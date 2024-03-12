@@ -4,7 +4,7 @@ title: "Column Headers"
 
 Column Headers by default use the Provided Header Component. The default can be overridden with Custom Header Component. This page explains how to use the Provided Header Component, create your own Custom Header Component, and general Header configuration.
 
-When no header name is provided, the grid will derieve the header name from the provided `field`. The grid will assume the field is Camel Case and will reverse engineer the readable name.
+When no header name is provided, the grid will derive the header name from the provided `field`. The grid expects the field value to use Camel Case and will insert spaces between word breaks to build a readable header name.
 
 ```js {% frameworkTransform=true suppressFrameworkContext=true spaceBetweenProperties=true %}
 const gridOptions = {
@@ -21,7 +21,7 @@ const gridOptions = {
 
 ## Selecting Components
 
-Specify the Header Component using the Column Definition `headerComponent`.
+By default the grid uses the provided Header Component. To use a Custom Header Component set `headerComponent` on the Column Definition.
 
 {% includeMarkdoc file="column-headers/_column-def-javascript.mdoc" /%}
 {% includeMarkdoc file="column-headers/_column-def-vue.mdoc" /%}
@@ -33,7 +33,7 @@ See [Registering Components](./components/) for an overview of registering compo
 This example shows a Custom Header Component. Note the following:
 
 * Column moving and resizing works without custom logic.
-* Use of `suppressMenu=true` to supporess the menu.
+* Use of `suppressMenu=true` to suppress the menu.
 * Use of `sortable=false` to suppress sorting.
 * Configurable menu icon.
 
@@ -77,7 +77,7 @@ The following props are passed to the Custom Component (`CustomHeaderProps` inte
 The grid provides the following features that should not be implemented by Custom Header Components:
 
 * [**Resizing:**](./column-sizing/) When enabled, the grid will put an invisible widget to be grabbed by the mouse for resizing.
-* [**Checkbox Selection:**](./row-selection/) When enabled, the grid puts a checkbox for 'select all' in the header.
+* [**Header Checkbox Selection:**](./row-selection/) When enabled, the grid displays a checkbox for 'select all' in the header.
 * **Column Moving** The grid will react to Column Dragging to reorder columns.
 
 The Custom Header Component is responsible for the following:
@@ -94,12 +94,12 @@ How you interact with the user for sorting (eg do you listen for mouse clicks?) 
 After the user requests a sort, you should call ONE of the following:
 
 {% if isFramework("javascript", "angular", "vue") %}
-1. `params.progressSort(multiSort):` This is the simplest. Call it to progress the sort on the column to the next stage. Using this uses the grid logic for working out what the next sort stage is (eg 'descending' normally follows 'ascending').
+1. `params.progressSort(multiSort):` Call this method to progress the sort on the column to the next stage. This uses the grid logic to determine the next sort stage (eg 'descending' normally follows 'ascending').
 1. `params.setSort(direction, multiSort):` Use this to set to sort to a specific state. Use this if you don't want to use the grids logic for working out the next sort state.
 {% /if %}
 
 {% if isFramework("react") %}
-1. `props.progressSort(multiSort):` This is the simplest. Call it to progress the sort on the column to the next stage. Using this uses the grid logic for working out what the next sort stage is (eg 'descending' normally follows 'ascending').
+1. `props.progressSort(multiSort):` Call this method to progress the sort on the column to the next stage. This uses the grid logic to determine the next sort stage (eg 'descending' normally follows 'ascending').
 1. `props.setSort(direction, multiSort):` Use this to set to sort to a specific state. Use this if you don't want to use the grids logic for working out the next sort state.
 {% /if %}
 
@@ -166,7 +166,7 @@ onSortDescClicked(event) {
 ```
 {% /if %}
 
-To know when a column's sort state has change (eg when to update your icons), you should listen for `sortChanged` event on the column.
+To know when a column's sort state has changed (eg when to update your icons), you should listen for `sortChanged` event on the column.
 
 ```js
 // listen to the column for sort events
@@ -243,12 +243,13 @@ onMenuClicked() {
 {% if isFramework("javascript", "angular", "vue") %}
 The `refresh(params)` method gets called when the application updates the Column Definitions. For example the application could set a `headerName` attribute and then set the Column Definitions again. In this instance, the Header Component should update the displayed header name.
 
-It is the responsibility of the Header Component to inspect the Column Definition for relevant changes and updated if needed. If the refresh was successful then `true` should be returned. If the refresh was not successful then `false` should be returned. If `false` is returned, then the grid will destroy and recreate the component. This pattern is consistent with the `refresh` method of Cell Renderers.
+It is the responsibility of the Header Component to inspect the Column Definition for relevant changes and update itself if needed. If the refresh was successful then `true` should be returned. If the refresh was not successful then `false` should be returned. If `false` is returned, then the grid will destroy and recreate the component. This pattern is consistent with the `refresh` method of Cell Renderers.
 {% /if %}
 
 ### Custom Props
 
-On top of the props provided by the grid, you can also provide your own parameters. This is useful if you want to 'configure' the header component. For example, you might have a header component for formatting currency but that needs the currency symbol.
+On top of the props provided by the grid, you can also provide your own parameters. 
+This is useful if you want to allow configuring the header component. For example, you might have a header component for formatting currency which also requires the currency symbol to be provided.
 
 {% if isFramework("javascript", "angular", "react") %}
 ```js
@@ -380,7 +381,7 @@ The following example shows how you can provide a unique look and feel to the he
 
 * The header heights have all been changed via grid options:
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```js {% frameworkTransform=true  %}
     const gridOptions = {
         // Group columns
         groupHeaderHeight: 75,
