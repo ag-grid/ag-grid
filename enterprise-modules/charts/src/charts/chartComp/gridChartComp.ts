@@ -102,6 +102,7 @@ export class GridChartComp extends Component {
 
     private chartProxy: ChartProxy;
     private chartType: ChartType;
+    private chartEmpty: boolean;
 
     private readonly params: GridChartParams;
 
@@ -379,9 +380,12 @@ export class GridChartComp extends Component {
             ? (((updatedChartType) => {
                 const currentChartType = this.chartType;
                 const targetChartType = updatedChartType;
-                const existingChartOptions = this.chartProxy.getChart()?.getOptions()
+                const existingChartInstance = this.chartProxy.getChart();
+                const existingChartOptions = existingChartInstance?.getOptions()
+                const existingAxes = existingChartInstance?.axes;
                 return this.chartOptionsService.getPersistedChartThemeOverrides(
                     existingChartOptions,
+                    existingAxes,
                     currentChartType,
                     targetChartType ?? currentChartType,
                 );
