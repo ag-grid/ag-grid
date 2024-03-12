@@ -11,7 +11,7 @@ export interface TAthlete {
     },
 }
 
-export function getDataSet(): TAthlete[] {
+export function getData(): TAthlete[] {
     return [
         {
             "name": "Michael Phelps",

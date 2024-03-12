@@ -10,15 +10,11 @@ import './styles.css';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-
-
+import { getData } from './data.jsx';
 
 var aggCallCount = 0;
-
 var compareCallCount = 0;
-
 var filterCallCount = 0;
 
 const myAggFunc = (params) => {

@@ -5,7 +5,7 @@ import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import {AgGridAngular} from '@ag-grid-community/angular';
 import {ColDef, GridApi, GridOptions, GridPreDestroyedEvent, GridReadyEvent} from '@ag-grid-community/core';
-import {TAthlete, getDataSet} from './data';
+import {TAthlete, getData} from './data';
 import './styles.css';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -77,7 +77,7 @@ export class AppComponent {
         editable: true,
     };
 
-    public rowData: any[] | null = getDataSet()
+    public rowData: any[] | null = getData()
 
     onGridPreDestroyed(params: GridPreDestroyedEvent<TAthlete>) {
         const allColumns = params.api?.getColumns();
