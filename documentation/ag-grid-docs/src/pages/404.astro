@@ -9,7 +9,7 @@ const { data: menu } = await getEntry('menu', 'data');
 const allMenuSections = menu.main.sections as MenuSection[];
 ---
 
-<Layout title="AG Grid: Page Not Found" showDocsNav={true}>
+<Layout title="AG Grid: Page Not Found" showDocsNav={true} showSearchBar={true}>
     <div class="layout-grid">
         <!-- NOTE: 404 is used for all paths, so will need to get framework from localstorage -->
         <PagesNavigationFromLocalStorage client:load allMenuSections={allMenuSections} pageName={'404'} />
