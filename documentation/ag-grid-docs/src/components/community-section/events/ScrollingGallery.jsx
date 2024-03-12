@@ -1,7 +1,7 @@
 import styles from '@design-system/modules/CommunityScrollingGallery.module.scss';
 import React, { useEffect, useRef } from 'react';
 
-import eventImages from '../../../content/community/news-updates/events-images.json';
+import eventImages from '../../../content/community/events-images.json';
 
 const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {

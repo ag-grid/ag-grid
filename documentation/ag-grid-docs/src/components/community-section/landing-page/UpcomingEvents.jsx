@@ -4,7 +4,7 @@ import { useDarkmode } from '@utils/hooks/useDarkmode';
 import React, { useEffect, useRef, useState } from 'react';
 
 import ScrollingGallery from '@components/community-section/events/ScrollingGallery';
-import events from '../../../content/community/news-updates/events-new.json';
+import events from '../../../content/community/events.json';
 
 const separateEventsByDate = (events) => {
     const upcomingEvents = [];

@@ -3,7 +3,7 @@ import styles from '@design-system/modules/CommunityEvents.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import React, { useState } from 'react';
 
-import events from '../../content/community/news-updates/events-new.json';
+import events from '../../content/community/events.json';
 
 const separateEventsByDate = (events) => {
     const upcomingEvents = [];
