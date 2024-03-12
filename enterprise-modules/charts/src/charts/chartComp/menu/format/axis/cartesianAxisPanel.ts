@@ -23,7 +23,7 @@ import { GridLinePanel } from '../gridLine/gridLinePanel';
 import { AgAngleSelect } from "../../../../../widgets/agAngleSelect";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 import { ChartOptionsProxy } from '../../../services/chartOptionsService';
-import { isPolar } from '../../../utils/seriesTypeMapper';
+import { isCartesian } from '../../../utils/seriesTypeMapper';
 import { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
 
 const DEFAULT_TIME_AXIS_FORMAT = '%d %B %Y';
@@ -128,7 +128,7 @@ export class CartesianAxisPanel extends Component {
     private getAxisTypeSelectParams(chartAxisOptions: ChartMenuParamsFactory, chartAxisAppliedThemeOverrides: ChartOptionsProxy): AgSelectParams | null {
         const chartOptions = chartAxisOptions.getChartOptions();
         const axisTypeSelectOptions = ((chartType, axisType) => {
-            if (isPolar(chartType)) return null;
+            if (!isCartesian(chartType)) return null;
             switch (axisType) {
                 case 'xAxis': return [
                     { value: 'category', text: this.translate('category') },
@@ -176,7 +176,7 @@ export class CartesianAxisPanel extends Component {
 
     private getAxisPositionSelectParams(chartAxisOptions: ChartMenuParamsFactory): AgSelectParams | null {
         const axisPositionSelectOptions = ((chartType, axisType) => {
-            if (isPolar(chartType)) return null;
+            if (!isCartesian(chartType)) return null;
             switch (axisType) {
                 case 'xAxis': return [
                     { value: 'top', text: this.translate('top') },

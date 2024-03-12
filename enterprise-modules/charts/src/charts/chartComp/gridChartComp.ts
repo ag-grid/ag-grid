@@ -102,6 +102,7 @@ export class GridChartComp extends Component {
 
     private chartProxy: ChartProxy;
     private chartType: ChartType;
+    private chartEmpty: boolean;
 
     private readonly params: GridChartParams;
 
@@ -375,15 +376,18 @@ export class GridChartComp extends Component {
         const updatedChartType = this.chartTypeChanged(params);
         // If the chart type has changed, grab the theme overrides from the exisiting chart before destroying it,
         // so that we can retain any compatible theme overrides across different chart types.
-        const persistedThemeOverrides = updatedChartType
+        const persistedThemeOverrides = updatedChartType || this.chartEmpty
             ? (((updatedChartType) => {
                 const currentChartType = this.chartType;
                 const targetChartType = updatedChartType;
-                const existingChartOptions = this.chartProxy.getChart()?.getOptions()
+                const existingChartInstance = this.chartProxy.getChart();
+                const existingChartOptions = existingChartInstance?.getOptions()
+                const existingAxes = existingChartInstance?.axes;
                 return this.chartOptionsService.getPersistedChartThemeOverrides(
                     existingChartOptions,
+                    existingAxes,
                     currentChartType,
-                    targetChartType,
+                    targetChartType ?? currentChartType,
                 );
             }))(updatedChartType)
             : undefined;
@@ -414,7 +418,11 @@ export class GridChartComp extends Component {
         const data = this.chartController.getChartData();
         const chartEmpty = this.handleEmptyChart(data, fields);
 
+        this.chartEmpty = chartEmpty;
         if (chartEmpty) {
+            // We don't have enough data to reinstantiate the chart with the new chart type,
+            // but we still want to persist any theme overrides for when the data is present
+            if (updatedOverrides) this.chartController.updateThemeOverrides(updatedOverrides);
             return;
         }
 
