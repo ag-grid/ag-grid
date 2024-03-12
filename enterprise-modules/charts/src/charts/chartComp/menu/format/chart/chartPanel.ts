@@ -46,7 +46,7 @@ export class ChartPanel extends Component {
             expanded: this.isExpandedOnInit,
             suppressEnabledCheckbox: true,
             items: [
-                this.createManagedBean(new TitlePanel(this.chartMenuUtils)),
+                this.createManagedBean(new TitlePanel(this.chartMenuUtils, this.chartController)),
                 this.createManagedBean(new PaddingPanel(this.chartMenuUtils, this.chartController)),
                 this.createManagedBean(new BackgroundPanel(this.chartMenuUtils))
             ]
