@@ -285,3 +285,20 @@ Note that the hook version of the above example makes use of `useImperativeHandl
 refer to the [hook specific](./react-hooks/) documentation for more information.
 {% /note %}
 {% /if %}
+
+## Dynamic Tooltips
+
+When working with Custom Cell Renderers it is possible to register custom tooltips that are displayed dynamically by using the `setTooltip` method.
+{% if isFramework("javascript", "angular", "vue") %}
+{% interfaceDocumentation interfaceName="ICellRendererParams" names=["setTooltip"] /%}
+{% /if %}
+
+{% if isFramework("react") %}
+{% interfaceDocumentation interfaceName="CustomCellRendererProps" names=["setTooltip"] /%}
+{% /if %}
+
+The example below demonstrates a dynamic tooltip being displayed on Cell Components. The following can be noted:
+
+* The Athlete column uses the `shouldDisplayTooltip` callback to only display Tooltips when the text is not fully displayed.
+
+{% gridExampleRunner title="Dynamic Tooltips" name="dynamic-tooltips" /%}
