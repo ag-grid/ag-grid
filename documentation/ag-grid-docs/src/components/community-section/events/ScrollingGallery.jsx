@@ -25,7 +25,7 @@ const ScrollingGallery = () => {
             });
         };
 
-        const interval = setInterval(scrollContent, 15);
+        const interval = setInterval(scrollContent, 10);
         return () => clearInterval(interval);
     }, []);
 
