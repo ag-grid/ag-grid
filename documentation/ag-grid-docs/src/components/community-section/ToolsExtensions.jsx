@@ -79,7 +79,7 @@ const ToolsExtensions = ({ limit = -1 }) => {
                 {filteredTools.map(
                     (tool, index) =>
                         (!selectedFramework || tool.frameworks?.includes(selectedFramework)) && (
-                            <div onClick={() => window.open(tool.link)} target="_blank" className={styles.linkWrapper} key={index}>
+                            <div onClick={() => window.open(tool.link ? tool.link : tool.repo)} target="_blank" className={styles.linkWrapper} key={index}>
                                 <div key={index} className={styles.itemContainer}>
                                     <div className={styles.image}>
                                         {

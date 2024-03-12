@@ -215,7 +215,6 @@
         "repo": "https://github.com/kpmck/cypress-ag-grid",
         "title": "Cypress AG Grid",
         "description": "With Cypress, you can easily create tests for your modern web applications, debug them visually, and automatically run them in your continuous integration builds. This plugin simplifies interacting with and validating against ag grid with Cypress.",
-        "link": "https://github.com/kpmck/cypress-ag-grid",
         "type": "Utility",
         "open_source": true,
         "stars": 30,
@@ -230,7 +229,6 @@
         "repo": "https://github.com/clickbar/ag-grid-laravel",
         "title": "AG Grid Laravel Server Side Adapter",
         "description": "A server-side adapter for AG Grid with support for filtering, sorting, exporting and server-side selection.",
-        "link": "https://github.com/clickbar/ag-grid-laravel",
         "type": "Wrapper",
         "open_source": true,
         "stars": 15,
@@ -245,7 +243,6 @@
         "repo": "https://github.com/LSEG/ag-grid-playwright",
         "title": "AG Grid Playwright",
         "description": "A simple way to test ag-grid with Playwright. Extensible enough to cover the all of ag-grid's features.",
-        "link": "",
         "type": "Utility",
         "open_source": true,
         "stars": 6,
@@ -416,7 +413,7 @@
         "open_source": true,
         "stars": 25,
         "type": "Integration",
-        "link": "suibase.io",
+        "link": "https://suibase.io",
         "frameworks": [
             "Rust"
         ],
