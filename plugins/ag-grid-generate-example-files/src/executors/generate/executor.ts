@@ -191,6 +191,7 @@ export async function generateFiles(options: ExecutorOptions) {
                     typedBindings,
                     componentScriptFiles,
                     otherScriptFiles,
+                    styleFiles,
                     ignoreDarkMode: false,
                     isDev,
                     importType,
@@ -226,7 +227,7 @@ export async function generateFiles(options: ExecutorOptions) {
                 entryFileName,
                 mainFileName,
                 scriptFiles: scriptFiles!,
-                styleFiles: Object.keys(mergedStyleFiles),
+                styleFiles: (['reactFunctional', 'reactFunctionalTs'] as InternalFramework[]).includes(internalFramework) ? [] : Object.keys(mergedStyleFiles),
                 // Replace files with provided examples
                 files: { ...mergedStyleFiles, ...files, ...provideFrameworkFiles, ...interfaceContents },
                 boilerPlateFiles,
