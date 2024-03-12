@@ -203,6 +203,7 @@ export interface ExcelColumn {
     hidden?: boolean;
     bestFit?: boolean;
     displayName?: string;
+    filterAllowed?: boolean;
 }
 
 export interface ExcelRow {
@@ -552,7 +553,15 @@ export interface ExcelTableSetup {
     /** This property is used to set the table name. It should be an alphanumeric string with no special characters. */
     name: string;
 
-    /** Set this property to `true` to show row stripes. Default is `true`. */
+    /**
+     * Set this property to `false` to disable the filter button at the exported Excel table header.
+     * Set it to `true` to show the filter button on all columns.
+     * Set it to `match` to show the filter button only if the column has a filter allowed.
+     * Default is `match`.
+     */
+    showFilterButton?: boolean | 'match';
+
+    /** Set this property to `false` to hide the row stripes. Default is `true`. */
     showRowStripes?: boolean;
 
     /** Set this property to `true` to show column stripes. Default is `false`. */
