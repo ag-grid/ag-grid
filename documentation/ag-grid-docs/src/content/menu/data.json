@@ -185,11 +185,6 @@
                                         ]
                                     },
                                     {
-                                        "title": "Modules - Example",
-                                        "path": "modules-building",
-                                        "frameworks": ["angular", "react", "vue"]
-                                    },
-                                    {
                                         "title": "Custom UMD Bundle",
                                         "path": "modules-building",
                                         "frameworks": ["javascript"]
@@ -203,7 +198,8 @@
                                 "items": [
                                     {
                                         "title": "Rollup",
-                                        "path": "building-rollup"
+                                        "path": "building-rollup",
+                                        "frameworks": ["javascript"]
                                     },
                                     {
                                         "title": "TypeScript & Webpack",
