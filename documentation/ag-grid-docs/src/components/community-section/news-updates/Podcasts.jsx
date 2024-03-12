@@ -3,7 +3,7 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import styles from '@design-system/modules/community-section/news-updates/Podcasts.module.scss';
+import styles from '@design-system/modules/CommunityPodcasts.module.scss';
 import { Icon } from '@components/icon/Icon';
 
 import React from 'react';
@@ -24,7 +24,7 @@ const Podcasts = () => {
         <>
             <div className={styles.container}>
                 {podcasts.map((podcast, index) => (
-                    <a href={podcast.website} target='_blank' className={styles.podcastContainer}>
+                    <a href={podcast.website} target='_blank' className={styles.podcastContainer} key={index}>
                         <div className={styles.podcastDetailsContainer}>
                             <div className={styles.titleContainer}>
                                 <span className={styles.title}>{podcast.title}</span>

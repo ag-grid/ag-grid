@@ -1,8 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import CommunityMenu from '@components/community-section/Menu';
-import LayoutStyles from '@design-system/modules/community-section/Layout.module.scss';
-import EventsNew from '@components/community-section/EventsNew';
+import CommunityMenu from '@components/community-section/CommunityMenu';
+import LayoutStyles from '@design-system/modules/CommunityLayout.module.scss';
+import Events from '@components/community-section/Events';
 ---
 
 <Layout title="AG Grid">
@@ -16,7 +16,7 @@ import EventsNew from '@components/community-section/EventsNew';
             <div class={LayoutStyles.container}>
                 <div class={LayoutStyles.content}>
                     <section>
-                        <EventsNew client:only/>
+                        <Events client:only/>
                     </section>
                 </div>
             </div>

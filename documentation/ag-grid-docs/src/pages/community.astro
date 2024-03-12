@@ -1,15 +1,15 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { Icon } from '@components/icon/Icon';
-import CommunityMenu from '@components/community-section/Menu';
-import LayoutStyles from '@design-system/modules/community-section/Layout.module.scss';
-import styles from '@design-system/modules/community-section/index.module.scss';
+import CommunityMenu from '@components/community-section/CommunityMenu';
+import LayoutStyles from '@design-system/modules/CommunityLayout.module.scss';
+import styles from '@design-system/modules/CommunityIndex.module.scss';
 import FeaturedNews from '@components/community-section/news-updates/FeaturedNews';
-import Events from '@components/community-section/news-updates/Events';
-import ShowcaseList from '@components/community-section/ShowcaseList';
+import UpcomingEvents from '@components/community-section/landing-page/UpcomingEvents';
+import Showcase from '@components/community-section/Showcase';
 import Support from '@components/community-section/landing-page/Support';
 import Socials from '@components/community-section/landing-page/Socials';
-import ToolsExtensions from '@components/community-section/tools-extensions/ToolsExtensions';
+import ToolsExtensions from '@components/community-section/ToolsExtensions';
 ---
 
 <Layout title="AG Grid">
@@ -21,7 +21,6 @@ import ToolsExtensions from '@components/community-section/tools-extensions/Tool
         </header>
         <div class="layout-max-width-small">
             <div class={LayoutStyles.container}>
-                
                 <div class={LayoutStyles.content}>
                     <!-- Featured News -->
                     <section>
@@ -55,7 +54,7 @@ import ToolsExtensions from '@components/community-section/tools-extensions/Tool
                                 <Icon name="arrowRight" />
                             </a>
                         </div>
-                        <Events enableFilters={false} client:only />
+                        <UpcomingEvents enableFilters={false} client:only />
                     </section>
                     <!-- Showcase -->
                     <section>
@@ -69,7 +68,7 @@ import ToolsExtensions from '@components/community-section/tools-extensions/Tool
                                 <Icon name="arrowRight" />
                             </a>
                         </div>
-                        <ShowcaseList favouritesOnly={true} maxItems={8} client:only />
+                        <Showcase favouritesOnly={true} maxItems={8} client:only />
                     </section>
                     <!-- Tools & Extensons -->
                     <section>

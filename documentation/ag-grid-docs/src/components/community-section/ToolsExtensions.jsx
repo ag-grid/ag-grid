@@ -1,8 +1,8 @@
 import { Icon } from '@components/icon/Icon';
-import styles from '@design-system/modules/community-section/ToolsExtensions.module.scss';
-import React, { useEffect, useReducer, useState } from 'react';
+import styles from '@design-system/modules/CommunityToolsExtensions.module.scss';
+import React, { useState } from 'react';
 
-import tools from '../../../content/community/tools-extensions.json';
+import tools from '../../content/community/tools-extensions.json';
 
 const frameworks = [
     'React',
@@ -59,6 +59,7 @@ const ToolsExtensions = ({ limit = -1 }) => {
                         {/* Display all frameworks */}
                         {frameworks.map((framework, index) => (
                             <button
+                                key={index}
                                 className={styles.filterButton}
                                 {...(selectedFramework === framework ? { active: 'true' } : {})}
                                 onClick={() => filterFrameworks(framework)}
@@ -78,7 +79,7 @@ const ToolsExtensions = ({ limit = -1 }) => {
                 {filteredTools.map(
                     (tool, index) =>
                         (!selectedFramework || tool.frameworks?.includes(selectedFramework)) && (
-                            <a href={tool.link} target="_blank" className={styles.linkWrapper}>
+                            <div onClick={() => window.open(tool.link)} target="_blank" className={styles.linkWrapper} key={index}>
                                 <div key={index} className={styles.itemContainer}>
                                     <div className={styles.image}>
                                         {
@@ -91,7 +92,7 @@ const ToolsExtensions = ({ limit = -1 }) => {
                                                 {tool.title}
                                             </span>
                                             {tool.repo && (
-                                                <a target="_blank" href={tool.repo}>
+                                                <div onClick={() => window.open(tool.repo)} target="_blank" >
                                                     <div className={styles.logoContainer}>
                                                         <Icon
                                                             alt={`GitHub logo`}
@@ -99,7 +100,7 @@ const ToolsExtensions = ({ limit = -1 }) => {
                                                             svgClasses={styles.githubIcon}
                                                         />
                                                     </div>
-                                                </a>
+                                                </div>
                                             )}
                                         </div>
                                         <span className={styles.description}>
@@ -123,7 +124,7 @@ const ToolsExtensions = ({ limit = -1 }) => {
                                         </div>
                                     </div>
                                 </div>
-                            </a>
+                            </div>
                         )
                     )
                 }   

@@ -1,8 +1,7 @@
-import styles from '@design-system/modules/community-section/EventsNew.module.scss';
-import React, { useEffect, useRef, useState } from 'react';
+import styles from '@design-system/modules/CommunityEvents.module.scss';
+import React, { useState } from 'react';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 
-import eventImages from '../../content/community/news-updates/events-images.json';
 import events from '../../content/community/news-updates/events-new.json';
 
 const separateEventsByDate = (events) => {
@@ -34,7 +33,7 @@ function extractUniqueYears(events) {
 const EventItem = ({ event }) => {
     const [darkMode] = useDarkmode();
     return (
-        <a href={event.eventPage} target='_blank' className={styles.linkWrapper}>
+        <div onClick={() => window.open(event.eventPage)} target='_blank' className={styles.linkWrapper}>
             <div className={styles.eventItemContainer}>
                 <div className={styles.eventItemLeftColumn}>
                     <div className={styles.titleContainer}>
@@ -55,22 +54,22 @@ const EventItem = ({ event }) => {
                         </div>
                         <div className={styles.ctaContainer}>
                             {event.eventPage && (
-                                <a
-                                    href={event.eventPage}
+                                <div 
+                                    onClick={() => window.open(event.eventPage)}
                                     target="_blank"
                                     className={event.recording ? styles.secondaryCta : styles.primaryCta}
                                 >
-                                    View Event
-                                </a>
+                                    <p>View Event</p>
+                                </div>
                             )}
                             {event.recording && (
-                                <a
-                                    href={event.recording}
+                                <div
+                                    onClick={() => window.open(event.recording)}
                                     target="_blank"
                                     className={event.eventPage ? styles.primaryCta : styles.secondaryCta}
                                 >
-                                    Watch Recording
-                                </a>
+                                    <p>Watch Recording</p>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -79,11 +78,11 @@ const EventItem = ({ event }) => {
                     <img className={event.images?.length > 0 ? styles.eventImage : styles.eventLogo} src={`/community/events/${darkMode || !event.coverImageLight ? event.coverImage : event.coverImageLight}`} />
                 </div>
             </div>
-        </a>
+        </div>
     );
 };
 
-const EventsNew = () => {
+const Events = () => {
     const { upcomingEvents, pastEvents } = separateEventsByDate(events);
     const [currEvents, setCurrEvents] = useState(upcomingEvents);
     const [activeTab, setActiveTab] = useState('upcoming');
@@ -151,4 +150,4 @@ const EventsNew = () => {
     );
 };
 
-export default EventsNew;
+export default Events;

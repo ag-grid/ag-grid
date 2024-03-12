@@ -1,5 +1,5 @@
 import { Icon } from '@components/icon/Icon';
-import styles from '@design-system/modules/community-section/news-updates/Events.module.scss';
+import styles from '@design-system/modules/CommunityUpcomingEvents.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -73,7 +73,7 @@ function extractUniqueYears(events) {
     return Array.from(years);
 }
 
-const Events = ({ enableFilters = false }) => {
+const UpcomingEvents = ({ enableFilters = false }) => {
     const [darkMode] = useDarkmode();
     const { upcomingEvents } = separateEventsByDate(events);
     const [currEvents, setCurrEvents] = useState(upcomingEvents);
@@ -129,7 +129,7 @@ const Events = ({ enableFilters = false }) => {
                 <ScrollingGallery />
                 <div className={styles.eventTilesContainer}>
                     {currEvents.map((event, index) => (
-                        <a href={event.eventPage} target='_blank' className={styles.linkWrapper}>
+                        <a href={event.eventPage} target='_blank' className={styles.linkWrapper} key={index}>
                             <div key={index} className={styles.eventTile}>
                                 <span className={styles.location}>
                                     <Icon className={styles.locationIcon} name="mapPin" />
@@ -153,4 +153,4 @@ const Events = ({ enableFilters = false }) => {
     );
 };
 
-export default Events;
+export default UpcomingEvents;

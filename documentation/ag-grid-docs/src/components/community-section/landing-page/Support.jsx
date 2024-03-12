@@ -1,5 +1,5 @@
 import { Icon } from '@components/icon/Icon';
-import styles from '@design-system/modules/community-section/landing-page/Support.module.scss';
+import styles from '@design-system/modules/CommunitySupport.module.scss';
 import React from 'react';
 
 import supportSites from '../../../content/community/support.json';
@@ -8,7 +8,7 @@ const Support = () => {
     return (
         <div className={styles.container}>
             {supportSites.map((site, index) => (
-                <a target="_blank" href={site.link} className={styles.supportChannelContainer}>
+                <div onClick={() => window.open(site.link)} target="_blank" className={styles.supportChannelContainer} key={index}>
                     <div key={index} className={styles.supportChannel}>
                         <div className={styles.header}>
                             <Icon alt={`${site.icon} logo`} name={site.icon} svgClasses={styles.siteIcon} />
@@ -19,7 +19,7 @@ const Support = () => {
                             <a>{site?.cta}</a>
                         </div>
                     </div>
-                </a>
+                </div>
             ))}
         </div>
     );

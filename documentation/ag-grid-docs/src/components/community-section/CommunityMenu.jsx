@@ -1,7 +1,6 @@
-import styles from '@design-system/modules/community-section/CommunityMenu.module.scss';
-import React, { useEffect, useState } from 'react';
+import styles from '@design-system/modules/CommunityMenu.module.scss';
+import React, { useState } from 'react';
 import menu from '../../content/community/community-menu.json';
-
 
 const getPageFromPath = (path) => {
     const lastIndex = path.lastIndexOf("/");

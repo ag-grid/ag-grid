@@ -1,5 +1,5 @@
 import { Icon } from '@components/icon/Icon';
-import styles from '@design-system/modules/community-section/Showcase.module.scss';
+import styles from '@design-system/modules/CommunityShowcase.module.scss';
 import React from 'react';
 
 import menu from '../../content/community/community-menu.json';
@@ -23,7 +23,7 @@ const GitHubDetails = ({ favouritesOnly, repo }) => {
     }
 };
 
-const ShowcaseList = ({ favouritesOnly = false, maxItems = -1 }) => {
+const Showcase = ({ favouritesOnly = false, maxItems = -1 }) => {
     const selectedShowcase = favouritesOnly ? showcase.favourites : showcase.other;
     const productsSortedByStars = selectedShowcase.sort((a, b) => b.stars - a.stars);
     const products = maxItems === -1 ? productsSortedByStars : productsSortedByStars.slice(0, maxItems);
@@ -31,7 +31,7 @@ const ShowcaseList = ({ favouritesOnly = false, maxItems = -1 }) => {
     return (
         <div className={styles.cardContainer}>
             {products.map((product, index) => (
-                <a key={index} target="_blank" href={product.link}>
+                <div onClick={() => window.open(product.link)} key={index} target="_blank">
                     <div className={`${styles.card} ${favouritesOnly ? "" : styles.smallCard}`}>
                         {favouritesOnly && (
                             <div className={styles.header}>
@@ -47,9 +47,9 @@ const ShowcaseList = ({ favouritesOnly = false, maxItems = -1 }) => {
                             </div>
                         )}
                         <div className={styles.body}>
-                            <a target="_blank" href={product.repo}>
+                            <div target="_blank" onClick={() => window.open(product.repo)}>
                                 <GitHubDetails favouritesOnly={favouritesOnly} repo={product.repo} />
-                            </a>
+                            </div>
                             <div className={styles.titleContainer}>
                                 <p className={styles.title}>{product.title}</p>
                             </div>
@@ -72,10 +72,10 @@ const ShowcaseList = ({ favouritesOnly = false, maxItems = -1 }) => {
                             ))}
                         </div>}
                     </div>
-                </a>
+                </div>
             ))}
         </div>
     );
 };
 
-export default ShowcaseList;
+export default Showcase;

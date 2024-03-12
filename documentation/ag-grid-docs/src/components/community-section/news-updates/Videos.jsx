@@ -1,4 +1,4 @@
-import styles from '@design-system/modules/community-section/news-updates/Videos.module.scss';
+import styles from '@design-system/modules/CommunityVideos.module.scss';
 import React, { useState } from 'react';
 
 import videos from '../../../content/community/news-updates/videos.json';

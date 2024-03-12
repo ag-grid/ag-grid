@@ -1,4 +1,4 @@
-@use '../../core/' as *;
+@use '../core/' as *;
 
 .cardContainer {
     display: grid;
@@ -17,6 +17,7 @@
     border: 1px solid var(--color-border-secondary);
     min-height: 375px;
     overflow: hidden; 
+    cursor: pointer;
 }
 
 .smallCard {

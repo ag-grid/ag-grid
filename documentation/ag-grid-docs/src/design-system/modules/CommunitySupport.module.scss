@@ -1,4 +1,4 @@
-@use '../../../core/' as *;
+@use '../core/' as *;
 
 .container {
     display: flex;
@@ -16,6 +16,7 @@
     flex: 1;
     color: var(--color-text-primary);
     font-weight: var(--text-fs-base);
+    cursor: pointer;
 }
 
 .supportChannel {

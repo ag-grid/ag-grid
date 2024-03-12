@@ -1,4 +1,4 @@
-@use '../../core/' as *;
+@use '../core/' as *;
 
 .container {
 }
@@ -130,14 +130,19 @@
 }
 
 .primaryCta {
+    color: var(--color-brand-400);
     gap: $spacing-size-8;
     margin: 0px;
+
+    p {
+        font-weight: var(--text-semibold);
+    }
 }
 
 .secondaryCta {
+    color: var(--color-brand-400);
     gap: $spacing-size-8;
     margin: 0px;
-    font-weight: 400;
 }
 
 .locationContainer {
