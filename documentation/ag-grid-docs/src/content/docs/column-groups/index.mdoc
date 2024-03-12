@@ -2,11 +2,34 @@
 title: "Column Groups"
 ---
 
-Columns can be grouped in the grid's header using Column Groups. This can be complimented with Open and Close functionality to show / hide Columns.
+Columns can be grouped in the grid's header using Column Groups. Column groups can be shown as open / closed to show / hide child Columns.
 
 Column Groups are configured by providing a hierachy of Column Definitions. If a Column Definition contains the `children` attribute then the grid treats it as a Column Group.
 
 {% gridExampleRunner title="Basic Grouping" name="basic-grouping"  exampleHeight=550 /%}
+
+```js {% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            headerName: 'Name & Country',
+            children: [
+                { field: 'athlete' },
+                { field: 'country' }
+            ]
+        },
+        {
+            headerName: 'Sports Results',
+            children: [
+                { columnGroupShow: 'closed', field: 'total' },
+                { columnGroupShow: 'open', field: 'gold' },
+                { columnGroupShow: 'open', field: 'silver' },
+                { columnGroupShow: 'open', field: 'bronze' },
+            ],
+        }
+    ]
+}
+```
 
 Set the attribute `columnGroupShow` on groups children to set the expand and collapse policy as follows:
 
@@ -20,9 +43,17 @@ Use `defaultColGroupDef` to set properties accross all Column Groups.
 
 {% gridExampleRunner title="Default Props" name="defaults"  exampleHeight=550 /%}
 
+```js {% frameworkTransform=true %}
+const gridOptions = {
+    defaultColGroupDef: {
+        headerName: 'A shared prop for all Groups'
+    }
+}
+```
+
 ## Multiple Levels
 
-This example demonstrates a grid with many levels. The example doesn't make sense, it's contrieved to demonstrate multip group levels. Note the following:
+The example below demonstrates a grid with many column group header levels. Note the following:
 
 * Using the API to open and close groups. To do this, you will need to provide your groups with an ID during the definition, or look up the groups ID via the API (as an ID is generated if you don't provide one).
 * Demonstrates `colDef.openByDefault` property, where it sets this on E and F groups, resulting in these groups appearing as open by default.
