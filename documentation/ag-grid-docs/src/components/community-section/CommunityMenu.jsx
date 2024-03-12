@@ -3,8 +3,7 @@ import React, { useState } from 'react';
 import menu from '../../content/community/community-menu.json';
 
 const getPageFromPath = (path) => {
-    const lastIndex = path.lastIndexOf("/");
-    return lastIndex ? path.substring(lastIndex) : "/";
+    return path.replace('community/', '');
 }
 
 const CommunityMenu = ({path}) => {
