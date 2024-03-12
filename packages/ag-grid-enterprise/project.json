@@ -66,7 +66,32 @@
         "build:updateWithCoreExports"
       ],
       "inputs": [
-        "tsDefaults"
+        "tsDefaults",
+        "{workspaceRoot}/community-modules/core/dist/package/main.cjs.js",
+        "{workspaceRoot}/community-modules/client-side-row-model/dist/package/main.cjs.js",
+        "{workspaceRoot}/community-modules/csv-export/dist/package/main.cjs.js",
+        "{workspaceRoot}/community-modules/infinite-row-model/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/core/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/advanced-filter/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/charts/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/charts-enterprise/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/clipboard/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/column-tool-panel/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/excel-export/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/filter-tool-panel/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/master-detail/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/menu/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/multi-filter/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/range-selection/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/rich-select/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/row-grouping/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/server-side-row-model/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/set-filter/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/side-bar/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/sparklines/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/viewport-row-model/dist/package/main.cjs.js",
+        "{workspaceRoot}/enterprise-modules/status-bar/dist/package/main.cjs.js",
+        "{workspaceRoot}/packages/ag-grid-community/dist/package/main.cjs.js"
       ],
       "outputs": [
         "{options.outputPath}"
