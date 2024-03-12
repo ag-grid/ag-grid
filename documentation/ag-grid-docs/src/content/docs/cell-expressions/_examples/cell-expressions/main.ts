@@ -27,14 +27,14 @@ const gridOptionsLeft: GridOptions<LeftData> = {
   ],
   defaultColDef: {
     flex: 1,
-    sortable: false
+    sortable: false,
+    enableCellChangeFlash: true
   },
   enableCellExpressions: true,
   rowData: rowDataLeft,
   context: {
     theNumber: 4,
   },
-  enableCellChangeFlash: true,
 }
 
 ///// Right table

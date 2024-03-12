@@ -46,12 +46,12 @@ const gridOptions: GridOptions = {
   columnDefs,
   defaultColDef: {
     flex: 1,
-    minWidth: 100,  
+    minWidth: 100,
+    enableCellChangeFlash: true,
   },
   autoGroupColumnDef: {
     minWidth: 220,
   },
-  enableCellChangeFlash: true,
   getRowId: (params: GetRowIdParams) => {  
     var rowId = '';
     if (params.parentKeys && params.parentKeys.length) {

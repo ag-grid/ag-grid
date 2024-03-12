@@ -27,12 +27,12 @@ const gridOptions: GridOptions<IAccount> = {
   ],
   defaultColDef: {
     flex: 1,
+    enableCellChangeFlash: true,
   },
   getRowId: (params: GetRowIdParams) => {
     return params.data.account
   },
   masterDetail: true,
-  enableCellChangeFlash: true,
   detailCellRendererParams: {
     refreshStrategy: 'everything',
 
@@ -51,7 +51,6 @@ const gridOptions: GridOptions<IAccount> = {
 
     detailGridOptions: {
       rowSelection: 'multiple',
-      enableCellChangeFlash: true,
       getRowId: (params: GetRowIdParams) => {
         return params.data.callId
       },
@@ -64,6 +63,7 @@ const gridOptions: GridOptions<IAccount> = {
       ],
       defaultColDef: {
         flex: 1,
+        enableCellChangeFlash: true,
       },
     },
     getDetailRowData: (params) => {

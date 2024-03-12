@@ -21,8 +21,8 @@ const gridOptions: GridOptions<IAccount> = {
   ],
   defaultColDef: {
     flex: 1,
+    enableCellChangeFlash: true,
   },
-  enableCellChangeFlash: true,
   masterDetail: true,
   detailCellRenderer: DetailCellRenderer,
   detailRowHeight: 70,

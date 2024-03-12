@@ -35,11 +35,11 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
+    enableCellChangeFlash: true,
   },
   autoGroupColumnDef: {
     minWidth: 220,
   },
-  enableCellChangeFlash: true,
   isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
     return params.rowNode.key === 'Aggressive' || params.rowNode.key === 'Hybrid';
   },

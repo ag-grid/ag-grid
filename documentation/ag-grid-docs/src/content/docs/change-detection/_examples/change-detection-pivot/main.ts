@@ -43,7 +43,6 @@ const gridOptions: GridOptions = {
   rowData: getRowData(),
   pivotMode: true,
   groupDefaultExpanded: 1,
-  // enableCellChangeFlash: true,
   getRowId: (params: GetRowIdParams) => {
     return params.data.student
   },

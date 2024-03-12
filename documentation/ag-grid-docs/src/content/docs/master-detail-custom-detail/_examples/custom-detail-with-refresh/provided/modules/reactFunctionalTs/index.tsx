@@ -33,6 +33,7 @@ const GridExample = () => {
     const defaultColDef = useMemo<ColDef>(() => {
         return {
             flex: 1,
+            enableCellChangeFlash: true
         }
     }, []);
     const detailCellRenderer = useMemo(() => { return DetailCellRenderer }, []);
@@ -79,7 +80,6 @@ const GridExample = () => {
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    enableCellChangeFlash={true}
                     masterDetail={true}
                     detailCellRenderer={detailCellRenderer}
                     detailRowHeight={70}

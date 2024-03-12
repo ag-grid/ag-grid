@@ -49,6 +49,7 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
+    enableCellChangeFlash: true,
   },
   autoGroupColumnDef: {
     minWidth: 140,
@@ -67,7 +68,6 @@ const gridOptions: GridOptions = {
   },
   rowData: getData(),
   suppressAggFuncInHeader: true,
-  enableCellChangeFlash: true,
   groupDefaultExpanded: 1,
   getRowId: (params: GetRowIdParams) => {
     return params.data.id

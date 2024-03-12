@@ -49,12 +49,12 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
+    enableCellChangeFlash: true,
   },
   autoGroupColumnDef: {
     minWidth: 220,
   },
   rowGroupPanelShow: 'always',
-  enableCellChangeFlash: true,
   purgeClosedRowNodes: true,
 
   rowModelType: 'serverSide',

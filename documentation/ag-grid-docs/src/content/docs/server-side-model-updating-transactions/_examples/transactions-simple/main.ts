@@ -30,7 +30,8 @@ const gridOptions: GridOptions = {
   columnDefs,
   defaultColDef: {
     flex: 1,
-    minWidth: 100,  
+    minWidth: 100,
+    enableCellChangeFlash: true,
   },
   autoGroupColumnDef: {
     minWidth: 220,
@@ -46,7 +47,6 @@ const gridOptions: GridOptions = {
     // register the datasource with the grid
     params.api.setGridOption('serverSideDatasource', datasource);
   },
-  enableCellChangeFlash: true,
   rowSelection: 'single',
   rowModelType: 'serverSide',
 };

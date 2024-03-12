@@ -40,13 +40,13 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     editable: true,
+    enableCellChangeFlash: true,
   },
   rowData: getRows(),
   enableRangeSelection: true,
   enableFillHandle: true,
   undoRedoCellEditing: true,
   undoRedoCellEditingLimit: 5,
-  enableCellChangeFlash: true,
   onFirstDataRendered: onFirstDataRendered,
   onCellValueChanged: onCellValueChanged,
 }

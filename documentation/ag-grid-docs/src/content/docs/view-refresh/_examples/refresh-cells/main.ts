@@ -22,11 +22,11 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     flex: 1,
+    enableCellChangeFlash: true,
   },
   rowData: [],
   pinnedTopRowData: [],
   pinnedBottomRowData: [],
-  enableCellChangeFlash: true,
   onGridReady: (params) => {
     // placing in 13 rows, so there are exactly enough rows to fill the grid, makes
     // the row animation look nice when you see all the rows
