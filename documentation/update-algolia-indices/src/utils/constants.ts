@@ -1,4 +1,4 @@
-export const WORKING_DIR = '../..';
+export const WORKING_DIR = '../ag-grid-docs';
 export const DOC_SOURCE_DIR = `${WORKING_DIR}/src/content/docs`;
 export const API_SOURCE_DIR = `${WORKING_DIR}/src/content/api-documentation`;
 export const DIST_DIR = `${WORKING_DIR}/dist`;
