@@ -104,7 +104,7 @@ export interface BaseMenuItemParams<TData = any, TContext = any> extends MenuIte
     /** Close the entire menu. */
     closeMenu: (event?: KeyboardEvent | MouseEvent) => void;
     /** Update the grid-provided tooltip for this item. */
-    updateTooltip: (tooltip?: string) => void;
+    updateTooltip: (tooltip?: string, shouldDisplayTooltip?: () => boolean) => void;
 }
 
 export interface IMenuItemParams<TData = any, TContext = any> extends BaseMenuItemParams<TData, TContext> {
