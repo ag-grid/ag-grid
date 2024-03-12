@@ -1,8 +1,6 @@
 import styles from '@design-system/modules/Search.module.scss';
-import { useStore } from '@nanostores/react';
-import { $internalFramework } from '@stores/frameworkStore';
-import { getFrameworkFromInternalFramework } from '@utils/framework';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
+import React, { useEffect, useState } from 'react';
 
 import { Icon } from '../icon/Icon';
 import SearchModal from './SearchModal';
@@ -13,8 +11,7 @@ import SearchModal from './SearchModal';
  * to render the search box and results.
  */
 const Search = () => {
-    const internalFramework = useStore($internalFramework);
-    const currentFramework = useMemo(() => getFrameworkFromInternalFramework(internalFramework), [internalFramework]);
+    const framework = useFrameworkFromStore();
     const [isOpen, setOpen] = useState(false);
     const [isMac, setMac] = useState<boolean>();
 
@@ -79,7 +76,7 @@ const Search = () => {
                 {isMac !== undefined && <span className={styles.kbdShortcut}>{isMac ? `⌘ K` : `Ctrl K`}</span>}
             </div>
 
-            <SearchModal isOpen={isOpen} currentFramework={currentFramework} closeModal={setModalOpenFnc(false)} />
+            <SearchModal isOpen={isOpen} currentFramework={framework} closeModal={setModalOpenFnc(false)} />
         </>
     );
 };
