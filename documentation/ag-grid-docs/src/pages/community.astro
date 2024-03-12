@@ -4,7 +4,7 @@ import { Icon } from '@components/icon/Icon';
 import CommunityMenu from '@components/community-section/CommunityMenu';
 import LayoutStyles from '@design-system/modules/CommunityLayout.module.scss';
 import styles from '@design-system/modules/CommunityIndex.module.scss';
-import FeaturedNews from '@components/community-section/news-updates/FeaturedNews';
+import Videos from '@components/community-section/news-updates/Videos';
 import UpcomingEvents from '@components/community-section/landing-page/UpcomingEvents';
 import Showcase from '@components/community-section/Showcase';
 import Support from '@components/community-section/landing-page/Support';
@@ -22,23 +22,6 @@ import ToolsExtensions from '@components/community-section/ToolsExtensions';
         <div class="layout-max-width-small">
             <div class={LayoutStyles.container}>
                 <div class={LayoutStyles.content}>
-                    <!-- Featured News -->
-                    <section>
-                        <div class={styles.sectionContainer}>
-                            <div class={styles.sectionHeader}>
-                                <h3 class={styles.sectionTitle}>News & Updates</h3>
-                                <!-- <p class={styles.sectionDescription}>
-                                    The latest content from the AG Grid team, including releases, new features, events,
-                                    and more
-                                </p> -->
-                            </div>
-                            <a href="/community/news-updates" class={styles.sectionLink}>
-                                <span class={styles.linkIcon}>View all</span>
-                                <Icon name="arrowRight" />
-                            </a>
-                        </div>
-                        <FeaturedNews client:only />
-                    </section>
                     <!-- Events -->
                     <section>
                         <div class={styles.sectionContainer}>
@@ -86,6 +69,23 @@ import ToolsExtensions from '@components/community-section/ToolsExtensions';
                             </a>
                         </div>
                         <ToolsExtensions limit={3} client:only />
+                    </section>
+                    <!-- Appearences -->
+                    <section>
+                        <div class={styles.sectionContainer}>
+                            <div class={styles.sectionHeader}>
+                                <h3 class={styles.sectionTitle}>Appearences</h3>
+                                <!-- <p class={styles.sectionDescription}>
+                                    The latest content from the AG Grid team, including releases, new features, events,
+                                    and more
+                                </p> -->
+                            </div>
+                            <a href="/community/news-updates" class={styles.sectionLink}>
+                                <span class={styles.linkIcon}>View all</span>
+                                <Icon name="arrowRight" />
+                            </a>
+                        </div>
+                        <Videos client:only />
                     </section>
                     <!-- Support -->
                     <section>

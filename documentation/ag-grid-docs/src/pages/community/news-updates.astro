@@ -18,18 +18,16 @@ import Videos from '@components/community-section/news-updates/Videos';
             <div class={LayoutStyles.container}>
                 <div class={LayoutStyles.content}>
                     <section>
-                        <h2>Featured News</h2>
-                        <FeaturedNews client:only />
-                    </section>
-                    <section>
                         <h2>Videos</h2>
                         <Videos client:only />
-                        <!-- TODO: Videos Component -->
                     </section>
                     <section>
                         <h2>Podcasts</h2>
                         <Podcasts client:only />
-                        <!-- TODO: Podcasts Component -->
+                    </section>
+                    <section>
+                        <h2>Featured News</h2>
+                        <FeaturedNews client:only />
                     </section>
                 </div>
             </div>
