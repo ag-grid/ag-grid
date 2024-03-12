@@ -47,8 +47,9 @@
 
 .filterContainer {
     display: flex;
-    justify-content: flex-end;
+    flex-wrap: wrap;
     margin: $spacing-size-8 0px;
+    gap: $spacing-size-2;
 }
 
 .eventsContainer {
