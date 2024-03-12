@@ -9,7 +9,8 @@ import { ColDef, ColGroupDef, IFilter } from '@ag-grid-community/core';
 import PartialMatchFilter from './partialMatchFilter';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { getData } from "./data";
+import { getData } from "./data.tsx";
+import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 

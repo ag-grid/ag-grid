@@ -225,9 +225,6 @@ export async function generateFiles(options: ExecutorOptions) {
             let mergedFiles = { ...mergedStyleFiles, ...files, ...provideFrameworkFiles, ...interfaceContents };
             if((['typescript', 'vanilla'] as InternalFramework[]).includes(internalFramework)){
                 styleFilesKeys = Object.keys(mergedStyleFiles);
-            }else{
-                // For React, Angular and Vue, we need to include the styles in the component
-                //mergedFiles = { ...mergedFiles, ...mergedStyleFiles };
             }
             // Replace files with provided examples
             const result: GeneratedContents = {
