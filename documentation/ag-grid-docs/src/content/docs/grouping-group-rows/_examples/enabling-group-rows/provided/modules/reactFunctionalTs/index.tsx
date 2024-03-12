@@ -8,6 +8,7 @@ import { ColDef, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core'
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
+import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 

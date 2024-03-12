@@ -6,6 +6,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
+import './styles.css';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -38,7 +39,7 @@ const numberToColor = (val) => {
 }
 
 const ragRenderer = (params) => {
-    return <span class="rag-element">{params.value}</span>;
+    return <span className="rag-element">{params.value}</span>;
 }
 
 const numberParser = (params) => {
