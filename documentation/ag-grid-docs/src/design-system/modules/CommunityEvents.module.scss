@@ -57,7 +57,6 @@
     gap: $spacing-size-8;
 }
 
-
 .linkWrapper {
     all: unset;
     cursor: pointer;
@@ -71,7 +70,6 @@
     box-shadow: var(--shadow-xs);
     border: 1px solid var(--color-border-secondary);
     overflow: hidden;
-
 
     @media screen and (max-width: $breakpoint-community-medium) {
         flex-direction: column-reverse;
@@ -105,7 +103,7 @@
 .title {
     font-size: var(--text-fs-xl);
     font-weight: var(--text-semibold);
-    color: var(--color-text-primary);
+    color: var(--color-fg-primary);
 }
 
 .date {
