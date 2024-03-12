@@ -27,6 +27,9 @@ interface IRow {
 }
 
 const gridOptions: GridOptions = {
+  defaultColDef: {
+    flex: 1,
+  },
   // Data to be displayed
   rowData: [] as IRow[],
   // Columns to be displayed (Should match rowData properties)
