@@ -21,7 +21,7 @@ export const Header: FunctionComponent<Props> = ({ title, framework, isEnterpris
 
     return (
         <header className={styles.docsPageHeader}>
-            <h1 id="top" className={styles.docsPageTitle}>
+            <div id="top" className={styles.docsPageTitle}>
                 <div className={styles.pageTitleContainer}>
                     <div className={styles.pageTitleGroup}>
                         {!suppressFrameworkHeader && (
@@ -29,7 +29,7 @@ export const Header: FunctionComponent<Props> = ({ title, framework, isEnterpris
                                 {getFrameworkDisplayText(framework)} Data Grid
                             </span>
                         )}
-                        <span>{title}</span>
+                        <h1>{title}</h1>
                     </div>
 
                     <FrameworkSelectorInsideDocs path={path} currentFramework={framework} />
@@ -41,7 +41,7 @@ export const Header: FunctionComponent<Props> = ({ title, framework, isEnterpris
                         <Icon name="enterprise" />
                     </span>
                 )}
-            </h1>
+            </div>
         </header>
     );
 };
