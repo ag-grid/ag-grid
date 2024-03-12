@@ -185,6 +185,12 @@ button.sectionHeader {
             transform: translate(-0.05em, 0.075em);
         }
     }
+
+    .newTabIcon {
+        --icon-size: 1.25em;
+
+        margin-left: $spacing-size-2;
+    }
 }
 
 .menuGroup a,
