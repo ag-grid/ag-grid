@@ -1,8 +1,8 @@
 import type { Framework } from '@ag-grid-types';
 import { SITE_BASE_URL } from '@constants';
 import { getFrameworkPath } from '@features/docs/utils/urlPaths';
-
-import { pathJoin } from './pathJoin';
+import { getIsDev } from '@utils/env';
+import { pathJoin } from '@utils/pathJoin';
 
 export const urlWithPrefix = ({
     url = '',
@@ -20,8 +20,13 @@ export const urlWithPrefix = ({
     } else if (url.startsWith('/')) {
         path = pathJoin('/', siteBaseUrl, url);
     } else if (!url.startsWith('#') && !url.startsWith('http') && !url.startsWith('mailto')) {
-        // eslint-disable-next-line no-console
-        console.warn(`Invalid url: ${url}`);
+        const errorMessage = `Invalid url: ${url} - use './' for framework urls, '/' for root urls, '#' for anchor links, and http/mailto for external urls`;
+        if (getIsDev()) {
+            // eslint-disable-next-line no-console
+            console.warn(errorMessage);
+        } else {
+            throw new Error(errorMessage);
+        }
     }
 
     return path;
