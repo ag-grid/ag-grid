@@ -229,20 +229,24 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         const isTableHeader = this.config.tableSetup !== undefined;
         const headerValue = column ? this.extractHeaderValue(column, index, isTableHeader) : undefined;
         const displayName = headerValue ? headerValue : `Column${index + 1}`;
+        const filterAllowed = column ? column.isFilterAllowed() : false;
         if (columnWidth) {
             if (typeof columnWidth === 'number') {
-                return { width: columnWidth, displayName };
+                return { width: columnWidth, displayName, filterAllowed };
             }
 
-            return { width: columnWidth({ column, index }), displayName };
+            return { width: columnWidth({ column, index }), displayName, filterAllowed };
         }
 
         if (column) {
             const smallestUsefulWidth = 75;
-            return { width: Math.max(column.getActualWidth(), smallestUsefulWidth), displayName };
+            return { width: Math.max(column.getActualWidth(), smallestUsefulWidth), displayName, filterAllowed };
         }
 
-        return {displayName};
+        return {
+            displayName,
+            filterAllowed,
+        };
     }
 
     private onNewHeaderColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void {
