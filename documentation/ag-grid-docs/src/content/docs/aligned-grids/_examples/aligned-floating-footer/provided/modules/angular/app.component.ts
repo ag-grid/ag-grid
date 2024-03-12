@@ -3,6 +3,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
+import './styles.css';
 import { ColDef, ColGroupDef, GridOptions } from '@ag-grid-community/core';
 import { AgGridAngular } from '@ag-grid-community/angular';
 

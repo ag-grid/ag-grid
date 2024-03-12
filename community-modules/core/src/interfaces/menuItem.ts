@@ -103,8 +103,12 @@ export interface BaseMenuItemParams<TData = any, TContext = any> extends MenuIte
     closeSubMenu: () => void;
     /** Close the entire menu. */
     closeMenu: (event?: KeyboardEvent | MouseEvent) => void;
-    /** Update the grid-provided tooltip for this item. */
-    updateTooltip: (tooltip?: string) => void;
+    /**
+     * Updates the grid-provided tooltip this component.
+     * @param tooltip The value to be displayed by the tooltip
+     * @param shouldDisplayTooltip A function returning a boolean that allows the tooltip to be displayed conditionally. This option does not work when `enableBrowserTooltips={true}`.
+     */
+    updateTooltip: (tooltip?: string, shouldDisplayTooltip?: () => boolean) => void;
 }
 
 export interface IMenuItemParams<TData = any, TContext = any> extends BaseMenuItemParams<TData, TContext> {

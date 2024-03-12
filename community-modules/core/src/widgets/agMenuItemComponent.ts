@@ -79,7 +79,7 @@ export class AgMenuItemComponent extends BeanStub {
             openSubMenu: activateFirstItem => this.openSubMenu(activateFirstItem),
             closeSubMenu: () => this.closeSubMenu(),
             closeMenu: event => this.closeMenu(event),
-            updateTooltip: tooltip => this.updateTooltip(tooltip),
+            updateTooltip: (tooltip?: string, shouldDisplayTooltip?: () => boolean)  => this.refreshTooltip(tooltip, shouldDisplayTooltip),
             onItemActivated: () => this.onItemActivated()
         });
         return compDetails.newAgStackInstance().then((comp: IMenuItemComp) => {
@@ -382,7 +382,7 @@ export class AgMenuItemComponent extends BeanStub {
             }
         }
         if (!params?.suppressTooltip) {
-            this.setTooltip();
+            this.refreshTooltip();
         }
         this.suppressAria = !!params?.suppressAria;
         if (!this.suppressAria) {
@@ -401,21 +401,29 @@ export class AgMenuItemComponent extends BeanStub {
         this.suppressFocus = !!params?.suppressFocus;
     }
 
-    private updateTooltip(tooltip?: string): void {
+    private refreshTooltip(tooltip?: string, shouldDisplayTooltip?: () => boolean): void {
         this.tooltip = tooltip;
 
-        if (!this.tooltipFeature && this.menuItemComp) {
-            this.setTooltip();
+        if (this.tooltipFeature) {
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
-    }
 
-    private setTooltip(): void {
-        if (!this.tooltip) { return; }
+        if (!tooltip || !this.menuItemComp) {
+            return;
+        }
 
-        this.tooltipFeature = this.createManagedBean(new TooltipFeature({
+        this.tooltipFeature = this.createBean(new TooltipFeature({
             getGui: () => this.getGui(),
             getTooltipValue: () => this.tooltip,
-            getLocation: () => 'menu'
+            getLocation: () => 'menu',
+            shouldDisplayTooltip
         }));
+    }
+
+    protected destroy(): void {
+        if (this.tooltipFeature) {
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
+        }
+        super.destroy();
     }
 }

@@ -44,7 +44,7 @@ export interface ICellRendererParams<TData = any, TValue = any, TContext = any> 
      */
     registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void;
     /**
-     * setTooltip
+     * Sets a tooltip to the main element of this component.
      * @param value The value to be displayed by the tooltip
      * @param shouldDisplayTooltip A function returning a boolean that allows the tooltip to be displayed conditionally. This option does not work when `enableBrowserTooltips={true}`.
      */
@@ -60,7 +60,7 @@ export interface ISetFilterCellRendererParams<TData = any, TContext = any> exten
     /** The cell's column. */
     column?: Column;
     /**
-     * setTooltip
+     * Sets a tooltip to the main element of this component.
      * @param value The value to be displayed by the tooltip
      * @param shouldDisplayTooltip A function returning a boolean that allows the tooltip to be displayed conditionally. This option does not work when `enableBrowserTooltips={true}`.
      */
