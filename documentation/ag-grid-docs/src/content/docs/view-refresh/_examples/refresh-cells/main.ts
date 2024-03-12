@@ -13,7 +13,7 @@ var bottomRowData: any[] = []
 let gridApi: GridApi;
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'a', suppressCellFlash: true },
+    { field: 'a', enableCellChangeFlash: false },
     { field: 'b' },
     { field: 'c' },
     { field: 'd' },
