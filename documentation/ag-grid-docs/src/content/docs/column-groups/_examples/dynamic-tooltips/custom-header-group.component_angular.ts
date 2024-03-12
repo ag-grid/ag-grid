@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { IHeaderGroupAngularComp } from "@ag-grid-community/angular";
 import { IHeaderGroupParams } from '@ag-grid-community/core';
@@ -7,7 +7,7 @@ import { IHeaderGroupParams } from '@ag-grid-community/core';
     imports: [NgClass],
     template: `
         <div class="ag-header-group-cell-label">
-            <div class="customHeaderLabel">{{params.displayName}}</div>
+            <div #label class="customHeaderLabel">{{params.displayName}}</div>
             <div class="customExpandButton" [ngClass]="expandState" (click)="expandOrCollapse()"><i
                     class="fa fa-arrow-right"></i></div>
         </div>
@@ -60,7 +60,6 @@ import { IHeaderGroupParams } from '@ag-grid-community/core';
             .customSortRemoveLabel
             {
                 margin-top: 2px;
-                margin-left: 4px;
                 float: left;
             }
             
@@ -105,9 +104,13 @@ export class CustomHeaderGroup implements IHeaderGroupAngularComp {
     public params!: IHeaderGroupParams;
     public expandState!: string;
 
+    @ViewChild('label', { read: ElementRef }) public label!: ElementRef;
+
     agInit(params: IHeaderGroupParams): void {
         this.params = params;
+
         this.params.columnGroup.getProvidedColumnGroup().addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
+        this.params.setTooltip(params.displayName, () => this.label.nativeElement.scrollWidth > this.label.nativeElement.clientWidth);
 
         this.syncExpandButtons();
     }
