@@ -15,7 +15,7 @@ import ToolsExtensions from '@components/community-section/ToolsExtensions';
 <Layout title="AG Grid">
     <div class="layout-max-width-large">
         <div class={LayoutStyles.header}>
-            <CommunityMenu path={Astro.url.pathname} client:only />
+            <CommunityMenu path={Astro.url.pathname} client:load />
             <p class={LayoutStyles.description}>Dedicated to our open-source community. Browse hundreds of open-source projects, find 3rd party tools and extensions, and stay up-to-date with the latest news - all in one place.</p>
         </div>
         <div class="layout-max-width-small">
@@ -36,7 +36,7 @@ import ToolsExtensions from '@components/community-section/ToolsExtensions';
                                 <Icon name="arrowRight" />
                             </a>
                         </div>
-                        <UpcomingEvents enableFilters={false} client:only />
+                        <UpcomingEvents enableFilters={false} client:load />
                     </section>
                     <!-- Showcase -->
                     <section>
@@ -50,7 +50,7 @@ import ToolsExtensions from '@components/community-section/ToolsExtensions';
                                 <Icon name="arrowRight" />
                             </a>
                         </div>
-                        <Showcase favouritesOnly={true} maxItems={8} client:only />
+                        <Showcase favouritesOnly={true} maxItems={8} client:load />
                     </section>
                     <!-- Tools & Extensons -->
                     <section>
@@ -67,7 +67,7 @@ import ToolsExtensions from '@components/community-section/ToolsExtensions';
                                 <Icon name="arrowRight" />
                             </a>
                         </div>
-                        <ToolsExtensions limit={3} client:only />
+                        <ToolsExtensions limit={3} client:idle />
                     </section>
                     <!-- Media -->
                     <section>
@@ -84,16 +84,16 @@ import ToolsExtensions from '@components/community-section/ToolsExtensions';
                                 <Icon name="arrowRight" />
                             </a>
                         </div>
-                        <Videos client:only />
+                        <Videos client:visible />
                     </section>
                     <!-- Support -->
                     <section>
                         <h2>Support & Socials</h2>
-                        <Support client:only />
+                        <Support client:visible />
                     </section>
                     <hr style={{ margin: '0px 5vw 5vw 5vw' }} />
                     <section>
-                        <Socials client:only />
+                        <Socials client:visible />
                     </section>
                 </div>
             </div>

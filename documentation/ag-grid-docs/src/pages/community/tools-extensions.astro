@@ -9,14 +9,14 @@ import ToolsExtensions from '@components/community-section/ToolsExtensions';
 <Layout title="AG Grid">
     <div class="layout-max-width-large">
         <div class={LayoutStyles.header}>
-            <CommunityMenu path={Astro.url.pathname} client:only/>
+            <CommunityMenu path={Astro.url.pathname} client:load/>
             <p class={LayoutStyles.description}>AG Grid has an entire ecosystem of community-built tools, extensions and utilities to help you create your next project, no matter which language or framework you're using.</p>
         </div>
         <div class="layout-max-width-small">
             <div class={LayoutStyles.container}>
                 <div class={LayoutStyles.content}>
                     <section>
-                        <ToolsExtensions client:only/>
+                        <ToolsExtensions client:load/>
                     </section>
                 </div>
             </div>

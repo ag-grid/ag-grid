@@ -8,7 +8,7 @@ import Showcase from '@components/community-section/Showcase';
 <Layout title="AG Grid">
     <div class="layout-max-width-large">
         <div class={LayoutStyles.header}>
-            <CommunityMenu path={Astro.url.pathname} client:only />
+            <CommunityMenu path={Astro.url.pathname} client:load />
             <p class={LayoutStyles.description}>
                 AG Grid's products are downloaded millions of times per week. Most projects are internal and closed source, but we've hand-picked 200+ open-source examples to help inspire your next project.
             </p>
@@ -18,11 +18,11 @@ import Showcase from '@components/community-section/Showcase';
                 <div class={LayoutStyles.content}>
                     <section>
                         <h2>Our Favourites</h2>
-                        <Showcase favouritesOnly={true} client:only />
+                        <Showcase favouritesOnly={true} client:load />
                     </section>
                     <section>
                         <h2>Full Showcase</h2>
-                        <Showcase client:only />
+                        <Showcase client:visible />
                     </section>
                 </div>
             </div>
