@@ -940,6 +940,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public animateRows: boolean | undefined = undefined;
     /** Set to `true` to have cells flash after data changes.
          * @default false
+         * @deprecated 31.2 use `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns.
          */
     @Input() public enableCellChangeFlash: boolean | undefined = undefined;
     /** To be used in combination with `enableCellChangeFlash`, the duration in milliseconds of how long a cell should remain in its "flashed" state.
