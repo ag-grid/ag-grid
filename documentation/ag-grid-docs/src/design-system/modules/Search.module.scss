@@ -5,15 +5,28 @@
     align-items: center;
     position: relative;
     width: 100%;
-    min-width: 320px;
-    padding: $spacing-size-2 $spacing-size-4;
-    border-radius: var(--radius-md);
-    background-color: rgba(0, 0, 0, 0.1);
+    min-width: 500px;
+    padding: $spacing-size-2 $spacing-size-3;
+    border-radius: var(--radius-lg);
+    background-color: rgba(0, 0, 0, 0.15);
     color: var(--color-white);
     cursor: pointer;
+    transition: all 0.5s;
+    border: 1px solid color-mix(in srgb, var(--color-brand-200), var(--color-brand-500) 95%);
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        min-width: 320px;
+    }
 
     #{$selector-darkmode} & {
         background-color: rgba(255, 255, 255, 0.06);
+        border: 1px solid color-mix(in srgb, var(--color-brand-200), var(--color-bg-primary) 90%);
+    }
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        transition: all 0.5s;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     &::-webkit-search-decoration,
@@ -23,11 +36,13 @@
 
     &:hover .placeholder,
     &:hover :global(.icon) {
-        opacity: 0.7;
+        opacity: 0.85;
     }
 
     &:hover .kbdShortcut {
-        opacity: 1;
+        opacity: 0.85;
+        background-color: rgba(255, 255, 255, 0.2);
+        box-shadow: var(--shadow-lg);
     }
 
     > * {
@@ -39,20 +54,31 @@
         --color-icon: var(--color-white);
 
         margin-right: $spacing-size-1;
-        opacity: 0.5;
+        opacity: 1;
     }
 }
 
 .placeholder {
-    opacity: 0.7;
+    opacity: 0.6;
 }
 
 .kbdShortcut {
     margin-left: auto;
     opacity: 0.8;
     font-size: var(--text-fs-sm);
-
     animation: fadeIn 0.2s;
+
+    font-weight: var(--text-semibold);
+    background-color: color-mix(in srgb, var(--color-brand-500), var(--color-fg-white) 10%);
+    color: var(--color-fg-white);
+    padding-right: $spacing-size-1;
+    padding-left: $spacing-size-1;
+    border-radius: var(--radius-sm);
+
+    #{$selector-darkmode} & {
+        color: var(--color-fg-white);
+        background-color: rgba(255, 255, 255, 0.2);
+    }
 }
 
 @keyframes fadeIn {

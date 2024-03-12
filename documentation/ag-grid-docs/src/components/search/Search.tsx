@@ -72,7 +72,7 @@ const Search = () => {
                 aria-label={`Open search with Enter or Space, or use the shortcut ${isMac ? `⌘ K` : `Ctrl K`} while anywhere else in the page.`}
             >
                 <Icon name="search" svgClasses={styles.searchIcon} />
-                <span className={styles.placeholder}>Search...</span>
+                <span className={styles.placeholder}>Search docs...</span>
                 {isMac !== undefined && <span className={styles.kbdShortcut}>{isMac ? `⌘ K` : `Ctrl K`}</span>}
             </div>
 
