@@ -190,28 +190,6 @@
                                         "frameworks": ["javascript"]
                                     }
                                 ]
-                            },
-                            {
-                                "title": "Building",
-                                "path": "building",
-                                "frameworks": ["javascript"],
-                                "items": [
-                                    {
-                                        "title": "Rollup",
-                                        "path": "building-rollup",
-                                        "frameworks": ["javascript"]
-                                    },
-                                    {
-                                        "title": "TypeScript & Webpack",
-                                        "path": "building-typescript",
-                                        "frameworks": ["javascript"]
-                                    },
-                                    {
-                                        "title": "AMD",
-                                        "path": "building-amd",
-                                        "frameworks": ["javascript"]
-                                    }
-                                ]
                             }
                         ]
                     },
