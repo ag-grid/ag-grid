@@ -198,7 +198,7 @@ export class CartesianAxisPanel extends Component {
 
     private getAxisTimeFormatSelectParams(chartAxisOptions: ChartMenuParamsFactory): AgSelectParams | null {
         const axisTimeFormatSelectOptions = ((chartType, axisType) => {
-            if (isPolar(chartType)) return null;
+            if (!isCartesian(chartType)) return null;
             switch (axisType) {
                 case 'xAxis': return [
                     { value: '%d/%m/%Y', text: this.translate('timeFormatSlashesDDMMYYYY') },
