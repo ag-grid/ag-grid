@@ -211,8 +211,17 @@ export class ChartController extends BeanStub {
     }
 
     public setChartType(chartType: ChartType): void {
-        const previousChartType = this.model.chartType;
+        this.updateMultiSeriesAndCategory(this.model.chartType, chartType);
 
+        this.model.chartType = chartType;
+
+        this.model.comboChartModel.updateSeriesChartTypes();
+
+        this.raiseChartModelUpdateEvent();
+        this.raiseChartOptionsChangedEvent();
+    }
+
+    private updateMultiSeriesAndCategory(previousChartType: ChartType, chartType: ChartType): void {
         // If we are changing from a multi-category/series chart type to a single-category/series chart type,
         // ensure that only the first selected category/series column remains selected
         const updateMultiValueToSingleValue = (columns: ColState[]) => {
@@ -227,19 +236,18 @@ export class ChartController extends BeanStub {
             }
         }
 
-        if (isHierarchical(previousChartType) && !isHierarchical(chartType)) {
+        const updateDimensionColState = isHierarchical(previousChartType) && !isHierarchical(chartType);
+        const updateValueColState = !canOnlyHaveSingleSeries(previousChartType) && canOnlyHaveSingleSeries(chartType);
+        if (updateDimensionColState) {
             updateMultiValueToSingleValue(this.model.dimensionColState);
         }
-        if (!canOnlyHaveSingleSeries(previousChartType) && canOnlyHaveSingleSeries(chartType)) {
+        if (updateValueColState) {
             updateMultiValueToSingleValue(this.model.valueColState);
         }
-
-        this.model.chartType = chartType;
-
-        this.model.comboChartModel.updateSeriesChartTypes();
-
-        this.raiseChartModelUpdateEvent();
-        this.raiseChartOptionsChangedEvent();
+        if (updateDimensionColState || updateValueColState) {
+            this.model.resetCellRanges(updateDimensionColState, updateValueColState);
+            this.setChartRange(true);
+        }
     }
 
     public setChartThemeName(chartThemeName: string, silent?: boolean): void {
