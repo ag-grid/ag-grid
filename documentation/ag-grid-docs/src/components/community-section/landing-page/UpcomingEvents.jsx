@@ -97,7 +97,7 @@ const UpcomingEvents = ({ enableFilters = false }) => {
                                 <span className={styles.conferenceIcon}>
                                     <img
                                         className={styles.organiserLogo}
-                                        src={`/community/events/organiser-logos/${darkMode ? event.organiserLogo : event.organiserLogoLight}`}
+                                        src={darkMode ? event.logo : event.logoLight}
                                     />
                                 </span>
                                 <span className={styles.title}>{event.title}</span>
