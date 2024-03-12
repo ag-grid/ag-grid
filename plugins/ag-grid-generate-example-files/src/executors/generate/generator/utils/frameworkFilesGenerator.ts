@@ -28,6 +28,7 @@ type ConfigGenerator = ({
     typedBindings,
     componentScriptFiles,
     otherScriptFiles,
+    styleFiles,
     ignoreDarkMode,
     isDev,
     exampleConfig,
@@ -39,6 +40,7 @@ type ConfigGenerator = ({
     typedBindings: ParsedBindings;
     componentScriptFiles: FileContents;
     otherScriptFiles: FileContents;
+    styleFiles: FileContents;
     ignoreDarkMode?: boolean;
     isDev: boolean;
     exampleConfig: ExampleConfig;
@@ -145,12 +147,12 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             // NOTE: `scriptFiles` not required, as system js handles import
         };
     },
-    reactFunctional: async ({ bindings, indexHtml, otherScriptFiles, componentScriptFiles, isDev, importType, exampleConfig }) => {
+    reactFunctional: async ({ bindings, indexHtml, otherScriptFiles, componentScriptFiles, styleFiles, isDev, importType, exampleConfig }) => {
         const internalFramework = 'reactFunctional';
         const entryFileName = getEntryFileName(internalFramework)!;
 
         const componentNames = getComponentName(componentScriptFiles);
-        let indexJsx = vanillaToReactFunctional(deepCloneObject(bindings), exampleConfig, componentNames, [])(importType);
+        let indexJsx = vanillaToReactFunctional(deepCloneObject(bindings), exampleConfig, componentNames, Object.keys(styleFiles))(importType);
 
         if(!isDev){
             indexJsx = await prettier.format(indexJsx, { parser: 'babel' });
@@ -166,11 +168,11 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             // NOTE: `scriptFiles` not required, as system js handles import
         };
     },
-    reactFunctionalTs: async ({ typedBindings, indexHtml, otherScriptFiles, componentScriptFiles, isDev, importType, exampleConfig }) => {
+    reactFunctionalTs: async ({ typedBindings, indexHtml, otherScriptFiles, componentScriptFiles, styleFiles, isDev, importType, exampleConfig }) => {
         const internalFramework: InternalFramework = 'reactFunctionalTs';
         const entryFileName = getEntryFileName(internalFramework)!;
         const componentNames = getComponentName(componentScriptFiles);
-        let indexTsx = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), exampleConfig, componentNames, [])(importType);
+        let indexTsx = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), exampleConfig, componentNames, Object.keys(styleFiles))(importType);
 
         if(!isDev){
             indexTsx = await prettier.format(indexTsx, { parser: 'typescript' });
