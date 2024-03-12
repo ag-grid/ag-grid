@@ -21,7 +21,7 @@ import {
 } from "@ag-grid-community/core";
 
 import { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-community";
-import { ChartMenu, CHART_TOOL_PANEL_MENU_OPTIONS } from "./menu/chartMenu";
+import { ChartMenu } from "./menu/chartMenu";
 import { TitleEdit } from "./chartTitle/titleEdit";
 import { ChartController, DEFAULT_THEMES } from "./chartController";
 import { ChartDataModel, ChartModelParams } from "./model/chartDataModel";
@@ -48,7 +48,7 @@ import { getCanonicalChartType, isHierarchical } from "./utils/seriesTypeMapper"
 import { ChartMenuParamsFactory } from './menu/chartMenuParamsFactory';
 import { ChartMenuContext } from "./menu/chartMenuContext";
 import { deepMerge } from './utils/object';
-import { ChartMenuService } from "./services/chartMenuService";
+import { ChartMenuService, CHART_TOOL_PANEL_MENU_OPTIONS } from "./services/chartMenuService";
 
 export interface GridChartParams {
     chartId: string;
