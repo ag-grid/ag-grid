@@ -11,11 +11,15 @@ import Videos from '@components/community-section/news-updates/Videos';
     <div class="layout-max-width-large">
         <div class={LayoutStyles.header}>
             <CommunityMenu path={Astro.url.pathname} client:load />
-            <p class={LayoutStyles.description}>The AG Grid team regularly appear in community podcasts, publications, conferences, and more. Read our blogs, watch our videos, or listen to our podcasts to hear the latest news & updates directly from our team.</p>
         </div>
         <div class="layout-max-width-small">
             <div class={LayoutStyles.container}>
                 <div class={LayoutStyles.content}>
+                    <!-- Title & Description -->
+                    <h1>Media</h1>
+                    <p class={LayoutStyles.description}>
+                        The AG Grid team regularly appear in community podcasts, publications, conferences, and more. Read our blogs, watch our videos, or listen to our podcasts to hear the latest news & updates directly from our team.
+                    </p>
                     <section>
                         <h2>Videos</h2>
                         <Videos client:load />

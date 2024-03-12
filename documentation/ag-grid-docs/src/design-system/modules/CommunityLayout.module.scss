@@ -5,7 +5,6 @@
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    padding: $spacing-size-4 0px;
     // margin: $spacing-size-8 0px 0px 0px; Margin for title
     background: linear-gradient(transparent, rgba(14,68,145,0.05));
     #{$selector-darkmode} & {
@@ -20,18 +19,14 @@
         color: var(--color-text-tertiary);
         text-align: center;
     }
+}
 
-    .description {
-        min-height: 75px;
-        display: flex;
-        align-items: center;
-        text-align: center;
-        max-width: 1024px;
+.description {
+    display: flex; 
+    font-size: var(--text-fs-xl);
+
+    @media screen and (max-width: $breakpoint-community-small) {
         margin: 0px $spacing-size-12;
-
-        @media screen and (max-width: $breakpoint-community-small) {
-            margin: 0px $spacing-size-12;
-        }
     }
 }
 
