@@ -250,9 +250,6 @@ export class Events {
     // environment
     public static EVENT_GRID_STYLES_CHANGED: 'gridStylesChanged' = 'gridStylesChanged';
 
-    // primarily for charts
-    public static EVENT_POPUP_TO_FRONT: 'popupToFront' = 'popupToFront';
-
     // these are used for server side group and agg - only used by CS with Viewport Row Model - intention is
     // to design these better around server side functions and then release to general public when fully working with
     // all the row models.

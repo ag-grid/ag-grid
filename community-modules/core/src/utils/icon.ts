@@ -145,7 +145,7 @@ export const iconNameClassMap: { [key: string]: string; } = {
     // Edit Chart menu item shown in Integrated Charts menu
     chartsMenuEdit: 'chart',
     // Advanced Settings menu item shown in Integrated Charts menu
-    chartsMenuAdvancedSettings: 'eye',
+    chartsMenuAdvancedSettings: 'settings',
     // shown in Integrated Charts menu add fields
     chartsMenuAdd: 'plus',
 };

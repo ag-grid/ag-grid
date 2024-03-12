@@ -57,7 +57,6 @@ export class AgDialog extends AgPanel<DialogOptions> {
         super.postConstruct();
 
         this.addManagedListener(eGui, 'focusin', (e: FocusEvent) => {
-            if (eGui.contains(e.relatedTarget as HTMLElement)) { return; }
             this.popupService.bringPopupToFront(eGui);
         });
 
