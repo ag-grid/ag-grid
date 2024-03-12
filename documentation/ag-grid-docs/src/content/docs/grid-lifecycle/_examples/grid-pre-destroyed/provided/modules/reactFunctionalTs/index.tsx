@@ -5,6 +5,7 @@ import { ColDef, GridApi, GridPreDestroyedEvent, GridReadyEvent, ModuleRegistry 
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
+import './styles.css';
 import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
