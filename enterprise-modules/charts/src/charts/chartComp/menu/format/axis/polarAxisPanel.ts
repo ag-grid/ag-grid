@@ -48,7 +48,7 @@ export class PolarAxisPanel extends Component {
         const axisGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-top-level',
             direction: 'vertical',
-            title: this.translate('axis'),
+            title: this.translate('polarAxis'),
             expanded: this.isExpandedOnInit,
             suppressEnabledCheckbox: true
         };
