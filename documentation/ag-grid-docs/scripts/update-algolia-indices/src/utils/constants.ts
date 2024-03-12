@@ -1,0 +1,9 @@
+export const WORKING_DIR = '../..';
+export const DOC_SOURCE_DIR = `${WORKING_DIR}/src/content/docs`;
+export const API_SOURCE_DIR = `${WORKING_DIR}/src/content/api-documentation`;
+export const DIST_DIR = `${WORKING_DIR}/dist`;
+export const API_REFERENCE_DIR = `${DIST_DIR}/files/reference`;
+
+export const MENU_FILE_PATH = `${WORKING_DIR}/src/content/menu/data.json`;
+
+export const SUPPORTED_FRAMEWORKS = ['react', 'angular', 'vue', 'javascript'] as const;

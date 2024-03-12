@@ -705,7 +705,7 @@ export abstract class Sparkline {
     }
 
     private invalidData(data: any) {
-        return !data || !Array.isArray(data) || data.length === 0;
+        return !data || !Array.isArray(data);
     }
 
     /**

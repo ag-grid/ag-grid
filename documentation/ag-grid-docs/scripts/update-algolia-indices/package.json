@@ -1,0 +1,23 @@
+{
+  "name": "update-algolia-indices",
+  "version": "0.0.1",
+  "description": "Update algolia indices",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "updateLocal": "tsx src/index.ts",
+    "updateDev": "tsx src/index.ts -d false",
+    "updateProd": "tsx src/index.ts -d false -i ag-grid",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.3",
+    "@types/prompts": "^2.4.9",
+    "algoliasearch": "^4.22.1",
+    "tsx": "^4.7.0",
+    "commander": "^12.0.0"
+  },
+  "dependencies": {
+  }
+}
