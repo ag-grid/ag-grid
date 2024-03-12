@@ -209,6 +209,7 @@ export class ChartTranslationService extends BeanStub {
         groupedColumn: 'Grouped Column',
         stackedColumn: 'Stacked Column',
         advancedSettings: 'Advanced Settings',
+        ariaChartMenuClose: 'Close Chart Edit Menu',
     };
 
     public translate(toTranslate: ChartTranslationKey): string {
