@@ -15,9 +15,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     {
       headerName: 'Athlete',
       children: [
-        { field: 'athlete' },
+        { field: 'athlete', filter: true },
         { field: 'age' },
-        { field: 'country' },
+        { field: 'country', filter: true },
       ],
     },
     {
@@ -31,7 +31,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     { field: 'total' },
   ],
   defaultColDef: {
-    filter: true,
+    filter: false,
     minWidth: 100,
     flex: 1,
   },

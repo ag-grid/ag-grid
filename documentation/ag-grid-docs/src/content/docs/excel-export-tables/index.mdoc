@@ -54,23 +54,28 @@ the case, and the user may end up with a table that doesn't work as expected.
 
 Below are some examples of how to customize the Excel table export.
 
-## Exporting A Single Sheet as Excel Table
+## Exporting A Sheet as Excel Table
 
-The following example demonstrates how to export the grid data as an Excel table. The Excel table will be created
-automatically when the exported file is opened in Excel.
+The following example demonstrates how to export the grid data as an Excel table.
+
+* We set the `exportAsExcelTable` property to `true` in the `defaultExcelExportParams` Grid Option.
+
+Proceed as follows to see the Excel table:
 
 * You can trigger the export by clicking the `Export to Excel` button or via context menu.
 * Once your file is exported, open it in Excel and select a cell within the table to see the `Table` tab.
 * This example includes grouped columns, and thus only the leaf columns are included in the Excel table.
+* In this example, only Athlete, and Country columns can be filtered. This is also reflected in the Excel table.
 
 {% gridExampleRunner title="Excel Export - Exporting A Single Sheet as Excel Table" name="excel-export-table-single-sheet" /%}
 
-## Customizing Excel Table Stripes
+## Customizing Excel Table Stripes and Filter Buttons
 
 In the following example, we customize the Excel table as follows:
 
 * `showRowStripes` - Set to `true` to show row stripes in the Excel table.
 * `showColumnStripes` - Set to `true` to show column stripes in the Excel table.
+* `showFilterButton` - Set to `true` to show filter buttons for all columns in the Excel table.
 * `name` - Set to `Olympic Medals` to name the Excel table.
 
 Proceed as follows to see the Excel table:
@@ -78,7 +83,8 @@ Proceed as follows to see the Excel table:
 * Click the `Export to Excel` button to export the grid data as an Excel table.
 * Open the exported file in Excel and select a cell within the table to see the `Table` tab.
 * Notice that the stripes are only applied to the columns of the table.
-* Notice that the table is name is set to `Olympic_Medals`.
+* Notice that the table name is set to `Olympic_Medals`.
+* Notice that the filter buttons are available for all columns in the table.
 
 {% gridExampleRunner title="Excel Export - Customizing Excel Table Stripes" name="excel-export-table-stripes" /%}
 

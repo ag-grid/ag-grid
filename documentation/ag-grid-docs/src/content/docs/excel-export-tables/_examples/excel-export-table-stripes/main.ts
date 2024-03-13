@@ -12,9 +12,9 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
-    { field: 'athlete' },
+    { field: 'athlete', filter: true },
     { field: 'age' },
-    { field: 'country' },
+    { field: 'country', filter: true },
     { field: 'gold' },
     { field: 'silver' },
     { field: 'bronze' },
@@ -30,6 +30,7 @@ const gridOptions: GridOptions<IOlympicData> = {
       name: 'Olympic Medals',
       showRowStripes: false,
       showColumnStripes: true,
+      showFilterButton: true,
     }
   },
 };
