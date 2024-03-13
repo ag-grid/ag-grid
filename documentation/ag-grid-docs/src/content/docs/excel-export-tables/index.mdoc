@@ -61,20 +61,23 @@ automatically when the exported file is opened in Excel.
 
 * You can trigger the export by clicking the `Export to Excel` button or via context menu.
 * Once your file is exported, open it in Excel and select a cell within the table to see the `Table` tab.
+* This example includes grouped columns, and thus only the leaf columns are included in the Excel table.
 
 {% gridExampleRunner title="Excel Export - Exporting A Single Sheet as Excel Table" name="excel-export-table-single-sheet" /%}
 
-## Exporting Grouped Columns In Excel Table
+## Customizing Excel Table Stripes
 
-When your data contains grouped columns, only the leaf columns will be included in the Excel table. The
-grouped columns will be exported as normal columns, but they won't be part of the Excel table.
+In the following example, we customize the Excel table as follows:
 
-The following example demonstrates that:
+* `showRowStripes` - Set to `true` to show row stripes in the Excel table.
+* `showColumnStripes` - Set to `true` to show column stripes in the Excel table.
+* `name` - Set to `Olympic Medals` to name the Excel table.
 
-{% gridExampleRunner title="Excel Export - Exporting Grouped Columns In Excel Table" name="excel-export-table-grouped-columns" /%}
+Proceed as follows to see the Excel table:
 
-## Multiple Sheets With Images And Excel Tables
+* Click the `Export to Excel` button to export the grid data as an Excel table.
+* Open the exported file in Excel and select a cell within the table to see the `Table` tab.
+* Notice that the stripes are only applied to the columns of the table.
+* Notice that the table is name is set to `Olympic_Medals`.
 
-The following example demonstrates how to export multiple sheets with images and Excel tables.
-
-{% gridExampleRunner title="Excel Export - Multiple Sheets With Images And Excel Tables" name="excel-export-table-multiple-sheets" /%}
+{% gridExampleRunner title="Excel Export - Customizing Excel Table Stripes" name="excel-export-table-stripes" /%}

@@ -12,12 +12,22 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
-    { field: 'athlete' },
-    { field: 'country' },
-    { field: 'sport' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
+    {
+      headerName: 'Athlete',
+      children: [
+        { field: 'athlete' },
+        { field: 'age' },
+        { field: 'country' },
+      ],
+    },
+    {
+      headerName: 'Medals',
+      children: [
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+      ],
+    },
     { field: 'total' },
   ],
   defaultColDef: {
@@ -26,9 +36,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
   },
   defaultExcelExportParams: {
-    exportAsExcelTable: true
-  }
-}
+    exportAsExcelTable: true,
+  },
+};
 
 function onBtExport() {
   gridApi!.exportDataAsExcel();
