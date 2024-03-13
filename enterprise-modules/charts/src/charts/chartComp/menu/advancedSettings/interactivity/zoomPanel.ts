@@ -12,10 +12,9 @@ import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 export class ZoomPanel extends Component {
     public static TEMPLATE = /* html */ `<div>
             <ag-group-component ref="zoomGroup">
-                <ag-checkbox ref="zoomAxisDraggingCheckbox"></ag-checkbox>
+                <ag-checkbox ref="zoomSelectingCheckbox"></ag-checkbox>
                 <ag-checkbox ref="zoomScrollingCheckbox"></ag-checkbox>
                 <ag-slider ref="zoomScrollingStepInput"></ag-slider>
-                <ag-checkbox ref="zoomSelectingCheckbox"></ag-checkbox>
             </ag-group-component>
         </div>`;
 
@@ -37,24 +36,20 @@ export class ZoomPanel extends Component {
             suppressEnabledCheckbox: true,
             useToggle: true
         });
-        const zoomAxisDraggingCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
-            'zoom.enableAxisDragging',
-            'zoomAxisDragging'
-        );
         const zoomScrollingCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'zoom.enableScrolling',
-            'zoomScrolling'
+            'scrollingZoom'
         );
         const zoomScrollingStepSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams(
             'zoom.scrollingStep',
-            'zoomScrollingStep',
+            'scrollingStep',
             1,
         );
         zoomScrollingStepSliderParams.step = 0.01;
         zoomScrollingStepSliderParams.minValue = zoomScrollingStepSliderParams.step;
         const zoomSelectingCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'zoom.enableSelecting',
-            'zoomSelecting'
+            'selectingZoom'
         );
 
         // Enable/disable the scrolling step input according to whether the scrolling checkbox is checked
@@ -66,7 +61,6 @@ export class ZoomPanel extends Component {
 
         this.setTemplate(ZoomPanel.TEMPLATE, {
             zoomGroup: zoomGroupParams,
-            zoomAxisDraggingCheckbox: zoomAxisDraggingCheckboxParams,
             zoomScrollingCheckbox: zoomScrollingCheckboxParams,
             zoomScrollingStepInput: zoomScrollingStepSliderParams,
             zoomSelectingCheckbox: zoomSelectingCheckboxParams,

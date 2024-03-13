@@ -13,9 +13,6 @@ export class CrosshairPanel extends Component {
                 <ag-checkbox ref="crosshairLabelCheckbox"></ag-checkbox>
                 <ag-checkbox ref="crosshairSnapCheckbox"></ag-checkbox>
                 <ag-color-picker ref="crosshairStrokeColorPicker"></ag-color-picker>
-                <ag-slider ref="crosshairStrokeWidthSlider"></ag-slider>
-                <ag-slider ref="crosshairLineDashSlider"></ag-slider>
-                <ag-slider ref="crosshairLineOpacitySlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
@@ -43,35 +40,15 @@ export class CrosshairPanel extends Component {
             'crosshair.snap',
             'crosshairSnap'
         );
-        const crosshairStrokeWidthSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams(
-            'crosshair.strokeWidth',
-            'crosshairWidth',
-            10
-        );
-        const crosshairLineDashSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams(
-            'crosshair.lineDash',
-            'crosshairDashOffset',
-            30,
-            true
-        );
-        const crosshairLineOpacitySliderParams = this.chartMenuParamsFactory.getDefaultSliderParams(
-            'crosshair.strokeOpacity',
-            'crosshairColor',
-            1
-        );
-        crosshairLineOpacitySliderParams.step = 0.05;
         const crosshairStrokeColorPickerParams = this.chartMenuParamsFactory.getDefaultColorPickerParams(
             'crosshair.stroke',
-            'crosshairOpacity'
+            'color'
         );
         this.setTemplate(CrosshairPanel.TEMPLATE, {
             crosshairGroup: crosshairGroupParams,
             crosshairLabelCheckbox: crosshairLabelCheckboxParams,
             crosshairSnapCheckbox: crosshairSnapCheckboxParams,
-            crosshairStrokeColorPicker: crosshairStrokeColorPickerParams,
-            crosshairStrokeWidthSlider: crosshairStrokeWidthSliderParams,
-            crosshairLineDashSlider: crosshairLineDashSliderParams,
-            crosshairLineOpacitySlider: crosshairLineOpacitySliderParams,
+            crosshairStrokeColorPicker: crosshairStrokeColorPickerParams
         });
     }
 }
