@@ -45,7 +45,7 @@
         "type": "Integration",
         "open_source": true,
         "stars": 80,
-        "img": "astro-uxds.jpeg",
+        "img": "astro-uxds.png",
         "frameworks": [
             "React"
         ],
