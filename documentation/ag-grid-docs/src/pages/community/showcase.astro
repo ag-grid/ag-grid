@@ -1,32 +1,31 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import CommunityMenu from '@components/community-section/Menu';
-import LayoutStyles from '@design-system/modules/community-section/Layout.module.scss';
-import ShowcaseList from "@components/community-section/ShowcaseList"
-import ShowcaseTable from "@components/community-section/ShowcaseTable"
+import CommunityMenu from '@components/community-section/CommunityMenu';
+import LayoutStyles from '@design-system/modules/CommunityLayout.module.scss';
+import Showcase from '@components/community-section/Showcase';
 ---
 
 <Layout title="AG Grid">
     <div class="layout-max-width-large">
-        <CommunityMenu path={Astro.url.pathname} client:only/>
+        <div class={LayoutStyles.header}>
+            <CommunityMenu path={Astro.url.pathname} client:load />
+        </div>
         <div class="layout-max-width-small">
             <div class={LayoutStyles.container}>
-                <header class={LayoutStyles.header}>
-                    <h1>Showcase</h1>
-                    <p class={LayoutStyles.description}>AG Grid's products are used by thousands of developers, totalling over 15 million NPM downloads per month.</p>
-                    <p class={LayoutStyles.description}>The majority of these projects are internal or closed-source but we've hand-picked some open-source examples to help inspire your next project with AG Grid</p>
-                    
-                </header>
                 <div class={LayoutStyles.content}>
+                    <!-- Title & Description -->
+                    <h1>Showcase</h1>
+                    <p class={LayoutStyles.description}>
+                        AG Grid's products are downloaded millions of times per week. Most projects are internal and closed source, but we've hand-picked 200+ open-source examples to help inspire your next project.
+                    </p>
                     <section>
                         <h2>Our Favourites</h2>
-                        <ShowcaseList favouritesOnly={true}  client:only/>
+                        <Showcase favouritesOnly={true} client:load />
                     </section>
                     <section>
                         <h2>Full Showcase</h2>
-                        <ShowcaseList client:only/>
+                        <Showcase client:visible />
                     </section>
-                    <!-- <ShowcaseTable client:only/> -->
                 </div>
             </div>
         </div>

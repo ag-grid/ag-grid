@@ -1,22 +1,26 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import CommunityMenu from '@components/community-section/Menu';
-import LayoutStyles from '@design-system/modules/community-section/Layout.module.scss';
-import ToolsExtensions from '@components/community-section/tools-extensions/ToolsExtensions';
+import CommunityMenu from '@components/community-section/CommunityMenu';
+import LayoutStyles from '@design-system/modules/CommunityLayout.module.scss';
+import ToolsExtensions from '@components/community-section/ToolsExtensions';
+
 ---
 
 <Layout title="AG Grid">
     <div class="layout-max-width-large">
-        <CommunityMenu path={Astro.url.pathname} client:only/>
+        <div class={LayoutStyles.header}>
+            <CommunityMenu path={Astro.url.pathname} client:load/>
+        </div>
         <div class="layout-max-width-small">
             <div class={LayoutStyles.container}>
-                <header class={LayoutStyles.header}>
-                    <h1>Tools & Extensions</h1>
-                    <p class={LayoutStyles.description}>AG Grid's open-source roots means that theres a ton of community-built tools, extensions and utilities to help you build your next project, whatever framework you're using.</p>
-                </header>
                 <div class={LayoutStyles.content}>
+                    <!-- Title & Description -->
+                    <h1>Tools & Extensions</h1>
+                    <p class={LayoutStyles.description}>
+                        AG Grid has an entire ecosystem of community-built tools, extensions and utilities to help you create your next project, no matter which language or framework you're using.
+                    </p>
                     <section>
-                        <ToolsExtensions client:only/>
+                        <ToolsExtensions client:load/>
                     </section>
                 </div>
             </div>

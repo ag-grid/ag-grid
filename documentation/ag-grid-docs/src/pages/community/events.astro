@@ -1,23 +1,26 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import CommunityMenu from '@components/community-section/Menu';
-import LayoutStyles from '@design-system/modules/community-section/Layout.module.scss';
-import EventsNew from '@components/community-section/EventsNew';
+import CommunityMenu from '@components/community-section/CommunityMenu';
+import LayoutStyles from '@design-system/modules/CommunityLayout.module.scss';
+import Events from '@components/community-section/Events';
 ---
 
 <Layout title="AG Grid">
     <div class="layout-max-width-large">
-        <CommunityMenu path={Astro.url.pathname} client:only/>
+        <div class={LayoutStyles.header}>
+            <CommunityMenu path={Astro.url.pathname} client:load />
+        </div>
         <div class="layout-max-width-small">
             <div class={LayoutStyles.container}>
-                <header class={LayoutStyles.header}>
-                    <h1>Events</h1>
-                    <p>AG Grid is regular sponsor of some of the biggest JavaScript, React & Angular conferences around. Take a look at where we'll be this year, or browse through our previous events</p>
-                </header>
                 <div class={LayoutStyles.content}>
+                    <!-- Title & Description -->
+                    <h1>Events</h1>
+                    <p class={LayoutStyles.description}>
+                        AG Grid is a regular sponsor and speaker at some of the biggest conferences in the world. Take a look at
+                        where we'll be this year or browse through all the events we've sponsored and held since 2018.
+                    </p>
                     <section>
-                        <h2>Events</h2>
-                        <EventsNew client:only/>
+                        <Events client:load />
                     </section>
                 </div>
             </div>
