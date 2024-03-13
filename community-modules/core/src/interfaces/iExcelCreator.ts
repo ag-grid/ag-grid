@@ -399,8 +399,13 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
     margins?: ExcelSheetMargin;
     /** Allows you to setup the page orientation and size. */
     pageSetup?: ExcelSheetPageSetup;
-    /** Used to add Excel table to the spreadsheet. Only one table is supported per sheet. */
-    tableSetup?: ExcelTableSetup,
+    /**
+     * Used to add an Excel table to the spreadsheet.
+     * Set to `true` to use default export table config, or provide a config object.
+     *
+     * @default false
+     **/
+    exportAsExcelTable?: boolean | ExcelTableConfig;
     /** The configuration for header and footers. */
     headerFooterConfig?: ExcelHeaderFooterConfig;
     /**
@@ -458,9 +463,12 @@ export interface ExcelExportMultipleSheetParams {
      */
     mimeType?: string;
     /**
-     * Use to export the data as a table within each sheet of the Excel document.
+     * Used to add an Excel table to the spreadsheet.
+     * Set to `true` to use default export table config, or provide a config object.
+     *
+     * @default false
      **/
-    tableSetup?: ExcelTableSetup,
+    exportAsExcelTable?: boolean | ExcelTableConfig;
 }
 
 export interface ExcelHeaderFooterConfig {
@@ -549,27 +557,47 @@ export interface ExcelSheetPageSetup {
     pageSize?: 'Letter' | 'Letter Small' | 'Tabloid' | 'Ledger' | 'Legal' | 'Statement' | 'Executive' | 'A3' | 'A4' | 'A4 Small' | 'A5' | 'A6' | 'B4' | 'B5' | 'Folio' | 'Envelope' | 'Envelope DL' | 'Envelope C5' | 'Envelope B5' | 'Envelope C3' | 'Envelope C4' | 'Envelope C6' | 'Envelope Monarch' | 'Japanese Postcard' | 'Japanese Double Postcard';
 }
 
-export interface ExcelTableSetup {
-    /** This property is used to set the table name. It should be an alphanumeric string with no special characters. */
-    name: string;
+export interface ExcelTableConfig {
+    /**
+     * This property is used to set the table name. It should be an alphanumeric string with no special characters.
+     * @default 'AG-GRID-TABLE'
+     */
+    name?: string;
 
     /**
      * Set this property to `false` to disable the filter button at the exported Excel table header.
      * Set it to `true` to show the filter button on all columns.
      * Set it to `match` to show the filter button only if the column has a filter allowed.
-     * Default is `match`.
+     *
+     * @default match
      */
     showFilterButton?: boolean | 'match';
 
-    /** Set this property to `false` to hide the row stripes. Default is `true`. */
+    /**
+     * Set this property to `false` to hide the row stripes.
+     *
+     * @default true
+     */
     showRowStripes?: boolean;
 
-    /** Set this property to `true` to show column stripes. Default is `false`. */
+    /**
+     * Set this property to `true` to show column stripes.
+     *
+     * @default false
+     */
     showColumnStripes?: boolean;
 
-    /** Set this property to `true` to show the first column in bold/highlighted style. Default is `false`. */
+    /**
+     * Set this property to `true` to show the first column in bold/highlighted style.
+     *
+     * @default false
+     */
     highlightFirstColumn?: boolean;
 
-    /** Set this property to `true` to show the last column in bold/highlighted style. Default is `false`. */
+    /**
+     * Set this property to `true` to show the last column in bold/highlighted style.
+     *
+     * @default false
+     */
     highlightLastColumn?: boolean;
 }

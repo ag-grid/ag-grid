@@ -46,7 +46,7 @@ const columnDefs: ColDef[] = [
 let gridApi: GridApi<IOlympicData>;
 
 const defaultExcelExportParams: ExcelExportParams = {
-    tableSetup: {
+    exportAsExcelTable: {
         name: 'TableDemo',
     },
     addImageToCell: (rowIndex, col, value) => {

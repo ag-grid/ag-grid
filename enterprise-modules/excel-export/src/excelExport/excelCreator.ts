@@ -155,11 +155,12 @@ const createExcelFileForExcel = (data: string[], options: {
 const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> => {
     const { data, fontSize, author } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    const tableName = typeof params.exportAsExcelTable === 'object' ? params.exportAsExcelTable?.name : undefined;
 
     if (!createExcelFileForExcel(data, {
         author,
         fontSize,
-        tableName: params.tableSetup?.name,
+        tableName,
     })) { return Promise.resolve(undefined); }
 
     return ZipContainer.getZipFile(mimeType);
@@ -168,11 +169,12 @@ const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetPara
 export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams): Blob | undefined => {
     const { data, fontSize, author } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    const tableName = typeof params.exportAsExcelTable === 'object' ? params.exportAsExcelTable?.name : undefined;
 
     if (!createExcelFileForExcel(data, {
         author,
         fontSize,
-        tableName: params.tableSetup?.name,
+        tableName: typeof params.exportAsExcelTable === 'object' ? params.exportAsExcelTable?.name : undefined,
     })) { return; }
 
     return ZipContainer.getUncompressedZipFile(mimeType);
@@ -231,7 +233,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             fontSize: mergedParams.fontSize,
             author: mergedParams.author,
             mimeType: mergedParams.mimeType,
-            tableSetup: mergedParams.tableSetup,
+            exportAsExcelTable: mergedParams.exportAsExcelTable,
         };
 
         this.packageCompressedFile(exportParams).then(packageFile => {
@@ -259,7 +261,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             fontSize: mergedParams.fontSize,
             author: mergedParams.author,
             mimeType: mergedParams.mimeType,
-            tableSetup: mergedParams.tableSetup,
+            exportAsExcelTable: mergedParams.exportAsExcelTable,
         };
 
         return this.packageFile(exportParams);

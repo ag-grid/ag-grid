@@ -29,7 +29,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 function onBtExport() {
   gridApi!.exportDataAsExcel({
-    tableSetup: {
+    exportAsExcelTable: {
       name: 'Olympic Medals',
     }
   });

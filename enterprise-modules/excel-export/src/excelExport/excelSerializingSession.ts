@@ -12,7 +12,7 @@ import {
     ExcelSheetMargin,
     ExcelStyle,
     ExcelWorksheet,
-    ExcelTableSetup,
+    ExcelTableConfig,
     RowHeightCallbackParams,
     RowNode,
     _,
@@ -53,7 +53,7 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     rowHeight?: number | ((params: RowHeightCallbackParams) => number);
     margins?: ExcelSheetMargin;
     pageSetup?: ExcelSheetPageSetup;
-    tableSetup?: ExcelTableSetup;
+    exportAsExcelTable?: boolean | ExcelTableConfig;
     sheetName: string;
     suppressColumnOutline?: boolean;
     suppressRowOutline?: boolean;
