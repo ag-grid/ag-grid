@@ -943,14 +943,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @deprecated 31.2 use `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns.
          */
     @Input() public enableCellChangeFlash: boolean | undefined = undefined;
-    /** To be used in combination with `enableCellChangeFlash`, the duration in milliseconds of how long a cell should remain in its "flashed" state.
+    /** To be used when setting `enableCellChangeFlash` on column definitions. Sets the duration in milliseconds of how long a cell should remain in its "flashed" state.
          * @default 500
          */
     @Input() public cellFlashDuration: number | undefined = undefined;
     /** @deprecated v31.1 - use `cellFlashDuration` instead.
          */
     @Input() public cellFlashDelay: number | undefined = undefined;
-    /** To be used in combination with `enableCellChangeFlash`, the duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDuration` has completed.
+    /** To be used when setting `enableCellChangeFlash` on column definitions. Sets the duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by cellFlashDuration has completed.
          * @default 1000
          */
     @Input() public cellFadeDuration: number | undefined = undefined;
