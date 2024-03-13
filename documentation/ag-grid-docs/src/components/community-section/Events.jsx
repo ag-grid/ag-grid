@@ -34,7 +34,7 @@ function extractUniqueYears(events) {
 const EventItem = ({ event }) => {
     const [darkMode] = useDarkmode();
     return (
-        <div onClick={() => window.open(event.eventPage)} target="_blank" className={styles.linkWrapper}>
+        <div onClick={() => event.eventPage ? window.open(event.eventPage) : window.open(event.recording)} target="_blank" className={styles.linkWrapper}>
             <div className={styles.eventItemContainer}>
                 <div className={styles.eventItemLeftColumn}>
                     <div className={styles.titleContainer}>

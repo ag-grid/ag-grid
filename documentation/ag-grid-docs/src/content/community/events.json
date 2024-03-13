@@ -183,7 +183,7 @@
     },
     {
         "title": "ng-conf",
-        "description": "Once again, AG Grid were the premier sponsors of the worlds original Angular conference",
+        "description": "Once again, AG Grid were the premier sponsors of the worlds original Angular conference. Max Koretskyi presented: 'Can you imagine a future without zones?', which covered everything there is (or was) to know about controlling change detection.",
         "location": "Salt Lake City, USA",
         "logo": "/community/events/organiser-logos/ng-conf-logo.webp",
         "countryIcon": "us.png",
@@ -212,32 +212,30 @@
     {
         "title": "ag-Grid Conf",
         "description": "",
-        "location": "",
+        "location": "New York, USA",
         "logo": "/community/events/organiser-logos/",
-        "countryIcon": "",
+        "countryIcon": "us.png",
         "startDate": "2018-",
         "eventPage": "",
         "recording": ""
     },
     {
         "title": "ag-Grid Conf",
-        "description": "",
+        "description": "Our inaugural event, hosted in London, our home city. We welcomed hundreds of developers from some of the worlds most prestigious organisations for a pack day full of all things AG Grid. Niall, our CEO, Niall talks the challenges of building ag-Grid, the internal framework we use and how to squeeze ag-Grid for performance.",
         "location": "London, UK",
         "logo": "/community/events/organiser-logos/",
         "countryIcon": "united-kingdom.png",
-        "startDate": "2018-",
-        "eventPage": "",
-        "recording": "https://www.youtube.com/channel/UCerp9sZdHwofLTW8zG6Sxtw"
+        "startDate": "2018-11-29",
+        "recording": "https://www.youtube.com/watch?v=rT0vQejPcrs&t=3sw"
     },
     {
         "title": "Microsoft Build",
         "description": "Microsoft Build is an annual conference event held by Microsoft, aimed at software engineers and web developers using Windows, Microsoft Azure and other Microsoft technologies. First held in 2011, it serves as a successor for Microsoft's previous developer events, the Professional Developers Conference and MIX.",
-        "location": "",
+        "location": "Seattle, USA",
         "logo": "/community/events/organiser-logos/microsoft-build-logo.png",
-        "countryIcon": "",
+        "countryIcon": "us.png",
         "startDate": "2018-05-07",
-        "eventPage": "",
-        "recording": ""
+        "eventPage": "https://learn.microsoft.com/en-us/events/build-2018/"
     },
     {
         "title": "Angular Connect",
