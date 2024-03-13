@@ -7,8 +7,7 @@
     "build": {
       "executor": "nx:run-script",
       "dependsOn": [
-        "build:copy-source",
-        "^build"
+        "build:copy-source"
       ],
       "inputs": [
         "tsDeclarations",
