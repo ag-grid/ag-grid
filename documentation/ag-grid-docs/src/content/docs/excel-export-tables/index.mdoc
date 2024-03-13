@@ -7,10 +7,21 @@ Excel Export provides a way to export grid data as an Excel table, which would i
 sort, and analyse the data in Excel. You can instruct AG Grid to automatically create an Excel table containing the
 grid data when exporting to Excel.
 
-## How It Works
+## Exporting Excel Tables
 
-In order to create an Excel table for the exported data, you should include the `tableSetup` property in the Excel
-export parameters passed to `exportDataAsExcel()`, `getDataAsExcel()` or `getSheetDataForExcel()`.
+In order to create an Excel table for the exported data, you should set the `exportAsExcelTable` property in the
+[ExcelExportParams](./excel-export-api/#excelexportparams) configuration object. Excel config parameters can either be set in the
+[defaultExcelExportParams](./grid-options/#reference-export-defaultExcelExportParams) Grid Option or passed as an argument
+to one of the [Excel export API methods](./excel-export-api/).
+
+```js {% frameworkTransform=true %}
+const gridOptions = {
+     defaultExcelExportParams: {
+        exportAsExcelTable: true,
+     },
+};
+```
+
 
 The exported Excel file will contain a sheet with a table surrounding the exported data. When you select a cell
 within the table, Excel will show you the `Table` tab, which provides options to filter, sort, and analyse the data.
@@ -19,13 +30,39 @@ This is how the exported Excel file with Table looks when opened in Excel:
 
 {% imageCaption imagePath="resources/excel-table-export.png" alt="Table in Excel" centered=true /%}
 
+## Customizing Excel Table Exports
+
+You can customize the Excel table by providing a config object instead of a boolean value for the `exportAsExcelTable`.
+This config object can contain the following properties:
+
+{% interfaceDocumentation interfaceName="ExcelTableConfig" /%}
+
+### Important note about Excel Table column names
+
+{% warning %}
+Excel tables require non-empty and unique table column names.
+When exporting your Grid as an Excel Table, you should ensure that the column headers are all unique and not empty.
+
+This is equally applicable when using
+[processHeaderCallback](./excel-export-api/#reference-ExcelExportParams-processHeaderCallback)
+to customize the column headers.
+
+If you have duplicate column headers, Excel will display a warning message when the exported file is opened. Excel will
+sometimes suggest to fix the issue automatically (by renaming the invalid table headers). However, this is not always
+the case, and the user may end up with a table that doesn't work as expected.
+{% /warning %}
+
+Below are some examples of how to customize the Excel table export.
+
 ## Exporting A Single Sheet as Excel Table
 
 The following example demonstrates how to export the grid data as an Excel table. The Excel table will be created
 automatically when the exported file is opened in Excel.
 
-{% gridExampleRunner title="Excel Export - Exporting A Single Sheet as Excel Table" name="excel-export-table-single-sheet" /%}
+* You can trigger the export by clicking the `Export to Excel` button or via context menu.
+* Once your file is exported, open it in Excel and select a cell within the table to see the `Table` tab.
 
+{% gridExampleRunner title="Excel Export - Exporting A Single Sheet as Excel Table" name="excel-export-table-single-sheet" /%}
 
 ## Exporting Grouped Columns In Excel Table
 
