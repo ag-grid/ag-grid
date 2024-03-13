@@ -61,14 +61,9 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         this.groupColumns = columnsToExport.filter(col => !!col.getColDef().showRowGroup);
     }
 
-    public extractHeaderValue(column: Column, index: number = 0, isTableHeader: boolean = false): string {
+    public extractHeaderValue(column: Column): string {
         const value = this.getHeaderName(this.processHeaderCallback, column);
-        const result = value ?? '';
-
-        // When the user provides an empty string for a column header WHILE EXPORTING DATA AS A TABLE:
-        // We should use the default column header name (e.g. "Column1", "Column2", etc.) instead of an empty string.
-        // to comply with Excel's requirement for table headers.
-        return (!isTableHeader || result !== '') ? result : `Column${index + 1}`;
+        return value ?? ''
     }
 
     public extractRowCellValue(
