@@ -22,7 +22,13 @@ import {
 import { ChartDataModel, ChartModelParams, ColState } from "./model/chartDataModel";
 import { ChartProxy, UpdateParams } from "./chartProxies/chartProxy";
 import { _Theme, AgChartThemePalette, _ModuleSupport } from "ag-charts-community";
-import { ChartSeriesType, getMaxNumCategories, getMaxNumSeries, getSeriesType } from "./utils/seriesTypeMapper";
+import {
+    ChartSeriesType,
+    getMaxNumCategories,
+    getMaxNumSeries,
+    getSeriesType,
+    supportsInvertedCategorySeries,
+} from './utils/seriesTypeMapper';
 import { isStockTheme } from "./chartProxies/chartTheme";
 import { UpdateParamsValidator } from "./utils/UpdateParamsValidator";
 
@@ -164,7 +170,7 @@ export class ChartController extends BeanStub {
         const data = this.getChartData();
         const selectedDimensions = this.getSelectedDimensions();
 
-        return {
+        const params: UpdateParams = {
             data,
             grouping: this.isGrouping(),
             categories: selectedDimensions.map((selectedDimension) => ({
@@ -177,6 +183,41 @@ export class ChartController extends BeanStub {
             getCrossFilteringContext: () => ({ lastSelectedChartId: 'xxx' }), //this.params.crossFilteringContext, //TODO
             seriesChartTypes: this.getSeriesChartTypes(),
             updatedOverrides: updatedOverrides
+        };
+
+        return (this.isCategorySeriesSwitched() ? this.invertCategorySeriesParams(params) : params);
+    }
+
+    private invertCategorySeriesParams(
+        params: UpdateParams,
+    ): UpdateParams {
+        const [category] = params.categories;
+        // Create a single synthetic output category that will contain the series name values
+        const categories = [{ id: ChartDataModel.DEFAULT_CATEGORY, name: '' }];
+        // Create an output series for each row in the source data
+        const fields = params.data.map((value) => ({
+            colId: value[category.id],
+            displayName: value[category.id],
+        }));
+        // Create an output data row corresponding to each selected series column
+        const data = params.fields.map((field) => {
+            // Create a new output row labeled with the series column name
+            const row: Record<PropertyKey, any> = {
+                [ChartDataModel.DEFAULT_CATEGORY]: field.displayName,
+            };
+            // Append fields corresponding to each row in the input data
+            for (const value of params.data) {
+                const outputCategoryKey = value[category.id] as PropertyKey;
+                const seriesLabelValue = value[field.colId];
+                row[outputCategoryKey] = seriesLabelValue;
+            }
+            return row;
+        });
+        return {
+            ...params,
+            categories,
+            fields,
+            data,
         };
     }
 
@@ -219,8 +260,21 @@ export class ChartController extends BeanStub {
 
         this.model.comboChartModel.updateSeriesChartTypes();
 
+        // Reset the inverted category/series toggle whenever the chart type changes
+        this.model.switchCategorySeries = false;
+
         this.raiseChartModelUpdateEvent();
         this.raiseChartOptionsChangedEvent();
+    }
+
+    public isCategorySeriesSwitched(): boolean {
+        return this.model.switchCategorySeries;
+    }
+
+    public switchCategorySeries(inverted: boolean): void {
+        if (!supportsInvertedCategorySeries(this.getChartType())) return;
+        this.model.switchCategorySeries = inverted;
+        this.raiseChartModelUpdateEvent();
     }
 
     private updateMultiSeriesAndCategory(previousChartType: ChartType, chartType: ChartType): void {
@@ -555,3 +609,4 @@ export class ChartController extends BeanStub {
         }
     }
 }
+

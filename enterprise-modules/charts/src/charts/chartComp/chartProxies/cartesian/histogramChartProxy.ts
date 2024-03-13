@@ -8,7 +8,7 @@ export class HistogramChartProxy extends CartesianChartProxy {
         super(params);
     }
 
-    public getSeries(params: UpdateParams): AgHistogramSeriesOptions[] {
+    protected override getSeries(params: UpdateParams): AgHistogramSeriesOptions[] {
         const firstField = params.fields[0]; // multiple series are not supported!
         return [
             {
@@ -21,7 +21,7 @@ export class HistogramChartProxy extends CartesianChartProxy {
         ];
     }
 
-    public getAxes(_params: UpdateParams): AgCartesianAxisOptions[] {
+    protected override getAxes(_params: UpdateParams): AgCartesianAxisOptions[] {
         return [
             {
                 type: 'number',

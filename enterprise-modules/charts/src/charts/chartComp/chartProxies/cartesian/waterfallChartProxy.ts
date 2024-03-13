@@ -9,7 +9,7 @@ export class WaterfallChartProxy extends CartesianChartProxy {
         super(params);
     }
 
-    public getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
+    protected override getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
         return [
             {
                 type: this.getXAxisType(params),
@@ -22,7 +22,7 @@ export class WaterfallChartProxy extends CartesianChartProxy {
         ];
     }
 
-    public getSeries(params: UpdateParams): AgWaterfallSeriesOptions[] {
+    protected override getSeries(params: UpdateParams): AgWaterfallSeriesOptions[] {
         const [category] = params.categories;
         const [firstField] = params.fields;
         const firstSeries: AgWaterfallSeriesOptions = {
