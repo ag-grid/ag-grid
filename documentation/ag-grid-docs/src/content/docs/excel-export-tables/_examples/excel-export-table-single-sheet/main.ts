@@ -25,14 +25,13 @@ const gridOptions: GridOptions<IOlympicData> = {
     minWidth: 100,
     flex: 1,
   },
+  defaultExcelExportParams: {
+    exportAsExcelTable: true
+  }
 }
 
 function onBtExport() {
-  gridApi!.exportDataAsExcel({
-    exportAsExcelTable: {
-      name: 'Olympic Medals',
-    }
-  });
+  gridApi!.exportDataAsExcel();
 }
 
 // setup the grid after the page has finished loading
