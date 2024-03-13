@@ -561,9 +561,9 @@
                 "url": "./integrated-charts-user-created/#enabling-user-created-charts"
             }
         },
-        "suppressChartToolPanelsButton": {
+        "legacyChartsMenu": {
             "more": {
-                "name": "Suppress Chart Tool Panels Button",
+                "name": "Chart Tool Panels",
                 "url": "./integrated-charts-chart-tool-panels/"
             }
         },
@@ -575,7 +575,7 @@
         },
         "createChartContainer": {
             "more": {
-                "name": "Configuring Toolbar Items",
+                "name": "Specifying Chart Container",
                 "url": "./integrated-charts-container/"
             }
         },

@@ -12,7 +12,7 @@ import { ComponentUtil } from "../../components/componentUtil";
  */
 const GRID_OPTION_DEPRECATIONS: Deprecations<GridOptions> = {
 
-    enableChartToolPanelsButton: { version: '29', message: 'The Chart Tool Panels button is now enabled by default. To hide the Chart Tool Panels button and display the hamburger button instead, set suppressChartToolPanelsButton=true.' },
+    enableChartToolPanelsButton: { version: '29', message: 'No longer used. To enable the charts menu, use `legacyChartsMenu = false`' },
     functionsPassive: { version: '29.2' },
     onColumnRowGroupChangeRequest: { version: '29.2' },
     onColumnPivotChangeRequest: { version: '29.2' },
@@ -36,7 +36,8 @@ const GRID_OPTION_DEPRECATIONS: Deprecations<GridOptions> = {
     serverSideSortOnServer: { version: '31.1' },
     serverSideFilterOnServer: { version: '31.1' },
 
-    enableCellChangeFlash: { version: '31.2', message: 'Use `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns.'}
+    enableCellChangeFlash: { version: '31.2', message: 'Use `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns.'},
+    suppressChartToolPanelsButton: { version: '31.2', message: 'A new format charts menu is now available. Set `legacyChartsMenu = false`.' },
 };
 
 // Leave untyped. so it can be inferred.

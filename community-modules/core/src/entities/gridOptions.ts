@@ -594,12 +594,12 @@ export interface GridOptions<TData = any> {
      */
     chartThemeOverrides?: AgChartThemeOverrides;
     /**
-     * @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`.
+     * @deprecated As of v29, no longer used.
      * @initial
      */
     enableChartToolPanelsButton?: boolean;
     /**
-     * Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons.
+     * @deprecated As of v31.2, a new format charts menu is available. Set `legacyChartsMenu = false`.
      * @default false
      * @initial
      */
