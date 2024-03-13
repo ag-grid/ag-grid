@@ -39,22 +39,22 @@ export class ZoomPanel extends Component {
         });
         const zoomAxisDraggingCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'zoom.enableAxisDragging',
-            'axisDragging'
+            'zoomAxisDragging'
         );
         const zoomScrollingCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'zoom.enableScrolling',
-            'scrollingZoom'
+            'zoomScrolling'
         );
         const zoomScrollingStepSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams(
             'zoom.scrollingStep',
-            'scrollingStep',
+            'zoomScrollingStep',
             1,
         );
         zoomScrollingStepSliderParams.step = 0.01;
         zoomScrollingStepSliderParams.minValue = zoomScrollingStepSliderParams.step;
         const zoomSelectingCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'zoom.enableSelecting',
-            'selectingZoom'
+            'zoomSelecting'
         );
 
         // Enable/disable the scrolling step input according to whether the scrolling checkbox is checked

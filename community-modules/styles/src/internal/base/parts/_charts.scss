@@ -433,6 +433,8 @@
 
     .ag-charts-format-top-level-group-container,
     .ag-charts-advanced-settings-top-level-group-container {
+        margin-top: calc(var(--ag-grid-size) * 2);
+        margin-bottom: calc(var(--ag-grid-size) * 2);
         margin-left: calc(var(--ag-grid-size) * 2);
         padding: var(--ag-grid-size);
     }
