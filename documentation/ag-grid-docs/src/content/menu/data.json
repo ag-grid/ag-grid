@@ -210,7 +210,7 @@
                                 "path": "licensing"
                             },
                             {
-                                "title": "React Hooks",
+                                "title": "React Best Practices",
                                 "path": "react-hooks",
                                 "frameworks": ["react"]
                             }
