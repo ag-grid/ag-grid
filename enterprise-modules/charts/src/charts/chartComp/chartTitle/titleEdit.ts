@@ -4,6 +4,7 @@ import { ChartTranslationService } from "../services/chartTranslationService";
 import { ChartController } from "../chartController";
 import { ChartOptionsProxy, ChartOptionsService } from '../services/chartOptionsService';
 import { ChartMenuContext } from "../menu/chartMenuContext";
+import { ChartMenuService } from "../services/chartMenuService";
 
 interface BBox { x: number; y: number; width: number; height: number }
 
@@ -15,6 +16,7 @@ export class TitleEdit extends Component {
         `;
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
+    @Autowired('chartMenuService') private chartMenuService: ChartMenuService;
 
     private destroyableChartListeners: (() => void)[] = [];
     private chartController: ChartController;
@@ -89,7 +91,7 @@ export class TitleEdit extends Component {
     }
 
     private startEditing(titleBBox: BBox, canvasWidth: number): void {
-        if (this.chartMenu && this.chartMenu.isVisible()) {
+        if (this.chartMenuService.isLegacyFormat() && this.chartMenu && this.chartMenu.isVisible()) {
             // currently, we ignore requests to edit the chart title while the chart menu is showing
             // because the click to edit the chart will also close the chart menu, making the position
             // of the title change.
