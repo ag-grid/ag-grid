@@ -249,6 +249,20 @@ export function isPieChartSeries(seriesType: ChartSeriesType): seriesType is Pie
     }
 }
 
-export function canOnlyHaveSingleSeries(chartType: ChartType): boolean {
+function canOnlyHaveSingleSeries(chartType: ChartType): boolean {
     return chartType === 'pie' || chartType === 'waterfall' || chartType === 'histogram';
+}
+
+export function getMaxNumCategories(chartType: ChartType): number | undefined {
+    return isHierarchical(chartType) ? undefined : 1;
+}
+
+export function getMaxNumSeries(chartType: ChartType): number | undefined {
+    if (isHierarchical(chartType)) {
+        return 2;
+    } else if (canOnlyHaveSingleSeries(chartType)) {
+        return 1;
+    } else {
+        return undefined;
+    }
 }
