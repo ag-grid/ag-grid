@@ -22,7 +22,7 @@ export function PriceRenderer(params: ICellRendererParams) {
     )
     for (let i = 0; i < priceMultiplier; i++) {
       const priceElement = document.createElement("img")
-      priceElement.src = `https://www.ag-grid.com/example-assets/pound.png`
+      priceElement.src = `https://www.ag-grid.com/example-assets/pound-coin-color-icon.png`
       priceElement.setAttribute(
         "class",
         "priceIcon"
