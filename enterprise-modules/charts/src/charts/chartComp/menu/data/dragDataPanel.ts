@@ -70,7 +70,8 @@ export abstract class DragDataPanel extends Component {
                 valueFormatter,
                 selectPlaceholder: this.chartTranslationService.translate(selectLabelKey),
                 dragSourceId,
-                onValuesChange: params => this.onValueChange(params)
+                onValuesChange: params => this.onValueChange(params),
+                maxSelection: this.getMaxSelection(chartType)
             }));
             this.groupComp.addItem(this.valuePillSelect);
         } else {
@@ -244,6 +245,10 @@ export abstract class DragDataPanel extends Component {
         if (colState) {
             this.chartController.updateForPanelChange(colState, resetOrder);
         }
+    }
+
+    protected getMaxSelection(chartType: ChartType): number | undefined { 
+        return undefined;
     }
 
     protected destroy(): void {

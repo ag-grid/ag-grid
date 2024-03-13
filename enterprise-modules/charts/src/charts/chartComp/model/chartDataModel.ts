@@ -98,7 +98,7 @@ export class ChartDataModel extends BeanStub {
         this.datasource = this.createManagedBean(new ChartDatasource());
         this.chartColumnService = this.createManagedBean(new ChartColumnService());
         this.comboChartModel = this.createManagedBean(new ComboChartModel(this));
-        this.updateCellRanges();
+        this.updateCellRanges({ init: true });
         this.updateData();
     }
 
@@ -143,8 +143,8 @@ export class ChartDataModel extends BeanStub {
         }
     }
 
-    public updateCellRanges(params?: { updatedColState?: ColState, resetOrder?: boolean, maintainColState?: boolean }): void {
-        const { updatedColState, resetOrder, maintainColState } = params ?? {};
+    public updateCellRanges(params?: { updatedColState?: ColState, resetOrder?: boolean, maintainColState?: boolean, init?: boolean }): void {
+        const { updatedColState, resetOrder, maintainColState, init } = params ?? {};
         if (this.valueCellRange) {
             this.referenceCellRange = this.valueCellRange;
         }
@@ -157,7 +157,7 @@ export class ChartDataModel extends BeanStub {
         }
 
         this.setDimensionCellRange(dimensionCols, allColsFromRanges, updatedColState);
-        this.setValueCellRange(valueCols, allColsFromRanges, updatedColState);
+        this.setValueCellRange(valueCols, allColsFromRanges, init);
 
         if (!updatedColState && !maintainColState) {
             this.resetColumnState();
@@ -446,22 +446,20 @@ export class ChartDataModel extends BeanStub {
         }
     }
 
-    private setValueCellRange(valueCols: Set<Column>, colsInRange: Set<Column>, updatedColState?: ColState, valueColState?: ColState[]): void {
+    private setValueCellRange(valueCols: Set<Column>, colsInRange: Set<Column>, init?: boolean): void {
         this.valueCellRange = undefined;
 
         const selectedValueCols: Column[] = [];
 
         valueCols.forEach(col => {
-            if (valueColState) {
-                if (valueColState.some(colState => colState.selected && colState.colId === col.getColId())) {
+            if (init) {
+                if (colsInRange.has(col)) {
                     selectedValueCols.push(col);
                 }
-            } else if (updatedColState && updatedColState.colId === col.getColId()) {
-                if (updatedColState.selected) {
-                    selectedValueCols.push(updatedColState.column!);
+            } else {
+                if (this.valueColState.some(colState => colState.selected && colState.colId === col.getColId())) {
+                    selectedValueCols.push(col);
                 }
-            } else if (colsInRange.has(col)) {
-                selectedValueCols.push(col);
             }
         });
 
@@ -488,7 +486,7 @@ export class ChartDataModel extends BeanStub {
             this.setDimensionCellRange(dimensionCols, allColsFromRanges);
         }
         if (value) {
-            this.setValueCellRange(valueCols, allColsFromRanges, undefined, this.valueColState);
+            this.setValueCellRange(valueCols, allColsFromRanges);
         }
     }
 
