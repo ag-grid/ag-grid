@@ -322,7 +322,7 @@ Now that you have a basic grid running, the remainder of this page explores some
 
 ### Mapping Values
 
-The `field` or `valueGetter` attributes map data to columns. A field maps to a field in the data. A [Value Getter](./value-getters/) is a function callback that returns the cell value.
+The `field` or `valueGetter` attributes [Map Data to Columns](./column-definitions). A field maps to a field in the data. A [Value Getter](./value-getters/) is a function callback that returns the cell value.
 
 The `headerName` provides the title for the header. If missing the title is derived from `field`.
 
@@ -676,7 +676,7 @@ const VueExample = {
 
 ### Customising a Theme
 
-Customise themes using CSS variables.
+[Customise Themes](./global-style-customisation) using CSS variables.
 
 ```css
 .ag-theme-quartz {
@@ -704,7 +704,7 @@ themes.
 
 ### Cell Style
 
-Define rules to apply styling to cells using `cellClassRules`. This can be used, for example, to set cell background colour based on its value.
+Define rules to apply [Styling to Cells](./cell-styles) using `cellClassRules`. This can be used, for example, to set cell background colour based on its value.
 
 ```css
 .rag-green {
@@ -726,7 +726,7 @@ const gridOptions = {
 
 ### Row Style
 
-Define rules to apply styling to rows using  and `rowClassRules`. This allows changing style (e.g. row colour) based on row values.
+Define rules to apply [Styling to Rows](./row-styles) using  and `rowClassRules`. This allows changing style (e.g. row colour) based on row values.
 
 ```css
 .rag-red {
