@@ -103,7 +103,7 @@ export class CartesianAxisPanel extends Component {
         if (!axisTypeSelectParams) this.removeTemplateComponent(this.axisTypeSelect);
         if (!axisPositionSelectParams) this.removeTemplateComponent(this.axisPositionSelect);
         if (!axisTimeFormatSelectParams) {
-            this.removeTemplateComponent(this.axisPositionSelect);
+            this.removeTemplateComponent(this.axisTimeFormatSelect);
         } else {
             // Conditionally hide the time format input based on the currently selected axis type
             const updateTimeFormatVisibility = () => {
@@ -208,7 +208,7 @@ export class CartesianAxisPanel extends Component {
                     { value: '%d.%e.%y', text: this.translate('timeFormatDotsDDMYY') },
                     { value: '%e.%d.%y', text: this.translate('timeFormatDotsMDDYY') },
                     { value: '%Y-%m-%d', text: this.translate('timeFormatDashesYYYYMMDD') },
-                    { value: '%d %b %Y', text: this.translate('timeFormatSpacesDDMMMMYYYY') },
+                    { value: '%d %B %Y', text: this.translate('timeFormatSpacesDDMMMMYYYY') },
                     { value: '%H %M %S', text: this.translate('timeFormatHHMMSS') },
                     { value: '%I %M %S %p', text: this.translate('timeFormatHHMMSSAmPm') },
                 ];
