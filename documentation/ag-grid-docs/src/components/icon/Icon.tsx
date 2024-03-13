@@ -20,6 +20,10 @@ import StackBlitzIcon from '@images/inline-svgs/stack-blitz.svg?react';
 import TakeControlIcon from '@images/inline-svgs/take-control-icon.svg?react';
 import TickIcon from '@images/inline-svgs/tick.svg?react';
 import XLogoIcon from '@images/inline-svgs/x-logo.svg?react';
+import ZendeskIcon from '@images/inline-svgs/zendesk.svg?react';
+import ZendeskMonochromeIcon from '@images/inline-svgs/zendesk-monochrome.svg?react';
+import StackOverflowIcon from '@images/inline-svgs/stack-overflow.svg?react';
+import StackOverflowMonochromeIcon from '@images/inline-svgs/stack-overflow-monochrome.svg?react';
 import EscapeIcon from '@images/inline-svgs/escape.svg?react'
 import PageResult from '@images/inline-svgs/page-result.svg?react'
 import CodeResult from '@images/inline-svgs/code-result.svg?react'
@@ -35,6 +39,12 @@ const SOCIALS_ICON_MAP = {
     xLogo: XLogoIcon,
     youtube: CarbonIcon.LogoYoutube,
     linkedin: CarbonIcon.LogoLinkedin,
+    email: CarbonIcon.Email,
+    blog: CarbonIcon.Blog,
+    stackoverflow: StackOverflowIcon,
+    stackoverflowMonochrome: StackOverflowMonochromeIcon,
+    zendesk: ZendeskIcon,
+    zendeskMonochrome: ZendeskMonochromeIcon
 };
 
 const DOCS_CATEGORIES_ICON_MAP = {
@@ -122,6 +132,7 @@ export const ICON_MAP = {
     arrowLeft: CarbonIcon.ArrowLeft,
     return: CarbonIcon.Return,
     link: CarbonIcon.Link,
+    mapPin: CarbonIcon.LocationFilled,
     chevronUp: BoldChevronUp,
     chevronRight: BoldChevronRight,
     chevronDown: BoldChevronDown,
@@ -153,6 +164,7 @@ export const ICON_MAP = {
     pageResult: PageResult,
     codeResult: CodeResult,
     headingResult: HeadingResult,
+    listBoxes: CarbonIcon.List,
     ...SOCIALS_ICON_MAP,
     ...DOCS_CATEGORIES_ICON_MAP,
     ...HOMEPAGE_FEATURES_ICON_MAP,
