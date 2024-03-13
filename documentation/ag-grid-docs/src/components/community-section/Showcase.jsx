@@ -47,7 +47,7 @@ const Showcase = ({ favouritesOnly = false, maxItems = -1 }) => {
                             </div>
                         )}
                         <div className={styles.body}>
-                            <div target="_blank" onClick={() => window.open(product.repo)}>
+                            <div target="_blank" onClick={(e) => {e.stopPropagation(); window.open(product.repo)}}>
                                 <GitHubDetails favouritesOnly={favouritesOnly} repo={product.repo} />
                             </div>
                             <div className={styles.titleContainer}>
