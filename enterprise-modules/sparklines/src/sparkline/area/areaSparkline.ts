@@ -300,16 +300,15 @@ export class AreaSparkline extends Sparkline {
     updateStroke(strokeData: PathDatum[]) {
         const { strokePath, yData, line } = this;
 
+        const path = strokePath.path;
+        path.clear();
+
         if (yData.length < 2) {
             return;
         }
 
-        const path = strokePath.path;
         const n = strokeData.length;
-
         let moveTo = true;
-
-        path.clear();
 
         for (let i = 0; i < n; i++) {
             const { point, seriesDatum } = strokeData[i];

@@ -229,17 +229,18 @@ export class LineSparkline extends Sparkline {
     protected updateLine(): void {
         const { linePath, yData, xData, xScale, yScale, line } = this;
 
+        const path = linePath.path;
+        path.clear();
+
         if (yData.length < 2) {
             return;
         }
 
         const continuous = !(xScale instanceof BandScale);
-        const path = linePath.path;
         const n = yData.length;
         const offsetX = !continuous ? xScale.bandwidth / 2 : 0;
         let moveTo = true;
 
-        path.clear();
 
         for (let i = 0; i < n; i++) {
             const xDatum = xData[i];
