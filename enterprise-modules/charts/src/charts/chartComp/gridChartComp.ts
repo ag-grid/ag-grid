@@ -58,6 +58,7 @@ export interface GridChartParams {
     chartThemeName?: string;
     insideDialog: boolean;
     suppressChartRanges: boolean;
+    switchCategorySeries: boolean,
     aggFunc?: string | IAggFunc;
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
@@ -121,6 +122,7 @@ export class GridChartComp extends Component {
             pivotChart: this.params.pivotChart,
             chartType: getCanonicalChartType(this.params.chartType),
             chartThemeName: this.getThemeName(),
+            switchCategorySeries: this.params.switchCategorySeries,
             aggFunc: this.params.aggFunc,
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,

@@ -63,6 +63,7 @@ export interface ChartModel {
     chartOptions: AgChartThemeOverrides;
     chartPalette?: AgChartThemePalette;
     suppressChartRanges?: boolean;
+    switchCategorySeries?: boolean;
     aggFunc?: string | IAggFunc;
     unlinkChart?: boolean;
     seriesChartTypes?: SeriesChartType[];
@@ -103,6 +104,8 @@ export interface CreateRangeChartParams extends CreateChartParams {
     cellRange: ChartParamsCellRange;
     /** Suppress highlighting the selected range in the grid. */
     suppressChartRanges?: boolean;
+    /** Switch Category / Series */
+    switchCategorySeries?: boolean;
     /** The aggregation function that should be applied to all series data. */
     aggFunc?: string | IAggFunc;
     /** The series chart type configurations used in combination charts */
@@ -139,6 +142,8 @@ export interface UpdateRangeChartParams {
     cellRange?: ChartParamsCellRange;
     /** Suppress highlighting the selected range in the grid. */
     suppressChartRanges?: boolean;
+    /** Switch Category / Series */
+    switchCategorySeries?: boolean;
     /** The aggregation function that should be applied to all series data. */
     aggFunc?: string | IAggFunc;
     /** The series chart type configurations used in combination charts */

@@ -96,6 +96,7 @@ export class ChartController extends BeanStub {
             chartThemeName: chartThemeName ?? this.model.chartThemeName,
             unlinkChart: unlinkChart ?? this.model.unlinked,
             cellRange: this.model.suppliedCellRange,
+            switchCategorySeries: this.model.switchCategorySeries,
             aggFunc: this.model.aggFunc,
             seriesChartTypes: undefined,
             suppressChartRanges: false,
@@ -108,15 +109,20 @@ export class ChartController extends BeanStub {
         switch (params.type) {
             case 'rangeChartUpdate':
                 chartModelParams.cellRange = this.createCellRange(params) ?? this.model.suppliedCellRange;
+                chartModelParams.switchCategorySeries = params.switchCategorySeries ?? this.model.switchCategorySeries;
                 chartModelParams.aggFunc = params.aggFunc ?? this.model.aggFunc;
                 chartModelParams.seriesChartTypes = params.seriesChartTypes;
                 chartModelParams.suppressChartRanges = params.suppressChartRanges ?? this.model.suppressChartRanges;
                 break;
             case 'crossFilterChartUpdate':
                 chartModelParams.cellRange = this.createCellRange(params) ?? this.model.suppliedCellRange;
+                chartModelParams.switchCategorySeries = false;
                 chartModelParams.aggFunc = params.aggFunc ?? this.model.aggFunc;
                 chartModelParams.crossFiltering = true;
                 chartModelParams.suppressChartRanges = params.suppressChartRanges ?? this.model.suppressChartRanges;
+                break;
+            case 'pivotChartUpdate':
+                chartModelParams.switchCategorySeries = false;
                 break;
         }
 
@@ -234,6 +240,7 @@ export class ChartController extends BeanStub {
             chartOptions: this.chartProxy.getChartThemeOverrides(),
             chartPalette: this.chartProxy.getChartPalette(),
             cellRange: this.getCellRangeParams(),
+            switchCategorySeries: this.model.switchCategorySeries,
             suppressChartRanges: this.model.suppressChartRanges,
             aggFunc: this.model.aggFunc,
             unlinkChart: this.model.unlinked,
