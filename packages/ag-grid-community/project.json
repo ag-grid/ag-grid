@@ -42,8 +42,8 @@
       ],
       "options": {
         "webpackConfig": "packages/ag-grid-community/webpack.config.js",
-        "outputPath": "{projectRoot}/dist",
-        "outputFileName": "ag-grid-community.js"
+        "outputPath": "ignore",
+        "outputFileName": "ignore"
       },
       "cache": true,
       "configurations": {
@@ -78,7 +78,12 @@
       }
     },
     "build:types": {
-      "dependsOn": ["^build:types"],
+      "dependsOn": [
+        "@ag-grid-community/core:build:types",
+        "@ag-grid-community/client-side-row-model:build:types",
+        "@ag-grid-community/csv-export:build:types",
+        "@ag-grid-community/infinite-row-model:build:types"
+      ],
       "command": "npx gulp copy-from-module-source && cp main.d.ts.src dist/types/main.d.ts",
       "options": {
         "cwd": "packages/ag-grid-community"

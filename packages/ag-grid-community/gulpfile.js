@@ -21,8 +21,6 @@ const copyFromModuleSource = () => {
             const filePath = file.path;
             const relativePathWithFile = filePath.replace(`${workspaceRoot}/`, "")
                 .replace("community-modules/", "")
-                // .replace("enterprise-modules/core/", "enterprise-core")
-                // .replace("enterprise-modules/", "")
                 .replace("/dist/types/src", "");
             const relativePath = relativePathWithFile.replace(basename(relativePathWithFile), "")
             path.dirname = `types/${relativePath}`;

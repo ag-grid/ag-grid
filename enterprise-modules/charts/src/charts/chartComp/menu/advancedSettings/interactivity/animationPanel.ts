@@ -35,7 +35,7 @@ export class AnimationPanel extends Component {
                 useToggle: true
             }
         );
-        const animationHeightInputParams = this.chartMenuParamsFactory.getDefaultNumberInputParams("animation.duration", "animationDurationMillis", {
+        const animationHeightInputParams = this.chartMenuParamsFactory.getDefaultNumberInputParams("animation.duration", "durationMillis", {
             min: 0,
         });
         this.setTemplate(AnimationPanel.TEMPLATE, {

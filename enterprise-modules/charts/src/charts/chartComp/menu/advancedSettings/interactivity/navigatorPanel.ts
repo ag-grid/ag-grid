@@ -14,8 +14,6 @@ export class NavigatorPanel extends Component {
             <ag-group-component ref="navigatorGroup">
                 <ag-slider ref="navigatorHeightSlider"></ag-slider>
                 <ag-checkbox ref="navigatorMiniChartCheckbox"></ag-checkbox>
-                <ag-slider ref="navigatorMinSlider"></ag-slider>
-                <ag-slider ref="navigatorMaxSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
@@ -38,20 +36,14 @@ export class NavigatorPanel extends Component {
                 useToggle: true
             }
         );
-        const navigatorHeightSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams("navigator.height", "navigatorHeight", 60);
+        const navigatorHeightSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams("navigator.height", "height", 60);
         navigatorHeightSliderParams.minValue = 10;
-        const navigatorMiniChartCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams("navigator.miniChart.enabled", "navigatorMiniChart");
-        const navigatorMinSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams("navigator.min", "navigatorRangeStart", 1);
-        navigatorMinSliderParams.step = 0.05;
-        const navigatorMaxSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams("navigator.max", "navigatorRangeEnd", 1);
-        navigatorMaxSliderParams.step = 0.05;
+        const navigatorMiniChartCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams("navigator.miniChart.enabled", "miniChart");
 
         this.setTemplate(NavigatorPanel.TEMPLATE, {
             navigatorGroup: navigatorGroupParams,
             navigatorHeightSlider: navigatorHeightSliderParams,
-            navigatorMiniChartCheckbox: navigatorMiniChartCheckboxParams,
-            navigatorMinSlider: navigatorMinSliderParams,
-            navigatorMaxSlider: navigatorMaxSliderParams,
+            navigatorMiniChartCheckbox: navigatorMiniChartCheckboxParams
         });
     }
 }

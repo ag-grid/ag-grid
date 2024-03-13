@@ -56,8 +56,8 @@
       ],
       "options": {
         "webpackConfig": "packages/ag-grid-charts-enterprise/webpack.config.js",
-        "outputPath": "{projectRoot}/dist",
-        "outputFileName": "ag-grid-charts-enterprise.js"
+        "outputPath": "ignore",
+        "outputFileName": "ignore"
       },
       "cache": true,
       "configurations": {
