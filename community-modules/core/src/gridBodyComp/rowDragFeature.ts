@@ -274,7 +274,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
     }
 
-    public addRowDropZone(params: RowDropZoneParams): void {
+    public addRowDropZone(params: RowDropZoneParams & { fromGrid?: boolean }): void {
         if (!params.getContainer()) {
             warnOnce('addRowDropZone - A container target needs to be provided');
             return;
@@ -289,8 +289,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             getContainer: params.getContainer
         };
 
-        if ((params as any).fromGrid) {
-            (params as any).fromGrid = undefined;
+        if (params.fromGrid) {
             processedParams = params;
         } else {
             if (params.onDragEnter) {
