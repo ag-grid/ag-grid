@@ -15,7 +15,7 @@ import { ChartDatasource, ChartDatasourceParams } from "../datasource/chartDatas
 import { ChartTranslationService } from '../services/chartTranslationService';
 import { ChartColumnService } from "../services/chartColumnService";
 import { ComboChartModel } from "./comboChartModel";
-import { isHierarchical } from "../utils/seriesTypeMapper";
+import { getMaxNumSeries, isHierarchical } from "../utils/seriesTypeMapper";
 
 export interface ColState {
     column?: Column;
@@ -451,10 +451,14 @@ export class ChartDataModel extends BeanStub {
 
         const selectedValueCols: Column[] = [];
 
+        const maxSelection = getMaxNumSeries(this.chartType);
+        let numSelected = 0;
+
         valueCols.forEach(col => {
             if (init) {
-                if (colsInRange.has(col)) {
+                if ((maxSelection == null || numSelected < maxSelection) && colsInRange.has(col)) {
                     selectedValueCols.push(col);
+                    numSelected++;
                 }
             } else {
                 if (this.valueColState.some(colState => colState.selected && colState.colId === col.getColId())) {
