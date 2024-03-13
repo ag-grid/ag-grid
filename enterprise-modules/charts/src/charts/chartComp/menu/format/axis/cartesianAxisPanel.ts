@@ -209,8 +209,8 @@ export class CartesianAxisPanel extends Component {
                     { value: '%e.%d.%y', text: this.translate('timeFormatDotsMDDYY') },
                     { value: '%Y-%m-%d', text: this.translate('timeFormatDashesYYYYMMDD') },
                     { value: '%d %B %Y', text: this.translate('timeFormatSpacesDDMMMMYYYY') },
-                    { value: '%H %M %S', text: this.translate('timeFormatHHMMSS') },
-                    { value: '%I %M %S %p', text: this.translate('timeFormatHHMMSSAmPm') },
+                    { value: '%H:%M:%S', text: this.translate('timeFormatHHMMSS') },
+                    { value: '%I:%M:%S %p', text: this.translate('timeFormatHHMMSSAmPm') },
                 ];
                 case 'yAxis': return null;
             }
