@@ -3,6 +3,7 @@
 .customMenu {
     display: none;
     padding-right: $spacing-size-2;
+    margin-right: auto;
     user-select: none;
 
     @media screen and (min-width: 440px) {

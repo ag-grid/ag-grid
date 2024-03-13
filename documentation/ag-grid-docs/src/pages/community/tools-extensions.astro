@@ -3,10 +3,9 @@ import Layout from '../../layouts/Layout.astro';
 import CommunityMenu from '@components/community-section/CommunityMenu';
 import LayoutStyles from '@design-system/modules/CommunityLayout.module.scss';
 import ToolsExtensions from '@components/community-section/ToolsExtensions';
-
 ---
 
-<Layout title="AG Grid">
+<Layout title="AG Grid" showSearchBar={true} showDocsNav={false}>
     <div class="layout-max-width-large">
         <div class={LayoutStyles.header}>
             <CommunityMenu path={Astro.url.pathname} client:load/>
