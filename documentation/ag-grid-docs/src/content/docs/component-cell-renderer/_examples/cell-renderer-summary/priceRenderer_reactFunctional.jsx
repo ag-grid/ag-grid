@@ -24,7 +24,7 @@ export default (params) => {
       {priceArr.map((_, index) => (
         <img
           key={index}
-          src="https://www.ag-grid.com/example-assets/pound.png"
+          src="https://www.ag-grid.com/example-assets/pound-coin-color-icon.png"
           className="priceIcon"
         />
       ))}
