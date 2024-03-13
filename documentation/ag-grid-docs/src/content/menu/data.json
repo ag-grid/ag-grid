@@ -1384,10 +1384,6 @@
                                 "isEnterprise": true
                             },
                             {
-                                "title": "Drag & Drop",
-                                "path": "drag-and-drop"
-                            },
-                            {
                                 "title": "Printing",
                                 "path": "printing"
                             },

@@ -931,10 +931,6 @@
                     "enterprise": true
                 },
                 {
-                    "name": "[Drag & Drop](./drag-and-drop)"
-                },
-
-                {
                     "name": "[Import Excel](./excel-import)"
                 }
             ]

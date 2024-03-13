@@ -480,9 +480,7 @@
             }
         },
         "rowDrag": {},
-        "rowDragText": {},
-        "dndSource": {},
-        "dndSourceOnRowDrag": {}
+        "rowDragText": {}
     },
     "events": {
         "meta": {
