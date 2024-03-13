@@ -26,6 +26,7 @@ interface Props {
     pageName: string;
     importType: ImportType;
     isDev: boolean;
+    typescriptOnly?: boolean;
 }
 
 // NOTE: Not on the layout level, as that is generated at build time, and queryClient needs to be
@@ -73,7 +74,7 @@ const getImportType = (docsImportType: ImportType, supportedImportTypes: ImportT
     return supportedImportTypes[0];
 };
 
-const DocsExampleRunnerInner = ({ name, title, exampleHeight, pageName, isDev }: Props) => {
+const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, pageName, isDev }: Props) => {
     const exampleName = name;
     const id = `example-${name}`;
     const loadingIFrameId = getLoadingIFrameId({ pageName, exampleName: name });
@@ -82,7 +83,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, pageName, isDev }:
     const [supportedFrameworks, setSupportedFrameworks] = useState<InternalFramework[] | undefined>(undefined);
     const [supportedImportTypes, setSupportedImportTypes] = useState<ImportType[] | undefined>(undefined);
 
-    const internalFramework = getInternalFramework(useStore($internalFramework), supportedFrameworks);
+    const internalFramework = typescriptOnly ? 'typescript' : getInternalFramework(useStore($internalFramework), supportedFrameworks);
     const importType = getImportType(useImportType(), supportedImportTypes);
     const urlConfig: UrlParams = useMemo(() => ({ internalFramework, pageName, exampleName, importType }),
         [internalFramework, pageName, exampleName, importType]);

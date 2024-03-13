@@ -24,7 +24,6 @@ export async function GET() {
             exampleName: example.params.exampleName,
             importType: example.params.importType,
             internalFramework: example.params.internalFramework,
-            isSupported: example.params.isSupported,
         };
     });
 

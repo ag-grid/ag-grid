@@ -70,27 +70,27 @@ async function getDocsExampleNameParts({ pages }: { pages: DocsPage[] }) {
         return IMPORT_TYPES.map((importType) => {
             const importTypeSupported =
                 example.supportedImportTypes === undefined || example.supportedImportTypes.has(importType);
-            const isSupported = frameworkSupported && importTypeSupported;
+            const isVanillaModules = importType === 'modules' && (example.internalFramework === 'vanilla');
+            const isSupported = frameworkSupported && importTypeSupported && !isVanillaModules;
+            if(!isSupported){return undefined;}
             return {
                 ...example,
                 importType,
-                isSupported,
             };
         });
-    });
+    }).filter(e => e !== undefined);
 }
 
 export async function getDocsExamplePages({ pages }: { pages: DocsPage[] }) {
     const examples = await getDocsExampleNameParts({ pages });
 
-    return examples.map(({ internalFramework, pageName, exampleName, importType, isSupported }) => {
+    return examples.map(({ internalFramework, pageName, exampleName, importType }) => {
         return {
             params: {
                 internalFramework,
                 pageName,
                 exampleName,
                 importType,
-                isSupported: isSupported.toString(),
             },
         };
     });
@@ -99,7 +99,7 @@ export async function getDocsExamplePages({ pages }: { pages: DocsPage[] }) {
 export async function getDocExampleFiles({ pages }: { pages: DocsPage[] }) {
     const examples = await getDocsExampleNameParts({ pages });
     const exampleFilesPromises = examples.flatMap(
-        async ({ internalFramework, pageName, exampleName, importType, isSupported }) => {
+        async ({ internalFramework, pageName, exampleName, importType }) => {
             try {
                 const filesList = await getGeneratedContentsFileList({
                     type: 'docs',
@@ -107,7 +107,6 @@ export async function getDocExampleFiles({ pages }: { pages: DocsPage[] }) {
                     pageName,
                     exampleName,
                     importType,
-                    isSupported,
                 });
                 return filesList.map((fileName) => {
                     return {

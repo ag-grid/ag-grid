@@ -94,7 +94,7 @@ export default defineMarkdocConfig({
             attributes: {
                 title: { type: String, required: true },
                 name: { type: String, required: true },
-                type: { type: String },
+                typescriptOnly: { type: Boolean },
                 exampleHeight: { type: Number },
             },
         },
