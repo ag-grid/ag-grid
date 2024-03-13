@@ -71,7 +71,7 @@
       "inputs": [],
       "outputs": ["{projectRoot}/dist/*.js"],
       "cache": false,
-      "dependsOn": ["^build", "build:updateWithCoreExports"],
+      "dependsOn": ["^build", "build:updateWithCoreExports", "build:copy-styles"],
       "options": {
         "parallel": true,
         "commands": [
