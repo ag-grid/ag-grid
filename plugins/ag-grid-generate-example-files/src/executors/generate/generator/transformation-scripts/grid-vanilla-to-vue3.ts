@@ -159,7 +159,7 @@ function getPropertyBindings(
             } else if (componentFileNames.length > 0 && property.name === 'components') {
                 if (bindings.components) {
                     const userAgComponents = OVERRIDABLE_AG_COMPONENTS.filter((agComponentName) =>
-                        bindings.components.some((component) => component.name === agComponentName)
+                        bindings.components.some((component) => component.name === agComponentName && !vueComponents.some(existingComp => existingComp.includes(agComponentName)))
                     ).map((agComponentName) => `${agComponentName}: '${agComponentName}'`);
 
                     vueComponents.push(...userAgComponents);
