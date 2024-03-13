@@ -14,9 +14,8 @@ body {
     margin-bottom: 0 !important;
 }
 
-html[data-color-scheme='dark'] {
-    background-color: #141D2C;
-    /* TODO: Replace with bg-primary variable */
+html, body {
+    background-color: transparent;
 }
 
 /* Apply "color-scheme: dark;" to all elements outside the grid */ 
