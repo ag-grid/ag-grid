@@ -61,7 +61,7 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["@ag-grid-community/core:build:types", "build:copy-source"],
+      "dependsOn": ["@ag-grid-community/core:build:types", "build:copy-source", "ag-grid-community:build"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
