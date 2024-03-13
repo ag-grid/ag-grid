@@ -16,8 +16,7 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
 
-import { registerObserver } from './data';
-import { getFakeServer } from './fakeServer';
+import { getFakeServer, registerObserver } from './fakeServer';
 
 const columnDefs: ColDef[] = [
   { field: 'tradeId' },
@@ -50,12 +49,12 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
+    enableCellChangeFlash: true,
   },
   autoGroupColumnDef: {
     minWidth: 220,
   },
   rowGroupPanelShow: 'always',
-  enableCellChangeFlash: true,
   purgeClosedRowNodes: true,
 
   rowModelType: 'serverSide',

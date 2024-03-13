@@ -1,19 +1,18 @@
 ---
-import { DocsExampleRunner } from './DocsExampleRunner';
-import ExampleRunnerContainer from '@features/example-runner/components/ExampleRunnerContainer.astro';
 import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
-import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
+import ExampleRunnerContainer from '@features/example-runner/components/ExampleRunnerContainer.astro';
 import { getIsDev } from '@utils/env';
+import { DocsExampleRunner } from './DocsExampleRunner';
 
 interface Props {
     title: string;
     name: string;
     exampleHeight?: number;
+    typescriptOnly?: boolean;
 }
 
-const { title, name, type, exampleHeight } = Astro.props as Props;
+const { title, name, exampleHeight, typescriptOnly } = Astro.props as Props;
 
-const framework = getFrameworkFromPath(Astro.url.pathname);
 const pageName = getPageNameFromPath(Astro.url.pathname);
 const isDev = getIsDev();
 ---
@@ -24,7 +23,7 @@ const isDev = getIsDev();
         title={title}
         name={name}
         exampleHeight={exampleHeight}
-        framework={framework}
+        typescriptOnly={typescriptOnly}
         pageName={pageName}
         isDev={isDev}
     />

@@ -1,8 +1,5 @@
-import type { Framework, MenuSection } from '@ag-grid-types';
-import { DEFAULT_FRAMEWORK } from '@constants';
-import { useStore } from '@nanostores/react';
-import { $internalFramework } from '@stores/frameworkStore';
-import { getFrameworkFromInternalFramework } from '@utils/framework';
+import type { MenuSection } from '@ag-grid-types';
+import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import { useEffect, useState } from 'react';
 
 import { getFilteredMenuSections } from '../utils/getFilteredMenuSections';
@@ -15,8 +12,7 @@ export function PagesNavigationFromLocalStorage({
     allMenuSections: MenuSection[];
     pageName: string;
 }) {
-    const internalFramework = useStore($internalFramework);
-    const [framework, setFramework] = useState<Framework>(DEFAULT_FRAMEWORK);
+    const framework = useFrameworkFromStore();
     const [menuSections, setMenuSections] = useState<MenuSection[]>(
         getFilteredMenuSections({
             menuSections: allMenuSections,
@@ -25,22 +21,13 @@ export function PagesNavigationFromLocalStorage({
     );
 
     useEffect(() => {
-        const newFramework = getFrameworkFromInternalFramework(internalFramework);
+        setMenuSections(
+            getFilteredMenuSections({
+                menuSections: allMenuSections,
+                framework,
+            })
+        );
+    }, [framework]);
 
-        if (newFramework !== framework) {
-            setFramework(newFramework);
-            setMenuSections(
-                getFilteredMenuSections({
-                    menuSections: allMenuSections,
-                    framework: newFramework,
-                })
-            );
-        }
-    }, [internalFramework]);
-
-    return (
-        framework && (
-            <PagesNavigation menuSections={menuSections} framework={framework} pageName={pageName}></PagesNavigation>
-        )
-    );
+    return <PagesNavigation menuSections={menuSections} framework={framework} pageName={pageName}></PagesNavigation>;
 }

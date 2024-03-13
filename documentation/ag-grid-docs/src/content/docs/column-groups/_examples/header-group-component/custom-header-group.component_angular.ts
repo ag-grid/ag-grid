@@ -13,56 +13,71 @@ import { IHeaderGroupParams } from '@ag-grid-community/core';
         </div>
     `,
     styles: [
-        `
-            .customExpandButton {
-                float: right;
+        `   
+            :host {
+                overflow: hidden;
+            }
+
+            .customExpandButton{
+                float:right;
                 margin-top: 2px;
                 margin-left: 3px;
             }
-
+            
             .expanded {
                 animation-name: toExpanded;
                 animation-duration: 1s;
                 -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
                 transform: rotate(180deg);
             }
-
+            
             .fa-arrow-right {
                 color: cornflowerblue;
             }
-
+            
             .collapsed {
                 animation-name: toCollapsed;
                 animation-duration: 1s;
                 -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
                 transform: rotate(0deg);
             }
-
+            
+            .ag-header-group-cell-label {
+                display: flex;
+                gap: 0.25rem;
+                overflow: hidden;
+            }
+            
+            .customHeaderLabel {
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            
             .customHeaderMenuButton,
-            .customHeaderLabel,
             .customHeaderLabel,
             .customSortDownLabel,
             .customSortUpLabel,
-            .customSortRemoveLabel {
+            .customSortRemoveLabel
+            {
                 margin-top: 2px;
                 margin-left: 4px;
                 float: left;
             }
-
-            .customSortDownLabel {
+            
+            .customSortDownLabel{
                 margin-left: 10px;
             }
-
-            .customSortUpLabel {
+            
+            .customSortUpLabel{
                 margin-left: 1px;
             }
-
-            .customSortRemoveLabel {
+            
+            .customSortRemoveLabel{
                 float: left;
                 font-size: 11px;
             }
-
-            @keyframes toExpanded {
+            
+            @keyframes  toExpanded{
                 from {
                     -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
                     transform: rotate(0deg);
@@ -72,8 +87,8 @@ import { IHeaderGroupParams } from '@ag-grid-community/core';
                     transform: rotate(180deg);
                 }
             }
-
-            @keyframes toCollapsed {
+            
+            @keyframes toCollapsed{
                 from {
                     -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
                     transform: rotate(180deg);
@@ -92,7 +107,6 @@ export class CustomHeaderGroup implements IHeaderGroupAngularComp {
 
     agInit(params: IHeaderGroupParams): void {
         this.params = params;
-
         this.params.columnGroup.getProvidedColumnGroup().addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
 
         this.syncExpandButtons();

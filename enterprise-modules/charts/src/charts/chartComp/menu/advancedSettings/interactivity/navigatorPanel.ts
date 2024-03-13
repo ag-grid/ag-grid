@@ -34,15 +34,16 @@ export class NavigatorPanel extends Component {
                 direction: 'vertical',
                 suppressOpenCloseIcons: true,
                 title: this.chartTranslationService.translate("navigator"),
-                suppressEnabledCheckbox: false,
+                suppressEnabledCheckbox: true,
+                useToggle: true
             }
         );
-        const navigatorHeightSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams("navigator.height", "height", 60);
+        const navigatorHeightSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams("navigator.height", "navigatorHeight", 60);
         navigatorHeightSliderParams.minValue = 10;
-        const navigatorMiniChartCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams("navigator.miniChart.enabled", "miniChart");
-        const navigatorMinSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams("navigator.min", "rangeStart", 1);
+        const navigatorMiniChartCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams("navigator.miniChart.enabled", "navigatorMiniChart");
+        const navigatorMinSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams("navigator.min", "navigatorRangeStart", 1);
         navigatorMinSliderParams.step = 0.05;
-        const navigatorMaxSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams("navigator.max", "rangeEnd", 1);
+        const navigatorMaxSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams("navigator.max", "navigatorRangeEnd", 1);
         navigatorMaxSliderParams.step = 0.05;
 
         this.setTemplate(NavigatorPanel.TEMPLATE, {

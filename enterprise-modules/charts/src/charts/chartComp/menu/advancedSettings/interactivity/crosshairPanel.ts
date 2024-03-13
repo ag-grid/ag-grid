@@ -32,7 +32,8 @@ export class CrosshairPanel extends Component {
             direction: 'vertical',
             suppressOpenCloseIcons: true,
             title: this.chartTranslationService.translate('crosshair'),
-            suppressEnabledCheckbox: false,
+            suppressEnabledCheckbox: true,
+            useToggle: true
         });
         const crosshairLabelCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'crosshair.label.enabled',
@@ -44,24 +45,24 @@ export class CrosshairPanel extends Component {
         );
         const crosshairStrokeWidthSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams(
             'crosshair.strokeWidth',
-            'lineWidth',
+            'crosshairWidth',
             10
         );
         const crosshairLineDashSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams(
             'crosshair.lineDash',
-            'lineDash',
+            'crosshairDashOffset',
             30,
             true
         );
         const crosshairLineOpacitySliderParams = this.chartMenuParamsFactory.getDefaultSliderParams(
             'crosshair.strokeOpacity',
-            'strokeOpacity',
+            'crosshairColor',
             1
         );
         crosshairLineOpacitySliderParams.step = 0.05;
         const crosshairStrokeColorPickerParams = this.chartMenuParamsFactory.getDefaultColorPickerParams(
             'crosshair.stroke',
-            'strokeColor'
+            'crosshairOpacity'
         );
         this.setTemplate(CrosshairPanel.TEMPLATE, {
             crosshairGroup: crosshairGroupParams,

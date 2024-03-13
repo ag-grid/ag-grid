@@ -515,6 +515,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to `true` to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid.
      * @default false
+     * @deprecated 31.2 Use `enableCellChangeFlash={false}` in the ColDef.
      */
     suppressCellFlash?: boolean;
 
@@ -536,9 +537,13 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop.
      * @default false
+     * @deprecated 31.2 This feature has been replaced by `Row Dragging to an External DropZone`.
      */
     dndSource?: boolean | DndSourceCallback<TData, TValue>;
-    /** Function to allow custom drag functionality for native drag and drop. */
+    /** 
+     * Function to allow custom drag functionality for native drag and drop.
+     * @deprecated 31.2 This feature has been replaced by `Row Dragging to an External DropZone`.
+     */
     dndSourceOnRowDrag?: (params: DndSourceOnRowDragParams<TData>) => void;
 
     // *** Columns: Row Grouping *** //

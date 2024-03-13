@@ -11,6 +11,8 @@ import PartialMatchFilter from './partialMatchFilter.jsx';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
+import { getData } from './data.jsx';
+
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {

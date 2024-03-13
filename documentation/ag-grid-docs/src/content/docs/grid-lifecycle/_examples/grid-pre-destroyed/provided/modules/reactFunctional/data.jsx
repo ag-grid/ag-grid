@@ -1,5 +1,5 @@
 
-function getDataSet() {
+export function getData() {
     return [
         {
             "name": "Michael Phelps",

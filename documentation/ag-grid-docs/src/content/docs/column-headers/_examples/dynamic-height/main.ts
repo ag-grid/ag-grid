@@ -19,7 +19,7 @@ const columnDefs: ColGroupDef[] = [
       },
       {
         field: 'age',
-        width: 90,
+        width: 90,        
         minWidth: 75,
         maxWidth: 100,
         enableRowGroup: true,
@@ -73,6 +73,9 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     floatingFilter: true,
     width: 120
+  },
+  autoGroupColumnDef: {
+    width: 200
   },
   columnDefs: columnDefs,
   rowData: null,

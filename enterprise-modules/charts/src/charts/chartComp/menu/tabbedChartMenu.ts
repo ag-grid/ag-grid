@@ -12,15 +12,19 @@ import { FormatPanel } from "./format/formatPanel";
 import { ChartSettingsPanel } from "./settings/chartSettingsPanel";
 import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
 import { ChartMenuContext } from "./chartMenuContext";
+import { ChartMenuService } from "../services/chartMenuService";
 
 export class TabbedChartMenu extends Component {
+    public static EVENT_CLOSED = 'closed';
     public static TAB_DATA = 'data';
     public static TAB_FORMAT = 'format';
 
     private tabbedLayout: TabbedLayout;
     private tabs: TabbedItem[] = [];
+    private eventSource?: HTMLElement;
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
+    @Autowired('chartMenuService') private chartMenuService: ChartMenuService;
 
     constructor(
         private readonly panels: ChartMenuOptions[],
@@ -45,7 +49,13 @@ export class TabbedChartMenu extends Component {
             cssClass: 'ag-chart-tabbed-menu',
             keepScrollPosition: true,
             suppressFocusBodyOnOpen: true,
-            suppressTrapFocus: true
+            suppressTrapFocus: true,
+            enableCloseButton: !this.chartMenuService.isLegacyFormat(),
+            closeButtonAriaLabel: this.chartTranslationService.translate('ariaChartMenuClose'),
+            onCloseClicked: () => {
+                this.eventSource?.focus({ preventScroll: true });
+                this.dispatchEvent({ type: TabbedChartMenu.EVENT_CLOSED });
+            }
         });
         this.getContext().createBean(this.tabbedLayout);
     }
@@ -87,8 +97,11 @@ export class TabbedChartMenu extends Component {
         return this.tabbedLayout && this.tabbedLayout.getGui();
     }
 
-    public focusHeader(): void {
-        this.tabbedLayout?.focusHeader(true);
+    public showMenu(eventSource?: HTMLElement, suppressFocus?: boolean): void {
+        this.eventSource = eventSource;
+        if (!suppressFocus) {
+            this.tabbedLayout?.focusHeader(true);
+        }
     }
 
     protected destroy(): void {

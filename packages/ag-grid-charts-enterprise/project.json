@@ -33,6 +33,17 @@
       "cache": true
     },
     "build:umd": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["nx run ag-grid-charts-enterprise:build:umd:development"]
+      },
+      "configurations": {
+        "production": {
+          "commands": ["nx run ag-grid-charts-enterprise:build:umd:production"]
+        }
+      }
+    },
+    "build:umd:development": {
       "executor": "@nx/webpack:webpack",
       "inputs": [],
       "outputs": [
@@ -45,13 +56,35 @@
       ],
       "options": {
         "webpackConfig": "packages/ag-grid-charts-enterprise/webpack.config.js",
-        "outputPath": "overridden in webpack config but required by nx",
-        "outputFileName": "overridden in webpack config but required by nx"
+        "outputPath": "{projectRoot}/dist",
+        "outputFileName": "ag-grid-charts-enterprise.js"
       },
-      "cache": true
+      "cache": true,
+      "configurations": {
+        "production": {
+          "buildTarget": "build:umd:production"
+        }
+      }
+    },
+    "build:umd:production": {
+      "executor": "nx:run-commands",
+      "inputs": [],
+      "outputs": ["{projectRoot}/dist/*.js"],
+      "cache": false,
+      "dependsOn": ["^build", "build:updateWithCoreExports", "build:copy-styles"],
+      "options": {
+        "parallel": true,
+        "commands": [
+          "npx webpack --env production --env minify --env styles       --env entry=./src/main-styles.ts",
+          "npx webpack --env production              --env styles       --env entry=./src/main-styles.ts",
+          "npx webpack --env production --env minify --env styles=false --env entry=./src/main.ts",
+          "npx webpack --env production              --env styles=false --env entry=./src/main.ts"
+        ],
+        "cwd": "packages/ag-grid-charts-enterprise"
+      }
     },
     "build:copy-styles": {
-      "dependsOn": [],
+      "dependsOn": ["@ag-grid-community/styles:build"],
       "inputs": [],
       "cache": true,
       "command": "rsync -r ../../community-modules/styles/*.*css --delete styles",
@@ -66,7 +99,11 @@
         "build:updateWithCoreExports"
       ],
       "inputs": [
-        "tsDefaults"
+        "tsDefaults",
+        {
+          "dependentTasksOutputFiles": "**/main.cjs.js",
+          "transitive": true
+        }
       ],
       "outputs": [
         "{options.outputPath}"

@@ -10,7 +10,7 @@ import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
-
+import { getData } from './data.jsx';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 

@@ -11,9 +11,8 @@
 }
 
 iframe {
-    #{$selector-darkmode} & {
-        background: var(--color-bg-primary);
-    }
+    background-color: transparent;
+    color-scheme: none; // Prevent white flash in darkmode
 }
 
 .tabsContainer {

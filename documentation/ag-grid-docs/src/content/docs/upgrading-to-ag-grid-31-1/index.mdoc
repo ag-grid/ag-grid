@@ -60,7 +60,7 @@ See [Implementing a Cell Editor Component](./cell-editors/#implementing-a-cell-e
 - `getDate` and `setDate` are no longer used. The component will be passed `date` as a prop with the latest date. When the date is updated in the UI, the component should call the prop `onDateChange` with the updated date (instead of calling the prop `onDateChanged` when the date changes).
 - Any other editing methods defined via `useImperativeHandle` should now be defined as callbacks, and passed to the new hook `useGridDate`. These are all optional; the hook is only needed if the callbacks are required.
 
-See [Implementing a Date Component](filter-date/) for examples and more details on the interfaces.
+See [Implementing a Date Component](./filter-date) for examples and more details on the interfaces.
 {% /if %}
 
 {% if isFramework("react") %}

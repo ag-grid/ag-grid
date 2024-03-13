@@ -27,12 +27,12 @@ const gridOptions: GridOptions = {
     flex: 1,
     editable: true,
     filter: true,
+    enableCellChangeFlash: true,
   },
   getRowId: (params: GetRowIdParams) => {
     return params.data.id
   },
-  rowData: rowData,
-  enableCellChangeFlash: true,
+  rowData: rowData
 }
 
 function updateSort() {

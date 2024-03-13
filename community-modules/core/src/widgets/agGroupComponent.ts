@@ -6,6 +6,8 @@ import { createIcon } from '../utils/icon';
 import { setDisplayed } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';
 import { setAriaExpanded } from '../utils/aria';
+import { AgToggleButton } from './agToggleButton';
+import { AgEvent } from '../events';
 
 type GroupItem = Component | HTMLElement;
 type Align = 'start' | 'end' | 'center' | 'stretch';
@@ -23,39 +25,49 @@ export interface AgGroupComponentParams {
     direction?: Direction;
     onEnableChange?: (enabled: boolean) => void;
     expanded?: boolean;
+    useToggle?: boolean;
+}
+
+interface ExpandChangedEvent extends AgEvent {
+    expanded?: boolean;
+}
+
+interface EnableChangeEvent extends AgEvent {
+    enabled: boolean;
 }
 
 export class AgGroupComponent extends Component {
     public static EVENT_EXPANDED = 'expanded';
     public static EVENT_COLLAPSED = 'collapsed';
+    public static EVENT_ENABLE_CHANGE = 'enableChange';
 
     private items: GroupItem[];
-    private title: string | undefined;
     private cssIdentifier: string;
     private enabled: boolean;
     private expanded: boolean;
     private suppressEnabledCheckbox: boolean = true;
-    private suppressOpenCloseIcons: boolean = false;
     private suppressToggleExpandOnEnableChange: boolean = false;
     private alignItems: Align | undefined;
+    private useToggle: boolean;
 
-    @RefSelector('eTitleBar') private eTitleBar: HTMLElement;
-    @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
-    @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
+    private eToggle?: AgToggleButton;
+    private eTitleBar?: DefaultTitleBar;
+
     @RefSelector('eToolbar') private eToolbar: HTMLElement;
     @RefSelector('cbGroupEnabled') private cbGroupEnabled: AgCheckbox;
-    @RefSelector('eTitle') private eTitle: HTMLElement;
     @RefSelector('eContainer') private eContainer: HTMLElement;
 
     constructor(private readonly params: AgGroupComponentParams = {}) {
         super(AgGroupComponent.getTemplate(params));
 
-        const { title, enabled, items, suppressEnabledCheckbox, suppressOpenCloseIcons, expanded, suppressToggleExpandOnEnableChange } = params;
+        const {
+            enabled, items, suppressEnabledCheckbox, expanded, suppressToggleExpandOnEnableChange, useToggle: toggleMode
+        } = params;
 
-        this.title = title;
         this.cssIdentifier = params.cssIdentifier || 'default';
         this.enabled = enabled != null ? enabled : true;
         this.items = items || [];
+        this.useToggle = toggleMode ?? false;
 
         this.alignItems = params.alignItems || 'center';
 
@@ -64,10 +76,6 @@ export class AgGroupComponent extends Component {
 
         if (suppressEnabledCheckbox != null) {
             this.suppressEnabledCheckbox = suppressEnabledCheckbox;
-        }
-
-        if (suppressOpenCloseIcons != null) {
-            this.suppressOpenCloseIcons = suppressOpenCloseIcons;
         }
 
         if (suppressToggleExpandOnEnableChange != null) {
@@ -79,21 +87,20 @@ export class AgGroupComponent extends Component {
         const cssIdentifier = params.cssIdentifier || 'default';
         const direction: Direction = params.direction || 'vertical';
 
-        return /* html */ `<div class="ag-group ag-${cssIdentifier}-group" role="presentation">
-            <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar ag-unselectable" ref="eTitleBar" role="button">
-                <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupOpenedIcon" role="presentation"></span>
-                <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupClosedIcon" role="presentation"></span>
-                <span ref="eTitle" class="ag-group-title ag-${cssIdentifier}-group-title"></span>
+        return /* html */ `
+            <div class="ag-group ag-${cssIdentifier}-group" role="presentation">
+                <div ref="eToolbar" class="ag-group-toolbar ag-${cssIdentifier}-group-toolbar">
+                    <ag-checkbox ref="cbGroupEnabled"></ag-checkbox>
+                </div>
+                <div ref="eContainer" class="ag-group-container ag-group-container-${direction} ag-${cssIdentifier}-group-container"></div>
             </div>
-            <div ref="eToolbar" class="ag-group-toolbar ag-${cssIdentifier}-group-toolbar">
-                <ag-checkbox ref="cbGroupEnabled"></ag-checkbox>
-            </div>
-            <div ref="eContainer" class="ag-group-container ag-group-container-${direction} ag-${cssIdentifier}-group-container"></div>
-        </div>`;
+        `;
     }
 
     @PostConstruct
     private postConstruct() {
+        this.setupTitleBar();
+
         if (this.items.length) {
             const initialItems = this.items;
             this.items = [];
@@ -104,62 +111,33 @@ export class AgGroupComponent extends Component {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         this.cbGroupEnabled.setLabel(localeTextFunc('enabled', 'Enabled'));
 
-        if (this.title) {
-            this.setTitle(this.title);
-        }
-
         if (this.enabled) {
             this.setEnabled(this.enabled, undefined, true);
         }
 
         this.setAlignItems(this.alignItems);
 
-        this.hideEnabledCheckbox(this.suppressEnabledCheckbox);
-        this.hideOpenCloseIcons(this.suppressOpenCloseIcons);
+        const { onEnableChange, suppressOpenCloseIcons } = this.params;
 
-        this.setupExpandContract();
-        this.refreshAriaStatus();
+        this.hideEnabledCheckbox(this.suppressEnabledCheckbox);
+        this.hideOpenCloseIcons(suppressOpenCloseIcons ?? false);
+
         this.refreshChildDisplay();
         setDisplayed(this.eContainer, this.expanded);
 
-        const { onEnableChange } = this.params;
+        this.cbGroupEnabled.onValueChange((newSelection: boolean) => {
+            this.setEnabled(newSelection, true, this.suppressToggleExpandOnEnableChange);
+            this.dispatchEnableChangeEvent(newSelection);
+        });
+
         if (onEnableChange != null) {
             this.onEnableChange(onEnableChange);
         }
     }
 
-    private setupExpandContract(): void {
-        this.eGroupClosedIcon.appendChild(createIcon('columnSelectClosed', this.gridOptionsService, null));
-        this.eGroupOpenedIcon.appendChild(createIcon('columnSelectOpen', this.gridOptionsService, null));
-        this.addManagedListener(this.eTitleBar, 'click', () => this.toggleGroupExpand());
-        this.addManagedListener(this.eTitleBar, 'keydown', (e: KeyboardEvent) => {
-            switch (e.key) {
-                case KeyCode.ENTER:
-                case KeyCode.SPACE:
-                    e.preventDefault();
-                    this.toggleGroupExpand();
-                    break;
-                case KeyCode.RIGHT:
-                case KeyCode.LEFT:
-                    e.preventDefault();
-                    this.toggleGroupExpand(e.key === KeyCode.RIGHT);
-                    break;
-            }
-        });
-    }
-
-    private refreshAriaStatus(): void {
-        if (!this.suppressOpenCloseIcons) {
-            setAriaExpanded(this.eTitleBar, this.expanded);
-        }
-    }
-
     private refreshChildDisplay(): void {
-        const showIcon = !this.suppressOpenCloseIcons;
-
         setDisplayed(this.eToolbar, this.expanded && !this.suppressEnabledCheckbox);
-        setDisplayed(this.eGroupOpenedIcon, showIcon && this.expanded);
-        setDisplayed(this.eGroupClosedIcon, showIcon && !this.expanded);
+        this.eTitleBar?.refreshOnExpand(this.expanded);
     }
 
     public isExpanded(): boolean {
@@ -180,27 +158,26 @@ export class AgGroupComponent extends Component {
     }
 
     public toggleGroupExpand(expanded?: boolean): this {
-        if (this.suppressOpenCloseIcons) {
-            this.expanded = true;
-            this.refreshChildDisplay();
-            setDisplayed(this.eContainer, true);
+        let silent = false;
+        if (this.eTitleBar?.isSuppressCollapse() && !this.useToggle) {
+            expanded = true;
+            silent = true;
+        } else {
+            expanded = expanded != null ? expanded : !this.expanded;
 
-            return this;
-        }
-
-        expanded = expanded != null ? expanded : !this.expanded;
-
-        if (this.expanded === expanded) {
-            return this;
+            if (this.expanded === expanded) {
+                return this;
+            }
         }
 
         this.expanded = expanded;
-        this.refreshAriaStatus();
         this.refreshChildDisplay();
 
         setDisplayed(this.eContainer, expanded);
 
-        this.dispatchEvent({ type: this.expanded ? AgGroupComponent.EVENT_EXPANDED : AgGroupComponent.EVENT_COLLAPSED });
+        if (!silent) {
+            this.dispatchEvent({ type: expanded ? AgGroupComponent.EVENT_EXPANDED : AgGroupComponent.EVENT_COLLAPSED });
+        }
 
         return this;
     }
@@ -210,21 +187,26 @@ export class AgGroupComponent extends Component {
     }
 
     public prependItem(item: GroupItem) {
-        this.insertItem(item, this.eContainer.firstChild);
+        this.insertItem(item, true);
     }
 
     public addItem(item: GroupItem) {
-        this.insertItem(item, null);
+        this.insertItem(item, false);
     }
 
-    private insertItem(item: GroupItem, before: Node | null) {
+    private insertItem(item: GroupItem, prepend?: boolean) {
         const container = this.eContainer;
         const el = item instanceof Component ? item.getGui() : item;
 
         el.classList.add('ag-group-item', `ag-${this.cssIdentifier}-group-item`);
 
-        container.insertBefore(el, before);
-        this.items.push(el);
+        if (prepend) {
+            container.insertAdjacentElement('afterbegin', el);
+            this.items.unshift(el);
+        } else {
+            container.appendChild(el);
+            this.items.push(el);
+        }
     }
 
     public hideItem(hide: boolean, index: number) {
@@ -232,13 +214,26 @@ export class AgGroupComponent extends Component {
         setDisplayed(itemToHide, !hide);
     }
 
+    public getItemIndex(item: GroupItem): number | -1 {
+        const el = item instanceof Component ? item.getGui() : item;
+        return this.items.indexOf(el);
+    }
+
     public setTitle(title: string): this {
-        this.eTitle.innerText = title;
+        this.eTitleBar?.setTitle(title);
         return this;
     }
 
     public addCssClassToTitleBar(cssClass: string) {
-        this.eTitleBar.classList.add(cssClass);
+        this.eTitleBar?.addCssClass(cssClass);
+    }
+
+    private dispatchEnableChangeEvent(enabled: boolean): void {
+        const event: EnableChangeEvent = {
+            type: AgGroupComponent.EVENT_ENABLE_CHANGE,
+            enabled
+        };
+        this.dispatchEvent(event);
     }
 
     public setEnabled(enabled: boolean, skipToggle?: boolean, skipExpand?: boolean): this {
@@ -251,6 +246,7 @@ export class AgGroupComponent extends Component {
 
         if (!skipToggle) {
             this.cbGroupEnabled.setValue(enabled);
+            this.eToggle?.setValue(enabled);
         }
 
         return this;
@@ -261,10 +257,7 @@ export class AgGroupComponent extends Component {
     }
 
     public onEnableChange(callbackFn: (enabled: boolean) => void): this {
-        this.cbGroupEnabled.onValueChange((newSelection: boolean) => {
-            this.setEnabled(newSelection, true, this.suppressToggleExpandOnEnableChange);
-            callbackFn(newSelection);
-        });
+        this.addManagedListener(this, AgGroupComponent.EVENT_ENABLE_CHANGE, (event: EnableChangeEvent) => callbackFn(event.enabled));
 
         return this;
     }
@@ -277,27 +270,168 @@ export class AgGroupComponent extends Component {
     }
 
     public hideOpenCloseIcons(hide: boolean): this {
-        this.suppressOpenCloseIcons = hide;
-
-        if (hide) {
-            this.toggleGroupExpand(true);
-        }
+        this.eTitleBar?.hideOpenCloseIcons(hide);
 
         return this;
     }
 
     private refreshDisabledStyles() {
-        this.eContainer.classList.toggle('ag-disabled', !this.enabled);
-
-        if (this.suppressEnabledCheckbox && !this.enabled) {
-            this.eTitleBar.classList.add('ag-disabled-group-title-bar');
-            this.eTitleBar.removeAttribute('tabindex');
-        } else {
-            this.eTitleBar.classList.remove('ag-disabled-group-title-bar');
-            this.eTitleBar.setAttribute('tabindex', '0');
-        }
-
-        this.eContainer.classList.toggle('ag-disabled-group-container', !this.enabled);
+        const disabled = !this.enabled;
+        this.eContainer.classList.toggle('ag-disabled', disabled);
+        this.eTitleBar?.refreshDisabledStyles(this.suppressEnabledCheckbox && disabled);
+        this.eContainer.classList.toggle('ag-disabled-group-container', disabled);
     }
 
+    private setupTitleBar(): void {
+        const titleBar = this.useToggle ? this.createToggleTitleBar() : this.createDefaultTitleBar();
+        this.eToolbar.insertAdjacentElement('beforebegin', titleBar.getGui());
+    }
+
+    private createDefaultTitleBar(): DefaultTitleBar {
+        const titleBar = this.createManagedBean(new DefaultTitleBar(this.params));
+        this.eTitleBar = titleBar;
+        titleBar.refreshOnExpand(this.expanded);
+        this.addManagedListener(titleBar, DefaultTitleBar.EVENT_EXPAND_CHANGED, (event: ExpandChangedEvent) => this.toggleGroupExpand(event.expanded));
+        return titleBar;
+    }
+
+    private createToggleTitleBar(): AgToggleButton {
+        const eToggle = this.createManagedBean(new AgToggleButton({
+            value: this.enabled,
+            label: this.params.title,
+            labelAlignment: 'left',
+            labelWidth: 'flex',
+            onValueChange: enabled => {
+                this.setEnabled(enabled, true);
+                this.dispatchEnableChangeEvent(enabled);
+            }
+        }));
+        eToggle.addCssClass('ag-group-title-bar')
+        eToggle.addCssClass(`ag-${this.params.cssIdentifier ?? 'default'}-group-title-bar ag-unselectable`);
+        this.eToggle = eToggle;
+        this.toggleGroupExpand(this.enabled);
+        return eToggle;
+    }
+}
+
+class DefaultTitleBar extends Component {
+    public static EVENT_EXPAND_CHANGED = 'expandedChanged';
+
+    private title: string | undefined;
+    private suppressOpenCloseIcons: boolean = false;
+
+    @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
+    @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
+    @RefSelector('eTitle') private eTitle: HTMLElement;
+
+    constructor(params: AgGroupComponentParams = {}) {
+        super(DefaultTitleBar.getTemplate(params));
+
+        const { title, suppressOpenCloseIcons } = params;
+
+        this.title = title;
+
+        if (suppressOpenCloseIcons != null) {
+            this.suppressOpenCloseIcons = suppressOpenCloseIcons;
+        }
+    }
+
+    private static getTemplate(params: AgGroupComponentParams) {
+        const cssIdentifier = params.cssIdentifier ?? 'default';
+
+        return /* html */ `
+            <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar ag-unselectable" role="button">
+                <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupOpenedIcon" role="presentation"></span>
+                <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupClosedIcon" role="presentation"></span>
+                <span ref="eTitle" class="ag-group-title ag-${cssIdentifier}-group-title"></span>
+            </div>
+        `;
+    }
+
+    @PostConstruct
+    private postConstruct() {
+        if (this.title) {
+            this.setTitle(this.title);
+        }
+
+        this.hideOpenCloseIcons(this.suppressOpenCloseIcons);
+
+        this.setupExpandContract();
+    }
+
+    private setupExpandContract(): void {
+        this.eGroupClosedIcon.appendChild(createIcon('columnSelectClosed', this.gridOptionsService, null));
+        this.eGroupOpenedIcon.appendChild(createIcon('columnSelectOpen', this.gridOptionsService, null));
+        this.addManagedListener(this.getGui(), 'click', () => this.dispatchExpandChanged());
+        this.addManagedListener(this.getGui(), 'keydown', (e: KeyboardEvent) => {
+            switch (e.key) {
+                case KeyCode.ENTER:
+                case KeyCode.SPACE:
+                    e.preventDefault();
+                    this.dispatchExpandChanged();
+                    break;
+                case KeyCode.RIGHT:
+                case KeyCode.LEFT:
+                    e.preventDefault();
+                    this.dispatchExpandChanged(e.key === KeyCode.RIGHT);
+                    break;
+            }
+        });
+    }
+
+    public refreshOnExpand(expanded: boolean): void {
+        this.refreshAriaStatus(expanded);
+        this.refreshOpenCloseIcons(expanded);
+    }
+
+    private refreshAriaStatus(expanded: boolean): void {
+        if (!this.suppressOpenCloseIcons) {
+            setAriaExpanded(this.getGui(), expanded);
+        }
+    }
+
+    private refreshOpenCloseIcons(expanded: boolean): void {
+        const showIcon = !this.suppressOpenCloseIcons;
+
+        setDisplayed(this.eGroupOpenedIcon, showIcon && expanded);
+        setDisplayed(this.eGroupClosedIcon, showIcon && !expanded);
+    }
+
+    public isSuppressCollapse(): boolean {
+        return this.suppressOpenCloseIcons;
+    }
+
+    private dispatchExpandChanged(expanded?: boolean): void {
+        const event: ExpandChangedEvent = {
+            type: DefaultTitleBar.EVENT_EXPAND_CHANGED,
+            expanded
+        };
+        this.dispatchEvent(event);
+    }
+
+    public setTitle(title: string): this {
+        this.eTitle.innerText = title;
+        return this;
+    }
+
+    public hideOpenCloseIcons(hide: boolean): this {
+        this.suppressOpenCloseIcons = hide;
+
+        if (hide) {
+            this.dispatchExpandChanged(true);
+        }
+
+        return this;
+    }
+
+    public refreshDisabledStyles(disabled: boolean) {
+        const eGui = this.getGui();
+        if (disabled) {
+            eGui.classList.add('ag-disabled-group-title-bar');
+            eGui.removeAttribute('tabindex');
+        } else {
+            eGui.classList.remove('ag-disabled-group-title-bar');
+            eGui.setAttribute('tabindex', '0');
+        }
+    }
 }

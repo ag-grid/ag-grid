@@ -175,6 +175,7 @@ button.sectionHeader {
         --color-icon: var(--color-enterprise-icon);
 
         position: relative;
+        top: 1px;
         margin-left: 4px;
         color: transparent;
 
@@ -183,6 +184,12 @@ button.sectionHeader {
             left: 0;
             transform: translate(-0.05em, 0.075em);
         }
+    }
+
+    .newTabIcon {
+        --icon-size: 1.25em;
+
+        margin-left: $spacing-size-2;
     }
 }
 
@@ -273,6 +280,6 @@ button.sectionHeader {
     }
 
     &.activeItemParent {
-        color: var(--color-text-primary);
+        color: var(--color-util-gray-400);
     }
 }

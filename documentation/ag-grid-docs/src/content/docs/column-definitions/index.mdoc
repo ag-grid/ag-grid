@@ -14,6 +14,17 @@ Each column in the grid is defined using a Column Definition (`ColDef`). Columns
 
 {% gridExampleRunner title="Simple Definitions" name="simple" /%}
 
+
+```js {% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'athlete' },
+        { field: 'sport' },
+        { field: 'age' }
+    ]
+}
+```
+
 See [Column Properties](./column-properties/) for all available properties.
 
 ## Column Defaults {% #default-column-definitions %}
@@ -22,9 +33,18 @@ Use `defaultColDef` to set properties across ALL Columns.
 
 {% gridExampleRunner title="Default Col Def" name="default-col-def" /%}
 
+```js {% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    defaultColDef: {
+        flex: 1,
+        editable: true
+    }
+}
+```
+
 ## Column Types
 
-Use `columnTypes` to define a bunch of Column properties. The propeties are then applied to a Column using `type`.
+Use `columnTypes` to define a set of Column properties to be applied together. The properties in a column type are applied to a Column by setting its `type` property.
 
 
 ```js {% frameworkTransform=true spaceBetweenProperties=true %}

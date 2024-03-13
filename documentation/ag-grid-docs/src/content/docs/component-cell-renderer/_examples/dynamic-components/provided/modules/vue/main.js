@@ -3,6 +3,7 @@ import { AgGridVue } from '@ag-grid-community/vue';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
+import './styles.css';
 import ChildMessageRenderer from './childMessageRendererVue.js';
 import CubeRenderer from './cubeRendererVue.js';
 import CurrencyRenderer from './currencyRendererVue.js';

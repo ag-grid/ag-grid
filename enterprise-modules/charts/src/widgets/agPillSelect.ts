@@ -21,6 +21,7 @@ export interface AgPillSelectParams<TValue = string | null> {
     selectPlaceholder?: string;
     onValuesChange?: (params: AgPillSelectChangeParams<TValue>) => void;
     dragSourceId?: string;
+    maxSelection?: number;
 }
 
 export interface AgPillSelectChangeParams<TValue> {
@@ -106,12 +107,16 @@ export class AgPillSelect<TValue = string | null> extends Component {
     }
 
     private createSelectOptions(): ListOption<TValue>[] {
-        const options: ListOption<TValue>[] = [];
+        let options: ListOption<TValue>[] = [];
+        const { maxSelection } = this.config;
+        if (maxSelection && this.selectedValues.length >= maxSelection) {
+            return options;
+        }
         this.valueList.forEach(value => {
             if (!this.selectedValues.includes(value)) {
                 options.push({ value, text: this.valueFormatter(value) });
             }
-        })
+        });
         return options;
     }
 

@@ -22,7 +22,7 @@ import {
 import { ChartDataModel, ChartModelParams, ColState } from "./model/chartDataModel";
 import { ChartProxy, UpdateParams } from "./chartProxies/chartProxy";
 import { _Theme, AgChartThemePalette, _ModuleSupport } from "ag-charts-community";
-import { canOnlyHaveSingleSeries, ChartSeriesType, getSeriesType, isHierarchical } from "./utils/seriesTypeMapper";
+import { ChartSeriesType, getMaxNumCategories, getMaxNumSeries, getSeriesType } from "./utils/seriesTypeMapper";
 import { isStockTheme } from "./chartProxies/chartTheme";
 import { UpdateParamsValidator } from "./utils/UpdateParamsValidator";
 
@@ -121,12 +121,12 @@ export class ChartController extends BeanStub {
         removeChartCellRanges ? this.rangeService?.setCellRanges([]) : this.setChartRange();
     }
 
-    public updateForGridChange(): void {
+    public updateForGridChange(maintainColState?: boolean): void {
         if (this.model.unlinked) {
             return;
         }
 
-        this.model.updateCellRanges();
+        this.model.updateCellRanges({ maintainColState });
         this.model.updateData();
         this.setChartRange();
     }
@@ -145,11 +145,15 @@ export class ChartController extends BeanStub {
         this.raiseChartRangeSelectionChangedEvent();
     }
 
-    public updateForPanelChange(updatedCol: ColState, resetOrder?: boolean): void {
-        this.model.updateCellRanges(updatedCol, resetOrder);
+    public updateForPanelChange(updatedColState: ColState, resetOrder?: boolean): void {
+        this.model.updateCellRanges({ updatedColState, resetOrder });
         this.model.updateData();
         this.setChartRange();
         this.raiseChartRangeSelectionChangedEvent();
+    }
+
+    public updateThemeOverrides(updatedOverrides: AgChartThemeOverrides): void {
+        this.chartProxy.updateThemeOverrides(updatedOverrides);
     }
 
     public getChartUpdateParams(updatedOverrides?: AgChartThemeOverrides): UpdateParams {
@@ -207,28 +211,7 @@ export class ChartController extends BeanStub {
     }
 
     public setChartType(chartType: ChartType): void {
-        const previousChartType = this.model.chartType;
-
-        // If we are changing from a multi-category/series chart type to a single-category/series chart type,
-        // ensure that only the first selected category/series column remains selected
-        const updateMultiValueToSingleValue = (columns: ColState[]) => {
-            let hasSelectedValue = false;
-            for (const colState of columns) {
-                if (!colState.selected) continue;
-                if (hasSelectedValue) colState.selected = false;
-                hasSelectedValue = true;
-            }
-            if (!hasSelectedValue) {
-                columns[0].selected = true;
-            }
-        }
-
-        if (isHierarchical(previousChartType) && !isHierarchical(chartType)) {
-            updateMultiValueToSingleValue(this.model.dimensionColState);
-        }
-        if (!canOnlyHaveSingleSeries(previousChartType) && canOnlyHaveSingleSeries(chartType)) {
-            updateMultiValueToSingleValue(this.model.valueColState);
-        }
+        this.updateMultiSeriesAndCategory(this.model.chartType, chartType);
 
         this.model.chartType = chartType;
 
@@ -236,6 +219,40 @@ export class ChartController extends BeanStub {
 
         this.raiseChartModelUpdateEvent();
         this.raiseChartOptionsChangedEvent();
+    }
+
+    private updateMultiSeriesAndCategory(previousChartType: ChartType, chartType: ChartType): void {
+        // If we are changing from a multi-category/series chart type to a single-category/series chart type,
+        // ensure that only the allowed number of selected category/series column remain selected
+        const updateForMax = (columns: ColState[], maxNum: number) => {
+            let numSelected = 0;
+            for (const colState of columns) {
+                if (!colState.selected) continue;
+                if (numSelected >= maxNum) {
+                    colState.selected = false;
+                } else {
+                    numSelected++;
+                }
+            }
+            if (numSelected === 0) {
+                columns[0].selected = true;
+            }
+        }
+
+        const maxNumDimensions = getMaxNumCategories(chartType);
+        const maxNumSeries = getMaxNumSeries(chartType);
+        const updateDimensionColState = maxNumDimensions != null && (getMaxNumCategories(previousChartType) ?? 100) > (maxNumDimensions ?? 100);
+        const updateValueColState = maxNumSeries != null && (getMaxNumSeries(previousChartType) ?? 100) > (maxNumSeries ?? 100);
+        if (updateDimensionColState) {
+            updateForMax(this.model.dimensionColState, maxNumDimensions);
+        }
+        if (updateValueColState) {
+            updateForMax(this.model.valueColState, maxNumSeries);
+        }
+        if (updateDimensionColState || updateValueColState) {
+            this.model.resetCellRanges(updateDimensionColState, updateValueColState);
+            this.setChartRange(true);
+        }
     }
 
     public setChartThemeName(chartThemeName: string, silent?: boolean): void {
@@ -427,8 +444,9 @@ export class ChartController extends BeanStub {
     }
 
     public getChartSeriesTypes(chartType?: ChartType): ChartSeriesType[] {
+        const targetChartType = chartType ?? this.getChartType();
         const supportedComboSeriesTypes: ChartSeriesType[] = ['line', 'bar', 'area'];
-        return this.isComboChart(chartType) ? supportedComboSeriesTypes : [getSeriesType(chartType ?? this.getChartType())];
+        return this.isComboChart(targetChartType) ? supportedComboSeriesTypes : [getSeriesType(targetChartType)];
     }
 
     public isEnterprise = () => _ModuleSupport.enterpriseModule.isEnterprise;

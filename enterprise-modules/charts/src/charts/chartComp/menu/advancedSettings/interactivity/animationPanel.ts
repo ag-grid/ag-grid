@@ -31,10 +31,11 @@ export class AnimationPanel extends Component {
                 direction: 'vertical',
                 suppressOpenCloseIcons: true,
                 title: this.chartTranslationService.translate("animation"),
-                suppressEnabledCheckbox: false,
+                suppressEnabledCheckbox: true,
+                useToggle: true
             }
         );
-        const animationHeightInputParams = this.chartMenuParamsFactory.getDefaultNumberInputParams("animation.duration", "durationMillis", {
+        const animationHeightInputParams = this.chartMenuParamsFactory.getDefaultNumberInputParams("animation.duration", "animationDurationMillis", {
             min: 0,
         });
         this.setTemplate(AnimationPanel.TEMPLATE, {

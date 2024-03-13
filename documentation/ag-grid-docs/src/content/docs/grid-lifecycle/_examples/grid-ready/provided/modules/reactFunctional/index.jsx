@@ -6,6 +6,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import React,{ StrictMode,useCallback,useMemo,useRef,useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
+import { getData } from './data.jsx';
 
 import {ModuleRegistry} from '@ag-grid-community/core';
 import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';

@@ -5,10 +5,11 @@ import { ColDef, GridApi, GridPreDestroyedEvent, GridReadyEvent, ModuleRegistry 
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
+import './styles.css';
 import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { getDataSet, TAthlete } from './data';
+import { getData, TAthlete } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -22,7 +23,7 @@ const GridExample = () => {
     const [gridVisible, setGridVisible] = useState(true);
     const [columnsWidthOnPreDestroyed, setColumnsWidthOnPreDestroyed] = useState<ColumnWidth[]>([]);
     const [gridApi, setGridApi] = useState<GridApi>();
-    const [rowData, setRowData] = useState<any[]>(getDataSet());
+    const [rowData, setRowData] = useState<any[]>(getData());
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         {field: 'name', headerName: 'Athlete'},
         {field: 'medals.gold', headerName: 'Gold Medals'},

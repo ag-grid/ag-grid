@@ -13,8 +13,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'athlete' },
         { field: 'sport' },
         { field: 'age' }
-    ],
-    rowData: null,
+    ]
 };
 
 // setup the grid after the page has finished loading

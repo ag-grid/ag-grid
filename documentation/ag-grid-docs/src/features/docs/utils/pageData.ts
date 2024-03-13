@@ -6,7 +6,7 @@ import { getIsDev } from '../../../utils/env';
 import { getGeneratedContentsFileList } from '../../example-generator';
 import { getInternalFrameworkExamples, getPagesList } from './filesData';
 
-const shouldFilterPages = QUICK_BUILD_PAGES && !getIsDev();
+const isQuickBuild = QUICK_BUILD_PAGES && !getIsDev();
 
 export function getDocsPages(pages: DocsPage[]) {
     const frameworkPages = FRAMEWORKS.flatMap((framework) => {
@@ -19,23 +19,30 @@ export function getDocsPages(pages: DocsPage[]) {
         });
     });
 
-    const filteredPages = shouldFilterPages
+    const filteredPages = isQuickBuild
         ? frameworkPages.filter(({ pageName }) => {
               return QUICK_BUILD_PAGES.includes(pageName);
           })
         : frameworkPages;
 
-    return filteredPages.map(({ framework, pageName, page }) => {
-        return {
-            params: {
-                framework,
-                pageName,
-            },
-            props: {
-                page,
-            },
-        };
-    });
+    return filteredPages
+        .map(({ framework, pageName, page }) => {
+            const { frameworks } = page.data;
+            if (frameworks && !frameworks.includes(framework)) {
+                return;
+            }
+
+            return {
+                params: {
+                    framework,
+                    pageName,
+                },
+                props: {
+                    page,
+                },
+            };
+        })
+        .filter(Boolean);
 }
 
 export function getDocsFrameworkPages() {
@@ -50,7 +57,7 @@ export function getDocsFrameworkPages() {
 
 async function getDocsExampleNameParts({ pages }: { pages: DocsPage[] }) {
     const internalFrameworkExamples = await getInternalFrameworkExamples({ pages });
-    const filteredInternalFrameworkExamples = shouldFilterPages
+    const filteredInternalFrameworkExamples = isQuickBuild
         ? internalFrameworkExamples.filter(({ pageName }) => {
               return QUICK_BUILD_PAGES.includes(pageName);
           })
@@ -63,27 +70,27 @@ async function getDocsExampleNameParts({ pages }: { pages: DocsPage[] }) {
         return IMPORT_TYPES.map((importType) => {
             const importTypeSupported =
                 example.supportedImportTypes === undefined || example.supportedImportTypes.has(importType);
-            const isSupported = frameworkSupported && importTypeSupported;
+            const isVanillaModules = importType === 'modules' && (example.internalFramework === 'vanilla');
+            const isSupported = frameworkSupported && importTypeSupported && !isVanillaModules;
+            if(!isSupported){return undefined;}
             return {
                 ...example,
                 importType,
-                isSupported,
             };
         });
-    });
+    }).filter(e => e !== undefined);
 }
 
 export async function getDocsExamplePages({ pages }: { pages: DocsPage[] }) {
     const examples = await getDocsExampleNameParts({ pages });
 
-    return examples.map(({ internalFramework, pageName, exampleName, importType, isSupported }) => {
+    return examples.map(({ internalFramework, pageName, exampleName, importType }) => {
         return {
             params: {
                 internalFramework,
                 pageName,
                 exampleName,
                 importType,
-                isSupported: isSupported.toString(),
             },
         };
     });
@@ -92,7 +99,7 @@ export async function getDocsExamplePages({ pages }: { pages: DocsPage[] }) {
 export async function getDocExampleFiles({ pages }: { pages: DocsPage[] }) {
     const examples = await getDocsExampleNameParts({ pages });
     const exampleFilesPromises = examples.flatMap(
-        async ({ internalFramework, pageName, exampleName, importType, isSupported }) => {
+        async ({ internalFramework, pageName, exampleName, importType }) => {
             try {
                 const filesList = await getGeneratedContentsFileList({
                     type: 'docs',
@@ -100,7 +107,6 @@ export async function getDocExampleFiles({ pages }: { pages: DocsPage[] }) {
                     pageName,
                     exampleName,
                     importType,
-                    isSupported,
                 });
                 return filesList.map((fileName) => {
                     return {

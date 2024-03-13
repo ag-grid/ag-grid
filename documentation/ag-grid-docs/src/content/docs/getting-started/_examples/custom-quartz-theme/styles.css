@@ -1,8 +1,10 @@
-.ag-theme-quartz, .ag-theme-quartz-dark {
+.ag-theme-quartz.ag-custom-theme, .ag-theme-quartz-dark.ag-custom-theme{
       /* Changes the color of the grid text */
-      --ag-foreground-color: rgb(163, 64, 64);
+      --ag-foreground-color: rgb(14, 68, 145);
       /* Changes the color of the grid background */
-      --ag-background-color: rgba(215, 245, 231, 0.212);
+      --ag-background-color: rgba(241, 247, 255);
       /* Changes the background color of selected rows */
       --ag-selected-row-background-color: rgba(0, 38, 255, 0.1);
+      /* Changes the header color of the top row */
+      --ag-header-background-color: rgba(228, 237, 250);
 }

@@ -30,19 +30,17 @@ const GridExample = () => {
   const defaultColDef = useMemo(() => {
     return {
       flex: 1,
+      enableCellChangeFlash: true
     }
   }, [])
   const getRowId = useMemo(() => {
-    return params => {
-      return params.data.account
-    }
+    return params => params.data.account
   }, [])
   const detailCellRendererParams = useMemo(() => {
     return {
       refreshStrategy: "everything",
       detailGridOptions: {
         rowSelection: "multiple",
-        enableCellChangeFlash: true,
         getRowId: params => {
           return params.data.callId
         },
@@ -55,7 +53,7 @@ const GridExample = () => {
         ],
         defaultColDef: {
           flex: 1,
-          
+          enableCellChangeFlash: true,
         },
       },
       getDetailRowData: params => {
@@ -117,7 +115,6 @@ const GridExample = () => {
           defaultColDef={defaultColDef}
           getRowId={getRowId}
           masterDetail={true}
-          enableCellChangeFlash={true}
           detailCellRendererParams={detailCellRendererParams}
           onGridReady={onGridReady}
           onFirstDataRendered={onFirstDataRendered}

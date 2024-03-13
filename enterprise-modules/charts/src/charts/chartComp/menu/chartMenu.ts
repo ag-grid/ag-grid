@@ -8,10 +8,7 @@ import {
     ChartToolPanelMenuOptions,
     Component,
     Events,
-    GetChartToolbarItemsParams,
-    PostConstruct,
-    WithoutGridCommon,
-    ChartToolPanelName
+    PostConstruct
 } from "@ag-grid-community/core";
 
 import { TabbedChartMenu } from "./tabbedChartMenu";
@@ -28,23 +25,6 @@ type ChartToolbarButtons = {
     }
 };
 
-const CHART_TOOL_PANEL_ALLOW_LIST: ChartToolPanelMenuOptions[] = [
-    'chartSettings', 
-    'chartData', 
-    'chartFormat'
-];
-const CHART_TOOLBAR_ALLOW_LIST: ChartMenuOptions[] = [
-    'chartUnlink',
-    'chartLink',
-    'chartDownload'
-];
-
-export const CHART_TOOL_PANEL_MENU_OPTIONS: { [key in ChartToolPanelName]: ChartToolPanelMenuOptions } = {
-    settings: "chartSettings",
-    data: "chartData",
-    format: "chartFormat"
-}
-
 export class ChartMenu extends Component {
     @Autowired('chartMenuService') private chartMenuService: ChartMenuService;
     @Autowired('chartMenuListFactory') private chartMenuListFactory: ChartMenuListFactory;
@@ -52,9 +32,9 @@ export class ChartMenu extends Component {
     private readonly chartController: ChartController;
 
     private buttons: ChartToolbarButtons = {
-        chartSettings: { iconName: 'menu', callback: () => this.showMenu(this.defaultPanel) },
-        chartData: { iconName: 'menu', callback: () => this.showMenu("chartData") },
-        chartFormat: { iconName: 'menu', callback: () => this.showMenu("chartFormat") },
+        chartSettings: { iconName: 'menu', callback: () => this.showMenu({ panel: this.defaultPanel }) },
+        chartData: { iconName: 'menu', callback: () => this.showMenu({ panel: "chartData" }) },
+        chartFormat: { iconName: 'menu', callback: () => this.showMenu({ panel: "chartFormat" }) },
         chartLink: { iconName: 'linked', callback: () => this.chartMenuService.toggleLinked(this.chartMenuContext) },
         chartUnlink: { iconName: 'unlinked', callback: () => this.chartMenuService.toggleLinked(this.chartMenuContext) },
         chartDownload: { iconName: 'save', callback: () => this.chartMenuService.downloadChart(this.chartMenuContext) },
@@ -100,7 +80,7 @@ export class ChartMenu extends Component {
             if (e.chartId === this.chartController.getChartId()) {
                 const showDefaultToolPanel = Boolean(this.gridOptionsService.get('chartToolPanelsDef')?.defaultToolPanel);
                 if (showDefaultToolPanel) {
-                    this.showMenu(this.defaultPanel, false, true);
+                    this.showMenu({ panel: this.defaultPanel, animate: false, suppressFocus: true });
                 }
             }
         });
@@ -126,7 +106,7 @@ export class ChartMenu extends Component {
     }
 
     public getExtraPaddingDirections(): ExtraPaddingDirection[]  {
-        const topItems: ChartMenuOptions[] = ['chartLink', 'chartUnlink', 'chartDownload'];
+        const topItems: ChartMenuOptions[] = ['chartMenu', 'chartLink', 'chartUnlink', 'chartDownload'];
         const rightItems: ChartMenuOptions[] = ['chartSettings', 'chartData', 'chartFormat'];
 
         const result: ExtraPaddingDirection[] = [];
@@ -157,122 +137,14 @@ export class ChartMenu extends Component {
     }
 
     private initToolbarOptionsAndPanels(): void {
-        const useChartToolPanelCustomisation = Boolean(this.gridOptionsService.get('chartToolPanelsDef')) || !this.legacyFormat;
-
-        if (useChartToolPanelCustomisation) {
-            const defaultChartToolbarOptions: ChartMenuOptions[] = this.legacyFormat ? [
-                this.chartController.isChartLinked() ? 'chartLink' : 'chartUnlink',
-                'chartDownload'
-            ] : [
-                'chartMenu'
-            ];
-    
-            const toolbarItemsFunc = this.gridOptionsService.getCallback('getChartToolbarItems');
-            const params: WithoutGridCommon<GetChartToolbarItemsParams> = {
-                defaultItems: defaultChartToolbarOptions
-            };
-            const chartToolbarOptions = toolbarItemsFunc
-                ? toolbarItemsFunc(params).filter(option => {
-                    if (!(this.legacyFormat ? CHART_TOOLBAR_ALLOW_LIST : [...CHART_TOOLBAR_ALLOW_LIST, 'chartMenu']).includes(option)) {
-                        let msg;
-                        if (CHART_TOOL_PANEL_ALLOW_LIST.includes(option as any)) {
-                            msg = `'${option}' is a Chart Tool Panel option and will be ignored since 'chartToolPanelsDef' is used. Please use 'chartToolPanelsDef.panels' grid option instead`
-                        } else if (option === 'chartMenu') {
-                            msg = `'chartMenu' is only allowed as a Chart Toolbar Option when 'legacyChartsMenu' is set to false`;
-                        } else {
-                            msg = `'${option}' is not a valid Chart Toolbar Option`;
-                        }
-                        _.warnOnce(msg);
-                        return false;
-                    }
-
-                    return true;
-                })
-                : defaultChartToolbarOptions;
-
-            const panelsOverride = this.gridOptionsService.get('chartToolPanelsDef')?.panels
-                ?.map(panel => {
-                    const menuOption = CHART_TOOL_PANEL_MENU_OPTIONS[panel]
-                    if (!menuOption) {
-                        _.warnOnce(`Invalid panel in chartToolPanelsDef.panels: '${panel}'`);
-                    }
-                    return menuOption;
-                })
-                .filter(panel => Boolean(panel));
-            this.panels = panelsOverride
-                ? panelsOverride
-                : Object.values(CHART_TOOL_PANEL_MENU_OPTIONS);
-
-            // pivot charts use the column tool panel instead of the data panel
-            if (this.chartController.isPivotChart()) {
-                this.panels = this.panels.filter(panel => panel !== 'chartData');
-            }
-
-            const defaultToolPanel = this.gridOptionsService.get('chartToolPanelsDef')?.defaultToolPanel;
-            this.defaultPanel = (defaultToolPanel && CHART_TOOL_PANEL_MENU_OPTIONS[defaultToolPanel]) || this.panels[0];
-
-            if (this.legacyFormat) {
-                this.chartToolbarOptions = this.panels.length > 0
-                    // Only one panel is required to display menu icon in toolbar
-                    ? [this.panels[0], ...chartToolbarOptions]
-                    : chartToolbarOptions;
-            } else {
-                this.chartToolbarOptions = this.panels.length ? chartToolbarOptions : chartToolbarOptions.filter(option => option !== 'chartMenu');
-            }
-        } else { // To be deprecated in future. Toolbar options will be different to chart tool panels.
-            let tabOptions: ChartMenuOptions[] = [
-                'chartSettings',
-                'chartData',
-                'chartFormat',
-                this.chartController.isChartLinked() ? 'chartLink' : 'chartUnlink',
-                'chartDownload'
-            ];
-    
-            const toolbarItemsFunc = this.gridOptionsService.getCallback('getChartToolbarItems');
-    
-            if (toolbarItemsFunc) {
-                const isLegacyToolbar = this.gridOptionsService.get('suppressChartToolPanelsButton');
-                const params: WithoutGridCommon<GetChartToolbarItemsParams> = {
-                    defaultItems: isLegacyToolbar ? tabOptions : CHART_TOOLBAR_ALLOW_LIST
-                };
-    
-                tabOptions = toolbarItemsFunc(params).filter(option => {
-                    if (!this.buttons[option]) {
-                        _.warnOnce(`'${option}' is not a valid Chart Toolbar Option`);
-                        return false;
-                    } 
-                    // If not legacy, remove chart tool panel options here,
-                    // and add them all in one go below
-                    else if (!isLegacyToolbar && CHART_TOOL_PANEL_ALLOW_LIST.includes(option as any)) {
-                        const msg = `'${option}' is a Chart Tool Panel option and will be ignored. Please use 'chartToolPanelsDef.panels' grid option instead`;
-                        _.warnOnce(msg);
-                        return false;
-                    }
-    
-                    return true;
-                });
-
-                if (!isLegacyToolbar) {
-                    // Add all the chart tool panels, as `chartToolPanelsDef.panels`
-                    // should be used for configuration
-                    tabOptions = tabOptions.concat(CHART_TOOL_PANEL_ALLOW_LIST);
-                }
-            }
-    
-            // pivot charts use the column tool panel instead of the data panel
-            if (this.chartController.isPivotChart()) {
-                tabOptions = tabOptions.filter(option => option !== 'chartData');
-            }
-    
-            const ignoreOptions: ChartMenuOptions[] = ['chartUnlink', 'chartLink', 'chartDownload'];
-            this.panels = tabOptions.filter(option => ignoreOptions.indexOf(option) === -1) as ChartToolPanelMenuOptions[];
-            this.defaultPanel = this.panels[0];
-    
-            this.chartToolbarOptions =  tabOptions.filter(value =>
-                ignoreOptions.indexOf(value) !== -1 ||
-                (this.panels.length && value === this.panels[0])
-            );
-        }
+        const {
+            panels,
+            defaultPanel,
+            chartToolbarOptions
+        } = this.chartMenuService.getToolbarOptionsAndPanels(this.chartController);
+        this.panels = panels;
+        this.defaultPanel = defaultPanel;
+        this.chartToolbarOptions = chartToolbarOptions;
     }
 
     private updateToolbar(): void {
@@ -307,6 +179,10 @@ export class ChartMenu extends Component {
             this.chartMenuContext
         ));
 
+        this.addManagedListener(this.tabbedMenu, TabbedChartMenu.EVENT_CLOSED, () => {
+            this.hideMenu(false);
+        });
+
         this.addManagedListener(
             menuPanel,
             Component.EVENT_DESTROYED,
@@ -337,22 +213,20 @@ export class ChartMenu extends Component {
         });
     }
 
-    private showContainer(suppressFocus?: boolean) {
+    private showContainer(eventSource?: HTMLElement, suppressFocus?: boolean) {
         if (!this.menuPanel) { return; }
 
         this.menuVisible = true;
         this.showParent(this.menuPanel.getWidth()!);
         this.refreshMenuClasses();
-        if (!suppressFocus) {
-            this.tabbedMenu.focusHeader();
-        }
+        this.tabbedMenu.showMenu(eventSource, suppressFocus);
     }
 
     private toggleMenu() {
-        this.menuVisible ? this.hideMenu(this.legacyFormat) : this.showMenu(undefined, this.legacyFormat);
+        this.menuVisible ? this.hideMenu(this.legacyFormat) : this.showMenu({ animate: this.legacyFormat });
     }
 
-    public showMenu(
+    public showMenu(params: {
         /**
          * Menu panel to show. If empty, shows the existing menu, or creates the default menu if menu panel has not been created
          */
@@ -360,15 +234,17 @@ export class ChartMenu extends Component {
         /**
          * Whether to animate the menu opening
          */
-        animate: boolean = true,
+        animate?: boolean,
+        eventSource?: HTMLElement,
         suppressFocus?: boolean
-    ): void {
+    }): void {
+        const { panel, animate = true, eventSource, suppressFocus } = params;
         if (!animate) {
             this.eMenuPanelContainer.classList.add('ag-no-transition');
         }
 
         if (this.menuPanel && !panel) {
-            this.showContainer(suppressFocus);
+            this.showContainer(eventSource, suppressFocus);
         } else {
             const menuPanel = panel || this.defaultPanel;
             let tab = this.panels.indexOf(menuPanel);
@@ -379,9 +255,9 @@ export class ChartMenu extends Component {
     
             if (this.menuPanel) {
                 this.tabbedMenu.showTab(tab);
-                this.showContainer(suppressFocus);
+                this.showContainer(eventSource, suppressFocus);
             } else {
-                this.createMenuPanel(tab).then(() => this.showContainer(suppressFocus));
+                this.createMenuPanel(tab).then(() => this.showContainer(eventSource, suppressFocus));
             }
         }
 
@@ -431,7 +307,7 @@ export class ChartMenu extends Component {
     private showMenuList(eventSource: HTMLElement): void {
         this.chartMenuListFactory.showMenuList({
             eventSource,
-            showMenu: () => this.showMenu(undefined, false),
+            showMenu: () => this.showMenu({ animate: false, eventSource }),
             chartMenuContext: this.chartMenuContext
         });
     }

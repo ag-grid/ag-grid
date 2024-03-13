@@ -1,7 +1,7 @@
 // All breakpoints have $breakpoint prefix
 // E.g. @media screen and (min-width: $breakpoint-site-header-small) {}
 $site-header-extra-small: 520px;
-$site-header-small: 820px;
+$site-header-small: 852px;
 $site-header-medium: 1200px;
 $site-header-large: 1400px;
 
@@ -29,7 +29,7 @@ $fw-selector-full-width-large: 1020px;
 $docs-search-small: 420px;
 $docs-search-medium: 720px;
 
-$docs-nav-medium: 992px;
+$docs-nav-medium: 1052px;
 $docs-nav-large: 1475px;
 $docs-nav-extra-large: 1880px;
 
@@ -67,3 +67,7 @@ $gallery-large: 1340px;
 $options-medium: 820px;
 $options-large: 1200px;
 $options-extra-large: 1800px;
+
+$community-small: 605px;
+$community-medium: 1024px;
+$community-large: 1260px;

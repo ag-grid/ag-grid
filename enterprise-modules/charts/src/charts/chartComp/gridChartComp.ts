@@ -10,7 +10,6 @@ import {
     ChartType,
     Component,
     Events,
-    GridApi,
     IAggFunc,
     PopupService,
     PostConstruct,
@@ -18,36 +17,38 @@ import {
     SeriesChartType,
     UpdateChartParams,
     WithoutGridCommon,
+    FocusService,
 } from "@ag-grid-community/core";
 
-import {AgChartInstance, AgChartThemeOverrides, AgChartThemePalette} from "ag-charts-community";
-import {ChartMenu, CHART_TOOL_PANEL_MENU_OPTIONS} from "./menu/chartMenu";
-import {TitleEdit} from "./chartTitle/titleEdit";
-import {ChartController, DEFAULT_THEMES} from "./chartController";
-import {ChartDataModel, ChartModelParams} from "./model/chartDataModel";
-import {BarChartProxy} from "./chartProxies/cartesian/barChartProxy";
-import {AreaChartProxy} from "./chartProxies/cartesian/areaChartProxy";
-import {ChartProxy, ChartProxyParams} from "./chartProxies/chartProxy";
-import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
-import {PolarChartProxy} from "./chartProxies/polar/polarChartProxy";
-import {PieChartProxy} from "./chartProxies/pie/pieChartProxy";
-import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
-import {RangeChartProxy} from "./chartProxies/statistical/rangeChartProxy";
-import {HistogramChartProxy} from "./chartProxies/cartesian/histogramChartProxy";
-import {BoxPlotChartProxy} from "./chartProxies/statistical/boxPlotChartProxy";
-import {TreemapChartProxy} from "./chartProxies/hierarchical/treemapChartProxy";
-import {SunburstChartProxy} from "./chartProxies/hierarchical/sunburstChartProxy";
-import {HeatmapChartProxy} from './chartProxies/specialized/heatmapChartProxy';
-import {WaterfallChartProxy} from './chartProxies/cartesian/waterfallChartProxy';
-import {ChartTranslationKey, ChartTranslationService} from "./services/chartTranslationService";
-import {ChartCrossFilterService} from "./services/chartCrossFilterService";
-import {CrossFilteringContext} from "../chartService";
-import {ChartOptionsService} from "./services/chartOptionsService";
-import {ComboChartProxy} from "./chartProxies/combo/comboChartProxy";
-import {getCanonicalChartType, isHierarchical} from "./utils/seriesTypeMapper";
+import { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-community";
+import { ChartMenu } from "./menu/chartMenu";
+import { TitleEdit } from "./chartTitle/titleEdit";
+import { ChartController, DEFAULT_THEMES } from "./chartController";
+import { ChartDataModel, ChartModelParams } from "./model/chartDataModel";
+import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
+import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
+import { ChartProxy, ChartProxyParams } from "./chartProxies/chartProxy";
+import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
+import { PolarChartProxy } from "./chartProxies/polar/polarChartProxy";
+import { PieChartProxy } from "./chartProxies/pie/pieChartProxy";
+import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
+import { RangeChartProxy } from "./chartProxies/statistical/rangeChartProxy";
+import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
+import { BoxPlotChartProxy } from "./chartProxies/statistical/boxPlotChartProxy";
+import { TreemapChartProxy } from "./chartProxies/hierarchical/treemapChartProxy";
+import { SunburstChartProxy } from "./chartProxies/hierarchical/sunburstChartProxy";
+import { HeatmapChartProxy } from './chartProxies/specialized/heatmapChartProxy';
+import { WaterfallChartProxy } from './chartProxies/cartesian/waterfallChartProxy';
+import { ChartTranslationKey, ChartTranslationService } from "./services/chartTranslationService";
+import { ChartCrossFilterService } from "./services/chartCrossFilterService";
+import { CrossFilteringContext } from "../chartService";
+import { ChartOptionsService } from "./services/chartOptionsService";
+import { ComboChartProxy } from "./chartProxies/combo/comboChartProxy";
+import { getCanonicalChartType, isHierarchical } from "./utils/seriesTypeMapper";
 import { ChartMenuParamsFactory } from './menu/chartMenuParamsFactory';
 import { ChartMenuContext } from "./menu/chartMenuContext";
 import { deepMerge } from './utils/object';
+import { ChartMenuService, CHART_TOOL_PANEL_MENU_OPTIONS } from "./services/chartMenuService";
 
 export interface GridChartParams {
     chartId: string;
@@ -87,8 +88,8 @@ export class GridChartComp extends Component {
 
     @Autowired('chartCrossFilterService') private readonly crossFilterService: ChartCrossFilterService;
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-
-    @Autowired('gridApi') private readonly gridApi: GridApi;
+    @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
+    @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('popupService') private readonly popupService: PopupService;
 
     private chartMenu: ChartMenu;
@@ -101,6 +102,7 @@ export class GridChartComp extends Component {
 
     private chartProxy: ChartProxy;
     private chartType: ChartType;
+    private chartEmpty: boolean;
 
     private readonly params: GridChartParams;
 
@@ -314,7 +316,10 @@ export class GridChartComp extends Component {
 
         this.getContext().createBean(this.chartDialog);
 
-        this.chartDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => this.destroy());
+        this.chartDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => {
+            this.destroy();
+            this.chartMenuService.hideAdvancedSettings();
+        });
     }
 
     private getBestDialogSize(): { width: number, height: number; } {
@@ -371,15 +376,18 @@ export class GridChartComp extends Component {
         const updatedChartType = this.chartTypeChanged(params);
         // If the chart type has changed, grab the theme overrides from the exisiting chart before destroying it,
         // so that we can retain any compatible theme overrides across different chart types.
-        const persistedThemeOverrides = updatedChartType
+        const persistedThemeOverrides = updatedChartType || this.chartEmpty
             ? (((updatedChartType) => {
                 const currentChartType = this.chartType;
                 const targetChartType = updatedChartType;
-                const existingChartOptions = this.chartProxy.getChart()?.getOptions()
+                const existingChartInstance = this.chartProxy.getChart();
+                const existingChartOptions = existingChartInstance?.getOptions()
+                const existingAxes = existingChartInstance?.axes;
                 return this.chartOptionsService.getPersistedChartThemeOverrides(
                     existingChartOptions,
+                    existingAxes,
                     currentChartType,
-                    targetChartType,
+                    targetChartType ?? currentChartType,
                 );
             }))(updatedChartType)
             : undefined;
@@ -410,7 +418,11 @@ export class GridChartComp extends Component {
         const data = this.chartController.getChartData();
         const chartEmpty = this.handleEmptyChart(data, fields);
 
+        this.chartEmpty = chartEmpty;
         if (chartEmpty) {
+            // We don't have enough data to reinstantiate the chart with the new chart type,
+            // but we still want to persist any theme overrides for when the data is present
+            if (updatedOverrides) this.chartController.updateThemeOverrides(updatedOverrides);
             return;
         }
 
@@ -482,7 +494,7 @@ export class GridChartComp extends Component {
 
     public openChartToolPanel(panel?: ChartToolPanelName) {
         const menuPanel = panel ? CHART_TOOL_PANEL_MENU_OPTIONS[panel] : panel;
-        this.chartMenu.showMenu(menuPanel);
+        this.chartMenu.showMenu({ panel: menuPanel });
     }
 
     public closeChartToolPanel() {
@@ -507,7 +519,7 @@ export class GridChartComp extends Component {
         }
 
         this.chartController.setChartRange(true);
-        (this.gridApi as any).focusService.clearFocusedCell();
+        this.focusService.clearFocusedCell();
     }
 
     private getThemeName(): string {

@@ -72,9 +72,9 @@ See [Registering Custom Components](./components/#registering-custom-components)
 
 ## Dynamic Selection
 
-The `colDef.cellRendererSelector` function allows setting difference Editor Components for different Rows within a Column.
+The `colDef.cellRendererSelector` function allows setting different Editor Components for different Rows within a Column.
 
-The `params` passed to `cellEditorSelector` are the same as those passed to the Editor Component. Typically the selector will use this to check the rows contents and choose an editor accordingly.
+The `params` passed to `cellEditorSelector` are the same as those passed to the Editor Component. Typically the selector will use this to check the row's contents and choose an editor accordingly.
 
 The result is an object with `component` and `params` to use instead of `cellEditor` and `cellEditorParams`.
 
@@ -226,9 +226,9 @@ You have two options to stop the grid from doing it's default action on certain 
 
 ### Option 1 - Stop Propagation
 
-If you don't want the grid to act on an event, call `event.stopPropagation()`. The advantage of this method is that your cell editor takes care of everything, good for creating reusable cell editors.
+If you don't want the grid to act on an event, call `event.stopPropagation()`. The advantage of this method is that your cell editor takes care of everything, this is good for creating reusable cell editors.
 
-The follow code snippet is one you could include for a simple text editor, which would stop the grid from doing navigation.
+The following code snippet is one you could include for a simple text editor, which would stop the grid from doing navigation.
 
 {% includeMarkdoc file="cell-editors/_keyboard-option-1-javascript.mdoc" /%}
 {% includeMarkdoc file="cell-editors/_keyboard-option-1-angular.mdoc" /%}
@@ -237,7 +237,7 @@ The follow code snippet is one you could include for a simple text editor, which
 
 ### Option 2 - Suppress Keyboard Event
 
-If you implement `colDef.suppressKeyboardEvent()`, you can tell the grid which events you want process and which not. The advantage of this method of the previous method is it takes the responsibility out of the cell editor and into the column definition. So if you are using a reusable, or third party, cell editor, and the editor doesn't have this logic in it, you can add the logic via configuration.
+If you implement `colDef.suppressKeyboardEvent()`, you can tell the grid which events you want to process and which not. The advantage of this method of the previous method is it takes the responsibility out of the cell editor and into the column definition. So if you are using a reusable, or third party, cell editor, and the editor doesn't have this logic in it, you can add the logic via configuration.
 
 {% apiDocumentation source="column-properties/properties.json" section="columns" names=["suppressKeyboardEvent"] /%}
 

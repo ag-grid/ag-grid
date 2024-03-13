@@ -9,6 +9,10 @@ function getFilteredMenuItems({ menuItems, framework }: { menuItems?: MenuItem[]
     return menuItems
         ? (menuItems
               .map((menuItem) => {
+                  if (menuItem.frameworks && !menuItem.frameworks.includes(framework)) {
+                      return undefined;
+                  }
+
                   if (menuItem.items) {
                       const filteredItems = getFilteredMenuItems({ menuItems: menuItem.items, framework })?.filter(
                           Boolean
@@ -18,9 +22,8 @@ function getFilteredMenuItems({ menuItems, framework }: { menuItems?: MenuItem[]
                           ...menuItem,
                           items: filteredItems,
                       };
-                  } else {
-                      return !menuItem.frameworks || menuItem.frameworks.includes(framework) ? menuItem : undefined;
-                  }
+                  } 
+                  return menuItem;
               })
               .filter(Boolean) as MenuSection[])
         : undefined;

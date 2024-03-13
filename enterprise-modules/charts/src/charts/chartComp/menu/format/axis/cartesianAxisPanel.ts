@@ -9,9 +9,11 @@ import {
     AgSliderParams,
     Autowired,
     Component,
+    Events,
     PostConstruct,
     RefSelector,
 } from "@ag-grid-community/core";
+import type { AgCartesianAxisOptions } from 'ag-charts-community';
 import { ChartController } from "../../../chartController";
 import { AxisTicksPanel } from "./axisTicksPanel";
 import { FontPanel, FontPanelParams } from "../fontPanel";
@@ -21,8 +23,10 @@ import { GridLinePanel } from '../gridLine/gridLinePanel';
 import { AgAngleSelect } from "../../../../../widgets/agAngleSelect";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 import { ChartOptionsProxy } from '../../../services/chartOptionsService';
-import { isPolar } from '../../../utils/seriesTypeMapper';
+import { isCartesian } from '../../../utils/seriesTypeMapper';
 import { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
+
+const DEFAULT_TIME_AXIS_FORMAT = '%d %B %Y';
 
 export class CartesianAxisPanel extends Component {
 
@@ -30,6 +34,7 @@ export class CartesianAxisPanel extends Component {
         `<div>
             <ag-group-component ref="axisGroup">
                 <ag-select ref="axisTypeSelect"></ag-select>
+                <ag-select ref="axisTimeFormatSelect"></ag-select>
                 <ag-select ref="axisPositionSelect"></ag-select>
                 <ag-color-picker ref="axisColorInput"></ag-color-picker>
                 <ag-slider ref="axisLineWidthSlider"></ag-slider>
@@ -39,6 +44,7 @@ export class CartesianAxisPanel extends Component {
     @RefSelector('axisGroup') private axisGroup: AgGroupComponent;
     @RefSelector('axisTypeSelect') private axisTypeSelect: AgSelect;
     @RefSelector('axisPositionSelect') private axisPositionSelect: AgSelect;
+    @RefSelector('axisTimeFormatSelect') private axisTimeFormatSelect: AgSelect;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
@@ -81,6 +87,7 @@ export class CartesianAxisPanel extends Component {
 
         const axisTypeSelectParams = this.getAxisTypeSelectParams(chartAxisOptions, this.chartAxisAppliedThemeOverridesProxy);
         const axisPositionSelectParams = this.getAxisPositionSelectParams(chartAxisOptions);
+        const axisTimeFormatSelectParams = this.getAxisTimeFormatSelectParams(chartAxisOptions);
         const axisColorInputParams = this.getAxisColorInputParams(chartAxisThemeOverrides);
         const axisLineWidthSliderParams = this.getAxisLineWidthSliderParams(chartAxisThemeOverrides);
 
@@ -88,12 +95,27 @@ export class CartesianAxisPanel extends Component {
             axisGroup: axisGroupParams,
             axisTypeSelect: axisTypeSelectParams ?? undefined,
             axisPositionSelect: axisPositionSelectParams ?? undefined,
+            axisTimeFormatSelect: axisTimeFormatSelectParams ?? undefined,
             axisColorInput: axisColorInputParams,
             axisLineWidthSlider: axisLineWidthSliderParams
         });
 
         if (!axisTypeSelectParams) this.removeTemplateComponent(this.axisTypeSelect);
         if (!axisPositionSelectParams) this.removeTemplateComponent(this.axisPositionSelect);
+        if (!axisTimeFormatSelectParams) {
+            this.removeTemplateComponent(this.axisTimeFormatSelect);
+        } else {
+            // Conditionally hide the time format input based on the currently selected axis type
+            const updateTimeFormatVisibility = () => {
+                const isTimeAxis = this.chartAxisOptionsProxy.getValue('type') === 'time';
+                _.setDisplayed(this.axisTimeFormatSelect.getGui(), isTimeAxis)
+            };
+            updateTimeFormatVisibility();
+            // Update the visibility whenever the axis type changes
+            this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, (e) => {
+                updateTimeFormatVisibility();
+            });
+        }
 
         this.initGridLines(chartAxisThemeOverrides);
         this.initAxisTicks(chartAxisThemeOverrides);
@@ -104,8 +126,9 @@ export class CartesianAxisPanel extends Component {
     }
 
     private getAxisTypeSelectParams(chartAxisOptions: ChartMenuParamsFactory, chartAxisAppliedThemeOverrides: ChartOptionsProxy): AgSelectParams | null {
+        const chartOptions = chartAxisOptions.getChartOptions();
         const axisTypeSelectOptions = ((chartType, axisType) => {
-            if (isPolar(chartType)) return null;
+            if (!isCartesian(chartType)) return null;
             switch (axisType) {
                 case 'xAxis': return [
                     { value: 'category', text: this.translate('category') },
@@ -121,23 +144,39 @@ export class CartesianAxisPanel extends Component {
             'axisType',
             axisTypeSelectOptions,
         );
-        params.onValueChange = ((onValueChange) => (value) => {
-            const previousAxisType = chartAxisOptions.getChartOptions().getValue('type');
+        params.onValueChange = (value: AgCartesianAxisOptions['type']): void => {
+            const previousAxisType = chartOptions.getValue<AgCartesianAxisOptions['type']>('type');
             if (value === previousAxisType) return;
             // If the axis type is changed, we need to carry over all the accumulated theme overrides
             // that have been applied to the existing axis type so far
-            const previousAxisThemeOverrides = chartAxisAppliedThemeOverrides.getValue('*');
-            // Update the axis type
-            onValueChange?.(value);
+            const previousAxisThemeOverrides = chartAxisAppliedThemeOverrides.getValue<AgCartesianAxisOptions>('*');
+            // Optionally update the axis label format when switching between time and non-time axes
+            const previousAxisIsTimeAxis = isTimeAxisType(previousAxisType);
+            const updatedAxisIsTimeAxis = isTimeAxisType(value);
+            const updatedLabelFormat = (previousAxisIsTimeAxis !== updatedAxisIsTimeAxis
+                ? (updatedAxisIsTimeAxis ? DEFAULT_TIME_AXIS_FORMAT : undefined)
+                : null
+            );
+            // Update the axis type (and label format if necessary)
+            if (updatedLabelFormat === null) {
+                chartOptions.setValue<AgCartesianAxisOptions['type']>('type', value);
+            } else {
+                const existingLabel = chartOptions.getValue<AgCartesianAxisOptions['label']>('label') ?? {};
+                chartOptions.setValues<AgCartesianAxisOptions['type'] | AgCartesianAxisOptions['label']>([
+                    { expression: 'type', value },
+                    { expression: 'label', value: { ...existingLabel, format: updatedLabelFormat } }
+                ]);
+                this.axisTimeFormatSelect.setValue(updatedLabelFormat, true);
+            }
             // Reapply the previous theme overrides to the new axis type
-            chartAxisAppliedThemeOverrides.setValue('*', previousAxisThemeOverrides);
-        })(params.onValueChange);
+            chartAxisAppliedThemeOverrides.setValue<AgCartesianAxisOptions>('*', previousAxisThemeOverrides);
+        };
         return params;
     }
 
     private getAxisPositionSelectParams(chartAxisOptions: ChartMenuParamsFactory): AgSelectParams | null {
         const axisPositionSelectOptions = ((chartType, axisType) => {
-            if (isPolar(chartType)) return null;
+            if (!isCartesian(chartType)) return null;
             switch (axisType) {
                 case 'xAxis': return [
                     { value: 'top', text: this.translate('top') },
@@ -154,6 +193,33 @@ export class CartesianAxisPanel extends Component {
             'position',
             'position',
             axisPositionSelectOptions,
+        );
+    }
+
+    private getAxisTimeFormatSelectParams(chartAxisOptions: ChartMenuParamsFactory): AgSelectParams | null {
+        const axisTimeFormatSelectOptions = ((chartType, axisType) => {
+            if (!isCartesian(chartType)) return null;
+            switch (axisType) {
+                case 'xAxis': return [
+                    { value: '%d/%m/%Y', text: this.translate('timeFormatSlashesDDMMYYYY') },
+                    { value: '%m/%d/%Y', text: this.translate('timeFormatSlashesMMDDYYYY') },
+                    { value: '%d/%m/%y', text: this.translate('timeFormatSlashesDDMMYY') },
+                    { value: '%m/%d/%y', text: this.translate('timeFormatSlashesMMDDYY') },
+                    { value: '%d.%e.%y', text: this.translate('timeFormatDotsDDMYY') },
+                    { value: '%e.%d.%y', text: this.translate('timeFormatDotsMDDYY') },
+                    { value: '%Y-%m-%d', text: this.translate('timeFormatDashesYYYYMMDD') },
+                    { value: '%d %B %Y', text: this.translate('timeFormatSpacesDDMMMMYYYY') },
+                    { value: '%H:%M:%S', text: this.translate('timeFormatHHMMSS') },
+                    { value: '%I:%M:%S %p', text: this.translate('timeFormatHHMMSSAmPm') },
+                ];
+                case 'yAxis': return null;
+            }
+        })(this.chartController.getChartType(), this.axisType);
+        if (!axisTimeFormatSelectOptions) return null;
+        return chartAxisOptions.getDefaultSelectParams(
+            'label.format',
+            'timeFormat',
+            axisTimeFormatSelectOptions,
         );
     }
 
@@ -337,5 +403,19 @@ export class CartesianAxisPanel extends Component {
     protected destroy(): void {
         this.destroyActivePanels();
         super.destroy();
+    }
+}
+
+function isTimeAxisType(axisType: AgCartesianAxisOptions['type']): boolean {
+    switch (axisType) {
+        case 'time':
+        case 'ordinal-time':
+            return true;
+        case 'number':
+        case 'log':
+        case 'category':
+        case 'grouped-category':
+        default:
+            return false;
     }
 }

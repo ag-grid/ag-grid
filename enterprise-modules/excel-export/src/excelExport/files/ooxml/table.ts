@@ -11,6 +11,7 @@ const tableFactory: ExcelOOXMLTemplate = {
             headerRowIndex,
             showRowStripes,
             showColumnStripes,
+            showFilterButtons,
             highlightFirstColumn,
             highlightLastColumn
         } = dataTable || {};
@@ -18,6 +19,16 @@ const tableFactory: ExcelOOXMLTemplate = {
         if (!dataTable || !name || !Array.isArray(columns) || !columns.length || !rowCount) {
             return { name: "table" };
         }
+
+        const filterColumns = columns.map((col: string, idx: number) => ({
+            name: "filterColumn",
+            properties: {
+                rawMap: {
+                    colId: idx.toString(), // For filters, this should start with 0
+                    hiddenButton: showFilterButtons[idx] ? 0 : 1
+                }
+            }
+        }));
 
         const firstRow = headerRowIndex + 1;
         const id: string = (idx + 1).toString();
@@ -47,9 +58,10 @@ const tableFactory: ExcelOOXMLTemplate = {
                     name: "autoFilter",
                     properties: {
                         rawMap: {
-                            ref
+                            ref,
                         }
-                    }
+                    },
+                    children: filterColumns,
                 },
                 {
                     name: "tableColumns",
@@ -77,7 +89,7 @@ const tableFactory: ExcelOOXMLTemplate = {
                             showFirstColumn: highlightFirstColumn ? 1 : 0,
                             showLastColumn: highlightLastColumn ? 1 : 0,
                             showRowStripes: showRowStripes ? 1 : 0,
-                            showColumnStripes: showColumnStripes ? 1 : 0
+                            showColumnStripes: showColumnStripes ? 1 : 0,
                         }
                     }
                 }

@@ -250,15 +250,6 @@
     "items": [
       {
         "label": {
-          "name": "Drag & Drop",
-          "link": "/react-data-grid/drag-and-drop/"
-        },
-        "community": true,
-        "enterprise": true,
-        "chartsGrid": true
-      },
-      {
-        "label": {
           "name": "CSV Export",
           "link": "/react-data-grid/csv-export/"
         },

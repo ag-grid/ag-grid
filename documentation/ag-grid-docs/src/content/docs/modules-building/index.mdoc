@@ -1,72 +1,9 @@
 ---
-title: "Building Applications With AG Grid Modules"
+title: "Custom UMD Bundle"
 ---
 
 In this section we demonstrate how you can cherry pick modules to provide the features you need with a reduced application bundle size.
 
-{% if isNotJavascriptFramework() %}
-## Introduction
-
-In order to use selective AG Grid modules within your application you need to do two things:
-
-- Specify the modules you require as dependencies
-- Register the modules you require with the Grid
-
-### Choosing Our Modules
-
-
-You can refer to the [Complete List of Modules here](./modules/#modules) but for our purposes we're going to assume that the application we're building requires the following features:
-
-- Client Side Row Model
-- Excel Export
-- Context Menu
-
-At a minimum you need to provide a [Row Model](./row-models/) to the Grid (as described in [Installing AG Grid Modules](./modules/#installing-ag-grid-modules)), and in our case we've opted for the Client Side Row Model. Additionally we're going to provide [Excel Export](./excel-export/) functionality, so we're going to need the corresponding Excel Module. Finally, we'd like our users to be able to export the data using the [Context Menu](./context-menu/), so we'll include that module too.
-
-This is what our `package.json` file will look like based on the requirements above:
-
-{% /if %}
-
-{% if isNotJavascriptFramework() %}
-```js
-"dependencies": {
-    "@ag-grid-community/client-side-row-model": "~@AG_GRID_VERSION@",
-    "@ag-grid-enterprise/excel-export": "~@AG_GRID_VERSION@",
-    "@ag-grid-enterprise/menu": "~@AG_GRID_VERSION@"
-
-    //...other dependencies...
-}
-```
-{% /if %}
-
-{% if isNotJavascriptFramework() %}
-### Registering Our Modules
-
-Now that these modules are available to us we need to import them within our application, and then register them with the Grid:
-{% /if %}
-
-{% if isNotJavascriptFramework() %}
-```js
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-
-ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
-```
-{% /if %}
-
-{% if isNotJavascriptFramework() %}
-{% note %}
-You do not need to register framework modules (ie. `@ag-grid-community/angular`, `@ag-grid-community/react`, `@ag-grid-community/vue` etc).
-{% /note %}
-{% /if %}
-
-{% if isNotJavascriptFramework() %}
-And that's all that's required. Below is an example using the above configuration for your framework.
-{% /if %}
-
-{% if isFramework("javascript") %}
 ## Building Your Own UMD Bundle
 
 `ag-grid-community` and `ag-grid-enterprise` provide UMD bundles with their distribution for ease of use, and these are great for getting started and making use of all features with very little effort.
@@ -83,9 +20,7 @@ As with the sections above we're going to assume that we only require the follow
 
 This is what our `package.json` file will look like based on the requirements above:
 
-{% /if %}
 
-{% if isFramework("javascript") %}
 ```js
 "dependencies": {
     "@ag-grid-community/client-side-row-model": "~@AG_GRID_VERSION@",
@@ -95,9 +30,6 @@ This is what our `package.json` file will look like based on the requirements ab
     //...other dependencies...
 }
 ```
-{% /if %}
-
-{% if isFramework("javascript") %}
 
 ### Specify What Is Included In The Bundle
 
@@ -108,9 +40,6 @@ Additionally we can include the theme(s) we want to include in our bundle - for 
 
 Let's create a file called `main.js` that will serve as our entry point:
 
-{% /if %}
-
-{% if isFramework("javascript") %}
 ```js
 export * from '@ag-grid-community/core';
 export * from '@ag-grid-enterprise/core';
@@ -130,16 +59,11 @@ ModuleRegistry.register(ExcelExportModule);
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 ```
-{% /if %}
 
-{% if isFramework("javascript") %}
 Note that we've included the Module Registration step here - we do this so that consumers of our UMD bundle won't have to. This is a convenience step but is recommended for UMD bundles.
 
 Next we'll create a Webpack configuration file:
 
-{% /if %}
-
-{% if isFramework("javascript") %}
 ```js
 module.exports = {
     mode: 'production',
@@ -152,9 +76,7 @@ module.exports = {
     }
 }
 ```
-{% /if %}
 
-{% if isFramework("javascript") %}
 There are two main items here:
 
 - `entry`: We specify the `main.js` entry file we created that will determine what to include in our bundle.
@@ -162,19 +84,13 @@ There are two main items here:
 
 You can then build your bundle as follows:
 
-{% /if %}
 
-{% if isFramework("javascript") %}
 ```bash
 webpack --config config/webpack.prod.js
 ```
-{% /if %}
 
-{% if isFramework("javascript") %}
 Which will result in a file called `dist/bundle.umd.js` being created, which we can then use as follows:
-{% /if %}
 
-{% if isFramework("javascript") %}
 ```html
 <!DOCTYPE html>
 <html>
@@ -213,4 +129,3 @@ Which will result in a file called `dist/bundle.umd.js` being created, which we 
 </body>
 </html>
 ```
-{% /if %}

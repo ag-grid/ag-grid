@@ -2,13 +2,13 @@
 title: "Value Cache"
 ---
 
+The Value Cache is for advanced users who have time-consuming Value Getters and want to reduce the number of times Value Getters get executed.
+
 Each time the grid requires a value from a Value Getter, the Value Getter is executed. For most use cases, this will not be an issue, as Value Getters will execute quickly and not have any noticeable performance implications for your application. However sometimes you might implement time-intensive tasks in your Value Getters. If this is the case, then you can opt to turn on the Value Cache to store the results of the value getters.
 
 If you are not using Value Getters, or you don't have performance problems, then you do not need the Value Cache.
 
 When the Calue Cache is turned on, each time a Value Getter is executed, its result is stored in the Value Cache. If the data in the grid has not changed since the last time the value getter was used, then the value is retrieved from the cache instead of executing the Value Getter again.
-
-This Value Cache is for advanced users who have time-consuming Value Getters and want to speed up their applications by introducing a cache to reduce the number of times Value Getters get executed.
 
 {% note %}
 One client of AG Grid had 1,000 rows and 20 columns in a grid. A lot of the columns were doing advanced
@@ -32,7 +32,7 @@ that has a `console.log()` statement. This will allow us to see exactly when the
 * As you **open and close groups**, the value getters are executed, as the DOM needs values for rendering.
 * Now turn the value cache **on** by selecting the radio button at the top. The grid gets reset and then works with the value cache on. Notice in the console that the value getter gets executed exactly 100 times, once for each row. Even through the value getter result is used in two places (aggregation and rendering the row), the value getter is only called once. Even scrolling and opening / closing the groups does not result in the value getter getting executed again.
 
-{% gridExampleRunner title="Value Cache" name="value-cache"  /%}
+{% gridExampleRunner title="Value Cache" name="value-cache" typescriptOnly=true /%}
 
 {% note %}
 Note that the example still works fast when the Value Cache is turned off. This emphasises you don't need to turn the Value Cache on if your application is not getting slowed down by your Value Getters.

@@ -21,12 +21,12 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     sortable: false,
+    enableCellChangeFlash: true,
   },
   columnDefs: columnDefs,
   // use the enterprise row model
   rowModelType: 'serverSide',
   cacheBlockSize: 75,
-  enableCellChangeFlash: true,
 }
 
 function setRows() {

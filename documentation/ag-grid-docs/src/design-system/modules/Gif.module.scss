@@ -2,7 +2,6 @@
 
 .gif {
     max-width: 100%;
-    margin-bottom: $spacing-size-4;
     outline: none !important;
 
     &.wrapped {
@@ -16,6 +15,12 @@
 
     display: inline-block;
     position: relative;
+    width: 100%;
+    min-height: $spacing-size-64;
+    margin-bottom: $spacing-size-4;
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-primary);
+    text-align: center;
     user-select: none;
     cursor: pointer;
 
@@ -26,6 +31,10 @@
     &:hover :global(.play_button) {
         background-color: var(--color-link-hover);
         transform: translate(-50%, -50%) scale(1.1);
+
+        #{$selector-darkmode} & {
+            background-color: color-mix(in srgb, var(--color-util-brand-200), var(--color-link-hover) 25%);
+        }
     }
 
     &:global(.playing) :global(.play_button) {

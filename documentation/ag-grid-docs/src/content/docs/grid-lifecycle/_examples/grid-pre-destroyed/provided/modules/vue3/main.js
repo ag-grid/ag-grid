@@ -5,7 +5,7 @@ import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 import {ModuleRegistry} from '@ag-grid-community/core';
 import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-
+import {getData} from './data.js';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
@@ -69,7 +69,7 @@ const VueExample = {
         const rowData = ref(null)
 
         onBeforeMount(() => {
-            rowData.value = getDataSet()
+            rowData.value = getData()
         });
 
         const onGridPreDestroyed = (params) => {

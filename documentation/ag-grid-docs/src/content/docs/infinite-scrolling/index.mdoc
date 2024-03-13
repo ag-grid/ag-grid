@@ -22,7 +22,7 @@ once the grid has extended the scroll to reach the last record in the table.
 The grid will ask your application, via a datasource, for the rows in blocks. Each block
 contains a subset of rows of the entire dataset. The following diagram is a high-level overview.
 
-{% imageCaption imagePath="resources/high-level.png" alt="high-level" centered=true constrained=true /%}
+{% imageCaption imagePath="resources/high-level.png" alt="high-level" centered=true constrained=true enableDarkModeFilter=true /%}
 
 When the grid scrolls to a position where there is no corresponding block of rows loaded, the model
 uses the provided datasource to get the rows for the requested block. In the diagram, the datasource

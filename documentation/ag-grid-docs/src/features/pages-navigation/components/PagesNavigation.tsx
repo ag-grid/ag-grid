@@ -77,6 +77,7 @@ function CollapsibleNav({
                                 )}
                                 {title}
                                 {isEnterprise && <EnterpriseIcon />}
+                                {newWindow && <Icon name="newTab" svgClasses={gridStyles.newTabIcon} />}
                             </a>
                         </li>
                     );

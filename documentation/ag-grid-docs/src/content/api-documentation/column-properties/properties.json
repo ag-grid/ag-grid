@@ -321,8 +321,7 @@
         },
         "autoHeight": {},
         "wrapText": {},
-        "enableCellChangeFlash": {},
-        "suppressCellFlash": {}
+        "enableCellChangeFlash": {}
     },
     "sort": {
         "meta": {
@@ -481,9 +480,7 @@
             }
         },
         "rowDrag": {},
-        "rowDragText": {},
-        "dndSource": {},
-        "dndSourceOnRowDrag": {}
+        "rowDragText": {}
     },
     "events": {
         "meta": {

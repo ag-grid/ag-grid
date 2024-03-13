@@ -3,7 +3,7 @@ title: "Group Cell Component"
 enterprise: true
 ---
 
-The Group Cell Component provides the expand and collapse functionatly when using Row Grouping, Master Detail or Tree Data. The Group Cell Component can be the [Provided Component](./group-cell-renderer/) that comes with the grid or a [Custom Component](./group-custom-group-comp/) that you provide youself.
+The Group Cell Component provides the expand and collapse functionality when using Row Grouping, Master Detail or Tree Data. The Group Cell Component can be the [Provided Component](./group-cell-renderer/) that comes with the grid or a [Custom Component](./group-custom-group-comp/) that you provide yourself
 
 Where the Group Cell Component is configured depends on the [Display Type](./grouping-display-types/).
 
@@ -62,7 +62,7 @@ const gridOptions = {
     autoGroupColumnDef: {
         cellRendererSelector: (params) => {
           if (['Australia', 'Norway'].includes(params.node.key)) {
-            return; // use Default Cell Renderer
+            return; // use Default Cell Component
           }
           return { component: 'agGroupCellRenderer' };      
         },
@@ -73,6 +73,6 @@ const gridOptions = {
 This example demonstrates Dynamic Selection.
 
 * The `autoGroupColumnDef` contains a `cellRendererSelector` to conditionally select the Group Cell Component.
-* The **Australia** and **Norway** group cells are using the Default Group Cell Component.
+* The **Australia** and **Norway** group cells are not using any Group Cell Component and as such are missing expand and collapse functionality.
 
 {% gridExampleRunner title="Conditionally Show Group Cell Renderer" name="custom-expand-collapse-cell" /%}

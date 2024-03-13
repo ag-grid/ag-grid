@@ -1,47 +1,22 @@
 [
     {
-        "src": "/community/socials/x-white.svg",
-        "text": "X (Twitter)",
-        "desc": "Found a bug? Raise a GitHub issue and one of our team will take a look",
-        "link": {
-            "url": "https://twitter.com/aggrid",
-            "text": "Follow"
-        }
+        "icon": "xLogo",
+        "url": "https://twitter.com/ag-grid"
     },
     {
-        "src": "/community/socials/linkedin.svg",
-        "text": "LinkedIn",
-        "desc": "Found a bug? Raise a GitHub issue and one of our team will take a look",
-        "link": {
-            "url": "https://www.linkedin.com/company/ag-grid/",
-            "text": "Connect"
-        }
+        "icon": "linkedin",
+        "url": "https://www.linkedin.com/company/ag-grid/"
     },
     {
-        "src": "/community/socials/youtube.svg",
-        "text": "YouTube",
-        "desc": "Enterprise user? Use Zendesk to request support from our dedicated in-house team",
-        "link": {
-            "url": "https://youtube.com/c/ag-grid",
-            "text": "Subscribe"
-        }
+        "icon": "youtube",
+        "url": "https://youtube.com/c/ag-grid"
     },
     {
-        "src": "/community/socials/blog.svg",
-        "text": "Blog",
-        "desc": "Havess a question? Browse the AG Grid & AG Charts tags to leverage our community to help answer your questions",
-        "link": {
-            "url": "https://blog.ag-grid.com",
-            "text": "Browse"
-        }
+        "icon": "blog",
+        "url": "https://blog.ag-grid.com"
     },
     {
-        "src": "/community/socials/mailchimp.svg",
-        "text": "Newsletter",
-        "desc": "Enterprise user? Use Zendesk to request support from our dedicated in-house team",
-        "link": {
-            "url": "https://blog.ag-grid.com/newsletter",
-            "text": "Join"
-        }
+        "icon": "email",
+        "url": "https://blog.ag-grid.com/newsletter"
     }
 ]

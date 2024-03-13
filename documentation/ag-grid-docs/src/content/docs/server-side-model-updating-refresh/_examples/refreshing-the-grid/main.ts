@@ -26,6 +26,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 150,
+    enableCellChangeFlash: true,
   },
   autoGroupColumnDef: {
     flex: 1,
@@ -51,8 +52,6 @@ const gridOptions: GridOptions = {
   },
   // use the server-side row model
   rowModelType: 'serverSide',
-
-  enableCellChangeFlash: true,
   suppressAggFuncInHeader: true,
 
 };

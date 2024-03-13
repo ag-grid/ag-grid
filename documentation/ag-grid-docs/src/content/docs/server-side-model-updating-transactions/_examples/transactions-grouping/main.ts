@@ -18,7 +18,7 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
 
 import { FakeServer } from './fakeServer';
-import { deletePortfolioOnServer, createRowOnServer, changePortfolioOnServer } from './data';
+import { data, deletePortfolioOnServer, createRowOnServer, changePortfolioOnServer } from './data';
 
 const columnDefs: ColDef[] = [
     { field: 'tradeId' },
@@ -35,11 +35,11 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
+    enableCellChangeFlash: true,
   },
   autoGroupColumnDef: {
     minWidth: 220,
   },
-  enableCellChangeFlash: true,
   isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
     return params.rowNode.key === 'Aggressive' || params.rowNode.key === 'Hybrid';
   },

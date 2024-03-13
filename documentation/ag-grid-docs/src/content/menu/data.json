@@ -7,11 +7,11 @@
             },
             {
                 "title": "Docs",
-                "path": "/documentation"
+                "path": "./getting-started"
             },
             {
                 "title": "API",
-                "path": "/reference"
+                "path": "./reference"
             },
             {
                 "title": "Community",
@@ -27,6 +27,21 @@
                 "icon": "github",
                 "github": "true"
             }
+        ]
+    },
+    "product": {
+        "items": [
+            {
+                "title": "AG Grid",
+                "description": "Best JavaScript Grid in the World",
+                "url": "https://ag-grid.com"
+            },
+            {
+                "title": "AG Charts",
+                "description": "Best JavaScript Charts in the World",
+                "url": "https://charts.ag-grid.com"
+            }
+            
         ]
     },
     "api": {
@@ -171,34 +186,8 @@
                                         ]
                                     },
                                     {
-                                        "title": "Modules - Example",
-                                        "path": "modules-building",
-                                        "frameworks": ["angular", "react", "vue"]
-                                    },
-                                    {
                                         "title": "Custom UMD Bundle",
                                         "path": "modules-building",
-                                        "frameworks": ["javascript"]
-                                    }
-                                ]
-                            },
-                            {
-                                "title": "Building",
-                                "path": "building",
-                                "frameworks": ["javascript"],
-                                "items": [
-                                    {
-                                        "title": "Rollup",
-                                        "path": "building-rollup"
-                                    },
-                                    {
-                                        "title": "TypeScript & Webpack",
-                                        "path": "building-typescript",
-                                        "frameworks": ["javascript"]
-                                    },
-                                    {
-                                        "title": "AMD",
-                                        "path": "building-amd",
                                         "frameworks": ["javascript"]
                                     }
                                 ]
@@ -221,7 +210,7 @@
                                 "path": "licensing"
                             },
                             {
-                                "title": "React Hooks",
+                                "title": "React Best Practices",
                                 "path": "react-hooks",
                                 "frameworks": ["react"]
                             }
@@ -556,7 +545,7 @@
                             },
                             {
                                 "title": "Advanced",
-                                "items": [                                    
+                                "items": [
                                     {
                                         "title": "Row Dragging",
                                         "path": "row-dragging",
@@ -570,10 +559,6 @@
                                                 "path": "row-dragging-to-grid"
                                             }
                                         ]
-                                    },
-                                    {
-                                        "title": "Displayed Rows",
-                                        "path": "rendering-api"
                                     },
                                     {
                                         "title": "Full Width Rows",
@@ -642,7 +627,7 @@
                                 ]
                             }
                         ]
-                    },                    
+                    },
                     {
                         "title": "Filtering",
                         "items": [
@@ -1399,10 +1384,6 @@
                                 "isEnterprise": true
                             },
                             {
-                                "title": "Drag & Drop",
-                                "path": "drag-and-drop"
-                            },
-                            {
                                 "title": "Printing",
                                 "path": "printing"
                             },
@@ -1476,29 +1457,15 @@
                         "title": "Other",
                         "items": [
                             {
-                                "title": "Testing",
-                                "path": "testing"
-                            },
-                            {
-                                "title": "Testing Async",
-                                "path": "testing-async",
-                                "frameworks": ["angular"]
+                                "title": "Context",
+                                "path": "context"
                             },
                             {
                                 "title": "Custom Components",
                                 "path": "components"
-                            },
+                            },                            
                             {
-                                "title": "Security",
-                                "path": "security"
-                            },
-                            {
-                                "title": "Vue2 Tutorial",
-                                "path": "vue2",
-                                "frameworks": ["vue"]
-                            },
-                            {
-                                "title": "Unidirectional Data Flow",
+                                "title": "Best Practices",
                                 "path": "framework-data-flow",
                                 "frameworks": ["vue"]
                             },
@@ -1513,17 +1480,26 @@
                                 "frameworks": ["angular"]
                             },
                             {
+                                "title": "Security",
+                                "path": "security"
+                            },
+                            {
                                 "title": "Supported Browsers",
                                 "path": "supported-browsers"
                             },
                             {
-                                "title": "Miscellaneous",
-                                "path": "framework-misc",
-                                "frameworks": ["vue"]
+                                "title": "Testing",
+                                "path": "testing"
                             },
                             {
-                                "title": "Context",
-                                "path": "context"
+                                "title": "Testing Async",
+                                "path": "testing-async",
+                                "frameworks": ["angular"]
+                            },
+                            {
+                                "title": "Vue2 Tutorial",
+                                "path": "vue2",
+                                "frameworks": ["vue"]
                             }
                         ]
                     }

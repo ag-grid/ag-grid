@@ -3,6 +3,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { AgGridAngular } from '@ag-grid-community/angular';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
+import './styles.css';
 import { ModuleRegistry, ColDef, GridApi, GetRowIdParams, GridReadyEvent, RowDropZoneParams } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);

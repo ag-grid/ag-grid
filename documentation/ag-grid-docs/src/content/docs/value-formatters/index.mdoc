@@ -28,8 +28,9 @@ Below shows the column definition properties for value formatters.
 
 {% apiDocumentation source="column-properties/properties.json" section="columns" names=["valueFormatter"] /%}
 
-Be aware that the Value Formatter params won't always have 'data' and 'node' supplied, e.g. the
-params supplied to the Value Formatter in the [Set Filter](./filter-set/).
+Please note the Value Formatter params won't always have 'data' and 'node' supplied, 
+e.g. the params supplied to the Value Formatter in the [Set Filter](./filter-set/). 
+
 As a result favour formatter implementations that rely upon the 'value' argument instead, as this
 will lead to better reuse of your Value Formatters.
 

@@ -70,7 +70,6 @@ const gridOptions: GridOptions = {
     },
     enableCharts: true,
     suppressAggFuncInHeader: true,
-    suppressChartToolPanelsButton: true,
     getRowId: (params: GetRowIdParams) => params.data.trade,
     getChartToolbarItems: (): ChartMenuOptions[] => [],
     onFirstDataRendered,
@@ -100,7 +99,7 @@ function numberCellFormatter(params: ValueFormatterParams) {
 }
 
 function startWorker(): void {
-  worker = new Worker(`${__basePath}/dataUpdateWorker.ts`);
+  worker = new Worker(`${__basePath}/dataUpdateWorker.js`);
   worker.addEventListener('message', handleWorkerMessage);
   worker.postMessage('start');
 }

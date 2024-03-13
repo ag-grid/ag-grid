@@ -47,7 +47,9 @@
         "compiler": "tsc"
       },
       "configurations": {
-        "watch": {},
+        "watch": {
+          "tsConfig": "packages/ag-grid-react/tsconfig.types.json"
+        },
         "production": {}
       }
     },
@@ -76,9 +78,6 @@
         "sourcemap": true
       },
       "configurations": {
-        "watch": {
-          "tsConfig": "packages/ag-grid-react/tsconfig.watch.json"
-        },
         "production": {
           "sourcemap": false
         }

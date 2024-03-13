@@ -801,12 +801,5 @@ export class PopupService extends BeanStub {
             const currentEl = innerElsScrollMap.pop();
             currentEl![0].scrollTop = currentEl![1];
         }
-
-        const params = {
-            type: 'popupToFront',
-            eWrapper
-        };
-
-        this.eventService.dispatchEvent(params);
     }
 }

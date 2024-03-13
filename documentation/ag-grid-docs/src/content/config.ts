@@ -6,6 +6,7 @@ const docs = defineCollection({
         title: z.string(),
         description: z.string().optional(),
         enterprise: z.boolean().optional(),
+        frameworks: z.array(z.string()).optional(),
         /**
          * Hide right hand side menu
          */
@@ -19,6 +20,7 @@ const docs = defineCollection({
 
 const menuItemBase = {
     title: z.string(),
+    description: z.string().optional(),
     /**
      * Path to website docs within `src/content/docs`
      */
@@ -68,6 +70,9 @@ const menu = defineCollection({
     type: 'data',
     schema: z.object({
         header: z.object({
+            items: z.array(level1MenuItem),
+        }),
+        product: z.object({
             items: z.array(level1MenuItem),
         }),
         api: z.object({

@@ -1,16 +1,16 @@
 import type { MenuItem } from '@ag-grid-types';
-import { SITE_BASE_URL } from '@constants';
 import styles from '@design-system/modules/HeaderNav.module.scss';
 import siteHeaderStyles from '@design-system/modules/SiteHeader.module.scss';
 import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
 import MenuIcon from '@images/inline-svgs/menu-icon.svg?react';
-import { pathJoin } from '@utils/pathJoin';
+import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { type ReactElement, useState } from 'react';
 
-import { DarkModeToggle } from './DarkModeToggle';
 import { Collapsible } from '../Collapsible';
 import { Icon } from '../icon/Icon';
+import { DarkModeToggle } from './DarkModeToggle';
 
 /**
  * Title of api header menu
@@ -55,6 +55,8 @@ const HeaderLinks = ({
     toggleIsOpen?: () => void;
     children: ReactElement;
 }) => {
+    const framework = useFrameworkFromStore();
+
     return (
         <ul className={classnames(siteHeaderStyles.navItemList, 'list-style-none')}>
             {items.map(({ title, path, url, icon }) => {
@@ -63,7 +65,12 @@ const HeaderLinks = ({
                     [siteHeaderStyles.buttonItem]: title === 'Github',
                     [siteHeaderStyles.githubItem]: title === 'Github',
                 });
-                const href = path ? pathJoin(SITE_BASE_URL, path) : url;
+                const href = path
+                    ? urlWithPrefix({
+                          url: path,
+                          framework,
+                      })
+                    : url;
 
                 return (
                     <li key={title.toLocaleLowerCase()} className={linkClasses}>
@@ -84,9 +91,8 @@ const HeaderLinks = ({
                 );
             })}
 
-            
             <DarkModeToggle />
-            
+
             {children}
         </ul>
     );

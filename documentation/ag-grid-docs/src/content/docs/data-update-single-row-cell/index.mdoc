@@ -13,7 +13,7 @@ Once you have access to the required Row Node, you update its data with the foll
 
 After calling `rowNode.setData`, `rowNode.updateData` or `rowNode.setDataValue` the grid's view will automatically refresh to reflect the change. There is no need to manually request a refresh.
 
-The main difference between `setData` and `updateData` is that `setData` will always refresh every cell, whereas `updateData` will only refresh cells whose values have changed. Additionally, `setData` will not cause changed cells to flash when `enableCellChangeFlash = true`.
+The main difference between `setData` and `updateData` is that `setData` will always refresh every cell, whereas `updateData` will only refresh cells whose values have changed. Additionally, `setData` will not cause changed cells to flash when `ColDef.enableCellChangeFlash = true`.
 
 ## Sort / Filter / Group Refresh
 

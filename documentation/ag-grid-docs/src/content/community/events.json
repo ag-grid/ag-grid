@@ -1,0 +1,303 @@
+[
+    {
+        "title": "ng-conf",
+        "description": "ng-conf 2024 is a two-day double track conference focused on building the Angular community. AG Grid has been a platinum sponsor of ng-conf for a number of years and will be a platinum sponsor once again in 2024. \n\nOne of our senior engineers, Stephen Cooper, will be giving a talk titled: 'Perfecting your Profiling Skills' which will show how you can use Angular Dev Tools alongside the standard Dev Tools to identify and resolve performance issues, whilst unearthing some hidden gems in the process.",
+        "location": "Salt Lake City, USA",
+        "logo": "/community/events/organiser-logos/ng-conf-logo.webp",
+        "logoLight": "/community/events/organiser-logos/ng-conf-logo.webp",
+        "startDate": "2024-03-20",
+        "countryIcon": "us.png",
+        "eventPage": "https://ng-conf.org/"
+    },
+    {
+        "title": "React Summit",
+        "description": "React Summit is an annual conference on all things React, gathering thousands of Front-end and Full-stack engineers from around the world.\n\nWe'll be presenting a lightning (20-min) talk this year, watch this space to find out more as we approach June...",
+        "location": "Amsterdam, NL",
+        "logo": "/community/events/organiser-logos/react-summit-logo.svg",
+        "logoLight": "/community/events/organiser-logos/react-summit-logo-light.svg",
+        "startDate": "2024-06-17",
+        "countryIcon": "netherlands.png",
+        "eventPage": "https://reactsummit.com/"
+    },
+    {
+        "title": "React Advanced",
+        "description": "AG Grid is once again the top sponsor of React Advanced London, as we were in 2023. This event holds a special place in our hearts, given that London is where AG Grid was born. We look forward to seeing you there again later this year - keep an eye on this page more more updates as we get closer to October",
+        "location": "London, UK",
+        "logo": "/community/events/organiser-logos/react-advanced-logo.svg",
+        "logoLight": "/community/events/organiser-logos/react-advanced-logo-light.svg",
+        "countryIcon": "united-kingdom.png",
+        "startDate": "2024-10-28",
+        "eventPage": "https://reactadvanced.com/"
+    },
+    {
+        "title": "React Summit",
+        "description": "Our last (but by no means least) event of 2024. It's still early stages yet, but we can confirm that we'll be sponsoring React Summit US again this year, following its successful inaugural event in 2023.",
+        "location": "New Jersey, USA",
+        "logo": "/community/events/organiser-logos/react-summit-logo.svg",
+        "logoLight": "/community/events/organiser-logos/react-summit-logo-light.svg",
+        "countryIcon": "us.png",
+        "startDate": "2024-11-13",
+        "eventPage": "https://reactsummit.us/"
+    },
+    {
+        "title": "ng-conf",
+        "description": "ng-conf is an event we've sponsored for a number of years, and 2023 was no different. We've always had an affinity for the angular community, and as always, it was a pleasure to meet up face-to-face again earlier this year. Of course, it wouldn't be complete without mentioning the talk from Stephen Cooper, who presented 'Typing the not so secret to customisation ngTemplateOutlet' - A walk through of the changes required to introduce types to ngTemplateOutlets using new Angular features.",
+        "location": "Salt Lake City, USA",
+        "logo": "/community/events/organiser-logos/ng-conf-logo.webp",
+        "startDate": "2023-06-14",
+        "collage": "ng-conf-2023.jpg",
+        "countryIcon": "us.png",
+        "eventPage": "https://2023.ng-conf.org/",
+        "recording": "https://www.youtube.com/watch?v=ELRCT7ooNCU"
+    },
+    {
+        "title": "React Summit",
+        "description": "This event was the European counter-part to the NY event held on June 6th, where again, Stephen presented a talk. This talk was entitled: 'Supercharged Code Refactoring via Abstract Syntax Trees' in which Stephen introduced AST’s and showed how they can be used to reason about / generate code.",
+        "location": "Amsterdam, NL",
+        "logo": "/community/events/organiser-logos/react-summit-logo.svg",
+        "logoLight": "/community/events/organiser-logos/react-summit-logo-light.svg",
+        "startDate": "2023-06-17",
+        "recording": "https://portal.gitnation.org/contents/visualising-data-with-react-ag-grid-and-ag-charts",
+        "countryIcon": "netherlands.png",
+        "collage": "react-summit-amsterdam-2023.jpg",
+        "eventPage": "https://reactsummit.com/2023/"
+    },
+    {
+        "title": "React Advanced",
+        "description": "We were platinum sponsors of this event, which took place in October and gathered over 700 React developers from around the world. We had a great time meeting with the React community, showcasing our product and getting valuable feedback. One of our senior engineers, Stephen Cooper, also gave a talk on 'Patterns for Performance', where he shared his tips and tricks for optimizing AG Grid using React hooks.",
+        "location": "London, UK",
+        "logo": "/community/events/organiser-logos/react-advanced-logo.svg",
+        "logoLight": "/community/events/organiser-logos/react-advanced-logo-light.svg",
+        "countryIcon": "united-kingdom.png",
+        "startDate": "2023-10-28",
+        "recording": "https://www.youtube.com/watch?v=qR608qHWTCA",
+        "eventPage": "https://reactadvanced.com/2023/",
+        "collage": "react-advanced-london-2023.jpg"
+    },
+    {
+        "title": "React Summit",
+        "description": "We also sponsored this event, which was held in November at the Liberty Science Center in Jersey City. It was another amazing opportunity to connect with React developers and enthusiasts, and to learn from some of the best speakers in the field. We also had a booth and Stephen gave another talk, 'To Sync or Not To Sync' - A dive deep into React rendering and the implication of Concurrent Rendering & automated batching on code that previously relied on the synchronous nature of v17.",
+        "location": "New Jersey, USA",
+        "logo": "/community/events/organiser-logos/react-summit-logo.svg",
+        "logoLight": "/community/events/organiser-logos/react-summit-logo-light.svg",
+        "countryIcon": "us.png",
+        "startDate": "2023-11-13",
+        "recording": "https://www.youtube.com/watch?v=69d3QIDVKDc",
+        "collage": "react-summit-us-2023.jpg",
+        "eventPage": "https://reactsummit.us/2023/"
+    },
+    {
+        "title": "ng-conf",
+        "description": "Hosted in Salt Lake City, this 3 day conference covered everything Angular, and was attended by members of the Angular core team. As always, AG Grid was the top sponsor for this event. Our CEO, Niall Crosby, and Senior Developer, Stephen Cooper, gave a 10 min keynote, providing a whirlwind overview of AG Grid and integrated charting for the audience.",
+        "location": "Salt Lake City, USA",
+        "logo": "/community/events/organiser-logos/ng-conf-logo.webp",
+        "countryIcon": "us.png",
+        "startDate": "2022-10-31",
+        "eventPage": "https://2022.ng-conf.org/",
+        "recording": "https://www.youtube.com/watch?v=4dhBnvgb5H0"
+    },
+    {
+        "title": "JS Nation",
+        "description": "JSNation is a 2-day 2-track event focusing exclusively on JavaScript development.\n\nStephen Cooper presented his talk entitled 'Automatically maintaining thousands of code demos across multiple framework variations'. At AG Grid, we maintain thousands of code demos, with the same demo in Angular, React, Vue, and Vanilla JS. Additionally, each framework has different variations covering JavaScript, TypeScript, Modules, Packages, Hooks, Classes, Vue 2, and Vue 3. How do we do it? We automate. Stephens session explains how we start with a single TypeScript version and automatically convert it to every combination we need and finally use Cypress to test the converted example.",
+        "location": "Amsterdam, NL",
+        "logo": "/community/events/organiser-logos/jsnation-logo.svg",
+        "logoLight": "/community/events/organiser-logos/jsnation-logo-light.svg",
+        "countryIcon": "netherlands.png",
+        "startDate": "2022-06-16",
+        "eventPage": "https://jsnation.com/2022/",
+        "recording": "https://portal.gitnation.org/contents/automatically-maintaining-thousands-of-code-demos-across-multiple-framework-variations"
+    },
+    {
+        "title": "React Summit",
+        "description": "Tied to the JS Nation conference in the days before, React Summit was focused on, you guessed it... React. Sean Landsman provided a workshop for the React Summit showing how to Get Started with AG Grid in React and our CEO, Niall Crosby, presented on the new React Rendering Engine for AG Grid.",
+        "location": "Amsterdam, NL",
+        "logo": "/community/events/organiser-logos/react-summit-logo.svg",
+        "logoLight": "/community/events/organiser-logos/react-summit-logo-light.svg",
+        "countryIcon": "netherlands.png",        
+        "startDate": "2022-06-17",
+        "endDate": "2022-06-21",
+        "eventPage": "https://reactsummit.com/2022/",
+        "recording": "https://youtu.be/AsaR0wyR9c0"
+    },
+    {
+        "title": "React Global Online Summit",
+        "description": "The Geekle React Global Online Summit took place in April 2022, AG Grid helped sponsor the conference. Our CEO, Niall Crosby, presented a talk describing the work done to convert AG Grid from a React Wrapper to a 100% React Data Grid, while at the same time supporting Angular, Vue and any JavaScript framework. We achieve this through an MVC style architecture. Niall explains more in the talk:",
+        "location": "Online, Global",
+        "logo": "/community/events/organiser-logos/geekle-logo.png",
+        "countryIcon": "",
+        "startDate": "2022-04-20",
+        "endDate": "2022-04-21",
+        "eventPage": "https://geekle.us/schedule/react2",
+        "recording": "https://www.youtube.com/watch?v=u4QTr56t7iM&t=8890s"
+    },
+    {
+        "title": "FinJS",
+        "description": "Given our almost ubiquitous presence in the finance industry, this conference was a no-brainer. Leveraging his background as a software engineer in the banking sector, Niall presented a talk entitled: AG Grid - Behind the frameworks. Lifting the lid on our agnostic nature, and the benefits this provides us, and most importantly, our customers.",
+        "location": "London, UK",
+        "countryIcon": "united-kingdom.png",
+        "startDate": "2022-11-02",
+        "endDate": "2022-11-02",
+        "logo": "/community/events/organiser-logos/finjs-logo.png",
+        "logoLight": "/community/events/organiser-logos/finjs-logo-light.png",
+        "eventPage": "https://www.finjs.com/finjs-on-demand",
+        "recording": "https://www.youtube.com/watch?v=iUsYl3Ux_Hc"
+    },
+    {
+        "title": "ngVikings",
+        "description": "ngVikings is a non-profit, non-commercial, 100% community-driven event comprised of many Nordic Angular groups with more than 3500 active members in total. Always having Angular team members, Google Developer Experts, and legendary international speakers onboard, ngVikings Conference guarantees an excellent program: fresh, technically deep, and 100% useful.",
+        "location": "Online, Global",
+        "logo": "/community/events/organiser-logos/ngvikings-logo.png",
+        "logoLight": "/community/events/organiser-logos/ngvikings-logo-light.png",
+        "startDate": "2020-05-20",
+        "eventPage": "https://ngvikings.org/",
+        "recording": ""
+    },
+    {
+        "title": "React Summit",
+        "description": "A two-day conference on all things React, gathering Front-end and Full-stack engineers across the globe in the cloud.",
+        "location": "Online, Global",
+        "logo": "/community/events/organiser-logos/react-summit-logo.svg",
+        "logoLight": "/community/events/organiser-logos/react-summit-logo-light.svg",
+        "startDate": "2020-10-15",
+        "eventPage": "https://reactsummit.com/2020/"
+    },
+    {
+        "title": "Enterprise NG",
+        "description": "AG Grid were gold sponsors of this fully virtual, two day event 'aimed at helping Angular enterprise leaders succeed in transforming their organization by adopting principles and practices that will put them ahead of our rapidly-changing industry'.",
+        "location": "Salt Lake City, USA",
+        "logo": "/community/events/organiser-logos/ng-conf-logo.webp",
+        "countryIcon": "us.png",
+        "startDate": "2020-11-19",
+        "eventPage": "https://enterprise2020.ng-conf.org/",
+        "recording": ""
+    },
+    {
+        "title": "Angular Connect",
+        "description": "Europe’s largest Angular conference had AG Grid as its premier sponsor in 2019, with a talk delivered by Max Koretskyi, entitled: The secrets behind Angular’s lightning speed, in which Max details his findings from reverse-engineering Angular.",
+        "location": "London, UK",
+        "logo": "/community/events/organiser-logos/angularconnect-logo.svg",
+        "countryIcon": "united-kingdom.png",
+        "startDate": "2019-09-19",
+        "eventPage": "http://www.angularconnect.com/2019/",
+        "recording": "https://www.youtube.com/watch?v=lXbjICP6V44&t=1s"
+    },
+    {
+        "title": "ng-conf",
+        "description": "Once again, AG Grid were the premier sponsors of the worlds original Angular conference. Max Koretskyi presented: 'Can you imagine a future without zones?', which covered everything there is (or was) to know about controlling change detection.",
+        "location": "Salt Lake City, USA",
+        "logo": "/community/events/organiser-logos/ng-conf-logo.webp",
+        "countryIcon": "us.png",
+        "startDate": "2019-05-01",
+        "eventPage": "https://2019.ng-conf.org/"
+    },
+    {
+        "title": "FinJS",
+        "description": "FinJS is a capital markets network that showcases innovations driven by web technologies. FinJS events are invite-only and include CTOs, eCommerce managers, development managers, product managers and other thought-leaders from banks, buy-side, and industry-leading technology platforms.",
+        "location": "London, UK",
+        "countryIcon": "united-kingdom.png",
+        "startDate": "2019-05-19",
+        "logo": "/community/events/organiser-logos/finjs-logo.png",
+        "logoLight": "/community/events/organiser-logos/finjs-logo-light.png",
+        "eventPage": "https://www.finos.org/hosted-events/2019-05-21finjs-london-2019"
+    },
+    {
+        "title": "React Amsterdam",
+        "description": "AG Grid were the platinum sponsor of React Amsterdam, the precursor to React Summit Amsterdam, which took place in Amsterdam Noord at De Kromhouthal and was organized by GitNation, who run developer conferences like JS Nation (Netherlands-based JS community) and React Day Berlin.",
+        "location": "Amsterdam, NL",
+        "logo": "/community/events/organiser-logos/react-summit-logo.svg",
+        "logoLight": "/community/events/organiser-logos/react-advanced-logo-light.svg",
+        "countryIcon": "netherlands.png",
+        "startDate": "2019-04-01"
+    },
+    {
+        "title": "ag-Grid Conf",
+        "description": "",
+        "location": "New York, USA",
+        "logo": "/community/events/organiser-logos/",
+        "countryIcon": "us.png",
+        "startDate": "2018-",
+        "eventPage": "",
+        "recording": ""
+    },
+    {
+        "title": "ag-Grid Conf",
+        "description": "Our inaugural event, hosted in London, our home city. We welcomed hundreds of developers from some of the worlds most prestigious organisations for a pack day full of all things AG Grid. Niall, our CEO, Niall talks the challenges of building ag-Grid, the internal framework we use and how to squeeze ag-Grid for performance.",
+        "location": "London, UK",
+        "logo": "/community/events/organiser-logos/",
+        "countryIcon": "united-kingdom.png",
+        "startDate": "2018-11-29",
+        "recording": "https://www.youtube.com/watch?v=rT0vQejPcrs&t=3sw"
+    },
+    {
+        "title": "Microsoft Build",
+        "description": "Microsoft Build is an annual conference event held by Microsoft, aimed at software engineers and web developers using Windows, Microsoft Azure and other Microsoft technologies. First held in 2011, it serves as a successor for Microsoft's previous developer events, the Professional Developers Conference and MIX.",
+        "location": "Seattle, USA",
+        "logo": "/community/events/organiser-logos/microsoft-build-logo.png",
+        "countryIcon": "us.png",
+        "startDate": "2018-05-07",
+        "eventPage": "https://learn.microsoft.com/en-us/events/build-2018/"
+    },
+    {
+        "title": "Angular Connect",
+        "description": "",
+        "location": "",
+        "logo": "/community/events/organiser-logos/angularconnect-logo.svg",
+        "countryIcon": "",
+        "startDate": "2017-",
+        "eventPage": "",
+        "recording": ""
+    },
+    {
+        "title": "Benzinga Fin Awards",
+        "description": "",
+        "location": "",
+        "logo": "/community/events/organiser-logos/",
+        "countryIcon": "",
+        "startDate": "2017-",
+        "eventPage": "",
+        "recording": ""
+    },
+    {
+        "title": "ng-conf",
+        "description": "The worlds original Angular conference",
+        "location": "Salt Lake City, USA",
+        "logo": "/community/events/organiser-logos/ng-conf-logo.webp",
+        "countryIcon": "us.png",
+        "startDate": "2017-04-15",
+        "eventPage": "",
+        "recording": ""
+    },
+    {
+        "title": "Angular Connect",
+        "description": "",
+        "location": "",
+        "logo": "/community/events/organiser-logos/angularconnect-logo.svg",
+        "countryIcon": "",
+        "startDate": "2016-",
+        "coverImage": "",
+        "eventPage": "",
+        "recording": ""
+    },
+    {
+        "title": "Angular UP",
+        "description": "",
+        "location": "",
+        "logo": "/community/events/organiser-logos/",
+        "countryIcon": "",
+        "startDate": "2016-",
+        "coverImage": "",
+        "eventPage": "",
+        "recording": ""
+    },
+    {
+        "title": "ng-Europe",
+        "description": "",
+        "location": "",
+        "logo": "/community/events/organiser-logos/",
+        "countryIcon": "",
+        "startDate": "2016-",
+        "coverImage": "",
+        "eventPage": "",
+        "recording": ""
+    }
+]

@@ -22,7 +22,7 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import { ModuleRegistry } from "@ag-grid-community/core";
-import { AG_GRID_LOCALE_ZZZ } from './locale.zzz';
+import { AG_GRID_LOCALE_ZZZ } from './locale';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ClipboardModule, ColumnsToolPanelModule, CsvExportModule, ExcelExportModule, FiltersToolPanelModule, GridChartsModule, MenuModule, MultiFilterModule, RangeSelectionModule, RowGroupingModule, SetFilterModule, SideBarModule, StatusBarModule]);
 

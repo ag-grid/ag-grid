@@ -63,12 +63,12 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
+    enableCellChangeFlash: true,
   },
   rowData: getData(),
   context: {
     reportingCurrency: 'EUR',
-  },
-  enableCellChangeFlash: true,
+  }
 }
 
 

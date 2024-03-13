@@ -13,10 +13,6 @@ const columnDefs: ColDef[] = [
   { field: "price" }
 ];
 
-const defaultColDef: ColDef = {
-  flex: 1
-};
-
 // specify the data
 const rowData = [
   { id: 'c1', make: "Toyota", model: "Celica", price: 35000 },
@@ -53,7 +49,9 @@ let gridApi: GridApi;
 // let the grid know which columns and what data to use
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
-  defaultColDef: defaultColDef,
+  defaultColDef: {
+    flex: 1
+  },
   rowData: rowData,
   rowSelection: 'multiple',
   getRowId: (params: GetRowIdParams) => params.data.id

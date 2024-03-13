@@ -27,7 +27,7 @@ function packModules() {
 COMMUNITY_MODULES=("core" "client-side-row-model" "styles")
 packModules "../../community-modules" "${COMMUNITY_MODULES[@]}"
 
-ENTERPRISE_MODULES=("core" "status-bar" "excel-export" "menu" "column-tool-panel" "range-selection" "clipboard")
+ENTERPRISE_MODULES=("core" "status-bar" "excel-export" "menu" "column-tool-panel" "range-selection" "clipboard" "charts" "charts-enterprise")
 packModules "../../enterprise-modules" "${ENTERPRISE_MODULES[@]}"
 
 if [ -d "./node_modules" ]; then
@@ -35,4 +35,4 @@ if [ -d "./node_modules" ]; then
   rm -rf ag-charts-community ag-charts-enterprise ag-charts-angular ag-charts-react ag-charts-vue ag-charts-vue3 @ag-grid-community @ag-grid-enterprise ag-grid-community ag-grid-enterprise
 fi
 
-npm i --no-package-lock
+npm i --registry http://52.50.158.57:4873 --no-package-lock

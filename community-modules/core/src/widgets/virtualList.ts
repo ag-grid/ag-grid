@@ -34,6 +34,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     private componentUpdater: (value: any, component: C) => void;
     private rowHeight = 20;
     private lastFocusedRowIndex: number | null;
+    private isHeightFromTheme: boolean = true;
 
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
@@ -175,6 +176,9 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     }
 
     private getItemHeight(): number {
+        if (!this.isHeightFromTheme) {
+            return this.rowHeight;
+        }
         return this.environment.getListItemHeight();
     }
 
@@ -234,6 +238,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     }
 
     public setRowHeight(rowHeight: number): void {
+        this.isHeightFromTheme = false;
         this.rowHeight = rowHeight;
         this.refresh();
     }

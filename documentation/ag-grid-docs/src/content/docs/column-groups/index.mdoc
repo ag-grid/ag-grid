@@ -2,11 +2,34 @@
 title: "Column Groups"
 ---
 
-Columns can be grouped in the grid's header using Column Groups. This can be complimented with Open and Close functionality to show / hide Columns.
+Columns can be grouped in the grid's header using Column Groups. Column groups can be shown as open / closed to show / hide child Columns.
 
 Column Groups are configured by providing a hierachy of Column Definitions. If a Column Definition contains the `children` attribute then the grid treats it as a Column Group.
 
 {% gridExampleRunner title="Basic Grouping" name="basic-grouping"  exampleHeight=550 /%}
+
+```js {% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            headerName: 'Name & Country',
+            children: [
+                { field: 'athlete' },
+                { field: 'country' }
+            ]
+        },
+        {
+            headerName: 'Sports Results',
+            children: [
+                { columnGroupShow: 'closed', field: 'total' },
+                { columnGroupShow: 'open', field: 'gold' },
+                { columnGroupShow: 'open', field: 'silver' },
+                { columnGroupShow: 'open', field: 'bronze' },
+            ],
+        }
+    ]
+}
+```
 
 Set the attribute `columnGroupShow` on groups children to set the expand and collapse policy as follows:
 
@@ -20,42 +43,23 @@ Use `defaultColGroupDef` to set properties accross all Column Groups.
 
 {% gridExampleRunner title="Default Props" name="defaults"  exampleHeight=550 /%}
 
-## Selecting Components
+```js {% frameworkTransform=true %}
+const gridOptions = {
+    defaultColGroupDef: {
+        headerName: 'A shared prop for all Groups'
+    }
+}
+```
 
-By default the grid provided Header Group Component is used. To use a Custom Group Component set `headerGroupComponent` on the Column Definition.
+## Multiple Levels
 
-{% includeMarkdoc file="column-groups/_column-def-javascript.mdoc" /%}
-{% includeMarkdoc file="column-groups/_column-def-vue.mdoc" /%}
+The example below demonstrates a grid with many column group header levels. Note the following:
 
-See [Registering Components](./components/) for an overview of registering componnets.
+* Using the API to open and close groups. To do this, you will need to provide your groups with an ID during the definition, or look up the groups ID via the API (as an ID is generated if you don't provide one).
+* Demonstrates `colDef.openByDefault` property, where it sets this on E and F groups, resulting in these groups appearing as open by default.
+* Uses `defaultColGroupDef` and `defaultColDef` to apply a class to some of the headers. Using this technique, you can apply style to any of the header sections.
 
-## Custom Group Component
-
-The example below shows a Custom Column Group Component.
-
-{% gridExampleRunner title="Header Group" name="header-group-component" /%}
-
-As with Column Headers, the grid will always handle resize and column moving. The Custom Component is responsible for the following:
-
-* **Group Open / Close:** If the group can expand (one or more columns visibility depends on the open / closed state of the group) then the Custom Component should handle the interaction with the user for opening and closing groups.
-
-{% includeMarkdoc file="column-groups/_group-component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="column-groups/_group-component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="column-groups/_group-component-interface-react.mdoc" /%}
-{% includeMarkdoc file="column-groups/_group-component-interface-vue.mdoc" /%}
-
-{% if isFramework("javascript", "angular", "vue") %}
-{% interfaceDocumentation interfaceName="IHeaderGroupParams" /%}
-{% /if %}
-
-{% if isFramework("react") %}
-{% interfaceDocumentation interfaceName="CustomHeaderGroupProps" /%}
-{% /if %}
-
-{% includeMarkdoc file="column-groups/_open-close-javascript.mdoc" /%}
-{% includeMarkdoc file="column-groups/_open-close-angular.mdoc" /%}
-{% includeMarkdoc file="column-groups/_open-close-react.mdoc" /%}
-{% includeMarkdoc file="column-groups/_open-close-vue.mdoc" /%}
+{% gridExampleRunner title="Advanced Grouping" name="advanced-grouping"  exampleHeight=680 /%}
 
 ## Groups & Column Pinning
 
@@ -73,6 +77,7 @@ Sometimes you want columns of the group to always stick together. To achieve thi
 * It is possible to place a column between groups (e.g. you can place 'Age' between the 'Athlete Details' and 'Sports Results').
 
 {% gridExampleRunner title="Marry Children" name="marry-children"  exampleHeight=560 /%}
+
 
 ## Resizing Groups
 
@@ -111,16 +116,6 @@ When Column Groups are too wide, the **Header Label** is always visible while sc
 * If you scroll the grid horizontally, the header label will not be visible until the column is completely out of view.
 
 {% gridExampleRunner title="Sticky Label" name="suppress-sticky-label"  exampleHeight=560 /%}
-
-## Mulitiple Levels
-
-This example demonstrates a grid with many levels. The example doesn't make sense, it's contrieved to demonstrate multip group levels. Note the following:
-
-* Using the API to open and close groups. To do this, you will need to provide your groups with an ID during the definition, or look up the groups ID via the API (as an ID is generated if you don't provide one).
-* Demonstrates `colDef.openByDefault` property, where it sets this on E and F groups, resulting in these groups appearing as open by default.
-* Uses `defaultColGroupDef` and `defaultColDef` to apply a class to some of the headers. Using this technique, you can apply style to any of the header sections.
-
-{% gridExampleRunner title="Advanced Grouping" name="advanced-grouping"  exampleHeight=680 /%}
 
 ## Group Changes
 
@@ -180,3 +175,64 @@ Note the following:
 * The **Age** column has an empty column group header cell above it (shown with red borders).
 
 {% gridExampleRunner title="Padded Header" name="padded-header"  exampleHeight=300 /%}
+
+## Tooltips
+
+Tooltips can be added to the Column Group Headers by using the `headerTooltip` property of the `ColGroupDef`.
+
+The example below demonstrates using the `headerTooltip` property in the grid column groups.
+
+{% gridExampleRunner title="Header Tooltip" name="group-header-tooltip" /%}
+
+## Selecting Components
+
+By default the grid uses the provided Header Group Component. To use a Custom Group Component set `headerGroupComponent` on the Column Definition.
+
+{% includeMarkdoc file="column-groups/_column-def-javascript.mdoc" /%}
+{% includeMarkdoc file="column-groups/_column-def-vue.mdoc" /%}
+
+See [Registering Components](./components/) for an overview of registering componnets.
+
+## Custom Group Component
+
+The example below shows a Custom Column Group Component.
+
+{% gridExampleRunner title="Header Group" name="header-group-component" /%}
+
+As with Column Headers, the grid will always handle resize and column moving. The Custom Component is responsible for the following:
+
+* **Group Open / Close:** If the group can expand (one or more columns visibility depends on the open / closed state of the group) then the Custom Component should handle the interaction with the user for opening and closing groups.
+
+{% includeMarkdoc file="column-groups/_group-component-interface-javascript.mdoc" /%}
+{% includeMarkdoc file="column-groups/_group-component-interface-angular.mdoc" /%}
+{% includeMarkdoc file="column-groups/_group-component-interface-react.mdoc" /%}
+{% includeMarkdoc file="column-groups/_group-component-interface-vue.mdoc" /%}
+
+{% if isFramework("javascript", "angular", "vue") %}
+{% interfaceDocumentation interfaceName="IHeaderGroupParams" /%}
+{% /if %}
+
+{% if isFramework("react") %}
+{% interfaceDocumentation interfaceName="CustomHeaderGroupProps" /%}
+{% /if %}
+
+{% includeMarkdoc file="column-groups/_open-close-javascript.mdoc" /%}
+{% includeMarkdoc file="column-groups/_open-close-angular.mdoc" /%}
+{% includeMarkdoc file="column-groups/_open-close-react.mdoc" /%}
+{% includeMarkdoc file="column-groups/_open-close-vue.mdoc" /%}
+
+### Dynamic Tooltips
+
+When using Custom Header Components it might be necessary to have a better control of how `Tooltips` are added instead of simply using the `headerTooltip` config. For this purpose, we provide the `setTooltip` method.
+{% if isFramework("javascript", "angular", "vue") %}
+{% interfaceDocumentation interfaceName="IHeaderGroupParams" names=["setTooltip"] /%}
+{% /if %}
+
+{% if isFramework("react") %}
+{% interfaceDocumentation interfaceName="IHeaderGroupParams" names=["setTooltip"] /%}
+{% /if %}
+
+The example below demonstrates using the Dynamic Tooltips with a Custom Group Component.
+* Note that only Group Headers where the text is not fully displayed will show tooltips.
+
+{% gridExampleRunner title="Dynamic Group Header Tooltip" name="dynamic-tooltips" /%}

@@ -12,7 +12,7 @@ import { CartesianAxisPanel } from "./axis/cartesianAxisPanel";
 import { PolarAxisPanel } from "./axis/polarAxisPanel";
 import { ChartPanel } from "./chart/chartPanel";
 import { SeriesPanel } from "./series/seriesPanel";
-import { ChartSeriesType, hasGradientLegend, isPolar } from "../../utils/seriesTypeMapper";
+import { ChartSeriesType, hasGradientLegend, isCartesian, isPolar } from "../../utils/seriesTypeMapper";
 import { GradientLegendPanel } from './legend/gradientLegendPanel';
 import { ChartPanelFeature } from "../chartPanelFeature";
 import { ChartMenuContext } from "../chartMenuContext";
@@ -81,10 +81,16 @@ export class FormatPanel extends Component {
                     // Polar charts have different axis options from cartesian charts, so choose the appropriate panels
                     if (isPolar(chartType)) {
                         this.chartPanelFeature.addComponent(new PolarAxisPanel(opts));
-                    } else {
+                    } else if (isCartesian(chartType)) {
                         this.chartPanelFeature.addComponent(new CartesianAxisPanel('xAxis', opts));
                         this.chartPanelFeature.addComponent(new CartesianAxisPanel('yAxis', opts));
                     }
+                    break;
+                case 'horizontalAxis':
+                    this.chartPanelFeature.addComponent(new CartesianAxisPanel('xAxis', opts));
+                    break;
+                case 'verticalAxis':
+                    this.chartPanelFeature.addComponent(new CartesianAxisPanel('yAxis', opts));
                     break;
                 case 'series':
                     this.chartPanelFeature.addComponent(new SeriesPanel(opts));
@@ -113,26 +119,26 @@ export class FormatPanel extends Component {
 
         // These panel groups depend on the selected series type
         const extendedGroupPanels: { [T in ChartSeriesType]?: Array<ChartFormatPanelGroup> } = {
-            'bar': ['axis'],
-            'column': ['axis'],
-            'line': ['axis'],
-            'area': ['axis'],
-            'scatter': ['axis'],
-            'bubble': ['axis'],
-            'histogram': ['axis'],
-            'cartesian': ['axis'],
+            'bar': ['axis', 'horizontalAxis', 'verticalAxis'],
+            'column': ['axis', 'horizontalAxis', 'verticalAxis'],
+            'line': ['axis', 'horizontalAxis', 'verticalAxis'],
+            'area': ['axis', 'horizontalAxis', 'verticalAxis'],
+            'scatter': ['axis', 'horizontalAxis', 'verticalAxis'],
+            'bubble': ['axis', 'horizontalAxis', 'verticalAxis'],
+            'histogram': ['axis', 'horizontalAxis', 'verticalAxis'],
+            'cartesian': ['axis', 'horizontalAxis', 'verticalAxis'],
             'radial-column': ['axis'],
             'radial-bar': ['axis'],
             'radar-line': ['axis'],
             'radar-area': ['axis'],
             'nightingale': ['axis'],
-            'range-bar': ['axis'],
-            'range-area': ['axis'],
+            'range-bar': ['axis', 'horizontalAxis', 'verticalAxis'],
+            'range-area': ['axis', 'horizontalAxis', 'verticalAxis'],
             'treemap': [],
             'sunburst': [],
-            'heatmap': ['axis'],
-            'waterfall': ['axis'],
-            'box-plot': ['axis'],
+            'heatmap': ['axis', 'horizontalAxis', 'verticalAxis'],
+            'waterfall': ['axis', 'horizontalAxis', 'verticalAxis'],
+            'box-plot': ['axis', 'horizontalAxis', 'verticalAxis'],
         };
         return extendedGroupPanels[seriesType]?.includes(group) ?? false;
     }

@@ -594,12 +594,12 @@ export interface GridOptions<TData = any> {
      */
     chartThemeOverrides?: AgChartThemeOverrides;
     /**
-     * @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`.
+     * @deprecated As of v29, no longer used.
      * @initial
      */
     enableChartToolPanelsButton?: boolean;
     /**
-     * Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons.
+     * @deprecated As of v31.2, a new format charts menu is available. Set `legacyChartsMenu = false`.
      * @default false
      * @initial
      */
@@ -957,10 +957,11 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to have cells flash after data changes.
      * @default false
+     * @deprecated 31.2 use `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns.
      */
     enableCellChangeFlash?: boolean;
     /**
-     * To be used in combination with `enableCellChangeFlash`, the duration in milliseconds of how long a cell should remain in its "flashed" state.
+     * To be used when setting `enableCellChangeFlash` on column definitions. Sets the duration in milliseconds of how long a cell should remain in its "flashed" state.
      * @default 500
      */
     cellFlashDuration?: number;
@@ -969,7 +970,7 @@ export interface GridOptions<TData = any> {
      */
     cellFlashDelay?: number;
     /**
-     * To be used in combination with `enableCellChangeFlash`, the duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDuration` has completed.
+     * To be used when setting `enableCellChangeFlash` on column definitions. Sets the duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by cellFlashDuration has completed.
      * @default 1000
      */
     cellFadeDuration?: number;

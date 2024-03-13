@@ -15,7 +15,7 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 ModuleRegistry.registerModules([ServerSideRowModelModule]);
 
 import { FakeServer } from './fakeServer';
-import { dataObservers, randomUpdates } from './data';
+import { dataObservers, randomUpdates, data } from './data';
 
 const columnDefs: ColDef[] = [
     { field: 'tradeId' },
@@ -46,12 +46,12 @@ const gridOptions: GridOptions = {
   columnDefs,
   defaultColDef: {
     flex: 1,
-    minWidth: 100,  
+    minWidth: 100,
+    enableCellChangeFlash: true,
   },
   autoGroupColumnDef: {
     minWidth: 220,
   },
-  enableCellChangeFlash: true,
   getRowId: (params: GetRowIdParams) => {  
     var rowId = '';
     if (params.parentKeys && params.parentKeys.length) {

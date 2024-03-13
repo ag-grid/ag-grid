@@ -379,7 +379,7 @@ This is demonstrated in the following example, note the following:
 
 The grid generates pivot result columns from the underlying data and the pivot columns, due to the flexibility of both of these inputs it can be difficult to handle extreme scenarios where thousands of columns can be generated. In these scenarios the browser can become overwhelmed with the amount of data to process causing slow performance or even crashing the browser.
 
-To circumvent this, you can provide a `pivotMaxGeneratedColumns`. When the grid reaches the point where it shall exceed this provided number of columns, it halts generation and does not display any pivot result columns at all. In this circumstance the grid will trigger a `pivotLimitExceeded` event, allowing your application to provide custom handling.
+To circumvent this, you can provide a `pivotMaxGeneratedColumns`. When the grid reaches the point where it shall exceed this provided number of columns, it halts generation and does not display any pivot result columns at all. In this circumstance the grid will trigger a `pivotMaxColumnsExceeded` event, allowing your application to provide custom handling.
 
 In the example below, note the following:
 
