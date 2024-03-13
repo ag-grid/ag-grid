@@ -2,15 +2,14 @@
 
 SOURCE_DIR="core"
 
-COMMUNITY_ROOTS=("grid-community-modules")
-ENTERPRISE_ROOTS=("grid-enterprise-modules")
+COMMUNITY_ROOTS=("community-modules")
+ENTERPRISE_ROOTS=("enterprise-modules")
 
-SOURCE_COMMUNITY_LICENSE=./grid-community-modules/core/LICENSE.txt
-SOURCE_ENTERPRISE_LICENSE=./grid-enterprise-modules/core/LICENSE.txt
+SOURCE_COMMUNITY_LICENSE=./community-modules/core/LICENSE.txt
 
-LEGACY_COMMUNITY_DIRS=("ag-grid-angular" "ag-grid-community" "ag-grid-react" "ag-grid-vue" "ag-grid-solid")
+LEGACY_COMMUNITY_DIRS=("ag-grid-angular" "ag-grid-community" "ag-grid-react" "ag-grid-vue" "ag-grid-vue3")
 
-ENTERPRISE_ROOT=./grid-enterprise-modules
+ENTERPRISE_ROOT=./enterprise-modules
 SOURCE_ENTERPRISE_LICENSE=$ENTERPRISE_ROOT/core/LICENSE.html
 
 function copyLicenses {
@@ -42,6 +41,6 @@ function forEachDirectory {
 forEachDirectory $SOURCE_COMMUNITY_LICENSE "${COMMUNITY_ROOTS[@]}"
 forEachDirectory $SOURCE_ENTERPRISE_LICENSE "${ENTERPRISE_ROOTS[@]}"
 
-copyLicenses "grid-packages" $SOURCE_COMMUNITY_LICENSE "${LEGACY_COMMUNITY_DIRS[@]}"
+copyLicenses "packages" $SOURCE_COMMUNITY_LICENSE "${LEGACY_COMMUNITY_DIRS[@]}"
 
-cp $SOURCE_ENTERPRISE_LICENSE "./grid-packages/ag-grid-enterprise"
+cp $SOURCE_ENTERPRISE_LICENSE "./packages/ag-grid-enterprise"
