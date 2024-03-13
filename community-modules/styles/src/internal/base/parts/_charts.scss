@@ -206,6 +206,10 @@
         overflow-y: auto;
     }
 
+    .ag-chart-advanced-settings {
+        background-color: var(--ag-control-panel-background-color);
+    }
+
     .ag-chart-advanced-settings-wrapper, .ag-chart-advanced-settings {
         width: 100%;
     }
