@@ -32,5 +32,5 @@ const replaceMainFile = (filename) => {
 }
 
 
-replaceMainFile('./src/main-umd.ts')
 replaceMainFile('./src/main.ts')
+replaceMainFile('./src/main-styles.ts')

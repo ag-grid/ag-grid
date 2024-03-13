@@ -1,9 +1,12 @@
+/*
+* Used for umd bundles with styles
+*/
 import {ModuleRegistry} from '@ag-grid-community/core';
 import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model'
 import {InfiniteRowModelModule} from '@ag-grid-community/infinite-row-model'
 import {CsvExportModule} from '@ag-grid-community/csv-export'
 import {AdvancedFilterModule} from "@ag-grid-enterprise/advanced-filter";
-import {GridChartsModule} from "@ag-grid-enterprise/charts";
+import {GridChartsModule} from "@ag-grid-enterprise/charts-enterprise";
 import {ClipboardModule} from "@ag-grid-enterprise/clipboard";
 import {ColumnsToolPanelModule} from "@ag-grid-enterprise/column-tool-panel";
 import {ExcelExportModule} from "@ag-grid-enterprise/excel-export";
@@ -261,7 +264,7 @@ export {getRowContainerTypeForName} from "@ag-grid-community/core";
 
 export * from "@ag-grid-enterprise/core";
 export * from "@ag-grid-enterprise/advanced-filter";
-export * from "@ag-grid-enterprise/charts";
+export * from "@ag-grid-enterprise/charts-enterprise";
 export * from "@ag-grid-enterprise/clipboard";
 export * from "@ag-grid-enterprise/column-tool-panel";
 export * from "@ag-grid-enterprise/excel-export";
