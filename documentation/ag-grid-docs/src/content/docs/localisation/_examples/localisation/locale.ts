@@ -269,6 +269,7 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     switchCategorySeries: 'Switch Category / Series',
     categoryValues: 'Category Values',
     seriesLabels: 'Series Labels',
+    aggregate: 'Aggregate',
     xyValues: 'X Y Values',
     paired: 'Paired Mode',
     axis: 'Axis',

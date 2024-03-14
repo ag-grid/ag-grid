@@ -17,7 +17,8 @@ import {
     AgChartThemeOverrides,
     UpdateCrossFilterChartParams,
     UpdateChartParams,
-    UpdateRangeChartParams
+    UpdateRangeChartParams,
+    IAggFunc
 } from "@ag-grid-community/core";
 import { ChartDataModel, ChartModelParams, ColState } from "./model/chartDataModel";
 import { ChartProxy, FieldDefinition, UpdateParams } from "./chartProxies/chartProxy";
@@ -283,6 +284,18 @@ export class ChartController extends BeanStub {
     public switchCategorySeries(inverted: boolean): void {
         if (!supportsInvertedCategorySeries(this.getChartType())) return;
         this.model.switchCategorySeries = inverted;
+        this.raiseChartModelUpdateEvent();
+    }
+
+    public getAggFunc(): string | IAggFunc | undefined {
+        return this.model.aggFunc;
+    }
+
+    public setAggFunc(value: string | IAggFunc | undefined, silent?: boolean): void {
+        if (this.model.aggFunc === value) return;
+        this.model.aggFunc = value;
+        if (silent) return;
+        this.model.updateData();
         this.raiseChartModelUpdateEvent();
     }
 
