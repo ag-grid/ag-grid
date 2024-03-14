@@ -20,6 +20,8 @@ export class SeriesChartTypePanel extends Component {
 
     private seriesChartTypeGroupComp: AgGroupComponent;
     private selectedColIds: string[] = [];
+    private chartTypeComps: Map<string, AgSelect> = new Map();
+    private secondaryAxisComps: Map<string, AgCheckbox> = new Map();
 
     constructor(
         private readonly chartController: ChartController,
@@ -37,6 +39,8 @@ export class SeriesChartTypePanel extends Component {
     public refresh(columns: ColState[]): void {
         if (!_.areEqual(this.getValidColIds(columns), this.selectedColIds)) {
             this.recreate(columns);
+        } else {
+            this.refreshComps();
         }
     }
 
@@ -46,6 +50,7 @@ export class SeriesChartTypePanel extends Component {
         this.destroyBean(this.seriesChartTypeGroupComp);
         this.columns = columns;
         this.selectedColIds = [];
+        this.clearComps();
         this.init();
     }
 
@@ -114,25 +119,44 @@ export class SeriesChartTypePanel extends Component {
                 labelWidth: "flex",
                 options: availableChartTypes,
                 value: seriesChartType.chartType,
-                onValueChange: (chartType: ChartType) => {
-                    this.chartController.updateSeriesChartType(col.colId, chartType);
-                    const isDisabled = isSecondaryAxisDisabled(chartType);
-                    secondaryAxisComp.setDisabled(isDisabled);
-                    if (isDisabled) {
-                        secondaryAxisComp.setValue(false, true);
-                    }
-                }
+                onValueChange: (chartType: ChartType) => this.chartController.updateSeriesChartType(col.colId, chartType)
             }));
 
             seriesItemGroup.addItem(chartTypeComp);
 
             this.seriesChartTypeGroupComp.addItem(seriesItemGroup);
+            this.chartTypeComps.set(col.colId, chartTypeComp);
+            this.secondaryAxisComps.set(col.colId, secondaryAxisComp);
         });
 
         this.getGui().appendChild(this.seriesChartTypeGroupComp.getGui());
     }
 
+    private refreshComps(): void {
+        const seriesChartTypes = this.chartController.getSeriesChartTypes();
+        this.selectedColIds.forEach(colId => {
+            const seriesChartType = seriesChartTypes.find(chartType => chartType.colId === colId);
+            if (!seriesChartType) { return; }
+            const chartTypeComp = this.chartTypeComps.get(colId);
+            const secondaryAxisComp = this.secondaryAxisComps.get(colId);
+
+            chartTypeComp?.setValue(seriesChartType.chartType);
+            secondaryAxisComp?.setValue(!!seriesChartType.secondaryAxis);
+            secondaryAxisComp?.setDisabled(this.isSecondaryAxisDisabled(seriesChartType.chartType));
+        });
+    }
+
+    private clearComps(): void {
+        this.chartTypeComps.clear();
+        this.secondaryAxisComps.clear();
+    }
+
+    private isSecondaryAxisDisabled(chartType: ChartType): boolean {
+        return ['groupedColumn', 'stackedColumn', 'stackedArea'].includes(chartType);
+    }
+
     protected destroy(): void {
+        this.clearComps();
         this.seriesChartTypeGroupComp = this.destroyBean(this.seriesChartTypeGroupComp)!;
         super.destroy();
     }
