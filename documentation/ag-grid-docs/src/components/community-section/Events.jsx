@@ -145,7 +145,7 @@ const Events = () => {
             {activeTab == 'past' && (
                 <div className={styles.filterContainer}>
                     {extractUniqueYears(events).map((year, index) => (
-                        <button className={`${styles.tabButton} ${selectedYear == year ? styles.active : ''}`} onClick={() => filterYears(year)}>{year}</button>
+                        <button key={index} className={`${styles.tabButton} ${selectedYear == year ? styles.active : ''}`} onClick={() => filterYears(year)}>{year}</button>
                     ))}
                 </div>
             )}
