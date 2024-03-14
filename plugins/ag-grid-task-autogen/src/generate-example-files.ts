@@ -28,7 +28,7 @@ export function createTask(parentProject: string, srcRelativeInputPath: string):
                     mode: 'prod',
                 },
                 staging: {
-                    mode: 'prod',
+                    mode: 'dev',
                 },
             },
         },
