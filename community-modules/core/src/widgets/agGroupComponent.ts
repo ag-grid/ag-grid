@@ -431,7 +431,11 @@ class DefaultTitleBar extends Component {
             eGui.removeAttribute('tabindex');
         } else {
             eGui.classList.remove('ag-disabled-group-title-bar');
-            eGui.setAttribute('tabindex', '0');
+            if (typeof this.title === 'string') {
+                eGui.setAttribute('tabindex', '0');
+            } else {
+                eGui.removeAttribute('tabindex');
+            }
         }
     }
 }

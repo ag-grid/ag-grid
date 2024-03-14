@@ -14,7 +14,6 @@ import {
 import { ChartController } from "../../chartController";
 import { ColState } from "../../model/chartDataModel";
 import { ChartMenuService } from "../../services/chartMenuService";
-import { getMaxNumCategories } from "../../utils/seriesTypeMapper";
 import { DragDataPanel } from "./dragDataPanel";
 
 export class CategoriesDataPanel extends DragDataPanel {
@@ -25,16 +24,19 @@ export class CategoriesDataPanel extends DragDataPanel {
     constructor(
         chartController: ChartController,
         autoScrollService: AutoScrollService,
+        private readonly title: string,
+        allowMultipleSelection: boolean,
         private dimensionCols: ColState[],
         private isOpen?: boolean
     ) {
-        super(chartController, autoScrollService, CategoriesDataPanel.TEMPLATE);
+        const maxSelection = undefined;
+        super(chartController, autoScrollService, allowMultipleSelection, maxSelection, CategoriesDataPanel.TEMPLATE);
     }
 
     @PostConstruct
     private init() {
         this.groupComp = this.createBean(new AgGroupComponent({
-            title: this.getCategoryGroupTitle(),
+            title: this.title,
             enabled: true,
             suppressEnabledCheckbox: true,
             suppressOpenCloseIcons: false,
@@ -68,10 +70,6 @@ export class CategoriesDataPanel extends DragDataPanel {
         this.init();
     }
 
-    protected canHaveMultipleValues(chartType: ChartType): boolean {
-        return getMaxNumCategories(chartType) !== 1;
-    }
-
     private createCategoriesGroup(columns: ColState[]): void {
         this.createGroup(columns, (col) => _.escapeString(col?.displayName)!, 'categoryAdd', 'categorySelect');
     }
@@ -81,8 +79,7 @@ export class CategoriesDataPanel extends DragDataPanel {
 
         // Display either radio buttons or checkboxes
         // depending on whether the current chart type supports multiple category columns
-        const chartType = this.chartController.getChartType();
-        const supportsMultipleCategoryColumns = this.canHaveMultipleValues(chartType);
+        const supportsMultipleCategoryColumns = this.allowMultipleSelection;
 
         columns.forEach(col => {
             const params: AgCheckboxParams = {
@@ -122,10 +119,6 @@ export class CategoriesDataPanel extends DragDataPanel {
             this.dragAndDropService.addDropTarget(dropTarget);
             this.addDestroyFunc(() => this.dragAndDropService.removeDropTarget(dropTarget));
         }
-    }
-
-    private getCategoryGroupTitle() {
-        return this.chartTranslationService.translate(this.chartController.isActiveXYChart() ? 'labels' : 'categories');
     }
 
     protected destroy(): void {

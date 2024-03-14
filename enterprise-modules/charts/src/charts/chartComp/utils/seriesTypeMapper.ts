@@ -266,3 +266,43 @@ export function getMaxNumSeries(chartType: ChartType): number | undefined {
         return undefined;
     }
 }
+
+export function supportsInvertedCategorySeries(chartType: ChartType): boolean {
+    switch (chartType) {
+        case 'column':
+        case 'groupedColumn':
+        case 'stackedColumn':
+        case 'normalizedColumn':
+        case 'bar':
+        case 'groupedBar':
+        case 'stackedBar':
+        case 'normalizedBar':
+        case 'line':
+        case 'donut':
+        case 'doughnut':
+        case 'area':
+        case 'stackedArea':
+        case 'normalizedArea':
+        case 'radarLine':
+        case 'radarArea':
+        case 'nightingale':
+        case 'radialColumn':
+        case 'radialBar':
+            return true;
+        case 'pie':
+        case 'scatter':
+        case 'bubble':
+        case 'sunburst':
+        case 'rangeBar':
+        case 'rangeArea':
+        case 'boxPlot':
+        case 'histogram':
+        case 'treemap':
+        case 'heatmap':
+        case 'waterfall':
+        case 'columnLineCombo':
+        case 'areaColumnCombo':
+        case 'customCombo':
+            return false;
+    }
+}

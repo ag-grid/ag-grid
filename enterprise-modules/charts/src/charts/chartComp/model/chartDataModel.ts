@@ -30,6 +30,7 @@ export interface ChartModelParams {
     pivotChart: boolean;
     chartType: ChartType;
     chartThemeName: string;
+    switchCategorySeries?: boolean;
     aggFunc?: string | IAggFunc;
     cellRange: CellRange;
     suppressChartRanges: boolean;
@@ -52,6 +53,7 @@ export class ChartDataModel extends BeanStub {
     public readonly chartId: string;
 
     public suppressChartRanges: boolean;
+    public switchCategorySeries: boolean;
     public aggFunc?: string | IAggFunc;
     public pivotChart: boolean;
 
@@ -85,6 +87,7 @@ export class ChartDataModel extends BeanStub {
         this.chartType = params.chartType;
         this.pivotChart = params.pivotChart;
         this.chartThemeName = params.chartThemeName;
+        this.switchCategorySeries = !!params.switchCategorySeries;
         this.aggFunc = params.aggFunc;
         this.referenceCellRange = params.cellRange;
         this.suppliedCellRange = params.cellRange;
@@ -108,6 +111,7 @@ export class ChartDataModel extends BeanStub {
             chartType,
             pivotChart,
             chartThemeName,
+            switchCategorySeries,
             aggFunc,
             suppressChartRanges,
             unlinkChart,
@@ -123,6 +127,7 @@ export class ChartDataModel extends BeanStub {
         this.chartType = chartType;
         this.pivotChart = pivotChart;
         this.chartThemeName = chartThemeName;
+        this.switchCategorySeries = !!switchCategorySeries;
         this.aggFunc = aggFunc;
         this.referenceCellRange = cellRange;
         this.suppliedCellRange = cellRange;

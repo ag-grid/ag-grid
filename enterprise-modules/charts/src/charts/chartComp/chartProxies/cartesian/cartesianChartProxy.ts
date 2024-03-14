@@ -16,8 +16,8 @@ export abstract class CartesianChartProxy extends ChartProxy {
         super(params);
     }
 
-    abstract getAxes(params: UpdateParams): AgCartesianAxisOptions[];
-    abstract getSeries(params: UpdateParams): AgBaseSeriesOptions<any>[];
+    protected abstract getAxes(params: UpdateParams): AgCartesianAxisOptions[];
+    protected abstract getSeries(params: UpdateParams): AgBaseSeriesOptions<any>[];
 
     public update(params: UpdateParams): void {
         const axes = this.getAxes(params);
