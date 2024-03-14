@@ -1,5 +1,4 @@
 import {
-    ChartMenuOptions,
     createGrid,
     FirstDataRenderedEvent,
     GridApi,
@@ -14,7 +13,6 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, MenuModule]);
 
-
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
@@ -28,16 +26,11 @@ const gridOptions: GridOptions = {
     enableRangeSelection: true,
     popupParent: document.body,
     enableCharts: true,
-    getChartToolbarItems,
     onGridReady : (params: GridReadyEvent) => {
     getData().then(rowData => params.api.setGridOption('rowData', rowData));
   },
     onFirstDataRendered,
 };
-
-function getChartToolbarItems(): ChartMenuOptions[] {
-    return ['chartDownload'];
-}
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
     params.api.createRangeChart({

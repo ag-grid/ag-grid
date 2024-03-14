@@ -1,0 +1,47 @@
+---
+title: "Chart Menu"
+enterprise: true
+---
+
+The Chart Menu appears in the top-right corner of the chart. The Chart Menu provides options to edit the chart, as well as actions such as unlinking the chart from the grid, and downloading the current chart.
+
+{% gridExampleRunner title="Chart Menu" name="menu" /%}
+
+{% note %}
+If using AG Charts Community, the legacy format Chart Menu is displayed by default. Set `legacyChartsMenu = false` to use the new format Chart Menu. This will become the default in version 32.
+{% /note %}
+
+## Default Chart Menu Items
+
+The following items are displayed within the Chart Menu by default:
+
+- **Edit Chart** (`'chartEdit'`) - Displays the [Chart Tool Panels](./integrated-charts-chart-tool-panels/), which allow users to change the selected chart type, and customise the data and chart formatting.
+- **Advanced Settings** (`'chartAdvancedSettings'`) - Displays a modal containing interactivity settings for the chart. Note that this is only displayed when using AG Charts Enterprise.
+- **Link to Grid** (`'chartLink'`) / **Unlink from Grid** (`'chartUnlink'`) - Charts are linked to the data in the grid by default, so that if the data changes, the chart will also update. However, it is sometimes desirable to unlink a chart from the grid data. For instance, users may want to prevent a chart from being updated when subsequent sorts and filters are applied in the grid. Note that the chart range disappears from the grid when the chart has been unlinked.
+- **Download Chart** (`'chartDownload'`) - Downloads the chart as a `PNG` file. Note that the chart is drawn using Canvas in the browser, and as such the user can also right click on the chart and save just like any other image on a web page. The chart can also be [downloaded using the Grid API](./integrated-charts-api-downloading-image).
+
+## Customising the Chart Menu Items
+
+The Chart Menu list can be customised via the grid option `chartMenuItems`. This can either be a list of menu items, or a callback which is passed the list of default menu items.
+
+The menu item list should be a list with each item either a) a string or b) a `MenuItemDef`. Use 'string' to pick from the built-in menu items (listed above) and use `MenuItemDef` for your own menu items.
+
+{% apiDocumentation source="grid-options/properties.json" section="charts" names=["chartMenuItems"] /%}
+
+The following example demonstrates hiding the Edit Chart and Advanced Settings menu items:
+
+{% gridExampleRunner title="Customising the Chart Menu Items" name="menu-customisation" /%}
+
+## Hiding the Chart Menu
+
+The Chart Menu can be hidden by returning an empty array from the `getChartToolbarItems()` grid callback:
+
+```js {% frameworkTransform=true %}
+const gridOptions = { 
+    getChartToolbarItems: () => [] // hide the Chart Menu
+}
+```
+
+## Next Up
+
+Continue to the next section to learn about [Chart Tool Panels](./integrated-charts-chart-tool-panels/).

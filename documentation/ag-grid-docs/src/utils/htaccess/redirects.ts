@@ -2628,6 +2628,11 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/redux-integration-pt1/', to: '/react-data-grid/getting-started/' },
     { from: '/react-data-grid/redux-integration-pt2/', to: '/react-data-grid/getting-started/' },
 
+    { from: '/javascript-data-grid/integrated-charts-toolbar/', to: '/javascript-data-grid/integrated-charts-menu/' },
+    { from: '/angular-data-grid/integrated-charts-toolbar/', to: '/angular-data-grid/integrated-charts-menu/' },
+    { from: '/react-data-grid/integrated-charts-toolbar/', to: '/react-data-grid/integrated-charts-menu/' },
+    { from: '/vue-data-grid/integrated-charts-toolbar/', to: '/vue-data-grid/integrated-charts-menu/' },
+
     { from: '/cookies.php', to: '/cookies' },
     { from: '/privacy.php', to: '/privacy' },
     { from: '/about.php', to: '/about' },

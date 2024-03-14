@@ -406,13 +406,13 @@
                                 "isEnterprise": true
                             },
                             {
-                                "title": "Chart Tool Panels",
-                                "path": "integrated-charts-chart-tool-panels",
+                                "title": "Chart Menu",
+                                "path": "integrated-charts-menu",
                                 "isEnterprise": true
                             },
                             {
-                                "title": "Chart Toolbar",
-                                "path": "integrated-charts-toolbar",
+                                "title": "Chart Tool Panels",
+                                "path": "integrated-charts-chart-tool-panels",
                                 "isEnterprise": true
                             },
                             {
