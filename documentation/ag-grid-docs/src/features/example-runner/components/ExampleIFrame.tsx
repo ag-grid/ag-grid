@@ -1,9 +1,8 @@
 import styles from '@design-system/modules/ExampleIFrame.module.scss';
-import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
+import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import classnames from 'classnames';
 import { type FunctionComponent, useEffect, useRef, useState } from 'react';
-import exampleRuntimeInjectedStyles from './exampleRuntimeInjectedStyles';
 
 interface Props {
     isHidden?: boolean;
@@ -65,18 +64,17 @@ export const ExampleIFrame: FunctionComponent<Props> = ({ isHidden, url, loading
 };
 
 const themes: Record<string, any> = {
-    "ag-theme-quartz": { dark: false, other: "ag-theme-quartz-dark" },
-    "ag-theme-quartz-dark": { dark: true, other: "ag-theme-quartz" },
-    "ag-theme-alpine": { dark: false, other: "ag-theme-alpine-dark" },
-    "ag-theme-alpine-dark": { dark: true, other: "ag-theme-alpine" },
-    "ag-theme-balham": { dark: false, other: "ag-theme-balham-dark" },
-    "ag-theme-balham-dark": { dark: true, other: "ag-theme-balham" },
-}
+    'ag-theme-quartz': { dark: false, other: 'ag-theme-quartz-dark' },
+    'ag-theme-quartz-dark': { dark: true, other: 'ag-theme-quartz' },
+    'ag-theme-alpine': { dark: false, other: 'ag-theme-alpine-dark' },
+    'ag-theme-alpine-dark': { dark: true, other: 'ag-theme-alpine' },
+    'ag-theme-balham': { dark: false, other: 'ag-theme-balham-dark' },
+    'ag-theme-balham-dark': { dark: true, other: 'ag-theme-balham' },
+};
 
 const applyExampleDarkMode = (document: Document, darkMode: boolean) => {
     document.documentElement.dataset.colorScheme = darkMode ? 'dark' : 'light';
     document.documentElement.dataset.defaultTheme = darkMode ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
-    injectStylesheet(document);
 
     for (const el of document.querySelectorAll("[class*='ag-theme-']")) {
         for (const className of Array.from(el.classList.values())) {
@@ -90,15 +88,4 @@ const applyExampleDarkMode = (document: Document, darkMode: boolean) => {
 
     // dispatch 'color-scheme-change' event for Integrated Charts to update dark mode theme
     document.dispatchEvent(new CustomEvent('color-scheme-change', { detail: { darkMode } }));
-}
-
-const injectStylesheet = (document: Document) => {
-    const id = 'example-runner-injected-styles';
-    let style = document.body.querySelector(`#${id}`);
-    if (!style) {
-        style = document.createElement('style');
-        style.setAttribute('id', id);
-        document.body.insertBefore(style, document.body.firstChild);
-    }
-    style.textContent = exampleRuntimeInjectedStyles;
 };
