@@ -37,9 +37,9 @@ const ToolsExtensions = ({ limit = -1 }) => {
             const repo = match[2];
             return `https://opengraph.githubassets.com/${new Date().getMilliseconds}/${owner}/${repo}`;
         } else {
-            throw new Error("Invalid GitHub repository URL.");
+            throw new Error('Invalid GitHub repository URL.');
         }
-    }
+    };
 
     return (
         <div className={styles.container}>
@@ -65,6 +65,7 @@ const ToolsExtensions = ({ limit = -1 }) => {
                                 onClick={() => filterFrameworks(framework)}
                             >
                                 <img
+                                    className={framework === 'Rust' ? styles.invert : undefined}
                                     src={`/community/frameworks/${framework.toLowerCase()}.svg`}
                                     alt={`${framework}`}
                                 />
@@ -79,20 +80,31 @@ const ToolsExtensions = ({ limit = -1 }) => {
                 {filteredTools.map(
                     (tool, index) =>
                         (!selectedFramework || tool.frameworks?.includes(selectedFramework)) && (
-                            <div onClick={() => window.open(tool.link ? tool.link : tool.repo)} target="_blank" className={styles.linkWrapper} key={index}>
+                            <div
+                                onClick={() => window.open(tool.link ? tool.link : tool.repo)}
+                                target="_blank"
+                                className={styles.linkWrapper}
+                                key={index}
+                            >
                                 <div key={index} className={styles.itemContainer}>
                                     <div className={styles.image}>
                                         {
-                                            <img src={`${tool.img ? `/community/tools-extensions/${tool.img}` : getGithubImage(tool.repo)}`} />
+                                            <img
+                                                src={`${tool.img ? `/community/tools-extensions/${tool.img}` : getGithubImage(tool.repo)}`}
+                                            />
                                         }
                                     </div>
                                     <div className={styles.content}>
                                         <div className={styles.toolHeader}>
-                                            <span className={styles.title}>
-                                                {tool.title}
-                                            </span>
+                                            <span className={styles.title}>{tool.title}</span>
                                             {tool.repo && (
-                                                <div onClick={(e) => {e.stopPropagation(); window.open(tool.repo)}} target="_blank" >
+                                                <div
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        window.open(tool.repo);
+                                                    }}
+                                                    target="_blank"
+                                                >
                                                     <div className={styles.logoContainer}>
                                                         <Icon
                                                             alt={`GitHub logo`}
@@ -103,9 +115,7 @@ const ToolsExtensions = ({ limit = -1 }) => {
                                                 </div>
                                             )}
                                         </div>
-                                        <span className={styles.description}>
-                                            {tool.description}
-                                        </span>
+                                        <span className={styles.description}>{tool.description}</span>
                                         <div className={styles.tagContainer}>
                                             {tool?.frameworks?.map((framework, index) => (
                                                 <span key={index} className={styles.tag}>
@@ -126,8 +136,7 @@ const ToolsExtensions = ({ limit = -1 }) => {
                                 </div>
                             </div>
                         )
-                    )
-                }   
+                )}
             </div>
         </div>
     );
