@@ -1,6 +1,5 @@
 import {ChartProxy, ChartProxyParams, UpdateParams} from '../chartProxy';
 import {
-    AgCharts,
     AgNightingaleSeriesOptions,
     AgPolarAxisOptions,
     AgPolarChartOptions,
@@ -22,7 +21,7 @@ export class PolarChartProxy extends ChartProxy {
         super(params);
     }
 
-    public getAxes(_: UpdateParams): AgPolarAxisOptions[] {
+    private getAxes(_: UpdateParams): AgPolarAxisOptions[] {
         const radialBar = this.standaloneChartType === 'radial-bar';
         return [
             {type: radialBar ? 'angle-number' : 'angle-category'},
@@ -30,7 +29,7 @@ export class PolarChartProxy extends ChartProxy {
         ];
     }
 
-    public getSeries(params: UpdateParams): AgPolarSeriesOptions[] {
+    private getSeries(params: UpdateParams): AgPolarSeriesOptions[] {
         const {fields} = params;
         const [category] = params.categories;
         const radialBar = this.standaloneChartType === 'radial-bar';
@@ -44,7 +43,7 @@ export class PolarChartProxy extends ChartProxy {
         }));
     }
 
-    public update(params: UpdateParams): void {
+    protected override update(params: UpdateParams): void {
         const axes = this.getAxes(params);
 
         const options: AgPolarChartOptions = {
@@ -54,7 +53,7 @@ export class PolarChartProxy extends ChartProxy {
             series: this.getSeries(params),
         };
 
-        AgCharts.update(this.getChartRef(), options);
+        this.updateChart(options);
     }
 
     private getData(params: UpdateParams, axes: AgPolarAxisOptions[]): any[] {

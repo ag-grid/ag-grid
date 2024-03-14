@@ -84,10 +84,26 @@ export abstract class ChartProxy {
 
     public abstract crossFilteringReset(): void;
 
-    public abstract update(params: UpdateParams): void;
+    protected abstract update(params: UpdateParams): void;
+
+    public applyUpdate(params: UpdateParams, options?: { skipAnimations?: boolean }): void {
+        const { skipAnimations } = options ?? {};
+        if (skipAnimations) this.chart.skipAnimations();
+        this.update(params);
+    }
+
+    protected updateChart(options: AgChartOptions, skipAnimations?: boolean): void {
+        if (skipAnimations) this.chart.skipAnimations();
+        AgCharts.update(this.chart, options);
+    }
+
+    protected updateChartDelta(options: AgChartOptions, skipAnimations?: boolean): void {
+        if (skipAnimations) this.chart.skipAnimations();
+        AgCharts.updateDelta(this.chart, options);
+    }
 
     public updateThemeOverrides(themeOverrides: AgChartThemeOverrides): void {
-        AgCharts.updateDelta(this.getChartRef(), { theme: { overrides: themeOverrides }});
+        this.updateChartDelta({ theme: { overrides: themeOverrides }});
     }
 
     public getChart() {
@@ -130,7 +146,7 @@ export abstract class ChartProxy {
         // the first column is used for X and every other column is treated as Y
         // (or alternates between Y and size for bubble)
         const seriesType = getSeriesType(this.chartProxyParams.chartType);
-        AgCharts.updateDelta(this.chart, { theme: { overrides: { [seriesType]: { paired }}}});
+        this.updateChartDelta({ theme: { overrides: { [seriesType]: { paired }}}});
     }
 
     public isPaired(): boolean {

@@ -37,6 +37,7 @@ export abstract class DragDataPanel extends Component {
         private readonly autoScrollService: AutoScrollService,
         protected readonly allowMultipleSelection: boolean,
         private readonly maxSelection: number | undefined,
+        protected skipAnimations: boolean,
         template?: string
     ) {
         super(template);
@@ -83,7 +84,9 @@ export abstract class DragDataPanel extends Component {
                 if (newValue.colId === ChartDataModel.DEFAULT_CATEGORY) {
                     this.chartController.setAggFunc(undefined, true);
                 }
-                this.chartController.updateForPanelChange(newValue);
+                this.chartController.updateForPanelChange(newValue, {
+                    skipAnimations: this.skipAnimations
+                });
             };
             this.valueSelect = this.groupComp.createManagedBean(new AgSelect<ColState>(params));
             this.groupComp.addItem(this.valueSelect);
@@ -245,7 +248,7 @@ export abstract class DragDataPanel extends Component {
             colState = updated[0];
         }
         if (colState) {
-            this.chartController.updateForPanelChange(colState, resetOrder);
+            this.chartController.updateForPanelChange(colState, { resetOrder });
         }
     }
 

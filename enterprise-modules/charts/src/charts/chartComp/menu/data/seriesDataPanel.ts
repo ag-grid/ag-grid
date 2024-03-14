@@ -30,7 +30,8 @@ export class SeriesDataPanel extends DragDataPanel {
         private valueCols: ColState[],
         private isOpen?: boolean
     ) {
-        super(chartController, autoScrollService, allowMultipleSelect, maxSelection, SeriesDataPanel.TEMPLATE);
+        const skipAnimations = false;
+        super(chartController, autoScrollService, allowMultipleSelect, maxSelection, skipAnimations, SeriesDataPanel.TEMPLATE);
     }
 
     @PostConstruct

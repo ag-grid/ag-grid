@@ -4,7 +4,6 @@ import {
     AgBaseSeriesOptions,
     AgCartesianAxisOptions,
     AgCartesianChartOptions,
-    AgCharts,
     AgLineSeriesOptions,
 } from "ag-charts-community";
 
@@ -19,7 +18,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
     protected abstract getAxes(params: UpdateParams): AgCartesianAxisOptions[];
     protected abstract getSeries(params: UpdateParams): AgBaseSeriesOptions<any>[];
 
-    public update(params: UpdateParams): void {
+    protected override update(params: UpdateParams): void {
         const axes = this.getAxes(params);
 
         const options: AgCartesianChartOptions = {
@@ -29,7 +28,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
             series: this.getSeries(params),
         };
 
-        AgCharts.update(this.getChartRef(), options);
+        this.updateChart(options);
     }
 
     protected getData(params: UpdateParams, axes: AgCartesianAxisOptions[]): any[] {

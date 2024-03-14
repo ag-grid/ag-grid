@@ -160,10 +160,14 @@ export class ChartController extends BeanStub {
         this.raiseChartRangeSelectionChangedEvent();
     }
 
-    public updateForPanelChange(updatedColState: ColState, resetOrder?: boolean): void {
+    public updateForPanelChange(updatedColState: ColState, options?: {
+        resetOrder?: boolean,
+        skipAnimations?: boolean,
+    }): void {
+        const { resetOrder, skipAnimations } = options ?? {};
         this.model.updateCellRanges({ updatedColState, resetOrder });
         this.model.updateData();
-        this.setChartRange();
+        this.setChartRange({ skipAnimations });
         this.raiseChartRangeSelectionChangedEvent();
     }
 
@@ -329,7 +333,7 @@ export class ChartController extends BeanStub {
         }
         if (updateDimensionColState || updateValueColState) {
             this.model.resetCellRanges(updateDimensionColState, updateValueColState);
-            this.setChartRange(true);
+            this.setChartRange({ silent: true });
         }
     }
 
@@ -416,13 +420,14 @@ export class ChartController extends BeanStub {
         return { dimensionCols: this.model.dimensionColState, valueCols: this.getValueColState() };
     }
 
-    public setChartRange(silent = false): void {
+    public setChartRange(options?: { silent?: boolean, skipAnimations?: boolean }): void {
+        const { silent, skipAnimations } = options ?? {};
         if (this.rangeService && !this.model.suppressChartRanges && !this.model.unlinked) {
             this.rangeService.setCellRanges(this.getCellRanges());
         }
 
         if (!silent) {
-            this.raiseChartModelUpdateEvent();
+            this.raiseChartModelUpdateEvent({ skipAnimations });
         }
     }
 
@@ -575,9 +580,11 @@ export class ChartController extends BeanStub {
         };
     }
 
-    private raiseChartModelUpdateEvent(): void {
+    private raiseChartModelUpdateEvent(options?: { skipAnimations?: boolean }): void {
+        const { skipAnimations = false } = options ?? {};
         const event = {
-            type: ChartController.EVENT_CHART_MODEL_UPDATE
+            type: ChartController.EVENT_CHART_MODEL_UPDATE,
+            skipAnimations,
         };
 
         this.dispatchEvent(event);

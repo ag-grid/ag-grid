@@ -1,5 +1,4 @@
 import {
-    AgCharts,
     AgCartesianChartOptions,
     AgHeatmapSeriesOptions,
     AgChartThemeOverrides,
@@ -18,7 +17,7 @@ export class HeatmapChartProxy extends ChartProxy {
         super(params);
     }
 
-    public override update(params: UpdateParams): void {
+    protected override update(params: UpdateParams): void {
         const xSeriesKey = HEATMAP_SERIES_KEY;
         const xValueKey = HEATMAP_VALUE_KEY;
         const yKey = HEATMAP_CATEGORY_KEY;
@@ -28,10 +27,10 @@ export class HeatmapChartProxy extends ChartProxy {
             data: this.getData(params, xSeriesKey, xValueKey, yKey),
         };
 
-        AgCharts.update(this.getChartRef(), options);
+        this.updateChart(options);
     }
 
-    protected getSeries(params: UpdateParams, xSeriesKey: string, xValueKey: string, yKey: string): AgHeatmapSeriesOptions[] {
+    private getSeries(params: UpdateParams, xSeriesKey: string, xValueKey: string, yKey: string): AgHeatmapSeriesOptions[] {
         const [category] = params.categories;
         return [
             {
@@ -50,7 +49,7 @@ export class HeatmapChartProxy extends ChartProxy {
         ];
     }
 
-    protected getData(params: UpdateParams, xSeriesKey: string, xValueKey: string, yKey: string): any[] {
+    private getData(params: UpdateParams, xSeriesKey: string, xValueKey: string, yKey: string): any[] {
         const [category] = params.categories;
         // Heatmap chart expects a flat array of data, with each row representing a single cell in the heatmap
         // This means we need to explode the list of input rows into their individual cells
