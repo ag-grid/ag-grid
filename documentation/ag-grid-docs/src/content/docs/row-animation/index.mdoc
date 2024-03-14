@@ -2,7 +2,14 @@
 title: "Row Animation"
 ---
 
-Row animations occur after filtering, sorting, resizing height and expanding / collapsing a row group.
+Row animations occur after filtering, sorting, resizing height and expanding / collapsing a row group and are enabled by default.
+
+## Disable Animation
+  
+Depending on how the grid is used, Row Animations can be a performance bottleneck.
+Row animations can be disabled by setting the grid option `animateRows = false`.
+
+## Row Animations
 
 The grid will animate the rows in the following scenarios:
 
@@ -17,10 +24,6 @@ The example below automatically triggers grid actions to demonstrate the animati
 
 {% gridExampleRunner title="Animation" name="animation" /%}
 
-## Disable Animation
-  
-Depending on how the grid is used, Row Animations can be a performance bottleneck.
-Row animations can be disabled by setting the grid option `animateRows = false`.
 
 ## Animation Sequence Details
 

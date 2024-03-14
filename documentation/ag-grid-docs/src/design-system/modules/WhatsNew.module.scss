@@ -4,8 +4,12 @@
     width: 100%;
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        width: calc(var(--layout-width-9-12) + $spacing-size-16);
+        width: calc(var(--layout-width-9-12));
         padding-top: $spacing-size-10;
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-large) {
+        width: calc(var(--layout-width-9-12) + $spacing-size-16);
     }
 }
 

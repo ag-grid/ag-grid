@@ -15,7 +15,7 @@ import { ColState } from "../../model/chartDataModel";
 import { ChartOptionsService } from "../../services/chartOptionsService";
 import { DragDataPanel } from "./dragDataPanel";
 import { ChartMenuService } from "../../services/chartMenuService";
-import { canOnlyHaveSingleSeries } from "../../utils/seriesTypeMapper";
+import { getMaxNumSeries } from "../../utils/seriesTypeMapper";
 
 export class SeriesDataPanel extends DragDataPanel {
     private static TEMPLATE = /* html */`<div id="seriesGroup"></div>`;
@@ -94,7 +94,11 @@ export class SeriesDataPanel extends DragDataPanel {
     }
 
     protected canHaveMultipleValues(chartType: ChartType): boolean {
-        return !canOnlyHaveSingleSeries(chartType);
+        return getMaxNumSeries(chartType) !== 1;
+    }
+
+    protected getMaxSelection(chartType: ChartType): number | undefined {
+        return getMaxNumSeries(chartType);
     }
 
     private createSeriesGroup(columns: ColState[]): void {

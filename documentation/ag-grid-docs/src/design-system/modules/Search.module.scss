@@ -5,7 +5,6 @@
     align-items: center;
     position: relative;
     width: 100%;
-    min-width: 700px;
     padding: $spacing-size-2 $spacing-size-3;
     border-radius: var(--radius-lg);
     background-color: rgba(255, 255, 255, 0.1);
@@ -14,12 +13,15 @@
     transition: all 0.5s;
     border: 1px solid rgba(255, 255, 255, 0.05);
     font-weight: var(--text-semibold);
-    @media screen and (max-width: $breakpoint-docs-nav-medium) {
-        min-width: 320px;
+
+    @media screen and (min-width: $breakpoint-site-header-medium) {
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     #{$selector-darkmode} & {
-        background-color: rgba(255, 255, 255, 0.06);
+        background-color: rgba(255, 255, 255, 0.1);
         border: 1px solid color-mix(in srgb, var(--color-brand-200), var(--color-bg-primary) 90%);
     }
 

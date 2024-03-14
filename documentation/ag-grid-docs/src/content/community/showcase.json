@@ -1,7 +1,7 @@
 {
     "favourites": [
         {
-            "link": "https://openbb.co/products/pro",
+            "link": "https://docs.openbb.co/pro/widgets/tabular-data",
             "repo": "https://github.com/OpenBB-finance/OpenBBTerminal",
             "title": "Terminal Pro @ OpenBB",
             "description": "A sleek graphical interface that is intuitive and fully customizable, making it easier for you to access and analyze financial information with ease.",
@@ -25,7 +25,7 @@
             "repo": "https://github.com/windmill-labs/windmill",
             "title": "Windmill",
             "description": "Open-source developer platform to turn scripts into workflows and UIs. Fastest workflow engine (5x vs Airflow). Open-source alternative to Airplane and Retool.",
-            "link": "https://windmill.dev",
+            "link": "https://www.windmill.dev/docs/apps/app_configuration_settings/aggrid_table#aggird-table-input",
             "type": "Product",
             "open_source": true,
             "stars": 8000,
@@ -47,7 +47,7 @@
             "open_source": true,
             "stars": 13100,
             "type": "Product",
-            "link": "https://pinpoint-apm.gitbook.io/",
+            "link": "https://pinpoint-apm.gitbook.io/pinpoint",
             "img": "pinpoint.png",
             "frameworks": [
                 "React", "Angular", "Vue"
@@ -100,7 +100,7 @@
         {
             "repo": "https://github.com/mlflow/mlflow/tree/master",
             "title": "MLFlow",
-            "description": "Open source platform for the machine learning lifecycle",
+            "description": "MLflow is a platform to streamline machine learning development, including tracking experiments, packaging code into reproducible runs, and sharing and deploying models.",
             "link": "https://mlflow.org",
             "type": "Product",
             "open_source": true,
@@ -122,7 +122,7 @@
             "repo": "https://github.com/jpmorganchase/salt-ds",
             "title": "J.P.Morgan - Salt DS",
             "description": "React UI components built with a focus on accessibility, customisation and ease-of-use",
-            "link": "https://www.saltdesignsystem.com/salt/index",
+            "link": "https://www.saltdesignsystem.com/salt/components/ag-grid-theme/examples",
             "type": "Integration",
             "open_source": true,
             "stars": 100,
@@ -145,14 +145,14 @@
             "open_source": true,
             "stars": 45,
             "type": "Product",
-            "link": "https://irida.ca",
+            "link": "https://phac-nml.github.io/irida-documentation/user/tutorials/web-upload/",
             "favourite": true,
             "img": "irida.png",
             "tags": [
                 "Public Health"
             ],
             "frameworks": [
-                "JavaScript"
+                "React"
             ],
             "products": [
                 "Grid"
@@ -160,14 +160,23 @@
         },
         {
             "title": "Allianz NG-Aquila",
-            "description": "Angular UI Component library for the Open Insurance Platform",
+            "description": "Aquila is an open-source component library provided by the Allianz Global Digital Factory (GDF).",
             "repo": "https://github.com/allianz/ng-aquila",
             "open_source": true,
             "stars": 200,
             "type": "Integration",
-            "link": "allianz.github.io/ng-aquila/",
+            "link": "https://allianz.github.io/ng-aquila/documentation/ag-grid/overview",
             "img": "allianz-ng.png",
-            "favourite": true
+            "favourite": true,
+            "tags": [
+                "Components"
+            ],
+            "frameworks": [
+                "Angular"
+            ],
+            "products": [
+                "Grid"
+            ]
         },
         {
             "title": "Microsoft MDR Gamut",
@@ -178,7 +187,16 @@
             "type": "Product",
             "link": "https://microsoft.github.io/msrgamut/",
             "favourite": true,
-            "img": "mdr-gamut.png"
+            "img": "mdr-gamut.png",
+            "tags": [
+                "Demo"
+            ],
+            "frameworks": [
+                "React"
+            ],
+            "products": [
+                "Grid"
+            ]
         },
         {
             "title": "Siemens IX",
@@ -187,13 +205,19 @@
             "open_source": true,
             "stars": 140,
             "type": "Integration",
-            "link": "https://ix.siemens.io/",
+            "link": "https://ix.siemens.io/docs/controls/grid",
             "favourite": true,
-            "img": "siemens.png"
+            "img": "siemens.png",
+            "frameworks": [
+                "React", "Angular", "Vue"
+            ],
+            "products": [
+                "Grid"
+            ]
         },
         {
             "title": "NASA Aerie UI",
-            "description": "The client application for Aerie.",
+            "description": "The client application for Aerie, a software framework for modeling spacecraft",
             "repo": "https://github.com/NASA-AMMOS/aerie-ui",
             "open_source": true,
             "stars": 30,
@@ -201,23 +225,20 @@
             "link": "https://nasa-ammos.github.io/aerie-docs/",
             "favourite": true,
             "img": "nasa-eerie.png",
-            "companyLogo": "nasa.svg"
-        },
-        {
-            "title": "AWS Network Orchestration",
-            "description": "The Network Orchestration for AWS Transit Gateway solution automates the process of setting up and managing transit networks in distributed AWS environments.",
-            "repo": "https://github.com/aws-solutions/network-orchestration-for-aws-transit-gateway",
-            "open_source": true,
-            "stars": 100,
-            "type": "Product",
-            "link": "https://aws.amazon.com/solutions/implementations/serverless-transit-network-orchestrator/",
-            "favourite": true,
-            "img": "aws-no.png",
-            "companyLogo": "aws.svg"
+            "companyLogo": "nasa.svg",
+            "tags": [
+                "Science"
+            ],
+            "frameworks": [
+                "Svelte"
+            ],
+            "products": [
+                "Grid"
+            ]
         },
         {
             "title": "MongoDB Compass",
-            "description": "The GUI for MongoDB.",
+            "description": "Compass is a free interactive tool for querying, optimizing, and analyzing your MongoDB data. Get key insights, drag and drop to build pipelines, and more.",
             "repo": "https://github.com/mongodb-js/compass",
             "open_source": true,
             "stars": 1000,
@@ -229,25 +250,14 @@
                 "Database"
             ],
             "frameworks": [
-                "React"
+                "Angular"
             ],
             "products": [
                 "Grid"
             ]
-        },
+        },   
         {
-            "title": "Timely",
-            "description": "Timely is a time series database application that provides secure access to time series data.",
-            "repo": "https://github.com/NationalSecurityAgency/timely",
-            "open_source": true,
-            "stars": 370,
-            "type": "Product",
-            "link": "https://code.nsa.gov/timely/",
-            "favourite": true,
-            "img": "nsa-timely.png"
-        },       
-        {
-            "link": "https://marmelab.com/react-admin/",
+            "link": "https://marmelab.com/react-admin/DatagridAG.html",
             "repo": "https://github.com/marmelab/react-admin",
             "title": "React Admin",
             "description": "A frontend Framework for building data-driven applications running on top of REST/GraphQL APIs, using TypeScript, React and Material Design.",
@@ -266,7 +276,7 @@
             ]
         },
         {
-            "link": "https://tableflow.com/",
+            "link": "https://tableflow.com/docs/introduction",
             "repo": "https://github.com/tableflowhq/csv-import",
             "title": "Tableflow",
             "description": "TableFlow is a data import platform for companies to collect and transform customer data.",
@@ -286,12 +296,12 @@
         },
         {
             "title": "Cube",
-            "description": "Cube — The Semantic Layer for Building Data Applications",
+            "description": "Cube is the semantic layer for building data applications. It helps data engineers and application developers access data from modern data stores, organize it into consistent definitions, and deliver it to every application.",
             "repo": "https://github.com/cube-js/cube",
             "open_source": true,
             "stars": 16900,
             "type": "Product",
-            "link": "https://cube.dev/",
+            "link": "https://react-pivot-table-demo.cube.dev/#/",
             "img": "cube-js.png",
             "tags": [
                 "Library"

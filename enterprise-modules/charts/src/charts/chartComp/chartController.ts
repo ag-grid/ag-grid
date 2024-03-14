@@ -22,7 +22,7 @@ import {
 import { ChartDataModel, ChartModelParams, ColState } from "./model/chartDataModel";
 import { ChartProxy, UpdateParams } from "./chartProxies/chartProxy";
 import { _Theme, AgChartThemePalette, _ModuleSupport } from "ag-charts-community";
-import { canOnlyHaveSingleSeries, ChartSeriesType, getSeriesType, isHierarchical } from "./utils/seriesTypeMapper";
+import { ChartSeriesType, getMaxNumCategories, getMaxNumSeries, getSeriesType } from "./utils/seriesTypeMapper";
 import { isStockTheme } from "./chartProxies/chartTheme";
 import { UpdateParamsValidator } from "./utils/UpdateParamsValidator";
 
@@ -223,26 +223,31 @@ export class ChartController extends BeanStub {
 
     private updateMultiSeriesAndCategory(previousChartType: ChartType, chartType: ChartType): void {
         // If we are changing from a multi-category/series chart type to a single-category/series chart type,
-        // ensure that only the first selected category/series column remains selected
-        const updateMultiValueToSingleValue = (columns: ColState[]) => {
-            let hasSelectedValue = false;
+        // ensure that only the allowed number of selected category/series column remain selected
+        const updateForMax = (columns: ColState[], maxNum: number) => {
+            let numSelected = 0;
             for (const colState of columns) {
                 if (!colState.selected) continue;
-                if (hasSelectedValue) colState.selected = false;
-                hasSelectedValue = true;
+                if (numSelected >= maxNum) {
+                    colState.selected = false;
+                } else {
+                    numSelected++;
+                }
             }
-            if (!hasSelectedValue) {
+            if (numSelected === 0) {
                 columns[0].selected = true;
             }
         }
 
-        const updateDimensionColState = isHierarchical(previousChartType) && !isHierarchical(chartType);
-        const updateValueColState = !canOnlyHaveSingleSeries(previousChartType) && canOnlyHaveSingleSeries(chartType);
+        const maxNumDimensions = getMaxNumCategories(chartType);
+        const maxNumSeries = getMaxNumSeries(chartType);
+        const updateDimensionColState = maxNumDimensions != null && (getMaxNumCategories(previousChartType) ?? 100) > (maxNumDimensions ?? 100);
+        const updateValueColState = maxNumSeries != null && (getMaxNumSeries(previousChartType) ?? 100) > (maxNumSeries ?? 100);
         if (updateDimensionColState) {
-            updateMultiValueToSingleValue(this.model.dimensionColState);
+            updateForMax(this.model.dimensionColState, maxNumDimensions);
         }
         if (updateValueColState) {
-            updateMultiValueToSingleValue(this.model.valueColState);
+            updateForMax(this.model.valueColState, maxNumSeries);
         }
         if (updateDimensionColState || updateValueColState) {
             this.model.resetCellRanges(updateDimensionColState, updateValueColState);

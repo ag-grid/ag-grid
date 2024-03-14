@@ -6,8 +6,15 @@
   "targets": {
     "build": {
       "executor": "nx:run-script",
-      "dependsOn": ["ag-grid-community:build:types", "build:copy-source"],
-      "inputs": ["{projectRoot}/angular.json", "{projectRoot}/projects/**", "!{projectRoot}/dist"],
+      "dependsOn": [
+        "build:copy-source"
+      ],
+      "inputs": [
+        "tsDeclarations",
+        "{projectRoot}/angular.json",
+        "{projectRoot}/projects/**",
+        "!{projectRoot}/dist"
+      ],
       "cache": true,
       "outputs": ["{projectRoot}/dist"],
       "options": {

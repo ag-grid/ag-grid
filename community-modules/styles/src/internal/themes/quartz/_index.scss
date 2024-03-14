@@ -212,7 +212,7 @@
     .ag-charts-format-top-level-group-container,
     .ag-charts-advanced-settings-top-level-group-container {
         padding: 0;
-        @include ag.theme-rtl((padding-left: 0, padding-right: var(--ag-widget-container-horizontal-padding)));
+        @include ag.theme-rtl((padding-left: var(--ag-grid-size), padding-right: var(--ag-widget-container-horizontal-padding)));
     }
 
     .ag-chart-mini-thumbnail {

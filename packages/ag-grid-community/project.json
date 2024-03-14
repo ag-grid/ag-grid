@@ -19,16 +19,65 @@
       }
     },
     "build:umd": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "@ag-grid-community/core:build",
+        "@ag-grid-community/client-side-row-model:build",
+        "@ag-grid-community/csv-export:build",
+        "@ag-grid-community/infinite-row-model:build"
+      ],
+      "options": {
+        "commands": ["nx run ag-grid-community:build:umd:development"]
+      },
+      "configurations": {
+        "production": {
+          "commands": ["nx run ag-grid-community:build:umd:production"]
+        }
+      }
+    },
+    "build:umd:development": {
       "executor": "@nx/webpack:webpack",
       "inputs": [],
-      "outputs": ["{projectRoot}/dist/ag-grid-community.js"],
+      "outputs": [
+        "{projectRoot}/dist/ag-grid-community.js"
+      ],
+      "dependsOn": [
+        "^build",
+        "build:updateWithCoreExports",
+        "build:copy-styles"
+      ],
       "options": {
         "webpackConfig": "packages/ag-grid-community/webpack.config.js",
-        "outputPath":  "overridden in webpack config but required by nx",
-        "outputFileName": "overridden in webpack config but required by nx"
+        "outputPath": "ignore",
+        "outputFileName": "ignore"
       },
       "cache": true,
-      "dependsOn": ["^build", "build:updateWithCoreExports"]
+      "configurations": {
+        "production": {
+          "buildTarget": "build:umd:production"
+        }
+      }
+    },
+    "build:umd:production": {
+      "executor": "nx:run-commands",
+      "inputs": [],
+      "outputs": ["{projectRoot}/dist/*.js"],
+      "cache": false,
+      "dependsOn": [
+        "^build",
+        "build:updateWithCoreExports",
+        "build:copy-styles"
+      ],
+      "options": {
+        "parallel": true,
+        "commands": [
+          "npx webpack --env production --env minify --env styles       --env entry=./src/main-styles.ts",
+          "npx webpack --env production              --env styles       --env entry=./src/main-styles.ts",
+          "npx webpack --env production --env minify --env styles=false --env entry=./src/main.ts",
+          "npx webpack --env production              --env styles=false --env entry=./src/main.ts"
+        ],
+        "cwd": "packages/ag-grid-community"
+      }
     },
     "build:copy-styles": {
       "dependsOn": ["@ag-grid-community/styles:build"],
@@ -39,7 +88,12 @@
       }
     },
     "build:types": {
-      "dependsOn": ["^build:types"],
+      "dependsOn": [
+        "@ag-grid-community/core:build:types",
+        "@ag-grid-community/client-side-row-model:build:types",
+        "@ag-grid-community/csv-export:build:types",
+        "@ag-grid-community/infinite-row-model:build:types"
+      ],
       "command": "npx gulp copy-from-module-source && cp main.d.ts.src dist/types/main.d.ts",
       "options": {
         "cwd": "packages/ag-grid-community"
@@ -50,21 +104,13 @@
       "executor": "@nx/esbuild:esbuild",
       "dependsOn": [
         "build:updateWithCoreExports",
-        "@ag-grid-community/core:build",
-        "@ag-grid-community/client-side-row-model:build",
-        "@ag-grid-community/csv-export:build",
-        "@ag-grid-community/infinite-row-model:build",
-        "@ag-grid-community/styles:build"
+        "^build"
       ],
       "inputs": [
-        "{projectRoot}/package.json",
-        "{projectRoot}/src/**/*",
-        "{projectRoot}/tsconfig.*.json",
-        "tsDeclarations",
-        "sharedGlobals",
-        "defaultExcludes",
+        "tsDefaults",
         {
-          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+          "dependentTasksOutputFiles": "**/main.cjs.js",
+          "transitive": true
         }
       ],
       "outputs": ["{options.outputPath}"],

@@ -10,7 +10,7 @@ import { SimpleCellRenderer } from './simpleCellRenderer_typescript';
 
 
 const columnDefs: ColDef[] = [
-    // this column shows just the country group values, but has not group renderer, so there is no expand / collapse functionality
+    // this column shows just the country group values, but has no group renderer, so there is no expand / collapse functionality.
     {
         headerName: 'Country Group - No Renderer',
         showRowGroup: 'country',

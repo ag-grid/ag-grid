@@ -210,7 +210,7 @@
                                 "path": "licensing"
                             },
                             {
-                                "title": "React Hooks",
+                                "title": "React Best Practices",
                                 "path": "react-hooks",
                                 "frameworks": ["react"]
                             }
@@ -1457,29 +1457,15 @@
                         "title": "Other",
                         "items": [
                             {
-                                "title": "Testing",
-                                "path": "testing"
-                            },
-                            {
-                                "title": "Testing Async",
-                                "path": "testing-async",
-                                "frameworks": ["angular"]
+                                "title": "Context",
+                                "path": "context"
                             },
                             {
                                 "title": "Custom Components",
                                 "path": "components"
-                            },
+                            },                            
                             {
-                                "title": "Security",
-                                "path": "security"
-                            },
-                            {
-                                "title": "Vue2 Tutorial",
-                                "path": "vue2",
-                                "frameworks": ["vue"]
-                            },
-                            {
-                                "title": "Unidirectional Data Flow",
+                                "title": "Best Practices",
                                 "path": "framework-data-flow",
                                 "frameworks": ["vue"]
                             },
@@ -1494,17 +1480,26 @@
                                 "frameworks": ["angular"]
                             },
                             {
+                                "title": "Security",
+                                "path": "security"
+                            },
+                            {
                                 "title": "Supported Browsers",
                                 "path": "supported-browsers"
                             },
                             {
-                                "title": "Miscellaneous",
-                                "path": "framework-misc",
-                                "frameworks": ["vue"]
+                                "title": "Testing",
+                                "path": "testing"
                             },
                             {
-                                "title": "Context",
-                                "path": "context"
+                                "title": "Testing Async",
+                                "path": "testing-async",
+                                "frameworks": ["angular"]
+                            },
+                            {
+                                "title": "Vue2 Tutorial",
+                                "path": "vue2",
+                                "frameworks": ["vue"]
                             }
                         ]
                     }

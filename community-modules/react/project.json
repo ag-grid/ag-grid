@@ -68,7 +68,6 @@
       },
       "configurations": {
         "watch": {
-          "tsConfig": "community-modules/react/tsconfig.watch.json"
         },
         "production": {
           "sourcemap": false

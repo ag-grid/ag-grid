@@ -33,6 +33,17 @@
       "cache": true
     },
     "build:umd": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["nx run ag-grid-charts-enterprise:build:umd:development"]
+      },
+      "configurations": {
+        "production": {
+          "commands": ["nx run ag-grid-charts-enterprise:build:umd:production"]
+        }
+      }
+    },
+    "build:umd:development": {
       "executor": "@nx/webpack:webpack",
       "inputs": [],
       "outputs": [
@@ -45,10 +56,32 @@
       ],
       "options": {
         "webpackConfig": "packages/ag-grid-charts-enterprise/webpack.config.js",
-        "outputPath": "overridden in webpack config but required by nx",
-        "outputFileName": "overridden in webpack config but required by nx"
+        "outputPath": "ignore",
+        "outputFileName": "ignore"
       },
-      "cache": true
+      "cache": true,
+      "configurations": {
+        "production": {
+          "buildTarget": "build:umd:production"
+        }
+      }
+    },
+    "build:umd:production": {
+      "executor": "nx:run-commands",
+      "inputs": [],
+      "outputs": ["{projectRoot}/dist/*.js"],
+      "cache": false,
+      "dependsOn": ["^build", "build:updateWithCoreExports", "build:copy-styles"],
+      "options": {
+        "parallel": true,
+        "commands": [
+          "npx webpack --env production --env minify --env styles       --env entry=./src/main-styles.ts",
+          "npx webpack --env production              --env styles       --env entry=./src/main-styles.ts",
+          "npx webpack --env production --env minify --env styles=false --env entry=./src/main.ts",
+          "npx webpack --env production              --env styles=false --env entry=./src/main.ts"
+        ],
+        "cwd": "packages/ag-grid-charts-enterprise"
+      }
     },
     "build:copy-styles": {
       "dependsOn": ["@ag-grid-community/styles:build"],
@@ -67,31 +100,10 @@
       ],
       "inputs": [
         "tsDefaults",
-        "{workspaceRoot}/community-modules/core/dist/package/main.cjs.js",
-        "{workspaceRoot}/community-modules/client-side-row-model/dist/package/main.cjs.js",
-        "{workspaceRoot}/community-modules/csv-export/dist/package/main.cjs.js",
-        "{workspaceRoot}/community-modules/infinite-row-model/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/core/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/advanced-filter/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/charts/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/charts-enterprise/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/clipboard/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/column-tool-panel/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/excel-export/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/filter-tool-panel/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/master-detail/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/menu/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/multi-filter/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/range-selection/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/rich-select/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/row-grouping/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/server-side-row-model/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/set-filter/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/side-bar/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/sparklines/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/viewport-row-model/dist/package/main.cjs.js",
-        "{workspaceRoot}/enterprise-modules/status-bar/dist/package/main.cjs.js",
-        "{workspaceRoot}/packages/ag-grid-community/dist/package/main.cjs.js"
+        {
+          "dependentTasksOutputFiles": "**/main.cjs.js",
+          "transitive": true
+        }
       ],
       "outputs": [
         "{options.outputPath}"

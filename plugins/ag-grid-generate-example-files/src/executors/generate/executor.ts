@@ -55,11 +55,6 @@ async function getGridOptionsType() {
 
 async function getSourceFileList(folderPath: string): Promise<string[]> {
     const sourceFileList = await fs.readdir(folderPath);
-    if (sourceFileList.includes('SKIP_EXAMPLE_GENERATION.md')) {
-        const msg = `Skipping example generation for ${folderPath} as there is a SKIP_EXAMPLE_GENERATION.md file present.`;
-        console.log(msg);
-        return undefined;
-    }
     if (!sourceFileList.includes(SOURCE_ENTRY_FILE_NAME)) {
         throw new Error('Unable to find example entry-point at: ' + folderPath);
     }

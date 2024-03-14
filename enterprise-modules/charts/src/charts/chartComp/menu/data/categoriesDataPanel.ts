@@ -14,7 +14,7 @@ import {
 import { ChartController } from "../../chartController";
 import { ColState } from "../../model/chartDataModel";
 import { ChartMenuService } from "../../services/chartMenuService";
-import { isHierarchical } from "../../utils/seriesTypeMapper";
+import { getMaxNumCategories } from "../../utils/seriesTypeMapper";
 import { DragDataPanel } from "./dragDataPanel";
 
 export class CategoriesDataPanel extends DragDataPanel {
@@ -69,7 +69,7 @@ export class CategoriesDataPanel extends DragDataPanel {
     }
 
     protected canHaveMultipleValues(chartType: ChartType): boolean {
-        return isHierarchical(chartType);
+        return getMaxNumCategories(chartType) !== 1;
     }
 
     private createCategoriesGroup(columns: ColState[]): void {
@@ -82,7 +82,7 @@ export class CategoriesDataPanel extends DragDataPanel {
         // Display either radio buttons or checkboxes
         // depending on whether the current chart type supports multiple category columns
         const chartType = this.chartController.getChartType();
-        const supportsMultipleCategoryColumns = isHierarchical(chartType);
+        const supportsMultipleCategoryColumns = this.canHaveMultipleValues(chartType);
 
         columns.forEach(col => {
             const params: AgCheckboxParams = {

@@ -57,7 +57,12 @@ The example below demonstrates these two properties.
 
 {% gridExampleRunner title="Suppress Virtualisation" name="suppress-virtualisation" /%}
 
-## Displayed Rows
+
+<!-- Niall note: After speaking to Kiril, takign this out for now, as exposing Displayed Rows
+     doesn't solve any business function, it's more exposing the internal workings of the grid.
+     Explaining it to users is proably causing more confusion than helping them.
+
+// ## Displayed Rows
 
 Displayed rows are rows that the grid tries to render. For example, if you have a group that is closed, the children of that group will not appear in the displayed rows. The grid renders the displayed rows onto the screen.
 
@@ -65,11 +70,11 @@ The displayed rows have indexes. For example, if the grid is rendering 20 rows, 
 
 You can look up the rows by index. This is dependent on anything that changes the index. For example, if you apply a sort or filter, then the rows and corresponding indexes will change.
 
-## Displayed Rows API
+// ## Displayed Rows API
 
 {% apiDocumentation source="grid-api/api.json" section="displayedRows" /%}
 
-## Accessing Displayed Rows Example
+// ## Accessing Displayed Rows Example
 
 The example below demonstrates the following:
 
@@ -83,7 +88,7 @@ The example below demonstrates the following:
 
 {% gridExampleRunner title="Get Displayed Row" name="get-displayed-row" /%}
 
-## Displayed Rows & Grouping
+// ## Displayed Rows & Grouping
 
 When grouping, displayed rows are those rows that are currently visible as per the open / closed state of their parent group rows.
 
@@ -91,10 +96,12 @@ In the example below `getDisplayedRowCount()` will return back 7. This is compos
 
 {% imageCaption imagePath="resources/rowGroups.png" alt="Row Groups" centered=true width="40rem" /%}
 
-## Displayed Rows & Loading
+// ## Displayed Rows & Loading
 
 If using [Server-Side Row Model](./server-side-model/) or [Infinite Row Model](./infinite-scrolling/), the `getDisplayedRowCount()` will include the 'loading rows'. This is because Displayed Rows are a concern of the grid's rendering engine and not the underlying data. As far as the rendering engine is concerned, the 'loading row' is just another row to render.
 
 For example, calling `getDisplayedRowCount()` below will return 5 as there are 4 normal rows and 1 loading row.
 
 {% imageCaption imagePath="resources/serverSideLoading.png" alt="Server Side Loading" centered=true width="38rem" /%}
+
+-->

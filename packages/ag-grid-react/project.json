@@ -47,13 +47,15 @@
         "compiler": "tsc"
       },
       "configurations": {
-        "watch": {},
+        "watch": {
+          "tsConfig": "packages/ag-grid-react/tsconfig.types.json"
+        },
         "production": {}
       }
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["@ag-grid-community/core:build:types", "build:copy-source"],
+      "dependsOn": ["ag-grid-community:build:types", "build:copy-source"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -76,9 +78,6 @@
         "sourcemap": true
       },
       "configurations": {
-        "watch": {
-          "tsConfig": "packages/ag-grid-react/tsconfig.watch.json"
-        },
         "production": {
           "sourcemap": false
         }

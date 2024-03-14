@@ -69,13 +69,6 @@
     @media screen and (min-width: $breakpoint-site-header-small) {
         order: 4;
     }
-
-    @media screen and (min-width: $breakpoint-site-header-medium) {
-        display: flex;
-        order: unset;
-        width: unset;
-        margin: 0 0 0 auto;
-    }
 }
 
 button.mobileNavButton {
@@ -215,7 +208,7 @@ button.mobileNavButton {
     @media screen and (min-width: $breakpoint-site-header-small) {
         width: auto;
         margin-right: $spacing-size-2;
-        margin-left: auto;
+        margin-left: $spacing-size-2;
     }
 }
 

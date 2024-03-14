@@ -16,19 +16,21 @@ type ChartInteractivityGroup = 'navigator' | 'zoom' | 'animation' | 'crosshair';
 
 const INTERACTIVITY_GROUPS: ChartInteractivityGroup[] = ['navigator', 'zoom', 'animation', 'crosshair'];
 
+const DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS: ChartInteractivityGroup[] = ['navigator', 'zoom', 'crosshair'];
+
 const SUPPORTED_GROUP_PANELS: { [T in ChartSeriesType]?: ChartInteractivityGroup[] } = {
-    'bar': ['navigator', 'crosshair'],
-    'column': ['navigator', 'crosshair'],
-    'line': ['navigator', 'crosshair'],
-    'area': ['navigator', 'crosshair'],
-    'scatter': ['navigator', 'crosshair'],
-    'bubble': ['navigator', 'crosshair'],
-    'histogram': ['navigator', 'crosshair'],
-    'cartesian': ['navigator', 'crosshair'],
-    'range-bar': ['navigator', 'crosshair'],
-    'range-area': ['navigator', 'crosshair'],
-    'waterfall': ['navigator', 'crosshair'],
-    'box-plot': ['navigator', 'crosshair'],
+    'cartesian': DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS,
+    'column': DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS,
+    'bar': DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS,
+    'line': DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS,
+    'area': DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS,
+    'scatter': DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS,
+    'histogram': DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS,
+    'bubble': DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS,
+    'range-bar': DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS,
+    'range-area': DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS,
+    'box-plot': DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS,
+    'waterfall': DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS,
 };
 
 export class AdvancedSettingsPanel extends Component {
@@ -67,7 +69,7 @@ export class AdvancedSettingsPanel extends Component {
     }
 
     private isGroupPanelShownForSeries(group: ChartInteractivityGroup, seriesType: ChartSeriesType): boolean {
-        if (['zoom', 'animation'].includes(group)) {
+        if (group === 'animation') {
             return true;
         }
 

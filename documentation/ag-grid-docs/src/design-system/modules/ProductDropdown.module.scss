@@ -3,6 +3,7 @@
 .customMenu {
     display: none;
     padding-right: $spacing-size-2;
+    margin-right: auto;
     user-select: none;
 
     @media screen and (min-width: 440px) {
@@ -34,6 +35,7 @@
         background-color: var(--color-bg-primary);
         border-radius: var(--radius-3xl);
         border: none;
+        opacity: 0.8;
     }
 }
 

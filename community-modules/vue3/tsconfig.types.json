@@ -8,7 +8,7 @@
     "src/main.ts"
   ],
   "exclude": [
-    "src/main-umd.ts",
+    "src/main-styles.ts",
     "src/*.test.ts"
   ]
 }
