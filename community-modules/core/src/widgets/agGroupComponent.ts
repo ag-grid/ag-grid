@@ -350,9 +350,7 @@ class DefaultTitleBar extends Component {
 
     @PostConstruct
     private postConstruct() {
-        if (this.title) {
-            this.setTitle(this.title);
-        }
+        this.setTitle(this.title);
 
         this.hideOpenCloseIcons(this.suppressOpenCloseIcons);
 
@@ -409,8 +407,9 @@ class DefaultTitleBar extends Component {
         this.dispatchEvent(event);
     }
 
-    public setTitle(title: string): this {
-        this.eTitle.innerText = title;
+    public setTitle(title: string | undefined): this {
+        this.eTitle.innerText = title || '';
+        setDisplayed(this.getGui(), title != undefined);
         return this;
     }
 

@@ -18,7 +18,7 @@ import {
 } from "@ag-grid-community/core";
 import { AgPillSelect, AgPillSelectChangeParams } from "../../../../widgets/agPillSelect";
 import { ChartController } from "../../chartController";
-import { ColState } from "../../model/chartDataModel";
+import { ChartDataModel, ColState } from "../../model/chartDataModel";
 import { ChartTranslationKey, ChartTranslationService } from "../../services/chartTranslationService";
 
 export abstract class DragDataPanel extends Component {
@@ -79,6 +79,10 @@ export abstract class DragDataPanel extends Component {
                     col.selected = false;
                 });
                 newValue.selected = true;
+                // Clear the category aggregation function if the default ordinal category is selected
+                if (newValue.colId === ChartDataModel.DEFAULT_CATEGORY) {
+                    this.chartController.setAggFunc(undefined, true);
+                }
                 this.chartController.updateForPanelChange(newValue);
             };
             this.valueSelect = this.groupComp.createManagedBean(new AgSelect<ColState>(params));
