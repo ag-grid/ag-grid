@@ -7,7 +7,7 @@ export class ChartTranslationService extends BeanStub {
     public static readonly DEFAULT_TRANSLATIONS = {
         pivotChartTitle: 'Pivot Chart',
         rangeChartTitle: 'Range Chart',
-        settings: 'Settings',
+        settings: 'Chart',
         data: 'Data',
         format: 'Format',
         categories: 'Categories',

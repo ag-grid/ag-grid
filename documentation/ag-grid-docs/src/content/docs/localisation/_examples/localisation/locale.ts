@@ -260,7 +260,7 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     // Charts
     pivotChartTitle: 'Pivot Chart',
     rangeChartTitle: 'Range Chart',
-    settings: 'Settings',
+    settings: 'Chart',
     data: 'Data',
     format: 'Format',
     categories: 'Categories',

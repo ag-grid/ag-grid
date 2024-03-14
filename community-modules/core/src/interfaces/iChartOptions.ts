@@ -18,7 +18,7 @@ export interface ChartGroupsDef {
 export type ChartToolPanelName = 'settings' | 'data' | 'format';
 
 export interface ChartSettingsPanel {
-    /** Chart groups customisations for which charts are displayed in the settings panel */
+    /** Chart groups customisations for which charts are displayed in the chart panel */
     chartGroupsDef?: ChartGroupsDef;
 }
 
@@ -44,7 +44,7 @@ export interface ChartDataPanel {
 }
 
 export interface ChartToolPanelsDef {
-    /** Customisations for the settings panel and chart menu items in the Context Menu. */
+    /** Customisations for the chart panel and chart menu items in the Context Menu. */
     settingsPanel?: ChartSettingsPanel,
     /** Customisations for the format panel */
     formatPanel?: ChartFormatPanel,

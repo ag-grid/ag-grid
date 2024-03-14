@@ -653,7 +653,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @default false
          */
     @Input() public enableCharts: boolean | undefined = undefined;
-    /** The list of chart themes that a user can choose from in the chart settings panel.
+    /** The list of chart themes that a user can choose from in the chart panel.
          * @default ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
          * @initial
          */
@@ -675,7 +675,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public suppressChartToolPanelsButton: boolean | undefined = undefined;
-    /** Allows customisation of the Chart Tool Panels, such as changing the tool panels visibility and order, as well as choosing which charts should be displayed in the settings panel.
+    /** Allows customisation of the Chart Tool Panels, such as changing the tool panels visibility and order, as well as choosing which charts should be displayed in the chart panel.
          * @initial
          */
     @Input() public chartToolPanelsDef: ChartToolPanelsDef | undefined = undefined;
