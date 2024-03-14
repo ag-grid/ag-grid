@@ -48,9 +48,19 @@
     },
     "build:umd:development": {
       "executor": "@nx/webpack:webpack",
-      "inputs": [],
+      "inputs": [
+        "tsDefaults",
+        {
+          "dependentTasksOutputFiles": "**/main.cjs.js",
+          "transitive": true
+        }
+      ],
       "outputs": [],
-      "dependsOn": [],
+      "dependsOn": [
+        "^build",
+        "build:updateWithCoreExports",
+        "build:copy-styles"
+      ],
       "options": {
         "webpackConfig": "packages/ag-grid-charts-enterprise/webpack.config.js",
         "outputPath": "ignore",

@@ -84,11 +84,13 @@ export class SeriesChartTypePanel extends Component {
                 cssIdentifier: 'charts-format-sub-level'
             }));
 
+            const isSecondaryAxisDisabled = (chartType: ChartType) => ['groupedColumn', 'stackedColumn', 'stackedArea'].includes(chartType);
+
             const secondaryAxisComp = this.seriesChartTypeGroupComp
                 .createManagedBean(new AgCheckbox({
                     label: this.chartTranslationService.translate('secondaryAxis'),
                     labelWidth: "flex",
-                    disabled: ['groupedColumn', 'stackedColumn', 'stackedArea'].includes(seriesChartType.chartType),
+                    disabled: isSecondaryAxisDisabled(seriesChartType.chartType),
                     value: !!seriesChartType.secondaryAxis,
                     onValueChange: (enabled: boolean) => this.chartController.updateSeriesChartType(col.colId, undefined, enabled)
                 }));
@@ -112,7 +114,14 @@ export class SeriesChartTypePanel extends Component {
                 labelWidth: "flex",
                 options: availableChartTypes,
                 value: seriesChartType.chartType,
-                onValueChange: (chartType: ChartType) => this.chartController.updateSeriesChartType(col.colId, chartType)
+                onValueChange: (chartType: ChartType) => {
+                    this.chartController.updateSeriesChartType(col.colId, chartType);
+                    const isDisabled = isSecondaryAxisDisabled(chartType);
+                    secondaryAxisComp.setDisabled(isDisabled);
+                    if (isDisabled) {
+                        secondaryAxisComp.setValue(false, true);
+                    }
+                }
             }));
 
             seriesItemGroup.addItem(chartTypeComp);
