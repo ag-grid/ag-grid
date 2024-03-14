@@ -51,7 +51,7 @@ const EventItem = ({ event }) => {
                     <div className={styles.footer}>
                         <div className={styles.locationContainer}>
                             {event.countryIcon ? (
-                                <img className={styles.flag} src={`/example-assets/flags/${event.countryIcon}`} />
+                                <img className={styles.flag} src={`/example-assets/flags/${event.countryIcon}`} alt={`${event.countryIcon}`} />
                             ) : (
                                 ''
                             )}
@@ -81,11 +81,12 @@ const EventItem = ({ event }) => {
                 </div>
                 <div className={styles.eventItemRightColumn}>
                     {event.collage ? (
-                        <img className={styles.eventImage} src={`/community/events/collages/${event.collage}`} />
+                        <img className={styles.eventImage} src={`/community/events/collages/${event.collage}`} alt={`${event.collage}`} />
                     ) : (
                         <img
                             className={styles.eventLogo}
                             src={darkMode || !event.logoLight ? event.logo : event.logoLight}
+                            alt={`${event.eventLogo}`}
                         />
                     )}
                 </div>

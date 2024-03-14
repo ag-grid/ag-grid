@@ -32,7 +32,7 @@ const Podcasts = () => {
                             </div>
                           <span className={styles.description}>{podcast.description}</span>
                           <div className={styles.creditsContainer}>
-                            <img className={styles.publicationLogo} src={`/community/podcasts/${podcast.publicationLogo}`} />
+                            <img className={styles.publicationLogo} src={`/community/podcasts/${podcast.publicationLogo}`} alt={`${podcast.publicationLogo} logo`} />
                             <span className={styles.publication}>{podcast.publication}</span>
                             <span>|</span>
                             <span className={styles.host}>{podcast.host}</span>

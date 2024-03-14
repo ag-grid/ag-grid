@@ -9,7 +9,7 @@ const Blogs = () => {
             {blogs.map((article, index) => (
                 <div onClick={(e) => {e.stopPropagation(); window.open(article.link)}} target="_blank" className={styles.linkWrapper} key={index}>
                     <div className={styles.card}>
-                        <img src={article.image} alt="Image Description" className={styles.articleImage} />
+                        <img src={article.image} alt="Blog Cover Image" className={styles.articleImage} />
                         <div className={styles.content}>
                             <div className={styles.headerTitleDescription}>
                                 <h2 className={styles.articleTitle}>{article.title}</h2>

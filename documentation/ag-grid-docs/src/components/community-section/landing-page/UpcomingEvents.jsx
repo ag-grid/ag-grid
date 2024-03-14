@@ -98,6 +98,7 @@ const UpcomingEvents = ({ enableFilters = false }) => {
                                     <img
                                         className={styles.organiserLogo}
                                         src={darkMode ? event.logo : event.logoLight}
+                                        alt={`${event.logo}`}
                                     />
                                 </span>
                                 <span className={styles.title}>{event.title}</span>
