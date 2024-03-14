@@ -20,6 +20,12 @@
     },
     "build:umd": {
       "executor": "nx:run-commands",
+      "dependsOn": [
+        "@ag-grid-community/core:build",
+        "@ag-grid-community/client-side-row-model:build",
+        "@ag-grid-community/csv-export:build",
+        "@ag-grid-community/infinite-row-model:build"
+      ],
       "options": {
         "commands": ["nx run ag-grid-community:build:umd:development"]
       },
@@ -57,7 +63,11 @@
       "inputs": [],
       "outputs": ["{projectRoot}/dist/*.js"],
       "cache": false,
-      "dependsOn": ["^build", "build:updateWithCoreExports"],
+      "dependsOn": [
+        "^build",
+        "build:updateWithCoreExports",
+        "build:copy-styles"
+      ],
       "options": {
         "parallel": true,
         "commands": [

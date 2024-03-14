@@ -42,15 +42,13 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     filter: 'agTextColumnFilter',
     floatingFilter: true,
+    flex: 1,
   },
   rowClassRules: {
     // apply red to Ford cars
     'rag-red': params => params.data.make === 'Ford',
   },
   rowSelection: "multiple",
-  pagination: true,
-  paginationPageSize: 500,
-  paginationPageSizeSelector: [200, 500, 1000]
 };
 
 const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
