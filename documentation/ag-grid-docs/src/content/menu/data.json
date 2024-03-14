@@ -362,6 +362,11 @@
                                 "isEnterprise": true
                             },
                             {
+                                "title": "Install Integrated Charts",
+                                "path": "integrated-charts-installation",
+                                "isEnterprise": true
+                            },
+                            {
                                 "title": "User Created Charts",
                                 "path": "integrated-charts-user-created",
                                 "isEnterprise": true,
