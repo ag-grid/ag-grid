@@ -25,26 +25,13 @@
         "cwd": "packages/ag-grid-community"
       }
     },
-    "build:types": {
-      "dependsOn": [
-        "@ag-grid-community/core:build:types",
-        "@ag-grid-community/client-side-row-model:build:types",
-        "@ag-grid-community/csv-export:build:types",
-        "@ag-grid-community/infinite-row-model:build:types"
-      ],
-      "command": "npx gulp copy-from-module-source && cp main.d.ts.src dist/types/main.d.ts",
-      "options": {
-        "cwd": "packages/ag-grid-community"
-      },
-      "cache": true
-    },
     "build:umd": {
       "executor": "nx:run-commands",
+      "inputs": [],
       "dependsOn": [
-        "@ag-grid-community/core:build",
-        "@ag-grid-community/client-side-row-model:build",
-        "@ag-grid-community/csv-export:build",
-        "@ag-grid-community/infinite-row-model:build"
+        "^build",
+        "build:updateWithCoreExports",
+        "build:copy-styles"
       ],
       "options": {
         "commands": [
@@ -62,38 +49,20 @@
     "build:umd:development": {
       "executor": "@nx/webpack:webpack",
       "inputs": [],
-      "outputs": [
-        "{projectRoot}/dist/ag-grid-community.js"
-      ],
-      "dependsOn": [
-        "^build",
-        "build:updateWithCoreExports",
-        "build:copy-styles"
-      ],
+      "outputs": [],
+      "dependsOn": [],
       "options": {
         "webpackConfig": "packages/ag-grid-community/webpack.config.js",
         "outputPath": "ignore",
         "outputFileName": "ignore"
       },
-      "cache": true,
-      "configurations": {
-        "production": {
-          "buildTarget": "build:umd:production"
-        }
-      }
+      "cache": true
     },
     "build:umd:production": {
       "executor": "nx:run-commands",
       "inputs": [],
-      "outputs": [
-        "{projectRoot}/dist/*.js"
-      ],
-      "cache": false,
-      "dependsOn": [
-        "^build",
-        "build:updateWithCoreExports",
-        "build:copy-styles"
-      ],
+      "outputs": [],
+      "dependsOn": [],
       "options": {
         "parallel": true,
         "commands": [
@@ -109,12 +78,21 @@
       "dependsOn": [
         "@ag-grid-community/styles:build"
       ],
-      "inputs": [],
       "cache": true,
       "command": "rsync -r ../../community-modules/styles/*.*css --delete styles",
       "options": {
         "cwd": "packages/ag-grid-community"
       }
+    },
+    "build:types": {
+      "dependsOn": [
+        "^build:types"
+      ],
+      "command": "npx gulp copy-from-module-source && cp main.d.ts.src dist/types/main.d.ts",
+      "options": {
+        "cwd": "packages/ag-grid-community"
+      },
+      "cache": true
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
@@ -161,18 +139,3 @@
     "community"
   ]
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
