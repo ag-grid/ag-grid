@@ -90,6 +90,10 @@ export class Component extends BeanStub {
             this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
 
+        if (this.tooltipText !== newTooltipText) {
+            this.tooltipText = newTooltipText;
+        }
+
         const getTooltipValue = () => this.tooltipText;
 
         if (newTooltipText != null) {
@@ -101,10 +105,6 @@ export class Component extends BeanStub {
                 getTooltipHideDelayOverride: hideDelayOverride != null ? (() => hideDelayOverride) : undefined,
                 shouldDisplayTooltip
             }));
-        }
-
-        if (this.tooltipText !== newTooltipText) {
-            this.tooltipText = newTooltipText;
         }
     }
 
