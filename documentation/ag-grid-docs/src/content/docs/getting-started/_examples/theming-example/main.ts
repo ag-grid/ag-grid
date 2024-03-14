@@ -48,9 +48,6 @@ const gridOptions: GridOptions = {
     'rag-red': params => params.data.make === 'Ford',
   },
   rowSelection: "multiple",
-  pagination: true,
-  paginationPageSize: 500,
-  paginationPageSizeSelector: [200, 500, 1000]
 };
 
 const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
