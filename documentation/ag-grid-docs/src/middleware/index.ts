@@ -1,3 +1,4 @@
+import { getIsProduction } from '@utils/env';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { defineMiddleware } from 'astro/middleware';
 import { parse } from 'node-html-parser';
@@ -58,13 +59,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
     if (isHtml(context.url.pathname)) {
         body = rewriteAstroGeneratedContent(body);
 
-        try {
-            body = await prettier.format(body, {
-                parser: 'html',
-            });
-        } catch (e) {
-            // eslint-disable-next-line no-console
-            console.warn(`Unable to prettier format for [${context.url.pathname}]`);
+        if (getIsProduction()) {
+            try {
+                body = await prettier.format(body, {
+                    parser: 'html',
+                });
+            } catch (e) {
+                // eslint-disable-next-line no-console
+                console.warn(`Unable to prettier format for [${context.url.pathname}]`);
+            }
         }
     }
 
