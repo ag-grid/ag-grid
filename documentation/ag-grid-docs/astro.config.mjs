@@ -10,8 +10,10 @@ import svgr from 'vite-plugin-svgr';
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
 import { getSitemapConfig } from './src/utils/sitemap';
+import { version } from '../../community-modules/core/package.json';
 
 const { NODE_ENV } = process.env;
+const AG_GRID_VERSION = version;
 const DEFAULT_BASE_URL = '/';
 const dotenv = {
     parsed: loadEnv(NODE_ENV, process.cwd(), ''),
@@ -42,18 +44,34 @@ console.log(
             SHOW_DEBUG_LOGS,
             HTACCESS,
             QUICK_BUILD_PAGES,
+            AG_GRID_VERSION,
         },
         null,
         2
     )
 );
 
+
+export function agGridVersionReplacement() {
+  return {
+    name: 'replace-AG_GRID_VERSION-placeholder',
+    transform(src, id) {
+      if (/\.(mdoc)$/.test(id)) {
+        return {
+          code: src.replace(/@AG_GRID_VERSION@/g, AG_GRID_VERSION),
+          map: null, // provide source map if available
+        }
+      }
+    },
+  }
+}
+
 // https://astro.build/config
 export default defineConfig({
     site: PUBLIC_SITE_URL,
     base: PUBLIC_BASE_URL,
     vite: {
-        plugins: [mkcert(), svgr(), agHotModuleReload()],
+        plugins: [mkcert(), svgr(), agHotModuleReload(), agGridVersionReplacement()],
         server: {
             https: !['0', 'false'].includes(PUBLIC_HTTPS_SERVER),
         },
