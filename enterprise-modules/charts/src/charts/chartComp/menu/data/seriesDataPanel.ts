@@ -51,7 +51,7 @@ export class SeriesDataPanel extends DragDataPanel {
                 value: this.chartOptionsService.getPairedMode(),
                 onValueChange: newValue => {
                     this.chartOptionsService.setPairedMode(!!newValue);
-                    this.chartController.updateForGridChange(true);
+                    this.chartController.updateForGridChange({ maintainColState: true });
                 }
             }));
             this.groupComp.addItem(pairedModeToggle);

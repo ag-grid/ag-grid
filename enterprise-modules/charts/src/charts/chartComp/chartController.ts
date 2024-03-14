@@ -121,12 +121,14 @@ export class ChartController extends BeanStub {
         removeChartCellRanges ? this.rangeService?.setCellRanges([]) : this.setChartRange();
     }
 
-    public updateForGridChange(maintainColState?: boolean): void {
+    public updateForGridChange(params?: { maintainColState?: boolean, setColsFromRange?: boolean }): void {
         if (this.model.unlinked) {
             return;
         }
 
-        this.model.updateCellRanges({ maintainColState });
+        const { maintainColState, setColsFromRange } = params ?? {};
+
+        this.model.updateCellRanges({ maintainColState, setColsFromRange });
         this.model.updateData();
         this.setChartRange();
     }
@@ -141,7 +143,7 @@ export class ChartController extends BeanStub {
     }
 
     public updateForRangeChange(): void {
-        this.updateForGridChange();
+        this.updateForGridChange({ setColsFromRange: true });
         this.raiseChartRangeSelectionChangedEvent();
     }
 

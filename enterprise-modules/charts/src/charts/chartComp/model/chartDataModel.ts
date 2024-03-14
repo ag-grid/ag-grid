@@ -98,7 +98,7 @@ export class ChartDataModel extends BeanStub {
         this.datasource = this.createManagedBean(new ChartDatasource());
         this.chartColumnService = this.createManagedBean(new ChartColumnService());
         this.comboChartModel = this.createManagedBean(new ComboChartModel(this));
-        this.updateCellRanges({ init: true });
+        this.updateCellRanges({ setColsFromRange: true });
         this.updateData();
     }
 
@@ -143,8 +143,8 @@ export class ChartDataModel extends BeanStub {
         }
     }
 
-    public updateCellRanges(params?: { updatedColState?: ColState, resetOrder?: boolean, maintainColState?: boolean, init?: boolean }): void {
-        const { updatedColState, resetOrder, maintainColState, init } = params ?? {};
+    public updateCellRanges(params?: { updatedColState?: ColState, resetOrder?: boolean, maintainColState?: boolean, setColsFromRange?: boolean }): void {
+        const { updatedColState, resetOrder, maintainColState, setColsFromRange } = params ?? {};
         if (this.valueCellRange) {
             this.referenceCellRange = this.valueCellRange;
         }
@@ -157,7 +157,7 @@ export class ChartDataModel extends BeanStub {
         }
 
         this.setDimensionCellRange(dimensionCols, allColsFromRanges, updatedColState);
-        this.setValueCellRange(valueCols, allColsFromRanges, init);
+        this.setValueCellRange(valueCols, allColsFromRanges, setColsFromRange);
 
         if (!updatedColState && !maintainColState) {
             this.resetColumnState();
@@ -446,7 +446,7 @@ export class ChartDataModel extends BeanStub {
         }
     }
 
-    private setValueCellRange(valueCols: Set<Column>, colsInRange: Set<Column>, init?: boolean): void {
+    private setValueCellRange(valueCols: Set<Column>, colsInRange: Set<Column>, setColsFromRange?: boolean): void {
         this.valueCellRange = undefined;
 
         const selectedValueCols: Column[] = [];
@@ -455,7 +455,7 @@ export class ChartDataModel extends BeanStub {
         let numSelected = 0;
 
         valueCols.forEach(col => {
-            if (init) {
+            if (setColsFromRange) {
                 if ((maxSelection == null || numSelected < maxSelection) && colsInRange.has(col)) {
                     selectedValueCols.push(col);
                     numSelected++;
