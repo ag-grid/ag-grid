@@ -60,7 +60,7 @@ const EventItem = ({ event }) => {
                         <div className={styles.ctaContainer}>
                             {event.eventPage && (
                                 <div
-                                    onClick={() => window.open(event.eventPage)}
+                                    onClick={(e) => {e.stopPropagation(); window.open(event.eventPage)}}
                                     target="_blank"
                                     className={event.recording ? styles.secondaryCta : styles.primaryCta}
                                 >
@@ -69,7 +69,7 @@ const EventItem = ({ event }) => {
                             )}
                             {event.recording && (
                                 <div
-                                    onClick={() => window.open(event.recording)}
+                                    onClick={(e) => {e.stopPropagation(); window.open(event.recording)}}
                                     target="_blank"
                                     className={event.eventPage ? styles.primaryCta : styles.secondaryCta}
                                 >

@@ -168,8 +168,7 @@
         "logo": "/community/events/organiser-logos/ng-conf-logo.webp",
         "countryIcon": "us.png",
         "startDate": "2020-11-19",
-        "eventPage": "https://enterprise2020.ng-conf.org/",
-        "recording": ""
+        "eventPage": "https://enterprise2020.ng-conf.org/"
     },
     {
         "title": "Angular Connect",
@@ -210,25 +209,6 @@
         "startDate": "2019-04-01"
     },
     {
-        "title": "ag-Grid Conf",
-        "description": "",
-        "location": "New York, USA",
-        "logo": "/community/events/organiser-logos/",
-        "countryIcon": "us.png",
-        "startDate": "2018-",
-        "eventPage": "",
-        "recording": ""
-    },
-    {
-        "title": "ag-Grid Conf",
-        "description": "Our inaugural event, hosted in London, our home city. We welcomed hundreds of developers from some of the worlds most prestigious organisations for a pack day full of all things AG Grid. Niall, our CEO, Niall talks the challenges of building ag-Grid, the internal framework we use and how to squeeze ag-Grid for performance.",
-        "location": "London, UK",
-        "logo": "/community/events/organiser-logos/",
-        "countryIcon": "united-kingdom.png",
-        "startDate": "2018-11-29",
-        "recording": "https://www.youtube.com/watch?v=rT0vQejPcrs&t=3sw"
-    },
-    {
         "title": "Microsoft Build",
         "description": "Microsoft Build is an annual conference event held by Microsoft, aimed at software engineers and web developers using Windows, Microsoft Azure and other Microsoft technologies. First held in 2011, it serves as a successor for Microsoft's previous developer events, the Professional Developers Conference and MIX.",
         "location": "Seattle, USA",
@@ -238,66 +218,39 @@
         "eventPage": "https://learn.microsoft.com/en-us/events/build-2018/"
     },
     {
-        "title": "Angular Connect",
-        "description": "",
-        "location": "",
-        "logo": "/community/events/organiser-logos/angularconnect-logo.svg",
-        "countryIcon": "",
-        "startDate": "2017-",
-        "eventPage": "",
-        "recording": ""
+        "title": "ag-Grid Conf",
+        "description": "Our inaugural event, hosted in London, our home city. We welcomed hundreds of developers from some of the worlds most prestigious organisations for a pack day full of all things AG Grid. Niall, our CEO, Niall talks the challenges of building ag-Grid, the internal framework we use and how to squeeze ag-Grid for performance.",
+        "location": "London, UK",
+        "logo": "/community/events/organiser-logos/aggrid-logo.svg",
+        "countryIcon": "united-kingdom.png",
+        "startDate": "2018-11-29",
+        "recording": "https://www.youtube.com/watch?v=rT0vQejPcrs&t=3sw"
     },
     {
-        "title": "Benzinga Fin Awards",
-        "description": "",
-        "location": "",
-        "logo": "/community/events/organiser-logos/",
-        "countryIcon": "",
-        "startDate": "2017-",
-        "eventPage": "",
-        "recording": ""
+        "title": "ag-Grid Conf",
+        "description": "The sister event to the inaugural AG Grid Conf held in London, but this time in the big apple. AG Grid have always had a global audience, so it was only right that we bring the conference across the pond, too. Like the London event, this was a day full of all things AG Grid. Niall, our CEO, Niall talks the challenges of building ag-Grid, the internal framework we use and how to squeeze ag-Grid for performance.",
+        "location": "New York, USA",
+        "logo": "/community/events/organiser-logos/aggrid-logo.svg",
+        "countryIcon": "us.png",
+        "startDate": "2018-12-03"
     },
     {
         "title": "ng-conf",
-        "description": "The worlds original Angular conference",
+        "description": "AG Grid were the premier sponsor of 2017's largest US Angular conference, ngconf, which took place just ahead of the release of Angular 4.0. This was their 4th addition with keynotes on day 1 from Stephen Fluin and Igor Minar, already looking ahead to Angular v5.",
         "location": "Salt Lake City, USA",
         "logo": "/community/events/organiser-logos/ng-conf-logo.webp",
         "countryIcon": "us.png",
         "startDate": "2017-04-15",
-        "eventPage": "",
-        "recording": ""
+        "eventPage": "https://2017.ng-conf.org/",
+        "recording": "https://www.youtube.com/playlist?list=PLOETEcp3DkCoS_2cW205cfRGl-Xp5jw4K"
     },
     {
         "title": "Angular Connect",
-        "description": "",
-        "location": "",
+        "description": "AngularConnect is Europe's largest Angular conference featuring talks, workshops, panel discussions and office hours sessions from the world's top Angular experts and the core Angular team at Google. As a bonus, developer advocate, Sophia Lazarova, gave a 5 min keynote all about AG Grid to the audience.",
+        "location": "London, UK",
         "logo": "/community/events/organiser-logos/angularconnect-logo.svg",
-        "countryIcon": "",
-        "startDate": "2016-",
-        "coverImage": "",
-        "eventPage": "",
-        "recording": ""
-    },
-    {
-        "title": "Angular UP",
-        "description": "",
-        "location": "",
-        "logo": "/community/events/organiser-logos/",
-        "countryIcon": "",
-        "startDate": "2016-",
-        "coverImage": "",
-        "eventPage": "",
-        "recording": ""
-    },
-    {
-        "title": "ng-Europe",
-        "description": "",
-        "location": "",
-        "logo": "/community/events/organiser-logos/",
-        "countryIcon": "",
-        "startDate": "2016-",
-        "coverImage": "",
-        "eventPage": "",
-        "recording": ""
+        "countryIcon": "united-kingdom.png",
+        "startDate": "2017-11-07",
+        "recording": "https://www.youtube.com/watch?v=qKk1gA0Wtt4"
     }
 ]

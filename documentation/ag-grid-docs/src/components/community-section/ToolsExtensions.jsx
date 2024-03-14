@@ -92,7 +92,7 @@ const ToolsExtensions = ({ limit = -1 }) => {
                                                 {tool.title}
                                             </span>
                                             {tool.repo && (
-                                                <div onClick={() => window.open(tool.repo)} target="_blank" >
+                                                <div onClick={(e) => {e.stopPropagation(); window.open(tool.repo)}} target="_blank" >
                                                     <div className={styles.logoContainer}>
                                                         <Icon
                                                             alt={`GitHub logo`}

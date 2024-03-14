@@ -1,7 +1,7 @@
 [
     {
         "link": "https://www.adaptabletools.com/",
-        "title": "Adaptable",
+        "title": "AdapTable",
         "description": "AdapTable for AG Grid is a powerful extension for the market-leading AG Grid Data Grid. AdapTable extends the powerful functionality provided by AG Grid to enable you to build data management applications unparalleled in power and sophistication, with features not previously available.",
         "open_source": false,
         "type": "Extension",
@@ -45,7 +45,7 @@
         "type": "Integration",
         "open_source": true,
         "stars": 80,
-        "img": "astro-uxds.jpeg",
+        "img": "astro-uxds.png",
         "frameworks": [
             "React"
         ],
@@ -124,7 +124,6 @@
         "repo": "https://github.com/MichaelKim/ag-grid-svelte",
         "type": "Wrapper",
         "open_source": true,
-        "img": "svelte-aggrid.png",
         "stars": 36,
         "frameworks": [
             "Svelte"
@@ -141,7 +140,6 @@
         "type": "Wrapper",
         "open_source": true,
         "stars": 46,
-        "img": "ipya-aggrid.png",
         "frameworks": [
             "Python"
         ],
@@ -203,7 +201,6 @@
         "type": "Integration",
         "open_source": true,
         "stars": 3200,
-        "img": "vuestic.png",
         "frameworks": [
             "Vue"
         ],
@@ -276,7 +273,6 @@
         "open_source": true,
         "stars": 350,
         "link": "https://terrestris.github.io/react-geo/docs/latest/#/Components/Grids/AgFeatureGrid",
-        "img": "react-geo.png",
         "frameworks": [
             "React"
         ],
@@ -292,7 +288,6 @@
         "stars": 5,
         "type": "Wrapper",
         "link": "https://bbj-plugins.github.io/BBjGridExWidget/",
-        "img": "bbjgridwidget.png",
         "frameworks": [
             "JavaScript"
         ],
@@ -308,7 +303,6 @@
         "stars": 20,
         "type": "Integration",
         "link": "https://openmrs.org/",
-        "img": "openmrs.png",
         "frameworks": [
             "React"
         ],
