@@ -144,10 +144,8 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
 
         this.eDisplayField.innerHTML = displayValue!;
 
-        const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') ===  'whenTruncated';
-
         this.setTooltip({
-            newTooltipText: isTooltipWhenTruncated ? displayValue: null,
+            newTooltipText: displayValue ?? null,
             shouldDisplayTooltip: () => this.eDisplayField.scrollWidth > this.eDisplayField.clientWidth
         });
 
