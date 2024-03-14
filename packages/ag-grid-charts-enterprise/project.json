@@ -11,12 +11,13 @@
       "dependsOn": [
         "build:types",
         "build:package",
-        "build:umd"
+        "build:umd",
+        "build:copy-styles"
       ]
     },
     "build:updateWithCoreExports": {
       "dependsOn": [
-        "ag-grid-community:build"
+        "@ag-grid-community/core:build"
       ],
       "cache": true,
       "command": "node updateMainTsWithCoreExports.js",
@@ -25,7 +26,12 @@
       }
     },
     "build:types": {
-      "dependsOn": ["^build:types"],
+      "dependsOn": [
+        "^build:types"
+
+
+
+      ],
       "command": "npx gulp copy-from-module-source && cp main.d.ts.src dist/types/main.d.ts",
       "options": {
         "cwd": "packages/ag-grid-charts-enterprise"
@@ -34,12 +40,22 @@
     },
     "build:umd": {
       "executor": "nx:run-commands",
+
+
+
+
+
+
       "options": {
-        "commands": ["nx run ag-grid-charts-enterprise:build:umd:development"]
+        "commands": [
+          "nx run ag-grid-charts-enterprise:build:umd:development"
+        ]
       },
       "configurations": {
         "production": {
-          "commands": ["nx run ag-grid-charts-enterprise:build:umd:production"]
+          "commands": [
+            "nx run ag-grid-charts-enterprise:build:umd:production"
+          ]
         }
       }
     },
@@ -69,9 +85,15 @@
     "build:umd:production": {
       "executor": "nx:run-commands",
       "inputs": [],
-      "outputs": ["{projectRoot}/dist/*.js"],
+      "outputs": [
+        "{projectRoot}/dist/*.js"
+      ],
       "cache": false,
-      "dependsOn": ["^build", "build:updateWithCoreExports", "build:copy-styles"],
+      "dependsOn": [
+        "^build",
+        "build:updateWithCoreExports",
+        "build:copy-styles"
+      ],
       "options": {
         "parallel": true,
         "commands": [
@@ -84,7 +106,9 @@
       }
     },
     "build:copy-styles": {
-      "dependsOn": ["@ag-grid-community/styles:build"],
+      "dependsOn": [
+        "@ag-grid-community/styles:build"
+      ],
       "inputs": [],
       "cache": true,
       "command": "rsync -r ../../community-modules/styles/*.*css --delete styles",
@@ -112,7 +136,9 @@
         "outputPath": "packages/ag-grid-charts-enterprise/dist/package",
         "main": "packages/ag-grid-charts-enterprise/src/main.ts",
         "tsConfig": "packages/ag-grid-charts-enterprise/tsconfig.lib.json",
-        "external": ["ag-grid-community"],
+        "external": [
+          "ag-grid-community"
+        ],
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
         "target": "es6",
