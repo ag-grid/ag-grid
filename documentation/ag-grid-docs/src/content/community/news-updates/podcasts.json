@@ -9,7 +9,7 @@
         "publication": "Web Rush",
         "guests": [ "Stephen Cooper", "Niall Crosby"],
         "published": "December, 2022",
-        "publicationLogo": "webrush.jpeg"
+        "publicationLogo": "webrush.webp"
     },
     {
         "title": "Async Angular Testing and Introducing AG Charts",
@@ -20,7 +20,7 @@
         "publication": "Adventures in Angular",
         "guests": [ "Stephen Cooper", "Mana Peirov" ],
         "published": "July, 2022",
-        "publicationLogo": "adventures-in-angular.jpeg"
+        "publicationLogo": "adventures-in-angular.webp"
     },
     {
         "title": "AgGrid: From Open Source to Successful Business ft. Niall Crosby - JSJ 504",
@@ -31,7 +31,7 @@
         "publication": "JavaScript Jabber",
         "guests": [ "Niall Crosby" ],
         "published": "October, 2021",
-        "publicationLogo": "javascript-jabber.png"
+        "publicationLogo": "javascript-jabber.webp"
     },
     {
         "title": "Bootstrapping a Successful Startup",
@@ -41,7 +41,7 @@
         "publication": "The Angular Plus Show",
         "guests": [ "Niall Crosby" ],
         "published": "May, 2021",
-        "publicationLogo": "angular-plus-show.jpeg",
+        "publicationLogo": "angular-plus-show.webp",
         "link": "https://api.spreaker.com/v2/episodes/44633123/play.mp3"
     }
 ]

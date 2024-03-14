@@ -42,7 +42,7 @@
         "author": "Mike Ryan",
         "type": "Workshop",
         "published": "11/2023",
-        "thumbnail": "/community/video-thumbnails/powerful-datagrid-workshop-react-summit-us-2023.png"
+        "thumbnail": "/community/video-thumbnails/powerful-datagrid-workshop-react-summit-us-2023.webp"
     },
     {
         "title": "Typing: The not so secret to customisation ngTemplateOutlet",
@@ -60,7 +60,7 @@
         "author": "Stephen Cooper",
         "type": "Video",
         "published": "06/2023",
-        "thumbnail": "/community/video-thumbnails/abstract-syntax-trees-react-summit-2023.png"
+        "thumbnail": "/community/video-thumbnails/abstract-syntax-trees-react-summit-2023.webp"
     },
     {
         "title": "Introducing AG Charts with Mana Peirov",
@@ -132,7 +132,7 @@
         "author": "Sean Landsman",
         "type": "Workshop",
         "published": "07/2022",
-        "thumbnail": "/community/video-thumbnails/hands-on-react-table-workshop-react-summit-2022.png"
+        "thumbnail": "/community/video-thumbnails/hands-on-react-table-workshop-react-summit-2022.webp"
     },
     {
         "title": "Get started with AG Grid Angular Data Grid",
@@ -141,7 +141,7 @@
         "author": "Stephen Cooper",
         "type": "Workshop",
         "published": "07/2022",
-        "thumbnail": "/community/video-thumbnails/get-started-workshop-jsnation-2022.png"
+        "thumbnail": "/community/video-thumbnails/get-started-workshop-jsnation-2022.webp"
     },
     {
         "title": "Automatically maintaining thousands of code demos across multiple framework variations",
@@ -150,7 +150,7 @@
         "author": "Stephen Cooper",
         "type": "Video",
         "published": "06/2022",
-        "thumbnail": "/community/video-thumbnails/maintain-demos-jsnation-2022.png"
+        "thumbnail": "/community/video-thumbnails/maintain-demos-jsnation-2022.webp"
     },
     {
         "title": "AG Grid's New React Rendering Engine, Custom built for React",

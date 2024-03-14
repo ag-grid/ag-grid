@@ -45,7 +45,7 @@
         "location": "Salt Lake City, USA",
         "logo": "/community/events/organiser-logos/ng-conf-logo.webp",
         "startDate": "2023-06-14",
-        "collage": "ng-conf-2023.jpg",
+        "collage": "ng-conf-2023.webp",
         "countryIcon": "us.png",
         "eventPage": "https://2023.ng-conf.org/",
         "recording": "https://www.youtube.com/watch?v=ELRCT7ooNCU"
@@ -59,7 +59,7 @@
         "startDate": "2023-06-17",
         "recording": "https://portal.gitnation.org/contents/visualising-data-with-react-ag-grid-and-ag-charts",
         "countryIcon": "netherlands.png",
-        "collage": "react-summit-amsterdam-2023.jpg",
+        "collage": "react-summit-amsterdam-2023.webp",
         "eventPage": "https://reactsummit.com/2023/"
     },
     {
@@ -72,7 +72,7 @@
         "startDate": "2023-10-28",
         "recording": "https://www.youtube.com/watch?v=qR608qHWTCA",
         "eventPage": "https://reactadvanced.com/2023/",
-        "collage": "react-advanced-london-2023.jpg"
+        "collage": "react-advanced-london-2023.webp"
     },
     {
         "title": "React Summit",
@@ -83,7 +83,7 @@
         "countryIcon": "us.png",
         "startDate": "2023-11-13",
         "recording": "https://www.youtube.com/watch?v=69d3QIDVKDc",
-        "collage": "react-summit-us-2023.jpg",
+        "collage": "react-summit-us-2023.webp",
         "eventPage": "https://reactsummit.us/2023/"
     },
     {
