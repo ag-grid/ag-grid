@@ -72,10 +72,10 @@ export class AgList<TValue = string> extends Component {
 
     public addOption(listOption: ListOption<TValue>): this {
         const { value, text } = listOption;
-        const sanitisedText = escapeString(text || value as any);
+        const valueToRender = text || value as any;
 
-        this.options.push({ value, text: sanitisedText! });
-        this.renderOption(value, sanitisedText!);
+        this.options.push({ value, text: valueToRender });
+        this.renderOption(value, valueToRender);
 
         this.updateIndices();
 
