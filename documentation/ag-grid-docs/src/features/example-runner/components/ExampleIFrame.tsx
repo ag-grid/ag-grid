@@ -4,6 +4,8 @@ import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import classnames from 'classnames';
 import { type FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
 
+import exampleRuntimeInjectedStyles from './exampleRuntimeInjectedStyles';
+
 interface Props {
     isHidden?: boolean;
     url?: string;
@@ -77,6 +79,7 @@ const themes: Record<string, any> = {
 const applyExampleDarkMode = (document: Document, darkMode: boolean) => {
     document.documentElement.dataset.colorScheme = darkMode ? 'dark' : 'light';
     document.documentElement.dataset.defaultTheme = darkMode ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
+    injectStylesheet(document);
 
     for (const el of document.querySelectorAll("[class*='ag-theme-']")) {
         for (const className of Array.from(el.classList.values())) {
@@ -90,4 +93,15 @@ const applyExampleDarkMode = (document: Document, darkMode: boolean) => {
 
     // dispatch 'color-scheme-change' event for Integrated Charts to update dark mode theme
     document.dispatchEvent(new CustomEvent('color-scheme-change', { detail: { darkMode } }));
+};
+
+const injectStylesheet = (document: Document) => {
+    const id = 'example-runner-injected-styles';
+    let style = document.body.querySelector(`#${id}`);
+    if (!style) {
+        style = document.createElement('style');
+        style.setAttribute('id', id);
+        document.body.insertBefore(style, document.body.firstChild);
+    }
+    style.textContent = exampleRuntimeInjectedStyles;
 };
