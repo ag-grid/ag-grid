@@ -15,8 +15,8 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'age' }
     ],
     defaultColDef: {
-        flex: 1,
-        editable: true
+        width: 150,
+        cellStyle: { fontWeight: 'bold' },
     },
     rowData: null,
 };
