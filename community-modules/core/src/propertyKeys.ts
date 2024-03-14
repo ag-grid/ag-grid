@@ -210,7 +210,8 @@ export class PropertyKeys {
         'getDataPath', 'isRowMaster', 'postSortRows', 'processHeaderForClipboard', 'processUnpinnedColumns', 'processGroupHeaderForClipboard',
         'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup', 'createChartContainer',
         'getChartToolbarItems', 'fillOperation', 'isApplyServerSideTransaction','getServerSideGroupLevelParams', 'isServerSideGroupOpenByDefault',
-        'isGroupOpenByDefault', 'initialGroupOrderComparator', 'groupIncludeFooter', 'loadingCellRendererSelector', 'getRowId', 'groupAggFiltering'
+        'isGroupOpenByDefault', 'initialGroupOrderComparator', 'groupIncludeFooter', 'loadingCellRendererSelector', 'getRowId', 'groupAggFiltering',
+        'chartMenuItems'
     ];
 
     public static FUNCTION_PROPERTIES: GridOptionKey[] = [

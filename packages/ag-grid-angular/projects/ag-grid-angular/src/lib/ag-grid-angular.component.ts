@@ -684,6 +684,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public legacyChartsMenu: boolean | undefined = undefined;
+    /** Get chart menu items. Only applies when `legacyChartsMenu = false`.
+         */
+    @Input() public chartMenuItems: (string | MenuItemDef)[] | GetChartMenuItems<TData> | undefined = undefined;
     /** Provide your own loading cell renderer to use when data is loading via a DataSource.
          * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
          */

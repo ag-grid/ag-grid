@@ -28,7 +28,7 @@ const gridOptions: GridOptions = {
     enableRangeSelection: true,
     popupParent: document.body,
     enableCharts: true,
-    chartMenuItems,
+    chartMenuItems: chartMenuItems,
     onGridReady : (params: GridReadyEvent) => {
     getData().then(rowData => params.api.setGridOption('rowData', rowData));
   },
