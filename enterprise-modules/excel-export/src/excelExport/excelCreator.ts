@@ -126,7 +126,6 @@ const createExcelXmlCoreSheets = (fontSize: number, author: string, sheetLen: nu
 }
 
 const createExcelFileForExcel = (data: string[], options: {
-    tableName?: string,
     columns?: string[],
     rowCount?: number,
     fontSize?: number
@@ -159,7 +158,6 @@ const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetPara
     if (!createExcelFileForExcel(data, {
         author,
         fontSize,
-        tableName: params.tableSetup?.name,
     })) { return Promise.resolve(undefined); }
 
     return ZipContainer.getZipFile(mimeType);
@@ -172,7 +170,6 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
     if (!createExcelFileForExcel(data, {
         author,
         fontSize,
-        tableName: params.tableSetup?.name,
     })) { return; }
 
     return ZipContainer.getUncompressedZipFile(mimeType);
@@ -230,8 +227,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             data: [data],
             fontSize: mergedParams.fontSize,
             author: mergedParams.author,
-            mimeType: mergedParams.mimeType,
-            tableSetup: mergedParams.tableSetup,
+            mimeType: mergedParams.mimeType
         };
 
         this.packageCompressedFile(exportParams).then(packageFile => {
@@ -258,8 +254,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             data: [data],
             fontSize: mergedParams.fontSize,
             author: mergedParams.author,
-            mimeType: mergedParams.mimeType,
-            tableSetup: mergedParams.tableSetup,
+            mimeType: mergedParams.mimeType
         };
 
         return this.packageFile(exportParams);

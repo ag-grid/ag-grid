@@ -56,6 +56,7 @@ const TYPE_LINKS : Record<string, string> = {
     ExcelSheetConfig: './excel-export-api/#excelsheetconfig',
     ExcelSheetPageSetup: './excel-export-api/#excelsheetpagesetup',
     ExcelSheetMargin: './excel-export-api/#excelsheetmargin',
+    ExcelTableConfig: './excel-export-api/#exceltableconfig',
     GridApi: './grid-api/',
     GridOptions: './grid-options/',
     HeaderPosition: './keyboard-navigation/#headerposition',

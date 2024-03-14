@@ -12,22 +12,12 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
-    {
-      headerName: 'Athlete',
-      children: [
-        { field: 'athlete' },
-        { field: 'age' },
-        { field: 'country' },
-      ],
-    },
-    {
-      headerName: 'Medals',
-      children: [
-          { field: 'gold' },
-          { field: 'silver' },
-          { field: 'bronze' },
-      ],
-    },
+    { field: 'athlete' },
+    { field: 'age' },
+    { field: 'country' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
     { field: 'total' },
   ],
   defaultColDef: {
@@ -35,14 +25,18 @@ const gridOptions: GridOptions<IOlympicData> = {
     minWidth: 100,
     flex: 1,
   },
-}
+  defaultExcelExportParams: {
+    exportAsExcelTable: {
+      name: 'Olympic Medals',
+      highlightFirstColumn: true,
+      highlightLastColumn: true,
+      showRowStripes: false,
+    }
+  },
+};
 
 function onBtExport() {
-  gridApi!.exportDataAsExcel({
-    tableSetup: {
-      name: 'Olympic Medals',
-    }
-  });
+  gridApi!.exportDataAsExcel();
 }
 
 // setup the grid after the page has finished loading
@@ -51,8 +45,8 @@ document.addEventListener('DOMContentLoaded', function () {
   gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
-    .then(response => response.json())
-    .then(function (data) {
-      gridApi!.setGridOption('rowData', data)
-    })
+      .then(response => response.json())
+      .then(function (data) {
+        gridApi!.setGridOption('rowData', data)
+      })
 })
