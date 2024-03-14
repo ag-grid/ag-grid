@@ -36,7 +36,6 @@ export const ExampleStyle = ({ rootSelector, extraStyles }: { rootSelector?: str
             padding: 0;
         }
 
-        /* This should be refactored and fixed at the place where .test-header is defined */
         .test-header {
             margin-bottom: 0 !important;
         }
