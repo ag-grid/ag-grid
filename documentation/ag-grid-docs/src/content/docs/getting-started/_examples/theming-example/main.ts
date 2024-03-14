@@ -42,6 +42,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     filter: 'agTextColumnFilter',
     floatingFilter: true,
+    flex: 1,
   },
   rowClassRules: {
     // apply red to Ford cars
