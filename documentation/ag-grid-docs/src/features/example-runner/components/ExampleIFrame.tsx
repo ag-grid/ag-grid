@@ -2,7 +2,7 @@ import styles from '@design-system/modules/ExampleIFrame.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import classnames from 'classnames';
-import { type FunctionComponent, useEffect, useRef, useState } from 'react';
+import { type FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
 
 interface Props {
     isHidden?: boolean;
@@ -43,6 +43,10 @@ export const ExampleIFrame: FunctionComponent<Props> = ({ isHidden, url, loading
         applyExampleDarkMode(iFrameRef.current.contentDocument!, darkMode);
     }, [darkMode]);
 
+    const handleOnLoad = useCallback(() => {
+        applyExampleDarkMode(iFrameRef.current.contentDocument, darkMode);
+    }, [darkMode]);
+
     return (
         <div
             className={classnames(styles.container, {
@@ -55,9 +59,7 @@ export const ExampleIFrame: FunctionComponent<Props> = ({ isHidden, url, loading
                 ref={iFrameRef}
                 className={classnames('exampleRunner', styles.iframe)}
                 style={{ visibility: 'hidden' }}
-                onLoad={() => {
-                    applyExampleDarkMode(iFrameRef.current.contentDocument, darkMode);
-                }}
+                onLoad={handleOnLoad}
             />
         </div>
     );
