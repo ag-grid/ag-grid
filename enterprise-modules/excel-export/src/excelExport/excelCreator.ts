@@ -126,7 +126,6 @@ const createExcelXmlCoreSheets = (fontSize: number, author: string, sheetLen: nu
 }
 
 const createExcelFileForExcel = (data: string[], options: {
-    tableName?: string,
     columns?: string[],
     rowCount?: number,
     fontSize?: number
@@ -166,7 +165,7 @@ const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetPara
 
 export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams): Blob | undefined => {
     const { data, fontSize, author } = params;
-    const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
     if (!createExcelFileForExcel(data, {
         author,
