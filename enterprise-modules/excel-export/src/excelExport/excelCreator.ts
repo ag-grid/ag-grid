@@ -155,12 +155,10 @@ const createExcelFileForExcel = (data: string[], options: {
 const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> => {
     const { data, fontSize, author } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-    const tableName = typeof params.exportAsExcelTable === 'object' ? params.exportAsExcelTable?.name : undefined;
 
     if (!createExcelFileForExcel(data, {
         author,
         fontSize,
-        tableName,
     })) { return Promise.resolve(undefined); }
 
     return ZipContainer.getZipFile(mimeType);
@@ -168,13 +166,11 @@ const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetPara
 
 export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams): Blob | undefined => {
     const { data, fontSize, author } = params;
-    const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-    const tableName = typeof params.exportAsExcelTable === 'object' ? params.exportAsExcelTable?.name : undefined;
+    const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
     if (!createExcelFileForExcel(data, {
         author,
         fontSize,
-        tableName: typeof params.exportAsExcelTable === 'object' ? params.exportAsExcelTable?.name : undefined,
     })) { return; }
 
     return ZipContainer.getUncompressedZipFile(mimeType);
@@ -232,8 +228,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             data: [data],
             fontSize: mergedParams.fontSize,
             author: mergedParams.author,
-            mimeType: mergedParams.mimeType,
-            exportAsExcelTable: mergedParams.exportAsExcelTable,
+            mimeType: mergedParams.mimeType
         };
 
         this.packageCompressedFile(exportParams).then(packageFile => {
@@ -260,8 +255,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             data: [data],
             fontSize: mergedParams.fontSize,
             author: mergedParams.author,
-            mimeType: mergedParams.mimeType,
-            exportAsExcelTable: mergedParams.exportAsExcelTable,
+            mimeType: mergedParams.mimeType
         };
 
         return this.packageFile(exportParams);

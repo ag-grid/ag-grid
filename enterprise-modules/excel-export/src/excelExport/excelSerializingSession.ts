@@ -227,7 +227,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     private convertColumnToExcel(column: Column | null, index: number): ExcelColumn {
         const columnWidth = this.config.columnWidth;
         const headerValue = column ? this.extractHeaderValue(column) : undefined;
-        const displayName = headerValue ? headerValue : `Column${index + 1}`;
+        const displayName = headerValue ?? '';
         const filterAllowed = column ? column.isFilterAllowed() : false;
         if (columnWidth) {
             if (typeof columnWidth === 'number') {

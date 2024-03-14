@@ -462,13 +462,6 @@ export interface ExcelExportMultipleSheetParams {
      * @default 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
      */
     mimeType?: string;
-    /**
-     * Used to add an Excel table to the spreadsheet.
-     * Set to `true` to use default export table config, or provide a config object.
-     *
-     * @default false
-     **/
-    exportAsExcelTable?: boolean | ExcelTableConfig;
 }
 
 export interface ExcelHeaderFooterConfig {
