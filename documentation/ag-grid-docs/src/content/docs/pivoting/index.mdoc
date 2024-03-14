@@ -375,11 +375,18 @@ This is demonstrated in the following example, note the following:
 
 {% gridExampleRunner title="Enabling Pivot Panel" name="pivot-panel"  exampleHeight=540 /%}
 
-## Handling Extreme Data
+## Pivoting Extreme Amounts of Data
 
-The grid generates pivot result columns from the underlying data and the pivot columns, due to the flexibility of both of these inputs it can be difficult to handle extreme scenarios where thousands of columns can be generated. In these scenarios the browser can become overwhelmed with the amount of data to process causing slow performance or even crashing the browser.
+When pivoting the grid generates the necessary number pivot result columns to represent the value columns for all the combinations
+of unique values of the pivoted columns. However, in cases where many value columns are used or multiple pivoted columns are used
+with thousands of distinct values, the grid has to generate a potentially much larger number of pivot result columns.
+In extreme cases, the processing time to generate the necessary pivot result columns can overwhelm the browser causing
+a delay in rendering or even make the page unresponsive.
 
-To circumvent this, you can provide a `pivotMaxGeneratedColumns`. When the grid reaches the point where it shall exceed this provided number of columns, it halts generation and does not display any pivot result columns at all. In this circumstance the grid will trigger a `pivotMaxColumnsExceeded` event, allowing your application to provide custom handling.
+To prevent this from happening, you can set the `pivotMaxGeneratedColumns` option. When the grid generates a number of pivot columns
+across all levels exceeding the `pivotMaxGeneratedColumns` value, the grid halts column generation, does not display any pivot result columns
+at all, and fires the `onPivotMaxColumnsExceeded` event. This event allows your application to provide custom handling - for example removing
+the last added pivoted column, filtering the pivoted columns or removing a value column.
 
 In the example below, note the following:
 
