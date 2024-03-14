@@ -218,6 +218,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                     clearElement(eDisplayField);
                 }
             }
+
+            const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') ===  'whenTruncated';
+
+            this.setTooltip({
+                newTooltipText: isTooltipWhenTruncated ? valueFormatted : null,
+                shouldDisplayTooltip: () => this.eDisplayField.scrollWidth > this.eDisplayField.clientWidth
+            });
         }
     }
 
