@@ -1,4 +1,4 @@
-.ag-theme-quartz.ag-custom-theme, .ag-theme-quartz-dark.ag-custom-theme{
+.ag-theme-quartz, .ag-theme-quartz-dark {
       /* Changes the color of the grid text */
       --ag-foreground-color: rgb(14, 68, 145);
       /* Changes the color of the grid background */
