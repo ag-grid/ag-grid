@@ -14,26 +14,41 @@ export const ExampleIFrame: FunctionComponent<Props> = ({ isHidden, url, loading
     const [isIntersecting, setIsIntersecting] = useState(false);
     const iFrameRef = useRef<HTMLIFrameElement>(null);
     const [darkMode] = useDarkmode();
+    const [isScrolling, setIsScrolling] = useState(false);
+
+    useEffect(() => {
+        const scrollListener = () => {
+            setIsScrolling(true);
+            // Ensure a slow user scroll still loads the example
+            // Main idea is to prevent loading examples during smooth scroll behavior of right menu links
+            setTimeout(() => { setIsScrolling(false) }, 500);
+        };
+        const scrollEndListener = () => setIsScrolling(false);
+        
+        addEventListener('scrollend', scrollEndListener);
+        addEventListener('scroll', scrollListener);
+
+        return () => {
+            removeEventListener('scroll', scrollListener);
+            removeEventListener('scrollend', scrollEndListener);
+        }
+    }, []);
 
     // Only show example iFrame if it is visible on the screen
     useIntersectionObserver({
         elementRef: iFrameRef,
         onChange: ({ isIntersecting: newIsIntersecting }) => {
-            if (url != null && newIsIntersecting && iFrameRef.current && !iFrameRef.current.src) {
-                iFrameRef.current.src = url;
-            }
             setIsIntersecting(newIsIntersecting);
         },
     });
 
     useEffect(() => {
         const currentSrc = iFrameRef.current?.src && new URL(iFrameRef.current.src);
-        if (!isIntersecting || !url || !iFrameRef.current || (currentSrc as URL)?.pathname === url) {
+        if (!isIntersecting || !url || !iFrameRef.current || (currentSrc as URL)?.pathname === url || isScrolling) {
             return;
         }
-
         iFrameRef.current.src = url;
-    }, [isIntersecting, url]);
+    }, [isIntersecting, url, isScrolling]);
 
     // when dark mode is changed, applies it to the iframe.
     useEffect(() => {
