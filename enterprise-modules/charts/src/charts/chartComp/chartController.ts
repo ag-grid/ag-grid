@@ -20,7 +20,7 @@ import {
     UpdateRangeChartParams
 } from "@ag-grid-community/core";
 import { ChartDataModel, ChartModelParams, ColState } from "./model/chartDataModel";
-import { ChartProxy, UpdateParams } from "./chartProxies/chartProxy";
+import { ChartProxy, FieldDefinition, UpdateParams } from "./chartProxies/chartProxy";
 import { _Theme, AgChartThemePalette, _ModuleSupport } from "ag-charts-community";
 import {
     ChartSeriesType,
@@ -200,11 +200,13 @@ export class ChartController extends BeanStub {
         const [category] = params.categories;
         // Create a single synthetic output category that will contain the series name values
         const categories = [{ id: ChartDataModel.DEFAULT_CATEGORY, name: '' }];
-        // Create an output series for each row in the source data
-        const fields = params.data.map((value) => ({
-            colId: value[category.id],
-            displayName: value[category.id],
-        }));
+        // Create an output series corresponding to each row in the input data
+        const fields = params.data.map((value, index): FieldDefinition => {
+            const categoryKey = `${category.id}:${index}`;
+            const categoryValue = value[category.id];
+            const seriesLabel = categoryValue == null ? '' : String(categoryValue);
+            return { colId: categoryKey, displayName: seriesLabel };
+        });
         // Create an output data row corresponding to each selected series column
         const data = params.fields.map((field) => {
             // Create a new output row labeled with the series column name
@@ -212,10 +214,10 @@ export class ChartController extends BeanStub {
                 [ChartDataModel.DEFAULT_CATEGORY]: field.displayName,
             };
             // Append fields corresponding to each row in the input data
-            for (const value of params.data) {
-                const outputCategoryKey = value[category.id] as PropertyKey;
+            for (const [index, value] of params.data.entries()) {
+                const categoryKey = `${category.id}:${index}`;
                 const seriesLabelValue = value[field.colId];
-                row[outputCategoryKey] = seriesLabelValue;
+                row[categoryKey] = seriesLabelValue;
             }
             return row;
         });
