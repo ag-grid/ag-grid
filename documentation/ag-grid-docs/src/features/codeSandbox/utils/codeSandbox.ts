@@ -68,6 +68,11 @@ const getCodeSandboxFiles = ({
           }
         : { ...boilerPlateFiles, ...files };
 
+    if(allFiles['package.json'] == undefined) {
+        // don't include undefined package.json
+        delete allFiles['package.json'];
+    }
+
     for (const [name, content] of Object.entries(allFiles)) {
         const key = getPathForFile({ fileName: name, internalFramework });
         sandboxFiles[key] = {
