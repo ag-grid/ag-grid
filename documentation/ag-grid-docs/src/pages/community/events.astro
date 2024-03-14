@@ -13,7 +13,7 @@ import Events from '@components/community-section/Events';
 >
     <div class="layout-max-width-large">
         <div class={LayoutStyles.header}>
-            <CommunityMenu path={Astro.url.pathname} client:load />
+            <CommunityMenu path={Astro.url.pathname} client:only />
         </div>
         <div class="layout-max-width-small">
             <div class={LayoutStyles.container}>
