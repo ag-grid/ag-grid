@@ -23,7 +23,9 @@
     },
     "build:copy-source": {
       "dependsOn": ["@ag-grid-community/angular:build"],
-      "inputs": [],
+      "inputs": [
+        "{workspaceRoot}/community-modules/angular/projects/ag-grid-angular/src/**"
+      ],
       "cache": true,
       "command": "npx gulp copy-from-module-source",
       "options": {

@@ -13,7 +13,9 @@
         "tsDeclarations",
         "{projectRoot}/angular.json",
         "{projectRoot}/projects/**",
-        "!{projectRoot}/dist"
+        "!{projectRoot}/dist",
+        "{workspaceRoot}/community-modules/core/src/components/componentUtil.ts",
+        "{workspaceRoot}/community-modules/core/src/propertyKeys.ts"
       ],
       "cache": true,
       "outputs": ["{projectRoot}/dist"],

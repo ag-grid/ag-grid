@@ -6,7 +6,7 @@
   "targets": {
     "build": {
       "executor": "@nx/js:swc",
-      "dependsOn": ["copySrcFilesForGeneration"],
+      "dependsOn": ["generateGridOptionsType"],
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "plugins/ag-grid-generate-example-files/dist",
@@ -39,13 +39,14 @@
     },
     "generateGridOptionsType": {
       "executor": "nx:run-script",
-      "dependsOn": ["@ag-grid-community/core:build:types"],
+      "dependsOn": ["@ag-grid-community/core:build:types", "copySrcFilesForGeneration"],
       "options": {
         "script": "generateGridOptionsType"
       },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/community-modules/core/src/entities/gridOptions.ts"
+        "{workspaceRoot}/plugins/ag-grid-generate-example-files/gridOptionsTypes/baseGridOptions.ts",
+        "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/propertyKeys.ts"
       ],
       "outputs": [
         "{workspaceRoot}/plugins/ag-grid-generate-example-files/gridOptionsTypes/_gridOptions_Types.json"
