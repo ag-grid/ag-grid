@@ -87,13 +87,11 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, pa
     const importType = getImportType(useImportType(), supportedImportTypes);
     const urlConfig: UrlParams = useMemo(() => ({ internalFramework, pageName, exampleName, importType }),
         [internalFramework, pageName, exampleName, importType]);
-    const [reload, setReload] = useState(false);
 
     const {
-        isError,
         data: [contents, exampleFileHtml] = [undefined, undefined],
     } = useQuery(
-        ['docsExampleContents', pageName, exampleName, internalFramework, importType, reload],
+        ['docsExampleContents', pageName, exampleName, internalFramework, importType],
         () => Promise.all([
             fetch(getExampleContentsUrl(urlConfig)).then((res) => res.json()),
             fetch(getExampleUrl(urlConfig)).then((res) => res.text())
@@ -109,12 +107,6 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, pa
 
     useEffect(() => {
         if (!contents || !exampleFileHtml) {
-            if (isError) {
-                // If there is an error fallback to typescript modules as the most likely to exist and reload
-                setSupportedFrameworks(['typescript']);
-                setSupportedImportTypes(['modules']);
-                setReload(true);
-            }
             return;
         }
         const files = {
@@ -128,8 +120,8 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, pa
         // If not provided we set to an empty array to finish rendering
         setSupportedFrameworks(contents.supportedFrameworks ?? []);
         setSupportedImportTypes(contents.supportedImportTypes ?? []);
-    }, [contents, exampleFileHtml, isError]);
-
+    }, [contents, exampleFileHtml]);
+    
     const externalLinks = exampleFiles && contents ? (
         <ExternalLinks
             title={title}
