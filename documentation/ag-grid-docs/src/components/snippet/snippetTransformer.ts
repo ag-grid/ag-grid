@@ -134,9 +134,10 @@ class AngularTransformer extends SnippetTransformer {
         const exprPrefix = variableExpression ? 'const ' : '';
         const exprPostfix = variableExpression ? '; ' : '';
         const [start, end] = expression.range;
-        return `\n${comment}${exprPrefix}${this.snippet.slice(start, end)}${exprPostfix}`
-            .replace('gridOptions.api', 'this.gridApi')
-            .replace('gridOptions.columnApi', 'this.gridColumnApi');
+        return `\n${comment}${exprPrefix}${this.snippet.slice(start, end)}${exprPostfix}`.replace(
+            'api',
+            'this.gridApi'
+        );
     }
 
     addFrameworkContext(result) {
@@ -168,7 +169,7 @@ class ReactTransformer extends SnippetTransformer {
     inlineProperties = [];
     inlinePropertiesWithValues = [];
 
-    parseProperty(property, depth) {
+    parseProperty(property) {
         const propertyName = getName(property);
         // keep track of visited properties for framework context
         this.propertiesVisited.push(getName(property));
@@ -189,15 +190,25 @@ class ReactTransformer extends SnippetTransformer {
         const exprPrefix = variableExpression ? 'const ' : '';
         const exprPostfix = variableExpression ? '; ' : '';
         const [start, end] = expression.range;
-        return `\n${comment}${exprPrefix}${this.snippet.slice(start, end)}${exprPostfix}`
-            .replace('gridOptions.api', 'gridApi')
-            .replace('gridOptions.columnApi', 'gridColumnApi');
+        return `\n${comment}${exprPrefix}${this.snippet.slice(start, end)}${exprPostfix}`.replace('api', 'gridApi');
     }
 
     extractExternalProperty(property) {
         const [start, end] = property.range;
-        const value = decreaseIndent(`${this.snippet.slice(start, end)}`.replace(`${getName(property)}:`, '').trim());
-        return `const ${getName(property)} = ${value};`;
+        const value = `${this.snippet.slice(start, end)}`.replace(`${getName(property)}:`, '').trim();
+
+        const propName = getName(property);
+        const setterPropName = `set${capitalise(getName(property))}`;
+
+        if (isUseStateProp(propName)) {
+            return `const [${propName}, ${setterPropName}] = useState(${decreaseIndent(value)});`;
+        }
+
+        if (isUseMemoProp(propName)) {
+            return `const ${propName} = useMemo(() => { \n\treturn ${value};\n}, []);`;
+        }
+
+        return `const ${getName(property)} = ${decreaseIndent(value)};`;
     }
 
     addFrameworkContext(result) {
@@ -226,36 +237,7 @@ class ReactTransformer extends SnippetTransformer {
     }
 
     addComment() {
-        return ''; // react comments are added inplace
-    }
-
-    extractColumnProperties(properties) {
-        let fieldName = '';
-
-        const mapColumnProperty = (property) => {
-            const propertyName = getName(property);
-            if (isLiteralProperty(property)) {
-                // store field name for prefixing extracted colDef properties later
-                const updateField = propertyName === 'field' || (propertyName === 'colId' && fieldName.length === 0);
-                if (updateField) {
-                    fieldName = property.value.value;
-                }
-
-                return `${propertyName}=${getReactValue(property)}`;
-            }
-            return this.extractNonLiteralColumnProperty(property, fieldName, propertyName);
-        };
-
-        return properties.filter((property) => getName(property) !== 'children').map(mapColumnProperty);
-    }
-
-    extractNonLiteralColumnProperty(property, fieldName, propertyName) {
-        const extraLine = this.options.spaceBetweenProperties ? '\n' : '';
-        const comment = extraLine + (property.comment ? `//${property.comment}\n` : '');
-        const funcName = fieldName ? fieldName + capitalise(propertyName) : propertyName;
-        const extracted = this.extractExternalProperty(property).replace(`const ${propertyName}`, `const ${funcName}`);
-        this.externalisedProperties.push(comment + decreaseIndent(extracted, 2));
-        return `${propertyName}={${funcName}}`;
+        return ''; // react comments are added in-place
     }
 }
 
@@ -296,6 +278,26 @@ const addCommentsToTree = (tree) => {
     return root;
 };
 
+const isUseStateProp = (propName) => ['columnDefs', 'rowData'].includes(propName);
+
+const isUseMemoProp = (propName) =>
+    [
+        'autoGroupColumnDef',
+        'columnTypes',
+        'dataTypeDefinitions',
+        'defaultColDef',
+        'defaultColGroupDef',
+        'defaultExcelExportParams',
+        'sideBar',
+        'statusBar',
+        'aggFuncs',
+        'excelStyles',
+        'popupParent',
+        'chartToolPanelsDef',
+        'customChartThemes',
+        'chartThemeOverrides',
+    ].includes(propName);
+
 // removes a tab spacing from the beginning of each line after first
 const decreaseIndent = (codeBlock, times = 1) => {
     const functionArr = codeBlock.split('\n');
@@ -316,7 +318,6 @@ const getReactValue = (node) => {
 
 const capitalise = (str) => str[0].toUpperCase() + str.substr(1);
 const isProperty = (node) => node.type === 'Property';
-const isLiteralProperty = (node) => isProperty(node) && node.value.type === 'Literal';
 const isObjectProperty = (node) => isProperty(node) && node.value.type === 'ObjectExpression';
 const isObjectExpr = (node) => node.type === 'ObjectExpression';
 const isArrayExpr = (node) => node.value && node.value.type === 'ArrayExpression';
