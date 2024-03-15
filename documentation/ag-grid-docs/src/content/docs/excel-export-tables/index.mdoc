@@ -31,9 +31,9 @@ This is how the exported Excel file with Table looks when opened in Excel:
 
 {% imageCaption imagePath="resources/excel-table-export.png" alt="Table in Excel" centered=true /%}
 
-## Customizing Excel Table Exports
+## Customising Excel Table Exports
 
-You can customize the Excel table by providing a config object instead of a boolean value for the `exportAsExcelTable`.
+You can customise the Excel table by providing a config object instead of a boolean value for the `exportAsExcelTable`.
 This config object can contain the following properties:
 
 {% interfaceDocumentation interfaceName="ExcelTableConfig" /%}
@@ -46,14 +46,14 @@ When exporting your Grid as an Excel Table, you should ensure that the column he
 
 This is equally applicable when using
 [processHeaderCallback](./excel-export-api/#reference-ExcelExportParams-processHeaderCallback)
-to customize the column headers.
+to customise the column headers.
 
 If you have duplicate column headers, Excel will display a warning message when the exported file is opened. Excel will
 sometimes suggest to fix the issue automatically (by renaming the invalid table headers). However, this is not always
 the case, and the user may end up with a table that doesn't work as expected.
 {% /warning %}
 
-Below are some examples of how to customize the Excel table export.
+Below are some examples of how to customise the Excel table export.
 
 ## Exporting a Sheet as Excel Table
 
@@ -70,9 +70,9 @@ Proceed as follows to see the Excel table:
 
 {% gridExampleRunner title="Excel Export - Exporting A Single Sheet as Excel Table" name="excel-export-table-single-sheet" /%}
 
-## Customizing Excel Table Stripes and Filter Buttons
+## Customising Excel Table Stripes and Filter Buttons
 
-In the following example, we customize the Excel table as follows:
+In the following example, we customise the Excel table as follows:
 
 * `showRowStripes` - Set to `true` to show row stripes in the Excel table.
 * `showColumnStripes` - Set to `true` to show column stripes in the Excel table.
@@ -87,11 +87,11 @@ Proceed as follows to see the Excel table:
 * Notice that the table name is set to `Olympic_Medals`.
 * Notice that the filter buttons are available for all columns in the table.
 
-{% gridExampleRunner title="Excel Export - Customizing Excel Table Stripes" name="excel-export-table-stripes" /%}
+{% gridExampleRunner title="Excel Export - Customising Excel Table Stripes" name="excel-export-table-stripes" /%}
 
 ## Highlighting the First and Last Columns
 
-In the following example, we customize the Excel table as follows:
+In the following example, we customise the Excel table as follows:
 
 * `highlightFirstColumn` - Set to `true` to highlight the first column in the Excel table.
 * `highlightLastColumn` - Set to `true` to highlight the last column in the Excel table.
