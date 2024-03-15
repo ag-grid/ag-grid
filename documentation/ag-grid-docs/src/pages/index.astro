@@ -7,9 +7,8 @@ import { quotesData } from '@components/quotes/quotesData';
 import FrameworkSelector from '@components/FrameworkSelector';
 import ChartsLogo from '@images/inline-svgs/ag-charts-logo.svg?react';
 import HeroGrid from '@components/hero-grid/HeroGrid.astro';
-import { pathJoin } from '@utils/pathJoin';
-import { FILES_BASE_PATH } from '@constants';
 import { AutomatedExamples } from '@components/automated-examples/AutomatedExamples';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 // TODO: Is this best place to get the current version from?
 const { data: versions } = await getEntry('versions', 'ag-grid-versions');
@@ -39,9 +38,21 @@ const agGridEnterpriseVersion = '31.1.1';
 const enterpriseGridUrl = `https://cdn.jsdelivr.net/npm/ag-grid-charts-enterprise@${agGridEnterpriseVersion}/dist/ag-grid-charts-enterprise.min.js`;
 ---
 
-<!-- Dev files -->
+<!-- Grid font for Quartz theme -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
-<!-- TODO: Add for dev packages -->
+
+<!-- Prefetch customer logos -->
+<link
+    rel="preload"
+    fetchpriority="high"
+    as="image"
+    href={urlWithBaseUrl('/images/ag-grid-customer-logos.webp')}
+    type="image/webp"
+/>
+
+<!-- Load AG Grid library -->
 <script defer src={enterpriseGridUrl}></script>
 
 <Layout
