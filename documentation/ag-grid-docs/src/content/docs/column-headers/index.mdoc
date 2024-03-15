@@ -69,6 +69,7 @@ You can provide an HTML template to the Default Header Component for simple layo
 ```html
 <div class="ag-cell-label-container" role="presentation">
     <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
+    <span ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
     <div ref="eLabel" class="ag-header-cell-label" role="presentation">
         <span ref="eText" class="ag-header-cell-text"></span>
         <span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
@@ -92,6 +93,7 @@ When you provide your own template, everything should work as expected as long a
 | `eSortAsc` | In case of sorting ascending the data in the column, this shows the associated icon. |
 | `eSortDesc` | In case of sorting descending the data in the column, this shows the descending icon. |
 | `eSortNone` | In case of no sort being applied, this shows the associated icon. Note this icon by default is empty. |
+| `eFilterButton` | The container where the column filter icon will appear to enable opening the filter (when using columnMenu = 'new'). |
 
 The ref parameters are used by the grid to identify elements to add functionality to. If you leave an element out of your template, the functionality will not be added. For example if you do not specify `eLabel` then the column will not react to click events for sorting.
 
@@ -107,17 +109,18 @@ const gridOptions = {
         width: 100,
         headerComponentParams: {
             template:
-                '<div class="ag-cell-label-container" role="presentation"&gt;' +
-                '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"&gt;</span&gt;' +
-                '  <div ref="eLabel" class="ag-header-cell-label" role="presentation"&gt;' +
-                '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"&gt;</span&gt;' +
-                '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"&gt;</span&gt;' +
-                '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"&gt;</span&gt;' +
-                '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"&gt;</span&gt;' +
-                '    ** <span ref="eText" class="ag-header-cell-text" role="columnheader"&gt;</span&gt;' +
-                '    <span ref="eFilter" class="ag-header-icon ag-filter-icon"&gt;</span&gt;' +
-                '  </div&gt;' +
-                '</div&gt;'
+                `<div class="ag-cell-label-container" role="presentation">
+                  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>
+                  <span ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button"></span>
+                  <div ref="eLabel" class="ag-header-cell-label" role="presentation">
+                    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>
+                    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>
+                    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>
+                    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>
+                    ** <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>
+                    <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>
+                  </div>
+                </div>`
         }
     }
 }
@@ -125,9 +128,9 @@ const gridOptions = {
 
 Note that specifying your own templates is compatible with other configurations:
 
-* `suppressMenu` is specified in: **Athlete**, **Country**, **Date** and **Bronze** columns
+* `suppressHeaderMenuButton` is specified in: **Athlete**, **Country**, **Date** and **Bronze** columns
 * `sortable=false` is specified in: **Age**, **Year**, **Sport**, **Silver** and **Total** columns
-* **Gold** is the only column that doesn't have `sortable=false` or `suppressMenu`
+* **Gold** is the only column that doesn't have `sortable=false` or `suppressHeaderMenuButton`
 
 {% gridExampleRunner title="Header template" name="header-template" /%}
 
@@ -181,7 +184,7 @@ The following props are passed to the Custom Component (`CustomHeaderProps` inte
 The grid provides the following features that should not be implemented by Custom Header Components:
 
 * [**Resizing:**](./column-sizing/) When enabled, the grid will put an invisible widget to be grabbed by the mouse for resizing.
-* [**Header Checkbox Selection:**](./row-selection/) When enabled, the grid displays a checkbox for 'select all' in the header.
+* [**Header Checkbox Selection:**](./row-selection/#header-checkbox-selection) When enabled, the grid displays a checkbox for 'select all' in the header.
 * **Column Moving** The grid will react to Column Dragging to reorder columns.
 
 The Custom Header Component is responsible for the following:
