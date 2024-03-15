@@ -1,21 +1,42 @@
 ---
-title: "Rows"
+title: "Row Data"
 ---
-The grid uses rows to display the records in the provided data.
+
+Provide an array of data to the grid via the `rowData` property to render a row for each item in the array. 
+
+## Row Data
+
+When using the default row model, [Client Side](/client-side-model/), data is provided to the grid via the `rowData` property.
+
+{% gridExampleRunner title="Row Data" name="row-data" exampleHeight=275 /%}
+
+```js {% frameworkTransform=true %}
+const gridOptions = {
+    rowData: [
+        { make: "Toyota", model: "Celica", price: 35000 },
+        { make: "Ford", model: "Mondeo", price: 32000 },
+        { make: "Porsche", model: "Boxster", price: 72000 },
+    ],
+};
+```
+
+{% note %}
+If you are using Typescript you may wish to provide the grid with your row data type for improved developer experience. See [Typescript Generics](/typescript-generics/) for more details.
+{% /note %}
+
+## Updating Row Data
+
+The simplest way to update `rowData` is to pass a new array of data to the grid. For full details on updating row data, including transactions, see [Updating Data](/data-update/).
 
 ## Row IDs
 
-Row IDs help the grid identify rows. Provide Row ID's to the grid by implementing `getRowId()`.
-It is recommended to provide row ID's to the grid if possible.
+Providing a unique ID for each row allows the grid to work optimally across a range of features. It is strongly recommend to provide row IDs.
 
-{% gridExampleRunner title="Get Row ID" name="get-row-id" exampleHeight=300 /%}
+Row IDs are provided by implementing the `getRowId()` callback.
 
 {% apiDocumentation source="grid-options/properties.json" section="rowModels" names=["getRowId"] /%}
 
-Providing Row IDs allows the grid to keep track of rows such as when `rowData` is updated,
-to identify rows that have changed, are added, or are removed. 
-
-Row IDs are also useful for identifying Rows via the grid's API, as discussed in the next section.
+{% gridExampleRunner title="Get Row ID" name="get-row-id" exampleHeight=300 /%}
 
 ## Row Nodes
 
