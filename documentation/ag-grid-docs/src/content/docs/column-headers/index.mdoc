@@ -86,6 +86,7 @@ When you provide your own template, everything should work as expected as long a
 | Ref | Description |
 |-|-|
 | `eMenu` | The container where the column menu icon will appear to enable opening the column menu. |
+| `eFilterButton` | The container where the column filter icon will appear to enable opening the filter (when using `columnMenu = 'new'`). |
 | `eLabel` | The container where there is going to be an onClick mouse listener to trigger the sort. |
 | `eText` | The text displayed on the column. |
 | `eFilter` | The container with the icon that will appear if the user filters this column. |
@@ -93,7 +94,6 @@ When you provide your own template, everything should work as expected as long a
 | `eSortAsc` | In case of sorting ascending the data in the column, this shows the associated icon. |
 | `eSortDesc` | In case of sorting descending the data in the column, this shows the descending icon. |
 | `eSortNone` | In case of no sort being applied, this shows the associated icon. Note this icon by default is empty. |
-| `eFilterButton` | The container where the column filter icon will appear to enable opening the filter (when using columnMenu = 'new'). |
 
 The ref parameters are used by the grid to identify elements to add functionality to. If you leave an element out of your template, the functionality will not be added. For example if you do not specify `eLabel` then the column will not react to click events for sorting.
 
