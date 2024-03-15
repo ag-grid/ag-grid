@@ -19,14 +19,57 @@ const DEFAULT_BASE_URL = '/';
 const dotenv = {
     parsed: loadEnv(NODE_ENV, process.cwd(), ''),
 };
+
+/**
+ * Environment variables used to modify the configuration of the server/build
+ */
 const {
+    /**
+     * Port used for servers
+     */
     PORT,
+
+    /**
+     * Site url
+     *
+     * eg, `https://grid-staging.ag-grid.com`
+     */
     PUBLIC_SITE_URL,
+
+    /**
+     * Base url used as a prefix to all urls
+     *
+     * eg, `/something` for site at `https://grid-staging.ag-grid.com/something`
+     */
     PUBLIC_BASE_URL = DEFAULT_BASE_URL,
+
+    /**
+     * Use packages for code
+     */
     USE_PACKAGES,
+
+    /**
+     * Set up https server
+     */
     PUBLIC_HTTPS_SERVER = '1',
+
+    /**
+     * Generate `/debug/*` pages
+     */
     ENABLE_GENERATE_DEBUG_PAGES = '1',
+
+    /**
+     * Show debug logs in the terminal
+     *
+     * Used to hide logs that are annoying for most other devs
+     */
     SHOW_DEBUG_LOGS,
+
+    /**
+     * Generate a `.htaccess` file for deployment
+     *
+     * Generated in `dist/.htaccess`
+     */
     HTACCESS = 'false',
 
     /**
@@ -36,7 +79,11 @@ const {
      */
     CHECK_REDIRECTS = 'false',
 
-    // Speed up builds by only building comma separated pages
+    /*
+     * Select pages to build
+     *
+     * A comma separated list of pages to build to make it run faster
+     */
     QUICK_BUILD_PAGES,
 } = dotenvExpand.expand(dotenv).parsed;
 console.log(
