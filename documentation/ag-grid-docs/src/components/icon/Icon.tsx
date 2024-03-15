@@ -5,29 +5,31 @@ import BoldChevronDown from '@images/inline-svgs/bold-chevron-down.svg?react';
 import BoldChevronLeft from '@images/inline-svgs/bold-chevron-left.svg?react';
 import BoldChevronRight from '@images/inline-svgs/bold-chevron-right.svg?react';
 import BoldChevronUp from '@images/inline-svgs/bold-chevron-up.svg?react';
+import CodeResult from '@images/inline-svgs/code-result.svg?react';
 import CodeSandboxIcon from '@images/inline-svgs/codesandbox.svg?react';
 import ColumnsIcon from '@images/inline-svgs/columns.svg?react';
 import CrossIcon from '@images/inline-svgs/cross.svg?react';
 import EnterpriseIcon from '@images/inline-svgs/enterprise.svg?react';
+import EscapeIcon from '@images/inline-svgs/escape.svg?react';
+import HeadingResult from '@images/inline-svgs/heading-result.svg?react';
 import IntegratedChartsIcon from '@images/inline-svgs/integrated-chart.svg?react';
 import maximizeIcon from '@images/inline-svgs/maximize.svg?react';
 import minimizeIcon from '@images/inline-svgs/minimize.svg?react';
 import NewTabIcon from '@images/inline-svgs/new-tab.svg?react';
+import PageResult from '@images/inline-svgs/page-result.svg?react';
 import PlunkerIcon from '@images/inline-svgs/plunker.svg?react';
+import RadarArea from '@images/inline-svgs/radar-area.svg?react';
+import RadialColumn from '@images/inline-svgs/radial-column.svg?react';
 import ReplayDemoIcon from '@images/inline-svgs/replay-demo-icon.svg?react';
 import RowsIcon from '@images/inline-svgs/rows.svg?react';
 import StackBlitzIcon from '@images/inline-svgs/stack-blitz.svg?react';
+import StackOverflowMonochromeIcon from '@images/inline-svgs/stack-overflow-monochrome.svg?react';
+import StackOverflowIcon from '@images/inline-svgs/stack-overflow.svg?react';
 import TakeControlIcon from '@images/inline-svgs/take-control-icon.svg?react';
 import TickIcon from '@images/inline-svgs/tick.svg?react';
 import XLogoIcon from '@images/inline-svgs/x-logo.svg?react';
-import ZendeskIcon from '@images/inline-svgs/zendesk.svg?react';
 import ZendeskMonochromeIcon from '@images/inline-svgs/zendesk-monochrome.svg?react';
-import StackOverflowIcon from '@images/inline-svgs/stack-overflow.svg?react';
-import StackOverflowMonochromeIcon from '@images/inline-svgs/stack-overflow-monochrome.svg?react';
-import EscapeIcon from '@images/inline-svgs/escape.svg?react'
-import PageResult from '@images/inline-svgs/page-result.svg?react'
-import CodeResult from '@images/inline-svgs/code-result.svg?react'
-import HeadingResult from '@images/inline-svgs/heading-result.svg?react'
+import ZendeskIcon from '@images/inline-svgs/zendesk.svg?react';
 import classNames from 'classnames';
 
 // Uses IBM Carbon Design System icons as a base
@@ -44,7 +46,7 @@ const SOCIALS_ICON_MAP = {
     stackoverflow: StackOverflowIcon,
     stackoverflowMonochrome: StackOverflowMonochromeIcon,
     zendesk: ZendeskIcon,
-    zendeskMonochrome: ZendeskMonochromeIcon
+    zendeskMonochrome: ZendeskMonochromeIcon,
 };
 
 const DOCS_CATEGORIES_ICON_MAP = {
@@ -96,7 +98,7 @@ const CHARTS_ICON_MAP = {
     chartsScatter: CarbonIcon.ChartScatter,
     chartsBubble: CarbonIcon.ChartBubble,
     chartsPie: CarbonIcon.ChartPie,
-    chartsDoughnut: CarbonIcon.ChartRing,
+    chartsDonut: CarbonIcon.ChartRing,
     chartsCombination: CarbonIcon.ChartCombo,
     chartsHistogram: CarbonIcon.Ordinal,
     chartsHeatmap: CarbonIcon.HeatMap_03,
@@ -106,8 +108,9 @@ const CHARTS_ICON_MAP = {
     chartsErrorBar: CarbonIcon.ChartErrorBar,
     chartsWaterfall: CarbonIcon.ChartWaterfall,
     chartsRadar: CarbonIcon.ChartRadar,
+    chartsRadarArea: RadarArea,
     chartsNightingale: CarbonIcon.ChartRose,
-    chartsRadialColumn: CarbonIcon.ChartSpiral,
+    chartsRadialColumn: RadialColumn,
     chartsRadialBar: CarbonIcon.ChartRadial,
     chartsTreemap: CarbonIcon.ChartTreemap,
     chartsSunburst: CarbonIcon.ChartSunburst,
@@ -115,6 +118,7 @@ const CHARTS_ICON_MAP = {
     chartsFunnel: CarbonIcon.Filter,
     chartsPyramid: CarbonIcon.UpToTop,
     chartsBullet: CarbonIcon.ChartBullet,
+    chartsMap: CarbonIcon.Plan,
 };
 
 export const ICON_MAP = {
