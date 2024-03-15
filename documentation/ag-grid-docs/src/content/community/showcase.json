@@ -453,7 +453,7 @@
             "repo": "https://github.com/vishwajeetraj11/quizco-frontend",
             "title": "Quizco",
             "description": "Quiz Builder and Assessment Application",
-            "link": "quizco-app.netlify.app/",
+            "link": "https://quizco-app.netlify.app/",
             "type": "Product",
             "open_source": true,
             "stars": 19
@@ -534,7 +534,7 @@
             "repo": "https://github.com/vegaprotocol/vega.xyz",
             "title": "Vega",
             "description": "Vega's main website",
-            "link": "vega.xyz",
+            "link": "https://vega.xyz",
             "type": "Product",
             "open_source": true,
             "stars": 10
