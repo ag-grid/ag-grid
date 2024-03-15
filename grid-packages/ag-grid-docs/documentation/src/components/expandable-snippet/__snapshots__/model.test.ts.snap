@@ -1,9 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`ExpandableSnippet Model for AgCartesianChartOptions builds a consistent model 1`] = `
-Object {
-  "properties": Object {},
-  "tsType": "AgCartesianChartOptions",
-  "type": "model",
-}
-`;

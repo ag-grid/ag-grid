@@ -1,0 +1,121 @@
+---
+title: "Excel Export API Reference"
+enterprise: true
+---
+
+This page documents the Excel Export API and Interfaces.
+
+### Grid Properties
+
+{% apiDocumentation source="grid-options/properties.json" section="export" names=["defaultExcelExportParams", "suppressExcelExport", "excelStyles"] /%}
+
+### API Methods
+
+{% apiDocumentation source="grid-api/api.json" section="export" names=["exportDataAsExcel", "getDataAsExcel", "getSheetDataForExcel", "getMultipleSheetsAsExcel", "exportMultipleSheetsAsExcel"] config={"isApi": true} /%}
+
+## Interfaces
+
+### ExcelExportParams
+
+{% interfaceDocumentation interfaceName="ExcelExportParams" overrideSrc="excel-export-api/excel-api.json" /%}
+
+### ExcelExportMultipleSheetParams
+
+{% interfaceDocumentation interfaceName="ExcelExportMultipleSheetParams" overrideSrc="excel-export-api/excel-api.json" /%}
+
+### ExcelAlignment
+
+{% interfaceDocumentation interfaceName="ExcelAlignment" /%}
+
+### ExcelBorders
+
+{% interfaceDocumentation interfaceName="ExcelBorders" /%}
+
+### ExcelBorder
+
+{% interfaceDocumentation interfaceName="ExcelBorder" /%}
+
+### ExcelCell
+
+{% interfaceDocumentation interfaceName="ExcelCell" /%}
+
+### ExcelData
+
+{% interfaceDocumentation interfaceName="ExcelData" overrideSrc="excel-export-api/excel-api.json" /%}
+
+### ExcelFont
+
+{% interfaceDocumentation interfaceName="ExcelFont" /%}
+
+### ExcelHeaderFooter
+
+{% interfaceDocumentation interfaceName="ExcelHeaderFooter" /%}
+
+### ExcelHeaderFooterContent
+
+{% interfaceDocumentation interfaceName="ExcelHeaderFooterContent" overrideSrc="excel-export-api/excel-api.json" /%}
+
+### ExcelImage
+
+{% interfaceDocumentation interfaceName="ExcelImage" overrideSrc="excel-export-api/excel-api.json" /%}
+
+### ExcelImagePosition
+
+{% interfaceDocumentation interfaceName="ExcelImagePosition" /%}
+
+### ExcelInterior
+
+{% interfaceDocumentation interfaceName="ExcelInterior" /%}
+
+### ExcelNumberFormat
+
+{% interfaceDocumentation interfaceName="ExcelNumberFormat" /%}
+
+### ExcelProtection
+
+{% interfaceDocumentation interfaceName="ExcelProtection" /%}
+
+### ExcelSheetMargin
+
+{% interfaceDocumentation interfaceName="ExcelSheetMargin" /%}
+
+### ExcelSheetPageSetup
+
+{% interfaceDocumentation interfaceName="ExcelSheetPageSetup" /%}
+
+### ExcelTableConfig
+
+{% interfaceDocumentation interfaceName="ExcelTableConfig" /%}
+
+### ExcelStyle
+
+{% interfaceDocumentation interfaceName="ExcelStyle" overrideSrc="excel-export-api/excel-api.json" /%}
+
+## Types
+
+### ExcelDataType
+
+```ts
+type ExcelDataType = 
+    'String'   |
+    'Formula'  |
+    'Number'   |
+    'Boolean'  |
+    'DateTime' |
+    'Error'
+```
+
+### ExcelOOXMLDataType
+
+```ts
+type ExcelOOXMLDataType = 
+    'str'       |
+    's'         |
+    'f'         |
+    'inlineStr' |
+    'n'         |
+    'b'         |
+    'd'         |
+    'e'         |
+    'empty'
+```

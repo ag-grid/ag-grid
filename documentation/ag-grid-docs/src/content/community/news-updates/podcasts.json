@@ -1,0 +1,47 @@
+[
+    
+    {
+        "title": "AG Grid with Stephen Cooper on Web Rush #212",
+        "website": "https://www.webrush.io/episodes/episode-212-ag-grid-with-stephen-cooper",
+        "link": "https://cdn.simplecast.com/audio/df5fbc79-a4cb-46e5-9cd9-12d319d7f92b/episodes/5e1f5c76-2730-4802-97ad-bbc978312be0/audio/df3447b5-b577-4d32-8b0b-abde4cb2e7e0/default_tc.mp3",
+        "description": "Stephen Cooper joins us to talk about AG Grid and his work helping developers figure out how best to use AG Grid in their projects. What are the pain points for using a grid? How do they determine sensible defaults? And advice for developers trying out AG Grid.",
+        "host": "John Papa",
+        "publication": "Web Rush",
+        "guests": [ "Stephen Cooper", "Niall Crosby"],
+        "published": "December, 2022",
+        "publicationLogo": "webrush.webp"
+    },
+    {
+        "title": "Async Angular Testing and Introducing AG Charts",
+        "website": "https://topenddevs.com/podcasts/adventures-in-angular/episodes/async-angular-testing-and-introducing-ag-charts-aia-352",
+        "link": "https://pdst.fm/e/dts.podtrac.com/redirect.mp3/audio2.redcircle.com/episodes/45a67d9d-80bb-47fb-9608-1eb8c39dc5dc/stream.mp3",
+        "description": "If you are testing an Angular application, then at some point, you will be required to test asynchronous behaviour.  Today on the show, guests Stephen Cooper and Mona Peirov share about how you can validate your internal models with async Angular testing and integrate AG Charts into your workflows.",
+        "host": "Charles Wood",
+        "publication": "Adventures in Angular",
+        "guests": [ "Stephen Cooper", "Mana Peirov" ],
+        "published": "July, 2022",
+        "publicationLogo": "adventures-in-angular.webp"
+    },
+    {
+        "title": "AgGrid: From Open Source to Successful Business ft. Niall Crosby - JSJ 504",
+        "website": "https://topenddevs.com/podcasts/javascript-jabber/episodes/aggrid-from-open-source-to-successful-business-ft-niall-crosby-jsj-504?ref=blog.ag-grid.com",
+        "link": "https://s3.us-east-2.amazonaws.com/pod-public-media-files/2024/2/21/23/8bd6940c-3cae-48bf-b523-505536aa3ff5_jsj_621.mp3",
+        "description": "Niall Crosby, creator of AgGrid, joins the panel to discuss the journey from building an open source data grid used all over the world to providing support and enterprise features and running a successful business based on that same open source software.",
+        "host": "AJ O'Neal",
+        "publication": "JavaScript Jabber",
+        "guests": [ "Niall Crosby" ],
+        "published": "October, 2021",
+        "publicationLogo": "javascript-jabber.webp"
+    },
+    {
+        "title": "Bootstrapping a Successful Startup",
+        "website": "https://next.spreaker.com/episode/s2-e12-bootstrapping-a-successful-startup--44633123",
+        "description": "Join the panelists of the Angular Show as we have the opportunity to spend some time with Niall Crosby, the founder, and CEO of AG Grid. Niall shares with us the story of how he got started building AG Grid, some of the early decisions he made, and how he was able to bootstrap and launch a successful startup.",
+        "host": "Brian Love",
+        "publication": "The Angular Plus Show",
+        "guests": [ "Niall Crosby" ],
+        "published": "May, 2021",
+        "publicationLogo": "angular-plus-show.webp",
+        "link": "https://api.spreaker.com/v2/episodes/44633123/play.mp3"
+    }
+]

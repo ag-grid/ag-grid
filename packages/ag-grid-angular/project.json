@@ -1,0 +1,69 @@
+{
+  "name": "ag-grid-angular",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "packages/ag-grid-angular/projects",
+  "targets": {
+    "build": {
+      "executor": "nx:run-script",
+      "dependsOn": [
+        "build:copy-source"
+      ],
+      "inputs": [
+        "tsDeclarations",
+        "{projectRoot}/angular.json",
+        "{projectRoot}/projects/**",
+        "!{projectRoot}/dist"
+      ],
+      "cache": true,
+      "outputs": ["{projectRoot}/dist"],
+      "options": {
+        "script": "build"
+      }
+    },
+    "build:copy-source": {
+      "dependsOn": ["@ag-grid-community/angular:build"],
+      "inputs": [
+        "{workspaceRoot}/community-modules/angular/projects/ag-grid-angular/src/**"
+      ],
+      "cache": true,
+      "command": "npx gulp copy-from-module-source",
+      "options": {
+        "cwd": "packages/ag-grid-angular"
+      }
+    },
+    "pack": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "inputs": ["{projectRoot}/dist/ag-grid-angular/"],
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}.tgz"],
+      "options": {
+        "cwd": "{projectRoot}/dist/ag-grid-angular",
+        "parallel": false,
+        "commands": ["mkdir -p ../../../../dist/packages", "yarn pack -f ../../../../dist/{projectRoot}.tgz"]
+      }
+    },
+    "pack:extract": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["pack"],
+      "inputs": ["{workspaceRoot}/dist/{projectRoot}.tgz"],
+      "outputs": ["{workspaceRoot}/dist/packages/contents/ag-charts-angular/"],
+      "options": {
+        "parallel": false,
+        "commands": [
+          "mkdir -p dist/packages/contents/ag-charts-angular",
+          "tar -xzf dist/{projectRoot}.tgz -C dist/packages/contents/ag-charts-angular/"
+        ]
+      }
+    },
+    "pack:verify": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["pack:extract"],
+      "inputs": ["{workspaceRoot}/dist/packages/contents/ag-charts-angular/"],
+      "options": {
+        "commands": ["node tools/sanity-check-package.js dist/packages/contents/ag-charts-angular/package"]
+      }
+    }
+  },
+  "tags": ["package:community", "package:framework", "package", "community", "framework"]
+}

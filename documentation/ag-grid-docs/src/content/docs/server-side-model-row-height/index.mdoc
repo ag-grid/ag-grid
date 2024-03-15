@@ -1,0 +1,39 @@
+---
+title: "SSRM Row Height"
+enterprise: true
+---
+
+Learn how to set Row Height when using the Server-Side Row Model.
+
+## Dynamic Row Height
+
+To enable [Dynamic Row Height](./row-height/) when using the Server-Side Row Model you need to provide an implementation for the `getRowHeight` Grid Options property. This is demonstrated in the example below:
+
+{% apiDocumentation source="grid-options/properties.json" section="styling" names=["getRowHeight"] /%}
+
+{% gridExampleRunner title="Dynamic Row Height Example" name="dynamic-row-height"  exampleHeight=630 /%}
+
+{% note %}
+Ensure `maxBlocksInCache` is not set when using dynamic row height.
+{% /note %}
+
+## Auto Row Height
+
+To have the grid calculate the row height based on the cell contents, set `autoHeight=true` on columns that require
+variable height. The grid will calculate the height once when the data is loaded into the grid.
+
+This is different to the [Client-Side Row Model](./client-side-model/) where the grid height can be changed. For
+Server-Side Row Model the row height cannot be changed once it is set.
+
+In the example below, Column A & B have `autoHeight=true` and `wrapText=true`. See [Row Height](./row-height/) for
+details on these properties.
+
+{% gridExampleRunner title="Auto Row Height Example" name="auto-row-height"  exampleHeight=610 /%}
+
+{% note %}
+Ensure `maxBlocksInCache` is not set when using auto row height.
+{% /note %}
+
+## Next Up
+
+Continue to the next section to learn how to combine [Master Detail](./server-side-model-master-detail/) with the SSRM.

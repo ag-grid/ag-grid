@@ -1,0 +1,57 @@
+---
+import { getCollection } from 'astro:content';
+import DebugLayout from '@layouts/DebugLayout.astro';
+import { getDocExampleFiles } from '@features/docs/utils/pageData';
+import { getExampleFileUrl } from '@features/docs/utils/urlPaths';
+import { ENABLE_GENERATE_DEBUG_PAGES } from '@constants';
+
+let exampleFiles: Awaited<ReturnType<typeof getDocExampleFiles>> = [];
+if (ENABLE_GENERATE_DEBUG_PAGES) {
+    const pages = await getCollection('docs');
+    exampleFiles = await getDocExampleFiles({
+        pages,
+    });
+}
+---
+
+<DebugLayout title={`Debug: Docs Example Files`}>
+    <h1>Example files ({exampleFiles.length})</h1>
+    <table>
+        <thead>
+            <th>No.</th>
+            <th>Url</th>
+            <th><code>params.internalFramework</code></th>
+            <th><code>params.pageName</code></th>
+            <th><code>params.exampleName</code></th>
+            <th><code>params.importType</code></th>
+            <th><code>params.fileName</code></th>
+        </thead>
+        <tbody>
+            {
+                exampleFiles.map((example, index) => {
+                    const { internalFramework, pageName, exampleName, importType, fileName } = example.params;
+                    const url = getExampleFileUrl({
+                        internalFramework,
+                        pageName,
+                        exampleName,
+                        importType,
+                        fileName,
+                    });
+                    return (
+                        <tr>
+                            <td>{index + 1}</td>
+                            <td>
+                                <a href={url}>{url}</a>
+                            </td>
+                            <td>{internalFramework}</td>
+                            <td>{pageName}</td>
+                            <td>{exampleName}</td>
+                            <td>{importType}</td>
+                            <td>{fileName}</td>
+                        </tr>
+                    );
+                })
+            }
+        </tbody>
+    </table>
+</DebugLayout>

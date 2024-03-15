@@ -1,0 +1,215 @@
+---
+title: "Sparklines - Sparkline Data"
+enterprise: true
+---
+
+This section starts off by comparing the different supported data formats before discussing how data can be formatted
+using a [Value Getter](./value-getters/) for sparklines and then shows how data updates are handled.
+
+## Supported Data Formats
+
+Sparklines are configured on a per-column basis and are supplied data based on their column configuration, just like any
+other grid cell, i.e. columns are configured with a `field` attribute or [Value Getter](./value-getters/).
+
+The data supplied to sparklines can be in the following formats:
+
+* [Array of Numbers](./sparklines-data/#array-of-numbers)
+* [Array of Tuples](./sparklines-data/#array-of-tuples)
+* [Array of Objects](./sparklines-data/#array-of-objects)
+
+In each of the formats above, Y values must be of type `number`, whereas X values can be a `number`, `string`, `Date` or
+objects with a `toString` method, if they are provided.
+
+It may be necessary to [Format Sparkline Data](./sparklines-data/#formatting-sparkline-data) using Value Getters if the data
+supplied to the grid is not in the correct format.
+
+### Array of Numbers
+
+The simplest data format supported by the sparkline is the `number[]` format. This does not require any further
+configuration, simply provide the array of numbers to the grid for that specific field.
+
+Alternatively, a `valueGetter` can be added to return an array of numbers for each cell in the sparkline column.
+
+* The numbers in the data array correspond to Y values.
+
+* The X value for each data point will be the index of the value in the data array. For this reason, the data points will be evenly spaced out along the width of the sparkline.
+
+* Note that the data for the `rateOfChange` field in the data.js file is a `number[]`.
+
+{% gridExampleRunner title="Sparkline Data - Array of Numbers" name="sparkline-data-number-array"  exampleHeight=585 /%}
+
+### Array of Tuples
+
+Another supported format is the tuples array. In this format, each tuple in the array can contain two values, X and Y.
+
+* At index 0 will be the X value and index 1, the Y value.
+* The Y value should be a `number` whereas the X can be a `number`, `string`, `Date` or an object with a `toString` method.
+* The `rateOfChange` field is of type `[Date, number][]`, where X values are `Date` objects.
+
+{% gridExampleRunner title="Sparkline Data - Array of Tuples" name="sparkline-data-tuple-array"  exampleHeight=585 /%}
+
+### Array of Objects
+
+The sparkline also supports an array of objects as a data format. This requires setting the `xKey` and `yKey` properties in
+the `sparklineOptions` to the corresponding property names in the objects you’re providing, as shown in the code snippet below:
+
+```js {% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'rateOfChange',
+            cellRenderer: 'agSparklineCellRenderer',
+            cellRendererParams: {
+                sparklineOptions: {
+                    type: 'line',
+                    // set xKey and yKey to the keys which can be used to retrieve X and Y values from the supplied data
+                    xKey: 'xVal',
+                    yKey: 'yVal',
+                }
+            },
+        },
+        // other column definitions ...
+    ],
+};
+```
+
+Note in the example below:
+
+* The data is an array of objects with the `xVal` and `yVal` keys.
+* `xKey` and `yKey` can be any `string` value as long as they are specified in the options.
+* By default, the `xKey` and `yKey` are `'x'` and `'y'` respectively, so data objects with `'x'` and `'y'` keys would work fine without further configuration.
+
+{% gridExampleRunner title="Sparkline Data - Array of Objects" name="sparkline-data-object-array"  exampleHeight=585 /%}
+
+## Formatting Sparkline Data
+
+If the data is not already in the required format, it is possible to provide `valueGetter` in the column definitions to format and supply data to the sparkline column.
+
+The formatted data from `valueGetter` will be supplied to the sparkline automatically by `agSparklineCellRenderer`.
+
+The following example demonstrates how data can be formatted using `valueGetter`.
+
+* In this example, the data for the `rateOfChange` field is an object with `x` and `y` keys, both containing an array of numbers.
+* A `valueGetter` is used to format this data into `[number, number][]`, entering the values for X and Y at each index in two arrays for the `rateOfChange` object.
+
+{% gridExampleRunner title="Formatting Sparkline Data" name="formatting-sparkline-data"  exampleHeight=585 /%}
+
+## Missing Data Points
+
+Missing or invalid X and Y values need to be handled differently and are described in the following sections:
+
+### Missing Y values
+
+If the Y value of the data point is `Infinity`, `null`, `undefined`, `NaN`, a `string` or an `object`, i.e. if it's not
+a `number`, it will be classified as missing or invalid.
+
+```js
+// Missing Y Values
+const data = [
+    0.17,
+    0.20,
+    undefined,
+    0.39,
+    0.26,
+    null,
+    0.68,
+    0.28
+];
+```
+
+When a data point has a missing or invalid Y value, it will be rendered as a gap, this is illustrated in the images below:
+
+{% flex justifyContent="center" %}
+{% imageCaption imagePath="resources/line-sparkline.png" alt="Line sparkline." constrained=true width="250px" enableDarkModeFilter=true %}
+No missing Y values
+{% /imageCaption %}
+{% imageCaption imagePath="resources/line-sparkline-invalid-y-values.png" alt="Line sparkline with gaps for invalid Y values." constrained=true width="250px" enableDarkModeFilter=true %}
+Missing Y values
+{% /imageCaption %}
+{% /flex %}
+
+{% flex justifyContent="center" %}
+{% imageCaption imagePath="resources/column-sparkline.png" alt="Column Sparkline" constrained=true width="250px" enableDarkModeFilter=true %}
+No missing Y values
+{% /imageCaption %}
+{% imageCaption imagePath="resources/column-sparkline-invalid-y-values.png" alt="Column sparkline with gaps for invalid Y values" constrained=true width="250px" enableDarkModeFilter=true %}
+Missing Y values
+{% /imageCaption %}
+{% /flex %}
+
+{% flex justifyContent="center" %}
+{% imageCaption imagePath="resources/area-sparkline.png" alt="Area Sparkline" constrained=true width="250px" enableDarkModeFilter=true %}
+No missing Y values
+{% /imageCaption %}
+{% imageCaption imagePath="resources/area-sparkline-invalid-y-values.png" alt="Area sparkline with gaps for invalid Y values" constrained=true width="250px" enableDarkModeFilter=true %}
+Missing Y values
+{% /imageCaption %}
+{% /flex %}
+
+### Missing X values
+
+If X values are supplied in the sparkline data but are inconsistent with the configured [axis type](./sparklines-axis-types/),
+they are considered invalid and will be skipped in the sparkline.
+
+There won't be any gaps, only the data points with valid x values will appear in the sparklines.
+
+For example if the axis is configured to be a [Number Axis](./sparklines-axis-types/#number-axis), but some data points
+have X values which are not of type `number`, these values will be considered invalid and will be ignored when the
+sparkline is rendered.
+
+```js
+// Missing X Values
+const data = [
+    [2.1, 0.17],
+    [2.3, 0.202],
+    [undefined, 0.28],
+    [2.9, 0.39],
+    [3.3, 0.26],
+    [null, 0.41],
+    [3.9, 0.68],
+    [4.3, 0.28],
+];
+```
+
+The following images show the line, column and area sparklines with 8 complete data points on the left, and on the
+right, with 6 valid X values and 2 invalid X values:
+
+{% flex justifyContent="center" %}
+{% imageCaption imagePath="resources/line-sparkline.png" alt="Line sparkline." constrained=true width="250px" enableDarkModeFilter=true %}
+No missing X values
+{% /imageCaption %}
+{% imageCaption imagePath="resources/line-sparkline-invalid-x-values.png" alt="Line sparkline with gaps for invalid Y values." constrained=true width="250px" enableDarkModeFilter=true %}
+Missing X values
+{% /imageCaption %}
+{% /flex %}
+
+{% flex justifyContent="center" %}
+{% imageCaption imagePath="resources/column-sparkline.png" alt="Column Sparkline" constrained=true width="250px" enableDarkModeFilter=true %}
+No missing X values
+{% /imageCaption %}
+{% imageCaption imagePath="resources/column-sparkline-invalid-x-values.png" alt="Column sparkline with gaps for invalid Y values" constrained=true width="250px" enableDarkModeFilter=true %}
+Missing X values
+{% /imageCaption %}
+{% /flex %}
+
+{% flex justifyContent="center" %}
+{% imageCaption imagePath="resources/area-sparkline.png" alt="Area Sparkline" constrained=true width="250px" enableDarkModeFilter=true %}
+No missing X values
+{% /imageCaption %}
+{% imageCaption imagePath="resources/area-sparkline-invalid-x-values.png" alt="Area sparkline with gaps for invalid Y values" constrained=true width="250px" enableDarkModeFilter=true %}
+Missing X values
+{% /imageCaption %}
+{% /flex %}
+
+## Updating Sparkline Data
+
+Updating Sparkline data is no different from updating any other cell data, for more details see
+[Updating Data](./data-update/).
+
+The following example demonstrates Sparkline data updates using the [Transaction Update API](./data-update-transactions/#transaction-update-api).
+
+{% gridExampleRunner title="Sparkline Data Updates" name="sparkline-data-updates"  exampleHeight=610 /%}
+
+## Next Up
+
+Continue to the next section to learn about: [Sparkline Axis Types](./sparklines-axis-types/).

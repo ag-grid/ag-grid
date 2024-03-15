@@ -1,8 +1,0 @@
-{
-    "extends": "../../module-build/tsconfig.test.json",
-    "compilerOptions": {
-        "outDir": "dist-test",
-        "baseUrl": "."
-    },
-    "include": ["**/*.test.ts", "src/ts/**/mock.ts"]
-}

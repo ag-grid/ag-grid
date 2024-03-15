@@ -1,0 +1,29 @@
+---
+import { ApiDocumentation } from './ReferenceDocumentation';
+import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
+import { getJsonFile } from '@utils/pages';
+import { getPropertiesFromSource } from './getPropertiesFromSource';
+
+const { names, config, source, sources: sourcesProp, section } = Astro.props;
+
+const framework = getFrameworkFromPath(Astro.url.pathname);
+const interfaceLookup = getJsonFile('reference/interfaces.AUTO.json');
+
+const { sources, propertiesFromFiles, propertyConfigs, codeConfigs } = await getPropertiesFromSource({
+    source,
+    sources: sourcesProp,
+});
+---
+
+<ApiDocumentation
+    client:load
+    framework={framework}
+    sources={sources}
+    section={section}
+    names={names}
+    config={config}
+    propertiesFromFiles={propertiesFromFiles}
+    interfaceLookup={interfaceLookup}
+    propertyConfigs={propertyConfigs}
+    codeConfigs={codeConfigs}
+/>

@@ -1,0 +1,141 @@
+{
+  "name": "ag-grid-docs",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "documentation/ag-grid-docs/src",
+  "targets": {
+    "build": {
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "dependsOn": ["^build", "generate-doc-references", "generate-examples"],
+      "inputs": [
+        "^production",
+        "production",
+        "!{projectRoot}/vitest.config.mjs",
+        { "env": "PUBLIC_PACKAGE_VERSION" }
+      ],
+      "cache": true,
+      "command": "astro build",
+      "options": {
+        "cwd": "documentation/ag-grid-docs",
+        "silent": true
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      }
+    },
+    "build-tsc": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --project documentation/ag-grid-docs/tsconfig.json"
+      }
+    },
+    "dev": {
+      "dependsOn": ["^build", "^docs-resolved-interfaces"],
+      "command": "astro dev --port=${PORT} --host",
+      "options": {
+        "cwd": "documentation/ag-grid-docs"
+      },
+      "configurations": {
+        "watch": {}
+      }
+    },
+    "preview": {
+      "dependsOn": [
+        {
+          "target": "build"
+        }
+      ],
+      "command": "astro preview --port=${PORT}",
+      "options": {
+        "cwd": "documentation/ag-grid-docs"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      }
+    },
+    "generate-examples": {
+      "executor": "nx:noop",
+      "dependsOn": ["^generate-example"],
+      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
+      "outputs": [],
+      "cache": true,
+      "batch": true,
+      "configurations": {
+        "staging": {},
+        "production": {}
+      }
+    },
+    "generate-doc-references": {
+      "executor": "ag-grid-generate-code-reference-files:generate",
+      "dependsOn": ["ag-grid-generate-code-reference-files:build"],
+      "inputs": [
+        "{workspaceRoot}/community-modules/core/src/**/*.ts",
+        "{workspaceRoot}/community-modules/angular/projects/ag-grid-angular/src/lib/**/*.ts",
+        "{workspaceRoot}/community-modules/react/src/shared/**/*.ts",
+        "{workspaceRoot}/enterprise-modules/set-filter/src/**/*.ts",
+        "{workspaceRoot}/enterprise-modules/filter-tool-panel/src/**/*.ts",
+        "{workspaceRoot}/enterprise-modules/multi-filter/src/**/*.ts",
+        { "dependentTasksOutputFiles": "**/*", "transitive": false },
+        {
+          "externalDependencies": ["npm:typescript"]
+        }
+      ],
+      "outputs": ["{options.output}"],
+      "cache": true,
+      "options": {
+        "output": "dist/documentation/reference"
+      }
+    },
+    "validate-examples": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build:types"],
+      "inputs": [
+        "{projectRoot}/tsconfig.examples.json",
+        "{workspaceRoot}/documentation/ag-grid-docs/src/**/_examples/**/*.ts",
+        "tsDeclarations",
+        {
+          "externalDependencies": ["npm:typescript"]
+        }
+      ],
+      "cache": true,
+      "options": {
+        "commands": ["npx tsc -p {projectRoot}/tsconfig.examples.json"]
+      }
+    }
+  },
+  "implicitDependencies": [
+    "community-modules/core",
+    "community-modules/client-side-row-model",
+    "community-modules/styles",
+    "community-modules/csv-export",
+    "community-modules/infinite-row-model",
+    "community-modules/angular",
+    "community-modules/react",
+    "community-modules/vue",
+    "community-modules/vue3",
+    "enterprise-modules/core",
+    "enterprise-modules/advanced-filter",
+    "enterprise-modules/charts",
+    "enterprise-modules/charts-enterprise",
+    "enterprise-modules/clipboard",
+    "enterprise-modules/column-tool-panel",
+    "enterprise-modules/excel-export",
+    "enterprise-modules/filter-tool-panel",
+    "enterprise-modules/master-detail",
+    "enterprise-modules/menu",
+    "enterprise-modules/multi-filter",
+    "enterprise-modules/range-selection",
+    "enterprise-modules/rich-select",
+    "enterprise-modules/row-grouping",
+    "enterprise-modules/server-side-row-model",
+    "enterprise-modules/set-filter",
+    "enterprise-modules/side-bar",
+    "enterprise-modules/sparklines",
+    "enterprise-modules/viewport-row-model",
+    "enterprise-modules/status-bar",
+    "packages/ag-grid-community"
+  ],
+  "tags": []
+}

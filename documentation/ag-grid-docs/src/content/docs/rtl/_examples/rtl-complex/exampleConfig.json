@@ -1,0 +1,6 @@
+{
+  "extras": [
+    "fontawesome"
+  ],
+  "supportedFrameworks": ["typescript"]
+}

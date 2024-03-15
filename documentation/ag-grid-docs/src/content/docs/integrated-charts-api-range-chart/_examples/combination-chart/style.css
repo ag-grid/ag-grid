@@ -1,0 +1,14 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 2;
+}
+
+#myChart {
+    flex: 3;
+    min-height: 455px;
+}

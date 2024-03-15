@@ -4,7 +4,6 @@
     "search.exclude": {
         "**/ag-grid-docs/_dev/**": true,
         "**/ag-grid-docs/.cache/**": true,
-        "**/ag-grid-docs/public/**": true,
         "**/build": true,
         "**/dist": true,
         "**/node_modules": true,
@@ -32,7 +31,6 @@
         "**/.git": true,
         "**/.DS_Store": true,
         "**/node_modules": true,
-        "packages": true
     },
     "[scss]": {
         "editor.detectIndentation": false,
@@ -51,12 +49,64 @@
             "url": "https://ag-grid.atlassian.net/browse/RTI-<num>"
         }
     ],
-    "peacock.color": "#f9e64f",
     "git.autoRepositoryDetection": "subFolders",
     "git.repositoryScanIgnoredFolders": [
         "node_modules",
         "dist",
         "typings"
     ],
-    "typescript.enablePromptUseWorkspaceTsdk": true
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "angular.enable-strict-mode-prompt": false,
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "**/exampleConfig.json"
+            ],
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "extras": {
+                        "type": "array",
+                        "description": "The extra scripts / styles to be added to the example index.html. Options are defined in .vscode/settings.json to match those supported in Extras.tsx",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "jquery",
+                                "jqueryui",
+                                "alasql",
+                                "flatpickr",
+                                "fontawesome",
+                                "xlsx-style",
+                                "materialdesignicons"
+                            ],
+                        }
+                    },
+                    "noStyle": {
+                        "const": true,
+                        "description": "If true, the example will not include style attribute on the <div id='myGrid'> element."
+                    },
+                    "licenseKey": {
+                        "const": true,
+                        "description": "If true, the license manager will be included in the example."
+                    },
+                    "supportedFrameworks": {
+                        "type": "array",
+                        "description": "The frameworks that this example supports. Options are defined in .vscode/settings.json to match those supported in Extras.tsx",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "vanilla",
+                                "typescript",
+                                "reactFunctional",
+                                "reactFunctionalTs",
+                                "angular",
+                                "vue",
+                                "vue3",
+                            ],
+                        }
+                    },
+                }
+            }
+        }
+    ]
 }

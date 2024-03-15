@@ -1,0 +1,18 @@
+.headerWrapper { 
+    display: flex;
+    overflow: hidden;
+    gap: 0.25rem;
+}
+
+.customHeaderLabel {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.customSortRemoveLabel {
+    font-size: 11px;
+}
+
+.active {
+    color: cornflowerblue;
+}

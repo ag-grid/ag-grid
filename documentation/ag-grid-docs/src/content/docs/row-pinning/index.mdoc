@@ -1,0 +1,32 @@
+---
+title: "Row Pinning"
+---
+
+Pinned rows appear either above or below the normal rows of a table.
+This feature in other grids is also known as **Frozen Rows** or **Floating Rows**.
+
+{% gridExampleRunner title="Simple Tow Pinning" name="simple-pinning"  exampleHeight=580 /%}
+
+Set Pinned Rows using grid attributes `pinnedTopRowData` and `pinnedBottomRowData`.
+
+{% if isFramework("javascript") %}
+Update the pinned rows using `api.setGridOption('pinnedTopRowData', rows)` and `api.setGridOption('pinnedBottomRowData', rows)`.
+{% /if %}
+
+{% apiDocumentation source="grid-options/properties.json" section="rowPinning" names=["pinnedTopRowData", "pinnedBottomRowData"] /%}
+
+## Cell Components
+
+Cell Components are shared between Pinned and non-Pinned rows. To have different Cell Components
+for Pinned vs non-Pinned, use a `cellRendererSelector`.
+
+{% gridExampleRunner title="Row Pinning" name="row-pinning"  exampleHeight=580 /%}
+
+## Non Supported Items
+
+Pinned rows are not part of the main row model. For this reason, the following is not possible:
+
+* **Sorting**: Pinned rows cannot be sorted.
+* **Filtering**: Pinned rows are not filtered.
+* **Row Grouping**: Pinned rows cannot be grouped.
+* **Row Selection**: Pinned rows cannot be selected.

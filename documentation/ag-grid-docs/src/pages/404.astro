@@ -1,0 +1,61 @@
+---
+import Layout from '@layouts/Layout.astro';
+import { getEntry } from 'astro:content';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { PagesNavigationFromLocalStorage } from '@features/pages-navigation/components/PagesNavigationFromLocalStorage';
+import type { MenuSection } from '@ag-grid-types';
+
+const { data: menu } = await getEntry('menu', 'data');
+const allMenuSections = menu.main.sections as MenuSection[];
+---
+
+<Layout title="AG Grid: Page Not Found" showDocsNav={true} showSearchBar={true}>
+    <div class="layout-grid">
+        <!-- NOTE: 404 is used for all paths, so will need to get framework from localstorage -->
+        <PagesNavigationFromLocalStorage client:load allMenuSections={allMenuSections} pageName={'404'} />
+
+        <div id="doc-content" class:list={['docPage', 'noSideMenu']}>
+            <h1>Page Not Found</h1>
+            <p>
+                Sorry, but it looks like you've ended up in the wrong place. Please go to the <a
+                    href={urlWithBaseUrl('/')}>homepage</a
+                > or <a href={urlWithBaseUrl('/documentation')}>documentation</a> to try to find what you're looking for.
+            </p>
+        </div>
+    </div>
+</Layout>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (!window.plausible) {
+            return;
+        }
+
+        window.plausible('404', { props: { path: document.location.pathname } });
+    });
+</script>
+
+<style lang="scss">
+    @use '../design-system' as *;
+    @import '../design-system/modules/docs.module.scss';
+
+    .contentViewport {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        @media (min-width: $breakpoint-docs-nav-medium) {
+            flex-direction: row;
+        }
+
+        @media (min-width: $breakpoint-docs-nav-large) {
+            &.noLeftMenu {
+                padding-left: max(var(--horizontal-margin), calc(50vw - var(--max-page-width) / 2));
+            }
+
+            .docPage {
+                padding-left: 0;
+            }
+        }
+    }
+</style>

@@ -1,9 +1,0 @@
-node_modules
-src
-.browserslistrc
-.gitignore
-.npmignore
-github-banner.png
-github-grid-demo.jpg
-tslint.json
-vue.config.js

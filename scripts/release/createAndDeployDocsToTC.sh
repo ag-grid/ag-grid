@@ -2,13 +2,15 @@
 
 ZIP_PREFIX=`date +%Y%m%d`
 
-cd grid-packages/ag-grid-docs
-npx gulp release-archive
+echo "Deploying Docs to Build Server"
 
-cd ../../
-node scripts/release/patchDocs.js
+if [ ! -d "documentation/ag-grid-docs/dist" ];
+then
+  echo "documentation/ag-grid-docs/dist does NOT EXIST. Exiting with error."
+  exit 1
+fi
 
-cd grid-packages/ag-grid-docs/dist
+cd documentation/ag-grid-docs/dist
 
 FILENAME=release_"$ZIP_PREFIX"_v"$ZIP_PREFIX".zip
 zip -qr ../../../$FILENAME *

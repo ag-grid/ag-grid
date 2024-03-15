@@ -1,0 +1,17 @@
+{% if isFramework("react") %}
+```jsx
+<AgGridReact 
+      statusBar: {{
+          statusPanels: [
+              {
+                  statusPanel: MyStatusBarComponent
+              },
+              {
+                  statusPanel: 'agAggregationComponent'
+              }
+          ]
+      }}
+      ...other props...
+/>
+```
+{% /if %}

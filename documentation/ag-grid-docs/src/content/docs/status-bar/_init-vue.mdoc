@@ -1,0 +1,16 @@
+{% if isFramework("vue") %}
+```js
+export default {
+  methods: {
+    updateStatusBar() { ... },
+  },
+  created() {
+    // Remove event listener when destroyed
+    this.params.api.addEventListener(
+      'modelUpdated',
+      this.updateStatusBar.bind(this)
+    );
+  },
+};
+```
+{% /if %}

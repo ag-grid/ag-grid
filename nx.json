@@ -1,37 +1,113 @@
 {
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [
-          "build",
-          "build-docs",
-          "build-prod",
-          "package",
-          "build-docs-initial",
-          "generate-doc-files",
-          "build-css",
-          "test",
-          "test:e2e"
-        ]
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "plugins": ["./plugins/ag-grid-task-autogen"],
+  "affected": {
+    "defaultBase": "latest"
+  },
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "defaultExcludes": [
+      "!{projectRoot}/.eslintrc.json",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/**/test/**",
+      "!{projectRoot}/**/__image_snapshots__/**",
+      "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/jest.config.[jt]s"
+    ],
+    "buildOutputExcludes": ["!{projectRoot}/dist/**"],
+    "production": ["default", "defaultExcludes"],
+    "tsDeclarations": [
+      {
+        "dependentTasksOutputFiles": "**/*.d.ts",
+        "transitive": false
       }
-    }
+    ],
+    "jsOutputs": [
+      {
+        "dependentTasksOutputFiles": "**/*.js",
+        "transitive": false
+      }
+    ],
+    "tsDefaults": [
+      "{projectRoot}/package.json",
+      "{projectRoot}/src/**/*",
+      "{projectRoot}/tsconfig.*.json",
+      "tsDeclarations",
+      "sharedGlobals",
+      "defaultExcludes",
+      {
+        "externalDependencies": ["npm:typescript", "npm:esbuild"]
+      }
+    ],
+    "sharedGlobals": ["{workspaceRoot}/esbuild.config*.cjs", "{workspaceRoot}/tsconfig.*.json"]
   },
   "targetDefaults": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"],
+      "cache": true
     },
-    "build-prod": {
-      "dependsOn": [
-        "^build-prod"
-      ]
+    "build:types": {
+      "dependsOn": ["^build:types"],
+      "inputs": ["production", "^production"],
+      "cache": true
     },
-    "package": {
-      "dependsOn": [
-        "^package"
-      ]
+    "build:package": {
+      "dependsOn": ["^build:package"],
+      "inputs": ["production", "^production"],
+      "cache": true
+    },
+    "build:umd": {
+      "dependsOn": ["build:package", "^build:package"],
+      "inputs": ["^jsOutputs"],
+      "cache": true
+    },
+    "build:styles": {
+      "dependsOn": ["^build:styles"],
+      "inputs": ["production", "^production"],
+      "cache": true
+    },
+    "lint": {
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json", "{workspaceRoot}/.eslintignore"],
+      "cache": true
+    },
+    "test": {
+      "inputs": ["default", "buildOutputExcludes", "^production", "{workspaceRoot}/jest.preset.js"],
+      "outputs": [],
+      "cache": true
+    },
+    "e2e": {
+      "inputs": ["default", "buildOutputExcludes", "^production"],
+      "outputs": [],
+      "cache": true
+    },
+    "pack": {
+      "inputs": [
+        "{projectRoot}/dist/**",
+        "{projectRoot}/.npmignore",
+        "{projectRoot}/README.md",
+        "{projectRoot}/LICENSE*",
+        "{projectRoot}/package.json"
+      ],
+      "cache": true
+    },
+    "@nx/jest:jest": {
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
+      "cache": true,
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "@nx/vite:test": {
+      "cache": true,
+      "inputs": ["default", "^production"]
     }
-  }
+  },
+  "defaultProject": "all"
 }

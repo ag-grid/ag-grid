@@ -1,0 +1,29 @@
+---
+title: "Rows"
+---
+The grid uses rows to display the records in the provided data.
+
+## Row IDs
+
+Row IDs help the grid identify rows. Provide Row ID's to the grid by implementing `getRowId()`.
+It is recommended to provide row ID's to the grid if possible.
+
+{% gridExampleRunner title="Get Row ID" name="get-row-id" exampleHeight=300 /%}
+
+{% apiDocumentation source="grid-options/properties.json" section="rowModels" names=["getRowId"] /%}
+
+Providing Row IDs allows the grid to keep track of rows such as when `rowData` is updated,
+to identify rows that have changed, are added, or are removed. 
+
+Row IDs are also useful for identifying Rows via the grid's API, as discussed in the next section.
+
+## Row Nodes
+
+Every row displayed in the grid is represented by a [Row Node](./row-interface/) which 
+exposes stateful attributes and methods for directly interacting with the row.
+
+Row Nodes are accessed via [Grid API](./grid-api/) methods, as well as provided as props for items such as [Cell Component](./component-cell-renderer/).
+
+{% gridExampleRunner title="Row Node" name="row-node" exampleHeight=350 /%}
+
+Check the [Row Reference](./row-object/) and [Row Events](./row-events/) for all items available on the [Row Node](./row-interface/).

@@ -1,0 +1,110 @@
+---
+import { getEntry } from 'astro:content';
+import '@design-system/design-system.scss';
+import SiteHeader from '@components/site-header/SiteHeader.astro';
+import { getFavIconsData, getAppleTouchIconsData } from '@utils/favicons';
+import { getIsProduction, getIsStaging, getIsDev } from '@utils/env';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import Plausible from '@components/Plausible.astro';
+import { Footer } from '@components/footer/Footer';
+import styles from '@design-system/modules/GridIndex.module.scss';
+
+interface Props {
+    title: string;
+    description?: string;
+    showSearchBar?: boolean;
+    showDocsNav?: boolean;
+    hideHeader?: boolean;
+    hideFooter?: boolean;
+}
+
+const { data: metadata } = await getEntry('metadata', 'metadata');
+const { data: footerItems } = await getEntry('footer', 'data');
+
+const isProduction = getIsProduction();
+const isStaging = getIsStaging();
+const isDev = getIsDev();
+const canonicalUrl = new URL(Astro.url.pathname, metadata.canonicalUrlBase);
+
+const { title, description = metadata.description, showSearchBar, showDocsNav, hideHeader, hideFooter } = Astro.props;
+
+const path = Astro.url.pathname;
+const socialImage = urlWithBaseUrl(metadata.socialImage);
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="description" content={description} />
+        <meta name="viewport" content="width=device-width" />
+        {
+            getFavIconsData().map(({ size, icon }: any) => (
+                <link rel="icon" type="image/png" sizes={`${size}x${size}`} href={icon} />
+            ))
+        }
+        {
+            getAppleTouchIconsData().map(({ size, icon }: any) => (
+                <link rel="apple-touch-icon" sizes={`${size}x${size}`} href={icon} />
+            ))
+        }
+        {!isProduction && <meta name="robots" content="noindex" />}
+        <meta name="generator" content={Astro.generator} />
+        <title>{title}</title>
+        <link rel="canonical" href={canonicalUrl}>
+        {!isDev && <link rel="sitemap" type="application/xml" title="Sitemap" href={urlWithBaseUrl("/sitemap-index.xml")} />}
+
+        <!-- Facebook Meta Tags -->
+        <meta property="og:url" content={canonicalUrl}>
+        <meta property="og:type" content="website">
+        <meta property="og:title" content={title}>
+        <meta property="og:description" content={description}>
+        <meta property="og:image" content={socialImage}>
+
+        <!-- Twitter Meta Tags -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta property="twitter:domain" content={canonicalUrl.host}>
+        <meta property="twitter:url" content={canonicalUrl}>
+        <meta name="twitter:title" content={title}>
+        <meta name="twitter:description" content={description}>
+        <meta name="twitter:image" content={socialImage}>
+
+        {isProduction && <Fragment>
+            <script is:inline define:vars={{
+                googleTagManagerId: metadata.googleTagManagerId
+            }}>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer',googleTagManagerId);</script>
+            <Plausible domain="ag-grid.com" />
+        </Fragment>}
+
+        {isStaging && <Plausible domain="grid-staging.ag-grid.com" />}
+    </head>
+    <body>
+        <script is:inline>
+            const htmlEl = document.querySelector('html');
+            const localDarkmode = localStorage['documentation:darkmode'];
+            const isOSDarkmode = (
+                window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+            ).toString();
+
+            if (localDarkmode === undefined) {
+              localStorage.setItem("documentation:darkmode", isOSDarkmode);
+            }
+
+            htmlEl.classList.add('no-transitions');
+            htmlEl.dataset.darkMode = localDarkmode !== undefined ? localDarkmode : isOSDarkmode;
+            htmlEl.offsetHeight; // Trigger a reflow, flushing the CSS changes
+            htmlEl.classList.remove('no-transitions');
+        </script>
+
+        <div class:list={styles.mainContainer}>
+            {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} />}
+            <slot />
+        </div>
+        
+        {!hideFooter && <Footer path={path} footerItems={footerItems} />}
+    </body>
+</html>

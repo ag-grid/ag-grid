@@ -1,0 +1,32 @@
+{% if isFramework("react") %}
+The api of the grid can be accessed via a ref passed to the `AgGridReact` component.
+
+```jsx
+// Create a gridRef
+const gridRef = useRef();
+
+const onClick = useCallback(() => {
+    // Use the gridRef to access the api
+    gridRef.current?.api.deselectAll();
+}, []);
+
+<AgGridReact ref={gridRef}  />
+```
+
+{% warning %}
+The gridRef.current value will not be defined until after the AgGridReact component has been initialised.
+If you want to access the api as soon as it's available (ie do initialisation
+work), consider listening to the `gridReady` event.
+{% /warning %}
+
+The `api` is also provided on the params for all grid events and callbacks.
+
+```jsx
+// access api directly within event handler
+onGridReady = useCallback((event: GridReadyEvent) => {
+    event.api.resetColumnState();
+},[]);
+
+<AgGridReact onGridReady={onGridReady} />
+```
+{% /if %}

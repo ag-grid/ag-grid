@@ -1,0 +1,71 @@
+{
+  "name": "ag-grid-community",
+  "version": "31.1.0",
+  "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
+  "main": "./dist/package/main.cjs.js",
+  "types": "./dist/types/main.d.ts",
+  "module": "./dist/package/main.esm.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/package/main.esm.mjs",
+      "require": "./dist/package/main.cjs.js",
+      "types": "./dist/types/main.d.ts",
+      "default": "./dist/package/main.cjs.js"
+    },
+    "./styles/*": "./styles/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "keywords": [
+    "ag",
+    "ag-grid",
+    "datagrid",
+    "data-grid",
+    "datatable",
+    "data-table",
+    "grid",
+    "table",
+    "react",
+    "table",
+    "angular",
+    "angular-component",
+    "react",
+    "react-component",
+    "reactjs",
+    "vue",
+    "vuejs"
+  ],
+  "author": "Sean Landsman <sean@thelandsmans.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie >= 0",
+    "not ie_mob >= 0",
+    "not blackberry > 0"
+  ],
+  "homepage": "https://www.ag-grid.com/",
+  "devDependencies": {
+    "source-map-loader": "^5.0.0",
+    "gulp": "^4.0.0",
+    "gulp-replace": "^1.0.0",
+    "gulp-rename": "^2.0.0",
+    "@ag-grid-community/client-side-row-model": "31.1.0",
+    "@ag-grid-community/core": "31.1.0",
+    "@ag-grid-community/csv-export": "31.1.0",
+    "@ag-grid-community/infinite-row-model": "31.1.0",
+    "@ag-grid-community/styles": "31.1.0",
+    "ts-loader": "^9.5.1",
+    "style-loader": "^3.3.4",
+    "css-loader": "^6.10.0",
+    "postcss-loader": "^8.1.0",
+    "webpack-cli": "^5.1.4",
+    "terser-webpack-plugin": "^5.3.10",
+    "postcss-preset-env": "^9.5.0"
+  }
+}
