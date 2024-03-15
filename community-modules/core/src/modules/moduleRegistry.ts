@@ -161,7 +161,7 @@ For more info see: https://www.ag-grid.com/javascript-grid/packages/`;
     public static __warnEnterpriseChartDisabled(chartType: ChartType): void {
         const reason = 'ag-charts-enterprise';
         const warningKey = reason + ':' + chartType;
-        const url = 'https://ag-grid.com/javascript-data-grid/integrated-charts/';
+        const url = 'https://www.ag-grid.com/javascript-data-grid/integrated-charts-installation/';
         const warningMessage = `AG Grid: the '${chartType}' chart type is not supported in AG Charts Community as 'ag-grid-charts-enterprise' or '@ag-grid-enterprise/charts-enterprise' hasn't been loaded. See ${url} for more details.`;
 
         doOnce(() => {
