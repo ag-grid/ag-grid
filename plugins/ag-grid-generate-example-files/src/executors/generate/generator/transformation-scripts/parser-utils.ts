@@ -1,27 +1,28 @@
-import ts = require("typescript");
-import {integratedChartsUsesChartsEnterprise} from "./consts";
-const sucrase = require("sucrase");
+import { transform } from 'sucrase';
+import ts from 'typescript';
 
-export type ImportType = 'packages' | 'modules';
+import { getEnterprisePackageName } from '../constants';
+import { BindingImport, ExampleConfig, InternalFramework, ParsedBindings } from '../types';
 
-export interface BindingImport {
-    isNamespaced: boolean;
-    module: string;
-    namedImport: string;
-    imports: string[];
-}
+export function readAsJsFile(
+    srcFile,
+    internalFramework: InternalFramework,
+) {
+    let tsFile = srcFile
+        // Remove imports like import 'ag-grid-community/styles/ag-grid.css';
+        .replace(/import ['"].*['"](;?)\n/g, '');
 
-const moduleMapping = require('../../documentation/doc-pages/modules/modules.json');
+    // Remove imports that are not required in javascript
+    if (internalFramework !== 'vanilla') {
+        // We leave in the relative imports as they are required for the example to work
+        // e.g import { colors } from './colors'; for non Vanilla examples
+        tsFile = tsFile.replace(/import {((.|\n)*?)} from(?!(\s['"]\.\/)).*\n/g, '');
+    } else {
+        tsFile = tsFile.replace(/import ((.|\n)*?)from.*\n/g, '');
+        tsFile = tsFile.replace(/export /g, '');
+    }
 
-export function readAsJsFile(srcFile, options: { includeImports: boolean } = undefined) {
-    const tsFile = srcFile
-        // Remove imports that are not required in javascript
-        .replace((options?.includeImports ? '' : /import ((.|\n)*?)from.*\n/g), '')
-        // Remove export statement
-        .replace(/export /g, "")
-
-    let jsFile = sucrase.transform(tsFile, { transforms: ["typescript"] }).code;
-
+    const jsFile = transform(tsFile, { transforms: ['typescript'] }).code; ///disableESTransforms: true
     return jsFile;
 }
 
@@ -35,67 +36,44 @@ export function parseFile(src) {
 //     omitTrailingSemicolon?: boolean;
 //     noEmitHelpers?: boolean;
 // }
-const printer = ts.createPrinter({ removeComments: false, omitTrailingSemicolon: false });
+const printer = ts.createPrinter({
+    removeComments: false,
+    omitTrailingSemicolon: false,
+});
 
 export function tsGenerate(node, srcFile) {
     try {
         if (!node) {
-            return ''
+            return '';
         }
         return printer.printNode(ts.EmitHint.Unspecified, node, srcFile);
     } catch (error) {
+        // eslint-disable-next-line no-console
         console.error(error);
     }
-    return "ERROR - Printing";
-}
-
-export function modulesProcessor(modules: string[]) {
-    const moduleImports = [];
-    const suppliedModules = [];
-
-    const requiredModules = [];
-    modules.forEach(module => {
-        let found = false;
-        moduleMapping.forEach(moduleConfig => {
-            if (moduleConfig.shortname && moduleConfig.shortname == module) {
-                requiredModules.push(moduleConfig);
-                found = true;
-            }
-        });
-        if (!found) {
-            console.error(`Could not find module ${module} in modules.json`);
-        }
-    });
-
-    requiredModules.forEach(requiredModule => {
-        moduleImports.push(`import { ${requiredModule.exported} } from '${requiredModule.module}';`);
-        suppliedModules.push(requiredModule.exported);
-    });
-
-    return { moduleImports, suppliedModules };
+    return 'ERROR - Printing';
 }
 
 export function removeFunctionKeyword(code: string): string {
-    return code.replace(/^function /, '')
-        .replace(/\n\s?function /, '\n ');
+    return code.replace(/^function /, '').replace(/\n\s?function /, '\n ');
 }
 
 export function getFunctionName(code: string): string {
-    let matches = /function\s+([^\(\s]+)\(/.exec(code);
+    const matches = /function\s+([^(\s]+)\(/.exec(code);
     return matches && matches.length === 2 ? matches[1].trim() : null;
 }
 
 export const convertFunctionToProperty = (code: string) =>
-    code.replace(/function\s+([^\(\s]+)\s*\(([^\)]*)\)/, '$1 = ($2) =>');
+    code.replace(/function\s+([^(\s]+)\s*\(([^)]*)\)/, '$1 = ($2) =>');
 
 export const convertFunctionToConstProperty = (code: string) =>
-    code.replace(/function\s+([^\(\s]+)\s*\(([^\)]*)\)/, 'const $1 = ($2) =>');
+    code.replace(/function\s+([^(\s]+)\s*\(([^)]*)\)/, 'const $1 = ($2) =>');
 export const convertFunctionToConstPropertyTs = (code: string) => {
-    return code.replace(/function\s+([^\(\s]+)\s*\(([^\)]*)\):(\s+[^\{]*)/, 'const $1: ($2) => $3 = ($2) =>');
-}
+    return code.replace(/function\s+([^(\s]+)\s*\(([^)]*)\):(\s+[^{]*)/, 'const $1: ($2) => $3 = ($2) =>');
+};
 
 export function isInstanceMethod(methods: string[], property: any): boolean {
-    return methods.map(getFunctionName).filter(name => name === property.name).length > 0;
+    return methods.map(getFunctionName).filter((name) => name === property.name).length > 0;
 }
 
 export const enum NodeType {
@@ -104,25 +82,26 @@ export const enum NodeType {
     Expression = 'ExpressionStatement',
 }
 
-export function tsCollect(tsTree, tsBindings, collectors, recurse = true) {
+export function tsCollect(tsTree, tsBindings: ParsedBindings, collectors, recurse = true): ParsedBindings {
     ts.forEachChild(tsTree, (node: ts.Node) => {
-
-        collectors.filter(c => {
-            let res = false;
-            try {
-                res = c.matches(node)
-            } catch (error) {
-                return false;
-            }
-            return res;
-        }
-        ).forEach(c => {
-            try {
-                c.apply(tsBindings, node)
-            } catch (error) {
-                console.error(error)
-            }
-        });
+        collectors
+            .filter((c) => {
+                let res = false;
+                try {
+                    res = c.matches(node);
+                } catch (error) {
+                    return false;
+                }
+                return res;
+            })
+            .forEach((c) => {
+                try {
+                    c.apply(tsBindings, node);
+                } catch (error) {
+                    // eslint-disable-next-line no-console
+                    console.error(error);
+                }
+            });
         if (recurse) {
             tsCollect(node, tsBindings, collectors, recurse);
         }
@@ -141,7 +120,6 @@ export function tsNodeIsGlobalVarWithName(node: any, name: string): boolean {
 export function tsNodeIsPropertyWithName(node: ts.Node, name: string) {
     if (ts.isPropertyAssignment(node)) {
         if (node.name.getText() === name) {
-
             // If the name matches the initializer then the property will get added via
             // the top level variable matching a gridProperty name
             // This means that we include cellRenderer properties like
@@ -161,9 +139,11 @@ export function tsNodeIsTopLevelVariable(node: ts.Node, registered: string[] = [
         // Is not just a type declaration i.e declare function getData: () => any[];
         if (node.declarations.length > 0) {
             const declaration = node.declarations[0];
-            // Don't include api declarations as these are handled separately
-            const isLetApi = declaration.name.getText() === 'gridApi';            
-            return !isLetApi && !isDeclareStatement(node.parent) && registered.indexOf(declaration.name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
+            return (
+                !isDeclareStatement(node.parent) &&
+                registered.indexOf(declaration.name.getText()) < 0 &&
+                ts.isSourceFile(node.parent.parent)
+            );
         }
     }
 }
@@ -171,20 +151,14 @@ export function tsNodeIsTopLevelVariable(node: ts.Node, registered: string[] = [
 export function tsNodeIsFunctionWithName(node: ts.Node, name: string): boolean {
     // eg: function someFunction() { }
     if (ts.isFunctionDeclaration(node)) {
-        const isMatch = node.name.getText() === name;
-        return isMatch
+        const isMatch = node?.name?.getText() === name;
+        return isMatch;
     }
     return false;
 }
 
-export function tsNodeIsInScope(node: any, unboundInstanceMethods: string[]): boolean {
-    return unboundInstanceMethods &&
-        ts.isFunctionDeclaration(node) && node.name &&
-        unboundInstanceMethods.indexOf(node.name.getText()) >= 0;
-}
-
-export function tsNodeIsUnusedFunction(node: any, used: string[], unboundInstanceMethods: string[]): boolean {
-    if (!tsNodeIsInScope(node, unboundInstanceMethods)) {
+export function tsNodeIsUnusedFunction(node: any, used: string[]): boolean {
+    if (ts.isFunctionDeclaration(node) && !!node.name) {
         if (ts.isFunctionLike(node) && used.indexOf(node.name.getText()) < 0) {
             const isTopLevel = ts.isSourceFile(node.parent);
             return isTopLevel && !isDeclareStatement(node);
@@ -194,28 +168,18 @@ export function tsNodeIsUnusedFunction(node: any, used: string[], unboundInstanc
 }
 
 function isDeclareStatement(node) {
-    return node && node.modifiers && node.modifiers.some(m => m.getText() === 'declare');
+    return node && node.modifiers && node.modifiers.some((m) => m.getText() === 'declare');
 }
 
 export function tsNodeIsTypeDeclaration(node: any): boolean {
-    if ((ts.isFunctionDeclaration(node) || ts.isVariableStatement(node))) {
+    if (ts.isFunctionDeclaration(node) || ts.isVariableStatement(node)) {
         return isDeclareStatement(node);
     }
     return false;
 }
 
 export function tsNodeIsFunctionCall(node: any): boolean {
-    return ts.isExpressionStatement(node) && ts.isCallExpression(node.expression);
-}
-
-export function tsNodeIsGlobalFunctionCall(node: ts.Node) {
-    // Get top level function calls like 
-    // setInterval(callback, 500)
-    // but don't match things like
-    // AgChart.create(options)
-    if (ts.isExpressionStatement(node)) {
-        return ts.isSourceFile(node.parent) && ts.isCallExpression(node.expression) && ts.isIdentifier(node.expression.expression);
-    }
+    return ts.isCallExpression(node);
 }
 
 export const recognizedDomEvents = ['click', 'change', 'input', 'dragover', 'dragstart', 'drop'];
@@ -230,96 +194,29 @@ const extractEventHandlerBody = (code: string) => code.match(/^(\w+)\((.*)\)/);
  * for each of the recognised events (click, change etc) extract the corresponding event handler, with (optional) params
  * eg: onclick="refreshEvenRowsCurrencyData()"
  */
-export function extractEventHandlers(tree: any, eventNames: string[]) {
+export function extractEventHandlers(domTree: any, eventNames: string[]) {
     const getHandlerAttributes = (event: string) => {
         const handlerName = `on${event}`;
 
-        return Array.prototype.map.call(tree.find(`[${handlerName}]`), el => el.getAttribute(handlerName));
+        return domTree(`[${handlerName}]`).map((index, el) => {
+            return domTree(el).attr(handlerName);
+        });
     };
 
-    return flatMap(eventNames, (event: string) => getHandlerAttributes(event).map(extractEventHandlerBody));
-}
-
-export function removeInScopeJsDoc(method: string): string {
-    return method.replace(/\/\*\*\s*inScope.*\*\/\n/g, '');
-}
-
-// functions marked with an "inScope" comment will be handled as "instance" methods, as opposed to (global/unused)
-// "util" ones
-export function extractUnboundInstanceMethods(srcFile: ts.SourceFile) {
-    let inScopeMethods = [];
-    srcFile.statements.forEach(node => {
-        if (ts.isFunctionDeclaration(node)) {
-            const docs = (node as any).jsDoc;
-            if (docs && docs.length > 0) {
-                docs.forEach(doc => {
-                    const trimmed = doc.comment.trim() || '';
-                    if (trimmed.includes('inScope')) {
-                        inScopeMethods = [...inScopeMethods, node.name?.getText()]
-                    }
-                });
-            }
-
-        }
-    })
-    return inScopeMethods;
-}
-
-export function extractTypeInfoForVariable(srcFile: ts.SourceFile, varName: string) {
-    let typeStr = undefined;
-    let typeParts = [];
-    srcFile.statements.forEach(node => {
-        if (ts.isVariableStatement(node)) {
-            node.declarationList.declarations.forEach(dec => {
-                if (ts.isVariableDeclaration(dec) && dec.name.getText() == varName && dec.type) {
-                    typeStr = dec.type.getText();
-                    typeParts = getTypes(dec.type)
-                }
+    return flatMap(eventNames, (event: string) => {
+        const result = getHandlerAttributes(event)
+            .map((index, el) => {
+                return [extractEventHandlerBody(el)];
             })
-        }
-    })
-    return { typeStr, typeParts };
-}
+            .toArray();
 
-export function getTypes(node: ts.Node) {
-    let typesToInclude = []
-    if (ts.isIdentifier(node)) {
-        const typeName = node.getText();
-        if (!['HTMLElement', 'Function', 'Partial', 'TData', 'TContext', 'TValue'].includes(typeName)) {
-            typesToInclude.push(typeName);
-        }
-    }
-    node.forEachChild(ct => {
-        // Only recurse down the type branches of the tree so we do not include argument names
-        if ((ct as any).type) {
-            typesToInclude = [...typesToInclude, ...getTypes((ct as any).type)]
-        } else {
-            typesToInclude = [...typesToInclude, ...getTypes(ct)]
-        }
-    })
-    return typesToInclude;
-}
-
-export function usesChartApi(node: ts.Node) {
-    let usesApi = false;
-    if (ts.isCallExpression(node)) {
-        if (node.getText()?.match(/AgChart.(?!create)/)) {
-            return true;
-        }
-        if (node.getText()?.match(/AgEnterpriseCharts.(?!create)/)) {
-            return true;
-        }
-    }
-
-    node.forEachChild(ct => {
-        usesApi = usesApi || usesChartApi(ct);
-    })
-    return usesApi;
+        return result;
+    });
 }
 
 export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[] {
-    let allImports = [];
-    srcFile.statements.forEach(node => {
+    const allImports = [];
+    srcFile.statements.forEach((node) => {
         if (ts.isImportDeclaration(node)) {
             const module = node.moduleSpecifier.getText();
             const moduleImports = node.importClause;
@@ -331,9 +228,9 @@ export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[]
                 if (!ts.isNamespaceImport(moduleImports.namedBindings)) {
                     isNamespaced = false;
                 }
-                moduleImports.namedBindings.forEachChild(o => {
+                moduleImports.namedBindings.forEachChild((o) => {
                     imports.push(o.getText());
-                })
+                });
             }
             if (moduleImports?.name) {
                 namedImport = moduleImports.name.getText();
@@ -343,50 +240,76 @@ export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[]
                 module,
                 isNamespaced,
                 namedImport,
-                imports
-            })
+                imports,
+            });
         }
-    })
+    });
     return allImports;
+}
+
+export function addLicenseManager(imports: any[], exampleConfig: ExampleConfig, usePackages: boolean) {
+    if (exampleConfig.licenseKey) {
+        imports.push(
+            `import { LicenseManager } from '${usePackages ? getEnterprisePackageName() : '@ag-grid-enterprise/core'}';`
+        );
+    }
+}
+
+export function addEnterprisePackage(imports: any[], bindings: ParsedBindings) {
+    const isEnterprise = bindings.imports.some((i) => i.module.includes('-enterprise'));
+    if (isEnterprise) {
+        imports.push(`import '${getEnterprisePackageName()}';`);
+    }
+}
+
+export function extractModuleRegistration(srcFile: ts.SourceFile): string {
+    for (const statement of srcFile.statements) {
+        if (
+            ts.isExpressionStatement(statement) &&
+            statement.expression?.getText().includes('ModuleRegistry.registerModules')
+        ) {
+            return statement.getText();
+        }
+    }
+    return undefined;
 }
 
 export function extractTypeDeclarations(srcFile: ts.SourceFile) {
     const allDeclareStatements = [];
-    srcFile.statements.forEach(node => {
+    srcFile.statements.forEach((node) => {
         if ((ts.isVariableStatement(node) || ts.isFunctionDeclaration(node)) && node.modifiers?.length > 0) {
-            if (node.modifiers.some(s => s.kind === ts.SyntaxKind.DeclareKeyword)) {
-                allDeclareStatements.push(node.getText())
+            if (node.modifiers.some((s) => s.kind === ts.SyntaxKind.DeclareKeyword)) {
+                allDeclareStatements.push(node.getText());
             }
         }
-    })
+    });
     return allDeclareStatements;
 }
 
-
 export function extractClassDeclarations(srcFile: ts.SourceFile) {
     const allClasses = [];
-    srcFile.statements.forEach(node => {
+    srcFile.statements.forEach((node) => {
         if (ts.isClassDeclaration(node)) {
-            allClasses.push(node.getText())
+            allClasses.push(node.getText());
         }
-    })
+    });
     return allClasses;
 }
 
 export function extractInterfaces(srcFile: ts.SourceFile) {
     const allInterfaces = [];
-    srcFile.statements.forEach(node => {
+    srcFile.statements.forEach((node) => {
         if (ts.isInterfaceDeclaration(node)) {
-            allInterfaces.push(node.getText())
+            allInterfaces.push(node.getText());
         }
-    })
+    });
     return allInterfaces;
 }
 
 export function tsNodeIsTopLevelFunction(node: any): boolean {
     if (ts.isFunctionLike(node)) {
         const isTopLevel = ts.isSourceFile(node.parent);
-        return isTopLevel
+        return isTopLevel;
     }
     return false;
 }
@@ -402,7 +325,7 @@ export function findAllVariables(node) {
     if (ts.isVariableDeclaration(node)) {
         if (ts.isObjectBindingPattern(node.name)) {
             // Code like this:  const { pageSetup, margins } = getSheetConfig();
-            node.name.elements.forEach(n => allVariables.push(n.getText()))
+            node.name.elements.forEach((n) => allVariables.push(n.getText()));
         } else {
             allVariables.push(node.name.getText());
         }
@@ -419,7 +342,7 @@ export function findAllVariables(node) {
 
         allVariables.push(node.name.getText());
     }
-    ts.forEachChild(node, n => {
+    ts.forEachChild(node, (n) => {
         const variables = findAllVariables(n);
         if (variables.length > 0) {
             allVariables = [...allVariables, ...variables];
@@ -440,7 +363,7 @@ function getLowestExpression(exp: any) {
 }
 
 /**
- * Find all the properties accessed in this node. 
+ * Find all the properties accessed in this node.
  */
 export function findAllAccessedProperties(node) {
     let properties = [];
@@ -452,43 +375,40 @@ export function findAllAccessedProperties(node) {
     } else if (ts.isCallExpression(node) || ts.isPropertyAccessExpression(node)) {
         // When there are chained accesses we need to recurse to the lowest identifier as this is the first in the statement,
         // and will be the true accessed variable.
-        // i.e api!.getModel().getRowCount() we need to recurse down the tree to extract gridOptions
+        // i.e gridOptions.api!.getModel().getRowCount() we need to recurse down the tree to extract gridOptions
         const exp = getLowestExpression(node.expression);
 
         if (ts.isArrayLiteralExpression(exp)) {
             // Check if the array has any properties in it that are dependencies
             properties = [...properties, ...findAllAccessedProperties(exp)];
         } else {
-            properties.push(exp.getText())
+            properties.push(exp.getText());
         }
         if (ts.isCallExpression(node) && node.arguments) {
             // Check arguments
             properties = [...properties, ...findAllAccessedProperties(node.arguments)];
         }
-    }
-    else if (ts.isBinaryExpression(node)) {
+    } else if (ts.isBinaryExpression(node)) {
         // In this function we set swimmingHeight but are not dependent on it,
         // so for binary expressions we only check the right hand branch
         // function setSwimmingHeight(height: number) {
         //      swimmingHeight = height
-        //      api!.resetRowHeights()
+        //      gridOptions.api!.resetRowHeights()
         // }
         const rightProps = findAllAccessedProperties(node.right);
         if (rightProps.length > 0) {
             properties = [...properties, ...rightProps];
         }
-    }
-    else if (ts.isVariableDeclaration(node)) {
+    } else if (ts.isVariableDeclaration(node)) {
         // get lowest identifier as this is the first in the statement
-        // i.e var nextHeader = params.nextHeaderPosition 
+        // i.e var nextHeader = params.nextHeaderPosition
         // we need to recurse down the initializer tree to extract params and not nextHeaderPosition
-        let init = node.initializer as any;
+        const init = node.initializer as any;
         if (init) {
             const exp = getLowestExpression(init);
             properties = [...properties, ...findAllAccessedProperties(exp)];
         }
-    }
-    else if (ts.isPropertyAssignment(node)) {
+    } else if (ts.isPropertyAssignment(node)) {
         // Ignore the name of rowIndex just check what is being assigned
         //  {
         //      rowIndex: nextRowIndex,
@@ -496,26 +416,21 @@ export function findAllAccessedProperties(node) {
         if (node.initializer) {
             properties = [...properties, ...findAllAccessedProperties(node.initializer)];
         }
-    }
-    else if (ts.isExpressionStatement(node)) {
+    } else if (ts.isExpressionStatement(node)) {
         if (node.expression) {
             properties = [...properties, ...findAllAccessedProperties(node.expression)];
         }
-    }
-    else if (ts.isClassDeclaration(node)) {
+    } else if (ts.isClassDeclaration(node)) {
         // Do nothing for Class declarations as this is likely a cell renderer setup
-    }
-    else if (ts.isTypeReferenceNode(node)) {
+    } else if (ts.isTypeReferenceNode(node)) {
         // Do nothing for Type references
-    }
-    else if (node instanceof Array) {
-        node.forEach(element => {
+    } else if (node instanceof Array) {
+        node.forEach((element) => {
             properties = [...properties, ...findAllAccessedProperties(element)];
         });
-    }
-    else {
+    } else {
         // Recurse down the tree looking for more accessed properties
-        ts.forEachChild(node, n => {
+        ts.forEachChild(node, (n) => {
             const props = findAllAccessedProperties(n);
             if (props.length > 0) {
                 properties = [...properties, ...props];
@@ -528,13 +443,13 @@ export function findAllAccessedProperties(node) {
 
 /** Convert import paths to their package equivalent when the docs are in Packages mode
  * i.e import { GridOptions } from '@ag-grid-community/core';
- * to 
- * import { GridOptions } from '@ag-grid-community';
+ * to
+ * import { GridOptions } from 'ag-grid-community';
  */
 export function convertImportPath(modulePackage: string, convertToPackage: boolean) {
     if (convertToPackage) {
-
         const conversions = {
+            // Duplicates have different quotes to handle both cases
             "'@ag-grid-community/angular'": "'ag-grid-angular'",
             '"@ag-grid-community/angular"': "'ag-grid-angular'",
             "'@ag-grid-community/vue3'": "'ag-grid-vue3'",
@@ -543,23 +458,23 @@ export function convertImportPath(modulePackage: string, convertToPackage: boole
             '"@ag-grid-community/vue"': "'ag-grid-vue'",
             "'@ag-grid-community/react'": "'ag-grid-react'",
             '"@ag-grid-community/react"': "'ag-grid-react'",
-        }
+        };
         if (conversions[modulePackage]) {
-            return conversions[modulePackage]
+            return conversions[modulePackage];
         }
 
-        if (modulePackage.includes("@ag-grid-community/core/dist")) {
+        if (modulePackage.includes('@ag-grid-community/core/dist')) {
             return modulePackage.replace('@ag-grid-community/core/dist', 'ag-grid-community/dist');
         }
-        if (modulePackage.includes("@ag-grid-community/styles")) {
+        if (modulePackage.includes('@ag-grid-community/styles')) {
             return modulePackage.replace('@ag-grid-community/styles', 'ag-grid-community/styles');
         }
 
-        if (modulePackage.includes("@ag-grid-community")) {
-            return `'ag-grid-community'`
+        if (modulePackage.includes('@ag-grid-community')) {
+            return `'ag-grid-community'`;
         }
-        if (modulePackage.includes("@ag-grid-enterprise")) {
-            return `'ag-grid-enterprise'`
+        if (modulePackage.includes('@ag-grid-enterprise')) {
+            return `'${getEnterprisePackageName()}'`;
         }
     }
     return modulePackage.replace('_typescript', '').replace(/"/g, `'`);
@@ -573,9 +488,9 @@ export function getImport(filename: string) {
 
 export function getPropertyInterfaces(properties) {
     let propTypesUsed = [];
-    properties.forEach(prop => {
+    properties.forEach((prop) => {
         if (prop.typings?.typesToInclude?.length > 0) {
-            propTypesUsed = [...propTypesUsed, ...prop.typings.typesToInclude]
+            propTypesUsed = [...propTypesUsed, ...prop.typings.typesToInclude];
         }
     });
     return [...new Set(propTypesUsed)];
@@ -585,17 +500,22 @@ export function getPropertyInterfaces(properties) {
  *  Add the imports from the parsed file
  * We ignore any component files as those imports are generated for each framework.
  */
-export function addBindingImports(bindingImports: any, imports: string[], convertToPackage: boolean, ignoreTsImports: boolean) {
-    let workingImports = {};
-    let namespacedImports = [];
-
-    const chartsEnterprise = bindingImports.some(i => i.module.includes('ag-charts-enterprise'));
+export function addBindingImports(
+    bindingImports: any,
+    imports: string[],
+    convertToPackage: boolean,
+    ignoreTsImports: boolean
+) {
+    const workingImports = {};
+    const namespacedImports = [];
 
     bindingImports.forEach((i: BindingImport) => {
-
-        const path = convertImportPath(i.module, convertToPackage)
+        const path = convertImportPath(i.module, convertToPackage);
         if (!i.module.includes('_typescript') || !ignoreTsImports) {
-            workingImports[path] = workingImports[path] || { namedImport: undefined, imports: [] };
+            workingImports[path] = workingImports[path] || {
+                namedImport: undefined,
+                imports: [],
+            };
             if (i.isNamespaced) {
                 if (i.imports.length > 0) {
                     namespacedImports.push(`import * as ${i.imports[0]} from ${path};`);
@@ -604,67 +524,70 @@ export function addBindingImports(bindingImports: any, imports: string[], conver
                 }
             } else {
                 if (i.namedImport) {
-                    workingImports[path] = { ...workingImports[path], namedImport: i.namedImport };
+                    workingImports[path] = {
+                        ...workingImports[path],
+                        namedImport: i.namedImport,
+                    };
                 }
                 if (i.imports) {
-                    workingImports[path] = { ...workingImports[path], imports: [...workingImports[path].imports, ...i.imports] };
+                    workingImports[path] = {
+                        ...workingImports[path],
+                        imports: [...workingImports[path].imports, ...i.imports],
+                    };
                 }
             }
         }
     });
 
-    [...new Set(namespacedImports)].forEach(ni => imports.push(ni));
+    [...new Set(namespacedImports)].forEach((ni) => imports.push(ni));
 
     let hasEnterpriseModules = false;
-    Object.entries(workingImports).forEach(([k, v]: ([string, { namedImport: string, imports: string[] }])) => {
+    Object.entries(workingImports).forEach(([k, v]: [string, { namedImport: string; imports: string[] }]) => {
         let unique = [...new Set(v.imports)].sort();
 
         if (convertToPackage && k.includes('ag-grid')) {
             // Remove module related imports
-            unique = unique.filter(i => !i.includes('Module'));
+            unique = unique.filter((i) => !i.includes('Module') || i == 'AgGridModule');
             hasEnterpriseModules = hasEnterpriseModules || k.includes('enterprise');
         }
         if (unique.length > 0 || v.namedImport) {
             const namedImport = v.namedImport ? v.namedImport : '';
-            const importStr = unique.length > 0 ? `{ ${unique.join(', ')} }` : ''
-            const joiningComma = namedImport && importStr ? ", " : "";
+            const importStr = unique.length > 0 ? `{ ${unique.join(', ')} }` : '';
+            const joiningComma = namedImport && importStr ? ', ' : '';
             imports.push(`import ${namedImport}${joiningComma}${importStr} from ${k};`);
         }
-    })
+    });
     if (hasEnterpriseModules && convertToPackage) {
-        imports.push(`import 'ag-grid-enterprise';`)
-    }
-
-    if (chartsEnterprise) {
-        imports.push(`import 'ag-charts-enterprise';`)
+        imports.push(`import '${getEnterprisePackageName()}';`);
     }
 }
 
-export function getModuleRegistration({ gridSettings, enterprise, exampleName }) {
-    const moduleRegistration = ["import { ModuleRegistry } from '@ag-grid-community/core';"];
-    const modules = gridSettings.modules;
-
-    if (enterprise && !Array.isArray(modules)) {
-        throw new Error(`The example ${exampleName} has "enterprise" : true but no modules have been provided "modules":[...]. Either remove the enterprise flag or provide the required modules.`)
+/** Add imports such as "import { colors } from './colors.js';"
+ * Does not include the imports for _framework component
+ */
+export function addRelativeImports(bindings: ParsedBindings, imports: string[], extension: string) {
+    const filterOtherFiles = (b) => b.module.includes('./') && !b.module.includes('_');
+    const bImports = [...(bindings.imports.filter((b) => filterOtherFiles(b)) || [])];
+    if (bImports.length > 0) {
+        bImports.forEach((b) => {
+            imports.push(`import { ${b.imports.join(', ')} } from '${b.module.replace(/['"]/g, '')}.${extension}';`);
+        });
     }
+}
 
-    let gridSuppliedModules;
-    let exampleModules = Array.isArray(modules) ? modules : ['clientside'];
-    exampleModules = exampleModules.map(module => module === 'charts-enterprise' && !integratedChartsUsesChartsEnterprise ? 'charts' : module)
 
-    const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
-    moduleRegistration.push(...moduleImports);
-    gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
 
-    moduleRegistration.push(`\n// Register the required feature modules with the Grid`);
-    moduleRegistration.push(`ModuleRegistry.registerModules(${gridSuppliedModules})`);
-    return moduleRegistration;
+export function removeModuleRegistration(code: string) {
+    return code.replace(/ModuleRegistry\.registerModules(.|\n)*?]\)(;?)/g, '');
 }
 
 export function handleRowGenericInterface(fileTxt: string, tData: string): string {
     if (tData) {
         fileTxt = fileTxt
-            .replace(/<(TData|TValue|TContext|any)?(, )?(TData|TValue|TContext|any)?(, )?(TData|TValue|TContext|any)?>/g, '')
+            .replace(
+                /<(TData|TValue|TContext|any)?(, )?(TData|TValue|TContext|any)?(, )?(TData|TValue|TContext|any)?>/g,
+                ''
+            )
             .replace(/TData\[\]/g, `${tData}[]`);
     } else {
         fileTxt = fileTxt.replace(/<TData>/g, '').replace(/TData\[\]/g, 'any[]');
@@ -673,24 +596,91 @@ export function handleRowGenericInterface(fileTxt: string, tData: string): strin
 }
 
 export function addGenericInterfaceImport(imports: string[], tData: string, bindings) {
-    if (tData &&
-        !bindings.interfaces.some(i => i.includes(tData)) &&
-        !imports.some(i => i.includes(tData))) {
-        imports.push(`import { ${tData} } from './interfaces'`)
+    if (tData && !bindings.interfaces.some((i) => i.includes(tData)) && !imports.some((i) => i.includes(tData))) {
+        imports.push(`import { ${tData} } from './interfaces'`);
     }
 }
 
 export function replaceGridReadyRowData(callback: string, rowDataSetter: string) {
-    return callback
-    // replace gridApi.setGridOption('rowData', data) with this.rowData = data
-    .replace(/gridApi(!?)\.setGridOption\('rowData', data\)/, `${rowDataSetter} = data`)
-    // replace gridApi.setGridOption('rowData', data.map(...)) with this.rowData = data.map(...)
-    .replace(/gridApi(!?)\.setGridOption\('rowData', data/, `${rowDataSetter} = (data`);
+    return (
+        callback
+            // replace gridApi.setGridOption('rowData', data) with this.rowData = data
+            .replace(/gridApi(!?)\.setGridOption\('rowData', data\)/, `${rowDataSetter} = data`)
+            // replace gridApi.setGridOption('rowData', data.map(...)) with this.rowData = data.map(...)
+            .replace(/gridApi(!?)\.setGridOption\('rowData', data/, `${rowDataSetter} = (data`)
+    );
 }
 
 export function preferParamsApi(code: string): string {
     // use params.api instead of gridApi.api when we have access to the params object
     return code.replace(/([\s\(!])gridApi(\W)/g, '$1params.api$2');
+}
+
+export function getInterfaceFileContents(tsBindings: ParsedBindings, currentFile) {
+    let interfaces = [];
+    // If the example has an existing interface file then merge that with our globally shared interfaces
+    if (currentFile) {
+        interfaces.push(currentFile);
+    }
+    if (tsBindings.tData && !interfaces.some((i) => i?.includes(tsBindings.tData))) {
+        interfaces.push(getGenericInterface(tsBindings.tData));
+    }
+    if (interfaces.length > 0) {
+        return interfaces.join('\n');
+    }
+    return undefined;
+}
+
+function getGenericInterface(tData) {
+    let interfaceStr = '';
+    switch (tData) {
+        case 'IOlympicDataWithId':
+            interfaceStr = `
+export interface IOlympicDataWithId extends IOlympicData {
+    id: number;
+}
+`; // purposefully fall through to IOlympicData
+        case 'IOlympicData':
+            interfaceStr =
+                interfaceStr +
+                `
+export interface IOlympicData {
+    athlete: string,
+    age: number,
+    country: string,
+    year: number,
+    date: string,
+    sport: string,
+    gold: number,
+    silver: number,
+    bronze: number,
+    total: number
+}`;
+            break;
+        case 'IAccount':
+            interfaceStr =
+                interfaceStr +
+                `
+export interface ICallRecord {
+    name: string;
+    callId: number;
+    duration: number;
+    switchCode: string;
+    direction: string;
+    number: string;
+}
+
+export interface IAccount {
+    name: string;
+    account: number;
+    calls: number;
+    minutes: number;
+    callRecords: ICallRecord[];
+}`;
+            break;
+    }
+
+    return interfaceStr;
 }
 
 export const DARK_MODE_START = '/** DARK MODE START **/';
@@ -712,7 +702,7 @@ const chartsExamplePathSubstrings = [
 ];
 
 export function getIntegratedDarkModeCode(exampleName: string, typescript?: boolean, apiName = 'params.api'): string {
-    if (!chartsExamplePathSubstrings.find(s => exampleName.includes(s))) {
+    if (!chartsExamplePathSubstrings.find((s) => exampleName.includes(s))) {
         return '';
     }
     return `${DARK_INTEGRATED_START}${(typescript ? darkModeTs : darkModeJS).replace(/params\.api/g, apiName)}${DARK_INTEGRATED_END}`;
@@ -754,7 +744,6 @@ const darkModeTs = `
         // listen for user-triggered dark mode changes (not removing listener is fine here!)
         document.addEventListener('color-scheme-change', handleColorSchemeChange as EventListener);                
     `;
-
 
 const darkModeJS = `
     const isInitialModeDark = () => {
