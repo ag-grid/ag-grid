@@ -18,7 +18,7 @@
             "Grid",
             "Charts"
         ],
-        "img": "adaptable.png",
+        "img": "adaptable.webp",
         "favourite": true
     },
     {
@@ -29,7 +29,7 @@
         "type": "Wrapper",
         "open_source": true,
         "stars": 120,
-        "img": "plotly-dash.png",
+        "img": "plotly-dash.webp",
         "frameworks": [
             "Python"
         ],
@@ -45,7 +45,7 @@
         "type": "Integration",
         "open_source": true,
         "stars": 80,
-        "img": "astro-uxds.png",
+        "img": "astro-uxds.webp",
         "frameworks": [
             "React"
         ],
@@ -61,7 +61,7 @@
         "stars": 900,
         "type": "Wrapper",
         "link": "https://pypi.org/project/streamlit-aggrid/",
-        "img": "streamlit-aggrid.png",
+        "img": "streamlit-aggrid.webp",
         "frameworks": [
             "Python"
         ],
@@ -75,7 +75,7 @@
         "description": "NiceGUI is an open-source Python library to write graphical user interfaces which run in the browser. It has a very gentle learning curve while still offering the option for advanced customizations. NiceGUI follows a backend-first philosophy: It handles all the web development details.",
         "type": "Integration",
         "open_source": true,
-        "img": "nicegui.png",
+        "img": "nicegui.webp",
         "link": "https://nicegui.io/documentation/section_data_elements#ag_grid",
         "stars": 6600,
         "frameworks": [
@@ -92,7 +92,7 @@
         "open_source": true,
         "stars": 60,
         "type": "Wrapper",
-        "img": "goodata-ui.png",
+        "img": "goodata-ui.webp",
         "link": "https://www.gooddata.com/docs/gooddata-ui/latest/",
         "frameworks": [
             "TypeScript"
@@ -108,7 +108,7 @@
         "repo": "https://github.com/blackbaud/skyux",
         "stars": 20,
         "title": "Sky UX",
-        "img": "sky-ux.png",
+        "img": "sky-ux.webp",
         "description": "Blackbaud's open source framework leverages reusable design patterns and components to create impactful, cohesive experiences across web applications.",
         "frameworks": [
             "Angular"
@@ -155,7 +155,7 @@
         "type": "Integration",
         "open_source": true,
         "stars": 2500,
-        "img": "lowdefy.png",
+        "img": "lowdefy.webp",
         "frameworks": [
             "React"
         ],

@@ -15,7 +15,6 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, MenuModule]);
 
-
 let gridApi: GridApi;
 let chartId: string | undefined;
 
@@ -39,8 +38,6 @@ const gridOptions: GridOptions = {
   onFirstDataRendered,
   onChartCreated,
 };
-
-
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.createRangeChart({

@@ -8,6 +8,7 @@ import {
     ExcelRelationship,
     ExcelStyle,
     ExcelWorksheet,
+    ExcelTableConfig,
     RowHeightCallbackParams,
     _
 } from '@ag-grid-community/core';
@@ -48,7 +49,7 @@ export class ExcelXlsxFactory {
     /** Maps all sheet tables to unique Ids */
     public static worksheetDataTables: Map<number, ExcelDataTable> = new Map();
     /** Default name to be used for tables when no name is provided */
-    public static defaultTableDisplayName = 'AG-GRID-Table';
+    public static defaultTableDisplayName = 'AG-GRID-TABLE';
 
     public static factoryMode: ExcelFactoryMode = ExcelFactoryMode.SINGLE_SHEET;
 
@@ -127,9 +128,12 @@ export class ExcelXlsxFactory {
         worksheet: ExcelWorksheet,
         config: ExcelGridSerializingParams
     ) {
-        if (!config.tableSetup) {
+        if (!config.exportAsExcelTable) {
             return;
         }
+
+        const tableConfig: Partial<ExcelTableConfig> = typeof config.exportAsExcelTable === 'boolean'
+            ? {} : config.exportAsExcelTable;
 
         const {
             name: nameFromConfig,
@@ -138,7 +142,8 @@ export class ExcelXlsxFactory {
             showFilterButton,
             highlightFirstColumn,
             highlightLastColumn,
-        } = config.tableSetup;
+        } = tableConfig;
+
         const tableName = this.getSanitizedTableName(
             nameFromConfig || ExcelXlsxFactory.defaultTableDisplayName
         );

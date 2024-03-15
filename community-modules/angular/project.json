@@ -7,7 +7,7 @@
     "build": {
       "executor": "nx:run-script",
       "dependsOn": [
-        "@ag-grid-community/core:build:types"
+        "@ag-grid-community/core:build:package"
       ],
       "inputs": [
         "tsDeclarations",

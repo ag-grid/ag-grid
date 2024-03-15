@@ -12,7 +12,7 @@ export class BarChartProxy extends CartesianChartProxy {
         super(params);
     }
 
-    public getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
+    protected override getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
         const axes: AgCartesianAxisOptions[] = [
             {
                 type: this.getXAxisType(params),
@@ -32,7 +32,7 @@ export class BarChartProxy extends CartesianChartProxy {
         return axes;
     }
 
-    public getSeries(params: UpdateParams): AgBarSeriesOptions[] {
+    protected override getSeries(params: UpdateParams): AgBarSeriesOptions[] {
         const [category] = params.categories;
         const series: AgBarSeriesOptions[] = params.fields.map(f => (
             {

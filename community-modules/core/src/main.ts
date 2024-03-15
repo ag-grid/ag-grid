@@ -81,7 +81,7 @@ export {
     ExcelStyle,
     ExcelTable,
     ExcelWorksheet,
-    ExcelTableSetup,
+    ExcelTableConfig,
     ExcelSheetNameGetter,
     ExcelSheetNameGetterParams,
 } from "./interfaces/iExcelCreator";

@@ -18,7 +18,7 @@
                 "Grid",
                 "Charts"
             ],
-            "img": "open-bb-terminal-pro.png",
+            "img": "open-bb-terminal-pro.webp",
             "favourite": true
         },
         {
@@ -29,7 +29,7 @@
             "type": "Product",
             "open_source": true,
             "stars": 8000,
-            "img": "windmill.png",
+            "img": "windmill.webp",
             "tags": [
                 "Platform"
             ],
@@ -48,7 +48,7 @@
             "stars": 13100,
             "type": "Product",
             "link": "https://pinpoint-apm.gitbook.io/pinpoint",
-            "img": "pinpoint.png",
+            "img": "pinpoint.webp",
             "frameworks": [
                 "React", "Angular", "Vue"
             ],
@@ -66,7 +66,7 @@
             "stars": 1700,
             "type": "Product",
             "favourite": true,
-            "img": "prisma-studio.png",
+            "img": "prisma-studio.webp",
             "tags": [
                 "Database"
             ],
@@ -86,7 +86,7 @@
             "stars": 1000,
             "type": "Product",
             "favourite": true,
-            "img": "apache-traffic-control.png",
+            "img": "apache-traffic-control.webp",
             "tags": [
                 "CDN"
             ],
@@ -105,7 +105,7 @@
             "type": "Product",
             "open_source": true,
             "stars": 16700,
-            "img": "ml-flow.png",
+            "img": "ml-flow.webp",
             "favourite": true,
             "tags": [
                 "ML / AI"
@@ -127,7 +127,7 @@
             "open_source": true,
             "stars": 100,
             "favourite": true,
-            "img": "salt-ds.png",
+            "img": "salt-ds.webp",
             "tags": [
                 "Design System"
             ],
@@ -147,7 +147,7 @@
             "type": "Product",
             "link": "https://phac-nml.github.io/irida-documentation/user/tutorials/web-upload/",
             "favourite": true,
-            "img": "irida.png",
+            "img": "irida.webp",
             "tags": [
                 "Public Health"
             ],
@@ -166,7 +166,7 @@
             "stars": 200,
             "type": "Integration",
             "link": "https://allianz.github.io/ng-aquila/documentation/ag-grid/overview",
-            "img": "allianz-ng.png",
+            "img": "allianz-ng.webp",
             "favourite": true,
             "tags": [
                 "Components"
@@ -187,7 +187,7 @@
             "type": "Product",
             "link": "https://microsoft.github.io/msrgamut/",
             "favourite": true,
-            "img": "mdr-gamut.png",
+            "img": "mdr-gamut.webp",
             "tags": [
                 "Demo"
             ],
@@ -207,7 +207,7 @@
             "type": "Integration",
             "link": "https://ix.siemens.io/docs/controls/grid",
             "favourite": true,
-            "img": "siemens.png",
+            "img": "siemens.webp",
             "frameworks": [
                 "React", "Angular", "Vue"
             ],
@@ -224,7 +224,7 @@
             "type": "Product",
             "link": "https://nasa-ammos.github.io/aerie-docs/",
             "favourite": true,
-            "img": "nasa-eerie.png",
+            "img": "nasa-eerie.webp",
             "companyLogo": "nasa.svg",
             "tags": [
                 "Science"
@@ -245,7 +245,7 @@
             "type": "Product",
             "link": "https://mongodb.com/compass",
             "favourite": true,
-            "img": "mongodb-compass.png",
+            "img": "mongodb-compass.webp",
             "tags": [
                 "Database"
             ],
@@ -264,7 +264,7 @@
             "open_source": true,
             "type": "Integration",
             "stars": 23500,
-            "img": "react-admin.png",
+            "img": "react-admin.webp",
             "tags": [
                 "Library"
             ],
@@ -283,7 +283,7 @@
             "open_source": true,
             "stars": 1600,
             "type": "Product",
-            "img": "tableflow.png",
+            "img": "tableflow.webp",
             "tags": [
                 "Library"
             ],
@@ -302,7 +302,7 @@
             "stars": 16900,
             "type": "Product",
             "link": "https://react-pivot-table-demo.cube.dev/#/",
-            "img": "cube-js.png",
+            "img": "cube-js.webp",
             "tags": [
                 "Library"
             ],
@@ -1228,7 +1228,7 @@
                 "Charts",
                 "React"
             ],
-            "img": "sample.png"
+            "img": "sample.webp"
         },
         {
             "title": "React Importer",

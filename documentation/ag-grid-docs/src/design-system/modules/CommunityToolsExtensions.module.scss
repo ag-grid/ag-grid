@@ -4,13 +4,12 @@
     display: flex;
     gap: $spacing-size-8;
 
-
     @media screen and (max-width: $breakpoint-community-medium) {
         flex-direction: column;
     }
 }
 
-// Filter 
+// Filter
 
 .filterPanel {
     border-radius: var(--radius-2xl);
@@ -25,7 +24,6 @@
     flex-direction: column;
     justify-content: flex-start;
     gap: $spacing-size-2;
-
 
     @media screen and (max-width: $breakpoint-community-medium) {
         flex-direction: row;
@@ -72,6 +70,10 @@
             margin-right: $spacing-size-2;
             padding: 4px;
             object-fit: contain;
+
+            &.invert {
+                filter: invert(1);
+            }
         }
 
         &[active='true'] {
@@ -143,7 +145,7 @@
     font-size: var(--text-fs-base);
 }
 
-.logoContainer .githubIcon  {
+.logoContainer .githubIcon {
     --icon-size: 28px;
     fill: var(--color-util-gray-600);
 }
@@ -157,7 +159,7 @@
     margin-right: $spacing-size-8;
     display: -webkit-box;
     -webkit-line-clamp: 6;
-    -webkit-box-orient: vertical;  
+    -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
@@ -177,4 +179,3 @@
     font-size: var(--text-fs-xs);
     gap: $spacing-size-2;
 }
-

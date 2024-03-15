@@ -4,7 +4,6 @@ import {
     AgToggleButton,
     AutoScrollService,
     Autowired,
-    ChartType,
     DragAndDropService,
     DropTarget,
     PostConstruct,
@@ -15,7 +14,6 @@ import { ColState } from "../../model/chartDataModel";
 import { ChartOptionsService } from "../../services/chartOptionsService";
 import { DragDataPanel } from "./dragDataPanel";
 import { ChartMenuService } from "../../services/chartMenuService";
-import { getMaxNumSeries } from "../../utils/seriesTypeMapper";
 
 export class SeriesDataPanel extends DragDataPanel {
     private static TEMPLATE = /* html */`<div id="seriesGroup"></div>`;
@@ -26,16 +24,19 @@ export class SeriesDataPanel extends DragDataPanel {
         chartController: ChartController,
         autoScrollService: AutoScrollService,
         private readonly chartOptionsService: ChartOptionsService,
+        private readonly title: string,
+        allowMultipleSelect: boolean,
+        maxSelection: number | undefined,
         private valueCols: ColState[],
         private isOpen?: boolean
     ) {
-        super(chartController, autoScrollService, SeriesDataPanel.TEMPLATE);
+        super(chartController, autoScrollService, allowMultipleSelect, maxSelection, SeriesDataPanel.TEMPLATE);
     }
 
     @PostConstruct
     private init() {
         this.groupComp = this.createBean(new AgGroupComponent({
-            title: this.getSeriesGroupTitle(),
+            title: this.title,
             enabled: true,
             suppressEnabledCheckbox: true,
             suppressOpenCloseIcons: false,
@@ -51,7 +52,7 @@ export class SeriesDataPanel extends DragDataPanel {
                 value: this.chartOptionsService.getPairedMode(),
                 onValueChange: newValue => {
                     this.chartOptionsService.setPairedMode(!!newValue);
-                    this.chartController.updateForGridChange(true);
+                    this.chartController.updateForGridChange({ maintainColState: true });
                 }
             }));
             this.groupComp.addItem(pairedModeToggle);
@@ -91,14 +92,6 @@ export class SeriesDataPanel extends DragDataPanel {
         this.destroyBean(this.groupComp);
         this.valueCols = valueCols;
         this.init();
-    }
-
-    protected canHaveMultipleValues(chartType: ChartType): boolean {
-        return getMaxNumSeries(chartType) !== 1;
-    }
-
-    protected getMaxSelection(chartType: ChartType): number | undefined {
-        return getMaxNumSeries(chartType);
     }
 
     private createSeriesGroup(columns: ColState[]): void {
@@ -178,10 +171,6 @@ export class SeriesDataPanel extends DragDataPanel {
 
             return `${escapedLabel} (${axisLabel})`;
         };
-    }
-
-    private getSeriesGroupTitle() {
-        return this.chartTranslationService.translate(this.chartController.isActiveXYChart() ? 'xyValues' : 'series');
     }
 
     protected destroy(): void {

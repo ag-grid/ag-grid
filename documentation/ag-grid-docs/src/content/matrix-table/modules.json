@@ -57,7 +57,7 @@
     {
         "title": "Charts",
         "shortname": "charts",
-        "module": "@ag-grid-enterprise/charts",
+        "module": "@ag-grid-enterprise/charts-enterprise",
         "enterprise": true,
         "exported": "GridChartsModule"
     },

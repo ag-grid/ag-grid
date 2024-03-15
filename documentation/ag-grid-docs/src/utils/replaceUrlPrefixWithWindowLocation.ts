@@ -6,6 +6,6 @@ function replaceUrlPrefixWithWindowLocation(text: string) {
 }
 export const cleanIndexHtml = (htmlFile: string) => {
     return replaceUrlPrefixWithWindowLocation(htmlFile)
-    .replace('<script type="module" src="/@vite/client"></script>', '');
+    .replace(/<script.*\/@vite\/client"><\/script>/g, '');
 }
 

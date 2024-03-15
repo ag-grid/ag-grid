@@ -12,7 +12,7 @@ import {
     ExcelSheetMargin,
     ExcelStyle,
     ExcelWorksheet,
-    ExcelTableSetup,
+    ExcelTableConfig,
     RowHeightCallbackParams,
     RowNode,
     _,
@@ -53,7 +53,7 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     rowHeight?: number | ((params: RowHeightCallbackParams) => number);
     margins?: ExcelSheetMargin;
     pageSetup?: ExcelSheetPageSetup;
-    tableSetup?: ExcelTableSetup;
+    exportAsExcelTable?: boolean | ExcelTableConfig;
     sheetName: string;
     suppressColumnOutline?: boolean;
     suppressRowOutline?: boolean;
@@ -226,9 +226,8 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
     private convertColumnToExcel(column: Column | null, index: number): ExcelColumn {
         const columnWidth = this.config.columnWidth;
-        const isTableHeader = this.config.tableSetup !== undefined;
-        const headerValue = column ? this.extractHeaderValue(column, index, isTableHeader) : undefined;
-        const displayName = headerValue ? headerValue : `Column${index + 1}`;
+        const headerValue = column ? this.extractHeaderValue(column) : undefined;
+        const displayName = headerValue ?? '';
         const filterAllowed = column ? column.isFilterAllowed() : false;
         if (columnWidth) {
             if (typeof columnWidth === 'number') {
@@ -250,9 +249,8 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     }
 
     private onNewHeaderColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void {
-        return (column, index) => {
-            const isTableHeader = this.config.tableSetup !== undefined;
-            const nameForCol = this.extractHeaderValue(column, index, isTableHeader);
+        return (column) => {
+            const nameForCol = this.extractHeaderValue(column);
             const styleIds: string[] = this.config.styleLinker({ rowType: RowType.HEADER, rowIndex, value: nameForCol, column });
             currentCells.push(this.createCell(this.getStyleId(styleIds), this.getDataTypeForValue('string'), nameForCol));
         };

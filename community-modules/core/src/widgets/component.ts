@@ -77,17 +77,21 @@ export class Component extends BeanStub {
         };
     }
 
-    public setTooltip(params: {
+    public setTooltip(params?: {
         newTooltipText?: string | null;
         showDelayOverride?: number;
         hideDelayOverride?: number; 
         location?: TooltipLocation;
         shouldDisplayTooltip?: () => boolean
     }): void {
-        const { newTooltipText, showDelayOverride, hideDelayOverride, location, shouldDisplayTooltip } = params;
+        const { newTooltipText, showDelayOverride, hideDelayOverride, location, shouldDisplayTooltip } = params || {};
 
         if (this.tooltipFeature) {
             this.tooltipFeature = this.destroyBean(this.tooltipFeature);
+        }
+
+        if (this.tooltipText !== newTooltipText) {
+            this.tooltipText = newTooltipText;
         }
 
         const getTooltipValue = () => this.tooltipText;
@@ -101,10 +105,6 @@ export class Component extends BeanStub {
                 getTooltipHideDelayOverride: hideDelayOverride != null ? (() => hideDelayOverride) : undefined,
                 shouldDisplayTooltip
             }));
-        }
-
-        if (this.tooltipText !== newTooltipText) {
-            this.tooltipText = newTooltipText;
         }
     }
 

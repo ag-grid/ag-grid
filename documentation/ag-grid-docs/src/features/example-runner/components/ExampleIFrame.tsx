@@ -1,8 +1,9 @@
 import styles from '@design-system/modules/ExampleIFrame.module.scss';
-import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
+import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import classnames from 'classnames';
-import { type FunctionComponent, useEffect, useRef, useState } from 'react';
+import { type FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
+
 import exampleRuntimeInjectedStyles from './exampleRuntimeInjectedStyles';
 
 interface Props {
@@ -15,26 +16,41 @@ export const ExampleIFrame: FunctionComponent<Props> = ({ isHidden, url, loading
     const [isIntersecting, setIsIntersecting] = useState(false);
     const iFrameRef = useRef<HTMLIFrameElement>(null);
     const [darkMode] = useDarkmode();
+    const [isScrolling, setIsScrolling] = useState(false);
+
+    useEffect(() => {
+        const scrollListener = () => {
+            setIsScrolling(true);
+            // Ensure a slow user scroll still loads the example
+            // Main idea is to prevent loading examples during smooth scroll behavior of right menu links
+            setTimeout(() => { setIsScrolling(false) }, 500);
+        };
+        const scrollEndListener = () => setIsScrolling(false);
+        
+        addEventListener('scrollend', scrollEndListener);
+        addEventListener('scroll', scrollListener);
+
+        return () => {
+            removeEventListener('scroll', scrollListener);
+            removeEventListener('scrollend', scrollEndListener);
+        }
+    }, []);
 
     // Only show example iFrame if it is visible on the screen
     useIntersectionObserver({
         elementRef: iFrameRef,
         onChange: ({ isIntersecting: newIsIntersecting }) => {
-            if (url != null && newIsIntersecting && iFrameRef.current && !iFrameRef.current.src) {
-                iFrameRef.current.src = url;
-            }
             setIsIntersecting(newIsIntersecting);
         },
     });
 
     useEffect(() => {
         const currentSrc = iFrameRef.current?.src && new URL(iFrameRef.current.src);
-        if (!isIntersecting || !url || !iFrameRef.current || (currentSrc as URL)?.pathname === url) {
+        if (!isIntersecting || !url || !iFrameRef.current || (currentSrc as URL)?.pathname === url || isScrolling) {
             return;
         }
-
         iFrameRef.current.src = url;
-    }, [isIntersecting, url]);
+    }, [isIntersecting, url, isScrolling]);
 
     // when dark mode is changed, applies it to the iframe.
     useEffect(() => {
@@ -42,6 +58,10 @@ export const ExampleIFrame: FunctionComponent<Props> = ({ isHidden, url, loading
             return;
         }
         applyExampleDarkMode(iFrameRef.current.contentDocument!, darkMode);
+    }, [darkMode]);
+
+    const handleOnLoad = useCallback(() => {
+        applyExampleDarkMode(iFrameRef.current.contentDocument, darkMode);
     }, [darkMode]);
 
     return (
@@ -56,22 +76,20 @@ export const ExampleIFrame: FunctionComponent<Props> = ({ isHidden, url, loading
                 ref={iFrameRef}
                 className={classnames('exampleRunner', styles.iframe)}
                 style={{ visibility: 'hidden' }}
-                onLoad={() => {
-                    applyExampleDarkMode(iFrameRef.current.contentDocument, darkMode);
-                }}
+                onLoad={handleOnLoad}
             />
         </div>
     );
 };
 
 const themes: Record<string, any> = {
-    "ag-theme-quartz": { dark: false, other: "ag-theme-quartz-dark" },
-    "ag-theme-quartz-dark": { dark: true, other: "ag-theme-quartz" },
-    "ag-theme-alpine": { dark: false, other: "ag-theme-alpine-dark" },
-    "ag-theme-alpine-dark": { dark: true, other: "ag-theme-alpine" },
-    "ag-theme-balham": { dark: false, other: "ag-theme-balham-dark" },
-    "ag-theme-balham-dark": { dark: true, other: "ag-theme-balham" },
-}
+    'ag-theme-quartz': { dark: false, other: 'ag-theme-quartz-dark' },
+    'ag-theme-quartz-dark': { dark: true, other: 'ag-theme-quartz' },
+    'ag-theme-alpine': { dark: false, other: 'ag-theme-alpine-dark' },
+    'ag-theme-alpine-dark': { dark: true, other: 'ag-theme-alpine' },
+    'ag-theme-balham': { dark: false, other: 'ag-theme-balham-dark' },
+    'ag-theme-balham-dark': { dark: true, other: 'ag-theme-balham' },
+};
 
 const applyExampleDarkMode = (document: Document, darkMode: boolean) => {
     document.documentElement.dataset.colorScheme = darkMode ? 'dark' : 'light';
@@ -90,7 +108,7 @@ const applyExampleDarkMode = (document: Document, darkMode: boolean) => {
 
     // dispatch 'color-scheme-change' event for Integrated Charts to update dark mode theme
     document.dispatchEvent(new CustomEvent('color-scheme-change', { detail: { darkMode } }));
-}
+};
 
 const injectStylesheet = (document: Document) => {
     const id = 'example-runner-injected-styles';

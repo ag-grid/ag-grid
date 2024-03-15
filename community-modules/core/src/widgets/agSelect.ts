@@ -144,6 +144,11 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
 
         this.eDisplayField.innerHTML = displayValue!;
 
+        this.setTooltip({
+            newTooltipText: displayValue ?? null,
+            shouldDisplayTooltip: () => this.eDisplayField.scrollWidth > this.eDisplayField.clientWidth
+        });
+
         return super.setValue(value, silent);
     }
 

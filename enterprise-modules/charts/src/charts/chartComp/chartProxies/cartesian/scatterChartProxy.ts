@@ -15,7 +15,7 @@ export class ScatterChartProxy extends CartesianChartProxy {
         super(params);
     }
 
-    public getAxes(_params: UpdateParams): AgCartesianAxisOptions[] {
+    protected override getAxes(_params: UpdateParams): AgCartesianAxisOptions[] {
         return [
             {
                 type: 'number',
@@ -28,7 +28,7 @@ export class ScatterChartProxy extends CartesianChartProxy {
         ];
     }
 
-    public getSeries(params: UpdateParams): (AgScatterSeriesOptions | AgBubbleSeriesOptions)[] {
+    protected override getSeries(params: UpdateParams): (AgScatterSeriesOptions | AgBubbleSeriesOptions)[] {
         const [category] = params.categories;
         const paired = this.isPaired();
         const seriesDefinitions = this.getSeriesDefinitions(params.fields, paired);

@@ -350,6 +350,10 @@
         position: relative;
     }
 
+    .ag-charts-data-group-item:not(:last-child) {
+        margin-bottom: var(--ag-grid-size);
+    }
+
     .ag-chart-menu {
         border-radius: var(--ag-card-radius);
         background: var(--ag-background-color);

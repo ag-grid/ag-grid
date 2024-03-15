@@ -27,7 +27,6 @@ const gridOptions: GridOptions = {
       groups: [
         { type: 'series' },
         { type: 'chart' },
-        { type: 'legend' },
         { type: 'horizontalAxis', isOpen: true },
         { type: 'verticalAxis' },
       ],

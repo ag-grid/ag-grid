@@ -788,6 +788,13 @@
       "IsRowFilterable"
     ]
   },
+  "chartMenuItems": {
+    "typeName": "(string | MenuItemDef)[] | GetChartMenuItems<TData>",
+    "typesToInclude": [
+      "MenuItemDef",
+      "GetChartMenuItems"
+    ]
+  },
   "suppressMakeColumnVisibleAfterUnGroup": {
     "typeName": "boolean",
     "typesToInclude": []

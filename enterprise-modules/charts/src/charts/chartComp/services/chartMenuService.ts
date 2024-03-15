@@ -125,8 +125,6 @@ export class ChartMenuService extends BeanStub {
                     // Only one panel is required to display menu icon in toolbar
                     ? [panels[0], ...chartToolbarOptions]
                     : chartToolbarOptions;
-            } else {
-                chartToolbarOptions = panels.length ? chartToolbarOptions : chartToolbarOptions.filter(option => option !== 'chartMenu');
             }
         } else { // To be deprecated in future. Toolbar options will be different to chart tool panels.
             let tabOptions: ChartMenuOptions[] = [
@@ -193,5 +191,10 @@ export class ChartMenuService extends BeanStub {
     public doesChartToolbarExist(chartController: ChartController) {
         const { chartToolbarOptions } = this.getToolbarOptionsAndPanels(chartController);
         return [ 'chartMenu', ...CHART_TOOLBAR_ALLOW_LIST ].some(option => chartToolbarOptions.includes(option as any));
+    }
+
+    public doChartToolPanelsExist(chartController: ChartController) {
+        const { panels } = this.getToolbarOptionsAndPanels(chartController);
+        return panels.length > 0;
     }
 }

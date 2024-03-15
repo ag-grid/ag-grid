@@ -101,11 +101,10 @@ export class HeatmapChartProxy extends ChartProxy {
 }
 
 function renderHeatmapTooltip(params: AgHeatmapSeriesTooltipRendererParams): string | AgTooltipRendererResult {
-    const { xKey, yKey, colorKey, yName, seriesId, datum } = params;
-    const item = datum[seriesId];
+    const { xKey, yKey, colorKey, yName, datum } = params;
     const table: Array<{ label: string; value: string | undefined }> = [
-        { label: yName, value: item[yKey] },
-        { label: item[xKey], value: colorKey && item[colorKey] },
+        { label: yName, value: datum[yKey] },
+        { label: datum[xKey], value: colorKey && datum[colorKey] },
     ];
     const html = table
         .map(({ label, value }) => `<b>${sanitizeHtml(String(label))}:</b> ${sanitizeHtml(String(value))}`)

@@ -563,8 +563,8 @@
         },
         "legacyChartsMenu": {
             "more": {
-                "name": "Chart Tool Panels",
-                "url": "./integrated-charts-chart-tool-panels/"
+                "name": "Chart Menu",
+                "url": "./integrated-charts-menu/"
             }
         },
         "getChartToolbarItems": {
@@ -607,6 +607,12 @@
             "more": {
                 "name": "Chart Tool Panel customisation",
                 "url": "./integrated-charts-toolbar/#toolbar-customisation"
+            }
+        },
+        "chartMenuItems": {
+            "more": {
+                "name": "Customising the Chart Menu Items",
+                "url": "./integrated-charts-menu/#customising-the-chart-menu-items"
             }
         }
     },

@@ -8,7 +8,7 @@ export class AreaChartProxy extends CartesianChartProxy {
         super(params);
     }
 
-    public getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
+    protected override getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
         const axes: AgCartesianAxisOptions[] = [
             {
                 type: this.getXAxisType(params),
@@ -29,7 +29,7 @@ export class AreaChartProxy extends CartesianChartProxy {
         return axes;
     }
 
-    public getSeries(params: UpdateParams) {
+    protected override getSeries(params: UpdateParams) {
         const [category] = params.categories;
         const series: AgAreaSeriesOptions[] = params.fields.map(f => (
             {

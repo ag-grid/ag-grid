@@ -60,7 +60,8 @@ const Showcase = ({ favouritesOnly = false, maxItems = -1 }) => {
                                 <span key={'framework-' + index} className={styles.tags}>
                                     <img
                                         src={`/community/frameworks/${framework.toLowerCase()}.svg`}
-                                        style={{ width: 18, height: 18, marginRight: 6 }}
+                                        style={{ width: 18, height: 18, marginRight: 6 }} 
+                                        alt={`${framework} logo`}
                                     />
                                     <p>{framework}</p>
                                 </span>

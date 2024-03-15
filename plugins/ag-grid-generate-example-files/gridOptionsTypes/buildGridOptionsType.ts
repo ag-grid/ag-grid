@@ -22,35 +22,36 @@ function getTypes(node: ts.Node) {
 }
 
 function getTypeLookupFunc(fileName) {
+    console.log('Generating gridOptions types');    
     let lookupType = (propName: string) => undefined;
-        const program = ts.createProgram([fileName], {});
-        program.getTypeChecker(); // does something important to make types work below
+    const program = ts.createProgram([fileName], {});
+    program.getTypeChecker(); // does something important to make types work below
 
-        const optionsFile = program.getSourceFiles().find((f) => f.fileName.endsWith('gridOptions.d.ts'));
-        if (optionsFile) {
-            const gridOptionsInterface = optionsFile.statements.find(
-                (i: ts.Node) => ts.isInterfaceDeclaration(i) && i.name.getText() == 'GridOptions'
-            ) as ts.InterfaceDeclaration;
+    const optionsFile = program.getSourceFiles().find((f) => f.fileName.endsWith('gridOptions.d.ts'));
+    if (optionsFile) {
+        const gridOptionsInterface = optionsFile.statements.find(
+            (i: ts.Node) => ts.isInterfaceDeclaration(i) && i.name.getText() == 'GridOptions'
+        ) as ts.InterfaceDeclaration;
 
-            lookupType = (propName: string) => {
-                const pop = gridOptionsInterface.members.find(
-                    (m) => (ts.isPropertySignature(m) || ts.isMethodSignature(m)) && m.name.getText() == propName
-                ) as ts.PropertySignature | ts.MethodSignature;
-                if (pop && pop.type) {
-                    return { typeName: pop.type.getText(), typesToInclude: getTypes(pop.type) };
-                }
-                return undefined;
-            };
+        lookupType = (propName: string) => {
+            const pop = gridOptionsInterface.members.find(
+                (m) => (ts.isPropertySignature(m) || ts.isMethodSignature(m)) && m.name.getText() == propName
+            ) as ts.PropertySignature | ts.MethodSignature;
+            if (pop && pop.type) {
+                return { typeName: pop.type.getText(), typesToInclude: getTypes(pop.type) };
+            }
+            return undefined;
+        };
 
-            const fullLookup = {};
-            PropertyKeys.ALL_PROPERTIES.forEach((prop) => {
-                fullLookup[prop] = lookupType(prop as string);
-            });
-
-            writeJSONFile('./gridOptionsTypes/_gridOptions_Types.json', fullLookup);
-        } else{
-            console.error('No gridOptions file found');
-        }
+        const fullLookup = {};
+        PropertyKeys.ALL_PROPERTIES.forEach((prop) => {
+            fullLookup[prop] = lookupType(prop as string);
+        });
+        console.log('Writing gridOptions types to file');
+        writeJSONFile('./gridOptionsTypes/_gridOptions_Types.json', fullLookup);
+    } else {
+        console.error('No gridOptions file found');
+    }
 }
 
 getTypeLookupFunc('./gridOptionsTypes/baseGridOptions.ts');

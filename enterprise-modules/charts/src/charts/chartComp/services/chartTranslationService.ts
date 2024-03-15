@@ -7,12 +7,16 @@ export class ChartTranslationService extends BeanStub {
     public static readonly DEFAULT_TRANSLATIONS = {
         pivotChartTitle: 'Pivot Chart',
         rangeChartTitle: 'Range Chart',
-        settings: 'Settings',
+        settings: 'Chart',
         data: 'Data',
         format: 'Format',
         categories: 'Categories',
         defaultCategory: '(None)',
         series: 'Series',
+        switchCategorySeries: 'Switch Category / Series',
+        categoryValues: 'Category Values',
+        seriesLabels: 'Series Labels',
+        aggregate: 'Aggregate',
         xyValues: 'X Y Values',
         paired: 'Paired Mode',
         axis: 'Axis',
@@ -219,6 +223,13 @@ export class ChartTranslationService extends BeanStub {
         timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
         timeFormatHHMMSS: 'HH:MM:SS',
         timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+        sum: 'Sum',
+        first: 'First',
+        last: 'Last',
+        min: 'Min',
+        max: 'Max',
+        count: 'Count',
+        avg: 'Average',
     };
 
     public translate(toTranslate: ChartTranslationKey): string {

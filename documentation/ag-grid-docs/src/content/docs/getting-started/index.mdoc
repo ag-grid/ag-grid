@@ -652,6 +652,7 @@ const VueExample = {
 {% tabs %}
 {% tabItem id="quartz" label="Quartz" %}
 
+{% flex justifyContent="flex-start" alignItems="center" %}
 {% imageCaption imagePath="resources/themeQuartz.png" alt="AG Theme Quartz" descriptionTop=true %}
 {% flex justifyContent="center" %}**Quartz**{% /flex %}
 {% /imageCaption %}
@@ -659,10 +660,12 @@ const VueExample = {
 {% imageCaption imagePath="resources/themeQuartzDark.png" alt="AG Theme Quartz Dark" descriptionTop=true %}
 {% flex justifyContent="center" %}**Quartz Dark**{% /flex %}
 {% /imageCaption %}
+{% /flex %}
 
 {% /tabItem %}
 {% tabItem id="alpine" label="Alpine" %}
 
+{% flex justifyContent="flex-start" alignItems="center" %}
 {% imageCaption imagePath="resources/themeAlpine.png" alt="AG Theme Alpine" descriptionTop=true %}
 {% flex justifyContent="center" %}**Alpine**{% /flex %}
 {% /imageCaption %}
@@ -670,8 +673,9 @@ const VueExample = {
 {% imageCaption imagePath="resources/themeAlpineDark.png" alt="AG Theme Alpine Dark" descriptionTop=true %}
 {% flex justifyContent="center" %}**Alpine Dark**{% /flex %}
 {% /imageCaption %}
-{% /tabItem %}
+{% /flex %}
 
+{% /tabItem %}
 {% /tabs %}
 
 ### Customising a Theme
@@ -684,10 +688,10 @@ const VueExample = {
       --ag-foreground-color: rgb(14, 68, 145);
       /* Changes the color of the grid background */
       --ag-background-color: rgba(241, 247, 255);
-      /* Changes the background color of selected rows */
-      --ag-selected-row-background-color: rgba(0, 38, 255, 0.1);
       /* Changes the header color of the top row */
       --ag-header-background-color: rgba(228, 237, 250);
+      /* Changes the hover color of the row*/
+      --ag-row-hover-color: rgba(0, 38, 255, 0.1);
 }
 ```
 

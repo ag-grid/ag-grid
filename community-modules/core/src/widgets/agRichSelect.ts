@@ -218,6 +218,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                     clearElement(eDisplayField);
                 }
             }
+
+            this.setTooltip({
+                newTooltipText: valueFormatted ?? null,
+                shouldDisplayTooltip: () => this.eDisplayField.scrollWidth > this.eDisplayField.clientWidth
+            });
         }
     }
 

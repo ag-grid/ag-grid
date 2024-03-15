@@ -21,7 +21,7 @@
     }
 
     #{$selector-darkmode} & {
-        background-color: rgba(255, 255, 255, 0.06);
+        background-color: rgba(255, 255, 255, 0.1);
         border: 1px solid color-mix(in srgb, var(--color-brand-200), var(--color-bg-primary) 90%);
     }
 

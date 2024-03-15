@@ -27,7 +27,7 @@ const getPathForFile = ({
     }
 
     if (/(.js|.jsx|.tsx|.ts|.css)$/.test(fileName)) {
-        if (fileName.endsWith('.js') || fileName.endsWith('.css')) {
+        if (fileName.endsWith('.js')) {
             return `public/${fileName}`;
         }
 
@@ -67,6 +67,11 @@ const getCodeSandboxFiles = ({
               ...files,
           }
         : { ...boilerPlateFiles, ...files };
+
+    if(allFiles['package.json'] == undefined) {
+        // don't include undefined package.json
+        delete allFiles['package.json'];
+    }
 
     for (const [name, content] of Object.entries(allFiles)) {
         const key = getPathForFile({ fileName: name, internalFramework });

@@ -30,6 +30,7 @@ export interface ChartModelParams {
     pivotChart: boolean;
     chartType: ChartType;
     chartThemeName: string;
+    switchCategorySeries?: boolean;
     aggFunc?: string | IAggFunc;
     cellRange: CellRange;
     suppressChartRanges: boolean;
@@ -52,6 +53,7 @@ export class ChartDataModel extends BeanStub {
     public readonly chartId: string;
 
     public suppressChartRanges: boolean;
+    public switchCategorySeries: boolean;
     public aggFunc?: string | IAggFunc;
     public pivotChart: boolean;
 
@@ -85,6 +87,7 @@ export class ChartDataModel extends BeanStub {
         this.chartType = params.chartType;
         this.pivotChart = params.pivotChart;
         this.chartThemeName = params.chartThemeName;
+        this.switchCategorySeries = !!params.switchCategorySeries;
         this.aggFunc = params.aggFunc;
         this.referenceCellRange = params.cellRange;
         this.suppliedCellRange = params.cellRange;
@@ -98,7 +101,7 @@ export class ChartDataModel extends BeanStub {
         this.datasource = this.createManagedBean(new ChartDatasource());
         this.chartColumnService = this.createManagedBean(new ChartColumnService());
         this.comboChartModel = this.createManagedBean(new ComboChartModel(this));
-        this.updateCellRanges({ init: true });
+        this.updateCellRanges({ setColsFromRange: true });
         this.updateData();
     }
 
@@ -108,6 +111,7 @@ export class ChartDataModel extends BeanStub {
             chartType,
             pivotChart,
             chartThemeName,
+            switchCategorySeries,
             aggFunc,
             suppressChartRanges,
             unlinkChart,
@@ -123,6 +127,7 @@ export class ChartDataModel extends BeanStub {
         this.chartType = chartType;
         this.pivotChart = pivotChart;
         this.chartThemeName = chartThemeName;
+        this.switchCategorySeries = !!switchCategorySeries;
         this.aggFunc = aggFunc;
         this.referenceCellRange = cellRange;
         this.suppliedCellRange = cellRange;
@@ -143,8 +148,8 @@ export class ChartDataModel extends BeanStub {
         }
     }
 
-    public updateCellRanges(params?: { updatedColState?: ColState, resetOrder?: boolean, maintainColState?: boolean, init?: boolean }): void {
-        const { updatedColState, resetOrder, maintainColState, init } = params ?? {};
+    public updateCellRanges(params?: { updatedColState?: ColState, resetOrder?: boolean, maintainColState?: boolean, setColsFromRange?: boolean }): void {
+        const { updatedColState, resetOrder, maintainColState, setColsFromRange } = params ?? {};
         if (this.valueCellRange) {
             this.referenceCellRange = this.valueCellRange;
         }
@@ -157,7 +162,7 @@ export class ChartDataModel extends BeanStub {
         }
 
         this.setDimensionCellRange(dimensionCols, allColsFromRanges, updatedColState);
-        this.setValueCellRange(valueCols, allColsFromRanges, init);
+        this.setValueCellRange(valueCols, allColsFromRanges, setColsFromRange);
 
         if (!updatedColState && !maintainColState) {
             this.resetColumnState();
@@ -446,7 +451,7 @@ export class ChartDataModel extends BeanStub {
         }
     }
 
-    private setValueCellRange(valueCols: Set<Column>, colsInRange: Set<Column>, init?: boolean): void {
+    private setValueCellRange(valueCols: Set<Column>, colsInRange: Set<Column>, setColsFromRange?: boolean): void {
         this.valueCellRange = undefined;
 
         const selectedValueCols: Column[] = [];
@@ -455,7 +460,7 @@ export class ChartDataModel extends BeanStub {
         let numSelected = 0;
 
         valueCols.forEach(col => {
-            if (init) {
+            if (setColsFromRange) {
                 if ((maxSelection == null || numSelected < maxSelection) && colsInRange.has(col)) {
                     selectedValueCols.push(col);
                     numSelected++;

@@ -30,9 +30,19 @@ export class ChartMenuListFactory extends BeanStub {
         eventSource: HTMLElement,
         showMenu: () => void,
         chartMenuContext: ChartMenuContext
-    }) {
+    }): void {
         const { eventSource, showMenu, chartMenuContext } = params;
-        const menuItems = this.mapWithStockItems(this.getMenuItems(chartMenuContext.chartController), chartMenuContext, showMenu, eventSource);
+        const areChartToolPanelsEnabled = this.chartMenuService.doChartToolPanelsExist(chartMenuContext.chartController);
+        const menuItems = this.mapWithStockItems(
+            this.getMenuItems(chartMenuContext.chartController, areChartToolPanelsEnabled),
+            chartMenuContext,
+            showMenu,
+            eventSource,
+            areChartToolPanelsEnabled)
+        ;
+        if (!menuItems.length) {
+            return;
+        }
         const chartMenuList = this.createBean(new ChartMenuList(menuItems));
         this.activeChartMenuList = chartMenuList;
 
@@ -77,9 +87,9 @@ export class ChartMenuListFactory extends BeanStub {
         });
     }
 
-    private getMenuItems(chartController: ChartController): (MenuItemDef | string)[] {
+    private getMenuItems(chartController: ChartController, areChartToolPanelsEnabled: boolean): (MenuItemDef | string)[] {
         const defaultItems = [
-            'chartEdit',
+            ...(areChartToolPanelsEnabled ? ['chartEdit'] : []),
             ...(chartController.isEnterprise() ? ['chartAdvancedSettings'] : []),
             chartController.isChartLinked() ? 'chartUnlink' : 'chartLink',
             'chartDownload'
@@ -96,7 +106,7 @@ export class ChartMenuListFactory extends BeanStub {
         }
     }
 
-    private mapWithStockItems(originalList: (MenuItemDef | string)[], chartMenuContext: ChartMenuContext, showMenu: () => void, eventSource: HTMLElement): MenuItemDef[] {
+    private mapWithStockItems(originalList: (MenuItemDef | string)[], chartMenuContext: ChartMenuContext, showMenu: () => void, eventSource: HTMLElement, areChartToolPanelsEnabled: boolean): MenuItemDef[] {
         if (!originalList) {
             return [];
         }
@@ -105,7 +115,7 @@ export class ChartMenuListFactory extends BeanStub {
         originalList.forEach(menuItemOrString => {
             let result: MenuItemDef | null;
             if (typeof menuItemOrString === 'string') {
-                result = this.getStockMenuItem(menuItemOrString, chartMenuContext, showMenu, eventSource);
+                result = this.getStockMenuItem(menuItemOrString, chartMenuContext, showMenu, eventSource, areChartToolPanelsEnabled);
             } else {
                 result = { ...menuItemOrString };
             }
@@ -113,7 +123,7 @@ export class ChartMenuListFactory extends BeanStub {
 
             const { subMenu } = result;
             if (Array.isArray(subMenu)) {
-                result.subMenu = this.mapWithStockItems(subMenu, chartMenuContext, showMenu, eventSource);
+                result.subMenu = this.mapWithStockItems(subMenu, chartMenuContext, showMenu, eventSource, areChartToolPanelsEnabled);
             }
 
             resultList.push(result);
@@ -122,10 +132,10 @@ export class ChartMenuListFactory extends BeanStub {
         return resultList;
     }
 
-    private getStockMenuItem(key: string, chartMenuContext: ChartMenuContext, showMenu: () => void, eventSource: HTMLElement): MenuItemDef | null {
+    private getStockMenuItem(key: string, chartMenuContext: ChartMenuContext, showMenu: () => void, eventSource: HTMLElement, areChartToolPanelsEnabled: boolean): MenuItemDef | null {
         switch (key) {
             case 'chartEdit':
-                return this.createMenuItem(this.chartTranslationService.translate('chartEdit'), 'chartsMenuEdit', showMenu);
+                return areChartToolPanelsEnabled ? this.createMenuItem(this.chartTranslationService.translate('chartEdit'), 'chartsMenuEdit', showMenu) : null;
             case 'chartAdvancedSettings':
                 return this.createMenuItem(
                     this.chartTranslationService.translate('chartAdvancedSettings'),
@@ -133,17 +143,17 @@ export class ChartMenuListFactory extends BeanStub {
                     () => this.chartMenuService.openAdvancedSettings(chartMenuContext, eventSource)
                 );
             case 'chartUnlink':
-                return this.createMenuItem(
+                return chartMenuContext.chartController.isChartLinked() ? this.createMenuItem(
                     this.chartTranslationService.translate('chartUnlink'),
                     'unlinked',
                     () => this.chartMenuService.toggleLinked(chartMenuContext)
-                );
+                ) : null;
             case 'chartLink':
-                return this.createMenuItem(
+                return !chartMenuContext.chartController.isChartLinked() ? this.createMenuItem(
                     this.chartTranslationService.translate('chartLink'),
                     'linked',
                     () => this.chartMenuService.toggleLinked(chartMenuContext)
-                );
+                ) : null;
             case 'chartDownload':
                 return this.createMenuItem(
                     this.chartTranslationService.translate('chartDownload'),
