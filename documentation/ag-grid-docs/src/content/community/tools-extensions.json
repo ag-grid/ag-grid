@@ -251,21 +251,6 @@
         ]
     },
     {
-        "repo": "https://github.com/syncfusion/ej2-angular-ui-components",
-        "title": "Syncfusion Angular UI Components",
-        "description": "Syncfusion Angular UI components library offer more than 50+ cross-browser, responsive, and lightweight angular UI controls for building modern web applications.",
-        "link": "https://www.syncfusion.com/angular-components",
-        "type": "Integration",
-        "open_source": true,
-        "frameworks": [
-            "Angular"
-        ],
-        "stars": 270,
-        "tags": [
-            "Component Library"
-        ]
-    },
-    {
         "repo": "https://github.com/terrestris/react-geo",
         "title": "React GEO",
         "description": "react-geo is a JavaScript library providing a large number of components to build modern mapping applications. It is used in combination with React, OpenLayers and Ant Design.",
