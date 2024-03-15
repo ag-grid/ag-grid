@@ -409,7 +409,6 @@ export class CartesianAxisPanel extends Component {
 function isTimeAxisType(axisType: AgCartesianAxisOptions['type']): boolean {
     switch (axisType) {
         case 'time':
-        case 'ordinal-time':
             return true;
         case 'number':
         case 'log':

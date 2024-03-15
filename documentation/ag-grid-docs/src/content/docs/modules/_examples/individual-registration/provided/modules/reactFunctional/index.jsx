@@ -12,7 +12,7 @@ import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-import { GridChartsModule } from '@ag-grid-enterprise/charts';
+import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 

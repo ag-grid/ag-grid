@@ -83,7 +83,7 @@ const createVueFilesGenerator =
     };
 
 export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGenerator>> = {
-    vanilla: async ({ entryFile, indexHtml, componentScriptFiles, otherScriptFiles, isDev }) => {
+    vanilla: async ({ bindings, entryFile, indexHtml, componentScriptFiles, otherScriptFiles, isDev }) => {
         const internalFramework: InternalFramework = 'vanilla';
         const entryFileName = getEntryFileName(internalFramework)!;
         let mainJs = readAsJsFile(entryFile, 'vanilla');
@@ -97,7 +97,8 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         // Javascript is packages only
         mainJs = removeModuleRegistration(mainJs);
         
-        mainJs = mainJs.replace(/agGrid\.createGrid(.*);/g, `agGrid.createGrid$1; ${getIntegratedDarkModeCode(entryFile, false, 'gridApi')}`);
+        const integratedDarkModeCode = getIntegratedDarkModeCode(bindings.exampleName, false, 'gridApi');
+        mainJs = mainJs.replace(/agGrid\.createGrid(.*);/g, `agGrid.createGrid$1; ${integratedDarkModeCode}`);
 
         // remove any leading new lines
         mainJs = mainJs.replace(/^\s*[\r\n]/, '');

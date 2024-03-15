@@ -4,9 +4,10 @@ interface Props {
     alignItems?: 'center' | 'start' | 'end' | 'self-start' | 'self-end' | 'flex-start' | 'flex-end';
     justifyContent?: 'center' | 'start' | 'end' | 'self-start' | 'self-end' | 'flex-start' | 'flex-end';
     gap?: 'size-6' | 'size-10';
+    mobileWrap?: boolean;
 }
 
-const { direction, alignItems, justifyContent, gap } = Astro.props as Props;
+const { direction, alignItems, justifyContent, gap, mobileWrap } = Astro.props as Props;
 
 const style = {
     ...(alignItems && { 'align-items': alignItems }),
@@ -21,6 +22,7 @@ const style = {
         {
             gapSize6: gap === 'size-6',
             gapSize10: gap === 'size-10',
+            mobileWrap: mobileWrap,
         },
     ]}
     style={style}
@@ -48,6 +50,17 @@ const style = {
 
         &.column {
             flex-direction: column;
+        }
+
+        &.mobileWrap {
+            @media screen and (max-width: 720px) {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        :global(.image-caption) {
+            margin: 0;
         }
     }
 </style>
