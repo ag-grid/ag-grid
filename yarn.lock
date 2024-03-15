@@ -25033,9 +25033,10 @@ react-dom@^18.2.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
 
-"react-gif-player@github:taktran/react-gif-player#react-18-upgrade-dist":
+react-gif-player@0.5.0:
   version "0.5.0"
-  resolved "https://codeload.github.com/taktran/react-gif-player/tar.gz/71b4f101fce71c9ba45b3495e3bda55572f710c8"
+  resolved "http://52.50.158.57:4873/react-gif-player/-/react-gif-player-0.5.0.tgz#a1b2b8af07a49c71849125ed01adecd45e4d1eaf"
+  integrity sha512-XS6ei8PGtyRCWFDNGkoJ/3u4R7Mun0Bhjada+5zohArARu0TuW7sOfYeaDLOuGGGmKu0VSirjOQJSTHyHhP9kw==
   dependencies:
     prop-types "^15.6.0"
 
