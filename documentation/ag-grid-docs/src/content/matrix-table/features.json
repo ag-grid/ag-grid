@@ -507,9 +507,6 @@
                             "name": "[High Frequency](./data-update-high-frequency)"
                         }
                     ]
-                },
-                {
-                    "name": "[Data Stages](./client-side-row-stages)"
                 }
             ]
         }

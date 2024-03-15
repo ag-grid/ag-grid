@@ -352,7 +352,7 @@
         },
         {
             "repo": "https://github.com/yobulkdev/yobulkdev",
-            "link": "https://yobulk.dev/",
+            "link": "https://www.yobulk.dev/",
             "title": "YoBulk",
             "description": "Open Source & AI driven Data Onboarding Platform:Free flatfile.com alternative",
             "open_source": true,
@@ -978,7 +978,7 @@
             "open_source": true,
             "stars": 760,
             "type": "Product",
-            "link": "https://slickflow.com"
+            "link": "https://github.com/besley/Slickflow"
         },
         {
             "title": "Research Literature Manager",

@@ -164,21 +164,6 @@
         ]
     },
     {
-        "repo": "https://github.com/systelab/systelab-components",
-        "title": "Systelab Components",
-        "description": "systelab-components is a library with common UI components to speed up your Angular developments.",
-        "link": "https://systelab.github.io/components/",
-        "type": "Integration",
-        "open_source": true,
-        "stars": 15,
-        "frameworks": [
-            "Angular"
-        ],
-        "tags": [
-            "Component Library"
-        ]
-    },
-    {
         "repo": "https://github.com/xh/hoist-react",
         "title": "Hoist UX Toolkit",
         "description": "Built on a careful integration of server and client technologies, Hoist provides an opinionated yet flexible foundation for building and operating enterprise web applications.",
@@ -248,21 +233,6 @@
         ],
         "tags": [
             "Utility"
-        ]
-    },
-    {
-        "repo": "https://github.com/syncfusion/ej2-angular-ui-components",
-        "title": "Syncfusion Angular UI Components",
-        "description": "Syncfusion Angular UI components library offer more than 50+ cross-browser, responsive, and lightweight angular UI controls for building modern web applications.",
-        "link": "https://www.syncfusion.com/angular-components",
-        "type": "Integration",
-        "open_source": true,
-        "frameworks": [
-            "Angular"
-        ],
-        "stars": 270,
-        "tags": [
-            "Component Library"
         ]
     },
     {

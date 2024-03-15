@@ -5,18 +5,20 @@
 }
 
 #myGrid {
-    flex: 1;
-    height: auto !important;
+    flex: 1 1 auto;
+    height: 57.5%;
 }
 
 .my-chart {
-    flex: 1;
+    flex: 1 1 auto;
+    height: 42.5%;
 }
 
-.ag-theme-quartz, .ag-theme-quartz-dark {
+.ag-theme-quartz,
+.ag-theme-quartz-dark {
     /* pink category range */
     --ag-range-selection-chart-category-background-color: rgba(255, 0, 132, 0.1);
-    
+
     /* orange data range */
     --ag-range-selection-chart-background-color: rgba(255, 115, 0, 0.1);
 }

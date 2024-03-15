@@ -10,7 +10,7 @@
         "icon": "github",
         "title": "GitHub",
         "desc": "Found a bug? Raise a GitHub issue and one of our team will take a look",
-        "link": "https://github.com/ag-grid/ag-grid",
+        "link": "https://github.com/ag-grid/ag-grid/issues",
         "cta": "Open issue"
     },
     {
