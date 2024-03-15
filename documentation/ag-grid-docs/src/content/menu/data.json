@@ -869,10 +869,6 @@
                                         "path": "data-update-high-frequency"
                                     }
                                 ]
-                            },
-                            {
-                                "title": "Data Stages",
-                                "path": "client-side-row-stages"
                             }
                         ]
                     },
