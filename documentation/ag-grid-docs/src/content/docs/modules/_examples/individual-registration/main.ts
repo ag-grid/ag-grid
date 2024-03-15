@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColDef, GridOptions, ModuleRegistry, createGrid } from '@ag-grid-community/core';
-import { GridChartsModule } from '@ag-grid-enterprise/charts';
+import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MenuModule } from '@ag-grid-enterprise/menu';

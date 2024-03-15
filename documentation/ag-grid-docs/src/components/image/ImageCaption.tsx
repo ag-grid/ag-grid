@@ -92,7 +92,7 @@ export const ImageCaption = ({
 
     return (
         <div
-            className={classnames(styles.imageCaption, {
+            className={classnames(styles.imageCaption, 'image-caption', {
                 [styles.centered]: centered,
                 [styles.constrained]: constrained,
                 [styles.darkmodeFilter]: enableDarkModeFilter,

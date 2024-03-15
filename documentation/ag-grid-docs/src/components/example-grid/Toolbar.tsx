@@ -1,7 +1,7 @@
 import { Icon } from '@components/icon/Icon';
 import styles from '@design-system/modules/Toolbar.module.scss';
 import { trackDemoToolbar, trackOnceDemoToolbar } from '@utils/analytics';
-import React from 'react';
+import React, { useDeferredValue, useEffect, useState } from 'react';
 
 import { createDataSizeValue } from './utils';
 
@@ -53,11 +53,19 @@ export const Toolbar = ({
         }
     }
 
-    function onFilterChanged(event) {
-        gridRef.current.api.setGridOption('quickFilterText', event.target.value);
+    const [quickFilterText, setQuickFilterText] = useState('');
+    const deferredQuickFilterText = useDeferredValue(quickFilterText);
+
+    useEffect(() => {
+        if(!gridRef.current?.api) return;
+        gridRef.current.api.setGridOption('quickFilterText', deferredQuickFilterText);
         trackOnceDemoToolbar({
             type: 'filterChange',
         });
+    }, [deferredQuickFilterText]);
+
+    function onFilterChanged(event) {
+        setQuickFilterText(event.target.value);        
     }
 
     return (

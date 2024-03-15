@@ -44,46 +44,43 @@ const gridOptions = {
 
 The video above highlights a number of charting features. For more details on each feature follow the links provided below:
 
-{% flex gap="size-6" direction="column" %}
+{% flex gap="size-10" direction="column" %}
 
-{% flex gap="size-6" %}
-{% flex %}
-* [Chart Ranges](./integrated-charts-range-chart/#creating-chart-ranges): When a chart is created, corresponding chart ranges appear in the grid and can be adjusted via the chart range handle.
-* [Categories and Series](./integrated-charts-range-chart/#category-and-series-ranges): Columns can be configured as either categories or series for charting. If not configured then the grid will infer whether a column contains category or series data.
+{% flex gap="size-6" mobileWrap=true %}
+{% flex direction="column" %}  
+[Chart Ranges](./integrated-charts-range-chart/#creating-chart-ranges): When a chart is created, corresponding chart ranges appear in the grid and can be adjusted via the chart range handle.
+
+[Categories and Series](./integrated-charts-range-chart/#category-and-series-ranges): Columns can be configured as either categories or series for charting. If not configured then the grid will infer whether a column contains category or series data.
 {% /flex %}
 
-{% image imagePath="resources/category-range-fill-handle.png" alt="Range Handle" maxWidth="90%" /%}
+{% imageCaption imagePath="resources/category-range-fill-handle.png" alt="Range Handle" minWidth="345px" /%}
 {% /flex %}
 
 
-{% flex gap="size-6" %}
-{% image imagePath="resources/chart-menu.png" alt="Open Chart Menu" maxWidth="90%" /%}
+{% flex gap="size-6" mobileWrap=true %}
+{% flex direction="column" %}  
+[Chart Menu](./integrated-charts-menu/): The Chart Menu can be opened by a button located in the top-right corner of the chart. The Chart Menu allows a user to:
 
-{% flex %}
-* [Chart Menu](./integrated-charts-menu/):
-    
-  The Chart Menu can be opened by a button located in the top-right corner of the chart. The Chart Menu allows a user to:
-
-  * Edit the chart via the Chart Tool Panels
-  * Change advanced settings such as interactivity
-  * Link/unlink the chart to the grid
-  * Download the chart
-{% /flex %}
+* Edit the chart via the Chart Tool Panels
+* Change advanced settings such as interactivity
+* Link/unlink the chart to the grid
+* Download the chart
 {% /flex %}
 
-{% flex gap="size-6" %}
-{% flex %}
-* [Chart Tool Panels](./integrated-charts-chart-tool-panels/):
-    
-  The Chart Tool Panels can be opened via the Edit Chart option in the Chart Menu. The Chart Tool Panels allow a user to:
-
-  * Change the chart type
-  * Change the theme
-  * Change which columns are used as categories and series
-  * Format different aspects of the chart
+{% imageCaption  imagePath="resources/chart-menu.png" alt="Open Chart Menu" minWidth="232px" /%}
 {% /flex %}
 
-{% image imagePath="resources/chart-tool-panels.png" alt="Open Chart Tool Panel" maxWidth="90%" /%}
+{% flex gap="size-6" mobileWrap=true %}
+{% flex direction="column" %}  
+[Chart Tool Panels](./integrated-charts-chart-tool-panels/): The Chart Tool Panels can be opened via the Edit Chart option in the Chart Menu. The Chart Tool Panels allow a user to:
+
+* Change the chart type
+* Change the theme
+* Change which columns are used as categories and series
+* Format different aspects of the chart
+{% /flex %}
+
+{% imageCaption imagePath="resources/chart-tool-panels.png" alt="Open Chart Tool Panel" minWidth="261px" /%}
 {% /flex %}
 
 {% /flex %}

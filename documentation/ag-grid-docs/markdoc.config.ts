@@ -261,6 +261,9 @@ export default defineMarkdocConfig({
                     type: String,
                     matches: ['size-6', 'size-10'],
                 },
+                mobileWrap: {
+                    type: Boolean
+                }
             },
         },
         tabs: {
