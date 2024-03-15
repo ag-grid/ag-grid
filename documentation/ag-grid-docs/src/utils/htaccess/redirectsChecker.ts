@@ -59,7 +59,7 @@ function checkPathExists(pathToCheck: string): Result {
     }
 }
 
-export function htaccessChecker({ buildDir, logger }: { buildDir: string; logger: AstroIntegrationLogger }) {
+export function redirectsChecker({ buildDir, logger }: { buildDir: string; logger: AstroIntegrationLogger }) {
     const results: Result[] = SITE_301_REDIRECTS.map(({ to }) => {
         if (to.startsWith('/')) {
             const toPath = to.split('#')[0]; // Remove search params
@@ -96,6 +96,8 @@ export function htaccessChecker({ buildDir, logger }: { buildDir: string; logger
         .forEach((line) => logger.info(line));
     const errorResults = getErrors(results);
     if (errorResults.length) {
-        throw new Error(`Errors in htaccess targets\n${getErrorOutput(results)}`);
+        throw new Error(
+            `Redirect target/s not found. Fix them in 'documentation/ag-grid-docs/src/utils/htaccess/redirects.ts'.\n${getErrorOutput(results)}`
+        );
     }
 }
