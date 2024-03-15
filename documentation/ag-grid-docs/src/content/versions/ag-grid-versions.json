@@ -1,5 +1,32 @@
 [
     {
+        "version": "31.2.0",
+        "date": "March 20th 2024",
+        "highlights": [
+            {
+                "text": "Integrated Charts use all AG Charts Enterprise features",
+                "url": "/javascript-data-grid/integrated-charts/"
+            },
+            {
+                "text": "Column Menu Redesign",
+                "url": "/javascript-data-grid/column-menu/"
+            },
+            {
+                "text": "Custom Column/Context Menu Item Components",
+                "url": "/javascript-data-grid/component-menu-item/"
+            },
+            {
+                "text": "Compressed Excel file",
+                "url": "/javascript-data-grid/excel-export/"
+            },
+            {
+                "text": "Client-side Sorting in Server-side row model",
+                "url": "/javascript-data-grid/server-side-model-sorting/#client-side-sorting"
+            }
+        ],
+        "notesUrl": "/javascript-data-grid/upgrading-to-ag-grid-31-2/"
+    },
+    {
         "version": "31.1.0",
         "date": "February 20th 2024",
         "highlights": [
