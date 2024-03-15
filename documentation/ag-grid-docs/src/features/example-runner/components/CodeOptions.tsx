@@ -137,7 +137,7 @@ export const CodeOptions = ({ id, internalFramework, supportedFrameworks, suppor
     const showVueSelector = isVueInternalFramework(internalFramework);
 
     if(supportedFrameworks?.length > 0){
-        showTypescriptSelector = supportedFrameworks.includes('vanilla');
+        showTypescriptSelector = showTypescriptSelector && supportedFrameworks.includes('vanilla');
     }
 
     return <div className={styles.outer}>
