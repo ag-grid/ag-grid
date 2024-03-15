@@ -79,6 +79,12 @@ export class PaginationProxy extends BeanStub {
 
     private onPaginationGridOptionChanged(): void {
         this.active = this.gridOptionsService.get('pagination');
+        const autoPageSizeOption = this.gridOptionsService.get('paginationAutoPageSize');
+
+        if (this.active && this.pageSizeAutoCalculated !== undefined && !autoPageSizeOption) {
+            this.unsetAutoCalculatedPageSize();
+        }
+
         this.calculatePages();
         const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
             type: Events.EVENT_PAGINATION_CHANGED,

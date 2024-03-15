@@ -63,7 +63,10 @@ export class PageSizeSelectorComp extends Component {
     };
 
     private handlePaginationChanged(paginationChangedEvent?: WithoutGridCommon<PaginationChangedEvent>): void {
-        if (!this.selectPageSizeComp || !paginationChangedEvent?.newPageSize) { return; }
+        if (!this.selectPageSizeComp || // Ignore when no selector component is present
+            !this.gridOptionsService.get('pagination') || // Ignore when pagination option is not set
+            !paginationChangedEvent?.newPageSize // Ignore when no new page size is set
+        ) { return; }
 
         const paginationPageSize = this.paginationProxy.getPageSize();
         if (this.getPageSizeSelectorValues().includes(paginationPageSize)) {
