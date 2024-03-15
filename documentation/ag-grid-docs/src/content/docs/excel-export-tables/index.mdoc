@@ -31,14 +31,27 @@ This is how the exported Excel file with Table looks when opened in Excel:
 
 {% imageCaption imagePath="resources/excel-table-export.png" alt="Table in Excel" centered=true /%}
 
-## Customising Excel Table Exports
+## Exporting a Sheet as Excel Table
+
+The following example demonstrates how to export the grid data as an Excel table.
+
+* We set the `exportAsExcelTable` property to `true` in the `defaultExcelExportParams` Grid Option.
+
+Proceed as follows to see the Excel table:
+
+* You can trigger the export by clicking the `Export to Excel` button or via context menu.
+* Once your file is exported, open it in Excel and select a cell within the table to see the `Table` tab.
+* This example includes grouped columns, and thus only the leaf columns are included in the Excel table.
+* In this example, only Athlete, and Country columns can be filtered. This is also reflected in the Excel table.
+
+{% gridExampleRunner title="Excel Export - Exporting A Single Sheet as Excel Table" name="excel-export-table-single-sheet" /%}
+
+## Customisation
 
 You can customise the Excel table by providing a config object instead of a boolean value for the `exportAsExcelTable`.
 This config object can contain the following properties:
 
 {% interfaceDocumentation interfaceName="ExcelTableConfig" /%}
-
-### Important note about Excel Table column names
 
 {% warning %}
 Excel tables require non-empty and unique table column names.
@@ -58,24 +71,7 @@ Please note that exporting to an Excel table isn’t supported for pivot and for
 The grid will be exported without an Excel table format.
 {% /note %}
 
-Below are some examples of how to customise the Excel table export.
-
-## Exporting a Sheet as Excel Table
-
-The following example demonstrates how to export the grid data as an Excel table.
-
-* We set the `exportAsExcelTable` property to `true` in the `defaultExcelExportParams` Grid Option.
-
-Proceed as follows to see the Excel table:
-
-* You can trigger the export by clicking the `Export to Excel` button or via context menu.
-* Once your file is exported, open it in Excel and select a cell within the table to see the `Table` tab.
-* This example includes grouped columns, and thus only the leaf columns are included in the Excel table.
-* In this example, only Athlete, and Country columns can be filtered. This is also reflected in the Excel table.
-
-{% gridExampleRunner title="Excel Export - Exporting A Single Sheet as Excel Table" name="excel-export-table-single-sheet" /%}
-
-## Customising Excel Table Stripes and Filter Buttons
+### Row / Column Stripes and Filter Buttons
 
 In the following example, we customise the Excel table as follows:
 
@@ -94,7 +90,7 @@ Proceed as follows to see the Excel table:
 
 {% gridExampleRunner title="Excel Export - Customising Excel Table Stripes" name="excel-export-table-stripes" /%}
 
-## Highlighting the First and Last Columns
+### Highlighting the First and Last Columns
 
 In the following example, we customise the Excel table as follows:
 
