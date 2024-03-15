@@ -793,7 +793,7 @@
                                 "path": "cell-editors"
                             },
                             {
-                                "title": "Provided Edit Editors",
+                                "title": "Provided Cell Editors",
                                 "path": "provided-cell-editors",
                                 "items": [
                                     {
