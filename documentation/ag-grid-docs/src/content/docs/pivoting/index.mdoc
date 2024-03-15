@@ -377,16 +377,15 @@ This is demonstrated in the following example, note the following:
 
 ## Pivoting Extreme Amounts of Data
 
-When pivoting the grid generates the necessary number pivot result columns to represent the value columns for all the combinations
-of unique values of the pivoted columns. However, in cases where many value columns are used or multiple pivoted columns are used
-with thousands of distinct values, the grid has to generate a potentially much larger number of pivot result columns.
-In extreme cases, the processing time to generate the necessary pivot result columns can overwhelm the browser causing
+When pivoting the grid generates the necessary number of pivot result columns to aggregate the value columns for all the combinations
+of unique values of the pivoted columns. However, when many value columns are used or multiple pivoted columns have a large number
+of distinct values, the grid has to generate a potentially much larger number of pivot result columns. In extreme cases, this can cause
 a delay in rendering or even make the page unresponsive.
 
 To prevent this from happening, you can set the `pivotMaxGeneratedColumns` option. When the grid generates a number of pivot columns
-across all levels exceeding the `pivotMaxGeneratedColumns` value, the grid halts column generation, does not display any pivot result columns
-at all, and fires the `onPivotMaxColumnsExceeded` event. This event allows your application to provide custom handling - for example removing
-the last added pivoted column, filtering the pivoted columns or removing a value column.
+across all levels exceeding the `pivotMaxGeneratedColumns` value, the grid halts column generation, clears all pivot result column headers,
+and fires the `onPivotMaxColumnsExceeded` event. This event allows your application to provide custom handling - for example removing the
+last added pivoted column, filtering the pivoted columns or removing a value column.
 
 In the example below, note the following:
 
