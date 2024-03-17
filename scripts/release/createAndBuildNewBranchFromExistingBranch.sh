@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$#" -ne 6 ]
+if [ "$#" -ne 4 ]
   then
     echo "You must supply a source branch, new branch name, grid version, charts version projects and modules to update"
     echo "For example: ./scripts/release/createAndBuildNewBranchFromExistingBranch.sh latest b19.1.2 19.1.2 2.0.0"
