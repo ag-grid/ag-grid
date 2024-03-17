@@ -517,7 +517,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public suppressAutoSize: boolean | undefined = undefined;
-    /** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns-to-fit-cell-contents) calculation.
+    /** Number of pixels to add to a column width after the [auto-sizing](./column-sizing/#auto-size-columns-to-fit-cell-contents) calculation.
          * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.
          * @default 20
          */

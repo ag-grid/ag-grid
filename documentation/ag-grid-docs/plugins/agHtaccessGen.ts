@@ -3,7 +3,6 @@ import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { htaccessChecker } from '../src/utils/htaccess/htaccessChecker';
 import { modDeflateRules, modExpiresRules, modRewriteRules } from '../src/utils/htaccess/htaccessRules';
 
 type Options = {
@@ -42,9 +41,6 @@ export default function createPlugin(options: Options): AstroIntegration {
                 writeFileSync(filename, HTACCESS_CONTENT);
 
                 logger.info(`.htaccess generated to: ${filename}`);
-
-                const checkLogger = logger.fork('ag-htaccess-gen/htaccessChecker');
-                htaccessChecker({ buildDir: destDir, logger: checkLogger });
             },
         },
     };
