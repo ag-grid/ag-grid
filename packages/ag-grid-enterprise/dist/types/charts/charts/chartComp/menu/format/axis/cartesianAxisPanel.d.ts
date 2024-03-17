@@ -1,0 +1,38 @@
+import { Component } from "ag-grid-community";
+import { FormatPanelOptions } from "../formatPanel";
+export declare class CartesianAxisPanel extends Component {
+    static TEMPLATE: string;
+    private axisGroup;
+    private axisTypeSelect;
+    private axisPositionSelect;
+    private axisTimeFormatSelect;
+    private readonly chartTranslationService;
+    private readonly axisType;
+    private readonly chartController;
+    private readonly chartAxisOptionsProxy;
+    private readonly chartAxisThemeOverridesProxy;
+    private readonly chartAxisAppliedThemeOverridesProxy;
+    private readonly isExpandedOnInit;
+    private activePanels;
+    private axisLabelUpdateFuncs;
+    private prevRotation;
+    constructor(axisType: 'xAxis' | 'yAxis', { chartController, chartOptionsService, isExpandedOnInit }: FormatPanelOptions);
+    private init;
+    private getAxisTypeSelectParams;
+    private getAxisPositionSelectParams;
+    private getAxisTimeFormatSelectParams;
+    private getAxisColorInputParams;
+    private getAxisLineWidthSliderParams;
+    private initGridLines;
+    private initAxisTicks;
+    private hasConfigurableAxisTicks;
+    private initAxisLabels;
+    private addAdditionalLabelComps;
+    private initLabelRotation;
+    private createRotationWidget;
+    private addLabelPadding;
+    private translate;
+    private removeTemplateComponent;
+    private destroyActivePanels;
+    protected destroy(): void;
+}

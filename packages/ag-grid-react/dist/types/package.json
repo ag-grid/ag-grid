@@ -1,0 +1,68 @@
+{
+  "name": "ag-grid-react",
+  "version": "31.2.0",
+  "description": "AG Grid React Component",
+  "main": "./src/index.js",
+  "types": "./dist/types/src/index.d.ts",
+  "module": "./dist/package/index.esm.mjs",
+  "exports": {
+    "import": "./dist/package/index.esm.mjs",
+    "require": "./dist/package/index.cjs.js",
+    "types": "./dist/types/src/index.d.ts",
+    "default": "./dist/package/index.cjs.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "keywords": [
+    "react-component",
+    "grid",
+    "data",
+    "table",
+    "react"
+  ],
+  "author": "Niall Crosby <niall.crosby@ag-grid.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "homepage": "https://www.ag-grid.com/react-grid/",
+  "devDependencies": {
+    "ag-grid-community": "31.2.0",
+    "gulp": "^4.0.0",
+    "gulp-replace": "^1.0.0",
+    "prop-types": "^15.6.2",
+    "@types/react": "~18.0.0",
+    "@types/react-dom": "~18.0.0",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0"
+  },
+  "dependencies": {
+    "prop-types": "^15.8.1",
+    "ag-grid-community": "31.2.0"
+  },
+  "peerDependencies": {
+    "react": "^16.3.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.3.0 || ^17.0.0 || ^18.0.0"
+  },
+  "browserslist": {
+    "production": [
+      "> 1%",
+      "last 2 versions",
+      "not ie >= 0",
+      "not ie_mob >= 0",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "commonjs"
+}

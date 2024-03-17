@@ -1,0 +1,35 @@
+import { Component } from "ag-grid-community";
+import { ChartController } from "../../chartController";
+import { ChartOptionsService } from "../../services/chartOptionsService";
+import { ChartTranslationService } from '../../services/chartTranslationService';
+export declare class ChartDataPanel extends Component {
+    private readonly chartController;
+    private readonly chartOptionsService;
+    static TEMPLATE: string;
+    protected readonly chartTranslationService: ChartTranslationService;
+    private chartMenuService;
+    private autoScrollService;
+    private chartType?;
+    private isSwitchCategorySeriesToggled;
+    private categoriesDataPanel?;
+    private seriesDataPanel?;
+    private seriesChartTypePanel?;
+    private switchCategorySeriesPanel?;
+    constructor(chartController: ChartController, chartOptionsService: ChartOptionsService);
+    init(): void;
+    protected destroy(): void;
+    private updatePanels;
+    private canRefresh;
+    private recreatePanels;
+    private addPanelComponents;
+    private clearPanelComponents;
+    private createAutoScrollService;
+    private addComponent;
+    private registerComponent;
+    private getDataPanelDef;
+    private getCategoryGroupTitle;
+    private getCategoryGroupMultipleSelect;
+    private getSeriesGroupTitle;
+    private getSeriesGroupMultipleSelect;
+    private getSeriesGroupMaxSelection;
+}

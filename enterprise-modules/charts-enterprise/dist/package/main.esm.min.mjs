@@ -1,0 +1,1 @@
+import{LicenseManager as e}from"@ag-grid-enterprise/core";import{AgCharts as r}from"ag-charts-enterprise";import"ag-charts-enterprise";export*from"@ag-grid-enterprise/charts";r.setGridContext(!0),e.setChartsLicenseManager(r);

@@ -1,0 +1,12 @@
+import { Column, DraggingEvent, ITooltipParams, WithoutGridCommon } from "ag-grid-community";
+import { BaseDropZonePanel } from "./baseDropZonePanel";
+export declare class RowGroupDropZonePanel extends BaseDropZonePanel {
+    constructor(horizontal: boolean);
+    private passBeansUp;
+    protected getAriaLabel(): string;
+    getTooltipParams(): WithoutGridCommon<ITooltipParams>;
+    protected isItemDroppable(column: Column, draggingEvent: DraggingEvent): boolean;
+    protected updateItems(columns: Column[]): void;
+    protected getIconName(): string;
+    protected getExistingItems(): Column[];
+}
