@@ -42,7 +42,7 @@ Here are some of the features that make AG Grid stand out:
 * Data Export to CSV
 * Data Export to Excel *
 * Excel-like Pivoting *
-* Row Reordering
+* Row Reordering *
 * Copy / Paste
 * Column Spanning
 * Pinned Rows
