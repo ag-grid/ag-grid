@@ -1,6 +1,7 @@
 import { _, AgChartTheme as GridAgChartTheme, ChartType, SeriesChartType } from "@ag-grid-community/core";
 import {
     _Theme,
+    _ModuleSupport,
     AgCharts,
     AgChartInstance,
     AgChartOptions,
@@ -58,6 +59,7 @@ export interface UpdateParams {
 }
 
 export abstract class ChartProxy {
+    private readonly isEnterpriseCharts: boolean;
     protected readonly chartType: ChartType;
     protected readonly standaloneChartType: ChartSeriesType;
 
@@ -68,6 +70,7 @@ export abstract class ChartProxy {
     protected clearThemeOverrides = false;
     
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
+        this.isEnterpriseCharts = _ModuleSupport.enterpriseModule.isEnterprise;
         this.chart = chartProxyParams.chartInstance!;
         this.chartType = chartProxyParams.chartType;
         this.crossFiltering = chartProxyParams.crossFiltering;
@@ -166,7 +169,7 @@ export abstract class ChartProxy {
         this.clearThemeOverrides = false;
 
         // Create a base theme and apply the various layers of overrides.
-        const baseTheme = createAgChartTheme(this.chartProxyParams, this);
+        const baseTheme = createAgChartTheme(this.chartProxyParams, this, this.isEnterpriseCharts);
         const chartThemeDefaults = this.getChartThemeDefaults();
         const theme = applyThemeOverrides(baseTheme, [
             chartThemeDefaults,
