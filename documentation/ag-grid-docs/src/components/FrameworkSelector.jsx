@@ -1,6 +1,6 @@
+import styles from '@design-system/modules/FrameworkSelector.module.scss';
 import classnames from 'classnames';
 import React from 'react';
-import styles from '@design-system/modules/FrameworkSelector.module.scss';
 
 const fwLogos = 'images/fw-logos/';
 

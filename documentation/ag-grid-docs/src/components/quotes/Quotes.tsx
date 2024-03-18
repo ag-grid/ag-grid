@@ -1,5 +1,5 @@
-import classNames from 'classnames';
 import styles from '@design-system/modules/Quotes.module.scss';
+import classNames from 'classnames';
 
 function filterAndSortByKey(data: QuotesData, sortKey: keyof QuotesDataItem) {
     return Object.values(data)
@@ -33,9 +33,7 @@ const QuoteItems = ({ quotes }: { quotes: QuotesDataItem[] }) => {
                             </blockquote>
                             <figcaption>
                                 <img className={styles.avatar} title={name} src={avatarUrl} alt={name} />
-                                <span className={classNames(styles.name, 'text-xl', 'bold-text')}>
-                                    {name}
-                                </span>
+                                <span className={classNames(styles.name, 'text-xl', 'bold-text')}>{name}</span>
                                 <div className={styles.orgContainer}>
                                     <span className="text-xs text-secondary">{orgRole}</span>
                                     <img className={styles.orgIcon} title={orgName} src={orgIconUrl} alt={orgName} />
