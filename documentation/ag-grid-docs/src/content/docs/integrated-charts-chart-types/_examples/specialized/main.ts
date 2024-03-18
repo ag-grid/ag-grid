@@ -78,10 +78,11 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 function updateChart(chartType: 'heatmap' | 'waterfall') {
   getData(chartType).then((rowData) => {
-    gridApi.updateGridOptions({
-      columnDefs: chartType === 'heatmap' ? heatmapColDefs : waterfallColDefs,
-      rowData,
-    });
+    gridApi.setGridOption('rowData', rowData);
+    gridApi.setGridOption(
+        'columnDefs',
+        chartType === 'heatmap' ? heatmapColDefs : waterfallColDefs
+    );
     gridApi.updateChart({
       type: 'rangeChartUpdate',
       chartId: chartRef.chartId,
