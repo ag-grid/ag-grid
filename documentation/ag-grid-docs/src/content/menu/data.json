@@ -1411,10 +1411,6 @@
                                 "path": "value-cache"
                             },
                             {
-                                "title": "Change Detection",
-                                "path": "change-detection"
-                            },
-                            {
                                 "title": "Row Animation",
                                 "path": "row-animation"
                             },
@@ -1464,6 +1460,10 @@
                             {
                                 "title": "Context",
                                 "path": "context"
+                            },
+                            {
+                                "title": "Change Detection",
+                                "path": "change-detection"
                             },
                             {
                                 "title": "Custom Components",
