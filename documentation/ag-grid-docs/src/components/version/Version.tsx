@@ -18,7 +18,7 @@ type VersionProps = {
 export const Version = ({ date, version, blogUrl, highlights, notesUrl, isLatest }: VersionProps) => {
     const { major, minor, isMajor } = parseVersion(version);
     const blogHref =
-        blogUrl || `https://blog.ag-grid.com/whats-new-in-ag-charts-${minor ? `${major}-${minor}` : major}/`;
+        blogUrl || `https://blog.ag-grid.com/whats-new-in-ag-grid-${minor ? `${major}-${minor}` : major}/`;
 
     return (
         <div className={styles.version}>
