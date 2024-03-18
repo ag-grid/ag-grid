@@ -8,20 +8,20 @@
                 "url": "/javascript-data-grid/integrated-charts/"
             },
             {
-                "text": "Tooltips by default",
-                "url": ""
+                "text": "Display Tooltips for Truncated Cell Values and Column Headers",
+                "url": "/javascript-data-grid/component-cell-renderer/#dynamic-tooltips"
             },
             {
-                "text": "Exporting grid as an Excel Table",
-                "url": ""
+                "text": "Exporting Grid Content as a Formatted Excel Table",
+                "url": "/javascript-data-grid/excel-export-tables/"
             },
             {
-                "text": "Dark mode for Material Design theme",
-                "url": ""
+                "text": "Dark Mode for Material Design Theme",
+                "url": "/javascript-data-grid/themes/#provided-themes"
             },
             {
-                "text": "Figma design system includes Material design theme",
-                "url": ""
+                "text": "Figma Design System includes Material Design Theme",
+                "url": "/javascript-data-grid/ag-grid-design-system/"
             }
         ],
         "notesUrl": "/javascript-data-grid/upgrading-to-ag-grid-31-2/"
