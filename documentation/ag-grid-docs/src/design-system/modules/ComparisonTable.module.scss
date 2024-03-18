@@ -52,10 +52,6 @@
         padding-top: $spacing-size-4;
     }
 
-    &:last-child .cell {
-        padding-bottom: $spacing-size-6;
-    }
-
     &:not(:first-child) {
         border-top: 1px solid var(--color-border-secondary);
     }
@@ -98,20 +94,8 @@
         }
     }
 
-    .row:first-child {
-        margin-top: -$spacing-size-2;
-    }
-
-    &:last-child .row:first-child {
-        margin-top: -$spacing-size-5;
-    }
-
     &:first-child .subGroupHeader .cell {
         padding-top: $spacing-size-4;
-    }
-
-    &:last-child .subGroupHeader .cell {
-        padding-bottom: $spacing-size-4 + 12px;
     }
 
     &:not(:first-child) {

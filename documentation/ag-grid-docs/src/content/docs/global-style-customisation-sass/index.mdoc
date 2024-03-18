@@ -6,7 +6,7 @@ The Sass Styling API is an optional lightweight wrapper around [Themes](./themes
 
 The Sass API provides a few benefits on top of the CSS API:
 
-1. **Colour blending.** The Sass API saves you the work of defining multiple related colours. For example with the Alpine theme, if you set `alpine-active-color` to `red` then the `row-hover-colour` will automatically be set to a light pink.
+1. **Colour blending with older themes.** The Sass API saves you the work of defining multiple related colours. For example with the Alpine theme, if you set `alpine-active-color` to `red` then `row-hover-colour` will automatically be set to a light pink. Without Sass, this functionality is only available in the Quartz theme.
 1. **Validation.** In the Sass API you will get a build error if you accidentally pass an invalid parameter name or value. In CSS this would be silent and lead to incorrect styling.
 1. **Automatic selection of CSS files.** The Sass API ensures that only the necessary CSS files are loaded, only once, in the correct order, and combined into a single file.
 

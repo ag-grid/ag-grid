@@ -1,15 +1,16 @@
-import React from 'react';
-import classNames from 'classnames';
-import styles from '@design-system/modules/SocialProof.module.scss';
 import { quotesData } from '@components/quotes/quotesData';
+import styles from '@design-system/modules/SocialProof.module.scss';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import classNames from 'classnames';
+import React from 'react';
 
 const CellsIllustration = () => {
-  return (
-    <div className={styles.cellsIllustration}>
-      <span className={styles.cellOne}></span>
-      <span className={styles.cellTwo}></span>
-    </div>
-  )
+    return (
+        <div className={styles.cellsIllustration}>
+            <span className={styles.cellOne}></span>
+            <span className={styles.cellTwo}></span>
+        </div>
+    );
 };
 
 const Quote = ({ quoteData }) => {
@@ -20,14 +21,18 @@ const Quote = ({ quoteData }) => {
             </blockquote>
 
             <footer>
-                <img className={styles.avatar} src={`../${quoteData.avatarUrl}`} alt={quoteData.name} />
+                <img className={styles.avatar} src={urlWithBaseUrl(`${quoteData.avatarUrl}`)} alt={quoteData.name} />
                 <div>
                     <h4 className={classNames(styles.name, 'text-lg')}>{quoteData.name}</h4>
                     <p className={classNames(styles.role, 'text-base')}>
                         {quoteData.orgRole} {quoteData.orgName}
                     </p>
                 </div>
-                <img className={styles.orgIcon} src={`../${quoteData.orgIconUrl}`} alt={quoteData.orgName} />
+                <img
+                    className={styles.orgIcon}
+                    src={urlWithBaseUrl(`${quoteData.orgIconUrl}`)}
+                    alt={quoteData.orgName}
+                />
             </footer>
         </div>
     );
@@ -37,7 +42,7 @@ const SocialProof = () => {
     return (
         <div className={classNames(styles.socialProof, 'text-lg')}>
             <div className={styles.header}>
-                <CellsIllustration/>
+                <CellsIllustration />
                 <p>For developers, by developers</p>
                 <h3 className="text-2xl">Join the AG Grid community</h3>
             </div>
@@ -70,7 +75,7 @@ const SocialProof = () => {
             </div>
 
             <div className={styles.footer}>
-                <CellsIllustration/>
+                <CellsIllustration />
             </div>
         </div>
     );

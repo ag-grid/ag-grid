@@ -73,12 +73,14 @@
 
 button.mobileNavButton {
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.15);
     border: none;
+    border-radius: var(--radius-lg);
     color: var(--color-button-primary-fg);
+    border: 1px solid rgba(255, 255, 255, 0.05);
 
     &:hover {
-        background-color: rgba(0, 0, 0, 0.1);
+        background-color: rgba(255, 255, 255, 0.19);
         color: var(--color-button-primary-fg);
     }
 
@@ -100,10 +102,10 @@ button.mobileNavButton {
     }
 
     #{$selector-darkmode} & {
-        background: color-mix(in srgb, var(--color-white), transparent 94%);
+        background-color: rgba(255, 255, 255, 0.1);
 
         &:hover {
-            background-color: var(--color-button-secondary-bg-hover);
+            background-color: rgba(255, 255, 255, 0.19);
         }
     }
 }

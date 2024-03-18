@@ -49,7 +49,7 @@
 
 %enterprise-icon {
     display: inline-block;
-    background-image: url('../../images/enterprise.svg');
+    background-image: url(urlWithBaseUrl('/images/enterprise.svg'));
     text-indent: -10000px;
     background-position-y: center;
     background-repeat: no-repeat;

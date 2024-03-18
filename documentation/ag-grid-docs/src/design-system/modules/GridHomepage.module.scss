@@ -197,7 +197,7 @@ gatsby-fast-refresh {
     height: 107px;
     margin-left: calc(var(--overflow-width) * -1);
     // NOTE: This image is also prefetched on the page
-    background-image: url('../../../images/ag-grid-customer-logos.webp');
+    background-image: url(urlWithBaseUrl('/images/ag-grid-customer-logos.webp'));
     background-size: auto 107px;
     animation-name: customerMarquee;
     animation-duration: 1600s;

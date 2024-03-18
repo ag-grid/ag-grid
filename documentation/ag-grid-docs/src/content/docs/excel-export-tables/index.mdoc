@@ -31,30 +31,6 @@ This is how the exported Excel file with Table looks when opened in Excel:
 
 {% imageCaption imagePath="resources/excel-table-export.png" alt="Table in Excel" centered=true /%}
 
-## Customising Excel Table Exports
-
-You can customise the Excel table by providing a config object instead of a boolean value for the `exportAsExcelTable`.
-This config object can contain the following properties:
-
-{% interfaceDocumentation interfaceName="ExcelTableConfig" /%}
-
-### Important note about Excel Table column names
-
-{% warning %}
-Excel tables require non-empty and unique table column names.
-When exporting your Grid as an Excel Table, you should ensure that the column headers are all unique and not empty.
-
-This is equally applicable when using
-[processHeaderCallback](./excel-export-api/#reference-ExcelExportParams-processHeaderCallback)
-to customise the column headers.
-
-If you have duplicate column headers, Excel will display a warning message when the exported file is opened. Excel will
-sometimes suggest to fix the issue automatically (by renaming the invalid table headers). However, this is not always
-the case, and the user may end up with a table that doesn't work as expected.
-{% /warning %}
-
-Below are some examples of how to customise the Excel table export.
-
 ## Exporting a Sheet as Excel Table
 
 The following example demonstrates how to export the grid data as an Excel table.
@@ -70,7 +46,32 @@ Proceed as follows to see the Excel table:
 
 {% gridExampleRunner title="Excel Export - Exporting A Single Sheet as Excel Table" name="excel-export-table-single-sheet" /%}
 
-## Customising Excel Table Stripes and Filter Buttons
+## Customisation
+
+You can customise the Excel table by providing a config object instead of a boolean value for the `exportAsExcelTable`.
+This config object can contain the following properties:
+
+{% interfaceDocumentation interfaceName="ExcelTableConfig" /%}
+
+{% warning %}
+Excel tables require non-empty and unique table column names.
+When exporting your Grid as an Excel Table, you should ensure that the column headers are all unique and not empty.
+
+This is equally applicable when using
+[processHeaderCallback](./excel-export-api/#reference-ExcelExportParams-processHeaderCallback)
+to customise the column headers.
+
+If you have duplicate column headers, Excel will display a warning message when the exported file is opened. Excel will
+sometimes suggest to fix the issue automatically (by renaming the invalid table headers). However, this is not always
+the case, and the user may end up with a table that doesn't work as expected.
+{% /warning %}
+
+{% note %}
+Please note that exporting to an Excel table isn’t supported for pivot and for master/detail grids.
+The grid will be exported without an Excel table format.
+{% /note %}
+
+### Row / Column Stripes and Filter Buttons
 
 In the following example, we customise the Excel table as follows:
 
@@ -89,7 +90,7 @@ Proceed as follows to see the Excel table:
 
 {% gridExampleRunner title="Excel Export - Customising Excel Table Stripes" name="excel-export-table-stripes" /%}
 
-## Highlighting the First and Last Columns
+### Highlighting the First and Last Columns
 
 In the following example, we customise the Excel table as follows:
 

@@ -12,7 +12,11 @@ import { ChartSeriesType, getSeriesType, isPieChartSeries } from '../utils/serie
 import { ChartProxy, ChartProxyParams } from './chartProxy';
 import { get } from '../utils/object';
 
-export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: ChartProxy): AgChartTheme {
+export function createAgChartTheme(
+    chartProxyParams: ChartProxyParams,
+    proxy: ChartProxy,
+    isEnterprise: boolean,
+): AgChartTheme {
     const { chartOptionsToRestore, chartPaletteToRestore, chartThemeToRestore } = chartProxyParams;
     const themeName = getSelectedTheme(chartProxyParams);
     const stockTheme = isStockTheme(themeName);
@@ -43,7 +47,7 @@ export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: Ch
 
     // Overrides in ascending precedence ordering.
     const overrides: (AgChartThemeOverrides | undefined)[] = [
-        stockTheme ? inbuiltStockThemeOverrides(chartProxyParams, isTitleEnabled()) : undefined,
+        stockTheme ? inbuiltStockThemeOverrides(chartProxyParams, isEnterprise, isTitleEnabled()) : undefined,
         crossFilteringOverrides,
         gridOptionsThemeOverrides,
         apiThemeOverrides,
@@ -144,13 +148,11 @@ const STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES = ALL_AXIS_TYPES.reduce(
     {}
 );
 
-function inbuiltStockThemeOverrides(params: ChartProxyParams, titleEnabled: boolean) {
+function inbuiltStockThemeOverrides(params: ChartProxyParams, isEnterprise: boolean, titleEnabled: boolean) {
     const extraPadding = params.getExtraPaddingDirections();
     return {
         common: {
-            animation: {
-                duration: 500,
-            },
+            ...(isEnterprise ? { animation: { duration: 500 } } : undefined),
             axes: STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES,
             padding: {
                 // don't add extra padding when a title is present!

@@ -1,0 +1,21 @@
+---
+title: "Upgrading to AG Grid 31.2"
+---
+
+## What's New
+
+See the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-31-2/) for details of what's new in this minor version.
+
+## Deprecations
+
+This release includes the following deprecations:
+
+### GridOptions
+
+- `enableCellChangeFlash` - deprecated, set `enableCellChangeFlash` on the column definitions instead.
+
+### Column API
+
+- `suppressCellFlash` - deprecated. When `suppressCellFlash=true`, use `enableCellChangeFlash=false` instead.
+- `dndSource` - deprecated, use [Row Dragging to an External DropZone](https://www.ag-grid.com/javascript-data-grid/row-dragging-to-external-dropzone/) instead.
+- `dndSourceOnRowDrag` - deprecated, use [Row Dragging to an External DropZone](https://www.ag-grid.com/javascript-data-grid/row-dragging-to-external-dropzone/) instead.

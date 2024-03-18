@@ -4,7 +4,9 @@ export class MoodRenderer implements ICellRendererComp {
 
     eGui!: HTMLSpanElement;
     init(params: ICellRendererParams) {
-        this.eGui = document.createElement('span');
+        const div = this.eGui = document.createElement('div');
+        div.className = 'mood-renderer';
+
         if (params.value !== "" || params.value !== undefined) {
             const imgForMood = params.value === 'Happy' ? 'https://www.ag-grid.com/example-assets/smileys/happy.png' :
                 'https://www.ag-grid.com/example-assets/smileys/sad.png';

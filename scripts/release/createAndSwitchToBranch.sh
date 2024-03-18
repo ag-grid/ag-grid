@@ -13,12 +13,4 @@ NEW_BRANCH=$2
 git checkout $SOURCE_BRANCH
 git pull
 
-# examples
-git submodule update --init --recursive
-git submodule foreach git checkout $SOURCE_BRANCH
-git submodule foreach git pull origin
-
 git checkout -B $NEW_BRANCH
-
-# submodules (i.e. examples)
-git submodule foreach git checkout -B $NEW_BRANCH

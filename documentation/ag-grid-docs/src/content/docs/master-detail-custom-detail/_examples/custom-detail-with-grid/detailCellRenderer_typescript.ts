@@ -1,9 +1,9 @@
-import { DetailGridInfo, createGrid, GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import * as agGrid from "@ag-grid-community/core";
 
-export class DetailCellRenderer implements ICellRendererComp {
+export class DetailCellRenderer implements agGrid.ICellRendererComp {
   eGui!: HTMLElement;
-  params!: ICellRendererParams;
-  detailGridApi!: GridApi;
+  params!: agGrid.ICellRendererParams;
+  detailGridApi!: agGrid.GridApi;
 
   init(params: ICellRendererParams) {
     this.params = params;
@@ -18,7 +18,7 @@ export class DetailCellRenderer implements ICellRendererComp {
 
   setupDetailGrid() {
     var eDetailGrid = this.eGui.querySelector<HTMLElement>('.full-width-grid')!;
-    var detailGridOptions: GridOptions = {
+    var detailGridOptions: agGrid.GridOptions = {
       columnDefs: [
         { field: 'callId' },
         { field: 'direction' },
@@ -33,12 +33,12 @@ export class DetailCellRenderer implements ICellRendererComp {
       rowData: this.params.data.callRecords
     };
 
-    this.detailGridApi = createGrid(eDetailGrid, detailGridOptions);
+    this.detailGridApi = agGrid.createGrid(eDetailGrid, detailGridOptions);
 
     var masterGridApi = this.params.api;
     var rowId = this.params.node.id!;
 
-    var gridInfo: DetailGridInfo = {
+    var gridInfo: agGrid.DetailGridInfo = {
       id: rowId,
       api: this.detailGridApi,
     };
@@ -67,7 +67,7 @@ export class DetailCellRenderer implements ICellRendererComp {
     return this.eGui;
   }
 
-  refresh(params: ICellRendererParams): boolean {
+  refresh(params: agGrid.ICellRendererParams): boolean {
     return false;
   }
 

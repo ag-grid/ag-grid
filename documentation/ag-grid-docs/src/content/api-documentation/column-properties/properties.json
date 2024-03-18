@@ -12,7 +12,7 @@
             },
             "more": {
                 "name": "Accessing Row Data Values",
-                "url": "./column-definitions/#accessing-row-data-values"
+                "url": "./value-getters/#field"
             }
         },
         "colId": {},
@@ -231,7 +231,7 @@
         "useValueFormatterForExport": {
             "more": {
                 "name": "Using Value Formatters with Other Grid Features",
-                "url": "./value-formatters/#use-value-formatter-for-export"
+                "url": "./value-formatters/#formating-for-export"
             }
         }
     },
@@ -424,7 +424,7 @@
         "cellEditorSelector": {
             "more": {
                 "name": "Many Editors One Column",
-                "url": "./cell-editors/#many-editors-one-column"
+                "url": "./cell-editors/#dynamic-selection"
             }
         },
         "cellEditorPopup": {},

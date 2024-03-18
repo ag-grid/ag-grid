@@ -99,7 +99,7 @@
     border: 1px solid var(--color-border-primary);
     box-shadow: var(--shadow-sm);
     opacity: 0;
-    z-index: 1;
+    z-index: 2;
     transform: translateY(10px) scale(0.95);
     transition:
         opacity 0.15s ease,
