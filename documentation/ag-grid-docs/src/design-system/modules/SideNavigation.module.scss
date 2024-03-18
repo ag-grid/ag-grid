@@ -63,10 +63,6 @@
     padding-left: $spacing-size-4;
     margin: var(--item-gap) 0;
     margin-bottom: 0;
-
-    &:first-child {
-        margin: 0 0 var(--item-gap);
-    }
 }
 
 .sideNav a {
