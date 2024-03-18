@@ -121,7 +121,7 @@
         object-fit: cover;
 
         @media screen and (max-width: $breakpoint-community-medium) {
-            max-height: 150px;
+            max-height: 100%;
         }
     }
 }
