@@ -8822,7 +8822,6 @@ var DragDataPanel = class extends Component22 {
     const eDragHandle = _62.createIconNoSpan("columnDrag", this.gridOptionsService);
     eDragHandle.classList.add("ag-drag-handle", "ag-chart-data-column-drag-handle");
     comp.getGui().insertAdjacentElement("beforeend", eDragHandle);
-    0;
     const dragSource = {
       type: DragSourceType22.ChartPanel,
       eElement: eDragHandle,

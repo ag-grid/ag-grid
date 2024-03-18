@@ -19,4 +19,4 @@ tsconfig.watch.json
 tsconfig.types.watch.json
 !dist
 !dist/types/src
-
+*.map
