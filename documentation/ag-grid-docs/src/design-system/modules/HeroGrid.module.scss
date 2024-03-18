@@ -20,6 +20,9 @@
 }
 
 :global(#heroGrid.ag-theme-quartz-dark .ag-root-wrapper) {
+    --ag-row-height: 48px;
+    --ag-header-height: 30px;
+
     align-self: end;
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
@@ -37,10 +40,8 @@
     --ag-borders: 1px solid;
     --ag-border-color: rgba(255, 255, 255, 0.1);
 
-    --ag-row-height: 48px;
     --ag-odd-row-background-color: #001223;
 
-    --ag-header-height: 30px;
     --ag-header-background-color: #001223;
     --ag-header-foreground-color: rgba(255, 255, 255, 0.7);
 
