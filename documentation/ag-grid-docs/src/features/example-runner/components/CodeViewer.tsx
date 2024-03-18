@@ -50,30 +50,6 @@ export function stripOutDarkModeCode(files: FileContents) {
     } */
 }
 
-function stripOutIndexHtml(files: FileContents) {
-    const mainFiles = ['index.html'];
-    mainFiles.forEach((mainFile) => {
-        if (files[mainFile]) {
-            const bodyContentRegex = /<body\b[^>]*>([\s\S]*?)<\/body>/i;
-            const scriptTagRegex = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
-            const linkRegex = /<link[^>]*>|<\/link>/gi;
-            const indexContent = files[mainFile];
-
-            // get the body content via the regex
-            const bodyMatches = indexContent.match(bodyContentRegex) ?? [];
-            if (bodyMatches.length > 1) {
-                let body = bodyMatches[1] ?? '';
-                body = body
-                    .replace(scriptTagRegex, '')
-                    .replace(linkRegex, '')
-                    .replace(POST_INIT_MESSAGE_START, '')
-                    .replace(POST_INIT_MESSAGE_END, '');
-                files[mainFile] = body ?? '';
-            }
-        }
-    });
-}
-
 /**
  * This renders the code viewer in the example runner.
  */
@@ -101,7 +77,6 @@ export const CodeViewer = ({
     let localFiles = { ...files };
     const exampleFiles = Object.keys(localFiles);
     stripOutDarkModeCode(localFiles);
-    stripOutIndexHtml(localFiles);
 
     useEffect(() => {
         setActiveFile(initialSelectedFile);

@@ -82,7 +82,6 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, pa
     const id = `example-${name}`;
     const loadingIFrameId = getLoadingIFrameId({ pageName, exampleName: name });
 
-    const [exampleFiles, setExampleFiles] = useState<FileContents>();
     const [supportedFrameworks, setSupportedFrameworks] = useState<InternalFramework[] | undefined>(undefined);
     const [supportedImportTypes, setSupportedImportTypes] = useState<ImportType[] | undefined>(undefined);
 
@@ -95,13 +94,12 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, pa
         [internalFramework, pageName, exampleName, importType]
     );
 
-    const { data: [contents, exampleFileHtml] = [undefined, undefined] } = useQuery(
+    const { data: [contents] = [undefined, undefined] } = useQuery(
         ['docsExampleContents', pageName, exampleName, internalFramework, importType],
         () =>
-            Promise.all([
-                fetch(getExampleContentsUrl(urlConfig)).then((res) => res.json()),
-                fetch(getExampleUrl(urlConfig)).then((res) => res.text()),
-            ]) as Promise<[GeneratedContents, string]>,
+            Promise.all([fetch(getExampleContentsUrl(urlConfig)).then((res) => res.json())]) as Promise<
+                [GeneratedContents]
+            >,
         queryOptions
     );
     const urls = {
@@ -112,36 +110,28 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, pa
     };
 
     useEffect(() => {
-        if (!contents || !exampleFileHtml) {
+        if (!contents) {
             return;
         }
-        const files = {
-            ...contents.files,
-            // Override `index.html` with generated file as
-            // exampleFiles endpoint only gets the index html fragment
-            'index.html': exampleFileHtml,
-        };
-        setExampleFiles(files);
 
         // If not provided we set to an empty array to finish rendering
         setSupportedFrameworks(contents.supportedFrameworks ?? []);
         setSupportedImportTypes(contents.supportedImportTypes ?? []);
-    }, [contents, exampleFileHtml]);
+    }, [contents]);
 
-    const externalLinks =
-        exampleFiles && contents ? (
-            <ExternalLinks
-                title={title}
-                internalFramework={internalFramework}
-                exampleFiles={exampleFiles}
-                exampleBoilerPlateFiles={contents.boilerPlateFiles}
-                packageJson={contents.packageJson}
-                initialSelectedFile={contents.mainFileName}
-                plunkrHtmlUrl={urls.plunkrHtmlUrl}
-                codeSandboxHtmlUrl={urls.codeSandboxHtmlUrl}
-                isDev={isDev}
-            />
-        ) : undefined;
+    const externalLinks = contents ? (
+        <ExternalLinks
+            title={title}
+            internalFramework={internalFramework}
+            exampleFiles={contents.files}
+            exampleBoilerPlateFiles={contents.boilerPlateFiles}
+            packageJson={contents.packageJson}
+            initialSelectedFile={contents.mainFileName}
+            plunkrHtmlUrl={urls.plunkrHtmlUrl}
+            codeSandboxHtmlUrl={urls.codeSandboxHtmlUrl}
+            isDev={isDev}
+        />
+    ) : undefined;
 
     const validFramework =
         supportedFrameworks &&
@@ -157,7 +147,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, pa
             exampleUrl={urls.exampleUrl}
             exampleRunnerExampleUrl={urls.exampleRunnerExampleUrl}
             exampleHeight={exampleHeight}
-            exampleFiles={exampleFiles}
+            exampleFiles={contents?.files}
             initialSelectedFile={contents?.mainFileName}
             internalFramework={internalFramework}
             externalLinks={externalLinks}
