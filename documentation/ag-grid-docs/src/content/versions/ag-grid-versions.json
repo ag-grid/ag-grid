@@ -4,24 +4,24 @@
         "date": "March 20th 2024",
         "highlights": [
             {
-                "text": "Integrated Charts use all AG Charts Enterprise features",
+                "text": "Integrated Enterprise Charts Menu Redesign",
                 "url": "/javascript-data-grid/integrated-charts/"
             },
             {
-                "text": "Column Menu Redesign",
-                "url": "/javascript-data-grid/column-menu/"
+                "text": "Tooltips by default",
+                "url": ""
             },
             {
-                "text": "Custom Column/Context Menu Item Components",
-                "url": "/javascript-data-grid/component-menu-item/"
+                "text": "Exporting grid as an Excel Table",
+                "url": ""
             },
             {
-                "text": "Compressed Excel file",
-                "url": "/javascript-data-grid/excel-export/"
+                "text": "Dark mode for Material Design theme",
+                "url": ""
             },
             {
-                "text": "Client-side Sorting in Server-side row model",
-                "url": "/javascript-data-grid/server-side-model-sorting/#client-side-sorting"
+                "text": "Figma design system includes Material design theme",
+                "url": ""
             }
         ],
         "notesUrl": "/javascript-data-grid/upgrading-to-ag-grid-31-2/"
