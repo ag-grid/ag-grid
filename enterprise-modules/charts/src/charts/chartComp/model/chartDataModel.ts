@@ -136,7 +136,7 @@ export class ChartDataModel extends BeanStub {
         this.crossFiltering = !!crossFiltering;
 
         this.updateSelectedDimensions(cellRange?.columns);
-        this.updateCellRanges({ setColsFromRange: true });
+        this.updateCellRanges();
 
         const shouldUpdateComboModel = this.isComboChart() || seriesChartTypes;
         if (shouldUpdateComboModel) {
