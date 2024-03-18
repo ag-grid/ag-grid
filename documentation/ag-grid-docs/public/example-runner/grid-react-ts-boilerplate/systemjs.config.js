@@ -146,7 +146,17 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
-        },
+            'ag-charts-community': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-enterprise-community': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            }
+        }
         meta: {
             typescript: {
                 exports: 'ts',

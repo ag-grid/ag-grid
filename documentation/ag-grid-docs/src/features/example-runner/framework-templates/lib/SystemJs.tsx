@@ -45,6 +45,7 @@ const localConfiguration: Configuration = {
         'ag-grid-react': `${localPrefix}/ag-grid-react`,
         'ag-grid-vue': `${localPrefix}/ag-grid-vue`,
         'ag-grid-vue3': `${localPrefix}/ag-grid-vue3`,
+        //'ag-charts-community': `${localPrefix}/ag-charts-community`
     },
     gridCommunityPaths: {
         'ag-grid-community': `${localPrefix}/ag-grid-community`,
@@ -78,11 +79,8 @@ const localConfiguration: Configuration = {
         '@ag-grid-enterprise/sparklines': `${localPrefix}/@ag-grid-enterprise/sparklines/dist/package/main.cjs.js`,
         '@ag-grid-enterprise/status-bar': `${localPrefix}/@ag-grid-enterprise/status-bar/dist/package/main.cjs.js`,
         '@ag-grid-enterprise/viewport-row-model': `${localPrefix}/@ag-grid-enterprise/viewport-row-model/dist/package/main.cjs.js`,
-        // 'ag-grid-community': `${localPrefix}/ag-grid-community/dist/package/main.cjs.js`,
-        // 'ag-grid-enterprise': `${localPrefix}/ag-grid-enterprise/dist/package/main.cjs.js`,
-        // 'ag-grid-enterprise-charts-enterprise': `${localPrefix}/ag-grid-enterprise-charts-enterprise/dist/package/main.cjs.js`,
-        "ag-charts-community": `${localPrefix}/ag-charts-community`,
-        "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise`,
+        "ag-charts-community": `${localPrefix}/ag-charts-community/dist/package/main.cjs.js`,
+        "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise/dist/package/main.cjs.js`,
     },
 };
 
@@ -92,7 +90,7 @@ const buildAndArchivesConfiguration: Configuration = {
     gridCommunityPaths: {
     },
     gridEnterprisePaths: {
-    },
+    }
 };
 
 const publishedConfiguration: Configuration = {
@@ -240,6 +238,7 @@ export const SystemJs = ({
             '@ag-grid-enterprise/sparklines': `${localPrefix}/@ag-grid-enterprise/sparklines`,
             '@ag-grid-enterprise/status-bar': `${localPrefix}/@ag-grid-enterprise/status-bar`,
             '@ag-grid-enterprise/viewport-row-model': `${localPrefix}/@ag-grid-enterprise/viewport-row-model`,
+            'ag-charts-community': `${localPrefix}/ag-charts-community`,
         };
     }
     configuration = getRelevantConfig(configuration, internalFramework);

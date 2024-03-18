@@ -211,10 +211,16 @@
                 main: './fesm2015/ag-grid-angular.mjs',
                 defaultExtension: 'mjs',
             },
-            // SPL Still needed?
-            // rxjs: {
-            //     defaultExtension: false
-            // }
+            'ag-charts-community': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-enterprise-community': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            }
         }
     });
 })(this);

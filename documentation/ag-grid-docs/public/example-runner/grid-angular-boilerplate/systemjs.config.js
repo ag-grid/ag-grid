@@ -160,6 +160,16 @@
             'ag-grid-angular': {
                 main: './fesm2015/ag-grid-angular.mjs',
                 defaultExtension: 'mjs',
+            },
+            'ag-charts-community': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-enterprise-community': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
             }
         }
     });
