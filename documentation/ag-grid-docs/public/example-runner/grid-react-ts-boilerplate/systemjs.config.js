@@ -154,7 +154,7 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
-        }
+        },
         meta: {
             typescript: {
                 exports: 'ts',

@@ -145,8 +145,7 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
-        }
-        ,
+        },
         meta: {
             '*.js': {
                 babelOptions: {
