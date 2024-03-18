@@ -6902,17 +6902,17 @@ adjust-sourcemap-loader@^4.0.0:
     loader-utils "^2.0.0"
     regex-parser "^2.2.11"
 
-ag-charts-community@9.2.0-beta.20240318:
-  version "9.2.0-beta.20240318"
-  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-9.2.0-beta.20240318.tgz#04adeadd5bd9164f7ce6dc67ed684c051681b1b4"
-  integrity sha512-kbZ9UuyreMC1TBrMuxvSGJEjGnySDAdwQvUHxOIm/MXIuoHVTvSZHLNu/MpyuG4Q6wGFvky7nU3A5oSDqr5VbA==
+ag-charts-community@9.2.0-beta.20240318.1631:
+  version "9.2.0-beta.20240318.1631"
+  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-9.2.0-beta.20240318.1631.tgz#36711d104be8fcb940d5cef976adca62d62c8a80"
+  integrity sha512-t795cJH6CI3lBK9ZjPBuoPnj/yRFdiktWsMU7v1drgB+7ceU9q9YTOdUO5n7fdb7Sh4DgZKZcweKAIhhZjR+ew==
 
-ag-charts-enterprise@9.2.0-beta.20240318:
-  version "9.2.0-beta.20240318"
-  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-9.2.0-beta.20240318.tgz#9621f806d991fe28c69d6324867a5fddb443b0bc"
-  integrity sha512-bPUjShTOGqGDV1xFHfOjpRjWjSH7QUKMSGm4CQ80i1ZhjpvXdSQUlvex2Q6a/8UH8ZwsNDP/X9mAfQr8E/fM9w==
+ag-charts-enterprise@9.2.0-beta.20240318.1631:
+  version "9.2.0-beta.20240318.1631"
+  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-9.2.0-beta.20240318.1631.tgz#9f7bbb8904a3357c402794c14d0f07c00927c9d3"
+  integrity sha512-XNcy+6c+i+TPVowwIcX72/bPYQM1yo9E3UJ4JOsUjxm4LawTmrkRQApeCmNX1djtcrDSyyDwlDD/LxlfKoANjQ==
   dependencies:
-    ag-charts-community "9.2.0-beta.20240318"
+    ag-charts-community "9.2.0-beta.20240318.1631"
 
 agent-base@4, agent-base@^4.1.0, agent-base@^4.3.0:
   version "4.3.0"

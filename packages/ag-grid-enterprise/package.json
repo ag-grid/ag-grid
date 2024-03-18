@@ -52,7 +52,7 @@
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
     "ag-grid-community": "31.1.0",
-    "ag-charts-community": "9.2.0-beta.20240318"
+    "ag-charts-community": "9.2.0-beta.20240318.1631"
   },
   "devDependencies": {
     "source-map-loader": "^5.0.0",
