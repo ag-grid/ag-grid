@@ -99,7 +99,7 @@ function numberCellFormatter(params: ValueFormatterParams) {
 }
 
 function startWorker(): void {
-  worker = new Worker(`${__basePath}/dataUpdateWorker.js`);
+  worker = new Worker(`${__basePath || '.'}/dataUpdateWorker.js`);
   worker.addEventListener('message', handleWorkerMessage);
   worker.postMessage('start');
 }

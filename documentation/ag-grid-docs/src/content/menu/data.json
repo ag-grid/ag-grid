@@ -1411,10 +1411,6 @@
                                 "path": "value-cache"
                             },
                             {
-                                "title": "Change Detection",
-                                "path": "change-detection"
-                            },
-                            {
                                 "title": "Row Animation",
                                 "path": "row-animation"
                             },
@@ -1436,6 +1432,10 @@
                     {
                         "title": "Migration",
                         "items": [
+                            {
+                                "title": "Upgrading to AG Grid 31.2",
+                                "path": "upgrading-to-ag-grid-31-2"
+                            },
                             {
                                 "title": "Upgrading to AG Grid 31.1",
                                 "path": "upgrading-to-ag-grid-31-1"
@@ -1460,6 +1460,10 @@
                             {
                                 "title": "Context",
                                 "path": "context"
+                            },
+                            {
+                                "title": "Change Detection",
+                                "path": "change-detection"
                             },
                             {
                                 "title": "Custom Components",
