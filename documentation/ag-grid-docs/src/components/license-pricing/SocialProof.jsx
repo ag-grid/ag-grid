@@ -1,5 +1,6 @@
 import { quotesData } from '@components/quotes/quotesData';
 import styles from '@design-system/modules/SocialProof.module.scss';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
 import React from 'react';
 
@@ -20,14 +21,18 @@ const Quote = ({ quoteData }) => {
             </blockquote>
 
             <footer>
-                <img className={styles.avatar} src={`../${quoteData.avatarUrl}`} alt={quoteData.name} />
+                <img className={styles.avatar} src={urlWithBaseUrl(`${quoteData.avatarUrl}`)} alt={quoteData.name} />
                 <div>
                     <h4 className={classNames(styles.name, 'text-lg')}>{quoteData.name}</h4>
                     <p className={classNames(styles.role, 'text-base')}>
                         {quoteData.orgRole} {quoteData.orgName}
                     </p>
                 </div>
-                <img className={styles.orgIcon} src={`../${quoteData.orgIconUrl}`} alt={quoteData.orgName} />
+                <img
+                    className={styles.orgIcon}
+                    src={urlWithBaseUrl(`${quoteData.orgIconUrl}`)}
+                    alt={quoteData.orgName}
+                />
             </footer>
         </div>
     );

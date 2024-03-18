@@ -116,8 +116,16 @@ const enterpriseGridUrl = `https://cdn.jsdelivr.net/npm/ag-grid-charts-enterpris
                 </p>
             </div>
             <div class={styles.chartsExample}>
-                <img class={styles.chartsExampleLight} src="images/ag-charts-gallery-light.webp" alt="AG Charts" />
-                <img class={styles.chartsExampleDark} src="images/ag-charts-gallery-dark.webp" alt="AG Charts" />
+                <img
+                    class={styles.chartsExampleLight}
+                    src={urlWithBaseUrl('images/ag-charts-gallery-light.webp')}
+                    alt="AG Charts"
+                />
+                <img
+                    class={styles.chartsExampleDark}
+                    src={urlWithBaseUrl('images/ag-charts-gallery-dark.webp')}
+                    alt="AG Charts"
+                />
             </div>
         </div>
     </div>
@@ -133,13 +141,13 @@ const enterpriseGridUrl = `https://cdn.jsdelivr.net/npm/ag-grid-charts-enterpris
 
             <ul class:list={[styles.projectsList, 'list-style-none']}>
                 <li class={styles.project}>
-                    <img src="images/webpack.svg" alt="Webpack" />
+                    <img src={urlWithBaseUrl('images/webpack.svg')} alt="Webpack" />
 
                     <h3>Webpack</h3>
                 </li>
 
                 <li class:list={[styles.project, styles.projectPlunker]}>
-                    <img src="images/plunker.svg" alt="Plunker" />
+                    <img src={urlWithBaseUrl('images/plunker.svg')} alt="Plunker" />
 
                     <h3>Plunker</h3>
                 </li>
