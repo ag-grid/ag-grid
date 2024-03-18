@@ -6,6 +6,6 @@ export default props => {
     const mood = useMemo(() => imageForMood(props.value), [props.value]);
 
     return (
-        <img width="20px" src={mood}/>
+        <div className="mood-renderer"><img width="20px" src={mood}/></div>
     );
 };
