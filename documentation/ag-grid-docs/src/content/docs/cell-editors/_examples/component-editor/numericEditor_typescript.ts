@@ -87,7 +87,7 @@ export class NumericEditor implements ICellEditorComp {
     }
 
     isCharNumeric(charStr: string | null) {
-        return charStr && !!/\d/.test(charStr);
+        return charStr && !!/^\d+$/.test(charStr);
     }
 
     isNumericKey(event: any) {
