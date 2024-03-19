@@ -8,16 +8,9 @@
             "open_source": true,
             "stars": 25600,
             "type": "Product",
-            "tags": [
-                "Finance"
-            ],
-            "frameworks": [
-                "React"
-            ],
-            "products": [
-                "Grid",
-                "Charts"
-            ],
+            "tags": ["Finance"],
+            "frameworks": ["React"],
+            "products": ["Grid", "Charts"],
             "img": "open-bb-terminal-pro.webp",
             "favourite": true
         },
@@ -30,15 +23,9 @@
             "open_source": true,
             "stars": 8000,
             "img": "windmill.webp",
-            "tags": [
-                "Platform"
-            ],
-            "frameworks": [
-                "Svelte"
-            ],
-            "products": [
-                "Grid"
-            ]
+            "tags": ["Platform"],
+            "frameworks": ["Svelte"],
+            "products": ["Grid"]
         },
         {
             "title": "Pinpoint",
@@ -49,13 +36,8 @@
             "type": "Product",
             "link": "https://pinpoint-apm.gitbook.io/pinpoint",
             "img": "pinpoint.webp",
-            "frameworks": [
-                "React", "Angular", "Vue"
-            ],
-            "products": [
-                "Grid",
-                "Charts"
-            ]
+            "frameworks": ["React", "Angular", "Vue"],
+            "products": ["Grid", "Charts"]
         },
         {
             "link": "https://www.prisma.io/studio",
@@ -67,15 +49,9 @@
             "type": "Product",
             "favourite": true,
             "img": "prisma-studio.webp",
-            "tags": [
-                "Database"
-            ],
-            "frameworks": [
-                "React"
-            ],
-            "products": [
-                "Grid"
-            ]
+            "tags": ["Database"],
+            "frameworks": ["React"],
+            "products": ["Grid"]
         },
         {
             "link": "https://trafficcontrol.apache.org/",
@@ -87,15 +63,9 @@
             "type": "Product",
             "favourite": true,
             "img": "apache-traffic-control.webp",
-            "tags": [
-                "CDN"
-            ],
-            "frameworks": [
-                "Angular"
-            ],
-            "products": [
-                "Grid"
-            ]
+            "tags": ["CDN"],
+            "frameworks": ["Angular"],
+            "products": ["Grid"]
         },
         {
             "repo": "https://github.com/mlflow/mlflow/tree/master",
@@ -107,16 +77,9 @@
             "stars": 16700,
             "img": "ml-flow.webp",
             "favourite": true,
-            "tags": [
-                "ML / AI"
-            ],
-            "frameworks": [
-                "React"
-            ],
-            "products": [
-                "Grid",
-                "Charts"
-            ]
+            "tags": ["ML / AI"],
+            "frameworks": ["React"],
+            "products": ["Grid", "Charts"]
         },
         {
             "repo": "https://github.com/jpmorganchase/salt-ds",
@@ -128,15 +91,9 @@
             "stars": 100,
             "favourite": true,
             "img": "salt-ds.webp",
-            "tags": [
-                "Design System"
-            ],
-            "frameworks": [
-                "React"
-            ],
-            "products": [
-                "Grid"
-            ]
+            "tags": ["Design System"],
+            "frameworks": ["React"],
+            "products": ["Grid"]
         },
         {
             "title": "Irida",
@@ -148,15 +105,9 @@
             "link": "https://phac-nml.github.io/irida-documentation/user/tutorials/web-upload/",
             "favourite": true,
             "img": "irida.webp",
-            "tags": [
-                "Public Health"
-            ],
-            "frameworks": [
-                "React"
-            ],
-            "products": [
-                "Grid"
-            ]
+            "tags": ["Public Health"],
+            "frameworks": ["React"],
+            "products": ["Grid"]
         },
         {
             "title": "Allianz NG-Aquila",
@@ -168,15 +119,9 @@
             "link": "https://allianz.github.io/ng-aquila/documentation/ag-grid/overview",
             "img": "allianz-ng.webp",
             "favourite": true,
-            "tags": [
-                "Components"
-            ],
-            "frameworks": [
-                "Angular"
-            ],
-            "products": [
-                "Grid"
-            ]
+            "tags": ["Components"],
+            "frameworks": ["Angular"],
+            "products": ["Grid"]
         },
         {
             "title": "Microsoft MDR Gamut",
@@ -188,15 +133,9 @@
             "link": "https://microsoft.github.io/msrgamut/",
             "favourite": true,
             "img": "mdr-gamut.webp",
-            "tags": [
-                "Demo"
-            ],
-            "frameworks": [
-                "React"
-            ],
-            "products": [
-                "Grid"
-            ]
+            "tags": ["Demo"],
+            "frameworks": ["React"],
+            "products": ["Grid"]
         },
         {
             "title": "Siemens IX",
@@ -208,12 +147,8 @@
             "link": "https://ix.siemens.io/docs/controls/grid",
             "favourite": true,
             "img": "siemens.webp",
-            "frameworks": [
-                "React", "Angular", "Vue"
-            ],
-            "products": [
-                "Grid"
-            ]
+            "frameworks": ["React", "Angular", "Vue"],
+            "products": ["Grid"]
         },
         {
             "title": "NASA Aerie UI",
@@ -226,15 +161,9 @@
             "favourite": true,
             "img": "nasa-eerie.webp",
             "companyLogo": "nasa.svg",
-            "tags": [
-                "Science"
-            ],
-            "frameworks": [
-                "Svelte"
-            ],
-            "products": [
-                "Grid"
-            ]
+            "tags": ["Science"],
+            "frameworks": ["Svelte"],
+            "products": ["Grid"]
         },
         {
             "title": "MongoDB Compass",
@@ -246,16 +175,10 @@
             "link": "https://mongodb.com/compass",
             "favourite": true,
             "img": "mongodb-compass.webp",
-            "tags": [
-                "Database"
-            ],
-            "frameworks": [
-                "Angular"
-            ],
-            "products": [
-                "Grid"
-            ]
-        },   
+            "tags": ["Database"],
+            "frameworks": ["Angular"],
+            "products": ["Grid"]
+        },
         {
             "link": "https://marmelab.com/react-admin/DatagridAG.html",
             "repo": "https://github.com/marmelab/react-admin",
@@ -265,15 +188,9 @@
             "type": "Integration",
             "stars": 23500,
             "img": "react-admin.webp",
-            "tags": [
-                "Library"
-            ],
-            "frameworks": [
-                "React"
-            ],
-            "products": [
-                "Grid"
-            ]
+            "tags": ["Library"],
+            "frameworks": ["React"],
+            "products": ["Grid"]
         },
         {
             "link": "https://tableflow.com/docs/introduction",
@@ -284,15 +201,9 @@
             "stars": 1600,
             "type": "Product",
             "img": "tableflow.webp",
-            "tags": [
-                "Library"
-            ],
-            "frameworks": [
-                "React", "JavaScript"
-            ],
-            "products": [
-                "Grid"
-            ]
+            "tags": ["Library"],
+            "frameworks": ["React", "JavaScript"],
+            "products": ["Grid"]
         },
         {
             "title": "Cube",
@@ -303,15 +214,9 @@
             "type": "Product",
             "link": "https://react-pivot-table-demo.cube.dev/#/",
             "img": "cube-js.webp",
-            "tags": [
-                "Library"
-            ],
-            "frameworks": [
-                "React"
-            ],
-            "products": [
-                "Grid"
-            ]
+            "tags": ["Library"],
+            "frameworks": ["React"],
+            "products": ["Grid"]
         }
     ],
     "other": [
@@ -1042,7 +947,6 @@
             "stars": 40,
             "type": "Integration",
             "link": "https://github.com/odpi/egeria-ui"
-
         },
         {
             "title": "VarFish Server",
@@ -1223,11 +1127,7 @@
             "open_source": true,
             "stars": 615,
             "type": "Product",
-            "tags": [
-                "Grid",
-                "Charts",
-                "React"
-            ],
+            "tags": ["Grid", "Charts", "React"],
             "img": "sample.webp"
         },
         {
