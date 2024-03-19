@@ -51,7 +51,7 @@ const localConfiguration: Configuration = {
         '@ag-grid-community/core': `${localPrefix}/@ag-grid-community/core/dist/package/main.cjs.js`,
         '@ag-grid-community/client-side-row-model': `${localPrefix}/@ag-grid-community/client-side-row-model/dist/package/main.cjs.js`,
         '@ag-grid-community/csv-export': `${localPrefix}/@ag-grid-community/csv-export/dist/package/main.cjs.js`,
-        '@ag-grid-community/infinite-row-model': `${localPrefix}/@ag-grid-community/infinite-row-model/dist/package/main.cjs.js`
+        '@ag-grid-community/infinite-row-model': `${localPrefix}/@ag-grid-community/infinite-row-model/dist/package/main.cjs.js`,
     },
     gridEnterprisePaths: {
         '@ag-grid-community/client-side-row-model': `${localPrefix}/@ag-grid-community/client-side-row-model/dist/package/main.cjs.js`,
@@ -81,18 +81,15 @@ const localConfiguration: Configuration = {
         // 'ag-grid-community': `${localPrefix}/ag-grid-community/dist/package/main.cjs.js`,
         // 'ag-grid-enterprise': `${localPrefix}/ag-grid-enterprise/dist/package/main.cjs.js`,
         // 'ag-grid-enterprise-charts-enterprise': `${localPrefix}/ag-grid-enterprise-charts-enterprise/dist/package/main.cjs.js`,
-        "ag-charts-community": `${localPrefix}/ag-charts-community`,
-        "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise`,
+        'ag-charts-community': `${localPrefix}/ag-charts-community`,
+        'ag-charts-enterprise': `${localPrefix}/ag-charts-enterprise`,
     },
 };
 
 const buildAndArchivesConfiguration: Configuration = {
-    gridMap: {
-    },
-    gridCommunityPaths: {
-    },
-    gridEnterprisePaths: {
-    },
+    gridMap: {},
+    gridCommunityPaths: {},
+    gridEnterprisePaths: {},
 };
 
 const publishedConfiguration: Configuration = {
