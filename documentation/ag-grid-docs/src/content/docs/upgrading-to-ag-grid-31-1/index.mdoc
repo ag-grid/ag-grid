@@ -28,6 +28,8 @@ Follow these steps to upgrade your project's AG Grid version to `31.1.0`:
 The Codemod runner will check the state of your project to ensure that you don't lose any work. If you would rather see a diff of the changes instead of applying them, pass the `--dry-run` argument.
 {% /note %}
 
+The codemod only transforms source files that make use of deprecated features, so if you aren't currently making use of any of those APIs your source code will be unaffected by the codemod.
+
 See the [Codemods](./codemods/) documentation for more details.
 
 {% if isFramework("react") %}
@@ -47,9 +49,9 @@ Please note that enabling this setting affects all custom components and you can
 {% if isFramework("react") %}
 - `getValue` is no longer used. The component will be passed `value` as a prop with the latest value (and `initialValue` with the value when editing started). When the value is updated in the UI, the component should call the prop `onValueChange` with the updated value.
 - Any other date methods defined via `useImperativeHandle` should now be defined as callbacks, and passed to the new hook `useGridCellEditor`. These are all optional; the hook is only needed if the callbacks are required.
-- If using `api.getCellEditorInstances`, the instance returned will now be a wrapper. To get the React custom cell editor component, use the helper function `getInstance` with the returned wrapper instance. See [Accessing Cell Editor Instances](./cell-editors/#accessing-cell-editor-instances).
+- If using `api.getCellEditorInstances`, the instance returned will now be a wrapper. To get the React custom cell editor component, use the helper function `getInstance` with the returned wrapper instance. See [Accessing Cell Editor Instances](./cell-editors).
 
-See [Implementing a Cell Editor Component](./cell-editors/#implementing-a-cell-editor-component) for examples and more details on the interfaces.
+See [Implementing a Cell Editor Component](./cell-editors) for examples and more details on the interfaces.
 {% /if %}
 
 {% if isFramework("react") %}

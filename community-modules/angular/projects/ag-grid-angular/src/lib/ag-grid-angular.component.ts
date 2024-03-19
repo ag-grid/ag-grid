@@ -670,7 +670,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public enableChartToolPanelsButton: boolean | undefined = undefined;
-    /** @deprecated As of v31.2, a new format charts menu is available. Set `legacyChartsMenu = false`.
+    /** Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons. Only applies when using AG Charts Community.
          * @default false
          * @initial
          */
@@ -679,12 +679,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public chartToolPanelsDef: ChartToolPanelsDef | undefined = undefined;
-    /** Enables the legacy format of the Integrated Charts Menu and Tool Panels.
-         * Defaults to `true` when using AG Charts Community and `false` when using AG Charts Enterprise.
-         * @initial
-         */
-    @Input() public legacyChartsMenu: boolean | undefined = undefined;
-    /** Get chart menu items. Only applies when `legacyChartsMenu = false`.
+    /** Get chart menu items. Only applies when using AG Charts Enterprise.
          */
     @Input() public chartMenuItems: (string | MenuItemDef)[] | GetChartMenuItems<TData> | undefined = undefined;
     /** Provide your own loading cell renderer to use when data is loading via a DataSource.
@@ -1997,6 +1992,5 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_masterDetail: boolean | null | '';
     static ngAcceptInputType_treeData: boolean | null | '';
     static ngAcceptInputType_suppressGroupMaintainValueType: boolean | null | '';
-    static ngAcceptInputType_legacyChartsMenu: boolean | null | '';
     // @END@
 }

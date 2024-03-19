@@ -97,7 +97,17 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, pa
     const { data: [contents] = [undefined, undefined] } = useQuery(
         ['docsExampleContents', pageName, exampleName, internalFramework, importType],
         () =>
-            Promise.all([fetch(getExampleContentsUrl(urlConfig)).then((res) => res.json())]) as Promise<
+            Promise.all([fetch(getExampleContentsUrl(urlConfig)).then((res) => res.json()).then(json => {
+                const isTs = internalFramework === 'reactFunctionalTs' || internalFramework === 'typescript' || internalFramework === 'angular';
+                if (!isTs) {
+                    delete json.files['interfaces.ts'];
+                };
+                if (internalFramework.startsWith('vue') || internalFramework.startsWith('react')) {
+                    delete json.files['index.html'];
+                }
+                console.log({internalFramework});
+                return json;
+            })]) as Promise<
                 [GeneratedContents]
             >,
         queryOptions

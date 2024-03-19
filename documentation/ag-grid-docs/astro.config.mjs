@@ -46,6 +46,11 @@ const {
     PUBLIC_BASE_URL = DEFAULT_BASE_URL,
 
     /**
+     * Use published packages in examples
+     */
+    PUBLIC_USE_PUBLISHED_PACKAGES,
+
+    /**
      * Use packages for code
      */
     USE_PACKAGES,
@@ -96,6 +101,7 @@ console.log(
             PORT,
             PUBLIC_SITE_URL,
             PUBLIC_BASE_URL,
+            PUBLIC_USE_PUBLISHED_PACKAGES,
             USE_PACKAGES,
             ENABLE_GENERATE_DEBUG_PAGES,
             SHOW_DEBUG_LOGS,

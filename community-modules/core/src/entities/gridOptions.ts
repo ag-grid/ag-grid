@@ -599,7 +599,7 @@ export interface GridOptions<TData = any> {
      */
     enableChartToolPanelsButton?: boolean;
     /**
-     * @deprecated As of v31.2, a new format charts menu is available. Set `legacyChartsMenu = false`.
+     * Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons. Only applies when using AG Charts Community.
      * @default false
      * @initial
      */
@@ -610,13 +610,7 @@ export interface GridOptions<TData = any> {
      */
     chartToolPanelsDef?: ChartToolPanelsDef;
     /**
-     * Enables the legacy format of the Integrated Charts Menu and Tool Panels.
-     * Defaults to `true` when using AG Charts Community and `false` when using AG Charts Enterprise.
-     * @initial
-     */
-    legacyChartsMenu?: boolean;
-    /**
-     * Get chart menu items. Only applies when `legacyChartsMenu = false`.
+     * Get chart menu items. Only applies when using AG Charts Enterprise.
      */
     chartMenuItems?: (string | MenuItemDef)[] | GetChartMenuItems<TData>;
 

@@ -1,7 +1,7 @@
 import { ICellEditorComp, ICellEditorParams } from "@ag-grid-community/core";
 
 function isCharNumeric(charStr: string) {
-    return !!/\d/.test(charStr)
+    return !!/^\d+$/.test(charStr)
 }
 
 function isNumericKey(event: any) {
@@ -23,7 +23,8 @@ export class NumericCellEditor implements ICellEditorComp {
         // create the cell
         this.eInput = document.createElement('input')
         this.eInput.classList.add('ag-input-field-input');
-        this.eInput.style.width = '100%'
+        this.eInput.style.width = '100%';
+
         this.eInput.value = (isCharNumeric(params.eventKey))
             ? params.eventKey
             : params.value

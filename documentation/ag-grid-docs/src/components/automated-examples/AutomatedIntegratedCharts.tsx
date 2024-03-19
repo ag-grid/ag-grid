@@ -83,7 +83,7 @@ export function AutomatedIntegratedCharts({ automatedExampleManager, useStaticDa
                         setAllScriptEnabledVars(true);
                         automatedExampleManager.start(exampleId);
                     },
-                    icon: `<img src="${urlWithBaseUrl('/images/automated-examples/replay-demo-icon.svg')} />`,
+                    icon: `<img src="${urlWithBaseUrl('/images/automated-examples/replay-demo-icon-dark.svg')}" />`,
                 },
             ],
             onStateChange(state) {

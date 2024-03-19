@@ -2633,6 +2633,16 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/integrated-charts-toolbar/', to: '/react-data-grid/integrated-charts-menu/' },
     { from: '/vue-data-grid/integrated-charts-toolbar/', to: '/vue-data-grid/integrated-charts-menu/' },
 
+    { from: '/javascript-data-grid/building/', to: '/javascript-data-grid/npm/' },
+    { from: '/angular-data-grid/building/', to: '/angular-data-grid/npm/' },
+    { from: '/react-data-grid/building/', to: '/react-data-grid/npm/' },
+    { from: '/vue-data-grid/building/', to: '/vue-data-grid/npm/' },
+
+    { from: '/javascript-data-grid/drag-and-drop/', to: '/javascript-data-grid/row-dragging-to-external-dropzone/' },
+    { from: '/angular-data-grid/drag-and-drop/', to: '/angular-data-grid/row-dragging-to-external-dropzone/' },
+    { from: '/react-data-grid/drag-and-drop/', to: '/react-data-grid/row-dragging-to-external-dropzone/' },
+    { from: '/vue-data-grid/drag-and-drop/', to: '/vue-data-grid/row-dragging-to-external-dropzone/' },
+
     { from: '/cookies.php', to: '/cookies' },
     { from: '/privacy.php', to: '/privacy' },
     { from: '/about.php', to: '/about' },

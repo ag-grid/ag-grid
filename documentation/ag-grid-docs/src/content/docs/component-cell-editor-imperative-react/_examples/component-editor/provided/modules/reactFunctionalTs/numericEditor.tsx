@@ -68,7 +68,7 @@ export default memo(forwardRef((props: ICellEditorParams, ref) => {
     };
 
     const isCharNumeric = (charStr: string) => {
-        return !!/\d/.test(charStr);
+        return !!/^\d+$/.test(charStr);
     };
 
     const isNumericKey = (event: any) => {
