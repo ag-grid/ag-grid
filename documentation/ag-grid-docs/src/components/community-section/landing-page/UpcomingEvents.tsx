@@ -1,10 +1,9 @@
+import ScrollingGallery from '@components/community-section/events/ScrollingGallery';
 import { Icon } from '@components/icon/Icon';
 import styles from '@design-system/modules/CommunityUpcomingEvents.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
-import React, { useEffect, useRef, useState } from 'react';
-
-import ScrollingGallery from '@components/community-section/events/ScrollingGallery';
-import events from '../../../content/community/events.json';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { useState } from 'react';
 
 const separateEventsByDate = (events) => {
     const upcomingEvents = [];
@@ -32,7 +31,7 @@ function extractUniqueYears(events) {
     return Array.from(years);
 }
 
-const UpcomingEvents = ({ enableFilters = false }) => {
+const UpcomingEvents = ({ enableFilters = false, images, events }) => {
     const [darkMode] = useDarkmode();
     const { upcomingEvents } = separateEventsByDate(events);
     const [currEvents, setCurrEvents] = useState(upcomingEvents);
@@ -85,10 +84,10 @@ const UpcomingEvents = ({ enableFilters = false }) => {
                         ))}
                     </div>
                 )}
-                <ScrollingGallery />
+                <ScrollingGallery images={images} />
                 <div className={styles.eventTilesContainer}>
                     {currEvents.map((event, index) => (
-                        <a href={event.eventPage} target='_blank' className={styles.linkWrapper} key={index}>
+                        <a href={event.eventPage} target="_blank" className={styles.linkWrapper} key={index}>
                             <div key={index} className={styles.eventTile}>
                                 <span className={styles.location}>
                                     <Icon className={styles.locationIcon} name="mapPin" />
@@ -97,7 +96,7 @@ const UpcomingEvents = ({ enableFilters = false }) => {
                                 <span className={styles.conferenceIcon}>
                                     <img
                                         className={styles.organiserLogo}
-                                        src={darkMode ? event.logo : event.logoLight}
+                                        src={urlWithBaseUrl(darkMode ? event.logo : event.logoLight)}
                                         alt={`${event.logo}`}
                                     />
                                 </span>

@@ -1,34 +1,15 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import CommunityMenu from '@components/community-section/CommunityMenu';
-import LayoutStyles from '@design-system/modules/CommunityLayout.module.scss';
+import CommunityLayout from '@layouts/CommunityLayout.astro';
 import ToolsExtensions from '@components/community-section/ToolsExtensions';
 ---
 
-<Layout
-    showSearchBar={true}
-    showDocsNav={false}
+<CommunityLayout
     title="AG Grid: Tools & Extensions"
     description="AG Grid has an entire ecosystem of community-built tools, extensions and utilities to help you create your next project, no matter which language or framework you're using."
+    pageTitle="Tools & Extensions"
+    pageDescription="AG Grid has an entire ecosystem of community-built tools, extensions and utilities to help you create your next project, no matter which language or framework you're using."
 >
-    <div class="layout-max-width-large">
-        <div class={LayoutStyles.header}>
-            <CommunityMenu path={Astro.url.pathname} client:load />
-        </div>
-        <div class="layout-max-width-small">
-            <div class={LayoutStyles.container}>
-                <div class={LayoutStyles.content}>
-                    <!-- Title & Description -->
-                    <h1>Tools & Extensions</h1>
-                    <p class={LayoutStyles.description}>
-                        AG Grid has an entire ecosystem of community-built tools, extensions and utilities to help you
-                        create your next project, no matter which language or framework you're using.
-                    </p>
-                    <section>
-                        <ToolsExtensions client:load />
-                    </section>
-                </div>
-            </div>
-        </div>
-    </div>
-</Layout>
+    <section>
+        <ToolsExtensions client:load />
+    </section>
+</CommunityLayout>

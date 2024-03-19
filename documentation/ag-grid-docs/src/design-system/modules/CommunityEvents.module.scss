@@ -135,14 +135,15 @@
 .primaryCta {
     color: var(--color-brand-600);
     gap: $spacing-size-8;
+    font-weight: var(--text-semibold);
     margin: 0px;
-
-    p {
-        font-weight: var(--text-semibold);
-    }
 
     #{$selector-darkmode} & {
         color: var(--color-brand-300);
+    }
+
+    &:hover {
+        color: var(--color-link-hover);
     }
 }
 
@@ -153,6 +154,10 @@
 
     #{$selector-darkmode} & {
         color: var(--color-brand-300);
+    }
+
+    &:hover {
+        color: var(--color-link-hover);
     }
 }
 

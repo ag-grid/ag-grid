@@ -1,7 +1,6 @@
 import styles from '@design-system/modules/CommunityScrollingGallery.module.scss';
-import React, { useEffect, useRef } from 'react';
-
-import eventImages from '../../../content/community/events-images.json';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { useEffect, useRef, useState } from 'react';
 
 const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
@@ -11,8 +10,8 @@ const shuffleArray = (array) => {
     return array;
 };
 
-
-const ScrollingGallery = () => {
+const ScrollingGallery = ({ images }) => {
+    const [shuffledImages, setShuffedImages] = useState(images);
     const scrollRef = useRef(null);
     useEffect(() => {
         const scrollContent = () => {
@@ -29,13 +28,17 @@ const ScrollingGallery = () => {
         return () => clearInterval(interval);
     }, []);
 
+    useEffect(() => {
+        setShuffedImages(shuffleArray([...images]));
+    }, [images]);
+
     return (
         <div className={styles.blurContainer}>
             <div className={styles.scrollingGalleryContainer} ref={scrollRef}>
-                {shuffleArray([...eventImages]).map((image, index) => (
+                {shuffledImages.map((image, index) => (
                     <img
-                        key={index}
-                        src={`/community/events/${image.src}`}
+                        key={image.src}
+                        src={urlWithBaseUrl(`/community/events/${image.src}`)}
                         alt={`Gallery item ${index}`}
                         className={styles.galleryImage}
                     />

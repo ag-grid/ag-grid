@@ -148,8 +148,8 @@
         },
         "menuTabs": {
             "more": {
-                "name": "Legacy Tabbed Column Menu",
-                "url": "./column-menu/#legacy-tabbed-column-menu"
+                "name": "Default Column Menu",
+                "url": "./column-menu/#default-tabbed-column-menu"
             }
         },
         "columnChooserParams": {
@@ -231,7 +231,7 @@
         "useValueFormatterForExport": {
             "more": {
                 "name": "Using Value Formatters with Other Grid Features",
-                "url": "./value-formatters/#formating-for-export"
+                "url": "./value-formatters/#formatting-for-export"
             }
         }
     },

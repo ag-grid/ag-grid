@@ -602,7 +602,7 @@
         "chartToolPanelsDef": {
             "more": {
                 "name": "Chart Tool Panel customisation",
-                "url": "./integrated-charts-toolbar/#toolbar-customisation"
+                "url": "./integrated-charts-chart-tool-panels/"
             }
         },
         "chartMenuItems": {
@@ -636,7 +636,7 @@
         "loadingCellRendererSelector": {
             "more": {
                 "name": "Loading Cell Renderer Selector",
-                "url": "./component-loading-cell-renderer/#dynamic-cell-loading-renderer"
+                "url": "./component-loading-cell-renderer/#dynamic-selection"
             }
         }
     },
@@ -759,13 +759,13 @@
         "valueCache": {
             "more": {
                 "name": "Value Cache",
-                "url": "./value-getters/#value-cache-properties"
+                "url": "./value-cache/"
             }
         },
         "valueCacheNeverExpires": {
             "more": {
                 "name": "Value Cache",
-                "url": "./value-getters/#value-cache-properties"
+                "url": "./value-cache/"
             }
         },
         "enableCellExpressions": {
@@ -974,7 +974,7 @@
         "pivotMaxGeneratedColumns": {
             "more": {
                 "name": "Pivot Max Generated Columns",
-                "url": "./pivoting/#handling-extreme-data"
+                "url": "./pivoting/#pivoting-extreme-amounts-of-data"
             }
         },
         "processPivotResultColDef": {
@@ -1882,19 +1882,19 @@
         "enableBrowserTooltips": {
             "more": {
                 "name": "Default Browser Tooltip",
-                "url": "./tooltips/#default-browser-tooltip"
+                "url": "./tooltips/#browser-tooltip"
             }
         },
         "tooltipShowDelay": {
             "more": {
                 "name": "Tooltip Show and Hide Delay",
-                "url": "./tooltips/#tooltip-show-and-hide-delay"
+                "url": "./tooltips/#show-and-hide-delay"
             }
         },
         "tooltipHideDelay": {
             "more": {
                 "name": "Tooltip Show and Hide Delay",
-                "url": "./tooltips/#tooltip-show-and-hide-delay"
+                "url": "./tooltips/#show-and-hide-delay"
             }
         },
         "tooltipMouseTrack": {
