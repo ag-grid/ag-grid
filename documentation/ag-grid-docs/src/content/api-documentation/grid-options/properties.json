@@ -561,10 +561,10 @@
                 "url": "./integrated-charts-user-created/#enabling-user-created-charts"
             }
         },
-        "legacyChartsMenu": {
+        "suppressChartToolPanelsButton": {
             "more": {
-                "name": "Chart Menu",
-                "url": "./integrated-charts-menu/"
+                "name": "Suppress Chart Tool Panels Button",
+                "url": "./integrated-charts-chart-tool-panels/"
             }
         },
         "getChartToolbarItems": {
