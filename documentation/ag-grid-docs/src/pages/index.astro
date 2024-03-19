@@ -9,8 +9,7 @@ import ChartsLogo from '@images/inline-svgs/ag-charts-logo.svg?react';
 import HeroGrid from '@components/hero-grid/HeroGrid.astro';
 import { AutomatedExamples } from '@components/automated-examples/AutomatedExamples';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { getIsProduction, getIsArchive } from '@utils/env';
-import { PUBLISHED_URLS } from '@constants';
+import { PUBLISHED_URLS, USE_PUBLISHED_PACKAGES } from '@constants';
 import { pathJoin } from '@utils/pathJoin';
 import { getExtraFileUrl } from '@utils/extraFileUrl';
 
@@ -37,9 +36,8 @@ const frameworksData = [
     },
 ];
 
-const enterpriseGridUrl = getIsArchive() ?
-    getExtraFileUrl({ filePath: 'ag-grid-charts-enterprise/dist/ag-grid-charts-enterprise.js' }) :
-    getIsProduction()? pathJoin(PUBLISHED_URLS['ag-grid-charts-enterprise'], 'dist/ag-grid-charts-enterprise.min.js')
+const enterpriseGridUrl = USE_PUBLISHED_PACKAGES
+    ? pathJoin(PUBLISHED_URLS['ag-grid-charts-enterprise'], 'dist/ag-grid-charts-enterprise.min.js')
     : getExtraFileUrl({ filePath: 'ag-grid-charts-enterprise/dist/ag-grid-charts-enterprise.js' });
 ---
 
