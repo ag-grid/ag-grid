@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
+import "style.css";
 import { MySimpleEditor } from './mySimple-editor.component';
 import { ColDef, GridReadyEvent } from '@ag-grid-community/core';
 import { AgGridAngular } from '@ag-grid-community/angular';
