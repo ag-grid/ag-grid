@@ -17,4 +17,6 @@ archive*.zip
 *.tgz
 .nx
 .angular
+plugins/ag-grid-generate-example-files/dist/
+tmp
 
