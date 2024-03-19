@@ -71,7 +71,6 @@ export class ChartMenu extends Component {
         this.chartToolbar = this.createManagedBean(new ChartToolbar());
         this.getGui().appendChild(this.chartToolbar.getGui());
         if (this.legacyFormat) {
-            _.warnOnce('As of v31.2, the legacy format charts menu is deprecated. Set `legacyChartsMenu = false` to use the new format menu.');
             this.createLegacyToggleButton();
         }
         

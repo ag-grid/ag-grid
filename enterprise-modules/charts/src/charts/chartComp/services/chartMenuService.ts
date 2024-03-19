@@ -37,7 +37,7 @@ export class ChartMenuService extends BeanStub {
     @Autowired('advancedSettingsMenuFactory') private readonly advancedSettingsMenuFactory: AdvancedSettingsMenuFactory;
 
     public isLegacyFormat(): boolean {
-        return this.gridOptionsService.get('legacyChartsMenu') ?? !this.chartService.isEnterprise();
+        return !this.chartService.isEnterprise();
     }
 
     public downloadChart(chartMenuContext: ChartMenuContext, dimensions?: { width: number, height: number }, fileName?: string, fileFormat?: string): void {
@@ -87,7 +87,7 @@ export class ChartMenuService extends BeanStub {
                         if (CHART_TOOL_PANEL_ALLOW_LIST.includes(option as any)) {
                             msg = `'${option}' is a Chart Tool Panel option and will be ignored since 'chartToolPanelsDef' is used. Please use 'chartToolPanelsDef.panels' grid option instead`
                         } else if (option === 'chartMenu') {
-                            msg = `'chartMenu' is only allowed as a Chart Toolbar Option when 'legacyChartsMenu' is set to false`;
+                            msg = `'chartMenu' is only allowed as a Chart Toolbar Option when using AG Charts Enterprise`;
                         } else {
                             msg = `'${option}' is not a valid Chart Toolbar Option`;
                         }
