@@ -95,7 +95,7 @@ The Cell Component for a Column is set via `colDef.cellRenderer` and can be any 
 
 The code snippet below demonstrates each of these method types.
 
-{% if isFramework("javascript") %}
+{% if isFramework("javascript", "angular") %}
 ```js {% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
@@ -114,34 +114,7 @@ const gridOptions = {
             field: 'year',
             cellRenderer: params => {
                 // put the value in bold
-                return 'Value is <b&gt;' + params.value + '</b&gt;';
-            }
-        }
-    ]
-}
-```
-{% /if %}
-
-{% if isFramework("angular") %}
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
-const gridOptions = {
-    columnDefs: [
-        // 1 - String - The name of a Cell Component registered with the grid.
-        {
-            field: 'age',
-            cellRenderer: 'agGroupCellRenderer',
-        },
-        // 2 - Class - Provide your own Cell Component directly without registering.
-        {
-            field: 'sport',
-            cellRenderer: MyCustomCellRendererClass,
-        },
-        // 3 - Function - A function that returns an HTML string or DOM element for display
-        {
-            field: 'year',
-            cellRenderer: params => {
-                // put the value in bold
-                return 'Value is <b&gt;' + params.value + '</b&gt;';
+                return 'Value is <b>' + params.value + '</b>';
             }
         }
     ]
@@ -150,7 +123,7 @@ const gridOptions = {
 {% /if %}
 
 {% if isFramework("react") %}
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```js {% spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         // 1 - String - The name of a Cell Component registered with the grid.
@@ -190,7 +163,7 @@ const gridOptions = {
             field: 'year',
             cellRenderer: params => {
                 // put the value in bold
-                return 'Value is <b&gt;' + params.value + '</b&gt;';
+                return 'Value is <b>' + params.value + '</b>';
             }
         }
     ]

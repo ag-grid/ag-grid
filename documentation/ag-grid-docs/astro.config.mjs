@@ -3,6 +3,7 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 import dotenvExpand from 'dotenv-expand';
+import sass from 'sass';
 import { loadEnv } from 'vite';
 import mkcert from 'vite-plugin-mkcert';
 import svgr from 'vite-plugin-svgr';
@@ -12,6 +13,7 @@ import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
 import agRedirectsChecker from './plugins/agRedirectsChecker';
 import { getSitemapConfig } from './src/utils/sitemap';
+import { urlWithBaseUrl } from './src/utils/urlWithBaseUrl';
 
 const { NODE_ENV } = process.env;
 const AG_GRID_VERSION = version;
@@ -129,6 +131,19 @@ export default defineConfig({
         plugins: [mkcert(), svgr(), agHotModuleReload(), agGridVersionReplacement()],
         server: {
             https: !['0', 'false'].includes(PUBLIC_HTTPS_SERVER),
+        },
+        css: {
+            preprocessorOptions: {
+                scss: {
+                    functions: {
+                        'urlWithBaseUrl($url)': function (url) {
+                            const urlWithBase = urlWithBaseUrl(url.getValue(), PUBLIC_BASE_URL);
+
+                            return new sass.types.String(urlWithBase);
+                        },
+                    },
+                },
+            },
         },
     },
     integrations: [

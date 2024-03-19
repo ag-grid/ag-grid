@@ -103,7 +103,7 @@
     position: relative;
     height: var(--scroller-height);
     overflow: hidden;
-    background-image: url('../../../images/homepage-scroll-light.webp');
+    background-image: url(urlWithBaseUrl('/images/homepage-scroll-light.webp'));
     background-size: 100% auto;
     animation-name: scroll-hero;
     animation-duration: 120s;
@@ -131,7 +131,7 @@
     }
 
     #{$selector-darkmode} & {
-        background-image: url('../../../images/homepage-scroll-dark.webp');
+        background-image: url(urlWithBaseUrl('images/homepage-scroll-dark.webp'));
 
         &::before {
             background-image: linear-gradient(var(--color-bg-primary), transparent);

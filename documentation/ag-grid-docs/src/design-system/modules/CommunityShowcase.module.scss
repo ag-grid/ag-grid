@@ -16,7 +16,7 @@
     box-shadow: var(--shadow-xs);
     border: 1px solid var(--color-border-secondary);
     min-height: 375px;
-    overflow: hidden; 
+    overflow: hidden;
     cursor: pointer;
 }
 
@@ -28,7 +28,7 @@
 .header {
     .image {
         width: 100%;
-        height: 150px;
+        height: 100%;
         object-fit: cover;
         object-position: top;
     }
@@ -40,7 +40,7 @@
     align-items: center;
 }
 
-.gibHubIcon { 
+.gibHubIcon {
     fill: var(--color-fg-primary);
 }
 

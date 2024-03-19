@@ -1,6 +1,7 @@
+import styles from '@design-system/modules/FrameworkSelector.module.scss';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import React from 'react';
-import styles from '@design-system/modules/FrameworkSelector.module.scss';
 
 const fwLogos = 'images/fw-logos/';
 
@@ -25,7 +26,7 @@ export default function FrameworkSelector({ data, currentFramework, isFullWidth,
                             [styles.selected]: isSelected,
                         })}
                     >
-                        <img src={`./${fwLogos}${framework.name}.svg`} alt={alt} />
+                        <img src={urlWithBaseUrl(`/${fwLogos}${framework.name}.svg`)} alt={alt} />
                         <span>{frameworkCapitalised}</span>
                     </a>
                 );

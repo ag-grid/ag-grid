@@ -1,6 +1,6 @@
 export default {
     template: `
-        <span>
+        <span v-if="value">
         <i :class="iconClass"> </i> {{ value }}
       </span>
     `,

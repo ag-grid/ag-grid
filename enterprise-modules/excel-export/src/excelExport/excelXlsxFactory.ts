@@ -61,8 +61,31 @@ export class ExcelXlsxFactory {
         this.addSheetName(worksheet);
         registerStyles(styles, this.sheetNames.length);
 
-        this.processTableConfig(worksheet, config);
-        return this.createWorksheet(worksheet, config);
+        let newConfig = Object.assign({}, config);
+
+        // Table export is not compatible with pivot mode nor master/detail features
+        if (config.exportAsExcelTable) {
+            if (config.columnModel.isPivotActive()) {
+                this.showExcelTableNonCompatibleFeaturesWarning('pivot mode');
+                newConfig.exportAsExcelTable = false;
+            }
+
+            if (config.gridOptionsService.get('masterDetail')) {
+                this.showExcelTableNonCompatibleFeaturesWarning('master/detail');
+                newConfig.exportAsExcelTable = false;
+            }
+        }
+
+        this.processTableConfig(worksheet, newConfig);
+        return this.createWorksheet(worksheet, newConfig);
+    }
+
+    private static showExcelTableNonCompatibleFeaturesWarning(featureName: string) {
+        console.warn(
+            `AG Grid: Excel table export does not work with ${featureName}. ` +
+            `The exported Excel file will not contain any Excel tables.\n` +
+            `Please turn off ${featureName} to enable Excel table exports.`
+        );
     }
 
     public static getTableNameFromIndex(idx: number) {

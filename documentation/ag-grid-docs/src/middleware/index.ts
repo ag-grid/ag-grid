@@ -1,10 +1,6 @@
 import { getIsProduction } from '@utils/env';
-import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { defineMiddleware } from 'astro/middleware';
-import { parse } from 'node-html-parser';
 import * as prettier from 'prettier';
-
-const env = import.meta.env;
 
 const BINARY_EXTENSIONS = ['png', 'webp', 'jpeg', 'jpg'];
 

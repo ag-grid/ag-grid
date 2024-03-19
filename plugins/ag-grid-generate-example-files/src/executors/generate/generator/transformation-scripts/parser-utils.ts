@@ -1,7 +1,7 @@
 import { transform } from 'sucrase';
 import ts from 'typescript';
 
-import { getEnterprisePackageName, integratedChartsUsesChartsEnterprise } from '../constants';
+import { getEnterprisePackageName } from '../constants';
 import { BindingImport, ExampleConfig, InternalFramework, ParsedBindings } from '../types';
 
 export function readAsJsFile(
@@ -554,11 +554,7 @@ export function addBindingImports(
             const namedImport = v.namedImport ? v.namedImport : '';
             const importStr = unique.length > 0 ? `{ ${unique.join(', ')} }` : '';
             const joiningComma = namedImport && importStr ? ', ' : '';
-            let fullImportStr = `import ${namedImport}${joiningComma}${importStr} from ${k};`;
-            if(!integratedChartsUsesChartsEnterprise && !convertToPackage){
-                fullImportStr = fullImportStr.replace(/@ag-grid-enterprise\/charts-enterprise/g, '@ag-grid-enterprise/charts');
-            }
-            imports.push(fullImportStr);
+            imports.push(`import ${namedImport}${joiningComma}${importStr} from ${k};`);
         }
     });
     if (hasEnterpriseModules && convertToPackage) {

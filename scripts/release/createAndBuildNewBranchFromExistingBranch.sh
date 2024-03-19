@@ -1,11 +1,11 @@
 #!/bin/bash
 
-if [ "$#" -ne 6 ]
+if [ "$#" -ne 4 ]
   then
     echo "You must supply a source branch, new branch name, grid version, charts version projects and modules to update"
-    echo "For example: ./scripts/release/createAndBuildNewBranchFromExistingBranch.sh latest b19.1.2 19.1.2 2.0.0 all all"
-    echo "For example: ./scripts/release/createAndBuildNewBranchFromExistingBranch.sh latest b19.1.2 19.1.2 2.0.0 charts react"
-    echo "For example: ./scripts/release/createAndBuildNewBranchFromExistingBranch.sh latest b19.1.2 19.1.2 2.0.0 grid react,vue"
+    echo "For example: ./scripts/release/createAndBuildNewBranchFromExistingBranch.sh latest b19.1.2 19.1.2 2.0.0"
+    echo "For example: ./scripts/release/createAndBuildNewBranchFromExistingBranch.sh latest b19.1.2 19.1.2 2.0.0"
+    echo "For example: ./scripts/release/createAndBuildNewBranchFromExistingBranch.sh latest b19.1.2 19.1.2 2.0.0"
     exit 1
 fi
 
@@ -17,14 +17,6 @@ PEER_GRID_VERSION="~$3"
 
 NEW_CHARTS_VERSION=$4
 PEER_CHARTS_VERSION="~$4"
-
-PROJECTS_TO_VERSION=$5
-MODULES_TO_VERSION=$6
-
-if [ $PROJECTS_TO_VERSION != "all" ] && [ $PROJECTS_TO_VERSION != "grid" ] && [ $PROJECTS_TO_VERSION != "charts" ]; then
-  echo "Projects to version must be one of [all,grid,charts]"
-  exit 1;
-fi
 
 GEN_KEY_DEFAULT_LOCATION=~/Documents/aggrid/aggrid/genkey/genKey.js
 
@@ -41,19 +33,16 @@ else
 fi
 
 echo "########################################################################"
-echo "####### Updating lerna.json, package.json, bower.json and version.ts files #########"
-if [ $PROJECTS_TO_VERSION == "all" ] || [ $PROJECTS_TO_VERSION == "grid" ]; then
-  echo "Versioning Grid Packages"
-  node scripts/release/versionModules.js $NEW_GRID_VERSION $PEER_GRID_VERSION '["grid-packages", "grid-community-modules", "grid-enterprise-modules"]' $MODULES_TO_VERSION $PEER_CHARTS_VERSION
-fi
+echo "####### Updating  package.json version.ts files                #########"
+node scripts/release/versionModules.js $NEW_GRID_VERSION $PEER_GRID_VERSION '["grid-packages", "grid-community-modules", "grid-enterprise-modules"]' $PEER_CHARTS_VERSION
 
 echo "########################################################################"
 echo "################# Installing Dependencies & Building #########################"
-npm run updateAndRebuildProd
+npm i
+npm run bootstrap
 
 echo "########################################################################"
-echo "###################### Packaging #############################"
-./node_modules/.bin/lerna run package
+echo "###################### Build               #############################"
 
 echo "########################################################################"
 echo "##################### Updating .gitignore #############################"

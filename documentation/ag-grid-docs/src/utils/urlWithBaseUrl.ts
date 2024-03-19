@@ -1,8 +1,15 @@
 import { SITE_BASE_URL } from '../constants';
+import { pathJoin } from './pathJoin';
 
-export const urlWithBaseUrl = (url: string = '') => {
-    const regex = /^\/(.*)/gm;
-    const substitution = `${SITE_BASE_URL}$1`;
+export const urlWithBaseUrl = (url: string = '', siteBaseUrl: string = SITE_BASE_URL) => {
+    let path = url;
+    if (url.startsWith('./')) {
+        path = pathJoin('/', siteBaseUrl, url.slice('./'.length));
+    } else if (url.startsWith('/')) {
+        path = pathJoin('/', siteBaseUrl, url);
+    } else if (!url.startsWith('http')) {
+        path = pathJoin('/', siteBaseUrl, url);
+    }
 
-    return url.match(regex) ? url.replace(regex, substitution) : url;
+    return path;
 };

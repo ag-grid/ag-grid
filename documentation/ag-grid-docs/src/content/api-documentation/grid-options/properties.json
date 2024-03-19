@@ -208,7 +208,7 @@
         "suppressFieldDotNotation": {
             "more": {
                 "name": "Accessing Row Data Values",
-                "url": "./column-definitions/#accessing-row-data-values"
+                "url": "./value-getters/#field"
             }
         }
     },

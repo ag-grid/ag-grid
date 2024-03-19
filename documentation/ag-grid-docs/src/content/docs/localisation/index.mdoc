@@ -18,19 +18,19 @@ An example full locale file is provided below. To support other languages, the f
 
 You can download the full file from [here](/examples/localisation/localisation/packages/vanilla/locale.js).
 
-There is one locale file for all the grid. The file covers all modules across all of AG Grid Enterprise and AG Grid Community. This was done on purpose as having multiple files for each module would provide to much confusion. The decision was made to keep it simple in one file.
+There is a single locale file which covers all modules across all of AG Grid Enterprise and AG Grid Community. This was done on purpose as having a separate localisation file for each module would be harder to manage.
 
 ## Installing a Locale
 
 To install a locale into the grid, set the locale object to the grid's `localeText` property. The example below shows this in action:
 
-The example below shows installing a locale file. The example has two local files `locale.en.js` and `locale.zzz.js`. The second one is a dummy locale, it just adds "zzz" to the start of each value. This is done so that the example looks different - otherwise is would just display English as normal and there would be no way of knowing if the locale was working or not as English is the default.
+The example has one local file `locale` containing two variables `AG_GRID_LOCALE_EN` which contains all localisation variables that can be configured, and `AG_GRID_LOCALE_ZZZ` which just adds "zzz" to the start of each value. This is done so that the example looks different - otherwise is would just display English as normal and there would be no way of knowing if the locale was working or not as English is the default.
 
 This to try in the example are as follows:
 
 1. Open up in Plunker.
 1. Change the locale to English by changing `localeText = AG_GRID_LOCALE_ZZZ` to `localeText = AG_GRID_LOCALE_EN`.
-1. Edit values in `locale.en.js` and observe the changes in the grid.
+1. Edit values in `locale` and observe the changes in the grid.
 
 {% gridExampleRunner title="Localisation" name="localisation"  exampleHeight=650 /%}
 
