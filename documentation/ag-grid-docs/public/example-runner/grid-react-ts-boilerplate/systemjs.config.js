@@ -16,8 +16,8 @@
             ...systemJsPaths
         },
         map: {
-            // css: boilerplatePath + "css.js",
-            'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
+            css: boilerplatePath + "css.js",
+            // 'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
             // react
             react: 'npm:react@18.2.0',
