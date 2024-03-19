@@ -22,7 +22,7 @@ const columnDefs: ColDef[] = [
             return params.data.firstName + ' ' + params.data.lastName;
         },
         valueSetter: (params: ValueSetterParams) => {
-            const fullName = params.newValue;
+            const fullName = params.newValue || '';
             const nameSplit = fullName.split(' ');
             const newFirstName = nameSplit[0];
             const newLastName = nameSplit[1];
