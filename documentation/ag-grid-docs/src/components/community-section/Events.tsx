@@ -1,6 +1,7 @@
 import ScrollingGallery from '@components/community-section/events/ScrollingGallery';
 import styles from '@design-system/modules/CommunityEvents.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import React, { useState } from 'react';
 
 import events from '../../content/community/events.json';
@@ -34,7 +35,11 @@ function extractUniqueYears(events) {
 const EventItem = ({ event }) => {
     const [darkMode] = useDarkmode();
     return (
-        <div onClick={() => event.eventPage ? window.open(event.eventPage) : window.open(event.recording)} target="_blank" className={styles.linkWrapper}>
+        <div
+            onClick={() => (event.eventPage ? window.open(event.eventPage) : window.open(event.recording))}
+            target="_blank"
+            className={styles.linkWrapper}
+        >
             <div className={styles.eventItemContainer}>
                 <div className={styles.eventItemLeftColumn}>
                     <div className={styles.titleContainer}>
@@ -51,7 +56,11 @@ const EventItem = ({ event }) => {
                     <div className={styles.footer}>
                         <div className={styles.locationContainer}>
                             {event.countryIcon ? (
-                                <img className={styles.flag} src={`/example-assets/flags/${event.countryIcon}`} alt={`${event.countryIcon}`} />
+                                <img
+                                    className={styles.flag}
+                                    src={urlWithBaseUrl(`/example-assets/flags/${event.countryIcon}`)}
+                                    alt={`${event.countryIcon}`}
+                                />
                             ) : (
                                 ''
                             )}
@@ -60,7 +69,10 @@ const EventItem = ({ event }) => {
                         <div className={styles.ctaContainer}>
                             {event.eventPage && (
                                 <div
-                                    onClick={(e) => {e.stopPropagation(); window.open(event.eventPage)}}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        window.open(event.eventPage);
+                                    }}
                                     target="_blank"
                                     className={event.recording ? styles.secondaryCta : styles.primaryCta}
                                 >
@@ -69,7 +81,10 @@ const EventItem = ({ event }) => {
                             )}
                             {event.recording && (
                                 <div
-                                    onClick={(e) => {e.stopPropagation(); window.open(event.recording)}}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        window.open(event.recording);
+                                    }}
                                     target="_blank"
                                     className={event.eventPage ? styles.primaryCta : styles.secondaryCta}
                                 >
@@ -81,11 +96,15 @@ const EventItem = ({ event }) => {
                 </div>
                 <div className={styles.eventItemRightColumn}>
                     {event.collage ? (
-                        <img className={styles.eventImage} src={`/community/events/collages/${event.collage}`} alt={`${event.collage}`} />
+                        <img
+                            className={styles.eventImage}
+                            src={urlWithBaseUrl(`/community/events/collages/${event.collage}`)}
+                            alt={`${event.collage}`}
+                        />
                     ) : (
                         <img
                             className={styles.eventLogo}
-                            src={darkMode || !event.logoLight ? event.logo : event.logoLight}
+                            src={urlWithBaseUrl(darkMode || !event.logoLight ? event.logo : event.logoLight)}
                             alt={`${event.eventLogo}`}
                         />
                     )}
@@ -95,7 +114,7 @@ const EventItem = ({ event }) => {
     );
 };
 
-const Events = () => {
+const Events = ({ images }) => {
     const { upcomingEvents, pastEvents } = separateEventsByDate(events);
     const [currEvents, setCurrEvents] = useState(upcomingEvents);
     const [activeTab, setActiveTab] = useState('upcoming');
@@ -146,13 +165,19 @@ const Events = () => {
             {activeTab == 'past' && (
                 <div className={styles.filterContainer}>
                     {extractUniqueYears(events).map((year, index) => (
-                        <button key={index} className={`${styles.tabButton} ${selectedYear == year ? styles.active : ''}`} onClick={() => filterYears(year)}>{year}</button>
+                        <button
+                            key={index}
+                            className={`${styles.tabButton} ${selectedYear == year ? styles.active : ''}`}
+                            onClick={() => filterYears(year)}
+                        >
+                            {year}
+                        </button>
                     ))}
                 </div>
             )}
             {activeTab == 'upcoming' && (
                 <div className={styles.scrollingGalleryContainer}>
-                    <ScrollingGallery />
+                    <ScrollingGallery images={images} />
                 </div>
             )}
             <div className={styles.eventsContainer}>

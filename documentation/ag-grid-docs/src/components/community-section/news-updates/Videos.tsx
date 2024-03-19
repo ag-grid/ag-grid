@@ -1,4 +1,5 @@
 import styles from '@design-system/modules/CommunityVideos.module.scss';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import React, { useState } from 'react';
 
 import videos from '../../../content/community/news-updates/videos.json';
@@ -18,7 +19,7 @@ const Videos = () => {
                     <p>{currentVideo.description}</p>
                 </div>
                 <div className={styles.rightColumn}>
-                  {/* TODO: GitNation Portal Support */}
+                    {/* TODO: GitNation Portal Support */}
                     <iframe
                         className={styles.videoFrame}
                         src={currentVideo.link}
@@ -34,20 +35,20 @@ const Videos = () => {
                         onClick={() => handleVideoSelect(video)}
                         className={`${styles.video} ${videos.indexOf(currentVideo) === index ? styles.active : ''}`}
                     >
-                    {/* TODO: GitNation Portal Support */}
-                    { video.id ? 
-                        <img
-                            src={`https://img.youtube.com/vi/${video.id}/0.jpg`}
-                            alt="Video thumbnail"
-                            className={styles.youtubeThumbnail}
-                        />
-                    : 
-                      <img
-                            src={`${video.thumbnail}`}
-                            alt="Video thumbnail"
-                            className={styles.videoThumbnail}
-                          />
-                    }
+                        {/* TODO: GitNation Portal Support */}
+                        {video.id ? (
+                            <img
+                                src={`https://img.youtube.com/vi/${video.id}/0.jpg`}
+                                alt="Video thumbnail"
+                                className={styles.youtubeThumbnail}
+                            />
+                        ) : (
+                            <img
+                                src={urlWithBaseUrl(video.thumbnail)}
+                                alt="Video thumbnail"
+                                className={styles.videoThumbnail}
+                            />
+                        )}
                     </div>
                 ))}
             </div>

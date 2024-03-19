@@ -1,7 +1,8 @@
 import { Icon } from '@components/icon/Icon';
 import styles from '@design-system/modules/CommunityToolsExtensions.module.scss';
-import React, { useState } from 'react';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import React, { useState } from 'react';
 
 import tools from '../../content/community/tools-extensions.json';
 
@@ -67,8 +68,8 @@ const ToolsExtensions = ({ limit = -1 }) => {
                                 onClick={() => filterFrameworks(framework)}
                             >
                                 <img
-                                    className={framework === 'Rust' && darkMode ? styles.invert : ""}
-                                    src={`/community/frameworks/${framework.toLowerCase()}.svg`}
+                                    className={framework === 'Rust' && darkMode ? styles.invert : ''}
+                                    src={urlWithBaseUrl(`/community/frameworks/${framework.toLowerCase()}.svg`)}
                                     alt={`${framework}`}
                                 />
                                 {framework}
@@ -92,7 +93,7 @@ const ToolsExtensions = ({ limit = -1 }) => {
                                     <div className={styles.image}>
                                         {
                                             <img
-                                                src={`${tool.img ? `/community/tools-extensions/${tool.img}` : getGithubImage(tool.repo)}`} 
+                                                src={`${tool.img ? urlWithBaseUrl(`/community/tools-extensions/${tool.img}`) : getGithubImage(tool.repo)}`}
                                                 alt={`${tool.name} logo`}
                                             />
                                         }
@@ -123,7 +124,9 @@ const ToolsExtensions = ({ limit = -1 }) => {
                                             {tool?.frameworks?.map((framework, index) => (
                                                 <span key={index} className={styles.tag}>
                                                     <img
-                                                        src={`/community/frameworks/${framework.toLowerCase()}.svg`}
+                                                        src={urlWithBaseUrl(
+                                                            `/community/frameworks/${framework.toLowerCase()}.svg`
+                                                        )}
                                                         className={styles.frameworkLogo}
                                                         alt={`${framework} logo`}
                                                     />

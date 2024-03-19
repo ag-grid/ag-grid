@@ -1,13 +1,15 @@
 import styles from '@design-system/modules/CommunityMenu.module.scss';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import React, { useState } from 'react';
+
 import menu from '../../content/community/community-menu.json';
 
 const getPageFromPath = (path) => {
     return path.replace('community/', '');
-}
+};
 
-const CommunityMenu = ({path}) => {
-    const currPage = getPageFromPath(path)
+const CommunityMenu = ({ path }) => {
+    const currPage = getPageFromPath(path);
     const [menuItems, setMenuItems] = useState(menu);
 
     return (
@@ -17,8 +19,7 @@ const CommunityMenu = ({path}) => {
                     key={item.name}
                     className={`${styles['community-menu-item']} ${currPage === item.path ? styles.selected : ''}`}
                 >
-                  <a href={'/community' + item.path}>
-                    {item.name}</a>
+                    <a href={urlWithBaseUrl('/community' + item.path)}>{item.name}</a>
                 </li>
             ))}
         </ul>

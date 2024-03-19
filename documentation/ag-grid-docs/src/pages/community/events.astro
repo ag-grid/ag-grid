@@ -3,6 +3,9 @@ import Layout from '../../layouts/Layout.astro';
 import CommunityMenu from '@components/community-section/CommunityMenu';
 import LayoutStyles from '@design-system/modules/CommunityLayout.module.scss';
 import Events from '@components/community-section/Events';
+import { getEntry } from 'astro:content';
+
+const { data: eventImages } = await getEntry('community', 'events-images');
 ---
 
 <Layout
@@ -26,7 +29,7 @@ import Events from '@components/community-section/Events';
                         2017.
                     </p>
                     <section>
-                        <Events client:load />
+                        <Events client:load images={eventImages} />
                     </section>
                 </div>
             </div>
