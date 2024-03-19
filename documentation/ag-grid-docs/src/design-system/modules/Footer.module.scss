@@ -1,9 +1,10 @@
 @use '../core' as *;
 
 .footer {
+    border-top: 1px solid var(--color-border-secondary);
     padding-top: $spacing-size-10;
     padding-bottom: calc($spacing-size-10 * 2);
-    background-color: var(--color-util-brand-500);
+    background-color: var(--color-bg-primary);
     color: var(--color-white);
 
     #{$selector-darkmode} & {
@@ -14,7 +15,7 @@
 
     h4,
     p {
-        color: var(--color-white);
+        color: var(--color-text-secondary);
         opacity: 0.6666;
     }
 
@@ -31,6 +32,10 @@
     @media screen and (min-width: $breakpoint-site-footer-four-column) {
         justify-content: space-between;
     }
+}
+
+.footerColumns .menuColumn:last-child a::after {
+    content: ' ↗'; /* Add space before the arrow for better readability */
 }
 
 .menuColumn {
@@ -64,14 +69,14 @@
         margin-top: -12px;
         margin-bottom: -12px;
         padding-top: 12px;
-        padding-bottom: 12px;
-        text-decoration-color: transparent;
-        text-underline-offset: 2px;
-        color: var(--color-white);
+        padding-bottom: 20px;
+        text-decoration-color: var(--color-border-primary);
+        text-underline-offset: 4px;
+        color: var(--color-text-secondary);
         transition: text-decoration-color $transition-default-timing;
 
         &:hover {
-            color: var(--color-white);
+            color: var(--color-text-primary);
             text-decoration-color: var(--color-white);
 
             :global(.icon) {
