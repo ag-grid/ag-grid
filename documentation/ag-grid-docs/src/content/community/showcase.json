@@ -328,15 +328,6 @@
             "stars": 1000
         },
         {
-            "repo": "https://github.com/mxswat/mx-division-builds",
-            "link": "https://mxswat.github.io/mx-division-builds/#/",
-            "title": "MX Division Builds",
-            "description": "A tool to create and share build easily currently in public beta",
-            "type": "Integration",
-            "open_source": true,
-            "stars": 79
-        },
-        {
             "repo": "https://github.com/vxcontrol/soldr",
             "link": "https://github.com/vxcontrol/soldr",
             "title": "Soldr",
