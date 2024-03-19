@@ -28,7 +28,7 @@
             },
         // map tells the System loader where to look for things
         map: {
-            css: (boilerplatePath === ("") ? `./` : '') + "css.js",
+            css: (boilerplatePath.length === 0 ? `./` : `${boilerplatePath}/`) + "css.js",
             // 'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
             ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
