@@ -28,6 +28,8 @@ Follow these steps to upgrade your project's AG Grid version to `31.0.0`:
 The Codemod runner will check the state of your project to ensure that you don't lose any work. If you would rather see a diff of the changes instead of applying them, pass the `--dry-run` argument.
 {% /note %}
 
+The codemod only transforms source files that make use of deprecated features, so if you aren't currently making use of any of those APIs your source code will be unaffected by the codemod.
+
 See the [Codemods](./codemods/) documentation for more details.
 
 ## Breaking Changes
