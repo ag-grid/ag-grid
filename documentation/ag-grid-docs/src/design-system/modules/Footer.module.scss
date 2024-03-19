@@ -13,14 +13,15 @@
         border-top: 1px solid var(--color-border-primary);
     }
 
-    h4,
     p {
         color: var(--color-text-secondary);
-        opacity: 0.6666;
+        opacity: 0.666;
     }
 
     h4 {
-        font-weight: var(--text-regular);
+        color: var(--color-text-primary);
+        font-weight: var(--text-semibold);
+        opacity: 1;
     }
 
     svg {
@@ -70,10 +71,11 @@
         margin-bottom: -12px;
         padding-top: 12px;
         padding-bottom: 20px;
-        text-decoration-color: var(--color-border-primary);
+        text-decoration-color: var(--color-bg-primary);
         text-underline-offset: 4px;
         color: var(--color-text-secondary);
         transition: text-decoration-color $transition-default-timing;
+        opacity: 0.666;
 
         &:hover {
             color: var(--color-text-primary);
