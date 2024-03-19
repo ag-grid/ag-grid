@@ -200,7 +200,7 @@
         "getRowNode": {
             "more": {
                 "name": "Application Assigned IDs",
-                "url": "./row-ids/#application-assigned-ids"
+                "url": "./row-ids/#row-ids"
             }
         },
         "forEachNode": {
@@ -652,7 +652,7 @@
         "getCellRendererInstances": {
             "more": {
                 "name": "Cell Renderer Instances",
-                "url": "./component-cell-renderer/#accessing-cell-renderer-instances"
+                "url": "./component-cell-renderer/#accessing-instances"
             }
         },
         "getSizesForCurrentTheme": {},
