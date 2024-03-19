@@ -403,7 +403,7 @@
             "repo": "https://github.com/mlops-ai/mlops",
             "title": "ML Ops",
             "description": "Open-source tool for tracking & monitoring machine learning models.",
-            "link": "pypi.org/project/mlops-ai/",
+            "link": "https://pypi.org/project/mlops-ai/",
             "type": "Product",
             "open_source": true,
             "stars": 10
