@@ -70,7 +70,6 @@ const localConfiguration: Configuration = {
         '@ag-grid-enterprise/viewport-row-model': `${localPrefix}/@ag-grid-enterprise/viewport-row-model/dist/package/main.cjs.js`,
         // 'ag-grid-community': `${localPrefix}/ag-grid-community/dist/package/main.cjs.js`,
         // 'ag-grid-enterprise': `${localPrefix}/ag-grid-enterprise/dist/package/main.cjs.js`,
-        // 'ag-grid-enterprise-charts-enterprise': `${localPrefix}/ag-grid-enterprise-charts-enterprise/dist/package/main.cjs.js`,
         'ag-charts-community': `${localPrefix}/ag-charts-community`,
         'ag-charts-enterprise': `${localPrefix}/ag-charts-enterprise`,
     },

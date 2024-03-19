@@ -39,7 +39,7 @@ export const PUBLISHED_URLS = {
     '@ag-grid-community/vue3': `${NPM_CDN}/@ag-grid-community/vue3@${agGridVue3Version}/`,
     'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}`,
     'ag-grid-enterprise': `${NPM_CDN}/ag-grid-enterprise@${agGridEnterpriseVersion}/`,
-    'ag-grid-enterprise-charts-enterprise': `${NPM_CDN}/ag-grid-enterprise-charts-enterprise@${agGridEnterpriseVersion}/`,
+    'ag-grid-charts-enterprise': `${NPM_CDN}/ag-grid-charts-enterprise@${agGridEnterpriseVersion}/`,
     'ag-grid-angular': `${NPM_CDN}/ag-grid-angular@${agGridAngularVersion}/`,
     'ag-grid-react': `${NPM_CDN}/ag-grid-react@${agGridReactVersion}/`,
     'ag-grid-vue': `${NPM_CDN}/ag-grid-vue@${agGridVueVersion}/`,
