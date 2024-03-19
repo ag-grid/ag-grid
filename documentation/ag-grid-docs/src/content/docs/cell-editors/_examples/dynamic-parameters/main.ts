@@ -73,13 +73,13 @@ function onCellValueChanged(params: CellValueChangedEvent) {
   const colId = params.column.getId()
 
   if (colId === 'country') {
-    const selectedCountry = params.data.country
-    const selectedCity = params.data.city
-    const allowedCities = countyToCityMap(selectedCountry)
-    const cityMismatch = allowedCities.indexOf(selectedCity) < 0
+    const selectedCountry = params.data.country;
+    const selectedCity = params.data.city;
+    const allowedCities = countyToCityMap(selectedCountry) || [];
+    const cityMismatch = allowedCities.indexOf(selectedCity) < 0;
 
     if (cityMismatch) {
-      params.node.setDataValue('city', null)
+      params.node.setDataValue('city', null);
     }
   }
 }

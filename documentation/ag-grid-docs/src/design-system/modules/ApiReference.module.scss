@@ -63,7 +63,6 @@
     }
 
     pre:global(.code) {
-        margin-top: $spacing-size-4;
         margin-bottom: $spacing-size-2;
     }
 
@@ -200,7 +199,7 @@ a.metaValue {
     display: flex;
     flex-wrap: wrap;
     gap: $spacing-size-4 $spacing-size-8;
-    margin-top: auto;
+    margin-top: $spacing-size-2;
     padding-top: $spacing-size-2;
 
     pre {

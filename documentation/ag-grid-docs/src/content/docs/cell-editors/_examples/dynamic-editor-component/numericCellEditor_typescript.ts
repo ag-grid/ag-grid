@@ -56,7 +56,7 @@ export class NumericCellEditor implements ICellEditorComp {
     }
 
     isCharNumeric(charStr: string | null) {
-        return charStr && !!/\d/.test(charStr);
+        return charStr && !!/^\d+$/.test(charStr);
     }
 
     // gets called once when grid ready to insert the element

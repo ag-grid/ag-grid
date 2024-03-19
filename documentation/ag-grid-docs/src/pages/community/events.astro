@@ -1,35 +1,19 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import CommunityMenu from '@components/community-section/CommunityMenu';
-import LayoutStyles from '@design-system/modules/CommunityLayout.module.scss';
+import CommunityLayout from '@layouts/CommunityLayout.astro';
 import Events from '@components/community-section/Events';
+import { getEntry } from 'astro:content';
+
+const { data: eventImages } = await getEntry('community', 'events-images');
+const { data: events } = await getEntry('community', 'events');
 ---
 
-<Layout
-    showSearchBar={true}
-    showDocsNav={false}
+<CommunityLayout
     title="AG Grid: Events"
     description="AG Grid is a regular sponsor and speaker at some of the biggest conferences in the world. Take a look at where we'll be this year or browse through all the events we've sponsored and held since 2018."
+    pageTitle="Events"
+    pageDescription="AG Grid is a regular sponsor and speaker at some of the biggest conferences in the world. Take a look at where we'll be this year or browse through all the events we've sponsored and held since 2017."
 >
-    <div class="layout-max-width-large">
-        <div class={LayoutStyles.header}>
-            <CommunityMenu path={Astro.url.pathname} client:only />
-        </div>
-        <div class="layout-max-width-small">
-            <div class={LayoutStyles.container}>
-                <div class={LayoutStyles.content}>
-                    <!-- Title & Description -->
-                    <h1>Events</h1>
-                    <p class={LayoutStyles.description}>
-                        AG Grid is a regular sponsor and speaker at some of the biggest conferences in the world. Take a
-                        look at where we'll be this year or browse through all the events we've sponsored and held since
-                        2017.
-                    </p>
-                    <section>
-                        <Events client:load />
-                    </section>
-                </div>
-            </div>
-        </div>
-    </div>
-</Layout>
+    <section>
+        <Events client:load images={eventImages} events={events} />
+    </section>
+</CommunityLayout>

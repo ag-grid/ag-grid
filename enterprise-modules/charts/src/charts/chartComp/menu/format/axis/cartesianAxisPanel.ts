@@ -129,13 +129,21 @@ export class CartesianAxisPanel extends Component {
         const chartOptions = chartAxisOptions.getChartOptions();
         const axisTypeSelectOptions = ((chartType, axisType) => {
             if (!isCartesian(chartType)) return null;
-            switch (axisType) {
-                case 'xAxis': return [
-                    { value: 'category', text: this.translate('category') },
-                    { value: 'number', text: this.translate('number') },
-                    { value: 'time', text: this.translate('time') },
-                ];
-                case 'yAxis': return null;
+            switch (chartType) {
+                // Some chart types do not support configuring the axis type
+                case 'heatmap':
+                    return null;
+                default:
+                    switch (axisType) {
+                        // Horizontal axis type can be changed between a limited subset of axis types
+                        case 'xAxis': return [
+                            { value: 'category', text: this.translate('category') },
+                            { value: 'number', text: this.translate('number') },
+                            { value: 'time', text: this.translate('time') },
+                        ];
+                        // Vertical axis type cannot currently be changed
+                        case 'yAxis': return null;
+                    }
             }
         })(this.chartController.getChartType(), this.axisType);
         if (!axisTypeSelectOptions) return null;
@@ -177,15 +185,23 @@ export class CartesianAxisPanel extends Component {
     private getAxisPositionSelectParams(chartAxisOptions: ChartMenuParamsFactory): AgSelectParams | null {
         const axisPositionSelectOptions = ((chartType, axisType) => {
             if (!isCartesian(chartType)) return null;
-            switch (axisType) {
-                case 'xAxis': return [
-                    { value: 'top', text: this.translate('top') },
-                    { value: 'bottom', text: this.translate('bottom') },
-                ];
-                case 'yAxis': return [
-                    { value: 'left', text: this.translate('left') },
-                    { value: 'right', text: this.translate('right') },
-                ];
+            switch (chartType) {
+                // Some chart types do not support configuring the axis position
+                case 'heatmap':
+                    return null;
+                default:
+                    switch (axisType) {
+                        // Horizontal axis position can be changed between top and bottom
+                        case 'xAxis': return [
+                            { value: 'top', text: this.translate('top') },
+                            { value: 'bottom', text: this.translate('bottom') },
+                        ];
+                        // Vertical axis position can be changed between left and right
+                        case 'yAxis': return [
+                            { value: 'left', text: this.translate('left') },
+                            { value: 'right', text: this.translate('right') },
+                        ];
+                    }
             }
         })(this.chartController.getChartType(), this.axisType);
         if (!axisPositionSelectOptions) return null;
@@ -254,9 +270,16 @@ export class CartesianAxisPanel extends Component {
     }
 
     private initGridLines(chartAxisThemeOverrides: ChartMenuParamsFactory) {
-        const gridLineComp = this.createBean(new GridLinePanel(chartAxisThemeOverrides));
-        this.axisGroup.addItem(gridLineComp);
-        this.activePanels.push(gridLineComp);
+        const chartType = this.chartController.getChartType();
+        switch (chartType) {
+            // Some chart types do not support configuring grid lines
+            case 'heatmap':
+                return;
+            default: 
+                const gridLineComp = this.createBean(new GridLinePanel(chartAxisThemeOverrides));
+                this.axisGroup.addItem(gridLineComp);
+                this.activePanels.push(gridLineComp);
+        }
     }
 
     private initAxisTicks(chartAxisThemeOverrides: ChartMenuParamsFactory) {

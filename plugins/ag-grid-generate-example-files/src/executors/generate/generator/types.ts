@@ -12,6 +12,10 @@ export interface ExampleConfig {
     noStyle?: boolean;
     licenseKey?: boolean;
     supportedFrameworks?: InternalFramework[];
+    /**
+     * Example uses `#myGrid`, which needs to be generated in framework examples
+     */
+    myGridReference?: boolean;
 }
 
 export type ImportType = 'packages' | 'modules';

@@ -31,14 +31,20 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     let body = await response.text();
 
-    if (isHtml(context.url.pathname) && getIsProduction()) {
-        try {
-            body = await prettier.format(body, {
-                parser: 'html',
-            });
-        } catch (e) {
-            // eslint-disable-next-line no-console
-            console.warn(`Unable to prettier format for [${context.url.pathname}]`);
+    if (isHtml(context.url.pathname)) {
+        if (getIsProduction()) {
+            try {
+                body = await prettier.format(body, {
+                    parser: 'html',
+                });
+            } catch (e) {
+                // eslint-disable-next-line no-console
+                console.warn(`Unable to prettier format for [${context.url.pathname}]`);
+            }
+        }
+        body = body.trim();
+        if (!/^<!doctype/i.test(body)) {
+            body = "<!doctype html>\n" + body;
         }
     }
 

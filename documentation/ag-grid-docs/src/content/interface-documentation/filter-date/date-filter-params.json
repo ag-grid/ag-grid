@@ -3,7 +3,7 @@
     "IDateFilterParams": {
         "filterOptions": {
             "more": {
-                "url": "./filter-date/#date-filter-options",
+                "url": "./filter-date/#filter-options",
                 "name": "Filter Options"
             }
         },

@@ -43,3 +43,12 @@
     font-weight: var(--text-bold);
     color: var(--color-fg-tertiary);
 }
+
+.cta {
+    color: var(--color-link);
+    font-weight: var(--text-semibold);
+
+    &:hover {
+        color: var(--color-link-hover);
+    }
+}

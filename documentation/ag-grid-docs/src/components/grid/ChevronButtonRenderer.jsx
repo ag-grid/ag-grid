@@ -34,6 +34,7 @@ const ChevronButtonCellRenderer = forwardRef((props, ref) => {
                         ref={ref}
                         src={TreeClosed}
                         style={{ cursor: 'pointer' }}
+                        onMouseDown={ e => e.preventDefault() }
                         onClick={() => {
                             clickHandler();
                         }}
