@@ -61,7 +61,7 @@ export default {
         },
 
         isCharNumeric(charStr) {
-            return /\d/.test(charStr);
+            return /^\d+$/.test(charStr);
         },
 
         isNumericKey(event) {

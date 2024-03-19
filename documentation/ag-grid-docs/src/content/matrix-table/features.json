@@ -944,7 +944,7 @@
                     "name": "[Cell Renderer](./component-cell-renderer)"
                 },
                 {
-                    "name": "[Cell Editor](./component-cell-editor)"
+                    "name": "[Cell Editor](./cell-editors)"
                 },
                 {
                     "name": "[Date Component](./component-date)"

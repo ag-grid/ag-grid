@@ -4,7 +4,7 @@ import { trackOnceDownloadDS } from '@utils/analytics';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 
-const DS_VERSION = '31.0.0';
+const DS_VERSION = '31.2.0';
 
 export const DownloadDSButton = () => {
     return (

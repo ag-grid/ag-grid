@@ -62,7 +62,7 @@ export default memo(({ value, onValueChange, eventKey, stopEditing }: CustomCell
     };
 
     const isCharNumeric = (charStr: string) => {
-        return !!/\d/.test(charStr);
+        return !!/^\d+$/.test(charStr);
     };
 
     const isNumericKey = (event: any) => {

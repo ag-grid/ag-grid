@@ -568,10 +568,6 @@
             }
         },
         "getChartToolbarItems": {
-            "more": {
-                "name": "Configuring Toolbar Items",
-                "url": "./integrated-charts-toolbar/#toolbar-customisation"
-            }
         },
         "createChartContainer": {
             "more": {

@@ -67,7 +67,7 @@ export default memo(forwardRef((props, ref) => {
     };
 
     const isCharNumeric = charStr => {
-        return !!/\d/.test(charStr);
+        return !!/^\d+$/.test(charStr);
     };
 
     const isNumericKey = event => {

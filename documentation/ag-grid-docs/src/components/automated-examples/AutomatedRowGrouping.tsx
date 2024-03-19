@@ -109,7 +109,7 @@ export function AutomatedRowGrouping({
                         setAllScriptEnabledVars(true);
                         automatedExampleManager.start(exampleId);
                     },
-                    icon: `<img src="${urlWithBaseUrl('/images/automated-examples/replay-demo-icon.svg')} />`,
+                    icon: `<img src="${urlWithBaseUrl('/images/automated-examples/replay-demo-icon.svg')}" />`,
                 },
             ],
             onStateChange(state) {

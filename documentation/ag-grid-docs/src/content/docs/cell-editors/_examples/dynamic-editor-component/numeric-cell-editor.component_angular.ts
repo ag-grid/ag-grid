@@ -83,7 +83,7 @@ export class NumericCellEditor implements ICellEditorAngularComp, AfterViewInit 
     }
 
     private isCharNumeric(charStr: string): boolean {
-        return !!/\d/.test(charStr);
+        return !!/^\d+$/.test(charStr);
     }
 
     private isNumericKey(event: any): boolean {
