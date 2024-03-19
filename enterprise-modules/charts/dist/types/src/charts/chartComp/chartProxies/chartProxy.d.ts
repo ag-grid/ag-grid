@@ -44,6 +44,7 @@ export interface UpdateParams {
 }
 export declare abstract class ChartProxy {
     protected readonly chartProxyParams: ChartProxyParams;
+    private readonly isEnterpriseCharts;
     protected readonly chartType: ChartType;
     protected readonly standaloneChartType: ChartSeriesType;
     protected readonly chart: AgChartInstance;

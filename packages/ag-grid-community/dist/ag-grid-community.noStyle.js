@@ -8992,8 +8992,7 @@ var INITIAL_GRID_OPTION_KEYS = {
   getLocaleText: true,
   getRowId: true,
   reactiveCustomComponents: true,
-  columnMenu: true,
-  legacyChartsMenu: true
+  columnMenu: true
 };
 var _PropertyKeys = class _PropertyKeys {
 };
@@ -9251,8 +9250,7 @@ _PropertyKeys.BOOLEAN_PROPERTIES = [
   "masterDetail",
   "treeData",
   "suppressGroupMaintainValueType",
-  "reactiveCustomComponents",
-  "legacyChartsMenu"
+  "reactiveCustomComponents"
 ];
 /** You do not need to include event callbacks in this list, as they are generated automatically. */
 _PropertyKeys.FUNCTIONAL_PROPERTIES = [
@@ -47763,7 +47761,7 @@ var COL_DEF_VALIDATORS = {
 
 // community-modules/core/src/validation/rules/gridOptionsValidations.ts
 var GRID_OPTION_DEPRECATIONS = {
-  enableChartToolPanelsButton: { version: "29", message: "No longer used. To enable the charts menu, use `legacyChartsMenu = false`" },
+  enableChartToolPanelsButton: { version: "29" },
   functionsPassive: { version: "29.2" },
   onColumnRowGroupChangeRequest: { version: "29.2" },
   onColumnPivotChangeRequest: { version: "29.2" },
@@ -47782,8 +47780,7 @@ var GRID_OPTION_DEPRECATIONS = {
   suppressServerSideInfiniteScroll: { version: "31.1" },
   serverSideSortOnServer: { version: "31.1" },
   serverSideFilterOnServer: { version: "31.1" },
-  enableCellChangeFlash: { version: "31.2", message: "Use `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns." },
-  suppressChartToolPanelsButton: { version: "31.2", message: "A new format charts menu is now available. Set `legacyChartsMenu = false`." }
+  enableCellChangeFlash: { version: "31.2", message: "Use `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns." }
 };
 var GRID_OPTION_DEFAULTS = {
   suppressContextMenu: false,

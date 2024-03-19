@@ -115,7 +115,6 @@ export declare const INITIAL_GRID_OPTION_KEYS: {
     getRowId: boolean;
     reactiveCustomComponents: boolean;
     columnMenu: boolean;
-    legacyChartsMenu: boolean;
 };
 type InitialGridOptionKey = keyof typeof INITIAL_GRID_OPTION_KEYS;
 export type ManagedGridOptionKey = Exclude<GridOptionKey, InitialGridOptionKey>;

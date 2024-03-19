@@ -6021,7 +6021,7 @@ import {
   Optional as Optional2,
   PreDestroy
 } from "ag-grid-community";
-import { VERSION as CHARTS_VERSION, _ModuleSupport as _ModuleSupport3 } from "ag-charts-community";
+import { VERSION as CHARTS_VERSION, _ModuleSupport as _ModuleSupport4 } from "ag-charts-community";
 import {
   _ as _322,
   AgDialog as AgDialog2,
@@ -6032,7 +6032,6 @@ import {
   RefSelector as RefSelector12
 } from "ag-grid-community";
 import {
-  _ as _28,
   AgPanel,
   AgPromise as AgPromise2,
   Autowired as Autowired37,
@@ -6322,6 +6321,7 @@ import { Autowired as Autowired38, Component as Component35, PostConstruct as Po
 import { _ as _29 } from "ag-grid-community";
 import {
   _Theme as _Theme8,
+  _ModuleSupport as _ModuleSupport3,
   AgCharts
 } from "ag-charts-community";
 import {
@@ -7204,7 +7204,7 @@ var _ChartDataModel = class _ChartDataModel2 extends BeanStub42 {
     this.unlinked = !!unlinkChart;
     this.crossFiltering = !!crossFiltering;
     this.updateSelectedDimensions(cellRange == null ? void 0 : cellRange.columns);
-    this.updateCellRanges();
+    this.updateCellRanges({ setColsFromRange: true });
     const shouldUpdateComboModel = this.isComboChart() || seriesChartTypes;
     if (shouldUpdateComboModel) {
       this.comboChartModel.update(seriesChartTypes);
@@ -7657,7 +7657,7 @@ function set(target, expression, value) {
   });
   objectToUpdate[keys[keys.length - 1]] = value;
 }
-function createAgChartTheme(chartProxyParams, proxy) {
+function createAgChartTheme(chartProxyParams, proxy, isEnterprise) {
   var _a;
   const { chartOptionsToRestore, chartPaletteToRestore, chartThemeToRestore } = chartProxyParams;
   const themeName = getSelectedTheme(chartProxyParams);
@@ -7679,7 +7679,7 @@ function createAgChartTheme(chartProxyParams, proxy) {
     return isTitleEnabled2(gridOptionsThemeOverrides) || isTitleEnabled2(apiThemeOverrides);
   };
   const overrides = [
-    stockTheme ? inbuiltStockThemeOverrides(chartProxyParams, isTitleEnabled()) : void 0,
+    stockTheme ? inbuiltStockThemeOverrides(chartProxyParams, isEnterprise, isTitleEnabled()) : void 0,
     crossFilteringOverrides,
     gridOptionsThemeOverrides,
     apiThemeOverrides,
@@ -7754,13 +7754,10 @@ var STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES = ALL_AXIS_TYPES.reduce(
   (r, n) => __spreadProps3(__spreadValues3({}, r), { [n]: { title: { _enabledFromTheme: true } } }),
   {}
 );
-function inbuiltStockThemeOverrides(params, titleEnabled) {
+function inbuiltStockThemeOverrides(params, isEnterprise, titleEnabled) {
   const extraPadding = params.getExtraPaddingDirections();
   return {
-    common: {
-      animation: {
-        duration: 500
-      },
+    common: __spreadProps3(__spreadValues3({}, isEnterprise ? { animation: { duration: 500 } } : void 0), {
       axes: STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES,
       padding: {
         // don't add extra padding when a title is present!
@@ -7769,7 +7766,7 @@ function inbuiltStockThemeOverrides(params, titleEnabled) {
         bottom: extraPadding.includes("bottom") ? 40 : 20,
         left: extraPadding.includes("left") ? 30 : 20
       }
-    },
+    }),
     pie: {
       series: {
         title: { _enabledFromTheme: true },
@@ -10270,15 +10267,20 @@ var _CartesianAxisPanel = class _CartesianAxisPanel2 extends Component102 {
     const axisTypeSelectOptions = ((chartType, axisType) => {
       if (!isCartesian(chartType))
         return null;
-      switch (axisType) {
-        case "xAxis":
-          return [
-            { value: "category", text: this.translate("category") },
-            { value: "number", text: this.translate("number") },
-            { value: "time", text: this.translate("time") }
-          ];
-        case "yAxis":
+      switch (chartType) {
+        case "heatmap":
           return null;
+        default:
+          switch (axisType) {
+            case "xAxis":
+              return [
+                { value: "category", text: this.translate("category") },
+                { value: "number", text: this.translate("number") },
+                { value: "time", text: this.translate("time") }
+              ];
+            case "yAxis":
+              return null;
+          }
       }
     })(this.chartController.getChartType(), this.axisType);
     if (!axisTypeSelectOptions)
@@ -10315,17 +10317,22 @@ var _CartesianAxisPanel = class _CartesianAxisPanel2 extends Component102 {
     const axisPositionSelectOptions = ((chartType, axisType) => {
       if (!isCartesian(chartType))
         return null;
-      switch (axisType) {
-        case "xAxis":
-          return [
-            { value: "top", text: this.translate("top") },
-            { value: "bottom", text: this.translate("bottom") }
-          ];
-        case "yAxis":
-          return [
-            { value: "left", text: this.translate("left") },
-            { value: "right", text: this.translate("right") }
-          ];
+      switch (chartType) {
+        case "heatmap":
+          return null;
+        default:
+          switch (axisType) {
+            case "xAxis":
+              return [
+                { value: "top", text: this.translate("top") },
+                { value: "bottom", text: this.translate("bottom") }
+              ];
+            case "yAxis":
+              return [
+                { value: "left", text: this.translate("left") },
+                { value: "right", text: this.translate("right") }
+              ];
+          }
       }
     })(this.chartController.getChartType(), this.axisType);
     if (!axisPositionSelectOptions)
@@ -10395,9 +10402,15 @@ var _CartesianAxisPanel = class _CartesianAxisPanel2 extends Component102 {
     return axisLineWidthSliderParams;
   }
   initGridLines(chartAxisThemeOverrides) {
-    const gridLineComp = this.createBean(new GridLinePanel(chartAxisThemeOverrides));
-    this.axisGroup.addItem(gridLineComp);
-    this.activePanels.push(gridLineComp);
+    const chartType = this.chartController.getChartType();
+    switch (chartType) {
+      case "heatmap":
+        return;
+      default:
+        const gridLineComp = this.createBean(new GridLinePanel(chartAxisThemeOverrides));
+        this.axisGroup.addItem(gridLineComp);
+        this.activePanels.push(gridLineComp);
+    }
   }
   initAxisTicks(chartAxisThemeOverrides) {
     if (!this.hasConfigurableAxisTicks())
@@ -14514,7 +14527,6 @@ var _ChartMenu = class _ChartMenu2 extends Component34 {
     this.chartToolbar = this.createManagedBean(new ChartToolbar());
     this.getGui().appendChild(this.chartToolbar.getGui());
     if (this.legacyFormat) {
-      _28.warnOnce("As of v31.2, the legacy format charts menu is deprecated. Set `legacyChartsMenu = false` to use the new format menu.");
       this.createLegacyToggleButton();
     }
     this.refreshToolbarAndPanels();
@@ -14883,6 +14895,7 @@ var ChartProxy = class {
   constructor(chartProxyParams) {
     this.chartProxyParams = chartProxyParams;
     this.clearThemeOverrides = false;
+    this.isEnterpriseCharts = _ModuleSupport3.enterpriseModule.isEnterprise;
     this.chart = chartProxyParams.chartInstance;
     this.chartType = chartProxyParams.chartType;
     this.crossFiltering = chartProxyParams.crossFiltering;
@@ -14952,7 +14965,7 @@ var ChartProxy = class {
     const existingOptions = this.clearThemeOverrides ? {} : (_b = (_a = this.chart) == null ? void 0 : _a.getOptions()) != null ? _b : {};
     const formattingPanelOverrides = this.chart != null ? this.getActiveFormattingPanelOverrides() : void 0;
     this.clearThemeOverrides = false;
-    const baseTheme = createAgChartTheme(this.chartProxyParams, this);
+    const baseTheme = createAgChartTheme(this.chartProxyParams, this, this.isEnterpriseCharts);
     const chartThemeDefaults = this.getChartThemeDefaults();
     const theme = applyThemeOverrides(baseTheme, [
       chartThemeDefaults,
@@ -16544,8 +16557,7 @@ var CHART_TOOL_PANEL_MENU_OPTIONS = {
 };
 var ChartMenuService = class extends BeanStub9 {
   isLegacyFormat() {
-    var _a;
-    return (_a = this.gridOptionsService.get("legacyChartsMenu")) != null ? _a : !this.chartService.isEnterprise();
+    return !this.chartService.isEnterprise();
   }
   downloadChart(chartMenuContext, dimensions, fileName, fileFormat) {
     chartMenuContext.chartController.getChartProxy().downloadChart(dimensions, fileName, fileFormat);
@@ -16583,7 +16595,7 @@ var ChartMenuService = class extends BeanStub9 {
           if (CHART_TOOL_PANEL_ALLOW_LIST.includes(option)) {
             msg = `'${option}' is a Chart Tool Panel option and will be ignored since 'chartToolPanelsDef' is used. Please use 'chartToolPanelsDef.panels' grid option instead`;
           } else if (option === "chartMenu") {
-            msg = `'chartMenu' is only allowed as a Chart Toolbar Option when 'legacyChartsMenu' is set to false`;
+            msg = `'chartMenu' is only allowed as a Chart Toolbar Option when using AG Charts Enterprise`;
           } else {
             msg = `'${option}' is not a valid Chart Toolbar Option`;
           }
@@ -17523,7 +17535,7 @@ var ChartService = class extends BeanStub10 {
     this.crossFilteringContext = {
       lastSelectedChartId: ""
     };
-    this.isEnterprise = () => _ModuleSupport3.enterpriseModule.isEnterprise;
+    this.isEnterprise = () => _ModuleSupport4.enterpriseModule.isEnterprise;
   }
   updateChart(params) {
     const chartType = params.chartType;
@@ -19683,7 +19695,7 @@ var ClipboardModule = {
 // enterprise-modules/column-tool-panel/dist/package/main.esm.mjs
 import { ModuleNames as ModuleNames24 } from "ag-grid-community";
 import {
-  _ as _39,
+  _ as _38,
   Autowired as Autowired55,
   Events as Events13,
   RefSelector as RefSelector17,
@@ -19710,7 +19722,7 @@ import {
   VirtualListDragFeature as VirtualListDragFeature2
 } from "ag-grid-community";
 import {
-  _ as _310,
+  _ as _39,
   Autowired as Autowired312,
   Column as Column3,
   Component as Component312,
@@ -19770,7 +19782,7 @@ import {
   Bean as Bean9,
   BeanStub as BeanStub16,
   Autowired as Autowired50,
-  _ as _30
+  _ as _28
 } from "ag-grid-community";
 import {
   _ as _210,
@@ -19901,7 +19913,7 @@ var AggregationStage = class extends BeanStub16 {
   // it's possible to recompute the aggregate without doing the other parts
   // + api.refreshClientSideRowModel('aggregate')
   execute(params) {
-    const noValueColumns = _30.missingOrEmpty(this.columnModel.getValueColumns());
+    const noValueColumns = _28.missingOrEmpty(this.columnModel.getValueColumns());
     const noUserAgg = !this.gridOptionsService.getCallback("getGroupRowAgg");
     const changedPathActive = params.changedPath && params.changedPath.isActive();
     if (noValueColumns && noUserAgg && changedPathActive) {
@@ -22542,7 +22554,7 @@ import {
   Component as Component210,
   PostConstruct as PostConstruct211,
   RefSelector as RefSelector16,
-  _ as _38
+  _ as _30
 } from "ag-grid-community";
 import {
   Autowired as Autowired311,
@@ -22689,14 +22701,14 @@ var _SideBarButtonComp = class _SideBarButtonComp2 extends Component210 {
     this.eLabel.innerText = label;
   }
   setIcon() {
-    this.eIconWrapper.insertAdjacentElement("afterbegin", _38.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsService));
+    this.eIconWrapper.insertAdjacentElement("afterbegin", _30.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsService));
   }
   onButtonPressed() {
     this.dispatchEvent({ type: _SideBarButtonComp2.EVENT_TOGGLE_BUTTON_CLICKED });
   }
   setSelected(selected) {
     this.addOrRemoveCssClass("ag-selected", selected);
-    _38.setAriaExpanded(this.eToggleButton, selected);
+    _30.setAriaExpanded(this.eToggleButton, selected);
   }
   getButtonElement() {
     return this.eToggleButton;
@@ -23518,9 +23530,9 @@ var _PrimaryColsHeaderPanel = class _PrimaryColsHeaderPanel2 extends Component46
     }
   }
   createExpandIcons() {
-    this.eExpand.appendChild(this.eExpandChecked = _39.createIconNoSpan("columnSelectOpen", this.gridOptionsService));
-    this.eExpand.appendChild(this.eExpandUnchecked = _39.createIconNoSpan("columnSelectClosed", this.gridOptionsService));
-    this.eExpand.appendChild(this.eExpandIndeterminate = _39.createIconNoSpan("columnSelectIndeterminate", this.gridOptionsService));
+    this.eExpand.appendChild(this.eExpandChecked = _38.createIconNoSpan("columnSelectOpen", this.gridOptionsService));
+    this.eExpand.appendChild(this.eExpandUnchecked = _38.createIconNoSpan("columnSelectClosed", this.gridOptionsService));
+    this.eExpand.appendChild(this.eExpandIndeterminate = _38.createIconNoSpan("columnSelectIndeterminate", this.gridOptionsService));
     this.setExpandState(
       0
       /* EXPANDED */
@@ -23534,13 +23546,13 @@ var _PrimaryColsHeaderPanel = class _PrimaryColsHeaderPanel2 extends Component46
     const groupsPresent = this.columnModel.isPrimaryColumnGroupsPresent();
     const translate = this.localeService.getLocaleTextFunc();
     this.eFilterTextField.setInputPlaceholder(translate("searchOoo", "Search..."));
-    _39.setDisplayed(this.eFilterTextField.getGui(), showFilter);
-    _39.setDisplayed(this.eSelect.getGui(), showSelect);
-    _39.setDisplayed(this.eExpand, showExpand && groupsPresent);
+    _38.setDisplayed(this.eFilterTextField.getGui(), showFilter);
+    _38.setDisplayed(this.eSelect.getGui(), showSelect);
+    _38.setDisplayed(this.eExpand, showExpand && groupsPresent);
   }
   onFilterTextChanged() {
     if (!this.onFilterTextChangedDebounced) {
-      this.onFilterTextChangedDebounced = _39.debounce(() => {
+      this.onFilterTextChangedDebounced = _38.debounce(() => {
         const filterText = this.eFilterTextField.getValue();
         this.dispatchEvent({ type: "filterChanged", filterText });
       }, _PrimaryColsHeaderPanel2.DEBOUNCE_DELAY);
@@ -23560,17 +23572,17 @@ var _PrimaryColsHeaderPanel = class _PrimaryColsHeaderPanel2 extends Component46
   }
   setExpandState(state) {
     this.expandState = state;
-    _39.setDisplayed(
+    _38.setDisplayed(
       this.eExpandChecked,
       this.expandState === 0
       /* EXPANDED */
     );
-    _39.setDisplayed(
+    _38.setDisplayed(
       this.eExpandUnchecked,
       this.expandState === 1
       /* COLLAPSED */
     );
-    _39.setDisplayed(
+    _38.setDisplayed(
       this.eExpandIndeterminate,
       this.expandState === 2
       /* INDETERMINATE */
@@ -23845,7 +23857,7 @@ var _ToolPanelColumnGroupComp = class _ToolPanelColumnGroupComp2 extends Compone
   }
   init() {
     this.setTemplate(_ToolPanelColumnGroupComp2.TEMPLATE);
-    this.eDragHandle = _310.createIconNoSpan("columnDrag", this.gridOptionsService);
+    this.eDragHandle = _39.createIconNoSpan("columnDrag", this.gridOptionsService);
     this.eDragHandle.classList.add("ag-drag-handle", "ag-column-select-column-group-drag-handle");
     const checkboxGui = this.cbSelect.getGui();
     const checkboxInput = this.cbSelect.getInputElement();
@@ -23935,7 +23947,7 @@ var _ToolPanelColumnGroupComp = class _ToolPanelColumnGroupComp2 extends Compone
   }
   setupDragging() {
     if (!this.allowDragging) {
-      _310.setDisplayed(this.eDragHandle, false);
+      _39.setDisplayed(this.eDragHandle, false);
       return;
     }
     let hideColumnOnExit = !this.gridOptionsService.get("suppressDragLeaveHidesColumns");
@@ -23994,8 +24006,8 @@ var _ToolPanelColumnGroupComp = class _ToolPanelColumnGroupComp2 extends Compone
     };
   }
   setupExpandContract() {
-    this.eGroupClosedIcon.appendChild(_310.createIcon("columnSelectClosed", this.gridOptionsService, null));
-    this.eGroupOpenedIcon.appendChild(_310.createIcon("columnSelectOpen", this.gridOptionsService, null));
+    this.eGroupClosedIcon.appendChild(_39.createIcon("columnSelectClosed", this.gridOptionsService, null));
+    this.eGroupOpenedIcon.appendChild(_39.createIcon("columnSelectOpen", this.gridOptionsService, null));
     this.addManagedListener(this.eGroupClosedIcon, "click", this.onExpandOrContractClicked.bind(this));
     this.addManagedListener(this.eGroupOpenedIcon, "click", this.onExpandOrContractClicked.bind(this));
     const touchListener = new TouchListener(this.eColumnGroupIcons, true);
@@ -24039,9 +24051,9 @@ var _ToolPanelColumnGroupComp = class _ToolPanelColumnGroupComp2 extends Compone
     const checkboxValue = this.cbSelect.getValue();
     const state = checkboxValue === void 0 ? translate("ariaIndeterminate", "indeterminate") : checkboxValue ? translate("ariaVisible", "visible") : translate("ariaHidden", "hidden");
     const visibilityLabel = translate("ariaToggleVisibility", "Press SPACE to toggle visibility");
-    _310.setAriaLabel(this.focusWrapper, `${this.displayName} ${columnLabel}`);
+    _39.setAriaLabel(this.focusWrapper, `${this.displayName} ${columnLabel}`);
     this.cbSelect.setInputAriaLabel(`${visibilityLabel} (${state})`);
-    _310.setAriaDescribedBy(this.focusWrapper, this.cbSelect.getInputElement().id);
+    _39.setAriaDescribedBy(this.focusWrapper, this.cbSelect.getInputElement().id);
   }
   onColumnStateChanged() {
     const selectedValue = this.workOutSelectedValue();
@@ -24107,11 +24119,11 @@ var _ToolPanelColumnGroupComp = class _ToolPanelColumnGroupComp2 extends Compone
   }
   setOpenClosedIcons() {
     const folderOpen = this.modelItem.isExpanded();
-    _310.setDisplayed(this.eGroupClosedIcon, !folderOpen);
-    _310.setDisplayed(this.eGroupOpenedIcon, folderOpen);
+    _39.setDisplayed(this.eGroupClosedIcon, !folderOpen);
+    _39.setDisplayed(this.eGroupOpenedIcon, folderOpen);
   }
   refreshAriaExpanded() {
-    _310.setAriaExpanded(this.focusWrapper, this.modelItem.isExpanded());
+    _39.setAriaExpanded(this.focusWrapper, this.modelItem.isExpanded());
   }
   getDisplayName() {
     return this.displayName;
@@ -25469,7 +25481,7 @@ import { _ as _213 } from "ag-grid-community";
 import {
   _ as _46
 } from "ag-grid-community";
-import { _ as _311 } from "ag-grid-community";
+import { _ as _310 } from "ag-grid-community";
 import { BaseCreator, Downloader, RowType as RowType2, ZipContainer } from "ag-grid-community";
 import {
   _ as _65
@@ -27447,14 +27459,14 @@ var cellFactory = {
     if (convertedType === "str" && type === "f") {
       children = [{
         name: "f",
-        textNode: _311.escapeString(value)
+        textNode: _310.escapeString(value)
       }];
     } else if (convertedType === "inlineStr") {
       children = [{
         name: "is",
         children: [{
           name: "t",
-          textNode: _311.escapeString(value)
+          textNode: _310.escapeString(value)
         }]
       }];
     } else {
@@ -28934,7 +28946,7 @@ import {
   RefSelector as RefSelector26
 } from "ag-grid-community";
 import {
-  _ as _312,
+  _ as _311,
   AgGroupComponent,
   Autowired as Autowired313,
   Column as Column32,
@@ -29406,7 +29418,7 @@ var _ToolPanelFilterGroupComp = class _ToolPanelFilterGroupComp2 extends Compone
   }
   destroyFilters() {
     this.childFilterComps = this.destroyBeans(this.childFilterComps);
-    _312.clearElement(this.getGui());
+    _311.clearElement(this.getGui());
   }
   destroy() {
     this.destroyFilters();
@@ -30233,7 +30245,7 @@ import {
   PostConstruct as PostConstruct214
 } from "ag-grid-community";
 import {
-  _ as _313,
+  _ as _312,
   Autowired as Autowired314,
   Bean as Bean34,
   BeanStub as BeanStub34,
@@ -30955,7 +30967,7 @@ var MenuItemMapper = class extends BeanStub34 {
       case "pinSubMenu":
         return {
           name: localeTextFunc("pinColumn", "Pin Column"),
-          icon: _313.createIconNoSpan("menuPin", this.gridOptionsService, null),
+          icon: _312.createIconNoSpan("menuPin", this.gridOptionsService, null),
           subMenu: ["clearPinned", "pinLeft", "pinRight"]
         };
       case "pinLeft":
@@ -30983,7 +30995,7 @@ var MenuItemMapper = class extends BeanStub34 {
           }
           return {
             name: localeTextFunc("valueAggregation", "Value Aggregation"),
-            icon: _313.createIconNoSpan("menuValue", this.gridOptionsService, null),
+            icon: _312.createIconNoSpan("menuValue", this.gridOptionsService, null),
             subMenu: this.createAggregationSubMenu(column)
           };
         } else {
@@ -31001,13 +31013,13 @@ var MenuItemMapper = class extends BeanStub34 {
         };
       case "rowGroup":
         return {
-          name: localeTextFunc("groupBy", "Group by") + " " + _313.escapeString(this.columnModel.getDisplayNameForColumn(column, "header")),
+          name: localeTextFunc("groupBy", "Group by") + " " + _312.escapeString(this.columnModel.getDisplayNameForColumn(column, "header")),
           disabled: (column == null ? void 0 : column.isRowGroupActive()) || !(column == null ? void 0 : column.getColDef().enableRowGroup),
           action: () => this.columnModel.addRowGroupColumns([column], "contextMenu"),
-          icon: _313.createIconNoSpan("menuAddRowGroup", this.gridOptionsService, null)
+          icon: _312.createIconNoSpan("menuAddRowGroup", this.gridOptionsService, null)
         };
       case "rowUnGroup":
-        const icon = _313.createIconNoSpan("menuRemoveRowGroup", this.gridOptionsService, null);
+        const icon = _312.createIconNoSpan("menuRemoveRowGroup", this.gridOptionsService, null);
         const showRowGroup = column == null ? void 0 : column.getColDef().showRowGroup;
         const lockedGroups = this.gridOptionsService.get("groupLockGroupColumns");
         if (showRowGroup === true) {
@@ -31020,7 +31032,7 @@ var MenuItemMapper = class extends BeanStub34 {
         }
         if (typeof showRowGroup === "string") {
           const underlyingColumn = this.columnModel.getPrimaryColumn(showRowGroup);
-          const ungroupByName = underlyingColumn != null ? _313.escapeString(this.columnModel.getDisplayNameForColumn(underlyingColumn, "header")) : showRowGroup;
+          const ungroupByName = underlyingColumn != null ? _312.escapeString(this.columnModel.getDisplayNameForColumn(underlyingColumn, "header")) : showRowGroup;
           return {
             name: localeTextFunc("ungroupBy", "Un-Group by") + " " + ungroupByName,
             disabled: underlyingColumn != null && this.columnModel.isColumnGroupingLocked(underlyingColumn),
@@ -31029,7 +31041,7 @@ var MenuItemMapper = class extends BeanStub34 {
           };
         }
         return {
-          name: localeTextFunc("ungroupBy", "Un-Group by") + " " + _313.escapeString(this.columnModel.getDisplayNameForColumn(column, "header")),
+          name: localeTextFunc("ungroupBy", "Un-Group by") + " " + _312.escapeString(this.columnModel.getDisplayNameForColumn(column, "header")),
           disabled: !(column == null ? void 0 : column.isRowGroupActive()) || !(column == null ? void 0 : column.getColDef().enableRowGroup) || this.columnModel.isColumnGroupingLocked(column),
           action: () => this.columnModel.removeRowGroupColumns([column], "contextMenu"),
           icon
@@ -31054,7 +31066,7 @@ var MenuItemMapper = class extends BeanStub34 {
           return {
             name: localeTextFunc("copy", "Copy"),
             shortcut: localeTextFunc("ctrlC", "Ctrl+C"),
-            icon: _313.createIconNoSpan("clipboardCopy", this.gridOptionsService, null),
+            icon: _312.createIconNoSpan("clipboardCopy", this.gridOptionsService, null),
             action: () => this.clipboardService.copyToClipboard()
           };
         } else {
@@ -31065,7 +31077,7 @@ var MenuItemMapper = class extends BeanStub34 {
           return {
             name: localeTextFunc("copyWithHeaders", "Copy with Headers"),
             // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-            icon: _313.createIconNoSpan("clipboardCopy", this.gridOptionsService, null),
+            icon: _312.createIconNoSpan("clipboardCopy", this.gridOptionsService, null),
             action: () => this.clipboardService.copyToClipboard({ includeHeaders: true })
           };
         } else {
@@ -31076,7 +31088,7 @@ var MenuItemMapper = class extends BeanStub34 {
           return {
             name: localeTextFunc("copyWithGroupHeaders", "Copy with Group Headers"),
             // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-            icon: _313.createIconNoSpan("clipboardCopy", this.gridOptionsService, null),
+            icon: _312.createIconNoSpan("clipboardCopy", this.gridOptionsService, null),
             action: () => this.clipboardService.copyToClipboard({ includeHeaders: true, includeGroupHeaders: true })
           };
         } else {
@@ -31090,7 +31102,7 @@ var MenuItemMapper = class extends BeanStub34 {
           return {
             name: localeTextFunc("cut", "Cut"),
             shortcut: localeTextFunc("ctrlX", "Ctrl+X"),
-            icon: _313.createIconNoSpan("clipboardCut", this.gridOptionsService, null),
+            icon: _312.createIconNoSpan("clipboardCut", this.gridOptionsService, null),
             disabled: !isEditable || this.gridOptionsService.get("suppressCutToClipboard"),
             action: () => this.clipboardService.cutToClipboard(void 0, "contextMenu")
           };
@@ -31103,7 +31115,7 @@ var MenuItemMapper = class extends BeanStub34 {
             name: localeTextFunc("paste", "Paste"),
             shortcut: localeTextFunc("ctrlV", "Ctrl+V"),
             disabled: true,
-            icon: _313.createIconNoSpan("clipboardPaste", this.gridOptionsService, null),
+            icon: _312.createIconNoSpan("clipboardPaste", this.gridOptionsService, null),
             action: () => this.clipboardService.pasteFromClipboard()
           };
         } else {
@@ -31122,18 +31134,18 @@ var MenuItemMapper = class extends BeanStub34 {
         return {
           name: localeTextFunc("export", "Export"),
           subMenu: exportSubMenuItems,
-          icon: _313.createIconNoSpan("save", this.gridOptionsService, null)
+          icon: _312.createIconNoSpan("save", this.gridOptionsService, null)
         };
       case "csvExport":
         return {
           name: localeTextFunc("csvExport", "CSV Export"),
-          icon: _313.createIconNoSpan("csvExport", this.gridOptionsService, null),
+          icon: _312.createIconNoSpan("csvExport", this.gridOptionsService, null),
           action: () => this.gridApi.exportDataAsCsv({})
         };
       case "excelExport":
         return {
           name: localeTextFunc("excelExport", "Excel Export"),
-          icon: _313.createIconNoSpan("excelExport", this.gridOptionsService, null),
+          icon: _312.createIconNoSpan("excelExport", this.gridOptionsService, null),
           action: () => this.gridApi.exportDataAsExcel()
         };
       case "separator":
@@ -31145,7 +31157,7 @@ var MenuItemMapper = class extends BeanStub34 {
         if (column) {
           return {
             name: localeTextFunc("columnFilter", "Column Filter"),
-            icon: _313.createIconNoSpan("filter", this.gridOptionsService, null),
+            icon: _312.createIconNoSpan("filter", this.gridOptionsService, null),
             action: () => this.menuService.showFilterMenu({
               column,
               buttonElement: sourceElement(),
@@ -31160,7 +31172,7 @@ var MenuItemMapper = class extends BeanStub34 {
         if (ModuleRegistry32.__isRegistered(ModuleNames32.ColumnsToolPanelModule, this.context.getGridId())) {
           return {
             name: localeTextFunc("columnChooser", "Choose Columns"),
-            icon: _313.createIconNoSpan("columns", this.gridOptionsService, null),
+            icon: _312.createIconNoSpan("columns", this.gridOptionsService, null),
             action: () => this.menuService.showColumnChooser({ column, eventSource: sourceElement() })
           };
         } else {
@@ -31169,19 +31181,19 @@ var MenuItemMapper = class extends BeanStub34 {
       case "sortAscending":
         return {
           name: localeTextFunc("sortAscending", "Sort Ascending"),
-          icon: _313.createIconNoSpan("sortAscending", this.gridOptionsService, null),
+          icon: _312.createIconNoSpan("sortAscending", this.gridOptionsService, null),
           action: () => this.sortController.setSortForColumn(column, "asc", false, "columnMenu")
         };
       case "sortDescending":
         return {
           name: localeTextFunc("sortDescending", "Sort Descending"),
-          icon: _313.createIconNoSpan("sortDescending", this.gridOptionsService, null),
+          icon: _312.createIconNoSpan("sortDescending", this.gridOptionsService, null),
           action: () => this.sortController.setSortForColumn(column, "desc", false, "columnMenu")
         };
       case "sortUnSort":
         return {
           name: localeTextFunc("sortUnSort", "Clear Sort"),
-          icon: _313.createIconNoSpan("sortUnSort", this.gridOptionsService, null),
+          icon: _312.createIconNoSpan("sortUnSort", this.gridOptionsService, null),
           action: () => this.sortController.setSortForColumn(column, null, false, "columnMenu")
         };
       default: {
@@ -31197,7 +31209,7 @@ var MenuItemMapper = class extends BeanStub34 {
       columnToUse = column;
     } else {
       const pivotValueColumn = column.getColDef().pivotValueColumn;
-      columnToUse = _313.exists(pivotValueColumn) ? pivotValueColumn : void 0;
+      columnToUse = _312.exists(pivotValueColumn) ? pivotValueColumn : void 0;
     }
     const result = [];
     if (columnToUse) {
@@ -32786,7 +32798,7 @@ var RichSelectModule = {
 // enterprise-modules/server-side-row-model/dist/package/main.esm.mjs
 import { ModuleNames as ModuleNames15 } from "ag-grid-community";
 import {
-  _ as _314,
+  _ as _313,
   Autowired as Autowired511,
   Bean as Bean28,
   BeanStub as BeanStub45,
@@ -35241,7 +35253,7 @@ __decorateClass14([
 var ServerSideRowModel = class extends BeanStub45 {
   constructor() {
     super(...arguments);
-    this.onRowHeightChanged_debounced = _314.debounce(this.onRowHeightChanged.bind(this), 100);
+    this.onRowHeightChanged_debounced = _313.debounce(this.onRowHeightChanged.bind(this), 100);
     this.pauseStoreUpdateListening = false;
     this.started = false;
     this.managingPivotResultColumns = false;
@@ -35295,10 +35307,10 @@ var ServerSideRowModel = class extends BeanStub45 {
   }
   verifyProps() {
     if (this.gridOptionsService.exists("initialGroupOrderComparator")) {
-      _314.warnOnce(`initialGroupOrderComparator cannot be used with Server Side Row Model.`);
+      _313.warnOnce(`initialGroupOrderComparator cannot be used with Server Side Row Model.`);
     }
     if (this.gridOptionsService.isRowSelection() && !this.gridOptionsService.exists("getRowId")) {
-      _314.warnOnce(`getRowId callback must be provided for Server Side Row Model selection to work correctly.`);
+      _313.warnOnce(`getRowId callback must be provided for Server Side Row Model selection to work correctly.`);
     }
   }
   setDatasource(datasource) {
@@ -35353,7 +35365,7 @@ var ServerSideRowModel = class extends BeanStub45 {
       const missingCols = !params.allowRemovedColumns && !!Object.values(oldColsMap).length;
       return allColsUnchanged && !missingCols;
     };
-    const sortModelDifferent = !_314.jsonEquals(this.storeParams.sortModel, this.sortController.getSortModel());
+    const sortModelDifferent = !_313.jsonEquals(this.storeParams.sortModel, this.sortController.getSortModel());
     const rowGroupDifferent = !areColsSame({
       oldCols: this.storeParams.rowGroupCols,
       newCols: rowGroupColumnVos
@@ -35675,7 +35687,7 @@ var ServerSideRowModel = class extends BeanStub45 {
     return res;
   }
   getNodesInRangeForSelection(firstInRange, lastInRange) {
-    if (!_314.exists(firstInRange)) {
+    if (!_313.exists(firstInRange)) {
       return [];
     }
     if (!lastInRange) {
@@ -37391,7 +37403,7 @@ import {
   GROUP_AUTO_COLUMN_ID as GROUP_AUTO_COLUMN_ID2
 } from "ag-grid-community";
 import {
-  _ as _315,
+  _ as _314,
   AgPromise as AgPromise24,
   TextFilter,
   EventService as EventService2
@@ -37966,11 +37978,11 @@ var _SetValueModel = class _SetValueModel2 {
     if (treeDataOrGrouping && !keyComparator) {
       this.entryComparator = this.createTreeDataOrGroupingComparator();
     } else if (treeList && !treeListPathGetter && !keyComparator) {
-      this.entryComparator = ([_aKey, aValue], [_bKey, bValue]) => _315.defaultComparator(aValue, bValue);
+      this.entryComparator = ([_aKey, aValue], [_bKey, bValue]) => _314.defaultComparator(aValue, bValue);
     } else {
       this.entryComparator = ([_aKey, aValue], [_bKey, bValue]) => keyComparator(aValue, bValue);
     }
-    this.keyComparator = keyComparator != null ? keyComparator : _315.defaultComparator;
+    this.keyComparator = keyComparator != null ? keyComparator : _314.defaultComparator;
     this.caseSensitive = !!caseSensitive;
     const getDataPath = gridOptionsService.get("getDataPath");
     const groupAllowUnbalanced = gridOptionsService.get("groupAllowUnbalanced");
@@ -38128,9 +38140,9 @@ var _SetValueModel = class _SetValueModel2 {
       if (firstValue && typeof firstValue !== "object" && typeof firstValue !== "function") {
         const firstKey = this.createKey(firstValue);
         if (firstKey == null) {
-          _315.warnOnce("Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects or set convertValuesToStrings=true in the filterParams. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types");
+          _314.warnOnce("Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects or set convertValuesToStrings=true in the filterParams. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types");
         } else {
-          _315.warnOnce("Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects or enable convertValuesToStrings?");
+          _314.warnOnce("Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects or enable convertValuesToStrings?");
         }
       }
     }
@@ -38173,7 +38185,7 @@ var _SetValueModel = class _SetValueModel2 {
   }
   getParamsForValuesFromRows(removeUnavailableValues = false) {
     if (!this.clientSideValuesExtractor) {
-      _315.doOnce(() => {
+      _314.doOnce(() => {
         console.error("AG Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values");
       }, "setFilterValueNotCSRM");
       return null;
@@ -38198,7 +38210,7 @@ var _SetValueModel = class _SetValueModel2 {
   }
   /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */
   setMiniFilter(value) {
-    value = _315.makeNull(value);
+    value = _314.makeNull(value);
     if (this.miniFilterText === value) {
       return false;
     }
@@ -38272,7 +38284,7 @@ var _SetValueModel = class _SetValueModel2 {
     return this.isInWindowsExcelMode() && this.addCurrentSelectionToFilter;
   }
   showAddCurrentSelectionToFilter() {
-    return this.isInWindowsExcelMode() && _315.exists(this.miniFilterText) && this.miniFilterText.length > 0;
+    return this.isInWindowsExcelMode() && _314.exists(this.miniFilterText) && this.miniFilterText.length > 0;
   }
   selectAllMatchingMiniFilter(clearExistingSelection = false) {
     if (this.miniFilterText == null) {
@@ -38337,7 +38349,7 @@ var _SetValueModel = class _SetValueModel2 {
           existingFormattedKeys.set(this.caseFormat(key), key);
         });
         model.forEach((unformattedKey) => {
-          const formattedKey = this.caseFormat(_315.makeNull(unformattedKey));
+          const formattedKey = this.caseFormat(_314.makeNull(unformattedKey));
           const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
           if (existingUnformattedKey !== void 0) {
             this.selectKey(existingUnformattedKey);
@@ -38350,7 +38362,7 @@ var _SetValueModel = class _SetValueModel2 {
     const uniqueValues = /* @__PURE__ */ new Map();
     const formattedKeys = /* @__PURE__ */ new Set();
     (values != null ? values : []).forEach((value) => {
-      const valueToUse = _315.makeNull(value);
+      const valueToUse = _314.makeNull(value);
       const unformattedKey = this.convertAndGetKey(valueToUse);
       const formattedKey = this.caseFormat(unformattedKey);
       if (!formattedKeys.has(formattedKey)) {
@@ -38384,7 +38396,7 @@ var _SetValueModel = class _SetValueModel2 {
         if (i >= bValue.length) {
           return 1;
         }
-        const diff = _315.defaultComparator(aValue[i], bValue[i]);
+        const diff = _314.defaultComparator(aValue[i], bValue[i]);
         if (diff !== 0) {
           return diff;
         }

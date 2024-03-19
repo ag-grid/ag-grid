@@ -868,7 +868,7 @@ var _ChartDataModel = class _ChartDataModel extends import_core4.BeanStub {
     this.unlinked = !!unlinkChart;
     this.crossFiltering = !!crossFiltering;
     this.updateSelectedDimensions(cellRange == null ? void 0 : cellRange.columns);
-    this.updateCellRanges();
+    this.updateCellRanges({ setColsFromRange: true });
     const shouldUpdateComboModel = this.isComboChart() || seriesChartTypes;
     if (shouldUpdateComboModel) {
       this.comboChartModel.update(seriesChartTypes);
@@ -1334,7 +1334,7 @@ function set(target, expression, value) {
 }
 
 // enterprise-modules/charts/src/charts/chartComp/chartProxies/chartTheme.ts
-function createAgChartTheme(chartProxyParams, proxy) {
+function createAgChartTheme(chartProxyParams, proxy, isEnterprise) {
   var _a;
   const { chartOptionsToRestore, chartPaletteToRestore, chartThemeToRestore } = chartProxyParams;
   const themeName = getSelectedTheme(chartProxyParams);
@@ -1356,7 +1356,7 @@ function createAgChartTheme(chartProxyParams, proxy) {
     return isTitleEnabled2(gridOptionsThemeOverrides) || isTitleEnabled2(apiThemeOverrides);
   };
   const overrides = [
-    stockTheme ? inbuiltStockThemeOverrides(chartProxyParams, isTitleEnabled()) : void 0,
+    stockTheme ? inbuiltStockThemeOverrides(chartProxyParams, isEnterprise, isTitleEnabled()) : void 0,
     crossFilteringOverrides,
     gridOptionsThemeOverrides,
     apiThemeOverrides,
@@ -1431,13 +1431,10 @@ var STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES = ALL_AXIS_TYPES.reduce(
   (r, n) => __spreadProps(__spreadValues({}, r), { [n]: { title: { _enabledFromTheme: true } } }),
   {}
 );
-function inbuiltStockThemeOverrides(params, titleEnabled) {
+function inbuiltStockThemeOverrides(params, isEnterprise, titleEnabled) {
   const extraPadding = params.getExtraPaddingDirections();
   return {
-    common: {
-      animation: {
-        duration: 500
-      },
+    common: __spreadProps(__spreadValues({}, isEnterprise ? { animation: { duration: 500 } } : void 0), {
       axes: STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES,
       padding: {
         // don't add extra padding when a title is present!
@@ -1446,7 +1443,7 @@ function inbuiltStockThemeOverrides(params, titleEnabled) {
         bottom: extraPadding.includes("bottom") ? 40 : 20,
         left: extraPadding.includes("left") ? 30 : 20
       }
-    },
+    }),
     pie: {
       series: {
         title: { _enabledFromTheme: true },
@@ -4003,15 +4000,20 @@ var _CartesianAxisPanel = class _CartesianAxisPanel extends import_core20.Compon
     const axisTypeSelectOptions = ((chartType, axisType) => {
       if (!isCartesian(chartType))
         return null;
-      switch (axisType) {
-        case "xAxis":
-          return [
-            { value: "category", text: this.translate("category") },
-            { value: "number", text: this.translate("number") },
-            { value: "time", text: this.translate("time") }
-          ];
-        case "yAxis":
+      switch (chartType) {
+        case "heatmap":
           return null;
+        default:
+          switch (axisType) {
+            case "xAxis":
+              return [
+                { value: "category", text: this.translate("category") },
+                { value: "number", text: this.translate("number") },
+                { value: "time", text: this.translate("time") }
+              ];
+            case "yAxis":
+              return null;
+          }
       }
     })(this.chartController.getChartType(), this.axisType);
     if (!axisTypeSelectOptions)
@@ -4048,17 +4050,22 @@ var _CartesianAxisPanel = class _CartesianAxisPanel extends import_core20.Compon
     const axisPositionSelectOptions = ((chartType, axisType) => {
       if (!isCartesian(chartType))
         return null;
-      switch (axisType) {
-        case "xAxis":
-          return [
-            { value: "top", text: this.translate("top") },
-            { value: "bottom", text: this.translate("bottom") }
-          ];
-        case "yAxis":
-          return [
-            { value: "left", text: this.translate("left") },
-            { value: "right", text: this.translate("right") }
-          ];
+      switch (chartType) {
+        case "heatmap":
+          return null;
+        default:
+          switch (axisType) {
+            case "xAxis":
+              return [
+                { value: "top", text: this.translate("top") },
+                { value: "bottom", text: this.translate("bottom") }
+              ];
+            case "yAxis":
+              return [
+                { value: "left", text: this.translate("left") },
+                { value: "right", text: this.translate("right") }
+              ];
+          }
       }
     })(this.chartController.getChartType(), this.axisType);
     if (!axisPositionSelectOptions)
@@ -4128,9 +4135,15 @@ var _CartesianAxisPanel = class _CartesianAxisPanel extends import_core20.Compon
     return axisLineWidthSliderParams;
   }
   initGridLines(chartAxisThemeOverrides) {
-    const gridLineComp = this.createBean(new GridLinePanel(chartAxisThemeOverrides));
-    this.axisGroup.addItem(gridLineComp);
-    this.activePanels.push(gridLineComp);
+    const chartType = this.chartController.getChartType();
+    switch (chartType) {
+      case "heatmap":
+        return;
+      default:
+        const gridLineComp = this.createBean(new GridLinePanel(chartAxisThemeOverrides));
+        this.axisGroup.addItem(gridLineComp);
+        this.activePanels.push(gridLineComp);
+    }
   }
   initAxisTicks(chartAxisThemeOverrides) {
     if (!this.hasConfigurableAxisTicks())
@@ -8430,7 +8443,6 @@ var _ChartMenu = class _ChartMenu extends import_core48.Component {
     this.chartToolbar = this.createManagedBean(new ChartToolbar());
     this.getGui().appendChild(this.chartToolbar.getGui());
     if (this.legacyFormat) {
-      import_core48._.warnOnce("As of v31.2, the legacy format charts menu is deprecated. Set `legacyChartsMenu = false` to use the new format menu.");
       this.createLegacyToggleButton();
     }
     this.refreshToolbarAndPanels();
@@ -8812,6 +8824,7 @@ var ChartProxy = class {
   constructor(chartProxyParams) {
     this.chartProxyParams = chartProxyParams;
     this.clearThemeOverrides = false;
+    this.isEnterpriseCharts = import_ag_charts_community28._ModuleSupport.enterpriseModule.isEnterprise;
     this.chart = chartProxyParams.chartInstance;
     this.chartType = chartProxyParams.chartType;
     this.crossFiltering = chartProxyParams.crossFiltering;
@@ -8881,7 +8894,7 @@ var ChartProxy = class {
     const existingOptions = this.clearThemeOverrides ? {} : (_b = (_a = this.chart) == null ? void 0 : _a.getOptions()) != null ? _b : {};
     const formattingPanelOverrides = this.chart != null ? this.getActiveFormattingPanelOverrides() : void 0;
     this.clearThemeOverrides = false;
-    const baseTheme = createAgChartTheme(this.chartProxyParams, this);
+    const baseTheme = createAgChartTheme(this.chartProxyParams, this, this.isEnterpriseCharts);
     const chartThemeDefaults = this.getChartThemeDefaults();
     const theme = applyThemeOverrides(baseTheme, [
       chartThemeDefaults,
@@ -10531,8 +10544,7 @@ var CHART_TOOL_PANEL_MENU_OPTIONS = {
 };
 var ChartMenuService = class extends import_core53.BeanStub {
   isLegacyFormat() {
-    var _a;
-    return (_a = this.gridOptionsService.get("legacyChartsMenu")) != null ? _a : !this.chartService.isEnterprise();
+    return !this.chartService.isEnterprise();
   }
   downloadChart(chartMenuContext, dimensions, fileName, fileFormat) {
     chartMenuContext.chartController.getChartProxy().downloadChart(dimensions, fileName, fileFormat);
@@ -10570,7 +10582,7 @@ var ChartMenuService = class extends import_core53.BeanStub {
           if (CHART_TOOL_PANEL_ALLOW_LIST.includes(option)) {
             msg = `'${option}' is a Chart Tool Panel option and will be ignored since 'chartToolPanelsDef' is used. Please use 'chartToolPanelsDef.panels' grid option instead`;
           } else if (option === "chartMenu") {
-            msg = `'chartMenu' is only allowed as a Chart Toolbar Option when 'legacyChartsMenu' is set to false`;
+            msg = `'chartMenu' is only allowed as a Chart Toolbar Option when using AG Charts Enterprise`;
           } else {
             msg = `'${option}' is not a valid Chart Toolbar Option`;
           }

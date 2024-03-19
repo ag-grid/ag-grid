@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/main.ts"],
-  "sourcesContent": ["import {LicenseManager, ILicenseManager} from \"@ag-grid-enterprise/core\";\nimport {AgCharts} from \"ag-charts-enterprise\";\n\nAgCharts.setGridContext(true);\n\nLicenseManager.setChartsLicenseManager(AgCharts as ILicenseManager)\n\nimport \"ag-charts-enterprise\";\n\nexport  * from \"@ag-grid-enterprise/charts\";\n"],
-  "mappings": ";AAAA,SAAQ,sBAAsC;AAC9C,SAAQ,gBAAe;AAMvB,OAAO;AAEP,cAAe;AANf,SAAS,eAAe,IAAI;AAE5B,eAAe,wBAAwB,QAA2B;",
-  "names": []
-}
