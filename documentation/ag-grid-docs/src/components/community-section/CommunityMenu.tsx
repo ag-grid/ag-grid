@@ -1,25 +1,30 @@
 import styles from '@design-system/modules/CommunityMenu.module.scss';
+import { pathJoin } from '@utils/pathJoin';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { useState } from 'react';
 
 const getPageFromPath = (path) => {
-    return path.replace('community/', '');
+    const prefix = urlWithBaseUrl('/community');
+    return path.replace(`${prefix}`, '');
 };
 
 const CommunityMenu = ({ path, menu }) => {
-    const currPage = getPageFromPath(path);
-    const [menuItems, setMenuItems] = useState(menu);
+    const curPage = getPageFromPath(path);
 
     return (
         <ul className={styles.communityMenu}>
-            {menuItems.map((item) => (
-                <li
-                    key={item.name}
-                    className={`${styles['community-menu-item']} ${currPage === item.path ? styles.selected : ''}`}
-                >
-                    <a href={urlWithBaseUrl('/community' + item.path)}>{item.name}</a>
-                </li>
-            ))}
+            {menu.map((item) => {
+                const link = urlWithBaseUrl(pathJoin('/community', item.path));
+                const isCurrentPage = curPage.replaceAll('/', '') === item.path.replaceAll('/', '');
+
+                return (
+                    <li
+                        key={item.name}
+                        className={`${styles['community-menu-item']} ${isCurrentPage ? styles.selected : ''}`}
+                    >
+                        <a href={link}>{item.name}</a>
+                    </li>
+                );
+            })}
         </ul>
     );
 };
