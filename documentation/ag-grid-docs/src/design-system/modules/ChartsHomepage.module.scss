@@ -103,10 +103,10 @@
     position: relative;
     height: var(--scroller-height);
     overflow: hidden;
-    background-image: url(urlWithBaseUrl('/images/homepage-scroll-light.webp'));
+    background-image: url('../../../images/homepage-scroll-light.webp');
     background-size: 100% auto;
     animation-name: scroll-hero;
-    animation-duration: 120s;
+    animation-duration: 220s;
     animation-iteration-count: infinite;
     animation-timing-function: linear;
 
@@ -131,7 +131,7 @@
     }
 
     #{$selector-darkmode} & {
-        background-image: url(urlWithBaseUrl('images/homepage-scroll-dark.webp'));
+        background-image: url('../../../images/homepage-scroll-dark.webp');
 
         &::before {
             background-image: linear-gradient(var(--color-bg-primary), transparent);
@@ -321,6 +321,9 @@
     video {
         width: 100%;
         max-width: 640px;
+        margin-left: auto;
+        margin-right: auto;
+        flex-shrink: 0;
         border-radius: 4px;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
     }
@@ -352,6 +355,9 @@
 
         .videoDark {
             display: inline-block;
+            padding: $spacing-size-4;
+            background: #192232;
+            border: 1px solid var(--color-border-secondary);
         }
     }
 }
