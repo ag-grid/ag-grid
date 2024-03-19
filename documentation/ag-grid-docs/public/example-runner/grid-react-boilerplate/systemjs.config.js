@@ -9,7 +9,7 @@
                 ...systemJsPaths
             },
         map: {
-            css: (boilerplatePath === ("") ? `./` : '') + "css.js",
+            css: (boilerplatePath.length === 0 ? `./` : `${boilerplatePath}/`) + "css.js",
             // 'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
             // babel transpiler
