@@ -13,7 +13,7 @@
             'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
             'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
 
-            css: boilerplatePath + "css.js",
+            css: (boilerplatePath === ("") ? `./` : '') + "css.js",
             // 'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
             // vuejs
