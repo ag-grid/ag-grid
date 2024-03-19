@@ -2,13 +2,11 @@ import styles from '@design-system/modules/CommunityMenu.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { useState } from 'react';
 
-import menu from '../../content/community/community-menu.json';
-
 const getPageFromPath = (path) => {
     return path.replace('community/', '');
 };
 
-const CommunityMenu = ({ path }) => {
+const CommunityMenu = ({ path, menu }) => {
     const currPage = getPageFromPath(path);
     const [menuItems, setMenuItems] = useState(menu);
 
