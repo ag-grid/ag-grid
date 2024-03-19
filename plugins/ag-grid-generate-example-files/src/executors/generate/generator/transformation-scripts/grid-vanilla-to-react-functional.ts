@@ -116,9 +116,9 @@ function getImports(
     }
 }
 
-function getTemplate(bindings: ParsedBindings, componentAttributes: string[]): string {
+function getTemplate(bindings: ParsedBindings, componentAttributes: string[], exampleConfig: ExampleConfig): string {
     const agGridTag = `
-        <div style={gridStyle} className={${getActiveTheme(bindings.inlineGridStyles.theme, false)}}>
+        <div ${exampleConfig.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className={${getActiveTheme(bindings.inlineGridStyles.theme, false)}}>
             <AgGridReact
                 ref={gridRef}
                 ${componentAttributes.join('\n')}
@@ -300,7 +300,7 @@ export function vanillaToReactFunctional(
                 .replace("gridRef.current.api.setGridOption('rowData',", 'setRowData(')
                 .replace(/gridApi/g, 'gridRef.current.api');
 
-        const template = getTemplate(bindings, componentProps.map(thisReferenceConverter));
+        const template = getTemplate(bindings, componentProps.map(thisReferenceConverter), exampleConfig);
         const eventHandlers = bindings.eventHandlers
             .map((event) => convertFunctionToConstCallback(event.handler, callbackDependencies))
             .map(thisReferenceConverter)

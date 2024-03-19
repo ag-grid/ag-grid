@@ -32,12 +32,18 @@ export const agGridVue3Version = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unk
 
 export const NPM_CDN = 'https://cdn.jsdelivr.net/npm';
 export const PUBLISHED_URLS = {
-    'ag-grid-react': `${NPM_CDN}/ag-grid-react@${agGridReactVersion}/`,
+    '@ag-grid-community/styles': `${NPM_CDN}/@ag-grid-community/styles@${agGridVersion}`,
+    '@ag-grid-community/react': `${NPM_CDN}/@ag-grid-community/react@${agGridReactVersion}/`,
+    '@ag-grid-community/angular': `${NPM_CDN}/@ag-grid-community/angular@${agGridAngularVersion}/`,
+    '@ag-grid-community/vue': `${NPM_CDN}/@ag-grid-community/vue@${agGridVueVersion}/`,
+    '@ag-grid-community/vue3': `${NPM_CDN}/@ag-grid-community/vue3@${agGridVue3Version}/`,
+    'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}`,
+    'ag-grid-enterprise': `${NPM_CDN}/ag-grid-enterprise@${agGridEnterpriseVersion}/`,
+    'ag-grid-charts-enterprise': `${NPM_CDN}/ag-grid-charts-enterprise@${agGridEnterpriseVersion}/`,
     'ag-grid-angular': `${NPM_CDN}/ag-grid-angular@${agGridAngularVersion}/`,
+    'ag-grid-react': `${NPM_CDN}/ag-grid-react@${agGridReactVersion}/`,
     'ag-grid-vue': `${NPM_CDN}/ag-grid-vue@${agGridVueVersion}/`,
-    'ag-grid-vue3': `${NPM_CDN}/ag-grid-vue3@${agGridVueVersion}/`,
-    'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}/dist/package/main.cjs.js`,
-    'ag-grid-enterprise': `${NPM_CDN}/ag-grid-enterprise@${agGridVersion}/dist/package/main.cjs.js`,
+    'ag-grid-vue3': `${NPM_CDN}/ag-grid-vue3@${agGridVue3Version}/`,
 };
 export const PUBLISHED_UMD_URLS = {
     'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}/dist/umd/ag-grid-community.js`,

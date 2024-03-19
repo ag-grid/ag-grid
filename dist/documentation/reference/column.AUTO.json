@@ -1,0 +1,824 @@
+{
+  "EVENT_MOVING_CHANGED": {
+    "type": {
+      "returnType": "ColumnEventName"
+    }
+  },
+  "EVENT_LEFT_CHANGED": {
+    "type": {
+      "returnType": "ColumnEventName"
+    }
+  },
+  "EVENT_WIDTH_CHANGED": {
+    "type": {
+      "returnType": "ColumnEventName"
+    }
+  },
+  "EVENT_LAST_LEFT_PINNED_CHANGED": {
+    "type": {
+      "returnType": "ColumnEventName"
+    }
+  },
+  "EVENT_FIRST_RIGHT_PINNED_CHANGED": {
+    "type": {
+      "returnType": "ColumnEventName"
+    }
+  },
+  "EVENT_VISIBLE_CHANGED": {
+    "type": {
+      "returnType": "ColumnEventName"
+    }
+  },
+  "EVENT_FILTER_CHANGED": {
+    "type": {
+      "returnType": "ColumnEventName"
+    }
+  },
+  "EVENT_FILTER_ACTIVE_CHANGED": {
+    "type": {
+      "returnType": "ColumnEventName"
+    }
+  },
+  "EVENT_SORT_CHANGED": {
+    "type": {
+      "returnType": "ColumnEventName"
+    }
+  },
+  "EVENT_COL_DEF_CHANGED": {
+    "type": {
+      "returnType": "ColumnEventName"
+    }
+  },
+  "EVENT_MENU_VISIBLE_CHANGED": {
+    "type": {
+      "returnType": "ColumnEventName"
+    }
+  },
+  "EVENT_ROW_GROUP_CHANGED": {
+    "type": {
+      "returnType": "ColumnEventName"
+    }
+  },
+  "EVENT_PIVOT_CHANGED": {
+    "type": {
+      "returnType": "ColumnEventName"
+    }
+  },
+  "EVENT_VALUE_CHANGED": {
+    "type": {
+      "returnType": "ColumnEventName"
+    }
+  },
+  "EVENT_STATE_UPDATED": {
+    "type": {
+      "returnType": "ColumnEventName"
+    }
+  },
+  "getInstanceId": {
+    "type": {
+      "arguments": {},
+      "returnType": "number"
+    }
+  },
+  "setColDef": {
+    "type": {
+      "arguments": {
+        "colDef": "ColDef<any, TValue>",
+        "userProvidedColDef": "ColDef<any, TValue> | null",
+        "source": "ColumnEventType"
+      },
+      "returnType": "void"
+    }
+  },
+  "getUserProvidedColDef": {
+    "meta": {
+      "all": "/** Returns the column definition provided by the application.\n     * This may not be correct, as items can be superseded by default column options.\n     * However it's useful for comparison, eg to know which application column definition matches that column.\n     */",
+      "comment": "Returns the column definition provided by the application.\nThis may not be correct, as items can be superseded by default column options.\nHowever it's useful for comparison, eg to know which application column definition matches that column."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "ColDef<any, TValue> | null"
+    }
+  },
+  "setParent": {
+    "type": {
+      "arguments": {
+        "parent": "ColumnGroup"
+      },
+      "returnType": "void"
+    }
+  },
+  "getParent": {
+    "meta": {
+      "all": "/** Returns the parent column group, if column grouping is active. */",
+      "comment": "Returns the parent column group, if column grouping is active."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "ColumnGroup"
+    }
+  },
+  "setOriginalParent": {
+    "type": {
+      "arguments": {
+        "originalParent": "ProvidedColumnGroup | null"
+      },
+      "returnType": "void"
+    }
+  },
+  "getOriginalParent": {
+    "meta": {
+      "all": "/** Used for marryChildren, helps with comparing when duplicate groups have been created to manage split groups.\n     * \n     * Parent may contain a duplicate but not identical group when the group is split.\n     */",
+      "comment": "Used for marryChildren, helps with comparing when duplicate groups have been created to manage split groups.\n\nParent may contain a duplicate but not identical group when the group is split."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "ProvidedColumnGroup | null"
+    }
+  },
+  "resetActualWidth": {
+    "type": {
+      "arguments": {
+        "source": "ColumnEventType"
+      },
+      "returnType": "void"
+    }
+  },
+  "isEmptyGroup": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isRowGroupDisplayed": {
+    "type": {
+      "arguments": {
+        "colId": "string"
+      },
+      "returnType": "boolean"
+    }
+  },
+  "isPrimary": {
+    "meta": {
+      "all": "/** Returns `true` if column is a primary column, `false` if secondary. Secondary columns are used for pivoting. */",
+      "comment": "Returns `true` if column is a primary column, `false` if secondary. Secondary columns are used for pivoting."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isFilterAllowed": {
+    "meta": {
+      "all": "/** Returns `true` if column filtering is allowed. */",
+      "comment": "Returns `true` if column filtering is allowed."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isFieldContainsDots": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isTooltipEnabled": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isTooltipFieldContainsDots": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "addEventListener": {
+    "meta": {
+      "all": "/** Add an event listener to the column. */",
+      "comment": "Add an event listener to the column."
+    },
+    "type": {
+      "arguments": {
+        "eventType": "ColumnEventName",
+        "userListener": "Function"
+      },
+      "returnType": "void"
+    }
+  },
+  "removeEventListener": {
+    "meta": {
+      "all": "/** Remove event listener from the column. */",
+      "comment": "Remove event listener from the column."
+    },
+    "type": {
+      "arguments": {
+        "eventType": "ColumnEventName",
+        "userListener": "Function"
+      },
+      "returnType": "void"
+    }
+  },
+  "createColumnFunctionCallbackParams": {
+    "type": {
+      "arguments": {
+        "rowNode": "IRowNode"
+      },
+      "returnType": "ColumnFunctionCallbackParams"
+    }
+  },
+  "isSuppressNavigable": {
+    "type": {
+      "arguments": {
+        "rowNode": "IRowNode"
+      },
+      "returnType": "boolean"
+    }
+  },
+  "isCellEditable": {
+    "meta": {
+      "all": "/** Returns `true` if the cell for this column is editable for the given `rowNode`, otherwise `false`.\n     */",
+      "comment": "Returns `true` if the cell for this column is editable for the given `rowNode`, otherwise `false`."
+    },
+    "type": {
+      "arguments": {
+        "rowNode": "IRowNode"
+      },
+      "returnType": "boolean"
+    }
+  },
+  "isSuppressFillHandle": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isAutoHeight": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isAutoHeaderHeight": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isRowDrag": {
+    "type": {
+      "arguments": {
+        "rowNode": "IRowNode"
+      },
+      "returnType": "boolean"
+    }
+  },
+  "isDndSource": {
+    "type": {
+      "arguments": {
+        "rowNode": "IRowNode"
+      },
+      "returnType": "boolean"
+    }
+  },
+  "isCellCheckboxSelection": {
+    "type": {
+      "arguments": {
+        "rowNode": "IRowNode"
+      },
+      "returnType": "boolean"
+    }
+  },
+  "isSuppressPaste": {
+    "type": {
+      "arguments": {
+        "rowNode": "IRowNode"
+      },
+      "returnType": "boolean"
+    }
+  },
+  "isResizable": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "setMoving": {
+    "type": {
+      "arguments": {
+        "moving": "boolean",
+        "source": "ColumnEventType"
+      },
+      "returnType": "void"
+    }
+  },
+  "isMoving": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "getSort": {
+    "meta": {
+      "all": "/** If sorting is active, returns the sort direction e.g. `'asc'` or `'desc'`. */",
+      "comment": "If sorting is active, returns the sort direction e.g. `'asc'` or `'desc'`."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "SortDirection | undefined"
+    }
+  },
+  "setSort": {
+    "type": {
+      "arguments": {
+        "sort": "SortDirection | undefined",
+        "source": "ColumnEventType"
+      },
+      "returnType": "void"
+    }
+  },
+  "setMenuVisible": {
+    "type": {
+      "arguments": {
+        "visible": "boolean",
+        "source": "ColumnEventType"
+      },
+      "returnType": "void"
+    }
+  },
+  "isMenuVisible": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isSortable": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isSortAscending": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isSortDescending": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isSortNone": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isSorting": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "getSortIndex": {
+    "type": {
+      "arguments": {},
+      "returnType": "number | null | undefined"
+    }
+  },
+  "setSortIndex": {
+    "type": {
+      "arguments": {
+        "sortOrder?": "number | null"
+      },
+      "returnType": "void"
+    }
+  },
+  "setAggFunc": {
+    "type": {
+      "arguments": {
+        "aggFunc": "string | IAggFunc | null | undefined"
+      },
+      "returnType": "void"
+    }
+  },
+  "getAggFunc": {
+    "meta": {
+      "all": "/** If aggregation is set for the column, returns the aggregation function. */",
+      "comment": "If aggregation is set for the column, returns the aggregation function."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "string | IAggFunc | null | undefined"
+    }
+  },
+  "getLeft": {
+    "type": {
+      "arguments": {},
+      "returnType": "number | null"
+    }
+  },
+  "getOldLeft": {
+    "type": {
+      "arguments": {},
+      "returnType": "number | null"
+    }
+  },
+  "getRight": {
+    "type": {
+      "arguments": {},
+      "returnType": "number"
+    }
+  },
+  "setLeft": {
+    "type": {
+      "arguments": {
+        "left": "number | null",
+        "source": "ColumnEventType"
+      }
+    }
+  },
+  "isFilterActive": {
+    "meta": {
+      "all": "/** Returns `true` if filter is active on the column. */",
+      "comment": "Returns `true` if filter is active on the column."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "setFilterActive": {
+    "type": {
+      "arguments": {
+        "active": "boolean",
+        "source": "ColumnEventType",
+        "additionalEventAttributes?": "any"
+      },
+      "returnType": "void"
+    }
+  },
+  "isHovered": {
+    "meta": {
+      "all": "/** Returns `true` when this `Column` is hovered, otherwise `false` */",
+      "comment": "Returns `true` when this `Column` is hovered, otherwise `false`"
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "setPinned": {
+    "type": {
+      "arguments": {
+        "pinned": "ColumnPinnedType"
+      },
+      "returnType": "void"
+    }
+  },
+  "setFirstRightPinned": {
+    "type": {
+      "arguments": {
+        "firstRightPinned": "boolean",
+        "source": "ColumnEventType"
+      },
+      "returnType": "void"
+    }
+  },
+  "setLastLeftPinned": {
+    "type": {
+      "arguments": {
+        "lastLeftPinned": "boolean",
+        "source": "ColumnEventType"
+      },
+      "returnType": "void"
+    }
+  },
+  "isFirstRightPinned": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isLastLeftPinned": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isPinned": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isPinnedLeft": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isPinnedRight": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "getPinned": {
+    "type": {
+      "arguments": {},
+      "returnType": "ColumnPinnedType"
+    }
+  },
+  "setVisible": {
+    "type": {
+      "arguments": {
+        "visible": "boolean",
+        "source": "ColumnEventType"
+      },
+      "returnType": "void"
+    }
+  },
+  "isVisible": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isSpanHeaderHeight": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "getColumnGroupPaddingInfo": {
+    "type": {
+      "arguments": {},
+      "returnType": "{ numberOfParents: number, isSpanningTotal: boolean }"
+    }
+  },
+  "getColDef": {
+    "meta": {
+      "all": "/** Returns the column definition for this column.\n     * The column definition will be the result of merging the application provided column definition with any provided defaults\n     * (e.g. `defaultColDef` grid option, or column types.\n     *\n     * Equivalent: `getDefinition` */",
+      "comment": "Returns the column definition for this column.\nThe column definition will be the result of merging the application provided column definition with any provided defaults\n(e.g. `defaultColDef` grid option, or column types.\n\nEquivalent: `getDefinition`"
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "ColDef<any, TValue>"
+    }
+  },
+  "getColumnGroupShow": {
+    "type": {
+      "arguments": {},
+      "returnType": "ColumnGroupShowType | undefined"
+    }
+  },
+  "getColId": {
+    "meta": {
+      "all": "/** Returns the unique ID for the column.\n     *\n     * Equivalent: `getId`, `getUniqueId` */",
+      "comment": "Returns the unique ID for the column.\n\nEquivalent: `getId`, `getUniqueId`"
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "string"
+    }
+  },
+  "getId": {
+    "meta": {
+      "all": "/** Returns the unique ID for the column.\n     *\n     * Equivalent: `getColId`, `getUniqueId` */",
+      "comment": "Returns the unique ID for the column.\n\nEquivalent: `getColId`, `getUniqueId`"
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "string"
+    }
+  },
+  "getUniqueId": {
+    "meta": {
+      "all": "/** Returns the unique ID for the column.\n     *\n     * Equivalent: `getColId`, `getId` */",
+      "comment": "Returns the unique ID for the column.\n\nEquivalent: `getColId`, `getId`"
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "string"
+    }
+  },
+  "getDefinition": {
+    "type": {
+      "arguments": {},
+      "returnType": "AbstractColDef<any, TValue>"
+    }
+  },
+  "getActualWidth": {
+    "meta": {
+      "all": "/** Returns the current width of the column. If the column is resized, the actual width is the new size. */",
+      "comment": "Returns the current width of the column. If the column is resized, the actual width is the new size."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "number"
+    }
+  },
+  "getAutoHeaderHeight": {
+    "type": {
+      "arguments": {},
+      "returnType": "number | null"
+    }
+  },
+  "setAutoHeaderHeight": {
+    "meta": {
+      "all": "/** Returns true if the header height has changed */",
+      "comment": "Returns true if the header height has changed"
+    },
+    "type": {
+      "arguments": {
+        "height": "number"
+      },
+      "returnType": "boolean"
+    }
+  },
+  "getColSpan": {
+    "type": {
+      "arguments": {
+        "rowNode": "IRowNode"
+      },
+      "returnType": "number"
+    }
+  },
+  "getRowSpan": {
+    "type": {
+      "arguments": {
+        "rowNode": "IRowNode"
+      },
+      "returnType": "number"
+    }
+  },
+  "setActualWidth": {
+    "type": {
+      "arguments": {
+        "actualWidth": "number",
+        "source": "ColumnEventType",
+        "silent": "boolean = false"
+      },
+      "returnType": "void"
+    }
+  },
+  "fireColumnWidthChangedEvent": {
+    "type": {
+      "arguments": {
+        "source": "ColumnEventType"
+      },
+      "returnType": "void"
+    }
+  },
+  "isGreaterThanMax": {
+    "type": {
+      "arguments": {
+        "width": "number"
+      },
+      "returnType": "boolean"
+    }
+  },
+  "getMinWidth": {
+    "type": {
+      "arguments": {},
+      "returnType": "number | null | undefined"
+    }
+  },
+  "getMaxWidth": {
+    "type": {
+      "arguments": {},
+      "returnType": "number | null | undefined"
+    }
+  },
+  "getFlex": {
+    "type": {
+      "arguments": {},
+      "returnType": "number"
+    }
+  },
+  "setFlex": {
+    "type": {
+      "arguments": {
+        "flex": "number | null"
+      }
+    }
+  },
+  "setMinimum": {
+    "type": {
+      "arguments": {
+        "source": "ColumnEventType"
+      },
+      "returnType": "void"
+    }
+  },
+  "setRowGroupActive": {
+    "type": {
+      "arguments": {
+        "rowGroup": "boolean",
+        "source": "ColumnEventType"
+      },
+      "returnType": "void"
+    }
+  },
+  "isRowGroupActive": {
+    "meta": {
+      "all": "/** Returns `true` if row group is currently active for this column. */",
+      "comment": "Returns `true` if row group is currently active for this column."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "setPivotActive": {
+    "type": {
+      "arguments": {
+        "pivot": "boolean",
+        "source": "ColumnEventType"
+      },
+      "returnType": "void"
+    }
+  },
+  "isPivotActive": {
+    "meta": {
+      "all": "/** Returns `true` if pivot is currently active for this column. */",
+      "comment": "Returns `true` if pivot is currently active for this column."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isAnyFunctionActive": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isAnyFunctionAllowed": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "setValueActive": {
+    "type": {
+      "arguments": {
+        "value": "boolean",
+        "source": "ColumnEventType"
+      },
+      "returnType": "void"
+    }
+  },
+  "isValueActive": {
+    "meta": {
+      "all": "/** Returns `true` if value (aggregation) is currently active for this column. */",
+      "comment": "Returns `true` if value (aggregation) is currently active for this column."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isAllowPivot": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isAllowValue": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isAllowRowGroup": {
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "getMenuTabs": {
+    "meta": {
+      "all": "/** @deprecated v31.1 Use `getColDef().menuTabs ?? defaultValues` instead.\n     */",
+      "tags": [
+        {
+          "name": "deprecated",
+          "comment": "v31.1 Use `getColDef().menuTabs ?? defaultValues` instead."
+        }
+      ]
+    },
+    "type": {
+      "arguments": {
+        "defaultValues": "ColumnMenuTab[]"
+      },
+      "returnType": "ColumnMenuTab[]"
+    }
+  }
+}

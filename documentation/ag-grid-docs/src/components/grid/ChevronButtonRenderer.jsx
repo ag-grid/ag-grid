@@ -34,7 +34,12 @@ const ChevronButtonCellRenderer = forwardRef((props, ref) => {
                         ref={ref}
                         src={TreeClosed}
                         style={{ cursor: 'pointer' }}
-                        onMouseDown={ e => e.preventDefault() }
+                        onMouseDown={ e => {
+                            // prevents this component from being focused
+                            e.preventDefault();
+                            // and focuses the cellWrapper instead.
+                            props.eGridCell.focus();
+                        }}
                         onClick={() => {
                             clickHandler();
                         }}
