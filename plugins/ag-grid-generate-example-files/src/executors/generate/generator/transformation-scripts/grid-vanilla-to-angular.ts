@@ -158,6 +158,7 @@ function getTemplate(bindings: ParsedBindings, exampleConfig: ExampleConfig, att
         : `style="width: ${inlineGridStyles.width}; height: ${inlineGridStyles.height};"`;
 
     const agGridTag = `<ag-grid-angular
+    ${exampleConfig.myGridReference ? 'id="myGrid"' : ''}
     ${style}
     ${attributes.join('\n    ')}
     ></ag-grid-angular>`;
