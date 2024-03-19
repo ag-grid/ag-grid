@@ -5,6 +5,11 @@ import LayoutStyles from '@design-system/modules/CommunityLayout.module.scss';
 import Blogs from '@components/community-section/news-updates/Blogs';
 import Podcasts from '@components/community-section/news-updates/Podcasts';
 import Videos from '@components/community-section/news-updates/Videos';
+import { getEntry } from 'astro:content';
+
+const { data: blogs } = await getEntry('community', 'news-updates/blogs');
+const { data: podcasts } = await getEntry('community', 'news-updates/podcasts');
+const { data: videos } = await getEntry('community', 'news-updates/videos');
 ---
 
 <Layout
@@ -29,15 +34,15 @@ import Videos from '@components/community-section/news-updates/Videos';
                     </p>
                     <section>
                         <h2>Videos</h2>
-                        <Videos client:load />
+                        <Videos client:load videos={videos} />
                     </section>
                     <section>
                         <h2>Podcasts</h2>
-                        <Podcasts client:load />
+                        <Podcasts client:load podcasts={podcasts} />
                     </section>
                     <section>
                         <h2>Blogs</h2>
-                        <Blogs client:visible />
+                        <Blogs client:visible blogs={blogs} />
                     </section>
                 </div>
             </div>

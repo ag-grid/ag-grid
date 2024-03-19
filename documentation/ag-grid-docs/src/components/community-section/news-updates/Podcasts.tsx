@@ -1,19 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { Icon } from '@components/icon/Icon';
 import styles from '@design-system/modules/CommunityPodcasts.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import React from 'react';
 
-import podcasts from '../../../content/community/news-updates/podcasts.json';
-
-// Register AG Grid modules
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
-
-const Podcasts = () => {
+const Podcasts = ({ podcasts }) => {
     const guestsToString = (arr) => {
         if (!arr.length) return '';
         if (arr.length === 1) return arr[0];

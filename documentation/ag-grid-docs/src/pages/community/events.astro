@@ -6,6 +6,7 @@ import Events from '@components/community-section/Events';
 import { getEntry } from 'astro:content';
 
 const { data: eventImages } = await getEntry('community', 'events-images');
+const { data: events } = await getEntry('community', 'events');
 ---
 
 <Layout
@@ -29,7 +30,7 @@ const { data: eventImages } = await getEntry('community', 'events-images');
                         2017.
                     </p>
                     <section>
-                        <Events client:load images={eventImages} />
+                        <Events client:load images={eventImages} events={events} />
                     </section>
                 </div>
             </div>

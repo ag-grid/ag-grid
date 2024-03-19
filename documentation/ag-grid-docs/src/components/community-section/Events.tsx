@@ -2,9 +2,7 @@ import ScrollingGallery from '@components/community-section/events/ScrollingGall
 import styles from '@design-system/modules/CommunityEvents.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import React, { useState } from 'react';
-
-import events from '../../content/community/events.json';
+import { useState } from 'react';
 
 const separateEventsByDate = (events) => {
     const upcomingEvents = [];
@@ -35,11 +33,7 @@ function extractUniqueYears(events) {
 const EventItem = ({ event }) => {
     const [darkMode] = useDarkmode();
     return (
-        <div
-            onClick={() => (event.eventPage ? window.open(event.eventPage) : window.open(event.recording))}
-            target="_blank"
-            className={styles.linkWrapper}
-        >
+        <a href={event.eventPage ? event.eventPage : event.recording} target="_blank" className={styles.linkWrapper}>
             <div className={styles.eventItemContainer}>
                 <div className={styles.eventItemLeftColumn}>
                     <div className={styles.titleContainer}>
@@ -68,28 +62,12 @@ const EventItem = ({ event }) => {
                         </div>
                         <div className={styles.ctaContainer}>
                             {event.eventPage && (
-                                <div
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        window.open(event.eventPage);
-                                    }}
-                                    target="_blank"
-                                    className={event.recording ? styles.secondaryCta : styles.primaryCta}
-                                >
-                                    <p>View Event</p>
-                                </div>
+                                <p className={event.recording ? styles.secondaryCta : styles.primaryCta}>View Event</p>
                             )}
                             {event.recording && (
-                                <div
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        window.open(event.recording);
-                                    }}
-                                    target="_blank"
-                                    className={event.eventPage ? styles.primaryCta : styles.secondaryCta}
-                                >
-                                    <p>Watch Recording</p>
-                                </div>
+                                <p className={event.eventPage ? styles.primaryCta : styles.secondaryCta}>
+                                    Watch Recording
+                                </p>
                             )}
                         </div>
                     </div>
@@ -110,11 +88,11 @@ const EventItem = ({ event }) => {
                     )}
                 </div>
             </div>
-        </div>
+        </a>
     );
 };
 
-const Events = ({ images }) => {
+const Events = ({ images, events }) => {
     const { upcomingEvents, pastEvents } = separateEventsByDate(events);
     const [currEvents, setCurrEvents] = useState(upcomingEvents);
     const [activeTab, setActiveTab] = useState('upcoming');

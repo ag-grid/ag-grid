@@ -3,9 +3,7 @@ import { Icon } from '@components/icon/Icon';
 import styles from '@design-system/modules/CommunityUpcomingEvents.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import React, { useEffect, useRef, useState } from 'react';
-
-import events from '../../../content/community/events.json';
+import { useState } from 'react';
 
 const separateEventsByDate = (events) => {
     const upcomingEvents = [];
@@ -33,7 +31,7 @@ function extractUniqueYears(events) {
     return Array.from(years);
 }
 
-const UpcomingEvents = ({ enableFilters = false, images }) => {
+const UpcomingEvents = ({ enableFilters = false, images, events }) => {
     const [darkMode] = useDarkmode();
     const { upcomingEvents } = separateEventsByDate(events);
     const [currEvents, setCurrEvents] = useState(upcomingEvents);

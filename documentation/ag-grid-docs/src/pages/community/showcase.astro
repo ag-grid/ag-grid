@@ -3,6 +3,9 @@ import Layout from '../../layouts/Layout.astro';
 import CommunityMenu from '@components/community-section/CommunityMenu';
 import LayoutStyles from '@design-system/modules/CommunityLayout.module.scss';
 import Showcase from '@components/community-section/Showcase';
+import { getEntry } from 'astro:content';
+
+const { data: showcase } = await getEntry('community', 'showcase');
 ---
 
 <Layout
@@ -27,11 +30,11 @@ import Showcase from '@components/community-section/Showcase';
                     </p>
                     <section>
                         <h2>Our Favourites</h2>
-                        <Showcase favouritesOnly={true} client:load />
+                        <Showcase client:load showcase={showcase} favouritesOnly={true} />
                     </section>
                     <section>
                         <h2>Full Showcase</h2>
-                        <Showcase client:visible />
+                        <Showcase client:visible showcase={showcase} />
                     </section>
                 </div>
             </div>

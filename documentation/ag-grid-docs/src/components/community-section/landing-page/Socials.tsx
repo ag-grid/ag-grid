@@ -1,10 +1,7 @@
 import { Icon } from '@components/icon/Icon';
 import styles from '@design-system/modules/CommunitySocials.module.scss';
-import React, { useEffect, useRef, useState } from 'react';
 
-import socialChannels from '../../../content/community/socials.json';
-
-const Socials = () => {
+const Socials = ({ socialChannels }) => {
     return (
         <div className={styles.socialChannelContainer}>
             {socialChannels.map((channel, index) => (

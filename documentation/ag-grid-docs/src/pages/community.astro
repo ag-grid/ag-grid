@@ -14,6 +14,11 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { getEntry } from 'astro:content';
 
 const { data: eventImages } = await getEntry('community', 'events-images');
+const { data: socialChannels } = await getEntry('community', 'socials');
+const { data: supportSites } = await getEntry('community', 'support');
+const { data: events } = await getEntry('community', 'events');
+const { data: showcase } = await getEntry('community', 'showcase');
+const { data: videos } = await getEntry('community', 'news-updates/videos');
 ---
 
 <Layout
@@ -50,7 +55,7 @@ const { data: eventImages } = await getEntry('community', 'events-images');
                                 <Icon name="arrowRight" />
                             </a>
                         </div>
-                        <UpcomingEvents client:only enableFilters={false} images={eventImages} />
+                        <UpcomingEvents client:only enableFilters={false} images={eventImages} events={events} />
                     </section>
                     <!-- Showcase -->
                     <section>
@@ -64,7 +69,7 @@ const { data: eventImages } = await getEntry('community', 'events-images');
                                 <Icon name="arrowRight" />
                             </a>
                         </div>
-                        <Showcase favouritesOnly={true} maxItems={8} client:load />
+                        <Showcase favouritesOnly={true} maxItems={8} showcase={showcase} client:load />
                     </section>
                     <!-- Tools & Extensons -->
                     <section>
@@ -98,16 +103,16 @@ const { data: eventImages } = await getEntry('community', 'events-images');
                                 <Icon name="arrowRight" />
                             </a>
                         </div>
-                        <Videos client:visible />
+                        <Videos client:visible videos={videos} />
                     </section>
                     <!-- Support -->
                     <section>
                         <h2>Support & Socials</h2>
-                        <Support client:visible />
+                        <Support client:visible supportSites={supportSites} />
                     </section>
                     <hr style={{ margin: '0px 5vw 5vw 5vw' }} />
                     <section>
-                        <Socials client:visible />
+                        <Socials client:visible socialChannels={socialChannels} />
                     </section>
                 </div>
             </div>

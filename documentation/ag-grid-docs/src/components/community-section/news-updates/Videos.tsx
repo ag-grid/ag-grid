@@ -1,10 +1,8 @@
 import styles from '@design-system/modules/CommunityVideos.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-import videos from '../../../content/community/news-updates/videos.json';
-
-const Videos = () => {
+const Videos = ({ videos }) => {
     const [currentVideo, setCurrentVideo] = useState(videos[0]);
 
     const handleVideoSelect = (video) => {

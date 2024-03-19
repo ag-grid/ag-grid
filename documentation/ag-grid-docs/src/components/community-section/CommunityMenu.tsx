@@ -1,6 +1,6 @@
 import styles from '@design-system/modules/CommunityMenu.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import menu from '../../content/community/community-menu.json';
 
