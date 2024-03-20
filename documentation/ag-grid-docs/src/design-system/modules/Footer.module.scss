@@ -19,7 +19,7 @@
     }
 
     h4 {
-        color: var(--color-text-primary);
+        color: var(--color-fg-primary);
         font-weight: var(--text-semibold);
         opacity: 1;
         #{$selector-darkmode} & {
@@ -76,7 +76,7 @@
         padding-bottom: 20px;
         text-decoration-color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 80%);
         text-underline-offset: 4px;
-        color: var(--color-fg-placeholder);
+        color: var(--color-text-secondary);
         transition: text-decoration-color $transition-default-timing;
         opacity: 1;
         font-weight: var(--text-regular);
@@ -85,6 +85,9 @@
             color: var(--color-text-primary);
             text-decoration-color: var(--color-white);
             opacity: 0.6;
+            #{$selector-darkmode} & {
+                text-decoration-color: var(--color-white);
+            }
 
             :global(.icon) {
                 opacity: 1;
@@ -110,7 +113,7 @@
 
 .gridIcon {
     fill: var(--color-text-tertiary) !important;
-    opacity: 0.6;
+    opacity: 0.7;
     height: $spacing-size-10;
     #{$selector-darkmode} & {
         fill: var(--color-fg-white) !important;
@@ -140,8 +143,9 @@
 }
 
 .trademarks {
+    margin-top: $spacing-size-4;
     @media screen and (min-width: $breakpoint-site-footer-four-column) {
-        margin-top: -$spacing-size-4;
+        margin-top: $spacing-size-4;
     }
 }
 
