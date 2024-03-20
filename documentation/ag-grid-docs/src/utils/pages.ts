@@ -202,8 +202,6 @@ export const getDebugPageUrls = async ({
 };
 
 export const isUsingPublishedPackages = () => USE_PUBLISHED_PACKAGES === true;
-export const isPreProductionBuild = () => false;
-export const isBuildServerBuild = () => false;
 
 /**
  * Get Dev File URL for referencing on the front end

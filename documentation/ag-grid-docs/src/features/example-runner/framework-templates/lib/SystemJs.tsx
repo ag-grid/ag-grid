@@ -21,7 +21,7 @@ interface Configuration {
 
 const localPrefix = pathJoin(import.meta.env?.PUBLIC_SITE_URL, SITE_BASE_URL, FILES_BASE_PATH);
 
-const localConfiguration: Configuration = {
+const localBuildAndArchiveConfiguration: Configuration = {
     gridMap: {
         '@ag-grid-community/styles': `${localPrefix}/@ag-grid-community/styles`,
         '@ag-grid-community/react': `${localPrefix}/@ag-grid-community/react`,
@@ -68,15 +68,9 @@ const localConfiguration: Configuration = {
         '@ag-grid-enterprise/sparklines': `${localPrefix}/@ag-grid-enterprise/sparklines/dist/package/main.cjs.js`,
         '@ag-grid-enterprise/status-bar': `${localPrefix}/@ag-grid-enterprise/status-bar/dist/package/main.cjs.js`,
         '@ag-grid-enterprise/viewport-row-model': `${localPrefix}/@ag-grid-enterprise/viewport-row-model/dist/package/main.cjs.js`,
-        'ag-charts-community': `${localPrefix}/ag-charts-community`,
-        'ag-charts-enterprise': `${localPrefix}/ag-charts-enterprise`,
+        'ag-charts-community': `${localPrefix}/ag-charts-community/dist/package/main.cjs.js`,
+        'ag-charts-enterprise': `${localPrefix}/ag-charts-enterprise/dist/package/main.cjs.js`,
     },
-};
-
-const buildAndArchivesConfiguration: Configuration = {
-    gridMap: {},
-    gridCommunityPaths: {},
-    gridEnterprisePaths: {},
 };
 
 const publishedConfiguration: Configuration = {
@@ -181,9 +175,7 @@ export const SystemJs = ({
     const systemJsPath = pathJoin(boilerplatePath, `systemjs.config${isDev ? '.dev' : ''}.js`);
     let configuration = isUsingPublishedPackages()
         ? publishedConfiguration
-        : isBuildServerBuild() || isPreProductionBuild()
-          ? buildAndArchivesConfiguration
-          : localConfiguration;
+        : localBuildAndArchiveConfiguration;
 
     if (isDev) {
         configuration.gridMap = {
