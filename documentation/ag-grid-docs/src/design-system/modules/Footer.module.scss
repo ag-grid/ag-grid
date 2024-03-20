@@ -22,6 +22,9 @@
         color: var(--color-text-primary);
         font-weight: var(--text-semibold);
         opacity: 1;
+        #{$selector-darkmode} & {
+            color: var(--color-fg-white);
+        }
     }
 
     svg {
@@ -71,15 +74,17 @@
         margin-bottom: -12px;
         padding-top: 12px;
         padding-bottom: 20px;
-        text-decoration-color: var(--color-bg-primary);
+        text-decoration-color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 80%);
         text-underline-offset: 4px;
-        color: var(--color-text-secondary);
+        color: var(--color-fg-placeholder);
         transition: text-decoration-color $transition-default-timing;
-        opacity: 0.7;
+        opacity: 1;
         font-weight: var(--text-regular);
+
         &:hover {
             color: var(--color-text-primary);
             text-decoration-color: var(--color-white);
+            opacity: 0.6;
 
             :global(.icon) {
                 opacity: 1;
@@ -96,6 +101,32 @@
         margin-right: $spacing-size-1;
         opacity: 0.6666;
         transition: opacity $transition-default-timing;
+        fill: var(--color-text-tertiary);
+        #{$selector-darkmode} & {
+            fill: var(--color-fg-white);
+        }
+    }
+}
+
+.gridIcon {
+    fill: var(--color-text-tertiary) !important;
+    opacity: 0.6;
+    height: $spacing-size-10;
+    #{$selector-darkmode} & {
+        fill: var(--color-fg-white) !important;
+        opacity: 1;
+    }
+}
+
+.listStyleNone {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    padding-left: 0;
+    opacity: 0.7;
+
+    #{$selector-darkmode} & {
+        opacity: 1;
     }
 }
 
@@ -112,4 +143,9 @@
     @media screen and (min-width: $breakpoint-site-footer-four-column) {
         margin-top: -$spacing-size-4;
     }
+}
+
+.headerTitle {
+    padding-top: $spacing-size-4;
+    color: var(--color-text-secondary);
 }
