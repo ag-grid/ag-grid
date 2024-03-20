@@ -51,7 +51,7 @@ export const PUBLISHED_URLS = {
 export const integratedChartsUsesChartsEnterprise = true;
 export const PUBLISHED_UMD_URLS = {
     'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}/dist/ag-grid-community.js`,
-    'ag-grid-enterprise': `{NPM_CDN}/ag-grid-enterprise@${agGridVersion}/dist/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise.js`
+    'ag-grid-enterprise': `{NPM_CDN}/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise@${agGridVersion}/dist/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise.js`
 };
 
 export const DOCS_TAB_ITEM_ID_PREFIX = 'reference-';
