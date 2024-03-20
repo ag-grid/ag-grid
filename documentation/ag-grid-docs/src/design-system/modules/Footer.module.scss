@@ -75,8 +75,8 @@
         text-underline-offset: 4px;
         color: var(--color-text-secondary);
         transition: text-decoration-color $transition-default-timing;
-        opacity: 0.666;
-
+        opacity: 0.7;
+        font-weight: var(--text-regular);
         &:hover {
             color: var(--color-text-primary);
             text-decoration-color: var(--color-white);
