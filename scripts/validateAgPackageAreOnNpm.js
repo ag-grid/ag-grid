@@ -20,6 +20,7 @@ const exclude = ['@ag-grid-community/vue-legacy', 'ag-grid-vue-legacy']
 const allPackages = getPackageInformation();
 const packageNames = Object.keys(allPackages);
 packageNames
+    .filter(packageName => packageName !== 'update-algolia-indices')
     .forEach(packageName => {
         const agPackage = allPackages[packageName];
         const {isGridPackage, publicPackage} = agPackage;
