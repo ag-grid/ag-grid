@@ -35,7 +35,6 @@ const localConfiguration: Configuration = {
         'ag-grid-react': `${localPrefix}/ag-grid-react`,
         'ag-grid-vue': `${localPrefix}/ag-grid-vue`,
         'ag-grid-vue3': `${localPrefix}/ag-grid-vue3`,
-        //'ag-charts-community': `${localPrefix}/ag-charts-community`
     },
     gridCommunityPaths: {
         'ag-grid-community': `${localPrefix}/ag-grid-community`,
@@ -69,8 +68,6 @@ const localConfiguration: Configuration = {
         '@ag-grid-enterprise/sparklines': `${localPrefix}/@ag-grid-enterprise/sparklines/dist/package/main.cjs.js`,
         '@ag-grid-enterprise/status-bar': `${localPrefix}/@ag-grid-enterprise/status-bar/dist/package/main.cjs.js`,
         '@ag-grid-enterprise/viewport-row-model': `${localPrefix}/@ag-grid-enterprise/viewport-row-model/dist/package/main.cjs.js`,
-        // 'ag-grid-community': `${localPrefix}/ag-grid-community/dist/package/main.cjs.js`,
-        // 'ag-grid-enterprise': `${localPrefix}/ag-grid-enterprise/dist/package/main.cjs.js`,
         'ag-charts-community': `${localPrefix}/ag-charts-community`,
         'ag-charts-enterprise': `${localPrefix}/ag-charts-enterprise`,
     },
@@ -101,6 +98,7 @@ const publishedConfiguration: Configuration = {
         'ag-charts-vue': `${NPM_CDN}/ag-charts-vue/`,
         'ag-charts-vue3': `${NPM_CDN}/ag-charts-vue3/`,
         'ag-charts-community': `${NPM_CDN}/ag-charts-community/`,
+        'ag-charts-enterprise': `${NPM_CDN}/ag-charts-enterprise/`,
         '@ag-grid-community/client-side-row-model': `https://cdn.jsdelivr.net/npm/@ag-grid-community/client-side-row-model@${agGridVersion}/dist/package/main.cjs.js`,
         '@ag-grid-community/core': `https://cdn.jsdelivr.net/npm/@ag-grid-community/core@${agGridVersion}/dist/package/main.cjs.js`,
         '@ag-grid-community/csv-export': `https://cdn.jsdelivr.net/npm/@ag-grid-community/csv-export@${agGridVersion}/dist/package/main.cjs.js`,
