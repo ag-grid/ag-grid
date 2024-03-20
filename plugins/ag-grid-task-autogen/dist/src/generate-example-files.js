@@ -27,6 +27,9 @@ function createTask(parentProject, srcRelativeInputPath) {
                 production: {
                     mode: 'prod',
                 },
+                archive: {
+                    mode: 'prod',
+                },
                 staging: {
                     mode: 'dev',
                 },
