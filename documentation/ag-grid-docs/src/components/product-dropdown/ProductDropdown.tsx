@@ -26,14 +26,6 @@ export const ProductDropdown = ({ items, children }) => {
         };
     }, []);
 
-    const handleMouseEnter = () => {
-        setIsOpen(true);
-    };
-
-    const handleMouseLeave = () => {
-        setIsOpen(false);
-    };
-
     const getIconComponent = (title) => {
         switch (title) {
             case 'AG Grid':
@@ -58,8 +50,12 @@ export const ProductDropdown = ({ items, children }) => {
         <div
             ref={dropdownRef}
             className={`${styles.customMenu} ${isOpen ? styles.open : ''}`}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+            onMouseEnter={() => {
+                setIsOpen(true);
+            }}
+            onMouseLeave={() => {
+                setIsOpen(false);
+            }}
         >
             <button className={`${styles.customTrigger} ${isOpen ? styles.open : ''}`} onClick={handleMenuToggle}>
                 Products
