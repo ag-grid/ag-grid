@@ -1,10 +1,10 @@
 {
   "name": "@ag-grid-community/csv-export",
-  "version": "31.1.0",
+  "version": "31.2.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "dependencies": {
     "tslib": "^2.3.0",
-    "@ag-grid-community/core": "31.1.0"
+    "@ag-grid-community/core": "31.2.0"
   },
   "main": "./dist/package/main.cjs.js",
   "types": "./dist/types/src/main.d.ts",
@@ -23,7 +23,6 @@
     "blob-polyfill": "^7.0.20220408",
     "compression-streams-polyfill": "^0.1.7",
     "text-encoding-polyfill": "^0.6.7"
-
   },
   "repository": {
     "type": "git",

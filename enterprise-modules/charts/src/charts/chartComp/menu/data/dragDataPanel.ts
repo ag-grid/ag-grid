@@ -200,7 +200,7 @@ export abstract class DragDataPanel extends Component {
         eDragHandle.classList.add('ag-drag-handle', 'ag-chart-data-column-drag-handle');
 
         comp.getGui().insertAdjacentElement('beforeend', eDragHandle);
-0
+
         const dragSource: DragSource = {
             type: DragSourceType.ChartPanel,
             eElement: eDragHandle,

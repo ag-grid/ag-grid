@@ -133,13 +133,14 @@ export const TextElements: FunctionComponent = () => {
 
             <div className={styles.textElementsItem}>
                 <code>{`<Snippet framework="javascript">`}</code>
-                <Snippet framework="javascript">
-                    {`const addOne = (x) => {
+                <Snippet
+                    framework="javascript"
+                    content={`const addOne = (x) => {
     // Add one here
     const result = x + 1;
     return result;
 }`}
-                </Snippet>
+                />
             </div>
         </>
     );

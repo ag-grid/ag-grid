@@ -1,4 +1,5 @@
 import type { Framework } from '@ag-grid-types';
+import { throwDevWarning } from '@utils/throwDevWarning';
 
 import Code, { type Language } from '../Code';
 import * as snippetTransformer from './snippetTransformer';
@@ -37,6 +38,11 @@ export const Snippet = (props: Props) => {
         spaceBetweenProperties,
         inlineReactProperties,
     } = props;
+
+    if (!content) {
+        throwDevWarning({ message: 'No content in snippet' });
+        return;
+    }
 
     // create FW specific snippet
     const snippet = transform
