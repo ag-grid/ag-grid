@@ -13,8 +13,8 @@
             'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
             'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
 
-            // css: boilerplatePath + "css.js",
-            'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
+            css: (boilerplatePath.length === 0 ? `./` : `${boilerplatePath}/`) + "css.js",
+            // 'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
 
             // vuejs
@@ -136,7 +136,15 @@
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js',
                 format: 'cjs',
-            }
+            },
+            'ag-charts-community': {
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-charts-enterprise': {
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
         },
         meta: {
             '*.js': {

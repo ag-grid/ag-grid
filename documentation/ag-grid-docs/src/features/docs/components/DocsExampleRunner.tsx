@@ -105,7 +105,6 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, pa
                 if (internalFramework.startsWith('vue') || internalFramework.startsWith('react')) {
                     delete json.files['index.html'];
                 }
-                console.log({internalFramework});
                 return json;
             })]) as Promise<
                 [GeneratedContents]

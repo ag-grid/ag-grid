@@ -25,7 +25,7 @@ export const IMPORT_TYPES: ImportType[] = USE_PACKAGES ? ['modules', 'packages']
 
 export const agGridVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
 export const agGridEnterpriseVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
-export const agGridReactVersion = import.meta?.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
+export const agGridReactVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
 export const agGridAngularVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
 export const agGridVueVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
 export const agGridVue3Version = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
@@ -45,16 +45,17 @@ export const PUBLISHED_URLS = {
     'ag-grid-vue': `${NPM_CDN}/ag-grid-vue@${agGridVueVersion}/`,
     'ag-grid-vue3': `${NPM_CDN}/ag-grid-vue3@${agGridVue3Version}/`,
 };
-export const PUBLISHED_UMD_URLS = {
-    'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}/dist/umd/ag-grid-community.js`,
-    'ag-grid-enterprise': `${NPM_CDN}/ag-grid-enterprise@${agGridVersion}/dist/umd/ag-grid-enterprise.js`,
-};
-
-export const DOCS_TAB_ITEM_ID_PREFIX = 'reference-';
 
 // whether integrated charts includes ag-charts-enterprise or just ag-charts-community
 // also need to update plugins/ag-grid-generate-example-files/src/executors/generate/generator/constants.ts if this value is changed
 export const integratedChartsUsesChartsEnterprise = true;
+export const PUBLISHED_UMD_URLS = {
+    'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}/dist/ag-grid-community.js`,
+    'ag-grid-enterprise': `${NPM_CDN}/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise@${agGridVersion}/dist/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise.js`
+};
+
+export const DOCS_TAB_ITEM_ID_PREFIX = 'reference-';
+
 export const getEnterprisePackageName = () =>
     `ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise`;
 

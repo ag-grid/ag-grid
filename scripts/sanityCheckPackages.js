@@ -13,6 +13,7 @@ const [exec, scriptPath, gridNewVersion, gridDependencyVersion, chartNewVersion,
 const allPackages = getPackageInformation();
 const packageNames = Object.keys(allPackages);
 packageNames
+    .filter(packageName => packageName != 'update-algolia-indices')
     .forEach(packageName => {
         const agPackage = allPackages[packageName];
         const {projectRoot, isGridPackage, version, agGridDeps, agChartDeps, agSubAngularVersion, agSubAngularGridDeps, agSubAngularChartDeps} = agPackage;
