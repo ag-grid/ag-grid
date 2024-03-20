@@ -31,7 +31,8 @@ import {
     AgGridEvent,
     ColumnMenuVisibleChangedEvent,
     Events,
-    WithoutGridCommon
+    WithoutGridCommon,
+    FilterWrapperComp
 } from '@ag-grid-community/core';
 import { ColumnChooserFactory } from './columnChooserFactory';
 import { ColumnMenuFactory } from './columnMenuFactory';
@@ -438,33 +439,20 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
     }
 
     private createFilterPanel(): TabbedItem {
-        const filterWrapper: FilterWrapper | null = this.column ? this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU') : null;
-        if (!filterWrapper) {
+        const comp = this.column ? this.createManagedBean(new FilterWrapperComp(this.column, 'COLUMN_MENU')) : null;
+        if (!comp?.hasFilter()) {
             throw new Error('AG Grid - Unable to instantiate filter');
         }
 
-        const afterFilterAttachedCallback = (params: IAfterGuiAttachedParams) => {
-            if (!filterWrapper?.filterPromise) { return; }
+        const afterAttachedCallback = (params: IAfterGuiAttachedParams) => comp.afterGuiAttached(params);
 
-            // slightly odd block this - this promise will always have been resolved by the time it gets here, so won't be
-            // async (_unless_ in react or similar, but if so why not encountered before now?).
-            // I'd suggest a future improvement would be to remove/replace this promise as this block just wont work if it is
-            // async and is confusing if you don't have this context
-            filterWrapper.filterPromise.then(filter => {
-                if (filter && filter.afterGuiAttached) {
-                    filter.afterGuiAttached(params);
-                }
-            });
-        };
-
-        // see comment above
-        const afterDetachedCallback = () => filterWrapper?.filterPromise?.then(filter => filter?.afterGuiDetached?.());
+        const afterDetachedCallback = () => comp.afterGuiDetached();
 
         this.tabItemFilter = {
             title: _.createIconNoSpan('filter', this.gridOptionsService, this.column)!,
             titleLabel: TabbedColumnMenu.TAB_FILTER.replace('MenuTab', ''),
-            bodyPromise: filterWrapper?.guiPromise as AgPromise<HTMLElement>,
-            afterAttachedCallback: afterFilterAttachedCallback,
+            bodyPromise: AgPromise.resolve(comp?.getGui()) as AgPromise<HTMLElement>,
+            afterAttachedCallback,
             afterDetachedCallback,
             name: TabbedColumnMenu.TAB_FILTER
         };

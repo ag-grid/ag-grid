@@ -14,6 +14,7 @@ import { MenuService } from '../../../misc/menuService';
 import { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { ColumnMenuVisibleChangedEvent } from '../../../events';
 import { Events } from '../../../eventKeys';
+import { FilterWrapperComp } from '../../../filter/filterWrapperComp';
 
 @Bean('filterMenuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
@@ -26,6 +27,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
     private hidePopup: () => void;
     private tabListener: () => null;
+    private activeMenu?: FilterWrapperComp;
 
     public hideActiveMenu(): void {
         if (this.hidePopup) {
@@ -78,8 +80,9 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         eventSource: HTMLElement,
         isLegacyMenuEnabled: boolean
     ): void {
-        const filterWrapper =  column ? this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU') : undefined;
-        if (!filterWrapper || !column) {
+        const comp = column ? this.createBean(new FilterWrapperComp(column, 'COLUMN_MENU')) : undefined;
+        this.activeMenu = comp;
+        if (!comp?.hasFilter() || !column) {
             throw new Error('AG Grid - unable to show popup filter, filter instantiation failed');
         }
 
@@ -93,11 +96,11 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu))!;
 
-        filterWrapper.guiPromise.then(gui => eMenu.appendChild(gui!));
+        eMenu.appendChild(comp?.getGui()!);
 
         let hidePopup: (() => void);
 
-        const afterGuiDetached = () => filterWrapper.filterPromise?.then(filter => filter?.afterGuiDetached?.());
+        const afterGuiDetached = () => comp?.afterGuiDetached();
 
         const anchorToElement = this.menuService.isColumnMenuAnchoringEnabled() ? (eventSource ?? this.ctrlsService.getGridBodyCtrl().getGui()) : undefined;
         const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
@@ -114,6 +117,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
                 if (focusableEl) { focusableEl.focus(); }
             }
             afterGuiDetached();
+            this.destroyBean(this.activeMenu);
             this.dispatchVisibleChangedEvent(false, containerType, column);
         };
 
@@ -137,14 +141,12 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             this.hidePopup = hidePopup = addPopupRes.hideFunc;
         }
 
-        filterWrapper.filterPromise!.then(filter => {
+        comp.afterInit().then(() => {
             // need to make sure the filter is present before positioning, as only
             // after filter it is visible can we find out what the width of it is
             positionCallback(eMenu);
 
-            if (filter!.afterGuiAttached) {
-                filter!.afterGuiAttached({ container: containerType, hidePopup });
-            }
+            comp.afterGuiAttached({ container: containerType, hidePopup });
         });
 
         column.setMenuVisible(true, 'contextMenu');
@@ -182,5 +184,10 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
     public showMenuAfterContextMenuEvent(): void {
         // not supported in standard menu
+    }
+
+    protected destroy(): void {
+        this.destroyBean(this.activeMenu);
+        super.destroy();
     }
 }

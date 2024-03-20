@@ -13,6 +13,7 @@ import {
     PostConstruct,
     RefSelector,
     TabGuardComp,
+    FilterWrapperComp,
 } from '@ag-grid-community/core';
 
 interface FilterColumnPair {
@@ -37,6 +38,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
     private filterColumnPairs: FilterColumnPair[] | undefined;
     private eGroupFieldSelect: AgSelect;
     private afterGuiAttachedParams: IAfterGuiAttachedParams | undefined;
+    private filterWrapperComp?: FilterWrapperComp;
 
     constructor() {
         super(/* html */ `
@@ -178,26 +180,27 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         if (!this.selectedColumn) {
             return AgPromise.resolve();
         }
-        const filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.selectedColumn, 'COLUMN_MENU');
-        if (!filterWrapper) {
+        const comp = this.createManagedBean(new FilterWrapperComp(this.selectedColumn, 'COLUMN_MENU'));
+        this.filterWrapperComp = comp;
+        if (!comp.hasFilter()) {
             return AgPromise.resolve();
         }
-        return filterWrapper.guiPromise.then(gui => {
-            this.eUnderlyingFilter.appendChild(gui!);
-            filterWrapper.filterPromise?.then(filter => {
-                filter?.afterGuiAttached?.(this.afterGuiAttachedParams);
-                if (!this.afterGuiAttachedParams?.suppressFocus && this.eGroupFieldSelect && !this.eGroupFieldSelect.isDisabled()) {
-                    this.eGroupFieldSelect.getFocusableElement().focus();
-                }
-            });
-        });
+        this.eUnderlyingFilter.appendChild(comp.getGui());
+
+        return comp.getFilter()?.then(() => {
+            comp.afterGuiAttached?.(this.afterGuiAttachedParams);
+            if (!this.afterGuiAttachedParams?.suppressFocus && this.eGroupFieldSelect && !this.eGroupFieldSelect.isDisabled()) {
+                this.eGroupFieldSelect.getFocusableElement().focus();
+            }
+        }) ?? AgPromise.resolve();
     }
 
     private updateSelectedColumn(columnId: string | null | undefined): void {
         if (!columnId) {
             return;
         }
-        this.selectedFilter?.afterGuiDetached?.();
+        this.filterWrapperComp?.afterGuiDetached();
+        this.destroyBean(this.filterWrapperComp);
         const selectedFilterColumnPair = this.getFilterColumnPair(columnId);
         this.selectedColumn = selectedFilterColumnPair?.column;
         this.selectedFilter = selectedFilterColumnPair?.filter;
