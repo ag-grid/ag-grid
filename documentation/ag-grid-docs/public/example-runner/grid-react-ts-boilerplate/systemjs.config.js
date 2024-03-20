@@ -16,8 +16,8 @@
             ...systemJsPaths
         },
         map: {
-            // css: boilerplatePath + "css.js",
-            'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
+            css: (boilerplatePath.length === 0 ? `./` : `${boilerplatePath}/`) + "css.js",
+            // 'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
             // react
             react: 'npm:react@18.2.0',
@@ -143,6 +143,14 @@
             },
             'ag-grid-react': {
                 main: './dist/package/index.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-charts-community': {
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-charts-enterprise': {
                 defaultExtension: 'js',
                 format: 'cjs',
             },

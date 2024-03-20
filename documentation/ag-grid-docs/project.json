@@ -6,7 +6,7 @@
   "targets": {
     "build": {
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
-      "dependsOn": ["^build", "generate-doc-references", "generate-examples"],
+      "dependsOn": ["generate-doc-references", "generate-examples"],
       "inputs": [
         "^production",
         "production",

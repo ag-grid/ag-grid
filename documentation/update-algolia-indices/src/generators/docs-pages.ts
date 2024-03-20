@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { JSDOM, VirtualConsole } from 'JSDOM';
+import { JSDOM, VirtualConsole } from 'jsdom';
 import { MENU_FILE_PATH, DIST_DIR, SUPPORTED_FRAMEWORKS } from '../utils/constants';
 import { writeResults, logWarning } from '../utils/output';
 

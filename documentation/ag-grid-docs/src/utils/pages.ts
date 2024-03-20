@@ -81,8 +81,8 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     '@ag-grid-enterprise/viewport-row-model/dist/**': 'enterprise-modules/viewport-row-model/dist/**/*.{cjs,js,map}',
 
     // Charts modules
-    'ag-charts-community': 'node_modules/ag-charts-community/dist/package/main.cjs.js',
-    'ag-charts-enterprise': 'node_modules/ag-charts-enterprise/dist/package/main.cjs.js',
+    'ag-charts-community/dist/**': 'node_modules/ag-charts-community/dist/**/*.{cjs,js,map}',
+    'ag-charts-enterprise/dist/**': 'node_modules/ag-charts-enterprise/dist/**/*.{cjs,js,map}',
 
     // Framework libraries
     '@ag-grid-community/react/dist/**': 'community-modules/react/dist/**/*.{cjs,mjs,js,map}',
@@ -202,8 +202,6 @@ export const getDebugPageUrls = async ({
 };
 
 export const isUsingPublishedPackages = () => USE_PUBLISHED_PACKAGES === true;
-export const isPreProductionBuild = () => false;
-export const isBuildServerBuild = () => false;
 
 /**
  * Get Dev File URL for referencing on the front end

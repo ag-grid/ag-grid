@@ -145,7 +145,6 @@
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/multi-filter/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/range-selection/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/rich-select/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/advanced-filter/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/charts/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/charts-enterprise/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/clipboard/dist" />

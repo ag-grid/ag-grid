@@ -66,6 +66,7 @@
         "main": "enterprise-modules/core/src/main.ts",
         "tsConfig": "enterprise-modules/core/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",
+        "external": ["@ag-grid-community/core"],
         "platform": "browser",
         "target": "es6",
         "format": [

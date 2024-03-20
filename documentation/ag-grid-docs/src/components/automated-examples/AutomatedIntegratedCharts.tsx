@@ -61,8 +61,6 @@ export function AutomatedIntegratedCharts({ automatedExampleManager, useStaticDa
     });
 
     useEffect(() => {
-        console.log(`<img src="${urlWithBaseUrl('/images/automated-examples/replay-demo-icon.svg')} />`);
-
         let params = {
             gridClassname,
             darkMode,

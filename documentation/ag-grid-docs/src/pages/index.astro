@@ -9,6 +9,9 @@ import ChartsLogo from '@images/inline-svgs/ag-charts-logo.svg?react';
 import HeroGrid from '@components/hero-grid/HeroGrid.astro';
 import { AutomatedExamples } from '@components/automated-examples/AutomatedExamples';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { PUBLISHED_URLS, USE_PUBLISHED_PACKAGES } from '@constants';
+import { pathJoin } from '@utils/pathJoin';
+import { getExtraFileUrl } from '@utils/extraFileUrl';
 
 // TODO: Is this best place to get the current version from?
 const { data: versions } = await getEntry('versions', 'ag-grid-versions');
@@ -33,9 +36,9 @@ const frameworksData = [
     },
 ];
 
-// TODO: Use `agGridEnterpriseVersion` from `@constants`;
-const agGridEnterpriseVersion = '31.1.1';
-const enterpriseGridUrl = `https://cdn.jsdelivr.net/npm/ag-grid-charts-enterprise@${agGridEnterpriseVersion}/dist/ag-grid-charts-enterprise.min.js`;
+const enterpriseGridUrl = USE_PUBLISHED_PACKAGES
+    ? pathJoin(PUBLISHED_URLS['ag-grid-charts-enterprise'], 'dist/ag-grid-charts-enterprise.min.js')
+    : getExtraFileUrl({ filePath: 'ag-grid-charts-enterprise/dist/ag-grid-charts-enterprise.js' });
 ---
 
 <!-- Grid font for Quartz theme -->

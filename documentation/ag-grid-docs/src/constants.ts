@@ -25,30 +25,37 @@ export const IMPORT_TYPES: ImportType[] = USE_PACKAGES ? ['modules', 'packages']
 
 export const agGridVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
 export const agGridEnterpriseVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
-export const agGridReactVersion = import.meta?.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
+export const agGridReactVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
 export const agGridAngularVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
 export const agGridVueVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
 export const agGridVue3Version = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
 
 export const NPM_CDN = 'https://cdn.jsdelivr.net/npm';
 export const PUBLISHED_URLS = {
-    'ag-grid-react': `${NPM_CDN}/ag-grid-react@${agGridReactVersion}/`,
+    '@ag-grid-community/styles': `${NPM_CDN}/@ag-grid-community/styles@${agGridVersion}`,
+    '@ag-grid-community/react': `${NPM_CDN}/@ag-grid-community/react@${agGridReactVersion}/`,
+    '@ag-grid-community/angular': `${NPM_CDN}/@ag-grid-community/angular@${agGridAngularVersion}/`,
+    '@ag-grid-community/vue': `${NPM_CDN}/@ag-grid-community/vue@${agGridVueVersion}/`,
+    '@ag-grid-community/vue3': `${NPM_CDN}/@ag-grid-community/vue3@${agGridVue3Version}/`,
+    'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}`,
+    'ag-grid-enterprise': `${NPM_CDN}/ag-grid-enterprise@${agGridEnterpriseVersion}/`,
+    'ag-grid-charts-enterprise': `${NPM_CDN}/ag-grid-charts-enterprise@${agGridEnterpriseVersion}/`,
     'ag-grid-angular': `${NPM_CDN}/ag-grid-angular@${agGridAngularVersion}/`,
+    'ag-grid-react': `${NPM_CDN}/ag-grid-react@${agGridReactVersion}/`,
     'ag-grid-vue': `${NPM_CDN}/ag-grid-vue@${agGridVueVersion}/`,
-    'ag-grid-vue3': `${NPM_CDN}/ag-grid-vue3@${agGridVueVersion}/`,
-    'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}/dist/package/main.cjs.js`,
-    'ag-grid-enterprise': `${NPM_CDN}/ag-grid-enterprise@${agGridVersion}/dist/package/main.cjs.js`,
+    'ag-grid-vue3': `${NPM_CDN}/ag-grid-vue3@${agGridVue3Version}/`,
 };
-export const PUBLISHED_UMD_URLS = {
-    'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}/dist/umd/ag-grid-community.js`,
-    'ag-grid-enterprise': `${NPM_CDN}/ag-grid-enterprise@${agGridVersion}/dist/umd/ag-grid-enterprise.js`,
-};
-
-export const DOCS_TAB_ITEM_ID_PREFIX = 'reference-';
 
 // whether integrated charts includes ag-charts-enterprise or just ag-charts-community
 // also need to update plugins/ag-grid-generate-example-files/src/executors/generate/generator/constants.ts if this value is changed
 export const integratedChartsUsesChartsEnterprise = true;
+export const PUBLISHED_UMD_URLS = {
+    'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}/dist/ag-grid-community.js`,
+    'ag-grid-enterprise': `${NPM_CDN}/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise@${agGridVersion}/dist/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise.js`
+};
+
+export const DOCS_TAB_ITEM_ID_PREFIX = 'reference-';
+
 export const getEnterprisePackageName = () =>
     `ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise`;
 
