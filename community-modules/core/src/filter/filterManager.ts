@@ -5,7 +5,7 @@ import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
 import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
 import { IRowModel } from '../interfaces/iRowModel';
-import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, FilterDestroyedEvent, AdvancedFilterEnabledChangedEvent, FilterChangedEventSourceType } from '../events';
+import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterDestroyedEvent, AdvancedFilterEnabledChangedEvent, FilterChangedEventSourceType } from '../events';
 import { IFilterComp, IFilter, IFilterParams, FilterModel } from '../interfaces/iFilter';
 import { ColDef } from '../entities/colDef';
 import { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
@@ -15,7 +15,6 @@ import { BeanStub } from '../context/beanStub';
 import { convertToSet } from '../utils/set';
 import { exists } from '../utils/generic';
 import { mergeDeep, cloneObject } from '../utils/object';
-import { loadTemplate } from '../utils/dom';
 import { RowRenderer } from '../rendering/rowRenderer';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { FilterComponent } from '../components/framework/componentTypes';
@@ -562,8 +561,6 @@ export class FilterManager extends BeanStub {
         if (!filterWrapper) {
             filterWrapper = this.createFilterWrapper(column, source);
             this.setColumnFilterWrapper(column, filterWrapper);
-        } else if (source !== 'NO_UI') {
-            this.putIntoGui(filterWrapper, source);
         }
 
         return filterWrapper;
@@ -658,7 +655,6 @@ export class FilterManager extends BeanStub {
             column: column,
             filterPromise: null,
             compiledElement: null,
-            guiPromise: AgPromise.resolve(null),
             compDetails: null
         };
 
@@ -666,46 +662,7 @@ export class FilterManager extends BeanStub {
         filterWrapper.filterPromise = filterPromise?.() ?? null;
         filterWrapper.compDetails = compDetails;
 
-        if (filterPromise) {
-            this.putIntoGui(filterWrapper, source);
-        }
-
         return filterWrapper;
-    }
-
-    private putIntoGui(filterWrapper: FilterWrapper, source: FilterRequestSource): void {
-        const eFilterGui = document.createElement('div');
-
-        eFilterGui.className = 'ag-filter';
-
-        filterWrapper.guiPromise = new AgPromise<HTMLElement>(resolve => {
-            filterWrapper.filterPromise!.then(filter => {
-                let guiFromFilter = filter!.getGui();
-
-                if (!exists(guiFromFilter)) {
-                    console.warn(`AG Grid: getGui method from filter returned ${guiFromFilter}, it should be a DOM element or an HTML template string.`);
-                }
-
-                // for backwards compatibility with Angular 1 - we
-                // used to allow providing back HTML from getGui().
-                // once we move away from supporting Angular 1
-                // directly, we can change this.
-                if (typeof guiFromFilter === 'string') {
-                    guiFromFilter = loadTemplate(guiFromFilter as string);
-                }
-
-                eFilterGui.appendChild(guiFromFilter);
-                resolve(eFilterGui);
-                const event: WithoutGridCommon<FilterOpenedEvent> = {
-                    type: Events.EVENT_FILTER_OPENED,
-                    column: filterWrapper.column,
-                    source,
-                    eGui: eFilterGui
-                };
-
-                this.eventService.dispatchEvent(event);
-            });
-        });
     }
 
     private onColumnsChanged(): void {
@@ -1092,6 +1049,5 @@ export interface FilterWrapper {
     compiledElement: any;
     column: Column;
     filterPromise: AgPromise<IFilterComp> | null;
-    guiPromise: AgPromise<HTMLElement | null>;
     compDetails: UserCompDetails | null;
 }
