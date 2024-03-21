@@ -31,6 +31,14 @@ function getOnGridReadyCode(
         additionalLines.push(readyCode.trim().replace(/^\{|\}$/g, ''));
     }
 
+    additionalLines.push(`window.parent.postMessage(
+        {
+            name: "done"
+        },
+        "*"
+    );`);
+    additionalLines.push(`console.log('Grid ready event received')`);
+
     if (data) {
         const { url, callback } = data;
         const setRowDataBlock = replaceGridReadyRowData(callback, 'this.rowData');
@@ -279,14 +287,17 @@ ${imports.join('\n')}
 ${exampleConfig.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
 ${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}${interfaces?.length > 0 ? '\n' + interfaces.join('\n') : ''}
 
+
 @Component({
     selector: 'my-app',
     standalone: true,
     imports: [${standaloneImports.join(', ')}],
     template: \`${template}\`
 })
-
 export class AppComponent {
+
+
+
 ${hasGridApi ? `    private gridApi!: GridApi${genericParams};\n` : ''}
     ${propertyVars.join('\n')}
     ${propertyAssignments.join(';\n')}

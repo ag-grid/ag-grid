@@ -3,7 +3,7 @@ import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import classnames from 'classnames';
 import { type FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
-
+import { getInstrument, createConnection } from '@getpolaris.ai/sdk';
 import exampleRuntimeInjectedStyles from './exampleRuntimeInjectedStyles';
 
 interface Props {
@@ -12,7 +12,10 @@ interface Props {
     loadingIFrameId: string;
 }
 
+createConnection({apiKey: 'api:2dyEFOhkXHeMjGZmwgpq0gLcZHr'});
+
 export const ExampleIFrame: FunctionComponent<Props> = ({ isHidden, url, loadingIFrameId }) => {
+    const instrument = getInstrument('example:'+ url);
     const [isIntersecting, setIsIntersecting] = useState(false);
     const iFrameRef = useRef<HTMLIFrameElement>(null);
     const [darkMode] = useDarkmode();
@@ -49,7 +52,21 @@ export const ExampleIFrame: FunctionComponent<Props> = ({ isHidden, url, loading
         if (!isIntersecting || !url || !iFrameRef.current || (currentSrc as URL)?.pathname === url || isScrolling) {
             return;
         }
+        console.log('loading and starting instrument', url);
+        instrument.start();
         iFrameRef.current.src = url;
+        const listener = (event: any) => {
+            if(event.source === iFrameRef.current?.contentWindow && event.data?.name === 'done'){
+                console.log('message', event);
+                instrument.done();
+            }else{
+                console.log('message from unknown source', event);
+            }
+        }
+        window.addEventListener('message',listener );
+        return () => {
+         //   window.removeEventListener('message', listener);
+        }
     }, [isIntersecting, url, isScrolling]);
 
     // when dark mode is changed, applies it to the iframe.

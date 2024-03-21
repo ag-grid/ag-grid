@@ -65,7 +65,8 @@
     "react-query": "^3.39.3",
     "sass": "^1.70.0",
     "typescript": "^5.3.3",
-    "vite-plugin-svgr": "^4.2.0"
+    "vite-plugin-svgr": "^4.2.0",
+    "@getpolaris.ai/sdk": "0.0.37"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
