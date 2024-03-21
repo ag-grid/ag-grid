@@ -86,7 +86,7 @@
             text-decoration-color: var(--color-white);
             opacity: 0.6;
             #{$selector-darkmode} & {
-                text-decoration-color: var(--color-white);
+                text-decoration-color: var(--color-text-tertiary);
             }
 
             :global(.icon) {
