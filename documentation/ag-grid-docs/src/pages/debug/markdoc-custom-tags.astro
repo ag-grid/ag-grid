@@ -1,0 +1,31 @@
+---
+import { getEntry } from 'astro:content';
+import { DEFAULT_FRAMEWORK } from '@constants';
+import DebugLayout from '@layouts/DebugLayout.astro';
+
+const page = await getEntry('markdoc', 'custom-tags');
+
+const { Content } = await page.render();
+const framework = DEFAULT_FRAMEWORK;
+---
+
+<DebugLayout title={`Debug: ${page.data.title}`}>
+    <Content framework={framework} page={page} />
+</DebugLayout>
+
+<script>
+    const { searchParams } = new URL(document.location);
+    const redirect = searchParams.get('redirect');
+    if (redirect) {
+        // Prevent an infinite loop by using session storage to check for previous redirects
+        const prevRedirect = window.sessionStorage.getItem('markdocCustomTags:redirect');
+        if (prevRedirect === redirect) {
+            console.error(
+                'Missing custom Markdoc tag in `src/content/markdoc/custom-tags.mdoc`. Add an example for what is missing, from the dev server terminal.'
+            );
+        } else {
+            window.sessionStorage.setItem('markdocCustomTags:redirect', redirect);
+            window.location.replace(redirect);
+        }
+    }
+</script>

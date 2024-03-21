@@ -1,0 +1,31 @@
+---
+title: All Markdoc Custom Tags
+---
+
+# Preload Custom Markdoc Tags
+
+{% warning %}
+This page is for development use only
+{% /warning %}
+
+A kitchen sink of all custom Markdoc tags that can be used inside the `{% includeMarkdoc /%}` custom tag.
+
+An example of each tag is rendered on this page so that it can be preloaded on dev before a page is loaded. Not required during builds because the custom tags will mostly be preloaded when building the pages.
+
+See [Astro custom markdoc tag issue](https://github.com/withastro/astro/issues/10418).
+
+## Custom Markdoc Tags
+
+{% apiDocumentation source="grid-options/properties.json" section="miscellaneous" names=["alignedGrids"] /%}
+
+{% interfaceDocumentation interfaceName="IDateComp" /%}
+
+{% note %}
+A note
+{% /note %}
+
+{% warning %}
+A warning
+{% /warning %}
+
+{% gridExampleRunner title="Simple Definitions" name="simple" /%}
