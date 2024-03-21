@@ -11,7 +11,7 @@ import {
     KeyCode,
     PostConstruct,
     RefSelector,
-    FilterDestroyedEvent
+    FilterWrapperComp
 } from "@ag-grid-community/core";
 
 export class ToolPanelFilterComp extends Component {
@@ -40,6 +40,7 @@ export class ToolPanelFilterComp extends Component {
     private column: Column;
     private expanded: boolean = false;
     private underlyingFilter: IFilterComp | null;
+    private filterWrapperComp?: FilterWrapperComp;
 
     constructor(hideHeader: boolean, private readonly expandedCallback: () => void) {
         super(ToolPanelFilterComp.TEMPLATE);
@@ -78,7 +79,6 @@ export class ToolPanelFilterComp extends Component {
         }
 
         this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_DESTROYED, this.onFilterDestroyed.bind(this));
     }
 
     public getColumn(): Column {
@@ -109,19 +109,6 @@ export class ToolPanelFilterComp extends Component {
         this.dispatchEvent({ type: Column.EVENT_FILTER_CHANGED });
     }
 
-    private onFilterDestroyed(event: FilterDestroyedEvent): void {
-        if (
-            this.expanded &&
-            (event.source === 'api' || event.source === 'paramsUpdated') &&
-            event.column.getId() === this.column.getId() &&
-            this.columnModel.getPrimaryColumn(this.column)
-        ) {
-            // filter was visible and has been destroyed by the API or params changing. If the column still exists, need to recreate UI component
-            this.removeFilterElement();
-            this.addFilterElement(true);
-        }
-    }
-
     public toggleExpanded(): void {
         this.expanded ? this.collapse() : this.expand();
     }
@@ -142,27 +129,20 @@ export class ToolPanelFilterComp extends Component {
 
     private addFilterElement(suppressFocus?: boolean): void {
         const filterPanelWrapper = _.loadTemplate(/* html */`<div class="ag-filter-toolpanel-instance-filter"></div>`);
-        const filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR');
+        const comp = this.createManagedBean(new FilterWrapperComp(this.column, 'TOOLBAR'));
+        this.filterWrapperComp = comp;
 
-        if (!filterWrapper) { return; }
+        if (!comp.hasFilter()) { return; }
 
-        const { filterPromise, guiPromise } = filterWrapper;
-
-        filterPromise?.then(filter => {
+        comp.getFilter()?.then(filter => {
             this.underlyingFilter = filter;
 
             if (!filter) { return; }
-            guiPromise.then(filterContainerEl => {
-                if (filterContainerEl) {
-                    filterPanelWrapper.appendChild(filterContainerEl);
-                }
+            filterPanelWrapper.appendChild(comp.getGui());
 
-                this.agFilterToolPanelBody.appendChild(filterPanelWrapper);
+            this.agFilterToolPanelBody.appendChild(filterPanelWrapper);
 
-                if (filter.afterGuiAttached) {
-                    filter.afterGuiAttached({ container: 'toolPanel', suppressFocus });
-                }
-            });
+            comp.afterGuiAttached({ container: 'toolPanel', suppressFocus });
         });
         
     }
@@ -177,7 +157,8 @@ export class ToolPanelFilterComp extends Component {
         _.setDisplayed(this.eExpandChecked, false);
         _.setDisplayed(this.eExpandUnchecked, true);
 
-        this.underlyingFilter?.afterGuiDetached?.();
+        this.filterWrapperComp?.afterGuiDetached();
+        this.destroyBean(this.filterWrapperComp);
 
         this.expandedCallback();
     }

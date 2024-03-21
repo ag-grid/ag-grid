@@ -112,6 +112,7 @@ export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, Pro
 export { ISetFilter, SetFilterModel, ISetFilterParams, SetFilterParams, SetFilterValues, SetFilterModelValue, SetFilterValuesFunc, SetFilterValuesFuncParams, ISetFilterTreeListTooltipParams } from "./interfaces/iSetFilter";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
 export { IMultiFilter, IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, MultiFilterParams, IMultiFilterDef } from './interfaces/iMultiFilter';
+export { FilterWrapperComp } from './filter/filterWrapperComp';
 
 export { ProvidedFilter, IProvidedFilter, IProvidedFilterParams, ProvidedFilterParams } from "./filter/provided/providedFilter";
 export { ISimpleFilter, SimpleFilter, ISimpleFilterParams, SimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel, JoinOperator, IFilterPlaceholderFunctionParams, FilterPlaceholderFunction } from "./filter/provided/simpleFilter";

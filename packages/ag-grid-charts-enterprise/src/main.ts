@@ -129,6 +129,7 @@ export {ExcelFactoryMode} from "@ag-grid-community/core";
 export {ExpansionService} from "@ag-grid-community/core";
 export {ExpressionService} from "@ag-grid-community/core";
 export {FilterManager} from "@ag-grid-community/core";
+export {FilterWrapperComp} from "@ag-grid-community/core";
 export {FloatingFilterMapper} from "@ag-grid-community/core";
 export {FocusService} from "@ag-grid-community/core";
 export {GROUP_AUTO_COLUMN_ID} from "@ag-grid-community/core";

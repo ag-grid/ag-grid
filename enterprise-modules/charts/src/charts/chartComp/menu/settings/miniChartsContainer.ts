@@ -207,6 +207,11 @@ export class MiniChartsContainer extends Component {
 
     @PostConstruct
     private init() {
+        // hide MiniCustomCombo if no custom combo exists
+        if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
+            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(chartType => chartType !== 'customCombo');
+        }
+
         const eGui = this.getGui();
         const isEnterprise = this.chartController.isEnterprise();
         const isPivotChart = this.chartController.isPivotChart();
@@ -287,11 +292,6 @@ export class MiniChartsContainer extends Component {
             }
 
             eGui.appendChild(groupComponent.getGui());
-        }            
-
-        // hide MiniCustomCombo if no custom combo exists
-        if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
-            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(chartType => chartType !== 'customCombo');
         }
 
         this.updateSelectedMiniChart();
