@@ -1,5 +1,4 @@
 import {
-    AgChartThemeOverrides,
     AgGroupComponentParams,
     AgSlider,
     Autowired,
@@ -10,7 +9,7 @@ import {
     RefSelector,
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { AgChartPaddingOptions } from "ag-charts-community";
+import { AgChartPaddingOptions, AgChartThemeOverrides } from "ag-charts-community";
 import { ChartController } from "../../../chartController";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 import { ChartThemeOverridesSeriesType } from "../../../utils/seriesTypeMapper";

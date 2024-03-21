@@ -1,4 +1,5 @@
-import { AgChartThemeOverrides, ChartType } from "@ag-grid-community/core";
+import { ChartType } from "@ag-grid-community/core";
+import { AgChartThemeOverrides } from "ag-charts-community";
 
 export type ChartSeriesType = keyof AgChartThemeOverrides & (
     'bar' |
