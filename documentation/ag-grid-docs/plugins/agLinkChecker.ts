@@ -11,7 +11,7 @@ const IGNORED_PATHS = [
     '/archive',
 ];
 
-const findAllHtmlFiles = (dir: string): string[] => {
+const findAllFiles = (dir: string): string[] => {
     const results: string[] = [];
     const files = readdirSync(dir, { recursive: true });
     files.forEach(file => {
@@ -45,7 +45,7 @@ const checkLinks = async (dir: string, files: string[]) => {
                 let active = false;
                 let str = '';
                 var chunk;
-                while (null !== (chunk = fileStream.read(16384) /* here */)) {
+                while (null !== (chunk = fileStream.read(16384))) {
                     const strChunk = chunk.toString();
                     for(let i = 0; i < strChunk.length; i++) {
                         const chr = strChunk[i];
@@ -153,7 +153,7 @@ export default function createPlugin(options: Options): AstroIntegration {
                 }
 
                 const destDir = fileURLToPath(dir.href);
-                const files = findAllHtmlFiles(destDir);
+                const files = findAllFiles(destDir);
                 await checkLinks(destDir, files);
             },
         },
