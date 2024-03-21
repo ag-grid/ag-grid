@@ -2,7 +2,6 @@ import {
     _,
     Autowired,
     BeanStub,
-    CellRange,
     Column,
     ColumnGroup,
     ColumnModel,
@@ -17,6 +16,7 @@ import {
     RowNodeSorter,
     SortController,
     ValueService,
+    PartialCellRange,
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "../model/chartDataModel";
 
@@ -30,7 +30,7 @@ export interface ChartDatasourceParams {
     endRow: number;
     isScatter: boolean;
     aggFunc?: string | IAggFunc;
-    referenceCellRange?: CellRange;
+    referenceCellRange?: PartialCellRange;
 }
 
 interface IData {

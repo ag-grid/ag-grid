@@ -2,10 +2,10 @@ import {
     Autowired,
     Bean,
     BeanStub,
-    CellRange,
     CellRangeParams,
     ChartDownloadParams,
     ChartModel,
+    ChartParamsCellRange,
     ChartRef,
     ChartType,
     ColumnModel,
@@ -19,6 +19,7 @@ import {
     ModuleRegistry,
     OpenChartToolPanelParams,
     Optional,
+    PartialCellRange,
     PreDestroy,
     SeriesChartType,
     UpdateChartParams
@@ -131,7 +132,7 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     public createChartFromCurrentRange(chartType: ChartType = 'groupedColumn'): ChartRef | undefined {
-        const selectedRange: CellRange = this.getSelectedRange();
+        const selectedRange: PartialCellRange = this.getSelectedRange();
         return this.createChart(selectedRange, chartType);
     }
 
@@ -157,12 +158,6 @@ export class ChartService extends BeanStub implements IChartService {
             seriesChartTypes: model.seriesChartTypes
         };
 
-        const getCellRange = (cellRangeParams: CellRangeParams) => {
-            return this.rangeService
-                ? this.rangeService.createCellRangeFromCellRangeParams(cellRangeParams)
-                : undefined;
-        }
-
         if (model.modelType === 'pivot') {
             // if required enter pivot mode
             this.gridOptionsService.updateGridOptions({ options: { pivotMode: true}, source: 'pivotChart' as any });
@@ -177,7 +172,7 @@ export class ChartService extends BeanStub implements IChartService {
                 columns 
             };
 
-            const cellRange = getCellRange(chartAllRangeParams);
+            const cellRange = this.createCellRange(chartAllRangeParams);
             if (!cellRange) {
                 console.warn("AG Grid - unable to create chart as there are no columns in the grid.");
                 return;
@@ -198,7 +193,7 @@ export class ChartService extends BeanStub implements IChartService {
                 model.chartOptions);
         }
 
-        const cellRange = getCellRange(params.cellRange);
+        const cellRange = this.createCellRange(params.cellRange);
         if (!cellRange) {
             console.warn("AG Grid - unable to create chart as no range is selected");
             return;
@@ -222,7 +217,7 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
-        const cellRange = this.rangeService?.createCellRangeFromCellRangeParams(params.cellRange as CellRangeParams);
+        const cellRange = this.createCellRange(params.cellRange);
 
         if (!cellRange) {
             console.warn("AG Grid - unable to create chart as no range is selected");
@@ -259,9 +254,7 @@ export class ChartService extends BeanStub implements IChartService {
             columns: this.columnModel.getAllDisplayedColumns().map(col => col.getColId())
         };
 
-        const cellRange = this.rangeService
-            ? this.rangeService.createCellRangeFromCellRangeParams(chartAllRangeParams)
-            : undefined;
+        const cellRange = this.createCellRange(chartAllRangeParams);
 
         if (!cellRange) {
             console.warn("AG Grid - unable to create chart as there are no columns in the grid.");
@@ -282,7 +275,7 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
-        const cellRange = this.rangeService?.createCellRangeFromCellRangeParams(params.cellRange as CellRangeParams);
+        const cellRange = this.createCellRange(params.cellRange);
 
         if (!cellRange) {
             console.warn("AG Grid - unable to create chart as no range is selected");
@@ -309,7 +302,7 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     private createChart(
-        cellRange: CellRange,
+        cellRange: PartialCellRange,
         chartType: ChartType,
         chartThemeName?: string,
         pivotChart = false,
@@ -405,13 +398,17 @@ export class ChartService extends BeanStub implements IChartService {
         return chartRef;
     }
 
-    private getSelectedRange(): CellRange {
+    private getSelectedRange(): PartialCellRange {
         const ranges = this.rangeService.getCellRanges();
-        return ranges.length > 0 ? ranges[0] : {} as CellRange;
+        return ranges.length > 0 ? ranges[0] : { columns: [] };
     }
 
     private generateId(): string {
         return `id-${Math.random().toString(36).substring(2, 18)}`;
+    }
+
+    private createCellRange(cellRangeParams: ChartParamsCellRange): PartialCellRange | undefined {
+        return cellRangeParams && this.rangeService?.createPartialCellRangeFromRangeParams(cellRangeParams as CellRangeParams, true);
     }
 
     @PreDestroy

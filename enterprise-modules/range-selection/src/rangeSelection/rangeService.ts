@@ -26,7 +26,8 @@ import {
     _,
     ClearCellRangeParams,
     RangeDeleteStartEvent,
-    RangeDeleteEndEvent
+    RangeDeleteEndEvent,
+    PartialCellRange
 } from "@ag-grid-community/core";
 
 @Bean('rangeService')
@@ -139,7 +140,7 @@ export class RangeService extends BeanStub implements IRangeService {
         return _.last(allPositions) - allPositions[0] + 1 === rangeColumns.length;
     }
 
-    public getRangeStartRow(cellRange: CellRange): RowPosition {
+    public getRangeStartRow(cellRange: PartialCellRange): RowPosition {
         if (cellRange.startRow && cellRange.endRow) {
             return this.rowPositionUtils.before(cellRange.startRow, cellRange.endRow) ?
                 cellRange.startRow : cellRange.endRow;
@@ -150,7 +151,7 @@ export class RangeService extends BeanStub implements IRangeService {
         return { rowIndex: 0, rowPinned };
     }
 
-    public getRangeEndRow(cellRange: CellRange): RowPosition {
+    public getRangeEndRow(cellRange: PartialCellRange): RowPosition {
         if (cellRange.startRow && cellRange.endRow) {
             return this.rowPositionUtils.before(cellRange.startRow, cellRange.endRow) ?
                 cellRange.endRow : cellRange.startRow;
@@ -380,6 +381,11 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined {
+        return this.createPartialCellRangeFromRangeParams(params, false) as CellRange | undefined;
+    }
+
+    // Range service can't normally support a range without columns, but charts can
+    public createPartialCellRangeFromRangeParams(params: CellRangeParams, allowEmptyColumns: boolean): PartialCellRange | undefined {
         let columns: Column[] | undefined;
         let startsOnTheRight: boolean = false;
 
@@ -400,7 +406,7 @@ export class RangeService extends BeanStub implements IRangeService {
             }
         }
 
-        if (!columns) {
+        if (!columns || (!allowEmptyColumns && columns.length === 0)) {
             return;
         }
 

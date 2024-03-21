@@ -2,7 +2,6 @@ import {
     _,
     AgDialog,
     Autowired,
-    CellRange,
     ChartCreated,
     ChartDestroyed,
     ChartModel,
@@ -18,6 +17,7 @@ import {
     UpdateChartParams,
     WithoutGridCommon,
     FocusService,
+    PartialCellRange,
 } from "@ag-grid-community/core";
 
 import { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-community";
@@ -53,7 +53,7 @@ import { ChartMenuService, CHART_TOOL_PANEL_MENU_OPTIONS } from "./services/char
 export interface GridChartParams {
     chartId: string;
     pivotChart: boolean;
-    cellRange: CellRange;
+    cellRange: PartialCellRange;
     chartType: ChartType;
     chartThemeName?: string;
     insideDialog: boolean;

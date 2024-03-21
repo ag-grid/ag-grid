@@ -18,7 +18,8 @@ import {
     UpdateCrossFilterChartParams,
     UpdateChartParams,
     UpdateRangeChartParams,
-    IAggFunc
+    IAggFunc,
+    PartialCellRange
 } from "@ag-grid-community/core";
 import { ChartDataModel, ChartModelParams, ColState } from "./model/chartDataModel";
 import { ChartProxy, FieldDefinition, UpdateParams } from "./chartProxies/chartProxy";
@@ -533,8 +534,8 @@ export class ChartController extends BeanStub {
         return [this.model.dimensionCellRange!, this.model.valueCellRange!].filter(r => r);
     }
 
-    private createCellRange(params: UpdateRangeChartParams | UpdateCrossFilterChartParams) {
-        return params.cellRange && this.rangeService?.createCellRangeFromCellRangeParams(params.cellRange as CellRangeParams);
+    private createCellRange(params: UpdateRangeChartParams | UpdateCrossFilterChartParams): PartialCellRange | undefined {
+        return params.cellRange && this.rangeService?.createPartialCellRangeFromRangeParams(params.cellRange as CellRangeParams, true);
     }
 
     private validUpdateType(params: UpdateChartParams): boolean {
