@@ -2,7 +2,6 @@ import {
     _,
     Autowired,
     BeanStub,
-    CellRange,
     CellRangeType,
     ChartType,
     Column,
@@ -10,6 +9,8 @@ import {
     IRangeService,
     PostConstruct,
     SeriesChartType,
+    PartialCellRange,
+    CellRange,
 } from "@ag-grid-community/core";
 import { ChartDatasource, ChartDatasourceParams } from "../datasource/chartDatasource";
 import { ChartTranslationService } from '../services/chartTranslationService';
@@ -32,7 +33,7 @@ export interface ChartModelParams {
     chartThemeName: string;
     switchCategorySeries?: boolean;
     aggFunc?: string | IAggFunc;
-    cellRange: CellRange;
+    cellRange: PartialCellRange;
     suppressChartRanges: boolean;
     unlinkChart?: boolean;
     crossFiltering?: boolean;
@@ -72,8 +73,8 @@ export class ChartDataModel extends BeanStub {
     private chartColumnService: ChartColumnService;
     private datasource: ChartDatasource;
 
-    public referenceCellRange: CellRange;
-    public suppliedCellRange: CellRange;
+    public referenceCellRange: PartialCellRange;
+    public suppliedCellRange: PartialCellRange;
 
     public crossFiltering = false;
 
@@ -243,7 +244,7 @@ export class ChartDataModel extends BeanStub {
             startRow: this.referenceCellRange.startRow,
             endRow: this.referenceCellRange.endRow,
             columns,
-            startColumn: type === CellRangeType.DIMENSION ? columns[0] : this.referenceCellRange.startColumn,
+            startColumn: type === CellRangeType.DIMENSION || this.referenceCellRange.startColumn == null ? columns[0] : this.referenceCellRange.startColumn,
             type
         };
     }

@@ -25,9 +25,10 @@ export interface IRangeService {
     extendLatestRangeInDirection(event: KeyboardEvent): CellPosition | undefined;
     extendLatestRangeToCell(cell: CellPosition): void;
     updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent?: boolean): void;
-    getRangeStartRow(cellRange: CellRange): RowPosition;
-    getRangeEndRow(cellRange: CellRange): RowPosition;
+    getRangeStartRow(cellRange: PartialCellRange): RowPosition;
+    getRangeEndRow(cellRange: PartialCellRange): RowPosition;
     createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined;
+    createPartialCellRangeFromRangeParams(params: CellRangeParams, allowEmptyColumns: boolean): PartialCellRange | undefined
     setCellRanges(cellRanges: CellRange[]): void;
     clearCellRangeCellValues(params: ClearCellRangeParams): void;
 }
@@ -58,6 +59,8 @@ export interface CellRange {
     /** The start column for the range */
     startColumn: Column;
 }
+
+export type PartialCellRange = Omit<CellRange, 'startColumn'> & Partial<Pick<CellRange, 'startColumn'>>;
 
 export interface CellRangeParams {
     /** Start row index */
