@@ -12,7 +12,6 @@ import {
     ColumnModel,
     Component,
     FocusService,
-    GetContextMenuItemsParams,
     IAfterGuiAttachedParams,
     IContextMenuFactory,
     IRangeService,
@@ -24,7 +23,6 @@ import {
     PostConstruct,
     RowNode,
     CtrlsService,
-    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { MenuItemMapper } from "./menuItemMapper";
 import { MenuUtils } from "./menuUtils";
@@ -236,7 +234,13 @@ class ContextMenu extends Component {
             const doc = this.gridOptionsService.getDocument();
 
             if (doc.activeElement === doc.body) {
-                this.focusService.setFocusedCell({ rowIndex, column, rowPinned, forceBrowserFocus: true });
+                this.focusService.setFocusedCell({
+                    rowIndex,
+                    column,
+                    rowPinned,
+                    forceBrowserFocus: true,
+                    preventScrollOnBrowserFocus: !this.focusService.isKeyboardMode()
+                });
             }
         }
     }
