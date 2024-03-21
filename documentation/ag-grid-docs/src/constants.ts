@@ -1,3 +1,4 @@
+import corePackageJson from '../../../community-modules/core/package.json';
 import type { Framework, ImportType, InternalFramework } from './types/ag-grid';
 
 // Speed up the builds by only building some of the frameworks/pages
@@ -23,12 +24,12 @@ export const FRAMEWORK_DISPLAY_TEXT: Record<Framework, string> = {
 
 export const IMPORT_TYPES: ImportType[] = USE_PACKAGES ? ['modules', 'packages'] : ['modules'];
 
-export const agGridVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
-export const agGridEnterpriseVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
-export const agGridReactVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
-export const agGridAngularVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
-export const agGridVueVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
-export const agGridVue3Version = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
+export const agGridVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? corePackageJson.version;
+export const agGridEnterpriseVersion = agGridVersion;
+export const agGridReactVersion = agGridVersion;
+export const agGridAngularVersion = agGridVersion;
+export const agGridVueVersion = agGridVersion;
+export const agGridVue3Version = agGridVersion;
 
 export const NPM_CDN = 'https://cdn.jsdelivr.net/npm';
 export const PUBLISHED_URLS = {
@@ -51,7 +52,7 @@ export const PUBLISHED_URLS = {
 export const integratedChartsUsesChartsEnterprise = true;
 export const PUBLISHED_UMD_URLS = {
     'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}/dist/ag-grid-community.js`,
-    'ag-grid-enterprise': `${NPM_CDN}/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise@${agGridVersion}/dist/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise.js`
+    'ag-grid-enterprise': `${NPM_CDN}/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise@${agGridVersion}/dist/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise.js`,
 };
 
 export const DOCS_TAB_ITEM_ID_PREFIX = 'reference-';
