@@ -727,7 +727,7 @@
                             {
                                 "title": "Advanced Filter",
                                 "path": "filter-advanced",
-                                "enterprise": true
+                                "isEnterprise": true
                             },
                             {
                                 "title": "External Filter",
