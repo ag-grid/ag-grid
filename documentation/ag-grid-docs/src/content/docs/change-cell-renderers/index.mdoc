@@ -8,9 +8,9 @@ Highlight cells by flashing or animating value changes.
 
 In the example above, to show changing values:
 
-* Columns A and B use flashing cells.
-* Columns C and D use the Animate Show Change cell renderer.
-* Columns E and F use the Animate Slide Cell cell renderer.
+* Columns A and B use [Flashing Cells](./change-cell-renderers#flashing-cells).
+* Columns C and D use the [Animate Show Change](./change-cell-renderers#animate-show-changed-cells) cell renderer.
+* Columns E and F use the [Animate Slide Cell](./change-cell-renderers#animate-slide-cells) cell renderer.
 
 ## Flashing Cells
 
@@ -53,18 +53,48 @@ The example below demonstrates flashing duration changes. The following can be n
 
 One exception to the above is changes due to filtering. If you are [Row Grouping](./grouping/) the data with [Aggregations](./aggregation/), then the aggregated values will change as filtering adds and removes rows contained within the groups. It typically doesn't make sense to flash these changes when it's due to a filter change, as filtering would impact many (possibly all) cells at once, thus not usefully bringing the users attention to any particular cell. If you do not like this exception and would like to flash changes even when it's the result of a filter change, then set grid property `allowShowChangeAfterFilter=true`.
 
-## Animated Cells
+## Animated Cell Renderers
 
-Interesting animations for data changes can be achieved using [Cell Components](./component-cell-renderer/). You can create your own or use one of the provided Show Change Cell Components. The grid provides two such components out of the box:
+Interesting animations for data changes can be achieved using [Cell Components](./component-cell-renderer/). You can create your own or use one of the provided Show Change Cell Components. The grid provides two such components out of the box.
 
-1. **Animate Show Changed**: The previous value is temporarily shown beside the old value with a directional arrow showing increase or decrease in value. The old value is then faded out. Set with `cellRenderer="agAnimateShowChangeCellRenderer"`
-1. **Animate Slide Cell**: The previous value shown in a faded fashion and slides, giving a ghosting effect as the old value fades and slides away. Set with `cellRenderer="agAnimateSlideCellRenderer"`.
+### Animate Show Changed Cells
 
-The example below demonstrates these.
+The previous value is temporarily shown beside the old value with a directional arrow showing increase or decrease in value. The old value is then faded out.
+
+```js {% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    columnDefs: [
+        // set the cell renderer in the column definition
+        { cellRenderer: "agAnimateShowChangeCellRenderer" },
+    ]
+}
+```
+
+The example below demonstrates this.
 
 * Columns A, B are editable.
 * Columns C and D are updated via clicking the button.
 * Changes to any of the first 4 columns results in animations in the Total and Average column.
-* The example demonstrates setting custom colours for up and down changes using the `--ag-value-change-delta-up-color` and `--ag-value-change-delta-down-color` CSS Variables.
 
-{% gridExampleRunner title="Animation Renderers" name="animation-renderers"  exampleHeight=530 /%}
+{% gridExampleRunner title="Animate Show Change Renderer" name="animate-show-change-renderer"  exampleHeight=530 /%}
+
+### Animate Slide Cells
+
+The previous value shown in a faded fashion and slides, giving a ghosting effect as the old value fades and slides away.
+
+```js {% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    columnDefs: [
+        // set the cell renderer in the column definition
+        { cellRenderer: "agAnimateSlideCellRenderer" },
+    ]
+}
+```
+
+The example below demonstrates this.
+
+* Columns A, B are editable.
+* Columns C and D are updated via clicking the button.
+* Changes to any of the first 4 columns results in animations in the Total and Average column.
+
+{% gridExampleRunner title="Animate Slide Renderer" name="animate-slide-renderer"  exampleHeight=530 /%}
