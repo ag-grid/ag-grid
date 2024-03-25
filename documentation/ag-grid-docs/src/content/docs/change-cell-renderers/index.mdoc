@@ -2,7 +2,7 @@
 title: "Highlighting Changes"
 ---
 
-Highlight cells by flashing or animating value changes.
+Highlight changes by flashing or animating cells.
 
 {% gridExampleRunner title="Animated Flashing Cells" name="animated-flashing-cells" /%}
 
@@ -61,6 +61,15 @@ Interesting animations for data changes can be achieved using [Cell Components](
 
 The previous value is temporarily shown beside the old value with a directional arrow showing increase or decrease in value. The old value is then faded out.
 
+{% gridExampleRunner title="Animate Show Change Renderer" name="animate-show-change-renderer"  exampleHeight=530 /%}
+
+The example above demonstrates this.
+
+* Columns A, B are editable.
+* Columns C and D are updated via clicking the button.
+* Changes to any of the first 4 columns results in animations in the Total and Average column.
+* This can be set as a cell renderer in the column definitions:
+
 ```js {% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
@@ -70,17 +79,18 @@ const gridOptions = {
 }
 ```
 
-The example below demonstrates this.
+### Animate Slide Cells
+
+The previous value shown in a faded fashion and slides, giving a ghosting effect as the old value fades and slides away.
+
+{% gridExampleRunner title="Animate Slide Renderer" name="animate-slide-renderer"  exampleHeight=530 /%}
+
+The example above demonstrates this.
 
 * Columns A, B are editable.
 * Columns C and D are updated via clicking the button.
 * Changes to any of the first 4 columns results in animations in the Total and Average column.
-
-{% gridExampleRunner title="Animate Show Change Renderer" name="animate-show-change-renderer"  exampleHeight=530 /%}
-
-### Animate Slide Cells
-
-The previous value shown in a faded fashion and slides, giving a ghosting effect as the old value fades and slides away.
+* This can be set as a cell renderer in the column definitions:
 
 ```js {% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
@@ -90,11 +100,3 @@ const gridOptions = {
     ]
 }
 ```
-
-The example below demonstrates this.
-
-* Columns A, B are editable.
-* Columns C and D are updated via clicking the button.
-* Changes to any of the first 4 columns results in animations in the Total and Average column.
-
-{% gridExampleRunner title="Animate Slide Renderer" name="animate-slide-renderer"  exampleHeight=530 /%}
