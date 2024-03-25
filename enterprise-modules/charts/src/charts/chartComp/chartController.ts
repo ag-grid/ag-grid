@@ -279,7 +279,7 @@ export class ChartController extends BeanStub {
     }
 
     public isCategorySeriesSwitched(): boolean {
-        return this.model.switchCategorySeries;
+        return this.model.switchCategorySeries && !this.model.isGrouping();
     }
 
     public switchCategorySeries(inverted: boolean): void {

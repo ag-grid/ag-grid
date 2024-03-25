@@ -72,7 +72,6 @@ export class ChartDataPanel extends Component {
         const { dimensionCols, valueCols } = this.chartController.getColStateForMenu();
 
         this.chartType = this.chartController.getChartType();
-        const hasChangedChartType = this.chartType !== currentChartType;
 
         // Determine the state of the category/series toggle
         this.isSwitchCategorySeriesToggled = this.chartController.isCategorySeriesSwitched();
@@ -90,11 +89,9 @@ export class ChartDataPanel extends Component {
         }
 
         // Ensure the category/series toggle UI control is up-to-date
-        if (hasChangedChartType) {
-            this.switchCategorySeriesPanel?.setDisplayed(
-                supportsInvertedCategorySeries(this.chartType) && !this.chartMenuService.isLegacyFormat()
-            );
-        }
+        this.switchCategorySeriesPanel?.setDisplayed(
+            supportsInvertedCategorySeries(this.chartType) && !this.chartMenuService.isLegacyFormat() && !this.chartController.isGrouping()
+        );
         if (hasChangedSwitchCategorySeries) {
             this.switchCategorySeriesPanel?.refresh();
         }
