@@ -5,7 +5,7 @@ export class DetailCellRenderer implements agGrid.ICellRendererComp {
   params!: agGrid.ICellRendererParams;
   detailGridApi!: agGrid.GridApi;
 
-  init(params: ICellRendererParams) {
+  init(params: agGrid.ICellRendererParams) {
     this.params = params;
 
     // trick to convert string of HTML into DOM object
