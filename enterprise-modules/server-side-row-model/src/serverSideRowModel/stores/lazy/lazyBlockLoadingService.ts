@@ -124,15 +124,15 @@ export class LazyBlockLoadingService extends BeanStub {
         }
 
         const success = (params: LoadSuccessParams) => {
+            this.rowNodeBlockLoader.loadComplete();
             cache.onLoadSuccess(startRow, endRow - startRow, params);
             removeNodesFromLoadingMap();
-            this.rowNodeBlockLoader.loadComplete();
         };
 
         const fail = () => {
+            this.rowNodeBlockLoader.loadComplete();
             cache.onLoadFailed(startRow, endRow - startRow);
             removeNodesFromLoadingMap();
-            this.rowNodeBlockLoader.loadComplete();
         }
 
         const params: IServerSideGetRowsParams = this.gridOptionsService.addGridCommonParams({
