@@ -25,7 +25,7 @@ export class LazyBlockLoadingService extends BeanStub {
     private init() {
         // after a block is loaded, check if we have a block to load now that
         // `maxConcurrentDatasourceRequests` has changed
-        this.addManagedListener(this.rowNodeBlockLoader, RowNodeBlockLoader.BLOCK_LOADED_EVENT, () => this.queueLoadAction());
+        this.addManagedListener(this.rowNodeBlockLoader, RowNodeBlockLoader.BLOCK_LOADED_EVENT, () => this.queueLoadCheck());
     }
 
     public subscribe(cache: LazyCache) {
@@ -93,7 +93,7 @@ export class LazyBlockLoadingService extends BeanStub {
 
         // requeue a load action before waiting for a response, this is to enable
         // more than one block to load simultaneously due to maxConcurrentDatasourceRequests
-        this.queueLoadAction();
+        this.queueLoadCheck();
     }
 
     private executeLoad(cache: LazyCache, startRow: number, endRow: number) {
@@ -124,15 +124,15 @@ export class LazyBlockLoadingService extends BeanStub {
         }
 
         const success = (params: LoadSuccessParams) => {
+            this.rowNodeBlockLoader.loadComplete();
             cache.onLoadSuccess(startRow, endRow - startRow, params);
             removeNodesFromLoadingMap();
-            this.rowNodeBlockLoader.loadComplete();
         };
 
         const fail = () => {
+            this.rowNodeBlockLoader.loadComplete();
             cache.onLoadFailed(startRow, endRow - startRow);
             removeNodesFromLoadingMap();
-            this.rowNodeBlockLoader.loadComplete();
         }
 
         const params: IServerSideGetRowsParams = this.gridOptionsService.addGridCommonParams({
