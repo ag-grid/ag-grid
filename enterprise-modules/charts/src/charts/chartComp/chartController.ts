@@ -528,6 +528,24 @@ export class ChartController extends BeanStub {
         return this.isComboChart(targetChartType) ? supportedComboSeriesTypes : [getSeriesType(targetChartType)];
     }
 
+    public getChartSeriesType(): ChartSeriesType {
+        const seriesChartTypes = this.getSeriesChartTypes();
+
+        if (seriesChartTypes.length === 0) {
+            return 'column';
+        }
+        const ct = seriesChartTypes[0].chartType;
+
+        if (ct === 'columnLineCombo') {
+            return 'column';
+        }
+
+        if (ct === 'areaColumnCombo') {
+            return 'area';
+        }
+        return getSeriesType(ct);
+    }
+
     public isEnterprise = () => _ModuleSupport.enterpriseModule.isEnterprise;
 
     private getCellRanges(): CellRange[] {
@@ -576,7 +594,7 @@ export class ChartController extends BeanStub {
         };
     }
 
-    private raiseChartModelUpdateEvent(): void {
+    public raiseChartModelUpdateEvent(): void {
         const event = {
             type: ChartController.EVENT_CHART_MODEL_UPDATE
         };

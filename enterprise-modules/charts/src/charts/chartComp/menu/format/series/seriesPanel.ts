@@ -108,7 +108,7 @@ export class SeriesPanel extends Component {
 
         this.chartController = chartController;
         this.chartOptionsService = chartOptionsService;
-        this.seriesType = seriesType || this.getChartSeriesType();
+        this.seriesType = seriesType || this.chartController.getChartSeriesType();
         this.isExpandedOnInit = isExpandedOnInit;
     }
 
@@ -357,22 +357,6 @@ export class SeriesPanel extends Component {
     private addWidget(widget: Component): void {
         this.seriesGroup.addItem(widget);
         this.activePanels.push(widget);
-    }
-
-    private getChartSeriesType(): ChartSeriesType {
-        if (this.chartController.getSeriesChartTypes().length === 0) {
-            return 'column';
-        }
-        const ct = this.chartController.getSeriesChartTypes()[0].chartType;
-
-        if (ct === 'columnLineCombo') {
-            return 'column';
-        }
-
-        if (ct === 'areaColumnCombo') {
-            return 'area';
-        }
-        return getSeriesType(ct);
     }
 
     private getSeriesSelectOptions(): ListOption[] {

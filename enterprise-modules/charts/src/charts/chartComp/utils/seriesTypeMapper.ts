@@ -72,11 +72,6 @@ export function isEnterpriseChartType(chartType: ChartType): boolean {
     }
 }
 
-const horizontalChartTypes = new Set(['bar', 'groupedBar', 'stackedBar', 'normalizedBar']);
-export function isHorizontal(chartType: ChartType): boolean {
-    return horizontalChartTypes.has(chartType);
-}
-
 const stackedChartTypes = new Set(['stackedColumn', 'normalizedColumn', 'stackedBar', 'normalizedBar']);
 export function isStacked(chartType: ChartType): boolean {
     return stackedChartTypes.has(chartType);
@@ -305,4 +300,14 @@ export function supportsInvertedCategorySeries(chartType: ChartType): boolean {
         case 'customCombo':
             return false;
     }
+}
+
+export function canSwitchDirection(chartType: ChartType): boolean {
+    switch (chartType) {
+        case 'waterfall':
+        case 'boxPlot':
+        case 'rangeBar':
+            return true;
+    }
+    return false;
 }

@@ -440,6 +440,9 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     seriesAdd: 'Add a series',
     categoryAdd: 'Add a category',
     advancedSettings: 'Advanced Settings',
+    direction: 'Direction',
+    horizontal: 'Horizontal',
+    vertical: 'Vertical',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Level ${variable}. Press ENTER to edit.',
