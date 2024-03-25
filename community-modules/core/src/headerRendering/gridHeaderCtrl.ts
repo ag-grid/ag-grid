@@ -171,10 +171,9 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     protected onFocusOut(e: FocusEvent): void {
-        const eDocument = this.gridOptionsService.getDocument();
         const { relatedTarget } = e;
 
-        if (!relatedTarget && this.eGui.contains(eDocument.activeElement)) { return; }
+        if (!relatedTarget && this.eGui.contains(this.gridOptionsService.getActiveDomElement())) { return; }
 
         if (!this.eGui.contains(relatedTarget as HTMLElement)) {
             this.focusService.clearFocusedHeader();

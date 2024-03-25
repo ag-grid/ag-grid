@@ -79,10 +79,9 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         }
 
         this.addManagedListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
-            const eDocument = this.gridOptionsService.getDocument();
             if (
                 eGui.contains(e.relatedTarget as HTMLElement) ||
-                eGui.contains(eDocument.activeElement) ||
+                eGui.contains(this.gridOptionsService.getActiveDomElement()) ||
                 this.eTitleBarButtons.contains(e.target as HTMLElement)
             ) {
                 e.preventDefault();

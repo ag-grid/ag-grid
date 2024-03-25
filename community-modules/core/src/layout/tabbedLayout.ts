@@ -99,11 +99,10 @@ export class TabbedLayout extends TabGuardComp {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        const eDocument = this.gridOptionsService.getDocument();
         switch (e.key) {
             case KeyCode.RIGHT:
             case KeyCode.LEFT:
-                if (!this.eTabHeader.contains(eDocument.activeElement)) { return; }
+                if (!this.eTabHeader.contains(this.gridOptionsService.getActiveDomElement())) { return; }
                 const isRightKey = e.key === KeyCode.RIGHT;
                 const isRtl = this.gridOptionsService.get('enableRtl');
                 const currentPosition = this.items.indexOf(this.activeItem);
@@ -130,8 +129,8 @@ export class TabbedLayout extends TabGuardComp {
 
         const { focusService, eHeader, eBody, activeItem, params } = this;
         const { suppressTrapFocus, enableCloseButton } = params;
-        const eDocument = this.gridOptionsService.getDocument();
-        const activeElement = eDocument.activeElement as HTMLElement;
+
+        const activeElement = this.gridOptionsService.getActiveDomElement();
         const target = e.target as HTMLElement;
         const backwards = e.shiftKey;
 

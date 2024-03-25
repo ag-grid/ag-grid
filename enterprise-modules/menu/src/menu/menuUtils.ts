@@ -36,7 +36,8 @@ export class MenuUtils extends BeanStub {
         if ((!restoreIfMouseEvent && !isKeyboardEvent) || !eventSource) { return; }
         
         const eDocument = this.gridOptionsService.getDocument();
-        if (!eComp.contains(eDocument.activeElement) && eDocument.activeElement !== eDocument.body) {
+        const activeEl = this.gridOptionsService.getActiveDomElement();
+        if (!eComp.contains(activeEl) && activeEl !== eDocument.body) {
             // something else has focus, so don't return focus to the header
             return;
         }
@@ -61,8 +62,9 @@ export class MenuUtils extends BeanStub {
         // in this case we focus the cell that was previously focused, otherwise the header
         const focusedCell = this.focusService.getFocusedCell();
         const eDocument = this.gridOptionsService.getDocument();
+        const activeEl = this.gridOptionsService.getActiveDomElement();
 
-        if (eDocument.activeElement === eDocument.body) {
+        if (!activeEl || activeEl === eDocument.body) {
             if (focusedCell) {
                 const { rowIndex, rowPinned, column } = focusedCell;
                 this.focusService.setFocusedCell({ rowIndex, column, rowPinned, forceBrowserFocus: true, preventScrollOnBrowserFocus: true });

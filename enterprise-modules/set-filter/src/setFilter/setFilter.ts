@@ -132,8 +132,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private getComponentForKeyEvent(e: KeyboardEvent): SetFilterListItem<V> | undefined {
-        const eDocument = this.gridOptionsService.getDocument();
-        if (!this.eSetFilterList.contains(eDocument.activeElement) || !this.virtualList) { return; }
+        if (!this.eSetFilterList.contains(this.gridOptionsService.getActiveDomElement()) || !this.virtualList) { return; }
 
         const currentItem = this.virtualList.getLastFocusedRow();
         if (currentItem == null) { return; }

@@ -28,9 +28,8 @@ export class SelectAllFeature extends BeanStub {
 
     public onSpaceKeyDown(e: KeyboardEvent): void {
         const checkbox = this.cbSelectAll;
-        const eDocument = this.gridOptionsService.getDocument();
 
-        if (checkbox.isDisplayed() && !checkbox.getGui().contains(eDocument.activeElement)) {
+        if (checkbox.isDisplayed() && !checkbox.getGui().contains(this.gridOptionsService.getActiveDomElement())) {
             e.preventDefault();
             checkbox.setValue(!checkbox.getValue());
         }

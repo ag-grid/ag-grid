@@ -43,7 +43,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
 
     private onWheel(e: WheelEvent) {
         // Prevent default scroll events from incrementing / decrementing the input, since its inconsistent between browsers
-        if (document.activeElement === this.eInput) {
+        if (this.gridOptionsService.getActiveDomElement() === this.eInput) {
             e.preventDefault();
         }
     }

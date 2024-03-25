@@ -63,8 +63,9 @@ export class ChartMenuListFactory extends BeanStub {
             closedCallback: () => {
                 this.destroyBean(chartMenuList);
                 this.activeChartMenuList = undefined;
-                const document = this.gridOptionsService.getDocument();
-                if (document.activeElement === document.body) {
+                const eDocument = this.gridOptionsService.getDocument();
+                const activeEl = this.gridOptionsService.getActiveDomElement()
+                if (!activeEl || activeEl === eDocument.body) {
                     eventSource.focus({ preventScroll: true });
                 }
             },

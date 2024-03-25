@@ -1323,7 +1323,6 @@ export class RowCtrl extends BeanStub {
     }
 
     private onRowSelected(gui?: RowGui): void {
-        const eDocument = this.beans.gridOptionsService.getDocument();
         // Treat undefined as false, if we pass undefined down it gets treated as toggle class, rather than explicitly
         // setting the required value
         const selected = !!this.rowNode.isSelected();
@@ -1331,7 +1330,7 @@ export class RowCtrl extends BeanStub {
             gui.rowComp.addOrRemoveCssClass('ag-row-selected', selected);
             setAriaSelected(gui.element, selected);
 
-            const hasFocus = gui.element.contains(eDocument.activeElement);
+            const hasFocus = gui.element.contains(this.beans.gridOptionsService.getActiveDomElement());
             if (hasFocus && (gui === this.centerGui || gui === this.fullWidthGui)) {
                 this.announceDescription();
             }

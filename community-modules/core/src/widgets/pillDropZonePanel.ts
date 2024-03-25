@@ -403,7 +403,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
     private getFocusedItem(): number {
         const eGui = this.getGui();
-        const activeElement = this.gridOptionsService.getDocument().activeElement;
+        const activeElement = this.gridOptionsService.getActiveDomElement();
 
         if (!eGui.contains(activeElement)) { return - 1; }
 

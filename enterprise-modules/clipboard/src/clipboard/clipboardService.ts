@@ -1034,7 +1034,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         // method 3 - if all else fails, the old school hack
         this.executeOnTempElement(element => {
             const eDocument = this.gridOptionsService.getDocument();
-            const focusedElementBefore = eDocument.activeElement as HTMLElement;
+            const focusedElementBefore = this.gridOptionsService.getActiveDomElement() as HTMLElement;
 
             element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
             element.select();

@@ -698,8 +698,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     public announceAriaDescription(): void {
-        const eDocument = this.beans.gridOptionsService.getDocument();
-        if (!this.eGui.contains(eDocument.activeElement)) { return; }
+        if (!this.eGui.contains(this.beans.gridOptionsService.getActiveDomElement())) { return; }
         const ariaDescription = 
             Array.from(this.ariaDescriptionProperties.keys())
                 // always announce the filter description first

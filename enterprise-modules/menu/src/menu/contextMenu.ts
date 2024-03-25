@@ -232,8 +232,9 @@ class ContextMenu extends Component {
         if (currentFocusedCell && this.focusedCell && this.cellPositionUtils.equals(currentFocusedCell, this.focusedCell)) {
             const { rowIndex, rowPinned, column } = this.focusedCell;
             const doc = this.gridOptionsService.getDocument();
+            const activeEl = this.gridOptionsService.getActiveDomElement()
 
-            if (doc.activeElement === doc.body) {
+            if (!activeEl || activeEl === doc.body) {
                 this.focusService.setFocusedCell({
                     rowIndex,
                     column,

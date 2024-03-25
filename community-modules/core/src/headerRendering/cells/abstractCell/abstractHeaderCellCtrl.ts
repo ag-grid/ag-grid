@@ -92,8 +92,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     protected getWrapperHasFocus(): boolean {
-        const eDocument = this.gridOptionsService.getDocument();
-        const activeEl = eDocument.activeElement;
+        const activeEl = this.gridOptionsService.getActiveDomElement();
 
         return activeEl === this.eGui;
     }
@@ -141,8 +140,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     private onGuiKeyDown(e: KeyboardEvent): void {
-        const eDocument = this.gridOptionsService.getDocument();
-        const activeEl = eDocument.activeElement;
+        const activeEl = this.gridOptionsService.getActiveDomElement();
 
         const isLeftOrRight = e.key === KeyCode.LEFT || e.key === KeyCode.RIGHT;
 

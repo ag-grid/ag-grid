@@ -136,7 +136,6 @@ export class FocusService extends BeanStub {
     // grid cell will still be focused as far as the grid is concerned,
     // however the browser focus will have moved somewhere else.
     public getFocusCellToUseAfterRefresh(): CellPosition | null {
-        const eDocument = this.gridOptionsService.getDocument();
         if (this.gridOptionsService.get('suppressFocusAfterRefresh') || !this.focusedCellPosition) {
             return null;
         }
@@ -144,7 +143,7 @@ export class FocusService extends BeanStub {
         // we check that the browser is actually focusing on the grid, if it is not, then
         // we have nothing to worry about. we check for ROW data, as this covers both focused Rows (for Full Width Rows)
         // and Cells (covers cells as cells live in rows)
-        if (this.isDomDataMissingInHierarchy(eDocument.activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL)) {
+        if (this.isDomDataMissingInHierarchy(this.gridOptionsService.getActiveDomElement(), RowCtrl.DOM_DATA_KEY_ROW_CTRL)) {
             return null;
         }
 
@@ -152,14 +151,13 @@ export class FocusService extends BeanStub {
     }
 
     public getFocusHeaderToUseAfterRefresh(): HeaderPosition | null {
-        const eDocument = this.gridOptionsService.getDocument();
         if (this.gridOptionsService.get('suppressFocusAfterRefresh') || !this.focusedHeaderPosition) {
             return null;
         }
 
         // we check that the browser is actually focusing on the grid, if it is not, then
         // we have nothing to worry about
-        if (this.isDomDataMissingInHierarchy(eDocument.activeElement, AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL)) {
+        if (this.isDomDataMissingInHierarchy(this.gridOptionsService.getActiveDomElement(), AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL)) {
             return null;
         }
 
@@ -494,8 +492,7 @@ export class FocusService extends BeanStub {
 
     public findNextFocusableElement(rootNode: HTMLElement = this.eGridDiv, onlyManaged?: boolean | null, backwards?: boolean): HTMLElement | null {
         const focusable = this.findFocusableElements(rootNode, onlyManaged ? ':not([tabindex="-1"])' : null);
-        const eDocument = this.gridOptionsService.getDocument();
-        const activeEl = eDocument.activeElement as HTMLElement;
+        const activeEl = this.gridOptionsService.getActiveDomElement() as HTMLElement;
         let currentIndex: number;
 
         if (onlyManaged) {

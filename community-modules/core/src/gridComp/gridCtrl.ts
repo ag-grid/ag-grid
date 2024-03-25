@@ -116,9 +116,9 @@ export class GridCtrl extends BeanStub {
     }
 
     public focusNextInnerContainer(backwards: boolean): boolean {
-        const eDocument = this.gridOptionsService.getDocument();
         const focusableContainers = this.view.getFocusableContainers();
-        const idxWithFocus = focusableContainers.findIndex(container => container.contains(eDocument.activeElement));
+        const activeEl = this.gridOptionsService.getActiveDomElement();
+        const idxWithFocus = focusableContainers.findIndex(container => container.contains(activeEl));
         const nextIdx = idxWithFocus + (backwards ? -1 : 1);
 
         if (nextIdx <= 0 || nextIdx >= focusableContainers.length) {

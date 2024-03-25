@@ -223,7 +223,8 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
             eChild: ePicker,
             closeOnEsc: true,
             closedCallback: () => {
-                const shouldRestoreFocus = eDocument.activeElement === eDocument.body;
+                const activeEl = this.gridOptionsService.getActiveDomElement()
+                const shouldRestoreFocus = !activeEl || activeEl === eDocument.body;
                 this.beforeHidePicker();
 
                 if (shouldRestoreFocus && this.isAlive()) {

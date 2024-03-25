@@ -206,7 +206,8 @@ export class AgAutocomplete extends Component {
 
     private setCaret(position: number, setFocus?: boolean): void {
         const eDocument = this.gridOptionsService.getDocument();
-        if (setFocus && eDocument.activeElement === eDocument.body) {
+        const activeEl = this.gridOptionsService.getActiveDomElement();
+        if (setFocus && (!activeEl || activeEl === eDocument.body)) {
             // clicking on the list loses focus, so restore
             this.eAutocompleteInput.getFocusableElement().focus();
         }

@@ -518,7 +518,7 @@ export class PopupService extends BeanStub {
         let popupHidden = false;
 
         const hidePopupOnKeyboardEvent = (event: KeyboardEvent) => {
-            if (!wrapperEl.contains(eDocument.activeElement)) {
+            if (!wrapperEl.contains(this.gridOptionsService.getActiveDomElement())) {
                 return;
             }
 

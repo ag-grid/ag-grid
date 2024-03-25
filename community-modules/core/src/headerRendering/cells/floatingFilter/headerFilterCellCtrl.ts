@@ -115,8 +115,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private onTabKeyDown(e: KeyboardEvent) {
-        const eDocument = this.gridOptionsService.getDocument();
-        const activeEl = eDocument.activeElement as HTMLElement;
+        const activeEl = this.gridOptionsService.getActiveDomElement();
         const wrapperHasFocus = activeEl === this.eGui;
 
         if (wrapperHasFocus) { return; }
