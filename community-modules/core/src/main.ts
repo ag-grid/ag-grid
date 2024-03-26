@@ -302,7 +302,7 @@ export { PillDropZonePanel, PillDropZonePanelParams } from "./widgets/pillDropZo
 // range
 export {
     CellRange, CellRangeParams, CellRangeType, IRangeService,
-    ISelectionHandle, SelectionHandleType, ISelectionHandleFactory, ClearCellRangeParams
+    ISelectionHandle, SelectionHandleType, ISelectionHandleFactory, ClearCellRangeParams, PartialCellRange
 } from "./interfaces/IRangeService";
 export {
     IChartService,
