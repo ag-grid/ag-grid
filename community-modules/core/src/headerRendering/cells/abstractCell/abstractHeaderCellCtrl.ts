@@ -21,6 +21,7 @@ import { WithoutGridCommon } from "../../../interfaces/iCommon";
 import { MenuService } from "../../../misc/menuService";
 import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
 import { getInnerWidth } from "../../../utils/dom";
+import { BrandedType } from "@ag-grid-community/core";
 
 let instanceIdSequence = 0;
 
@@ -31,6 +32,8 @@ export interface IAbstractHeaderCellComp {
 export interface IHeaderResizeFeature {
     toggleColumnResizing(resizing: boolean): void;
 }
+
+export type HeaderCellCtrlInstanceId = BrandedType<string, 'HeaderCellCtrlInstanceId'>;
 
 export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellComp = any, TColumn extends IHeaderColumn = any, TFeature extends IHeaderResizeFeature = any> extends BeanStub {
 
@@ -44,7 +47,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     @Autowired('menuService') protected readonly menuService: MenuService;
 
     protected readonly beans: Beans;
-    private instanceId: string;
+    private instanceId: HeaderCellCtrlInstanceId;
     private columnGroupChild: IHeaderColumn;
     private parentRowCtrl: HeaderRowCtrl;
 
@@ -72,7 +75,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         this.beans = beans;
 
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
-        this.instanceId = columnGroupChild.getUniqueId() + '-' + instanceIdSequence++;
+        this.instanceId = columnGroupChild.getUniqueId() + '-' + instanceIdSequence++ as HeaderCellCtrlInstanceId;
     }
 
     @PostConstruct
@@ -272,7 +275,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         return this.parentRowCtrl.getPinned();
     }
 
-    public getInstanceId(): string {
+    public getInstanceId(): HeaderCellCtrlInstanceId {
         return this.instanceId;
     }
 

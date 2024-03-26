@@ -3,7 +3,7 @@ import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { BeanStub } from "../../context/beanStub";
 import { CellPosition } from "../../entities/cellPositionUtils";
-import { Column, ColumnPinnedType } from "../../entities/column";
+import { Column, ColumnInstanceId, ColumnPinnedType } from "../../entities/column";
 import { RowClassParams, RowStyle } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
 import { DataChangedEvent, IRowNode, RowHighlightPosition } from "../../interfaces/iRowNode";
@@ -26,6 +26,7 @@ import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { RowDragComp } from "./rowDragComp";
 import { GridOptionsService } from "../../gridOptionsService";
 import { ITooltipFeatureCtrl, TooltipFeature } from "../../widgets/tooltipFeature";
+import { BrandedType } from "../../utils";
 
 enum RowType {
     Normal = 'Normal',
@@ -36,6 +37,7 @@ enum RowType {
 }
 
 let instanceIdSequence = 0;
+export type RowCtrlInstanceId = BrandedType<string, 'RowCtrlInstanceId'>;
 
 export interface IRowComp {
     setDomOrder(domOrder: boolean): void;
@@ -60,14 +62,14 @@ interface RowGui {
 
 interface CellCtrlListAndMap {
     list: CellCtrl[];
-    map: { [key: string]: CellCtrl };
+    map: { [key: ColumnInstanceId]: CellCtrl };
 }
 
 export class RowCtrl extends BeanStub {
 
     public static DOM_DATA_KEY_ROW_CTRL = 'renderedRow';
 
-    private instanceId: string;
+    private instanceId: RowCtrlInstanceId;
 
     private readonly rowNode: RowNode;
     private readonly beans: Beans;
@@ -149,7 +151,7 @@ export class RowCtrl extends BeanStub {
         this.printLayout = printLayout;
         this.suppressRowTransform = this.gridOptionsService.get('suppressRowTransform');
 
-        this.instanceId = rowNode.id + '-' + instanceIdSequence++;
+        this.instanceId = rowNode.id + '-' + instanceIdSequence++ as RowCtrlInstanceId;
         this.rowId = escapeString(rowNode.id);
 
         this.initRowBusinessKey();
@@ -198,7 +200,7 @@ export class RowCtrl extends BeanStub {
         return this.beans;
     }
 
-    public getInstanceId(): string {
+    public getInstanceId(): RowCtrlInstanceId {
         return this.instanceId;
     }
 
@@ -494,7 +496,7 @@ export class RowCtrl extends BeanStub {
             map: {}
         };
 
-        const addCell = (colInstanceId: number, cellCtrl: CellCtrl) => {
+        const addCell = (colInstanceId: ColumnInstanceId, cellCtrl: CellCtrl) => {
             res.list.push(cellCtrl);
             res.map[colInstanceId] = cellCtrl;
         };
@@ -891,10 +893,11 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    public refreshCell(cellCtrl: CellCtrl) {
+    public recreateCell(cellCtrl: CellCtrl) {
         this.centerCellCtrls = this.removeCellCtrl(this.centerCellCtrls, cellCtrl);
         this.leftCellCtrls = this.removeCellCtrl(this.leftCellCtrls, cellCtrl);
         this.rightCellCtrls = this.removeCellCtrl(this.rightCellCtrls, cellCtrl);
+        cellCtrl.destroy();
         this.updateColumnLists();
     }
 
@@ -906,7 +909,7 @@ export class RowCtrl extends BeanStub {
         prev.list.forEach(cellCtrl => {
             if (cellCtrl === cellCtrlToRemove) { return; }
             res.list.push(cellCtrl);
-            res.map[cellCtrl.getInstanceId()] = cellCtrl;
+            res.map[cellCtrl.getColumn().getInstanceId()] = cellCtrl;
         });
         return res;
     }

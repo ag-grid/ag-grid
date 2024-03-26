@@ -5,7 +5,7 @@ import { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from "../event
 import { EventService } from "../eventService";
 import { GridOptionsService } from "../gridOptionsService";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
-import { IHeaderColumn } from "../interfaces/iHeaderColumn";
+import { HeaderColumnId, IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { IRowNode } from "../interfaces/iRowNode";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
@@ -22,6 +22,7 @@ import {
 import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { warnOnce } from "../utils/function";
+import { BrandedType } from "../utils";
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 export type ColumnEventName =
@@ -46,9 +47,10 @@ const COL_DEF_DEFAULTS: Partial<ColDef> = {
     sortable: true
 };
 
+export type ColumnInstanceId = BrandedType<number, 'ColumnInstanceId'>;
 let instanceIdSequence = 0;
-export function getNextColInstanceId() {
-    return instanceIdSequence++;
+export function getNextColInstanceId(): ColumnInstanceId {
+    return instanceIdSequence++ as ColumnInstanceId;
 }
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
@@ -158,7 +160,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         this.setState(colDef);
     }
 
-    public getInstanceId(): number {
+    public getInstanceId(): ColumnInstanceId {
         return this.instanceId;
     }
 
@@ -679,7 +681,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
      * Returns the unique ID for the column.
      *
      * Equivalent: `getColId`, `getId` */
-    public getUniqueId(): string {
+    public getUniqueId(): HeaderColumnId {
         return this.colId;
     }
 

@@ -37,6 +37,7 @@ import { getElementSize } from "../../utils/dom";
 import { setAriaColIndex } from "../../utils/aria";
 import { CssClassApplier } from "../../headerRendering/cells/cssClassApplier";
 import { FlashCellsParams } from "../rowRenderer";
+import { BrandedType } from "../../utils";
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -66,12 +67,13 @@ export interface ICellComp {
 }
 
 let instanceIdSequence = 0;
+export type CellCtrlInstanceId = BrandedType<string, 'CellCtrlInstanceId'>;
 
 export class CellCtrl extends BeanStub {
 
     public static DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
 
-    private instanceId: string;
+    private instanceId: CellCtrlInstanceId;
 
     private eGui: HTMLElement;
     private cellComp: ICellComp;
@@ -120,7 +122,7 @@ export class CellCtrl extends BeanStub {
         this.rowCtrl = rowCtrl;
 
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
-        this.instanceId = column.getId() + '-' + instanceIdSequence++;
+        this.instanceId = column.getId() + '-' + instanceIdSequence++ as CellCtrlInstanceId;
 
         this.colIdSanitised = escapeString(this.column.getId())!;
         if (!beans.gridOptionsService.get('suppressCellFocus')) {
@@ -329,7 +331,7 @@ export class CellCtrl extends BeanStub {
         return this.column.getColDef().cellAriaRole ?? 'gridcell';
     }
 
-    public getInstanceId(): string {
+    public getInstanceId(): CellCtrlInstanceId {
         return this.instanceId;
     }
     public getIncludeSelection(): boolean {
@@ -396,8 +398,10 @@ export class CellCtrl extends BeanStub {
         const selectionChanged = this.includeSelection != this.isIncludeControl(colDef.checkboxSelection);
         const rowDragChanged = this.includeRowDrag != this.isIncludeControl(colDef.rowDrag);
         const dndSourceChanged = this.includeDndSource != this.isIncludeControl(colDef.dndSource);
+        // auto height uses wrappers, so need to destroy
+        const autoHeightChanged = this.isAutoHeight != this.column.isAutoHeight();
 
-        return selectionChanged || rowDragChanged || dndSourceChanged;
+        return selectionChanged || rowDragChanged || dndSourceChanged || autoHeightChanged;
     }
 
     // either called internally if single cell editing, or called by rowRenderer if row editing
@@ -616,7 +620,7 @@ export class CellCtrl extends BeanStub {
 
     public refreshOrDestroyCell(params?: { suppressFlash?: boolean, newData?: boolean, forceRefresh?: boolean; }): void {
         if (this.refreshShouldDestroy()) {
-            this.rowCtrl?.refreshCell(this);
+            this.rowCtrl?.recreateCell(this);
         } else {
             this.refreshCell(params);
         }
@@ -1062,12 +1066,6 @@ export class CellCtrl extends BeanStub {
 
     public onColDefChanged(): void {
         if (!this.cellComp) { return; }
-
-        const isAutoHeight = this.column.isAutoHeight();
-        if (isAutoHeight !== this.isAutoHeight) {
-            // auto height uses wrappers, so need to destroy
-            this.rowCtrl?.refreshCell(this);
-        }
 
         const isTooltipEnabled = this.column.isTooltipEnabled();
         if (isTooltipEnabled) {

@@ -2,7 +2,7 @@ import { BeanStub } from "../../context/beanStub";
 import { Autowired, PostConstruct } from "../../context/context";
 import { Column, ColumnPinnedType } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
-import { IHeaderColumn } from "../../interfaces/iHeaderColumn";
+import { HeaderColumnId, IHeaderColumn } from "../../interfaces/iHeaderColumn";
 import { Events } from "../../eventKeys";
 import { VirtualColumnsChangedEvent } from "../../events";
 import { AbstractHeaderCellCtrl } from "../cells/abstractCell/abstractHeaderCellCtrl";
@@ -12,6 +12,7 @@ import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
 import { values } from "../../utils/generic";
 import { Beans } from "../../rendering/beans";
+import { BrandedType } from "../../utils";
 
 export interface IHeaderRowComp {
     setTop(top: string): void;
@@ -21,6 +22,7 @@ export interface IHeaderRowComp {
 }
 
 let instanceIdSequence = 0;
+export type HeaderRowCtrlInstanceId = BrandedType<number, 'HeaderRowCtrlInstanceId'>;
 
 export class HeaderRowCtrl extends BeanStub {
 
@@ -32,9 +34,9 @@ export class HeaderRowCtrl extends BeanStub {
     private type: HeaderRowType;
     private headerRowClass: string;
 
-    private instanceId = instanceIdSequence++;
+    private instanceId : HeaderRowCtrlInstanceId = instanceIdSequence++ as HeaderRowCtrlInstanceId;
 
-    private headerCellCtrls: Map<string, AbstractHeaderCellCtrl> | undefined;
+    private headerCellCtrls: Map<HeaderColumnId, AbstractHeaderCellCtrl> | undefined;
 
     private isPrintLayout: boolean;
     private isEnsureDomOrder: boolean;
@@ -58,7 +60,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
 
-    public getInstanceId(): number {
+    public getInstanceId(): HeaderRowCtrlInstanceId {
         return this.instanceId;
     }
 
@@ -236,7 +238,7 @@ export class HeaderRowCtrl extends BeanStub {
         return ctrlsToDisplay;
     }
 
-    private recycleAndCreateHeaderCtrls(headerColumn: IHeaderColumn, oldCtrls?: Map<string, AbstractHeaderCellCtrl>): void {
+    private recycleAndCreateHeaderCtrls(headerColumn: IHeaderColumn, oldCtrls?: Map<HeaderColumnId, AbstractHeaderCellCtrl>): void {
         if (!this.headerCellCtrls) { return; }
         // skip groups that have no displayed children. this can happen when the group is broken,
         // and this section happens to have nothing to display for the open / closed state.

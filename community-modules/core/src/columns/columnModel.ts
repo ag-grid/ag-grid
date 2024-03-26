@@ -1,7 +1,7 @@
 import { ColumnGroup } from '../entities/columnGroup';
-import { Column, ColumnPinnedType } from '../entities/column';
+import { Column, ColumnInstanceId, ColumnPinnedType } from '../entities/column';
 import { AbstractColDef, ColDef, ColGroupDef, IAggFunc, HeaderValueGetterParams, HeaderLocation } from '../entities/colDef';
-import { IHeaderColumn } from '../interfaces/iHeaderColumn';
+import { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
 import { ExpressionService } from '../valueService/expressionService';
 import { ColumnFactory } from './columnFactory';
 import { DisplayedGroupCreator } from './displayedGroupCreator';
@@ -194,7 +194,7 @@ export class ColumnModel extends BeanStub {
     private ariaOrderColumns: Column[];
 
     // for fast lookup, to see if a column or group is still displayed
-    private displayedColumnsAndGroupsMap: { [id: string]: IHeaderColumn } = {};
+    private displayedColumnsAndGroupsMap: { [id: HeaderColumnId]: IHeaderColumn } = {};
 
     // all columns to be rendered
     private viewportColumns: Column[] = [];
@@ -318,7 +318,7 @@ export class ColumnModel extends BeanStub {
     }
 
     private destroyOldColumns(oldTree: IProvidedColumn[] | null, newTree?: IProvidedColumn[] | null): void {
-        const oldObjectsById: {[id: number]: IProvidedColumn | null} = {};
+        const oldObjectsById: {[id: ColumnInstanceId]: IProvidedColumn | null} = {};
 
         if (!oldTree) { return; }
 

@@ -1,4 +1,4 @@
-import { RowCtrl } from "./row/rowCtrl";
+import { RowCtrl, RowCtrlInstanceId } from "./row/rowCtrl";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import {
@@ -36,11 +36,11 @@ import { StickyRowFeature } from "./features/stickyRowFeature";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { browserSupportsPreventScroll } from "../utils/browser";
 import { WithoutGridCommon } from "../interfaces/iCommon";
-import { IRowNode, VerticalScrollPosition } from "../interfaces/iRowNode";
+import { IRowNode } from "../interfaces/iRowNode";
 
-export interface RowCtrlMap {
-    [key: string]: RowCtrl;
-}
+type RowCtrlIdMap = Record<RowCtrlInstanceId, RowCtrl>;
+type RowCtrlByRowIndex = Record<number, RowCtrl>;
+export type RowCtrlByRowNodeIdMap = Record<string, RowCtrl>;
 
 interface RowNodeMap {
     [id: string]: IRowNode;
@@ -103,8 +103,8 @@ export class RowRenderer extends BeanStub {
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom.
-    private rowCtrlsByRowIndex: RowCtrlMap = {};
-    private zombieRowCtrls: RowCtrlMap = {};
+    private rowCtrlsByRowIndex: RowCtrlByRowIndex = {};
+    private zombieRowCtrls: RowCtrlIdMap = {};
     private cachedRowCtrls: RowCtrlCache;
     private allRowCtrls: RowCtrl[] = [];
 
@@ -681,7 +681,7 @@ export class RowRenderer extends BeanStub {
         const stickyRowCtrls = (this.stickyRowFeature && this.stickyRowFeature.getStickyRowCtrls()) || [];
         const res = [...this.topRowCtrls, ...this.bottomRowCtrls, ...stickyRowCtrls];
 
-        for (const key of Object.keys(this.rowCtrlsByRowIndex)) {
+        for (const key in this.rowCtrlsByRowIndex) {
             res.push(this.rowCtrlsByRowIndex[key]);
         }
         return res;
@@ -876,11 +876,11 @@ export class RowRenderer extends BeanStub {
         this.removeRowCtrls(rowIndexesToRemove);
     }
 
-    private getRowsToRecycle(): RowCtrlMap {
+    private getRowsToRecycle(): RowCtrlByRowNodeIdMap {
         // remove all stub nodes, they can't be reused, as no rowNode id
         const stubNodeIndexes: string[] = [];
-        iterateObject(this.rowCtrlsByRowIndex, (index: string, rowComp: RowCtrl) => {
-            const stubNode = rowComp.getRowNode().id == null;
+        iterateObject(this.rowCtrlsByRowIndex, (index: string, rowCtrl: RowCtrl) => {
+            const stubNode = rowCtrl.getRowNode().id == null;
             if (stubNode) {
                 stubNodeIndexes.push(index);
             }
@@ -888,10 +888,10 @@ export class RowRenderer extends BeanStub {
         this.removeRowCtrls(stubNodeIndexes);
 
         // then clear out rowCompsByIndex, but before that take a copy, but index by id, not rowIndex
-        const ctrlsByIdMap: RowCtrlMap = {};
-        iterateObject(this.rowCtrlsByRowIndex, (index: string, rowComp: RowCtrl) => {
-            const rowNode = rowComp.getRowNode();
-            ctrlsByIdMap[rowNode.id!] = rowComp;
+        const ctrlsByIdMap: RowCtrlByRowNodeIdMap = {};
+        iterateObject(this.rowCtrlsByRowIndex, (index: string, rowCtrl: RowCtrl) => {
+            const rowNode = rowCtrl.getRowNode();
+            ctrlsByIdMap[rowNode.id!] = rowCtrl;
         });
         this.rowCtrlsByRowIndex = {};
 
@@ -1151,7 +1151,7 @@ export class RowRenderer extends BeanStub {
         return rowCtrl;
     }
 
-    private destroyRowCtrls(rowCtrlsMap: RowCtrlMap | null | undefined, animate: boolean): void {
+    private destroyRowCtrls(rowCtrlsMap: RowCtrlIdMap | null | undefined, animate: boolean): void {
         const executeInAWhileFuncs: (() => void)[] = [];
         iterateObject(rowCtrlsMap, (nodeId: string, rowCtrl: RowCtrl) => {
             // if row was used, then it's null
@@ -1396,8 +1396,7 @@ export class RowRenderer extends BeanStub {
 
     public getRenderedNodes() {
         const renderedRows = this.rowCtrlsByRowIndex;
-
-        return Object.keys(renderedRows).map(key => renderedRows[key]!.getRowNode());
+        return Object.values(renderedRows).map(rowCtrl => rowCtrl.getRowNode());
     }
 
     public getRowByPosition(rowPosition: RowPosition): RowCtrl | null {
@@ -1451,7 +1450,7 @@ export class RowRenderer extends BeanStub {
 class RowCtrlCache {
 
     // map for fast access
-    private entriesMap: RowCtrlMap = {};
+    private entriesMap: RowCtrlByRowNodeIdMap = {};
 
     // list for keeping order
     private entriesList: RowCtrl[] = [];

@@ -1,4 +1,4 @@
-import { IHeaderColumn } from "../interfaces/iHeaderColumn";
+import { HeaderColumnId, IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { ColGroupDef } from "./colDef";
 import { Column, ColumnPinnedType } from "./column";
 import { AbstractColDef } from "./colDef";
@@ -17,8 +17,8 @@ export class ColumnGroup implements IHeaderColumn {
     public static EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
 
     // this is static, a it is used outside of this class
-    public static createUniqueId(groupId: string, instanceId: number): string {
-        return groupId + '_' + instanceId;
+    public static createUniqueId(groupId: string, instanceId: number): HeaderColumnId {
+        return groupId + '_' + instanceId as HeaderColumnId;
     }
 
     @Autowired('gridOptionsService') gridOptionsService: GridOptionsService;
@@ -63,7 +63,7 @@ export class ColumnGroup implements IHeaderColumn {
         this.parent = parent;
     }
 
-    public getUniqueId(): string {
+    public getUniqueId(): HeaderColumnId {
         return ColumnGroup.createUniqueId(this.groupId, this.partId);
     }
 

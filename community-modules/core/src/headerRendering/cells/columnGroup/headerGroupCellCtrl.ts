@@ -29,6 +29,7 @@ import { HorizontalDirection } from "../../../constants/direction";
 import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HeaderPosition } from "../../common/headerPosition";
 import { WithoutGridCommon } from "../../../interfaces/iCommon";
+import { HeaderColumnId } from "../../../interfaces/iHeaderColumn";
 import { Beans } from "../../../rendering/beans";
 
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
@@ -269,7 +270,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         }
     }
 
-    public getColId(): string {
+    public getColId(): HeaderColumnId {
         return this.column.getUniqueId();
     }
 
