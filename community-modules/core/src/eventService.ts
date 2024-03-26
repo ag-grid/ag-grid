@@ -14,7 +14,7 @@ export class EventService implements IEventEmitter {
     private globalAsyncListeners = new Set<AgGlobalEventListener>();
 
     private frameworkOverrides: IFrameworkOverrides;
-    private gridOptionsService?: GridOptionsService;
+    private gos?: GridOptionsService;
 
     private asyncFunctionsQueue: Function[] = [];
     private scheduled = false;
@@ -32,16 +32,16 @@ export class EventService implements IEventEmitter {
     // the times when this class is used outside of the context (eg RowNode has an instance of this
     // class) then it is not a bean, and this setBeans method is not called.
     public setBeans(
-        @Qualifier('gridOptionsService') gridOptionsService: GridOptionsService,
+        @Qualifier('gridOptionsService') gos: GridOptionsService,
         @Qualifier('frameworkOverrides') frameworkOverrides: IFrameworkOverrides,
         @Qualifier('globalEventListener') globalEventListener: AgGlobalEventListener | null = null,
         @Qualifier('globalSyncEventListener') globalSyncEventListener: AgGlobalEventListener | null = null
     ) {
         this.frameworkOverrides = frameworkOverrides;
-        this.gridOptionsService = gridOptionsService;
+        this.gos = gos;
 
         if (globalEventListener) {
-            const async = gridOptionsService.useAsyncEvents();
+            const async = gos.useAsyncEvents();
             this.addGlobalListener(globalEventListener, async);
         }
 
@@ -101,10 +101,10 @@ export class EventService implements IEventEmitter {
 
     public dispatchEvent(event: AgEvent): void {
         let agEvent = event as AgGridEvent<any>;
-        if (this.gridOptionsService) {
+        if (this.gos) {
             // Apply common properties to all dispatched events if this event service has had its beans set with gridOptionsService.
             // Note there are multiple instances of EventService that are used local to components which do not set gridOptionsService.
-            this.gridOptionsService.addGridCommonParams(agEvent);
+            this.gos.addGridCommonParams(agEvent);
         }
 
         this.dispatchToListeners(agEvent, true);

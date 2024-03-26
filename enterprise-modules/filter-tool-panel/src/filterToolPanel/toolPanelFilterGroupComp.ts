@@ -87,7 +87,7 @@ export class ToolPanelFilterGroupComp extends Component {
         // maybe the group shouldn't contain the children form a DOM perspective.
         if (!this.showingColumn) { return; }
 
-        const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
+        const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
         let shouldDisplayTooltip: (() => boolean) | undefined;
 
         if (isTooltipWhenTruncated) {

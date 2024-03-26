@@ -22,7 +22,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
-    @Autowired('gridOptionsService') gridOptionsService: GridOptionsService;
+    @Autowired('gridOptionsService') gos: GridOptionsService;
     @Autowired('valueFormatterService') valueFormatterService: ValueFormatterService;
     @Autowired('valueParserService') valueParserService: ValueParserService;
 
@@ -30,12 +30,12 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     public postConstruct(): void {
         this.setBeans({
             gridSerializer: this.gridSerializer,
-            gridOptionsService: this.gridOptionsService
+            gos: this.gos
         });
     }
 
     protected getMergedParams(params?: CsvExportParams): CsvExportParams {
-        const baseParams = this.gridOptionsService.get('defaultCsvExportParams');
+        const baseParams = this.gos.get('defaultCsvExportParams');
         return Object.assign({}, baseParams, params);
     }
 
@@ -51,7 +51,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         const packagedFile = new Blob(["\ufeff", data], { type: 'text/plain' });
 
         const fileName = typeof mergedParams.fileName === 'function'
-            ? mergedParams.fileName(this.gridOptionsService.getGridCommonParams())
+            ? mergedParams.fileName(this.gos.getGridCommonParams())
             : mergedParams.fileName;
 
         Downloader.download(this.getFileName(fileName), packagedFile);
@@ -74,7 +74,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     }
 
     public createSerializingSession(params?: CsvExportParams): CsvSerializingSession {
-        const { columnModel, valueService, gridOptionsService, valueFormatterService, valueParserService } = this;
+        const { columnModel, valueService, gos, valueFormatterService, valueParserService } = this;
         const {
             processCellCallback,
             processHeaderCallback,
@@ -87,7 +87,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         return new CsvSerializingSession({
             columnModel: columnModel,
             valueService,
-            gridOptionsService,
+            gos,
             valueFormatterService,
             valueParserService,
             processCellCallback: processCellCallback || undefined,
@@ -100,6 +100,6 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     }
 
     public isExportSuppressed(): boolean {
-        return this.gridOptionsService.get('suppressCsvExport');
+        return this.gos.get('suppressCsvExport');
     }
 }

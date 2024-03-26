@@ -62,7 +62,7 @@ export class ChartMenuService extends BeanStub {
         chartToolbarOptions: ChartMenuOptions[]
     } {
         const legacyFormat = this.isLegacyFormat();
-        const useChartToolPanelCustomisation = Boolean(this.gridOptionsService.get('chartToolPanelsDef')) || !legacyFormat;
+        const useChartToolPanelCustomisation = Boolean(this.gos.get('chartToolPanelsDef')) || !legacyFormat;
 
         let panels: ChartToolPanelMenuOptions[];
         let defaultPanel: ChartToolPanelMenuOptions;
@@ -76,7 +76,7 @@ export class ChartMenuService extends BeanStub {
                 'chartMenu'
             ];
     
-            const toolbarItemsFunc = this.gridOptionsService.getCallback('getChartToolbarItems');
+            const toolbarItemsFunc = this.gos.getCallback('getChartToolbarItems');
             const params: WithoutGridCommon<GetChartToolbarItemsParams> = {
                 defaultItems: defaultChartToolbarOptions
             };
@@ -99,7 +99,7 @@ export class ChartMenuService extends BeanStub {
                 })
                 : defaultChartToolbarOptions;
 
-            const panelsOverride = this.gridOptionsService.get('chartToolPanelsDef')?.panels
+            const panelsOverride = this.gos.get('chartToolPanelsDef')?.panels
                 ?.map(panel => {
                     const menuOption = CHART_TOOL_PANEL_MENU_OPTIONS[panel]
                     if (!menuOption) {
@@ -117,7 +117,7 @@ export class ChartMenuService extends BeanStub {
                 panels = panels.filter(panel => panel !== 'chartData');
             }
 
-            const defaultToolPanel = this.gridOptionsService.get('chartToolPanelsDef')?.defaultToolPanel;
+            const defaultToolPanel = this.gos.get('chartToolPanelsDef')?.defaultToolPanel;
             defaultPanel = (defaultToolPanel && CHART_TOOL_PANEL_MENU_OPTIONS[defaultToolPanel]) || panels[0];
 
             if (legacyFormat) {
@@ -135,10 +135,10 @@ export class ChartMenuService extends BeanStub {
                 'chartDownload'
             ];
     
-            const toolbarItemsFunc = this.gridOptionsService.getCallback('getChartToolbarItems');
+            const toolbarItemsFunc = this.gos.getCallback('getChartToolbarItems');
     
             if (toolbarItemsFunc) {
-                const isLegacyToolbar = this.gridOptionsService.get('suppressChartToolPanelsButton');
+                const isLegacyToolbar = this.gos.get('suppressChartToolPanelsButton');
                 const params: WithoutGridCommon<GetChartToolbarItemsParams> = {
                     defaultItems: isLegacyToolbar ? tabOptions : CHART_TOOLBAR_ALLOW_LIST
                 };

@@ -41,7 +41,7 @@ export class AlignedGridsService extends BeanStub {
     }
 
     private getAlignedGridApis(): GridApi[]{
-        let alignedGrids = this.gridOptionsService.get('alignedGrids') ?? [];
+        let alignedGrids = this.gos.get('alignedGrids') ?? [];
         const isCallbackConfig = typeof alignedGrids === 'function';
         if (typeof alignedGrids === 'function') {
             alignedGrids = alignedGrids();

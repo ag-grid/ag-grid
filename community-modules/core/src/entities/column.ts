@@ -92,7 +92,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     // + dataTypeService - when waiting to infer cell data types
     public static EVENT_STATE_UPDATED: ColumnEventName = 'columnStateUpdated';
 
-    @Autowired('gridOptionsService') private readonly gridOptionsService: GridOptionsService;
+    @Autowired('gridOptionsService') private readonly gos: GridOptionsService;
     @Autowired('columnUtils') private readonly columnUtils: ColumnUtils;
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
     
@@ -270,7 +270,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     private initDotNotation(): void {
-        const suppressDotNotation = this.gridOptionsService.get('suppressFieldDotNotation');
+        const suppressDotNotation = this.gos.get('suppressFieldDotNotation');
         this.fieldContainsDots = exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
         this.tooltipFieldContainsDots = exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
     }
@@ -352,7 +352,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     public createColumnFunctionCallbackParams(rowNode: IRowNode): ColumnFunctionCallbackParams {
-        return this.gridOptionsService.addGridCommonParams({
+        return this.gos.addGridCommonParams({
             node: rowNode,
             data: rowNode.data,
             column: this,
@@ -381,7 +381,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
      */
     public isCellEditable(rowNode: IRowNode): boolean {
         // only allow editing of groups if the user has this option enabled
-        if (rowNode.group && !this.gridOptionsService.get('enableGroupEdit')) {
+        if (rowNode.group && !this.gos.get('enableGroupEdit')) {
             return false;
         }
 
@@ -447,7 +447,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     private createColumnEvent(type: ColumnEventName, source: ColumnEventType): ColumnEvent {
-        return this.gridOptionsService.addGridCommonParams({
+        return this.gos.addGridCommonParams({
             type: type,
             column: this,
             columns: [this],
@@ -706,7 +706,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     private createBaseColDefParams(rowNode: IRowNode): BaseColDefParams {
-        const params: BaseColDefParams = this.gridOptionsService.addGridCommonParams({
+        const params: BaseColDefParams = this.gos.addGridCommonParams({
             node: rowNode,
             data: rowNode.data,
             colDef: this.colDef,

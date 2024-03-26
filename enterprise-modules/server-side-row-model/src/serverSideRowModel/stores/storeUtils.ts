@@ -49,7 +49,7 @@ export class StoreUtils extends BeanStub {
             sortModel: storeParams.sortModel
         };
 
-        const getRowsParams: IServerSideGetRowsParams = this.gridOptionsService.addGridCommonParams({
+        const getRowsParams: IServerSideGetRowsParams = this.gos.addGridCommonParams({
             success: p.success,
             fail: p.fail,
             request: request,
@@ -116,18 +116,18 @@ export class StoreUtils extends BeanStub {
     }
 
     public getServerSideInitialRowCount(): number | null {
-        return this.gridOptionsService.get('serverSideInitialRowCount');
+        return this.gos.get('serverSideInitialRowCount');
     }
 
     private assertRowModelIsServerSide(key: keyof GridOptions) {
-        if (!this.gridOptionsService.isRowModelType('serverSide')) {
+        if (!this.gos.isRowModelType('serverSide')) {
             _.warnOnce(`The '${key}' property can only be used with the Server Side Row Model.`);
             return false;
         }
         return true;
     }
     private assertNotTreeData(key: keyof GridOptions) {
-        if (this.gridOptionsService.get('treeData')) {
+        if (this.gos.get('treeData')) {
             _.warnOnce(`The '${key}' property cannot be used while using tree data.`);
             return false;
         }
@@ -135,16 +135,16 @@ export class StoreUtils extends BeanStub {
     }
 
     public isServerSideSortAllLevels() {
-        return this.gridOptionsService.get('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
+        return this.gos.get('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
     }
     public isServerSideOnlyRefreshFilteredGroups() {
-        return this.gridOptionsService.get('serverSideOnlyRefreshFilteredGroups') && this.assertRowModelIsServerSide('serverSideOnlyRefreshFilteredGroups');
+        return this.gos.get('serverSideOnlyRefreshFilteredGroups') && this.assertRowModelIsServerSide('serverSideOnlyRefreshFilteredGroups');
     }
     public isServerSideSortOnServer() {
-        return this.gridOptionsService.get('serverSideSortOnServer') && this.assertRowModelIsServerSide('serverSideSortOnServer') && this.assertNotTreeData('serverSideSortOnServer');
+        return this.gos.get('serverSideSortOnServer') && this.assertRowModelIsServerSide('serverSideSortOnServer') && this.assertNotTreeData('serverSideSortOnServer');
     }
     public isServerSideFilterOnServer() {
-        return this.gridOptionsService.get('serverSideFilterOnServer') && this.assertRowModelIsServerSide('serverSideFilterOnServer') && this.assertNotTreeData('serverSideFilterOnServer');
+        return this.gos.get('serverSideFilterOnServer') && this.assertRowModelIsServerSide('serverSideFilterOnServer') && this.assertNotTreeData('serverSideFilterOnServer');
     }
 
 }

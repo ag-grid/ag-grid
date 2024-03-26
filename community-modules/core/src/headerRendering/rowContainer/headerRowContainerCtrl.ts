@@ -202,8 +202,8 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
             const hidden = (width == 0);
             const hiddenChanged = this.hidden !== hidden;
-            const isRtl = this.gridOptionsService.get('enableRtl');
-            const scrollbarWidth = this.gridOptionsService.getScrollbarWidth();
+            const isRtl = this.gos.get('enableRtl');
+            const scrollbarWidth = this.gos.getScrollbarWidth();
 
             // if there is a scroll showing (and taking up space, so Windows, and not iOS)
             // in the body, then we add extra space to keep header aligned with the body,

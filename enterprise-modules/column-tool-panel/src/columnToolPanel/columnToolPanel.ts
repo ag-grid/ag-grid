@@ -47,7 +47,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public init(params: ToolPanelColumnCompParams): void {
-        const defaultParams: Partial<ToolPanelColumnCompParams> = this.gridOptionsService.addGridCommonParams({
+        const defaultParams: Partial<ToolPanelColumnCompParams> = this.gos.addGridCommonParams({
             suppressColumnMove: false,
             suppressColumnSelectAll: false,
             suppressColumnFilter: false,

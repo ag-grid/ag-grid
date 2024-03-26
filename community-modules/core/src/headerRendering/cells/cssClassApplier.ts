@@ -16,7 +16,7 @@ export class CssClassApplier {
 
     public static getHeaderClassesFromColDef(
         abstractColDef: AbstractColDef | null,
-        gridOptionsService: GridOptionsService,
+        gos: GridOptionsService,
         column: Column | null,
         columnGroup: ColumnGroup | null
     ): string[] {
@@ -25,7 +25,7 @@ export class CssClassApplier {
         return this.getColumnClassesFromCollDef(
             abstractColDef.headerClass,
             abstractColDef,
-            gridOptionsService,
+            gos,
             column,
             columnGroup
         );
@@ -33,7 +33,7 @@ export class CssClassApplier {
 
     public static getToolPanelClassesFromColDef(
         abstractColDef: AbstractColDef | null,
-        gridOptionsService: GridOptionsService,
+        gos: GridOptionsService,
         column: Column | null,
         columnGroup: ProvidedColumnGroup | null
     ): string[] {
@@ -42,7 +42,7 @@ export class CssClassApplier {
         return this.getColumnClassesFromCollDef(
             abstractColDef.toolPanelClass,
             abstractColDef,
-            gridOptionsService,
+            gos,
             column,
             columnGroup
         );
@@ -54,10 +54,10 @@ export class CssClassApplier {
     }
 
     private static getClassParams<T extends HeaderClassParams | ToolPanelClassParams>(abstractColDef: AbstractColDef,
-        gridOptionsService: GridOptionsService,
+        gos: GridOptionsService,
         column: Column | null,
         columnGroup: T['columnGroup']): T {
-        return gridOptionsService.addGridCommonParams({
+        return gos.addGridCommonParams({
             // bad naming, as colDef here can be a group or a column,
             // however most people won't appreciate the difference,
             // so keeping it as colDef to avoid confusion.
@@ -70,7 +70,7 @@ export class CssClassApplier {
     private static getColumnClassesFromCollDef<T extends HeaderClassParams | ToolPanelClassParams>(
         classesOrFunc: string | string[] | ((params: T) => string | string[] | undefined) | null | undefined,
         abstractColDef: AbstractColDef,
-        gridOptionsService: GridOptionsService,
+        gos: GridOptionsService,
         column: Column | null,
         columnGroup: ColumnGroup | ProvidedColumnGroup | null
     ): string[] {
@@ -79,7 +79,7 @@ export class CssClassApplier {
         let classToUse: string | string[] | undefined;
 
         if (typeof classesOrFunc === 'function') {
-            const params: T = this.getClassParams(abstractColDef, gridOptionsService, column, columnGroup);
+            const params: T = this.getClassParams(abstractColDef, gos, column, columnGroup);
             classToUse = classesOrFunc(params);
         } else {
             classToUse = classesOrFunc;

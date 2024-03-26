@@ -30,7 +30,7 @@ export class AgInputDateField extends AgInputTextField {
 
     private onWheel(e: WheelEvent) {
         // Prevent default scroll events from incrementing / decrementing the input, since its inconsistent between browsers
-        if (this.gridOptionsService.getActiveDomElement() === this.eInput) {
+        if (this.gos.getActiveDomElement() === this.eInput) {
             e.preventDefault();
         }
     }

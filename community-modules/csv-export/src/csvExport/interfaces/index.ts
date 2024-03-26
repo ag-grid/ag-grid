@@ -16,7 +16,7 @@ import { GridSerializer } from "../gridSerializer";
 
 export interface BaseCreatorBeans {
     gridSerializer: GridSerializer;
-    gridOptionsService: GridOptionsService;
+    gos: GridOptionsService;
 }
 
 export interface RowAccumulator {
@@ -30,7 +30,7 @@ export interface RowSpanningAccumulator {
 export interface GridSerializingParams {
     columnModel: ColumnModel;
     valueService: ValueService;
-    gridOptionsService: GridOptionsService;
+    gos: GridOptionsService;
     valueFormatterService: ValueFormatterService,
     valueParserService: ValueParserService,
     processCellCallback?: (params: ProcessCellForExportParams) => string;

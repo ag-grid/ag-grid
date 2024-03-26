@@ -55,8 +55,8 @@ export class HeaderRowCtrl extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.isPrintLayout = this.gridOptionsService.isDomLayout('print');
-        this.isEnsureDomOrder = this.gridOptionsService.get('ensureDomOrder');
+        this.isPrintLayout = this.gos.isDomLayout('print');
+        this.isEnsureDomOrder = this.gos.get('ensureDomOrder');
     }
 
 
@@ -116,7 +116,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private onDisplayedColumnsChanged(): void {
-        this.isPrintLayout = this.gridOptionsService.isDomLayout('print');
+        this.isPrintLayout = this.gos.isDomLayout('print');
         this.onVirtualColumnsChanged();
         this.setWidth();
         this.onRowHeightChanged();

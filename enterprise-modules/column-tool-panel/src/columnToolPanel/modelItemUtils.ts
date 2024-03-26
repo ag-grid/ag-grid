@@ -21,7 +21,7 @@ export class ModelItemUtils {
 
     @Autowired('aggFuncService') aggFuncService: IAggFuncService;
     @Autowired('columnModel') columnModel: ColumnModel;
-    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
+    @Autowired('gridOptionsService') private gos: GridOptionsService;
     @Autowired('eventService') private eventService: EventService;
 
     public selectAllChildren(colTree: ColumnModelItem[], selectAllChecked: boolean, eventType: ColumnEventType): void {
@@ -80,7 +80,7 @@ export class ModelItemUtils {
     }
 
     private setAllPivot(columns: Column[], value: boolean, eventType: ColumnEventType): void {
-        if (this.gridOptionsService.get('functionsPassive')) {
+        if (this.gos.get('functionsPassive')) {
             this.setAllPivotPassive(columns, value);
         } else {
             this.setAllPivotActive(columns, value, eventType);

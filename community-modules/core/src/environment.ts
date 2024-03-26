@@ -141,7 +141,7 @@ export class Environment extends BeanStub {
     private calculateValueForSassProperty(property: SASS_PROPERTIES, theme: string, themeElement?: HTMLElement): number | undefined {
         const useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : theme.match('balham') ? 'balham' : theme.match('alpine') ? 'alpine' : 'custom');
         const defaultValue = HARD_CODED_SIZES[useTheme][property];
-        const eDocument = this.gridOptionsService.getDocument();
+        const eDocument = this.gos.getDocument();
 
         if (!themeElement) {
             themeElement = this.eGridDiv;
@@ -232,7 +232,7 @@ export class Environment extends BeanStub {
 
     public refreshRowHeightVariable(): number {
         const oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-line-height').trim();
-        const height = this.gridOptionsService.get('rowHeight');
+        const height = this.gos.get('rowHeight');
 
         if (height == null || isNaN(height) || !isFinite(height)) {
             if (oldRowHeight !== null) {

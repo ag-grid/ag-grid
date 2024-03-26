@@ -12,7 +12,7 @@ export class ValueParserService extends BeanStub {
 
     public parseValue(column: Column, rowNode: IRowNode | null, newValue: any, oldValue: any): any {
         const colDef = column.getColDef();
-        const params: ValueParserParams = this.gridOptionsService.addGridCommonParams({
+        const params: ValueParserParams = this.gos.addGridCommonParams({
             node: rowNode,
             data: rowNode?.data,
             oldValue,

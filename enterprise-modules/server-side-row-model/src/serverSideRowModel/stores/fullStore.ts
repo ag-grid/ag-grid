@@ -93,7 +93,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     @PostConstruct
     private postConstruct(): void {
-        this.usingTreeData = this.gridOptionsService.get('treeData');
+        this.usingTreeData = this.gos.get('treeData');
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
 
         if (!this.usingTreeData && this.groupLevel) {
@@ -115,7 +115,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.addDestroyFunc(() => this.rowNodeBlockLoader.removeBlock(this));
 
 
-        this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
+        this.postSortFunc = this.gos.getCallback('postSortRows');
 
         if (userInitialRowCount != null) {
             this.eventService.dispatchEventOnce({
@@ -264,7 +264,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         const lookupNodeToRecycle = (data: any): RowNode | undefined => {
             if (!nodesToRecycle) { return undefined; }
 
-            const getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
+            const getRowIdFunc = this.gos.getCallback('getRowId');
             if (!getRowIdFunc) { return undefined; }
 
             const parentKeys = this.parentRowNode.getGroupKeys();
@@ -546,7 +546,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
                 return { status: ServerSideTransactionResultStatus.StoreWaitingToLoad };
         }
 
-        const applyCallback = this.gridOptionsService.getCallback('isApplyServerSideTransaction');
+        const applyCallback = this.gos.getCallback('isApplyServerSideTransaction');
         if (applyCallback) {
             const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
                 transaction: transaction,
@@ -671,7 +671,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private lookupRowNode(data: any): RowNode | null {
-        const getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
+        const getRowIdFunc = this.gos.getCallback('getRowId');
 
         let rowNode: RowNode;
         if (getRowIdFunc != null) {

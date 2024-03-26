@@ -129,7 +129,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
         this.selectedValues = values;
         const changes = this.getChanges(previousSelectedValues, values);
         const refreshSelect = forceRefreshSelect || changes.added.length || changes.removed.length;
-        const activeElement = this.gridOptionsService.getActiveDomElement();
+        const activeElement = this.gos.getActiveDomElement();
         const selectHasFocus = this.eSelect?.getGui().contains(activeElement);
         const dropZoneHasFocus = this.dropZonePanel?.getGui().contains(activeElement);
         if (!silent) {

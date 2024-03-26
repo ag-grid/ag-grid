@@ -23,7 +23,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
         const title = localeTextFunc('pivots', 'Column Labels');
 
         super.init({
-            icon: _.createIconNoSpan('pivotPanel', this.gridOptionsService, null)!,
+            icon: _.createIconNoSpan('pivotPanel', this.gos, null)!,
             emptyMessage: emptyMessage,
             title: title
         });
@@ -59,7 +59,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
         if (this.isHorizontal()) {
             // what we do for horizontal (ie the pivot panel at the top) depends
             // on the user property as well as pivotMode.
-            switch (this.gridOptionsService.get('pivotPanelShow')) {
+            switch (this.gos.get('pivotPanelShow')) {
                 case 'always':
                     this.setDisplayed(pivotMode);
                     break;
@@ -80,13 +80,13 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
 
     protected isItemDroppable(column: Column, draggingEvent: DraggingEvent): boolean {
         // we never allow grouping of secondary columns
-        if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) { return false; }
+        if (this.gos.get('functionsReadOnly') || !column.isPrimary()) { return false; }
 
         return column.isAllowPivot() && (!column.isPivotActive() || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: Column[]): void {
-        if (this.gridOptionsService.get('functionsPassive')) {
+        if (this.gos.get('functionsPassive')) {
             const event: WithoutGridCommon<ColumnPivotChangeRequestEvent> = {
                 type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
                 columns: columns

@@ -121,7 +121,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private updateDatasource(): void {
-        const datasource = this.gridOptionsService.get('serverSideDatasource');
+        const datasource = this.gos.get('serverSideDatasource');
 
         if (datasource) {
             this.setDatasource(datasource);
@@ -129,10 +129,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private verifyProps(): void {
-        if (this.gridOptionsService.exists('initialGroupOrderComparator')) {
+        if (this.gos.exists('initialGroupOrderComparator')) {
             _.warnOnce(`initialGroupOrderComparator cannot be used with Server Side Row Model.`);
         }
-        if (this.gridOptionsService.isRowSelection() && !this.gridOptionsService.exists('getRowId')) {
+        if (this.gos.isRowSelection() && !this.gos.exists('getRowId')) {
             _.warnOnce(`getRowId callback must be provided for Server Side Row Model selection to work correctly.`);
         }
     }
@@ -260,10 +260,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     public resetRowHeights(): void {
         const atLeastOne = this.resetRowHeightsForAllRowNodes();
 
-        const rootNodeHeight = this.gridOptionsService.getRowHeightForNode(this.rootNode);
+        const rootNodeHeight = this.gos.getRowHeightForNode(this.rootNode);
         this.rootNode.setRowHeight(rootNodeHeight.height, rootNodeHeight.estimated);
         if (this.rootNode.sibling) {
-            const rootNodeSibling = this.gridOptionsService.getRowHeightForNode(this.rootNode.sibling);
+            const rootNodeSibling = this.gos.getRowHeightForNode(this.rootNode.sibling);
             this.rootNode.sibling.setRowHeight(rootNodeSibling.height, rootNodeSibling.estimated);
         }
 
@@ -277,19 +277,19 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     private resetRowHeightsForAllRowNodes(): boolean {
         let atLeastOne = false;
         this.forEachNode(rowNode => {
-            const rowHeightForNode = this.gridOptionsService.getRowHeightForNode(rowNode);
+            const rowHeightForNode = this.gos.getRowHeightForNode(rowNode);
             rowNode.setRowHeight(rowHeightForNode.height, rowHeightForNode.estimated);
             // we keep the height each row is at, however we set estimated=true rather than clear the height.
             // this means the grid will not reset the row heights back to defaults, rather it will re-calc
             // the height for each row as the row is displayed. otherwise the scroll will jump when heights are reset.
             const detailNode = rowNode.detailNode;
             if (detailNode) {
-                const detailRowHeight = this.gridOptionsService.getRowHeightForNode(detailNode);
+                const detailRowHeight = this.gos.getRowHeightForNode(detailNode);
                 detailNode.setRowHeight(detailRowHeight.height, detailRowHeight.estimated);
             }
 
             if (rowNode.sibling) {
-                const siblingRowHeight = this.gridOptionsService.getRowHeightForNode(rowNode.sibling);
+                const siblingRowHeight = this.gos.getRowHeightForNode(rowNode.sibling);
                 detailNode.setRowHeight(siblingRowHeight.height, siblingRowHeight.estimated);
             }
             atLeastOne = true;
@@ -338,7 +338,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const valueColumnVos = this.columnsToValueObjects(this.columnModel.getValueColumns());
         const pivotColumnVos = this.columnsToValueObjects(this.columnModel.getPivotColumns());
 
-        const dynamicRowHeight = this.gridOptionsService.isGetRowHeightFunction();
+        const dynamicRowHeight = this.gos.isGetRowHeightFunction();
 
         const params: SSRMParams = {
             // the columns the user has grouped and aggregated by
@@ -484,7 +484,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     public getRowBounds(index: number): RowBounds {
         const rootStore = this.getRootStore();
         if (!rootStore) {
-            const rowHeight = this.gridOptionsService.getRowHeightAsNumber();
+            const rowHeight = this.gos.getRowHeightAsNumber();
             return {
                 rowTop: 0,
                 rowHeight: rowHeight

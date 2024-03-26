@@ -93,12 +93,12 @@ export class FilterManager extends BeanStub {
         this.addManagedListener(this.quickFilterService, QuickFilterService.EVENT_QUICK_FILTER_CHANGED, () => this.onFilterChanged({ source: 'quickFilter' }));
 
         this.initialFilterModel = {
-            ...this.gridOptionsService.get('initialState')?.filter?.filterModel ?? {}
+            ...this.gos.get('initialState')?.filter?.filterModel ?? {}
         };
     }
 
     private isExternalFilterPresentCallback() {
-        const isFilterPresent = this.gridOptionsService.getCallback('isExternalFilterPresent');
+        const isFilterPresent = this.gos.getCallback('isExternalFilterPresent');
         if (typeof isFilterPresent === 'function') {
             return isFilterPresent({});
         }
@@ -106,7 +106,7 @@ export class FilterManager extends BeanStub {
     }
 
     private doesExternalFilterPass(node: RowNode) {
-        const doesFilterPass = this.gridOptionsService.get('doesExternalFilterPass');
+        const doesFilterPass = this.gos.get('doesExternalFilterPass');
         if (typeof doesFilterPass === 'function') {
             return doesFilterPass(node);
         }
@@ -294,7 +294,7 @@ export class FilterManager extends BeanStub {
             return filter.isFilterActive();
         };
 
-        const groupFilterEnabled = !!this.gridOptionsService.getGroupAggFiltering();
+        const groupFilterEnabled = !!this.gos.getGroupAggFiltering();
 
         const isAggFilter = (column: Column) => {
             const isSecondary = !column.isPrimary();
@@ -369,7 +369,7 @@ export class FilterManager extends BeanStub {
     }
 
     private refreshFiltersForAggregations() {
-        const isAggFiltering = this.gridOptionsService.getGroupAggFiltering();
+        const isAggFiltering = this.gos.getGroupAggFiltering();
         if (isAggFiltering) {
             this.onFilterChanged();
         }
@@ -439,7 +439,7 @@ export class FilterManager extends BeanStub {
     public isSuppressFlashingCellsBecauseFiltering(): boolean {
         // if user has elected to always flash cell changes, then always return false, otherwise we suppress flashing
         // changes when filtering
-        const allowShowChangeAfterFilter = this.gridOptionsService.get('allowShowChangeAfterFilter') ?? false;
+        const allowShowChangeAfterFilter = this.gos.get('allowShowChangeAfterFilter') ?? false;
         return !allowShowChangeAfterFilter && this.processingFilterChange;
     }
 
@@ -448,7 +448,7 @@ export class FilterManager extends BeanStub {
     }
 
     private updateAggFiltering(): void {
-        this.aggFiltering = !!this.gridOptionsService.getGroupAggFiltering();
+        this.aggFiltering = !!this.gos.getGroupAggFiltering();
     }
 
     public isAggregateQuickFilterPresent(): boolean {
@@ -636,7 +636,7 @@ export class FilterManager extends BeanStub {
     }
 
     public createFilterParams(column: Column, colDef: ColDef): IFilterParams {
-        const params: IFilterParams = this.gridOptionsService.addGridCommonParams({
+        const params: IFilterParams = this.gos.addGridCommonParams({
             column,
             colDef: cloneObject(colDef),
             rowModel: this.rowModel,

@@ -106,10 +106,10 @@ export class PageSizeSelectorComp extends Component {
 
     public shouldShowPageSizeSelector(): boolean {
         return (
-            this.gridOptionsService.get('pagination') &&
-            !this.gridOptionsService.get('suppressPaginationPanel') &&
-            !this.gridOptionsService.get('paginationAutoPageSize') &&
-            this.gridOptionsService.get('paginationPageSizeSelector') !== false
+            this.gos.get('pagination') &&
+            !this.gos.get('suppressPaginationPanel') &&
+            !this.gos.get('paginationAutoPageSize') &&
+            this.gos.get('paginationPageSizeSelector') !== false
         );
     }
 
@@ -156,7 +156,7 @@ export class PageSizeSelectorComp extends Component {
 
     private getPageSizeSelectorValues(): number[] {
         const defaultValues = [20, 50, 100];
-        const paginationPageSizeSelectorValues = this.gridOptionsService.get('paginationPageSizeSelector');
+        const paginationPageSizeSelectorValues = this.gos.get('paginationPageSizeSelector');
 
         if (
             !Array.isArray(paginationPageSizeSelectorValues) ||

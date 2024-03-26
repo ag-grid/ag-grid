@@ -160,7 +160,7 @@ export class ChartService extends BeanStub implements IChartService {
 
         if (model.modelType === 'pivot') {
             // if required enter pivot mode
-            this.gridOptionsService.updateGridOptions({ options: { pivotMode: true}, source: 'pivotChart' as any });
+            this.gos.updateGridOptions({ options: { pivotMode: true}, source: 'pivotChart' as any });
 
             // pivot chart range contains all visible column without a row range to include all rows
             const columns = this.columnModel.getAllDisplayedColumns().map(col => col.getColId());
@@ -243,7 +243,7 @@ export class ChartService extends BeanStub implements IChartService {
 
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
         // if required enter pivot mode
-        this.gridOptionsService.updateGridOptions({ options: { pivotMode: true}, source: 'pivotChart' as any });
+        this.gos.updateGridOptions({ options: { pivotMode: true}, source: 'pivotChart' as any });
 
         // pivot chart range contains all visible column without a row range to include all rows
         const chartAllRangeParams: CellRangeParams = {
@@ -322,7 +322,7 @@ export class ChartService extends BeanStub implements IChartService {
             return undefined;
         }
 
-        const createChartContainerFunc = this.gridOptionsService.getCallback('createChartContainer');
+        const createChartContainerFunc = this.gos.getCallback('createChartContainer');
 
         const params: GridChartParams = {
             chartId: this.generateId(),

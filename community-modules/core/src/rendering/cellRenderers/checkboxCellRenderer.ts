@@ -52,7 +52,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
 
         this.addManagedListener(this.params.eGridCell, 'keydown', (event: KeyboardEvent) => {
             if (event.key === KeyCode.SPACE && !this.eCheckbox.isDisabled()) {
-                if (this.params.eGridCell === this.gridOptionsService.getActiveDomElement()) {
+                if (this.params.eGridCell === this.gos.getActiveDomElement()) {
                     this.eCheckbox.toggle();
                 }
                 const isSelected = this.eCheckbox.getValue();

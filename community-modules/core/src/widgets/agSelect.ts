@@ -31,7 +31,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
     protected postConstruct(): void {
         super.postConstruct();
         this.createListComponent();
-        this.eWrapper.tabIndex = this.gridOptionsService.get('tabIndex');
+        this.eWrapper.tabIndex = this.gos.get('tabIndex');
 
         const { options, value, placeholder } = this.config;
         if (options != null) {

@@ -41,7 +41,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         });
         
         this.addManagedListener(inputElement, 'input', e => {
-            if (e.target !== this.gridOptionsService.getActiveDomElement()) { return; }
+            if (e.target !== this.gos.getActiveDomElement()) { return; }
             if (this.eDateInput.isDisabled()) { return; }
             
             this.params.onDateChanged();

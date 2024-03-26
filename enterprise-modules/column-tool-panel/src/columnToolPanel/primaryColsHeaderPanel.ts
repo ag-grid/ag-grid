@@ -81,7 +81,7 @@ export class PrimaryColsHeaderPanel extends Component {
     }
 
     private onFunctionsReadOnlyPropChanged(): void {
-        const readOnly = this.gridOptionsService.get('functionsReadOnly');
+        const readOnly = this.gos.get('functionsReadOnly');
         this.eSelect.setReadOnly(readOnly);
         this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
     }
@@ -89,7 +89,7 @@ export class PrimaryColsHeaderPanel extends Component {
     public init(params: ToolPanelColumnCompParams): void {
         this.params = params;
 
-        const readOnly = this.gridOptionsService.get('functionsReadOnly');
+        const readOnly = this.gos.get('functionsReadOnly');
         this.eSelect.setReadOnly(readOnly);
         this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
 
@@ -100,15 +100,15 @@ export class PrimaryColsHeaderPanel extends Component {
 
     private createExpandIcons() {
         this.eExpand.appendChild((
-            this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gridOptionsService)!
+            this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gos)!
         ));
 
         this.eExpand.appendChild((
-            this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gridOptionsService)!
+            this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gos)!
         ));
 
         this.eExpand.appendChild((
-            this.eExpandIndeterminate = _.createIconNoSpan('columnSelectIndeterminate', this.gridOptionsService)!
+            this.eExpandIndeterminate = _.createIconNoSpan('columnSelectIndeterminate', this.gos)!
         ));
 
         this.setExpandState(ExpandState.EXPANDED);

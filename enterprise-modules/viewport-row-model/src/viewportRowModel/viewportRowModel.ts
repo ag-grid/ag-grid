@@ -40,11 +40,11 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
 
     @PostConstruct
     private init(): void {
-        this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
+        this.rowHeight = this.gos.getRowHeightAsNumber();
         this.addManagedListener(this.eventService, Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
         this.addManagedPropertyListener('viewportDatasource', () => this.updateDatasource());
         this.addManagedPropertyListener('rowHeight', () => {
-            this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
+            this.rowHeight = this.gos.getRowHeightAsNumber();
             this.updateRowHeights();
         });
     }
@@ -71,18 +71,18 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     private updateDatasource(): void {
-        const datasource = this.gridOptionsService.get('viewportDatasource');
+        const datasource = this.gos.get('viewportDatasource');
         if (datasource) {
             this.setViewportDatasource(datasource);
         }
     }
 
     private getViewportRowModelPageSize(): number | undefined {
-        return this.gridOptionsService.get('viewportRowModelPageSize');
+        return this.gos.get('viewportRowModelPageSize');
     }
 
     private getViewportRowModelBufferSize(): number {
-        return this.gridOptionsService.get('viewportRowModelBufferSize');
+        return this.gos.get('viewportRowModelBufferSize');
     }
 
     private calculateFirstRow(firstRenderedRow: number): number {

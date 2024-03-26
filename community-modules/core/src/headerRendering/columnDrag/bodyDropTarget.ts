@@ -68,7 +68,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
 
     public isInterestedIn(type: DragSourceType): boolean {
         return type === DragSourceType.HeaderCell ||
-            (type === DragSourceType.ToolPanel && this.gridOptionsService.get('allowDragFromColumnsToolPanel'));
+            (type === DragSourceType.ToolPanel && this.gos.get('allowDragFromColumnsToolPanel'));
     }
 
     public getSecondaryContainers(): HTMLElement[][] {

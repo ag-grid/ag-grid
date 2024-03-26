@@ -363,7 +363,7 @@ export class ChartController extends BeanStub {
     }
 
     public getThemeNames(): string[] {
-        return this.gridOptionsService.get('chartThemes') || DEFAULT_THEMES;
+        return this.gos.get('chartThemes') || DEFAULT_THEMES;
     }
 
     public getThemes(): _Theme.ChartTheme[] {

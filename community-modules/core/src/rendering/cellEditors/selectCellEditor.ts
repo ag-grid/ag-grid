@@ -48,7 +48,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
     public init(params: SelectCellEditorParams): void {
         this.focusAfterAttached = params.cellStartedEdit;
 
-        const { eSelect, valueFormatterService, gridOptionsService } = this;
+        const { eSelect, valueFormatterService, gos } = this;
         const { values, value, eventKey } = params;
         if (missing(values)) {
             console.warn('AG Grid: no values found for select cellEditor');
@@ -90,7 +90,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
 
         // we don't want to add this if full row editing, otherwise selecting will stop the
         // full row editing.
-        if (gridOptionsService.get('editType') !== 'fullRow') {
+        if (gos.get('editType') !== 'fullRow') {
             this.addManagedListener(this.eSelect, AgSelect.EVENT_ITEM_SELECTED, () => params.stopEditing());
         }
     }

@@ -27,7 +27,7 @@ export function isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
 
 /**
  * Allows user to tell the grid to skip specific keyboard events
- * @param {GridOptionsService} gridOptionsService
+ * @param {GridOptionsService} gos
  * @param {KeyboardEvent} keyboardEvent
  * @param {IRowNode} rowNode
  * @param {Column} column
@@ -35,7 +35,7 @@ export function isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
  * @returns {boolean}
  */
 export function isUserSuppressingKeyboardEvent(
-    gridOptionsService: GridOptionsService,
+    gos: GridOptionsService,
     keyboardEvent: KeyboardEvent,
     rowNode: IRowNode,
     column: Column,
@@ -46,7 +46,7 @@ export function isUserSuppressingKeyboardEvent(
     // if no callbacks provided by user, then do nothing
     if (!colDefFunc) { return false; }
 
-    const params: SuppressKeyboardEventParams = gridOptionsService.addGridCommonParams({
+    const params: SuppressKeyboardEventParams = gos.addGridCommonParams({
         event: keyboardEvent,
         editing,
         column,
@@ -67,7 +67,7 @@ export function isUserSuppressingKeyboardEvent(
 }
 
 export function isUserSuppressingHeaderKeyboardEvent(
-    gridOptionsService: GridOptionsService,
+    gos: GridOptionsService,
     keyboardEvent: KeyboardEvent,
     headerRowIndex: number,
     column: Column | ColumnGroup
@@ -77,7 +77,7 @@ export function isUserSuppressingHeaderKeyboardEvent(
 
     if (!exists(colDefFunc)) { return false; }
 
-    const params: SuppressHeaderKeyboardEventParams = gridOptionsService.addGridCommonParams({
+    const params: SuppressHeaderKeyboardEventParams = gos.addGridCommonParams({
         colDef: colDef,
         column,
         headerRowIndex,

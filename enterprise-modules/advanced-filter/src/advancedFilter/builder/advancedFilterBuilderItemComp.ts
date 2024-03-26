@@ -98,7 +98,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
         } else {
             this.setupTreeLines(level);
 
-            this.eDragHandle.appendChild(_.createIconNoSpan('advancedFilterBuilderDrag', this.gridOptionsService)!);
+            this.eDragHandle.appendChild(_.createIconNoSpan('advancedFilterBuilderDrag', this.gos)!);
             this.setupValidation();
             this.setupMoveButtons(showMove);
             this.setupAddButton();
@@ -185,7 +185,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     }
 
     private setupValidation(): void {
-        this.eValidation.appendChild(_.createIconNoSpan('advancedFilterBuilderInvalid', this.gridOptionsService)!);
+        this.eValidation.appendChild(_.createIconNoSpan('advancedFilterBuilderInvalid', this.gos)!);
         this.validationTooltipFeature = this.createManagedBean(new TooltipFeature({
             getGui: () => this.eValidation,
             getLocation: () => 'advancedFilter',
@@ -198,7 +198,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     private setupAddButton(): void {
         const addButtonParams = getAdvancedFilterBuilderAddButtonParams(
             key => this.advancedFilterExpressionService.translate(key),
-            this.gridOptionsService.get('advancedFilterBuilderParams')?.addSelectWidth
+            this.gos.get('advancedFilterBuilderParams')?.addSelectWidth
         );
         const eAddButton = this.createManagedBean(new AddDropdownComp(addButtonParams));
         this.addManagedListener(
@@ -220,7 +220,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     }
 
     private setupRemoveButton(): void {
-        this.eRemoveButton.appendChild(_.createIconNoSpan('advancedFilterBuilderRemove', this.gridOptionsService)!);
+        this.eRemoveButton.appendChild(_.createIconNoSpan('advancedFilterBuilderRemove', this.gos)!);
         this.addManagedListener(this.eRemoveButton, 'click', () => this.removeItem());
         this.addManagedListener(this.eRemoveButton, 'keydown', (event: KeyboardEvent) => {
             switch (event.key) {
@@ -244,7 +244,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
 
     private setupMoveButtons(showMove?: boolean): void {
         if (showMove) {
-            this.eMoveUpButton.appendChild(_.createIconNoSpan('advancedFilterBuilderMoveUp', this.gridOptionsService)!);
+            this.eMoveUpButton.appendChild(_.createIconNoSpan('advancedFilterBuilderMoveUp', this.gos)!);
             this.addManagedListener(this.eMoveUpButton, 'click', () => this.moveItem(true));
             this.addManagedListener(this.eMoveUpButton, 'keydown', (event: KeyboardEvent) => {
                 switch (event.key) {
@@ -265,7 +265,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             }));
             _.setAriaLabel(this.eMoveUpButton, this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveUpButtonTooltip'));
 
-            this.eMoveDownButton.appendChild(_.createIconNoSpan('advancedFilterBuilderMoveDown', this.gridOptionsService)!);
+            this.eMoveDownButton.appendChild(_.createIconNoSpan('advancedFilterBuilderMoveDown', this.gos)!);
             this.addManagedListener(this.eMoveDownButton, 'click', () => this.moveItem(false));
             this.addManagedListener(this.eMoveDownButton, 'keydown', (event: KeyboardEvent) => {
                 switch (event.key) {
@@ -310,7 +310,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
         };
         if (params.isSelect) {
             const { getEditorParams, pickerAriaLabelKey, pickerAriaLabelValue } = params;
-            const advancedFilterBuilderParams = this.gridOptionsService.get('advancedFilterBuilderParams');
+            const advancedFilterBuilderParams = this.gos.get('advancedFilterBuilderParams');
             const minPickerWidth = `${advancedFilterBuilderParams?.pillSelectMinWidth ?? 140}px`;
             const maxPickerWidth = `${advancedFilterBuilderParams?.pillSelectMaxWidth ?? 200}px`;
             const comp = this.createBean(new SelectPillComp({

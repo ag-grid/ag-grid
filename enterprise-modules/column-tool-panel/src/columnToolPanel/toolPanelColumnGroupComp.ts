@@ -76,7 +76,7 @@ export class ToolPanelColumnGroupComp extends Component {
     public init(): void {
         this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE);
 
-        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsService)!;
+        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gos)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-group-drag-handle');
 
         const checkboxGui = this.cbSelect.getGui();
@@ -106,7 +106,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.refreshAriaLabel();
         this.setupTooltip();
 
-        const classes = CssClassApplier.getToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.gridOptionsService, null, this.columnGroup);
+        const classes = CssClassApplier.getToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.gos, null, this.columnGroup);
         classes.forEach(c => this.addOrRemoveCssClass(c, true));
     }
 
@@ -119,7 +119,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         if (!colGroupDef) { return; }
 
-        const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
+        const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
 
         let shouldDisplayTooltip: (() => boolean) | undefined;
 
@@ -163,9 +163,9 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private onContextMenu(e: MouseEvent): void {
-        const { columnGroup, gridOptionsService } = this;
+        const { columnGroup, gos } = this;
 
-        if (gridOptionsService.get('functionsReadOnly')) { return; }
+        if (gos.get('functionsReadOnly')) { return; }
 
         const contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper));
         this.addDestroyFunc(() => {
@@ -190,7 +190,7 @@ export class ToolPanelColumnGroupComp extends Component {
             return;
         }
 
-        let hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !this.gos.get('suppressDragLeaveHidesColumns');
         const dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
@@ -198,7 +198,7 @@ export class ToolPanelColumnGroupComp extends Component {
             getDefaultIconName: () => hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
-                hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
+                hideColumnOnExit = !this.gos.get('suppressDragLeaveHidesColumns');
                 const event: WithoutGridCommon<ColumnPanelItemDragStartEvent> = {
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                     column: this.columnGroup
@@ -257,8 +257,8 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private setupExpandContract(): void {
-        this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.gridOptionsService, null));
-        this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gridOptionsService, null));
+        this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.gos, null));
+        this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gos, null));
 
         this.addManagedListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         this.addManagedListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));

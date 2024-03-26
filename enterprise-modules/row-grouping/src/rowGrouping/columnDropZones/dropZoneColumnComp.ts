@@ -86,8 +86,8 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     }
 
     protected addAdditionalAriaInstructions(ariaInstructions: string[], translate: (key: string, defaultValue: string) => string): void {
-        const isSortSuppressed = this.gridOptionsService.get('rowGroupPanelSuppressSort');
-        const isFunctionsReadOnly = this.gridOptionsService.get('functionsReadOnly')
+        const isSortSuppressed = this.gos.get('rowGroupPanelSuppressSort');
+        const isFunctionsReadOnly = this.gos.get('functionsReadOnly')
         if (this.isAggregationZone() && !isFunctionsReadOnly) {
             const aggregationMenuAria = translate('ariaDropZoneColumnValueItemDescription', 'Press ENTER to change the aggregation type');
             ariaInstructions.push(aggregationMenuAria);
@@ -110,7 +110,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     }
 
     private isReadOnly(): boolean {
-        return !this.isGroupingAndLocked() && !this.gridOptionsService.get('functionsReadOnly');
+        return !this.isGroupingAndLocked() && !this.gos.get('functionsReadOnly');
     }
 
     protected getAriaDisplayName(): string {
@@ -123,7 +123,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
         };
         const columnSort = this.column.getSort();
-        const isSortSuppressed = this.gridOptionsService.get('rowGroupPanelSuppressSort');
+        const isSortSuppressed = this.gos.get('rowGroupPanelSuppressSort');
         return [
             aggFuncName && `${aggFuncName}${aggSeparator}`,
             name,
@@ -153,11 +153,11 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
             return;
         }
 
-        if (!this.gridOptionsService.get('rowGroupPanelSuppressSort')) {
+        if (!this.gos.get('rowGroupPanelSuppressSort')) {
             this.eSortIndicator.setupSort(this.column, true);
             const performSort = (event: MouseEvent | KeyboardEvent) => {
                 event.preventDefault();
-                const sortUsingCtrl = this.gridOptionsService.get('multiSortKey') === 'ctrl';
+                const sortUsingCtrl = this.gos.get('multiSortKey') === 'ctrl';
                 const multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
                 this.sortController.progressSort(this.column, multiSort, 'uiColumnSorted');
             };
@@ -191,7 +191,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     protected setupComponents(): void {
         super.setupComponents();
 
-        if (this.isAggregationZone() && !this.gridOptionsService.get('functionsReadOnly')) {
+        if (this.isAggregationZone() && !this.gos.get('functionsReadOnly')) {
             this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this));
         }
     }
@@ -200,7 +200,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         super.onKeyDown(e);
 
         const isEnter = e.key === KeyCode.ENTER;
-        if (isEnter && this.isAggregationZone() && !this.gridOptionsService.get('functionsReadOnly')) {
+        if (isEnter && this.isAggregationZone() && !this.gos.get('functionsReadOnly')) {
             e.preventDefault();
             this.onShowAggFuncSelection();
         }
@@ -304,7 +304,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
 
         const itemSelected = () => {
             hidePopup();
-            if (this.gridOptionsService.get('functionsPassive')) {
+            if (this.gos.get('functionsPassive')) {
                 const event: WithoutGridCommon<ColumnAggFuncChangeRequestEvent> = {
                     type: Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
                     columns: [this.column],

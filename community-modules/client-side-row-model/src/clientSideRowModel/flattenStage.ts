@@ -62,16 +62,16 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
 
     private getFlattenDetails(): FlattenDetails {
         // these two are mutually exclusive, so if first set, we don't set the second
-        const groupRemoveSingleChildren = this.gridOptionsService.get('groupRemoveSingleChildren');
-        const groupRemoveLowestSingleChildren = !groupRemoveSingleChildren && this.gridOptionsService.get('groupRemoveLowestSingleChildren');
+        const groupRemoveSingleChildren = this.gos.get('groupRemoveSingleChildren');
+        const groupRemoveLowestSingleChildren = !groupRemoveSingleChildren && this.gos.get('groupRemoveLowestSingleChildren');
 
         return {
             groupRemoveLowestSingleChildren,
             groupRemoveSingleChildren,
-            isGroupMultiAutoColumn: this.gridOptionsService.isGroupMultiAutoColumn(),
-            hideOpenParents : this.gridOptionsService.get('groupHideOpenParents'),
-            groupIncludeTotalFooter : this.gridOptionsService.get('groupIncludeTotalFooter'),
-            getGroupIncludeFooter : this.gridOptionsService.getGroupIncludeFooter(),
+            isGroupMultiAutoColumn: this.gos.isGroupMultiAutoColumn(),
+            hideOpenParents : this.gos.get('groupHideOpenParents'),
+            groupIncludeTotalFooter : this.gos.get('groupIncludeTotalFooter'),
+            getGroupIncludeFooter : this.gos.getGroupIncludeFooter(),
         };
     }
 

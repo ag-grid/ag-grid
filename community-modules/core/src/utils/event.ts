@@ -48,11 +48,11 @@ export const isEventSupported = (() => {
     return eventChecker;
 })();
 
-export function getCtrlForEventTarget<T>(gridOptionsService: GridOptionsService, eventTarget: EventTarget | null, type: string): T | null {
+export function getCtrlForEventTarget<T>(gos: GridOptionsService, eventTarget: EventTarget | null, type: string): T | null {
     let sourceElement = eventTarget as HTMLElement;
 
     while (sourceElement) {
-        const renderedComp = gridOptionsService.getDomData(sourceElement, type);
+        const renderedComp = gos.getDomData(sourceElement, type);
 
         if (renderedComp) {
             return renderedComp as T;

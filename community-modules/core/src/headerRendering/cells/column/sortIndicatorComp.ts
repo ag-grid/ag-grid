@@ -81,7 +81,7 @@ export class SortIndicatorComp extends Component {
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
         if (eParent == null) { return; }
 
-        const eIcon = createIconNoSpan(iconName, this.gridOptionsService, column);
+        const eIcon = createIconNoSpan(iconName, this.gos, column);
         if (eIcon) {
             eParent.appendChild(eIcon);
         }
@@ -108,7 +108,7 @@ export class SortIndicatorComp extends Component {
         }
 
         if (this.eSortNone) {
-            const alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gridOptionsService.get('unSortIcon');
+            const alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gos.get('unSortIcon');
             const isNone = sortDirection === null || sortDirection === undefined;
             setDisplayed(this.eSortNone, !alwaysHideNoSort && isNone, { skipAriaHidden: true });
         }
@@ -118,7 +118,7 @@ export class SortIndicatorComp extends Component {
         this.addInIcon('sortUnSort', this.eSortMixed, this.column);
 
         const isColumnShowingRowGroup = this.column.getColDef().showRowGroup;
-        const areGroupsCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
+        const areGroupsCoupled = this.gos.isColumnsSortingCoupledToGroup();
         if (areGroupsCoupled && isColumnShowingRowGroup) {
             // Watch global events, as row group columns can effect their display column.
             this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, () => this.updateMultiSortIndicator());

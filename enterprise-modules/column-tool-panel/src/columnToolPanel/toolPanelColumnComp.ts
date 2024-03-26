@@ -60,7 +60,7 @@ export class ToolPanelColumnComp extends Component {
     public init(): void {
 
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
-        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsService)!;
+        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gos)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-drag-handle');
 
         const checkboxGui = this.cbSelect.getGui();
@@ -99,7 +99,7 @@ export class ToolPanelColumnComp extends Component {
 
         this.setupTooltip();
 
-        const classes = CssClassApplier.getToolPanelClassesFromColDef(this.column.getColDef(), this.gridOptionsService, this.column, null);
+        const classes = CssClassApplier.getToolPanelClassesFromColDef(this.column.getColDef(), this.gos, this.column, null);
         classes.forEach(c => this.addOrRemoveCssClass(c, true));
     }
 
@@ -108,7 +108,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private setupTooltip(): void {
-        const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
+        const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
         let shouldDisplayTooltip: (() => boolean) | undefined;
 
         if (isTooltipWhenTruncated) {
@@ -132,9 +132,9 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private onContextMenu(e: MouseEvent): void {
-        const { column, gridOptionsService } = this;
+        const { column, gos } = this;
 
-        if (gridOptionsService.get('functionsReadOnly')) { return; }
+        if (gos.get('functionsReadOnly')) { return; }
 
         const contextMenu = this.createBean(new ToolPanelContextMenu(column, e, this.focusWrapper));
         this.addDestroyFunc(() => {
@@ -154,7 +154,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private onLabelClicked(): void {
-        if (this.gridOptionsService.get('functionsReadOnly')) {
+        if (this.gos.get('functionsReadOnly')) {
             return;
         }
 
@@ -198,7 +198,7 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
-        let hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !this.gos.get('suppressDragLeaveHidesColumns');
         const dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
@@ -206,7 +206,7 @@ export class ToolPanelColumnComp extends Component {
             getDefaultIconName: () => hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
-                hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
+                hideColumnOnExit = !this.gos.get('suppressDragLeaveHidesColumns');
                 const event: WithoutGridCommon<ColumnPanelItemDragStartEvent> = {
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                     column: this.column
@@ -271,7 +271,7 @@ export class ToolPanelColumnComp extends Component {
         if (isPivotMode) {
             // when in pivot mode, the item should be read only if:
             //  a) gui is not allowed make any changes
-            const functionsReadOnly = this.gridOptionsService.get('functionsReadOnly');
+            const functionsReadOnly = this.gos.get('functionsReadOnly');
             //  b) column is not allow any functions on it
             const noFunctionsAllowed = !this.column.isAnyFunctionAllowed();
             canBeToggled = !functionsReadOnly && !noFunctionsAllowed;
@@ -289,7 +289,7 @@ export class ToolPanelColumnComp extends Component {
         this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !canBeDragged);
         this.addOrRemoveCssClass('ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
 
-        const checkboxPassive = isPivotMode && this.gridOptionsService.get('functionsPassive');
+        const checkboxPassive = isPivotMode && this.gos.get('functionsPassive');
         this.cbSelect.setPassive(checkboxPassive);
 
         this.processingColumnStateChange = false;

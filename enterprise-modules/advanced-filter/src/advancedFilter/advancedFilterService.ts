@@ -49,7 +49,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
 
     @PostConstruct
     private postConstruct(): void {
-        this.setEnabled(this.gridOptionsService.get('enableAdvancedFilter'), true);
+        this.setEnabled(this.gos.get('enableAdvancedFilter'), true);
 
         this.ctrl = this.createManagedBean(new AdvancedFilterCtrl(this.enabled));
 
@@ -140,7 +140,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     }
 
     public isHeaderActive(): boolean {
-        return !this.gridOptionsService.get('advancedFilterParent');
+        return !this.gos.get('advancedFilterParent');
     }
 
     public getCtrl(): AdvancedFilterCtrl {
