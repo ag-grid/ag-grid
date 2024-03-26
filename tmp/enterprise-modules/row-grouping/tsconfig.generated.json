@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@ag-grid-community/core": [
+        "community-modules/core/dist/types"
+      ],
+      "@ag-grid-community/client-side-row-model": [
+        "community-modules/client-side-row-model/src/main.ts"
+      ],
+      "@ag-grid-enterprise/core": [
+        "enterprise-modules/core/dist/types"
+      ],
+      "@ag-grid-enterprise/status-bar": [
+        "enterprise-modules/status-bar/src/main.ts"
+      ]
+    }
+  },
+  "extends": "../../../enterprise-modules/row-grouping/tsconfig.types.watch.json"
+}
