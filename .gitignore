@@ -17,6 +17,7 @@ archive*.zip
 *.tgz
 .nx
 .angular
+tmp
 
 # latest only
 dist
