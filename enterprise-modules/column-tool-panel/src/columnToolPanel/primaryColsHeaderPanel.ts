@@ -4,13 +4,13 @@ import {
     ColumnModel,
     Events,
     RefSelector,
-    ToolPanelColumnCompParams,
     AgCheckbox,
     AgInputTextField,
     KeyCode,
     PostConstruct,
     Component
 } from "@ag-grid-community/core";
+import { ToolPanelColumnCompParams } from "./columnToolPanel";
 
 export enum ExpandState { EXPANDED, COLLAPSED, INDETERMINATE }
 
