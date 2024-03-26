@@ -14,7 +14,7 @@ import { Component } from '@angular/core';
 })
 export class PriceRenderer implements ICellRendererAngularComp {
   priceMultiplier: number = 1;
-  src: string = "https://www.ag-grid.com/example-assets/pound-coin-color-icon.png";
+  src: string = "https://www.ag-grid.com/example-assets/icons/pound-coin-color-icon.png";
   arr!: any[];
 
   agInit(params: ICellRendererParams): void {
