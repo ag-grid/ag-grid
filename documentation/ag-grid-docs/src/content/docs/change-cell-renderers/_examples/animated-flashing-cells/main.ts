@@ -31,16 +31,16 @@ const gridOptions: GridOptions = {
   onGridReady: () => {
     const updateValues = () => {
       var rowCount = gridApi!.getDisplayedRowCount()
-      // pick 10 cells at random to update
-      for (var i = 0; i < 10; i++) {
+      // pick 2 cells at random to update
+      for (var i = 0; i < 2; i++) {
         var row = Math.floor(Math.random() * rowCount)
         var rowNode = gridApi!.getDisplayedRowAtIndex(row)!
-        var col = ['a', 'b', 'c', 'd', 'e', 'f'][i % 6]
+        var col = ['a', 'b', 'c', 'd', 'e', 'f'][Math.floor(Math.random() * 6)]
         rowNode.setDataValue(col, Math.floor(Math.random() * 10000))
       }
     }
 
-    setInterval(updateValues, 1000)
+    setInterval(updateValues, 250)
   }
 }
 
