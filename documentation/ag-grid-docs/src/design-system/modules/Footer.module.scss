@@ -33,7 +33,7 @@
 }
 
 .footerColumns {
-    @media screen and (min-width: $breakpoint-site-footer-four-column) {
+    @media screen and (min-width: $breakpoint-site-footer-five-column) {
         justify-content: space-between;
     }
 }
@@ -47,7 +47,12 @@
     margin-bottom: $spacing-size-10;
     width: var(--layout-width-4-4);
 
-    @media screen and (min-width: $breakpoint-site-footer-two-column) and (max-width: $breakpoint-site-footer-four-column) {
+    &:first-child {
+        width: 100%;
+        text-align: center;
+    }
+
+    @media screen and (min-width: $breakpoint-site-footer-two-column) and (max-width: $breakpoint-site-footer-five-column) {
         width: var(--layout-width-2-4);
 
         &:nth-child(even) {
@@ -55,8 +60,13 @@
         }
     }
 
-    @media screen and (min-width: $breakpoint-site-footer-four-column) {
+    @media screen and (min-width: $breakpoint-site-footer-five-column) {
         width: auto;
+
+        &:first-child {
+            max-width: 20%;
+            text-align: left;
+        }
 
         &:last-child {
             text-align: right;
@@ -67,7 +77,7 @@
         overflow: hidden;
     }
 
-    a {
+    li a {
         text-decoration: underline;
         display: inline-block;
         min-width: $spacing-size-12;
@@ -109,14 +119,12 @@
     }
 }
 
-.gridIcon {
-    fill: var(--color-text-tertiary) !important;
-    opacity: 0.7;
-    height: $spacing-size-10;
+.logoContainer a {
+    display: inline-block;
 
-    #{$selector-darkmode} & {
-        fill: var(--color-fg-white) !important;
-        opacity: 1;
+    @media screen and (min-width: $breakpoint-site-footer-five-column) {
+        margin-top: -18px;
+        margin-left: -12px;
     }
 }
 
@@ -129,23 +137,6 @@
 
     #{$selector-darkmode} & {
         opacity: 1;
-    }
-}
-
-.legal {
-    justify-content: space-between;
-    gap: 0;
-
-    p:first-child {
-        margin-right: $spacing-size-8;
-    }
-}
-
-.trademarks {
-    margin-top: $spacing-size-4;
-
-    @media screen and (min-width: $breakpoint-site-footer-four-column) {
-        margin-top: $spacing-size-4;
     }
 }
 
