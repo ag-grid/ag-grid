@@ -23,6 +23,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     cellClass: 'align-right',
+    enableCellChangeFlash: true,
     valueFormatter: (params) => {
       return formatNumber(params.value)
     },
@@ -30,24 +31,15 @@ const gridOptions: GridOptions = {
   rowData: createRowData(),
 }
 
-function onFlashOneCell() {
-  // pick fourth row at random
-  var rowNode = gridApi!.getDisplayedRowAtIndex(4)!
-  // pick 'c' column
-  gridApi!.flashCells({ rowNodes: [rowNode], columns: ['c'] })
-}
-
-function onFlashTwoColumns() {
-  // flash whole column, so leave row selection out
-  gridApi!.flashCells({ columns: ['c', 'd'] })
-}
-
-function onFlashTwoRows() {
-  // pick fourth and fifth row at random
-  var rowNode1 = gridApi!.getDisplayedRowAtIndex(4)!
-  var rowNode2 = gridApi!.getDisplayedRowAtIndex(5)!
-  // flash whole row, so leave column selection out
-  gridApi!.flashCells({ rowNodes: [rowNode1, rowNode2] })
+function onUpdateSomeValues() {
+  var rowCount = gridApi!.getDisplayedRowCount()
+  // pick 20 cells at random to update
+  for (var i = 0; i < 20; i++) {
+    var row = Math.floor(Math.random() * rowCount)
+    var rowNode = gridApi!.getDisplayedRowAtIndex(row)!
+    var col = ['a', 'b', 'c', 'd', 'e', 'f'][i % 6]
+    rowNode.setDataValue(col, Math.floor(Math.random() * 10000))
+  }
 }
 
 // setup the grid after the page has finished loading
