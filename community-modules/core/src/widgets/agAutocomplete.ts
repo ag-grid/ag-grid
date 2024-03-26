@@ -205,8 +205,8 @@ export class AgAutocomplete extends Component {
     }
 
     private setCaret(position: number, setFocus?: boolean): void {
-        const eDocument = this.gridOptionsService.getDocument();
-        const activeEl = this.gridOptionsService.getActiveDomElement();
+        const eDocument = this.gos.getDocument();
+        const activeEl = this.gos.getActiveDomElement();
         if (setFocus && (!activeEl || activeEl === eDocument.body)) {
             // clicking on the list loses focus, so restore
             this.eAutocompleteInput.getFocusableElement().focus();
@@ -254,7 +254,7 @@ export class AgAutocomplete extends Component {
             type: 'autocomplete',
             eventSource: this.getGui(),
             position: 'under',
-            alignSide: this.gridOptionsService.get('enableRtl') ? 'right' : 'left',
+            alignSide: this.gos.get('enableRtl') ? 'right' : 'left',
             keepWithinBounds: true
         };
 

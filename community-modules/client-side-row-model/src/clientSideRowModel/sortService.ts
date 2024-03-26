@@ -31,7 +31,7 @@ export class SortService extends BeanStub {
         changedPath: ChangedPath | undefined,
         sortContainsGroupColumns: boolean,
     ): void {
-        const groupMaintainOrder = this.gridOptionsService.get('groupMaintainOrder');
+        const groupMaintainOrder = this.gos.get('groupMaintainOrder');
         const groupColumnsPresent = this.columnModel.getAllGridColumns().some(c => c.isRowGroupActive());
 
         let allDirtyNodes: { [key: string]: true } = {};
@@ -40,7 +40,7 @@ export class SortService extends BeanStub {
         }
 
         const isPivotMode = this.columnModel.isPivotMode();
-        const postSortFunc = this.gridOptionsService.getCallback('postSortRows');
+        const postSortFunc = this.gos.getCallback('postSortRows');
 
         const callback = (rowNode: RowNode) => {
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
@@ -208,11 +208,11 @@ export class SortService extends BeanStub {
     }
 
     private updateGroupDataForHideOpenParents(changedPath?: ChangedPath) {
-        if (!this.gridOptionsService.get('groupHideOpenParents')) {
+        if (!this.gos.get('groupHideOpenParents')) {
             return;
         }
 
-        if (this.gridOptionsService.get('treeData')) {
+        if (this.gos.get('treeData')) {
             _.warnOnce(`The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them.`);
             return false;
         }
@@ -233,7 +233,7 @@ export class SortService extends BeanStub {
     }
 
     private pullDownGroupDataForHideOpenParents(rowNodes: RowNode[] | null, clearOperation: boolean) {
-        if (!this.gridOptionsService.get('groupHideOpenParents') || _.missing(rowNodes)) { return; }
+        if (!this.gos.get('groupHideOpenParents') || _.missing(rowNodes)) { return; }
 
         rowNodes.forEach(childRowNode => {
             const groupDisplayCols = this.columnModel.getGroupDisplayColumns();

@@ -465,12 +465,12 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
         const isResizable = containerType === 'floatingFilter' || containerType === 'columnFilter';
 
-        const { positionableFeature, gridOptionsService } = this;
+        const { positionableFeature, gos } = this;
 
         if (isResizable) {
             positionableFeature.restoreLastSize();
             positionableFeature.setResizable(
-                gridOptionsService.get('enableRtl')
+                gos.get('enableRtl')
                     ? { bottom: true, bottomLeft: true, left: true }
                     : { bottom: true, bottomRight: true, right: true }
             );

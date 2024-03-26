@@ -89,7 +89,7 @@ export class CheckboxSelectionComponent extends Component {
             // would possibly get selected twice
             stopPropagationForAgGrid(event);
 
-            const groupSelectsFiltered = this.gridOptionsService.get('groupSelectsFiltered');
+            const groupSelectsFiltered = this.gos.get('groupSelectsFiltered');
             const isSelected = this.eCheckbox.getValue();
 
             if (this.shouldHandleIndeterminateState(isSelected, groupSelectsFiltered)) {
@@ -109,7 +109,7 @@ export class CheckboxSelectionComponent extends Component {
         this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_SELECTABLE_CHANGED, this.onSelectableChanged.bind(this));
 
-        const isRowSelectableFunc = this.gridOptionsService.get('isRowSelectable');
+        const isRowSelectableFunc = this.gos.get('isRowSelectable');
         const checkboxVisibleIsDynamic = isRowSelectableFunc || typeof this.getIsVisible() === 'function';
 
         if (checkboxVisibleIsDynamic) {
@@ -128,7 +128,7 @@ export class CheckboxSelectionComponent extends Component {
         // and we would expect clicking to deselect all rather than select all
         return groupSelectsFiltered &&
             (this.eCheckbox.getPreviousValue() === undefined || isSelected === undefined) &&
-            this.gridOptionsService.isRowModelType('clientSide');
+            this.gos.isRowModelType('clientSide');
     }
 
     private showOrHideSelect(): void {

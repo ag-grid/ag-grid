@@ -51,7 +51,7 @@ export class PinnedRowModel extends BeanStub {
     }
 
     private setPinnedTopRowData(): void {
-        const rowData = this.gridOptionsService.get('pinnedTopRowData');
+        const rowData = this.gos.get('pinnedTopRowData');
         this.pinnedTopRows = this.createNodesFromData(rowData, true);
         const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
             type: Events.EVENT_PINNED_ROW_DATA_CHANGED
@@ -60,7 +60,7 @@ export class PinnedRowModel extends BeanStub {
     }
 
     private setPinnedBottomRowData(): void {
-        const rowData = this.gridOptionsService.get('pinnedBottomRowData');
+        const rowData = this.gos.get('pinnedBottomRowData');
         this.pinnedBottomRows = this.createNodesFromData(rowData, false);
         const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
             type: Events.EVENT_PINNED_ROW_DATA_CHANGED
@@ -81,7 +81,7 @@ export class PinnedRowModel extends BeanStub {
 
                 rowNode.rowPinned = isTop ? 'top' : 'bottom';
                 rowNode.setRowTop(nextRowTop);
-                rowNode.setRowHeight(this.gridOptionsService.getRowHeightForNode(rowNode).height);
+                rowNode.setRowHeight(this.gos.getRowHeightForNode(rowNode).height);
                 rowNode.setRowIndex(index);
                 nextRowTop += rowNode.rowHeight!;
                 rowNodes.push(rowNode);

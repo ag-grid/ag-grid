@@ -144,7 +144,7 @@ export class FillHandle extends AbstractSelectionHandle {
     }
 
     private getFillHandleDirection(): 'x' | 'y' | 'xy' {
-        const direction = this.gridOptionsService.get('fillHandleDirection');
+        const direction = this.gos.get('fillHandleDirection');
 
         if (!direction) { return 'xy'; }
 
@@ -181,7 +181,7 @@ export class FillHandle extends AbstractSelectionHandle {
 
         // if the range is being reduced in size, all we need to do is
         // clear the cells that are no longer part of the range
-        if (this.isReduce && !this.gridOptionsService.get('suppressClearOnFillReduction')) {
+        if (this.isReduce && !this.gos.get('suppressClearOnFillReduction')) {
             const columns = isVertical
                 ? initialRange.columns
                 : initialRange.columns.filter(col => finalRange.columns.indexOf(col) < 0);
@@ -331,7 +331,7 @@ export class FillHandle extends AbstractSelectionHandle {
     }): { value: any, fromUserFunction: boolean, sourceCol?: Column, sourceRowNode?: RowNode } {
         const { event, values, initialValues, initialNonAggregatedValues, initialFormattedValues, col, rowNode, idx } = params;
 
-        const userFillOperation = this.gridOptionsService.getCallback('fillOperation');
+        const userFillOperation = this.gos.getCallback('fillOperation');
         const isVertical = this.dragAxis === 'y';
         let direction: 'up' | 'down' | 'left' | 'right';
 

@@ -23,7 +23,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
         const title = localeTextFunc('values', 'Values');
 
         super.init({
-            icon: _.createIconNoSpan('valuePanel', this.gridOptionsService, null)!,
+            icon: _.createIconNoSpan('valuePanel', this.gos, null)!,
             emptyMessage: emptyMessage,
             title: title
         });
@@ -50,13 +50,13 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
 
     protected isItemDroppable(column: Column, draggingEvent: DraggingEvent): boolean {
         // we never allow grouping of secondary columns
-        if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) { return false; }
+        if (this.gos.get('functionsReadOnly') || !column.isPrimary()) { return false; }
 
         return column.isAllowValue() && (!column.isValueActive() || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: Column[]): void {
-        if (this.gridOptionsService.get('functionsPassive')) {
+        if (this.gos.get('functionsPassive')) {
             const event: WithoutGridCommon<ColumnValueChangeRequestEvent> = {
                 type: Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
                 columns: columns

@@ -23,7 +23,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
         const title = localeTextFunc('groups', 'Row Groups');
 
         super.init({
-            icon: _.createIconNoSpan('rowGroupPanel', this.gridOptionsService, null)!,
+            icon: _.createIconNoSpan('rowGroupPanel', this.gos, null)!,
             emptyMessage: emptyMessage,
             title
         });
@@ -47,13 +47,13 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
 
     protected isItemDroppable(column: Column, draggingEvent: DraggingEvent): boolean {
         // we never allow grouping of secondary columns
-        if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) { return false; }
+        if (this.gos.get('functionsReadOnly') || !column.isPrimary()) { return false; }
 
         return column.isAllowRowGroup() && (!column.isRowGroupActive() || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: Column[]) {
-        if (this.gridOptionsService.get('functionsPassive')) {
+        if (this.gos.get('functionsPassive')) {
             const event: WithoutGridCommon<ColumnRowGroupChangeRequestEvent> = {
                 type: Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
                 columns: columns

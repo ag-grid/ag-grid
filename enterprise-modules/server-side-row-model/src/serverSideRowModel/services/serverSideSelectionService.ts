@@ -26,7 +26,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
 
     @PostConstruct
     private init(): void {
-        const groupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
+        const groupSelectsChildren = this.gos.get('groupSelectsChildren');
         this.addManagedPropertyListener('groupSelectsChildren', (propChange) => {
             this.destroyBean(this.selectionStrategy);
 
@@ -66,7 +66,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
     public setNodesSelected(params: ISetNodesSelectedParams): number {
         const {nodes, ...otherParams} = params;
 
-        const rowSelection = this.gridOptionsService.get('rowSelection');
+        const rowSelection = this.gos.get('rowSelection');
         if (nodes.length > 1 && rowSelection !== 'multiple') {
             console.warn(`AG Grid: cannot multi select while rowSelection='single'`);
             return 0;

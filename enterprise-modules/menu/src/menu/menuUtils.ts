@@ -35,8 +35,8 @@ export class MenuUtils extends BeanStub {
         const isKeyboardEvent = e instanceof KeyboardEvent;
         if ((!restoreIfMouseEvent && !isKeyboardEvent) || !eventSource) { return; }
         
-        const eDocument = this.gridOptionsService.getDocument();
-        const activeEl = this.gridOptionsService.getActiveDomElement();
+        const eDocument = this.gos.getDocument();
+        const activeEl = this.gos.getActiveDomElement();
         if (!eComp.contains(activeEl) && activeEl !== eDocument.body) {
             // something else has focus, so don't return focus to the header
             return;
@@ -61,8 +61,8 @@ export class MenuUtils extends BeanStub {
         // this method only gets called when the menu was closed by selecting an option
         // in this case we focus the cell that was previously focused, otherwise the header
         const focusedCell = this.focusService.getFocusedCell();
-        const eDocument = this.gridOptionsService.getDocument();
-        const activeEl = this.gridOptionsService.getActiveDomElement();
+        const eDocument = this.gos.getDocument();
+        const activeEl = this.gos.getActiveDomElement();
 
         if (!activeEl || activeEl === eDocument.body) {
             if (focusedCell) {
@@ -81,7 +81,7 @@ export class MenuUtils extends BeanStub {
     ) => boolean): void {
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
         // not everyone wants this, so first 'if' below allows to turn this hack off.
-        if (!this.gridOptionsService.get('allowContextMenuWithControlKey')) {
+        if (!this.gos.get('allowContextMenuWithControlKey')) {
             // then do the check
             if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) { return; }
         }
@@ -92,7 +92,7 @@ export class MenuUtils extends BeanStub {
             this.blockMiddleClickScrollsIfNeeded(mouseEvent);
         }
 
-        if (this.gridOptionsService.get('suppressContextMenu')) { return; }
+        if (this.gos.get('suppressContextMenu')) { return; }
 
         const eventOrTouch: (MouseEvent | Touch) = mouseEvent ?? touchEvent!.touches[0];
         if (showMenuCallback(eventOrTouch)) {
@@ -137,10 +137,7 @@ export class MenuUtils extends BeanStub {
         // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
         // button in the browser). so this property allows the user to receive middle button clicks if
         // they want.
-        const { gridOptionsService } = this;
-        const { which } = mouseEvent;
-
-        if (gridOptionsService.get('suppressMiddleClickScrolls') && which === 2) {
+        if (this.gos.get('suppressMiddleClickScrolls') && mouseEvent.which === 2) {
             mouseEvent.preventDefault();
         }
     }

@@ -29,15 +29,15 @@ export class OverlayService extends BeanStub {
         this.overlayWrapperComp = overlayWrapperComp;
 
         if (
-            !this.gridOptionsService.get('columnDefs') ||
-            (this.gridOptionsService.isRowModelType('clientSide') && !this.gridOptionsService.get('rowData'))
+            !this.gos.get('columnDefs') ||
+            (this.gos.isRowModelType('clientSide') && !this.gos.get('rowData'))
         ) {
             this.showLoadingOverlay();
         }
     }
 
     public showLoadingOverlay(): void {
-        if (this.gridOptionsService.get('suppressLoadingOverlay')) { return; }
+        if (this.gos.get('suppressLoadingOverlay')) { return; }
 
         const params: WithoutGridCommon<ILoadingOverlayParams> = {};
 
@@ -46,7 +46,7 @@ export class OverlayService extends BeanStub {
     }
 
     public showNoRowsOverlay(): void {
-        if (this.gridOptionsService.get('suppressNoRowsOverlay')) { return; }
+        if (this.gos.get('suppressNoRowsOverlay')) { return; }
 
         const params: WithoutGridCommon<INoRowsOverlayParams> = {};
 
@@ -59,7 +59,7 @@ export class OverlayService extends BeanStub {
         const listenerDestroyFunc = this.addManagedPropertyListener(gridOption, ({ currentValue }) => {
             promise.then(comp => {
                 if (comp!.refresh) {
-                    comp.refresh(this.gridOptionsService.addGridCommonParams({
+                    comp.refresh(this.gos.addGridCommonParams({
                         ...(currentValue ?? {})
                     }));
                 }
@@ -77,7 +77,7 @@ export class OverlayService extends BeanStub {
 
     private showOrHideOverlay(): void {
         const isEmpty = this.paginationProxy.isEmpty();
-        const isSuppressNoRowsOverlay = this.gridOptionsService.get('suppressNoRowsOverlay');
+        const isSuppressNoRowsOverlay = this.gos.get('suppressNoRowsOverlay');
         if (isEmpty && !isSuppressNoRowsOverlay) {
             this.showNoRowsOverlay();
         } else {

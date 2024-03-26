@@ -230,7 +230,7 @@ class ReactFrameworkComponentWrapper
 // Define DetailCellRenderer and ReactFrameworkOverrides here to avoid circular dependency
 const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: any) => {
 
-    const { ctrlsFactory, context, gridOptionsService, resizeObserverService, clientSideRowModel, serverSideRowModel } = useContext(BeansContext);
+    const { ctrlsFactory, context, gos, resizeObserverService, clientSideRowModel, serverSideRowModel } = useContext(BeansContext);
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [gridCssClasses, setGridCssClasses] = useState<CssClasses>(() => new CssClasses());
@@ -283,7 +283,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
 
         ctrlRef.current = ctrl;
 
-        if (gridOptionsService.get('detailRowAutoHeight')) {
+        if (gos.get('detailRowAutoHeight')) {
             const checkRowSizeFunc = () => {
                 // when disposed, current is null, so nothing to do, and the resize observer will
                 // be disposed of soon

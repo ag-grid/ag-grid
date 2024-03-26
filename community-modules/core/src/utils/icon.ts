@@ -154,12 +154,12 @@ export const iconNameClassMap: { [key: string]: string; } = {
  * If icon provided, use this (either a string, or a function callback).
  * if not, then use the default icon from the theme
  * @param {string} iconName
- * @param {GridOptionsService} gridOptionsService
+ * @param {GridOptionsService} gos
  * @param {Column | null} [column]
  * @returns {Element}
  */
-export function createIcon(iconName: string, gridOptionsService: GridOptionsService, column: Column | null): Element {
-    const iconContents = createIconNoSpan(iconName, gridOptionsService, column);
+export function createIcon(iconName: string, gos: GridOptionsService, column: Column | null): Element {
+    const iconContents = createIconNoSpan(iconName, gos, column);
 
     if (iconContents) {
         const { className } = iconContents;
@@ -177,7 +177,7 @@ export function createIcon(iconName: string, gridOptionsService: GridOptionsServ
     return eResult;
 }
 
-export function createIconNoSpan(iconName: string, gridOptionsService: GridOptionsService, column?: Column | null, forceCreate?: boolean): Element | undefined {
+export function createIconNoSpan(iconName: string, gos: GridOptionsService, column?: Column | null, forceCreate?: boolean): Element | undefined {
     let userProvidedIcon: Function | string | null = null;
 
     // check col for icon first
@@ -188,8 +188,8 @@ export function createIconNoSpan(iconName: string, gridOptionsService: GridOptio
     }
 
     // if not in col, try grid options
-    if (gridOptionsService && !userProvidedIcon) {
-        const optionsIcons = gridOptionsService.get('icons');
+    if (gos && !userProvidedIcon) {
+        const optionsIcons = gos.get('icons');
         if (optionsIcons) {
             userProvidedIcon = optionsIcons[iconName];
         }

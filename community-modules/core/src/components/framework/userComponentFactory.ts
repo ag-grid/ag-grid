@@ -314,7 +314,7 @@ export class UserComponentFactory extends BeanStub {
         paramsFromGrid: any,
         paramsFromSelector: any = null
     ): any {
-        const params: AgGridCommon<any, any> = this.gridOptionsService.getGridCommonParams();
+        const params: AgGridCommon<any, any> = this.gos.getGridCommonParams();
 
         mergeDeep(params, paramsFromGrid);
 

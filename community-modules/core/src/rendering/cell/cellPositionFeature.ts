@@ -137,7 +137,7 @@ export class CellPositionFeature extends BeanStub {
     private getCellLeft(): number | null {
         let mostLeftCol: Column;
 
-        if (this.beans.gridOptionsService.get('enableRtl') && this.colsSpanning) {
+        if (this.beans.gos.get('enableRtl') && this.colsSpanning) {
             mostLeftCol = last(this.colsSpanning);
         } else {
             mostLeftCol = this.column;
@@ -166,7 +166,7 @@ export class CellPositionFeature extends BeanStub {
 
         if (this.rowSpan === 1 && !force) { return; }
 
-        const singleRowHeight = this.beans.gridOptionsService.getRowHeightAsNumber();
+        const singleRowHeight = this.beans.gos.getRowHeightAsNumber();
         const totalRowHeight = singleRowHeight * this.rowSpan;
 
         this.eGui.style.height = `${totalRowHeight}px`;

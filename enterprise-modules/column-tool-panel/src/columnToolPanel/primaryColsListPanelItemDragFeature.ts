@@ -20,7 +20,7 @@ import { ToolPanelColumnComp } from "./toolPanelColumnComp";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('gridOptionsService') protected readonly gridOptionsService: GridOptionsService;
+    @Autowired('gridOptionsService') protected readonly gos: GridOptionsService;
 
     constructor(
         private readonly comp: PrimaryColsListPanel,
@@ -58,7 +58,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     }
 
     private isMoveBlocked(currentDragValue: Column | ProvidedColumnGroup | null): boolean {
-        const preventMoving = this.gridOptionsService.get('suppressMovableColumns');
+        const preventMoving = this.gos.get('suppressMovableColumns');
         if (preventMoving) {
             return true;
         }

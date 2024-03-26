@@ -17,7 +17,7 @@ import { LazyStore } from "./lazy/lazyStore";
 @Bean('ssrmStoreFactory')
 export class StoreFactory {
 
-    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
+    @Autowired('gridOptionsService') private gos: GridOptionsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
@@ -53,7 +53,7 @@ export class StoreFactory {
 
         const maxBlocksInCache = (userStoreParams && userStoreParams.maxBlocksInCache != null)
             ? userStoreParams.maxBlocksInCache
-            : this.gridOptionsService.get('maxBlocksInCache');
+            : this.gos.get('maxBlocksInCache');
 
         const maxBlocksActive = maxBlocksInCache != null && maxBlocksInCache >= 0;
 
@@ -83,7 +83,7 @@ export class StoreFactory {
 
         const blockSize = (userStoreParams && userStoreParams.cacheBlockSize != null)
             ? userStoreParams.cacheBlockSize
-            : this.gridOptionsService.get('cacheBlockSize');
+            : this.gos.get('cacheBlockSize');
 
         if (blockSize != null && blockSize > 0) {
             return blockSize;
@@ -94,7 +94,7 @@ export class StoreFactory {
 
     private getLevelSpecificParams(parentNode: RowNode): ServerSideGroupLevelParams | undefined {
 
-        const callback = this.gridOptionsService.getCallback('getServerSideGroupLevelParams');
+        const callback = this.gos.getCallback('getServerSideGroupLevelParams');
         if (!callback) { return undefined; }
 
         const params: WithoutGridCommon<GetServerSideGroupLevelParamsParams> = {
@@ -118,6 +118,6 @@ export class StoreFactory {
     }
 
     private isSuppressServerSideInfiniteScroll(): boolean {
-        return this.gridOptionsService.get('suppressServerSideInfiniteScroll');
+        return this.gos.get('suppressServerSideInfiniteScroll');
     }
 }

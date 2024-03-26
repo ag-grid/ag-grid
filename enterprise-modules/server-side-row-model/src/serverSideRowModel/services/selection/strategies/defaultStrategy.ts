@@ -20,7 +20,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
     @PostConstruct
     private init(): void {
-        this.rowSelection = this.gridOptionsService.get('rowSelection');
+        this.rowSelection = this.gos.get('rowSelection');
         this.addManagedPropertyListener('rowSelection', (propChange) => {
             this.rowSelection = propChange.currentValue;
         });

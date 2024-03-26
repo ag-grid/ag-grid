@@ -125,7 +125,7 @@ export class CellCtrl extends BeanStub {
         this.instanceId = column.getId() + '-' + instanceIdSequence++ as CellCtrlInstanceId;
 
         this.colIdSanitised = escapeString(this.column.getId())!;
-        if (!beans.gridOptionsService.get('suppressCellFocus')) {
+        if (!beans.gos.get('suppressCellFocus')) {
             this.tabIndex = -1;
         }
 
@@ -157,7 +157,7 @@ export class CellCtrl extends BeanStub {
             this.addDestroyFunc(() => { this.disableTooltipFeature(); });
         }
 
-        const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsService.get('enableRangeSelection');
+        const rangeSelectionEnabled = this.beans.rangeService && this.beans.gos.get('enableRangeSelection');
         if (rangeSelectionEnabled) {
             this.cellRangeFeature = new CellRangeFeature(this.beans, this);
             this.addDestroyFunc(() => { this.cellRangeFeature?.destroy(); this.cellRangeFeature = null; });
@@ -176,7 +176,7 @@ export class CellCtrl extends BeanStub {
             const valueGetter = colDef.tooltipValueGetter;
 
             if (valueGetter) {
-                return valueGetter(this.beans.gridOptionsService.addGridCommonParams({
+                return valueGetter(this.beans.gos.addGridCommonParams({
                     location: 'cell',
                     colDef: this.column.getColDef(),
                     column: this.column,
@@ -191,7 +191,7 @@ export class CellCtrl extends BeanStub {
             return null;
         };
 
-        const isTooltipWhenTruncated = this.beans.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
+        const isTooltipWhenTruncated = this.beans.gos.get('tooltipShowMode') === 'whenTruncated';
 
         if (!shouldDisplayTooltip && isTooltipWhenTruncated && !this.isCellRenderer()) {
             shouldDisplayTooltip = () => {
@@ -280,7 +280,7 @@ export class CellCtrl extends BeanStub {
         const eParentCell = eCellWrapper.parentElement!;
         // taking minRowHeight from getRowHeightForNode means the getRowHeight() callback is used,
         // thus allowing different min heights for different rows.
-        const minRowHeight = this.beans.gridOptionsService.getRowHeightForNode(this.rowNode).height;
+        const minRowHeight = this.beans.gos.getRowHeightForNode(this.rowNode).height;
 
         const measureHeight = (timesCalled: number) => {
             if (this.editing) { return; }
@@ -297,7 +297,7 @@ export class CellCtrl extends BeanStub {
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
-                const doc = this.beans.gridOptionsService.getDocument();
+                const doc = this.beans.gos.getDocument();
                 const notYetInDom = !doc || !doc.contains(eCellWrapper);
 
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
@@ -381,7 +381,7 @@ export class CellCtrl extends BeanStub {
 
     public isForceWrapper(): boolean {
         // text selection requires the value to be wrapped in another element
-        const forceWrapper = this.beans.gridOptionsService.get('enableCellTextSelection') || this.column.isAutoHeight();
+        const forceWrapper = this.beans.gos.get('enableCellTextSelection') || this.column.isAutoHeight();
         return forceWrapper;
     }
 
@@ -425,7 +425,7 @@ export class CellCtrl extends BeanStub {
         const position: 'over' | 'under' | undefined = compDetails?.popupPositionFromSelector != null ? compDetails.popupPositionFromSelector : colDef.cellEditorPopupPosition;
 
         this.setEditing(true);
-        this.cellComp.setEditDetails(compDetails, popup, position, this.beans.gridOptionsService.get('reactiveCustomComponents'));
+        this.cellComp.setEditDetails(compDetails, popup, position, this.beans.gos.get('reactiveCustomComponents'));
 
         const e: CellEditingStartedEvent = this.createEvent(event, Events.EVENT_CELL_EDITING_STARTED);
         this.beans.eventService.dispatchEvent(e);
@@ -440,7 +440,7 @@ export class CellCtrl extends BeanStub {
 
     // pass in 'true' to cancel the editing.
     public stopRowOrCellEdit(cancel: boolean = false) {
-        if (this.beans.gridOptionsService.get('editType') === 'fullRow') {
+        if (this.beans.gos.get('editType') === 'fullRow') {
             this.rowCtrl.stopEditing(cancel);
         } else {
             this.stopEditing(cancel);
@@ -532,7 +532,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private createCellEditorParams(key: string | null, cellStartedEdit: boolean): ICellEditorParams {
-        return this.beans.gridOptionsService.addGridCommonParams({
+        return this.beans.gos.addGridCommonParams({
             value: this.rowNode.getValueFromValueService(this.column),
             eventKey: key,
             column: this.column,
@@ -550,7 +550,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private createCellRendererParams(): ICellRendererParams {
-        const res: ICellRendererParams = this.beans.gridOptionsService.addGridCommonParams({
+        const res: ICellRendererParams = this.beans.gos.addGridCommonParams({
             value: this.value,
             valueFormatted: this.valueFormatted,
             getValue: () => this.rowNode.getValueFromValueService(this.column),
@@ -671,7 +671,7 @@ export class CellCtrl extends BeanStub {
             const processingFilterChange = this.beans.filterManager.isSuppressFlashingCellsBecauseFiltering();
 
             const flashCell = !suppressFlash && !processingFilterChange &&
-                (this.beans.gridOptionsService.get('enableCellChangeFlash') || colDef.enableCellChangeFlash);
+                (this.beans.gos.get('enableCellChangeFlash') || colDef.enableCellChangeFlash);
 
             if (flashCell) {
                 this.flashCell();
@@ -700,7 +700,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private navigateAfterEdit(shiftKey: boolean): void {
-        const enterNavigatesVerticallyAfterEdit = this.beans.gridOptionsService.get('enterNavigatesVerticallyAfterEdit');
+        const enterNavigatesVerticallyAfterEdit = this.beans.gos.get('enterNavigatesVerticallyAfterEdit');
 
         if (enterNavigatesVerticallyAfterEdit) {
             const key = shiftKey ? KeyCode.UP : KeyCode.DOWN;
@@ -721,14 +721,14 @@ export class CellCtrl extends BeanStub {
 
         const fullName = `ag-cell-${cssName}`;
         const animationFullName = `ag-cell-${cssName}-animation`;
-        const { gridOptionsService } = this.beans;
+        const { gos } = this.beans;
 
         if (!flashDuration) {
-            flashDuration = gridOptionsService.get('cellFlashDuration');
+            flashDuration = gos.get('cellFlashDuration');
         }
 
         if (!exists(fadeDuration)) {
-            fadeDuration = gridOptionsService.get('cellFadeDuration');
+            fadeDuration = gos.get('cellFadeDuration');
         }
 
         // we want to highlight the cells, without any animation
@@ -812,12 +812,12 @@ export class CellCtrl extends BeanStub {
     private addDomData(): void {
         const element = this.getGui();
 
-        this.beans.gridOptionsService.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, this);
-        this.addDestroyFunc(() => this.beans.gridOptionsService.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
+        this.beans.gos.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, this);
+        this.addDestroyFunc(() => this.beans.gos.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
     }
 
     public createEvent(domEvent: Event | null, eventType: string): CellEvent {
-        const event: CellEvent = this.beans.gridOptionsService.addGridCommonParams({
+        const event: CellEvent = this.beans.gos.addGridCommonParams({
             type: eventType,
             node: this.rowNode,
             data: this.rowNode.data,
@@ -929,7 +929,7 @@ export class CellCtrl extends BeanStub {
             return;
         }
         
-        if (this.beans.gridOptionsService.get('editType') === 'fullRow') {
+        if (this.beans.gos.get('editType') === 'fullRow') {
             this.rowCtrl.startRowEditing(key, this);
         } else {
             this.startEditing(key, true, event);
@@ -999,7 +999,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
-        if (this.beans.gridOptionsService.get('suppressCellFocus')) {
+        if (this.beans.gos.get('suppressCellFocus')) {
             return;
         }
         const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
@@ -1024,7 +1024,7 @@ export class CellCtrl extends BeanStub {
         }
 
         // if another cell was focused, and we are editing, then stop editing
-        const fullRowEdit = this.beans.gridOptionsService.get('editType') === 'fullRow';
+        const fullRowEdit = this.beans.gos.get('editType') === 'fullRow';
 
         if (!cellFocused && !fullRowEdit && this.editing) {
             this.stopRowOrCellEdit();
@@ -1058,7 +1058,7 @@ export class CellCtrl extends BeanStub {
 
     public onColumnHover(): void {
         if (!this.cellComp) { return; }
-        if (!this.beans.gridOptionsService.get('columnHoverHighlight')) { return; }
+        if (!this.beans.gos.get('columnHoverHighlight')) { return; }
 
         const isHovered = this.beans.columnHoverService.isHovered(this.column);
         this.cellComp.addOrRemoveCssClass(CSS_COLUMN_HOVER, isHovered);
@@ -1167,9 +1167,9 @@ export class CellCtrl extends BeanStub {
         dragStartPixels?: number,
         suppressVisibilityChange?: boolean
     ): RowDragComp | undefined {
-        const pagination = this.beans.gridOptionsService.get('pagination');
-        const rowDragManaged = this.beans.gridOptionsService.get('rowDragManaged');
-        const clientSideRowModelActive = this.beans.gridOptionsService.isRowModelType('clientSide');
+        const pagination = this.beans.gos.get('pagination');
+        const rowDragManaged = this.beans.gos.get('rowDragManaged');
+        const clientSideRowModelActive = this.beans.gos.isRowModelType('clientSide');
 
         if (rowDragManaged) {
             // row dragging only available in default row model

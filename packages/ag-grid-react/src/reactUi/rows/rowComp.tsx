@@ -7,7 +7,7 @@ import CellComp from '../cells/cellComp';
 
 const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) => {
 
-    const { context, gridOptionsService } = useContext(BeansContext);
+    const { context, gos } = useContext(BeansContext);
     const { rowCtrl, containerType } = params;
 
     const tabIndex = rowCtrl.getTabIndex();
@@ -137,7 +137,7 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
     // needs to be a ref to avoid stale closure, as used in compProxy passed to row ctrl
     const canRefreshFullWidthRef = useRef(false);
     useEffect(() => {
-        canRefreshFullWidthRef.current = reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gridOptionsService.get('reactiveCustomComponents');
+        canRefreshFullWidthRef.current = reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gos.get('reactiveCustomComponents');
     }, [reactFullWidthCellRendererStateless, fullWidthCompDetails]);
 
     const showCellsJsx = () => cellCtrls?.map(cellCtrl => (

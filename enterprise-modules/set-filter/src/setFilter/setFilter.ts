@@ -132,7 +132,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private getComponentForKeyEvent(e: KeyboardEvent): SetFilterListItem<V> | undefined {
-        if (!this.eSetFilterList.contains(this.gridOptionsService.getActiveDomElement()) || !this.virtualList) { return; }
+        if (!this.eSetFilterList.contains(this.gos.getActiveDomElement()) || !this.virtualList) { return; }
 
         const currentItem = this.virtualList.getLastFocusedRow();
         if (currentItem == null) { return; }
@@ -255,8 +255,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         const keyCreator = newParams.keyCreator ?? newParams.colDef.keyCreator;
         this.setValueFormatter(newParams.valueFormatter, keyCreator, this.convertValuesToStrings, !!newParams.treeList, !!newParams.colDef.refData);
         const isGroupCol = newParams.column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
-        this.treeDataTreeList = this.gridOptionsService.get('treeData') && !!newParams.treeList && isGroupCol;
-        this.getDataPath = this.gridOptionsService.get('getDataPath');
+        this.treeDataTreeList = this.gos.get('treeData') && !!newParams.treeList && isGroupCol;
+        this.getDataPath = this.gos.get('getDataPath');
         this.groupingTreeList = !!this.columnModel.getRowGroupColumns().length && !!newParams.treeList && isGroupCol;
         this.createKey = this.generateCreateKey(keyCreator, this.convertValuesToStrings, this.treeDataTreeList || this.groupingTreeList);
     }
@@ -279,7 +279,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             createKey: this.createKey,
             valueFormatter: this.valueFormatter,
             usingComplexObjects: !!keyCreator,
-            gridOptionsService: this.gridOptionsService,
+            gos: this.gos,
             columnModel: this.columnModel,
             valueService: this.valueService,
             treeDataTreeList: this.treeDataTreeList,

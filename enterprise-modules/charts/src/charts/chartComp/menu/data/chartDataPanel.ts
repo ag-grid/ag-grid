@@ -200,7 +200,7 @@ export class ChartDataPanel extends Component {
     }
 
     private getDataPanelDef() {
-        return this.gridOptionsService.get('chartToolPanelsDef')?.dataPanel ?? DefaultDataPanelDef;
+        return this.gos.get('chartToolPanelsDef')?.dataPanel ?? DefaultDataPanelDef;
     }
 
     private getCategoryGroupTitle(isCategorySeriesSwitched: boolean): string {

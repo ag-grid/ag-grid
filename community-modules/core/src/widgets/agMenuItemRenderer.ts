@@ -40,7 +40,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
         );
 
         if (this.params.checked) {
-            icon.appendChild(createIconNoSpan('check', this.gridOptionsService)!);
+            icon.appendChild(createIconNoSpan('check', this.gos)!);
         } else if (this.params.icon) {
             if (isNodeOrElement(this.params.icon)) {
                 icon.appendChild(this.params.icon as HTMLElement);
@@ -79,10 +79,10 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
         const eGui = this.getGui();
 
         if (this.params.subMenu) {
-            const iconName = this.gridOptionsService.get('enableRtl') ? 'smallLeft' : 'smallRight';
+            const iconName = this.gos.get('enableRtl') ? 'smallLeft' : 'smallRight';
             setAriaExpanded(eGui, false);
 
-            pointer.appendChild(createIconNoSpan(iconName, this.gridOptionsService)!);
+            pointer.appendChild(createIconNoSpan(iconName, this.gos)!);
         }
 
         eGui.appendChild(pointer);

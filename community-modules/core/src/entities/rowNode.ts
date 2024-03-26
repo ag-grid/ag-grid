@@ -338,7 +338,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     private checkRowSelectable() {
-        const isRowSelectableFunc = this.beans.gridOptionsService.get('isRowSelectable');
+        const isRowSelectableFunc = this.beans.gos.get('isRowSelectable');
         this.setRowSelectable(isRowSelectableFunc ? isRowSelectableFunc!(this) : true);
     }
 
@@ -351,7 +351,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
             if (suppressSelectionUpdate) { return; }
 
-            const isGroupSelectsChildren = this.beans.gridOptionsService.get('groupSelectsChildren');
+            const isGroupSelectsChildren = this.beans.gos.get('groupSelectsChildren');
             if (isGroupSelectsChildren) {
                 const selected = this.calculateSelectedFromChildren();
                 this.setSelectedParams({
@@ -373,7 +373,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
     public setId(id?: string): void {
         // see if user is providing the id's
-        const getRowIdFunc = this.beans.gridOptionsService.getCallback('getRowId');
+        const getRowIdFunc = this.beans.gos.getCallback('getRowId');
 
         if (getRowIdFunc) {
             // if user is providing the id's, then we set the id only after the data has been set.
@@ -646,7 +646,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         // means more rows fit in) which looks crap. so best ignore small values and assume
         // we are still waiting for values to render.
         if (nonePresent || newRowHeight < 10) {
-            newRowHeight = this.beans.gridOptionsService.getRowHeightForNode(this).height;
+            newRowHeight = this.beans.gos.getRowHeightForNode(this).height;
         }
 
         if (newRowHeight == this.rowHeight) { return; }
@@ -706,7 +706,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     private createGlobalRowEvent(type: string): RowEvent<TData> {
-        return this.beans.gridOptionsService.addGridCommonParams({
+        return this.beans.gos.addGridCommonParams({
             type: type,
             node: this,
             data: this.data,
@@ -746,7 +746,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         const column = getColumnFromKey()!;
         const oldValue = this.getValueFromValueService(column);
 
-        if (this.beans.gridOptionsService.get('readOnlyEdit')) {
+        if (this.beans.gos.get('readOnlyEdit')) {
             this.dispatchEventForSaveValueReadOnly(column, oldValue, newValue, eventSource);
             return false;
         }
@@ -769,11 +769,11 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         const isOpenGroup = this.group && this.expanded && !this.footer && !lockedClosedGroup;
 
         // are we showing group footers
-        const getGroupIncludeFooter = this.beans.gridOptionsService.getGroupIncludeFooter();
+        const getGroupIncludeFooter = this.beans.gos.getGroupIncludeFooter();
         const groupFootersEnabled = getGroupIncludeFooter({ node: this });
 
         // if doing footers, we normally don't show agg data at group level when group is open
-        const groupAlwaysShowAggData = this.beans.gridOptionsService.get('groupSuppressBlankHeader');
+        const groupAlwaysShowAggData = this.beans.gos.get('groupSuppressBlankHeader');
 
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
@@ -785,7 +785,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     private dispatchEventForSaveValueReadOnly(column: Column, oldValue: any, newValue: any, eventSource?: string): void {
-        const event: CellEditRequestEvent = this.beans.gridOptionsService.addGridCommonParams({
+        const event: CellEditRequestEvent = this.beans.gos.addGridCommonParams({
             type: Events.EVENT_CELL_EDIT_REQUEST,
             event: null,
             rowIndex: this.rowIndex!,
@@ -851,10 +851,10 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         // in CSRM, the group property will be set before the childrenAfterGroup property, check both to prevent flickering
         let newValue: boolean | null = (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
 
-        const isSsrm = this.beans.gridOptionsService.isRowModelType('serverSide');
+        const isSsrm = this.beans.gos.isRowModelType('serverSide');
         if (isSsrm) {
-            const isTreeData = this.beans.gridOptionsService.get('treeData');
-            const isGroupFunc = this.beans.gridOptionsService.get('isServerSideGroup');
+            const isTreeData = this.beans.gos.get('treeData');
+            const isGroupFunc = this.beans.gos.get('isServerSideGroup');
             // stubs and footers can never have children, as they're grid rows. if tree data the presence of children
             // is determined by the isServerSideGroup callback, if not tree data then the rows group property will be set.
             newValue = !this.stub && !this.footer && (isTreeData ? !!isGroupFunc && isGroupFunc(this.data) : !!this.group);
@@ -1146,7 +1146,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     public isFullWidthCell(): boolean {
         if (this.detail) { return true; }
 
-        const isFullWidthCellFunc = this.beans.gridOptionsService.getCallback('isFullWidthRow');
+        const isFullWidthCellFunc = this.beans.gos.getCallback('isFullWidthRow');
         return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
     }
 

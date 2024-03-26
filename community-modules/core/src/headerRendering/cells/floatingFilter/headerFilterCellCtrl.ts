@@ -89,7 +89,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         
         if (!this.active || this.iconCreated) { return; }
 
-        const eMenuIcon = createIconNoSpan('filter', this.gridOptionsService, this.column);
+        const eMenuIcon = createIconNoSpan('filter', this.gos, this.column);
 
         if (eMenuIcon) {
             this.iconCreated = true;
@@ -115,7 +115,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private onTabKeyDown(e: KeyboardEvent) {
-        const activeEl = this.gridOptionsService.getActiveDomElement();
+        const activeEl = this.gos.getActiveDomElement();
         const wrapperHasFocus = activeEl === this.eGui;
 
         if (wrapperHasFocus) { return; }
@@ -218,7 +218,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.createManagedBean(new HoverFeature([this.column], this.eGui));
 
         const listener = () => {
-            if (!this.gridOptionsService.get('columnHoverHighlight')) { return; }
+            if (!this.gos.get('columnHoverHighlight')) { return; }
             const hovered = this.beans.columnHoverService.isHovered(this.column);
             this.comp.addOrRemoveCssClass('ag-column-hover', hovered);
         };

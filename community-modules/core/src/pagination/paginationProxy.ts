@@ -39,8 +39,8 @@ export class PaginationProxy extends BeanStub {
 
     @PostConstruct
     private postConstruct() {
-        this.active = this.gridOptionsService.get('pagination');
-        this.pageSizeFromGridOptions = this.gridOptionsService.get('paginationPageSize');
+        this.active = this.gos.get('pagination');
+        this.pageSizeFromGridOptions = this.gos.get('paginationPageSize');
         this.paginateChildRows = this.isPaginateChildRows();
 
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
@@ -59,9 +59,9 @@ export class PaginationProxy extends BeanStub {
     }
 
     private isPaginateChildRows(): boolean {
-        const shouldPaginate = this.gridOptionsService.get('groupRemoveSingleChildren') || this.gridOptionsService.get('groupRemoveLowestSingleChildren');
+        const shouldPaginate = this.gos.get('groupRemoveSingleChildren') || this.gos.get('groupRemoveLowestSingleChildren');
         if (shouldPaginate) { return true; }
-        return this.gridOptionsService.get('paginateChildRows');
+        return this.gos.get('paginateChildRows');
     }
 
     private onModelUpdated(modelUpdatedEvent?: WithoutGridCommon<ModelUpdatedEvent>): void {
@@ -78,7 +78,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     private onPaginationGridOptionChanged(): void {
-        this.active = this.gridOptionsService.get('pagination');
+        this.active = this.gos.get('pagination');
         this.calculatePages();
         const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
             type: Events.EVENT_PAGINATION_CHANGED,
@@ -94,7 +94,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     private onPageSizeGridOptionChanged(): void {
-        this.setPageSize(this.gridOptionsService.get('paginationPageSize'),'gridOptions');
+        this.setPageSize(this.gos.get('paginationPageSize'),'gridOptions');
     }
 
     public goToPage(page: number): void {

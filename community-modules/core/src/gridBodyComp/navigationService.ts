@@ -304,7 +304,7 @@ export class NavigationService extends BeanStub {
     private getViewportHeight(): number {
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
-        const scrollbarWidth = this.gridOptionsService.getScrollbarWidth();
+        const scrollbarWidth = this.gos.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
         if (this.ctrlsService.getCenterRowContainerCtrl().isHorizontalScrollShowing()) {
@@ -373,7 +373,7 @@ export class NavigationService extends BeanStub {
             const { rowIndex, rowPinned } = previous.getRowPosition();
             const firstRow = rowPinned ? rowIndex === 0 : rowIndex === this.paginationProxy.getPageFirstRow();
             if (firstRow) {
-                if (this.gridOptionsService.get('headerHeight') === 0 || this.gridOptionsService.get('suppressHeaderFocus')) {
+                if (this.gos.get('headerHeight') === 0 || this.gos.get('suppressHeaderFocus')) {
                     this.focusService.focusNextGridCoreContainer(true, true);
                 } else {
                     keyboardEvent.preventDefault();
@@ -431,7 +431,7 @@ export class NavigationService extends BeanStub {
 
         if (editing) {
             // if we are editing, we know it's not a Full Width Row (RowComp)
-            if (this.gridOptionsService.get('editType') === 'fullRow') {
+            if (this.gos.get('editType') === 'fullRow') {
                 res = this.moveToNextEditingRow(previous as CellCtrl, backwards, event);
             } else {
                 res = this.moveToNextEditingCell(previous as CellCtrl, backwards, event);
@@ -545,7 +545,7 @@ export class NavigationService extends BeanStub {
             nextPosition = this.cellNavigationService.getNextTabbedCell(nextPosition, backwards);
 
             // allow user to override what cell to go to next
-            const userFunc = this.gridOptionsService.getCallback('tabToNextCell');
+            const userFunc = this.gos.getCallback('tabToNextCell');
 
             if (exists(userFunc)) {
                 const params: WithoutGridCommon<TabToNextCellParams> = {
@@ -593,7 +593,7 @@ export class NavigationService extends BeanStub {
             // a bunch of cells (eg 10 rows) then all the work on ensuring cell visible is useless
             // (except for the last one) which causes grid to stall for a while.
             // note - for full row edit, we do focus non-editable cells, as the row stays in edit mode.
-            const fullRowEdit = this.gridOptionsService.get('editType') === 'fullRow';
+            const fullRowEdit = this.gos.get('editType') === 'fullRow';
             if (startEditing && !fullRowEdit) {
                 const cellIsEditable = this.isCellEditable(nextPosition);
                 if (!cellIsEditable) { continue; }
@@ -668,7 +668,7 @@ export class NavigationService extends BeanStub {
             // if the current cell is spanning across multiple columns, we need to move
             // our current position to be the last cell on the right before finding the
             // the next target.
-            if (this.gridOptionsService.get('enableRtl')) {
+            if (this.gos.get('enableRtl')) {
                 if (key === KeyCode.LEFT) {
                     nextCell = this.getLastCellOfColSpan(nextCell);
                 }
@@ -693,7 +693,7 @@ export class NavigationService extends BeanStub {
         // allow user to override what cell to go to next. when doing normal cell navigation (with keys)
         // we allow this, however if processing 'enter after edit' we don't allow override
         if (allowUserOverride) {
-            const userFunc = this.gridOptionsService.getCallback('navigateToNextCell');
+            const userFunc = this.gos.getCallback('navigateToNextCell');
             if (exists(userFunc)) {
                 const params: WithoutGridCommon<NavigateToNextCellParams> = {
                     key: key,
@@ -832,7 +832,7 @@ export class NavigationService extends BeanStub {
     }
 
     public ensureCellVisible(gridCell: CellPosition): void {
-        const isGroupStickyEnabled = this.gridOptionsService.isGroupRowsSticky();
+        const isGroupStickyEnabled = this.gos.isGroupRowsSticky();
 
         const rowNode = this.rowModel.getRow(gridCell.rowIndex);
         // sticky rows are always visible, so the grid shouldn't scroll to focus them.

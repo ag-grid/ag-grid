@@ -75,7 +75,7 @@ export class RowCtrl extends BeanStub {
     private readonly beans: Beans;
     // The RowCtrl is never Wired, so it needs its own access
     // to the gridOptionsService to be able to call `addManagedPropertyListener`
-    protected readonly gridOptionsService: GridOptionsService;
+    protected readonly gos: GridOptionsService;
     private tooltipFeature: TooltipFeature | undefined;
 
     private rowType: RowType;
@@ -144,12 +144,12 @@ export class RowCtrl extends BeanStub {
     ) {
         super();
         this.beans = beans;
-        this.gridOptionsService = beans.gridOptionsService;
+        this.gos = beans.gos;
         this.rowNode = rowNode;
         this.paginationPage = beans.paginationProxy.getCurrentPage();
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         this.printLayout = printLayout;
-        this.suppressRowTransform = this.gridOptionsService.get('suppressRowTransform');
+        this.suppressRowTransform = this.gos.get('suppressRowTransform');
 
         this.instanceId = rowNode.id + '-' + instanceIdSequence++ as RowCtrlInstanceId;
         this.rowId = escapeString(rowNode.id);
@@ -164,7 +164,7 @@ export class RowCtrl extends BeanStub {
         this.rowStyles = this.processStylesFromGridOptions();
 
         // calls to `isFullWidth()` only work after `setRowType` has been called.
-        if (this.isFullWidth() && !this.gridOptionsService.get('suppressCellFocus')) {
+        if (this.isFullWidth() && !this.gos.get('suppressCellFocus')) {
             this.tabIndex = -1;
         }
 
@@ -172,7 +172,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private initRowBusinessKey(): void {
-        this.businessKeyForNodeFunc = this.gridOptionsService.get('getBusinessKeyForNode');
+        this.businessKeyForNodeFunc = this.gos.get('getBusinessKeyForNode');
         this.updateRowBusinessKey();
     }
 
@@ -252,7 +252,7 @@ export class RowCtrl extends BeanStub {
 
     public isCacheable(): boolean {
         return this.rowType === RowType.FullWidthDetail
-            && this.gridOptionsService.get('keepDetailRows');
+            && this.gos.get('keepDetailRows');
     }
 
     public setCached(cached: boolean): void {
@@ -261,7 +261,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private initialiseRowComp(gui: RowGui): void {
-        const gos = this.gridOptionsService;
+        const gos = this.gos;
 
         this.listenOnDomOrder(gui);
         if (this.beans.columnModel.wasAutoRowHeightEverActive()) {
@@ -370,7 +370,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private addRowDraggerToRow(gui: RowGui) {
-        if (this.gridOptionsService.get('enableRangeSelection')) {
+        if (this.gos.get('enableRangeSelection')) {
             warnOnce('Setting `rowDragEntireRow: true` in the gridOptions doesn\'t work with `enableRangeSelection: true`');
             return;
         }
@@ -405,7 +405,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public getFullWidthCellRenderers(): (ICellRenderer<any> | null | undefined)[] {
-        if (this.gridOptionsService.get('embedFullWidthRows')) {
+        if (this.gos.get('embedFullWidthRows')) {
             return this.allRowGuis.map(gui => gui?.rowComp?.getFullWidthCellRenderer());
         }
         return [this.fullWidthGui?.rowComp?.getFullWidthCellRenderer()];
@@ -418,7 +418,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public executeProcessRowPostCreateFunc(): void {
-        const func = this.gridOptionsService.getCallback('processRowPostCreate');
+        const func = this.gos.getCallback('processRowPostCreate');
         if (!func || !this.areAllContainersReady()) { return; }
 
         const params: WithoutGridCommon<ProcessRowParams> = {
@@ -444,14 +444,14 @@ export class RowCtrl extends BeanStub {
     private setRowType(): void {
         const isStub = this.rowNode.stub;
         const isFullWidthCell = this.rowNode.isFullWidthCell();
-        const isDetailCell = this.gridOptionsService.get('masterDetail') && this.rowNode.detail;
+        const isDetailCell = this.gos.get('masterDetail') && this.rowNode.detail;
         const pivotMode = this.beans.columnModel.isPivotMode();
         // we only use full width for groups, not footers. it wouldn't make sense to include footers if not looking
         // for totals. if users complain about this, then we should introduce a new property 'footerUseEntireRow'
         // so each can be set independently (as a customer complained about footers getting full width, hence
         // introducing this logic)
         const isGroupRow = !!this.rowNode.group && !this.rowNode.footer;
-        const isFullWidthGroup = isGroupRow && this.gridOptionsService.isGroupUseEntireRow(pivotMode);
+        const isFullWidthGroup = isGroupRow && this.gos.isGroupUseEntireRow(pivotMode);
 
         if (isStub) {
             this.rowType = RowType.FullWidthLoading;
@@ -470,7 +470,7 @@ export class RowCtrl extends BeanStub {
         if (this.isFullWidth()) { return; }
 
         const noAnimation = suppressAnimationFrame
-            || this.gridOptionsService.get('suppressAnimationFrame')
+            || this.gos.get('suppressAnimationFrame')
             || this.printLayout;
 
         if (noAnimation) {
@@ -603,8 +603,8 @@ export class RowCtrl extends BeanStub {
     }
 
     public getDomOrder(): boolean {
-        const isEnsureDomOrder = this.gridOptionsService.get('ensureDomOrder');
-        return isEnsureDomOrder || this.gridOptionsService.isDomLayout('print');
+        const isEnsureDomOrder = this.gos.get('ensureDomOrder');
+        return isEnsureDomOrder || this.gos.isDomLayout('print');
     }
 
     private listenOnDomOrder(gui: RowGui): void {
@@ -624,7 +624,7 @@ export class RowCtrl extends BeanStub {
         const pinningRight = this.beans.columnModel.isPinningRight();
 
         if (oldRowTopExists) {
-            if (this.isFullWidth() && !this.gridOptionsService.get('embedFullWidthRows')) {
+            if (this.isFullWidth() && !this.gos.get('embedFullWidthRows')) {
                 this.slideInAnimation.fullWidth = true;
                 return;
             }
@@ -634,7 +634,7 @@ export class RowCtrl extends BeanStub {
             this.slideInAnimation.left = pinningLeft;
             this.slideInAnimation.right = pinningRight;
         } else {
-            if (this.isFullWidth() && !this.gridOptionsService.get('embedFullWidthRows')) {
+            if (this.isFullWidth() && !this.gos.get('embedFullWidthRows')) {
                 this.fadeInAnimation.fullWidth = true;
                 return;
             }
@@ -718,7 +718,7 @@ export class RowCtrl extends BeanStub {
             }
         });
         this.addManagedPropertyListeners(['rowDragEntireRow'], () => {
-            const useRowDragEntireRow = this.gridOptionsService.get('rowDragEntireRow');
+            const useRowDragEntireRow = this.gos.get('rowDragEntireRow');
             if (useRowDragEntireRow) {
                 this.allRowGuis.forEach(gui => {
                     this.addRowDraggerToRow(gui);
@@ -926,7 +926,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public createRowEvent(type: string, domEvent?: Event): RowEvent {
-        return this.gridOptionsService.addGridCommonParams({
+        return this.gos.addGridCommonParams({
             type: type,
             node: this.rowNode,
             data: this.rowNode.data,
@@ -996,7 +996,7 @@ export class RowCtrl extends BeanStub {
         // the children (as the default behaviour when clicking is to unselect other rows) which results
         // in the group getting unselected (as all children are unselected). the correct thing would be
         // to change this, so that children of the selected group are not then subsequently un-selected.
-        const groupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
+        const groupSelectsChildren = this.gos.get('groupSelectsChildren');
 
         if (
             // we do not allow selecting groups by clicking (as the click here expands the group), or if it's a detail row,
@@ -1004,13 +1004,13 @@ export class RowCtrl extends BeanStub {
             (groupSelectsChildren && this.rowNode.group) ||
             this.isRowSelectionBlocked() ||
             // if click selection suppressed, do nothing
-            this.gridOptionsService.get('suppressRowClickSelection')
+            this.gos.get('suppressRowClickSelection')
         ) {
             return;
         }
 
-        const multiSelectOnClick = this.gridOptionsService.get('rowMultiSelectWithClick');
-        const rowDeselectionWithCtrl = !this.gridOptionsService.get('suppressRowDeselection');
+        const multiSelectOnClick = this.gos.get('rowMultiSelectWithClick');
+        const rowDeselectionWithCtrl = !this.gos.get('suppressRowDeselection');
         const source = 'rowClicked';
 
         if (this.rowNode.isSelected()) {
@@ -1031,13 +1031,13 @@ export class RowCtrl extends BeanStub {
     }
 
     public isRowSelectionBlocked(): boolean {
-        return !this.rowNode.selectable || !!this.rowNode.rowPinned || !this.gridOptionsService.isRowSelection();
+        return !this.rowNode.selectable || !!this.rowNode.rowPinned || !this.gos.isRowSelection();
     }
 
     public setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {
         if (this.rowType !== RowType.FullWidthDetail) { return; }
 
-        if (!this.gridOptionsService.get('detailRowAutoHeight')) { return; }
+        if (!this.gos.get('detailRowAutoHeight')) { return; }
 
         const checkRowSizeFunc = () => {
             const clientHeight = eDetailGui.clientHeight;
@@ -1069,7 +1069,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private createFullWidthCompDetails(eRow: HTMLElement, pinned: ColumnPinnedType): UserCompDetails {
-        const params = this.gridOptionsService.addGridCommonParams({
+        const params = this.gos.addGridCommonParams({
             fullWidth: true,
             data: this.rowNode.data,
             node: this.rowNode,
@@ -1299,7 +1299,7 @@ export class RowCtrl extends BeanStub {
 
     public processStylesFromGridOptions(): RowStyle | undefined {
         // part 1 - rowStyle
-        const rowStyle = this.gridOptionsService.get('rowStyle');
+        const rowStyle = this.gos.get('rowStyle');
 
         if (rowStyle && typeof rowStyle === 'function') {
             console.warn('AG Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
@@ -1307,7 +1307,7 @@ export class RowCtrl extends BeanStub {
         }
 
         // part 1 - rowStyleFunc
-        const rowStyleFunc = this.gridOptionsService.getCallback('getRowStyle');
+        const rowStyleFunc = this.gos.getCallback('getRowStyle');
         let rowStyleFuncResult: any;
 
         if (rowStyleFunc) {
@@ -1333,7 +1333,7 @@ export class RowCtrl extends BeanStub {
             gui.rowComp.addOrRemoveCssClass('ag-row-selected', selected);
             setAriaSelected(gui.element, selected);
 
-            const hasFocus = gui.element.contains(this.beans.gridOptionsService.getActiveDomElement());
+            const hasFocus = gui.element.contains(this.beans.gos.getActiveDomElement());
             if (hasFocus && (gui === this.centerGui || gui === this.fullWidthGui)) {
                 this.announceDescription();
             }
@@ -1344,7 +1344,7 @@ export class RowCtrl extends BeanStub {
         if (this.isRowSelectionBlocked()) { return; }
 
         const selected = this.rowNode.isSelected()!;
-        if (selected && this.beans.gridOptionsService.get('suppressRowDeselection')) { return; }
+        if (selected && this.beans.gos.get('suppressRowDeselection')) { return; }
 
         const translate = this.beans.localeService.getLocaleTextFunc();
         const label = translate(
@@ -1383,7 +1383,7 @@ export class RowCtrl extends BeanStub {
             // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
             if (
                 !this.beans.dragService.isDragging() &&
-                !this.gridOptionsService.get('suppressRowHoverHighlight')
+                !this.gos.get('suppressRowHoverHighlight')
             ) {
                 eRow.classList.add('ag-row-hover');
                 this.rowNode.setHovered(true);
@@ -1429,8 +1429,8 @@ export class RowCtrl extends BeanStub {
         const rowHeight = this.rowNode.rowHeight;
 
         const defaultRowHeight = this.beans.environment.getDefaultRowHeight();
-        const isHeightFromFunc = this.gridOptionsService.isGetRowHeightFunction();
-        const heightFromFunc = isHeightFromFunc ? this.gridOptionsService.getRowHeightForNode(this.rowNode).height : undefined;
+        const isHeightFromFunc = this.gos.isGetRowHeightFunction();
+        const heightFromFunc = isHeightFromFunc ? this.gos.getRowHeightForNode(this.rowNode).height : undefined;
         const lineHeight = heightFromFunc ? `${Math.min(defaultRowHeight, heightFromFunc) - 2}px` : undefined;
 
         this.forEachGui(gui, gui => {
@@ -1445,7 +1445,7 @@ export class RowCtrl extends BeanStub {
             // and we found using the autoHeight result causes a loop, where changing the
             // line-height them impacts the cell height, resulting in a new autoHeight,
             // resulting in a new line-height and so on loop.
-            // const heightFromFunc = this.gridOptionsService.getRowHeightForNode(this.rowNode).height;
+            // const heightFromFunc = this.gos.getRowHeightForNode(this.rowNode).height;
             if (lineHeight) {
                 gui.element.style.setProperty('--ag-line-height', lineHeight);
             }
@@ -1467,7 +1467,7 @@ export class RowCtrl extends BeanStub {
         // why do we have this method? shouldn't everything below be added as a destroy func beside
         // the corresponding create logic?
 
-        if (!suppressAnimation && this.gridOptionsService.isAnimateRows() && !this.isSticky()) {
+        if (!suppressAnimation && this.gos.isAnimateRows() && !this.isSticky()) {
             const rowStillVisibleJustNotInViewport = this.rowNode.rowTop != null;
             if (rowStillVisibleJustNotInViewport) {
                 // if the row is not rendered, but in viewport, it means it has moved,

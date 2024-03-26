@@ -101,7 +101,7 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
     (setFilter as any).eGui = eGui;
     (setFilter as any).eMiniFilter = eMiniFilter;
     (setFilter as any).eSelectAll = eSelectAll;
-    (setFilter as any).gridOptionsService = gridOptionsService;
+    (setFilter as any).gos = gridOptionsService;
     (setFilter as any).columnModel = columnModel;
 
     setFilter.setParams(params);

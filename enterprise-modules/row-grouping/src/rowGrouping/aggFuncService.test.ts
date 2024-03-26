@@ -9,7 +9,7 @@ function createService(): AggFuncService {
 
     const service = new AggFuncService() as any;
 
-    service.gridOptionsService = gridOptionsService;
+    service.gos = gridOptionsService;
 
     return service;
 }

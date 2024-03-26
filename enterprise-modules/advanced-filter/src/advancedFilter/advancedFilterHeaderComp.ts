@@ -159,6 +159,6 @@ export class AdvancedFilterHeaderComp extends Component {
     }
 
     private hasFocus(): boolean {
-        return this.gridOptionsService.getActiveDomElement() === this.getFocusableElement();
+        return this.gos.getActiveDomElement() === this.getFocusableElement();
     }
 }

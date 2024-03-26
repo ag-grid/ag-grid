@@ -44,7 +44,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
         this.initialised = true;
 
-        const defaultParams: Partial<ToolPanelFiltersCompParams> = this.gridOptionsService.addGridCommonParams({
+        const defaultParams: Partial<ToolPanelFiltersCompParams> = this.gos.addGridCommonParams({
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false

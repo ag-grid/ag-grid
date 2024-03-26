@@ -116,7 +116,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             this.eInput.setDisplayed(false);
         }
 
-        this.eWrapper.tabIndex = this.gridOptionsService.get('tabIndex');
+        this.eWrapper.tabIndex = this.gos.get('tabIndex');
 
         const { searchDebounceDelay = 300 } = this.config;
         this.clearSearchString = debounce(this.clearSearchString, searchDebounceDelay);
@@ -132,7 +132,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     private createLoadingElement(): void {
-        const eDocument = this.gridOptionsService.getDocument();
+        const eDocument = this.gos.getDocument();
         const translate = this.localeService.getLocaleTextFunc();
         const el = eDocument.createElement('div');
 

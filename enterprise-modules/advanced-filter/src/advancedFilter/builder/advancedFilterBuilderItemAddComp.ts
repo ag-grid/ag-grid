@@ -38,7 +38,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
 
         const addButtonParams = getAdvancedFilterBuilderAddButtonParams(
             key => this.advancedFilterExpressionService.translate(key),
-            this.gridOptionsService.get('advancedFilterBuilderParams')?.addSelectWidth
+            this.gos.get('advancedFilterBuilderParams')?.addSelectWidth
         );
         const eAddButton = this.createManagedBean(new AddDropdownComp(addButtonParams));
         this.addManagedListener(eAddButton, Events.EVENT_FIELD_PICKER_VALUE_SELECTED, ({ value }: FieldPickerValueSelectedEvent) => {

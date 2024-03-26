@@ -11,8 +11,8 @@ export class ValueCache extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.active = this.gridOptionsService.get('valueCache');
-        this.neverExpires = this.gridOptionsService.get('valueCacheNeverExpires');
+        this.active = this.gos.get('valueCache');
+        this.neverExpires = this.gos.get('valueCacheNeverExpires');
     }
 
     public onDataChanged(): void {

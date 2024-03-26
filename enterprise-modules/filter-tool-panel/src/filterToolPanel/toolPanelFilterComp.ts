@@ -49,8 +49,8 @@ export class ToolPanelFilterComp extends Component {
 
     @PostConstruct
     private postConstruct() {
-        this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gridOptionsService)!;
-        this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gridOptionsService)!;
+        this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gos)!;
+        this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gos)!;
         this.eExpand.appendChild(this.eExpandChecked);
         this.eExpand.appendChild(this.eExpandUnchecked);
     }
@@ -96,7 +96,7 @@ export class ToolPanelFilterComp extends Component {
     private addInIcon(iconName: string, eParent: Element, column: Column): void {
         if (eParent == null) { return; }
 
-        const eIcon = _.createIconNoSpan(iconName, this.gridOptionsService, column)!;
+        const eIcon = _.createIconNoSpan(iconName, this.gos, column)!;
         eParent.appendChild(eIcon);
     }
 

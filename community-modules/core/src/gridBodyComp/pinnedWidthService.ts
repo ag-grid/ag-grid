@@ -22,7 +22,7 @@ export class PinnedWidthService extends BeanStub {
 
     private checkContainerWidths() {
 
-        const printLayout = this.gridOptionsService.isDomLayout('print');
+        const printLayout = this.gos.isDomLayout('print');
 
         const newLeftWidth = printLayout ? 0 : this.columnModel.getDisplayedColumnsLeftWidth();
         const newRightWidth = printLayout ? 0 : this.columnModel.getDisplayedColumnsRightWidth();

@@ -19,7 +19,7 @@ export class HoverFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.gridOptionsService.get('columnHoverHighlight')) {
+        if (this.gos.get('columnHoverHighlight')) {
             this.addMouseHoverListeners();
         }
     }

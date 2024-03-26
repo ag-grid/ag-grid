@@ -21,7 +21,7 @@ export class ColumnGroup implements IHeaderColumn {
         return groupId + '_' + instanceId as HeaderColumnId;
     }
 
-    @Autowired('gridOptionsService') gridOptionsService: GridOptionsService;
+    @Autowired('gridOptionsService') gos: GridOptionsService;
 
     // all the children of this group, regardless of whether they are opened or closed
     private children: IHeaderColumn[] | null;
@@ -88,7 +88,7 @@ export class ColumnGroup implements IHeaderColumn {
 
         // set our left based on first displayed column
         if (this.displayedChildren!.length > 0) {
-            if (this.gridOptionsService.get('enableRtl')) {
+            if (this.gos.get('enableRtl')) {
                 const lastChild = last(this.displayedChildren!);
                 const lastChildLeft = lastChild.getLeft();
                 this.setLeft(lastChildLeft);

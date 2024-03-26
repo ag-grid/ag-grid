@@ -375,8 +375,8 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                 });
             }
 
-            const eDocument = this.gridOptionsService.getDocument();
-            const activeEl =this.gridOptionsService.getActiveDomElement();
+            const eDocument = this.gos.getDocument();
+            const activeEl =this.gos.getActiveDomElement();
 
             // if we haven't focused the first item in the filter, we might run into two scenarios:
             // 1 - we are loading the filter for the first time and the component isn't ready,

@@ -53,7 +53,7 @@ export class CellMouseListenerFeature extends Beans {
             return;
         }
 
-        const { eventService, rangeService, gridOptionsService } = this.beans;
+        const { eventService, rangeService, gos } = this.beans;
         const isMultiKey = mouseEvent.ctrlKey || mouseEvent.metaKey;
 
         if (rangeService && isMultiKey) {
@@ -78,8 +78,8 @@ export class CellMouseListenerFeature extends Beans {
             }, 0);
         }
 
-        const editOnSingleClick = (gridOptionsService.get('singleClickEdit') || colDef.singleClickEdit)
-            && !gridOptionsService.get('suppressClickEdit');
+        const editOnSingleClick = (gos.get('singleClickEdit') || colDef.singleClickEdit)
+            && !gos.get('suppressClickEdit');
 
         // edit on single click, but not if extending a range
         if (editOnSingleClick && !(mouseEvent.shiftKey && rangeService?.getCellRanges().length != 0)) {
@@ -114,8 +114,8 @@ export class CellMouseListenerFeature extends Beans {
             }, 0);
         }
 
-        const editOnDoubleClick = !this.beans.gridOptionsService.get('singleClickEdit')
-            && !this.beans.gridOptionsService.get('suppressClickEdit');
+        const editOnDoubleClick = !this.beans.gos.get('singleClickEdit')
+            && !this.beans.gos.get('suppressClickEdit');
         if (editOnDoubleClick) {
             this.cellCtrl.startRowOrCellEdit(null, mouseEvent);
         }
@@ -194,7 +194,7 @@ export class CellMouseListenerFeature extends Beans {
 
         if (rangeService) {
             const cellInRange = rangeService.isCellInAnyRange(this.cellCtrl.getCellPosition());
-            const isRightClick = mouseEvent.button === 2 || (mouseEvent.ctrlKey && this.beans.gridOptionsService.get('allowContextMenuWithControlKey'));
+            const isRightClick = mouseEvent.button === 2 || (mouseEvent.ctrlKey && this.beans.gos.get('allowContextMenuWithControlKey'));
 
             if (cellInRange && isRightClick) {
                 return true;

@@ -26,7 +26,7 @@ export class BeanStub implements IEventEmitter {
     @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
     @Autowired('context') protected readonly context: Context;
     @Autowired('eventService') protected readonly eventService: EventService;
-    @Autowired('gridOptionsService') protected readonly gridOptionsService: GridOptionsService;
+    @Autowired('gridOptionsService') protected readonly gos: GridOptionsService;
     @Autowired('localeService') protected readonly localeService: LocaleService;
     @Autowired('environment') protected readonly environment: Environment;
 
@@ -123,9 +123,9 @@ export class BeanStub implements IEventEmitter {
         event: keyof GridOptions,
         listener: PropertyValueChangedListener<K>
     ): (() => null) {
-        this.gridOptionsService.addEventListener(event, listener);
+        this.gos.addEventListener(event, listener);
         const destroyFunc: () => null = () => {
-            this.gridOptionsService.removeEventListener(event, listener);
+            this.gos.removeEventListener(event, listener);
             this.destroyFunctions = this.destroyFunctions.filter((fn) => fn !== destroyFunc);
             return null;
         };
