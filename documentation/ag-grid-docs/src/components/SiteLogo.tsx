@@ -4,7 +4,7 @@ import LogoType from '@images/inline-svgs/ag-grid-logotype.svg?react';
 import type { FunctionComponent } from 'react';
 import { useState } from 'react';
 
-import LogoMark from '../logo/LogoMark';
+import LogoMark from './logo/LogoMark';
 
 export const SiteLogo: FunctionComponent = () => {
     const [isLogoHover, setIsLogoHover] = useState(false);
@@ -19,7 +19,8 @@ export const SiteLogo: FunctionComponent = () => {
             }}
             onMouseLeave={() => {
                 setIsLogoHover(false);
-            }}>
+            }}
+        >
             <LogoType />
             <LogoMark bounce={isLogoHover} />
         </a>
