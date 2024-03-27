@@ -73,6 +73,11 @@ if ! ignoreProject $MODIFIED; then
   elif [[ "${VALID_FILE_COUNT}" -gt 0 ]] ; then
     echo "[changed]${VALID_FILES}"
     nx run-many -p ${MODIFIED} -t build
+    if [[ ${MODIFIED} =~ "@ag-grid" ]] ; then
+      if [[ "${BUILD_PACKAGES}" == "1" ]] ; then
+        nx run-many -p ag-grid-community,ag-grid-charts-enterprise -t build:umd
+      fi
+    fi
   fi
 fi
 
