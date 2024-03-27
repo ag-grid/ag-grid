@@ -29,19 +29,6 @@ const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) =>
     ));
 
 export const Footer = ({ path, footerItems }: FooterProps) => {
-    // Filter items with icons
-    const iconItems = footerItems.flatMap(({ title, links }) =>
-        links
-            .filter(({ iconName }) => iconName)
-            .map(({ name, url, newTab, iconName }) => ({
-                title,
-                name,
-                url,
-                newTab,
-                iconName,
-            }))
-    );
-
     return (
         <footer className={styles.footer}>
             <div className={classNames(styles.footerColumns, 'layout-grid')}>
