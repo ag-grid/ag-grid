@@ -97,7 +97,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
             if (rangeService && gos.get('enableRangeSelection')) {
                 rangeService.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
             } else if (cellCtrl.isCellEditable()) {
-                rowNode.setDataValue(cellCtrl.getColumn(), null, 'cellClear');
+                const column = cellCtrl.getColumn();
+                const emptyValue = this.beans.valueParserService.parseValue(column, rowNode, '', rowNode.getValueFromValueService(column)) ?? null;
+                rowNode.setDataValue(column, emptyValue, 'cellClear');
             }
         } else {
             cellCtrl.startRowOrCellEdit(key, event);
