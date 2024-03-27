@@ -64,7 +64,8 @@
         width: auto;
 
         &:first-child {
-            max-width: 20%;
+            max-width: 18%;
+            margin-right: -4%;
             text-align: left;
         }
 
@@ -125,6 +126,14 @@
     @media screen and (min-width: $breakpoint-site-footer-five-column) {
         margin-top: -18px;
         margin-left: -12px;
+    }
+
+    :global(.logotype) * {
+        fill: var(--color-logo-text);
+
+        #{$selector-darkmode} & {
+            fill: var(--color-white);
+        }
     }
 }
 
