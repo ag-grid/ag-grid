@@ -9,6 +9,7 @@
       "dependsOn": [
         "build:types",
         "build:package",
+        "build:umd",
         "build:copy-source"
       ],
       "inputs": [],
@@ -106,6 +107,15 @@
           "sourcemap": false
         }
       }
+    },
+    "build:umd": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "options": {
+        "command": "NODE_OPTIONS=--openssl-legacy-provider npx vue-cli-service build --target lib src/AgGridVue.ts",
+        "cwd": "packages/ag-grid-vue"
+      },
+      "cache": false
     }
   },
   "tags": ["package:community", "package:framework", "package", "community", "framework"]

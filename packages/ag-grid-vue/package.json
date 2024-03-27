@@ -49,7 +49,7 @@
     "vue": "2.6.10",
     "vue-class-component": "^7.0.0",
     "vue-property-decorator": "^9.1.2",
-    "vue-template-compiler": "^2.6.10",
+    "vue-template-compiler": "2.6.10",
     "rimraf": "3.0.2"
   },
   "peerDependencies": {

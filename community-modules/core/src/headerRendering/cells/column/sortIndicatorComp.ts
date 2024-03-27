@@ -59,7 +59,7 @@ export class SortIndicatorComp extends Component {
 
         this.setupMultiSortIndicator();
 
-        if (!this.column.isSortable()) {
+        if (!this.column.isSortable() && !this.column.getColDef().showRowGroup) {
             return;
         }
 

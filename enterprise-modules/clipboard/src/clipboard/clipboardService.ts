@@ -709,7 +709,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     private clearCellValue(rowNode: RowNode, column: Column): void {
         if (!column.isCellEditable(rowNode)) { return; }
-        rowNode.setDataValue(column, null, 'clipboardService');
+        const emptyValue = this.valueParserService.parseValue(column, rowNode, '', rowNode.getValueFromValueService(column)) ?? null;
+        rowNode.setDataValue(column, emptyValue, 'clipboardService');
     }
 
     private shouldSkipSingleCellRange(): boolean {
