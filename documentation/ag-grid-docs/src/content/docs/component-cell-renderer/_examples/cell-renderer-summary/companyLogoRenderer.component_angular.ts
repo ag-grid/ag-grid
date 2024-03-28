@@ -11,7 +11,7 @@ import { NgIf } from '@angular/common';
   <span *ngIf="value" :class="imgSpan" >
     <img
       [alt]="value"
-      [src]="'https://www.ag-grid.com/example-assets/space-company-logos/' + value.toLowerCase() + '.png'"
+      [src]="'https://www.ag-grid.com/example-assets/software-company-logos/' + value.toLowerCase() + '.png'"
       [height]="30"
       :class="logo"
     />

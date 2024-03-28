@@ -12,6 +12,6 @@ export class CustomButtonComponent implements ICellRendererAngularComp {
     return true;
   }
   buttonClicked() {
-    alert("Mission Launched");
+    alert("Software Launched");
   }
 }

@@ -3,16 +3,16 @@ import React from "react";
 
 export default (params: CustomCellRendererProps) => {
   let priceMultiplier: number = 1
-  if (params.value > 5000000) {
+  if (params.value > 5000000000) {
     priceMultiplier = 2
   }
-  if (params.value > 10000000) {
+  if (params.value > 10000000000) {
     priceMultiplier = 3
   }
-  if (params.value > 25000000) {
+  if (params.value > 20000000000) {
     priceMultiplier = 4
   }
-  if (params.value > 20000000) {
+  if (params.value > 300000000000) {
     priceMultiplier = 5
   }
 

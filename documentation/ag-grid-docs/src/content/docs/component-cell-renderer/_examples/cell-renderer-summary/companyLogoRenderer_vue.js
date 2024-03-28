@@ -2,7 +2,7 @@ export default {
   template: 
     `
     <span class="imgSpan">
-      <img :src="'https://www.ag-grid.com/example-assets/space-company-logos/' + cellValueLowerCase + '.png'" class="logo" />
+      <img :src="'https://www.ag-grid.com/example-assets/software-company-logos/' + cellValueLowerCase + '.png'" class="logo" />
     </span>
     `,
     data: function () {

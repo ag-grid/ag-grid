@@ -11,9 +11,8 @@
 
 .logo {
     display: block;
-    width: 25px;
+    width: 90px;
     height: auto;
-    max-height: 50%;
     margin-right: 12px;
     filter: brightness(1.1);
 }
@@ -43,4 +42,8 @@
     height: auto;
     max-height: 50%;
     margin-right: 2px;
+}
+
+.logoCell {
+    background-color: white;
 }
