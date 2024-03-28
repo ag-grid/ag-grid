@@ -7,7 +7,7 @@ export class CustomButtonComponent {
       this.eGui = document.createElement("div")
       let eButton = document.createElement("button")
       eButton.className = "btn-simple"
-      eButton.innerText = "Launch!"
+      eButton.textContent = "Launch!"
       this.eventListener = () => alert("Mission Launched")
       eButton.addEventListener("click", this.eventListener)
       this.eGui.appendChild(eButton)

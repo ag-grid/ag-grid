@@ -15,7 +15,7 @@ export class ClickableStatusBarComponent implements IStatusPanelComp {
         this.eGui.className = 'ag-status-name-value';
 
         var label = document.createElement('span');
-        label.innerText = 'Status Bar Component  ';
+        label.textContent = 'Status Bar Component  ';
         this.eGui.appendChild(label);
 
         this.eButton = document.createElement('button');

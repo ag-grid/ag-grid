@@ -12,7 +12,7 @@ export class CountStatusBarComponent implements IStatusPanelComp {
         this.eGui.className = 'ag-status-name-value';
 
         var label = document.createElement('span');
-        label.innerText = 'Row Count Component: ';
+        label.textContent = 'Row Count Component: ';
         this.eGui.appendChild(label);
 
         this.eCount = document.createElement('span');
@@ -34,7 +34,7 @@ export class CountStatusBarComponent implements IStatusPanelComp {
     }
 
     onGridReady() {
-        this.eCount.innerText = this.params.api.getDisplayedRowCount() + ''
+        this.eCount.textContent = this.params.api.getDisplayedRowCount() + ''
     }
 }
 

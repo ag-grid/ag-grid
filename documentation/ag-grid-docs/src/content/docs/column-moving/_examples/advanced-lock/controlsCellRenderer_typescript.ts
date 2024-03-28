@@ -10,7 +10,7 @@ export class ControlsCellRenderer implements ICellRendererComp {
         this.eGui = document.createElement('div');
 
         let button = document.createElement('button')
-        button.innerText = 'Action';
+        button.textContent = 'Action';
         this.eGui.appendChild(button);
     }
 
