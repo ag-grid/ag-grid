@@ -281,7 +281,7 @@ const GRID_OPTION_VALIDATIONS: Validations<GridOptions> = {
         },
     },
     groupIncludeTotalFooter: {
-        supportedRowModels: ['clientSide'],
+        supportedRowModels: ['clientSide', 'serverSide'],
     },
     groupRemoveSingleChildren: {
         dependencies: {

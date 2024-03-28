@@ -251,7 +251,7 @@ export { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 
 export { ColumnVO } from "./interfaces/iColumnVO";
 
-export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest } from "./interfaces/iServerSideDatasource";
+export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest, IServerSideGetTotalFooterDataParams, IServerSideGetTotalFooterDataRequest } from "./interfaces/iServerSideDatasource";
 export { IServerSideRowModel, IServerSideTransactionManager, RefreshServerSideParams } from "./interfaces/iServerSideRowModel";
 export { IServerSideStore, StoreRefreshAfterParams, ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
 

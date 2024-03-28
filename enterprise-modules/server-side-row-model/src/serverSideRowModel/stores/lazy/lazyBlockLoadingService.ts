@@ -173,7 +173,8 @@ export class LazyBlockLoadingService extends BeanStub {
                 continue;
             }
 
-            if (row.__needsRefreshWhenVisible || (row.stub && !row.failedLoad)) {
+            // if this is `groupIncludeTotalFooter row, it is a footer that is potentially a stub.
+            if (row.__needsRefreshWhenVisible || (row.stub && !row.failedLoad && !row.footer)) {
                 return {
                     cache: cache,
                     index: cache.getBlockStartIndex(lazyNode.index),

@@ -31,10 +31,10 @@ import {
     SortController,
     FilterModel,
     AdvancedFilterModel,
+    IServerSideGetTotalFooterDataParams,
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
-import { SortListener } from "./listeners/sortListener";
 import { StoreFactory } from "./stores/storeFactory";
 import { FullStore } from "./stores/fullStore";
 import { LazyStore } from "./stores/lazy/lazyStore";
@@ -114,10 +114,20 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             'masterDetail', 'treeData', 'removePivotHeaderRowWhenSingleValueColumn',
             'suppressServerSideInfiniteScroll', 'cacheBlockSize',
         ], resetListener);
+        this.addManagedPropertyListener('groupIncludeTotalFooter', (params) => this.onTotalFooterChanged(params.currentValue));
         this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
         this.verifyProps();
 
         this.addManagedPropertyListener('serverSideDatasource', () => this.updateDatasource());
+    }
+
+    private onTotalFooterChanged(enabled: boolean) {
+        if (enabled) {
+            this.createTotalFooter();
+        } else {
+            this.rootNode.sibling = undefined!;
+        }
+        this.onStoreUpdated();
     }
 
     private updateDatasource(): void {
@@ -148,6 +158,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.destroyDatasource();
         this.datasource = datasource;
         this.resetRootStore();
+    }
+
+    public applyGroupTotalData(rowData: any) {
+        this.rootNode.sibling?.setData(rowData);
     }
 
     public applyRowData(rowDataParams: LoadSuccessParams, startRow: number, route: string[]) {
@@ -298,6 +312,50 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return atLeastOne;
     }
 
+    private createTotalFooter() {
+        if (this.gridOptionsService.get('groupIncludeTotalFooter') && this.datasource) {
+            this.rootNode.createFooter();
+            // because this row needs data, unlike other footers it needs to be a stub.
+            this.rootNode.sibling.stub = true;
+
+            const rowHeight = this.gridOptionsService.getRowHeightAsNumber();
+            this.rootNode.sibling.setRowHeight(rowHeight);
+
+            const setTotalData = (data: any) => {
+                this.rootNode.sibling.setData(data);
+                this.rootNode.sibling.stub = false;
+
+                // row needs redrawn to change from a stub
+                this.rowRenderer.redrawRow(this.rootNode.sibling);
+            };
+
+            const onFail = () => {
+                this.rootNode.sibling.failedLoad = true;
+                this.rowRenderer.redrawRow(this.rootNode.sibling);
+            }
+            
+            const getFooterData = this.datasource.getTotalFooterData;
+            if (!getFooterData) {
+                console.error('AG Grid: Server-Side Row Model - you need to implement getTotalFooterData() on your datasource to use total footers.');
+                return;
+            }
+            
+            const ssrmParams = this.getParams();
+            const params: IServerSideGetTotalFooterDataParams = this.gridOptionsService.addGridCommonParams({
+                request: {
+                    rowGroupCols: ssrmParams.rowGroupCols,
+                    valueCols: ssrmParams.valueCols,
+                    pivotCols: ssrmParams.pivotCols,
+                    pivotMode: ssrmParams.pivotMode,
+                    filterModel: ssrmParams.filterModel,
+                },
+                success: setTotalData,
+                fail: onFail,
+            });
+            getFooterData(params);
+        }
+    }
+
     public resetRootStore(): void {
         this.destroyRootStore();
 
@@ -310,6 +368,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             this.rootNode.childStore = this.createBean(this.storeFactory.createStore(this.storeParams, this.rootNode));
             this.updateRowIndexesAndBounds();
         }
+        this.createTotalFooter();
 
         if (this.managingPivotResultColumns) {
             // if managing pivot columns, also reset secondary columns.
@@ -453,6 +512,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         if (!rootStore) { return; }
         rootStore.refreshAfterFilter(params);
 
+        // after filters change, totals will need updated.
+        this.createTotalFooter();
+
         this.onStoreUpdated();
     }
 
@@ -562,6 +624,11 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public refreshStore(params: RefreshServerSideParams = {}): void {
         const route = params.route ? params.route : [];
+
+        if (route.length === 0) {
+            this.createTotalFooter();
+        }
+
         this.executeOnStore(route, store => store.refreshStore(params.purge == true));
     }
 

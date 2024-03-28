@@ -1451,6 +1451,15 @@ export class GridApi<TData = any> {
         }
     }
 
+    /** Updates the total footer row displayed by `groupIncludeTotalFooter` with new data */
+    public applyServerSideGroupTotalData(data: TData) {
+        if (!this.serverSideTransactionManager) {
+            this.logMissingRowModel('applyServerSideTransaction', 'serverSide');
+            return;
+        }
+        return this.serverSideRowModel.applyGroupTotalData(data);
+    }
+
     /** Apply transactions to the server side row model. */
     public applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {
         if (!this.serverSideTransactionManager) {

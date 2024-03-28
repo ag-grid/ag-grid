@@ -42,7 +42,7 @@ export interface IServerSideGetRowsParams<TData = any, TContext = any> extends A
 
     /**
      * The parent row node. The RootNode (level -1) if request is top level.
-     * This is NOT part fo the request as it cannot be serialised to JSON (a rowNode has methods).
+     * This is NOT part of the request as it cannot be serialised to JSON (a rowNode has methods).
      */
     parentNode: IRowNode;
 
@@ -58,6 +58,41 @@ export interface IServerSideGetRowsParams<TData = any, TContext = any> extends A
 
 }
 
+export interface IServerSideGetTotalFooterDataRequest {
+    /** Columns that are currently row grouped.  */
+    rowGroupCols: ColumnVO[];
+    /** Columns that have aggregations on them.  */
+    valueCols: ColumnVO[];
+    /** Columns that have pivot on them.  */
+    pivotCols: ColumnVO[];
+    /** Defines if pivot mode is on or off.  */
+    pivotMode: boolean;
+    /**
+     * If filtering, what the filter model is.
+     * If Advanced Filter is enabled, will be of type `AdvancedFilterModel | null`.
+     * If Advanced Filter is disabled, will be of type `FilterModel`.
+     */
+    filterModel: FilterModel | AdvancedFilterModel | null;
+}
+
+export interface IServerSideGetTotalFooterDataParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /**
+     * Details for the request. A simple object that can be converted to JSON.
+     */
+    request: IServerSideGetTotalFooterDataRequest;
+
+    /**
+     * Success callback, pass the row data back to the grid that was requested.
+     */
+    success(data: any): void;
+
+    /**
+     * Fail callback, tell the grid the call failed so it can adjust it's state.
+     */
+    fail(): void;
+
+}
+
 // datasource for Server Side Row Model
 export interface IServerSideDatasource {
     /**
@@ -65,6 +100,11 @@ export interface IServerSideDatasource {
      * Params object contains callbacks for responding to the request.
      */
     getRows(params: IServerSideGetRowsParams): void;
+    /**
+     * Only required if using `groupIncludeTotalFooter`
+     * Grid calls `getTotalFooterData` when it requires the total footer data.
+     */
+    getTotalFooterData?(params: IServerSideGetTotalFooterDataParams): void;
     /** Optional method, if your datasource has state it needs to clean up. */
     destroy?(): void;
 }
