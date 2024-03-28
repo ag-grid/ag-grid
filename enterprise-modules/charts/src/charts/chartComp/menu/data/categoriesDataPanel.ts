@@ -39,7 +39,8 @@ export class CategoriesDataPanel extends DragDataPanel {
         private isOpen?: boolean
     ) {
         const maxSelection = undefined;
-        super(chartController, autoScrollService, allowMultipleSelection, maxSelection, CategoriesDataPanel.TEMPLATE);
+        const skipAnimations = false;
+        super(chartController, autoScrollService, allowMultipleSelection, maxSelection, skipAnimations, CategoriesDataPanel.TEMPLATE);
     }
 
     @PostConstruct
@@ -60,6 +61,7 @@ export class CategoriesDataPanel extends DragDataPanel {
             this.createAggFuncControls(this.dimensionCols);
         }
         this.getGui().appendChild(this.groupComp.getGui());
+        this.updateShouldSkipAnimations();
     }
 
     public refresh(dimensionCols: ColState[]): void {
@@ -146,6 +148,7 @@ export class CategoriesDataPanel extends DragDataPanel {
                 this.chartController.setAggFunc(aggFunc);
                 this.aggFuncSelect?.setValue(aggFunc, true);
                 this.aggFuncSelect?.setDisplayed(aggFunc != undefined);
+                this.updateShouldSkipAnimations();
             },
         })));
         this.groupComp.addItem(this.aggFuncSelect = this.createBean(new AgSelect<AggFuncPreset>({
@@ -178,6 +181,10 @@ export class CategoriesDataPanel extends DragDataPanel {
     private clearAggFuncControls(): void {
         this.aggFuncToggle = this.aggFuncToggle && this.destroyBean(this.aggFuncToggle);
         this.aggFuncSelect = this.aggFuncSelect && this.destroyBean(this.aggFuncSelect);
+    }
+
+    private updateShouldSkipAnimations(): boolean {
+        return (this.skipAnimations = !this.allowMultipleSelection && (!this.aggFuncToggle?.getValue()));
     }
 
     protected destroy(): void {

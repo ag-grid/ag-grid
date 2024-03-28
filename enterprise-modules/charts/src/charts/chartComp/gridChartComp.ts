@@ -153,7 +153,10 @@ export class GridChartComp extends Component {
         this.addTitleEditComp();
 
         this.addManagedListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATE, this.update.bind(this));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATE, (event) => {
+            const { skipAnimations = false } = event;
+            this.update(undefined, { skipAnimations })
+        });
 
         this.addManagedPropertyListeners(['chartThemeOverrides', 'chartThemes'], this.reactivePropertyUpdate.bind(this));
 
@@ -366,7 +369,9 @@ export class GridChartComp extends Component {
         }
     }
 
-    public update(params?: UpdateChartParams): void {
+    public update(params?: UpdateChartParams, options?: { skipAnimations?: boolean }): void {
+        const { skipAnimations } = options ?? {};
+
         // update chart model for api.updateChart()
         if (params?.chartId) {
             const validUpdate = this.chartController.update(params);
@@ -403,7 +408,7 @@ export class GridChartComp extends Component {
             : persistedThemeOverrides || params?.chartThemeOverrides;
 
         // update chart options if chart type hasn't changed or if overrides are supplied
-        this.updateChart(updatedThemeOverrides);
+        this.updateChart(updatedThemeOverrides, { skipAnimations: skipAnimations && !updatedChartType });
 
         if (params?.chartId) {
             this.chartProxy.getChart().waitForUpdate().then(() => {
@@ -412,7 +417,8 @@ export class GridChartComp extends Component {
         }
     }
 
-    private updateChart(updatedOverrides?: AgChartThemeOverrides): void {
+    private updateChart(updatedOverrides?: AgChartThemeOverrides, options?: { skipAnimations?: boolean }): void {
+        const { skipAnimations } = options ?? {};
         const { chartProxy } = this;
 
         const selectedCols = this.chartController.getSelectedValueColState();
@@ -429,7 +435,7 @@ export class GridChartComp extends Component {
         }
 
         let chartUpdateParams = this.chartController.getChartUpdateParams(updatedOverrides);
-        chartProxy.update(chartUpdateParams);
+        chartProxy.applyUpdate(chartUpdateParams, { skipAnimations });
 
         this.chartProxy.getChart().waitForUpdate().then(() => {
             this.chartController.raiseChartUpdatedEvent();
@@ -520,7 +526,7 @@ export class GridChartComp extends Component {
             return;
         }
 
-        this.chartController.setChartRange(true);
+        this.chartController.setChartRange({ silent: true });
         this.focusService.clearFocusedCell();
     }
 

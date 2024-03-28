@@ -1,4 +1,4 @@
-import { AgCharts, AgHierarchyChartOptions, AgHierarchySeriesOptions } from 'ag-charts-community';
+import { AgHierarchyChartOptions, AgHierarchySeriesOptions } from 'ag-charts-community';
 import { ChartProxy, ChartProxyParams, UpdateParams } from '../chartProxy';
 import { CATEGORY_LABEL_KEY, createAutoGroupHierarchy, createCategoryHierarchy } from './hierarchicalChartUtils';
 import { GROUP_AUTO_COLUMN_ID } from '@ag-grid-community/core';
@@ -8,14 +8,14 @@ export abstract class HierarchicalChartProxy extends ChartProxy {
         super(chartProxyParams);
     }
     
-    public override update(params: UpdateParams): void {
+    protected override update(params: UpdateParams): void {
         const options: AgHierarchyChartOptions = {
             ...this.getCommonChartOptions(params.updatedOverrides),
             series: this.getSeries(params, CATEGORY_LABEL_KEY),
             data: this.getData(params),
         };
 
-        AgCharts.update(this.getChartRef(), options);
+        this.updateChart(options);
     }
 
     protected abstract getSeries(params: UpdateParams, labelKey: string): AgHierarchySeriesOptions[];
