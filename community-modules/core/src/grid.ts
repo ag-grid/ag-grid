@@ -57,8 +57,6 @@ import { ResizeObserverService } from "./misc/resizeObserverService";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 import { Module } from "./interfaces/iModule";
 import { AgGroupComponent } from "./widgets/agGroupComponent";
-import { AgDialog } from "./widgets/agDialog";
-import { AgPanel } from "./widgets/agPanel";
 import { AgInputTextField } from "./widgets/agInputTextField";
 import { AgInputTextArea } from "./widgets/agInputTextArea";
 import { AgSlider } from "./widgets/agSlider";
@@ -98,6 +96,7 @@ import { ValueParserService } from "./valueService/valueParserService";
 import { AgAutocomplete } from "./widgets/agAutocomplete";
 import { QuickFilterService } from "./filter/quickFilterService";
 import { warnOnce, errorOnce } from "./utils/function";
+import { mergeDeep } from "./utils/object";
 import { SyncService } from "./syncService";
 import { OverlayService } from "./rendering/overlays/overlayService";
 import { StateService } from "./misc/stateService";
@@ -131,6 +130,19 @@ export interface Params {
     modules?: Module[];
 }
 
+class GlobalGridOptions{
+    static gridOptions: GridOptions | undefined = undefined;
+}
+
+/**
+ * Provide gridOptions that will be shared by all grid instances.
+ * Individually defined GridOptions will take precedence over global options.
+ * @param gridOptions - global grid options
+ */
+export function provideGlobalGridOptions(gridOptions: GridOptions): void {
+    GlobalGridOptions.gridOptions = gridOptions;
+}
+
 /**
  * Creates a grid inside the provided HTML element.
  * @param eGridDiv Parent element to contain the grid.
@@ -145,7 +157,17 @@ export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOption
         return {} as GridApi;
     }   
     // Ensure we do not mutate the provided gridOptions
-    const shallowCopy = GridOptionsService.getCoercedGridOptions(gridOptions);
+    const globalGridOptions = GlobalGridOptions.gridOptions;
+    let mergedGridOps: GridOptions;
+    if(globalGridOptions){
+        mergedGridOps = {};
+        // mergeDeep both times to avoid mutating the globalGridOptions
+        mergeDeep(mergedGridOps, globalGridOptions, true, true);
+        mergeDeep(mergedGridOps, gridOptions, true, true);
+    }else{
+        mergedGridOps = gridOptions;
+    }
+    const shallowCopy = GridOptionsService.getCoercedGridOptions(mergedGridOps);
     const api = new GridCoreCreator().create(eGridDiv, shallowCopy, context => {
         const gridComp = new GridComp(eGridDiv);
         context.createBean(gridComp);
@@ -445,3 +467,4 @@ export class GridCoreCreator {
         return [].concat(...moduleEntities.map(extractor));
     }
 }
+

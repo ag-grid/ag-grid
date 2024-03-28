@@ -335,7 +335,7 @@ export { CellNavigationService } from "./cellNavigationService";
 export { AlignedGridsService } from "./alignedGridsService";
 export { KeyCode } from "./constants/keyCode";
 export { VerticalDirection, HorizontalDirection } from "./constants/direction";
-export { Grid, GridParams, Params, GridCoreCreator, createGrid } from "./grid";
+export { Grid, GridParams, Params, GridCoreCreator, createGrid, provideGlobalGridOptions } from "./grid";
 export { GridApi, DetailGridInfo, StartEditingCellParams } from "./gridApi";
 export { Events } from "./eventKeys";
 export { FocusService } from "./focusService";
