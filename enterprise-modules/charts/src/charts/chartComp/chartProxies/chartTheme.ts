@@ -29,9 +29,8 @@ export function createAgChartTheme(
     const apiThemeOverrides = chartProxyParams.apiChartThemeOverrides;
 
     const standaloneChartType = getSeriesType(chartProxyParams.chartType);
-    const crossFilterThemeOverridePoint = isPieChartSeries(standaloneChartType) ? standaloneChartType : 'cartesian';
     const crossFilteringOverrides = chartProxyParams.crossFiltering
-        ? createCrossFilterThemeOverrides(proxy, chartProxyParams, crossFilterThemeOverridePoint)
+        ? createCrossFilterThemeOverrides(proxy, chartProxyParams, standaloneChartType)
         : undefined;
     const formattingPanelOverrides: AgChartThemeOverrides = {
         ...(chartOptionsToRestore ?? {}),
@@ -114,7 +113,7 @@ export function isStockTheme(themeName: string): boolean {
 function createCrossFilterThemeOverrides(
     proxy: ChartProxy,
     chartProxyParams: ChartProxyParams,
-    overrideType: Extract<ChartSeriesType, 'cartesian' | 'pie' | 'donut'>,
+    seriesType: ChartSeriesType
 ): AgChartThemeOverrides {
     const legend = {
         listeners: {
@@ -128,9 +127,8 @@ function createCrossFilterThemeOverrides(
         },
     };
 
-    const series: AgChartThemeOverrides = {};
     return {
-        [overrideType]: {
+        [seriesType]: {
             tooltip: {
                 delay: 500,
             },
@@ -138,7 +136,6 @@ function createCrossFilterThemeOverrides(
             listeners: {
                 click: (e: any) => chartProxyParams.crossFilterCallback(e, true),
             },
-            series,
         },
     };
 }

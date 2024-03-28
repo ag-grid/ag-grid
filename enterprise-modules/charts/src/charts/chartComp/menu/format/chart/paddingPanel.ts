@@ -2,15 +2,17 @@ import {
     AgGroupComponentParams,
     AgSlider,
     Autowired,
+    ChartOptionsChanged,
     Component,
     Events,
     PostConstruct,
     RefSelector,
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { AgChartPaddingOptions } from "ag-charts-community";
+import { AgChartPaddingOptions, AgChartThemeOverrides } from "ag-charts-community";
 import { ChartController } from "../../../chartController";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import { ChartThemeOverridesSeriesType } from "../../../utils/seriesTypeMapper";
 
 export class PaddingPanel extends Component {
 
@@ -52,18 +54,18 @@ export class PaddingPanel extends Component {
             paddingLeftSlider: getSliderParams('left')
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, (e) => {
+        this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, (e: ChartOptionsChanged) => {
             this.updateTopPadding(e.chartOptions);
         });
     }
 
-    private updateTopPadding(chartOptions: any) {
+    private updateTopPadding(chartOptions: AgChartThemeOverrides) {
         // keep 'top' padding in sync with chart as toggling chart title on / off change the 'top' padding
         const topPadding = [...this.chartController.getChartSeriesTypes(), 'common']
-            .map((seriesType) => chartOptions[seriesType]?.padding?.top)
+            .map((seriesType: ChartThemeOverridesSeriesType) => chartOptions[seriesType]?.padding?.top)
             .find((value) => value != null);
         if (topPadding != null) {
-            this.paddingTopSlider.setValue(topPadding);
+            this.paddingTopSlider.setValue(`${topPadding}`);
         }
     }
 }
