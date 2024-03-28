@@ -230,6 +230,9 @@ export class ChartTranslationService extends BeanStub {
         max: 'Max',
         count: 'Count',
         avg: 'Average',
+        direction: 'Direction',
+        horizontal: 'Horizontal',
+        vertical: 'Vertical',
     };
 
     public translate(toTranslate: ChartTranslationKey): string {

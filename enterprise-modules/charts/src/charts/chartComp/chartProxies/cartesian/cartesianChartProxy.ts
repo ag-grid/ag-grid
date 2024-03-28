@@ -5,6 +5,7 @@ import {
     AgCartesianAxisOptions,
     AgCartesianChartOptions,
     AgCharts,
+    AgChartTheme,
     AgLineSeriesOptions,
 } from "ag-charts-community";
 
@@ -143,5 +144,24 @@ export abstract class CartesianChartProxy extends ChartProxy {
 
     private crossFilteringAddSelectedPoint(multiSelection: boolean, value: string): void {
         multiSelection ? this.crossFilteringSelectedPoints.push(value) : this.crossFilteringSelectedPoints = [value];
+    }
+
+    protected isHorizontal(params: UpdateParams): boolean {
+        const seriesType = this.standaloneChartType;
+        if (seriesType !== 'waterfall' && seriesType !== 'box-plot' && seriesType !== 'range-bar') {
+            return false;
+        }
+        const theme = this.getCommonChartOptions(params.updatedOverrides).theme;
+        const isHorizontal = (theme: AgChartTheme): boolean => {
+            const direction = theme.overrides?.[seriesType]?.series?.direction;
+            if (direction != null) {
+                return direction === 'horizontal';
+            }
+            if (typeof theme.baseTheme === 'object') {
+                return isHorizontal(theme.baseTheme as any);
+            }
+            return false;
+        }
+        return isHorizontal(theme);
     }
 }

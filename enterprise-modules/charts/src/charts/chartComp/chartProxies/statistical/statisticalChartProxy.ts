@@ -1,7 +1,6 @@
 import {ChartProxyParams, UpdateParams} from '../chartProxy';
 import {CartesianChartProxy} from "../cartesian/cartesianChartProxy";
 import {AgCartesianAxisOptions} from 'ag-charts-community';
-import {isHorizontal} from "../../utils/seriesTypeMapper";
 import {ChartDataModel} from "../../model/chartDataModel";
 
 export abstract class StatisticalChartProxy extends CartesianChartProxy {
@@ -13,11 +12,11 @@ export abstract class StatisticalChartProxy extends CartesianChartProxy {
         return [
             {
                 type: this.getXAxisType(params),
-                position: isHorizontal(this.chartType) ? 'left' : 'bottom',
+                position: this.isHorizontal(params) ? 'left' : 'bottom',
             },
             {
                 type: 'number',
-                position: isHorizontal(this.chartType) ? 'bottom' : 'left',
+                position: this.isHorizontal(params) ? 'bottom' : 'left',
             },
         ];
     }
