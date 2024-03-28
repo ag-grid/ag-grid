@@ -110,7 +110,7 @@ Similarly, the reordering of columns from inside the Columns Section of the Colu
 
 The configuration of these properties are shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     sideBar: {
           toolPanels: [
@@ -147,7 +147,7 @@ The following example demonstrates the results of enabling both of these propert
 
 You can add a CSS class to the columns in the tool panel by specifying `toolPanelClass` in the column definition as follows:
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         // set as string
@@ -198,7 +198,7 @@ interface IColumnToolPanel {
 
 The code snippet below shows how to expand and collapse column groups using the Columns Tool Panel instance:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // lookup Columns Tool Panel instance by id, in this case using the default columns instance id
 const columnsToolPanel = api.getToolPanelInstance('columns');
 
@@ -242,7 +242,7 @@ Notice that the same [Column Definitions](./column-definitions/) that are suppli
 
 The code snippets below show how to set custom column layouts using the Columns Tool Panel instance:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // original column definitions supplied to the grid
     columnDefs: [
@@ -253,7 +253,7 @@ const gridOptions = {
 }
 ```
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // lookup Columns Tool Panel instance by id, in this case using the default columns instance id
 const columnsToolPanel = api.getToolPanelInstance('columns');
 

@@ -53,7 +53,7 @@ It is possible to configure which groups are shown, the order in which they appe
 
 The default list and order of the Data Panel groups are as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     chartToolPanelsDef: {
         dataPanel: {
@@ -93,7 +93,7 @@ It is possible to configure which groups are shown, the order in which they appe
 
 The default list and order of format groups are as follows:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     chartToolPanelsDef: {
         formatPanel: {
@@ -128,7 +128,7 @@ The following example shows some Format Panel customisations. Note the following
 
 The Chart Tool Panels can be omitted and ordered using the `chartToolPanelsDef.panels` grid option:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     chartToolPanelsDef: {
         panels: ['data', 'format', 'settings'], // default order
@@ -138,7 +138,7 @@ const gridOptions = {
 
 To hide the Chart Tool Panels, the `chartToolPanelsDef.panels` grid option can be set to an empty array:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     chartToolPanelsDef: {
         panels: [], // No Chart Tool Panels are shown and Edit Chart is removed from the Chart Menu

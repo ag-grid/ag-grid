@@ -18,7 +18,7 @@ Cross-Filter charts are created programmatically using `createCrossFilterChart(p
 
 The following snippet shows how a cross-filtering pie chart can be created:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 api.createCrossFilterChart({
     chartType: 'pie',
     cellRange: {
@@ -32,7 +32,7 @@ Note in the snippet above that the `sale` values are aggregated by the `salesRep
 
 A corresponding column configuration for the chart above is shown in the following snippet:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'salesRep', filter: 'agSetColumnFilter', chartDataType: 'category' },

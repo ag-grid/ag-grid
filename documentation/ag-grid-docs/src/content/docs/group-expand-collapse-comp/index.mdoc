@@ -11,7 +11,7 @@ Where the Group Cell Component is configured depends on the [Display Type](./gro
 
 Display types [Single Column](./grouping-single-group-column/) and [Multiple Columns](./grouping-multiple-group-columns/) configure the Group Column Definition via the Grid Option `autoGroupColumnDef`. Part of this Column Definition is the Cell Component (`cellRenderer`).
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     autoGroupColumnDef: {
         headerName: 'My Group',
@@ -28,7 +28,7 @@ const gridOptions = {
 Display type [Group Rows](./grouping-group-rows/) configures the Group Cell Component
 on the Grid Option `groupRowRenderer`. Note there is no Group Column, hence there is no Column Definition involved.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     groupRowRenderer: MyGroupCellRenderer,
     groupRowRendererParams: {},
@@ -40,7 +40,7 @@ const gridOptions = {
 
 Display type [Custom Column](./grouping-custom-group-columns/) configures the Group Cell Component on the Column Definitions.
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         // Group Column (Custom)
@@ -57,7 +57,7 @@ const gridOptions = {
 
 Dynamic selection is achieved using `cellRendererSelector`. This can be used to conditionally show the expand and collapse functionality.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = { 
     autoGroupColumnDef: {
         cellRendererSelector: (params) => {

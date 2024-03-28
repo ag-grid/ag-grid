@@ -8,7 +8,7 @@ Each Column has a Column Header providing a Header Name and typically functions 
 
 When no header name is provided, the grid will derive the header name from the provided `field`. The grid expects the field value to use Camel Case and will insert spaces between word breaks to build a readable header name.
 
-```js {% frameworkTransform=true suppressFrameworkContext=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true suppressFrameworkContext=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         // header name will be 'Athlete'
@@ -103,7 +103,7 @@ Templates are not meant to let you configure icons. If you are looking to change
 
 Set the template using `colDef.headerComponentParams`. Set on the grid options `defaultColDef` to set for all Columns.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     defaultColDef: {
         width: 100,
@@ -431,7 +431,7 @@ The following example shows how you can provide a unique look and feel to the he
 
 * The header heights have all been changed via grid options:
 
-```js {% frameworkTransform=true  %}
+```{% frameworkTransform=true  %}
     const gridOptions = {
         // Group columns
         groupHeaderHeight: 75,

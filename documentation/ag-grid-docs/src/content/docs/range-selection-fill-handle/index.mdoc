@@ -9,7 +9,7 @@ When working with a Range Selection, a Fill Handle allows you to run operations 
 
 To enable the Fill Handle, simply set `enableFillHandle` to `true` in the `gridOptions` as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country' },
@@ -62,7 +62,7 @@ By the default, the Fill Handle can be dragged horizontally or vertically. If dr
 
 {% apiDocumentation source="grid-options/properties.json" section="selection" names=["fillHandleDirection"] config={"overrideBottomMargin":"0"} /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country' },
@@ -84,7 +84,7 @@ Often there is a need to use a custom method to fill values instead of simply co
 
 {% apiDocumentation source="grid-options/properties.json" section="selection" names=["fillOperation"] /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country' },

@@ -136,7 +136,7 @@ It is possible to have a checkbox in the header for selection. To configure the 
 
 {% apiDocumentation source="column-properties/properties.json" section="header" names=["headerCheckboxSelection"] /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         // the name column header always has a checkbox in the header
@@ -215,7 +215,7 @@ It is possible to specify which rows can be selected via the `gridOptions.isRowS
 
 For instance if we only wanted to allow rows where the 'year' property is less than 2007, we could implement the following:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     isRowSelectable: rowNode => rowNode.data ? rowNode.data.year < 2007 : false,
 }
@@ -260,7 +260,7 @@ To select rows programmatically, use the `node.setSelected(params)` method.
 
 {% apiDocumentation source="row-object/properties.json" section="selection" names=["setSelected", "isSelected"] /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // set selected, keep any other selections
 node.setSelected(true);
 
@@ -307,7 +307,7 @@ We need to provide a callback to the `navigateToNextCell` grid option to overrid
 
 {% apiDocumentation source="grid-options/properties.json" section="nav" names=["navigateToNextCell"] /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     navigateToNextCell: params => {
         const suggestedNextCell = params.nextCellPosition;

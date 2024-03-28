@@ -18,7 +18,7 @@ There are two ways to include formulas as part of the exported Excel file.
 
 When a cell is exported with `dataType='Formula'`, the cell content will be automatically converted to an Excel formula. It is your responsibility to ensure the value in the grid cell is a valid Excel formula.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'firstName', headerName: 'First Name' },
@@ -59,7 +59,7 @@ Note the following:
 
 When `autoConvertFormulas=true` is set, the Excel Export will automatically convert any cell with a value that starts with '=' into a formula. As you wouldn't normally display the formula text in the grid (instead, you will display its results), you can provide the Excel formula text in the call to `processCellCallback`, implementing the logic used to compute the cell value in the column's `valueGetter`. This substitution of `valueGetter` logic for an Excel formula in the exported Excel file is shown in the code segment and sample below.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'firstName', headerName: 'First Name' },

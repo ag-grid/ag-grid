@@ -15,7 +15,7 @@ This is because this row model needs to work out the position of rows that are n
 To change the row height for the whole grid, set the property `rowHeight` to a positive number.
 For example, to set the height to 50px, do the following:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     rowHeight: 50,
 }
@@ -31,7 +31,7 @@ To change the row height so that each row can have a different height,
 implement the `getRowHeight(params)` callback. For example, to set the height
 to 50px for all group rows and 25px for all other rows, do the following:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     getRowHeight: params => params.node.group ? 50 : 20,
 }

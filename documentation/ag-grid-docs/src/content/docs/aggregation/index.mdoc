@@ -13,7 +13,7 @@ You can set `colDef.enableValue=true` to enable aggregation via the column menu 
 
 Another way to enable aggregations is with the built-in aggregation functions: `sum`, `min`, `max`, `count`, `avg`, `first`, and `last`. The following snippet shows how these agg functions can be applied to columns via `colDef.aggFunc`:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },

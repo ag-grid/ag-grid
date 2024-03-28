@@ -21,7 +21,7 @@ To change the height of the details section from the default you have the follow
 
 Use the grid property `detailRowHeight` to set a fixed height for each detail row.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // statically fix row height for all detail grids
     detailRowHeight: 200,
@@ -36,7 +36,7 @@ The following example sets a fixed row height for all detail rows.
 
 Set grid property `detailRowAutoHeight=true` to have the detail grid to dynamically change its height to fit its rows.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // dynamically set row height for all detail grids
     detailRowAutoHeight: true,
@@ -86,7 +86,7 @@ Use the callback `getRowHeight(params)` to set height for each row individually.
 
 Note that this callback gets called for **all rows** in the Master Grid, not just rows containing Detail Grids. If you do not want to set row heights explicitly for other rows simply return `undefined / null` and the grid will ignore the result for that particular row.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // dynamically assigning detail row height
     getRowHeight: params => {
