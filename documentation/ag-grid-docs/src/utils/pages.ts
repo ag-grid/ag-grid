@@ -113,7 +113,7 @@ if (USE_PACKAGES) {
     FILES_PATH_MAP['ag-grid-react/dist/**'] = `packages/ag-grid-react/dist/**/*.{cjs,js,map}`;
     FILES_PATH_MAP['ag-grid-angular/fesm2015/ag-grid-angular.mjs'] =
         'packages/ag-grid-angular/dist/ag-grid-angular/fesm2015/ag-grid-angular.mjs';
-    FILES_PATH_MAP['ag-grid-vue/dist/**'] = 'packages/ag-grid-vue/dist/**/*.{cjs,mjs,js,map}';
+    FILES_PATH_MAP['ag-grid-vue/lib/**'] = 'packages/ag-grid-vue/lib/**/*.{cjs,mjs,js,map}';
     FILES_PATH_MAP['ag-grid-vue3/dist/**'] = 'packages/ag-grid-vue3/dist/**/*.{cjs,mjs,js,map}';
 }
 
