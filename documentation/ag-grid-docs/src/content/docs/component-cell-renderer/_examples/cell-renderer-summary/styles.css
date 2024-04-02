@@ -24,6 +24,14 @@
     align-items: center;
 }
 
+.imgSpanLogo {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
 .missionSpan {
     display: flex;
     justify-content: center;

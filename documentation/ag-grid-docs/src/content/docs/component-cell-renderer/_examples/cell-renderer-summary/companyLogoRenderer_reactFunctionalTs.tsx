@@ -3,7 +3,7 @@ import React from "react";
 
 export default (params: CustomCellRendererProps) => (
   <span
-    className="imgSpan"
+    className="imgSpanLogo"
   >
     {params.value && (
       <img

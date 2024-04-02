@@ -2,7 +2,7 @@ import React from "react";
 
 export default (params) => (
   <span
-    className="imgSpan"
+    className="imgSpanLogo"
   >
     {params.value && (
       <img

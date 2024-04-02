@@ -47,6 +47,7 @@ const gridOptions: GridOptions = {
       field: "company",
       cellRenderer: CompanyLogoRenderer,
       cellClass: "logoCell",
+      minWidth: 100,
     },
     {
       field: "revenue",

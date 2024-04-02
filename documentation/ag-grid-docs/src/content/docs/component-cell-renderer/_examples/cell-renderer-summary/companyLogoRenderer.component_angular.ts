@@ -8,7 +8,7 @@ import { NgIf } from '@angular/common';
   standalone: true,
   imports: [NgIf],
   template: `
-  <span *ngIf="value" :class="imgSpan" >
+  <span *ngIf="value" :class="imgSpanLogo" >
     <img
       [alt]="value"
       [src]="'https://www.ag-grid.com/example-assets/software-company-logos/' + value.toLowerCase() + '.png'"

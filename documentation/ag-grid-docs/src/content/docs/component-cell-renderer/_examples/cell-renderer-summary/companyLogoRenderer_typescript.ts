@@ -10,7 +10,7 @@ export class CompanyLogoRenderer implements ICellRendererComp {
     companyLogo.setAttribute("class", "logo")
 
     this.eGui = document.createElement("span")
-    this.eGui.setAttribute("class", "imgSpan")
+    this.eGui.setAttribute("class", "imgSpanLogo")
     this.eGui.appendChild(companyLogo)
   }
 
