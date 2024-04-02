@@ -74,7 +74,6 @@ export class SeriesPanel extends Component {
     };
 
     private seriesWidgetMappings: { [K in ChartSeriesType]?: string[] } = {
-        'column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         'bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         'donut': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
@@ -361,12 +360,12 @@ export class SeriesPanel extends Component {
 
     private getChartSeriesType(): ChartSeriesType {
         if (this.chartController.getSeriesChartTypes().length === 0) {
-            return 'column';
+            return 'bar';
         }
         const ct = this.chartController.getSeriesChartTypes()[0].chartType;
 
         if (ct === 'columnLineCombo') {
-            return 'column';
+            return 'bar';
         }
 
         if (ct === 'areaColumnCombo') {
@@ -380,31 +379,18 @@ export class SeriesPanel extends Component {
             // lazy init options as they are only required for combo charts
             this.seriesSelectOptions = new Map<ChartSeriesType, ListOption>([
                 ['area', {value: 'area', text: this.translate('area')}],
-                ['bar', {value: 'bar', text: this.translate('bar')}],
-                ['column', {value: 'column', text: this.translate('column')}],
+                ['bar', {value: 'bar', text: this.translate('column')}],
                 ['line', {value: 'line', text: this.translate('line')}],
-                ['scatter', {value: 'scatter', text: this.translate('scatter')}],
-                ['histogram', {value: 'histogram', text: this.translate('histogram')}],
-                ['radial-column', {value: 'radial-column', text: this.translate('radialColumn')}],
-                ['radial-bar', {value: 'radial-bar', text: this.translate('radialBar')}],
-                ['radar-line', {value: 'radar-line', text: this.translate('radarLine')}],
-                ['radar-area', {value: 'radar-area', text: this.translate('radarArea')}],
-                ['nightingale', {value: 'nightingale', text: this.translate('nightingale')}],
-                ['range-bar', {value: 'range-bar', text: this.translate('rangeBar')}],
-                ['range-area', {value: 'range-area', text: this.translate('rangeArea')}],
-                ['treemap', {value: 'treemap', text: this.translate('treemap')}],
-                ['sunburst', {value: 'sunburst', text: this.translate('sunburst')}],
-                ['waterfall', {value: 'waterfall', text: this.translate('waterfall')}],
-                ['box-plot', {value: 'box-plot', text: this.translate('boxPlot')}],
-                ['pie', {value: 'pie', text: this.translate('pie')}],
-                ['donut', {value: 'donut', text: this.translate('donut')}],
             ]);
         }
 
         const seriesSelectOptions = new Set<ListOption>();
         this.chartController.getActiveSeriesChartTypes().forEach(s => {
             const chartType = getSeriesType(s.chartType);
-            seriesSelectOptions.add(this.seriesSelectOptions.get(chartType) as ListOption);
+            const option = this.seriesSelectOptions.get(chartType);
+            if (option) {
+                seriesSelectOptions.add(option);
+            }
         });
         return Array.from(seriesSelectOptions);
     }
