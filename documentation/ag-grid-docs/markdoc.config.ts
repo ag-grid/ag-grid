@@ -28,9 +28,6 @@ export default defineMarkdocConfig({
                 suppressFrameworkContext: Boolean,
                 spaceBetweenProperties: Boolean,
                 inlineReactProperties: Boolean,
-
-                // TODO: Temporary for mdx migration
-                fixme: Boolean,
             } as any,
             render: component('./src/components/snippet/Snippet.astro'),
         },
