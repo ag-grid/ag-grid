@@ -62,8 +62,8 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
 
         this.addDestroyFunc(finishedWithResizeFunc);
 
-        if (!this.gridOptionsService.get('suppressAutoSize')) {
-            const skipHeaderOnAutoSize = this.gridOptionsService.get('skipHeaderOnAutoSize');
+        if (!this.gos.get('suppressAutoSize')) {
+            const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
 
             this.eResize.addEventListener('dblclick', () => {
                 // get list of all the column keys we are responsible for
@@ -240,7 +240,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     private normaliseDragChange(dragChange: number): number {
         let result = dragChange;
 
-        if (this.gridOptionsService.get('enableRtl')) {
+        if (this.gos.get('enableRtl')) {
             // for RTL, dragging left makes the col bigger, except when pinning left
             if (this.pinned !== 'left') {
                 result *= -1;

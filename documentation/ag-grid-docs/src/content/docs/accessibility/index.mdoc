@@ -110,7 +110,7 @@ results when parsed by screen readers.
 
 To force row and column order, enable the following gridOptions property like so:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     ensureDomOrder: true,
 }
@@ -123,7 +123,7 @@ announcements for row indices when parsed by screen readers.
 
 To disable Group Sticky Rows, set `suppressGroupRowsSticky={true}` the gridOptions like so:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     suppressGroupRowsSticky: true,
 }
@@ -141,7 +141,7 @@ If your requirement is to use scrolling instead of pagination, you can disable r
 
 Column virtualisation can be disabled as follows:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     suppressColumnVirtualisation: true,
 }
@@ -151,7 +151,7 @@ This means if you have 100 columns, but only 10 visible due to scrolling, all 10
 
 Row virtualisation can be disabled as follows:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     suppressRowVirtualisation: true,
 }

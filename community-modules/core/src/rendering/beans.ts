@@ -59,7 +59,7 @@ export class Beans {
     @Autowired('context') public context: Context;
     @Autowired('columnApi') public columnApi: ColumnApi;
     @Autowired('gridApi') public gridApi: GridApi;
-    @Autowired('gridOptionsService') public gridOptionsService: GridOptionsService;
+    @Autowired('gridOptionsService') public gos: GridOptionsService;
     @Autowired('expressionService') public expressionService: ExpressionService;
     @Autowired('environment') public environment: Environment;
     @Autowired('rowRenderer') public rowRenderer: RowRenderer;
@@ -106,10 +106,10 @@ export class Beans {
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.gridOptionsService.isRowModelType('clientSide')) {
+        if (this.gos.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
-        if (this.gridOptionsService.isRowModelType('serverSide')) {
+        if (this.gos.isRowModelType('serverSide')) {
             this.serverSideRowModel = this.rowModel as IServerSideRowModel;
         }
     }

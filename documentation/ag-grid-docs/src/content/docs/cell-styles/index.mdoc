@@ -19,7 +19,7 @@ of CSS styles, or a function returning an object of CSS styles.
 
 {% apiDocumentation source="column-properties/properties.json" section="styling" names=["cellStyle"] /%}
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         // same style for each row
@@ -51,7 +51,7 @@ Provides a class for the cells in this column. Can be a string (a class), array 
 
 {% apiDocumentation source="column-properties/properties.json" section="styling" names=["cellClass"] /%}
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         // return same class for each row
@@ -95,7 +95,7 @@ or a string which is treated as a shorthand for a function by the grid.
 
 The following snippet is cellClassRules using functions on a year column:
 
-```js {% frameworkTransform=true suppressFrameworkContext=true %}
+```{% frameworkTransform=true suppressFrameworkContext=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -137,7 +137,7 @@ In other words, x and ctx map value and context, all other attributes map the pa
 
 The following snippet is cellClassRules using expressions on an age column:
 
-```js {% frameworkTransform=true suppressFrameworkContext=true %}
+```{% frameworkTransform=true suppressFrameworkContext=true %}
 const gridOptions = {
     columnDefs: [
         {

@@ -123,7 +123,7 @@ export class TabGuardCtrl extends BeanStub {
     private activateTabGuards(): void {
         // Do not activate tabs while focus is being forced out
         if (this.forcingFocusOut) { return; }
-        const tabIndex = this.gridOptionsService.get('tabIndex');
+        const tabIndex = this.gos.get('tabIndex');
         this.comp.setTabIndex(tabIndex.toString());
     }
 
@@ -158,7 +158,7 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     private findNextElementOutsideAndFocus(up: boolean) {
-        const eDocument = this.gridOptionsService.getDocument();
+        const eDocument = this.gos.getDocument();
         const focusableEls = this.focusService.findFocusableElements(eDocument.body, null, true);
         const index = focusableEls.indexOf(up ? this.eTopGuard : this.eBottomGuard);
 
@@ -174,7 +174,7 @@ export class TabGuardCtrl extends BeanStub {
             end = focusableEls.length;
         }
         const focusableRange = focusableEls.slice(start, end);
-        const targetTabIndex = this.gridOptionsService.get('tabIndex');
+        const targetTabIndex = this.gos.get('tabIndex');
         focusableRange.sort((a: HTMLElement, b: HTMLElement) => {
             const indexA = parseInt(a.getAttribute('tabindex') || '0');
             const indexB = parseInt(b.getAttribute('tabindex') || '0');

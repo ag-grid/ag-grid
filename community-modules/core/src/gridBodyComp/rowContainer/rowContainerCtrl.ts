@@ -168,7 +168,7 @@ export class RowContainerCtrl extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.enableRtl = this.gridOptionsService.get('enableRtl');
+        this.enableRtl = this.gos.get('enableRtl');
 
         this.forContainers([RowContainerName.CENTER],
             () => this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)));
@@ -266,8 +266,8 @@ export class RowContainerCtrl extends BeanStub {
         }
 
         const listener = () => {
-            const isEnsureDomOrder = this.gridOptionsService.get('ensureDomOrder');
-            const isPrintLayout = this.gridOptionsService.isDomLayout('print');
+            const isEnsureDomOrder = this.gos.get('ensureDomOrder');
+            const isPrintLayout = this.gos.isDomLayout('print');
             this.comp.setDomOrder(isEnsureDomOrder || isPrintLayout);
         };
 
@@ -338,7 +338,7 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     public isHorizontalScrollShowing(): boolean {
-        const isAlwaysShowHorizontalScroll = this.gridOptionsService.get('alwaysShowHorizontalScroll');
+        const isAlwaysShowHorizontalScroll = this.gos.get('alwaysShowHorizontalScroll');
         return isAlwaysShowHorizontalScroll || isHorizontalScrollShowing(this.eViewport);
     }
 
@@ -382,8 +382,8 @@ export class RowContainerCtrl extends BeanStub {
             return;
         }
 
-        const printLayout = this.gridOptionsService.isDomLayout('print');
-        const embedFullWidthRows = this.gridOptionsService.get('embedFullWidthRows');
+        const printLayout = this.gos.isDomLayout('print');
+        const embedFullWidthRows = this.gos.get('embedFullWidthRows');
         const embedFW = embedFullWidthRows || printLayout;
         
         // this list contains either all pinned top, center or pinned bottom rows

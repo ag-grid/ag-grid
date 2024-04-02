@@ -8,12 +8,12 @@ describe('Basic Tests of UMD Bundle', function () {
 
         // id column - first row should be 10
         cy.get('.ag-cell-value').then(rows => {
-            expect(rows[0].innerText).to.equal("10");
+            expect(rows[0].textContent).to.equal("10");
         });
 
         // framework column - first row should be Data 10
         cy.get('.ag-cell-value .ag-react-container').then(rows => {
-            expect(rows[0].innerText).to.equal("Data 10");
+            expect(rows[0].textContent).to.equal("Data 10");
         })
     })
 });

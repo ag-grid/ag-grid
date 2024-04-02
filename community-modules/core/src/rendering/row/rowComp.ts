@@ -6,7 +6,7 @@ import { IRowComp, RowCtrl } from "./rowCtrl";
 import { CellComp } from "../cell/cellComp";
 import { getAllValuesInObject } from "../../utils/object";
 import { setAriaRole } from "../../utils/aria";
-import { CellCtrl } from "../cell/cellCtrl";
+import { CellCtrl, CellCtrlInstanceId } from "../cell/cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
 import { RowStyle } from "../../entities/gridOptions";
@@ -20,7 +20,7 @@ export class RowComp extends Component {
     private rowCtrl: RowCtrl;
 
     private domOrder: boolean;
-    private cellComps: { [key: string]: CellComp | null; } = {};
+    private cellComps: { [key: CellCtrlInstanceId]: CellComp | null; } = {};
 
     constructor(ctrl: RowCtrl, beans: Beans, containerType: RowContainerType) {
         super();

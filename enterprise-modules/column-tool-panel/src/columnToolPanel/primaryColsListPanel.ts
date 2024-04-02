@@ -10,7 +10,6 @@ import {
     Events,
     ProvidedColumnGroup,
     IProvidedColumn,
-    ToolPanelColumnCompParams,
     VirtualList,
     VirtualListModel,
     PreDestroy,
@@ -23,6 +22,7 @@ import { ToolPanelColDefService } from "@ag-grid-enterprise/side-bar";
 import { ExpandState } from "./primaryColsHeaderPanel";
 import { ColumnModelItem } from "./columnModelItem";
 import { ModelItemUtils } from "./modelItemUtils";
+import { ToolPanelColumnCompParams } from "./columnToolPanel";
 
 class UIColumnModel implements VirtualListModel {
 

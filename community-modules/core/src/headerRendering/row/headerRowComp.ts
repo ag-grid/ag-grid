@@ -4,7 +4,7 @@ import { setDomChildOrder } from '../../utils/dom';
 import { getAllValuesInObject, iterateObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
 import { AbstractHeaderCellComp } from '../cells/abstractCell/abstractHeaderCellComp';
-import { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
+import { AbstractHeaderCellCtrl, HeaderCellCtrlInstanceId } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { HeaderCellComp } from '../cells/column/headerCellComp';
 import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
 import { HeaderGroupCellComp } from '../cells/columnGroup/headerGroupCellComp';
@@ -23,7 +23,7 @@ export class HeaderRowComp extends Component {
 
     private ctrl: HeaderRowCtrl;
 
-    private headerComps: { [key: string]: AbstractHeaderCellComp<AbstractHeaderCellCtrl>; } = {};
+    private headerComps: { [key: HeaderCellCtrlInstanceId]: AbstractHeaderCellComp<AbstractHeaderCellCtrl>; } = {};
 
     constructor(ctrl: HeaderRowCtrl) {
         super();

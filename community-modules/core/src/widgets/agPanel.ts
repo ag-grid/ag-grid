@@ -79,10 +79,9 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         }
 
         this.addManagedListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
-            const eDocument = this.gridOptionsService.getDocument();
             if (
                 eGui.contains(e.relatedTarget as HTMLElement) ||
-                eGui.contains(eDocument.activeElement) ||
+                eGui.contains(this.gos.getActiveDomElement()) ||
                 this.eTitleBarButtons.contains(e.target as HTMLElement)
             ) {
                 e.preventDefault();
@@ -142,7 +141,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             this.getContext().createBean(closeButtonComp);
 
             const eGui = closeButtonComp.getGui();
-            const child = createIconNoSpan('close', this.gridOptionsService)!;
+            const child = createIconNoSpan('close', this.gos)!;
             child.classList.add('ag-panel-title-bar-button-icon');
             eGui.appendChild(child);
 

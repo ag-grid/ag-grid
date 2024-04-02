@@ -3,12 +3,12 @@ import React from "react";
 
 export default (params: CustomCellRendererProps) => (
   <span
-    className="imgSpan"
+    className="imgSpanLogo"
   >
     {params.value && (
       <img
         alt={`${params.value} Flag`}
-        src={`https://www.ag-grid.com/example-assets/space-company-logos/${params.value.toLowerCase()}.png`}
+        src={`https://www.ag-grid.com/example-assets/software-company-logos/${params.value.toLowerCase()}.png`}
         className="logo"
       />
     )}

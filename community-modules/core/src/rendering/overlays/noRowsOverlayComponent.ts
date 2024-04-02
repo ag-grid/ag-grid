@@ -25,7 +25,7 @@ export class NoRowsOverlayComponent extends Component implements INoRowsOverlayC
     }
 
     public init(params: INoRowsOverlayParams): void {
-        const customTemplate = this.gridOptionsService.get('overlayNoRowsTemplate');
+        const customTemplate = this.gos.get('overlayNoRowsTemplate');
 
         this.setTemplate(customTemplate ?? NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE);
 

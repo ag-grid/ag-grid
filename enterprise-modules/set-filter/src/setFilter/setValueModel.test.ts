@@ -73,8 +73,8 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
     const caseFormat = simulateCaseSensitivity ?
         v => v : (v) => typeof v === 'string' ? v.toUpperCase() : v;
 
-    const gridOptionsService = mock<GridOptionsService>('get', 'addGridCommonParams');
-    gridOptionsService.addGridCommonParams.mockImplementation(params => params as any);
+    const gos = mock<GridOptionsService>('get', 'addGridCommonParams');
+    gos.addGridCommonParams.mockImplementation(params => params as any);
 
     const columnModel = mock<ColumnModel>('getRowGroupColumns');
     columnModel.getRowGroupColumns.mockImplementation(() => []);
@@ -89,7 +89,7 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
         caseFormat,
         createKey: value => _.makeNull(Array.isArray(value) ? value as any : _.toStringOrNull(value)!),
         valueFormatter: params => _.toStringOrNull(params.value)!,
-        gridOptionsService,
+        gos,
         columnModel,
         valueService,
         addManagedListener: () => undefined

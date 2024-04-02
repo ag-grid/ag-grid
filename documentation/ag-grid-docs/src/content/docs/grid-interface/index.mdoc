@@ -85,6 +85,19 @@ Not all Grid Options support updates. These are marked as Initial.
 
 For a full list of options see: [Options Reference](./grid-options).
 
+### Global Grid Options
+
+Global Grid Options can be used to share configuration across all grids in an application. Global grid options are provided by passing the global options to `provideGlobalGridOptions`. Each grid will inherit the global options with local options taking precedence if both define the same property.
+
+```js {% frameworkTransform=false %}
+import { provideGlobalGridOptions } from 'ag-grid-community';
+
+// provide localeText to all grids via global options
+provideGlobalGridOptions({
+   localeText: userLocaleText,
+});
+```
+
 ## Grid Events
 
 As a user interacts with the grid events will be fired to enable your application to respond to specific actions.

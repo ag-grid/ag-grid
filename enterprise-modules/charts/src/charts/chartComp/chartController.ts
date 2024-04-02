@@ -279,7 +279,7 @@ export class ChartController extends BeanStub {
     }
 
     public isCategorySeriesSwitched(): boolean {
-        return this.model.switchCategorySeries;
+        return this.model.switchCategorySeries && !this.model.isGrouping();
     }
 
     public switchCategorySeries(inverted: boolean): void {
@@ -363,7 +363,7 @@ export class ChartController extends BeanStub {
     }
 
     public getThemeNames(): string[] {
-        return this.gridOptionsService.get('chartThemes') || DEFAULT_THEMES;
+        return this.gos.get('chartThemes') || DEFAULT_THEMES;
     }
 
     public getThemes(): _Theme.ChartTheme[] {
@@ -532,12 +532,12 @@ export class ChartController extends BeanStub {
         const seriesChartTypes = this.getSeriesChartTypes();
 
         if (seriesChartTypes.length === 0) {
-            return 'column';
+            return 'bar';
         }
         const ct = seriesChartTypes[0].chartType;
 
         if (ct === 'columnLineCombo') {
-            return 'column';
+            return 'bar';
         }
 
         if (ct === 'areaColumnCombo') {

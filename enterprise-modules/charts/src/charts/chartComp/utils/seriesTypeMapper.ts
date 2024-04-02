@@ -1,18 +1,14 @@
 import { ChartType } from "@ag-grid-community/core";
+import { AgChartThemeOverrides } from "ag-charts-community";
 
-// these values correspond to top level object names in `AgChartThemeOverrides`
-export type ChartSeriesType =
-    'cartesian' |
-    'column' |
+export type ChartSeriesType = keyof AgChartThemeOverrides & (
     'bar' |
     'line' |
     'area' |
     'scatter' |
     'histogram' |
-    'polar' |
     'pie' |
     'donut' |
-    'hierarchy' |
     'bubble' |
     'radial-column' |
     'radial-bar' |
@@ -25,13 +21,15 @@ export type ChartSeriesType =
     'treemap' |
     'sunburst' |
     'heatmap' |
-    'waterfall' |
-    'common';
+    'waterfall'
+);
+
+// these values correspond to top level object names in `AgChartThemeOverrides`
+export type ChartThemeOverridesSeriesType = keyof AgChartThemeOverrides & (ChartSeriesType | 'common');
 
 export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'area',
     'bar',
-    'column',
     'histogram',
     'line',
     'pie',
@@ -228,7 +226,7 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
         case 'waterfall':
             return 'waterfall';
         default:
-            return 'cartesian';
+            return 'line';
     }
 }
 

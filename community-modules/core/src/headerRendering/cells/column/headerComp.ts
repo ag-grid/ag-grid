@@ -197,16 +197,16 @@ export class HeaderComp extends Component implements IHeaderComp {
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
         if (eParent == null) { return; }
 
-        const eIcon = createIconNoSpan(iconName, this.gridOptionsService, column);
+        const eIcon = createIconNoSpan(iconName, this.gos, column);
         if (eIcon) {
             eParent.appendChild(eIcon);
         }
     }
 
     private setupTap(): void {
-        const { gridOptionsService } = this;
+        const { gos } = this;
 
-        if (gridOptionsService.get('suppressTouch')) { return; }
+        if (gos.get('suppressTouch')) { return; }
 
         const touchListener = new TouchListener(this.getGui(), true);
         const suppressMenuHide = this.shouldSuppressMenuHide();
@@ -341,7 +341,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                 const columnMoving = moving || movedRecently;
 
                 if (!columnMoving) {
-                    const sortUsingCtrl = this.gridOptionsService.get('multiSortKey') === 'ctrl';
+                    const sortUsingCtrl = this.gos.get('multiSortKey') === 'ctrl';
                     const multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
                     this.params.progressSort(multiSort);
                 }

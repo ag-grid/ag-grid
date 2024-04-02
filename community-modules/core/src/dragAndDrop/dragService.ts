@@ -66,7 +66,7 @@ export class DragService extends BeanStub {
 
         let touchListener: ((touchEvent: TouchEvent) => void) | null = null;
 
-        const suppressTouch = this.gridOptionsService.get('suppressTouch');
+        const suppressTouch = this.gos.get('suppressTouch');
 
         if (includeTouch && !suppressTouch) {
             touchListener = (touchEvent: TouchEvent) => {
@@ -114,7 +114,7 @@ export class DragService extends BeanStub {
             // Prevents the page document from moving while we are dragging items around.
             // preventDefault needs to be called in the touchmove listener and never inside the
             // touchstart, because using touchstart causes the click event to be cancelled on touch devices.
-            { target: this.gridOptionsService.getRootNode(), type: 'touchmove', listener: documentTouchMove, options: { passive: false } },
+            { target: this.gos.getRootNode(), type: 'touchmove', listener: documentTouchMove, options: { passive: false } },
             { target, type: 'touchmove', listener: touchMoveEvent, options: { passive: true } },
             { target, type: 'touchend', listener: touchEndEvent, options: { passive: true} },
             { target, type: 'touchcancel', listener: touchEndEvent, options: { passive: true} }
@@ -160,7 +160,7 @@ export class DragService extends BeanStub {
         const mouseUpEvent = (event: MouseEvent) => this.onMouseUp(event, params.eElement);
         const contextEvent = (event: MouseEvent) => event.preventDefault();
 
-        const target = this.gridOptionsService.getRootNode();
+        const target = this.gos.getRootNode();
         const events = [
             { target, type: 'mousemove', listener: mouseMoveEvent },
             { target, type: 'mouseup', listener: mouseUpEvent },
@@ -252,7 +252,7 @@ export class DragService extends BeanStub {
     // and is removed when mouseUp happens
     private onMouseMove(mouseEvent: MouseEvent, el: Element): void {
         if (isBrowserSafari()) {
-            const eDocument = this.gridOptionsService.getDocument();
+            const eDocument = this.gos.getDocument();
             eDocument.getSelection()?.removeAllRanges();
         }
 
@@ -264,7 +264,7 @@ export class DragService extends BeanStub {
     }
 
     private shouldPreventMouseEvent(mouseEvent: MouseEvent): boolean {
-        const isEnableCellTextSelect = this.gridOptionsService.get('enableCellTextSelection');
+        const isEnableCellTextSelect = this.gos.get('enableCellTextSelection');
         const isMouseMove = mouseEvent.type === 'mousemove';
 
         return (

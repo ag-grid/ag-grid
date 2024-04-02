@@ -44,7 +44,7 @@ function addDelta() {
     gridApi!.setGridOption('deltaSort', true);
     const startTime = new Date().getTime();
     gridApi!.applyTransaction(transaction);
-    document.getElementById('transactionDuration')!.innerText = `${new Date().getTime() - startTime} ms`;
+    document.getElementById('transactionDuration')!.textContent = `${new Date().getTime() - startTime} ms`;
 }
 
 function addDefault() {
@@ -55,7 +55,7 @@ function addDefault() {
     gridApi!.setGridOption('deltaSort', false);
     const startTime = new Date().getTime();
     gridApi!.applyTransaction(transaction);
-    document.getElementById('transactionDuration')!.innerText = `${new Date().getTime() - startTime} ms`;
+    document.getElementById('transactionDuration')!.textContent = `${new Date().getTime() - startTime} ms`;
 
 }
 

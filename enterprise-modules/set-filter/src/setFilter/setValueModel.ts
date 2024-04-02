@@ -32,7 +32,7 @@ export enum SetFilterModelValuesType {
 
 export interface SetValueModelParams<V> {
     valueFormatterService: ValueFormatterService,
-    gridOptionsService: GridOptionsService,
+    gos: GridOptionsService,
     columnModel: ColumnModel,
     valueService: ValueService,
     filterParams: SetFilterParams<any, V>,
@@ -51,7 +51,7 @@ export interface SetValueModelParams<V> {
 export class SetValueModel<V> implements IEventEmitter {
     public static EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
 
-    private readonly gridOptionsService: GridOptionsService;
+    private readonly gos: GridOptionsService;
     private readonly localEventService = new EventService();
     private formatter: TextFormatter;
     private suppressSorting: boolean;
@@ -109,7 +109,7 @@ export class SetValueModel<V> implements IEventEmitter {
             treeDataTreeList,
             groupingTreeList,
             filterParams,
-            gridOptionsService,
+            gos,
             valueFormatterService,
             valueFormatter,
             addManagedListener
@@ -131,7 +131,7 @@ export class SetValueModel<V> implements IEventEmitter {
         } = filterParams;
 
         this.filterParams = filterParams;
-        this.gridOptionsService = gridOptionsService;
+        this.gos = gos;
         this.setIsLoading = params.setIsLoading;
         this.translate = params.translate;
         this.caseFormat = params.caseFormat;
@@ -156,8 +156,8 @@ export class SetValueModel<V> implements IEventEmitter {
         }
         this.keyComparator = keyComparator as any ?? _.defaultComparator;
         this.caseSensitive = !!caseSensitive
-        const getDataPath = gridOptionsService.get('getDataPath');
-        const groupAllowUnbalanced = gridOptionsService.get('groupAllowUnbalanced');
+        const getDataPath = gos.get('getDataPath');
+        const groupAllowUnbalanced = gos.get('groupAllowUnbalanced');
 
         if (rowModel.getType() === 'clientSide') {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
@@ -315,7 +315,7 @@ export class SetValueModel<V> implements IEventEmitter {
 
                     const callback = this.providedValues as SetFilterValuesFunc<any, V>;
                     const { column, colDef } = this.filterParams;
-                    const params: SetFilterValuesFuncParams<any, V> = this.gridOptionsService.addGridCommonParams({
+                    const params: SetFilterValuesFuncParams<any, V> = this.gos.addGridCommonParams({
                         success: values => {
                             this.setIsLoading(false);
 

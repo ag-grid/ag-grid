@@ -31,7 +31,6 @@ export class DefaultDateComponent extends Component implements IDateComp {
         this.params = params;
         this.setParams(params);
 
-        const eDocument = this.gridOptionsService.getDocument();
         const inputElement = this.eDateInput.getInputElement();
 
         // ensures that the input element is focussed when a clear button is clicked,
@@ -42,7 +41,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         });
         
         this.addManagedListener(inputElement, 'input', e => {
-            if (e.target !== eDocument.activeElement) { return; }
+            if (e.target !== this.gos.getActiveDomElement()) { return; }
             if (this.eDateInput.isDisabled()) { return; }
             
             this.params.onDateChanged();

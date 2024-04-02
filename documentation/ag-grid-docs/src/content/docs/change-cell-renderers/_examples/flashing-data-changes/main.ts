@@ -23,23 +23,11 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     cellClass: 'align-right',
-    enableCellChangeFlash: true,
     valueFormatter: (params) => {
       return formatNumber(params.value)
     },
   },
   rowData: createRowData(),
-}
-
-function onUpdateSomeValues() {
-  var rowCount = gridApi!.getDisplayedRowCount()
-  // pick 20 cells at random to update
-  for (var i = 0; i < 20; i++) {
-    var row = Math.floor(Math.random() * rowCount)
-    var rowNode = gridApi!.getDisplayedRowAtIndex(row)!
-    var col = ['a', 'b', 'c', 'd', 'e', 'f'][i % 6]
-    rowNode.setDataValue(col, Math.floor(Math.random() * 10000))
-  }
 }
 
 function onFlashOneCell() {

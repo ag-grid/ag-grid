@@ -96,7 +96,7 @@ The Cell Component for a Column is set via `colDef.cellRenderer` and can be any 
 The code snippet below demonstrates each of these method types.
 
 {% if isFramework("javascript", "angular") %}
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         // 1 - String - The name of a Cell Component registered with the grid.
@@ -123,7 +123,7 @@ const gridOptions = {
 {% /if %}
 
 {% if isFramework("react") %}
-```js {% spaceBetweenProperties=true %}
+```{% spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         // 1 - String - The name of a Cell Component registered with the grid.
@@ -150,7 +150,7 @@ const gridOptions = {
 {% /if %}
 
 {% if isFramework("vue") %}
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         // 1 - String - The name of a Cell Component registered with the grid.

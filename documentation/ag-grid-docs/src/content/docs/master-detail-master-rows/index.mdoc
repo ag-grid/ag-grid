@@ -9,7 +9,7 @@ Master Rows are the rows inside the Master Grid that can be expanded to display 
 
 Once a Master Grid is configured with `masterDetail=true`, all rows in the Master Grid behave as Master Rows, in that they can be expanded to display Detail Grids.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // by itself, all rows will be expandable
     masterDetail: true,
@@ -26,7 +26,7 @@ To specify which rows should expand, provide the grid callback `isRowMaster`. Th
 
 {% apiDocumentation source="grid-options/properties.json" section="masterDetail" names=["isRowMaster"] /%}
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     // turn on master detail
     masterDetail: true,

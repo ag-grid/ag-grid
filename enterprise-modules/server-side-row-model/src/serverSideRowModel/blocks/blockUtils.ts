@@ -34,7 +34,7 @@ export class BlockUtils extends BeanStub {
 
         const rowNode = new RowNode(this.beans);
 
-        const rowHeight = params.rowHeight != null ? params.rowHeight : this.gridOptionsService.getRowHeightAsNumber();
+        const rowHeight = params.rowHeight != null ? params.rowHeight : this.gos.getRowHeightAsNumber();
         rowNode.setRowHeight(rowHeight);
 
         rowNode.group = params.group;
@@ -85,7 +85,7 @@ export class BlockUtils extends BeanStub {
     private setTreeGroupInfo(rowNode: RowNode): void {
         rowNode.updateHasChildren();
 
-        const getKeyFunc = this.gridOptionsService.get('getServerSideGroupKey');
+        const getKeyFunc = this.gos.get('getServerSideGroupKey');
         if (rowNode.hasChildren() && getKeyFunc != null) {
             rowNode.key = getKeyFunc(rowNode.data);
         }
@@ -109,7 +109,7 @@ export class BlockUtils extends BeanStub {
             }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
         }
 
-        const getGroupIncludeFooter = this.beans.gridOptionsService.getGroupIncludeFooter();
+        const getGroupIncludeFooter = this.beans.gos.getGroupIncludeFooter();
         const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
         if (doesRowShowFooter) {
             rowNode.createFooter();
@@ -120,7 +120,7 @@ export class BlockUtils extends BeanStub {
     }
 
     private setMasterDetailInfo(rowNode: RowNode): void {
-        const isMasterFunc = this.gridOptionsService.get('isRowMaster');
+        const isMasterFunc = this.gos.get('isRowMaster');
         if (isMasterFunc != null) {
             rowNode.master = isMasterFunc(rowNode.data);
         } else {
@@ -131,14 +131,14 @@ export class BlockUtils extends BeanStub {
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
         rowNode.updateData(data);
 
-        if (this.gridOptionsService.get('treeData')) {
+        if (this.gos.get('treeData')) {
             this.setTreeGroupInfo(rowNode);
             this.setChildCountIntoRowNode(rowNode);
         } else if (rowNode.group) {
             this.setChildCountIntoRowNode(rowNode);
 
             if (!rowNode.footer) {
-                const getGroupIncludeFooter = this.beans.gridOptionsService.getGroupIncludeFooter();
+                const getGroupIncludeFooter = this.beans.gos.getGroupIncludeFooter();
                 const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
                 if (doesRowShowFooter) {
                     if (rowNode.sibling) {
@@ -154,7 +154,7 @@ export class BlockUtils extends BeanStub {
             // it's not possible for a node to change whether it's a group or not
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
-        } else if (this.gridOptionsService.get('masterDetail')) {
+        } else if (this.gos.get('masterDetail')) {
             // this should be implemented, however it's not the use case i'm currently
             // programming, so leaving for another day. to test this, create an example
             // where whether a master row is expandable or not is dynamic
@@ -163,7 +163,7 @@ export class BlockUtils extends BeanStub {
 
     public setDataIntoRowNode(rowNode: RowNode, data: any, defaultId: string, cachedRowHeight: number | undefined): void {
         rowNode.stub = false;
-        const treeData = this.gridOptionsService.get('treeData');
+        const treeData = this.gos.get('treeData');
 
         if (_.exists(data)) {
             rowNode.setDataAndId(data, defaultId);
@@ -172,7 +172,7 @@ export class BlockUtils extends BeanStub {
                 this.setTreeGroupInfo(rowNode);
             } else if (rowNode.group) {
                 this.setRowGroupInfo(rowNode);
-            } else if (this.gridOptionsService.get('masterDetail')) {
+            } else if (this.gos.get('masterDetail')) {
                 this.setMasterDetailInfo(rowNode);
             }
 
@@ -189,13 +189,13 @@ export class BlockUtils extends BeanStub {
         // this needs to be done AFTER setGroupDataIntoRowNode(), as the height can depend on the group data
         // getting set, if it's a group node and colDef.autoHeight=true
         if (_.exists(data)) {
-            rowNode.setRowHeight(this.gridOptionsService.getRowHeightForNode(rowNode, false, cachedRowHeight).height);
-            rowNode.sibling?.setRowHeight(this.gridOptionsService.getRowHeightForNode(rowNode.sibling, false, cachedRowHeight).height);
+            rowNode.setRowHeight(this.gos.getRowHeightForNode(rowNode, false, cachedRowHeight).height);
+            rowNode.sibling?.setRowHeight(this.gos.getRowHeightForNode(rowNode.sibling, false, cachedRowHeight).height);
         }
     }
 
     private setChildCountIntoRowNode(rowNode: RowNode): void {
-        const getChildCount = this.gridOptionsService.get('getChildCount');
+        const getChildCount = this.gos.get('getChildCount');
         if (getChildCount) {
             rowNode.setAllChildrenCount(getChildCount(rowNode.data));
         }
@@ -204,7 +204,7 @@ export class BlockUtils extends BeanStub {
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
         const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
 
-        const usingTreeData = this.gridOptionsService.get('treeData');
+        const usingTreeData = this.gos.get('treeData');
 
         groupDisplayCols.forEach(col => {
             if (rowNode.groupData == null) {

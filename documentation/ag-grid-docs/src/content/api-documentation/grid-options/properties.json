@@ -1058,13 +1058,13 @@
         "cellFlashDuration": {
             "more": {
                 "name": "How Flashing Works",
-                "url": "./change-cell-renderers/#how-flashing-works"
+                "url": "./change-cell-renderers/#enable-flashing-on-data-change"
             }
         },
         "cellFadeDuration": {
             "more": {
                 "name": "How Flashing Works",
-                "url": "./change-cell-renderers/#how-flashing-works"
+                "url": "./change-cell-renderers/#enable-flashing-on-data-change"
             }
         },
         "allowShowChangeAfterFilter": {

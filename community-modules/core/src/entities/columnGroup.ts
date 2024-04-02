@@ -1,4 +1,4 @@
-import { IHeaderColumn } from "../interfaces/iHeaderColumn";
+import { HeaderColumnId, IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { ColGroupDef } from "./colDef";
 import { Column, ColumnPinnedType } from "./column";
 import { AbstractColDef } from "./colDef";
@@ -17,11 +17,11 @@ export class ColumnGroup implements IHeaderColumn {
     public static EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
 
     // this is static, a it is used outside of this class
-    public static createUniqueId(groupId: string, instanceId: number): string {
-        return groupId + '_' + instanceId;
+    public static createUniqueId(groupId: string, instanceId: number): HeaderColumnId {
+        return groupId + '_' + instanceId as HeaderColumnId;
     }
 
-    @Autowired('gridOptionsService') gridOptionsService: GridOptionsService;
+    @Autowired('gridOptionsService') gos: GridOptionsService;
 
     // all the children of this group, regardless of whether they are opened or closed
     private children: IHeaderColumn[] | null;
@@ -63,7 +63,7 @@ export class ColumnGroup implements IHeaderColumn {
         this.parent = parent;
     }
 
-    public getUniqueId(): string {
+    public getUniqueId(): HeaderColumnId {
         return ColumnGroup.createUniqueId(this.groupId, this.partId);
     }
 
@@ -88,7 +88,7 @@ export class ColumnGroup implements IHeaderColumn {
 
         // set our left based on first displayed column
         if (this.displayedChildren!.length > 0) {
-            if (this.gridOptionsService.get('enableRtl')) {
+            if (this.gos.get('enableRtl')) {
                 const lastChild = last(this.displayedChildren!);
                 const lastChildLeft = lastChild.getLeft();
                 this.setLeft(lastChildLeft);

@@ -23,7 +23,6 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
     public static PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('gridOptionsService') private gos: GridOptionsService;
 
     private fieldSeparator: string;
     private pivotDefaultExpanded: number;
@@ -101,7 +100,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         const comparator = this.headerNameComparator.bind(this, primaryPivotColumnDefs.pivotComparator);
 
         // Base case for the compact layout, instead of recursing build the last layer of groups as measure columns instead
-        if (measureColumns.length === 1 && this.gridOptionsService.get('removePivotHeaderRowWhenSingleValueColumn') && index === maxDepth - 1) {
+        if (measureColumns.length === 1 && this.gos.get('removePivotHeaderRowWhenSingleValueColumn') && index === maxDepth - 1) {
             const leafCols: ColDef[] = [];
 
             _.iterateObject(uniqueValue, (key) => {
@@ -157,8 +156,8 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         pivotColumnDefs: ColDef[],
     ) {
         if (
-            this.gridOptionsService.get('suppressExpandablePivotGroups') ||
-            this.gridOptionsService.get('pivotColumnGroupTotals')
+            this.gos.get('suppressExpandablePivotGroups') ||
+            this.gos.get('pivotColumnGroupTotals')
         ) {
             return;
         }
@@ -218,9 +217,9 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
     }
 
     private addPivotTotalsToGroups(pivotColumnGroupDefs: (ColDef | ColGroupDef)[], pivotColumnDefs: ColDef[]) {
-        if (!this.gridOptionsService.get('pivotColumnGroupTotals')) { return; }
+        if (!this.gos.get('pivotColumnGroupTotals')) { return; }
 
-        const insertAfter = this.gridOptionsService.get('pivotColumnGroupTotals') === 'after';
+        const insertAfter = this.gos.get('pivotColumnGroupTotals') === 'after';
 
         const valueCols = this.columnModel.getValueColumns();
         const aggFuncs = valueCols.map(valueCol => valueCol.getAggFunc());
@@ -282,9 +281,9 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
 
     private addRowGroupTotals(pivotColumnGroupDefs: (ColDef | ColGroupDef)[],
                               pivotColumnDefs: ColDef[]) {
-        if (!this.gridOptionsService.get('pivotRowTotals')) { return; }
+        if (!this.gos.get('pivotRowTotals')) { return; }
 
-        const insertAfter = this.gridOptionsService.get('pivotRowTotals') === 'after';
+        const insertAfter = this.gos.get('pivotRowTotals') === 'after';
 
         const valueColumns = this.columnModel.getValueColumns();
         // order of row group totals depends on position
@@ -298,7 +297,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
                 colIds = colIds.concat(this.extractColIdsForValueColumn(groupDef, valueCol));
             });
 
-            const withGroup = valueCols.length > 1 || !this.gridOptionsService.get('removePivotHeaderRowWhenSingleValueColumn');
+            const withGroup = valueCols.length > 1 || !this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
             this.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, valueCol, colIds, insertAfter, withGroup);
         }
     }
@@ -497,7 +496,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
 
             // this is a bit sketchy. As the fields can be anything we just build groups as deep as the fields go.
             // nothing says user has to give us groups the same depth.
-            const collapseSingleChildren = this.gridOptionsService.get('removePivotHeaderRowWhenSingleValueColumn');
+            const collapseSingleChildren = this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
             if (collapseSingleChildren && children.length === 1 && 'colId' in children[0]) {
                 children[0].headerName = key;
                 return children[0];

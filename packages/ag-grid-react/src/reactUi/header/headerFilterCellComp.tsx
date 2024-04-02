@@ -10,7 +10,7 @@ import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 
 const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
-    const { context, gridOptionsService } = useContext(BeansContext);
+    const { context, gos } = useContext(BeansContext);
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses('ag-header-cell', 'ag-floating-filter'));
     const [cssBodyClasses, setBodyCssClasses] = useState<CssClasses>(() => new CssClasses());
@@ -86,7 +86,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     }, [userCompDetails]);
 
 
-    const reactiveCustomComponents = useMemo(() => gridOptionsService.get('reactiveCustomComponents'), []);
+    const reactiveCustomComponents = useMemo(() => gos.get('reactiveCustomComponents'), []);
     const floatingFilterCompProxy = useMemo(() => {
         if (userCompDetails) {
             if (reactiveCustomComponents) {

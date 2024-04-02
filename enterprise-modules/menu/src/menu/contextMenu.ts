@@ -51,14 +51,14 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         if (_.exists(node) && ModuleRegistry.__isRegistered(ModuleNames.ClipboardModule, this.context.getGridId())) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
-                if (!this.gridOptionsService.get('suppressCutToClipboard')) {
+                if (!this.gos.get('suppressCutToClipboard')) {
                     defaultMenuOptions.push('cut');
                 }
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
             }
         }
 
-        if (this.gridOptionsService.get('enableCharts') && ModuleRegistry.__isRegistered(ModuleNames.GridChartsModule, this.context.getGridId())) {
+        if (this.gos.get('enableCharts') && ModuleRegistry.__isRegistered(ModuleNames.GridChartsModule, this.context.getGridId())) {
             if (this.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
@@ -72,8 +72,8 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             // if user clicks a cell
             const csvModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.context.getGridId());
             const excelModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.context.getGridId());
-            const suppressExcel = this.gridOptionsService.get('suppressExcelExport') || excelModuleMissing;
-            const suppressCsv = this.gridOptionsService.get('suppressCsvExport') || csvModuleMissing;
+            const suppressExcel = this.gos.get('suppressExcelExport') || excelModuleMissing;
+            const suppressCsv = this.gos.get('suppressCsvExport') || csvModuleMissing;
             const onIPad = _.isIOSUserAgent();
             const anyExport: boolean = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {
@@ -86,11 +86,11 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         if (Array.isArray(columnContextMenuItems)) {
             return columnContextMenuItems;
         } else if (typeof columnContextMenuItems === 'function') {
-            return columnContextMenuItems(this.gridOptionsService.addGridCommonParams({
+            return columnContextMenuItems(this.gos.addGridCommonParams({
                 column, node, value, defaultItems
             }));
         } else {
-            const userFunc = this.gridOptionsService.getCallback('getContextMenuItems');
+            const userFunc = this.gos.getCallback('getContextMenuItems');
             if (userFunc) {
                 return userFunc({ column, node, value, defaultItems });
             } else {
@@ -137,7 +137,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             },
             click: mouseEvent,
             positionCallback: () => {
-                const isRtl = this.gridOptionsService.get('enableRtl');
+                const isRtl = this.gos.get('enableRtl');
                 this.popupService.positionPopupUnderMouseEvent({
                     ...positionParams,
                     nudgeX: isRtl ? (eMenuGui.offsetWidth + 1) * -1 : 1
@@ -231,9 +231,10 @@ class ContextMenu extends Component {
 
         if (currentFocusedCell && this.focusedCell && this.cellPositionUtils.equals(currentFocusedCell, this.focusedCell)) {
             const { rowIndex, rowPinned, column } = this.focusedCell;
-            const doc = this.gridOptionsService.getDocument();
+            const doc = this.gos.getDocument();
+            const activeEl = this.gos.getActiveDomElement()
 
-            if (doc.activeElement === doc.body) {
+            if (!activeEl || activeEl === doc.body) {
                 this.focusService.setFocusedCell({
                     rowIndex,
                     column,

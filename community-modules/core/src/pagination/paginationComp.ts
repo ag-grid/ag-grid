@@ -41,16 +41,16 @@ export class PaginationComp extends Component {
 
     @PostConstruct
     protected postConstruct(): void {
-        const isRtl = this.gridOptionsService.get('enableRtl');
+        const isRtl = this.gos.get('enableRtl');
         this.setTemplate(this.getTemplate());
 
         const { btFirst, btPrevious, btNext, btLast, pageSizeComp } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast])
 
-        btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsService)!);
-        btPrevious.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsService)!);
-        btNext.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsService)!);
-        btLast.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsService)!);
+        btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.gos)!);
+        btPrevious.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'next' : 'previous', this.gos)!);
+        btNext.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'previous' : 'next', this.gos)!);
+        btLast.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'first' : 'last', this.gos)!);
 
         this.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
         this.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
@@ -66,8 +66,8 @@ export class PaginationComp extends Component {
     }
 
     private onPaginationChanged(): void {
-        const isPaging = this.gridOptionsService.get('pagination');
-        const paginationPanelEnabled = isPaging && !this.gridOptionsService.get('suppressPaginationPanel');
+        const isPaging = this.gos.get('pagination');
+        const paginationPanelEnabled = isPaging && !this.gos.get('suppressPaginationPanel');
 
         this.setDisplayed(paginationPanelEnabled);
         if (!paginationPanelEnabled) {
@@ -127,7 +127,7 @@ export class PaginationComp extends Component {
     }
 
     private formatNumber(value: number): string {
-        const userFunc = this.gridOptionsService.getCallback('paginationNumberFormatter');
+        const userFunc = this.gos.getCallback('paginationNumberFormatter');
 
         if (userFunc) {
             const params: WithoutGridCommon<PaginationNumberFormatterParams> = { value: value };

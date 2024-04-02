@@ -67,13 +67,13 @@ export class MenuItemMapper extends BeanStub {
 
     private getStockMenuItem(key: string, column: Column | null, sourceElement: () => HTMLElement): MenuItemDef | string | null {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
-        const skipHeaderOnAutoSize = this.gridOptionsService.get('skipHeaderOnAutoSize');
+        const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
 
         switch (key) {
             case 'pinSubMenu':
                 return {
                     name: localeTextFunc('pinColumn', 'Pin Column'),
-                    icon: _.createIconNoSpan('menuPin', this.gridOptionsService, null),
+                    icon: _.createIconNoSpan('menuPin', this.gos, null),
                     subMenu: ['clearPinned', 'pinLeft', 'pinRight']
                 };
             case 'pinLeft':
@@ -102,7 +102,7 @@ export class MenuItemMapper extends BeanStub {
 
                     return {
                         name: localeTextFunc('valueAggregation', 'Value Aggregation'),
-                        icon: _.createIconNoSpan('menuValue', this.gridOptionsService, null),
+                        icon: _.createIconNoSpan('menuValue', this.gos, null),
                         subMenu: this.createAggregationSubMenu(column!)
                     };
                 } else {
@@ -123,12 +123,12 @@ export class MenuItemMapper extends BeanStub {
                     name: localeTextFunc('groupBy', 'Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
                     disabled: column?.isRowGroupActive() || !column?.getColDef().enableRowGroup,
                     action: () => this.columnModel.addRowGroupColumns([column], "contextMenu"),
-                    icon: _.createIconNoSpan('menuAddRowGroup', this.gridOptionsService, null)
+                    icon: _.createIconNoSpan('menuAddRowGroup', this.gos, null)
                 };
             case 'rowUnGroup':
-                const icon = _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsService, null);
+                const icon = _.createIconNoSpan('menuRemoveRowGroup', this.gos, null);
                 const showRowGroup = column?.getColDef().showRowGroup;
-                const lockedGroups = this.gridOptionsService.get('groupLockGroupColumns');
+                const lockedGroups = this.gos.get('groupLockGroupColumns');
                 // Handle single auto group column
                 if (showRowGroup === true) {
                     return {
@@ -176,7 +176,7 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
-                        icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsService, null),
+                        icon: _.createIconNoSpan('clipboardCopy', this.gos, null),
                         action: () => this.clipboardService.copyToClipboard()
                     };
                 } else {
@@ -187,7 +187,7 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                        icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsService, null),
+                        icon: _.createIconNoSpan('clipboardCopy', this.gos, null),
                         action: () => this.clipboardService.copyToClipboard({ includeHeaders: true })
                     };
                 } else {
@@ -198,7 +198,7 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('copyWithGroupHeaders', 'Copy with Group Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                        icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsService, null),
+                        icon: _.createIconNoSpan('clipboardCopy', this.gos, null),
                         action: () => this.clipboardService.copyToClipboard({ includeHeaders: true, includeGroupHeaders: true })
                     };
                 } else {
@@ -212,8 +212,8 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('cut', 'Cut'),
                         shortcut: localeTextFunc('ctrlX', 'Ctrl+X'),
-                        icon: _.createIconNoSpan('clipboardCut', this.gridOptionsService, null),
-                        disabled: !isEditable || this.gridOptionsService.get('suppressCutToClipboard'),
+                        icon: _.createIconNoSpan('clipboardCut', this.gos, null),
+                        disabled: !isEditable || this.gos.get('suppressCutToClipboard'),
                         action: () => this.clipboardService.cutToClipboard(undefined, 'contextMenu')
                     };
                 } else {
@@ -225,7 +225,7 @@ export class MenuItemMapper extends BeanStub {
                         name: localeTextFunc('paste', 'Paste'),
                         shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
                         disabled: true,
-                        icon: _.createIconNoSpan('clipboardPaste', this.gridOptionsService, null),
+                        icon: _.createIconNoSpan('clipboardPaste', this.gos, null),
                         action: () => this.clipboardService.pasteFromClipboard()
                     };
                 } else {
@@ -237,27 +237,27 @@ export class MenuItemMapper extends BeanStub {
                 const csvModuleLoaded = ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.context.getGridId());
                 const excelModuleLoaded = ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.context.getGridId());
 
-                if (!this.gridOptionsService.get('suppressCsvExport') && csvModuleLoaded) {
+                if (!this.gos.get('suppressCsvExport') && csvModuleLoaded) {
                     exportSubMenuItems.push('csvExport');
                 }
-                if (!this.gridOptionsService.get('suppressExcelExport') && excelModuleLoaded) {
+                if (!this.gos.get('suppressExcelExport') && excelModuleLoaded) {
                     exportSubMenuItems.push('excelExport');
                 }
                 return {
                     name: localeTextFunc('export', 'Export'),
                     subMenu: exportSubMenuItems,
-                    icon: _.createIconNoSpan('save', this.gridOptionsService, null),
+                    icon: _.createIconNoSpan('save', this.gos, null),
                 };
             case 'csvExport':
                 return {
                     name: localeTextFunc('csvExport', 'CSV Export'),
-                    icon: _.createIconNoSpan('csvExport', this.gridOptionsService, null),
+                    icon: _.createIconNoSpan('csvExport', this.gos, null),
                     action: () => this.gridApi.exportDataAsCsv({})
                 };
             case 'excelExport':
                 return {
                     name: localeTextFunc('excelExport', 'Excel Export'),
-                    icon: _.createIconNoSpan('excelExport', this.gridOptionsService, null),
+                    icon: _.createIconNoSpan('excelExport', this.gos, null),
                     action: () => this.gridApi.exportDataAsExcel()
                 };
             case 'separator':
@@ -269,7 +269,7 @@ export class MenuItemMapper extends BeanStub {
                 if (column) {
                     return {
                         name: localeTextFunc('columnFilter', 'Column Filter'),
-                        icon: _.createIconNoSpan('filter', this.gridOptionsService, null),
+                        icon: _.createIconNoSpan('filter', this.gos, null),
                         action: () => this.menuService.showFilterMenu({
                             column, buttonElement: sourceElement(), containerType: 'columnFilter', positionBy: 'button'
                         })
@@ -281,7 +281,7 @@ export class MenuItemMapper extends BeanStub {
                 if (ModuleRegistry.__isRegistered(ModuleNames.ColumnsToolPanelModule, this.context.getGridId())) {
                     return {
                         name: localeTextFunc('columnChooser', 'Choose Columns'),
-                        icon: _.createIconNoSpan('columns', this.gridOptionsService, null),
+                        icon: _.createIconNoSpan('columns', this.gos, null),
                         action: () => this.menuService.showColumnChooser({ column, eventSource: sourceElement() })
                     }
                 } else {
@@ -290,19 +290,19 @@ export class MenuItemMapper extends BeanStub {
             case 'sortAscending':
                 return {
                     name: localeTextFunc('sortAscending', 'Sort Ascending'),
-                    icon: _.createIconNoSpan('sortAscending', this.gridOptionsService, null),
+                    icon: _.createIconNoSpan('sortAscending', this.gos, null),
                     action: () => this.sortController.setSortForColumn(column!, 'asc', false, 'columnMenu')
                 }
             case 'sortDescending':
                 return {
                     name: localeTextFunc('sortDescending', 'Sort Descending'),
-                    icon: _.createIconNoSpan('sortDescending', this.gridOptionsService, null),
+                    icon: _.createIconNoSpan('sortDescending', this.gos, null),
                     action: () => this.sortController.setSortForColumn(column!, 'desc', false, 'columnMenu')
                 }
             case 'sortUnSort':
                 return {
                     name: localeTextFunc('sortUnSort', 'Clear Sort'),
-                    icon: _.createIconNoSpan('sortUnSort', this.gridOptionsService, null),
+                    icon: _.createIconNoSpan('sortUnSort', this.gos, null),
                     action: () => this.sortController.setSortForColumn(column!, null, false, 'columnMenu')
                 }
             default: {

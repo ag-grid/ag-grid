@@ -13,7 +13,7 @@ The Column Definition `field` property maps values from the row data object to t
 
 The field supports dot notation (e.g. `medals.gold`) to access properties of complex objects.
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     rowData: [
         {
@@ -40,7 +40,7 @@ Typically column cell values are loaded using a `field`, and then a `valueGetter
 the value requires custom logic. Columns with Value Getter's usually have manually provided 
 Header Name's as the grid cannot derive Header Names from Value Getters like it does with Fields.
 
-```js {% frameworkTransform=true suppressFrameworkContext=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true suppressFrameworkContext=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         // achieves the same as using 'athlete' for the field

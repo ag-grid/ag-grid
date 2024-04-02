@@ -5,7 +5,7 @@ import { getAllValuesInObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { HeaderRowComp } from '../row/headerRowComp';
-import { HeaderRowCtrl } from '../row/headerRowCtrl';
+import { HeaderRowCtrl, HeaderRowCtrlInstanceId } from '../row/headerRowCtrl';
 import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowContainerCtrl';
 
 export class HeaderRowContainerComp extends Component {
@@ -25,7 +25,7 @@ export class HeaderRowContainerComp extends Component {
 
     private pinned: ColumnPinnedType;
 
-    private headerRowComps: {[ctrlId: string]: HeaderRowComp} = {};
+    private headerRowComps: {[ctrlId: HeaderRowCtrlInstanceId]: HeaderRowComp} = {};
     private rowCompsList: HeaderRowComp[] = [];
 
     constructor(pinned: ColumnPinnedType) {

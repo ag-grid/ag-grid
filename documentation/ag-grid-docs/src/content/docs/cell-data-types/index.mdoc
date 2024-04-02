@@ -14,7 +14,7 @@ These are enabled by default, with the data type being inferred from the row dat
 
 Specific cell data types can also be defined by setting the `cellDataType` property on the column definition.
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
    columnDefs: [
        {
@@ -155,7 +155,7 @@ Custom cell data types can be added by setting the grid option `dataTypeDefiniti
 
 {% apiDocumentation source="grid-options/properties.json" section="columns" names=["dataTypeDefinitions"] /%}
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
    dataTypeDefinitions: {
        percentage: {
@@ -193,7 +193,7 @@ For example, this is required if a different date format is desired.
 
 This works in the same way as when [Providing Custom Cell Data Types](#providing-custom-cell-data-types).
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
    dataTypeDefinitions: {
        // override `date` to handle custom date format `dd/mm/yyyy`

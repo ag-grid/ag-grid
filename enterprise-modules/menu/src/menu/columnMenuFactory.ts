@@ -46,12 +46,12 @@ export class ColumnMenuFactory extends BeanStub {
         if (Array.isArray(columnMainMenuItems)) {
             result = columnMainMenuItems;
         } else if (typeof columnMainMenuItems === 'function') {
-            result = columnMainMenuItems(this.gridOptionsService.addGridCommonParams({
+            result = columnMainMenuItems(this.gos.addGridCommonParams({
                 column: column!,
                 defaultItems
             }));
         } else {
-            const userFunc = this.gridOptionsService.getCallback('getMainMenuItems');
+            const userFunc = this.gos.getCallback('getMainMenuItems');
             if (userFunc && column) {
                 result = userFunc({
                     column,
@@ -94,7 +94,7 @@ export class ColumnMenuFactory extends BeanStub {
 
         const isInMemoryRowModel = this.rowModel.getType() === 'clientSide';
 
-        const usingTreeData = this.gridOptionsService.get('treeData');
+        const usingTreeData = this.gos.get('treeData');
 
         const allowValueAgg =
             // if primary, then only allow aggValue if grouping and it's a value columns

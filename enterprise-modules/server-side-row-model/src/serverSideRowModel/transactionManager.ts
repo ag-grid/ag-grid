@@ -38,7 +38,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     @PostConstruct
     private postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
-        if (!this.gridOptionsService.isRowModelType('serverSide')) { return; }
+        if (!this.gos.isRowModelType('serverSide')) { return; }
     }
 
     public applyTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
@@ -49,7 +49,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     }
 
     private scheduleExecuteAsync(): void {
-        const waitMillis = this.gridOptionsService.getAsyncTransactionWaitMillis();
+        const waitMillis = this.gos.getAsyncTransactionWaitMillis();
         this.asyncTransactionsTimeout = window.setTimeout(() => {
             this.executeAsyncTransactions();
         }, waitMillis);

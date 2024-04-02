@@ -85,7 +85,7 @@ export class ViewportSizeFeature extends BeanStub {
 
         // remove 50px from the bodyWidth to give some margin
         let columnsToRemove = this.getPinnedColumnsOverflowingViewport(bodyWidth - 50);
-        const processUnpinnedColumns = this.gridOptionsService.getCallback('processUnpinnedColumns');
+        const processUnpinnedColumns = this.gos.getCallback('processUnpinnedColumns');
 
         if (!columnsToRemove.length) { return; }
 

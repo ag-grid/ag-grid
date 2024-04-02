@@ -88,8 +88,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
         }
 
         this.addManagedListener(this, Events.EVENT_FIELD_VALUE_CHANGED, () => {
-            const eDocument = this.gridOptionsService.getDocument();
-            if (this.eAngleValue.getInputElement().contains(eDocument.activeElement)) {
+            if (this.eAngleValue.getInputElement().contains(this.gos.getActiveDomElement())) {
                 return;
             }
             this.updateNumberInput();

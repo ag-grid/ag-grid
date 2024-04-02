@@ -49,7 +49,7 @@ export class ChartMenuListFactory extends BeanStub {
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
-        if (this.gridOptionsService.get('enableRtl')) {
+        if (this.gos.get('enableRtl')) {
             multiplier = 1;
             alignSide = 'right';
         }
@@ -63,8 +63,9 @@ export class ChartMenuListFactory extends BeanStub {
             closedCallback: () => {
                 this.destroyBean(chartMenuList);
                 this.activeChartMenuList = undefined;
-                const document = this.gridOptionsService.getDocument();
-                if (document.activeElement === document.body) {
+                const eDocument = this.gos.getDocument();
+                const activeEl = this.gos.getActiveDomElement()
+                if (!activeEl || activeEl === eDocument.body) {
                     eventSource.focus({ preventScroll: true });
                 }
             },
@@ -94,13 +95,13 @@ export class ChartMenuListFactory extends BeanStub {
             chartController.isChartLinked() ? 'chartUnlink' : 'chartLink',
             'chartDownload'
         ];
-        const chartMenuItems = this.gridOptionsService.get('chartMenuItems');
+        const chartMenuItems = this.gos.get('chartMenuItems');
         if (!chartMenuItems) {
             return defaultItems;
         } else if (Array.isArray(chartMenuItems)) {
             return chartMenuItems;
         } else {
-            return chartMenuItems(this.gridOptionsService.addGridCommonParams({
+            return chartMenuItems(this.gos.addGridCommonParams({
                 defaultItems
             }));
         }
@@ -167,7 +168,7 @@ export class ChartMenuListFactory extends BeanStub {
     private createMenuItem(name: string, iconName: string, action: () => void): MenuItemDef {
         return {
             name,
-            icon: _.createIconNoSpan(iconName, this.gridOptionsService, null),
+            icon: _.createIconNoSpan(iconName, this.gos, null),
             action
         }
     }

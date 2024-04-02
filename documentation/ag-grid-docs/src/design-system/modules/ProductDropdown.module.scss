@@ -105,6 +105,9 @@
         opacity 0.15s ease,
         transform 0.15s ease;
 
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 5%);
+    }
     @media screen and (min-width: $breakpoint-hero-small) {
         top: 100%;
         left: 0;
@@ -128,7 +131,7 @@
 
 .productDescription {
     color: var(--color-text-secondary);
-    opacity: 1;
+    opacity: 0.85;
     font-size: var(--text-fs-sm);
     font-weight: var(--text-regular);
 }
@@ -157,7 +160,8 @@
     border-radius: var(--radius-md);
 
     #{$selector-darkmode} & {
-        background: color-mix(in srgb, var(--color-brand-300), var(--color-bg-primary) 90%);
+        background: color-mix(in srgb, var(--color-fg-white), var(--color-bg-primary) 85%);
+        box-shadow: var(--shadow-lg);
     }
 }
 
@@ -167,7 +171,7 @@
     transition: 0.3s all ease-in-out;
 
     #{$selector-darkmode} & {
-        background: color-mix(in srgb, var(--color-brand-300), var(--color-bg-primary) 96%);
+        background: color-mix(in srgb, var(--color-fg-white), var(--color-bg-primary) 85%);
     }
 }
 

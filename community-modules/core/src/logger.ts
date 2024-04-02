@@ -8,8 +8,8 @@ export class LoggerFactory extends BeanStub {
 
     private logging: boolean;
 
-    private setBeans(@Qualifier('gridOptionsService') gridOptionsService: GridOptionsService): void {
-        this.logging = gridOptionsService.get('debug');
+    private setBeans(@Qualifier('gridOptionsService') gos: GridOptionsService): void {
+        this.logging = gos.get('debug');
     }
 
     public create(name: string) {

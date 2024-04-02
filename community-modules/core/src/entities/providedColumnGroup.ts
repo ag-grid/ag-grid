@@ -1,7 +1,7 @@
 import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { ColGroupDef } from "./colDef";
 import { ColumnGroupShowType } from "./columnGroup";
-import { Column, getNextColInstanceId } from "./column";
+import { Column, ColumnInstanceId, getNextColInstanceId } from "./column";
 import { EventService } from "../eventService";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { AgEvent, AgEventListener } from "../events";
@@ -63,7 +63,7 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
         this.expandable = undefined!;
     }
 
-    public getInstanceId(): number {
+    public getInstanceId(): ColumnInstanceId {
         return this.instanceId;
     }
 

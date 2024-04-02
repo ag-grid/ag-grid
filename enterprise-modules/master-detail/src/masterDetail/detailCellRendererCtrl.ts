@@ -56,7 +56,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     }
 
     private setAutoHeightClasses(): void {
-        const autoHeight = this.gridOptionsService.get('detailRowAutoHeight');
+        const autoHeight = this.gos.get('detailRowAutoHeight');
 
         const parentClass = autoHeight ? 'ag-details-row-auto-height' : 'ag-details-row-fixed-height';
         const detailClass =  autoHeight ? 'ag-details-grid-auto-height' : 'ag-details-grid-fixed-height';
@@ -98,7 +98,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             return;
         }
 
-        const autoHeight = this.gridOptionsService.get('detailRowAutoHeight');
+        const autoHeight = this.gos.get('detailRowAutoHeight');
 
         // we clone the detail grid options, as otherwise it would be shared
         // across many instances, and that would be a problem because we set
@@ -171,7 +171,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             // as the data could have been updated with new instance
             data: this.params.node.data,
             successCallback: successCallback,
-            context: this.gridOptionsService.getGridCommonParams().context
+            context: this.gos.getGridCommonParams().context
         };
         userFunc(funcParams);
     }

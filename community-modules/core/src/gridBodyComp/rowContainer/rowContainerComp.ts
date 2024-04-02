@@ -4,7 +4,7 @@ import { Autowired, PostConstruct, PreDestroy } from "../../context/context";
 import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowContainerType } from "./rowContainerCtrl";
 import { ensureDomOrder, insertWithDomOrder } from "../../utils/dom";
 import { RowComp } from "../../rendering/row/rowComp";
-import { RowCtrl } from "../../rendering/row/rowCtrl";
+import { RowCtrl, RowCtrlInstanceId } from "../../rendering/row/rowCtrl";
 import { Beans } from "../../rendering/beans";
 import { getAllValuesInObject } from "../../utils/object";
 import { setAriaRole } from "../../utils/aria";
@@ -45,7 +45,7 @@ export class RowContainerComp extends Component {
     private readonly name: RowContainerName;
     private readonly type: RowContainerType;
 
-    private rowComps: {[id: string]: RowComp} = {};
+    private rowComps: {[id: RowCtrlInstanceId]: RowComp} = {};
 
     // we ensure the rows are in the dom in the order in which they appear on screen when the
     // user requests this via gridOptions.ensureDomOrder. this is typically used for screen readers.

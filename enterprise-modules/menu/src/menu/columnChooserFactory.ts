@@ -37,7 +37,7 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
             suppressColumnSelectAll, suppressSyncLayoutWithGrid, columnLayout
         } = columnChooserParams;
     
-        columnSelectPanel.init(!!draggable, this.gridOptionsService.addGridCommonParams({
+        columnSelectPanel.init(!!draggable, this.gos.addGridCommonParams({
             suppressColumnMove: false,
             suppressValues: false,
             suppressPivots: false,

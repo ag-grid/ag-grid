@@ -95,7 +95,7 @@ export class GridCtrl extends BeanStub {
     }
 
     private addRtlSupport(): void {
-        const cssClass = this.gridOptionsService.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
+        const cssClass = this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
         this.view.setRtlClass(cssClass);
     }
 
@@ -116,9 +116,9 @@ export class GridCtrl extends BeanStub {
     }
 
     public focusNextInnerContainer(backwards: boolean): boolean {
-        const eDocument = this.gridOptionsService.getDocument();
         const focusableContainers = this.view.getFocusableContainers();
-        const idxWithFocus = focusableContainers.findIndex(container => container.contains(eDocument.activeElement));
+        const activeEl = this.gos.getActiveDomElement();
+        const idxWithFocus = focusableContainers.findIndex(container => container.contains(activeEl));
         const nextIdx = idxWithFocus + (backwards ? -1 : 1);
 
         if (nextIdx <= 0 || nextIdx >= focusableContainers.length) {
@@ -141,7 +141,7 @@ export class GridCtrl extends BeanStub {
             if (this.focusService.focusGridView(lastColumn, true)) { return true; }
         }
 
-        if (this.gridOptionsService.get('headerHeight') === 0 || this.gridOptionsService.get('suppressHeaderFocus')) {
+        if (this.gos.get('headerHeight') === 0 || this.gos.get('suppressHeaderFocus')) {
             if (this.focusService.focusGridView(allColumns[0])) {
                 return true;
             }

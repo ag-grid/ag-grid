@@ -109,6 +109,10 @@ button.sectionHeader {
         border: 2px solid transparent;
     }
 
+    &:active {
+        background-color: transparent;
+    }
+
     &:hover .sectionIcon {
         transform: translateX(3px);
     }

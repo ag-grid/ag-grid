@@ -5,19 +5,14 @@ import {
     FiltersToolPanelState,
     IFiltersToolPanel,
     IToolPanelComp,
+    IToolPanelFiltersCompParams,
     IToolPanelParams,
     RefSelector
 } from "@ag-grid-community/core";
 import { FiltersToolPanelHeaderPanel } from "./filtersToolPanelHeaderPanel";
 import { FiltersToolPanelListPanel } from "./filtersToolPanelListPanel";
 
-export interface ToolPanelFiltersCompParams<TData = any, TContext = any> extends IToolPanelParams<TData, TContext, FiltersToolPanelState> {
-    /** To suppress Expand / Collapse All */
-    suppressExpandAll: boolean;
-    /** To suppress the Filter Search */
-    suppressFilterSearch: boolean;
-    /** Suppress updating the layout of columns as they are rearranged in the grid */
-    suppressSyncLayoutWithGrid: boolean;
+export interface ToolPanelFiltersCompParams<TData = any, TContext = any> extends IToolPanelParams<TData, TContext, FiltersToolPanelState>, IToolPanelFiltersCompParams {
 }
 
 export class FiltersToolPanel extends Component implements IFiltersToolPanel, IToolPanelComp {
@@ -49,7 +44,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
         this.initialised = true;
 
-        const defaultParams: Partial<ToolPanelFiltersCompParams> = this.gridOptionsService.addGridCommonParams({
+        const defaultParams: Partial<ToolPanelFiltersCompParams> = this.gos.addGridCommonParams({
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false

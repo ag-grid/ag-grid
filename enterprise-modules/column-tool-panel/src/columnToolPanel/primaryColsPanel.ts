@@ -4,14 +4,13 @@ import {
     Component,
     ToolPanelColumnCompParams,
     RefSelector,
-    IPrimaryColsPanel,
     ColumnEventType,
     PositionableFeature
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
 import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";
 
-export class PrimaryColsPanel extends Component implements IPrimaryColsPanel {
+export class PrimaryColsPanel extends Component {
 
     private static TEMPLATE = /* html */
         `<div class="ag-column-select">

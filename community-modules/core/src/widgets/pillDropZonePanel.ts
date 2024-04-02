@@ -119,7 +119,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         let isPrevious = e.key === KeyCode.UP;
 
         if (!isVertical) {
-            const isRtl = this.gridOptionsService.get('enableRtl');
+            const isRtl = this.gos.get('enableRtl');
             isNext = (!isRtl && e.key === KeyCode.RIGHT) || (isRtl && e.key === KeyCode.LEFT);
             isPrevious = (!isRtl && e.key === KeyCode.LEFT) || (isRtl && e.key === KeyCode.RIGHT);
         }
@@ -200,7 +200,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
         // not hovering a non-ghost component
         if (hoveredIndex === -1) {
-            const enableRtl = this.gridOptionsService.get('enableRtl');
+            const enableRtl = this.gos.get('enableRtl');
 
             // if mouse is below or right of all components then new index should be placed last
             const isLast = boundsList.every(rect => (
@@ -403,7 +403,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
     private getFocusedItem(): number {
         const eGui = this.getGui();
-        const activeElement = this.gridOptionsService.getDocument().activeElement;
+        const activeElement = this.gos.getActiveDomElement();
 
         if (!eGui.contains(activeElement)) { return - 1; }
 
@@ -538,8 +538,8 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         // only add the arrows if the layout is horizontal
         if (this.horizontal) {
             // for RTL it's a left arrow, otherwise it's a right arrow
-            const enableRtl = this.gridOptionsService.get('enableRtl');
-            const icon = createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.gridOptionsService)!;
+            const enableRtl = this.gos.get('enableRtl');
+            const icon = createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.gos)!;
             this.addElementClasses(icon, 'cell-separator');
             eParent.appendChild(icon);
         }

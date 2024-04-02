@@ -166,7 +166,7 @@ export const Pipeline = ({ location }) => {
                     onChange={onQuickFilterChange}
                 ></input>
                 <span className={classnames(styles.searchExplainer, 'text-secondary')}>
-                    Find pipeline items by issue number, summary content, or version
+                    Find pipeline items by issue number, summary content
                 </span>
             </div>
 

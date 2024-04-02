@@ -32,7 +32,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
     }
 
     private notActive(): boolean {
-        return !this.gridOptionsService.get('paginationAutoPageSize') || this.centerRowContainerCon == null;
+        return !this.gos.get('paginationAutoPageSize') || this.centerRowContainerCon == null;
     }
 
     private onPaginationAutoSizeChanged(): void {
@@ -50,7 +50,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
 
         if (bodyHeight > 0) {
             const update = () => {
-                const rowHeight = this.gridOptionsService.getRowHeightAsNumber();
+                const rowHeight = this.gos.getRowHeightAsNumber();
                 const newPageSize = Math.floor(bodyHeight / rowHeight);
                 this.paginationProxy.setPageSize(newPageSize, 'autoCalculated');
             }

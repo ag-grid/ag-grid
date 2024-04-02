@@ -45,7 +45,7 @@ export class FiltersToolPanelListPanel extends Component {
     public init(params: ToolPanelFiltersCompParams): void {
         this.initialised = true;
 
-        const defaultParams: Partial<ToolPanelFiltersCompParams> = this.gridOptionsService.addGridCommonParams({
+        const defaultParams: Partial<ToolPanelFiltersCompParams> = this.gos.addGridCommonParams({
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false
@@ -112,7 +112,7 @@ export class FiltersToolPanelListPanel extends Component {
     private recreateFilters(columnTree: IProvidedColumn[]): void {
         // Underlying filter comp/element won't get recreated if the column still exists (the element just gets detached/re-attached).
         // We can therefore restore focus if an element in the filter tool panel was focused.
-        const activeElement = this.gridOptionsService.getDocument().activeElement as HTMLElement;
+        const activeElement = this.gos.getActiveDomElement() as HTMLElement;
 
         if (!this.hasLoadedInitialState) {
             this.hasLoadedInitialState = true;

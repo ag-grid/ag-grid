@@ -21,13 +21,12 @@ export const ProductDropdown = ({ items, children }) => {
 
     useEffect(() => {
         document.addEventListener('click', handleClickOutside);
-
         return () => {
             document.removeEventListener('click', handleClickOutside);
         };
     }, []);
 
-    const getIconComponent = (title: any) => {
+    const getIconComponent = (title) => {
         switch (title) {
             case 'AG Grid':
                 return (
@@ -48,7 +47,16 @@ export const ProductDropdown = ({ items, children }) => {
     };
 
     return (
-        <div ref={dropdownRef} className={`${styles.customMenu} ${isOpen ? styles.open : ''}`}>
+        <div
+            ref={dropdownRef}
+            className={`${styles.customMenu} ${isOpen ? styles.open : ''}`}
+            onMouseEnter={() => {
+                setIsOpen(true);
+            }}
+            onMouseLeave={() => {
+                setIsOpen(false);
+            }}
+        >
             <button className={`${styles.customTrigger} ${isOpen ? styles.open : ''}`} onClick={handleMenuToggle}>
                 Products
                 <span className={styles.arrow}></span>

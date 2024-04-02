@@ -85,7 +85,7 @@ export class RichSelectRow<TValue> extends Component {
     }
 
     private populateWithoutRenderer(value: any, valueFormatted: any) {
-        const eDocument = this.gridOptionsService.getDocument();
+        const eDocument = this.gos.getDocument();
         const eGui = this.getGui();
 
         const span = eDocument.createElement('span');

@@ -47,9 +47,9 @@ export class SideBarComp extends Component implements ISideBar {
     @PostConstruct
     private postConstruct(): void {
         this.sideBarButtonsComp.addEventListener(SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED, this.onToolPanelButtonClicked.bind(this));
-        const { sideBar: sideBarState } = this.gridOptionsService.get('initialState') ?? {};
+        const { sideBar: sideBarState } = this.gos.get('initialState') ?? {};
         this.setSideBarDef({
-            sideBarDef: SideBarDefParser.parse(this.gridOptionsService.get('sideBar')),
+            sideBarDef: SideBarDefParser.parse(this.gos.get('sideBar')),
             sideBarState
         });
 
@@ -71,8 +71,7 @@ export class SideBarComp extends Component implements ISideBar {
         const { focusService, sideBarButtonsComp } = this;
         const eGui = this.getGui();
         const sideBarGui = sideBarButtonsComp.getGui();
-        const eDocument = this.gridOptionsService.getDocument();
-        const activeElement = eDocument.activeElement as HTMLElement;
+        const activeElement = this.gos.getActiveDomElement() as HTMLElement;
         const openPanel = eGui.querySelector('.ag-tool-panel-wrapper:not(.ag-hidden)') as HTMLElement;
         const target = e.target as HTMLElement;
 
@@ -108,11 +107,13 @@ export class SideBarComp extends Component implements ISideBar {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        const eDocument = this.gridOptionsService.getDocument();
-        if (!this.sideBarButtonsComp.getGui().contains(eDocument.activeElement)) { return; }
+        const currentButton = this.gos.getActiveDomElement();
+
+        if (!this.sideBarButtonsComp.getGui().contains(currentButton)) { return; }
+
         const sideBarGui = this.sideBarButtonsComp.getGui();
         const buttons: HTMLElement[] = Array.prototype.slice.call(sideBarGui.querySelectorAll('.ag-side-button'));
-        const currentButton = eDocument.activeElement;
+        
         const currentPos = buttons.findIndex(button => button.contains(currentButton));
         let nextPos: number | null = null;
 
@@ -365,7 +366,7 @@ export class SideBarComp extends Component implements ISideBar {
     }
 
     private onSideBarUpdated(): void {
-        const sideBarDef = SideBarDefParser.parse(this.gridOptionsService.get('sideBar'));
+        const sideBarDef = SideBarDefParser.parse(this.gos.get('sideBar'));
 
         let existingToolPanelWrappers: { [id: string]: ToolPanelWrapper } = {};
         if (sideBarDef && this.sideBar) {
@@ -380,7 +381,7 @@ export class SideBarComp extends Component implements ISideBar {
                 }
                 const toolPanelWrapper = this.toolPanelWrappers.find(toolPanel => toolPanel.getToolPanelId() === id);
                 if (!toolPanelWrapper) { return; }
-                const params = this.gridOptionsService.addGridCommonParams<IToolPanelParams>({
+                const params = this.gos.addGridCommonParams<IToolPanelParams>({
                     ...(toolPanelDef.toolPanelParams ?? {}),
                     onStateUpdated: () => this.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED })
                 });

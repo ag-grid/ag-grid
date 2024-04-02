@@ -114,7 +114,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
         const { pickerIcon, inputWidth } = this.config;
 
         if (pickerIcon) {
-            const icon = createIconNoSpan(pickerIcon, this.gridOptionsService);
+            const icon = createIconNoSpan(pickerIcon, this.gos);
             if (icon) {
                 this.eIcon.appendChild(icon);
             }
@@ -128,7 +128,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     protected setupAria(): void {
         const ariaEl = this.getAriaElement();
         
-        ariaEl.setAttribute('tabindex', (this.gridOptionsService.get('tabIndex')).toString());
+        ariaEl.setAttribute('tabindex', (this.gos.get('tabIndex')).toString());
 
         setAriaExpanded(ariaEl, false);
 
@@ -205,10 +205,10 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     }
 
     protected renderAndPositionPicker(): (() => void) {
-        const eDocument = this.gridOptionsService.getDocument();
+        const eDocument = this.gos.getDocument();
         const ePicker = this.pickerComponent!.getGui();
 
-        if (!this.gridOptionsService.get('suppressScrollWhenPopupsAreOpen')) {
+        if (!this.gos.get('suppressScrollWhenPopupsAreOpen')) {
             this.destroyMouseWheelFunc = this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, () => {
                 this.hidePicker();
             });
@@ -223,7 +223,8 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
             eChild: ePicker,
             closeOnEsc: true,
             closedCallback: () => {
-                const shouldRestoreFocus = eDocument.activeElement === eDocument.body;
+                const activeEl = this.gos.getActiveDomElement()
+                const shouldRestoreFocus = !activeEl || activeEl === eDocument.body;
                 this.beforeHidePicker();
 
                 if (shouldRestoreFocus && this.isAlive()) {
@@ -265,7 +266,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
         const { pickerType } = this.config;
         const { pickerGap } = this;
 
-        const alignSide = this.gridOptionsService.get('enableRtl') ? 'right' : 'left';
+        const alignSide = this.gos.get('enableRtl') ? 'right' : 'left';
 
         this.popupService.positionPopupByComponent({
             type: pickerType,

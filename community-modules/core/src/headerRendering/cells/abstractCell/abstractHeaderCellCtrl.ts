@@ -21,6 +21,7 @@ import { WithoutGridCommon } from "../../../interfaces/iCommon";
 import { MenuService } from "../../../misc/menuService";
 import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
 import { getInnerWidth } from "../../../utils/dom";
+import { BrandedType } from "@ag-grid-community/core";
 
 let instanceIdSequence = 0;
 
@@ -31,6 +32,8 @@ export interface IAbstractHeaderCellComp {
 export interface IHeaderResizeFeature {
     toggleColumnResizing(resizing: boolean): void;
 }
+
+export type HeaderCellCtrlInstanceId = BrandedType<string, 'HeaderCellCtrlInstanceId'>;
 
 export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellComp = any, TColumn extends IHeaderColumn = any, TFeature extends IHeaderResizeFeature = any> extends BeanStub {
 
@@ -44,7 +47,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     @Autowired('menuService') protected readonly menuService: MenuService;
 
     protected readonly beans: Beans;
-    private instanceId: string;
+    private instanceId: HeaderCellCtrlInstanceId;
     private columnGroupChild: IHeaderColumn;
     private parentRowCtrl: HeaderRowCtrl;
 
@@ -72,7 +75,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         this.beans = beans;
 
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
-        this.instanceId = columnGroupChild.getUniqueId() + '-' + instanceIdSequence++;
+        this.instanceId = columnGroupChild.getUniqueId() + '-' + instanceIdSequence++ as HeaderCellCtrlInstanceId;
     }
 
     @PostConstruct
@@ -84,7 +87,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         const { headerRowIndex, column } = this.focusService.getFocusedHeader()!;
 
         return isUserSuppressingHeaderKeyboardEvent(
-            this.gridOptionsService,
+            this.gos,
             e,
             headerRowIndex,
             column
@@ -92,8 +95,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     protected getWrapperHasFocus(): boolean {
-        const eDocument = this.gridOptionsService.getDocument();
-        const activeEl = eDocument.activeElement;
+        const activeEl = this.gos.getActiveDomElement();
 
         return activeEl === this.eGui;
     }
@@ -132,7 +134,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     private refreshTabIndex(): void {
-        const suppressHeaderFocus = this.gridOptionsService.get('suppressHeaderFocus');
+        const suppressHeaderFocus = this.gos.get('suppressHeaderFocus');
         if (suppressHeaderFocus) {
             this.eGui.removeAttribute('tabindex');
         } else {
@@ -141,8 +143,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     private onGuiKeyDown(e: KeyboardEvent): void {
-        const eDocument = this.gridOptionsService.getDocument();
-        const activeEl = eDocument.activeElement;
+        const activeEl = this.gos.getActiveDomElement();
 
         const isLeftOrRight = e.key === KeyCode.LEFT || e.key === KeyCode.RIGHT;
 
@@ -165,7 +166,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
         if (!isLeftOrRight) { return; }
         
-        const isLeft = (e.key === KeyCode.LEFT) !== this.gridOptionsService.get('enableRtl');
+        const isLeft = (e.key === KeyCode.LEFT) !== this.gos.get('enableRtl');
         const direction = HorizontalDirection[isLeft ? 'Left' : 'Right' ];
 
         if (e.altKey) {
@@ -202,10 +203,10 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     private getResizeDiff(e: KeyboardEvent): number {
-        let isLeft = (e.key === KeyCode.LEFT) !== this.gridOptionsService.get('enableRtl');
+        let isLeft = (e.key === KeyCode.LEFT) !== this.gos.get('enableRtl');
 
         const pinned = this.column.getPinned();
-        const isRtl = this.gridOptionsService.get('enableRtl');
+        const isRtl = this.gos.get('enableRtl');
         if (pinned) {
             if (isRtl !== (pinned === 'right')) {
                 isLeft = !isLeft;
@@ -246,8 +247,8 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
     private addDomData(): void {
         const key = AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL;
-        this.gridOptionsService.setDomData(this.eGui, key, this);
-        this.addDestroyFunc(() => this.gridOptionsService.setDomData(this.eGui, key, null));
+        this.gos.setDomData(this.eGui, key, this);
+        this.addDestroyFunc(() => this.gos.setDomData(this.eGui, key, null));
     }
 
     public getGui(): HTMLElement {
@@ -274,7 +275,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         return this.parentRowCtrl.getPinned();
     }
 
-    public getInstanceId(): string {
+    public getInstanceId(): HeaderCellCtrlInstanceId {
         return this.instanceId;
     }
 
@@ -291,7 +292,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
     protected handleContextMenuMouseEvent(mouseEvent: MouseEvent | undefined, touchEvent: TouchEvent | undefined, column: Column | ProvidedColumnGroup): void {
         const event = mouseEvent ?? touchEvent!;
-        if (this.gridOptionsService.get('preventDefaultOnContextMenu')) {
+        if (this.gos.get('preventDefaultOnContextMenu')) {
             event.preventDefault();
         }
         const columnToUse = column instanceof Column ? column : undefined;

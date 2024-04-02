@@ -1,4 +1,4 @@
-import { RowCtrl } from "./row/rowCtrl";
+import { RowCtrl, RowCtrlInstanceId } from "./row/rowCtrl";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import {
@@ -36,11 +36,11 @@ import { StickyRowFeature } from "./features/stickyRowFeature";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { browserSupportsPreventScroll } from "../utils/browser";
 import { WithoutGridCommon } from "../interfaces/iCommon";
-import { IRowNode, VerticalScrollPosition } from "../interfaces/iRowNode";
+import { IRowNode } from "../interfaces/iRowNode";
 
-export interface RowCtrlMap {
-    [key: string]: RowCtrl;
-}
+type RowCtrlIdMap = Record<RowCtrlInstanceId, RowCtrl>;
+type RowCtrlByRowIndex = Record<number, RowCtrl>;
+export type RowCtrlByRowNodeIdMap = Record<string, RowCtrl>;
 
 interface RowNodeMap {
     [id: string]: IRowNode;
@@ -103,8 +103,8 @@ export class RowRenderer extends BeanStub {
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom.
-    private rowCtrlsByRowIndex: RowCtrlMap = {};
-    private zombieRowCtrls: RowCtrlMap = {};
+    private rowCtrlsByRowIndex: RowCtrlByRowIndex = {};
+    private zombieRowCtrls: RowCtrlIdMap = {};
     private cachedRowCtrls: RowCtrlCache;
     private allRowCtrls: RowCtrl[] = [];
 
@@ -157,7 +157,7 @@ export class RowRenderer extends BeanStub {
             'enableRangeSelection', 'enableCellTextSelection',
         ], () => this.redrawRows());
 
-        if (this.gridOptionsService.isGroupRowsSticky()) {
+        if (this.gos.isGroupRowsSticky()) {
             const rowModelType = this.rowModel.getType();
             if (rowModelType === 'clientSide' || rowModelType === 'serverSide') {
                 this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(
@@ -170,14 +170,14 @@ export class RowRenderer extends BeanStub {
         this.registerCellEventListeners();
 
         this.initialiseCache();
-        this.printLayout = this.gridOptionsService.isDomLayout('print');
-        this.embedFullWidthRows = this.printLayout || this.gridOptionsService.get('embedFullWidthRows');
+        this.printLayout = this.gos.isDomLayout('print');
+        this.embedFullWidthRows = this.printLayout || this.gos.get('embedFullWidthRows');
 
         this.redrawAfterModelUpdate();
     }
 
     private initialiseCache(): void {
-        if (this.gridOptionsService.get('keepDetailRows')) {
+        if (this.gos.get('keepDetailRows')) {
             const countProp = this.getKeepDetailRowsCount();
             const count = countProp != null ? countProp : 3;
             this.cachedRowCtrls = new RowCtrlCache(count);
@@ -185,7 +185,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private getKeepDetailRowsCount(): number {
-        return this.gridOptionsService.get('keepDetailRowsCount');
+        return this.gos.get('keepDetailRowsCount');
     }
 
     public getStickyTopRowCtrls(): RowCtrl[] {
@@ -287,7 +287,7 @@ export class RowRenderer extends BeanStub {
                 removeRangeSelectionListeners();
             }
         });
-        const rangeSelectionEnabled = this.gridOptionsService.get('enableRangeSelection');
+        const rangeSelectionEnabled = this.gos.get('enableRangeSelection');
         if (rangeSelectionEnabled) {
             addRangeSelectionListeners();
         }
@@ -350,8 +350,8 @@ export class RowRenderer extends BeanStub {
     }
 
     private onDomLayoutChanged(): void {
-        const printLayout = this.gridOptionsService.isDomLayout('print');
-        const embedFullWidthRows = printLayout || this.gridOptionsService.get('embedFullWidthRows');
+        const printLayout = this.gos.isDomLayout('print');
+        const embedFullWidthRows = printLayout || this.gos.get('embedFullWidthRows');
 
         // if moving towards or away from print layout, means we need to destroy all rows, as rows are not laid
         // out using absolute positioning when doing print layout
@@ -522,10 +522,9 @@ export class RowRenderer extends BeanStub {
         // has the focus and not the cell div. therefore, when the refresh is finished, the grid will focus
         // the cell, and not the textfield. that means if the user is in a text field, and the grid refreshes,
         // the focus is lost from the text field. we do not want this.
-        const eDocument = this.gridOptionsService.getDocument();
-        const activeElement = eDocument.activeElement;
-        const cellDomData = this.gridOptionsService.getDomData(activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
-        const rowDomData = this.gridOptionsService.getDomData(activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
+        const activeElement = this.gos.getActiveDomElement();
+        const cellDomData = this.gos.getDomData(activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        const rowDomData = this.gos.getDomData(activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
 
         const gridElementFocused = cellDomData || rowDomData;
 
@@ -549,7 +548,7 @@ export class RowRenderer extends BeanStub {
         // never recycle rows on layout change as rows could change from normal DOM layout
         // back to the grid's row positioning.
         const recycleRows: boolean = !params.domLayoutChanged && !!params.recycleRows;
-        const animate = params.animate && this.gridOptionsService.isAnimateRows();
+        const animate = params.animate && this.gos.isAnimateRows();
 
         // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
         // however we can reuse the rows, so we keep them but index by rowNode.id
@@ -584,7 +583,7 @@ export class RowRenderer extends BeanStub {
 
     private scrollToTopIfNewData(params: RefreshViewParams): void {
         const scrollToTop = params.newData || params.newPage;
-        const suppressScrollToTop = this.gridOptionsService.get('suppressScrollOnNewData');
+        const suppressScrollToTop = this.gos.get('suppressScrollOnNewData');
 
         if (scrollToTop && !suppressScrollToTop) {
             this.gridBodyCtrl.getScrollFeature().scrollToTop();
@@ -644,7 +643,7 @@ export class RowRenderer extends BeanStub {
             // state
             this.focusService.setRestoreFocusedCell(cellPosition);
 
-            this.onCellFocusChanged(this.beans.gridOptionsService.addGridCommonParams<CellFocusedEvent>({
+            this.onCellFocusChanged(this.beans.gos.addGridCommonParams<CellFocusedEvent>({
                 rowIndex: cellPosition.rowIndex,
                 column: cellPosition.column,
                 rowPinned: cellPosition.rowPinned,
@@ -682,7 +681,7 @@ export class RowRenderer extends BeanStub {
         const stickyRowCtrls = (this.stickyRowFeature && this.stickyRowFeature.getStickyRowCtrls()) || [];
         const res = [...this.topRowCtrls, ...this.bottomRowCtrls, ...stickyRowCtrls];
 
-        for (const key of Object.keys(this.rowCtrlsByRowIndex)) {
+        for (const key in this.rowCtrlsByRowIndex) {
             res.push(this.rowCtrlsByRowIndex[key]);
         }
         return res;
@@ -877,11 +876,11 @@ export class RowRenderer extends BeanStub {
         this.removeRowCtrls(rowIndexesToRemove);
     }
 
-    private getRowsToRecycle(): RowCtrlMap {
+    private getRowsToRecycle(): RowCtrlByRowNodeIdMap {
         // remove all stub nodes, they can't be reused, as no rowNode id
         const stubNodeIndexes: string[] = [];
-        iterateObject(this.rowCtrlsByRowIndex, (index: string, rowComp: RowCtrl) => {
-            const stubNode = rowComp.getRowNode().id == null;
+        iterateObject(this.rowCtrlsByRowIndex, (index: string, rowCtrl: RowCtrl) => {
+            const stubNode = rowCtrl.getRowNode().id == null;
             if (stubNode) {
                 stubNodeIndexes.push(index);
             }
@@ -889,10 +888,10 @@ export class RowRenderer extends BeanStub {
         this.removeRowCtrls(stubNodeIndexes);
 
         // then clear out rowCompsByIndex, but before that take a copy, but index by id, not rowIndex
-        const ctrlsByIdMap: RowCtrlMap = {};
-        iterateObject(this.rowCtrlsByRowIndex, (index: string, rowComp: RowCtrl) => {
-            const rowNode = rowComp.getRowNode();
-            ctrlsByIdMap[rowNode.id!] = rowComp;
+        const ctrlsByIdMap: RowCtrlByRowNodeIdMap = {};
+        iterateObject(this.rowCtrlsByRowIndex, (index: string, rowCtrl: RowCtrl) => {
+            const rowNode = rowCtrl.getRowNode();
+            ctrlsByIdMap[rowNode.id!] = rowCtrl;
         });
         this.rowCtrlsByRowIndex = {};
 
@@ -1039,7 +1038,7 @@ export class RowRenderer extends BeanStub {
         });
 
         if (rowsToRecycle) {
-            const useAnimationFrame = afterScroll && !this.gridOptionsService.get('suppressAnimationFrame') && !this.printLayout;
+            const useAnimationFrame = afterScroll && !this.gos.get('suppressAnimationFrame') && !this.printLayout;
             if (useAnimationFrame) {
                 this.beans.animationFrameService.addDestroyTask(() => {
                     this.destroyRowCtrls(rowsToRecycle, animate);
@@ -1152,7 +1151,7 @@ export class RowRenderer extends BeanStub {
         return rowCtrl;
     }
 
-    private destroyRowCtrls(rowCtrlsMap: RowCtrlMap | null | undefined, animate: boolean): void {
+    private destroyRowCtrls(rowCtrlsMap: RowCtrlIdMap | null | undefined, animate: boolean): void {
         const executeInAWhileFuncs: (() => void)[] = [];
         iterateObject(rowCtrlsMap, (nodeId: string, rowCtrl: RowCtrl) => {
             // if row was used, then it's null
@@ -1186,12 +1185,12 @@ export class RowRenderer extends BeanStub {
     }
 
     private getRowBuffer(): number {
-        return this.gridOptionsService.get('rowBuffer');
+        return this.gos.get('rowBuffer');
     }
 
     private getRowBufferInPixels() {
         const rowsToBuffer = this.getRowBuffer();
-        const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
+        const defaultRowHeight = this.gos.getRowHeightAsNumber();
 
         return rowsToBuffer * defaultRowHeight;
     }
@@ -1211,7 +1210,7 @@ export class RowRenderer extends BeanStub {
         } else {
             const bufferPixels = this.getRowBufferInPixels();
             const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
-            const suppressRowVirtualisation = this.gridOptionsService.get('suppressRowVirtualisation');
+            const suppressRowVirtualisation = this.gos.get('suppressRowVirtualisation');
 
             let rowHeightsChanged = false;
             let firstPixel: number;
@@ -1263,8 +1262,8 @@ export class RowRenderer extends BeanStub {
         // trying to render all the rows, eg 10,000+ rows. this will kill the browser. so instead of
         // killing the browser, we limit the number of rows. just in case some use case we didn't think
         // of, we also have a property to not do this operation.
-        const rowLayoutNormal = this.gridOptionsService.isDomLayout('normal');
-        const suppressRowCountRestriction = this.gridOptionsService.get('suppressMaxRenderedRowRestriction');
+        const rowLayoutNormal = this.gos.isDomLayout('normal');
+        const suppressRowCountRestriction = this.gos.get('suppressMaxRenderedRowRestriction');
         const rowBufferMaxSize = Math.max(this.getRowBuffer(), 500);
 
         if (rowLayoutNormal && !suppressRowCountRestriction) {
@@ -1381,7 +1380,7 @@ export class RowRenderer extends BeanStub {
         // we only do the animation frames after scrolling, as this is where we want the smooth user experience.
         // having animation frames for other times makes the grid look 'jumpy'.
 
-        const suppressAnimationFrame = this.gridOptionsService.get('suppressAnimationFrame');
+        const suppressAnimationFrame = this.gos.get('suppressAnimationFrame');
         const useAnimationFrameForCreate = afterScroll && !suppressAnimationFrame && !this.printLayout;
 
         const res = new RowCtrl(
@@ -1397,8 +1396,7 @@ export class RowRenderer extends BeanStub {
 
     public getRenderedNodes() {
         const renderedRows = this.rowCtrlsByRowIndex;
-
-        return Object.keys(renderedRows).map(key => renderedRows[key]!.getRowNode());
+        return Object.values(renderedRows).map(rowCtrl => rowCtrl.getRowNode());
     }
 
     public getRowByPosition(rowPosition: RowPosition): RowCtrl | null {
@@ -1452,7 +1450,7 @@ export class RowRenderer extends BeanStub {
 class RowCtrlCache {
 
     // map for fast access
-    private entriesMap: RowCtrlMap = {};
+    private entriesMap: RowCtrlByRowNodeIdMap = {};
 
     // list for keeping order
     private entriesList: RowCtrl[] = [];

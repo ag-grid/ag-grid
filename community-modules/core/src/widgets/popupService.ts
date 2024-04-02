@@ -110,7 +110,7 @@ export class PopupService extends BeanStub {
     }
 
     public getPopupParent(): HTMLElement {
-        const ePopupParent = this.gridOptionsService.get('popupParent');
+        const ePopupParent = this.gos.get('popupParent');
 
         if (ePopupParent) { return ePopupParent; }
 
@@ -140,7 +140,7 @@ export class PopupService extends BeanStub {
         // to the right, unless it doesn't fit and we then put it to the left. for RTL it's the other way around,
         // we try place it first to the left, and then if not to the right.
         let x: number;
-        if (this.gridOptionsService.get('enableRtl')) {
+        if (this.gos.get('enableRtl')) {
             // for RTL, try left first
             x = xLeftPosition();
             if (x < 0) {
@@ -295,7 +295,7 @@ export class PopupService extends BeanStub {
         column?: Column | null,
         rowNode?: IRowNode | null
     ): void {
-        const callback = this.gridOptionsService.getCallback('postProcessPopup');
+        const callback = this.gos.getCallback('postProcessPopup');
         if (callback) {
             const params: WithoutGridCommon<PostProcessPopupParams> = {
                 column: column,
@@ -369,7 +369,7 @@ export class PopupService extends BeanStub {
         // returns the rect outside the borders, but the 0,0 coordinate for absolute
         // positioning is inside the border, leading the popup to be off by the width
         // of the border
-        const eDocument = this.gridOptionsService.getDocument();
+        const eDocument = this.gos.getDocument();
         let popupParent = this.getPopupParent();
 
         if (popupParent === eDocument.body) {
@@ -392,7 +392,7 @@ export class PopupService extends BeanStub {
         const offsetProperty = isVertical ? 'offsetHeight' : 'offsetWidth';
         const scrollPositionProperty = isVertical ? 'scrollTop' : 'scrollLeft';
 
-        const eDocument = this.gridOptionsService.getDocument();
+        const eDocument = this.gos.getDocument();
         const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
         const parentRect = popupParent.getBoundingClientRect();
@@ -414,7 +414,7 @@ export class PopupService extends BeanStub {
     }
 
     public addPopup(params: AddPopupParams): AddPopupResult { 
-        const eDocument = this.gridOptionsService.getDocument();
+        const eDocument = this.gos.getDocument();
         const { eChild, ariaLabel, alwaysOnTop, positionCallback, anchorToElement } = params;
 
         if (!eDocument) {
@@ -471,7 +471,7 @@ export class PopupService extends BeanStub {
 
         eWrapper.classList.add('ag-popup');
         element.classList.add(
-            this.gridOptionsService.get('enableRtl') ? 'ag-rtl' : 'ag-ltr',
+            this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr',
             'ag-popup-child'
         );
 
@@ -510,7 +510,7 @@ export class PopupService extends BeanStub {
     }
 
     private addEventListenersToPopup(params: AddPopupParams & { wrapperEl: HTMLElement }): () => void {
-        const eDocument = this.gridOptionsService.getDocument();
+        const eDocument = this.gos.getDocument();
         const ePopupParent = this.getPopupParent();
 
         const { wrapperEl, eChild: popupEl, click: pointerEvent, closedCallback, afterGuiAttached, closeOnEsc, modal } = params;
@@ -518,7 +518,7 @@ export class PopupService extends BeanStub {
         let popupHidden = false;
 
         const hidePopupOnKeyboardEvent = (event: KeyboardEvent) => {
-            if (!wrapperEl.contains(eDocument.activeElement)) {
+            if (!wrapperEl.contains(this.gos.getActiveDomElement())) {
                 return;
             }
 
@@ -727,7 +727,7 @@ export class PopupService extends BeanStub {
     }
 
     public isElementWithinCustomPopup(el: HTMLElement): boolean {
-        const eDocument = this.gridOptionsService.getDocument();
+        const eDocument = this.gos.getDocument();
         while (el && el !== eDocument.body) {
             if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) {
                 return true;

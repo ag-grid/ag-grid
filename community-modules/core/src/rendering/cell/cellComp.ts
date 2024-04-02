@@ -329,7 +329,7 @@ export class CellComp extends Component implements TooltipParentComp {
         // never use task service if animation frame service is turned off.
         // and lastly we never use it if doing auto-height, as the auto-height service checks the
         // row height directly after the cell is created, it doesn't wait around for the tasks to complete        
-        const suppressAnimationFrame = this.beans.gridOptionsService.get('suppressAnimationFrame');
+        const suppressAnimationFrame = this.beans.gos.get('suppressAnimationFrame');
         const useTaskService = !suppressAnimationFrame;
 
         const displayComponentVersionCopy = this.rendererVersion;
@@ -449,8 +449,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if focus is inside the cell, we move focus to the cell itself
         // before removing it's contents, otherwise errors could be thrown.
-        const eDocument = this.beans.gridOptionsService.getDocument();
-        if (eGui.contains(eDocument.activeElement)) {
+        if (eGui.contains(this.beans.gos.getActiveDomElement())) {
             eGui.focus();
         }
 
@@ -464,7 +463,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private addPopupCellEditor(params: ICellEditorParams, position?: 'over' | 'under'): void {
-        if (this.beans.gridOptionsService.get('editType') === 'fullRow') {
+        if (this.beans.gos.get('editType') === 'fullRow') {
             console.warn('AG Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
                 '- either turn off fullRowEdit, or stop using popup editors.');
         }
@@ -480,7 +479,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const popupService = this.beans.popupService;
 
-        const useModelPopup = this.beans.gridOptionsService.get('stopEditingWhenCellsLoseFocus');
+        const useModelPopup = this.beans.gos.get('stopEditingWhenCellsLoseFocus');
 
         // see if position provided by colDef, if not then check old way of method on cellComp
         const positionToUse: 'over' | 'under' | undefined = position != null 
@@ -488,7 +487,7 @@ export class CellComp extends Component implements TooltipParentComp {
             : cellEditor.getPopupPosition 
                 ? cellEditor.getPopupPosition() 
                 : 'over';
-        const isRtl = this.beans.gridOptionsService.get('enableRtl');
+        const isRtl = this.beans.gos.get('enableRtl');
 
         const positionParams = {
             ePopup: ePopupGui,
@@ -543,8 +542,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if focus is inside the cell, we move focus to the cell itself
         // before removing it's contents, otherwise errors could be thrown.
-        const eDocument = this.beans.gridOptionsService.getDocument();
-        if (eGui.contains(eDocument.activeElement) && browserSupportsPreventScroll()) {
+        if (eGui.contains(this.beans.gos.getActiveDomElement()) && browserSupportsPreventScroll()) {
             eGui.focus({ preventScroll: true });
         }
 

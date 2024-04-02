@@ -131,7 +131,7 @@ export class GridChartComp extends Component {
             seriesChartTypes: this.params.seriesChartTypes,
         };
 
-        const isRtl = this.gridOptionsService.get('enableRtl');
+        const isRtl = this.gos.get('enableRtl');
 
         this.addCssClass(isRtl ? 'ag-rtl' : 'ag-ltr');
 
@@ -183,7 +183,7 @@ export class GridChartComp extends Component {
             chartInstance,
             getChartThemeName: this.getChartThemeName.bind(this),
             getChartThemes: this.getChartThemes.bind(this),
-            customChartThemes: this.gridOptionsService.get('customChartThemes'),
+            customChartThemes: this.gos.get('customChartThemes'),
             getGridOptionsChartThemeOverrides: () => this.getGridOptionsChartThemeOverrides(),
             getExtraPaddingDirections: () => this.chartMenu?.getExtraPaddingDirections() ?? [],
             apiChartThemeOverrides: this.params.chartThemeOverrides,
@@ -241,7 +241,7 @@ export class GridChartComp extends Component {
     }
 
     private getGridOptionsChartThemeOverrides(): AgChartThemeOverrides | undefined {
-        return this.gridOptionsService.get('chartThemeOverrides');
+        return this.gos.get('chartThemeOverrides');
     }
 
     private static createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy {
@@ -525,7 +525,7 @@ export class GridChartComp extends Component {
     }
 
     private getThemeName(): string {
-        const availableChartThemes = this.gridOptionsService.get('chartThemes') || DEFAULT_THEMES;
+        const availableChartThemes = this.gos.get('chartThemes') || DEFAULT_THEMES;
 
         if (availableChartThemes.length === 0) {
             throw new Error('Cannot create chart: no chart themes available.');
@@ -547,7 +547,7 @@ export class GridChartComp extends Component {
 
     private validateCustomThemes() {
         const suppliedThemes = this.getChartThemes();
-        const customChartThemes = this.gridOptionsService.get('customChartThemes');
+        const customChartThemes = this.gos.get('customChartThemes');
         if (customChartThemes) {
             this.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
                 if (!_.includes(suppliedThemes, customThemeName)) {
@@ -568,7 +568,7 @@ export class GridChartComp extends Component {
             : this.getChartModel().modelType;
 
         // standalone requires that `undefined` / `null` values are supplied as `{}`
-        const chartThemeOverrides = this.gridOptionsService.get('chartThemeOverrides') || {};
+        const chartThemeOverrides = this.gos.get('chartThemeOverrides') || {};
 
         this.update({
             type: `${modelType}ChartUpdate`,

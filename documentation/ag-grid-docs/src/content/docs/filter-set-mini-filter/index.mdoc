@@ -15,7 +15,7 @@ When the {% kbd "↵ Enter" /%} key is pressed while on the Mini Filter, the Set
 
 Alternatively, you can choose to have the Mini Filter applied as the user is typing, i.e. as the Filter List is filtered, the Set Filter will be applied as described above so that the results in the grid will also be filtered at the same time. To enable this behaviour, use the following:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -42,7 +42,7 @@ Sometimes it is necessary to provide custom handling for Mini Filter searches, f
 
 As with the [Text Filter](./filter-text/#text-formatter) it is possible to supply a Text Formatter to the Set Filter which formats the text before applying the Mini Filter compare logic. The snippet below shows how this can be configured:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -83,7 +83,7 @@ By default the Mini Filter is case-insensitive. Practically this means that sear
 
 Case-sensitive searches can be enabled by using the `caseSensitive` filter parameter:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -122,7 +122,7 @@ The example below shows this text being customised:
 
 By default, the Mini Filter is shown whenever the Set Filter is used. If you would like to hide it, you can use the following:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {

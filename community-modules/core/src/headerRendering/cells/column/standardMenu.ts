@@ -51,7 +51,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         let alignSide: 'left' | 'right' = 'left';
 
         const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
-        if (!isLegacyMenuEnabled && this.gridOptionsService.get('enableRtl')) {
+        if (!isLegacyMenuEnabled && this.gos.get('enableRtl')) {
             multiplier = 1;
             alignSide = 'right';
         }

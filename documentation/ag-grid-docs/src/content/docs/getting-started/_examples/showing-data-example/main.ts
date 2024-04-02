@@ -16,7 +16,7 @@ class CustomButtonComponent {
       this.eGui = document.createElement("div");
       let eButton = document.createElement("button");
       eButton.className = "btn-simple";
-      eButton.innerText = "Push Me!";
+      eButton.textContent = "Push Me!";
       this.eventListener = () => alert("clicked");
       eButton.addEventListener("click", this.eventListener);
       this.eGui.appendChild(eButton);

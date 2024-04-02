@@ -53,7 +53,7 @@ The `toolPanels` property follows the `ToolPanelDef` interface:
 
 The following snippet shows configuring the Tool Panel using a `SideBarDef` object:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     sideBar: {
         toolPanels: [
@@ -94,14 +94,14 @@ The `boolean` and `string` configurations are shortcuts for more detailed config
 
 The following code snippets show an example of the `boolean` shortcut and the equivalent `SideBarDef` long form.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // shortcut
     sideBar: true,
 }
 ```
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // equivalent detailed long form
     sideBar: {
@@ -128,14 +128,14 @@ const gridOptions = {
 
 The following code snippets show an example of the `string` shortcut and the equivalent `SideBarDef` long form.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // shortcut
     sideBar: 'filters',
 }
 ```
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // equivalent detailed long form
     sideBar: {
@@ -155,7 +155,7 @@ const gridOptions = {
 
 You can also use shortcuts inside the `toolPanel.items` array for specifying the Columns and Filters items.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // shortcut
     sideBar: {
@@ -164,7 +164,7 @@ const gridOptions = {
 }
 ```
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // equivalent detailed long form
     sideBar: {
@@ -198,7 +198,7 @@ If you are using the long form (providing a `SideBarDef` object) then it is poss
 
 Parameters are passed to Tool Panels via the `toolPanelParams` object. For example, the following code snippet sets `suppressRowGroups: true` and `suppressValues: true` for the [Columns Tool Panel](./tool-panel-columns/).
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     sideBar: {
         toolPanels: [

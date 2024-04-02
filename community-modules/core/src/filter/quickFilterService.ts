@@ -29,7 +29,7 @@ export class QuickFilterService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.resetQuickFilterCache());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.resetQuickFilterCache());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
-            if (!this.gridOptionsService.get('includeHiddenColumnsInQuickFilter')) {
+            if (!this.gos.get('includeHiddenColumnsInQuickFilter')) {
                 this.resetQuickFilterCache();
             }
         });
@@ -37,9 +37,9 @@ export class QuickFilterService extends BeanStub {
         this.addManagedPropertyListener('quickFilterText', (e) => this.setQuickFilter(e.currentValue));
         this.addManagedPropertyListener('includeHiddenColumnsInQuickFilter', () => this.onIncludeHiddenColumnsInQuickFilterChanged());
 
-        this.quickFilter = this.parseQuickFilter(this.gridOptionsService.get('quickFilterText'));
-        this.parser = this.gridOptionsService.get('quickFilterParser');
-        this.matcher = this.gridOptionsService.get('quickFilterMatcher');
+        this.quickFilter = this.parseQuickFilter(this.gos.get('quickFilterText'));
+        this.parser = this.gos.get('quickFilterParser');
+        this.matcher = this.gos.get('quickFilterMatcher');
         this.setQuickFilterParts();
 
         this.addManagedPropertyListeners(['quickFilterMatcher', 'quickFilterParser'], () => this.setQuickFilterParserAndMatcher());
@@ -50,7 +50,7 @@ export class QuickFilterService extends BeanStub {
     }
 
     public doesRowPassQuickFilter(node: RowNode): boolean {
-        const usingCache = this.gridOptionsService.get('cacheQuickFilter');
+        const usingCache = this.gos.get('cacheQuickFilter');
 
         if (this.matcher) {
             return this.doesRowPassQuickFilterMatcher(usingCache, node);
@@ -80,7 +80,7 @@ export class QuickFilterService extends BeanStub {
             return null;
         }
 
-        if (!this.gridOptionsService.isRowModelType('clientSide')) {
+        if (!this.gos.isRowModelType('clientSide')) {
             console.warn('AG Grid - Quick filtering only works with the Client-Side Row Model');
             return null;
         }
@@ -104,8 +104,8 @@ export class QuickFilterService extends BeanStub {
     }
 
     private setQuickFilterParserAndMatcher(): void {
-        const parser = this.gridOptionsService.get('quickFilterParser');
-        const matcher = this.gridOptionsService.get('quickFilterMatcher');
+        const parser = this.gos.get('quickFilterParser');
+        const matcher = this.gos.get('quickFilterMatcher');
         const hasChanged = parser !== this.parser || matcher !== this.matcher;
         this.parser = parser;
         this.matcher = matcher;
@@ -162,7 +162,7 @@ export class QuickFilterService extends BeanStub {
         const colDef = column.getColDef();
 
         if (colDef.getQuickFilterText) {
-            const params: GetQuickFilterTextParams = this.gridOptionsService.addGridCommonParams({
+            const params: GetQuickFilterTextParams = this.gos.addGridCommonParams({
                 value,
                 node,
                 data: node.data,

@@ -6,11 +6,11 @@ export class CompanyLogoRenderer implements ICellRendererComp {
   // Optional: Params for rendering. The same params that are passed to the cellRenderer function.
   init(params: ICellRendererParams) {
     let companyLogo: HTMLImageElement = document.createElement("img")
-    companyLogo.src = `https://www.ag-grid.com/example-assets/space-company-logos/${params.value.toLowerCase()}.png`
+    companyLogo.src = `https://www.ag-grid.com/example-assets/software-company-logos/${params.value.toLowerCase()}.png`
     companyLogo.setAttribute("class", "logo")
 
     this.eGui = document.createElement("span")
-    this.eGui.setAttribute("class", "imgSpan")
+    this.eGui.setAttribute("class", "imgSpanLogo")
     this.eGui.appendChild(companyLogo)
   }
 

@@ -28,11 +28,11 @@ export class SortStage extends BeanStub implements IRowNodeStage {
             // on if transactions are present. it's off for now so that we can
             // selectively turn it on and test it with some select users before
             // rolling out to everyone.
-            && this.gridOptionsService.get('deltaSort');
+            && this.gos.get('deltaSort');
 
 
         const sortContainsGroupColumns = sortOptions.some(opt => {
-            const isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
+            const isSortingCoupled = this.gos.isColumnsSortingCoupledToGroup();
             if (isSortingCoupled) {
                 return opt.column.isPrimary() && opt.column.isRowGroupActive();
             }

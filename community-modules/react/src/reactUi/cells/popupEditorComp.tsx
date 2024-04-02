@@ -15,13 +15,13 @@ const PopupEditorComp = (props: {
 
     const [popupEditorWrapper, setPopupEditorWrapper] = useState<PopupEditorWrapper>();
 
-    const { context, popupService, localeService, gridOptionsService } = useContext(BeansContext);
+    const { context, popupService, localeService, gos } = useContext(BeansContext);
 
     useEffectOnce(() => {
         const {editDetails, cellCtrl, eParentCell} = props;
         const {compDetails} = editDetails;
 
-        const useModelPopup = gridOptionsService.get('stopEditingWhenCellsLoseFocus');
+        const useModelPopup = gos.get('stopEditingWhenCellsLoseFocus');
         
         const wrapper = context.createBean(new PopupEditorWrapper(compDetails.params));
         const ePopupGui = wrapper.getGui();

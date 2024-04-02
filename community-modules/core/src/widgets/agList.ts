@@ -100,7 +100,7 @@ export class AgList<TValue = string> extends Component {
     }
 
     private renderOption(value: TValue, text: string): void {
-        const eDocument = this.gridOptionsService.getDocument();
+        const eDocument = this.gos.getDocument();
         const itemEl = eDocument.createElement('div');
 
         setAriaRole(itemEl, 'option');

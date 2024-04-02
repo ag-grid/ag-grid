@@ -4,7 +4,7 @@ import { AgCartesianAxisType, AgCharts, AgChartOptions, AgPolarAxisType, AgBaseT
 import { ChartController } from "../chartController";
 import { AgChartActual, AgChartAxisType } from "../utils/integration";
 import { get, set } from "../utils/object";
-import { ChartSeriesType, isCartesian, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
+import { ChartThemeOverridesSeriesType, ChartSeriesType, isCartesian, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
 
 export interface ChartOptionsProxy {
     getValue<T = string>(expression: string, calculated?: boolean): T;
@@ -539,7 +539,7 @@ export class ChartOptionsService extends BeanStub {
 
     private retrieveChartOptionsSeriesThemeOverride<T>(
         chartOptions: AgChartOptions, 
-        seriesType: ChartSeriesType,
+        seriesType: ChartThemeOverridesSeriesType,
         expression: string | null,
     ): T | undefined {
         return this.retrieveChartOption<T>(
@@ -550,7 +550,7 @@ export class ChartOptionsService extends BeanStub {
 
     private assignChartOptionsSeriesThemeOverride<T>(
         chartOptions: AgChartOptions, 
-        seriesType: ChartSeriesType,
+        seriesType: ChartThemeOverridesSeriesType,
         expression: string | null,
         value: T,
     ): void {
@@ -561,10 +561,10 @@ export class ChartOptionsService extends BeanStub {
         );
     }
 
-    private getChartThemeOverridesSeriesTypeKeys(chartType: ChartType): ChartSeriesType[] {
+    private getChartThemeOverridesSeriesTypeKeys(chartType: ChartType): ChartThemeOverridesSeriesType[] {
         // In the chart options API, theme overrides are categorized according to series type.
         // Depending on the chart type, theme overrides may need to be applied to multiple series types.
-        const chartSeriesTypes = this.chartController.getChartSeriesTypes(chartType);
+        const chartSeriesTypes: ChartThemeOverridesSeriesType[] = this.chartController.getChartSeriesTypes(chartType);
         if (this.chartController.isComboChart()) {
             chartSeriesTypes.push('common');
         }

@@ -53,13 +53,13 @@ export class ChartDatasource extends BeanStub {
                 return {chartData: [], columnNames: {}};
             }
 
-            if (!this.gridOptionsService.isRowModelType('clientSide')) {
+            if (!this.gos.isRowModelType('clientSide')) {
                 console.warn("AG Grid: crossing filtering is only supported in the client side row model.");
                 return {chartData: [], columnNames: {}};
             }
         }
 
-        const isServerSide = this.gridOptionsService.isRowModelType('serverSide');
+        const isServerSide = this.gos.isRowModelType('serverSide');
         if (isServerSide && params.pivoting) {
             this.updatePivotKeysForSSRM();
         }
@@ -70,6 +70,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private extractRowsFromGridRowModel(params: ChartDatasourceParams): IData {
+        const { crossFiltering, startRow, endRow, valueCols, dimensionCols, grouping } = params;
         let extractedRowData: any[] = [];
         const columnNames: { [key: string]: string[]; } = {};
 
@@ -82,7 +83,7 @@ export class ChartDatasource extends BeanStub {
         let allRowNodes: RowNode[] = [];
 
         let numRows;
-        if (params.crossFiltering) {
+        if (crossFiltering) {
             filteredNodes = this.getFilteredRowNodes();
             allRowNodes = this.getAllRowNodes();
             numRows = allRowNodes.length;
@@ -90,17 +91,23 @@ export class ChartDatasource extends BeanStub {
             // make sure enough rows in range to chart. if user filters and less rows, then end row will be
             // the last displayed row, not where the range ends.
             const modelLastRow = this.gridRowModel.getRowCount() - 1;
-            const rangeLastRow = params.endRow >= 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
-            numRows = rangeLastRow - params.startRow + 1;
+            // inclusivity is wrong for end row, so can't detect 0 rows properly
+            const hasNoRange = startRow === endRow && startRow === 0 && dimensionCols.length === 0 && valueCols.length === 0;
+            if (hasNoRange) {
+                numRows = 0;
+            } else {
+                const rangeLastRow = endRow >= 0 ? Math.min(endRow, modelLastRow) : modelLastRow;
+                numRows = rangeLastRow - startRow + 1;
+            }
         }
 
         for (let i = 0; i < numRows; i++) {
             const data: any = {};
 
-            const rowNode = params.crossFiltering ? allRowNodes[i] : this.gridRowModel.getRow(i + params.startRow)!;
+            const rowNode = crossFiltering ? allRowNodes[i] : this.gridRowModel.getRow(i + startRow)!;
 
             // first get data for dimensions columns
-            params.dimensionCols.forEach(col => {
+            dimensionCols.forEach(col => {
                 const colId = col.colId;
                 const column = this.columnModel.getGridColumn(colId);
 
@@ -108,7 +115,7 @@ export class ChartDatasource extends BeanStub {
                     const valueObject = this.valueService.getValue(column, rowNode);
 
                     // when grouping we also need to build up multi category labels for charts
-                    if (params.grouping) {
+                    if (grouping) {
                         const valueString = valueObject && valueObject.toString ? String(valueObject.toString()) : '';
 
                         // traverse parents to extract group label path
@@ -142,7 +149,7 @@ export class ChartDatasource extends BeanStub {
             });
 
             // then get data for value columns
-            params.valueCols.forEach(col => {
+            valueCols.forEach(col => {
                 let columnNamesArr: string[] = [];
 
                 // pivot keys should be added first
@@ -163,7 +170,7 @@ export class ChartDatasource extends BeanStub {
                 }
 
                 const colId = col.getColId();
-                if (params.crossFiltering) {
+                if (crossFiltering) {
                     const filteredOutColId = colId + '-filtered-out';
 
                     // add data value to value column
@@ -202,7 +209,7 @@ export class ChartDatasource extends BeanStub {
             extractedRowData.push(data);
         }
 
-        if (params.grouping) {
+        if (grouping) {
             const groupIndexesToRemove = _.values(groupsToRemove);
             const filterFunc = (data: any, index: number) => !data.footer && !_.includes(groupIndexesToRemove, index);
             extractedRowData = extractedRowData.filter(filterFunc);

@@ -6,14 +6,18 @@ import {
     Events,
     IColumnToolPanel,
     IToolPanelComp,
-    ToolPanelColumnCompParams,
     ModuleNames,
     ModuleRegistry,
-    ColumnToolPanelState
+    ColumnToolPanelState,
+    IToolPanelParams,
+    IToolPanelColumnCompParams
 } from "@ag-grid-community/core";
 import { PivotModePanel } from "./pivotModePanel";
 import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from "@ag-grid-enterprise/row-grouping";
 import { PrimaryColsPanel } from "./primaryColsPanel";
+
+export interface ToolPanelColumnCompParams<TData = any, TContext = any> extends IToolPanelParams<TData, TContext, ColumnToolPanelState>, IToolPanelColumnCompParams {
+}
 
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
 
@@ -43,7 +47,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public init(params: ToolPanelColumnCompParams): void {
-        const defaultParams: Partial<ToolPanelColumnCompParams> = this.gridOptionsService.addGridCommonParams({
+        const defaultParams: Partial<ToolPanelColumnCompParams> = this.gos.addGridCommonParams({
             suppressColumnMove: false,
             suppressColumnSelectAll: false,
             suppressColumnFilter: false,

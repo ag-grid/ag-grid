@@ -68,7 +68,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.enableRtl = this.gridOptionsService.get('enableRtl');
+        this.enableRtl = this.gos.get('enableRtl');
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
 
         this.ctrlsService.whenReady(p => {
@@ -85,7 +85,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.addManagedListener(this.centerRowContainerCtrl.getViewportElement(), 'scroll', this.onHScroll.bind(this));
         fakeHScroll.onScrollCallback(this.onFakeHScroll.bind(this));
 
-        const isDebounce = this.gridOptionsService.get('debounceVerticalScrollbar');
+        const isDebounce = this.gos.get('debounceVerticalScrollbar');
 
         const onVScroll = isDebounce ?
             debounce(this.onVScroll.bind(this), 100) : this.onVScroll.bind(this);
@@ -217,7 +217,7 @@ export class GridBodyScrollFeature extends BeanStub {
         // the `scrollGridIfNeeded` will recalculate the rows to be rendered by the grid
         // so it should only be called after `eBodyViewport` has been scrolled to the correct
         // position, otherwise the `first` and `last` row could be miscalculated.
-        if (this.gridOptionsService.get('suppressAnimationFrame')) {
+        if (this.gos.get('suppressAnimationFrame')) {
             this.scrollGridIfNeeded();
         } else {
             this.animationFrameService.schedule();
@@ -447,7 +447,7 @@ export class GridBodyScrollFeature extends BeanStub {
     //    if row is already in view, grid does not scroll
     public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null) {
         // if for print or auto height, everything is always visible
-        if (this.gridOptionsService.isDomLayout('print')) { return; }
+        if (this.gos.isDomLayout('print')) { return; }
 
         const rowCount = this.paginationProxy.getRowCount();
 
@@ -456,8 +456,8 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
 
-        const isPaging = this.gridOptionsService.get('pagination');
-        const paginationPanelEnabled = isPaging && !this.gridOptionsService.get('suppressPaginationPanel');
+        const isPaging = this.gos.get('pagination');
+        const paginationPanelEnabled = isPaging && !this.gos.get('suppressPaginationPanel');
 
         this.getFrameworkOverrides().wrapIncoming(() => {
             if (!paginationPanelEnabled) {

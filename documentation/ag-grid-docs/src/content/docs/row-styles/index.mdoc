@@ -18,7 +18,7 @@ You can add CSS styles to each row in the following ways:
 
 {% apiDocumentation source="grid-options/properties.json" section="styling" names=["rowStyle", "getRowStyle"] /%}
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     // set background colour on every row, this is probably bad, should be using CSS classes
     rowStyle: { background: 'black' },
@@ -37,7 +37,7 @@ You can add CSS classes to each row in the following ways:
 
 {% apiDocumentation source="grid-options/properties.json" section="styling" names=["rowClass", "getRowClass"] /%}
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     // all rows assigned CSS class 'my-green-class'
     rowClass: 'my-green-class',
@@ -58,7 +58,7 @@ You can define rules which can be applied to include certain CSS classes via the
 
 The following snippet shows `rowClassRules` that use functions and the value from the year column:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     rowClassRules: {
         // apply green to 2008
@@ -89,7 +89,7 @@ params object):
 
 The following snippet shows `rowClassRules` applying classes to rows using expressions on an age column value:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     rowClassRules: {
         'rag-green': 'data.age < 20',
@@ -126,7 +126,7 @@ Highlighting Rows is on by default. To turn it off, set the grid property `suppr
 
 Highlighting Columns is off by default. To turn it on, set the grid property `columnHoverHighlight=true`.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // turns OFF row hover, it's on by default
     suppressRowHoverHighlight: true,

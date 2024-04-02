@@ -162,13 +162,13 @@ export class SetFilterListItem<V> extends Component {
     }
 
     private setupExpansion(): void {
-        this.eGroupClosedIcon.appendChild(_.createIcon('setFilterGroupClosed', this.gridOptionsService, null));
-        this.eGroupOpenedIcon.appendChild(_.createIcon('setFilterGroupOpen', this.gridOptionsService, null));
+        this.eGroupClosedIcon.appendChild(_.createIcon('setFilterGroupClosed', this.gos, null));
+        this.eGroupOpenedIcon.appendChild(_.createIcon('setFilterGroupOpen', this.gos, null));
         this.addManagedListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         this.addManagedListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
 
         if (this.hasIndeterminateExpandState) {
-            this.eGroupIndeterminateIcon.appendChild(_.createIcon('setFilterGroupIndeterminate', this.gridOptionsService, null));
+            this.eGroupIndeterminateIcon.appendChild(_.createIcon('setFilterGroupIndeterminate', this.gos, null));
             this.addManagedListener(this.eGroupIndeterminateIcon, 'click', this.onExpandOrContractClicked.bind(this));
         }
 
@@ -313,7 +313,7 @@ export class SetFilterListItem<V> extends Component {
     }
 
     private setTooltipAndCellRendererParams(value: V | null | (() => string), formattedValue: string | null): void {
-        const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
+        const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
 
         if (this.params.showTooltips && (!isTooltipWhenTruncated || !this.params.cellRenderer)) {
             const newTooltipText = formattedValue != null ? formattedValue : _.toStringOrNull(value);
@@ -329,7 +329,7 @@ export class SetFilterListItem<V> extends Component {
             this.setTooltip({ newTooltipText, location: 'setFilterValue', shouldDisplayTooltip });
         }
 
-        this.cellRendererParams = this.gridOptionsService.addGridCommonParams({
+        this.cellRendererParams = this.gos.addGridCommonParams({
             value,
             valueFormatted: formattedValue,
             colDef: this.params.colDef,

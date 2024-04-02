@@ -128,7 +128,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     private updateDateComponent(): void {
-        const params = this.gridOptionsService.addGridCommonParams(this.getDateComponentParams());
+        const params = this.gos.addGridCommonParams(this.getDateComponentParams());
         this.dateComp.updateParams(params);
     }
 

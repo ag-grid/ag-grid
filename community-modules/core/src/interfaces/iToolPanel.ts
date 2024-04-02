@@ -31,7 +31,13 @@ export interface IToolPanel<TData = any, TContext = any, TState = any> {
 export interface IToolPanelComp<TData = any, TContext = any, TState = any>
     extends IToolPanel<TData, TContext, TState>, IComponent<IToolPanelParams<TData, TContext, TState>> { }
 
-export interface ToolPanelColumnCompParams<TData = any, TContext = any> extends IToolPanelParams<TData, TContext, ColumnToolPanelState> {
+/**
+ * @deprecated v31.3 - Use `IToolPanelColumnCompParams` instead.
+ */
+export interface ToolPanelColumnCompParams<TData = any, TContext = any> extends IToolPanelParams<TData, TContext, ColumnToolPanelState>, IToolPanelColumnCompParams {
+}
+
+export interface IToolPanelColumnCompParams {
     /** Suppress Column Move */
     suppressColumnMove: boolean;
     /** Suppress Row Groups section */
@@ -54,13 +60,11 @@ export interface ToolPanelColumnCompParams<TData = any, TContext = any> extends 
     suppressSyncLayoutWithGrid: boolean;
 }
 
-export interface IPrimaryColsPanel {
-    getGui(): HTMLElement;
-    init(allowDragging: boolean, params: ToolPanelColumnCompParams, eventType: ColumnEventType): void;
-    onExpandAll(): void;
-    onCollapseAll(): void;
-    expandGroups(groupIds?: string[]): void;
-    collapseGroups(groupIds?: string[]): void;
-    setColumnLayout(colDefs: (ColDef | ColGroupDef)[]): void;
-    syncLayoutWithGrid(): void;
+export interface IToolPanelFiltersCompParams {
+    /** To suppress Expand / Collapse All */
+    suppressExpandAll: boolean;
+    /** To suppress the Filter Search */
+    suppressFilterSearch: boolean;
+    /** Suppress updating the layout of columns as they are rearranged in the grid */
+    suppressSyncLayoutWithGrid: boolean;
 }

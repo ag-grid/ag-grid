@@ -260,7 +260,8 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     protected createValueElement(): HTMLElement {
-        const eCondition = document.createElement('div');
+        const eDocument = this.gos.getDocument();
+        const eCondition = eDocument.createElement('div');
         eCondition.classList.add('ag-filter-body');
 
         this.createFromToElement(eCondition, this.eConditionPanelsFrom, this.dateConditionFromComps, 'from');
@@ -270,7 +271,8 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     private createFromToElement(eCondition: HTMLElement, eConditionPanels: HTMLElement[], dateConditionComps: DateCompWrapper[], fromTo: string): void {
-        const eConditionPanel = document.createElement('div');
+        const eDocument = this.gos.getDocument();
+        const eConditionPanel = eDocument.createElement('div');
         eConditionPanel.classList.add(`ag-filter-${fromTo}`);
         eConditionPanel.classList.add(`ag-filter-date-${fromTo}`);
         eConditionPanels.push(eConditionPanel);
