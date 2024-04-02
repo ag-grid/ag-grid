@@ -38,8 +38,8 @@ If using node modules and grid packages include the enterprise package `ag-grid-
 
 ```js
 "dependencies": {
-    "ag-grid-community": "~@AG_GRID_VERSION@",
-    "ag-grid-enterprise": "~@AG_GRID_VERSION@"
+    "ag-grid-community": "~{% $agGridVersion %}",
+    "ag-grid-enterprise": "~{% $agGridVersion %}"
     ...
 }
 ```
@@ -60,8 +60,8 @@ If using node modules and grid modules, include the enterprise feature modules f
 
 ```js
 "dependencies": {    
-    "@ag-grid-enterprise/row-grouping": "~@AG_GRID_VERSION@",
-    "@ag-grid-enterprise/server-side-row-model": "~@AG_GRID_VERSION@",
+    "@ag-grid-enterprise/row-grouping": "~{% $agGridVersion %}",
+    "@ag-grid-enterprise/server-side-row-model": "~{% $agGridVersion %}",
     ...
 }
 ```

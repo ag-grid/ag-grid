@@ -57,7 +57,7 @@ If you do decide to use `packages` you'll need to specify `ag-grid-community` as
 
 ```js
 "dependencies": {
-    "ag-grid-community": "~@AG_GRID_VERSION@"
+    "ag-grid-community": "~{% $agGridVersion %}"
     //...other dependencies...
 }
 ```
@@ -66,9 +66,9 @@ You can then (optionally) specify `ag-grid-enterprise` if you require Enterprise
 
 ```diff
 "dependencies": {
-    "ag-grid-community": "~@AG_GRID_VERSION@"
+    "ag-grid-community": "~{% $agGridVersion %}"
 
-+   "ag-grid-enterprise": "~@AG_GRID_VERSION@"
++   "ag-grid-enterprise": "~{% $agGridVersion %}"
     //...other dependencies...
 }
 ```
@@ -86,9 +86,9 @@ Finally, if you're using Angular you'll need to specify `ag-grid-angular` packag
 {% if isFramework("angular") %}
 ```diff
 "dependencies": {
-   "ag-grid-community": "~@AG_GRID_VERSION@"
-   "ag-grid-enterprise": "~@AG_GRID_VERSION@"
-+   "ag-grid-angular": "~@AG_GRID_VERSION@"
+   "ag-grid-community": "~{% $agGridVersion %}"
+   "ag-grid-enterprise": "~{% $agGridVersion %}"
++   "ag-grid-angular": "~{% $agGridVersion %}"
    //...other dependencies...
 }
 ```
@@ -101,9 +101,9 @@ Finally, if you're using React you'll need to specify `ag-grid-react` packages:
 {% if isFramework("react") %}
 ```diff
 "dependencies": {
-   "ag-grid-community": "~@AG_GRID_VERSION@"
-   "ag-grid-enterprise": "~@AG_GRID_VERSION@"
-+   "ag-grid-react": "~@AG_GRID_VERSION@"
+   "ag-grid-community": "~{% $agGridVersion %}"
+   "ag-grid-enterprise": "~{% $agGridVersion %}"
++   "ag-grid-react": "~{% $agGridVersion %}"
    //...other dependencies...
 }
 ```
@@ -116,9 +116,9 @@ Finally, if you're using Vue you'll need to specify `ag-grid-vue3` packages:
 {% if isFramework("vue") %}
 ```diff
 "dependencies": {
-   "ag-grid-community": "~@AG_GRID_VERSION@"
-   "ag-grid-enterprise": "~@AG_GRID_VERSION@"
-+   "ag-grid-vue3": "~@AG_GRID_VERSION@"
+   "ag-grid-community": "~{% $agGridVersion %}"
+   "ag-grid-enterprise": "~{% $agGridVersion %}"
++   "ag-grid-vue3": "~{% $agGridVersion %}"
    //...other dependencies...
 }
 ```
@@ -145,8 +145,8 @@ It is vitally important that you do not mix packages and modules in the same app
 
 ```js
 "dependencies": {
-    "ag-grid-community": "~@AG_GRID_VERSION@" // a package dependency
-    "@ag-grid-enterprise/row-grouping": "~@AG_GRID_VERSION@" // a module dependency
+    "ag-grid-community": "~{% $agGridVersion %}" // a package dependency
+    "@ag-grid-enterprise/row-grouping": "~{% $agGridVersion %}" // a module dependency
     //...other dependencies...
 }
 ```

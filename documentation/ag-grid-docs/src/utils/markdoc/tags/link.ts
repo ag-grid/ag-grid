@@ -1,4 +1,5 @@
 import { Markdoc, type Schema, nodes } from '@astrojs/markdoc/config';
+import { agGridVersion } from '@constants';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
 export const link: Schema = {
@@ -17,7 +18,11 @@ export const link: Schema = {
         const { framework } = config.variables;
         const children = node.transformChildren(config);
         const nodeAttributes = node.transformAttributes(config);
-        const href = urlWithPrefix({ url: nodeAttributes.href, framework });
+
+        const hrefWithFramework = urlWithPrefix({ url: nodeAttributes.href, framework });
+        // Replace markdoc variables, as markdoc does not parse attributes
+        const href = hrefWithFramework.replace('{% $agGridVersion %}', agGridVersion);
+
         const attributes = {
             ...nodeAttributes,
             href,

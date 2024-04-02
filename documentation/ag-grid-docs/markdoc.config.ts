@@ -1,10 +1,13 @@
 import { Markdoc, component, defineMarkdocConfig, nodes } from '@astrojs/markdoc/config';
 
-import { DOCS_TAB_ITEM_ID_PREFIX } from './src/constants';
+import { DOCS_TAB_ITEM_ID_PREFIX, agGridVersion } from './src/constants';
 import { includeMarkdoc } from './src/utils/markdoc/tags/include-markdoc';
 import { link } from './src/utils/markdoc/tags/link';
 
 export default defineMarkdocConfig({
+    variables: {
+        agGridVersion,
+    },
     nodes: {
         heading: {
             ...nodes.heading, // Preserve default anchor link generation
