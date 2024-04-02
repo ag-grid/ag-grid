@@ -23,7 +23,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartDataModel, ChartModelParams, ColState } from "./model/chartDataModel";
 import { ChartProxy, FieldDefinition, UpdateParams } from "./chartProxies/chartProxy";
-import { _Theme, AgChartThemePalette, _ModuleSupport } from "ag-charts-community";
+import { _Theme, AgChartThemePalette, _ModuleSupport, AgCartesianAxisType } from "ag-charts-community";
 import {
     ChartSeriesType,
     getMaxNumCategories,
@@ -184,7 +184,7 @@ export class ChartController extends BeanStub {
             categories: selectedDimensions.map((selectedDimension) => ({
                 id: selectedDimension.colId,
                 name: selectedDimension.displayName!,
-                chartDataType: this.model.getChartDataType(selectedDimension.colId)
+                chartDataType: this.model.categoryAxisType ?? this.model.getChartDataType(selectedDimension.colId)
             })),
             fields,
             chartId: this.getChartId(),
@@ -273,6 +273,8 @@ export class ChartController extends BeanStub {
 
         // Reset the inverted category/series toggle whenever the chart type changes
         this.model.switchCategorySeries = false;
+
+        this.model.categoryAxisType = undefined;
 
         this.raiseChartModelUpdateEvent();
         this.raiseChartOptionsChangedEvent();
@@ -592,6 +594,11 @@ export class ChartController extends BeanStub {
             rowEndPinned: endRow && endRow.rowPinned,
             columns: cellRanges.reduce((columns, value) => columns.concat(value.columns.map(c => c.getId())), [] as string[])
         };
+    }
+
+    public setCategoryAxisType(categoryAxisType?: AgCartesianAxisType): void {
+        this.model.categoryAxisType = categoryAxisType;
+        this.raiseChartModelUpdateEvent();
     }
 
     public raiseChartModelUpdateEvent(): void {
