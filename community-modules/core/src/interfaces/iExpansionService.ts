@@ -7,7 +7,7 @@ export interface IExpansionService {
 
     expandAll(value: boolean): void;
 
-    setRowNodeExpanded(rowNode: IRowNode, expanded: boolean, expandParents?: boolean): void;
+    setRowNodeExpanded(rowNode: IRowNode, expanded: boolean, expandParents?: boolean, forceSync?: boolean): void;
 
     onGroupExpandedOrCollapsed(): void;
 }

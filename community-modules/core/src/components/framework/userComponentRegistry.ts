@@ -1,6 +1,5 @@
 import { BeanStub } from "../../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../../context/context";
-import { GridOptions } from "../../entities/gridOptions";
+import { Bean, PostConstruct } from "../../context/context";
 import { ReadOnlyFloatingFilter } from "../../filter/floating/provided/readOnlyFloatingFilter";
 import { DateFilter } from "../../filter/provided/date/dateFilter";
 import { DateFloatingFilter } from "../../filter/provided/date/dateFloatingFilter";
@@ -36,8 +35,6 @@ import { AgMenuItemRenderer } from "../../widgets/agMenuItemRenderer";
 
 @Bean('userComponentRegistry')
 export class UserComponentRegistry extends BeanStub {
-
-    @Autowired('gridOptions') private gridOptions: GridOptions;
 
     private agGridDefaults: { [key: string]: any } = {
         //date
@@ -106,8 +103,9 @@ export class UserComponentRegistry extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        if (this.gridOptions.components != null) {
-            iterateObject(this.gridOptions.components, (key, component) => this.registerJsComponent(key, component));
+        const comps = this.gos.get('components');
+        if (comps != null) {
+            iterateObject(comps, (key, component) => this.registerJsComponent(key, component));
         }
     }
 
@@ -132,7 +130,7 @@ export class UserComponentRegistry extends BeanStub {
         // FrameworkOverrides.frameworkComponent() is used in two locations:
         // 1) for Vue, user provided components get registered via a framework specific way.
         // 2) for React, it's how the React UI provides alternative default components (eg GroupCellRenderer and DetailCellRenderer)
-        const registeredViaFrameworkComp = this.getFrameworkOverrides().frameworkComponent(name, this.gridOptions.components);
+        const registeredViaFrameworkComp = this.getFrameworkOverrides().frameworkComponent(name, this.gos.get('components'));
         if (registeredViaFrameworkComp!=null) {
             return createResult(registeredViaFrameworkComp, true);
         }

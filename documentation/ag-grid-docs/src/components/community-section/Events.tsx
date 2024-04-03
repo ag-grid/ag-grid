@@ -20,16 +20,6 @@ const separateEventsByDate = (events) => {
     return { upcomingEvents, pastEvents };
 };
 
-function extractUniqueYears(events) {
-    const years = new Set();
-    const currYear = new Date().getFullYear();
-    events.forEach((event) => {
-        const year = event.startDate.substring(0, 4);
-        if (year != currYear) years.add(year);
-    });
-    return Array.from(years);
-}
-
 const EventItem = ({ event }) => {
     const [darkMode] = useDarkmode();
     return (
@@ -94,72 +84,20 @@ const EventItem = ({ event }) => {
 
 const Events = ({ images, events }) => {
     const { upcomingEvents, pastEvents } = separateEventsByDate(events);
-    const [currEvents, setCurrEvents] = useState(upcomingEvents);
-    const [activeTab, setActiveTab] = useState('upcoming');
-    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear() - 1);
-
-    const handleTabClick = (tab) => {
-        if (tab === 'upcoming') {
-            setCurrEvents(upcomingEvents);
-            setActiveTab('upcoming');
-        } else {
-            setCurrEvents(pastEvents);
-            setActiveTab('past');
-            setCurrEvents(
-                events.filter((event) => {
-                    const eventYear = new Date(event.startDate).getFullYear();
-                    return eventYear == selectedYear;
-                })
-            );
-        }
-    };
-
-    const filterYears = (year) => {
-        setSelectedYear(year);
-        setCurrEvents(
-            events.filter((event) => {
-                const eventYear = new Date(event.startDate).getFullYear();
-                return eventYear == year;
-            })
-        );
-    };
-
     return (
         <div className={styles.container}>
-            <div className={styles.tabContainer}>
-                <button
-                    className={`${styles.tabButton} ${activeTab === 'upcoming' ? styles.active : ''}`}
-                    onClick={() => handleTabClick('upcoming')}
-                >
-                    Upcoming Events
-                </button>
-                <button
-                    className={`${styles.tabButton} ${activeTab === 'past' ? styles.active : ''}`}
-                    onClick={() => handleTabClick('past')}
-                >
-                    Past Events
-                </button>
+            <div className={styles.scrollingGalleryContainer}>
+                <ScrollingGallery images={images} />
             </div>
-            {activeTab == 'past' && (
-                <div className={styles.filterContainer}>
-                    {extractUniqueYears(events).map((year, index) => (
-                        <button
-                            key={index}
-                            className={`${styles.tabButton} ${selectedYear == year ? styles.active : ''}`}
-                            onClick={() => filterYears(year)}
-                        >
-                            {year}
-                        </button>
-                    ))}
-                </div>
-            )}
-            {activeTab == 'upcoming' && (
-                <div className={styles.scrollingGalleryContainer}>
-                    <ScrollingGallery images={images} />
-                </div>
-            )}
+            <h2>Upcoming Events</h2>
             <div className={styles.eventsContainer}>
-                {currEvents.map((event, index) => (
+                {upcomingEvents.sort((a, b) => new Date(a.startDate) - new Date(b.startDate)).map((event, index) => (
+                    <EventItem key={index} event={event} />
+                ))}
+            </div>
+            <h2>Past Events</h2>
+            <div className={styles.eventsContainer}>
+                {pastEvents.map((event, index) => (
                     <EventItem key={index} event={event} />
                 ))}
             </div>

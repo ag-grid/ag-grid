@@ -58,13 +58,14 @@ export type ShowContextMenuParams = (MouseShowContextMenuParams | TouchShowConte
 
 @Bean('menuService')
 export class MenuService extends BeanStub {
-    @Optional('enterpriseMenuFactory') private readonly enterpriseMenuFactory? : IMenuFactory;
     @Autowired('filterMenuFactory') private readonly filterMenuFactory: IMenuFactory;
-    @Optional('contextMenuFactory') private readonly contextMenuFactory?: IContextMenuFactory;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Optional('columnChooserFactory') private columnChooserFactory: IColumnChooserFactory;
     @Autowired('filterManager') private filterManager: FilterManager;
+
+    @Optional('columnChooserFactory') private columnChooserFactory?: IColumnChooserFactory;
+    @Optional('contextMenuFactory') private readonly contextMenuFactory?: IContextMenuFactory;
+    @Optional('enterpriseMenuFactory') private readonly enterpriseMenuFactory? : IMenuFactory;
 
     private activeMenuFactory: IMenuFactory;
 

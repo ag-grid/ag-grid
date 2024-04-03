@@ -45,9 +45,7 @@ import { ColumnAnimationService } from "../rendering/columnAnimationService";
 @Bean('stateService')
 export class StateService extends BeanStub {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Optional('rangeService') private readonly rangeService?: IRangeService;
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
-    @Optional('sideBarService') private readonly sideBarService?: ISideBarService;
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
@@ -55,7 +53,10 @@ export class StateService extends BeanStub {
     @Autowired('selectionService') private readonly selectionService: ISelectionService;
     @Autowired('expansionService') private readonly expansionService: IExpansionService;
     @Autowired('columnAnimationService') private readonly columnAnimationService: ColumnAnimationService;
-
+    
+    @Optional('sideBarService') private readonly sideBarService?: ISideBarService;
+    @Optional('rangeService') private readonly rangeService?: IRangeService;
+    
     private isClientSideRowModel: boolean;
     private cachedState: GridState;
     private suppressEvents = true;

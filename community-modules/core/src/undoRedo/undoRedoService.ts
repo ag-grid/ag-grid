@@ -36,7 +36,8 @@ export class UndoRedoService extends BeanStub {
     @Autowired('cellPositionUtils') private cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Optional('rangeService') private readonly rangeService: IRangeService;
+
+    @Optional('rangeService') private readonly rangeService?: IRangeService;
 
     private gridBodyCtrl: GridBodyCtrl;
 
@@ -175,7 +176,7 @@ export class UndoRedoService extends BeanStub {
         this.processAction(undoRedoAction, (cellValueChange: CellValueChange) => cellValueChange[cellValueChangeProperty], source);
 
         if (undoRedoAction instanceof RangeUndoRedoAction) {
-            this.processRange(undoRedoAction.ranges || [undoRedoAction[rangeProperty]]);
+            this.processRange(this.rangeService!, undoRedoAction.ranges || [undoRedoAction[rangeProperty]]);
         } else {
             this.processCell(undoRedoAction.cellValueChanges);
         }
@@ -198,10 +199,10 @@ export class UndoRedoService extends BeanStub {
         });
     }
 
-    private processRange(ranges: (CellRange | undefined)[]) {
+    private processRange(rangeService: IRangeService, ranges: (CellRange | undefined)[]) {
         let lastFocusedCell: LastFocusedCell;
 
-        this.rangeService.removeAllCellRanges(true);
+        rangeService.removeAllCellRanges(true);
         ranges.forEach((range, idx) => {
             if (!range) { return; }
 
@@ -227,7 +228,7 @@ export class UndoRedoService extends BeanStub {
                 columns: range.columns
             };
 
-            this.rangeService.addCellRange(cellRangeParams);
+            rangeService.addCellRange(cellRangeParams);
         });
     }
 
@@ -246,10 +247,10 @@ export class UndoRedoService extends BeanStub {
         // when single cells are being processed, they should be considered
         // as ranges when the rangeService is present (singleCellRanges).
         // otherwise focus will be restore but the range will not.
-        this.setLastFocusedCell(lastFocusedCell, !!this.rangeService);
+        this.setLastFocusedCell(lastFocusedCell, this.rangeService);
     }
 
-    private setLastFocusedCell(lastFocusedCell: LastFocusedCell, setRangeToCell?: boolean) {
+    private setLastFocusedCell(lastFocusedCell: LastFocusedCell, rangeService?: IRangeService) {
         const { rowIndex, columnId, rowPinned } = lastFocusedCell;
         const scrollFeature = this.gridBodyCtrl.getScrollFeature();
 
@@ -263,10 +264,7 @@ export class UndoRedoService extends BeanStub {
         const cellPosition: CellPosition = { rowIndex, column, rowPinned };
         this.focusService.setFocusedCell({ ...cellPosition, forceBrowserFocus: true });
 
-
-        if (setRangeToCell) {
-            this.rangeService.setRangeToCell(cellPosition);
-        }
+        rangeService?.setRangeToCell(cellPosition);
     }
 
     private addRowEditingListeners(): void {

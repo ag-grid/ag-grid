@@ -29,7 +29,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
             <ag-name-value ref="sumAggregationComp"></ag-name-value>
         </div>`;
 
-    @Optional('rangeService') private rangeService: IRangeService;
+    @Optional('rangeService') private rangeService?: IRangeService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -123,7 +123,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     }
 
     private onRangeSelectionChanged(): void {
-        const cellRanges = this.rangeService ? this.rangeService.getCellRanges() : undefined;
+        const cellRanges = this.rangeService?.getCellRanges();
 
         let sum = 0;
         let count = 0;
@@ -133,10 +133,11 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
         const cellsSoFar: any = {};
 
-        if (cellRanges && !_.missingOrEmpty(cellRanges)) {
+        if (cellRanges && !_.missingOrEmpty(cellRanges) && this.rangeService) {
 
-            cellRanges.forEach((cellRange) => {
-
+            for (let i = 0; i < cellRanges.length; i++) {
+                const cellRange = cellRanges[i];
+                
                 let currentRow: RowPosition | null = this.rangeService.getRangeStartRow(cellRange);
                 const lastRow = this.rangeService.getRangeEndRow(cellRange);
 
@@ -209,7 +210,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
                     currentRow = this.cellNavigationService.getRowBelow(currentRow);
                 }
-            });
+            };
         }
 
         const gotResult = count > 1;

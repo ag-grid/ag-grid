@@ -193,9 +193,12 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     */
     isExpandable(): boolean;
     /**
-     * Set the expanded state of this rowNode. Pass `true` to expand and `false` to collapse.
+     * Set the expanded state of this rowNode.
+     * @param expanded - `true` to expand, `false` to collapse.
+     * @param sourceEvent - Optional event that will be passed to the `rowGroupOpened` event.
+     * @param forceSync - By default rows are expanded asynchronously for best performance. Set to `true` if you need to interact with the expanded row immediately after this function.
      */
-    setExpanded(expanded: boolean, e?: MouseEvent | KeyboardEvent): void;
+    setExpanded(expanded: boolean, sourceEvent?: MouseEvent | KeyboardEvent, forceSync?: boolean): void;
 
     /**
      * Returns:

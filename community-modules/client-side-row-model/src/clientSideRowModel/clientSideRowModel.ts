@@ -25,7 +25,6 @@ import {
     ValueCache,
     AsyncTransactionsFlushed,
     Beans,
-    FilterManager,
     WithoutGridCommon,
     RowModelType,
     SelectionChangedEvent,
@@ -50,7 +49,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('selectionService') private selectionService: ISelectionService;
-    @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('beans') private beans: Beans;
 
@@ -60,10 +58,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     @Autowired('flattenStage') private flattenStage: IRowNodeStage;
 
     // enterprise stages
-    @Optional('groupStage') private groupStage: IRowNodeStage;
-    @Optional('aggregationStage') private aggregationStage: IRowNodeStage;
-    @Optional('pivotStage') private pivotStage: IRowNodeStage;
-    @Optional('filterAggregatesStage') private filterAggregatesStage: IRowNodeStage;
+    @Optional('groupStage') private groupStage?: IRowNodeStage;
+    @Optional('aggregationStage') private aggregationStage?: IRowNodeStage;
+    @Optional('pivotStage') private pivotStage?: IRowNodeStage;
+    @Optional('filterAggregatesStage') private filterAggregatesStage?: IRowNodeStage;
 
     private onRowHeightChanged_debounced = _.debounce(this.onRowHeightChanged.bind(this), 100);
 
@@ -889,9 +887,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     // it's possible to recompute the aggregate without doing the other parts
     // + api.refreshClientSideRowModel('aggregate')
     public doAggregate(changedPath?: ChangedPath): void {
-        if (this.aggregationStage) {
-            this.aggregationStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
-        }
+        this.aggregationStage?.execute({ rowNode: this.rootNode, changedPath: changedPath });
     }
 
     private doFilterAggregates(changedPath: ChangedPath): void {
@@ -1019,9 +1015,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private doPivot(changedPath: ChangedPath) {
-        if (this.pivotStage) {
-            this.pivotStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
-        }
+        this.pivotStage?.execute({ rowNode: this.rootNode, changedPath: changedPath });
     }
 
     public getCopyOfNodesMap(): { [id: string]: RowNode; } {

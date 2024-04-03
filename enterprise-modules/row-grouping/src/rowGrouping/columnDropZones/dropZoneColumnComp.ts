@@ -25,9 +25,10 @@ import { TDropZone } from "./baseDropZonePanel";
 
 export class DropZoneColumnComp extends PillDragComp<Column> {
     @Autowired('popupService') private readonly popupService: PopupService;
-    @Optional('aggFuncService') private readonly aggFuncService: IAggFuncService;
     @Autowired('sortController') private readonly sortController: SortController;
     @Autowired('columnModel') protected readonly columnModel: ColumnModel;
+    
+    @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
 
     @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
 
@@ -217,7 +218,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         this.popupShowing = true;
 
         const virtualList = new VirtualList({ cssIdentifier: 'select-agg-func' });
-        const rows = this.aggFuncService.getFuncNames(this.column);
+        const rows = this.aggFuncService!.getFuncNames(this.column);
         const eGui = this.getGui();
         const virtualListGui = virtualList.getGui();
 

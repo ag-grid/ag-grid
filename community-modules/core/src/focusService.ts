@@ -38,11 +38,12 @@ export class FocusService extends BeanStub {
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
     @Autowired('cellPositionUtils') private readonly cellPositionUtils: CellPositionUtils;
-    @Optional('rangeService') private readonly rangeService: IRangeService;
     @Autowired('navigationService') public navigationService: NavigationService;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
     @Autowired('filterManager') public filterManager: FilterManager;
-    @Optional('advancedFilterService') public advancedFilterService: IAdvancedFilterService;
+
+    @Optional('rangeService') private readonly rangeService?: IRangeService;
+    @Optional('advancedFilterService') public readonly advancedFilterService?: IAdvancedFilterService;
 
     private gridCtrl: GridCtrl;
     private focusedCellPosition: CellPosition | null;
@@ -577,10 +578,7 @@ export class FocusService extends BeanStub {
             forceBrowserFocus: true
         });
 
-        if (this.rangeService) {
-            const cellPosition = { rowIndex, rowPinned, column };
-            this.rangeService.setRangeToCell(cellPosition);
-        }
+        this.rangeService?.setRangeToCell({ rowIndex, rowPinned, column });
 
         return true;
     }
@@ -599,7 +597,7 @@ export class FocusService extends BeanStub {
 
     private focusAdvancedFilter(position: HeaderPosition | null): boolean {
         this.advancedFilterFocusColumn = position?.column as Column | undefined;
-        return this.advancedFilterService.getCtrl().focusHeaderComp();
+        return this.advancedFilterService?.getCtrl().focusHeaderComp() ?? false;
     }
 
     public focusNextFromAdvancedFilter(backwards?: boolean, forceFirstColumn?: boolean): boolean {

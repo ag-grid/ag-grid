@@ -5,47 +5,14 @@ import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { useState } from 'react';
 
-const separateEventsByDate = (events) => {
-    const upcomingEvents = [];
-    const pastEvents = [];
-
-    events.forEach((event) => {
-        const startDate = new Date(event.startDate);
-        if (startDate >= new Date()) {
-            upcomingEvents.push(event);
-        } else {
-            pastEvents.push(event);
-        }
-    });
-
-    return { upcomingEvents, pastEvents };
-};
-
-function extractUniqueYears(events) {
-    const years = new Set();
-    const currYear = new Date().getFullYear();
-    events.forEach((event) => {
-        const year = event.startDate.substring(0, 4);
-        years.add(year);
-    });
-    return Array.from(years);
+const filterEvents = (events) => {
+    const filteredEvents = events.filter((event) => new Date(event.startDate).getFullYear() == new Date().getFullYear());
+    return filteredEvents.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
 }
 
-const UpcomingEvents = ({ enableFilters = false, images, events }) => {
+const UpcomingEvents = ({ images, events }) => {
     const [darkMode] = useDarkmode();
-    const { upcomingEvents } = separateEventsByDate(events);
-    const [currEvents, setCurrEvents] = useState(upcomingEvents);
-    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-
-    const filterYears = (year) => {
-        setSelectedYear(year);
-        setCurrEvents(
-            events.filter((event) => {
-                const eventYear = new Date(event.startDate).getFullYear();
-                return eventYear == year;
-            })
-        );
-    };
+    const currEvents = filterEvents(events);
 
     // Function to format date
     const formatDate = (dateString) => {
@@ -71,19 +38,6 @@ const UpcomingEvents = ({ enableFilters = false, images, events }) => {
     return (
         <div className={styles.container}>
             <div className={styles.eventDetailsContainer}>
-                {enableFilters && (
-                    <div className={styles.yearFiltersContainer}>
-                        {extractUniqueYears(events).map((year, index) => (
-                            <button
-                                key={index}
-                                className={`${styles.yearFilter} ${year == selectedYear ? styles.active : ''}`}
-                                onClick={() => filterYears(year)}
-                            >
-                                {year}
-                            </button>
-                        ))}
-                    </div>
-                )}
                 <ScrollingGallery images={images} />
                 <div className={styles.eventTilesContainer}>
                     {currEvents.map((event, index) => (

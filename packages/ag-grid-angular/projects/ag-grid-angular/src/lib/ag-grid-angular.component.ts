@@ -625,6 +625,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Changes the matching logic for whether a row passes the Quick Filter.
          */
     @Input() public quickFilterMatcher: ((quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean) | undefined = undefined;
+    /** When pivoting, Quick Filter is only applied on the pivoted data
+         * (or aggregated data if `groupAggFiltering = true`).
+         * Set to `true` to apply Quick Filter before pivoting (/aggregating) instead.
+         * @default false
+         */
+    @Input() public applyQuickFilterBeforePivotOrAgg: boolean | undefined = undefined;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results.
          * @default false
          */
@@ -1992,5 +1998,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_masterDetail: boolean | null | '';
     static ngAcceptInputType_treeData: boolean | null | '';
     static ngAcceptInputType_suppressGroupMaintainValueType: boolean | null | '';
+    static ngAcceptInputType_applyQuickFilterBeforePivotOrAgg: boolean | null | '';
     // @END@
 }

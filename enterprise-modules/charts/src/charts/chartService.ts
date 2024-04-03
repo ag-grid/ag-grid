@@ -37,8 +37,8 @@ export interface CrossFilteringContext {
 @Bean('chartService')
 export class ChartService extends BeanStub implements IChartService {
 
-    @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Optional('rangeService') private rangeService?: IRangeService;
 
     public static CHARTS_VERSION = CHARTS_VERSION;
 
@@ -399,7 +399,7 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     private getSelectedRange(): PartialCellRange {
-        const ranges = this.rangeService.getCellRanges();
+        const ranges = this.rangeService?.getCellRanges() ?? [];
         return ranges.length > 0 ? ranges[0] : { columns: [] };
     }
 

@@ -59,11 +59,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     @Autowired('selectionService') private selectionService: ISelectionService;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Optional('rangeService') private rangeService: IRangeService;
+
+    @Optional('rangeService') private rangeService?: IRangeService;
 
     private clientSideRowModel: IClientSideRowModel;
     private eContainer: HTMLElement;
-    private isMultiRowDrag: boolean = false;
     private lastDraggingEvent: DraggingEvent;
     private autoScrollService: AutoScrollService;
 
@@ -142,11 +142,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const currentNode = draggingEvent.dragItem.rowNode! as RowNode;
 
         if (isRowDragMultiRow && selectedNodes.indexOf(currentNode) !== -1) {
-            this.isMultiRowDrag = true;
             return selectedNodes;
         }
-
-        this.isMultiRowDrag = false;
 
         return [currentNode];
     }
@@ -268,9 +265,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         if (rowWasMoved) {
             this.focusService.clearFocusedCell();
-            if (this.rangeService) {
-                this.rangeService.removeAllCellRanges();
-            }
+            this.rangeService?.removeAllCellRanges();
         }
     }
 
@@ -415,10 +410,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         if (this.gos.get('rowDragManaged')) {
             this.clearRowHighlight();
-        }
-
-        if (this.isFromThisGrid(draggingEvent)) {
-            this.isMultiRowDrag = false;
         }
     }
 

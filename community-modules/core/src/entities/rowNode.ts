@@ -682,7 +682,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     /**
      * Set the expanded state of this rowNode. Pass `true` to expand and `false` to collapse.
      */
-    public setExpanded(expanded: boolean, e?: MouseEvent | KeyboardEvent): void {
+    public setExpanded(expanded: boolean, e?: MouseEvent | KeyboardEvent, forceSync?: boolean): void {
         if (this.expanded === expanded) { return; }
 
         this.expanded = expanded;
@@ -696,7 +696,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
             event: e || null
         });
 
-        this.beans.rowNodeEventThrottle.dispatchExpanded(event);
+        this.beans.rowNodeEventThrottle.dispatchExpanded(event, forceSync);
 
         // when using footers we need to refresh the group row, as the aggregation
         // values jump between group and footer

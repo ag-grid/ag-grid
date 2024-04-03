@@ -44,7 +44,8 @@ export class ChartDatasource extends BeanStub {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('rowNodeSorter') private readonly rowNodeSorter: RowNodeSorter;
     @Autowired('sortController') private sortController: SortController;
-    @Optional('aggregationStage') private readonly aggregationStage: IAggregationStage;
+
+    @Optional('aggregationStage') private readonly aggregationStage?: IAggregationStage;
 
     public getData(params: ChartDatasourceParams): IData {
         if (params.crossFiltering) {
@@ -263,6 +264,7 @@ export class ChartDatasource extends BeanStub {
         });
 
         if (ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation', this.context.getGridId())) {
+            const aggStage = this.aggregationStage!;
             dataAggregated.forEach(groupItem => params.valueCols.forEach(col => {
 
                 if (params.crossFiltering) {
@@ -274,7 +276,7 @@ export class ChartDatasource extends BeanStub {
                             .filter((child: any) => typeof child[colId] !== 'undefined')
                             .map((child: any) => child[colId]);
 
-                        let aggResult: any = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
+                        let aggResult: any = aggStage.aggregateValues(dataToAgg, params.aggFunc!);
                         groupItem[valueCol.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
 
                         // filtered out data
@@ -283,16 +285,12 @@ export class ChartDatasource extends BeanStub {
                             .filter((child: any) => typeof child[filteredOutColId] !== 'undefined')
                             .map((child: any) => child[filteredOutColId]);
 
-                        let aggResultFiltered: any = this.aggregationStage.aggregateValues(dataToAggFiltered, params.aggFunc!);
+                        let aggResultFiltered: any = aggStage.aggregateValues(dataToAggFiltered, params.aggFunc!);
                         groupItem[filteredOutColId] = aggResultFiltered && typeof aggResultFiltered.value !== 'undefined' ? aggResultFiltered.value : aggResultFiltered;
                     });
                 } else {
                     const dataToAgg = groupItem.__children.map((child: any) => child[col.getId()]);
-                    let aggResult: any = 0;
-
-                    if (ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation', this.context.getGridId())) {
-                        aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
-                    }
+                    let aggResult = aggStage.aggregateValues(dataToAgg, params.aggFunc!);
 
                     groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
                 }

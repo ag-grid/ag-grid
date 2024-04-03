@@ -52,7 +52,7 @@ export class GridBodyComp extends Component {
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
-    @Optional('rangeService') private rangeService: IRangeService;
+    @Optional('rangeService') private rangeService?: IRangeService;
 
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
     @RefSelector('eStickyTop') private eStickyTop: HTMLElement;
