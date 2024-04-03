@@ -27,7 +27,7 @@ import {
     ColumnGroupState,
     RowGroupExpansionState
 } from "../interfaces/gridState";
-import { IRangeService } from "../interfaces/IRangeService";
+import { CellRange, IRangeService } from "../interfaces/IRangeService";
 import { ISideBarService } from "../interfaces/iSideBar";
 import { FilterModel } from "../interfaces/iFilter";
 import { IRowModel } from "../interfaces/iRowModel";
@@ -41,6 +41,7 @@ import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { debounce } from "../utils/function";
 import { ColumnAnimationService } from "../rendering/columnAnimationService";
+import { Column } from "../entities/column";
 
 @Bean('stateService')
 export class StateService extends BeanStub {
@@ -491,13 +492,31 @@ export class StateService extends BeanStub {
     }
 
     private setRangeSelectionState(rangeSelectionState: RangeSelectionState): void {
-        if (!this.gos.get('enableRangeSelection')) { return; }
-        const cellRanges = rangeSelectionState.cellRanges.map(cellRange => ({
-            ...cellRange,
-            columns: cellRange.colIds.map(colId => this.columnModel.getGridColumn(colId)!),
-            startColumn: this.columnModel.getGridColumn(cellRange.startColId)!
-        }));
-        this.rangeService?.setCellRanges(cellRanges);
+        if (!this.gos.get('enableRangeSelection') || !this.rangeService) { return; }
+        const cellRanges: CellRange[] = [];
+        rangeSelectionState.cellRanges.forEach(cellRange => {
+            const columns: Column[] = [];
+            cellRange.colIds.forEach(colId => {
+                const column = this.columnModel.getGridColumn(colId);
+                if (column) {
+                    columns.push(column);
+                }
+            });
+            if (!columns.length) { return; }
+            let startColumn = this.columnModel.getGridColumn(cellRange.startColId);
+            if (!startColumn) {
+                // find the first remaining column
+                const allColumns = this.columnModel.getAllDisplayedColumns();
+                const columnSet = new Set(columns);
+                startColumn = allColumns.find(column => columnSet.has(column))!;
+            }
+            cellRanges.push({
+                ...cellRange,
+                columns,
+                startColumn
+            });
+        });
+        this.rangeService.setCellRanges(cellRanges);
     }
 
     private getScrollState(): ScrollState | undefined {
