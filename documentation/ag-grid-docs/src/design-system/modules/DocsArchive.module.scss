@@ -70,3 +70,24 @@
     border: 1px solid var(--color-logo-orange);
     color: var(--color-logo-orange);
 }
+.archiveList {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4;
+    margin-top: $spacing-size-8;
+    margin-bottom: $spacing-size-8;
+}
+
+.archiveItem {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-2;
+    width: 100%;
+    padding: $spacing-size-4;
+    border-radius: 8px;
+    border: 1px solid var(--color-border-primary);
+
+    a {
+        font-weight: var(--text-regular);
+    }
+}
