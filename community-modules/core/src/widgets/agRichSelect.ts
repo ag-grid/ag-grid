@@ -4,6 +4,7 @@ import { Autowired } from "../context/context";
 import { Events } from "../eventKeys";
 import { FieldPickerValueSelectedEvent } from "../events";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { AnimationFrameService } from "../misc/animationFrameService";
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { AgPromise } from "../utils";
 import { setAriaActiveDescendant, setAriaControls, setAriaLabel } from "../utils/aria";
@@ -62,6 +63,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     private eLoading: HTMLElement | undefined;
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
+    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @RefSelector('eInput') private eInput: AgInputTextField;
     
 
@@ -585,6 +587,18 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         this.selectListItem(newIndex);
     }
 
+    private onPageNavigation(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): void {
+        if (!this.isPickerDisplayed) { return ;}
+        const newIndex = this.listComponent?.navigateToPage(key, this.highlightedItem);
+
+        if (newIndex != null) {
+            this.animationFrameService.requestAnimationFrame(() => {
+                if (!this.isAlive()) { return null; }
+                this.highlightSelectedValue(newIndex);
+            });
+        }
+    }
+
     protected onEnterKeyDown(e: KeyboardEvent): void {
         if (!this.isPickerDisplayed) { return; }
         e.preventDefault();
@@ -634,15 +648,24 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         switch (key) {
             case KeyCode.LEFT:
             case KeyCode.RIGHT:
-            case KeyCode.PAGE_HOME:
-            case KeyCode.PAGE_END:
                 if (!allowTyping) {
                     event.preventDefault();
                 }
                 break;
+            case KeyCode.PAGE_HOME:
+            case KeyCode.PAGE_END:
+                if (allowTyping) {
+                    event.preventDefault();
+                    const inputEl = this.eInput.getInputElement();
+                    const target = key === KeyCode.PAGE_HOME ? 0 : inputEl.value.length;
+                    inputEl.setSelectionRange(target, target);
+                    break;
+                }
+                // Only break here for allowTyping, otherwise use the same logic as PageUp/PageDown
             case KeyCode.PAGE_UP:
             case KeyCode.PAGE_DOWN:
                 event.preventDefault();
+                this.onPageNavigation(key);
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:
@@ -654,7 +677,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                         event.preventDefault();
                         stopPropagationForAgGrid(event);
                     }
-
                     this.hidePicker();
                 }
                 break;
