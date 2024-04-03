@@ -1378,5 +1378,9 @@
   "reactiveCustomComponents": {
     "typeName": "boolean",
     "typesToInclude": []
+  },
+  "applyQuickFilterBeforePivotOrAgg": {
+    "typeName": "boolean",
+    "typesToInclude": []
   }
 }

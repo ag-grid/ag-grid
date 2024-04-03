@@ -452,11 +452,15 @@ export class FilterManager extends BeanStub {
     }
 
     public isAggregateQuickFilterPresent(): boolean {
-        return this.isQuickFilterPresent() && (this.aggFiltering || this.columnModel.isPivotMode());
+        return this.isQuickFilterPresent() && this.shouldApplyQuickFilterAfterAgg();
     }
 
     private isNonAggregateQuickFilterPresent(): boolean {
-        return this.isQuickFilterPresent() && !(this.aggFiltering || this.columnModel.isPivotMode());
+        return this.isQuickFilterPresent() && !this.shouldApplyQuickFilterAfterAgg();
+    }
+
+    private shouldApplyQuickFilterAfterAgg(): boolean {
+        return (this.aggFiltering || this.columnModel.isPivotMode()) && !this.gos.get('applyQuickFilterBeforePivotOrAgg');
     }
 
     public doesRowPassOtherFilters(filterToSkip: IFilterComp, node: any): boolean {

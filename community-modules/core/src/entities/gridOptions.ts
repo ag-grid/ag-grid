@@ -541,6 +541,13 @@ export interface GridOptions<TData = any> {
      */
     quickFilterMatcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
     /**
+     * When pivoting, Quick Filter is only applied on the pivoted data
+     * (or aggregated data if `groupAggFiltering = true`).
+     * Set to `true` to apply Quick Filter before pivoting (/aggregating) instead.
+     * @default false
+     */
+    applyQuickFilterBeforePivotOrAgg?: boolean;
+    /**
      * Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results.
      * @default false
      */
