@@ -10,7 +10,7 @@ import {
     ExcelHeaderFooterContent,
     ExcelHeaderFooterConfig,
     ExcelFont,
-    _
+    _, ExcelWatermarkImage,
 } from '@ag-grid-community/core';
 import { ExcelDataTable } from '../../assets/excelInterfaces';
 
@@ -243,12 +243,18 @@ const processHeaderFooterContent = (content: ExcelHeaderFooterContent[]): string
         return `${output}${_.escapeString(replaceHeaderFooterTokens(curr.value))}`;
     }, '');
 
-const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElement[] => {
+const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig, hasWatermarkImage: boolean = false): XmlElement[] => {
     const rules: ['all', 'first', 'even'] = ['all', 'first', 'even'];
     const headersAndFooters = [] as XmlElement[];
 
+    const headerFooterConfigToUse: ExcelHeaderFooterConfig = {
+        ...headerFooterConfig,
+        // When there is a watermark image, the header/footer should be applied to all pages
+        all: headerFooterConfig?.all ?? (hasWatermarkImage ? { header: [{ value: '&G' }] } : undefined)
+    }
+
     rules.forEach(rule => {
-        const headerFooter = headerFooterConfig[rule];
+        const headerFooter = headerFooterConfigToUse[rule];
         const namePrefix = rule === 'all' ? 'odd' : rule;
 
         if (!headerFooter || (!headerFooter.header && !headerFooter.footer)) { return; }
@@ -273,9 +279,17 @@ const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElem
     return headersAndFooters;
 };
 
-const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig) => {
+const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig, watermarkImageConfig?: ExcelWatermarkImage) => {
     return (children: XmlElement[]) => {
-        if (!headerFooterConfig) { return children; }
+        if (!headerFooterConfig && !watermarkImageConfig) { return children; }
+        if (!headerFooterConfig) {
+            children.push({
+                name: 'headerFooter',
+                children: buildHeaderFooter({}, true),
+            });
+
+            return children;
+        }
 
         const differentFirst = headerFooterConfig.first != null ? 1 : 0;
         const differentOddEven = headerFooterConfig.even != null ? 1 : 0;
@@ -293,6 +307,28 @@ const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig) => {
         return children;
     };
 };
+
+const addWatermarkParts = (watermarkConfig?: ExcelWatermarkImage) => {
+    if (!watermarkConfig) {
+        return (children: XmlElement[]) => children;
+    }
+
+    const watermarkRelId = ExcelXlsxFactory.getWatermarkRelId();
+    const watermarkImageType = watermarkConfig.imageType;
+
+    return (children: XmlElement[]) => {
+        children.push({
+            name: 'legacyDrawingHF',
+            properties: {
+                rawMap: {
+                    'r:id': watermarkRelId
+                }
+            }
+        });
+
+        return children;
+    };
+}
 
 const addExcelTableParts = (excelTable?: ExcelDataTable, index?: number) => {
     if (!excelTable) {
@@ -392,6 +428,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
         const { rows, columns } = table;
         const mergedCells = (columns && columns.length) ? getMergedCellsAndAddColumnGroups(rows, columns, !!suppressColumnOutline) : [];
 
+        const watermarkImageConfig = ExcelXlsxFactory.worksheetWatermarkImage;
         const worksheetExcelTables = ExcelXlsxFactory.worksheetDataTables.get(currentSheet);
 
         const createWorksheetChildren = _.compose(
@@ -402,9 +439,10 @@ const worksheetFactory: ExcelOOXMLTemplate = {
             addMergeCells(mergedCells),
             addPageMargins(margins),
             addPageSetup(pageSetup),
-            addHeaderFooter(headerFooterConfig),
+            addHeaderFooter(headerFooterConfig, watermarkImageConfig),
             addDrawingRel(currentSheet),
             addExcelTableParts(worksheetExcelTables, currentSheet),
+            addWatermarkParts(watermarkImageConfig),
         );
 
         const children = createWorksheetChildren([]);

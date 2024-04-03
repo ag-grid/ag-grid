@@ -37,8 +37,26 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
             Extension: ext
         }));
 
+        const watermarkTypes = [];
+        const watermarkImageType = ExcelXlsxFactory.worksheetWatermarkImage?.imageType;
+        if (watermarkImageType)  {
+            imageTypesObject[watermarkImageType] = true;
+            imageTypes.push({
+                name: 'Default',
+                ContentType: `image/${watermarkImageType}`,
+                Extension: watermarkImageType
+            });
+
+            watermarkTypes.push({
+                name: 'Default',
+                ContentType: 'application/vnd.openxmlformats-officedocument.vmlDrawing',
+                Extension: 'vml'
+            });
+        }
+
         const children = [
             ...imageTypes,
+            ...watermarkTypes,
             {
                 name: 'Default',
                 Extension: 'rels',

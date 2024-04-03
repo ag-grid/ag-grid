@@ -1,13 +1,11 @@
 import {
     Column,
-    ColGroupDef,
-    ColDef,
-    ColumnModel,
     ExcelFactoryMode,
     ExcelImage,
     ExcelRelationship,
     ExcelStyle,
     ExcelWorksheet,
+    ExcelWatermarkImage,
     ExcelTableConfig,
     RowHeightCallbackParams,
     _
@@ -51,6 +49,9 @@ export class ExcelXlsxFactory {
     /** Default name to be used for tables when no name is provided */
     public static defaultTableDisplayName = 'AG-GRID-TABLE';
 
+    /** Defines an image to be used as a watermark. If present, it will be applied to all sheets */
+    public static worksheetWatermarkImage: ExcelWatermarkImage | undefined;
+
     public static factoryMode: ExcelFactoryMode = ExcelFactoryMode.SINGLE_SHEET;
 
     public static createExcel(
@@ -76,6 +77,7 @@ export class ExcelXlsxFactory {
             }
         }
 
+        this.processWatermarkConfig(newConfig);
         this.processTableConfig(worksheet, newConfig);
         return this.createWorksheet(worksheet, newConfig);
     }
@@ -94,6 +96,10 @@ export class ExcelXlsxFactory {
 
     public static getTableRelIdFromIndex(idx: number) {
         return `tableRelId${idx + 1}`;
+    }
+
+    public static getWatermarkRelId() {
+        return 'watermarkRelId1'; // Only 1 single watermark per workbook is supported
     }
 
     public static getSanitizedTableName(name: string) {
@@ -209,6 +215,13 @@ export class ExcelXlsxFactory {
             highlightFirstColumn: highlightFirstColumn ?? false,
             highlightLastColumn: highlightLastColumn ?? false,
         });
+    }
+
+    private static processWatermarkConfig(
+        config: ExcelGridSerializingParams
+    ): void {
+        if (!config.watermark) { return; }
+        this.worksheetWatermarkImage = {...config.watermark};
     }
 
     private static buildSheetImageMap(sheetIndex: number, image: ExcelCalculatedImage): void {

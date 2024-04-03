@@ -6,6 +6,7 @@ import {
     ExcelColumn,
     ExcelImage,
     ExcelHeaderFooterConfig,
+    ExcelWatermarkImage,
     ExcelOOXMLDataType,
     ExcelRow,
     ExcelSheetPageSetup,
@@ -54,6 +55,7 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     margins?: ExcelSheetMargin;
     pageSetup?: ExcelSheetPageSetup;
     exportAsExcelTable?: boolean | ExcelTableConfig;
+    watermark?: ExcelWatermarkImage;
     sheetName: string;
     suppressColumnOutline?: boolean;
     suppressRowOutline?: boolean;
