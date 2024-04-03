@@ -292,7 +292,7 @@
             "type": "Product"
         },
         {
-            "link": "www.elfdict.com",
+            "link": "https://www.elfdict.com",
             "repo": "https://github.com/galadhremmin/Parf-Edhellen/tree/master",
             "title": "Parf Edhellen",
             "description": "A dictionary for Tolkien's languages",
@@ -358,7 +358,7 @@
             "repo": "https://github.com/sipb/hydrant",
             "title": "Hydrant",
             "description": "MIT semester course planning app",
-            "link": "hydrant.mit.edu/",
+            "link": "https://hydrant.mit.edu/",
             "type": "Product",
             "open_source": true,
             "stars": 21
@@ -613,7 +613,7 @@
             "open_source": true,
             "stars": 70,
             "type": "Product",
-            "link": "xataform.com"
+            "link": "https://github.com/xataio/xataform"
         },
         {
             "title": "Dash Player (Chinese)",
@@ -640,7 +640,7 @@
             "open_source": true,
             "stars": 35,
             "type": "Product",
-            "link": "fribbels.github.io/hsr-optimizer/"
+            "link": "https://fribbels.github.io/hsr-optimizer/"
         },
         {
             "title": "MSAez",
@@ -658,7 +658,7 @@
             "open_source": true,
             "stars": 70,
             "type": "Product",
-            "link": "dominate.ai/"
+            "link": "https://dominate.ai/"
         },
         {
             "title": "Parkour 2",
@@ -1398,7 +1398,7 @@
             "open_source": true,
             "stars": 70,
             "type": "Product",
-            "link": "www.coinfi.com"
+            "link": "https://www.coinfi.com"
         },
         {
             "title": "AccountGo",
