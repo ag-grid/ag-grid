@@ -33,6 +33,8 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     private componentCreator: (value: any, listItemElement: HTMLElement) => C;
     private componentUpdater: (value: any, component: C) => void;
     private rowHeight = 20;
+    private pageSize = -1;
+    private isScrolling = false;
     private lastFocusedRowIndex: number | null;
     private isHeightFromTheme: boolean = true;
 
@@ -116,6 +118,14 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
                 }
 
                 break;
+            case KeyCode.PAGE_HOME:
+            case KeyCode.PAGE_END:
+            case KeyCode.PAGE_UP:
+            case KeyCode.PAGE_DOWN:
+                if (this.navigateToPage(e.key)) {
+                    e.preventDefault();
+                }
+                break;
         }
     }
 
@@ -140,21 +150,60 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         return true;
     }
 
+    public navigateToPage(key: 'Home' | 'PageUp' | 'PageDown' | 'End', fromItem: number | 'focused' = 'focused'): boolean {
+        let hasFocus = false;
+
+        if (fromItem === 'focused') {
+            fromItem = this.getLastFocusedRow() as number;
+            hasFocus = true;
+        }
+
+        const rowCount = this.model.getRowCount() - 1;
+
+        let newIndex = -1;
+
+        if (key === KeyCode.PAGE_HOME) {
+            newIndex = 0;
+        } else if (key === KeyCode.PAGE_END) {
+            newIndex = rowCount;
+        } else if (key === KeyCode.PAGE_DOWN) {
+            newIndex = Math.min(fromItem + this.pageSize, rowCount);
+        } else if (key === KeyCode.PAGE_UP) {
+            newIndex = Math.max(fromItem - this.pageSize, 0)
+        }
+
+        if (newIndex === -1) {
+            return false;
+        }
+
+        if (hasFocus) {
+            this.focusRow(newIndex);
+        } else {
+            this.ensureIndexVisible(newIndex);
+        }
+
+        return true
+    }
+
     public getLastFocusedRow(): number | null {
         return this.lastFocusedRowIndex;
     }
 
     public focusRow(rowNumber: number): void {
+        if (this.isScrolling) { return; }
+        this.isScrolling = true;
+
         this.ensureIndexVisible(rowNumber);
 
-        window.setTimeout(() => {
+        this.animationFrameService.requestAnimationFrame(() => {
+            this.isScrolling = false;
             if (!this.isAlive()) { return; }
             const renderedRow = this.renderedRows.get(rowNumber);
 
             if (renderedRow) {
                 renderedRow.eDiv.focus();
             }
-        }, 10);
+        });
     }
 
     public getComponentAt(rowIndex: number): C | undefined {
@@ -280,6 +329,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         const bottomPixel = topPixel + gui.offsetHeight;
         const firstRow = Math.floor(topPixel / this.rowHeight);
         const lastRow = Math.floor(bottomPixel / this.rowHeight);
+        this.pageSize = Math.floor((bottomPixel - topPixel) / this.rowHeight);
 
         this.ensureRowsRendered(firstRow, lastRow, softRefresh);
     }
