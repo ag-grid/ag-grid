@@ -89,13 +89,19 @@ const Events = ({ images, events }) => {
             <div className={styles.scrollingGalleryContainer}>
                 <ScrollingGallery images={images} />
             </div>
-            <h2>Upcoming Events</h2>
-            <div className={styles.eventsContainer}>
-                {upcomingEvents.sort((a, b) => new Date(a.startDate) - new Date(b.startDate)).map((event, index) => (
-                    <EventItem key={index} event={event} />
-                ))}
-            </div>
-            <h2>Past Events</h2>
+            {upcomingEvents && (
+                <>
+                    <p className={styles.eventsSeparatorTitle}>Upcoming Events</p>
+                    <div className={styles.eventsContainer}>
+                        {upcomingEvents
+                            .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
+                            .map((event, index) => (
+                                <EventItem key={index} event={event} />
+                            ))}
+                    </div>
+                </>
+            )}
+            <p className={styles.eventsSeparatorTitle}>Past Events</p>
             <div className={styles.eventsContainer}>
                 {pastEvents.map((event, index) => (
                     <EventItem key={index} event={event} />
