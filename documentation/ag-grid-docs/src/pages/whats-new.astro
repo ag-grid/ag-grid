@@ -32,16 +32,18 @@ const versionsData: any[] = versionsContent ? versionsContent.data : [];
                 <div class={styles.versions}>
                     {
                         versionsData.map((versionInfo, index) => {
-                            return (
-                                <Version
-                                    client:load
-                                    isLatest={index === 0}
-                                    version={versionInfo.version}
-                                    date={versionInfo.date}
-                                    highlights={versionInfo.highlights}
-                                    notesPath={versionInfo.notesPath}
-                                />
-                            );
+                            if (versionInfo.highlights) {
+                                return (
+                                    <Version
+                                        client:load
+                                        isLatest={index === 0}
+                                        version={versionInfo.version}
+                                        date={versionInfo.date}
+                                        highlights={versionInfo.highlights}
+                                        notesPath={versionInfo.notesPath}
+                                    />
+                                );
+                            }
                         })
                     }
                 </div>

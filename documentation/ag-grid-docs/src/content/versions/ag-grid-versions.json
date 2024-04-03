@@ -202,5 +202,165 @@
                 "text": "Displaying stacked and unstacked column series together in the chart"
             }
         ]
+    },
+    {
+        "version": "29.1.0",
+        "date": "March 2023"
+    },
+    {
+        "version": "29.0.0",
+        "date": "January 2023"
+    },
+    {
+        "version": "28.2.1",
+        "date": "November 2022"
+    },
+    {
+        "version": "28.1.1",
+        "date": "August 2022"
+    },
+    {
+        "version": "28.1.0",
+        "date": "August 2022"
+    },
+    {
+        "version": "28.0.0",
+        "date": "July 2022"
+    },
+    {
+        "version": "27.3.0",
+        "date": "May 2022"
+    },
+    {
+        "version": "27.2.0",
+        "date": "April 2022"
+    },
+    {
+        "version": "27.1.0",
+        "date": "March 2022"
+    },
+    {
+        "version": "27.0.1",
+        "date": "February 2022"
+    },
+    {
+        "version": "27.0.0",
+        "date": "February 2022"
+    },
+    {
+        "version": "26.2.0",
+        "date": "November 2021"
+    },
+    {
+        "version": "26.1.0",
+        "date": "November 2021"
+    },
+    {
+        "version": "26.0.0",
+        "date": "August 2021"
+    },
+    {
+        "version": "25.3.0",
+        "date": "July 2021"
+    },
+    {
+        "version": "25.2.0",
+        "date": "May 2021"
+    },
+    {
+        "version": "25.1.0",
+        "date": "March 2021"
+    },
+    {
+        "version": "25.0.0",
+        "date": "January 2021"
+    },
+    {
+        "version": "24.1.0",
+        "date": "October 2020"
+    },
+    {
+        "version": "24.0.0",
+        "date": "September 2020"
+    },
+    {
+        "version": "23.2.0",
+        "date": "June 2020"
+    },
+    {
+        "version": "23.1.1",
+        "date": "May 2020"
+    },
+    {
+        "version": "23.1.0",
+        "date": "May 2020"
+    },
+    {
+        "version": "23.0.2",
+        "date": "March 2020"
+    },
+    {
+        "version": "23.0.0",
+        "date": "March 2020"
+    },
+    {
+        "version": "22.1.1",
+        "date": "December 2019"
+    },
+    {
+        "version": "22.1.0",
+        "date": "December 2019"
+    },
+    {
+        "version": "22.0.0",
+        "date": "November 2019"
+    },
+    {
+        "version": "21.2.2",
+        "date": "September 2019"
+    },
+    {
+        "version": "21.2.1",
+        "date": "September 2019"
+    },
+    {
+        "version": "21.2.0",
+        "date": "August 2019"
+    },
+    {
+        "version": "21.1.0",
+        "date": "July 2019"
+    },
+    {
+        "version": "21.0.1",
+        "date": "June 2019"
+    },
+    {
+        "version": "21.0.0",
+        "date": "June 2019"
+    },
+    {
+        "version": "20.2.0",
+        "date": "March 2019"
+    },
+    {
+        "version": "20.1.0",
+        "date": "February 2019"
+    },
+    {
+        "version": "20.0.0",
+        "date": "January 2019"
+    },
+    {
+        "version": "19.1.4",
+        "date": "November 2018"
+    },
+    {
+        "version": "19.0.0",
+        "date": "September 2018"
+    },
+    {
+        "version": "18.1.0",
+        "date": "June 2018"
     }
 ]
