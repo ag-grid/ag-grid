@@ -23,13 +23,14 @@ export class MenuItemMapper extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Optional('clipboardService') private readonly clipboardService: IClipboardService;
-    @Optional('aggFuncService') private readonly aggFuncService: IAggFuncService;
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
     @Autowired('chartMenuItemMapper') private readonly chartMenuItemMapper: ChartMenuItemMapper;
     @Autowired('menuService') private readonly menuService: MenuService;
     @Autowired('sortController') private readonly sortController: SortController;
+    
+    @Optional('clipboardService') private readonly clipboardService?: IClipboardService;
+    @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
 
     public mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null, sourceElement: () => HTMLElement): (MenuItemDef | string)[] {
         if (!originalList) {
@@ -103,7 +104,7 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('valueAggregation', 'Value Aggregation'),
                         icon: _.createIconNoSpan('menuValue', this.gos, null),
-                        subMenu: this.createAggregationSubMenu(column!)
+                        subMenu: this.createAggregationSubMenu(column!, this.aggFuncService!)
                     };
                 } else {
                     return null;
@@ -177,7 +178,7 @@ export class MenuItemMapper extends BeanStub {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
                         icon: _.createIconNoSpan('clipboardCopy', this.gos, null),
-                        action: () => this.clipboardService.copyToClipboard()
+                        action: () => this.clipboardService!.copyToClipboard()
                     };
                 } else {
                     return null;
@@ -188,7 +189,7 @@ export class MenuItemMapper extends BeanStub {
                         name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
                         icon: _.createIconNoSpan('clipboardCopy', this.gos, null),
-                        action: () => this.clipboardService.copyToClipboard({ includeHeaders: true })
+                        action: () => this.clipboardService!.copyToClipboard({ includeHeaders: true })
                     };
                 } else {
                     return null;
@@ -199,7 +200,7 @@ export class MenuItemMapper extends BeanStub {
                         name: localeTextFunc('copyWithGroupHeaders', 'Copy with Group Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
                         icon: _.createIconNoSpan('clipboardCopy', this.gos, null),
-                        action: () => this.clipboardService.copyToClipboard({ includeHeaders: true, includeGroupHeaders: true })
+                        action: () => this.clipboardService!.copyToClipboard({ includeHeaders: true, includeGroupHeaders: true })
                     };
                 } else {
                     return null;
@@ -214,7 +215,7 @@ export class MenuItemMapper extends BeanStub {
                         shortcut: localeTextFunc('ctrlX', 'Ctrl+X'),
                         icon: _.createIconNoSpan('clipboardCut', this.gos, null),
                         disabled: !isEditable || this.gos.get('suppressCutToClipboard'),
-                        action: () => this.clipboardService.cutToClipboard(undefined, 'contextMenu')
+                        action: () => this.clipboardService!.cutToClipboard(undefined, 'contextMenu')
                     };
                 } else {
                     return null;
@@ -226,7 +227,7 @@ export class MenuItemMapper extends BeanStub {
                         shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
                         disabled: true,
                         icon: _.createIconNoSpan('clipboardPaste', this.gos, null),
-                        action: () => this.clipboardService.pasteFromClipboard()
+                        action: () => this.clipboardService!.pasteFromClipboard()
                     };
                 } else {
                     return null;
@@ -312,7 +313,7 @@ export class MenuItemMapper extends BeanStub {
         }
     }
 
-    private createAggregationSubMenu(column: Column): MenuItemDef[] {
+    private createAggregationSubMenu(column: Column, aggFuncService: IAggFuncService): MenuItemDef[] {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
 
         let columnToUse: Column | undefined;
@@ -326,7 +327,7 @@ export class MenuItemMapper extends BeanStub {
         const result: MenuItemDef[] = [];
         if (columnToUse) {
             const columnIsAlreadyAggValue = columnToUse.isValueActive();
-            const funcNames = this.aggFuncService.getFuncNames(columnToUse);
+            const funcNames = aggFuncService.getFuncNames(columnToUse);
 
             result.push({
                 name: localeTextFunc('noAggregation', 'None'),
@@ -339,7 +340,7 @@ export class MenuItemMapper extends BeanStub {
 
             funcNames.forEach(funcName => {
                 result.push({
-                    name: localeTextFunc(funcName, this.aggFuncService.getDefaultFuncLabel(funcName)),
+                    name: localeTextFunc(funcName, aggFuncService.getDefaultFuncLabel(funcName)),
                     action: () => {
                         this.columnModel.setColumnAggFunc(columnToUse, funcName, "contextMenu");
                         this.columnModel.addValueColumns([columnToUse!], "contextMenu");

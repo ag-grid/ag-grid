@@ -4,7 +4,7 @@ import {
     ICellComp
 } from "./cellCtrl";
 import { includes, last } from "../../utils/array";
-import { CellRangeType, ISelectionHandle, SelectionHandleType } from "../../interfaces/IRangeService";
+import { CellRangeType, IRangeService, ISelectionHandle, ISelectionHandleFactory, SelectionHandleType } from "../../interfaces/IRangeService";
 import { Column } from "../../entities/column";
 import { missing } from "../../utils/generic";
 import { setAriaSelected } from "../../utils/aria";
@@ -22,6 +22,8 @@ const CSS_CELL_RANGE_LEFT = 'ag-cell-range-left';
 export class CellRangeFeature {
 
     private beans: Beans;
+    private rangeService: IRangeService;
+    private selectionHandleFactory: ISelectionHandleFactory;
     private cellComp: ICellComp;
     private cellCtrl: CellCtrl;
     private eGui: HTMLElement;
@@ -33,6 +35,9 @@ export class CellRangeFeature {
 
     constructor(beans: Beans, ctrl: CellCtrl) {
         this.beans = beans;
+        // We know these are defined otherwise the feature wouldn't be registered
+        this.rangeService = beans.rangeService!;
+        this.selectionHandleFactory = beans.selectionHandleFactory!;
         this.cellCtrl = ctrl;
     }
 
@@ -46,7 +51,7 @@ export class CellRangeFeature {
         // when using reactUi, given UI is async, it's possible this method is called before the comp is registered
         if (!this.cellComp) { return; }
 
-        this.rangeCount = this.beans.rangeService.getCellRangeCount(this.cellCtrl.getCellPosition());
+        this.rangeCount = this.rangeService.getCellRangeCount(this.cellCtrl.getCellPosition());
         this.hasChartRange = this.getHasChartRange();
 
         this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SELECTED, this.rangeCount !== 0);
@@ -80,7 +85,7 @@ export class CellRangeFeature {
 
     private isSingleCell(): boolean {
         const { rangeService } = this.beans;
-        return this.rangeCount === 1 && rangeService && !rangeService.isMoreThanOneCell();
+        return this.rangeCount === 1 && !!rangeService && !rangeService.isMoreThanOneCell();
     }
 
     private getHasChartRange(): boolean {
@@ -115,7 +120,7 @@ export class CellRangeFeature {
         let left = false;
 
         const thisCol = this.cellCtrl.getCellPosition().column;
-        const { rangeService, columnModel } = this.beans;
+        const columnModel = this.beans.columnModel;
 
         let leftCol: Column | null;
         let rightCol: Column | null;
@@ -128,8 +133,8 @@ export class CellRangeFeature {
             rightCol = columnModel.getDisplayedColAfter(thisCol);
         }
 
-        const ranges = rangeService.getCellRanges().filter(
-            range => rangeService.isCellInSpecificRange(this.cellCtrl.getCellPosition(), range)
+        const ranges = this.rangeService.getCellRanges().filter(
+            range => this.rangeService.isCellInSpecificRange(this.cellCtrl.getCellPosition(), range)
         );
 
         // this means we are the first column in the grid
@@ -146,8 +151,8 @@ export class CellRangeFeature {
             if (top && right && bottom && left) { break; }
 
             const range = ranges[i];
-            const startRow = rangeService.getRangeStartRow(range);
-            const endRow = rangeService.getRangeEndRow(range);
+            const startRow = this.rangeService.getRangeStartRow(range);
+            const endRow = this.rangeService.getRangeEndRow(range);
 
             if (!top && this.beans.rowPositionUtils.sameRow(startRow, this.cellCtrl.getCellPosition())) {
                 top = true;
@@ -170,7 +175,7 @@ export class CellRangeFeature {
     }
 
     public refreshHandle(): void {
-        if (!this.beans.rangeService || this.beans.context.isDestroyed()) { return; }
+        if (this.beans.context.isDestroyed()) { return; }
 
         const shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
 
@@ -186,8 +191,8 @@ export class CellRangeFeature {
     }
 
     private shouldHaveSelectionHandle(): boolean {
-        const { gos, rangeService } = this.beans;
-        const cellRanges = rangeService.getCellRanges();
+        const gos = this.beans.gos;
+        const cellRanges = this.rangeService.getCellRanges();
         const rangesLen = cellRanges.length;
 
         if (this.rangeCount < 1 || rangesLen < 1) {
@@ -205,7 +210,7 @@ export class CellRangeFeature {
 
         if (this.hasChartRange) {
             const hasCategoryRange = cellRanges[0].type === CellRangeType.DIMENSION;
-            const isCategoryCell = hasCategoryRange && rangeService.isCellInSpecificRange(cellPosition, cellRanges[0]);
+            const isCategoryCell = hasCategoryRange && this.rangeService.isCellInSpecificRange(cellPosition, cellRanges[0]);
 
             this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART_CATEGORY, isCategoryCell);
             handleIsAvailable = cellRange.type === CellRangeType.VALUE;
@@ -213,13 +218,13 @@ export class CellRangeFeature {
 
         return handleIsAvailable &&
             cellRange.endRow != null &&
-            rangeService.isContiguousRange(cellRange) &&
-            rangeService.isBottomRightCell(cellRange, cellPosition);
+            this.rangeService.isContiguousRange(cellRange) &&
+            this.rangeService.isBottomRightCell(cellRange, cellPosition);
     }
 
     private addSelectionHandle() {
-        const { gos, rangeService } = this.beans;
-        const cellRangeType = last(rangeService.getCellRanges()).type;
+        const gos = this.beans.gos;
+        const cellRangeType = last(this.rangeService.getCellRanges()).type;
         const selectionHandleFill = gos.get('enableFillHandle') && missing(cellRangeType);
         const type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;
 
@@ -228,7 +233,7 @@ export class CellRangeFeature {
         }
 
         if (!this.selectionHandle) {
-            this.selectionHandle = this.beans.selectionHandleFactory.createSelectionHandle(type);
+            this.selectionHandle = this.selectionHandleFactory.createSelectionHandle(type);
         }
 
         this.selectionHandle.refresh(this.cellCtrl);

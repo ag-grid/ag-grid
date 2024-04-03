@@ -170,44 +170,45 @@ export function unwrapUserComp<T>(comp: T): T {
 
 @Bean('gridApi')
 export class GridApi<TData = any> {
-
-    @Optional('csvCreator') private csvCreator: ICsvCreator;
-    @Optional('excelCreator') private excelCreator: IExcelCreator;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('navigationService') private navigationService: NavigationService;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-    @Autowired('gridOptionsService') private gos: GridOptionsService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
-    @Autowired('eventService') private eventService: EventService;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('context') private context: Context;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Optional('rangeService') private rangeService: IRangeService;
-    @Optional('clipboardService') private clipboardService: IClipboardService;
-    @Optional('aggFuncService') private aggFuncService: IAggFuncService;
-    @Autowired('menuService') private menuService: MenuService;
-    @Autowired('valueCache') private valueCache: ValueCache;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Optional('statusBarService') private statusBarService: IStatusBarService;
-    @Optional('chartService') private chartService: IChartService;
-    @Optional('undoRedoService') private undoRedoService: UndoRedoService;
-    @Optional('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
-    @Optional('ssrmTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('overlayService') private overlayService: OverlayService;
-    @Optional('sideBarService') private sideBarService?: ISideBarService;
-    @Autowired('stateService') private stateService: StateService;
-    @Autowired('expansionService') private expansionService: IExpansionService;
-    @Autowired('apiEventService') private apiEventService: ApiEventService;
-    @Autowired('frameworkOverrides') private frameworkOverrides: IFrameworkOverrides;
-
+    
+    @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
+    @Autowired('navigationService') private readonly navigationService: NavigationService;
+    @Autowired('filterManager') private readonly filterManager: FilterManager;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('selectionService') private readonly selectionService: ISelectionService;
+    @Autowired('gridOptionsService') private readonly gos: GridOptionsService;
+    @Autowired('valueService') private readonly valueService: ValueService;
+    @Autowired('alignedGridsService') private readonly alignedGridsService: AlignedGridsService;
+    @Autowired('eventService') private readonly eventService: EventService;
+    @Autowired('pinnedRowModel') private readonly pinnedRowModel: PinnedRowModel;
+    @Autowired('context') private readonly context: Context;
+    @Autowired('rowModel') private readonly rowModel: IRowModel;
+    @Autowired('sortController') private readonly sortController: SortController;
+    @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
+    @Autowired('focusService') private readonly focusService: FocusService;
+    @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
+    @Autowired('menuService') private readonly menuService: MenuService;
+    @Autowired('valueCache') private readonly valueCache: ValueCache;
+    @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
+    @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
+    @Autowired('overlayService') private readonly overlayService: OverlayService;
+    @Autowired('stateService') private readonly stateService: StateService;
+    @Autowired('expansionService') private readonly expansionService: IExpansionService;
+    @Autowired('apiEventService') private readonly apiEventService: ApiEventService;
+    @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
+    @Autowired('undoRedoService') private readonly undoRedoService: UndoRedoService;
+    @Autowired('rowNodeBlockLoader') private readonly rowNodeBlockLoader: RowNodeBlockLoader;
+    
+    @Optional('csvCreator') private readonly csvCreator?: ICsvCreator;
+    @Optional('excelCreator') private readonly excelCreator?: IExcelCreator;
+    @Optional('rangeService') private readonly rangeService?: IRangeService;
+    @Optional('clipboardService') private readonly clipboardService?: IClipboardService;
+    @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
+    @Optional('statusBarService') private readonly statusBarService?: IStatusBarService;
+    @Optional('chartService') private readonly chartService?: IChartService;
+    @Optional('ssrmTransactionManager') private readonly serverSideTransactionManager?: IServerSideTransactionManager;
+    @Optional('sideBarService') private readonly sideBarService?: ISideBarService;
+    
     private gridBodyCtrl: GridBodyCtrl;
 
     private clientSideRowModel: IClientSideRowModel;
@@ -288,20 +289,20 @@ export class GridApi<TData = any> {
     /** Similar to `exportDataAsCsv`, except returns the result as a string rather than download it. */
     public getDataAsCsv(params?: CsvExportParams): string | undefined {
         if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv', this.context.getGridId())) {
-            return this.csvCreator.getDataAsCsv(params);
+            return this.csvCreator!.getDataAsCsv(params);
         }
     }
 
     /** Downloads a CSV export of the grid's data. */
     public exportDataAsCsv(params?: CsvExportParams): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.exportDataAsCSv', this.context.getGridId())) {
-            this.csvCreator.exportDataAsCsv(params);
+        if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.exportDataAsCsv', this.context.getGridId())) {
+            this.csvCreator!.exportDataAsCsv(params);
         }
     }
 
     private assertNotExcelMultiSheet(method: keyof GridApi, params?: ExcelExportParams): boolean {
         if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method, this.context.getGridId())) { return false }
-        if (this.excelCreator.getFactoryMode() === ExcelFactoryMode.MULTI_SHEET) {
+        if (this.excelCreator!.getFactoryMode() === ExcelFactoryMode.MULTI_SHEET) {
             console.warn("AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'");
             return false;
         }
@@ -311,36 +312,36 @@ export class GridApi<TData = any> {
     /** Similar to `exportDataAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     public getDataAsExcel(params?: ExcelExportParams): string | Blob | undefined {
         if (this.assertNotExcelMultiSheet('getDataAsExcel', params)) {
-            return this.excelCreator.getDataAsExcel(params);
+            return this.excelCreator!.getDataAsExcel(params);
         }
     }
 
     /** Downloads an Excel export of the grid's data. */
     public exportDataAsExcel(params?: ExcelExportParams): void {
         if (this.assertNotExcelMultiSheet('exportDataAsExcel', params)) {
-            this.excelCreator.exportDataAsExcel(params);
+            this.excelCreator!.exportDataAsExcel(params);
         }
     }
 
     /** This is method to be used to get the grid's data as a sheet, that will later be exported either by `getMultipleSheetsAsExcel()` or `exportMultipleSheetsAsExcel()`. */
     public getSheetDataForExcel(params?: ExcelExportParams): string | undefined {
         if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel', this.context.getGridId())) { return; }
-        this.excelCreator.setFactoryMode(ExcelFactoryMode.MULTI_SHEET);
+        this.excelCreator!.setFactoryMode(ExcelFactoryMode.MULTI_SHEET);
 
-        return this.excelCreator.getSheetDataForExcel(params);
+        return this.excelCreator!.getSheetDataForExcel(params);
     }
 
     /** Similar to `exportMultipleSheetsAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined {
         if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel', this.context.getGridId())) {
-            return this.excelCreator.getMultipleSheetsAsExcel(params);
+            return this.excelCreator!.getMultipleSheetsAsExcel(params);
         }
     }
 
     /** Downloads an Excel export of multiple sheets in one file. */
     public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void {
         if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel', this.context.getGridId())) {
-            this.excelCreator.exportMultipleSheetsAsExcel(params);
+            this.excelCreator!.exportMultipleSheetsAsExcel(params);
         }
     }
 
@@ -843,7 +844,7 @@ export class GridApi<TData = any> {
     /** Gets the status panel instance corresponding to the supplied `id`. */
     public getStatusPanel<TStatusPanel = IStatusPanel>(key: string): TStatusPanel | undefined {
         if (!ModuleRegistry.__assertRegistered(ModuleNames.StatusBarModule, 'api.getStatusPanel', this.context.getGridId())) { return; }
-        const comp = this.statusBarService.getStatusPanel(key);
+        const comp = this.statusBarService!.getStatusPanel(key);
         return unwrapUserComp(comp) as any;
     }
 
@@ -1199,7 +1200,7 @@ export class GridApi<TData = any> {
         return this.undoRedoService.getCurrentRedoStackSize();
     }
 
-    private assertChart<T>(methodName: string ,func: () => T): T | undefined {
+    private assertChart<T>(methodName: keyof GridApi ,func: () => T): T | undefined {
         if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.' + methodName, this.context.getGridId())) {
             return this.frameworkOverrides.wrapIncoming(() => func());
         }
@@ -1207,92 +1208,92 @@ export class GridApi<TData = any> {
 
     /** Returns a list of models with information about the charts that are currently rendered from the grid. */
     public getChartModels(): ChartModel[] | undefined {
-        return this.assertChart('getChartModels', () => this.chartService.getChartModels());
+        return this.assertChart('getChartModels', () => this.chartService!.getChartModels());
     }
 
     /** Returns the `ChartRef` using the supplied `chartId`. */
     public getChartRef(chartId: string): ChartRef | undefined {
-        return this.assertChart('getChartRef', () => this.chartService.getChartRef(chartId));
+        return this.assertChart('getChartRef', () => this.chartService!.getChartRef(chartId));
     }
 
     /** Returns a base64-encoded image data URL for the referenced chartId. */
     public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
-        return this.assertChart('getChartImageDataURL', () => this.chartService.getChartImageDataURL(params));
+        return this.assertChart('getChartImageDataURL', () => this.chartService!.getChartImageDataURL(params));
     }
 
     /** Starts a browser-based image download for the referenced chartId. */
     public downloadChart(params: ChartDownloadParams) {
-        return this.assertChart('downloadChart', () => this.chartService.downloadChart(params));
+        return this.assertChart('downloadChart', () => this.chartService!.downloadChart(params));
     }
 
     /** Open the Chart Tool Panel. */
     public openChartToolPanel(params: OpenChartToolPanelParams) {
-        return this.assertChart('openChartToolPanel', () => this.chartService.openChartToolPanel(params));
+        return this.assertChart('openChartToolPanel', () => this.chartService!.openChartToolPanel(params));
     }
 
     /** Close the Chart Tool Panel. */
     public closeChartToolPanel(params: CloseChartToolPanelParams) {
-        return this.assertChart('closeChartToolPanel', () => this.chartService.closeChartToolPanel(params.chartId));
+        return this.assertChart('closeChartToolPanel', () => this.chartService!.closeChartToolPanel(params.chartId));
     }
 
     /** Used to programmatically create charts from a range. */
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
-        return this.assertChart('createRangeChart', () => this.chartService.createRangeChart(params));
+        return this.assertChart('createRangeChart', () => this.chartService!.createRangeChart(params));
     }
 
     /** Used to programmatically create pivot charts from a grid. */
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
-        return this.assertChart('createPivotChart', () => this.chartService.createPivotChart(params));
+        return this.assertChart('createPivotChart', () => this.chartService!.createPivotChart(params));
     }
 
     /** Used to programmatically create cross filter charts from a range. */
     public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
-        return this.assertChart('createCrossFilterChart', () => this.chartService.createCrossFilterChart(params));
+        return this.assertChart('createCrossFilterChart', () => this.chartService!.createCrossFilterChart(params));
     }
 
     /** Used to programmatically update a chart. */
     public updateChart(params: UpdateChartParams): void {
-        return this.assertChart('updateChart', () => this.chartService.updateChart(params));
+        return this.assertChart('updateChart', () => this.chartService!.updateChart(params));
     }
 
     /** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */
     public restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
-        return this.assertChart('restoreChart', () => this.chartService.restoreChart(chartModel, chartContainer));
+        return this.assertChart('restoreChart', () => this.chartService!.restoreChart(chartModel, chartContainer));
     }
 
-    private assertClipboard<T>(methodName: string, func: () => T): void {
+    private assertClipboard<T>(methodName: keyof GridApi, func: () => T ): void {
         if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api' + methodName, this.context.getGridId())) {
             func();
         }
     }
     /** Copies data to clipboard by following the same rules as pressing Ctrl+C. */
     public copyToClipboard(params?: IClipboardCopyParams) {
-        this.assertClipboard('copyToClipboard', () => this.clipboardService.copyToClipboard(params));
+        this.assertClipboard('copyToClipboard', () => this.clipboardService!.copyToClipboard(params));
     }
 
     /** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */
     public cutToClipboard(params?: IClipboardCopyParams) {
-        this.assertClipboard('cutToClipboard', () => this.clipboardService.cutToClipboard(params));
+        this.assertClipboard('cutToClipboard', () => this.clipboardService!.cutToClipboard(params));
     }
 
     /** Copies the selected rows to the clipboard. */
     public copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void {
-        this.assertClipboard('copySelectedRowsToClipboard', () => this.clipboardService.copySelectedRowsToClipboard(params));
+        this.assertClipboard('copySelectedRowsToClipboard', () => this.clipboardService!.copySelectedRowsToClipboard(params));
     }
 
     /** Copies the selected ranges to the clipboard. */
     public copySelectedRangeToClipboard(params?: IClipboardCopyParams): void {
-        this.assertClipboard('copySelectedRangeToClipboard', () => this.clipboardService.copySelectedRangeToClipboard(params));
+        this.assertClipboard('copySelectedRangeToClipboard', () => this.clipboardService!.copySelectedRangeToClipboard(params));
     }
 
     /** Copies the selected range down, similar to `Ctrl + D` in Excel. */
     public copySelectedRangeDown(): void {
-        this.assertClipboard('copySelectedRangeDown', () => this.clipboardService.copyRangeDown());
+        this.assertClipboard('copySelectedRangeDown', () => this.clipboardService!.copyRangeDown());
     }
 
     /** Pastes the data from the Clipboard into the focused cell of the grid. If no grid cell is focused, calling this method has no effect. */
     public pasteFromClipboard(): void {
-        this.assertClipboard('pasteFromClipboard', () => this.clipboardService.pasteFromClipboard());
+        this.assertClipboard('pasteFromClipboard', () => this.clipboardService!.pasteFromClipboard());
     }
 
     /** @deprecated v31.1 Use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere. */

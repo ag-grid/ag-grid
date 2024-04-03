@@ -3,7 +3,7 @@ import { Bean, BeanStub, ChartGroupsDef, ChartType, GridOptionsService, IChartSe
 @Bean('chartMenuItemMapper')
 export class ChartMenuItemMapper extends BeanStub {
 
-    @Optional('chartService') private readonly chartService: IChartService;
+    @Optional('chartService') private readonly chartService?: IChartService;
 
     public getChartItems(key: 'pivotChart' | 'chartRange'): MenuItemDef | undefined {
         if (!this.chartService) {

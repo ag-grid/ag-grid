@@ -38,8 +38,9 @@ export class RowContainerEventsFeature extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Optional('rangeService') private rangeService: IRangeService;
-    @Optional('clipboardService') private clipboardService: IClipboardService;
+
+    @Optional('rangeService') private rangeService?: IRangeService;
+    @Optional('clipboardService') private clipboardService?: IClipboardService;
 
     private element: HTMLElement;
 

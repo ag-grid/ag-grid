@@ -34,10 +34,11 @@ const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
 export class ContextMenuFactory extends BeanStub implements IContextMenuFactory {
 
     @Autowired('popupService') private popupService: PopupService;
-    @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('menuUtils') private menuUtils: MenuUtils;
+    
+    @Optional('rangeService') private rangeService?: IRangeService;
 
     private activeMenu: ContextMenu | null;
 

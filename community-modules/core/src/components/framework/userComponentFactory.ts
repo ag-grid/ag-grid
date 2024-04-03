@@ -77,7 +77,7 @@ export class UserComponentFactory extends BeanStub {
     @Autowired('agComponentUtils') private readonly agComponentUtils: AgComponentUtils;
     @Autowired('componentMetadataProvider') private readonly componentMetadataProvider: ComponentMetadataProvider;
     @Autowired('userComponentRegistry') private readonly userComponentRegistry: UserComponentRegistry;
-    @Optional('frameworkComponentWrapper') private readonly frameworkComponentWrapper: FrameworkComponentWrapper;
+    @Optional('frameworkComponentWrapper') private readonly frameworkComponentWrapper?: FrameworkComponentWrapper;
 
     public getHeaderCompDetails(colDef: ColDef, params: WithoutGridCommon<IHeaderParams>): UserCompDetails | undefined {
         return this.getCompDetails(colDef, HeaderComponent, 'agColumnHeader', params);
@@ -291,7 +291,7 @@ export class UserComponentFactory extends BeanStub {
         } else {
             // Using framework component
             const thisComponentConfig: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
-            instance = this.frameworkComponentWrapper.wrap(
+            instance = this.frameworkComponentWrapper!.wrap(
                 ComponentClass,
                 thisComponentConfig.mandatoryMethodList,
                 thisComponentConfig.optionalMethodList,

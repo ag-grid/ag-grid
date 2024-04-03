@@ -3,14 +3,12 @@ import {
     Autowired,
     Bean,
     BeanStub,
-    ColumnModel,
     IRowNodeStage,
     RowNode,
     StageExecuteParams,
     Beans,
     WithoutGridCommon,
     GetGroupIncludeFooterParams,
-    GridOptions
 } from "@ag-grid-community/core";
 
 interface FlattenDetails {
@@ -25,7 +23,6 @@ interface FlattenDetails {
 @Bean('flattenStage')
 export class FlattenStage extends BeanStub implements IRowNodeStage {
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('beans') private beans: Beans;
 
     public execute(params: StageExecuteParams): RowNode[] {
@@ -34,7 +31,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         // even if not doing grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
         const result: RowNode[] = [];
-        const skipLeafNodes = this.columnModel.isPivotMode();
+        const skipLeafNodes = this.beans.columnModel.isPivotMode();
         // if we are reducing, and not grouping, then we want to show the root node, as that
         // is where the pivot values are
         const showRootNode = skipLeafNodes && rootNode.leafGroup;

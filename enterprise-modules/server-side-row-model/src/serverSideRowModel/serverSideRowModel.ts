@@ -31,10 +31,11 @@ import {
     SortController,
     FilterModel,
     AdvancedFilterModel,
+    ModuleRegistry,
+    ModuleNames
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
-import { SortListener } from "./listeners/sortListener";
 import { StoreFactory } from "./stores/storeFactory";
 import { FullStore } from "./stores/fullStore";
 import { LazyStore } from "./stores/lazy/lazyStore";
@@ -61,7 +62,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
     @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
     @Autowired('beans') private beans: Beans;
-    @Optional('pivotColDefService') private pivotColDefService: IPivotColDefService;
+
+    @Optional('pivotColDefService') private pivotColDefService?: IPivotColDefService;
 
     private onRowHeightChanged_debounced = _.debounce(this.onRowHeightChanged.bind(this), 100);
 
@@ -252,6 +254,12 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public generateSecondaryColumns(pivotFields: string[]) {
+
+        if(!this.pivotColDefService) {
+            ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'pivotResultFields', this.context.getGridId());
+            return;
+        }
+
         const pivotColumnGroupDefs = this.pivotColDefService.createColDefsFromFields(pivotFields);
         this.managingPivotResultColumns = true;
         this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");

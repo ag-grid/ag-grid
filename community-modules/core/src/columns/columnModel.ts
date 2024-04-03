@@ -128,12 +128,12 @@ export class ColumnModel extends BeanStub {
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('autoGroupColService') private autoGroupColService: AutoGroupColService;
-    @Optional('aggFuncService') private aggFuncService: IAggFuncService;
-    @Optional('valueCache') private valueCache: ValueCache;
-    @Optional('animationFrameService') private animationFrameService: AnimationFrameService;
-
+    @Autowired('valueCache') private valueCache: ValueCache;
+    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('columnDefFactory') private columnDefFactory: ColumnDefFactory;
+
+    @Optional('aggFuncService') private aggFuncService?: IAggFuncService;
 
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
@@ -1203,7 +1203,7 @@ export class ColumnModel extends BeanStub {
 
         column.setValueActive(active, source);
 
-        if (active && !column.getAggFunc()) {
+        if (active && !column.getAggFunc() && this.aggFuncService) {
             const initialAggFunc = this.aggFuncService.getDefaultAggFunc(column);
             column.setAggFunc(initialAggFunc);
         }

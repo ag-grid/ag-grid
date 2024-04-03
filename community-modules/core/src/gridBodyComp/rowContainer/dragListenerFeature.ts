@@ -1,13 +1,12 @@
 import { BeanStub } from "../../context/beanStub";
-import { missing } from "../../utils/generic";
 import { Autowired, Optional, PostConstruct } from "../../context/context";
 import { IRangeService } from "../../interfaces/IRangeService";
 import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
 
 export class DragListenerFeature extends BeanStub {
 
-    @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('dragService') private dragService: DragService;
+    @Optional('rangeService') private rangeService?: IRangeService;
 
     private eContainer: HTMLElement;
 
@@ -20,7 +19,7 @@ export class DragListenerFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        if (missing(this.rangeService)) {
+        if (!this.rangeService) {
             return;
         }
 

@@ -45,7 +45,6 @@ export class NavigationService extends BeanStub {
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('focusService') private focusService: FocusService;
-    @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
@@ -54,6 +53,8 @@ export class NavigationService extends BeanStub {
     @Autowired("rowPositionUtils") private rowPositionUtils: RowPositionUtils;
     @Autowired("cellNavigationService") private cellNavigationService: CellNavigationService;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
+    
+    @Optional('rangeService') private rangeService?: IRangeService;
 
     private gridBodyCon: GridBodyCtrl;
 
@@ -161,10 +162,7 @@ export class NavigationService extends BeanStub {
         // highlighted.
         this.focusService.setFocusedCell({ rowIndex: focusIndex, column: focusColumn, rowPinned: null, forceBrowserFocus: true });
 
-        if (this.rangeService) {
-            const cellPosition: CellPosition = { rowIndex: focusIndex, rowPinned: null, column: focusColumn };
-            this.rangeService.setRangeToCell(cellPosition);
-        }
+        this.rangeService?.setRangeToCell({ rowIndex: focusIndex, rowPinned: null, column: focusColumn });
     }
 
     // this method is throttled, see the `constructor`
@@ -619,9 +617,7 @@ export class NavigationService extends BeanStub {
 
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
-            if (this.rangeService) {
-                this.rangeService.setRangeToCell(nextPosition);
-            }
+            this.rangeService?.setRangeToCell(nextPosition);
 
             // we successfully tabbed onto a grid cell, so return true
             return nextCell;
@@ -803,9 +799,7 @@ export class NavigationService extends BeanStub {
             forceBrowserFocus: true
         });
 
-        if (this.rangeService) {
-            this.rangeService.setRangeToCell(cellPosition);
-        }
+        this.rangeService?.setRangeToCell(cellPosition);
     }
 
     private isValidNavigateCell(cell: CellPosition): boolean {
