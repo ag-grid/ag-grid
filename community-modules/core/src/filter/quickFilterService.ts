@@ -35,7 +35,9 @@ export class QuickFilterService extends BeanStub {
         });
 
         this.addManagedPropertyListener('quickFilterText', (e) => this.setQuickFilter(e.currentValue));
-        this.addManagedPropertyListener('includeHiddenColumnsInQuickFilter', () => this.onIncludeHiddenColumnsInQuickFilterChanged());
+        this.addManagedPropertyListeners([
+            'includeHiddenColumnsInQuickFilter', 'applyQuickFilterBeforePivotOrAgg'
+        ], () => this.onQuickFilterColumnConfigChanged());
 
         this.quickFilter = this.parseQuickFilter(this.gos.get('quickFilterText'));
         this.parser = this.gos.get('quickFilterParser');
@@ -115,7 +117,7 @@ export class QuickFilterService extends BeanStub {
         }
     }
 
-    private onIncludeHiddenColumnsInQuickFilterChanged(): void {
+    private onQuickFilterColumnConfigChanged(): void {
         this.columnModel.refreshQuickFilterColumns();
         this.resetQuickFilterCache();
         if (this.isQuickFilterPresent()) {
