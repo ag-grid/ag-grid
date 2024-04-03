@@ -1,4 +1,3 @@
-import { getIsImplemented } from '@constants';
 import { getDocsExamplePages } from '@features/docs/utils/pageData';
 import { getCollection } from 'astro:content';
 
@@ -8,14 +7,10 @@ export async function getAllExamples() {
         pages,
     });
 
-    return examples.filter(({ params }) => {
-        return getIsImplemented(params);
-    });
+    return examples;
 }
 
 export async function GET() {
-   
-
     const examples = await getAllExamples();
 
     const cleanerExamples = examples.map((example) => {
