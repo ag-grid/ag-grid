@@ -29,8 +29,6 @@ const gridOptions: GridOptions = {
     },
   },
   rowData: createRowData(),
-  cellFlashDuration: 2000,
-  cellFadeDuration: 500,
 }
 
 function onUpdateSomeValues() {
@@ -42,18 +40,6 @@ function onUpdateSomeValues() {
     var col = ['a', 'b', 'c', 'd', 'e', 'f'][i % 6]
     rowNode.setDataValue(col, Math.floor(Math.random() * 10000))
   }
-}
-
-function onFlashTwoRows() {
-  // pick fourth and fifth row at random
-  var rowNode1 = gridApi!.getDisplayedRowAtIndex(4)!
-  var rowNode2 = gridApi!.getDisplayedRowAtIndex(5)!
-  // flash whole row, so leave column selection out
-  gridApi!.flashCells({
-    rowNodes: [rowNode1, rowNode2],
-    flashDuration: 3000,
-    fadeDuration: 2000,
-  })
 }
 
 function createRowData() {

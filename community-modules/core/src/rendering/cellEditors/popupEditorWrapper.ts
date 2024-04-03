@@ -13,7 +13,7 @@ export class PopupEditorWrapper extends PopupComponent {
 
     @PostConstruct
     private postConstruct(): void {
-        this.gridOptionsService.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
+        this.gos.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
         this.addKeyDownListener();
     }
 
@@ -21,7 +21,7 @@ export class PopupEditorWrapper extends PopupComponent {
         const eGui = this.getGui();
         const params = this.params;
         const listener = (event: KeyboardEvent) => {
-            if (!isUserSuppressingKeyboardEvent(this.gridOptionsService, event, params.node, params.column, true)) {
+            if (!isUserSuppressingKeyboardEvent(this.gos, event, params.node, params.column, true)) {
                 params.onKeyDown(event);
             }
         };

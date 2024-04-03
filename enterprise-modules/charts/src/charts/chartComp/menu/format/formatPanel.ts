@@ -104,7 +104,7 @@ export class FormatPanel extends Component {
     }
 
     private getFormatPanelDef() {
-        const userProvidedFormatPanelDef = this.gridOptionsService.get('chartToolPanelsDef')?.formatPanel;
+        const userProvidedFormatPanelDef = this.gos.get('chartToolPanelsDef')?.formatPanel;
         return userProvidedFormatPanelDef ? userProvidedFormatPanelDef : DefaultFormatPanelDef;
     }
 
@@ -120,13 +120,11 @@ export class FormatPanel extends Component {
         // These panel groups depend on the selected series type
         const extendedGroupPanels: { [T in ChartSeriesType]?: Array<ChartFormatPanelGroup> } = {
             'bar': ['axis', 'horizontalAxis', 'verticalAxis'],
-            'column': ['axis', 'horizontalAxis', 'verticalAxis'],
             'line': ['axis', 'horizontalAxis', 'verticalAxis'],
             'area': ['axis', 'horizontalAxis', 'verticalAxis'],
             'scatter': ['axis', 'horizontalAxis', 'verticalAxis'],
             'bubble': ['axis', 'horizontalAxis', 'verticalAxis'],
             'histogram': ['axis', 'horizontalAxis', 'verticalAxis'],
-            'cartesian': ['axis', 'horizontalAxis', 'verticalAxis'],
             'radial-column': ['axis'],
             'radial-bar': ['axis'],
             'radar-line': ['axis'],

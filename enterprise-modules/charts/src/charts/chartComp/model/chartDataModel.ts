@@ -17,6 +17,7 @@ import { ChartTranslationService } from '../services/chartTranslationService';
 import { ChartColumnService } from "../services/chartColumnService";
 import { ComboChartModel } from "./comboChartModel";
 import { getMaxNumSeries, isHierarchical } from "../utils/seriesTypeMapper";
+import { AgCartesianAxisType } from "ag-charts-community";
 
 export interface ColState {
     column?: Column;
@@ -57,6 +58,7 @@ export class ChartDataModel extends BeanStub {
     public switchCategorySeries: boolean;
     public aggFunc?: string | IAggFunc;
     public pivotChart: boolean;
+    public categoryAxisType?: AgCartesianAxisType;
 
     public chartType: ChartType;
     public chartThemeName: string;
@@ -199,10 +201,11 @@ export class ChartDataModel extends BeanStub {
 
         this.chartData = chartData;
         this.columnNames = columnNames;
+        this.categoryAxisType = undefined;
     }
 
     public isGrouping(): boolean {
-        const usingTreeData = this.gridOptionsService.get('treeData');
+        const usingTreeData = this.gos.get('treeData');
         const groupedCols = usingTreeData ? null : this.chartColumnService.getRowGroupColumns();
         const isGroupActive = usingTreeData || (groupedCols && groupedCols.length > 0);
 

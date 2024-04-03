@@ -89,7 +89,7 @@ When using selection where all selected rows may not have been loaded, it is ins
 
 The below snippet demonstrates how to set all nodes as selected, except for the row which has the ID `United States`, and the row with the ID `United States2004`.
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 api.setServerSideSelectionState({
     selectAll: true,
     toggledNodes: ['United States', 'United States2004'],
@@ -108,7 +108,7 @@ In the example below, note the following;
 
 The below snippet demonstrates how to set all nodes as selected, except for the row which has the ID `United States`, and its child row with the ID `United States2004`.
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 params.api.setServerSideSelectionState({
     // this root level config can be used to determine a global select-all
     selectAllChildren: true,

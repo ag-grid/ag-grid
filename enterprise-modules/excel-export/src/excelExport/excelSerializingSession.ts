@@ -187,8 +187,8 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     }
 
     private addRowOutlineIfNecessary(node: RowNode): void {
-        const { gridOptionsService, suppressRowOutline, rowGroupExpandState = 'expanded' } = this.config;
-        const isGroupHideOpenParents = gridOptionsService.get('groupHideOpenParents');
+        const { gos, suppressRowOutline, rowGroupExpandState = 'expanded' } = this.config;
+        const isGroupHideOpenParents = gos.get('groupHideOpenParents');
 
         if (isGroupHideOpenParents || suppressRowOutline || node.level == null) { return; }
 

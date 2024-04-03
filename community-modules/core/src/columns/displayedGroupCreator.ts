@@ -1,6 +1,6 @@
 import { Column, ColumnPinnedType } from "../entities/column";
 import { GroupInstanceIdCreator } from "./groupInstanceIdCreator";
-import { IHeaderColumn } from "../interfaces/iHeaderColumn";
+import { HeaderColumnId, IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { ColumnGroup } from "../entities/columnGroup";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { Bean } from "../context/context";
@@ -131,7 +131,7 @@ export class DisplayedGroupCreator extends BeanStub {
 
     // returns back a 2d map of ColumnGroup as follows: groupId -> instanceId -> ColumnGroup
     private mapOldGroupsById(displayedGroups: IHeaderColumn[]): {[uniqueId: string]: ColumnGroup} {
-        const result: {[uniqueId: string]: ColumnGroup} = {};
+        const result: {[uniqueId: HeaderColumnId]: ColumnGroup} = {};
 
         const recursive = (columnsOrGroups: IHeaderColumn[] | null) => {
             columnsOrGroups!.forEach(columnOrGroup => {

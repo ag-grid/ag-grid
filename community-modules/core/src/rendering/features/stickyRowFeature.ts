@@ -1,7 +1,7 @@
 import { RowNode } from "../../entities/rowNode";
 import { BeanStub } from "../../context/beanStub";
 import { RowCtrl } from "../row/rowCtrl";
-import { RowCtrlMap, RowRenderer } from "../rowRenderer";
+import { RowCtrlByRowNodeIdMap, RowRenderer } from "../rowRenderer";
 import { Autowired, PostConstruct } from "../../context/context";
 import { IRowModel, RowModelType } from "../../interfaces/iRowModel";
 import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
@@ -21,7 +21,7 @@ export class StickyRowFeature extends BeanStub {
 
     constructor(
         private readonly createRowCon: (rowNode: RowNode, animate: boolean, afterScroll: boolean) => RowCtrl,
-        private readonly destroyRowCtrls: (rowCtrlsMap: RowCtrlMap | null | undefined, animate: boolean) => void
+        private readonly destroyRowCtrls: (rowCtrlsMap: RowCtrlByRowNodeIdMap | null | undefined, animate: boolean) => void
     ) {
         super();
     }
@@ -42,7 +42,7 @@ export class StickyRowFeature extends BeanStub {
     public checkStickyRows(): boolean {
         let height = 0;
 
-        if (!this.gridOptionsService.isGroupRowsSticky()) {
+        if (!this.gos.isGroupRowsSticky()) {
             return this.refreshNodesAndContainerHeight([], height);
         }
 
@@ -159,7 +159,7 @@ export class StickyRowFeature extends BeanStub {
             stickyRowsChanged = true;
         }
 
-        const ctrlsToDestroy: RowCtrlMap = {};
+        const ctrlsToDestroy: RowCtrlByRowNodeIdMap = {};
         removedCtrls.forEach(removedCtrl => {
             ctrlsToDestroy[removedCtrl.getRowNode().id!] = removedCtrl;
             this.stickyRowCtrls = this.stickyRowCtrls.filter(ctrl => ctrl !== removedCtrl);

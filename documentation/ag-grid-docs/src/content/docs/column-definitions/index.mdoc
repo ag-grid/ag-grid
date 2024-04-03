@@ -15,7 +15,7 @@ Each column in the grid is defined using a Column Definition (`ColDef`). Columns
 {% gridExampleRunner title="Simple Definitions" name="simple" exampleHeight=300 /%}
 
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'athlete' },
@@ -31,7 +31,7 @@ See [Column Properties](./column-properties/) for all available properties.
 
 Use `defaultColDef` to set properties across ALL Columns.
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     defaultColDef: {
         width: 150,
@@ -48,7 +48,7 @@ const gridOptions = {
 Use `columnTypes` to define a set of Column properties to be applied together. The properties in a column type are applied to a Column by setting its `type` property.
 
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     // Define column types
     columnTypes: {
@@ -86,7 +86,7 @@ The grid provides the Column Types `rightAligned` and `numericColumn`.
 Both of these types right align the header and cells contents
 by applying CSS classes `ag-right-aligned-header` to Column Headers and `ag-right-aligned-cell` to Cells.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { headerName: 'Column A', field: 'a' },

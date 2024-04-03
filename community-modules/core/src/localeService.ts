@@ -7,7 +7,7 @@ import { WithoutGridCommon } from "./interfaces/iCommon";
 export class LocaleService extends BeanStub {
     public getLocaleTextFunc(): (key: string, defaultValue: string, variableValues?: string[]) => string {
 
-        const getLocaleText = this.gridOptionsService.getCallback('getLocaleText');
+        const getLocaleText = this.gos.getCallback('getLocaleText');
         if (getLocaleText) {
             //key: string, defaultValue: string, variableValues?: string[]
             return (key: string, defaultValue: string, variableValues?: string[]) => {
@@ -20,7 +20,7 @@ export class LocaleService extends BeanStub {
             };
         }
 
-        const localeText = this.gridOptionsService.get('localeText');
+        const localeText = this.gos.get('localeText');
         return (key: string, defaultValue: string, variableValues?: string[]) => {
             let localisedText = localeText && localeText[key];
 

@@ -39,7 +39,7 @@ export class CellCustomStyleFeature extends BeanStub {
     public applyCellClassRules(): void {
         const colDef = this.column.getColDef();
         const { cellClassRules } = colDef;
-        const cellClassParams: CellClassParams = this.beans.gridOptionsService.addGridCommonParams({
+        const cellClassParams: CellClassParams = this.beans.gos.addGridCommonParams({
             value: this.cellCtrl.getValue(),
             data: this.rowNode.data,
             node: this.rowNode,
@@ -67,7 +67,7 @@ export class CellCustomStyleFeature extends BeanStub {
         let styles: CellStyle | null | undefined;
 
         if (typeof colDef.cellStyle === 'function') {
-            const cellStyleParams: CellClassParams = this.beans.gridOptionsService.addGridCommonParams({
+            const cellStyleParams: CellClassParams = this.beans.gos.addGridCommonParams({
                 column: this.column,
                 value: this.cellCtrl.getValue(),
                 colDef: colDef,
@@ -88,7 +88,7 @@ export class CellCustomStyleFeature extends BeanStub {
 
     public applyClassesFromColDef() {
         const colDef = this.column.getColDef();
-        const cellClassParams: CellClassParams = this.beans.gridOptionsService.addGridCommonParams({
+        const cellClassParams: CellClassParams = this.beans.gos.addGridCommonParams({
             value: this.cellCtrl.getValue(),
             data: this.rowNode.data,
             node: this.rowNode,

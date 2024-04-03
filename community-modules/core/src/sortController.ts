@@ -32,7 +32,7 @@ export class SortController extends BeanStub {
             sort = null;
         }
 
-        const isColumnsSortingCoupledToGroup = this.gridOptionsService.isColumnsSortingCoupledToGroup();
+        const isColumnsSortingCoupledToGroup = this.gos.isColumnsSortingCoupledToGroup();
         let columnsToUpdate = [column];
         if (isColumnsSortingCoupledToGroup) {
             if (column.getColDef().showRowGroup) {
@@ -47,7 +47,7 @@ export class SortController extends BeanStub {
 
         columnsToUpdate.forEach(col => col.setSort(sort, source));
 
-        const doingMultiSort = (multiSort || this.gridOptionsService.get('alwaysMultiSort')) && !this.gridOptionsService.get('suppressMultiSort');
+        const doingMultiSort = (multiSort || this.gos.get('alwaysMultiSort')) && !this.gos.get('suppressMultiSort');
 
         // clear sort on all columns except those changed, and update the icons
         const updatedColumns: Column[] = [];
@@ -64,7 +64,7 @@ export class SortController extends BeanStub {
     }
 
     private updateSortIndex(lastColToChange: Column) {
-        const isCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
+        const isCoupled = this.gos.isColumnsSortingCoupledToGroup();
         const groupParent = this.columnModel.getGroupDisplayColumnForGroup(lastColToChange.getId());
         const lastSortIndexCol = isCoupled ? groupParent || lastColToChange : lastColToChange;
 
@@ -129,8 +129,8 @@ export class SortController extends BeanStub {
 
         if (column.getColDef().sortingOrder) {
             sortingOrder = column.getColDef().sortingOrder;
-        } else if (this.gridOptionsService.get('sortingOrder')) {
-            sortingOrder = this.gridOptionsService.get('sortingOrder');
+        } else if (this.gos.get('sortingOrder')) {
+            sortingOrder = this.gos.get('sortingOrder');
         } else {
             sortingOrder = SortController.DEFAULT_SORTING_ORDER;
         }
@@ -169,7 +169,7 @@ export class SortController extends BeanStub {
             .filter(col => !!col.getSort());
 
         if (this.columnModel.isPivotMode()) {
-            const isSortingLinked = this.gridOptionsService.isColumnsSortingCoupledToGroup();
+            const isSortingLinked = this.gos.isColumnsSortingCoupledToGroup();
             allSortedCols = allSortedCols.filter(col => {
                 const isAggregated = !!col.getAggFunc();
                 const isSecondary = !col.isPrimary();
@@ -205,7 +205,7 @@ export class SortController extends BeanStub {
             }
         });
 
-        const isSortLinked = this.gridOptionsService.isColumnsSortingCoupledToGroup() && !!sortedRowGroupCols.length;
+        const isSortLinked = this.gos.isColumnsSortingCoupledToGroup() && !!sortedRowGroupCols.length;
         if (isSortLinked) {
             allSortedCols = [
                 ...new Set(
@@ -257,7 +257,7 @@ export class SortController extends BeanStub {
     }
 
     public canColumnDisplayMixedSort(column: Column): boolean {
-        const isColumnSortCouplingActive = this.gridOptionsService.isColumnsSortingCoupledToGroup();
+        const isColumnSortCouplingActive = this.gos.isColumnsSortingCoupledToGroup();
         const isGroupDisplayColumn = !!column.getColDef().showRowGroup;
         return isColumnSortCouplingActive && isGroupDisplayColumn;
     }

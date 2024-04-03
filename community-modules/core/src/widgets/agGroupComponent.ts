@@ -358,8 +358,8 @@ class DefaultTitleBar extends Component {
     }
 
     private setupExpandContract(): void {
-        this.eGroupClosedIcon.appendChild(createIcon('columnSelectClosed', this.gridOptionsService, null));
-        this.eGroupOpenedIcon.appendChild(createIcon('columnSelectOpen', this.gridOptionsService, null));
+        this.eGroupClosedIcon.appendChild(createIcon('columnSelectClosed', this.gos, null));
+        this.eGroupOpenedIcon.appendChild(createIcon('columnSelectOpen', this.gos, null));
         this.addManagedListener(this.getGui(), 'click', () => this.dispatchExpandChanged());
         this.addManagedListener(this.getGui(), 'keydown', (e: KeyboardEvent) => {
             switch (e.key) {

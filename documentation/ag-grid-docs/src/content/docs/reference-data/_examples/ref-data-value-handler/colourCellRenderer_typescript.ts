@@ -6,9 +6,9 @@ export class ColourCellRenderer implements ICellRendererComp {
     init(params: ICellRendererParams) {
         this.eGui = document.createElement('div');
         if (params.value === '(Select All)') {
-            this.eGui.innerText = params.value;
+            this.eGui.textContent = params.value;
         } else {
-            this.eGui.innerText = params.valueFormatted || '';
+            this.eGui.textContent = params.valueFormatted || '';
             this.eGui.style.color = this.removeSpaces(params.valueFormatted || '');
         }
     }

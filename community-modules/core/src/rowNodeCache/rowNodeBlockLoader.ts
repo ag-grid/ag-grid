@@ -24,7 +24,7 @@ export class RowNodeBlockLoader extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         this.maxConcurrentRequests = this.getMaxConcurrentDatasourceRequests();
-        const blockLoadDebounceMillis = this.gridOptionsService.get('blockLoadDebounceMillis');
+        const blockLoadDebounceMillis = this.gos.get('blockLoadDebounceMillis');
 
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
             this.checkBlockToLoadDebounce = _.debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
@@ -36,7 +36,7 @@ export class RowNodeBlockLoader extends BeanStub {
     }
 
     private getMaxConcurrentDatasourceRequests(): number | undefined {
-        const res = this.gridOptionsService.get('maxConcurrentDatasourceRequests');
+        const res = this.gos.get('maxConcurrentDatasourceRequests');
         if (res == null) { return 2; } // 2 is the default
         if (res <= 0) { return; } // negative number, eg -1, means no max restriction
         return res;
@@ -100,7 +100,7 @@ export class RowNodeBlockLoader extends BeanStub {
     }
 
     public getBlockState() {
-        if (this.gridOptionsService.isRowModelType('serverSide')) {
+        if (this.gos.isRowModelType('serverSide')) {
             const ssrm = this.rowModel as IServerSideRowModel;
             return ssrm.getBlockStates();
         }

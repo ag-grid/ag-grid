@@ -8,7 +8,7 @@ This page describes how to sort row data in the grid and how you can customise t
 
 Sorting is enabled by default for all columns. You can sort a column by clicking on the column header. To enable / disable sorting per column use the `sortable` column definition attribute.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'name' },
@@ -21,7 +21,7 @@ const gridOptions = {
 
 To disable sorting for all columns, set sorting in the [default column definition](./column-definitions/).
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // disable sorting on all columns
     defaultColDef: {
@@ -42,7 +42,7 @@ Custom sorting is provided at a column level by configuring a comparator on the 
 
 {% apiDocumentation source="column-properties/properties.json" section="sort" names=["comparator"] /%}
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -76,7 +76,7 @@ Example below shows the following:
 
 When [Row Grouping](./grouping/) it is possible to override the sort order of the Row Group columns. If using the Auto Group Column, provide a comparator via the `autoGroupColumnDef` grid property.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 var gridOptions = {
     autoGroupColumnDef: {
         field: 'athlete',
@@ -163,7 +163,7 @@ This is provided via the `postSortRows` grid callback function as shown below:
 
 {% apiDocumentation source="grid-options/properties.json" section="sort" names=["postSortRows"] /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     postSortRows: params => {
         let rowNodes = params.nodes;

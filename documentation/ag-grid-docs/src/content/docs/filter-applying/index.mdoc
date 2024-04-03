@@ -50,7 +50,7 @@ Applying the model is then typically followed by calling `gridApi.onFilterChange
 
 {% interfaceDocumentation interfaceName="IProvidedFilter" names=["getModelFromUi", "applyModel"] config={"description":""} /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // Get a reference to the 'name' filter instance
 api.getColumnFilterInstance('name').then(filterInstance => {
    // Apply the model to ensure any changes in the UI or via API methods are recognised

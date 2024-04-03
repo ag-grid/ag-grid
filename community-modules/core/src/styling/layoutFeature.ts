@@ -47,7 +47,7 @@ export class LayoutFeature extends BeanStub {
 
     // returns either 'print', 'autoHeight' or 'normal' (normal is the default)
     private getDomLayout(): DomLayoutType {
-        const domLayout: DomLayoutType = this.gridOptionsService.get('domLayout') ?? 'normal';
+        const domLayout: DomLayoutType = this.gos.get('domLayout') ?? 'normal';
         const validLayouts: DomLayoutType[] = ['normal', 'print', 'autoHeight'];
 
         if (validLayouts.indexOf(domLayout) === -1) {

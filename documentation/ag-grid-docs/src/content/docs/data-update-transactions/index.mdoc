@@ -48,7 +48,7 @@ There are two approaches you can take: 1) Providing Row IDs, or 2) Using Object 
   For removing rows, the grid will find the row with the same key and remove it. For this reason, the
   provided records within the `remove` array only need to have a key present.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     getRowId: (params) => params.data.employeeId
 }

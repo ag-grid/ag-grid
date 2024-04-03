@@ -84,7 +84,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
         this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, this.storeParams));
 
-        const usingTreeData = this.gridOptionsService.get('treeData');
+        const usingTreeData = this.gos.get('treeData');
 
         if (!usingTreeData && this.group) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
@@ -118,7 +118,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns an object determining the status of this transaction and effected nodes
      */
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
-        const idFunc = this.gridOptionsService.getCallback('getRowId');
+        const idFunc = this.gos.getCallback('getRowId');
         if (!idFunc) {
             console.warn('AG Grid: getRowId callback must be implemented for transactions to work. Transaction was ignored.');
             return {
@@ -126,7 +126,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             };
         }
 
-        const applyCallback = this.gridOptionsService.getCallback('isApplyServerSideTransaction');
+        const applyCallback = this.gos.getCallback('isApplyServerSideTransaction');
         if (applyCallback) {
             const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
                 transaction: transaction,
@@ -166,7 +166,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove);
         }
 
-        const isClientSideSortingEnabled = this.gridOptionsService.get('serverSideEnableClientSideSort');
+        const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
         
         const isUpdateOrAdd = updatedNodes?.length || insertedNodes?.length;
         const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
@@ -396,7 +396,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
     
-        const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
+        const defaultRowHeight = this.gos.getRowHeightAsNumber();
         // if node after this, can calculate backwards (and ignore detail/grouping)
         if (nextNode) {
             const numberOfRowDiff = (nextNode.node.rowIndex! - displayIndex) * defaultRowHeight;
@@ -475,7 +475,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
 
-        const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
+        const defaultRowHeight = this.gos.getRowHeightAsNumber();
         // if node after this, can calculate backwards (and ignore detail/grouping)
         if (nextNode) {
             const nextTop = nextNode.rowTop!;
@@ -529,7 +529,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         const serverSortsAllLevels = this.storeUtils.isServerSideSortAllLevels();
         if (serverSortsAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
             const allRowsLoaded = this.cache.isStoreFullyLoaded();
-            const isClientSideSortingEnabled = this.gridOptionsService.get('serverSideEnableClientSideSort');
+            const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
             
             const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
             if (!isClientSideSort) {

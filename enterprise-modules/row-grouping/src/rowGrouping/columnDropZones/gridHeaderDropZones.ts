@@ -66,7 +66,7 @@ export class GridHeaderDropZones extends Component {
             return;
         }
 
-        const rowGroupPanelShow = this.gridOptionsService.get('rowGroupPanelShow');
+        const rowGroupPanelShow = this.gos.get('rowGroupPanelShow');
 
         if (rowGroupPanelShow === 'always') {
             this.rowGroupComp.setDisplayed(true);
@@ -83,7 +83,7 @@ export class GridHeaderDropZones extends Component {
             return;
         }
 
-        const pivotPanelShow = this.gridOptionsService.get('pivotPanelShow');
+        const pivotPanelShow = this.gos.get('pivotPanelShow');
 
         if (pivotPanelShow === 'always') {
             this.pivotComp.setDisplayed(true);

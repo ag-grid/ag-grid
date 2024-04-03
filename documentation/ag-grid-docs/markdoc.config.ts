@@ -1,33 +1,19 @@
 import { Markdoc, component, defineMarkdocConfig, nodes } from '@astrojs/markdoc/config';
-import { urlWithPrefix } from '@utils/urlWithPrefix';
 
-import { DOCS_TAB_ITEM_ID_PREFIX } from './src/constants';
+import { DOCS_TAB_ITEM_ID_PREFIX, agGridVersion } from './src/constants';
 import { includeMarkdoc } from './src/utils/markdoc/tags/include-markdoc';
+import { link } from './src/utils/markdoc/tags/link';
 
 export default defineMarkdocConfig({
+    variables: {
+        agGridVersion,
+    },
     nodes: {
         heading: {
             ...nodes.heading, // Preserve default anchor link generation
             render: component('./src/components/Heading.astro'),
         },
-        link: {
-            ...nodes.link,
-            /**
-             * Transform markdoc links to add url prefix and framework to href
-             */
-            transform(node, config) {
-                const { framework } = config.variables;
-                const children = node.transformChildren(config);
-                const nodeAttributes = node.transformAttributes(config);
-                const href = urlWithPrefix({ url: nodeAttributes.href, framework });
-                const attributes = {
-                    ...nodeAttributes,
-                    href,
-                };
-
-                return new Markdoc.Tag('a', attributes, children);
-            },
-        },
+        link,
         fence: {
             attributes: {
                 ...Markdoc.nodes.fence.attributes!,
@@ -42,9 +28,6 @@ export default defineMarkdocConfig({
                 suppressFrameworkContext: Boolean,
                 spaceBetweenProperties: Boolean,
                 inlineReactProperties: Boolean,
-
-                // TODO: Temporary for mdx migration
-                fixme: Boolean,
             } as any,
             render: component('./src/components/snippet/Snippet.astro'),
         },
@@ -76,15 +59,7 @@ export default defineMarkdocConfig({
         br: {
             render: 'br',
         },
-        /**
-         * External link that opens in a new tab
-         */
-        externalLink: {
-            render: component('./src/components/ExternalLink.astro'),
-            attributes: {
-                href: { type: String, required: true },
-            },
-        },
+        link,
         enterpriseIcon: {
             render: component('./src/components/icon/EnterpriseIcon', 'EnterpriseIcon'),
         },
@@ -262,8 +237,8 @@ export default defineMarkdocConfig({
                     matches: ['size-6', 'size-10'],
                 },
                 mobileWrap: {
-                    type: Boolean
-                }
+                    type: Boolean,
+                },
             },
         },
         tabs: {

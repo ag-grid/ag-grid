@@ -30,7 +30,7 @@ export class ValueFormatterService extends BeanStub {
         }
 
         if (formatter) {
-            const params: ValueFormatterParams = this.gridOptionsService.addGridCommonParams({
+            const params: ValueFormatterParams = this.gos.addGridCommonParams({
                 value,
                 node,
                 data: node ? node.data : null,

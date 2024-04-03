@@ -41,13 +41,13 @@ export class ChangeDetectionService extends BeanStub {
     }
 
     private doChangeDetection(rowNode: RowNode, column: Column): void {
-        if (this.gridOptionsService.get('suppressChangeDetection')) { return; }
+        if (this.gos.get('suppressChangeDetection')) { return; }
 
         const nodesToRefresh: RowNode[] = [rowNode];
 
         // step 1 of change detection is to update the aggregated values
         if (this.clientSideRowModel && !rowNode.isRowPinned()) {
-            const onlyChangedColumns = this.gridOptionsService.get('aggregateOnlyChangedColumns');
+            const onlyChangedColumns = this.gos.get('aggregateOnlyChangedColumns');
             const changedPath = new ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
             changedPath.addParentNode(rowNode.parent, [column]);
             this.clientSideRowModel.doAggregate(changedPath);

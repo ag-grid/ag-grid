@@ -8,7 +8,7 @@ import { GridOptionsService } from '../gridOptionsService';
 
 let colDef: ColDef;
 let column: jest.Mocked<Column>;
-let gridOptionsService: jest.Mocked<GridOptionsService>;
+let gos: jest.Mocked<GridOptionsService>;
 let expressionService: jest.Mocked<ExpressionService>;
 let valueFormatterService: ValueFormatterService;
 
@@ -18,11 +18,11 @@ describe('formatValue', () => {
         column = mock<Column>('getColDef');
         column.getColDef.mockReturnValue(colDef);
 
-        gridOptionsService = mock<GridOptionsService>('get', 'addGridCommonParams');
-        gridOptionsService.addGridCommonParams.mockImplementation(params => params as any);
+        gos = mock<GridOptionsService>('get', 'addGridCommonParams');
+        gos.addGridCommonParams.mockImplementation(params => params as any);
         expressionService = mock<ExpressionService>('evaluate');
         valueFormatterService = new ValueFormatterService();
-        (valueFormatterService as any).gridOptionsService = gridOptionsService;
+        (valueFormatterService as any).gos = gos;
         (valueFormatterService as any).expressionService = expressionService;
     });
 

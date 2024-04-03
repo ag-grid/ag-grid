@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
 @Component({
   standalone: true,
   template: `
-    <a [href]="'https://en.wikipedia.org/wiki/' + value" target="_blank">{{ value }}</a>
+    <a [href]="value" target="_blank">{{ parsedValue }}</a>
   `
 })
 export class CompanyRenderer implements ICellRendererAngularComp {
@@ -14,11 +14,13 @@ export class CompanyRenderer implements ICellRendererAngularComp {
   public parsedValue!: string;
   agInit(params: ICellRendererParams): void {
     this.value = params.value;
+    this.parsedValue = new URL(params.value).hostname;
   }
 
   // Return Cell Value
   refresh(params: ICellRendererParams): boolean {
     this.value = params.value;
+    this.parsedValue = new URL(params.value).hostname;
     return true;
   }
 }

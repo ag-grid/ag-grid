@@ -197,7 +197,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
     @Autowired('stylingService') private stylingService: StylingService;
 
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
-    @Autowired('gridOptionsService') gridOptionsService: GridOptionsService;
+    @Autowired('gridOptionsService') gos: GridOptionsService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('valueParserService') private valueParserService: ValueParserService;
 
@@ -205,12 +205,12 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
     public postConstruct(): void {
         this.setBeans({
             gridSerializer: this.gridSerializer,
-            gridOptionsService: this.gridOptionsService
+            gos: this.gos
         });
     }
 
     protected getMergedParams(params?: ExcelExportParams): ExcelExportParams {
-        const baseParams = this.gridOptionsService.get('defaultExcelExportParams');
+        const baseParams = this.gos.get('defaultExcelExportParams');
         return Object.assign({}, baseParams, params);
     }
 
@@ -234,7 +234,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             if (packageFile) {
                 const { fileName } = mergedParams;
                 const providedFileName = typeof fileName === 'function'
-                    ? fileName(this.gridOptionsService.getGridCommonParams())
+                    ? fileName(this.gos.getGridCommonParams())
                     : fileName;
 
                 Downloader.download(this.getFileName(providedFileName), packageFile);
@@ -286,13 +286,13 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
     }
 
     public createSerializingSession(params: ExcelExportParams): ExcelSerializingSession {
-        const { columnModel, valueService, gridOptionsService, valueFormatterService, valueParserService } = this;
+        const { columnModel, valueService, gos, valueFormatterService, valueParserService } = this;
 
         let sheetName: string;
         if (params.sheetName != null) {
             const {sheetName: sheetNameParam } = params;
             const sheetNameValue = typeof sheetNameParam === 'function'
-                ? sheetNameParam(this.gridOptionsService.getGridCommonParams())
+                ? sheetNameParam(this.gos.getGridCommonParams())
                 : sheetNameParam;
 
             sheetName = String(sheetNameValue).substring(0, 31);
@@ -305,12 +305,12 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             sheetName,
             columnModel,
             valueService,
-            gridOptionsService,
+            gos,
             valueFormatterService,
             valueParserService,
             suppressRowOutline: params.suppressRowOutline || params.skipRowGroups,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
-            baseExcelStyles: this.gridOptionsService.get('excelStyles') || [],
+            baseExcelStyles: this.gos.get('excelStyles') || [],
             styleLinker: this.styleLinker.bind(this)
         };
 
@@ -333,7 +333,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             if (col) {
                 headerClasses = headerClasses.concat(CssClassApplier.getHeaderClassesFromColDef(
                     col.getDefinition(),
-                    this.gridOptionsService,
+                    this.gos,
                     column || null,
                     columnGroup || null
                 ));
@@ -342,7 +342,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             return headerClasses;
         }
 
-        const styles = this.gridOptionsService.get('excelStyles');
+        const styles = this.gos.get('excelStyles');
 
         const applicableStyles: string [] = ["cell"];
 
@@ -354,7 +354,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
 
         this.stylingService.processAllCellClasses(
             column!.getDefinition(),
-            this.gridOptionsService.addGridCommonParams({
+            this.gos.addGridCommonParams({
                 value,
                 data: node!.data,
                 node: node!,
@@ -375,7 +375,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
     }
 
     public isExportSuppressed():boolean {
-        return this.gridOptionsService.get('suppressExcelExport');
+        return this.gos.get('suppressExcelExport');
     }
 
     private packageCompressedFile(params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> {

@@ -83,7 +83,7 @@ export class TooltipFeature extends BeanStub {
     }
 
     public refreshToolTip() {
-        this.browserTooltips = this.beans.gridOptionsService.get('enableBrowserTooltips');
+        this.browserTooltips = this.beans.gos.get('enableBrowserTooltips');
         this.updateTooltipText();
 
         if (this.browserTooltips) {

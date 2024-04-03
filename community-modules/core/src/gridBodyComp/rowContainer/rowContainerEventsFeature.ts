@@ -114,7 +114,7 @@ export class RowContainerEventsFeature extends BeanStub {
         let sourceElement: HTMLElement | null = event.target as HTMLElement | null;
 
         while (sourceElement) {
-            const rowCon = this.gridOptionsService.getDomData(sourceElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
+            const rowCon = this.gos.getDomData(sourceElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
             if (rowCon) {
                 return rowCon;
             }
@@ -145,8 +145,8 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private getControlsForEventTarget(target: EventTarget | null): { cellCtrl: CellCtrl | null, rowCtrl: RowCtrl | null } {
         return {
-            cellCtrl: getCtrlForEventTarget<CellCtrl>(this.gridOptionsService, target, CellCtrl.DOM_DATA_KEY_CELL_CTRL),
-            rowCtrl: getCtrlForEventTarget<RowCtrl>(this.gridOptionsService, target, RowCtrl.DOM_DATA_KEY_ROW_CTRL)
+            cellCtrl: getCtrlForEventTarget<CellCtrl>(this.gos, target, CellCtrl.DOM_DATA_KEY_CELL_CTRL),
+            rowCtrl: getCtrlForEventTarget<RowCtrl>(this.gos, target, RowCtrl.DOM_DATA_KEY_ROW_CTRL)
         }
     }
 
@@ -166,7 +166,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const column = cellCtrl.getColumn();
         const editing = cellCtrl.isEditing();
 
-        const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gridOptionsService, keyboardEvent, rowNode, column, editing);
+        const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gos, keyboardEvent, rowNode, column, editing);
 
         if (gridProcessingAllowed) {
             if (eventName === 'keydown') {
@@ -198,7 +198,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const rowNode = rowComp.getRowNode();
         const focusedCell = this.focusService.getFocusedCell();
         const column = (focusedCell && focusedCell.column) as Column;
-        const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gridOptionsService, keyboardEvent, rowNode, column, false);
+        const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gos, keyboardEvent, rowNode, column, false);
 
         if (gridProcessingAllowed) {
             const key = keyboardEvent.key;
@@ -290,7 +290,7 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndC(event: KeyboardEvent): void {
-        if (!this.clipboardService || this.gridOptionsService.get('enableCellTextSelection')) { return; }
+        if (!this.clipboardService || this.gos.get('enableCellTextSelection')) { return; }
 
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
 
@@ -303,8 +303,8 @@ export class RowContainerEventsFeature extends BeanStub {
     private onCtrlAndX(event: KeyboardEvent): void {
         if (
             !this.clipboardService ||
-            this.gridOptionsService.get('enableCellTextSelection') ||
-            this.gridOptionsService.get('suppressCutToClipboard')
+            this.gos.get('enableCellTextSelection') ||
+            this.gos.get('suppressCutToClipboard')
         ) { return; }
 
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
@@ -320,20 +320,20 @@ export class RowContainerEventsFeature extends BeanStub {
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
 
         if (cellCtrl?.isEditing() || rowCtrl?.isEditing()) { return; }
-        if (this.clipboardService && !this.gridOptionsService.get('suppressClipboardPaste')) {
+        if (this.clipboardService && !this.gos.get('suppressClipboardPaste')) {
             this.clipboardService.pasteFromClipboard();
         }
     }
 
     private onCtrlAndD(event: KeyboardEvent): void {
-        if (this.clipboardService && !this.gridOptionsService.get('suppressClipboardPaste')) {
+        if (this.clipboardService && !this.gos.get('suppressClipboardPaste')) {
             this.clipboardService.copyRangeDown();
         }
         event.preventDefault();
     }
 
     private onCtrlAndZ(event: KeyboardEvent): void {
-        if (!this.gridOptionsService.get('undoRedoCellEditing')) { return; }
+        if (!this.gos.get('undoRedoCellEditing')) { return; }
         event.preventDefault();
 
         if (event.shiftKey) {

@@ -104,7 +104,7 @@ To handle this scenario, the grid provides `parentKeys` and `level` properties i
 
 These can be used to create unique group IDs as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
    getRowId: params => {
        const parentKeysJoined = (params.parentKeys || []).join('-');

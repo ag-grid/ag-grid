@@ -4,7 +4,9 @@ import { ChartProxyParams, UpdateParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
 import { hexToRGBA } from "../../utils/color";
-import { isHorizontal, isStacked } from "../../utils/seriesTypeMapper";
+import { isStacked } from "../../utils/seriesTypeMapper";
+
+const HORIZONTAL_CHART_TYPES = new Set(['bar', 'groupedBar', 'stackedBar', 'normalizedBar']);
 
 export class BarChartProxy extends CartesianChartProxy {
 
@@ -16,11 +18,11 @@ export class BarChartProxy extends CartesianChartProxy {
         const axes: AgCartesianAxisOptions[] = [
             {
                 type: this.getXAxisType(params),
-                position: isHorizontal(this.chartType) ? 'left' : 'bottom',
+                position: this.isHorizontal() ? 'left' : 'bottom',
             },
             {
                 type: 'number',
-                position: isHorizontal(this.chartType) ? 'bottom' : 'left',
+                position: this.isHorizontal() ? 'bottom' : 'left',
             },
         ];
         // Add a default label formatter to show '%' for normalized charts if none is provided
@@ -37,7 +39,7 @@ export class BarChartProxy extends CartesianChartProxy {
         const series: AgBarSeriesOptions[] = params.fields.map(f => (
             {
                 type: this.standaloneChartType,
-                direction: isHorizontal(this.chartType) ? 'horizontal' : 'vertical',
+                direction: this.isHorizontal() ? 'horizontal' : 'vertical',
                 stacked: this.crossFiltering || isStacked(this.chartType),
                 normalizedTo: this.isNormalised() ? 100 : undefined,
                 xKey: category.id,
@@ -91,5 +93,9 @@ export class BarChartProxy extends CartesianChartProxy {
     private isNormalised() {
         const normalisedCharts = ['normalizedColumn', 'normalizedBar'];
         return !this.crossFiltering && _.includes(normalisedCharts, this.chartType);
+    }
+
+    protected override isHorizontal(): boolean {
+        return HORIZONTAL_CHART_TYPES.has(this.chartType);
     }
 }

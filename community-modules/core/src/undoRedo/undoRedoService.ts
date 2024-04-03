@@ -53,9 +53,9 @@ export class UndoRedoService extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        if (!this.gridOptionsService.get('undoRedoCellEditing')) { return; }
+        if (!this.gos.get('undoRedoCellEditing')) { return; }
 
-        const undoRedoLimit = this.gridOptionsService.get('undoRedoCellEditingLimit');
+        const undoRedoLimit = this.gos.get('undoRedoCellEditingLimit');
 
         if (undoRedoLimit <= 0) { return; }
 
@@ -329,7 +329,7 @@ export class UndoRedoService extends BeanStub {
 
         this.addManagedListener(this.eventService, Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END, () => {
             let action: UndoRedoAction;
-            if (this.rangeService && this.gridOptionsService.get('enableRangeSelection')) {
+            if (this.rangeService && this.gos.get('enableRangeSelection')) {
                 action = new RangeUndoRedoAction(this.cellValueChanges, undefined, undefined, [...this.rangeService.getCellRanges()]);
             } else {
                 action = new UndoRedoAction(this.cellValueChanges);

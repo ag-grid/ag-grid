@@ -77,7 +77,7 @@ export class StateService extends BeanStub {
     private postConstruct(): void {
         this.isClientSideRowModel = this.rowModel.getType() === 'clientSide';
 
-        this.cachedState = this.gridOptionsService.get('initialState') ?? {};
+        this.cachedState = this.gos.get('initialState') ?? {};
 
         this.ctrlsService.whenReady(() => this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnGridReady()));
 
@@ -114,7 +114,7 @@ export class StateService extends BeanStub {
     }
 
     private setupStateOnColumnsInitialised(): void {
-        const initialState = this.gridOptionsService.get('initialState') ?? {};
+        const initialState = this.gos.get('initialState') ?? {};
         this.setColumnState(initialState);
         this.setColumnGroupState(initialState);
 
@@ -154,8 +154,8 @@ export class StateService extends BeanStub {
             rowGroupExpansion: rowGroupExpansionState,
             rowSelection: rowSelectionState,
             pagination: paginationState
-        } = this.gridOptionsService.get('initialState') ?? {};
-        const advancedFilterModel = this.gridOptionsService.get('advancedFilterModel');
+        } = this.gos.get('initialState') ?? {};
+        const advancedFilterModel = this.gos.get('advancedFilterModel');
         if (filterState || advancedFilterModel) {
             this.setFilterState(filterState, advancedFilterModel);
         }
@@ -194,7 +194,7 @@ export class StateService extends BeanStub {
             rangeSelection: rangeSelectionState,
             focusedCell: focusedCellState,
             columnOrder: columnOrderState,
-        } = this.gridOptionsService.get('initialState') ?? {};
+        } = this.gos.get('initialState') ?? {};
         if (focusedCellState) {
             this.setFocusedCellState(focusedCellState);
         }
@@ -340,7 +340,7 @@ export class StateService extends BeanStub {
                 columnState.pivot = true;
                 columnState.pivotIndex = pivotIndex;
             });
-            this.gridOptionsService.updateGridOptions({ options: { pivotMode: pivotState.pivotMode }, source: 'gridInitializing' as any });
+            this.gos.updateGridOptions({ options: { pivotMode: pivotState.pivotMode }, source: 'gridInitializing' as any });
         }
         if (columnPinningState) {
             columnPinningState.leftColIds.forEach(colId => {
@@ -490,7 +490,7 @@ export class StateService extends BeanStub {
     }
 
     private setRangeSelectionState(rangeSelectionState: RangeSelectionState): void {
-        if (!this.gridOptionsService.get('enableRangeSelection')) { return; }
+        if (!this.gos.get('enableRangeSelection')) { return; }
         const cellRanges = rangeSelectionState.cellRanges.map(cellRange => ({
             ...cellRange,
             columns: cellRange.colIds.map(colId => this.columnModel.getGridColumn(colId)!),
@@ -554,7 +554,7 @@ export class StateService extends BeanStub {
 
     private getPaginationState(): PaginationState | undefined {
         const page = this.paginationProxy.getCurrentPage();
-        const pageSize = !this.gridOptionsService.get('paginationAutoPageSize')
+        const pageSize = !this.gos.get('paginationAutoPageSize')
             ? this.paginationProxy.getPageSize() : undefined;
 
         if (!page && !pageSize) { return; }
@@ -562,7 +562,7 @@ export class StateService extends BeanStub {
     }
 
     private setPaginationState(paginationState: PaginationState): void {
-        if (paginationState.pageSize && !this.gridOptionsService.get('paginationAutoPageSize')) {
+        if (paginationState.pageSize && !this.gos.get('paginationAutoPageSize')) {
             this.paginationProxy.setPageSize(paginationState.pageSize, 'initialState');
         }
 

@@ -2,7 +2,16 @@
 title: "Quick Start" 
 ---
 
+{% if isFramework("javascript", "angular", "vue") %}
 Welcome to the AG Grid documentation. After reading this page you will have an overview of the key concepts of AG Grid that you will use on a daily basis.
+{% /if %}
+
+{% if isFramework("react") %}
+{% videoSection id="6hxbPqziELk" title="React Quick Start" showHeader=true %}
+Welcome to the AG Grid documentation. After reading this page you will have an overview of the key concepts of AG Grid that you will use on a daily basis.
+{% /videoSection %}
+{% /if %}
+
 
 ## Your First Grid
 
@@ -326,7 +335,7 @@ The `field` or `valueGetter` attributes [Map Data to Columns](./column-definitio
 
 The `headerName` provides the title for the header. If missing the title is derived from `field`.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { headerName: "Make & Model", valueGetter: p => p.make + ' ' + p.model},
@@ -339,10 +348,10 @@ const gridOptions = {
 
 Format text for cell content using a [Value Formatter](./value-formatters/).
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
-        { field: "price", valueFormatter: p => '£' + Math.floor(p.value).toLocaleString() },
+        { field: "price", valueFormatter: p => '£' + p.value.toLocaleString() },
     ],
 };
 ```
@@ -375,7 +384,7 @@ class CustomButtonComponent {
    this.eGui = document.createElement("div");
    let button = document.createElement("button");
    button.className = "btn-simple";
-   button.innerText = "Push Me!";
+   button.textContent = "Push Me!";
    this.eventListener = () => alert("clicked");
    button.addEventListener("click", this.eventListener);
    this.eGui.appendChild(button);
@@ -460,7 +469,7 @@ columnDefs: ColDef[] = [
 Columns are [Resized](./column-sizing/) by dragging the Column Header edges. Additionally assign `flex` values to
 allow columns to flex to the grid width.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: "make", flex: 2 }, //This column will be twice as wide as the others
@@ -485,7 +494,7 @@ By default, the row data is used to infer the [Cell Data Type](./cell-data-types
 
 [Column Filters](./filtering/) are embedded into each column menu. These are enabled using the `filter` attribute. The filter type is inferred from the cell data type.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: "make", filter: true },
@@ -498,7 +507,7 @@ You can also create your own [Custom Filter](./filter-custom/).
 
 [Floating Filters](./floating-filters/) embed the Column Filter into the header for ease of access.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: "make", filter: true, floatingFilter: true },
@@ -510,7 +519,7 @@ const gridOptions = {
 
 Enable [Editing](./cell-editing/) by setting the `editable` attribute to `true`. The cell editor is inferred from the cell data type.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: "make", editable: true },
@@ -521,7 +530,7 @@ const gridOptions = {
 Set the cell editor type using the `cellEditor` attribute. There are 7 [Provided Cell Editors](./provided-cell-editors/) which can be set through this attribute.
 You can also create your own [Custom Editors](./cell-editors/).
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -544,7 +553,7 @@ Data is [Sorted](./row-sorting/) by clicking the column headers. Sorting is enab
 
 [Row Selection](./row-selection/) is enabled using the `rowSelection` attribute. Use the `checkboxSelection` column definition attribute to render checkboxes for selection.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // Column Definitions: Defines the columns to be displayed.
     columnDefs: [
@@ -558,7 +567,7 @@ const gridOptions = {
 
 Enable [Pagination](./row-pagination/) by setting `pagination` to be true.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     pagination: true,
     paginationPageSize: 500,
@@ -687,11 +696,11 @@ const VueExample = {
     /* Changes the color of the grid text */
       --ag-foreground-color: rgb(14, 68, 145);
       /* Changes the color of the grid background */
-      --ag-background-color: rgba(241, 247, 255);
+      --ag-background-color: rgb(241, 247, 255);
       /* Changes the header color of the top row */
-      --ag-header-background-color: rgba(228, 237, 250);
+      --ag-header-background-color: rgb(228, 237, 250);
       /* Changes the hover color of the row*/
-      --ag-row-hover-color: rgba(0, 38, 255, 0.1);
+      --ag-row-hover-color: rgb(216, 226, 255);
 }
 ```
 
@@ -716,7 +725,7 @@ Define rules to apply [Styling to Cells](./cell-styles) using `cellClassRules`. 
 }
 ```
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [{
         field: 'electric',
@@ -738,7 +747,7 @@ Define rules to apply [Styling to Rows](./row-styles) using  and `rowClassRules`
 }
 ```
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     rowClassRules: {
         // apply red to Ford cars

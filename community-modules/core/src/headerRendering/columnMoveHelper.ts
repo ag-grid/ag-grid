@@ -18,10 +18,10 @@ export class ColumnMoveHelper {
         fromEnter: boolean;
         fakeEvent: boolean,
         pinned: ColumnPinnedType,
-        gridOptionsService: GridOptionsService,
+        gos: GridOptionsService,
         columnModel: ColumnModel
     }): { columns: Column[], toIndex: number } | null | undefined {
-        const { isFromHeader, hDirection, xPosition, fromEnter, fakeEvent, pinned, gridOptionsService, columnModel } = params; 
+        const { isFromHeader, hDirection, xPosition, fromEnter, fakeEvent, pinned, gos, columnModel } = params; 
 
         const draggingLeft = hDirection === HorizontalDirection.Left;
         const draggingRight = hDirection === HorizontalDirection.Right;
@@ -69,7 +69,7 @@ export class ColumnMoveHelper {
             draggingRight,
             xPosition,
             pinned,
-            gridOptionsService,
+            gos,
             columnModel
         });
 
@@ -195,11 +195,11 @@ export class ColumnMoveHelper {
         draggingRight: boolean,
         xPosition: number,
         pinned: ColumnPinnedType,
-        gridOptionsService: GridOptionsService,
+        gos: GridOptionsService,
         columnModel: ColumnModel
     }): number[] {
-        const { movingCols, draggingRight, xPosition, pinned, gridOptionsService, columnModel } = params;
-        const isMoveBlocked = gridOptionsService.get('suppressMovableColumns') || movingCols.some(col => col.getColDef().suppressMovable);
+        const { movingCols, draggingRight, xPosition, pinned, gos, columnModel } = params;
+        const isMoveBlocked = gos.get('suppressMovableColumns') || movingCols.some(col => col.getColDef().suppressMovable);
 
         if (isMoveBlocked) { return []; }
         // this is the list of cols on the screen, so it's these we use when comparing the x mouse position
@@ -312,7 +312,7 @@ export class ColumnMoveHelper {
         return validMoves;
     }
 
-    public static normaliseX(x: number, pinned: ColumnPinnedType, fromKeyboard: boolean, gridOptionsService: GridOptionsService, ctrlsService: CtrlsService): number {
+    public static normaliseX(x: number, pinned: ColumnPinnedType, fromKeyboard: boolean, gos: GridOptionsService, ctrlsService: CtrlsService): number {
         const eViewport = ctrlsService.getHeaderRowContainerCtrl(pinned).getViewport();
 
         if (fromKeyboard) {
@@ -320,7 +320,7 @@ export class ColumnMoveHelper {
         }
 
         // flip the coordinate if doing RTL
-        if (gridOptionsService.get('enableRtl')) {
+        if (gos.get('enableRtl')) {
             const clientWidth = eViewport.clientWidth;
             x = clientWidth - x;
         }

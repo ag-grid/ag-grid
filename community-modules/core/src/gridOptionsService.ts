@@ -475,6 +475,10 @@ export class GridOptionsService {
         return this.eGridDiv.getRootNode() as Document | ShadowRoot;
     }
 
+    public getActiveDomElement(): Element | null {
+        return this.getRootNode().activeElement;
+    }
+
     public getAsyncTransactionWaitMillis(): number | undefined {
         return exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : 50;
     }

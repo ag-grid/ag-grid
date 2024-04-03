@@ -15,7 +15,7 @@ export class MoveColumnFeature implements DropListener {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
+    @Autowired('gridOptionsService') private gos: GridOptionsService;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
 
     private gridBodyCon: GridBodyCtrl;
@@ -110,7 +110,7 @@ export class MoveColumnFeature implements DropListener {
             const firstVisiblePixel = this.ctrlsService.getCenterRowContainerCtrl().getCenterViewportScrollLeft();
             const lastVisiblePixel = firstVisiblePixel + this.ctrlsService.getCenterRowContainerCtrl().getCenterWidth();
 
-            if (this.gridOptionsService.get('enableRtl')) {
+            if (this.gos.get('enableRtl')) {
                 this.needToMoveRight = xAdjustedForScroll < (firstVisiblePixel + 50);
                 this.needToMoveLeft = xAdjustedForScroll > (lastVisiblePixel - 50);
             } else {
@@ -145,7 +145,7 @@ export class MoveColumnFeature implements DropListener {
             draggingEvent.x,
             this.pinned,
             false,
-            this.gridOptionsService,
+            this.gos,
             this.ctrlsService
         );
 
@@ -178,7 +178,7 @@ export class MoveColumnFeature implements DropListener {
             pinned: this.pinned,
             fromEnter,
             fakeEvent,
-            gridOptionsService: this.gridOptionsService,
+            gos: this.gos,
             columnModel: this.columnModel
         });
 
@@ -188,7 +188,7 @@ export class MoveColumnFeature implements DropListener {
     }
 
     private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection | undefined {
-        if (this.gridOptionsService.get('enableRtl')) {
+        if (this.gos.get('enableRtl')) {
             switch (hDirection) {
                 case HorizontalDirection.Left: return HorizontalDirection.Right;
                 case HorizontalDirection.Right: return HorizontalDirection.Left;

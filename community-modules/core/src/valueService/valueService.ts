@@ -31,15 +31,15 @@ export class ValueService extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.isSsrm = this.gridOptionsService.isRowModelType('serverSide');
-        this.cellExpressions = this.gridOptionsService.get('enableCellExpressions');
-        this.isTreeData = this.gridOptionsService.get('treeData');
+        this.isSsrm = this.gos.isRowModelType('serverSide');
+        this.cellExpressions = this.gos.get('enableCellExpressions');
+        this.isTreeData = this.gos.get('treeData');
         this.initialised = true;
 
         // We listen to our own event and use it to call the columnSpecific callback,
         // this way the handler calls are correctly interleaved with other global events
         const listener = (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event);
-        const async = this.gridOptionsService.useAsyncEvents();
+        const async = this.gos.useAsyncEvents();
         this.eventService.addEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async);
         this.addDestroyFunc(() => this.eventService.removeEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async));
 
@@ -117,7 +117,7 @@ export class ValueService extends BeanStub {
 
     private getOpenedGroup(rowNode: IRowNode, column: Column): any {
 
-        if (!this.gridOptionsService.get('showOpenedGroup')) { return; }
+        if (!this.gos.get('showOpenedGroup')) { return; }
 
         const colDef = column.getColDef();
         if (!colDef.showRowGroup) { return; }
@@ -168,7 +168,7 @@ export class ValueService extends BeanStub {
             return false;
         }
 
-        const params: ValueSetterParams = this.gridOptionsService.addGridCommonParams({
+        const params: ValueSetterParams = this.gos.addGridCommonParams({
             node: rowNode,
             data: rowNode.data,
             oldValue: this.getValue(column, rowNode),
@@ -285,7 +285,7 @@ export class ValueService extends BeanStub {
     }
 
     private executeFilterValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: IRowNode): any {
-        const params: ValueGetterParams = this.gridOptionsService.addGridCommonParams({
+        const params: ValueGetterParams = this.gos.addGridCommonParams({
             data: data,
             node: rowNode,
             column: column,
@@ -310,7 +310,7 @@ export class ValueService extends BeanStub {
             return valueFromCache;
         }
 
-        const params: ValueGetterParams = this.gridOptionsService.addGridCommonParams({
+        const params: ValueGetterParams = this.gos.addGridCommonParams({
             data: data,
             node: rowNode,
             column: column,
@@ -348,7 +348,7 @@ export class ValueService extends BeanStub {
 
         let result = value;
         if (keyCreator) {
-            const keyParams: KeyCreatorParams = this.gridOptionsService.addGridCommonParams({
+            const keyParams: KeyCreatorParams = this.gos.addGridCommonParams({
                 value: value,
                 colDef: col.getColDef(),
                 column: col,

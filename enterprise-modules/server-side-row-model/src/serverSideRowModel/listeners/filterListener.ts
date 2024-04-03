@@ -22,7 +22,7 @@ export class FilterListener extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
-        if (!this.gridOptionsService.isRowModelType('serverSide')) { return; }
+        if (!this.gos.isRowModelType('serverSide')) { return; }
 
         this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, () => this.onFilterChanged(true));
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, () => this.onFilterChanged());

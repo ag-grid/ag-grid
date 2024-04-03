@@ -19,8 +19,6 @@ const INTERACTIVITY_GROUPS: ChartInteractivityGroup[] = ['navigator', 'zoom', 'a
 const DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS: ChartInteractivityGroup[] = ['navigator', 'zoom', 'crosshair'];
 
 const SUPPORTED_GROUP_PANELS: { [T in ChartSeriesType]?: ChartInteractivityGroup[] } = {
-    'cartesian': DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS,
-    'column': DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS,
     'bar': DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS,
     'line': DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS,
     'area': DEFAULT_PER_SERIES_SUPPORTED_GROUP_PANELS,

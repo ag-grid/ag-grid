@@ -28,7 +28,7 @@ export interface RowCssClassCalculatorParams {
 export class RowCssClassCalculator {
 
     @Autowired('stylingService') public stylingService: StylingService;
-    @Autowired('gridOptionsService') gridOptionsService: GridOptionsService;
+    @Autowired('gridOptionsService') gos: GridOptionsService;
 
     public getInitialRowClasses(params: RowCssClassCalculatorParams): string[] {
 
@@ -116,7 +116,7 @@ export class RowCssClassCalculator {
         };
 
         // part 1 - rowClass
-        const rowClass = this.gridOptionsService.get('rowClass');
+        const rowClass = this.gos.get('rowClass');
         if (rowClass) {
             if (typeof rowClass === 'function') {
                 console.warn('AG Grid: rowClass should not be a function, please use getRowClass instead');
@@ -126,7 +126,7 @@ export class RowCssClassCalculator {
         }
 
         // part 2 - rowClassFunc
-        const rowClassFunc = this.gridOptionsService.getCallback('getRowClass');
+        const rowClassFunc = this.gos.getCallback('getRowClass');
 
         if (rowClassFunc) {
             const params: WithoutGridCommon<RowClassParams> = {
@@ -157,7 +157,7 @@ export class RowCssClassCalculator {
     }
 
     public processRowClassRules(rowNode: RowNode, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void {
-        const rowClassParams: RowClassParams = this.gridOptionsService.addGridCommonParams({
+        const rowClassParams: RowClassParams = this.gos.addGridCommonParams({
             data: rowNode.data,
             node: rowNode,
             rowIndex: rowNode.rowIndex!
@@ -165,7 +165,7 @@ export class RowCssClassCalculator {
 
         this.stylingService.processClassRules(
             undefined,
-            this.gridOptionsService.get('rowClassRules'),
+            this.gos.get('rowClassRules'),
             rowClassParams,
             onApplicableClass,
             onNotApplicableClass

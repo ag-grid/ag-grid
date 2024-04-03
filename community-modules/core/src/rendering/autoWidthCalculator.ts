@@ -84,7 +84,7 @@ export class AutoWidthCalculator extends BeanStub {
     }
 
     private getAutoSizePadding(): number {
-        return this.gridOptionsService.get('autoSizePadding');
+        return this.gos.get('autoSizePadding');
     }
 
     /* tslint:disable */

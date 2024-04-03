@@ -77,9 +77,9 @@ export class DataTypeService extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.groupHideOpenParents = this.gridOptionsService.get('groupHideOpenParents');
+        this.groupHideOpenParents = this.gos.get('groupHideOpenParents');
         this.addManagedPropertyListener('groupHideOpenParents', () => {
-            this.groupHideOpenParents = this.gridOptionsService.get('groupHideOpenParents');
+            this.groupHideOpenParents = this.gos.get('groupHideOpenParents');
         });
         this.processDataTypeDefinitions();
 
@@ -98,7 +98,7 @@ export class DataTypeService extends BeanStub {
                 groupSafeValueFormatter: this.createGroupSafeValueFormatter(dataTypeDefinition)
             };
         });
-        const dataTypeDefinitions = this.gridOptionsService.get('dataTypeDefinitions') ?? {};
+        const dataTypeDefinitions = this.gos.get('dataTypeDefinitions') ?? {};
         this.dataTypeMatchers = {};
 
         Object.entries(dataTypeDefinitions).forEach(([cellDataType, dataTypeDefinition]) => {
@@ -258,7 +258,7 @@ export class DataTypeService extends BeanStub {
 
                 // we don't want to double format the value
                 // as this is already formatted by using the valueFormatter as the keyCreator
-                if (!this.gridOptionsService.get('suppressGroupMaintainValueType')) {
+                if (!this.gos.get('suppressGroupMaintainValueType')) {
                     return undefined as any;
                 }
             } else if (this.groupHideOpenParents && params.column.isRowGroupActive()) {
@@ -270,7 +270,7 @@ export class DataTypeService extends BeanStub {
 
                 // we don't want to double format the value
                 // as this is already formatted by using the valueFormatter as the keyCreator
-                if (!this.gridOptionsService.get('suppressGroupMaintainValueType')) {
+                if (!this.gos.get('suppressGroupMaintainValueType')) {
                     return undefined as any;
                 }
             }
@@ -345,7 +345,7 @@ export class DataTypeService extends BeanStub {
         }
         const columnTypes = userColDef.type === null ? colDef.type : userColDef.type;
         if (columnTypes) {
-            const columnTypeDefs = this.gridOptionsService.get('columnTypes') ?? {};
+            const columnTypeDefs = this.gos.get('columnTypes') ?? {};
             const hasPropsPreventingInference = this.convertColumnTypes(columnTypes).some(columnType => {
                 const columnTypeDef = columnTypeDefs[columnType.trim()];
                 return columnTypeDef && this.doColDefPropsPreventInference(columnTypeDef, propsToCheckForInference);
@@ -389,7 +389,7 @@ export class DataTypeService extends BeanStub {
         let value: any;
         const initialData = this.getInitialData();
         if (initialData) {
-            const fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.get('suppressFieldDotNotation');
+            const fieldContainsDots = field.indexOf('.') >= 0 && !this.gos.get('suppressFieldDotNotation');
             value = getValueUsingField(initialData, field, fieldContainsDots);
         } else {
             this.initWaitForRowData(colId);
@@ -402,7 +402,7 @@ export class DataTypeService extends BeanStub {
     }
 
     private getInitialData(): any {
-        const rowData = this.gridOptionsService.get('rowData');
+        const rowData = this.gos.get('rowData');
         if (rowData?.length) {
             return rowData[0];
         } else if (this.initialData) {

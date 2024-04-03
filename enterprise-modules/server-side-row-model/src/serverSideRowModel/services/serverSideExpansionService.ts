@@ -32,7 +32,7 @@ export class ServerSideExpansionService extends ExpansionService implements IExp
             return;
         }
 
-        const userFunc = this.gridOptionsService.getCallback('isServerSideGroupOpenByDefault');
+        const userFunc = this.gos.getCallback('isServerSideGroupOpenByDefault');
         if (!userFunc) { return; }
 
         const params: WithoutGridCommon<IsServerSideGroupOpenByDefaultParams> = {

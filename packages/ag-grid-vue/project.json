@@ -9,6 +9,7 @@
       "dependsOn": [
         "build:types",
         "build:package",
+        "build:umd",
         "build:copy-source"
       ],
       "inputs": [],
@@ -47,7 +48,7 @@
         "{options.outputPath}"
       ],
       "options": {
-        "outputPath": "packages/ag-grid-vue/dist/types",
+        "outputPath": "packages/ag-grid-vue/lib/types",
         "main": "packages/ag-grid-vue/src/main.ts",
         "tsConfig": "packages/ag-grid-vue/tsconfig.types.json",
         "compiler": "tsc"
@@ -80,7 +81,7 @@
         "{options.outputPath}"
       ],
       "options": {
-        "outputPath": "packages/ag-grid-vue/dist/package",
+        "outputPath": "packages/ag-grid-vue/lib",
         "main": "packages/ag-grid-vue/src/main.ts",
         "tsConfig": "packages/ag-grid-vue/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",
@@ -106,6 +107,19 @@
           "sourcemap": false
         }
       }
+    },
+    "build:umd": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "packages/ag-grid-vue/dist",
+        "command": "NODE_OPTIONS=--openssl-legacy-provider npx vue-cli-service build --target lib src/AgGridVue.ts && rm dist/demo.html",
+        "cwd": "packages/ag-grid-vue"
+      },
+      "cache": false
     }
   },
   "tags": ["package:community", "package:framework", "package", "community", "framework"]

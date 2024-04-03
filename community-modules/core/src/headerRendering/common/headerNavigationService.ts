@@ -31,7 +31,7 @@ export class HeaderNavigationService extends BeanStub {
             this.gridBodyCon = p.gridBodyCtrl;
         });
 
-        const eDocument = this.gridOptionsService.getDocument();
+        const eDocument = this.gos.getDocument();
         this.addManagedListener(eDocument, 'mousedown', () => this.setCurrentHeaderRowWithoutSpan(-1));
     }
 
@@ -97,7 +97,7 @@ export class HeaderNavigationService extends BeanStub {
     public navigateHorizontally(direction: HeaderNavigationDirection, fromTab: boolean = false, event: KeyboardEvent): boolean {
         const focusedHeader = this.focusService.getFocusedHeader()!;
         const isLeft = direction === HeaderNavigationDirection.LEFT;
-        const isRtl = this.gridOptionsService.get('enableRtl');
+        const isRtl = this.gos.get('enableRtl');
         let nextHeader: HeaderPosition;
         let normalisedDirection: 'Before' |  'After';
 

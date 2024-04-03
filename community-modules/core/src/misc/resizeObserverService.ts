@@ -9,7 +9,7 @@ export class ResizeObserverService extends BeanStub {
     private polyfillScheduled: boolean;
 
     public observeResize(element: HTMLElement, callback: () => void): () => void {
-        const win = this.gridOptionsService.getWindow();
+        const win = this.gos.getWindow();
         const useBrowserResizeObserver = () => {
             const resizeObserver = new win.ResizeObserver(callback);
             resizeObserver.observe(element);
@@ -47,7 +47,7 @@ export class ResizeObserverService extends BeanStub {
             return () => running = false;
         };
 
-        const suppressResize = this.gridOptionsService.get('suppressBrowserResizeObserver');
+        const suppressResize = this.gos.get('suppressBrowserResizeObserver');
         const resizeObserverExists = !!win.ResizeObserver;
 
         if (resizeObserverExists && !suppressResize) {

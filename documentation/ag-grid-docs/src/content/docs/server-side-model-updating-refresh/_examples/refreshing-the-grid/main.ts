@@ -62,7 +62,7 @@ let versionCounter = 1;
 
 const updateChangeIndicator = () => {
   const el = document.querySelector('#version-indicator') as HTMLInputElement;
-  el.innerText = `${versionCounter}`;
+  el.textContent = `${versionCounter}`;
 }
 
 const beginPeriodicallyModifyingData = () => {

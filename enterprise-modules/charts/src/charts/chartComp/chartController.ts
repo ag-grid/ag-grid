@@ -23,7 +23,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartDataModel, ChartModelParams, ColState } from "./model/chartDataModel";
 import { ChartProxy, FieldDefinition, UpdateParams } from "./chartProxies/chartProxy";
-import { _Theme, AgChartThemePalette, _ModuleSupport } from "ag-charts-community";
+import { _Theme, AgChartThemePalette, _ModuleSupport, AgCartesianAxisType } from "ag-charts-community";
 import {
     ChartSeriesType,
     getMaxNumCategories,
@@ -184,7 +184,7 @@ export class ChartController extends BeanStub {
             categories: selectedDimensions.map((selectedDimension) => ({
                 id: selectedDimension.colId,
                 name: selectedDimension.displayName!,
-                chartDataType: this.model.getChartDataType(selectedDimension.colId)
+                chartDataType: this.model.categoryAxisType ?? this.model.getChartDataType(selectedDimension.colId)
             })),
             fields,
             chartId: this.getChartId(),
@@ -274,12 +274,14 @@ export class ChartController extends BeanStub {
         // Reset the inverted category/series toggle whenever the chart type changes
         this.model.switchCategorySeries = false;
 
+        this.model.categoryAxisType = undefined;
+
         this.raiseChartModelUpdateEvent();
         this.raiseChartOptionsChangedEvent();
     }
 
     public isCategorySeriesSwitched(): boolean {
-        return this.model.switchCategorySeries;
+        return this.model.switchCategorySeries && !this.model.isGrouping();
     }
 
     public switchCategorySeries(inverted: boolean): void {
@@ -363,7 +365,7 @@ export class ChartController extends BeanStub {
     }
 
     public getThemeNames(): string[] {
-        return this.gridOptionsService.get('chartThemes') || DEFAULT_THEMES;
+        return this.gos.get('chartThemes') || DEFAULT_THEMES;
     }
 
     public getThemes(): _Theme.ChartTheme[] {
@@ -528,6 +530,24 @@ export class ChartController extends BeanStub {
         return this.isComboChart(targetChartType) ? supportedComboSeriesTypes : [getSeriesType(targetChartType)];
     }
 
+    public getChartSeriesType(): ChartSeriesType {
+        const seriesChartTypes = this.getSeriesChartTypes();
+
+        if (seriesChartTypes.length === 0) {
+            return 'bar';
+        }
+        const ct = seriesChartTypes[0].chartType;
+
+        if (ct === 'columnLineCombo') {
+            return 'bar';
+        }
+
+        if (ct === 'areaColumnCombo') {
+            return 'area';
+        }
+        return getSeriesType(ct);
+    }
+
     public isEnterprise = () => _ModuleSupport.enterpriseModule.isEnterprise;
 
     private getCellRanges(): CellRange[] {
@@ -576,7 +596,12 @@ export class ChartController extends BeanStub {
         };
     }
 
-    private raiseChartModelUpdateEvent(): void {
+    public setCategoryAxisType(categoryAxisType?: AgCartesianAxisType): void {
+        this.model.categoryAxisType = categoryAxisType;
+        this.raiseChartModelUpdateEvent();
+    }
+
+    public raiseChartModelUpdateEvent(): void {
         const event = {
             type: ChartController.EVENT_CHART_MODEL_UPDATE
         };

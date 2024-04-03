@@ -10,7 +10,7 @@ This section shows how to add group footers to show group level totals.
 If you want to include a footer with each group, set the property `groupIncludeFooter` to true. It is also possible to
 include a 'grand' total footer for all groups using the property `groupIncludeTotalFooter`.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // adds subtotals
     groupIncludeFooter: true,
@@ -35,7 +35,7 @@ If you want a group footer to only be enabled for certain groups but not others,
 
 For example, to enable group footers for the second level of groups and groups with name 'France':
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
    // adds a group footer to the second level of groups and groups with name 'France'
    groupIncludeFooter: (params) => {
@@ -59,7 +59,7 @@ The following example demonstrates a custom group footer enablement. Note the fo
 
 To enable group footer for a particular row group column, you could do the following:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // adds a group footer to rows grouped by the country column
     groupIncludeFooter: (params) => params.node.rowGroupColumn.getId() === 'country' 
@@ -78,7 +78,7 @@ The following example demonstrates a custom group footer enablement for rows gro
 By default, the footer will display the word 'Total' followed by the group key. However, this can be changed using the
 `footerValueGetter` supplied to the [Group Cell Renderer](./group-cell-renderer/) params as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     autoGroupColumnDef: { 
         cellRendererParams: {

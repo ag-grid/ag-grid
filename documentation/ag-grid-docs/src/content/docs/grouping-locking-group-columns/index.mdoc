@@ -11,7 +11,7 @@ By default, when no `groupLockGroupColumns` option is specified or if `groupLock
 
 To lock group columns, provide the number of group columns to lock to the grid option `groupLockGroupColumns`. For example, to lock the first group column, you can specify `groupLockGroupColumns = 1`  as shown below:
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
  const gridOptions = { 
      columnDefs: [
          { field: 'country', rowGroup: true, enableRowGroup: true, },
@@ -45,7 +45,7 @@ To lock multiple group columns, you can either specify the number of group colum
 
 For example, to lock the first two group columns, you can specify `groupLockGroupColumns = 2`:
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
  const gridOptions = { 
      columnDefs: [
          { field: 'country', rowGroup: true, enableRowGroup: true, },

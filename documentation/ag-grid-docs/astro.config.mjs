@@ -8,16 +8,14 @@ import { loadEnv } from 'vite';
 import mkcert from 'vite-plugin-mkcert';
 import svgr from 'vite-plugin-svgr';
 
-import { version } from '../../community-modules/core/package.json';
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
-import agRedirectsChecker from './plugins/agRedirectsChecker';
 import agLinkChecker from './plugins/agLinkChecker';
+import agRedirectsChecker from './plugins/agRedirectsChecker';
 import { getSitemapConfig } from './src/utils/sitemap';
 import { urlWithBaseUrl } from './src/utils/urlWithBaseUrl';
 
 const { NODE_ENV } = process.env;
-const AG_GRID_VERSION = version;
 const DEFAULT_BASE_URL = '/';
 const dotenv = {
     parsed: loadEnv(NODE_ENV, process.cwd(), ''),
@@ -114,33 +112,18 @@ console.log(
             HTACCESS,
             CHECK_REDIRECTS,
             QUICK_BUILD_PAGES,
-            AG_GRID_VERSION,
         },
         null,
         2
     )
 );
 
-export function agGridVersionReplacement() {
-    return {
-        name: 'replace-AG_GRID_VERSION-placeholder',
-        transform(src, id) {
-            if (/\.(mdoc)$/.test(id)) {
-                return {
-                    code: src.replace(/@AG_GRID_VERSION@/g, AG_GRID_VERSION),
-                    map: null, // provide source map if available
-                };
-            }
-        },
-    };
-}
-
 // https://astro.build/config
 export default defineConfig({
     site: PUBLIC_SITE_URL,
     base: PUBLIC_BASE_URL,
     vite: {
-        plugins: [mkcert(), svgr(), agHotModuleReload(), agGridVersionReplacement()],
+        plugins: [mkcert(), svgr(), agHotModuleReload()],
         server: {
             https: !['0', 'false'].includes(PUBLIC_HTTPS_SERVER),
         },

@@ -11,7 +11,7 @@ Quick Filter is a piece of text given to the grid (typically the user will type 
 {% if isFramework("react") %}
 You can set the Quick Filter text via the `quickFilterText` grid option.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
    quickFilterText: 'new filter text'
 }
@@ -21,7 +21,7 @@ const gridOptions = {
 {% if isFramework("javascript", "angular", "vue") %}
 You can set the Quick Filter text by calling the `setGridOption('quickFilterText', text)` method on the grid API.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 api.setGridOption('quickFilterText', 'new filter text');
 ```
 
@@ -42,7 +42,7 @@ Alternatively, you might want to format string values specifically for searching
 
 Finally, if you want a column to be ignored by the Quick Filter, have `getQuickFilterText` return an empty string `''`.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -84,7 +84,7 @@ This can also be set via the API method `setGridOption('includeHiddenColumnsInQu
 
 By default the Quick Filter splits the text into a list of words which are then compared against each row. You may want to override this behaviour, for example to allow using quotes to search for exact string values. This is possible by providing a `quickFilterParser`. Note that the value passed to the parser will have already been converted to upper case.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // split words by comma instead of space
     quickFilterParser: (quickFilter) => quickFilter.split(','),
@@ -97,7 +97,7 @@ The default behaviour of the Quick Filter is to check whether every search term 
 
 The `rowQuickFilterAggregateText` parameter passed to the matcher function is a concatenation of all the Quick Filter Values (using the [Quick Filter Cache](#quick-filter-cache) if enabled). Note that this value will be upper case.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // perform a regular expression search
     quickFilterMatcher: (quickFilterParts, rowQuickFilterAggregateText) => {

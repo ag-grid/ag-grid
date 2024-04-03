@@ -112,18 +112,18 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
-        const { eGui, column, gridOptionsService, ctrlsService } = this;
+        const { eGui, column, gos, ctrlsService } = this;
         const pinned = this.getPinned();
         const left = eGui.getBoundingClientRect().left;
         const width = column.getActualWidth();
-        const isRtl = gridOptionsService.get('enableRtl');
+        const isRtl = gos.get('enableRtl');
         const isLeft = hDirection === HorizontalDirection.Left !== isRtl;
 
         const xPosition = ColumnMoveHelper.normaliseX(
             isLeft ? (left - 20) : (left + width + 20),
             pinned,
             true,
-            gridOptionsService,
+            gos,
             ctrlsService
         );
 
@@ -135,7 +135,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             pinned,
             fromEnter: false,
             fakeEvent: false,
-            gridOptionsService,
+            gos,
             columnModel: this.beans.columnModel
         });
 
@@ -160,7 +160,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     private createParams(): IHeaderParams {
 
-        const params: IHeaderParams = this.gridOptionsService.addGridCommonParams({
+        const params: IHeaderParams = this.gos.addGridCommonParams({
             column: this.column,
             displayName: this.displayName!,
             enableSorting: this.column.isSortable(),
@@ -271,7 +271,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
 
-        const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
+        const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
         const eGui = this.eGui;
         const colDef = this.column.getColDef();
 
@@ -307,7 +307,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     private setupClassesFromColDef(): void {
         const refreshHeaderClasses = () => {
             const colDef = this.column.getColDef();
-            const classes = CssClassApplier.getHeaderClassesFromColDef(colDef, this.gridOptionsService, this.column, null);
+            const classes = CssClassApplier.getHeaderClassesFromColDef(colDef, this.gos, this.column, null);
 
             const oldClasses = this.userHeaderClasses;
             this.userHeaderClasses = new Set(classes);
@@ -336,10 +336,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
         if (!eSource || !this.draggable) { return; }
 
-        const { column, beans, displayName, dragAndDropService, gridOptionsService } = this;
+        const { column, beans, displayName, dragAndDropService, gos } = this;
         const { columnModel } = beans;
 
-        let hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !this.gos.get('suppressDragLeaveHidesColumns');
         const dragSource = this.dragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eSource,
@@ -347,7 +347,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             getDragItem: () => this.createDragItem(column),
             dragItemName: displayName,
             onDragStarted: () => {
-                hideColumnOnExit = !gridOptionsService.get('suppressDragLeaveHidesColumns');
+                hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
                 column.setMoving(true, "uiColumnMoved");
             },
             onDragStopped: () => column.setMoving(false, "uiColumnMoved"),
@@ -442,7 +442,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     private workOutDraggable(): boolean {
         const colDef = this.column.getColDef();
-        const isSuppressMovableColumns = this.gridOptionsService.get('suppressMovableColumns');
+        const isSuppressMovableColumns = this.gos.get('suppressMovableColumns');
 
         const colCanMove = !isSuppressMovableColumns && !colDef.suppressMovable && !colDef.lockPosition;
 
@@ -586,7 +586,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
-                const doc = this.beans.gridOptionsService.getDocument();
+                const doc = this.beans.gos.getDocument();
                 const notYetInDom = !doc || !doc.contains(wrapperElement);
 
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
@@ -698,8 +698,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     public announceAriaDescription(): void {
-        const eDocument = this.beans.gridOptionsService.getDocument();
-        if (!this.eGui.contains(eDocument.activeElement)) { return; }
+        if (!this.eGui.contains(this.beans.gos.getActiveDomElement())) { return; }
         const ariaDescription = 
             Array.from(this.ariaDescriptionProperties.keys())
                 // always announce the filter description first
@@ -719,7 +718,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     private addColumnHoverListener(): void {
         const listener = () => {
-            if (!this.gridOptionsService.get('columnHoverHighlight')) { return; }
+            if (!this.gos.get('columnHoverHighlight')) { return; }
             const isHovered = this.beans.columnHoverService.isHovered(this.column);
             this.comp.addOrRemoveCssClass('ag-column-hover', isHovered);
         };

@@ -8,7 +8,7 @@ import { DropListener } from "./bodyDropTarget";
 export class BodyDropPivotTarget implements DropListener {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
+    @Autowired('gridOptionsService') private gos: GridOptionsService;
 
     private columnsToAggregate: Column[] = [];
     private columnsToGroup: Column[] = [];
@@ -25,7 +25,7 @@ export class BodyDropPivotTarget implements DropListener {
         this.clearColumnsList();
 
         // in pivot mode, we don't accept any drops if functions are read only
-        if (this.gridOptionsService.get('functionsReadOnly')) { return; }
+        if (this.gos.get('functionsReadOnly')) { return; }
 
         const dragColumns: Column[] | undefined = draggingEvent.dragItem.columns;
 

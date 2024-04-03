@@ -189,7 +189,7 @@ export class AgMenuList extends TabGuardComp {
                 return;
         }
 
-        const left = this.gridOptionsService.get('enableRtl') ? KeyCode.RIGHT : KeyCode.LEFT;
+        const left = this.gos.get('enableRtl') ? KeyCode.RIGHT : KeyCode.LEFT;
 
         if (key === left) {
             this.closeIfIsChild();

@@ -70,7 +70,7 @@ export class ExcelXlsxFactory {
                 newConfig.exportAsExcelTable = false;
             }
 
-            if (config.gridOptionsService.get('masterDetail')) {
+            if (config.gos.get('masterDetail')) {
                 this.showExcelTableNonCompatibleFeaturesWarning('master/detail');
                 newConfig.exportAsExcelTable = false;
             }

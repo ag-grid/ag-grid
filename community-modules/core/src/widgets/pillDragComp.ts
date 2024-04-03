@@ -53,9 +53,9 @@ export abstract class PillDragComp<TItem> extends Component {
         this.addElementClasses(this.eText, 'text');
         this.addElementClasses(this.eButton, 'button');
 
-        this.eDragHandle.appendChild(createIconNoSpan('columnDrag', this.gridOptionsService)!);
+        this.eDragHandle.appendChild(createIconNoSpan('columnDrag', this.gos)!);
 
-        this.eButton.appendChild(createIconNoSpan('cancel', this.gridOptionsService)!);
+        this.eButton.appendChild(createIconNoSpan('cancel', this.gos)!);
 
         this.setupComponents();
 

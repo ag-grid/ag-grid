@@ -159,7 +159,6 @@ export class AdvancedFilterHeaderComp extends Component {
     }
 
     private hasFocus(): boolean {
-        const eDocument = this.gridOptionsService.getDocument();
-        return eDocument.activeElement === this.getFocusableElement();
+        return this.gos.getActiveDomElement() === this.getFocusableElement();
     }
 }

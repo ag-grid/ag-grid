@@ -12,8 +12,8 @@ export class ChartMenuItemMapper extends BeanStub {
         }
 
         const builder = key === 'pivotChart'
-            ? new PivotMenuItemMapper(this.gridOptionsService, this.chartService, this.localeService)
-            : new RangeMenuItemMapper(this.gridOptionsService, this.chartService, this.localeService);
+            ? new PivotMenuItemMapper(this.gos, this.chartService, this.localeService)
+            : new RangeMenuItemMapper(this.gos, this.chartService, this.localeService);
 
         const isEnterprise = this.chartService.isEnterprise();
 
@@ -28,7 +28,7 @@ export class ChartMenuItemMapper extends BeanStub {
             topLevelMenuItem = filterEnterpriseItems(topLevelMenuItem);
         }
 
-        const chartGroupsDef = this.gridOptionsService.get('chartToolPanelsDef')?.settingsPanel?.chartGroupsDef;
+        const chartGroupsDef = this.gos.get('chartToolPanelsDef')?.settingsPanel?.chartGroupsDef;
         if (chartGroupsDef) {
             topLevelMenuItem = ChartMenuItemMapper.filterAndOrderChartMenu(topLevelMenuItem, chartGroupsDef, builder.getConfigLookup());
         }
@@ -148,7 +148,7 @@ export type PivotMenuOptionName =
 
 class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName>{
 
-    constructor(private gridOptionsService: GridOptionsService, private chartService: IChartService, private localeService: LocaleService) { }
+    constructor(private gos: GridOptionsService, private chartService: IChartService, private localeService: LocaleService) { }
 
     getMenuItem(): MenuItemDefWithKey<PivotMenuOptionName> {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
@@ -237,7 +237,7 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName>{
                     ]
                 }
             ],
-            icon: _.createIconNoSpan('chart', this.gridOptionsService, undefined),
+            icon: _.createIconNoSpan('chart', this.gos, undefined),
         }
     }
 
@@ -319,7 +319,7 @@ export type RangeMenuOptionName =
 
 class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
 
-    constructor(private gridOptionsService: GridOptionsService, private chartService: IChartService, private localeService: LocaleService) { }
+    constructor(private gos: GridOptionsService, private chartService: IChartService, private localeService: LocaleService) { }
 
     getMenuItem(): MenuItemDefWithKey<RangeMenuOptionName> {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
@@ -435,7 +435,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     _key: 'rangeCombinationChart'
                 }
             ],
-            icon: _.createIconNoSpan('chart', this.gridOptionsService, undefined),
+            icon: _.createIconNoSpan('chart', this.gos, undefined),
         }
     }
 

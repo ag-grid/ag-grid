@@ -29,6 +29,7 @@ import { HorizontalDirection } from "../../../constants/direction";
 import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HeaderPosition } from "../../common/headerPosition";
 import { WithoutGridCommon } from "../../../interfaces/iCommon";
+import { HeaderColumnId } from "../../../interfaces/iHeaderColumn";
 import { Beans } from "../../../rendering/beans";
 
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
@@ -100,8 +101,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
-        const { beans, eGui, column, gridOptionsService, ctrlsService } = this;
-        const isRtl = gridOptionsService.get('enableRtl');
+        const { beans, eGui, column, gos, ctrlsService } = this;
+        const isRtl = gos.get('enableRtl');
         const isLeft = hDirection === HorizontalDirection.Left;
 
         const pinned = this.getPinned();
@@ -113,7 +114,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             isLeft !== isRtl ? (left - 20) : (left + width + 20),
             pinned,
             true,
-            gridOptionsService,
+            gos,
             ctrlsService
         );
 
@@ -128,7 +129,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             pinned,
             fromEnter: false,
             fakeEvent: false,
-            gridOptionsService: gridOptionsService,
+            gos: gos,
             columnModel: beans.columnModel
         });
 
@@ -176,7 +177,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
     }
 
     private setupUserComp(): void {
-        const params: IHeaderGroupParams = this.gridOptionsService.addGridCommonParams({
+        const params: IHeaderGroupParams = this.gos.addGridCommonParams({
             displayName: this.displayName!,
             columnGroup: this.column,
             setExpanded: (expanded: boolean) => {
@@ -221,7 +222,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         }
 
         const colGroupDef = this.column.getColGroupDef();
-        const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
+        const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
         const eGui = this.eGui;
 
         if (!shouldDisplayTooltip && isTooltipWhenTruncated && !colGroupDef?.headerGroupComponent) {
@@ -269,13 +270,13 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         }
     }
 
-    public getColId(): string {
+    public getColId(): HeaderColumnId {
         return this.column.getUniqueId();
     }
 
     private addClasses(): void {
         const colGroupDef = this.column.getColGroupDef();
-        const classes = CssClassApplier.getHeaderClassesFromColDef(colGroupDef, this.gridOptionsService, null, this.column);
+        const classes = CssClassApplier.getHeaderClassesFromColDef(colGroupDef, this.gos, null, this.column);
 
         // having different classes below allows the style to not have a bottom border
         // on the group header, if no group is specified
@@ -354,11 +355,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             return;
         }
 
-        const { beans, column, displayName, gridOptionsService, dragAndDropService } = this;
+        const { beans, column, displayName, gos, dragAndDropService } = this;
         const { columnModel } = beans;
 
         const allLeafColumns = column.getProvidedColumnGroup().getLeafColumns();
-        let hideColumnOnExit = !gridOptionsService.get('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
 
         const dragSource = this.dragSource = {
             type: DragSourceType.HeaderCell,
@@ -368,7 +369,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             // we add in the original group leaf columns, so we move both visible and non-visible items
             getDragItem: () => this.getDragItemForGroup(column),
             onDragStarted: () => {
-                hideColumnOnExit = !gridOptionsService.get('suppressDragLeaveHidesColumns');
+                hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
                 allLeafColumns.forEach(col => col.setMoving(true, "uiColumnDragged"));
             },
             onDragStopped: () => allLeafColumns.forEach(col => col.setMoving(false, "uiColumnDragged")),
@@ -425,7 +426,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             }
         });
 
-        const result = childSuppressesMoving || this.gridOptionsService.get('suppressMovableColumns');
+        const result = childSuppressesMoving || this.gos.get('suppressMovableColumns');
 
         return result;
     }

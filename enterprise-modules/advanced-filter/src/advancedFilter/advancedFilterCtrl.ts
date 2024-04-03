@@ -39,7 +39,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
 
     @PostConstruct
     private postConstruct(): void {
-        this.hasAdvancedFilterParent = !!this.gridOptionsService.get('advancedFilterParent');
+        this.hasAdvancedFilterParent = !!this.gos.get('advancedFilterParent');
 
         this.ctrlsService.whenReady(() => this.setAdvancedFilterComp());
 
@@ -143,7 +143,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
     }
 
     private getBuilderDialogSize(): { width: number, height: number, minWidth: number } {
-        const minWidth = this.gridOptionsService.get('advancedFilterBuilderParams')?.minWidth ?? 500;
+        const minWidth = this.gos.get('advancedFilterBuilderParams')?.minWidth ?? 500;
         const popupParent = this.popupService.getPopupParent();
         const maxWidth = Math.round(_.getAbsoluteWidth(popupParent)) - 2; // assume 1 pixel border
         const maxHeight = Math.round(_.getAbsoluteHeight(popupParent) * 0.75) - 2;
@@ -171,7 +171,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
         this.destroyAdvancedFilterComp();
         if (!this.enabled) { return; }
 
-        const advancedFilterParent = this.gridOptionsService.get('advancedFilterParent');
+        const advancedFilterParent = this.gos.get('advancedFilterParent');
         this.hasAdvancedFilterParent = !!advancedFilterParent;
         if (advancedFilterParent) {
             // unmanaged as can be recreated
@@ -184,7 +184,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
                 eAdvancedFilterCompGui.classList.add(...allThemes);
             }
             
-            eAdvancedFilterCompGui.classList.add(this.gridOptionsService.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
+            eAdvancedFilterCompGui.classList.add(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
 
             advancedFilterParent.appendChild(eAdvancedFilterCompGui);
 

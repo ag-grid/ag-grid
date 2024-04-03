@@ -1,4 +1,3 @@
-import {isHorizontal} from '../../utils/seriesTypeMapper';
 import {ChartProxyParams, UpdateParams} from '../chartProxy';
 import {AgBoxPlotSeriesOptions} from 'ag-charts-community';
 import {StatisticalChartProxy} from "./statisticalChartProxy";
@@ -13,7 +12,6 @@ export class BoxPlotChartProxy extends StatisticalChartProxy {
         return params.fields.map(
             (field, seriesIndex) => ({
                 type: this.standaloneChartType as AgBoxPlotSeriesOptions['type'],
-                direction: isHorizontal(this.chartType) ? 'horizontal' : 'vertical',
                 // xKey/xName refer to category buckets
                 xKey: category.id,
                 xName: category.name,

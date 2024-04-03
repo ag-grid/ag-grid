@@ -131,7 +131,7 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {
-        const isRtl = this.gridOptionsService.get('enableRtl');
+        const isRtl = this.gos.get('enableRtl');
         const direction = e.shiftKey !== isRtl
             ? HeaderNavigationDirection.LEFT
             : HeaderNavigationDirection.RIGHT;
@@ -171,10 +171,9 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     protected onFocusOut(e: FocusEvent): void {
-        const eDocument = this.gridOptionsService.getDocument();
         const { relatedTarget } = e;
 
-        if (!relatedTarget && this.eGui.contains(eDocument.activeElement)) { return; }
+        if (!relatedTarget && this.eGui.contains(this.gos.getActiveDomElement())) { return; }
 
         if (!this.eGui.contains(relatedTarget as HTMLElement)) {
             this.focusService.clearFocusedHeader();

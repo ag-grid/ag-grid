@@ -50,10 +50,9 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             stopPropagationForAgGrid(event);
         });
 
-        const eDocument = this.gridOptionsService.getDocument();
         this.addManagedListener(this.params.eGridCell, 'keydown', (event: KeyboardEvent) => {
             if (event.key === KeyCode.SPACE && !this.eCheckbox.isDisabled()) {
-                if (this.params.eGridCell === eDocument.activeElement) {
+                if (this.params.eGridCell === this.gos.getActiveDomElement()) {
                     this.eCheckbox.toggle();
                 }
                 const isSelected = this.eCheckbox.getValue();

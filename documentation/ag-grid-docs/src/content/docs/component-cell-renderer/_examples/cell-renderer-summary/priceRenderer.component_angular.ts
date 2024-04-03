@@ -14,20 +14,20 @@ import { Component } from '@angular/core';
 })
 export class PriceRenderer implements ICellRendererAngularComp {
   priceMultiplier: number = 1;
-  src: string = "https://www.ag-grid.com/example-assets/pound-coin-color-icon.png";
+  src: string = "https://www.ag-grid.com/example-assets/icons/pound-coin-color-icon.png";
   arr!: any[];
 
   agInit(params: ICellRendererParams): void {
-    if (params.value > 5000000) {
+    if (params.value > 5000000000) {
       this.priceMultiplier = 2
     }
-    if (params.value > 10000000) {
+    if (params.value > 10000000000) {
       this.priceMultiplier = 3
     }
-    if (params.value > 25000000) {
+    if (params.value > 20000000000) {
       this.priceMultiplier = 4
     }
-    if (params.value > 20000000) {
+    if (params.value > 300000000000) {
       this.priceMultiplier = 5
     }
     this.arr = new Array(this.priceMultiplier);
@@ -35,16 +35,16 @@ export class PriceRenderer implements ICellRendererAngularComp {
 
   // Return Cell Value
   refresh(params: ICellRendererParams): boolean {
-    if (params.value > 5000000) {
+    if (params.value > 5000000000) {
       this.priceMultiplier = 2
     }
-    if (params.value > 10000000) {
+    if (params.value > 10000000000) {
       this.priceMultiplier = 3
     }
-    if (params.value > 25000000) {
+    if (params.value > 20000000000) {
       this.priceMultiplier = 4
     }
-    if (params.value > 20000000) {
+    if (params.value > 300000000000) {
       this.priceMultiplier = 5
     }
     this.arr = new Array(this.priceMultiplier).fill('');

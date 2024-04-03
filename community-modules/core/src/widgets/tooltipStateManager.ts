@@ -71,12 +71,12 @@ export class TooltipStateManager extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.gridOptionsService.get('tooltipInteraction')) {
+        if (this.gos.get('tooltipInteraction')) {
             this.interactionEnabled = true;
         }
 
         this.tooltipTrigger = this.getTooltipTrigger();
-        this.tooltipMouseTrack = this.gridOptionsService.get('tooltipMouseTrack');
+        this.tooltipMouseTrack = this.gos.get('tooltipMouseTrack');
 
         const el = this.parentComp.getGui();
 
@@ -99,7 +99,7 @@ export class TooltipStateManager extends BeanStub {
     }
 
     private getGridOptionsTooltipDelay(delayOption: 'tooltipShowDelay' | 'tooltipHideDelay'): number {
-        const delay = this.gridOptionsService.get(delayOption);
+        const delay = this.gos.get(delayOption);
         if (delay < 0) {
             warnOnce(`${delayOption} should not be lower than 0`);
         }
@@ -122,7 +122,7 @@ export class TooltipStateManager extends BeanStub {
     }
 
     private getTooltipTrigger(): TooltipTrigger {
-        const trigger = this.gridOptionsService.get('tooltipTrigger');
+        const trigger = this.gos.get('tooltipTrigger');
 
         if (!trigger || trigger === 'hover') {
             return TooltipTrigger.HOVER;

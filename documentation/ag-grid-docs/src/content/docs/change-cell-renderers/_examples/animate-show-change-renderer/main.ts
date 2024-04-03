@@ -42,7 +42,7 @@ const columnDefs: ColDef[] = [
     headerName: 'Average',
     valueGetter: '(data.a + data.b + data.c + data.d) / 4',
     minWidth: 135,
-    cellRenderer: 'agAnimateSlideCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
 ]
 

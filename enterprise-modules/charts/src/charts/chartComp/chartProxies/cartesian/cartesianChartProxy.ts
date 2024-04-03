@@ -3,8 +3,10 @@ import {
     AgAreaSeriesOptions,
     AgBaseSeriesOptions,
     AgCartesianAxisOptions,
+    AgCartesianAxisType,
     AgCartesianChartOptions,
     AgCharts,
+    AgChartTheme,
     AgLineSeriesOptions,
 } from "ag-charts-community";
 
@@ -48,19 +50,22 @@ export abstract class CartesianChartProxy extends ChartProxy {
     protected getXAxisType(params: UpdateParams) {
         if (params.grouping) {
             return 'grouped-category';
-        } else if (CartesianChartProxy.isTimeAxis(params)) {
+        } else if (this.isXAxisOfType(params, 'time', value => value instanceof Date)) {
             return 'time';
+        } else if (this.isXAxisOfType(params, 'number', value => !isNaN(parseFloat(value as any)))) {
+            return 'number';
         }
         return 'category';
     }
 
-    private static isTimeAxis(params: UpdateParams): boolean {
+    private isXAxisOfType<T>(params: UpdateParams, type: AgCartesianAxisType, isInstance: (value: T) => boolean): boolean {
         const [category] = params.categories;
-        if (category && category.chartDataType) {
-            return category.chartDataType === 'time';
+        if (category?.chartDataType) {
+            return category.chartDataType === type;
         }
         const testDatum = params.data[0];
-        return (testDatum && testDatum[category.id]) instanceof Date;
+        if (!testDatum) { return false; }
+        return isInstance(testDatum[category.id]);
     }
 
     public crossFilteringReset(): void {
@@ -143,5 +148,24 @@ export abstract class CartesianChartProxy extends ChartProxy {
 
     private crossFilteringAddSelectedPoint(multiSelection: boolean, value: string): void {
         multiSelection ? this.crossFilteringSelectedPoints.push(value) : this.crossFilteringSelectedPoints = [value];
+    }
+
+    protected isHorizontal(params: UpdateParams): boolean {
+        const seriesType = this.standaloneChartType;
+        if (seriesType !== 'waterfall' && seriesType !== 'box-plot' && seriesType !== 'range-bar') {
+            return false;
+        }
+        const theme = this.getCommonChartOptions(params.updatedOverrides).theme;
+        const isHorizontal = (theme: AgChartTheme): boolean => {
+            const direction = theme.overrides?.[seriesType]?.series?.direction;
+            if (direction != null) {
+                return direction === 'horizontal';
+            }
+            if (typeof theme.baseTheme === 'object') {
+                return isHorizontal(theme.baseTheme as any);
+            }
+            return false;
+        }
+        return isHorizontal(theme);
     }
 }

@@ -28,9 +28,8 @@ export class SelectAllFeature extends BeanStub {
 
     public onSpaceKeyDown(e: KeyboardEvent): void {
         const checkbox = this.cbSelectAll;
-        const eDocument = this.gridOptionsService.getDocument();
 
-        if (checkbox.isDisplayed() && !checkbox.getGui().contains(eDocument.activeElement)) {
+        if (checkbox.isDisplayed() && !checkbox.getGui().contains(this.gos.getActiveDomElement())) {
             e.preventDefault();
             checkbox.setValue(!checkbox.getValue());
         }
@@ -127,7 +126,7 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private checkSelectionType(feature: string): boolean {
-        const isMultiSelect = this.gridOptionsService.get('rowSelection') === 'multiple';
+        const isMultiSelect = this.gos.get('rowSelection') === 'multiple';
 
         if (!isMultiSelect) {
             console.warn(`AG Grid: ${feature} is only available if using 'multiple' rowSelection.`);
@@ -179,7 +178,7 @@ export class SelectAllFeature extends BeanStub {
 
         if (typeof result === 'function') {
             const func = result as (params: HeaderCheckboxSelectionCallbackParams) => boolean;
-            const params: HeaderCheckboxSelectionCallbackParams = this.gridOptionsService.addGridCommonParams({
+            const params: HeaderCheckboxSelectionCallbackParams = this.gos.addGridCommonParams({
                 column: this.column,
                 colDef: this.column.getColDef()
             });

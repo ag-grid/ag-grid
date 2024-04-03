@@ -37,7 +37,7 @@ export class CenterWidthFeature extends BeanStub {
     private setWidth(): void {
         const {columnModel} = this;
 
-        const printLayout = this.gridOptionsService.isDomLayout('print');
+        const printLayout = this.gos.isDomLayout('print');
 
         const centerWidth = columnModel.getBodyContainerWidth();
         const leftWidth = columnModel.getDisplayedColumnsLeftWidth();
@@ -51,9 +51,9 @@ export class CenterWidthFeature extends BeanStub {
             totalWidth = centerWidth;
 
             if (this.addSpacer) {
-                const relevantWidth = this.gridOptionsService.get('enableRtl') ? leftWidth : rightWidth;
+                const relevantWidth = this.gos.get('enableRtl') ? leftWidth : rightWidth;
                 if (relevantWidth === 0 && this.scrollVisibleService.isVerticalScrollShowing()) {
-                    totalWidth += this.gridOptionsService.getScrollbarWidth();
+                    totalWidth += this.gos.getScrollbarWidth();
                 }
             }
         }

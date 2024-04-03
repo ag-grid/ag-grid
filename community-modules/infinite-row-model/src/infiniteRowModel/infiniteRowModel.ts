@@ -50,11 +50,11 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     @PostConstruct
     public init(): void {
-        if (!this.gridOptionsService.isRowModelType('infinite')) {
+        if (!this.gos.isRowModelType('infinite')) {
             return;
         }
 
-        this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
+        this.rowHeight = this.gos.getRowHeightAsNumber();
 
         this.addEventListeners();
 
@@ -64,13 +64,13 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     private verifyProps(): void {
-        if (this.gridOptionsService.exists('initialGroupOrderComparator')) {
+        if (this.gos.exists('initialGroupOrderComparator')) {
             _.warnOnce('initialGroupOrderComparator cannot be used with Infinite Row Model as sorting is done on the server side');
         }
     }
 
     public start(): void {
-        this.setDatasource(this.gridOptionsService.get('datasource'));
+        this.setDatasource(this.gos.get('datasource'));
     }
 
     @PreDestroy
@@ -87,10 +87,10 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onCacheUpdated.bind(this));
-        this.addManagedPropertyListener('datasource', () => this.setDatasource(this.gridOptionsService.get('datasource')));
+        this.addManagedPropertyListener('datasource', () => this.setDatasource(this.gos.get('datasource')));
         this.addManagedPropertyListener('cacheBlockSize', () => this.resetCache());
         this.addManagedPropertyListener('rowHeight', () => {
-            this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
+            this.rowHeight = this.gos.getRowHeightAsNumber();
             this.cacheParams.rowHeight = this.rowHeight;
             this.updateRowHeights();
         });
@@ -160,7 +160,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         // if user is providing id's, then this means we can keep the selection between datasource hits,
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
         // is done.
-        const getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
+        const getRowIdFunc = this.gos.getCallback('getRowId');
         const userGeneratingIds = getRowIdFunc != null;
 
         if (!userGeneratingIds) {
@@ -200,17 +200,17 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
             // properties - this way we take a snapshot of them, so if user changes any, they will be
             // used next time we create a new cache, which is generally after a filter or sort change,
             // or a new datasource is set
-            initialRowCount: this.gridOptionsService.get('infiniteInitialRowCount'),
-            maxBlocksInCache: this.gridOptionsService.get('maxBlocksInCache'),
-            rowHeight: this.gridOptionsService.getRowHeightAsNumber(),
+            initialRowCount: this.gos.get('infiniteInitialRowCount'),
+            maxBlocksInCache: this.gos.get('maxBlocksInCache'),
+            rowHeight: this.gos.getRowHeightAsNumber(),
 
             // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
             // the current page and request first row of next page
-            overflowSize: this.gridOptionsService.get('cacheOverflowSize'),
+            overflowSize: this.gos.get('cacheOverflowSize'),
 
             // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
             // server for one page at a time. so the default if not specified is 100.
-            blockSize: this.gridOptionsService.get('cacheBlockSize'),
+            blockSize: this.gos.get('cacheBlockSize'),
 
             // the cache could create this, however it is also used by the pages, so handy to create it
             // here as the settings are also passed to the pages

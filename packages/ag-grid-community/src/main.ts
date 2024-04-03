@@ -206,6 +206,7 @@ export {VirtualListDragFeature} from "@ag-grid-community/core";
 export {_} from "@ag-grid-community/core";
 export {createGrid} from "@ag-grid-community/core";
 export {getRowContainerTypeForName} from "@ag-grid-community/core";
+export {provideGlobalGridOptions} from "@ag-grid-community/core";
 /** AUTO_GENERATED_END **/
 
 export * from "@ag-grid-community/client-side-row-model";

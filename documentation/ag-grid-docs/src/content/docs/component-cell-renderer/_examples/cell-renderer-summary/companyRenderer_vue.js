@@ -1,6 +1,6 @@
 export default {
   template: `
-    <a :href="parsedValue" target="_blank">{{ value }}</a>
+    <a :href="value" target="_blank">{{ parsedValue }}</a>
   `,
   data: function () {
     return {
@@ -17,7 +17,7 @@ export default {
       },
       updateDisplay(params) {
         this.value = params.value;
-        this.parsedValue = `https://en.wikipedia.org/wiki/${params.value}`;
+        this.parsedValue = new URL(params.value).hostname;
       },
   },
 };

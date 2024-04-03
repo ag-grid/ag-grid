@@ -28,7 +28,7 @@ interface IRow {
 
 const gridOptions: GridOptions = {
   defaultColDef: {
-    flex: 1,
+    flex: 10,
   },
   // Data to be displayed
   rowData: [] as IRow[],
@@ -36,21 +36,26 @@ const gridOptions: GridOptions = {
   columnDefs: [
     {
       field: "company",
+      flex: 6,
+    },
+    {
+      field: "website",
       cellRenderer: CompanyRenderer,
     },
     {
       headerName: "Logo",
       field: "company",
       cellRenderer: CompanyLogoRenderer,
+      cellClass: "logoCell",
+      minWidth: 100,
     },
     {
-      headerName: "Mission Cost",
-      field: "price",
+      field: "revenue",
       cellRenderer: PriceRenderer,
     },
     {
-      field: "successful",
-      headerName: "Success",
+      field: "hardware",
+      headerName: "Hardware",
       cellRenderer: MissionResultRenderer,
     },
     {
@@ -67,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/small-space-mission-data.json')
+  fetch('https://www.ag-grid.com/example-assets/small-company-data.json')
     .then(response => response.json())
     .then(data => {
       gridApi!.setGridOption('rowData', data)

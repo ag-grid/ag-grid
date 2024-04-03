@@ -1,5 +1,4 @@
 ---
-import { getEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import styles from '@design-system/modules/GridHomepage.module.scss';
 import { Quotes } from '@components/quotes/Quotes';
@@ -9,13 +8,9 @@ import ChartsLogo from '@images/inline-svgs/ag-charts-logo.svg?react';
 import HeroGrid from '@components/hero-grid/HeroGrid.astro';
 import { AutomatedExamples } from '@components/automated-examples/AutomatedExamples';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { PUBLISHED_URLS, USE_PUBLISHED_PACKAGES } from '@constants';
+import { PUBLISHED_URLS, USE_PUBLISHED_PACKAGES, agGridVersion } from '@constants';
 import { pathJoin } from '@utils/pathJoin';
 import { getExtraFileUrl } from '@utils/extraFileUrl';
-
-// TODO: Is this best place to get the current version from?
-const { data: versions } = await getEntry('versions', 'ag-grid-versions');
-const agGridVersion = versions[0].version;
 
 const frameworksData = [
     {

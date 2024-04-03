@@ -1,18 +1,14 @@
 import { ChartType } from "@ag-grid-community/core";
+import { AgChartThemeOverrides } from "ag-charts-community";
 
-// these values correspond to top level object names in `AgChartThemeOverrides`
-export type ChartSeriesType =
-    'cartesian' |
-    'column' |
+export type ChartSeriesType = keyof AgChartThemeOverrides & (
     'bar' |
     'line' |
     'area' |
     'scatter' |
     'histogram' |
-    'polar' |
     'pie' |
     'donut' |
-    'hierarchy' |
     'bubble' |
     'radial-column' |
     'radial-bar' |
@@ -25,13 +21,15 @@ export type ChartSeriesType =
     'treemap' |
     'sunburst' |
     'heatmap' |
-    'waterfall' |
-    'common';
+    'waterfall'
+);
+
+// these values correspond to top level object names in `AgChartThemeOverrides`
+export type ChartThemeOverridesSeriesType = keyof AgChartThemeOverrides & (ChartSeriesType | 'common');
 
 export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'area',
     'bar',
-    'column',
     'histogram',
     'line',
     'pie',
@@ -70,11 +68,6 @@ export function isEnterpriseChartType(chartType: ChartType): boolean {
         default:
             return false;
     }
-}
-
-const horizontalChartTypes = new Set(['bar', 'groupedBar', 'stackedBar', 'normalizedBar']);
-export function isHorizontal(chartType: ChartType): boolean {
-    return horizontalChartTypes.has(chartType);
 }
 
 const stackedChartTypes = new Set(['stackedColumn', 'normalizedColumn', 'stackedBar', 'normalizedBar']);
@@ -233,7 +226,7 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
         case 'waterfall':
             return 'waterfall';
         default:
-            return 'cartesian';
+            return 'line';
     }
 }
 
@@ -305,4 +298,14 @@ export function supportsInvertedCategorySeries(chartType: ChartType): boolean {
         case 'customCombo':
             return false;
     }
+}
+
+export function canSwitchDirection(chartType: ChartType): boolean {
+    switch (chartType) {
+        case 'waterfall':
+        case 'boxPlot':
+        case 'rangeBar':
+            return true;
+    }
+    return false;
 }

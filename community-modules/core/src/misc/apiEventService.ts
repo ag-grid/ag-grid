@@ -19,7 +19,7 @@ export class ApiEventService extends BeanStub {
     public addEventListener(eventType: string, userListener: AgEventListener): void {
         const listener = this.frameworkEventWrappingService.wrap(userListener);
 
-        const async = this.gridOptionsService.useAsyncEvents() && !ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);;
+        const async = this.gos.useAsyncEvents() && !ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);;
         const listeners = async ? this.asyncEventListeners : this.syncEventListeners;
         if (!listeners.has(eventType)) {
             listeners.set(eventType, new Set());
@@ -41,7 +41,7 @@ export class ApiEventService extends BeanStub {
     public addGlobalListener(userListener: AgGlobalEventListener): void {
         const listener = this.frameworkEventWrappingService.wrapGlobal(userListener);
 
-        const async = this.gridOptionsService.useAsyncEvents();
+        const async = this.gos.useAsyncEvents();
 
         if(async){
             // if async then need to setup the global listener for sync to handle alwaysSyncGlobalEvents

@@ -60,7 +60,7 @@ export function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | un
     return res;
 }
 
-export function getAllValuesInObject<T extends Object>(obj: T): any[] {
+export function getAllValuesInObject<T extends Object, K extends keyof T, O extends T[K]>(obj: T): O[] {
     if (!obj) { return []; }
     const anyObject = Object as any;
     if (typeof anyObject.values === 'function') {

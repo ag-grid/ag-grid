@@ -1,9 +1,10 @@
 @use '../core' as *;
 
 .footer {
+    border-top: 1px solid var(--color-border-secondary);
     padding-top: $spacing-size-10;
     padding-bottom: calc($spacing-size-10 * 2);
-    background-color: var(--color-util-brand-500);
+    background-color: var(--color-bg-primary);
     color: var(--color-white);
 
     #{$selector-darkmode} & {
@@ -12,14 +13,18 @@
         border-top: 1px solid var(--color-border-primary);
     }
 
-    h4,
     p {
-        color: var(--color-white);
-        opacity: 0.6666;
+        color: var(--color-text-secondary);
+        opacity: 0.666;
     }
 
     h4 {
-        font-weight: var(--text-regular);
+        color: var(--color-fg-primary);
+        font-weight: var(--text-semibold);
+        opacity: 1;
+        #{$selector-darkmode} & {
+            color: var(--color-fg-white);
+        }
     }
 
     svg {
@@ -28,16 +33,26 @@
 }
 
 .footerColumns {
-    @media screen and (min-width: $breakpoint-site-footer-four-column) {
+    @media screen and (min-width: $breakpoint-site-footer-five-column) {
         justify-content: space-between;
     }
+}
+
+.footerColumns .menuColumn:last-child a::after {
+    content: ' ↗';
+    opacity: 0.85;
 }
 
 .menuColumn {
     margin-bottom: $spacing-size-10;
     width: var(--layout-width-4-4);
 
-    @media screen and (min-width: $breakpoint-site-footer-two-column) and (max-width: $breakpoint-site-footer-four-column) {
+    &:first-child {
+        width: 100%;
+        text-align: center;
+    }
+
+    @media screen and (min-width: $breakpoint-site-footer-two-column) and (max-width: $breakpoint-site-footer-five-column) {
         width: var(--layout-width-2-4);
 
         &:nth-child(even) {
@@ -45,8 +60,14 @@
         }
     }
 
-    @media screen and (min-width: $breakpoint-site-footer-four-column) {
+    @media screen and (min-width: $breakpoint-site-footer-five-column) {
         width: auto;
+
+        &:first-child {
+            max-width: 18%;
+            margin-right: -4%;
+            text-align: left;
+        }
 
         &:last-child {
             text-align: right;
@@ -57,22 +78,24 @@
         overflow: hidden;
     }
 
-    a {
+    li a {
         text-decoration: underline;
         display: inline-block;
         min-width: $spacing-size-12;
         margin-top: -12px;
         margin-bottom: -12px;
         padding-top: 12px;
-        padding-bottom: 12px;
-        text-decoration-color: transparent;
-        text-underline-offset: 2px;
-        color: var(--color-white);
-        transition: text-decoration-color $transition-default-timing;
+        padding-bottom: 20px;
+        text-decoration-color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 80%);
+        text-underline-offset: 4px;
+        color: var(--color-text-secondary);
+        transition: color $transition-default-timing;
+        opacity: 1;
+        font-weight: var(--text-regular);
 
         &:hover {
-            color: var(--color-white);
-            text-decoration-color: var(--color-white);
+            color: var(--color-text-primary);
+            opacity: 0.6;
 
             :global(.icon) {
                 opacity: 1;
@@ -89,20 +112,44 @@
         margin-right: $spacing-size-1;
         opacity: 0.6666;
         transition: opacity $transition-default-timing;
+        fill: var(--color-text-tertiary);
+
+        #{$selector-darkmode} & {
+            fill: var(--color-fg-white);
+        }
     }
 }
 
-.legal {
-    justify-content: space-between;
-    gap: 0;
+.logoContainer a {
+    display: inline-block;
 
-    p:first-child {
-        margin-right: $spacing-size-8;
+    @media screen and (min-width: $breakpoint-site-footer-five-column) {
+        margin-top: -18px;
+        margin-left: -12px;
+    }
+
+    :global(.logotype) * {
+        fill: var(--color-logo-text);
+
+        #{$selector-darkmode} & {
+            fill: var(--color-white);
+        }
     }
 }
 
-.trademarks {
-    @media screen and (min-width: $breakpoint-site-footer-four-column) {
-        margin-top: -$spacing-size-4;
+.listStyleNone {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    padding-left: 0;
+    opacity: 0.7;
+
+    #{$selector-darkmode} & {
+        opacity: 1;
     }
+}
+
+.headerTitle {
+    padding-top: $spacing-size-4;
+    color: var(--color-text-secondary);
 }
