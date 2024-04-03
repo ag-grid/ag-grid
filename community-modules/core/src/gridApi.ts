@@ -468,9 +468,12 @@ export class GridApi<TData = any> {
         return this.rowModel;
     }
 
-    /** Expand or collapse a specific row node, optionally expanding/collapsing all of its parent nodes. */
-    public setRowNodeExpanded(rowNode: IRowNode, expanded: boolean, expandParents?: boolean): void {
-        this.expansionService.setRowNodeExpanded(rowNode, expanded, expandParents);
+    /** 
+     * Expand or collapse a specific row node, optionally expanding/collapsing all of its parent nodes.
+     * By default rows are expanded asynchronously for best performance. Set forceSync: `true` if you need to interact with the expanded row immediately after this function.
+     */
+    public setRowNodeExpanded(rowNode: IRowNode, expanded: boolean, expandParents?: boolean, forceSync?: boolean): void {
+        this.expansionService.setRowNodeExpanded(rowNode, expanded, expandParents, forceSync);
     }
 
     /**

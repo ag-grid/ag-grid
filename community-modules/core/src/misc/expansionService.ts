@@ -43,14 +43,14 @@ export class ExpansionService extends BeanStub implements IExpansionService {
         (this.rowModel as IClientSideRowModel).expandOrCollapseAll(value);
     }
 
-    public setRowNodeExpanded(rowNode: IRowNode, expanded: boolean, expandParents?: boolean): void {
+    public setRowNodeExpanded(rowNode: IRowNode, expanded: boolean, expandParents?: boolean, forceSync?: boolean): void {
         if (rowNode) {
             // expand all parents recursively, except root node.
             if (expandParents && rowNode.parent && rowNode.parent.level !== -1) {
-                this.setRowNodeExpanded(rowNode.parent, expanded, expandParents);
+                this.setRowNodeExpanded(rowNode.parent, expanded, expandParents, forceSync);
             }
 
-            rowNode.setExpanded(expanded);
+            rowNode.setExpanded(expanded, undefined, forceSync);
         }
     }
 
