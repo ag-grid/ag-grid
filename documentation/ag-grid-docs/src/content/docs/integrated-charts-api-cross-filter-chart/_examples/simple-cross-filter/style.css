@@ -10,6 +10,6 @@
 }
 
 #myGrid {
-    height: 20px;
+    height: 20px !important;
     flex: 1 1 auto;
 }
