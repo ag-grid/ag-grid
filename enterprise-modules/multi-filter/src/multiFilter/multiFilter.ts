@@ -403,10 +403,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     }
 
     public destroy(): void {
-        this.filters!.forEach(filter => {
-            filter.setModel(null);
-            this.destroyBean(filter);
-        });
+        this.filters!.forEach(filter => this.destroyBean(filter));
 
         this.filters!.length = 0;
         this.destroyChildren();
