@@ -27,7 +27,7 @@ function ignoreProject {
        return 0;
     fi
 
-    exclusions=("angular" "react" "vue" "vue3" "solid" "styles")
+    exclusions=("angular" "react" "vue" "vue3" "solid")
     for exclusion in "${exclusions[@]}";
     do
       if echo "$changedModule" | grep -q -E "$exclusion"; then
@@ -79,6 +79,8 @@ if ! ignoreProject $MODIFIED; then
       fi
     fi
   fi
+else
+ echo "$MODIFIED Ignored"
 fi
 
 
