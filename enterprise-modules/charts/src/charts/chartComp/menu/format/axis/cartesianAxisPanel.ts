@@ -23,7 +23,7 @@ import { FormatPanelOptions } from "../formatPanel";
 import { GridLinePanel } from '../gridLine/gridLinePanel';
 import { AgAngleSelect } from "../../../../../widgets/agAngleSelect";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
-import { ChartOptionsProxy } from '../../../services/chartOptionsService';
+import { ChartOptionsProxy, ChartOptionsService } from '../../../services/chartOptionsService';
 import { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
 
 const DEFAULT_TIME_AXIS_FORMAT = '%d %B %Y';
@@ -54,6 +54,7 @@ export class CartesianAxisPanel extends Component {
     private readonly chartAxisThemeOverridesProxy: ChartOptionsProxy;
     private readonly chartAxisAppliedThemeOverridesProxy: ChartOptionsProxy;
     private readonly chartOptionsSeriesProxy: ChartOptionsProxy;
+    private readonly chartOptionsService: ChartOptionsService;
     private readonly isExpandedOnInit: boolean;
 
     private activePanels: Component[] = [];
@@ -70,6 +71,7 @@ export class CartesianAxisPanel extends Component {
         this.chartAxisThemeOverridesProxy = chartOptionsService.getCartesianAxisThemeOverridesProxy(axisType);
         this.chartAxisAppliedThemeOverridesProxy = chartOptionsService.getCartesianAxisAppliedThemeOverridesProxy(axisType);
         this.chartOptionsSeriesProxy = chartOptionsService.getSeriesOptionsProxy(() => seriesType ?? this.chartController.getChartSeriesType());
+        this.chartOptionsService = chartOptionsService;
         this.isExpandedOnInit = isExpandedOnInit;
     }
 
@@ -154,7 +156,7 @@ export class CartesianAxisPanel extends Component {
                 : null
             );
             // Update the axis type (and label format if necessary)
-            this.chartController.setCategoryAxisType(value);
+            this.chartOptionsService.setCartesianCategoryAxisType(this.axisType, value);
             if (updatedLabelFormat !== null) {
                 const existingLabel = chartOptions.getValue<AgCartesianAxisOptions['label']>('label') ?? {};
                 chartOptions.setValue<AgCartesianAxisOptions['label']>('label', { ...existingLabel, format: updatedLabelFormat });
@@ -183,7 +185,9 @@ export class CartesianAxisPanel extends Component {
             return this.chartController.getSelectedDimensions().every(col => !isNaN(parseFloat(testDatum[col.colId])));
         }
         if (
-            ['heatmap', 'histogram', 'scatter' , 'bubble'].includes(chartType) ||
+            [
+                'heatmap', 'histogram', 'boxPlot', 'rangeBar', 'scatter' , 'bubble'
+            ].includes(chartType) ||
             this.chartController.isGrouping() ||
             !this.isCategoryAxis() ||
             !supportsNumericalAxis()
