@@ -39,6 +39,7 @@ community-modules/vue3/main.js
 
 packages/ag-grid-vue/lib
 
-_copiedFromCore/propertyKeys.ts
-_copiedFromCore/eventKeys.ts
-_copiedFromCore/modules.json
+plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/modules.json
+plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventKeys.ts
+plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/propertyKeys.ts
+plugins/ag-grid-generate-code-reference-files/src/executors/generate/_copiedFromCore/eventKeys.ts
