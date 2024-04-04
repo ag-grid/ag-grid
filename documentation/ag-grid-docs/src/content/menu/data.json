@@ -568,10 +568,6 @@
                                     {
                                         "title": "Full Width Rows",
                                         "path": "full-width-rows"
-                                    },
-                                    {
-                                        "title": "Scrolling Scenarios",
-                                        "path": "scrolling-scenarios"
                                     }
                                 ]
                             }

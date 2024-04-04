@@ -1598,16 +1598,10 @@
             }
         },
         "alwaysShowHorizontalScroll": {
-            "more": {
-                "name": "Make Scrollbars Always Visible",
-                "url": "./scrolling-scenarios/#make-scrollbars-always-visible"
-            }
+            "description": "Set to `true` to always show the horizontal scrollbar. Windows and Mac OS both have settings to control scrollbar visibility. Depending on your browser, you may need to adjust the scrollbar settings in your OS to have this property take effect."
         },
         "alwaysShowVerticalScroll": {
-            "more": {
-                "name": "Make Scrollbars Always Visible",
-                "url": "./scrolling-scenarios/#make-scrollbars-always-visible"
-            }
+            "description": "Set to `true` to always show the vertical scrollbar. Windows and Mac OS both have settings to control scrollbar visibility. Depending on your browser, you may need to adjust the scrollbar settings in your OS to have this property take effect."
         },
         "debounceVerticalScrollbar": {
             "more": {
