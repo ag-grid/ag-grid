@@ -28,6 +28,9 @@ packages/ag-grid-charts-enterprise/styles/**
 
 # compiled CSS files
 community-modules/styles/*.css
+packages/ag-grid-community/styles
+packages/ag-grid-enterprise/styles
+packages/ag-grid-charts-enterprise/styles
 # compiled css files as SCSS
 community-modules/styles/_css-content.scss
 
