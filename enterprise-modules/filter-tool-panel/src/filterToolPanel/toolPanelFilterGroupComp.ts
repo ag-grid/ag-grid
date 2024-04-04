@@ -78,6 +78,7 @@ export class ToolPanelFilterGroupComp extends Component {
         this.addExpandCollapseListeners();
         this.addFilterChangedListeners();
         this.setupTooltip();
+        this.addInIcon('filter');
     }
 
     private setupTooltip(): void {
@@ -156,6 +157,14 @@ export class ToolPanelFilterGroupComp extends Component {
 
     public hideGroup(hide: boolean) {
         this.setDisplayed(!hide);
+    }
+
+    private addInIcon(iconName: string): void {
+        const eIcon = _.createIconNoSpan(iconName, this.gos)!;
+        if (eIcon) {
+            eIcon.classList.add('ag-filter-toolpanel-group-instance-header-icon')
+        }
+        this.filterGroupComp.addTitleBarWidget(eIcon);
     }
 
     private forEachToolPanelFilterChild(action: (filterComp: ToolPanelFilterItem) => void) {

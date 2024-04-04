@@ -224,6 +224,11 @@ export class AgGroupComponent extends Component {
         return this;
     }
 
+    public addTitleBarWidget(el: Element): this {
+        this.eTitleBar?.addWidget(el);
+        return this;
+    }
+
     public addCssClassToTitleBar(cssClass: string) {
         this.eTitleBar?.addCssClass(cssClass);
     }
@@ -410,6 +415,12 @@ class DefaultTitleBar extends Component {
     public setTitle(title: string | undefined): this {
         this.eTitle.innerText = title || '';
         setDisplayed(this.getGui(), title != undefined);
+        return this;
+    }
+
+    public addWidget(el: Element): this {
+        this.getGui().appendChild(el);
+
         return this;
     }
 

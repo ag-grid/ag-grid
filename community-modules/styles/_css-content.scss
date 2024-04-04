@@ -2556,8 +2556,7 @@
         }
         
         .ag-group-title {
-          display: block;
-          flex: 1 1 auto;
+          display: inline;
           min-width: 0;
           overflow: hidden;
           white-space: nowrap;
@@ -6757,25 +6756,8 @@
           border-color: var(--ag-input-focus-border-color);
         }
         
-        .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title::after {
-          font-family: var(--ag-icon-font-family);
-          font-weight: var(--ag-icon-font-weight);
-          color: var(--ag-icon-font-color);
-          font-size: var(--ag-icon-size);
-          line-height: var(--ag-icon-size);
-          font-style: normal;
-          font-variant: normal;
-          text-transform: none;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-          content: var(--ag-icon-font-code-filter, "\f115");
-          position: absolute;
-        }
-        .ag-ltr .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title::after {
-          padding-left: var(--ag-grid-size);
-        }
-        .ag-rtl .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title::after {
-          padding-right: var(--ag-grid-size);
+        .ag-filter-toolpanel-group:not(.ag-has-filter) > .ag-group-title-bar .ag-filter-toolpanel-group-instance-header-icon {
+          display: none;
         }
         
         .ag-filter-toolpanel-group-level-0-header {
@@ -6925,9 +6907,11 @@
           margin-top: var(--ag-grid-size);
         }
         
+        .ag-ltr .ag-filter-toolpanel-group-instance-header-icon,
         .ag-ltr .ag-filter-toolpanel-instance-header-icon {
           margin-left: var(--ag-grid-size);
         }
+        .ag-rtl .ag-filter-toolpanel-group-instance-header-icon,
         .ag-rtl .ag-filter-toolpanel-instance-header-icon {
           margin-right: var(--ag-grid-size);
         }
@@ -10884,8 +10868,7 @@
         }
         
         .ag-group-title {
-          display: block;
-          flex: 1 1 auto;
+          display: inline;
           min-width: 0;
           overflow: hidden;
           white-space: nowrap;
@@ -15085,25 +15068,8 @@
           border-color: var(--ag-input-focus-border-color);
         }
         
-        .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title::after {
-          font-family: var(--ag-icon-font-family);
-          font-weight: var(--ag-icon-font-weight);
-          color: var(--ag-icon-font-color);
-          font-size: var(--ag-icon-size);
-          line-height: var(--ag-icon-size);
-          font-style: normal;
-          font-variant: normal;
-          text-transform: none;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-          content: var(--ag-icon-font-code-filter, "\f115");
-          position: absolute;
-        }
-        .ag-ltr .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title::after {
-          padding-left: var(--ag-grid-size);
-        }
-        .ag-rtl .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title::after {
-          padding-right: var(--ag-grid-size);
+        .ag-filter-toolpanel-group:not(.ag-has-filter) > .ag-group-title-bar .ag-filter-toolpanel-group-instance-header-icon {
+          display: none;
         }
         
         .ag-filter-toolpanel-group-level-0-header {
@@ -15253,9 +15219,11 @@
           margin-top: var(--ag-grid-size);
         }
         
+        .ag-ltr .ag-filter-toolpanel-group-instance-header-icon,
         .ag-ltr .ag-filter-toolpanel-instance-header-icon {
           margin-left: var(--ag-grid-size);
         }
+        .ag-rtl .ag-filter-toolpanel-group-instance-header-icon,
         .ag-rtl .ag-filter-toolpanel-instance-header-icon {
           margin-right: var(--ag-grid-size);
         }
