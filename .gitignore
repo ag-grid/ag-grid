@@ -38,3 +38,7 @@ community-modules/vue3/dist/**
 community-modules/vue3/main.js
 
 packages/ag-grid-vue/lib
+
+_copiedFromCore/propertyKeys.ts
+_copiedFromCore/eventKeys.ts
+_copiedFromCore/modules.json
