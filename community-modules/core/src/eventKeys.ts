@@ -277,3 +277,7 @@ export class Events {
 
     /*****************************  INTERNAL EVENTS: END ******************************************* */
 }
+
+export type EventsType = {
+    [key in keyof typeof Events]: (typeof Events)[key] extends string ? (typeof Events)[key] : never;
+}[keyof typeof Events];

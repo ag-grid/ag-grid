@@ -103,9 +103,16 @@
 }
 
 .title {
-    font-size: var(--text-fs-xl);
+    font-size: var(--text-fs-lg);
     font-weight: var(--text-semibold);
     color: var(--color-fg-primary);
+}
+
+.eventsSeparatorTitle {
+    font-size: var(--text-fs-xl);
+    font-weight: var(--text-semibold);
+    color: var(--color-fg-secondary);
+    margin: $spacing-size-8 0;
 }
 
 .date {

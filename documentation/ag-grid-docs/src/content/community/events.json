@@ -31,13 +31,14 @@
     },
     {
         "title": "ng-conf",
-        "description": "ng-conf 2024 is a two-day double track conference focused on building the Angular community. AG Grid has been a platinum sponsor of ng-conf for a number of years and will be a platinum sponsor once again in 2024. \n\nOne of our senior engineers, Stephen Cooper, will be giving a talk titled: 'Perfecting your Profiling Skills' which will show how you can use Angular Dev Tools alongside the standard Dev Tools to identify and resolve performance issues, whilst unearthing some hidden gems in the process.",
+        "description": "ng-conf 2024 marked our 7th consecutive year as sponsors. This year our focus was on AG Charts, but, of course, we couldn't forget about the Grid where we've been working hard to significantly improve the performance in Angular. These improvements to the Grid performance were the result of in-depth research into profiling Angular apps and so we decided to share these profiling techniques in Stephen Cooper's talk: 'Perfecting your Profiling Skills'.",
         "location": "Salt Lake City, USA",
         "logo": "/community/events/organiser-logos/ng-conf-logo.webp",
         "logoLight": "/community/events/organiser-logos/ng-conf-logo.webp",
         "startDate": "2024-03-20",
         "countryIcon": "us.png",
-        "eventPage": "https://ng-conf.org/"
+        "eventPage": "https://ng-conf.org/",
+        "collage": "ng-conf-2024.webp"
     },
     {
         "title": "React Summit",

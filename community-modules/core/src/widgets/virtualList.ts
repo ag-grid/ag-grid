@@ -122,7 +122,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
             case KeyCode.PAGE_END:
             case KeyCode.PAGE_UP:
             case KeyCode.PAGE_DOWN:
-                if (this.navigateToPage(e.key)) {
+                if (this.navigateToPage(e.key) !== null) {
                     e.preventDefault();
                 }
                 break;
@@ -150,7 +150,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         return true;
     }
 
-    public navigateToPage(key: 'Home' | 'PageUp' | 'PageDown' | 'End', fromItem: number | 'focused' = 'focused'): boolean {
+    public navigateToPage(key: 'Home' | 'PageUp' | 'PageDown' | 'End', fromItem: number | 'focused' = 'focused'): number | null {
         let hasFocus = false;
 
         if (fromItem === 'focused') {
@@ -173,7 +173,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         }
 
         if (newIndex === -1) {
-            return false;
+            return null;
         }
 
         if (hasFocus) {
@@ -182,7 +182,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
             this.ensureIndexVisible(newIndex);
         }
 
-        return true
+        return newIndex;
     }
 
     public getLastFocusedRow(): number | null {
