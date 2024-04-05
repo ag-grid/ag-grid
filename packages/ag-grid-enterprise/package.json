@@ -12,7 +12,12 @@
       "types": "./dist/types/main.d.ts",
       "default": "./dist/package/main.cjs.js"
     },
-    "./styles/*": "./styles/*"
+    "./styles/ag-grid.css": "./styles/ag-grid.css",
+    "./styles/ag-theme-alpine.css": "./styles/ag-theme-alpine.css",
+    "./styles/ag-theme-balham.css": "./styles/ag-theme-balham.css",
+    "./styles/ag-theme-material.css": "./styles/ag-theme-material.css",
+    "./styles/ag-theme-quartz.css": "./styles/ag-theme-quartz.css",
+    "./styles": "./styles/_index.scss"
   },
   "repository": {
     "type": "git",
