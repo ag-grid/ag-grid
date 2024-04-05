@@ -13,6 +13,9 @@
     "[typescript]": {
         "editor.autoClosingBrackets": "always"
     },
+    "cSpell.enableFiletypes": [
+        "markdoc"
+    ],
     "cSpell.language": "en-GB",
     "cSpell.words": [
         "autowire",
