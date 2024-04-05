@@ -334,7 +334,11 @@ class DefaultTitleBar extends Component {
     constructor(params: AgGroupComponentParams = {}) {
         super(DefaultTitleBar.getTemplate(params));
 
-        const { suppressOpenCloseIcons } = params;
+        const { title, suppressOpenCloseIcons } = params;
+
+        if (!!title && title.length > 0) {
+            this.title = title;
+        }
 
         if (suppressOpenCloseIcons != null) {
             this.suppressOpenCloseIcons = suppressOpenCloseIcons;
@@ -415,10 +419,14 @@ class DefaultTitleBar extends Component {
     public setTitle(title: string | undefined): this {
         const eGui = this.getGui();
         const hasTitle = (!!title && title.length > 0);
+        title = hasTitle ? title : undefined;
 
-        this.eTitle.textContent = title || '';
+        this.eTitle.textContent = title ?? '';
         setDisplayed(eGui, hasTitle);
-        this.title = hasTitle ? title : undefined;
+
+        if (title !== this.title) {
+            this.title = title;
+        }
 
         const disabled = eGui.classList.contains(TITLE_BAR_DISABLED_CLASS);
         this.refreshDisabledStyles(disabled);
