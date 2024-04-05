@@ -319,6 +319,8 @@ export class AgGroupComponent extends Component {
     }
 }
 
+const TITLE_BAR_DISABLED_CLASS = 'ag-disabled-group-title-bar';
+
 class DefaultTitleBar extends Component {
     public static EVENT_EXPAND_CHANGED = 'expandedChanged';
 
@@ -332,9 +334,7 @@ class DefaultTitleBar extends Component {
     constructor(params: AgGroupComponentParams = {}) {
         super(DefaultTitleBar.getTemplate(params));
 
-        const { title, suppressOpenCloseIcons } = params;
-
-        this.title = title;
+        const { suppressOpenCloseIcons } = params;
 
         if (suppressOpenCloseIcons != null) {
             this.suppressOpenCloseIcons = suppressOpenCloseIcons;
@@ -413,8 +413,16 @@ class DefaultTitleBar extends Component {
     }
 
     public setTitle(title: string | undefined): this {
-        this.eTitle.innerText = title || '';
-        setDisplayed(this.getGui(), title != undefined);
+        const eGui = this.getGui();
+        const hasTitle = (!!title && title.length > 0);
+
+        this.eTitle.textContent = title || '';
+        setDisplayed(eGui, hasTitle);
+        this.title = hasTitle ? title : undefined;
+
+        const disabled = eGui.classList.contains(TITLE_BAR_DISABLED_CLASS);
+        this.refreshDisabledStyles(disabled);
+
         return this;
     }
 
@@ -437,10 +445,10 @@ class DefaultTitleBar extends Component {
     public refreshDisabledStyles(disabled: boolean) {
         const eGui = this.getGui();
         if (disabled) {
-            eGui.classList.add('ag-disabled-group-title-bar');
+            eGui.classList.add(TITLE_BAR_DISABLED_CLASS);
             eGui.removeAttribute('tabindex');
         } else {
-            eGui.classList.remove('ag-disabled-group-title-bar');
+            eGui.classList.remove(TITLE_BAR_DISABLED_CLASS);
             if (typeof this.title === 'string') {
                 eGui.setAttribute('tabindex', '0');
             } else {
