@@ -20,6 +20,7 @@ import { AnimateShowChangeCellRenderer } from "../../rendering/cellRenderers/ani
 import { AnimateSlideCellRenderer } from "../../rendering/cellRenderers/animateSlideCellRenderer";
 import { GroupCellRenderer } from "../../rendering/cellRenderers/groupCellRenderer";
 import { LoadingCellRenderer } from "../../rendering/cellRenderers/loadingCellRenderer";
+import { SkeletonCellRenderer } from "../../rendering/cellRenderers/skeletonCellRenderer";
 import { LoadingOverlayComponent } from "../../rendering/overlays/loadingOverlayComponent";
 import { NoRowsOverlayComponent } from "../../rendering/overlays/noRowsOverlayComponent";
 import { TooltipComponent } from "../../rendering/tooltipComponent";
@@ -57,6 +58,7 @@ export class UserComponentRegistry extends BeanStub {
         agGroupCellRenderer: GroupCellRenderer,
         agGroupRowRenderer: GroupCellRenderer,
         agLoadingCellRenderer: LoadingCellRenderer,
+        agSkeletonCellRenderer: SkeletonCellRenderer,
         agCheckboxCellRenderer: CheckboxCellRenderer,
 
         //editors
