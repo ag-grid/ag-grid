@@ -103,3 +103,18 @@ export const SITE_BASE_URL_SEGMENTS = SITE_BASE_URL?.split('/').filter(Boolean).
  * URL prefix to serve files
  */
 export const FILES_BASE_PATH = '/files';
+
+/*
+ * Charts URL
+ */
+function getChartsUrl() {
+    if (SITE_URL == null) return;
+
+    if (SITE_URL?.includes('localhost:4610')) {
+        return 'https://localhost:4600';
+    } else if (SITE_URL?.includes(STAGING_SITE_URL)) {
+        return 'https://charts-staging.ag-grid.com';
+    }
+    return 'https://charts.ag-grid.com';
+}
+export const CHARTS_SITE_URL = getChartsUrl();

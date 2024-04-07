@@ -2,9 +2,9 @@ import { readFileSync } from 'fs';
 
 import { getEnterprisePackageName } from '../constants';
 import type { InternalFramework } from '../types';
-import ModuleConfig from '../_copiedFromCore/modules.json';
+import { moduleConfig } from '../_copiedFromCore/modules';
 
-const modules = Object.values(ModuleConfig).filter((m) => m.module && !m.framework);
+const modules = moduleConfig.filter((m) => m.module && !m.framework);
 // const communityModules = modules.filter((m) => {
 //     return m.module.includes('community');
 // });

@@ -34,11 +34,12 @@ const versionsData: any[] = versionsContent ? versionsContent.data : [];
                         versionsData.map((versionInfo, index) => {
                             return (
                                 <Version
+                                    client:load
                                     isLatest={index === 0}
                                     version={versionInfo.version}
                                     date={versionInfo.date}
                                     highlights={versionInfo.highlights}
-                                    notesUrl={versionInfo.notesUrl}
+                                    notesPath={versionInfo.notesPath}
                                 />
                             );
                         })

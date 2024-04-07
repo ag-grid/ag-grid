@@ -1,7 +1,7 @@
 import { Component } from './component';
 import { Autowired, PostConstruct } from '../context/context';
 import { RefSelector } from './componentAnnotations';
-import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected, setAriaChecked, setAriaRole, setAriaLabel } from '../utils/aria';
+import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaRole, setAriaLabel } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { waitUntil } from '../utils/function';
