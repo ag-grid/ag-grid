@@ -1,4 +1,4 @@
-import { ICON_MAP } from '@components/icon/Icon';
+import { ICON_MAP } from '@ag-website-shared/components/icon/Icon';
 import { defineCollection, z } from 'astro:content';
 
 const docs = defineCollection({

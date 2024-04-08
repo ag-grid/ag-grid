@@ -1,9 +1,8 @@
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import styles from '@design-system/modules/SearchHits.module.scss';
 import { ChevronRight } from 'lucide-react';
 import React, { useEffect, useRef } from 'react';
 import { useHits } from 'react-instantsearch';
-
-import { Icon } from '../icon/Icon';
 
 export default ({ closeModal, structuredHits, selectedHit, setSelectedHit, query }) => {
     const { sendEvent } = useHits();
@@ -41,7 +40,6 @@ export default ({ closeModal, structuredHits, selectedHit, setSelectedHit, query
         <div
             className={styles.results}
             ref={containerRef}
-
             id="search-hits"
             role="listbox"
             aria-activedescendant={`hit-${selectedHit}`}
@@ -74,12 +72,11 @@ export default ({ closeModal, structuredHits, selectedHit, setSelectedHit, query
                         }
                         return (
                             <a
-                                className={styles.hitLink} 
+                                className={styles.hitLink}
                                 href={hit.path}
                                 key={hit.objectID}
                                 tabIndex={-1}
                                 id={`hit-${idx}`}
-
                                 role="option"
                                 aria-selected={selectedHit === idx}
                             >

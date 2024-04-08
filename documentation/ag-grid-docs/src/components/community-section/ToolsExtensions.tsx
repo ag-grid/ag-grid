@@ -1,4 +1,4 @@
-import { Icon } from '@components/icon/Icon';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import styles from '@design-system/modules/CommunityToolsExtensions.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
