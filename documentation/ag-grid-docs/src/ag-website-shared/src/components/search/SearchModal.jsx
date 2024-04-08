@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import algoliasearch from 'algoliasearch/lite';
-import { InstantSearch, useHits, useInstantSearch, useSearchBox } from 'react-instantsearch';
-import SearchBox from './SearchBox';
-import Hits from './SearchHits';
-import Controls from './SearchControls';
 import styles from '@design-system/modules/SearchModal.module.scss';
+import algoliasearch from 'algoliasearch/lite';
+import React, { useEffect, useMemo, useState } from 'react';
+import { InstantSearch, useHits, useInstantSearch, useSearchBox } from 'react-instantsearch';
+
+import SearchBox from './SearchBox';
+import Controls from './SearchControls';
+import Hits from './SearchHits';
 
 const envPrefix = import.meta.env.PUBLIC_ALGOLIA_INDEX_PREFIX;
 const algoliaClient = algoliasearch(import.meta.env.PUBLIC_ALGOLIA_APP_ID, import.meta.env.PUBLIC_ALGOLIA_SEARCH_KEY);
@@ -36,7 +37,7 @@ const searchClient = {
     },
     future: {
         preserveSharedStateOnUnmount: true,
-    }
+    },
 };
 
 const Modal = ({ isOpen, closeModal, children }) => {
@@ -55,7 +56,7 @@ const Modal = ({ isOpen, closeModal, children }) => {
             htmlElement.style.paddingRight = `${scrollbarWidth}px`;
             return;
         }
-    
+
         htmlElement.style.overflow = '';
         htmlElement.style.paddingRight = '';
     }, [isOpen]);
@@ -70,14 +71,14 @@ const Modal = ({ isOpen, closeModal, children }) => {
 
     return (
         <div
-            className={`${styles.backdrop} ${(isOpen ? styles.backdropEnter : styles.backdropExit)}`}
+            className={`${styles.backdrop} ${isOpen ? styles.backdropEnter : styles.backdropExit}`}
             onAnimationEnd={onAnimationEnd}
-            onKeyDown={evt => evt.key === 'Tab' && evt.preventDefault()}
+            onKeyDown={(evt) => evt.key === 'Tab' && evt.preventDefault()}
             onClick={closeModal}
         >
             <div
                 className={styles.container}
-                onClick={evt => evt.stopPropagation()}
+                onClick={(evt) => evt.stopPropagation()}
                 role="presentation"
                 aria-modal="true"
             >
@@ -85,7 +86,7 @@ const Modal = ({ isOpen, closeModal, children }) => {
             </div>
         </div>
     );
-}
+};
 
 export default ({ currentFramework, closeModal, isOpen }) => {
     const index = `${envPrefix}_${currentFramework}`;
@@ -97,7 +98,7 @@ export default ({ currentFramework, closeModal, isOpen }) => {
             </InstantSearch>
         </Modal>
     );
-}
+};
 
 const SearchComponent = ({ closeModal }) => {
     const { status } = useInstantSearch();
@@ -126,7 +127,7 @@ const SearchComponent = ({ closeModal }) => {
         if (hitEl) {
             hitEl.scrollIntoView({ behavior: 'smooth', block });
         }
-    }
+    };
 
     const onKeyDown = (evt) => {
         if (hits.length === 0) {
@@ -134,18 +135,18 @@ const SearchComponent = ({ closeModal }) => {
         }
 
         if (evt.key === 'Enter') {
-            window.location = (flattenedHits[selectedHit].path);
+            window.location = flattenedHits[selectedHit].path;
             // close modal, if link was same page we don't want to keep the modal open.
             closeModal();
             return;
         }
 
         const newIdx = {
-            'PageUp': 0,
-            'PageDown': hits.length - 1,
-            'ArrowUp': (selectedHit - 1 + hits.length) % hits.length,
-            'ArrowDown': (selectedHit + 1) % hits.length,
-            'Tab': (selectedHit + (evt.shiftKey ? -1 : 1) + hits.length) % hits.length,
+            PageUp: 0,
+            PageDown: hits.length - 1,
+            ArrowUp: (selectedHit - 1 + hits.length) % hits.length,
+            ArrowDown: (selectedHit + 1) % hits.length,
+            Tab: (selectedHit + (evt.shiftKey ? -1 : 1) + hits.length) % hits.length,
         }[evt.key];
 
         if (newIdx === undefined) {
@@ -153,13 +154,13 @@ const SearchComponent = ({ closeModal }) => {
         }
         evt.preventDefault();
         selectHit(newIdx);
-    }
+    };
 
     return (
         <div onKeyDown={onKeyDown}>
             <SearchBox selectedHit={selectedHit} />
-            {
-                status === 'idle' && !!query.length && <>
+            {status === 'idle' && !!query.length && (
+                <>
                     <Hits
                         structuredHits={structuredHits}
                         selectedHit={selectedHit}
@@ -169,18 +170,18 @@ const SearchComponent = ({ closeModal }) => {
                     />
                     <Controls />
                 </>
-            }
+            )}
         </div>
     );
-}
+};
 
 const flattenStructure = (structuredHits) => {
     const result = [];
     structuredHits.forEach(({ children }) => {
-        children.forEach(child => result.push(child));
+        children.forEach((child) => result.push(child));
     });
     return result;
-}
+};
 
 /**
  * This function takes an array of crumbs and returns an array of crumbs which are the highest level shared crumbs.
@@ -193,16 +194,16 @@ const getAllCrumbs = (crumbArray) => {
         result.push(nextCrumb);
 
         // remove all crumbs which share the same path
-        allCrumbs = allCrumbs.filter(crumb => !crumb.breadcrumb.startsWith(nextCrumb.breadcrumb));
+        allCrumbs = allCrumbs.filter((crumb) => !crumb.breadcrumb.startsWith(nextCrumb.breadcrumb));
     }
     return result;
-}
+};
 
 const getNextBreadCrumb = (crumbArray) => {
     const firstBreadCrumb = crumbArray[0].breadcrumb.split(' > ');
     const firstCrumb = firstBreadCrumb[0];
 
-    const allSiblings = crumbArray.filter(crumb => crumb.breadcrumb.startsWith(firstCrumb));
+    const allSiblings = crumbArray.filter((crumb) => crumb.breadcrumb.startsWith(firstCrumb));
     // only crumb, return it alone as a full breadcrumb
     if (allSiblings.length === 1) {
         return { breadcrumb: crumbArray[0].breadcrumb, children: allSiblings };
@@ -220,4 +221,4 @@ const getNextBreadCrumb = (crumbArray) => {
     }
     // all crumbs are the same, return the full crumb
     return { breadcrumb: crumbArray[0].breadcrumb, children: allSiblings };
-}
+};
