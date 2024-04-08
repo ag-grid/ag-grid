@@ -34,7 +34,7 @@ export interface ControllerMeta {
 interface BeanWrapper {
     bean: any;
     beanInstance: any;
-    beanName: any;
+    beanName: BeanName;
 }
 
 export class Context {
@@ -153,7 +153,7 @@ export class Context {
 
     private methodWireBeans(beanInstances: any[]): void {
         beanInstances.forEach(beanInstance => {
-            this.forEachMetaDataInHierarchy(beanInstance, (metaData: any, beanName: string) => {
+            this.forEachMetaDataInHierarchy(beanInstance, (metaData: any, beanName: BeanName) => {
                 iterateObject(metaData.autowireMethods, (methodName: string, wireParams: any[]) => {
                     // skip constructor, as this is dealt with elsewhere
                     if (methodName === "agConstructor") {
@@ -193,10 +193,10 @@ export class Context {
         return beanName;
     }
 
-    private getBeansForParameters(parameters: any, beanName: string): any[] {
+    private getBeansForParameters(parameters: any, beanName: BeanName): any[] {
         const beansList: any[] = [];
         if (parameters) {
-            iterateObject(parameters, (paramIndex: string, otherBeanName: string) => {
+            iterateObject(parameters, (paramIndex: string, otherBeanName: BeanName) => {
                 const otherBean = this.lookupBeanInstance(beanName, otherBeanName);
                 beansList[Number(paramIndex)] = otherBean;
             });
@@ -204,7 +204,7 @@ export class Context {
         return beansList;
     }
 
-    private lookupBeanInstance(wiringBean: string, beanName: string, optional = false): any {
+    private lookupBeanInstance(wiringBean: string, beanName: BeanName, optional = false): any {
         if (this.destroyed) {
             this.logger.log(`AG Grid: bean reference ${beanName} is used after the grid is destroyed!`);
             return null;
@@ -255,7 +255,7 @@ export class Context {
         allMethodsList.forEach(methodName => beanInstance[methodName]());
     }
 
-    public getBean(name: string): any {
+    public getBean(name: BeanName): any {
         return this.lookupBeanInstance("getBean", name, true);
     }
 
@@ -334,20 +334,20 @@ export function PreDestroy(target: Object, methodName: string, descriptor: Typed
     props.preDestroyMethods.push(methodName);
 }
 
-export function Bean(beanName: string): Function {
+export function Bean(beanName: BeanName): Function {
     return (classConstructor: any) => {
         const props = getOrCreateProps(classConstructor);
         props.beanName = beanName;
     };
 }
 
-export function Autowired(name?: string): Function {
+export function Autowired(name?: BeanName): Function {
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
         autowiredFunc(target, name, false, target, propertyKey, null);
     };
 }
 
-export function Optional(name?: string): Function {
+export function Optional(name?: BeanName): Function {
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
         autowiredFunc(target, name, true, target, propertyKey, null);
     };
@@ -375,7 +375,7 @@ function autowiredFunc(target: any, name: string | undefined, optional: boolean,
     });
 }
 
-export function Qualifier(name: string): Function {
+export function Qualifier(name: BeanName): Function {
     return (classPrototype: any, methodOrAttributeName: string, index: number) => {
         const constructor: any = typeof classPrototype == "function" ? classPrototype : classPrototype.constructor;
         let props: any;
@@ -408,3 +408,148 @@ function getOrCreateProps(target: any): any {
 
     return target.__agBeanMetaData;
 }
+
+export type BeanName =
+| 'advancedFilterExpressionService'
+| 'advancedFilterService'
+| 'advancedSettingsMenuFactory'
+| 'aggFuncService'
+| 'agGridAngular'
+| 'agGridReact'
+| 'agGridVue'
+| 'agComponentUtils'
+| 'agStackComponentsRegistry'
+| 'aggregationStage'
+| 'alignedGridsService'
+| 'animationFrameService'
+| 'ariaAnnouncementService'
+| 'apiEventService'
+| 'autoGroupColService'
+| 'autoWidthCalculator'
+| 'beans'
+| 'cellEditorFactory'
+| 'cellNavigationService'
+| 'cellPositionUtils'
+| 'cellRendererFactory'
+| 'cellRendererService'
+| 'changeDetectionService'
+| 'chartColumnService'
+| 'chartCrossFilterService'
+| 'chartMenuItemMapper'
+| 'chartMenuListFactory'
+| 'chartMenuService'
+| 'chartTranslationService'
+| 'chartService'
+| 'clipboardService'
+| 'columnApi'
+| 'columnChooserFactory'
+| 'columnController'
+| 'columnDefFactory'
+| 'columnEditorFactory'
+| 'columnFactory'
+| 'columnAnimationService'
+| 'columnHoverService'
+| 'columnMenuFactory'
+| 'columnModel'
+| 'columnPositionService'
+| 'columnUtils'
+| 'componentMetadataProvider'
+| 'context'
+| 'contextMenuFactory'
+| 'ctrlsFactory'
+| 'ctrlsService'
+| 'csvCreator'
+| 'dataTypeService'
+| 'displayedGroupCreator'
+| 'dragAndDropService'
+| 'dragService'
+| 'excelCreator'
+| 'enterpriseMenuFactory'
+| 'environment'
+| 'eventService'
+| 'eGridDiv'
+| 'expansionService'
+| 'expressionService'
+| 'filterAggregatesStage'
+| 'filterManager'
+| 'filterMenuFactory'
+| 'filterService'
+| 'filterStage'
+| 'flattenStage'
+| 'focusService'
+| 'frameworkComponentWrapper'
+| 'frameworkOverrides'
+| 'globalEventListener'
+| 'globalSyncEventListener'
+| 'gridApi'
+| 'gridOptions'
+| 'gridOptionsService'
+| 'gridOptionsWrapper'
+| 'gridSerializer'
+| 'groupStage'
+| 'headerNavigationService'
+| 'headerPositionUtils'
+| 'horizontalResizeService'
+| 'immutableService'
+| 'lazyBlockLoadingService'
+| 'licenseManager'
+| 'localeService'
+| 'loggerFactory'
+| 'menuItemMapper'
+| 'menuService'
+| 'menuUtils'
+| 'modelItemUtils'
+| 'mouseEventService'
+| 'navigationService'
+| 'overlayService'
+| 'paginationAutoPageSizeService'
+| 'paginationProxy'
+| 'pinnedRowModel'
+| 'pinnedWidthService'
+| 'pivotColDefService'
+| 'pivotStage'
+| 'popupService'
+| 'quickFilterService'
+| 'rangeService'
+| 'resizeObserverService'
+| 'rowContainerHeightService'
+| 'rowCssClassCalculator'
+| 'rowModel'
+| 'rowNodeBlockLoader'
+| 'rowNodeEventThrottle'
+| 'rowNodeSorter'
+| 'rowPositionUtils'
+| 'rowRenderer'
+| 'scrollVisibleService'
+| 'selectableService'
+| 'selectionController'
+| 'selectionHandleFactory'
+| 'selectionService'
+| 'sideBarService'
+| 'sortController'
+| 'sortService'
+| 'sortStage'
+| 'sparklineTooltipSingleton'
+| 'ssrmBlockUtils'
+| 'ssrmExpandListener'
+| 'ssrmFilterListener'
+| 'ssrmListenerUtils'
+| 'ssrmNodeManager'
+| 'ssrmSortService'
+| 'ssrmStoreFactory'
+| 'ssrmStoreUtils'
+| 'ssrmTransactionManager'
+| 'stateService'
+| 'statusBarService'
+| 'stylingService'
+| 'syncService'
+| 'templateService'
+| 'toolPanelColDefService'
+| 'undoRedoService'
+| 'userComponentFactory'
+| 'userComponentRegistry'
+| 'valueCache'
+| 'valueFormatterService'
+| 'valueParserService'
+| 'valueService'
+| 'validationService';
