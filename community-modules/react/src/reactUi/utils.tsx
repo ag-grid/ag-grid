@@ -134,7 +134,13 @@ export function getNextValueIfDifferent<T extends { getInstanceId: () => string 
     if (oldValues.length === 0 && newValues.length === next.length) {
         return next;
     }
-    // Spread as we need to combine the old and new values
-    return [...oldValues, ...newValues];
+    // Spread as required to combine the old and new values
+    if(oldValues.length === 0) {
+        return newValues;
+    } else if(newValues.length === 0) {
+        return oldValues;
+    }else {
+        return [...oldValues, ...newValues];
+    }
 }
 
