@@ -6872,14 +6872,14 @@ adjust-sourcemap-loader@^4.0.0:
     loader-utils "^2.0.0"
     regex-parser "^2.2.11"
 
-ag-charts-community@9.2.0, ag-charts-community@~9.2.0:
+ag-charts-community@9.2.0:
   version "9.2.0"
   resolved "https://registry.npmjs.org/ag-charts-community/-/ag-charts-community-9.2.0.tgz"
   integrity sha512-dS5nPExh81owIIdyHli0TvWvSyhmZy2RncM/s3/KXpjAf3eiVN2fxfT2z+QxqsLyoms+fernp5cAuSju0peYXw==
 
-ag-charts-enterprise@~9.2.0:
+ag-charts-enterprise@9.2.0:
   version "9.2.0"
-  resolved "https://registry.npmjs.org/ag-charts-enterprise/-/ag-charts-enterprise-9.2.0.tgz"
+  resolved "https://registry.yarnpkg.com/ag-charts-enterprise/-/ag-charts-enterprise-9.2.0.tgz#80d6920403162e4fb9d1aa71ca3aeffcb294c521"
   integrity sha512-/7mRmGhDuvDL9mNIRInBeznN7849X5qDWceLYl1ZusekPAiDBKCCSJR+qDtjHIDXryzhNd3UGxXkm548njVgHg==
   dependencies:
     ag-charts-community "9.2.0"
@@ -14980,7 +14980,7 @@ hdr-histogram-percentiles-obj@^3.0.0:
   resolved "http://52.50.158.57:4873/hdr-histogram-percentiles-obj/-/hdr-histogram-percentiles-obj-3.0.0.tgz"
   integrity sha512-7kIufnBqdsBGcSZLPJwqHT3yhk1QTsSlFsVD3kx5ixH/AlgBs9yM1q6DPhXZ8f8gtdqgh7N7/5btRLpQsS2gHw==
 
-he@1.2.0, he@1.2.x, he@^1.2.0:
+he@1.2.0, he@1.2.x, he@^1.1.0, he@^1.2.0:
   version "1.2.0"
   resolved "http://52.50.158.57:4873/he/-/he-1.2.0.tgz"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
@@ -29683,6 +29683,14 @@ vue-style-loader@^4.1.0, vue-style-loader@^4.1.3:
   dependencies:
     hash-sum "^1.0.2"
     loader-utils "^1.0.2"
+
+vue-template-compiler@2.6.10:
+  version "2.6.10"
+  resolved "https://registry.yarnpkg.com/vue-template-compiler/-/vue-template-compiler-2.6.10.tgz#323b4f3495f04faa3503337a82f5d6507799c9cc"
+  integrity sha512-jVZkw4/I/HT5ZMvRnhv78okGusqe0+qH2A0Em0Cp8aq78+NK9TII263CDVz2QXZsIT+yyV/gZc/j/vlwa+Epyg==
+  dependencies:
+    de-indent "^1.0.2"
+    he "^1.1.0"
 
 vue-template-compiler@^2.6.10:
   version "2.7.16"
