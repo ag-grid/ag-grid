@@ -32,6 +32,32 @@ The codemod only transforms source files that make use of deprecated features, s
 
 See the [Codemods](./codemods/) documentation for more details.
 
+## Breaking Change
+
+React 17 users that use Create React App will need to do the following
+
+```bash
+npm install react-app-rewired --save-dev
+```
+
+Create a file in the root of your project called config-overrides.js with the following contents:
+
+```js
+module.exports = function override(config, env) {
+    config.resolve.alias["react-dom/server"] = "react-dom/server.js";
+    return config;
+}
+```
+
+Replace the following scripts in your `package.json`:
+
+```
+"react-scripts start" -> "react-scripts start"
+"react-scripts build" -> "react-scripts build"
+```
+
+This is only necessary if you use React 17 **AND** Create React App. If you use React 18+ or don't use Create React App then this step is not necessary.
+
 ## Deprecations
 
 This release includes the following deprecations:
