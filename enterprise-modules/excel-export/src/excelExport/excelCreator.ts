@@ -60,6 +60,7 @@ const createExcelXmlWorksheets = (data: string[]): void => {
 
         const hasImages = ExcelXlsxFactory.images.size > 0 && ExcelXlsxFactory.worksheetImages.has(i);
         const hasTables = ExcelXlsxFactory.worksheetDataTables.size > 0 && ExcelXlsxFactory.worksheetDataTables.has(i);
+        const hasWatermark = ExcelXlsxFactory.worksheetWatermarkImage !== undefined;
 
         if (!hasImages && !hasTables) { continue; }
 
@@ -78,12 +79,16 @@ const createExcelXmlWorksheets = (data: string[]): void => {
         }
 
         const worksheetRelFile = `xl/worksheets/_rels/sheet${i + 1}.xml.rels`;
+        const watermarkTarget = hasWatermark ? 'vmlDrawing1' : undefined;
         ZipContainer.addFile(
             worksheetRelFile,
-            ExcelXlsxFactory.createRelationships({ tableIndex, drawingIndex }),
+            ExcelXlsxFactory.createRelationships({
+                tableIndex,
+                drawingIndex,
+                watermarkTarget,
+            }),
         );
     }
-
 }
 
 const createExcelXmlDrawings = (sheetIndex: number, drawingIndex: number): void => {
@@ -112,6 +117,18 @@ const createExcelXmlTables = (): void => {
             ExcelXlsxFactory.createTable(dataTable, i),
         );
     }
+}
+
+const createWatermarkDrawing = (): void => {
+    const watermarkImage = ExcelXlsxFactory.worksheetWatermarkImage;
+    if (!watermarkImage) { return; }
+
+    const drawingFolder = 'xl/drawings';
+    const drawingVmlFileName = `${drawingFolder}/vmlDrawing1.vml`;
+    const imageFileName = `xl/media/watermarkImage.${watermarkImage.imageType}`;
+
+    ZipContainer.addFile(drawingVmlFileName, ExcelXlsxFactory.createWatermarkVmlDrawing());
+    ZipContainer.addFile(imageFileName, watermarkImage.base64, true);
 }
 
 const createExcelXmlCoreSheets = (fontSize: number, author: string, sheetLen: number): void => {
@@ -144,6 +161,7 @@ const createExcelFileForExcel = (data: string[], options: {
 
     createExcelXMLCoreFolderStructure();
     createExcelXmlTables();
+    createWatermarkDrawing();
     createExcelXmlWorksheets(data);
     createExcelXmlCoreSheets(fontSize, author, data.length);
 

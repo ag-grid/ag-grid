@@ -10,6 +10,7 @@ import {
     RowHeightCallbackParams,
     _
 } from '@ag-grid-community/core';
+import {XmlFactory} from '@ag-grid-community/csv-export';
 
 import coreFactory from './files/ooxml/core';
 import contentTypesFactory from './files/ooxml/contentTypes';
@@ -18,6 +19,7 @@ import tableFactory from './files/ooxml/table';
 import officeThemeFactory from './files/ooxml/themes/office';
 import sharedStringsFactory from './files/ooxml/sharedStrings';
 import stylesheetFactory, { registerStyles } from './files/ooxml/styles/stylesheet';
+import watermarkVmlDrawing from './files/ooxml/watermarkVml';
 import workbookFactory from './files/ooxml/workbook';
 import worksheetFactory from './files/ooxml/worksheet';
 import relationshipsFactory from './files/ooxml/relationships';
@@ -289,6 +291,10 @@ export class ExcelXlsxFactory {
         return createXmlPart(workbookFactory.getTemplate(this.sheetNames));
     }
 
+    public static createWatermarkVmlDrawing(): string {
+        return XmlFactory.createXml(watermarkVmlDrawing.getTemplate());
+    }
+
     public static createStylesheet(defaultFontSize: number): string {
         return createXmlPart(stylesheetFactory.getTemplate(defaultFontSize));
     }
@@ -397,9 +403,11 @@ export class ExcelXlsxFactory {
     public static createRelationships({
         drawingIndex,
         tableIndex,
+        watermarkTarget,
     } : {
         drawingIndex?: number,
         tableIndex?: number,
+        watermarkTarget?: string,
     } = {}) {
         if (drawingIndex === undefined && tableIndex === undefined) {
             return '';
@@ -421,6 +429,14 @@ export class ExcelXlsxFactory {
                 Id: tableRelId,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
                 Target: `../tables/${tableId}.xml`
+            });
+        }
+
+        if (watermarkTarget) {
+            config.push({
+                Id: this.getWatermarkRelId(),
+                Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing',
+                Target: `../drawings/${watermarkTarget}.xml`
             });
         }
 

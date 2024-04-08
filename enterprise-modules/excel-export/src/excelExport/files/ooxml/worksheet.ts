@@ -243,7 +243,10 @@ const processHeaderFooterContent = (content: ExcelHeaderFooterContent[]): string
         return `${output}${_.escapeString(replaceHeaderFooterTokens(curr.value))}`;
     }, '');
 
-const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig, hasWatermarkImage: boolean = false): XmlElement[] => {
+const buildHeaderFooter = (
+    headerFooterConfig: ExcelHeaderFooterConfig,
+    hasWatermarkImage: boolean = false
+): XmlElement[] => {
     const rules: ['all', 'first', 'even'] = ['all', 'first', 'even'];
     const headersAndFooters = [] as XmlElement[];
 
@@ -279,10 +282,14 @@ const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig, hasWater
     return headersAndFooters;
 };
 
-const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig, watermarkImageConfig?: ExcelWatermarkImage) => {
+const addHeaderFooter = (
+    headerFooterConfig?: ExcelHeaderFooterConfig,
+    watermarkImageConfig?: ExcelWatermarkImage,
+) => {
     return (children: XmlElement[]) => {
         if (!headerFooterConfig && !watermarkImageConfig) { return children; }
         if (!headerFooterConfig) {
+            // Case where we add header/footer only markup for the purpose of adding a watermark image.
             children.push({
                 name: 'headerFooter',
                 children: buildHeaderFooter({}, true),
@@ -302,7 +309,7 @@ const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig, watermark
                     differentOddEven
                 }
             },
-            children: buildHeaderFooter(headerFooterConfig)
+            children: buildHeaderFooter(headerFooterConfig, watermarkImageConfig !== undefined),
         });
         return children;
     };
