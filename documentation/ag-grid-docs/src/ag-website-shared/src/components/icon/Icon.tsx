@@ -120,6 +120,7 @@ const CHARTS_ICON_MAP = {
     chartsPyramid: CarbonIcon.UpToTop,
     chartsBullet: CarbonIcon.ChartBullet,
     chartsMap: CarbonIcon.Plan,
+    chartsCandlestick: CarbonIcon.ChartCandlestick,
 };
 
 export const ICON_MAP = {
