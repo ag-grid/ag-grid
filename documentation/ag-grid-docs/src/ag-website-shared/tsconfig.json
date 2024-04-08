@@ -14,5 +14,11 @@
     "noUnusedLocals": true,
     "allowImportingTsExtensions": false,
     "experimentalDecorators": true,
+
+    // Import aliases
+    "baseUrl": ".",
+    "paths": {
+      "@ag-website-shared/*": ["src/*"]
+    }
   }
 }

@@ -1,4 +1,4 @@
-import LogoMarkSVG from '@images/inline-svgs/ag-grid-logomark.svg?react';
+import LogoMarkSVG from '@ag-website-shared/images/inline-svgs/ag-grid-logomark.svg?react';
 import styles from '@design-system/modules/LogoMark.module.scss';
 
 interface Props {
