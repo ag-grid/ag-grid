@@ -1,6 +1,6 @@
 import type { FooterItem } from '@ag-grid-types';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { SiteLogo } from '@components/SiteLogo';
-import { Icon } from '@components/icon/Icon';
 import { SITE_BASE_URL } from '@constants';
 import styles from '@design-system/modules/Footer.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';

@@ -1,7 +1,7 @@
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Alert } from '@components/alert/Alert';
 import DetailCellRenderer from '@components/grid/DetailCellRendererComponent';
 import Grid from '@components/grid/Grid';
-import { Icon } from '@components/icon/Icon';
 import ReleaseVersionNotes from '@components/release-notes/ReleaseVersionNotes.jsx';
 import styles from '@design-system/modules/pipelineChangelog.module.scss';
 import { IssueColDef, IssueTypeColDef } from '@utils/grid/issueColDefs';

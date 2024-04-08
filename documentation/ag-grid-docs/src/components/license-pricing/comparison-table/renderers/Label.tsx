@@ -1,4 +1,4 @@
-import { Icon, type IconName } from '@components/icon/Icon';
+import { Icon, type IconName } from '@ag-website-shared/components/icon/Icon';
 import styles from '@design-system/modules/ComparisonTableRenderers.module.scss';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import { urlWithPrefix } from '@utils/urlWithPrefix';

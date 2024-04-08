@@ -1,7 +1,7 @@
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import styles from '@design-system/modules/Alert.module.scss';
 import classNames from 'classnames';
 import { FunctionComponent, ReactNode } from 'react';
-import { Icon } from '@components/icon/Icon';
-import styles from '@design-system/modules/Alert.module.scss';
 
 interface Props {
     type: 'info' | 'idea' | 'warning' | 'default';

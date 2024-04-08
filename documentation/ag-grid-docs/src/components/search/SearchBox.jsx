@@ -1,14 +1,12 @@
-import React, { useRef, useEffect } from 'react';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import styles from '@design-system/modules/SearchBox.module.scss';
-import { useSearchBox, useHits } from 'react-instantsearch';
-import { Icon } from '../icon/Icon';
+import React, { useEffect, useRef } from 'react';
+import { useHits, useSearchBox } from 'react-instantsearch';
 
 let timeout;
 
 export default ({ selectedHit }) => {
-    const {
-        refine,
-    } = useSearchBox();
+    const { refine } = useSearchBox();
     const { hits } = useHits();
     const inputRef = useRef();
 
@@ -31,22 +29,21 @@ export default ({ selectedHit }) => {
 
     return (
         <div role="presentation" className={styles.searchBox} onClick={onContainerClick}>
-            <Icon name="search" svgClasses={styles.searchIcon}/>
-            
+            <Icon name="search" svgClasses={styles.searchIcon} />
+
             <input
                 ref={inputRef}
                 type="search"
-                placeholder='Search documentation...'
-                className={styles.searchInput} 
+                placeholder="Search documentation..."
+                className={styles.searchInput}
                 onChange={onInputChanged}
-
                 role="combobox"
                 aria-activedescendant={`hit-${selectedHit}`}
                 aria-controls="search-hits"
-                aria-haspopup="search-hits" 
+                aria-haspopup="search-hits"
                 aria-expanded={hits.length > 0}
                 aria-label="Press escape to close."
             />
         </div>
     );
-}
+};

@@ -1,6 +1,6 @@
-import { FunctionComponent, ReactElement } from 'react';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { trackInfoEmail } from '@utils/analytics';
-import { Icon } from '@components/icon/Icon';
+import { FunctionComponent, ReactElement } from 'react';
 
 interface Props {
     isButton?: boolean;

@@ -1,4 +1,5 @@
 import type { MenuItem } from '@ag-grid-types';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import MenuIcon from '@ag-website-shared/images/inline-svgs/menu-icon.svg?react';
 import styles from '@design-system/modules/HeaderNav.module.scss';
 import siteHeaderStyles from '@design-system/modules/SiteHeader.module.scss';
@@ -9,7 +10,6 @@ import classnames from 'classnames';
 import { type ReactElement, useState } from 'react';
 
 import { Collapsible } from '../Collapsible';
-import { Icon } from '../icon/Icon';
 import { DarkModeToggle } from './DarkModeToggle';
 
 /**
