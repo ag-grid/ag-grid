@@ -16,6 +16,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     const eContainer = useRef<HTMLDivElement | null>(null);
 
     const rowCtrlsRef = useRef<RowCtrl[]>([]);
+    const prevRowCtrlsRef = useRef<RowCtrl[]>([]);
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>(() => []);
     const domOrderRef = useRef<boolean>(false);
     const rowContainerCtrlRef = useRef<RowContainerCtrl | null>();
@@ -56,9 +57,10 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         if (areElementsReady()) {
 
             const updateRowCtrlsOrdered = (useFlushSync: boolean) => {
-                agFlushSync(useFlushSync, () => {
-                    setRowCtrlsOrdered(prev => getNextValueIfDifferent(prev, rowCtrlsRef.current, domOrderRef.current)!);
-                });
+                const next = getNextValueIfDifferent(prevRowCtrlsRef.current, rowCtrlsRef.current, domOrderRef.current)!;
+                if(next !== prevRowCtrlsRef.current) { 
+                    agFlushSync(useFlushSync, () => setRowCtrlsOrdered(next));
+                }
             }
 
             const compProxy: IRowContainerComp = {
@@ -67,8 +69,9 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
                         eViewport.current.style.height = height;
                     }
                 },
-                setRowCtrls: ({ rowCtrls, useFlushSync }) => {
+                setRowCtrls: ({ rowCtrls, useFlushSync }: { rowCtrls: RowCtrl[], useFlushSync?: boolean }) => {
                     const useFlush = !!useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
+                    prevRowCtrlsRef.current = rowCtrlsRef.current;
                     // Keep a record of the rowCtrls in case we need to reset the Dom order.
                     rowCtrlsRef.current = rowCtrls;
                     updateRowCtrlsOrdered(useFlush);

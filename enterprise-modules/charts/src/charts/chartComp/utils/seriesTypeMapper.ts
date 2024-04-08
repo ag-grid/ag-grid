@@ -1,33 +1,11 @@
 import { ChartType } from "@ag-grid-community/core";
 import { AgChartThemeOverrides } from "ag-charts-community";
 
-export type ChartSeriesType = keyof AgChartThemeOverrides & (
-    'bar' |
-    'line' |
-    'area' |
-    'scatter' |
-    'histogram' |
-    'pie' |
-    'donut' |
-    'bubble' |
-    'radial-column' |
-    'radial-bar' |
-    'radar-line' |
-    'radar-area' |
-    'nightingale' |
-    'range-bar' |
-    'range-area' |
-    'box-plot' |
-    'treemap' |
-    'sunburst' |
-    'heatmap' |
-    'waterfall'
-);
 
 // these values correspond to top level object names in `AgChartThemeOverrides`
 export type ChartThemeOverridesSeriesType = keyof AgChartThemeOverrides & (ChartSeriesType | 'common');
 
-export const VALID_SERIES_TYPES: ChartSeriesType[] = [
+const VALID_SERIES_TYPES = [
     'area',
     'bar',
     'histogram',
@@ -48,7 +26,19 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'sunburst',
     'heatmap',
     'waterfall',
-];
+] as const;
+
+export type ChartSeriesType = keyof AgChartThemeOverrides & typeof VALID_SERIES_TYPES[number];
+
+export function isSeriesType(seriesType: ChartSeriesType): boolean {
+    return VALID_SERIES_TYPES.includes(seriesType);
+}
+
+const COMBO_CHART_TYPES: ChartType[] = ['columnLineCombo', 'areaColumnCombo', 'customCombo'];
+
+export function isComboChart(chartType: ChartType): boolean {
+    return COMBO_CHART_TYPES.includes(chartType);
+}
 
 export function isEnterpriseChartType(chartType: ChartType): boolean {
     switch (chartType) {
@@ -172,7 +162,7 @@ export function getCanonicalChartType(chartType: ChartType): Exclude<ChartType, 
     }
 }
 
-export function getSeriesType(chartType: ChartType): ChartSeriesType {
+export function getSeriesTypeIfExists(chartType: ChartType): ChartSeriesType | undefined {
     switch (chartType) {
         case 'bar':
         case 'groupedBar':
@@ -226,8 +216,12 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
         case 'waterfall':
             return 'waterfall';
         default:
-            return 'line';
+            return undefined;
     }
+}
+
+export function getSeriesType(chartType: ChartType): ChartSeriesType {
+    return getSeriesTypeIfExists(chartType) ?? 'line';
 }
 
 export type PieChartSeriesType = Extract<ChartSeriesType, 'pie' | 'donut'>;

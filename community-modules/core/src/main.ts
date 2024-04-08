@@ -313,7 +313,8 @@ export {
     GetChartImageDataUrlParams,
     ChartModelType,
     CreateRangeChartParams, ChartParamsCellRange, CreatePivotChartParams, CreateCrossFilterChartParams,
-    UpdateRangeChartParams, UpdatePivotChartParams, UpdateCrossFilterChartParams, UpdateChartParams
+    UpdateRangeChartParams, UpdatePivotChartParams, UpdateCrossFilterChartParams, UpdateChartParams,
+    BaseCreateChartParams
 } from './interfaces/IChartService';
 
 // master detail

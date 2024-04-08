@@ -52,17 +52,17 @@ import { ChartMenuService, CHART_TOOL_PANEL_MENU_OPTIONS } from "./services/char
 
 export interface GridChartParams {
     chartId: string;
-    pivotChart: boolean;
+    pivotChart?: boolean;
     cellRange: PartialCellRange;
     chartType: ChartType;
     chartThemeName?: string;
     insideDialog: boolean;
-    suppressChartRanges: boolean;
-    switchCategorySeries: boolean,
+    suppressChartRanges?: boolean;
+    switchCategorySeries?: boolean,
     aggFunc?: string | IAggFunc;
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
-    crossFiltering: boolean;
+    crossFiltering?: boolean;
     crossFilteringContext: CrossFilteringContext;
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
@@ -118,17 +118,9 @@ export class GridChartComp extends Component {
     @PostConstruct
     public init(): void {
         const modelParams: ChartModelParams = {
-            chartId: this.params.chartId,
-            pivotChart: this.params.pivotChart,
+            ...this.params,
             chartType: getCanonicalChartType(this.params.chartType),
             chartThemeName: this.getThemeName(),
-            switchCategorySeries: this.params.switchCategorySeries,
-            aggFunc: this.params.aggFunc,
-            cellRange: this.params.cellRange,
-            suppressChartRanges: this.params.suppressChartRanges,
-            unlinkChart: this.params.unlinkChart,
-            crossFiltering: this.params.crossFiltering,
-            seriesChartTypes: this.params.seriesChartTypes,
         };
 
         const isRtl = this.gos.get('enableRtl');
@@ -187,7 +179,7 @@ export class GridChartComp extends Component {
             getGridOptionsChartThemeOverrides: () => this.getGridOptionsChartThemeOverrides(),
             getExtraPaddingDirections: () => this.chartMenu?.getExtraPaddingDirections() ?? [],
             apiChartThemeOverrides: this.params.chartThemeOverrides,
-            crossFiltering: this.params.crossFiltering,
+            crossFiltering: this.params.crossFiltering ?? false,
             crossFilterCallback,
             parentElement: this.eChart,
             grouping: this.chartController.isGrouping(),

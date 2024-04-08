@@ -15,6 +15,9 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
     const [height, setHeight] = useState<string>(() => rowHeight + 'px');
     const [top, setTop] = useState<string>(() => topOffset + 'px');
+
+    const cellCtrlsRef = useRef<AbstractHeaderCellCtrl[] | null>(null);
+    const prevCellCtrlsRef = useRef<AbstractHeaderCellCtrl[] | null>(null);    
     const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>(() => ctrl.getHeaderCtrls());
 
     const eGui = useRef<HTMLDivElement | null>(null);
@@ -29,9 +32,13 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
             setHeight: height => setHeight(height),
             setTop: top => setTop(top),
             setHeaderCtrls: (ctrls, forceOrder, afterScroll) =>{
-                agFlushSync(afterScroll, () => {
-                    setCellCtrls(prev => getNextValueIfDifferent(prev, ctrls, forceOrder)!)
-                });
+                prevCellCtrlsRef.current = cellCtrlsRef.current;
+                cellCtrlsRef.current = ctrls;
+
+                const next = getNextValueIfDifferent(prevCellCtrlsRef.current, ctrls, forceOrder)!;
+                if (next !== prevCellCtrlsRef.current) {
+                    agFlushSync(afterScroll, () => setCellCtrls(next));
+                }
             },
             setWidth: width => {
                 if (eGui.current) {

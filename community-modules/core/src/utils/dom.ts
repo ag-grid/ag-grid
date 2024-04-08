@@ -1,11 +1,10 @@
-import { browserSupportsPreventScroll, isBrowserChrome, isBrowserSafari } from './browser';
-import { exists } from './generic';
-import { setAriaHidden } from './aria';
-import { RowStyle } from '../entities/gridOptions';
 import { CellStyle } from '../entities/colDef';
-import { camelCaseToHyphenated } from './string';
-import { AgPromise } from './promise';
+import { RowStyle } from '../entities/gridOptions';
 import { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
+import { setAriaHidden } from './aria';
+import { isBrowserChrome, isBrowserSafari } from './browser';
+import { AgPromise } from './promise';
+import { camelCaseToHyphenated } from './string';
 
 let rtlNegativeScroll: boolean;
 
