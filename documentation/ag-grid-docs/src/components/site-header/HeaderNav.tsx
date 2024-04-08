@@ -1,8 +1,8 @@
 import type { MenuItem } from '@ag-grid-types';
+import MenuIcon from '@ag-website-shared/images/inline-svgs/menu-icon.svg?react';
 import styles from '@design-system/modules/HeaderNav.module.scss';
 import siteHeaderStyles from '@design-system/modules/SiteHeader.module.scss';
 import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
-import MenuIcon from '@images/inline-svgs/menu-icon.svg?react';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';

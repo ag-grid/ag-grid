@@ -1,4 +1,4 @@
-import LogoMarkTransparentSVG from '@images/inline-svgs/ag-grid-logomark-transparent.svg?react';
+import LogoMarkTransparentSVG from '@ag-website-shared/images/inline-svgs/ag-grid-logomark-transparent.svg?react';
 import styles from '@design-system/modules/LogoMark.module.scss';
 
 const LogoMarkTransparent = ({ bounce, isSpinning }) => {

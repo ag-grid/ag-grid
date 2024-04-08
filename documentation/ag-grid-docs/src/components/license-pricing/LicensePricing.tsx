@@ -1,11 +1,12 @@
+import ChartsActive from '@ag-website-shared/images/inline-svgs/pricing/charts-active.svg?react';
+import ChartsInactive from '@ag-website-shared/images/inline-svgs/pricing/charts-inactive.svg?react';
+import GridActive from '@ag-website-shared/images/inline-svgs/pricing/grid-active.svg?react';
+import GridInactive from '@ag-website-shared/images/inline-svgs/pricing/grid-inactive.svg?react';
 import styles from '@design-system/modules/license-pricing.module.scss';
-import ChartsActive from '@images/inline-svgs/pricing/charts-active.svg?react';
-import ChartsInactive from '@images/inline-svgs/pricing/charts-inactive.svg?react';
-import GridActive from '@images/inline-svgs/pricing/grid-active.svg?react';
-import GridInactive from '@images/inline-svgs/pricing/grid-inactive.svg?react';
 import { trackOnceInfoEmail } from '@utils/analytics';
 import classnames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
+
 import chartsFeaturesData from '../../content/licence-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '../../content/licence-features/gridFeaturesMatrix.json';
 import { InfoEmailLink } from './InfoEmailLink';
