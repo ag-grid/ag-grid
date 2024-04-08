@@ -1,5 +1,5 @@
 import { type Framework } from '@ag-grid-types';
-import { EnterpriseIcon } from '@components/icon/EnterpriseIcon';
+import { EnterpriseIcon } from '@ag-website-shared/components/icon/EnterpriseIcon';
 import styles from '@design-system/modules/MatrixTable.module.scss';
 import { transformMarkdoc } from '@utils/markdoc/transformMarkdoc';
 import classnames from 'classnames';
