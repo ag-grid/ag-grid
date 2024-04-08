@@ -1,0 +1,364 @@
+@use './core' as *;
+
+:root {
+    // Layout
+    --layout-gap: 32px;
+    --layout-max-width: 1800px;
+    --layout-max-width-small: 1240px;
+    --layout-horizontal-margins: #{$spacing-size-6};
+    --layout-site-header-height: 64px;
+    --layout-scroll-offset: 80px;
+
+    @media screen and (min-width: $breakpoint-horizontal-margins-large) {
+        --layout-horizontal-margins: #{$spacing-size-5};
+    }
+
+    --layout-width-1-4: calc((100% - var(--layout-gap) * (4 / 1 - 1)) / 4 * 1);
+    --layout-width-2-4: calc((100% - var(--layout-gap) * (4 / 2 - 1)) / 4 * 2);
+    --layout-width-3-4: calc((100% - var(--layout-gap) * (4 / 3 - 1)) / 4 * 3);
+    --layout-width-4-4: 100%;
+
+    --layout-width-1-6: calc((100% - var(--layout-gap) * (6 / 1 - 1)) / 6 * 1);
+    --layout-width-2-6: calc((100% - var(--layout-gap) * (6 / 2 - 1)) / 6 * 2);
+    --layout-width-3-6: calc((100% - var(--layout-gap) * (6 / 3 - 1)) / 6 * 3);
+    --layout-width-4-6: calc((100% - var(--layout-gap) * (6 / 4 - 1)) / 6 * 4);
+    --layout-width-5-6: calc((100% - var(--layout-gap) * (6 / 5 - 1)) / 6 * 5);
+    --layout-width-6-6: 100%;
+
+    --layout-width-1-12: calc((100% - var(--layout-gap) * (12 / 1 - 1)) / 12 * 1);
+    --layout-width-2-12: calc((100% - var(--layout-gap) * (12 / 2 - 1)) / 12 * 2);
+    --layout-width-3-12: calc((100% - var(--layout-gap) * (12 / 3 - 1)) / 12 * 3);
+    --layout-width-4-12: calc((100% - var(--layout-gap) * (12 / 4 - 1)) / 12 * 4);
+    --layout-width-5-12: calc((100% - var(--layout-gap) * (12 / 5 - 1)) / 12 * 5);
+    --layout-width-6-12: calc((100% - var(--layout-gap) * (12 / 6 - 1)) / 12 * 6);
+    --layout-width-7-12: calc((100% - var(--layout-gap) * (12 / 7 - 1)) / 12 * 7);
+    --layout-width-8-12: calc((100% - var(--layout-gap) * (12 / 8 - 1)) / 12 * 8);
+    --layout-width-9-12: calc((100% - var(--layout-gap) * (12 / 9 - 1)) / 12 * 9);
+    --layout-width-10-12: calc((100% - var(--layout-gap) * (12 / 10 - 1)) / 12 * 10);
+    --layout-width-11-12: calc((100% - var(--layout-gap) * (12 / 11 - 1)) / 12 * 11);
+    --layout-width-12-12: 100%;
+
+    // Border radii
+    --radius-none: 0;
+    --radius-xxs: 2px;
+    --radius-xs: 4px;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 10px;
+    --radius-xl: 12px;
+    --radius-2xl: 16px;
+    --radius-3xl: 20px;
+    --radius-4xl: 24px;
+    --radius-full: 100%;
+
+    // Typography
+    --text-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+        'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --text-monospace-font-family: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono',
+        'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
+
+    --text-regular: 400;
+    --text-semibold: 600;
+    --text-bold: 700;
+
+    --text-lh-tight: 1.2;
+    --text-lh-ultra-tight: 1;
+
+    --text-fs-2xs: 10px;
+    --text-lh-2xs: 1.2;
+
+    --text-fs-xs: 12px;
+    --text-lh-xs: 1.6666;
+
+    --text-fs-sm: 14px;
+    --text-lh-sm: 1.4;
+
+    --text-fs-base: 16px;
+    --text-lh-base: 1.4;
+
+    --text-fs-lg: 20px;
+    --text-lh-lg: 1.2;
+
+    --text-fs-xl: 24px;
+    --text-lh-xl: 1.2;
+
+    --text-fs-2xl: 32px;
+    --text-lh-2xl: 1.5;
+
+    --text-fs-3xl: 40px;
+    --text-lh-3xl: 1.1;
+
+    --icon-size: #{$spacing-size-8};
+
+    --color-scheme: light;
+
+    // Abstract colors
+    --color-white: #fff;
+    --color-black: #000;
+
+    --color-gray-25: #fcfcfd;
+    --color-gray-50: #f9fafb;
+    --color-gray-100: #f2f4f7;
+    --color-gray-200: #eaecf0;
+    --color-gray-300: #d0d5dd;
+    --color-gray-400: #98a2b3;
+    --color-gray-500: #667085;
+    --color-gray-600: #475467;
+    --color-gray-700: #344054;
+    --color-gray-800: #182230;
+    --color-gray-900: #101828;
+    --color-gray-950: #0c111d;
+
+    --color-brand-25: #fafcff;
+    --color-brand-50: #f4f8ff;
+    --color-brand-100: #e5effd;
+    --color-brand-200: #d4e3f8;
+    --color-brand-300: #a9c5ec;
+    --color-brand-400: #3d7acd;
+    --color-brand-500: #0e4491;
+    --color-brand-600: #0042a1;
+    --color-brand-700: #00388f;
+    --color-brand-800: #002e7e;
+    --color-brand-900: #00246c;
+    --color-brand-950: #001a5a;
+
+    --color-warning-25: #fffcf5;
+    --color-warning-50: #fffaeb;
+    --color-warning-100: #fef0c7;
+    --color-warning-200: #fedf89;
+    --color-warning-300: #fec84b;
+    --color-warning-400: #fdb022;
+    --color-warning-500: #f79009;
+    --color-warning-600: #dc6803;
+    --color-warning-700: #b54708;
+    --color-warning-800: #93370d;
+    --color-warning-900: #7a2e0e;
+    --color-warning-950: #4e1d09;
+
+    --color-logo-text: #003264;
+    --color-logo-aqua: #55b4c8;
+    --color-logo-orange: #ff8c00;
+    --color-logo-red: #f00;
+    --color-logo-grey: #b4bebe;
+
+    --color-positive: #28a745;
+    --color-negative: #dc3545;
+
+    // Background colors
+    --color-bg-primary: var(--color-white);
+    --color-bg-secondary: var(--color-gray-50);
+    --color-bg-tertiary: var(--color-gray-100);
+    --color-bg-brand-solid: var(--color-brand-500);
+    --color-bg-disabled_subtle: var(--color-gray-50);
+    --color-bg-toolbar: var(--color-gray-100);
+    --color-bg-code: var(--color-gray-100);
+    --color-bg-site-header: var(--color-brand-500);
+    --color-bg-mobile-nav: var(--color-bg-site-header); //TODO, review & replace color
+
+    // Foreground colors
+    --color-fg-primary: var(--color-gray-900);
+    --color-fg-secondary: var(--color-gray-700);
+    --color-fg-tertiary: var(--color-gray-600);
+    --color-fg-quinary: var(--color-gray-400);
+    --color-fg-disabled: var(--color-gray-400);
+    --color-fg-placeholder: var(--color-gray-500);
+    --color-fg-white: var(--color-white);
+    --color-fg-code: #e83e8d; // TODO, review & replace color
+
+    // Text colors
+    --color-text-primary: var(--color-gray-600);
+    --color-text-secondary: var(--color-gray-700);
+    --color-text-tertiary: var(--color-gray-600);
+
+    // Border colors
+    --color-border-primary: var(--color-gray-300);
+    --color-border-secondary: var(--color-gray-200);
+    --color-border-tertiary: var(--color-gray-100);
+    --color-border-disabled_subtle: var(--color-gray-200);
+
+    // Link colors
+    --color-link: var(--color-brand-500); // TODO, review & replace color
+    --color-link-hover: var(--color-brand-700); // TODO, review & replace color
+
+    // Button colors
+    --color-button-primary-bg: var(--color-brand-500);
+    --color-button-primary-bg-hover: var(--color-brand-700);
+    --color-button-primary-bg-active: var(--color-brand-800);
+    --color-button-primary-shadow-focus: var(--color-brand-200);
+    --color-button-primary-fg: var(--color-fg-white);
+    --color-button-primary-border: var(--color-brand-500);
+
+    --color-button-secondary-bg: var(--color-bg-primary);
+    --color-button-secondary-bg-hover: var(--color-bg-secondary);
+    --color-button-secondary-bg-active: var(--color-gray-300);
+    --color-button-secondary-shadow-focus: var(--color-gray-200);
+    --color-button-secondary-fg: var(--color-fg-secondary);
+    --color-button-secondary-border: var(--color-border-primary);
+
+    --color-button-tertiary-bg: var(--color-bg-primary);
+    --color-button-tertiary-bg-hover: var(--color-brand-50);
+    --color-button-tertiary-bg-active: var(--color-brand-100);
+    --color-button-tertiary-shadow-focus: var(--color-brand-100);
+    --color-button-tertiary-fg: var(--color-brand-500);
+    --color-button-tertiary-border: var(--color-brand-300);
+
+    --color-button-disabled-bg: var(--color-gray-100);
+    --color-button-disabled-fg: var(--color-gray-400);
+    --color-button-disabled-border: var(--color-gray-200);
+
+    // Input colors
+    --color-input-border: var(--color-border-primary);
+    --color-input-border-hover: var(--color-brand-300);
+    --color-input-bg-checked: var(--color-bg-brand-solid);
+    --color-input-shadow-focus: var(--color-brand-200);
+    --color-input-disabled-bg: var(--color-bg-disabled_subtle);
+    --color-input-disabled-fg: var(--color-fg-disabled);
+    --color-input-error: red; // TODO, review & replace color
+
+    // Enterprise color
+    --color-enterprise-icon: #dc3545; // TODO, review & replace color
+
+    // Warning colors
+    --color-util-warning-50: var(--color-warning-50);
+    --color-util-warning-100: var(--color-warning-100);
+    --color-util-warning-200: var(--color-warning-200);
+    --color-util-warning-300: var(--color-warning-300);
+    --color-util-warning-400: var(--color-warning-400);
+    --color-util-warning-500: var(--color-warning-500);
+    --color-util-warning-600: var(--color-warning-600);
+    --color-util-warning-700: var(--color-warning-700);
+
+    // Brand
+    --color-text-brand-primary: var(--color-brand-500);
+
+    --color-util-brand-50: var(--color-brand-50);
+    --color-util-brand-100: var(--color-brand-100);
+    --color-util-brand-200: var(--color-brand-200);
+    --color-util-brand-300: var(--color-brand-300);
+    --color-util-brand-400: var(--color-brand-400);
+    --color-util-brand-500: var(--color-brand-500);
+    --color-util-brand-600: var(--color-brand-600);
+    --color-util-brand-700: var(--color-brand-700);
+
+    // Gray
+    --color-util-gray-50: var(--color-gray-50);
+    --color-util-gray-100: var(--color-gray-100);
+    --color-util-gray-200: var(--color-gray-200);
+    --color-util-gray-300: var(--color-gray-300);
+    --color-util-gray-400: var(--color-gray-400);
+    --color-util-gray-500: var(--color-gray-500);
+    --color-util-gray-600: var(--color-gray-600);
+    --color-util-gray-700: var(--color-gray-700);
+
+    // Shadows
+    --shadow-xs: 0 1px 2px 0 color-mix(in srgb, var(--color-gray-950) 05%, transparent);
+    --shadow-sm: 0 1px 3px 0 color-mix(in srgb, var(--color-gray-950) 10%, transparent),
+        0 1px 2px -1px color-mix(in srgb, var(--color-gray-950) 10%, transparent);
+    --shadow-md: 0 4px 6px -1px color-mix(in srgb, var(--color-gray-950) 10%, transparent),
+        0 2px 4px -2px color-mix(in srgb, var(--color-gray-950) 10%, transparent);
+    --shadow-lg: 0 10px 15px -3px color-mix(in srgb, var(--color-gray-950) 10%, transparent),
+        0 4px 6px -4px color-mix(in srgb, var(--color-gray-950) 10%, transparent);
+    --shadow-xl: 0 20px 25px -5px color-mix(in srgb, var(--color-gray-950) 10%, transparent),
+        0 8px 10px -6px color-mix(in srgb, var(--color-gray-950) 10%, transparent);
+    --shadow-2xl: 0 25px 50px -12px color-mix(in srgb, var(--color-gray-950) 25%, transparent);
+
+    // TODO: Find a way to use base url here. Moved to Layout for now
+    // --dark-icon: url(urlWithBaseUrl('/images/moon.svg'));
+}
+
+html[data-dark-mode='true'] {
+    --color-scheme: dark;
+
+    // Background colors
+    --color-bg-primary: color-mix(in srgb, var(--color-gray-800), var(--color-gray-900) 50%);
+    --color-bg-secondary: var(--color-gray-700);
+    --color-bg-tertiary: var(--color-gray-800);
+    --color-bg-brand-solid: var(--color-brand-500);
+    --color-bg-disabled_subtle: var(--color-gray-800);
+    --color-bg-toolbar: var(--color-bg-primary);
+    --color-bg-code: var(--color-gray-700);
+    --color-bg-site-header: var(--color-bg-primary);
+    --color-bg-mobile-nav: var(--color-bg-primary);
+
+    // Foreground colors
+    --color-fg-primary: var(--color-white);
+    --color-fg-secondary: var(--color-gray-300);
+    --color-fg-tertiary: var(--color-gray-400);
+    --color-fg-quinary: var(--color-gray-500);
+    --color-fg-disabled: var(--color-gray-500);
+    --color-fg-placeholder: var(--color-gray-400);
+    --color-fg-white: var(--color-white);
+    --color-fg-code: #f64f76; // TODO, review & replace color
+
+    // Text colors
+    --color-text-primary: color-mix(in srgb, var(--color-gray-400), var(--color-fg-primary) 20%);
+    --color-text-secondary: var(--color-gray-300);
+    --color-text-tertiary: var(--color-gray-400);
+
+    // Border colors
+    --color-border-primary: var(--color-gray-700);
+    --color-border-secondary: color-mix(in srgb, var(--color-gray-700), var(--color-bg-primary) 40%);
+    --color-border-tertiary: var(--color-gray-800);
+    --color-border-disabled_subtle: var(--color-gray-800);
+
+    // Link colors
+    --color-link: var(--color-brand-300); // TODO, review & replace color
+    --color-link-hover: var(--color-brand-200); // TODO, review & replace color
+
+    // Button colors
+    --color-button-primary-bg-hover: var(--color-brand-600);
+    --color-button-primary-bg-active: var(--color-brand-700);
+    --color-button-primary-shadow-focus: var(--color-brand-900);
+
+    --color-button-secondary-bg-hover: var(--color-gray-700);
+    --color-button-secondary-bg-active: var(--color-gray-600);
+    --color-button-secondary-shadow-focus: var(--color-gray-800);
+
+    --color-button-tertiary-bg-hover: var(--color-gray-700);
+    --color-button-tertiary-bg-active: var(--color-gray-600);
+    --color-button-tertiary-shadow-focus: var(--color-gray-700);
+    --color-button-tertiary-fg: var(--color-brand-300);
+
+    --color-button-disabled-bg: var(--color-gray-800);
+    --color-button-disabled-fg: var(--color-gray-500);
+    --color-button-disabled-border: var(--color-gray-700);
+
+    // Input colors
+    --color-input-shadow-focus: var(--color-gray-700);
+
+    // Warning colors
+    --color-util-warning-50: var(--color-warning-950);
+    --color-util-warning-100: var(--color-warning-900);
+    --color-util-warning-200: var(--color-warning-800);
+    --color-util-warning-300: var(--color-warning-700);
+    --color-util-warning-400: var(--color-warning-600);
+    --color-util-warning-500: var(--color-warning-500);
+    --color-util-warning-600: var(--color-warning-400);
+    --color-util-warning-700: var(--color-warning-300);
+
+    // Brand
+    --color-text-brand-primary: var(--color-brand-200);
+
+    --color-util-brand-50: var(--color-brand-950);
+    --color-util-brand-100: var(--color-brand-900);
+    --color-util-brand-200: var(--color-brand-800);
+    --color-util-brand-300: var(--color-brand-700);
+    --color-util-brand-400: var(--color-brand-600);
+    --color-util-brand-500: var(--color-brand-500);
+    --color-util-brand-600: var(--color-brand-400);
+    --color-util-brand-700: var(--color-brand-300);
+
+    // Gray
+    --color-util-gray-50: var(--color-gray-950);
+    --color-util-gray-100: var(--color-gray-900);
+    --color-util-gray-200: var(--color-gray-800);
+    --color-util-gray-300: var(--color-gray-700);
+    --color-util-gray-400: var(--color-gray-600);
+    --color-util-gray-500: var(--color-gray-500);
+    --color-util-gray-600: var(--color-gray-400);
+    --color-util-gray-700: var(--color-gray-300);
+
+    // TODO: Find a way to use base url here. Moved to Layout for now
+    // --dark-icon: url(urlWithBaseUrl('/images/sun.svg'));
+}
