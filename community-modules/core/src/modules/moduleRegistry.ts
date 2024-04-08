@@ -1,4 +1,3 @@
-import { ChartType } from '../interfaces/iChartOptions';
 import { Module, ModuleValidationInvalidResult } from "../interfaces/iModule";
 import { ModuleNames } from "./moduleNames";
 import { doOnce } from "../utils/function";
@@ -154,21 +153,6 @@ For more info see: https://www.ag-grid.com/javascript-grid/packages/`;
 
         return false;
     }
-
-    /**
-     * AG GRID INTERNAL - Warn that a given integrated chart type is not supported under the community distribution.
-     */
-    public static __warnEnterpriseChartDisabled(chartType: ChartType): void {
-        const reason = 'ag-charts-enterprise';
-        const warningKey = reason + ':' + chartType;
-        const url = 'https://www.ag-grid.com/javascript-data-grid/integrated-charts-installation/';
-        const warningMessage = `AG Grid: the '${chartType}' chart type is not supported in AG Charts Community as 'ag-grid-charts-enterprise' or '@ag-grid-enterprise/charts-enterprise' hasn't been loaded. See ${url} for more details.`;
-
-        doOnce(() => {
-            console.warn(warningMessage);
-        }, warningKey);
-    }
-
 
     /** AG GRID INTERNAL - Is the given module registered, globally or individually with this grid. */
     public static __isRegistered(moduleName: ModuleNames, gridId: string): boolean {

@@ -16,7 +16,7 @@ import { ChartDatasource, ChartDatasourceParams } from "../datasource/chartDatas
 import { ChartTranslationService } from '../services/chartTranslationService';
 import { ChartColumnService } from "../services/chartColumnService";
 import { ComboChartModel } from "./comboChartModel";
-import { getMaxNumSeries, isHierarchical } from "../utils/seriesTypeMapper";
+import { getMaxNumSeries, isComboChart, isHierarchical } from "../utils/seriesTypeMapper";
 import { AgCartesianAxisType } from "ag-charts-community";
 
 export interface ColState {
@@ -29,13 +29,13 @@ export interface ColState {
 
 export interface ChartModelParams {
     chartId: string;
-    pivotChart: boolean;
+    pivotChart?: boolean;
     chartType: ChartType;
     chartThemeName: string;
     switchCategorySeries?: boolean;
     aggFunc?: string | IAggFunc;
     cellRange: PartialCellRange;
-    suppressChartRanges: boolean;
+    suppressChartRanges?: boolean;
     unlinkChart?: boolean;
     crossFiltering?: boolean;
     seriesChartTypes?: SeriesChartType[];
@@ -87,16 +87,21 @@ export class ChartDataModel extends BeanStub {
 
         this.params = params;
         this.chartId = params.chartId;
-        this.chartType = params.chartType;
-        this.pivotChart = params.pivotChart;
-        this.chartThemeName = params.chartThemeName;
-        this.switchCategorySeries = !!params.switchCategorySeries;
-        this.aggFunc = params.aggFunc;
-        this.referenceCellRange = params.cellRange;
-        this.suppliedCellRange = params.cellRange;
-        this.suppressChartRanges = params.suppressChartRanges;
-        this.unlinked = !!params.unlinkChart;
-        this.crossFiltering = !!params.crossFiltering;
+        this.setParams(params);
+    }
+
+    private setParams(params: ChartModelParams): void {
+        const { chartType, pivotChart, chartThemeName, switchCategorySeries, aggFunc, cellRange, suppressChartRanges, unlinkChart, crossFiltering } = params;
+        this.chartType = chartType;
+        this.pivotChart = pivotChart ?? false;
+        this.chartThemeName = chartThemeName;
+        this.switchCategorySeries = !!switchCategorySeries;
+        this.aggFunc = aggFunc;
+        this.referenceCellRange = cellRange;
+        this.suppliedCellRange = cellRange;
+        this.suppressChartRanges = suppressChartRanges ?? false;
+        this.unlinked = !!unlinkChart;
+        this.crossFiltering = !!crossFiltering;
     }
 
     @PostConstruct
@@ -109,34 +114,14 @@ export class ChartDataModel extends BeanStub {
     }
 
     public updateModel(params: ChartModelParams): void {
-        const {
-            cellRange,
-            chartType,
-            pivotChart,
-            chartThemeName,
-            switchCategorySeries,
-            aggFunc,
-            suppressChartRanges,
-            unlinkChart,
-            crossFiltering,
-            seriesChartTypes
-        } = params;
+        const { cellRange, seriesChartTypes } = params;
 
         if (cellRange !== this.suppliedCellRange) {
             this.dimensionCellRange = undefined;
             this.valueCellRange = undefined;
         }
 
-        this.chartType = chartType;
-        this.pivotChart = pivotChart;
-        this.chartThemeName = chartThemeName;
-        this.switchCategorySeries = !!switchCategorySeries;
-        this.aggFunc = aggFunc;
-        this.referenceCellRange = cellRange;
-        this.suppliedCellRange = cellRange;
-        this.suppressChartRanges = suppressChartRanges;
-        this.unlinked = !!unlinkChart;
-        this.crossFiltering = !!crossFiltering;
+        this.setParams(params);
 
         this.updateSelectedDimensions(cellRange?.columns);
         this.updateCellRanges({ setColsFromRange: true });
@@ -540,6 +525,6 @@ export class ChartDataModel extends BeanStub {
     }
 
     public isComboChart(chartType?: ChartType): boolean {
-        return ['columnLineCombo', 'areaColumnCombo', 'customCombo'].includes(chartType ?? this.chartType);
+        return isComboChart(chartType ?? this.chartType);
     }
 }
