@@ -4,14 +4,14 @@
   "version": "31.2.1",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
-  "main": "./dist/package/main.cjs.js",
-  "types": "./dist/types/src/main.d.ts",
-  "module": "./dist/package/main.esm.mjs",
+  "main": "./lib/main.cjs.js",
+  "types": "./lib/types/src/main.d.ts",
+  "module": "./lib/main.esm.mjs",
   "exports": {
-    "import": "./dist/package/main.esm.mjs",
-    "require": "./dist/package/main.cjs.js",
-    "types": "./dist/types/src/main.d.ts",
-    "default": "./dist/package/main.cjs.js"
+    "import": "./lib/main.esm.mjs",
+    "require": "./lib/main.cjs.js",
+    "types": "./lib/types/src/main.d.ts",
+    "default": "./lib/main.cjs.js"
   },
   "repository": {
     "type": "git",
@@ -49,7 +49,7 @@
     "vue": "2.6.10",
     "vue-class-component": "^7.0.0",
     "vue-property-decorator": "^9.1.2",
-    "vue-template-compiler": "^2.6.10",
+    "vue-template-compiler": "2.6.10",
     "rimraf": "3.0.2"
   },
   "peerDependencies": {
