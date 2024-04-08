@@ -9,9 +9,6 @@ import {
     IAggFuncParams
 } from '@ag-grid-community/core';
 
-// @ts-ignore
-const AGBigInt = typeof BigInt === 'undefined' ? null : BigInt;
-
 const defaultAggFuncNames: { [key: string]: string } = {
     sum: 'Sum',
     first: 'First',
@@ -118,17 +115,13 @@ function aggSum(params: IAggFuncParams): number | bigint {
             if (result === null) {
                 result = value;
             } else {
-                if (AGBigInt) {
-                    result += typeof result === 'number' ? value : AGBigInt(value);
-                } else {
-                    result += value;
-                }
+                result += typeof result === 'number' ? value : BigInt(value);
             }
         } else if (typeof value === 'bigint') {
             if (result === null) {
                 result = value;
             } else {
-                result = (typeof result === 'bigint' ? result : AGBigInt(result)) + value;
+                result = (typeof result === 'bigint' ? result : BigInt(result)) + value;
             }
         }
     }
@@ -226,22 +219,14 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
             count++;
         } else if (currentValue != null && (typeof currentValue.value === 'number' || typeof currentValue.value === 'bigint') && typeof currentValue.count === 'number') {
             // we are aggregating groups, so we take the aggregated values to calculated a weighted average
-            if (AGBigInt) {
-                valueToAdd = currentValue.value * (typeof currentValue.value === 'number' ? currentValue.count : AGBigInt(currentValue.count));
-            } else {
-                valueToAdd = currentValue.value * currentValue.count;
-            }
+            valueToAdd = currentValue.value * (typeof currentValue.value === 'number' ? currentValue.count : BigInt(currentValue.count));
             count += currentValue.count;
         }
 
         if (typeof valueToAdd === 'number') {
-            if (AGBigInt) {
-                sum += typeof sum === 'number' ? valueToAdd : AGBigInt(valueToAdd);
-            } else {
-                sum += valueToAdd;
-            }
+            sum += typeof sum === 'number' ? valueToAdd : BigInt(valueToAdd);
         } else if (typeof valueToAdd === 'bigint') {
-            sum = (typeof sum === 'bigint' ? sum : AGBigInt(sum)) + valueToAdd;
+            sum = (typeof sum === 'bigint' ? sum : BigInt(sum)) + valueToAdd;
         }
     }
 
@@ -249,12 +234,7 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
 
     // avoid divide by zero error
     if (count > 0) {
-        if (AGBigInt) {
-            value = sum / ((typeof sum === 'number' ? count : AGBigInt(count)) as any);
-        } else {
-            value = sum / count;
-        }
-
+        value = sum / ((typeof sum === 'number' ? count : BigInt(count)) as any);
     }
 
     // the previous aggregation data

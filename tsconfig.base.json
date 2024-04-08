@@ -12,7 +12,7 @@
     "target": "ES6",
     "module": "commonjs",
     "lib": [
-      "ES2017",
+      "ES2022",
       "DOM"
     ],
     "skipLibCheck": true,
