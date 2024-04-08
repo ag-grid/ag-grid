@@ -1279,6 +1279,12 @@ export interface GridOptions<TData = any> {
      * @deprecated v31.1
      */
     suppressServerSideInfiniteScroll?: boolean;
+
+    /**
+     * When `true`, the Server-side Row Model will not use a full width loading renderer, instead using the colDef `loadingCellRenderer` if present.
+     */
+    suppressServerSideFullWidthLoadingRow?: boolean;
+
     /**
      * How many rows for each block in the store, i.e. how many rows returned from the server at a time.
      * @default 100

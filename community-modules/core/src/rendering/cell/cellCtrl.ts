@@ -360,7 +360,12 @@ export class CellCtrl extends BeanStub {
     private showValue(forceNewCellRendererInstance = false): void {
         const valueToDisplay = this.getValueToDisplay();
         let compDetails: UserCompDetails | undefined;
-        if (this.isCellRenderer()) {
+
+        if (this.rowNode.stub) {
+            console.log('wow')
+            const params = this.createCellRendererParams();
+            compDetails = this.beans.userComponentFactory.getLoadingCellRendererDetails(this.column.getColDef(), params);
+        } else if (this.isCellRenderer()) {
             const params = this.createCellRendererParams();
             compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
         }

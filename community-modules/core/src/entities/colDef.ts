@@ -496,6 +496,15 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     cellRendererParams?: any;
     /** Callback to select which cell renderer to be used for a given row within the same column. */
     cellRendererSelector?: CellRendererSelectorFunc<TData, TValue>;
+    /**
+     * The renderer to be used while the row is in an unloaded state.
+     * Only used if `suppressServerSideFullWidthLoadingRow` is enabled.
+    */
+    loadingCellRenderer?: any;
+    /** Params to be passed to the `loadingCellRenderer` component. */
+    loadingCellRendererParams?: any;
+    /** Callback to select which loading renderer to be used for a given row within the same column. */
+    loadingCellRendererSelector?: CellRendererSelectorFunc<TData, TValue>;
 
     /**
      * Set to `true` to have the grid calculate the height of a row based on contents of this column.

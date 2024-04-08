@@ -1188,6 +1188,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @deprecated v31.1
          */
     @Input() public suppressServerSideInfiniteScroll: boolean | undefined = undefined;
+    /** When `true`, the Server-side Row Model will not use a full width loading renderer, instead using the colDef `loadingCellRenderer` if present.
+         */
+    @Input() public suppressServerSideFullWidthLoadingRow: boolean | undefined = undefined;
     /** How many rows for each block in the store, i.e. how many rows returned from the server at a time.
          * @default 100
          */
@@ -1999,5 +2002,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_treeData: boolean | null | '';
     static ngAcceptInputType_suppressGroupMaintainValueType: boolean | null | '';
     static ngAcceptInputType_applyQuickFilterBeforePivotOrAgg: boolean | null | '';
+    static ngAcceptInputType_suppressServerSideFullWidthLoadingRow: boolean | null | '';
     // @END@
 }
