@@ -91,12 +91,27 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
 
     protected onKeyDown(e: KeyboardEvent): void {
         const { key } = e;
+        
         if (key === KeyCode.TAB) {
             this.hidePicker();
-        } else if (!this.isPickerDisplayed || (key !== KeyCode.ENTER && key !== KeyCode.UP && key !== KeyCode.DOWN)) {
+        }
+
+        if (!this.isPickerDisplayed) {
             super.onKeyDown(e);
-        } else {
-            this.listComponent?.handleKeyDown(e);
+        }
+
+        switch (key) {
+            case KeyCode.ENTER:
+            case KeyCode.UP:
+            case KeyCode.DOWN:
+            case KeyCode.PAGE_UP:
+            case KeyCode.PAGE_DOWN:
+            case KeyCode.PAGE_HOME:
+            case KeyCode.PAGE_END:
+                this.listComponent?.handleKeyDown(e);
+                break;
+            default:
+                super.onKeyDown(e);
         }
     }
 

@@ -671,11 +671,7 @@
     },
     "scrolling": {
         "meta": {
-            "displayName": "Scrolling",
-            "page": {
-                "name": "Scrolling",
-                "url": "./scrolling-scenarios/"
-            }
+            "displayName": "Scrolling"
         },
         "ensureIndexVisible": {
             "more": {

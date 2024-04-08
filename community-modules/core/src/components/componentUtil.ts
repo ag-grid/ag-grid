@@ -69,12 +69,7 @@ export class ComponentUtil {
     // onXXX methods, based on the above events
     public static EVENT_CALLBACKS: string[] = ComponentUtil.EVENTS.map(event => ComponentUtil.getCallbackForEvent(event));
 
-    public static STRING_PROPERTIES = PropertyKeys.STRING_PROPERTIES;
-    public static OBJECT_PROPERTIES = PropertyKeys.OBJECT_PROPERTIES;
-    public static ARRAY_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES;
-    public static NUMBER_PROPERTIES = PropertyKeys.NUMBER_PROPERTIES;
     public static BOOLEAN_PROPERTIES = PropertyKeys.BOOLEAN_PROPERTIES;
-    public static FUNCTION_PROPERTIES = PropertyKeys.FUNCTION_PROPERTIES;
     public static ALL_PROPERTIES = PropertyKeys.ALL_PROPERTIES;
 
     public static ALL_PROPERTIES_AND_CALLBACKS = [...this.ALL_PROPERTIES, ...this.EVENT_CALLBACKS];

@@ -5,26 +5,26 @@
         "highlights": [
             {
                 "text": "Integrated Enterprise Charts Menu Redesign",
-                "url": "/javascript-data-grid/integrated-charts/"
+                "path": "./integrated-charts"
             },
             {
                 "text": "Display Tooltips for Truncated Cell Values and Column Headers",
-                "url": "/javascript-data-grid/component-cell-renderer/#dynamic-tooltips"
+                "path": "./component-cell-renderer/#dynamic-tooltips"
             },
             {
                 "text": "Exporting Grid Content as a Formatted Excel Table",
-                "url": "/javascript-data-grid/excel-export-tables/"
+                "path": "./excel-export-tables"
             },
             {
                 "text": "Dark Mode for Material Design Theme",
-                "url": "/javascript-data-grid/themes/#provided-themes"
+                "path": "./themes/#provided-themes"
             },
             {
                 "text": "Figma Design System includes Material Design Theme",
-                "url": "/javascript-data-grid/ag-grid-design-system/"
+                "path": "./ag-grid-design-system"
             }
         ],
-        "notesUrl": "/javascript-data-grid/upgrading-to-ag-grid-31-2/"
+        "notesPath": "./upgrading-to-ag-grid-31-2"
     },
     {
         "version": "31.1.0",
@@ -32,26 +32,26 @@
         "highlights": [
             {
                 "text": "Integrated Charts use all AG Charts Enterprise features",
-                "url": "/javascript-data-grid/integrated-charts/"
+                "path": "./integrated-charts"
             },
             {
                 "text": "Column Menu Redesign",
-                "url": "/javascript-data-grid/column-menu/"
+                "path": "./column-menu"
             },
             {
                 "text": "Custom Column/Context Menu Item Components",
-                "url": "/javascript-data-grid/component-menu-item/"
+                "path": "./component-menu-item"
             },
             {
                 "text": "Compressed Excel file",
-                "url": "/javascript-data-grid/excel-export/"
+                "path": "./excel-export"
             },
             {
                 "text": "Client-side Sorting in Server-side row model",
-                "url": "/javascript-data-grid/server-side-model-sorting/#client-side-sorting"
+                "path": "./server-side-model-sorting/#client-side-sorting"
             }
         ],
-        "notesUrl": "/javascript-data-grid/upgrading-to-ag-grid-31-1/"
+        "notesPath": "./upgrading-to-ag-grid-31-1"
     },
     {
         "version": "31.0.0",
@@ -59,26 +59,26 @@
         "highlights": [
             {
                 "text": "Save/Restore the initial grid state as a single object",
-                "url": "https://www.ag-grid.com/javascript-data-grid/grid-state/"
+                "path": "./grid-state"
             },
             {
                 "text": "New Quartz Theme",
-                "url": "https://www.ag-grid.com/example/?theme=ag-theme-quartz-auto-dark"
+                "url": "/example/?theme=ag-theme-quartz-auto-dark"
             },
             {
                 "text": "Column Header resizing and moving via keyboard",
-                "url": "https://www.ag-grid.com/javascript-data-grid/keyboard-navigation/#column-header-navigation"
+                "path": "./keyboard-navigation/#column-header-navigation"
             },
             {
                 "text": "Prevent Group Column reordering and removal",
-                "url": "https://www.ag-grid.com/javascript-data-grid/grouping-locking-group-columns/"
+                "path": "./grouping-locking-group-columns"
             },
             {
                 "text": "Pagination Panel Page Size Selector",
-                "url": "https://www.ag-grid.com/javascript-data-grid/row-pagination/#top"
+                "path": "./row-pagination/#top"
             }
         ],
-        "notesUrl": "/javascript-data-grid/upgrading-to-ag-grid-31/"
+        "notesPath": "./upgrading-to-ag-grid-31"
     },
     {
         "version": "30.2.0",
@@ -86,23 +86,22 @@
         "highlights": [
             {
                 "text": "Advanced Filter Builder UI for building filter expressions",
-                "url": "https://www.ag-grid.com/javascript-data-grid/filter-advanced/#advanced-filter-builder"
+                "path": "./filter-advanced/#advanced-filter-builder"
             },
             {
                 "text": "Support for Custom Matching in Quick Filter",
-                "url": "https://www.ag-grid.com/javascript-data-grid/filter-quick/#quick-filter-matcher"
+                "path": "./filter-quick/#quick-filter-matcher"
             },
             {
                 "text": "Typing, filtering, async population of values in Rich Select Editor",
-                "url": "https://www.ag-grid.com/javascript-data-grid/provided-cell-editors/#rich-select-cell-editor"
+                "path": "./provided-cell-editors/#rich-select-cell-editor"
             },
             {
                 "text": "Dynamic Group Footer Rows",
-                "url": "https://www.ag-grid.com/javascript-data-grid/grouping-footers/#dynamic-group-footers"
+                "path": "./grouping-footers/#dynamic-group-footers"
             },
             {
-                "text": "Documentation examples on CodeSandbox",
-                "url": ""
+                "text": "Documentation examples on CodeSandbox"
             }
         ]
     },
@@ -112,23 +111,23 @@
         "highlights": [
             {
                 "text": "Advanced filtering with boolean expressions",
-                "url": "https://www.ag-grid.com/javascript-data-grid/filter-advanced/"
+                "path": "./filter-advanced"
             },
             {
                 "text": "Rebuilt Rich Select Editor",
-                "url": "https://www.ag-grid.com/javascript-data-grid/provided-cell-editors/#rich-select-cell-editor"
+                "path": "./provided-cell-editors/#rich-select-cell-editor"
             },
             {
                 "text": "Figma Design System to design and customize AG Grid",
-                "url": "https://www.ag-grid.com/javascript-data-grid/ag-grid-design-system/"
+                "path": "./ag-grid-design-system"
             },
             {
                 "text": "Automatic pivot columns for server-side row model",
-                "url": "https://www.ag-grid.com/javascript-data-grid/server-side-model-pivoting/#supplying-pivot-result-fields-simple"
+                "path": "./server-side-model-pivoting/#supplying-pivot-result-fields-simple"
             },
             {
                 "text": "Interactive Tooltips",
-                "url": "https://www.ag-grid.com/javascript-data-grid/tooltips/#interactive-tooltips"
+                "path": "./tooltips/#interactive-tooltips"
             }
         ]
     },
@@ -138,23 +137,22 @@
         "highlights": [
             {
                 "text": "Cell data types with automatic type inference",
-                "url": "https://www.ag-grid.com/javascript-data-grid/cell-data-types/"
+                "path": "./cell-data-types"
             },
             {
                 "text": "Built-in cell editors",
-                "url": "https://www.ag-grid.com/javascript-data-grid/provided-cell-editors/?ref=blog.ag-grid.com#top"
+                "path": "./provided-cell-editors/?ref=blog.ag-grid.com#top"
             },
             {
                 "text": "Group footer rows when using server-side row model",
-                "url": "https://www.ag-grid.com/javascript-data-grid/server-side-model-grouping/#row-group-footers"
+                "path": "./server-side-model-grouping/#row-group-footers"
             },
             {
                 "text": "Module registration is no longer global and is per-grid",
-                "url": "https://www.ag-grid.com/javascript-data-grid/modules/#providing-modules-to-individual-grids"
+                "path": "./modules/#providing-modules-to-individual-grids"
             },
             {
-                "text": "Export row groups to Excel with their current expanded state",
-                "url": ""
+                "text": "Export row groups to Excel with their current expanded state"
             }
         ]
     },
@@ -164,23 +162,20 @@
         "highlights": [
             {
                 "text": "Sticky group rows for master-detail, tree data and server-side row model",
-                "url": "https://www.ag-grid.com/javascript-data-grid/master-detail-master-rows/"
+                "path": "./master-detail-master-rows"
             },
             {
-                "text": "Horizontal sticky column group headers",
-                "url": ""
+                "text": "Horizontal sticky column group headers"
             },
             {
-                "text": "ShadowDOM support",
-                "url": ""
+                "text": "ShadowDOM support"
             },
             {
                 "text": "Tooltip customization and interaction support for charts",
-                "url": "https://www.ag-grid.com/javascript-charts/tooltips/#interaction-with-tooltips"
+                "chartsPath": "./tooltips/#interaction-with-tooltips"
             },
             {
-                "text": "Pie chart callout labels anti-collision improvements",
-                "url": ""
+                "text": "Pie chart callout labels anti-collision improvements"
             }
         ]
     },
@@ -190,23 +185,21 @@
         "highlights": [
             {
                 "text": "Header checkbox and group selection when using server-side row model",
-                "url": "https://www.ag-grid.com/javascript-data-grid/server-side-model-selection/#header-checkbox-selection"
+                "path": "./server-side-model-selection/#header-checkbox-selection"
             },
             {
                 "text": "Entering more than two filter conditions in a column filter",
-                "url": "https://www.ag-grid.com/javascript-data-grid/filter-conditions/"
+                "path": "./filter-conditions"
             },
             {
-                "text": "Vertically-spanning column header cells",
-                "url": ""
+                "text": "Vertically-spanning column header cells"
             },
             {
                 "text": "Displaying \"No Data\" overlay in the chart when there's no data",
-                "url": "https://www.ag-grid.com/javascript-charts/overlays/#missing-data-overlay"
+                "chartsPath": "./overlays/#missing-data-overlay"
             },
             {
-                "text": "Displaying stacked and unstacked column series together in the chart",
-                "url": ""
+                "text": "Displaying stacked and unstacked column series together in the chart"
             }
         ]
     }

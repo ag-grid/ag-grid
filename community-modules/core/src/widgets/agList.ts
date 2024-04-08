@@ -1,10 +1,9 @@
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
-import { escapeString } from "../utils/string";
 import { KeyCode } from '../constants/keyCode';
 import { setAriaPosInSet, setAriaRole, setAriaSelected, setAriaSetSize } from '../utils/aria';
 import { Events } from "../eventKeys";
-import { getInnerWidth, isVisible, removeFromParent } from "../utils/dom";
+import { isVisible, removeFromParent } from "../utils/dom";
 import { TooltipFeature } from "./tooltipFeature";
 
 export interface ListOption<TValue = string> {
@@ -47,22 +46,61 @@ export class AgList<TValue = string> extends Component {
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:
-                const isDown = key === KeyCode.DOWN;
-                let itemToHighlight: HTMLElement;
-
                 e.preventDefault();
-
-                if (!this.highlightedEl) {
-                    itemToHighlight = this.itemEls[isDown ? 0 : this.itemEls.length - 1];
-                } else {
-                    const currentIdx = this.itemEls.indexOf(this.highlightedEl);
-                    let nextPos = currentIdx + (isDown ? 1 : -1);
-                    nextPos = Math.min(Math.max(nextPos, 0), this.itemEls.length - 1);
-                    itemToHighlight = this.itemEls[nextPos];
-                }
-                this.highlightItem(itemToHighlight);
+                this.navigate(key);
+                break;
+            case KeyCode.PAGE_DOWN:
+            case KeyCode.PAGE_UP:
+            case KeyCode.PAGE_HOME:
+            case KeyCode.PAGE_END:
+                e.preventDefault();
+                this.navigateToPage(key);
                 break;
         }
+    }
+
+    private navigate(key: 'ArrowUp' | 'ArrowDown'): void {
+        const isDown = key === KeyCode.DOWN;
+        let itemToHighlight: HTMLElement;
+
+        if (!this.highlightedEl) {
+            itemToHighlight = this.itemEls[isDown ? 0 : this.itemEls.length - 1];
+        } else {
+            const currentIdx = this.itemEls.indexOf(this.highlightedEl);
+            let nextPos = currentIdx + (isDown ? 1 : -1);
+            nextPos = Math.min(Math.max(nextPos, 0), this.itemEls.length - 1);
+            itemToHighlight = this.itemEls[nextPos];
+        }
+        this.highlightItem(itemToHighlight);
+    }
+
+    private navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): void {
+        if (!this.highlightedEl || this.itemEls.length === 0) {
+            return;
+        }
+
+        const currentIdx = this.itemEls.indexOf(this.highlightedEl);
+        const rowCount = this.options.length - 1;
+        const itemHeight = this.itemEls[0].clientHeight;
+        const pageSize = Math.floor(this.getGui().clientHeight / itemHeight);
+
+        let newIndex = -1;
+
+        if (key === KeyCode.PAGE_HOME) {
+            newIndex = 0;
+        } else if (key === KeyCode.PAGE_END) {
+            newIndex = rowCount;
+        } else if (key === KeyCode.PAGE_DOWN) {
+            newIndex = Math.min(currentIdx + pageSize, rowCount);
+        } else if (key === KeyCode.PAGE_UP) {
+            newIndex = Math.max(currentIdx - pageSize, 0)
+        }
+
+        if (newIndex === -1) {
+            return;
+        }
+
+        this.highlightItem(this.itemEls[newIndex]);
     }
 
     public addOptions(listOptions: ListOption<TValue>[]): this {

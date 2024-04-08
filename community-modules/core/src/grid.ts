@@ -289,9 +289,9 @@ export class GridCoreCreator {
         beans.syncService.start();
 
         if (acceptChanges) { acceptChanges(context); }
-
-
-        return beans.gridApi;
+        
+        const gridApi = context.getBean('gridApi') as GridApi;
+        return gridApi;
     }
 
     private registerControllers(beans: Beans, registeredModules: Module[]): void {

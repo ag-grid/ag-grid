@@ -224,6 +224,11 @@ export class AgGroupComponent extends Component {
         return this;
     }
 
+    public addTitleBarWidget(el: Element): this {
+        this.eTitleBar?.addWidget(el);
+        return this;
+    }
+
     public addCssClassToTitleBar(cssClass: string) {
         this.eTitleBar?.addCssClass(cssClass);
     }
@@ -314,6 +319,8 @@ export class AgGroupComponent extends Component {
     }
 }
 
+const TITLE_BAR_DISABLED_CLASS = 'ag-disabled-group-title-bar';
+
 class DefaultTitleBar extends Component {
     public static EVENT_EXPAND_CHANGED = 'expandedChanged';
 
@@ -329,7 +336,9 @@ class DefaultTitleBar extends Component {
 
         const { title, suppressOpenCloseIcons } = params;
 
-        this.title = title;
+        if (!!title && title.length > 0) {
+            this.title = title;
+        }
 
         if (suppressOpenCloseIcons != null) {
             this.suppressOpenCloseIcons = suppressOpenCloseIcons;
@@ -408,8 +417,26 @@ class DefaultTitleBar extends Component {
     }
 
     public setTitle(title: string | undefined): this {
-        this.eTitle.innerText = title || '';
-        setDisplayed(this.getGui(), title != undefined);
+        const eGui = this.getGui();
+        const hasTitle = (!!title && title.length > 0);
+        title = hasTitle ? title : undefined;
+
+        this.eTitle.textContent = title ?? '';
+        setDisplayed(eGui, hasTitle);
+
+        if (title !== this.title) {
+            this.title = title;
+        }
+
+        const disabled = eGui.classList.contains(TITLE_BAR_DISABLED_CLASS);
+        this.refreshDisabledStyles(disabled);
+
+        return this;
+    }
+
+    public addWidget(el: Element): this {
+        this.getGui().appendChild(el);
+
         return this;
     }
 
@@ -426,10 +453,10 @@ class DefaultTitleBar extends Component {
     public refreshDisabledStyles(disabled: boolean) {
         const eGui = this.getGui();
         if (disabled) {
-            eGui.classList.add('ag-disabled-group-title-bar');
+            eGui.classList.add(TITLE_BAR_DISABLED_CLASS);
             eGui.removeAttribute('tabindex');
         } else {
-            eGui.classList.remove('ag-disabled-group-title-bar');
+            eGui.classList.remove(TITLE_BAR_DISABLED_CLASS);
             if (typeof this.title === 'string') {
                 eGui.setAttribute('tabindex', '0');
             } else {

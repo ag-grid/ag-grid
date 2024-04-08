@@ -95,6 +95,14 @@ The example below demonstrates the different ways columns can be defined for cha
 
 Cell ranges from which categories and data are taken will be highlighted on the grid. The highlight colours can be customised using the `--ag-range-selection-chart-category-background-color` and `--ag-range-selection-chart-background-color` CSS variables. See `style.css` in the example above.
 
+### Switching Categories and Series
+
+It's possible to switch categories and series. This can be done either via the [Data Tool Panel](./integrated-charts-chart-tool-panels/#data-tool-panel) or the [Range Chart API](./integrated-charts-api-range-chart/). When this is done, the values in the category column will become series, and the series columns will become values in the category.
+
+The example below demonstrates switching categories and series:
+
+{% gridExampleRunner title="Switching categories and series" name="switching-categories-and-series"  exampleHeight=710 /%}
+
 ## Next Up
 
 Continue to the next section to learn about the [Pivot Chart](./integrated-charts-pivot-chart/).
