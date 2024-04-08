@@ -1,9 +1,9 @@
 import type { Framework, MenuItem } from '@ag-grid-types';
+import fwLogos from '@ag-website-shared/images/fw-logos';
 import { FRAMEWORKS } from '@constants';
 import styles from '@design-system/modules/FrameworkSelectorInsideDocs.module.scss';
 import { DOCS_FRAMEWORK_REDIRECT_PAGE } from '@features/docs/constants';
 import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
-import fwLogos from '@images/fw-logos';
 import { getFrameworkDisplayText } from '@utils/framework';
 import { getNewFrameworkPath } from '@utils/framework';
 import { getMenuItemFromPageName } from '@utils/getMenuItemFromPageName';
