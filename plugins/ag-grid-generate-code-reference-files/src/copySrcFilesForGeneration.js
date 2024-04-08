@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-function copyFileWithTSNoCheck(sourceFile, destinationFile) {
+function copyFileWithTSNoCheck(sourceFile, destinationDir, destinationFile) {
 
     fs.readFile(sourceFile, 'utf8', (err, data) => {
         if (err) {
@@ -8,9 +8,14 @@ function copyFileWithTSNoCheck(sourceFile, destinationFile) {
             return;
         }
 
+        const targetDir = `${__dirname}/${destinationDir}`;
+        if (!fs.existsSync(targetDir)){
+            fs.mkdirSync(targetDir);
+        }
+
         // Prepend '@ts-nocheck' to the content so we don't have to worry about typescript errors
         const modifiedContent = `// @ts-nocheck\n${data}`;
-        fs.writeFile(destinationFile, modifiedContent, {
+        fs.writeFile(`${targetDir}/${destinationFile}`, modifiedContent, {
             encoding: 'utf8',
             flag: 'w'
         }, (err) => {
@@ -23,5 +28,6 @@ function copyFileWithTSNoCheck(sourceFile, destinationFile) {
 }
 
 const srcPropertyKeys = '../../community-modules/core/src/eventKeys.ts';
-const destPropertyKeys = './src/executors/generate/_copiedFromCore/eventKeys.ts';
-copyFileWithTSNoCheck(srcPropertyKeys, destPropertyKeys);
+const destDir = './executors/generate/_copiedFromCore'
+const destPropertyFile = '/eventKeys.ts';
+copyFileWithTSNoCheck(srcPropertyKeys, destDir, destPropertyFile);

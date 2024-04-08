@@ -4,6 +4,8 @@ import {
     BeanStub,
     Column,
     ColumnModel,
+    Events,
+    PostConstruct,
     RowNode,
     RowRenderer,
     ValueService
@@ -11,10 +13,18 @@ import {
 
 @Bean("chartColumnService")
 export class ChartColumnService extends BeanStub {
-
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
+
+    private valueColsWithoutSeriesType: Set<string> = new Set();
+
+    @PostConstruct
+    private postConstruct(): void {
+        const clearValueCols = () => this.valueColsWithoutSeriesType.clear();
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, clearValueCols);
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, clearValueCols);
+    }
 
     public getColumn(colId: string): Column | null {
         return this.columnModel.getPrimaryColumn(colId);
@@ -83,20 +93,23 @@ export class ChartColumnService extends BeanStub {
             }
 
             // if 'chartDataType' is not provided then infer type based data contained in first row
-            (this.isNumberCol(col) ? valueCols : dimensionCols).add(col);
+            (this.isInferredValueCol(col) ? valueCols : dimensionCols).add(col);
         });
 
         return { dimensionCols, valueCols };
     }
 
-    private isNumberCol(col: Column): boolean {
-        if (col.getColId() === 'ag-Grid-AutoColumn') {
+    private isInferredValueCol(col: Column): boolean {
+        const colId = col.getColId();
+        if (colId === 'ag-Grid-AutoColumn') {
             return false;
         }
 
         const row = this.rowRenderer.getRowNode({ rowIndex: 0, rowPinned: null });
 
-        if (!row) { return false; }
+        if (!row) {
+            return this.valueColsWithoutSeriesType.has(colId);
+        }
 
         let cellValue = this.valueService.getValue(col, row);
 
@@ -108,7 +121,13 @@ export class ChartColumnService extends BeanStub {
             cellValue = cellValue.toNumber();
         }
 
-        return typeof cellValue === 'number';
+        const isNumber = typeof cellValue === 'number';
+
+        if (isNumber) {
+            this.valueColsWithoutSeriesType.add(colId);
+        }
+
+        return isNumber;
     }
 
     private extractLeafData(row: RowNode, col: Column): any {
@@ -124,5 +143,10 @@ export class ChartColumnService extends BeanStub {
         }
 
         return null;
+    }
+
+    protected destroy(): void {
+        this.valueColsWithoutSeriesType.clear();
+        super.destroy();
     }
 }

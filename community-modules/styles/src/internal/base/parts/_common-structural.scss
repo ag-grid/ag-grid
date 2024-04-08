@@ -750,7 +750,6 @@
 
     .ag-cell-wrap-text {
         white-space: normal;
-        word-break: break-all;
     }
 
     .ag-cell-wrapper {
@@ -1547,8 +1546,7 @@
     }
 
     .ag-group-title {
-        display: block;
-        flex: 1 1 auto;
+        display: inline;
         min-width: 0;
         overflow: hidden;
         white-space: nowrap;

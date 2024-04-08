@@ -104,11 +104,11 @@ export interface CreateRangeChartParams extends CreateChartParams {
     cellRange: ChartParamsCellRange;
     /** Suppress highlighting the selected range in the grid. */
     suppressChartRanges?: boolean;
-    /** Switch Category / Series */
+    /** Switch Category / Series. */
     switchCategorySeries?: boolean;
     /** The aggregation function that should be applied to all series data. */
     aggFunc?: string | IAggFunc;
-    /** The series chart type configurations used in combination charts */
+    /** The series chart type configurations used in combination charts. */
     seriesChartTypes?: SeriesChartType[];
 }
 export interface CreateCrossFilterChartParams extends CreateChartParams {
@@ -142,11 +142,11 @@ export interface UpdateRangeChartParams {
     cellRange?: ChartParamsCellRange;
     /** Suppress highlighting the selected range in the grid. */
     suppressChartRanges?: boolean;
-    /** Switch Category / Series */
+    /** Switch Category / Series. */
     switchCategorySeries?: boolean;
     /** The aggregation function that should be applied to all series data. */
     aggFunc?: string | IAggFunc;
-    /** The series chart type configurations used in combination charts */
+    /** The series chart type configurations used in combination charts. */
     seriesChartTypes?: SeriesChartType[];
 }
 

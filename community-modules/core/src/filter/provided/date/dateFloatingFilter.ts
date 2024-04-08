@@ -1,7 +1,7 @@
 import { DateFilter, DateFilterModel, DateFilterModelFormatter, DateFilterParams } from './dateFilter';
 import { Autowired } from '../../../context/context';
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import { IDateParams } from '../../../rendering/dateComponent';
+import { IDateParams } from '../../../interfaces/dateComponent';
 import { IFloatingFilterParams } from '../../floating/floatingFilter';
 import { DateCompWrapper } from './dateCompWrapper';
 import { RefSelector } from '../../../widgets/componentAnnotations';

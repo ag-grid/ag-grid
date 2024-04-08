@@ -56,7 +56,6 @@ export class Beans {
     @Autowired('resizeObserverService') public readonly resizeObserverService: ResizeObserverService;
     @Autowired('paginationProxy') public readonly paginationProxy: PaginationProxy;
     @Autowired('context') public readonly context: Context;
-    @Autowired('gridApi') public readonly gridApi: GridApi;
     @Autowired('gridOptionsService') public readonly gos: GridOptionsService;
     @Autowired('expressionService') public readonly expressionService: ExpressionService;
     @Autowired('environment') public readonly environment: Environment;

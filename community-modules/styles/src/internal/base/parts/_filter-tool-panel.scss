@@ -11,12 +11,8 @@
     }
 
     @include ag.keyboard-focus((ag-filter-toolpanel-header), 4px);
-
-    .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title::after {
-        @include ag.icon();
-        @include ag.unthemed-rtl(( padding-left: var(--ag-grid-size) ));
-        content: ag.icon-content(filter);
-        position: absolute;
+    .ag-filter-toolpanel-group:not(.ag-has-filter) > .ag-group-title-bar .ag-filter-toolpanel-group-instance-header-icon {
+        display: none;
     }
 
     .ag-filter-toolpanel-group-level-0-header {
@@ -72,6 +68,7 @@
         margin-top: var(--ag-grid-size);
     }
 
+    .ag-filter-toolpanel-group-instance-header-icon,
     .ag-filter-toolpanel-instance-header-icon {
         @include ag.unthemed-rtl((margin-left: var(--ag-grid-size)));
     }

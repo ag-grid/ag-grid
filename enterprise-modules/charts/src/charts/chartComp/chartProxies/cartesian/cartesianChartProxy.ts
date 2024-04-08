@@ -52,17 +52,18 @@ export abstract class CartesianChartProxy extends ChartProxy {
             return 'grouped-category';
         } else if (this.isXAxisOfType(params, 'time', value => value instanceof Date)) {
             return 'time';
-        } else if (this.isXAxisOfType(params, 'number', value => !isNaN(parseFloat(value as any)))) {
+        } else if (this.isXAxisOfType(params, 'number')) {
             return 'number';
         }
         return 'category';
     }
 
-    private isXAxisOfType<T>(params: UpdateParams, type: AgCartesianAxisType, isInstance: (value: T) => boolean): boolean {
+    private isXAxisOfType<T>(params: UpdateParams, type: AgCartesianAxisType, isInstance?: (value: T) => boolean): boolean {
         const [category] = params.categories;
         if (category?.chartDataType) {
             return category.chartDataType === type;
         }
+        if (!isInstance) { return false; }
         const testDatum = params.data[0];
         if (!testDatum) { return false; }
         return isInstance(testDatum[category.id]);

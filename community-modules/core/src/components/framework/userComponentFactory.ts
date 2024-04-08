@@ -13,7 +13,7 @@ import { IStatusPanelParams, StatusPanelDef } from "../../interfaces/iStatusPane
 import { IToolPanelParams } from "../../interfaces/iToolPanel";
 import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRendererCtrl";
 import { ICellRendererParams, ISetFilterCellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
-import { IDateParams } from "../../rendering/dateComponent";
+import { IDateParams } from "../../interfaces/dateComponent";
 import { ILoadingOverlayParams } from "../../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayParams } from "../../rendering/overlays/noRowsOverlayComponent";
 import { ITooltipParams } from "../../rendering/tooltipComponent";
