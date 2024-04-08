@@ -50806,7 +50806,7 @@ ImmutableService = __decorateClass([
 ], ImmutableService);
 
 // community-modules/client-side-row-model/src/version.ts
-var VERSION = "31.2.0";
+var VERSION = "31.2.1";
 
 // community-modules/client-side-row-model/src/clientSideRowModelModule.ts
 var ClientSideRowModelModule = {
@@ -51427,7 +51427,7 @@ __decorateClass2([
 InfiniteRowModel = __decorateClass2([
   Bean("rowModel")
 ], InfiniteRowModel);
-var VERSION2 = "31.2.0";
+var VERSION2 = "31.2.1";
 var InfiniteRowModelModule = {
   version: VERSION2,
   moduleName: "@ag-grid-community/infinite-row-model" /* InfiniteRowModelModule */,
@@ -52134,7 +52134,7 @@ __decorateClass3([
 GridSerializer = __decorateClass3([
   Bean("gridSerializer")
 ], GridSerializer);
-var VERSION3 = "31.2.0";
+var VERSION3 = "31.2.1";
 var CsvExportModule = {
   version: VERSION3,
   moduleName: "@ag-grid-community/csv-export" /* CsvExportModule */,

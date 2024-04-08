@@ -479,7 +479,7 @@ var _LicenseManager = class _LicenseManager {
     this.watermarkMessage = "License Expired";
   }
 };
-_LicenseManager.RELEASE_INFORMATION = "MTcxMDY5MjgwODc5NQ==";
+_LicenseManager.RELEASE_INFORMATION = "MTcxMjU1ODYyOTkzMw==";
 var LicenseManager = _LicenseManager;
 
 // enterprise-modules/core/src/license/gridLicenseManager.ts
@@ -546,7 +546,7 @@ __decorateClass([
 ], WatermarkComp.prototype, "postConstruct", 1);
 
 // enterprise-modules/core/src/version.ts
-var VERSION = "31.2.0";
+var VERSION = "31.2.1";
 
 // enterprise-modules/core/src/agGridEnterpriseModule.ts
 var EnterpriseCoreModule = {

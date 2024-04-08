@@ -1499,7 +1499,7 @@ SelectionHandleFactory = __decorateClass([
 ], SelectionHandleFactory);
 
 // enterprise-modules/range-selection/src/version.ts
-var VERSION = "31.2.0";
+var VERSION = "31.2.1";
 
 // enterprise-modules/range-selection/src/rangeSelectionModule.ts
 var RangeSelectionModule = {

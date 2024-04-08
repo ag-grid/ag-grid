@@ -999,7 +999,7 @@ var FiltersToolPanel = _FiltersToolPanel;
 var import_side_bar = require("@ag-grid-enterprise/side-bar");
 
 // enterprise-modules/filter-tool-panel/src/version.ts
-var VERSION = "31.2.0";
+var VERSION = "31.2.1";
 
 // enterprise-modules/filter-tool-panel/src/filtersToolPanelModule.ts
 var FiltersToolPanelModule = {

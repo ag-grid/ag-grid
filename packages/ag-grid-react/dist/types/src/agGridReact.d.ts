@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { AgGridReactProps, AgReactUiProps } from './shared/interfaces';
 import { ColumnApi, GridApi } from 'ag-grid-community';
 export declare class AgGridReact<TData = any> extends Component<AgGridReactProps<TData> | AgReactUiProps<TData>, {}> {
@@ -13,5 +13,5 @@ export declare class AgGridReact<TData = any> extends Component<AgGridReactProps
     registerApiListener(listener: (api: GridApi) => void): void;
     private setGridApi;
     componentWillUnmount(): void;
-    render(): React.JSX.Element;
+    render(): JSX.Element;
 }

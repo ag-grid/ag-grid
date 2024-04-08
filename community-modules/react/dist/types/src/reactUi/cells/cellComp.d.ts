@@ -20,5 +20,5 @@ declare const _default: React.MemoExoticComponent<(props: {
     cellCtrl: CellCtrl;
     printLayout: boolean;
     editingRow: boolean;
-}) => React.JSX.Element>;
+}) => JSX.Element>;
 export default _default;

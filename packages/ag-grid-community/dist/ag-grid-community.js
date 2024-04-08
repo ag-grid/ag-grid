@@ -1780,7 +1780,7 @@ ImmutableService = __decorateClass([
 ], ImmutableService);
 
 // community-modules/client-side-row-model/src/version.ts
-var VERSION = "31.2.0";
+var VERSION = "31.2.1";
 
 // community-modules/client-side-row-model/src/clientSideRowModelModule.ts
 var ClientSideRowModelModule = {
@@ -51632,7 +51632,7 @@ GridSerializer = __decorateClass([
 ], GridSerializer);
 
 // community-modules/csv-export/src/version.ts
-var VERSION = "31.2.0";
+var VERSION = "31.2.1";
 
 // community-modules/csv-export/src/csvExportModule.ts
 var CsvExportModule = {
@@ -52938,7 +52938,7 @@ InfiniteRowModel = __decorateClass([
 ], InfiniteRowModel);
 
 // community-modules/infinite-row-model/src/version.ts
-var VERSION = "31.2.0";
+var VERSION = "31.2.1";
 
 // community-modules/infinite-row-model/src/infiniteRowModelModule.ts
 var InfiniteRowModelModule = {

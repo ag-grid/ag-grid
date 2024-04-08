@@ -259,7 +259,7 @@ __decorateClass([
 var DetailCellRenderer = _DetailCellRenderer;
 
 // enterprise-modules/master-detail/src/version.ts
-var VERSION = "31.2.0";
+var VERSION = "31.2.1";
 
 // enterprise-modules/master-detail/src/masterDetailModule.ts
 var MasterDetailModule = {

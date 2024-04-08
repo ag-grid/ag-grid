@@ -7,5 +7,5 @@ declare const _default: React.MemoExoticComponent<(props: {
     eParentCell: HTMLElement;
     wrappedContent?: any;
     jsChildComp?: any;
-}) => React.JSX.Element>;
+}) => JSX.Element>;
 export default _default;

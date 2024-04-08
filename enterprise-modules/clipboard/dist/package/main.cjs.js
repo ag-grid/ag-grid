@@ -871,7 +871,7 @@ ClipboardService = __decorateClass([
 ], ClipboardService);
 
 // enterprise-modules/clipboard/src/version.ts
-var VERSION = "31.2.0";
+var VERSION = "31.2.1";
 
 // enterprise-modules/clipboard/src/clipboardModule.ts
 var ClipboardModule = {

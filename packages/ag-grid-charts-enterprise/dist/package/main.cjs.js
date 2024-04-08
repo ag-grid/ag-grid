@@ -734,7 +734,7 @@ var _LicenseManager = class _LicenseManager {
     this.watermarkMessage = "License Expired";
   }
 };
-_LicenseManager.RELEASE_INFORMATION = "MTcxMDY5MjgwODc5NQ==";
+_LicenseManager.RELEASE_INFORMATION = "MTcxMjU1ODYyOTkzMw==";
 var LicenseManager = _LicenseManager;
 
 // enterprise-modules/core/src/license/gridLicenseManager.ts
@@ -801,7 +801,7 @@ __decorateClass([
 ], WatermarkComp.prototype, "postConstruct", 1);
 
 // enterprise-modules/core/src/version.ts
-var VERSION = "31.2.0";
+var VERSION = "31.2.1";
 
 // enterprise-modules/core/src/agGridEnterpriseModule.ts
 var EnterpriseCoreModule = {
@@ -4410,7 +4410,7 @@ __decorateClass2([
 AdvancedFilterService = __decorateClass2([
   (0, import_core20.Bean)("advancedFilterService")
 ], AdvancedFilterService);
-var VERSION2 = "31.2.0";
+var VERSION2 = "31.2.1";
 var AdvancedFilterModule = {
   version: VERSION2,
   moduleName: import_core4.ModuleNames.AdvancedFilterModule,
@@ -5904,7 +5904,7 @@ var SelectionHandleFactory = class extends import_core27.BeanStub {
 SelectionHandleFactory = __decorateClass3([
   (0, import_core27.Bean)("selectionHandleFactory")
 ], SelectionHandleFactory);
-var VERSION3 = "31.2.0";
+var VERSION3 = "31.2.1";
 var RangeSelectionModule = {
   version: VERSION3,
   moduleName: import_core21.ModuleNames.RangeSelectionModule,
@@ -16754,7 +16754,7 @@ __decorateClass4([
   import_core31.PostConstruct
 ], _GridChartComp.prototype, "init", 1);
 var GridChartComp = _GridChartComp;
-var VERSION4 = "31.2.0";
+var VERSION4 = "31.2.1";
 var DEBUG = false;
 function upgradeChartModel(model) {
   const originalVersion = model.version;
@@ -19299,7 +19299,7 @@ __decorateClass5([
 ClipboardService = __decorateClass5([
   (0, import_core97.Bean)("clipboardService")
 ], ClipboardService);
-var VERSION5 = "31.2.0";
+var VERSION5 = "31.2.1";
 var ClipboardModule = {
   version: VERSION5,
   moduleName: import_core95.ModuleNames.ClipboardModule,
@@ -21527,7 +21527,7 @@ __decorateClass6([
 FilterAggregatesStage = __decorateClass6([
   (0, import_core110.Bean)("filterAggregatesStage")
 ], FilterAggregatesStage);
-var VERSION6 = "31.2.0";
+var VERSION6 = "31.2.1";
 var _GroupFilter = class _GroupFilter2 extends import_core111.TabGuardComp {
   constructor() {
     super(
@@ -22845,7 +22845,7 @@ __decorateClass7([
 ToolPanelColDefService = __decorateClass7([
   (0, import_core121.Bean)("toolPanelColDefService")
 ], ToolPanelColDefService);
-var VERSION7 = "31.2.0";
+var VERSION7 = "31.2.1";
 var SideBarService = class extends import_core122.BeanStub {
   registerSideBarComp(sideBarComp) {
     this.sideBarComp = sideBarComp;
@@ -24854,7 +24854,7 @@ __decorateClass8([
 ModelItemUtils = __decorateClass8([
   (0, import_core135.Bean)("modelItemUtils")
 ], ModelItemUtils);
-var VERSION8 = "31.2.0";
+var VERSION8 = "31.2.1";
 var ColumnsToolPanelModule = {
   version: VERSION8,
   moduleName: import_core123.ModuleNames.ColumnsToolPanelModule,
@@ -28296,7 +28296,7 @@ __decorateClass9([
 ExcelCreator = __decorateClass9([
   (0, import_core138.Bean)("excelCreator")
 ], ExcelCreator);
-var VERSION9 = "31.2.0";
+var VERSION9 = "31.2.1";
 var ExcelExportModule = {
   version: VERSION9,
   moduleName: import_core136.ModuleNames.ExcelExportModule,
@@ -29288,7 +29288,7 @@ __decorateClass10([
   (0, import_core151.RefSelector)("filtersToolPanelListPanel")
 ], _FiltersToolPanel.prototype, "filtersToolPanelListPanel", 2);
 var FiltersToolPanel = _FiltersToolPanel;
-var VERSION10 = "31.2.0";
+var VERSION10 = "31.2.1";
 var FiltersToolPanelModule = {
   version: VERSION10,
   moduleName: import_core145.ModuleNames.FiltersToolPanelModule,
@@ -29552,7 +29552,7 @@ __decorateClass11([
   (0, import_core154.RefSelector)("eDetailGrid")
 ], _DetailCellRenderer.prototype, "eDetailGrid", 2);
 var DetailCellRenderer = _DetailCellRenderer;
-var VERSION11 = "31.2.0";
+var VERSION11 = "31.2.1";
 var MasterDetailModule = {
   version: VERSION11,
   moduleName: import_core152.ModuleNames.MasterDetailModule,
@@ -30570,7 +30570,7 @@ __decorateClass12([
 MenuItemMapper = __decorateClass12([
   (0, import_core160.Bean)("menuItemMapper")
 ], MenuItemMapper);
-var VERSION12 = "31.2.0";
+var VERSION12 = "31.2.1";
 var ChartMenuItemMapper = class extends import_core161.BeanStub {
   getChartItems(key) {
     var _a, _b;
@@ -31906,7 +31906,7 @@ __decorateClass13([
 __decorateClass13([
   (0, import_core168.Autowired)("filterManager")
 ], MultiFloatingFilterComp.prototype, "filterManager", 2);
-var VERSION13 = "31.2.0";
+var VERSION13 = "31.2.1";
 var MultiFilterModule = {
   version: VERSION13,
   moduleName: import_core165.ModuleNames.MultiFilterModule,
@@ -32063,7 +32063,7 @@ var RichSelectCellEditor = class extends import_core171.PopupComponent {
     return false;
   }
 };
-var VERSION14 = "31.2.0";
+var VERSION14 = "31.2.1";
 var RichSelectModule = {
   version: VERSION14,
   moduleName: import_core169.ModuleNames.RichSelectModule,
@@ -36509,7 +36509,7 @@ __decorateClass14([
 ServerSideSelectionService = __decorateClass14([
   (0, import_core188.Bean)("selectionService")
 ], ServerSideSelectionService);
-var VERSION15 = "31.2.0";
+var VERSION15 = "31.2.1";
 var ServerSideExpansionService = class extends import_core191.ExpansionService {
   constructor() {
     super(...arguments);
@@ -39116,7 +39116,7 @@ __decorateClass15([
 __decorateClass15([
   (0, import_core199.Autowired)("columnModel")
 ], SetFloatingFilterComp.prototype, "columnModel", 2);
-var VERSION16 = "31.2.0";
+var VERSION16 = "31.2.1";
 var SetFilterModule = {
   version: VERSION16,
   moduleName: import_core192.ModuleNames.SetFilterModule,
@@ -41244,7 +41244,7 @@ __decorateClass16([
 SparklineTooltipSingleton = __decorateClass16([
   (0, import_core203.Bean)("sparklineTooltipSingleton")
 ], SparklineTooltipSingleton);
-var VERSION17 = "31.2.0";
+var VERSION17 = "31.2.1";
 var SparklinesModule = {
   version: VERSION17,
   moduleName: import_core200.ModuleNames.SparklinesModule,
@@ -41845,7 +41845,7 @@ __decorateClass([
 var AggregationComp = _AggregationComp;
 
 // enterprise-modules/status-bar/src/version.ts
-var VERSION18 = "31.2.0";
+var VERSION18 = "31.2.1";
 
 // enterprise-modules/status-bar/src/statusBarModule.ts
 var StatusBarModule = {
@@ -41882,7 +41882,7 @@ var __decorateClass17 = (decorators, target, key, kind) => {
     __defProp17(target, key, result);
   return result;
 };
-var VERSION19 = "31.2.0";
+var VERSION19 = "31.2.1";
 var ViewportRowModel = class extends import_core216.BeanStub {
   constructor() {
     super(...arguments);

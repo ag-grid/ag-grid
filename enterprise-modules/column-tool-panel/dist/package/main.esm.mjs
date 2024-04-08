@@ -2099,7 +2099,7 @@ ModelItemUtils = __decorateClass([
 ], ModelItemUtils);
 
 // enterprise-modules/column-tool-panel/src/version.ts
-var VERSION = "31.2.0";
+var VERSION = "31.2.1";
 
 // enterprise-modules/column-tool-panel/src/columnsToolPanelModule.ts
 var ColumnsToolPanelModule = {

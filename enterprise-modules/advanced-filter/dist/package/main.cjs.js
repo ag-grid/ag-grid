@@ -3682,7 +3682,7 @@ AdvancedFilterService = __decorateClass([
 ], AdvancedFilterService);
 
 // enterprise-modules/advanced-filter/src/version.ts
-var VERSION = "31.2.0";
+var VERSION = "31.2.1";
 
 // enterprise-modules/advanced-filter/src/advancedFilterModule.ts
 var AdvancedFilterModule = {

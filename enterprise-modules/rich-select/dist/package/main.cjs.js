@@ -171,7 +171,7 @@ var RichSelectCellEditor = class extends import_core.PopupComponent {
 };
 
 // enterprise-modules/rich-select/src/version.ts
-var VERSION = "31.2.0";
+var VERSION = "31.2.1";
 
 // enterprise-modules/rich-select/src/richSelectModule.ts
 var RichSelectModule = {

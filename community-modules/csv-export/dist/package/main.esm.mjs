@@ -729,7 +729,7 @@ GridSerializer = __decorateClass([
 ], GridSerializer);
 
 // community-modules/csv-export/src/version.ts
-var VERSION = "31.2.0";
+var VERSION = "31.2.1";
 
 // community-modules/csv-export/src/csvExportModule.ts
 var CsvExportModule = {

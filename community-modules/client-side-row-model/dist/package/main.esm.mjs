@@ -1788,7 +1788,7 @@ ImmutableService = __decorateClass([
 ], ImmutableService);
 
 // community-modules/client-side-row-model/src/version.ts
-var VERSION = "31.2.0";
+var VERSION = "31.2.1";
 
 // community-modules/client-side-row-model/src/clientSideRowModelModule.ts
 var ClientSideRowModelModule = {
