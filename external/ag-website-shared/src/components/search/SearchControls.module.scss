@@ -1,0 +1,56 @@
+@use '../../design-system' as *;
+
+.controlsOuter,
+.keyboardSection,
+.kbdIcon {
+    display: flex;
+    align-items: center;
+}
+
+.controlsOuter {
+    justify-content: flex-end;
+    gap: $spacing-size-4;
+    padding: $spacing-size-4 $spacing-size-6;
+    height: var(--controls-height);
+    border-top: 1px solid var(--color-border-secondary);
+
+    #{$selector-darkmode} & {
+        border-top: 1px solid var(--color-border-primary);
+    }
+
+    @media screen and (max-width: $breakpoint-docs-search-small) {
+        display: none;
+    }
+}
+
+.keyboardSection {
+    justify-content: center;
+    gap: $spacing-size-2;
+}
+
+.kbdIcon {
+    justify-content: center;
+    width: $spacing-size-8;
+    height: $spacing-size-8;
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-secondary);
+    box-shadow: var(--shadow-xs);
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-border-tertiary);
+    }
+
+    + .kbdIcon {
+        margin-left: -$spacing-size-1;
+    }
+
+    :global(.icon) {
+        --icon-size: #{$spacing-size-5};
+        --color-icon: var(--color-util-gray-400);
+
+        #{$selector-darkmode} & {
+            --color-icon: var(--color-fg-primary);
+        }
+    }
+}
