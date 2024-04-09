@@ -504,6 +504,12 @@
                 "url": "./filter-quick/#quick-filter-matcher"
             }
         },
+        "applyQuickFilterBeforePivotOrAgg": {
+            "more": {
+                "name": "Pivoting / Group Aggregation Filtering",
+                "url": "./filter-quick/#pivoting--group-aggregation-filtering"
+            }
+        },
         "isExternalFilterPresent": {
             "more": {
                 "name": "External Filter",

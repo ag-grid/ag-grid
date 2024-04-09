@@ -131,7 +131,9 @@ When [Pivoting](./pivoting/) or [Group Aggregation Filtering](./aggregation-filt
 
 It is possible to instead filter the data before pivoting/aggregating are applied. This can be done by setting the grid option `applyQuickFilterBeforePivotOrAgg = true`.
 
-The following example demonstrates the difference in filtering behaviour with `applyQuickFilterBeforePivotOrAgg` enabled/disabled. The columns **Athlete** and **Sport** are present, but are not being used for pivoting.
+The following example demonstrates the difference in filtering behaviour with `applyQuickFilterBeforePivotOrAgg` enabled/disabled. The columns **Athlete** and **Sport** are present, but are not being used for pivoting:
+- Search for “Swimming” or 2000 and note that there are no matches in the grid, as the filter is applied after pivoting.
+- Click the button to apply Quick Filter before pivoting and aggregation and note that there are matches in the grid, as the filter is applied before pivoting.
 
 {% gridExampleRunner title="Quick Filter Pivot / Aggregation" name="quick-filter-pivot-agg" /%}
 
