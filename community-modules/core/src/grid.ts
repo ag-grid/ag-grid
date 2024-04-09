@@ -243,7 +243,7 @@ export class GridCoreCreator {
 
         // Ensure we do not mutate the provided gridOptions / global gridOptions
         let mergedGridOps: GridOptions = {};
-        if(GlobalGridOptions.gridOptions){
+        if (GlobalGridOptions.gridOptions) {
             mergeDeep(mergedGridOps, GlobalGridOptions.gridOptions, true, true);
         }
         mergeDeep(mergedGridOps, providedOptions, true, true);

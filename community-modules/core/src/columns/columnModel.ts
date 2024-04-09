@@ -1035,7 +1035,7 @@ export class ColumnModel extends BeanStub {
         let atLeastOne = false;
 
         keys.forEach(key => {
-            if(!key) { return; }
+            if (!key) { return; }
             const columnToAdd = this.getPrimaryColumn(key);
             if (!columnToAdd) { return; }
 
@@ -1838,7 +1838,7 @@ export class ColumnModel extends BeanStub {
         const updatedColumns: Column[] = [];
 
         keys.forEach(key => {
-            if(!key) { return; }
+            if (!key) { return; }
             const column = this.getGridColumn(key);
             if (!column) { return; }
 

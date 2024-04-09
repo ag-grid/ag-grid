@@ -43,22 +43,22 @@ export class ApiEventService extends BeanStub {
 
         const async = this.gos.useAsyncEvents();
 
-        if(async){
+        if (async) {
             // if async then need to setup the global listener for sync to handle alwaysSyncGlobalEvents
             const syncListener: AgGlobalEventListener = (eventType: string, event: any) => {
-                if(ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType)){
+                if (ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType)) {
                     listener(eventType, event);
                 }
             };
             const asyncListener: AgGlobalEventListener = (eventType: string, event: any) => {
-                if(!ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType)){
+                if (!ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType)) {
                     listener(eventType, event);
                 }
             };
             this.globalEventListenerPairs.set(userListener, {syncListener, asyncListener});
             this.eventService.addGlobalListener(syncListener, false);
             this.eventService.addGlobalListener(asyncListener, true);
-        }else{
+        } else {
             this.syncGlobalEventListeners.add(listener);
             this.eventService.addGlobalListener(listener, false);
         }        
@@ -67,14 +67,14 @@ export class ApiEventService extends BeanStub {
     public removeGlobalListener(userListener: AgGlobalEventListener): void {
         const listener = this.frameworkEventWrappingService.unwrapGlobal(userListener);
         
-        const hasAsync = this.globalEventListenerPairs.has(listener);        
-        if(hasAsync){
+        const hasAsync = this.globalEventListenerPairs.has(listener);
+        if (hasAsync) {
             // If it was async also remove the always sync listener we added
             const { syncListener, asyncListener } = this.globalEventListenerPairs.get(listener)!;
             this.eventService.removeGlobalListener(syncListener, false);
             this.eventService.removeGlobalListener(asyncListener, true);
             this.globalEventListenerPairs.delete(userListener);
-        }else{
+        } else {
             this.syncGlobalEventListeners.delete(listener);
             this.eventService.removeGlobalListener(listener, false);
         }

@@ -57,7 +57,7 @@ export const Toolbar = ({
     const deferredQuickFilterText = useDeferredValue(quickFilterText);
 
     useEffect(() => {
-        if(!gridRef.current?.api) return;
+        if (!gridRef.current?.api) { return; }
         gridRef.current.api.setGridOption('quickFilterText', deferredQuickFilterText);
         trackOnceDemoToolbar({
             type: 'filterChange',
@@ -65,7 +65,7 @@ export const Toolbar = ({
     }, [deferredQuickFilterText]);
 
     function onFilterChanged(event) {
-        setQuickFilterText(event.target.value);        
+        setQuickFilterText(event.target.value);
     }
 
     return (

@@ -13,11 +13,11 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
 
         this.isRunningWithinTestZone = (window as any)?.AG_GRID_UNDER_TEST ?? !!((window as any)?.Zone?.AsyncTestZoneSpec);
         
-        if(!this._ngZone){
+        if (!this._ngZone) {
             this.runOutside = (callback) => callback();
-        }else if(this.isRunningWithinTestZone){
+        } else if (this.isRunningWithinTestZone) {
             this.runOutside = (callback, source) =>{
-                if(source === 'resize-observer'){
+                if (source === 'resize-observer') {
                     // ensure resize observer callbacks are run outside of Angular even under test due to Jest not supporting ResizeObserver
                     // which means it just loops continuously with a setTimeout with no way to flush the queue or have fixture.whenStable() resolve.
                     return this._ngZone.runOutsideAngular(callback);
@@ -25,7 +25,7 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
                 // When under test run inside Angular so that tests can use fixture.whenStable() to wait for async operations to complete.
                 return callback();
             };
-        }else{
+        } else{
             this.runOutside = (callback) => this._ngZone.runOutsideAngular(callback);
         }
     }
