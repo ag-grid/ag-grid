@@ -61,7 +61,7 @@ export default defineMarkdocConfig({
         },
         link,
         enterpriseIcon: {
-            render: component('./src/ag-website-shared/src/components/icon/EnterpriseIcon', 'EnterpriseIcon'),
+            render: component('../../external/ag-website-shared/src/components/icon/EnterpriseIcon', 'EnterpriseIcon'),
         },
         includeMarkdoc,
         gridExampleRunner: {
