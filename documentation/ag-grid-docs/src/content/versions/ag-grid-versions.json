@@ -362,5 +362,29 @@
     {
         "version": "18.1.0",
         "date": "June 2018"
+    },
+    {
+        "version": "17.1.1",
+        "date": "April 2018"
+    },
+    {
+        "version": "17.0.0",
+        "date": "March 2018"
+    },
+    {
+        "version": "16.0.0",
+        "date": "January 2018"
+    },
+    {
+        "version": "15.0.0",
+        "date": "December 2017"
+    },
+    {
+        "version": "14.1.0",
+        "date": "November 2017"
+    },
+    {
+        "version": "14.0.0",
+        "date": "October 2017"
     }
 ]
