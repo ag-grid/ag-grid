@@ -55,12 +55,12 @@ export class ChartColumnService extends BeanStub {
     }
 
     public getChartColumns(): { dimensionCols: Set<Column>; valueCols: Set<Column>; } {
-        const displayedCols = this.columnModel.getAllDisplayedColumns();
+        const gridCols = this.columnModel.getAllGridColumns();
 
         const dimensionCols = new Set<Column>();
         const valueCols = new Set<Column>();
 
-        displayedCols.forEach(col => {
+        gridCols.forEach(col => {
             const colDef = col.getColDef();
             const chartDataType = colDef.chartDataType;
 
