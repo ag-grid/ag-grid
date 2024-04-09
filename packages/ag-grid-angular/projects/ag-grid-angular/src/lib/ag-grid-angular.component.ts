@@ -78,7 +78,9 @@ import {
     ExcelExportParams,
     ExcelStyle,
     ExpandCollapseAllEvent,
+    FillEndEvent,
     FillOperationParams,
+    FillStartEvent,
     FilterChangedEvent,
     FilterModifiedEvent,
     FilterOpenedEvent,
@@ -1697,6 +1699,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Range delete operation (cell clear) has ended.
          */
     @Output() public rangeDeleteEnd: EventEmitter<RangeDeleteEndEvent<TData>> = new EventEmitter<RangeDeleteEndEvent<TData>>();
+    /** Fill operation has started.
+         */
+    @Output() public fillStart: EventEmitter<FillStartEvent<TData>> = new EventEmitter<FillStartEvent<TData>>();
+    /** Fill operation has ended.
+         */
+    @Output() public fillEnd: EventEmitter<FillEndEvent<TData>> = new EventEmitter<FillEndEvent<TData>>();
     /** Filter has been opened.
          */
     @Output() public filterOpened: EventEmitter<FilterOpenedEvent<TData>> = new EventEmitter<FilterOpenedEvent<TData>>();
