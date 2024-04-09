@@ -137,6 +137,7 @@ export default defineConfig({
                             return new sass.types.String(urlWithBase);
                         },
                     },
+                    includePaths: ['../../external/ag-website-shared/src'],
                 },
             },
         },
