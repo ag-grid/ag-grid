@@ -1,8 +1,8 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import styles from '@design-system/modules/Search.module.scss';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import { useEffect, useState } from 'react';
 
+import styles from './Search.module.scss';
 import SearchModal from './SearchModal';
 
 /**

@@ -1,11 +1,11 @@
 // @ts-expect-error
-import styles from '@design-system/modules/Licenses.module.scss';
 // import { trackBuyButton } from '@utils/analytics';
 import classnames from 'classnames';
 import { FunctionComponent, useState } from 'react';
 
 import chartsFeaturesData from '../../content/license-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '../../content/license-features/gridFeaturesMatrix.json';
+import styles from './Licenses.module.scss';
 import { ComparisonTable } from './comparison-table/ComparisonTable';
 
 type LicenseData = {

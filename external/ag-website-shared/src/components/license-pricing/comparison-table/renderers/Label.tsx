@@ -1,5 +1,6 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import styles from '@design-system/modules/ComparisonTableRenderers.module.scss';
+
+import styles from './ComparisonTableRenderers.module.scss';
 
 export function Label({ value }: { value: { name: string; icon?: string; link: string } }) {
     const iconName: IconName = value.icon;
