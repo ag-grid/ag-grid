@@ -878,6 +878,13 @@ export class RowCtrl extends BeanStub {
         }
     }
 
+    public getFullWidthElement(): HTMLElement | null {
+        if (this.fullWidthGui) {
+            return this.fullWidthGui.element;
+        }
+        return null;
+    }
+
     public onFullWidthRowFocused(event?: CellFocusedEvent) {
         const node = this.rowNode;
         const isFocused = !event ? false : this.isFullWidth() && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;

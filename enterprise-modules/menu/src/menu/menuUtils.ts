@@ -97,7 +97,10 @@ export class MenuUtils extends BeanStub {
         const eventOrTouch: (MouseEvent | Touch) = mouseEvent ?? touchEvent!.touches[0];
         if (showMenuCallback(eventOrTouch)) {
             const event = mouseEvent ?? touchEvent;
-            event!.preventDefault();
+
+            if (event && event.cancelable) {
+                event.preventDefault();
+            }
         }
     }
 
