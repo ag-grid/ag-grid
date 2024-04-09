@@ -60,30 +60,33 @@ git subrepo pull documentation/ag-grid-docs/src/ag-website-shared
 git subrepo pull packages/ag-charts-website/src/ag-website-shared
 ```
 
-### Backport changes from container repository to this shared repository
+### Updating this shared repository
 
-To backport changes from the container repository back to this shared repository:
+There are 2 ways to update this shared repository:
 
-1. Make commits to the container respository as normal.
+1. Check out the [ag-website-shared](https://github.com/ag-grid/ag-website-shared) repository and git push/pull as normal
+1. Backport changes from the container repository back to this shared repository:
 
-    It doesn't matter if there are changes not related to the shared repository in the same commit, as they will be filtered out. However, it is good practice to make shared repository changes in separate commits.
+    1. Make commits to the container respository as normal.
 
-1. Push changes from the container repository back to the shared repository:
+        It doesn't matter if there are changes not related to the shared repository in the same commit, as they will be filtered out. However, it is good practice to make shared repository changes in separate commits.
 
-    ```
-    git subrepo push [dest-folder]
+    1. Push changes from the container repository back to the shared repository:
 
-    # Grid
-    git subrepo push documentation/ag-grid-docs/src/ag-website-shared
+        ```
+        git subrepo push [dest-folder]
 
-    # Charts
-    git subrepo push packages/ag-charts-website/src/ag-website-shared
-    ```
+        # Grid
+        git subrepo push documentation/ag-grid-docs/src/ag-website-shared
 
-    If there are changes already on the shared repository, you will get the following error:
+        # Charts
+        git subrepo push packages/ag-charts-website/src/ag-website-shared
+        ```
 
-    ```
-    git-subrepo: There are new changes upstream, you need to pull first.
-    ```
+        If there are changes already on the shared repository, you will get the following error:
 
-    In which case, you should do a `git subrepo pull ...` first
+        ```
+        git-subrepo: There are new changes upstream, you need to pull first.
+        ```
+
+        In which case, you should do a `git subrepo pull ...` first
