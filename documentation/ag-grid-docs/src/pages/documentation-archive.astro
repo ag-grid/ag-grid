@@ -51,10 +51,8 @@ const isMajor = (version) => {
                         versionsData.slice(1).map((versionInfo) => {
                             return (
                                 <tr>
-                                    <td class="text-lg monospace-text">
-                                        <a href={`https://www.ag-grid.com/archive/${versionInfo.version}/`}>
+                                    <td class="text-base text-monospace text-semibold">
                                             {versionInfo.version}
-                                        </a>
                                     </td>
 
                                     <td>{versionInfo.date}</td>
