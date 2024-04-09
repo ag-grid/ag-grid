@@ -1,5 +1,6 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import styles from '@design-system/modules/ComparisonTableRenderers.module.scss';
+
+import styles from './ComparisonTableRenderers.module.scss';
 
 export function Feature({ value }: { value: boolean | string }) {
     const isEnabled = value === true || value.value === true;

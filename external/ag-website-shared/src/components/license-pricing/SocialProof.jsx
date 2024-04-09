@@ -1,7 +1,8 @@
 import { quotesData } from '@components/quotes/quotesData';
-import styles from '@design-system/modules/SocialProof.module.scss';
 import classNames from 'classnames';
 import React from 'react';
+
+import styles from './SocialProof.module.scss';
 
 const CellsIllustration = () => {
     return (

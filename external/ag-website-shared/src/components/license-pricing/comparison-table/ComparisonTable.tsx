@@ -1,9 +1,9 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Collapsible } from '@components/Collapsible';
-import styles from '@design-system/modules/ComparisonTable.module.scss';
 import classnames from 'classnames';
 import { ReactNode, useMemo, useState } from 'react';
 
+import styles from './ComparisonTable.module.scss';
 import { Feature } from './renderers/Feature';
 import { Label } from './renderers/Label';
 import { createRowDataFilter } from './utils/createRowDataFilter';
