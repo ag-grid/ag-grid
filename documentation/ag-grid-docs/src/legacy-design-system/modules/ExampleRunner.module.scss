@@ -1,0 +1,66 @@
+@use 'design-system' as *;
+
+.exampleOuter {
+    --example-border-color: color-mix(in srgb, var(--color-border-secondary), var(--color-border-primary));
+
+    margin-bottom: $spacing-size-4;
+
+    #{$selector-darkmode} & {
+        --example-border-color: color-mix(in srgb, var(--color-bg-primary), white 10%);
+    }
+}
+
+iframe {
+    background-color: transparent;
+    color-scheme: none; // Prevent white flash in darkmode
+}
+
+.tabsContainer {
+    container-type: inline-size;
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: $spacing-size-4;
+}
+
+.previewCodeToggle {
+    padding: 4px 12px 6px;
+    font-weight: 500;
+    border-radius: $spacing-size-2;
+
+    :global(.icon) {
+        --icon-size: #{$spacing-size-6};
+    }
+}
+
+.externalLinks {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    margin-left: $spacing-size-4;
+    margin-right: -10px;
+    margin-bottom: 2px;
+}
+
+.importInfoIcon {
+    margin-right: -$spacing-size-1;
+
+    &:hover svg {
+        opacity: 1;
+    }
+
+    svg {
+        --color-icon: var(--color-fg-secondary);
+
+        opacity: 0.5;
+        transition: opacity $transition-default-timing;
+    }
+}
+
+:global(.tabs-content).content {
+    overflow: auto;
+    padding: 0;
+}

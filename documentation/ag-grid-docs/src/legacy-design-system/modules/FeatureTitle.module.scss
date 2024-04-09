@@ -1,0 +1,16 @@
+@use 'design-system' as *;
+
+.featureTitleContainer {
+    display: flex;
+    align-items: center;
+    gap: $spacing-size-2;
+}
+
+.enterpriseIcon {
+    --icon-size: #{$spacing-size-4};
+    --color-icon: var(--color-enterprise-icon);
+}
+
+.featureGroup {
+    font-size: var(--text-fs-xl);
+}

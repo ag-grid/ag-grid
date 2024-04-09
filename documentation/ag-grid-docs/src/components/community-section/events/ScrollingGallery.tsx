@@ -1,4 +1,4 @@
-import styles from '@design-system/modules/CommunityScrollingGallery.module.scss';
+import styles from '@legacy-design-system/modules/CommunityScrollingGallery.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { useEffect, useRef, useState } from 'react';
 

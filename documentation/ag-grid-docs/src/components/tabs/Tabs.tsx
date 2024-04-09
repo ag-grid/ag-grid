@@ -1,4 +1,4 @@
-import styles from '@design-system/modules/Tabs.module.scss';
+import styles from '@legacy-design-system/modules/Tabs.module.scss';
 import classnames from 'classnames';
 import type { FunctionComponent, ReactElement } from 'react';
 import { Children, useState } from 'react';

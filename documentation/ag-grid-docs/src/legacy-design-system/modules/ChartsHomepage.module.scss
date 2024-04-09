@@ -1,0 +1,363 @@
+@use 'design-system' as *;
+
+.homepageHero {
+    background-color: var(--color-util-brand-500);
+    color: var(--color-white);
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-bg-primary);
+    }
+}
+
+.heroInner {
+    display: flex;
+    flex-direction: column;
+    gap: 0 $spacing-size-4;
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        gap: 0 $spacing-size-8;
+    }
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        flex-direction: row;
+    }
+}
+
+.heroHeadings {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: $spacing-size-10;
+    padding-bottom: $spacing-size-10;
+
+    @media screen and (min-width: $breakpoint-hero-small) {
+        padding-top: $spacing-size-10;
+    }
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        align-items: flex-start;
+        padding-top: $spacing-size-12;
+    }
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        text-align: unset;
+    }
+
+    #{$selector-darkmode} & {
+    }
+
+    h1,
+    h2 {
+        line-height: var(--text-lh-tight);
+        color: var(--color-white);
+    }
+
+    h1 {
+        font-size: 28px;
+
+        @media screen and (min-width: $breakpoint-hero-small) {
+            font-size: var(--text-fs-2xl);
+        }
+
+        @media screen and (min-width: $breakpoint-hero-large) {
+            font-size: min(3.4vw, 54px);
+            margin-top: -0.225em;
+            margin-bottom: 0.5em;
+        }
+    }
+
+    h2 {
+        max-width: 18em;
+        margin-bottom: 1.4em;
+
+        @media screen and (min-width: $breakpoint-hero-small) {
+            font-size: 22px;
+        }
+
+        @media screen and (min-width: $breakpoint-hero-large) {
+            font-size: min(1.9vw, 30px);
+            max-width: unset;
+        }
+    }
+
+    a {
+        padding-left: $spacing-size-8;
+
+        :global(.icon) {
+            --icon-size: 1.3333em;
+
+            transition: transform 0.33s ease-in-out;
+        }
+
+        &:hover :global(.icon) {
+            transform: translateX(4px);
+        }
+    }
+}
+
+.galleryScroller {
+    --scroller-height: max(416px, 33vh);
+
+    position: relative;
+    height: var(--scroller-height);
+    overflow: hidden;
+    background-image: url('../../../images/homepage-scroll-light.webp');
+    background-size: 100% auto;
+    animation-name: scroll-hero;
+    animation-duration: 220s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        left: 0;
+        height: $spacing-size-12;
+    }
+
+    &::before {
+        top: 0;
+        background-image: linear-gradient(var(--color-util-brand-700), transparent);
+        z-index: 1;
+    }
+
+    &::after {
+        bottom: 0;
+        background-image: linear-gradient(transparent, var(--color-util-brand-700));
+    }
+
+    #{$selector-darkmode} & {
+        background-image: url('../../../images/homepage-scroll-dark.webp');
+
+        &::before {
+            background-image: linear-gradient(var(--color-bg-primary), transparent);
+        }
+
+        &::after {
+            background-image: linear-gradient(transparent, var(--color-bg-primary));
+        }
+    }
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        width: 720px;
+
+        &::before {
+            display: none;
+        }
+    }
+}
+
+@keyframes scroll-hero {
+    from {
+        background-position-y: 0;
+    }
+
+    to {
+        background-position-y: 500%;
+    }
+}
+
+.galleryScrollerExample {
+    background: white;
+
+    #{$selector-darkmode} & {
+        background: var(--color-bg-primary);
+    }
+}
+
+.homepageFrameworks {
+    background-color: var(--color-brand-100);
+    padding-top: $spacing-size-4;
+    padding-bottom: $spacing-size-12;
+
+    @media screen and (min-width: 640px) {
+        padding-top: $spacing-size-12;
+    }
+
+    border-bottom: 1px solid transparent;
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-bg-primary);
+        border-bottom-color: var(--color-border-primary);
+    }
+}
+
+.frameworksInner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-size-2;
+
+    @media screen and (min-width: 640px) {
+        flex-direction: row;
+    }
+
+    @media screen and (min-width: 1020px) {
+        gap: $spacing-size-4;
+    }
+}
+
+.frameworksLabel {
+    @media screen and (min-width: 1020px) {
+        font-size: var(--text-fs-xl);
+    }
+
+    #{$selector-darkmode} & {
+        color: var(--color-fg-primary);
+    }
+}
+
+.homepageGrid {
+    padding-top: $spacing-size-24;
+    padding-bottom: $spacing-size-20;
+}
+
+.gridInner {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    @media screen and (min-width: 920px) {
+        flex-direction: row;
+    }
+}
+
+.gridCopy {
+    width: 100%;
+    margin-bottom: $spacing-size-8;
+    text-align: center;
+
+    @media screen and (min-width: 920px) {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 40%;
+        margin-bottom: 0;
+        padding-right: $spacing-size-8;
+        text-align: left;
+    }
+}
+
+.agGridLogo {
+    width: 100%;
+    margin-bottom: $spacing-size-4;
+    margin-left: $spacing-size-4;
+
+    @media screen and (min-width: 920px) {
+        $logo-scale: 1.3;
+
+        max-width: 320px;
+        margin-bottom: $spacing-size-2;
+        margin-left: -$spacing-size-2;
+
+        :global(.logotype) {
+            width: 154px * $logo-scale;
+            height: 40px * $logo-scale;
+        }
+
+        :global(.logomark) {
+            width: 64px * $logo-scale;
+            height: 48px * $logo-scale;
+        }
+    }
+}
+
+[data-dark-mode='false'] .agGridLogo :global(.logotype) > * {
+    fill: var(--color-logo-text);
+}
+
+.gridExample {
+    width: 100%;
+
+    @media screen and (min-width: 920px) {
+        width: 60%;
+        max-width: 640px;
+    }
+
+    img {
+        width: 100%;
+    }
+
+    .gridExampleDark {
+        display: none;
+    }
+
+    #{$selector-darkmode} & {
+        .gridExampleLight {
+            display: none;
+        }
+
+        .gridExampleDark {
+            display: inline;
+        }
+    }
+}
+
+.homepageBenefits {
+    background-color: var(--color-util-brand-50);
+    padding-top: $spacing-size-16;
+    padding-bottom: $spacing-size-24;
+
+    border-bottom: 1px solid transparent;
+
+    #{$selector-darkmode} & {
+        padding-top: $spacing-size-24;
+        background-color: var(--color-bg-primary);
+        border-bottom-color: var(--color-border-primary);
+    }
+}
+
+.benefitsInner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: $spacing-size-8 $spacing-size-16;
+
+    video {
+        width: 100%;
+        max-width: 640px;
+        margin-left: auto;
+        margin-right: auto;
+        flex-shrink: 0;
+        border-radius: 4px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    div {
+        text-align: center;
+    }
+
+    @media screen and (min-width: 920px) {
+        flex-wrap: nowrap;
+
+        video {
+            width: 40%;
+        }
+
+        div {
+            text-align: left;
+        }
+    }
+
+    .videoDark {
+        display: none;
+    }
+
+    #{$selector-darkmode} & {
+        .videoLight {
+            display: none;
+        }
+
+        .videoDark {
+            display: inline-block;
+            padding: $spacing-size-4;
+            background: #192232;
+            border: 1px solid var(--color-border-secondary);
+        }
+    }
+}

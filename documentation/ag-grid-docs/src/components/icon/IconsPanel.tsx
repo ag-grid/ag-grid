@@ -1,5 +1,5 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import styles from '@design-system/modules/IconsPanel.module.scss';
+import styles from '@legacy-design-system/modules/IconsPanel.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 

@@ -5,7 +5,7 @@ import { PagesNavigationFromLocalStorage } from '@features/pages-navigation/comp
 import { getDocsPages } from '../features/docs/utils/pageData';
 import { Version } from '../components/version/Version';
 import type { Framework, MenuSection } from '@ag-grid-types';
-import styles from '@design-system/modules/WhatsNew.module.scss';
+import styles from '@legacy-design-system/modules/WhatsNew.module.scss';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');

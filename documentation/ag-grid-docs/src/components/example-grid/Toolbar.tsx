@@ -1,5 +1,5 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import styles from '@design-system/modules/Toolbar.module.scss';
+import styles from '@legacy-design-system/modules/Toolbar.module.scss';
 import { trackDemoToolbar, trackOnceDemoToolbar } from '@utils/analytics';
 import React, { useDeferredValue, useEffect, useState } from 'react';
 

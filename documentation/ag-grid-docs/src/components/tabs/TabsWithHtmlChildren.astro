@@ -2,11 +2,11 @@
 import { extractTabsData, getTabId } from './utils';
 import { type TabHeaderLink } from './types.d';
 import { OpenInCTA } from '@components/open-in-cta/OpenInCTA';
-import styles from '@design-system/modules/Tabs.module.scss';
+import styles from '@legacy-design-system/modules/Tabs.module.scss';
 
 interface Props {
-    tabItemIdPrefix?: string,
-    headerLinks?: TabHeaderLink[]
+    tabItemIdPrefix?: string;
+    headerLinks?: TabHeaderLink[];
 }
 
 const html = await Astro.slots.render('default');
@@ -34,13 +34,17 @@ const { tabItemIdPrefix, headerLinks } = Astro.props as Props;
                 }
             </ul>
 
-            {headerLinks && <div class={styles.externalLinks}>{
-                headerLinks.map(({ type, ...props }) => {
-                    if (type === 'codesandbox') {
-                        return <OpenInCTA type="codesandbox" {...props} />
-                    }
-                })
-            }</div>}
+            {
+                headerLinks && (
+                    <div class={styles.externalLinks}>
+                        {headerLinks.map(({ type, ...props }) => {
+                            if (type === 'codesandbox') {
+                                return <OpenInCTA type="codesandbox" {...props} />;
+                            }
+                        })}
+                    </div>
+                )
+            }
         </header>
         <div class="tabs-content" role="tabpanel">
             <Fragment set:html={html} />

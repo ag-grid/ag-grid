@@ -1,7 +1,7 @@
 import type { Framework, MenuItem } from '@ag-grid-types';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { FrameworkSelectorInsideDocs } from '@components/framework-selector-inside-doc/FrameworkSelectorInsideDocs';
-import styles from '@design-system/modules/Header.module.scss';
+import styles from '@legacy-design-system/modules/Header.module.scss';
 import { getFrameworkDisplayText } from '@utils/framework';
 import { useSyncFrameworkStoreState } from '@utils/hooks/useSyncFrameworkStoreState';
 import type { FunctionComponent } from 'react';

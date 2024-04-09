@@ -1,0 +1,17 @@
+@use 'design-system' as *;
+
+.enterpriseIcon {
+    position: relative;
+    margin-right: -$spacing-size-1;
+    color: transparent;
+
+    :global(svg) {
+        --icon-size: 1.15em;
+
+        position: absolute;
+        left: 0;
+        margin: 0;
+        fill: var(--color-enterprise-icon);
+        transform: translate(-0.05em, 0.175em);
+    }
+}

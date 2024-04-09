@@ -1,0 +1,74 @@
+@use 'design-system' as *;
+
+.featuresListOuter {
+    margin-top: $spacing-size-24;
+
+    p {
+        text-align: center;
+        margin-bottom: $spacing-size-8;
+    }
+}
+
+.featuresList {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: $spacing-size-4 0;
+}
+
+.itemGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-size-4 0;
+    width: 100%;
+
+    @media screen and (min-width: 600px) {
+        width: 50%;
+
+        &:nth-child(odd) {
+            align-items: flex-start;
+        }
+
+        &:nth-child(even) {
+            align-items: flex-end;
+        }
+    }
+
+    @media screen and (min-width: 1020px) {
+        width: auto;
+
+        &:nth-child(even) {
+            align-items: flex-start;
+        }
+    }
+}
+
+.featureItem {
+    display: flex;
+    gap: 0 $spacing-size-2;
+    transition: color $transition-default-timing;
+
+    span {
+        #{$selector-darkmode} & {
+            color: var(--link-color);
+        }
+    }
+}
+
+.icon {
+    width: $spacing-size-10;
+    height: $spacing-size-10;
+    fill: var(--color-link);
+    transform: translateY(-5px);
+    transition: fill $transition-default-timing;
+
+    .featureItem:hover & {
+        fill: var(--color-link-hover);
+    }
+
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}
