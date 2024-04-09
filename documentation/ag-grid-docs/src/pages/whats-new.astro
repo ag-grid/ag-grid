@@ -31,7 +31,7 @@ const versionsData: any[] = versionsContent ? versionsContent.data : [];
                 <p class={styles.description}>See what's new in recent AG Grid versions.</p>
                 <div class={styles.versions}>
                     {
-                        versionsData.map((versionInfo, index) => {
+                        versionsData.slice(0, 9).map((versionInfo, index) => {
                             if (versionInfo.highlights) {
                                 return (
                                     <Version

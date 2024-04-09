@@ -51,14 +51,14 @@ const isMajor = (version) => {
                         versionsData.slice(1).map((versionInfo) => {
                             return (
                                 <tr>
-                                    <td class="text-base text-monospace text-semibold">
-                                            {versionInfo.version}
-                                    </td>
+                                    <td class="text-base text-monospace text-semibold">{versionInfo.version}</td>
 
                                     <td>{versionInfo.date}</td>
 
                                     <td>
-                                        <span class={ isMajor(versionInfo.version) ? styles.major : undefined } >{getVersionType(versionInfo.version)}</span>
+                                        <span class={isMajor(versionInfo.version) ? styles.major : undefined}>
+                                            {getVersionType(versionInfo.version)}
+                                        </span>
                                     </td>
 
                                     <td>
@@ -69,7 +69,7 @@ const isMajor = (version) => {
 
                                     <td>
                                         <a href={`https://www.ag-grid.com/archive/${versionInfo.version}/`}>
-                                            View Documentation <Icon name="arrowRight" />
+                                            Documentation <Icon name="arrowRight" />
                                         </a>
                                     </td>
                                 </tr>
