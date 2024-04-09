@@ -1,0 +1,7 @@
+@use 'design-system' as *;
+
+.detailCellRenderer {
+    white-space: normal;
+    padding: $spacing-size-6;
+    font-size: var(--text-fs-base);
+}

@@ -1,4 +1,4 @@
-import styles from '@design-system/modules/ChevronButtonRenderer.module.scss';
+import styles from '@legacy-design-system/modules/ChevronButtonRenderer.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
@@ -34,7 +34,7 @@ const ChevronButtonCellRenderer = forwardRef((props, ref) => {
                         ref={ref}
                         src={TreeClosed}
                         style={{ cursor: 'pointer' }}
-                        onMouseDown={ e => {
+                        onMouseDown={(e) => {
                             // prevents this component from being focused
                             e.preventDefault();
                             // and focuses the cellWrapper instead.

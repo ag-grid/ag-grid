@@ -2,7 +2,7 @@ import type { FooterItem } from '@ag-grid-types';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { SiteLogo } from '@components/SiteLogo';
 import { SITE_BASE_URL } from '@constants';
-import styles from '@design-system/modules/Footer.module.scss';
+import styles from '@legacy-design-system/modules/Footer.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
 

@@ -1,0 +1,49 @@
+@use 'design-system' as *;
+
+.outer {
+    container-type: inline-size;
+}
+
+.matrix {
+    table-layout: fixed;
+    margin-top: $spacing-size-8;
+
+    @container (max-width: #{$breakpoint-table-small}) {
+        div {
+            display: inline;
+        }
+    }
+
+    th {
+        white-space: nowrap;
+    }
+}
+
+.title {
+    font-size: var(--font-size-extra-large);
+}
+
+.level3 {
+    @container (min-width: #{$breakpoint-table-small}) {
+        margin-left: $spacing-size-4;
+    }
+}
+
+.level4 {
+    @container (min-width: #{$breakpoint-table-small}) {
+        margin-left: $spacing-size-10;
+    }
+}
+
+.tick,
+.cross {
+    --icon-size: #{$spacing-size-6};
+}
+
+.tick {
+    --color-icon: #28a745;
+}
+
+.cross {
+    --color-icon: #dc3545;
+}

@@ -1,5 +1,5 @@
-import styles from '@design-system/modules/SideNavigation.module.scss';
 import { useScrollSpy } from '@features/pages-navigation/hooks/useScrollSpy';
+import styles from '@legacy-design-system/modules/SideNavigation.module.scss';
 import { addNonBreakingSpaceBetweenLastWords } from '@utils/addNonBreakingSpaceBetweenLastWords';
 import { navigate, scrollIntoViewById } from '@utils/navigation';
 import type { MarkdownHeading } from 'astro';

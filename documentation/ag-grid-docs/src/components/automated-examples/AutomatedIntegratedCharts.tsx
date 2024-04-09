@@ -4,8 +4,8 @@ import { createAutomatedIntegratedCharts } from '@components/automated-examples/
 import { INTEGRATED_CHARTS_ID } from '@components/automated-examples/lib/constants';
 import LogoMark from '@components/logo/LogoMark';
 import breakpoints from '@design-system/breakpoint.module.scss';
-import automatedExamplesVars from '@design-system/modules/AutomatedExamplesVars.module.scss';
-import styles from '@design-system/modules/AutomatedIntegratedCharts.module.scss';
+import automatedExamplesVars from '@legacy-design-system/modules/AutomatedExamplesVars.module.scss';
+import styles from '@legacy-design-system/modules/AutomatedIntegratedCharts.module.scss';
 import { trackHomepageExampleIntegratedCharts, trackOnceHomepageExampleIntegratedCharts } from '@utils/analytics';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';

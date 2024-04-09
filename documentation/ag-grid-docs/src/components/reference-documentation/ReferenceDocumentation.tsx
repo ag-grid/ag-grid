@@ -1,7 +1,7 @@
 import type { Framework } from '@ag-grid-types';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import Code from '@components/Code';
-import styles from '@design-system/modules/ApiReference.module.scss';
+import styles from '@legacy-design-system/modules/ApiReference.module.scss';
 import { trackApiDocumentation } from '@utils/analytics';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';

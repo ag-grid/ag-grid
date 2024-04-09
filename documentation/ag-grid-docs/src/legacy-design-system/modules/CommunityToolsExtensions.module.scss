@@ -1,0 +1,182 @@
+@use 'design-system' as *;
+
+.container {
+    display: flex;
+    gap: $spacing-size-8;
+
+    @media screen and (max-width: $breakpoint-community-medium) {
+        flex-direction: column;
+    }
+}
+
+// Filter
+
+.filterPanel {
+    border-radius: var(--radius-2xl);
+    padding: $spacing-size-2;
+    padding-top: 0;
+    position: sticky;
+    top: 100px;
+}
+
+.filterButtonContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: $spacing-size-2;
+
+    @media screen and (max-width: $breakpoint-community-medium) {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .filterButton {
+        background: transparent;
+        text-align: start;
+        font-weight: 400;
+        padding-left: 0px;
+        height: 48px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        color: var(---color-util-gray-200);
+        border: none;
+        box-shadow: none;
+        padding: $spacing-size-1 $spacing-size-4;
+        transition:
+            background-color 0.2s,
+            opacity 0.2s;
+        transition: background-color 0.3s ease;
+        border-radius: var(--radius-4xl);
+
+        &:hover {
+            background-color: var(--color-util-brand-100);
+            color: var(--color-text-secondary);
+        }
+
+        .filterIcon {
+            --icon-size: 32px;
+            fill: var(--color-fg-primary);
+            margin-right: $spacing-size-2;
+            padding: 4px;
+            object-fit: contain;
+        }
+
+        img {
+            width: 32px;
+            height: 32px;
+            margin-right: $spacing-size-2;
+            padding: 4px;
+            object-fit: contain;
+
+            &.invert {
+                filter: invert(1);
+            }
+        }
+
+        &[active='true'] {
+            color: var(--color-fg-primary);
+            padding: 0px 0px 0px 0x;
+            background-color: var(--color-util-brand-100);
+            border-radius: var(--radius-4xl);
+        }
+    }
+}
+
+// List
+
+.listContainer {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4;
+}
+
+.linkWrapper {
+    all: unset;
+    cursor: pointer;
+}
+
+.itemContainer {
+    display: flex;
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-xl);
+    background: var(--color-bg-primary);
+    box-shadow: var(--shadow-xs);
+    overflow: hidden;
+    justify-content: space-between;
+
+    @media screen and (max-width: $breakpoint-community-medium) {
+        flex-direction: column;
+    }
+}
+
+.image {
+    display: flex;
+    flex: 0 1 33%;
+
+    img {
+        width: 100%;
+        object-fit: cover;
+
+        @media screen and (max-width: $breakpoint-community-medium) {
+            max-height: 100%;
+        }
+    }
+}
+
+.content {
+    flex: 0 1 67%;
+    padding: $spacing-size-4;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-2;
+    justify-content: space-between;
+}
+
+.toolHeader {
+    display: flex;
+    justify-content: space-between;
+}
+
+.title {
+    font-weight: var(--text-bold);
+    font-size: var(--text-fs-base);
+}
+
+.logoContainer .githubIcon {
+    --icon-size: 28px;
+    fill: var(--color-util-gray-600);
+}
+
+.frameworkLogo {
+    width: 18px;
+    height: 18px;
+}
+
+.description {
+    margin-right: $spacing-size-8;
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-weight: var(--text-regular);
+}
+
+.tagContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-4;
+}
+
+.tag {
+    display: flex;
+    align-items: center;
+    background: transparent;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-2xl);
+    padding: $spacing-size-1 $spacing-size-2;
+    font-size: var(--text-fs-xs);
+    gap: $spacing-size-2;
+}

@@ -1,4 +1,4 @@
-import styles from '@design-system/modules/LearningVideos.module.scss';
+import styles from '@legacy-design-system/modules/LearningVideos.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';

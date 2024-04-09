@@ -1,5 +1,5 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import styles from '@design-system/modules/Alert.module.scss';
+import styles from '@legacy-design-system/modules/Alert.module.scss';
 import classNames from 'classnames';
 import { FunctionComponent, ReactNode } from 'react';
 

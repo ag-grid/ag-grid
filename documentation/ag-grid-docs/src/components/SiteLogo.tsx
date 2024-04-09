@@ -1,6 +1,6 @@
 import LogoType from '@ag-website-shared/images/inline-svgs/ag-grid-logotype.svg?react';
 import { SITE_BASE_URL } from '@constants';
-import gridStyles from '@design-system/modules/SiteHeader.module.scss';
+import gridStyles from '@legacy-design-system/modules/SiteHeader.module.scss';
 import type { FunctionComponent } from 'react';
 import { useState } from 'react';
 

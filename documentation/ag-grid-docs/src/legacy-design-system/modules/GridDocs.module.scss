@@ -1,0 +1,213 @@
+@use 'design-system' as *;
+
+.doc-page-wrapper {
+    display: contents;
+}
+
+%enterprise-icon {
+    display: inline-block;
+    background-image: url(urlWithBaseUrl('/images/enterprise.svg'));
+    text-indent: -10000px;
+    background-position-y: center;
+    background-repeat: no-repeat;
+    content: 'e';
+}
+
+.doc-page {
+    flex: 1 1 0px;
+    min-width: 0px;
+    padding-top: $spacing-size-4;
+    padding-bottom: $spacing-size-16;
+
+    @media screen and (max-width: $breakpoint-docs-nav-large) {
+        border: none;
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        width: var(--layout-width-9-12);
+        padding-top: $spacing-size-10;
+        padding-right: $spacing-size-3;
+    }
+
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        padding-top: 0;
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-large) {
+        width: var(--layout-width-7-12);
+        max-width: var(--layout-width-7-12);
+        padding-right: 0;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        &:hover :global(.docs-header-icon) {
+            opacity: 0.5;
+        }
+    }
+
+    :global(.docs-header-icon) {
+        position: relative;
+        padding-left: 0;
+        margin-left: $spacing-size-2;
+        font-size: inherit;
+        opacity: 0;
+        transition: opacity 0.33s ease-in-out;
+
+        &:hover {
+            opacity: 1 !important;
+        }
+
+        svg {
+            position: relative;
+            width: 0.85em;
+            height: 0.85em;
+            top: -0.1em;
+            visibility: visible;
+            fill: var(--color-link);
+        }
+    }
+
+    ul li > p {
+        margin-bottom: 0.25rem;
+    }
+
+    :global(.alert) {
+        margin-bottom: $spacing-size-4;
+    }
+
+    enterprise-icon::after {
+        @extend %enterprise-icon;
+
+        width: 1rem;
+        margin-left: 0.25rem;
+    }
+
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        padding-top: var(--spacing-size-5);
+    }
+}
+
+.docsPageHeader {
+    position: relative;
+}
+
+.docsPageTitle {
+    margin-bottom: $spacing-size-4;
+
+    span:nth-of-type(2) {
+        letter-spacing: -1.2px;
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        line-height: var(--line-height-ultra-tight);
+    }
+
+    > span {
+        margin-bottom: $spacing-size-2;
+    }
+}
+
+.pageTitleContainer {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        flex-direction: row;
+    }
+}
+
+.pageTitleGroup {
+    display: flex;
+    flex-direction: column;
+    color: var(--color-fg-primary);
+}
+
+.headerFramework {
+    display: none;
+    font-size: var(--text-fs-base);
+    font-weight: var(--text-semibold);
+    color: var(--color-text-brand-primary);
+    padding-bottom: $spacing-size-3;
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        display: block;
+    }
+}
+
+.enterpriseLabel {
+    display: inline-block;
+    position: relative;
+    bottom: 0.05em;
+    font-size: var(--text-fs-xl);
+    font-weight: var(--text-regular);
+    color: var(--color-text-tertiary);
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        position: absolute;
+        top: 2.25em;
+        right: -2px;
+        bottom: auto;
+        padding-left: 0;
+    }
+
+    :global(.icon) {
+        --icon-size: 1.25em;
+        --color-icon: var(--color-enterprise-icon);
+
+        position: relative;
+        top: -0.1em;
+        margin-left: $spacing-size-1;
+    }
+}
+
+// Align two column markdown tables
+.pageSections > div > table {
+    table-layout: fixed;
+}
+
+// Hack to target "intro" section of docs page
+.pageSections > div > p:first-child {
+    font-size: var(--text-fs-xl);
+    margin-bottom: $spacing-size-8;
+    color: color-mix(in srgb, var(--color-fg-secondary), var(--color-bg-primary) 20%);
+    line-height: var(--text-lh-sm);
+
+    code {
+        font-size: 0.8em;
+    }
+}
+
+// Hack to target markdown images and not images within components
+.pageSections > div > div *:not([class]) img {
+    max-width: 100%;
+}
+
+.pageSections > div {
+    > h2 {
+        margin-top: $spacing-size-12;
+    }
+
+    > h3,
+    > h4 {
+        margin-top: $spacing-size-10;
+    }
+
+    p,
+    > ul,
+    > ol,
+    > table,
+    > pre {
+        font-size: var(--text-fs-base);
+    }
+    p {
+        line-height: var(--text-lh-xs);
+    }
+}

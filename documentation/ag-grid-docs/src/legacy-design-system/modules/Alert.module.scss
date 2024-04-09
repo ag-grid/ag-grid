@@ -1,0 +1,60 @@
+@use 'design-system' as *;
+
+.alert {
+    --icon-size: 1.5rem;
+
+    display: flex;
+    gap: $spacing-size-2;
+    align-items: center;
+    padding: $spacing-size-2 $spacing-size-2 $spacing-size-2 $spacing-size-3;
+    background-color: var(--color-util-brand-50);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-util-brand-100);
+    color: var(--color-util-brand-700);
+    margin-top: $spacing-size-4;
+    margin-bottom: $spacing-size-4;
+
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-util-brand-50), var(--color-bg-primary) 60%);
+    }
+
+    :global(.icon) {
+        align-self: flex-start;
+        position: relative;
+        flex-shrink: 0;
+        fill: var(--color-util-brand-700);
+    }
+
+    p :last-child {
+        margin-bottom: 0;
+    }
+
+    kbd {
+        margin: 0;
+        padding-top: 0.075em;
+        padding-bottom: 0.25em;
+    }
+}
+
+.alert.idea {
+    :global(.icon) {
+        fill: orange;
+    }
+}
+
+.alert.warning {
+    background-color: var(--color-util-warning-50);
+    border: 1px solid var(--color-util-warning-100);
+    color: var(--color-util-warning-700);
+    display: flex;
+    border: 1px solid rgba(209, 142, 0, 0.3);
+
+    :global(.icon) {
+        fill: var(--color-util-warning-700);
+    }
+}
+
+.alert a {
+    font-weight: var(--text-semibold);
+    text-decoration: underline;
+}

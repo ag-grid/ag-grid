@@ -5,8 +5,8 @@ import { createAutomatedRowGrouping } from '@components/automated-examples/examp
 import { ROW_GROUPING_ID } from '@components/automated-examples/lib/constants';
 import LogoMark from '@components/logo/LogoMark';
 import breakpoints from '@design-system/breakpoint.module.scss';
-import automatedExamplesVars from '@design-system/modules/AutomatedExamplesVars.module.scss';
-import styles from '@design-system/modules/AutomatedRowGrouping.module.scss';
+import automatedExamplesVars from '@legacy-design-system/modules/AutomatedExamplesVars.module.scss';
+import styles from '@legacy-design-system/modules/AutomatedRowGrouping.module.scss';
 import { trackHomepageExampleRowGrouping, trackOnceHomepageExampleRowGrouping } from '@utils/analytics';
 import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';

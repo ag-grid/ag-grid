@@ -1,0 +1,70 @@
+@use 'design-system' as *;
+
+.container {
+    --total-header-height: calc(var(--header-nav-height) + 54px);
+
+    width: 100%;
+}
+
+.objectViewOuter {
+    width: calc(100% + var(--layout-horizontal-margins) * 2);
+    margin-left: calc(var(--layout-horizontal-margins) * -1);
+
+    @media screen and (max-width: $breakpoint-options-medium) {
+        margin-left: var(--layout--horizontal-margins);
+        padding-top: $spacing-size-5;
+    }
+
+    @media screen and (min-width: $breakpoint-options-medium) {
+        width: calc(var(--layout-width-4-12) + var(--layout-horizontal-margins));
+        box-shadow: -1px 0 0 0 var(--color-border-primary);
+        border-right: 1px solid var(--color-border-primary);
+    }
+
+    @media screen and (min-width: $breakpoint-options-large) {
+        width: calc(var(--layout-width-3-12) + var(--layout-horizontal-margins));
+    }
+}
+
+.referenceOuter {
+    width: calc(100% + var(--layout-gap) * 2);
+    margin-left: calc(var(--layout-gap) * -1);
+    margin-bottom: 105px;
+    padding-left: var(--horizontal-margin);
+    padding-right: var(--horizontal-margin);
+
+    @media screen and (max-width: $breakpoint-options-medium) {
+        margin-left: 0;
+    }
+
+    @media screen and (min-width: $breakpoint-options-medium) {
+        width: var(--layout-width-8-12);
+        margin-left: 0;
+        padding: 0;
+    }
+
+    @media screen and (min-width: $breakpoint-options-large) {
+        width: var(--layout-width-9-12);
+    }
+
+    header {
+        --parent-properties-color: var(--color-text-primary);
+        --parent-properties-font-weight: var(--text-bold);
+
+        position: sticky;
+        top: var(--total-header-height);
+        z-index: 1;
+        padding-top: $spacing-size-8;
+        padding-bottom: $spacing-size-8;
+        background-color: var(--color-bg-primary);
+        border-bottom: 1px solid var(--color-border-primary);
+    }
+
+    tr:first-child {
+        border-top: none;
+    }
+}
+
+.unionDiscriminator {
+    color: var(--color-fg-code);
+}

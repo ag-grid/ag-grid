@@ -2,7 +2,7 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Alert } from '@components/alert/Alert';
 import DetailCellRenderer from '@components/grid/DetailCellRendererComponent';
 import Grid from '@components/grid/Grid';
-import styles from '@design-system/modules/pipelineChangelog.module.scss';
+import styles from '@legacy-design-system/modules/pipelineChangelog.module.scss';
 import { IssueColDef, IssueTypeColDef } from '@utils/grid/issueColDefs';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';

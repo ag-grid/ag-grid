@@ -1,0 +1,21 @@
+@use 'design-system' as *;
+
+html {
+    overflow-x: hidden;
+}
+
+main {
+    display: contents;
+}
+
+.mainContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+    padding: 0;
+
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        overflow-x: hidden;
+    }
+}
