@@ -63,11 +63,35 @@ h5#{$selector-exclude-grid},
 h6#{$selector-exclude-grid},
 b#{$selector-exclude-grid},
 strong#{$selector-exclude-grid},
-.bold-text {
+.text-regular {
+    font-weight: var(--text-regular);
+}
+
+h1#{$selector-exclude-grid},
+h2#{$selector-exclude-grid},
+h3#{$selector-exclude-grid},
+h4#{$selector-exclude-grid},
+h5#{$selector-exclude-grid},
+h6#{$selector-exclude-grid},
+b#{$selector-exclude-grid},
+strong#{$selector-exclude-grid},
+.text-semibold {
     font-weight: var(--text-semibold);
 }
 
-.monospace-text {
+h1#{$selector-exclude-grid},
+h2#{$selector-exclude-grid},
+h3#{$selector-exclude-grid},
+h4#{$selector-exclude-grid},
+h5#{$selector-exclude-grid},
+h6#{$selector-exclude-grid},
+b#{$selector-exclude-grid},
+strong#{$selector-exclude-grid},
+.text-bold {
+    font-weight: var(--text-bold);
+}
+
+.text-monospace {
     font-family: var(--text-monospace-font-family);
 }
 
