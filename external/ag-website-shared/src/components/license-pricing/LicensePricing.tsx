@@ -2,7 +2,6 @@ import ChartsActive from '@ag-website-shared/images/inline-svgs/pricing/charts-a
 import ChartsInactive from '@ag-website-shared/images/inline-svgs/pricing/charts-inactive.svg?react';
 import GridActive from '@ag-website-shared/images/inline-svgs/pricing/grid-active.svg?react';
 import GridInactive from '@ag-website-shared/images/inline-svgs/pricing/grid-inactive.svg?react';
-import styles from '@design-system/modules/license-pricing.module.scss';
 // import { trackOnceInfoEmail } from '@utils/analytics';
 import classnames from 'classnames';
 import { type FunctionComponent, useEffect, useRef, useState } from 'react';
@@ -13,6 +12,7 @@ import { InfoEmailLink } from './InfoEmailLink';
 import { Licenses } from './Licenses';
 import SocialProof from './SocialProof';
 import { ComparisonTable } from './comparison-table/ComparisonTable';
+import styles from './license-pricing.module.scss';
 
 export type LicenseTab = 'grid' | 'charts';
 
