@@ -255,16 +255,6 @@ export class GridApi<TData = any> {
         return this.alignedGridsService;
     }
 
-    /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-    public __getContext(): Context {
-        return this.context;
-    }
-
-    /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-    public __getModel(): IRowModel {
-        return this.rowModel;
-    }
-
     /** Returns the `gridId` for the current grid as specified via the gridOptions property `gridId` or the auto assigned grid id if none was provided. */
     public getGridId(): string {
         return this.context.getGridId();
