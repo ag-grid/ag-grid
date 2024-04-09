@@ -1,4 +1,3 @@
-import styles from '@design-system/modules/SearchModal.module.scss';
 import algoliasearch from 'algoliasearch/lite';
 import React, { useEffect, useMemo, useState } from 'react';
 import { InstantSearch, useHits, useInstantSearch, useSearchBox } from 'react-instantsearch';
@@ -6,6 +5,7 @@ import { InstantSearch, useHits, useInstantSearch, useSearchBox } from 'react-in
 import SearchBox from './SearchBox';
 import Controls from './SearchControls';
 import Hits from './SearchHits';
+import styles from './SearchModal.module.scss';
 
 const envPrefix = import.meta.env.PUBLIC_ALGOLIA_INDEX_PREFIX;
 const algoliaClient = algoliasearch(import.meta.env.PUBLIC_ALGOLIA_APP_ID, import.meta.env.PUBLIC_ALGOLIA_SEARCH_KEY);

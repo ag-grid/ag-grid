@@ -1,6 +1,7 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import styles from '@design-system/modules/SearchControls.module.scss';
 import React from 'react';
+
+import styles from './SearchControls.module.scss';
 
 export default () => (
     <div className={styles.controlsOuter}>

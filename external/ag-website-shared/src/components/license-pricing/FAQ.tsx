@@ -1,9 +1,9 @@
 import { Icon } from '@ag-website-shared/components/icon';
-import styles from '@design-system/modules/FAQ.module.scss';
 import classNames from 'classnames';
 import React, { useState } from 'react';
 
 import { Collapsible } from '../Collapsible';
+import styles from './FAQ.module.scss';
 
 // Single FAQ item component
 const FAQItem = ({ question, answer }) => {
