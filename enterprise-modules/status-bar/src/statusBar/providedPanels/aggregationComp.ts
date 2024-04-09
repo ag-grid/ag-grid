@@ -12,9 +12,10 @@ import {
     ValueService,
     _, CellPositionUtils,
     RowPositionUtils,
-    RowRenderer, Optional,
+    Optional,
     AggregationStatusPanelAggFunc,
-    AggregationStatusPanelParams
+    AggregationStatusPanelParams,
+    IRowModel
 } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
@@ -32,8 +33,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     @Optional('rangeService') private rangeService?: IRangeService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
 
@@ -74,7 +74,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
     private isValidRowModel() {
         // this component is only really useful with client or server side rowmodels
-        const rowModelType = this.gridApi.__getModel().getType();
+        const rowModelType = this.rowModel.getType();
         return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     }
 
@@ -164,7 +164,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         }
                         cellsSoFar[cellId] = true;
 
-                        const rowNode = this.rowRenderer.getRowNode(currentRow);
+                        const rowNode = this.rowPositionUtils.getRowNode(currentRow);
                         if (_.missing(rowNode)) {
                             return;
                         }
