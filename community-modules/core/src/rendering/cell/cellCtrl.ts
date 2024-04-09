@@ -362,7 +362,6 @@ export class CellCtrl extends BeanStub {
         let compDetails: UserCompDetails | undefined;
 
         if (this.rowNode.stub) {
-            console.log('wow')
             const params = this.createCellRendererParams();
             compDetails = this.beans.userComponentFactory.getLoadingCellRendererDetails(this.column.getColDef(), params);
         } else if (this.isCellRenderer()) {
