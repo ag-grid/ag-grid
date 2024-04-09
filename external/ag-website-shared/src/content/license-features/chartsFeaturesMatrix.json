@@ -1,0 +1,410 @@
+[
+    {
+        "group": {
+            "name": "Grid"
+        },
+        "items": [
+            {
+                "label": {
+                    "name": "AG Grid Enterprise ",
+                    "link": "https://www.ag-grid.com/react-data-grid/packages/"
+                },
+                "community": false,
+                "enterprise": false,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Integrated Charts",
+                    "link": "https://www.ag-grid.com/react-data-grid/integrated-charts/"
+                },
+                "community": false,
+                "enterprise": false,
+                "chartsGrid": true
+            }
+        ]
+    },
+    {
+        "group": {
+            "name": "Series"
+        },
+        "items": [
+            {
+                "label": {
+                    "name": "Bar",
+                    "icon": "chartsBar",
+                    "link": "https://charts.ag-grid.com/react/bar-series/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Line",
+                    "icon": "chartsLine",
+                    "link": "https://charts.ag-grid.com/react/line-series/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Area",
+                    "icon": "chartsArea",
+                    "link": "https://charts.ag-grid.com/react/area-series/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Scatter",
+                    "icon": "chartsScatter",
+                    "link": "https://charts.ag-grid.com/react/scatter-series/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Bubble",
+                    "icon": "chartsBubble",
+                    "link": "https://charts.ag-grid.com/react/bubble-series/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Pie",
+                    "icon": "chartsPie",
+                    "link": "https://charts.ag-grid.com/react/pie-series/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Doughnut",
+                    "icon": "chartsDonut",
+                    "link": "https://charts.ag-grid.com/react/doughnut-series/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Combination",
+                    "icon": "chartsCombination",
+                    "link": "https://charts.ag-grid.com/react/combination-series/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Box Plot",
+                    "icon": "chartsBoxPlot",
+                    "link": "https://charts.ag-grid.com/react/box-plot-series/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Bullet",
+                    "icon": "chartsBullet",
+                    "link": "https://charts.ag-grid.com/react/bullet-series/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Heatmap",
+                    "icon": "chartsHeatmap",
+                    "link": "https://charts.ag-grid.com/react/heatmap-series/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Histogram",
+                    "icon": "chartsHistogram",
+                    "link": "https://charts.ag-grid.com/react/histogram-series/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Nightingale",
+                    "icon": "chartsNightingale",
+                    "link": "https://charts.ag-grid.com/react/nightingale-series/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Radar Area",
+                    "icon": "chartsRadar",
+                    "link": "https://charts.ag-grid.com/react/radar-area-series/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Radar Line",
+                    "icon": "chartsRadar",
+                    "link": "https://charts.ag-grid.com/react/radar-line-series/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Radial Bar",
+                    "icon": "chartsRadialBar",
+                    "link": "https://charts.ag-grid.com/react/radial-bar-series/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Radial Column",
+                    "icon": "chartsRadialColumn",
+                    "link": "https://charts.ag-grid.com/react/radial-column-series/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Range Area",
+                    "icon": "chartsRangeArea",
+                    "link": "https://charts.ag-grid.com/react/range-area-series/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Range Bar",
+                    "icon": "chartsRangeBar",
+                    "link": "https://charts.ag-grid.com/react/range-bar-series/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Sunburst",
+                    "icon": "chartsSunburst",
+                    "link": "https://charts.ag-grid.com/react/sunburst-series/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Treemap",
+                    "icon": "chartsTreemap",
+                    "link": "https://charts.ag-grid.com/react/treemap-series/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Waterfall",
+                    "icon": "chartsWaterfall",
+                    "link": "https://charts.ag-grid.com/react/waterfall-series/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            }
+        ]
+    },
+    {
+        "group": {
+            "name": "Maps"
+        },
+        "items": [
+            {
+                "label": {
+                    "name": "Geographic Areas",
+                    "link": "https://charts.ag-grid.com/react/map-shapes/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Routes and Connections",
+                    "link": "https://charts.ag-grid.com/react/map-lines/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Markers and Points of Interest",
+                    "link": "https://charts.ag-grid.com/react/map-markers/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            }
+        ]
+    },
+    {
+        "group": {
+            "name": "Interactivity"
+        },
+        "items": [
+            {
+                "label": {
+                    "name": "Series Highlighting",
+                    "link": "https://charts.ag-grid.com/react/series-highlighting/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Tooltips",
+                    "link": "https://charts.ag-grid.com/react/tooltips/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Animations",
+                    "link": "https://charts.ag-grid.com/react/animation/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Context Menu",
+                    "link": "https://charts.ag-grid.com/react/context-menu/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Crosshairs",
+                    "link": "https://charts.ag-grid.com/react/axes-crosshairs/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Navigator",
+                    "link": "https://charts.ag-grid.com/react/navigator/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Synchronization",
+                    "link": "https://charts.ag-grid.com/react/sync/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Zoom",
+                    "link": "https://charts.ag-grid.com/react/zoom/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            }
+        ]
+    },
+    {
+        "group": {
+            "name": "Support"
+        },
+        "items": [
+            {
+                "label": {
+                    "name": "Enterprise Support",
+                    "link": "https://ag-grid.com/react-data-grid/licensing/"
+                },
+                "community": {
+                    "value": false,
+                    "detail": "Community support via Github"
+                },
+                "enterprise": {
+                    "value": true,
+                    "detail": "Enterprise support via Zendesk"
+                },
+                "chartsGrid": {
+                    "value": true,
+                    "detail": "Enterprise support via Zendesk"
+                }
+            },
+            {
+                "label": {
+                    "name": "Perpetual License",
+                    "link": "https://ag-grid.com/react-data-grid/licensing/"
+                },
+                "community": {
+                    "value": false,
+                    "detail": "<a href='https://www.ag-grid.com/eula/AG-Grid-Community-License.html'>MIT license</a>"
+                },
+                "enterprise": {
+                    "value": true,
+                    "detail": "Including 1 year of updates (see <a href='https://www.ag-grid.com/eula/AG-Grid-Enterprise-License-Latest.html'>EULA</a>)"
+                },
+                "chartsGrid": {
+                    "value": true,
+                    "detail": "Including 1 year of updates (see <a href='https://www.ag-grid.com/eula/AG-Grid-Enterprise-License-Latest.html'>EULA</a>)"
+                }
+            }
+        ]
+    }
+]
