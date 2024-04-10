@@ -102,7 +102,7 @@ export abstract class DragDataPanel extends Component {
     } {
         let selectedValue: ColState;
         const options = columns.map(value => {
-            const text = value.displayName ?? '';
+            const text = _.escapeString(value.displayName)!;
             if (value.selected) {
                 selectedValue = value;
             }

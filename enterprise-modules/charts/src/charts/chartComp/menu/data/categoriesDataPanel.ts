@@ -83,7 +83,7 @@ export class CategoriesDataPanel extends DragDataPanel {
     }
 
     private createCategoriesGroup(columns: ColState[]): void {
-        this.createGroup(columns, col => col.displayName ?? '', 'categoryAdd', 'categorySelect');
+        this.createGroup(columns, (col) => _.escapeString(col?.displayName)!, 'categoryAdd', 'categorySelect');
     }
 
     private createLegacyCategoriesGroup(columns: ColState[]): void {
@@ -95,7 +95,7 @@ export class CategoriesDataPanel extends DragDataPanel {
 
         columns.forEach(col => {
             const params: AgCheckboxParams = {
-                label: col.displayName ?? '',
+                label: _.escapeString(col.displayName)!,
                 value: col.selected,
                 inputName
             };

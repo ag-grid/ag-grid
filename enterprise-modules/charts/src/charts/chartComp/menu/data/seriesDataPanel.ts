@@ -133,7 +133,7 @@ export class SeriesDataPanel extends DragDataPanel {
 
     private generateGetSeriesLabel(valueCols: ColState[]): (col: ColState) => string {
         if (!this.chartController.isActiveXYChart()) {
-            return col => col.displayName ?? '';
+            return col => _.escapeString(col.displayName)!;
         }
 
         const selectedCols = valueCols.filter(col => col.selected);
@@ -147,7 +147,7 @@ export class SeriesDataPanel extends DragDataPanel {
         indexToAxisLabel.set(2, 'size');
 
         return (col: ColState): string => {
-            const escapedLabel = col.displayName ?? '';
+            const escapedLabel = _.escapeString(col.displayName)!;
 
             if (!col.selected) {
                 return escapedLabel;
