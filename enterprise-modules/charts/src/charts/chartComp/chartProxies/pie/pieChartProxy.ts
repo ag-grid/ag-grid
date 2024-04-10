@@ -16,12 +16,9 @@ export class PieChartProxy extends ChartProxy {
     }
 
     public update(params: UpdateParams): void {
-        const { data } = params;
-        const [category] = params.categories;
-
         const options: AgPolarChartOptions = {
             ...this.getCommonChartOptions(params.updatedOverrides),
-            data: this.crossFiltering ? this.getCrossFilterData(params) : this.transformData(data, category.id),
+            data: this.crossFiltering ? this.getCrossFilterData(params) : params.data,
             series: this.getSeries(params),
         }
 

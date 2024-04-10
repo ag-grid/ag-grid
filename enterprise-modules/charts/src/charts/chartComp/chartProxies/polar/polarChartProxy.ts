@@ -59,12 +59,12 @@ export class PolarChartProxy extends ChartProxy {
 
     private getData(params: UpdateParams, axes: AgPolarAxisOptions[]): any[] {
         const isCategoryAxis = axes.some((axis) => axis.type === 'angle-category' || axis.type === 'radius-category');
-        return this.getDataTransformedData(params, isCategoryAxis);
-    }
-
-    private getDataTransformedData(params: UpdateParams, isCategoryAxis: boolean) {
-        const [category] = params.categories;
-        return this.transformData(params.data, category.id, isCategoryAxis);
+        if (isCategoryAxis) {
+            const [category] = params.categories;
+            return this.transformCategoryData(params.data, category.id);
+        } else {
+            return params.data;
+        }
     }
 
     public crossFilteringReset(): void {
