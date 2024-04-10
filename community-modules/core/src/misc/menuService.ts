@@ -11,6 +11,8 @@ import { IColumnChooserFactory, ShowColumnChooserParams } from "../interfaces/iC
 import { FilterManager } from "../filter/filterManager";
 import { isIOSUserAgent } from "../utils/browser";
 import { warnOnce } from "../utils/function";
+import { RowRenderer } from "../rendering/rowRenderer";
+import { RowCtrl } from "../rendering/row/rowCtrl";
 
 interface BaseShowColumnMenuParams {
     column?: Column,
@@ -39,11 +41,13 @@ export type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams |
 
 export type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) & BaseShowFilterMenuParams;
 
-interface BaseShowContextMenuParams { 
-    rowNode?: RowNode | null,
-    column?: Column | null,
-    value: any,
-    anchorToElement: HTMLElement
+export interface ShowContextMenuParams {
+    /** The `RowNode` associated with the Context Menu */
+    rowNode?: RowNode | null;
+    /** The `Column` associated with the Context Menu */
+    column?: Column | null;
+    /** The value that will be passed to the Context Menu (useful with `getContextMenuItems`). If none is passed, and `RowNode` and `Column` are provided, this will be the respective Cell value */
+    value: any;
 }
 
 interface MouseShowContextMenuParams {
@@ -54,7 +58,13 @@ interface TouchShowContextMenuParam {
     touchEvent: TouchEvent;
 }
 
-export type ShowContextMenuParams = (MouseShowContextMenuParams | TouchShowContextMenuParam) & BaseShowContextMenuParams;
+export type EventShowContextMenuParams = (MouseShowContextMenuParams | TouchShowContextMenuParam) & ShowContextMenuParams;
+export interface IContextMenuParams extends ShowContextMenuParams {
+    /** The x position for the Context Menu, if no value is given and `RowNode` and `Column` are provided, this will default to be middle of the cell, otherwise it will be `0`. */
+    x?: number;
+    /** The y position for the Context Menu, if no value is given and `RowNode` and `Column` are provided, this will default to be middle of the cell, otherwise it will be `0`. */
+    y?: number;
+}
 
 @Bean('menuService')
 export class MenuService extends BeanStub {
@@ -62,6 +72,7 @@ export class MenuService extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     @Optional('columnChooserFactory') private columnChooserFactory?: IColumnChooserFactory;
     @Optional('contextMenuFactory') private readonly contextMenuFactory?: IContextMenuFactory;
@@ -89,10 +100,36 @@ export class MenuService extends BeanStub {
         this.activeMenuFactory.showMenuAfterContextMenuEvent(column, mouseEvent, touchEvent);
     }
 
+    public getContextMenuPosition(rowNode?: RowNode | null, column?: Column | null): { x: number, y: number } {
+        const rowCtrl = this.getRowCtrl(rowNode);
+        const eGui = this.getCellGui(rowCtrl, column);
+
+        if (!eGui) {
+            return { x: 0, y: 0 }
+        }
+
+        const rect = eGui.getBoundingClientRect();
+
+        return {
+            x: rect.x + rect.width / 2,
+            y: rect.y + rect.height / 2
+        }
+    }
+
     public showContextMenu(
-        params: ShowContextMenuParams
+        params: EventShowContextMenuParams & { anchorToElement?: HTMLElement }
     ): void {
-        const { column, anchorToElement, rowNode, value } = params;
+        const { column, rowNode } = params;
+        let { anchorToElement, value } = params;
+
+        if (rowNode && column && value == null) {
+            value = rowNode.getValueFromValueService(column);
+        }
+
+        if (anchorToElement == null) {
+            anchorToElement = this.getContextMenuAnchorElement(rowNode, column)
+        }
+
         this.contextMenuFactory?.onContextMenu(
             (params as MouseShowContextMenuParams).mouseEvent ?? null,
             (params as TouchShowContextMenuParam).touchEvent ?? null,
@@ -213,5 +250,45 @@ export class MenuService extends BeanStub {
                 menuFactory.showMenuAfterButtonClick(column, headerCellCtrl.getAnchorElementForMenu(filtersOnly), containerType, true);
             });
         }
+    }
+
+    private getRowCtrl(rowNode?: RowNode | null): RowCtrl | undefined {
+        const { rowIndex, rowPinned } = rowNode || {};
+
+        if (rowIndex == null) {
+            return;
+        }
+
+        return this.rowRenderer.getRowByPosition({ rowIndex, rowPinned }) || undefined;
+
+    }
+
+    private getCellGui(rowCtrl?: RowCtrl, column?: Column | null): HTMLElement | undefined {
+        if (!rowCtrl || !column) { return; }
+
+        const cellCtrl = rowCtrl.getCellCtrl(column);
+
+        return cellCtrl?.getGui() || undefined;
+    }
+
+    private getContextMenuAnchorElement(rowNode?: RowNode | null, column?: Column | null): HTMLElement {
+        const gridBodyEl = this.ctrlsService.getGridBodyCtrl().getGridBodyElement();
+        const rowCtrl = this.getRowCtrl(rowNode);
+
+        if (!rowCtrl) {
+            return gridBodyEl;
+        }
+
+        const cellGui = this.getCellGui(rowCtrl, column);
+
+        if (cellGui) {
+            return cellGui;
+        }
+
+        if (rowCtrl.isFullWidth()) {
+            return rowCtrl.getFullWidthElement() as HTMLElement;
+        }
+
+        return gridBodyEl;
     }
 }

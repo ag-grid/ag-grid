@@ -20,7 +20,7 @@ import { IRowModel } from "../interfaces/iRowModel";
 import { TouchListener, LongTapEvent } from "../widgets/touchListener";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { FilterManager } from "../filter/filterManager";
-import { MenuService, ShowContextMenuParams } from "../misc/menuService";
+import { MenuService, EventShowContextMenuParams } from "../misc/menuService";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -328,7 +328,7 @@ export class GridBodyCtrl extends BeanStub {
 
         if (target === this.eBodyViewport || target === this.ctrlsService.getCenterRowContainerCtrl().getViewportElement()) {
             // show it
-            this.menuService.showContextMenu({ mouseEvent, touchEvent, value: null, anchorToElement: this.eGridBody } as ShowContextMenuParams);
+            this.menuService.showContextMenu({ mouseEvent, touchEvent, value: null, anchorToElement: this.eGridBody } as EventShowContextMenuParams);
         }
     }
 

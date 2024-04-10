@@ -184,7 +184,7 @@ export { IImmutableService } from "./interfaces/iImmutableService";
 export { AnimationFrameService } from "./misc/animationFrameService";
 export { AlignedGrid } from "./interfaces/iAlignedGrid";
 export { ExpansionService } from "./misc/expansionService";
-export { MenuService } from "./misc/menuService";
+export { MenuService, IContextMenuParams } from "./misc/menuService";
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from "./interfaces/iCellEditor";

@@ -137,9 +137,7 @@ import { ApiEventService } from "./misc/apiEventService";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { ManagedGridOptionKey, ManagedGridOptions } from "./propertyKeys";
 import { WithoutGridCommon } from "./interfaces/iCommon";
-import { MenuService } from "./misc/menuService";
-import { CellCtrl } from "./rendering/cell/cellCtrl";
-import { RowCtrl } from "./rendering/row/rowCtrl";
+import { MenuService, IContextMenuParams } from "./misc/menuService";
 
 export interface DetailGridInfo {
     /**
@@ -162,15 +160,6 @@ export interface StartEditingCellParams {
     rowPinned?: RowPinnedType;
     /** The key to pass to the cell editor */
     key?: string;
-}
-
-export interface ContextMenuShowParams extends CellPosition {
-    /** The `x` coordinates to display the Context Menu, if none is passed it will take the coordinates from the `cellPosition`. If no `cellPosition` is passed it will be rendered at `0`. */
-    x?: number;
-    /** The `y` coordinates to display the Context Menu, if none is passed it will take the coordinates from the `cellPosition`. If no `cellPosition` is passed it will be rendered at `0`. */
-    y?: number;
-    /** A custom value to be associated with the ContextMenu when using `Custom Context Menus`  If left `undefined` and a `cellPosition` is passed, it will then use the value from the cell at that position. */
-    value?: any;
 }
 
 export function unwrapUserComp<T>(comp: T): T {
@@ -1333,62 +1322,24 @@ export class GridApi<TData = any> {
 
     /**
      * Displays the AG Grid's context menu
-     * @param params 
      */
-    public showContextMenu(params?: ContextMenuShowParams) {
-        const { rowIndex, rowPinned, column } = params || {};
+    public showContextMenu(params?: IContextMenuParams) {
+        const { rowNode, column, value, x, y } = params || {};
+        let { x: clientX, y: clientY } = this.menuService.getContextMenuPosition(rowNode, column);
 
-        let cellCtrl: CellCtrl | null = null;
-        let rowCtrl: RowCtrl | null = null;
-        let rowNode: RowNode | null = null;
-        let anchorToElement: HTMLElement;
-        let value: any;
-        let x = 0;
-        let y = 0;
-
-        if (rowIndex != null) {
-            rowCtrl = this.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
-            rowNode = rowCtrl?.getRowNode() || null;
-
-            if (column && rowNode) {
-                cellCtrl = rowCtrl?.getCellCtrl(column) || null;
-            }
-            
-            if (cellCtrl && value === undefined) {
-                value = cellCtrl.getValue();
-            }
+        if (x != null) {
+            clientX = x;
         }
 
-        if (cellCtrl) {
-            const eGui = cellCtrl.getGui();
-            const rect = eGui.getBoundingClientRect();
-            anchorToElement = eGui;
-            x = rect.x + rect.width / 2;
-            y = rect.y + rect.height / 2;
-        } else if (rowCtrl && rowCtrl.isFullWidth()) {
-            anchorToElement = rowCtrl.getFullWidthElement() as HTMLElement;
-        } else {
-            const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
-            anchorToElement = gridBodyCon.getGridBodyElement();
+        if (y != null) {
+            clientY = y;
         }
 
-        if (params) {
-            x = params.x ?? x;
-            y = params.y ?? y;
-            value = params.value !== undefined ? params.value : value;
-        }
-
-        const mouseEvent = new MouseEvent('mousedown', {
-            clientX: x,
-            clientY: y
-        });
-        
         this.menuService.showContextMenu({
-            mouseEvent,
+            mouseEvent: new MouseEvent('mousedown', { clientX, clientY }),
             rowNode,
             column,
-            value,
-            anchorToElement
+            value
         });
     }
 
