@@ -42,6 +42,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
     }
 
     private getDataTransformedData(params: UpdateParams, axes: AgCartesianAxisOptions[]) {
+        // assumed that the first axis is always the "category" axis
         const xAxisType = axes[0].type;
         const { categories, data } = params;
         const [category] = categories;
@@ -78,7 +79,6 @@ export abstract class CartesianChartProxy extends ChartProxy {
     }
 
     private transformTimeData(data: any[], categoryKey: string): any[] {
-        // assumed that the first axis is always the "category" axis
         const firstValue = data[0]?.[categoryKey];
         if (firstValue instanceof Date) { return data; }
 
