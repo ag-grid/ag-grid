@@ -2,7 +2,13 @@
 title: "AG Grid Modules"
 ---
 
-AG Grid modules allow you to cherry pick grid features resulting in a smaller application bundle size overall.
+Reduce your application bundle size by cherry picking grid features using AG Grid modules.
+
+## Packages vs Modules
+
+Importing AG Grid with packages ensures every grid feature is implicitly available but this can bloat your application bundle size with features that aren't required. Packages default to **CommonJS ES5** format which makes integration into other build & testing tools (specifically Jest) easier.
+
+If you want to minimise your application bundle size, use modules to include only the functionality you need. You will need to [Register Modules](./modules/#registering-ag-grid-modules) in your application. Modules default to **ES6 ES Modules** but not all tooling supports ESM out of the box yet (specifically testing tools such as Jest). These tools can be accommodated with extra configuration (see [Testing](./testing)).
 
 {% if isFramework("vue") %}
 {% note %}
