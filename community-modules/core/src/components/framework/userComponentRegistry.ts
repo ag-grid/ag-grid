@@ -105,7 +105,7 @@ export class UserComponentRegistry extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        const comps = this.gos.get('components');
+        const comps = this.beans.gos.get('components');
         if (comps != null) {
             iterateObject(comps, (key, component) => this.registerJsComponent(key, component));
         }
@@ -132,7 +132,7 @@ export class UserComponentRegistry extends BeanStub {
         // FrameworkOverrides.frameworkComponent() is used in two locations:
         // 1) for Vue, user provided components get registered via a framework specific way.
         // 2) for React, it's how the React UI provides alternative default components (eg GroupCellRenderer and DetailCellRenderer)
-        const registeredViaFrameworkComp = this.getFrameworkOverrides().frameworkComponent(name, this.gos.get('components'));
+        const registeredViaFrameworkComp = this.getFrameworkOverrides().frameworkComponent(name, this.beans.gos.get('components'));
         if (registeredViaFrameworkComp!=null) {
             return createResult(registeredViaFrameworkComp, true);
         }
@@ -150,7 +150,7 @@ export class UserComponentRegistry extends BeanStub {
 
         const moduleForComponent = this.enterpriseAgDefaultCompsModule[name];
         if (moduleForComponent) {
-            ModuleRegistry.__assertRegistered(moduleForComponent, `AG Grid '${propertyName}' component: ${name}`, this.context.getGridId());
+            ModuleRegistry.__assertRegistered(moduleForComponent, `AG Grid '${propertyName}' component: ${name}`, this.beans.context.getGridId());
         } else {
             doOnce(() => { this.warnAboutMissingComponent(propertyName, name) }, "MissingComp" + name);
         }

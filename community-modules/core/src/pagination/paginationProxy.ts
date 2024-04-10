@@ -39,11 +39,11 @@ export class PaginationProxy extends BeanStub {
 
     @PostConstruct
     private postConstruct() {
-        this.active = this.gos.get('pagination');
-        this.pageSizeFromGridOptions = this.gos.get('paginationPageSize');
+        this.active = this.beans.gos.get('pagination');
+        this.pageSizeFromGridOptions = this.beans.gos.get('paginationPageSize');
         this.paginateChildRows = this.isPaginateChildRows();
 
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+        this.addManagedEventListener(Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
         this.addManagedPropertyListener('pagination', this.onPaginationGridOptionChanged.bind(this));
         this.addManagedPropertyListener('paginationPageSize', this.onPageSizeGridOptionChanged.bind(this));
 
@@ -59,9 +59,9 @@ export class PaginationProxy extends BeanStub {
     }
 
     private isPaginateChildRows(): boolean {
-        const shouldPaginate = this.gos.get('groupRemoveSingleChildren') || this.gos.get('groupRemoveLowestSingleChildren');
+        const shouldPaginate = this.beans.gos.get('groupRemoveSingleChildren') || this.beans.gos.get('groupRemoveLowestSingleChildren');
         if (shouldPaginate) { return true; }
-        return this.gos.get('paginateChildRows');
+        return this.beans.gos.get('paginateChildRows');
     }
 
     private onModelUpdated(modelUpdatedEvent?: WithoutGridCommon<ModelUpdatedEvent>): void {
@@ -74,11 +74,11 @@ export class PaginationProxy extends BeanStub {
             newPageSize: modelUpdatedEvent ? modelUpdatedEvent.newPageSize : false,
             keepRenderedRows: modelUpdatedEvent ? modelUpdatedEvent.keepRenderedRows : false
         };
-        this.eventService.dispatchEvent(paginationChangedEvent);
+        this.beans.eventService.dispatchEvent(paginationChangedEvent);
     }
 
     private onPaginationGridOptionChanged(): void {
-        this.active = this.gos.get('pagination');
+        this.active = this.beans.gos.get('pagination');
         this.calculatePages();
         const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
             type: Events.EVENT_PAGINATION_CHANGED,
@@ -90,11 +90,11 @@ export class PaginationProxy extends BeanStub {
             // we would destroy all the rows.
             keepRenderedRows: true
         };
-        this.eventService.dispatchEvent(paginationChangedEvent);
+        this.beans.eventService.dispatchEvent(paginationChangedEvent);
     }
 
     private onPageSizeGridOptionChanged(): void {
-        this.setPageSize(this.gos.get('paginationPageSize'),'gridOptions');
+        this.setPageSize(this.beans.gos.get('paginationPageSize'),'gridOptions');
     }
 
     public goToPage(page: number): void {
@@ -338,7 +338,7 @@ export class PaginationProxy extends BeanStub {
         if (this.pixelOffset === value) { return; }
 
         this.pixelOffset = value;
-        this.eventService.dispatchEvent({type: Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED});
+        this.beans.eventService.dispatchEvent({type: Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED});
     }
 
     private setZeroRows(): void {

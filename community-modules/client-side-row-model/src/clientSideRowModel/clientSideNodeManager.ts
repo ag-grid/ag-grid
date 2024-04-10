@@ -19,8 +19,6 @@ export class ClientSideNodeManager {
 
     private readonly rootNode: RowNode;
 
-    private gos: GridOptionsService;
-    private eventService: EventService;
     private columnModel: ColumnModel;
     private selectionService: ISelectionService;
     private beans: Beans;
@@ -35,11 +33,8 @@ export class ClientSideNodeManager {
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: { [id: string]: RowNode } = {};
 
-    constructor(rootNode: RowNode, gos: GridOptionsService, eventService: EventService,
-        columnModel: ColumnModel, selectionService: ISelectionService, beans: Beans) {
+    constructor(rootNode: RowNode, columnModel: ColumnModel, selectionService: ISelectionService, beans: Beans) {
         this.rootNode = rootNode;
-        this.gos = gos;
-        this.eventService = eventService;
         this.columnModel = columnModel;
         this.beans = beans;
         this.selectionService = selectionService;
@@ -138,7 +133,7 @@ export class ClientSideNodeManager {
             type: Events.EVENT_ROW_DATA_UPDATE_STARTED,
             firstRowData: rowData?.length ? rowData[0] : null
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private updateSelection(nodesToUnselect: RowNode[], source: SelectionEventSourceType): void {
@@ -163,7 +158,7 @@ export class ClientSideNodeManager {
                 type: Events.EVENT_SELECTION_CHANGED,
                 source: source
             };
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         }
     }
 
@@ -181,7 +176,7 @@ export class ClientSideNodeManager {
             const len = allLeafChildren.length;
             let normalisedAddIndex = addIndex;
 
-            const isTreeData = this.gos.get('treeData');
+            const isTreeData = this.beans.gos.get('treeData');
             if (isTreeData && addIndex > 0 && len > 0) {
                 for (let i = 0; i < len; i++) {
                     if (allLeafChildren[i]?.rowIndex == addIndex - 1) { normalisedAddIndex = i + 1; break; }
@@ -258,7 +253,7 @@ export class ClientSideNodeManager {
     }
 
     private lookupRowNode(data: any): RowNode | null {
-        const getRowIdFunc = this.gos.getCallback('getRowId');
+        const getRowIdFunc = this.beans.gos.getCallback('getRowId');
 
         let rowNode: RowNode | undefined;
         if (getRowIdFunc) {
@@ -288,7 +283,7 @@ export class ClientSideNodeManager {
         node.group = false;
         this.setMasterForRow(node, dataItem, level, true);
 
-        const suppressParentsInRowNodes = this.gos.get('suppressParentsInRowNodes');
+        const suppressParentsInRowNodes = this.beans.gos.get('suppressParentsInRowNodes');
         if (parent && !suppressParentsInRowNodes) {
             node.parent = parent;
         }
@@ -306,19 +301,19 @@ export class ClientSideNodeManager {
     }
 
     private setMasterForRow(rowNode: RowNode, data: any, level: number, setExpanded: boolean): void {
-        const isTreeData = this.gos.get('treeData');
+        const isTreeData = this.beans.gos.get('treeData');
         if (isTreeData) {
             rowNode.setMaster(false);
             if (setExpanded) {
                 rowNode.expanded = false;
             }
         } else {
-            const masterDetail = this.gos.get('masterDetail');
+            const masterDetail = this.beans.gos.get('masterDetail');
             // this is the default, for when doing grid data
             if (masterDetail) {
                 // if we are doing master detail, then the
                 // default is that everything can be a Master Row.
-                const isRowMasterFunc = this.gos.get('isRowMaster');
+                const isRowMasterFunc = this.beans.gos.get('isRowMaster');
                 if (isRowMasterFunc) {
                     rowNode.setMaster(isRowMasterFunc(data));
                 } else {
@@ -341,7 +336,7 @@ export class ClientSideNodeManager {
     }
 
     private isExpanded(level: any) {
-        const expandByDefault = this.gos.get('groupDefaultExpanded');
+        const expandByDefault = this.beans.gos.get('groupDefaultExpanded');
         if (expandByDefault === -1) {
             return true;
         }

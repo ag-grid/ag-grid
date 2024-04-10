@@ -43,7 +43,7 @@ export class StatusBar extends Component {
     }
 
     private processStatusPanels(existingStatusPanelsToReuse: Map<string, IStatusPanelComp>) {
-        const statusPanels = this.gos.get('statusBar')?.statusPanels;
+        const statusPanels = this.beans.gos.get('statusBar')?.statusPanels;
         if (statusPanels) {
             const leftStatusPanelComponents = statusPanels
                 .filter((componentConfig) => componentConfig.align === 'left');
@@ -62,7 +62,7 @@ export class StatusBar extends Component {
     }
 
     private handleStatusBarChanged() {
-        const statusPanels = this.gos.get('statusBar')?.statusPanels;
+        const statusPanels = this.beans.gos.get('statusBar')?.statusPanels;
         const validStatusBarPanelsProvided = Array.isArray(statusPanels) && statusPanels.length > 0;
         this.setDisplayed(validStatusBarPanelsProvided);
 
@@ -73,7 +73,7 @@ export class StatusBar extends Component {
                 const key = statusPanelConfig.key ?? statusPanelConfig.statusPanel;
                 const existingStatusPanel = this.statusBarService.getStatusPanel(key);
                 if (existingStatusPanel?.refresh) {
-                    const newParams = this.gos.addGridCommonParams(statusPanelConfig.statusPanelParams ?? {});
+                    const newParams = this.beans.gos.addGridCommonParams(statusPanelConfig.statusPanelParams ?? {});
                     const hasRefreshed = existingStatusPanel.refresh(newParams);
                     if (hasRefreshed) {
                         existingStatusPanelsToReuse.set(key, existingStatusPanel);
@@ -122,7 +122,7 @@ export class StatusBar extends Component {
             } else {
                 const params: WithoutGridCommon<IStatusPanelParams> = {};
 
-                const compDetails = this.userComponentFactory.getStatusPanelCompDetails(componentConfig, params);
+                const compDetails = this.beans.userComponentFactory.getStatusPanelCompDetails(componentConfig, params);
                 promise = compDetails.newAgStackInstance();
 
                 if (!promise) { return; }

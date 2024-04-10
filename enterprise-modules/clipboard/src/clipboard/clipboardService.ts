@@ -114,7 +114,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         this.logger.log('pasteFromClipboard');
 
         // Method 1 - native clipboard API, available in modern chrome browsers
-        const allowNavigator = !this.gos.get('suppressClipboardApi');
+        const allowNavigator = !this.beans.gos.get('suppressClipboardApi');
         // Some browsers (Firefox) do not allow Web Applications to read from
         // the clipboard so verify if not only the ClipboardAPI is available,
         // but also if the `readText` method is public.
@@ -178,7 +178,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private getClipboardDelimiter() {
-        const delimiter = this.gos.get('clipboardDelimiter');
+        const delimiter = this.beans.gos.get('clipboardDelimiter');
         return _.exists(delimiter) ? delimiter : '\t';
     }
 
@@ -187,7 +187,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         let parsedData: string[][] | null = ClipboardService.stringToArray(data, this.getClipboardDelimiter());
 
-        const userFunc = this.gos.getCallback('processDataFromClipboard');
+        const userFunc = this.beans.gos.getCallback('processDataFromClipboard');
 
         if (userFunc) {
             parsedData = userFunc({ data: parsedData });
@@ -195,7 +195,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         if (parsedData == null) { return; }
 
-        if (this.gos.get('suppressLastEmptyLineOnPaste')) {
+        if (this.beans.gos.get('suppressLastEmptyLineOnPaste')) {
             this.removeLastLineIfBlank(parsedData!);
         }
 
@@ -304,7 +304,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     ): void {
         const source = 'clipboard';
 
-        this.eventService.dispatchEvent({
+        this.beans.eventService.dispatchEvent({
             type: Events.EVENT_PASTE_START,
             source
         } as WithoutGridCommon<PasteStartEvent>);
@@ -312,7 +312,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         let changedPath: ChangedPath | undefined;
 
         if (this.clientSideRowModel) {
-            const onlyChangedColumns = this.gos.get('aggregateOnlyChangedColumns');
+            const onlyChangedColumns = this.beans.gos.get('aggregateOnlyChangedColumns');
             changedPath = new ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
         }
 
@@ -347,7 +347,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             type: Events.EVENT_PASTE_END,
             source
         }
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private pasteIntoActiveRange(
@@ -379,7 +379,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             // otherwise we are not the first row, so copy
             updatedRowNodes.push(rowNode);
 
-            const processCellFromClipboardFunc = this.gos.getCallback('processCellFromClipboard');
+            const processCellFromClipboardFunc = this.beans.gos.getCallback('processCellFromClipboard');
 
             columns.forEach((column, idx) => {
                 if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) { return; }
@@ -471,8 +471,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             focusedCell: CellPosition,
             changedPath: ChangedPath | undefined
         ) => {
-            const processCellForClipboardFunc = this.gos.getCallback('processCellForClipboard');
-            const processCellFromClipboardFunc = this.gos.getCallback('processCellFromClipboard');
+            const processCellForClipboardFunc = this.beans.gos.getCallback('processCellForClipboard');
+            const processCellFromClipboardFunc = this.beans.gos.getCallback('processCellFromClipboard');
 
             const rowCallback: RowCallback = (currentRow: RowPosition, rowNode: RowNode, columns: Column[]) => {
                 // take reference of first row, this is the one we will be using to copy from
@@ -530,7 +530,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private fireRowChanged(rowNodes: RowNode[]): void {
-        if (this.gos.get('editType') !== 'fullRow') { return; }
+        if (this.beans.gos.get('editType') !== 'fullRow') { return; }
 
         rowNodes.forEach(rowNode => {
             const event: WithoutGridCommon<RowValueChangedEvent> = {
@@ -541,7 +541,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 rowPinned: rowNode.rowPinned
             };
 
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         });
     }
 
@@ -558,7 +558,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
         // so we should skip them when doing paste operations.
-        const skipGroupRows = this.clientSideRowModel != null && !this.gos.get('enableGroupEdit') && !this.gos.get('treeData');
+        const skipGroupRows = this.clientSideRowModel != null && !this.beans.gos.get('enableGroupEdit') && !this.beans.gos.get('treeData');
 
         const getNextGoodRowNode = () => {
             while (true) {
@@ -609,7 +609,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         // if the cell is a group and the col is an aggregation, skip the cell.
         if (rowNode.group && column.isValueActive()) { return; }
 
-        const processedValue = this.processCell(rowNode, column, value, type, this.gos.getCallback('processCellFromClipboard'), true);
+        const processedValue = this.processCell(rowNode, column, value, type, this.beans.gos.getCallback('processCellFromClipboard'), true);
         rowNode.setDataValue(column, processedValue, SOURCE_PASTE);
         
         const { rowIndex, rowPinned } = rowNode;
@@ -626,13 +626,13 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     public cutToClipboard(params: IClipboardCopyParams = {}, source: 'api' | 'ui' | 'contextMenu' = 'api'): void {
-        if (this.gos.get('suppressCutToClipboard')) { return; }
+        if (this.beans.gos.get('suppressCutToClipboard')) { return; }
 
         const startEvent: WithoutGridCommon<CutStartEvent> = {
             type: Events.EVENT_CUT_START,
             source
         };
-        this.eventService.dispatchEvent(startEvent);
+        this.beans.eventService.dispatchEvent(startEvent);
 
         this.copyOrCutToClipboard(params, true);
 
@@ -640,7 +640,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             type: Events.EVENT_CUT_END,
             source
         };
-        this.eventService.dispatchEvent(endEvent);
+        this.beans.eventService.dispatchEvent(endEvent);
 
     }
 
@@ -650,15 +650,15 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         // don't override 'includeHeaders' if it has been explicitly set to 'false'
         if (includeHeaders == null) {
-            includeHeaders = this.gos.get('copyHeadersToClipboard');
+            includeHeaders = this.beans.gos.get('copyHeadersToClipboard');
         }
 
         if (includeGroupHeaders == null) {
-            includeGroupHeaders = this.gos.get('copyGroupHeadersToClipboard');
+            includeGroupHeaders = this.beans.gos.get('copyGroupHeadersToClipboard');
         }
 
         const copyParams = { includeHeaders, includeGroupHeaders };
-        const shouldCopyRows = !this.gos.get('suppressCopyRowsToClipboard');
+        const shouldCopyRows = !this.beans.gos.get('suppressCopyRowsToClipboard');
 
 
         let cellClearType: CellClearType | null = null;
@@ -680,7 +680,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private clearCellsAfterCopy(type: CellClearType) {
-        this.eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
+        this.beans.eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
         if (type === CellClearType.CellRange) {
             this.rangeService!.clearCellRangeCellValues({ cellEventSource: 'clipboardService' });
         } else if (type === CellClearType.SelectedRows) {
@@ -694,7 +694,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 this.clearCellValue(rowNode, focusedCell.column);
             }
         }
-        this.eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END });
+        this.beans.eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END });
     }
 
     private clearSelectedRows(): void {
@@ -715,7 +715,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private shouldSkipSingleCellRange(rangeService: IRangeService): boolean {
-        return this.gos.get('suppressCopySingleCellRanges') && !rangeService.isMoreThanOneCell();
+        return this.beans.gos.get('suppressCopySingleCellRanges') && !rangeService.isMoreThanOneCell();
     }
 
     private iterateActiveRanges(onlyFirst: boolean, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {
@@ -912,10 +912,10 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             suppressQuotes: true,
             columnSeparator: this.getClipboardDelimiter(),
             onlySelected: !rowPositions,
-            processCellCallback: this.gos.getCallback('processCellForClipboard'),
+            processCellCallback: this.beans.gos.getCallback('processCellForClipboard'),
             processRowGroupCallback: (params) => this.processRowGroupCallback(params),
-            processHeaderCallback: this.gos.getCallback('processHeaderForClipboard'),
-            processGroupHeaderCallback: this.gos.getCallback('processGroupHeaderForClipboard')
+            processHeaderCallback: this.beans.gos.getCallback('processHeaderForClipboard'),
+            processGroupHeaderCallback: this.beans.gos.getCallback('processGroupHeaderForClipboard')
             
         };
 
@@ -925,8 +925,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private processRowGroupCallback(params: ProcessRowGroupForExportParams) {
         const { node, column } = params;
 
-        const isTreeData = this.gos.get('treeData');
-        const isSuppressGroupMaintainValueType = this.gos.get('suppressGroupMaintainValueType');
+        const isTreeData = this.beans.gos.get('treeData');
+        const isSuppressGroupMaintainValueType = this.beans.gos.get('suppressGroupMaintainValueType');
 
         // if not tree data and not suppressGroupMaintainValueType then we get the value from the group data
         const getValueFromNode = () => {
@@ -946,7 +946,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             }
             value = `Total${suffix}`;
         }
-        const processCellForClipboard = this.gos.getCallback('processCellForClipboard');
+        const processCellForClipboard = this.beans.gos.getCallback('processCellForClipboard');
 
         if (processCellForClipboard) {
             let column = node.rowGroupColumn as Column;
@@ -973,7 +973,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 cells: cellsToFlash
             };
 
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         }, 0);
     }
 
@@ -1008,7 +1008,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private copyDataToClipboard(data: string): void {
-        const userProvidedFunc = this.gos.getCallback('sendToClipboard');
+        const userProvidedFunc = this.beans.gos.getCallback('sendToClipboard');
 
         // method 1 - user provided func
         if (userProvidedFunc) {
@@ -1017,7 +1017,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         }
 
         // method 2 - native clipboard API, available in modern chrome browsers
-        const allowNavigator = !this.gos.get('suppressClipboardApi');
+        const allowNavigator = !this.beans.gos.get('suppressClipboardApi');
         if (allowNavigator && navigator.clipboard) {
             navigator.clipboard.writeText(data).catch((e) => {
                 _.doOnce(() => {
@@ -1035,8 +1035,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private copyDataToClipboardLegacy(data: string): void {
         // method 3 - if all else fails, the old school hack
         this.executeOnTempElement(element => {
-            const eDocument = this.gos.getDocument();
-            const focusedElementBefore = this.gos.getActiveDomElement() as HTMLElement;
+            const eDocument = this.beans.gos.getDocument();
+            const focusedElementBefore = this.beans.gos.getActiveDomElement() as HTMLElement;
 
             element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
             element.select();
@@ -1060,7 +1060,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         callbackNow: (element: HTMLTextAreaElement) => void,
         callbackAfter?: (element: HTMLTextAreaElement) => void
     ): void {
-        const eDoc = this.gos.getDocument();
+        const eDoc = this.beans.gos.getDocument();
         const eTempInput = eDoc.createElement('textarea');
         eTempInput.style.width = '1px';
         eTempInput.style.height = '1px';

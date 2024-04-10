@@ -80,7 +80,7 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private buildMenuItemMap(): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
 
         this.menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap.set('rowGroup', {
@@ -146,7 +146,7 @@ export class ToolPanelContextMenu extends Component {
     private displayContextMenu(menuItemsMapped: MenuItemDef[]): void {
         const eGui = this.getGui();
         const menuList = this.createBean(new AgMenuList());
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
 
         let hideFunc = () => {};
 
@@ -195,7 +195,7 @@ export class ToolPanelContextMenu extends Component {
             if (isInactive) {
                 ret.push({
                     name: val.activateLabel(this.displayName!),
-                    icon: _.createIconNoSpan(val.addIcon, this.gos, null),
+                    icon: _.createIconNoSpan(val.addIcon, this.beans.gos, null),
                     action: () => val.activateFunction()
                 });
             }
@@ -203,7 +203,7 @@ export class ToolPanelContextMenu extends Component {
             if (isActive) {
                 ret.push({
                     name: val.deactivateLabel(this.displayName!),
-                    icon: _.createIconNoSpan(val.removeIcon, this.gos, null),
+                    icon: _.createIconNoSpan(val.removeIcon, this.beans.gos, null),
                     action: () => val.deActivateFunction()
                 });
             }

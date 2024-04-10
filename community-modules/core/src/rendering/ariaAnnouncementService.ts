@@ -19,7 +19,7 @@ export class AriaAnnouncementService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        const eDocument = this.gos.getDocument();
+        const eDocument = this.beans.gos.getDocument();
         const div = this.descriptionContainer = eDocument.createElement('div');
         div.classList.add('ag-aria-description-container');
 

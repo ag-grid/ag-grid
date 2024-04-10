@@ -68,7 +68,7 @@ export class AgDialog extends AgPanel<DialogOptions> {
     protected renderComponent() {
         const eGui = this.getGui();
         const { alwaysOnTop, modal, title, afterGuiAttached  } = this.config;
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         const addPopupRes = this.popupService.addPopup({
             modal,
@@ -181,11 +181,11 @@ export class AgDialog extends AgPanel<DialogOptions> {
 
         const eGui = maximizeButtonComp.getGui();
 
-        this.maximizeIcon = createIconNoSpan('maximize', this.gos)!;
+        this.maximizeIcon = createIconNoSpan('maximize', this.beans.gos)!;
         eGui.appendChild(this.maximizeIcon);
         this.maximizeIcon.classList.add('ag-panel-title-bar-button-icon');
 
-        this.minimizeIcon = createIconNoSpan('minimize', this.gos)!;
+        this.minimizeIcon = createIconNoSpan('minimize', this.beans.gos)!;
         eGui.appendChild(this.minimizeIcon);
         this.minimizeIcon.classList.add('ag-panel-title-bar-button-icon');
 

@@ -11,7 +11,6 @@ export class CellCustomStyleFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;
     private readonly column: Column;
     private readonly rowNode: RowNode;
-    private readonly beans: Beans;
     private staticClasses: string[] = [];
 
     private cellComp: ICellComp;
@@ -22,7 +21,7 @@ export class CellCustomStyleFeature extends BeanStub {
         super();
 
         this.cellCtrl = ctrl;
-        this.beans = beans;
+        this.manualSetBeans(beans);
 
         this.column = ctrl.getColumn();
         this.rowNode = ctrl.getRowNode();

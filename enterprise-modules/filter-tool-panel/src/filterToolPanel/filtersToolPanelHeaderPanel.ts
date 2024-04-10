@@ -42,7 +42,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
     @PostConstruct
     public postConstruct(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         this.eFilterTextField
             .setAutoComplete(false)
@@ -52,7 +52,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
         this.addManagedListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
     }
 
     public init(params: ToolPanelFiltersCompParams): void {
@@ -64,16 +64,16 @@ export class FiltersToolPanelHeaderPanel extends Component {
     }
 
     private createExpandIcons() {
-        this.eExpand.appendChild(this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gos)!);
-        this.eExpand.appendChild(this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gos)!);
-        this.eExpand.appendChild(this.eExpandIndeterminate = _.createIconNoSpan('columnSelectIndeterminate', this.gos)!);
+        this.eExpand.appendChild(this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.beans.gos)!);
+        this.eExpand.appendChild(this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.beans.gos)!);
+        this.eExpand.appendChild(this.eExpandIndeterminate = _.createIconNoSpan('columnSelectIndeterminate', this.beans.gos)!);
     }
 
     // we only show expand / collapse if we are showing filters
     private showOrHideOptions(): void {
         const showFilterSearch = !this.params.suppressFilterSearch;
         const showExpand = !this.params.suppressExpandAll;
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 

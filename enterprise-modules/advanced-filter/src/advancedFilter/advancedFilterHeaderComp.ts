@@ -31,7 +31,7 @@ export class AdvancedFilterHeaderComp extends Component {
 
         this.addDestroyFunc(() => this.destroyBean(this.eAdvancedFilter));
 
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onGridColumnsChanged());
+        this.addManagedEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onGridColumnsChanged());
 
         this.addGuiEventListener('keydown', (event: KeyboardEvent) => this.onKeyDown(event));
 
@@ -159,6 +159,6 @@ export class AdvancedFilterHeaderComp extends Component {
     }
 
     private hasFocus(): boolean {
-        return this.gos.getActiveDomElement() === this.getFocusableElement();
+        return this.beans.gos.getActiveDomElement() === this.getFocusableElement();
     }
 }

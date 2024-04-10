@@ -162,13 +162,13 @@ export class SetFilterListItem<V> extends Component {
     }
 
     private setupExpansion(): void {
-        this.eGroupClosedIcon.appendChild(_.createIcon('setFilterGroupClosed', this.gos, null));
-        this.eGroupOpenedIcon.appendChild(_.createIcon('setFilterGroupOpen', this.gos, null));
+        this.eGroupClosedIcon.appendChild(_.createIcon('setFilterGroupClosed', this.beans.gos, null));
+        this.eGroupOpenedIcon.appendChild(_.createIcon('setFilterGroupOpen', this.beans.gos, null));
         this.addManagedListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         this.addManagedListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
 
         if (this.hasIndeterminateExpandState) {
-            this.eGroupIndeterminateIcon.appendChild(_.createIcon('setFilterGroupIndeterminate', this.gos, null));
+            this.eGroupIndeterminateIcon.appendChild(_.createIcon('setFilterGroupIndeterminate', this.beans.gos, null));
             this.addManagedListener(this.eGroupIndeterminateIcon, 'click', this.onExpandOrContractClicked.bind(this));
         }
 
@@ -235,7 +235,7 @@ export class SetFilterListItem<V> extends Component {
 
     private refreshVariableAriaLabels(): void {
         if (!this.isTree) { return; }
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const checkboxValue = this.eCheckbox.getValue();
         const state = checkboxValue === undefined ?
             translate('ariaIndeterminate', 'indeterminate') : 
@@ -247,7 +247,7 @@ export class SetFilterListItem<V> extends Component {
     
     private setupFixedAriaLabels(value: any): void {
         if (!this.isTree) { return; }
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const itemLabel = translate('ariaFilterValue', 'Filter Value');
         const ariaEl = this.getAriaElement();
         _.setAriaLabel(ariaEl, `${value} ${itemLabel}`);
@@ -313,7 +313,7 @@ export class SetFilterListItem<V> extends Component {
     }
 
     private setTooltipAndCellRendererParams(value: V | null | (() => string), formattedValue: string | null): void {
-        const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
+        const isTooltipWhenTruncated = this.beans.gos.get('tooltipShowMode') === 'whenTruncated';
 
         if (this.params.showTooltips && (!isTooltipWhenTruncated || !this.params.cellRenderer)) {
             const newTooltipText = formattedValue != null ? formattedValue : _.toStringOrNull(value);
@@ -329,7 +329,7 @@ export class SetFilterListItem<V> extends Component {
             this.setTooltip({ newTooltipText, location: 'setFilterValue', shouldDisplayTooltip });
         }
 
-        this.cellRendererParams = this.gos.addGridCommonParams({
+        this.cellRendererParams = this.beans.gos.addGridCommonParams({
             value,
             valueFormatted: formattedValue,
             colDef: this.params.colDef,
@@ -355,7 +355,7 @@ export class SetFilterListItem<V> extends Component {
     }
 
     private renderCell(): void {
-        const compDetails = this.userComponentFactory.getSetFilterCellRendererDetails(this.params, this.cellRendererParams);
+        const compDetails = this.beans.userComponentFactory.getSetFilterCellRendererDetails(this.params, this.cellRendererParams);
         const cellRendererPromise = compDetails ? compDetails.newAgStackInstance() : undefined;
 
         if (cellRendererPromise == null) {

@@ -8,7 +8,8 @@ import {
     Events,
     ProvidedColumnGroup,
     IProvidedColumn,
-    FiltersToolPanelState
+    FiltersToolPanelState,
+    ToolPanelVisibleChangedEvent
 } from "@ag-grid-community/core";
 
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";
@@ -45,7 +46,7 @@ export class FiltersToolPanelListPanel extends Component {
     public init(params: ToolPanelFiltersCompParams): void {
         this.initialised = true;
 
-        const defaultParams: Partial<ToolPanelFiltersCompParams> = this.gos.addGridCommonParams({
+        const defaultParams: Partial<ToolPanelFiltersCompParams> = this.beans.gos.addGridCommonParams({
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false
@@ -54,12 +55,12 @@ export class FiltersToolPanelListPanel extends Component {
         this.params = defaultParams as ToolPanelFiltersCompParams;
 
         if (!this.params.suppressSyncLayoutWithGrid) {
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.onColumnsChanged());
+            this.addManagedEventListener(Events.EVENT_COLUMN_MOVED, () => this.onColumnsChanged());
         }
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
 
-        this.addManagedListener(this.eventService, Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, (event) => {
+        this.addManagedEventListener(Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, (event: ToolPanelVisibleChangedEvent) => {
             // when re-entering the filters tool panel we need to refresh the virtual lists in the set filters in case
             // filters have been changed elsewhere, i.e. via an api call.
             if (event.key === 'filters') {
@@ -67,10 +68,10 @@ export class FiltersToolPanelListPanel extends Component {
             }
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_DRAG_STARTED, () => {
+        this.addManagedEventListener(Events.EVENT_DRAG_STARTED, () => {
             this.suppressOnColumnsChanged = true;
         });
-        this.addManagedListener(this.eventService, Events.EVENT_DRAG_STOPPED, () => {
+        this.addManagedEventListener(Events.EVENT_DRAG_STOPPED, () => {
             this.suppressOnColumnsChanged = false;
             if (this.onColumnsChangedPending) {
                 this.onColumnsChangedPending = false;
@@ -112,7 +113,7 @@ export class FiltersToolPanelListPanel extends Component {
     private recreateFilters(columnTree: IProvidedColumn[]): void {
         // Underlying filter comp/element won't get recreated if the column still exists (the element just gets detached/re-attached).
         // We can therefore restore focus if an element in the filter tool panel was focused.
-        const activeElement = this.gos.getActiveDomElement() as HTMLElement;
+        const activeElement = this.beans.gos.getActiveDomElement() as HTMLElement;
 
         if (!this.hasLoadedInitialState) {
             this.hasLoadedInitialState = true;
@@ -185,7 +186,7 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     private refreshAriaLabel(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const filterListName = translate('ariaFilterPanelList', 'Filter List');
         const localeFilters = translate('filters', 'Filters');
 

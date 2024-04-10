@@ -132,7 +132,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private getComponentForKeyEvent(e: KeyboardEvent): SetFilterListItem<V> | undefined {
-        if (!this.eSetFilterList.contains(this.gos.getActiveDomElement()) || !this.virtualList) { return; }
+        if (!this.eSetFilterList.contains(this.beans.gos.getActiveDomElement()) || !this.virtualList) { return; }
 
         const currentItem = this.virtualList.getLastFocusedRow();
         if (currentItem == null) { return; }
@@ -255,8 +255,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         const keyCreator = newParams.keyCreator ?? newParams.colDef.keyCreator;
         this.setValueFormatter(newParams.valueFormatter, keyCreator, this.convertValuesToStrings, !!newParams.treeList, !!newParams.colDef.refData);
         const isGroupCol = newParams.column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
-        this.treeDataTreeList = this.gos.get('treeData') && !!newParams.treeList && isGroupCol;
-        this.getDataPath = this.gos.get('getDataPath');
+        this.treeDataTreeList = this.beans.gos.get('treeData') && !!newParams.treeList && isGroupCol;
+        this.getDataPath = this.beans.gos.get('getDataPath');
         this.groupingTreeList = !!this.columnModel.getRowGroupColumns().length && !!newParams.treeList && isGroupCol;
         this.createKey = this.generateCreateKey(keyCreator, this.convertValuesToStrings, this.treeDataTreeList || this.groupingTreeList);
     }
@@ -279,12 +279,12 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             createKey: this.createKey,
             valueFormatter: this.valueFormatter,
             usingComplexObjects: !!keyCreator,
-            gos: this.gos,
+            gos: this.beans.gos,
             columnModel: this.columnModel,
             valueService: this.valueService,
             treeDataTreeList: this.treeDataTreeList,
             groupingTreeList: this.groupingTreeList,
-            addManagedListener: (event, listener) => this.addManagedListener(this.eventService, event, listener)
+            addManagedListener: (event, listener) => this.addManagedListener(this.beans.eventService, event, listener)
         });
 
         this.initialiseFilterBodyUi();
@@ -385,8 +385,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private addEventListenersForDataChanges(): void {
         if (!this.isValuesTakenFromGrid()) { return; }
 
-        this.addManagedListener(
-            this.eventService,
+        this.addManagedEventListener(
             Events.EVENT_CELL_VALUE_CHANGED,
             (event: CellValueChangedEvent) => {
                 // only interested in changes to do with this column
@@ -428,7 +427,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const filterListName = translate('ariaFilterList', 'Filter List');
         const isTree = !!this.setFilterParams.treeList;
 
@@ -670,8 +669,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        const { eMiniFilter, localeService } = this;
-        const translate = localeService.getLocaleTextFunc();
+        const { eMiniFilter, beans } = this;
+        const translate = beans.localeService.getLocaleTextFunc();
 
         eMiniFilter.setDisplayed(!this.setFilterParams.suppressMiniFilter);
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
@@ -1143,7 +1142,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private translateForSetFilter(key: keyof ISetFilterLocaleText): string {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         return translate(key, DEFAULT_LOCALE_TEXT[key]);
     }

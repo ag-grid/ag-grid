@@ -41,7 +41,7 @@ export class GridCtrl extends BeanStub {
         this.eGridHostDiv = eGridDiv;
         this.eGui = eGui;
 
-        this.eGui.setAttribute('grid-id', this.context.getGridId());
+        this.eGui.setAttribute('grid-id', this.beans.context.getGridId());
 
         // this drop target is just used to see if the drop event is inside the grid
         this.dragAndDropService.addDropTarget({
@@ -70,19 +70,19 @@ export class GridCtrl extends BeanStub {
     }
 
     public showDropZones(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.RowGroupingModule, this.context.getGridId());
+        return ModuleRegistry.__isRegistered(ModuleNames.RowGroupingModule, this.beans.context.getGridId());
     }
 
     public showSideBar(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.SideBarModule, this.context.getGridId());
+        return ModuleRegistry.__isRegistered(ModuleNames.SideBarModule, this.beans.context.getGridId());
     }
 
     public showStatusBar(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.StatusBarModule, this.context.getGridId());
+        return ModuleRegistry.__isRegistered(ModuleNames.StatusBarModule, this.beans.context.getGridId());
     }
 
     public showWatermark(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.context.getGridId());
+        return ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.beans.context.getGridId());
     }
 
     private onGridSizeChanged(): void {
@@ -91,11 +91,11 @@ export class GridCtrl extends BeanStub {
             clientWidth: this.eGridHostDiv.clientWidth,
             clientHeight: this.eGridHostDiv.clientHeight
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private addRtlSupport(): void {
-        const cssClass = this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
+        const cssClass = this.beans.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
         this.view.setRtlClass(cssClass);
     }
 
@@ -117,7 +117,7 @@ export class GridCtrl extends BeanStub {
 
     public focusNextInnerContainer(backwards: boolean): boolean {
         const focusableContainers = this.view.getFocusableContainers();
-        const activeEl = this.gos.getActiveDomElement();
+        const activeEl = this.beans.gos.getActiveDomElement();
         const idxWithFocus = focusableContainers.findIndex(container => container.contains(activeEl));
         const nextIdx = idxWithFocus + (backwards ? -1 : 1);
 
@@ -141,7 +141,7 @@ export class GridCtrl extends BeanStub {
             if (this.focusService.focusGridView(lastColumn, true)) { return true; }
         }
 
-        if (this.gos.get('headerHeight') === 0 || this.gos.get('suppressHeaderFocus')) {
+        if (this.beans.gos.get('headerHeight') === 0 || this.beans.gos.get('suppressHeaderFocus')) {
             if (this.focusService.focusGridView(allColumns[0])) {
                 return true;
             }

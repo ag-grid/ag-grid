@@ -89,7 +89,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         
         if (!this.active || this.iconCreated) { return; }
 
-        const eMenuIcon = createIconNoSpan('filter', this.gos, this.column);
+        const eMenuIcon = createIconNoSpan('filter', this.beans.gos, this.column);
 
         if (eMenuIcon) {
             this.iconCreated = true;
@@ -110,12 +110,12 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private setupAria(): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
         setAriaLabel(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
     }
 
     private onTabKeyDown(e: KeyboardEvent) {
-        const activeEl = this.gos.getActiveDomElement();
+        const activeEl = this.beans.gos.getActiveDomElement();
         const wrapperHasFocus = activeEl === this.eGui;
 
         if (wrapperHasFocus) { return; }
@@ -218,12 +218,12 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.createManagedBean(new HoverFeature([this.column], this.eGui));
 
         const listener = () => {
-            if (!this.gos.get('columnHoverHighlight')) { return; }
+            if (!this.beans.gos.get('columnHoverHighlight')) { return; }
             const hovered = this.beans.columnHoverService.isHovered(this.column);
             this.comp.addOrRemoveCssClass('ag-column-hover', hovered);
         };
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, listener);
+        this.addManagedEventListener(Events.EVENT_COLUMN_HOVER_CHANGED, listener);
         listener();
     }
 

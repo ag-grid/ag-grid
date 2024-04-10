@@ -28,12 +28,12 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
 
         this.setDisplayed(true);
 
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onDataChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_MODEL_UPDATED, this.onDataChanged.bind(this));
         this.onDataChanged();
     }
 
     private onDataChanged() {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 
@@ -43,7 +43,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
         if (rowCount === totalRowCount) {
             this.setValue(rowCount);
         } else {
-            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
             this.setValue(`${rowCount} ${localeTextFunc('of', 'of')} ${totalRowCount}`);
         }
     }

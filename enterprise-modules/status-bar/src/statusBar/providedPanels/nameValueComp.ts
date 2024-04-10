@@ -19,7 +19,7 @@ export class NameValueComp extends Component {
         // we want to hide until the first value comes in
         this.setDisplayed(false);
 
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
         this.eLabel.innerHTML = localeTextFunc(key, defaultValue);
     }
 

@@ -609,7 +609,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return {
             value: displayKey,
             text: customOption ?
-                this.localeService.getLocaleTextFunc()(customOption.displayKey, customOption.displayName) :
+                this.beans.localeService.getLocaleTextFunc()(customOption.displayKey, customOption.displayName) :
                 this.translate(displayKey as keyof typeof FILTER_LOCALE_TEXT),
         };
     }
@@ -826,7 +826,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     // allow sub-classes to reset HTML placeholders after UI update.
     protected resetPlaceholder(): void {
-        const globalTranslate = this.localeService.getLocaleTextFunc();
+        const globalTranslate = this.beans.localeService.getLocaleTextFunc();
 
         this.forEachInput((element, index, position, numberOfInputs) => {
             if (!(element instanceof AgAbstractInputField)) {
@@ -971,7 +971,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     private resetType(eType: AgSelect): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const filteringLabel = translate('ariaFilteringOperator', 'Filtering operator');
         eType
             .setValue(this.optionsFactory.getDefaultOption(), true)

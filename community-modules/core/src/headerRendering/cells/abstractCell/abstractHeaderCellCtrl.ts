@@ -46,7 +46,6 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     @Autowired('dragAndDropService') protected readonly dragAndDropService: DragAndDropService;
     @Autowired('menuService') protected readonly menuService: MenuService;
 
-    protected readonly beans: Beans;
     private instanceId: HeaderCellCtrlInstanceId;
     private columnGroupChild: IHeaderColumn;
     private parentRowCtrl: HeaderRowCtrl;
@@ -72,7 +71,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
         this.columnGroupChild = columnGroupChild;
         this.parentRowCtrl = parentRowCtrl;
-        this.beans = beans;
+        this.manualSetBeans(beans);
 
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = columnGroupChild.getUniqueId() + '-' + instanceIdSequence++ as HeaderCellCtrlInstanceId;
@@ -87,7 +86,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         const { headerRowIndex, column } = this.focusService.getFocusedHeader()!;
 
         return isUserSuppressingHeaderKeyboardEvent(
-            this.gos,
+            this.beans.gos,
             e,
             headerRowIndex,
             column
@@ -95,7 +94,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     protected getWrapperHasFocus(): boolean {
-        const activeEl = this.gos.getActiveDomElement();
+        const activeEl = this.beans.gos.getActiveDomElement();
 
         return activeEl === this.eGui;
     }
@@ -134,7 +133,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     private refreshTabIndex(): void {
-        const suppressHeaderFocus = this.gos.get('suppressHeaderFocus');
+        const suppressHeaderFocus = this.beans.gos.get('suppressHeaderFocus');
         if (suppressHeaderFocus) {
             this.eGui.removeAttribute('tabindex');
         } else {
@@ -143,7 +142,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     private onGuiKeyDown(e: KeyboardEvent): void {
-        const activeEl = this.gos.getActiveDomElement();
+        const activeEl = this.beans.gos.getActiveDomElement();
 
         const isLeftOrRight = e.key === KeyCode.LEFT || e.key === KeyCode.RIGHT;
 
@@ -166,7 +165,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
         if (!isLeftOrRight) { return; }
         
-        const isLeft = (e.key === KeyCode.LEFT) !== this.gos.get('enableRtl');
+        const isLeft = (e.key === KeyCode.LEFT) !== this.beans.gos.get('enableRtl');
         const direction = HorizontalDirection[isLeft ? 'Left' : 'Right' ];
 
         if (e.altKey) {
@@ -203,10 +202,10 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     private getResizeDiff(e: KeyboardEvent): number {
-        let isLeft = (e.key === KeyCode.LEFT) !== this.gos.get('enableRtl');
+        let isLeft = (e.key === KeyCode.LEFT) !== this.beans.gos.get('enableRtl');
 
         const pinned = this.column.getPinned();
-        const isRtl = this.gos.get('enableRtl');
+        const isRtl = this.beans.gos.get('enableRtl');
         if (pinned) {
             if (isRtl !== (pinned === 'right')) {
                 isLeft = !isLeft;
@@ -247,8 +246,8 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
     private addDomData(): void {
         const key = AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL;
-        this.gos.setDomData(this.eGui, key, this);
-        this.addDestroyFunc(() => this.gos.setDomData(this.eGui, key, null));
+        this.beans.gos.setDomData(this.eGui, key, this);
+        this.addDestroyFunc(() => this.beans.gos.setDomData(this.eGui, key, null));
     }
 
     public getGui(): HTMLElement {
@@ -292,7 +291,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
     protected handleContextMenuMouseEvent(mouseEvent: MouseEvent | undefined, touchEvent: TouchEvent | undefined, column: Column | ProvidedColumnGroup): void {
         const event = mouseEvent ?? touchEvent!;
-        if (this.gos.get('preventDefaultOnContextMenu')) {
+        if (this.beans.gos.get('preventDefaultOnContextMenu')) {
             event.preventDefault();
         }
         const columnToUse = column instanceof Column ? column : undefined;
@@ -309,7 +308,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
             column,
         };
 
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     protected destroy(): void {

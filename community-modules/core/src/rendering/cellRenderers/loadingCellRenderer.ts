@@ -28,17 +28,17 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
     }
 
     private setupFailed(): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
         this.eLoadingText.innerText = localeTextFunc('loadingError', 'ERR');
     }
 
     private setupLoading(): void {
-        const eLoadingIcon = createIconNoSpan('groupLoading', this.gos, null);
+        const eLoadingIcon = createIconNoSpan('groupLoading', this.beans.gos, null);
         if (eLoadingIcon) {
             this.eLoadingIcon.appendChild(eLoadingIcon);
         }
 
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
         this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
     }
 

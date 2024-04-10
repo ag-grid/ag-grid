@@ -138,6 +138,7 @@ import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { ManagedGridOptionKey, ManagedGridOptions } from "./propertyKeys";
 import { WithoutGridCommon } from "./interfaces/iCommon";
 import { MenuService, IContextMenuParams } from "./misc/menuService";
+import { BeansProvider } from "./rendering/beans";
 
 export interface DetailGridInfo {
     /**
@@ -169,7 +170,7 @@ export function unwrapUserComp<T>(comp: T): T {
 }
 
 @Bean('gridApi')
-export class GridApi<TData = any> {
+export class GridApi<TData = any> extends BeansProvider {
     
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('navigationService') private readonly navigationService: NavigationService;
@@ -246,7 +247,7 @@ export class GridApi<TData = any> {
 
     /** Returns the `gridId` for the current grid as specified via the gridOptions property `gridId` or the auto assigned grid id if none was provided. */
     public getGridId(): string {
-        return this.context.getGridId();
+        return this.beans.context.getGridId();
     }
 
     /** Register a detail grid with the master grid when it is created. */
@@ -278,20 +279,20 @@ export class GridApi<TData = any> {
 
     /** Similar to `exportDataAsCsv`, except returns the result as a string rather than download it. */
     public getDataAsCsv(params?: CsvExportParams): string | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv', this.beans.context.getGridId())) {
             return this.csvCreator!.getDataAsCsv(params);
         }
     }
 
     /** Downloads a CSV export of the grid's data. */
     public exportDataAsCsv(params?: CsvExportParams): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.exportDataAsCsv', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.exportDataAsCsv', this.beans.context.getGridId())) {
             this.csvCreator!.exportDataAsCsv(params);
         }
     }
 
     private assertNotExcelMultiSheet(method: keyof GridApi, params?: ExcelExportParams): boolean {
-        if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method, this.context.getGridId())) { return false }
+        if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method, this.beans.context.getGridId())) { return false }
         if (this.excelCreator!.getFactoryMode() === ExcelFactoryMode.MULTI_SHEET) {
             console.warn("AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'");
             return false;
@@ -315,7 +316,7 @@ export class GridApi<TData = any> {
 
     /** This is method to be used to get the grid's data as a sheet, that will later be exported either by `getMultipleSheetsAsExcel()` or `exportMultipleSheetsAsExcel()`. */
     public getSheetDataForExcel(params?: ExcelExportParams): string | undefined {
-        if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel', this.context.getGridId())) { return; }
+        if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel', this.beans.context.getGridId())) { return; }
         this.excelCreator!.setFactoryMode(ExcelFactoryMode.MULTI_SHEET);
 
         return this.excelCreator!.getSheetDataForExcel(params);
@@ -323,14 +324,14 @@ export class GridApi<TData = any> {
 
     /** Similar to `exportMultipleSheetsAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel', this.beans.context.getGridId())) {
             return this.excelCreator!.getMultipleSheetsAsExcel(params);
         }
     }
 
     /** Downloads an Excel export of multiple sheets in one file. */
     public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel', this.beans.context.getGridId())) {
             this.excelCreator!.exportMultipleSheetsAsExcel(params);
         }
     }
@@ -517,7 +518,7 @@ export class GridApi<TData = any> {
      */
     public getSizesForCurrentTheme() {
         return {
-            rowHeight: this.gos.getRowHeightAsNumber(),
+            rowHeight: this.beans.gos.getRowHeightAsNumber(),
             headerHeight: this.columnModel.getHeaderHeight()
         };
     }
@@ -553,13 +554,13 @@ export class GridApi<TData = any> {
 
     /** Get the current Quick Filter text from the grid, or `undefined` if none is set. */
     public getQuickFilter(): string | undefined {
-        return this.gos.get('quickFilterText');
+        return this.beans.gos.get('quickFilterText');
     }
 
 
     /** Get the state of the Advanced Filter. Used for saving Advanced Filter state */
     public getAdvancedFilterModel(): AdvancedFilterModel | null {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.getAdvancedFilterModel', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.getAdvancedFilterModel', this.beans.context.getGridId())) {
             return this.filterManager.getAdvancedFilterModel();
         }
         return null;
@@ -572,7 +573,7 @@ export class GridApi<TData = any> {
 
     /** Open the Advanced Filter Builder dialog (if enabled). */
     public showAdvancedFilterBuilder(): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.setAdvancedFilterModel', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.setAdvancedFilterModel', this.beans.context.getGridId())) {
             this.filterManager.showAdvancedFilterBuilder('api');
         }
     }
@@ -836,7 +837,7 @@ export class GridApi<TData = any> {
 
     /** Gets the status panel instance corresponding to the supplied `id`. */
     public getStatusPanel<TStatusPanel = IStatusPanel>(key: string): TStatusPanel | undefined {
-        if (!ModuleRegistry.__assertRegistered(ModuleNames.StatusBarModule, 'api.getStatusPanel', this.context.getGridId())) { return; }
+        if (!ModuleRegistry.__assertRegistered(ModuleNames.StatusBarModule, 'api.getStatusPanel', this.beans.context.getGridId())) { return; }
         const comp = this.statusBarService!.getStatusPanel(key);
         return unwrapUserComp(comp) as any;
     }
@@ -938,7 +939,7 @@ export class GridApi<TData = any> {
     }
 
     private assertSideBarLoaded(apiMethod: keyof GridApi): boolean {
-        return ModuleRegistry.__assertRegistered(ModuleNames.SideBarModule, 'api.' + apiMethod, this.context.getGridId());
+        return ModuleRegistry.__assertRegistered(ModuleNames.SideBarModule, 'api.' + apiMethod, this.beans.context.getGridId());
     }
 
     /** Returns `true` if the side bar is visible. */
@@ -1102,7 +1103,7 @@ export class GridApi<TData = any> {
     }
 
     public dispatchEvent(event: AgEvent): void {
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     /** Will destroy the grid and release resources. If you are using a framework you do not need to call this, as the grid links in with the framework lifecycle. However if you are using Web Components or native JavaScript, you do need to call this, to avoid a memory leak in your application. */
@@ -1155,7 +1156,7 @@ export class GridApi<TData = any> {
             return this.rangeService.getCellRanges();
         }
 
-        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'api.getCellRanges', this.context.getGridId());
+        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'api.getCellRanges', this.beans.context.getGridId());
         return null;
     }
 
@@ -1165,7 +1166,7 @@ export class GridApi<TData = any> {
             this.rangeService.addCellRange(params);
             return;
         }
-        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'api.addCellRange', this.context.getGridId());
+        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'api.addCellRange', this.beans.context.getGridId());
     }
 
     /** Clears the selected ranges. */
@@ -1173,7 +1174,7 @@ export class GridApi<TData = any> {
         if (this.rangeService) {
             this.rangeService.removeAllCellRanges();
         }
-        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection', this.context.getGridId());
+        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection', this.beans.context.getGridId());
     }
     /** Reverts the last cell edit. */
     public undoCellEditing(): void {
@@ -1194,7 +1195,7 @@ export class GridApi<TData = any> {
     }
 
     private assertChart<T>(methodName: keyof GridApi ,func: () => T): T | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.' + methodName, this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.' + methodName, this.beans.context.getGridId())) {
             return this.frameworkOverrides.wrapIncoming(() => func());
         }
     }
@@ -1255,7 +1256,7 @@ export class GridApi<TData = any> {
     }
 
     private assertClipboard<T>(methodName: keyof GridApi, func: () => T ): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api' + methodName, this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api' + methodName, this.beans.context.getGridId())) {
             func();
         }
     }
@@ -1934,7 +1935,7 @@ export class GridApi<TData = any> {
      * Returns the grid option value for a provided key.
      */
     public getGridOption<Key extends keyof GridOptions<TData>>(key: Key): GridOptions<TData>[Key] {
-        return this.gos.get(key);
+        return this.beans.gos.get(key);
     }
 
     /**
@@ -1951,12 +1952,12 @@ export class GridApi<TData = any> {
     public updateGridOptions<TDataUpdate extends TData>(options: ManagedGridOptions<TDataUpdate>): void {
         // NOTE: The TDataUpdate generic is used to ensure that the update options match the generic passed into the GridApi above as TData.
         // This is required because if we just use TData directly then Typescript will get into an infinite loop due to callbacks which recursively include the GridApi.
-        this.gos.updateGridOptions({ options });
+        this.beans.gos.updateGridOptions({ options });
     }
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __internalUpdateGridOptions(options: GridOptions): void {
-        this.gos.updateGridOptions({ options, source: 'gridOptionsUpdated' });
+        this.beans.gos.updateGridOptions({ options, source: 'gridOptionsUpdated' });
     }
 
     private deprecatedUpdateGridOption<K extends keyof GridOptions & ManagedGridOptionKey>(key: K, value: GridOptions<TData>[K]) {
@@ -2164,7 +2165,7 @@ export class GridApi<TData = any> {
      * */
     public setQuickFilter(newFilter: string): void {
         warnOnce(`setQuickFilter is deprecated. Please use 'api.setGridOption('quickFilterText', newValue)' or 'api.updateGridOptions({ quickFilterText: newValue })' instead.`);
-        this.gos.updateGridOptions({ options: { quickFilterText: newFilter }});
+        this.beans.gos.updateGridOptions({ options: { quickFilterText: newFilter }});
     }
 
     /** 
@@ -2232,7 +2233,7 @@ export class GridApi<TData = any> {
      */
     public setColumnDefs(colDefs: (ColDef<TData> | ColGroupDef<TData>)[], source: ColumnEventType = "api") {
         warnOnce(`setColumnDefs is deprecated. Please use 'api.setGridOption('columnDefs', newValue)' or 'api.updateGridOptions({ columnDefs: newValue })' instead.`);
-        this.gos.updateGridOptions({
+        this.beans.gos.updateGridOptions({
             options: { columnDefs: colDefs },
             source: source as any,
         });
@@ -2244,7 +2245,7 @@ export class GridApi<TData = any> {
      * */
     public setAutoGroupColumnDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
         warnOnce(`setAutoGroupColumnDef is deprecated. Please use 'api.setGridOption('autoGroupColumnDef', newValue)' or 'api.updateGridOptions({ autoGroupColumnDef: newValue })' instead.`);
-        this.gos.updateGridOptions({
+        this.beans.gos.updateGridOptions({
             options: { autoGroupColumnDef: colDef },
             source: source as any,
         });
@@ -2256,7 +2257,7 @@ export class GridApi<TData = any> {
      * */
     public setDefaultColDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
         warnOnce(`setDefaultColDef is deprecated. Please use 'api.setGridOption('defaultColDef', newValue)' or 'api.updateGridOptions({ defaultColDef: newValue })' instead.`);
-        this.gos.updateGridOptions({
+        this.beans.gos.updateGridOptions({
             options: { defaultColDef: colDef },
             source: source as any,
         });
@@ -2268,7 +2269,7 @@ export class GridApi<TData = any> {
      * */
     public setColumnTypes(columnTypes: { string: ColDef<TData> }, source: ColumnEventType = "api") {
         warnOnce(`setColumnTypes is deprecated. Please use 'api.setGridOption('columnTypes', newValue)' or 'api.updateGridOptions({ columnTypes: newValue })' instead.`);
-        this.gos.updateGridOptions({
+        this.beans.gos.updateGridOptions({
             options: { columnTypes: columnTypes },
             source: source as any,
         });

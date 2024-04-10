@@ -319,7 +319,7 @@ export class UserComponentFactory extends BeanStub {
         paramsFromGrid: any,
         paramsFromSelector: any = null
     ): any {
-        const params: AgGridCommon<any, any> = this.gos.getGridCommonParams();
+        const params: AgGridCommon<any, any> = this.beans.gos.getGridCommonParams();
 
         mergeDeep(params, paramsFromGrid);
 
@@ -341,7 +341,7 @@ export class UserComponentFactory extends BeanStub {
     }
 
     private initComponent(component: any, params: any): AgPromise<void> | void {
-        this.context.createBean(component);
+        this.createBean(component);
         if (component.init == null) { return; }
         return component.init(params);
     }

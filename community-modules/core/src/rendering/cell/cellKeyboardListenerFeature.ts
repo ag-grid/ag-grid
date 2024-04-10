@@ -11,16 +11,15 @@ import { Events } from "../../eventKeys";
 export class CellKeyboardListenerFeature extends BeanStub {
 
     private readonly cellCtrl: CellCtrl;
-    private readonly beans: Beans;
     private readonly rowNode: RowNode;
     private readonly rowCtrl: RowCtrl;
 
     private eGui: HTMLElement;
 
-    constructor(ctrl: CellCtrl, beans: Beans, column: Column, rowNode: RowNode, rowCtrl: RowCtrl) {
+    constructor(ctrl: CellCtrl, beans: Beans, rowNode: RowNode, rowCtrl: RowCtrl) {
         super();
         this.cellCtrl = ctrl;
-        this.beans = beans;
+        this.manualSetBeans(beans);
         this.rowNode = rowNode;
         this.rowCtrl = rowCtrl;
     }

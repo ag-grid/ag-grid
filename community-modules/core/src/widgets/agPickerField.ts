@@ -114,7 +114,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
         const { pickerIcon, inputWidth } = this.config;
 
         if (pickerIcon) {
-            const icon = createIconNoSpan(pickerIcon, this.gos);
+            const icon = createIconNoSpan(pickerIcon, this.beans.gos);
             if (icon) {
                 this.eIcon.appendChild(icon);
             }
@@ -128,7 +128,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     protected setupAria(): void {
         const ariaEl = this.getAriaElement();
         
-        ariaEl.setAttribute('tabindex', (this.gos.get('tabIndex')).toString());
+        ariaEl.setAttribute('tabindex', (this.beans.gos.get('tabIndex')).toString());
 
         setAriaExpanded(ariaEl, false);
 
@@ -205,16 +205,16 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     }
 
     protected renderAndPositionPicker(): (() => void) {
-        const eDocument = this.gos.getDocument();
+        const eDocument = this.beans.gos.getDocument();
         const ePicker = this.pickerComponent!.getGui();
 
-        if (!this.gos.get('suppressScrollWhenPopupsAreOpen')) {
-            this.destroyMouseWheelFunc = this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, () => {
+        if (!this.beans.gos.get('suppressScrollWhenPopupsAreOpen')) {
+            this.destroyMouseWheelFunc = this.addManagedEventListener(Events.EVENT_BODY_SCROLL, () => {
                 this.hidePicker();
             });
         }
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         const { pickerAriaLabelKey, pickerAriaLabelValue, modalPicker = true } = this.config;
 
@@ -223,7 +223,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
             eChild: ePicker,
             closeOnEsc: true,
             closedCallback: () => {
-                const activeEl = this.gos.getActiveDomElement()
+                const activeEl = this.beans.gos.getActiveDomElement()
                 const shouldRestoreFocus = !activeEl || activeEl === eDocument.body;
                 this.beforeHidePicker();
 
@@ -266,7 +266,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
         const { pickerType } = this.config;
         const { pickerGap } = this;
 
-        const alignSide = this.gos.get('enableRtl') ? 'right' : 'left';
+        const alignSide = this.beans.gos.get('enableRtl') ? 'right' : 'left';
 
         this.popupService.positionPopupByComponent({
             type: pickerType,

@@ -60,11 +60,11 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
         this.setupDragAndDrop(this.eViewport);
 
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
 
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
 
-        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onDisplayedColumnsChanged.bind(this));
 
         this.ctrlsService.registerHeaderContainer(this, this.pinned);
 
@@ -202,8 +202,8 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
             const hidden = (width == 0);
             const hiddenChanged = this.hidden !== hidden;
-            const isRtl = this.gos.get('enableRtl');
-            const scrollbarWidth = this.gos.getScrollbarWidth();
+            const isRtl = this.beans.gos.get('enableRtl');
+            const scrollbarWidth = this.beans.gos.getScrollbarWidth();
 
             // if there is a scroll showing (and taking up space, so Windows, and not iOS)
             // in the body, then we add extra space to keep header aligned with the body,
@@ -220,10 +220,10 @@ export class HeaderRowContainerCtrl extends BeanStub {
             }
         };
 
-        this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, listener);
+        this.addManagedEventListener(Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, listener);
+        this.addManagedEventListener(Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, listener);
+        this.addManagedEventListener(Events.EVENT_SCROLL_VISIBILITY_CHANGED, listener);
+        this.addManagedEventListener(Events.EVENT_SCROLLBAR_WIDTH_CHANGED, listener);
     }
 
     public getHeaderCtrlForColumn(column: Column): HeaderCellCtrl | undefined;

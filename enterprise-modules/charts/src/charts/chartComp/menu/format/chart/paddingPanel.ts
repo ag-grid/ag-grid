@@ -54,7 +54,7 @@ export class PaddingPanel extends Component {
             paddingLeftSlider: getSliderParams('left')
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, (e: ChartOptionsChanged) => {
+        this.addManagedEventListener(Events.EVENT_CHART_OPTIONS_CHANGED, (e: ChartOptionsChanged) => {
             this.updateTopPadding(e.chartOptions);
         });
     }

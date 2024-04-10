@@ -79,21 +79,21 @@ export class StateService extends BeanStub {
     private postConstruct(): void {
         this.isClientSideRowModel = this.rowModel.getType() === 'clientSide';
 
-        this.cachedState = this.gos.get('initialState') ?? {};
+        this.cachedState = this.beans.gos.get('initialState') ?? {};
 
         this.ctrlsService.whenReady(() => this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnGridReady()));
 
-        const newColumnsLoadedDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, ({ source }: NewColumnsLoadedEvent) => {
+        const newColumnsLoadedDestroyFunc = this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, ({ source }: NewColumnsLoadedEvent) => {
             if (source === 'gridInitializing') {
                 newColumnsLoadedDestroyFunc?.();
                 this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnColumnsInitialised());
             }
         });
-        const rowCountReadyDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_ROW_COUNT_READY, () => {
+        const rowCountReadyDestroyFunc = this.addManagedEventListener(Events.EVENT_ROW_COUNT_READY, () => {
             rowCountReadyDestroyFunc?.();
             this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnRowCountReady());
         });
-        const firstDataRenderedDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => {
+        const firstDataRenderedDestroyFunc = this.addManagedEventListener(Events.EVENT_FIRST_DATA_RENDERED, () => {
             firstDataRenderedDestroyFunc?.();
             this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnFirstDataRendered());
         });
@@ -111,12 +111,12 @@ export class StateService extends BeanStub {
 
         this.updateCachedState('sideBar', this.getSideBarState());
 
-        this.addManagedListener(this.eventService, Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, () => this.updateCachedState('sideBar', this.getSideBarState()));
-        this.addManagedListener(this.eventService, Events.EVENT_SIDE_BAR_UPDATED, () => this.updateCachedState('sideBar', this.getSideBarState()));
+        this.addManagedEventListener(Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, () => this.updateCachedState('sideBar', this.getSideBarState()));
+        this.addManagedEventListener(Events.EVENT_SIDE_BAR_UPDATED, () => this.updateCachedState('sideBar', this.getSideBarState()));
     }
 
     private setupStateOnColumnsInitialised(): void {
-        const initialState = this.gos.get('initialState') ?? {};
+        const initialState = this.beans.gos.get('initialState') ?? {};
         this.setColumnState(initialState);
         this.setColumnGroupState(initialState);
 
@@ -126,28 +126,28 @@ export class StateService extends BeanStub {
         this.updateCachedState('columnGroup', this.getColumnGroupState());
 
         // aggregation
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, () => this.updateColumnState(['aggregation']));
+        this.addManagedEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, () => this.updateColumnState(['aggregation']));
         // columnOrder
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.updateColumnState(['columnOrder']));
+        this.addManagedEventListener(Events.EVENT_COLUMN_MOVED, () => this.updateColumnState(['columnOrder']));
         // columnPinning
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, () => this.updateColumnState(['columnPinning']));
+        this.addManagedEventListener(Events.EVENT_COLUMN_PINNED, () => this.updateColumnState(['columnPinning']));
         // columnSizing
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, () => this.updateColumnState(['columnSizing']));
+        this.addManagedEventListener(Events.EVENT_COLUMN_RESIZED, () => this.updateColumnState(['columnSizing']));
         // columnVisibility
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => this.updateColumnState(['columnVisibility']));
+        this.addManagedEventListener(Events.EVENT_COLUMN_VISIBLE, () => this.updateColumnState(['columnVisibility']));
         // pivot
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.updateColumnState(['pivot']));
+        this.addManagedEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.updateColumnState(['pivot']));
         // pivot
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.updateColumnState(['pivot']));
+        this.addManagedEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.updateColumnState(['pivot']));
         // rowGroup
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.updateColumnState(['rowGroup']));
+        this.addManagedEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.updateColumnState(['rowGroup']));
         // sort
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, () => this.updateColumnState(['sort']));
+        this.addManagedEventListener(Events.EVENT_SORT_CHANGED, () => this.updateColumnState(['sort']));
         // any column
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.updateColumnState([
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, () => this.updateColumnState([
             'aggregation', 'columnOrder', 'columnPinning', 'columnSizing', 'columnVisibility', 'pivot', 'pivot', 'rowGroup', 'sort'
         ]));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, () => this.updateCachedState('columnGroup', this.getColumnGroupState()));
+        this.addManagedEventListener(Events.EVENT_COLUMN_GROUP_OPENED, () => this.updateCachedState('columnGroup', this.getColumnGroupState()));
     }
 
     private setupStateOnRowCountReady(): void {
@@ -156,8 +156,8 @@ export class StateService extends BeanStub {
             rowGroupExpansion: rowGroupExpansionState,
             rowSelection: rowSelectionState,
             pagination: paginationState
-        } = this.gos.get('initialState') ?? {};
-        const advancedFilterModel = this.gos.get('advancedFilterModel');
+        } = this.beans.gos.get('initialState') ?? {};
+        const advancedFilterModel = this.beans.gos.get('advancedFilterModel');
         if (filterState || advancedFilterModel) {
             this.setFilterState(filterState, advancedFilterModel);
         }
@@ -176,14 +176,14 @@ export class StateService extends BeanStub {
         this.updateCachedState('rowSelection', this.getRowSelectionState());
         this.updateCachedState('pagination', this.getPaginationState());
 
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, () => this.updateCachedState('filter', this.getFilterState()));
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, () => this.onRowGroupOpenedDebounced());
-        this.addManagedListener(this.eventService, Events.EVENT_EXPAND_COLLAPSE_ALL, () => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()));
-        this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, () => {
+        this.addManagedEventListener(Events.EVENT_FILTER_CHANGED, () => this.updateCachedState('filter', this.getFilterState()));
+        this.addManagedEventListener(Events.EVENT_ROW_GROUP_OPENED, () => this.onRowGroupOpenedDebounced());
+        this.addManagedEventListener(Events.EVENT_EXPAND_COLLAPSE_ALL, () => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()));
+        this.addManagedEventListener(Events.EVENT_SELECTION_CHANGED, () => {
             this.staleStateKeys.add('rowSelection');
             this.onRowSelectedDebounced();
         });
-        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, (event: PaginationChangedEvent) => {
+        this.addManagedEventListener(Events.EVENT_PAGINATION_CHANGED, (event: PaginationChangedEvent) => {
             if (event.newPage || event.newPageSize) {
                 this.updateCachedState('pagination', this.getPaginationState());
             }
@@ -196,7 +196,7 @@ export class StateService extends BeanStub {
             rangeSelection: rangeSelectionState,
             focusedCell: focusedCellState,
             columnOrder: columnOrderState,
-        } = this.gos.get('initialState') ?? {};
+        } = this.beans.gos.get('initialState') ?? {};
         if (focusedCellState) {
             this.setFocusedCellState(focusedCellState);
         }
@@ -214,13 +214,13 @@ export class StateService extends BeanStub {
         this.updateCachedState('rangeSelection', this.getRangeSelectionState());
         this.updateCachedState('scroll', this.getScrollState());
 
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, () => this.updateCachedState('focusedCell', this.getFocusedCellState()));
-        this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, (event: RangeSelectionChangedEvent) => {
+        this.addManagedEventListener(Events.EVENT_CELL_FOCUSED, () => this.updateCachedState('focusedCell', this.getFocusedCellState()));
+        this.addManagedEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, (event: RangeSelectionChangedEvent) => {
             if (event.finished) {
                 this.updateCachedState('rangeSelection', this.getRangeSelectionState());
             }
         });
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL_END, () => this.updateCachedState('scroll', this.getScrollState()));
+        this.addManagedEventListener(Events.EVENT_BODY_SCROLL_END, () => this.updateCachedState('scroll', this.getScrollState()));
     }
 
     private getColumnState(): {
@@ -342,7 +342,7 @@ export class StateService extends BeanStub {
                 columnState.pivot = true;
                 columnState.pivotIndex = pivotIndex;
             });
-            this.gos.updateGridOptions({ options: { pivotMode: pivotState.pivotMode }, source: 'gridInitializing' as any });
+            this.beans.gos.updateGridOptions({ options: { pivotMode: pivotState.pivotMode }, source: 'gridInitializing' as any });
         }
         if (columnPinningState) {
             columnPinningState.leftColIds.forEach(colId => {
@@ -492,7 +492,7 @@ export class StateService extends BeanStub {
     }
 
     private setRangeSelectionState(rangeSelectionState: RangeSelectionState): void {
-        if (!this.gos.get('enableRangeSelection') || !this.rangeService) { return; }
+        if (!this.beans.gos.get('enableRangeSelection') || !this.rangeService) { return; }
         const cellRanges: CellRange[] = [];
         rangeSelectionState.cellRanges.forEach(cellRange => {
             const columns: Column[] = [];
@@ -574,7 +574,7 @@ export class StateService extends BeanStub {
 
     private getPaginationState(): PaginationState | undefined {
         const page = this.paginationProxy.getCurrentPage();
-        const pageSize = !this.gos.get('paginationAutoPageSize')
+        const pageSize = !this.beans.gos.get('paginationAutoPageSize')
             ? this.paginationProxy.getPageSize() : undefined;
 
         if (!page && !pageSize) { return; }
@@ -582,7 +582,7 @@ export class StateService extends BeanStub {
     }
 
     private setPaginationState(paginationState: PaginationState): void {
-        if (paginationState.pageSize && !this.gos.get('paginationAutoPageSize')) {
+        if (paginationState.pageSize && !this.beans.gos.get('paginationAutoPageSize')) {
             this.paginationProxy.setPageSize(paginationState.pageSize, 'initialState');
         }
 
@@ -676,7 +676,7 @@ export class StateService extends BeanStub {
             sources,
             state: this.cachedState
         }
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private suppressEventsAndDispatchInitEvent(updateFunc: () => void): void {

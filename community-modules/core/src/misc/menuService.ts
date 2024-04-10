@@ -216,7 +216,7 @@ export class MenuService extends BeanStub {
     }
 
     private getColumnMenuType(): 'legacy' | 'new' {
-        return this.gos.get('columnMenu') ?? 'legacy';
+        return this.beans.gos.get('columnMenu') ?? 'legacy';
     }
 
     private isFloatingFilterButtonDisplayed(column: Column): boolean {
@@ -224,12 +224,12 @@ export class MenuService extends BeanStub {
     }
 
     private isSuppressMenuHide(): boolean {
-        const suppressMenuHide = this.gos.get('suppressMenuHide');
+        const suppressMenuHide = this.beans.gos.get('suppressMenuHide');
         if (this.isLegacyMenuEnabled()) {
             return suppressMenuHide;
         } else {
             // default to true for new
-            return this.gos.exists('suppressMenuHide') ? suppressMenuHide : true;
+            return this.beans.gos.exists('suppressMenuHide') ? suppressMenuHide : true;
         }
     }
 

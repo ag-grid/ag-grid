@@ -49,7 +49,7 @@ export class ChartMenuListFactory extends BeanStub {
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
-        if (this.gos.get('enableRtl')) {
+        if (this.beans.gos.get('enableRtl')) {
             multiplier = 1;
             alignSide = 'right';
         }
@@ -63,8 +63,8 @@ export class ChartMenuListFactory extends BeanStub {
             closedCallback: () => {
                 this.destroyBean(chartMenuList);
                 this.activeChartMenuList = undefined;
-                const eDocument = this.gos.getDocument();
-                const activeEl = this.gos.getActiveDomElement()
+                const eDocument = this.beans.gos.getDocument();
+                const activeEl = this.beans.gos.getActiveDomElement()
                 if (!activeEl || activeEl === eDocument.body) {
                     eventSource.focus({ preventScroll: true });
                 }
@@ -95,13 +95,13 @@ export class ChartMenuListFactory extends BeanStub {
             chartController.isChartLinked() ? 'chartUnlink' : 'chartLink',
             'chartDownload'
         ];
-        const chartMenuItems = this.gos.get('chartMenuItems');
+        const chartMenuItems = this.beans.gos.get('chartMenuItems');
         if (!chartMenuItems) {
             return defaultItems;
         } else if (Array.isArray(chartMenuItems)) {
             return chartMenuItems;
         } else {
-            return chartMenuItems(this.gos.addGridCommonParams({
+            return chartMenuItems(this.beans.gos.addGridCommonParams({
                 defaultItems
             }));
         }
@@ -168,7 +168,7 @@ export class ChartMenuListFactory extends BeanStub {
     private createMenuItem(name: string, iconName: string, action: () => void): MenuItemDef {
         return {
             name,
-            icon: _.createIconNoSpan(iconName, this.gos, null),
+            icon: _.createIconNoSpan(iconName, this.beans.gos, null),
             action
         }
     }

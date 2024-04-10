@@ -49,7 +49,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
 
     @PostConstruct
     private postConstruct(): void {
-        this.setEnabled(this.gos.get('enableAdvancedFilter'), true);
+        this.setEnabled(this.beans.gos.get('enableAdvancedFilter'), true);
 
         this.ctrl = this.createManagedBean(new AdvancedFilterCtrl(this.enabled));
 
@@ -61,7 +61,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         }
 
         this.addManagedPropertyListener('enableAdvancedFilter', (event) => this.setEnabled(!!event.currentValue))
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED,
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED,
             (event: NewColumnsLoadedEvent) => this.onNewColumnsLoaded(event));
         this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', () => this.updateValidity());
     }
@@ -140,7 +140,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     }
 
     public isHeaderActive(): boolean {
-        return !this.gos.get('advancedFilterParent');
+        return !this.beans.gos.get('advancedFilterParent');
     }
 
     public getCtrl(): AdvancedFilterCtrl {
@@ -160,7 +160,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
                 type: Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
                 enabled: this.enabled
             };
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         }
     }
 
@@ -204,7 +204,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         if (event.source !== 'gridInitializing' || !this.dataTypeService.isPendingInference()) { return; }
 
         this.ctrl.setInputDisabled(true);
-        const destroyFunc = this.addManagedListener(this.eventService, Events.EVENT_DATA_TYPES_INFERRED, () => {
+        const destroyFunc = this.addManagedEventListener(Events.EVENT_DATA_TYPES_INFERRED, () => {
             destroyFunc?.();
             this.ctrl.setInputDisabled(false);
         });

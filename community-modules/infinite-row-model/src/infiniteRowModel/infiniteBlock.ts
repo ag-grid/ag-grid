@@ -7,14 +7,10 @@ import {
     RowNode,
     RowNodeBlock,
     LoadSuccessParams,
-    Beans,
-    Autowired
 } from "@ag-grid-community/core";
 import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 
 export class InfiniteBlock extends RowNodeBlock {
-    @Autowired('beans') private beans: Beans;
-
     private readonly startRow: number;
     private readonly endRow: number;
     private readonly parentCache: InfiniteCache;
@@ -95,7 +91,7 @@ export class InfiniteBlock extends RowNodeBlock {
             failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
             sortModel: this.params.sortModel,
             filterModel: this.params.filterModel,
-            context: this.gos.getGridCommonParams().context
+            context: this.beans.gos.getGridCommonParams().context
         };
         return params;
     }

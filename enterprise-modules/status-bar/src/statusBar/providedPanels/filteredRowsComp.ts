@@ -29,14 +29,14 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
         this.setDisplayed(true);
 
         const listener = this.onDataChanged.bind(this);
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, listener);
+        this.addManagedEventListener(Events.EVENT_MODEL_UPDATED, listener);
         listener();
     }
 
     private onDataChanged() {
         const totalRowCountValue = this.getTotalRowCountValue();
         const filteredRowCountValue = this.getFilteredRowCountValue();
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 

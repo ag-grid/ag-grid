@@ -1,11 +1,12 @@
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { Column } from "../entities/column";
 import { Bean } from "../context/context";
-import { deepCloneDefinition } from "../utils/object";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
+import { isNonNullObject } from "../utils/object";
+import { BeansProvider } from "../rendering/beans";
 
 @Bean('columnDefFactory')
-export class ColumnDefFactory {
+export class ColumnDefFactory extends BeansProvider {
 
     public buildColumnDefs(cols: Column[], rowGroupColumns: Column[], pivotColumns: Column[]): (ColDef | ColGroupDef)[] {
 
@@ -71,7 +72,7 @@ export class ColumnDefFactory {
     }
 
     private createDefFromGroup(group: ProvidedColumnGroup): ColGroupDef | null | undefined {
-        const defCloned = deepCloneDefinition(group.getColGroupDef(), ['children']);
+        const defCloned = this.deepCloneDefinition(group.getColGroupDef(), ['children']);
 
         if (defCloned) {
             defCloned.groupId = group.getGroupId();
@@ -81,7 +82,7 @@ export class ColumnDefFactory {
     }
 
     private createDefFromColumn(col: Column, rowGroupColumns: Column[], pivotColumns: Column[]): ColDef {
-        const colDefCloned = deepCloneDefinition(col.getColDef())!;
+        const colDefCloned = this.deepCloneDefinition(col.getColDef())!;
 
         colDefCloned.colId = col.getColId();
 
@@ -99,5 +100,37 @@ export class ColumnDefFactory {
 
         return colDefCloned;
     }
+
+    // returns copy of an object, doing a deep clone of any objects with that object.
+    // this is used for eg creating copies of Column Definitions, where we want to
+    // deep copy all objects, but do not want to deep copy functions (eg when user provides
+    // a function or class for colDef.cellRenderer)
+    private deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | undefined {
+        if (!object) { return; }
+
+        const obj = object as any;
+        const res: any = {};
+
+        Object.keys(obj).forEach(key => {
+
+            if (keysToSkip && keysToSkip.indexOf(key) >= 0) { return; }
+
+            const value = obj[key];
+
+            // 'simple object' means a bunch of key/value pairs, eg {filter: 'myFilter'}. it does
+            // NOT include the following:
+            // 1) arrays
+            // 2) functions or classes (eg ColumnAPI instance)
+            const sourceIsSimpleObject = isNonNullObject(value) && value.constructor === Object;
+
+            if (sourceIsSimpleObject) {
+                res[key] = this.deepCloneDefinition(value);
+            } else {
+                res[key] = value;
+            }
+        });
+
+    return res;
+}
 
 }

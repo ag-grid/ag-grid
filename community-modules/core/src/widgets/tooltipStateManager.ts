@@ -71,12 +71,12 @@ export class TooltipStateManager extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.gos.get('tooltipInteraction')) {
+        if (this.beans.gos.get('tooltipInteraction')) {
             this.interactionEnabled = true;
         }
 
         this.tooltipTrigger = this.getTooltipTrigger();
-        this.tooltipMouseTrack = this.gos.get('tooltipMouseTrack');
+        this.tooltipMouseTrack = this.beans.gos.get('tooltipMouseTrack');
 
         const el = this.parentComp.getGui();
 
@@ -99,7 +99,7 @@ export class TooltipStateManager extends BeanStub {
     }
 
     private getGridOptionsTooltipDelay(delayOption: 'tooltipShowDelay' | 'tooltipHideDelay'): number {
-        const delay = this.gos.get(delayOption);
+        const delay = this.beans.gos.get(delayOption);
         if (delay < 0) {
             warnOnce(`${delayOption} should not be lower than 0`);
         }
@@ -122,7 +122,7 @@ export class TooltipStateManager extends BeanStub {
     }
 
     private getTooltipTrigger(): TooltipTrigger {
-        const trigger = this.gos.get('tooltipTrigger');
+        const trigger = this.beans.gos.get('tooltipTrigger');
 
         if (!trigger || trigger === 'hover') {
             return TooltipTrigger.HOVER;
@@ -272,7 +272,7 @@ export class TooltipStateManager extends BeanStub {
         // we disregard it
         const callback = this.newTooltipComponentCallback.bind(this, this.tooltipInstanceCount);
 
-        const userDetails = this.userComponentFactory.getTooltipCompDetails(params);
+        const userDetails = this.beans.userComponentFactory.getTooltipCompDetails(params);
         userDetails.newAgStackInstance()!.then(callback);
     }
 
@@ -290,7 +290,7 @@ export class TooltipStateManager extends BeanStub {
             type: Events.EVENT_TOOLTIP_HIDE,
             parentGui: this.parentComp.getGui()
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
 
         this.state = TooltipStates.NOTHING;
     }
@@ -319,7 +319,7 @@ export class TooltipStateManager extends BeanStub {
             eGui.classList.add('ag-tooltip-interactive');
         }
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         const addPopupRes = this.popupService.addPopup({
             eChild: eGui,
@@ -332,8 +332,8 @@ export class TooltipStateManager extends BeanStub {
         this.positionTooltip();
 
         if (this.tooltipTrigger === TooltipTrigger.FOCUS) {
-            this.onBodyScrollEventCallback = this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.setToDoNothing.bind(this));
-            this.onColumnMovedEventCallback = this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.setToDoNothing.bind(this));
+            this.onBodyScrollEventCallback = this.addManagedEventListener(Events.EVENT_BODY_SCROLL, this.setToDoNothing.bind(this));
+            this.onColumnMovedEventCallback = this.addManagedEventListener(Events.EVENT_COLUMN_MOVED, this.setToDoNothing.bind(this));
         }
 
         if (this.interactionEnabled) {
@@ -351,7 +351,7 @@ export class TooltipStateManager extends BeanStub {
             tooltipGui: eGui,
             parentGui: this.parentComp.getGui()
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
 
         this.startHideTimeout();
     }

@@ -28,7 +28,7 @@ export class SyncService extends BeanStub {
     public start(): void {
         // we wait until the UI has finished initialising before setting in columns and rows
         this.ctrlsService.whenReady(() => {
-            const columnDefs = this.gos.get('columnDefs');
+            const columnDefs = this.beans.gos.get('columnDefs');
             if (columnDefs) {
                 this.setColumnsAndData(columnDefs);
             } else {
@@ -45,8 +45,8 @@ export class SyncService extends BeanStub {
     
     private gridReady(): void {
         this.dispatchGridReadyEvent();
-        const isEnterprise = ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.context.getGridId());
-        const logger = new Logger('AG Grid', () => this.gos.get('debug'));
+        const isEnterprise = ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.beans.context.getGridId());
+        const logger = new Logger('AG Grid', () => this.beans.gos.get('debug'));
         logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
     }
 
@@ -54,11 +54,11 @@ export class SyncService extends BeanStub {
         const readyEvent: WithoutGridCommon<GridReadyEvent> = {
             type: Events.EVENT_GRID_READY,
         };
-        this.eventService.dispatchEvent(readyEvent);
+        this.beans.eventService.dispatchEvent(readyEvent);
     }
 
     private setColumnDefs(event: PropertyValueChangedEvent<'columnDefs'>): void {
-        const columnDefs = this.gos.get('columnDefs');
+        const columnDefs = this.beans.gos.get('columnDefs');
         if (!columnDefs) { return; }
 
         if (this.waitingForColumns) {

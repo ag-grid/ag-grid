@@ -45,7 +45,7 @@ import { UserComponentFactory } from "./components/framework/userComponentFactor
 import { UserComponentRegistry } from "./components/framework/userComponentRegistry";
 import { AgComponentUtils } from "./components/framework/agComponentUtils";
 import { ComponentMetadataProvider } from "./components/framework/componentMetadataProvider";
-import { Beans } from "./rendering/beans";
+import { Beans, BeansProvider } from "./rendering/beans";
 import { Environment } from "./environment";
 import { AnimationFrameService } from "./misc/animationFrameService";
 import { NavigationService } from "./gridBodyComp/navigationService";
@@ -105,6 +105,7 @@ import { ApiEventService } from "./misc/apiEventService";
 import { PageSizeSelectorComp } from "./pagination/pageSizeSelector/pageSizeSelectorComp";
 import { AriaAnnouncementService } from "./rendering/ariaAnnouncementService";
 import { MenuService } from "./misc/menuService";
+import { BeanStub } from "./main";
 
 export interface GridParams {
     // INTERNAL - used by Web Components

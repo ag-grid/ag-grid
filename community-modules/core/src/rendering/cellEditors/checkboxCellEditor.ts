@@ -54,7 +54,7 @@ export class CheckboxCellEditor extends PopupComponent implements ICellEditorCom
     }
 
     private setAriaLabel(isSelected?: boolean): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const stateName = getAriaCheckboxStateName(translate, isSelected);
         const ariaLabel = translate('ariaToggleCellValue', 'Press SPACE to toggle cell value');
         this.eCheckbox.setInputAriaLabel(`${ariaLabel} (${stateName})`);

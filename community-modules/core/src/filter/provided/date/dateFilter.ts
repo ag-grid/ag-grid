@@ -226,7 +226,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
             console.warn(`AG Grid: DateFilter minValidDate should be <= maxValidDate`);
         }
 
-        this.filterModelFormatter = new DateFilterModelFormatter(this.dateFilterParams, this.localeService, this.optionsFactory);
+        this.filterModelFormatter = new DateFilterModelFormatter(this.dateFilterParams, this.beans.localeService, this.optionsFactory);
     }
 
     createDateCompWrapper(element: HTMLElement): DateCompWrapper {
@@ -260,7 +260,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     protected createValueElement(): HTMLElement {
-        const eDocument = this.gos.getDocument();
+        const eDocument = this.beans.gos.getDocument();
         const eCondition = eDocument.createElement('div');
         eCondition.classList.add('ag-filter-body');
 
@@ -271,7 +271,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     private createFromToElement(eCondition: HTMLElement, eConditionPanels: HTMLElement[], dateConditionComps: DateCompWrapper[], fromTo: string): void {
-        const eDocument = this.gos.getDocument();
+        const eDocument = this.beans.gos.getDocument();
         const eConditionPanel = eDocument.createElement('div');
         eConditionPanel.classList.add(`ag-filter-${fromTo}`);
         eConditionPanel.classList.add(`ag-filter-date-${fromTo}`);
@@ -368,7 +368,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     protected resetPlaceholder(): void {
-        const globalTranslate = this.localeService.getLocaleTextFunc();
+        const globalTranslate = this.beans.localeService.getLocaleTextFunc();
         const placeholder = this.translate('dateFormatOoo');
         const ariaLabel = globalTranslate('ariaFilterValue', 'Filter Value');
 

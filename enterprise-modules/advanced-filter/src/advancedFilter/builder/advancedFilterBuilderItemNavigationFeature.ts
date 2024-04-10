@@ -26,7 +26,7 @@ export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
                     break;
                 case KeyCode.ESCAPE:
                     if (_.isStopPropagationForAgGrid(event)) { return; }
-                    if (this.eGui.contains(this.gos.getActiveDomElement())) {
+                    if (this.eGui.contains(this.beans.gos.getActiveDomElement())) {
                         event.preventDefault();
                         _.stopPropagationForAgGrid(event);
                         this.focusWrapper.focus();
@@ -38,7 +38,7 @@ export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
             switch (event.key) {
                 case KeyCode.ENTER:
                     if (_.isStopPropagationForAgGrid(event)) { return; }
-                    if (this.gos.getActiveDomElement() === this.focusWrapper) {
+                    if (this.beans.gos.getActiveDomElement() === this.focusWrapper) {
                         event.preventDefault();
                         _.stopPropagationForAgGrid(event);
                         this.eFocusableComp.getFocusableElement().focus();

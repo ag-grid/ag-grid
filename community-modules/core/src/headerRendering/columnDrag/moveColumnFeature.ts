@@ -3,19 +3,18 @@ import { ColumnModel } from "../../columns/columnModel";
 import { Column, ColumnPinnedType } from "../../entities/column";
 import { DragAndDropService, DraggingEvent, DragSourceType } from "../../dragAndDrop/dragAndDropService";
 import { DropListener } from "./bodyDropTarget";
-import { GridOptionsService } from "../../gridOptionsService";
 import { ColumnEventType } from "../../events";
 import { missing, exists } from "../../utils/generic";
 import { CtrlsService } from "../../ctrlsService";
 import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
 import { ColumnMoveHelper } from "../columnMoveHelper";
 import { HorizontalDirection } from "../../constants/direction";
+import { BeansProvider } from "../../rendering/beans";
 
-export class MoveColumnFeature implements DropListener {
+export class MoveColumnFeature extends BeansProvider implements DropListener {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('gridOptionsService') private gos: GridOptionsService;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
 
     private gridBodyCon: GridBodyCtrl;
@@ -39,6 +38,7 @@ export class MoveColumnFeature implements DropListener {
     private eContainer: HTMLElement;
 
     constructor(pinned: ColumnPinnedType, eContainer: HTMLElement) {
+        super();
         this.pinned = pinned;
         this.eContainer = eContainer;
         this.centerContainer = !exists(pinned);
@@ -110,7 +110,7 @@ export class MoveColumnFeature implements DropListener {
             const firstVisiblePixel = this.ctrlsService.getCenterRowContainerCtrl().getCenterViewportScrollLeft();
             const lastVisiblePixel = firstVisiblePixel + this.ctrlsService.getCenterRowContainerCtrl().getCenterWidth();
 
-            if (this.gos.get('enableRtl')) {
+            if (this.beans.gos.get('enableRtl')) {
                 this.needToMoveRight = xAdjustedForScroll < (firstVisiblePixel + 50);
                 this.needToMoveLeft = xAdjustedForScroll > (lastVisiblePixel - 50);
             } else {
@@ -145,7 +145,7 @@ export class MoveColumnFeature implements DropListener {
             draggingEvent.x,
             this.pinned,
             false,
-            this.gos,
+            this.beans.gos,
             this.ctrlsService
         );
 
@@ -178,7 +178,7 @@ export class MoveColumnFeature implements DropListener {
             pinned: this.pinned,
             fromEnter,
             fakeEvent,
-            gos: this.gos,
+            gos: this.beans.gos,
             columnModel: this.columnModel
         });
 
@@ -188,7 +188,7 @@ export class MoveColumnFeature implements DropListener {
     }
 
     private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection | undefined {
-        if (this.gos.get('enableRtl')) {
+        if (this.beans.gos.get('enableRtl')) {
             switch (hDirection) {
                 case HorizontalDirection.Left: return HorizontalDirection.Right;
                 case HorizontalDirection.Right: return HorizontalDirection.Left;

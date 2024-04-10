@@ -20,12 +20,12 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
 
         this.setDisplayed(true);
 
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onDataChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_MODEL_UPDATED, this.onDataChanged.bind(this));
         this.onDataChanged();
     }
 
     private onDataChanged() {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
         this.setValue(_.formatNumberCommas(this.getRowCountValue(), thousandSeparator, decimalSeparator));

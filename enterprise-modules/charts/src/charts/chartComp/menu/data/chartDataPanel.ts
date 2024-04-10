@@ -200,7 +200,7 @@ export class ChartDataPanel extends Component {
     }
 
     private getDataPanelDef() {
-        return this.gos.get('chartToolPanelsDef')?.dataPanel ?? DefaultDataPanelDef;
+        return this.beans.gos.get('chartToolPanelsDef')?.dataPanel ?? DefaultDataPanelDef;
     }
 
     private getCategoryGroupTitle(isCategorySeriesSwitched: boolean): string {

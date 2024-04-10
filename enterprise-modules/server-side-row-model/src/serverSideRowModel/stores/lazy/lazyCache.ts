@@ -94,8 +94,8 @@ export class LazyCache extends BeanStub {
         this.nodesToRefresh = new Set();
 
         this.defaultNodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
-        this.getRowIdFunc = this.gos.getCallback('getRowId');
-        this.isMasterDetail = this.gos.get('masterDetail');
+        this.getRowIdFunc = this.beans.gos.getCallback('getRowId');
+        this.isMasterDetail = this.beans.gos.get('masterDetail');
     }
 
     @PreDestroy
@@ -216,7 +216,7 @@ export class LazyCache extends BeanStub {
         if (numberOfRowsToSkip === 0) {
             return;
         }
-        const defaultRowHeight = this.gos.getRowHeightAsNumber();
+        const defaultRowHeight = this.beans.gos.getRowHeightAsNumber();
 
         displayIndexSeq.skip(numberOfRowsToSkip);
         nextRowTop.value += numberOfRowsToSkip * defaultRowHeight;

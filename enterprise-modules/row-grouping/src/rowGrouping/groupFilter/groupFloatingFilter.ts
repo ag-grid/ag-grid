@@ -40,7 +40,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         this.params = params;
 
         // we only support showing the underlying floating filter for multiple group columns
-        const canShowUnderlyingFloatingFilter = this.gos.get('groupDisplayType') === 'multipleColumns';
+        const canShowUnderlyingFloatingFilter = this.beans.gos.get('groupDisplayType') === 'multipleColumns';
 
         return new AgPromise<void>(resolve => {
             this.params.parentFilterInstance(parentFilterInstance => {
@@ -70,7 +70,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
 
     private setParams(): void {
         const displayName = this.columnModel.getDisplayNameForColumn(this.params.column, 'header', true);
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         this.eFloatingFilterText?.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }
 

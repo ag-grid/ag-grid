@@ -37,7 +37,7 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
             suppressColumnSelectAll, suppressSyncLayoutWithGrid, columnLayout
         } = columnChooserParams;
     
-        columnSelectPanel.init(!!draggable, this.gos.addGridCommonParams({
+        columnSelectPanel.init(!!draggable, this.beans.gos.addGridCommonParams({
             suppressColumnMove: false,
             suppressValues: false,
             suppressPivots: false,
@@ -62,7 +62,7 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
         this.hideActiveColumnChooser();
 
         const columnSelectPanel = this.createColumnSelectPanel(this, column, true, chooserParams);
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const columnIndex = this.columnModel.getAllDisplayedColumns().indexOf(column!);
         const headerPosition = column ? this.focusService.getFocusedHeader() : null;
 
@@ -108,6 +108,6 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
             key: 'columnChooser',
             column: column ?? null
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 }

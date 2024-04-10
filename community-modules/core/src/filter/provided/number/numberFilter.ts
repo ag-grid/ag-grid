@@ -126,7 +126,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         this.numberFilterParams = params;
 
         super.setParams(params);
-        this.filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory, this.numberFilterParams.numberFormatter);
+        this.filterModelFormatter = new NumberFilterModelFormatter(this.beans.localeService, this.optionsFactory, this.numberFilterParams.numberFormatter);
     }
 
     protected getDefaultFilterOptions(): string[] {

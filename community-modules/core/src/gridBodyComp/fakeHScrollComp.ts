@@ -36,9 +36,9 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
         // When doing printing, this changes whether cols are pinned or not
         const spacerWidthsListener = this.setFakeHScrollSpacerWidths.bind(this);
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, spacerWidthsListener);
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, spacerWidthsListener);
-        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, spacerWidthsListener);
+        this.addManagedEventListener(Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, spacerWidthsListener);
+        this.addManagedEventListener(Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.addManagedPropertyListener('domLayout', spacerWidthsListener);
 
         this.ctrlsService.registerFakeHScrollComp(this);
@@ -50,7 +50,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     protected initialiseInvisibleScrollbar(): void {
         if (this.invisibleScrollbar !== undefined) { return; }
 
-        this.enableRtl = this.gos.get('enableRtl');
+        this.enableRtl = this.beans.gos.get('enableRtl');
         super.initialiseInvisibleScrollbar();
 
         if (this.invisibleScrollbar) {
@@ -81,7 +81,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         // b) if v scroll is showing on the right (normal position of scroll)
         let rightSpacing = this.columnModel.getDisplayedColumnsRightWidth();
         const scrollOnRight = !this.enableRtl && vScrollShowing;
-        const scrollbarWidth = this.gos.getScrollbarWidth();
+        const scrollbarWidth = this.beans.gos.getScrollbarWidth();
 
         if (scrollOnRight) {
             rightSpacing += scrollbarWidth;
@@ -105,8 +105,8 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     protected setScrollVisible(): void {
         const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
         const invisibleScrollbar = this.invisibleScrollbar;
-        const isSuppressHorizontalScroll = this.gos.get('suppressHorizontalScroll');
-        const scrollbarWidth = hScrollShowing ? (this.gos.getScrollbarWidth() || 0) : 0;
+        const isSuppressHorizontalScroll = this.beans.gos.get('suppressHorizontalScroll');
+        const scrollbarWidth = hScrollShowing ? (this.beans.gos.getScrollbarWidth() || 0) : 0;
         const adjustedScrollbarWidth = (scrollbarWidth === 0 && invisibleScrollbar) ? 16 : scrollbarWidth;
         const scrollContainerSize = !isSuppressHorizontalScroll ? adjustedScrollbarWidth : 0;
 

@@ -26,7 +26,7 @@ export class FilterWrapperComp extends Component {
     private postConstruct(): void {
         this.createFilter(true);
 
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_DESTROYED, this.onFilterDestroyed.bind(this));
+        this.addManagedEventListener(Events.EVENT_FILTER_DESTROYED, this.onFilterDestroyed.bind(this));
     }
 
     public hasFilter(): boolean {
@@ -80,7 +80,7 @@ export class FilterWrapperComp extends Component {
                     source,
                     eGui: this.getGui()
                 };
-                this.eventService.dispatchEvent(event);
+                this.beans.eventService.dispatchEvent(event);
             }
         });
     }

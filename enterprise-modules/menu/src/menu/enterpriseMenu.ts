@@ -89,7 +89,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
-        if (this.gos.get('enableRtl')) {
+        if (this.beans.gos.get('enableRtl')) {
             multiplier = 1;
             alignSide = 'right';
         }
@@ -146,7 +146,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             }
         );
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
@@ -257,7 +257,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             key: (this.lastSelectedTab ?? defaultTab ?? (this.menuService.isLegacyMenuEnabled() ? TabbedColumnMenu.TAB_GENERAL : 'columnMenu')) as any,
             column: column ?? null
         }
-        this.eventService.dispatchEvent(event)
+        this.beans.eventService.dispatchEvent(event)
     }
 
     public isMenuEnabled(column: Column): boolean {
@@ -353,7 +353,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
 
     private isModuleLoaded(menuTabName: string): boolean {
         if (menuTabName === TabbedColumnMenu.TAB_COLUMNS) {
-            return ModuleRegistry.__isRegistered(ModuleNames.ColumnsToolPanelModule, this.context.getGridId());
+            return ModuleRegistry.__isRegistered(ModuleNames.ColumnsToolPanelModule, this.beans.context.getGridId());
         }
 
         return true;
@@ -425,7 +425,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
         this.mainMenuList.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {
-            title: _.createIconNoSpan('menu', this.gos, this.column)!,
+            title: _.createIconNoSpan('menu', this.beans.gos, this.column)!,
             titleLabel: TabbedColumnMenu.TAB_GENERAL.replace('MenuTab', ''),
             bodyPromise: AgPromise.resolve(this.mainMenuList.getGui()),
             name: TabbedColumnMenu.TAB_GENERAL
@@ -449,7 +449,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
         const afterDetachedCallback = () => comp.afterGuiDetached();
 
         this.tabItemFilter = {
-            title: _.createIconNoSpan('filter', this.gos, this.column)!,
+            title: _.createIconNoSpan('filter', this.beans.gos, this.column)!,
             titleLabel: TabbedColumnMenu.TAB_FILTER.replace('MenuTab', ''),
             bodyPromise: AgPromise.resolve(comp?.getGui()) as AgPromise<HTMLElement>,
             afterAttachedCallback,
@@ -471,7 +471,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
         eWrapperDiv.appendChild(columnSelectPanelGui);
 
         this.tabItemColumns = {
-            title: _.createIconNoSpan('columns', this.gos, this.column)!, //createColumnsIcon(),
+            title: _.createIconNoSpan('columns', this.beans.gos, this.column)!, //createColumnsIcon(),
             titleLabel: TabbedColumnMenu.TAB_COLUMNS.replace('MenuTab', ''),
             bodyPromise: AgPromise.resolve(eWrapperDiv),
             name: TabbedColumnMenu.TAB_COLUMNS

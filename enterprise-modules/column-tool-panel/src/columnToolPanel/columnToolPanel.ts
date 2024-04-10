@@ -47,7 +47,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public init(params: ToolPanelColumnCompParams): void {
-        const defaultParams: Partial<ToolPanelColumnCompParams> = this.gos.addGridCommonParams({
+        const defaultParams: Partial<ToolPanelColumnCompParams> = this.beans.gos.addGridCommonParams({
             suppressColumnMove: false,
             suppressColumnSelectAll: false,
             suppressColumnFilter: false,
@@ -102,7 +102,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             }
 
             this.setLastVisible();
-            const pivotModeListener = this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => {
+            const pivotModeListener = this.addManagedEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => {
                 this.resetChildrenHeight();
                 this.setLastVisible();
             });
@@ -206,7 +206,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private isRowGroupingModuleLoaded(): boolean {
-        return ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Row Grouping', this.context.getGridId());
+        return ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Row Grouping', this.beans.context.getGridId());
     }
 
     public expandColumnGroups(groupIds?: string[]): void {

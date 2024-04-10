@@ -31,17 +31,17 @@ export class ValueService extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.isSsrm = this.gos.isRowModelType('serverSide');
-        this.cellExpressions = this.gos.get('enableCellExpressions');
-        this.isTreeData = this.gos.get('treeData');
+        this.isSsrm = this.beans.gos.isRowModelType('serverSide');
+        this.cellExpressions = this.beans.gos.get('enableCellExpressions');
+        this.isTreeData = this.beans.gos.get('treeData');
         this.initialised = true;
 
         // We listen to our own event and use it to call the columnSpecific callback,
         // this way the handler calls are correctly interleaved with other global events
         const listener = (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event);
-        const async = this.gos.useAsyncEvents();
-        this.eventService.addEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async);
-        this.addDestroyFunc(() => this.eventService.removeEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async));
+        const async = this.beans.gos.useAsyncEvents();
+        this.beans.eventService.addEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async);
+        this.addDestroyFunc(() => this.beans.eventService.removeEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async));
 
         this.addManagedPropertyListener('treeData', (propChange) => this.isTreeData = propChange.currentValue);
     }
@@ -117,7 +117,7 @@ export class ValueService extends BeanStub {
 
     private getOpenedGroup(rowNode: IRowNode, column: Column): any {
 
-        if (!this.gos.get('showOpenedGroup')) { return; }
+        if (!this.beans.gos.get('showOpenedGroup')) { return; }
 
         const colDef = column.getColDef();
         if (!colDef.showRowGroup) { return; }
@@ -168,7 +168,7 @@ export class ValueService extends BeanStub {
             return false;
         }
 
-        const params: ValueSetterParams = this.gos.addGridCommonParams({
+        const params: ValueSetterParams = this.beans.gos.addGridCommonParams({
             node: rowNode,
             data: rowNode.data,
             oldValue: this.getValue(column, rowNode),
@@ -229,7 +229,7 @@ export class ValueService extends BeanStub {
             source: eventSource
         };
 
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
 
         return true;
     }
@@ -285,7 +285,7 @@ export class ValueService extends BeanStub {
     }
 
     private executeFilterValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: IRowNode): any {
-        const params: ValueGetterParams = this.gos.addGridCommonParams({
+        const params: ValueGetterParams = this.beans.gos.addGridCommonParams({
             data: data,
             node: rowNode,
             column: column,
@@ -310,7 +310,7 @@ export class ValueService extends BeanStub {
             return valueFromCache;
         }
 
-        const params: ValueGetterParams = this.gos.addGridCommonParams({
+        const params: ValueGetterParams = this.beans.gos.addGridCommonParams({
             data: data,
             node: rowNode,
             column: column,
@@ -348,7 +348,7 @@ export class ValueService extends BeanStub {
 
         let result = value;
         if (keyCreator) {
-            const keyParams: KeyCreatorParams = this.gos.addGridCommonParams({
+            const keyParams: KeyCreatorParams = this.beans.gos.addGridCommonParams({
                 value: value,
                 colDef: col.getColDef(),
                 column: col,

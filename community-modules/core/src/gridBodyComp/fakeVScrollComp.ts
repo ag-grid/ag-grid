@@ -24,14 +24,14 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         this.createManagedBean(new SetHeightFeature(this.eContainer));
         this.ctrlsService.registerFakeVScrollComp(this);
 
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED, this.onRowContainerHeightChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED, this.onRowContainerHeightChanged.bind(this));
     }
 
     protected setScrollVisible(): void {
         const vScrollShowing = this.scrollVisibleService.isVerticalScrollShowing();
         const invisibleScrollbar = this.invisibleScrollbar;
 
-        const scrollbarWidth = vScrollShowing ? (this.gos.getScrollbarWidth() || 0) : 0;
+        const scrollbarWidth = vScrollShowing ? (this.beans.gos.getScrollbarWidth() || 0) : 0;
         const adjustedScrollbarWidth = (scrollbarWidth === 0 && invisibleScrollbar) ? 16 : scrollbarWidth;
 
         this.addOrRemoveCssClass('ag-scrollbar-invisible', invisibleScrollbar);

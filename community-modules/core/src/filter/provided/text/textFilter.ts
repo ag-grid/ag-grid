@@ -182,7 +182,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         this.matcher = this.getTextMatcher();
         this.formatter = this.textFilterParams.textFormatter ||
             (this.textFilterParams.caseSensitive ? TextFilter.DEFAULT_FORMATTER : TextFilter.DEFAULT_LOWERCASE_FORMATTER);
-        this.filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
+        this.filterModelFormatter = new TextFilterModelFormatter(this.beans.localeService, this.optionsFactory);
     }
 
     private getTextMatcher(): TextMatcher {

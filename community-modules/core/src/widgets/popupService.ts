@@ -106,11 +106,11 @@ export class PopupService extends BeanStub {
         this.ctrlsService.whenReady(p => {
             this.gridCtrl = p.gridCtrl;
         });
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.handleThemeChange.bind(this));
+        this.addManagedEventListener(Events.EVENT_GRID_STYLES_CHANGED, this.handleThemeChange.bind(this));
     }
 
     public getPopupParent(): HTMLElement {
-        const ePopupParent = this.gos.get('popupParent');
+        const ePopupParent = this.beans.gos.get('popupParent');
 
         if (ePopupParent) { return ePopupParent; }
 
@@ -140,7 +140,7 @@ export class PopupService extends BeanStub {
         // to the right, unless it doesn't fit and we then put it to the left. for RTL it's the other way around,
         // we try place it first to the left, and then if not to the right.
         let x: number;
-        if (this.gos.get('enableRtl')) {
+        if (this.beans.gos.get('enableRtl')) {
             // for RTL, try left first
             x = xLeftPosition();
             if (x < 0) {
@@ -295,7 +295,7 @@ export class PopupService extends BeanStub {
         column?: Column | null,
         rowNode?: IRowNode | null
     ): void {
-        const callback = this.gos.getCallback('postProcessPopup');
+        const callback = this.beans.gos.getCallback('postProcessPopup');
         if (callback) {
             const params: WithoutGridCommon<PostProcessPopupParams> = {
                 column: column,
@@ -369,7 +369,7 @@ export class PopupService extends BeanStub {
         // returns the rect outside the borders, but the 0,0 coordinate for absolute
         // positioning is inside the border, leading the popup to be off by the width
         // of the border
-        const eDocument = this.gos.getDocument();
+        const eDocument = this.beans.gos.getDocument();
         let popupParent = this.getPopupParent();
 
         if (popupParent === eDocument.body) {
@@ -392,7 +392,7 @@ export class PopupService extends BeanStub {
         const offsetProperty = isVertical ? 'offsetHeight' : 'offsetWidth';
         const scrollPositionProperty = isVertical ? 'scrollTop' : 'scrollLeft';
 
-        const eDocument = this.gos.getDocument();
+        const eDocument = this.beans.gos.getDocument();
         const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
         const parentRect = popupParent.getBoundingClientRect();
@@ -414,7 +414,7 @@ export class PopupService extends BeanStub {
     }
 
     public addPopup(params: AddPopupParams): AddPopupResult { 
-        const eDocument = this.gos.getDocument();
+        const eDocument = this.beans.gos.getDocument();
         const { eChild, ariaLabel, alwaysOnTop, positionCallback, anchorToElement } = params;
 
         if (!eDocument) {
@@ -463,7 +463,7 @@ export class PopupService extends BeanStub {
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing
         const eWrapper = document.createElement('div');
-        const { allThemes } = this.environment.getTheme();
+        const { allThemes } = this.beans.environment.getTheme();
 
         if (allThemes.length) {
             eWrapper.classList.add(...allThemes);
@@ -471,7 +471,7 @@ export class PopupService extends BeanStub {
 
         eWrapper.classList.add('ag-popup');
         element.classList.add(
-            this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr',
+            this.beans.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr',
             'ag-popup-child'
         );
 
@@ -494,7 +494,7 @@ export class PopupService extends BeanStub {
     }
 
     private handleThemeChange() {
-        const { allThemes } = this.environment.getTheme();
+        const { allThemes } = this.beans.environment.getTheme();
 
         for (const popup of this.popupList) {
             for (const className of Array.from(popup.wrapper.classList)) {
@@ -510,7 +510,7 @@ export class PopupService extends BeanStub {
     }
 
     private addEventListenersToPopup(params: AddPopupParams & { wrapperEl: HTMLElement }): () => void {
-        const eDocument = this.gos.getDocument();
+        const eDocument = this.beans.gos.getDocument();
         const ePopupParent = this.getPopupParent();
 
         const { wrapperEl, eChild: popupEl, click: pointerEvent, closedCallback, afterGuiAttached, closeOnEsc, modal } = params;
@@ -518,7 +518,7 @@ export class PopupService extends BeanStub {
         let popupHidden = false;
 
         const hidePopupOnKeyboardEvent = (event: KeyboardEvent) => {
-            if (!wrapperEl.contains(this.gos.getActiveDomElement())) {
+            if (!wrapperEl.contains(this.beans.gos.getActiveDomElement())) {
                 return;
             }
 
@@ -554,7 +554,7 @@ export class PopupService extends BeanStub {
             eDocument.removeEventListener('touchstart', hidePopupOnTouchEvent);
             eDocument.removeEventListener('contextmenu', hidePopupOnMouseEvent);
 
-            this.eventService.removeEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent as any);
+            this.beans.eventService.removeEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent as any);
 
             if (closedCallback) {
                 closedCallback(mouseEvent || touchEvent || keyboardEvent);
@@ -576,7 +576,7 @@ export class PopupService extends BeanStub {
 
             if (modal) {
                 eDocument.addEventListener('mousedown', hidePopupOnMouseEvent);
-                this.eventService.addEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent as any);
+                this.beans.eventService.addEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent as any);
                 eDocument.addEventListener('touchstart', hidePopupOnTouchEvent);
                 eDocument.addEventListener('contextmenu', hidePopupOnMouseEvent);
             }
@@ -727,7 +727,7 @@ export class PopupService extends BeanStub {
     }
 
     public isElementWithinCustomPopup(el: HTMLElement): boolean {
-        const eDocument = this.gos.getDocument();
+        const eDocument = this.beans.gos.getDocument();
         while (el && el !== eDocument.body) {
             if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) {
                 return true;

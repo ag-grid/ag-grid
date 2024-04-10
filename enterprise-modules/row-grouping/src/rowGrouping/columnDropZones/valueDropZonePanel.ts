@@ -18,21 +18,21 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
 
     @PostConstruct
     private passBeansUp(): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag here to aggregate');
         const title = localeTextFunc('values', 'Values');
 
         super.init({
-            icon: _.createIconNoSpan('valuePanel', this.gos, null)!,
+            icon: _.createIconNoSpan('valuePanel', this.beans.gos, null)!,
             emptyMessage: emptyMessage,
             title: title
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
+        this.addManagedEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
     }
 
     protected getAriaLabel(): string {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const label = translate('ariaValuesDropZonePanelLabel', 'Values');
 
         return label;
@@ -50,18 +50,18 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
 
     protected isItemDroppable(column: Column, draggingEvent: DraggingEvent): boolean {
         // we never allow grouping of secondary columns
-        if (this.gos.get('functionsReadOnly') || !column.isPrimary()) { return false; }
+        if (this.beans.gos.get('functionsReadOnly') || !column.isPrimary()) { return false; }
 
         return column.isAllowValue() && (!column.isValueActive() || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: Column[]): void {
-        if (this.gos.get('functionsPassive')) {
+        if (this.beans.gos.get('functionsPassive')) {
             const event: WithoutGridCommon<ColumnValueChangeRequestEvent> = {
                 type: Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
                 columns: columns
             };
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         } else {
             this.columnModel.setValueColumns(columns, "toolPanelUi");
         }

@@ -50,7 +50,7 @@ export class CheckboxSelectionComponent extends Component {
     }
 
     private onSelectionChanged(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const state = this.rowNode.isSelected();
         const stateName = getAriaCheckboxStateName(translate, state);
         const [ariaKey, ariaLabel] = this.rowNode.selectable ? ['ariaRowToggleSelection', 'Press Space to toggle row selection'] : ['ariaRowSelectionDisabled', 'Row Selection is disabled for this row'];
@@ -89,7 +89,7 @@ export class CheckboxSelectionComponent extends Component {
             // would possibly get selected twice
             stopPropagationForAgGrid(event);
 
-            const groupSelectsFiltered = this.gos.get('groupSelectsFiltered');
+            const groupSelectsFiltered = this.beans.gos.get('groupSelectsFiltered');
             const isSelected = this.eCheckbox.getValue();
 
             if (this.shouldHandleIndeterminateState(isSelected, groupSelectsFiltered)) {
@@ -109,12 +109,12 @@ export class CheckboxSelectionComponent extends Component {
         this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_SELECTABLE_CHANGED, this.onSelectableChanged.bind(this));
 
-        const isRowSelectableFunc = this.gos.get('isRowSelectable');
+        const isRowSelectableFunc = this.beans.gos.get('isRowSelectable');
         const checkboxVisibleIsDynamic = isRowSelectableFunc || typeof this.getIsVisible() === 'function';
 
         if (checkboxVisibleIsDynamic) {
             const showOrHideSelectListener = this.showOrHideSelect.bind(this);
-            this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, showOrHideSelectListener);
+            this.addManagedEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, showOrHideSelectListener);
             this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, showOrHideSelectListener);
             this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, showOrHideSelectListener);
             this.showOrHideSelect();
@@ -128,7 +128,7 @@ export class CheckboxSelectionComponent extends Component {
         // and we would expect clicking to deselect all rather than select all
         return groupSelectsFiltered &&
             (this.eCheckbox.getPreviousValue() === undefined || isSelected === undefined) &&
-            this.gos.isRowModelType('clientSide');
+            this.beans.gos.isRowModelType('clientSide');
     }
 
     private showOrHideSelect(): void {

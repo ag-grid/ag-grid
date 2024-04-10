@@ -57,7 +57,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('selectableService') private selectableService: SelectableService;
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('beans') private beans: Beans;
     @Autowired('selectionService') private selectionService: ISelectionService;
 
     // when grouping, these items are of note:
@@ -120,15 +119,15 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
         const { rowNode, changedPath, rowNodeTransactions, rowNodeOrder } = params;
 
-        const usingTreeData = this.gos.get('treeData');
+        const usingTreeData = this.beans.gos.get('treeData');
 
         const groupedCols = usingTreeData ? null : this.columnModel.getRowGroupColumns();
 
         const details: GroupingDetails = {
             // someone complained that the parent attribute was causing some change detection
             // to break in an angular add-on.  Taking the parent out breaks a cyclic dependency, hence this flag got introduced.
-            includeParents: !this.gos.get('suppressParentsInRowNodes'),
-            expandByDefault: this.gos.get('groupDefaultExpanded'),
+            includeParents: !this.beans.gos.get('suppressParentsInRowNodes'),
+            expandByDefault: this.beans.gos.get('groupDefaultExpanded'),
             groupedCols: groupedCols!,
             rootNode: rowNode,
             pivotMode: this.columnModel.isPivotMode(),
@@ -137,12 +136,12 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             transactions: rowNodeTransactions!,
             // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
             changedPath: changedPath!,
-            groupAllowUnbalanced:  this.gos.get('groupAllowUnbalanced'),
-            isGroupOpenByDefault: this.gos.getCallback('isGroupOpenByDefault') as any,
-            initialGroupOrderComparator: this.gos.getCallback('initialGroupOrderComparator') as any,
+            groupAllowUnbalanced:  this.beans.gos.get('groupAllowUnbalanced'),
+            isGroupOpenByDefault: this.beans.gos.getCallback('isGroupOpenByDefault') as any,
+            initialGroupOrderComparator: this.beans.gos.getCallback('initialGroupOrderComparator') as any,
             usingTreeData: usingTreeData,
-            suppressGroupMaintainValueType: this.gos.get('suppressGroupMaintainValueType'),
-            getDataPath: usingTreeData ? this.gos.get('getDataPath') : undefined,
+            suppressGroupMaintainValueType: this.beans.gos.get('suppressGroupMaintainValueType'),
+            getDataPath: usingTreeData ? this.beans.gos.get('getDataPath') : undefined,
             keyCreators: groupedCols?.map(column => column.getColDef().keyCreator) ?? []
         };
 

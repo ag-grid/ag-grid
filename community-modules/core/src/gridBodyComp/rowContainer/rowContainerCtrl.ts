@@ -168,7 +168,7 @@ export class RowContainerCtrl extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.enableRtl = this.gos.get('enableRtl');
+        this.enableRtl = this.beans.gos.get('enableRtl');
 
         this.forContainers([RowContainerName.CENTER],
             () => this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)));
@@ -229,11 +229,11 @@ export class RowContainerCtrl extends BeanStub {
 
         this.forContainers(allLeft, () => {
             this.pinnedWidthFeature = this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer));
-            this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, () => this.onPinnedWidthChanged());
+            this.addManagedEventListener(Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, () => this.onPinnedWidthChanged());
         });
         this.forContainers(allRight, () => {
             this.pinnedWidthFeature = this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer));
-            this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, () => this.onPinnedWidthChanged());
+            this.addManagedEventListener(Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, () => this.onPinnedWidthChanged());
         });
         this.forContainers(allMiddle, () => this.createManagedBean(new SetHeightFeature(this.eContainer, this.name === RowContainerName.CENTER ? eViewport : undefined)));
         this.forContainers(allNoFW, () => this.createManagedBean(new DragListenerFeature(this.eContainer)));
@@ -247,9 +247,9 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private addListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => this.onDisplayedColumnsChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => this.onDisplayedColumnsWidthChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, (params: DisplayedRowsChangedEvent) => this.onDisplayedRowsChanged(params.afterScroll));
+        this.addManagedEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => this.onDisplayedColumnsChanged());
+        this.addManagedEventListener(Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => this.onDisplayedColumnsWidthChanged());
+        this.addManagedEventListener(Events.EVENT_DISPLAYED_ROWS_CHANGED, (params: DisplayedRowsChangedEvent) => this.onDisplayedRowsChanged(params.afterScroll));
 
         this.onDisplayedColumnsChanged();
         this.onDisplayedColumnsWidthChanged();
@@ -266,8 +266,8 @@ export class RowContainerCtrl extends BeanStub {
         }
 
         const listener = () => {
-            const isEnsureDomOrder = this.gos.get('ensureDomOrder');
-            const isPrintLayout = this.gos.isDomLayout('print');
+            const isEnsureDomOrder = this.beans.gos.get('ensureDomOrder');
+            const isPrintLayout = this.beans.gos.isDomLayout('print');
             this.comp.setDomOrder(isEnsureDomOrder || isPrintLayout);
         };
 
@@ -338,7 +338,7 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     public isHorizontalScrollShowing(): boolean {
-        const isAlwaysShowHorizontalScroll = this.gos.get('alwaysShowHorizontalScroll');
+        const isAlwaysShowHorizontalScroll = this.beans.gos.get('alwaysShowHorizontalScroll');
         return isAlwaysShowHorizontalScroll || isHorizontalScrollShowing(this.eViewport);
     }
 
@@ -383,8 +383,8 @@ export class RowContainerCtrl extends BeanStub {
             return;
         }
 
-        const printLayout = this.gos.isDomLayout('print');
-        const embedFullWidthRows = this.gos.get('embedFullWidthRows');
+        const printLayout = this.beans.gos.isDomLayout('print');
+        const embedFullWidthRows = this.beans.gos.get('embedFullWidthRows');
         const embedFW = embedFullWidthRows || printLayout;
         
         // this list contains either all pinned top, center or pinned bottom rows

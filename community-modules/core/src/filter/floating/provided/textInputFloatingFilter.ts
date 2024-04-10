@@ -171,7 +171,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
 
     private getAriaLabel(params: ITextInputFloatingFilterParams): string {
         const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         return `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`
     }
 

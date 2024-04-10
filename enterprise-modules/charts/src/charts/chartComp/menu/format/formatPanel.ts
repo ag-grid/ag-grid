@@ -104,7 +104,7 @@ export class FormatPanel extends Component {
     }
 
     private getFormatPanelDef() {
-        const userProvidedFormatPanelDef = this.gos.get('chartToolPanelsDef')?.formatPanel;
+        const userProvidedFormatPanelDef = this.beans.gos.get('chartToolPanelsDef')?.formatPanel;
         return userProvidedFormatPanelDef ? userProvidedFormatPanelDef : DefaultFormatPanelDef;
     }
 

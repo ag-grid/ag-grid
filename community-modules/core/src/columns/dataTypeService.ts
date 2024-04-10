@@ -75,9 +75,9 @@ export class DataTypeService extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.groupHideOpenParents = this.gos.get('groupHideOpenParents');
+        this.groupHideOpenParents = this.beans.gos.get('groupHideOpenParents');
         this.addManagedPropertyListener('groupHideOpenParents', () => {
-            this.groupHideOpenParents = this.gos.get('groupHideOpenParents');
+            this.groupHideOpenParents = this.beans.gos.get('groupHideOpenParents');
         });
         this.processDataTypeDefinitions();
 
@@ -96,7 +96,7 @@ export class DataTypeService extends BeanStub {
                 groupSafeValueFormatter: this.createGroupSafeValueFormatter(dataTypeDefinition)
             };
         });
-        const dataTypeDefinitions = this.gos.get('dataTypeDefinitions') ?? {};
+        const dataTypeDefinitions = this.beans.gos.get('dataTypeDefinitions') ?? {};
         this.dataTypeMatchers = {};
 
         Object.entries(dataTypeDefinitions).forEach(([cellDataType, dataTypeDefinition]) => {
@@ -256,7 +256,7 @@ export class DataTypeService extends BeanStub {
 
                 // we don't want to double format the value
                 // as this is already formatted by using the valueFormatter as the keyCreator
-                if (!this.gos.get('suppressGroupMaintainValueType')) {
+                if (!this.beans.gos.get('suppressGroupMaintainValueType')) {
                     return undefined as any;
                 }
             } else if (this.groupHideOpenParents && params.column.isRowGroupActive()) {
@@ -268,7 +268,7 @@ export class DataTypeService extends BeanStub {
 
                 // we don't want to double format the value
                 // as this is already formatted by using the valueFormatter as the keyCreator
-                if (!this.gos.get('suppressGroupMaintainValueType')) {
+                if (!this.beans.gos.get('suppressGroupMaintainValueType')) {
                     return undefined as any;
                 }
             }
@@ -343,7 +343,7 @@ export class DataTypeService extends BeanStub {
         }
         const columnTypes = userColDef.type === null ? colDef.type : userColDef.type;
         if (columnTypes) {
-            const columnTypeDefs = this.gos.get('columnTypes') ?? {};
+            const columnTypeDefs = this.beans.gos.get('columnTypes') ?? {};
             const hasPropsPreventingInference = this.convertColumnTypes(columnTypes).some(columnType => {
                 const columnTypeDef = columnTypeDefs[columnType.trim()];
                 return columnTypeDef && this.doColDefPropsPreventInference(columnTypeDef, propsToCheckForInference);
@@ -387,7 +387,7 @@ export class DataTypeService extends BeanStub {
         let value: any;
         const initialData = this.getInitialData();
         if (initialData) {
-            const fieldContainsDots = field.indexOf('.') >= 0 && !this.gos.get('suppressFieldDotNotation');
+            const fieldContainsDots = field.indexOf('.') >= 0 && !this.beans.gos.get('suppressFieldDotNotation');
             value = getValueUsingField(initialData, field, fieldContainsDots);
         } else {
             this.initWaitForRowData(colId);
@@ -400,7 +400,7 @@ export class DataTypeService extends BeanStub {
     }
 
     private getInitialData(): any {
-        const rowData = this.gos.get('rowData');
+        const rowData = this.beans.gos.get('rowData');
         if (rowData?.length) {
             return rowData[0];
         } else if (this.initialData) {
@@ -426,7 +426,7 @@ export class DataTypeService extends BeanStub {
         if (columnTypeOverridesExist) {
             this.columnModel.queueResizeOperations();
         }
-        const destroyFunc = this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATE_STARTED, (event: RowDataUpdateStartedEvent) => {
+        const destroyFunc = this.addManagedEventListener(Events.EVENT_ROW_DATA_UPDATE_STARTED, (event: RowDataUpdateStartedEvent) => {
             const { firstRowData } = event;
             if (!firstRowData) {
                 return;
@@ -441,7 +441,7 @@ export class DataTypeService extends BeanStub {
             const dataTypesInferredEvent: WithoutGridCommon<DataTypesInferredEvent> = {
                 type: Events.EVENT_DATA_TYPES_INFERRED
             }
-            this.eventService.dispatchEvent(dataTypesInferredEvent);
+            this.beans.eventService.dispatchEvent(dataTypesInferredEvent);
         });
     }
 
@@ -580,8 +580,8 @@ export class DataTypeService extends BeanStub {
             }
             return this.valueFormatterService.formatValue(column, node, value, valueFormatter as any);
         }
-        const usingSetFilter = ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.context.getGridId());
-        const translate = this.localeService.getLocaleTextFunc();
+        const usingSetFilter = ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.beans.context.getGridId());
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const mergeFilterParams = (params: any) => {
             const { filterParams } = colDef;
             colDef.filterParams = typeof filterParams === 'object' ? {
@@ -733,7 +733,7 @@ export class DataTypeService extends BeanStub {
 
     private getDefaultDataTypes(): { [key: string]: CoreDataTypeDefinition } {
         const defaultDateFormatMatcher = (value: string) => !!value.match('^\\d{4}-\\d{2}-\\d{2}$');
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         return {
             number: {
                 baseDataType: 'number',

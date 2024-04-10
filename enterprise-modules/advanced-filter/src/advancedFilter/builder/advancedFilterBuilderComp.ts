@@ -33,7 +33,6 @@ export class AdvancedFilterBuilderComp extends Component {
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('advancedFilterService') private advancedFilterService: AdvancedFilterService;
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
-    @Autowired('beans') private beans: Beans;
 
     private virtualList: VirtualList<AdvancedFilterBuilderItemComp | AdvancedFilterBuilderItemAddComp>;
     private filterModel: AdvancedFilterModel;
@@ -57,7 +56,7 @@ export class AdvancedFilterBuilderComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        const { showMoveButtons } = this.gos.get('advancedFilterBuilderParams') ?? {};
+        const { showMoveButtons } = this.beans.gos.get('advancedFilterBuilderParams') ?? {};
         this.showMove = !!showMoveButtons;
         this.addManagedPropertyListener('advancedFilterBuilderParams', ({currentValue}) => {
             this.showMove = !!currentValue?.showMoveButtons;

@@ -47,9 +47,9 @@ export class SideBarComp extends Component implements ISideBar {
     @PostConstruct
     private postConstruct(): void {
         this.sideBarButtonsComp.addEventListener(SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED, this.onToolPanelButtonClicked.bind(this));
-        const { sideBar: sideBarState } = this.gos.get('initialState') ?? {};
+        const { sideBar: sideBarState } = this.beans.gos.get('initialState') ?? {};
         this.setSideBarDef({
-            sideBarDef: SideBarDefParser.parse(this.gos.get('sideBar')),
+            sideBarDef: SideBarDefParser.parse(this.beans.gos.get('sideBar')),
             sideBarState
         });
 
@@ -71,7 +71,7 @@ export class SideBarComp extends Component implements ISideBar {
         const { focusService, sideBarButtonsComp } = this;
         const eGui = this.getGui();
         const sideBarGui = sideBarButtonsComp.getGui();
-        const activeElement = this.gos.getActiveDomElement() as HTMLElement;
+        const activeElement = this.beans.gos.getActiveDomElement() as HTMLElement;
         const openPanel = eGui.querySelector('.ag-tool-panel-wrapper:not(.ag-hidden)') as HTMLElement;
         const target = e.target as HTMLElement;
 
@@ -107,7 +107,7 @@ export class SideBarComp extends Component implements ISideBar {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        const currentButton = this.gos.getActiveDomElement();
+        const currentButton = this.beans.gos.getActiveDomElement();
 
         if (!this.sideBarButtonsComp.getGui().contains(currentButton)) { return; }
 
@@ -207,14 +207,14 @@ export class SideBarComp extends Component implements ISideBar {
             wrapper.setResizerSizerSide(resizerSide);
         });
 
-        this.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED });
+        this.beans.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED });
 
         return this;
     }
 
     public setDisplayed(displayed: boolean, options?: { skipAriaHidden?: boolean | undefined; } | undefined): void {
         super.setDisplayed(displayed, options);
-        this.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED });
+        this.beans.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED });
     }
 
     public getState(): SideBarState {
@@ -249,13 +249,13 @@ export class SideBarComp extends Component implements ISideBar {
         // helpers, in case user doesn't have the right module loaded
         if (def.toolPanel === 'agColumnsToolPanel') {
             const moduleMissing =
-                !ModuleRegistry.__assertRegistered(ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel', this.context.getGridId());
+                !ModuleRegistry.__assertRegistered(ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel', this.beans.context.getGridId());
             if (moduleMissing) { return false; }
         }
 
         if (def.toolPanel === 'agFiltersToolPanel') {
             const moduleMissing =
-                !ModuleRegistry.__assertRegistered(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.context.getGridId());
+                !ModuleRegistry.__assertRegistered(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.beans.context.getGridId());
             if (moduleMissing) { return false; }
             if (this.filterManager.isAdvancedFilterEnabled()) {
                 _.warnOnce('Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.');                
@@ -278,7 +278,7 @@ export class SideBarComp extends Component implements ISideBar {
 
             wrapper.setToolPanelDef(def, {
                 initialState,
-                onStateUpdated: () => this.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED })
+                onStateUpdated: () => this.beans.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED })
             });
         }
         wrapper.setDisplayed(false);
@@ -333,7 +333,7 @@ export class SideBarComp extends Component implements ISideBar {
                 visible: false,
                 switchingToolPanel,
             };
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         }
         if (key) {
             const event: WithoutGridCommon<ToolPanelVisibleChangedEvent> = {
@@ -343,7 +343,7 @@ export class SideBarComp extends Component implements ISideBar {
                 visible: true,
                 switchingToolPanel,
             };
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         }
     }
 
@@ -366,7 +366,7 @@ export class SideBarComp extends Component implements ISideBar {
     }
 
     private onSideBarUpdated(): void {
-        const sideBarDef = SideBarDefParser.parse(this.gos.get('sideBar'));
+        const sideBarDef = SideBarDefParser.parse(this.beans.gos.get('sideBar'));
 
         let existingToolPanelWrappers: { [id: string]: ToolPanelWrapper } = {};
         if (sideBarDef && this.sideBar) {
@@ -381,9 +381,9 @@ export class SideBarComp extends Component implements ISideBar {
                 }
                 const toolPanelWrapper = this.toolPanelWrappers.find(toolPanel => toolPanel.getToolPanelId() === id);
                 if (!toolPanelWrapper) { return; }
-                const params = this.gos.addGridCommonParams<IToolPanelParams>({
+                const params = this.beans.gos.addGridCommonParams<IToolPanelParams>({
                     ...(toolPanelDef.toolPanelParams ?? {}),
-                    onStateUpdated: () => this.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED })
+                    onStateUpdated: () => this.beans.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED })
                 });
                 const hasRefreshed = toolPanelWrapper.getToolPanelInstance().refresh(params);
                 if (hasRefreshed !== true) { return; }

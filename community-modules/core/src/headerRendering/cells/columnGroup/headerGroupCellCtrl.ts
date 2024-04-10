@@ -101,7 +101,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
-        const { beans, eGui, column, gos, ctrlsService } = this;
+        const { beans, eGui, column, ctrlsService } = this;
+        const { gos } = beans;
         const isRtl = gos.get('enableRtl');
         const isLeft = hDirection === HorizontalDirection.Left;
 
@@ -177,7 +178,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
     }
 
     private setupUserComp(): void {
-        const params: IHeaderGroupParams = this.gos.addGridCommonParams({
+        const params: IHeaderGroupParams = this.beans.gos.addGridCommonParams({
             displayName: this.displayName!,
             columnGroup: this.column,
             setExpanded: (expanded: boolean) => {
@@ -188,7 +189,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             }
         });
 
-        const compDetails = this.userComponentFactory.getHeaderGroupCompDetails(params)!;
+        const compDetails = this.beans.userComponentFactory.getHeaderGroupCompDetails(params)!;
         this.comp.setUserCompDetails(compDetails);
     }
 
@@ -213,7 +214,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             column: this.column.getProvidedColumnGroup(),
         };
 
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private setupTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
@@ -222,7 +223,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         }
 
         const colGroupDef = this.column.getColGroupDef();
-        const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
+        const isTooltipWhenTruncated = this.beans.gos.get('tooltipShowMode') === 'whenTruncated';
         const eGui = this.eGui;
 
         if (!shouldDisplayTooltip && isTooltipWhenTruncated && !colGroupDef?.headerGroupComponent) {
@@ -276,7 +277,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
 
     private addClasses(): void {
         const colGroupDef = this.column.getColGroupDef();
-        const classes = CssClassApplier.getHeaderClassesFromColDef(colGroupDef, this.gos, null, this.column);
+        const classes = CssClassApplier.getHeaderClassesFromColDef(colGroupDef, this.beans.gos, null, this.column);
 
         // having different classes below allows the style to not have a bottom border
         // on the group header, if no group is specified
@@ -355,7 +356,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             return;
         }
 
-        const { beans, column, displayName, gos, dragAndDropService } = this;
+        const { beans, column, displayName, dragAndDropService } = this;
+        const { gos } = beans;
         const { columnModel } = beans;
 
         const allLeafColumns = column.getProvidedColumnGroup().getLeafColumns();
@@ -426,7 +428,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             }
         });
 
-        const result = childSuppressesMoving || this.gos.get('suppressMovableColumns');
+        const result = childSuppressesMoving || this.beans.gos.get('suppressMovableColumns');
 
         return result;
     }

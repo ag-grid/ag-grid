@@ -8,10 +8,8 @@ import { AgEvent } from '../events';
 import { loadTemplate } from '../utils/dom';
 import { setAriaDisabled, setAriaExpanded, setAriaLevel, setAriaRole } from '../utils/aria';
 import { BeanStub } from '../context/beanStub';
-import { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { AgPromise } from '../utils/promise';
 import { TooltipFeature } from './tooltipFeature';
-import { Beans } from '../rendering/beans';
 import { IMenuConfigParams, IMenuItemComp,  MenuItemDef } from '../interfaces/menuItem';
 import { IComponent } from '../interfaces/iComponent';
 import { WithoutGridCommon } from '../interfaces/iCommon';
@@ -35,8 +33,6 @@ interface AgMenuItemComponentParams {
 
 export class AgMenuItemComponent extends BeanStub {
     @Autowired('popupService') private readonly popupService: PopupService;
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
-    @Autowired('beans') private readonly beans: Beans;
 
     public static EVENT_CLOSE_MENU = 'closeMenu';
     public static EVENT_MENU_ITEM_ACTIVATED = 'menuItemActivated';
@@ -72,7 +68,7 @@ export class AgMenuItemComponent extends BeanStub {
         this.childComponent = childComponent;
         this.contextParams = contextParams;
         this.cssClassPrefix = this.params.menuItemParams?.cssClassPrefix ?? 'ag-menu-option';
-        const compDetails = this.userComponentFactory.getMenuItemCompDetails(this.params, {
+        const compDetails = this.beans.userComponentFactory.getMenuItemCompDetails(this.params, {
             ...menuItemDef,
             level,
             isAnotherSubMenuOpen,
@@ -179,7 +175,7 @@ export class AgMenuItemComponent extends BeanStub {
         const positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService,
             { eventSource: this.eGui, ePopup });
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         const addPopupRes = this.popupService.addPopup({
             modal: true,
@@ -285,7 +281,7 @@ export class AgMenuItemComponent extends BeanStub {
     private onItemSelected(event: MouseEvent | KeyboardEvent): void {
         this.menuItemComp.select?.();
         if (this.params.action) {
-            this.getFrameworkOverrides().wrapOutgoing(() => this.params.action!(this.gos.addGridCommonParams({
+            this.getFrameworkOverrides().wrapOutgoing(() => this.params.action!(this.beans.gos.addGridCommonParams({
                 ...this.contextParams
             })));
         } else {

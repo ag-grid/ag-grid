@@ -41,16 +41,16 @@ export class PaginationComp extends Component {
 
     @PostConstruct
     protected postConstruct(): void {
-        const isRtl = this.gos.get('enableRtl');
+        const isRtl = this.beans.gos.get('enableRtl');
         this.setTemplate(this.getTemplate());
 
         const { btFirst, btPrevious, btNext, btLast, pageSizeComp } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast])
 
-        btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.gos)!);
-        btPrevious.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'next' : 'previous', this.gos)!);
-        btNext.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'previous' : 'next', this.gos)!);
-        btLast.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'first' : 'last', this.gos)!);
+        btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.beans.gos)!);
+        btPrevious.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'next' : 'previous', this.beans.gos)!);
+        btNext.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'previous' : 'next', this.beans.gos)!);
+        btLast.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'first' : 'last', this.beans.gos)!);
 
         this.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
         this.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
@@ -66,8 +66,8 @@ export class PaginationComp extends Component {
     }
 
     private onPaginationChanged(): void {
-        const isPaging = this.gos.get('pagination');
-        const paginationPanelEnabled = isPaging && !this.gos.get('suppressPaginationPanel');
+        const isPaging = this.beans.gos.get('pagination');
+        const paginationPanelEnabled = isPaging && !this.beans.gos.get('suppressPaginationPanel');
 
         this.setDisplayed(paginationPanelEnabled);
         if (!paginationPanelEnabled) {
@@ -91,7 +91,7 @@ export class PaginationComp extends Component {
 
     private setupListeners() {
         if (!this.areListenersSetup) {
-            this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
+            this.addManagedEventListener(Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
 
             [
                 { el: this.btFirst, fn: this.onBtFirst.bind(this) },
@@ -127,14 +127,14 @@ export class PaginationComp extends Component {
     }
 
     private formatNumber(value: number): string {
-        const userFunc = this.gos.getCallback('paginationNumberFormatter');
+        const userFunc = this.beans.gos.getCallback('paginationNumberFormatter');
 
         if (userFunc) {
             const params: WithoutGridCommon<PaginationNumberFormatterParams> = { value: value };
             return userFunc(params);
         }
 
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 
@@ -142,7 +142,7 @@ export class PaginationComp extends Component {
     }
 
     private getTemplate(): string {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
 
         const strPage = localeTextFunc('page', 'Page');
         const strTo = localeTextFunc('to', 'to');
@@ -241,7 +241,7 @@ export class PaginationComp extends Component {
 
         this.lbFirstRowOnPage.textContent = this.formatNumber(startRow);
         if (this.rowNodeBlockLoader.isLoading()) {
-            const translate = this.localeService.getLocaleTextFunc();
+            const translate = this.beans.localeService.getLocaleTextFunc();
             this.lbLastRowOnPage.innerHTML = translate('pageLastRowUnknown', '?');
         } else {
             this.lbLastRowOnPage.textContent = this.formatNumber(endRow);
@@ -277,7 +277,7 @@ export class PaginationComp extends Component {
             this.lbTotal.textContent = this.formatNumber(totalPages);
             this.lbRecordCount.textContent = this.formatNumber(rowCount!);
         } else {
-            const moreText = this.localeService.getLocaleTextFunc()('more', 'more');
+            const moreText = this.beans.localeService.getLocaleTextFunc()('more', 'more');
             this.lbTotal.innerHTML = moreText;
             this.lbRecordCount.innerHTML = moreText;
         }

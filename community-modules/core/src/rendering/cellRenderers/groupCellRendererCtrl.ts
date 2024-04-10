@@ -134,7 +134,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
             // this footer should only be non-top level. Don't need to check groupIncludeFooter
             // as we won't have footer rows in that instance.
-            if (node.footer && this.gos.get('groupHideOpenParents')) {
+            if (node.footer && this.beans.gos.get('groupHideOpenParents')) {
                 const showRowGroup = colDef && colDef.showRowGroup;
                 const rowGroupColumnId = node.rowGroupColumn && node.rowGroupColumn.getColId();
 
@@ -152,10 +152,10 @@ export class GroupCellRendererCtrl extends BeanStub {
         if (!topLevelFooter) {
             const showingFooterTotal = params.node.footer && params.node.rowGroupIndex === this.columnModel.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup);
             // if we're always showing a group value
-            const isAlwaysShowing = this.gos.get('groupDisplayType') != 'multipleColumns' || this.gos.get('treeData');
+            const isAlwaysShowing = this.beans.gos.get('groupDisplayType') != 'multipleColumns' || this.beans.gos.get('treeData');
             // if the cell is populated with a parent value due to `showOpenedGroup`
             const showOpenGroupValue = (
-                isAlwaysShowing || (this.gos.get('showOpenedGroup') && !params.node.footer && (
+                isAlwaysShowing || (this.beans.gos.get('showOpenedGroup') && !params.node.footer && (
                     (
                         !params.node.group ||
                         (
@@ -221,7 +221,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private isTopLevelFooter(): boolean {
-        if (!this.gos.get('groupIncludeTotalFooter')) { return false; }
+        if (!this.beans.gos.get('groupIncludeTotalFooter')) { return false; }
 
         if (this.params.value != null || this.params.node.level != -1) { return false; }
 
@@ -248,13 +248,13 @@ export class GroupCellRendererCtrl extends BeanStub {
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
     // in the right section. otherwise we would have the cell repeated in each section.
     private isEmbeddedRowMismatch(): boolean {
-        if (!this.params.fullWidth || !this.gos.get('embedFullWidthRows')) { return false; }
+        if (!this.params.fullWidth || !this.beans.gos.get('embedFullWidthRows')) { return false; }
 
         const pinnedLeftCell = this.params.pinned === 'left';
         const pinnedRightCell = this.params.pinned === 'right';
         const bodyCell = !pinnedLeftCell && !pinnedRightCell;
 
-        if (this.gos.get('enableRtl')) {
+        if (this.beans.gos.get('enableRtl')) {
             if (this.columnModel.isPinningLeft()) {
                 return !pinnedRightCell;
             }
@@ -296,7 +296,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         const rowNode = this.params.node;
         const column = this.params.column as Column;
 
-        if (!this.gos.get('groupHideOpenParents')) {
+        if (!this.beans.gos.get('groupHideOpenParents')) {
             this.showingValueForOpenedParent = false;
             return;
         }
@@ -354,7 +354,7 @@ export class GroupCellRendererCtrl extends BeanStub {
             );
 
             if (this.displayedGroupNode.key === "" && this.displayedGroupNode.group && isGroupColForNode) {
-                const localeTextFunc = this.localeService.getLocaleTextFunc();
+                const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
                 valueWhenNoRenderer = localeTextFunc('blanks', '(Blanks)');
             } else {
                 valueWhenNoRenderer = value ?? null;
@@ -410,7 +410,7 @@ export class GroupCellRendererCtrl extends BeanStub {
                 console.warn('AG Grid: footerValueGetter should be either a function or a string (expression)');
             }
         } else {
-            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
             const footerTotalPrefix = localeTextFunc('footerTotal', 'Total');
             footerValue = footerTotalPrefix + ' ' + (this.params.value != null ? this.params.value : '');
         }
@@ -424,8 +424,8 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         // for full width rows, we don't do any of the below
         if (params.fullWidth) {
-            return this.userComponentFactory.getFullWidthGroupRowInnerCellRenderer(
-                this.gos.get('groupRowRendererParams'), params);
+            return this.beans.userComponentFactory.getFullWidthGroupRowInnerCellRenderer(
+                this.beans.gos.get('groupRowRendererParams'), params);
         }
 
         // when grouping, the normal case is we use the cell renderer of the grouped column. eg if grouping by country
@@ -475,7 +475,7 @@ export class GroupCellRendererCtrl extends BeanStub {
             relatedColDef.cellRendererParams.innerRenderer) {
             // edge case - this comes from a column which has been grouped dynamically, that has a renderer 'group'
             // and has an inner cell renderer
-            const res = this.userComponentFactory.getInnerRendererDetails(relatedColDef.cellRendererParams, params);
+            const res = this.beans.userComponentFactory.getInnerRendererDetails(relatedColDef.cellRendererParams, params);
             return res;
         }
     }
@@ -500,7 +500,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private isShowRowGroupForThisRow(): boolean {
-        if (this.gos.get('treeData')) { return true; }
+        if (this.beans.gos.get('treeData')) { return true; }
 
         const rowGroupColumn = this.displayedGroupNode.rowGroupColumn;
 
@@ -515,8 +515,8 @@ export class GroupCellRendererCtrl extends BeanStub {
 
     private addExpandAndContract(): void {
         const params = this.params;
-        const eExpandedIcon = createIconNoSpan('groupExpanded', this.gos, null);
-        const eContractedIcon = createIconNoSpan('groupContracted', this.gos, null);
+        const eExpandedIcon = createIconNoSpan('groupExpanded', this.beans.gos, null);
+        const eContractedIcon = createIconNoSpan('groupContracted', this.beans.gos, null);
 
         if (eExpandedIcon) {
             this.eExpanded.appendChild(eExpandedIcon);
@@ -529,7 +529,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         const eGroupCell = params.eGridCell;
 
         // if editing groups, then double click is to start editing
-        const isDoubleClickEdit = this.params.column?.isCellEditable(params.node) && this.gos.get('enableGroupEdit');
+        const isDoubleClickEdit = this.params.column?.isCellEditable(params.node) && this.beans.gos.get('enableGroupEdit');
         if (!isDoubleClickEdit && this.isExpandable() && !params.suppressDoubleClickExpand) {
             this.addManagedListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
@@ -659,13 +659,13 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private setIndent(): void {
-        if (this.gos.get('groupHideOpenParents')) { return; }
+        if (this.beans.gos.get('groupHideOpenParents')) { return; }
 
         const params = this.params;
         const rowNode: IRowNode = params.node;
         // if we are only showing one group column, we don't want to be indenting based on level
         const fullWithRow = !!params.colDef;
-        const treeData = this.gos.get('treeData');
+        const treeData = this.beans.gos.get('treeData');
         const manyDimensionThisColumn = !fullWithRow || treeData || params.colDef!.showRowGroup === true;
         const paddingCount = manyDimensionThisColumn ? rowNode.uiLevel : 0;
 
@@ -681,7 +681,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         if (!this.params.fullWidth || !this.params.rowDrag) { return; }
 
         const rowDragComp = new RowDragComp(() => this.params.value, this.params.node as RowNode);
-        this.createManagedBean(rowDragComp, this.context);
+        this.createManagedBean(rowDragComp, this.beans.context);
 
         this.eGui.insertAdjacentElement('afterbegin', rowDragComp.getGui());
     }

@@ -41,7 +41,7 @@ export class DragListenerFeature extends BeanStub {
 
         this.addDestroyFunc(() => this.disableFeature());
 
-        const isRangeSelection = this.gos.get('enableRangeSelection');
+        const isRangeSelection = this.beans.gos.get('enableRangeSelection');
         if (isRangeSelection) {
             this.enableFeature();
         }

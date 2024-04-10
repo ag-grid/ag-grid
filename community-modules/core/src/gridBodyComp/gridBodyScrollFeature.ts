@@ -68,8 +68,8 @@ export class GridBodyScrollFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.enableRtl = this.gos.get('enableRtl');
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
+        this.enableRtl = this.beans.gos.get('enableRtl');
+        this.addManagedEventListener(Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
 
         this.ctrlsService.whenReady(p => {
             this.centerRowContainerCtrl = p.centerRowContainerCtrl;
@@ -85,7 +85,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.addManagedListener(this.centerRowContainerCtrl.getViewportElement(), 'scroll', this.onHScroll.bind(this));
         fakeHScroll.onScrollCallback(this.onFakeHScroll.bind(this));
 
-        const isDebounce = this.gos.get('debounceVerticalScrollbar');
+        const isDebounce = this.beans.gos.get('debounceVerticalScrollbar');
 
         const onVScroll = isDebounce ?
             debounce(this.onVScroll.bind(this), 100) : this.onVScroll.bind(this);
@@ -217,7 +217,7 @@ export class GridBodyScrollFeature extends BeanStub {
         // the `scrollGridIfNeeded` will recalculate the rows to be rendered by the grid
         // so it should only be called after `eBodyViewport` has been scrolled to the correct
         // position, otherwise the `first` and `last` row could be miscalculated.
-        if (this.gos.get('suppressAnimationFrame')) {
+        if (this.beans.gos.get('suppressAnimationFrame')) {
             this.scrollGridIfNeeded();
         } else {
             this.animationFrameService.schedule();
@@ -246,7 +246,7 @@ export class GridBodyScrollFeature extends BeanStub {
             top: this.scrollTop
         };
 
-        this.eventService.dispatchEvent(bodyScrollEvent);
+        this.beans.eventService.dispatchEvent(bodyScrollEvent);
 
         window.clearTimeout(this.scrollTimer);
         this.scrollTimer = undefined;
@@ -257,7 +257,7 @@ export class GridBodyScrollFeature extends BeanStub {
                 type: Events.EVENT_BODY_SCROLL_END
             };
 
-            this.eventService.dispatchEvent(bodyScrollEndEvent);
+            this.beans.eventService.dispatchEvent(bodyScrollEndEvent);
         }, 100);
     }
 
@@ -447,7 +447,7 @@ export class GridBodyScrollFeature extends BeanStub {
     //    if row is already in view, grid does not scroll
     public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null) {
         // if for print or auto height, everything is always visible
-        if (this.gos.isDomLayout('print')) { return; }
+        if (this.beans.gos.isDomLayout('print')) { return; }
 
         const rowCount = this.paginationProxy.getRowCount();
 
@@ -456,8 +456,8 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
 
-        const isPaging = this.gos.get('pagination');
-        const paginationPanelEnabled = isPaging && !this.gos.get('suppressPaginationPanel');
+        const isPaging = this.beans.gos.get('pagination');
+        const paginationPanelEnabled = isPaging && !this.beans.gos.get('suppressPaginationPanel');
 
         this.getFrameworkOverrides().wrapIncoming(() => {
             if (!paginationPanelEnabled) {

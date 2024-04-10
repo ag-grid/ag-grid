@@ -102,7 +102,7 @@ export class GridBodyCtrl extends BeanStub {
         this.eBottom = eBottom;
         this.eStickyTop = eStickyTop;
 
-        this.setCellTextSelection(this.gos.get('enableCellTextSelection'));
+        this.setCellTextSelection(this.beans.gos.get('enableCellTextSelection'));
         this.addManagedPropertyListener('enableCellTextSelection', (props) => this.setCellTextSelection(props.currentValue));
 
         this.createManagedBean(new LayoutFeature(this.comp));
@@ -129,10 +129,10 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private addEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
     }
 
     private addFocusListeners(elements: HTMLElement[]): void {
@@ -178,7 +178,7 @@ export class GridBodyCtrl extends BeanStub {
         this.setVerticalScrollPaddingVisible(visible);
         this.setStickyTopWidth(visible);
 
-        const scrollbarWidth = visible ? (this.gos.getScrollbarWidth() || 0) : 0;
+        const scrollbarWidth = visible ? (this.beans.gos.getScrollbarWidth() || 0) : 0;
         const pad = isInvisibleScrollbar() ? 16 : 0;
         const width = `calc(100% + ${scrollbarWidth + pad}px)`;
 
@@ -202,7 +202,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private addStopEditingWhenGridLosesFocus(): void {
-        if (!this.gos.get('stopEditingWhenCellsLoseFocus')) { return; }
+        if (!this.beans.gos.get('stopEditingWhenCellsLoseFocus')) { return; }
 
         const focusOutListener = (event: FocusEvent): void => {
             // this is the element the focus is moving to
@@ -256,9 +256,9 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public isVerticalScrollShowing(): boolean {
-        const show = this.gos.get('alwaysShowVerticalScroll');
+        const show = this.beans.gos.get('alwaysShowVerticalScroll');
         const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
-        const allowVerticalScroll = this.gos.isDomLayout('normal');
+        const allowVerticalScroll = this.beans.gos.isDomLayout('normal');
         this.comp.setAlwaysVerticalScrollClass(cssClass, show);
         return show || (allowVerticalScroll && isVerticalScrollShowing(this.eBodyViewport));
     }
@@ -267,14 +267,14 @@ export class GridBodyCtrl extends BeanStub {
         const listener = () => {
             // we don't want to use row animation if scaling, as rows jump strangely as you scroll,
             // when scaling and doing row animation.
-            const animateRows = this.gos.isAnimateRows() && !this.rowContainerHeightService.isStretching();
+            const animateRows = this.beans.gos.isAnimateRows() && !this.rowContainerHeightService.isStretching();
             const animateRowsCssClass = animateRows ? RowAnimationCssClasses.ANIMATION_ON : RowAnimationCssClasses.ANIMATION_OFF;
             this.comp.setRowAnimationCssOnBodyViewport(animateRowsCssClass, animateRows);
         };
 
         listener();
 
-        this.addManagedListener(this.eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, listener);
+        this.addManagedEventListener(Events.EVENT_HEIGHT_SCALE_CHANGED, listener);
         this.addManagedPropertyListener('animateRows', listener);
     }
 
@@ -319,7 +319,7 @@ export class GridBodyCtrl extends BeanStub {
     private onBodyViewportContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
         if (!mouseEvent && !touchEvent) { return; }
 
-        if (this.gos.get('preventDefaultOnContextMenu')) {
+        if (this.beans.gos.get('preventDefaultOnContextMenu')) {
             const event = (mouseEvent || touchEvent)!;
             event.preventDefault();
         }
@@ -346,7 +346,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private onBodyViewportWheel(e: WheelEvent): void {
-        if (!this.gos.get('suppressScrollWhenPopupsAreOpen')) { return; }
+        if (!this.beans.gos.get('suppressScrollWhenPopupsAreOpen')) { return; }
 
         if (this.popupService.hasAnchoredPopup()) {
             e.preventDefault();
@@ -412,7 +412,7 @@ export class GridBodyCtrl extends BeanStub {
         if (!vScrollVisible) {
             this.comp.setStickyTopWidth('100%');
         } else {
-            const scrollbarWidth = this.gos.getScrollbarWidth();
+            const scrollbarWidth = this.beans.gos.getScrollbarWidth();
             this.comp.setStickyTopWidth(`calc(100% - ${scrollbarWidth}px)`);
         }
     }
@@ -441,7 +441,7 @@ export class GridBodyCtrl extends BeanStub {
         nextTimeout?: number,
     ) {
         const removeScrollWidth = this.isVerticalScrollShowing();
-        const scrollWidthToRemove = removeScrollWidth ? this.gos.getScrollbarWidth() : 0;
+        const scrollWidthToRemove = removeScrollWidth ? this.beans.gos.getScrollbarWidth() : 0;
         // bodyViewportWidth should be calculated from eGridBody, not eBodyViewport
         // because we change the width of the bodyViewport to hide the real browser scrollbar
         const bodyViewportWidth = getInnerWidth(this.eGridBody);

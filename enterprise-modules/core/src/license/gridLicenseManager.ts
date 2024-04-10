@@ -7,7 +7,7 @@ export class GridLicenseManager extends BeanStub {
 
     @PreConstruct
     public validateLicense(): void {
-        this.licenseManager = new LicenseManager(this.gos.getDocument())
+        this.licenseManager = new LicenseManager(this.beans.gos.getDocument())
         this.licenseManager.validateLicense();
     }
 

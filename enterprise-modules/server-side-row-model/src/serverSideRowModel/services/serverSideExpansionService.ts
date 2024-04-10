@@ -18,7 +18,7 @@ export class ServerSideExpansionService extends ExpansionService implements IExp
 
     protected postConstruct(): void {
         super.postConstruct();
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => {
+        this.addManagedEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => {
             this.queuedRowIds.clear();
         });
     }
@@ -32,7 +32,7 @@ export class ServerSideExpansionService extends ExpansionService implements IExp
             return;
         }
 
-        const userFunc = this.gos.getCallback('isServerSideGroupOpenByDefault');
+        const userFunc = this.beans.gos.getCallback('isServerSideGroupOpenByDefault');
         if (!userFunc) { return; }
 
         const params: WithoutGridCommon<IsServerSideGroupOpenByDefaultParams> = {

@@ -37,8 +37,6 @@ function templateFactory(): string {
 
 export class RowContainerComp extends Component {
 
-    @Autowired('beans') private beans: Beans;
-
     @RefSelector('eViewport') private eViewport: HTMLElement;
     @RefSelector('eContainer') private eContainer: HTMLElement;
 

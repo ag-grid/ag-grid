@@ -7,13 +7,13 @@ export class ChartMenuItemMapper extends BeanStub {
 
     public getChartItems(key: 'pivotChart' | 'chartRange'): MenuItemDef | undefined {
         if (!this.chartService) {
-            ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, `the Context Menu key "${key}"`, this.context.getGridId());
+            ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, `the Context Menu key "${key}"`, this.beans.context.getGridId());
             return undefined;
         }
 
         const builder = key === 'pivotChart'
-            ? new PivotMenuItemMapper(this.gos, this.chartService, this.localeService)
-            : new RangeMenuItemMapper(this.gos, this.chartService, this.localeService);
+            ? new PivotMenuItemMapper(this.beans.gos, this.chartService, this.beans.localeService)
+            : new RangeMenuItemMapper(this.beans.gos, this.chartService, this.beans.localeService);
 
         const isEnterprise = this.chartService.isEnterprise();
 
@@ -28,7 +28,7 @@ export class ChartMenuItemMapper extends BeanStub {
             topLevelMenuItem = filterEnterpriseItems(topLevelMenuItem);
         }
 
-        const chartGroupsDef = this.gos.get('chartToolPanelsDef')?.settingsPanel?.chartGroupsDef;
+        const chartGroupsDef = this.beans.gos.get('chartToolPanelsDef')?.settingsPanel?.chartGroupsDef;
         if (chartGroupsDef) {
             topLevelMenuItem = ChartMenuItemMapper.filterAndOrderChartMenu(topLevelMenuItem, chartGroupsDef, builder.getConfigLookup());
         }

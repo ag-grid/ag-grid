@@ -54,13 +54,13 @@ export class ChartDatasource extends BeanStub {
                 return {chartData: [], columnNames: {}};
             }
 
-            if (!this.gos.isRowModelType('clientSide')) {
+            if (!this.beans.gos.isRowModelType('clientSide')) {
                 console.warn("AG Grid: crossing filtering is only supported in the client side row model.");
                 return {chartData: [], columnNames: {}};
             }
         }
 
-        const isServerSide = this.gos.isRowModelType('serverSide');
+        const isServerSide = this.beans.gos.isRowModelType('serverSide');
         if (isServerSide && params.pivoting) {
             this.updatePivotKeysForSSRM();
         }
@@ -263,7 +263,7 @@ export class ChartDatasource extends BeanStub {
             });
         });
 
-        if (ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation', this.context.getGridId())) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation', this.beans.context.getGridId())) {
             const aggStage = this.aggregationStage!;
             dataAggregated.forEach(groupItem => params.valueCols.forEach(col => {
 

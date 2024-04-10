@@ -58,7 +58,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             if (!componentPromise) { return; }
             componentPromise.then(comp => {
                 if (!comp) { return; }
-                const destroyComp = () => this.context.destroyBean(comp);
+                const destroyComp = () => this.destroyBean(comp);
                 if (this.isAlive()) {
                     this.eValue.appendChild(comp.getGui());
                     this.addDestroyFunc(destroyComp);

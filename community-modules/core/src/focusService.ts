@@ -90,10 +90,10 @@ export class FocusService extends BeanStub {
     private init(): void {
         const clearFocusedCellListener = this.clearFocusedCell.bind(this);
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener);
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverythingChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
+        this.addManagedEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener);
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverythingChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
+        this.addManagedEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
         this.registerKeyboardFocusEvents();
 
         this.ctrlsService.whenReady(p => {
@@ -102,7 +102,7 @@ export class FocusService extends BeanStub {
     }
 
     private registerKeyboardFocusEvents(): void {
-        const eDocument = this.gos.getDocument();
+        const eDocument = this.beans.gos.getDocument();
         FocusService.addKeyboardModeEvents(eDocument);
 
         FocusService.instanceCount++;
@@ -137,14 +137,14 @@ export class FocusService extends BeanStub {
     // grid cell will still be focused as far as the grid is concerned,
     // however the browser focus will have moved somewhere else.
     public getFocusCellToUseAfterRefresh(): CellPosition | null {
-        if (this.gos.get('suppressFocusAfterRefresh') || !this.focusedCellPosition) {
+        if (this.beans.gos.get('suppressFocusAfterRefresh') || !this.focusedCellPosition) {
             return null;
         }
 
         // we check that the browser is actually focusing on the grid, if it is not, then
         // we have nothing to worry about. we check for ROW data, as this covers both focused Rows (for Full Width Rows)
         // and Cells (covers cells as cells live in rows)
-        if (this.isDomDataMissingInHierarchy(this.gos.getActiveDomElement(), RowCtrl.DOM_DATA_KEY_ROW_CTRL)) {
+        if (this.isDomDataMissingInHierarchy(this.beans.gos.getActiveDomElement(), RowCtrl.DOM_DATA_KEY_ROW_CTRL)) {
             return null;
         }
 
@@ -152,13 +152,13 @@ export class FocusService extends BeanStub {
     }
 
     public getFocusHeaderToUseAfterRefresh(): HeaderPosition | null {
-        if (this.gos.get('suppressFocusAfterRefresh') || !this.focusedHeaderPosition) {
+        if (this.beans.gos.get('suppressFocusAfterRefresh') || !this.focusedHeaderPosition) {
             return null;
         }
 
         // we check that the browser is actually focusing on the grid, if it is not, then
         // we have nothing to worry about
-        if (this.isDomDataMissingInHierarchy(this.gos.getActiveDomElement(), AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL)) {
+        if (this.isDomDataMissingInHierarchy(this.beans.gos.getActiveDomElement(), AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL)) {
             return null;
         }
 
@@ -169,7 +169,7 @@ export class FocusService extends BeanStub {
         let ePointer = eBrowserCell;
 
         while (ePointer) {
-            const data = this.gos.getDomData(ePointer, key);
+            const data = this.beans.gos.getDomData(ePointer, key);
 
             if (data) {
                 return false;
@@ -242,7 +242,7 @@ export class FocusService extends BeanStub {
 
         this.focusedCellPosition = null;
 
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     public setFocusedCell(params: CellFocusedParams): void {
@@ -278,7 +278,7 @@ export class FocusService extends BeanStub {
             floating: null
         };
 
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     public isCellFocused(cellPosition: CellPosition): boolean {
@@ -326,7 +326,7 @@ export class FocusService extends BeanStub {
         fromCell?: boolean;
         rowWithoutSpanValue?: number;
     }): boolean {
-        if (this.gos.get('suppressHeaderFocus')) { return false; }
+        if (this.beans.gos.get('suppressHeaderFocus')) { return false; }
 
         const { direction, fromTab, allowUserOverride, event, fromCell, rowWithoutSpanValue } = params;
         let { headerPosition } = params;
@@ -340,7 +340,7 @@ export class FocusService extends BeanStub {
             const headerRowCount = this.headerNavigationService.getHeaderRowCount();
 
             if (fromTab) {
-                const userFunc = this.gos.getCallback('tabToNextHeader');
+                const userFunc = this.beans.gos.getCallback('tabToNextHeader');
                 if (userFunc) {
                     const params: WithoutGridCommon<TabToNextHeaderParams> = {
                         backwards: direction === 'Before',
@@ -351,7 +351,7 @@ export class FocusService extends BeanStub {
                     headerPosition = userFunc(params);
                 }
             } else {
-                const userFunc = this.gos.getCallback('navigateToNextHeader');
+                const userFunc = this.beans.gos.getCallback('navigateToNextHeader');
                 if (userFunc && event) {
                     const params: WithoutGridCommon<NavigateToNextHeaderParams> = {
                         key: event.key,
@@ -493,7 +493,7 @@ export class FocusService extends BeanStub {
 
     public findNextFocusableElement(rootNode: HTMLElement = this.eGridDiv, onlyManaged?: boolean | null, backwards?: boolean): HTMLElement | null {
         const focusable = this.findFocusableElements(rootNode, onlyManaged ? ':not([tabindex="-1"])' : null);
-        const activeEl = this.gos.getActiveDomElement() as HTMLElement;
+        const activeEl = this.beans.gos.getActiveDomElement() as HTMLElement;
         let currentIndex: number;
 
         if (onlyManaged) {
@@ -543,9 +543,9 @@ export class FocusService extends BeanStub {
         // if suppressCellFocus is `true`, it means the user does not want to
         // navigate between the cells using tab. Instead, we put focus on either
         // the header or after the grid, depending on whether tab or shift-tab was pressed.
-        if (this.gos.get('suppressCellFocus')) {
+        if (this.beans.gos.get('suppressCellFocus')) {
             if (backwards) {
-                if (!this.gos.get('suppressHeaderFocus')) {
+                if (!this.beans.gos.get('suppressHeaderFocus')) {
                     return this.focusLastHeader();
                 }
                 return this.focusNextGridCoreContainer(true, true);

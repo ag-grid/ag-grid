@@ -26,12 +26,12 @@ export class LoadingOverlayComponent extends Component implements ILoadingOverla
     }
 
     public init(params: ILoadingOverlayParams): void {
-        const customTemplate = this.gos.get('overlayLoadingTemplate');
+        const customTemplate = this.beans.gos.get('overlayLoadingTemplate');
 
         this.setTemplate(customTemplate ?? LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE);
 
         if (!customTemplate) {
-            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
             // setTimeout is used because some screen readers only announce `aria-live` text when
             // there is a "text change", so we force a change from empty.
             setTimeout(() => {

@@ -144,7 +144,7 @@ export class FillHandle extends AbstractSelectionHandle {
     }
 
     private getFillHandleDirection(): 'x' | 'y' | 'xy' {
-        const direction = this.gos.get('fillHandleDirection');
+        const direction = this.beans.gos.get('fillHandleDirection');
 
         if (!direction) { return 'xy'; }
 
@@ -160,7 +160,7 @@ export class FillHandle extends AbstractSelectionHandle {
         const fillStartEvent: WithoutGridCommon<FillStartEvent> = {
             type: Events.EVENT_FILL_START
         };
-        this.eventService.dispatchEvent(fillStartEvent);
+        this.beans.eventService.dispatchEvent(fillStartEvent);
     }
 
     private raiseFillEndEvent(initialRange: CellRange, finalRange: CellRange) {
@@ -169,7 +169,7 @@ export class FillHandle extends AbstractSelectionHandle {
             initialRange: initialRange,
             finalRange: finalRange
         };
-        this.eventService.dispatchEvent(fillEndEvent);
+        this.beans.eventService.dispatchEvent(fillEndEvent);
     }
 
     private handleValueChanged(initialRange: CellRange, finalRange: CellRange, e: MouseEvent) {
@@ -181,7 +181,7 @@ export class FillHandle extends AbstractSelectionHandle {
 
         // if the range is being reduced in size, all we need to do is
         // clear the cells that are no longer part of the range
-        if (this.isReduce && !this.gos.get('suppressClearOnFillReduction')) {
+        if (this.isReduce && !this.beans.gos.get('suppressClearOnFillReduction')) {
             const columns = isVertical
                 ? initialRange.columns
                 : initialRange.columns.filter(col => finalRange.columns.indexOf(col) < 0);
@@ -331,7 +331,7 @@ export class FillHandle extends AbstractSelectionHandle {
     }): { value: any, fromUserFunction: boolean, sourceCol?: Column, sourceRowNode?: RowNode } {
         const { event, values, initialValues, initialNonAggregatedValues, initialFormattedValues, col, rowNode, idx } = params;
 
-        const userFillOperation = this.gos.getCallback('fillOperation');
+        const userFillOperation = this.beans.gos.getCallback('fillOperation');
         const isVertical = this.dragAxis === 'y';
         let direction: 'up' | 'down' | 'left' | 'right';
 

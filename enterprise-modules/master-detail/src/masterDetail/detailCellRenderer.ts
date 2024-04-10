@@ -85,13 +85,13 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         // this is only needed when suppressReactUi=true, once we remove the old way
         // of doing react, and Master / Details is all native React, then we
         // can remove this code.
-        const agGridReact = this.context.getBean('agGridReact');
+        const agGridReact = this.beans.context.getBean('agGridReact');
         const agGridReactCloned = agGridReact ? _.cloneObject(agGridReact) : undefined;
 
         // when we create detail grid, the detail grid needs frameworkComponentWrapper so that
         // it created child components correctly, ie  Angular detail grid can have Angular cell renderer.
         // this is only used by Angular and Vue, as React uses native React AG Grid detail grids
-        const frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
+        const frameworkComponentWrapper = this.beans.context.getBean('frameworkComponentWrapper');
         const frameworkOverrides = this.getFrameworkOverrides();
 
         const api = createGrid(this.eDetailGrid, gridOptions, {

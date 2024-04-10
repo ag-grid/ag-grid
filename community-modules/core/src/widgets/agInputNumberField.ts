@@ -43,7 +43,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
 
     private onWheel(e: WheelEvent) {
         // Prevent default scroll events from incrementing / decrementing the input, since its inconsistent between browsers
-        if (this.gos.getActiveDomElement() === this.eInput) {
+        if (this.beans.gos.getActiveDomElement() === this.eInput) {
             e.preventDefault();
         }
     }

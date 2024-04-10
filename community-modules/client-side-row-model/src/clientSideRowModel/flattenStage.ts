@@ -1,12 +1,10 @@
 import {
     _,
-    Autowired,
     Bean,
     BeanStub,
     IRowNodeStage,
     RowNode,
     StageExecuteParams,
-    Beans,
     WithoutGridCommon,
     GetGroupIncludeFooterParams,
 } from "@ag-grid-community/core";
@@ -22,8 +20,6 @@ interface FlattenDetails {
 
 @Bean('flattenStage')
 export class FlattenStage extends BeanStub implements IRowNodeStage {
-
-    @Autowired('beans') private beans: Beans;
 
     public execute(params: StageExecuteParams): RowNode[] {
         const rootNode = params.rowNode;
@@ -59,16 +55,16 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
 
     private getFlattenDetails(): FlattenDetails {
         // these two are mutually exclusive, so if first set, we don't set the second
-        const groupRemoveSingleChildren = this.gos.get('groupRemoveSingleChildren');
-        const groupRemoveLowestSingleChildren = !groupRemoveSingleChildren && this.gos.get('groupRemoveLowestSingleChildren');
+        const groupRemoveSingleChildren = this.beans.gos.get('groupRemoveSingleChildren');
+        const groupRemoveLowestSingleChildren = !groupRemoveSingleChildren && this.beans.gos.get('groupRemoveLowestSingleChildren');
 
         return {
             groupRemoveLowestSingleChildren,
             groupRemoveSingleChildren,
-            isGroupMultiAutoColumn: this.gos.isGroupMultiAutoColumn(),
-            hideOpenParents : this.gos.get('groupHideOpenParents'),
-            groupIncludeTotalFooter : this.gos.get('groupIncludeTotalFooter'),
-            getGroupIncludeFooter : this.gos.getGroupIncludeFooter(),
+            isGroupMultiAutoColumn: this.beans.gos.isGroupMultiAutoColumn(),
+            hideOpenParents : this.beans.gos.get('groupHideOpenParents'),
+            groupIncludeTotalFooter : this.beans.gos.get('groupIncludeTotalFooter'),
+            getGroupIncludeFooter : this.beans.gos.getGroupIncludeFooter(),
         };
     }
 

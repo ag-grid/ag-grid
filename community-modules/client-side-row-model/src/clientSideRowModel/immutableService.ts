@@ -31,10 +31,10 @@ export class ImmutableService extends BeanStub implements IImmutableService {
     }
 
     public isActive(): boolean {
-        const getRowIdProvided = this.gos.exists('getRowId');        
+        const getRowIdProvided = this.beans.gos.exists('getRowId');        
         // this property is a backwards compatibility property, for those who want
         // the old behaviour of Row ID's but NOT Immutable Data.
-        const resetRowDataOnUpdate = this.gos.get('resetRowDataOnUpdate');
+        const resetRowDataOnUpdate = this.beans.gos.get('resetRowDataOnUpdate');
 
         if (resetRowDataOnUpdate) { return false; }
         return getRowIdProvided;
@@ -55,7 +55,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
             return;
         }
 
-        const getRowIdFunc = this.gos.getCallback('getRowId');
+        const getRowIdFunc = this.beans.gos.getCallback('getRowId');
         if (getRowIdFunc == null) {
             console.error('AG Grid: ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
             return;
@@ -70,7 +70,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
 
         const existingNodesMap: { [id: string]: RowNode | undefined } = this.clientSideRowModel.getCopyOfNodesMap();
 
-        const suppressSortOrder = this.gos.get('suppressMaintainUnsortedOrder');
+        const suppressSortOrder = this.beans.gos.get('suppressMaintainUnsortedOrder');
         const orderMap: { [id: string]: number } | undefined = suppressSortOrder ? undefined : {};
 
         if (_.exists(rowData)) {
@@ -112,7 +112,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
     }
 
     private onRowDataUpdated(): void {
-        const rowData = this.gos.get('rowData');
+        const rowData = this.beans.gos.get('rowData');
         if (!rowData) { return; }
 
         if (this.isActive()) {

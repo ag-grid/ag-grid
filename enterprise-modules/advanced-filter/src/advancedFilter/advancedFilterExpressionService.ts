@@ -136,7 +136,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
         if (typeof defaultValue === 'function') {
             defaultValue = defaultValue(variableValues!);
         }
-        return this.localeService.getLocaleTextFunc()(key, defaultValue, variableValues);
+        return this.beans.localeService.getLocaleTextFunc()(key, defaultValue, variableValues);
     }
 
     public generateAutocompleteListParams(entries: AutocompleteEntry[], type: string, searchString: string): AutocompleteListParams {
@@ -154,7 +154,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
         }
         const columns = this.columnModel.getAllPrimaryColumns() ?? [];
         const entries: AutocompleteEntry[] = [];
-        const includeHiddenColumns = this.gos.get('includeHiddenColumnsInAdvancedFilter');
+        const includeHiddenColumns = this.beans.gos.get('includeHiddenColumnsInAdvancedFilter');
         columns.forEach(column => {
             if (column.getColDef().filter && (includeHiddenColumns || column.isVisible() || column.isRowGroupActive())) {
                 entries.push({

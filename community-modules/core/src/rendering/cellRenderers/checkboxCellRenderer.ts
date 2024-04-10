@@ -52,7 +52,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
 
         this.addManagedListener(this.params.eGridCell, 'keydown', (event: KeyboardEvent) => {
             if (event.key === KeyCode.SPACE && !this.eCheckbox.isDisabled()) {
-                if (this.params.eGridCell === this.gos.getActiveDomElement()) {
+                if (this.params.eGridCell === this.beans.gos.getActiveDomElement()) {
                     this.eCheckbox.toggle();
                 }
                 const isSelected = this.eCheckbox.getValue();
@@ -92,7 +92,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         const disabled = params.disabled != null ? params.disabled : !params.column?.isCellEditable(params.node);
         this.eCheckbox.setDisabled(disabled);
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const stateName = getAriaCheckboxStateName(translate, isSelected);
         const ariaLabel = disabled
             ? stateName
@@ -112,7 +112,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             rowPinned: node.rowPinned,
             value
         };
-        this.eventService.dispatchEvent(eventStarted);
+        this.beans.eventService.dispatchEvent(eventStarted);
 
         const valueChanged = this.params.node.setDataValue(this.params.column!, isSelected, 'edit');
 
@@ -129,6 +129,6 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             newValue: isSelected,
             valueChanged
         };
-        this.eventService.dispatchEvent(eventStopped);
+        this.beans.eventService.dispatchEvent(eventStopped);
     }
 }

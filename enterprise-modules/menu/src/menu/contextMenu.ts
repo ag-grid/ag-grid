@@ -49,17 +49,17 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
     private getMenuItems(node: RowNode | null, column: Column | null, value: any): (MenuItemDef | string)[] | undefined {
         const defaultMenuOptions: string[] = [];
 
-        if (_.exists(node) && ModuleRegistry.__isRegistered(ModuleNames.ClipboardModule, this.context.getGridId())) {
+        if (_.exists(node) && ModuleRegistry.__isRegistered(ModuleNames.ClipboardModule, this.beans.context.getGridId())) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
-                if (!this.gos.get('suppressCutToClipboard')) {
+                if (!this.beans.gos.get('suppressCutToClipboard')) {
                     defaultMenuOptions.push('cut');
                 }
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
             }
         }
 
-        if (this.gos.get('enableCharts') && ModuleRegistry.__isRegistered(ModuleNames.GridChartsModule, this.context.getGridId())) {
+        if (this.beans.gos.get('enableCharts') && ModuleRegistry.__isRegistered(ModuleNames.GridChartsModule, this.beans.context.getGridId())) {
             if (this.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
@@ -71,10 +71,10 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
         if (_.exists(node)) {
             // if user clicks a cell
-            const csvModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.context.getGridId());
-            const excelModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.context.getGridId());
-            const suppressExcel = this.gos.get('suppressExcelExport') || excelModuleMissing;
-            const suppressCsv = this.gos.get('suppressCsvExport') || csvModuleMissing;
+            const csvModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.beans.context.getGridId());
+            const excelModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.beans.context.getGridId());
+            const suppressExcel = this.beans.gos.get('suppressExcelExport') || excelModuleMissing;
+            const suppressCsv = this.beans.gos.get('suppressCsvExport') || csvModuleMissing;
             const onIPad = _.isIOSUserAgent();
             const anyExport: boolean = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {
@@ -90,12 +90,12 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         }
         
         if (typeof columnContextMenuItems === 'function') {
-            return columnContextMenuItems(this.gos.addGridCommonParams({
+            return columnContextMenuItems(this.beans.gos.addGridCommonParams({
                 column, node, value, defaultItems
             }));
         }
 
-        const userFunc = this.gos.getCallback('getContextMenuItems');
+        const userFunc = this.beans.gos.getCallback('getContextMenuItems');
         if (userFunc) {
             return userFunc({ column, node, value, defaultItems });
         }
@@ -129,7 +129,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             nudgeY: 1
         };
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         const addPopupRes = this.popupService.addPopup({
             modal: true,
@@ -141,7 +141,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             },
             click: mouseEvent,
             positionCallback: () => {
-                const isRtl = this.gos.get('enableRtl');
+                const isRtl = this.beans.gos.get('enableRtl');
                 this.popupService.positionPopupUnderMouseEvent({
                     ...positionParams,
                     nudgeX: isRtl ? (eMenuGui.offsetWidth + 1) * -1 : 1
@@ -235,8 +235,8 @@ class ContextMenu extends Component {
 
         if (currentFocusedCell && this.focusedCell && this.cellPositionUtils.equals(currentFocusedCell, this.focusedCell)) {
             const { rowIndex, rowPinned, column } = this.focusedCell;
-            const doc = this.gos.getDocument();
-            const activeEl = this.gos.getActiveDomElement()
+            const doc = this.beans.gos.getDocument();
+            const activeEl = this.beans.gos.getActiveDomElement()
 
             if (!activeEl || activeEl === doc.body) {
                 this.focusService.setFocusedCell({

@@ -22,8 +22,8 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
         this.onRowSelectionChanged();
 
         const eventListener = this.onRowSelectionChanged.bind(this);
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, eventListener);
-        this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, eventListener);
+        this.addManagedEventListener(Events.EVENT_MODEL_UPDATED, eventListener);
+        this.addManagedEventListener(Events.EVENT_SELECTION_CHANGED, eventListener);
     }
 
     private isValidRowModel() {
@@ -39,7 +39,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
             this.setDisplayed(true);
             return;
         }
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
         this.setValue(_.formatNumberCommas(selectedRowCount, thousandSeparator, decimalSeparator));

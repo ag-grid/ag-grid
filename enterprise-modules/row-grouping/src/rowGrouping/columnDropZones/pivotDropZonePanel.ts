@@ -18,25 +18,25 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
 
     @PostConstruct
     private passBeansUp(): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to set column labels');
         const title = localeTextFunc('pivots', 'Column Labels');
 
         super.init({
-            icon: _.createIconNoSpan('pivotPanel', this.gos, null)!,
+            icon: _.createIconNoSpan('pivotPanel', this.beans.gos, null)!,
             emptyMessage: emptyMessage,
             title: title
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refresh.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refresh.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.checkVisibility.bind(this));
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, this.refresh.bind(this));
+        this.addManagedEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, this.refresh.bind(this));
+        this.addManagedEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.checkVisibility.bind(this));
 
         this.refresh();
     }
 
     protected getAriaLabel(): string {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const label = translate('ariaPivotDropZonePanelLabel', 'Column Labels');
 
         return label;
@@ -59,7 +59,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
         if (this.isHorizontal()) {
             // what we do for horizontal (ie the pivot panel at the top) depends
             // on the user property as well as pivotMode.
-            switch (this.gos.get('pivotPanelShow')) {
+            switch (this.beans.gos.get('pivotPanelShow')) {
                 case 'always':
                     this.setDisplayed(pivotMode);
                     break;
@@ -80,19 +80,19 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
 
     protected isItemDroppable(column: Column, draggingEvent: DraggingEvent): boolean {
         // we never allow grouping of secondary columns
-        if (this.gos.get('functionsReadOnly') || !column.isPrimary()) { return false; }
+        if (this.beans.gos.get('functionsReadOnly') || !column.isPrimary()) { return false; }
 
         return column.isAllowPivot() && (!column.isPivotActive() || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: Column[]): void {
-        if (this.gos.get('functionsPassive')) {
+        if (this.beans.gos.get('functionsPassive')) {
             const event: WithoutGridCommon<ColumnPivotChangeRequestEvent> = {
                 type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
                 columns: columns
             };
 
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         } else {
             this.columnModel.setPivotColumns(columns, "toolPanelUi");
         }

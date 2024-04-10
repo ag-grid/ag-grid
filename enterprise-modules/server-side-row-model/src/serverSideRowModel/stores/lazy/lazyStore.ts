@@ -78,13 +78,13 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         if (this.level === 0) {
             numberOfRows = this.storeUtils.getServerSideInitialRowCount() ?? 1;
 
-            this.eventService.dispatchEventOnce({
+            this.beans.eventService.dispatchEventOnce({
                 type: Events.EVENT_ROW_COUNT_READY
             });
         }
         this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, this.storeParams));
 
-        const usingTreeData = this.gos.get('treeData');
+        const usingTreeData = this.beans.gos.get('treeData');
 
         if (!usingTreeData && this.group) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
@@ -118,7 +118,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns an object determining the status of this transaction and effected nodes
      */
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
-        const idFunc = this.gos.getCallback('getRowId');
+        const idFunc = this.beans.gos.getCallback('getRowId');
         if (!idFunc) {
             console.warn('AG Grid: getRowId callback must be implemented for transactions to work. Transaction was ignored.');
             return {
@@ -126,7 +126,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             };
         }
 
-        const applyCallback = this.gos.getCallback('isApplyServerSideTransaction');
+        const applyCallback = this.beans.gos.getCallback('isApplyServerSideTransaction');
         if (applyCallback) {
             const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
                 transaction: transaction,
@@ -166,7 +166,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove);
         }
 
-        const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
+        const isClientSideSortingEnabled = this.beans.gos.get('serverSideEnableClientSideSort');
         
         const isUpdateOrAdd = updatedNodes?.length || insertedNodes?.length;
         const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
@@ -396,7 +396,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
     
-        const defaultRowHeight = this.gos.getRowHeightAsNumber();
+        const defaultRowHeight = this.beans.gos.getRowHeightAsNumber();
         // if node after this, can calculate backwards (and ignore detail/grouping)
         if (nextNode) {
             const numberOfRowDiff = (nextNode.node.rowIndex! - displayIndex) * defaultRowHeight;
@@ -475,7 +475,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
 
-        const defaultRowHeight = this.gos.getRowHeightAsNumber();
+        const defaultRowHeight = this.beans.gos.getRowHeightAsNumber();
         // if node after this, can calculate backwards (and ignore detail/grouping)
         if (nextNode) {
             const nextTop = nextNode.rowTop!;
@@ -529,7 +529,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         const serverSortsAllLevels = this.storeUtils.isServerSideSortAllLevels();
         if (serverSortsAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
             const allRowsLoaded = this.cache.isStoreFullyLoaded();
-            const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
+            const isClientSideSortingEnabled = this.beans.gos.get('serverSideEnableClientSideSort');
             
             const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
             if (!isClientSideSort) {
@@ -680,7 +680,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         const event: WithoutGridCommon<StoreUpdatedEvent> = {
             type: Events.EVENT_STORE_UPDATED
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     // gets called when row data updated, and no more refreshing needed
@@ -689,7 +689,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             type: Events.EVENT_STORE_REFRESHED,
             route: this.parentRowNode.getRoute(),
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     public getBlockStates() {

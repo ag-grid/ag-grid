@@ -8,6 +8,7 @@ import {
     DisplayedRowsChangedEvent,
     Events,
     FirstDataRenderedEvent,
+    FlashCellsEvent,
     ModelUpdatedEvent,
     ViewportChangedEvent
 } from "../events";
@@ -90,7 +91,6 @@ export class RowRenderer extends BeanStub {
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
     @Autowired("rowModel") private rowModel: IRowModel;
     @Autowired("focusService") private focusService: FocusService;
-    @Autowired("beans") private beans: Beans;
     @Autowired("rowContainerHeightService") private rowContainerHeightService: RowContainerHeightService;
     @Autowired("ctrlsService") private ctrlsService: CtrlsService;
 
@@ -137,11 +137,11 @@ export class RowRenderer extends BeanStub {
     }
 
     private initialise(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.onBodyScroll.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redraw.bind(this));
+        this.addManagedEventListener(Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
+        this.addManagedEventListener(Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_BODY_SCROLL, this.onBodyScroll.bind(this));
+        this.addManagedEventListener(Events.EVENT_BODY_HEIGHT_CHANGED, this.redraw.bind(this));
 
         this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], () => this.onDomLayoutChanged());
         this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction', 'rowBuffer'], () => this.redraw());
@@ -157,7 +157,7 @@ export class RowRenderer extends BeanStub {
             'enableRangeSelection', 'enableCellTextSelection',
         ], () => this.redrawRows());
 
-        if (this.gos.isGroupRowsSticky()) {
+        if (this.beans.gos.isGroupRowsSticky()) {
             const rowModelType = this.rowModel.getType();
             if (rowModelType === 'clientSide' || rowModelType === 'serverSide') {
                 this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(
@@ -170,14 +170,14 @@ export class RowRenderer extends BeanStub {
         this.registerCellEventListeners();
 
         this.initialiseCache();
-        this.printLayout = this.gos.isDomLayout('print');
-        this.embedFullWidthRows = this.printLayout || this.gos.get('embedFullWidthRows');
+        this.printLayout = this.beans.gos.isDomLayout('print');
+        this.embedFullWidthRows = this.printLayout || this.beans.gos.get('embedFullWidthRows');
 
         this.redrawAfterModelUpdate();
     }
 
     private initialiseCache(): void {
-        if (this.gos.get('keepDetailRows')) {
+        if (this.beans.gos.get('keepDetailRows')) {
             const countProp = this.getKeepDetailRowsCount();
             const count = countProp != null ? countProp : 3;
             this.cachedRowCtrls = new RowCtrlCache(count);
@@ -185,7 +185,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private getKeepDetailRowsCount(): number {
-        return this.gos.get('keepDetailRowsCount');
+        return this.beans.gos.get('keepDetailRowsCount');
     }
 
     public getStickyTopRowCtrls(): RowCtrl[] {
@@ -215,23 +215,23 @@ export class RowRenderer extends BeanStub {
     // registering and de-registering for events is a performance bottleneck. so we register here once and inform
     // all active cells.
     private registerCellEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, (event: CellFocusedEvent) => {
+        this.addManagedEventListener(Events.EVENT_CELL_FOCUSED, (event: CellFocusedEvent) => {
             this.onCellFocusChanged(event);
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUS_CLEARED, () => {
+        this.addManagedEventListener(Events.EVENT_CELL_FOCUS_CLEARED, () => {
             this.onCellFocusChanged();
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_FLASH_CELLS, event => {
+        this.addManagedEventListener(Events.EVENT_FLASH_CELLS, (event: FlashCellsEvent) => {
             this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onFlashCells(event));
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, () => {
+        this.addManagedEventListener(Events.EVENT_COLUMN_HOVER_CHANGED, () => {
             this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onColumnHover());
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => {
+        this.addManagedEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => {
             this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onDisplayedColumnsChanged());
         });
 
@@ -240,7 +240,7 @@ export class RowRenderer extends BeanStub {
         // left position adjusted by the width of the left pinned column, so if the pinned left column width changes,
         // all the center cols need to be shifted to accommodate this. when in normal layout, the pinned cols are
         // in different containers so doesn't impact.
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => {
+        this.addManagedEventListener(Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => {
             if (this.printLayout) {
                 this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onLeftChanged());
             }
@@ -251,7 +251,7 @@ export class RowRenderer extends BeanStub {
         // add listeners to the grid columns
         this.refreshListenersToColumnsForCellComps();
         // if the grid columns change, then refresh the listeners again
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.refreshListenersToColumnsForCellComps.bind(this));
+        this.addManagedEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.refreshListenersToColumnsForCellComps.bind(this));
 
         this.addDestroyFunc(this.removeGridColumnListeners.bind(this));
     }
@@ -266,17 +266,17 @@ export class RowRenderer extends BeanStub {
         };
 
         const addRangeSelectionListeners = () => {
-            this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
-            this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
-            this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
-            this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
+            this.beans.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
+            this.beans.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
+            this.beans.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
+            this.beans.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
         };
 
         const removeRangeSelectionListeners = () => {
-            this.eventService.removeEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
-            this.eventService.removeEventListener(Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
-            this.eventService.removeEventListener(Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
-            this.eventService.removeEventListener(Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
+            this.beans.eventService.removeEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
+            this.beans.eventService.removeEventListener(Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
+            this.beans.eventService.removeEventListener(Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
+            this.beans.eventService.removeEventListener(Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
         };
         this.addDestroyFunc(() => removeRangeSelectionListeners());
         this.addManagedPropertyListener('enableRangeSelection', (params) => {
@@ -287,7 +287,7 @@ export class RowRenderer extends BeanStub {
                 removeRangeSelectionListeners();
             }
         });
-        const rangeSelectionEnabled = this.gos.get('enableRangeSelection');
+        const rangeSelectionEnabled = this.beans.gos.get('enableRangeSelection');
         if (rangeSelectionEnabled) {
             addRangeSelectionListeners();
         }
@@ -350,8 +350,8 @@ export class RowRenderer extends BeanStub {
     }
 
     private onDomLayoutChanged(): void {
-        const printLayout = this.gos.isDomLayout('print');
-        const embedFullWidthRows = printLayout || this.gos.get('embedFullWidthRows');
+        const printLayout = this.beans.gos.isDomLayout('print');
+        const embedFullWidthRows = printLayout || this.beans.gos.get('embedFullWidthRows');
 
         // if moving towards or away from print layout, means we need to destroy all rows, as rows are not laid
         // out using absolute positioning when doing print layout
@@ -522,9 +522,9 @@ export class RowRenderer extends BeanStub {
         // has the focus and not the cell div. therefore, when the refresh is finished, the grid will focus
         // the cell, and not the textfield. that means if the user is in a text field, and the grid refreshes,
         // the focus is lost from the text field. we do not want this.
-        const activeElement = this.gos.getActiveDomElement();
-        const cellDomData = this.gos.getDomData(activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
-        const rowDomData = this.gos.getDomData(activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
+        const activeElement = this.beans.gos.getActiveDomElement();
+        const cellDomData = this.beans.gos.getDomData(activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        const rowDomData = this.beans.gos.getDomData(activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
 
         const gridElementFocused = cellDomData || rowDomData;
 
@@ -548,7 +548,7 @@ export class RowRenderer extends BeanStub {
         // never recycle rows on layout change as rows could change from normal DOM layout
         // back to the grid's row positioning.
         const recycleRows: boolean = !params.domLayoutChanged && !!params.recycleRows;
-        const animate = params.animate && this.gos.isAnimateRows();
+        const animate = params.animate && this.beans.gos.isAnimateRows();
 
         // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
         // however we can reuse the rows, so we keep them but index by rowNode.id
@@ -583,7 +583,7 @@ export class RowRenderer extends BeanStub {
 
     private scrollToTopIfNewData(params: RefreshViewParams): void {
         const scrollToTop = params.newData || params.newPage;
-        const suppressScrollToTop = this.gos.get('suppressScrollOnNewData');
+        const suppressScrollToTop = this.beans.gos.get('suppressScrollOnNewData');
 
         if (scrollToTop && !suppressScrollToTop) {
             this.gridBodyCtrl.getScrollFeature().scrollToTop();
@@ -1038,7 +1038,7 @@ export class RowRenderer extends BeanStub {
         });
 
         if (rowsToRecycle) {
-            const useAnimationFrame = afterScroll && !this.gos.get('suppressAnimationFrame') && !this.printLayout;
+            const useAnimationFrame = afterScroll && !this.beans.gos.get('suppressAnimationFrame') && !this.printLayout;
             if (useAnimationFrame) {
                 this.beans.animationFrameService.addDestroyTask(() => {
                     this.destroyRowCtrls(rowsToRecycle, animate);
@@ -1055,7 +1055,7 @@ export class RowRenderer extends BeanStub {
 
     private dispatchDisplayedRowsChanged(afterScroll: boolean = false): void {
         const event: WithoutGridCommon<DisplayedRowsChangedEvent> = { type: Events.EVENT_DISPLAYED_ROWS_CHANGED, afterScroll };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -1185,12 +1185,12 @@ export class RowRenderer extends BeanStub {
     }
 
     private getRowBuffer(): number {
-        return this.gos.get('rowBuffer');
+        return this.beans.gos.get('rowBuffer');
     }
 
     private getRowBufferInPixels() {
         const rowsToBuffer = this.getRowBuffer();
-        const defaultRowHeight = this.gos.getRowHeightAsNumber();
+        const defaultRowHeight = this.beans.gos.getRowHeightAsNumber();
 
         return rowsToBuffer * defaultRowHeight;
     }
@@ -1204,13 +1204,13 @@ export class RowRenderer extends BeanStub {
             newFirst = 0;
             newLast = -1; // setting to -1 means nothing in range
         } else if (this.printLayout) {
-            this.environment.refreshRowHeightVariable();
+            this.beans.environment.refreshRowHeightVariable();
             newFirst = this.paginationProxy.getPageFirstRow();
             newLast = this.paginationProxy.getPageLastRow();
         } else {
             const bufferPixels = this.getRowBufferInPixels();
             const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
-            const suppressRowVirtualisation = this.gos.get('suppressRowVirtualisation');
+            const suppressRowVirtualisation = this.beans.gos.get('suppressRowVirtualisation');
 
             let rowHeightsChanged = false;
             let firstPixel: number;
@@ -1262,8 +1262,8 @@ export class RowRenderer extends BeanStub {
         // trying to render all the rows, eg 10,000+ rows. this will kill the browser. so instead of
         // killing the browser, we limit the number of rows. just in case some use case we didn't think
         // of, we also have a property to not do this operation.
-        const rowLayoutNormal = this.gos.isDomLayout('normal');
-        const suppressRowCountRestriction = this.gos.get('suppressMaxRenderedRowRestriction');
+        const rowLayoutNormal = this.beans.gos.isDomLayout('normal');
+        const suppressRowCountRestriction = this.beans.gos.get('suppressMaxRenderedRowRestriction');
         const rowBufferMaxSize = Math.max(this.getRowBuffer(), 500);
 
         if (rowLayoutNormal && !suppressRowCountRestriction) {
@@ -1285,7 +1285,7 @@ export class RowRenderer extends BeanStub {
                 lastRow: newLast
             };
 
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         }
     }
 
@@ -1380,7 +1380,7 @@ export class RowRenderer extends BeanStub {
         // we only do the animation frames after scrolling, as this is where we want the smooth user experience.
         // having animation frames for other times makes the grid look 'jumpy'.
 
-        const suppressAnimationFrame = this.gos.get('suppressAnimationFrame');
+        const suppressAnimationFrame = this.beans.gos.get('suppressAnimationFrame');
         const useAnimationFrameForCreate = afterScroll && !suppressAnimationFrame && !this.printLayout;
 
         const res = new RowCtrl(

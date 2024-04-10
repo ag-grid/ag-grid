@@ -48,7 +48,7 @@ export class ToolPanelWrapper extends Component {
         this.toolPanelId = id;
         this.width = width;
 
-        const compDetails = this.userComponentFactory.getToolPanelCompDetails(toolPanelDef, params);
+        const compDetails = this.beans.userComponentFactory.getToolPanelCompDetails(toolPanelDef, params);
         const componentPromise = compDetails.newAgStackInstance();
 
         this.params = compDetails.params;
@@ -86,7 +86,7 @@ export class ToolPanelWrapper extends Component {
     }
 
     public setResizerSizerSide(side: 'right' | 'left') {
-        const isRtl = this.gos.get('enableRtl');
+        const isRtl = this.beans.gos.get('enableRtl');
         const isLeft = side === 'left';
         const inverted = isRtl ? isLeft : !isLeft;
 

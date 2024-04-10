@@ -40,7 +40,7 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
         }
 
         this.initialiseWithDefaultAggregations();
-        this.addAggFuncs(this.gos.get('aggFuncs'));
+        this.addAggFuncs(this.beans.gos.get('aggFuncs'));
     }
 
     private initialiseWithDefaultAggregations(): void {

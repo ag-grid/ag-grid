@@ -66,7 +66,7 @@ export class TabbedLayout extends TabGuardComp {
         }
         if (enableCloseButton) {
             this.setupCloseButton(addCssClasses);
-            this.eTabHeader = this.gos.getDocument().createElement('div');
+            this.eTabHeader = this.beans.gos.getDocument().createElement('div');
             addCssClasses(this.eHeader, 'header-wrapper');
             setAriaRole(this.eHeader, 'presentation');
             this.eHeader.appendChild(this.eTabHeader);
@@ -78,12 +78,12 @@ export class TabbedLayout extends TabGuardComp {
     }
 
     private setupCloseButton(addCssClasses: (el: HTMLElement, suffix: string) => void): void {
-        const eDocument = this.gos.getDocument();
+        const eDocument = this.beans.gos.getDocument();
         const eCloseButton = eDocument.createElement('button');
         addCssClasses(eCloseButton, 'close-button');
         const eIcon = createIconNoSpan(
             'close',
-            this.gos,
+            this.beans.gos,
             undefined,
             true
         )!;
@@ -102,9 +102,9 @@ export class TabbedLayout extends TabGuardComp {
         switch (e.key) {
             case KeyCode.RIGHT:
             case KeyCode.LEFT:
-                if (!this.eTabHeader.contains(this.gos.getActiveDomElement())) { return; }
+                if (!this.eTabHeader.contains(this.beans.gos.getActiveDomElement())) { return; }
                 const isRightKey = e.key === KeyCode.RIGHT;
-                const isRtl = this.gos.get('enableRtl');
+                const isRtl = this.beans.gos.get('enableRtl');
                 const currentPosition = this.items.indexOf(this.activeItem);
                 const nextPosition = isRightKey !== isRtl ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
 
@@ -130,7 +130,7 @@ export class TabbedLayout extends TabGuardComp {
         const { focusService, eHeader, eBody, activeItem, params } = this;
         const { suppressTrapFocus, enableCloseButton } = params;
 
-        const activeElement = this.gos.getActiveDomElement();
+        const activeElement = this.beans.gos.getActiveDomElement();
         const target = e.target as HTMLElement;
         const backwards = e.shiftKey;
 
@@ -139,7 +139,7 @@ export class TabbedLayout extends TabGuardComp {
             if (enableCloseButton && backwards && !this.eCloseButton?.contains(activeElement)) {
                 this.eCloseButton?.focus();
             } else if (suppressTrapFocus && backwards) {
-                this.focusService.findFocusableElementBeforeTabGuard(this.gos.getDocument().body, target)?.focus();
+                this.focusService.findFocusableElementBeforeTabGuard(this.beans.gos.getDocument().body, target)?.focus();
             } else {
                 // focus is in header, move into body of popup
                 this.focusBody(e.shiftKey);

@@ -93,7 +93,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     @PostConstruct
     private postConstruct(): void {
-        this.usingTreeData = this.gos.get('treeData');
+        this.usingTreeData = this.beans.gos.get('treeData');
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
 
         if (!this.usingTreeData && this.groupLevel) {
@@ -115,10 +115,10 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.addDestroyFunc(() => this.rowNodeBlockLoader.removeBlock(this));
 
 
-        this.postSortFunc = this.gos.getCallback('postSortRows');
+        this.postSortFunc = this.beans.gos.getCallback('postSortRows');
 
         if (userInitialRowCount != null) {
-            this.eventService.dispatchEventOnce({
+            this.beans.eventService.dispatchEventOnce({
                 type: Events.EVENT_ROW_COUNT_READY
             });
         }
@@ -248,7 +248,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         }
 
         if (this.level === 0) {
-            this.eventService.dispatchEventOnce({
+            this.beans.eventService.dispatchEventOnce({
                 type: Events.EVENT_ROW_COUNT_READY
             });
         }
@@ -264,7 +264,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         const lookupNodeToRecycle = (data: any): RowNode | undefined => {
             if (!nodesToRecycle) { return undefined; }
 
-            const getRowIdFunc = this.gos.getCallback('getRowId');
+            const getRowIdFunc = this.beans.gos.getCallback('getRowId');
             if (!getRowIdFunc) { return undefined; }
 
             const parentKeys = this.parentRowNode.getGroupKeys();
@@ -546,7 +546,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
                 return { status: ServerSideTransactionResultStatus.StoreWaitingToLoad };
         }
 
-        const applyCallback = this.gos.getCallback('isApplyServerSideTransaction');
+        const applyCallback = this.beans.gos.getCallback('isApplyServerSideTransaction');
         if (applyCallback) {
             const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
                 transaction: transaction,
@@ -594,7 +594,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
                 type: Events.EVENT_SELECTION_CHANGED,
                 source: 'rowDataChanged'
             };
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         }
     }
 
@@ -671,7 +671,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private lookupRowNode(data: any): RowNode | null {
-        const getRowIdFunc = this.gos.getCallback('getRowId');
+        const getRowIdFunc = this.beans.gos.getCallback('getRowId');
 
         let rowNode: RowNode;
         if (getRowIdFunc != null) {
@@ -740,7 +740,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         const event: WithoutGridCommon<StoreUpdatedEvent> = {
             type: Events.EVENT_STORE_UPDATED
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     public getRowCount(): number {

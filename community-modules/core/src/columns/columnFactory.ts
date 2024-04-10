@@ -271,7 +271,7 @@ export class ColumnFactory extends BeanStub {
 
     private createMergedColGroupDef(colGroupDef: ColGroupDef | null): ColGroupDef {
         const colGroupDefMerged: ColGroupDef = {} as ColGroupDef;
-        Object.assign(colGroupDefMerged, this.gos.get('defaultColGroupDef'));
+        Object.assign(colGroupDefMerged, this.beans.gos.get('defaultColGroupDef'));
         Object.assign(colGroupDefMerged, colGroupDef);
 
         return colGroupDefMerged;
@@ -299,7 +299,7 @@ export class ColumnFactory extends BeanStub {
             const colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
             const colDefMerged = this.addColumnDefaultAndTypes(colDef, colId);
             column = new Column(colDefMerged, colDef, colId, primaryColumns);
-            this.context.createBean(column);
+            this.createBean(column);
         } else {
             const colDefMerged = this.addColumnDefaultAndTypes(colDef, column.getColId());
             column.setColDef(colDefMerged, colDef, source);
@@ -413,7 +413,7 @@ export class ColumnFactory extends BeanStub {
         const res: ColDef = {} as ColDef;
 
         // merge properties from default column definitions
-        const defaultColDef = this.gos.get('defaultColDef');
+        const defaultColDef = this.beans.gos.get('defaultColDef');
         mergeDeep(res, defaultColDef, false, true);
 
         const columnType = this.dataTypeService.updateColDefAndGetColumnType(res, colDef, colId);
@@ -425,8 +425,8 @@ export class ColumnFactory extends BeanStub {
         // merge properties from column definitions
         mergeDeep(res, colDef, false, true);
 
-        const autoGroupColDef = this.gos.get('autoGroupColumnDef');
-        const isSortingCoupled = this.gos.isColumnsSortingCoupledToGroup();
+        const autoGroupColDef = this.beans.gos.get('autoGroupColumnDef');
+        const isSortingCoupled = this.beans.gos.isColumnsSortingCoupledToGroup();
         if (colDef.rowGroup && autoGroupColDef && isSortingCoupled) {
             // override the sort for row group columns where the autoGroupColDef defines these values.
             mergeDeep(res, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort } as ColDef, false, true);
@@ -444,7 +444,7 @@ export class ColumnFactory extends BeanStub {
 
         // merge user defined with default column types
         const allColumnTypes = Object.assign({}, DefaultColumnTypes);
-        const userTypes = this.gos.get('columnTypes') || {};
+        const userTypes = this.beans.gos.get('columnTypes') || {};
 
         iterateObject(userTypes, (key, value) => {
             if (key in allColumnTypes) {

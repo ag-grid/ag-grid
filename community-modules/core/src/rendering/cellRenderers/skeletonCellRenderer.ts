@@ -24,12 +24,12 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
     }
 
     private setupFailed(): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
         this.eSkeletonContainer.innerText = localeTextFunc('loadingError', 'ERR');
     }
 
     private setupLoading(): void {
-        const eDocument = this.gos.getDocument();
+        const eDocument = this.beans.gos.getDocument();
         const skeletonEffect = eDocument.createElement('div');
         skeletonEffect.classList.add('ag-skeleton-effect');
 

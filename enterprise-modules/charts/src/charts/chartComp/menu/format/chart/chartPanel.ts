@@ -66,7 +66,7 @@ export class ChartPanel extends Component {
             ]
         };
         this.setTemplate(ChartPanel.TEMPLATE, { chartGroup: chartGroupParams });
-        this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, () => this.refresh());
+        this.addManagedEventListener(Events.EVENT_CHART_OPTIONS_CHANGED, () => this.refresh());
     }
 
     private refresh(): void {

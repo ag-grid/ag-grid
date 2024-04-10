@@ -21,15 +21,13 @@ export class SetLeftFeature extends BeanStub {
     // otherwise this is empty
     private colsSpanning: Column[] | undefined;
 
-    private beans: Beans;
-
     constructor(columnOrGroup: IHeaderColumn, eCell: HTMLElement, beans: Beans, colsSpanning?: Column[]) {
         super();
         this.columnOrGroup = columnOrGroup;
         this.eCell = eCell;
         this.ariaEl = this.eCell.querySelector('[role=columnheader]') || this.eCell;
         this.colsSpanning = colsSpanning;
-        this.beans = beans;
+        this.manualSetBeans(beans);
     }
 
     public setColsSpanning(colsSpanning: Column[]): void {
@@ -51,7 +49,7 @@ export class SetLeftFeature extends BeanStub {
 
         // when in print layout, the left position is also dependent on the width of the pinned sections.
         // so additionally update left if any column width changes.
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onLeftChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onLeftChanged.bind(this));
 
         // setting left has a dependency on print layout
         this.addManagedPropertyListener('domLayout', this.onLeftChanged.bind(this));

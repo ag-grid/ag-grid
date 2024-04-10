@@ -236,7 +236,7 @@ export class ChartTranslationService extends BeanStub {
     };
 
     public translate(toTranslate: ChartTranslationKey): string {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const defaultTranslation = ChartTranslationService.DEFAULT_TRANSLATIONS[toTranslate];
         return translate(toTranslate, defaultTranslation);
     }

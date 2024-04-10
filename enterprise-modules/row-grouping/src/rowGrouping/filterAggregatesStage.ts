@@ -30,7 +30,7 @@ export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
 
         // The predicate to determine whether filters should apply to this row. Either defined by the user in groupAggFiltering or a default depending
         // on current pivot mode status.
-        const applyFilterToNode = this.gos.getGroupAggFiltering()
+        const applyFilterToNode = this.beans.gos.getGroupAggFiltering()
             || (isPivotMode ? defaultSecondaryColumnPredicate : defaultPrimaryColumnPredicate);
 
         const { changedPath } = params;
@@ -107,7 +107,7 @@ export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
             return;
         }
 
-        if (this.gos.get('treeData')) {
+        if (this.beans.gos.get('treeData')) {
             this.setAllChildrenCountTreeData(rowNode);
         } else {
             this.setAllChildrenCountGridGrouping(rowNode);

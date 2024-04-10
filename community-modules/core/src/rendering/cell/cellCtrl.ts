@@ -77,7 +77,6 @@ export class CellCtrl extends BeanStub {
 
     private eGui: HTMLElement;
     private cellComp: ICellComp;
-    private beans: Beans;
     private column: Column;
     private rowNode: RowNode;
     private rowCtrl: RowCtrl;
@@ -118,7 +117,7 @@ export class CellCtrl extends BeanStub {
         super();
         this.column = column;
         this.rowNode = rowNode;
-        this.beans = beans;
+        this.manualSetBeans(beans);
         this.rowCtrl = rowCtrl;
 
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
@@ -149,7 +148,7 @@ export class CellCtrl extends BeanStub {
         this.cellMouseListenerFeature = new CellMouseListenerFeature(this, this.beans, this.column);
         this.addDestroyFunc(() => { this.cellMouseListenerFeature?.destroy(); this.cellMouseListenerFeature = null; });
 
-        this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(this, this.beans, this.column, this.rowNode, this.rowCtrl);
+        this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(this, this.beans, this.rowNode, this.rowCtrl);
         this.addDestroyFunc(() => { this.cellKeyboardListenerFeature?.destroy(); this.cellKeyboardListenerFeature = null; });
 
         if (this.column.isTooltipEnabled()) {

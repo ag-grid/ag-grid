@@ -74,7 +74,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.gos.isRowModelType('clientSide')) {
+        if (this.beans.gos.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
@@ -100,7 +100,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public getIconName(): string {
-        const managedDrag = this.gos.get('rowDragManaged');
+        const managedDrag = this.beans.gos.get('rowDragManaged');
 
         if (managedDrag && this.shouldPreventRowMove()) {
             return DragAndDropService.ICON_NOT_ALLOWED;
@@ -130,7 +130,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return (draggingEvent.dragItem.rowNodes || []) as RowNode[];
         }
 
-        const isRowDragMultiRow = this.gos.get('rowDragMultiRow');
+        const isRowDragMultiRow = this.beans.gos.get('rowDragMultiRow');
         const selectedNodes = [...this.selectionService.getSelectedNodes()].sort(
             (a, b) => {
                 if (a.rowIndex == null || b.rowIndex == null) { return 0; }
@@ -170,7 +170,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private isFromThisGrid(draggingEvent: DraggingEvent) {
         const { dragSourceDomDataKey } = draggingEvent.dragSource;
 
-        return dragSourceDomDataKey === this.gos.getDomDataKey();
+        return dragSourceDomDataKey === this.beans.gos.getDomDataKey();
     }
 
     private isDropZoneWithinThisGrid(draggingEvent: DraggingEvent): boolean {
@@ -188,7 +188,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.lastDraggingEvent = draggingEvent;
 
         const pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
-        const managedDrag = this.gos.get('rowDragManaged');
+        const managedDrag = this.beans.gos.get('rowDragManaged');
 
         if (managedDrag) {
             this.doManagedDrag(draggingEvent, pixel);
@@ -199,14 +199,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     private doManagedDrag(draggingEvent: DraggingEvent, pixel: number): void {
         const isFromThisGrid = this.isFromThisGrid(draggingEvent);
-        const managedDrag = this.gos.get('rowDragManaged');
+        const managedDrag = this.beans.gos.get('rowDragManaged');
         const rowNodes = draggingEvent.dragItem.rowNodes! as RowNode[];
 
         if (managedDrag && this.shouldPreventRowMove()) {
             return;
         }
 
-        if (this.gos.get('suppressMoveWhenRowDragging') || !isFromThisGrid) {
+        if (this.beans.gos.get('suppressMoveWhenRowDragging') || !isFromThisGrid) {
             if (!this.isDropZoneWithinThisGrid(draggingEvent)) {
                 this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
             }
@@ -235,7 +235,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             });
             this.moveRows(rowNodes!, pixel, increment);
         } else {
-            const getRowIdFunc = this.gos.getCallback('getRowId');
+            const getRowIdFunc = this.beans.gos.getCallback('getRowId');
 
             let addIndex = this.clientSideRowModel.getRowIndexAtPixel(pixel) + 1;
 
@@ -384,7 +384,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 break;
         }
 
-        const event: RowDragEvent = this.gos.addGridCommonParams({
+        const event: RowDragEvent = this.beans.gos.addGridCommonParams({
             type: type,
             event: draggingEvent.event,
             node: draggingEvent.dragItem.rowNode!,
@@ -401,14 +401,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private dispatchGridEvent(type: string, draggingEvent: DraggingEvent): void {
         const event = this.draggingToRowDragEvent(type, draggingEvent);
 
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     public onDragLeave(draggingEvent: DraggingEvent): void {
         this.dispatchGridEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
 
-        if (this.gos.get('rowDragManaged')) {
+        if (this.beans.gos.get('rowDragManaged')) {
             this.clearRowHighlight();
         }
     }
@@ -418,8 +418,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.stopDragging(draggingEvent);
 
         if (
-            this.gos.get('rowDragManaged') &&
-            (this.gos.get('suppressMoveWhenRowDragging') || !this.isFromThisGrid(draggingEvent)) &&
+            this.beans.gos.get('rowDragManaged') &&
+            (this.beans.gos.get('suppressMoveWhenRowDragging') || !this.isFromThisGrid(draggingEvent)) &&
             !this.isDropZoneWithinThisGrid(draggingEvent)
         ) {
             this.moveRowAndClearHighlight(draggingEvent);

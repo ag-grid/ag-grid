@@ -31,9 +31,7 @@ export class TouchListener implements IEventEmitter {
 
     private lastTapTime: number | null;
 
-    private eventService: EventService = new EventService();
-
-    // private mostRecentTouch: Touch;
+    private localEventService: EventService = new EventService();
 
     private preventMouseClick: boolean;
 
@@ -69,11 +67,11 @@ export class TouchListener implements IEventEmitter {
     }
 
     public addEventListener(eventType: string, listener: AgEventListener): void {
-        this.eventService.addEventListener(eventType, listener);
+        this.localEventService.addEventListener(eventType, listener);
     }
 
     public removeEventListener(eventType: string, listener: AgEventListener): void {
-        this.eventService.removeEventListener(eventType, listener);
+        this.localEventService.removeEventListener(eventType, listener);
     }
 
     private onTouchStart(touchEvent: TouchEvent): void {
@@ -99,7 +97,7 @@ export class TouchListener implements IEventEmitter {
                     touchStart: this.touchStart,
                     touchEvent: touchEvent
                 };
-                this.eventService.dispatchEvent(event);
+                this.localEventService.dispatchEvent(event);
             }
         }, 500);
     }
@@ -130,7 +128,7 @@ export class TouchListener implements IEventEmitter {
                 type: TouchListener.EVENT_TAP,
                 touchStart: this.touchStart
             };
-            this.eventService.dispatchEvent(event);
+            this.localEventService.dispatchEvent(event);
             this.checkForDoubleTap();
         }
 
@@ -154,7 +152,7 @@ export class TouchListener implements IEventEmitter {
                     type: TouchListener.EVENT_DOUBLE_TAP,
                     touchStart: this.touchStart
                 };
-                this.eventService.dispatchEvent(event);
+                this.localEventService.dispatchEvent(event);
 
                 // this stops a tripple tap ending up as two double taps
                 this.lastTapTime = null;

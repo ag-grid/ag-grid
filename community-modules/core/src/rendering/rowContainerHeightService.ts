@@ -45,7 +45,7 @@ export class RowContainerHeightService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
+        this.addManagedEventListener(Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
         this.maxDivHeight = getMaxDivHeight();
         this.logger.log('maxDivHeight = ' + this.maxDivHeight);
     }
@@ -90,7 +90,7 @@ export class RowContainerHeightService extends BeanStub {
     private setUiContainerHeight(height: number | null): void {
         if (height !== this.uiContainerHeight) {
             this.uiContainerHeight = height;
-            this.eventService.dispatchEvent({type: Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED});
+            this.beans.eventService.dispatchEvent({type: Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED});
         }
     }
 
@@ -106,7 +106,7 @@ export class RowContainerHeightService extends BeanStub {
         if (this.divStretchOffset === newOffsetFloor) { return; }
 
         this.divStretchOffset = newOffsetFloor!;
-        this.eventService.dispatchEvent({type: Events.EVENT_HEIGHT_SCALE_CHANGED});
+        this.beans.eventService.dispatchEvent({type: Events.EVENT_HEIGHT_SCALE_CHANGED});
     }
 
     public setModelHeight(modelHeight: number | null): void {

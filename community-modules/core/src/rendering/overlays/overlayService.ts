@@ -21,36 +21,36 @@ export class OverlayService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => this.onRowDataUpdated());
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onNewColumnsLoaded());
+        this.addManagedEventListener(Events.EVENT_ROW_DATA_UPDATED, () => this.onRowDataUpdated());
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, () => this.onNewColumnsLoaded());
     }
 
     public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {
         this.overlayWrapperComp = overlayWrapperComp;
 
         if (
-            !this.gos.get('columnDefs') ||
-            (this.gos.isRowModelType('clientSide') && !this.gos.get('rowData'))
+            !this.beans.gos.get('columnDefs') ||
+            (this.beans.gos.isRowModelType('clientSide') && !this.beans.gos.get('rowData'))
         ) {
             this.showLoadingOverlay();
         }
     }
 
     public showLoadingOverlay(): void {
-        if (this.gos.get('suppressLoadingOverlay')) { return; }
+        if (this.beans.gos.get('suppressLoadingOverlay')) { return; }
 
         const params: WithoutGridCommon<ILoadingOverlayParams> = {};
 
-        const compDetails = this.userComponentFactory.getLoadingOverlayCompDetails(params);
+        const compDetails = this.beans.userComponentFactory.getLoadingOverlayCompDetails(params);
         this.showOverlay(compDetails, 'ag-overlay-loading-wrapper', 'loadingOverlayComponentParams');
     }
 
     public showNoRowsOverlay(): void {
-        if (this.gos.get('suppressNoRowsOverlay')) { return; }
+        if (this.beans.gos.get('suppressNoRowsOverlay')) { return; }
 
         const params: WithoutGridCommon<INoRowsOverlayParams> = {};
 
-        const compDetails = this.userComponentFactory.getNoRowsOverlayCompDetails(params);
+        const compDetails = this.beans.userComponentFactory.getNoRowsOverlayCompDetails(params);
         this.showOverlay(compDetails, 'ag-overlay-no-rows-wrapper', 'noRowsOverlayComponentParams');
     }
 
@@ -59,7 +59,7 @@ export class OverlayService extends BeanStub {
         const listenerDestroyFunc = this.addManagedPropertyListener(gridOption, ({ currentValue }) => {
             promise.then(comp => {
                 if (comp!.refresh) {
-                    comp.refresh(this.gos.addGridCommonParams({
+                    comp.refresh(this.beans.gos.addGridCommonParams({
                         ...(currentValue ?? {})
                     }));
                 }
@@ -77,7 +77,7 @@ export class OverlayService extends BeanStub {
 
     private showOrHideOverlay(): void {
         const isEmpty = this.paginationProxy.isEmpty();
-        const isSuppressNoRowsOverlay = this.gos.get('suppressNoRowsOverlay');
+        const isSuppressNoRowsOverlay = this.beans.gos.get('suppressNoRowsOverlay');
         if (isEmpty && !isSuppressNoRowsOverlay) {
             this.showNoRowsOverlay();
         } else {

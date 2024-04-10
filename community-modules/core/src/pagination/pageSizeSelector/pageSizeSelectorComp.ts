@@ -26,7 +26,7 @@ export class PageSizeSelectorComp extends Component {
         });
 
         this.addManagedListener(
-            this.eventService,
+            this.beans.eventService,
             Events.EVENT_PAGINATION_CHANGED,
             (event) => this.handlePaginationChanged(event),
         );
@@ -106,10 +106,10 @@ export class PageSizeSelectorComp extends Component {
 
     public shouldShowPageSizeSelector(): boolean {
         return (
-            this.gos.get('pagination') &&
-            !this.gos.get('suppressPaginationPanel') &&
-            !this.gos.get('paginationAutoPageSize') &&
-            this.gos.get('paginationPageSizeSelector') !== false
+            this.beans.gos.get('pagination') &&
+            !this.beans.gos.get('suppressPaginationPanel') &&
+            !this.beans.gos.get('paginationAutoPageSize') &&
+            this.beans.gos.get('paginationPageSizeSelector') !== false
         );
     }
 
@@ -134,7 +134,7 @@ export class PageSizeSelectorComp extends Component {
             this.selectPageSizeComp = undefined;
         }
 
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
         const localisedLabel = localeTextFunc('pageSizeSelectorLabel', 'Page Size:');
 
         const options = pageSizeOptions.map(value => ({
@@ -156,7 +156,7 @@ export class PageSizeSelectorComp extends Component {
 
     private getPageSizeSelectorValues(): number[] {
         const defaultValues = [20, 50, 100];
-        const paginationPageSizeSelectorValues = this.gos.get('paginationPageSizeSelector');
+        const paginationPageSizeSelectorValues = this.beans.gos.get('paginationPageSizeSelector');
 
         if (
             !Array.isArray(paginationPageSizeSelectorValues) ||

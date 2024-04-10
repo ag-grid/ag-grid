@@ -29,11 +29,11 @@ export class RowNodeSorter extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.isAccentedSort = this.gos.get('accentedSort');
-        this.primaryColumnsSortGroups = this.gos.isColumnsSortingCoupledToGroup();
+        this.isAccentedSort = this.beans.gos.get('accentedSort');
+        this.primaryColumnsSortGroups = this.beans.gos.isColumnsSortingCoupledToGroup();
 
         this.addManagedPropertyListener('accentedSort', (propChange) => this.isAccentedSort = propChange.currentValue);
-        this.addManagedPropertyListener('autoGroupColumnDef', () => this.primaryColumnsSortGroups = this.gos.isColumnsSortingCoupledToGroup());
+        this.addManagedPropertyListener('autoGroupColumnDef', () => this.primaryColumnsSortGroups = this.beans.gos.isColumnsSortingCoupledToGroup());
     }
 
     public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
@@ -110,7 +110,7 @@ export class RowNodeSorter extends BeanStub {
 
         const isNodeGroupedAtLevel = node.rowGroupColumn === column;
         if (isNodeGroupedAtLevel) {
-            const isGroupRows = this.gos.isGroupUseEntireRow(this.columnModel.isPivotActive());
+            const isGroupRows = this.beans.gos.isGroupUseEntireRow(this.columnModel.isPivotActive());
             // because they're group rows, no display cols exist, so groupData never populated.
             // instead delegate to getting value from leaf child.
             if (isGroupRows) {

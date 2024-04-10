@@ -68,8 +68,8 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         this.maxAggregationComp.setLabel('max', 'Max');
         this.sumAggregationComp.setLabel('sum', 'Sum');
 
-        this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
     }
 
     private isValidRowModel() {
@@ -91,7 +91,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     private setAggregationComponentValue(aggFuncName: AggregationStatusPanelAggFunc, value: number | null, visible: boolean) {
         const statusBarValueComponent = this.getAllowedAggregationValueComponent(aggFuncName);
         if (_.exists(statusBarValueComponent) && statusBarValueComponent) {
-            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
             const thousandSeparator = localeTextFunc('thousandSeparator', ',');
             const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 

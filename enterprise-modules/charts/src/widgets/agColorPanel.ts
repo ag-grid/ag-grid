@@ -102,7 +102,7 @@ export class AgColorPanel extends Component {
     }
 
     private initTabIndex(): void {
-        const tabIndex = this.tabIndex = (this.gos.get('tabIndex')).toString();
+        const tabIndex = this.tabIndex = (this.beans.gos.get('tabIndex')).toString();
 
         this.spectrumColor.setAttribute('tabindex', tabIndex);
         this.spectrumHueSlider.setAttribute('tabindex', tabIndex);

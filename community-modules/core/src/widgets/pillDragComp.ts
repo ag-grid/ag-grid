@@ -53,9 +53,9 @@ export abstract class PillDragComp<TItem> extends Component {
         this.addElementClasses(this.eText, 'text');
         this.addElementClasses(this.eButton, 'button');
 
-        this.eDragHandle.appendChild(createIconNoSpan('columnDrag', this.gos)!);
+        this.eDragHandle.appendChild(createIconNoSpan('columnDrag', this.beans.gos)!);
 
-        this.eButton.appendChild(createIconNoSpan('cancel', this.gos)!);
+        this.eButton.appendChild(createIconNoSpan('cancel', this.beans.gos)!);
 
         this.setupComponents();
 
@@ -80,7 +80,7 @@ export abstract class PillDragComp<TItem> extends Component {
     }
 
     protected setupAria() {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         const ariaInstructions = [this.getAriaDisplayName()];
 
@@ -104,7 +104,7 @@ export abstract class PillDragComp<TItem> extends Component {
 
         refresh();
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, refresh);
     }
 
     protected getDragSourceId(): string | undefined {

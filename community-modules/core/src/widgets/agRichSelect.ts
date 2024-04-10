@@ -118,7 +118,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             this.eInput.setDisplayed(false);
         }
 
-        this.eWrapper.tabIndex = this.gos.get('tabIndex');
+        this.eWrapper.tabIndex = this.beans.gos.get('tabIndex');
 
         const { searchDebounceDelay = 300 } = this.config;
         this.clearSearchString = debounce(this.clearSearchString, searchDebounceDelay);
@@ -134,8 +134,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     private createLoadingElement(): void {
-        const eDocument = this.gos.getDocument();
-        const translate = this.localeService.getLocaleTextFunc();
+        const eDocument = this.beans.gos.getDocument();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const el = eDocument.createElement('div');
 
         el.classList.add('ag-loading-text');
@@ -169,7 +169,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
         const listId = `ag-rich-select-list-${this.listComponent.getCompId()}`;
         eListAriaEl.setAttribute('id', listId);
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const ariaLabel = translate(this.config.pickerAriaLabelKey, this.config.pickerAriaLabelValue);
 
         setAriaLabel(eListAriaEl, ariaLabel);
@@ -189,7 +189,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         let userCompDetails: UserCompDetails | undefined;
 
         if (config.cellRenderer) {
-            userCompDetails = this.userComponentFactory.getCellRendererDetails(this.config, {
+            userCompDetails = this.beans.userComponentFactory.getCellRendererDetails(this.config, {
                 value,
                 valueFormatted
             } as ICellRendererParams);

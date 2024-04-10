@@ -26,7 +26,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
 
     @PostConstruct
     private init(): void {
-        const groupSelectsChildren = this.gos.get('groupSelectsChildren');
+        const groupSelectsChildren = this.beans.gos.get('groupSelectsChildren');
         this.addManagedPropertyListener('groupSelectsChildren', (propChange) => {
             this.destroyBean(this.selectionStrategy);
 
@@ -38,7 +38,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
                 type: Events.EVENT_SELECTION_CHANGED,
                 source: 'api',
             };
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         });
 
         this.addManagedPropertyListener('rowSelection', () => this.deselectAllRowNodes({ source: 'api' }));
@@ -60,13 +60,13 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
             type: Events.EVENT_SELECTION_CHANGED,
             source,
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
         const {nodes, ...otherParams} = params;
 
-        const rowSelection = this.gos.get('rowSelection');
+        const rowSelection = this.beans.gos.get('rowSelection');
         if (nodes.length > 1 && rowSelection !== 'multiple') {
             console.warn(`AG Grid: cannot multi select while rowSelection='single'`);
             return 0;
@@ -93,7 +93,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
             type: Events.EVENT_SELECTION_CHANGED,
             source: adjustedParams.source,
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
         return changedNodes;
     }
 
@@ -113,7 +113,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
             type: Events.EVENT_SELECTION_CHANGED,
             source: 'api',
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private shotgunResetNodeSelectionState(source?: SelectionEventSourceType) {
@@ -163,7 +163,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
                 type: Events.EVENT_SELECTION_CHANGED,
                 source: 'api',
             };
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
             return;
         }
         rowNode.setSelectedInitialValue(isNodeSelected);
@@ -200,7 +200,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
             type: Events.EVENT_SELECTION_CHANGED,
             source: params.source,
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
     
     public deselectAllRowNodes(params: { source: SelectionEventSourceType; justFiltered?: boolean | undefined; justCurrentPage?: boolean | undefined; }): void {
@@ -222,7 +222,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
             type: Events.EVENT_SELECTION_CHANGED,
             source: params.source,
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     public getSelectAllState(justFiltered?: boolean, justCurrentPage?: boolean): boolean | null {

@@ -50,11 +50,11 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     @PostConstruct
     public init(): void {
-        if (!this.gos.isRowModelType('infinite')) {
+        if (!this.beans.gos.isRowModelType('infinite')) {
             return;
         }
 
-        this.rowHeight = this.gos.getRowHeightAsNumber();
+        this.rowHeight = this.beans.gos.getRowHeightAsNumber();
 
         this.addEventListeners();
 
@@ -64,13 +64,13 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     private verifyProps(): void {
-        if (this.gos.exists('initialGroupOrderComparator')) {
+        if (this.beans.gos.exists('initialGroupOrderComparator')) {
             _.warnOnce('initialGroupOrderComparator cannot be used with Infinite Row Model as sorting is done on the server side');
         }
     }
 
     public start(): void {
-        this.setDatasource(this.gos.get('datasource'));
+        this.setDatasource(this.beans.gos.get('datasource'));
     }
 
     @PreDestroy
@@ -83,14 +83,14 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     private addEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onCacheUpdated.bind(this));
-        this.addManagedPropertyListener('datasource', () => this.setDatasource(this.gos.get('datasource')));
+        this.addManagedEventListener(Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
+        this.addManagedEventListener(Events.EVENT_STORE_UPDATED, this.onCacheUpdated.bind(this));
+        this.addManagedPropertyListener('datasource', () => this.setDatasource(this.beans.gos.get('datasource')));
         this.addManagedPropertyListener('cacheBlockSize', () => this.resetCache());
         this.addManagedPropertyListener('rowHeight', () => {
-            this.rowHeight = this.gos.getRowHeightAsNumber();
+            this.rowHeight = this.beans.gos.getRowHeightAsNumber();
             this.cacheParams.rowHeight = this.rowHeight;
             this.updateRowHeights();
         });
@@ -160,7 +160,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         // if user is providing id's, then this means we can keep the selection between datasource hits,
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
         // is done.
-        const getRowIdFunc = this.gos.getCallback('getRowId');
+        const getRowIdFunc = this.beans.gos.getCallback('getRowId');
         const userGeneratingIds = getRowIdFunc != null;
 
         if (!userGeneratingIds) {
@@ -200,17 +200,17 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
             // properties - this way we take a snapshot of them, so if user changes any, they will be
             // used next time we create a new cache, which is generally after a filter or sort change,
             // or a new datasource is set
-            initialRowCount: this.gos.get('infiniteInitialRowCount'),
-            maxBlocksInCache: this.gos.get('maxBlocksInCache'),
-            rowHeight: this.gos.getRowHeightAsNumber(),
+            initialRowCount: this.beans.gos.get('infiniteInitialRowCount'),
+            maxBlocksInCache: this.beans.gos.get('maxBlocksInCache'),
+            rowHeight: this.beans.gos.getRowHeightAsNumber(),
 
             // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
             // the current page and request first row of next page
-            overflowSize: this.gos.get('cacheOverflowSize'),
+            overflowSize: this.beans.gos.get('cacheOverflowSize'),
 
             // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
             // server for one page at a time. so the default if not specified is 100.
-            blockSize: this.gos.get('cacheBlockSize'),
+            blockSize: this.beans.gos.get('cacheBlockSize'),
 
             // the cache could create this, however it is also used by the pages, so handy to create it
             // here as the settings are also passed to the pages
@@ -219,12 +219,12 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
         this.infiniteCache = this.createBean(new InfiniteCache(this.cacheParams));
 
-        this.eventService.dispatchEventOnce({
+        this.beans.eventService.dispatchEventOnce({
             type: Events.EVENT_ROW_COUNT_READY
         });
 
         const event = this.createModelUpdatedEvent();
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private updateRowHeights() {
@@ -234,7 +234,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         });
 
         const event = this.createModelUpdatedEvent();
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private destroyCache(): void {
@@ -245,7 +245,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     private onCacheUpdated(): void {
         const event = this.createModelUpdatedEvent();
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     public getRow(rowIndex: number): RowNode | undefined {

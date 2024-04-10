@@ -60,7 +60,7 @@ export class ToolPanelColumnComp extends Component {
     public init(): void {
 
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
-        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gos)!;
+        this.eDragHandle = _.createIconNoSpan('columnDrag', this.beans.gos)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-drag-handle');
 
         const checkboxGui = this.cbSelect.getGui();
@@ -81,7 +81,7 @@ export class ToolPanelColumnComp extends Component {
 
         this.setupDragging();
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
         this.addManagedListener(this.column, Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
         this.addManagedListener(this.column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
         this.addManagedListener(this.column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
@@ -99,7 +99,7 @@ export class ToolPanelColumnComp extends Component {
 
         this.setupTooltip();
 
-        const classes = CssClassApplier.getToolPanelClassesFromColDef(this.column.getColDef(), this.gos, this.column, null);
+        const classes = CssClassApplier.getToolPanelClassesFromColDef(this.column.getColDef(), this.beans.gos, this.column, null);
         classes.forEach(c => this.addOrRemoveCssClass(c, true));
     }
 
@@ -108,7 +108,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private setupTooltip(): void {
-        const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
+        const isTooltipWhenTruncated = this.beans.gos.get('tooltipShowMode') === 'whenTruncated';
         let shouldDisplayTooltip: (() => boolean) | undefined;
 
         if (isTooltipWhenTruncated) {
@@ -121,7 +121,7 @@ export class ToolPanelColumnComp extends Component {
 
         refresh();
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, refresh);
     }
 
     public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
@@ -132,9 +132,9 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private onContextMenu(e: MouseEvent): void {
-        const { column, gos } = this;
+        const { column, beans } = this;
 
-        if (gos.get('functionsReadOnly')) { return; }
+        if (beans.gos.get('functionsReadOnly')) { return; }
 
         const contextMenu = this.createBean(new ToolPanelContextMenu(column, e, this.focusWrapper));
         this.addDestroyFunc(() => {
@@ -154,7 +154,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private onLabelClicked(): void {
-        if (this.gos.get('functionsReadOnly')) {
+        if (this.beans.gos.get('functionsReadOnly')) {
             return;
         }
 
@@ -182,7 +182,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private refreshAriaLabel(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const columnLabel = translate('ariaColumn', 'Column');
         const state = this.cbSelect.getValue() ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden');
         const visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');
@@ -198,7 +198,7 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
-        let hideColumnOnExit = !this.gos.get('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !this.beans.gos.get('suppressDragLeaveHidesColumns');
         const dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
@@ -206,18 +206,18 @@ export class ToolPanelColumnComp extends Component {
             getDefaultIconName: () => hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
-                hideColumnOnExit = !this.gos.get('suppressDragLeaveHidesColumns');
+                hideColumnOnExit = !this.beans.gos.get('suppressDragLeaveHidesColumns');
                 const event: WithoutGridCommon<ColumnPanelItemDragStartEvent> = {
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                     column: this.column
                 };
-                this.eventService.dispatchEvent(event);
+                this.beans.eventService.dispatchEvent(event);
             },
             onDragStopped: () => {
                 const event: WithoutGridCommon<ColumnPanelItemDragEndEvent> = {
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END
                 };
-                this.eventService.dispatchEvent(event);
+                this.beans.eventService.dispatchEvent(event);
             },
             onGridEnter: (dragItem: DragItem | null) => {
                 if (hideColumnOnExit) {
@@ -271,7 +271,7 @@ export class ToolPanelColumnComp extends Component {
         if (isPivotMode) {
             // when in pivot mode, the item should be read only if:
             //  a) gui is not allowed make any changes
-            const functionsReadOnly = this.gos.get('functionsReadOnly');
+            const functionsReadOnly = this.beans.gos.get('functionsReadOnly');
             //  b) column is not allow any functions on it
             const noFunctionsAllowed = !this.column.isAnyFunctionAllowed();
             canBeToggled = !functionsReadOnly && !noFunctionsAllowed;
@@ -289,7 +289,7 @@ export class ToolPanelColumnComp extends Component {
         this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !canBeDragged);
         this.addOrRemoveCssClass('ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
 
-        const checkboxPassive = isPivotMode && this.gos.get('functionsPassive');
+        const checkboxPassive = isPivotMode && this.beans.gos.get('functionsPassive');
         this.cbSelect.setPassive(checkboxPassive);
 
         this.processingColumnStateChange = false;

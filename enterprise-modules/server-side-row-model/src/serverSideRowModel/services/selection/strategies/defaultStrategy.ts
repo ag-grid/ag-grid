@@ -20,7 +20,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
     @PostConstruct
     private init(): void {
-        this.rowSelection = this.gos.get('rowSelection');
+        this.rowSelection = this.beans.gos.get('rowSelection');
         this.addManagedPropertyListener('rowSelection', (propChange) => {
             this.rowSelection = propChange.currentValue;
         });
@@ -192,7 +192,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             type: Events.EVENT_SELECTION_CHANGED,
             source,
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
 
         return clearedRows;
     }

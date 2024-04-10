@@ -39,7 +39,7 @@ export class RowNodeEventThrottle extends BeanStub {
 
         // if not using CSRM, we don't debounce. otherwise this breaks the SSRM.
         if (this.clientSideRowModel == null) {
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
             return;
         }
 
@@ -49,7 +49,7 @@ export class RowNodeEventThrottle extends BeanStub {
             if (this.clientSideRowModel) {
                 this.clientSideRowModel.onRowGroupOpened();
             }
-            this.events.forEach(e => this.eventService.dispatchEvent(e));
+            this.events.forEach(e => this.beans.eventService.dispatchEvent(e));
             this.events = [];
         };
 

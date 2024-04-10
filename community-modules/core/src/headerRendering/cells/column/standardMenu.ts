@@ -51,7 +51,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         let alignSide: 'left' | 'right' = 'left';
 
         const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
-        if (!isLegacyMenuEnabled && this.gos.get('enableRtl')) {
+        if (!isLegacyMenuEnabled && this.beans.gos.get('enableRtl')) {
             multiplier = 1;
             alignSide = 'right';
         }
@@ -121,7 +121,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             this.dispatchVisibleChangedEvent(false, containerType, column);
         };
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         const ariaLabel = isLegacyMenuEnabled && containerType !== 'columnFilter'
             ? translate('ariaLabelColumnMenu', 'Column Menu')
@@ -174,7 +174,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             key: containerType as 'columnMenu' | 'columnFilter' | 'floatingFilter',
             column: column ?? null
         }
-        this.eventService.dispatchEvent(displayedEvent)
+        this.beans.eventService.dispatchEvent(displayedEvent)
     }
 
     public isMenuEnabled(column: Column): boolean {

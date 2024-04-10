@@ -465,12 +465,12 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
         const isResizable = containerType === 'floatingFilter' || containerType === 'columnFilter';
 
-        const { positionableFeature, gos } = this;
+        const { positionableFeature } = this;
 
         if (isResizable) {
             positionableFeature.restoreLastSize();
             positionableFeature.setResizable(
-                gos.get('enableRtl')
+                this.beans.gos.get('enableRtl')
                     ? { bottom: true, bottomLeft: true, left: true }
                     : { bottom: true, bottomRight: true, right: true }
             );
@@ -530,7 +530,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     protected translate(key: keyof typeof FILTER_LOCALE_TEXT): string {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         return translate(key, FILTER_LOCALE_TEXT[key]);
     }

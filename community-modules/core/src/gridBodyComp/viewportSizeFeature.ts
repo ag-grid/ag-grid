@@ -39,7 +39,7 @@ export class ViewportSizeFeature extends BeanStub {
             this.gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
             this.listenForResize();
         });
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
         this.addManagedPropertyListeners(['alwaysShowHorizontalScroll', 'alwaysShowVerticalScroll'], () => {
             this.checkViewportAndScrolls();
         });
@@ -85,7 +85,7 @@ export class ViewportSizeFeature extends BeanStub {
 
         // remove 50px from the bodyWidth to give some margin
         let columnsToRemove = this.getPinnedColumnsOverflowingViewport(bodyWidth - 50);
-        const processUnpinnedColumns = this.gos.getCallback('processUnpinnedColumns');
+        const processUnpinnedColumns = this.beans.gos.getCallback('processUnpinnedColumns');
 
         if (!columnsToRemove.length) { return; }
 
@@ -163,7 +163,7 @@ export class ViewportSizeFeature extends BeanStub {
             const event: WithoutGridCommon<BodyHeightChangedEvent> = {
                 type: Events.EVENT_BODY_HEIGHT_CHANGED
             };
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         }
     }
 

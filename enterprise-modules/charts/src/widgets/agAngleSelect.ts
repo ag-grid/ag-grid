@@ -88,7 +88,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
         }
 
         this.addManagedListener(this, Events.EVENT_FIELD_VALUE_CHANGED, () => {
-            if (this.eAngleValue.getInputElement().contains(this.gos.getActiveDomElement())) {
+            if (this.eAngleValue.getInputElement().contains(this.beans.gos.getActiveDomElement())) {
                 return;
             }
             this.updateNumberInput();

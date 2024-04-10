@@ -24,13 +24,11 @@ export class CellPositionFeature extends BeanStub {
     private colsSpanning: Column[];
     private rowSpan: number;
 
-    private beans: Beans;
-
     constructor(ctrl: CellCtrl, beans: Beans) {
         super();
 
         this.cellCtrl = ctrl;
-        this.beans = beans;
+        this.manualSetBeans(beans);
 
         this.column = ctrl.getColumn();
         this.rowNode = ctrl.getRowNode();

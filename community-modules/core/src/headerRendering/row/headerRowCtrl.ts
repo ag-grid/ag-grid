@@ -1,5 +1,5 @@
 import { BeanStub } from "../../context/beanStub";
-import { Autowired, PostConstruct } from "../../context/context";
+import { PostConstruct } from "../../context/context";
 import { Column, ColumnPinnedType } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { HeaderColumnId, IHeaderColumn } from "../../interfaces/iHeaderColumn";
@@ -11,7 +11,6 @@ import { HeaderCellCtrl } from "../cells/column/headerCellCtrl";
 import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
 import { values } from "../../utils/generic";
-import { Beans } from "../../rendering/beans";
 import { BrandedType } from "../../utils";
 
 export interface IHeaderRowComp {
@@ -25,8 +24,6 @@ let instanceIdSequence = 0;
 export type HeaderRowCtrlInstanceId = BrandedType<number, 'HeaderRowCtrlInstanceId'>;
 
 export class HeaderRowCtrl extends BeanStub {
-
-    @Autowired('beans') private beans: Beans;
 
     private comp: IHeaderRowComp;
     private rowIndex: number;
@@ -55,8 +52,8 @@ export class HeaderRowCtrl extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.isPrintLayout = this.gos.isDomLayout('print');
-        this.isEnsureDomOrder = this.gos.get('ensureDomOrder');
+        this.isPrintLayout = this.beans.gos.isDomLayout('print');
+        this.isEnsureDomOrder = this.beans.gos.get('ensureDomOrder');
     }
 
 
@@ -90,12 +87,12 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private addEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, (params: VirtualColumnsChangedEvent) => this.onVirtualColumnsChanged(params.afterScroll));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onRowHeightChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onRowHeightChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
+        this.addManagedEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, (params: VirtualColumnsChangedEvent) => this.onVirtualColumnsChanged(params.afterScroll));
+        this.addManagedEventListener(Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_GRID_STYLES_CHANGED, this.onRowHeightChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onRowHeightChanged.bind(this));
 
         // when print layout changes, it changes what columns are in what section
         this.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
@@ -116,7 +113,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private onDisplayedColumnsChanged(): void {
-        this.isPrintLayout = this.gos.isDomLayout('print');
+        this.isPrintLayout = this.beans.gos.isDomLayout('print');
         this.onVirtualColumnsChanged();
         this.setWidth();
         this.onRowHeightChanged();

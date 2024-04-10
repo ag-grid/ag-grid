@@ -58,7 +58,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         this.params = params;
         this.validateParams();
         return this.updateGroups().then(() => {
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.onColumnRowGroupChanged());
+            this.addManagedEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.onColumnRowGroupChanged());
         });
     }
 
@@ -82,7 +82,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
 
     private getSourceColumns(): Column[] {
         this.groupColumn = this.params.column;
-        if (this.gos.get('treeData')) {
+        if (this.beans.gos.get('treeData')) {
             _.warnOnce('Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.');
             return [];
         }
@@ -128,7 +128,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
 
     private createGroupFieldSelectElement(sourceColumns: Column[]): void {
         this.eGroupFieldSelect = this.createManagedBean(new AgSelect());
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
         this.eGroupFieldSelect.setLabel(localeTextFunc('groupFilterSelect', 'Select field:'));
         this.eGroupFieldSelect.setLabelAlignment('top');
         this.eGroupFieldSelect.addOptions(sourceColumns.map(sourceColumn => ({
@@ -242,7 +242,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
             this.dispatchEvent({
                 type: GroupFilter.EVENT_COLUMN_ROW_GROUP_CHANGED
             });
-            this.eventService.dispatchEvent({
+            this.beans.eventService.dispatchEvent({
                 type: 'filterAllowedUpdated'
             })
         });

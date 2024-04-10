@@ -37,7 +37,7 @@ export class HorizontalResizeComp extends Component {
         });
 
         this.addDestroyFunc(finishedWithResizeFunc);
-        this.setInverted(this.gos.get('enableRtl'));
+        this.setInverted(this.beans.gos.get('enableRtl'));
     }
 
     private dispatchResizeEvent(start: boolean, end: boolean, width: number) {
@@ -47,7 +47,7 @@ export class HorizontalResizeComp extends Component {
             started: start,
             ended: end,
         };
-        this.eventService.dispatchEvent(event)
+        this.beans.eventService.dispatchEvent(event)
     }
 
     private onResizeStart(): void {

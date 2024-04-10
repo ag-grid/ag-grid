@@ -76,9 +76,9 @@ export class ChartMenu extends Component {
         
         this.refreshToolbarAndPanels();
 
-        this.addManagedListener(this.eventService, Events.EVENT_CHART_CREATED, (e: ChartCreated) => {
+        this.addManagedEventListener(Events.EVENT_CHART_CREATED, (e: ChartCreated) => {
             if (e.chartId === this.chartController.getChartId()) {
-                const showDefaultToolPanel = Boolean(this.gos.get('chartToolPanelsDef')?.defaultToolPanel);
+                const showDefaultToolPanel = Boolean(this.beans.gos.get('chartToolPanelsDef')?.defaultToolPanel);
                 if (showDefaultToolPanel) {
                     this.showMenu({ panel: this.defaultPanel, animate: false, suppressFocus: true });
                 }
@@ -88,7 +88,7 @@ export class ChartMenu extends Component {
 
         this.refreshMenuClasses();
 
-        if (this.legacyFormat && !this.gos.get('suppressChartToolPanelsButton') && this.panels.length > 0) {
+        if (this.legacyFormat && !this.beans.gos.get('suppressChartToolPanelsButton') && this.panels.length > 0) {
             this.getGui().classList.add('ag-chart-tool-panel-button-enable');
             if (this.eHideButton) {
                 this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
@@ -115,14 +115,14 @@ export class ChartMenu extends Component {
         }
 
         if (rightItems.some(v => this.chartToolbarOptions.includes(v))) {
-            result.push(this.gos.get('enableRtl') ? 'left' : 'right');
+            result.push(this.beans.gos.get('enableRtl') ? 'left' : 'right');
         }
 
         return result;
     }
 
     private createLegacyToggleButton(): void {
-        const eDocument = this.gos.getDocument();
+        const eDocument = this.beans.gos.getDocument();
         this.eHideButton = eDocument.createElement('button');
         this.eHideButton.classList.add('ag-button', 'ag-chart-menu-close');
         this.eHideButtonIcon = eDocument.createElement('span');
@@ -160,7 +160,7 @@ export class ChartMenu extends Component {
     }
 
     private createMenuPanel(defaultTab: number): AgPromise<AgPanel> {
-        const width = this.environment.chartMenuPanelWidth();
+        const width = this.beans.environment.chartMenuPanelWidth();
 
         const menuPanel = this.menuPanel = this.createBean(new AgPanel({
             minWidth: width,
@@ -290,7 +290,7 @@ export class ChartMenu extends Component {
         this.eChartContainer.classList.toggle('ag-chart-menu-visible', this.menuVisible);
         this.eChartContainer.classList.toggle('ag-chart-menu-hidden', !this.menuVisible);
 
-        if (this.legacyFormat && !this.gos.get('suppressChartToolPanelsButton')) {
+        if (this.legacyFormat && !this.beans.gos.get('suppressChartToolPanelsButton')) {
             this.eHideButtonIcon.classList.toggle('ag-icon-contracted', this.menuVisible);
             this.eHideButtonIcon.classList.toggle('ag-icon-expanded', !this.menuVisible);
         }

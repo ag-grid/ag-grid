@@ -47,7 +47,7 @@ export class SideBarButtonComp extends Component {
     }
     
     private setLabel(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const def = this.toolPanelDef;
         const label = translate(def.labelKey, def.labelDefault);
 
@@ -55,7 +55,7 @@ export class SideBarButtonComp extends Component {
     }
 
     private setIcon(): void {
-        this.eIconWrapper.insertAdjacentElement('afterbegin', _.createIconNoSpan(this.toolPanelDef.iconKey, this.gos)!);
+        this.eIconWrapper.insertAdjacentElement('afterbegin', _.createIconNoSpan(this.toolPanelDef.iconKey, this.beans.gos)!);
     }
 
     private onButtonPressed(): void {

@@ -120,7 +120,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         }
 
         return (values: TValue[]) => values.map((value: TValue) => {
-            const keyParams: KeyCreatorParams = this.gos.addGridCommonParams({
+            const keyParams: KeyCreatorParams = this.beans.gos.addGridCommonParams({
                 value: value,
                 colDef: this.params.colDef,
                 column: this.params.column,

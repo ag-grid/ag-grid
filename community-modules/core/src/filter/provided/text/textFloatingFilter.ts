@@ -10,7 +10,7 @@ export class TextFloatingFilter extends TextInputFloatingFilter<TextFilterModel>
 
     public init(params: ITextFloatingFilterParams): void {
         super.init(params);
-        this.filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
+        this.filterModelFormatter = new TextFilterModelFormatter(this.beans.localeService, this.optionsFactory);
     }
 
     public onParamsUpdated(params: ITextFloatingFilterParams): void {

@@ -41,7 +41,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
                 dragSourceType: DragSourceType.ToolPanel,
                 listItemDragStartEvent: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                 listItemDragEndEvent: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
-                eventSource: this.eventService,
+                eventSource: this.beans.eventService,
                 getCurrentDragValue: (listItemDragStartEvent: ColumnPanelItemDragStartEvent) => this.getCurrentDragValue(listItemDragStartEvent),
                 isMoveBlocked: (currentDragValue: Column | ProvidedColumnGroup | null) => this.isMoveBlocked(currentDragValue),
                 getNumRows: (comp: PrimaryColsListPanel) => comp.getDisplayedColsList().length,
@@ -58,7 +58,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     }
 
     private isMoveBlocked(currentDragValue: Column | ProvidedColumnGroup | null): boolean {
-        const preventMoving = this.gos.get('suppressMovableColumns');
+        const preventMoving = this.beans.gos.get('suppressMovableColumns');
         if (preventMoving) {
             return true;
         }

@@ -19,14 +19,13 @@ export class ExpandListener extends BeanStub {
 
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
     @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
-    @Autowired('beans') private beans: Beans;
 
     @PostConstruct
     private postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
-        if (!this.gos.isRowModelType('serverSide')) { return; }
+        if (!this.beans.gos.isRowModelType('serverSide')) { return; }
 
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
+        this.addManagedEventListener(Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
     }
 
     private onRowGroupOpened(event: RowGroupOpenedEvent): void {
@@ -39,12 +38,12 @@ export class ExpandListener extends BeanStub {
                 const storeParams = this.serverSideRowModel.getParams();
                 rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
             }
-        } else if (this.gos.get('purgeClosedRowNodes') && _.exists(rowNode.childStore)) {
+        } else if (this.beans.gos.get('purgeClosedRowNodes') && _.exists(rowNode.childStore)) {
             rowNode.childStore = this.destroyBean(rowNode.childStore)!;
         }
 
         const storeUpdatedEvent: WithoutGridCommon<StoreUpdatedEvent> = { type: Events.EVENT_STORE_UPDATED };
-        this.eventService.dispatchEvent(storeUpdatedEvent);
+        this.beans.eventService.dispatchEvent(storeUpdatedEvent);
     }
 
     private createDetailNode(masterNode: RowNode): RowNode {
@@ -64,7 +63,7 @@ export class ExpandListener extends BeanStub {
         detailNode.level = masterNode.level + 1;
 
         const defaultDetailRowHeight = 200;
-        const rowHeight = this.gos.getRowHeightForNode(detailNode).height;
+        const rowHeight = this.beans.gos.getRowHeightForNode(detailNode).height;
 
         detailNode.rowHeight = rowHeight ? rowHeight : defaultDetailRowHeight;
         masterNode.detailNode = detailNode;

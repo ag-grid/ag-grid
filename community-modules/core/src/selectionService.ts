@@ -28,15 +28,15 @@ export class SelectionService extends BeanStub implements ISelectionService {
 
     @PostConstruct
     private init(): void {
-        this.rowSelection = this.gos.get('rowSelection');
-        this.groupSelectsChildren = this.gos.get('groupSelectsChildren');
+        this.rowSelection = this.beans.gos.get('rowSelection');
+        this.groupSelectsChildren = this.beans.gos.get('groupSelectsChildren');
         this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection'], () => {
-            this.groupSelectsChildren = this.gos.get('groupSelectsChildren');
-            this.rowSelection = this.gos.get('rowSelection');
+            this.groupSelectsChildren = this.beans.gos.get('groupSelectsChildren');
+            this.rowSelection = this.beans.gos.get('rowSelection');
             this.deselectAllRowNodes({ source: 'api' });
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
+        this.addManagedEventListener(Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     }
 
     protected destroy(): void {
@@ -147,7 +147,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
                     type: Events.EVENT_SELECTION_CHANGED,
                     source
                 };
-                this.eventService.dispatchEvent(event);
+                this.beans.eventService.dispatchEvent(event);
             }
         }
         return updatedCount;
@@ -177,7 +177,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
             source
         };
 
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
 
         return updatedCount;
     }
@@ -368,7 +368,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
                 type: Events.EVENT_SELECTION_CHANGED,
                 source
             };
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         }
     }
 
@@ -462,7 +462,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
             source
         };
 
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private getSelectedCounts(justFiltered?: boolean | undefined, justCurrentPage?: boolean | undefined): {
@@ -580,7 +580,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
             type: Events.EVENT_SELECTION_CHANGED,
             source
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     public getSelectionState(): string[] | null {

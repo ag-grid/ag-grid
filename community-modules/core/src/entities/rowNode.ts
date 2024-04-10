@@ -346,7 +346,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         if (this.selectable !== newVal) {
             this.selectable = newVal;
             if (this.eventService) {
-                this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_SELECTABLE_CHANGED));
+                this.beans.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_SELECTABLE_CHANGED));
             }
 
             if (suppressSelectionUpdate) { return; }
@@ -436,7 +436,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.firstChild = firstChild;
 
         if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_FIRST_CHILD_CHANGED));
+            this.beans.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_FIRST_CHILD_CHANGED));
         }
     }
 
@@ -446,7 +446,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.lastChild = lastChild;
 
         if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_LAST_CHILD_CHANGED));
+            this.beans.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_LAST_CHILD_CHANGED));
         }
     }
 
@@ -456,7 +456,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.childIndex = childIndex;
 
         if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_CHILD_INDEX_CHANGED));
+            this.beans.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_CHILD_INDEX_CHANGED));
         }
     }
 
@@ -468,7 +468,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.rowTop = rowTop;
 
         if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_TOP_CHANGED));
+            this.beans.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_TOP_CHANGED));
         }
 
         this.setDisplayed(rowTop !== null);
@@ -486,7 +486,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.displayed = displayed;
 
         if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DISPLAYED_CHANGED));
+            this.beans.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DISPLAYED_CHANGED));
         }
     }
 
@@ -496,7 +496,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.dragging = dragging;
 
         if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DRAGGING_CHANGED));
+            this.beans.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DRAGGING_CHANGED));
         }
     }
 
@@ -506,7 +506,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.highlighted = highlighted;
 
         if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HIGHLIGHT_CHANGED));
+            this.beans.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HIGHLIGHT_CHANGED));
         }
     }
 
@@ -526,7 +526,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.allChildrenCount = allChildrenCount;
 
         if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED));
+            this.beans.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED));
         }
     }
 
@@ -542,7 +542,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.master = master;
 
         if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_MASTER_CHANGED));
+            this.beans.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_MASTER_CHANGED));
         }
     }
 
@@ -558,7 +558,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.updateHasChildren();
 
         if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_GROUP_CHANGED));
+            this.beans.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_GROUP_CHANGED));
         }
     }
 
@@ -571,7 +571,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.rowHeightEstimated = estimated;
 
         if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HEIGHT_CHANGED));
+            this.beans.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HEIGHT_CHANGED));
         }
     }
 
@@ -665,7 +665,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.rowIndex = rowIndex;
 
         if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_INDEX_CHANGED));
+            this.beans.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_INDEX_CHANGED));
         }
     }
 
@@ -675,7 +675,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.uiLevel = uiLevel;
 
         if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_UI_LEVEL_CHANGED));
+            this.beans.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_UI_LEVEL_CHANGED));
         }
     }
 
@@ -688,7 +688,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.expanded = expanded;
 
         if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_EXPANDED_CHANGED));
+            this.beans.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_EXPANDED_CHANGED));
         }
 
         const event = Object.assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED), {
@@ -717,7 +717,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
     private dispatchLocalEvent(event: AgEvent): void {
         if (this.eventService) {
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         }
     }
 
@@ -863,7 +863,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         if (newValue !== this.__hasChildren) {
             this.__hasChildren = !!newValue;
             if (this.eventService) {
-                this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HAS_CHILDREN_CHANGED));
+                this.beans.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HAS_CHILDREN_CHANGED));
             }
         }
     }
@@ -1084,12 +1084,12 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
             this.eventService = new EventService();
         }
         if (this.beans.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
-            this.eventService.setFrameworkOverrides(this.beans.frameworkOverrides);
+            this.beans.eventService.setFrameworkOverrides(this.beans.frameworkOverrides);
             this.frameworkEventListenerService = new FrameworkEventListenerService(this.beans.frameworkOverrides);
         }
 
         const listener = this.frameworkEventListenerService?.wrap(userListener as AgEventListener) ?? userListener;
-        this.eventService.addEventListener(eventType, listener as AgEventListener);
+        this.beans.eventService.addEventListener(eventType, listener as AgEventListener);
     }
 
     /** Remove event listener. */
@@ -1097,8 +1097,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         if (!this.eventService) { return; }
 
         const listener = this.frameworkEventListenerService?.unwrap(userListener as AgEventListener) ?? userListener;
-        this.eventService.removeEventListener(eventType, listener as AgEventListener);
-        if (this.eventService.noRegisteredListenersExist()) {
+        this.beans.eventService.removeEventListener(eventType, listener as AgEventListener);
+        if (this.beans.eventService.noRegisteredListenersExist()) {
             this.eventService = null;
         }
     }

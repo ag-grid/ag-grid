@@ -59,7 +59,7 @@ export class ChartToolbar extends Component {
     private createButton(iconName: string): Element {
         let buttonEl = _.createIconNoSpan(
             iconName,
-            this.gos,
+            this.beans.gos,
             undefined,
             true
         )!;
@@ -73,7 +73,7 @@ export class ChartToolbar extends Component {
     }
 
     private wrapButton(buttonEl: Element): HTMLElement {
-        const wrapperEl = this.gos.getDocument().createElement('button');
+        const wrapperEl = this.beans.gos.getDocument().createElement('button');
         wrapperEl.appendChild(buttonEl);
         wrapperEl.classList.add('ag-chart-menu-toolbar-button');
         return wrapperEl;

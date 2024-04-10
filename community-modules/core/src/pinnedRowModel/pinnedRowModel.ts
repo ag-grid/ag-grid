@@ -1,17 +1,14 @@
-import { RowNode } from "../entities/rowNode";
-import { RowPinnedType } from "../interfaces/iRowNode";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { Events, PinnedRowDataChangedEvent } from "../events";
 import { BeanStub } from "../context/beanStub";
-import { missingOrEmpty } from "../utils/generic";
-import { last } from "../utils/array";
-import { Beans } from "../rendering/beans";
+import { Bean, PostConstruct } from "../context/context";
+import { RowNode } from "../entities/rowNode";
+import { Events, PinnedRowDataChangedEvent } from "../events";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { RowPinnedType } from "../interfaces/iRowNode";
+import { last } from "../utils/array";
+import { missingOrEmpty } from "../utils/generic";
 
 @Bean('pinnedRowModel')
 export class PinnedRowModel extends BeanStub {
-
-    @Autowired('beans') private beans: Beans;
 
     private pinnedTopRows: RowNode[];
     private pinnedBottomRows: RowNode[];
@@ -51,21 +48,21 @@ export class PinnedRowModel extends BeanStub {
     }
 
     private setPinnedTopRowData(): void {
-        const rowData = this.gos.get('pinnedTopRowData');
+        const rowData = this.beans.gos.get('pinnedTopRowData');
         this.pinnedTopRows = this.createNodesFromData(rowData, true);
         const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
             type: Events.EVENT_PINNED_ROW_DATA_CHANGED
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private setPinnedBottomRowData(): void {
-        const rowData = this.gos.get('pinnedBottomRowData');
+        const rowData = this.beans.gos.get('pinnedBottomRowData');
         this.pinnedBottomRows = this.createNodesFromData(rowData, false);
         const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
             type: Events.EVENT_PINNED_ROW_DATA_CHANGED
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private createNodesFromData(allData: any[] | undefined, isTop: boolean): RowNode[] {
@@ -81,7 +78,7 @@ export class PinnedRowModel extends BeanStub {
 
                 rowNode.rowPinned = isTop ? 'top' : 'bottom';
                 rowNode.setRowTop(nextRowTop);
-                rowNode.setRowHeight(this.gos.getRowHeightForNode(rowNode).height);
+                rowNode.setRowHeight(this.beans.gos.getRowHeightForNode(rowNode).height);
                 rowNode.setRowIndex(index);
                 nextRowTop += rowNode.rowHeight!;
                 rowNodes.push(rowNode);

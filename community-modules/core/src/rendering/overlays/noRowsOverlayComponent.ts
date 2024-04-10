@@ -25,12 +25,12 @@ export class NoRowsOverlayComponent extends Component implements INoRowsOverlayC
     }
 
     public init(params: INoRowsOverlayParams): void {
-        const customTemplate = this.gos.get('overlayNoRowsTemplate');
+        const customTemplate = this.beans.gos.get('overlayNoRowsTemplate');
 
         this.setTemplate(customTemplate ?? NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE);
 
         if (!customTemplate) {
-            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
             // setTimeout is used because some screen readers only announce `aria-live` text when
             // there is a "text change", so we force a change from empty.
             setTimeout(() => {

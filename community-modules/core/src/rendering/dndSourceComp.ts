@@ -22,7 +22,7 @@ export class DndSourceComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         const eGui = this.getGui();
-        eGui.appendChild(createIconNoSpan('rowDrag', this.gos, null)!);
+        eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gos, null)!);
         // we need to stop the event propagation here to avoid starting a range selection while dragging
         this.addGuiEventListener('mousedown', (e: MouseEvent) => {
             e.stopPropagation();
@@ -55,7 +55,7 @@ export class DndSourceComp extends Component {
         };
 
         if (providedOnRowDrag) {
-            const params: DndSourceOnRowDragParams = this.gos.addGridCommonParams({
+            const params: DndSourceOnRowDragParams = this.beans.gos.addGridCommonParams({
                 rowNode: this.rowNode, dragEvent: dragEvent
             });
             providedOnRowDrag(params);

@@ -68,12 +68,12 @@ export class SortIndicatorComp extends Component {
         this.addInIcon('sortUnSort', this.eSortNone, column);
 
         this.addManagedPropertyListener('unSortIcon', () => this.updateIcons());
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED,  () => this.updateIcons());
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED,  () => this.updateIcons());
 
         // Watch global events, as row group columns can effect their display column.
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED,  () => this.onSortChanged());
+        this.addManagedEventListener(Events.EVENT_SORT_CHANGED,  () => this.onSortChanged());
         // when grouping changes so can sort indexes and icons
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED,  () => this.onSortChanged());
+        this.addManagedEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED,  () => this.onSortChanged());
 
         this.onSortChanged();
     }
@@ -81,7 +81,7 @@ export class SortIndicatorComp extends Component {
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
         if (eParent == null) { return; }
 
-        const eIcon = createIconNoSpan(iconName, this.gos, column);
+        const eIcon = createIconNoSpan(iconName, this.beans.gos, column);
         if (eIcon) {
             eParent.appendChild(eIcon);
         }
@@ -108,7 +108,7 @@ export class SortIndicatorComp extends Component {
         }
 
         if (this.eSortNone) {
-            const alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gos.get('unSortIcon');
+            const alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.beans.gos.get('unSortIcon');
             const isNone = sortDirection === null || sortDirection === undefined;
             setDisplayed(this.eSortNone, !alwaysHideNoSort && isNone, { skipAriaHidden: true });
         }
@@ -118,12 +118,12 @@ export class SortIndicatorComp extends Component {
         this.addInIcon('sortUnSort', this.eSortMixed, this.column);
 
         const isColumnShowingRowGroup = this.column.getColDef().showRowGroup;
-        const areGroupsCoupled = this.gos.isColumnsSortingCoupledToGroup();
+        const areGroupsCoupled = this.beans.gos.isColumnsSortingCoupledToGroup();
         if (areGroupsCoupled && isColumnShowingRowGroup) {
             // Watch global events, as row group columns can effect their display column.
-            this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, () => this.updateMultiSortIndicator());
+            this.addManagedEventListener(Events.EVENT_SORT_CHANGED, () => this.updateMultiSortIndicator());
             // when grouping changes so can sort indexes and icons
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED,  () => this.updateMultiSortIndicator());
+            this.addManagedEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED,  () => this.updateMultiSortIndicator());
             this.updateMultiSortIndicator();
         }
     }

@@ -24,7 +24,7 @@ export class ChangeDetectionService extends BeanStub {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));
     }
 
     private onCellValueChanged(event: CellValueChangedEvent): void {
@@ -41,13 +41,13 @@ export class ChangeDetectionService extends BeanStub {
     }
 
     private doChangeDetection(rowNode: RowNode, column: Column): void {
-        if (this.gos.get('suppressChangeDetection')) { return; }
+        if (this.beans.gos.get('suppressChangeDetection')) { return; }
 
         const nodesToRefresh: RowNode[] = [rowNode];
 
         // step 1 of change detection is to update the aggregated values
         if (this.clientSideRowModel && !rowNode.isRowPinned()) {
-            const onlyChangedColumns = this.gos.get('aggregateOnlyChangedColumns');
+            const onlyChangedColumns = this.beans.gos.get('aggregateOnlyChangedColumns');
             const changedPath = new ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
             changedPath.addParentNode(rowNode.parent, [column]);
             this.clientSideRowModel.doAggregate(changedPath);

@@ -49,8 +49,8 @@ export class ToolPanelFilterComp extends Component {
 
     @PostConstruct
     private postConstruct() {
-        this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gos)!;
-        this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gos)!;
+        this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.beans.gos)!;
+        this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.beans.gos)!;
         this.eExpand.appendChild(this.eExpandChecked);
         this.eExpand.appendChild(this.eExpandUnchecked);
     }
@@ -65,7 +65,7 @@ export class ToolPanelFilterComp extends Component {
                 this.toggleExpanded();
             }
         });
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
+        this.addManagedEventListener(Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
         this.addInIcon('filter', this.eFilterIcon, this.column);
 
         _.setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
@@ -96,7 +96,7 @@ export class ToolPanelFilterComp extends Component {
     private addInIcon(iconName: string, eParent: Element, column: Column): void {
         if (eParent == null) { return; }
 
-        const eIcon = _.createIconNoSpan(iconName, this.gos, column)!;
+        const eIcon = _.createIconNoSpan(iconName, this.beans.gos, column)!;
         eParent.appendChild(eIcon);
     }
 

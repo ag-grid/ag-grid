@@ -47,8 +47,8 @@ export class ChartSettingsPanel extends Component {
     private postConstruct() {
         this.resetPalettes();
 
-        this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('previous', this.gos)!);
-        this.eNextBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('next', this.gos)!);
+        this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('previous', this.beans.gos)!);
+        this.eNextBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('next', this.beans.gos)!);
 
         this.addManagedListener(this.ePrevBtn, 'click', () => this.setActivePalette(this.getPrev(), 'left'));
         this.addManagedListener(this.eNextBtn, 'click', () => this.setActivePalette(this.getNext(), 'right'));
@@ -81,7 +81,7 @@ export class ChartSettingsPanel extends Component {
     private resetPalettes(forceReset?: boolean): void {
         const palettes = this.chartController.getPalettes();
         const themeTemplateParameters = this.chartController.getThemeTemplateParameters();
-        const chartGroups = this.gos.get('chartToolPanelsDef')?.settingsPanel?.chartGroupsDef;
+        const chartGroups = this.beans.gos.get('chartToolPanelsDef')?.settingsPanel?.chartGroupsDef;
 
         if ((_.shallowCompare(palettes, this.palettes) && !forceReset) || this.isAnimating) {
             return;

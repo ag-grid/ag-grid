@@ -38,7 +38,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     @PostConstruct
     private postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
-        if (!this.gos.isRowModelType('serverSide')) { return; }
+        if (!this.beans.gos.isRowModelType('serverSide')) { return; }
     }
 
     public applyTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
@@ -49,7 +49,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     }
 
     private scheduleExecuteAsync(): void {
-        const waitMillis = this.gos.getAsyncTransactionWaitMillis();
+        const waitMillis = this.beans.gos.getAsyncTransactionWaitMillis();
         this.asyncTransactionsTimeout = window.setTimeout(() => {
             this.executeAsyncTransactions();
         }, waitMillis);
@@ -107,7 +107,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
 
         if (atLeastOneTransactionApplied) {
             this.valueCache.onDataChanged();
-            this.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
+            this.beans.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
         }
 
         if (resultsForEvent.length > 0) {
@@ -115,7 +115,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
                 type: Events.EVENT_ASYNC_TRANSACTIONS_FLUSHED,
                 results: resultsForEvent
             };
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         }
     }
 
@@ -143,7 +143,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
                 this.selectionService.deleteSelectionStateFromParent(transaction.route || [], removedRowIds);
             }
 
-            this.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
+            this.beans.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
             return res;
         } else {
             return { status: ServerSideTransactionResultStatus.StoreNotFound };

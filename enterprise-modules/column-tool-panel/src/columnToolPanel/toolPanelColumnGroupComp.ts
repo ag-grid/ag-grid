@@ -76,7 +76,7 @@ export class ToolPanelColumnGroupComp extends Component {
     public init(): void {
         this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE);
 
-        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gos)!;
+        this.eDragHandle = _.createIconNoSpan('columnDrag', this.beans.gos)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-group-drag-handle');
 
         const checkboxGui = this.cbSelect.getGui();
@@ -90,7 +90,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         this.addCssClass('ag-column-select-indent-' + this.columnDept);
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
 
         this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
         this.addManagedListener(this.cbSelect, Events.EVENT_FIELD_VALUE_CHANGED, this.onCheckboxChanged.bind(this));
@@ -106,7 +106,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.refreshAriaLabel();
         this.setupTooltip();
 
-        const classes = CssClassApplier.getToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.gos, null, this.columnGroup);
+        const classes = CssClassApplier.getToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.beans.gos, null, this.columnGroup);
         classes.forEach(c => this.addOrRemoveCssClass(c, true));
     }
 
@@ -119,7 +119,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         if (!colGroupDef) { return; }
 
-        const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
+        const isTooltipWhenTruncated = this.beans.gos.get('tooltipShowMode') === 'whenTruncated';
 
         let shouldDisplayTooltip: (() => boolean) | undefined;
 
@@ -134,7 +134,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         refresh();
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, refresh);
     }
 
     public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
@@ -163,9 +163,9 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private onContextMenu(e: MouseEvent): void {
-        const { columnGroup, gos } = this;
+        const { columnGroup, beans } = this;
 
-        if (gos.get('functionsReadOnly')) { return; }
+        if (beans.gos.get('functionsReadOnly')) { return; }
 
         const contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper));
         this.addDestroyFunc(() => {
@@ -190,7 +190,7 @@ export class ToolPanelColumnGroupComp extends Component {
             return;
         }
 
-        let hideColumnOnExit = !this.gos.get('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !this.beans.gos.get('suppressDragLeaveHidesColumns');
         const dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
@@ -198,18 +198,18 @@ export class ToolPanelColumnGroupComp extends Component {
             getDefaultIconName: () => hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
-                hideColumnOnExit = !this.gos.get('suppressDragLeaveHidesColumns');
+                hideColumnOnExit = !this.beans.gos.get('suppressDragLeaveHidesColumns');
                 const event: WithoutGridCommon<ColumnPanelItemDragStartEvent> = {
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                     column: this.columnGroup
                 };
-                this.eventService.dispatchEvent(event);
+                this.beans.eventService.dispatchEvent(event);
             },
             onDragStopped: () => {
                 const event: WithoutGridCommon<ColumnPanelItemDragEndEvent> = {
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END
                 };
-                this.eventService.dispatchEvent(event);
+                this.beans.eventService.dispatchEvent(event);
             },
             onGridEnter: (dragItem: DragItem | null) => {
                 if (hideColumnOnExit) {
@@ -257,8 +257,8 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private setupExpandContract(): void {
-        this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.gos, null));
-        this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gos, null));
+        this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.beans.gos, null));
+        this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.beans.gos, null));
 
         this.addManagedListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         this.addManagedListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
@@ -305,7 +305,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private refreshAriaLabel(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const columnLabel = translate('ariaColumnGroup', 'Column Group');
         const checkboxValue = this.cbSelect.getValue();
         const state = checkboxValue === undefined ?

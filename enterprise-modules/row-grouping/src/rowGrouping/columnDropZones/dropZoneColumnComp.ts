@@ -61,7 +61,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
 
         this.setupSort();
 
-        this.addManagedListener(this.eventService, Column.EVENT_SORT_CHANGED, () => {
+        this.addManagedListener(this.beans.eventService, Column.EVENT_SORT_CHANGED, () => {
             this.setupAria();
         });
 
@@ -87,8 +87,8 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     }
 
     protected addAdditionalAriaInstructions(ariaInstructions: string[], translate: (key: string, defaultValue: string) => string): void {
-        const isSortSuppressed = this.gos.get('rowGroupPanelSuppressSort');
-        const isFunctionsReadOnly = this.gos.get('functionsReadOnly')
+        const isSortSuppressed = this.beans.gos.get('rowGroupPanelSuppressSort');
+        const isFunctionsReadOnly = this.beans.gos.get('functionsReadOnly')
         if (this.isAggregationZone() && !isFunctionsReadOnly) {
             const aggregationMenuAria = translate('ariaDropZoneColumnValueItemDescription', 'Press ENTER to change the aggregation type');
             ariaInstructions.push(aggregationMenuAria);
@@ -111,11 +111,11 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     }
 
     private isReadOnly(): boolean {
-        return !this.isGroupingAndLocked() && !this.gos.get('functionsReadOnly');
+        return !this.isGroupingAndLocked() && !this.beans.gos.get('functionsReadOnly');
     }
 
     protected getAriaDisplayName(): string {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         const { name, aggFuncName } = this.getColumnAndAggFuncName();
         const aggSeparator = translate('ariaDropZoneColumnComponentAggFuncSeparator', ' of ');
@@ -124,7 +124,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
         };
         const columnSort = this.column.getSort();
-        const isSortSuppressed = this.gos.get('rowGroupPanelSuppressSort');
+        const isSortSuppressed = this.beans.gos.get('rowGroupPanelSuppressSort');
         return [
             aggFuncName && `${aggFuncName}${aggSeparator}`,
             name,
@@ -140,7 +140,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
             const aggFunc = this.column.getAggFunc();
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
             const aggFuncString = typeof aggFunc === 'string' ? aggFunc : 'agg';
-            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
             aggFuncName = localeTextFunc(aggFuncString, aggFuncString);
         }
 
@@ -154,11 +154,11 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
             return;
         }
 
-        if (!this.gos.get('rowGroupPanelSuppressSort')) {
+        if (!this.beans.gos.get('rowGroupPanelSuppressSort')) {
             this.eSortIndicator.setupSort(this.column, true);
             const performSort = (event: MouseEvent | KeyboardEvent) => {
                 event.preventDefault();
-                const sortUsingCtrl = this.gos.get('multiSortKey') === 'ctrl';
+                const sortUsingCtrl = this.beans.gos.get('multiSortKey') === 'ctrl';
                 const multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
                 this.sortController.progressSort(this.column, multiSort, 'uiColumnSorted');
             };
@@ -192,7 +192,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     protected setupComponents(): void {
         super.setupComponents();
 
-        if (this.isAggregationZone() && !this.gos.get('functionsReadOnly')) {
+        if (this.isAggregationZone() && !this.beans.gos.get('functionsReadOnly')) {
             this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this));
         }
     }
@@ -201,7 +201,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         super.onKeyDown(e);
 
         const isEnter = e.key === KeyCode.ENTER;
-        if (isEnter && this.isAggregationZone() && !this.gos.get('functionsReadOnly')) {
+        if (isEnter && this.isAggregationZone() && !this.beans.gos.get('functionsReadOnly')) {
             e.preventDefault();
             this.onShowAggFuncSelection();
         }
@@ -254,7 +254,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
             }
         };
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         const addPopupRes = this.popupService.addPopup({
             modal: true,
@@ -305,19 +305,19 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
 
         const itemSelected = () => {
             hidePopup();
-            if (this.gos.get('functionsPassive')) {
+            if (this.beans.gos.get('functionsPassive')) {
                 const event: WithoutGridCommon<ColumnAggFuncChangeRequestEvent> = {
                     type: Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
                     columns: [this.column],
                     aggFunc: value
                 };
-                this.eventService.dispatchEvent(event);
+                this.beans.eventService.dispatchEvent(event);
             } else {
                 this.columnModel.setColumnAggFunc(this.column, value, "toolPanelDragAndDrop");
             }
         };
 
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
         const aggFuncString = value.toString();
         const aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
         const comp = new AggItemComp(itemSelected, aggFuncStringTranslated);

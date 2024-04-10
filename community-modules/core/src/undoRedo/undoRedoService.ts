@@ -5,6 +5,7 @@ import {
     CellEditingStoppedEvent,
     CellValueChangedEvent,
     FillEndEvent,
+    ModelUpdatedEvent,
     RedoEndedEvent,
     RedoStartedEvent,
     RowEditingStartedEvent,
@@ -49,9 +50,9 @@ export class UndoRedoService extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        if (!this.gos.get('undoRedoCellEditing')) { return; }
+        if (!this.beans.gos.get('undoRedoCellEditing')) { return; }
 
-        const undoRedoLimit = this.gos.get('undoRedoCellEditingLimit');
+        const undoRedoLimit = this.beans.gos.get('undoRedoCellEditingLimit');
 
         if (undoRedoLimit <= 0) { return; }
 
@@ -64,22 +65,22 @@ export class UndoRedoService extends BeanStub {
         this.addFillListeners();
         this.addCellKeyListeners();
 
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged);
+        this.addManagedEventListener(Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged);
         // undo / redo is restricted to actual editing so we clear the stacks when other operations are
         // performed that change the order of the row / cols.
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, e => {
+        this.addManagedEventListener(Events.EVENT_MODEL_UPDATED, (e: ModelUpdatedEvent) => {
             if (!e.keepUndoRedoStack) {
                 this.clearStacks();
             }
         });
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DRAG_END, this.clearStacks);
+        this.addManagedEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearStacks);
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, this.clearStacks);
+        this.addManagedEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.clearStacks);
+        this.addManagedEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearStacks);
+        this.addManagedEventListener(Events.EVENT_COLUMN_MOVED, this.clearStacks);
+        this.addManagedEventListener(Events.EVENT_COLUMN_PINNED, this.clearStacks);
+        this.addManagedEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearStacks);
+        this.addManagedEventListener(Events.EVENT_ROW_DRAG_END, this.clearStacks);
 
         this.ctrlsService.whenReady(() => {
             this.gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
@@ -126,7 +127,7 @@ export class UndoRedoService extends BeanStub {
             type: Events.EVENT_UNDO_STARTED,
             source
         }
-        this.eventService.dispatchEvent(startEvent);
+        this.beans.eventService.dispatchEvent(startEvent);
 
         const operationPerformed = this.undoRedo(this.undoStack, this.redoStack, 'initialRange', 'oldValue', 'undo');
 
@@ -135,7 +136,7 @@ export class UndoRedoService extends BeanStub {
             source,
             operationPerformed
         };
-        this.eventService.dispatchEvent(endEvent);
+        this.beans.eventService.dispatchEvent(endEvent);
     }
 
     public redo(source: 'api' | 'ui'): void {
@@ -143,7 +144,7 @@ export class UndoRedoService extends BeanStub {
             type: Events.EVENT_REDO_STARTED,
             source
         }
-        this.eventService.dispatchEvent(startEvent);
+        this.beans.eventService.dispatchEvent(startEvent);
 
         const operationPerformed = this.undoRedo(this.redoStack, this.undoStack, 'finalRange', 'newValue', 'redo');
 
@@ -152,7 +153,7 @@ export class UndoRedoService extends BeanStub {
             source,
             operationPerformed
         };
-        this.eventService.dispatchEvent(endEvent);
+        this.beans.eventService.dispatchEvent(endEvent);
     }
 
     private undoRedo(
@@ -263,11 +264,11 @@ export class UndoRedoService extends BeanStub {
     }
 
     private addRowEditingListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_EDITING_STARTED, (e: RowEditingStartedEvent) => {
+        this.addManagedEventListener(Events.EVENT_ROW_EDITING_STARTED, (e: RowEditingStartedEvent) => {
             this.activeRowEdit = { rowIndex: e.rowIndex!, rowPinned: e.rowPinned};
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_EDITING_STOPPED, () => {
+        this.addManagedEventListener(Events.EVENT_ROW_EDITING_STOPPED, () => {
             const action = new UndoRedoAction(this.cellValueChanges);
             this.pushActionsToUndoStack(action);
             this.activeRowEdit = null;
@@ -275,11 +276,11 @@ export class UndoRedoService extends BeanStub {
     }
 
     private addCellEditingListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_EDITING_STARTED, (e: CellEditingStartedEvent) => {
+        this.addManagedEventListener(Events.EVENT_CELL_EDITING_STARTED, (e: CellEditingStartedEvent) => {
             this.activeCellEdit = { column: e.column, rowIndex: e.rowIndex!, rowPinned: e.rowPinned };
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_EDITING_STOPPED, (e: CellEditingStoppedEvent) => {
+        this.addManagedEventListener(Events.EVENT_CELL_EDITING_STOPPED, (e: CellEditingStoppedEvent) => {
             this.activeCellEdit = null;
 
             const shouldPushAction = e.valueChanged && !this.activeRowEdit && !this.isPasting && !this.isRangeInAction;
@@ -292,11 +293,11 @@ export class UndoRedoService extends BeanStub {
     }
 
     private addPasteListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_PASTE_START, () => {
+        this.addManagedEventListener(Events.EVENT_PASTE_START, () => {
             this.isPasting = true;
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_PASTE_END, () => {
+        this.addManagedEventListener(Events.EVENT_PASTE_END, () => {
             const action = new UndoRedoAction(this.cellValueChanges);
             this.pushActionsToUndoStack(action);
             this.isPasting = false;
@@ -304,11 +305,11 @@ export class UndoRedoService extends BeanStub {
     }
 
     private addFillListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_FILL_START, () => {
+        this.addManagedEventListener(Events.EVENT_FILL_START, () => {
             this.isRangeInAction = true;
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_FILL_END, (event: FillEndEvent) => {
+        this.addManagedEventListener(Events.EVENT_FILL_END, (event: FillEndEvent) => {
             const action = new RangeUndoRedoAction(this.cellValueChanges, event.initialRange, event.finalRange);
             this.pushActionsToUndoStack(action);
             this.isRangeInAction = false;
@@ -316,13 +317,13 @@ export class UndoRedoService extends BeanStub {
     }
 
     private addCellKeyListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START, () => {
+        this.addManagedEventListener(Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START, () => {
             this.isRangeInAction = true;
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END, () => {
+        this.addManagedEventListener(Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END, () => {
             let action: UndoRedoAction;
-            if (this.rangeService && this.gos.get('enableRangeSelection')) {
+            if (this.rangeService && this.beans.gos.get('enableRangeSelection')) {
                 action = new RangeUndoRedoAction(this.cellValueChanges, undefined, undefined, [...this.rangeService.getCellRanges()]);
             } else {
                 action = new UndoRedoAction(this.cellValueChanges);

@@ -88,7 +88,7 @@ export class ToolPanelFilterGroupComp extends Component {
         // maybe the group shouldn't contain the children form a DOM perspective.
         if (!this.showingColumn) { return; }
 
-        const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
+        const isTooltipWhenTruncated = this.beans.gos.get('tooltipShowMode') === 'whenTruncated';
         let shouldDisplayTooltip: (() => boolean) | undefined;
 
         if (isTooltipWhenTruncated) {
@@ -108,7 +108,7 @@ export class ToolPanelFilterGroupComp extends Component {
 
         refresh();
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, refresh);
     }
 
     public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
@@ -160,7 +160,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private addInIcon(iconName: string): void {
-        const eIcon = _.createIconNoSpan(iconName, this.gos)!;
+        const eIcon = _.createIconNoSpan(iconName, this.beans.gos)!;
         if (eIcon) {
             eIcon.classList.add('ag-filter-toolpanel-group-instance-header-icon')
         }
@@ -202,7 +202,7 @@ export class ToolPanelFilterGroupComp extends Component {
         });
 
         if (!(this.columnGroup instanceof ProvidedColumnGroup)) {
-            this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
+            this.addManagedEventListener(Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
         }
     }
 

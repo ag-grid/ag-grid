@@ -77,7 +77,7 @@ export class LazyBlockLoadingService extends BeanStub {
                 this.loaderTimeout = undefined;
                 this.attemptLoad(cache, startRow, endRow);
                 this.nextBlockToLoad = undefined;
-            }, this.gos.get('blockLoadDebounceMillis'));
+            }, this.beans.gos.get('blockLoadDebounceMillis'));
         }
     }
 
@@ -135,7 +135,7 @@ export class LazyBlockLoadingService extends BeanStub {
             removeNodesFromLoadingMap();
         }
 
-        const params: IServerSideGetRowsParams = this.gos.addGridCommonParams({
+        const params: IServerSideGetRowsParams = this.beans.gos.addGridCommonParams({
             request,
             success,
             fail,

@@ -14,7 +14,7 @@ export class ColumnHoverService extends BeanStub {
         const event: WithoutGridCommon<ColumnHoverChangedEvent> = {
             type: Events.EVENT_COLUMN_HOVER_CHANGED
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     public clearMouseOver(): void {
@@ -22,7 +22,7 @@ export class ColumnHoverService extends BeanStub {
         const event: WithoutGridCommon<ColumnHoverChangedEvent> = {
             type: Events.EVENT_COLUMN_HOVER_CHANGED
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     public isHovered(column: Column): boolean {

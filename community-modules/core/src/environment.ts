@@ -1,11 +1,16 @@
 import { Bean, Autowired, PostConstruct } from './context/context';
-import { BeanStub } from "./context/beanStub";
+import { BeanStub } from './context/beanStub';
 import { exists } from './utils/generic';
 import { Events } from './eventKeys';
 import { WithoutGridCommon } from './interfaces/iCommon';
 import { CssVariablesChanged } from './events';
 
-export type SASS_PROPERTIES = 'headerHeight' | 'headerCellMinWidth' | 'listItemHeight' | 'rowHeight' | 'chartMenuPanelWidth';
+export type SASS_PROPERTIES =
+    | 'headerHeight'
+    | 'headerCellMinWidth'
+    | 'listItemHeight'
+    | 'rowHeight'
+    | 'chartMenuPanelWidth';
 
 interface HardCodedSize {
     [key: string]: {
@@ -17,8 +22,8 @@ interface ThemeDetails {
     theme?: string;
     el?: HTMLElement;
     themeFamily?: string;
-    allThemes: string[] 
-};
+    allThemes: string[];
+}
 
 const DEFAULT_ROW_HEIGHT = 25;
 const MIN_COL_WIDTH = 10;
@@ -39,36 +44,36 @@ const HARD_CODED_SIZES: HardCodedSize = {
         headerCellMinWidth: 24,
         listItemHeight: BASE_GRID_SIZE * 5,
         rowHeight: 25,
-        chartMenuPanelWidth: 220
+        chartMenuPanelWidth: 220,
     },
     'ag-theme-material': {
         headerHeight: MAT_GRID_SIZE * 7,
         headerCellMinWidth: 48,
         listItemHeight: MAT_GRID_SIZE * 4,
         rowHeight: MAT_GRID_SIZE * 6,
-        chartMenuPanelWidth: 240
+        chartMenuPanelWidth: 240,
     },
     'ag-theme-balham': {
         headerHeight: BALHAM_GRID_SIZE * 8,
         headerCellMinWidth: 24,
         listItemHeight: BALHAM_GRID_SIZE * 6,
         rowHeight: BALHAM_GRID_SIZE * 7,
-        chartMenuPanelWidth: 220
+        chartMenuPanelWidth: 220,
     },
     'ag-theme-alpine': {
         headerHeight: ALPINE_GRID_SIZE * 8,
         headerCellMinWidth: 36,
         listItemHeight: ALPINE_GRID_SIZE * 4,
         rowHeight: ALPINE_GRID_SIZE * 7,
-        chartMenuPanelWidth: 240
+        chartMenuPanelWidth: 240,
     },
     'ag-theme-quartz': {
         headerHeight: QUARTZ_FONT_SIZE + QUARTZ_GRID_SIZE * 4.25,
         headerCellMinWidth: 36,
         listItemHeight: QUARTZ_ICON_SIZE + QUARTZ_GRID_SIZE,
         rowHeight: QUARTZ_FONT_SIZE + QUARTZ_GRID_SIZE * 3.5,
-        chartMenuPanelWidth: 260
-    }
+        chartMenuPanelWidth: 260,
+    },
 };
 
 /**
@@ -86,12 +91,11 @@ const SASS_PROPERTY_BUILDER: { [key in SASS_PROPERTIES]: string[] } = {
     headerCellMinWidth: ['ag-header-cell'],
     listItemHeight: ['ag-virtual-list-item'],
     rowHeight: ['ag-row'],
-    chartMenuPanelWidth: ['ag-chart-docked-container']
+    chartMenuPanelWidth: ['ag-chart-docked-container'],
 };
 
 @Bean('environment')
 export class Environment extends BeanStub {
-
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
     private calculatedSizes: HardCodedSize | null = {};
@@ -112,21 +116,23 @@ export class Environment extends BeanStub {
 
         this.mutationObserver.observe(el || this.eGridDiv, {
             attributes: true,
-            attributeFilter: ['class']
+            attributeFilter: ['class'],
         });
     }
 
     private fireGridStylesChangedEvent(): void {
         const event: WithoutGridCommon<CssVariablesChanged> = {
-            type: Events.EVENT_GRID_STYLES_CHANGED
-        }
-        this.eventService.dispatchEvent(event);
+            type: Events.EVENT_GRID_STYLES_CHANGED,
+        };
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private getSassVariable(key: SASS_PROPERTIES): number | undefined {
         const { themeFamily, el } = this.getTheme();
 
-        if (!themeFamily || themeFamily.indexOf('ag-theme') !== 0) { return; }
+        if (!themeFamily || themeFamily.indexOf('ag-theme') !== 0) {
+            return;
+        }
 
         if (!this.calculatedSizes) {
             this.calculatedSizes = {};
@@ -147,23 +153,37 @@ export class Environment extends BeanStub {
         return this.calculatedSizes[themeFamily][key];
     }
 
-    private calculateValueForSassProperty(property: SASS_PROPERTIES, theme: string, themeElement?: HTMLElement): number | undefined {
-        const useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : theme.match('balham') ? 'balham' : theme.match('alpine') ? 'alpine' : 'custom');
+    private calculateValueForSassProperty(
+        property: SASS_PROPERTIES,
+        theme: string,
+        themeElement?: HTMLElement
+    ): number | undefined {
+        const useTheme =
+            'ag-theme-' +
+            (theme.match('material')
+                ? 'material'
+                : theme.match('balham')
+                  ? 'balham'
+                  : theme.match('alpine')
+                    ? 'alpine'
+                    : 'custom');
         const defaultValue = HARD_CODED_SIZES[useTheme][property];
-        const eDocument = this.gos.getDocument();
+        const eDocument = this.beans.gos.getDocument();
 
         if (!themeElement) {
             themeElement = this.eGridDiv;
         }
 
-        if (!SASS_PROPERTY_BUILDER[property]) { return defaultValue; }
+        if (!SASS_PROPERTY_BUILDER[property]) {
+            return defaultValue;
+        }
 
         const classList = SASS_PROPERTY_BUILDER[property];
         const div = eDocument.createElement('div');
-        
+
         // this will apply SASS variables that were manually added to the current theme
-        const classesFromThemeElement = Array.from(themeElement.classList)
-        div.classList.add(theme,...classesFromThemeElement);
+        const classesFromThemeElement = Array.from(themeElement.classList);
+        div.classList.add(theme, ...classesFromThemeElement);
 
         div.style.position = 'absolute';
 
@@ -197,9 +217,8 @@ export class Environment extends BeanStub {
         return this.getSassVariable('chartMenuPanelWidth');
     }
 
-    public getTheme():  ThemeDetails {
-
-        if(this.calculatedTheme){
+    public getTheme(): ThemeDetails {
+        if (this.calculatedTheme) {
             return this.calculatedTheme;
         }
 
@@ -221,7 +240,9 @@ export class Environment extends BeanStub {
             }
         }
 
-        if (!themeMatch) { return { allThemes }; }
+        if (!themeMatch) {
+            return { allThemes };
+        }
 
         const theme = themeMatch[0];
 
@@ -247,7 +268,7 @@ export class Environment extends BeanStub {
 
     public refreshRowHeightVariable(): number {
         const oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-line-height').trim();
-        const height = this.gos.get('rowHeight');
+        const height = this.beans.gos.get('rowHeight');
 
         if (height == null || isNaN(height) || !isFinite(height)) {
             if (oldRowHeight !== null) {

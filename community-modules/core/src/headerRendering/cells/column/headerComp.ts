@@ -197,14 +197,14 @@ export class HeaderComp extends Component implements IHeaderComp {
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
         if (eParent == null) { return; }
 
-        const eIcon = createIconNoSpan(iconName, this.gos, column);
+        const eIcon = createIconNoSpan(iconName, this.beans.gos, column);
         if (eIcon) {
             eParent.appendChild(eIcon);
         }
     }
 
     private setupTap(): void {
-        const { gos } = this;
+        const { gos } = this.beans;
 
         if (gos.get('suppressTouch')) { return; }
 
@@ -303,7 +303,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         // templates, in that case, we need to look for provided sort elements and
         // manually create eSortIndicator.
         if (!this.eSortIndicator) {
-            this.eSortIndicator = this.context.createBean(new SortIndicatorComp(true));
+            this.eSortIndicator = this.createBean(new SortIndicatorComp(true));
             this.eSortIndicator.attachCustomElements(
                 this.eSortOrder,
                 this.eSortAsc,
@@ -341,7 +341,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                 const columnMoving = moving || movedRecently;
 
                 if (!columnMoving) {
-                    const sortUsingCtrl = this.gos.get('multiSortKey') === 'ctrl';
+                    const sortUsingCtrl = this.beans.gos.get('multiSortKey') === 'ctrl';
                     const multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
                     this.params.progressSort(multiSort);
                 }
@@ -362,8 +362,8 @@ export class HeaderComp extends Component implements IHeaderComp {
                 this.addOrRemoveCssClass('ag-header-cell-sorted-mixed', isMultiSorting);
             }
         };
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, onSortingChanged);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, onSortingChanged);
+        this.addManagedEventListener(Events.EVENT_SORT_CHANGED, onSortingChanged);
+        this.addManagedEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, onSortingChanged);
     }
 
     private setupFilterIcon(): void {

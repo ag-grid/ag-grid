@@ -18,8 +18,6 @@ export class RowDragComp extends Component {
 
     private dragSource: DragSource | null = null;
 
-    @Autowired('beans') private readonly beans: Beans;
-
     constructor(
         private readonly cellValueFn: () => string,
         private readonly rowNode: RowNode,
@@ -37,7 +35,7 @@ export class RowDragComp extends Component {
     private postConstruct(): void {
         if (!this.customGui) {
             this.setTemplate(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`);
-            this.getGui().appendChild(createIconNoSpan('rowDrag', this.gos, null)!);
+            this.getGui().appendChild(createIconNoSpan('rowDrag', this.beans.gos, null)!);
             this.addDragSource();
         } else {
             this.setDragElement(this.customGui, this.dragStartPixels);
@@ -46,7 +44,7 @@ export class RowDragComp extends Component {
         this.checkCompatibility();
 
         if (!this.suppressVisibilityChange) {
-            const strategy = this.gos.get('rowDragManaged') ?
+            const strategy = this.beans.gos.get('rowDragManaged') ?
                 new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column) :
                 new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column);
 
@@ -60,7 +58,7 @@ export class RowDragComp extends Component {
     }
 
     private getSelectedNodes(): RowNode[] {
-        const isRowDragMultiRow = this.gos.get('rowDragMultiRow');
+        const isRowDragMultiRow = this.beans.gos.get('rowDragMultiRow');
         if (!isRowDragMultiRow) { return [this.rowNode]; }
 
         const selection = this.beans.selectionService.getSelectedNodes();
@@ -70,8 +68,8 @@ export class RowDragComp extends Component {
 
     // returns true if all compatibility items work out
     private checkCompatibility(): void {
-        const managed = this.gos.get('rowDragManaged');
-        const treeData = this.gos.get('treeData');
+        const managed = this.beans.gos.get('rowDragManaged');
+        const treeData = this.beans.gos.get('treeData');
 
         if (treeData && managed) {
             warnOnce('If using row drag with tree data, you cannot have rowDragManaged=true');
@@ -94,14 +92,14 @@ export class RowDragComp extends Component {
                 return colDef.rowDragText;
             }
         }
-        return this.gos.get('rowDragText');
+        return this.beans.gos.get('rowDragText');
     }
 
     private addDragSource(dragStartPixels: number = 4): void {
         // if this is changing the drag element, delete the previous dragSource
         if (this.dragSource) { this.removeDragSource(); }
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         this.dragSource = {
             type: DragSourceType.RowDrag,
@@ -119,7 +117,7 @@ export class RowDragComp extends Component {
             },
             getDragItem: () => this.getDragItem(),
             dragStartPixels,
-            dragSourceDomDataKey: this.gos.getDomDataKey()
+            dragSourceDomDataKey: this.beans.gos.getDomDataKey()
         };
 
         this.beans.dragAndDropService.addDragSource(this.dragSource, true);
@@ -139,11 +137,12 @@ class VisibilityStrategy extends BeanStub {
     private readonly column: Column | undefined;
     protected readonly rowNode: RowNode;
 
-    constructor(parent: RowDragComp, rowNode: RowNode, column?: Column) {
+    constructor(beans: Beans, parent: RowDragComp, rowNode: RowNode, column?: Column) {
         super();
         this.parent = parent;
         this.rowNode = rowNode;
         this.column = column;
+        this.manualSetBeans(beans);
     }
 
     protected setDisplayedOrVisible(neverDisplayed: boolean): void {
@@ -175,11 +174,9 @@ class VisibilityStrategy extends BeanStub {
 
 // when non managed, the visibility depends on suppressRowDrag property only
 class NonManagedVisibilityStrategy extends VisibilityStrategy {
-    private readonly beans: Beans;
 
     constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column?: Column) {
-        super(parent, rowNode, column);
-        this.beans = beans;
+        super(beans, parent, rowNode, column);
     }
 
     @PostConstruct
@@ -201,7 +198,7 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
 
     private workOutVisibility(): void {
         // only show the drag if both sort and filter are not present
-        const neverDisplayed = this.gos.get('suppressRowDrag');
+        const neverDisplayed = this.beans.gos.get('suppressRowDrag');
         this.setDisplayedOrVisible(neverDisplayed);
     }
 }
@@ -209,11 +206,8 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
 // when managed, the visibility depends on sort, filter and row group, as well as suppressRowDrag property
 class ManagedVisibilityStrategy extends VisibilityStrategy {
 
-    private readonly beans: Beans;
-
     constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column?: Column) {
-        super(parent, rowNode, column);
-        this.beans = beans;
+        super(beans, parent, rowNode, column);
     }
 
     @PostConstruct
@@ -243,7 +237,7 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         const gridBodyCon = this.beans.ctrlsService.getGridBodyCtrl();
         const rowDragFeature = gridBodyCon.getRowDragFeature();
         const shouldPreventRowMove = rowDragFeature && rowDragFeature.shouldPreventRowMove();
-        const suppressRowDrag = this.gos.get('suppressRowDrag');
+        const suppressRowDrag = this.beans.gos.get('suppressRowDrag');
         const hasExternalDropZones = this.beans.dragAndDropService.hasExternalDropZones();
         const neverDisplayed = (shouldPreventRowMove && !hasExternalDropZones) || suppressRowDrag;
 

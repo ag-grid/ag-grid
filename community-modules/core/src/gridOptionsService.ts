@@ -17,6 +17,7 @@ import { IRowNode } from "./interfaces/iRowNode";
 import { GRID_OPTION_DEFAULTS } from "./validation/rules/gridOptionsValidations";
 import { ValidationService } from "./validation/validationService";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
+import { BeansProvider } from "./rendering/beans";
 
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never
@@ -69,7 +70,7 @@ export type PropertyChangedListener = (event: PropertyChangedEvent) => void
 export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: PropertyValueChangedEvent<K>) => void
 
 @Bean('gridOptionsService')
-export class GridOptionsService {
+export class GridOptionsService extends BeansProvider {
 
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('eventService') private readonly eventService: EventService;
@@ -99,8 +100,8 @@ export class GridOptionsService {
     public init(): void {
         this.columnApi = new ColumnApi(this.api);
         const async = !this.get('suppressAsyncEvents');
-        this.eventService.addGlobalListener(this.globalEventHandlerFactory().bind(this), async);
-        this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
+        this.beans.eventService.addGlobalListener(this.globalEventHandlerFactory().bind(this), async);
+        this.beans.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
 
         // Ensure the propertyEventService has framework overrides set so that it can fire events outside of angular
         this.propertyEventService.setFrameworkOverrides(this.frameworkOverrides);
@@ -323,7 +324,7 @@ export class GridOptionsService {
             if (scrollbarWidth != null) {
                 this.scrollbarWidth = scrollbarWidth;
 
-                this.eventService.dispatchEvent({
+                this.beans.eventService.dispatchEvent({
                     type: Events.EVENT_SCROLLBAR_WIDTH_CHANGED
                 });
             }
@@ -356,7 +357,7 @@ export class GridOptionsService {
 
     public getRowHeightForNode(rowNode: IRowNode, allowEstimate = false, defaultRowHeight?: number): { height: number; estimated: boolean; } {
         if (defaultRowHeight == null) {
-            defaultRowHeight = this.environment.getDefaultRowHeight();
+            defaultRowHeight = this.beans.environment.getDefaultRowHeight();
         }
 
         // check the function first, in case use set both function and
@@ -410,17 +411,17 @@ export class GridOptionsService {
     // we don't allow dynamic row height for virtual paging
     public getRowHeightAsNumber(): number {
         if (!this.gridOptions.rowHeight || missing(this.gridOptions.rowHeight)) {
-            return this.environment.getDefaultRowHeight();
+            return this.beans.environment.getDefaultRowHeight();
         }
 
-        const rowHeight = this.environment.refreshRowHeightVariable();
+        const rowHeight = this.beans.environment.refreshRowHeightVariable();
 
         if (rowHeight !== -1) {
             return rowHeight;
         }
 
         console.warn('AG Grid row height must be a number if not using standard row model');
-        return this.environment.getDefaultRowHeight();
+        return this.beans.environment.getDefaultRowHeight();
     }
 
     private isNumeric(value: any): value is number {

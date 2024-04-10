@@ -29,11 +29,11 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
 
     @PostConstruct
     public init(): void {
-        const getFieldSeparator = () => this.gos.get('serverSidePivotResultFieldSeparator') ?? '_';
+        const getFieldSeparator = () => this.beans.gos.get('serverSidePivotResultFieldSeparator') ?? '_';
         this.fieldSeparator = getFieldSeparator();
         this.addManagedPropertyListener('serverSidePivotResultFieldSeparator', () => {this.fieldSeparator = getFieldSeparator();});
 
-        const getPivotDefaultExpanded = () => this.gos.get('pivotDefaultExpanded');
+        const getPivotDefaultExpanded = () => this.beans.gos.get('pivotDefaultExpanded');
         this.pivotDefaultExpanded = getPivotDefaultExpanded();
         this.addManagedPropertyListener('pivotDefaultExpanded', () => {this.pivotDefaultExpanded = getPivotDefaultExpanded();});
     }
@@ -100,7 +100,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         const comparator = this.headerNameComparator.bind(this, primaryPivotColumnDefs.pivotComparator);
 
         // Base case for the compact layout, instead of recursing build the last layer of groups as measure columns instead
-        if (measureColumns.length === 1 && this.gos.get('removePivotHeaderRowWhenSingleValueColumn') && index === maxDepth - 1) {
+        if (measureColumns.length === 1 && this.beans.gos.get('removePivotHeaderRowWhenSingleValueColumn') && index === maxDepth - 1) {
             const leafCols: ColDef[] = [];
 
             _.iterateObject(uniqueValue, (key) => {
@@ -156,8 +156,8 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         pivotColumnDefs: ColDef[],
     ) {
         if (
-            this.gos.get('suppressExpandablePivotGroups') ||
-            this.gos.get('pivotColumnGroupTotals')
+            this.beans.gos.get('suppressExpandablePivotGroups') ||
+            this.beans.gos.get('pivotColumnGroupTotals')
         ) {
             return;
         }
@@ -217,9 +217,9 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
     }
 
     private addPivotTotalsToGroups(pivotColumnGroupDefs: (ColDef | ColGroupDef)[], pivotColumnDefs: ColDef[]) {
-        if (!this.gos.get('pivotColumnGroupTotals')) { return; }
+        if (!this.beans.gos.get('pivotColumnGroupTotals')) { return; }
 
-        const insertAfter = this.gos.get('pivotColumnGroupTotals') === 'after';
+        const insertAfter = this.beans.gos.get('pivotColumnGroupTotals') === 'after';
 
         const valueCols = this.columnModel.getValueColumns();
         const aggFuncs = valueCols.map(valueCol => valueCol.getAggFunc());
@@ -262,7 +262,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         // only add total colDef if there is more than 1 child node
         if (group.children.length > 1) {
 
-            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
             const headerName = localeTextFunc('pivotColumnGroupTotals', 'Total');
 
             //create total colDef using an arbitrary value column as a template
@@ -281,9 +281,9 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
 
     private addRowGroupTotals(pivotColumnGroupDefs: (ColDef | ColGroupDef)[],
                               pivotColumnDefs: ColDef[]) {
-        if (!this.gos.get('pivotRowTotals')) { return; }
+        if (!this.beans.gos.get('pivotRowTotals')) { return; }
 
-        const insertAfter = this.gos.get('pivotRowTotals') === 'after';
+        const insertAfter = this.beans.gos.get('pivotRowTotals') === 'after';
 
         const valueColumns = this.columnModel.getValueColumns();
         // order of row group totals depends on position
@@ -297,7 +297,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
                 colIds = colIds.concat(this.extractColIdsForValueColumn(groupDef, valueCol));
             });
 
-            const withGroup = valueCols.length > 1 || !this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
+            const withGroup = valueCols.length > 1 || !this.beans.gos.get('removePivotHeaderRowWhenSingleValueColumn');
             this.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, valueCol, colIds, insertAfter, withGroup);
         }
     }
@@ -496,7 +496,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
 
             // this is a bit sketchy. As the fields can be anything we just build groups as deep as the fields go.
             // nothing says user has to give us groups the same depth.
-            const collapseSingleChildren = this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
+            const collapseSingleChildren = this.beans.gos.get('removePivotHeaderRowWhenSingleValueColumn');
             if (collapseSingleChildren && children.length === 1 && 'colId' in children[0]) {
                 children[0].headerName = key;
                 return children[0];

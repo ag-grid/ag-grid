@@ -28,37 +28,6 @@ export function cloneObject<T extends {}>(object: T): T {
     return copy;
 }
 
-// returns copy of an object, doing a deep clone of any objects with that object.
-// this is used for eg creating copies of Column Definitions, where we want to
-// deep copy all objects, but do not want to deep copy functions (eg when user provides
-// a function or class for colDef.cellRenderer)
-export function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | undefined {
-    if (!object) { return; }
-
-    const obj = object as any;
-    const res: any = {};
-
-    Object.keys(obj).forEach(key => {
-
-        if (keysToSkip && keysToSkip.indexOf(key) >= 0) { return; }
-
-        const value = obj[key];
-
-        // 'simple object' means a bunch of key/value pairs, eg {filter: 'myFilter'}. it does
-        // NOT include the following:
-        // 1) arrays
-        // 2) functions or classes (eg ColumnAPI instance)
-        const sourceIsSimpleObject = isNonNullObject(value) && value.constructor === Object;
-
-        if (sourceIsSimpleObject) {
-            res[key] = deepCloneDefinition(value);
-        } else {
-            res[key] = value;
-        }
-    });
-
-    return res;
-}
 
 export function getAllValuesInObject<T extends Object, K extends keyof T, O extends T[K]>(obj: T): O[] {
     if (!obj) { return []; }

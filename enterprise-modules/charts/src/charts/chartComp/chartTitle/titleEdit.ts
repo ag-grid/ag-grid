@@ -189,7 +189,7 @@ export class TitleEdit extends Component {
 
         // await chart updates so `chartTitleEdit` event consumers can read the new state correctly
         this.chartOptionsService.awaitChartOptionUpdate(() => {
-            this.eventService.dispatchEvent({type: 'chartTitleEdit'});
+            this.beans.eventService.dispatchEvent({type: 'chartTitleEdit'});
         });
     }
 }

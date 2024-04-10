@@ -23,8 +23,8 @@ export class PaginationAutoPageSizeService extends BeanStub {
         this.ctrlsService.whenReady(p => {
             this.centerRowContainerCon = p.centerRowContainerCtrl;
 
-            this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.checkPageSize.bind(this));
-            this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.checkPageSize.bind(this));
+            this.addManagedEventListener(Events.EVENT_BODY_HEIGHT_CHANGED, this.checkPageSize.bind(this));
+            this.addManagedEventListener(Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.checkPageSize.bind(this));
             this.addManagedPropertyListener('paginationAutoPageSize', this.onPaginationAutoSizeChanged.bind(this));
 
             this.checkPageSize();
@@ -32,7 +32,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
     }
 
     private notActive(): boolean {
-        return !this.gos.get('paginationAutoPageSize') || this.centerRowContainerCon == null;
+        return !this.beans.gos.get('paginationAutoPageSize') || this.centerRowContainerCon == null;
     }
 
     private onPaginationAutoSizeChanged(): void {
@@ -50,7 +50,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
 
         if (bodyHeight > 0) {
             const update = () => {
-                const rowHeight = this.gos.getRowHeightAsNumber();
+                const rowHeight = this.beans.gos.getRowHeightAsNumber();
                 const newPageSize = Math.floor(bodyHeight / rowHeight);
                 this.paginationProxy.setPageSize(newPageSize, 'autoCalculated');
             }

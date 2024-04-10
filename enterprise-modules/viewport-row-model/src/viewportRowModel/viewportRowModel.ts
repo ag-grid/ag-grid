@@ -12,7 +12,6 @@ import {
     RowBounds,
     RowNode,
     RowRenderer,
-    Beans,
     WithoutGridCommon,
     FocusService,
     RowModelType
@@ -23,7 +22,6 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('focusService') private focusService: FocusService;
-    @Autowired('beans') private beans: Beans;
 
     // rowRenderer tells us these
     private firstRow = -1;
@@ -40,11 +38,11 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
 
     @PostConstruct
     private init(): void {
-        this.rowHeight = this.gos.getRowHeightAsNumber();
-        this.addManagedListener(this.eventService, Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
+        this.rowHeight = this.beans.gos.getRowHeightAsNumber();
+        this.addManagedEventListener(Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
         this.addManagedPropertyListener('viewportDatasource', () => this.updateDatasource());
         this.addManagedPropertyListener('rowHeight', () => {
-            this.rowHeight = this.gos.getRowHeightAsNumber();
+            this.rowHeight = this.beans.gos.getRowHeightAsNumber();
             this.updateRowHeights();
         });
     }
@@ -71,18 +69,18 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     private updateDatasource(): void {
-        const datasource = this.gos.get('viewportDatasource');
+        const datasource = this.beans.gos.get('viewportDatasource');
         if (datasource) {
             this.setViewportDatasource(datasource);
         }
     }
 
     private getViewportRowModelPageSize(): number | undefined {
-        return this.gos.get('viewportRowModelPageSize');
+        return this.beans.gos.get('viewportRowModelPageSize');
     }
 
     private getViewportRowModelBufferSize(): number {
-        return this.gos.get('viewportRowModelBufferSize');
+        return this.beans.gos.get('viewportRowModelBufferSize');
     }
 
     private calculateFirstRow(firstRenderedRow: number): number {
@@ -214,7 +212,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
             keepRenderedRows: true,
             animate: false,
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     public getTopLevelRowCount(): number {
@@ -304,7 +302,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
 
         this.rowCount = rowCount;
 
-        this.eventService.dispatchEventOnce({
+        this.beans.eventService.dispatchEventOnce({
             type: Events.EVENT_ROW_COUNT_READY
         });
 
@@ -316,7 +314,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
             animate: false
         };
 
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     public isRowPresent(rowNode: RowNode): boolean {

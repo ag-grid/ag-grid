@@ -33,13 +33,11 @@ export class TooltipFeature extends BeanStub {
     private tooltipManager: TooltipStateManager | undefined;
     private browserTooltips: boolean;
 
-    @Autowired('beans') private beans: Beans;
-
     constructor(private readonly ctrl: ITooltipFeatureCtrl, beans?: Beans) {
         super();
 
         if (beans) {
-            this.beans = beans;
+            this.manualSetBeans(beans);
         }
     }
 

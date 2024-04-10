@@ -85,7 +85,7 @@ export class RichSelectRow<TValue> extends Component {
     }
 
     private populateWithoutRenderer(value: any, valueFormatted: any) {
-        const eDocument = this.gos.getDocument();
+        const eDocument = this.beans.gos.getDocument();
         const eGui = this.getGui();
 
         const span = eDocument.createElement('span');
@@ -115,7 +115,7 @@ export class RichSelectRow<TValue> extends Component {
 
 
         if (this.params.cellRenderer) {
-            userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {
+            userCompDetails = this.beans.userComponentFactory.getCellRendererDetails(this.params, {
                 value,
                 valueFormatted,
                 setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {

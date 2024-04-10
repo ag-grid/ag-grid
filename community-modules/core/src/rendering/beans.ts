@@ -1,7 +1,6 @@
 import { Autowired, Bean, Context, Optional, PostConstruct } from "../context/context";
 import { ColumnModel } from "../columns/columnModel";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
-import { GridApi } from "../gridApi";
 import { ExpressionService } from "../valueService/expressionService";
 import { RowRenderer } from "./rowRenderer";
 import { TemplateService } from "../templateService";
@@ -44,6 +43,13 @@ import { Environment } from "../environment";
 import { ValueParserService } from "../valueService/valueParserService";
 import { SyncService } from "../syncService";
 import { AriaAnnouncementService } from "./ariaAnnouncementService";
+import { QuickFilterService } from "../filter/quickFilterService";
+import { IAdvancedFilterService } from "../interfaces/iAdvancedFilterService";
+import { DataTypeService } from "../columns/dataTypeService";
+
+export class BeansProvider {
+    @Autowired('beans') protected readonly beans: Beans;
+}
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -95,7 +101,10 @@ export class Beans {
     @Autowired('valueParserService') public readonly valueParserService: ValueParserService;
     @Autowired('syncService') public readonly syncService: SyncService;
     @Autowired('ariaAnnouncementService') public readonly ariaAnnouncementService: AriaAnnouncementService;
+    @Autowired('quickFilterService') public readonly quickFilterService: QuickFilterService;
+    @Autowired('dataTypeService') public readonly dataTypeService: DataTypeService;
     
+    @Optional('advancedFilterService') public readonly advancedFilterService: IAdvancedFilterService;
     @Optional('rangeService') public readonly rangeService?: IRangeService;
     @Optional('selectionHandleFactory') public readonly selectionHandleFactory?: ISelectionHandleFactory;
 

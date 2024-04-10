@@ -25,11 +25,11 @@ export class QuickFilterService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.resetQuickFilterCache());
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.resetQuickFilterCache());
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.resetQuickFilterCache());
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
-            if (!this.gos.get('includeHiddenColumnsInQuickFilter')) {
+        this.addManagedEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.resetQuickFilterCache());
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, () => this.resetQuickFilterCache());
+        this.addManagedEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.resetQuickFilterCache());
+        this.addManagedEventListener(Events.EVENT_COLUMN_VISIBLE, () => {
+            if (!this.beans.gos.get('includeHiddenColumnsInQuickFilter')) {
                 this.resetQuickFilterCache();
             }
         });
@@ -39,9 +39,9 @@ export class QuickFilterService extends BeanStub {
             'includeHiddenColumnsInQuickFilter', 'applyQuickFilterBeforePivotOrAgg'
         ], () => this.onQuickFilterColumnConfigChanged());
 
-        this.quickFilter = this.parseQuickFilter(this.gos.get('quickFilterText'));
-        this.parser = this.gos.get('quickFilterParser');
-        this.matcher = this.gos.get('quickFilterMatcher');
+        this.quickFilter = this.parseQuickFilter(this.beans.gos.get('quickFilterText'));
+        this.parser = this.beans.gos.get('quickFilterParser');
+        this.matcher = this.beans.gos.get('quickFilterMatcher');
         this.setQuickFilterParts();
 
         this.addManagedPropertyListeners(['quickFilterMatcher', 'quickFilterParser'], () => this.setQuickFilterParserAndMatcher());
@@ -52,7 +52,7 @@ export class QuickFilterService extends BeanStub {
     }
 
     public doesRowPassQuickFilter(node: RowNode): boolean {
-        const usingCache = this.gos.get('cacheQuickFilter');
+        const usingCache = this.beans.gos.get('cacheQuickFilter');
 
         if (this.matcher) {
             return this.doesRowPassQuickFilterMatcher(usingCache, node);
@@ -82,7 +82,7 @@ export class QuickFilterService extends BeanStub {
             return null;
         }
 
-        if (!this.gos.isRowModelType('clientSide')) {
+        if (!this.beans.gos.isRowModelType('clientSide')) {
             console.warn('AG Grid - Quick filtering only works with the Client-Side Row Model');
             return null;
         }
@@ -106,8 +106,8 @@ export class QuickFilterService extends BeanStub {
     }
 
     private setQuickFilterParserAndMatcher(): void {
-        const parser = this.gos.get('quickFilterParser');
-        const matcher = this.gos.get('quickFilterMatcher');
+        const parser = this.beans.gos.get('quickFilterParser');
+        const matcher = this.beans.gos.get('quickFilterMatcher');
         const hasChanged = parser !== this.parser || matcher !== this.matcher;
         this.parser = parser;
         this.matcher = matcher;
@@ -164,7 +164,7 @@ export class QuickFilterService extends BeanStub {
         const colDef = column.getColDef();
 
         if (colDef.getQuickFilterText) {
-            const params: GetQuickFilterTextParams = this.gos.addGridCommonParams({
+            const params: GetQuickFilterTextParams = this.beans.gos.addGridCommonParams({
                 value,
                 node,
                 data: node.data,

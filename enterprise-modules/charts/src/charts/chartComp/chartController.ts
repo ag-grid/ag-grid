@@ -19,7 +19,8 @@ import {
     UpdateChartParams,
     UpdateRangeChartParams,
     IAggFunc,
-    PartialCellRange
+    PartialCellRange,
+    RangeSelectionChangedEvent
 } from "@ag-grid-community/core";
 import { ChartDataModel, ChartModelParams, ColState } from "./model/chartDataModel";
 import { ChartProxy, FieldDefinition, UpdateParams } from "./chartProxies/chartProxy";
@@ -57,7 +58,7 @@ export class ChartController extends BeanStub {
     private init(): void {
         this.setChartRange();
 
-        this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, event => {
+        this.addManagedEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, (event: RangeSelectionChangedEvent) => {
             if (event.id && event.id === this.model.chartId) {
                 this.updateForRangeChange();
             }
@@ -69,13 +70,13 @@ export class ChartController extends BeanStub {
             }
         }
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.updateForGridChange.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.updateForGridChange.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.updateForGridChange.bind(this));
+        this.addManagedEventListener(Events.EVENT_COLUMN_MOVED, this.updateForGridChange.bind(this));
+        this.addManagedEventListener(Events.EVENT_COLUMN_PINNED, this.updateForGridChange.bind(this));
+        this.addManagedEventListener(Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
+        this.addManagedEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.updateForGridChange.bind(this));
 
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateForGridChange.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateForDataChange.bind(this));
+        this.addManagedEventListener(Events.EVENT_MODEL_UPDATED, this.updateForGridChange.bind(this));
+        this.addManagedEventListener(Events.EVENT_CELL_VALUE_CHANGED, this.updateForDataChange.bind(this));
     }
 
     public update(params: UpdateChartParams): boolean {
@@ -365,7 +366,7 @@ export class ChartController extends BeanStub {
     }
 
     public getThemeNames(): string[] {
-        return this.gos.get('chartThemes') || DEFAULT_THEMES;
+        return this.beans.gos.get('chartThemes') || DEFAULT_THEMES;
     }
 
     public getThemes(): _Theme.ChartTheme[] {
@@ -635,7 +636,7 @@ export class ChartController extends BeanStub {
             chartOptions: this.chartProxy.getChartThemeOverrides()
         };
 
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private raiseChartRangeSelectionChangedEvent(): void {
@@ -646,7 +647,7 @@ export class ChartController extends BeanStub {
             cellRange: this.getCellRangeParams()
         };
 
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     protected destroy(): void {

@@ -195,7 +195,7 @@ export abstract class DragDataPanel extends Component {
     }
 
     protected addDragHandle(comp: AgCheckbox, col: ColState): void {
-        const eDragHandle = _.createIconNoSpan('columnDrag', this.gos)!;
+        const eDragHandle = _.createIconNoSpan('columnDrag', this.beans.gos)!;
 
         eDragHandle.classList.add('ag-drag-handle', 'ag-chart-data-column-drag-handle');
 

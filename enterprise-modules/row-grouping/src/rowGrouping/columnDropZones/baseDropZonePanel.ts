@@ -26,7 +26,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     public init(params: PillDropZonePanelParams): void {
         super.init(params);
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refreshGui.bind(this));
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, this.refreshGui.bind(this));
 
         this.addManagedPropertyListeners(['functionsReadOnly', 'rowGroupPanelSuppressSort', 'groupLockGroupColumns'], this.refreshGui.bind(this));
     }
@@ -41,7 +41,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     }
 
     protected minimumAllowedNewInsertIndex(): number {
-        const numberOfLockedCols = this.gos.get('groupLockGroupColumns');
+        const numberOfLockedCols = this.beans.gos.get('groupLockGroupColumns');
         const numberOfGroupCols = this.columnModel.getRowGroupColumns().length;
         if (numberOfLockedCols === -1) {
             return numberOfGroupCols;
@@ -50,7 +50,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     }
 
     private showOrHideColumnOnExit(draggingEvent: DraggingEvent): boolean {
-        return this.isRowGroupPanel() && !this.gos.get('suppressRowGroupHidesColumns') && !draggingEvent.fromNudge;
+        return this.isRowGroupPanel() && !this.beans.gos.get('suppressRowGroupHidesColumns') && !draggingEvent.fromNudge;
     }
 
     protected handleDragEnterEnd(draggingEvent: DraggingEvent): void {
@@ -90,7 +90,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         // cause a refresh. This gives a nice GUI where the ghost stays until the app has caught
         // up with the changes. However, if there was no change in the order, then we do need to
         // refresh to reset the columns
-        return !this.gos.get('functionsPassive');
+        return !this.beans.gos.get('functionsPassive');
     }
 
     protected createPillComponent(column: Column, dropTarget: DropTarget, ghost: boolean, horizontal: boolean): DropZoneColumnComp {

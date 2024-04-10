@@ -119,7 +119,7 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
             previousValue
         };
 
-        this.eventService.dispatchEvent(checkboxChangedEvent);
+        this.beans.eventService.dispatchEvent(checkboxChangedEvent);
     }
 
     private onCheckboxClick(e: MouseEvent) {

@@ -60,13 +60,13 @@ export class GridSerializer extends BeanStub {
 
     private processRow<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T>, columnsToExport: Column[], node: RowNode): void {
         const rowSkipper: (params: ShouldRowBeSkippedParams) => boolean = params.shouldRowBeSkipped || (() => false);
-        const skipSingleChildrenGroup = this.gos.get('groupRemoveSingleChildren');
-        const skipLowestSingleChildrenGroup = this.gos.get('groupRemoveLowestSingleChildren');
+        const skipSingleChildrenGroup = this.beans.gos.get('groupRemoveSingleChildren');
+        const skipLowestSingleChildrenGroup = this.beans.gos.get('groupRemoveLowestSingleChildren');
         // if onlySelected, we ignore groupHideOpenParents as the user has explicitly selected the rows they wish to export.
         // similarly, if specific rowNodes are provided we do the same. (the clipboard service uses rowNodes to define which rows to export)
         const isClipboardExport = params.rowPositions != null;
         const isExplicitExportSelection = isClipboardExport || !!params.onlySelected;
-        const hideOpenParents = this.gos.get('groupHideOpenParents') && !isExplicitExportSelection;
+        const hideOpenParents = this.beans.gos.get('groupHideOpenParents') && !isExplicitExportSelection;
         const isLeafNode = this.columnModel.isPivotMode() ? node.leafGroup : !node.group;
         const isFooter = !!node.footer;
         const skipRowGroups = params.skipRowGroups;
@@ -90,7 +90,7 @@ export class GridSerializer extends BeanStub {
             return;
         }
 
-        const shouldRowBeSkipped: boolean = rowSkipper(this.gos.addGridCommonParams({ node }));
+        const shouldRowBeSkipped: boolean = rowSkipper(this.beans.gos.addGridCommonParams({ node }));
 
         if (shouldRowBeSkipped) { return; }
 
@@ -100,7 +100,7 @@ export class GridSerializer extends BeanStub {
         });
 
         if (params.getCustomContentBelowRow) {
-            const content = params.getCustomContentBelowRow(this.gos.addGridCommonParams({ node }));
+            const content = params.getCustomContentBelowRow(this.beans.gos.addGridCommonParams({ node }));
             if (content) {
                 gridSerializingSession.addCustomContent(content);
             }
@@ -299,7 +299,7 @@ export class GridSerializer extends BeanStub {
             return this.columnModel.getGridColumns(columnKeys);
         }
 
-        const isTreeData = this.gos.get('treeData');
+        const isTreeData = this.beans.gos.get('treeData');
 
         let columnsToExport: Column[] = [];
 
@@ -343,7 +343,7 @@ export class GridSerializer extends BeanStub {
 
             let name: string;
             if (processGroupHeaderCallback) {
-                name = processGroupHeaderCallback(this.gos.addGridCommonParams({
+                name = processGroupHeaderCallback(this.beans.gos.addGridCommonParams({
                     columnGroup: columnGroup
                 }));
             } else {

@@ -43,7 +43,7 @@ export class AnimationFrameService extends BeanStub {
     private cancelledTasks = new Set();
 
     public setScrollTop(scrollTop: number): void {
-        const isPaginationActive = this.gos.get('pagination');
+        const isPaginationActive = this.beans.gos.get('pagination');
         this.scrollGoingDown = scrollTop >= this.lastScrollTop;
 
         if (isPaginationActive && scrollTop === 0) {
@@ -59,7 +59,7 @@ export class AnimationFrameService extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.useAnimationFrame = !this.gos.get('suppressAnimationFrame');
+        this.useAnimationFrame = !this.beans.gos.get('suppressAnimationFrame');
     }
 
     public isOn(): boolean {
@@ -192,7 +192,7 @@ export class AnimationFrameService extends BeanStub {
     }
 
     public requestAnimationFrame(callback: any) {
-        const win = this.gos.getWindow();
+        const win = this.beans.gos.getWindow();
 
         if (win.requestAnimationFrame) {
             win.requestAnimationFrame(callback);

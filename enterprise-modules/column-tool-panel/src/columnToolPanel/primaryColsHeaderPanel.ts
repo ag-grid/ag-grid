@@ -70,9 +70,9 @@ export class PrimaryColsHeaderPanel extends Component {
             this.onMiniFilterKeyDown.bind(this)
         );
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         this.eSelect.setInputAriaLabel(translate('ariaColumnSelectAll', 'Toggle Select All Columns'));
         this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
@@ -81,7 +81,7 @@ export class PrimaryColsHeaderPanel extends Component {
     }
 
     private onFunctionsReadOnlyPropChanged(): void {
-        const readOnly = this.gos.get('functionsReadOnly');
+        const readOnly = this.beans.gos.get('functionsReadOnly');
         this.eSelect.setReadOnly(readOnly);
         this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
     }
@@ -89,7 +89,7 @@ export class PrimaryColsHeaderPanel extends Component {
     public init(params: ToolPanelColumnCompParams): void {
         this.params = params;
 
-        const readOnly = this.gos.get('functionsReadOnly');
+        const readOnly = this.beans.gos.get('functionsReadOnly');
         this.eSelect.setReadOnly(readOnly);
         this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
 
@@ -100,15 +100,15 @@ export class PrimaryColsHeaderPanel extends Component {
 
     private createExpandIcons() {
         this.eExpand.appendChild((
-            this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gos)!
+            this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.beans.gos)!
         ));
 
         this.eExpand.appendChild((
-            this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gos)!
+            this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.beans.gos)!
         ));
 
         this.eExpand.appendChild((
-            this.eExpandIndeterminate = _.createIconNoSpan('columnSelectIndeterminate', this.gos)!
+            this.eExpandIndeterminate = _.createIconNoSpan('columnSelectIndeterminate', this.beans.gos)!
         ));
 
         this.setExpandState(ExpandState.EXPANDED);
@@ -120,7 +120,7 @@ export class PrimaryColsHeaderPanel extends Component {
         const showSelect = !this.params.suppressColumnSelectAll;
         const showExpand = !this.params.suppressColumnExpandAll;
         const groupsPresent = this.columnModel.isPrimaryColumnGroupsPresent();
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 

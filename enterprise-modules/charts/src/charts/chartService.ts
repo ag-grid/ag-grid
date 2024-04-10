@@ -161,7 +161,7 @@ export class ChartService extends BeanStub implements IChartService {
 
         if (model.modelType === 'pivot') {
             // if required enter pivot mode
-            this.gos.updateGridOptions({ options: { pivotMode: true}, source: 'pivotChart' as any });
+            this.beans.gos.updateGridOptions({ options: { pivotMode: true}, source: 'pivotChart' as any });
 
             cellRange = this.createCellRange(undefined, true);
             pivotChart = true;
@@ -197,7 +197,7 @@ export class ChartService extends BeanStub implements IChartService {
 
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
         // if required enter pivot mode
-        this.gos.updateGridOptions({ options: { pivotMode: true}, source: 'pivotChart' as any });
+        this.beans.gos.updateGridOptions({ options: { pivotMode: true}, source: 'pivotChart' as any });
 
         const cellRange = this.createCellRange(undefined, true);
 
@@ -234,7 +234,7 @@ export class ChartService extends BeanStub implements IChartService {
 
         const { chartType, chartContainer } = params;
 
-        const createChartContainerFunc = this.gos.getCallback('createChartContainer');
+        const createChartContainerFunc = this.beans.gos.getCallback('createChartContainer');
 
 
         const gridChartParams: GridChartParams = {
@@ -247,7 +247,7 @@ export class ChartService extends BeanStub implements IChartService {
         };
 
         const chartComp = new GridChartComp(gridChartParams);
-        this.context.createBean(chartComp);
+        this.createBean(chartComp);
 
         const chartRef = this.createChartRef(chartComp);
 
@@ -258,7 +258,7 @@ export class ChartService extends BeanStub implements IChartService {
             // if the chart container was placed outside an element that
             // has the grid's theme, we manually add the current theme to
             // make sure all styles for the chartMenu are rendered correctly
-            const theme = this.environment.getTheme();
+            const theme = this.beans.environment.getTheme();
 
             if (theme.el && !theme.el.contains(chartContainer)) {
                 chartContainer.classList.add(theme.theme!);
@@ -284,7 +284,7 @@ export class ChartService extends BeanStub implements IChartService {
         const chartRef: ChartRef = {
             destroyChart: () => {
                 if (this.activeCharts.has(chartRef)) {
-                    this.context.destroyBean(chartComp);
+                    this.destroyBean(chartComp);
                     this.activeChartComps.delete(chartComp);
                     this.activeCharts.delete(chartRef);
                 }

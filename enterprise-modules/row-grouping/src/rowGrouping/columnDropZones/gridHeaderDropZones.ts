@@ -24,8 +24,8 @@ export class GridHeaderDropZones extends Component {
     private postConstruct(): void {
         this.setGui(this.createNorthPanel());
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.onRowGroupChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onRowGroupChanged());
+        this.addManagedEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.onRowGroupChanged());
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, () => this.onRowGroupChanged());
         this.addManagedPropertyListener('rowGroupPanelShow', () => this.onRowGroupChanged());
         this.addManagedPropertyListener('pivotPanelShow', () => this.onPivotPanelShow());
 
@@ -66,7 +66,7 @@ export class GridHeaderDropZones extends Component {
             return;
         }
 
-        const rowGroupPanelShow = this.gos.get('rowGroupPanelShow');
+        const rowGroupPanelShow = this.beans.gos.get('rowGroupPanelShow');
 
         if (rowGroupPanelShow === 'always') {
             this.rowGroupComp.setDisplayed(true);
@@ -83,7 +83,7 @@ export class GridHeaderDropZones extends Component {
             return;
         }
 
-        const pivotPanelShow = this.gos.get('pivotPanelShow');
+        const pivotPanelShow = this.beans.gos.get('pivotPanelShow');
 
         if (pivotPanelShow === 'always') {
             this.pivotComp.setDisplayed(true);

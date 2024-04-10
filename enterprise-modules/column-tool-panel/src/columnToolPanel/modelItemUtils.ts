@@ -3,7 +3,6 @@ import {
     ColumnModel,
     Events,
     ColumnPivotChangeRequestEvent,
-    GridOptionsService,
     ColumnEventType,
     Bean,
     IAggFuncService,
@@ -13,15 +12,15 @@ import {
     ColumnState,
     _,
     WithoutGridCommon,
-    IAggFunc
+    IAggFunc,
+    BeanStub
 } from "@ag-grid-community/core";
 
 @Bean('modelItemUtils')
-export class ModelItemUtils {
+export class ModelItemUtils extends BeanStub {
 
     @Autowired('aggFuncService') aggFuncService: IAggFuncService;
     @Autowired('columnModel') columnModel: ColumnModel;
-    @Autowired('gridOptionsService') private gos: GridOptionsService;
     @Autowired('eventService') private eventService: EventService;
 
     public selectAllChildren(colTree: ColumnModelItem[], selectAllChecked: boolean, eventType: ColumnEventType): void {
@@ -80,7 +79,7 @@ export class ModelItemUtils {
     }
 
     private setAllPivot(columns: Column[], value: boolean, eventType: ColumnEventType): void {
-        if (this.gos.get('functionsPassive')) {
+        if (this.beans.gos.get('functionsPassive')) {
             this.setAllPivotPassive(columns, value);
         } else {
             this.setAllPivotActive(columns, value, eventType);

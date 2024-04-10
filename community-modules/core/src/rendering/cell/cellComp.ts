@@ -24,7 +24,6 @@ export class CellComp extends Component implements TooltipParentComp {
     private eCellWrapper: HTMLElement | undefined;
     private eCellValue: HTMLElement | undefined;
 
-    private beans: Beans;
     private column: Column;
     private rowNode: RowNode;
     private eRow: HTMLElement;
@@ -66,7 +65,7 @@ export class CellComp extends Component implements TooltipParentComp {
     constructor(beans: Beans, cellCtrl: CellCtrl,
         printLayout: boolean, eRow: HTMLElement, editingRow: boolean) {
         super();
-        this.beans = beans;
+        this.manualSetBeans(beans);
         this.column = cellCtrl.getColumn();
         this.rowNode = cellCtrl.getRowNode();
         this.rowCtrl = cellCtrl.getRowCtrl();

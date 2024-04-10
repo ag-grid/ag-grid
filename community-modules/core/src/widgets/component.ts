@@ -63,7 +63,7 @@ export class Component extends BeanStub {
 
     @PreConstruct
     private preConstructOnComponent(): void {
-        this.usingBrowserTooltips = this.gos.get('enableBrowserTooltips');
+        this.usingBrowserTooltips = this.beans.gos.get('enableBrowserTooltips');
     }
 
     public getCompId(): number {
@@ -204,7 +204,7 @@ export class Component extends BeanStub {
     }
 
     protected activateTabIndex(elements?: Element[]): void {
-        const tabIndex = this.gos.get('tabIndex');
+        const tabIndex = this.beans.gos.get('tabIndex');
 
         if (!elements) {
             elements = [];

@@ -24,12 +24,12 @@ export class SelectableService extends BeanStub {
     }
 
     private updateSelectable(skipLeafNodes = false) {
-        const isRowSelecting = !!this.gos.get('rowSelection');
-        const isRowSelectable = this.gos.get('isRowSelectable');
+        const isRowSelecting = !!this.beans.gos.get('rowSelection');
+        const isRowSelectable = this.beans.gos.get('isRowSelectable');
 
         if (!isRowSelecting || !isRowSelectable) { return; }
 
-        const isGroupSelectsChildren = this.gos.get('groupSelectsChildren');
+        const isGroupSelectsChildren = this.beans.gos.get('groupSelectsChildren');
 
         const isCsrmGroupSelectsChildren = this.rowModel.getType() === 'clientSide' && isGroupSelectsChildren;
 

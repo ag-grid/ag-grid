@@ -65,15 +65,15 @@ export class RangeService extends BeanStub implements IRangeService {
 
     @PostConstruct
     private init(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.removeAllCellRanges());
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.removeAllCellRanges());
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.removeAllCellRanges());
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
+        this.addManagedEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnsChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnsChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.removeAllCellRanges());
+        this.addManagedEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.removeAllCellRanges());
+        this.addManagedEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.removeAllCellRanges());
+        this.addManagedEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
+        this.addManagedEventListener(Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
+        this.addManagedEventListener(Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
 
         this.ctrlsService.whenReady(() => {
             const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
@@ -84,7 +84,7 @@ export class RangeService extends BeanStub implements IRangeService {
                 setVerticalPosition: (position) => gridBodyCtrl.getScrollFeature().setVerticalScrollPosition(position),
                 getHorizontalPosition: () => gridBodyCtrl.getScrollFeature().getHScrollPosition().left,
                 setHorizontalPosition: (position) => gridBodyCtrl.getScrollFeature().setHorizontalScrollPosition(position),
-                shouldSkipVerticalScroll: () => !this.gos.isDomLayout('normal'),
+                shouldSkipVerticalScroll: () => !this.beans.gos.isDomLayout('normal'),
                 shouldSkipHorizontalScroll: () => !gridBodyCtrl.getScrollFeature().isHorizontalScrollShowing()
             });
         });
@@ -176,13 +176,13 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
-        if (!this.gos.get('enableRangeSelection')) { return; }
+        if (!this.beans.gos.get('enableRangeSelection')) { return; }
 
         const columns = this.calculateColumnsBetween(cell.column, cell.column);
 
         if (!columns) { return; }
 
-        const suppressMultiRangeSelections = this.gos.get('suppressMultiRangeSelection');
+        const suppressMultiRangeSelections = this.beans.gos.get('suppressMultiRangeSelection');
 
         // if not appending, then clear previous range selections
         if (suppressMultiRangeSelections || !appendRange || _.missing(this.cellRanges)) {
@@ -311,7 +311,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public setCellRange(params: CellRangeParams): void {
-        if (!this.gos.get('enableRangeSelection')) {
+        if (!this.beans.gos.get('enableRangeSelection')) {
             return;
         }
 
@@ -356,7 +356,7 @@ export class RangeService extends BeanStub implements IRangeService {
                 type: Events.EVENT_RANGE_DELETE_START,
                 source: wrapperEventSource
             };
-            this.eventService.dispatchEvent(startEvent);
+            this.beans.eventService.dispatchEvent(startEvent);
         }
 
         if (!cellRanges) { cellRanges = this.cellRanges; }
@@ -379,7 +379,7 @@ export class RangeService extends BeanStub implements IRangeService {
                 type: Events.EVENT_RANGE_DELETE_END,
                 source: wrapperEventSource
             };
-            this.eventService.dispatchEvent(endEvent);
+            this.beans.eventService.dispatchEvent(endEvent);
         }
     }
 
@@ -432,7 +432,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public addCellRange(params: CellRangeParams): void {
-        if (!this.gos.get('enableRangeSelection')) {
+        if (!this.beans.gos.get('enableRangeSelection')) {
             return;
         }
 
@@ -615,13 +615,13 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public onDragStart(mouseEvent: MouseEvent): void {
-        if (!this.gos.get('enableRangeSelection')) { return; }
+        if (!this.beans.gos.get('enableRangeSelection')) { return; }
 
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
 
         // ctrlKey for windows, metaKey for Apple
         const isMultiKey = ctrlKey || metaKey;
-        const allowMulti = !this.gos.get('suppressMultiRangeSelection');
+        const allowMulti = !this.beans.gos.get('suppressMultiRangeSelection');
         const isMultiSelect = allowMulti ? isMultiKey : false;
         const extendRange = shiftKey && _.existsAndNotEmpty(this.cellRanges);
 
@@ -678,7 +678,7 @@ export class RangeService extends BeanStub implements IRangeService {
         // when ranges are created due to a mouse click without drag (happens in cellMouseListener)
         // this method will be called with `fromMouseClick=true`.
         if (fromMouseClick && this.dragging) { return; }
-        if (this.gos.get('suppressMultiRangeSelection')) { return; }
+        if (this.beans.gos.get('suppressMultiRangeSelection')) { return; }
         if (this.isEmpty()) { return; }
         
         const lastRange = _.last(this.cellRanges);
@@ -749,7 +749,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
     
     private updateValuesOnMove(eventTarget: EventTarget | null) {
-        const cellCtrl = _.getCtrlForEventTarget<CellCtrl>(this.gos, eventTarget, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        const cellCtrl = _.getCtrlForEventTarget<CellCtrl>(this.beans.gos, eventTarget, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
         const cell = cellCtrl?.getCellPosition();
 
         this.cellHasChanged = false;
@@ -823,7 +823,7 @@ export class RangeService extends BeanStub implements IRangeService {
             id,
         };
 
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private calculateColumnsBetween(columnFrom: Column, columnTo: Column): Column[] | undefined {

@@ -29,7 +29,7 @@ export class SelectAllFeature extends BeanStub {
     public onSpaceKeyDown(e: KeyboardEvent): void {
         const checkbox = this.cbSelectAll;
 
-        if (checkbox.isDisplayed() && !checkbox.getGui().contains(this.gos.getActiveDomElement())) {
+        if (checkbox.isDisplayed() && !checkbox.getGui().contains(this.beans.gos.getActiveDomElement())) {
             e.preventDefault();
             checkbox.setValue(!checkbox.getValue());
         }
@@ -46,11 +46,11 @@ export class SelectAllFeature extends BeanStub {
         setAriaRole(this.cbSelectAll.getGui(), 'presentation');
         this.showOrHideSelectAll();
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onSelectionChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+        this.addManagedEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_PAGINATION_CHANGED, this.onSelectionChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
         this.addManagedListener(this.cbSelectAll, Events.EVENT_FIELD_VALUE_CHANGED, this.onCbSelectAll.bind(this));
         setAriaHidden(this.cbSelectAll.getGui(), true);
         this.cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
@@ -109,7 +109,7 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private refreshSelectAllLabel(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const checked = this.cbSelectAll.getValue();
         const ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
         const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
@@ -126,7 +126,7 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private checkSelectionType(feature: string): boolean {
-        const isMultiSelect = this.gos.get('rowSelection') === 'multiple';
+        const isMultiSelect = this.beans.gos.get('rowSelection') === 'multiple';
 
         if (!isMultiSelect) {
             console.warn(`AG Grid: ${feature} is only available if using 'multiple' rowSelection.`);
@@ -178,7 +178,7 @@ export class SelectAllFeature extends BeanStub {
 
         if (typeof result === 'function') {
             const func = result as (params: HeaderCheckboxSelectionCallbackParams) => boolean;
-            const params: HeaderCheckboxSelectionCallbackParams = this.gos.addGridCommonParams({
+            const params: HeaderCheckboxSelectionCallbackParams = this.beans.gos.addGridCommonParams({
                 column: this.column,
                 colDef: this.column.getColDef()
             });

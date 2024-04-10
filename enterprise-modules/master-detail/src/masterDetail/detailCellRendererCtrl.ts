@@ -41,7 +41,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         this.createDetailGrid();
         this.loadRowData();
 
-        this.addManagedListener(this.eventService, Events.EVENT_FULL_WIDTH_ROW_FOCUSED, this.onFullWidthRowFocused.bind(this));
+        this.addManagedEventListener(Events.EVENT_FULL_WIDTH_ROW_FOCUSED, this.onFullWidthRowFocused.bind(this));
     }
 
     private onFullWidthRowFocused(e: FullWidthRowFocusedEvent): void {
@@ -56,7 +56,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     }
 
     private setAutoHeightClasses(): void {
-        const autoHeight = this.gos.get('detailRowAutoHeight');
+        const autoHeight = this.beans.gos.get('detailRowAutoHeight');
 
         const parentClass = autoHeight ? 'ag-details-row-auto-height' : 'ag-details-row-fixed-height';
         const detailClass =  autoHeight ? 'ag-details-grid-auto-height' : 'ag-details-grid-fixed-height';
@@ -85,7 +85,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     private addThemeToDetailGrid(): void {
         // this is needed by environment service of the child grid, the class needs to be on
         // the grid div itself - the browser's CSS on the other hand just inherits from the parent grid theme.
-        const { theme } = this.environment.getTheme();
+        const { theme } = this.beans.environment.getTheme();
         if (theme) {
             this.comp.addOrRemoveDetailGridCssClass(theme, true);
         }
@@ -98,7 +98,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             return;
         }
 
-        const autoHeight = this.gos.get('detailRowAutoHeight');
+        const autoHeight = this.beans.gos.get('detailRowAutoHeight');
 
         // we clone the detail grid options, as otherwise it would be shared
         // across many instances, and that would be a problem because we set
@@ -171,7 +171,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             // as the data could have been updated with new instance
             data: this.params.node.data,
             successCallback: successCallback,
-            context: this.gos.getGridCommonParams().context
+            context: this.beans.gos.getGridCommonParams().context
         };
         userFunc(funcParams);
     }

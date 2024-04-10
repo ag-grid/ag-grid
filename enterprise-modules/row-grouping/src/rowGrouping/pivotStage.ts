@@ -70,7 +70,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
 
         // As unique values creates one column per aggregation column, divide max columns by number of aggregation columns
         // to get the max number of unique values.
-        const configuredMaxCols = this.gos.get('pivotMaxGeneratedColumns');
+        const configuredMaxCols = this.beans.gos.get('pivotMaxGeneratedColumns');
         this.maxUniqueValues = configuredMaxCols === -1 ? -1 : configuredMaxCols / numberOfAggregationColumns;
         let uniqueValues;
         try {
@@ -84,7 +84,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
                     type: Events.EVENT_PIVOT_MAX_COLUMNS_EXCEEDED,
                     message: e.message,
                 };
-                this.eventService.dispatchEvent(event);
+                this.beans.eventService.dispatchEvent(event);
                 this.lastTimeFailed = true;
                 return;
             }
@@ -106,10 +106,10 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         const groupColumnsChanged = groupColumnsHash !== this.groupColumnsHashLastTime;
         this.groupColumnsHashLastTime = groupColumnsHash;
 
-        const pivotRowTotals = this.gos.get('pivotRowTotals');
-        const pivotColumnGroupTotals = this.gos.get('pivotColumnGroupTotals');
-        const suppressExpandablePivotGroups = this.gos.get('suppressExpandablePivotGroups');
-        const removePivotHeaderRowWhenSingleValueColumn = this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
+        const pivotRowTotals = this.beans.gos.get('pivotRowTotals');
+        const pivotColumnGroupTotals = this.beans.gos.get('pivotColumnGroupTotals');
+        const suppressExpandablePivotGroups = this.beans.gos.get('suppressExpandablePivotGroups');
+        const removePivotHeaderRowWhenSingleValueColumn = this.beans.gos.get('removePivotHeaderRowWhenSingleValueColumn');
 
         const anyGridOptionsChanged = (
             pivotRowTotals !== this.pivotRowTotalsLastTime || pivotColumnGroupTotals !== this.pivotColumnGroupTotalsLastTime ||

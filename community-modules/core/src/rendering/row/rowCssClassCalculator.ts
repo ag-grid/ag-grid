@@ -7,6 +7,7 @@ import { StylingService } from "../../styling/stylingService";
 import { RowClassParams } from "../../entities/gridOptions";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { ColumnPinnedType } from "../../entities/column";
+import { BeansProvider } from "../beans";
 
 export interface RowCssClassCalculatorParams {
     rowNode: RowNode;
@@ -25,10 +26,9 @@ export interface RowCssClassCalculatorParams {
 }
 
 @Bean('rowCssClassCalculator')
-export class RowCssClassCalculator {
+export class RowCssClassCalculator extends BeansProvider {
 
     @Autowired('stylingService') public stylingService: StylingService;
-    @Autowired('gridOptionsService') gos: GridOptionsService;
 
     public getInitialRowClasses(params: RowCssClassCalculatorParams): string[] {
 
@@ -116,7 +116,7 @@ export class RowCssClassCalculator {
         };
 
         // part 1 - rowClass
-        const rowClass = this.gos.get('rowClass');
+        const rowClass = this.beans.gos.get('rowClass');
         if (rowClass) {
             if (typeof rowClass === 'function') {
                 console.warn('AG Grid: rowClass should not be a function, please use getRowClass instead');
@@ -126,7 +126,7 @@ export class RowCssClassCalculator {
         }
 
         // part 2 - rowClassFunc
-        const rowClassFunc = this.gos.getCallback('getRowClass');
+        const rowClassFunc = this.beans.gos.getCallback('getRowClass');
 
         if (rowClassFunc) {
             const params: WithoutGridCommon<RowClassParams> = {
@@ -157,7 +157,7 @@ export class RowCssClassCalculator {
     }
 
     public processRowClassRules(rowNode: RowNode, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void {
-        const rowClassParams: RowClassParams = this.gos.addGridCommonParams({
+        const rowClassParams: RowClassParams = this.beans.gos.addGridCommonParams({
             data: rowNode.data,
             node: rowNode,
             rowIndex: rowNode.rowIndex!
@@ -165,7 +165,7 @@ export class RowCssClassCalculator {
 
         this.stylingService.processClassRules(
             undefined,
-            this.gos.get('rowClassRules'),
+            this.beans.gos.get('rowClassRules'),
             rowClassParams,
             onApplicableClass,
             onNotApplicableClass

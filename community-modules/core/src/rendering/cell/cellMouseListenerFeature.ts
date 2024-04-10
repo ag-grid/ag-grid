@@ -1,3 +1,4 @@
+import { BeanStub } from "../../context/beanStub";
 import { Column } from "../../entities/column";
 import { CellClickedEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent, Events } from "../../events";
 import { isBrowserSafari, isIOSUserAgent } from "../../utils/browser";
@@ -6,10 +7,9 @@ import { isEventSupported, isStopPropagationForAgGrid } from "../../utils/event"
 import { Beans } from "../beans";
 import { CellCtrl } from "./cellCtrl";
 
-export class CellMouseListenerFeature extends Beans {
+export class CellMouseListenerFeature extends BeanStub {
 
     private readonly cellCtrl: CellCtrl;
-    private readonly beans: Beans;
     private readonly column: Column;
 
     private lastIPadMouseClickEvent: number;
@@ -17,7 +17,7 @@ export class CellMouseListenerFeature extends Beans {
     constructor(ctrl: CellCtrl, beans: Beans, column: Column) {
         super();
         this.cellCtrl = ctrl;
-        this.beans = beans;
+        this.manualSetBeans(beans);
         this.column = column;
     }
 

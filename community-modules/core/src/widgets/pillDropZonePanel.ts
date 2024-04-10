@@ -119,7 +119,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         let isPrevious = e.key === KeyCode.UP;
 
         if (!isVertical) {
-            const isRtl = this.gos.get('enableRtl');
+            const isRtl = this.beans.gos.get('enableRtl');
             isNext = (!isRtl && e.key === KeyCode.RIGHT) || (isRtl && e.key === KeyCode.LEFT);
             isPrevious = (!isRtl && e.key === KeyCode.LEFT) || (isRtl && e.key === KeyCode.RIGHT);
         }
@@ -200,7 +200,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
         // not hovering a non-ghost component
         if (hoveredIndex === -1) {
-            const enableRtl = this.gos.get('enableRtl');
+            const enableRtl = this.beans.gos.get('enableRtl');
 
             // if mouse is below or right of all components then new index should be placed last
             const isLast = boundsList.every(rect => (
@@ -403,7 +403,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
     private getFocusedItem(): number {
         const eGui = this.getGui();
-        const activeElement = this.gos.getActiveDomElement();
+        const activeElement = this.beans.gos.getActiveDomElement();
 
         if (!eGui.contains(activeElement)) { return - 1; }
 
@@ -484,7 +484,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const itemComponent = this.createPillComponent(item, this.dropTarget, ghost, this.horizontal);
         itemComponent.addEventListener(PillDragComp.EVENT_COLUMN_REMOVE, this.removeItems.bind(this, [item]));
 
-        this.context.createBean(itemComponent);
+        this.beans.context.createBean(itemComponent);
         this.guiDestroyFunctions.push(() => this.destroyBean(itemComponent));
 
         if (!ghost) {
@@ -538,8 +538,8 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         // only add the arrows if the layout is horizontal
         if (this.horizontal) {
             // for RTL it's a left arrow, otherwise it's a right arrow
-            const enableRtl = this.gos.get('enableRtl');
-            const icon = createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.gos)!;
+            const enableRtl = this.beans.gos.get('enableRtl');
+            const icon = createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.beans.gos)!;
             this.addElementClasses(icon, 'cell-separator');
             eParent.appendChild(icon);
         }

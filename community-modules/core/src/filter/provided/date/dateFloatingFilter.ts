@@ -44,8 +44,8 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         this.filterParams = params.filterParams;
 
         this.createDateComponent();
-        this.filterModelFormatter = new DateFilterModelFormatter(this.filterParams, this.localeService, this.optionsFactory);
-        const translate = this.localeService.getLocaleTextFunc();
+        this.filterModelFormatter = new DateFilterModelFormatter(this.filterParams, this.beans.localeService, this.optionsFactory);
+        const translate = this.beans.localeService.getLocaleTextFunc();
         this.eReadOnlyText
             .setDisabled(true)
             .setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));
@@ -128,7 +128,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     private updateDateComponent(): void {
-        const params = this.gos.addGridCommonParams(this.getDateComponentParams());
+        const params = this.beans.gos.addGridCommonParams(this.getDateComponentParams());
         this.dateComp.updateParams(params);
     }
 

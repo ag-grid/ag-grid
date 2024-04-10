@@ -18,8 +18,8 @@ export class AutoGroupColService extends BeanStub {
     public createAutoGroupColumns(rowGroupColumns: Column[]): Column[] {
         const groupAutoColumns: Column[] = [];
 
-        const doingTreeData = this.gos.get('treeData');
-        let doingMultiAutoColumn = this.gos.isGroupMultiAutoColumn();
+        const doingTreeData = this.beans.gos.get('treeData');
+        let doingMultiAutoColumn = this.beans.gos.isGroupMultiAutoColumn();
 
         if (doingTreeData && doingMultiAutoColumn) {
             console.warn('AG Grid: you cannot mix groupDisplayType = "multipleColumns" with treeData, only one column can be used to display groups when doing tree data');
@@ -57,7 +57,7 @@ export class AutoGroupColService extends BeanStub {
         colDef.colId = colId;
 
         const newCol = new Column(colDef, null, colId, true);
-        this.context.createBean(newCol);
+        this.createBean(newCol);
         return newCol;
     }
 
@@ -78,13 +78,13 @@ export class AutoGroupColService extends BeanStub {
         // if one provided by user, use it, otherwise create one
         let res: ColDef = this.createBaseColDef(underlyingColumn);
 
-        const autoGroupColumnDef = this.gos.get('autoGroupColumnDef');
+        const autoGroupColumnDef = this.beans.gos.get('autoGroupColumnDef');
         mergeDeep(res, autoGroupColumnDef);
 
         res = this.columnFactory.addColumnDefaultAndTypes(res, colId);
 
         // For tree data the filter is always allowed
-        if (!this.gos.get('treeData')) {
+        if (!this.beans.gos.get('treeData')) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
             const noFieldOrValueGetter =
@@ -102,7 +102,7 @@ export class AutoGroupColService extends BeanStub {
             res.headerCheckboxSelection = false;
         }
 
-        const isSortingCoupled = this.gos.isColumnsSortingCoupledToGroup();
+        const isSortingCoupled = this.beans.gos.isColumnsSortingCoupledToGroup();
         const hasOwnData = res.valueGetter || res.field != null;
         if (isSortingCoupled && !hasOwnData) {
             // if col is coupled sorting, and has sort attribute, we want to ignore this
@@ -115,8 +115,8 @@ export class AutoGroupColService extends BeanStub {
     }
 
     private createBaseColDef(rowGroupCol?: Column): ColDef {
-        const userDef = this.gos.get('autoGroupColumnDef');
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const userDef = this.beans.gos.get('autoGroupColumnDef');
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
 
         const res: ColDef = {
             headerName: localeTextFunc('group', 'Group')

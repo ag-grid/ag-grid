@@ -635,7 +635,7 @@ export class ChartOptionsService extends BeanStub {
             chartOptions: chartModel.chartOptions
         };
 
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private static isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {

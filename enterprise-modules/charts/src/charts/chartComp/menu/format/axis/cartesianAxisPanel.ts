@@ -116,7 +116,7 @@ export class CartesianAxisPanel extends Component {
             // Conditionally hide the time format input based on the currently selected axis type
             updateTimeFormatVisibility();
             // Update the visibility whenever the axis type changes
-            this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, (e) => {
+            this.addManagedEventListener(Events.EVENT_CHART_OPTIONS_CHANGED, (e) => {
                 updateTimeFormatVisibility();
             });
         }

@@ -66,7 +66,7 @@ export class DragService extends BeanStub {
 
         let touchListener: ((touchEvent: TouchEvent) => void) | null = null;
 
-        const suppressTouch = this.gos.get('suppressTouch');
+        const suppressTouch = this.beans.gos.get('suppressTouch');
 
         if (includeTouch && !suppressTouch) {
             touchListener = (touchEvent: TouchEvent) => {
@@ -114,7 +114,7 @@ export class DragService extends BeanStub {
             // Prevents the page document from moving while we are dragging items around.
             // preventDefault needs to be called in the touchmove listener and never inside the
             // touchstart, because using touchstart causes the click event to be cancelled on touch devices.
-            { target: this.gos.getRootNode(), type: 'touchmove', listener: documentTouchMove, options: { passive: false } },
+            { target: this.beans.gos.getRootNode(), type: 'touchmove', listener: documentTouchMove, options: { passive: false } },
             { target, type: 'touchmove', listener: touchMoveEvent, options: { passive: true } },
             { target, type: 'touchend', listener: touchEndEvent, options: { passive: true} },
             { target, type: 'touchcancel', listener: touchEndEvent, options: { passive: true} }
@@ -160,7 +160,7 @@ export class DragService extends BeanStub {
         const mouseUpEvent = (event: MouseEvent) => this.onMouseUp(event, params.eElement);
         const contextEvent = (event: MouseEvent) => event.preventDefault();
 
-        const target = this.gos.getRootNode();
+        const target = this.beans.gos.getRootNode();
         const events = [
             { target, type: 'mousemove', listener: mouseMoveEvent },
             { target, type: 'mouseup', listener: mouseUpEvent },
@@ -224,7 +224,7 @@ export class DragService extends BeanStub {
                 type: Events.EVENT_DRAG_STARTED,
                 target: el
             };
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
 
             this.currentDragParams!.onDragStart(startEvent);
             // we need ONE drag action at the startEvent, so that we are guaranteed the drop target
@@ -252,7 +252,7 @@ export class DragService extends BeanStub {
     // and is removed when mouseUp happens
     private onMouseMove(mouseEvent: MouseEvent, el: Element): void {
         if (isBrowserSafari()) {
-            const eDocument = this.gos.getDocument();
+            const eDocument = this.beans.gos.getDocument();
             eDocument.getSelection()?.removeAllRanges();
         }
 
@@ -264,7 +264,7 @@ export class DragService extends BeanStub {
     }
 
     private shouldPreventMouseEvent(mouseEvent: MouseEvent): boolean {
-        const isEnableCellTextSelect = this.gos.get('enableCellTextSelection');
+        const isEnableCellTextSelect = this.beans.gos.get('enableCellTextSelection');
         const isMouseMove = mouseEvent.type === 'mousemove';
 
         return (
@@ -322,7 +322,7 @@ export class DragService extends BeanStub {
                 type: Events.EVENT_DRAG_STOPPED,
                 target: el
             };
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         }
 
         this.mouseStartEvent = null;

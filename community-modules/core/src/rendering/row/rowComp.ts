@@ -15,8 +15,6 @@ export class RowComp extends Component {
 
     private fullWidthCellRenderer: ICellRendererComp | null | undefined;
 
-    private beans: Beans;
-
     private rowCtrl: RowCtrl;
 
     private domOrder: boolean;
@@ -25,7 +23,7 @@ export class RowComp extends Component {
     constructor(ctrl: RowCtrl, beans: Beans, containerType: RowContainerType) {
         super();
 
-        this.beans = beans;
+        this.manualSetBeans(beans);
         this.rowCtrl = ctrl;
 
         const rowDiv = document.createElement('div');

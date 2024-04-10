@@ -39,11 +39,11 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
 
     @PostConstruct
     private postConstruct(): void {
-        this.hasAdvancedFilterParent = !!this.gos.get('advancedFilterParent');
+        this.hasAdvancedFilterParent = !!this.beans.gos.get('advancedFilterParent');
 
         this.ctrlsService.whenReady(() => this.setAdvancedFilterComp());
 
-        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
+        this.addManagedEventListener(Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
             ({ enabled }: AdvancedFilterEnabledChangedEvent) => this.onEnabledChanged(enabled));
 
         this.addManagedPropertyListener('advancedFilterParent', () => this.updateComps());
@@ -139,11 +139,11 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
             source,
             visible
         };
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private getBuilderDialogSize(): { width: number, height: number, minWidth: number } {
-        const minWidth = this.gos.get('advancedFilterBuilderParams')?.minWidth ?? 500;
+        const minWidth = this.beans.gos.get('advancedFilterBuilderParams')?.minWidth ?? 500;
         const popupParent = this.popupService.getPopupParent();
         const maxWidth = Math.round(_.getAbsoluteWidth(popupParent)) - 2; // assume 1 pixel border
         const maxHeight = Math.round(_.getAbsoluteHeight(popupParent) * 0.75) - 2;
@@ -162,7 +162,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
     private updateComps(): void {
         this.setAdvancedFilterComp();
         this.setHeaderCompEnabled();
-        this.eventService.dispatchEvent({
+        this.beans.eventService.dispatchEvent({
             type: Events.EVENT_HEADER_HEIGHT_CHANGED
         });
     }
@@ -171,20 +171,20 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
         this.destroyAdvancedFilterComp();
         if (!this.enabled) { return; }
 
-        const advancedFilterParent = this.gos.get('advancedFilterParent');
+        const advancedFilterParent = this.beans.gos.get('advancedFilterParent');
         this.hasAdvancedFilterParent = !!advancedFilterParent;
         if (advancedFilterParent) {
             // unmanaged as can be recreated
             const eAdvancedFilterComp = this.createBean(new AdvancedFilterComp());
             const eAdvancedFilterCompGui = eAdvancedFilterComp.getGui();
             
-            const { allThemes } = this.environment.getTheme();
+            const { allThemes } = this.beans.environment.getTheme();
             
             if (allThemes.length) {
                 eAdvancedFilterCompGui.classList.add(...allThemes);
             }
             
-            eAdvancedFilterCompGui.classList.add(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
+            eAdvancedFilterCompGui.classList.add(this.beans.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
 
             advancedFilterParent.appendChild(eAdvancedFilterCompGui);
 

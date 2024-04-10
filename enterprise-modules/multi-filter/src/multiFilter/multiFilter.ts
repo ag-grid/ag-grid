@@ -375,8 +375,8 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                 });
             }
 
-            const eDocument = this.gos.getDocument();
-            const activeEl =this.gos.getActiveDomElement();
+            const eDocument = this.beans.gos.getDocument();
+            const activeEl =this.beans.gos.getActiveDomElement();
 
             // if we haven't focused the first item in the filter, we might run into two scenarios:
             // 1 - we are loading the filter for the first time and the component isn't ready,
@@ -443,7 +443,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                 doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, filterInstance),
         };
 
-        const compDetails = this.userComponentFactory.getFilterDetails(filterDef, filterParams, 'agTextColumnFilter');
+        const compDetails = this.beans.userComponentFactory.getFilterDetails(filterDef, filterParams, 'agTextColumnFilter');
         if (!compDetails) { return null; }
         const filterPromise = compDetails.newAgStackInstance();
 

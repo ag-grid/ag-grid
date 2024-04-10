@@ -70,7 +70,7 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
     }
 
     public afterGuiAttached(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const eInput = this.eInput;
 
         eInput.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));

@@ -45,8 +45,8 @@ export class GridHeaderCtrl extends BeanStub {
         ));
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
 
         this.onPivotModeChanged();
         this.setupHeaderHeight();
@@ -68,10 +68,10 @@ export class GridHeaderCtrl extends BeanStub {
         this.addManagedPropertyListener('pivotGroupHeaderHeight', listener);
         this.addManagedPropertyListener('floatingFiltersHeight', listener);
 
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, listener);
+        this.addManagedEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
+        this.addManagedEventListener(Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, listener);
+        this.addManagedEventListener(Events.EVENT_GRID_STYLES_CHANGED, listener);
+        this.addManagedEventListener(Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, listener);
     }
 
     public getHeaderHeight(): number {
@@ -111,7 +111,7 @@ export class GridHeaderCtrl extends BeanStub {
         const px = `${totalHeaderHeight + 1}px`;
         this.comp.setHeightAndMinHeight(px);
 
-        this.eventService.dispatchEvent({
+        this.beans.eventService.dispatchEvent({
             type: Events.EVENT_HEADER_HEIGHT_CHANGED
         });
     }
@@ -131,7 +131,7 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {
-        const isRtl = this.gos.get('enableRtl');
+        const isRtl = this.beans.gos.get('enableRtl');
         const direction = e.shiftKey !== isRtl
             ? HeaderNavigationDirection.LEFT
             : HeaderNavigationDirection.RIGHT;
@@ -173,7 +173,7 @@ export class GridHeaderCtrl extends BeanStub {
     protected onFocusOut(e: FocusEvent): void {
         const { relatedTarget } = e;
 
-        if (!relatedTarget && this.eGui.contains(this.gos.getActiveDomElement())) { return; }
+        if (!relatedTarget && this.eGui.contains(this.beans.gos.getActiveDomElement())) { return; }
 
         if (!this.eGui.contains(relatedTarget as HTMLElement)) {
             this.focusService.clearFocusedHeader();

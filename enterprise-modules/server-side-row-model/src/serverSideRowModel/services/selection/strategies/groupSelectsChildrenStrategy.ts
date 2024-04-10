@@ -20,14 +20,14 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     @PostConstruct
     private init(): void {
         // if model has updated, a store may now be fully loaded to clean up indeterminate states
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, () => this.removeRedundantState());
+        this.addManagedEventListener(Events.EVENT_MODEL_UPDATED, () => this.removeRedundantState());
 
         // when the grouping changes, the state no longer makes sense, so reset the state.
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.selectionService.reset('rowGroupChanged'));
+        this.addManagedEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.selectionService.reset('rowGroupChanged'));
     }
 
     public getSelectedState() {
-        const treeData = this.gos.get('treeData');
+        const treeData = this.beans.gos.get('treeData');
         const recursivelySerializeState = (state: SelectionState, level: number, nodeId?: string) => {
             const normalisedState: IServerSideGroupSelectionState = {
                 nodeId,

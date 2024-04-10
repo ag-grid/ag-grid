@@ -13,7 +13,8 @@ import {
     VirtualList,
     VirtualListModel,
     PreDestroy,
-    ColumnToolPanelState
+    ColumnToolPanelState,
+    EventsType
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanelItemDragFeature } from './primaryColsListPanelItemDragFeature';
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
@@ -88,12 +89,12 @@ export class PrimaryColsListPanel extends Component {
         this.eventType = eventType;
 
         if (!this.params.suppressSyncLayoutWithGrid) {
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
+            this.addManagedEventListener(Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
         }
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnsChanged.bind(this));
+        this.addManagedEventListener(Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnsChanged.bind(this));
 
-        const eventsImpactingCheckedState: string[] = [
+        const eventsImpactingCheckedState: EventsType[] = [
             Events.EVENT_COLUMN_PIVOT_CHANGED,
             Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
             Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
@@ -104,7 +105,7 @@ export class PrimaryColsListPanel extends Component {
 
         eventsImpactingCheckedState.forEach(event => {
             // update header select all checkbox with current selection state
-            this.addManagedListener(this.eventService, event, this.fireSelectionChangedEvent.bind(this));
+            this.addManagedEventListener(event, this.fireSelectionChangedEvent.bind(this));
         });
 
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
@@ -323,7 +324,7 @@ export class PrimaryColsListPanel extends Component {
     }
 
     private refreshAriaLabel(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const columnListName = translate('ariaColumnPanelList', 'Column List');
         const localeColumns = translate('columns', 'Columns');
         const items = this.displayedColsList.length;

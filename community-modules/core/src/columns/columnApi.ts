@@ -6,16 +6,18 @@ import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { ColumnEventType } from "../events";
 import { GridApi } from "../gridApi";
 import { IHeaderColumn } from "../interfaces/iHeaderColumn";
+import { BeansProvider } from "../rendering/beans";
 import { warnOnce } from "../utils/function";
 import { ApplyColumnStateParams, ColumnState } from "./columnModel";
 
 /** @deprecated Use methods via the grid api instead. */
 @Bean('columnApi')
-export class ColumnApi {
+export class ColumnApi extends BeansProvider {
 
     @Autowired('gridApi') private api: GridApi;
 
     constructor(gridAp: GridApi) {
+        super();
         this.api = gridAp;
      }
 

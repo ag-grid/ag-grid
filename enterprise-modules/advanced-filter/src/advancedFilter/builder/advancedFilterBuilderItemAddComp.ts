@@ -16,7 +16,7 @@ import { getAdvancedFilterBuilderAddButtonParams } from "./advancedFilterBuilder
 import { AdvancedFilterBuilderAddEvent, AdvancedFilterBuilderEvents, AdvancedFilterBuilderItem } from "./iAdvancedFilterBuilder";
 
 export class AdvancedFilterBuilderItemAddComp extends Component {
-    @Autowired('beans') private readonly beans: Beans;
+    
     @Autowired('advancedFilterExpressionService') private readonly advancedFilterExpressionService: AdvancedFilterExpressionService;
     @RefSelector('eItem') private readonly eItem: HTMLElement;
 
@@ -38,7 +38,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
 
         const addButtonParams = getAdvancedFilterBuilderAddButtonParams(
             key => this.advancedFilterExpressionService.translate(key),
-            this.gos.get('advancedFilterBuilderParams')?.addSelectWidth
+            this.beans.gos.get('advancedFilterBuilderParams')?.addSelectWidth
         );
         const eAddButton = this.createManagedBean(new AddDropdownComp(addButtonParams));
         this.addManagedListener(eAddButton, Events.EVENT_FIELD_PICKER_VALUE_SELECTED, ({ value }: FieldPickerValueSelectedEvent) => {

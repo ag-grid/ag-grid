@@ -108,7 +108,7 @@ export class AgGroupComponent extends Component {
             this.addItems(initialItems);
         }
 
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
         this.cbGroupEnabled.setLabel(localeTextFunc('enabled', 'Enabled'));
 
         if (this.enabled) {
@@ -367,8 +367,8 @@ class DefaultTitleBar extends Component {
     }
 
     private setupExpandContract(): void {
-        this.eGroupClosedIcon.appendChild(createIcon('columnSelectClosed', this.gos, null));
-        this.eGroupOpenedIcon.appendChild(createIcon('columnSelectOpen', this.gos, null));
+        this.eGroupClosedIcon.appendChild(createIcon('columnSelectClosed', this.beans.gos, null));
+        this.eGroupOpenedIcon.appendChild(createIcon('columnSelectOpen', this.beans.gos, null));
         this.addManagedListener(this.getGui(), 'click', () => this.dispatchExpandChanged());
         this.addManagedListener(this.getGui(), 'keydown', (e: KeyboardEvent) => {
             switch (e.key) {

@@ -18,21 +18,21 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
 
     @PostConstruct
     private passBeansUp(): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.beans.localeService.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to set row groups');
         const title = localeTextFunc('groups', 'Row Groups');
 
         super.init({
-            icon: _.createIconNoSpan('rowGroupPanel', this.gos, null)!,
+            icon: _.createIconNoSpan('rowGroupPanel', this.beans.gos, null)!,
             emptyMessage: emptyMessage,
             title
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
+        this.addManagedEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
     }
 
     protected getAriaLabel(): string {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const label = translate('ariaRowGroupDropZonePanelLabel', 'Row Groups');
 
         return label;
@@ -47,19 +47,19 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
 
     protected isItemDroppable(column: Column, draggingEvent: DraggingEvent): boolean {
         // we never allow grouping of secondary columns
-        if (this.gos.get('functionsReadOnly') || !column.isPrimary()) { return false; }
+        if (this.beans.gos.get('functionsReadOnly') || !column.isPrimary()) { return false; }
 
         return column.isAllowRowGroup() && (!column.isRowGroupActive() || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: Column[]) {
-        if (this.gos.get('functionsPassive')) {
+        if (this.beans.gos.get('functionsPassive')) {
             const event: WithoutGridCommon<ColumnRowGroupChangeRequestEvent> = {
                 type: Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
                 columns: columns
             };
 
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         } else {
             this.columnModel.setRowGroupColumns(columns, "toolPanelUi");
         }

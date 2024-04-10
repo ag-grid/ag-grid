@@ -274,7 +274,7 @@ export class InfiniteCache extends BeanStub {
             const event: WithoutGridCommon<StoreUpdatedEvent> = {
                 type: Events.EVENT_STORE_UPDATED
             };
-            this.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent(event);
         }
     }
 
