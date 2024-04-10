@@ -113,7 +113,7 @@ do
   fi
 done
 
-frameworks=("ag-grid-react" "ag-grid-vue" "ag-grid-vue3" "ag-grid-angular")
+frameworks=("ag-grid-react" "ag-grid-vue3" "ag-grid-angular")
 for framework in "${frameworks[@]}"
 do
   if [[ ! -d "packages/$framework/dist" ]]
@@ -148,5 +148,18 @@ count=`ls -l packages/ag-grid-charts-enterprise/dist/*.js | wc -l | tr -d ' '`
 if [[ $count -ne 4 ]]
 then
   echo "!!!!! packages/ag-grid-community/dist should have 4 umd files"
+  exit 1
+fi
+
+count=`ls -l packages/ag-grid-vue/dist/*.js | wc -l | tr -d ' '`
+if [[ $count -ne 3 ]]
+then
+  echo "!!!!! packages/ag-grid-vue/dist should have 3 umd files"
+  exit 1
+fi
+count=`tree  packages/ag-grid-vue/lib | wc -l`
+if [[ $count -ne 19 ]]
+then
+  echo "!!!!! packages/ag-grid-vue/lib should have 19 files"
   exit 1
 fi
