@@ -111,33 +111,33 @@ const getPageSize = (pageSize?: string): number => {
 };
 
 const addColumns = (columns: ExcelColumn[]) => {
-    return (children: XmlElement[]) => {
+    return (params: ComposedWorksheetParams) => {
         if (columns.length) {
-            children.push({
+            params.children.push({
                 name: 'cols',
                 children: columns.map(column => columnFactory.getTemplate(column))
             });
         }
-        return children;
+        return params;
     };
 };
 
 const addSheetData = (rows: ExcelRow[], sheetNumber: number) => {
-    return (children: XmlElement[]) => {
+    return (params: ComposedWorksheetParams) => {
         if (rows.length) {
-            children.push({
+            params.children.push({
                 name: 'sheetData',
                 children: rows.map((row, idx) => rowFactory.getTemplate(row, idx, sheetNumber))
             });
         }
-        return children;
+        return params;
     };
 };
 
 const addMergeCells = (mergeCells: string[]) => {
-    return (children: XmlElement[]) => {
+    return (params: ComposedWorksheetParams) => {
         if (mergeCells.length) {
-            children.push({
+            params.children.push({
                 name: 'mergeCells',
                 properties: {
                     rawMap: {
@@ -147,29 +147,29 @@ const addMergeCells = (mergeCells: string[]) => {
                 children: mergeCells.map(mergedCell => mergeCellFactory.getTemplate(mergedCell))
             });
         }
-        return children;
+        return params;
     };
 };
 
 const addPageMargins = (margins: ExcelSheetMargin) => {
-    return (children: XmlElement[]) => {
+    return (params: ComposedWorksheetParams) => {
         const { top = 0.75, right = 0.7, bottom = 0.75, left = 0.7, header = 0.3, footer = 0.3 } = margins;
 
-        children.push({
+        params.children.push({
             name: 'pageMargins',
             properties: {
                 rawMap: { bottom, footer, header, left, right, top }
             }
         });
 
-        return children;
+        return params;
     };
 };
 
 const addPageSetup = (pageSetup?: ExcelSheetPageSetup) => {
-    return (children: XmlElement[]) => {
+    return (params: ComposedWorksheetParams) => {
         if (pageSetup) {
-            children.push({
+            params.children.push({
                 name: 'pageSetup',
                 properties: {
                     rawMap: {
@@ -181,7 +181,7 @@ const addPageSetup = (pageSetup?: ExcelSheetPageSetup) => {
                 }
             });
         }
-        return children;
+        return params;
     };
 };
 
@@ -286,22 +286,22 @@ const addHeaderFooter = (
     headerFooterConfig?: ExcelHeaderFooterConfig,
     watermarkImageConfig?: ExcelWatermarkImage,
 ) => {
-    return (children: XmlElement[]) => {
-        if (!headerFooterConfig && !watermarkImageConfig) { return children; }
+    return (params: ComposedWorksheetParams) => {
+        if (!headerFooterConfig && !watermarkImageConfig) { return params; }
         if (!headerFooterConfig) {
             // Case where we add header/footer only markup for the purpose of adding a watermark image.
-            children.push({
+            params.children.push({
                 name: 'headerFooter',
                 children: buildHeaderFooter({}, true),
             });
 
-            return children;
+            return params;
         }
 
         const differentFirst = headerFooterConfig.first != null ? 1 : 0;
         const differentOddEven = headerFooterConfig.even != null ? 1 : 0;
 
-        children.push({
+        params.children.push({
             name: 'headerFooter',
             properties: {
                 rawMap: {
@@ -311,80 +311,72 @@ const addHeaderFooter = (
             },
             children: buildHeaderFooter(headerFooterConfig, watermarkImageConfig !== undefined),
         });
-        return children;
+        return params;
     };
 };
 
-const addWatermarkParts = (watermarkConfig?: ExcelWatermarkImage) => {
-    if (!watermarkConfig) {
-        return (children: XmlElement[]) => children;
-    }
-
-    const watermarkRelId = ExcelXlsxFactory.getWatermarkRelId();
-    const watermarkImageType = watermarkConfig.imageType;
-
-    return (children: XmlElement[]) => {
-        children.push({
-            name: 'legacyDrawingHF',
-            properties: {
-                rawMap: {
-                    'r:id': watermarkRelId
-                }
-            }
-        });
-
-        return children;
-    };
-}
-
-const addExcelTableParts = (excelTable?: ExcelDataTable, index?: number) => {
-    if (!excelTable) {
-        return (children: XmlElement[]) => children;
-    }
-
-    const rId = ExcelXlsxFactory.getTableRelIdFromIndex(index || 0);
-    return (children: XmlElement[]) => {
-        children.push({
-            name: 'tableParts',
-            properties: {
-                rawMap: {
-                    count: '1',
-                }
-            },
-            children: [{
-                name: 'tablePart',
+const addWatermarkRel = (watermarkConfig?: ExcelWatermarkImage) => {
+    return (params: ComposedWorksheetParams) => {
+        if (watermarkConfig) {
+            params.children.push({
+                name: 'legacyDrawingHF',
                 properties: {
                     rawMap: {
-                        'r:id': rId,
-                    }
-                }
-            }],
-        });
-
-        return children;
-    };
-};
-
-const addDrawingRel = (currentSheet: number) => {
-    return (children: XmlElement[]) => {
-        if (ExcelXlsxFactory.worksheetImages.get(currentSheet)) {
-            children.push({
-                name: 'drawing',
-                properties: {
-                    rawMap: {
-                        'r:id': 'rId1'
+                        'r:id': `rId${++params.rIdCounter}`
                     }
                 }
             });
         }
 
-        return children;
+        return params;
+    };
+}
+
+const addExcelTableRel = (excelTable?: ExcelDataTable) => {
+    return (params: ComposedWorksheetParams) => {
+        if (excelTable) {
+            params.children.push({
+                name: 'tableParts',
+                properties: {
+                    rawMap: {
+                        count: '1',
+                    }
+                },
+                children: [{
+                    name: 'tablePart',
+                    properties: {
+                        rawMap: {
+                            'r:id': `rId${++params.rIdCounter}`
+                        }
+                    }
+                }],
+            });
+        }
+
+        return params;
+    };
+};
+
+const addDrawingRel = (currentSheet: number) => {
+    return (params: ComposedWorksheetParams) => {
+        if (ExcelXlsxFactory.worksheetImages.get(currentSheet)) {
+            params.children.push({
+                name: 'drawing',
+                properties: {
+                    rawMap: {
+                        'r:id': `rId${++params.rIdCounter}`
+                    }
+                }
+            });
+        }
+
+        return params;
     };
 };
 
 const addSheetPr = () => {
-    return (children: XmlElement[]) => {
-        children.push({
+    return (params: { children: XmlElement[] }) => {
+        params.children.push({
             name: 'sheetPr',
             children: [{
                 name: 'outlinePr',
@@ -395,12 +387,12 @@ const addSheetPr = () => {
                 }
             }]
         });
-        return children;
+        return params;
     }
 }
 
 const addSheetFormatPr = (rows: ExcelRow[]) => {
-    return (children: XmlElement[]) => {
+    return (params: ComposedWorksheetParams) => {
         const maxOutline = rows.reduce((prev: number, row: ExcelRow) => {
             if (row.outlineLevel && row.outlineLevel > prev) {
                 return row.outlineLevel;
@@ -408,7 +400,7 @@ const addSheetFormatPr = (rows: ExcelRow[]) => {
             return prev;
         }, 0);
 
-        children.push({
+        params.children.push({
             name: 'sheetFormatPr',
             properties: {
                 rawMap: {
@@ -418,8 +410,13 @@ const addSheetFormatPr = (rows: ExcelRow[]) => {
                 }
             }
         });
-        return children;
+        return params;
     }
+}
+
+type ComposedWorksheetParams = {
+    children: XmlElement[];
+    rIdCounter: number;
 }
 
 const worksheetFactory: ExcelOOXMLTemplate = {
@@ -438,7 +435,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
         const watermarkImageConfig = ExcelXlsxFactory.worksheetWatermarkImage;
         const worksheetExcelTables = ExcelXlsxFactory.worksheetDataTables.get(currentSheet);
 
-        const createWorksheetChildren = _.compose(
+        const createWorksheetChildren = _.compose<ComposedWorksheetParams>(
             addSheetPr(),
             addSheetFormatPr(rows),
             addColumns(columns),
@@ -448,11 +445,11 @@ const worksheetFactory: ExcelOOXMLTemplate = {
             addPageSetup(pageSetup),
             addHeaderFooter(headerFooterConfig, watermarkImageConfig),
             addDrawingRel(currentSheet),
-            addExcelTableParts(worksheetExcelTables, currentSheet),
-            addWatermarkParts(watermarkImageConfig),
+            addExcelTableRel(worksheetExcelTables),
+            addWatermarkRel(watermarkImageConfig),
         );
 
-        const children = createWorksheetChildren([]);
+        const children = createWorksheetChildren({ children: [], rIdCounter: 0 }).children;
 
         return {
             name: "worksheet",

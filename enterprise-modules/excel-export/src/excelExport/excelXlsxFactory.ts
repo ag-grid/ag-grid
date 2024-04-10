@@ -96,14 +96,6 @@ export class ExcelXlsxFactory {
         return `table${idx + 1}`;
     }
 
-    public static getTableRelIdFromIndex(idx: number) {
-        return `tableRelId${idx + 1}`;
-    }
-
-    public static getWatermarkRelId() {
-        return 'watermarkRelId1'; // Only 1 single watermark per workbook is supported
-    }
-
     public static getSanitizedTableName(name: string) {
         return name.replace(/^[^a-zA-Z_]+/, '_')
                    .replace(/\s/g, '_')
@@ -378,28 +370,6 @@ export class ExcelXlsxFactory {
         return createXmlPart(relationshipsFactory.getTemplate(XMLArr));
     }
 
-    public static createWorksheetDrawingRel(currentRelationIndex: number) {
-        const rs = relationshipsFactory.getTemplate([{
-            Id: 'rId1',
-            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing',
-            Target: `../drawings/drawing${currentRelationIndex + 1}.xml`
-        }]);
-
-        return createXmlPart(rs);
-    }
-
-    public static createWorksheetTableRel(currentRelationIndex: number) {
-        const tableId = this.getTableNameFromIndex(currentRelationIndex);
-        const tableRelId = this.getTableRelIdFromIndex(currentRelationIndex);
-        const rs = relationshipsFactory.getTemplate([{
-            Id: tableRelId,
-            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
-            Target: `../tables/${tableId}.xml`
-        }]);
-
-        return createXmlPart(rs);
-    }
-
     public static createRelationships({
         drawingIndex,
         tableIndex,
@@ -416,25 +386,23 @@ export class ExcelXlsxFactory {
         const config = [];
         if (typeof drawingIndex === 'number') {
             config.push({
-                Id: 'rId1',
+                Id: `rId${config.length + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing',
                 Target: `../drawings/drawing${drawingIndex + 1}.xml`
             });
         }
 
         if (typeof tableIndex === 'number') {
-            const tableId = this.getTableNameFromIndex(tableIndex);
-            const tableRelId = this.getTableRelIdFromIndex(tableIndex);
             config.push({
-                Id: tableRelId,
+                Id: `rId${config.length + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
-                Target: `../tables/${tableId}.xml`
+                Target: `../tables/${this.getTableNameFromIndex(tableIndex)}.xml`
             });
         }
 
         if (watermarkTarget) {
             config.push({
-                Id: this.getWatermarkRelId(),
+                Id: `rId${config.length + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing',
                 Target: `../drawings/${watermarkTarget}.xml`
             });
