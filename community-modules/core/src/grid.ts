@@ -15,7 +15,6 @@ import { ExpressionService } from "./valueService/expressionService";
 import { TemplateService } from "./templateService";
 import { PopupService } from "./widgets/popupService";
 import { Logger, LoggerFactory } from "./logger";
-import { ColumnUtils } from "./columns/columnUtils";
 import { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 import { HorizontalResizeService } from "./headerRendering/common/horizontalResizeService";
 import { ComponentMeta, Context, ContextParams } from "./context/context";
@@ -432,7 +431,7 @@ export class GridCoreCreator {
             PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
             AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,
-            ColumnUtils, AutoWidthCalculator, StandardMenuFactory, DragAndDropService, ColumnApi,
+            AutoWidthCalculator, StandardMenuFactory, DragAndDropService, ColumnApi,
             FocusService, MouseEventService, Environment, CellNavigationService, ValueFormatterService,
             StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,

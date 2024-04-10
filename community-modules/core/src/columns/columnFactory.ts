@@ -1,5 +1,4 @@
 import { Logger, LoggerFactory } from '../logger';
-import { ColumnUtils } from './columnUtils';
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { ColumnKeyCreator } from "./columnKeyCreator";
 import { IProvidedColumn } from "../interfaces/iProvidedColumn";
@@ -13,12 +12,12 @@ import { attrToNumber, attrToBoolean } from '../utils/generic';
 import { DataTypeService } from './dataTypeService';
 import { warnOnce } from '../utils/function';
 import { ColumnEventType } from '../events';
+import { depthFirstOriginalTreeSearch } from './columnUtils';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')
 export class ColumnFactory extends BeanStub {
 
-    @Autowired('columnUtils') private columnUtils: ColumnUtils;
     @Autowired('dataTypeService') private dataTypeService: DataTypeService;
 
     private logger: Logger;
@@ -54,7 +53,7 @@ export class ColumnFactory extends BeanStub {
             child.setOriginalParent(parent);
         };
 
-        this.columnUtils.depthFirstOriginalTreeSearch(null, columnTree, deptFirstCallback);
+        depthFirstOriginalTreeSearch(null, columnTree, deptFirstCallback);
 
         return {
             columnTree,
@@ -74,7 +73,7 @@ export class ColumnFactory extends BeanStub {
         const existingColKeys: string[] = [];
 
         if (existingTree) {
-            this.columnUtils.depthFirstOriginalTreeSearch(null, existingTree, (item: IProvidedColumn) => {
+            depthFirstOriginalTreeSearch(null, existingTree, (item: IProvidedColumn) => {
                 if (item instanceof ProvidedColumnGroup) {
                     const group = item;
                     existingGroups.push(group);
