@@ -145,21 +145,17 @@ export abstract class ChartProxy {
         return lookupCustomChartTheme(this.chartProxyParams, themeName);
     }
 
-    protected transformData(data: any[], categoryKey: string, categoryAxis?: boolean): any[] {
-        if (categoryAxis) {
-            // replace the values for the selected category with a complex object to allow for duplicated categories
-            return data.map((d, index) => {
-                const value = d[categoryKey];
-                const valueString = value && value.toString ? value.toString() : '';
-                const datum = { ...d };
+    protected transformCategoryData(data: any[], categoryKey: string): any[] {
+        // replace the values for the selected category with a complex object to allow for duplicated categories
+        return data.map((d, index) => {
+            const value = d[categoryKey];
+            const valueString = value && value.toString ? value.toString() : '';
+            const datum = { ...d };
 
-                datum[categoryKey] = { id: index, value, toString: () => valueString };
+            datum[categoryKey] = { id: index, value, toString: () => valueString };
 
-                return datum;
-            });
-        }
-
-        return data;
+            return datum;
+        });
     }
 
     protected getCommonChartOptions(updatedOverrides?: AgChartThemeOverrides) {
