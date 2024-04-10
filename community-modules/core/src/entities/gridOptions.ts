@@ -91,6 +91,8 @@ import {
     ColumnHeaderContextMenuEvent,
     PivotMaxColumnsExceededEvent,
     ColumnMenuVisibleChangedEvent,
+    FillStartEvent,
+    FillEndEvent,
 } from "../events";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import {
@@ -1279,6 +1281,12 @@ export interface GridOptions<TData = any> {
      * @deprecated v31.1
      */
     suppressServerSideInfiniteScroll?: boolean;
+
+    /**
+     * When `true`, the Server-side Row Model will not use a full width loading renderer, instead using the colDef `loadingCellRenderer` if present.
+     */
+    suppressServerSideFullWidthLoadingRow?: boolean;
+
     /**
      * How many rows for each block in the store, i.e. how many rows returned from the server at a time.
      * @default 100
@@ -2012,6 +2020,16 @@ export interface GridOptions<TData = any> {
      * Range delete operation (cell clear) has ended.
      */
     onRangeDeleteEnd?(event: RangeDeleteEndEvent<TData>): void;
+
+    /**
+     * Fill operation has started.
+     */
+    onFillStart?(event: FillStartEvent<TData>): void;
+
+    /**
+     * Fill operation has ended.
+     */
+    onFillEnd?(event: FillEndEvent<TData>): void;
 
     // *** Filtering *** //
     /**

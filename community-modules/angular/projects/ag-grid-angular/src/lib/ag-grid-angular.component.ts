@@ -78,7 +78,9 @@ import {
     ExcelExportParams,
     ExcelStyle,
     ExpandCollapseAllEvent,
+    FillEndEvent,
     FillOperationParams,
+    FillStartEvent,
     FilterChangedEvent,
     FilterModifiedEvent,
     FilterOpenedEvent,
@@ -1188,6 +1190,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @deprecated v31.1
          */
     @Input() public suppressServerSideInfiniteScroll: boolean | undefined = undefined;
+    /** When `true`, the Server-side Row Model will not use a full width loading renderer, instead using the colDef `loadingCellRenderer` if present.
+         */
+    @Input() public suppressServerSideFullWidthLoadingRow: boolean | undefined = undefined;
     /** How many rows for each block in the store, i.e. how many rows returned from the server at a time.
          * @default 100
          */
@@ -1694,6 +1699,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Range delete operation (cell clear) has ended.
          */
     @Output() public rangeDeleteEnd: EventEmitter<RangeDeleteEndEvent<TData>> = new EventEmitter<RangeDeleteEndEvent<TData>>();
+    /** Fill operation has started.
+         */
+    @Output() public fillStart: EventEmitter<FillStartEvent<TData>> = new EventEmitter<FillStartEvent<TData>>();
+    /** Fill operation has ended.
+         */
+    @Output() public fillEnd: EventEmitter<FillEndEvent<TData>> = new EventEmitter<FillEndEvent<TData>>();
     /** Filter has been opened.
          */
     @Output() public filterOpened: EventEmitter<FilterOpenedEvent<TData>> = new EventEmitter<FilterOpenedEvent<TData>>();
@@ -1999,5 +2010,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_treeData: boolean | null | '';
     static ngAcceptInputType_suppressGroupMaintainValueType: boolean | null | '';
     static ngAcceptInputType_applyQuickFilterBeforePivotOrAgg: boolean | null | '';
+    static ngAcceptInputType_suppressServerSideFullWidthLoadingRow: boolean | null | '';
     // @END@
 }

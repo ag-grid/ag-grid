@@ -53,9 +53,9 @@ export class RowNodeEventThrottle extends BeanStub {
             this.events = [];
         };
 
-        if(forceSync) {
+        if (forceSync) {
             func();
-        }else{
+        } else {
             if (this.dispatchExpandedDebounced == null) {
                 this.dispatchExpandedDebounced = this.animationFrameService.debounce(func);
             }  

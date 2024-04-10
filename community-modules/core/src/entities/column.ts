@@ -335,7 +335,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
 
     /** Add an event listener to the column. */
     public addEventListener(eventType: ColumnEventName, userListener: Function): void {
-        if(this.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
+        if (this.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
             // Only construct if we need it, as it's an overhead for column construction
             this.eventService.setFrameworkOverrides(this.frameworkOverrides);
             this.frameworkEventListenerService = new FrameworkEventListenerService(this.frameworkOverrides);

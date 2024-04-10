@@ -34,8 +34,6 @@ export class ComponentUtil {
         Events.EVENT_STORE_UPDATED,
         Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
         Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
-        Events.EVENT_FILL_START,
-        Events.EVENT_FILL_END,
         Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START,
         Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END,
         Events.EVENT_FULL_WIDTH_ROW_FOCUSED,

@@ -1382,5 +1382,9 @@
   "applyQuickFilterBeforePivotOrAgg": {
     "typeName": "boolean",
     "typesToInclude": []
+  },
+  "suppressServerSideFullWidthLoadingRow": {
+    "typeName": "boolean",
+    "typesToInclude": []
   }
 }

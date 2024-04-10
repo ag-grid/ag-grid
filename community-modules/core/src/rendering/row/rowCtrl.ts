@@ -442,7 +442,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private setRowType(): void {
-        const isStub = this.rowNode.stub;
+        const isStub = this.rowNode.stub && !this.gos.get('suppressServerSideFullWidthLoadingRow');
         const isFullWidthCell = this.rowNode.isFullWidthCell();
         const isDetailCell = this.gos.get('masterDetail') && this.rowNode.detail;
         const pivotMode = this.beans.columnModel.isPivotMode();
@@ -876,6 +876,13 @@ export class RowCtrl extends BeanStub {
         if ((this.isFullWidth() && isFullWidthContainerFocused) || !nextEl) {
             this.beans.navigationService.onTabKeyDown(this, keyboardEvent);
         }
+    }
+
+    public getFullWidthElement(): HTMLElement | null {
+        if (this.fullWidthGui) {
+            return this.fullWidthGui.element;
+        }
+        return null;
     }
 
     public onFullWidthRowFocused(event?: CellFocusedEvent) {

@@ -266,8 +266,8 @@ function appendTextAfterLastImport(filePath, textToAppend) {
 
   rl.on("line", line => {
     lineNumber++
-    if(line.includes("from")){
-        lastImportLine = lineNumber        
+    if (line.includes("from")) {
+        lastImportLine = lineNumber;
     }
     lines.push(line)
   })

@@ -12,11 +12,8 @@ import {
     UndoStartedEvent,
 } from '../events';
 import { FocusService } from "../focusService";
-import { IRowModel } from "../interfaces/iRowModel";
-import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { CellValueChange, RangeUndoRedoAction, LastFocusedCell, UndoRedoAction, UndoRedoStack } from "./undoRedoStack";
 import { RowPosition, RowPositionUtils } from "../entities/rowPositionUtils";
-import { RowNode } from "../entities/rowNode";
 import { CellRange, CellRangeParams, IRangeService } from "../interfaces/IRangeService";
 import { BeanStub } from "../context/beanStub";
 import { CellPosition, CellPositionUtils } from "../entities/cellPositionUtils";
@@ -31,8 +28,6 @@ export class UndoRedoService extends BeanStub {
 
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('cellPositionUtils') private cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
     @Autowired('columnModel') private columnModel: ColumnModel;
@@ -190,7 +185,7 @@ export class UndoRedoService extends BeanStub {
         action.cellValueChanges.forEach(cellValueChange => {
             const { rowIndex, rowPinned, columnId } = cellValueChange;
             const rowPosition: RowPosition = { rowIndex, rowPinned };
-            const currentRow = this.getRowNode(rowPosition);
+            const currentRow = this.rowPositionUtils.getRowNode(rowPosition);
 
             // checks if the row has been filtered out
             if (!currentRow!.displayed) { return; }
@@ -236,7 +231,7 @@ export class UndoRedoService extends BeanStub {
         const cellValueChange = cellValueChanges[0];
         const { rowIndex, rowPinned } = cellValueChange;
         const rowPosition: RowPosition = { rowIndex, rowPinned };
-        const row = this.getRowNode(rowPosition);
+        const row = this.rowPositionUtils.getRowNode(rowPosition);
 
         const lastFocusedCell: LastFocusedCell = {
             rowPinned: cellValueChange.rowPinned,
@@ -342,16 +337,5 @@ export class UndoRedoService extends BeanStub {
 
         this.cellValueChanges = [];
         this.redoStack.clear();
-    }
-
-    private getRowNode(gridRow: RowPosition): RowNode | undefined {
-        switch (gridRow.rowPinned) {
-            case 'top':
-                return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
-            case 'bottom':
-                return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
-            default:
-                return this.rowModel.getRow(gridRow.rowIndex);
-        }
     }
 }

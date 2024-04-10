@@ -33,14 +33,14 @@ const gridOptions: GridOptions = {
     },
     rowData: getDataSet(),
     onGridPreDestroyed: (params: GridPreDestroyedEvent<TAthlete>) => {
-        const allColumns = params.api?.getColumns();
+        const allColumns = params.api.getColumns();
         if (!allColumns) {
             return;
         }
 
         const currentColumnWidths = allColumns.map(column => ({
-            field: column?.getColDef().field || '-',
-            width: column?.getActualWidth(),
+            field: column.getColDef().field || '-',
+            width: column.getActualWidth(),
         }));
 
         displayColumnsWidth(currentColumnWidths);
@@ -51,8 +51,8 @@ const gridOptions: GridOptions = {
 };
 
 const displayColumnsWidth = (values: ColumnWidth[]) => {
-    const parentContainer = document.querySelector<HTMLElement>('#gridPreDestroyedState');
-    const valuesContainer = parentContainer?.querySelector<HTMLElement>('.values');
+    const parentContainer = document.querySelector<HTMLElement>('#gridPreDestroyedState')!;
+    const valuesContainer = parentContainer.querySelector<HTMLElement>('.values');
     if (!parentContainer || !valuesContainer) {
         return;
     }
@@ -85,6 +85,7 @@ function destroyGrid() {
     }
 
     gridApi.destroy();
+    gridApi = undefined;
 }
 
 function reloadGrid() {
@@ -97,8 +98,8 @@ function reloadGrid() {
                 ...colDef,
             };
 
-            if (colDef.field) {
-                const restoredWidth = columnWidths?.get(colDef.field);
+            if (colDef.field && columnWidths) {
+                const restoredWidth = columnWidths.get(colDef.field);
                 if (restoredWidth) {
                     result.width = restoredWidth;
                 }

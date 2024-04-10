@@ -83,7 +83,7 @@ function getModuleImports(
 
     if (bindings.moduleRegistration) {
         bindings.imports.forEach((importStatement) => {
-            if(importStatement.imports.some(m => m.includes('Module'))){
+            if (importStatement.imports.some(m => m.includes('Module'))) {
                 imports.push(`import { ${importStatement.imports.join(', ')} } from ${importStatement.module};`)
             }
         })

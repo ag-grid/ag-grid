@@ -770,4 +770,4 @@ export interface FieldPickerValueSelectedEvent<TData = any, TContext = any> exte
     fromEnterKey: boolean;
 }
 
-export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
+export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED, Events.EVENT_FILL_START]);

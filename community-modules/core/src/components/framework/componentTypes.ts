@@ -23,6 +23,11 @@ export const CellRendererComponent: ComponentType = {
     cellRenderer: true
 };
 
+export const LoadingCellRendererComponent: ComponentType = {
+    propertyName: 'loadingCellRenderer',
+    cellRenderer: true
+};
+
 export const CellEditorComponent: ComponentType = {
     propertyName: 'cellEditor',
     cellRenderer: false

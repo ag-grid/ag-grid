@@ -56,12 +56,12 @@ interface ColumnWidth {
 })
 
 export class AppComponent {
-    themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
+    public themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
     public isVisible = true;
     public showPreDestroyState = false;
-    private gridApi!: GridApi;
+    private gridApi: GridApi | undefined;
 
-    private gridOptions: GridOptions = {
+    public gridOptions: GridOptions = {
         onGridPreDestroyed: (params: GridPreDestroyedEvent<TAthlete>) => this.onGridPreDestroyed(params),
     };
 
@@ -80,13 +80,13 @@ export class AppComponent {
     public rowData: any[] | null = getData()
 
     onGridPreDestroyed(params: GridPreDestroyedEvent<TAthlete>) {
-        const allColumns = params.api?.getColumns();
+        const allColumns = params.api.getColumns();
         if (!allColumns) {
             return;
         }
         const currentColumnWidths = allColumns.map(column => ({
-            field: column?.getColDef().field || '-',
-            width: column?.getActualWidth(),
+            field: column.getColDef().field || '-',
+            width: column.getActualWidth(),
         }));
 
         this.columnsWidthOnPreDestroyed = currentColumnWidths;
@@ -99,12 +99,13 @@ export class AppComponent {
         const newWidths = this.gridApi.getColumns()!.map(column => {
             return { key: column.getColId(), newWidth: Math.round((150 + Math.random() * 100) * 100) / 100 };
         })
-        this.gridApi?.setColumnWidths(newWidths);
+        this.gridApi.setColumnWidths(newWidths);
     }
 
     destroyGrid() {
         this.isVisible = false;
         this.showPreDestroyState = true;
+        this.gridApi = undefined;
     }
 
     reloadGrid() {

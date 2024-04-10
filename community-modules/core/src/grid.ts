@@ -156,19 +156,7 @@ export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOption
         errorOnce('No gridOptions provided to createGrid');
         return {} as GridApi;
     }   
-    // Ensure we do not mutate the provided gridOptions
-    const globalGridOptions = GlobalGridOptions.gridOptions;
-    let mergedGridOps: GridOptions;
-    if(globalGridOptions){
-        mergedGridOps = {};
-        // mergeDeep both times to avoid mutating the globalGridOptions
-        mergeDeep(mergedGridOps, globalGridOptions, true, true);
-        mergeDeep(mergedGridOps, gridOptions, true, true);
-    }else{
-        mergedGridOps = gridOptions;
-    }
-    const shallowCopy = GridOptionsService.getCoercedGridOptions(mergedGridOps);
-    const api = new GridCoreCreator().create(eGridDiv, shallowCopy, context => {
+    const api = new GridCoreCreator().create(eGridDiv, gridOptions, context => {
         const gridComp = new GridComp(eGridDiv);
         context.createBean(gridComp);
     }, undefined, params);
@@ -251,9 +239,16 @@ let nextGridId = 1;
 // their own UI
 export class GridCoreCreator {
 
-    public create(eGridDiv: HTMLElement, gridOptions: GridOptions, createUi: (context: Context) => void, acceptChanges?: (context: Context) => void, params?: GridParams): GridApi {
+    public create(eGridDiv: HTMLElement, providedOptions: GridOptions, createUi: (context: Context) => void, acceptChanges?: (context: Context) => void, params?: GridParams): GridApi {
 
-        // Shallow copy to prevent user provided gridOptions from being mutated.
+        // Ensure we do not mutate the provided gridOptions / global gridOptions
+        let mergedGridOps: GridOptions = {};
+        if (GlobalGridOptions.gridOptions) {
+            mergeDeep(mergedGridOps, GlobalGridOptions.gridOptions, true, true);
+        }
+        mergeDeep(mergedGridOps, providedOptions, true, true);
+        const gridOptions = GridOptionsService.getCoercedGridOptions(mergedGridOps);
+        
         const debug = !!gridOptions.debug;
         const gridId = gridOptions.gridId ?? String(nextGridId++);
 

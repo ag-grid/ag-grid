@@ -40,8 +40,12 @@ export const isComponentStateless = (Component: any) => {
     const getMemoType = () => hasSymbol() ? Symbol.for('react.memo') : 0xead3;
 
     return (
-            typeof Component === 'function' && !(Component.prototype && Component.prototype.isReactComponent)
-        ) || (typeof Component === 'object' && Component.$$typeof === getMemoType());
+            typeof Component === 'function' &&
+            !(Component.prototype && Component.prototype.isReactComponent)
+        ) || (
+            typeof Component === 'object' &&
+            Component.$$typeof === getMemoType()
+        );
 }
 
 // CreateRoot is only available from React 18, which if used requires us to use flushSync.
@@ -52,7 +56,7 @@ let disableFlushSync = false;
  * Provides an alternative to the more fine grained useFlushSync boolean param to agFlushSync.
  */
 export function runWithoutFlushSync<T>(func: () => T){
-    if(!disableFlushSync){
+    if (!disableFlushSync){
         // We only re-enable flushSync asynchronously to avoid re-enabling it while React is still triggering renders related to the original call.
         setTimeout(() => disableFlushSync = false, 0);
     }
@@ -108,6 +112,7 @@ export function getNextValueIfDifferent<T extends { getInstanceId: () => string 
         const c = next[i];
         nextMap.set(c.getInstanceId(), c);
     }
+
     for (let i = 0; i < prev.length; i++) {
         const c = prev[i];
         prevMap.set(c.getInstanceId(), c);
@@ -134,7 +139,15 @@ export function getNextValueIfDifferent<T extends { getInstanceId: () => string 
     if (oldValues.length === 0 && newValues.length === next.length) {
         return next;
     }
-    // Spread as we need to combine the old and new values
+    // Spread as required to combine the old and new values
+    if (oldValues.length === 0) {
+        return newValues;
+    }
+
+    if (newValues.length === 0) {
+        return oldValues;
+    }
+
     return [...oldValues, ...newValues];
 }
 

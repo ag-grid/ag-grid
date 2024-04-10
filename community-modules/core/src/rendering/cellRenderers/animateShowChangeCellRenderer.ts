@@ -114,7 +114,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
             this.eValue.classList.add('ag-value-change-value-highlight');
         }
 
-        if(!isInitialRender){
+        if (!isInitialRender) {
             this.setTimerToRemoveDelta();
         }
 
