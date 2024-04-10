@@ -145,7 +145,7 @@ export class AgList<TValue = string> extends Component {
         itemEl.classList.add('ag-list-item', `ag-${this.cssIdentifier}-list-item`);
         const span = eDocument.createElement('span');
         itemEl.appendChild(span);
-        span.innerText = text;
+        span.textContent = text;
 
         if (!this.unFocusable) {
             itemEl.tabIndex = -1;
