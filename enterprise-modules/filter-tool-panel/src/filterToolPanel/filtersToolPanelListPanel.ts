@@ -1,29 +1,21 @@
 import {
-    _,
     AbstractColDef,
     Autowired,
-    Column,
-    ColumnModel,
-    Component,
-    Events,
-    ProvidedColumnGroup,
-    IProvidedColumn,
-    FiltersToolPanelState,
-    ToolPanelVisibleChangedEvent
+    Column, Component,
+    Events, FiltersToolPanelState, IProvidedColumn, ProvidedColumnGroup, ToolPanelVisibleChangedEvent, _
 } from "@ag-grid-community/core";
 
-import { ToolPanelFilterComp } from "./toolPanelFilterComp";
-import { ToolPanelFiltersCompParams } from "./filtersToolPanel";
-import { ToolPanelFilterGroupComp, ToolPanelFilterItem } from "./toolPanelFilterGroupComp";
-import { EXPAND_STATE } from "./filtersToolPanelHeaderPanel";
 import { ToolPanelColDefService } from "@ag-grid-enterprise/side-bar";
+import { ToolPanelFiltersCompParams } from "./filtersToolPanel";
+import { EXPAND_STATE } from "./filtersToolPanelHeaderPanel";
+import { ToolPanelFilterComp } from "./toolPanelFilterComp";
+import { ToolPanelFilterGroupComp, ToolPanelFilterItem } from "./toolPanelFilterGroupComp";
 
 export class FiltersToolPanelListPanel extends Component {
 
     private static TEMPLATE = /* html */ `<div class="ag-filter-list-panel"></div>`;
 
     @Autowired('toolPanelColDefService') private toolPanelColDefService: ToolPanelColDefService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private initialised = false;
     private hasLoadedInitialState = false;
@@ -79,7 +71,7 @@ export class FiltersToolPanelListPanel extends Component {
             }
         });
 
-        if (this.columnModel.isReady()) {
+        if (this.beans.columnModel.isReady()) {
             this.onColumnsChanged();
         }
     }
@@ -89,7 +81,7 @@ export class FiltersToolPanelListPanel extends Component {
             this.onColumnsChangedPending = true;
             return;
         }
-        const pivotModeActive = this.columnModel.isPivotMode();
+        const pivotModeActive = this.beans.columnModel.isPivotMode();
         const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
         shouldSyncColumnLayoutWithGrid ? this.syncFilterLayout() : this.buildTreeFromProvidedColumnDefs();
         this.refreshAriaLabel();
@@ -101,7 +93,7 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     private buildTreeFromProvidedColumnDefs(): void {
-        const columnTree: IProvidedColumn[] = this.columnModel.getPrimaryColumnTree();
+        const columnTree: IProvidedColumn[] = this.beans.columnModel.getPrimaryColumnTree();
         this.recreateFilters(columnTree);
     }
 

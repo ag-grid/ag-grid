@@ -1,29 +1,19 @@
 import {
-    _,
     AbstractColDef,
     Autowired,
     ColGroupDef,
-    Column,
-    ColumnModel,
-    ColumnEventType,
-    Component,
-    Events,
-    ProvidedColumnGroup,
-    IProvidedColumn,
-    VirtualList,
-    VirtualListModel,
-    PreDestroy,
-    ColumnToolPanelState,
-    EventsType
+    Column, ColumnEventType, ColumnToolPanelState, Component,
+    Events, EventsType, IProvidedColumn, PreDestroy, ProvidedColumnGroup, VirtualList,
+    VirtualListModel, _
 } from "@ag-grid-community/core";
-import { PrimaryColsListPanelItemDragFeature } from './primaryColsListPanelItemDragFeature';
-import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
-import { ToolPanelColumnComp } from "./toolPanelColumnComp";
 import { ToolPanelColDefService } from "@ag-grid-enterprise/side-bar";
-import { ExpandState } from "./primaryColsHeaderPanel";
 import { ColumnModelItem } from "./columnModelItem";
-import { ModelItemUtils } from "./modelItemUtils";
 import { ToolPanelColumnCompParams } from "./columnToolPanel";
+import { ModelItemUtils } from "./modelItemUtils";
+import { ExpandState } from "./primaryColsHeaderPanel";
+import { PrimaryColsListPanelItemDragFeature } from './primaryColsListPanelItemDragFeature';
+import { ToolPanelColumnComp } from "./toolPanelColumnComp";
+import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 
 class UIColumnModel implements VirtualListModel {
 
@@ -48,7 +38,6 @@ export class PrimaryColsListPanel extends Component {
 
     public static TEMPLATE = /* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('toolPanelColDefService') private colDefService: ToolPanelColDefService;
     @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
 
@@ -124,7 +113,7 @@ export class PrimaryColsListPanel extends Component {
             }
         );
 
-        if (this.columnModel.isReady()) {
+        if (this.beans.columnModel.isReady()) {
             this.onColumnsChanged();
         }
 
@@ -138,13 +127,13 @@ export class PrimaryColsListPanel extends Component {
     private createComponentFromItem(item: ColumnModelItem, listItemElement: HTMLElement): Component {
         if (item.isGroup()) {
             const renderedGroup = new ToolPanelColumnGroupComp(item, this.allowDragging, this.eventType, listItemElement);
-            this.getContext().createBean(renderedGroup);
+            this.createBean(renderedGroup);
 
             return renderedGroup;
         }
 
         const columnComp = new ToolPanelColumnComp(item, this.allowDragging, this.groupsExist, listItemElement);
-        this.getContext().createBean(columnComp);
+        this.createBean(columnComp);
 
         return columnComp;
     }
@@ -157,7 +146,7 @@ export class PrimaryColsListPanel extends Component {
 
         const expandedStates = this.getExpandedStates();
 
-        const pivotModeActive = this.columnModel.isPivotMode();
+        const pivotModeActive = this.beans.columnModel.isPivotMode();
         const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
 
         if (shouldSyncColumnLayoutWithGrid) {
@@ -238,8 +227,8 @@ export class PrimaryColsListPanel extends Component {
 
     private buildTreeFromProvidedColumnDefs(): void {
         // add column / group comps to tool panel
-        this.buildListModel(this.columnModel.getPrimaryColumnTree());
-        this.groupsExist = this.columnModel.isPrimaryColumnGroupsPresent();
+        this.buildListModel(this.beans.columnModel.getPrimaryColumnTree());
+        this.groupsExist = this.beans.columnModel.isPrimaryColumnGroupsPresent();
     }
 
     private buildListModel(columnTree: IProvidedColumn[]): void {
@@ -270,7 +259,7 @@ export class PrimaryColsListPanel extends Component {
                 return;
             }
 
-            const displayName = this.columnModel.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'columnToolPanel');
+            const displayName = this.beans.columnModel.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'columnToolPanel');
             const item: ColumnModelItem = new ColumnModelItem(displayName, columnGroup, dept, true, this.expandGroupsByDefault);
 
             parentList.push(item);
@@ -284,7 +273,7 @@ export class PrimaryColsListPanel extends Component {
 
             if (skipThisColumn) { return; }
 
-            const displayName = this.columnModel.getDisplayNameForColumn(column, 'columnToolPanel');
+            const displayName = this.beans.columnModel.getDisplayNameForColumn(column, 'columnToolPanel');
 
             parentList.push(new ColumnModelItem(displayName, column, dept));
         };
@@ -420,7 +409,7 @@ export class PrimaryColsListPanel extends Component {
         let checkedCount = 0;
         let uncheckedCount = 0;
 
-        const pivotMode = this.columnModel.isPivotMode();
+        const pivotMode = this.beans.columnModel.isPivotMode();
 
         this.forEachItem(item => {
             if (item.isGroup()) { return; }

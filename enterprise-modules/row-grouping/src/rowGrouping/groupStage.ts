@@ -54,10 +54,7 @@ interface GroupingDetails {
 @Bean('groupStage')
 export class GroupStage extends BeanStub implements IRowNodeStage {
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('selectableService') private selectableService: SelectableService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('selectionService') private selectionService: ISelectionService;
 
     // when grouping, these items are of note:
     // rowNode.parent: RowNode: set to the parent
@@ -121,7 +118,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
         const usingTreeData = this.beans.gos.get('treeData');
 
-        const groupedCols = usingTreeData ? null : this.columnModel.getRowGroupColumns();
+        const groupedCols = usingTreeData ? null : this.beans.columnModel.getRowGroupColumns();
 
         const details: GroupingDetails = {
             // someone complained that the parent attribute was causing some change detection
@@ -130,7 +127,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             expandByDefault: this.beans.gos.get('groupDefaultExpanded'),
             groupedCols: groupedCols!,
             rootNode: rowNode,
-            pivotMode: this.columnModel.isPivotMode(),
+            pivotMode: this.beans.columnModel.isPivotMode(),
             groupedColCount: usingTreeData || !groupedCols ? 0 : groupedCols.length,
             rowNodeOrder: rowNodeOrder!,
             transactions: rowNodeTransactions!,
@@ -458,7 +455,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
 
         // groups are about to get disposed, so need to deselect any that are selected
-        this.selectionService.filterFromSelection((node: RowNode) => node && !node.group);
+        this.beans.selectionService.filterFromSelection((node: RowNode) => node && !node.group);
 
         const { rootNode, groupedCols } = details;
         // because we are not creating the root node each time, we have the logic
@@ -484,7 +481,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
         let noFurtherProcessingNeeded = false;
 
-        const groupDisplayColumns = this.columnModel.getGroupDisplayColumns();
+        const groupDisplayColumns = this.beans.columnModel.getGroupDisplayColumns();
         const newGroupDisplayColIds = groupDisplayColumns ?
             groupDisplayColumns.map(c => c.getId()).join('-') : '';
 
@@ -656,7 +653,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo, details: GroupingDetails): void {
         groupNode.groupData = {};
-        const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
+        const groupDisplayCols: Column[] = this.beans.columnModel.getGroupDisplayColumns();
         groupDisplayCols.forEach(col => {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
@@ -673,7 +670,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                     groupNode.groupData![col.getColId()] = groupInfo.key;
                 } else {
                     // if maintain group value type, get the value from any leaf node.
-                    groupNode.groupData![col.getColId()] = this.valueService.getValue(groupColumn, groupInfo.leafNode);
+                    groupNode.groupData![col.getColId()] = this.beans.valueService.getValue(groupColumn, groupInfo.leafNode);
                 }
             }
         });
@@ -740,7 +737,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private getGroupInfoFromGroupColumns(rowNode: RowNode, details: GroupingDetails) {
         const res: GroupInfo[] = [];
         details.groupedCols.forEach(groupCol => {
-            let key: string = this.valueService.getKeyForNode(groupCol, rowNode);
+            let key: string = this.beans.valueService.getKeyForNode(groupCol, rowNode);
             let keyExists = key !== null && key !== undefined && key !== '';
 
             // unbalanced tree and pivot mode don't work together - not because of the grid, it doesn't make

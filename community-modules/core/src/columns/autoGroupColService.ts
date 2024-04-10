@@ -1,18 +1,16 @@
-import { Autowired, Bean } from "../context/context";
-import { Column } from "../entities/column";
-import { ColDef } from "../entities/colDef";
-import { ColumnModel } from "./columnModel";
-import { ColumnFactory } from "./columnFactory";
 import { BeanStub } from "../context/beanStub";
-import { mergeDeep } from "../utils/object";
-import { missing } from "../utils/generic";
+import { Autowired, Bean } from "../context/context";
+import { ColDef } from "../entities/colDef";
+import { Column } from "../entities/column";
 import { ColumnEventType } from "../events";
+import { missing } from "../utils/generic";
+import { mergeDeep } from "../utils/object";
+import { ColumnFactory } from "./columnFactory";
 
 export const GROUP_AUTO_COLUMN_ID: 'ag-Grid-AutoColumn' = 'ag-Grid-AutoColumn';
 @Bean('autoGroupColService')
 export class AutoGroupColService extends BeanStub {
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
 
     public createAutoGroupColumns(rowGroupColumns: Column[]): Column[] {
@@ -67,7 +65,7 @@ export class AutoGroupColService extends BeanStub {
     private updateOneAutoGroupColumn(colToUpdate: Column, index: number, source: ColumnEventType) {
         const oldColDef = colToUpdate.getColDef();
         const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
-        const underlyingColumn = underlyingColId!=null ? this.columnModel.getPrimaryColumn(underlyingColId) : undefined;
+        const underlyingColumn = underlyingColId!=null ? this.beans.columnModel.getPrimaryColumn(underlyingColId) : undefined;
         const colDef = this.createAutoGroupColDef(colToUpdate.getId(), underlyingColumn??undefined, index);
 
         colToUpdate.setColDef(colDef, null, source);
@@ -136,7 +134,7 @@ export class AutoGroupColService extends BeanStub {
             const colDef = rowGroupCol.getColDef();
             Object.assign(res, {
                 // cellRendererParams.groupKey: colDefToCopy.field;
-                headerName: this.columnModel.getDisplayNameForColumn(rowGroupCol, 'header'),
+                headerName: this.beans.columnModel.getDisplayNameForColumn(rowGroupCol, 'header'),
                 headerValueGetter: colDef.headerValueGetter
             });
 

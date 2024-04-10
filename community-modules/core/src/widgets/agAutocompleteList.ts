@@ -165,7 +165,7 @@ export class AgAutocompleteList extends PopupComponent {
     private createRowComponent(value: AutocompleteEntry): Component {
         const row = new AgAutocompleteRow();
 
-        this.getContext().createBean(row);
+        this.createBean(row);
         row.setState(value.displayValue ?? value.key, value === this.selectedValue);
 
         return row;

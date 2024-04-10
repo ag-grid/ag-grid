@@ -1,20 +1,17 @@
-import { Bean, PreDestroy, Autowired } from "../context/context";
-import { DragStartedEvent, DragStoppedEvent, Events } from "../events";
 import { BeanStub } from "../context/beanStub";
-import { exists } from "../utils/generic";
-import { removeFromArray } from "../utils/array";
-import { areEventsNear } from "../utils/mouse";
-import { MouseEventService } from "../gridBodyComp/mouseEventService";
-import { isBrowserSafari } from "../utils/browser";
+import { Bean, PreDestroy } from "../context/context";
+import { DragStartedEvent, DragStoppedEvent, Events } from "../events";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { removeFromArray } from "../utils/array";
+import { isBrowserSafari } from "../utils/browser";
 import { isFocusableFormField } from "../utils/dom";
+import { exists } from "../utils/generic";
+import { areEventsNear } from "../utils/mouse";
 
 /** Adds drag listening onto an element. In AG Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 @Bean('dragService')
 export class DragService extends BeanStub {
-
-    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
 
     private currentDragParams: DragListenerParams | null;
     private dragging: boolean;
@@ -272,7 +269,7 @@ export class DragService extends BeanStub {
             // to avoid the grid text being selected while dragging components.
             ((isEnableCellTextSelect && isMouseMove)) &&
             mouseEvent.cancelable &&
-            this.mouseEventService.isEventFromThisGrid(mouseEvent) &&
+            this.beans.mouseEventService.isEventFromThisGrid(mouseEvent) &&
             !this.isOverFormFieldElement(mouseEvent)
         );
     }

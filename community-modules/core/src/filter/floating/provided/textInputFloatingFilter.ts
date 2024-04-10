@@ -89,7 +89,6 @@ export interface ITextInputFloatingFilterParams extends IFloatingFilterParams<Te
 
 type ModelUnion = TextFilterModel | NumberFilterModel;
 export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @RefSelector('eFloatingFilterInputContainer') private readonly eFloatingFilterInputContainer: HTMLElement;
     private floatingFilterInputService: FloatingFilterInputService;
 
@@ -170,7 +169,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
     }
 
     private getAriaLabel(params: ITextInputFloatingFilterParams): string {
-        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
+        const displayName = this.beans.columnModel.getDisplayNameForColumn(params.column, 'header', true);
         const translate = this.beans.localeService.getLocaleTextFunc();
         return `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`
     }

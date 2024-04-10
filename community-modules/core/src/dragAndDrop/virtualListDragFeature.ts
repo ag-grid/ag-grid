@@ -1,6 +1,6 @@
 import { AutoScrollService } from "../autoScrollService";
 import { BeanStub } from "../context/beanStub";
-import { Autowired, PostConstruct } from "../context/context";
+import { PostConstruct } from "../context/context";
 import { AgEvent } from "../events";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { radioCssClass } from "../utils/dom";
@@ -28,7 +28,6 @@ export interface VirtualListDragParams<C extends Component, R extends Component,
 }
 
 export class VirtualListDragFeature<C extends Component, R extends Component, V, E extends AgEvent> extends BeanStub {
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
     private currentDragValue: V | null = null;
     private lastHoveredListItem: VirtualListDragItem<R> | null = null;
@@ -72,7 +71,7 @@ export class VirtualListDragFeature<C extends Component, R extends Component, V,
             onDragLeave: () => this.onDragLeave()
         };
 
-        this.dragAndDropService.addDropTarget(dropTarget);
+        this.beans.dragAndDropService.addDropTarget(dropTarget);
     }
 
     private createAutoScrollService(): void {

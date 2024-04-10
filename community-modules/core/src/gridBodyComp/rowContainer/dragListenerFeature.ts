@@ -1,12 +1,8 @@
 import { BeanStub } from "../../context/beanStub";
-import { Autowired, Optional, PostConstruct } from "../../context/context";
-import { IRangeService } from "../../interfaces/IRangeService";
-import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
+import { PostConstruct } from "../../context/context";
+import { DragListenerParams } from "../../dragAndDrop/dragService";
 
 export class DragListenerFeature extends BeanStub {
-
-    @Autowired('dragService') private dragService: DragService;
-    @Optional('rangeService') private rangeService?: IRangeService;
 
     private eContainer: HTMLElement;
 
@@ -19,15 +15,16 @@ export class DragListenerFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        if (!this.rangeService) {
+        const { rangeService } = this.beans;
+        if (!rangeService) {
             return;
         }
 
         this.params = {
             eElement: this.eContainer,
-            onDragStart: this.rangeService.onDragStart.bind(this.rangeService),
-            onDragStop: this.rangeService.onDragStop.bind(this.rangeService),
-            onDragging: this.rangeService.onDragging.bind(this.rangeService)
+            onDragStart: rangeService.onDragStart.bind(rangeService),
+            onDragStop: rangeService.onDragStop.bind(rangeService),
+            onDragging: rangeService.onDragging.bind(rangeService)
         };
 
         this.addManagedPropertyListener('enableRangeSelection', (props) => {
@@ -48,10 +45,10 @@ export class DragListenerFeature extends BeanStub {
     }
 
     private enableFeature() {
-        this.dragService.addDragSource(this.params);
+        this.beans.dragService.addDragSource(this.params);
     }
 
     private disableFeature() {
-        this.dragService.removeDragSource(this.params);
+        this.beans.dragService.removeDragSource(this.params);
     }
 }

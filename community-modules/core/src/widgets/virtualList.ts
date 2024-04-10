@@ -1,14 +1,12 @@
-import { Component } from './component';
-import { Autowired, PostConstruct } from '../context/context';
-import { RefSelector } from './componentAnnotations';
-import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaRole, setAriaLabel } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
-import { ResizeObserverService } from "../misc/resizeObserverService";
-import { waitUntil } from '../utils/function';
-import { TabGuardComp } from './tabGuardComp';
+import { PostConstruct } from '../context/context';
 import { Events } from '../eventKeys';
+import { getAriaPosInSet, setAriaLabel, setAriaPosInSet, setAriaRole, setAriaSetSize } from '../utils/aria';
 import { stopPropagationForAgGrid } from '../utils/event';
-import { AnimationFrameService } from '../misc/animationFrameService';
+import { waitUntil } from '../utils/function';
+import { Component } from './component';
+import { RefSelector } from './componentAnnotations';
+import { TabGuardComp } from './tabGuardComp';
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -38,8 +36,6 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     private lastFocusedRowIndex: number | null;
     private isHeightFromTheme: boolean = true;
 
-    @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
-    @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 
     constructor(params?: VirtualListParams) {
@@ -86,8 +82,8 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
 
     private addResizeObserver(): void {
         // do this in an animation frame to prevent loops
-        const listener = () => this.animationFrameService.requestAnimationFrame(() => this.drawVirtualRows());
-        const destroyObserver = this.resizeObserverService.observeResize(this.getGui(), listener);
+        const listener = () => this.beans.animationFrameService.requestAnimationFrame(() => this.drawVirtualRows());
+        const destroyObserver = this.beans.resizeObserverService.observeResize(this.getGui(), listener);
         this.addDestroyFunc(destroyObserver);
     }
 
@@ -195,7 +191,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
 
         this.ensureIndexVisible(rowNumber);
 
-        this.animationFrameService.requestAnimationFrame(() => {
+        this.beans.animationFrameService.requestAnimationFrame(() => {
             this.isScrolling = false;
             if (!this.isAlive()) { return; }
             const renderedRow = this.renderedRows.get(rowNumber);

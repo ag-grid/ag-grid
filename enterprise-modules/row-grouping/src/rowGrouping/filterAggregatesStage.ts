@@ -1,25 +1,14 @@
 import {
-    Autowired,
-    Bean,
-    IRowNodeStage,
-    StageExecuteParams,
-    BeanStub,
-    FilterManager,
-    RowNode,
-    ColumnModel,
-    GridOptions,
+    Bean, BeanStub, IRowNodeStage, RowNode, StageExecuteParams
 } from "@ag-grid-community/core";
 
 @Bean('filterAggregatesStage')
 export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
 
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-
     public execute(params: StageExecuteParams): void {
-        const isPivotMode = this.columnModel.isPivotMode();
-        const isAggFilterActive = this.filterManager.isAggregateFilterPresent()
-            || this.filterManager.isAggregateQuickFilterPresent();
+        const isPivotMode = this.beans.columnModel.isPivotMode();
+        const isAggFilterActive = this.beans.filterManager.isAggregateFilterPresent()
+            || this.beans.filterManager.isAggregateQuickFilterPresent();
 
         // This is the default filter for applying only to leaf nodes, realistically this should not apply as primary agg columns,
         // should not be applied by the filterManager if getGroupAggFiltering is missing. Predicate will apply filters to leaf level.
@@ -53,7 +42,7 @@ export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
             node.childrenAfterAggFilter = node.childrenAfterFilter?.filter((child: RowNode) => {
                 const shouldFilterRow = applyFilterToNode({ node: child });
                 if (shouldFilterRow) {
-                    const doesNodePassFilter = this.filterManager.doesRowPassAggregateFilters({ rowNode: child });
+                    const doesNodePassFilter = this.beans.filterManager.doesRowPassAggregateFilters({ rowNode: child });
                     if (doesNodePassFilter) {
                         // Node has passed, so preserve children
                         preserveChildren(child, true);

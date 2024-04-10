@@ -1,19 +1,11 @@
 import {
     AutocompleteEntry,
-    AutocompleteListParams,
-    Autowired,
-    BaseCellDataType,
+    AutocompleteListParams, BaseCellDataType,
     Bean,
     BeanStub,
     Column,
-    ColumnAdvancedFilterModel,
-    ColumnModel,
-    DataTypeService,
-    JoinAdvancedFilterModel,
-    PostConstruct,
-    ValueFormatterService,
-    ValueParserService,
-    _,
+    ColumnAdvancedFilterModel, JoinAdvancedFilterModel,
+    PostConstruct, _
 } from '@ag-grid-community/core';
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import { ColFilterExpressionParser } from './colFilterExpressionParser';
@@ -24,15 +16,11 @@ import {
     FilterExpressionOperator,
     FilterExpressionOperators,
     ScalarFilterExpressionOperators,
-    TextFilterExpressionOperators,
+    TextFilterExpressionOperators
 } from './filterExpressionOperators';
 
 @Bean('advancedFilterExpressionService')
 export class AdvancedFilterExpressionService extends BeanStub {
-    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
-    @Autowired('valueParserService') private valueParserService: ValueParserService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
 
     private columnNameToIdMap: { [columnNameUpperCase: string]: { colId: string, columnName: string } } = {};
     private columnAutocompleteEntries: AutocompleteEntry[] | null = null;
@@ -74,18 +62,18 @@ export class AdvancedFilterExpressionService extends BeanStub {
             case 'number':
                 return _.exists(operand) ? Number(operand) : null;
             case 'date':
-                return _.serialiseDate(this.valueParserService.parseValue(column, null, operand, undefined), false);
+                return _.serialiseDate(this.beans.valueParserService.parseValue(column, null, operand, undefined), false);
             case 'dateString':
                 // displayed string format may be different from data string format, so parse before converting to date
-                const parsedDateString = this.valueParserService.parseValue(column, null, operand, undefined);
-                return _.serialiseDate(this.dataTypeService.getDateParserFunction(column)(parsedDateString) ?? null, false);
+                const parsedDateString = this.beans.valueParserService.parseValue(column, null, operand, undefined);
+                return _.serialiseDate(this.beans.dataTypeService.getDateParserFunction(column)(parsedDateString) ?? null, false);
         }
         return operand;
     }
 
     public getOperandDisplayValue(model: ColumnAdvancedFilterModel, skipFormatting?: boolean): string {
         const { colId, filter } = model as any;
-        const column = this.columnModel.getPrimaryColumn(colId);
+        const column = this.beans.columnModel.getPrimaryColumn(colId);
         let operand = '';
         if (filter != null) {
             let operand1: string | null | undefined;
@@ -95,15 +83,15 @@ export class AdvancedFilterExpressionService extends BeanStub {
                     break;
                 case 'date':
                     const dateValue = _.parseDateTimeFromString(filter);
-                    operand1 = column ? this.valueFormatterService.formatValue(column, null, dateValue) : null;
+                    operand1 = column ? this.beans.valueFormatterService.formatValue(column, null, dateValue) : null;
                     break;
                 case 'dateString':
                     // need to convert from ISO date string to Date to data string format to formatted string format
                     const dateStringDateValue = _.parseDateTimeFromString(filter);
                     const dateStringStringValue = column
-                        ? this.dataTypeService.getDateFormatterFunction(column)(dateStringDateValue ?? undefined)
+                        ? this.beans.dataTypeService.getDateFormatterFunction(column)(dateStringDateValue ?? undefined)
                         : null;
-                    operand1 = column ? this.valueFormatterService.formatValue(column, null, dateStringStringValue) : null;
+                    operand1 = column ? this.beans.valueFormatterService.formatValue(column, null, dateStringStringValue) : null;
                     break;
             }
             if (model.filterType !== 'number') {
@@ -152,14 +140,14 @@ export class AdvancedFilterExpressionService extends BeanStub {
         if (this.columnAutocompleteEntries) {
             return this.columnAutocompleteEntries;
         }
-        const columns = this.columnModel.getAllPrimaryColumns() ?? [];
+        const columns = this.beans.columnModel.getAllPrimaryColumns() ?? [];
         const entries: AutocompleteEntry[] = [];
         const includeHiddenColumns = this.beans.gos.get('includeHiddenColumnsInAdvancedFilter');
         columns.forEach(column => {
             if (column.getColDef().filter && (includeHiddenColumns || column.isVisible() || column.isRowGroupActive())) {
                 entries.push({
                     key: column.getColId(),
-                    displayValue: this.columnModel.getDisplayNameForColumn(column, 'advancedFilter')!
+                    displayValue: this.beans.columnModel.getDisplayNameForColumn(column, 'advancedFilter')!
                 });
             }
         });
@@ -222,14 +210,14 @@ export class AdvancedFilterExpressionService extends BeanStub {
         let params = this.expressionEvaluatorParams[colId];
         if (params) { return params; }
 
-        const column = this.columnModel.getPrimaryColumn(colId);
+        const column = this.beans.columnModel.getPrimaryColumn(colId);
         if (!column) { return { valueConverter: (v: any) => v }; }
 
-        const baseCellDataType = this.dataTypeService.getBaseDataType(column);
+        const baseCellDataType = this.beans.dataTypeService.getBaseDataType(column);
         switch (baseCellDataType) {
             case 'dateString':
                 params = {
-                    valueConverter: this.dataTypeService.getDateParserFunction(column)
+                    valueConverter: this.beans.dataTypeService.getDateParserFunction(column)
                 };
                 break;
             case 'object':
@@ -238,7 +226,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
                     params = { valueConverter: (v: any) => v };
                 } else {
                     params = {
-                        valueConverter: (value, node) => this.valueFormatterService.formatValue(column, node, value)
+                        valueConverter: (value, node) => this.beans.valueFormatterService.formatValue(column, node, value)
                             ?? (typeof value.toString === 'function' ? value.toString() : '')
                     };
                 }
@@ -268,8 +256,8 @@ export class AdvancedFilterExpressionService extends BeanStub {
     }
 
     public getColumnDetails(colId: string): { column?: Column, baseCellDataType: BaseCellDataType } {
-        const column = this.columnModel.getPrimaryColumn(colId) ?? undefined;
-        const baseCellDataType = (column ? this.dataTypeService.getBaseDataType(column) : undefined) ?? 'text';
+        const column = this.beans.columnModel.getPrimaryColumn(colId) ?? undefined;
+        const baseCellDataType = (column ? this.beans.dataTypeService.getBaseDataType(column) : undefined) ?? 'text';
         return { column, baseCellDataType };
     }
 

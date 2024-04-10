@@ -1,14 +1,12 @@
-import { Autowired, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
-import { PopupService } from "./popupService";
-import { UserComponentFactory } from "../components/framework/userComponentFactory";
-import { exists } from "../utils/generic";
-import { isIOSUserAgent } from "../utils/browser";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { warnOnce } from "../utils/function";
+import { PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
 import { TooltipHideEvent, TooltipShowEvent } from "../events";
+import { WithoutGridCommon } from "../interfaces/iCommon";
+import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
+import { isIOSUserAgent } from "../utils/browser";
+import { warnOnce } from "../utils/function";
+import { exists } from "../utils/generic";
 
 export interface TooltipParentComp {
     getTooltipParams(): WithoutGridCommon<ITooltipParams>;
@@ -28,9 +26,6 @@ export class TooltipStateManager extends BeanStub {
     // last tooltip was hidden.
     private static lastTooltipHideTime: number;
     private static isLocked = false;
-
-    @Autowired('popupService') private popupService: PopupService;
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     private showTooltipTimeoutId: number | undefined;
     private hideTooltipTimeoutId: number | undefined;
@@ -299,7 +294,7 @@ export class TooltipStateManager extends BeanStub {
         const compNoLongerNeeded = this.state !== TooltipStates.SHOWING || this.tooltipInstanceCount !== tooltipInstanceCopy;
 
         if (compNoLongerNeeded) {
-            this.getContext().destroyBean(tooltipComp);
+            this.destroyBean(tooltipComp);
             return;
         }
 
@@ -321,7 +316,7 @@ export class TooltipStateManager extends BeanStub {
 
         const translate = this.beans.localeService.getLocaleTextFunc();
 
-        const addPopupRes = this.popupService.addPopup({
+        const addPopupRes = this.beans.popupService.addPopup({
             eChild: eGui,
             ariaLabel: translate('ariaLabelTooltip', 'Tooltip')
         });
@@ -401,12 +396,12 @@ export class TooltipStateManager extends BeanStub {
         };
 
         if (this.lastMouseEvent) {
-            this.popupService.positionPopupUnderMouseEvent({
+            this.beans.popupService.positionPopupUnderMouseEvent({
                 ...params,
                 mouseEvent: this.lastMouseEvent
             });
         } else {
-            this.popupService.positionPopupByComponent({
+            this.beans.popupService.positionPopupByComponent({
                 ...params,
                 eventSource: this.parentComp.getGui(),
                 position: 'under',
@@ -428,7 +423,7 @@ export class TooltipStateManager extends BeanStub {
 
         window.setTimeout(() => {
             tooltipPopupDestroyFunc!();
-            this.getContext().destroyBean(tooltipComp);
+            this.destroyBean(tooltipComp);
         }, delay);
 
         this.clearTooltipListeners();

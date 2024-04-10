@@ -1,23 +1,18 @@
 import { BeanStub } from "../../context/beanStub";
-import { Autowired, PostConstruct } from "../../context/context";
+import { PostConstruct } from "../../context/context";
+import { ColumnPinnedType } from "../../entities/column";
 import { Events } from "../../eventKeys";
-import { RowContainerEventsFeature } from "./rowContainerEventsFeature";
-import { DragService } from "../../dragAndDrop/dragService";
-import { CtrlsService } from "../../ctrlsService";
+import { DisplayedRowsChangedEvent } from "../../events";
+import { RowCtrl } from "../../rendering/row/rowCtrl";
 import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isInDOM, setScrollLeft } from "../../utils/dom";
-import { ColumnModel } from "../../columns/columnModel";
-import { ResizeObserverService } from "../../misc/resizeObserverService";
-import { ViewportSizeFeature } from "../viewportSizeFeature";
 import { convertToMap } from "../../utils/map";
+import { CenterWidthFeature } from "../centerWidthFeature";
+import { ViewportSizeFeature } from "../viewportSizeFeature";
+import { DragListenerFeature } from "./dragListenerFeature";
+import { RowContainerEventsFeature } from "./rowContainerEventsFeature";
+import { SetHeightFeature } from "./setHeightFeature";
 import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
 import { SetPinnedRightWidthFeature } from "./setPinnedRightWidthFeature";
-import { SetHeightFeature } from "./setHeightFeature";
-import { DragListenerFeature } from "./dragListenerFeature";
-import { CenterWidthFeature } from "../centerWidthFeature";
-import { RowCtrl } from "../../rendering/row/rowCtrl";
-import { RowRenderer } from "../../rendering/rowRenderer";
-import { ColumnPinnedType } from "../../entities/column";
-import { DisplayedRowsChangedEvent } from "../../events";
 
 export enum RowContainerName {
     LEFT = 'left',
@@ -136,12 +131,6 @@ export class RowContainerCtrl extends BeanStub {
         }
     }
 
-    @Autowired('dragService') private dragService: DragService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-
     private readonly name: RowContainerName;
     private readonly isFullWithContainer: boolean;
 
@@ -175,19 +164,20 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private registerWithCtrlsService(): void {
+        const { ctrlsService } = this.beans;
         switch (this.name) {
-            case RowContainerName.CENTER: this.ctrlsService.registerCenterRowContainerCtrl(this); break;
-            case RowContainerName.LEFT: this.ctrlsService.registerLeftRowContainerCtrl(this); break;
-            case RowContainerName.RIGHT: this.ctrlsService.registerRightRowContainerCtrl(this); break;
-            case RowContainerName.TOP_CENTER: this.ctrlsService.registerTopCenterRowContainerCtrl(this); break;
-            case RowContainerName.TOP_LEFT: this.ctrlsService.registerTopLeftRowContainerCon(this); break;
-            case RowContainerName.TOP_RIGHT: this.ctrlsService.registerTopRightRowContainerCtrl(this); break;
-            case RowContainerName.STICKY_TOP_CENTER: this.ctrlsService.registerStickyTopCenterRowContainerCtrl(this); break;
-            case RowContainerName.STICKY_TOP_LEFT: this.ctrlsService.registerStickyTopLeftRowContainerCon(this); break;
-            case RowContainerName.STICKY_TOP_RIGHT: this.ctrlsService.registerStickyTopRightRowContainerCtrl(this); break;
-            case RowContainerName.BOTTOM_CENTER: this.ctrlsService.registerBottomCenterRowContainerCtrl(this); break;
-            case RowContainerName.BOTTOM_LEFT: this.ctrlsService.registerBottomLeftRowContainerCtrl(this); break;
-            case RowContainerName.BOTTOM_RIGHT: this.ctrlsService.registerBottomRightRowContainerCtrl(this); break;
+            case RowContainerName.CENTER: ctrlsService.registerCenterRowContainerCtrl(this); break;
+            case RowContainerName.LEFT: ctrlsService.registerLeftRowContainerCtrl(this); break;
+            case RowContainerName.RIGHT: ctrlsService.registerRightRowContainerCtrl(this); break;
+            case RowContainerName.TOP_CENTER: ctrlsService.registerTopCenterRowContainerCtrl(this); break;
+            case RowContainerName.TOP_LEFT: ctrlsService.registerTopLeftRowContainerCon(this); break;
+            case RowContainerName.TOP_RIGHT: ctrlsService.registerTopRightRowContainerCtrl(this); break;
+            case RowContainerName.STICKY_TOP_CENTER: ctrlsService.registerStickyTopCenterRowContainerCtrl(this); break;
+            case RowContainerName.STICKY_TOP_LEFT: ctrlsService.registerStickyTopLeftRowContainerCon(this); break;
+            case RowContainerName.STICKY_TOP_RIGHT: ctrlsService.registerStickyTopRightRowContainerCtrl(this); break;
+            case RowContainerName.BOTTOM_CENTER: ctrlsService.registerBottomCenterRowContainerCtrl(this); break;
+            case RowContainerName.BOTTOM_LEFT: ctrlsService.registerBottomLeftRowContainerCtrl(this); break;
+            case RowContainerName.BOTTOM_RIGHT: ctrlsService.registerBottomRightRowContainerCtrl(this); break;
         }
     }
 
@@ -296,7 +286,7 @@ export class RowContainerCtrl extends BeanStub {
     // eg. the view should not scroll up and down while dragging rows using the rowDragComp.
     private addPreventScrollWhileDragging(): void {
         const preventScroll = (e: TouchEvent) => {
-            if (this.dragService.isDragging()) {
+            if (this.beans.dragService.isDragging()) {
                 if (e.cancelable) { e.preventDefault(); }
             }
         };
@@ -312,7 +302,7 @@ export class RowContainerCtrl extends BeanStub {
         const scrollWidth = this.getCenterWidth();
         const scrollPosition = this.getCenterViewportScrollLeft();
 
-        this.columnModel.setViewportPosition(scrollWidth, scrollPosition, afterScroll);
+        this.beans.columnModel.setViewportPosition(scrollWidth, scrollPosition, afterScroll);
     }
 
     public getCenterWidth(): number {
@@ -325,7 +315,7 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     public registerViewportResizeListener(listener: (() => void)) {
-        const unsubscribeFromResize = this.resizeObserverService.observeResize(this.eViewport, listener);
+        const unsubscribeFromResize = this.beans.resizeObserverService.observeResize(this.eViewport, listener);
         this.addDestroyFunc(() => unsubscribeFromResize());
     }
 
@@ -411,22 +401,22 @@ export class RowContainerCtrl extends BeanStub {
             case RowContainerName.TOP_LEFT:
             case RowContainerName.TOP_RIGHT:
             case RowContainerName.TOP_FULL_WIDTH:
-                return this.rowRenderer.getTopRowCtrls();
+                return this.beans.rowRenderer.getTopRowCtrls();
 
             case RowContainerName.STICKY_TOP_CENTER:
             case RowContainerName.STICKY_TOP_LEFT:
             case RowContainerName.STICKY_TOP_RIGHT:
             case RowContainerName.STICKY_TOP_FULL_WIDTH:
-                return this.rowRenderer.getStickyTopRowCtrls();
+                return this.beans.rowRenderer.getStickyTopRowCtrls();
 
             case RowContainerName.BOTTOM_CENTER:
             case RowContainerName.BOTTOM_LEFT:
             case RowContainerName.BOTTOM_RIGHT:
             case RowContainerName.BOTTOM_FULL_WIDTH:
-                return this.rowRenderer.getBottomRowCtrls();
+                return this.beans.rowRenderer.getBottomRowCtrls();
 
             default:
-                return this.rowRenderer.getCentreRowCtrls();
+                return this.beans.rowRenderer.getCentreRowCtrls();
         }
     }
 }

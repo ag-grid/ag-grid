@@ -50,10 +50,6 @@ const GRID_BODY_TEMPLATE = /* html */
 
 export class GridBodyComp extends Component {
 
-    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-
-    @Optional('rangeService') private rangeService?: IRangeService;
-
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
     @RefSelector('eStickyTop') private eStickyTop: HTMLElement;
     @RefSelector('eTop') private eTop: HTMLElement;
@@ -107,7 +103,7 @@ export class GridBodyComp extends Component {
             setAlwaysVerticalScrollClass: (cssClass, on) =>
                 this.eBodyViewport.classList.toggle(CSS_CLASS_FORCE_VERTICAL_SCROLL, on),
             registerBodyViewportResizeListener: listener => {
-                const unsubscribeFromResize = this.resizeObserverService.observeResize(this.eBodyViewport, listener);
+                const unsubscribeFromResize = this.beans.resizeObserverService.observeResize(this.eBodyViewport, listener);
                 this.addDestroyFunc(() => unsubscribeFromResize());
             },
             setPinnedTopBottomOverflowY: overflow => this.eTop.style.overflowY = this.eBottom.style.overflowY = overflow,
@@ -128,7 +124,7 @@ export class GridBodyComp extends Component {
             this.eStickyTop
         );
 
-        if (this.rangeService && this.beans.gos.get('enableRangeSelection') || this.beans.gos.get('rowSelection') === 'multiple') {
+        if (this.beans.rangeService && this.beans.gos.get('enableRangeSelection') || this.beans.gos.get('rowSelection') === 'multiple') {
             setAriaMultiSelectable(this.getGui(), true);
         }
     }

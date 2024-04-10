@@ -1,13 +1,9 @@
 import {
-    Autowired,
     Bean,
     BeanStub,
     ColDef,
     ColGroupDef,
-    Column,
-    ColumnModel,
-    GridOptionsService,
-    IPivotColDefService,
+    Column, IPivotColDefService,
     PostConstruct,
     _
 } from "@ag-grid-community/core";
@@ -21,8 +17,6 @@ export interface PivotColDefServiceResult {
 export class PivotColDefService extends BeanStub implements IPivotColDefService {
 
     public static PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private fieldSeparator: string;
     private pivotDefaultExpanded: number;
@@ -76,7 +70,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
     }
 
     private createPivotColumnsFromUniqueValues(uniqueValues: any): (ColDef | ColGroupDef)[] {
-        const pivotColumns = this.columnModel.getPivotColumns();
+        const pivotColumns = this.beans.columnModel.getPivotColumns();
         const maxDepth = pivotColumns.length;
 
         const pivotColumnGroupDefs: (ColDef | ColGroupDef)[] = this.recursivelyBuildGroup(0, uniqueValues, [], maxDepth, pivotColumns);
@@ -90,7 +84,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         maxDepth: number,
         primaryPivotColumns: Column[]
     ): ColGroupDef[] | ColDef[]  {
-        const measureColumns = this.columnModel.getValueColumns();
+        const measureColumns = this.beans.columnModel.getValueColumns();
         if (index >= maxDepth) { // Base case - build the measure columns
             return this.buildMeasureCols(pivotKeys);
         }
@@ -135,7 +129,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
     private buildMeasureCols(
         pivotKeys: string[],
     ): ColDef[] {
-        const measureColumns = this.columnModel.getValueColumns();
+        const measureColumns = this.beans.columnModel.getValueColumns();
         if (measureColumns.length === 0) {
             // if no value columns selected, then we insert one blank column, so the user at least sees columns
             // rendered. otherwise the grid would render with no columns (just empty groups) which would give the
@@ -143,7 +137,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
             return [this.createColDef(null, '-', pivotKeys)];
         }
         return measureColumns.map((measureCol) => {
-            const columnName = this.columnModel.getDisplayNameForColumn(measureCol, 'header');
+            const columnName = this.beans.columnModel.getDisplayNameForColumn(measureCol, 'header');
             return {
                 ...this.createColDef(measureCol, columnName, pivotKeys),
                 columnGroupShow: 'open'
@@ -178,8 +172,8 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
 
                 const firstGroup = !group.children.some(child => (child as ColGroupDef).children);
 
-                this.columnModel.getValueColumns().forEach(valueColumn => {
-                    const columnName: string | null = this.columnModel.getDisplayNameForColumn(valueColumn, 'header');
+                this.beans.columnModel.getValueColumns().forEach(valueColumn => {
+                    const columnName: string | null = this.beans.columnModel.getDisplayNameForColumn(valueColumn, 'header');
                     const totalColDef = this.createColDef(valueColumn, columnName, groupDef.pivotKeys);
                     totalColDef.pivotTotalColumnIds = childAcc.get(valueColumn.getColId());
 
@@ -221,7 +215,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
 
         const insertAfter = this.beans.gos.get('pivotColumnGroupTotals') === 'after';
 
-        const valueCols = this.columnModel.getValueColumns();
+        const valueCols = this.beans.columnModel.getValueColumns();
         const aggFuncs = valueCols.map(valueCol => valueCol.getAggFunc());
 
         // don't add pivot totals if there is less than 1 aggFunc or they are not all the same
@@ -285,7 +279,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
 
         const insertAfter = this.beans.gos.get('pivotRowTotals') === 'after';
 
-        const valueColumns = this.columnModel.getValueColumns();
+        const valueColumns = this.beans.columnModel.getValueColumns();
         // order of row group totals depends on position
         const valueCols = insertAfter ? valueColumns.slice() : valueColumns.slice().reverse();
 
@@ -327,14 +321,14 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
                                 insertAfter: boolean,
                                 addGroup: boolean): void {
 
-        const measureColumns = this.columnModel.getValueColumns();
+        const measureColumns = this.beans.columnModel.getValueColumns();
 
         let colDef: ColDef;
 
         if (measureColumns.length === 0) {
             colDef = this.createColDef(null, '-', []);
         } else {
-            const columnName: string | null = this.columnModel.getDisplayNameForColumn(valueColumn, 'header');
+            const columnName: string | null = this.beans.columnModel.getDisplayNameForColumn(valueColumn, 'header');
             colDef = this.createColDef(valueColumn, columnName, []);
             colDef.pivotTotalColumnIds = colIds;
         }
@@ -431,12 +425,12 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
     }
 
     private generateColumnGroupId(pivotKeys: string[]): string {
-        const pivotCols = this.columnModel.getPivotColumns().map((col) => col.getColId());
+        const pivotCols = this.beans.columnModel.getPivotColumns().map((col) => col.getColId());
         return `pivotGroup_${pivotCols.join('-')}_${pivotKeys.join('-')}`;
     }
 
     private generateColumnId(pivotKeys: string[], measureColumnId: string) {
-        const pivotCols = this.columnModel.getPivotColumns().map((col) => col.getColId());
+        const pivotCols = this.beans.columnModel.getPivotColumns().map((col) => col.getColId());
         return `pivot_${pivotCols.join('-')}_${pivotKeys.join('-')}_${measureColumnId}`;
     }
 
@@ -474,9 +468,9 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
             }
 
             if (children.length === 0) {
-                const potentialAggCol = this.columnModel.getPrimaryColumn(key);
+                const potentialAggCol = this.beans.columnModel.getPrimaryColumn(key);
                 if (potentialAggCol) {
-                    const headerName = this.columnModel.getDisplayNameForColumn(potentialAggCol, 'header') ?? key;
+                    const headerName = this.beans.columnModel.getDisplayNameForColumn(potentialAggCol, 'header') ?? key;
                     const colDef = this.createColDef(potentialAggCol, headerName, undefined, false);
                     colDef.colId = id;
                     colDef.aggFunc = potentialAggCol.getAggFunc();

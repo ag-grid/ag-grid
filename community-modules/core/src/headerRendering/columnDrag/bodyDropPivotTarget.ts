@@ -1,14 +1,9 @@
 import { DraggingEvent, DragAndDropService } from "../../dragAndDrop/dragAndDropService";
 import { Column, ColumnPinnedType } from "../../entities/column";
-import { ColumnModel } from "../../columns/columnModel";
-import { Autowired } from "../../context/context";
-import { GridOptionsService } from "../../gridOptionsService";
 import { DropListener } from "./bodyDropTarget";
+import { BeansProvider } from "../../rendering/beans";
 
-export class BodyDropPivotTarget implements DropListener {
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('gridOptionsService') private gos: GridOptionsService;
+export class BodyDropPivotTarget extends BeansProvider implements DropListener {
 
     private columnsToAggregate: Column[] = [];
     private columnsToGroup: Column[] = [];
@@ -17,6 +12,7 @@ export class BodyDropPivotTarget implements DropListener {
     private pinned: ColumnPinnedType;
 
     constructor(pinned: ColumnPinnedType) {
+        super();
         this.pinned = pinned;
     }
 
@@ -25,7 +21,7 @@ export class BodyDropPivotTarget implements DropListener {
         this.clearColumnsList();
 
         // in pivot mode, we don't accept any drops if functions are read only
-        if (this.gos.get('functionsReadOnly')) { return; }
+        if (this.beans.gos.get('functionsReadOnly')) { return; }
 
         const dragColumns: Column[] | undefined = draggingEvent.dragItem.columns;
 
@@ -76,13 +72,13 @@ export class BodyDropPivotTarget implements DropListener {
     /** Callback for when drag stops */
     public onDragStop(draggingEvent: DraggingEvent): void {
         if (this.columnsToAggregate.length > 0) {
-            this.columnModel.addValueColumns(this.columnsToAggregate, "toolPanelDragAndDrop");
+            this.beans.columnModel.addValueColumns(this.columnsToAggregate, "toolPanelDragAndDrop");
         }
         if (this.columnsToGroup.length > 0) {
-            this.columnModel.addRowGroupColumns(this.columnsToGroup, "toolPanelDragAndDrop");
+            this.beans.columnModel.addRowGroupColumns(this.columnsToGroup, "toolPanelDragAndDrop");
         }
         if (this.columnsToPivot.length > 0) {
-            this.columnModel.addPivotColumns(this.columnsToPivot, "toolPanelDragAndDrop");
+            this.beans.columnModel.addPivotColumns(this.columnsToPivot, "toolPanelDragAndDrop");
         }
     }
 

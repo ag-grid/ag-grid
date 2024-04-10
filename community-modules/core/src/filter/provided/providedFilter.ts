@@ -1,19 +1,18 @@
-import { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
-import { Autowired, PostConstruct } from '../../context/context';
-import { IRowModel } from '../../interfaces/iRowModel';
+import { PostConstruct } from '../../context/context';
+import { FilterChangedEventSourceType } from '../../events';
 import { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
+import { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
+import { IRowNode } from '../../interfaces/iRowNode';
+import { PositionableFeature } from '../../rendering/features/positionableFeature';
 import { clearElement, loadTemplate, removeFromParent, setDisabled } from '../../utils/dom';
 import { debounce } from '../../utils/function';
 import { AgPromise } from '../../utils/promise';
-import { PopupEventParams } from '../../widgets/popupService';
-import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
-import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import { convertToSet } from '../../utils/set';
 import { Component } from '../../widgets/component';
-import { IRowNode } from '../../interfaces/iRowNode';
 import { RefSelector } from '../../widgets/componentAnnotations';
-import { PositionableFeature } from '../../rendering/features/positionableFeature';
-import { FilterChangedEventSourceType } from '../../events';
+import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
+import { PopupEventParams } from '../../widgets/popupService';
+import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
@@ -101,8 +100,6 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     private appliedModel: M | null = null;
 
     private positionableFeature: PositionableFeature | undefined;
-
-    @Autowired('rowModel') protected readonly rowModel: IRowModel;
 
     @RefSelector('eFilterBody') protected readonly eFilterBody: HTMLElement;
 

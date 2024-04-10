@@ -1,19 +1,11 @@
 import {
-    _,
     AgPromise,
-    AgSelect,
-    Autowired,
-    Column,
-    ColumnModel,
-    Events,
-    FilterManager,
-    IAfterGuiAttachedParams,
+    AgSelect, Column, Events, FilterWrapperComp, IAfterGuiAttachedParams,
     IFilterComp,
     IFilterParams,
     PostConstruct,
     RefSelector,
-    TabGuardComp,
-    FilterWrapperComp,
+    TabGuardComp, _
 } from '@ag-grid-community/core';
 
 interface FilterColumnPair {
@@ -24,9 +16,6 @@ interface FilterColumnPair {
 export class GroupFilter extends TabGuardComp implements IFilterComp {
     public static EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
     public static EVENT_SELECTED_COLUMN_CHANGED = 'selectedColumnChanged';
-
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
     @RefSelector('eGroupField') private readonly eGroupField: HTMLElement;
     @RefSelector('eUnderlyingFilter') private readonly eUnderlyingFilter: HTMLElement;
@@ -86,7 +75,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
             _.warnOnce('Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.');
             return [];
         }
-        const sourceColumns = this.columnModel.getSourceColumnsForGroupColumn(this.groupColumn);
+        const sourceColumns = this.beans.columnModel.getSourceColumnsForGroupColumn(this.groupColumn);
         if (!sourceColumns) {
             _.warnOnce('Group Column Filter only works on group columns. Please use a different filter.');
             return [];
@@ -133,7 +122,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         this.eGroupFieldSelect.setLabelAlignment('top');
         this.eGroupFieldSelect.addOptions(sourceColumns.map(sourceColumn => ({
             value: sourceColumn.getId(),
-            text: this.columnModel.getDisplayNameForColumn(sourceColumn, 'groupFilter', false) ?? undefined
+            text: this.beans.columnModel.getDisplayNameForColumn(sourceColumn, 'groupFilter', false) ?? undefined
         })));
         this.eGroupFieldSelect.setValue(this.selectedColumn!.getId());
         this.eGroupFieldSelect.onValueChange((newValue) => this.updateSelectedColumn(newValue));
@@ -153,7 +142,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         const filterPromises: AgPromise<IFilterComp>[] = [];
         const filterColumnPairs: FilterColumnPair[] = [];
         sourceColumns.forEach(column => {
-            const filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
+            const filterWrapper = this.beans.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
             if (filterWrapper?.filterPromise) {
                 filterPromises.push(filterWrapper.filterPromise.then(filter => {
                     if (filter) {

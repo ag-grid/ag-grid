@@ -1,10 +1,8 @@
-import { Autowired } from "../context/context";
-import { PanelOptions, AgPanel } from "./agPanel";
-import { Component } from "./component";
+import { ResizableStructure } from "../rendering/features/positionableFeature";
 import { setDisplayed } from "../utils/dom";
 import { createIconNoSpan } from "../utils/icon";
-import { PopupService } from "./popupService";
-import { ResizableStructure } from "../rendering/features/positionableFeature";
+import { AgPanel, PanelOptions } from "./agPanel";
+import { Component } from "./component";
 
 export type ResizableSides = 'topLeft' |
     'top' |
@@ -26,8 +24,6 @@ export interface DialogOptions extends PanelOptions {
 }
 
 export class AgDialog extends AgPanel<DialogOptions> {
-
-    @Autowired('popupService') private popupService: PopupService;
 
     private isMaximizable: boolean = false;
     private isMaximized: boolean = false;
@@ -57,7 +53,7 @@ export class AgDialog extends AgPanel<DialogOptions> {
         super.postConstruct();
 
         this.addManagedListener(eGui, 'focusin', (e: FocusEvent) => {
-            this.popupService.bringPopupToFront(eGui);
+            this.beans.popupService.bringPopupToFront(eGui);
         });
 
         if (movable) { this.setMovable(movable); }
@@ -70,7 +66,7 @@ export class AgDialog extends AgPanel<DialogOptions> {
         const { alwaysOnTop, modal, title, afterGuiAttached  } = this.config;
         const translate = this.beans.localeService.getLocaleTextFunc();
 
-        const addPopupRes = this.popupService.addPopup({
+        const addPopupRes = this.beans.popupService.addPopup({
             modal,
             eChild: eGui,
             closeOnEsc: true,

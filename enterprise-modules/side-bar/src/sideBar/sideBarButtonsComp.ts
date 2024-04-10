@@ -23,9 +23,6 @@ export class SideBarButtonsComp extends Component {
     private static readonly TEMPLATE: string = /* html */ `<div class="ag-side-buttons" role="tablist"></div>`;
     private buttonComps: SideBarButtonComp[] = [];
 
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-
     constructor() {
         super(SideBarButtonsComp.TEMPLATE);
     }
@@ -38,9 +35,9 @@ export class SideBarButtonsComp extends Component {
     private handleKeyDown(e: KeyboardEvent): void {
         if (e.key !== KeyCode.TAB || !e.shiftKey) { return; }
 
-        const lastColumn = _.last(this.columnModel.getAllDisplayedColumns());
+        const lastColumn = _.last(this.beans.columnModel.getAllDisplayedColumns());
 
-        if (this.focusService.focusGridView(lastColumn, true)) {
+        if (this.beans.focusService.focusGridView(lastColumn, true)) {
             e.preventDefault();
         }
     }

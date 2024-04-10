@@ -1,17 +1,11 @@
-import { ColumnModel } from "../columns/columnModel";
 import { KeyCode } from "../constants/keyCode";
 import { BeanStub } from "../context/beanStub";
-import { Autowired } from "../context/context";
-import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
-import { FilterManager } from "../filter/filterManager";
-import { FocusService } from "../focusService";
-import { MenuService } from "../misc/menuService";
 import { isIOSUserAgent } from "../utils/browser";
 import { exists } from "../utils/generic";
 import { ManagedFocusFeature } from "../widgets/managedFocusFeature";
 import { LongTapEvent, TouchListener } from "../widgets/touchListener";
-import { HeaderNavigationDirection, HeaderNavigationService } from "./common/headerNavigationService";
+import { HeaderNavigationDirection } from "./common/headerNavigationService";
 
 export interface IGridHeaderComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -19,13 +13,6 @@ export interface IGridHeaderComp {
 }
 
 export class GridHeaderCtrl extends BeanStub {
-
-    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('menuService') private menuService: MenuService;
 
     private comp: IGridHeaderComp;
     private eGui: HTMLElement;
@@ -55,7 +42,7 @@ export class GridHeaderCtrl extends BeanStub {
         this.addManagedListener(this.eGui, 'contextmenu', listener);
         this.mockContextMenuForIPad(listener);
 
-        this.ctrlsService.registerGridHeaderCtrl(this);
+        this.beans.ctrlsService.registerGridHeaderCtrl(this);
     }
 
     private setupHeaderHeight(): void {
@@ -79,21 +66,21 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private setHeaderHeight(): void {
-        const { columnModel } = this;
+        const { columnModel, filterManager } = this.beans;
 
         let numberOfFloating = 0;
         let headerRowCount = columnModel.getHeaderRowCount();
         let totalHeaderHeight: number;
 
-        const hasFloatingFilters = this.filterManager.hasFloatingFilters();
+        const hasFloatingFilters = filterManager.hasFloatingFilters();
 
         if (hasFloatingFilters) {
             headerRowCount++;
             numberOfFloating = 1;
         }
 
-        const groupHeight = this.columnModel.getColumnGroupHeaderRowHeight();
-        const headerHeight = this.columnModel.getColumnHeaderRowHeight();
+        const groupHeight = columnModel.getColumnGroupHeaderRowHeight();
+        const headerHeight = columnModel.getColumnHeaderRowHeight();
 
         const numberOfNonGroups = 1 + numberOfFloating;
         const numberOfGroups = headerRowCount - numberOfNonGroups;
@@ -117,14 +104,14 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private onPivotModeChanged(): void {
-        const pivotMode = this.columnModel.isPivotMode();
+        const pivotMode = this.beans.columnModel.isPivotMode();
 
         this.comp.addOrRemoveCssClass('ag-pivot-on', pivotMode);
         this.comp.addOrRemoveCssClass('ag-pivot-off', !pivotMode);
     }
 
     private onDisplayedColumnsChanged(): void {
-        const columns = this.columnModel.getAllDisplayedColumns();
+        const columns = this.beans.columnModel.getAllDisplayedColumns();
         const shouldAllowOverflow = columns.some(col => col.isSpanHeaderHeight());
 
         this.comp.addOrRemoveCssClass('ag-header-allow-overflow', shouldAllowOverflow);
@@ -136,8 +123,8 @@ export class GridHeaderCtrl extends BeanStub {
             ? HeaderNavigationDirection.LEFT
             : HeaderNavigationDirection.RIGHT;
 
-        if (this.headerNavigationService.navigateHorizontally(direction, true, e) ||
-            this.focusService.focusNextGridCoreContainer(e.shiftKey)
+        if (this.beans.headerNavigationService.navigateHorizontally(direction, true, e) ||
+            this.beans.focusService.focusNextGridCoreContainer(e.shiftKey)
         ) {
             e.preventDefault();
         }
@@ -153,7 +140,7 @@ export class GridHeaderCtrl extends BeanStub {
                 if (!exists(direction)) {
                     direction = HeaderNavigationDirection.RIGHT;
                 }
-                this.headerNavigationService.navigateHorizontally(direction, false, e);
+                this.beans.headerNavigationService.navigateHorizontally(direction, false, e);
                 break;
             case KeyCode.UP:
                 direction = HeaderNavigationDirection.UP;
@@ -161,7 +148,7 @@ export class GridHeaderCtrl extends BeanStub {
                 if (!exists(direction)) {
                     direction = HeaderNavigationDirection.DOWN;
                 }
-                if (this.headerNavigationService.navigateVertically(direction, null, e)) {
+                if (this.beans.headerNavigationService.navigateVertically(direction, null, e)) {
                     e.preventDefault();
                 }
                 break;
@@ -176,17 +163,17 @@ export class GridHeaderCtrl extends BeanStub {
         if (!relatedTarget && this.eGui.contains(this.beans.gos.getActiveDomElement())) { return; }
 
         if (!this.eGui.contains(relatedTarget as HTMLElement)) {
-            this.focusService.clearFocusedHeader();
+            this.beans.focusService.clearFocusedHeader();
         }
     }
 
     private onHeaderContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
-        if ((!mouseEvent && !touchEvent) || !this.menuService.isHeaderContextMenuEnabled()) { return; }
+        if ((!mouseEvent && !touchEvent) || !this.beans.menuService.isHeaderContextMenuEnabled()) { return; }
 
         const { target } = (mouseEvent ?? touch)!;
 
-        if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl().getViewport()) {
-            this.menuService.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
+        if (target === this.eGui || target === this.beans.ctrlsService.getHeaderRowContainerCtrl().getViewport()) {
+            this.beans.menuService.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
         }
     }
 

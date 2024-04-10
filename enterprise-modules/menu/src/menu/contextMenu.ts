@@ -1,5 +1,4 @@
 import {
-    _,
     AgEvent,
     AgMenuItemComponent,
     AgMenuList,
@@ -8,21 +7,13 @@ import {
     BeanStub,
     CellPosition,
     CellPositionUtils,
-    Column,
-    ColumnModel,
-    Component,
+    Column, Component,
     FocusService,
     IAfterGuiAttachedParams,
-    IContextMenuFactory,
-    IRangeService,
-    MenuItemDef,
+    IContextMenuFactory, MenuItemDef,
     ModuleNames,
-    ModuleRegistry,
-    Optional,
-    PopupService,
-    PostConstruct,
-    RowNode,
-    CtrlsService,
+    ModuleRegistry, PostConstruct,
+    RowNode, _
 } from "@ag-grid-community/core";
 import { MenuItemMapper } from "./menuItemMapper";
 import { MenuUtils } from "./menuUtils";
@@ -33,12 +24,7 @@ const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
 @Bean('contextMenuFactory')
 export class ContextMenuFactory extends BeanStub implements IContextMenuFactory {
 
-    @Autowired('popupService') private popupService: PopupService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('menuUtils') private menuUtils: MenuUtils;
-    
-    @Optional('rangeService') private rangeService?: IRangeService;
 
     private activeMenu: ContextMenu | null;
 
@@ -60,11 +46,11 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         }
 
         if (this.beans.gos.get('enableCharts') && ModuleRegistry.__isRegistered(ModuleNames.GridChartsModule, this.beans.context.getGridId())) {
-            if (this.columnModel.isPivotMode()) {
+            if (this.beans.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
 
-            if (this.rangeService && !this.rangeService.isEmpty()) {
+            if (this.beans.rangeService && !this.beans.rangeService.isEmpty()) {
                 defaultMenuOptions.push('chartRange');
             }
         }
@@ -109,7 +95,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
     public showMenu(node: RowNode | null, column: Column | null, value: any, mouseEvent: MouseEvent | Touch, anchorToElement: HTMLElement): boolean {
         const menuItems = this.getMenuItems(node, column, value);
-        const eGridBodyGui = this.ctrlsService.getGridBodyCtrl().getGui();
+        const eGridBodyGui = this.beans.ctrlsService.getGridBodyCtrl().getGui();
 
         if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return false; }
 
@@ -131,7 +117,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
         const translate = this.beans.localeService.getLocaleTextFunc();
 
-        const addPopupRes = this.popupService.addPopup({
+        const addPopupRes = this.beans.popupService.addPopup({
             modal: true,
             eChild: eMenuGui,
             closeOnEsc: true,
@@ -142,7 +128,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             click: mouseEvent,
             positionCallback: () => {
                 const isRtl = this.beans.gos.get('enableRtl');
-                this.popupService.positionPopupUnderMouseEvent({
+                this.beans.popupService.positionPopupUnderMouseEvent({
                     ...positionParams,
                     nudgeX: isRtl ? (eMenuGui.offsetWidth + 1) * -1 : 1
                 });

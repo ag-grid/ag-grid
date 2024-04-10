@@ -1,18 +1,14 @@
-import { Bean } from "../context/context";
-import { Autowired } from "../context/context";
-import { CellPosition } from "../entities/cellPositionUtils";
-import { NumberSequence } from '../utils';
-import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 import { BeanStub } from "../context/beanStub";
+import { Bean } from "../context/context";
+import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
+import { CellPosition } from "../entities/cellPositionUtils";
+import { CellCtrl } from "../rendering/cell/cellCtrl";
+import { NumberSequence } from '../utils';
 import { getCtrlForEventTarget } from "../utils/event";
 import { exists } from "../utils/generic";
-import { CtrlsService } from "../ctrlsService";
-import { CellCtrl } from "../rendering/cell/cellCtrl";
 
 @Bean('mouseEventService')
 export class MouseEventService extends BeanStub {
-
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private static gridInstanceSequence = new NumberSequence();
     private static GRID_DOM_KEY = '__ag_grid_instance';
@@ -71,7 +67,7 @@ export class MouseEventService extends BeanStub {
         }
 
         if (gridPanelHasScrolls) {
-            const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+            const gridBodyCon = this.beans.ctrlsService.getGridBodyCtrl();
             const vRange = gridBodyCon.getScrollFeature().getVScrollPosition();
             const hRange = gridBodyCon.getScrollFeature().getHScrollPosition();
             x += hRange.left;

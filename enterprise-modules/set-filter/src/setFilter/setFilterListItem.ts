@@ -375,7 +375,7 @@ export class SetFilterListItem<V> extends Component {
     private renderCellWithoutCellRenderer(): void {
         let valueToRender = (this.cellRendererParams.valueFormatted == null ? this.cellRendererParams.value : this.cellRendererParams.valueFormatted) ?? this.translate('blanks');
         if (typeof valueToRender !== 'string') {
-            _.warnOnce(`Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects, or set convertValuesToStrings=true in the filterParams. See ${this.getFrameworkOverrides().getDocLink('filter-set-filter-list/#filter-value-types')}`);
+            _.warnOnce(`Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects, or set convertValuesToStrings=true in the filterParams. See ${this.beans.frameworkOverrides.getDocLink('filter-set-filter-list/#filter-value-types')}`);
             valueToRender = '';
         }
 

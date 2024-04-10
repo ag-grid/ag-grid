@@ -1408,10 +1408,6 @@ export class RowCtrl extends BeanStub {
         return Math.min(Math.max(minPixel, rowTop), maxPixel);
     }
 
-    protected getFrameworkOverrides(): IFrameworkOverrides {
-        return this.beans.frameworkOverrides;
-    }
-
     private forEachGui(gui: RowGui | undefined, callback: (gui: RowGui) => void): void {
         if (gui) {
             callback(gui);

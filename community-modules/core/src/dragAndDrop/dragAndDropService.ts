@@ -1,20 +1,19 @@
-import { BeanStub } from "../context/beanStub";
-import { PostConstruct, Bean, Autowired, PreDestroy } from "../context/context";
-import { Column } from "../entities/column";
 import { ColumnApi } from "../columns/columnApi";
+import { HorizontalDirection, VerticalDirection } from "../constants/direction";
+import { BeanStub } from "../context/beanStub";
+import { Autowired, Bean, PostConstruct, PreDestroy } from "../context/context";
+import { IAggFunc } from "../entities/colDef";
+import { Column } from "../entities/column";
 import { GridApi } from "../gridApi";
-import { DragService, DragListenerParams } from "./dragService";
-import { MouseEventService } from "../gridBodyComp/mouseEventService";
 import { RowDropZoneParams } from "../gridBodyComp/rowDragFeature";
-import { escapeString } from "../utils/string";
-import { createIcon } from "../utils/icon";
+import { IRowNode } from "../interfaces/iRowNode";
 import { flatten, removeFromArray } from "../utils/array";
 import { getBodyHeight, getBodyWidth } from "../utils/browser";
-import { loadTemplate, clearElement, getElementRectWithOffset } from "../utils/dom";
+import { clearElement, getElementRectWithOffset, loadTemplate } from "../utils/dom";
 import { isFunction } from "../utils/function";
-import { IRowNode } from "../interfaces/iRowNode";
-import { IAggFunc } from "../entities/colDef";
-import { HorizontalDirection, VerticalDirection } from "../constants/direction";
+import { createIcon } from "../utils/icon";
+import { escapeString } from "../utils/string";
+import { DragListenerParams } from "./dragService";
 
 export interface DragItem<TValue = any> {
     /**
@@ -143,8 +142,6 @@ export interface DraggingEvent {
 @Bean('dragAndDropService')
 export class DragAndDropService extends BeanStub {
 
-    @Autowired('dragService') private dragService: DragService;
-    @Autowired('mouseEventService') private readonly mouseEventService: MouseEventService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
@@ -213,21 +210,21 @@ export class DragAndDropService extends BeanStub {
 
         this.dragSourceAndParamsList.push({ params: params, dragSource: dragSource });
 
-        this.dragService.addDragSource(params);
+        this.beans.dragService.addDragSource(params);
     }
 
     public removeDragSource(dragSource: DragSource): void {
         const sourceAndParams = this.dragSourceAndParamsList.find(item => item.dragSource === dragSource);
 
         if (sourceAndParams) {
-            this.dragService.removeDragSource(sourceAndParams.params);
+            this.beans.dragService.removeDragSource(sourceAndParams.params);
             removeFromArray(this.dragSourceAndParamsList, sourceAndParams);
         }
     }
 
     @PreDestroy
     private clearDragSourceParamsList(): void {
-        this.dragSourceAndParamsList.forEach(sourceAndParams => this.dragService.removeDragSource(sourceAndParams.params));
+        this.dragSourceAndParamsList.forEach(sourceAndParams => this.beans.dragService.removeDragSource(sourceAndParams.params));
         this.dragSourceAndParamsList.length = 0;
         this.dropTargets.length = 0;
     }
@@ -493,7 +490,7 @@ export class DragAndDropService extends BeanStub {
 
     private createGhost(): void {
         this.eGhost = loadTemplate(DragAndDropService.GHOST_TEMPLATE);
-        this.mouseEventService.stampTopLevelGridCompWithGridInstance(this.eGhost);
+        this.beans.mouseEventService.stampTopLevelGridCompWithGridInstance(this.eGhost);
 
         const { theme } = this.beans.environment.getTheme();
 

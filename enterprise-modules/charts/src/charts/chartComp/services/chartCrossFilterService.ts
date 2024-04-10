@@ -14,7 +14,7 @@ import {
 export class ChartCrossFilterService extends BeanStub {
 
     @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    
     @Autowired('valueService') private readonly valueService: ValueService;
 
     public filter(event: any, reset: boolean = false): void {
@@ -123,6 +123,6 @@ export class ChartCrossFilterService extends BeanStub {
     }
 
     private getColumnById(colId: string) {
-        return this.columnModel.getGridColumn(colId) as Column;
+        return this.beans.columnModel.getGridColumn(colId) as Column;
     }
 }

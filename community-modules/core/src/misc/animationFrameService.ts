@@ -1,7 +1,5 @@
-import { Autowired, Bean, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { CtrlsService } from "../ctrlsService";
-import { PaginationProxy } from "../pagination/paginationProxy";
+import { Bean, PostConstruct } from "../context/context";
 
 interface TaskItem {
     task: () => void;
@@ -16,9 +14,6 @@ interface TaskList {
 
 @Bean('animationFrameService')
 export class AnimationFrameService extends BeanStub {
-
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     // p1 and p2 are create tasks are to do with row and cell creation.
     // for them we want to execute according to row order, so we use
@@ -47,7 +42,7 @@ export class AnimationFrameService extends BeanStub {
         this.scrollGoingDown = scrollTop >= this.lastScrollTop;
 
         if (isPaginationActive && scrollTop === 0) {
-            const currentPage = this.paginationProxy.getCurrentPage();
+            const currentPage = this.beans.paginationProxy.getCurrentPage();
             if (currentPage !== this.lastPage) {
                 this.lastPage = currentPage;
                 this.scrollGoingDown = true;
@@ -128,7 +123,7 @@ export class AnimationFrameService extends BeanStub {
         // 16ms is 60 fps
         const noMaxMillis = millis <= 0;
 
-        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        const gridBodyCon = this.beans.ctrlsService.getGridBodyCtrl();
 
         while (noMaxMillis || duration < millis) {
             const gridBodyDidSomething = gridBodyCon.getScrollFeature().scrollGridIfNeeded();

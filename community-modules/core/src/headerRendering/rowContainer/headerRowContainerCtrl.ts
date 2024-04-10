@@ -1,23 +1,16 @@
-import { ColumnModel } from "../../columns/columnModel";
 import { BeanStub } from "../../context/beanStub";
-import { Autowired } from "../../context/context";
-import { CtrlsService } from "../../ctrlsService";
 import { Column, ColumnPinnedType } from "../../entities/column";
-import { IHeaderColumn } from "../../interfaces/iHeaderColumn";
+import { ColumnGroup } from "../../entities/columnGroup";
 import { Events } from "../../eventKeys";
 import { CenterWidthFeature } from "../../gridBodyComp/centerWidthFeature";
-import { PinnedWidthService } from "../../gridBodyComp/pinnedWidthService";
-import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
+import { IHeaderColumn } from "../../interfaces/iHeaderColumn";
 import { NumberSequence } from "../../utils";
-import { BodyDropTarget } from "../columnDrag/bodyDropTarget";
-import { HeaderRowType } from "../row/headerRowComp";
-import { HeaderRowCtrl } from "../row/headerRowCtrl";
-import { FocusService } from "../../focusService";
-import { HeaderPosition } from "../common/headerPosition";
-import { ColumnGroup } from "../../entities/columnGroup";
 import { HeaderCellCtrl } from "../cells/column/headerCellCtrl";
 import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
-import { FilterManager } from "../../filter/filterManager";
+import { BodyDropTarget } from "../columnDrag/bodyDropTarget";
+import { HeaderPosition } from "../common/headerPosition";
+import { HeaderRowType } from "../row/headerRowComp";
+import { HeaderRowCtrl } from "../row/headerRowCtrl";
 
 export interface IHeaderRowContainerComp {
     setCenterWidth(width: string): void;
@@ -28,13 +21,6 @@ export interface IHeaderRowContainerComp {
 }
 
 export class HeaderRowContainerCtrl extends BeanStub {
-
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('focusService') public focusService: FocusService;
-    @Autowired('filterManager') public filterManager: FilterManager;
 
     private pinned: ColumnPinnedType;
     private comp: IHeaderRowContainerComp;
@@ -61,14 +47,12 @@ export class HeaderRowContainerCtrl extends BeanStub {
         this.setupDragAndDrop(this.eViewport);
 
         this.addManagedEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
-
         this.addManagedEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-
         this.addManagedEventListener(Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onDisplayedColumnsChanged.bind(this));
 
-        this.ctrlsService.registerHeaderContainer(this, this.pinned);
+        this.beans.ctrlsService.registerHeaderContainer(this, this.pinned);
 
-        if (this.columnModel.isReady()) {
+        if (this.beans.columnModel.isReady()) {
             this.refresh();
         }
     }
@@ -80,10 +64,10 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
     public refresh(keepColumns = false): void {
         const sequence = new NumberSequence();
-        const focusedHeaderPosition = this.focusService.getFocusHeaderToUseAfterRefresh();
+        const focusedHeaderPosition = this.beans.focusService.getFocusHeaderToUseAfterRefresh();
 
         const refreshColumnGroups = () => {
-            const groupRowCount = this.columnModel.getHeaderRowCount() - 1;
+            const groupRowCount = this.beans.columnModel.getHeaderRowCount() - 1;
 
             this.groupsRowCtrls = this.destroyBeans(this.groupsRowCtrls);
 
@@ -110,7 +94,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
         };
 
         const refreshFilters = () => {
-            this.includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.hidden;
+            this.includeFloatingFilter = this.beans.filterManager.hasFloatingFilters() && !this.hidden;
 
             const destroyPreviousComp = () => {
                 this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
@@ -148,7 +132,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     private restoreFocusOnHeader(position: HeaderPosition | null): void {
         if (position == null || position.column.getPinned() != this.pinned) { return; }
 
-        this.focusService.focusHeaderPosition({ headerPosition: position });
+        this.beans.focusService.focusHeaderPosition({ headerPosition: position });
     }
 
     private getAllCtrls(): HeaderRowCtrl[] {
@@ -172,7 +156,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     }
 
     private onDisplayedColumnsChanged(): void {
-        const includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.hidden;
+        const includeFloatingFilter = this.beans.filterManager.hasFloatingFilters() && !this.hidden;
         if (this.includeFloatingFilter !== includeFloatingFilter) {
             this.refresh(true);
         }
@@ -196,19 +180,20 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
         this.hidden = true;
 
+        const { pinnedWidthService, scrollVisibleService, gos } = this.beans;
         const listener = () => {
-            const width = pinningLeft ? this.pinnedWidthService.getPinnedLeftWidth() : this.pinnedWidthService.getPinnedRightWidth();
+            const width = pinningLeft ? pinnedWidthService.getPinnedLeftWidth() : pinnedWidthService.getPinnedRightWidth();
             if (width == null) { return; } // can happen at initialisation, width not yet set
 
             const hidden = (width == 0);
             const hiddenChanged = this.hidden !== hidden;
-            const isRtl = this.beans.gos.get('enableRtl');
-            const scrollbarWidth = this.beans.gos.getScrollbarWidth();
+            const isRtl = gos.get('enableRtl');
+            const scrollbarWidth = gos.getScrollbarWidth();
 
             // if there is a scroll showing (and taking up space, so Windows, and not iOS)
             // in the body, then we add extra space to keep header aligned with the body,
             // as body width fits the cols and the scrollbar
-            const addPaddingForScrollbar = this.scrollVisibleService.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
+            const addPaddingForScrollbar = scrollVisibleService.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
             const widthWithPadding = addPaddingForScrollbar ? width + scrollbarWidth : width;
 
             this.comp.setPinnedContainerWidth(`${widthWithPadding}px`);

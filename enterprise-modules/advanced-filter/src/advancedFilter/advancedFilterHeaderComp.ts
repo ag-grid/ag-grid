@@ -1,20 +1,12 @@
 import {
-    Autowired,
-    ColumnModel,
     Component,
-    Events,
-    FocusService,
-    HeaderNavigationService,
-    KeyCode,
+    Events, KeyCode,
     PostConstruct,
     _
 } from "@ag-grid-community/core";
 import { AdvancedFilterComp } from "./advancedFilterComp";
 
 export class AdvancedFilterHeaderComp extends Component {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
 
     private eAdvancedFilter: AdvancedFilterComp | undefined;
     private height: number;
@@ -37,7 +29,7 @@ export class AdvancedFilterHeaderComp extends Component {
 
         this.addGuiEventListener('focusout', (event: FocusEvent) => {
             if (!this.getFocusableElement().contains(event.relatedTarget as HTMLElement)) {
-                this.focusService.clearAdvancedFilterColumn();
+                this.beans.focusService.clearAdvancedFilterColumn();
             }
         });
     }
@@ -71,7 +63,7 @@ export class AdvancedFilterHeaderComp extends Component {
             const eAdvancedFilterGui = this.eAdvancedFilter.getGui();
             this.eAdvancedFilter.addCssClass('ag-advanced-filter-header-cell');
             
-            this.height = this.columnModel.getFloatingFiltersHeight();
+            this.height = this.beans.columnModel.getFloatingFiltersHeight();
             const height = `${this.height}px`;
             eGui.style.height = height;
             eGui.style.minHeight = height;
@@ -92,11 +84,11 @@ export class AdvancedFilterHeaderComp extends Component {
     }
     
     private setAriaColumnCount(eAdvancedFilterGui: HTMLElement): void {
-        _.setAriaColSpan(eAdvancedFilterGui, this.columnModel.getAllGridColumns().length);
+        _.setAriaColSpan(eAdvancedFilterGui, this.beans.columnModel.getAllGridColumns().length);
     }
 
     private setAriaRowIndex(): void {
-        _.setAriaRowIndex(this.getGui(), this.headerNavigationService.getHeaderRowCount());
+        _.setAriaRowIndex(this.getGui(), this.beans.headerNavigationService.getHeaderRowCount());
     }
 
     private onGridColumnsChanged(): void {
@@ -109,7 +101,7 @@ export class AdvancedFilterHeaderComp extends Component {
         switch (event.key) {
             case KeyCode.ENTER: {
                 if (this.hasFocus()) {
-                    if (this.focusService.focusInto(this.getFocusableElement())) {
+                    if (this.beans.focusService.focusInto(this.getFocusableElement())) {
                         event.preventDefault();
                     }
                 }
@@ -130,7 +122,7 @@ export class AdvancedFilterHeaderComp extends Component {
                 if (this.hasFocus()) {
                     this.navigateLeftRight(event);
                 } else {
-                    const nextFocusableEl = this.focusService.findNextFocusableElement(this.getFocusableElement(), null, event.shiftKey);
+                    const nextFocusableEl = this.beans.focusService.findNextFocusableElement(this.getFocusableElement(), null, event.shiftKey);
                     if (nextFocusableEl) {
                         event.preventDefault();
                         nextFocusableEl.focus();
@@ -144,7 +136,7 @@ export class AdvancedFilterHeaderComp extends Component {
 
     private navigateUpDown(backwards: boolean, event: KeyboardEvent): void {
         if (this.hasFocus()) {
-            if (this.focusService.focusNextFromAdvancedFilter(backwards)) {
+            if (this.beans.focusService.focusNextFromAdvancedFilter(backwards)) {
                 event.preventDefault();
             };
         }
@@ -152,8 +144,8 @@ export class AdvancedFilterHeaderComp extends Component {
 
     private navigateLeftRight(event: KeyboardEvent): void {
         if (event.shiftKey
-            ? this.focusService.focusLastHeader()
-            : this.focusService.focusNextFromAdvancedFilter(false, true)) {
+            ? this.beans.focusService.focusLastHeader()
+            : this.beans.focusService.focusNextFromAdvancedFilter(false, true)) {
             event.preventDefault();
         }
     }

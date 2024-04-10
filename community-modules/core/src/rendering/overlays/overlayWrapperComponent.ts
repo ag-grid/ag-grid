@@ -1,11 +1,10 @@
-import { Autowired, PostConstruct } from '../../context/context';
-import { Component } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
+import { PostConstruct } from '../../context/context';
+import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams } from "../../styling/layoutFeature";
 import { AgPromise } from '../../utils';
 import { clearElement } from '../../utils/dom';
-import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams } from "../../styling/layoutFeature";
+import { Component } from '../../widgets/component';
+import { RefSelector } from '../../widgets/componentAnnotations';
 
-import { OverlayService } from './overlayService';
 
 export class OverlayWrapperComponent extends Component implements LayoutView {
 
@@ -16,8 +15,6 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
                 <div class="ag-overlay-wrapper" ref="eOverlayWrapper" role="presentation"></div>
             </div>
         </div>`;
-
-    @Autowired('overlayService') private readonly overlayService: OverlayService;
 
     @RefSelector('eOverlayWrapper') eOverlayWrapper: HTMLElement;
 
@@ -43,7 +40,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.createManagedBean(new LayoutFeature(this));
         this.setDisplayed(false, { skipAriaHidden: true });
 
-        this.overlayService.registerOverlayWrapperComp(this);
+        this.beans.overlayService.registerOverlayWrapperComp(this);
     }
 
     private setWrapperTypeClass(overlayWrapperCssClass: string): void {
@@ -93,7 +90,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
             return;
         }
 
-        this.activeOverlay = this.getContext().destroyBean(this.activeOverlay)!;
+        this.activeOverlay = this.destroyBean(this.activeOverlay)!;
         this.updateListenerDestroyFunc?.();
 
         clearElement(this.eOverlayWrapper);

@@ -1,10 +1,7 @@
-import { Bean, Autowired, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
+import { Bean, PostConstruct } from "../context/context";
 import { Events, ScrollVisibilityChangedEvent } from "../events";
-import { CtrlsService } from "../ctrlsService";
 import { WithoutGridCommon } from "../interfaces/iCommon";
-import { debounce } from "../utils/function";
-import { ColumnAnimationService } from "../rendering/columnAnimationService";
 
 export interface SetScrollsVisibleParams {
     horizontalScrollShowing: boolean;
@@ -13,9 +10,6 @@ export interface SetScrollsVisibleParams {
 
 @Bean('scrollVisibleService')
 export class ScrollVisibleService extends BeanStub {
-
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('columnAnimationService') public columnAnimationService: ColumnAnimationService;
 
     private horizontalScrollShowing: boolean;
     private verticalScrollShowing: boolean;
@@ -42,9 +36,10 @@ export class ScrollVisibleService extends BeanStub {
         // location at the start of the animation, so pre animation the H scrollbar is still
         // needed, but post animation it is not. So if animation is active, we only update
         // after the animation has ended.
-        if (this.columnAnimationService.isActive()) {
-            this.columnAnimationService.executeLaterVMTurn(() => {
-                this.columnAnimationService.executeLaterVMTurn(() => this.updateImpl());
+        const { columnAnimationService } = this.beans;
+        if (columnAnimationService.isActive()) {
+            columnAnimationService.executeLaterVMTurn(() => {
+                columnAnimationService.executeLaterVMTurn(() => this.updateImpl());
             });
         } else {
             this.updateImpl();
@@ -52,9 +47,11 @@ export class ScrollVisibleService extends BeanStub {
     }
 
     private updateImpl(): void {
-        const centerRowCtrl = this.ctrlsService.getCenterRowContainerCtrl();
+        const { columnAnimationService, ctrlsService } = this.beans;
 
-        if (!centerRowCtrl || this.columnAnimationService.isActive()) { return; }
+        const centerRowCtrl = ctrlsService.getCenterRowContainerCtrl();
+
+        if (!centerRowCtrl || columnAnimationService.isActive()) { return; }
 
         const params: SetScrollsVisibleParams = {
             horizontalScrollShowing: centerRowCtrl.isHorizontalScrollShowing(),

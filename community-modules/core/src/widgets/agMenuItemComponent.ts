@@ -1,19 +1,17 @@
+import { KeyCode } from '../constants/keyCode';
+import { BeanStub } from '../context/beanStub';
+import { AgEvent } from '../events';
+import { IMenuActionParams } from '../interfaces/iCallbackParams';
+import { WithoutGridCommon } from '../interfaces/iCommon';
+import { IComponent } from '../interfaces/iComponent';
+import { IMenuConfigParams, IMenuItemComp, MenuItemDef } from '../interfaces/menuItem';
+import { setAriaDisabled, setAriaExpanded, setAriaLevel, setAriaRole } from '../utils/aria';
+import { loadTemplate } from '../utils/dom';
+import { AgPromise } from '../utils/promise';
 import { AgMenuList } from './agMenuList';
 import { AgMenuPanel } from './agMenuPanel';
 import { Component } from './component';
-import { PopupService } from './popupService';
-import { KeyCode } from '../constants/keyCode';
-import { Autowired } from '../context/context';
-import { AgEvent } from '../events';
-import { loadTemplate } from '../utils/dom';
-import { setAriaDisabled, setAriaExpanded, setAriaLevel, setAriaRole } from '../utils/aria';
-import { BeanStub } from '../context/beanStub';
-import { AgPromise } from '../utils/promise';
 import { TooltipFeature } from './tooltipFeature';
-import { IMenuConfigParams, IMenuItemComp,  MenuItemDef } from '../interfaces/menuItem';
-import { IComponent } from '../interfaces/iComponent';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { IMenuActionParams } from '../interfaces/iCallbackParams';
 
 export interface CloseMenuEvent extends AgEvent {
     event?: MouseEvent | KeyboardEvent;
@@ -32,7 +30,6 @@ interface AgMenuItemComponentParams {
 }
 
 export class AgMenuItemComponent extends BeanStub {
-    @Autowired('popupService') private readonly popupService: PopupService;
 
     public static EVENT_CLOSE_MENU = 'closeMenu';
     public static EVENT_MENU_ITEM_ACTIVATED = 'menuItemActivated';
@@ -172,12 +169,12 @@ export class AgMenuItemComponent extends BeanStub {
             }
         }
 
-        const positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService,
+        const positionCallback = this.beans.popupService.positionPopupForMenu.bind(this.beans.popupService,
             { eventSource: this.eGui, ePopup });
 
         const translate = this.beans.localeService.getLocaleTextFunc();
 
-        const addPopupRes = this.popupService.addPopup({
+        const addPopupRes = this.beans.popupService.addPopup({
             modal: true,
             eChild: ePopup,
             positionCallback: positionCallback,
@@ -281,7 +278,7 @@ export class AgMenuItemComponent extends BeanStub {
     private onItemSelected(event: MouseEvent | KeyboardEvent): void {
         this.menuItemComp.select?.();
         if (this.params.action) {
-            this.getFrameworkOverrides().wrapOutgoing(() => this.params.action!(this.beans.gos.addGridCommonParams({
+            this.beans.frameworkOverrides.wrapOutgoing(() => this.params.action!(this.beans.gos.addGridCommonParams({
                 ...this.contextParams
             })));
         } else {

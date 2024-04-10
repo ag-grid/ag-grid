@@ -1,16 +1,11 @@
 import { BeanStub } from "../context/beanStub";
+import { Bean, PostConstruct } from "../context/context";
 import { Events } from "../events";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { CtrlsService } from "../ctrlsService";
 import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
 import { debounce } from "../utils/function";
-import { PaginationProxy } from "./paginationProxy";
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
-
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     private centerRowContainerCon: RowContainerCtrl;
 
@@ -20,7 +15,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.ctrlsService.whenReady(p => {
+        this.beans.ctrlsService.whenReady(p => {
             this.centerRowContainerCon = p.centerRowContainerCtrl;
 
             this.addManagedEventListener(Events.EVENT_BODY_HEIGHT_CHANGED, this.checkPageSize.bind(this));
@@ -37,7 +32,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
 
     private onPaginationAutoSizeChanged(): void {
         if (this.notActive()) {
-            this.paginationProxy.unsetAutoCalculatedPageSize();
+            this.beans.paginationProxy.unsetAutoCalculatedPageSize();
         } else {
             this.checkPageSize();
         }
@@ -52,7 +47,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
             const update = () => {
                 const rowHeight = this.beans.gos.getRowHeightAsNumber();
                 const newPageSize = Math.floor(bodyHeight / rowHeight);
-                this.paginationProxy.setPageSize(newPageSize, 'autoCalculated');
+                this.beans.paginationProxy.setPageSize(newPageSize, 'autoCalculated');
             }
 
             if (!this.isBodyRendered) {

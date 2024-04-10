@@ -1,26 +1,18 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired, PostConstruct } from "../context/context";
-import { ColumnModel } from "../columns/columnModel";
-import { ScrollVisibleService, SetScrollsVisibleParams } from "../gridBodyComp/scrollVisibleService";
-import { GridBodyCtrl } from "./gridBodyCtrl";
-import { BodyHeightChangedEvent, Events } from "../events";
-import { CtrlsService } from "../ctrlsService";
-import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
-import { getInnerHeight, getInnerWidth } from "../utils/dom";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { PinnedWidthService } from "./pinnedWidthService";
+import { PostConstruct } from "../context/context";
 import { Column } from "../entities/column";
+import { BodyHeightChangedEvent, Events } from "../events";
+import { SetScrollsVisibleParams } from "../gridBodyComp/scrollVisibleService";
 import { ProcessUnpinnedColumnsParams } from "../interfaces/iCallbackParams";
+import { WithoutGridCommon } from "../interfaces/iCommon";
+import { getInnerHeight, getInnerWidth } from "../utils/dom";
+import { GridBodyCtrl } from "./gridBodyCtrl";
+import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
 
 // listens to changes in the center viewport size, for column and row virtualisation,
 // and adjusts grid as necessary. there are two viewports, one for horizontal and one for
 // vertical scrolling.
 export class ViewportSizeFeature extends BeanStub {
-
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
     private centerContainerCtrl: RowContainerCtrl;
     private gridBodyCtrl: GridBodyCtrl;
@@ -35,8 +27,8 @@ export class ViewportSizeFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.ctrlsService.whenReady(() => {
-            this.gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        this.beans.ctrlsService.whenReady(() => {
+            this.gridBodyCtrl = this.beans.ctrlsService.getGridBodyCtrl();
             this.listenForResize();
         });
         this.addManagedEventListener(Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
@@ -68,7 +60,7 @@ export class ViewportSizeFeature extends BeanStub {
 
             if (newWidth !== this.centerWidth) {
                 this.centerWidth = newWidth;
-                this.columnModel.refreshFlexedColumns(
+                this.beans.columnModel.refreshFlexedColumns(
                     { viewportWidth: this.centerWidth, updateBodyWidths: true, fireResizedEvent: true }
                 );
             }
@@ -97,18 +89,19 @@ export class ViewportSizeFeature extends BeanStub {
             columnsToRemove = processUnpinnedColumns(params);
         }
 
-        this.columnModel.setColumnsPinned(columnsToRemove, null, 'viewportSizeFeature')
+        this.beans.columnModel.setColumnsPinned(columnsToRemove, null, 'viewportSizeFeature')
     }
 
     private getPinnedColumnsOverflowingViewport(viewportWidth: number): Column[] {
-        const pinnedRightWidth = this.pinnedWidthService.getPinnedRightWidth();
-        const pinnedLeftWidth = this.pinnedWidthService.getPinnedLeftWidth();
+        const { pinnedWidthService } = this.beans;
+        const pinnedRightWidth = pinnedWidthService.getPinnedRightWidth();
+        const pinnedLeftWidth = pinnedWidthService.getPinnedLeftWidth();
         const totalPinnedWidth = pinnedRightWidth + pinnedLeftWidth;
 
         if (totalPinnedWidth < viewportWidth) { return []; }
 
-        const pinnedLeftColumns: Column[] = [...this.columnModel.getDisplayedLeftColumns()];
-        const pinnedRightColumns: Column[] = [...this.columnModel.getDisplayedRightColumns()];
+        const pinnedLeftColumns: Column[] = [...this.beans.columnModel.getDisplayedLeftColumns()];
+        const pinnedRightColumns: Column[] = [...this.beans.columnModel.getDisplayedRightColumns()];
 
         let indexRight = 0;
         let indexLeft = 0;
@@ -184,7 +177,7 @@ export class ViewportSizeFeature extends BeanStub {
             verticalScrollShowing: this.gridBodyCtrl.isVerticalScrollShowing()
         };
 
-        this.scrollVisibleService.setScrollsVisible(params);
+        this.beans.scrollVisibleService.setScrollsVisible(params);
     }
 
     private isHorizontalScrollShowing(): boolean {
@@ -198,6 +191,6 @@ export class ViewportSizeFeature extends BeanStub {
         const scrollWidth = this.centerContainerCtrl.getCenterWidth();
         const scrollPosition = this.centerContainerCtrl.getViewportScrollLeft();
 
-        this.columnModel.setViewportPosition(scrollWidth, scrollPosition);
+        this.beans.columnModel.setViewportPosition(scrollWidth, scrollPosition);
     }
 }

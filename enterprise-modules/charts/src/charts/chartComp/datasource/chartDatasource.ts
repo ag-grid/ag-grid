@@ -41,7 +41,7 @@ interface IData {
 export class ChartDatasource extends BeanStub {
     @Autowired('rowModel') private readonly gridRowModel: IRowModel;
     @Autowired('valueService') private readonly valueService: ValueService;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    
     @Autowired('rowNodeSorter') private readonly rowNodeSorter: RowNodeSorter;
     @Autowired('sortController') private sortController: SortController;
 
@@ -110,7 +110,7 @@ export class ChartDatasource extends BeanStub {
             // first get data for dimensions columns
             dimensionCols.forEach(col => {
                 const colId = col.colId;
-                const column = this.columnModel.getGridColumn(colId);
+                const column = this.beans.columnModel.getGridColumn(colId);
 
                 if (column) {
                     const valueObject = this.valueService.getValue(column, rowNode);
@@ -301,7 +301,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private updatePivotKeysForSSRM() {
-        const secondaryColumns = this.columnModel.getSecondaryColumns();
+        const secondaryColumns = this.beans.columnModel.getSecondaryColumns();
 
         if (!secondaryColumns) { return; }
 

@@ -35,7 +35,7 @@ export class ToolPanelContextMenu extends Component {
     private menuItemMap: Map<MenuItemName, MenuItemProperty>;
     private displayName: string | null = null;
 
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    
     @Autowired('popupService') private readonly popupService: PopupService;
     @Autowired('focusService') private readonly focusService: FocusService;
 
@@ -53,9 +53,9 @@ export class ToolPanelContextMenu extends Component {
         this.buildMenuItemMap();
 
         if (this.column instanceof Column) {
-            this.displayName = this.columnModel.getDisplayNameForColumn(this.column, 'columnToolPanel');
+            this.displayName = this.beans.columnModel.getDisplayNameForColumn(this.column, 'columnToolPanel');
         } else {
-            this.displayName = this.columnModel.getDisplayNameForProvidedColumnGroup(null, this.column, 'columnToolPanel');
+            this.displayName = this.beans.columnModel.getDisplayNameForProvidedColumnGroup(null, this.column, 'columnToolPanel');
         }
 
         if (this.isActive()) {
@@ -76,7 +76,7 @@ export class ToolPanelContextMenu extends Component {
 
         this.allowGrouping = this.columns.some(col => col.isPrimary() && col.isAllowRowGroup());
         this.allowValues = this.columns.some(col => col.isPrimary() && col.isAllowValue());
-        this.allowPivoting = this.columnModel.isPivotMode() && this.columns.some(col => col.isPrimary() && col.isAllowPivot());
+        this.allowPivoting = this.beans.columnModel.isPivotMode() && this.columns.some(col => col.isPrimary() && col.isAllowPivot());
     }
 
     private buildMenuItemMap(): void {
@@ -84,17 +84,17 @@ export class ToolPanelContextMenu extends Component {
 
         this.menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap.set('rowGroup', {
-            allowedFunction: (col: Column) => col.isPrimary() && col.isAllowRowGroup() && !this.columnModel.isColumnGroupingLocked(col),
+            allowedFunction: (col: Column) => col.isPrimary() && col.isAllowRowGroup() && !this.beans.columnModel.isColumnGroupingLocked(col),
             activeFunction: (col: Column) => col.isRowGroupActive(),
             activateLabel: () => `${localeTextFunc('groupBy', 'Group by')} ${this.displayName}`,
             deactivateLabel: () => `${localeTextFunc('ungroupBy', 'Un-Group by')} ${this.displayName}`,
             activateFunction: () => {
-                const groupedColumns = this.columnModel.getRowGroupColumns();
-                this.columnModel.setRowGroupColumns(this.addColumnsToList(groupedColumns), "toolPanelUi");
+                const groupedColumns = this.beans.columnModel.getRowGroupColumns();
+                this.beans.columnModel.setRowGroupColumns(this.addColumnsToList(groupedColumns), "toolPanelUi");
             },
             deActivateFunction: () => {
-                const groupedColumns = this.columnModel.getRowGroupColumns();
-                this.columnModel.setRowGroupColumns(this.removeColumnsFromList(groupedColumns), "toolPanelUi");
+                const groupedColumns = this.beans.columnModel.getRowGroupColumns();
+                this.beans.columnModel.setRowGroupColumns(this.removeColumnsFromList(groupedColumns), "toolPanelUi");
             },
             addIcon: 'menuAddRowGroup',
             removeIcon: 'menuRemoveRowGroup'
@@ -106,29 +106,29 @@ export class ToolPanelContextMenu extends Component {
             activateLabel: () => localeTextFunc('addToValues', `Add ${this.displayName} to values`, [this.displayName!]),
             deactivateLabel: () => localeTextFunc('removeFromValues', `Remove ${this.displayName} from values`, [this.displayName!]),
             activateFunction: () => {
-                const valueColumns = this.columnModel.getValueColumns();
-                this.columnModel.setValueColumns(this.addColumnsToList(valueColumns), "toolPanelUi");
+                const valueColumns = this.beans.columnModel.getValueColumns();
+                this.beans.columnModel.setValueColumns(this.addColumnsToList(valueColumns), "toolPanelUi");
             },
             deActivateFunction: () => {
-                const valueColumns = this.columnModel.getValueColumns();
-                this.columnModel.setValueColumns(this.removeColumnsFromList(valueColumns), "toolPanelUi");
+                const valueColumns = this.beans.columnModel.getValueColumns();
+                this.beans.columnModel.setValueColumns(this.removeColumnsFromList(valueColumns), "toolPanelUi");
             },
             addIcon: 'valuePanel',
             removeIcon: 'valuePanel'
         });
 
         this.menuItemMap.set('pivot', {
-            allowedFunction: (col: Column) => this.columnModel.isPivotMode() && col.isPrimary() && col.isAllowPivot(),
+            allowedFunction: (col: Column) => this.beans.columnModel.isPivotMode() && col.isPrimary() && col.isAllowPivot(),
             activeFunction: (col: Column) => col.isPivotActive(),
             activateLabel: () => localeTextFunc('addToLabels', `Add ${this.displayName} to labels`, [this.displayName!]),
             deactivateLabel: () => localeTextFunc('removeFromLabels', `Remove ${this.displayName} from labels`, [this.displayName!]),
             activateFunction: () => {
-                const pivotColumns = this.columnModel.getPivotColumns();
-                this.columnModel.setPivotColumns(this.addColumnsToList(pivotColumns), "toolPanelUi");
+                const pivotColumns = this.beans.columnModel.getPivotColumns();
+                this.beans.columnModel.setPivotColumns(this.addColumnsToList(pivotColumns), "toolPanelUi");
             },
             deActivateFunction: () => {
-                const pivotColumns = this.columnModel.getPivotColumns();
-                this.columnModel.setPivotColumns(this.removeColumnsFromList(pivotColumns), "toolPanelUi");
+                const pivotColumns = this.beans.columnModel.getPivotColumns();
+                this.beans.columnModel.setPivotColumns(this.removeColumnsFromList(pivotColumns), "toolPanelUi");
             },
             addIcon: 'pivotPanel',
             removeIcon: 'pivotPanel'

@@ -1,20 +1,7 @@
 import {
-    _,
-    AgGroupComponent,
-    Autowired,
-    Column,
-    ColumnModel,
-    Component,
+    AgGroupComponent, AgGroupComponentParams, Column, Component,
     Events,
-    FilterOpenedEvent,
-    ProvidedColumnGroup,
-    IProvidedColumn,
-    PostConstruct,
-    ITooltipParams,
-    PreConstruct,
-    RefSelector,
-    AgGroupComponentParams,
-    WithoutGridCommon
+    FilterOpenedEvent, IProvidedColumn, ITooltipParams, PostConstruct, PreConstruct, ProvidedColumnGroup, RefSelector, WithoutGridCommon, _
 } from "@ag-grid-community/core";
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";
 
@@ -27,8 +14,6 @@ export class ToolPanelFilterGroupComp extends Component {
         </div>`;
 
     @RefSelector('filterGroupComp') private filterGroupComp: AgGroupComponent;
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private readonly depth: number;
     private readonly columnGroup: IProvidedColumn;
@@ -240,11 +225,11 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private getColumnGroupName(columnGroup: ProvidedColumnGroup): string | null {
-        return this.columnModel.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'filterToolPanel');
+        return this.beans.columnModel.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'filterToolPanel');
     }
 
     private getColumnName(column: Column): string | null {
-        return this.columnModel.getDisplayNameForColumn(column, 'filterToolPanel', false);
+        return this.beans.columnModel.getDisplayNameForColumn(column, 'filterToolPanel', false);
     }
 
     private destroyFilters() {

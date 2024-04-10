@@ -1,15 +1,10 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../context/context";
+import { Bean, PostConstruct } from "../context/context";
 import { RowGroupOpenedEvent } from "../events";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
-import { IRowModel } from "../interfaces/iRowModel";
-import { AnimationFrameService } from "../misc/animationFrameService";
 
 @Bean('rowNodeEventThrottle')
 export class RowNodeEventThrottle extends BeanStub {
-
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('rowModel') private rowModel: IRowModel;
 
     private clientSideRowModel: IClientSideRowModel;
 
@@ -19,8 +14,8 @@ export class RowNodeEventThrottle extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.rowModel.getType() == 'clientSide') {
-            this.clientSideRowModel = this.rowModel as IClientSideRowModel;
+        if (this.beans.rowModel.getType() == 'clientSide') {
+            this.clientSideRowModel = this.beans.clientSideRowModel;
         }
     }
 
@@ -57,7 +52,7 @@ export class RowNodeEventThrottle extends BeanStub {
             func();
         } else {
             if (this.dispatchExpandedDebounced == null) {
-                this.dispatchExpandedDebounced = this.animationFrameService.debounce(func);
+                this.dispatchExpandedDebounced = this.beans.animationFrameService.debounce(func);
             }  
             this.dispatchExpandedDebounced();
         }

@@ -1,24 +1,11 @@
 import {
-    Component,
-    FilterChangedEvent,
-    _,
-    IFloatingFilterComp,
-    IFloatingFilterParams,
-    UserComponentFactory,
-    Autowired,
-    IFilterDef,
-    AgPromise,
-    MultiFilterParams,
-    IMultiFilterModel,
-    IFilter,
-    FilterManager,
-    UserCompDetails,
+    AgPromise, Component,
+    FilterChangedEvent, IFilter, IFilterDef, IFloatingFilterComp,
+    IFloatingFilterParams, IMultiFilterModel, MultiFilterParams, UserCompDetails, _
 } from '@ag-grid-community/core';
 import { MultiFilter } from './multiFilter';
 
 export class MultiFloatingFilterComp extends Component implements IFloatingFilterComp<MultiFilter> {
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
 
     private floatingFilters: IFloatingFilterComp[] = [];
     private compDetailsList: UserCompDetails[] = [];
@@ -70,7 +57,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         this.params = params;
         const { compDetailsList: newCompDetailsList, floatingFilterParamsList } = this.getCompDetailsList(params);
         const allFloatingFilterCompsUnchanged = newCompDetailsList.length === this.compDetailsList.length
-            && newCompDetailsList.every((newCompDetails, index) => !this.filterManager.areFilterCompsDifferent(this.compDetailsList[index], newCompDetails));
+            && newCompDetailsList.every((newCompDetails, index) => !this.beans.filterManager.areFilterCompsDifferent(this.compDetailsList[index], newCompDetails));
 
         if (allFloatingFilterCompsUnchanged) {
             floatingFilterParamsList.forEach((floatingFilterParams, index) => {
@@ -165,7 +152,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     private getCompDetails(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): UserCompDetails | undefined {
         let defaultComponentName = this.beans.userComponentFactory.getDefaultFloatingFilterType(
             filterDef,
-            () => this.filterManager.getDefaultFloatingFilter(this.params.column)
+            () => this.beans.filterManager.getDefaultFloatingFilter(this.params.column)
         ) ?? 'agReadOnlyFloatingFilter';
 
         return this.beans.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);

@@ -1,25 +1,16 @@
-import { ExpressionService } from "./expressionService";
-import { ColumnModel } from "../columns/columnModel";
-import { ValueGetterParams, KeyCreatorParams, ValueSetterParams } from "../entities/colDef";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { Column } from "../entities/column";
-import { CellValueChangedEvent, Events } from "../events";
-import { ValueCache } from "./valueCache";
 import { BeanStub } from "../context/beanStub";
-import { getValueUsingField } from "../utils/object";
-import { missing, exists } from "../utils/generic";
-import { warnOnce } from "../utils/function";
-import { IRowNode } from "../interfaces/iRowNode";
+import { Bean, PostConstruct } from "../context/context";
+import { KeyCreatorParams, ValueGetterParams, ValueSetterParams } from "../entities/colDef";
+import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
-import { DataTypeService } from "../columns/dataTypeService";
+import { CellValueChangedEvent, Events } from "../events";
+import { IRowNode } from "../interfaces/iRowNode";
+import { warnOnce } from "../utils/function";
+import { exists, missing } from "../utils/generic";
+import { getValueUsingField } from "../utils/object";
 
 @Bean('valueService')
 export class ValueService extends BeanStub {
-
-    @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('valueCache') private valueCache: ValueCache;
-    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
 
     private cellExpressions: boolean;
     // Store locally for performance reasons and keep updated via property listener
@@ -145,7 +136,7 @@ export class ValueService extends BeanStub {
      * @returns `True` if the value has been updated, otherwise`False`.
      */
     public setValue(rowNode: IRowNode, colKey: string | Column, newValue: any, eventSource?: string): boolean {
-        const column = this.columnModel.getPrimaryColumn(colKey);
+        const column = this.beans.columnModel.getPrimaryColumn(colKey);
 
         if (!rowNode || !column) {
             return false;
@@ -159,12 +150,12 @@ export class ValueService extends BeanStub {
         const { field, valueSetter } = column.getColDef();
 
         if (missing(field) && missing(valueSetter)) {
-            console.warn(`AG Grid: you need either field or valueSetter set on colDef for editing to work`);
+            warnOnce(`You need either field or valueSetter set on colDef for editing to work`);
             return false;
         }
 
-        if (!this.dataTypeService.checkType(column, newValue)) {
-            console.warn(`AG Grid: Data type of the new value does not match the cell data type of the column`);
+        if (!this.beans.dataTypeService.checkType(column, newValue)) {
+            warnOnce(`Data type of the new value does not match the cell data type of the column`);
             return false;
         }
 
@@ -185,7 +176,7 @@ export class ValueService extends BeanStub {
             if (typeof valueSetter === 'function') {
                 valueWasDifferent = valueSetter(params)
             } else {
-                valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
+                valueWasDifferent = this.beans.expressionService.evaluate(valueSetter, params);
             }
         } else {
             valueWasDifferent = this.setValueUsingField(rowNode.data, field, newValue, column.isFieldContainsDots());
@@ -207,7 +198,7 @@ export class ValueService extends BeanStub {
         // reset quick filter on this row
         rowNode.resetQuickFilterAggregateText();
 
-        this.valueCache.onDataChanged();
+        this.beans.valueCache.onDataChanged();
 
         params.newValue = this.getValue(column, rowNode);
 
@@ -237,7 +228,7 @@ export class ValueService extends BeanStub {
     private callColumnCellValueChangedHandler(event: CellValueChangedEvent) {
         const onCellValueChanged = event.colDef.onCellValueChanged;
         if (typeof onCellValueChanged === 'function') {
-            this.getFrameworkOverrides().wrapOutgoing(() => {
+            this.beans.frameworkOverrides.wrapOutgoing(() => {
                 onCellValueChanged({
                     node: event.node,
                     data: event.data,
@@ -296,7 +287,7 @@ export class ValueService extends BeanStub {
         if (typeof valueGetter === 'function') {
             return valueGetter(params);
         }
-        return this.expressionService.evaluate(valueGetter, params);
+        return this.beans.expressionService.evaluate(valueGetter, params);
     }
 
     private executeValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: IRowNode): any {
@@ -304,7 +295,7 @@ export class ValueService extends BeanStub {
         const colId = column.getColId();
 
         // if inside the same turn, just return back the value we got last time
-        const valueFromCache = this.valueCache.getValue(rowNode as RowNode, colId);
+        const valueFromCache = this.beans.valueCache.getValue(rowNode as RowNode, colId);
 
         if (valueFromCache !== undefined) {
             return valueFromCache;
@@ -322,17 +313,17 @@ export class ValueService extends BeanStub {
         if (typeof valueGetter === 'function') {
             result = valueGetter(params)
         } else {
-            result = this.expressionService.evaluate(valueGetter, params);
+            result = this.beans.expressionService.evaluate(valueGetter, params);
         }
 
         // if a turn is active, store the value in case the grid asks for it again
-        this.valueCache.setValue(rowNode as RowNode, colId, result);
+        this.beans.valueCache.setValue(rowNode as RowNode, colId, result);
 
         return result;
     }
 
     private getValueCallback(node: IRowNode, field: string | Column): any {
-        const otherColumn = this.columnModel.getPrimaryColumn(field);
+        const otherColumn = this.beans.columnModel.getPrimaryColumn(field);
 
         if (otherColumn) {
             return this.getValue(otherColumn, node);

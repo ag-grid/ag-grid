@@ -1,23 +1,19 @@
-import { DateFilter, DateFilterModel, DateFilterModelFormatter, DateFilterParams } from './dateFilter';
-import { Autowired } from '../../../context/context';
-import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import { IDateParams } from '../../../interfaces/dateComponent';
-import { IFloatingFilterParams } from '../../floating/floatingFilter';
-import { DateCompWrapper } from './dateCompWrapper';
-import { RefSelector } from '../../../widgets/componentAnnotations';
-import { ISimpleFilterModel, SimpleFilterModelFormatter } from '../simpleFilter';
-import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import { FilterChangedEvent } from '../../../events';
-import { ProvidedFilter } from '../providedFilter';
-import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { setDisplayed } from '../../../utils/dom';
-import { parseDateTimeFromString, serialiseDate } from '../../../utils/date';
-import { debounce } from '../../../utils/function';
+import { IDateParams } from '../../../interfaces/dateComponent';
 import { WithoutGridCommon } from '../../../interfaces/iCommon';
+import { parseDateTimeFromString, serialiseDate } from '../../../utils/date';
+import { setDisplayed } from '../../../utils/dom';
+import { debounce } from '../../../utils/function';
+import { AgInputTextField } from '../../../widgets/agInputTextField';
+import { RefSelector } from '../../../widgets/componentAnnotations';
+import { IFloatingFilterParams } from '../../floating/floatingFilter';
+import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
+import { ProvidedFilter } from '../providedFilter';
+import { ISimpleFilterModel, SimpleFilterModelFormatter } from '../simpleFilter';
+import { DateCompWrapper } from './dateCompWrapper';
+import { DateFilter, DateFilterModel, DateFilterModelFormatter, DateFilterParams } from './dateFilter';
 
 export class DateFloatingFilter extends SimpleFloatingFilter {
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
-
     @RefSelector('eReadOnlyText') private readonly eReadOnlyText: AgInputTextField;
     @RefSelector('eDateWrapper') private readonly eDateWrapper: HTMLInputElement;
 
@@ -122,7 +118,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     private createDateComponent(): void {
-        this.dateComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, this.getDateComponentParams(), this.eDateWrapper);
+        this.dateComp = new DateCompWrapper(this.beans.context, this.beans.userComponentFactory, this.getDateComponentParams(), this.eDateWrapper);
 
         this.addDestroyFunc(() => this.dateComp.destroy());
     }

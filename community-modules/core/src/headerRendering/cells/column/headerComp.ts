@@ -111,10 +111,6 @@ export class HeaderComp extends Component implements IHeaderComp {
             </div>
         </div>`;
 
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('menuService') private menuService: MenuService;
-    @Autowired('columnModel')  private readonly  columnModel: ColumnModel;
-
     @RefSelector('eFilter') private eFilter: HTMLElement;
     @RefSelector('eFilterButton') private eFilterButton?: HTMLElement;
     @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
@@ -226,7 +222,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                 // to the header container, in that case we should not sort
                 if (suppressMenuHide && (this.eMenu?.contains(target) || this.eFilterButton?.contains(target))) { return; }
 
-                this.sortController.progressSort(this.params.column, false, "uiColumnSorted");
+                this.beans.sortController.progressSort(this.params.column, false, "uiColumnSorted");
             };
 
             this.addManagedListener(touchListener, TouchListener.EVENT_TAP, tapListener);
@@ -248,11 +244,11 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private workOutShowMenu(): boolean {
-        return this.params.enableMenu && this.menuService.isHeaderMenuButtonEnabled();
+        return this.params.enableMenu && this.beans.menuService.isHeaderMenuButtonEnabled();
     }
 
     private shouldSuppressMenuHide(): boolean {
-        return this.menuService.isHeaderMenuButtonAlwaysShowEnabled();
+        return this.beans.menuService.isHeaderMenuButtonAlwaysShowEnabled();
     }
 
     private setMenu(): void {
@@ -268,7 +264,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        const isLegacyMenu = this.menuService.isLegacyMenuEnabled()
+        const isLegacyMenu = this.beans.menuService.isLegacyMenuEnabled()
         this.addInIcon(isLegacyMenu ? 'menu' : 'menuAlt', this.eMenu, this.params.column);
         this.eMenu.classList.toggle('ag-header-menu-icon', !isLegacyMenu);
 
@@ -279,9 +275,9 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     public onMenuKeyboardShortcut(isFilterShortcut: boolean): boolean {
         const { column } = this.params;
-        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
+        const isLegacyMenuEnabled = this.beans.menuService.isLegacyMenuEnabled();
         if (isFilterShortcut && !isLegacyMenuEnabled) {
-            if (this.menuService.isFilterMenuInHeaderEnabled(column)) {
+            if (this.beans.menuService.isFilterMenuInHeaderEnabled(column)) {
                 this.params.showFilter(this.eFilterButton ?? this.eMenu ?? this.getGui());
                 return true;
             }
@@ -354,7 +350,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             this.addOrRemoveCssClass('ag-header-cell-sorted-none', this.params.column.isSortNone());
 
             if (this.params.column.getColDef().showRowGroup) {
-                const sourceColumns = this.columnModel.getSourceColumnsForGroupColumn(this.params.column);
+                const sourceColumns = this.beans.columnModel.getSourceColumnsForGroupColumn(this.params.column);
                 // this == is intentional, as it allows null and undefined to match, which are both unsorted states
                 const sortDirectionsMatch = sourceColumns?.every(sourceCol => this.params.column.getSort() == sourceCol.getSort());
                 const isMultiSorting = !sortDirectionsMatch;

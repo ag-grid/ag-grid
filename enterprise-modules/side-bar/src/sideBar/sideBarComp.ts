@@ -1,24 +1,13 @@
 import {
-    _,
-    Component,
+    Autowired, Component,
     Events,
     ISideBar,
-    IToolPanel,
-    ModuleNames,
+    IToolPanel, IToolPanelParams, KeyCode, ManagedFocusFeature, ModuleNames,
     ModuleRegistry,
     PostConstruct,
     RefSelector,
-    SideBarDef,
-    ToolPanelDef,
-    ToolPanelVisibleChangedEvent,
-    Autowired,
-    ManagedFocusFeature,
-    FocusService,
-    KeyCode,
-    WithoutGridCommon,
-    FilterManager,
-    SideBarState,
-    IToolPanelParams
+    SideBarDef, SideBarState, ToolPanelDef,
+    ToolPanelVisibleChangedEvent, WithoutGridCommon, _
 } from "@ag-grid-community/core";
 import { SideBarButtonClickedEvent, SideBarButtonsComp } from "./sideBarButtonsComp";
 import { SideBarDefParser } from "./sideBarDefParser";
@@ -26,8 +15,6 @@ import { SideBarService } from "./sideBarService";
 import { ToolPanelWrapper } from "./toolPanelWrapper";
 
 export class SideBarComp extends Component implements ISideBar {
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sideBarService') private sideBarService: SideBarService;
     @RefSelector('sideBarButtons') private sideBarButtonsComp: SideBarButtonsComp;
 
@@ -68,7 +55,8 @@ export class SideBarComp extends Component implements ISideBar {
     protected onTabKeyDown(e: KeyboardEvent) {
         if (e.defaultPrevented) { return; }
 
-        const { focusService, sideBarButtonsComp } = this;
+        const { sideBarButtonsComp, beans } = this;
+        const { focusService } = beans;
         const eGui = this.getGui();
         const sideBarGui = sideBarButtonsComp.getGui();
         const activeElement = this.beans.gos.getActiveDomElement() as HTMLElement;
@@ -91,9 +79,9 @@ export class SideBarComp extends Component implements ISideBar {
 
 
         if (openPanel.contains(activeElement)) {
-            nextEl = this.focusService.findNextFocusableElement(openPanel, undefined, true);
+            nextEl = focusService.findNextFocusableElement(openPanel, undefined, true);
         } else if (focusService.isTargetUnderManagedComponent(openPanel, target) && e.shiftKey) {
-            nextEl = this.focusService.findFocusableElementBeforeTabGuard(openPanel, target);
+            nextEl = focusService.findFocusableElementBeforeTabGuard(openPanel, target);
         }
 
         if (!nextEl) {
@@ -257,7 +245,7 @@ export class SideBarComp extends Component implements ISideBar {
             const moduleMissing =
                 !ModuleRegistry.__assertRegistered(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.beans.context.getGridId());
             if (moduleMissing) { return false; }
-            if (this.filterManager.isAdvancedFilterEnabled()) {
+            if (this.beans.filterManager.isAdvancedFilterEnabled()) {
                 _.warnOnce('Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.');                
                 return false;
             }
@@ -274,7 +262,7 @@ export class SideBarComp extends Component implements ISideBar {
         if (existingToolPanelWrapper) {
             wrapper = existingToolPanelWrapper;
         } else {
-            wrapper = this.getContext().createBean(new ToolPanelWrapper());
+            wrapper = this.createBean(new ToolPanelWrapper());
 
             wrapper.setToolPanelDef(def, {
                 initialState,

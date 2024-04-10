@@ -1,21 +1,15 @@
 import {
-    _,
-    Autowired, Column,
-    ColumnModel,
-    Component,
+    AgInputTextField, Column, Component,
     Events,
     PostConstruct,
     PreConstruct,
-    RefSelector,
-    AgInputTextField
+    RefSelector, _
 } from "@ag-grid-community/core";
 import { ToolPanelFiltersCompParams } from "./filtersToolPanel";
 
 export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
 
 export class FiltersToolPanelHeaderPanel extends Component {
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
 
     @RefSelector('eExpand') private eExpand: Element;
     @RefSelector('eFilterTextField') private eFilterTextField: AgInputTextField;
@@ -58,7 +52,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
     public init(params: ToolPanelFiltersCompParams): void {
         this.params = params;
 
-        if (this.columnModel.isReady()) {
+        if (this.beans.columnModel.isReady()) {
             this.showOrHideOptions();
         }
     }
@@ -78,7 +72,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
         this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 
         const isFilterGroupPresent = (col: Column) => col.getOriginalParent() && col.isFilterAllowed();
-        const filterGroupsPresent = this.columnModel.getAllGridColumns().some(isFilterGroupPresent);
+        const filterGroupsPresent = this.beans.columnModel.getAllGridColumns().some(isFilterGroupPresent);
 
         _.setDisplayed(this.eFilterTextField.getGui(), showFilterSearch);
         _.setDisplayed(this.eExpand, showExpand && filterGroupsPresent);

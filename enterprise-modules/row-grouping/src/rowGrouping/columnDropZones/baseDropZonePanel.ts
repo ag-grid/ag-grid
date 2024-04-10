@@ -17,7 +17,7 @@ import { DropZoneColumnComp } from "./dropZoneColumnComp";
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, Column> {
-    @Autowired('columnModel') protected readonly columnModel: ColumnModel;
+     protected readonly columnModel: ColumnModel;
 
     constructor(horizontal: boolean, private dropZonePurpose: TDropZone) {
         super(horizontal);
@@ -42,7 +42,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
 
     protected minimumAllowedNewInsertIndex(): number {
         const numberOfLockedCols = this.beans.gos.get('groupLockGroupColumns');
-        const numberOfGroupCols = this.columnModel.getRowGroupColumns().length;
+        const numberOfGroupCols = this.beans.columnModel.getRowGroupColumns().length;
         if (numberOfLockedCols === -1) {
             return numberOfGroupCols;
         }
@@ -76,7 +76,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     public setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType) {
         if (columns) {
             const allowedCols = columns.filter(c => !c.getColDef().lockVisible);
-            this.columnModel.setColumnsVisible(allowedCols, visible, source);
+            this.beans.columnModel.setColumnsVisible(allowedCols, visible, source);
         }
     }
 

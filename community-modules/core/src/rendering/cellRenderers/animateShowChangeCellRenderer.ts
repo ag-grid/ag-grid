@@ -1,9 +1,7 @@
-import { Autowired } from "../../context/context";
-import { ICellRenderer } from "./iCellRenderer";
-import { Component } from "../../widgets/component";
-import { FilterManager } from "../../filter/filterManager";
-import { exists } from "../../utils/generic";
 import { clearElement } from "../../utils/dom";
+import { exists } from "../../utils/generic";
+import { Component } from "../../widgets/component";
+import { ICellRenderer } from "./iCellRenderer";
 
 const ARROW_UP = '\u2191';
 const ARROW_DOWN = '\u2193';
@@ -16,8 +14,6 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
     private eDelta: HTMLElement;
 
     private refreshCount = 0;
-
-    @Autowired('filterManager') private filterManager: FilterManager;
 
     constructor() {
         super();
@@ -68,7 +64,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         // is not the most recent and will not try to remove the delta value.
         this.refreshCount++;
         const refreshCountCopy = this.refreshCount;
-        this.getFrameworkOverrides().wrapIncoming(() => {
+        this.beans.frameworkOverrides.wrapIncoming(() => {
             window.setTimeout(() => {
                 if (refreshCountCopy === this.refreshCount) {
                     this.hideDeltaValue();
@@ -99,7 +95,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
 
         // we don't show the delta if we are in the middle of a filter. see comment on FilterManager
         // with regards processingFilterChange
-        if (this.filterManager.isSuppressFlashingCellsBecauseFiltering()) {
+        if (this.beans.filterManager.isSuppressFlashingCellsBecauseFiltering()) {
             return false;
         }
 

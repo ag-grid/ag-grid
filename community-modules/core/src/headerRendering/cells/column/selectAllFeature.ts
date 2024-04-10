@@ -1,19 +1,12 @@
 import { BeanStub } from "../../../context/beanStub";
-import { Autowired } from "../../../context/context";
 import { HeaderCheckboxSelectionCallbackParams } from "../../../entities/colDef";
 import { Column } from "../../../entities/column";
 import { Events, SelectionEventSourceType } from "../../../events";
-import { IRowModel } from "../../../interfaces/iRowModel";
-import { ISelectionService } from "../../../interfaces/iSelectionService";
 import { setAriaHidden, setAriaRole } from "../../../utils/aria";
 import { AgCheckbox } from "../../../widgets/agCheckbox";
 import { HeaderCellCtrl } from "./headerCellCtrl";
 
 export class SelectAllFeature extends BeanStub {
-
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-
     private cbSelectAllVisible = false;
     private processingEventFromCheckbox = false;
     private column: Column;
@@ -95,13 +88,13 @@ export class SelectAllFeature extends BeanStub {
 
         this.processingEventFromCheckbox = true;
 
-        const allSelected = this.selectionService.getSelectAllState(
+        const allSelected = this.beans.selectionService.getSelectAllState(
             this.isFilteredOnly(),
             this.isCurrentPageOnly()
         );
 
         this.cbSelectAll.setValue(allSelected!);
-        const hasNodesToSelect = this.selectionService.hasNodesToSelect(this.isFilteredOnly(), this.isCurrentPageOnly());
+        const hasNodesToSelect = this.beans.selectionService.hasNodesToSelect(this.isFilteredOnly(), this.isCurrentPageOnly());
         this.cbSelectAll.setDisabled(!hasNodesToSelect);
         this.refreshSelectAllLabel();
 
@@ -136,7 +129,7 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private checkRightRowModelType(feature: string): boolean {
-        const rowModelType = this.rowModel.getType();
+        const rowModelType = this.beans.rowModel.getType();
         const rowModelMatches = rowModelType === 'clientSide' || rowModelType === 'serverSide';
 
         if (!rowModelMatches) {
@@ -167,9 +160,9 @@ export class SelectAllFeature extends BeanStub {
             justCurrentPage,
         };
         if (value) {
-            this.selectionService.selectAllRowNodes(params);
+            this.beans.selectionService.selectAllRowNodes(params);
         } else {
-            this.selectionService.deselectAllRowNodes(params);
+            this.beans.selectionService.deselectAllRowNodes(params);
         }
     }
 

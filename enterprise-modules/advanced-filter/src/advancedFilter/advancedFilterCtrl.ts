@@ -20,7 +20,6 @@ import { AdvancedFilterExpressionService } from "./advancedFilterExpressionServi
 
 export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl {
     @Autowired('focusService') private focusService: FocusService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
@@ -41,7 +40,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
     private postConstruct(): void {
         this.hasAdvancedFilterParent = !!this.beans.gos.get('advancedFilterParent');
 
-        this.ctrlsService.whenReady(() => this.setAdvancedFilterComp());
+        this.beans.ctrlsService.whenReady(() => this.setAdvancedFilterComp());
 
         this.addManagedEventListener(Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
             ({ enabled }: AdvancedFilterEnabledChangedEvent) => this.onEnabledChanged(enabled));

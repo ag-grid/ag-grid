@@ -1,26 +1,9 @@
 import {
-    _,
-    Autowired,
     Bean,
     BeanStub,
-    Column,
-    ColumnModel,
-    ColumnGroup,
-    IHeaderColumn,
-    GROUP_AUTO_COLUMN_ID,
-    DisplayedGroupCreator,
-    ExportParams,
-    GroupInstanceIdCreator,
-    IClientSideRowModel,
-    IRowModel,
-    IServerSideRowModel,
-    PinnedRowModel,
-    ProcessGroupHeaderForExportParams,
-    RowNode,
-    ISelectionService,
-    ShouldRowBeSkippedParams,
-    RowNodeSorter,
-    SortController
+    Column, ColumnGroup, ExportParams,
+    GroupInstanceIdCreator, GROUP_AUTO_COLUMN_ID, IClientSideRowModel, IHeaderColumn, IServerSideRowModel, ProcessGroupHeaderForExportParams,
+    RowNode, ShouldRowBeSkippedParams, _
 } from "@ag-grid-community/core";
 import { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "./interfaces";
 
@@ -31,13 +14,6 @@ export enum RowType { HEADER_GROUPING, HEADER, BODY }
 @Bean("gridSerializer")
 export class GridSerializer extends BeanStub {
 
-    @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-    @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
-    @Autowired('sortController') private sortController: SortController;
 
     public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T> = {}): string {
         const { allColumns, columnKeys, skipRowGroups } = params;
@@ -67,7 +43,7 @@ export class GridSerializer extends BeanStub {
         const isClipboardExport = params.rowPositions != null;
         const isExplicitExportSelection = isClipboardExport || !!params.onlySelected;
         const hideOpenParents = this.beans.gos.get('groupHideOpenParents') && !isExplicitExportSelection;
-        const isLeafNode = this.columnModel.isPivotMode() ? node.leafGroup : !node.group;
+        const isLeafNode = this.beans.columnModel.isPivotMode() ? node.leafGroup : !node.group;
         const isFooter = !!node.footer;
         const skipRowGroups = params.skipRowGroups;
         const shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
@@ -138,7 +114,7 @@ export class GridSerializer extends BeanStub {
         return (gridSerializingSession) => {
             if (!params.skipColumnGroupHeaders) {
                 const groupInstanceIdCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
-                const displayedGroups: IHeaderColumn[] = this.displayedGroupCreator.createDisplayedGroups(
+                const displayedGroups: IHeaderColumn[] = this.beans.displayedGroupCreator.createDisplayedGroups(
                     columnsToExport,
                     groupInstanceIdCreator,
                     null
@@ -170,10 +146,10 @@ export class GridSerializer extends BeanStub {
                     // only pinnedTop rows, other models are processed by `processRows` and `processPinnedBottomsRows`
                     .filter(position => position.rowPinned === 'top')
                     .sort((a, b) => a.rowIndex - b.rowIndex)
-                    .map(position => this.pinnedRowModel.getPinnedTopRow(position.rowIndex))
+                    .map(position => this.beans.pinnedRowModel.getPinnedTopRow(position.rowIndex))
                     .forEach(processRow);
             } else {
-                this.pinnedRowModel.forEachPinnedTopRow(processRow);
+                this.beans.pinnedRowModel.forEachPinnedTopRow(processRow);
             }
             return gridSerializingSession;
         };
@@ -182,7 +158,7 @@ export class GridSerializer extends BeanStub {
     private processRows<T>(params: ExportParams<T>, columnsToExport: Column[]): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
             // when in pivot mode, we always render cols on screen, never 'all columns'
-            const rowModel = this.rowModel;
+            const rowModel = this.beans.rowModel;
             const rowModelType = rowModel.getType();
             const usingCsrm = rowModelType === 'clientSide';
             const usingSsrm = rowModelType === 'serverSide';
@@ -199,7 +175,7 @@ export class GridSerializer extends BeanStub {
                     .sort((a, b) => a.rowIndex - b.rowIndex)
                     .map(position => rowModel.getRow(position.rowIndex))
                     .forEach(processRow);
-            } else if (this.columnModel.isPivotMode()) {
+            } else if (this.beans.columnModel.isPivotMode()) {
                 if (usingCsrm) {
                     (rowModel as IClientSideRowModel).forEachPivotNode(processRow, true);
                 } else if (usingSsrm) {
@@ -215,7 +191,7 @@ export class GridSerializer extends BeanStub {
                 // onlySelectedNonStandardModel: if user wants selected in non standard row model
                 // (eg viewport) then again RowModel cannot be used, so need to use selected instead.
                 if (params.onlySelectedAllPages || onlySelectedNonStandardModel) {
-                    const selectedNodes = this.selectionService.getSelectedNodes();
+                    const selectedNodes = this.beans.selectionService.getSelectedNodes();
                     this.replicateSortedOrder(selectedNodes);
                     // serialize each node
                     selectedNodes.forEach(processRow);
@@ -239,7 +215,7 @@ export class GridSerializer extends BeanStub {
     }
 
     private replicateSortedOrder(rows: RowNode[]) {
-        const sortOptions = this.sortController.getSortOptions();
+        const sortOptions = this.beans.sortController.getSortOptions();
         const compareNodes = (rowA: RowNode, rowB: RowNode): number => {
             if (rowA.rowIndex != null && rowB.rowIndex != null) {
                 // if the rows have rowIndexes, this is the easiest way to compare,
@@ -251,7 +227,7 @@ export class GridSerializer extends BeanStub {
             // if the level is the same, compare these nodes, or their parents
             if (rowA.level === rowB.level) {
                 if (rowA.parent?.id === rowB.parent?.id) {
-                    return this.rowNodeSorter.compareRowNodes(sortOptions, {
+                    return this.beans.rowNodeSorter.compareRowNodes(sortOptions, {
                         rowNode: rowA,
                         currentPos: rowA.rowIndex ?? -1,
                     }, {
@@ -283,20 +259,20 @@ export class GridSerializer extends BeanStub {
                     // only pinnedBottom rows, other models are processed by `processRows` and `processPinnedTopRows`
                     .filter(position => position.rowPinned === 'bottom')
                     .sort((a, b) => a.rowIndex - b.rowIndex)
-                    .map(position => this.pinnedRowModel.getPinnedBottomRow(position.rowIndex))
+                    .map(position => this.beans.pinnedRowModel.getPinnedBottomRow(position.rowIndex))
                     .forEach(processRow);
             } else {
-                this.pinnedRowModel.forEachPinnedBottomRow(processRow);
+                this.beans.pinnedRowModel.forEachPinnedBottomRow(processRow);
             }
             return gridSerializingSession;
         };
     }
 
     private getColumnsToExport(allColumns: boolean = false, skipRowGroups: boolean = false, columnKeys?: (string | Column)[]): Column[] {
-        const isPivotMode = this.columnModel.isPivotMode();
+        const isPivotMode = this.beans.columnModel.isPivotMode();
 
         if (columnKeys && columnKeys.length) {
-            return this.columnModel.getGridColumns(columnKeys);
+            return this.beans.columnModel.getGridColumns(columnKeys);
         }
 
         const isTreeData = this.beans.gos.get('treeData');
@@ -304,9 +280,9 @@ export class GridSerializer extends BeanStub {
         let columnsToExport: Column[] = [];
 
         if (allColumns && !isPivotMode) {
-            columnsToExport =  this.columnModel.getAllGridColumns();
+            columnsToExport =  this.beans.columnModel.getAllGridColumns();
         } else {
-            columnsToExport = this.columnModel.getAllDisplayedColumns();
+            columnsToExport = this.beans.columnModel.getAllDisplayedColumns();
         }
 
         if (skipRowGroups && !isTreeData) {
@@ -347,7 +323,7 @@ export class GridSerializer extends BeanStub {
                     columnGroup: columnGroup
                 }));
             } else {
-                name = this.columnModel.getDisplayNameForColumnGroup(columnGroup, 'header')!;
+                name = this.beans.columnModel.getDisplayNameForColumnGroup(columnGroup, 'header')!;
             }
 
             const collapsibleGroupRanges = columnGroup.getLeafColumns().reduce((collapsibleGroups: number[][], currentColumn, currentIdx, arr) => {

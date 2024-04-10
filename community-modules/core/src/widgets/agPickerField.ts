@@ -1,13 +1,12 @@
+import { KeyCode } from '../constants/keyCode';
+import { Events } from "../eventKeys";
+import { setAriaExpanded, setAriaRole } from "../utils/aria";
+import { formatSize, getAbsoluteWidth, getInnerHeight, setElementWidth } from "../utils/dom";
+import { createIconNoSpan } from "../utils/icon";
 import { AgAbstractField, AgFieldParams } from "./agAbstractField";
 import { Component } from "./component";
 import { RefSelector } from "./componentAnnotations";
-import { setAriaExpanded, setAriaRole } from "../utils/aria";
-import { createIconNoSpan } from "../utils/icon";
-import { setElementWidth, getAbsoluteWidth, getInnerHeight, formatSize } from "../utils/dom";
-import { KeyCode } from '../constants/keyCode';
-import { AddPopupParams, PopupService } from "./popupService";
-import { Autowired } from "../context/context";
-import { Events } from "../eventKeys";
+import { AddPopupParams } from "./popupService";
 
 export interface AgPickerFieldParams extends AgFieldParams {
     pickerType: string;
@@ -59,8 +58,6 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     private hideCurrentPicker: (() => void) | null = null;
     private destroyMouseWheelFunc: (() => null) | undefined;
     private ariaRole?: string;
-
-    @Autowired('popupService') protected popupService: PopupService;
 
     @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
     @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;
@@ -234,7 +231,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
             ariaLabel: translate(pickerAriaLabelKey, pickerAriaLabelValue),
         }
 
-        const addPopupRes = this.popupService.addPopup(popupParams);
+        const addPopupRes = this.beans.popupService.addPopup(popupParams);
 
         const { maxPickerHeight, minPickerWidth, maxPickerWidth, variableWidth } = this;
 
@@ -250,7 +247,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
             setElementWidth(ePicker, maxPickerWidth ?? getAbsoluteWidth(this.eWrapper));
         }
 
-        const maxHeight = maxPickerHeight ?? `${getInnerHeight(this.popupService.getPopupParent())}px`;
+        const maxHeight = maxPickerHeight ?? `${getInnerHeight(this.beans.popupService.getPopupParent())}px`;
 
         ePicker.style.setProperty('max-height', maxHeight);
         ePicker.style.position = 'absolute';
@@ -268,7 +265,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
 
         const alignSide = this.beans.gos.get('enableRtl') ? 'right' : 'left';
 
-        this.popupService.positionPopupByComponent({
+        this.beans.popupService.positionPopupByComponent({
             type: pickerType,
             eventSource: this.eWrapper,
             ePopup: this.pickerComponent.getGui(),

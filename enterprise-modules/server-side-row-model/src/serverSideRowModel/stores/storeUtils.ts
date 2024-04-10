@@ -1,25 +1,15 @@
 import {
-    _,
-    IServerSideStore,
     Autowired,
     Bean,
-    BeanStub,
-    IServerSideGetRowsParams,
-    IServerSideGetRowsRequest,
-    StoreRefreshAfterParams,
-    RowNode,
-    ColumnVO,
-    RowNodeBlock,
-    ColumnModel,
-    GridOptions
+    BeanStub, ColumnVO, GridOptions, IServerSideGetRowsParams,
+    IServerSideGetRowsRequest, IServerSideStore, RowNode, RowNodeBlock, StoreRefreshAfterParams, _
 } from "@ag-grid-community/core";
-import { SSRMParams, ServerSideRowModel } from "../serverSideRowModel";
+import { ServerSideRowModel, SSRMParams } from "../serverSideRowModel";
 import { StoreFactory } from "./storeFactory";
 
 @Bean('ssrmStoreUtils')
 export class StoreUtils extends BeanStub {
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
     @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
 
@@ -104,7 +94,7 @@ export class StoreUtils extends BeanStub {
 
         if (actionOnThisGroup) { return true; }
 
-        const allCols = this.columnModel.getAllGridColumns();
+        const allCols = this.beans.columnModel.getAllGridColumns();
         const affectedGroupCols = allCols
             // find all impacted cols which also a group display column
             .filter(col => col.getColDef().showRowGroup && params.changedColumns.includes(col.getId()))

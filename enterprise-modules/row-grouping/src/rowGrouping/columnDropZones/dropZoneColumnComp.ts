@@ -26,7 +26,7 @@ import { TDropZone } from "./baseDropZonePanel";
 export class DropZoneColumnComp extends PillDragComp<Column> {
     @Autowired('popupService') private readonly popupService: PopupService;
     @Autowired('sortController') private readonly sortController: SortController;
-    @Autowired('columnModel') protected readonly columnModel: ColumnModel;
+     protected readonly columnModel: ColumnModel;
     
     @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
 
@@ -55,7 +55,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     }
 
     public init(): void {
-        this.displayName = this.columnModel.getDisplayNameForColumn(this.column, 'columnDrop');
+        this.displayName = this.beans.columnModel.getDisplayNameForColumn(this.column, 'columnDrop');
 
         super.init();
 
@@ -227,7 +227,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
             getRowCount: function () { return rows.length; }
         });
 
-        this.getContext().createBean(virtualList);
+        this.createBean(virtualList);
 
         const ePopup = _.loadTemplate(/* html*/ `<div class="ag-select-agg-func-popup"></div>`);
         ePopup.style.top = '0px';
@@ -313,7 +313,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
                 };
                 this.beans.eventService.dispatchEvent(event);
             } else {
-                this.columnModel.setColumnAggFunc(this.column, value, "toolPanelDragAndDrop");
+                this.beans.columnModel.setColumnAggFunc(this.column, value, "toolPanelDragAndDrop");
             }
         };
 
@@ -326,7 +326,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     }
 
     private isGroupingAndLocked(): boolean {
-        return this.isGroupingZone() && this.columnModel.isColumnGroupingLocked(this.column);
+        return this.isGroupingZone() && this.beans.columnModel.isColumnGroupingLocked(this.column);
     }
 
     private isAggregationZone() {

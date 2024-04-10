@@ -101,8 +101,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
-        const { beans, eGui, column, ctrlsService } = this;
-        const { gos } = beans;
+        const { beans, eGui, column } = this;
+        const { gos, ctrlsService, focusService } = beans;
         const isRtl = gos.get('enableRtl');
         const isLeft = hDirection === HorizontalDirection.Left;
 
@@ -120,7 +120,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         );
 
         const id = column.getGroupId();
-        const headerPosition = this.focusService.getFocusedHeader();
+        const headerPosition = focusService.getFocusedHeader();
 
         ColumnMoveHelper.attemptMoveColumns({
             allMovingColumns: this.column.getLeafColumns(),
@@ -137,7 +137,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         const displayedLeafColumns = column.getDisplayedLeafColumns();
         const targetColumn = isLeft ? displayedLeafColumns[0] : last(displayedLeafColumns);
 
-        this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(targetColumn, 'auto');
+        this.beans.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(targetColumn, 'auto');
 
         if (!this.isAlive() && headerPosition) {
             this.restoreFocus(id, column, headerPosition);
@@ -152,7 +152,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
 
         const newColumnGroup = this.findGroupWidthId(parent, groupId)
         if (newColumnGroup) {
-            this.focusService.focusHeaderPosition({
+            this.beans.focusService.focusHeaderPosition({
                 headerPosition: {
                     ...previousPosition,
                 column: newColumnGroup
@@ -356,9 +356,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             return;
         }
 
-        const { beans, column, displayName, dragAndDropService } = this;
-        const { gos } = beans;
-        const { columnModel } = beans;
+        const { beans, column, displayName } = this;
+        const { gos, dragAndDropService, columnModel } = beans;
 
         const allLeafColumns = column.getProvidedColumnGroup().getLeafColumns();
         let hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');

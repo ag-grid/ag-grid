@@ -257,7 +257,7 @@ export class UserComponentFactory extends BeanStub {
                 if (typeof providedJsComp === 'string') {
                     compName = providedJsComp as string;
                 } else if (providedJsComp != null && providedJsComp !== true) {
-                    const isFwkComp = this.getFrameworkOverrides().isFrameworkComponent(providedJsComp);
+                    const isFwkComp = this.beans.frameworkOverrides.isFrameworkComponent(providedJsComp);
                     if (isFwkComp) {
                         fwComp = providedJsComp;
                     } else {

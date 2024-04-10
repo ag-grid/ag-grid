@@ -63,11 +63,11 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
             };
             this.beans.eventService.dispatchEvent(event);
         } else {
-            this.columnModel.setValueColumns(columns, "toolPanelUi");
+            this.beans.columnModel.setValueColumns(columns, "toolPanelUi");
         }
     }
 
     protected getExistingItems(): Column[] {
-        return this.columnModel.getValueColumns();
+        return this.beans.columnModel.getValueColumns();
     }
 }

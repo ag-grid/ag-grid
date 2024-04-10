@@ -1,23 +1,17 @@
+import { convertSourceType } from "./columns/columnModel";
 import { BeanStub } from "./context/beanStub";
-import { Autowired, Bean, PostConstruct } from "./context/context";
-import { CtrlsService } from "./ctrlsService";
+import { Bean, PostConstruct } from "./context/context";
+import { ColDef, ColGroupDef } from "./entities/colDef";
+import { Events } from "./eventKeys";
+import { GridReadyEvent } from "./events";
+import { PropertyValueChangedEvent } from "./gridOptionsService";
+import { WithoutGridCommon } from "./interfaces/iCommon";
 import { Logger } from "./logger";
-import { ColumnModel, convertSourceType } from "./columns/columnModel";
 import { ModuleNames } from "./modules/moduleNames";
 import { ModuleRegistry } from "./modules/moduleRegistry";
-import { IRowModel } from "./interfaces/iRowModel";
-import { WithoutGridCommon } from "./interfaces/iCommon";
-import { GridReadyEvent } from "./events";
-import { Events } from "./eventKeys";
-import { PropertyValueChangedEvent } from "./gridOptionsService";
-import { ColDef, ColGroupDef } from "./entities/colDef";
 
 @Bean('syncService')
 export class SyncService extends BeanStub {
-    @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('rowModel') private readonly rowModel: IRowModel;
-
     private waitingForColumns: boolean = false;
 
     @PostConstruct
@@ -27,7 +21,7 @@ export class SyncService extends BeanStub {
 
     public start(): void {
         // we wait until the UI has finished initialising before setting in columns and rows
-        this.ctrlsService.whenReady(() => {
+        this.beans.ctrlsService.whenReady(() => {
             const columnDefs = this.beans.gos.get('columnDefs');
             if (columnDefs) {
                 this.setColumnsAndData(columnDefs);
@@ -39,8 +33,8 @@ export class SyncService extends BeanStub {
     }
 
     private setColumnsAndData(columnDefs:  (ColDef | ColGroupDef)[]): void {
-        this.columnModel.setColumnDefs(columnDefs ?? [], "gridInitializing");
-        this.rowModel.start();
+        this.beans.columnModel.setColumnDefs(columnDefs ?? [], "gridInitializing");
+        this.beans.rowModel.start();
     }
     
     private gridReady(): void {
@@ -67,6 +61,6 @@ export class SyncService extends BeanStub {
             return;
         }
 
-        this.columnModel.setColumnDefs(columnDefs, convertSourceType(event.source));
+        this.beans.columnModel.setColumnDefs(columnDefs, convertSourceType(event.source));
     }
 }

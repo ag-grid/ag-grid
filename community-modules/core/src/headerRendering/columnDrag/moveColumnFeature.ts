@@ -1,21 +1,15 @@
-import { Autowired, PostConstruct } from "../../context/context";
-import { ColumnModel } from "../../columns/columnModel";
-import { Column, ColumnPinnedType } from "../../entities/column";
-import { DragAndDropService, DraggingEvent, DragSourceType } from "../../dragAndDrop/dragAndDropService";
-import { DropListener } from "./bodyDropTarget";
-import { ColumnEventType } from "../../events";
-import { missing, exists } from "../../utils/generic";
-import { CtrlsService } from "../../ctrlsService";
-import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
-import { ColumnMoveHelper } from "../columnMoveHelper";
 import { HorizontalDirection } from "../../constants/direction";
+import { PostConstruct } from "../../context/context";
+import { DragAndDropService, DraggingEvent, DragSourceType } from "../../dragAndDrop/dragAndDropService";
+import { Column, ColumnPinnedType } from "../../entities/column";
+import { ColumnEventType } from "../../events";
+import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
 import { BeansProvider } from "../../rendering/beans";
+import { exists, missing } from "../../utils/generic";
+import { ColumnMoveHelper } from "../columnMoveHelper";
+import { DropListener } from "./bodyDropTarget";
 
 export class MoveColumnFeature extends BeansProvider implements DropListener {
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
 
     private gridBodyCon: GridBodyCtrl;
 
@@ -46,8 +40,8 @@ export class MoveColumnFeature extends BeansProvider implements DropListener {
 
     @PostConstruct
     public init(): void {
-        this.ctrlsService.whenReady(() => {
-            this.gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        this.beans.ctrlsService.whenReady(() => {
+            this.gridBodyCon = this.beans.ctrlsService.getGridBodyCtrl();
         });
     }
 
@@ -86,14 +80,14 @@ export class MoveColumnFeature extends BeansProvider implements DropListener {
     public setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType) {
         if (columns) {
             const allowedCols = columns.filter(c => !c.getColDef().lockVisible);
-            this.columnModel.setColumnsVisible(allowedCols, visible, source);
+            this.beans.columnModel.setColumnsVisible(allowedCols, visible, source);
         }
     }
 
     public setColumnsPinned(columns: Column[] | null | undefined, pinned: ColumnPinnedType, source: ColumnEventType) {
         if (columns) {
             const allowedCols = columns.filter(c => !c.getColDef().lockPinned);
-            this.columnModel.setColumnsPinned(allowedCols, pinned, source);
+            this.beans.columnModel.setColumnsPinned(allowedCols, pinned, source);
         }
     }
 
@@ -107,8 +101,8 @@ export class MoveColumnFeature extends BeansProvider implements DropListener {
         if (this.centerContainer) {
             // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
             // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
-            const firstVisiblePixel = this.ctrlsService.getCenterRowContainerCtrl().getCenterViewportScrollLeft();
-            const lastVisiblePixel = firstVisiblePixel + this.ctrlsService.getCenterRowContainerCtrl().getCenterWidth();
+            const firstVisiblePixel = this.beans.ctrlsService.getCenterRowContainerCtrl().getCenterViewportScrollLeft();
+            const lastVisiblePixel = firstVisiblePixel + this.beans.ctrlsService.getCenterRowContainerCtrl().getCenterWidth();
 
             if (this.beans.gos.get('enableRtl')) {
                 this.needToMoveRight = xAdjustedForScroll < (firstVisiblePixel + 50);
@@ -130,7 +124,7 @@ export class MoveColumnFeature extends BeansProvider implements DropListener {
         if (finished) {
             if (this.lastMovedInfo) {
                 const { columns, toIndex } = this.lastMovedInfo;
-                ColumnMoveHelper.moveColumns(columns, toIndex, 'uiColumnMoved', true, this.columnModel);
+                ColumnMoveHelper.moveColumns(columns, toIndex, 'uiColumnMoved', true, this.beans.columnModel);
             }
             return;
         }
@@ -146,7 +140,7 @@ export class MoveColumnFeature extends BeansProvider implements DropListener {
             this.pinned,
             false,
             this.beans.gos,
-            this.ctrlsService
+            this.beans.ctrlsService
         );
 
         // if the user is dragging into the panel, ie coming from the side panel into the main grid,
@@ -179,7 +173,7 @@ export class MoveColumnFeature extends BeansProvider implements DropListener {
             fromEnter,
             fakeEvent,
             gos: this.beans.gos,
-            columnModel: this.columnModel
+            columnModel: this.beans.columnModel
         });
 
         if (lastMovedInfo) {
@@ -205,9 +199,9 @@ export class MoveColumnFeature extends BeansProvider implements DropListener {
             this.failedMoveAttempts = 0;
             this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), 100);
             if (this.needToMoveLeft) {
-                this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_LEFT, true);
+                this.beans.dragAndDropService.setGhostIcon(DragAndDropService.ICON_LEFT, true);
             } else {
-                this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_RIGHT, true);
+                this.beans.dragAndDropService.setGhostIcon(DragAndDropService.ICON_RIGHT, true);
             }
         }
     }
@@ -216,7 +210,7 @@ export class MoveColumnFeature extends BeansProvider implements DropListener {
         if (this.movingIntervalId) {
             window.clearInterval(this.movingIntervalId);
             this.movingIntervalId = null;
-            this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_MOVE);
+            this.beans.dragAndDropService.setGhostIcon(DragAndDropService.ICON_MOVE);
         }
     }
 
@@ -250,11 +244,11 @@ export class MoveColumnFeature extends BeansProvider implements DropListener {
             const columnsThatCanPin = columns!.filter(c => !c.getColDef().lockPinned);
 
             if (columnsThatCanPin.length > 0) {
-                this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
+                this.beans.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
                 if (this.failedMoveAttempts > 7) {
                     const pinType = this.needToMoveLeft ? 'left' : 'right';
                     this.setColumnsPinned(columnsThatCanPin, pinType, "uiColumnDragged");
-                    this.dragAndDropService.nudge();
+                    this.beans.dragAndDropService.nudge();
                 }
             }
         }

@@ -1,24 +1,21 @@
-import { Logger, LoggerFactory } from '../logger';
-import { ColDef, ColGroupDef } from "../entities/colDef";
-import { ColumnKeyCreator } from "./columnKeyCreator";
-import { IProvidedColumn } from "../interfaces/iProvidedColumn";
-import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
-import { Column } from "../entities/column";
-import { Autowired, Bean, Qualifier } from "../context/context";
-import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 import { BeanStub } from "../context/beanStub";
-import { iterateObject, mergeDeep } from '../utils/object';
-import { attrToNumber, attrToBoolean } from '../utils/generic';
-import { DataTypeService } from './dataTypeService';
-import { warnOnce } from '../utils/function';
+import { Bean, Qualifier } from "../context/context";
+import { ColDef, ColGroupDef } from "../entities/colDef";
+import { Column } from "../entities/column";
+import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
+import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { ColumnEventType } from '../events';
+import { IProvidedColumn } from "../interfaces/iProvidedColumn";
+import { Logger, LoggerFactory } from '../logger';
+import { warnOnce } from '../utils/function';
+import { attrToBoolean, attrToNumber } from '../utils/generic';
+import { iterateObject, mergeDeep } from '../utils/object';
+import { ColumnKeyCreator } from "./columnKeyCreator";
 import { depthFirstOriginalTreeSearch } from './columnUtils';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')
 export class ColumnFactory extends BeanStub {
-
-    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
 
     private logger: Logger;
 
@@ -306,7 +303,7 @@ export class ColumnFactory extends BeanStub {
             this.applyColumnState(column, colDefMerged, source);
         }
 
-        this.dataTypeService.addColumnListeners(column);
+        this.beans.dataTypeService.addColumnListeners(column);
 
         return column;
     }
@@ -416,7 +413,7 @@ export class ColumnFactory extends BeanStub {
         const defaultColDef = this.beans.gos.get('defaultColDef');
         mergeDeep(res, defaultColDef, false, true);
 
-        const columnType = this.dataTypeService.updateColDefAndGetColumnType(res, colDef, colId);
+        const columnType = this.beans.dataTypeService.updateColDefAndGetColumnType(res, colDef, colId);
 
         if (columnType) {
             this.assignColumnTypes(columnType, res);
@@ -432,7 +429,7 @@ export class ColumnFactory extends BeanStub {
             mergeDeep(res, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort } as ColDef, false, true);
         }
 
-        this.dataTypeService.validateColDef(res);
+        this.beans.dataTypeService.validateColDef(res);
 
         return res;
     }

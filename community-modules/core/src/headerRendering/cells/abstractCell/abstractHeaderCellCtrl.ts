@@ -1,27 +1,22 @@
-import { BeanStub } from "../../../context/beanStub";
-import { Autowired, PostConstruct } from "../../../context/context";
-import { IHeaderColumn } from "../../../interfaces/iHeaderColumn";
-import { FocusService } from "../../../focusService";
-import { isUserSuppressingHeaderKeyboardEvent } from "../../../utils/keyboard";
-import { HeaderRowCtrl } from "../../row/headerRowCtrl";
-import { KeyCode } from "../.././../constants/keyCode";
-import { Beans } from "../../../rendering/beans";
-import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import { Column, ColumnPinnedType } from "../../../entities/column";
-import { CtrlsService } from "../../../ctrlsService";
+import { BrandedType } from "@ag-grid-community/core";
 import { HorizontalDirection } from "../../../constants/direction";
-import { DragAndDropService, DragSource } from "../../../dragAndDrop/dragAndDropService";
-import { CssClassApplier } from "../cssClassApplier";
+import { BeanStub } from "../../../context/beanStub";
+import { PostConstruct } from "../../../context/context";
+import { DragSource } from "../../../dragAndDrop/dragAndDropService";
+import { Column, ColumnPinnedType } from "../../../entities/column";
 import { ColumnGroup } from "../../../entities/columnGroup";
-import { setAriaColIndex } from "../../../utils/aria";
+import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { Events } from "../../../eventKeys";
 import { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent } from "../../../events";
-import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { WithoutGridCommon } from "../../../interfaces/iCommon";
-import { MenuService } from "../../../misc/menuService";
-import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
+import { IHeaderColumn } from "../../../interfaces/iHeaderColumn";
+import { Beans } from "../../../rendering/beans";
+import { setAriaColIndex } from "../../../utils/aria";
 import { getInnerWidth } from "../../../utils/dom";
-import { BrandedType } from "@ag-grid-community/core";
+import { isUserSuppressingHeaderKeyboardEvent } from "../../../utils/keyboard";
+import { KeyCode } from "../.././../constants/keyCode";
+import { HeaderRowCtrl } from "../../row/headerRowCtrl";
+import { CssClassApplier } from "../cssClassApplier";
 
 let instanceIdSequence = 0;
 
@@ -38,13 +33,6 @@ export type HeaderCellCtrlInstanceId = BrandedType<string, 'HeaderCellCtrlInstan
 export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellComp = any, TColumn extends IHeaderColumn = any, TFeature extends IHeaderResizeFeature = any> extends BeanStub {
 
     public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
-
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
-    @Autowired('focusService') protected readonly focusService: FocusService;
-    @Autowired('userComponentFactory') protected readonly userComponentFactory: UserComponentFactory;
-    @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
-    @Autowired('dragAndDropService') protected readonly dragAndDropService: DragAndDropService;
-    @Autowired('menuService') protected readonly menuService: MenuService;
 
     private instanceId: HeaderCellCtrlInstanceId;
     private columnGroupChild: IHeaderColumn;
@@ -83,7 +71,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
-        const { headerRowIndex, column } = this.focusService.getFocusedHeader()!;
+        const { headerRowIndex, column } = this.beans.focusService.getFocusedHeader()!;
 
         return isUserSuppressingHeaderKeyboardEvent(
             this.beans.gos,
@@ -181,12 +169,13 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
     private getViewportAdjustedResizeDiff(e: KeyboardEvent): number {
         let diff = this.getResizeDiff(e);
+        const { pinnedWidthService, ctrlsService } = this.beans;
 
         const pinned = this.column.getPinned();
         if (pinned) {
-            const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
-            const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
-            const bodyWidth = getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
+            const leftWidth = pinnedWidthService.getPinnedLeftWidth();
+            const rightWidth = pinnedWidthService.getPinnedRightWidth();
+            const bodyWidth = getInnerWidth(ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
 
             if (leftWidth + rightWidth + diff > bodyWidth) {
                 if (bodyWidth > leftWidth + rightWidth) {
@@ -284,19 +273,20 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
     protected removeDragSource(): void {
         if (this.dragSource) {
-            this.dragAndDropService.removeDragSource(this.dragSource);
+            this.beans.dragAndDropService.removeDragSource(this.dragSource);
             this.dragSource = null;
         }
     }
 
     protected handleContextMenuMouseEvent(mouseEvent: MouseEvent | undefined, touchEvent: TouchEvent | undefined, column: Column | ProvidedColumnGroup): void {
         const event = mouseEvent ?? touchEvent!;
-        if (this.beans.gos.get('preventDefaultOnContextMenu')) {
+        const { gos, menuService } = this.beans;
+        if (gos.get('preventDefaultOnContextMenu')) {
             event.preventDefault();
         }
         const columnToUse = column instanceof Column ? column : undefined;
-        if (this.menuService.isHeaderContextMenuEnabled(columnToUse)) {
-            this.menuService.showHeaderContextMenu(columnToUse, mouseEvent, touchEvent);
+        if (menuService.isHeaderContextMenuEnabled(columnToUse)) {
+            menuService.showHeaderContextMenu(columnToUse, mouseEvent, touchEvent);
         }
 
         this.dispatchColumnMouseEvent(Events.EVENT_COLUMN_HEADER_CONTEXT_MENU, column);

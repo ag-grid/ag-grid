@@ -1,9 +1,8 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct, Qualifier } from "../context/context";
+import { Bean, PostConstruct, Qualifier } from "../context/context";
 import { Events } from "../eventKeys";
-import { getMaxDivHeight } from "../utils/browser";
-import { CtrlsService } from "../ctrlsService";
 import { Logger, LoggerFactory } from "../logger";
+import { getMaxDivHeight } from "../utils/browser";
 
 /**
  * This class solves the 'max height' problem, where the user might want to show more data than
@@ -12,8 +11,6 @@ import { Logger, LoggerFactory } from "../logger";
 
 @Bean('rowContainerHeightService')
 export class RowContainerHeightService extends BeanStub {
-
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private maxDivHeight: number;
 
@@ -61,7 +58,7 @@ export class RowContainerHeightService extends BeanStub {
     public updateOffset(): void {
         if (!this.stretching) { return; }
 
-        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        const gridBodyCon = this.beans.ctrlsService.getGridBodyCtrl();
         const newScrollY = gridBodyCon.getScrollFeature().getVScrollPosition().top;
         const newBodyHeight = this.getUiBodyHeight();
 
@@ -130,7 +127,7 @@ export class RowContainerHeightService extends BeanStub {
     }
 
     private getUiBodyHeight(): number {
-        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        const gridBodyCon = this.beans.ctrlsService.getGridBodyCtrl();
         const pos = gridBodyCon.getScrollFeature().getVScrollPosition();
         return pos.bottom - pos.top;
     }

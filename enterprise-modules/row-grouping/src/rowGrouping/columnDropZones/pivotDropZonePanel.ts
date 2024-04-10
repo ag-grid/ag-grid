@@ -54,7 +54,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     private checkVisibility(): void {
-        const pivotMode = this.columnModel.isPivotMode();
+        const pivotMode = this.beans.columnModel.isPivotMode();
 
         if (this.isHorizontal()) {
             // what we do for horizontal (ie the pivot panel at the top) depends
@@ -64,7 +64,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
                     this.setDisplayed(pivotMode);
                     break;
                 case 'onlyWhenPivoting':
-                    const pivotActive = this.columnModel.isPivotActive();
+                    const pivotActive = this.beans.columnModel.isPivotActive();
                     this.setDisplayed(pivotMode && pivotActive);
                     break;
                 default:
@@ -94,7 +94,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
 
             this.beans.eventService.dispatchEvent(event);
         } else {
-            this.columnModel.setPivotColumns(columns, "toolPanelUi");
+            this.beans.columnModel.setPivotColumns(columns, "toolPanelUi");
         }
     }
 
@@ -103,6 +103,6 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): Column[] {
-        return this.columnModel.getPivotColumns();
+        return this.beans.columnModel.getPivotColumns();
     }
 }

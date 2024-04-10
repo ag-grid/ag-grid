@@ -1,9 +1,7 @@
-import { Autowired } from "../../context/context";
-import { ICellRenderer } from "./iCellRenderer";
-import { Component } from "../../widgets/component";
-import { FilterManager } from "../../filter/filterManager";
 import { clearElement } from "../../utils/dom";
-import { missing, exists } from "../../utils/generic";
+import { exists, missing } from "../../utils/generic";
+import { Component } from "../../widgets/component";
+import { ICellRenderer } from "./iCellRenderer";
 
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
 
@@ -13,8 +11,6 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
     private lastValue: any;
 
     private refreshCount = 0;
-
-    @Autowired('filterManager') private filterManager: FilterManager;
 
     constructor() {
         super();
@@ -56,7 +52,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         // having timeout of 0 allows use to skip to the next css turn,
         // so we know the previous css classes have been applied. so the
         // complex set of setTimeout below creates the animation
-        this.getFrameworkOverrides().wrapIncoming(() => {
+        this.beans.frameworkOverrides.wrapIncoming(() => {
             window.setTimeout(() => {
                 if (refreshCountCopy !== this.refreshCount) { return; }
                 this.ePrevious!.classList.add('ag-value-slide-out-end');
@@ -83,7 +79,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
 
         // we don't show the delta if we are in the middle of a filter. see comment on FilterManager
         // with regards processingFilterChange
-        if (this.filterManager.isSuppressFlashingCellsBecauseFiltering()) {
+        if (this.beans.filterManager.isSuppressFlashingCellsBecauseFiltering()) {
             return false;
         }
 

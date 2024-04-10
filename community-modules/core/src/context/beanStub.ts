@@ -9,7 +9,6 @@ import {
     PropertyValueChangedListener,
 } from '../gridOptionsService';
 import { IEventEmitter } from '../interfaces/iEventEmitter';
-import { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import { Beans } from '../rendering/beans';
 import { addSafePassiveEventListener } from '../utils/event';
 import { Component } from '../widgets/component';
@@ -56,15 +55,6 @@ export class BeanStub extends Destroyable implements IEventEmitter {
     // Closely related to logic in ComponentUtil.ts
     private lastChangeSetIdLookup: Record<string, number> = {};
 
-    // CellComp and GridComp and override this because they get the FrameworkOverrides from the Beans bean
-    protected getFrameworkOverrides(): IFrameworkOverrides {
-        return this.beans.frameworkOverrides;
-    }
-
-    public getContext(): Context {
-        return this.beans.context;
-    }
-
     @PreDestroy
     protected destroy(): void {
         super.destroy();
@@ -102,7 +92,7 @@ export class BeanStub extends Destroyable implements IEventEmitter {
         }
 
         if (object instanceof HTMLElement) {
-            addSafePassiveEventListener(this.getFrameworkOverrides(), object, event, listener);
+            addSafePassiveEventListener(this.beans.frameworkOverrides, object, event, listener);
         } else {
             object.addEventListener(event, listener);
         }
@@ -207,11 +197,11 @@ export class BeanStub extends Destroyable implements IEventEmitter {
     }
 
     protected createBean<T>(bean: T, context?: Context | null, afterPreCreateCallback?: (comp: Component) => void): T {
-        return (context || this.getContext()).createBean(bean, afterPreCreateCallback);
+        return (context ?? this.beans.context).createBean(bean, afterPreCreateCallback);
     }
 
     protected destroyBean<T>(bean: T, context?: Context): undefined {
-        return (context || this.beans.context).destroyBean(bean);
+        return (context ?? this.beans.context).destroyBean(bean);
     }
 
     protected destroyBeans<T>(beans: T[], context?: Context): T[] {

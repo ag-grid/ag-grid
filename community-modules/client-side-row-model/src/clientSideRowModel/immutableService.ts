@@ -1,13 +1,8 @@
 import {
-    Autowired,
     Bean,
-    BeanStub,
-    IImmutableService,
-    IRowModel,
-    ISelectionService,
-    PostConstruct,
+    BeanStub, IImmutableService, PostConstruct,
     RowDataTransaction,
-    RowNode, RowRenderer, _
+    RowNode, _
 } from "@ag-grid-community/core";
 import { ClientSideRowModel } from "./clientSideRowModel";
 
@@ -15,16 +10,12 @@ import { ClientSideRowModel } from "./clientSideRowModel";
 @Bean('immutableService')
 export class ImmutableService extends BeanStub implements IImmutableService {
 
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-
     private clientSideRowModel: ClientSideRowModel;
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.rowModel.getType() === 'clientSide') {
-            this.clientSideRowModel = this.rowModel as ClientSideRowModel;
+        if (this.beans.rowModel.getType() === 'clientSide') {
+            this.clientSideRowModel = this.beans.clientSideRowModel as ClientSideRowModel;
 
             this.addManagedPropertyListener('rowData', () => this.onRowDataUpdated());
         }
@@ -118,7 +109,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         if (this.isActive()) {
             this.setRowData(rowData);
         } else {
-            this.selectionService.reset('rowDataChanged');
+            this.beans.selectionService.reset('rowDataChanged');
             this.clientSideRowModel.setRowData(rowData);
         }
     }

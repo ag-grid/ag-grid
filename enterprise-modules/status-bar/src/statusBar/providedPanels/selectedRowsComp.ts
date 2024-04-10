@@ -3,7 +3,7 @@ import { NameValueComp } from "./nameValueComp";
 
 export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp {
 
-    @Autowired('rowModel') private rowModel: IRowModel;
+    
     @Autowired('selectionService') private selectionService: ISelectionService;
 
     @PostConstruct
@@ -28,7 +28,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
 
     private isValidRowModel() {
         // this component is only really useful with client or server side rowmodels
-        const rowModelType = this.rowModel.getType();
+        const rowModelType = this.beans.rowModel.getType();
         return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     }
 

@@ -1,27 +1,14 @@
 import {
-    _,
     AgCheckbox,
     Autowired,
-    Column,
-    ColumnModel,
-    ColumnEventType,
-    ColumnPanelItemDragStartEvent,
-    ColumnPanelItemDragEndEvent,
-    Component,
+    Column, ColumnEventType, ColumnPanelItemDragEndEvent, ColumnPanelItemDragStartEvent, Component,
     CssClassApplier,
-    DragAndDropService,
-    DragSource,
+    DragAndDropService, DragItem, DragSource,
     DragSourceType,
-    Events,
-    ITooltipParams,
-    KeyCode,
-    ProvidedColumnGroup,
-    PostConstruct,
-    RefSelector,
+    Events, IAggFunc, ITooltipParams,
+    KeyCode, PostConstruct, ProvidedColumnGroup, RefSelector,
     TouchListener,
-    WithoutGridCommon,
-    IAggFunc,
-    DragItem
+    WithoutGridCommon, _
 } from "@ag-grid-community/core";
 import { ColumnModelItem } from "./columnModelItem";
 import { ModelItemUtils } from "./modelItemUtils";
@@ -39,7 +26,6 @@ export class ToolPanelColumnGroupComp extends Component {
             <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
 
@@ -329,7 +315,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutSelectedValue(): boolean | undefined {
-        const pivotMode = this.columnModel.isPivotMode();
+        const pivotMode = this.beans.columnModel.isPivotMode();
 
         const visibleLeafColumns = this.getVisibleLeafColumns();
 
@@ -354,7 +340,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutReadOnlyValue(): boolean {
-        const pivotMode = this.columnModel.isPivotMode();
+        const pivotMode = this.beans.columnModel.isPivotMode();
 
         let colsThatCanAction = 0;
 

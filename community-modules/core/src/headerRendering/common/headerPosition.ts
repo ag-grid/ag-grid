@@ -1,11 +1,9 @@
-import { Autowired, Bean } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
-import { ColumnModel } from "../../columns/columnModel";
+import { Bean } from "../../context/context";
 import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
-import { CtrlsService } from "../../ctrlsService";
-import { HeaderRowType } from "../row/headerRowComp";
 import { last } from "../../utils/array";
+import { HeaderRowType } from "../row/headerRowComp";
 
 export interface HeaderPosition {
 /** A number from 0 to n, where n is the last header row the grid is rendering */
@@ -21,9 +19,6 @@ export interface HeaderFuturePosition extends HeaderPosition {
 @Bean('headerPositionUtils')
 export class HeaderPositionUtils extends BeanStub {
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-
     public findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition | undefined {
         let nextColumn: Column | ColumnGroup;
         let getGroupMethod: 'getDisplayedGroupBefore' | 'getDisplayedGroupAfter';
@@ -31,10 +26,10 @@ export class HeaderPositionUtils extends BeanStub {
 
         if (focusedHeader.column instanceof ColumnGroup) {
             getGroupMethod = `getDisplayedGroup${direction}` as any;
-            nextColumn = this.columnModel[getGroupMethod](focusedHeader.column)!;
+            nextColumn = this.beans.columnModel[getGroupMethod](focusedHeader.column)!;
         } else {
             getColMethod = `getDisplayedCol${direction}` as any;
-            nextColumn = this.columnModel[getColMethod](focusedHeader.column)!;
+            nextColumn = this.beans.columnModel[getColMethod](focusedHeader.column)!;
         }
 
         if (!nextColumn) { return; }
@@ -149,23 +144,23 @@ export class HeaderPositionUtils extends BeanStub {
     }
 
     private getHeaderRowType(rowIndex: number): HeaderRowType | undefined {
-        const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
+        const centerHeaderContainer = this.beans.ctrlsService.getHeaderRowContainerCtrl();
         if (centerHeaderContainer) {
             return centerHeaderContainer.getRowType(rowIndex);
         }
     }
 
     public findColAtEdgeForHeaderRow(level: number, position: 'start' | 'end'): HeaderPosition | undefined {
-        const displayedColumns = this.columnModel.getAllDisplayedColumns();
+        const displayedColumns = this.beans.columnModel.getAllDisplayedColumns();
         const column = displayedColumns[position === 'start' ? 0 : displayedColumns.length - 1];
 
         if (!column) { return; }
 
-        const childContainer = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned());
+        const childContainer = this.beans.ctrlsService.getHeaderRowContainerCtrl(column.getPinned());
         const type = childContainer.getRowType(level);
 
         if (type == HeaderRowType.COLUMN_GROUP) {
-            const columnGroup = this.columnModel.getColumnGroupAtLevel(column, level);
+            const columnGroup = this.beans.columnModel.getColumnGroupAtLevel(column, level);
             return {
                 headerRowIndex: level,
                 column: columnGroup!

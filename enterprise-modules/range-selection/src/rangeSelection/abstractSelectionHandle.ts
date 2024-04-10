@@ -1,29 +1,11 @@
 import {
     Autowired,
-    CellCtrl,
-    RowRenderer,
-    DragService,
-    Component,
-    MouseEventService,
-    ColumnModel,
-    CellNavigationService,
-    CellRange,
-    RowPosition,
-    CellPosition,
-    PostConstruct,
-    ISelectionHandle,
-    RowPositionUtils,
-    _,
-    SelectionHandleType,
-    NavigationService,
-    CtrlsService,
-    CellPositionUtils
+    CellCtrl, CellNavigationService, CellPosition, CellPositionUtils, CellRange, ColumnModel, Component, DragService, ISelectionHandle, MouseEventService, NavigationService, PostConstruct, RowPosition, RowPositionUtils, RowRenderer, SelectionHandleType, _
 } from "@ag-grid-community/core";
 import { RangeService } from "./rangeService";
 
 export abstract class AbstractSelectionHandle extends Component implements ISelectionHandle {
 
-    @Autowired("rowRenderer") protected rowRenderer: RowRenderer;
     @Autowired("dragService") protected dragService: DragService;
     @Autowired("rangeService") protected rangeService: RangeService;
     @Autowired("mouseEventService") protected mouseEventService: MouseEventService;
@@ -32,7 +14,6 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     @Autowired("navigationService") protected navigationService: NavigationService;
     @Autowired('rowPositionUtils') protected rowPositionUtils: RowPositionUtils;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
-    @Autowired('ctrlsService') protected ctrlsService: CtrlsService;
 
     private cellCtrl: CellCtrl;
     private cellRange: CellRange;
@@ -135,7 +116,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
     protected onDragStart(e: MouseEvent) {
         this.cellHoverListener = this.addManagedListener(
-            this.ctrlsService.getGridCtrl().getGui(),
+            this.beans.ctrlsService.getGridCtrl().getGui(),
             'mousemove',
             this.updateValuesOnMove.bind(this)
         );

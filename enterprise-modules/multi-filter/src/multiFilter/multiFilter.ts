@@ -1,35 +1,10 @@
 import {
-    ProvidedFilter,
-    AgPromise,
-    ProvidedFilterModel,
-    IDoesFilterPassParams,
-    IAfterGuiAttachedParams,
-    IFilterComp,
-    IMultiFilterDef,
-    MultiFilterParams,
-    IMultiFilterModel,
-    Autowired,
-    UserComponentFactory,
-    FilterManager,
-    Column,
-    IFilterDef,
-    IFilterParams,
-    RowNode,
-    AgGroupComponent,
-    ContainerType,
-    TabGuardComp,
-    AgMenuItemComponent,
-    AgMenuItemRenderer,
-    MenuItemActivatedEvent,
-    PostConstruct,
-    IMultiFilter,
-    _,
-    KeyCode
+    AgGroupComponent, AgMenuItemComponent,
+    AgMenuItemRenderer, AgPromise, Column, ContainerType, IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterComp, IFilterDef,
+    IFilterParams, IMultiFilter, IMultiFilterDef, IMultiFilterModel, KeyCode, MenuItemActivatedEvent, MultiFilterParams, PostConstruct, ProvidedFilter, ProvidedFilterModel, RowNode, TabGuardComp, _
 } from '@ag-grid-community/core';
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
     private params: MultiFilterParams;
     private filterDefs: IMultiFilterDef[] = [];
@@ -434,7 +409,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         let filterInstance: IFilterComp;
 
         const filterParams: IFilterParams = {
-            ...this.filterManager.createFilterParams(this.column, this.column.getColDef()),
+            ...this.beans.filterManager.createFilterParams(this.column, this.column.getColDef()),
             filterModifiedCallback,
             filterChangedCallback: additionalEventAttributes => {
                 this.executeWhenAllFiltersReady(() => this.filterChanged(index, additionalEventAttributes));

@@ -1,22 +1,13 @@
-import { ColumnModel } from "../../../columns/columnModel";
 import { BeanStub } from "../../../context/beanStub";
-import { Autowired, PostConstruct } from "../../../context/context";
-import { CtrlsService } from "../../../ctrlsService";
+import { PostConstruct } from "../../../context/context";
 import { Column, ColumnPinnedType } from "../../../entities/column";
-import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
 import { getInnerWidth, setDisplayed } from "../../../utils/dom";
 import { TouchListener } from "../../../widgets/touchListener";
-import { HorizontalResizeService } from "../../common/horizontalResizeService";
 import { IHeaderResizeFeature } from "../abstractCell/abstractHeaderCellCtrl";
 import { HeaderCellCtrl, IHeaderCellComp } from "./headerCellCtrl";
 
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
-
-    @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private pinned: ColumnPinnedType;
     private column: Column;
@@ -56,7 +47,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
             if (!canResize) { return; }
 
-            const finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
+            const finishedWithResizeFunc = this.beans.horizontalResizeService.addResizeBar({
                 eResizeBar: this.eResize,
                 onResizeStart: this.onResizeStart.bind(this),
                 onResizing: this.onResizing.bind(this, false),
@@ -68,7 +59,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
                 const skipHeaderOnAutoSize = this.beans.gos.get('skipHeaderOnAutoSize');
 
                 const autoSizeColListener = () => {
-                    this.columnModel.autoSizeColumn(this.column, "uiColumnResized", skipHeaderOnAutoSize);
+                    this.beans.columnModel.autoSizeColumn(this.column, "uiColumnResized", skipHeaderOnAutoSize);
                 };
 
                 this.eResize.addEventListener('dblclick', autoSizeColListener);
@@ -106,7 +97,8 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     }
 
     private onResizing(finished: boolean, resizeAmount: number): void {
-        const { column: key, lastResizeAmount, resizeStartWidth } = this;
+        const { column: key, lastResizeAmount, resizeStartWidth, beans } = this;
+        const { ctrlsService, pinnedWidthService } = beans;
 
         const resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
         const newWidth = resizeStartWidth + resizeAmountNormalised;
@@ -114,9 +106,9 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         const columnWidths = [{ key, newWidth }];
 
         if (this.column.getPinned()) {
-            const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
-            const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
-            const bodyWidth = getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
+            const leftWidth = pinnedWidthService.getPinnedLeftWidth();
+            const rightWidth = pinnedWidthService.getPinnedRightWidth();
+            const bodyWidth = getInnerWidth(ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
 
             if (leftWidth + rightWidth + (resizeAmountNormalised - lastResizeAmount) > bodyWidth) {
                 return;
@@ -125,7 +117,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
         this.lastResizeAmount = resizeAmountNormalised;
 
-        this.columnModel.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnResized");
+        this.beans.columnModel.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnResized");
 
         if (finished) {
             this.toggleColumnResizing(false);

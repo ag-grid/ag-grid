@@ -1,9 +1,6 @@
 import { BeanStub } from "../../context/beanStub";
-import { Autowired } from "../../context/context";
-import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
+import { DragListenerParams } from "../../dragAndDrop/dragService";
 import { getAbsoluteHeight, getAbsoluteWidth, isVisible, setFixedHeight, setFixedWidth } from "../../utils/dom";
-import { PopupService } from "../../widgets/popupService";
-import { ResizeObserverService } from "../../misc/resizeObserverService";
 
 const RESIZE_CONTAINER_STYLE = 'ag-resizer-wrapper';
 
@@ -56,10 +53,6 @@ interface MappedResizer {
 }
 
 export class PositionableFeature extends BeanStub {
-
-    @Autowired('popupService') protected readonly popupService: PopupService;
-    @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
-    @Autowired('dragService') private readonly dragService: DragService;
 
     private dragStartPosition = {
         x: 0,
@@ -210,10 +203,10 @@ export class PositionableFeature extends BeanStub {
         };
 
         if (movable) {
-            this.dragService.addDragSource(params);
+            this.beans.dragService.addDragSource(params);
             this.moveElementDragListener = params;
         } else {
-            this.dragService.removeDragSource(params);
+            this.beans.dragService.removeDragSource(params);
             this.moveElementDragListener = undefined;
         }
     }
@@ -257,7 +250,7 @@ export class PositionableFeature extends BeanStub {
 
             if (isSideResizable || (!this.isAlive() && !isSideResizable)) {
                 if (isSideResizable) {
-                    this.dragService.addDragSource(params);
+                    this.beans.dragService.addDragSource(params);
                     this.resizeListeners.push(params);
                     resizerEl!.style.pointerEvents = 'all';
                 } else {
@@ -406,7 +399,7 @@ export class PositionableFeature extends BeanStub {
 
         if (!ePopup) { return; }
 
-        this.popupService.positionPopup({
+        this.beans.popupService.positionPopup({
             ePopup,
             keepWithinBounds: true,
             skipObserver: this.movable || this.isResizable(),
@@ -428,8 +421,8 @@ export class PositionableFeature extends BeanStub {
         };
 
         if (constrain) {
-            this.resizeObserverSubscriber = this.resizeObserverService.observeResize(
-                this.popupService.getPopupParent(), applyMaxHeightToElement
+            this.resizeObserverSubscriber = this.beans.resizeObserverService.observeResize(
+                this.beans.popupService.getPopupParent(), applyMaxHeightToElement
             );
         } else {
             this.element.style.removeProperty('max-height');
@@ -840,7 +833,7 @@ export class PositionableFeature extends BeanStub {
 
     private setOffsetParent() {
         if (this.config.forcePopupParentAsOffsetParent) {
-            this.offsetParent = this.popupService.getPopupParent();
+            this.offsetParent = this.beans.popupService.getPopupParent();
         } else {
             this.offsetParent = this.element.offsetParent as HTMLElement;
         }
@@ -859,7 +852,7 @@ export class PositionableFeature extends BeanStub {
     private clearResizeListeners(): void {
         while (this.resizeListeners.length) {
             const params = this.resizeListeners.pop()!;
-            this.dragService.removeDragSource(params);
+            this.beans.dragService.removeDragSource(params);
         }
     }
 
@@ -867,7 +860,7 @@ export class PositionableFeature extends BeanStub {
         super.destroy();
 
         if (this.moveElementDragListener) {
-            this.dragService.removeDragSource(this.moveElementDragListener);
+            this.beans.dragService.removeDragSource(this.moveElementDragListener);
         }
 
         this.constrainSizeToAvailableHeight(false);

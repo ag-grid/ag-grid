@@ -1,17 +1,13 @@
 import {
-    Autowired,
-    ColumnModel,
     Component,
     Events,
     PostConstruct,
     _
 } from "@ag-grid-community/core";
-import { RowGroupDropZonePanel } from "./rowGroupDropZonePanel";
 import { PivotDropZonePanel } from "./pivotDropZonePanel";
+import { RowGroupDropZonePanel } from "./rowGroupDropZonePanel";
 
 export class GridHeaderDropZones extends Component {
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private rowGroupComp: Component;
     private pivotComp: Component;
@@ -71,7 +67,7 @@ export class GridHeaderDropZones extends Component {
         if (rowGroupPanelShow === 'always') {
             this.rowGroupComp.setDisplayed(true);
         } else if (rowGroupPanelShow === 'onlyWhenGrouping') {
-            const grouping = !this.columnModel.isRowGroupEmpty();
+            const grouping = !this.beans.columnModel.isRowGroupEmpty();
             this.rowGroupComp.setDisplayed(grouping);
         } else {
             this.rowGroupComp.setDisplayed(false);
@@ -88,7 +84,7 @@ export class GridHeaderDropZones extends Component {
         if (pivotPanelShow === 'always') {
             this.pivotComp.setDisplayed(true);
         } else if (pivotPanelShow === 'onlyWhenPivoting') {
-            const pivoting = this.columnModel.isPivotActive();
+            const pivoting = this.beans.columnModel.isPivotActive();
             this.pivotComp.setDisplayed(pivoting);
         } else {
             this.pivotComp.setDisplayed(false);

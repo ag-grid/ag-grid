@@ -1,20 +1,15 @@
+import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { BeanStub } from "../../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../../context/context";
-import { WithoutGridCommon } from "../../interfaces/iCommon";
-import { UserCompDetails, UserComponentFactory } from "../../components/framework/userComponentFactory";
-import { OverlayWrapperComponent } from "./overlayWrapperComponent";
-import { PaginationProxy } from "../../pagination/paginationProxy";
-import { ColumnModel } from "../../columns/columnModel";
+import { Bean, PostConstruct } from "../../context/context";
+import { GridOptions } from "../../entities/gridOptions";
 import { Events } from "../../eventKeys";
+import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { ILoadingOverlayParams } from "./loadingOverlayComponent";
 import { INoRowsOverlayParams } from "./noRowsOverlayComponent";
-import { GridOptions } from "../../entities/gridOptions";
+import { OverlayWrapperComponent } from "./overlayWrapperComponent";
 
 @Bean('overlayService')
 export class OverlayService extends BeanStub {
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
-    @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
     private overlayWrapperComp: OverlayWrapperComponent;
     private manuallyDisplayed: boolean = false;
@@ -66,7 +61,7 @@ export class OverlayService extends BeanStub {
             });
         });
 
-        this.manuallyDisplayed = this.columnModel.isReady() && !this.paginationProxy.isEmpty();
+        this.manuallyDisplayed = this.beans.columnModel.isReady() && !this.beans.paginationProxy.isEmpty();
         this.overlayWrapperComp.showOverlay(promise, wrapperCssClass, listenerDestroyFunc);
     }
 
@@ -76,7 +71,7 @@ export class OverlayService extends BeanStub {
     }
 
     private showOrHideOverlay(): void {
-        const isEmpty = this.paginationProxy.isEmpty();
+        const isEmpty = this.beans.paginationProxy.isEmpty();
         const isSuppressNoRowsOverlay = this.beans.gos.get('suppressNoRowsOverlay');
         if (isEmpty && !isSuppressNoRowsOverlay) {
             this.showNoRowsOverlay();
@@ -94,7 +89,7 @@ export class OverlayService extends BeanStub {
         // this problem exists before of the race condition between the services (column controller in this case)
         // and the view (grid panel). if the model beans were all initialised first, and then the view beans second,
         // this race condition would not happen.
-        if (this.columnModel.isReady() && !this.paginationProxy.isEmpty() && !this.manuallyDisplayed) {
+        if (this.beans.columnModel.isReady() && !this.beans.paginationProxy.isEmpty() && !this.manuallyDisplayed) {
             this.hideOverlay();
         }
     }

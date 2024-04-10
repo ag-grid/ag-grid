@@ -32,7 +32,6 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
 
     private focusAfterAttached: boolean;
 
-    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @RefSelector('eSelect') private eSelect: AgSelect;
 
     private startedByEnter: boolean = false;
@@ -48,8 +47,9 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
     public init(params: SelectCellEditorParams): void {
         this.focusAfterAttached = params.cellStartedEdit;
 
-        const { eSelect, valueFormatterService } = this;
+        const { eSelect, beans } = this;
         const { values, value, eventKey } = params;
+        const valueFormatterService = beans.valueFormatterService;
         if (missing(values)) {
             console.warn('AG Grid: no values found for select cellEditor');
             return;

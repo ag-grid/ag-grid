@@ -1,11 +1,9 @@
-import { DragAndDropService, DraggingEvent, DragSourceType, DropTarget } from "../../dragAndDrop/dragAndDropService";
-import { Autowired, PostConstruct } from "../../context/context";
-import { MoveColumnFeature } from "./moveColumnFeature";
-import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
-import { ColumnModel } from "../../columns/columnModel";
 import { BeanStub } from "../../context/beanStub";
-import { CtrlsService } from "../../ctrlsService";
+import { PostConstruct } from "../../context/context";
+import { DraggingEvent, DragSourceType, DropTarget } from "../../dragAndDrop/dragAndDropService";
 import { ColumnPinnedType } from "../../entities/column";
+import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
+import { MoveColumnFeature } from "./moveColumnFeature";
 
 export interface DropListener {
     getIconName(): string | null;
@@ -16,10 +14,6 @@ export interface DropListener {
 }
 
 export class BodyDropTarget extends BeanStub implements DropTarget {
-
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private pinned: ColumnPinnedType;
     // public because it's part of the DropTarget interface
@@ -39,7 +33,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
 
     @PostConstruct
     private postConstruct(): void {
-        this.ctrlsService.whenReady(p => {
+        this.beans.ctrlsService.whenReady(p => {
             switch (this.pinned) {
                 case 'left':
                     this.eSecondaryContainers = [
@@ -84,7 +78,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         this.moveColumnFeature = this.createManagedBean(new MoveColumnFeature(this.pinned, this.eContainer));
         this.bodyDropPivotTarget = this.createManagedBean(new BodyDropPivotTarget(this.pinned));
 
-        this.dragAndDropService.addDropTarget(this);
+        this.beans.dragAndDropService.addDropTarget(this);
     }
 
     public getIconName(): string | null {
@@ -98,7 +92,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         // in pivot mode, then if moving a column (ie didn't come from toolpanel) then it's
         // a standard column move, however if it came from the toolpanel, then we are introducing
         // dimensions or values to the grid
-        return this.columnModel.isPivotMode() && draggingEvent.dragSource.type === DragSourceType.ToolPanel;
+        return this.beans.columnModel.isPivotMode() && draggingEvent.dragSource.type === DragSourceType.ToolPanel;
     }
 
     public onDragEnter(draggingEvent: DraggingEvent): void {

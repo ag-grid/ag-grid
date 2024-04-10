@@ -1,15 +1,11 @@
-import { RowNode } from "../entities/rowNode";
-import { Autowired, Bean, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { IRowModel } from "../interfaces/iRowModel";
-import { ISelectionService } from "../interfaces/iSelectionService";
+import { Bean, PostConstruct } from "../context/context";
+import { RowNode } from "../entities/rowNode";
+import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { SelectionService } from "../selectionService";
 import { ChangedPath } from "../utils/changedPath";
-import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 @Bean('selectableService')
 export class SelectableService extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
     
     @PostConstruct
     private init() {
@@ -24,14 +20,15 @@ export class SelectableService extends BeanStub {
     }
 
     private updateSelectable(skipLeafNodes = false) {
-        const isRowSelecting = !!this.beans.gos.get('rowSelection');
-        const isRowSelectable = this.beans.gos.get('isRowSelectable');
+        const { selectionService, gos, rowModel } = this.beans;
+        const isRowSelecting = !!gos.get('rowSelection');
+        const isRowSelectable = gos.get('isRowSelectable');
 
         if (!isRowSelecting || !isRowSelectable) { return; }
 
-        const isGroupSelectsChildren = this.beans.gos.get('groupSelectsChildren');
+        const isGroupSelectsChildren = gos.get('groupSelectsChildren');
 
-        const isCsrmGroupSelectsChildren = this.rowModel.getType() === 'clientSide' && isGroupSelectsChildren;
+        const isCsrmGroupSelectsChildren = rowModel.getType() === 'clientSide' && isGroupSelectsChildren;
 
         const nodesToDeselect: RowNode[] = [];
 
@@ -55,21 +52,21 @@ export class SelectableService extends BeanStub {
         
         // Needs to be depth first in this case, so that parents can be updated based on child.
         if (isCsrmGroupSelectsChildren) {
-            const csrm = this.rowModel as IClientSideRowModel;
+            const csrm = rowModel as IClientSideRowModel;
             const changedPath = new ChangedPath(false, csrm.getRootNode());
             changedPath.forEachChangedNodeDepthFirst(nodeCallback, true, true);
         } else {
             // Normal case, update all rows
-            this.rowModel.forEachNode(nodeCallback);
+            rowModel.forEachNode(nodeCallback);
         }
 
         if (nodesToDeselect.length) {
-            this.selectionService.setNodesSelected({ nodes: nodesToDeselect, newValue: false, source: 'selectableChanged' });
+            selectionService.setNodesSelected({ nodes: nodesToDeselect, newValue: false, source: 'selectableChanged' });
         }
 
         // if csrm and group selects children, update the groups after deselecting leaf nodes.
-        if (isCsrmGroupSelectsChildren && this.selectionService instanceof SelectionService) {
-            this.selectionService.updateGroupsFromChildrenSelections('selectableChanged');
+        if (isCsrmGroupSelectsChildren && selectionService instanceof SelectionService) {
+            selectionService.updateGroupsFromChildrenSelections('selectableChanged');
         }
     }
 

@@ -1,13 +1,10 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../context/context";
+import { Bean, PostConstruct } from "../context/context";
 
 import { Events } from "../eventKeys";
-import { ColumnModel } from "../columns/columnModel";
 
 @Bean('pinnedWidthService')
 export class PinnedWidthService extends BeanStub {
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private leftWidth: number;
     private rightWidth: number;
@@ -24,8 +21,8 @@ export class PinnedWidthService extends BeanStub {
 
         const printLayout = this.beans.gos.isDomLayout('print');
 
-        const newLeftWidth = printLayout ? 0 : this.columnModel.getDisplayedColumnsLeftWidth();
-        const newRightWidth = printLayout ? 0 : this.columnModel.getDisplayedColumnsRightWidth();
+        const newLeftWidth = printLayout ? 0 : this.beans.columnModel.getDisplayedColumnsLeftWidth();
+        const newRightWidth = printLayout ? 0 : this.beans.columnModel.getDisplayedColumnsRightWidth();
 
         if (newLeftWidth != this.leftWidth) {
             this.leftWidth = newLeftWidth;

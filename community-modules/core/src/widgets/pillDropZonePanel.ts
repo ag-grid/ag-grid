@@ -1,15 +1,13 @@
-import { Autowired } from "../context/context";
-import { Component } from "./component";
-import { DragAndDropService, DraggingEvent, DragItem, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
-import { PillDragComp } from "./pillDragComp";
-import { PositionableFeature } from "../rendering/features/positionableFeature";
-import { FocusService } from "../focusService";
-import { ManagedFocusFeature } from "./managedFocusFeature";
 import { KeyCode } from "../constants/keyCode";
-import { createIconNoSpan } from "../utils/icon";
+import { DraggingEvent, DragItem, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
+import { PositionableFeature } from "../rendering/features/positionableFeature";
 import { setAriaHidden, setAriaLabel, setAriaPosInSet, setAriaRole, setAriaSetSize } from "../utils/aria";
 import { areEqual, existsAndNotEmpty, includes, insertArrayIntoArray } from "../utils/array";
 import { clearElement } from "../utils/dom";
+import { createIconNoSpan } from "../utils/icon";
+import { Component } from "./component";
+import { ManagedFocusFeature } from "./managedFocusFeature";
+import { PillDragComp } from "./pillDragComp";
 
 export interface PillDropZonePanelParams {
     emptyMessage?: string;
@@ -18,8 +16,6 @@ export interface PillDropZonePanelParams {
 }
 
 export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem> extends Component {
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('dragAndDropService') protected readonly dragAndDropService: DragAndDropService;
 
     private static STATE_NOT_DRAGGING = 'notDragging';
     private static STATE_NEW_ITEMS_IN = 'newItemsIn';
@@ -126,7 +122,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
         if (!isNext && !isPrevious) { return; }
 
-        const el = this.focusService.findNextFocusableElement(
+        const el = this.beans.focusService.findNextFocusableElement(
             this.getFocusableElement(),
             false,
             isPrevious
@@ -155,7 +151,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             isInterestedIn: this.isInterestedIn.bind(this)
         };
 
-        this.dragAndDropService.addDropTarget(this.dropTarget);
+        this.beans.dragAndDropService.addDropTarget(this.dropTarget);
     }
 
     protected minimumAllowedNewInsertIndex(): number {
@@ -372,10 +368,10 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const resizeEnabled = this.resizeEnabled;
         const focusedIndex = this.getFocusedItem();
 
-        let alternateElement = this.focusService.findNextFocusableElement();
+        let alternateElement = this.beans.focusService.findNextFocusableElement();
 
         if (!alternateElement) {
-            alternateElement = this.focusService.findNextFocusableElement(undefined, false, true);
+            alternateElement = this.beans.focusService.findNextFocusableElement(undefined, false, true);
         }
 
         this.toggleResizable(false);
@@ -396,7 +392,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         // focus should only be restored when keyboard mode
         // otherwise mouse clicks will cause containers to scroll
         // without no apparent reason.
-        if (this.focusService.isKeyboardMode()) {
+        if (this.beans.focusService.isKeyboardMode()) {
             this.restoreFocus(focusedIndex, alternateElement!);
         }
     }

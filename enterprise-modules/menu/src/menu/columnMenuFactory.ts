@@ -3,24 +3,14 @@ import {
     Autowired,
     Bean,
     BeanStub,
-    Column,
-    ColumnModel,
-    FilterManager,
-    IRowModel,
-    MenuItemDef,
-    MenuService,
-    _
+    Column, MenuItemDef, _
 } from "@ag-grid-community/core";
 import { MenuItemMapper } from "./menuItemMapper";
 
 @Bean('columnMenuFactory')
 export class ColumnMenuFactory extends BeanStub {
     @Autowired('menuItemMapper') private readonly menuItemMapper: MenuItemMapper;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('rowModel') private readonly rowModel: IRowModel;
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('menuService') private readonly menuService: MenuService;
-
+    
     private static MENU_ITEM_SEPARATOR = 'separator';
 
     public createMenu(parent: BeanStub, column: Column | undefined, sourceElement: () => HTMLElement): AgMenuList {
@@ -72,7 +62,7 @@ export class ColumnMenuFactory extends BeanStub {
     private getDefaultMenuOptions(column?: Column): string[] {
         const result: string[] = [];
 
-        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
+        const isLegacyMenuEnabled = this.beans.menuService.isLegacyMenuEnabled();
 
         if (!column) {
             if (!isLegacyMenuEnabled) {
@@ -84,15 +74,15 @@ export class ColumnMenuFactory extends BeanStub {
 
         const allowPinning = !column.getColDef().lockPinned;
 
-        const rowGroupCount = this.columnModel.getRowGroupColumns().length;
+        const rowGroupCount = this.beans.columnModel.getRowGroupColumns().length;
         const doingGrouping = rowGroupCount > 0;
 
         const allowValue = column.isAllowValue();
         const allowRowGroup = column.isAllowRowGroup();
         const isPrimary = column.isPrimary();
-        const pivotModeOn = this.columnModel.isPivotMode();
+        const pivotModeOn = this.beans.columnModel.isPivotMode();
 
-        const isInMemoryRowModel = this.rowModel.getType() === 'clientSide';
+        const isInMemoryRowModel = this.beans.rowModel.getType() === 'clientSide';
 
         const usingTreeData = this.beans.gos.get('treeData');
 
@@ -116,7 +106,7 @@ export class ColumnMenuFactory extends BeanStub {
             result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
         }
 
-        if (this.menuService.isFilterMenuItemEnabled(column)) {
+        if (this.beans.menuService.isFilterMenuItemEnabled(column)) {
             result.push('columnFilter');
             result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
         }
@@ -142,7 +132,7 @@ export class ColumnMenuFactory extends BeanStub {
             result.push('rowUnGroup');
         } else if (allowRowGroup && column.isPrimary()) {
             if (column.isRowGroupActive()) {
-                const groupLocked = this.columnModel.isColumnGroupingLocked(column);
+                const groupLocked = this.beans.columnModel.isColumnGroupingLocked(column);
                 if (!groupLocked) {
                     result.push('rowUnGroup');
                 }

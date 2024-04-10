@@ -1,16 +1,7 @@
 import {
-    Beans, ColumnModel, Events,
-    EventService,
-    RowDataTransaction,
-    RowNode,
+    Beans, Events, RowDataTransaction, RowDataUpdateStartedEvent, RowNode,
     RowNodeTransaction,
-    SelectionChangedEvent,
-    _,
-    WithoutGridCommon,
-    GridOptionsService,
-    SelectionEventSourceType,
-    ISelectionService,
-    RowDataUpdateStartedEvent
+    SelectionChangedEvent, SelectionEventSourceType, WithoutGridCommon, _
 } from "@ag-grid-community/core";
 
 export class ClientSideNodeManager {
@@ -19,8 +10,6 @@ export class ClientSideNodeManager {
 
     private readonly rootNode: RowNode;
 
-    private columnModel: ColumnModel;
-    private selectionService: ISelectionService;
     private beans: Beans;
 
     private nextId = 0;
@@ -33,11 +22,9 @@ export class ClientSideNodeManager {
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: { [id: string]: RowNode } = {};
 
-    constructor(rootNode: RowNode, columnModel: ColumnModel, selectionService: ISelectionService, beans: Beans) {
+    constructor(rootNode: RowNode, beans: Beans) {
         this.rootNode = rootNode;
-        this.columnModel = columnModel;
         this.beans = beans;
-        this.selectionService = selectionService;
 
         this.rootNode.group = true;
         this.rootNode.level = -1;
@@ -139,7 +126,7 @@ export class ClientSideNodeManager {
     private updateSelection(nodesToUnselect: RowNode[], source: SelectionEventSourceType): void {
         const selectionChanged = nodesToUnselect.length > 0;
         if (selectionChanged) {
-            this.selectionService.setNodesSelected({
+            this.beans.selectionService.setNodesSelected({
                 newValue: false,
                 nodes: nodesToUnselect,
                 suppressFinishActions: true,
@@ -151,7 +138,7 @@ export class ClientSideNodeManager {
         // a new node was inserted, so a parent that was previously selected (as all
         // children were selected) should not be tri-state (as new one unselected against
         // all other selected children).
-        this.selectionService.updateGroupsFromChildrenSelections(source);
+        this.beans.selectionService.updateGroupsFromChildrenSelections(source);
 
         if (selectionChanged) {
             const event: WithoutGridCommon<SelectionChangedEvent> = {
@@ -324,7 +311,7 @@ export class ClientSideNodeManager {
             }
 
             if (setExpanded) {
-                const rowGroupColumns = this.columnModel.getRowGroupColumns();
+                const rowGroupColumns = this.beans.columnModel.getRowGroupColumns();
                 const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
 
                 // need to take row group into account when determining level

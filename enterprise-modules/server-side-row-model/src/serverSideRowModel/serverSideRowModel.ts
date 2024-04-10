@@ -1,44 +1,18 @@
 import {
-    _,
-    Autowired,
+    AdvancedFilterModel, Autowired,
     Bean,
     BeanStub,
-    Column,
-    ColumnModel,
-    ColumnVO,
-    Events,
-    FilterManager,
-    IServerSideDatasource,
+    Column, ColumnVO,
+    Events, FilterModel, IPivotColDefService, IServerSideDatasource,
     IServerSideRowModel,
-    IServerSideStore,
-    ModelUpdatedEvent,
-    NumberSequence,
-    PostConstruct,
-    PreDestroy,
-    RowBounds,
-    RowNode,
-    RowRenderer,
-    StoreRefreshAfterParams,
-    RefreshServerSideParams,
-    ServerSideGroupLevelState,
-    Beans,
-    SortModelItem,
-    WithoutGridCommon,
-    RowModelType,
-    Optional,
-    IPivotColDefService,
-    LoadSuccessParams,
-    SortController,
-    FilterModel,
-    AdvancedFilterModel,
-    ModuleRegistry,
-    ModuleNames
+    IServerSideStore, LoadSuccessParams, ModelUpdatedEvent, ModuleNames, ModuleRegistry, NumberSequence, Optional, PostConstruct,
+    PreDestroy, RefreshServerSideParams, RowBounds, RowModelType, RowNode, ServerSideGroupLevelState, SortModelItem, StoreRefreshAfterParams, WithoutGridCommon, _
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
-import { StoreFactory } from "./stores/storeFactory";
 import { FullStore } from "./stores/fullStore";
 import { LazyStore } from "./stores/lazy/lazyStore";
+import { StoreFactory } from "./stores/storeFactory";
 
 export interface SSRMParams {
     sortModel: SortModelItem[];
@@ -55,10 +29,6 @@ export interface SSRMParams {
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
     @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
 
@@ -93,7 +63,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             this.datasource.destroy();
         }
 
-        this.rowRenderer.datasourceChanged();
+        this.beans.rowRenderer.datasourceChanged();
         this.datasource = undefined;
     }
 
@@ -181,9 +151,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         // check if anything pertaining to fetching data has changed, and if it has, reset, but if
         // it has not, don't reset
-        const rowGroupColumnVos = this.columnsToValueObjects(this.columnModel.getRowGroupColumns());
-        const valueColumnVos = this.columnsToValueObjects(this.columnModel.getValueColumns());
-        const pivotColumnVos = this.columnsToValueObjects(this.columnModel.getPivotColumns());
+        const rowGroupColumnVos = this.columnsToValueObjects(this.beans.columnModel.getRowGroupColumns());
+        const valueColumnVos = this.columnsToValueObjects(this.beans.columnModel.getValueColumns());
+        const pivotColumnVos = this.columnsToValueObjects(this.beans.columnModel.getPivotColumns());
 
         // compares two sets of columns, ensuring no columns have been added or removed (unless specified via allowRemovedColumns)
         // if the columns are found, also ensures the field and aggFunc properties have not been changed.
@@ -203,7 +173,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             return allColsUnchanged && !missingCols;
         }
 
-        const sortModelDifferent = !_.jsonEquals(this.storeParams.sortModel, this.sortController.getSortModel());
+        const sortModelDifferent = !_.jsonEquals(this.storeParams.sortModel, this.beans.sortController.getSortModel());
         const rowGroupDifferent = !areColsSame({
             oldCols: this.storeParams.rowGroupCols,
             newCols: rowGroupColumnVos,
@@ -261,7 +231,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         const pivotColumnGroupDefs = this.pivotColDefService.createColDefsFromFields(pivotFields);
         this.managingPivotResultColumns = true;
-        this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
+        this.beans.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
     };
 
     public resetRowHeights(): void {
@@ -320,7 +290,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         if (this.managingPivotResultColumns) {
             // if managing pivot columns, also reset secondary columns.
-            this.columnModel.setSecondaryColumns(null, 'api');
+            this.beans.columnModel.setSecondaryColumns(null, 'api');
             this.managingPivotResultColumns = false;
         }
 
@@ -334,31 +304,31 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return columns.map(col => ({
             id: col.getId(),
             aggFunc: col.getAggFunc(),
-            displayName: this.columnModel.getDisplayNameForColumn(col, 'model'),
+            displayName: this.beans.columnModel.getDisplayNameForColumn(col, 'model'),
             field: col.getColDef().field
         }) as ColumnVO);
     }
 
     private createStoreParams(): SSRMParams {
+        const { columnModel, gos, filterManager, sortController} = this.beans;
+        const rowGroupColumnVos = this.columnsToValueObjects(columnModel.getRowGroupColumns());
+        const valueColumnVos = this.columnsToValueObjects(columnModel.getValueColumns());
+        const pivotColumnVos = this.columnsToValueObjects(columnModel.getPivotColumns());
 
-        const rowGroupColumnVos = this.columnsToValueObjects(this.columnModel.getRowGroupColumns());
-        const valueColumnVos = this.columnsToValueObjects(this.columnModel.getValueColumns());
-        const pivotColumnVos = this.columnsToValueObjects(this.columnModel.getPivotColumns());
-
-        const dynamicRowHeight = this.beans.gos.isGetRowHeightFunction();
+        const dynamicRowHeight = gos.isGetRowHeightFunction();
 
         const params: SSRMParams = {
             // the columns the user has grouped and aggregated by
             valueCols: valueColumnVos,
             rowGroupCols: rowGroupColumnVos,
             pivotCols: pivotColumnVos,
-            pivotMode: this.columnModel.isPivotMode(),
+            pivotMode: columnModel.isPivotMode(),
 
             // sort and filter model
-            filterModel: this.filterManager.isAdvancedFilterEnabled()
-                ? this.filterManager.getAdvancedFilterModel()
-                : this.filterManager.getFilterModel(),
-            sortModel: this.sortController.getSortModel(),
+            filterModel: filterManager.isAdvancedFilterEnabled()
+                ? filterManager.getAdvancedFilterModel()
+                : filterManager.getFilterModel(),
+            sortModel: sortController.getSortModel(),
 
             datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),

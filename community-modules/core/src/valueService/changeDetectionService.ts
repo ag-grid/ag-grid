@@ -13,15 +13,12 @@ const SOURCE_PASTE = 'paste';
 @Bean('changeDetectionService')
 export class ChangeDetectionService extends BeanStub {
 
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-
     private clientSideRowModel: IClientSideRowModel;
 
     @PostConstruct
     private init(): void {
-        if (this.rowModel.getType() === 'clientSide') {
-            this.clientSideRowModel = this.rowModel as IClientSideRowModel;
+        if (this.beans.rowModel.getType() === 'clientSide') {
+            this.clientSideRowModel = this.beans.rowModel as IClientSideRowModel;
         }
 
         this.addManagedEventListener(Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));
@@ -59,6 +56,6 @@ export class ChangeDetectionService extends BeanStub {
         }
 
         // step 2 of change detection is to refresh the cells
-        this.rowRenderer.refreshCells({ rowNodes: nodesToRefresh });
+        this.beans.rowRenderer.refreshCells({ rowNodes: nodesToRefresh });
     }
 }

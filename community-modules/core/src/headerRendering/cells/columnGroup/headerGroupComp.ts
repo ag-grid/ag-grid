@@ -1,9 +1,7 @@
-import { ColumnModel } from "../../../columns/columnModel";
-import { Autowired } from "../../../context/context";
 import { ColumnGroup } from "../../../entities/columnGroup";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
-import { IComponent } from "../../../interfaces/iComponent";
 import { AgGridCommon } from "../../../interfaces/iCommon";
+import { IComponent } from "../../../interfaces/iComponent";
 import { setDisplayed } from "../../../utils/dom";
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../../utils/event";
 import { warnOnce } from "../../../utils/function";
@@ -37,8 +35,6 @@ export interface IHeaderGroup { }
 export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams> { }
 
 export class HeaderGroupComp extends Component implements IHeaderGroupComp {
-
-    @Autowired("columnModel") private columnModel: ColumnModel;
 
     static TEMPLATE = /* html */
         `<div class="ag-header-group-cell-label" ref="agContainer" role="presentation">
@@ -90,7 +86,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             }
 
             const newExpandedValue = !this.params.columnGroup.isExpanded();
-            this.columnModel.setColumnGroupOpened(this.params.columnGroup.getProvidedColumnGroup(), newExpandedValue, "uiColumnExpanded");
+            this.beans.columnModel.setColumnGroupOpened(this.params.columnGroup.getProvidedColumnGroup(), newExpandedValue, "uiColumnExpanded");
         };
 
         this.addTouchAndClickListeners(this.eCloseIcon, expandAction);

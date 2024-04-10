@@ -1,21 +1,17 @@
-import { Autowired, PostConstruct } from "../context/context";
+import { PostConstruct } from "../context/context";
 import { Column } from "../entities/column";
 import { Events } from "../eventKeys";
 import { FilterDestroyedEvent, FilterOpenedEvent } from "../events";
-import { IFilterComp } from "../interfaces/iFilter";
-import { ColumnModel } from "../columns/columnModel";
-import { AgPromise } from "../utils/promise";
-import { clearElement, loadTemplate } from "../utils/dom";
-import { Component } from "../widgets/component";
-import { FilterManager, FilterRequestSource, FilterWrapper } from "./filterManager";
-import { exists } from "../utils/generic";
-import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
+import { WithoutGridCommon } from "../interfaces/iCommon";
+import { IFilterComp } from "../interfaces/iFilter";
+import { clearElement, loadTemplate } from "../utils/dom";
+import { exists } from "../utils/generic";
+import { AgPromise } from "../utils/promise";
+import { Component } from "../widgets/component";
+import { FilterRequestSource, FilterWrapper } from "./filterManager";
 
 export class FilterWrapperComp extends Component {
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-
     private filterWrapper: FilterWrapper | null = null;
 
     constructor(private readonly column: Column, private readonly source: FilterRequestSource) {
@@ -55,7 +51,7 @@ export class FilterWrapperComp extends Component {
 
     private createFilter(init?: boolean): void {
         const { column, source } = this;
-        this.filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, source);
+        this.filterWrapper = this.beans.filterManager.getOrCreateFilterWrapper(column, source);
         if (!this.filterWrapper?.filterPromise) { return; }
         this.filterWrapper.filterPromise.then(filter => {
             let guiFromFilter = filter!.getGui();
@@ -89,7 +85,7 @@ export class FilterWrapperComp extends Component {
         if (
             (event.source === 'api' || event.source === 'paramsUpdated') &&
             event.column.getId() === this.column.getId() &&
-            this.columnModel.getPrimaryColumn(this.column)
+            this.beans.columnModel.getPrimaryColumn(this.column)
         ) {
             // filter has been destroyed by the API or params changing. If the column still exists, need to recreate UI component
             clearElement(this.getGui());

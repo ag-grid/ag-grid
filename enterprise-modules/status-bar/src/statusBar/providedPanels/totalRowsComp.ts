@@ -1,16 +1,16 @@
-import { Autowired, Events, IClientSideRowModel, IRowModel, IStatusPanelComp, PostConstruct, _ } from '@ag-grid-community/core';
+import { Events, IStatusPanelComp, PostConstruct, _ } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
 export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
 
-    @Autowired('rowModel') private rowModel: IRowModel;
+    
 
     @PostConstruct
     protected postConstruct(): void {
         this.setLabel('totalRows', 'Total Rows');
 
         // this component is only really useful with client side row model
-        if (this.rowModel.getType() !== 'clientSide') {
+        if (this.beans.rowModel.getType() !== 'clientSide') {
             _.warnOnce('agTotalRowCountComponent should only be used with the client side row model.');
             return;
         }
@@ -33,7 +33,7 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
 
     private getRowCountValue(): number {
         let totalRowCount = 0;
-        (this.rowModel as IClientSideRowModel).forEachLeafNode((node) => totalRowCount += 1);
+        (this.beans.clientSideRowModel).forEachLeafNode((node) => totalRowCount += 1);
         return totalRowCount;
     }
 

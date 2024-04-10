@@ -1,10 +1,8 @@
-import { UserCompDetails, UserComponentFactory } from "../components/framework/userComponentFactory";
+import { UserCompDetails } from "../components/framework/userComponentFactory";
 import { KeyCode } from "../constants/keyCode";
-import { Autowired } from "../context/context";
 import { Events } from "../eventKeys";
 import { FieldPickerValueSelectedEvent } from "../events";
 import { WithoutGridCommon } from "../interfaces/iCommon";
-import { AnimationFrameService } from "../misc/animationFrameService";
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { AgPromise } from "../utils";
 import { setAriaActiveDescendant, setAriaControls, setAriaLabel } from "../utils/aria";
@@ -62,8 +60,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;
     private eLoading: HTMLElement | undefined;
 
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @RefSelector('eInput') private eInput: AgInputTextField;
     
 
@@ -205,7 +201,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             clearElement(eDisplayField);
             bindCellRendererToHtmlElement(userCompDetailsPromise, eDisplayField);
             userCompDetailsPromise.then(renderer => {
-                this.addDestroyFunc(() => this.getContext().destroyBean(renderer));
+                this.addDestroyFunc(() => this.destroyBean(renderer));
             });
         } else {
             if (exists(this.value)) {
@@ -532,7 +528,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         const row = new RichSelectRow<TValue>(this.config, this.eWrapper);
         row.setParentComponent(this.listComponent!);
 
-        this.getContext().createBean(row);
+        this.createBean(row);
         row.setState(value);
 
         const { highlightMatch, searchType = 'fuzzy' } = this.config;
@@ -592,7 +588,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         const newIndex = this.listComponent?.navigateToPage(key, this.highlightedItem);
 
         if (newIndex != null) {
-            this.animationFrameService.requestAnimationFrame(() => {
+            this.beans.animationFrameService.requestAnimationFrame(() => {
                 if (!this.isAlive()) { return null; }
                 this.highlightSelectedValue(newIndex);
             });

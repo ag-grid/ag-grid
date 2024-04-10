@@ -1,17 +1,14 @@
-import { AgPromise } from '../utils';
-import { RefSelector } from '../widgets/componentAnnotations';
-import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
-import { clearElement } from '../utils/dom';
-import { setAriaLabel, setAriaRole } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
-import { PostConstruct, Autowired } from '../context/context';
-import { FocusService } from '../focusService';
-import { TabGuardComp } from '../widgets/tabGuardComp';
+import { PostConstruct } from '../context/context';
+import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
+import { AgPromise } from '../utils';
+import { setAriaLabel, setAriaRole } from '../utils/aria';
+import { clearElement } from '../utils/dom';
 import { createIconNoSpan } from '../utils/icon';
+import { RefSelector } from '../widgets/componentAnnotations';
+import { TabGuardComp } from '../widgets/tabGuardComp';
 
 export class TabbedLayout extends TabGuardComp {
-
-    @Autowired('focusService') private focusService: FocusService;
 
     @RefSelector('eHeader') private readonly eHeader: HTMLElement;
     @RefSelector('eBody') private readonly eBody: HTMLElement;
@@ -127,8 +124,9 @@ export class TabbedLayout extends TabGuardComp {
     protected onTabKeyDown(e: KeyboardEvent) {
         if (e.defaultPrevented) { return; }
 
-        const { focusService, eHeader, eBody, activeItem, params } = this;
+        const { eHeader, eBody, activeItem, params, beans } = this;
         const { suppressTrapFocus, enableCloseButton } = params;
+        const { focusService, gos } = beans;
 
         const activeElement = this.beans.gos.getActiveDomElement();
         const target = e.target as HTMLElement;
@@ -139,7 +137,7 @@ export class TabbedLayout extends TabGuardComp {
             if (enableCloseButton && backwards && !this.eCloseButton?.contains(activeElement)) {
                 this.eCloseButton?.focus();
             } else if (suppressTrapFocus && backwards) {
-                this.focusService.findFocusableElementBeforeTabGuard(this.beans.gos.getDocument().body, target)?.focus();
+                focusService.findFocusableElementBeforeTabGuard(gos.getDocument().body, target)?.focus();
             } else {
                 // focus is in header, move into body of popup
                 this.focusBody(e.shiftKey);
@@ -151,7 +149,7 @@ export class TabbedLayout extends TabGuardComp {
 
         if (focusService.isTargetUnderManagedComponent(eBody, target)) {
             if (backwards) {
-                nextEl = this.focusService.findFocusableElementBeforeTabGuard(eBody, target);
+                nextEl = focusService.findFocusableElementBeforeTabGuard(eBody, target);
             }
 
             if (!nextEl && !suppressTrapFocus) {
@@ -194,7 +192,7 @@ export class TabbedLayout extends TabGuardComp {
     }
 
     private focusBody(fromBottom?: boolean): void {
-        this.focusService.focusInto(this.eBody, fromBottom);
+        this.beans.focusService.focusInto(this.eBody, fromBottom);
     }
 
     public setAfterAttachedParams(params: IAfterGuiAttachedParams): void {
@@ -253,10 +251,10 @@ export class TabbedLayout extends TabGuardComp {
 
         tabbedItem.bodyPromise.then((body: HTMLElement) => {
             this.eBody.appendChild(body);
-            const onlyUnmanaged = !this.focusService.isKeyboardMode();
+            const onlyUnmanaged = !this.beans.focusService.isKeyboardMode();
 
             if (!this.params.suppressFocusBodyOnOpen) {
-                this.focusService.focusInto(this.eBody, false, onlyUnmanaged);
+                this.beans.focusService.focusInto(this.eBody, false, onlyUnmanaged);
             }
 
             if (tabbedItem.afterAttachedCallback) {

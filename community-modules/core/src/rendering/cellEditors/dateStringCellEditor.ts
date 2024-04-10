@@ -1,10 +1,9 @@
-import { ICellEditorParams } from "../../interfaces/iCellEditor";
 import { DataTypeService } from "../../columns/dataTypeService";
-import { Autowired } from "../../context/context";
+import { ICellEditorParams } from "../../interfaces/iCellEditor";
 import { serialiseDate } from "../../utils/date";
+import { exists } from "../../utils/generic";
 import { AgInputDateField } from "../../widgets/agInputDateField";
 import { CellEditorInput, SimpleCellEditor } from "./simpleCellEditor";
-import { exists } from "../../utils/generic";
 
 export interface IDateStringCellEditorParams<TData = any, TContext = any> extends ICellEditorParams<TData, string, TContext> {
     /** Min allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */
@@ -66,9 +65,8 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
 }
 
 export class DateStringCellEditor extends SimpleCellEditor<string, IDateStringCellEditorParams, AgInputDateField> {
-    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
 
     constructor() {
-        super(new DateStringCellEditorInput(() => this.dataTypeService));
+        super(new DateStringCellEditorInput(() => this.beans.dataTypeService));
     }
 }

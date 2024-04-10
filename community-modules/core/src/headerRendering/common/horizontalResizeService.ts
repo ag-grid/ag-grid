@@ -1,7 +1,6 @@
-import { Autowired, Bean } from "../../context/context";
-import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
 import { BeanStub } from "../../context/beanStub";
-import { CtrlsService } from "../../ctrlsService";
+import { Bean } from "../../context/context";
+import { DragListenerParams } from "../../dragAndDrop/dragService";
 
 export interface HorizontalResizeParams {
     eResizeBar: HTMLElement;
@@ -13,9 +12,6 @@ export interface HorizontalResizeParams {
 
 @Bean('horizontalResizeService')
 export class HorizontalResizeService extends BeanStub {
-
-    @Autowired('dragService') private dragService: DragService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private dragStartX: number;
     private resizeAmount: number;
@@ -31,11 +27,11 @@ export class HorizontalResizeService extends BeanStub {
             stopPropagationForTouch: true
         };
 
-        this.dragService.addDragSource(dragSource);
+        this.beans.dragService.addDragSource(dragSource);
 
         // we pass remove func back to the caller, so call can tell us when they
         // are finished, and then we remove the listener from the drag source
-        const finishedWithResizeFunc = () => this.dragService.removeDragSource(dragSource);
+        const finishedWithResizeFunc = () => this.beans.dragService.removeDragSource(dragSource);
 
         return finishedWithResizeFunc;
     }
@@ -51,7 +47,7 @@ export class HorizontalResizeService extends BeanStub {
 
     private setResizeIcons(): void {
 
-        const ctrl = this.ctrlsService.getGridCtrl();
+        const ctrl = this.beans.ctrlsService.getGridCtrl();
         // change the body cursor, so when drag moves out of the drag bar, the cursor is still 'resize' (or 'move'
         ctrl.setResizeCursor(true);
         // we don't want text selection outside the grid (otherwise it looks weird as text highlights when we move)
@@ -64,7 +60,7 @@ export class HorizontalResizeService extends BeanStub {
     }
 
     private resetIcons(): void {
-        const ctrl = this.ctrlsService.getGridCtrl();
+        const ctrl = this.beans.ctrlsService.getGridCtrl();
         ctrl.setResizeCursor(false);
         ctrl.disableUserSelect(false);
     }

@@ -1,21 +1,13 @@
 import {
-    _,
-    AbstractColDef,
-    Autowired,
-    Bean,
+    AbstractColDef, Bean,
     BeanStub,
     ColDef,
     ColGroupDef,
-    Column,
-    ColumnModel,
-    ProvidedColumnGroup,
-    IProvidedColumn
+    Column, IProvidedColumn, ProvidedColumnGroup, _
 } from "@ag-grid-community/core";
 
 @Bean('toolPanelColDefService')
 export class ToolPanelColDefService extends BeanStub {
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
 
     public createColumnTree(colDefs: AbstractColDef[]): IProvidedColumn[] {
         const invalidColIds: AbstractColDef[] = [];
@@ -41,7 +33,7 @@ export class ToolPanelColDefService extends BeanStub {
             } else {
                 const colDef = abstractColDef as ColDef;
                 const key = colDef.colId ? colDef.colId : colDef.field;
-                const column = this.columnModel.getPrimaryColumn(key!) as IProvidedColumn;
+                const column = this.beans.columnModel.getPrimaryColumn(key!) as IProvidedColumn;
 
                 if (!column) {
                     invalidColIds.push(colDef);
@@ -115,7 +107,7 @@ export class ToolPanelColDefService extends BeanStub {
         };
 
         // obtain a sorted list of all grid columns
-        const allGridColumns = this.columnModel.getAllGridColumns();
+        const allGridColumns = this.beans.columnModel.getAllGridColumns();
 
         // only primary columns and non row group columns should appear in the tool panel
         const allPrimaryGridColumns = allGridColumns.filter(column => {

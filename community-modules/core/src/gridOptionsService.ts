@@ -73,9 +73,6 @@ export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: 
 export class GridOptionsService extends BeansProvider {
 
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
-    @Autowired('eventService') private readonly eventService: EventService;
-    @Autowired('environment') private readonly environment: Environment;
-    @Autowired('frameworkOverrides') frameworkOverrides: IFrameworkOverrides;
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
     @Autowired('validationService') private validationService: ValidationService;
 
@@ -104,7 +101,7 @@ export class GridOptionsService extends BeansProvider {
         this.beans.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
 
         // Ensure the propertyEventService has framework overrides set so that it can fire events outside of angular
-        this.propertyEventService.setFrameworkOverrides(this.frameworkOverrides);
+        this.propertyEventService.setFrameworkOverrides(this.beans.frameworkOverrides);
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
 
@@ -302,7 +299,7 @@ export class GridOptionsService extends BeansProvider {
             const eventHandlerName = ComponentUtil.getCallbackForEvent(eventName);
             const eventHandler = (this.gridOptions as any)[eventHandlerName];
             if (typeof eventHandler === 'function') {
-                this.frameworkOverrides.wrapOutgoing(() => {
+                this.beans.frameworkOverrides.wrapOutgoing(() => {
                     eventHandler(event);
                 })
             }

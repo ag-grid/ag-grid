@@ -1,15 +1,15 @@
-import { AgEvent } from "../events";
-import { DragAndDropService, DropTarget, DragSource, DragSourceType, DragItem } from "../dragAndDrop/dragAndDropService";
-import { Component } from "./component";
-import { Autowired, PostConstruct } from "../context/context";
-import { RefSelector } from "./componentAnnotations";
-import { setDisplayed } from "../utils/dom";
-import { Events } from '../eventKeys';
-import { createIconNoSpan } from "../utils/icon";
-import { setAriaLabel } from "../utils/aria";
 import { KeyCode } from "../constants/keyCode";
-import { TouchListener } from "./touchListener";
+import { PostConstruct } from "../context/context";
+import { DragAndDropService, DragItem, DragSource, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
+import { Events } from '../eventKeys';
+import { AgEvent } from "../events";
+import { setAriaLabel } from "../utils/aria";
+import { setDisplayed } from "../utils/dom";
+import { createIconNoSpan } from "../utils/icon";
 import { escapeString } from "../utils/string";
+import { Component } from "./component";
+import { RefSelector } from "./componentAnnotations";
+import { TouchListener } from "./touchListener";
 
 export abstract class PillDragComp<TItem> extends Component {
     public static EVENT_COLUMN_REMOVE = 'columnRemove';
@@ -20,8 +20,6 @@ export abstract class PillDragComp<TItem> extends Component {
           <span ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
           <span ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
         </span>`;
-
-    @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
 
     @RefSelector('eText') private eText: HTMLElement;
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
@@ -116,7 +114,8 @@ export abstract class PillDragComp<TItem> extends Component {
     }
 
     private addDragSource(): void {
-        const { dragAndDropService, eDragHandle } = this;
+        const { beans, eDragHandle } = this;
+        const { dragAndDropService } = beans;
         const getDragItem = this.createGetDragItem();
         const defaultIconName = this.getDefaultIconName();
         const dragSource: DragSource = {

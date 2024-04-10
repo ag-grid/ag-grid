@@ -1,10 +1,8 @@
-import { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParent } from '../floatingFilter';
+import { IFilter } from '../../../interfaces/iFilter';
+import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { Component } from '../../../widgets/component';
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { Autowired } from '../../../context/context';
-import { ColumnModel } from '../../../columns/columnModel';
-import { IFilter } from '../../../interfaces/iFilter';
+import { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParent } from '../floatingFilter';
 
 // optional floating filter for user provided filters - instead of providing a floating filter,
 // they can provide a getModelAsString() method on the filter instead. this class just displays
@@ -12,8 +10,6 @@ import { IFilter } from '../../../interfaces/iFilter';
 export class ReadOnlyFloatingFilter extends Component implements IFloatingFilterComp<IFilter & IFloatingFilterParent> {
 
     @RefSelector('eFloatingFilterText') private eFloatingFilterText: AgInputTextField;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-
     private params: IFloatingFilterParams;
 
     constructor() {
@@ -31,7 +27,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
 
     public init(params: IFloatingFilterParams): void {
         this.params = params;
-        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
+        const displayName = this.beans.columnModel.getDisplayNameForColumn(params.column, 'header', true);
         const translate = this.beans.localeService.getLocaleTextFunc();
         this.eFloatingFilterText
             .setDisabled(true)

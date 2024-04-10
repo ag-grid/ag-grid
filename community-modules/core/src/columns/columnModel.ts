@@ -119,19 +119,12 @@ export type Maybe<T> = T | null | undefined;
 @Bean('columnModel')
 export class ColumnModel extends BeanStub {
 
-    @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
     @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('autoGroupColService') private autoGroupColService: AutoGroupColService;
-    @Autowired('valueCache') private valueCache: ValueCache;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('sortController') private sortController: SortController;
     @Autowired('columnDefFactory') private columnDefFactory: ColumnDefFactory;
-
-    @Optional('aggFuncService') private aggFuncService?: IAggFuncService;
 
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
@@ -350,7 +343,7 @@ export class ColumnModel extends BeanStub {
 
         // always invalidate cache on changing columns, as the column id's for the new columns
         // could overlap with the old id's, so the cache would return old values for new columns.
-        this.valueCache.expire();
+        this.beans.valueCache.expire();
 
         // NOTE ==================
         // we should be destroying the existing columns and groups if they exist, for example, the original column
@@ -603,7 +596,7 @@ export class ColumnModel extends BeanStub {
         // we autosize after animation frames finish in case any cell renderers need to complete first. this can
         // happen eg if client code is calling api.autoSizeAllColumns() straight after grid is initialised, but grid
         // hasn't fully drawn out all the cells yet (due to cell renderers in animation frames).
-        this.animationFrameService.flushAllFrames();
+        this.beans.animationFrameService.flushAllFrames();
 
         // keep track of which cols we have resized in here
         const columnsAutosized: Column[] = [];
@@ -750,7 +743,7 @@ export class ColumnModel extends BeanStub {
         const resizedColumns: Column[] = [];
 
         for (const columnGroup of columnGroups) {
-            for (const headerContainerCtrl of this.ctrlsService.getHeaderRowContainerCtrls()) {
+            for (const headerContainerCtrl of this.beans.ctrlsService.getHeaderRowContainerCtrls()) {
                 headerGroupCtrl = headerContainerCtrl.getHeaderCtrlForColumn(columnGroup);
                 if (headerGroupCtrl) { break; }
             }
@@ -1196,8 +1189,8 @@ export class ColumnModel extends BeanStub {
 
         column.setValueActive(active, source);
 
-        if (active && !column.getAggFunc() && this.aggFuncService) {
-            const initialAggFunc = this.aggFuncService.getDefaultAggFunc(column);
+        if (active && !column.getAggFunc() && this.beans.aggFuncService) {
+            const initialAggFunc = this.beans.aggFuncService.getDefaultAggFunc(column);
             column.setAggFunc(initialAggFunc);
         }
     }
@@ -2376,7 +2369,7 @@ export class ColumnModel extends BeanStub {
             const sortChangePredicate = (cs: ColumnState, c: Column) => cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
             const changedColumns = getChangedColumns(sortChangePredicate);
             if (changedColumns.length > 0) {
-                this.sortController.dispatchSortChangedEvents(source, changedColumns);
+                this.beans.sortController.dispatchSortChangedEvents(source, changedColumns);
             }
 
             // special handling for moved column events
@@ -2745,7 +2738,7 @@ export class ColumnModel extends BeanStub {
                 return headerValueGetter(params);
             } else if (typeof headerValueGetter === 'string') {
                 // valueGetter is an expression, so execute the expression
-                return this.expressionService.evaluate(headerValueGetter, params);
+                return this.beans.expressionService.evaluate(headerValueGetter, params);
             }
             console.warn('AG Grid: headerValueGetter must be a function or a string');
             return '';
@@ -4329,7 +4322,7 @@ export class ColumnModel extends BeanStub {
                     minWidth,
                     maxWidth
                 }));
-                this.ctrlsService.getGridBodyCtrl().sizeColumnsToFit({
+                this.beans.ctrlsService.getGridBodyCtrl().sizeColumnsToFit({
                     defaultMinWidth,
                     defaultMaxWidth,
                     columnLimits

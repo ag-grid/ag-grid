@@ -1,17 +1,8 @@
 import {
-    _,
-    RowBounds,
     Autowired,
     Bean,
     BeanStub,
-    Column,
-    ColumnModel,
-    PostConstruct,
-    RowNode,
-    ValueService,
-    NumberSequence,
-    Beans,
-    IRowNode
+    Column, IRowNode, NumberSequence, RowBounds, RowNode, _
 } from "@ag-grid-community/core";
 import { NodeManager } from "../nodeManager";
 import { ServerSideExpansionService } from "../services/serverSideExpansionService";
@@ -21,8 +12,6 @@ export const GROUP_MISSING_KEY_ID: 'ag-Grid-MissingKey' = 'ag-Grid-MissingKey';
 @Bean('ssrmBlockUtils')
 export class BlockUtils extends BeanStub {
 
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
     @Autowired('expansionService') private readonly expansionService: ServerSideExpansionService;
 
@@ -97,7 +86,7 @@ export class BlockUtils extends BeanStub {
     }
 
     private setRowGroupInfo(rowNode: RowNode): void {
-        rowNode.key = this.valueService.getValue(rowNode.rowGroupColumn!, rowNode);
+        rowNode.key = this.beans.valueService.getValue(rowNode.rowGroupColumn!, rowNode);
         if (rowNode.key === null || rowNode.key === undefined) {
             _.doOnce(() => {
                 console.warn(`AG Grid: null and undefined values are not allowed for server side row model keys`);
@@ -201,7 +190,7 @@ export class BlockUtils extends BeanStub {
     }
 
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
-        const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
+        const groupDisplayCols: Column[] = this.beans.columnModel.getGroupDisplayColumns();
 
         const usingTreeData = this.beans.gos.get('treeData');
 
@@ -212,7 +201,7 @@ export class BlockUtils extends BeanStub {
             if (usingTreeData) {
                 rowNode.groupData[col.getColId()] = rowNode.key;
             } else if (col.isRowGroupDisplayed(rowNode.rowGroupColumn!.getId())) {
-                const groupValue = this.valueService.getValue(rowNode.rowGroupColumn!, rowNode);
+                const groupValue = this.beans.valueService.getValue(rowNode.rowGroupColumn!, rowNode);
                 rowNode.groupData[col.getColId()] = groupValue;
             }
         });

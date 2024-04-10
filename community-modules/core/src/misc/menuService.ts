@@ -1,18 +1,13 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
-import { IMenuFactory } from "../interfaces/iMenuFactory";
-import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
+import { Bean, PostConstruct } from "../context/context";
 import { Column } from "../entities/column";
-import { ContainerType } from "../interfaces/iAfterGuiAttachedParams";
 import { RowNode } from "../entities/rowNode";
-import { CtrlsService } from "../ctrlsService";
-import { AnimationFrameService } from "./animationFrameService";
-import { IColumnChooserFactory, ShowColumnChooserParams } from "../interfaces/iColumnChooserFactory";
-import { FilterManager } from "../filter/filterManager";
+import { ContainerType } from "../interfaces/iAfterGuiAttachedParams";
+import { ShowColumnChooserParams } from "../interfaces/iColumnChooserFactory";
+import { IMenuFactory } from "../interfaces/iMenuFactory";
+import { RowCtrl } from "../rendering/row/rowCtrl";
 import { isIOSUserAgent } from "../utils/browser";
 import { warnOnce } from "../utils/function";
-import { RowRenderer } from "../rendering/rowRenderer";
-import { RowCtrl } from "../rendering/row/rowCtrl";
 
 interface BaseShowColumnMenuParams {
     column?: Column,
@@ -68,21 +63,13 @@ export interface IContextMenuParams extends ShowContextMenuParams {
 
 @Bean('menuService')
 export class MenuService extends BeanStub {
-    @Autowired('filterMenuFactory') private readonly filterMenuFactory: IMenuFactory;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
-    @Optional('columnChooserFactory') private columnChooserFactory?: IColumnChooserFactory;
-    @Optional('contextMenuFactory') private readonly contextMenuFactory?: IContextMenuFactory;
-    @Optional('enterpriseMenuFactory') private readonly enterpriseMenuFactory? : IMenuFactory;
 
     private activeMenuFactory: IMenuFactory;
 
     @PostConstruct
     private postConstruct(): void {
-        this.activeMenuFactory = this.enterpriseMenuFactory ?? this.filterMenuFactory;
+        this.activeMenuFactory = this.beans.enterpriseMenuFactory ?? this.beans.filterMenuFactory;
     }
 
     public showColumnMenu(params: ShowColumnMenuParams): void {
@@ -90,9 +77,9 @@ export class MenuService extends BeanStub {
     }
 
     public showFilterMenu(params: ShowFilterMenuParams): void {
-        const menuFactory: IMenuFactory = this.enterpriseMenuFactory && this.isLegacyMenuEnabled()
-            ? this.enterpriseMenuFactory
-            : this.filterMenuFactory;
+        const menuFactory: IMenuFactory = this.beans.enterpriseMenuFactory && this.isLegacyMenuEnabled()
+            ? this.beans.enterpriseMenuFactory
+            : this.beans.filterMenuFactory;
         this.showColumnMenuCommon(menuFactory, params, params.containerType, true);
     }
 
@@ -130,7 +117,7 @@ export class MenuService extends BeanStub {
             anchorToElement = this.getContextMenuAnchorElement(rowNode, column)
         }
 
-        this.contextMenuFactory?.onContextMenu(
+        this.beans.contextMenuFactory?.onContextMenu(
             (params as MouseShowContextMenuParams).mouseEvent ?? null,
             (params as TouchShowContextMenuParam).touchEvent ?? null,
             rowNode ?? null,
@@ -141,28 +128,28 @@ export class MenuService extends BeanStub {
     }
 
     public showColumnChooser(params: ShowColumnChooserParams): void {
-        this.columnChooserFactory?.showColumnChooser(params);
+        this.beans.columnChooserFactory?.showColumnChooser(params);
     }
 
     public hidePopupMenu(): void {
         // hide the context menu if in enterprise
-        this.contextMenuFactory?.hideActiveMenu();
+        this.beans.contextMenuFactory?.hideActiveMenu();
         // and hide the column menu always
         this.activeMenuFactory.hideActiveMenu();
     }
 
     public hideColumnChooser(): void {
-        this.columnChooserFactory?.hideActiveColumnChooser();
+        this.beans.columnChooserFactory?.hideActiveColumnChooser();
     }
 
     public isColumnMenuInHeaderEnabled(column: Column): boolean {
         const { suppressMenu, suppressHeaderMenuButton } = column.getColDef();
         const isSuppressMenuButton = suppressHeaderMenuButton ?? suppressMenu;
-        return !isSuppressMenuButton && this.activeMenuFactory.isMenuEnabled(column) && (this.isLegacyMenuEnabled() || !!this.enterpriseMenuFactory);
+        return !isSuppressMenuButton && this.activeMenuFactory.isMenuEnabled(column) && (this.isLegacyMenuEnabled() || !!this.beans.enterpriseMenuFactory);
     }
 
     public isFilterMenuInHeaderEnabled(column: Column): boolean {
-        return !column.getColDef().suppressHeaderFilterButton && this.filterManager.isFilterAllowed(column);
+        return !column.getColDef().suppressHeaderFilterButton && this.beans.filterManager.isFilterAllowed(column);
     }
 
     public isHeaderContextMenuEnabled(column?: Column): boolean {
@@ -190,7 +177,7 @@ export class MenuService extends BeanStub {
     }
 
     public isFilterMenuItemEnabled(column: Column): boolean {
-        return this.filterManager.isFilterAllowed(column) && !this.isLegacyMenuEnabled() &&
+        return this.beans.filterManager.isFilterAllowed(column) && !this.isLegacyMenuEnabled() &&
             !this.isFilterMenuInHeaderEnabled(column) && !this.isFloatingFilterButtonDisplayed(column);
     }
 
@@ -243,10 +230,10 @@ export class MenuService extends BeanStub {
             menuFactory.showMenuAfterMouseEvent(column, mouseEvent, containerType, filtersOnly);
         } else if (column) {
             // auto
-            this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
+            this.beans.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
             // make sure we've finished scrolling into view before displaying the menu
-            this.animationFrameService.requestAnimationFrame(() => {
-                const headerCellCtrl = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned()).getHeaderCtrlForColumn(column)!;
+            this.beans.animationFrameService.requestAnimationFrame(() => {
+                const headerCellCtrl = this.beans.ctrlsService.getHeaderRowContainerCtrl(column.getPinned()).getHeaderCtrlForColumn(column)!;
                 menuFactory.showMenuAfterButtonClick(column, headerCellCtrl.getAnchorElementForMenu(filtersOnly), containerType, true);
             });
         }
@@ -259,7 +246,7 @@ export class MenuService extends BeanStub {
             return;
         }
 
-        return this.rowRenderer.getRowByPosition({ rowIndex, rowPinned }) || undefined;
+        return this.beans.rowRenderer.getRowByPosition({ rowIndex, rowPinned }) || undefined;
 
     }
 
@@ -272,7 +259,7 @@ export class MenuService extends BeanStub {
     }
 
     private getContextMenuAnchorElement(rowNode?: RowNode | null, column?: Column | null): HTMLElement {
-        const gridBodyEl = this.ctrlsService.getGridBodyCtrl().getGridBodyElement();
+        const gridBodyEl = this.beans.ctrlsService.getGridBodyCtrl().getGridBodyElement();
         const rowCtrl = this.getRowCtrl(rowNode);
 
         if (!rowCtrl) {

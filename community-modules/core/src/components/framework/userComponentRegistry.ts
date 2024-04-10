@@ -132,14 +132,14 @@ export class UserComponentRegistry extends BeanStub {
         // FrameworkOverrides.frameworkComponent() is used in two locations:
         // 1) for Vue, user provided components get registered via a framework specific way.
         // 2) for React, it's how the React UI provides alternative default components (eg GroupCellRenderer and DetailCellRenderer)
-        const registeredViaFrameworkComp = this.getFrameworkOverrides().frameworkComponent(name, this.beans.gos.get('components'));
+        const registeredViaFrameworkComp = this.beans.frameworkOverrides.frameworkComponent(name, this.beans.gos.get('components'));
         if (registeredViaFrameworkComp!=null) {
             return createResult(registeredViaFrameworkComp, true);
         }
 
         const jsComponent = this.jsComps[name];
         if (jsComponent) {
-            const isFwkComp = this.getFrameworkOverrides().isFrameworkComponent(jsComponent);
+            const isFwkComp = this.beans.frameworkOverrides.isFrameworkComponent(jsComponent);
             return createResult(jsComponent, isFwkComp);
         }
 
@@ -169,6 +169,6 @@ export class UserComponentRegistry extends BeanStub {
         if (suggestions.length > 0) {
             console.warn(`         Did you mean: [${suggestions.slice(0, 3)}]?`);
         }
-        console.warn(`If using a custom component check it has been registered as described in: ${this.getFrameworkOverrides().getDocLink('components/')}`);
+        console.warn(`If using a custom component check it has been registered as described in: ${this.beans.frameworkOverrides.getDocLink('components/')}`);
     }
 }

@@ -1,8 +1,7 @@
-import { PostConstruct, Autowired } from '../context/context';
-import { FocusService } from '../focusService';
 import { KeyCode } from '../constants/keyCode';
-import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from '../utils/event';
 import { BeanStub } from '../context/beanStub';
+import { PostConstruct } from '../context/context';
+import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from '../utils/event';
 
 export interface ManagedFocusCallbacks {
     shouldStopEventPropagation?: (e: KeyboardEvent) => boolean;
@@ -16,8 +15,6 @@ export class ManagedFocusFeature extends BeanStub {
 
     public static FOCUS_MANAGED_CLASS = 'ag-focus-managed';
 
-    @Autowired('focusService') private readonly focusService: FocusService;
-
     constructor(
         private readonly eFocusableElement: HTMLElement,
         private callbacks: ManagedFocusCallbacks = {}
@@ -28,7 +25,7 @@ export class ManagedFocusFeature extends BeanStub {
             onTabKeyDown: (e: KeyboardEvent) => {
                 if (e.defaultPrevented) { return; }
 
-                const nextRoot = this.focusService.findNextFocusableElement(this.eFocusableElement, false, e.shiftKey);
+                const nextRoot = this.beans.focusService.findNextFocusableElement(this.eFocusableElement, false, e.shiftKey);
 
                 if (!nextRoot) { return; }
 

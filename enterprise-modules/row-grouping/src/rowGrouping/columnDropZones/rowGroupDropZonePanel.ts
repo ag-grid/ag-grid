@@ -61,7 +61,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
 
             this.beans.eventService.dispatchEvent(event);
         } else {
-            this.columnModel.setRowGroupColumns(columns, "toolPanelUi");
+            this.beans.columnModel.setRowGroupColumns(columns, "toolPanelUi");
         }
     }
 
@@ -70,6 +70,6 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): Column[] {
-        return this.columnModel.getRowGroupColumns();
+        return this.beans.columnModel.getRowGroupColumns();
     }
 }

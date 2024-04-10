@@ -1,12 +1,10 @@
 import { BeanStub } from "../../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../../context/context";
-import { CtrlsService } from "../../ctrlsService";
+import { Bean, PostConstruct } from "../../context/context";
 import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
-import { FocusService } from "../../focusService";
 import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
 import { last } from "../../utils/array";
-import { HeaderPosition, HeaderPositionUtils } from "./headerPosition";
+import { HeaderPosition } from "./headerPosition";
 
 export enum HeaderNavigationDirection {
     UP,
@@ -18,16 +16,12 @@ export enum HeaderNavigationDirection {
 @Bean('headerNavigationService')
 export class HeaderNavigationService extends BeanStub {
 
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-
     private gridBodyCon: GridBodyCtrl;
     private currentHeaderRowWithoutSpan: number = -1;
 
     @PostConstruct
     private postConstruct(): void {
-        this.ctrlsService.whenReady(p => {
+        this.beans.ctrlsService.whenReady(p => {
             this.gridBodyCon = p.gridBodyCtrl;
         });
 
@@ -36,7 +30,7 @@ export class HeaderNavigationService extends BeanStub {
     }
 
     public getHeaderRowCount(): number {
-        const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
+        const centerHeaderContainer = this.beans.ctrlsService.getHeaderRowContainerCtrl();
         return centerHeaderContainer ? centerHeaderContainer.getRowCount() : 0;
     }
 
@@ -46,7 +40,7 @@ export class HeaderNavigationService extends BeanStub {
      */
     public navigateVertically(direction: HeaderNavigationDirection, fromHeader: HeaderPosition | null, event: KeyboardEvent): boolean {
         if (!fromHeader) {
-            fromHeader = this.focusService.getFocusedHeader();
+            fromHeader = this.beans.focusService.getFocusedHeader();
         }
 
         if (!fromHeader) { return false; }
@@ -56,8 +50,8 @@ export class HeaderNavigationService extends BeanStub {
         const isUp = direction === HeaderNavigationDirection.UP;
 
         let { headerRowIndex: nextRow, column: nextFocusColumn, headerRowIndexWithoutSpan } = isUp
-            ? this.headerPositionUtils.getColumnVisibleParent(column, headerRowIndex)
-            : this.headerPositionUtils.getColumnVisibleChild(column, headerRowIndex);
+            ? this.beans.headerPositionUtils.getColumnVisibleParent(column, headerRowIndex)
+            : this.beans.headerPositionUtils.getColumnVisibleChild(column, headerRowIndex);
 
         let skipColumn = false;
 
@@ -79,7 +73,7 @@ export class HeaderNavigationService extends BeanStub {
             return false;
         }
 
-        return this.focusService.focusHeaderPosition({
+        return this.beans.focusService.focusHeaderPosition({
             headerPosition: { headerRowIndex: nextRow, column: nextFocusColumn! },
             allowUserOverride:  true,
             event
@@ -95,7 +89,7 @@ export class HeaderNavigationService extends BeanStub {
      * @return {boolean} true to preventDefault on the event that caused this navigation.
      */
     public navigateHorizontally(direction: HeaderNavigationDirection, fromTab: boolean = false, event: KeyboardEvent): boolean {
-        const focusedHeader = this.focusService.getFocusedHeader()!;
+        const focusedHeader = this.beans.focusService.getFocusedHeader()!;
         const isLeft = direction === HeaderNavigationDirection.LEFT;
         const isRtl = this.beans.gos.get('enableRtl');
         let nextHeader: HeaderPosition;
@@ -110,14 +104,14 @@ export class HeaderNavigationService extends BeanStub {
 
         if (isLeft !== isRtl) {
             normalisedDirection = 'Before';
-            nextHeader = this.headerPositionUtils.findHeader(focusedHeader, normalisedDirection)!;
+            nextHeader = this.beans.headerPositionUtils.findHeader(focusedHeader, normalisedDirection)!;
         } else {
             normalisedDirection = 'After';
-            nextHeader = this.headerPositionUtils.findHeader(focusedHeader, normalisedDirection)!;
+            nextHeader = this.beans.headerPositionUtils.findHeader(focusedHeader, normalisedDirection)!;
         }
 
         if (nextHeader || !fromTab) {
-            return this.focusService.focusHeaderPosition({
+            return this.beans.focusService.focusHeaderPosition({
                 headerPosition: nextHeader,
                 direction: normalisedDirection,
                 fromTab,
@@ -138,7 +132,7 @@ export class HeaderNavigationService extends BeanStub {
             if (currentIndex > 0) {
                 nextRowIndex = currentIndex - 1;
                 this.currentHeaderRowWithoutSpan -= 1;
-                nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'end')!;
+                nextPosition = this.beans.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'end')!;
             }
         } else {
             nextRowIndex = currentIndex + 1;
@@ -147,14 +141,14 @@ export class HeaderNavigationService extends BeanStub {
             } else {
                 this.setCurrentHeaderRowWithoutSpan(-1);
             }
-            nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'start')!;
+            nextPosition = this.beans.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'start')!;
         }
 
         if (!nextPosition) { return false; }
 
-        const { column, headerRowIndex } = this.headerPositionUtils.getHeaderIndexToFocus(nextPosition.column, nextPosition?.headerRowIndex)
+        const { column, headerRowIndex } = this.beans.headerPositionUtils.getHeaderIndexToFocus(nextPosition.column, nextPosition?.headerRowIndex)
 
-        return this.focusService.focusHeaderPosition({
+        return this.beans.focusService.focusHeaderPosition({
             headerPosition: { column, headerRowIndex },
             direction,
             fromTab: true,

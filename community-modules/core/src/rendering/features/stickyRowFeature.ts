@@ -28,9 +28,9 @@ export class StickyRowFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.isClientSide = this.rowModel.getType() === 'clientSide';
+        this.isClientSide = this.beans.rowModel.getType() === 'clientSide';
 
-        this.ctrlsService.whenReady(params => {
+        this.beans.ctrlsService.whenReady(params => {
             this.gridBodyCtrl = params.gridBodyCtrl;
         });
     }
@@ -98,8 +98,8 @@ export class StickyRowFeature extends BeanStub {
         let counter = 0;
         while (true) {
             const firstPixelAfterStickyRows = firstPixel + height;
-            const firstIndex = this.rowModel.getRowIndexAtPixel(firstPixelAfterStickyRows);
-            const firstRow = this.rowModel.getRow(firstIndex);
+            const firstIndex = this.beans.rowModel.getRowIndexAtPixel(firstPixelAfterStickyRows);
+            const firstRow = this.beans.rowModel.getRow(firstIndex);
 
             if (firstRow == null) {  break; }
 

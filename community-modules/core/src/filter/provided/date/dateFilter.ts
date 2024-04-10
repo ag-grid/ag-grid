@@ -1,14 +1,12 @@
-import { Autowired } from '../../../context/context';
-import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import { DateCompWrapper } from './dateCompWrapper';
-import { ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
-import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
-import { serialiseDate, parseDateTimeFromString, dateToFormattedString } from '../../../utils/date';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
 import { LocaleService } from '../../../localeService';
-import { OptionsFactory } from '../optionsFactory';
+import { dateToFormattedString, parseDateTimeFromString, serialiseDate } from '../../../utils/date';
 import { FILTER_LOCALE_TEXT } from '../../filterLocaleText';
+import { OptionsFactory } from '../optionsFactory';
+import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
+import { ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
+import { DateCompWrapper } from './dateCompWrapper';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
@@ -137,8 +135,6 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     private readonly dateConditionFromComps: DateCompWrapper[] = [];
     private readonly dateConditionToComps: DateCompWrapper[] = [];
 
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
-
     private dateFilterParams: DateFilterParams;
     private minValidYear: number = DEFAULT_MIN_YEAR;
     private maxValidYear: number = DEFAULT_MAX_YEAR;
@@ -231,8 +227,8 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
 
     createDateCompWrapper(element: HTMLElement): DateCompWrapper {
         const dateCompWrapper = new DateCompWrapper(
-            this.getContext(),
-            this.userComponentFactory,
+            this.beans.context,
+            this.beans.userComponentFactory,
             {
                 onDateChanged: () => this.onUiChanged(),
                 filterParams: this.dateFilterParams

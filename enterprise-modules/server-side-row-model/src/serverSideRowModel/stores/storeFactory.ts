@@ -1,24 +1,14 @@
 import {
-    _,
-    Autowired,
-    Bean,
-    IServerSideStore,
+    Bean, BeanStub, GetServerSideGroupLevelParamsParams, IServerSideStore,
     RowNode,
-    ServerSideGroupLevelParams,
-    GetServerSideGroupLevelParamsParams,
-    ColumnModel,
-    WithoutGridCommon,
-    GridOptionsService
+    ServerSideGroupLevelParams, WithoutGridCommon, _
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 import { FullStore } from "./fullStore";
 import { LazyStore } from "./lazy/lazyStore";
 
 @Bean('ssrmStoreFactory')
-export class StoreFactory {
-
-    @Autowired('gridOptionsService') private gos: GridOptionsService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
+export class StoreFactory extends BeanStub {
 
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
         const storeParams = this.getStoreParams(ssrmParams, parentNode);
@@ -53,7 +43,7 @@ export class StoreFactory {
 
         const maxBlocksInCache = (userStoreParams && userStoreParams.maxBlocksInCache != null)
             ? userStoreParams.maxBlocksInCache
-            : this.gos.get('maxBlocksInCache');
+            : this.beans.gos.get('maxBlocksInCache');
 
         const maxBlocksActive = maxBlocksInCache != null && maxBlocksInCache >= 0;
 
@@ -68,7 +58,7 @@ export class StoreFactory {
             return undefined;
         }
 
-        if (this.columnModel.isAutoRowHeightActive()) {
+        if (this.beans.columnModel.isAutoRowHeightActive()) {
             const message = 'Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
                 'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.';
             _.warnOnce(message);
@@ -83,7 +73,7 @@ export class StoreFactory {
 
         const blockSize = (userStoreParams && userStoreParams.cacheBlockSize != null)
             ? userStoreParams.cacheBlockSize
-            : this.gos.get('cacheBlockSize');
+            : this.beans.gos.get('cacheBlockSize');
 
         if (blockSize != null && blockSize > 0) {
             return blockSize;
@@ -94,15 +84,15 @@ export class StoreFactory {
 
     private getLevelSpecificParams(parentNode: RowNode): ServerSideGroupLevelParams | undefined {
 
-        const callback = this.gos.getCallback('getServerSideGroupLevelParams');
+        const callback = this.beans.gos.getCallback('getServerSideGroupLevelParams');
         if (!callback) { return undefined; }
 
         const params: WithoutGridCommon<GetServerSideGroupLevelParamsParams> = {
             level: parentNode.level + 1,
             parentRowNode: parentNode.level >= 0 ? parentNode : undefined,
-            rowGroupColumns: this.columnModel.getRowGroupColumns(),
-            pivotColumns: this.columnModel.getPivotColumns(),
-            pivotMode: this.columnModel.isPivotMode()
+            rowGroupColumns: this.beans.columnModel.getRowGroupColumns(),
+            pivotColumns: this.beans.columnModel.getPivotColumns(),
+            pivotMode: this.beans.columnModel.isPivotMode()
         };
 
         const res = callback(params);
@@ -118,6 +108,6 @@ export class StoreFactory {
     }
 
     private isSuppressServerSideInfiniteScroll(): boolean {
-        return this.gos.get('suppressServerSideInfiniteScroll');
+        return this.beans.gos.get('suppressServerSideInfiniteScroll');
     }
 }

@@ -32,18 +32,6 @@ import { IAdvancedFilterService } from "./interfaces/iAdvancedFilterService";
 export class FocusService extends BeanStub {
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
-    @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
-    @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
-    @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
-    @Autowired('cellPositionUtils') private readonly cellPositionUtils: CellPositionUtils;
-    @Autowired('navigationService') public navigationService: NavigationService;
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('filterManager') public filterManager: FilterManager;
-
-    @Optional('rangeService') private readonly rangeService?: IRangeService;
-    @Optional('advancedFilterService') public readonly advancedFilterService?: IAdvancedFilterService;
 
     private gridCtrl: GridCtrl;
     private focusedCellPosition: CellPosition | null;
@@ -96,7 +84,7 @@ export class FocusService extends BeanStub {
         this.addManagedEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
         this.registerKeyboardFocusEvents();
 
-        this.ctrlsService.whenReady(p => {
+        this.beans.ctrlsService.whenReady(p => {
             this.gridCtrl = p.gridCtrl;
         });
     }
@@ -118,7 +106,7 @@ export class FocusService extends BeanStub {
         if (!this.focusedCellPosition) { return; }
 
         const col = this.focusedCellPosition.column;
-        const colFromColumnModel = this.columnModel.getGridColumn(col.getId());
+        const colFromColumnModel = this.beans.columnModel.getGridColumn(col.getId());
 
         if (col !== colFromColumnModel) {
             this.clearFocusedCell();
@@ -201,11 +189,11 @@ export class FocusService extends BeanStub {
     private isCellRestoreFocused(cellPosition: CellPosition): boolean {
         if (this.restoredFocusedCellPosition == null) { return false; }
 
-        return this.cellPositionUtils.equals(cellPosition, this.restoredFocusedCellPosition);
+        return this.beans.cellPositionUtils.equals(cellPosition, this.restoredFocusedCellPosition);
     }
 
     public setRestoreFocusedCell(cellPosition: CellPosition): void {
-        if (this.getFrameworkOverrides().renderingEngine === 'react') {
+        if (this.beans.frameworkOverrides.renderingEngine === 'react') {
             // The restoredFocusedCellPosition is used in the React Rendering engine as we have to be able
             // to support restoring focus after an async rendering.
             this.restoredFocusedCellPosition = cellPosition;
@@ -222,7 +210,7 @@ export class FocusService extends BeanStub {
             isFullWidthCell: false
         };
 
-        const rowCtrl = this.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
+        const rowCtrl = this.beans.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
 
         if (rowCtrl) {
             params.isFullWidthCell = rowCtrl.isFullWidth();
@@ -254,7 +242,7 @@ export class FocusService extends BeanStub {
             preventScrollOnBrowserFocus = false
         } = params;
 
-        const gridColumn = this.columnModel.getGridColumn(column!);
+        const gridColumn = this.beans.columnModel.getGridColumn(column!);
 
         // if column doesn't exist, then blank the focused cell and return. this can happen when user sets new columns,
         // and the focused cell is in a column that no longer exists. after columns change, the grid refreshes and tries
@@ -284,7 +272,7 @@ export class FocusService extends BeanStub {
     public isCellFocused(cellPosition: CellPosition): boolean {
         if (this.focusedCellPosition == null) { return false; }
 
-        return this.cellPositionUtils.equals(cellPosition, this.focusedCellPosition);
+        return this.beans.cellPositionUtils.equals(cellPosition, this.focusedCellPosition);
     }
 
     public isRowNodeFocused(rowNode: RowNode): boolean {
@@ -331,13 +319,13 @@ export class FocusService extends BeanStub {
         const { direction, fromTab, allowUserOverride, event, fromCell, rowWithoutSpanValue } = params;
         let { headerPosition } = params;
 
-        if (fromCell && this.filterManager.isAdvancedFilterHeaderActive()) {
+        if (fromCell && this.beans.filterManager.isAdvancedFilterHeaderActive()) {
             return this.focusAdvancedFilter(headerPosition);
         }
 
         if (allowUserOverride) {
             const currentPosition = this.getFocusedHeader();
-            const headerRowCount = this.headerNavigationService.getHeaderRowCount();
+            const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
 
             if (fromTab) {
                 const userFunc = this.beans.gos.getCallback('tabToNextHeader');
@@ -368,36 +356,36 @@ export class FocusService extends BeanStub {
         if (!headerPosition) { return false; }
 
         if (headerPosition.headerRowIndex === -1) {
-            if (this.filterManager.isAdvancedFilterHeaderActive()) {
+            if (this.beans.filterManager.isAdvancedFilterHeaderActive()) {
                 return this.focusAdvancedFilter(headerPosition);
             }
             return this.focusGridView(headerPosition.column as Column);
         }
 
-        this.headerNavigationService.scrollToColumn(headerPosition.column, direction);
+        this.beans.headerNavigationService.scrollToColumn(headerPosition.column, direction);
 
-        const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl(headerPosition.column.getPinned());
+        const headerRowContainerCtrl = this.beans.ctrlsService.getHeaderRowContainerCtrl(headerPosition.column.getPinned());
 
         // this will automatically call the setFocusedHeader method above
         const focusSuccess = headerRowContainerCtrl.focusHeader(headerPosition.headerRowIndex, headerPosition.column, event);
 
         if (focusSuccess && (rowWithoutSpanValue != null || fromCell)) {
 
-            this.headerNavigationService.setCurrentHeaderRowWithoutSpan(rowWithoutSpanValue ?? -1);
+            this.beans.headerNavigationService.setCurrentHeaderRowWithoutSpan(rowWithoutSpanValue ?? -1);
         }
 
         return focusSuccess;
     }
 
     public focusFirstHeader(): boolean {
-        let firstColumn: Column | ColumnGroup = this.columnModel.getAllDisplayedColumns()[0];
+        let firstColumn: Column | ColumnGroup = this.beans.columnModel.getAllDisplayedColumns()[0];
         if (!firstColumn) { return false; }
 
         if (firstColumn.getParent()) {
-            firstColumn = this.columnModel.getColumnGroupAtLevel(firstColumn, 0)!;
+            firstColumn = this.beans.columnModel.getColumnGroupAtLevel(firstColumn, 0)!;
         }
 
-        const headerPosition = this.headerPositionUtils.getHeaderIndexToFocus(firstColumn, 0);
+        const headerPosition = this.beans.headerPositionUtils.getHeaderIndexToFocus(firstColumn, 0);
 
         return this.focusHeaderPosition({
             headerPosition,
@@ -406,8 +394,8 @@ export class FocusService extends BeanStub {
     }
 
     public focusLastHeader(event?: KeyboardEvent): boolean {
-        const headerRowIndex = this.headerNavigationService.getHeaderRowCount() - 1;
-        const column = last(this.columnModel.getAllDisplayedColumns());
+        const headerRowIndex = this.beans.headerNavigationService.getHeaderRowCount() - 1;
+        const column = last(this.beans.columnModel.getAllDisplayedColumns());
 
         return this.focusHeaderPosition({
             headerPosition: { headerRowIndex, column },
@@ -417,7 +405,7 @@ export class FocusService extends BeanStub {
     }
 
     public focusPreviousFromFirstCell(event?: KeyboardEvent): boolean {
-        if (this.filterManager.isAdvancedFilterHeaderActive()) {
+        if (this.beans.filterManager.isAdvancedFilterHeaderActive()) {
             return this.focusAdvancedFilter(null);
         }
         return this.focusLastHeader(event);
@@ -555,8 +543,8 @@ export class FocusService extends BeanStub {
         }
 
         const nextRow = backwards
-            ? this.rowPositionUtils.getLastRow()
-            : this.rowPositionUtils.getFirstRow();
+            ? this.beans.rowPositionUtils.getLastRow()
+            : this.beans.rowPositionUtils.getFirstRow();
 
         if (!nextRow) { return false; }
 
@@ -569,7 +557,7 @@ export class FocusService extends BeanStub {
 
         if (rowIndex == null || !column) { return false; }
 
-        this.navigationService.ensureCellVisible({ rowIndex, column, rowPinned });
+        this.beans.navigationService.ensureCellVisible({ rowIndex, column, rowPinned });
 
         this.setFocusedCell({
             rowIndex,
@@ -578,7 +566,7 @@ export class FocusService extends BeanStub {
             forceBrowserFocus: true
         });
 
-        this.rangeService?.setRangeToCell({ rowIndex, rowPinned, column });
+        this.beans.rangeService?.setRangeToCell({ rowIndex, rowPinned, column });
 
         return true;
     }
@@ -597,16 +585,16 @@ export class FocusService extends BeanStub {
 
     private focusAdvancedFilter(position: HeaderPosition | null): boolean {
         this.advancedFilterFocusColumn = position?.column as Column | undefined;
-        return this.advancedFilterService?.getCtrl().focusHeaderComp() ?? false;
+        return this.beans.advancedFilterService?.getCtrl().focusHeaderComp() ?? false;
     }
 
     public focusNextFromAdvancedFilter(backwards?: boolean, forceFirstColumn?: boolean): boolean {
-        const column = (forceFirstColumn ? undefined : this.advancedFilterFocusColumn) ?? this.columnModel.getAllDisplayedColumns()?.[0];
+        const column = (forceFirstColumn ? undefined : this.advancedFilterFocusColumn) ?? this.beans.columnModel.getAllDisplayedColumns()?.[0];
         if (backwards) {
             return this.focusHeaderPosition({
                 headerPosition: {
                     column: column,
-                    headerRowIndex: this.headerNavigationService.getHeaderRowCount() - 1
+                    headerRowIndex: this.beans.headerNavigationService.getHeaderRowCount() - 1
                 }
             });
         } else {

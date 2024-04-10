@@ -7,7 +7,7 @@ interface SelectedState {
 }
 
 export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
-    @Autowired('rowModel') private rowModel: IRowModel;
+    
 
     private selectedState: SelectedState = { selectAll: false, toggledNodes: new Set() };
     private lastSelected: string | null = null;
@@ -132,8 +132,8 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 throw new Error('AG Grid: cannot select multiple rows when using rangeSelect');
             }
             const node = params.nodes[0];
-            const lastSelectedNode = this.rowModel.getRowNode(this.lastSelected);
-            this.rowModel.getNodesInRangeForSelection(node, lastSelectedNode ?? null).forEach(updateNodeState);
+            const lastSelectedNode = this.beans.rowModel.getRowNode(this.lastSelected);
+            this.beans.rowModel.getNodesInRangeForSelection(node, lastSelectedNode ?? null).forEach(updateNodeState);
             this.lastSelected = node.id!;
             return 1;
         }
@@ -182,7 +182,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             toggledNodes: new Set([rowNodeToKeepSelected.id!]),
         }
 
-        this.rowModel.forEachNode(node => {
+        this.beans.rowModel.forEachNode(node => {
             if (node !== rowNodeToKeepSelected) {
                 node.selectThisNode(false, undefined, source);
             }

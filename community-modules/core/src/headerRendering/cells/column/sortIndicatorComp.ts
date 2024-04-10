@@ -1,12 +1,9 @@
-import { Events } from "../../../eventKeys";
-import { SortController } from "../../../sortController";
-import { setDisplayed, clearElement } from "../../../utils/dom";
-import { Autowired } from "../../../context/context";
 import { Column } from "../../../entities/column";
-import { RefSelector } from "../../../widgets/componentAnnotations";
-import { Component } from "../../../widgets/component";
-import { ColumnModel } from "../../../columns/columnModel";
+import { Events } from "../../../eventKeys";
+import { clearElement, setDisplayed } from "../../../utils/dom";
 import { createIconNoSpan } from "../../../utils/icon";
+import { Component } from "../../../widgets/component";
+import { RefSelector } from "../../../widgets/componentAnnotations";
 
 export class SortIndicatorComp extends Component {
 
@@ -24,9 +21,6 @@ export class SortIndicatorComp extends Component {
     @RefSelector('eSortDesc') private eSortDesc: HTMLElement;
     @RefSelector('eSortMixed') private eSortMixed: HTMLElement;
     @RefSelector('eSortNone') private eSortNone: HTMLElement;
-
-    @Autowired('columnModel')  private readonly columnModel: ColumnModel;
-    @Autowired('sortController')  private readonly sortController: SortController;
 
     private column: Column;
     private suppressOrder: boolean;
@@ -95,7 +89,7 @@ export class SortIndicatorComp extends Component {
     }
 
     private updateIcons(): void {
-        const sortDirection = this.sortController.getDisplaySortForColumn(this.column);
+        const sortDirection = this.beans.sortController.getDisplaySortForColumn(this.column);
 
         if (this.eSortAsc) {
             const isAscending = sortDirection === 'asc';
@@ -130,7 +124,7 @@ export class SortIndicatorComp extends Component {
 
     private updateMultiSortIndicator() {
         if (this.eSortMixed) {
-            const isMixedSort = this.sortController.getDisplaySortForColumn(this.column) === 'mixed';
+            const isMixedSort = this.beans.sortController.getDisplaySortForColumn(this.column) === 'mixed';
             setDisplayed(this.eSortMixed, isMixedSort, { skipAriaHidden: true });
         }
     }
@@ -141,10 +135,10 @@ export class SortIndicatorComp extends Component {
     private updateSortOrder(): void {
         if (!this.eSortOrder) { return; }
 
-        const allColumnsWithSorting = this.sortController.getColumnsWithSortingOrdered();
+        const allColumnsWithSorting = this.beans.sortController.getColumnsWithSortingOrdered();
 
-        const indexThisCol = this.sortController.getDisplaySortIndexForColumn(this.column) ?? -1;
-        const moreThanOneColSorting = allColumnsWithSorting.some(col => this.sortController.getDisplaySortIndexForColumn(col) ?? -1 >= 1);
+        const indexThisCol = this.beans.sortController.getDisplaySortIndexForColumn(this.column) ?? -1;
+        const moreThanOneColSorting = allColumnsWithSorting.some(col => this.beans.sortController.getDisplaySortIndexForColumn(col) ?? -1 >= 1);
         const showIndex = indexThisCol >= 0 && moreThanOneColSorting;
         setDisplayed(this.eSortOrder, showIndex, { skipAriaHidden: true });
 

@@ -1,4 +1,8 @@
-import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
+import { BeanStub } from "../context/beanStub";
+import { Bean, PostConstruct } from "../context/context";
+import { CellPosition } from "../entities/cellPositionUtils";
+import { Column } from '../entities/column';
+import { RowPosition } from "../entities/rowPositionUtils";
 import { Events } from "../eventKeys";
 import {
     CellEditingStartedEvent,
@@ -10,30 +14,15 @@ import {
     RedoStartedEvent,
     RowEditingStartedEvent,
     UndoEndedEvent,
-    UndoStartedEvent,
+    UndoStartedEvent
 } from '../events';
-import { FocusService } from "../focusService";
-import { CellValueChange, RangeUndoRedoAction, LastFocusedCell, UndoRedoAction, UndoRedoStack } from "./undoRedoStack";
-import { RowPosition, RowPositionUtils } from "../entities/rowPositionUtils";
-import { CellRange, CellRangeParams, IRangeService } from "../interfaces/IRangeService";
-import { BeanStub } from "../context/beanStub";
-import { CellPosition, CellPositionUtils } from "../entities/cellPositionUtils";
-import { Column } from '../entities/column';
-import { ColumnModel } from "../columns/columnModel";
-import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { CellRange, CellRangeParams, IRangeService } from "../interfaces/IRangeService";
+import { CellValueChange, LastFocusedCell, RangeUndoRedoAction, UndoRedoAction, UndoRedoStack } from "./undoRedoStack";
 
 @Bean('undoRedoService')
 export class UndoRedoService extends BeanStub {
-
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('cellPositionUtils') private cellPositionUtils: CellPositionUtils;
-    @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-
-    @Optional('rangeService') private readonly rangeService?: IRangeService;
 
     private gridBodyCtrl: GridBodyCtrl;
 
@@ -82,15 +71,15 @@ export class UndoRedoService extends BeanStub {
         this.addManagedEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearStacks);
         this.addManagedEventListener(Events.EVENT_ROW_DRAG_END, this.clearStacks);
 
-        this.ctrlsService.whenReady(() => {
-            this.gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        this.beans.ctrlsService.whenReady(() => {
+            this.gridBodyCtrl = this.beans.ctrlsService.getGridBodyCtrl();
         });
     }
 
     private onCellValueChanged = (event: CellValueChangedEvent): void => {
         const eventCell: CellPosition = { column: event.column, rowIndex: event.rowIndex!, rowPinned: event.rowPinned };
-        const isCellEditing = this.activeCellEdit !== null && this.cellPositionUtils.equals(this.activeCellEdit, eventCell);
-        const isRowEditing = this.activeRowEdit !== null && this.rowPositionUtils.sameRow(this.activeRowEdit, eventCell);
+        const isCellEditing = this.activeCellEdit !== null && this.beans.cellPositionUtils.equals(this.activeCellEdit, eventCell);
+        const isRowEditing = this.activeRowEdit !== null && this.beans.rowPositionUtils.sameRow(this.activeRowEdit, eventCell);
 
         const shouldCaptureAction = isCellEditing || isRowEditing || this.isPasting || this.isRangeInAction;
 
@@ -172,7 +161,7 @@ export class UndoRedoService extends BeanStub {
         this.processAction(undoRedoAction, (cellValueChange: CellValueChange) => cellValueChange[cellValueChangeProperty], source);
 
         if (undoRedoAction instanceof RangeUndoRedoAction) {
-            this.processRange(this.rangeService!, undoRedoAction.ranges || [undoRedoAction[rangeProperty]]);
+            this.processRange(this.beans.rangeService!, undoRedoAction.ranges || [undoRedoAction[rangeProperty]]);
         } else {
             this.processCell(undoRedoAction.cellValueChanges);
         }
@@ -186,7 +175,7 @@ export class UndoRedoService extends BeanStub {
         action.cellValueChanges.forEach(cellValueChange => {
             const { rowIndex, rowPinned, columnId } = cellValueChange;
             const rowPosition: RowPosition = { rowIndex, rowPinned };
-            const currentRow = this.rowPositionUtils.getRowNode(rowPosition);
+            const currentRow = this.beans.rowPositionUtils.getRowNode(rowPosition);
 
             // checks if the row has been filtered out
             if (!currentRow!.displayed) { return; }
@@ -232,7 +221,7 @@ export class UndoRedoService extends BeanStub {
         const cellValueChange = cellValueChanges[0];
         const { rowIndex, rowPinned } = cellValueChange;
         const rowPosition: RowPosition = { rowIndex, rowPinned };
-        const row = this.rowPositionUtils.getRowNode(rowPosition);
+        const row = this.beans.rowPositionUtils.getRowNode(rowPosition);
 
         const lastFocusedCell: LastFocusedCell = {
             rowPinned: cellValueChange.rowPinned,
@@ -243,14 +232,14 @@ export class UndoRedoService extends BeanStub {
         // when single cells are being processed, they should be considered
         // as ranges when the rangeService is present (singleCellRanges).
         // otherwise focus will be restore but the range will not.
-        this.setLastFocusedCell(lastFocusedCell, this.rangeService);
+        this.setLastFocusedCell(lastFocusedCell, this.beans.rangeService);
     }
 
     private setLastFocusedCell(lastFocusedCell: LastFocusedCell, rangeService?: IRangeService) {
         const { rowIndex, columnId, rowPinned } = lastFocusedCell;
         const scrollFeature = this.gridBodyCtrl.getScrollFeature();
 
-        const column: Column | null = this.columnModel.getGridColumn(columnId);
+        const column: Column | null = this.beans.columnModel.getGridColumn(columnId);
 
         if (!column) { return; }
 
@@ -258,7 +247,7 @@ export class UndoRedoService extends BeanStub {
         scrollFeature.ensureColumnVisible(column);
 
         const cellPosition: CellPosition = { rowIndex, column, rowPinned };
-        this.focusService.setFocusedCell({ ...cellPosition, forceBrowserFocus: true });
+        this.beans.focusService.setFocusedCell({ ...cellPosition, forceBrowserFocus: true });
 
         rangeService?.setRangeToCell(cellPosition);
     }
@@ -323,8 +312,8 @@ export class UndoRedoService extends BeanStub {
 
         this.addManagedEventListener(Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END, () => {
             let action: UndoRedoAction;
-            if (this.rangeService && this.beans.gos.get('enableRangeSelection')) {
-                action = new RangeUndoRedoAction(this.cellValueChanges, undefined, undefined, [...this.rangeService.getCellRanges()]);
+            if (this.beans.rangeService && this.beans.gos.get('enableRangeSelection')) {
+                action = new RangeUndoRedoAction(this.cellValueChanges, undefined, undefined, [...this.beans.rangeService.getCellRanges()]);
             } else {
                 action = new UndoRedoAction(this.cellValueChanges);
             }

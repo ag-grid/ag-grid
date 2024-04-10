@@ -1,10 +1,6 @@
 import {
-    _,
     Autowired,
-    BeanStub,
-    Events,
-    IServerSideStore,
-    NumberSequence,
+    BeanStub, Column, Events, IRowNode, IsApplyServerSideTransactionParams, IServerSideStore, LoadSuccessParams, NumberSequence,
     PostConstruct,
     PreDestroy,
     RowBounds,
@@ -14,29 +10,18 @@ import {
     ServerSideTransaction,
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
-    StoreRefreshAfterParams,
-    StoreUpdatedEvent,
-    WithoutGridCommon,
-    Column,
-    ColumnModel,
-    IsApplyServerSideTransactionParams,
-    SelectionChangedEvent,
-    IRowNode,
-    StoreRefreshedEvent,
-    ISelectionService,
-    LoadSuccessParams
+    StoreRefreshAfterParams, StoreRefreshedEvent, StoreUpdatedEvent,
+    WithoutGridCommon, _
 } from "@ag-grid-community/core";
+import { BlockUtils } from "../../blocks/blockUtils";
 import { SSRMParams } from "../../serverSideRowModel";
 import { StoreUtils } from "../storeUtils";
-import { BlockUtils } from "../../blocks/blockUtils";
 import { LazyCache } from "./lazyCache";
 
 export class LazyStore extends BeanStub implements IServerSideStore {
 
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
     @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
 
     // display indexes
     private displayIndexStart: number | undefined;
@@ -89,7 +74,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         if (!usingTreeData && this.group) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field!;
-            this.rowGroupColumn = this.columnModel.getRowGroupColumns()[this.level];
+            this.rowGroupColumn = this.beans.columnModel.getRowGroupColumns()[this.level];
         }
     }
 
@@ -199,7 +184,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         });
 
         if (nodesToDeselect.length) {
-            this.selectionService.setNodesSelected({
+            this.beans.selectionService.setNodesSelected({
                 newValue: false,
                 clearSelection: false,
                 nodes: nodesToDeselect,

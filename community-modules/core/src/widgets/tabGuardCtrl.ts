@@ -1,6 +1,5 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired, PostConstruct } from "../context/context";
-import { FocusService } from "../focusService";
+import { PostConstruct } from "../context/context";
 import { ManagedFocusFeature } from "./managedFocusFeature";
 
 export enum TabGuardClassNames {
@@ -14,8 +13,6 @@ export interface ITabGuard {
 }
 
 export class TabGuardCtrl extends BeanStub {
-
-    @Autowired('focusService') private readonly focusService: FocusService;
 
     private readonly comp: ITabGuard;
     private readonly eTopGuard: HTMLElement;
@@ -141,7 +138,7 @@ export class TabGuardCtrl extends BeanStub {
         // in the TabGuard itself and has nowhere to go, so we need to manually find
         // the closest element to focus by calling `forceFocusOutWhenTabGuardAreEmpty`.
         if (this.forceFocusOutWhenTabGuardsAreEmpty) {
-            const isEmpty = this.focusService.findFocusableElements(this.eFocusableElement, '.ag-tab-guard').length === 0;
+            const isEmpty = this.beans.focusService.findFocusableElements(this.eFocusableElement, '.ag-tab-guard').length === 0;
             if (isEmpty) {
                 this.findNextElementOutsideAndFocus(e.target === this.eBottomGuard);
                 return;
@@ -159,7 +156,7 @@ export class TabGuardCtrl extends BeanStub {
 
     private findNextElementOutsideAndFocus(up: boolean) {
         const eDocument = this.beans.gos.getDocument();
-        const focusableEls = this.focusService.findFocusableElements(eDocument.body, null, true);
+        const focusableEls = this.beans.focusService.findFocusableElements(eDocument.body, null, true);
         const index = focusableEls.indexOf(up ? this.eTopGuard : this.eBottomGuard);
 
         if (index === -1) { return; }
@@ -243,7 +240,7 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     public focusInnerElement(fromBottom = false): void {
-        const focusable = this.focusService.findFocusableElements(this.eFocusableElement);
+        const focusable = this.beans.focusService.findFocusableElements(this.eFocusableElement);
 
         if (this.tabGuardsAreActive()) {
             // remove tab guards from this component from list of focusable elements
@@ -257,7 +254,7 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     public getNextFocusableElement(backwards?: boolean): HTMLElement | null {
-        return this.focusService.findNextFocusableElement(this.eFocusableElement, false, backwards);
+        return this.beans.focusService.findNextFocusableElement(this.eFocusableElement, false, backwards);
     }
 
     public forceFocusOutOfContainer(up: boolean = false): void {

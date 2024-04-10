@@ -10,7 +10,7 @@ import { WithoutGridCommon } from "../interfaces/iCommon";
 @Bean('paginationProxy')
 export class PaginationProxy extends BeanStub {
 
-    @Autowired('rowModel') private rowModel: IRowModel;
+    
 
     private active: boolean;
     private paginateChildRows: boolean;
@@ -51,7 +51,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean {
-        const res = this.rowModel.ensureRowHeightsValid(startPixel, endPixel, this.getPageFirstRow(), this.getPageLastRow());
+        const res = this.beans.rowModel.ensureRowHeightsValid(startPixel, endPixel, this.getPageFirstRow(), this.getPageLastRow());
         if (res) {
             this.calculatePages();
         }
@@ -117,15 +117,15 @@ export class PaginationProxy extends BeanStub {
     }
 
     public getRow(index: number): RowNode | undefined {
-        return this.rowModel.getRow(index);
+        return this.beans.rowModel.getRow(index);
     }
 
     public getRowNode(id: string): RowNode | undefined {
-        return this.rowModel.getRowNode(id);
+        return this.beans.rowModel.getRowNode(id);
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        return this.rowModel.getRowIndexAtPixel(pixel);
+        return this.beans.rowModel.getRowIndexAtPixel(pixel);
     }
 
     public getCurrentPageHeight(): number {
@@ -142,7 +142,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
-        if (!this.rowModel.isRowPresent(rowNode)) {
+        if (!this.beans.rowModel.isRowPresent(rowNode)) {
             return false;
         }
         const nodeIsInPage = rowNode.rowIndex! >= this.topDisplayedRowIndex && rowNode.rowIndex! <= this.bottomDisplayedRowIndex;
@@ -150,15 +150,15 @@ export class PaginationProxy extends BeanStub {
     }
 
     public isEmpty(): boolean {
-        return this.rowModel.isEmpty();
+        return this.beans.rowModel.isEmpty();
     }
 
     public isRowsToRender(): boolean {
-        return this.rowModel.isRowsToRender();
+        return this.beans.rowModel.isRowsToRender();
     }
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
-        return this.rowModel.forEachNode(callback);
+        return this.beans.rowModel.forEachNode(callback);
     }
 
     public forEachNodeOnPage(callback: (rowNode: RowNode) => void) {
@@ -173,11 +173,11 @@ export class PaginationProxy extends BeanStub {
     }
 
     public getType(): RowModelType {
-        return this.rowModel.getType();
+        return this.beans.rowModel.getType();
     }
 
     public getRowBounds(index: number): RowBounds {
-        const res = this.rowModel.getRowBounds(index)!;
+        const res = this.beans.rowModel.getRowBounds(index)!;
         res.rowIndex = index;
         return res;
     }
@@ -191,7 +191,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     public getRowCount(): number {
-        return this.rowModel.getRowCount();
+        return this.beans.rowModel.getRowCount();
     }
 
     public getPageForIndex(index: number): number {
@@ -212,7 +212,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     public isLastPageFound(): boolean {
-        return this.rowModel.isLastRowIndexKnown();
+        return this.beans.rowModel.isLastRowIndexKnown();
     }
 
     public getCurrentPage(): number {
@@ -232,7 +232,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     public goToLastPage(): void {
-        const rowCount = this.rowModel.getRowCount();
+        const rowCount = this.beans.rowModel.getRowCount();
         const lastPage = Math.floor(rowCount / this.pageSize);
         this.goToPage(lastPage);
     }
@@ -321,12 +321,12 @@ export class PaginationProxy extends BeanStub {
             this.calculatedPagesNotActive();
         }
 
-        this.topRowBounds = this.rowModel.getRowBounds(this.topDisplayedRowIndex)!;
+        this.topRowBounds = this.beans.rowModel.getRowBounds(this.topDisplayedRowIndex)!;
         if (this.topRowBounds) {
             this.topRowBounds.rowIndex = this.topDisplayedRowIndex;
         }
 
-        this.bottomRowBounds = this.rowModel.getRowBounds(this.bottomDisplayedRowIndex)!;
+        this.bottomRowBounds = this.beans.rowModel.getRowBounds(this.bottomDisplayedRowIndex)!;
         if (this.bottomRowBounds) {
             this.bottomRowBounds.rowIndex = this.bottomDisplayedRowIndex;
         }
@@ -366,7 +366,7 @@ export class PaginationProxy extends BeanStub {
         // const rootNode = csrm.getRootNode();
         // const masterRows = rootNode.childrenAfterSort;
 
-        this.masterRowCount = this.rowModel.getTopLevelRowCount();
+        this.masterRowCount = this.beans.rowModel.getTopLevelRowCount();
 
         // we say <=0 (rather than =0) as viewport returns -1 when no rows
         if (this.masterRowCount <= 0) {
@@ -386,14 +386,14 @@ export class PaginationProxy extends BeanStub {
             masterPageEndIndex = masterLastRowIndex;
         }
 
-        this.topDisplayedRowIndex = this.rowModel.getTopLevelRowDisplayedIndex(masterPageStartIndex);
+        this.topDisplayedRowIndex = this.beans.rowModel.getTopLevelRowDisplayedIndex(masterPageStartIndex);
         // masterRows[masterPageStartIndex].rowIndex;
 
         if (masterPageEndIndex === masterLastRowIndex) {
             // if showing the last master row, then we want to show the very last row of the model
-            this.bottomDisplayedRowIndex = this.rowModel.getRowCount() - 1;
+            this.bottomDisplayedRowIndex = this.beans.rowModel.getRowCount() - 1;
         } else {
-            const firstIndexNotToShow = this.rowModel.getTopLevelRowDisplayedIndex(masterPageEndIndex + 1);
+            const firstIndexNotToShow = this.beans.rowModel.getTopLevelRowDisplayedIndex(masterPageEndIndex + 1);
             //masterRows[masterPageEndIndex + 1].rowIndex;
             // this gets the index of the last child - eg current row is open, we want to display all children,
             // the index of the last child is one less than the index of the next parent row.
@@ -406,7 +406,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     private calculatePagesAllRows(): void {
-        this.masterRowCount = this.rowModel.getRowCount();
+        this.masterRowCount = this.beans.rowModel.getRowCount();
 
         if (this.masterRowCount === 0) {
             this.setZeroRows();
@@ -431,6 +431,6 @@ export class PaginationProxy extends BeanStub {
         this.totalPages = 1;
         this.currentPage = 0;
         this.topDisplayedRowIndex = 0;
-        this.bottomDisplayedRowIndex = this.rowModel.getRowCount() - 1;
+        this.bottomDisplayedRowIndex = this.beans.rowModel.getRowCount() - 1;
     }
 }

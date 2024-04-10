@@ -1,19 +1,13 @@
-import { ColumnModel } from "../columns/columnModel";
 import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../context/context";
+import { Bean, PostConstruct } from "../context/context";
 import { GetQuickFilterTextParams } from "../entities/colDef";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { Events } from "../eventKeys";
-import { IRowModel } from "../interfaces/iRowModel";
 import { exists } from "../utils/generic";
-import { ValueService } from "../valueService/valueService";
 
 @Bean('quickFilterService')
 export class QuickFilterService extends BeanStub {
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('rowModel') private rowModel: IRowModel;
 
     public static readonly EVENT_QUICK_FILTER_CHANGED = 'quickFilterChanged';
     private static readonly QUICK_FILTER_SEPARATOR = '\n';
@@ -65,7 +59,7 @@ export class QuickFilterService extends BeanStub {
     }
 
     public resetQuickFilterCache(): void {
-        this.rowModel.forEachNode(node => node.quickFilterAggregateText = null);
+        this.beans.rowModel.forEachNode(node => node.quickFilterAggregateText = null);
     }
 
     private setQuickFilterParts(): void {
@@ -118,7 +112,7 @@ export class QuickFilterService extends BeanStub {
     }
 
     private onQuickFilterColumnConfigChanged(): void {
-        this.columnModel.refreshQuickFilterColumns();
+        this.beans.columnModel.refreshQuickFilterColumns();
         this.resetQuickFilterCache();
         if (this.isQuickFilterPresent()) {
             this.dispatchEvent({ type: QuickFilterService.EVENT_QUICK_FILTER_CHANGED });
@@ -126,7 +120,7 @@ export class QuickFilterService extends BeanStub {
     }
 
     private doesRowPassQuickFilterNoCache(node: RowNode, filterPart: string): boolean {
-        const columns = this.columnModel.getAllColumnsForQuickFilter();
+        const columns = this.beans.columnModel.getAllColumnsForQuickFilter();
 
         return columns.some(column => {
             const part = this.getQuickFilterTextForColumn(column, node);
@@ -160,7 +154,7 @@ export class QuickFilterService extends BeanStub {
     }
 
     private getQuickFilterTextForColumn(column: Column, node: RowNode): string {
-        let value = this.valueService.getValue(column, node, true);
+        let value = this.beans.valueService.getValue(column, node, true);
         const colDef = column.getColDef();
 
         if (colDef.getQuickFilterText) {
@@ -180,7 +174,7 @@ export class QuickFilterService extends BeanStub {
 
     private getQuickFilterAggregateText(node: RowNode): string {
         const stringParts: string[] = [];
-        const columns = this.columnModel.getAllColumnsForQuickFilter();
+        const columns = this.beans.columnModel.getAllColumnsForQuickFilter();
 
         columns.forEach(column => {
             const part = this.getQuickFilterTextForColumn(column, node);

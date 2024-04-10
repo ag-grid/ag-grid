@@ -31,7 +31,7 @@ export class ToolPanelColumnComp extends Component {
             <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    
     @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
     @Autowired('modelItemUtils') private readonly modelItemUtils: ModelItemUtils;
 
@@ -256,7 +256,7 @@ export class ToolPanelColumnComp extends Component {
 
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
-        const isPivotMode = this.columnModel.isPivotMode();
+        const isPivotMode = this.beans.columnModel.isPivotMode();
         if (isPivotMode) {
             // if reducing, checkbox means column is one of pivot, value or group
             const anyFunctionActive = this.column.isAnyFunctionActive();

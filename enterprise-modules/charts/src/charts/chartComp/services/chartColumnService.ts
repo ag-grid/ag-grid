@@ -13,7 +13,7 @@ import {
 
 @Bean("chartColumnService")
 export class ChartColumnService extends BeanStub {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
 
@@ -27,35 +27,35 @@ export class ChartColumnService extends BeanStub {
     }
 
     public getColumn(colId: string): Column | null {
-        return this.columnModel.getPrimaryColumn(colId);
+        return this.beans.columnModel.getPrimaryColumn(colId);
     }
 
     public getAllDisplayedColumns(): Column[] {
-        return this.columnModel.getAllDisplayedColumns();
+        return this.beans.columnModel.getAllDisplayedColumns();
     }
 
     public getColDisplayName(col: Column): string | null {
-        return this.columnModel.getDisplayNameForColumn(col, 'chart');
+        return this.beans.columnModel.getDisplayNameForColumn(col, 'chart');
     }
 
     public getRowGroupColumns(): Column[] {
-        return this.columnModel.getRowGroupColumns();
+        return this.beans.columnModel.getRowGroupColumns();
     }
 
     public getGroupDisplayColumns(): Column[] {
-        return this.columnModel.getGroupDisplayColumns();
+        return this.beans.columnModel.getGroupDisplayColumns();
     }
 
     public isPivotMode(): boolean {
-        return this.columnModel.isPivotMode();
+        return this.beans.columnModel.isPivotMode();
     }
 
     public isPivotActive(): boolean {
-        return this.columnModel.isPivotActive();
+        return this.beans.columnModel.isPivotActive();
     }
 
     public getChartColumns(): { dimensionCols: Set<Column>; valueCols: Set<Column>; } {
-        const gridCols = this.columnModel.getAllGridColumns();
+        const gridCols = this.beans.columnModel.getAllGridColumns();
 
         const dimensionCols = new Set<Column>();
         const valueCols = new Set<Column>();

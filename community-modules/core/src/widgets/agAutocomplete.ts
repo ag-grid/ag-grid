@@ -1,13 +1,13 @@
-import { Component } from "./component";
-import { RefSelector } from "./componentAnnotations";
-import { Autowired, PostConstruct } from "../context/context";
-import { AgInputTextField } from "./agInputTextField";
-import { AgAutocompleteList } from "./agAutocompleteList";
-import { PopupPositionParams, PopupService } from "./popupService";
 import { KeyCode } from "../constants/keyCode";
-import { AutocompleteEntry, AutocompleteListParams } from "./autocompleteParams";
+import { PostConstruct } from "../context/context";
 import { AgEvent } from "../events";
 import { makeNull } from "../utils/generic";
+import { AgAutocompleteList } from "./agAutocompleteList";
+import { AgInputTextField } from "./agInputTextField";
+import { AutocompleteEntry, AutocompleteListParams } from "./autocompleteParams";
+import { Component } from "./component";
+import { RefSelector } from "./componentAnnotations";
+import { PopupPositionParams } from "./popupService";
 
 export interface AutocompleteValueChangedEvent extends AgEvent {
     value: string | null;
@@ -33,8 +33,6 @@ export class AgAutocomplete extends Component {
     public static EVENT_VALUE_CONFIRMED = 'eventValueConfirmed';
     public static EVENT_OPTION_SELECTED = 'eventOptionSelected';
     public static EVENT_VALID_CHANGED = 'eventValidChanged';
-
-    @Autowired('popupService') private popupService: PopupService;
 
     @RefSelector('eAutocompleteInput') private eAutocompleteInput: AgInputTextField;
 
@@ -258,10 +256,10 @@ export class AgAutocomplete extends Component {
             keepWithinBounds: true
         };
 
-        const addPopupRes = this.popupService.addPopup({
+        const addPopupRes = this.beans.popupService.addPopup({
             eChild: ePopupGui,
             anchorToElement: this.getGui(),
-            positionCallback: () => this.popupService.positionPopupByComponent(positionParams),
+            positionCallback: () => this.beans.popupService.positionPopupByComponent(positionParams),
             ariaLabel: this.listAriaLabel
         });
         this.hidePopup = addPopupRes.hideFunc;

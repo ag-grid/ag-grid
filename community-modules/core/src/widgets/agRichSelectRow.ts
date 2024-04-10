@@ -1,24 +1,22 @@
-import { UserCompDetails, UserComponentFactory } from "../components/framework/userComponentFactory";
-import { Autowired, PostConstruct } from "../context/context";
+import { UserCompDetails } from "../components/framework/userComponentFactory";
+import { PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
+import { FieldPickerValueSelectedEvent } from "../events";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { AgPromise } from "../utils";
-import { bindCellRendererToHtmlElement, getInnerWidth } from "../utils/dom";
-import { RichSelectParams } from "./agRichSelect";
-import { FieldPickerValueSelectedEvent } from "../events";
-import { Component } from "./component";
-import { escapeString } from "../utils/string";
-import { exists } from "../utils/generic";
 import { setAriaActiveDescendant, setAriaSelected } from "../utils/aria";
+import { bindCellRendererToHtmlElement } from "../utils/dom";
+import { exists } from "../utils/generic";
+import { escapeString } from "../utils/string";
+import { RichSelectParams } from "./agRichSelect";
+import { Component } from "./component";
 import { VirtualList } from "./virtualList";
 
 export class RichSelectRow<TValue> extends Component {
 
     private value: TValue;
     private parsedValue: string | null;
-
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     constructor(private readonly params: RichSelectParams<TValue>, private readonly wrapperEl: HTMLElement) {
         super(/* html */`<div class="ag-rich-select-row" role="presentation"></div>`);
@@ -136,7 +134,7 @@ export class RichSelectRow<TValue> extends Component {
         if (cellRendererPromise) {
             cellRendererPromise.then(childComponent => {
                 this.addDestroyFunc(() => {
-                    this.getContext().destroyBean(childComponent);
+                    this.destroyBean(childComponent);
                 });
             });
             return true;

@@ -1,12 +1,9 @@
-import { Autowired, Bean, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
+import { Bean, PostConstruct } from "../context/context";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
-import { CtrlsService } from "../ctrlsService";
 
 @Bean('columnAnimationService')
 export class ColumnAnimationService extends BeanStub {
-
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private gridBodyCtrl: GridBodyCtrl;
 
@@ -20,7 +17,7 @@ export class ColumnAnimationService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.ctrlsService.whenReady(p => this.gridBodyCtrl = p.gridBodyCtrl);
+        this.beans.ctrlsService.whenReady(p => this.gridBodyCtrl = p.gridBodyCtrl);
     }
 
     public isActive(): boolean {
@@ -95,7 +92,7 @@ export class ColumnAnimationService extends BeanStub {
             }
         }
 
-        this.getFrameworkOverrides().wrapIncoming(() => {
+        this.beans.frameworkOverrides.wrapIncoming(() => {
             window.setTimeout(() => runFuncs(this.executeNextFuncs), 0);
             window.setTimeout(() => {
                 runFuncs(this.executeLaterFuncs);

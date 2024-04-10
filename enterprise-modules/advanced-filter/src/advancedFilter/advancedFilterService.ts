@@ -4,13 +4,9 @@ import {
     AutocompleteEntry,
     Autowired,
     Bean,
-    BeanStub,
-    ColumnModel,
-    DataTypeService,
+    BeanStub, DataTypeService,
     Events,
-    IAdvancedFilterService,
-    IRowModel,
-    IRowNode,
+    IAdvancedFilterService, IRowNode,
     NewColumnsLoadedEvent,
     PostConstruct,
     ValueParserService,
@@ -18,9 +14,9 @@ import {
     WithoutGridCommon,
     _
 } from "@ag-grid-community/core";
-import { FilterExpressionParser } from "./filterExpressionParser";
 import { AdvancedFilterCtrl } from "./advancedFilterCtrl";
 import { AdvancedFilterExpressionService } from "./advancedFilterExpressionService";
+import { FilterExpressionParser } from "./filterExpressionParser";
 import { FilterExpressionFunctionParams } from "./filterExpressionUtils";
 
 interface ExpressionProxy {
@@ -30,10 +26,9 @@ interface ExpressionProxy {
 @Bean('advancedFilterService')
 export class AdvancedFilterService extends BeanStub implements IAdvancedFilterService {
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dataTypeService') private dataTypeService: DataTypeService;
     @Autowired('valueParserService') private valueParserService: ValueParserService;
-    @Autowired('rowModel') private rowModel: IRowModel;
+    
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     private enabled: boolean;
@@ -55,7 +50,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
 
         this.expressionProxy = {
             getValue: (colId, node) => {
-                const column = this.columnModel.getPrimaryColumn(colId);
+                const column = this.beans.columnModel.getPrimaryColumn(colId);
                 return column ? this.valueService.getValue(column, node, true) : undefined;
             },
         }
@@ -122,7 +117,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
 
         return new FilterExpressionParser({
             expression,
-            columnModel: this.columnModel,
+            columnModel: this.beans.columnModel,
             dataTypeService: this.dataTypeService,
             valueParserService: this.valueParserService,
             advancedFilterExpressionService: this.advancedFilterExpressionService,
@@ -149,7 +144,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
 
     private setEnabled(enabled: boolean, silent?: boolean): void {
         const previousValue = this.enabled;
-        const rowModelType = this.rowModel.getType();
+        const rowModelType = this.beans.rowModel.getType();
         const isValidRowModel = rowModelType === 'clientSide' || rowModelType === 'serverSide';
         if (enabled && !rowModelType) {
             _.warnOnce('Advanced Filter is only supported with the Client-Side Row Model or Server-Side Row Model.');

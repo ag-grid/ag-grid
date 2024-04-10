@@ -1,16 +1,13 @@
-import { Component } from "../../widgets/component";
-import { Autowired, PostConstruct } from "../../context/context";
-import { AgSelect } from "../../widgets/agSelect";
+import { PostConstruct } from "../../context/context";
 import { Events } from "../../eventKeys";
 import { PaginationChangedEvent } from "../../events";
-import { PaginationProxy } from "../../pagination/paginationProxy";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { clearElement } from "../../utils/dom";
 import { warnOnce } from "../../utils/function";
+import { AgSelect } from "../../widgets/agSelect";
+import { Component } from "../../widgets/component";
 
 export class PageSizeSelectorComp extends Component {
-
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     private selectPageSizeComp: AgSelect | undefined;
     private hasEmptyOption = false;
@@ -44,10 +41,10 @@ export class PageSizeSelectorComp extends Component {
         if (
             isNaN(paginationPageSize) ||
             paginationPageSize < 1 ||
-            paginationPageSize === this.paginationProxy.getPageSize()
+            paginationPageSize === this.beans.paginationProxy.getPageSize()
         ) { return; }
 
-        this.paginationProxy.setPageSize(paginationPageSize, 'pageSizeSelector');
+        this.beans.paginationProxy.setPageSize(paginationPageSize, 'pageSizeSelector');
 
         if (this.hasEmptyOption) {
             // Toggle the selector to force a refresh of the options and hide the empty option,
@@ -61,7 +58,7 @@ export class PageSizeSelectorComp extends Component {
     private handlePaginationChanged(paginationChangedEvent?: WithoutGridCommon<PaginationChangedEvent>): void {
         if (!this.selectPageSizeComp || !paginationChangedEvent?.newPageSize) { return; }
 
-        const paginationPageSize = this.paginationProxy.getPageSize();
+        const paginationPageSize = this.beans.paginationProxy.getPageSize();
         if (this.getPageSizeSelectorValues().includes(paginationPageSize)) {
             this.selectPageSizeComp.setValue(paginationPageSize.toString());
         } else {
@@ -115,7 +112,7 @@ export class PageSizeSelectorComp extends Component {
 
     private reloadPageSizesSelector(): void {
         const pageSizeOptions: (number | string)[] = this.getPageSizeSelectorValues();
-        const paginationPageSizeOption: number = this.paginationProxy.getPageSize();
+        const paginationPageSizeOption: number = this.beans.paginationProxy.getPageSize();
         const shouldAddAndSelectEmptyOption = !paginationPageSizeOption || !pageSizeOptions.includes(paginationPageSizeOption)
         if (shouldAddAndSelectEmptyOption) {
             // When the paginationPageSize option is set to a value that is

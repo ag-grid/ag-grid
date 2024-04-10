@@ -13,7 +13,7 @@ export class ApiEventService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.frameworkEventWrappingService = new FrameworkEventListenerService(this.getFrameworkOverrides());
+        this.frameworkEventWrappingService = new FrameworkEventListenerService(this.beans.frameworkOverrides);
     }
 
     public addEventListener(eventType: string, userListener: AgEventListener): void {

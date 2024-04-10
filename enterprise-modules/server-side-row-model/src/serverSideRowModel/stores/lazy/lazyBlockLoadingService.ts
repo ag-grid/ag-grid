@@ -152,7 +152,7 @@ export class LazyBlockLoadingService extends BeanStub {
 
         // quick look-up for priority rows needing loading in viewport.
         for (let i = firstRowInViewport; i <= lastRowInViewport; i++) {
-            const row = this.rowModel.getRow(i);
+            const row = this.beans.rowModel.getRow(i);
             if (!row) {
                 continue;
             }

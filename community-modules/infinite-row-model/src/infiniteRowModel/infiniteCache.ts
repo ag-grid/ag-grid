@@ -1,8 +1,5 @@
 import {
-    Autowired,
-    BeanStub,
-    StoreUpdatedEvent,
-    Events,
+    BeanStub, Events,
     IDatasource,
     Logger,
     LoggerFactory,
@@ -10,12 +7,7 @@ import {
     PreDestroy,
     Qualifier,
     RowNode,
-    RowNodeBlockLoader,
-    RowRenderer,
-    _,
-    FocusService,
-    SortModelItem,
-    WithoutGridCommon
+    RowNodeBlockLoader, SortModelItem, StoreUpdatedEvent, WithoutGridCommon, _
 } from "@ag-grid-community/core";
 import { InfiniteBlock } from "./infiniteBlock";
 
@@ -39,9 +31,6 @@ export class InfiniteCache extends BeanStub {
     // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
     // scrolled over are not needed to be loaded.
     private static MAX_EMPTY_BLOCKS_TO_KEEP = 2;
-
-    @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
-    @Autowired("focusService") private focusService: FocusService;
 
     private readonly params: InfiniteCacheParams;
 
@@ -175,7 +164,7 @@ export class InfiniteCache extends BeanStub {
     }
 
     private isBlockFocused(block: InfiniteBlock): boolean {
-        const focusedCell = this.focusService.getFocusCellToUseAfterRefresh();
+        const focusedCell = this.beans.focusService.getFocusCellToUseAfterRefresh();
         if (!focusedCell) { return false; }
         if (focusedCell.rowPinned != null) { return false; }
 
@@ -189,7 +178,7 @@ export class InfiniteCache extends BeanStub {
     private isBlockCurrentlyDisplayed(block: InfiniteBlock): boolean {
         const startIndex = block.getStartRow();
         const endIndex = block.getEndRow() - 1;
-        return this.rowRenderer.isRangeInRenderedViewport(startIndex, endIndex);
+        return this.beans.rowRenderer.isRangeInRenderedViewport(startIndex, endIndex);
     }
 
     private removeBlockFromCache(blockToRemove: InfiniteBlock): void {

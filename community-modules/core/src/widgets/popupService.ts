@@ -1,21 +1,18 @@
-import { Autowired, Bean, PostConstruct } from "../context/context";
+import { KeyCode } from '../constants/keyCode';
+import { BeanStub } from "../context/beanStub";
+import { Bean, PostConstruct } from "../context/context";
 import { Column } from "../entities/column";
 import { Events } from '../events';
-import { BeanStub } from "../context/beanStub";
-import { getAbsoluteHeight, getAbsoluteWidth, getElementRectWithOffset } from '../utils/dom';
-import { last } from '../utils/array';
-import { isElementInEventPath, isStopPropagationForAgGrid } from '../utils/event';
-import { KeyCode } from '../constants/keyCode';
-import { FocusService } from "../focusService";
 import { GridCtrl } from "../gridComp/gridCtrl";
 import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
-import { AgPromise } from "../utils";
-import { CtrlsService } from "../ctrlsService";
-import { setAriaLabel, setAriaRole } from "../utils/aria";
 import { PostProcessPopupParams } from "../interfaces/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
-import { ResizeObserverService } from "../misc/resizeObserverService";
 import { IRowNode } from "../interfaces/iRowNode";
+import { AgPromise } from "../utils";
+import { setAriaLabel, setAriaRole } from "../utils/aria";
+import { last } from '../utils/array';
+import { getAbsoluteHeight, getAbsoluteWidth, getElementRectWithOffset } from '../utils/dom';
+import { isElementInEventPath, isStopPropagationForAgGrid } from '../utils/event';
 import { exists } from "../utils/generic";
 
 export interface PopupPositionParams {
@@ -91,19 +88,15 @@ export class PopupService extends BeanStub {
 
     // really this should be using eGridDiv, not sure why it's not working.
     // maybe popups in the future should be parent to the body??
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('resizeObserverService') public resizeObserverService: ResizeObserverService;
 
     private gridCtrl: GridCtrl;
-
     private popupList: AgPopup[] = [];
 
     private static WAIT_FOR_POPUP_CONTENT_RESIZE: number = 200;
 
     @PostConstruct
     private postConstruct(): void {
-        this.ctrlsService.whenReady(p => {
+        this.beans.ctrlsService.whenReady(p => {
             this.gridCtrl = p.gridCtrl;
         });
         this.addManagedEventListener(Events.EVENT_GRID_STYLES_CHANGED, this.handleThemeChange.bind(this));
@@ -350,7 +343,7 @@ export class PopupService extends BeanStub {
         if (!skipObserver) {
             // Since rendering popup contents can be asynchronous, use a resize observer to
             // reposition the popup after initial updates to the size of the contents
-            const resizeObserverDestroyFunc = this.resizeObserverService.observeResize(ePopup, () => updatePopupPosition(true));
+            const resizeObserverDestroyFunc = this.beans.resizeObserverService.observeResize(ePopup, () => updatePopupPosition(true));
             // Only need to reposition when first open, so can clean up after a bit of time
             setTimeout(() => resizeObserverDestroyFunc(), PopupService.WAIT_FOR_POPUP_CONTENT_RESIZE);
         }
@@ -664,7 +657,7 @@ export class PopupService extends BeanStub {
         const left = parseInt(leftPx!.substring(0, leftPx!.length - 1), 10);
 
         return new AgPromise<() => void>(resolve => {
-            this.getFrameworkOverrides().setInterval(() => {
+            this.beans.frameworkOverrides.setInterval(() => {
                 const pRect = eParent.getBoundingClientRect();
                 const sRect = element.getBoundingClientRect();
 

@@ -170,45 +170,7 @@ export function unwrapUserComp<T>(comp: T): T {
 }
 
 @Bean('gridApi')
-export class GridApi<TData = any> extends BeansProvider {
-    
-    @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
-    @Autowired('navigationService') private readonly navigationService: NavigationService;
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('selectionService') private readonly selectionService: ISelectionService;
-    @Autowired('gridOptionsService') private readonly gos: GridOptionsService;
-    @Autowired('valueService') private readonly valueService: ValueService;
-    @Autowired('alignedGridsService') private readonly alignedGridsService: AlignedGridsService;
-    @Autowired('eventService') private readonly eventService: EventService;
-    @Autowired('pinnedRowModel') private readonly pinnedRowModel: PinnedRowModel;
-    @Autowired('context') private readonly context: Context;
-    @Autowired('rowModel') private readonly rowModel: IRowModel;
-    @Autowired('sortController') private readonly sortController: SortController;
-    @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
-    @Autowired('menuService') private readonly menuService: MenuService;
-    @Autowired('valueCache') private readonly valueCache: ValueCache;
-    @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
-    @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
-    @Autowired('overlayService') private readonly overlayService: OverlayService;
-    @Autowired('stateService') private readonly stateService: StateService;
-    @Autowired('expansionService') private readonly expansionService: IExpansionService;
-    @Autowired('apiEventService') private readonly apiEventService: ApiEventService;
-    @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
-    @Autowired('undoRedoService') private readonly undoRedoService: UndoRedoService;
-    @Autowired('rowNodeBlockLoader') private readonly rowNodeBlockLoader: RowNodeBlockLoader;
-    
-    @Optional('csvCreator') private readonly csvCreator?: ICsvCreator;
-    @Optional('excelCreator') private readonly excelCreator?: IExcelCreator;
-    @Optional('rangeService') private readonly rangeService?: IRangeService;
-    @Optional('clipboardService') private readonly clipboardService?: IClipboardService;
-    @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
-    @Optional('statusBarService') private readonly statusBarService?: IStatusBarService;
-    @Optional('chartService') private readonly chartService?: IChartService;
-    @Optional('ssrmTransactionManager') private readonly serverSideTransactionManager?: IServerSideTransactionManager;
-    @Optional('sideBarService') private readonly sideBarService?: ISideBarService;
+export class GridApi<TData = any> extends BeansProvider {  
     
     private gridBodyCtrl: GridBodyCtrl;
 
@@ -223,26 +185,26 @@ export class GridApi<TData = any> extends BeansProvider {
 
     @PostConstruct
     private init(): void {
-        switch (this.rowModel.getType()) {
+        switch (this.beans.rowModel.getType()) {
             case 'clientSide':
-                this.clientSideRowModel = this.rowModel as IClientSideRowModel;
+                this.clientSideRowModel = this.beans.rowModel as IClientSideRowModel;
                 break;
             case 'infinite':
-                this.infiniteRowModel = this.rowModel as IInfiniteRowModel;
+                this.infiniteRowModel = this.beans.rowModel as IInfiniteRowModel;
                 break;
             case 'serverSide':
-                this.serverSideRowModel = this.rowModel as IServerSideRowModel;
+                this.serverSideRowModel = this.beans.rowModel as IServerSideRowModel;
                 break;
         }
 
-        this.ctrlsService.whenReady(() => {
-            this.gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        this.beans.ctrlsService.whenReady(() => {
+            this.gridBodyCtrl = this.beans.ctrlsService.getGridBodyCtrl();
         });
     }
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __getAlignedGridService(): AlignedGridsService {
-        return this.alignedGridsService;
+        return this.beans.alignedGridsService;
     }
 
     /** Returns the `gridId` for the current grid as specified via the gridOptions property `gridId` or the auto assigned grid id if none was provided. */
@@ -280,20 +242,20 @@ export class GridApi<TData = any> extends BeansProvider {
     /** Similar to `exportDataAsCsv`, except returns the result as a string rather than download it. */
     public getDataAsCsv(params?: CsvExportParams): string | undefined {
         if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv', this.beans.context.getGridId())) {
-            return this.csvCreator!.getDataAsCsv(params);
+            return this.beans.csvCreator!.getDataAsCsv(params);
         }
     }
 
     /** Downloads a CSV export of the grid's data. */
     public exportDataAsCsv(params?: CsvExportParams): void {
         if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.exportDataAsCsv', this.beans.context.getGridId())) {
-            this.csvCreator!.exportDataAsCsv(params);
+            this.beans.csvCreator!.exportDataAsCsv(params);
         }
     }
 
     private assertNotExcelMultiSheet(method: keyof GridApi, params?: ExcelExportParams): boolean {
         if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method, this.beans.context.getGridId())) { return false }
-        if (this.excelCreator!.getFactoryMode() === ExcelFactoryMode.MULTI_SHEET) {
+        if (this.beans.excelCreator!.getFactoryMode() === ExcelFactoryMode.MULTI_SHEET) {
             console.warn("AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'");
             return false;
         }
@@ -303,36 +265,36 @@ export class GridApi<TData = any> extends BeansProvider {
     /** Similar to `exportDataAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     public getDataAsExcel(params?: ExcelExportParams): string | Blob | undefined {
         if (this.assertNotExcelMultiSheet('getDataAsExcel', params)) {
-            return this.excelCreator!.getDataAsExcel(params);
+            return this.beans.excelCreator!.getDataAsExcel(params);
         }
     }
 
     /** Downloads an Excel export of the grid's data. */
     public exportDataAsExcel(params?: ExcelExportParams): void {
         if (this.assertNotExcelMultiSheet('exportDataAsExcel', params)) {
-            this.excelCreator!.exportDataAsExcel(params);
+            this.beans.excelCreator!.exportDataAsExcel(params);
         }
     }
 
     /** This is method to be used to get the grid's data as a sheet, that will later be exported either by `getMultipleSheetsAsExcel()` or `exportMultipleSheetsAsExcel()`. */
     public getSheetDataForExcel(params?: ExcelExportParams): string | undefined {
         if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel', this.beans.context.getGridId())) { return; }
-        this.excelCreator!.setFactoryMode(ExcelFactoryMode.MULTI_SHEET);
+        this.beans.excelCreator!.setFactoryMode(ExcelFactoryMode.MULTI_SHEET);
 
-        return this.excelCreator!.getSheetDataForExcel(params);
+        return this.beans.excelCreator!.getSheetDataForExcel(params);
     }
 
     /** Similar to `exportMultipleSheetsAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined {
         if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel', this.beans.context.getGridId())) {
-            return this.excelCreator!.getMultipleSheetsAsExcel(params);
+            return this.beans.excelCreator!.getMultipleSheetsAsExcel(params);
         }
     }
 
     /** Downloads an Excel export of multiple sheets in one file. */
     public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void {
         if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel', this.beans.context.getGridId())) {
-            this.excelCreator!.exportMultipleSheetsAsExcel(params);
+            this.beans.excelCreator!.exportMultipleSheetsAsExcel(params);
         }
     }
 
@@ -345,7 +307,7 @@ export class GridApi<TData = any> extends BeansProvider {
      */
     public setGridAriaProperty(property: string, value: string | null): void {
         if (!property) { return; }
-        const eGrid = this.ctrlsService.getGridBodyCtrl().getGui();
+        const eGrid = this.beans.ctrlsService.getGridBodyCtrl().getGui();
         const ariaProperty = `aria-${property}`;
 
         if (value === null) {
@@ -366,26 +328,26 @@ export class GridApi<TData = any> extends BeansProvider {
 
     /** Gets the number of top pinned rows. */
     public getPinnedTopRowCount(): number {
-        return this.pinnedRowModel.getPinnedTopRowCount();
+        return this.beans.pinnedRowModel.getPinnedTopRowCount();
     }
 
     /** Gets the number of bottom pinned rows. */
     public getPinnedBottomRowCount(): number {
-        return this.pinnedRowModel.getPinnedBottomRowCount();
+        return this.beans.pinnedRowModel.getPinnedBottomRowCount();
     }
 
     /** Gets the top pinned row with the specified index. */
     public getPinnedTopRow(index: number): IRowNode | undefined {
-        return this.pinnedRowModel.getPinnedTopRow(index);
+        return this.beans.pinnedRowModel.getPinnedTopRow(index);
     }
 
     /** Gets the bottom pinned row with the specified index. */
     public getPinnedBottomRow(index: number): IRowNode | undefined {
-        return this.pinnedRowModel.getPinnedBottomRow(index);
+        return this.beans.pinnedRowModel.getPinnedBottomRow(index);
     }
 
     public expireValueCache(): void {
-        this.valueCache.expire();
+        this.beans.valueCache.expire();
     }
 
     /**
@@ -408,7 +370,7 @@ export class GridApi<TData = any> extends BeansProvider {
 
     /** Performs change detection on all cells, refreshing cells where required. */
     public refreshCells(params: RefreshCellsParams<TData> = {}): void {
-        this.frameworkOverrides.wrapIncoming(() => this.rowRenderer.refreshCells(params));
+        this.beans.frameworkOverrides.wrapIncoming(() => this.beans.rowRenderer.refreshCells(params));
     }
 
     /** Flash rows, columns or individual cells. */
@@ -417,33 +379,33 @@ export class GridApi<TData = any> extends BeansProvider {
         if (exists(params.fadeDelay)) { warning('fade') }
         if (exists(params.flashDelay)) { warning('flash') }
 
-        this.frameworkOverrides.wrapIncoming(() => this.rowRenderer.flashCells(params));
+        this.beans.frameworkOverrides.wrapIncoming(() => this.beans.rowRenderer.flashCells(params));
     }
 
     /** Remove row(s) from the DOM and recreate them again from scratch. */
     public redrawRows(params: RedrawRowsParams<TData> = {}): void {
         const rowNodes = params ? params.rowNodes : undefined;
-        this.frameworkOverrides.wrapIncoming(() => this.rowRenderer.redrawRows(rowNodes));
+        this.beans.frameworkOverrides.wrapIncoming(() => this.beans.rowRenderer.redrawRows(rowNodes));
     }
 
     /** Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed. */
     public refreshHeader() {
-        this.frameworkOverrides.wrapIncoming(() => this.ctrlsService.getHeaderRowContainerCtrls().forEach(c => c.refresh()));
+        this.beans.frameworkOverrides.wrapIncoming(() => this.beans.ctrlsService.getHeaderRowContainerCtrls().forEach(c => c.refresh()));
     }
 
     /** Returns `true` if any filter is set. This includes quick filter, column filter, external filter or advanced filter. */
     public isAnyFilterPresent(): boolean {
-        return this.filterManager.isAnyFilterPresent();
+        return this.beans.filterManager.isAnyFilterPresent();
     }
 
     /** Returns `true` if any column filter is set, otherwise `false`. */
     public isColumnFilterPresent(): boolean {
-        return this.filterManager.isColumnFilterPresent() || this.filterManager.isAggregateFilterPresent();
+        return this.beans.filterManager.isColumnFilterPresent() || this.beans.filterManager.isAggregateFilterPresent();
     }
 
     /** Returns `true` if the Quick Filter is set, otherwise `false`. */
     public isQuickFilterPresent(): boolean {
-        return this.filterManager.isQuickFilterPresent();
+        return this.beans.filterManager.isQuickFilterPresent();
     }
 
     /**
@@ -456,7 +418,7 @@ export class GridApi<TData = any> extends BeansProvider {
      */
     public getModel(): IRowModel {
         warnOnce('Since v31.1 getModel() is deprecated. Please use the appropriate grid API methods instead.');
-        return this.rowModel;
+        return this.beans.rowModel;
     }
 
     /** 
@@ -464,7 +426,7 @@ export class GridApi<TData = any> extends BeansProvider {
      * By default rows are expanded asynchronously for best performance. Set forceSync: `true` if you need to interact with the expanded row immediately after this function.
      */
     public setRowNodeExpanded(rowNode: IRowNode, expanded: boolean, expandParents?: boolean, forceSync?: boolean): void {
-        this.expansionService.setRowNodeExpanded(rowNode, expanded, expandParents, forceSync);
+        this.beans.expansionService.setRowNodeExpanded(rowNode, expanded, expandParents, forceSync);
     }
 
     /**
@@ -477,7 +439,7 @@ export class GridApi<TData = any> extends BeansProvider {
             this.logMissingRowModel('onGroupExpandedOrCollapsed', 'clientSide');
             return;
         }
-        this.expansionService.onGroupExpandedOrCollapsed();
+        this.beans.expansionService.onGroupExpandedOrCollapsed();
     }
 
     /**
@@ -495,11 +457,11 @@ export class GridApi<TData = any> extends BeansProvider {
 
     /** Returns `true` when there are no more animation frames left to process. */
     public isAnimationFrameQueueEmpty(): boolean {
-        return this.animationFrameService.isQueueEmpty();
+        return this.beans.animationFrameService.isQueueEmpty();
     }
 
     public flushAllAnimationFrames(): void {
-        this.animationFrameService.flushAllFrames();
+        this.beans.animationFrameService.flushAllFrames();
     }
 
     /**
@@ -509,7 +471,7 @@ export class GridApi<TData = any> extends BeansProvider {
      * the row data is set.
      */
     public getRowNode(id: string): IRowNode<TData> | undefined {
-        return this.rowModel.getRowNode(id);
+        return this.beans.rowModel.getRowNode(id);
     }
 
     /**
@@ -519,14 +481,14 @@ export class GridApi<TData = any> extends BeansProvider {
     public getSizesForCurrentTheme() {
         return {
             rowHeight: this.beans.gos.getRowHeightAsNumber(),
-            headerHeight: this.columnModel.getHeaderHeight()
+            headerHeight: this.beans.columnModel.getHeaderHeight()
         };
     }
 
     /** Expand all groups. */
     public expandAll() {
         if (this.clientSideRowModel || this.serverSideRowModel) {
-            this.expansionService.expandAll(true);
+            this.beans.expansionService.expandAll(true);
         } else {
             this.logMissingRowModel('expandAll', 'clientSide', 'serverSide');
         }
@@ -535,7 +497,7 @@ export class GridApi<TData = any> extends BeansProvider {
     /** Collapse all groups. */
     public collapseAll() {
         if (this.clientSideRowModel || this.serverSideRowModel) {
-            this.expansionService.expandAll(false);
+            this.beans.expansionService.expandAll(false);
         } else {
             this.logMissingRowModel('collapseAll', 'clientSide', 'serverSide');
         }
@@ -549,7 +511,7 @@ export class GridApi<TData = any> extends BeansProvider {
      * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists.
      */
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function) {
-        this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback as any);
+        this.beans.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback as any);
     }
 
     /** Get the current Quick Filter text from the grid, or `undefined` if none is set. */
@@ -561,20 +523,20 @@ export class GridApi<TData = any> extends BeansProvider {
     /** Get the state of the Advanced Filter. Used for saving Advanced Filter state */
     public getAdvancedFilterModel(): AdvancedFilterModel | null {
         if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.getAdvancedFilterModel', this.beans.context.getGridId())) {
-            return this.filterManager.getAdvancedFilterModel();
+            return this.beans.filterManager.getAdvancedFilterModel();
         }
         return null;
     }
 
     /** Set the state of the Advanced Filter. Used for restoring Advanced Filter state */
     public setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void {
-        this.filterManager.setAdvancedFilterModel(advancedFilterModel);
+        this.beans.filterManager.setAdvancedFilterModel(advancedFilterModel);
     }
 
     /** Open the Advanced Filter Builder dialog (if enabled). */
     public showAdvancedFilterBuilder(): void {
         if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.setAdvancedFilterModel', this.beans.context.getGridId())) {
-            this.filterManager.showAdvancedFilterBuilder('api');
+            this.beans.filterManager.showAdvancedFilterBuilder('api');
         }
     }
 
@@ -602,7 +564,7 @@ export class GridApi<TData = any> extends BeansProvider {
 
         const { nodes, source, newValue } = params;
         const nodesAsRowNode = nodes as RowNode[];
-        this.selectionService.setNodesSelected({ nodes: nodesAsRowNode, source: source ?? 'api', newValue });
+        this.beans.selectionService.setNodesSelected({ nodes: nodesAsRowNode, source: source ?? 'api', newValue });
     }
 
 
@@ -611,7 +573,7 @@ export class GridApi<TData = any> extends BeansProvider {
      * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`
      */
     public selectAll(source: SelectionEventSourceType = 'apiSelectAll') {
-        this.selectionService.selectAllRowNodes({ source });
+        this.beans.selectionService.selectAllRowNodes({ source });
     }
 
     /**
@@ -619,7 +581,7 @@ export class GridApi<TData = any> extends BeansProvider {
      * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`
      */
     public deselectAll(source: SelectionEventSourceType = 'apiSelectAll') {
-        this.selectionService.deselectAllRowNodes({ source });
+        this.beans.selectionService.deselectAllRowNodes({ source });
     }
 
     /**
@@ -627,7 +589,7 @@ export class GridApi<TData = any> extends BeansProvider {
      * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
      */
     public selectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
-        this.selectionService.selectAllRowNodes({ source, justFiltered: true });
+        this.beans.selectionService.selectAllRowNodes({ source, justFiltered: true });
     }
 
     /**
@@ -635,7 +597,7 @@ export class GridApi<TData = any> extends BeansProvider {
      * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
      */
     public deselectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
-        this.selectionService.deselectAllRowNodes({ source, justFiltered: true });
+        this.beans.selectionService.deselectAllRowNodes({ source, justFiltered: true });
     }
 
     /**
@@ -650,7 +612,7 @@ export class GridApi<TData = any> extends BeansProvider {
             return null;
         }
 
-        return this.selectionService.getSelectionState() as IServerSideSelectionState | IServerSideGroupSelectionState | null;
+        return this.beans.selectionService.getSelectionState() as IServerSideSelectionState | IServerSideGroupSelectionState | null;
     }
 
     /**
@@ -665,7 +627,7 @@ export class GridApi<TData = any> extends BeansProvider {
             return;
         }
 
-        this.selectionService.setSelectionState(state, 'api');
+        this.beans.selectionService.setSelectionState(state, 'api');
     }
 
     /**
@@ -673,7 +635,7 @@ export class GridApi<TData = any> extends BeansProvider {
      * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
      */
     public selectAllOnCurrentPage(source: SelectionEventSourceType = 'apiSelectAllCurrentPage') {
-        this.selectionService.selectAllRowNodes({ source, justCurrentPage: true });
+        this.beans.selectionService.selectAllRowNodes({ source, justCurrentPage: true });
     }
 
     /**
@@ -681,22 +643,22 @@ export class GridApi<TData = any> extends BeansProvider {
      * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
      */
     public deselectAllOnCurrentPage(source: SelectionEventSourceType = 'apiSelectAllCurrentPage') {
-        this.selectionService.deselectAllRowNodes({ source, justCurrentPage: true });
+        this.beans.selectionService.deselectAllRowNodes({ source, justCurrentPage: true });
     }
 
     /** Show the 'loading' overlay. */
     public showLoadingOverlay(): void {
-        this.overlayService.showLoadingOverlay();
+        this.beans.overlayService.showLoadingOverlay();
     }
 
     /** Show the 'no rows' overlay. */
     public showNoRowsOverlay(): void {
-        this.overlayService.showNoRowsOverlay();
+        this.beans.overlayService.showNoRowsOverlay();
     }
 
     /** Hides the overlay if showing. */
     public hideOverlay(): void {
-        this.overlayService.hideOverlay();
+        this.beans.overlayService.hideOverlay();
     }
 
     /**
@@ -705,11 +667,11 @@ export class GridApi<TData = any> extends BeansProvider {
      * as the node can be traversed.
      */
     public getSelectedNodes(): IRowNode<TData>[] {
-        return this.selectionService.getSelectedNodes();
+        return this.beans.selectionService.getSelectedNodes();
     }
     /** Returns an unsorted list of selected rows (i.e. row data that you provided). */
     public getSelectedRows(): TData[] {
-        return this.selectionService.getSelectedRows();
+        return this.beans.selectionService.getSelectedRows();
     }
 
     /**
@@ -722,12 +684,12 @@ export class GridApi<TData = any> extends BeansProvider {
             this.logMissingRowModel('getBestCostNodeSelection', 'clientSide');
             return;
         }
-        return this.selectionService.getBestCostNodeSelection();
+        return this.beans.selectionService.getBestCostNodeSelection();
     }
 
     /** Retrieve rendered nodes. Due to virtualisation this will contain only the current visible rows and those in the buffer. */
     public getRenderedNodes(): IRowNode<TData>[] {
-        return this.rowRenderer.getRenderedNodes();
+        return this.beans.rowRenderer.getRenderedNodes();
     }
 
     /**
@@ -743,7 +705,7 @@ export class GridApi<TData = any> extends BeansProvider {
      * - `end` - Scrolls the column to the end of the viewport.
     */
     public ensureColumnVisible(key: string | Column, position: 'auto' | 'start' | 'middle' | 'end' = 'auto') {
-        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureColumnVisible(key, position), 'ensureVisible');
+        this.beans.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureColumnVisible(key, position), 'ensureVisible');
     }
 
     /**
@@ -752,7 +714,7 @@ export class GridApi<TData = any> extends BeansProvider {
      * This will have no effect before the firstDataRendered event has fired.
      */
     public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null) {
-        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureIndexVisible(index, position), 'ensureVisible');
+        this.beans.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureIndexVisible(index, position), 'ensureVisible');
     }
 
     /**
@@ -764,7 +726,7 @@ export class GridApi<TData = any> extends BeansProvider {
         nodeSelector: TData | IRowNode<TData> | ((row: IRowNode<TData>) => boolean),
         position: 'top' | 'bottom' | 'middle' | null = null
     ) {
-        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureNodeVisible(nodeSelector, position), 'ensureVisible');
+        this.beans.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureNodeVisible(nodeSelector, position), 'ensureVisible');
     }
 
     /**
@@ -788,7 +750,7 @@ export class GridApi<TData = any> extends BeansProvider {
      * If using the Infinite Row Model, then this gets called for each page loaded in the page cache.
      */
     public forEachNode(callback: (rowNode: IRowNode<TData>, index: number) => void, includeFooterNodes?: boolean) {
-        this.rowModel.forEachNode(callback, includeFooterNodes);
+        this.beans.rowModel.forEachNode(callback, includeFooterNodes);
     }
 
     /** Similar to `forEachNode`, except skips any filtered out data. */
@@ -815,35 +777,35 @@ export class GridApi<TData = any> extends BeansProvider {
      */
     public getFilterInstance<TFilter extends IFilter>(key: string | Column, callback?: (filter: TFilter | null) => void): TFilter | null | undefined {
         warnOnce(`'getFilterInstance' is deprecated. To get/set individual filter models, use 'getColumnFilterModel' or 'setColumnFilterModel' instead. To get hold of the filter instance, use 'getColumnFilterInstance' which returns the instance asynchronously.`);
-        return this.filterManager.getFilterInstance(key, callback);
+        return this.beans.filterManager.getFilterInstance(key, callback);
     }
 
     /**
      * Returns the filter component instance for a column.
-     * For getting/setting models for individual column filters, use `getColumnFilterModel` and `setColumnFilterModel` instead of this.
+     * For getting/setting models for individual column filters, use `getColumnFilterModel` and `setColumnFilterModel` instead of this.beans.
      * `key` can be a column ID or a `Column` object.
      */
     public getColumnFilterInstance<TFilter extends IFilter>(key: string | Column): Promise<TFilter | null | undefined> {
-        return this.filterManager.getColumnFilterInstance(key);
+        return this.beans.filterManager.getColumnFilterInstance(key);
     }
 
     /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */
     public destroyFilter(key: string | Column) {
-        const column = this.columnModel.getPrimaryColumn(key);
+        const column = this.beans.columnModel.getPrimaryColumn(key);
         if (column) {
-            return this.filterManager.destroyFilter(column, 'api');
+            return this.beans.filterManager.destroyFilter(column, 'api');
         }
     }
 
     /** Gets the status panel instance corresponding to the supplied `id`. */
     public getStatusPanel<TStatusPanel = IStatusPanel>(key: string): TStatusPanel | undefined {
         if (!ModuleRegistry.__assertRegistered(ModuleNames.StatusBarModule, 'api.getStatusPanel', this.beans.context.getGridId())) { return; }
-        const comp = this.statusBarService!.getStatusPanel(key);
+        const comp = this.beans.statusBarService!.getStatusPanel(key);
         return unwrapUserComp(comp) as any;
     }
 
     public getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null {
-        const column = this.columnModel.getPrimaryColumn(key);
+        const column = this.beans.columnModel.getPrimaryColumn(key);
         if (column) {
             return column.getColDef();
         }
@@ -853,14 +815,14 @@ export class GridApi<TData = any> extends BeansProvider {
     /**
      * Returns the current column definitions.
     */
-    public getColumnDefs(): (ColDef<TData> | ColGroupDef<TData>)[] | undefined { return this.columnModel.getColumnDefs(); }
+    public getColumnDefs(): (ColDef<TData> | ColGroupDef<TData>)[] | undefined { return this.beans.columnModel.getColumnDefs(); }
 
     /**
      * Informs the grid that a filter has changed. This is typically called after a filter change through one of the filter APIs.
      * @param source The source of the filter change event. If not specified defaults to `'api'`.
      */
     public onFilterChanged(source: FilterChangedEventSourceType = 'api') {
-        this.filterManager.onFilterChanged({ source });
+        this.beans.filterManager.onFilterChanged({ source });
     }
 
     /**
@@ -868,7 +830,7 @@ export class GridApi<TData = any> extends BeansProvider {
      * Useful if you update some values and want to get the grid to reorder them according to the new values.
      */
     public onSortChanged() {
-        this.sortController.onSortChanged('api');
+        this.beans.sortController.onSortChanged('api');
     }
 
     /**
@@ -879,12 +841,12 @@ export class GridApi<TData = any> extends BeansProvider {
      * or provide cell data types for every column.
      */
     public setFilterModel(model: FilterModel | null): void {
-        this.frameworkOverrides.wrapIncoming(() => this.filterManager.setFilterModel(model));
+        this.beans.frameworkOverrides.wrapIncoming(() => this.beans.filterManager.setFilterModel(model));
     }
 
     /** Gets the current state of all the column filters. Used for saving filter state. */
     public getFilterModel(): FilterModel {
-        return this.filterManager.getFilterModel();
+        return this.beans.filterManager.getFilterModel();
     }
 
     /**
@@ -892,7 +854,7 @@ export class GridApi<TData = any> extends BeansProvider {
      * Will return `null` if no active filter.
      */
     public getColumnFilterModel<TModel>(column: string | Column): TModel | null {
-        return this.filterManager.getColumnFilterModel(column);
+        return this.beans.filterManager.getColumnFilterModel(column);
     }
 
     /**
@@ -901,22 +863,22 @@ export class GridApi<TData = any> extends BeansProvider {
      * Must wait on the response before calling `api.onFilterChanged()`.
      */
     public setColumnFilterModel<TModel>(column: string | Column, model: TModel | null): Promise<void> {
-        return this.filterManager.setColumnFilterModel(column, model);
+        return this.beans.filterManager.setColumnFilterModel(column, model);
     }
 
     /** Returns the focused cell (or the last focused cell if the grid lost focus). */
     public getFocusedCell(): CellPosition | null {
-        return this.focusService.getFocusedCell();
+        return this.beans.focusService.getFocusedCell();
     }
 
     /** Clears the focused cell. */
     public clearFocusedCell(): void {
-        return this.focusService.clearFocusedCell();
+        return this.beans.focusService.clearFocusedCell();
     }
 
     /** Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned). */
     public setFocusedCell(rowIndex: number, colKey: string | Column, rowPinned?: RowPinnedType) {
-        this.focusService.setFocusedCell({ rowIndex, column: colKey, rowPinned, forceBrowserFocus: true });
+        this.beans.focusService.setFocusedCell({ rowIndex, column: colKey, rowPinned, forceBrowserFocus: true });
     }
 
     /** Adds a drop zone outside of the grid where rows can be dropped. */
@@ -926,10 +888,10 @@ export class GridApi<TData = any> extends BeansProvider {
 
     /** Removes an external drop zone added by `addRowDropZone`. */
     public removeRowDropZone(params: RowDropZoneParams): void {
-        const activeDropTarget = this.dragAndDropService.findExternalZone(params);
+        const activeDropTarget = this.beans.dragAndDropService.findExternalZone(params);
 
         if (activeDropTarget) {
-            this.dragAndDropService.removeDropTarget(activeDropTarget);
+            this.beans.dragAndDropService.removeDropTarget(activeDropTarget);
         }
     }
 
@@ -944,41 +906,41 @@ export class GridApi<TData = any> extends BeansProvider {
 
     /** Returns `true` if the side bar is visible. */
     public isSideBarVisible(): boolean {
-        return this.assertSideBarLoaded('isSideBarVisible') && this.sideBarService!.getSideBarComp().isDisplayed();
+        return this.assertSideBarLoaded('isSideBarVisible') && this.beans.sideBarService!.getSideBarComp().isDisplayed();
     }
 
     /** Show/hide the entire side bar, including any visible panel and the tab buttons. */
     public setSideBarVisible(show: boolean) {
         if (this.assertSideBarLoaded('setSideBarVisible')) {
-            this.sideBarService!.getSideBarComp().setDisplayed(show);
+            this.beans.sideBarService!.getSideBarComp().setDisplayed(show);
         }
     }
 
     /** Sets the side bar position relative to the grid. Possible values are `'left'` or `'right'`. */
     public setSideBarPosition(position: 'left' | 'right') {
         if (this.assertSideBarLoaded('setSideBarPosition')) {
-            this.sideBarService!.getSideBarComp().setSideBarPosition(position);
+            this.beans.sideBarService!.getSideBarComp().setSideBarPosition(position);
         }
     }
 
     /** Opens a particular tool panel. Provide the ID of the tool panel to open. */
     public openToolPanel(key: string) {
         if (this.assertSideBarLoaded('openToolPanel')) {
-            this.sideBarService!.getSideBarComp().openToolPanel(key, 'api');
+            this.beans.sideBarService!.getSideBarComp().openToolPanel(key, 'api');
         }
     }
 
     /** Closes the currently open tool panel (if any). */
     public closeToolPanel() {
         if (this.assertSideBarLoaded('closeToolPanel')) {
-            this.sideBarService!.getSideBarComp().close('api');
+            this.beans.sideBarService!.getSideBarComp().close('api');
         }
     }
 
     /** Returns the ID of the currently shown tool panel if any, otherwise `null`. */
     public getOpenedToolPanel(): string | null {
         if (this.assertSideBarLoaded('getOpenedToolPanel')) {
-            return this.sideBarService!.getSideBarComp().openedItem()
+            return this.beans.sideBarService!.getSideBarComp().openedItem()
         }
         return null;
     }
@@ -986,13 +948,13 @@ export class GridApi<TData = any> extends BeansProvider {
     /** Force refresh all tool panels by calling their `refresh` method. */
     public refreshToolPanel(): void {
         if (this.assertSideBarLoaded('refreshToolPanel')) {
-            this.sideBarService!.getSideBarComp().refresh();
+            this.beans.sideBarService!.getSideBarComp().refresh();
         }
     }
 
     /** Returns `true` if the tool panel is showing, otherwise `false`. */
     public isToolPanelShowing(): boolean {
-        return this.assertSideBarLoaded('isToolPanelShowing') && this.sideBarService!.getSideBarComp().isToolPanelShowing();
+        return this.assertSideBarLoaded('isToolPanelShowing') && this.beans.sideBarService!.getSideBarComp().isToolPanelShowing();
     }
 
     public getToolPanelInstance(id: 'columns'): IColumnToolPanel | undefined;
@@ -1002,7 +964,7 @@ export class GridApi<TData = any> extends BeansProvider {
     /** Gets the tool panel instance corresponding to the supplied `id`. */
     public getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined {
         if (this.assertSideBarLoaded('getToolPanelInstance')) {
-            const comp = this.sideBarService!.getSideBarComp().getToolPanelInstance(id);
+            const comp = this.beans.sideBarService!.getSideBarComp().getToolPanelInstance(id);
             return unwrapUserComp(comp) as any;
         }
     }
@@ -1010,7 +972,7 @@ export class GridApi<TData = any> extends BeansProvider {
     /** Returns the current side bar configuration. If a shortcut was used, returns the detailed long form. */
     public getSideBar(): SideBarDef | undefined {
         if (this.assertSideBarLoaded('getSideBar')) {
-            return this.sideBarService!.getSideBarComp().getDef();
+            return this.beans.sideBarService!.getSideBarComp().getDef();
         }
         return undefined;
     }
@@ -1018,7 +980,7 @@ export class GridApi<TData = any> extends BeansProvider {
     /** Tells the grid to recalculate the row heights. */
     public resetRowHeights() {
         if (exists(this.clientSideRowModel)) {
-            if (this.columnModel.isAutoRowHeightActive()) {
+            if (this.beans.columnModel.isAutoRowHeightActive()) {
                 console.warn('AG Grid: calling gridApi.resetRowHeights() makes no sense when using Auto Row Height.');
                 return;
             }
@@ -1035,7 +997,7 @@ export class GridApi<TData = any> extends BeansProvider {
      */
     public setRowCount(rowCount: number, maxRowFound?: boolean): void {
         if (this.serverSideRowModel) {
-            if (this.columnModel.isRowGroupEmpty()) {
+            if (this.beans.columnModel.isRowGroupEmpty()) {
                 this.serverSideRowModel.setRowCount(rowCount, maxRowFound);
                 return;
             }
@@ -1065,14 +1027,14 @@ export class GridApi<TData = any> extends BeansProvider {
      * This is useful if you want the raw value of a cell e.g. if implementing your own CSV export.
      */
     public getValue<TValue = any>(colKey: string | Column<TValue>, rowNode: IRowNode): TValue | null | undefined {
-        let column = this.columnModel.getPrimaryColumn(colKey);
+        let column = this.beans.columnModel.getPrimaryColumn(colKey);
         if (missing(column)) {
-            column = this.columnModel.getGridColumn(colKey);
+            column = this.beans.columnModel.getGridColumn(colKey);
         }
         if (missing(column)) {
             return null;
         }
-        return this.valueService.getValue(column, rowNode);
+        return this.beans.valueService.getValue(column, rowNode);
     }
 
     /**
@@ -1081,7 +1043,7 @@ export class GridApi<TData = any> extends BeansProvider {
      * Listeners will be automatically removed when the grid is destroyed.
      */
     public addEventListener(eventType: string, listener: Function): void {
-        this.apiEventService.addEventListener(eventType, listener as AgEventListener);
+        this.beans.apiEventService.addEventListener(eventType, listener as AgEventListener);
     }
 
     /**
@@ -1089,17 +1051,17 @@ export class GridApi<TData = any> extends BeansProvider {
      * Listeners will be automatically removed when the grid is destroyed.
      */
     public addGlobalListener(listener: Function): void {
-        this.apiEventService.addGlobalListener(listener as AgGlobalEventListener);
+        this.beans.apiEventService.addGlobalListener(listener as AgGlobalEventListener);
     }
 
     /** Remove an event listener. */
     public removeEventListener(eventType: string, listener: Function): void {
-        this.apiEventService.removeEventListener(eventType, listener as AgEventListener);
+        this.beans.apiEventService.removeEventListener(eventType, listener as AgEventListener);
     }
 
     /** Remove a global event listener. */
     public removeGlobalListener(listener: Function): void {
-        this.apiEventService.removeGlobalListener(listener as AgGlobalEventListener);
+        this.beans.apiEventService.removeGlobalListener(listener as AgGlobalEventListener);
     }
 
     public dispatchEvent(event: AgEvent): void {
@@ -1110,7 +1072,7 @@ export class GridApi<TData = any> extends BeansProvider {
     public destroy(): void {
 
         // Get framework link before this is destroyed
-        const preDestroyLink = `See ${this.frameworkOverrides.getDocLink('grid-lifecycle/#grid-pre-destroyed')}`;
+        const preDestroyLink = `See ${this.beans.frameworkOverrides.getDocLink('grid-lifecycle/#grid-pre-destroyed')}`;
 
         // this is needed as GridAPI is a bean, and GridAPI.destroy() is called as part
         // of context.destroy(). so we need to stop the infinite loop.
@@ -1126,13 +1088,13 @@ export class GridApi<TData = any> extends BeansProvider {
         this.destroyCalled = true;
 
         // destroy the UI first (as they use the services)
-        const gridCtrl = this.ctrlsService.getGridCtrl();
+        const gridCtrl = this.beans.ctrlsService.getGridCtrl();
         if (gridCtrl) {
             gridCtrl.destroyGridUi();
         }
 
         // destroy the services
-        this.context.destroy();
+        this.beans.context.destroy();
 
         // some users were raising support issues with regards memory leaks. the problem was the customers applications
         // were keeping references to the API. trying to educate them all would be difficult, easier to just remove
@@ -1147,13 +1109,13 @@ export class GridApi<TData = any> extends BeansProvider {
 
     /** Reset the Quick Filter cache text on every rowNode. */
     public resetQuickFilter(): void {
-        this.filterManager.resetQuickFilterCache();
+        this.beans.filterManager.resetQuickFilterCache();
     }
 
     /** Returns the list of selected cell ranges. */
     public getCellRanges(): CellRange[] | null {
-        if (this.rangeService) {
-            return this.rangeService.getCellRanges();
+        if (this.beans.rangeService) {
+            return this.beans.rangeService.getCellRanges();
         }
 
         ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'api.getCellRanges', this.beans.context.getGridId());
@@ -1162,8 +1124,8 @@ export class GridApi<TData = any> extends BeansProvider {
 
     /** Adds the provided cell range to the selected ranges. */
     public addCellRange(params: CellRangeParams): void {
-        if (this.rangeService) {
-            this.rangeService.addCellRange(params);
+        if (this.beans.rangeService) {
+            this.beans.rangeService.addCellRange(params);
             return;
         }
         ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'api.addCellRange', this.beans.context.getGridId());
@@ -1171,88 +1133,88 @@ export class GridApi<TData = any> extends BeansProvider {
 
     /** Clears the selected ranges. */
     public clearRangeSelection(): void {
-        if (this.rangeService) {
-            this.rangeService.removeAllCellRanges();
+        if (this.beans.rangeService) {
+            this.beans.rangeService.removeAllCellRanges();
         }
         ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection', this.beans.context.getGridId());
     }
     /** Reverts the last cell edit. */
     public undoCellEditing(): void {
-        this.undoRedoService.undo('api');
+        this.beans.undoRedoService.undo('api');
     }
     /** Re-applies the most recently undone cell edit. */
     public redoCellEditing(): void {
-        this.undoRedoService.redo('api');
+        this.beans.undoRedoService.redo('api');
     }
 
     /** Returns current number of available cell edit undo operations. */
     public getCurrentUndoSize(): number {
-        return this.undoRedoService.getCurrentUndoStackSize();
+        return this.beans.undoRedoService.getCurrentUndoStackSize();
     }
     /** Returns current number of available cell edit redo operations. */
     public getCurrentRedoSize(): number {
-        return this.undoRedoService.getCurrentRedoStackSize();
+        return this.beans.undoRedoService.getCurrentRedoStackSize();
     }
 
     private assertChart<T>(methodName: keyof GridApi ,func: () => T): T | undefined {
         if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.' + methodName, this.beans.context.getGridId())) {
-            return this.frameworkOverrides.wrapIncoming(() => func());
+            return this.beans.frameworkOverrides.wrapIncoming(() => func());
         }
     }
 
     /** Returns a list of models with information about the charts that are currently rendered from the grid. */
     public getChartModels(): ChartModel[] | undefined {
-        return this.assertChart('getChartModels', () => this.chartService!.getChartModels());
+        return this.assertChart('getChartModels', () => this.beans.chartService!.getChartModels());
     }
 
     /** Returns the `ChartRef` using the supplied `chartId`. */
     public getChartRef(chartId: string): ChartRef | undefined {
-        return this.assertChart('getChartRef', () => this.chartService!.getChartRef(chartId));
+        return this.assertChart('getChartRef', () => this.beans.chartService!.getChartRef(chartId));
     }
 
     /** Returns a base64-encoded image data URL for the referenced chartId. */
     public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
-        return this.assertChart('getChartImageDataURL', () => this.chartService!.getChartImageDataURL(params));
+        return this.assertChart('getChartImageDataURL', () => this.beans.chartService!.getChartImageDataURL(params));
     }
 
     /** Starts a browser-based image download for the referenced chartId. */
     public downloadChart(params: ChartDownloadParams) {
-        return this.assertChart('downloadChart', () => this.chartService!.downloadChart(params));
+        return this.assertChart('downloadChart', () => this.beans.chartService!.downloadChart(params));
     }
 
     /** Open the Chart Tool Panel. */
     public openChartToolPanel(params: OpenChartToolPanelParams) {
-        return this.assertChart('openChartToolPanel', () => this.chartService!.openChartToolPanel(params));
+        return this.assertChart('openChartToolPanel', () => this.beans.chartService!.openChartToolPanel(params));
     }
 
     /** Close the Chart Tool Panel. */
     public closeChartToolPanel(params: CloseChartToolPanelParams) {
-        return this.assertChart('closeChartToolPanel', () => this.chartService!.closeChartToolPanel(params.chartId));
+        return this.assertChart('closeChartToolPanel', () => this.beans.chartService!.closeChartToolPanel(params.chartId));
     }
 
     /** Used to programmatically create charts from a range. */
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
-        return this.assertChart('createRangeChart', () => this.chartService!.createRangeChart(params));
+        return this.assertChart('createRangeChart', () => this.beans.chartService!.createRangeChart(params));
     }
 
     /** Used to programmatically create pivot charts from a grid. */
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
-        return this.assertChart('createPivotChart', () => this.chartService!.createPivotChart(params));
+        return this.assertChart('createPivotChart', () => this.beans.chartService!.createPivotChart(params));
     }
 
     /** Used to programmatically create cross filter charts from a range. */
     public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
-        return this.assertChart('createCrossFilterChart', () => this.chartService!.createCrossFilterChart(params));
+        return this.assertChart('createCrossFilterChart', () => this.beans.chartService!.createCrossFilterChart(params));
     }
 
     /** Used to programmatically update a chart. */
     public updateChart(params: UpdateChartParams): void {
-        return this.assertChart('updateChart', () => this.chartService!.updateChart(params));
+        return this.assertChart('updateChart', () => this.beans.chartService!.updateChart(params));
     }
 
     /** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */
     public restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
-        return this.assertChart('restoreChart', () => this.chartService!.restoreChart(chartModel, chartContainer));
+        return this.assertChart('restoreChart', () => this.beans.chartService!.restoreChart(chartModel, chartContainer));
     }
 
     private assertClipboard<T>(methodName: keyof GridApi, func: () => T ): void {
@@ -1262,40 +1224,40 @@ export class GridApi<TData = any> extends BeansProvider {
     }
     /** Copies data to clipboard by following the same rules as pressing Ctrl+C. */
     public copyToClipboard(params?: IClipboardCopyParams) {
-        this.assertClipboard('copyToClipboard', () => this.clipboardService!.copyToClipboard(params));
+        this.assertClipboard('copyToClipboard', () => this.beans.clipboardService!.copyToClipboard(params));
     }
 
     /** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */
     public cutToClipboard(params?: IClipboardCopyParams) {
-        this.assertClipboard('cutToClipboard', () => this.clipboardService!.cutToClipboard(params));
+        this.assertClipboard('cutToClipboard', () => this.beans.clipboardService!.cutToClipboard(params));
     }
 
     /** Copies the selected rows to the clipboard. */
     public copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void {
-        this.assertClipboard('copySelectedRowsToClipboard', () => this.clipboardService!.copySelectedRowsToClipboard(params));
+        this.assertClipboard('copySelectedRowsToClipboard', () => this.beans.clipboardService!.copySelectedRowsToClipboard(params));
     }
 
     /** Copies the selected ranges to the clipboard. */
     public copySelectedRangeToClipboard(params?: IClipboardCopyParams): void {
-        this.assertClipboard('copySelectedRangeToClipboard', () => this.clipboardService!.copySelectedRangeToClipboard(params));
+        this.assertClipboard('copySelectedRangeToClipboard', () => this.beans.clipboardService!.copySelectedRangeToClipboard(params));
     }
 
     /** Copies the selected range down, similar to `Ctrl + D` in Excel. */
     public copySelectedRangeDown(): void {
-        this.assertClipboard('copySelectedRangeDown', () => this.clipboardService!.copyRangeDown());
+        this.assertClipboard('copySelectedRangeDown', () => this.beans.clipboardService!.copyRangeDown());
     }
 
     /** Pastes the data from the Clipboard into the focused cell of the grid. If no grid cell is focused, calling this method has no effect. */
     public pasteFromClipboard(): void {
-        this.assertClipboard('pasteFromClipboard', () => this.clipboardService!.pasteFromClipboard());
+        this.assertClipboard('pasteFromClipboard', () => this.beans.clipboardService!.pasteFromClipboard());
     }
 
     /** @deprecated v31.1 Use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere. */
     public showColumnMenuAfterButtonClick(colKey: string | Column, buttonElement: HTMLElement): void {
         warnOnce(`'showColumnMenuAfterButtonClick' is deprecated. Use 'IHeaderParams.showColumnMenu' within a header component, or 'api.showColumnMenu' elsewhere.`);
         // use grid column so works with pivot mode
-        const column = this.columnModel.getGridColumn(colKey)!;
-        this.menuService.showColumnMenu({
+        const column = this.beans.columnModel.getGridColumn(colKey)!;
+        this.beans.menuService.showColumnMenu({
             column,
             buttonElement,
             positionBy: 'button'
@@ -1306,15 +1268,15 @@ export class GridApi<TData = any> extends BeansProvider {
     public showColumnMenuAfterMouseClick(colKey: string | Column, mouseEvent: MouseEvent | Touch): void {
         warnOnce(`'showColumnMenuAfterMouseClick' is deprecated. Use 'IHeaderParams.showColumnMenuAfterMouseClick' within a header component, or 'api.showColumnMenu' elsewhere.`);
         // use grid column so works with pivot mode
-        let column = this.columnModel.getGridColumn(colKey);
+        let column = this.beans.columnModel.getGridColumn(colKey);
         if (!column) {
-            column = this.columnModel.getPrimaryColumn(colKey);
+            column = this.beans.columnModel.getPrimaryColumn(colKey);
         }
         if (!column) {
             console.error(`AG Grid: column '${colKey}' not found`);
             return;
         }
-        this.menuService.showColumnMenu({
+        this.beans.menuService.showColumnMenu({
             column,
             mouseEvent,
             positionBy: 'mouse'
@@ -1326,7 +1288,7 @@ export class GridApi<TData = any> extends BeansProvider {
      */
     public showContextMenu(params?: IContextMenuParams) {
         const { rowNode, column, value, x, y } = params || {};
-        let { x: clientX, y: clientY } = this.menuService.getContextMenuPosition(rowNode, column);
+        let { x: clientX, y: clientY } = this.beans.menuService.getContextMenuPosition(rowNode, column);
 
         if (x != null) {
             clientX = x;
@@ -1336,7 +1298,7 @@ export class GridApi<TData = any> extends BeansProvider {
             clientY = y;
         }
 
-        this.menuService.showContextMenu({
+        this.beans.menuService.showContextMenu({
             mouseEvent: new MouseEvent('mousedown', { clientX, clientY }),
             rowNode,
             column,
@@ -1346,17 +1308,17 @@ export class GridApi<TData = any> extends BeansProvider {
 
     /** Show the column chooser. */
     public showColumnChooser(params?: ColumnChooserParams): void {
-        this.menuService.showColumnChooser({ chooserParams: params });
+        this.beans.menuService.showColumnChooser({ chooserParams: params });
     }
 
     /** Show the filter for the provided column. */
     public showColumnFilter(colKey: string | Column): void {
-        const column = this.columnModel.getGridColumn(colKey);
+        const column = this.beans.columnModel.getGridColumn(colKey);
         if (!column) {
             console.error(`AG Grid: column '${colKey}' not found`);
             return;
         }
-        this.menuService.showFilterMenu({
+        this.beans.menuService.showFilterMenu({
             column,
             containerType: 'columnFilter',
             positionBy: 'auto'
@@ -1365,12 +1327,12 @@ export class GridApi<TData = any> extends BeansProvider {
 
     /** Show the column menu for the provided column. */
     public showColumnMenu(colKey: string | Column): void {
-        const column = this.columnModel.getGridColumn(colKey);
+        const column = this.beans.columnModel.getGridColumn(colKey);
         if (!column) {
             console.error(`AG Grid: column '${colKey}' not found`);
             return;
         }
-        this.menuService.showColumnMenu({
+        this.beans.menuService.showColumnMenu({
             column,
             positionBy: 'auto'
         });
@@ -1378,51 +1340,51 @@ export class GridApi<TData = any> extends BeansProvider {
 
     /** Hides any visible context menu or column menu. */
     public hidePopupMenu(): void {
-        this.menuService.hidePopupMenu();
+        this.beans.menuService.hidePopupMenu();
     }
 
     /** Hide the column chooser if visible. */
     public hideColumnChooser(): void {
-        this.menuService.hideColumnChooser();
+        this.beans.menuService.hideColumnChooser();
     }
 
     /** Navigates the grid focus to the next cell, as if tabbing. */
     public tabToNextCell(event?: KeyboardEvent): boolean {
-        return this.navigationService.tabToNextCell(false, event);
+        return this.beans.navigationService.tabToNextCell(false, event);
     }
 
     /** Navigates the grid focus to the previous cell, as if shift-tabbing. */
     public tabToPreviousCell(event?: KeyboardEvent): boolean {
-        return this.navigationService.tabToNextCell(true, event);
+        return this.beans.navigationService.tabToNextCell(true, event);
     }
 
     /** Returns the list of active cell renderer instances. */
     public getCellRendererInstances(params: GetCellRendererInstancesParams<TData> = {}): ICellRenderer[] {
-        const res = this.rowRenderer.getCellRendererInstances(params);
+        const res = this.beans.rowRenderer.getCellRendererInstances(params);
         const unwrapped = res.map(unwrapUserComp);
         return unwrapped;
     }
 
     /** Returns the list of active cell editor instances. Optionally provide parameters to restrict to certain columns / row nodes. */
     public getCellEditorInstances(params: GetCellEditorInstancesParams<TData> = {}): ICellEditor[] {
-        const res = this.rowRenderer.getCellEditorInstances(params);
+        const res = this.beans.rowRenderer.getCellEditorInstances(params);
         const unwrapped = res.map(unwrapUserComp);
         return unwrapped;
     }
 
     /** If the grid is editing, returns back details of the editing cell(s). */
     public getEditingCells(): CellPosition[] {
-        return this.rowRenderer.getEditingCells();
+        return this.beans.rowRenderer.getEditingCells();
     }
 
     /** If a cell is editing, it stops the editing. Pass `true` if you want to cancel the editing (i.e. don't accept changes). */
     public stopEditing(cancel: boolean = false): void {
-        this.rowRenderer.stopEditing(cancel);
+        this.beans.rowRenderer.stopEditing(cancel);
     }
 
     /** Start editing the provided cell. If another cell is editing, the editing will be stopped in that other cell. */
     public startEditingCell(params: StartEditingCellParams): void {
-        const column = this.columnModel.getGridColumn(params.colKey);
+        const column = this.beans.columnModel.getGridColumn(params.colKey);
         if (!column) {
             console.warn(`AG Grid: no column found for ${params.colKey}`);
             return;
@@ -1439,10 +1401,10 @@ export class GridApi<TData = any> extends BeansProvider {
 
         this.ensureColumnVisible(params.colKey);
 
-        const cell = this.navigationService.getCellByPosition(cellPosition);
+        const cell = this.beans.navigationService.getCellByPosition(cellPosition);
         if (!cell) { return; }
-        if (!this.focusService.isCellFocused(cellPosition)) {
-            this.focusService.setFocusedCell(cellPosition);
+        if (!this.beans.focusService.isCellFocused(cellPosition)) {
+            this.beans.focusService.setFocusedCell(cellPosition);
         }
         cell.startRowOrCellEdit(params.key);
     }
@@ -1450,41 +1412,41 @@ export class GridApi<TData = any> extends BeansProvider {
     /** @deprecated v31.1 addAggFunc(key, func) is  deprecated, please use addAggFuncs({ key: func }) instead. */
     public addAggFunc(key: string, aggFunc: IAggFunc): void {
         this.logDeprecation('v31.1', 'addAggFunc(key, func)', 'addAggFuncs({ key: func })');
-        if (this.aggFuncService) {
-            this.aggFuncService.addAggFuncs({ key: aggFunc });
+        if (this.beans.aggFuncService) {
+            this.beans.aggFuncService.addAggFuncs({ key: aggFunc });
         }
     }
 
     /** Add aggregations function with the specified keys. */
     public addAggFuncs(aggFuncs: { [key: string]: IAggFunc; }): void {
-        if (this.aggFuncService) {
-            this.aggFuncService.addAggFuncs(aggFuncs);
+        if (this.beans.aggFuncService) {
+            this.beans.aggFuncService.addAggFuncs(aggFuncs);
         }
     }
 
     /** Clears all aggregation functions (including those provided by the grid). */
     public clearAggFuncs(): void {
-        if (this.aggFuncService) {
-            this.aggFuncService.clear();
+        if (this.beans.aggFuncService) {
+            this.beans.aggFuncService.clear();
         }
     }
 
     /** Apply transactions to the server side row model. */
     public applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {
-        if (!this.serverSideTransactionManager) {
+        if (!this.beans.serverSideTransactionManager) {
             this.logMissingRowModel('applyServerSideTransaction', 'serverSide');
             return;
         }
-        return this.serverSideTransactionManager.applyTransaction(transaction);
+        return this.beans.serverSideTransactionManager.applyTransaction(transaction);
     }
 
     /** Batch apply transactions to the server side row model. */
     public applyServerSideTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
-        if (!this.serverSideTransactionManager) {
+        if (!this.beans.serverSideTransactionManager) {
             this.logMissingRowModel('applyServerSideTransactionAsync', 'serverSide');
             return;
         }
-        return this.serverSideTransactionManager.applyTransactionAsync(transaction, callback);
+        return this.beans.serverSideTransactionManager.applyTransactionAsync(transaction, callback);
     }
 
     /**
@@ -1516,11 +1478,11 @@ export class GridApi<TData = any> extends BeansProvider {
     }
 
     public flushServerSideAsyncTransactions(): void {
-        if (!this.serverSideTransactionManager) {
+        if (!this.beans.serverSideTransactionManager) {
             this.logMissingRowModel('flushServerSideAsyncTransactions', 'serverSide');
             return;
         }
-        return this.serverSideTransactionManager.flushAsyncTransactions();
+        return this.beans.serverSideTransactionManager.flushAsyncTransactions();
     }
 
     /** Update row data. Pass a transaction object with lists for `add`, `remove` and `update`. */
@@ -1529,7 +1491,7 @@ export class GridApi<TData = any> extends BeansProvider {
             this.logMissingRowModel('applyTransaction', 'clientSide');
             return;
         }
-        return this.frameworkOverrides.wrapIncoming(() => this.clientSideRowModel.updateRowData(rowDataTransaction));
+        return this.beans.frameworkOverrides.wrapIncoming(() => this.clientSideRowModel.updateRowData(rowDataTransaction));
     }
 
     /** Same as `applyTransaction` except executes asynchronously for efficiency. */
@@ -1538,7 +1500,7 @@ export class GridApi<TData = any> extends BeansProvider {
             this.logMissingRowModel('applyTransactionAsync', 'clientSide');
             return;
         }
-        this.frameworkOverrides.wrapIncoming(() => this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback));
+        this.beans.frameworkOverrides.wrapIncoming(() => this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback));
     }
 
     /** Executes any remaining asynchronous grid transactions, if any are waiting to be executed. */
@@ -1547,7 +1509,7 @@ export class GridApi<TData = any> extends BeansProvider {
             this.logMissingRowModel('flushAsyncTransactions', 'clientSide');
             return;
         }
-        this.frameworkOverrides.wrapIncoming(() => this.clientSideRowModel.flushAsyncTransactions());
+        this.beans.frameworkOverrides.wrapIncoming(() => this.clientSideRowModel.flushAsyncTransactions());
     }
 
     /**
@@ -1622,7 +1584,7 @@ export class GridApi<TData = any> extends BeansProvider {
      * Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.
      */
     public getCacheBlockState(): any {
-        return this.rowNodeBlockLoader.getBlockState();
+        return this.beans.rowNodeBlockLoader.getBlockState();
     }
 
     /** @deprecated v31.1 `getFirstDisplayedRow` is deprecated. Please use `getFirstDisplayedRowIndex` instead. */
@@ -1632,7 +1594,7 @@ export class GridApi<TData = any> extends BeansProvider {
     }
     /** Get the index of the first displayed row due to scrolling (includes invisible rendered rows in the buffer). */
     public getFirstDisplayedRowIndex(): number {
-        return this.rowRenderer.getFirstVirtualRenderedRow();
+        return this.beans.rowRenderer.getFirstVirtualRenderedRow();
     }
 
     /** @deprecated v31.1 `getLastDisplayedRow` is deprecated. Please use `getLastDisplayedRowIndex` instead. */
@@ -1642,17 +1604,17 @@ export class GridApi<TData = any> extends BeansProvider {
     }
     /** Get the index of the last displayed row due to scrolling (includes invisible rendered rows in the buffer). */
     public getLastDisplayedRowIndex(): number {
-        return this.rowRenderer.getLastVirtualRenderedRow();
+        return this.beans.rowRenderer.getLastVirtualRenderedRow();
     }
 
     /** Returns the displayed `RowNode` at the given `index`. */
     public getDisplayedRowAtIndex(index: number): IRowNode<TData> | undefined {
-        return this.rowModel.getRow(index);
+        return this.beans.rowModel.getRow(index);
     }
 
     /** Returns the total number of displayed rows. */
     public getDisplayedRowCount(): number {
-        return this.rowModel.getRowCount();
+        return this.beans.rowModel.getRowCount();
     }
 
 
@@ -1662,52 +1624,52 @@ export class GridApi<TData = any> extends BeansProvider {
      * Returns `false` when the last page is not known; this only happens when using Infinite Row Model.
      */
     public paginationIsLastPageFound(): boolean {
-        return this.paginationProxy.isLastPageFound();
+        return this.beans.paginationProxy.isLastPageFound();
     }
 
     /** Returns how many rows are being shown per page. */
     public paginationGetPageSize(): number {
-        return this.paginationProxy.getPageSize();
+        return this.beans.paginationProxy.getPageSize();
     }
 
     /** Returns the 0-based index of the page which is showing. */
     public paginationGetCurrentPage(): number {
-        return this.paginationProxy.getCurrentPage();
+        return this.beans.paginationProxy.getCurrentPage();
     }
 
     /** Returns the total number of pages. Returns `null` if `paginationIsLastPageFound() === false`. */
     public paginationGetTotalPages(): number {
-        return this.paginationProxy.getTotalPages();
+        return this.beans.paginationProxy.getTotalPages();
     }
 
     /** The total number of rows. Returns `null` if `paginationIsLastPageFound() === false`. */
     public paginationGetRowCount(): number {
-        return this.paginationProxy.getMasterRowCount();
+        return this.beans.paginationProxy.getMasterRowCount();
     }
 
     /** Navigates to the next page. */
     public paginationGoToNextPage(): void {
-        this.paginationProxy.goToNextPage();
+        this.beans.paginationProxy.goToNextPage();
     }
 
     /** Navigates to the previous page. */
     public paginationGoToPreviousPage(): void {
-        this.paginationProxy.goToPreviousPage();
+        this.beans.paginationProxy.goToPreviousPage();
     }
 
     /** Navigates to the first page. */
     public paginationGoToFirstPage(): void {
-        this.paginationProxy.goToFirstPage();
+        this.beans.paginationProxy.goToFirstPage();
     }
 
     /** Navigates to the last page. */
     public paginationGoToLastPage(): void {
-        this.paginationProxy.goToLastPage();
+        this.beans.paginationProxy.goToLastPage();
     }
 
     /** Goes to the specified page. If the page requested doesn't exist, it will go to the last page. */
     public paginationGoToPage(page: number): void {
-        this.paginationProxy.goToPage(page);
+        this.beans.paginationProxy.goToPage(page);
     }
 
     // Methods migrated from old ColumnApi
@@ -1725,65 +1687,65 @@ export class GridApi<TData = any> extends BeansProvider {
      **/
     public sizeColumnsToFit(paramsOrGridWidth?: ISizeColumnsToFitParams | number) {
         if (typeof paramsOrGridWidth === 'number') {
-            this.columnModel.sizeColumnsToFit(paramsOrGridWidth, 'api');
+            this.beans.columnModel.sizeColumnsToFit(paramsOrGridWidth, 'api');
         } else {
             this.gridBodyCtrl.sizeColumnsToFit(paramsOrGridWidth);
         }
     }
 
     /** Call this if you want to open or close a column group. */
-    public setColumnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void { this.columnModel.setColumnGroupOpened(group, newValue, 'api'); }
+    public setColumnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void { this.beans.columnModel.setColumnGroupOpened(group, newValue, 'api'); }
     /** Returns the column group with the given name. */
-    public getColumnGroup(name: string, instanceId?: number): ColumnGroup | null { return this.columnModel.getColumnGroup(name, instanceId); }
+    public getColumnGroup(name: string, instanceId?: number): ColumnGroup | null { return this.beans.columnModel.getColumnGroup(name, instanceId); }
     /** Returns the provided column group with the given name. */
-    public getProvidedColumnGroup(name: string): ProvidedColumnGroup | null { return this.columnModel.getProvidedColumnGroup(name); }
+    public getProvidedColumnGroup(name: string): ProvidedColumnGroup | null { return this.beans.columnModel.getProvidedColumnGroup(name); }
 
     /** Returns the display name for a column. Useful if you are doing your own header rendering and want the grid to work out if `headerValueGetter` is used, or if you are doing your own column management GUI, to know what to show as the column name. */
-    public getDisplayNameForColumn(column: Column, location: HeaderLocation): string { return this.columnModel.getDisplayNameForColumn(column, location) || ''; }
+    public getDisplayNameForColumn(column: Column, location: HeaderLocation): string { return this.beans.columnModel.getDisplayNameForColumn(column, location) || ''; }
     /** Returns the display name for a column group (when grouping columns). */
-    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string { return this.columnModel.getDisplayNameForColumnGroup(columnGroup, location) || ''; }
+    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string { return this.beans.columnModel.getDisplayNameForColumnGroup(columnGroup, location) || ''; }
 
     /** Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object). */
-    public getColumn<TValue = any>(key: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null { return this.columnModel.getPrimaryColumn(key); }
+    public getColumn<TValue = any>(key: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null { return this.beans.columnModel.getPrimaryColumn(key); }
     /** Returns all the columns, regardless of visible or not. */
-    public getColumns(): Column[] | null { return this.columnModel.getAllPrimaryColumns(); }
+    public getColumns(): Column[] | null { return this.beans.columnModel.getAllPrimaryColumns(); }
     /** Applies the state of the columns from a previous state. Returns `false` if one or more columns could not be found. */
-    public applyColumnState(params: ApplyColumnStateParams): boolean { return this.columnModel.applyColumnState(params, 'api'); }
+    public applyColumnState(params: ApplyColumnStateParams): boolean { return this.beans.columnModel.applyColumnState(params, 'api'); }
     /** Gets the state of the columns. Typically used when saving column state. */
-    public getColumnState(): ColumnState[] { return this.columnModel.getColumnState(); }
+    public getColumnState(): ColumnState[] { return this.beans.columnModel.getColumnState(); }
     /** Sets the state back to match the originally provided column definitions. */
-    public resetColumnState(): void { this.columnModel.resetColumnState('api'); }
+    public resetColumnState(): void { this.beans.columnModel.resetColumnState('api'); }
     /** Gets the state of the column groups. Typically used when saving column group state. */
-    public getColumnGroupState(): { groupId: string, open: boolean }[] { return this.columnModel.getColumnGroupState(); }
+    public getColumnGroupState(): { groupId: string, open: boolean }[] { return this.beans.columnModel.getColumnGroupState(); }
     /** Sets the state of the column group state from a previous state. */
-    public setColumnGroupState(stateItems: ({ groupId: string, open: boolean })[]): void { this.columnModel.setColumnGroupState(stateItems, 'api'); }
+    public setColumnGroupState(stateItems: ({ groupId: string, open: boolean })[]): void { this.beans.columnModel.setColumnGroupState(stateItems, 'api'); }
     /** Sets the state back to match the originally provided column definitions. */
-    public resetColumnGroupState(): void { this.columnModel.resetColumnGroupState('api'); }
+    public resetColumnGroupState(): void { this.beans.columnModel.resetColumnGroupState('api'); }
 
     /** Returns `true` if pinning left or right, otherwise `false`. */
-    public isPinning(): boolean { return this.columnModel.isPinningLeft() || this.columnModel.isPinningRight(); }
+    public isPinning(): boolean { return this.beans.columnModel.isPinningLeft() || this.beans.columnModel.isPinningRight(); }
     /** Returns `true` if pinning left, otherwise `false`. */
-    public isPinningLeft(): boolean { return this.columnModel.isPinningLeft(); }
+    public isPinningLeft(): boolean { return this.beans.columnModel.isPinningLeft(); }
     /** Returns `true` if pinning right, otherwise `false`. */
-    public isPinningRight(): boolean { return this.columnModel.isPinningRight(); }
+    public isPinningRight(): boolean { return this.beans.columnModel.isPinningRight(); }
     /** Returns the column to the right of the provided column, taking into consideration open / closed column groups and visible columns. This is useful if you need to know what column is beside yours e.g. if implementing your own cell navigation. */
-    public getDisplayedColAfter(col: Column): Column | null { return this.columnModel.getDisplayedColAfter(col); }
+    public getDisplayedColAfter(col: Column): Column | null { return this.beans.columnModel.getDisplayedColAfter(col); }
     /** Same as `getVisibleColAfter` except gives column to the left. */
-    public getDisplayedColBefore(col: Column): Column | null { return this.columnModel.getDisplayedColBefore(col); }
+    public getDisplayedColBefore(col: Column): Column | null { return this.beans.columnModel.getDisplayedColBefore(col); }
     /** @deprecated v31.1 setColumnVisible(key, visible) deprecated, please use setColumnsVisible([key], visible) instead. */
     public setColumnVisible(key: string | Column, visible: boolean): void { 
         this.logDeprecation('v31.1', 'setColumnVisible(key,visible)', 'setColumnsVisible([key],visible)');
-        this.columnModel.setColumnsVisible([key], visible, 'api'); 
+        this.beans.columnModel.setColumnsVisible([key], visible, 'api'); 
     }
     /** Sets the visibility of columns. Key can be the column ID or `Column` object. */
-    public setColumnsVisible(keys: (string | Column)[], visible: boolean): void { this.columnModel.setColumnsVisible(keys, visible, 'api'); }
+    public setColumnsVisible(keys: (string | Column)[], visible: boolean): void { this.beans.columnModel.setColumnsVisible(keys, visible, 'api'); }
     /** @deprecated v31.1 setColumnPinned(key, pinned) deprecated, please use setColumnsPinned([key], pinned) instead. */
     public setColumnPinned(key: string | ColDef | Column, pinned: ColumnPinnedType): void { 
         this.logDeprecation('v31.1', 'setColumnPinned(key,pinned)', 'setColumnsPinned([key],pinned)');
-        this.columnModel.setColumnsPinned([key], pinned, 'api'); 
+        this.beans.columnModel.setColumnsPinned([key], pinned, 'api'); 
     }
     /** Set a column's pinned / unpinned state. Key can be the column ID, field, `ColDef` object or `Column` object. */
-    public setColumnsPinned(keys: (string | ColDef |Column)[], pinned: ColumnPinnedType): void { this.columnModel.setColumnsPinned(keys, pinned, 'api'); }
+    public setColumnsPinned(keys: (string | ColDef |Column)[], pinned: ColumnPinnedType): void { this.beans.columnModel.setColumnsPinned(keys, pinned, 'api'); }
 
     /**
      * Returns all the grid columns, same as `getColumns()`, except
@@ -1792,116 +1754,116 @@ export class GridApi<TData = any> extends BeansProvider {
      *
      *  b) it's after the 'pivot' step, so if pivoting, has the value columns for the pivot.
      */
-    public getAllGridColumns(): Column[] { return this.columnModel.getAllGridColumns(); }
+    public getAllGridColumns(): Column[] { return this.beans.columnModel.getAllGridColumns(); }
     /** Same as `getAllDisplayedColumns` but just for the pinned left portion of the grid. */
-    public getDisplayedLeftColumns(): Column[] { return this.columnModel.getDisplayedLeftColumns(); }
+    public getDisplayedLeftColumns(): Column[] { return this.beans.columnModel.getDisplayedLeftColumns(); }
     /** Same as `getAllDisplayedColumns` but just for the center portion of the grid. */
-    public getDisplayedCenterColumns(): Column[] { return this.columnModel.getDisplayedCenterColumns(); }
+    public getDisplayedCenterColumns(): Column[] { return this.beans.columnModel.getDisplayedCenterColumns(); }
     /** Same as `getAllDisplayedColumns` but just for the pinned right portion of the grid. */
-    public getDisplayedRightColumns(): Column[] { return this.columnModel.getDisplayedRightColumns(); }
+    public getDisplayedRightColumns(): Column[] { return this.beans.columnModel.getDisplayedRightColumns(); }
     /** Returns all columns currently displayed (e.g. are visible and if in a group, the group is showing the columns) for the pinned left, centre and pinned right portions of the grid. */
-    public getAllDisplayedColumns(): Column[] { return this.columnModel.getAllDisplayedColumns(); }
+    public getAllDisplayedColumns(): Column[] { return this.beans.columnModel.getAllDisplayedColumns(); }
     /** Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns that are not within the viewport and therefore not rendered, due to column virtualisation, are not displayed. */
-    public getAllDisplayedVirtualColumns(): Column[] { return this.columnModel.getViewportColumns(); }
+    public getAllDisplayedVirtualColumns(): Column[] { return this.beans.columnModel.getViewportColumns(); }
 
     /** @deprecated v31.1 moveColumn(key, toIndex) deprecated, please use moveColumns([key], toIndex) instead. */
     public moveColumn(key: string | ColDef | Column, toIndex: number): void {
         this.logDeprecation('v31.1', 'moveColumn(key, toIndex)', 'moveColumns([key], toIndex)');
-        this.columnModel.moveColumns([key], toIndex, 'api');
+        this.beans.columnModel.moveColumns([key], toIndex, 'api');
     }
     /** Moves the column at `fromIdex` to `toIndex`. The column is first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
-    public moveColumnByIndex(fromIndex: number, toIndex: number): void { this.columnModel.moveColumnByIndex(fromIndex, toIndex, 'api'); }
+    public moveColumnByIndex(fromIndex: number, toIndex: number): void { this.beans.columnModel.moveColumnByIndex(fromIndex, toIndex, 'api'); }
     /** Moves columns to `toIndex`. The columns are first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
-    public moveColumns(columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number) { this.columnModel.moveColumns(columnsToMoveKeys, toIndex, 'api'); }
+    public moveColumns(columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number) { this.beans.columnModel.moveColumns(columnsToMoveKeys, toIndex, 'api'); }
     /** Move the column to a new position in the row grouping order. */
-    public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.columnModel.moveRowGroupColumn(fromIndex, toIndex, 'api'); }
+    public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.beans.columnModel.moveRowGroupColumn(fromIndex, toIndex, 'api'); }
     /** Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function. */
-    public setColumnAggFunc(key: string | ColDef | Column, aggFunc: string | IAggFunc | null | undefined): void { this.columnModel.setColumnAggFunc(key, aggFunc, 'api'); }
+    public setColumnAggFunc(key: string | ColDef | Column, aggFunc: string | IAggFunc | null | undefined): void { this.beans.columnModel.setColumnAggFunc(key, aggFunc, 'api'); }
     /** @deprecated v31.1 setColumnWidths(key, newWidth) deprecated, please use setColumnWidths( [{key: newWidth}] ) instead. */
     public setColumnWidth(key: string | ColDef | Column, newWidth: number, finished: boolean = true, source: ColumnEventType = 'api'): void {
         this.logDeprecation('v31.1', 'setColumnWidth(col, width)', 'setColumnWidths([{key: col, newWidth: width}])');
-        this.columnModel.setColumnWidths([{ key, newWidth }], false, finished, source);
+        this.beans.columnModel.setColumnWidths([{ key, newWidth }], false, finished, source);
     }
     /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
     public setColumnWidths(columnWidths: { key: string | ColDef | Column, newWidth: number }[], finished: boolean = true, source: ColumnEventType = 'api'): void {
-        this.columnModel.setColumnWidths(columnWidths, false, finished, source);
+        this.beans.columnModel.setColumnWidths(columnWidths, false, finished, source);
     }
 
     /** Get the pivot mode. */
-    public isPivotMode(): boolean { return this.columnModel.isPivotMode(); }
+    public isPivotMode(): boolean { return this.beans.columnModel.isPivotMode(); }
 
     /** Returns the pivot result column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */
-    public getPivotResultColumn<TValue = any>(pivotKeys: string[], valueColKey: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null { return this.columnModel.getSecondaryPivotColumn(pivotKeys, valueColKey); }
+    public getPivotResultColumn<TValue = any>(pivotKeys: string[], valueColKey: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null { return this.beans.columnModel.getSecondaryPivotColumn(pivotKeys, valueColKey); }
 
     /** Set the value columns to the provided list of columns. */
-    public setValueColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.setValueColumns(colKeys, 'api'); }
+    public setValueColumns(colKeys: (string | ColDef | Column)[]): void { this.beans.columnModel.setValueColumns(colKeys, 'api'); }
     /** Get a list of the existing value columns. */
-    public getValueColumns(): Column[] { return this.columnModel.getValueColumns(); }
+    public getValueColumns(): Column[] { return this.beans.columnModel.getValueColumns(); }
     /** @deprecated v31.1 removeValueColumn(colKey) deprecated, please use removeValueColumns([colKey]) instead. */
     public removeValueColumn(colKey: (string | ColDef | Column)): void {
         this.logDeprecation('v31.1', 'removeValueColumn(colKey)', 'removeValueColumns([colKey])');
-        this.columnModel.removeValueColumns([colKey], 'api'); 
+        this.beans.columnModel.removeValueColumns([colKey], 'api'); 
     }
     /** Remove the given list of columns from the existing set of value columns. */
-    public removeValueColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.removeValueColumns(colKeys, 'api'); }
+    public removeValueColumns(colKeys: (string | ColDef | Column)[]): void { this.beans.columnModel.removeValueColumns(colKeys, 'api'); }
     /** @deprecated v31.1 addValueColumn(colKey) deprecated, please use addValueColumns([colKey]) instead. */
     public addValueColumn(colKey: (string | ColDef | Column)): void {
         this.logDeprecation('v31.1', 'addValueColumn(colKey)', 'addValueColumns([colKey])');
-        this.columnModel.addValueColumns([colKey], 'api');
+        this.beans.columnModel.addValueColumns([colKey], 'api');
     }
     /** Add the given list of columns to the existing set of value columns. */
-    public addValueColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.addValueColumns(colKeys, 'api'); }
+    public addValueColumns(colKeys: (string | ColDef | Column)[]): void { this.beans.columnModel.addValueColumns(colKeys, 'api'); }
 
     /** Set the row group columns. */
-    public setRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.setRowGroupColumns(colKeys, 'api'); }
+    public setRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.beans.columnModel.setRowGroupColumns(colKeys, 'api'); }
     /** @deprecated v31.1 removeRowGroupColumn(colKey) deprecated, please use removeRowGroupColumns([colKey]) instead. */
     public removeRowGroupColumn(colKey: string | ColDef | Column): void {
         this.logDeprecation('v31.1', 'removeRowGroupColumn(colKey)', 'removeRowGroupColumns([colKey])');
-        this.columnModel.removeRowGroupColumns([colKey], 'api');
+        this.beans.columnModel.removeRowGroupColumns([colKey], 'api');
     }
     /** Remove columns from the row groups. */
-    public removeRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.removeRowGroupColumns(colKeys, 'api'); }
+    public removeRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.beans.columnModel.removeRowGroupColumns(colKeys, 'api'); }
     /** @deprecated v31.1 addRowGroupColumn(colKey) deprecated, please use addRowGroupColumns([colKey]) instead. */
     public addRowGroupColumn(colKey: string | ColDef | Column): void { 
         this.logDeprecation('v31.1', 'addRowGroupColumn(colKey)', 'addRowGroupColumns([colKey])');
-        this.columnModel.addRowGroupColumns([colKey], 'api');
+        this.beans.columnModel.addRowGroupColumns([colKey], 'api');
     }
     /** Add columns to the row groups. */
-    public addRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.addRowGroupColumns(colKeys, 'api'); }
+    public addRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.beans.columnModel.addRowGroupColumns(colKeys, 'api'); }
     /** Get row group columns. */
-    public getRowGroupColumns(): Column[] { return this.columnModel.getRowGroupColumns(); }
+    public getRowGroupColumns(): Column[] { return this.beans.columnModel.getRowGroupColumns(); }
 
     /** Set the pivot columns. */
-    public setPivotColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.setPivotColumns(colKeys, 'api'); }
+    public setPivotColumns(colKeys: (string | ColDef | Column)[]): void { this.beans.columnModel.setPivotColumns(colKeys, 'api'); }
     /** @deprecated v31.1 removePivotColumn(colKey) deprecated, please use removePivotColumns([colKey]) instead. */
     public removePivotColumn(colKey: string | ColDef | Column): void {
         this.logDeprecation('v31.1', 'removePivotColumn(colKey)', 'removePivotColumns([colKey])');
-        this.columnModel.removePivotColumns([colKey], 'api');
+        this.beans.columnModel.removePivotColumns([colKey], 'api');
     }
     /** Remove pivot columns. */
-    public removePivotColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.removePivotColumns(colKeys, 'api'); }
+    public removePivotColumns(colKeys: (string | ColDef | Column)[]): void { this.beans.columnModel.removePivotColumns(colKeys, 'api'); }
     /** @deprecated v31.1 addPivotColumn(colKey) deprecated, please use addPivotColumns([colKey]) instead. */
     public addPivotColumn(colKey: string | ColDef | Column): void {
         this.logDeprecation('v31.1', 'addPivotColumn(colKey)', 'addPivotColumns([colKey])');
-        this.columnModel.addPivotColumns([colKey], 'api');
+        this.beans.columnModel.addPivotColumns([colKey], 'api');
     }
     /** Add pivot columns. */
-    public addPivotColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.addPivotColumns(colKeys, 'api'); }
+    public addPivotColumns(colKeys: (string | ColDef | Column)[]): void { this.beans.columnModel.addPivotColumns(colKeys, 'api'); }
     /** Get the pivot columns. */
-    public getPivotColumns(): Column[] { return this.columnModel.getPivotColumns(); }
+    public getPivotColumns(): Column[] { return this.beans.columnModel.getPivotColumns(); }
 
     /** Same as `getAllDisplayedColumnGroups` but just for the pinned left portion of the grid. */
-    public getLeftDisplayedColumnGroups(): IHeaderColumn[] { return this.columnModel.getDisplayedTreeLeft(); }
+    public getLeftDisplayedColumnGroups(): IHeaderColumn[] { return this.beans.columnModel.getDisplayedTreeLeft(); }
     /** Same as `getAllDisplayedColumnGroups` but just for the center portion of the grid. */
-    public getCenterDisplayedColumnGroups(): IHeaderColumn[] { return this.columnModel.getDisplayedTreeCentre(); }
+    public getCenterDisplayedColumnGroups(): IHeaderColumn[] { return this.beans.columnModel.getDisplayedTreeCentre(); }
     /** Same as `getAllDisplayedColumnGroups` but just for the pinned right portion of the grid. */
-    public getRightDisplayedColumnGroups(): IHeaderColumn[] { return this.columnModel.getDisplayedTreeRight(); }
+    public getRightDisplayedColumnGroups(): IHeaderColumn[] { return this.beans.columnModel.getDisplayedTreeRight(); }
     /** Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping, these return the top level groups - you can navigate down through each one to get the other lower level headers and finally the columns at the bottom. */
-    public getAllDisplayedColumnGroups(): IHeaderColumn[] | null { return this.columnModel.getAllDisplayedTrees(); }
+    public getAllDisplayedColumnGroups(): IHeaderColumn[] | null { return this.beans.columnModel.getAllDisplayedTrees(); }
     /** @deprecated v31.1 autoSizeColumn(key) deprecated, please use autoSizeColumns([colKey]) instead. */
     public autoSizeColumn(key: string | ColDef | Column, skipHeader?: boolean): void {
         this.logDeprecation('v31.1', 'autoSizeColumn(key, skipHeader)', 'autoSizeColumns([key], skipHeader)');
-        return this.columnModel.autoSizeColumns({ columns: [key], skipHeader: skipHeader, source: 'api'});
+        return this.beans.columnModel.autoSizeColumns({ columns: [key], skipHeader: skipHeader, source: 'api'});
     }
 
     /**
@@ -1910,7 +1872,7 @@ export class GridApi<TData = any> extends BeansProvider {
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      */
     public autoSizeColumns(keys: (string | ColDef | Column)[], skipHeader?: boolean): void {
-        this.columnModel.autoSizeColumns({ columns: keys, skipHeader: skipHeader, source: 'api'});
+        this.beans.columnModel.autoSizeColumns({ columns: keys, skipHeader: skipHeader, source: 'api'});
     }
 
     /**
@@ -1918,17 +1880,17 @@ export class GridApi<TData = any> extends BeansProvider {
      * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      */
-    public autoSizeAllColumns(skipHeader?: boolean): void { this.columnModel.autoSizeAllColumns('api', skipHeader); }
+    public autoSizeAllColumns(skipHeader?: boolean): void { this.beans.columnModel.autoSizeAllColumns('api', skipHeader); }
 
     /** Set the pivot result columns. */
-    public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.columnModel.setSecondaryColumns(colDefs, 'api'); }
+    public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.beans.columnModel.setSecondaryColumns(colDefs, 'api'); }
 
     /** Returns the grid's pivot result columns. */
-    public getPivotResultColumns(): Column[] | null { return this.columnModel.getSecondaryColumns(); }
+    public getPivotResultColumns(): Column[] | null { return this.beans.columnModel.getSecondaryColumns(); }
 
     /** Get the current state of the grid. Can be used in conjunction with the `initialState` grid option to save and restore grid state. */
     public getState(): GridState {
-        return this.stateService.getState();
+        return this.beans.stateService.getState();
     }
 
     /**

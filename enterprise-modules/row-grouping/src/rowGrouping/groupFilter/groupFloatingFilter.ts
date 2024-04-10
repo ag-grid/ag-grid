@@ -1,25 +1,14 @@
 import {
-    _,
     AgInputTextField,
-    AgPromise,
-    Autowired,
-    ColumnModel,
-    Column,
-    Component,
-    FilterChangedEvent,
-    FilterManager,
-    IFloatingFilterComp,
+    AgPromise, Column, ColumnEvent, Component,
+    FilterChangedEvent, IFloatingFilterComp,
     IFloatingFilterParams,
-    RefSelector,
-    UserCompDetails,
-    ColumnEvent,
+    RefSelector, _
 } from '@ag-grid-community/core';
 import { GroupFilter } from './groupFilter';
 
 export class GroupFloatingFilterComp extends Component implements IFloatingFilterComp<GroupFilter> {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-
+    
     @RefSelector('eFloatingFilter') private readonly eFloatingFilter: HTMLElement;
     
     private params: IFloatingFilterParams<GroupFilter>;
@@ -27,7 +16,6 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     private parentFilterInstance: GroupFilter;
     private underlyingFloatingFilter: IFloatingFilterComp | undefined;
     private showingUnderlyingFloatingFilter: boolean;
-    private compDetails: UserCompDetails;
     private haveAddedColumnListeners: boolean = false;
     
     constructor() {
@@ -69,7 +57,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     }
 
     private setParams(): void {
-        const displayName = this.columnModel.getDisplayNameForColumn(this.params.column, 'header', true);
+        const displayName = this.beans.columnModel.getDisplayNameForColumn(this.params.column, 'header', true);
         const translate = this.beans.localeService.getLocaleTextFunc();
         this.eFloatingFilterText?.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }
@@ -97,9 +85,8 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         const column = this.parentFilterInstance.getSelectedColumn();
         // we can only show the underlying filter if there is one instance (e.g. the underlying column is not visible)
         if (column && !column.isVisible()) {
-            const compDetails = this.filterManager.getFloatingFilterCompDetails(column, this.params.showParentFilter);
+            const compDetails = this.beans.filterManager.getFloatingFilterCompDetails(column, this.params.showParentFilter);
             if (compDetails) {
-                this.compDetails = compDetails;
                 if (!this.haveAddedColumnListeners) {
                     this.haveAddedColumnListeners = true;
                     this.addManagedListener(column, Column.EVENT_VISIBLE_CHANGED, this.onColumnVisibleChanged.bind(this));
@@ -124,7 +111,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
 
     private onColDefChanged(event: ColumnEvent): void {
         if (!event.column) { return; }
-        const compDetails = this.filterManager.getFloatingFilterCompDetails(event.column, this.params.showParentFilter);
+        const compDetails = this.beans.filterManager.getFloatingFilterCompDetails(event.column, this.params.showParentFilter);
         if (compDetails) {
             if (this.underlyingFloatingFilter?.refresh) {
                 this.underlyingFloatingFilter.refresh(compDetails.params);

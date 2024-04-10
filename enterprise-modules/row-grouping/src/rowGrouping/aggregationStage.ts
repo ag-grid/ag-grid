@@ -1,20 +1,6 @@
 import {
-    Bean,
-    BeanStub,
-    IRowNodeStage,
-    Autowired,
-    ColumnModel,
-    ValueService,
-    RowNode,
-    Column,
-    StageExecuteParams,
-    IAggFunc,
-    ChangedPath,
-    IAggFuncParams,
-    _,
-    GetGroupRowAggParams,
-    WithoutGridCommon,
-    GridOptions,
+    Autowired, Bean,
+    BeanStub, ChangedPath, Column, GetGroupRowAggParams, IAggFunc, IAggFuncParams, IRowNodeStage, RowNode, StageExecuteParams, WithoutGridCommon, _
 } from "@ag-grid-community/core";
 import { AggFuncService } from "./aggFuncService";
 
@@ -31,8 +17,6 @@ interface AggregationDetails {
 @Bean('aggregationStage')
 export class AggregationStage extends BeanStub implements IRowNodeStage {
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('valueService') private valueService: ValueService;
     @Autowired('aggFuncService') private aggFuncService: AggFuncService;
 
     // it's possible to recompute the aggregate without doing the other parts
@@ -43,7 +27,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         // and there is no cleanup to be done (as value columns don't change between transactions or change
         // detections). if no value columns and no changed path, means we have to go through all nodes in
         // case we need to clean up agg data from before.
-        const noValueColumns = _.missingOrEmpty(this.columnModel.getValueColumns());
+        const noValueColumns = _.missingOrEmpty(this.beans.columnModel.getValueColumns());
         const noUserAgg = !this.beans.gos.getCallback('getGroupRowAgg');
         const changedPathActive = params.changedPath && params.changedPath.isActive();
         if (noValueColumns && noUserAgg && changedPathActive) { return; }
@@ -55,10 +39,10 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
 
     private createAggDetails(params: StageExecuteParams): AggregationDetails {
 
-        const pivotActive = this.columnModel.isPivotActive();
+        const pivotActive = this.beans.columnModel.isPivotActive();
 
-        const measureColumns = this.columnModel.getValueColumns();
-        const pivotColumns = pivotActive ? this.columnModel.getPivotColumns() : [];
+        const measureColumns = this.beans.columnModel.getValueColumns();
+        const pivotColumns = pivotActive ? this.beans.columnModel.getPivotColumns() : [];
 
         const aggDetails: AggregationDetails = {
             alwaysAggregateAtRootLevel: this.beans.gos.get('alwaysAggregateAtRootLevel'),
@@ -97,7 +81,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
             const isRootNode = rowNode.level === -1;
             // if total footer is displayed, the value is in use
             if (isRootNode && !aggDetails.groupIncludeTotalFooter) {
-                const notPivoting = !this.columnModel.isPivotMode();
+                const notPivoting = !this.beans.columnModel.isPivotMode();
                 if (!aggDetails.alwaysAggregateAtRootLevel && notPivoting) {
                     rowNode.setAggData(null);
                     return;
@@ -138,7 +122,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     private aggregateRowNodeUsingValuesAndPivot(rowNode: RowNode): any {
         const result: any = {};
 
-        const secondaryColumns = this.columnModel.getSecondaryColumns() ?? [];
+        const secondaryColumns = this.beans.columnModel.getSecondaryColumns() ?? [];
         let canSkipTotalColumns = true;
         for (let i = 0; i < secondaryColumns.length; i++) {
             const secondaryCol = secondaryColumns[i];
@@ -224,7 +208,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
             return [];
         }
 
-        return mapPointer.map((rowNode: RowNode) => this.valueService.getValue(valueColumn, rowNode));
+        return mapPointer.map((rowNode: RowNode) => this.beans.valueService.getValue(valueColumn, rowNode));
     }
 
     private getValuesNormal(rowNode: RowNode, valueColumns: Column[], filteredOnly: boolean): any[][] {
@@ -243,7 +227,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
                 const valueColumn = valueColumns[j];
                 // if the row is a group, then it will only have an agg result value,
                 // which means valueGetter is never used.
-                const value = this.valueService.getValue(valueColumn, childNode);
+                const value = this.beans.valueService.getValue(valueColumn, childNode);
                 values[j].push(value);
             }
         }

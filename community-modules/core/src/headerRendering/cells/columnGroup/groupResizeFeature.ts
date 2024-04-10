@@ -34,7 +34,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
 
     @Autowired('horizontalResizeService') private readonly horizontalResizeService: HorizontalResizeService;
     @Autowired('autoWidthCalculator') private readonly autoWidthCalculator: AutoWidthCalculator;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    
 
     constructor(comp: IHeaderGroupCellComp, eResize: HTMLElement,  pinned: ColumnPinnedType, columnGroup: ColumnGroup) {
         super();
@@ -78,7 +78,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
                 });
 
                 if (keys.length > 0) {
-                    this.columnModel.autoSizeColumns({
+                    this.beans.columnModel.autoSizeColumns({
                         columns: keys,
                         skipHeader: skipHeaderOnAutoSize,
                         stopAtGroup: this.columnGroup,
@@ -118,7 +118,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         let groupAfter: ColumnGroup | null = null;
 
         if (shiftKey) {
-            groupAfter = this.columnModel.getDisplayedGroupAfter(this.columnGroup);
+            groupAfter = this.beans.columnModel.getDisplayedGroupAfter(this.columnGroup);
         }
 
         if (groupAfter) {
@@ -205,7 +205,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             });
         }
 
-        this.columnModel.resizeColumnSets({
+        this.beans.columnModel.resizeColumnSets({
             resizeSets,
             finished,
             source: source

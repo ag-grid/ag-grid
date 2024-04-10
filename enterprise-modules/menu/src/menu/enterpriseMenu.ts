@@ -1,38 +1,13 @@
 import {
-    _,
-    AgEvent,
-    Autowired,
+    AgEvent, AgGridEvent, AgMenuItemComponent, AgMenuList, AgPromise, Autowired,
     Bean,
-    BeanStub,
-    Column,
-    ColumnModel,
-    ColumnMenuTab,
-    FilterManager,
-    FilterWrapper,
-    IMenuFactory,
-    ModuleNames,
-    ModuleRegistry,
-    PopupService,
+    BeanStub, CloseMenuEvent, Column, ColumnMenuTab, ColumnMenuVisibleChangedEvent, Component, ContainerType,
+    CtrlsService, Events, FilterWrapperComp, FocusService,
+    IAfterGuiAttachedParams, IMenuFactory, MenuService, ModuleNames,
+    ModuleRegistry, PopupEventParams, PopupService,
     PostConstruct,
-    RefSelector,
-    AgPromise,
-    TabbedItem,
-    TabbedLayout,
-    FocusService,
-    IAfterGuiAttachedParams,
-    ContainerType,
-    CtrlsService,
-    AgMenuList,
-    AgMenuItemComponent,
-    PopupEventParams,
-    Component,
-    CloseMenuEvent,
-    MenuService,
-    AgGridEvent,
-    ColumnMenuVisibleChangedEvent,
-    Events,
-    WithoutGridCommon,
-    FilterWrapperComp
+    RefSelector, TabbedItem,
+    TabbedLayout, WithoutGridCommon, _
 } from '@ag-grid-community/core';
 import { ColumnChooserFactory } from './columnChooserFactory';
 import { ColumnMenuFactory } from './columnMenuFactory';
@@ -53,9 +28,7 @@ interface EnterpriseColumnMenu {
 export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     @Autowired('popupService') private readonly popupService: PopupService;
     @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
+    
     @Autowired('menuUtils') private readonly menuUtils: MenuUtils;
     @Autowired('menuService') private readonly menuService: MenuService;
 
@@ -224,14 +197,14 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         const restoreFocusParams = {
             column,
             headerPosition: this.focusService.getFocusedHeader(),
-            columnIndex: this.columnModel.getAllDisplayedColumns().indexOf(column!),
+            columnIndex: this.beans.columnModel.getAllDisplayedColumns().indexOf(column!),
             eventSource
         };
         const menu = this.createMenu(column, restoreFocusParams, restrictToTabs, eventSource);
         return {
             menu,
             eMenuGui: menu.getGui(),
-            anchorToElement: eventSource || this.ctrlsService.getGridBodyCtrl().getGui(),
+            anchorToElement: eventSource || this.beans.ctrlsService.getGridBodyCtrl().getGui(),
             restoreFocusParams
         }
     }
@@ -265,7 +238,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             return true;
         }
         // Determine whether there are any tabs to show in the menu, given that the filter tab may be hidden
-        const isFilterDisabled = !this.filterManager.isFilterAllowed(column);
+        const isFilterDisabled = !this.beans.filterManager.isFilterAllowed(column);
         const tabs = column.getColDef().menuTabs ?? TabbedColumnMenu.TABS_DEFAULT;
         const numActiveTabs = isFilterDisabled && tabs.includes(TabbedColumnMenu.TAB_FILTER)
             ? tabs.length - 1
@@ -289,7 +262,6 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
     public static TAB_COLUMNS: 'columnsMenuTab' = 'columnsMenuTab';
     public static TABS_DEFAULT: ColumnMenuTab[] = [TabbedColumnMenu.TAB_GENERAL, TabbedColumnMenu.TAB_FILTER, TabbedColumnMenu.TAB_COLUMNS];
 
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnChooserFactory') private readonly columnChooserFactory: ColumnChooserFactory;
     @Autowired('columnMenuFactory') private readonly columnMenuFactory: ColumnMenuFactory;
     @Autowired('menuUtils') private readonly menuUtils: MenuUtils;
@@ -318,7 +290,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
         this.tabFactories[TabbedColumnMenu.TAB_COLUMNS] = this.createColumnsPanel.bind(this);
 
         this.includeChecks[TabbedColumnMenu.TAB_GENERAL] = () => true;
-        this.includeChecks[TabbedColumnMenu.TAB_FILTER] = () => column ? this.filterManager.isFilterAllowed(column) : false;
+        this.includeChecks[TabbedColumnMenu.TAB_FILTER] = () => column ? this.beans.filterManager.isFilterAllowed(column) : false;
         this.includeChecks[TabbedColumnMenu.TAB_COLUMNS] = () => true;
     }
 

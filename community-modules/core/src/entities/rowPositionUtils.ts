@@ -6,6 +6,7 @@ import { RowPinnedType } from "../interfaces/iRowNode";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists } from "../utils/generic";
 import { PaginationProxy } from "../pagination/paginationProxy";
+import { CellPosition } from "./cellPositionUtils";
 
 export interface RowPosition {
     /** A positive number from 0 to n, where n is the last row the grid is rendering
@@ -18,21 +19,18 @@ export interface RowPosition {
 
 @Bean('rowPositionUtils')
 export class RowPositionUtils extends BeanStub {
-
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-
+    
     public getFirstRow(): RowPosition | null {
         let rowIndex = 0;
         let rowPinned: RowPinnedType;
+        const { pinnedRowModel, paginationProxy, rowModel} = this.beans;
 
-        if (this.pinnedRowModel.getPinnedTopRowCount()) {
+        if (pinnedRowModel.getPinnedTopRowCount()) {
             rowPinned = 'top';
-        } else if (this.rowModel.getRowCount()) {
+        } else if (rowModel.getRowCount()) {
             rowPinned = null;
-            rowIndex = this.paginationProxy.getPageFirstRow();
-        } else if (this.pinnedRowModel.getPinnedBottomRowCount()) {
+            rowIndex = paginationProxy.getPageFirstRow();
+        } else if (pinnedRowModel.getPinnedBottomRowCount()) {
             rowPinned = 'bottom';
         }
 
@@ -42,16 +40,17 @@ export class RowPositionUtils extends BeanStub {
     public getLastRow(): RowPosition | null {
         let rowIndex;
         let rowPinned: RowPinnedType = null;
+        const { pinnedRowModel, paginationProxy, rowModel} = this.beans;
 
-        const pinnedBottomCount = this.pinnedRowModel.getPinnedBottomRowCount();
-        const pinnedTopCount = this.pinnedRowModel.getPinnedTopRowCount();
+        const pinnedBottomCount = pinnedRowModel.getPinnedBottomRowCount();
+        const pinnedTopCount = pinnedRowModel.getPinnedTopRowCount();
 
         if (pinnedBottomCount) {
             rowPinned = 'bottom';
             rowIndex = pinnedBottomCount - 1;
-        } else if (this.rowModel.getRowCount()) {
+        } else if (rowModel.getRowCount()) {
             rowPinned = null;
-            rowIndex = this.paginationProxy.getPageLastRow();
+            rowIndex = paginationProxy.getPageLastRow();
         } else if (pinnedTopCount) {
             rowPinned = 'top';
             rowIndex = pinnedTopCount - 1;
@@ -60,14 +59,16 @@ export class RowPositionUtils extends BeanStub {
         return rowIndex === undefined ? null : { rowIndex, rowPinned };
     }
 
-    public getRowNode(gridRow: RowPosition): RowNode | undefined {
+    public getRowNode(gridRow: RowPosition | CellPosition): RowNode | undefined {
+        const { pinnedRowModel, rowModel} = this.beans;
+
         switch (gridRow.rowPinned) {
             case 'top':
-                return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
+                return pinnedRowModel.getPinnedTopRow(gridRow.rowIndex);
             case 'bottom':
-                return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
+                return pinnedRowModel.getPinnedBottomRow(gridRow.rowIndex);
             default:
-                return this.rowModel.getRow(gridRow.rowIndex);
+                return rowModel.getRow(gridRow.rowIndex);
         }
     }
 

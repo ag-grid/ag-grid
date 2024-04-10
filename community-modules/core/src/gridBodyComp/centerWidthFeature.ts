@@ -1,13 +1,8 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired, PostConstruct } from "../context/context";
-import { ColumnModel } from "../columns/columnModel";
+import { PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
-import { ScrollVisibleService } from "./scrollVisibleService";
 
 export class CenterWidthFeature extends BeanStub {
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
     constructor(
         private readonly callback: (width: number) => void,
@@ -35,9 +30,9 @@ export class CenterWidthFeature extends BeanStub {
     }
 
     private setWidth(): void {
-        const {columnModel} = this;
+        const {columnModel, scrollVisibleService, gos } = this.beans;
 
-        const printLayout = this.beans.gos.isDomLayout('print');
+        const printLayout = gos.isDomLayout('print');
 
         const centerWidth = columnModel.getBodyContainerWidth();
         const leftWidth = columnModel.getDisplayedColumnsLeftWidth();
@@ -51,9 +46,9 @@ export class CenterWidthFeature extends BeanStub {
             totalWidth = centerWidth;
 
             if (this.addSpacer) {
-                const relevantWidth = this.beans.gos.get('enableRtl') ? leftWidth : rightWidth;
-                if (relevantWidth === 0 && this.scrollVisibleService.isVerticalScrollShowing()) {
-                    totalWidth += this.beans.gos.getScrollbarWidth();
+                const relevantWidth = gos.get('enableRtl') ? leftWidth : rightWidth;
+                if (relevantWidth === 0 && scrollVisibleService.isVerticalScrollShowing()) {
+                    totalWidth += gos.getScrollbarWidth();
                 }
             }
         }

@@ -228,7 +228,7 @@ export class Component extends BeanStub {
         this.wireQuerySelectors();
 
         // context will not be available when user sets template in constructor
-        if (!!this.getContext()) {
+        if (!!this.beans?.context) {
             this.createChildComponentsFromTags(this.getGui(), paramsMap);
         }
     }

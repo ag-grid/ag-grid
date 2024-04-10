@@ -1,10 +1,7 @@
 import {
     Autowired,
-    Bean,
-    IRowNodeStage,
-    StageExecuteParams,
-    BeanStub,
-    GridOptions
+    Bean, BeanStub, IRowNodeStage,
+    StageExecuteParams
 } from "@ag-grid-community/core";
 
 import { FilterService } from "./filterService";

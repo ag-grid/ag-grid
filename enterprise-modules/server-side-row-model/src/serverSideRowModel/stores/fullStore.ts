@@ -1,11 +1,6 @@
 import {
-    _,
     Autowired,
-    Column,
-    ColumnModel,
-    Events,
-    FilterManager,
-    IServerSideStore,
+    Column, Events, IRowNode, IsApplyServerSideTransactionParams, IServerSideStore,
     LoadSuccessParams,
     NumberSequence,
     PostConstruct,
@@ -21,32 +16,23 @@ import {
     ServerSideGroupLevelState,
     ServerSideTransaction,
     ServerSideTransactionResult,
-    ServerSideTransactionResultStatus,
-    SortController,
-    StoreRefreshAfterParams,
+    ServerSideTransactionResultStatus, StoreRefreshAfterParams,
     StoreUpdatedEvent,
-    WithoutGridCommon,
-    IsApplyServerSideTransactionParams,
-    IRowNode,
-    ISelectionService,
+    WithoutGridCommon, _
 } from "@ag-grid-community/core";
-import { SSRMParams, ServerSideRowModel } from "../serverSideRowModel";
-import { StoreUtils } from "./storeUtils";
 import { BlockUtils } from "../blocks/blockUtils";
 import { NodeManager } from "../nodeManager";
+import { ServerSideRowModel, SSRMParams } from "../serverSideRowModel";
 import { TransactionManager } from "../transactionManager";
+import { StoreUtils } from "./storeUtils";
 
 export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
-    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('selectionService') private selectionService: ISelectionService;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
-    @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('ssrmTransactionManager') private transactionManager: TransactionManager;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
 
@@ -99,7 +85,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         if (!this.usingTreeData && this.groupLevel) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field!;
-            this.rowGroupColumn = this.columnModel.getRowGroupColumns()[this.level];
+            this.rowGroupColumn = this.beans.columnModel.getRowGroupColumns()[this.level];
         }
 
 
@@ -314,7 +300,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     private sortRowNodes(): void {
         const serverIsSorting = this.storeUtils.isServerSideSortAllLevels() || this.storeUtils.isServerSideSortOnServer();
-        const sortOptions = this.sortController.getSortOptions();
+        const sortOptions = this.beans.sortController.getSortOptions();
         const noSortApplied = !sortOptions || sortOptions.length == 0;
         if (serverIsSorting || noSortApplied) {
             this.nodesAfterSort = this.nodesAfterFilter;
@@ -340,7 +326,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         }
 
         this.nodesAfterFilter = this.allRowNodes.filter(
-            rowNode => this.filterManager.doesRowPassFilter({ rowNode: rowNode })
+            rowNode => this.beans.filterManager.doesRowPassFilter({ rowNode: rowNode })
         );
     }
 
@@ -582,7 +568,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private updateSelection(nodesToUnselect: RowNode[]): void {
         const selectionChanged = nodesToUnselect.length > 0;
         if (selectionChanged) {
-            this.selectionService.setNodesSelected({
+            this.beans.selectionService.setNodesSelected({
                 newValue: false,
                 nodes: nodesToUnselect,
                 suppressFinishActions: true,

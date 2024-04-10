@@ -33,7 +33,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     @Optional('rangeService') private rangeService?: IRangeService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
-    @Autowired('rowModel') private rowModel: IRowModel;
+    
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
 
@@ -74,7 +74,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
     private isValidRowModel() {
         // this component is only really useful with client or server side rowmodels
-        const rowModelType = this.rowModel.getType();
+        const rowModelType = this.beans.rowModel.getType();
         return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     }
 

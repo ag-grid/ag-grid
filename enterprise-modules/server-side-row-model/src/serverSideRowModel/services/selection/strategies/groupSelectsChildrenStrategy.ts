@@ -1,5 +1,4 @@
-import { Autowired, BeanStub, IRowModel, IRowNode, IServerSideGroupSelectionState, RowNode, SelectionEventSourceType, ISetNodesSelectedParams, ColumnModel, FilterManager, PostConstruct, Events, IServerSideStore, ISelectionService } from "@ag-grid-community/core";
-import { ServerSideRowModel } from "../../../serverSideRowModel";
+import { BeanStub, Events, IRowNode, IServerSideGroupSelectionState, ISetNodesSelectedParams, PostConstruct, RowNode, SelectionEventSourceType } from "@ag-grid-community/core";
 import { ISelectionStrategy } from "./iSelectionStrategy";
 
 interface SelectionState {
@@ -8,12 +7,7 @@ interface SelectionState {
 }
 
 export class GroupSelectsChildrenStrategy extends BeanStub implements ISelectionStrategy {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-
+    
     private selectedState: SelectionState = { selectAllChildren: false, toggledNodes: new Map() };
     private lastSelected: RowNode | null = null;
 
@@ -23,7 +17,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         this.addManagedEventListener(Events.EVENT_MODEL_UPDATED, () => this.removeRedundantState());
 
         // when the grouping changes, the state no longer makes sense, so reset the state.
-        this.addManagedEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.selectionService.reset('rowGroupChanged'));
+        this.addManagedEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.beans.selectionService.reset('rowGroupChanged'));
     }
 
     public getSelectedState() {
@@ -33,7 +27,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 nodeId,
             };
     
-            if (treeData || level <= this.columnModel.getRowGroupColumns().length) {
+            if (treeData || level <= this.beans.columnModel.getRowGroupColumns().length) {
                 normalisedState.selectAllChildren = state.selectAllChildren;
             }
     
@@ -130,7 +124,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 throw new Error('AG Grid: cannot select multiple rows when using rangeSelect');
             }
             const node = nodes[0];
-            const rangeOfNodes = this.rowModel.getNodesInRangeForSelection(node, this.lastSelected);
+            const rangeOfNodes = this.beans.rowModel.getNodesInRangeForSelection(node, this.lastSelected);
             // sort the routes by route length, high to low, this means we can do the lowest level children first
             const routes = rangeOfNodes.map(this.getRouteToNode).sort((a, b) => b.length - a.length);
 
@@ -200,7 +194,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     private removeRedundantState() {
-        if (this.filterManager.isAnyFilterPresent()) {
+        if (this.beans.filterManager.isAnyFilterPresent()) {
             return;
         }
 
@@ -212,7 +206,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             });
 
             if (thisKey) {
-                const thisRow = this.rowModel.getRowNode(thisKey);
+                const thisRow = this.beans.rowModel.getRowNode(thisKey);
                 const thisRowStore = thisRow?.childStore;
                 const isStoreSizeKnown = thisRowStore?.isLastRowIndexKnown();
                 if (isStoreSizeKnown) {
@@ -229,7 +223,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                                 return;
                             }
 
-                            const rowDoesNotExist = !this.rowModel.getRowNode(key);
+                            const rowDoesNotExist = !this.beans.rowModel.getRowNode(key);
                             if (rowDoesNotExist) {
                                 // if row doesn't exist, it's not toggled.
                                 return;
@@ -304,7 +298,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         );
 
         const selectedNodes: RowNode[] = [];
-        this.rowModel.forEachNode(node => {
+        this.beans.rowModel.forEachNode(node => {
             if (node.isSelected()) {
                 selectedNodes.push(node);
             }

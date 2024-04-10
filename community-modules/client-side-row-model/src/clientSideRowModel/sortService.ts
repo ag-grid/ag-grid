@@ -1,27 +1,11 @@
 import {
-    _,
-    RowNodeSorter,
-    SortedRowNode,
-    SortOption,
-    Autowired,
-    Bean,
-    ChangedPath,
-    ColumnModel,
-    PostConstruct,
-    RowNode,
-    BeanStub,
-    WithoutGridCommon,
-    PostSortRowsParams,
-    RowNodeTransaction,
-    IRowNode
+    Bean, BeanStub, ChangedPath, IRowNode, PostSortRowsParams, RowNode, RowNodeTransaction, SortedRowNode,
+    SortOption, WithoutGridCommon, _
 } from "@ag-grid-community/core";
 
 
 @Bean('sortService')
 export class SortService extends BeanStub {
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
 
     public sort(
         sortOptions: SortOption[],
@@ -32,14 +16,14 @@ export class SortService extends BeanStub {
         sortContainsGroupColumns: boolean,
     ): void {
         const groupMaintainOrder = this.beans.gos.get('groupMaintainOrder');
-        const groupColumnsPresent = this.columnModel.getAllGridColumns().some(c => c.isRowGroupActive());
+        const groupColumnsPresent = this.beans.columnModel.getAllGridColumns().some(c => c.isRowGroupActive());
 
         let allDirtyNodes: { [key: string]: true } = {};
         if (useDeltaSort && rowNodeTransactions) {
             allDirtyNodes = this.calculateDirtyNodes(rowNodeTransactions);
         }
 
-        const isPivotMode = this.columnModel.isPivotMode();
+        const isPivotMode = this.beans.columnModel.isPivotMode();
         const postSortFunc = this.beans.gos.getCallback('postSortRows');
 
         const callback = (rowNode: RowNode) => {
@@ -54,7 +38,7 @@ export class SortService extends BeanStub {
             // are going to inspect the original array position. This is what sortedRowNodes is for.
             let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
             if (skipSortingGroups) {
-                const nextGroup = this.columnModel.getRowGroupColumns()?.[rowNode.level + 1];
+                const nextGroup = this.beans.columnModel.getRowGroupColumns()?.[rowNode.level + 1];
                 // if the sort is null, then sort was explicitly removed, so remove sort from this group.
                 const wasSortExplicitlyRemoved =  nextGroup?.getSort() === null;
 
@@ -73,7 +57,7 @@ export class SortService extends BeanStub {
             } else if (useDeltaSort) {
                 rowNode.childrenAfterSort = this.doDeltaSort(rowNode, allDirtyNodes, changedPath!, sortOptions);
             } else {
-                rowNode.childrenAfterSort = this.rowNodeSorter.doFullSort(rowNode.childrenAfterAggFilter!, sortOptions);
+                rowNode.childrenAfterSort = this.beans.rowNodeSorter.doFullSort(rowNode.childrenAfterAggFilter!, sortOptions);
             }
 
             if (rowNode.sibling) {
@@ -125,7 +109,7 @@ export class SortService extends BeanStub {
         const unsortedRows = rowNode.childrenAfterAggFilter!;
         const oldSortedRows = rowNode.childrenAfterSort;
         if (!oldSortedRows) {
-            return this.rowNodeSorter.doFullSort(unsortedRows, sortOptions);
+            return this.beans.rowNodeSorter.doFullSort(unsortedRows, sortOptions);
         }
 
         const untouchedRowsMap: { [rowId: string]: true } = {};
@@ -147,7 +131,7 @@ export class SortService extends BeanStub {
 
         const sortedChangedRows = touchedRows
             .map(mapNodeToSortedNode)
-            .sort((a, b) => this.rowNodeSorter.compareRowNodes(sortOptions, a, b));
+            .sort((a, b) => this.beans.rowNodeSorter.compareRowNodes(sortOptions, a, b));
 
         return this.mergeSortedArrays(
             sortOptions,
@@ -170,7 +154,7 @@ export class SortService extends BeanStub {
             // of second array. If yes, store first
             // array element and increment first array
             // index. Otherwise do same with second array
-            const compareResult = this.rowNodeSorter.compareRowNodes(sortOptions, arr1[i], arr2[j]);
+            const compareResult = this.beans.rowNodeSorter.compareRowNodes(sortOptions, arr1[i], arr2[j]);
             if (compareResult < 0) {
                 res.push(arr1[i++]);
             } else {
@@ -236,7 +220,7 @@ export class SortService extends BeanStub {
         if (!this.beans.gos.get('groupHideOpenParents') || _.missing(rowNodes)) { return; }
 
         rowNodes.forEach(childRowNode => {
-            const groupDisplayCols = this.columnModel.getGroupDisplayColumns();
+            const groupDisplayCols = this.beans.columnModel.getGroupDisplayColumns();
             groupDisplayCols.forEach(groupDisplayCol => {
 
                 const showRowGroup = groupDisplayCol.getColDef().showRowGroup;
@@ -246,7 +230,7 @@ export class SortService extends BeanStub {
                 }
 
                 const displayingGroupKey = showRowGroup;
-                const rowGroupColumn = this.columnModel.getPrimaryColumn(displayingGroupKey);
+                const rowGroupColumn = this.beans.columnModel.getPrimaryColumn(displayingGroupKey);
                 const thisRowNodeMatches = rowGroupColumn === childRowNode.rowGroupColumn;
 
                 if (thisRowNodeMatches) { return; }

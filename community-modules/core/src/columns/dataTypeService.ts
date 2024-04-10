@@ -56,10 +56,7 @@ const MONTH_KEYS: (keyof typeof MONTH_LOCALE_TEXT)[] = ['january', 'february', '
 
 @Bean('dataTypeService')
 export class DataTypeService extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    
 
     private dataTypeDefinitions: { [cellDataType: string]: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter } = {};
     private dataTypeMatchers: { [cellDataType: string]: ((value: any) => boolean) | undefined };
@@ -83,7 +80,7 @@ export class DataTypeService extends BeanStub {
 
         this.addManagedPropertyListener('dataTypeDefinitions', (event) => {
             this.processDataTypeDefinitions();
-            this.columnModel.recreateColumnDefs(convertSourceType(event.source));
+            this.beans.columnModel.recreateColumnDefs(convertSourceType(event.source));
         });
     }
 
@@ -334,7 +331,7 @@ export class DataTypeService extends BeanStub {
     }
 
     private canInferCellDataType(colDef: ColDef, userColDef: ColDef): boolean {
-        if (this.rowModel.getType() !== 'clientSide') {
+        if (this.beans.rowModel.getType() !== 'clientSide') {
             return false;
         }
         const propsToCheckForInference = { cellRenderer: true, valueGetter: true, valueParser: true, refData: true };
@@ -406,7 +403,7 @@ export class DataTypeService extends BeanStub {
         } else if (this.initialData) {
             return this.initialData;
         } else {
-            const rowNodes = (this.rowModel as IClientSideRowModel)
+            const rowNodes = this.beans.clientSideRowModel
                 .getRootNode()
                 .allLeafChildren;
             if (rowNodes?.length) {
@@ -424,7 +421,7 @@ export class DataTypeService extends BeanStub {
         this.isWaitingForRowData = true;
         const columnTypeOverridesExist = this.isColumnTypeOverrideInDataTypeDefinitions;
         if (columnTypeOverridesExist) {
-            this.columnModel.queueResizeOperations();
+            this.beans.columnModel.queueResizeOperations();
         }
         const destroyFunc = this.addManagedEventListener(Events.EVENT_ROW_DATA_UPDATE_STARTED, (event: RowDataUpdateStartedEvent) => {
             const { firstRowData } = event;
@@ -436,7 +433,7 @@ export class DataTypeService extends BeanStub {
             this.processColumnsPendingInference(firstRowData, columnTypeOverridesExist);
             this.columnStateUpdatesPendingInference = {};
             if (columnTypeOverridesExist) {
-                this.columnModel.processResizeOperations();
+                this.beans.columnModel.processResizeOperations();
             }
             const dataTypesInferredEvent: WithoutGridCommon<DataTypesInferredEvent> = {
                 type: Events.EVENT_DATA_TYPES_INFERRED
@@ -457,10 +454,10 @@ export class DataTypeService extends BeanStub {
         const newRowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
         const newPivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
         Object.entries(this.columnStateUpdatesPendingInference).forEach(([colId, columnStateUpdates]) => {
-            const column = this.columnModel.getGridColumn(colId);
+            const column = this.beans.columnModel.getGridColumn(colId);
             if (!column) { return; }
             const oldColDef = column.getColDef();
-            if (!this.columnModel.resetColumnDefIntoColumn(column, 'cellDataTypeInferred')) { return; }
+            if (!this.beans.columnModel.resetColumnDefIntoColumn(column, 'cellDataTypeInferred')) { return; }
             const newColDef = column.getColDef();
             if (columnTypeOverridesExist && newColDef.type && newColDef.type !== oldColDef.type) {
                 const updatedColumnState = this.getUpdatedColumnState(column, columnStateUpdates);
@@ -474,16 +471,16 @@ export class DataTypeService extends BeanStub {
             }
         });
         if (columnTypeOverridesExist) {
-            state.push(...this.columnModel.generateColumnStateForRowGroupAndPivotIndexes(newRowGroupColumnStateWithoutIndex, newPivotColumnStateWithoutIndex));
+            state.push(...this.beans.columnModel.generateColumnStateForRowGroupAndPivotIndexes(newRowGroupColumnStateWithoutIndex, newPivotColumnStateWithoutIndex));
         }
         if (state.length) {
-            this.columnModel.applyColumnState({ state }, 'cellDataTypeInferred');
+            this.beans.columnModel.applyColumnState({ state }, 'cellDataTypeInferred');
         }
         this.initialData = null;
     }
 
     private getUpdatedColumnState(column: Column, columnStateUpdates: Set<keyof ColumnStateParams>): ColumnState {
-        const columnState = this.columnModel.getColumnStateFromColDef(column);
+        const columnState = this.beans.columnModel.getColumnStateFromColDef(column);
         columnStateUpdates.forEach(key => {
             // if the column state has been updated, don't update again
             delete columnState[key];
@@ -578,7 +575,7 @@ export class DataTypeService extends BeanStub {
             if (valueFormatter === dataTypeDefinition.groupSafeValueFormatter) {
                 valueFormatter = dataTypeDefinition.valueFormatter;
             }
-            return this.valueFormatterService.formatValue(column, node, value, valueFormatter as any);
+            return this.beans.valueFormatterService.formatValue(column, node, value, valueFormatter as any);
         }
         const usingSetFilter = ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.beans.context.getGridId());
         const translate = this.beans.localeService.getLocaleTextFunc();
@@ -701,7 +698,7 @@ export class DataTypeService extends BeanStub {
                     useFormatter: true,
                 };
                 colDef.comparator = (a: any, b: any) => {
-                    const column = this.columnModel.getPrimaryColumn(colId);
+                    const column = this.beans.columnModel.getPrimaryColumn(colId);
                     const colDef = column?.getColDef();
                     if (!column || !colDef) {
                         return 0;
@@ -723,7 +720,7 @@ export class DataTypeService extends BeanStub {
                     colDef.filterValueGetter = (params: ValueGetterParams) => formatValue(
                         params.column,
                         params.node,
-                        this.valueService.getValue(params.column, params.node)
+                        this.beans.valueService.getValue(params.column, params.node)
                     );
                 }
                 break;

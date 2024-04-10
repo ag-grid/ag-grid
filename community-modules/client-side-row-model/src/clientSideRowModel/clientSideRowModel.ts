@@ -1,35 +1,17 @@
 import {
-    _,
-    Autowired,
+    AsyncTransactionsFlushed, Autowired,
     Bean,
     BeanStub,
-    ChangedPath,
-    ColumnModel,
-    Events,
+    ChangedPath, ClientSideRowModelStep, ClientSideRowModelSteps, Events,
     ExpandCollapseAllEvent,
-    FilterChangedEvent,
-    IClientSideRowModel,
+    FilterChangedEvent, GridOptions, IClientSideRowModel,
     IRowNodeStage,
     ModelUpdatedEvent,
     Optional,
     PostConstruct,
-    RefreshModelParams,
-    ClientSideRowModelSteps,
-    ClientSideRowModelStep,
-    RowBounds,
+    RefreshModelParams, RowBounds,
     RowDataTransaction,
-    RowDataUpdatedEvent,
-    RowNode,
-    RowHighlightPosition,
-    RowNodeTransaction,
-    ValueCache,
-    AsyncTransactionsFlushed,
-    Beans,
-    WithoutGridCommon,
-    RowModelType,
-    SelectionChangedEvent,
-    ISelectionService,
-    GridOptions,
+    RowDataUpdatedEvent, RowHighlightPosition, RowModelType, RowNode, RowNodeTransaction, SelectionChangedEvent, WithoutGridCommon, _
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -46,10 +28,6 @@ export interface RowNodeMap {
 
 @Bean('rowModel')
 export class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-    @Autowired('valueCache') private valueCache: ValueCache;
 
     // standard stages
     @Autowired('filterStage') private filterStage: IRowNodeStage;
@@ -110,7 +88,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.addPropertyListeners();
 
         this.rootNode = new RowNode(this.beans);
-        this.nodeManager = new ClientSideNodeManager(this.rootNode, this.columnModel, this.selectionService, this.beans);
+        this.nodeManager = new ClientSideNodeManager(this.rootNode, this.beans);
     }
 
     private addPropertyListeners() {
@@ -499,7 +477,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private onValueChanged(): void {
-        if (this.columnModel.isPivotActive()) {
+        if (this.beans.columnModel.isPivotActive()) {
             this.refreshModel({ step: ClientSideRowModelSteps.PIVOT });
         } else {
             this.refreshModel({ step: ClientSideRowModelSteps.AGGREGATE });
@@ -572,7 +550,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void {
-        if (!this.hasStarted || this.isRefreshingModel || this.columnModel.shouldRowModelIgnoreRefresh()) { return; }
+        if (!this.hasStarted || this.isRefreshingModel || this.beans.columnModel.shouldRowModelIgnoreRefresh()) { return; }
 
         let params = typeof paramsOrStep === 'object' && "step" in paramsOrStep ? paramsOrStep : this.buildRefreshModelParams(paramsOrStep);
 
@@ -637,7 +615,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     public isEmpty(): boolean {
         const rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
-        return _.missing(this.rootNode) || rowsMissing || !this.columnModel.isReady();
+        return _.missing(this.rootNode) || rowsMissing || !this.beans.columnModel.isReady();
     }
 
     public isRowsToRender(): boolean {
@@ -899,7 +877,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     // + gridApi.collapseAll()
     public expandOrCollapseAll(expand: boolean): void {
         const usingTreeData = this.beans.gos.get('treeData');
-        const usingPivotMode = this.columnModel.isPivotActive();
+        const usingPivotMode = this.beans.columnModel.isPivotActive();
 
         const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {
             if (!rowNodes) { return; }
@@ -978,7 +956,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             }
 
             if (this.beans.gos.get('groupSelectsChildren')) {
-                const selectionChanged = this.selectionService.updateGroupsFromChildrenSelections('rowGroupChanged', changedPath);
+                const selectionChanged = this.beans.selectionService.updateGroupsFromChildrenSelections('rowGroupChanged', changedPath);
 
                 if (selectionChanged) {
                     const event: WithoutGridCommon<SelectionChangedEvent> = {
@@ -1045,7 +1023,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         // so new rowNodes means the cache is wiped anyway.
         
         // - clears selection, done before we set row data to ensure it isn't readded via `selectionService.syncInOldRowNode`
-        this.selectionService.reset('rowDataChanged');
+        this.beans.selectionService.reset('rowDataChanged');
 
         this.nodeManager.setRowData(rowData);
         
@@ -1088,7 +1066,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private executeBatchUpdateRowData(): void {
-        this.valueCache.onDataChanged();
+        this.beans.valueCache.onDataChanged();
 
         const callbackFuncsBound: Function[] = [];
         const rowNodeTrans: RowNodeTransaction[] = [];
@@ -1133,7 +1111,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: { [id: string]: number; }): RowNodeTransaction | null {
 
-        this.valueCache.onDataChanged();
+        this.beans.valueCache.onDataChanged();
 
         const rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
 
@@ -1247,7 +1225,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private onGridStylesChanges() {
-        if (this.columnModel.isAutoRowHeightActive()) { return; }
+        if (this.beans.columnModel.isAutoRowHeightActive()) { return; }
 
         this.resetRowHeights();
     }

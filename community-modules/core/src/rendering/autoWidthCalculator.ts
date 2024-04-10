@@ -1,24 +1,20 @@
-import { RowRenderer } from "./rowRenderer";
-import { Column } from "../entities/column";
-import { Autowired, Bean, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { CtrlsService } from "../ctrlsService";
+import { Autowired, Bean, PostConstruct } from "../context/context";
+import { Column } from "../entities/column";
+import { ColumnGroup } from "../entities/columnGroup";
 import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
 import { RowCssClassCalculator } from "./row/rowCssClassCalculator";
-import { ColumnGroup } from "../entities/columnGroup";
 
 @Bean('autoWidthCalculator')
 export class AutoWidthCalculator extends BeanStub {
 
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('rowCssClassCalculator') public rowCssClassCalculator: RowCssClassCalculator;
 
     private centerRowContainerCtrl: RowContainerCtrl;
 
     @PostConstruct
     private postConstruct(): void {
-        this.ctrlsService.whenReady(p => {
+        this.beans.ctrlsService.whenReady(p => {
             this.centerRowContainerCtrl = p.centerRowContainerCtrl;
         });
     }
@@ -32,7 +28,7 @@ export class AutoWidthCalculator extends BeanStub {
         // cell isn't visible
         if (!eHeaderCell) { return -1; }
 
-        const elements = this.rowRenderer.getAllCellsForColumn(column);
+        const elements = this.beans.rowRenderer.getAllCellsForColumn(column);
 
         if (!skipHeader) {
             // we only consider the lowest level cell, not the group cell. in 99% of the time, this
@@ -94,7 +90,7 @@ export class AutoWidthCalculator extends BeanStub {
     /* tslint:enable */
         let element: HTMLElement | null = null;
 
-        this.ctrlsService.getHeaderRowContainerCtrls().forEach(container => {
+        this.beans.ctrlsService.getHeaderRowContainerCtrls().forEach(container => {
                 const res = container.getHtmlElementForColumnHeader(column);
                 if (res != null) { element = res; }
             }

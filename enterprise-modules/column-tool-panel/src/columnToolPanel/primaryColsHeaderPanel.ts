@@ -15,7 +15,7 @@ import { ToolPanelColumnCompParams } from "./columnToolPanel";
 export enum ExpandState { EXPANDED, COLLAPSED, INDETERMINATE }
 
 export class PrimaryColsHeaderPanel extends Component {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    
 
     @RefSelector('eExpand') private readonly eExpand: Element;
     @RefSelector('eSelect') private readonly eSelect: AgCheckbox;
@@ -93,7 +93,7 @@ export class PrimaryColsHeaderPanel extends Component {
         this.eSelect.setReadOnly(readOnly);
         this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
 
-        if (this.columnModel.isReady()) {
+        if (this.beans.columnModel.isReady()) {
             this.showOrHideOptions();
         }
     }
@@ -119,7 +119,7 @@ export class PrimaryColsHeaderPanel extends Component {
         const showFilter = !this.params.suppressColumnFilter;
         const showSelect = !this.params.suppressColumnSelectAll;
         const showExpand = !this.params.suppressColumnExpandAll;
-        const groupsPresent = this.columnModel.isPrimaryColumnGroupsPresent();
+        const groupsPresent = this.beans.columnModel.isPrimaryColumnGroupsPresent();
         const translate = this.beans.localeService.getLocaleTextFunc();
 
         this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));

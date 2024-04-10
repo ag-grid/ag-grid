@@ -1,9 +1,5 @@
 import {
-    Autowired,
-    Events,
-    IClientSideRowModel,
-    IRowModel,
-    IStatusPanelComp,
+    Events, IStatusPanelComp,
     PostConstruct,
     _
 } from '@ag-grid-community/core';
@@ -11,12 +7,12 @@ import { NameValueComp } from "./nameValueComp";
 
 export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPanelComp {
 
-    @Autowired('rowModel') private rowModel: IRowModel;
+    
 
     @PostConstruct
     protected postConstruct(): void {
         // this component is only really useful with client side row model
-        if (this.rowModel.getType() !== 'clientSide') {
+        if (this.beans.rowModel.getType() !== 'clientSide') {
             _.warnOnce(`agTotalAndFilteredRowCountComponent should only be used with the client side row model.`);
             return;
         }
@@ -50,7 +46,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
 
     private getFilteredRowCountValue(): number {
         let filteredRowCount = 0;
-        (this.rowModel as IClientSideRowModel).forEachNodeAfterFilter((node) => {
+        (this.beans.clientSideRowModel).forEachNodeAfterFilter((node) => {
             if (!node.group) { filteredRowCount++; }
         });
         return filteredRowCount;
@@ -58,7 +54,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
 
     private getTotalRowCount(): number {
         let totalRowCount = 0;
-        this.rowModel.forEachNode(node => {
+        this.beans.rowModel.forEachNode(node => {
             if (!node.group) { totalRowCount++; }
         });
         return totalRowCount;

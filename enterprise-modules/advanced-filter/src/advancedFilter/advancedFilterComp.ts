@@ -7,9 +7,7 @@ import {
     AutocompleteValueChangedEvent,
     AutocompleteValueConfirmedEvent,
     Autowired,
-    Component,
-    FilterManager,
-    ITooltipParams,
+    Component, ITooltipParams,
     PostConstruct,
     RefSelector,
     WithoutGridCommon,
@@ -29,7 +27,6 @@ export class AdvancedFilterComp extends Component {
     @RefSelector('eBuilderFilterButtonLabel') private eBuilderFilterButtonLabel: HTMLElement;
     @Autowired('advancedFilterService') private advancedFilterService: AdvancedFilterService;
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
-    @Autowired('filterManager') private filterManager: FilterManager;
 
     private expressionParser: FilterExpressionParser | null = null;
     private isApplyDisabled = true;
@@ -116,7 +113,7 @@ export class AdvancedFilterComp extends Component {
         if (!isValid || this.isApplyDisabled) { return; }
         _.setDisabled(this.eApplyFilterButton, true);
         this.advancedFilterService.applyExpression();
-        this.filterManager.onFilterChanged({ source: 'advancedFilter' });
+        this.beans.filterManager.onFilterChanged({ source: 'advancedFilter' });
     }
 
     private onOptionSelected(position: number, updateEntry: AutocompleteEntry, type?: string): void {

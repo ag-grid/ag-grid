@@ -1,6 +1,9 @@
-import { RowCtrl, RowCtrlInstanceId } from "./row/rowCtrl";
+import { BeanStub } from "../context/beanStub";
+import { Bean, PostConstruct } from "../context/context";
+import { CellPosition } from "../entities/cellPositionUtils";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
+import { RowPosition } from "../entities/rowPositionUtils";
 import {
     AgEventListener,
     BodyScrollEvent,
@@ -12,32 +15,20 @@ import {
     ModelUpdatedEvent,
     ViewportChangedEvent
 } from "../events";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { ColumnModel } from "../columns/columnModel";
-import { FocusService } from "../focusService";
-import { CellPosition } from "../entities/cellPositionUtils";
-import { BeanStub } from "../context/beanStub";
-import { PaginationProxy } from "../pagination/paginationProxy";
-import { Beans } from "./beans";
-import { RowContainerHeightService } from "./rowContainerHeightService";
-import { ICellRenderer } from "./cellRenderers/iCellRenderer";
-import { ICellEditor } from "../interfaces/iCellEditor";
-import { IRowModel } from "../interfaces/iRowModel";
-import { RowPosition } from "../entities/rowPositionUtils";
-import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { exists } from "../utils/generic";
-import { getAllValuesInObject, iterateObject } from "../utils/object";
-import { createArrayOfNumbers } from "../utils/number";
-import { executeInAWhile } from "../utils/function";
-import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
-import { CellCtrl } from "./cell/cellCtrl";
-import { removeFromArray } from "../utils/array";
-import { StickyRowFeature } from "./features/stickyRowFeature";
-import { AnimationFrameService } from "../misc/animationFrameService";
-import { browserSupportsPreventScroll } from "../utils/browser";
+import { ICellEditor } from "../interfaces/iCellEditor";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IRowNode } from "../interfaces/iRowNode";
+import { removeFromArray } from "../utils/array";
+import { browserSupportsPreventScroll } from "../utils/browser";
+import { executeInAWhile } from "../utils/function";
+import { exists } from "../utils/generic";
+import { createArrayOfNumbers } from "../utils/number";
+import { getAllValuesInObject, iterateObject } from "../utils/object";
+import { CellCtrl } from "./cell/cellCtrl";
+import { ICellRenderer } from "./cellRenderers/iCellRenderer";
+import { StickyRowFeature } from "./features/stickyRowFeature";
+import { RowCtrl, RowCtrlInstanceId } from "./row/rowCtrl";
 
 type RowCtrlIdMap = Record<RowCtrlInstanceId, RowCtrl>;
 type RowCtrlByRowIndex = Record<number, RowCtrl>;
@@ -85,15 +76,6 @@ export interface RedrawRowsParams<TData = any> {
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
 
-    @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
-    @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
-    @Autowired("columnModel") private columnModel: ColumnModel;
-    @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
-    @Autowired("rowModel") private rowModel: IRowModel;
-    @Autowired("focusService") private focusService: FocusService;
-    @Autowired("rowContainerHeightService") private rowContainerHeightService: RowContainerHeightService;
-    @Autowired("ctrlsService") private ctrlsService: CtrlsService;
-
     private gridBodyCtrl: GridBodyCtrl;
 
     private destroyFuncsForColumnListeners: (() => void)[] = [];
@@ -130,8 +112,8 @@ export class RowRenderer extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.ctrlsService.whenReady(() => {
-            this.gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        this.beans.ctrlsService.whenReady(() => {
+            this.gridBodyCtrl = this.beans.ctrlsService.getGridBodyCtrl();
             this.initialise();
         });
     }
@@ -158,7 +140,7 @@ export class RowRenderer extends BeanStub {
         ], () => this.redrawRows());
 
         if (this.beans.gos.isGroupRowsSticky()) {
-            const rowModelType = this.rowModel.getType();
+            const rowModelType = this.beans.rowModel.getType();
             if (rowModelType === 'clientSide' || rowModelType === 'serverSide') {
                 this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(
                     this.createRowCon.bind(this),
@@ -306,7 +288,7 @@ export class RowRenderer extends BeanStub {
     private refreshListenersToColumnsForCellComps(): void {
         this.removeGridColumnListeners();
 
-        const cols = this.columnModel.getAllGridColumns();
+        const cols = this.beans.columnModel.getAllGridColumns();
 
         cols.forEach(col => {
             const forEachCellWithThisCol = (callback: (cellCtrl: CellCtrl) => void) => {
@@ -403,12 +385,12 @@ export class RowRenderer extends BeanStub {
     public refreshFloatingRowComps(): void {
         this.refreshFloatingRows(
             this.topRowCtrls,
-            this.pinnedRowModel.getPinnedTopRowData()
+            this.beans.pinnedRowModel.getPinnedTopRowData()
         );
 
         this.refreshFloatingRows(
             this.bottomRowCtrls,
-            this.pinnedRowModel.getPinnedBottomRowData()
+            this.beans.pinnedRowModel.getPinnedBottomRowData()
         );
     }
 
@@ -512,7 +494,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private getCellToRestoreFocusToAfterRefresh(params?: RefreshViewParams): CellPosition | null {
-        const focusedCell = (params?.suppressKeepFocus) ? null : this.focusService.getFocusCellToUseAfterRefresh();
+        const focusedCell = (params?.suppressKeepFocus) ? null : this.beans.focusService.getFocusCellToUseAfterRefresh();
 
         if (focusedCell == null) { return null; }
 
@@ -593,11 +575,11 @@ export class RowRenderer extends BeanStub {
     private updateContainerHeights(): void {
         // when doing print layout, we don't explicitly set height on the containers
         if (this.printLayout) {
-            this.rowContainerHeightService.setModelHeight(null);
+            this.beans.rowContainerHeightService.setModelHeight(null);
             return;
         }
 
-        let containerHeight = this.paginationProxy.getCurrentPageHeight();
+        let containerHeight = this.beans.paginationProxy.getCurrentPageHeight();
         // we need at least 1 pixel for the horizontal scroll to work. so if there are now rows,
         // we still want the scroll to be present, otherwise there would be no way to scroll the header
         // which might be needed us user wants to access columns
@@ -607,7 +589,7 @@ export class RowRenderer extends BeanStub {
             containerHeight = 1;
         }
 
-        this.rowContainerHeightService.setModelHeight(containerHeight);
+        this.beans.rowContainerHeightService.setModelHeight(containerHeight);
     }
 
     private getLockOnRefresh(): void {
@@ -641,7 +623,7 @@ export class RowRenderer extends BeanStub {
             // we don't wish to dispatch an event as the rowRenderer is not capable of changing the selected cell,
             // so we mock a change event for the full width rows and cells to ensure they update to the newly selected
             // state
-            this.focusService.setRestoreFocusedCell(cellPosition);
+            this.beans.focusService.setRestoreFocusedCell(cellPosition);
 
             this.onCellFocusChanged(this.beans.gos.addGridCommonParams<CellFocusedEvent>({
                 rowIndex: cellPosition.rowIndex,
@@ -845,7 +827,7 @@ export class RowRenderer extends BeanStub {
         if (exists(columns)) {
             colIdsMap = {};
             columns.forEach((colKey: string | Column) => {
-                const column: Column | null = this.columnModel.getGridColumn(colKey);
+                const column: Column | null = this.beans.columnModel.getGridColumn(colKey);
                 if (exists(column)) {
                     colIdsMap[column.getId()] = true;
                 }
@@ -956,7 +938,7 @@ export class RowRenderer extends BeanStub {
             const newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
 
             if (cellFocused != null && newFocusedCell == null) {
-                this.animationFrameService.flushAllFrames();
+                this.beans.animationFrameService.flushAllFrames();
                 this.restoreFocusedCell(cellFocused);
             }
         }
@@ -999,7 +981,7 @@ export class RowRenderer extends BeanStub {
 
         for (let i = 0; i < indexesToDraw.length; i++) {
             const currRow = indexesToDraw[i];
-            const rowNode = this.paginationProxy.getRow(currRow);
+            const rowNode = this.beans.paginationProxy.getRow(currRow);
             if (rowNode && !rowNode.sticky) {
                 ret.push(currRow);
             }
@@ -1059,8 +1041,8 @@ export class RowRenderer extends BeanStub {
     }
 
     private onDisplayedColumnsChanged(): void {
-        const pinningLeft = this.columnModel.isPinningLeft();
-        const pinningRight = this.columnModel.isPinningRight();
+        const pinningLeft = this.beans.columnModel.isPinningLeft();
+        const pinningRight = this.beans.columnModel.isPinningRight();
         const atLeastOneChanged = this.pinningLeft !== pinningLeft || pinningRight !== this.pinningRight;
 
         if (atLeastOneChanged) {
@@ -1116,7 +1098,7 @@ export class RowRenderer extends BeanStub {
 
         // if no row comp, see if we can get it from the previous rowComps
         if (!rowCtrl) {
-            rowNode = this.paginationProxy.getRow(rowIndex);
+            rowNode = this.beans.paginationProxy.getRow(rowIndex);
             if (exists(rowNode) && exists(rowsToRecycle) && rowsToRecycle[rowNode.id!] && rowNode.alreadyRendered) {
                 rowCtrl = rowsToRecycle[rowNode.id!];
                 rowsToRecycle[rowNode.id!] = null;
@@ -1128,7 +1110,7 @@ export class RowRenderer extends BeanStub {
         if (creatingNewRowCtrl) {
             // create a new one
             if (!rowNode) {
-                rowNode = this.paginationProxy.getRow(rowIndex);
+                rowNode = this.beans.paginationProxy.getRow(rowIndex);
             }
 
             if (exists(rowNode)) {
@@ -1196,29 +1178,29 @@ export class RowRenderer extends BeanStub {
     }
 
     private workOutFirstAndLastRowsToRender(): void {
-        this.rowContainerHeightService.updateOffset();
+        this.beans.rowContainerHeightService.updateOffset();
         let newFirst: number;
         let newLast: number;
 
-        if (!this.paginationProxy.isRowsToRender()) {
+        if (!this.beans.paginationProxy.isRowsToRender()) {
             newFirst = 0;
             newLast = -1; // setting to -1 means nothing in range
         } else if (this.printLayout) {
             this.beans.environment.refreshRowHeightVariable();
-            newFirst = this.paginationProxy.getPageFirstRow();
-            newLast = this.paginationProxy.getPageLastRow();
+            newFirst = this.beans.paginationProxy.getPageFirstRow();
+            newLast = this.beans.paginationProxy.getPageLastRow();
         } else {
             const bufferPixels = this.getRowBufferInPixels();
-            const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+            const gridBodyCtrl = this.beans.ctrlsService.getGridBodyCtrl();
             const suppressRowVirtualisation = this.beans.gos.get('suppressRowVirtualisation');
 
             let rowHeightsChanged = false;
             let firstPixel: number;
             let lastPixel: number;
             do {
-                const paginationOffset = this.paginationProxy.getPixelOffset();
-                const {pageFirstPixel, pageLastPixel} = this.paginationProxy.getCurrentPagePixelRange();
-                const divStretchOffset = this.rowContainerHeightService.getDivStretchOffset();
+                const paginationOffset = this.beans.paginationProxy.getPixelOffset();
+                const {pageFirstPixel, pageLastPixel} = this.beans.paginationProxy.getCurrentPagePixelRange();
+                const divStretchOffset = this.beans.rowContainerHeightService.getDivStretchOffset();
 
                 const bodyVRange = gridBodyCtrl.getScrollFeature().getVScrollPosition();
                 const bodyTopPixel = bodyVRange.top;
@@ -1239,11 +1221,11 @@ export class RowRenderer extends BeanStub {
 
             } while (rowHeightsChanged);
 
-            let firstRowIndex = this.paginationProxy.getRowIndexAtPixel(firstPixel);
-            let lastRowIndex = this.paginationProxy.getRowIndexAtPixel(lastPixel);
+            let firstRowIndex = this.beans.paginationProxy.getRowIndexAtPixel(firstPixel);
+            let lastRowIndex = this.beans.paginationProxy.getRowIndexAtPixel(lastPixel);
 
-            const pageFirstRow = this.paginationProxy.getPageFirstRow();
-            const pageLastRow = this.paginationProxy.getPageLastRow();
+            const pageFirstRow = this.beans.paginationProxy.getPageFirstRow();
+            const pageLastRow = this.beans.paginationProxy.getPageLastRow();
 
             // adjust, in case buffer extended actual size
             if (firstRowIndex < pageFirstRow) {
@@ -1313,7 +1295,7 @@ export class RowRenderer extends BeanStub {
     private ensureAllRowsInRangeHaveHeightsCalculated(topPixel: number, bottomPixel: number): boolean {
         // ensureRowHeightsVisible only works with CSRM, as it's the only row model that allows lazy row height calcs.
         // all the other row models just hard code so the method just returns back false
-        const res = this.paginationProxy.ensureRowHeightsValid(topPixel, bottomPixel, -1, -1);
+        const res = this.beans.paginationProxy.ensureRowHeightsValid(topPixel, bottomPixel, -1, -1);
 
         if (res) {
             this.updateContainerHeights();
@@ -1350,7 +1332,7 @@ export class RowRenderer extends BeanStub {
         const KEEP_ROW: boolean = true;
         const rowNode = rowComp.getRowNode();
 
-        const rowHasFocus = this.focusService.isRowNodeFocused(rowNode);
+        const rowHasFocus = this.beans.focusService.isRowNodeFocused(rowNode);
         const rowIsEditing = rowComp.isEditing();
         const rowIsDetail = rowNode.detail;
 
@@ -1364,7 +1346,7 @@ export class RowRenderer extends BeanStub {
         // editing row, only remove if it is no longer rendered, eg filtered out or new data set.
         // the reason we want to keep is if user is scrolling up and down, we don't want to loose
         // the context of the editing in process.
-        const rowNodePresent = this.paginationProxy.isRowPresent(rowNode);
+        const rowNodePresent = this.beans.paginationProxy.isRowPresent(rowNode);
         return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
     }
 

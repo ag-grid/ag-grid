@@ -1,19 +1,12 @@
 import {
-    Autowired,
-    Bean,
-    ChangedPath,
-    FilterManager,
-    RowNode,
-    BeanStub
+    Bean, BeanStub, ChangedPath, RowNode
 } from "@ag-grid-community/core";
 
 @Bean("filterService")
 export class FilterService extends BeanStub {
 
-    @Autowired('filterManager') private filterManager: FilterManager;
-
     public filter(changedPath: ChangedPath): void {
-        const filterActive: boolean = this.filterManager.isChildFilterPresent();
+        const filterActive: boolean = this.beans.filterManager.isChildFilterPresent();
         this.filterNodes(filterActive, changedPath);
     }
 
@@ -33,7 +26,7 @@ export class FilterService extends BeanStub {
                         // both leaf level nodes and tree data nodes have data. these get added if
                         // the data passes the filter
                         const passBecauseDataPasses = childNode.data
-                            && this.filterManager.doesRowPassFilter({rowNode: childNode});
+                            && this.beans.filterManager.doesRowPassFilter({rowNode: childNode});
 
                         // note - tree data nodes pass either if a) they pass themselves or b) any children of that node pass
 
@@ -65,7 +58,7 @@ export class FilterService extends BeanStub {
 
                         // first check if current node passes filter before invoking child nodes
                         const foundInParent = alreadyFoundInParent
-                            || this.filterManager.doesRowPassFilter({rowNode: childNode});
+                            || this.beans.filterManager.doesRowPassFilter({rowNode: childNode});
                         if (childNode.childrenAfterGroup) {
                             treeDataDepthFirstFilter(rowNode.childrenAfterGroup[i], foundInParent);
                         } else {

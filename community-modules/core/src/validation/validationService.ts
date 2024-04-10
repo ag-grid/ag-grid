@@ -174,7 +174,7 @@ export class ValidationService extends BeanStub {
         });
 
         if (Object.keys(invalidProperties).length > 0 && docsUrl) {
-            const url = this.getFrameworkOverrides().getDocLink(docsUrl);            
+            const url = this.beans.frameworkOverrides.getDocLink(docsUrl);            
             warnOnce(`to see all the valid ${containerName} properties please check: ${url}`);
         }
     }

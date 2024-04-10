@@ -28,7 +28,7 @@ import { ISelectionService } from "../interfaces/iSelectionService";
 import { RowCssClassCalculator } from "./row/rowCssClassCalculator";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
-import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
+import { IServerSideRowModel, IServerSideTransactionManager } from "../interfaces/iServerSideRowModel";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { CtrlsService } from "../ctrlsService";
 import { NavigationService } from "../gridBodyComp/navigationService";
@@ -46,7 +46,33 @@ import { AriaAnnouncementService } from "./ariaAnnouncementService";
 import { QuickFilterService } from "../filter/quickFilterService";
 import { IAdvancedFilterService } from "../interfaces/iAdvancedFilterService";
 import { DataTypeService } from "../columns/dataTypeService";
-
+import { AlignedGridsService } from "../alignedGridsService";
+import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
+import { MenuService } from "../misc/menuService";
+import { OverlayService } from "./overlays/overlayService";
+import { StateService } from "../misc/stateService";
+import { IExpansionService } from "../interfaces/iExpansionService";
+import { ApiEventService } from "../misc/apiEventService";
+import { UndoRedoService } from "../undoRedo/undoRedoService";
+import { RowNodeBlockLoader } from "../rowNodeCache/rowNodeBlockLoader";
+import { ICsvCreator } from "../interfaces/iCsvCreator";
+import { IExcelCreator } from "../interfaces/iExcelCreator";
+import { IClipboardService } from "../interfaces/iClipboardService";
+import { IAggFuncService } from "../interfaces/iAggFuncService";
+import { IStatusBarService } from "../interfaces/iStatusBarService";
+import { IChartService } from "../interfaces/IChartService";
+import { ISideBarService } from "../interfaces/iSideBar";
+import { ScrollVisibleService } from "../gridBodyComp/scrollVisibleService";
+import { MouseEventService } from "../gridBodyComp/mouseEventService";
+import { RowNodeSorter } from "../rowNodes/rowNodeSorter";
+import { CellNavigationService } from "../cellNavigationService";
+import { PinnedWidthService } from "../gridBodyComp/pinnedWidthService";
+import { HorizontalResizeService } from "../headerRendering/common/horizontalResizeService";
+import { DisplayedGroupCreator } from "../columns/displayedGroupCreator";
+import { HeaderPositionUtils } from "../headerRendering/common/headerPosition";
+import { IMenuFactory } from "../interfaces/iMenuFactory";
+import { IColumnChooserFactory } from "../interfaces/iColumnChooserFactory";
+import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 export class BeansProvider {
     @Autowired('beans') protected readonly beans: Beans;
 }
@@ -69,7 +95,7 @@ export class Beans {
     @Autowired('templateService') public readonly templateService: TemplateService;
     @Autowired('valueService') public readonly valueService: ValueService;
     @Autowired('eventService') public readonly eventService: EventService;
-    @Autowired('columnModel') public readonly columnModel: ColumnModel;
+     public readonly columnModel: ColumnModel;
     @Autowired('headerNavigationService') public readonly headerNavigationService: HeaderNavigationService;
     @Autowired('navigationService') public readonly navigationService: NavigationService;
     @Autowired('columnAnimationService') public readonly columnAnimationService: ColumnAnimationService;
@@ -107,6 +133,40 @@ export class Beans {
     @Optional('advancedFilterService') public readonly advancedFilterService: IAdvancedFilterService;
     @Optional('rangeService') public readonly rangeService?: IRangeService;
     @Optional('selectionHandleFactory') public readonly selectionHandleFactory?: ISelectionHandleFactory;
+
+    @Autowired('alignedGridsService') public readonly alignedGridsService: AlignedGridsService;
+    @Autowired('pinnedRowModel') public readonly pinnedRowModel: PinnedRowModel;
+    @Autowired('menuService') public readonly menuService: MenuService;
+    @Autowired('overlayService') public readonly overlayService: OverlayService;
+    @Autowired('stateService') public readonly stateService: StateService;
+    @Autowired('expansionService') public readonly expansionService: IExpansionService;
+    @Autowired('apiEventService') public readonly apiEventService: ApiEventService;
+    @Autowired('undoRedoService') public readonly undoRedoService: UndoRedoService;
+    @Autowired('rowNodeBlockLoader') public readonly rowNodeBlockLoader: RowNodeBlockLoader;
+    @Autowired('scrollVisibleService') public readonly scrollVisibleService: ScrollVisibleService;
+    @Autowired('mouseEventService') public readonly mouseEventService: MouseEventService;
+    @Autowired('rowNodeSorter') public readonly rowNodeSorter: RowNodeSorter;
+    @Autowired("cellNavigationService") public readonly cellNavigationService: CellNavigationService;
+    @Autowired('pinnedWidthService') public readonly pinnedWidthService: PinnedWidthService;
+    @Autowired('horizontalResizeService') public readonly horizontalResizeService: HorizontalResizeService;
+    @Autowired('displayedGroupCreator') public readonly displayedGroupCreator: DisplayedGroupCreator;
+    @Autowired('headerPositionUtils') public readonly headerPositionUtils: HeaderPositionUtils;
+
+    @Autowired('filterMenuFactory') public readonly filterMenuFactory: IMenuFactory;
+
+    @Optional('columnChooserFactory') public columnChooserFactory?: IColumnChooserFactory;
+    @Optional('contextMenuFactory') public readonly contextMenuFactory?: IContextMenuFactory;
+    @Optional('enterpriseMenuFactory') public readonly enterpriseMenuFactory? :IMenuFactory;
+    
+    @Optional('csvCreator') public readonly csvCreator?: ICsvCreator;
+    @Optional('excelCreator') public readonly excelCreator?: IExcelCreator;
+    @Optional('clipboardService') public readonly clipboardService?: IClipboardService;
+    @Optional('aggFuncService') public readonly aggFuncService?: IAggFuncService;
+    @Optional('statusBarService') public readonly statusBarService?: IStatusBarService;
+    @Optional('chartService') public readonly chartService?: IChartService;
+    @Optional('ssrmTransactionManager') public readonly serverSideTransactionManager?: IServerSideTransactionManager;
+    @Optional('sideBarService') public readonly sideBarService?: ISideBarService;
+
 
     public clientSideRowModel: IClientSideRowModel;
     public serverSideRowModel: IServerSideRowModel;

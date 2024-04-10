@@ -21,7 +21,7 @@ import { ISelectionStrategy } from "./selection/strategies/iSelectionStrategy";
 
 @Bean('selectionService')
 export class ServerSideSelectionService extends BeanStub implements ISelectionService {
-    @Autowired('rowModel') private rowModel: IRowModel;
+    
     private selectionStrategy: ISelectionStrategy;
 
     @PostConstruct
@@ -117,7 +117,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
     }
 
     private shotgunResetNodeSelectionState(source?: SelectionEventSourceType) {
-        this.rowModel.forEachNode(node => {
+        this.beans.rowModel.forEachNode(node => {
             if (node.stub) {
                 return;
             }
@@ -188,7 +188,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
 
         this.selectionStrategy.selectAllRowNodes(params);
 
-        this.rowModel.forEachNode(node => {
+        this.beans.rowModel.forEachNode(node => {
             if (node.stub) {
                 return;
             }
@@ -210,7 +210,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
 
         this.selectionStrategy.deselectAllRowNodes(params);
 
-        this.rowModel.forEachNode(node => {
+        this.beans.rowModel.forEachNode(node => {
             if (node.stub) {
                 return;
             }

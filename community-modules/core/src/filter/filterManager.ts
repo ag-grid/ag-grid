@@ -1,44 +1,29 @@
-import { AgPromise, _ } from '../utils';
-import { ValueService } from '../valueService/valueService';
-import { ColumnModel } from '../columns/columnModel';
-import { RowNode } from '../entities/rowNode';
-import { Column } from '../entities/column';
-import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
-import { IRowModel } from '../interfaces/iRowModel';
-import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterDestroyedEvent, AdvancedFilterEnabledChangedEvent, FilterChangedEventSourceType } from '../events';
-import { IFilterComp, IFilter, IFilterParams, FilterModel } from '../interfaces/iFilter';
-import { ColDef } from '../entities/colDef';
-import { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
-import { ModuleNames } from '../modules/moduleNames';
-import { ModuleRegistry } from '../modules/moduleRegistry';
-import { BeanStub } from '../context/beanStub';
-import { convertToSet } from '../utils/set';
-import { exists } from '../utils/generic';
-import { mergeDeep, cloneObject } from '../utils/object';
-import { RowRenderer } from '../rendering/rowRenderer';
-import { WithoutGridCommon } from '../interfaces/iCommon';
 import { FilterComponent } from '../components/framework/componentTypes';
-import { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
+import { UserCompDetails } from '../components/framework/userComponentFactory';
+import { BeanStub } from '../context/beanStub';
+import { Bean, PostConstruct } from '../context/context';
+import { ColDef } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { RowNode } from '../entities/rowNode';
+import { AdvancedFilterEnabledChangedEvent, ColumnEventType, Events, FilterChangedEvent, FilterChangedEventSourceType, FilterDestroyedEvent, FilterModifiedEvent } from '../events';
 import { unwrapUserComp } from '../gridApi';
 import { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
-import { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
+import { WithoutGridCommon } from '../interfaces/iCommon';
+import { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
+import { ModuleNames } from '../modules/moduleNames';
+import { ModuleRegistry } from '../modules/moduleRegistry';
+import { AgPromise, _ } from '../utils';
 import { warnOnce } from '../utils/function';
-import { DataTypeService } from '../columns/dataTypeService';
+import { exists } from '../utils/generic';
+import { cloneObject, mergeDeep } from '../utils/object';
+import { convertToSet } from '../utils/set';
+import { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
 import { QuickFilterService } from './quickFilterService';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
 @Bean('filterManager')
 export class FilterManager extends BeanStub {
-
-    // @Autowired('valueService') private valueService: ValueService;
-    // @Autowired('columnModel') private columnModel: ColumnModel;
-    // @Autowired('rowModel') private rowModel: IRowModel;
-    // @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    // @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    // @Autowired('dataTypeService') private dataTypeService: DataTypeService;
-    // @Autowired('quickFilterService') private quickFilterService: QuickFilterService;
-    // @Optional('advancedFilterService') private advancedFilterService: IAdvancedFilterService;
 
     private allColumnFilters = new Map<string, FilterWrapper>();
     private allColumnListeners = new Map<string, (() => null) | undefined>();

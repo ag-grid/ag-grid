@@ -1,10 +1,8 @@
-import { Autowired, PostConstruct } from "../context/context";
-import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
-import { getScrollLeft, isVisible, setFixedHeight, setFixedWidth, setScrollLeft } from "../utils/dom";
-import { ColumnModel } from "../columns/columnModel";
+import { PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
-import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
+import { getScrollLeft, isVisible, setFixedHeight, setFixedWidth, setScrollLeft } from "../utils/dom";
 import { RefSelector } from "../widgets/componentAnnotations";
+import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
 import { CenterWidthFeature } from "./centerWidthFeature";
 
 export class FakeHScrollComp extends AbstractFakeScrollComp {
@@ -20,9 +18,6 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
     @RefSelector('eLeftSpacer') private eLeftSpacer: HTMLElement;
     @RefSelector('eRightSpacer') private eRightSpacer: HTMLElement;
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
 
     private enableRtl: boolean;
 
@@ -41,7 +36,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         this.addManagedEventListener(Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.addManagedPropertyListener('domLayout', spacerWidthsListener);
 
-        this.ctrlsService.registerFakeHScrollComp(this);
+        this.beans.ctrlsService.registerFakeHScrollComp(this);
         this.createManagedBean(new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`));
 
         this.addManagedPropertyListeners(['suppressHorizontalScroll'], this.onScrollVisibilityChanged.bind(this));
@@ -64,7 +59,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
     private refreshCompBottom(): void {
         if (!this.invisibleScrollbar) { return; }
-        const bottomPinnedHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
+        const bottomPinnedHeight = this.beans.pinnedRowModel.getPinnedBottomTotalHeight();
 
         this.getGui().style.bottom = `${bottomPinnedHeight}px`
     }
@@ -75,11 +70,11 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     }
 
     private setFakeHScrollSpacerWidths(): void {
-        const vScrollShowing = this.scrollVisibleService.isVerticalScrollShowing();
+        const vScrollShowing = this.beans.scrollVisibleService.isVerticalScrollShowing();
 
         // we pad the right based on a) if cols are pinned to the right and
         // b) if v scroll is showing on the right (normal position of scroll)
-        let rightSpacing = this.columnModel.getDisplayedColumnsRightWidth();
+        let rightSpacing = this.beans.columnModel.getDisplayedColumnsRightWidth();
         const scrollOnRight = !this.enableRtl && vScrollShowing;
         const scrollbarWidth = this.beans.gos.getScrollbarWidth();
 
@@ -91,7 +86,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
         // we pad the left based on a) if cols are pinned to the left and
         // b) if v scroll is showing on the left (happens in LTR layout only)
-        let leftSpacing = this.columnModel.getDisplayedColumnsLeftWidth();
+        let leftSpacing = this.beans.columnModel.getDisplayedColumnsLeftWidth();
         const scrollOnLeft = this.enableRtl && vScrollShowing;
 
         if (scrollOnLeft) {
@@ -103,7 +98,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     }
 
     protected setScrollVisible(): void {
-        const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
+        const hScrollShowing = this.beans.scrollVisibleService.isHorizontalScrollShowing();
         const invisibleScrollbar = this.invisibleScrollbar;
         const isSuppressHorizontalScroll = this.beans.gos.get('suppressHorizontalScroll');
         const scrollbarWidth = hScrollShowing ? (this.beans.gos.getScrollbarWidth() || 0) : 0;

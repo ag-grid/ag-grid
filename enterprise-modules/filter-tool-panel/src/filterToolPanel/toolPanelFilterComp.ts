@@ -1,17 +1,9 @@
 import {
-    _,
-    Autowired,
-    Column,
-    ColumnModel,
-    Component,
-    Events,
-    FilterManager,
-    FilterOpenedEvent,
-    IFilterComp,
+    Column, Component,
+    Events, FilterOpenedEvent, FilterWrapperComp, IFilterComp,
     KeyCode,
     PostConstruct,
-    RefSelector,
-    FilterWrapperComp
+    RefSelector, _
 } from "@ag-grid-community/core";
 
 export class ToolPanelFilterComp extends Component {
@@ -30,9 +22,6 @@ export class ToolPanelFilterComp extends Component {
     @RefSelector('agFilterToolPanelBody') private agFilterToolPanelBody: HTMLElement;
     @RefSelector('eFilterIcon') private eFilterIcon: Element;
     @RefSelector('eExpand') private eExpand: Element;
-
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private eExpandChecked: Element;
     private eExpandUnchecked: Element;
@@ -57,7 +46,7 @@ export class ToolPanelFilterComp extends Component {
 
     public setColumn(column: Column): void {
         this.column = column;
-        this.eFilterName.innerText = this.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
+        this.eFilterName.innerText = this.beans.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', (e: KeyboardEvent) => {
             if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
@@ -86,7 +75,7 @@ export class ToolPanelFilterComp extends Component {
     }
 
     public getColumnFilterName(): string | null {
-        return this.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false);
+        return this.beans.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false);
     }
 
     public addCssClassToTitleBar(cssClass: string) {
@@ -101,7 +90,7 @@ export class ToolPanelFilterComp extends Component {
     }
 
     public isFilterActive(): boolean {
-        return this.filterManager.isFilterActive(this.column);
+        return this.beans.filterManager.isFilterActive(this.column);
     }
 
     private onFilterChanged(): void {

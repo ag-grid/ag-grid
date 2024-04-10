@@ -8,7 +8,7 @@ import { _ } from "../utils";
 
 @Bean('rowNodeBlockLoader')
 export class RowNodeBlockLoader extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
+    
     
     public static BLOCK_LOADED_EVENT = 'blockLoaded';
     public static BLOCK_LOADER_FINISHED_EVENT = 'blockLoaderFinished';
@@ -101,7 +101,7 @@ export class RowNodeBlockLoader extends BeanStub {
 
     public getBlockState() {
         if (this.beans.gos.isRowModelType('serverSide')) {
-            const ssrm = this.rowModel as IServerSideRowModel;
+            const ssrm = this.beans.serverSideRowModel;
             return ssrm.getBlockStates();
         }
 

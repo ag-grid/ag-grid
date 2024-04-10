@@ -20,7 +20,7 @@ import {
 export class ModelItemUtils extends BeanStub {
 
     @Autowired('aggFuncService') aggFuncService: IAggFuncService;
-    @Autowired('columnModel') columnModel: ColumnModel;
+     columnModel: ColumnModel;
     @Autowired('eventService') private eventService: EventService;
 
     public selectAllChildren(colTree: ColumnModelItem[], selectAllChecked: boolean, eventType: ColumnEventType): void {
@@ -33,7 +33,7 @@ export class ModelItemUtils extends BeanStub {
     }
 
     public setAllColumns(cols: Column[], selectAllChecked: boolean, eventType: ColumnEventType): void {
-        if (this.columnModel.isPivotMode()) {
+        if (this.beans.columnModel.isPivotMode()) {
             this.setAllPivot(cols, selectAllChecked, eventType);
         } else {
             this.setAllVisible(cols, selectAllChecked, eventType);
@@ -74,7 +74,7 @@ export class ModelItemUtils extends BeanStub {
         });
 
         if (colStateItems.length > 0) {
-            this.columnModel.applyColumnState({state: colStateItems}, eventType);
+            this.beans.columnModel.applyColumnState({state: colStateItems}, eventType);
         }
     }
 
@@ -88,9 +88,9 @@ export class ModelItemUtils extends BeanStub {
 
     private setAllPivotPassive(columns: Column[], value: boolean): void {
 
-        const copyOfPivotColumns = this.columnModel.getPivotColumns().slice();
-        const copyOfValueColumns = this.columnModel.getValueColumns().slice();
-        const copyOfRowGroupColumns = this.columnModel.getRowGroupColumns().slice();
+        const copyOfPivotColumns = this.beans.columnModel.getPivotColumns().slice();
+        const copyOfValueColumns = this.beans.columnModel.getValueColumns().slice();
+        const copyOfRowGroupColumns = this.beans.columnModel.getRowGroupColumns().slice();
 
         let pivotChanged = false;
         let valueChanged = false;
@@ -203,7 +203,7 @@ export class ModelItemUtils extends BeanStub {
         columns.forEach(action);
 
         if (colStateItems.length > 0) {
-            this.columnModel.applyColumnState({state: colStateItems}, eventType);
+            this.beans.columnModel.applyColumnState({state: colStateItems}, eventType);
         }
     }
 
@@ -220,7 +220,7 @@ export class ModelItemUtils extends BeanStub {
         const { columns, visibleState, pivotState, eventType } = params;
         const state: ColumnState[] = columns.map(column => {
             const colId = column.getColId();
-            if (this.columnModel.isPivotMode()) {
+            if (this.beans.columnModel.isPivotMode()) {
                 const pivotStateForColumn = pivotState?.[colId];
                 return {
                     colId,
@@ -235,7 +235,7 @@ export class ModelItemUtils extends BeanStub {
                 }
             }
         });
-        this.columnModel.applyColumnState({ state }, eventType);
+        this.beans.columnModel.applyColumnState({ state }, eventType);
     }
 
     public createPivotState(column: Column): {

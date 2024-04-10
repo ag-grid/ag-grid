@@ -1,5 +1,4 @@
 import {
-    Autowired,
     BaseCreateChartParams,
     Bean,
     BeanStub,
@@ -8,29 +7,22 @@ import {
     ChartModel,
     ChartParamsCellRange,
     ChartRef,
-    ChartType,
-    ColumnModel,
-    CreateCrossFilterChartParams,
+    ChartType, CreateCrossFilterChartParams,
     CreatePivotChartParams,
     CreateRangeChartParams,
     GetChartImageDataUrlParams,
     IAggFunc,
-    IChartService,
-    IRangeService,
-    OpenChartToolPanelParams,
-    Optional,
-    PartialCellRange,
+    IChartService, OpenChartToolPanelParams, PartialCellRange,
     PreDestroy,
     SeriesChartType,
-    UpdateChartParams,
-    _
+    UpdateChartParams
 } from "@ag-grid-community/core";
-import { AgChartThemeOverrides, AgChartThemePalette, VERSION as CHARTS_VERSION, _ModuleSupport} from "ag-charts-community";
+import { AgChartThemeOverrides, AgChartThemePalette, VERSION as CHARTS_VERSION, _ModuleSupport } from "ag-charts-community";
+import { VERSION as GRID_VERSION } from "../version";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
+import { ChartParamsValidator } from "./chartComp/utils/chartParamsValidator";
 import { getCanonicalChartType } from './chartComp/utils/seriesTypeMapper';
 import { upgradeChartModel } from "./chartModelMigration";
-import { VERSION as GRID_VERSION } from "../version";
-import { ChartParamsValidator } from "./chartComp/utils/chartParamsValidator";
 
 export interface CrossFilteringContext {
     lastSelectedChartId: string;
@@ -50,9 +42,6 @@ export interface CommonCreateChartParams extends BaseCreateChartParams {
 
 @Bean('chartService')
 export class ChartService extends BeanStub implements IChartService {
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Optional('rangeService') private rangeService?: IRangeService;
 
     public static CHARTS_VERSION = CHARTS_VERSION;
 
@@ -301,7 +290,7 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     private getSelectedRange(): PartialCellRange {
-        const ranges = this.rangeService?.getCellRanges() ?? [];
+        const ranges = this.beans.rangeService?.getCellRanges() ?? [];
         return ranges.length > 0 ? ranges[0] : { columns: [] };
     }
 
@@ -315,9 +304,9 @@ export class ChartService extends BeanStub implements IChartService {
             rowStartPinned: undefined,
             rowEndIndex: null,
             rowEndPinned: undefined,
-            columns: this.columnModel.getAllDisplayedColumns().map(col => col.getColId())
+            columns: this.beans.columnModel.getAllDisplayedColumns().map(col => col.getColId())
         } : cellRangeParams;
-        const cellRange = rangeParams && this.rangeService?.createPartialCellRangeFromRangeParams(rangeParams as CellRangeParams, true);
+        const cellRange = rangeParams && this.beans.rangeService?.createPartialCellRangeFromRangeParams(rangeParams as CellRangeParams, true);
         if (!cellRange) {
             console.warn(`AG Grid - unable to create chart as ${allRange ? 'there are no columns in the grid' : 'no range is selected'}.`);
         }

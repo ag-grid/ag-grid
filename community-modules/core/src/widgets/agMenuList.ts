@@ -1,20 +1,17 @@
-import { FocusService } from "../focusService";
-import { Autowired, PostConstruct } from "../context/context";
+import { KeyCode } from "../constants/keyCode";
+import { BeanStub } from "../context/beanStub";
+import { PostConstruct } from "../context/context";
+import { IMenuActionParams } from "../interfaces/iCallbackParams";
+import { WithoutGridCommon } from "../interfaces/iCommon";
+import { MenuItemDef } from "../interfaces/menuItem";
+import { last } from "../utils/array";
+import { loadTemplate } from "../utils/dom";
+import { stopPropagationForAgGrid } from "../utils/event";
+import { AgPromise } from "../utils/promise";
 import { AgMenuItemComponent, CloseMenuEvent, MenuItemActivatedEvent } from "./agMenuItemComponent";
 import { TabGuardComp } from "./tabGuardComp";
-import { KeyCode } from "../constants/keyCode";
-import { MenuItemDef } from "../interfaces/menuItem";
-import { loadTemplate } from "../utils/dom";
-import { last } from "../utils/array";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { IMenuActionParams } from "../interfaces/iCallbackParams";
-import { BeanStub } from "../context/beanStub";
-import { AgPromise } from "../utils/promise";
-import { stopPropagationForAgGrid } from "../utils/event";
 
 export class AgMenuList extends TabGuardComp {
-
-    @Autowired('focusService') private readonly focusService: FocusService;
 
     private menuItems: AgMenuItemComponent[] = [];
     private activeMenuItem: AgMenuItemComponent | null;

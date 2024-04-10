@@ -1,22 +1,19 @@
-import { HeaderRowCtrl } from "../../row/headerRowCtrl";
-import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
+import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { KeyCode } from '../../../constants/keyCode';
-import { Autowired } from '../../../context/context';
 import { Column } from '../../../entities/column';
 import { Events, FilterChangedEvent } from '../../../events';
-import { FilterManager } from '../../../filter/filterManager';
 import { IFloatingFilter } from '../../../filter/floating/floatingFilter';
-import { ColumnHoverService } from '../../../rendering/columnHoverService';
+import { Beans } from "../../../rendering/beans";
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { AgPromise } from '../../../utils';
+import { setAriaLabel } from "../../../utils/aria";
 import { isElementChildOfClass } from '../../../utils/dom';
+import { warnOnce } from "../../../utils/function";
 import { createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
+import { HeaderRowCtrl } from "../../row/headerRowCtrl";
+import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { HoverFeature } from '../hoverFeature';
-import { UserCompDetails } from "../../../components/framework/userComponentFactory";
-import { setAriaLabel } from "../../../utils/aria";
-import { warnOnce } from "../../../utils/function";
-import { Beans } from "../../../rendering/beans";
 
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     addOrRemoveBodyCssClass(cssClassName: string, on: boolean): void;
@@ -120,7 +117,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
         if (wrapperHasFocus) { return; }
 
-        const nextFocusableEl = this.focusService.findNextFocusableElement(this.eGui, null, e.shiftKey);
+        const nextFocusableEl = this.beans.focusService.findNextFocusableElement(this.eGui, null, e.shiftKey);
 
         if (nextFocusableEl) {
             this.beans.headerNavigationService.scrollToColumn(this.column);
@@ -133,7 +130,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
         if (!nextFocusableColumn) { return; }
 
-        if (this.focusService.focusHeaderPosition({
+        if (this.beans.focusService.focusHeaderPosition({
             headerPosition: {
                 headerRowIndex: this.getParentRowCtrl().getRowIndex(),
                 column: nextFocusableColumn
@@ -177,7 +174,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
                 e.stopPropagation();
             case KeyCode.ENTER:
                 if (wrapperHasFocus) {
-                    if (this.focusService.focusInto(this.eGui)) {
+                    if (this.beans.focusService.focusInto(this.eGui)) {
                         e.preventDefault();
                     }
                 }
@@ -206,7 +203,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             if (lastFocusEvent && fromTab) {
                 const shouldFocusLast = lastFocusEvent.shiftKey;
 
-                this.focusService.focusInto(this.eGui, shouldFocusLast);
+                this.beans.focusService.focusInto(this.eGui, shouldFocusLast);
             }
         }
 
@@ -233,8 +230,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private setupFilterButton(): void {
-        this.suppressFilterButton = !this.menuService.isFloatingFilterButtonEnabled(this.column);
-        this.highlightFilterButtonWhenActive = !this.menuService.isLegacyMenuEnabled();
+        this.suppressFilterButton = !this.beans.menuService.isFloatingFilterButtonEnabled(this.column);
+        this.highlightFilterButtonWhenActive = !this.beans.menuService.isLegacyMenuEnabled();
     }
 
     private setupUserComp(): void {
@@ -257,7 +254,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     private showParentFilter() {
         const eventSource = this.suppressFilterButton ? this.eFloatingFilterBody : this.eButtonShowMainFilter;
-        this.menuService.showFilterMenu({
+        this.beans.menuService.showFilterMenu({
             column: this.column,
             buttonElement: eventSource,
             containerType: 'floatingFilter',

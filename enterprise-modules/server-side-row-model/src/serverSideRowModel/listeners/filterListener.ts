@@ -3,9 +3,7 @@ import {
     Autowired,
     Bean,
     BeanStub,
-    Events,
-    FilterManager,
-    FilterModel,
+    Events, FilterModel,
     PostConstruct,
     StoreRefreshAfterParams
 } from "@ag-grid-community/core";
@@ -16,7 +14,6 @@ import { ListenerUtils } from "./listenerUtils";
 export class FilterListener extends BeanStub {
 
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
-    @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('ssrmListenerUtils') private listenerUtils: ListenerUtils;
 
     @PostConstruct
@@ -35,16 +32,17 @@ export class FilterListener extends BeanStub {
         const oldModel = storeParams.filterModel;
         let newModel: FilterModel | AdvancedFilterModel | null;
         let changedColumns: string[];
+        const {filterManager} = this.beans;
 
-        if (this.filterManager.isAdvancedFilterEnabled()) {
-            newModel = this.filterManager.getAdvancedFilterModel();
+        if (filterManager.isAdvancedFilterEnabled()) {
+            newModel = filterManager.getAdvancedFilterModel();
             // if advancedFilterEnabledChanged, old model is of type `FilterModel`
             const oldColumns = advancedFilterEnabledChanged ? Object.keys(oldModel ?? {}) : this.getAdvancedFilterColumns(oldModel as AdvancedFilterModel | null);
             const newColumns = this.getAdvancedFilterColumns(newModel as AdvancedFilterModel | null);
             oldColumns.forEach(column => newColumns.add(column));
             changedColumns = Array.from(newColumns);
         } else {
-            newModel = this.filterManager.getFilterModel();
+            newModel = filterManager.getFilterModel();
             if (advancedFilterEnabledChanged) {
                 // old model is of type `AdvancedFilterModel | null`
                 const oldColumns = this.getAdvancedFilterColumns(oldModel as AdvancedFilterModel | null);

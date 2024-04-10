@@ -15,7 +15,7 @@ import { SetValueModel } from './setValueModel';
 
 export class SetFloatingFilterComp<V = string> extends Component implements IFloatingFilter {
     @RefSelector('eFloatingFilterText') private readonly eFloatingFilterText: AgInputTextField;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    
 
     private params: IFloatingFilterParams;
     private availableValuesListenerAdded = false;
@@ -46,7 +46,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     }
 
     private setParams(params: IFloatingFilterParams): void {
-        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
+        const displayName = this.beans.columnModel.getDisplayNameForColumn(params.column, 'header', true);
         const translate = this.beans.localeService.getLocaleTextFunc();
 
         this.eFloatingFilterText.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);

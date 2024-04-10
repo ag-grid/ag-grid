@@ -1,4 +1,4 @@
-import { AgInputNumberField, Autowired, DragService, Events, AgAbstractLabel, DragListenerParams, AgLabelParams, RefSelector, _ } from "@ag-grid-community/core";
+import { AgAbstractLabel, AgInputNumberField, AgLabelParams, DragListenerParams, Events, RefSelector, _ } from "@ag-grid-community/core";
 
 export interface AgAngleSelectParams extends AgLabelParams {
     value?: number;
@@ -24,8 +24,6 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     @RefSelector('eParentCircle') private readonly eParentCircle: HTMLElement;
     @RefSelector('eChildCircle') private readonly eChildCircle: HTMLElement;
     @RefSelector('eAngleValue') private readonly eAngleValue: AgInputNumberField;
-
-    @Autowired('dragService') protected readonly dragService: DragService;
 
     private parentCircleRect: ClientRect | DOMRect;
     private degrees: number;
@@ -60,7 +58,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
             onDragStop: () => { }
         };
 
-        this.dragService.addDragSource(this.dragListener);
+        this.beans.dragService.addDragSource(this.dragListener);
 
         this.eAngleValue
             .setLabel('')
@@ -247,7 +245,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     }
 
     protected destroy(): void {
-        this.dragService.removeDragSource(this.dragListener);
+        this.beans.dragService.removeDragSource(this.dragListener);
         super.destroy();
     }
 }

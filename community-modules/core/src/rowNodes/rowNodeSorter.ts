@@ -1,10 +1,8 @@
+import { BeanStub } from "../context/beanStub";
+import { Bean, PostConstruct } from "../context/context";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { ValueService } from "../valueService/valueService";
 import { _ } from "../utils";
-import { ColumnModel } from "../columns/columnModel";
-import { BeanStub } from "../context/beanStub";
 
 export interface SortOption {
     sort: 'asc' | 'desc';
@@ -20,9 +18,6 @@ export interface SortedRowNode {
 
 @Bean('rowNodeSorter')
 export class RowNodeSorter extends BeanStub {
-
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private isAccentedSort: boolean;
     private primaryColumnsSortGroups: boolean;
@@ -97,7 +92,7 @@ export class RowNodeSorter extends BeanStub {
         const groupLeafField = !rowNode.group && column.getColDef().field;
         if (!groupLeafField) { return; }
 
-        const primaryColumn = this.columnModel.getPrimaryColumn(groupLeafField);
+        const primaryColumn = this.beans.columnModel.getPrimaryColumn(groupLeafField);
         if (!primaryColumn) { return; }
 
         return primaryColumn.getColDef().comparator;
@@ -105,23 +100,23 @@ export class RowNodeSorter extends BeanStub {
 
     private getValue(node: RowNode, column: Column): any {
         if (!this.primaryColumnsSortGroups) {
-            return this.valueService.getValue(column, node, false, false);
+            return this.beans.valueService.getValue(column, node, false, false);
         }
 
         const isNodeGroupedAtLevel = node.rowGroupColumn === column;
         if (isNodeGroupedAtLevel) {
-            const isGroupRows = this.beans.gos.isGroupUseEntireRow(this.columnModel.isPivotActive());
+            const isGroupRows = this.beans.gos.isGroupUseEntireRow(this.beans.columnModel.isPivotActive());
             // because they're group rows, no display cols exist, so groupData never populated.
             // instead delegate to getting value from leaf child.
             if (isGroupRows) {
                 const leafChild = node.allLeafChildren?.[0];
                 if (leafChild) {
-                    return this.valueService.getValue(column, leafChild, false, false);
+                    return this.beans.valueService.getValue(column, leafChild, false, false);
                 }
                 return undefined;
             }
 
-            const displayCol = this.columnModel.getGroupDisplayColumnForGroup(column.getId());
+            const displayCol = this.beans.columnModel.getGroupDisplayColumnForGroup(column.getId());
             if (!displayCol) {
                 return undefined;
             }
@@ -132,6 +127,6 @@ export class RowNodeSorter extends BeanStub {
             return undefined;
         }
 
-        return this.valueService.getValue(column, node, false, false);
+        return this.beans.valueService.getValue(column, node, false, false);
     }
 }
