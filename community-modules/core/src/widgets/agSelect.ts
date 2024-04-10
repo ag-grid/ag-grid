@@ -98,6 +98,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
 
         if (!this.isPickerDisplayed) {
             super.onKeyDown(e);
+            return;
         }
 
         switch (key) {
