@@ -36,15 +36,23 @@ export abstract class CartesianChartProxy extends ChartProxy {
 
     protected getData(params: UpdateParams, axes: AgCartesianAxisOptions[]): any[] {
         const supportsCrossFiltering = ['area', 'line'].includes(this.standaloneChartType);
-        const xAxisIsCategory = axes.some(axes => axes?.type === 'category');
         return this.crossFiltering && supportsCrossFiltering ?
             this.getCrossFilterData(params) :
-            this.getDataTransformedData(params, xAxisIsCategory);
+            this.getDataTransformedData(params, axes);
     }
 
-    private getDataTransformedData(params: UpdateParams, isCategoryAxis: boolean) {
-        const [category] = params.categories;
-        return this.transformData(params.data, category.id, isCategoryAxis);
+    private getDataTransformedData(params: UpdateParams, axes: AgCartesianAxisOptions[]) {
+        const xAxisType = axes[0].type;
+        const { categories, data } = params;
+        const [category] = categories;
+        switch (xAxisType) {
+            case 'category':
+                return this.transformCategoryData(data, category.id);
+            case 'time':
+                return this.transformTimeData(data, category.id);
+            default:
+                return data;
+        }
     }
 
     protected getXAxisType(params: UpdateParams) {
@@ -67,6 +75,20 @@ export abstract class CartesianChartProxy extends ChartProxy {
         const testDatum = params.data[0];
         if (!testDatum) { return false; }
         return isInstance(testDatum[category.id]);
+    }
+
+    private transformTimeData(data: any[], categoryKey: string): any[] {
+        // assumed that the first axis is always the "category" axis
+        const firstValue = data[0]?.[categoryKey];
+        if (firstValue instanceof Date) { return data; }
+
+        return data.map(datum => {
+            const value = datum[categoryKey];
+            return typeof value === 'string' ? {
+                ...datum,
+                [categoryKey]: new Date(value)
+            } : datum;
+        });
     }
 
     public crossFilteringReset(): void {
