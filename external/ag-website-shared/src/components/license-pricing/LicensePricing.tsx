@@ -2,7 +2,6 @@ import ChartsActive from '@ag-website-shared/images/inline-svgs/pricing/charts-a
 import ChartsInactive from '@ag-website-shared/images/inline-svgs/pricing/charts-inactive.svg?react';
 import GridActive from '@ag-website-shared/images/inline-svgs/pricing/grid-active.svg?react';
 import GridInactive from '@ag-website-shared/images/inline-svgs/pricing/grid-inactive.svg?react';
-// import { trackOnceInfoEmail } from '@utils/analytics';
 import classnames from 'classnames';
 import { type FunctionComponent, useEffect, useRef, useState } from 'react';
 
@@ -46,23 +45,6 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
-
-    useEffect(() => {
-        const onSelectionChange = () => {
-            const selection = document.getSelection()?.toString();
-            if (selection?.includes('info@ag-grid.com')) {
-                // TODO replace pricing analytics
-                // trackOnceInfoEmail({
-                //     type: 'selectedEmail',
-                // });
-            }
-        };
-        document.addEventListener('selectionchange', onSelectionChange);
-
-        return () => {
-            document.removeEventListener('selectionchange', onSelectionChange);
-        };
-    });
 
     // Handles charts/grid toggle logic
     const [chartsIsSelected, setChartsIsSelected] = useState(defaultSelection === 'charts');
