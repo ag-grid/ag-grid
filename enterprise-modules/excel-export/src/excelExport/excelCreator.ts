@@ -39,7 +39,6 @@ const createExcelXMLCoreFolderStructure = (): void => {
         'xl/drawings/',
         'xl/drawings/_rels',
         'xl/media/',
-
     ]);
 
     let imgCounter = 0;
@@ -62,7 +61,7 @@ const createExcelXmlWorksheets = (data: string[]): void => {
         const hasTables = ExcelXlsxFactory.worksheetDataTables.size > 0 && ExcelXlsxFactory.worksheetDataTables.has(i);
         const hasWatermark = ExcelXlsxFactory.worksheetWatermarkImage !== undefined;
 
-        if (!hasImages && !hasTables) { continue; }
+        if (!hasImages && !hasTables && !hasWatermark) { continue; }
 
         let tableIndex: number | undefined;
         let drawingIndex: number | undefined;
@@ -123,8 +122,7 @@ const createWatermarkDrawing = (): void => {
     const watermarkImage = ExcelXlsxFactory.worksheetWatermarkImage;
     if (!watermarkImage) { return; }
 
-    const drawingFolder = 'xl/drawings';
-    const drawingVmlFileName = `${drawingFolder}/vmlDrawing1.vml`;
+    const drawingVmlFileName = `xl/drawings/vmlDrawing1.vml`;
     const imageFileName = `xl/media/watermarkImage.${watermarkImage.imageType}`;
 
     ZipContainer.addFile(drawingVmlFileName, ExcelXlsxFactory.createWatermarkVmlDrawing());

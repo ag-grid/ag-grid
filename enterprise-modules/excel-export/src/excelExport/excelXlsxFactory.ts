@@ -409,7 +409,7 @@ export class ExcelXlsxFactory {
         tableIndex?: number,
         watermarkTarget?: string,
     } = {}) {
-        if (drawingIndex === undefined && tableIndex === undefined) {
+        if (drawingIndex === undefined && tableIndex === undefined && watermarkTarget === undefined) {
             return '';
         }
 
