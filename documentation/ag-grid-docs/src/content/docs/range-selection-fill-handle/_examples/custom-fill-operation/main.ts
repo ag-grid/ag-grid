@@ -1,4 +1,4 @@
-import { FillOperationParams, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
+import { FillOperationParams, GridApi, createGrid, GridOptions, FillStartEvent, FillEndEvent } from '@ag-grid-community/core';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
@@ -52,9 +52,16 @@ const gridOptions: GridOptions = {
 
     var lastValue = params.values[params.values.length - 1]
     var idxOfLast = daysList.indexOf(lastValue)
-
-    return daysList[(idxOfLast + 1) % daysList.length]
+    var nextDay = daysList[(idxOfLast + 1) % daysList.length]
+    console.log('Custom Fill Operation -> Next Day is:', nextDay);
+    return nextDay
   },
+  onFillStart: (event: FillStartEvent) => {
+    console.log('Fill Start', event);
+  },
+  onFillEnd: (event: FillEndEvent) => {
+    console.log('Fill End', event);
+  }
 }
 
 function createRowData(data: any[]) {

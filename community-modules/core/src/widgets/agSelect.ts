@@ -98,6 +98,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
 
         if (!this.isPickerDisplayed) {
             super.onKeyDown(e);
+            return;
         }
 
         switch (key) {
@@ -157,7 +158,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
             displayValue = this.config.placeholder;
         }
 
-        this.eDisplayField.innerHTML = displayValue!;
+        this.eDisplayField.textContent = displayValue!;
 
         this.setTooltip({
             newTooltipText: displayValue ?? null,

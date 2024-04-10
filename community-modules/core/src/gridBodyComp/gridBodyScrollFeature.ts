@@ -378,7 +378,7 @@ export class GridBodyScrollFeature extends BeanStub {
      * This can have big performance improvements but may not be 100% accurate so only use if this is acceptable.
      */
     public getApproximateVScollPosition(): VerticalScrollPosition{
-        if(this.lastScrollTop >= 0 && this.lastOffsetHeight >= 0){
+        if (this.lastScrollTop >= 0 && this.lastOffsetHeight >= 0) {
             return {
                 top: this.scrollTop,
                 bottom: this.scrollTop + this.lastOffsetHeight

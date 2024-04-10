@@ -35,6 +35,7 @@ import {
     HeaderComponent,
     HeaderGroupComponent,
     InnerRendererComponent,
+    LoadingCellRendererComponent,
     LoadingOverlayComponent,
     MenuItemComponent,
     NoRowsOverlayComponent,
@@ -116,6 +117,10 @@ export class UserComponentFactory extends BeanStub {
 
     public getCellRendererDetails(def: ColDef | RichSelectParams, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined {
         return this.getCompDetails(def, CellRendererComponent, null, params);
+    }
+
+    public getLoadingCellRendererDetails(def: ColDef | RichSelectParams, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined {
+        return this.getCompDetails(def, LoadingCellRendererComponent, 'agSkeletonCellRenderer', params, true);
     }
 
     // CELL EDITOR

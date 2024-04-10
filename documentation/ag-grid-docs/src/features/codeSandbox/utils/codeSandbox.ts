@@ -68,7 +68,7 @@ const getCodeSandboxFiles = ({
           }
         : { ...boilerPlateFiles, ...files };
 
-    if(allFiles['package.json'] == undefined) {
+    if (allFiles['package.json'] == undefined) {
         // don't include undefined package.json
         delete allFiles['package.json'];
     }

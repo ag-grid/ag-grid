@@ -84,20 +84,23 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
         const defaultItems = defaultMenuOptions.length ? defaultMenuOptions : undefined;
         const columnContextMenuItems = column?.getColDef().contextMenuItems;
+
         if (Array.isArray(columnContextMenuItems)) {
             return columnContextMenuItems;
-        } else if (typeof columnContextMenuItems === 'function') {
-            return columnContextMenuItems(this.gos.addGridCommonParams({
-                column, node, value, defaultItems
-            }));
-        } else {
-            const userFunc = this.gos.getCallback('getContextMenuItems');
-            if (userFunc) {
-                return userFunc({ column, node, value, defaultItems });
-            } else {
-                return defaultMenuOptions;
-            }
         }
+        
+        if (typeof columnContextMenuItems === 'function') {
+            return columnContextMenuItems(this.gos.addGridCommonParams({
+                column, node, value, defaultItems
+            }));
+        }
+
+        const userFunc = this.gos.getCallback('getContextMenuItems');
+        if (userFunc) {
+            return userFunc({ column, node, value, defaultItems });
+        }
+
+        return defaultMenuOptions;
     }
 
     public onContextMenu(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowNode: RowNode | null, column: Column | null, value: any, anchorToElement: HTMLElement): void {

@@ -7,7 +7,7 @@ import {
     Events,
     PostConstruct,
     RowNode,
-    RowRenderer,
+    RowPositionUtils,
     ValueService
 } from "@ag-grid-community/core";
 
@@ -15,7 +15,7 @@ import {
 export class ChartColumnService extends BeanStub {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('valueService') private readonly valueService: ValueService;
-    @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
+    @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
 
     private valueColsWithoutSeriesType: Set<string> = new Set();
 
@@ -55,12 +55,12 @@ export class ChartColumnService extends BeanStub {
     }
 
     public getChartColumns(): { dimensionCols: Set<Column>; valueCols: Set<Column>; } {
-        const displayedCols = this.columnModel.getAllDisplayedColumns();
+        const gridCols = this.columnModel.getAllGridColumns();
 
         const dimensionCols = new Set<Column>();
         const valueCols = new Set<Column>();
 
-        displayedCols.forEach(col => {
+        gridCols.forEach(col => {
             const colDef = col.getColDef();
             const chartDataType = colDef.chartDataType;
 
@@ -105,7 +105,7 @@ export class ChartColumnService extends BeanStub {
             return false;
         }
 
-        const row = this.rowRenderer.getRowNode({ rowIndex: 0, rowPinned: null });
+        const row = this.rowPositionUtils.getRowNode({ rowIndex: 0, rowPinned: null });
 
         if (!row) {
             return this.valueColsWithoutSeriesType.has(colId);

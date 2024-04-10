@@ -21,7 +21,6 @@ export interface InternalFrameworkExample {
     pageName: string;
     exampleName: string;
     supportedFrameworks: Set<InternalFramework> | undefined;
-    supportedImportTypes: Set<ImportType> | undefined;
 }
 
 export interface ExtraFileRoute {

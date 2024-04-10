@@ -145,7 +145,7 @@ export class AgList<TValue = string> extends Component {
         itemEl.classList.add('ag-list-item', `ag-${this.cssIdentifier}-list-item`);
         const span = eDocument.createElement('span');
         itemEl.appendChild(span);
-        span.innerText = text;
+        span.textContent = text;
 
         if (!this.unFocusable) {
             itemEl.tabIndex = -1;
@@ -234,13 +234,11 @@ export class AgList<TValue = string> extends Component {
         setAriaSelected(this.highlightedEl, true);
 
         const eGui = this.getGui();
-        const rect = eGui.getBoundingClientRect();
 
-        const currentTop = rect.top + eGui.scrollTop;
-        const height = rect.height;
+        const { scrollTop, clientHeight } = eGui;
         const { offsetTop, offsetHeight } = el;
 
-        if (((offsetTop + offsetHeight) > currentTop + height) || (offsetTop < currentTop)) {
+        if (((offsetTop + offsetHeight) > scrollTop + clientHeight) || (offsetTop < scrollTop)) {
             this.highlightedEl.scrollIntoView({ block: 'nearest' })
         }
 

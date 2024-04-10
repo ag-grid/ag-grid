@@ -137,7 +137,7 @@ import { ApiEventService } from "./misc/apiEventService";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { ManagedGridOptionKey, ManagedGridOptions } from "./propertyKeys";
 import { WithoutGridCommon } from "./interfaces/iCommon";
-import { MenuService } from "./misc/menuService";
+import { MenuService, IContextMenuParams } from "./misc/menuService";
 
 export interface DetailGridInfo {
     /**
@@ -242,16 +242,6 @@ export class GridApi<TData = any> {
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __getAlignedGridService(): AlignedGridsService {
         return this.alignedGridsService;
-    }
-
-    /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-    public __getContext(): Context {
-        return this.context;
-    }
-
-    /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-    public __getModel(): IRowModel {
-        return this.rowModel;
     }
 
     /** Returns the `gridId` for the current grid as specified via the gridOptions property `gridId` or the auto assigned grid id if none was provided. */
@@ -423,8 +413,8 @@ export class GridApi<TData = any> {
     /** Flash rows, columns or individual cells. */
     public flashCells(params: FlashCellsParams<TData> = {}): void {
         const warning = (prop: 'fade' | 'flash') => warnOnce(`Since v31.1 api.flashCells parameter '${prop}Delay' is deprecated. Please use '${prop}Duration' instead.`);
-        if(exists(params.fadeDelay)){ warning('fade') }
-        if(exists(params.flashDelay)){ warning('flash') }
+        if (exists(params.fadeDelay)) { warning('fade') }
+        if (exists(params.flashDelay)) { warning('flash') }
 
         this.frameworkOverrides.wrapIncoming(() => this.rowRenderer.flashCells(params));
     }
@@ -1327,6 +1317,29 @@ export class GridApi<TData = any> {
             column,
             mouseEvent,
             positionBy: 'mouse'
+        });
+    }
+
+    /**
+     * Displays the AG Grid's context menu
+     */
+    public showContextMenu(params?: IContextMenuParams) {
+        const { rowNode, column, value, x, y } = params || {};
+        let { x: clientX, y: clientY } = this.menuService.getContextMenuPosition(rowNode, column);
+
+        if (x != null) {
+            clientX = x;
+        }
+
+        if (y != null) {
+            clientY = y;
+        }
+
+        this.menuService.showContextMenu({
+            mouseEvent: new MouseEvent('mousedown', { clientX, clientY }),
+            rowNode,
+            column,
+            value
         });
     }
 

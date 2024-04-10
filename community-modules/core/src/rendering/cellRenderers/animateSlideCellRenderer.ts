@@ -87,7 +87,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
             return false;
         }
 
-        if(!isInitialRender){
+        if (!isInitialRender) {
             this.addSlideAnimation();
         }
 

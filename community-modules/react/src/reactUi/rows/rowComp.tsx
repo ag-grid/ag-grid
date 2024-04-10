@@ -98,8 +98,8 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
                 cellCtrlsRef.current = next;
 
                 const nextCells = getNextValueIfDifferent(prevCellCtrlsRef.current, next, domOrderRef.current);
-                if(nextCells !== prevCellCtrlsRef.current) {
-                    agFlushSync(useFlushSync, () => setCellCtrls(nextCells));                    
+                if (nextCells !== prevCellCtrlsRef.current) {
+                    agFlushSync(useFlushSync, () => setCellCtrls(nextCells));
                 }
 
             },

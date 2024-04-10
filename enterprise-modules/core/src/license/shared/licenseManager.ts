@@ -123,7 +123,7 @@ export class LicenseManager {
                             valid = false;
                         } else {
                             suppliedLicenseType = type;
-                            if((type !== LICENSE_TYPES['01'] && type !== LICENSE_TYPES['0102']) ||
+                            if ((type !== LICENSE_TYPES['01'] && type !== LICENSE_TYPES['0102']) ||
                                 (currentLicenseType === 'BOTH' && suppliedLicenseType !== 'BOTH')) {
                                 valid = false;
                                 incorrectLicenseType = true
@@ -266,7 +266,7 @@ export class LicenseManager {
     static setLicenseKey(licenseKey: string): void {
         this.licenseKey = licenseKey;
 
-        if(this.chartsLicenseManager) {
+        if (this.chartsLicenseManager) {
             this.chartsLicenseManager.setLicenseKey(licenseKey, true);
         }
     }

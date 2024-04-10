@@ -504,6 +504,12 @@
                 "url": "./filter-quick/#quick-filter-matcher"
             }
         },
+        "applyQuickFilterBeforePivotOrAgg": {
+            "more": {
+                "name": "Pivoting / Group Aggregation Filtering",
+                "url": "./filter-quick/#pivoting--group-aggregation-filtering"
+            }
+        },
         "isExternalFilterPresent": {
             "more": {
                 "name": "External Filter",
@@ -1461,6 +1467,12 @@
             "more": {
                 "name": "Block Loading Debounce",
                 "url": "./server-side-model-configuration/#block-loading-debounce"
+            }
+        },
+        "suppressServerSideFullWidthLoadingRow": {
+            "more": {
+                "name": "Cell Loading",
+                "url": "./component-loading-cell-renderer/#skeleton-loading"
             }
         },
         "purgeClosedRowNodes": {

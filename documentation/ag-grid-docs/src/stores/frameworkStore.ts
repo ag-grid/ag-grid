@@ -41,9 +41,9 @@ export const setInternalFramework = (internalFramework: InternalFramework) => {
         $frameworkContext.setKey('useVue3', 'true');
     }
 
-    if(INTERNAL_FRAMEWORKS.includes(internalFramework)) {
+    if (INTERNAL_FRAMEWORKS.includes(internalFramework)) {
         $internalFramework.set(internalFramework);
-    }else{
+    } else {
         console.error('Unsupported internal framework', internalFramework);
         $internalFramework.set(DEFAULT_INTERNAL_FRAMEWORK);
     }

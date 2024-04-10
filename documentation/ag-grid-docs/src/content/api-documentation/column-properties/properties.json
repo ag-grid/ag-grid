@@ -319,6 +319,25 @@
                 "url": "./component-cell-renderer/#dynamic-selection"
             }
         },
+        "loadingCellRenderer": {
+            "description": "Provide your own cell loading Renderer component for this column's cells when using SSRM.",
+            "more": {
+                "name": "SSRM Cell Loading",
+                "url": "./component-loading-cell-renderer/#skeleton-loading"
+            }
+        },
+        "loadingCellRendererParams": {
+            "more": {
+                "name": "SSRM Cell Loading",
+                "url": "./component-loading-cell-renderer/#skeleton-loading"
+            }
+        },
+        "loadingCellRendererSelector": {
+            "more": {
+                "name": "SSRM Cell Loading",
+                "url": "./component-loading-cell-renderer/#skeleton-loading"
+            }
+        },
         "autoHeight": {},
         "wrapText": {},
         "enableCellChangeFlash": {}

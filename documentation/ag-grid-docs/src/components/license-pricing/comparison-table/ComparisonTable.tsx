@@ -116,7 +116,7 @@ const TableRow = ({ datum, cellRenderer, columns, id }) => {
 
     const subGroup = datum.isSubGroup;
 
-    if(!subGroup) {
+    if (!subGroup) {
         return (
             <div className={styles.row}>
                 {Object.keys(columns).map((columnField, index) => {

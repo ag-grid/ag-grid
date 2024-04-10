@@ -689,7 +689,7 @@ export class StateService extends BeanStub {
             this.suppressEvents = false;
             // We only want the grid initializing source.
             this.queuedUpdateSources.clear();
-            if(!this.isAlive()){
+            if (!this.isAlive()) {
                 // Ensure the grid is still alive before dispatching the event.
                 return;
             }

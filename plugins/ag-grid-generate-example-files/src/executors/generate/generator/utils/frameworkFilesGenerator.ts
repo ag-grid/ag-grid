@@ -64,7 +64,7 @@ const createVueFilesGenerator =
         const componentNames = getComponentName(componentScriptFiles);
         let mainJs = sourceGenerator(deepCloneObject(bindings), exampleConfig, componentNames, Object.keys(styleFiles))(importType);
 
-        if(!isDev){
+        if (!isDev) {
             mainJs = await prettier.format(mainJs, { parser: 'babel' });
         }
 
@@ -104,7 +104,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         mainJs = mainJs.replace(/^\s*[\r\n]/, '');
 
         const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
-        if(!isDev){
+        if (!isDev){
             mainJs = await prettier.format(mainJs, { parser: 'babel' });
         }
 
@@ -133,7 +133,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
 
         let mainTs = vanillaToTypescript(deepCloneObject(typedBindings), exampleConfig, mainFileName, entryFile)(importType);
 
-        if(!isDev){
+        if (!isDev){
             mainTs = await prettier.format(mainTs, { parser: 'typescript' });
         }
 
@@ -155,7 +155,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         const componentNames = getComponentName(componentScriptFiles);
         let indexJsx = vanillaToReactFunctional(deepCloneObject(bindings), exampleConfig, componentNames, Object.keys(styleFiles))(importType);
 
-        if(!isDev){
+        if (!isDev){
             indexJsx = await prettier.format(indexJsx, { parser: 'babel' });
         }
 
@@ -175,7 +175,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         const componentNames = getComponentName(componentScriptFiles);
         let indexTsx = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), exampleConfig, componentNames, Object.keys(styleFiles))(importType);
 
-        if(!isDev){
+        if (!isDev){
             indexTsx = await prettier.format(indexTsx, { parser: 'typescript' });
         }
 
@@ -197,7 +197,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         const componentNames = getComponentName(componentScriptFiles);
         let appComponent = vanillaToAngular(deepCloneObject(typedBindings), exampleConfig, componentNames, Object.keys(styleFiles))(importType);
 
-        if(!isDev){
+        if (!isDev){
             appComponent = await prettier.format(appComponent, { parser: 'typescript' });
         }
 

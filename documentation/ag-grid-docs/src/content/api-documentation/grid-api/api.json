@@ -822,6 +822,7 @@
                 "url": "./column-menu/#column-menu-api--events"
             }
         },
+        "showContextMenu": {},
         "hidePopupMenu": {
             "description": "Hides any visible [context menu](./context-menu/) or [column menu](./column-menu/)."
         },
