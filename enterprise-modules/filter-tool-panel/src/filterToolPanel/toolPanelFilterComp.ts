@@ -59,12 +59,7 @@ export class ToolPanelFilterComp extends Component {
         this.column = column;
         this.eFilterName.innerText = this.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
-        this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', (e: KeyboardEvent) => {
-            if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
-                e.preventDefault();
-                this.toggleExpanded();
-            }
-        });
+        this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', this.onKeyDown.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
         this.addInIcon('filter', this.eFilterIcon, this.column);
 
@@ -79,6 +74,25 @@ export class ToolPanelFilterComp extends Component {
         }
 
         this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+    }
+
+    private onKeyDown(e: KeyboardEvent): void {
+        const { key } = e;
+        const { ENTER, SPACE, LEFT, RIGHT } = KeyCode;
+
+        if (key !== ENTER && key !== SPACE && key !== LEFT && key !== RIGHT) {
+            return;
+        }
+
+        e.preventDefault();
+
+        if (key === ENTER || key === SPACE) {
+            this.toggleExpanded();
+        } else if (key === KeyCode.LEFT) {
+            this.collapse();
+        } else {
+            this.expand();
+        }
     }
 
     public getColumn(): Column {

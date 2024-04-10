@@ -24,7 +24,7 @@ import { IRangeService } from "../../interfaces/IRangeService";
 import { IClipboardService } from "../../interfaces/iClipboardService";
 import { CellCtrl } from "../../rendering/cell/cellCtrl";
 import { RowPinnedType } from "../../interfaces/iRowNode";
-import { MenuService, ShowContextMenuParams } from "../../misc/menuService";
+import { MenuService, EventShowContextMenuParams } from "../../misc/menuService";
 
 export class RowContainerEventsFeature extends BeanStub {
 
@@ -141,7 +141,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const anchorToElement = cellCtrl ? cellCtrl.getGui() : gridBodyCon.getGridBodyElement();
 
-        this.menuService.showContextMenu({ mouseEvent, touchEvent, rowNode, column, value, anchorToElement } as ShowContextMenuParams);
+        this.menuService.showContextMenu({ mouseEvent, touchEvent, rowNode, column, value, anchorToElement } as EventShowContextMenuParams);
     }
 
     private getControlsForEventTarget(target: EventTarget | null): { cellCtrl: CellCtrl | null, rowCtrl: RowCtrl | null } {

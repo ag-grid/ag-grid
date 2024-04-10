@@ -12,7 +12,6 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 export { ColumnFactory } from "./columns/columnFactory";
 export { ColumnModel, ColumnState, ColumnStateParams, ApplyColumnStateParams, ISizeColumnsToFitParams, IColumnLimit } from "./columns/columnModel";
 export { ColumnKeyCreator } from "./columns/columnKeyCreator";
-export { ColumnUtils } from "./columns/columnUtils";
 export { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
 export { GroupInstanceIdCreator } from "./columns/groupInstanceIdCreator";
 export { GROUP_AUTO_COLUMN_ID } from "./columns/autoGroupColService";
@@ -185,7 +184,7 @@ export { IImmutableService } from "./interfaces/iImmutableService";
 export { AnimationFrameService } from "./misc/animationFrameService";
 export { AlignedGrid } from "./interfaces/iAlignedGrid";
 export { ExpansionService } from "./misc/expansionService";
-export { MenuService } from "./misc/menuService";
+export { MenuService, IContextMenuParams } from "./misc/menuService";
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from "./interfaces/iCellEditor";
