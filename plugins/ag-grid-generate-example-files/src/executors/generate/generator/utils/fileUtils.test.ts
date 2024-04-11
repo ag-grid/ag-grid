@@ -40,12 +40,12 @@ describe('getBoilerPlateName', () => {
         ${undefined}           | ${undefined}
         ${'other'}             | ${undefined}
         ${'vanilla'}           | ${undefined}
-        ${'typescript'}        | ${'charts-typescript-boilerplate'}
-        ${'reactFunctional'}   | ${'charts-react-boilerplate'}
-        ${'reactFunctionalTs'} | ${'charts-react-ts-boilerplate'}
-        ${'angular'}           | ${'charts-angular-boilerplate'}
-        ${'vue'}               | ${'charts-vue-boilerplate'}
-        ${'vue3'}              | ${'charts-vue3-boilerplate'}
+        ${'typescript'}        | ${'grid-typescript-boilerplate'}
+        ${'reactFunctional'}   | ${'grid-react-boilerplate'}
+        ${'reactFunctionalTs'} | ${'grid-react-ts-boilerplate'}
+        ${'angular'}           | ${'grid-angular-boilerplate'}
+        ${'vue'}               | ${'grid-vue-boilerplate'}
+        ${'vue3'}              | ${'grid-vue3-boilerplate'}
     `('$internalFramework is $expected', ({ internalFramework, expected }) => {
         expect(getBoilerPlateName(internalFramework)).toEqual(expected);
     });

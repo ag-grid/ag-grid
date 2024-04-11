@@ -234,13 +234,11 @@ export class AgList<TValue = string> extends Component {
         setAriaSelected(this.highlightedEl, true);
 
         const eGui = this.getGui();
-        const rect = eGui.getBoundingClientRect();
 
-        const currentTop = rect.top + eGui.scrollTop;
-        const height = rect.height;
+        const { scrollTop, clientHeight } = eGui;
         const { offsetTop, offsetHeight } = el;
 
-        if (((offsetTop + offsetHeight) > currentTop + height) || (offsetTop < currentTop)) {
+        if (((offsetTop + offsetHeight) > scrollTop + clientHeight) || (offsetTop < scrollTop)) {
             this.highlightedEl.scrollIntoView({ block: 'nearest' })
         }
 

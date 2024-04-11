@@ -38,12 +38,6 @@ export class SunburstChartProxy extends HierarchicalChartProxy {
         };
     }
 
-    protected override transformData(data: any[], categoryKey: string, categoryAxis?: boolean): any[] {
-        // Ignore the base implementation as it assumes only a single category axis
-        // (this method is never actually invoked)
-        return data;
-    }
-
     public override crossFilteringReset(): void {
         // cross filtering is not currently supported in sunburst charts
     }

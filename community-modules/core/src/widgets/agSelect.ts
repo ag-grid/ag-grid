@@ -96,10 +96,6 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
             this.hidePicker();
         }
 
-        if (!this.isPickerDisplayed) {
-            super.onKeyDown(e);
-        }
-
         switch (key) {
             case KeyCode.ENTER:
             case KeyCode.UP:
@@ -108,10 +104,13 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
             case KeyCode.PAGE_DOWN:
             case KeyCode.PAGE_HOME:
             case KeyCode.PAGE_END:
-                this.listComponent?.handleKeyDown(e);
+                e.preventDefault();
+                if (this.isPickerDisplayed) {
+                    this.listComponent?.handleKeyDown(e);
+                } else {
+                    super.onKeyDown(e);
+                }
                 break;
-            default:
-                super.onKeyDown(e);
         }
     }
 

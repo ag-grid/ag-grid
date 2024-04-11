@@ -664,7 +664,8 @@ export class FilterManager extends BeanStub {
             } else {
                 currentColumn = this.beans.columnModel.getGridColumn(colId);
             }
-            if (currentColumn) { return; }
+            // group columns can be recreated with the same colId
+            if (currentColumn && currentColumn === wrapper.column) { return; }
 
             columns.push(wrapper.column);
             this.disposeFilterWrapper(wrapper, 'columnChanged');

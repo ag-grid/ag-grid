@@ -25,8 +25,8 @@ export const link: Schema = {
 
         const attributes = {
             ...nodeAttributes,
+            ...(nodeAttributes.isExternal ? { target: '_blank' } : undefined),
             href,
-            target: nodeAttributes.isExternal ? '_blank' : undefined,
         };
 
         return new Markdoc.Tag('a', attributes, children);

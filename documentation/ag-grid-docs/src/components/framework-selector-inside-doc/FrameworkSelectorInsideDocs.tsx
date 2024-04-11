@@ -1,17 +1,45 @@
+import type { Framework, MenuItem } from '@ag-grid-types';
 import { FRAMEWORKS } from '@constants';
 import styles from '@design-system/modules/FrameworkSelectorInsideDocs.module.scss';
+import { DOCS_FRAMEWORK_REDIRECT_PAGE } from '@features/docs/constants';
+import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
 import fwLogos from '@images/fw-logos';
 import { getFrameworkDisplayText } from '@utils/framework';
 import { getNewFrameworkPath } from '@utils/framework';
+import { getMenuItemFromPageName } from '@utils/getMenuItemFromPageName';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 
-export const FrameworkSelectorInsideDocs = ({ path, currentFramework }) => {
-    const handleFrameworkChange = (selectedFramework) => {
-        const newUrl = getNewFrameworkPath({
+interface Props {
+    path: string;
+    currentFramework: Framework;
+    menuItems: MenuItem[];
+}
+
+export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems }: Props) => {
+    const handleFrameworkChange = (selectedFramework: Framework) => {
+        const pageName = getPageNameFromPath(path);
+        const menuItem = getMenuItemFromPageName({ menuItems: menuItems, pageName });
+        let newUrl = getNewFrameworkPath({
             path,
             currentFramework,
             newFramework: selectedFramework,
         });
+
+        // Redirect to default page if page does not exist in framework
+        if (menuItem?.frameworks) {
+            const withinFrameworks = menuItem?.frameworks?.includes(selectedFramework);
+
+            if (!withinFrameworks) {
+                const relativeUrl = DOCS_FRAMEWORK_REDIRECT_PAGE.startsWith('./')
+                    ? DOCS_FRAMEWORK_REDIRECT_PAGE
+                    : `./${DOCS_FRAMEWORK_REDIRECT_PAGE}`;
+                newUrl = urlWithPrefix({
+                    framework: selectedFramework,
+                    url: relativeUrl,
+                });
+            }
+        }
 
         window.location.href = newUrl;
     };
@@ -24,10 +52,10 @@ export const FrameworkSelectorInsideDocs = ({ path, currentFramework }) => {
                 {currentFrameworkLogo && (
                     <img src={currentFrameworkLogo} alt={`${currentFramework} logo`} className={styles.frameworkLogo} />
                 )}
-                <span classnames={styles.divider}></span>
+                <span className={styles.divider}></span>
                 <select
                     value={currentFramework}
-                    onChange={(event) => handleFrameworkChange(event.target.value)}
+                    onChange={(event) => handleFrameworkChange(event.target.value as Framework)}
                     onClick={(event) => event.stopPropagation()} // Prevent event propagation
                     className={styles.select}
                     aria-label="Framework selector"
