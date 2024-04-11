@@ -2,7 +2,7 @@ import { AgAreaSeriesOptions, AgCartesianAxisOptions } from "ag-charts-community
 import { ChartProxyParams, UpdateParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
-export class AreaChartProxy extends CartesianChartProxy {
+export class AreaChartProxy extends CartesianChartProxy<'area'> {
 
     public constructor(params: ChartProxyParams) {
         super(params);

@@ -15,7 +15,7 @@ import {ChartController} from '../../../chartController';
 import {FontPanel, FontPanelParams} from '../fontPanel';
 import {ChartTranslationKey, ChartTranslationService} from '../../../services/chartTranslationService';
 import {FormatPanelOptions} from '../formatPanel';
-import {isRadial} from '../../../utils/seriesTypeMapper';
+import {getSeriesType, isRadial} from '../../../utils/seriesTypeMapper';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class PolarAxisPanel extends Component {
@@ -121,8 +121,8 @@ export class PolarAxisPanel extends Component {
     }
 
     private initRadiusAxis() {
-        const chartType = this.chartController.getChartType();
-        if (!isRadial(chartType)) return;
+        const chartSeriesType = getSeriesType(this.chartController.getChartType());
+        if (!isRadial(chartSeriesType)) return;
 
         const items = [
             this.createSlider({

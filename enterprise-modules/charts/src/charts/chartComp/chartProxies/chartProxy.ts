@@ -7,7 +7,8 @@ import {
     AgChartOptions,
     AgChartTheme,
     AgChartThemeOverrides,
-    AgChartThemePalette
+    AgChartThemePalette,
+    AgCrosshairOptions
 } from "ag-charts-community";
 
 import { CrossFilteringContext } from "../../chartService";
@@ -58,10 +59,10 @@ export interface UpdateParams {
     updatedOverrides?: AgChartThemeOverrides;
 }
 
-export abstract class ChartProxy {
+export abstract class ChartProxy<TOptions extends AgChartOptions = AgChartOptions, TSeries extends ChartSeriesType = ChartSeriesType> {
     private readonly isEnterpriseCharts: boolean;
     protected readonly chartType: ChartType;
-    protected readonly standaloneChartType: ChartSeriesType;
+    protected readonly standaloneChartType: TSeries;
 
     protected readonly chart: AgChartInstance;
     protected readonly crossFiltering: boolean;
@@ -75,7 +76,7 @@ export abstract class ChartProxy {
         this.chartType = chartProxyParams.chartType;
         this.crossFiltering = chartProxyParams.crossFiltering;
         this.crossFilterCallback = chartProxyParams.crossFilterCallback;
-        this.standaloneChartType = getSeriesType(this.chartType);
+        this.standaloneChartType = getSeriesType(this.chartType) as TSeries;
 
         if (this.chart == null) {
             this.chart = AgCharts.create(this.getCommonChartOptions());
@@ -85,9 +86,15 @@ export abstract class ChartProxy {
         }
     }
 
-    public abstract crossFilteringReset(): void;
+    protected abstract getUpdateOptions(params: UpdateParams, commonChartOptions: TOptions): TOptions;
 
-    public abstract update(params: UpdateParams): void;
+    public crossFilteringReset(): void {
+        // only required in cartesian charts
+    }
+
+    public update(params: UpdateParams): void {
+        AgCharts.update(this.getChartRef(), this.getUpdateOptions(params, this.getCommonChartOptions(params.updatedOverrides)));
+    }
 
     public updateThemeOverrides(themeOverrides: AgChartThemeOverrides): void {
         AgCharts.updateDelta(this.getChartRef(), { theme: { overrides: themeOverrides }});
@@ -158,9 +165,9 @@ export abstract class ChartProxy {
         });
     }
 
-    protected getCommonChartOptions(updatedOverrides?: AgChartThemeOverrides) {
+    private getCommonChartOptions(updatedOverrides?: AgChartThemeOverrides): TOptions & { mode: 'integrated' } {
         // Only apply active overrides if chart is initialised.
-        const existingOptions: any = this.clearThemeOverrides ? {} : this.chart?.getOptions() ?? {};
+        const existingOptions = (this.clearThemeOverrides ? {} : this.chart?.getOptions() ?? {}) as TOptions;
         const formattingPanelOverrides = this.chart != null ? this.getActiveFormattingPanelOverrides() : undefined;
         this.clearThemeOverrides = false;
 
@@ -172,20 +179,52 @@ export abstract class ChartProxy {
             updatedOverrides ?? formattingPanelOverrides,
         ]);
 
-        return {
+        const newOptions = {
             ...existingOptions,
-            theme,
-            container: this.chartProxyParams.parentElement,
-            mode: 'integrated',
-        }
+            mode: 'integrated'
+        } as const;
+        newOptions.theme = theme;
+        newOptions.container = this.chartProxyParams.parentElement;
+        return newOptions;
     }
 
-    /**
-     * Retrieve default theme overrides for the current chart type
-     */
-    protected getChartThemeDefaults(): AgChartThemeOverrides | undefined {
-        // Override this method to provide chart type specific theme overrides
-        return undefined;
+    private getChartThemeDefaults(): AgChartThemeOverrides | undefined {
+        const seriesOverrides = this.getSeriesChartThemeDefaults();
+        const seriesChartOptions = seriesOverrides ? {
+            [this.standaloneChartType]: seriesOverrides
+        } : {}
+        const crosshair: AgCrosshairOptions = {
+            enabled: true,
+            snap: true,
+            label: {
+                enabled: false
+            }
+        };
+        return {
+            common: {
+                navigator: {
+                    enabled: false
+                },
+                zoom: {
+                    enabled: true,
+                },
+                animation: {
+                    enabled: true,
+                    duration: 500
+                },
+                axes: {
+                    number: { crosshair },
+                    category: { crosshair },
+                    log: { crosshair },
+                    time: { crosshair }
+                }
+            },
+            ...seriesChartOptions
+        };
+    }
+
+    protected getSeriesChartThemeDefaults(): AgChartThemeOverrides[TSeries] {
+        return undefined
     }
 
     private getActiveFormattingPanelOverrides(): AgChartThemeOverrides {

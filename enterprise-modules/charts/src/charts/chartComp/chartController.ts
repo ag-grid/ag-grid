@@ -526,8 +526,7 @@ export class ChartController extends BeanStub {
 
     public getChartSeriesTypes(chartType?: ChartType): ChartSeriesType[] {
         const targetChartType = chartType ?? this.getChartType();
-        const supportedComboSeriesTypes: ChartSeriesType[] = ['line', 'bar', 'area'];
-        return this.isComboChart(targetChartType) ? supportedComboSeriesTypes : [getSeriesType(targetChartType)];
+        return this.isComboChart(targetChartType) ? ['line', 'bar', 'area'] : [getSeriesType(targetChartType)];
     }
 
     public getChartSeriesType(): ChartSeriesType {

@@ -21,7 +21,7 @@ import {
 import { ChartController } from "../chartController";
 import { AgChartActual, AgChartAxisType } from "../utils/integration";
 import { get, set } from "../utils/object";
-import { ChartThemeOverridesSeriesType, ChartSeriesType, isCartesian, isSeriesType } from "../utils/seriesTypeMapper";
+import { ChartThemeOverridesSeriesType, ChartSeriesType, isCartesian, isSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 
 export interface ChartOptionsProxy {
     getValue<T = string>(expression: string, calculated?: boolean): T;
@@ -201,7 +201,7 @@ export class ChartOptionsService extends BeanStub {
         // other chart options will be retained depending on the specifics of the chart type from/to transition
         const chartSpecificThemeOverrideKeys = ((previousChartType, updatedChartType) => {
             const expressions = new Array<string>();
-            if (isCartesian(previousChartType) && isCartesian(updatedChartType)) {
+            if (isCartesian(getSeriesType(previousChartType)) && isCartesian(getSeriesType(updatedChartType))) {
                 expressions.push(...PERSISTED_CARTESIAN_CHART_THEME_OVERRIDES);
             }
             return expressions;
@@ -222,7 +222,7 @@ export class ChartOptionsService extends BeanStub {
         targetAxisTypes: AgChartAxisType[],
     }[] {
         // different axis types have different theme overrides
-        if (isCartesian(existingChartType) && isCartesian(targetChartType)) {
+        if (isCartesian(getSeriesType(existingChartType)) && isCartesian(getSeriesType(targetChartType))) {
             const retainedKeys = this.getRetainedCartesianAxisThemeOverrideKeys(axisType);
             return retainedKeys.map((expression) => ({ expression, targetAxisTypes: CARTESIAN_AXIS_TYPES }));
         }

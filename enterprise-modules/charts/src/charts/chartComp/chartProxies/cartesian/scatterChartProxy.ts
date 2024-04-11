@@ -9,7 +9,7 @@ interface SeriesDefinition {
     sizeField?: FieldDefinition;
 }
 
-export class ScatterChartProxy extends CartesianChartProxy {
+export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'> {
 
     public constructor(params: ChartProxyParams) {
         super(params);

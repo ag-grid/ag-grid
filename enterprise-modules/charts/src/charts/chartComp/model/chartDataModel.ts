@@ -16,7 +16,7 @@ import { ChartDatasource, ChartDatasourceParams } from "../datasource/chartDatas
 import { ChartTranslationService } from '../services/chartTranslationService';
 import { ChartColumnService } from "../services/chartColumnService";
 import { ComboChartModel } from "./comboChartModel";
-import { getMaxNumSeries, isComboChart, isHierarchical } from "../utils/seriesTypeMapper";
+import { getMaxNumSeries, getSeriesType, isComboChart, isHierarchical } from "../utils/seriesTypeMapper";
 import { AgCartesianAxisType } from "ag-charts-community";
 
 export interface ColState {
@@ -283,7 +283,7 @@ export class ChartDataModel extends BeanStub {
         this.dimensionColState = [];
         this.valueColState = [];
 
-        const supportsMultipleDimensions = isHierarchical(this.chartType);
+        const supportsMultipleDimensions = isHierarchical(getSeriesType(this.chartType));
         let hasSelectedDimension = false;
         let order = 1;
 
@@ -351,7 +351,7 @@ export class ChartDataModel extends BeanStub {
 
         if (matchedDimensionColState) {
             // For non-hierarchical chart types, only one dimension can be selected
-            const supportsMultipleDimensions = isHierarchical(this.chartType);
+            const supportsMultipleDimensions = isHierarchical(getSeriesType(this.chartType));
             if (!supportsMultipleDimensions) {
                 // Determine which column should end up selected, if any
                 const selectedColumnState = updatedCol.selected
@@ -403,7 +403,7 @@ export class ChartDataModel extends BeanStub {
 
     private setDimensionCellRange(dimensionCols: Set<Column>, colsInRange: Set<Column>, updatedColState?: ColState): void {
         this.dimensionCellRange = undefined;
-        const supportsMultipleDimensions = isHierarchical(this.chartType);
+        const supportsMultipleDimensions = isHierarchical(getSeriesType(this.chartType));
 
         if (!updatedColState && !this.dimensionColState.length) {
             const selectedCols = new Array<Column>();
@@ -492,7 +492,7 @@ export class ChartDataModel extends BeanStub {
         const colIdSet = new Set(columns.map((column) => column.getColId()));
 
         // For non-hierarchical chart types, only one dimension can be selected
-        const supportsMultipleDimensions = isHierarchical(this.chartType);
+        const supportsMultipleDimensions = isHierarchical(getSeriesType(this.chartType));
         if (!supportsMultipleDimensions) {
             // Determine which column should end up selected, if any
             // if no dimension found in supplied columns use the default category (always index = 0)
