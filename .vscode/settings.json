@@ -21,10 +21,13 @@
         "autowire",
         "autowired",
         "balham",
+        "crosshair",
         "csrm",
+        "ctrls",
         "lucide",
         "Sparkline",
         "sparklines",
+        "themeable",
         "tran",
         "trans",
         "treemap"
