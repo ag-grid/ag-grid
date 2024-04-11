@@ -22,7 +22,7 @@ describe('transformMarkdoc', () => {
                     "children": [],
                     "name": {
                       "namedExport": "EnterpriseIcon",
-                      "path": "./src/components/icon/EnterpriseIcon",
+                      "path": "../../external/ag-website-shared/src/components/icon/EnterpriseIcon",
                       "type": "local",
                       Symbol(@astrojs/markdoc/component-config): true,
                     },
