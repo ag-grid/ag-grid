@@ -1,7 +1,8 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import styles from '@legacy-design-system/modules/Alert.module.scss';
 import classNames from 'classnames';
 import { FunctionComponent, ReactNode } from 'react';
+
+import styles from './Alert.module.scss';
 
 interface Props {
     type: 'info' | 'idea' | 'warning' | 'default';

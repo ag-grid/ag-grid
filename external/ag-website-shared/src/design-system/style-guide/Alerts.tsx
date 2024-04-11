@@ -1,6 +1,7 @@
-import { Alert } from '@components/alert/Alert';
 import React from 'react';
 import type { FunctionComponent } from 'react';
+
+import { Alert } from '../../componetns/alert/Alert';
 
 export const Alerts: FunctionComponent = () => {
     return (
