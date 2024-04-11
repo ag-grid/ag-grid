@@ -12,7 +12,6 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 export { ColumnFactory } from "./columns/columnFactory";
 export { ColumnModel, ColumnState, ColumnStateParams, ApplyColumnStateParams, ISizeColumnsToFitParams, IColumnLimit } from "./columns/columnModel";
 export { ColumnKeyCreator } from "./columns/columnKeyCreator";
-export { ColumnUtils } from "./columns/columnUtils";
 export { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
 export { GroupInstanceIdCreator } from "./columns/groupInstanceIdCreator";
 export { GROUP_AUTO_COLUMN_ID } from "./columns/autoGroupColService";
@@ -184,7 +183,7 @@ export { IImmutableService } from "./interfaces/iImmutableService";
 export { AnimationFrameService } from "./misc/animationFrameService";
 export { AlignedGrid } from "./interfaces/iAlignedGrid";
 export { ExpansionService } from "./misc/expansionService";
-export { MenuService } from "./misc/menuService";
+export { MenuService, IContextMenuParams } from "./misc/menuService";
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from "./interfaces/iCellEditor";
@@ -312,7 +311,8 @@ export {
     GetChartImageDataUrlParams,
     ChartModelType,
     CreateRangeChartParams, ChartParamsCellRange, CreatePivotChartParams, CreateCrossFilterChartParams,
-    UpdateRangeChartParams, UpdatePivotChartParams, UpdateCrossFilterChartParams, UpdateChartParams
+    UpdateRangeChartParams, UpdatePivotChartParams, UpdateCrossFilterChartParams, UpdateChartParams,
+    BaseCreateChartParams
 } from './interfaces/IChartService';
 
 // master detail
@@ -544,7 +544,7 @@ export { IHeaderColumn } from "./interfaces/iHeaderColumn";
 export { IViewportDatasource, IViewportDatasourceParams } from "./interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 export { IRowNodeStage, StageExecuteParams } from "./interfaces/iRowNodeStage";
-export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from "./rendering/dateComponent";
+export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from "./interfaces/dateComponent";
 export { IAfterGuiAttachedParams, ContainerType } from "./interfaces/iAfterGuiAttachedParams";
 export { IComponent } from "./interfaces/iComponent";
 export { IEventEmitter } from "./interfaces/iEventEmitter";

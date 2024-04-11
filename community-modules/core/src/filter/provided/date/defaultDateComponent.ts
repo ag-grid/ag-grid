@@ -1,6 +1,6 @@
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { Component } from '../../../widgets/component';
-import { IDateComp, IDateParams } from '../../../rendering/dateComponent';
+import { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { serialiseDate, parseDateTimeFromString, dateToFormattedString } from '../../../utils/date';
 import { getSafariVersion, isBrowserChrome, isBrowserFirefox, isBrowserSafari } from '../../../utils/browser';

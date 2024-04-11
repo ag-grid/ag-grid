@@ -32,7 +32,6 @@ import { ValueFormatterService } from '../rendering/valueFormatterService';
 import { IRowNode } from '../interfaces/iRowNode';
 import { parseDateTimeFromString, serialiseDate } from '../utils/date';
 import { AgEventListener, AgGridEvent, DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
-import { ColumnUtils } from './columnUtils';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 
 interface GroupSafeValueFormatter {
@@ -59,7 +58,6 @@ const MONTH_KEYS: (keyof typeof MONTH_LOCALE_TEXT)[] = ['january', 'february', '
 export class DataTypeService extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnUtils') private columnUtils: ColumnUtils;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
 

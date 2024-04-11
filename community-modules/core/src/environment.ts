@@ -13,6 +13,13 @@ interface HardCodedSize {
     };
 }
 
+interface ThemeDetails {
+    theme?: string;
+    el?: HTMLElement;
+    themeFamily?: string;
+    allThemes: string[] 
+};
+
 const DEFAULT_ROW_HEIGHT = 25;
 const MIN_COL_WIDTH = 10;
 
@@ -88,6 +95,7 @@ export class Environment extends BeanStub {
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
     private calculatedSizes: HardCodedSize | null = {};
+    private calculatedTheme: ThemeDetails | null = null;
     private mutationObserver: MutationObserver;
 
     @PostConstruct
@@ -98,6 +106,7 @@ export class Environment extends BeanStub {
 
         this.mutationObserver = new MutationObserver(() => {
             this.calculatedSizes = {};
+            this.calculatedTheme = null;
             this.fireGridStylesChangedEvent();
         });
 
@@ -188,7 +197,12 @@ export class Environment extends BeanStub {
         return this.getSassVariable('chartMenuPanelWidth');
     }
 
-    public getTheme(): { theme?: string; el?: HTMLElement; themeFamily?: string; allThemes: string[] } {
+    public getTheme():  ThemeDetails {
+
+        if(this.calculatedTheme){
+            return this.calculatedTheme;
+        }
+
         const reg = /\bag-(material|(?:theme-([\w\-]*)))\b/g;
         let el: HTMLElement | undefined = this.eGridDiv;
         let themeMatch: RegExpMatchArray | null = null;
@@ -211,7 +225,8 @@ export class Environment extends BeanStub {
 
         const theme = themeMatch[0];
 
-        return { theme, el, themeFamily: theme.replace(/-dark$/, ''), allThemes };
+        this.calculatedTheme = { theme, el, themeFamily: theme.replace(/-dark$/, ''), allThemes };
+        return this.calculatedTheme;
     }
 
     // Material data table has strict guidelines about whitespace, and these values are different than the ones

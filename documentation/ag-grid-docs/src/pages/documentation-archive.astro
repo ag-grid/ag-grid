@@ -1,0 +1,83 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import { PagesNavigationFromLocalStorage } from '@features/pages-navigation/components/PagesNavigationFromLocalStorage';
+import { getDocsPages } from '../features/docs/utils/pageData';
+import type { Framework, MenuSection } from '@ag-grid-types';
+import { Icon } from '@components/icon/Icon';
+import styles from '@design-system/modules/DocsArchive.module.scss';
+
+export async function getStaticPaths() {
+    const pages = await getCollection('docs');
+    return getDocsPages(pages);
+}
+
+const pageName = Astro.params.pageName as Framework;
+
+const { data: menu } = await getEntry('menu', 'data');
+const allMenuSections = menu.main.sections as MenuSection[];
+
+const versionsContent = await getEntry('versions', 'ag-grid-versions');
+const versionsData: any[] = versionsContent ? versionsContent.data : [];
+
+const getVersionType = (version) => {
+    const [_, minor, patch] = version.split('.');
+
+    if (patch !== '0') {
+        return 'Patch';
+    } else if (minor !== '0') {
+        return 'Minor';
+    } else {
+        return 'Major';
+    }
+};
+
+const isMajor = (version) => {
+    return getVersionType(version) === 'Major';
+};
+---
+
+<Layout title={'Documentation Archive'} showDocsNav={true} showSearchBar={true}>
+    <div class:list={['contentViewport layout-grid']}>
+        <PagesNavigationFromLocalStorage client:load allMenuSections={allMenuSections} pageName={pageName} />
+
+        <main is="div">
+            <div class={styles.docsArchiveContainer}>
+                <h1>Documentation Archive</h1>
+                <p class={styles.description}>Review documentation for previous AG Grid versions.</p>
+
+                <table class={styles.archiveTable}>
+                    {
+                        versionsData.slice(1).map((versionInfo) => {
+                            return (
+                                <tr>
+                                    <td class="text-base text-monospace text-semibold">{versionInfo.version}</td>
+
+                                    <td>{versionInfo.date}</td>
+
+                                    <td>
+                                        <span class={isMajor(versionInfo.version) ? styles.major : undefined}>
+                                            {getVersionType(versionInfo.version)}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <a href={`https://ag-grid.com/changelog/?fixVersion=${versionInfo.version}`}>
+                                            Changelog <Icon name="arrowRight" />
+                                        </a>
+                                    </td>
+
+                                    <td>
+                                        <a href={`https://www.ag-grid.com/archive/${versionInfo.version}/`}>
+                                            Documentation <Icon name="arrowRight" />
+                                        </a>
+                                    </td>
+                                </tr>
+                            );
+                        })
+                    }
+                </table>
+            </div>
+        </main>
+    </div>
+</Layout>

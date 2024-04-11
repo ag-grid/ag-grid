@@ -62,7 +62,7 @@ export function getTypeUrl(type, framework) {
     }
 
     const typeLink = getTypeLink(type);
-    if(typeLink) {
+    if (typeLink) {
         return urlWithPrefix({
             url: typeLink,
             framework,

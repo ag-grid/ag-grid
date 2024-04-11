@@ -6,7 +6,7 @@ export const useImportType = () => {
     const internalFramework = useStore($internalFramework);
     const frameworkStore = useStore($frameworkContext);
 
-    if(!IMPORT_TYPES.includes(frameworkStore['importType'])) {
+    if (!IMPORT_TYPES.includes(frameworkStore['importType'])) {
         $frameworkContext.setKey('importType', 'modules');
     }
 

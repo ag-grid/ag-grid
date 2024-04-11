@@ -1420,17 +1420,6 @@ export class RowRenderer extends BeanStub {
         return rowCtrl;
     }
 
-    public getRowNode(gridRow: RowPosition): RowNode | undefined {
-        switch (gridRow.rowPinned) {
-            case 'top':
-                return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
-            case 'bottom':
-                return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
-            default:
-                return this.rowModel.getRow(gridRow.rowIndex);
-        }
-    }
-
     // returns true if any row between startIndex and endIndex is rendered. used by
     // SSRM or IRM, as they don't want to purge visible blocks from cache.
     public isRangeInRenderedViewport(startIndex: number, endIndex: number): boolean {

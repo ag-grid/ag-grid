@@ -13,7 +13,7 @@ import { IStatusPanelParams, StatusPanelDef } from "../../interfaces/iStatusPane
 import { IToolPanelParams } from "../../interfaces/iToolPanel";
 import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRendererCtrl";
 import { ICellRendererParams, ISetFilterCellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
-import { IDateParams } from "../../rendering/dateComponent";
+import { IDateParams } from "../../interfaces/dateComponent";
 import { ILoadingOverlayParams } from "../../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayParams } from "../../rendering/overlays/noRowsOverlayComponent";
 import { ITooltipParams } from "../../rendering/tooltipComponent";
@@ -35,6 +35,7 @@ import {
     HeaderComponent,
     HeaderGroupComponent,
     InnerRendererComponent,
+    LoadingCellRendererComponent,
     LoadingOverlayComponent,
     MenuItemComponent,
     NoRowsOverlayComponent,
@@ -116,6 +117,10 @@ export class UserComponentFactory extends BeanStub {
 
     public getCellRendererDetails(def: ColDef | RichSelectParams, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined {
         return this.getCompDetails(def, CellRendererComponent, null, params);
+    }
+
+    public getLoadingCellRendererDetails(def: ColDef | RichSelectParams, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined {
+        return this.getCompDetails(def, LoadingCellRendererComponent, 'agSkeletonCellRenderer', params, true);
     }
 
     // CELL EDITOR

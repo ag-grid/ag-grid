@@ -65,7 +65,9 @@ export class BeanStub implements IEventEmitter {
         // const constructorString = constructor.toString();
         // const beanName = constructorString.substring(9, constructorString.indexOf("("));
 
-        this.destroyFunctions.forEach(func => func());
+        for (let i = 0; i < this.destroyFunctions.length; i++) {
+            this.destroyFunctions[i]();
+        }
         this.destroyFunctions.length = 0;
         this.destroyed = true;
 
@@ -109,14 +111,17 @@ export class BeanStub implements IEventEmitter {
 
         const destroyFunc: () => null = () => {
             (object as any).removeEventListener(event, listener);
-
-            this.destroyFunctions = this.destroyFunctions.filter(fn => fn !== destroyFunc);
             return null;
         };
 
         this.destroyFunctions.push(destroyFunc);
 
-        return destroyFunc;
+        return () => {
+            destroyFunc();
+            // Only remove if manually called before bean is destroyed
+            this.destroyFunctions = this.destroyFunctions.filter(fn => fn !== destroyFunc);
+            return null;
+        };
     }
 
     private setupGridOptionListener<K extends keyof GridOptions>(
@@ -126,11 +131,16 @@ export class BeanStub implements IEventEmitter {
         this.gos.addEventListener(event, listener);
         const destroyFunc: () => null = () => {
             this.gos.removeEventListener(event, listener);
-            this.destroyFunctions = this.destroyFunctions.filter((fn) => fn !== destroyFunc);
             return null;
         };
         this.destroyFunctions.push(destroyFunc);
-        return destroyFunc;
+
+        return () => {
+            destroyFunc();
+            // Only remove if manually called before bean is destroyed
+            this.destroyFunctions = this.destroyFunctions.filter((fn) => fn !== destroyFunc);
+            return null;
+        }
     }
 
     /**
@@ -218,7 +228,9 @@ export class BeanStub implements IEventEmitter {
 
     protected destroyBeans<T>(beans: T[], context?: Context): T[] {
         if (beans) {
-            beans.forEach(bean => this.destroyBean(bean, context));
+            for (let i = 0; i < beans.length; i++) {
+                this.destroyBean(beans[i], context);
+            }
         }
 
         return [];

@@ -45,7 +45,7 @@ const processPackageFile = packageJsonFilename => {
 for (const lernaPackage of packageRootDirectories) {
     const packageRootDirectory = lernaPackage.replace('/*', '');
         const packageJsonFilename = `./${packageRootDirectory}/package.json`;
-        if(fs.existsSync(packageJsonFilename)) {
+        if (fs.existsSync(packageJsonFilename)) {
             processPackageFile(packageJsonFilename);
         }
 }

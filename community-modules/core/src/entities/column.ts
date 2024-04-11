@@ -1,5 +1,4 @@
 import { ColumnState } from "../columns/columnModel";
-import { ColumnUtils } from "../columns/columnUtils";
 import { Autowired, PostConstruct } from "../context/context";
 import { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from "../events";
 import { EventService } from "../eventService";
@@ -23,6 +22,8 @@ import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { warnOnce } from "../utils/function";
 import { BrandedType } from "../utils";
+import { calculateColInitialWidth, calculateColMaxWidth, calculateColMinWidth } from "../columns/columnUtils";
+import { Environment } from "../environment";
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 export type ColumnEventName =
@@ -93,7 +94,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     public static EVENT_STATE_UPDATED: ColumnEventName = 'columnStateUpdated';
 
     @Autowired('gridOptionsService') private readonly gos: GridOptionsService;
-    @Autowired('columnUtils') private readonly columnUtils: ColumnUtils;
+    @Autowired('environment') protected readonly environment: Environment;
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
     
     @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
@@ -278,8 +279,8 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     private initMinAndMaxWidths(): void {
         const colDef = this.colDef;
 
-        this.minWidth = this.columnUtils.calculateColMinWidth(colDef);
-        this.maxWidth = this.columnUtils.calculateColMaxWidth(colDef);
+        this.minWidth = calculateColMinWidth(colDef, () => this.environment.getMinColWidth());
+        this.maxWidth = calculateColMaxWidth(colDef);
     }
 
     private initTooltip(): void {
@@ -289,7 +290,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     public resetActualWidth(source: ColumnEventType): void {
-        const initialWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
+        const initialWidth = calculateColInitialWidth(this.colDef, () => this.environment.getMinColWidth());
         this.setActualWidth(initialWidth, source, true);
     }
 
@@ -335,7 +336,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
 
     /** Add an event listener to the column. */
     public addEventListener(eventType: ColumnEventName, userListener: Function): void {
-        if(this.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
+        if (this.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
             // Only construct if we need it, as it's an overhead for column construction
             this.eventService.setFrameworkOverrides(this.frameworkOverrides);
             this.frameworkEventListenerService = new FrameworkEventListenerService(this.frameworkOverrides);

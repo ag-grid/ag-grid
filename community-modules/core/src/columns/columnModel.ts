@@ -7,7 +7,6 @@ import { ColumnFactory } from './columnFactory';
 import { DisplayedGroupCreator } from './displayedGroupCreator';
 import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import { IProvidedColumn } from '../interfaces/iProvidedColumn';
-import { ColumnUtils } from './columnUtils';
 import { Logger, LoggerFactory } from '../logger';
 import {
     ColumnEvent,
@@ -50,6 +49,7 @@ import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { PropertyChangedSource } from '../gridOptionsService';
+import { calculateColMinWidth, depthFirstAllColumnTreeSearch, depthFirstDisplayedColumnTreeSearch, depthFirstOriginalTreeSearch } from './columnUtils';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -125,7 +125,6 @@ export class ColumnModel extends BeanStub {
     @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
-    @Autowired('columnUtils') private columnUtils: ColumnUtils;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('autoGroupColService') private autoGroupColService: AutoGroupColService;
     @Autowired('valueCache') private valueCache: ValueCache;
@@ -323,13 +322,13 @@ export class ColumnModel extends BeanStub {
         if (!oldTree) { return; }
 
         // add in all old columns to be destroyed
-        this.columnUtils.depthFirstOriginalTreeSearch(null, oldTree, child => {
+        depthFirstOriginalTreeSearch(null, oldTree, child => {
             oldObjectsById[child.getInstanceId()] = child;
         });
 
         // however we don't destroy anything in the new tree. if destroying the grid, there is no new tree
         if (newTree) {
-            this.columnUtils.depthFirstOriginalTreeSearch(null, newTree, child => {
+            depthFirstOriginalTreeSearch(null, newTree, child => {
                 oldObjectsById[child.getInstanceId()] = null;
             });
         }
@@ -1035,7 +1034,7 @@ export class ColumnModel extends BeanStub {
         let atLeastOne = false;
 
         keys.forEach(key => {
-            if(!key) { return; }
+            if (!key) { return; }
             const columnToAdd = this.getPrimaryColumn(key);
             if (!columnToAdd) { return; }
 
@@ -1591,7 +1590,7 @@ export class ColumnModel extends BeanStub {
     public doesMovePassMarryChildren(allColumnsCopy: Column[]): boolean {
         let rulePassed = true;
 
-        this.columnUtils.depthFirstOriginalTreeSearch(null, this.gridBalancedTree, child => {
+        depthFirstOriginalTreeSearch(null, this.gridBalancedTree, child => {
             if (!(child instanceof ProvidedColumnGroup)) { return; }
 
             const columnGroup = child;
@@ -1838,7 +1837,7 @@ export class ColumnModel extends BeanStub {
         const updatedColumns: Column[] = [];
 
         keys.forEach(key => {
-            if(!key) { return; }
+            if (!key) { return; }
             const column = this.getGridColumn(key);
             if (!column) { return; }
 
@@ -2496,7 +2495,7 @@ export class ColumnModel extends BeanStub {
         }
 
         // if width provided and valid, use it, otherwise stick with the old width
-        const minColWidth = this.columnUtils.calculateColMinWidth(column.getColDef());
+        const minColWidth = calculateColMinWidth(column.getColDef(), () => this.environment.getMinColWidth());
 
         // flex
         const flex = getValue('flex').value1;
@@ -2815,7 +2814,7 @@ export class ColumnModel extends BeanStub {
         const checkPartId = typeof partId === 'number';
         let result: ColumnGroup | null = null;
 
-        this.columnUtils.depthFirstAllColumnTreeSearch(allColumnGroups, (child: IHeaderColumn) => {
+        depthFirstAllColumnTreeSearch(allColumnGroups, (child: IHeaderColumn) => {
             if (child instanceof ColumnGroup) {
                 const columnGroup = child;
                 let matched: boolean;
@@ -3026,7 +3025,7 @@ export class ColumnModel extends BeanStub {
 
         const stateItems: { groupId: string, open: boolean | undefined; }[] = [];
 
-        this.columnUtils.depthFirstOriginalTreeSearch(null, this.primaryColumnTree, child => {
+        depthFirstOriginalTreeSearch(null, this.primaryColumnTree, child => {
             if (child instanceof ProvidedColumnGroup) {
                 const colGroupDef = child.getColGroupDef();
                 const groupState = {
@@ -3043,7 +3042,7 @@ export class ColumnModel extends BeanStub {
     public getColumnGroupState(): { groupId: string, open: boolean; }[] {
         const columnGroupState: { groupId: string, open: boolean; }[] = [];
 
-        this.columnUtils.depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
+        depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
             if (node instanceof ProvidedColumnGroup) {
                 columnGroupState.push({
                     groupId: node.getGroupId(),
@@ -3112,7 +3111,7 @@ export class ColumnModel extends BeanStub {
         // otherwise, search for the column group by id
         let res: ProvidedColumnGroup | null = null;
 
-        this.columnUtils.depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
+        depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
             if (node instanceof ProvidedColumnGroup) {
                 if (node.getId() === key) {
                     res = node;
@@ -3635,7 +3634,7 @@ export class ColumnModel extends BeanStub {
 
     private derivedDisplayedColumnsFromDisplayedTree(tree: IHeaderColumn[], columns: Column[]): void {
         columns.length = 0;
-        this.columnUtils.depthFirstDisplayedColumnTreeSearch(tree, (child: IHeaderColumn) => {
+        depthFirstDisplayedColumnTreeSearch(tree, (child: IHeaderColumn) => {
             if (child instanceof Column) {
                 columns.push(child);
             }
@@ -4047,9 +4046,9 @@ export class ColumnModel extends BeanStub {
             this.displayedColumnsAndGroupsMap[child.getUniqueId()] = child;
         };
 
-        this.columnUtils.depthFirstAllColumnTreeSearch(this.displayedTreeCentre, func);
-        this.columnUtils.depthFirstAllColumnTreeSearch(this.displayedTreeLeft, func);
-        this.columnUtils.depthFirstAllColumnTreeSearch(this.displayedTreeRight, func);
+        depthFirstAllColumnTreeSearch(this.displayedTreeCentre, func);
+        depthFirstAllColumnTreeSearch(this.displayedTreeLeft, func);
+        depthFirstAllColumnTreeSearch(this.displayedTreeRight, func);
     }
 
     public isDisplayed(item: IHeaderColumn): boolean {
@@ -4061,7 +4060,7 @@ export class ColumnModel extends BeanStub {
     private updateOpenClosedVisibilityInColumnGroups(): void {
         const allColumnGroups = this.getAllDisplayedTrees();
 
-        this.columnUtils.depthFirstAllColumnTreeSearch(allColumnGroups, child => {
+        depthFirstAllColumnTreeSearch(allColumnGroups, child => {
             if (child instanceof ColumnGroup) {
                 child.calculateDisplayedColumns();
             }

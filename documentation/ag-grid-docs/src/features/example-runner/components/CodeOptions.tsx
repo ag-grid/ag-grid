@@ -136,7 +136,7 @@ export const CodeOptions = ({ id, internalFramework, supportedFrameworks, suppor
     const showReactSelector = isReactInternalFramework(internalFramework);
     const showVueSelector = isVueInternalFramework(internalFramework);
 
-    if(supportedFrameworks?.length > 0){
+    if (supportedFrameworks?.length > 0) {
         showTypescriptSelector = showTypescriptSelector && supportedFrameworks.includes('vanilla');
     }
 

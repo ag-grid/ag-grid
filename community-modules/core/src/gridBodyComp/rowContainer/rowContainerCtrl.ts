@@ -377,7 +377,8 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private onDisplayedRowsChanged(afterScroll: boolean = false): void {
-        if (!this.visible) {
+        const rows = this.getRowCtrls();
+        if (!this.visible || rows.length === 0) {
             this.comp.setRowCtrls({ rowCtrls: this.EMPTY_CTRLS });
             return;
         }
@@ -388,7 +389,7 @@ export class RowContainerCtrl extends BeanStub {
         
         // this list contains either all pinned top, center or pinned bottom rows
         // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
-        const rowsThisContainer = this.getRowCtrls().filter(rowCtrl => {
+        const rowsThisContainer = rows.filter(rowCtrl => {
             // this just justifies if the ctrl is in the correct place, this will be fed with zombie rows by the
             // row renderer, so should not block them as they still need to animate -  the row renderer
             // will clean these up when they finish animating

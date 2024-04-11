@@ -1,4 +1,3 @@
 {
-    "supportedFrameworks": ["angular", "reactFunctional", "reactFunctionalTs", "typescript", "vue", "vue3"],
-    "supportedImportTypes": ["modules"]
+    "supportedFrameworks": ["angular", "reactFunctional", "reactFunctionalTs", "typescript", "vue", "vue3"]
 }

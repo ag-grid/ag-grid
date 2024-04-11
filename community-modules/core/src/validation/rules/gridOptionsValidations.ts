@@ -214,6 +214,7 @@ export const GRID_OPTION_DEFAULTS = {
     functionsPassive: false,
     groupLockGroupColumns: 0,
     serverSideEnableClientSideSort: false,
+    suppressServerSideFullWidthLoadingRow: false,
     pivotMaxGeneratedColumns: -1,
 } as const;
 /**

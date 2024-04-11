@@ -1,9 +1,9 @@
-import { Autowired, Events, GridApi, PostConstruct, IStatusPanelComp, _, ISelectionService } from '@ag-grid-community/core';
+import { Autowired, Events, PostConstruct, IStatusPanelComp, _, ISelectionService, IRowModel } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
 export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp {
 
-    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('selectionService') private selectionService: ISelectionService;
 
     @PostConstruct
@@ -28,7 +28,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
 
     private isValidRowModel() {
         // this component is only really useful with client or server side rowmodels
-        const rowModelType = this.gridApi.__getModel().getType();
+        const rowModelType = this.rowModel.getType();
         return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     }
 

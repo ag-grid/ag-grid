@@ -102,6 +102,18 @@
                 "name": "Range Selection Changed Event",
                 "url": "./range-selection/#range-selection-changed-event"
             }
+        },
+        "fillStart": {
+            "more": {
+                "name": "Fill Range Event",
+                "url": "./range-selection-fill-handle/#fill-handle-events"
+            }
+        },
+        "fillEnd": {
+            "more": {
+                "name": "Fill Range Event",
+                "url": "./range-selection-fill-handle/#fill-handle-events"
+            }
         }
     },
     "charts": {

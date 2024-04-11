@@ -162,6 +162,13 @@ export function convertColumnDefs(rawColumnDefs, userComponentNames, vueComponen
                             addToVueComponents(componentFileNames, vueComponents, 'cellRenderer', value.cellRenderer);
                         }
                     }
+                    if (value.loadingCellRenderer) {
+                        const component = `${value.loadingCellRenderer.replace('AG_LITERAL_', '')}`;
+                        if (isExternalVueFile(componentFileNames, component)) {
+                            value.loadingCellRenderer = component;
+                            addToVueComponents(componentFileNames, vueComponents, 'loadingCellRenderer', value.loadingCellRenderer);
+                        }
+                    }
                     if (value.filters) {
                         value.filters.forEach((filter) => {
                             if (filter.floatingFilterComponent) {
@@ -219,6 +226,21 @@ export function convertColumnDefs(rawColumnDefs, userComponentNames, vueComponen
                             }
                         }
 
+                        if (columnProperty === 'loadingCellRendererSelector') {
+                            const component = parsedValue.match(/.*component:\s*(.*),/)
+                                ? parsedValue.match(/.*:\s*(.*),/)[1]
+                                : parsedValue.match(/.*:\s*(.*)$/)[1];
+                            if (component) {
+                                parsedValue = parsedValue.replace(component, `'${component}'`);
+                                if (
+                                    isExternalVueFile(componentFileNames, component) &&
+                                    !vueComponents.includes(component)
+                                ) {
+                                    vueComponents.push(component);
+                                }
+                            }
+                        }
+
                         // values starting with AG_FUNCTION_ are actually function definitions, which we extract and
                         // turn into lambda functions here
                         columnProperties.push(`${columnProperty}:${parsedValue}`);
@@ -251,6 +273,7 @@ export function convertDefaultColDef(defaultColDef, vueComponents, componentFile
         if (
             line.includes('tooltipComponent') ||
             (line.includes('cellRenderer') && !line.includes("'ag")) ||
+            (line.includes('loadingCellRenderer') && !line.includes("'ag")) ||
             (line.includes('headerComponent') && !line.includes('headerComponentParams')) ||
             (line.includes('filter') &&
                 line.includes(':') &&

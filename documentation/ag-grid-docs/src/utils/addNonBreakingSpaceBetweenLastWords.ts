@@ -3,7 +3,7 @@
  * onto the next line and create widows
  */
 export const addNonBreakingSpaceBetweenLastWords = (text: string) => {
-    if(!text || !text.replace) {
+    if (!text || !text.replace) {
         console.log("Text supplied to addNonBreakingSpaceBetweenLastWords is null or undefined");
         return '';
     }

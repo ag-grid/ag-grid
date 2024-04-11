@@ -38,7 +38,7 @@ const getOtherTsGeneratedFiles = async ({
             generatedFiles[tsxFileName] = srcFile;
         } else if (transformTsFileExt === undefined) {
             generatedFiles[tsFileName] = srcFile;
-        } else if(transformTsFileExt === '.js') {
+        } else if (transformTsFileExt === '.js') {
             let jsFileName = tsFileName.replace('.ts', transformTsFileExt);
             // For provided typescript component files, automatically generate vanilla js files
             jsFileName = jsFileName.replace('_typescript', '_vanilla');
@@ -74,26 +74,26 @@ const getOtherJsFiles = ({
  * @returns 
  */
 const getComponentSuffix = (file: string, framework: InternalFramework) => {
-    if(framework === 'vue3') {
+    if (framework === 'vue3') {
         // Let vue3 share vue files
-        if(file.includes('_vue.' )){
+        if (file.includes('_vue.' )){
             return '_vue'
         };
-        if(file.includes('_vue3.' )){
+        if (file.includes('_vue3.' )){
             return '_vue3'
         }
     }
-    else if(file.includes('_' + framework + '.')){
+    else if (file.includes('_' + framework + '.')){
         return '_' + framework;
     }
     return undefined;
 };
 
 const isValidFrameworkFile = (internalFramework: InternalFramework, framework: InternalFramework) => {
-    if(internalFramework === framework){
+    if (internalFramework === framework){
         return true;
     }
-    if(internalFramework === 'vue3' && framework === 'vue'){
+    if (internalFramework === 'vue3' && framework === 'vue'){
         // Let vue3 share vue files
         return true;
     }
@@ -152,7 +152,7 @@ export const getOtherScriptFiles = async ({
     const others = {};
     Object.entries(contents).forEach(([file, content]) => {
 
-        if(importType === 'packages'){
+        if (importType === 'packages'){
             content = convertModuleToPackageImports(content);
         }
 

@@ -1,4 +1,4 @@
-import { IDateComp, IDateParams } from '../../../rendering/dateComponent';
+import { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { Context } from '../../../context/context';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';

@@ -1,7 +1,7 @@
 import {Component, Prop, Vue} from 'vue-property-decorator';
-import {Bean, ComponentUtil, GridOptions, Module, Events, GridApi, createGrid, GridParams} from '@ag-grid-community/core';
+import {Bean, ComponentUtil, GridOptions, Module, GridApi, createGrid, GridParams, ALWAYS_SYNC_GLOBAL_EVENTS} from '@ag-grid-community/core';
 import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
-import { getAgGridProperties, Properties } from './Utils';
+import { getAgGridProperties } from './Utils';
 import {VueFrameworkOverrides} from './VueFrameworkOverrides';
 
 const [props, computed, watch, model] = getAgGridProperties();
@@ -16,7 +16,6 @@ const [props, computed, watch, model] = getAgGridProperties();
 export class AgGridVue extends Vue {
 
     private static ROW_DATA_EVENTS: Set<string> = new Set(['rowDataUpdated', 'cellValueChanged', 'rowValueChanged']);
-    private static ALWAYS_SYNC_GLOBAL_EVENTS: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
 
     private static kebabProperty(property: string) {
         return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
@@ -48,7 +47,7 @@ export class AgGridVue extends Vue {
         return h('div');
     }
 
-    // It forces events defined in AgGridVue.ALWAYS_SYNC_GLOBAL_EVENTS to be fired synchronously.
+    // It forces events defined in ALWAYS_SYNC_GLOBAL_EVENTS to be fired synchronously.
     // This is required for events such as GridPreDestroyed.
     // Other events are fired can be fired asynchronously or synchronously depending on config.
     public globalEventListenerFactory(restrictToSyncOnly?: boolean) {
@@ -61,7 +60,7 @@ export class AgGridVue extends Vue {
                 this.gridReadyFired = true;
             }
 
-            const alwaysSync = AgGridVue.ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);
+            const alwaysSync = ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);
             if ((alwaysSync && !restrictToSyncOnly) || (!alwaysSync && restrictToSyncOnly)) {
                 return;
             }

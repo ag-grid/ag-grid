@@ -21,7 +21,7 @@ import {
 import { ChartController } from "../chartController";
 import { AgChartActual, AgChartAxisType } from "../utils/integration";
 import { get, set } from "../utils/object";
-import { ChartThemeOverridesSeriesType, ChartSeriesType, isCartesian, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
+import { ChartThemeOverridesSeriesType, ChartSeriesType, isCartesian, isSeriesType } from "../utils/seriesTypeMapper";
 
 export interface ChartOptionsProxy {
     getValue<T = string>(expression: string, calculated?: boolean): T;
@@ -639,7 +639,7 @@ export class ChartOptionsService extends BeanStub {
     }
 
     private static isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {
-        return VALID_SERIES_TYPES.includes(seriesType) && series.type === seriesType;
+        return isSeriesType(seriesType) && series.type === seriesType;
     }
 
     protected destroy(): void {
