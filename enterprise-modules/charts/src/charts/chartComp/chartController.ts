@@ -161,9 +161,14 @@ export class ChartController extends BeanStub {
         this.raiseChartRangeSelectionChangedEvent();
     }
 
-    public updateForPanelChange(updatedColState: ColState, resetOrder?: boolean): void {
-        this.model.updateCellRanges({ updatedColState, resetOrder });
+    public updateForPanelChange(params: {
+        updatedColState: ColState, resetOrder?: boolean, skipAnimation?: boolean
+    }): void {
+        this.model.updateCellRanges(params);
         this.model.updateData();
+        if (params.skipAnimation) {
+            this.getChartProxy().getChartRef().skipAnimations();
+        }
         this.setChartRange();
         this.raiseChartRangeSelectionChangedEvent();
     }
