@@ -14,9 +14,9 @@ import { missing } from "../../utils/generic";
 import { createIconNoSpan } from "../../utils/icon";
 import { cloneObject } from "../../utils/object";
 import { ExpressionService } from "../../valueService/expressionService";
+import { ValueService } from "../../valueService/valueService";
 import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
 import { RowDragComp } from "../row/rowDragComp";
-import { ValueFormatterService } from "../valueFormatterService";
 import { ICellRendererParams } from "./iCellRenderer";
 
 export interface IGroupCellRenderer {
@@ -86,7 +86,7 @@ export type GroupCellRendererParams<TData = any, TValue = any> = IGroupCellRende
 export class GroupCellRendererCtrl extends BeanStub {
 
     @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired("ctrlsService") private ctrlsService: CtrlsService;
@@ -380,7 +380,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         const params = this.params;
 
         const { value, node } = this.params;
-        const valueFormatted = this.valueFormatterService.formatValue(relatedColumn, node, value);
+        const valueFormatted = this.valueService.formatValue(relatedColumn, node, value);
 
         // we don't update the original params, as they could of come through React,
         // as react has RowGroupCellRenderer, which means the params could be props which

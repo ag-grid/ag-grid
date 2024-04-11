@@ -13,8 +13,6 @@ import {
     _, CellCtrl,
     FillOperationParams,
     WithoutGridCommon,
-    ValueParserService,
-    ValueFormatterService
 } from '@ag-grid-community/core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 import { findLineByLeastSquares } from './utils';
@@ -35,8 +33,6 @@ type Direction = 'x' | 'y';
 export class FillHandle extends AbstractSelectionHandle {
 
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('valueParserService') private valueParserService: ValueParserService;
-    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
 
     static TEMPLATE = /* html */ `<div class="ag-fill-handle"></div>`;
 
@@ -250,7 +246,7 @@ export class FillHandle extends AbstractSelectionHandle {
                 currentValue = this.valueService.getValue(col, rowNode);
                 initialValues.push(currentValue);
                 initialNonAggregatedValues.push(this.valueService.getValue(col, rowNode, undefined, true));
-                initialFormattedValues.push(this.valueFormatterService.formatValue(col, rowNode, currentValue));
+                initialFormattedValues.push(this.valueService.formatValue(col, rowNode, currentValue));
                 withinInitialRange = updateInitialSet();
             } else {
                 const { value, fromUserFunction, sourceCol, sourceRowNode } = this.processValues({
@@ -270,10 +266,10 @@ export class FillHandle extends AbstractSelectionHandle {
 
                     if (!fromUserFunction) {
                         if (sourceCol && sourceCol.getColDef()?.useValueFormatterForExport !== false) {
-                            currentValue = this.valueFormatterService.formatValue(sourceCol, sourceRowNode!, currentValue) ?? currentValue;
+                            currentValue = this.valueService.formatValue(sourceCol, sourceRowNode!, currentValue) ?? currentValue;
                         }
                         if (col.getColDef().useValueParserForImport !== false) {
-                            currentValue = this.valueParserService.parseValue(
+                            currentValue = this.valueService.parseValue(
                                 col,
                                 rowNode,
                                 // if no sourceCol, then currentValue is a number

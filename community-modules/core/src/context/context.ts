@@ -549,7 +549,5 @@ export type BeanName =
 | 'userComponentFactory'
 | 'userComponentRegistry'
 | 'valueCache'
-| 'valueFormatterService'
-| 'valueParserService'
 | 'valueService'
 | 'validationService';

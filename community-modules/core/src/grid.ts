@@ -25,7 +25,6 @@ import { SortController } from "./sortController";
 import { FocusService } from "./focusService";
 import { MouseEventService } from "./gridBodyComp/mouseEventService";
 import { CellNavigationService } from "./cellNavigationService";
-import { ValueFormatterService } from "./rendering/valueFormatterService";
 import { AgCheckbox } from "./widgets/agCheckbox";
 import { AgRadioButton } from "./widgets/agRadioButton";
 import { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
@@ -91,7 +90,6 @@ import { LocaleService } from "./localeService";
 import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
 import { DataTypeService } from "./columns/dataTypeService";
 import { AgInputDateField } from "./widgets/agInputDateField";
-import { ValueParserService } from "./valueService/valueParserService";
 import { AgAutocomplete } from "./widgets/agAutocomplete";
 import { QuickFilterService } from "./filter/quickFilterService";
 import { warnOnce, errorOnce } from "./utils/function";
@@ -432,14 +430,13 @@ export class GridCoreCreator {
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
             AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,
             AutoWidthCalculator, StandardMenuFactory, DragAndDropService, ColumnApi,
-            FocusService, MouseEventService, Environment, CellNavigationService, ValueFormatterService,
-            StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
+            FocusService, MouseEventService, Environment, CellNavigationService, StylingService,
+            ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
-            UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
-            RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, CtrlsService,
-            PinnedWidthService, RowNodeEventThrottle, CtrlsFactory, DataTypeService, ValueParserService,
-            QuickFilterService, SyncService, OverlayService, StateService, ExpansionService,
-            ApiEventService, AriaAnnouncementService, MenuService
+            UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory, RowCssClassCalculator, 
+            RowNodeBlockLoader, RowNodeSorter, CtrlsService, PinnedWidthService, RowNodeEventThrottle,
+            CtrlsFactory, DataTypeService, QuickFilterService, SyncService, OverlayService, StateService,
+            ExpansionService, ApiEventService, AriaAnnouncementService, MenuService
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);

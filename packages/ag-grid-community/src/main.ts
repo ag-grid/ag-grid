@@ -196,8 +196,6 @@ export {TouchListener} from "@ag-grid-community/core";
 export {UserComponentFactory} from "@ag-grid-community/core";
 export {UserComponentRegistry} from "@ag-grid-community/core";
 export {ValueCache} from "@ag-grid-community/core";
-export {ValueFormatterService} from "@ag-grid-community/core";
-export {ValueParserService} from "@ag-grid-community/core";
 export {ValueService} from "@ag-grid-community/core";
 export {VanillaFrameworkOverrides} from "@ag-grid-community/core";
 export {VerticalDirection} from "@ag-grid-community/core";

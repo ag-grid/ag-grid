@@ -1,16 +1,16 @@
 import { mock } from '../test-utils/mock';
-import { ExpressionService } from '../valueService/expressionService';
-import { ValueFormatterService } from './valueFormatterService';
+import { ExpressionService } from './expressionService';
 import { Column } from '../entities/column';
 import { ColDef, ValueFormatterParams } from '../entities/colDef';
 import { RowNode } from '../entities/rowNode';
 import { GridOptionsService } from '../gridOptionsService';
+import { ValueService } from './valueService';
 
 let colDef: ColDef;
 let column: jest.Mocked<Column>;
 let gos: jest.Mocked<GridOptionsService>;
 let expressionService: jest.Mocked<ExpressionService>;
-let valueFormatterService: ValueFormatterService;
+let valueService: ValueService;
 
 describe('formatValue', () => {
     beforeEach(() => {
@@ -21,9 +21,9 @@ describe('formatValue', () => {
         gos = mock<GridOptionsService>('get', 'addGridCommonParams');
         gos.addGridCommonParams.mockImplementation(params => params as any);
         expressionService = mock<ExpressionService>('evaluate');
-        valueFormatterService = new ValueFormatterService();
-        (valueFormatterService as any).gos = gos;
-        (valueFormatterService as any).expressionService = expressionService;
+        valueService = new ValueService();
+        (valueService as any).gos = gos;
+        (valueService as any).expressionService = expressionService;
     });
 
     it('uses supplied formatter if provided', () => {
@@ -31,7 +31,7 @@ describe('formatValue', () => {
         const formatter = (params: ValueFormatterParams) => returnValue;
         const value = 'bar';
 
-        const formattedValue = valueFormatterService.formatValue(column, null, value, formatter);
+        const formattedValue = valueService.formatValue(column, null, value, formatter);
 
         expect(formattedValue).toBe(returnValue);
         expect(expressionService.evaluate).toHaveBeenCalledTimes(0);
@@ -43,7 +43,7 @@ describe('formatValue', () => {
         colDef.valueFormatter = formatter;
         const value = 'bar';
 
-        const formattedValue = valueFormatterService.formatValue(column, null, value);
+        const formattedValue = valueService.formatValue(column, null, value);
 
         expect(formattedValue).toBe(returnValue);
         expect(expressionService.evaluate).toHaveBeenCalledTimes(0);
@@ -52,7 +52,7 @@ describe('formatValue', () => {
     it('does not use value formatter from column definition if disabled', () => {
         const formatter = (params: ValueFormatterParams) => params.value.toString();
         colDef.valueFormatter = formatter;
-        const formattedValue = valueFormatterService.formatValue(column, null, 'bar', undefined, false);
+        const formattedValue = valueService.formatValue(column, null, 'bar', undefined, false);
 
         expect(formattedValue).toBeNull();
         expect(expressionService.evaluate).toHaveBeenCalledTimes(0);
@@ -63,11 +63,11 @@ describe('formatValue', () => {
         const formatter = (params: ValueFormatterParams) => (params.node?.isRowPinned() ? returnValue : '');
         colDef.valueFormatter = formatter;
         const value = 'bar';
-        const node = new RowNode({} as any);        
+        const node = new RowNode({} as any);
         node.rowPinned = 'top';
         expect(node.isRowPinned()).toBe(true);
 
-        const formattedValue = valueFormatterService.formatValue(column, node, value);
+        const formattedValue = valueService.formatValue(column, node, value);
 
         expect(formattedValue).toBe(returnValue);
         expect(expressionService.evaluate).toHaveBeenCalledTimes(0);
@@ -77,14 +77,14 @@ describe('formatValue', () => {
         const value = 'foo';
         const refDataValue = 'bar';
         colDef.refData = { [value]: refDataValue };
-        const formattedValue = valueFormatterService.formatValue(column, null, value);
+        const formattedValue = valueService.formatValue(column, null, value);
 
         expect(formattedValue).toBe(refDataValue);
     });
 
     it('returns empty string if refData exists but key cannot be found', () => {
         colDef.refData = {};
-        const formattedValue = valueFormatterService.formatValue(column, null, 'foo');
+        const formattedValue = valueService.formatValue(column, null, 'foo');
 
         expect(formattedValue).toBe('');
     });
@@ -95,14 +95,14 @@ describe('formatValue', () => {
         const formatter = (params: ValueFormatterParams) => params.value.toString();
         colDef.refData = { [value]: 'bob' };
 
-        const formattedValue = valueFormatterService.formatValue(column, null,  value, formatter);
+        const formattedValue = valueService.formatValue(column, null,  value, formatter);
 
         expect(formattedValue).toBe(returnValue);
     });
 
     it('formats array values with spaces by default if not otherwise formatted', () => {
         const value = [1, 2, 3];
-        const formattedValue = valueFormatterService.formatValue(column, null, value);
+        const formattedValue = valueService.formatValue(column, null, value);
 
         expect(formattedValue).toBe('1, 2, 3');
     });

@@ -14,9 +14,7 @@ import {
     ExcelExportMultipleSheetParams,
     ExcelRow,
     CssClassApplier,
-    ColumnGroup,
-    ValueFormatterService,
-    ValueParserService,
+    ColumnGroup
 } from '@ag-grid-community/core';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
 import { BaseCreator, Downloader, GridSerializer, RowType, ZipContainer } from "@ag-grid-community/csv-export";
@@ -198,8 +196,6 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
 
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
     @Autowired('gridOptionsService') gos: GridOptionsService;
-    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
-    @Autowired('valueParserService') private valueParserService: ValueParserService;
 
     @PostConstruct
     public postConstruct(): void {
@@ -286,7 +282,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
     }
 
     public createSerializingSession(params: ExcelExportParams): ExcelSerializingSession {
-        const { columnModel, valueService, gos, valueFormatterService, valueParserService } = this;
+        const { columnModel, valueService, gos } = this;
 
         let sheetName: string;
         if (params.sheetName != null) {
@@ -306,8 +302,6 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             columnModel,
             valueService,
             gos,
-            valueFormatterService,
-            valueParserService,
             suppressRowOutline: params.suppressRowOutline || params.skipRowGroups,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
             baseExcelStyles: this.gos.get('excelStyles') || [],

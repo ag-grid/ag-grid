@@ -13,7 +13,6 @@ import {
     IRowNode,
     NewColumnsLoadedEvent,
     PostConstruct,
-    ValueParserService,
     ValueService,
     WithoutGridCommon,
     _
@@ -32,7 +31,6 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dataTypeService') private dataTypeService: DataTypeService;
-    @Autowired('valueParserService') private valueParserService: ValueParserService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
@@ -124,7 +122,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
             expression,
             columnModel: this.columnModel,
             dataTypeService: this.dataTypeService,
-            valueParserService: this.valueParserService,
+            valueService: this.valueService,
             advancedFilterExpressionService: this.advancedFilterExpressionService,
         });
     }
