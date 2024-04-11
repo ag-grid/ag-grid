@@ -8,7 +8,7 @@ import { isStacked } from "../../utils/seriesTypeMapper";
 
 const HORIZONTAL_CHART_TYPES = new Set(['bar', 'groupedBar', 'stackedBar', 'normalizedBar']);
 
-export class BarChartProxy extends CartesianChartProxy {
+export class BarChartProxy extends CartesianChartProxy<'bar'> {
 
     public constructor(params: ChartProxyParams) {
         super(params);

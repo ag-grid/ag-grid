@@ -2,7 +2,7 @@ import { AgChartThemeOverrides, AgSunburstSeriesOptions } from 'ag-charts-commun
 import { HierarchicalChartProxy } from './hierarchicalChartProxy';
 import { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 
-export class SunburstChartProxy extends HierarchicalChartProxy {
+export class SunburstChartProxy extends HierarchicalChartProxy<'sunburst'> {
     public constructor(params: ChartProxyParams) {
         super(params);
     }
@@ -26,19 +26,13 @@ export class SunburstChartProxy extends HierarchicalChartProxy {
         ];
     }
 
-    protected override getChartThemeDefaults(): AgChartThemeOverrides | undefined {
+    protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides['sunburst'] {
         return {
-            sunburst: {
-                gradientLegend: {
-                    gradient: {
-                        preferredLength: 200,
-                    },
+            gradientLegend: {
+                gradient: {
+                    preferredLength: 200,
                 },
             },
         };
-    }
-
-    public override crossFilteringReset(): void {
-        // cross filtering is not currently supported in sunburst charts
     }
 }

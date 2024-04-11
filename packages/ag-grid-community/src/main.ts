@@ -51,6 +51,8 @@ export {BeanStub} from "@ag-grid-community/core";
 export {Beans} from "@ag-grid-community/core";
 export {BodyDropPivotTarget} from "@ag-grid-community/core";
 export {BodyDropTarget} from "@ag-grid-community/core";
+export {CHART_TYPE_TO_SERIES_TYPE} from "@ag-grid-community/core";
+export {COMBO_CHART_TYPES} from "@ag-grid-community/core";
 export {CellComp} from "@ag-grid-community/core";
 export {CellCtrl} from "@ag-grid-community/core";
 export {CellNavigationService} from "@ag-grid-community/core";

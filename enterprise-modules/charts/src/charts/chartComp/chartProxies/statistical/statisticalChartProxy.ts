@@ -1,22 +1,22 @@
 import {ChartProxyParams, UpdateParams} from '../chartProxy';
 import {CartesianChartProxy} from "../cartesian/cartesianChartProxy";
-import {AgCartesianAxisOptions} from 'ag-charts-community';
+import {AgCartesianAxisOptions, AgCartesianChartOptions} from 'ag-charts-community';
 import {ChartDataModel} from "../../model/chartDataModel";
 
-export abstract class StatisticalChartProxy extends CartesianChartProxy {
+export abstract class StatisticalChartProxy<TSeries extends 'box-plot' | 'range-area' | 'range-bar'> extends CartesianChartProxy<TSeries> {
     protected constructor(params: ChartProxyParams) {
         super(params);
     }
 
-    public getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
+    public getAxes(params: UpdateParams, commonChartOptions: AgCartesianChartOptions): AgCartesianAxisOptions[] {
         return [
             {
                 type: this.getXAxisType(params),
-                position: this.isHorizontal(params) ? 'left' : 'bottom',
+                position: this.isHorizontal(commonChartOptions) ? 'left' : 'bottom',
             },
             {
                 type: 'number',
-                position: this.isHorizontal(params) ? 'bottom' : 'left',
+                position: this.isHorizontal(commonChartOptions) ? 'bottom' : 'left',
             },
         ];
     }

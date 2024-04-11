@@ -2,7 +2,7 @@ import { AgChartThemeOverrides, AgTreemapSeriesOptions } from 'ag-charts-communi
 import { HierarchicalChartProxy } from './hierarchicalChartProxy';
 import { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 
-export class TreemapChartProxy extends HierarchicalChartProxy {
+export class TreemapChartProxy extends HierarchicalChartProxy<'treemap'> {
     public constructor(params: ChartProxyParams) {
         super(params);
     }
@@ -26,19 +26,13 @@ export class TreemapChartProxy extends HierarchicalChartProxy {
         ];
     }
     
-    protected override getChartThemeDefaults(): AgChartThemeOverrides | undefined {
+    protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides['treemap'] {
         return {
-            treemap: {
-                gradientLegend: {
-                    gradient: {
-                        preferredLength: 200,
-                    },
+            gradientLegend: {
+                gradient: {
+                    preferredLength: 200,
                 },
             },
         };
-    }
-
-    public override crossFilteringReset(): void {
-        // cross filtering is not currently supported in treemap charts
     }
 }
