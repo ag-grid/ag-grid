@@ -1,13 +1,12 @@
-import { ColumnEventType } from "../../../events";
-import { ColumnModel, ColumnResizeSet } from "../../../columns/columnModel";
+import { ColumnResizeSet } from "../../../columns/columnModel";
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
 import { Column, ColumnPinnedType } from "../../../entities/column";
 import { ColumnGroup } from "../../../entities/columnGroup";
+import { ColumnEventType } from "../../../events";
 import { AutoWidthCalculator } from "../../../rendering/autoWidthCalculator";
-import { HorizontalResizeService } from "../../common/horizontalResizeService";
-import { IHeaderGroupCellComp } from "./headerGroupCellCtrl";
 import { IHeaderResizeFeature } from "../abstractCell/abstractHeaderCellCtrl";
+import { IHeaderGroupCellComp } from "./headerGroupCellCtrl";
 
 interface ColumnSizeAndRatios {
     columnsToResize: Column[];
@@ -32,10 +31,8 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     private resizeTakeFromStartWidth?: number;
     private resizeTakeFromRatios?: number[];
 
-    @Autowired('horizontalResizeService') private readonly horizontalResizeService: HorizontalResizeService;
     @Autowired('autoWidthCalculator') private readonly autoWidthCalculator: AutoWidthCalculator;
     
-
     constructor(comp: IHeaderGroupCellComp, eResize: HTMLElement,  pinned: ColumnPinnedType, columnGroup: ColumnGroup) {
         super();
 
@@ -53,7 +50,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             return;
         }
 
-        const finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
+        const finishedWithResizeFunc = this.beans.horizontalResizeService.addResizeBar({
             eResizeBar: this.eResize,
             onResizeStart: this.onResizeStart.bind(this),
             onResizing: this.onResizing.bind(this, false),

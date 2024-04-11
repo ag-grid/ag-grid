@@ -1,25 +1,13 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
     ChangedPath,
-    Column,
-    ColumnModel,
-    GetDataPath,
-    IRowNodeStage,
-    IsGroupOpenByDefaultParams,
-    RowNode,
+    Column, GetDataPath, InitialGroupOrderComparatorParams, IRowNodeStage,
+    IsGroupOpenByDefaultParams, KeyCreatorParams, RowNode,
     RowNodeTransaction,
     SelectableService,
-    StageExecuteParams,
-    ValueService,
-    Beans,
-    ISelectionService,
-    WithoutGridCommon,
-    InitialGroupOrderComparatorParams,
-    GridOptions,
-    KeyCreatorParams
+    StageExecuteParams, WithoutGridCommon, _
 } from "@ag-grid-community/core";
 import { BatchRemover } from "./batchRemover";
 

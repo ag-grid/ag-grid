@@ -1,15 +1,16 @@
 import { ColumnState } from "../columns/columnModel";
+import { calculateColInitialWidth, calculateColMaxWidth, calculateColMinWidth } from "../columns/columnUtils";
 import { Autowired, PostConstruct } from "../context/context";
 import { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from "../events";
 import { EventService } from "../eventService";
-import { GridOptionsService } from "../gridOptionsService";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { HeaderColumnId, IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { IRowNode } from "../interfaces/iRowNode";
-import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { FrameworkEventListenerService } from "../misc/frameworkEventListenerService";
-import { ColumnHoverService } from "../rendering/columnHoverService";
+import { Beans } from "../rendering/beans";
+import { BrandedType } from "../utils";
+import { warnOnce } from "../utils/function";
 import { exists, missing } from "../utils/generic";
 import { mergeDeep } from "../utils/object";
 import {
@@ -20,11 +21,6 @@ import {
 } from "./colDef";
 import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
-import { warnOnce } from "../utils/function";
-import { BrandedType } from "../utils";
-import { calculateColInitialWidth, calculateColMaxWidth, calculateColMinWidth } from "../columns/columnUtils";
-import { Environment } from "../environment";
-import { Beans } from "../rendering/beans";
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 export type ColumnEventName =
@@ -95,10 +91,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     public static EVENT_STATE_UPDATED: ColumnEventName = 'columnStateUpdated';
 
     @Autowired('beans') private readonly beans: Beans;
-    @Autowired('environment') protected readonly environment: Environment;
-    @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
     
-    @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
     private frameworkEventListenerService: FrameworkEventListenerService | null;
 
     private readonly colId: any;
@@ -337,10 +330,11 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
 
     /** Add an event listener to the column. */
     public addEventListener(eventType: ColumnEventName, userListener: Function): void {
-        if (this.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
+        const { frameworkOverrides } = this.beans;
+        if (frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
             // Only construct if we need it, as it's an overhead for column construction
-            this.localEventService.setFrameworkOverrides(this.frameworkOverrides);
-            this.frameworkEventListenerService = new FrameworkEventListenerService(this.frameworkOverrides);
+            this.localEventService.setFrameworkOverrides(frameworkOverrides);
+            this.frameworkEventListenerService = new FrameworkEventListenerService(frameworkOverrides);
         }
         const listener = this.frameworkEventListenerService?.wrap(userListener as AgEventListener) ?? userListener;
 
@@ -564,7 +558,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
 
     /** Returns `true` when this `Column` is hovered, otherwise `false` */
     public isHovered(): boolean {
-        return this.columnHoverService.isHovered(this);
+        return this.beans.columnHoverService.isHovered(this);
     }
 
     public setPinned(pinned: ColumnPinnedType): void {

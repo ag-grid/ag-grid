@@ -1,17 +1,15 @@
+import { PostConstruct } from "../context/context";
 import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
-import { Logger, LoggerFactory } from "../logger";
-import { Autowired, PostConstruct } from "../context/context";
-import { Component } from "../widgets/component";
 import { ISideBar } from "../interfaces/iSideBar";
-import { RefSelector } from "../widgets/componentAnnotations";
-import { isVisible } from "../utils/dom";
-import { GridCtrl, IGridComp } from "./gridCtrl";
+import { Logger } from "../logger";
 import { LayoutCssClasses, UpdateLayoutClassesParams } from "../styling/layoutFeature";
+import { isVisible } from "../utils/dom";
+import { Component } from "../widgets/component";
+import { RefSelector } from "../widgets/componentAnnotations";
 import { TabGuardComp } from "../widgets/tabGuardComp";
+import { GridCtrl, IGridComp } from "./gridCtrl";
 
 export class GridComp extends TabGuardComp {
-
-    @Autowired('loggerFactory') private readonly loggerFactory: LoggerFactory;
 
     @RefSelector('gridBody') private readonly gridBodyComp: GridBodyComp;
     @RefSelector('sideBar') private readonly sideBarComp: ISideBar & Component;
@@ -28,7 +26,7 @@ export class GridComp extends TabGuardComp {
 
     @PostConstruct
     private postConstruct(): void {
-        this.logger = this.loggerFactory.create('GridComp');
+        this.logger = this.beans.loggerFactory.create('GridComp');
 
         const compProxy: IGridComp = {
             destroyGridUi:

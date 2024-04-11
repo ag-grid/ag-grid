@@ -1,12 +1,10 @@
-import { exists } from "../../utils/generic";
-import { RowNode } from "../../entities/rowNode";
-import { pushAll } from "../../utils/array";
-import { GridOptionsService } from "../../gridOptionsService";
-import { Autowired, Bean } from "../../context/context";
-import { StylingService } from "../../styling/stylingService";
-import { RowClassParams } from "../../entities/gridOptions";
-import { WithoutGridCommon } from "../../interfaces/iCommon";
+import { Bean } from "../../context/context";
 import { ColumnPinnedType } from "../../entities/column";
+import { RowClassParams } from "../../entities/gridOptions";
+import { RowNode } from "../../entities/rowNode";
+import { WithoutGridCommon } from "../../interfaces/iCommon";
+import { pushAll } from "../../utils/array";
+import { exists } from "../../utils/generic";
 import { BeansProvider } from "../beans";
 
 export interface RowCssClassCalculatorParams {
@@ -27,8 +25,6 @@ export interface RowCssClassCalculatorParams {
 
 @Bean('rowCssClassCalculator')
 export class RowCssClassCalculator extends BeansProvider {
-
-    @Autowired('stylingService') public stylingService: StylingService;
 
     public getInitialRowClasses(params: RowCssClassCalculatorParams): string[] {
 
@@ -163,7 +159,7 @@ export class RowCssClassCalculator extends BeansProvider {
             rowIndex: rowNode.rowIndex!
         });
 
-        this.stylingService.processClassRules(
+        this.beans.stylingService.processClassRules(
             undefined,
             this.beans.gos.get('rowClassRules'),
             rowClassParams,

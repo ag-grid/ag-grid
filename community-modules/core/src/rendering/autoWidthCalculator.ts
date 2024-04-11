@@ -1,14 +1,11 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../context/context";
+import { Bean, PostConstruct } from "../context/context";
 import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
 import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
-import { RowCssClassCalculator } from "./row/rowCssClassCalculator";
 
 @Bean('autoWidthCalculator')
 export class AutoWidthCalculator extends BeanStub {
-
-    @Autowired('rowCssClassCalculator') public rowCssClassCalculator: RowCssClassCalculator;
 
     private centerRowContainerCtrl: RowContainerCtrl;
 

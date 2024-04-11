@@ -73,6 +73,7 @@ import { HeaderPositionUtils } from "../headerRendering/common/headerPosition";
 import { IMenuFactory } from "../interfaces/iMenuFactory";
 import { IColumnChooserFactory } from "../interfaces/iColumnChooserFactory";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
+import { LoggerFactory } from "../logger";
 export class BeansProvider {
     @Autowired('beans') protected readonly beans: Beans;
 }
@@ -85,6 +86,7 @@ export class BeansProvider {
 @Bean('beans')
 export class Beans {
 
+    @Autowired('loggerFactory') public readonly loggerFactory: LoggerFactory;
     @Autowired('resizeObserverService') public readonly resizeObserverService: ResizeObserverService;
     @Autowired('paginationProxy') public readonly paginationProxy: PaginationProxy;
     @Autowired('context') public readonly context: Context;
@@ -95,7 +97,7 @@ export class Beans {
     @Autowired('templateService') public readonly templateService: TemplateService;
     @Autowired('valueService') public readonly valueService: ValueService;
     @Autowired('eventService') public readonly eventService: EventService;
-     public readonly columnModel: ColumnModel;
+    @Autowired('columnModel') public readonly columnModel: ColumnModel;
     @Autowired('headerNavigationService') public readonly headerNavigationService: HeaderNavigationService;
     @Autowired('navigationService') public readonly navigationService: NavigationService;
     @Autowired('columnAnimationService') public readonly columnAnimationService: ColumnAnimationService;
