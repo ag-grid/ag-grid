@@ -23,6 +23,11 @@ import {
     PostConstruct,
     RowNode,
     CtrlsService,
+    WithoutGridCommon,
+    Events,
+    ContextMenuVisibleChangedEvent,
+    CloseMenuEvent
+
 } from "@ag-grid-community/core";
 import { MenuItemMapper } from "./menuItemMapper";
 import { MenuUtils } from "./menuUtils";
@@ -135,9 +140,10 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             modal: true,
             eChild: eMenuGui,
             closeOnEsc: true,
-            closedCallback: () => {
+            closedCallback: (e) => {
                 eGridBodyGui.classList.remove(CSS_CONTEXT_MENU_OPEN);
                 this.destroyBean(menu);
+                this.dispatchVisibleChangedEvent(false, e === undefined ? 'api' : 'ui');
             },
             click: mouseEvent,
             positionCallback: () => {
@@ -176,10 +182,28 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
         // hide the popup if something gets selected
         if (addPopupRes) {
-            menu.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, addPopupRes.hideFunc);
+            menu.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, (e: CloseMenuEvent) => addPopupRes.hideFunc({
+                mouseEvent: e.mouseEvent ?? undefined,
+                keyboardEvent: e.keyboardEvent ?? undefined,
+                forceHide: true 
+            }));
         }
 
+        // we check for a mousedown event because `gridApi.showContextMenu`
+        // generates a `mousedown` event to display the context menu.
+        const isApi = mouseEvent && (mouseEvent instanceof MouseEvent) && mouseEvent.type === 'mousedown';
+        this.dispatchVisibleChangedEvent(true, isApi ? 'api' : 'ui');
+
         return true;
+    }
+
+    private dispatchVisibleChangedEvent(visible: boolean, source: 'api' | 'ui' = 'ui'): void {
+        const displayedEvent: WithoutGridCommon<ContextMenuVisibleChangedEvent> = {
+            type: Events.EVENT_CONTEXT_MENU_VISIBLE_CHANGED,
+            visible,
+            source
+        }
+        this.eventService.dispatchEvent(displayedEvent)
     }
 }
 

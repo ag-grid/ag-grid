@@ -37,12 +37,13 @@ export interface PopupEventParams {
     mouseEvent?: MouseEvent;
     touchEvent?: TouchEvent;
     keyboardEvent?: KeyboardEvent;
+    forceHide?: boolean;
 }
 
 export interface AgPopup {
     element: HTMLElement;
     wrapper: HTMLElement;
-    hideFunc: () => void;
+    hideFunc: (params?: PopupEventParams) => void;
     isAnchored: boolean;
     instanceId: number;
     alignedToElement?: HTMLElement;
@@ -83,7 +84,7 @@ export interface AddPopupParams {
 }
 
 export interface AddPopupResult {
-    hideFunc: () => void;
+    hideFunc: (params?: PopupEventParams) => void;
 }
 
 @Bean('popupService')
@@ -509,11 +510,11 @@ export class PopupService extends BeanStub {
 
     }
 
-    private addEventListenersToPopup(params: AddPopupParams & { wrapperEl: HTMLElement }): () => void {
+    private addEventListenersToPopup(params: AddPopupParams & { wrapperEl: HTMLElement }): (popupParams?: PopupEventParams) => void {
         const eDocument = this.gos.getDocument();
         const ePopupParent = this.getPopupParent();
 
-        const { wrapperEl, eChild: popupEl, click: pointerEvent, closedCallback, afterGuiAttached, closeOnEsc, modal } = params;
+        const { wrapperEl, eChild: popupEl, closedCallback, afterGuiAttached, closeOnEsc, modal } = params;
 
         let popupHidden = false;
 
@@ -533,15 +534,15 @@ export class PopupService extends BeanStub {
         const hidePopupOnTouchEvent = (event: TouchEvent) => removeListeners({ touchEvent: event });
 
         const removeListeners = (popupParams: PopupEventParams = {}) => {
-            const { mouseEvent, touchEvent, keyboardEvent } = popupParams;
-            if (
+            const { mouseEvent, touchEvent, keyboardEvent, forceHide } = popupParams;
+            if (!forceHide && (
                 // we don't hide popup if the event was on the child, or any
                 // children of this child
                 this.isEventFromCurrentPopup({ mouseEvent, touchEvent }, popupEl) ||
                 // this method should only be called once. the client can have different
                 // paths, each one wanting to close, so this method may be called multiple times.
                 popupHidden
-            ) {
+            )) {
                 return;
             }
 
@@ -585,7 +586,7 @@ export class PopupService extends BeanStub {
         return removeListeners;
     }
 
-    private addPopupToPopupList(element: HTMLElement, wrapperEl: HTMLElement, removeListeners: () => void, anchorToElement?: HTMLElement): void {
+    private addPopupToPopupList(element: HTMLElement, wrapperEl: HTMLElement, removeListeners: (popupParams?: PopupEventParams) => void, anchorToElement?: HTMLElement): void {
         this.popupList.push({
             element: element,
             wrapper: wrapperEl,
@@ -643,7 +644,7 @@ export class PopupService extends BeanStub {
     private keepPopupPositionedRelativeTo(params: {
         ePopup: HTMLElement,
         element: HTMLElement,
-        hidePopup: () => void;
+        hidePopup: (params?: PopupEventParams) => void;
     }): AgPromise<() => void> {
         const eParent = this.getPopupParent();
         const parentRect = eParent.getBoundingClientRect();
