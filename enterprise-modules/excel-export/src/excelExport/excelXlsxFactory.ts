@@ -287,6 +287,14 @@ export class ExcelXlsxFactory {
         return XmlFactory.createXml(watermarkVmlDrawing.getTemplate());
     }
 
+    public static createWatermarkVmlDrawingRels(imageFileName: string): string {
+        return createXmlPart(relationshipsFactory.getTemplate([{
+            Id: 'rId1',
+            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
+            Target: `../media/${imageFileName}`
+        }]));
+    }
+
     public static createStylesheet(defaultFontSize: number): string {
         return createXmlPart(stylesheetFactory.getTemplate(defaultFontSize));
     }

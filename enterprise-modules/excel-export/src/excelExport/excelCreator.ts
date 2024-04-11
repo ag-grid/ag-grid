@@ -122,11 +122,14 @@ const createWatermarkDrawing = (): void => {
     const watermarkImage = ExcelXlsxFactory.worksheetWatermarkImage;
     if (!watermarkImage) { return; }
 
+    const imageFileName = `watermarkImage.${watermarkImage.imageType}`;
     const drawingVmlFileName = `xl/drawings/vmlDrawing1.vml`;
-    const imageFileName = `xl/media/watermarkImage.${watermarkImage.imageType}`;
+    const drawingRelFileName = `xl/drawings/_rels/vmlDrawing1.vml.rels`;
+    const imageFilePath = `xl/media/${imageFileName}`;
 
     ZipContainer.addFile(drawingVmlFileName, ExcelXlsxFactory.createWatermarkVmlDrawing());
-    ZipContainer.addFile(imageFileName, watermarkImage.base64, true);
+    ZipContainer.addFile(drawingRelFileName, ExcelXlsxFactory.createWatermarkVmlDrawingRels(imageFileName));
+    ZipContainer.addFile(imageFilePath, watermarkImage.base64, true);
 }
 
 const createExcelXmlCoreSheets = (fontSize: number, author: string, sheetLen: number): void => {
