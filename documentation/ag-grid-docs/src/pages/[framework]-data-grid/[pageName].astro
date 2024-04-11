@@ -4,7 +4,7 @@ import Layout from '@layouts/Layout.astro';
 import { PagesNavigation } from '@features/pages-navigation/components/PagesNavigation';
 import { Header } from '@features/docs/components/Header';
 import { getFrameworkDisplayText } from '@utils/framework';
-import type { Framework, MenuSection } from '@ag-grid-types';
+import type { Framework, MenuItem, MenuSection } from '@ag-grid-types';
 import { getDocsPages } from '@features/docs/utils/pageData';
 import { SideNavigation } from '@features/pages-navigation/components/SideNavigation';
 import { getFirstParagraphText } from '@utils/markdoc/getFirstParagraphText';
@@ -41,6 +41,7 @@ const isApiPage = isApiMenuPath({
     pageName,
     menuData: menu,
 });
+const menuSections = isApiPage ? apiMenuSections : frameworkMenuSections;
 
 async function renderPage() {
     try {
@@ -93,7 +94,7 @@ if (error?.message.includes('Custom Markdoc tags not loaded')) {
             !hidePageMenu && (
                 <PagesNavigation
                     client:load
-                    menuSections={isApiPage ? apiMenuSections : frameworkMenuSections}
+                    menuSections={menuSections}
                     framework={currentFramework}
                     pageName={pageName}
                 />
@@ -108,7 +109,14 @@ if (error?.message.includes('Custom Markdoc tags not loaded')) {
                 },
             ]}
         >
-            <Header client:load title={title} framework={currentFramework} isEnterprise={enterprise} path={path} />
+            <Header
+                client:load
+                title={title}
+                framework={currentFramework}
+                isEnterprise={enterprise}
+                path={path}
+                menuItems={menuSections as MenuItem[]}
+            />
 
             {/* Wrapping div is a hack to target "intro" section of docs page */}
             <div class={styles.pageSections}>
