@@ -199,8 +199,7 @@ export class Environment extends BeanStub {
     }
 
     public getTheme():  ThemeDetails {
-
-        if(this.calculatedTheme){
+        if (this.calculatedTheme) {
             return this.calculatedTheme;
         }
 
