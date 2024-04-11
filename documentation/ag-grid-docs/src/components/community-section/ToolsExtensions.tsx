@@ -14,6 +14,7 @@ const frameworks = [
     'Vue',
     'Python',
     'Svelte',
+    'SolidJS',
     'Laravel',
     '.NET',
     'Rust',

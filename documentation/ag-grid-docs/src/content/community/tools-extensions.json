@@ -194,6 +194,22 @@
         ]
     },
     {
+        "repo": "https://github.com/solidjs-community/solid-ag-grid",
+        "title": "Solid AG Grid",
+        "description": "Solid AG Grid is a fully-featured and highly customizable JavaScript data grid. It delivers outstanding performance, has no 3rd party dependencies and integrates smoothly with Solid as Solid Component.",
+        "link": "",
+        "type": "Wrapper",
+        "open_source": true,
+        "stars": 5,
+        "img": "",
+        "frameworks": [
+            "SolidJS"
+        ],
+        "tags": [
+            "Wrapper"
+        ]
+    },
+    {
         "repo": "https://github.com/kpmck/cypress-ag-grid",
         "title": "Cypress AG Grid",
         "description": "This plugin simplifies interacting with and validating against ag grid with Cypress, a testing framework for JavaScript. With Cypress, you can easily create tests for your modern web applications, debug them visually, and automatically run them in your continuous integration builds.",
