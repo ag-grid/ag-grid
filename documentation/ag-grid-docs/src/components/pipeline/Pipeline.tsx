@@ -1,5 +1,5 @@
+import { Alert } from '@ag-website-shared/components/alert/Alert';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { Alert } from '@components/alert/Alert';
 import DetailCellRenderer from '@components/grid/DetailCellRendererComponent';
 import Grid from '@components/grid/Grid';
 import styles from '@legacy-design-system/modules/pipelineChangelog.module.scss';
