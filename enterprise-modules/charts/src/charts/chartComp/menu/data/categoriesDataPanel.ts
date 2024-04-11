@@ -83,7 +83,7 @@ export class CategoriesDataPanel extends DragDataPanel {
     }
 
     private createCategoriesGroup(columns: ColState[]): void {
-        this.createGroup(columns, col => col.displayName ?? '', 'categoryAdd', 'categorySelect');
+        this.createGroup(columns, col => col.displayName ?? '', 'categoryAdd', 'categorySelect', () => !this.chartController.getAggFunc());
     }
 
     private createLegacyCategoriesGroup(columns: ColState[]): void {
