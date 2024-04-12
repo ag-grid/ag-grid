@@ -147,21 +147,6 @@
                         "path": "getting-started"
                     },
                     {
-                        "title": "Installation",
-                        "items": [
-                            {
-                                "title": "Install with NPM",
-                                "path": "npm",
-                                "frameworks": ["javascript"]
-                            },
-                            {
-                                "title": "Download Bundles",
-                                "path": "download",
-                                "frameworks": ["javascript"]
-                            }
-                        ]
-                    },
-                    {
                         "title": "Guides",
                         "items": [
                             {
