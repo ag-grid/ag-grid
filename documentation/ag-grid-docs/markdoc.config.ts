@@ -1,3 +1,4 @@
+import { kbd } from '@ag-website-shared/markdoc/tags/kbd';
 import { Markdoc, component, defineMarkdocConfig, nodes } from '@astrojs/markdoc/config';
 
 import { DOCS_TAB_ITEM_ID_PREFIX, agGridVersion } from './src/constants';
@@ -47,15 +48,7 @@ export default defineMarkdocConfig({
         },
     },
     tags: {
-        kbd: {
-            render: 'kbd',
-            attributes: {
-                primary: { type: String },
-            },
-            transform(node) {
-                return new Markdoc.Tag(this.render, {}, [node.attributes.primary]);
-            },
-        },
+        kbd,
         br: {
             render: 'br',
         },

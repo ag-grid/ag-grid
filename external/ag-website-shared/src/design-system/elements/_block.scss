@@ -15,6 +15,7 @@ li:where(:not(:last-child)) {
 
 li > ol#{$selector-exclude-grid},
 li > ul#{$selector-exclude-grid} {
+    margin-top: $spacing-size-2;
     padding-left: 1.5em;
 }
 
