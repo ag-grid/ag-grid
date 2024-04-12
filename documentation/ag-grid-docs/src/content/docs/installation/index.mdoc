@@ -1,0 +1,82 @@
+---
+title: "Installation"
+frameworks: ["javascript"]
+---
+
+Install AG Grid with a package manager or download AG Grid directly.
+
+## Install AG Grid with NPM
+
+AG Grid is available through NPM packages. Below is a code example of using AG Grid with NPM and ECMA 6 imports.
+
+To install AG Grid and update your `package.json` file run:
+
+```bash
+npm install --save ag-grid-community
+```
+
+To install AG Grid Enterprise and update your `package.json` file run:
+
+```bash
+npm install --save ag-grid-enterprise
+```
+
+Afterwards, depending on your project setup, you can either `require` or `import` the module. For ag-grid, you need the ag-grid module:
+
+```js
+// ECMA 5 - using nodes require() method
+var AgGrid = require('ag-grid-community');
+
+// ECMA 6 - using the system import method
+import { createGrid } from 'ag-grid-community';
+```
+
+For AG Grid Enterprise features, import the `ag-grid-enterprise` package for it to be included in your application:
+
+```js
+import 'ag-grid-enterprise'
+```
+
+After you have loaded the scripts, you should include the styles in your project. There are several
+ways to do it, depending on your module bundler and the specifics of your project. The stylesheet
+files reside in `styles/` directory of the ag-grid package - you should include `ag-grid.css`
+and the theme of your choice.
+
+## Download AG Grid
+
+If your project does not use package manager and you don't want to refer AG Grid from CDN,
+you can download the AG Grid's source files and keep them in your project structure.
+
+{% note %}
+**Disclaimer:** This makes upgrading more complex and prone to errors. We recommend using AG Grid
+from an NPM package or from CDN.
+{% /note %}
+
+### Download AG Grid bundle
+
+You can download AG Grid from the `dist` folder of the AG Grid {% link href="https://github.com/ag-grid/ag-grid/tree/v{% $agGridVersion %}/packages/ag-grid-community/dist" %}GitHub Repository{% /link %}.
+
+There are four bundle files in the distribution:
+
+* `dist/ag-grid-community.js` — standard bundle containing JavaScript and CSS
+* `dist/ag-grid-community.min.js` — minified bundle containing JavaScript and CSS
+* `dist/ag-grid-community.noStyle.js` — standard bundle containing JavaScript without CSS
+* `dist/ag-grid-community.min.noStyle.js` — minified bundle containing JavaScript without CSS
+
+Should you decide to use the `noStyle` versions of the bundle, the stylesheet files are present in the `styles` folder.
+
+### Download AG Grid Enterprise bundle
+
+You can download AG Grid Enterprise from the `dist` folder of the AG Grid Enterprise {% link href="https://github.com/ag-grid/ag-grid/tree/v{% $agGridVersion %}/packages/ag-grid-enterprise/dist" %}Github Repository{% /link %}.
+
+Again there are four bundle files in the distribution:
+
+* `dist/ag-grid-enterprise.js` — standard bundle containing JavaScript and CSS
+* `dist/ag-grid-enterprise.min.js` — minified bundle containing JavaScript and CSS
+* `dist/ag-grid-enterprise.noStyle.js` — standard bundle containing JavaScript without CSS
+* `dist/ag-grid-enterprise.min.noStyle.js ` — minified bundle containing JavaScript without CSS
+
+Should you decide to use the `noStyle` versions of the bundle, you should use the style files from
+the AG Grid bundle (all the styles needed for community and enterprise are in the community CSS files).
+
+After downloading the bundles, you can refer to the files in the same way as you would from CDN. Refer [the getting started section](./getting-started/) for step-by-step guide on that.
