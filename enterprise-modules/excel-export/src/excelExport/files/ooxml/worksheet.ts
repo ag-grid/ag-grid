@@ -10,7 +10,8 @@ import {
     ExcelHeaderFooterContent,
     ExcelHeaderFooterConfig,
     ExcelFont,
-    _, ExcelWatermarkImage,
+    ExcelWatermarkImage,
+    _,
 } from '@ag-grid-community/core';
 import { ExcelDataTable } from '../../assets/excelInterfaces';
 
@@ -432,8 +433,8 @@ const worksheetFactory: ExcelOOXMLTemplate = {
         const { rows, columns } = table;
         const mergedCells = (columns && columns.length) ? getMergedCellsAndAddColumnGroups(rows, columns, !!suppressColumnOutline) : [];
 
-        const watermarkImageConfig = ExcelXlsxFactory.worksheetWatermarkImage;
-        const worksheetExcelTables = ExcelXlsxFactory.worksheetDataTables.get(currentSheet);
+        const { worksheetWatermarkImage, worksheetDataTables } = ExcelXlsxFactory;
+        const worksheetExcelTables = worksheetDataTables.get(currentSheet);
 
         const createWorksheetChildren = _.compose<ComposedWorksheetParams>(
             addSheetPr(),
@@ -443,13 +444,13 @@ const worksheetFactory: ExcelOOXMLTemplate = {
             addMergeCells(mergedCells),
             addPageMargins(margins),
             addPageSetup(pageSetup),
-            addHeaderFooter(headerFooterConfig, watermarkImageConfig),
+            addHeaderFooter(headerFooterConfig, worksheetWatermarkImage),
             addDrawingRel(currentSheet),
             addExcelTableRel(worksheetExcelTables),
-            addWatermarkRel(watermarkImageConfig),
+            addWatermarkRel(worksheetWatermarkImage),
         );
 
-        const children = createWorksheetChildren({ children: [], rIdCounter: 0 }).children;
+        const { children } = createWorksheetChildren({ children: [], rIdCounter: 0 });
 
         return {
             name: "worksheet",

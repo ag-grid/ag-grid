@@ -384,15 +384,12 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      * */
     author?: string;
     /**
-     * If set to `true`, this will try to convert any cell that starts with `=` to a formula, instead of setting the
-     * cell value as regular string that starts with `=`.
+     * If set to `true`, this will try to convert any cell that starts with `=` to a formula, instead of setting the cell value as regular string that starts with `=`.
      * @default false
      */
     autoConvertFormulas?: boolean;
     /**
-     * Defines the default column width. If no value is present, each column will have value currently set in the
-     * application with a min value of 75px. This property can also be supplied a callback function that returns a
-     * number.
+     * Defines the default column width. If no value is present, each column will have value currently set in the application with a min value of 75px. This property can also be supplied a callback function that returns a number.
      */
     columnWidth?: number | ((params: ColumnWidthCallbackParams) => number);
     /**
@@ -401,13 +398,11 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      */
     fontSize?: number;
     /**
-     * The height in pixels of header rows. Defaults to Excel default value. This property can also be supplied a
-     * callback function that returns a number.
+     * The height in pixels of header rows. Defaults to Excel default value. This property can also be supplied a callback function that returns a number.
      */
     headerRowHeight?: number | ((params: RowHeightCallbackParams) => number);
     /**
-     * The height in pixels of all rows. Defaults to Excel default value. This property can also be supplied a callback
-     * function that returns a number.
+     * The height in pixels of all rows. Defaults to Excel default value. This property can also be supplied a callback function that returns a number.
      */
     rowHeight?: number | ((params: RowHeightCallbackParams) => number);
     /**
@@ -435,14 +430,12 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
     /** The configuration for header and footers. */
     headerFooterConfig?: ExcelHeaderFooterConfig;
     /**
-     * If `true`, the outline (controls to expand and collapse) for Row Groups will not be added automatically to the
-     * Excel Document.
+     * If `true`, the outline (controls to expand and collapse) for Row Groups will not be added automatically to the Excel Document.
      * @default false.
      */
     suppressRowOutline?: boolean;
     /**
-     * If `true`, the outline (controls to expand and collapse) for Group Columns will not be added automatically to
-     * the Excel Document.
+     * If `true`, the outline (controls to expand and collapse) for Group Columns will not be added automatically to the Excel Document.
      * @default false.
      */
     suppressColumnOutline?: boolean;
@@ -472,8 +465,7 @@ export interface ExcelExportMultipleSheetParams {
     author?: string;
     /**
      * Array of strings containing the raw data for Excel workbook sheets.
-     * This property is only used when exporting to multiple sheets using `api.exportMultipleSheetsAsExcel()` and the
-     * data for each sheet is obtained by calling `api.getSheetDataForExcel()`.
+     * This property is only used when exporting to multiple sheets using `api.exportMultipleSheetsAsExcel()` and the data for each sheet is obtained by calling `api.getSheetDataForExcel()`.
      */
     data: string[];
     /**
