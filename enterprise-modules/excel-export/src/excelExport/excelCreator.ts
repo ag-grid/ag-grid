@@ -30,7 +30,9 @@ const createExcelXMLCoreFolderStructure = (): void => {
         'xl/worksheets/'
     ]);
 
-    if (!ExcelXlsxFactory.images.size) { return; }
+    const { images } = ExcelXlsxFactory
+
+    if (!images.size) { return; }
 
     ZipContainer.addFolders([
         'xl/worksheets/_rels',
@@ -40,7 +42,8 @@ const createExcelXMLCoreFolderStructure = (): void => {
     ]);
 
     let imgCounter = 0;
-    ExcelXlsxFactory.images.forEach(value => {
+
+    images.forEach(value => {
         const firstImage = value[0].image[0];
         const ext = firstImage.imageType;
         ZipContainer.addFile(`xl/media/image${++imgCounter}.${ext}`, firstImage.base64, true);
@@ -51,13 +54,15 @@ const createExcelXmlWorksheets = (data: string[]): void => {
     let imageRelationCounter = 0;
     let tableRelationCounter = 0;
 
+    const { images, worksheetDataTables, worksheetImages, worksheetWatermarkImage } = ExcelXlsxFactory;
+
     for (let i = 0; i < data.length; i++) {
         const value = data[i];
         ZipContainer.addFile(`xl/worksheets/sheet${i + 1}.xml`, value, false);
 
-        const hasImages = ExcelXlsxFactory.images.size > 0 && ExcelXlsxFactory.worksheetImages.has(i);
-        const hasTables = ExcelXlsxFactory.worksheetDataTables.size > 0 && ExcelXlsxFactory.worksheetDataTables.has(i);
-        const hasWatermark = ExcelXlsxFactory.worksheetWatermarkImage !== undefined;
+        const hasImages = images.size > 0 && worksheetImages.has(i);
+        const hasTables = worksheetDataTables.size > 0 && worksheetDataTables.has(i);
+        const hasWatermark = worksheetWatermarkImage !== undefined;
 
         if (!hasImages && !hasTables && !hasWatermark) { continue; }
 
@@ -77,6 +82,7 @@ const createExcelXmlWorksheets = (data: string[]): void => {
 
         const worksheetRelFile = `xl/worksheets/_rels/sheet${i + 1}.xml.rels`;
         const watermarkTarget = hasWatermark ? 'vmlDrawing1' : undefined;
+
         ZipContainer.addFile(
             worksheetRelFile,
             ExcelXlsxFactory.createRelationships({
@@ -98,7 +104,9 @@ const createExcelXmlDrawings = (sheetIndex: number, drawingIndex: number): void 
 };
 
 const createExcelXmlTables = (): void => {
-    const tablesDataByWorksheet = ExcelXlsxFactory.worksheetDataTables;
+    const { worksheetDataTables } = ExcelXlsxFactory;
+
+    const tablesDataByWorksheet = worksheetDataTables;
     const worksheetKeys = Array.from(tablesDataByWorksheet.keys());
 
     for (let i = 0; i < worksheetKeys.length; i++) {
@@ -117,17 +125,18 @@ const createExcelXmlTables = (): void => {
 }
 
 const createWatermarkDrawing = (): void => {
-    const watermarkImage = ExcelXlsxFactory.worksheetWatermarkImage;
-    if (!watermarkImage) { return; }
+    const { worksheetWatermarkImage } = ExcelXlsxFactory;
 
-    const imageFileName = `watermarkImage.${watermarkImage.imageType}`;
+    if (!worksheetWatermarkImage) { return; }
+
+    const imageFileName = `watermarkImage.${worksheetWatermarkImage.imageType}`;
     const drawingVmlFileName = `xl/drawings/vmlDrawing1.vml`;
     const drawingRelFileName = `xl/drawings/_rels/vmlDrawing1.vml.rels`;
     const imageFilePath = `xl/media/${imageFileName}`;
 
     ZipContainer.addFile(drawingVmlFileName, ExcelXlsxFactory.createWatermarkVmlDrawing());
     ZipContainer.addFile(drawingRelFileName, ExcelXlsxFactory.createWatermarkVmlDrawingRels(imageFileName));
-    ZipContainer.addFile(imageFilePath, watermarkImage.base64, true);
+    ZipContainer.addFile(imageFilePath, worksheetWatermarkImage.base64, true);
 }
 
 const createExcelXmlCoreSheets = (fontSize: number, author: string, sheetLen: number): void => {
@@ -165,6 +174,7 @@ const createExcelFileForExcel = (data: string[], options: {
     createExcelXmlCoreSheets(fontSize, author, data.length);
 
     ExcelXlsxFactory.resetFactory();
+
     return true;
 }
 
