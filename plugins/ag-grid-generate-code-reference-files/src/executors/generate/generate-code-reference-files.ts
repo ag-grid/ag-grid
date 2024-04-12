@@ -12,7 +12,6 @@ function getCallbackForEvent(eventName: string): string {
     }
     return 'on' + eventName[0].toUpperCase() + eventName.substring(1);
 }
-
 const EVENTS = Object.values(Events)
 const EVENT_LOOKUP = new Set(EVENTS.map(event => getCallbackForEvent(event)));
 
@@ -82,6 +81,7 @@ function extractTypesFromNode(node, srcFile, includeQuestionMark) {
             type: { arguments: methodArgs, returnType, optional }
         };
 
+        
         if (EVENT_LOOKUP.has(name)) {
             // Duplicate events without their prefix
             let shortName = name.substring(2);

@@ -28,7 +28,6 @@ import { Column } from '../entities/column';
 import { warnOnce } from '../utils/function';
 import { KeyCode } from '../constants/keyCode';
 import { exists, toStringOrNull } from '../utils/generic';
-import { ValueFormatterService } from '../rendering/valueFormatterService';
 import { IRowNode } from '../interfaces/iRowNode';
 import { parseDateTimeFromString, serialiseDate } from '../utils/date';
 import { AgEventListener, AgGridEvent, DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
@@ -59,7 +58,6 @@ export class DataTypeService extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
 
     private dataTypeDefinitions: { [cellDataType: string]: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter } = {};
     private dataTypeMatchers: { [cellDataType: string]: ((value: any) => boolean) | undefined };
@@ -578,7 +576,7 @@ export class DataTypeService extends BeanStub {
             if (valueFormatter === dataTypeDefinition.groupSafeValueFormatter) {
                 valueFormatter = dataTypeDefinition.valueFormatter;
             }
-            return this.valueFormatterService.formatValue(column, node, value, valueFormatter as any);
+            return this.valueService.formatValue(column, node, value, valueFormatter as any);
         }
         const usingSetFilter = ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.context.getGridId());
         const translate = this.localeService.getLocaleTextFunc();

@@ -1,5 +1,5 @@
 import { SetValueModel, SetFilterModelValuesType } from './setValueModel';
-import { RowNode, IClientSideRowModel, ValueFormatterService, SetFilterParams, ValueFormatterFunc, _, GridOptionsService, ColumnModel, ValueService } from '@ag-grid-community/core';
+import { RowNode, IClientSideRowModel, SetFilterParams, ValueFormatterFunc, _, GridOptionsService, ColumnModel, ValueService } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 
 type ValueType = string | number | boolean | Date;
@@ -57,8 +57,8 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
         isRowDataLoaded: () => true,
     } as IClientSideRowModel;
 
-    const valueFormatterService = mock<ValueFormatterService>('formatValue');
-    valueFormatterService.formatValue.mockImplementation((_1, _2, value) => value);
+    const valueService = mock<ValueService>('formatValue');
+    valueService.formatValue.mockImplementation((_1, _2, value) => value);
 
     const svmParams: SetFilterParams = {
         rowModel,
@@ -79,12 +79,9 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
     const columnModel = mock<ColumnModel>('getRowGroupColumns');
     columnModel.getRowGroupColumns.mockImplementation(() => []);
 
-    const valueService = mock< ValueService>();
-
     return new SetValueModel<string>({
         filterParams: svmParams,
         setIsLoading: _ => { },
-        valueFormatterService,
         translate: key => key === 'blanks' ? '(Blanks)' : '',
         caseFormat,
         createKey: value => _.makeNull(Array.isArray(value) ? value as any : _.toStringOrNull(value)!),

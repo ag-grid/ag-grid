@@ -67,6 +67,7 @@ import {
     ColumnValueChangedEvent,
     ColumnVisibleEvent,
     ComponentStateChangedEvent,
+    ContextMenuVisibleChangedEvent,
     CsvExportParams,
     CutEndEvent,
     CutStartEvent,
@@ -1591,6 +1592,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** The column menu visibility has changed. Fires twice if switching between tabs - once with the old tab and once with the new tab.
          */
     @Output() public columnMenuVisibleChanged: EventEmitter<ColumnMenuVisibleChangedEvent<TData>> = new EventEmitter<ColumnMenuVisibleChangedEvent<TData>>();
+    /** The context menu visibility has changed (opened or closed).
+         */
+    @Output() public contextMenuVisibleChanged: EventEmitter<ContextMenuVisibleChangedEvent<TData>> = new EventEmitter<ContextMenuVisibleChangedEvent<TData>>();
     /** Cut operation has started.
          */
     @Output() public cutStart: EventEmitter<CutStartEvent<TData>> = new EventEmitter<CutStartEvent<TData>>();

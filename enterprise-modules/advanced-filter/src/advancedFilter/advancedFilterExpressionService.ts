@@ -11,8 +11,7 @@ import {
     DataTypeService,
     JoinAdvancedFilterModel,
     PostConstruct,
-    ValueFormatterService,
-    ValueParserService,
+    ValueService,
     _,
 } from '@ag-grid-community/core';
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
@@ -29,8 +28,7 @@ import {
 
 @Bean('advancedFilterExpressionService')
 export class AdvancedFilterExpressionService extends BeanStub {
-    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
-    @Autowired('valueParserService') private valueParserService: ValueParserService;
+    @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dataTypeService') private dataTypeService: DataTypeService;
 
@@ -74,10 +72,10 @@ export class AdvancedFilterExpressionService extends BeanStub {
             case 'number':
                 return _.exists(operand) ? Number(operand) : null;
             case 'date':
-                return _.serialiseDate(this.valueParserService.parseValue(column, null, operand, undefined), false);
+                return _.serialiseDate(this.valueService.parseValue(column, null, operand, undefined), false);
             case 'dateString':
                 // displayed string format may be different from data string format, so parse before converting to date
-                const parsedDateString = this.valueParserService.parseValue(column, null, operand, undefined);
+                const parsedDateString = this.valueService.parseValue(column, null, operand, undefined);
                 return _.serialiseDate(this.dataTypeService.getDateParserFunction(column)(parsedDateString) ?? null, false);
         }
         return operand;
@@ -95,7 +93,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
                     break;
                 case 'date':
                     const dateValue = _.parseDateTimeFromString(filter);
-                    operand1 = column ? this.valueFormatterService.formatValue(column, null, dateValue) : null;
+                    operand1 = column ? this.valueService.formatValue(column, null, dateValue) : null;
                     break;
                 case 'dateString':
                     // need to convert from ISO date string to Date to data string format to formatted string format
@@ -103,7 +101,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
                     const dateStringStringValue = column
                         ? this.dataTypeService.getDateFormatterFunction(column)(dateStringDateValue ?? undefined)
                         : null;
-                    operand1 = column ? this.valueFormatterService.formatValue(column, null, dateStringStringValue) : null;
+                    operand1 = column ? this.valueService.formatValue(column, null, dateStringStringValue) : null;
                     break;
             }
             if (model.filterType !== 'number') {
@@ -238,7 +236,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
                     params = { valueConverter: (v: any) => v };
                 } else {
                     params = {
-                        valueConverter: (value, node) => this.valueFormatterService.formatValue(column, node, value)
+                        valueConverter: (value, node) => this.valueService.formatValue(column, node, value)
                             ?? (typeof value.toString === 'function' ? value.toString() : '')
                     };
                 }

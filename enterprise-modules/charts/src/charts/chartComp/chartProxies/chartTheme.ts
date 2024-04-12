@@ -8,7 +8,7 @@ import {
     AgChartThemePalette,
 } from 'ag-charts-community';
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
-import { ChartSeriesType, getSeriesType, isPieChartSeries } from '../utils/seriesTypeMapper';
+import { ChartSeriesType, getSeriesType } from '../utils/seriesTypeMapper';
 import { ChartProxy, ChartProxyParams } from './chartProxy';
 import { get } from '../utils/object';
 

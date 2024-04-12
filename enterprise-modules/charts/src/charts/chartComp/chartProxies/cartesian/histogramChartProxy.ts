@@ -2,7 +2,7 @@ import { AgCartesianAxisOptions, AgHistogramSeriesOptions } from "ag-charts-comm
 import { ChartProxyParams, UpdateParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
-export class HistogramChartProxy extends CartesianChartProxy {
+export class HistogramChartProxy extends CartesianChartProxy<'histogram'> {
 
     public constructor(params: ChartProxyParams) {
         super(params);

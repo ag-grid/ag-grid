@@ -12,7 +12,7 @@ import { CartesianAxisPanel } from "./axis/cartesianAxisPanel";
 import { PolarAxisPanel } from "./axis/polarAxisPanel";
 import { ChartPanel } from "./chart/chartPanel";
 import { SeriesPanel } from "./series/seriesPanel";
-import { ChartSeriesType, hasGradientLegend, isCartesian, isPolar } from "../../utils/seriesTypeMapper";
+import { ChartSeriesType, isCartesian, isPolar } from "../../utils/seriesTypeMapper";
 import { GradientLegendPanel } from './legend/gradientLegendPanel';
 import { ChartPanelFeature } from "../chartPanelFeature";
 import { ChartMenuContext } from "../chartMenuContext";
@@ -74,14 +74,16 @@ export class FormatPanel extends Component {
                     break;
                 case 'legend':
                     // Some chart types require non-standard legend options, so choose the appropriate panel
-                    const panel = hasGradientLegend(chartType) ? new GradientLegendPanel(opts) : new LegendPanel(opts);
+                    const panel = ['treemap', 'sunburst', 'heatmap'].includes(chartType)
+                        ? new GradientLegendPanel(opts)
+                        : new LegendPanel(opts);
                     this.chartPanelFeature.addComponent(panel);
                     break;
                 case 'axis':
                     // Polar charts have different axis options from cartesian charts, so choose the appropriate panels
-                    if (isPolar(chartType)) {
+                    if (isPolar(seriesType)) {
                         this.chartPanelFeature.addComponent(new PolarAxisPanel(opts));
-                    } else if (isCartesian(chartType)) {
+                    } else if (isCartesian(seriesType)) {
                         this.chartPanelFeature.addComponent(new CartesianAxisPanel('xAxis', opts));
                         this.chartPanelFeature.addComponent(new CartesianAxisPanel('yAxis', opts));
                     }
@@ -108,36 +110,9 @@ export class FormatPanel extends Component {
         return userProvidedFormatPanelDef ? userProvidedFormatPanelDef : DefaultFormatPanelDef;
     }
 
-    private isGroupPanelShownInSeries = (group: ChartFormatPanelGroup, seriesType: ChartSeriesType): boolean => {
-        // Determine whether the given panel group is shown depending on the active series type
-
-        // These panel groups are always shown regardless of series type
-        const commonGroupPanels = ['chart', 'legend', 'series'];
-        if (commonGroupPanels.includes(group)) {
-            return true;
-        }
-
-        // These panel groups depend on the selected series type
-        const extendedGroupPanels: { [T in ChartSeriesType]?: Array<ChartFormatPanelGroup> } = {
-            'bar': ['axis', 'horizontalAxis', 'verticalAxis'],
-            'line': ['axis', 'horizontalAxis', 'verticalAxis'],
-            'area': ['axis', 'horizontalAxis', 'verticalAxis'],
-            'scatter': ['axis', 'horizontalAxis', 'verticalAxis'],
-            'bubble': ['axis', 'horizontalAxis', 'verticalAxis'],
-            'histogram': ['axis', 'horizontalAxis', 'verticalAxis'],
-            'radial-column': ['axis'],
-            'radial-bar': ['axis'],
-            'radar-line': ['axis'],
-            'radar-area': ['axis'],
-            'nightingale': ['axis'],
-            'range-bar': ['axis', 'horizontalAxis', 'verticalAxis'],
-            'range-area': ['axis', 'horizontalAxis', 'verticalAxis'],
-            'treemap': [],
-            'sunburst': [],
-            'heatmap': ['axis', 'horizontalAxis', 'verticalAxis'],
-            'waterfall': ['axis', 'horizontalAxis', 'verticalAxis'],
-            'box-plot': ['axis', 'horizontalAxis', 'verticalAxis'],
-        };
-        return extendedGroupPanels[seriesType]?.includes(group) ?? false;
+    private isGroupPanelShownInSeries(group: ChartFormatPanelGroup, seriesType: ChartSeriesType): boolean {
+        return ['chart', 'legend', 'series'].includes(group) ||
+            (isCartesian(seriesType) && ['axis', 'horizontalAxis', 'verticalAxis'].includes(group)) ||
+            (isPolar(seriesType) && group === 'axis');
     }
 }

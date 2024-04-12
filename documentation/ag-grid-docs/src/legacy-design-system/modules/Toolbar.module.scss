@@ -1,0 +1,125 @@
+@use 'design-system' as *;
+
+.toolbar {
+    width: 100%;
+    position: relative;
+    background-color: var(--color-util-brand-100);
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-bg-primary);
+        border-bottom: 1px solid var(--color-border-primary);
+    }
+}
+
+.controlsContainer {
+    padding-top: $spacing-size-2;
+    padding-bottom: $spacing-size-2;
+    padding-left: var(--layout-horizontal-margins);
+    margin-left: auto;
+    margin-right: auto;
+    overflow-x: auto;
+
+    // --layout-max-width + --layout-horizontal-margins * 2
+    @media screen and (min-width: (1800px + 48px * 2)) {
+        padding-left: 0;
+        max-width: var(--layout-max-width);
+    }
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    min-height: 36px;
+
+    > * {
+        flex-shrink: 0;
+    }
+
+    > *:last-child {
+        padding-right: 90px;
+    }
+
+    select,
+    input {
+        max-width: 200px;
+        margin-right: $spacing-size-8;
+    }
+}
+
+.scrollIndicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 70px;
+    background: linear-gradient(90deg, transparent 0%, var(--color-bg-primary));
+    pointer-events: none;
+}
+
+.videoTour {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    :global(.icon) {
+        fill: #f00;
+
+        #{$selector-darkmode} & {
+            fill: var(--color-text-primary);
+        }
+    }
+}
+
+.toolbarNav {
+    position: sticky;
+    top: var(--header-nav-height);
+    z-index: 2;
+
+    ul {
+        display: flex;
+        gap: $spacing-size-8;
+    }
+
+    li {
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            left: 0;
+            bottom: -2px;
+            border-radius: 1px;
+            background-color: var(--color-link);
+            opacity: 0;
+            transform: scaleX(0);
+            transition:
+                transform 0.33s ease-in-out,
+                opacity 0.33s ease-in-out;
+        }
+
+        &:hover::before {
+            opacity: 0.4;
+            transform: scaleX(1);
+        }
+
+        &.active::before {
+            opacity: 1;
+            transform: scaleX(1);
+        }
+    }
+
+    a {
+        display: block;
+        font-weight: 500;
+
+        #{$selector-darkmode} & {
+            color: var(--color-fg-primary);
+        }
+
+        &:hover {
+            color: var(--color-link);
+        }
+    }
+}

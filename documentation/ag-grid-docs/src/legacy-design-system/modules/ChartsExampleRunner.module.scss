@@ -1,0 +1,8 @@
+@use 'design-system' as *;
+
+.content {
+    border-radius: $spacing-size-2;
+    // Border color taken from
+    border: 1px solid var(--color-border-primary);
+    overflow: hidden;
+}

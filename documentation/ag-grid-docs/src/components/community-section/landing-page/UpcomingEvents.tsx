@@ -1,14 +1,16 @@
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import ScrollingGallery from '@components/community-section/events/ScrollingGallery';
-import { Icon } from '@components/icon/Icon';
-import styles from '@design-system/modules/CommunityUpcomingEvents.module.scss';
+import styles from '@legacy-design-system/modules/CommunityUpcomingEvents.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { useState } from 'react';
 
 const filterEvents = (events) => {
-    const filteredEvents = events.filter((event) => new Date(event.startDate).getFullYear() == new Date().getFullYear());
+    const filteredEvents = events.filter(
+        (event) => new Date(event.startDate).getFullYear() == new Date().getFullYear()
+    );
     return filteredEvents.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-}
+};
 
 const UpcomingEvents = ({ images, events }) => {
     const [darkMode] = useDarkmode();

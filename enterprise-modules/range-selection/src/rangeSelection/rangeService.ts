@@ -28,7 +28,7 @@ import {
     RangeDeleteStartEvent,
     RangeDeleteEndEvent,
     PartialCellRange,
-    ValueParserService
+    ValueService
 } from "@ag-grid-community/core";
 
 @Bean('rangeService')
@@ -42,7 +42,7 @@ export class RangeService extends BeanStub implements IRangeService {
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('valueParserService') private valueParserService: ValueParserService;
+    @Autowired('valueService') private valueService: ValueService;
 
     private cellRanges: CellRange[] = [];
     private lastMouseEvent: MouseEvent | null;
@@ -368,7 +368,7 @@ export class RangeService extends BeanStub implements IRangeService {
                 for (let i = 0; i < cellRange.columns.length; i++) {
                     const column = this.columnModel.getGridColumn(cellRange.columns[i]);
                     if (!column || !column.isCellEditable(rowNode)) { continue; }
-                    const emptyValue = this.valueParserService.parseValue(column, rowNode, '', rowNode.getValueFromValueService(column)) ?? null;
+                    const emptyValue = this.valueService.parseValue(column, rowNode, '', rowNode.getValueFromValueService(column)) ?? null;
                     rowNode.setDataValue(column, emptyValue, cellEventSource);
                 }
             });

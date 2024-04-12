@@ -1,4 +1,4 @@
-import styles from '@design-system/modules/ReleaseVersionNotes.module.scss';
+import styles from '@legacy-design-system/modules/ReleaseVersionNotes.module.scss';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 

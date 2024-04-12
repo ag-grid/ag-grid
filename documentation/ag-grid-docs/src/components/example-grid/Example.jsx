@@ -22,7 +22,7 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
-import styles from '@design-system/modules/Example.module.scss';
+import styles from '@legacy-design-system/modules/Example.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import classnames from 'classnames';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
@@ -375,7 +375,7 @@ const desktopDefaultCols = [
     },
 ];
 
-const createTooltip = prop => ({
+const createTooltip = (prop) => ({
     renderer: (params) => ({
         content: '$' + formatThousands(Math.round(params.datum[params[prop]])),
     }),
@@ -390,7 +390,7 @@ const pieSeriesThemeOverrides = {
     },
 };
 
-const createThemeOverrides = tooltipProp => ({
+const createThemeOverrides = (tooltipProp) => ({
     series: {
         tooltip: createTooltip(tooltipProp),
     },
@@ -408,11 +408,7 @@ const scatterSeriesThemeOverrides = {
                 const yValue = params.yName + ': $' + formatThousands(params.datum[params.yKey]);
                 let size = '';
                 if (params.sizeKey) {
-                    size =
-                        '<br>' +
-                        params.sizeName +
-                        ': $' +
-                        formatThousands(params.datum[params.sizeKey]);
+                    size = '<br>' + params.sizeName + ': $' + formatThousands(params.datum[params.sizeKey]);
                 }
                 return {
                     content: label + xValue + '<br>' + yValue + size,
@@ -443,12 +439,17 @@ const chartThemeOverrides = {
     'radial-bar': createThemeOverrides('angleKey'),
     'radar-line': polarSeriesThemeOverrides,
     'radar-area': polarSeriesThemeOverrides,
-    'nightingale': polarSeriesThemeOverrides,
+    nightingale: polarSeriesThemeOverrides,
     histogram: {
         series: {
             tooltip: {
                 renderer: (params) => ({
-                    title: (params.xName || params.xKey) + ': $' + formatThousands(params.datum.domain[0]) + ' - $' + formatThousands(params.datum.domain[1]),
+                    title:
+                        (params.xName || params.xKey) +
+                        ': $' +
+                        formatThousands(params.datum.domain[0]) +
+                        ' - $' +
+                        formatThousands(params.datum.domain[1]),
                     // With a yKey, the value is the total of the yKey value for the population of the bin.
                     // Without a yKey, the value is a count of the population of the bin.
                     content: params.yKey ? formatThousands(Math.round(params.datum.total)) : params.datum.frequency,

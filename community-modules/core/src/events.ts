@@ -55,16 +55,6 @@ export interface PaginationChangedEvent<TData = any, TContext = any> extends AgG
     newPageSize?: boolean;
 }
 
-export interface ToolPanelVisibleChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
-    source: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api';
-    /** Key of tool panel. */
-    key: string;
-    /** True if now visible; false if now hidden. */
-    visible: boolean;
-    /** True if switching between tool panels. False if showing/hiding. */
-    switchingToolPanel: boolean;
-}
-
 export interface ToolPanelSizeChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     type: 'toolPanelSizeChanged';
     /** True if this is the first change to the Tool Panel size. */
@@ -185,13 +175,6 @@ export interface FilterOpenedEvent<TData = any, TContext = any> extends AgGridEv
 export interface FilterDestroyedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled' | 'paramsUpdated';
     column: Column;
-}
-
-export interface AdvancedFilterBuilderVisibleChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
-    /** Source of the visibility status change. */
-    source: 'api' | 'ui';
-    /** `true` if now visible. `false` if now hidden. */
-    visible: boolean
 }
 
 export interface SortChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
@@ -574,6 +557,33 @@ export interface ColumnHeaderContextMenuEvent<TData = any, TContext = any> exten
     column: Column | ProvidedColumnGroup;
 }
 
+/**-------------------*/
+/** VISIBILITY EVENTS */
+/**-------------------*/
+export interface ContextMenuVisibleChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** True if now visible; false if now hidden. */
+    visible: boolean;
+    /** Source of the visibility status change. */
+    source: 'api' | 'ui';
+}
+
+export interface AdvancedFilterBuilderVisibleChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** True if now visible; false if now hidden. */
+    visible: boolean;
+    /** Source of the visibility status change. */
+    source: 'api' | 'ui';
+}
+
+export interface ToolPanelVisibleChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** True if now visible; false if now hidden. */
+    visible: boolean;
+    source: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api';
+    /** Key of tool panel. */
+    key: string;
+    /** True if switching between tool panels. False if showing/hiding. */
+    switchingToolPanel: boolean;
+}
+
 export interface ColumnMenuVisibleChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** True if now visible; false if now hidden. */
     visible: boolean;
@@ -597,7 +607,6 @@ export interface ColumnMenuVisibleChangedEvent<TData = any, TContext = any> exte
 }
 
 /**------------*/
-
 /** ROW EVENTS */
 /**------------*/
 interface BaseRowEvent<TData, TContext> extends AgGridEvent<TData, TContext> {

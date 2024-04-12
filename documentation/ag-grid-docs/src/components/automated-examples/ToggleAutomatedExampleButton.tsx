@@ -1,5 +1,5 @@
-import { Icon } from '@components/icon/Icon';
-import styles from '@design-system/modules/ToggleAutomatedExampleButton.module.scss';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import styles from '@legacy-design-system/modules/ToggleAutomatedExampleButton.module.scss';
 import classnames from 'classnames';
 import { type FunctionComponent } from 'react';
 

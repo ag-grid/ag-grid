@@ -1,4 +1,4 @@
-import automatedExamplesVars from '@design-system/modules/AutomatedExamplesVars.module.scss';
+import automatedExamplesVars from '@legacy-design-system/modules/AutomatedExamplesVars.module.scss';
 
 import { getOffset } from './dom';
 import { type Point } from './geometry';

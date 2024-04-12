@@ -10,7 +10,7 @@ import { IRowNode } from "../interfaces/iRowNode";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { FrameworkEventListenerService } from "../misc/frameworkEventListenerService";
 import { ColumnHoverService } from "../rendering/columnHoverService";
-import { exists, missing } from "../utils/generic";
+import { attrToNumber, exists, missing } from "../utils/generic";
 import { mergeDeep } from "../utils/object";
 import {
     AbstractColDef,
@@ -22,7 +22,6 @@ import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { warnOnce } from "../utils/function";
 import { BrandedType } from "../utils";
-import { calculateColInitialWidth, calculateColMaxWidth, calculateColMinWidth } from "../columns/columnUtils";
 import { Environment } from "../environment";
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
@@ -279,8 +278,8 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     private initMinAndMaxWidths(): void {
         const colDef = this.colDef;
 
-        this.minWidth = calculateColMinWidth(colDef, () => this.environment.getMinColWidth());
-        this.maxWidth = calculateColMaxWidth(colDef);
+        this.minWidth = colDef.minWidth ?? this.environment.getMinColWidth();
+        this.maxWidth = colDef.maxWidth ?? Number.MAX_SAFE_INTEGER;
     }
 
     private initTooltip(): void {
@@ -290,8 +289,27 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     public resetActualWidth(source: ColumnEventType): void {
-        const initialWidth = calculateColInitialWidth(this.colDef, () => this.environment.getMinColWidth());
+        const initialWidth = this.calculateColInitialWidth(this.colDef);
         this.setActualWidth(initialWidth, source, true);
+    }
+
+    private calculateColInitialWidth(colDef: ColDef): number {
+        const minColWidth = colDef.minWidth ?? this.environment.getMinColWidth();
+        const maxColWidth = colDef.maxWidth ?? Number.MAX_SAFE_INTEGER;
+    
+        let width: number;
+        const colDefWidth = attrToNumber(colDef.width);
+        const colDefInitialWidth = attrToNumber(colDef.initialWidth);
+    
+        if (colDefWidth != null) {
+            width = colDefWidth;
+        } else if (colDefInitialWidth != null) {
+            width = colDefInitialWidth;
+        } else {
+            width = 200;
+        }
+    
+        return Math.max(Math.min(width, maxColWidth), minColWidth);
     }
 
     public isEmptyGroup(): boolean {

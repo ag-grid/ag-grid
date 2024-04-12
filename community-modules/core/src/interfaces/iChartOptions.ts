@@ -56,41 +56,42 @@ export interface ChartToolPanelsDef {
     defaultToolPanel?: ChartToolPanelName
 }
 
-export type ChartType =
-      'column'
-    | 'groupedColumn'
-    | 'stackedColumn'
-    | 'normalizedColumn'
-    | 'bar'
-    | 'groupedBar'
-    | 'stackedBar'
-    | 'normalizedBar'
-    | 'line'
-    | 'scatter'
-    | 'bubble'
-    | 'pie'
-    | 'donut'
-    | 'doughnut'
-    | 'area'
-    | 'stackedArea'
-    | 'normalizedArea'
-    | 'histogram'
-    | 'radarLine'
-    | 'radarArea'
-    | 'nightingale'
-    | 'radialColumn'
-    | 'radialBar'
-    | 'sunburst'
-    | 'rangeBar'
-    | 'rangeArea'
-    | 'boxPlot'
-    | 'treemap'
-    | 'sunburst'
-    | 'heatmap'
-    | 'waterfall'
-    | 'columnLineCombo'
-    | 'areaColumnCombo'
-    | 'customCombo';
+export const CHART_TYPE_TO_SERIES_TYPE = {
+    column: 'bar',
+    groupedColumn: 'bar',
+    stackedColumn: 'bar',
+    normalizedColumn: 'bar',
+    bar: 'bar',
+    groupedBar: 'bar',
+    stackedBar: 'bar',
+    normalizedBar: 'bar',
+    line: 'line',
+    scatter: 'scatter',
+    bubble: 'bubble',
+    pie: 'pie',
+    donut: 'donut',
+    doughnut: 'donut',
+    area: 'area',
+    stackedArea: 'area',
+    normalizedArea: 'area',
+    histogram: 'histogram',
+    radarLine: 'radar-line',
+    radarArea: 'radar-area',
+    nightingale: 'nightingale',
+    radialColumn: 'radial-column',
+    radialBar: 'radial-bar',
+    sunburst: 'sunburst',
+    rangeBar: 'range-bar',
+    rangeArea: 'range-area',
+    boxPlot: 'box-plot',
+    treemap: 'treemap',
+    heatmap: 'heatmap',
+    waterfall: 'waterfall',
+} as const;
+
+export const COMBO_CHART_TYPES = ['columnLineCombo', 'areaColumnCombo', 'customCombo'] as const;
+
+export type ChartType = keyof typeof CHART_TYPE_TO_SERIES_TYPE | typeof COMBO_CHART_TYPES[number];
 
 export type CrossFilterChartType =
       'column'

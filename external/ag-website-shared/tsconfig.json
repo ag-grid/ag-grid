@@ -1,0 +1,24 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+
+    "strict": true,
+    "forceConsistentCasingInFileNames": false,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": false,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "allowImportingTsExtensions": false,
+    "experimentalDecorators": true,
+
+    // Import aliases
+    "baseUrl": ".",
+    "paths": {
+      "@ag-website-shared/*": ["src/*"]
+    }
+  }
+}

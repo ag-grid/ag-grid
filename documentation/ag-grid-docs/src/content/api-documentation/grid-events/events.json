@@ -23,6 +23,12 @@
                 "name": "Column Menu API / Events",
                 "url": "./column-menu/#column-menu-api--events"
             }
+        },
+        "contextMenuVisibleChanged": {
+            "more": {
+                "name": "Context Menu API / Events",
+                "url": "./context-menu/#context-menu-api--events"
+            }
         }
     },
     "clipboard": {

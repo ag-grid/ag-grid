@@ -1,5 +1,5 @@
 ---
-import { LicensePricing } from '@components/license-pricing/LicensePricing';
+import { LicensePricing } from '@ag-website-shared/components/license-pricing/LicensePricing';
 import Layout from '@layouts/Layout.astro';
 ---
 
@@ -9,5 +9,5 @@ import Layout from '@layouts/Layout.astro';
     showSearchBar={false}
     showDocsNav={false}
 >
-    <LicensePricing client:load />
+    <LicensePricing client:load defaultSelection="grid" />
 </Layout>

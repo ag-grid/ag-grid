@@ -1,0 +1,32 @@
+{
+  "editor.insertSpaces": true,
+  "editor.tabSize": 4,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "[typescript]": {
+    "editor.autoClosingBrackets": "always"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true
+  },
+  "[scss]": {
+    "editor.detectIndentation": false,
+    "editor.tabSize": 4
+  },
+  "gitlens.autolinks": [
+    {
+      "prefix": "AG-",
+      "url": "https://ag-grid.atlassian.net/browse/AG-<num>"
+    },
+    {
+      "prefix": "RTI-",
+      "url": "https://ag-grid.atlassian.net/browse/RTI-<num>"
+    }
+  ],
+  "git.autoRepositoryDetection": "subFolders",
+  "git.repositoryScanIgnoredFolders": ["node_modules", "dist", "typings"],
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
+}

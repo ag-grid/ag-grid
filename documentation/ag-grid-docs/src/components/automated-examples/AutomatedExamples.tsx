@@ -1,5 +1,5 @@
 import { createAutomatedExampleManager } from '@components/automated-examples/lib/createAutomatedExampleManager';
-import styles from '@design-system/modules/GridHomepage.module.scss';
+import styles from '@legacy-design-system/modules/GridHomepage.module.scss';
 import classNames from 'classnames';
 import { type FunctionComponent, useEffect, useMemo, useState } from 'react';
 

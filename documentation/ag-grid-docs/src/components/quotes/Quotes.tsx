@@ -1,4 +1,4 @@
-import styles from '@design-system/modules/Quotes.module.scss';
+import styles from '@legacy-design-system/modules/Quotes.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
 

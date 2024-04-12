@@ -100,3 +100,15 @@ Most of the time, you will simply set the popup parent to the document body.
 The example below is identical to the previous example except it sets the popup parent to the document body.
 
 {% gridExampleRunner title="Small Grid Solution" name="popup-parent-solution"  exampleHeight=400 /%}
+
+## Context Menu API / Events
+
+The `gridApi` has the following methods that can be used to interact with the context menu:
+
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["showContextMenu", "hidePopupMenu"] /%}
+
+{% br /%}
+
+The following context menu event is emitted by the grid:
+
+{% apiDocumentation source="grid-events/events.json" section="accessories" names=["contextMenuVisibleChanged"] /%}

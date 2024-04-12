@@ -1,4 +1,4 @@
-import styles from '@design-system/modules/UpdateSpeedSlider.module.scss';
+import styles from '@legacy-design-system/modules/UpdateSpeedSlider.module.scss';
 import classnames from 'classnames';
 import { type FunctionComponent } from 'react';
 

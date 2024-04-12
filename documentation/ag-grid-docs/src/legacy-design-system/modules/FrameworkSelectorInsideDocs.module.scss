@@ -1,0 +1,48 @@
+@use 'design-system' as *;
+
+.frameworkSelector {
+    --icon-size: #{$spacing-size-6};
+
+    display: flex;
+    background-color: var(--color-bg-primary);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border-primary);
+    margin-bottom: $spacing-size-4;
+}
+
+.selectFrameworkContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    img {
+        width: var(--icon-size);
+        height: var(--icon-size);
+        margin: 10px;
+        border-radius: 4px;
+    }
+
+    span {
+        display: block;
+        width: 1px;
+        height: calc(100% - 12px);
+        background-color: var(--color-border-primary);
+
+        #{$selector-darkmode} & {
+            background-color: var(--color-bg-primary);
+        }
+    }
+
+    select {
+        display: block;
+        width: 135px;
+        cursor: pointer;
+        font-weight: var(--text-regular);
+        font-size: var(--text-fs-base);
+        border: none;
+
+        &:focus-visible {
+            box-shadow: none;
+        }
+    }
+}

@@ -1,5 +1,5 @@
 import ScrollingGallery from '@components/community-section/events/ScrollingGallery';
-import styles from '@design-system/modules/CommunityEvents.module.scss';
+import styles from '@legacy-design-system/modules/CommunityEvents.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { useState } from 'react';

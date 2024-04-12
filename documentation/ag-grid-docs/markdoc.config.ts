@@ -61,7 +61,7 @@ export default defineMarkdocConfig({
         },
         link,
         enterpriseIcon: {
-            render: component('./src/components/icon/EnterpriseIcon', 'EnterpriseIcon'),
+            render: component('../../external/ag-website-shared/src/components/icon/EnterpriseIcon', 'EnterpriseIcon'),
         },
         includeMarkdoc,
         gridExampleRunner: {
@@ -124,13 +124,13 @@ export default defineMarkdocConfig({
             },
         },
         note: {
-            render: component('./src/components/alert/Note'),
+            render: component('../../external/ag-website-shared/src/components/alert/Note'),
         },
         warning: {
-            render: component('./src/components/alert/Warning'),
+            render: component('../../external/ag-website-shared/src/components/alert/Warning'),
         },
         idea: {
-            render: component('./src/components/alert/Idea'),
+            render: component('../../external/ag-website-shared/src/components/alert/Idea'),
         },
         gif: {
             render: component('./src/components/image/Gif.astro'),

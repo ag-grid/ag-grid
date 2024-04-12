@@ -1,4 +1,4 @@
-import { Column, TextFormatter, ValueFormatterParams, ValueFormatterService } from '@ag-grid-community/core';
+import { Column, TextFormatter, ValueService, ValueFormatterParams } from '@ag-grid-community/core';
 import { ISetDisplayValueModel, SetFilterDisplayValue } from './iSetDisplayValueModel';
 
 export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
@@ -6,7 +6,7 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     private displayedKeys: (string | null)[] = [];
 
     constructor(
-        private readonly valueFormatterService: ValueFormatterService,
+        private readonly valueService: ValueService,
         private readonly valueFormatter: ((params: ValueFormatterParams) => string) | undefined,
         private readonly formatter: TextFormatter,
         private readonly column: Column
@@ -36,7 +36,7 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
                 }
             } else {
                 const value = getValue(key);
-                const valueFormatterValue = this.valueFormatterService.formatValue(
+                const valueFormatterValue = this.valueService.formatValue(
                     this.column, null, value, this.valueFormatter, false);
 
                 const textFormatterValue = this.formatter(valueFormatterValue);
