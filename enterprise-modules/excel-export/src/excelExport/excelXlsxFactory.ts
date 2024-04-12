@@ -5,7 +5,6 @@ import {
     ExcelRelationship,
     ExcelStyle,
     ExcelWorksheet,
-    ExcelWatermarkImage,
     ExcelTableConfig,
     RowHeightCallbackParams,
     _
@@ -52,7 +51,7 @@ export class ExcelXlsxFactory {
     public static defaultTableDisplayName = 'AG-GRID-TABLE';
 
     /** Defines an image to be used as a watermark. If present, it will be applied to all sheets */
-    public static worksheetWatermarkImage: ExcelWatermarkImage | undefined;
+    public static worksheetWatermarkImage: ExcelImage | undefined;
 
     public static factoryMode: ExcelFactoryMode = ExcelFactoryMode.SINGLE_SHEET;
 

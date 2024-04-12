@@ -281,6 +281,7 @@ export interface ExcelImage {
     altText?: string;
     /**
      * If set to `true`, the image will cover the whole cell that is being imported to.
+     * This property does not apply to images in the Header/Footer
      * @default false
      */
     fitCell?: boolean;
@@ -302,23 +303,6 @@ export interface ExcelImage {
     height?: number;
     /** Position of the image. */
     position?: ExcelImagePosition;
-}
-
-export interface ExcelWatermarkImage {
-    /**
-     * The image `id`. This field is required so the same image doesn't get imported multiple times.
-     */
-    id: string;
-    /**
-     * A base64 string that represents the image to be used as a watermark.
-     */
-    base64: string;
-    /** The type of image being exported. */
-    imageType: 'jpg' | 'png' | 'gif';
-    /** The width of the image in pixels. If this value is not selected, `fitCell` will be automatically set to true. */
-    width: number;
-    /** The height of the image in pixels. If this value is not selected, `fitCell` will be automatically set to true. */
-    height: number;
 }
 
 /*
@@ -426,7 +410,7 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
     /**
      * Used to add a watermark image to the Excel document.
      */
-    watermark?: ExcelWatermarkImage;
+    watermark?: ExcelImage;
     /** The configuration for header and footers. */
     headerFooterConfig?: ExcelHeaderFooterConfig;
     /**

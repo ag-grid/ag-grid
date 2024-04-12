@@ -10,7 +10,6 @@ import {
     ExcelHeaderFooterContent,
     ExcelHeaderFooterConfig,
     ExcelFont,
-    ExcelWatermarkImage,
     _,
 } from '@ag-grid-community/core';
 import { ExcelDataTable } from '../../assets/excelInterfaces';
@@ -21,6 +20,7 @@ import mergeCellFactory from './mergeCell';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 import { getExcelColumnName } from '../../assets/excelUtils';
 import { ExcelGridSerializingParams } from '../../excelSerializingSession';
+import { ExcelImage } from '@ag-grid-community/core';
 
 const getMergedCellsAndAddColumnGroups = (rows: ExcelRow[], cols: ExcelColumn[], suppressColumnOutline: boolean): string[] => {
     const mergedCells: string[] = [];
@@ -285,7 +285,7 @@ const buildHeaderFooter = (
 
 const addHeaderFooter = (
     headerFooterConfig?: ExcelHeaderFooterConfig,
-    watermarkImageConfig?: ExcelWatermarkImage,
+    watermarkImageConfig?: ExcelImage,
 ) => {
     return (params: ComposedWorksheetParams) => {
         if (!headerFooterConfig && !watermarkImageConfig) { return params; }
@@ -316,7 +316,7 @@ const addHeaderFooter = (
     };
 };
 
-const addWatermarkRel = (watermarkConfig?: ExcelWatermarkImage) => {
+const addWatermarkRel = (watermarkConfig?: ExcelImage) => {
     return (params: ComposedWorksheetParams) => {
         if (watermarkConfig) {
             params.children.push({
