@@ -1,0 +1,24 @@
+@use 'design-system' as *;
+
+.image {
+    aspect-ratio: 600 / 375;
+    background: center / contain var(--image-png);
+    background: center / contain
+        image-set(
+            var(--image-webp-2x) 2x type('image/webp'),
+            var(--image-webp) type('image/webp'),
+            var(--image-png-2x) 2x type('image/png'),
+            var(--image-png) type('image/png')
+        );
+
+    #{$selector-darkmode} & {
+        background: center / contain var(--image-png-dark);
+        background: center / contain
+            image-set(
+                var(--image-webp-dark-2x) 2x type('image/webp'),
+                var(--image-webp-dark) type('image/webp'),
+                var(--image-png-dark-2x) 2x type('image/png'),
+                var(--image-png-dark) type('image/png')
+            );
+    }
+}

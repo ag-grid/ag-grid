@@ -444,7 +444,7 @@ export class ColFilterExpressionParser {
                 break;
             case 'date':
             case 'dateString':
-                operand = this.params.valueParserService.parseValue(column!, null, operand, undefined);
+                operand = this.params.valueService.parseValue(column!, null, operand, undefined);
                 break;
         }
         if (baseCellDataType === 'dateString') {

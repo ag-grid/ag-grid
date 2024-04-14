@@ -1,8 +1,8 @@
 import type { ImportType, InternalFramework } from '@ag-grid-types';
-import { Icon } from '@components/icon/Icon';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { OpenInCTA } from '@components/open-in-cta/OpenInCTA';
-import styles from '@design-system/modules/ExampleRunner.module.scss';
 import type { FileContents } from '@features/example-generator/types';
+import styles from '@legacy-design-system/modules/ExampleRunner.module.scss';
 import classnames from 'classnames';
 import { type FunctionComponent, type ReactElement, useState } from 'react';
 
@@ -38,7 +38,7 @@ export const ExampleRunner: FunctionComponent<Props> = ({
     hideInternalFrameworkSelection,
     loadingIFrameId,
     supportedFrameworks,
-    supportedImportTypes
+    supportedImportTypes,
 }) => {
     const [showCode, setShowCode] = useState(false);
 

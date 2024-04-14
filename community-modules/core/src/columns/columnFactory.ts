@@ -12,7 +12,6 @@ import { attrToNumber, attrToBoolean } from '../utils/generic';
 import { DataTypeService } from './dataTypeService';
 import { warnOnce } from '../utils/function';
 import { ColumnEventType } from '../events';
-import { depthFirstOriginalTreeSearch } from './columnUtils';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')
@@ -474,5 +473,23 @@ export class ColumnFactory extends BeanStub {
     // if object has children, we assume it's a group
     private isColumnGroup(abstractColDef: ColDef | ColGroupDef): boolean {
         return (abstractColDef as ColGroupDef).children !== undefined;
+    }
+}
+
+export function depthFirstOriginalTreeSearch(
+    parent: ProvidedColumnGroup | null,
+    tree: IProvidedColumn[],
+    callback: (treeNode: IProvidedColumn, parent: ProvidedColumnGroup | null) => void
+): void {
+    if (!tree) {
+        return;
+    }
+
+    for (let i = 0; i < tree.length; i++) {
+        const child = tree[i];
+        if (child instanceof ProvidedColumnGroup) {
+            depthFirstOriginalTreeSearch(child, child.getChildren(), callback);
+        }
+        callback(child, parent);        
     }
 }

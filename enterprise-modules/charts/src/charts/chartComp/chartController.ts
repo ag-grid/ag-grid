@@ -161,9 +161,14 @@ export class ChartController extends BeanStub {
         this.raiseChartRangeSelectionChangedEvent();
     }
 
-    public updateForPanelChange(updatedColState: ColState, resetOrder?: boolean): void {
-        this.model.updateCellRanges({ updatedColState, resetOrder });
+    public updateForPanelChange(params: {
+        updatedColState: ColState, resetOrder?: boolean, skipAnimation?: boolean
+    }): void {
+        this.model.updateCellRanges(params);
         this.model.updateData();
+        if (params.skipAnimation) {
+            this.getChartProxy().getChartRef().skipAnimations();
+        }
         this.setChartRange();
         this.raiseChartRangeSelectionChangedEvent();
     }
@@ -526,8 +531,7 @@ export class ChartController extends BeanStub {
 
     public getChartSeriesTypes(chartType?: ChartType): ChartSeriesType[] {
         const targetChartType = chartType ?? this.getChartType();
-        const supportedComboSeriesTypes: ChartSeriesType[] = ['line', 'bar', 'area'];
-        return this.isComboChart(targetChartType) ? supportedComboSeriesTypes : [getSeriesType(targetChartType)];
+        return this.isComboChart(targetChartType) ? ['line', 'bar', 'area'] : [getSeriesType(targetChartType)];
     }
 
     public getChartSeriesType(): ChartSeriesType {

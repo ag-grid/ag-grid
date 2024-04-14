@@ -1,5 +1,5 @@
-import { Icon } from '@components/icon/Icon';
-import styles from '@design-system/modules/Toolbar.module.scss';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import styles from '@legacy-design-system/modules/Toolbar.module.scss';
 import { trackDemoToolbar, trackOnceDemoToolbar } from '@utils/analytics';
 import React, { useDeferredValue, useEffect, useState } from 'react';
 
@@ -57,7 +57,9 @@ export const Toolbar = ({
     const deferredQuickFilterText = useDeferredValue(quickFilterText);
 
     useEffect(() => {
-        if (!gridRef.current?.api) { return; }
+        if (!gridRef.current?.api) {
+            return;
+        }
         gridRef.current.api.setGridOption('quickFilterText', deferredQuickFilterText);
         trackOnceDemoToolbar({
             type: 'filterChange',

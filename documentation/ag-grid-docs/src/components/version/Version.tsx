@@ -1,4 +1,4 @@
-import styles from '@design-system/modules/WhatsNew.module.scss';
+import styles from '@legacy-design-system/modules/WhatsNew.module.scss';
 import { chartsUrlWithPrefix } from '@utils/chartsUrlWithPrefix';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';

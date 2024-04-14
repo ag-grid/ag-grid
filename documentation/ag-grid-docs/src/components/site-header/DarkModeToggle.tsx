@@ -1,9 +1,8 @@
-import gridHeaderStyles from '@design-system/modules/SiteHeader.module.scss';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import styles from '@legacy-design-system/modules/Icon.module.scss';
+import gridHeaderStyles from '@legacy-design-system/modules/SiteHeader.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
-import styles from '@design-system/modules/Icon.module.scss';
 import classNames from 'classnames';
-
-import { Icon } from '../icon/Icon';
 
 export const DarkModeToggle = () => {
     const [darkmode, setDarkmode] = useDarkmode();

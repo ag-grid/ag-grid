@@ -1,16 +1,19 @@
 import { ChartProxy, ChartProxyParams, UpdateParams } from "../chartProxy";
 import {
     AgAreaSeriesOptions,
-    AgBaseSeriesOptions,
     AgCartesianAxisOptions,
     AgCartesianAxisType,
     AgCartesianChartOptions,
-    AgCharts,
+    AgCartesianSeriesOptions,
     AgChartTheme,
+    AgChartThemeName,
     AgLineSeriesOptions,
+    AgRangeBarSeriesThemeableOptions,
 } from "ag-charts-community";
 
-export abstract class CartesianChartProxy extends ChartProxy {
+export abstract class CartesianChartProxy<
+    TSeries extends 'area' | 'bar' | 'histogram' | 'line' | 'scatter' | 'bubble' | 'waterfall' | 'box-plot' | 'range-area' | 'range-bar'
+> extends ChartProxy<AgCartesianChartOptions, TSeries> {
     protected crossFilteringAllPoints = new Set<string>();
     protected crossFilteringSelectedPoints: string[] = [];
 
@@ -18,20 +21,18 @@ export abstract class CartesianChartProxy extends ChartProxy {
         super(params);
     }
 
-    protected abstract getAxes(params: UpdateParams): AgCartesianAxisOptions[];
-    protected abstract getSeries(params: UpdateParams): AgBaseSeriesOptions<any>[];
+    protected abstract getAxes(params: UpdateParams, commonChartOptions: AgCartesianChartOptions): AgCartesianAxisOptions[];
+    protected abstract getSeries(params: UpdateParams): AgCartesianSeriesOptions[];
 
-    public update(params: UpdateParams): void {
-        const axes = this.getAxes(params);
+    protected getUpdateOptions(params: UpdateParams, commonChartOptions: AgCartesianChartOptions): AgCartesianChartOptions {
+        const axes = this.getAxes(params, commonChartOptions);
 
-        const options: AgCartesianChartOptions = {
-            ...this.getCommonChartOptions(params.updatedOverrides),
+        return {
+            ...commonChartOptions,
             data: this.getData(params, axes),
             axes,
             series: this.getSeries(params),
         };
-
-        AgCharts.update(this.getChartRef(), options);
     }
 
     protected getData(params: UpdateParams, axes: AgCartesianAxisOptions[]): any[] {
@@ -91,7 +92,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
         });
     }
 
-    public crossFilteringReset(): void {
+    public override crossFilteringReset(): void {
         this.crossFilteringSelectedPoints = [];
         this.crossFilteringAllPoints.clear();
     }
@@ -173,19 +174,19 @@ export abstract class CartesianChartProxy extends ChartProxy {
         multiSelection ? this.crossFilteringSelectedPoints.push(value) : this.crossFilteringSelectedPoints = [value];
     }
 
-    protected isHorizontal(params: UpdateParams): boolean {
+    protected isHorizontal(commonChartOptions: AgCartesianChartOptions): boolean {
         const seriesType = this.standaloneChartType;
         if (seriesType !== 'waterfall' && seriesType !== 'box-plot' && seriesType !== 'range-bar') {
             return false;
         }
-        const theme = this.getCommonChartOptions(params.updatedOverrides).theme;
-        const isHorizontal = (theme: AgChartTheme): boolean => {
-            const direction = theme.overrides?.[seriesType]?.series?.direction;
+        const theme = commonChartOptions.theme;
+        const isHorizontal = (theme?: AgChartTheme | AgChartThemeName): boolean => {
+            const direction = ((theme as AgChartTheme)?.overrides?.[seriesType]?.series as AgRangeBarSeriesThemeableOptions)?.direction;
             if (direction != null) {
                 return direction === 'horizontal';
             }
-            if (typeof theme.baseTheme === 'object') {
-                return isHorizontal(theme.baseTheme as any);
+            if (typeof (theme as AgChartTheme)?.baseTheme === 'object') {
+                return isHorizontal((theme as AgChartTheme).baseTheme as any);
             }
             return false;
         }

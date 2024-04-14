@@ -1,4 +1,4 @@
-import styles from '@design-system/modules/CommunityPodcasts.module.scss';
+import styles from '@legacy-design-system/modules/CommunityPodcasts.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 const Podcasts = ({ podcasts }) => {

@@ -1,5 +1,4 @@
 import {
-    AgCharts,
     AgCartesianChartOptions,
     AgHeatmapSeriesOptions,
     AgChartThemeOverrides,
@@ -13,22 +12,20 @@ export const HEATMAP_CATEGORY_KEY = 'AG-GRID-DEFAULT-HEATMAP-CATEGORY-KEY';
 export const HEATMAP_SERIES_KEY = 'AG-GRID-DEFAULT-HEATMAP-SERIES-KEY';
 export const HEATMAP_VALUE_KEY = 'AG-GRID-DEFAULT-HEATMAP-VALUE-KEY';
 
-export class HeatmapChartProxy extends ChartProxy {
+export class HeatmapChartProxy extends ChartProxy<AgCartesianChartOptions, 'heatmap'> {
     public constructor(params: ChartProxyParams) {
         super(params);
     }
 
-    public override update(params: UpdateParams): void {
+    protected getUpdateOptions(params: UpdateParams, commonChartOptions: AgCartesianChartOptions): AgCartesianChartOptions {
         const xSeriesKey = HEATMAP_SERIES_KEY;
         const xValueKey = HEATMAP_VALUE_KEY;
         const yKey = HEATMAP_CATEGORY_KEY;
-        const options: AgCartesianChartOptions = {
-            ...this.getCommonChartOptions(params.updatedOverrides),
+        return {
+            ...commonChartOptions,
             series: this.getSeries(params, xSeriesKey, xValueKey, yKey),
             data: this.getData(params, xSeriesKey, xValueKey, yKey),
         };
-
-        AgCharts.update(this.getChartRef(), options);
     }
 
     protected getSeries(params: UpdateParams, xSeriesKey: string, xValueKey: string, yKey: string): AgHeatmapSeriesOptions[] {
@@ -72,25 +69,19 @@ export class HeatmapChartProxy extends ChartProxy {
         );
     }
 
-    protected override getChartThemeDefaults(): AgChartThemeOverrides | undefined {
+    protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides['heatmap'] {
         return {
-            heatmap: {
-                gradientLegend: {
-                    gradient: {
-                        preferredLength: 200,
-                    },
+            gradientLegend: {
+                gradient: {
+                    preferredLength: 200,
                 },
-                series: {
-                    tooltip: {
-                        renderer: renderHeatmapTooltip,
-                    },
+            },
+            series: {
+                tooltip: {
+                    renderer: renderHeatmapTooltip,
                 },
             },
         };
-    }
-
-    public override crossFilteringReset(): void {
-        // cross filtering is not currently supported in heatmap charts
     }
 }
 

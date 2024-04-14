@@ -1,4 +1,4 @@
-import styles from '@design-system/modules/FrameworkSelector.module.scss';
+import styles from '@legacy-design-system/modules/FrameworkSelector.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import React from 'react';

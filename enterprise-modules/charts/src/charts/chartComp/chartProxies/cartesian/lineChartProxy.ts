@@ -2,7 +2,7 @@ import { AgCartesianAxisOptions, AgLineSeriesOptions } from "ag-charts-community
 import { ChartProxyParams, UpdateParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
-export class LineChartProxy extends CartesianChartProxy {
+export class LineChartProxy extends CartesianChartProxy<'line'> {
 
     public constructor(params: ChartProxyParams) {
         super(params);

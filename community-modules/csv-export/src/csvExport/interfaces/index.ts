@@ -8,9 +8,7 @@ import {
     ProcessHeaderForExportParams,
     ProcessRowGroupForExportParams,
     RowNode,
-    ValueFormatterService,
-    ValueService,
-    ValueParserService
+    ValueService
 } from "@ag-grid-community/core";
 import { GridSerializer } from "../gridSerializer";
 
@@ -31,8 +29,6 @@ export interface GridSerializingParams {
     columnModel: ColumnModel;
     valueService: ValueService;
     gos: GridOptionsService;
-    valueFormatterService: ValueFormatterService,
-    valueParserService: ValueParserService,
     processCellCallback?: (params: ProcessCellForExportParams) => string;
     processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
     processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;

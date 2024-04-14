@@ -20,7 +20,8 @@
     "paths": {
       "@astro/*": ["src/astro/*"],
       "@components/*": ["src/components/*"],
-      "@design-system/*": ["src/design-system/*"],
+      "@design-system/*": ["../../external/ag-website-shared/src/design-system/*"],
+      "@legacy-design-system/*": ["src/legacy-design-system/*"],
       "@features/*": ["src/features/*"],
       "@images/*": ["src/images/*"],
       "@layouts/*": ["src/layouts/*"],
@@ -28,6 +29,8 @@
       "@ag-grid-types": ["src/types/ag-grid.d.ts"],
       "@utils/*": ["src/utils/*"],
       "@constants": ["src/constants.ts"],
+      "@ag-website-shared/*": ["../../external/ag-website-shared/src/*"],
+
       // Get auto completion in _examples
       "@ag-grid-community/core": ["../../community-modules/core/src/main.ts"],
       "@ag-grid-community/client-side-row-model": ["../../community-modules/client-side-row-model/src/main.ts"],

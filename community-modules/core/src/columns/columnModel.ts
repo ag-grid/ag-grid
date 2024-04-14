@@ -3,7 +3,7 @@ import { Column, ColumnInstanceId, ColumnPinnedType } from '../entities/column';
 import { AbstractColDef, ColDef, ColGroupDef, IAggFunc, HeaderValueGetterParams, HeaderLocation } from '../entities/colDef';
 import { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
 import { ExpressionService } from '../valueService/expressionService';
-import { ColumnFactory } from './columnFactory';
+import { ColumnFactory, depthFirstOriginalTreeSearch } from './columnFactory';
 import { DisplayedGroupCreator } from './displayedGroupCreator';
 import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import { IProvidedColumn } from '../interfaces/iProvidedColumn';
@@ -49,7 +49,6 @@ import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { PropertyChangedSource } from '../gridOptionsService';
-import { calculateColMinWidth, depthFirstAllColumnTreeSearch, depthFirstDisplayedColumnTreeSearch, depthFirstOriginalTreeSearch } from './columnUtils';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -2495,7 +2494,7 @@ export class ColumnModel extends BeanStub {
         }
 
         // if width provided and valid, use it, otherwise stick with the old width
-        const minColWidth = calculateColMinWidth(column.getColDef(), () => this.environment.getMinColWidth());
+        const minColWidth = column.getColDef().minWidth ?? this.environment.getMinColWidth();
 
         // flex
         const flex = getValue('flex').value1;
@@ -2814,7 +2813,7 @@ export class ColumnModel extends BeanStub {
         const checkPartId = typeof partId === 'number';
         let result: ColumnGroup | null = null;
 
-        depthFirstAllColumnTreeSearch(allColumnGroups, (child: IHeaderColumn) => {
+        depthFirstAllColumnTreeSearch(allColumnGroups, false, (child: IHeaderColumn) => {
             if (child instanceof ColumnGroup) {
                 const columnGroup = child;
                 let matched: boolean;
@@ -3634,7 +3633,7 @@ export class ColumnModel extends BeanStub {
 
     private derivedDisplayedColumnsFromDisplayedTree(tree: IHeaderColumn[], columns: Column[]): void {
         columns.length = 0;
-        depthFirstDisplayedColumnTreeSearch(tree, (child: IHeaderColumn) => {
+        depthFirstAllColumnTreeSearch(tree, true, (child: IHeaderColumn) => {
             if (child instanceof Column) {
                 columns.push(child);
             }
@@ -4046,9 +4045,9 @@ export class ColumnModel extends BeanStub {
             this.displayedColumnsAndGroupsMap[child.getUniqueId()] = child;
         };
 
-        depthFirstAllColumnTreeSearch(this.displayedTreeCentre, func);
-        depthFirstAllColumnTreeSearch(this.displayedTreeLeft, func);
-        depthFirstAllColumnTreeSearch(this.displayedTreeRight, func);
+        depthFirstAllColumnTreeSearch(this.displayedTreeCentre, false, func);
+        depthFirstAllColumnTreeSearch(this.displayedTreeLeft, false, func);
+        depthFirstAllColumnTreeSearch(this.displayedTreeRight, false, func);
     }
 
     public isDisplayed(item: IHeaderColumn): boolean {
@@ -4060,7 +4059,7 @@ export class ColumnModel extends BeanStub {
     private updateOpenClosedVisibilityInColumnGroups(): void {
         const allColumnGroups = this.getAllDisplayedTrees();
 
-        depthFirstAllColumnTreeSearch(allColumnGroups, child => {
+        depthFirstAllColumnTreeSearch(allColumnGroups, false, child => {
             if (child instanceof ColumnGroup) {
                 child.calculateDisplayedColumns();
             }
@@ -4370,4 +4369,23 @@ export class ColumnModel extends BeanStub {
 export function convertSourceType(source: PropertyChangedSource): ColumnEventType {
     // unfortunately they do not match so need to perform conversion
     return source === 'gridOptionsUpdated' ? 'gridOptionsChanged' : source;
+}
+
+function depthFirstAllColumnTreeSearch(
+    tree: IHeaderColumn[] | null,
+    useDisplayedChildren: boolean,
+    callback: (treeNode: IHeaderColumn) => void
+): void {
+    if (!tree) {
+        return;
+    }
+
+    for (let i = 0; i < tree.length; i++) {
+        const child = tree[i];
+        if (child instanceof ColumnGroup) {
+            const childTree = useDisplayedChildren ? child.getDisplayedChildren() : child.getChildren();
+            depthFirstAllColumnTreeSearch(childTree, useDisplayedChildren, callback);
+        }
+        callback(child);
+    }
 }

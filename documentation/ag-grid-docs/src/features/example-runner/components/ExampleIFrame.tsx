@@ -1,4 +1,4 @@
-import styles from '@design-system/modules/ExampleIFrame.module.scss';
+import styles from '@legacy-design-system/modules/ExampleIFrame.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import classnames from 'classnames';
@@ -23,17 +23,19 @@ export const ExampleIFrame: FunctionComponent<Props> = ({ isHidden, url, loading
             setIsScrolling(true);
             // Ensure a slow user scroll still loads the example
             // Main idea is to prevent loading examples during smooth scroll behavior of right menu links
-            setTimeout(() => { setIsScrolling(false) }, 500);
+            setTimeout(() => {
+                setIsScrolling(false);
+            }, 500);
         };
         const scrollEndListener = () => setIsScrolling(false);
-        
+
         addEventListener('scrollend', scrollEndListener);
         addEventListener('scroll', scrollListener);
 
         return () => {
             removeEventListener('scroll', scrollListener);
             removeEventListener('scrollend', scrollEndListener);
-        }
+        };
     }, []);
 
     // Only show example iFrame if it is visible on the screen

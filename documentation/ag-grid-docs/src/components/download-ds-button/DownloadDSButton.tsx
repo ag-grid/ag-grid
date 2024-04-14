@@ -1,5 +1,5 @@
-import { Icon } from '@components/icon/Icon';
-import styles from '@design-system/modules/DownloadDSButton.module.scss';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import styles from '@legacy-design-system/modules/DownloadDSButton.module.scss';
 import { trackOnceDownloadDS } from '@utils/analytics';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';

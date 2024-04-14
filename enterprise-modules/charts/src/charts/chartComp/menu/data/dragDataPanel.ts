@@ -58,7 +58,8 @@ export abstract class DragDataPanel extends Component {
         columns: ColState[],
         valueFormatter: (colState: ColState) => string,
         selectLabelKey: ChartTranslationKey,
-        dragSourceId: string
+        dragSourceId: string,
+        skipAnimation?: () => boolean
     ): void {
         if (this.allowMultipleSelection) {
             const selectedValueList = columns.filter(col => col.selected);
@@ -74,16 +75,16 @@ export abstract class DragDataPanel extends Component {
             this.groupComp.addItem(this.valuePillSelect);
         } else {
             const params: AgSelectParams<ColState> = this.createValueSelectParams(columns);
-            params.onValueChange = (newValue: ColState) => {
+            params.onValueChange = (updatedColState: ColState) => {
                 columns.forEach(col => {
                     col.selected = false;
                 });
-                newValue.selected = true;
+                updatedColState.selected = true;
                 // Clear the category aggregation function if the default ordinal category is selected
-                if (newValue.colId === ChartDataModel.DEFAULT_CATEGORY) {
+                if (updatedColState.colId === ChartDataModel.DEFAULT_CATEGORY) {
                     this.chartController.setAggFunc(undefined, true);
                 }
-                this.chartController.updateForPanelChange(newValue);
+                this.chartController.updateForPanelChange({ updatedColState, skipAnimation: skipAnimation?.() });
             };
             this.valueSelect = this.groupComp.createManagedBean(new AgSelect<ColState>(params));
             this.groupComp.addItem(this.valueSelect);
@@ -175,7 +176,7 @@ export abstract class DragDataPanel extends Component {
                 if (this.lastHoveredItem.position === 'bottom') { targetIndex++; }
 
                 draggedColumnState.order = targetIndex;
-                this.chartController.updateForPanelChange(draggedColumnState);
+                this.chartController.updateForPanelChange({ updatedColState: draggedColumnState });
             }
         }
         this.clearHoveredItems();
@@ -213,10 +214,10 @@ export abstract class DragDataPanel extends Component {
         this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
     }
 
-    protected addChangeListener(component: AgRadioButton | AgCheckbox, columnState: ColState) {
+    protected addChangeListener(component: AgRadioButton | AgCheckbox, updatedColState: ColState) {
         this.addManagedListener(component, Events.EVENT_FIELD_VALUE_CHANGED, () => {
-            columnState.selected = component.getValue();
-            this.chartController.updateForPanelChange(columnState);
+            updatedColState.selected = component.getValue();
+            this.chartController.updateForPanelChange({ updatedColState });
         });
     }
 
@@ -225,7 +226,7 @@ export abstract class DragDataPanel extends Component {
     }
 
     protected onValueChange({ added, updated, removed, selected }: AgPillSelectChangeParams<ColState>) {
-        let colState: ColState | undefined;
+        let updatedColState: ColState | undefined;
         let resetOrder: boolean | undefined
         const updateOrder = () => {
             selected.forEach((col, index) => {
@@ -234,18 +235,18 @@ export abstract class DragDataPanel extends Component {
             resetOrder = true;
         }
         if (added.length) {
-            colState = added[0];
-            colState.selected = true;
+            updatedColState = added[0];
+            updatedColState.selected = true;
             updateOrder();
         } else if (removed.length) {
-            colState = removed[0];
-            colState.selected = false;
+            updatedColState = removed[0];
+            updatedColState.selected = false;
         } else if (updated.length) {
             updateOrder();
-            colState = updated[0];
+            updatedColState = updated[0];
         }
-        if (colState) {
-            this.chartController.updateForPanelChange(colState, resetOrder);
+        if (updatedColState) {
+            this.chartController.updateForPanelChange({ updatedColState, resetOrder });
         }
     }
 

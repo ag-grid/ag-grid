@@ -1,12 +1,12 @@
 import { AgSelect } from "../../widgets/agSelect";
 import { Autowired } from "../../context/context";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
-import { ValueFormatterService } from "../valueFormatterService";
 import { PopupComponent } from "../../widgets/popupComponent";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { ListOption } from "../../widgets/agList";
 import { missing } from "../../utils/generic";
 import { KeyCode } from '../../constants/keyCode';
+import { ValueService } from "../../valueService/valueService";
 
 export interface ISelectCellEditorParams<TValue = any> {
     /** List of values to display */
@@ -32,7 +32,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
 
     private focusAfterAttached: boolean;
 
-    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    @Autowired('valueService') private valueService: ValueService;
     @RefSelector('eSelect') private eSelect: AgSelect;
 
     private startedByEnter: boolean = false;
@@ -48,7 +48,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
     public init(params: SelectCellEditorParams): void {
         this.focusAfterAttached = params.cellStartedEdit;
 
-        const { eSelect, valueFormatterService, gos } = this;
+        const { eSelect, valueService, gos } = this;
         const { values, value, eventKey } = params;
         if (missing(values)) {
             console.warn('AG Grid: no values found for select cellEditor');
@@ -60,7 +60,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         let hasValue = false;
         values.forEach((currentValue: any) => {
             const option: ListOption = { value: currentValue };
-            const valueFormatted = valueFormatterService.formatValue(params.column, null, currentValue);
+            const valueFormatted = valueService.formatValue(params.column, null, currentValue);
             const valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
             option.text = valueFormattedExits ? valueFormatted : currentValue;
 

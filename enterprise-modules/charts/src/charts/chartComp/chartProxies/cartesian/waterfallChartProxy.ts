@@ -1,22 +1,22 @@
-import {AgCartesianAxisOptions, AgWaterfallSeriesOptions} from "ag-charts-community";
+import {AgCartesianAxisOptions, AgCartesianChartOptions, AgWaterfallSeriesOptions} from "ag-charts-community";
 import {ChartProxyParams, UpdateParams} from "../chartProxy";
 import {CartesianChartProxy} from "./cartesianChartProxy";
 
-export class WaterfallChartProxy extends CartesianChartProxy {
+export class WaterfallChartProxy extends CartesianChartProxy<'waterfall'> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
     }
 
-    protected override getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
+    protected override getAxes(params: UpdateParams, commonChartOptions: AgCartesianChartOptions): AgCartesianAxisOptions[] {
         return [
             {
                 type: this.getXAxisType(params),
-                position: this.isHorizontal(params) ? 'left' : 'bottom',
+                position: this.isHorizontal(commonChartOptions) ? 'left' : 'bottom',
             },
             {
                 type: 'number',
-                position: this.isHorizontal(params) ? 'bottom' : 'left',
+                position: this.isHorizontal(commonChartOptions) ? 'bottom' : 'left',
             },
         ];
     }

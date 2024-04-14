@@ -1,0 +1,63 @@
+@use 'design-system' as *;
+
+.gif {
+    max-width: 100%;
+    outline: none !important;
+
+    &.wrapped {
+        margin-bottom: 0;
+    }
+}
+
+:global(.gif_player) {
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    min-height: $spacing-size-64;
+    margin-bottom: $spacing-size-4;
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-primary);
+    text-align: center;
+    user-select: none;
+    cursor: pointer;
+
+    img {
+        max-width: 100%;
+    }
+
+    &:hover :global(.play_button) {
+        background-color: var(--color-link-hover);
+        transform: translate(-50%, -50%) scale(1.1);
+
+        #{$selector-darkmode} & {
+            background-color: color-mix(in srgb, var(--color-util-brand-200), var(--color-link-hover) 25%);
+        }
+    }
+
+    &:global(.playing) :global(.play_button) {
+        transform: translate(-50%, -50%) scale(0);
+    }
+}
+
+:global(.play_button) {
+    position: absolute;
+    width: $spacing-size-16;
+    height: $spacing-size-16;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    background-color: var(--color-util-brand-400);
+    background-image: url('../../images/gif-play-icon.svg');
+    color: #fff;
+    transform: translate(-50%, -50%) scale(1);
+    transition:
+        transform 0.25s,
+        background-color 0.25s;
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-util-brand-200);
+    }
+}

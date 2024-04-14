@@ -1,3 +1,4 @@
+import { kbd } from '@ag-website-shared/markdoc/tags/kbd';
 import { Markdoc, component, defineMarkdocConfig, nodes } from '@astrojs/markdoc/config';
 
 import { DOCS_TAB_ITEM_ID_PREFIX, agGridVersion } from './src/constants';
@@ -47,21 +48,13 @@ export default defineMarkdocConfig({
         },
     },
     tags: {
-        kbd: {
-            render: 'kbd',
-            attributes: {
-                primary: { type: String },
-            },
-            transform(node) {
-                return new Markdoc.Tag(this.render, {}, [node.attributes.primary]);
-            },
-        },
+        kbd,
         br: {
             render: 'br',
         },
         link,
         enterpriseIcon: {
-            render: component('./src/components/icon/EnterpriseIcon', 'EnterpriseIcon'),
+            render: component('../../external/ag-website-shared/src/components/icon/EnterpriseIcon', 'EnterpriseIcon'),
         },
         includeMarkdoc,
         gridExampleRunner: {
@@ -124,13 +117,13 @@ export default defineMarkdocConfig({
             },
         },
         note: {
-            render: component('./src/components/alert/Note'),
+            render: component('../../external/ag-website-shared/src/components/alert/Note'),
         },
         warning: {
-            render: component('./src/components/alert/Warning'),
+            render: component('../../external/ag-website-shared/src/components/alert/Warning'),
         },
         idea: {
-            render: component('./src/components/alert/Idea'),
+            render: component('../../external/ag-website-shared/src/components/alert/Idea'),
         },
         gif: {
             render: component('./src/components/image/Gif.astro'),

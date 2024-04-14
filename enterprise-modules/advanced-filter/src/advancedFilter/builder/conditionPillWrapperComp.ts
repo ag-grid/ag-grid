@@ -5,7 +5,7 @@ import {
     Column,
     ColumnAdvancedFilterModel,
     Component,
-    ValueParserService,
+    ValueService,
     _
 } from "@ag-grid-community/core";
 import { AdvancedFilterExpressionService } from "../advancedFilterExpressionService";
@@ -15,7 +15,7 @@ import { SelectPillComp } from "./selectPillComp";
 
 export class ConditionPillWrapperComp extends Component {
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
-    @Autowired('valueParserService') private valueParserService: ValueParserService;
+    @Autowired('valueService') private valueService: ValueService;
 
     private item: AdvancedFilterBuilderItem;
     private createPill: (params: CreatePillParams) => SelectPillComp | InputPillComp;

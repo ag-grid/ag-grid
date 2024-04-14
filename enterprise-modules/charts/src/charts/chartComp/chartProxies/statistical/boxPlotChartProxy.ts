@@ -2,7 +2,7 @@ import {ChartProxyParams, UpdateParams} from '../chartProxy';
 import {AgBoxPlotSeriesOptions} from 'ag-charts-community';
 import {StatisticalChartProxy} from "./statisticalChartProxy";
 
-export class BoxPlotChartProxy extends StatisticalChartProxy {
+export class BoxPlotChartProxy extends StatisticalChartProxy<'box-plot'> {
     public constructor(params: ChartProxyParams) {
         super(params);
     }

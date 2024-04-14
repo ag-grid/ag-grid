@@ -585,7 +585,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private parseValue(newValue: any): any {
-        return this.beans.valueParserService.parseValue(this.column, this.rowNode, newValue, this.getValue());
+        return this.beans.valueService.parseValue(this.column, this.rowNode, newValue, this.getValue());
     }
 
     public setFocusOutOnEditor(): void {
@@ -778,8 +778,8 @@ export class CellCtrl extends BeanStub {
         return this.callValueFormatter(value) ?? value;
     }
 
-    private callValueFormatter(value: any): any {
-        return this.beans.valueFormatterService.formatValue(this.column, this.rowNode, value);
+    private callValueFormatter(value: any): string | null {
+        return this.beans.valueService.formatValue(this.column, this.rowNode, value);
     }
 
     private updateAndFormatValue(compareValues: boolean): boolean {

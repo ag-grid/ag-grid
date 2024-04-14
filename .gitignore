@@ -46,3 +46,6 @@ plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedF
 plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventKeys.ts
 plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/propertyKeys.ts
 plugins/ag-grid-generate-code-reference-files/src/executors/generate/_copiedFromCore/eventKeys.ts
+
+# Astro generated file
+src/env.d.ts

@@ -44,7 +44,7 @@ import { ChartCrossFilterService } from "./services/chartCrossFilterService";
 import { CrossFilteringContext } from "../chartService";
 import { ChartOptionsService } from "./services/chartOptionsService";
 import { ComboChartProxy } from "./chartProxies/combo/comboChartProxy";
-import { getCanonicalChartType, isHierarchical } from "./utils/seriesTypeMapper";
+import { getCanonicalChartType, getSeriesType, isHierarchical } from "./utils/seriesTypeMapper";
 import { ChartMenuParamsFactory } from './menu/chartMenuParamsFactory';
 import { ChartMenuContext } from "./menu/chartMenuContext";
 import { deepMerge } from './utils/object';
@@ -269,7 +269,6 @@ export class GridChartComp extends Component {
             case 'radialBar':
                 return new PolarChartProxy(chartProxyParams);
             case 'rangeBar':
-                return new RangeChartProxy(chartProxyParams);
             case 'rangeArea':
                 return new RangeChartProxy(chartProxyParams);
             case 'boxPlot':
@@ -457,7 +456,7 @@ export class GridChartComp extends Component {
         let minFieldsRequired = 1;
         if (this.chartController.isActiveXYChart()) {
             minFieldsRequired = chartType === 'bubble' ? 3 : 2;
-        } else if (isHierarchical(chartType)) {
+        } else if (isHierarchical(getSeriesType(chartType))) {
             minFieldsRequired = 0;
         }
 

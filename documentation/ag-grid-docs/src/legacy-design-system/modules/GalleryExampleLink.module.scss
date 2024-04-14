@@ -1,0 +1,55 @@
+@use 'design-system' as *;
+
+.link {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border-secondary);
+    overflow: hidden;
+    transition: border-color 0.5s ease-in-out;
+
+    &:hover {
+        border-color: var(--color-link);
+    }
+
+    .image {
+        flex: 1;
+        padding: 24px;
+    }
+
+    .label {
+        display: block;
+        flex: none;
+        padding: $spacing-size-2 $spacing-size-4;
+        font-size: 12px;
+        line-height: var(--text-lh-tight);
+        border-top: 1px solid var(--color-border-secondary);
+        transition: border-color 0.5s ease-in-out;
+    }
+
+    #{$selector-darkmode} & {
+        background-color: #192232; // Dark themes background color
+    }
+}
+
+.layout-3-col {
+    --columns: 1;
+
+    width: calc(100% / var(--columns) - #{$spacing-size-6} / var(--columns) * (var(--columns) - 1));
+    max-width: 520px;
+
+    @media screen and (min-width: 720px) {
+        --columns: 2;
+    }
+
+    @media screen and (min-width: 1120px) {
+        --columns: 3;
+    }
+}
+
+@media screen and (max-width: $breakpoint-docs-nav-medium) {
+    .layout-3-col {
+        max-width: 100%;
+    }
+}

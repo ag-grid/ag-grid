@@ -52,8 +52,8 @@ export class MenuUtils extends BeanStub {
     ): void {
         let keyboardEvent: KeyboardEvent | undefined;
 
-        if (event && event.event && event.event instanceof KeyboardEvent) {
-            keyboardEvent = event.event;
+        if (event && event.keyboardEvent) {
+            keyboardEvent = event.keyboardEvent;
         }
 
         hidePopupFunc(keyboardEvent && { keyboardEvent });

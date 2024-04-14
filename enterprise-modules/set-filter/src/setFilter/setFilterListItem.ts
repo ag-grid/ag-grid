@@ -12,9 +12,9 @@ import {
     PostConstruct,
     RefSelector,
     UserComponentFactory,
-    ValueFormatterService,
     WithoutGridCommon,
     ValueFormatterParams,
+    ValueService,
     ICellRendererComp,
     ISetFilterTreeListTooltipParams
 } from '@ag-grid-community/core';
@@ -56,7 +56,7 @@ export class SetFilterListItem<V> extends Component {
     public static EVENT_SELECTION_CHANGED = 'selectionChanged';
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
 
-    @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
+    @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
     private static GROUP_TEMPLATE = /* html */`
@@ -351,7 +351,7 @@ export class SetFilterListItem<V> extends Component {
     }
 
     private getFormattedValue(column: Column, value: any) {
-        return this.valueFormatterService.formatValue(column, null, value, this.valueFormatter, false);
+        return this.valueService.formatValue(column, null, value, this.valueFormatter, false);
     }
 
     private renderCell(): void {

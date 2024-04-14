@@ -1,15 +1,15 @@
 import type { MenuItem } from '@ag-grid-types';
-import styles from '@design-system/modules/HeaderNav.module.scss';
-import siteHeaderStyles from '@design-system/modules/SiteHeader.module.scss';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import MenuIcon from '@ag-website-shared/images/inline-svgs/menu-icon.svg?react';
 import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
-import MenuIcon from '@images/inline-svgs/menu-icon.svg?react';
+import styles from '@legacy-design-system/modules/HeaderNav.module.scss';
+import siteHeaderStyles from '@legacy-design-system/modules/SiteHeader.module.scss';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { type ReactElement, useState } from 'react';
 
 import { Collapsible } from '../Collapsible';
-import { Icon } from '../icon/Icon';
 import { DarkModeToggle } from './DarkModeToggle';
 
 /**

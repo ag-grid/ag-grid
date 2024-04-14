@@ -7,7 +7,6 @@ import {
     SetFilterParams,
     ProvidedFilter,
     RefSelector,
-    ValueFormatterService,
     VirtualList,
     VirtualListModel,
     IAfterGuiAttachedParams,
@@ -39,7 +38,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     @RefSelector('eSetFilterList') private readonly eSetFilterList: HTMLElement;
     @RefSelector('eFilterNoMatches') private readonly eNoMatches: HTMLElement;
 
-    @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('valueService') private readonly valueService: ValueService;
 
@@ -273,7 +271,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.valueModel = new SetValueModel({
             filterParams: params,
             setIsLoading: loading => this.setIsLoading(loading),
-            valueFormatterService: this.valueFormatterService,
             translate: key => this.translateForSetFilter(key),
             caseFormat: v => this.caseFormat(v),
             createKey: this.createKey,
@@ -310,7 +307,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
                 throw new Error('AG Grid: Must supply a Value Formatter in Set Filter params when using a Key Creator unless convertValuesToStrings is enabled');
             }
             this.noValueFormatterSupplied = true;
-            // ref data is handled by ValueFormatterService
+            // ref data is handled by ValueService
             if (!isRefData) {
                 valueFormatter = params => _.toStringOrNull(params.value)!;
             }
@@ -347,7 +344,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             value = _.last(value) as string;
         }
 
-        const formattedValue = this.valueFormatterService.formatValue(
+        const formattedValue = this.valueService.formatValue(
             this.setFilterParams!.column, null, value, this.valueFormatter, false);
 
         return (formattedValue == null ? _.toStringOrNull(value) : formattedValue) ?? this.translateForSetFilter('blanks')

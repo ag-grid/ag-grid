@@ -148,15 +148,23 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     public refresh(params: IHeaderParams): boolean {
+        const oldParams = this.params;
 
         this.params = params;
 
         // if template changed, then recreate the whole comp, the code required to manage
         // a changing template is to difficult for what it's worth.
-        if (this.workOutTemplate() != this.currentTemplate) { return false; }
-        if (this.workOutShowMenu() != this.currentShowMenu) { return false; }
-        if (this.workOutSort() != this.currentSort) { return false; }
-        if (this.shouldSuppressMenuHide() != this.currentSuppressMenuHide) { return false; }
+        if (
+            this.workOutTemplate() != this.currentTemplate ||
+            this.workOutShowMenu() != this.currentShowMenu ||
+            this.workOutSort() != this.currentSort ||
+            this.shouldSuppressMenuHide() != this.currentSuppressMenuHide ||
+            oldParams.enableFilterButton != params.enableFilterButton ||
+            oldParams.enableFilterIcon != params.enableFilterIcon
+        ) {
+            return false;
+        }
+
 
         this.setDisplayName(params);
 

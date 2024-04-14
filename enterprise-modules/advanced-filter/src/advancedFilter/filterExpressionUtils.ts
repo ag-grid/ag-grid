@@ -1,4 +1,4 @@
-import { ColumnModel, DataTypeService, ValueParserService } from '@ag-grid-community/core';
+import { ColumnModel, DataTypeService, ValueService } from '@ag-grid-community/core';
 import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import { FilterExpressionEvaluatorParams, FilterExpressionOperator } from "./filterExpressionOperators";
 
@@ -6,7 +6,7 @@ export interface FilterExpressionParserParams {
     expression: string;
     columnModel: ColumnModel;
     dataTypeService: DataTypeService;
-    valueParserService: ValueParserService;
+    valueService: ValueService;
     advancedFilterExpressionService: AdvancedFilterExpressionService;
 }
 

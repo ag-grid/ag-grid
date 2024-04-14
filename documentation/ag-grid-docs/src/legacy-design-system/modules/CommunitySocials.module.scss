@@ -1,0 +1,18 @@
+@use 'design-system' as *;
+
+.socialChannelContainer {
+    display: flex;
+    justify-content: space-around;
+    margin: 0px $spacing-size-40;
+    gap: $spacing-size-4;
+    flex-wrap: wrap;
+
+    @media screen and (max-width: $breakpoint-community-small) {
+        margin: 0px $spacing-size-12;
+    }
+}
+
+.socialChannelContainer .socialChannelIcon {
+    --icon-size: 64px;
+    fill: var(--color-util-gray-600);
+}

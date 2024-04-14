@@ -1,5 +1,5 @@
 import { ChartProxy, ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
-import { AgCharts, AgDonutSeriesOptions, AgPieSeriesOptions, AgPolarChartOptions, AgPolarSeriesOptions, } from 'ag-charts-community';
+import { AgDonutSeriesOptions, AgPieSeriesOptions, AgPolarChartOptions, AgPolarSeriesOptions, } from 'ag-charts-community';
 
 import { changeOpacity } from '../../utils/color';
 import { deepMerge } from '../../utils/object';
@@ -9,20 +9,18 @@ interface DonutOffset {
     currentOffset: number;
 }
 
-export class PieChartProxy extends ChartProxy {
+export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donut'> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
     }
 
-    public update(params: UpdateParams): void {
-        const options: AgPolarChartOptions = {
-            ...this.getCommonChartOptions(params.updatedOverrides),
+    protected getUpdateOptions(params: UpdateParams, commonChartOptions: AgPolarChartOptions): AgPolarChartOptions {
+        return {
+            ...commonChartOptions,
             data: this.crossFiltering ? this.getCrossFilterData(params) : params.data,
             series: this.getSeries(params),
-        }
-
-        AgCharts.update(this.getChartRef(), options);
+        };
     }
 
     private getSeries(params: UpdateParams): AgPolarSeriesOptions[] {
@@ -138,9 +136,5 @@ export class PieChartProxy extends ChartProxy {
     private getFields(params: UpdateParams): FieldDefinition[] {
         // pie charts only support a single series, donut charts support multiple series
         return this.chartType === 'pie' ? params.fields.slice(0, 1) : params.fields;
-    }
-
-    public crossFilteringReset() {
-        // not required in pie charts
     }
 }

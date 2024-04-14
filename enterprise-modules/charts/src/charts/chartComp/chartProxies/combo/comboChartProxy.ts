@@ -4,7 +4,7 @@ import {ChartProxyParams, FieldDefinition, UpdateParams} from "../chartProxy";
 import {CartesianChartProxy} from "../cartesian/cartesianChartProxy";
 import {getSeriesType} from "../../utils/seriesTypeMapper";
 
-export class ComboChartProxy extends CartesianChartProxy {
+export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'> {
 
     public constructor(params: ChartProxyParams) {
         super(params);

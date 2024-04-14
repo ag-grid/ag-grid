@@ -1,6 +1,5 @@
 import {ChartProxy, ChartProxyParams, UpdateParams} from '../chartProxy';
 import {
-    AgCharts,
     AgNightingaleSeriesOptions,
     AgPolarAxisOptions,
     AgPolarChartOptions,
@@ -17,7 +16,7 @@ type AgPolarSeriesOptions =
     AgRadialBarSeriesOptions |
     AgRadialColumnSeriesOptions;
 
-export class PolarChartProxy extends ChartProxy {
+export class PolarChartProxy extends ChartProxy<AgPolarChartOptions, 'radar-line' | 'radar-area' | 'nightingale' | 'radial-column' | 'radial-bar'> {
     public constructor(params: ChartProxyParams) {
         super(params);
     }
@@ -44,17 +43,15 @@ export class PolarChartProxy extends ChartProxy {
         }));
     }
 
-    public update(params: UpdateParams): void {
+    protected getUpdateOptions(params: UpdateParams, commonChartOptions: AgPolarChartOptions): AgPolarChartOptions {
         const axes = this.getAxes(params);
 
-        const options: AgPolarChartOptions = {
-            ...this.getCommonChartOptions(params.updatedOverrides),
+        return {
+            ...commonChartOptions,
             data: this.getData(params, axes),
             axes,
             series: this.getSeries(params),
         };
-
-        AgCharts.update(this.getChartRef(), options);
     }
 
     private getData(params: UpdateParams, axes: AgPolarAxisOptions[]): any[] {
@@ -65,9 +62,5 @@ export class PolarChartProxy extends ChartProxy {
         } else {
             return params.data;
         }
-    }
-
-    public crossFilteringReset(): void {
-        // cross filtering is not currently supported in polar charts
     }
 }

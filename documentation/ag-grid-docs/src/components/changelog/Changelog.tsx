@@ -1,9 +1,9 @@
-import { Alert } from '@components/alert/Alert';
+import { Alert } from '@ag-website-shared/components/alert/Alert';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import DetailCellRenderer from '@components/grid/DetailCellRendererComponent';
 import Grid from '@components/grid/Grid';
-import { Icon } from '@components/icon/Icon';
 import ReleaseVersionNotes from '@components/release-notes/ReleaseVersionNotes.jsx';
-import styles from '@design-system/modules/pipelineChangelog.module.scss';
+import styles from '@legacy-design-system/modules/pipelineChangelog.module.scss';
 import { IssueColDef, IssueTypeColDef } from '@utils/grid/issueColDefs';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';

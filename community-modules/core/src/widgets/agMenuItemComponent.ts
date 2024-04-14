@@ -18,7 +18,8 @@ import { WithoutGridCommon } from '../interfaces/iCommon';
 import { IMenuActionParams } from '../interfaces/iCallbackParams';
 
 export interface CloseMenuEvent extends AgEvent {
-    event?: MouseEvent | KeyboardEvent;
+    mouseEvent?: MouseEvent;
+    keyboardEvent?: KeyboardEvent;
 }
 
 export interface MenuItemActivatedEvent extends AgEvent {
@@ -36,7 +37,6 @@ interface AgMenuItemComponentParams {
 export class AgMenuItemComponent extends BeanStub {
     @Autowired('popupService') private readonly popupService: PopupService;
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
-    @Autowired('beans') private readonly beans: Beans;
 
     public static EVENT_CLOSE_MENU = 'closeMenu';
     public static EVENT_MENU_ITEM_ACTIVATED = 'menuItemActivated';
@@ -296,14 +296,21 @@ export class AgMenuItemComponent extends BeanStub {
 
         this.closeMenu(event);
     }
-    
+
     private closeMenu(event?: MouseEvent | KeyboardEvent): void {
         const e: CloseMenuEvent = {
             type: AgMenuItemComponent.EVENT_CLOSE_MENU,
-            event
         };
-    
-        this.dispatchEvent(e);    
+
+        if (event) {
+            if (event instanceof MouseEvent) {
+                e.mouseEvent = event;
+            } else {
+                e.keyboardEvent = event;
+            }
+        }
+
+        this.dispatchEvent(e);
     }
 
     private onItemActivated(): void {

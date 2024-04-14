@@ -1,4 +1,4 @@
-import styles from '@design-system/modules/ImageCaption.module.scss';
+import styles from '@legacy-design-system/modules/ImageCaption.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';

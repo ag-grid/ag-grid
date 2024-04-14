@@ -1,0 +1,58 @@
+@use 'design-system' as *;
+
+$replay-button-width: 222px;
+$control-button-width: 256px;
+
+.buttonOuter {
+    display: inline-block;
+    width: $control-button-width;
+}
+
+.button {
+    position: relative;
+    max-width: $replay-button-width;
+    padding: 7px 12px 9px !important;
+    text-align: left;
+    transition:
+        background-color $transition-default-timing,
+        border $transition-default-timing,
+        box-shadow $transition-default-timing,
+        max-width $transition-default-timing !important;
+
+    @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
+        display: none;
+    }
+
+    :global(.icon) {
+        --icon-size: 1.5em;
+
+        margin: -1em 0 -1em 0.25em;
+    }
+
+    span {
+        transition: opacity 0.4s;
+    }
+
+    &.isActive {
+        max-width: $control-button-width;
+    }
+}
+
+.controlInner {
+    opacity: 0;
+
+    .isActive & {
+        opacity: 1;
+    }
+}
+
+.replayInner {
+    position: absolute;
+    top: 0.25em;
+    left: 0.5em;
+    opacity: 1;
+
+    .isActive & {
+        opacity: 0;
+    }
+}

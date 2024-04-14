@@ -1,4 +1,4 @@
-import styles from '@design-system/modules/OverlayButton.module.scss';
+import styles from '@legacy-design-system/modules/OverlayButton.module.scss';
 import classNames from 'classnames';
 import { type FunctionComponent, forwardRef, useEffect } from 'react';
 

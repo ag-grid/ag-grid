@@ -37,6 +37,7 @@ import {
     ColumnValueChangeRequestEvent,
     ColumnVisibleEvent,
     ComponentStateChangedEvent,
+    ContextMenuVisibleChangedEvent,
     CutEndEvent,
     CutStartEvent,
     DisplayedColumnsChangedEvent,
@@ -1863,6 +1864,10 @@ export interface GridOptions<TData = any> {
      * The column menu visibility has changed. Fires twice if switching between tabs - once with the old tab and once with the new tab.
      */
     onColumnMenuVisibleChanged?(event: ColumnMenuVisibleChangedEvent<TData>): void;
+    /**
+     * The context menu visibility has changed (opened or closed).
+     */
+    onContextMenuVisibleChanged?(event: ContextMenuVisibleChangedEvent<TData>): void;
 
     // *** Clipboard *** //
     /**

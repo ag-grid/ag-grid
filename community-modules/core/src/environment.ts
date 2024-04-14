@@ -107,6 +107,7 @@ export class Environment extends BeanStub {
         this.mutationObserver = new MutationObserver(() => {
             this.calculatedSizes = {};
             this.calculatedTheme = null;
+            this.calculatedTheme = this.getTheme();
             this.fireGridStylesChangedEvent();
         });
 
@@ -198,8 +199,7 @@ export class Environment extends BeanStub {
     }
 
     public getTheme():  ThemeDetails {
-
-        if(this.calculatedTheme){
+        if (this.calculatedTheme) {
             return this.calculatedTheme;
         }
 

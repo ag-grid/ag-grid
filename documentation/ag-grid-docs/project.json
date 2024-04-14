@@ -7,12 +7,7 @@
     "build": {
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "dependsOn": ["generate-doc-references", "generate-examples"],
-      "inputs": [
-        "^production",
-        "production",
-        "!{projectRoot}/vitest.config.mjs",
-        { "env": "PUBLIC_PACKAGE_VERSION" }
-      ],
+      "inputs": ["^production", "production", "!{projectRoot}/vitest.config.mjs", { "env": "PUBLIC_PACKAGE_VERSION" }],
       "cache": true,
       "command": "astro build",
       "options": {
@@ -55,6 +50,41 @@
         "staging": {},
         "archive": {},
         "production": {}
+      }
+    },
+    "test": {
+      "executor": "nx:noop",
+      "dependsOn": ["test:vitest"],
+      "inputs": [],
+      "outputs": [],
+      "options": {
+        "cwd": "documentation/ag-grid-docs"
+      },
+      "configurations": {
+        "ci": {},
+        "watch": {},
+        "update": {}
+      }
+    },
+    "test:vitest": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{workspaceRoot}/reports/ag-grid-website.xml"],
+      "dependsOn": [],
+      "options": {
+        "cwd": "documentation/ag-grid-docs",
+        "config": "documentation/ag-grid-docs/vitest.config.mjs"
+      },
+      "configurations": {
+        "ci": {
+          "outputFile": "../../reports/ag-grid-website.xml",
+          "reporters": ["junit"]
+        },
+        "watch": {
+          "watch": true
+        },
+        "update": {
+          "update": true
+        }
       }
     },
     "generate-examples": {
