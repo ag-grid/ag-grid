@@ -118,7 +118,7 @@ export abstract class ChartProxy<TOptions extends AgChartOptions = AgChartOption
     }
 
     public getChartImageDataURL(type?: string) {
-        return this.getChart().scene.getDataURL(type);
+        return this.getChart().getCanvasDataURL(type);
     }
 
     private getChartOptions(): AgChartOptions {
