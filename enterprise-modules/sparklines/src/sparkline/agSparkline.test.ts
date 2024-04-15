@@ -16,9 +16,9 @@ const matrixMock = jest.fn(() => ({
     preMultiplySelf: () => matrixMock,
     inverse: () => matrixMock,
     invertSelf: () => matrixMock,
-})) as jest.Mock;
+}));
 
-global.DOMMatrix = matrixMock;
+global.DOMMatrix = matrixMock as any;
 
 const data = [
     7,
