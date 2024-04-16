@@ -1,0 +1,21 @@
+.ag-root-wrapper {
+    line-height: normal;
+    cursor: default;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    white-space: normal;
+    -webkit-font-smoothing: antialiased;
+    font-family: var(--ag-font-family);
+    font-size: var(--ag-font-size);
+
+    &.ag-layout-normal {
+        height: 100%;
+    }
+
+    color: var(--ag-text-color);
+    background-color: var(--ag-background-color);
+    border: var(--ag-wrapper-border);
+    border-radius: var(--ag-wrapper-border-radius);
+}

@@ -1,0 +1,130 @@
+.ag-panel {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--ag-panel-background-color);
+}
+
+/* A dialog is  panel that is also a popup */
+.ag-dialog {
+    position: absolute;
+    border-radius: var(--ag-border-radius);
+    box-shadow: var(--ag-dialog-shadow);
+    border: var(--ag-dialog-border);
+}
+
+.ag-panel-title-bar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    cursor: default;
+    color: var(--ag-header-text-color);
+    background-color: var(--ag-panel-title-bar-background-color);
+    height: var(--ag-header-height);
+    padding: var(--ag-grid-size) var(--ag-cell-horizontal-padding);
+    border-bottom: var(--ag-panel-title-bar-border);
+}
+
+.ag-panel-title-bar-button {
+    margin-left: calc(var(--ag-grid-size) * 2);
+    margin-right: var(--ag-grid-size);
+}
+
+.ag-panel-title-bar-title {
+    flex: 1 1 auto;
+    font-weight: 500;
+    color: var(--ag-header-text-color);
+}
+
+.ag-panel-title-bar-buttons {
+    display: flex;
+}
+
+.ag-panel-title-bar-button {
+    cursor: pointer;
+}
+
+.ag-panel-content-wrapper {
+    display: flex;
+    flex: 1 1 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.ag-resizer {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1;
+    user-select: none;
+    &.ag-resizer-topLeft {
+        top: 0;
+        /*rtl:ignore*/
+        left: 0;
+        height: 5px;
+        width: 5px;
+        cursor: nwse-resize;
+    }
+    &.ag-resizer-top {
+        top: 0;
+        /*rtl:ignore*/
+        left: 5px;
+        right: 5px;
+        height: 5px;
+        cursor: ns-resize;
+    }
+    &.ag-resizer-topRight {
+        top: 0;
+        /*rtl:ignore*/
+        right: 0;
+        height: 5px;
+        width: 5px;
+        cursor: nesw-resize;
+    }
+    &.ag-resizer-right {
+        top: 5px;
+        /*rtl:ignore*/
+        right: 0;
+        bottom: 5px;
+        width: 5px;
+        cursor: ew-resize;
+    }
+    &.ag-resizer-bottomRight {
+        bottom: 0;
+        /*rtl:ignore*/
+        right: 0;
+        height: 5px;
+        width: 5px;
+        cursor: nwse-resize;
+    }
+    &.ag-resizer-bottom {
+        bottom: 0;
+        left: 5px;
+        /*rtl:ignore*/
+        right: 5px;
+        height: 5px;
+        cursor: ns-resize;
+    }
+    &.ag-resizer-bottomLeft {
+        bottom: 0;
+        /*rtl:ignore*/
+        left: 0;
+        height: 5px;
+        width: 5px;
+        cursor: nesw-resize;
+    }
+    &.ag-resizer-left {
+        /*rtl:ignore*/
+        left: 0;
+        top: 5px;
+        bottom: 5px;
+        width: 5px;
+        cursor: ew-resize;
+    }
+}
+
+.ag-dragging-range-handle .ag-dialog,
+.ag-dragging-fill-handle .ag-dialog {
+    opacity: 0.7;
+    pointer-events: none;
+}

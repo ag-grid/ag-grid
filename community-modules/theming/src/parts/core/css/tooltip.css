@@ -1,0 +1,28 @@
+.ag-tooltip {
+    position: absolute;
+    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+    background-color: var(--ag-tooltip-background-color);
+    color: var(--ag-tooltip-text-color);
+    border: var(--ag-tooltip-border);
+    border-radius: var(--ag-border-radius);
+    white-space: normal;
+    z-index: 99999;
+}
+
+.ag-tooltip-custom {
+    position: absolute;
+    z-index: 99999;
+}
+
+.ag-tooltip:not(.ag-tooltip-interactive),
+.ag-tooltip-custom:not(.ag-tooltip-interactive) {
+    pointer-events: none;
+}
+
+.ag-tooltip.ag-tooltip-animate,
+.ag-tooltip-custom.ag-tooltip-animate {
+    transition: opacity 1s;
+    &.ag-tooltip-hiding {
+        opacity: 0;
+    }
+}

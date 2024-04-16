@@ -1,0 +1,16 @@
+.ag-tab {
+    border-top: solid var(--ag-tab-selected-border-width) transparent;
+    border-left: solid var(--ag-tab-selected-border-width) transparent;
+    border-right: solid var(--ag-tab-selected-border-width) transparent;
+    flex: 0;
+
+    &.ag-tab-selected {
+        border-top-color: var(--ag-tab-selected-border-color);
+        border-left-color: var(--ag-tab-selected-border-color);
+        border-right-color: var(--ag-tab-selected-border-color);
+
+        /* shift down 1px to make tab background blend with area below */
+        margin-bottom: -1px;
+        padding-bottom: calc(var(--ag-tab-bottom-padding) + 1px);
+    }
+}

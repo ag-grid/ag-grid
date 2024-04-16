@@ -1,0 +1,85 @@
+.ag-range-field {
+    display: flex;
+    align-items: center;
+
+    .ag-input-wrapper {
+        height: 100%;
+    }
+}
+
+/* TODO check range inputs */
+input[class^='ag-'][type='range'] {
+    padding: 0;
+    -webkit-appearance: none;
+    width: 100%;
+    height: 100%;
+    background: none;
+    overflow: visible;
+
+    &::-webkit-slider-runnable-track {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 3px;
+        background-color: var(--ag-border-color);
+        border-radius: 1.5px;
+    }
+
+    &::-moz-range-track {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 3px;
+        background-color: var(--ag-border-color);
+        border-radius: 1.5px;
+    }
+
+    &::-webkit-slider-thumb {
+        margin: 0;
+        padding: 0;
+        -webkit-appearance: none;
+        width: var(--ag-icon-size);
+        height: var(--ag-icon-size);
+        background-color: var(--ag-background-color);
+        border: 1px solid var(--ag-border-color);
+        border-radius: 100%;
+        transform: translateY(calc(var(--ag-icon-size) * -0.5 + 1.5px));
+    }
+
+    &::-moz-ag-range-thumb {
+        margin: 0;
+        padding: 0;
+        -webkit-appearance: none;
+        width: var(--ag-icon-size);
+        height: var(--ag-icon-size);
+        background-color: var(--ag-background-color);
+        border: 1px solid var(--ag-border-color);
+        border-radius: 100%;
+        transform: translateY(calc(var(--ag-icon-size) * -0.5 + 1.5px));
+    }
+
+    &:focus {
+        &::-webkit-slider-thumb {
+            box-shadow: var(--ag-focus-shadow);
+            border-color: var(--ag-accent-color);
+        }
+
+        &::-moz-ag-range-thumb {
+            box-shadow: var(--ag-focus-shadow);
+            border-color: var(--ag-accent-color);
+        }
+    }
+
+    &:active {
+        &::-webkit-slider-runnable-track {
+            background-color: var(--ag-accent-color);
+        }
+        &::-moz-ag-range-track {
+            background-color: var(--ag-accent-color);
+        }
+    }
+
+    &:disabled {
+        opacity: 0.5;
+    }
+}
