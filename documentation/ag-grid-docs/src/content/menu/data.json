@@ -33,21 +33,6 @@
             }
         ]
     },
-    "product": {
-        "items": [
-            {
-                "title": "AG Grid",
-                "description": "Best JavaScript Grid in the World",
-                "url": "https://ag-grid.com"
-            },
-            {
-                "title": "AG Charts",
-                "description": "Best JavaScript Charts in the World",
-                "url": "https://charts.ag-grid.com"
-            }
-            
-        ]
-    },
     "api": {
         "sections": [
             {
@@ -1460,7 +1445,7 @@
                             {
                                 "title": "Custom Components",
                                 "path": "components"
-                            },                            
+                            },
                             {
                                 "title": "Best Practices",
                                 "path": "framework-data-flow",
