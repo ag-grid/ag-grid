@@ -1,0 +1,19 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import { getDocsPages } from '../features/docs/utils/pageData';
+import { ThemeBuilder } from '@components/theme-builder/ThemeBuilder';
+
+export async function getStaticPaths() {
+    const pages = await getCollection('docs');
+    return getDocsPages(pages);
+}
+---
+
+<Layout title="AG Grid Theme Builder" showDocsNav={true} showSearchBar={true}>
+    <div class:list={['contentViewport layout-grid']}>
+        <main is="div">
+            <ThemeBuilder client:only />
+        </main>
+    </div>
+</Layout>

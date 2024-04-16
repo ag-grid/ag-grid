@@ -1,0 +1,209 @@
+.ag-column-drop {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    overflow: auto;
+    width: 100%;
+}
+
+.ag-column-drop-list {
+    display: flex;
+    align-items: center;
+}
+
+.ag-column-drop-cell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--ag-label-widget-spacing);
+}
+
+.ag-column-drop-cell-text {
+    overflow: hidden;
+    flex: 1 1 auto;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ag-column-drop-vertical {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    align-items: stretch;
+    flex: 1 1 0px;
+}
+
+.ag-column-drop-vertical-title-bar {
+    display: flex;
+    align-items: center;
+    flex: none;
+}
+
+.ag-column-drop-vertical-list {
+    position: relative;
+    align-items: stretch;
+    flex-grow: 1;
+    flex-direction: column;
+    overflow-x: auto;
+
+    > * {
+        flex: none;
+    }
+}
+
+.ag-column-drop-empty .ag-column-drop-vertical-list {
+    overflow: hidden;
+}
+
+.ag-column-drop-vertical-empty-message {
+    display: block;
+}
+
+.ag-column-drop.ag-column-drop-horizontal {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.ag-column-drop-cell-button {
+    cursor: pointer;
+}
+
+.ag-column-drop-wrapper {
+    display: flex;
+}
+
+.ag-column-drop-horizontal-half-width {
+    display: inline-block;
+    width: 50% !important;
+}
+
+.ag-column-drop-cell {
+    background: var(--ag-column-drop-cell-background-color);
+    border-radius: 500px;
+    padding: calc(var(--ag-grid-size) * 0.5);
+    padding-left: calc(var(--ag-grid-size) * 0.75);
+    border: var(--ag-column-drop-cell-border);
+
+    &:focus-visible {
+        box-shadow: var(--ag-focus-shadow);
+    }
+}
+
+.ag-column-drop-cell-button {
+    min-width: calc(var(--ag-grid-size) * 4);
+}
+
+.ag-column-drop-cell-ghost {
+    opacity: 0.5;
+}
+
+.ag-column-drop-horizontal {
+    background-color: var(--ag-header-background-color);
+    height: var(--ag-header-height);
+
+    padding-left: var(--ag-cell-horizontal-padding);
+    gap: var(--ag-cell-widget-spacing);
+}
+
+.ag-column-drop-horizontal-list {
+    gap: var(--ag-cell-widget-spacing);
+}
+
+.ag-column-drop-vertical-list {
+    padding-bottom: var(--ag-grid-size);
+    padding-right: var(--ag-grid-size);
+    padding-left: var(--ag-grid-size);
+}
+
+.ag-column-drop-vertical-cell {
+    /* TODO use gap */
+    margin-top: var(--ag-grid-size);
+}
+
+.ag-column-drop-vertical {
+    min-height: 50px;
+
+    &:not(.ag-last-column-drop) {
+        /* TODO this style belongs in the columns tool panel file */
+        border-bottom: var(--ag-tool-panel-separator-border);
+    }
+}
+
+.ag-column-drop-vertical-icon {
+    margin-right: var(--ag-widget-horizontal-spacing);
+}
+
+.ag-column-drop-vertical-empty-message {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    margin-top: var(--ag-grid-size);
+}
+
+.ag-select-agg-func-popup {
+    @include ag.card();
+
+    background: var(--ag-background-color);
+    height: calc(var(--ag-grid-size) * 5 * 3.5);
+    padding: 0;
+}
+
+.ag-select-agg-func-virtual-list-item {
+    cursor: default;
+    @include ag.unthemed-rtl((padding-left: calc(var(--ag-grid-size) * 2)));
+
+    &:hover {
+        background-color: var(--ag-selected-row-background-color);
+    }
+}
+
+@include ag.keyboard-focus((ag-select-agg-func-virtual-list-item), 1px);
+
+.ag-sort-indicator-container {
+    display: contents;
+}
+
+/* TODO remove this and replace with flex gap in column drop, already done for header */
+.ag-sort-indicator-icon {
+    @include ag.unthemed-rtl((padding-left: var(--ag-grid-size)));
+}
+
+.ag-column-drop-horizontal {
+    background-color: var(--ag-header-background-color);
+    border-bottom: var(--ag-header-border);
+}
+
+.ag-column-drop-horizontal-half-width:not(:last-child) {
+    /* should be rtl */
+    border-right: var(--ag-column-border);
+}
+
+.ag-column-drop-cell-button {
+    min-width: 0;
+    opacity: 0.75;
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+.ag-column-drop-vertical {
+    min-height: 75px;
+}
+
+.ag-column-drop-vertical-title-bar {
+    padding: var(--ag-widget-container-vertical-padding) calc(var(--ag-grid-size) * 2) 0;
+}
+
+.ag-column-drop-vertical-empty-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: dashed 1px;
+    border-color: var(--ag-border-color);
+    margin: calc(var(--ag-grid-size) * 1.5) calc(var(--ag-grid-size) * 2);
+    padding: calc(var(--ag-grid-size) * 2);
+}

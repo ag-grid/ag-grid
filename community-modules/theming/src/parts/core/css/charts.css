@@ -1,0 +1,497 @@
+.ag-chart {
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+.ag-chart-components-wrapper {
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    overflow: hidden;
+}
+
+.ag-chart-title-edit {
+    position: absolute;
+    display: none;
+    top: 0;
+    /*rtl:ignore*/
+    left: 0;
+    text-align: center;
+}
+
+.ag-chart-title-edit.currently-editing {
+    display: inline-block;
+}
+
+.ag-chart-canvas-wrapper {
+    position: relative;
+    flex: 1 1 auto;
+    overflow: hidden;
+}
+
+.ag-charts-canvas {
+    display: block;
+}
+
+.ag-chart-menu {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ag-chart-docked-container {
+    position: relative;
+    width: 0;
+    min-width: 0;
+    transition: min-width 0.4s;
+}
+
+.ag-chart-menu-hidden ~ .ag-chart-docked-container {
+    max-width: 0;
+    overflow: hidden;
+}
+
+.ag-chart-tabbed-menu {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ag-chart-tabbed-menu-header {
+    flex: none;
+    user-select: none;
+    cursor: default;
+}
+
+.ag-chart-tabbed-menu-body {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: stretch;
+    overflow: hidden;
+}
+
+.ag-chart-tab {
+    width: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.ag-chart-settings {
+    overflow-x: hidden;
+}
+
+.ag-chart-settings-wrapper {
+    position: relative;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    overflow: hidden;
+}
+
+.ag-chart-settings-nav-bar {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 30px;
+    padding: 0 10px;
+    user-select: none;
+    border-top: solid 1px var(--ag-border-color);
+}
+
+.ag-chart-settings-card-selector {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex: 1 1 auto;
+    height: 100%;
+    /* increase size of click area for better UX */
+    padding: 0 10px;
+}
+
+.ag-chart-settings-card-item {
+    cursor: pointer;
+    width: 10px;
+    height: 10px;
+    position: relative;
+    &.ag-not-selected {
+        opacity: 0.2;
+    }
+
+    &::before {
+        /* make expanded click area */
+        content: ' ';
+        display: block;
+        position: absolute;
+        background-color: transparent;
+        /*rtl:ignore*/
+        left: 50%;
+        top: 50%;
+        /*rtl:ignore*/
+        margin-left: -10px;
+        margin-top: -10px;
+        width: 20px;
+        height: 20px;
+    }
+
+    background-color: var(--ag-foreground-color);
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+
+    &.ag-selected {
+        background-color: var(--ag-accent-color);
+    }
+}
+
+.ag-chart-settings-prev,
+.ag-chart-settings-next {
+    position: relative;
+    flex: none;
+}
+
+.ag-chart-settings-prev-button,
+.ag-chart-settings-next-button {
+    position: absolute;
+    top: 0;
+    /*rtl:ignore*/
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    opacity: 0;
+}
+
+.ag-chart-settings-mini-charts-container {
+    position: relative;
+    flex: 1 1 auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.ag-chart-settings-mini-wrapper {
+    position: absolute;
+    top: 0;
+    /*rtl:ignore*/
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100%;
+    overflow: hidden;
+
+    &.ag-animating {
+        /*rtl:ignore*/
+        transition: left 0.3s;
+        transition-timing-function: ease-in-out;
+    }
+}
+
+.ag-chart-mini-thumbnail {
+    cursor: pointer;
+}
+
+.ag-chart-mini-thumbnail-canvas {
+    display: block;
+}
+
+.ag-chart-data-wrapper,
+.ag-chart-format-wrapper {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    user-select: none;
+    padding-bottom: 16px;
+}
+
+.ag-chart-data-wrapper {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.ag-chart-data-section,
+.ag-chart-format-section {
+    display: flex;
+    margin: 0;
+}
+
+.ag-chart-empty-text {
+    display: flex;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--ag-background-color);
+}
+
+.ag-chart .ag-chart-menu {
+    display: none;
+}
+
+.ag-chart-menu-hidden:hover .ag-chart-menu {
+    display: block;
+}
+
+.ag-chart .ag-chart-tool-panel-button-enable .ag-chart-menu {
+    display: flex;
+    flex-direction: row;
+    top: 8px;
+    right: calc(var(--ag-cell-horizontal-padding) + var(--ag-grid-size) - 4px);
+    gap: 20px;
+    width: auto;
+    justify-content: right;
+}
+
+.ag-chart-menu-close {
+    display: none;
+}
+
+.ag-chart-tool-panel-button-enable {
+    .ag-chart-menu-close {
+        position: absolute;
+        top: 50%;
+        transition: transform 0.33s ease-in-out;
+        padding: 14px 5px 14px 2px;
+        display: block;
+        cursor: pointer;
+        right: 0px;
+        background-color: var(--ag-background-color);
+        border-top: var(--ag-chart-menu-button-border);
+        border-left: var(--ag-chart-menu-button-border);
+        border-bottom: var(--ag-chart-menu-button-border);
+
+        &:before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            bottom: -40px;
+            right: 0px;
+            left: -10px;
+        }
+
+        &:hover {
+            background-image: linear-gradient(var(--ag-icon-button-hover-color), var(--ag-icon-button-hover-color));
+        }
+    }
+
+    /* Hide burger menu */
+    .ag-icon-menu {
+        display: none;
+    }
+}
+
+/* TODO these are split out like this because RTLCSS doesnt' work with nesting,
+when that's fixed, nest them in the above block */
+.ag-chart-tool-panel-button-enable .ag-chart-menu-close {
+    transform: translate(3px, -50%);
+}
+.ag-chart-tool-panel-button-enable .ag-chart-menu-close:hover {
+    transform: translate(0, -50%);
+}
+.ag-chart-menu-visible .ag-chart-tool-panel-button-enable .ag-chart-menu-close:hover {
+    transform: translate(5px, -50%);
+}
+
+.ag-charts-font-size-color {
+    display: flex;
+    align-self: stretch;
+    justify-content: space-between;
+}
+
+.ag-charts-data-group-item {
+    position: relative;
+}
+
+.ag-chart-menu {
+    border-radius: var(--ag-border-radius);
+    background: var(--ag-background-color);
+}
+
+.ag-chart-menu-icon {
+    opacity: 0.5;
+    margin: 2px 0;
+    cursor: pointer;
+    border-radius: var(--ag-border-radius);
+    opacity: 0.8;
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+.ag-chart-mini-thumbnail {
+    border: 1px solid var(--ag-border-color);
+    border-radius: 5px;
+
+    &.ag-selected {
+        border-color: var(--ag-accent-color);
+    }
+}
+
+.ag-chart-data-column-drag-handle {
+    /*rtl:ignore*/
+    margin-left: var(--ag-grid-size);
+}
+
+.ag-charts-data-group-container {
+    padding: calc(var(--ag-widget-container-vertical-padding) * 0.5) var(--ag-widget-container-horizontal-padding);
+
+    .ag-charts-data-group-item:not(.ag-charts-format-sub-level-group) {
+        height: var(--ag-list-item-height);
+    }
+}
+
+.ag-charts-format-top-level-group-container {
+    /*rtl:ignore*/
+    margin-left: calc(var(--ag-grid-size) * 2);
+    padding: var(--ag-grid-size);
+}
+
+.ag-charts-format-top-level-group-item {
+    margin: var(--ag-grid-size) 0;
+}
+
+.ag-charts-format-sub-level-group-container {
+    display: flex;
+    flex-direction: column;
+    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+    gap: var(--ag-widget-vertical-spacing);
+}
+
+.ag-charts-settings-group-container {
+    padding: var(--ag-grid-size);
+    row-gap: 8px;
+
+    display: grid;
+    grid-template-columns: 60px 1fr 60px 1fr 60px;
+
+    .ag-chart-mini-thumbnail:nth-child(3n + 1) {
+        grid-column: 1;
+    }
+    .ag-chart-mini-thumbnail:nth-child(3n + 2) {
+        grid-column: 3;
+    }
+    .ag-chart-mini-thumbnail:nth-child(3n + 3) {
+        grid-column: 5;
+    }
+}
+
+.ag-chart-data-section,
+.ag-chart-format-section {
+    display: flex;
+    margin: 0;
+}
+
+.ag-chart-menu-panel {
+    border-left: solid 1px var(--ag-border-color);
+    background-color: var(--ag-chrome-background-color);
+}
+
+.ag-chart-tabbed-menu-body {
+    position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        display: block;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 16px;
+        background: linear-gradient(var(--ag-chrome-background-color), transparent);
+    }
+}
+
+.ag-charts-settings-group-title-bar,
+.ag-charts-data-group-title-bar,
+.ag-charts-format-top-level-group-title-bar,
+.ag-charts-settings-group-container {
+    border-top: none;
+    padding: 0 calc(var(--ag-grid-size) * 1.5);
+    font-weight: 500;
+}
+
+.ag-charts-format-top-level-group-item {
+    padding-bottom: 12px;
+}
+
+.ag-charts-settings-group-container {
+    margin-top: calc(var(--ag-grid-size));
+    padding-right: var(--ag-widget-container-horizontal-padding);
+}
+
+.ag-charts-format-sub-level-group-container {
+    padding-right: 0;
+}
+
+.ag-charts-format-top-level-group-toolbar {
+    margin-top: var(--ag-grid-size);
+    padding-left: calc(var(--ag-grid-size) * 2);
+}
+
+.ag-charts-settings-group-title-bar,
+.ag-charts-data-group-title-bar,
+.ag-charts-format-top-level-group-title-bar {
+    margin-top: calc(var(--ag-grid-size) * 2);
+}
+
+.ag-charts-format-top-level-group-container {
+    padding: 0;
+    padding-left: 0;
+    padding-right: var(--ag-widget-container-horizontal-padding);
+}
+
+.ag-charts-format-top-level-group-item {
+    margin-top: calc(var(--ag-grid-size) * 2);
+    margin-bottom: 0;
+}
+
+.ag-chart-mini-thumbnail {
+    background-color: var(--ag-background-color);
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.ag-charts-format-sub-level-group {
+    border-left: dashed 1px;
+    border-left-color: var(--ag-border-color);
+    padding-left: var(--ag-grid-size);
+    margin-bottom: calc(var(--ag-grid-size) * 2);
+}
+
+.ag-charts-format-sub-level-group-title-bar {
+    padding-top: 0;
+    padding-bottom: 0;
+    background: none;
+    font-weight: 500;
+}
+
+.ag-charts-format-sub-level-group-container {
+    padding-bottom: 0;
+}
+
+.ag-charts-format-sub-level-group-item:last-child {
+    margin-bottom: 0;
+}
+
+.ag-chart-menu {
+    --ag-icon-size: 20px;
+    background-color: color-mix(in srgb, transparent, var(--ag-background-color) 30%);
+    padding: 4px 2px;
+}
+
+.ag-chart-docked-container {
+    min-width: 260px;
+}
+
+.ag-chart-settings-card-item.ag-not-selected:hover {
+    opacity: 0.35;
+}

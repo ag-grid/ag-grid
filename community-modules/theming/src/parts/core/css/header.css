@@ -1,0 +1,201 @@
+/* HEADER */
+.ag-header {
+    display: flex;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    background-color: var(--ag-header-background-color);
+    color: var(--ag-header-text-color);
+    border-bottom: var(--ag-header-border);
+    font-size: var(--ag-header-font-size);
+    font-family: var(--ag-header-font-family);
+    font-weight: var(--ag-header-font-weight);
+}
+
+/* HEADER ROW */
+
+.ag-header-row {
+    position: absolute;
+    height: var(--ag-header-height);
+}
+
+.ag-header-row:not(:first-child) {
+    .ag-header-cell:not(.ag-header-span-height.ag-header-span-total),
+    .ag-header-group-cell.ag-header-group-cell-with-group {
+        border-top: var(--ag-header-border);
+    }
+}
+
+.ag-header-row:not(.ag-header-row-column-group) {
+    overflow: hidden;
+}
+
+.ag-header.ag-header-allow-overflow .ag-header-row {
+    overflow: visible;
+}
+
+/* HEADER CELL AND GROUP CELL */
+
+.ag-header-cell,
+.ag-header-group-cell {
+    display: inline-flex;
+    align-items: center;
+    position: absolute;
+    height: 100%;
+    gap: var(--ag-cell-widget-spacing);
+    padding: 0 var(--ag-cell-horizontal-padding);
+}
+
+/* Implement header cell hover background as a pseudoelement so that it overlays
+on top of any custom colour that the application has given this cell */
+.ag-header-cell:not(.ag-floating-filter),
+.ag-header-group-cell {
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        transition: background-color var(--ag-header-cell-hover-background-transition-duration);
+        background-color: transparent;
+    }
+    &:hover::before,
+    &.ag-header-cell-moving::before {
+        background-color: var(--ag-header-cell-hover-background-color);
+    }
+}
+
+/* Ensure cell content shows above cell hover background */
+:where(.ag-header-cell:not(.ag-floating-filter) *, .ag-header-group-cell *) {
+    position: relative;
+    z-index: 1;
+}
+
+.ag-header-cell.ag-header-active .ag-header-cell-menu-button,
+.ag-header-cell-filter-button {
+    opacity: 1;
+}
+
+.ag-header-cell-menu-button:not(.ag-header-menu-always-show) {
+    transition: opacity 0.2s;
+    opacity: 0;
+}
+
+.ag-header-group-cell-label,
+.ag-header-cell-label {
+    display: flex;
+    flex: 1 1 auto;
+    align-self: stretch;
+    align-items: center;
+    gap: var(--ag-label-widget-spacing);
+}
+
+.ag-header-cell-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ag-header-group-cell-label.ag-sticky-label {
+    position: sticky;
+    flex: none;
+    max-width: 100%;
+    left: var(--ag-cell-horizontal-padding);
+}
+
+.ag-header-group-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ag-header-cell-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ag-header-cell:not(.ag-header-cell-auto-height) .ag-header-cell-comp-wrapper {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.ag-header-cell-comp-wrapper {
+    width: 100%;
+}
+
+.ag-header-cell-wrap-text .ag-header-cell-comp-wrapper {
+    white-space: normal;
+}
+
+.ag-right-aligned-header .ag-header-cell-label {
+    flex-direction: row-reverse;
+}
+
+/* INTERACTION */
+
+.ag-header-cell-menu-button,
+.ag-header-cell-filter-button,
+.ag-side-button-button,
+.ag-panel-title-bar-button,
+.ag-floating-filter-button-button,
+.ag-header-cell-sortable .ag-header-cell-label,
+.ag-header-expand-icon {
+    cursor: pointer;
+}
+
+.ag-header-cell,
+.ag-header-group-cell,
+.ag-advanced-filter-header-cell {
+    &:focus-visible {
+        box-shadow: inset var(--ag-focus-shadow);
+    }
+}
+
+/* COLUMN SEPARATOR */
+
+.ag-header-cell::after,
+.ag-header-group-cell:not(.ag-header-span-height.ag-header-group-cell-no-group)::after {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    height: var(--ag-column-header-border-height);
+    top: calc(50% - var(--ag-column-header-border-height) * 0.5);
+    border-right: var(--ag-column-header-border);
+    right: 0;
+}
+
+/* RESIZE HANDLE */
+
+.ag-header-cell-resize {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    z-index: 2;
+    height: 100%;
+    width: 8px;
+    top: 0;
+
+    cursor: ew-resize;
+
+    /* unpinned headers get their rezise handle on the right in normal mode and left in RTL mode */
+    right: -4px;
+
+    &::after {
+        content: '';
+        position: absolute;
+        z-index: 1;
+        display: var(--ag-header-column-resize-handle-display);
+        top: calc(50% - var(--ag-header-column-resize-handle-height) * 0.5);
+        left: calc(50% - var(--ag-header-column-resize-handle-width));
+        width: var(--ag-header-column-resize-handle-width);
+        height: var(--ag-header-column-resize-handle-height);
+        background-color: var(--ag-header-column-resize-handle-color);
+
+        .ag-header-cell.ag-header-span-height & {
+            height: calc(100% - calc(var(--ag-grid-size) * 4));
+            top: calc(var(--ag-grid-size) * 2);
+        }
+    }
+}
+
+.ag-header-group-cell-no-group.ag-header-span-height .ag-header-cell-resize {
+    display: none;
+}

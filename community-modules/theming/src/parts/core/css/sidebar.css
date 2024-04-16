@@ -1,0 +1,101 @@
+.ag-side-bar-left .ag-tool-panel-horizontal-resize {
+    right: -3px;
+}
+
+.ag-side-bar-right .ag-tool-panel-horizontal-resize {
+    left: -3px;
+}
+
+.ag-tool-panel-wrapper {
+    width: var(--ag-side-bar-panel-width);
+}
+
+.ag-side-bar {
+    position: relative;
+    display: flex;
+    flex-direction: row-reverse;
+    background-color: var(--ag-side-bar-background-color);
+}
+
+.ag-side-bar-left {
+    order: -1;
+    flex-direction: row;
+}
+
+.ag-side-buttons {
+    position: relative;
+    width: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
+}
+
+.ag-side-button {
+    &.ag-selected {
+        background-color: var(--ag-side-button-selected-background-color);
+
+        &:not(:first-of-type) {
+            border-top: var(--ag-side-button-selected-border);
+        }
+        border-bottom: var(--ag-side-button-selected-border);
+        background-color: var(--ag-side-button-selected-background-color);
+    }
+}
+
+.ag-side-button-button {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ag-label-widget-spacing);
+    align-items: center;
+    white-space: nowrap;
+
+    padding: calc(var(--ag-grid-size) * 3) 0;
+    width: 100%;
+
+    &:focus {
+        box-shadow: none;
+    }
+}
+
+.ag-side-button-button:focus-visible {
+    box-shadow: inset var(--ag-focus-shadow);
+}
+
+.ag-side-button-label {
+    writing-mode: vertical-lr;
+}
+
+@media (max-resolution: 1.5x) {
+    /* On Windows, on low res screens only, most custom fonts look awful in
+         vertical-lr mode. Use "Segoe UI" in preference. In practice this is a
+         Windows-only fix since most non-Windows computers don't have Segoe UI
+         installed. */
+    .ag-side-button-label {
+        font-family: 'Segoe UI', var(--ag-font-family);
+        /* ... and additionally apply a rotation to fix rendering in Firefox */
+        transform: rotate(0.05deg);
+    }
+}
+
+/* sidebar visually on left */
+.ag-ltr .ag-side-bar-left,
+.ag-rtl .ag-side-bar-right {
+    border-right: var(--ag-side-panel-border);
+
+    .ag-tool-panel-wrapper {
+        /*rtl:ignore*/
+        border-left: var(--ag-side-panel-border);
+    }
+}
+/* sidebar visually on right */
+.ag-rtl .ag-side-bar-left,
+.ag-ltr .ag-side-bar-right {
+    border-left: var(--ag-side-panel-border);
+
+    .ag-tool-panel-wrapper {
+        /*rtl:ignore*/
+        border-right: var(--ag-side-panel-border);
+    }
+}
+
+.ag-chart-menu-panel {
+    border-left: var(--ag-side-panel-border);
+}

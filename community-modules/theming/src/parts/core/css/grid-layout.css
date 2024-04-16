@@ -1,0 +1,273 @@
+.ag-rtl {
+    text-align: right;
+}
+
+.ag-row > .ag-cell-wrapper.ag-row-group {
+    border: solid 1px blue;
+    padding-left: calc(
+        var(--ag-cell-horizontal-padding) + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
+    );
+}
+
+.ag-cell-wrapper.ag-row-group {
+    padding-left: calc(var(--ag-indentation-level) * var(--ag-row-group-indent-size));
+}
+
+.ag-pivot-leaf-group {
+    margin-left: var(--ag-row-group-indent-size);
+}
+
+.ag-row-group-leaf-indent {
+    margin-left: var(--ag-row-group-indent-size);
+}
+
+.ag-value-change-delta {
+    padding: 0 2px;
+}
+
+.ag-value-change-delta-up {
+    color: var(--ag-value-change-delta-up-color);
+}
+
+.ag-value-change-delta-down {
+    color: var(--ag-value-change-delta-down-color);
+}
+
+.ag-value-change-value {
+    background-color: transparent;
+    border-radius: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    transition: background-color 1s;
+}
+
+.ag-value-change-value-highlight {
+    background-color: var(--ag-value-change-value-highlight-background-color);
+    transition: background-color 0.1s;
+}
+
+.ag-cell-data-changed {
+    background-color: var(--ag-value-change-value-highlight-background-color) !important;
+}
+
+.ag-cell-data-changed-animation {
+    background-color: transparent;
+}
+
+.ag-cell-highlight {
+    background-color: var(--ag-range-selection-highlight-color) !important;
+}
+
+.ag-row {
+    background-color: var(--ag-background-color);
+    color: var(--ag-data-color);
+    white-space: nowrap;
+    width: 100%;
+    height: var(--ag-row-height);
+
+    border-bottom: var(--ag-row-border);
+
+    /* Work out the correct line height. --ag-row-height is the default row
+     height, --ag-line-height is the actual row height, only set if variable row
+     heights are enabled.
+
+  - use line height rather than flex align to centre single line text within a
+    default height row, because if the row is larger than the default height
+    then we want content to be top aligned.
+  - don't allow line height to be larger than the actual row height as then
+    content won't fit
+    */
+    --ag-internal-content-line-height: min(calc(var(--ag-row-height) - 1px), var(--ag-line-height, 1000px));
+}
+
+.ag-group-expanded,
+.ag-group-contracted {
+    cursor: pointer;
+}
+
+.ag-cell,
+.ag-full-width-row .ag-cell-wrapper.ag-row-group {
+    /* There is always a 1px border around cells, defaulting to transparent to
+  avoid layout shift when we add a selection border. */
+    border: 1px solid transparent;
+    line-height: var(--ag-internal-content-line-height);
+}
+
+.ag-cell {
+    border-right: var(--ag-column-border);
+}
+
+.ag-cell-wrapper {
+    display: flex;
+    align-items: center;
+
+    &.ag-row-group {
+        align-items: flex-start;
+    }
+
+    > *:not(.ag-cell-value):not(.ag-group-value) {
+        /* cell widgets like checkboxes don't respond to line-height, so set their
+    height to vertically centre them */
+        height: var(--ag-internal-content-line-height);
+        display: flex;
+        align-items: center;
+    }
+}
+
+.ag-row-drag,
+.ag-selection-checkbox,
+.ag-group-expanded,
+.ag-group-contracted {
+    margin-right: var(--ag-cell-widget-spacing);
+}
+.ag-group-child-count {
+    margin-left: 3px;
+}
+
+.ag-row-highlight-above::after,
+.ag-row-highlight-below::after {
+    content: '';
+    position: absolute;
+    width: calc(100% - 1px);
+    height: 1px;
+    background-color: var(--ag-range-selection-border-color);
+    left: 1px;
+}
+
+.ag-row-highlight-above::after {
+    top: -1px;
+}
+
+.ag-row-highlight-above.ag-row-first::after {
+    top: 0;
+}
+
+.ag-row-highlight-below::after {
+    bottom: 0px;
+}
+
+.ag-row-odd {
+    background-color: var(--ag-odd-row-background-color);
+}
+
+/* row selection and hover colors are added on a ::before pseudo element so
+  that they overlay on top of the alternating row backgrounds rather than
+  replacing them */
+.ag-row-selected::before {
+    content: '';
+    background-color: var(--ag-selected-row-background-color);
+    display: block;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.ag-row-hover:not(.ag-full-width-row)::before,
+.ag-row-hover.ag-full-width-row.ag-row-group::before {
+    content: '';
+    background-color: var(--ag-row-hover-color);
+    display: block;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.ag-row-hover.ag-row-selected::before {
+    background-color: var(--ag-row-hover-color);
+    /* apply hover with a background-image so that it overlays on top of the
+    existing background-color */
+    background-image: linear-gradient(var(--ag-selected-row-background-color), var(--ag-selected-row-background-color));
+}
+
+/* Default the content position to relative so that it doesn't appear under the background */
+.ag-row-hover.ag-full-width-row.ag-row-group > * {
+    position: relative;
+}
+
+.ag-column-hover {
+    background-color: var(--ag-column-hover-color);
+}
+
+.ag-right-aligned-cell {
+    text-align: right;
+}
+
+/* right-align numeric values in cells with wrappers */
+.ag-right-aligned-cell .ag-cell-value,
+.ag-right-aligned-cell .ag-group-value {
+    /*rtl:ignore*/
+    margin-left: auto;
+}
+
+.ag-cell,
+.ag-full-width-row .ag-cell-wrapper.ag-row-group {
+    padding-left: calc(var(--ag-cell-horizontal-padding) - 1px);
+    padding-right: calc(var(--ag-cell-horizontal-padding) - 1px);
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+
+/* in full width rows, a cell renderer is rendered directly into a row with no
+  cell in between, in which case we need to apply the padding to the cell
+  renderer's wrapper. */
+.ag-row > .ag-cell-wrapper {
+    padding-left: calc(var(--ag-cell-horizontal-padding) - 1px);
+    padding-right: calc(var(--ag-cell-horizontal-padding) - 1px);
+}
+
+.ag-row-dragging {
+    cursor: move;
+    opacity: 0.5;
+}
+
+.ag-details-row {
+    padding: calc(var(--ag-grid-size) * 3.5);
+    background-color: var(--ag-background-color);
+}
+
+.ag-layout-auto-height,
+.ag-layout-print {
+    .ag-center-cols-viewport,
+    .ag-center-cols-container {
+        min-height: 150px;
+    }
+}
+
+.ag-overlay-loading-wrapper {
+    background-color: var(--ag-modal-overlay-background-color);
+}
+
+/* in auto-height mode with no rows, add padding to prevent grid being too small */
+.ag-overlay-no-rows-wrapper.ag-layout-auto-height {
+    padding-top: 60px;
+}
+
+.ag-loading {
+    padding-left: var(--ag-cell-horizontal-padding);
+    display: flex;
+    height: 100%;
+    align-items: center;
+}
+
+.ag-loading-icon {
+    padding-right: var(--ag-cell-widget-spacing);
+}
+
+.ag-icon-loading {
+    animation-name: spin;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.ag-details-row {
+    padding: calc(var(--ag-grid-size) * 3.75);
+}

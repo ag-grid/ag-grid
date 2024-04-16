@@ -1,0 +1,37 @@
+.ag-button {
+    border-radius: 0px;
+}
+
+.ag-button:hover {
+    background-color: transparent;
+}
+
+.ag-standard-button {
+    font-family: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+    border-radius: var(--ag-border-radius);
+    border: var(--ag-input-border);
+    background-color: var(--ag-background-color);
+    padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 2);
+    cursor: pointer;
+
+    &:hover {
+        /* TODO different variable */
+        background-color: var(--ag-row-hover-color);
+    }
+
+    &:active {
+        border-color: var(--ag-accent-color);
+    }
+
+    &:disabled {
+        color: var(--ag-input-disabled-text-color);
+        background-color: var(--ag-input-disabled-background-color);
+        border: var(--ag-input-disabled-border);
+    }
+}
+
+:where(input[class^='ag-'][type='button'], button[class^='ag-']):focus-visible {
+    box-shadow: var(--ag-focus-shadow);
+}

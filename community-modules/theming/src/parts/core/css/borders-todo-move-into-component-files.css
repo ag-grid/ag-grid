@@ -1,0 +1,15 @@
+/* Above footers */
+
+.ag-paging-panel {
+    border-top: var(--ag-footer-border);
+}
+
+/* Pinned row borders */
+
+.ag-floating-top {
+    border-bottom: var(--ag-pinned-row-border);
+}
+
+.ag-floating-bottom {
+    border-top: var(--ag-pinned-row-border);
+}

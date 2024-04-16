@@ -1,0 +1,74 @@
+/**
+ * NOTE: these don't need RTL versions when pinning columns, "left" always means
+ * visually on the left
+ */
+
+.ag-pinned-left-header,
+.ag-pinned-right-header {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+}
+
+.ag-body-horizontal-scroll:not(.ag-scrollbar-invisible) {
+    .ag-horizontal-left-spacer:not(.ag-scroller-corner) {
+        /*rtl:ignore*/
+        border-right: var(--ag-pinned-column-border);
+    }
+
+    .ag-horizontal-right-spacer:not(.ag-scroller-corner) {
+        /*rtl:ignore*/
+        border-left: var(--ag-pinned-column-border);
+    }
+}
+
+.ag-pinned-right-header {
+    /*rtl:ignore*/
+    border-left: var(--ag-pinned-column-border);
+}
+
+.ag-pinned-left-header {
+    /*rtl:ignore*/
+    border-right: var(--ag-pinned-column-border);
+}
+
+.ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left):not(.ag-cell-range-single-cell) {
+    /*rtl:ignore*/
+    border-left: var(--ag-pinned-column-border);
+}
+
+.ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right):not(.ag-cell-range-single-cell) {
+    /*rtl:ignore*/
+    border-right: var(--ag-pinned-column-border);
+}
+
+/*  */
+.ag-pinned-left-header .ag-header-cell-resize::after {
+    /*rtl:ignore*/
+    left: calc(50% - var(--ag-header-column-resize-handle-width));
+}
+
+.ag-pinned-right-header .ag-header-cell-resize::after {
+    /*rtl:ignore*/
+    left: 50%;
+}
+
+.ag-pinned-left-header {
+    height: 100%;
+}
+
+.ag-pinned-right-header {
+    height: 100%;
+}
+
+.ag-pinned-left-header .ag-header-cell-resize {
+    /* pinned left headers always have their resize on the right, even in RTL mode */
+    /*rtl:ignore*/
+    right: -4px;
+}
+
+.ag-pinned-right-header .ag-header-cell-resize {
+    /* pinned right headers always have their resize on the left, even in RTL mode */
+    /*rtl:ignore*/
+    left: -4px;
+}
