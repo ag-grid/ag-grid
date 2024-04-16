@@ -20,7 +20,7 @@ import mergeCellFactory from './mergeCell';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 import { getExcelColumnName } from '../../assets/excelUtils';
 import { ExcelGridSerializingParams } from '../../excelSerializingSession';
-import { ExcelImage } from '@ag-grid-community/core';
+
 
 const getMergedCellsAndAddColumnGroups = (rows: ExcelRow[], cols: ExcelColumn[], suppressColumnOutline: boolean): string[] => {
     const mergedCells: string[] = [];
@@ -194,7 +194,8 @@ const replaceHeaderFooterTokens = (value: string): string => {
         '&[Time]': '&T',
         '&[Tab]': '&A',
         '&[Path]': '&Z',
-        '&[File]': '&F'
+        '&[File]': '&F',
+        '&[Picture]': '&G'
     };
 
     _.iterateObject<string>(map, (key, val) => {
@@ -236,35 +237,47 @@ const applyHeaderFontStyle = (headerString: string, font?: ExcelFont): string =>
     return headerString;
 };
 
-const processHeaderFooterContent = (content: ExcelHeaderFooterContent[]): string =>
-    content.reduce((prev, curr) => {
+const processHeaderFooterContent = (content: ExcelHeaderFooterContent[], location: 'header' | 'footer'): string =>
+    content.reduce((prev, curr, idx) => {
         const pos = getHeaderPosition(curr.position);
         const output = applyHeaderFontStyle(`${prev}&amp;${pos}`, curr.font);
+        const PositionMap: ['Left', 'Center', 'Right'] = ['Left', 'Center', 'Right'];
+
+        if (!curr.position) {
+            curr.position = PositionMap[idx];
+        }
+
+        const { image } = curr;
+        if (curr.value === '&[Picture]' && image) {
+            if (!image.position) {
+                image.position = {}
+            }
+
+            if (location === 'header') {
+                image.position.headerPosition = curr.position;
+            } else {
+                image.position.footerPosition = curr.position;
+            }
+
+            ExcelXlsxFactory.buildImageMap(image)
+        }
 
         return `${output}${_.escapeString(replaceHeaderFooterTokens(curr.value))}`;
     }, '');
 
-const buildHeaderFooter = (
-    headerFooterConfig: ExcelHeaderFooterConfig,
-    hasWatermarkImage: boolean = false
-): XmlElement[] => {
+const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElement[] => {
     const rules: ['all', 'first', 'even'] = ['all', 'first', 'even'];
     const headersAndFooters = [] as XmlElement[];
 
-    const headerFooterConfigToUse: ExcelHeaderFooterConfig = {
-        ...headerFooterConfig,
-        // When there is a watermark image, the header/footer should be applied to all pages
-        all: headerFooterConfig?.all ?? (hasWatermarkImage ? { header: [{ value: '&G' }] } : undefined)
-    }
-
     rules.forEach(rule => {
-        const headerFooter = headerFooterConfigToUse[rule];
+        const headerFooter = headerFooterConfig[rule];
         const namePrefix = rule === 'all' ? 'odd' : rule;
 
         if (!headerFooter) { return; }
 
         for (const [key, value] of Object.entries<ExcelHeaderFooterContent[]>(headerFooter)) {
             const nameSuffix = `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
+            const location = key as 'header' | 'footer';
 
             if (value) {
                 headersAndFooters.push({
@@ -274,7 +287,7 @@ const buildHeaderFooter = (
                             'xml:space': 'preserve'
                         }
                     },
-                    textNode: processHeaderFooterContent(value)
+                    textNode: processHeaderFooterContent(value, location)
                 });
             }
         }
@@ -283,21 +296,10 @@ const buildHeaderFooter = (
     return headersAndFooters;
 };
 
-const addHeaderFooter = (
-    headerFooterConfig?: ExcelHeaderFooterConfig,
-    watermarkImageConfig?: ExcelImage,
+const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig
 ) => {
     return (params: ComposedWorksheetParams) => {
-        if (!headerFooterConfig && !watermarkImageConfig) { return params; }
-        if (!headerFooterConfig) {
-            // Case where we add header/footer only markup for the purpose of adding a watermark image.
-            params.children.push({
-                name: 'headerFooter',
-                children: buildHeaderFooter({}, true),
-            });
-
-            return params;
-        }
+        if (!headerFooterConfig) { return params; }
 
         const differentFirst = headerFooterConfig.first != null ? 1 : 0;
         const differentOddEven = headerFooterConfig.even != null ? 1 : 0;
@@ -310,28 +312,11 @@ const addHeaderFooter = (
                     differentOddEven
                 }
             },
-            children: buildHeaderFooter(headerFooterConfig, watermarkImageConfig !== undefined),
+            children: buildHeaderFooter(headerFooterConfig),
         });
         return params;
     };
 };
-
-const addWatermarkRel = (watermarkConfig?: ExcelImage) => {
-    return (params: ComposedWorksheetParams) => {
-        if (watermarkConfig) {
-            params.children.push({
-                name: 'legacyDrawingHF',
-                properties: {
-                    rawMap: {
-                        'r:id': `rId${++params.rIdCounter}`
-                    }
-                }
-            });
-        }
-
-        return params;
-    };
-}
 
 const addExcelTableRel = (excelTable?: ExcelDataTable) => {
     return (params: ComposedWorksheetParams) => {
@@ -360,9 +345,28 @@ const addExcelTableRel = (excelTable?: ExcelDataTable) => {
 
 const addDrawingRel = (currentSheet: number) => {
     return (params: ComposedWorksheetParams) => {
-        if (ExcelXlsxFactory.worksheetImages.get(currentSheet)) {
+        const worksheetImages = ExcelXlsxFactory.worksheetImages.get(currentSheet);
+        if (worksheetImages && worksheetImages.some(img => !img.position?.headerPosition && img.position?.footerPosition)) {
             params.children.push({
                 name: 'drawing',
+                properties: {
+                    rawMap: {
+                        'r:id': `rId${++params.rIdCounter}`
+                    }
+                }
+            });
+        }
+
+        return params;
+    };
+};
+
+
+const addVmlDrawingRel = (currentSheet: number) => {
+    return (params: ComposedWorksheetParams) => {
+        if (ExcelXlsxFactory.worksheetHeaderFooterImages.get(currentSheet)) {
+            params.children.push({
+                name: 'legacyDrawingHF',
                 properties: {
                     rawMap: {
                         'r:id': `rId${++params.rIdCounter}`
@@ -433,7 +437,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
         const { rows, columns } = table;
         const mergedCells = (columns && columns.length) ? getMergedCellsAndAddColumnGroups(rows, columns, !!suppressColumnOutline) : [];
 
-        const { worksheetWatermarkImage, worksheetDataTables } = ExcelXlsxFactory;
+        const { worksheetDataTables } = ExcelXlsxFactory;
         const worksheetExcelTables = worksheetDataTables.get(currentSheet);
 
         const createWorksheetChildren = _.compose<ComposedWorksheetParams>(
@@ -444,10 +448,10 @@ const worksheetFactory: ExcelOOXMLTemplate = {
             addMergeCells(mergedCells),
             addPageMargins(margins),
             addPageSetup(pageSetup),
-            addHeaderFooter(headerFooterConfig, worksheetWatermarkImage),
+            addHeaderFooter(headerFooterConfig),
             addDrawingRel(currentSheet),
-            addExcelTableRel(worksheetExcelTables),
-            addWatermarkRel(worksheetWatermarkImage),
+            addVmlDrawingRel(currentSheet),
+            addExcelTableRel(worksheetExcelTables)
         );
 
         const { children } = createWorksheetChildren({ children: [], rIdCounter: 0 });

@@ -10,7 +10,7 @@ export function iterateObject<T>(object: { [p: string]: T; } | T[] | null | unde
         return;
     }
 
-    for (const [key, value ] of Object.entries(object)) {
+    for (const [key, value] of Object.entries<T>(object)) {
         callback(key, value);
     }
 }

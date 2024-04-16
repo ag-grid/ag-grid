@@ -250,7 +250,15 @@ export interface ExcelImagePosition {
     /** The column containing this image. This property is set automatically, don't change it unless you know what you are doing. */
     column?: number;
     /**
-     * The amount of columns this image will cover.
+     * The header position containing this image.
+     */
+    headerPosition?: ExcelHeaderFooterPosition;
+    /**
+     * The footer position containing this image.
+     */
+    footerPosition?: ExcelHeaderFooterPosition;
+    /**
+     * The amount of columns this image will cover. Only relevant when not associated with a Header or Footer.
      * @default 1
      */
     colSpan?: number;
@@ -407,10 +415,6 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      * @default false
      **/
     exportAsExcelTable?: boolean | ExcelTableConfig;
-    /**
-     * Used to add a watermark image to the Excel document.
-     */
-    watermark?: ExcelImage;
     /** The configuration for header and footers. */
     headerFooterConfig?: ExcelHeaderFooterConfig;
     /**
@@ -488,16 +492,22 @@ type ExcelFooter = {
     footer: ExcelHeaderFooterContent[]
 }
 
+type ExcelHeaderFooterPosition = 'Left' | 'Center' | 'Right'
+
 export type ExcelHeaderFooter = ExcelFooter | ExcelHeader | (ExcelFooter & ExcelHeader);
 
 export interface ExcelHeaderFooterContent {
     /** The value of the text to be included in the header. */
     value: string;
     /**
+     * When value is `&[Picture]`, this should be used to container the image.
+     */
+    image?: ExcelImage;
+    /**
      * Configures where the text should be added: `Left`, `Center` or `Right`.
      * @default 'Left'
      */
-    position?: 'Left' | 'Center' | 'Right';
+    position?: ExcelHeaderFooterPosition;
     /** The font style of the header/footer value. */
     font?: ExcelFont;
 }

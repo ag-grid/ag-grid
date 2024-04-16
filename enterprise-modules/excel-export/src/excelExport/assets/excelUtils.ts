@@ -42,57 +42,62 @@ export const getHeightFromProperty = (rowIndex: number, height?: number | ((para
 export const setExcelImageTotalWidth = (image: ExcelCalculatedImage, columnsToExport: Column[]): void => {
     const { colSpan, column } = image.position!;
 
-    if (image.width) {
-        if (colSpan) {
-            const columnsInSpan = columnsToExport.slice(column! - 1, column! + colSpan - 1);
-            let totalWidth = 0;
-            for (let i = 0; i < columnsInSpan.length; i++) {
-                const colWidth = columnsInSpan[i].getActualWidth();
-                if (image.width < totalWidth + colWidth) {
-                    image.position!.colSpan = i + 1;
-                    image.totalWidth = image.width;
-                    image.width = image.totalWidth - totalWidth;
-                    break;
-                }
-                totalWidth += colWidth;
+    if (!image.width) { return; }
+
+    if (colSpan) {
+        const columnsInSpan = columnsToExport.slice(column! - 1, column! + colSpan - 1);
+        let totalWidth = 0;
+        for (let i = 0; i < columnsInSpan.length; i++) {
+            const colWidth = columnsInSpan[i].getActualWidth();
+            if (image.width < totalWidth + colWidth) {
+                image.position!.colSpan = i + 1;
+                image.totalWidth = image.width;
+                image.width = image.totalWidth - totalWidth;
+                break;
             }
-        } else {
-            image.totalWidth = image.width;
+            totalWidth += colWidth;
         }
+    } else {
+        image.totalWidth = image.width;
     }
 };
 
 export const setExcelImageTotalHeight = (image: ExcelCalculatedImage, rowHeight?: number | ((params: RowHeightCallbackParams) => number)): void => {
     const { rowSpan, row } = image.position!;
 
-    if (image.height) {
-        if (rowSpan) {
-            let totalHeight = 0;
-            let counter = 0;
-            for (let i = row!; i < row! + rowSpan; i++) {
-                const nextRowHeight = pointsToPixel(getHeightFromProperty(i, rowHeight) || 20);
-                if (image.height < totalHeight + nextRowHeight) {
-                    image.position!.rowSpan = counter + 1;
-                    image.totalHeight = image.height;
-                    image.height = image.totalHeight - totalHeight;
-                    break;
-                }
-                totalHeight += nextRowHeight;
-                counter++;
+    if (!image.height) { return; }
+
+    if (rowSpan) {
+        let totalHeight = 0;
+        let counter = 0;
+        for (let i = row!; i < row! + rowSpan; i++) {
+            const nextRowHeight = pointsToPixel(getHeightFromProperty(i, rowHeight) || 20);
+            if (image.height < totalHeight + nextRowHeight) {
+                image.position!.rowSpan = counter + 1;
+                image.totalHeight = image.height;
+                image.height = image.totalHeight - totalHeight;
+                break;
             }
-        } else {
-            image.totalHeight = image.height;
+            totalHeight += nextRowHeight;
+            counter++;
         }
+    } else {
+        image.totalHeight = image.height;
     }
 };
 
-export const createXmlPart = (body: XmlElement): string => {
+export const createXmlPart = (body: XmlElement, skipHeader?: boolean): string => {
     const header = XmlFactory.createHeader({
         encoding: 'UTF-8',
         standalone: 'yes'
     });
 
     const xmlBody = XmlFactory.createXml(body);
+
+    if (skipHeader) {
+        return xmlBody;
+    }
+
     return `${header}${xmlBody}`;
 };
 

@@ -52,22 +52,24 @@ const createExcelXMLCoreFolderStructure = (): void => {
 
 const createExcelXmlWorksheets = (data: string[]): void => {
     let imageRelationCounter = 0;
+    let headerFooterImageCounter = 0;
     let tableRelationCounter = 0;
 
-    const { images, worksheetDataTables, worksheetImages, worksheetWatermarkImage } = ExcelXlsxFactory;
+    const { images, worksheetDataTables, worksheetImages, worksheetHeaderFooterImages } = ExcelXlsxFactory;
 
     for (let i = 0; i < data.length; i++) {
         const value = data[i];
         ZipContainer.addFile(`xl/worksheets/sheet${i + 1}.xml`, value, false);
 
-        const hasImages = images.size > 0 && worksheetImages.has(i);
+        const hasImages = worksheetImages.has(i) && worksheetImages.get(i)?.some(img => !img.position?.headerPosition && !img.position?.footerPosition);
         const hasTables = worksheetDataTables.size > 0 && worksheetDataTables.has(i);
-        const hasWatermark = worksheetWatermarkImage !== undefined;
+        const hasHeaderFooterImages = images.size && worksheetHeaderFooterImages.has(i);
 
-        if (!hasImages && !hasTables && !hasWatermark) { continue; }
+        if (!hasImages && !hasTables && !hasHeaderFooterImages) { continue; }
 
         let tableIndex: number | undefined;
         let drawingIndex: number | undefined;
+        let vmlDrawingIndex: number | undefined;
 
         if (hasImages) {
             createExcelXmlDrawings(i, imageRelationCounter);
@@ -75,20 +77,24 @@ const createExcelXmlWorksheets = (data: string[]): void => {
             imageRelationCounter++;
         }
 
+        if (hasHeaderFooterImages) {
+            createExcelVmlDrawings(i, headerFooterImageCounter);
+            vmlDrawingIndex = headerFooterImageCounter;
+            headerFooterImageCounter++
+        }
+
         if (hasTables) {
-            tableIndex = tableRelationCounter;
-            tableRelationCounter++;
+            tableIndex = tableRelationCounter++;
         }
 
         const worksheetRelFile = `xl/worksheets/_rels/sheet${i + 1}.xml.rels`;
-        const watermarkTarget = hasWatermark ? 'vmlDrawing1' : undefined;
 
         ZipContainer.addFile(
             worksheetRelFile,
             ExcelXlsxFactory.createRelationships({
                 tableIndex,
                 drawingIndex,
-                watermarkTarget,
+                vmlDrawingIndex
             }),
         );
     }
@@ -101,6 +107,15 @@ const createExcelXmlDrawings = (sheetIndex: number, drawingIndex: number): void 
 
     ZipContainer.addFile(relFileName, ExcelXlsxFactory.createDrawingRel(sheetIndex));
     ZipContainer.addFile(drawingFileName, ExcelXlsxFactory.createDrawing(sheetIndex));
+};
+
+const createExcelVmlDrawings = (sheetIndex: number, drawingIndex: number): void => {
+    const drawingFolder = 'xl/drawings';
+    const drawingFileName = `${drawingFolder}/vmlDrawing${drawingIndex + 1}.vml`;
+    const relFileName = `${drawingFolder}/_rels/vmlDrawing${drawingIndex + 1}.vml.rels`;
+
+    ZipContainer.addFile(drawingFileName, ExcelXlsxFactory.createVmlDrawing(sheetIndex));
+    ZipContainer.addFile(relFileName, ExcelXlsxFactory.createVmlDrawingRel(sheetIndex));
 };
 
 const createExcelXmlTables = (): void => {
@@ -122,21 +137,6 @@ const createExcelXmlTables = (): void => {
             ExcelXlsxFactory.createTable(dataTable, i),
         );
     }
-}
-
-const createWatermarkDrawing = (): void => {
-    const { worksheetWatermarkImage } = ExcelXlsxFactory;
-
-    if (!worksheetWatermarkImage) { return; }
-
-    const imageFileName = `watermarkImage.${worksheetWatermarkImage.imageType}`;
-    const drawingVmlFileName = `xl/drawings/vmlDrawing1.vml`;
-    const drawingRelFileName = `xl/drawings/_rels/vmlDrawing1.vml.rels`;
-    const imageFilePath = `xl/media/${imageFileName}`;
-
-    ZipContainer.addFile(drawingVmlFileName, ExcelXlsxFactory.createWatermarkVmlDrawing());
-    ZipContainer.addFile(drawingRelFileName, ExcelXlsxFactory.createWatermarkVmlDrawingRels(imageFileName));
-    ZipContainer.addFile(imageFilePath, worksheetWatermarkImage.base64, true);
 }
 
 const createExcelXmlCoreSheets = (fontSize: number, author: string, sheetLen: number): void => {
@@ -169,7 +169,6 @@ const createExcelFileForExcel = (data: string[], options: {
 
     createExcelXMLCoreFolderStructure();
     createExcelXmlTables();
-    createWatermarkDrawing();
     createExcelXmlWorksheets(data);
     createExcelXmlCoreSheets(fontSize, author, data.length);
 

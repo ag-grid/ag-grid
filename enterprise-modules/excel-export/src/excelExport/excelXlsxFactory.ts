@@ -9,7 +9,6 @@ import {
     RowHeightCallbackParams,
     _
 } from '@ag-grid-community/core';
-import {XmlFactory} from '@ag-grid-community/csv-export';
 
 import coreFactory from './files/ooxml/core';
 import contentTypesFactory from './files/ooxml/contentTypes';
@@ -18,7 +17,6 @@ import tableFactory from './files/ooxml/table';
 import officeThemeFactory from './files/ooxml/themes/office';
 import sharedStringsFactory from './files/ooxml/sharedStrings';
 import stylesheetFactory, { registerStyles } from './files/ooxml/styles/stylesheet';
-import watermarkVmlDrawing from './files/ooxml/watermarkVml';
 import workbookFactory from './files/ooxml/workbook';
 import worksheetFactory from './files/ooxml/worksheet';
 import relationshipsFactory from './files/ooxml/relationships';
@@ -26,6 +24,7 @@ import relationshipsFactory from './files/ooxml/relationships';
 import { setExcelImageTotalHeight, setExcelImageTotalWidth, createXmlPart } from './assets/excelUtils';
 import { ImageIdMap, ExcelCalculatedImage, ExcelDataTable } from './assets/excelInterfaces';
 import { ExcelGridSerializingParams } from './excelSerializingSession';
+import vmlDrawingFactory from './files/ooxml/vmlDrawing';
 
 /**
  * See links for more info on the Office Open XML format being used:
@@ -41,6 +40,8 @@ export class ExcelXlsxFactory {
     public static images: Map<string, { sheetId: number, image: ExcelCalculatedImage[] }[]> = new Map();
     /** Maps sheets to images */
     public static worksheetImages: Map<number, ExcelCalculatedImage[]> = new Map();
+    /** Maps sheets to header/footer images */
+    public static worksheetHeaderFooterImages: Map<number, string[]> = new Map();
     /** Maps all workbook images to a global Id */
     public static workbookImageIds: ImageIdMap = new Map();
     /** Maps all sheet images to unique Ids */
@@ -49,9 +50,6 @@ export class ExcelXlsxFactory {
     public static worksheetDataTables: Map<number, ExcelDataTable> = new Map();
     /** Default name to be used for tables when no name is provided */
     public static defaultTableDisplayName = 'AG-GRID-TABLE';
-
-    /** Defines an image to be used as a watermark. If present, it will be applied to all sheets */
-    public static worksheetWatermarkImage: ExcelImage | undefined;
 
     public static factoryMode: ExcelFactoryMode = ExcelFactoryMode.SINGLE_SHEET;
 
@@ -78,7 +76,6 @@ export class ExcelXlsxFactory {
             }
         }
 
-        this.processWatermarkConfig(newConfig);
         this.processTableConfig(worksheet, newConfig);
         return this.createWorksheet(worksheet, newConfig);
     }
@@ -110,23 +107,36 @@ export class ExcelXlsxFactory {
         this.worksheetDataTables.set(sheetIndex, table);
     }
 
-    public static buildImageMap(image: ExcelImage, rowIndex: number, col: Column, columnsToExport: Column[], rowHeight?: number | ((params: RowHeightCallbackParams) => number)): void {
-        const currentSheetIndex = this.sheetNames.length;
+    public static buildImageMap(image: ExcelImage, rowIndex?: number, col?: Column, columnsToExport?: Column[], rowHeight?: number | ((params: RowHeightCallbackParams) => number)): void {
+        let currentSheetIndex = this.sheetNames.length;
         const registeredImage = this.images.get(image.id);
 
-        if (!image.position || !image.position.row || !image.position.column) {
-            if (!image.position) { image.position = {}; }
-
-            image.position = Object.assign({}, image.position, {
-                row: rowIndex,
-                column: columnsToExport.indexOf(col) + 1
-            });
-        }
-
+        const { row, column, headerPosition, footerPosition } = image.position || {};
         const calculatedImage = image as ExcelCalculatedImage;
 
-        setExcelImageTotalWidth(calculatedImage, columnsToExport);
-        setExcelImageTotalHeight(calculatedImage, rowHeight);
+        if (!headerPosition && !footerPosition && columnsToExport) {
+            if (rowIndex != null && col != null && (!row || !column)) {
+                if (!image.position) { image.position = {}; }
+
+                image.position = Object.assign({}, image.position, {
+                    row: rowIndex,
+                    column: columnsToExport.indexOf(col) + 1
+                });
+            }
+            setExcelImageTotalWidth(calculatedImage, columnsToExport);
+            setExcelImageTotalHeight(calculatedImage, rowHeight);
+        } else {
+            // we process Header / Footer images after the sheet has been created,
+            // so we need to subtract 1 here to make sure Header/Footer images
+            // are associated with the correct worksheet.
+            currentSheetIndex -= 1;
+            if (image.width) {
+                calculatedImage.totalWidth = image.width;
+            }
+            if (image.height) {
+                calculatedImage.totalHeight = image.height;
+            }
+        }
 
         if (registeredImage) {
             const currentSheetImages = registeredImage.find(currentImage => currentImage.sheetId === currentSheetIndex);
@@ -210,13 +220,6 @@ export class ExcelXlsxFactory {
         });
     }
 
-    private static processWatermarkConfig(
-        config: ExcelGridSerializingParams
-    ): void {
-        if (!config.watermark) { return; }
-        this.worksheetWatermarkImage = {...config.watermark};
-    }
-
     private static buildSheetImageMap(sheetIndex: number, image: ExcelCalculatedImage): void {
         let worksheetImageIdMap = this.worksheetImageIds.get(sheetIndex);
 
@@ -234,6 +237,18 @@ export class ExcelXlsxFactory {
             sheetImages.push(image);
             if (!worksheetImageIdMap.get(image.id)) {
                 worksheetImageIdMap.set(image.id, { index: worksheetImageIdMap.size, type: image.imageType });
+            }
+        }
+
+        if (image.position && (image.position.headerPosition || image.position.footerPosition)) {
+            let headerFooterImagesForSheet = this.worksheetHeaderFooterImages.get(sheetIndex);
+            if (!headerFooterImagesForSheet) {
+                headerFooterImagesForSheet = [];
+                this.worksheetHeaderFooterImages.set(sheetIndex, headerFooterImagesForSheet)
+            }
+
+            if (headerFooterImagesForSheet.indexOf(image.id) === -1) {
+                headerFooterImagesForSheet.push(image.id);
             }
         }
     }
@@ -280,18 +295,6 @@ export class ExcelXlsxFactory {
 
     public static createWorkbook(): string {
         return createXmlPart(workbookFactory.getTemplate(this.sheetNames));
-    }
-
-    public static createWatermarkVmlDrawing(): string {
-        return XmlFactory.createXml(watermarkVmlDrawing.getTemplate());
-    }
-
-    public static createWatermarkVmlDrawingRels(imageFileName: string): string {
-        return createXmlPart(relationshipsFactory.getTemplate([{
-            Id: 'rId1',
-            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
-            Target: `../media/${imageFileName}`
-        }]));
     }
 
     public static createStylesheet(defaultFontSize: number): string {
@@ -363,35 +366,63 @@ export class ExcelXlsxFactory {
     }
 
     public static createDrawingRel(sheetIndex: number) {
-        const worksheetImageIds = this.worksheetImageIds.get(sheetIndex);
+        const worksheetImageIds = this.worksheetImageIds.get(sheetIndex) || [];
+        const worksheetHeaderFooterImages = this.worksheetHeaderFooterImages.get(sheetIndex);
+
         const XMLArr: ExcelRelationship[] = [];
 
-        worksheetImageIds!.forEach((value, key) => {
+        for (const[ key, value ] of worksheetImageIds) {
+            if (worksheetHeaderFooterImages?.indexOf(key) !== -1) { continue; }
+
             XMLArr.push({
                 Id: `rId${value.index + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
                 Target: `../media/image${this.workbookImageIds.get(key)!.index + 1}.${value.type}`
             });
-        });
+        }
+
+        return createXmlPart(relationshipsFactory.getTemplate(XMLArr));
+    }
+
+    public static createVmlDrawing(sheetIndex: number) {
+        return createXmlPart(vmlDrawingFactory.getTemplate({ sheetIndex }), true)
+    }
+
+    public static createVmlDrawingRel(sheetIndex: number) {
+        const worksheetHeaderFooterImages = this.worksheetHeaderFooterImages.get(sheetIndex) || [];
+        const XMLArr: ExcelRelationship[] = [];
+
+        for (let i = 0; i < worksheetHeaderFooterImages.length; i++) {
+            const imageId = worksheetHeaderFooterImages[i];
+            const image = this.workbookImageIds.get(imageId);
+
+            if (!image) { continue; }
+
+            XMLArr.push({
+                Id: `rId${i + 1}`,
+                Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
+                Target: `../media/image${image.index + 1}.${image.type}`
+            });
+        }
 
         return createXmlPart(relationshipsFactory.getTemplate(XMLArr));
     }
 
     public static createRelationships({
         drawingIndex,
+        vmlDrawingIndex,
         tableIndex,
-        watermarkTarget,
     } : {
-        drawingIndex?: number,
-        tableIndex?: number,
-        watermarkTarget?: string,
+        drawingIndex?: number;
+        vmlDrawingIndex?: number;
+        tableIndex?: number;
     } = {}) {
-        if (drawingIndex === undefined && tableIndex === undefined && watermarkTarget === undefined) {
+        if (drawingIndex === undefined && vmlDrawingIndex === undefined && tableIndex === undefined) {
             return '';
         }
 
         const config = [];
-        if (typeof drawingIndex === 'number') {
+        if (drawingIndex != null) {
             config.push({
                 Id: `rId${config.length + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing',
@@ -399,19 +430,19 @@ export class ExcelXlsxFactory {
             });
         }
 
-        if (typeof tableIndex === 'number') {
+        if (vmlDrawingIndex != null) {
+            config.push({
+                Id: `rId${config.length + 1}`,
+                Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing',
+                Target: `../drawings/vmlDrawing${vmlDrawingIndex + 1}.vml`
+            });
+        }
+
+        if (tableIndex != null) {
             config.push({
                 Id: `rId${config.length + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
                 Target: `../tables/${this.getTableNameFromIndex(tableIndex)}.xml`
-            });
-        }
-
-        if (watermarkTarget) {
-            config.push({
-                Id: `rId${config.length + 1}`,
-                Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing',
-                Target: `../drawings/${watermarkTarget}.xml`
             });
         }
 

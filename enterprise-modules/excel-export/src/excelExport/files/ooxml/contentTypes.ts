@@ -1,6 +1,7 @@
 import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 import contentTypeFactory from './contentType';
+import { XmlElement } from '@ag-grid-community/core';
 
 const contentTypesFactory: ExcelOOXMLTemplate = {
     getTemplate(sheetLen: number) {
@@ -11,9 +12,17 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
             PartName: `/xl/worksheets/sheet${i + 1}.xml`
         }));
 
-        const sheetsWithImages = ExcelXlsxFactory.worksheetImages.size;
+        let sheetsWithImages = 0;
+
+        for (const [sheetId, images] of ExcelXlsxFactory.worksheetImages) {
+            if (images.some(value => !value.position?.headerPosition && !value.position?.footerPosition)) {
+                sheetsWithImages++;
+            }
+        }
+
+        const headerFooterImages = ExcelXlsxFactory.worksheetHeaderFooterImages.size;
         const sheetsWithTables = ExcelXlsxFactory.worksheetDataTables.size;
-        const imageTypesObject: { [ key: string ]: boolean} = {};
+        const imageTypesObject: { [ key: string ]: boolean } = {};
 
         ExcelXlsxFactory.workbookImageIds.forEach((v) => {
             imageTypesObject[v.type] = true;
@@ -25,6 +34,7 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
             PartName: `/xl/drawings/drawing${i + 1}.xml`
         }));
 
+        
         const tableDocs = new Array(sheetsWithTables).fill(undefined).map((v, i) => ({
             name: 'Override',
             ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml',
@@ -37,26 +47,16 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
             Extension: ext
         }));
 
-        const watermarkTypes = [];
-        const watermarkImageType = ExcelXlsxFactory.worksheetWatermarkImage?.imageType;
-        if (watermarkImageType)  {
-            imageTypesObject[watermarkImageType] = true;
+        if (headerFooterImages) {
             imageTypes.push({
                 name: 'Default',
-                ContentType: `image/${watermarkImageType}`,
-                Extension: watermarkImageType
-            });
-
-            watermarkTypes.push({
-                name: 'Default',
-                ContentType: 'application/vnd.openxmlformats-officedocument.vmlDrawing',
-                Extension: 'vml'
+                Extension: 'vml',
+                ContentType: 'application/vnd.openxmlformats-officedocument.vmlDrawing'
             });
         }
 
-        const children = [
+        const children: XmlElement[] = [
             ...imageTypes,
-            ...watermarkTypes,
             {
                 name: 'Default',
                 Extension: 'rels',
