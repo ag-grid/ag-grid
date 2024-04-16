@@ -11,6 +11,7 @@ import {
     SeriesChartType,
     PartialCellRange,
     CellRange,
+    SeriesGroupType,
 } from "@ag-grid-community/core";
 import { ChartDatasource, ChartDatasourceParams } from "../datasource/chartDatasource";
 import { ChartTranslationService } from '../services/chartTranslationService';
@@ -39,6 +40,7 @@ export interface ChartModelParams {
     unlinkChart?: boolean;
     crossFiltering?: boolean;
     seriesChartTypes?: SeriesChartType[];
+    seriesGroupType?: SeriesGroupType;
 }
 
 export class ChartDataModel extends BeanStub {
@@ -82,6 +84,8 @@ export class ChartDataModel extends BeanStub {
 
     private grouping = false;
 
+    public seriesGroupType?: SeriesGroupType;
+
     public constructor(params: ChartModelParams) {
         super();
 
@@ -91,7 +95,9 @@ export class ChartDataModel extends BeanStub {
     }
 
     private setParams(params: ChartModelParams): void {
-        const { chartType, pivotChart, chartThemeName, switchCategorySeries, aggFunc, cellRange, suppressChartRanges, unlinkChart, crossFiltering } = params;
+        const {
+            chartType, pivotChart, chartThemeName, switchCategorySeries, aggFunc, cellRange, suppressChartRanges, unlinkChart, crossFiltering, seriesGroupType
+        } = params;
         this.chartType = chartType;
         this.pivotChart = pivotChart ?? false;
         this.chartThemeName = chartThemeName;
@@ -102,6 +108,7 @@ export class ChartDataModel extends BeanStub {
         this.suppressChartRanges = suppressChartRanges ?? false;
         this.unlinked = !!unlinkChart;
         this.crossFiltering = !!crossFiltering;
+        this.seriesGroupType = seriesGroupType;
     }
 
     @PostConstruct

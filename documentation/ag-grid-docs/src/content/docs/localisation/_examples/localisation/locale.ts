@@ -443,6 +443,10 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     direction: 'Direction',
     horizontal: 'Horizontal',
     vertical: 'Vertical',
+    seriesGroupType: 'Group Type',
+    groupedSeriesGroupType: 'Grouped',
+    stackedSeriesGroupType: 'Stacked',
+    normalizedSeriesGroupType: '100% Stacked',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Level ${variable}. Press ENTER to edit.',

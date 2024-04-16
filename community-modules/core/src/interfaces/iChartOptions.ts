@@ -56,43 +56,6 @@ export interface ChartToolPanelsDef {
     defaultToolPanel?: ChartToolPanelName
 }
 
-export const CHART_TYPE_TO_SERIES_TYPE = {
-    column: 'bar',
-    groupedColumn: 'bar',
-    stackedColumn: 'bar',
-    normalizedColumn: 'bar',
-    bar: 'bar',
-    groupedBar: 'bar',
-    stackedBar: 'bar',
-    normalizedBar: 'bar',
-    line: 'line',
-    scatter: 'scatter',
-    bubble: 'bubble',
-    pie: 'pie',
-    donut: 'donut',
-    doughnut: 'donut',
-    area: 'area',
-    stackedArea: 'area',
-    normalizedArea: 'area',
-    histogram: 'histogram',
-    radarLine: 'radar-line',
-    radarArea: 'radar-area',
-    nightingale: 'nightingale',
-    radialColumn: 'radial-column',
-    radialBar: 'radial-bar',
-    sunburst: 'sunburst',
-    rangeBar: 'range-bar',
-    rangeArea: 'range-area',
-    boxPlot: 'box-plot',
-    treemap: 'treemap',
-    heatmap: 'heatmap',
-    waterfall: 'waterfall',
-} as const;
-
-export const COMBO_CHART_TYPES = ['columnLineCombo', 'areaColumnCombo', 'customCombo'] as const;
-
-export type ChartType = keyof typeof CHART_TYPE_TO_SERIES_TYPE | typeof COMBO_CHART_TYPES[number];
-
 export type CrossFilterChartType =
       'column'
     | 'bar'
@@ -113,3 +76,46 @@ export interface SeriesChartType {
     chartType: ChartType;
     secondaryAxis?: boolean;
 }
+
+export class ChartMappings {
+    public static readonly CHART_TYPE_TO_SERIES_TYPE = {
+        column: 'bar',
+        groupedColumn: 'bar',
+        stackedColumn: 'bar',
+        normalizedColumn: 'bar',
+        bar: 'bar',
+        groupedBar: 'bar',
+        stackedBar: 'bar',
+        normalizedBar: 'bar',
+        line: 'line',
+        scatter: 'scatter',
+        bubble: 'bubble',
+        pie: 'pie',
+        donut: 'donut',
+        doughnut: 'donut',
+        area: 'area',
+        stackedArea: 'area',
+        normalizedArea: 'area',
+        histogram: 'histogram',
+        radarLine: 'radar-line',
+        radarArea: 'radar-area',
+        nightingale: 'nightingale',
+        radialColumn: 'radial-column',
+        radialBar: 'radial-bar',
+        sunburst: 'sunburst',
+        rangeBar: 'range-bar',
+        rangeArea: 'range-area',
+        boxPlot: 'box-plot',
+        treemap: 'treemap',
+        heatmap: 'heatmap',
+        waterfall: 'waterfall',
+    } as const;
+
+    public static readonly COMBO_CHART_TYPES = ['columnLineCombo', 'areaColumnCombo', 'customCombo'] as const;
+
+    public static readonly SERIES_GROUP_TYPES = ['grouped', 'stacked', 'normalized'] as const;
+}
+
+export type ChartType = keyof typeof ChartMappings.CHART_TYPE_TO_SERIES_TYPE | typeof ChartMappings.COMBO_CHART_TYPES[number];
+
+export type SeriesGroupType = typeof ChartMappings.SERIES_GROUP_TYPES[number];
