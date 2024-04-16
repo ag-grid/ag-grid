@@ -34,7 +34,6 @@ const Container = styled('div')`
     height: calc(100vh - var(--header-nav-height) - 32px);
     min-height: 600px;
     margin-top: 16px;
-    margin-bottom: 40px;
     display: flex;
 
     font-family: 'IBM Plex Sans', sans-serif;

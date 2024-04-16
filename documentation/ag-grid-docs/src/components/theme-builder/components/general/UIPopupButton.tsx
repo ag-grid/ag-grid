@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { type UseFloatingOptions, autoUpdate, shift, useFloating } from '@floating-ui/react';
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 
-import { combineClassNames } from '../component-utils';
+import { combineClassNames, useClickAwayListener } from '../component-utils';
 import { Card } from './Card';
 
 export type UIPopupButtonProps = {
@@ -52,36 +52,6 @@ const floatingOptions: Partial<UseFloatingOptions> = {
     whileElementsMounted: autoUpdate,
     placement: 'right-start',
     middleware: [shift({ padding: 8 })],
-};
-
-const useClickAwayListener = (onHide: () => void, ignoreElements: Array<Element | null | undefined>) => {
-    const ignoreElementsRef = useRef(ignoreElements);
-    ignoreElementsRef.current = ignoreElements;
-
-    const ignore = useRef(false);
-
-    useEffect(() => {
-        const handleStart = (event: Event) => {
-            ignore.current = ignoreElementsRef.current.some((el) => el?.contains(event.target as Node));
-        };
-        const handleEnd = () => {
-            if (!ignore.current) {
-                onHide();
-            }
-        };
-
-        document.addEventListener('mousedown', handleStart);
-        document.addEventListener('touchstart', handleStart);
-        document.addEventListener('mouseup', handleEnd);
-        document.addEventListener('touchend', handleEnd);
-
-        return () => {
-            document.removeEventListener('mousedown', handleStart);
-            document.removeEventListener('touchstart', handleStart);
-            document.removeEventListener('mouseup', handleEnd);
-            document.removeEventListener('touchend', handleEnd);
-        };
-    }, [onHide]);
 };
 
 export const Button = styled('button')`
