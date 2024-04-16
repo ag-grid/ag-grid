@@ -44,7 +44,6 @@ const HeaderLinks = ({
     apiPaths,
     isOpen,
     toggleIsOpen,
-    children,
 }: {
     currentPath: string;
     items: MenuItem[];
@@ -52,7 +51,6 @@ const HeaderLinks = ({
     apiPaths: string[];
     isOpen?: boolean;
     toggleIsOpen?: () => void;
-    children: ReactElement;
 }) => {
     const framework = useFrameworkFromStore();
 
@@ -91,8 +89,6 @@ const HeaderLinks = ({
             })}
 
             <DarkModeToggle />
-
-            {children}
         </ul>
     );
 };
@@ -177,13 +173,11 @@ export const HeaderNav = ({
     items,
     allPaths,
     apiPaths,
-    children,
 }: {
     currentPath: string;
     items: MenuItem[];
     allPaths: MenuItem[];
     apiPaths: string[];
-    children: ReactElement;
 }) => {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -195,9 +189,7 @@ export const HeaderNav = ({
 
     return (
         <>
-            <HeaderNavLarge currentPath={currentPath} items={items} allPaths={allPaths} apiPaths={apiPaths}>
-                {children}
-            </HeaderNavLarge>
+            <HeaderNavLarge currentPath={currentPath} items={items} allPaths={allPaths} apiPaths={apiPaths} />
             <HeaderNavSmall
                 currentPath={currentPath}
                 items={items}
@@ -205,9 +197,7 @@ export const HeaderNav = ({
                 apiPaths={apiPaths}
                 isOpen={isOpen}
                 toggleIsOpen={toggleIsOpen}
-            >
-                {children}
-            </HeaderNavSmall>
+            />
         </>
     );
 };
