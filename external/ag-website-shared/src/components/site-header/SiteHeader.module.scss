@@ -26,6 +26,7 @@
     max-width: calc(var(--layout-max-width) + var(--layout-horizontal-margins) * 2);
     margin-left: auto;
     margin-right: auto;
+    justify-content: space-between;
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         flex-wrap: nowrap;
