@@ -261,9 +261,9 @@ const buildHeaderFooter = (
         const headerFooter = headerFooterConfigToUse[rule];
         const namePrefix = rule === 'all' ? 'odd' : rule;
 
-        if (!headerFooter || (!headerFooter.header && !headerFooter.footer)) { return; }
+        if (!headerFooter) { return; }
 
-        _.iterateObject<ExcelHeaderFooterContent[]>((headerFooter as any), (key: string, value: ExcelHeaderFooterContent[]) => {
+        for (const [key, value] of Object.entries<ExcelHeaderFooterContent[]>(headerFooter)) {
             const nameSuffix = `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
 
             if (value) {
@@ -277,7 +277,7 @@ const buildHeaderFooter = (
                     textNode: processHeaderFooterContent(value)
                 });
             }
-        });
+        }
     });
 
     return headersAndFooters;

@@ -6,6 +6,10 @@
                 "path": "/example"
             },
             {
+                "title": "Theme Builder",
+                "path": "/theme-builder"
+            },
+            {
                 "title": "Docs",
                 "path": "./getting-started"
             },

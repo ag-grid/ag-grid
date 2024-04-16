@@ -1,9 +1,13 @@
-import styled from '@emotion/styled';
+import type { ParamType } from '@ag-grid-community/theming';
+import type { FC } from 'react';
 
 import { ParamModel, useParamAtom } from '../../model/ParamModel';
 import { useRenderedTheme } from '../../model/rendered-theme';
 import { withErrorBoundary } from '../general/ErrorBoundary';
+import { ColorValueEditor } from './ColorValueEditor';
+import { CssValueEditor } from './CssValueEditor';
 import { FormField } from './FormField';
+import type { ValueEditorProps } from './ValueEditorProps';
 
 export type ParamEditorProps = {
     param: string;
@@ -25,13 +29,27 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
         }
     }
 
+    const ValueEditorComponent = valueEditors[param.type] || CssValueEditor;
+
     return (
         <FormField label={props.label || param.label} docs={props.showDocs ? param.docs : null}>
-            <Input type="text" value={editorValue} onChange={(e) => setValue(e.target.value)} />
+            <ValueEditorComponent param={param} value={editorValue} onChange={setValue} />
         </FormField>
     );
 });
 
-const Input = styled('input')`
-    width: 100%;
-`;
+const valueEditors: Record<ParamType, FC<ValueEditorProps>> = {
+    color: ColorValueEditor,
+    // length: LengthValueEditor,
+    length: CssValueEditor,
+    // border: BorderValueEditor,
+    border: CssValueEditor,
+    // borderStyle: BorderStyleValueEditor,
+    borderStyle: CssValueEditor,
+    shadow: CssValueEditor,
+    image: CssValueEditor,
+    fontFamily: CssValueEditor,
+    fontWeight: CssValueEditor,
+    display: CssValueEditor,
+    duration: CssValueEditor,
+};

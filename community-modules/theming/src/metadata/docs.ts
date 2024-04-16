@@ -26,9 +26,6 @@ export const getParamType = (param: string): ParamType => {
 };
 
 
-
-
-
 const docs: Record<string, string | undefined> = {
     backgroundColor:
         'Background colour of the grid. Many UI elements are semi-transparent, so their colour blends with the background colour.',

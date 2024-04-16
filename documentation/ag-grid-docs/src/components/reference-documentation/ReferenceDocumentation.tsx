@@ -554,7 +554,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         !(config.suppressMissingPropCheck || definition.overrideMissingPropCheck)
     ) {
         throw new Error(
-            `We could not find a type for "${id}" -> "${name}" from the code sources ${config.codeSrcProvided.join()}. Has this property been removed from the source code / or is there a typo?`
+            `We could not find a type for "${id}" -> "${name}" from the code sources ${config.codeSrcProvided.join()}. Has this property been removed from the source code / or is there a typo? Alternatively, if this type has an override you can suppress this error by setting meta.suppressMissingPropCheck to true in the override config.`
         );
     }
 

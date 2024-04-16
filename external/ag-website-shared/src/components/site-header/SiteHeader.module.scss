@@ -26,6 +26,7 @@
     max-width: calc(var(--layout-max-width) + var(--layout-horizontal-margins) * 2);
     margin-left: auto;
     margin-right: auto;
+    justify-content: space-between;
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         flex-wrap: nowrap;
@@ -282,6 +283,7 @@ button.navLink {
     width: 100%;
     padding: 19px var(--layout-horizontal-margins) 16px;
     font-size: 17px;
+    white-space: nowrap;
     font-weight: 500;
     letter-spacing: 0.01em;
     color: var(--color-white);
