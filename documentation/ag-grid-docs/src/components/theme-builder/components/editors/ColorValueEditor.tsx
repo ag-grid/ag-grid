@@ -164,4 +164,8 @@ const DropdownArea = styled(Card)`
         height: 20px;
         border-width: 3px;
     }
+
+    .react-colorful__last-control {
+        margin-bottom: 2px;
+    }
 `;

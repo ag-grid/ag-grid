@@ -77,7 +77,7 @@ const MenuBottom = styled('div')`
         top: 0;
         height: 12px;
         margin-top: -12px;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #fff 100%);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, var(--color-bg-primary) 100%);
     }
 `;
 
