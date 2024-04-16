@@ -466,6 +466,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
             const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
             const stickyTopHeight = gridBodyCtrl.getStickyTopHeight();
+            const stickyBottomHeight = gridBodyCtrl.getStickyBottomHeight();
 
             const rowNode = this.paginationProxy.getRow(index);
             let rowGotShiftedDuringOperation: boolean;
@@ -494,7 +495,7 @@ export class GridBodyScrollFeature extends BeanStub {
                 const pxMiddle = Math.min((pxTop + pxBottom) / 2, rowTopPixel);
 
                 const rowAboveViewport = (vScrollTop + stickyTopHeight) > rowTopPixel;
-                const rowBelowViewport = vScrollBottom < rowBottomPixel;
+                const rowBelowViewport = (vScrollBottom - stickyBottomHeight) < rowBottomPixel;
 
                 let newScrollPosition: number | null = null;
 
@@ -509,7 +510,7 @@ export class GridBodyScrollFeature extends BeanStub {
                     newScrollPosition = pxTop - stickyTopHeight;
                 } else if (rowBelowViewport) {
                     // if row is after, scroll down with row at bottom
-                    newScrollPosition = pxBottom;
+                    newScrollPosition = pxBottom + stickyBottomHeight;
                 }
 
                 if (newScrollPosition !== null) {

@@ -520,23 +520,25 @@ export class GridOptionsService {
         return undefined;
     }
 
-    public isGroupIncludeFooterTrueOrCallback(): boolean{
-        const userValue = this.gridOptions.groupIncludeFooter;
-        return userValue === true || typeof userValue === 'function';
-    }
-
-    public getGroupIncludeFooter(): (params: WithoutGridCommon<GetGroupIncludeFooterParams>) => boolean{
-        const userValue = this.gridOptions.groupIncludeFooter;
+    public getGroupTotalRowCallback(): (params: WithoutGridCommon<GetGroupIncludeFooterParams>) => 'top' | 'bottom' | undefined {
+        const userValue = this.get('groupTotalRow');
 
         if (typeof userValue === 'function') {
-            return this.getCallback('groupIncludeFooter' as any) as any;
+            return this.getCallback('groupTotalRow' as any) as any;
         }
 
-        if (userValue === true) {
-            return () => true; 
+        if (userValue) {
+            return () => userValue;
         }
 
-        return () => false;
+        const legacyValue = this.get('groupIncludeFooter');
+        if (typeof legacyValue === 'function') {
+            return () => {
+                const legacyRes = this.getCallback('groupIncludeFooter' as any);
+                return legacyRes ? 'bottom' : undefined;
+            };
+        }
+        return () => legacyValue ? 'bottom' : undefined;
     }
 
     public isGroupMultiAutoColumn() {

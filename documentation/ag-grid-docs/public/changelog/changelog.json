@@ -1702,7 +1702,7 @@
     "moreInformation": null,
     "deprecationNotes": null,
     "breakingChangesNotes": null,
-    "documentationUrl": "https://www.ag-grid.com/javascript-data-grid/grouping-footers/#customising-footer-cells"
+    "documentationUrl": "https://www.ag-grid.com/javascript-data-grid/grouping-footers/#customising-total-row-cells"
   },
   {
     "key": "AG-5580",

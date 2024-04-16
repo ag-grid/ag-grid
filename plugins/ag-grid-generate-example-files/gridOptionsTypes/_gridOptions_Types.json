@@ -327,6 +327,10 @@
     "typeName": "'standard' | 'whenTruncated'",
     "typesToInclude": []
   },
+  "grandTotalRow": {
+    "typeName": "'top' | 'bottom'",
+    "typesToInclude": []
+  },
   "rowHeight": {
     "typeName": "number",
     "typesToInclude": []
@@ -793,6 +797,12 @@
     "typesToInclude": [
       "MenuItemDef",
       "GetChartMenuItems"
+    ]
+  },
+  "groupTotalRow": {
+    "typeName": "'top' | 'bottom' | UseGroupTotalRow<TData>",
+    "typesToInclude": [
+      "UseGroupTotalRow"
     ]
   },
   "suppressMakeColumnVisibleAfterUnGroup": {
@@ -1385,6 +1395,10 @@
   },
   "suppressServerSideFullWidthLoadingRow": {
     "typeName": "boolean",
+    "typesToInclude": []
+  },
+  "suppressStickyTotalRow": {
+    "typeName": "boolean | 'grand' | 'group'",
     "typesToInclude": []
   }
 }

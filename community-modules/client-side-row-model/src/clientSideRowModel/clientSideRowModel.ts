@@ -875,7 +875,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             const totalFooters = this.gos.get('groupIncludeTotalFooter');
             if (!totalFooters) return index;
         } else {
-            const isGroupIncludeFooter = this.gos.getGroupIncludeFooter();
+            const isGroupIncludeFooter = this.gos.getGroupTotalRowCallback();
             if (!isGroupIncludeFooter({ node: parentNode })) return index;
         }
 

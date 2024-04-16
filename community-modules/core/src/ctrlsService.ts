@@ -32,6 +32,10 @@ interface ReadyParams {
     stickyTopLeft: RowContainerCtrl;
     stickyTopRight: RowContainerCtrl;
 
+    stickyBottomCenter: RowContainerCtrl;
+    stickyBottomLeft: RowContainerCtrl;
+    stickyBottomRight: RowContainerCtrl;
+
     fakeHScrollComp: FakeHScrollComp;
     fakeVScrollComp: FakeVScrollComp;
     gridHeaderCtrl: GridHeaderCtrl;
@@ -74,6 +78,10 @@ export class CtrlsService extends BeanStub {
             && params.stickyTopLeft != null
             && params.stickyTopRight != null
 
+            && params.stickyBottomCenter != null
+            && params.stickyBottomLeft != null
+            && params.stickyBottomRight != null
+
             && params.centerHeader != null
             && params.leftHeader != null
             && params.rightHeader != null
@@ -115,7 +123,6 @@ export class CtrlsService extends BeanStub {
         this.checkReady();
     }
     
-
     public get<K extends CtrlType>(ctrlType: K): ReadyParams[K] {
         return this.params[ctrlType];
     }

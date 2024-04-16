@@ -139,7 +139,8 @@ export class PropertyKeys {
     public static STRING_PROPERTIES: KeysOfType<string>[] = [
         'rowSelection', 'overlayLoadingTemplate', 'overlayNoRowsTemplate', 'gridId', 'quickFilterText', 'rowModelType', 'editType', 'domLayout', 
         'clipboardDelimiter', 'rowGroupPanelShow', 'multiSortKey', 'pivotColumnGroupTotals', 'pivotRowTotals', 'pivotPanelShow', 'fillHandleDirection',
-        'groupDisplayType', 'treeDataDisplayType', 'colResizeDefault', 'tooltipTrigger', 'serverSidePivotResultFieldSeparator', 'columnMenu', 'tooltipShowMode'
+        'groupDisplayType', 'treeDataDisplayType', 'colResizeDefault', 'tooltipTrigger', 'serverSidePivotResultFieldSeparator', 'columnMenu', 'tooltipShowMode',
+        'grandTotalRow',
     ];
 
     public static OBJECT_PROPERTIES: KeysLike<object | HTMLElement>[] = [
@@ -192,6 +193,7 @@ export class PropertyKeys {
         'resetRowDataOnUpdate', 'removePivotHeaderRowWhenSingleValueColumn', 'suppressCopySingleCellRanges', 'suppressGroupRowsSticky', 'suppressCutToClipboard',
         'suppressServerSideInfiniteScroll', 'rowGroupPanelSuppressSort', 'allowShowChangeAfterFilter','enableAdvancedFilter', 'masterDetail', 'treeData',
         'suppressGroupMaintainValueType', 'reactiveCustomComponents', 'applyQuickFilterBeforePivotOrAgg', 'suppressServerSideFullWidthLoadingRow',
+        'suppressStickyTotalRow',
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */
@@ -210,7 +212,7 @@ export class PropertyKeys {
         'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup', 'createChartContainer',
         'getChartToolbarItems', 'fillOperation', 'isApplyServerSideTransaction','getServerSideGroupLevelParams', 'isServerSideGroupOpenByDefault',
         'isGroupOpenByDefault', 'initialGroupOrderComparator', 'groupIncludeFooter', 'loadingCellRendererSelector', 'getRowId', 'groupAggFiltering',
-        'chartMenuItems'
+        'chartMenuItems', 'groupTotalRow',
     ];
 
     public static FUNCTION_PROPERTIES: GridOptionKey[] = [

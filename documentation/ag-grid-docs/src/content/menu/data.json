@@ -970,11 +970,6 @@
                                         ]
                                     },
                                     {
-                                        "title": "Group Footers",
-                                        "path": "grouping-footers",
-                                        "isEnterprise": true
-                                    },
-                                    {
                                         "title": "Opening Groups",
                                         "path": "grouping-opening-groups",
                                         "isEnterprise": true
@@ -1009,6 +1004,11 @@
                                     {
                                         "title": "Other",
                                         "path": "aggregation-other",
+                                        "isEnterprise": true
+                                    },
+                                    {
+                                        "title": "Total Rows",
+                                        "path": "grouping-footers",
                                         "isEnterprise": true
                                     }
                                 ]
@@ -1185,7 +1185,8 @@
                                     },
                                     {
                                         "title": "Loading Cell Renderer",
-                                        "path": "component-loading-cell-renderer"
+                                        "path": "component-loading-cell-renderer",
+                                        "isEnterprise": true
                                     },
                                     {
                                         "title": "Changing Columns",

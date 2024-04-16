@@ -22,6 +22,9 @@ const GridBodyComp = () => {
     const [stickyTopHeight, setStickyTopHeight] = useState<string>('0px');
     const [stickyTopTop, setStickyTopTop] = useState<string>('0px');
     const [stickyTopWidth, setStickyTopWidth] = useState<string>('100%');
+    const [stickyBottomHeight, setStickyBottomHeight] = useState<string>('0px');
+    const [stickyBottomBottom, setStickyBottomBottom] = useState<string>('0px');
+    const [stickyBottomWidth, setStickyBottomWidth] = useState<string>('100%');
     const [topDisplay, setTopDisplay] = useState<string>('');
     const [bottomDisplay, setBottomDisplay] = useState<string>('');
 
@@ -44,6 +47,7 @@ const GridBodyComp = () => {
     const eRoot = useRef<HTMLDivElement | null>(null);
     const eTop = useRef<HTMLDivElement>(null);
     const eStickyTop = useRef<HTMLDivElement>(null);
+    const eStickyBottom = useRef<HTMLDivElement>(null);
     const eBody = useRef<HTMLDivElement>(null);
     const eBodyViewport = useRef<HTMLDivElement>(null);
     const eBottom = useRef<HTMLDivElement>(null);
@@ -97,9 +101,9 @@ const GridBodyComp = () => {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
             setColumnCount: count => {
                 if (eRoot.current) {
-                    _.setAriaColCount(eRoot.current, count)
+                    _.setAriaColCount(eRoot.current, count);
                 }
-            } ,
+            },
             setRowCount: count => {
                 if (eRoot.current) {
                     _.setAriaRowCount(eRoot.current, count);
@@ -127,7 +131,10 @@ const GridBodyComp = () => {
                     const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current, listener);
                     destroyFuncs.current.push(() => unsubscribeFromResize());
                 }
-            }
+            },
+            setStickyBottomHeight,
+            setStickyBottomBottom,
+            setStickyBottomWidth,
         };
 
         const ctrl = context.createBean(new GridBodyCtrl());
@@ -138,7 +145,8 @@ const GridBodyComp = () => {
             eBodyViewport.current!,
             eTop.current!,
             eBottom.current!,
-            eStickyTop.current!
+            eStickyTop.current!,
+            eStickyBottom.current!,
         );
 
     }, []);
@@ -163,6 +171,10 @@ const GridBodyComp = () => {
         classesList('ag-sticky-top', cellSelectableCss), 
         [cellSelectableCss]
     );
+    const stickyBottomClasses = useMemo(() =>
+        classesList('ag-sticky-bottom', cellSelectableCss), 
+        [cellSelectableCss]
+    );
     const bottomClasses = useMemo(() =>
         classesList('ag-floating-bottom', cellSelectableCss),
         [cellSelectableCss]
@@ -180,6 +192,12 @@ const GridBodyComp = () => {
         top: stickyTopTop,
         width: stickyTopWidth
     }), [stickyTopHeight, stickyTopTop, stickyTopWidth]);
+
+    const stickyBottomStyle: React.CSSProperties = useMemo(() => ({
+        height: stickyBottomHeight,
+        top: stickyBottomBottom,
+        width: stickyBottomWidth,
+    }), [stickyBottomHeight, stickyBottomBottom, stickyBottomWidth]);
 
     const bottomStyle: React.CSSProperties = useMemo(()=> ({
         height: bottomHeight,
@@ -223,6 +241,12 @@ const GridBodyComp = () => {
                 RowContainerName.STICKY_TOP_CENTER,
                 RowContainerName.STICKY_TOP_RIGHT,
                 RowContainerName.STICKY_TOP_FULL_WIDTH,
+            ]}) }
+            { createSection({ section: eStickyBottom, className: stickyBottomClasses, style: stickyBottomStyle, children: [
+                RowContainerName.STICKY_BOTTOM_LEFT,
+                RowContainerName.STICKY_BOTTOM_CENTER,
+                RowContainerName.STICKY_BOTTOM_RIGHT,
+                RowContainerName.STICKY_BOTTOM_FULL_WIDTH,
             ]}) }
             { createSection({ section: eBottom, className: bottomClasses, style: bottomStyle, children: [
                 RowContainerName.BOTTOM_LEFT,
