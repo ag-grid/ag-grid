@@ -7,7 +7,7 @@
             {
                 "label": {
                     "name": "Sparklines",
-                    "link": "/react-data-grid/sparklines-overview/"
+                    "link": "./sparklines-overview/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -16,7 +16,7 @@
             {
                 "label": {
                     "name": "Integrated Charts",
-                    "link": "/react-data-grid/integrated-charts/"
+                    "link": "./integrated-charts/"
                 },
                 "community": false,
                 "enterprise": false,
@@ -45,7 +45,7 @@
                     {
                         "label": {
                             "name": "Text Filter",
-                            "link": "/react-data-grid/filter-text/"
+                            "link": "./filter-text/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -54,7 +54,7 @@
                     {
                         "label": {
                             "name": "Number Filter",
-                            "link": "/react-data-grid/filter-number/"
+                            "link": "./filter-number/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -63,7 +63,7 @@
                     {
                         "label": {
                             "name": "Date Filter",
-                            "link": "/react-data-grid/filter-date/"
+                            "link": "./filter-date/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -74,7 +74,7 @@
             {
                 "label": {
                     "name": "Quick Filter",
-                    "link": "/react-data-grid/filter-quick/"
+                    "link": "./filter-quick/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -83,7 +83,7 @@
             {
                 "label": {
                     "name": "External Filter",
-                    "link": "/react-data-grid/filter-external/"
+                    "link": "./filter-external/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -96,7 +96,7 @@
                     {
                         "label": {
                             "name": "Set Filter",
-                            "link": "/react-data-grid/filter-set/"
+                            "link": "./filter-set/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -105,7 +105,7 @@
                     {
                         "label": {
                             "name": "Multi Filter",
-                            "link": "/react-data-grid/filter-multi/"
+                            "link": "./filter-multi/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -116,7 +116,7 @@
             {
                 "label": {
                     "name": "Advanced Filter",
-                    "link": "/react-data-grid/filter-advanced/"
+                    "link": "./filter-advanced/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -132,7 +132,7 @@
             {
                 "label": {
                     "name": "Row Selection",
-                    "link": "/react-data-grid/row-selection/"
+                    "link": "./row-selection/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -141,7 +141,7 @@
             {
                 "label": {
                     "name": "Cell Range Selection",
-                    "link": "/react-data-grid/range-selection/"
+                    "link": "./range-selection/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -150,7 +150,7 @@
             {
                 "label": {
                     "name": "Fill Handle",
-                    "link": "/react-data-grid/range-selection-fill-handle/"
+                    "link": "./range-selection-fill-handle/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -170,7 +170,7 @@
                     {
                         "label": {
                             "name": "Text Editor",
-                            "link": "/react-data-grid/provided-cell-editors-text/"
+                            "link": "./provided-cell-editors-text/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -179,7 +179,7 @@
                     {
                         "label": {
                             "name": "Number Editor",
-                            "link": "/react-data-grid/provided-cell-editors-number/"
+                            "link": "./provided-cell-editors-number/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -188,7 +188,7 @@
                     {
                         "label": {
                             "name": "Date Editor",
-                            "link": "/react-data-grid/provided-cell-editors-date/"
+                            "link": "./provided-cell-editors-date/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -197,7 +197,7 @@
                     {
                         "label": {
                             "name": "Checkbox Editor",
-                            "link": "/react-data-grid/provided-cell-editors-checkbox/"
+                            "link": "./provided-cell-editors-checkbox/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -206,7 +206,7 @@
                     {
                         "label": {
                             "name": "Large Text Editor",
-                            "link": "/react-data-grid/provided-cell-editors-large-text/"
+                            "link": "./provided-cell-editors-large-text/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -215,7 +215,7 @@
                     {
                         "label": {
                             "name": "Select Editor",
-                            "link": "/react-data-grid/provided-cell-editors-select/"
+                            "link": "./provided-cell-editors-select/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -226,7 +226,7 @@
             {
                 "label": {
                     "name": "Undo / Redo",
-                    "link": "/react-data-grid/undo-redo-edits/"
+                    "link": "./undo-redo-edits/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -235,7 +235,7 @@
             {
                 "label": {
                     "name": "Advanced Select Editor",
-                    "link": "/react-data-grid/provided-cell-editors-rich-select/"
+                    "link": "./provided-cell-editors-rich-select/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -250,17 +250,8 @@
         "items": [
             {
                 "label": {
-                    "name": "Drag & Drop",
-                    "link": "/react-data-grid/drag-and-drop/"
-                },
-                "community": true,
-                "enterprise": true,
-                "chartsGrid": true
-            },
-            {
-                "label": {
                     "name": "CSV Export",
-                    "link": "/react-data-grid/csv-export/"
+                    "link": "./csv-export/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -269,7 +260,7 @@
             {
                 "label": {
                     "name": "Excel Export",
-                    "link": "/react-data-grid/excel-export/"
+                    "link": "./excel-export/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -278,7 +269,7 @@
             {
                 "label": {
                     "name": "Clipboard Operations",
-                    "link": "/react-data-grid/clipboard/"
+                    "link": "./clipboard/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -294,7 +285,7 @@
             {
                 "label": {
                     "name": "Aggregation",
-                    "link": "/react-data-grid/aggregation/"
+                    "link": "./aggregation/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -303,7 +294,7 @@
             {
                 "label": {
                     "name": "Row Grouping",
-                    "link": "/react-data-grid/grouping/"
+                    "link": "./grouping/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -312,7 +303,7 @@
             {
                 "label": {
                     "name": "Pivoting",
-                    "link": "/react-data-grid/pivoting/"
+                    "link": "./pivoting/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -321,7 +312,7 @@
             {
                 "label": {
                     "name": "Tree Data",
-                    "link": "/react-data-grid/tree-data/"
+                    "link": "./tree-data/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -330,7 +321,7 @@
             {
                 "label": {
                     "name": "Master Detail",
-                    "link": "/react-data-grid/server-side-model-master-detail/"
+                    "link": "./server-side-model-master-detail/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -350,7 +341,7 @@
                     {
                         "label": {
                             "name": "Sorting",
-                            "link": "/react-data-grid/infinite-scrolling/#sorting--filtering"
+                            "link": "./infinite-scrolling/#sorting--filtering"
                         },
                         "community": true,
                         "enterprise": true,
@@ -359,7 +350,7 @@
                     {
                         "label": {
                             "name": "Filtering",
-                            "link": "/react-data-grid/infinite-scrolling/#sorting--filtering"
+                            "link": "./infinite-scrolling/#sorting--filtering"
                         },
                         "community": true,
                         "enterprise": true,
@@ -368,7 +359,7 @@
                     {
                         "label": {
                             "name": "Selection",
-                            "link": "/react-data-grid/infinite-scrolling/#selection"
+                            "link": "./infinite-scrolling/#selection"
                         },
                         "community": true,
                         "enterprise": true,
@@ -377,7 +368,7 @@
                     {
                         "label": {
                             "name": "Pagination",
-                            "link": "/react-data-grid/infinite-scrolling/#pagination"
+                            "link": "./infinite-scrolling/#pagination"
                         },
                         "community": true,
                         "enterprise": true,
@@ -392,7 +383,7 @@
                     {
                         "label": {
                             "name": "Row Grouping",
-                            "link": "/react-data-grid/grouping/"
+                            "link": "./grouping/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -401,7 +392,7 @@
                     {
                         "label": {
                             "name": "Pivoting",
-                            "link": "/react-data-grid/pivoting/"
+                            "link": "./pivoting/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -410,7 +401,7 @@
                     {
                         "label": {
                             "name": "Tree Data",
-                            "link": "/react-data-grid/server-side-model-tree-data/"
+                            "link": "./server-side-model-tree-data/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -419,7 +410,7 @@
                     {
                         "label": {
                             "name": "Master Detail",
-                            "link": "/react-data-grid/server-side-model-master-detail/"
+                            "link": "./server-side-model-master-detail/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -428,7 +419,7 @@
                     {
                         "label": {
                             "name": "Transactions",
-                            "link": "/react-data-grid/server-side-model-updating-transactions/"
+                            "link": "./server-side-model-updating-transactions/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -446,7 +437,7 @@
             {
                 "label": {
                     "name": "Column Menu",
-                    "link": "/react-data-grid/column-menu/"
+                    "link": "./column-menu/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -455,7 +446,7 @@
             {
                 "label": {
                     "name": "Context Menu",
-                    "link": "/react-data-grid/context-menu/"
+                    "link": "./context-menu/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -464,7 +455,7 @@
             {
                 "label": {
                     "name": "Columns Tool Panel",
-                    "link": "/react-data-grid/tool-panel-columns/"
+                    "link": "./tool-panel-columns/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -473,7 +464,7 @@
             {
                 "label": {
                     "name": "Filters Tool Panel",
-                    "link": "/react-data-grid/tool-panel-filters/"
+                    "link": "./tool-panel-filters/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -482,7 +473,7 @@
             {
                 "label": {
                     "name": "Status Bar",
-                    "link": "/react-data-grid/status-bar/"
+                    "link": "./status-bar/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -498,7 +489,7 @@
             {
                 "label": {
                     "name": "Accessibility",
-                    "link": "/react-data-grid/accessibility/"
+                    "link": "./accessibility/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -507,7 +498,7 @@
             {
                 "label": {
                     "name": "Localisation",
-                    "link": "/react-data-grid/localisation/"
+                    "link": "./localisation/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -516,7 +507,7 @@
             {
                 "label": {
                     "name": "Custom Components",
-                    "link": "/react-data-grid/components/"
+                    "link": "./components/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -532,7 +523,7 @@
             {
                 "label": {
                     "name": "Enterprise Support",
-                    "link": "/react-data-grid/licensing/"
+                    "link": "./licensing/"
                 },
                 "community": {
                     "value": false,
@@ -550,7 +541,7 @@
             {
                 "label": {
                     "name": "Perpetual License",
-                    "link": "/react-data-grid/licensing/"
+                    "link": "./licensing/"
                 },
                 "community": {
                     "value": false,

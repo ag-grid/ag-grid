@@ -45,6 +45,7 @@ const TYPE_LINKS : Record<string, string> = {
     ExcelExportMultipleSheetParams: './excel-export-api/#excelexportmultiplesheetparams',
     ExcelFont: './excel-export-api/#excelfont',
     ExcelHeaderFooter: './excel-export-api/#excelheaderfooter',
+    ExcelHeaderFooterContent: './excel-export-api/#excelheaderfootercontent',
     ExcelImage: './excel-export-api/#excelimage',
     ExcelImagePosition: './excel-export-api/#excelimageposition',
     ExcelInterior: './excel-export-api/#excelinterior',

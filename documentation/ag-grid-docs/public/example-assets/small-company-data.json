@@ -31,7 +31,7 @@
     },
     {
         "company": "Meta",
-        "website": "https://about.meta.com/",
+        "website": "https://www.meta.com/",
         "revenue": 32000000000,
         "hardware": true
     },
@@ -55,7 +55,7 @@
     },
     {
         "company": "Broadcom",
-        "website": "https://www.google.com/",
+        "website": "https://www.broadcom.com/",
         "revenue": 35820000000,
         "hardware": true
     }

@@ -139,7 +139,7 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
         return <Code code={escapedLines} keepMarkup={true} />;
     }
 
-    let props = {};
+    let props: any = {};
     let interfaceOverrides: Overrides = {};
     if (Object.keys(overrides).length) {
         interfaceOverrides = overrides[interfaceName];
@@ -148,7 +148,16 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
         }
     }
 
-    const typeProps = Object.entries(li.type);
+    let typeProps: any[] = [];
+    if(typeof li.type === 'string'){
+        if(interfaceOverrides){
+            typeProps = Object.entries(interfaceOverrides);
+        }else{
+            console.error(`Please provide an override for type alias: ${interfaceName}`);
+        }
+    }else{
+        typeProps = Object.entries(li.type);
+    }
     sortAndFilterProperties(typeProps, framework).forEach(([k, v]) => {
         // interfaces include the ? as part of the name. We want to remove this for the <interface-documentation> component
         // Instead the type will be unioned with undefined as part of the propertyType

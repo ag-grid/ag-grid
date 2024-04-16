@@ -1,0 +1,102 @@
+.ag-filter-toolpanel {
+    flex: 1 1 0px;
+    min-width: 0;
+}
+
+.ag-filter-toolpanel-header {
+    position: relative;
+}
+
+.ag-filter-toolpanel-header,
+.ag-filter-toolpanel-search {
+    display: flex;
+    align-items: center;
+
+    > * {
+        display: flex;
+        align-items: center;
+    }
+}
+
+.ag-filter-toolpanel-header {
+    height: calc(var(--ag-grid-size) * 6);
+
+    &:focus-visible {
+        border-radius: var(--ag-border-radius);
+        box-shadow: inset var(--ag-focus-shadow);
+    }
+}
+
+.ag-filter-toolpanel-header,
+.ag-filter-toolpanel-search {
+    padding: 0 var(--ag-grid-size);
+}
+
+.ag-filter-toolpanel-group-level-0-header {
+    height: calc(var(--ag-grid-size) * 8);
+}
+
+.ag-filter-toolpanel-group-item {
+    margin-top: calc(var(--ag-grid-size) * 0.5);
+    margin-bottom: calc(var(--ag-grid-size) * 0.5);
+}
+
+.ag-filter-toolpanel-search {
+    margin-top: var(--ag-widget-container-vertical-padding);
+}
+
+.ag-filter-toolpanel-search-input {
+    flex-grow: 1;
+    height: calc(var(--ag-grid-size) * 4);
+}
+
+.ag-filter-toolpanel-expand,
+.ag-filter-toolpanel-group-title-bar-icon {
+    margin-right: var(--ag-grid-size);
+}
+
+.ag-filter-toolpanel-instance-header {
+    padding-left: calc(var(--ag-filter-tool-panel-group-indent) * var(--ag-indentation-level));
+}
+
+.ag-filter-toolpanel-instance-header.ag-filter-toolpanel-group-level-1-header {
+    padding-left: var(--ag-grid-size);
+}
+
+.ag-filter-toolpanel-instance-filter {
+    margin-top: var(--ag-grid-size);
+}
+
+.ag-filter-toolpanel-instance-header-icon {
+    margin-left: var(--ag-grid-size);
+}
+
+.ag-filter-toolpanel-group-container {
+    padding-left: var(--ag-grid-size);
+}
+
+.ag-filter-toolpanel-instance-filter {
+    border: none;
+    background-color: var(--ag-chrome-background-color);
+    margin-left: calc(var(--ag-icon-size) * 0.5);
+}
+
+.ag-filter-toolpanel-group-level-0 {
+    border-top: none;
+}
+
+.ag-filter-toolpanel-header {
+    height: initial;
+    padding-top: var(--ag-grid-size);
+    padding-bottom: var(--ag-grid-size);
+}
+
+.ag-filter-toolpanel-group-item {
+    margin: 0;
+}
+
+.ag-filter-toolpanel-header,
+.ag-filter-toolpanel-search {
+    font-weight: 500;
+    color: var(--ag-header-text-color);
+}

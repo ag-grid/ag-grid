@@ -28,12 +28,8 @@ export interface AgChartActual extends AgChartInstance {
         type: AgCartesianAxisType | AgPolarAxisOptions['type'];
         direction: 'x' | 'y';
     }[];
-    scene: {
-        canvas: {
-            element: HTMLCanvasElement;
-        };
-        getDataURL(type?: string): string;
-    };
+    canvasElement: HTMLCanvasElement;
+    getCanvasDataURL(type?: string): string;
     addEventListener(type: 'click', cb: (even: any) => void): void;
     waitForUpdate(): Promise<void>;
 }

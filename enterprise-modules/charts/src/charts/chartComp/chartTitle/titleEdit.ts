@@ -59,7 +59,7 @@ export class TitleEdit extends Component {
         
         const chartProxy = this.chartController.getChartProxy();
         const chart = chartProxy.getChart();
-        const canvas = chart.scene.canvas.element;
+        const canvas = chart.canvasElement;
 
         const destroyDbleClickListener = this.addManagedListener(canvas, 'dblclick', event => {
             const { title } = chart;

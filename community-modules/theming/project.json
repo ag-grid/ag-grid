@@ -1,0 +1,114 @@
+{
+  "name": "@ag-grid-community/theming",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "community-modules/theming/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": ["build:types", "build:package"],
+      "inputs": [],
+      "outputs": [],
+      "configurations": {
+        "watch": {},
+        "production": {}
+      }
+    },
+    "codegen": {
+      "executor": "nx:run-script",
+      "cache": true,
+      "options": {
+        "script": "codegen:prod"
+      },
+      "outputs": [
+        "{projectRoot}/**/GENERATED-*.ts"
+      ]
+    },
+    "build:types": {
+      "executor": "@nx/js:tsc",
+      "dependsOn": ["^build:types"],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+        }
+      ],
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "community-modules/theming/dist/types",
+        "main": "community-modules/theming/src/main.ts",
+        "tsConfig": "community-modules/theming/tsconfig.types.json",
+        "compiler": "tsc"
+      },
+      "configurations": {
+        "watch": {
+          "tsConfig": "community-modules/theming/tsconfig.types.watch.json"
+        },
+        "production": {}
+      }
+    },
+    "build:package": {
+      "executor": "@nx/esbuild:esbuild",
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+        }
+      ],
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "community-modules/theming/dist/package",
+        "main": "community-modules/theming/src/main.ts",
+        "tsConfig": "community-modules/theming/tsconfig.lib.json",
+        "esbuildConfig": "esbuild.config.cjs",
+        "external": ["@ag-grid-community/core", "@ag-grid-enterprise/core"],
+        "platform": "browser",
+        "target": "es6",
+        "format": [
+          "cjs",
+          "esm"
+        ],
+        "sourcemap": true
+      },
+      "configurations": {
+        "watch": {
+          "tsConfig": "community-modules/theming/tsconfig.watch.json"
+        },
+        "production": {
+          "sourcemap": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "jestConfig": "community-modules/theming/jest.config.js"
+      }
+    }
+  },
+  "tags": ["module:enterprise", "module", "enterprise"]
+}

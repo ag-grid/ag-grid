@@ -1,0 +1,59 @@
+.ag-list-item,
+.ag-virtual-list-item {
+    height: var(--ag-list-item-height);
+}
+
+.ag-virtual-list-item {
+    position: absolute;
+    width: 100%;
+}
+
+.ag-select-list {
+    background-color: var(--ag-background-color);
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: var(--ag-border-radius);
+    border: var(--ag-input-border);
+    box-shadow: var(--ag-dropdown-shadow);
+}
+
+.ag-list-item {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &.ag-active-item {
+        background-color: var(--ag-row-hover-color);
+    }
+}
+
+.ag-select-list-item {
+    padding-left: calc(var(--ag-cell-horizontal-padding) / 2);
+    user-select: none;
+    cursor: default;
+    span {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+}
+
+.ag-list-item-hovered::after {
+    /* TODO use inset focus shadow? */
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--ag-range-selection-border-color);
+}
+
+.ag-item-highlight-top::after {
+    top: 0;
+}
+
+.ag-item-highlight-bottom::after {
+    bottom: 0;
+}
