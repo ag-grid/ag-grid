@@ -45,7 +45,8 @@
     },
     "ExcelHeaderFooter": {
         "meta": {
-            "description": "Properties available on the `ExcelHeaderFooter` interface. At least one of header or footer is required or both."
+            "description": "Properties available on the `ExcelHeaderFooter` interface. At least one of header or footer is required or both.",
+            "suppressMissingPropCheck": true
         },
         "header": {
             "description": "An array of maximum 3 items (`Left`, `Center`, `Right`), containing header configurations.",
