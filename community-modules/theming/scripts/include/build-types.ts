@@ -115,7 +115,6 @@ const paramExtraDocs: Record<ParamType, string[]> = {
     ],
     fontFamily: ['A CSS font-family value e.g. `\'"Times New Roman", serif\'`'],
     fontWeight: ['A CSS font-weight value e.g. `500` or `"bold"`'],
-    scale: ['A number without units, e.g. `1` or `0.5`.'],
 };
 
 const docComment = (arg: {

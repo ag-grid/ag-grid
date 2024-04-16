@@ -44,9 +44,6 @@ const cssStringIsValid = (value: string, type: ParamType): boolean => {
         reinterpretationElement = document.createElement('span');
         document.body.appendChild(reinterpretationElement);
     }
-    if (type === 'scale') {
-        return !isNaN(parseFloat(value));
-    }
     const cssProperty = cssPropertyForParamType[type];
     try {
         reinterpretationElement.style[cssProperty as any] = value;

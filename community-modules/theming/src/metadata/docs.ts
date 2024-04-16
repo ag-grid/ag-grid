@@ -1,7 +1,6 @@
 export type ParamType =
     | 'color'
     | 'length'
-    | 'scale'
     | 'border'
     | 'borderStyle'
     | 'shadow'
@@ -13,8 +12,7 @@ export type ParamType =
 
 export const getParamType = (param: string): ParamType => {
     if (/Color$/.test(param)) return 'color';
-    if (/Scale?$/.test(param)) return 'scale';
-    if (/(Padding|Spacing|Size|Width|Height|Radius|Indent)(Start|End|Top|Bottom|Horizontal|Vertical)?$/.test(param))
+    if (/(Padding|Spacing|Size|Width|Height|Radius|Indent|Scale)(Start|End|Top|Bottom|Horizontal|Vertical)?$/.test(param))
         return 'length';
     if (/Border$/.test(param)) return 'border';
     if (/BorderStyle$/.test(param)) return 'borderStyle';
