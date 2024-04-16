@@ -282,6 +282,7 @@ button.navLink {
     width: 100%;
     padding: 19px var(--layout-horizontal-margins) 16px;
     font-size: 17px;
+    white-space: nowrap;
     font-weight: 500;
     letter-spacing: 0.01em;
     color: var(--color-white);
