@@ -238,12 +238,15 @@ export class GridCoreCreator {
 
     public create(eGridDiv: HTMLElement, providedOptions: GridOptions, createUi: (context: Context) => void, acceptChanges?: (context: Context) => void, params?: GridParams): GridApi {
 
-        // Ensure we do not mutate the provided gridOptions / global gridOptions
         let mergedGridOps: GridOptions = {};
         if (GlobalGridOptions.gridOptions) {
+            // Merge deep to avoid leaking changes to the global options
             mergeDeep(mergedGridOps, GlobalGridOptions.gridOptions, true, true);
+            // Shallow copy to ensure context reference is maintained
+            mergedGridOps = {...mergedGridOps, ...providedOptions};
+        }else{
+            mergedGridOps = providedOptions;
         }
-        mergeDeep(mergedGridOps, providedOptions, true, true);
         const gridOptions = GridOptionsService.getCoercedGridOptions(mergedGridOps);
         
         const debug = !!gridOptions.debug;
