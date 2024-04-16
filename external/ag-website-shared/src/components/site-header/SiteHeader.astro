@@ -8,25 +8,29 @@ import { SiteLogo } from '@components/SiteLogo';
 import Search from '@ag-website-shared/components/search/Search';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { ProductDropdown } from '@ag-website-shared/components/product-dropdown/ProductDropdown';
-import { getApiPaths } from '@utils/apiMenuPath';
-
-const { pathname } = Astro.url;
-const { data: menuData } = await getEntry('menu', 'data');
-const topNavItems = menuData.header.items;
-const productItems = menuData.product.items;
-const frameworkPaths = FRAMEWORKS.map((framework) => ({
-    title: 'Docs',
-    path: urlWithBaseUrl(framework),
-}));
-const allPaths = [...topNavItems, ...frameworkPaths];
-const apiPaths = getApiPaths(menuData);
+import productItems from '@ag-website-shared/content/products/menu.json';
 
 export interface Props {
     showSearchBar?: boolean;
     showDocsNav?: boolean;
+    apiPaths?: string[];
 }
 
-const { showSearchBar, showDocsNav } = Astro.props;
+const { showSearchBar, showDocsNav, apiPaths = [] } = Astro.props;
+
+const { pathname } = Astro.url;
+const { data: menuData } = await getEntry('menu', 'data');
+const topNavItems = menuData.header?.items || [];
+const frameworkPaths = FRAMEWORKS.map((framework) => ({
+    title: 'Docs',
+    path: urlWithBaseUrl(framework),
+}));
+const allPaths = [
+    ...topNavItems, // NOTE: Prioritise API paths over framework paths - for doc pages which are in
+    //  the API section
+    ...apiPaths,
+    ...frameworkPaths,
+];
 ---
 
 <header class:list={[styles.header, 'site-header']}>

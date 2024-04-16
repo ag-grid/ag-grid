@@ -8,6 +8,7 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import Plausible from '@components/Plausible.astro';
 import { Footer } from '@components/footer/Footer';
 import styles from '@legacy-design-system/modules/GridIndex.module.scss';
+import { getApiPaths } from '@utils/apiMenuPath';
 
 interface Props {
     title: string;
@@ -19,7 +20,9 @@ interface Props {
 }
 
 const { data: metadata } = await getEntry('metadata', 'metadata');
+const { data: menuData } = await getEntry('menu', 'data');
 const { data: footerItems } = await getEntry('footer', 'data');
+const apiPaths = getApiPaths(menuData);
 
 const isProduction = getIsProduction();
 const isStaging = getIsStaging();
@@ -117,7 +120,7 @@ const darkModeCSSUrl = `url("${urlWithBaseUrl('/images/moon.svg')}")`;
         </script>
 
         <div class:list={styles.mainContainer}>
-            {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} />}
+            {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} apiPaths={apiPaths} />}
             <slot />
         </div>
         
