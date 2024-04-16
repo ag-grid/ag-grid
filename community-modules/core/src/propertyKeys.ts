@@ -192,6 +192,7 @@ export class PropertyKeys {
         'resetRowDataOnUpdate', 'removePivotHeaderRowWhenSingleValueColumn', 'suppressCopySingleCellRanges', 'suppressGroupRowsSticky', 'suppressCutToClipboard',
         'suppressServerSideInfiniteScroll', 'rowGroupPanelSuppressSort', 'allowShowChangeAfterFilter','enableAdvancedFilter', 'masterDetail', 'treeData',
         'suppressGroupMaintainValueType', 'reactiveCustomComponents', 'applyQuickFilterBeforePivotOrAgg', 'suppressServerSideFullWidthLoadingRow',
+        'suppressAdvancedFilterEval',
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */

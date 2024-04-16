@@ -1,6 +1,6 @@
 import { AdvancedFilterModel, AutocompleteEntry, AutocompleteListParams } from "@ag-grid-community/core";
 import { JoinFilterExpressionParser } from "./joinFilterExpressionParser";
-import { AutocompleteUpdate, FilterExpression, FilterExpressionFunctionParams, FilterExpressionParserParams } from "./filterExpressionUtils";
+import { AutocompleteUpdate, FilterExpressionFunction, FilterExpressionFunctionParams, FilterExpressionParserParams } from "./filterExpressionUtils";
 
 export class FilterExpressionParser {
     private joinExpressionParser: JoinFilterExpressionParser;
@@ -30,15 +30,24 @@ export class FilterExpressionParser {
             : this.params.advancedFilterExpressionService.translate('advancedFilterValidationMessageAtEnd', [message]);
     }
 
-    public getFunction(): FilterExpression {
-        const params: FilterExpressionFunctionParams = {
-            operands: [],
-            operators: [],
-            evaluatorParams: []
-        };
-        const functionBody = `return ${this.joinExpressionParser.getFunction(params)};`;
+    public getFunctionString(): {
+        functionString: string;
+        params: FilterExpressionFunctionParams;
+    } {
+        const params = this.createFunctionParams();
         return {
-            functionBody,
+            functionString: `return ${this.joinExpressionParser.getFunctionString(params)};`,
+            params
+        };
+    }
+
+    public getFunctionParsed(): {
+        expressionFunction: FilterExpressionFunction;
+        params: FilterExpressionFunctionParams;
+    } {
+        const params = this.createFunctionParams();
+        return {
+            expressionFunction: this.joinExpressionParser.getFunctionParsed(params),
             params
         };
     }
@@ -53,5 +62,13 @@ export class FilterExpressionParser {
 
     public getModel(): AdvancedFilterModel | null {
         return this.isValid() ? this.joinExpressionParser.getModel() : null;
+    }
+
+    private createFunctionParams(): FilterExpressionFunctionParams {
+        return {
+            operands: [],
+            operators: [],
+            evaluatorParams: []
+        };
     }
 }

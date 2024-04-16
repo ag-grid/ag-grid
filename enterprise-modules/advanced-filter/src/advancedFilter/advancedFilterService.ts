@@ -20,11 +20,7 @@ import {
 import { FilterExpressionParser } from "./filterExpressionParser";
 import { AdvancedFilterCtrl } from "./advancedFilterCtrl";
 import { AdvancedFilterExpressionService } from "./advancedFilterExpressionService";
-import { FilterExpressionFunctionParams } from "./filterExpressionUtils";
-
-interface ExpressionProxy {
-    getValue(colId: string, node: IRowNode): any;
-}
+import { ExpressionProxy, FilterExpressionFunction, FilterExpressionFunctionParams } from "./filterExpressionUtils";
 
 @Bean('advancedFilterService')
 export class AdvancedFilterService extends BeanStub implements IAdvancedFilterService {
@@ -41,7 +37,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     private appliedExpression: string | null = null;
     /** The value displayed in the input, which may be invalid */
     private expression: string | null = null;
-    private expressionFunction: Function | null;
+    private expressionFunction: FilterExpressionFunction | null;
     private expressionParams: FilterExpressionFunctionParams | null;
     private isValid: boolean = true;
 
@@ -73,7 +69,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     }
 
     public doesFilterPass(node: IRowNode): boolean {
-        return this.expressionFunction!(this.expressionProxy, node, this.expressionParams);
+        return this.expressionFunction!(this.expressionProxy, node, this.expressionParams!);
     }
 
     public getModel(): AdvancedFilterModel | null {
@@ -177,11 +173,23 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
             return;
         }
 
-        const { functionBody, params } = expressionParser.getFunction();
+        const { expressionFunction, params } = this.getFunction(expressionParser);
 
-        this.expressionFunction = new Function('expressionProxy', 'node', 'params', functionBody);
+        this.expressionFunction = expressionFunction;
         this.expressionParams = params;
         this.appliedExpression = this.expression;
+    }
+
+    private getFunction(expressionParser: FilterExpressionParser): { expressionFunction: FilterExpressionFunction, params: FilterExpressionFunctionParams } {
+        if (this.gos.get('suppressAdvancedFilterEval')) {
+            return expressionParser.getFunctionParsed();
+        } else {
+            const { functionString, params } = expressionParser.getFunctionString();
+            return {
+                expressionFunction: new Function('expressionProxy', 'node', 'params', functionString) as FilterExpressionFunction,
+                params
+            };
+        }
     }
 
     public updateValidity(): boolean {

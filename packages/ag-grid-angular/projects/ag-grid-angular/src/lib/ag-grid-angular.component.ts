@@ -658,6 +658,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Customise the parameters passed to the Advanced Filter Builder.
          */
     @Input() public advancedFilterBuilderParams: IAdvancedFilterBuilderParams | undefined = undefined;
+    /** By default, Advanced Filter sanitises user input and passes it to `new Function()` to provide the best performance.
+         * Set to `true` to prevent this and use defined functions instead.
+         * This will result in slower filtering, but it enables Advanced Filter to work when `unsafe-eval` is disabled.
+         * @default false
+         */
+    @Input() public suppressAdvancedFilterEval: boolean | undefined = undefined;
     /** Set to `true` to Enable Charts.
          * @default false
          */
@@ -2015,5 +2021,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressGroupMaintainValueType: boolean | null | '';
     static ngAcceptInputType_applyQuickFilterBeforePivotOrAgg: boolean | null | '';
     static ngAcceptInputType_suppressServerSideFullWidthLoadingRow: boolean | null | '';
+    static ngAcceptInputType_suppressAdvancedFilterEval: boolean | null | '';
     // @END@
 }

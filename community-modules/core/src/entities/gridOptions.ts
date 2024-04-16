@@ -580,6 +580,13 @@ export interface GridOptions<TData = any> {
      * Customise the parameters passed to the Advanced Filter Builder.
      */
     advancedFilterBuilderParams?: IAdvancedFilterBuilderParams;
+    /**
+     * By default, Advanced Filter sanitises user input and passes it to `new Function()` to provide the best performance.
+     * Set to `true` to prevent this and use defined functions instead.
+     * This will result in slower filtering, but it enables Advanced Filter to work when `unsafe-eval` is disabled.
+     * @default false
+     */
+    suppressAdvancedFilterEval?: boolean;
 
     // *** Integrated Charts *** //
     /**

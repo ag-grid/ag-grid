@@ -1,4 +1,4 @@
-import { ColumnModel, DataTypeService, ValueService } from '@ag-grid-community/core';
+import { ColumnModel, DataTypeService, IRowNode, ValueService } from '@ag-grid-community/core';
 import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import { FilterExpressionEvaluatorParams, FilterExpressionOperator } from "./filterExpressionOperators";
 
@@ -8,11 +8,6 @@ export interface FilterExpressionParserParams {
     dataTypeService: DataTypeService;
     valueService: ValueService;
     advancedFilterExpressionService: AdvancedFilterExpressionService;
-}
-
-export interface FilterExpression {
-    functionBody: string;
-    params: FilterExpressionFunctionParams;
 }
 
 export interface AutocompleteUpdate {
@@ -32,6 +27,12 @@ export interface FilterExpressionFunctionParams {
     operators: FilterExpressionOperator<any>[];
     evaluatorParams: FilterExpressionEvaluatorParams<any, any>[];
 }
+
+export interface ExpressionProxy {
+    getValue<T = any>(colId: string, node: IRowNode): T;
+}
+
+export type FilterExpressionFunction = (expressionProxy: ExpressionProxy, node: IRowNode, params: FilterExpressionFunctionParams) => boolean;
 
 export function getSearchString(value: string, position: number, endPosition: number): string {
     if (!value) { return ''; }
