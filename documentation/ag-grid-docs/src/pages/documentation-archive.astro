@@ -20,6 +20,14 @@ const allMenuSections = menu.main.sections as MenuSection[];
 const versionsContent = await getEntry('versions', 'ag-grid-versions');
 const versionsData: any[] = versionsContent ? versionsContent.data : [];
 
+const removeDay = (date) => {
+    const splitDate = date.split(' ');
+
+    if (splitDate.length < 3) return date;
+
+    return `${splitDate[0]} ${splitDate[2]}`;
+};
+
 const getVersionType = (version) => {
     const [_, minor, patch] = version.split('.');
 
@@ -53,7 +61,7 @@ const isMajor = (version) => {
                                 <tr>
                                     <td class="text-base text-monospace text-semibold">{versionInfo.version}</td>
 
-                                    <td>{versionInfo.date}</td>
+                                    <td>{removeDay(versionInfo.date)}</td>
 
                                     <td>
                                         <span class={isMajor(versionInfo.version) ? styles.major : undefined}>
