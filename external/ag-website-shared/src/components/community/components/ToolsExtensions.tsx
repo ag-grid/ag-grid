@@ -1,10 +1,10 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import styles from '@legacy-design-system/modules/CommunityToolsExtensions.module.scss';
+import tools from '@ag-website-shared/content/community/tools-extensions.json';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { useState } from 'react';
 
-import tools from '../../content/community/tools-extensions.json';
+import styles from './ToolsExtensions.module.scss';
 
 const frameworks = [
     'React',

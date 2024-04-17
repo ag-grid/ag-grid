@@ -1,8 +1,8 @@
 ---
 import Layout from '@layouts/Layout.astro';
-import CommunityMenu from '@components/community-section/CommunityMenu';
-import styles from '@legacy-design-system/modules/CommunityLayout.module.scss';
-import { getEntry } from 'astro:content';
+import CommunityMenu from '@ag-website-shared/components/community/components/CommunityMenu';
+import styles from './CommunityLayout.module.scss';
+import menu from '@ag-website-shared/content/community/community-menu.json';
 
 interface Props {
     title: string;
@@ -12,8 +12,6 @@ interface Props {
 }
 
 const { title, description, pageTitle, pageDescription } = Astro.props as Props;
-
-const { data: menu } = await getEntry('community', 'community-menu');
 ---
 
 <Layout showSearchBar={true} showDocsNav={false} title={title} description={description}>

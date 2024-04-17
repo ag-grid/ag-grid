@@ -1,19 +1,5 @@
 ---
-import CommunityLayout from '@layouts/CommunityLayout.astro';
-import Events from '@components/community-section/Events';
-import { getEntry } from 'astro:content';
-
-const { data: eventImages } = await getEntry('community', 'events-images');
-const { data: events } = await getEntry('community', 'events');
+import Events from '@ag-website-shared/components/community/pages/events.astro';
 ---
 
-<CommunityLayout
-    title="AG Grid: Events"
-    description="AG Grid is a regular sponsor and speaker at some of the biggest conferences in the world. Take a look at where we'll be this year or browse through all the events we've sponsored and held since 2018."
-    pageTitle="Events"
-    pageDescription="AG Grid is a regular sponsor and speaker at some of the biggest conferences in the world. Take a look at where we'll be this year or browse through all the events we've sponsored and held since 2017."
->
-    <section>
-        <Events client:load images={eventImages} events={events} />
-    </section>
-</CommunityLayout>
+<Events />

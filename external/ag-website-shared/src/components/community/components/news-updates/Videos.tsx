@@ -1,6 +1,7 @@
-import styles from '@legacy-design-system/modules/CommunityVideos.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { useState } from 'react';
+
+import styles from './Videos.module.scss';
 
 const Videos = ({ videos }) => {
     const [currentVideo, setCurrentVideo] = useState(videos[0]);

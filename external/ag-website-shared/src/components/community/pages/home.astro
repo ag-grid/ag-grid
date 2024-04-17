@@ -1,0 +1,101 @@
+---
+import CommunityLayout from '@ag-website-shared/components/community/layout/CommunityLayout.astro';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import styles from './home.module.scss';
+import Videos from '@ag-website-shared/components/community/components/news-updates/Videos';
+import UpcomingEvents from '@ag-website-shared/components/community/components/landing-page/UpcomingEvents';
+import Showcase from '@ag-website-shared/components/community/components/Showcase';
+import Support from '@ag-website-shared/components/community/components/landing-page/Support';
+import Socials from '@ag-website-shared/components/community/components/landing-page/Socials';
+import ToolsExtensions from '@ag-website-shared/components/community/components/ToolsExtensions';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+import eventImages from '@ag-website-shared/content/community/events-images.json';
+import socialChannels from '@ag-website-shared/content/community/socials.json';
+import supportSites from '@ag-website-shared/content/community/support.json';
+import events from '@ag-website-shared/content/community/events.json';
+import showcase from '@ag-website-shared/content/community/showcase.json';
+import videos from '@ag-website-shared/content/community/news-updates/videos.json';
+---
+
+<CommunityLayout
+    title="AG Grid: Community"
+    description="Dedicated to our open-source community. Browse hundreds of open-source projects, find 3rd party tools and extensions, and stay up-to-date with the latest news - all in one place."
+    pageTitle="Our Community"
+    pageDescription="Dedicated to our open-source community. Browse hundreds of open-source projects, find 3rd party tools and extensions, and stay up-to-date with the latest news - all in one place."
+>
+    <!-- Events -->
+    <section>
+        <div class={styles.sectionContainer}>
+            <div class={styles.sectionHeader}>
+                <h3 class={styles.sectionTitle}>{new Date().getFullYear()} Events</h3>
+                <!-- <p class={styles.sectionDescription}>
+                                    The latest content from the AG Grid team, including releases, new features, events,
+                                    and more
+                                </p> -->
+            </div>
+            <a href={urlWithBaseUrl('/community/events/')} class={styles.sectionLink}>
+                <span class={styles.linkIcon}>View all</span>
+                <Icon name="arrowRight" />
+            </a>
+        </div>
+        <UpcomingEvents client:only enableFilters={false} images={eventImages} events={events} />
+    </section>
+    <!-- Showcase -->
+    <section>
+        <div class={styles.sectionContainer}>
+            <div class={styles.sectionHeader}>
+                <h2 class={styles.sectionTitle}>Showcase</h2>
+                <!-- <p class={styles.sectionDescription}>A selection of public projects that use AG Grid</p> -->
+            </div>
+            <a href={urlWithBaseUrl('/community/showcase/')} class={styles.sectionLink}>
+                <span class={styles.linkIcon}>View all</span>
+                <Icon name="arrowRight" />
+            </a>
+        </div>
+        <Showcase favouritesOnly={true} maxItems={8} showcase={showcase} client:load />
+    </section>
+    <!-- Tools & Extensons -->
+    <section>
+        <div class={styles.sectionContainer}>
+            <div class={styles.sectionHeader}>
+                <h2 class={styles.sectionTitle}>Tools & Extensions</h2>
+                <!-- <p class={styles.sectionDescription}>
+                                    Wrappers, integrations and utilities created by our community to make using AG Grid
+                                    even easier (***WIP***)
+                                </p> -->
+            </div>
+            <a href={urlWithBaseUrl('/community/tools-extensions/')} class={styles.sectionLink}>
+                <span class={styles.linkIcon}>View all</span>
+                <Icon name="arrowRight" />
+            </a>
+        </div>
+        <ToolsExtensions limit={3} client:idle />
+    </section>
+    <!-- Media -->
+    <section>
+        <div class={styles.sectionContainer}>
+            <div class={styles.sectionHeader}>
+                <h3 class={styles.sectionTitle}>Media</h3>
+                <!-- <p class={styles.sectionDescription}>
+                                    The latest content from the AG Grid team, including releases, new features, events,
+                                    and more
+                                </p> -->
+            </div>
+            <a href={urlWithBaseUrl('/community/media/')} class={styles.sectionLink}>
+                <span class={styles.linkIcon}>View all</span>
+                <Icon name="arrowRight" />
+            </a>
+        </div>
+        <Videos client:visible videos={videos} />
+    </section>
+    <!-- Support -->
+    <section>
+        <h2>Support & Socials</h2>
+        <Support client:visible supportSites={supportSites} />
+    </section>
+    <hr style={{ margin: '0px 5vw 5vw 5vw' }} />
+    <section>
+        <Socials client:visible socialChannels={socialChannels} />
+    </section>
+</CommunityLayout>
