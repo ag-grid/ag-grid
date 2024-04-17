@@ -195,7 +195,7 @@ const GridBodyComp = () => {
 
     const stickyBottomStyle: React.CSSProperties = useMemo(() => ({
         height: stickyBottomHeight,
-        top: stickyBottomBottom,
+        bottom: stickyBottomBottom,
         width: stickyBottomWidth,
     }), [stickyBottomHeight, stickyBottomBottom, stickyBottomWidth]);
 

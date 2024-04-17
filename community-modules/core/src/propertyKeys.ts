@@ -156,6 +156,7 @@ export class PropertyKeys {
         'rowClass', 'paginationPageSizeSelector',
     ];
 
+    // These properties are coerced at runtime, do not do union types
     public static NUMBER_PROPERTIES: KeysOfType<number>[] = [
         'rowHeight', 'detailRowHeight', 'rowBuffer', 'headerHeight', 'groupHeaderHeight', 'groupLockGroupColumns', 'floatingFiltersHeight',
         'pivotHeaderHeight', 'pivotGroupHeaderHeight', 'groupDefaultExpanded', 'pivotDefaultExpanded', 'viewportRowModelPageSize',
@@ -165,6 +166,7 @@ export class PropertyKeys {
         'cellFlashDelay', 'cellFadeDelay', 'cellFlashDuration', 'cellFadeDuration', 'tabIndex', 'pivotMaxGeneratedColumns',
     ];
 
+    // These properties are coerced at runtime, do not do union types
     public static BOOLEAN_PROPERTIES: KeysOfType<boolean>[] = [
         'suppressMakeColumnVisibleAfterUnGroup', 'suppressRowClickSelection', 'suppressCellFocus', 'suppressHeaderFocus', 'suppressHorizontalScroll', 'groupSelectsChildren',
         'alwaysShowHorizontalScroll', 'alwaysShowVerticalScroll', 'debug', 'enableBrowserTooltips', 'enableCellExpressions', 'groupIncludeTotalFooter',
@@ -193,6 +195,10 @@ export class PropertyKeys {
         'resetRowDataOnUpdate', 'removePivotHeaderRowWhenSingleValueColumn', 'suppressCopySingleCellRanges', 'suppressGroupRowsSticky', 'suppressCutToClipboard',
         'suppressServerSideInfiniteScroll', 'rowGroupPanelSuppressSort', 'allowShowChangeAfterFilter','enableAdvancedFilter', 'masterDetail', 'treeData',
         'suppressGroupMaintainValueType', 'reactiveCustomComponents', 'applyQuickFilterBeforePivotOrAgg', 'suppressServerSideFullWidthLoadingRow',
+    ];
+
+    // If property does not fit above, i.e union that should not be coerced.
+    public static OTHER_PROPERTIES: GridOptionKey[] = [
         'suppressStickyTotalRow',
     ];
 
@@ -226,6 +232,7 @@ export class PropertyKeys {
         ...PropertyKeys.STRING_PROPERTIES,
         ...PropertyKeys.NUMBER_PROPERTIES,
         ...PropertyKeys.FUNCTION_PROPERTIES,
-        ...PropertyKeys.BOOLEAN_PROPERTIES
+        ...PropertyKeys.BOOLEAN_PROPERTIES,
+        ...PropertyKeys.OTHER_PROPERTIES,
     ];
 }

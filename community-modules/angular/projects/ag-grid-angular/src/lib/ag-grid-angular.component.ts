@@ -2032,6 +2032,5 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressGroupMaintainValueType: boolean | null | '';
     static ngAcceptInputType_applyQuickFilterBeforePivotOrAgg: boolean | null | '';
     static ngAcceptInputType_suppressServerSideFullWidthLoadingRow: boolean | null | '';
-    static ngAcceptInputType_suppressStickyTotalRow: boolean | null | '';
     // @END@
 }
