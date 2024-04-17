@@ -41,6 +41,10 @@ const Container = styled('div')`
     .tooltip {
         max-width: 400px;
     }
+
+    @media screen and (max-width: 800px) {
+        display: none;
+    }
 `;
 
 const EditorScroller = styled('div')`
