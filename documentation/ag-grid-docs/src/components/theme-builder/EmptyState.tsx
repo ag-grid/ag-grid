@@ -13,7 +13,10 @@ export const EmptyState = () => {
                 <p className={styles.paragraphyEmpty}>
                     Visit us on a larger device to explore our many preset themes, customise colours, spacing, and
                     typography and download your own{' '}
-                    <a href="https://ag-grid.com/react-data-grid/themes/">AG Grid theme</a>.
+                    <span className={styles.lineGrid}>
+                        <a href="https://ag-grid.com/react-data-grid/themes/">AG Grid theme</a>
+                    </span>
+                    .
                 </p>
             </div>
         </>
