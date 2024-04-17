@@ -16,285 +16,126 @@ interface ReadyParams {
     gridCtrl: GridCtrl;
     gridBodyCtrl: GridBodyCtrl;
 
-    centerRowContainerCtrl: RowContainerCtrl;
-    leftRowContainerCtrl: RowContainerCtrl;
-    rightRowContainerCtrl: RowContainerCtrl;
+    center: RowContainerCtrl;
+    left: RowContainerCtrl;
+    right: RowContainerCtrl;
 
-    bottomCenterRowContainerCtrl: RowContainerCtrl;
-    bottomLeftRowContainerCtrl: RowContainerCtrl;
-    bottomRightRowContainerCtrl: RowContainerCtrl;
+    bottomCenter: RowContainerCtrl;
+    bottomLeft: RowContainerCtrl;
+    bottomRight: RowContainerCtrl;
 
-    topCenterRowContainerCtrl: RowContainerCtrl;
-    topLeftRowContainerCtrl: RowContainerCtrl;
-    topRightRowContainerCtrl: RowContainerCtrl;
+    topCenter: RowContainerCtrl;
+    topLeft: RowContainerCtrl;
+    topRight: RowContainerCtrl;
 
-    stickyTopCenterRowContainerCtrl: RowContainerCtrl;
-    stickyTopLeftRowContainerCtrl: RowContainerCtrl;
-    stickyTopRightRowContainerCtrl: RowContainerCtrl;
+    stickyTopCenter: RowContainerCtrl;
+    stickyTopLeft: RowContainerCtrl;
+    stickyTopRight: RowContainerCtrl;
 
     fakeHScrollComp: FakeHScrollComp;
     fakeVScrollComp: FakeVScrollComp;
     gridHeaderCtrl: GridHeaderCtrl;
 
-    centerHeaderRowContainerCtrl: HeaderRowContainerCtrl;
-    leftHeaderRowContainerCtrl: HeaderRowContainerCtrl;
-    rightHeaderRowContainerCtrl: HeaderRowContainerCtrl;
+    centerHeader: HeaderRowContainerCtrl;
+    leftHeader: HeaderRowContainerCtrl;
+    rightHeader: HeaderRowContainerCtrl;
 }
+
+type CtrlType = keyof ReadyParams;
 
 @Bean(CtrlsService.NAME)
 export class CtrlsService extends BeanStub {
 
     public static readonly NAME = 'ctrlsService';
 
-    private gridCtrl: GridCtrl;
-    private gridBodyCtrl: GridBodyCtrl;
-
-    private centerRowContainerCtrl: RowContainerCtrl;
-    private leftRowContainerCtrl: RowContainerCtrl;
-    private rightRowContainerCtrl: RowContainerCtrl;
-
-    private bottomCenterRowContainerCtrl: RowContainerCtrl;
-    private bottomLeftRowContainerCtrl: RowContainerCtrl;
-    private bottomRightRowContainerCtrl: RowContainerCtrl;
-
-    private topCenterRowContainerCtrl: RowContainerCtrl;
-    private topLeftRowContainerCtrl: RowContainerCtrl;
-    private topRightRowContainerCtrl: RowContainerCtrl;
-
-    private stickyTopCenterRowContainerCtrl: RowContainerCtrl;
-    private stickyTopLeftRowContainerCtrl: RowContainerCtrl;
-    private stickyTopRightRowContainerCtrl: RowContainerCtrl;
-
-    private centerHeaderRowContainerCtrl: HeaderRowContainerCtrl;
-    private leftHeaderRowContainerCtrl: HeaderRowContainerCtrl;
-    private rightHeaderRowContainerCtrl: HeaderRowContainerCtrl;
-
-    private fakeHScrollComp: FakeHScrollComp;
-    private fakeVScrollComp: FakeVScrollComp;
-
-    private gridHeaderCtrl: GridHeaderCtrl;
-
+    private params: ReadyParams = {} as ReadyParams;
     private ready = false;
     private readyCallbacks: ((p: ReadyParams) => void)[] = [];
 
     private checkReady(): void {
+        const params = this.params;
         this.ready =
-            this.gridCtrl != null
-            && this.gridBodyCtrl != null
+            params.gridCtrl != null
+            && params.gridBodyCtrl != null
 
-            && this.centerRowContainerCtrl != null
-            && this.leftRowContainerCtrl != null
-            && this.rightRowContainerCtrl != null
+            && params.center != null
+            && params.left != null
+            && params.right != null
 
-            && this.bottomCenterRowContainerCtrl != null
-            && this.bottomLeftRowContainerCtrl != null
-            && this.bottomRightRowContainerCtrl != null
+            && params.bottomCenter != null
+            && params.bottomLeft != null
+            && params.bottomRight != null
 
-            && this.topCenterRowContainerCtrl != null
-            && this.topLeftRowContainerCtrl != null
-            && this.topRightRowContainerCtrl != null
+            && params.topCenter != null
+            && params.topLeft != null
+            && params.topRight != null
 
-            && this.stickyTopCenterRowContainerCtrl != null
-            && this.stickyTopLeftRowContainerCtrl != null
-            && this.stickyTopRightRowContainerCtrl != null
+            && params.stickyTopCenter != null
+            && params.stickyTopLeft != null
+            && params.stickyTopRight != null
 
-            && this.centerHeaderRowContainerCtrl != null
-            && this.leftHeaderRowContainerCtrl != null
-            && this.rightHeaderRowContainerCtrl != null
+            && params.centerHeader != null
+            && params.leftHeader != null
+            && params.rightHeader != null
 
-            && this.fakeHScrollComp != null
-            && this.fakeVScrollComp != null
-            && this.gridHeaderCtrl != null;
+            && params.fakeHScrollComp != null
+            && params.fakeVScrollComp != null
+            && params.gridHeaderCtrl != null;
 
         if (this.ready) {
-            const p = this.createReadyParams();
-            this.readyCallbacks.forEach(c => c(p));
+            this.readyCallbacks.forEach(c => c(params));
             this.readyCallbacks.length = 0;
         }
     }
 
     public whenReady(callback: (p: ReadyParams) => void): void {
         if (this.ready) {
-            callback(this.createReadyParams());
+            callback(this.params);
         } else {
             this.readyCallbacks.push(callback);
         }
     }
 
-    private createReadyParams(): ReadyParams {
-        return {
-            centerRowContainerCtrl: this.centerRowContainerCtrl,
-            leftRowContainerCtrl: this.leftRowContainerCtrl,
-            rightRowContainerCtrl: this.rightRowContainerCtrl,
-
-            bottomCenterRowContainerCtrl: this.bottomCenterRowContainerCtrl,
-            bottomLeftRowContainerCtrl: this.bottomLeftRowContainerCtrl,
-            bottomRightRowContainerCtrl: this.bottomRightRowContainerCtrl,
-
-            topCenterRowContainerCtrl: this.topCenterRowContainerCtrl,
-            topLeftRowContainerCtrl: this.topLeftRowContainerCtrl,
-            topRightRowContainerCtrl: this.topRightRowContainerCtrl,
-
-            stickyTopCenterRowContainerCtrl: this.stickyTopCenterRowContainerCtrl,
-            stickyTopLeftRowContainerCtrl: this.stickyTopLeftRowContainerCtrl,
-            stickyTopRightRowContainerCtrl: this.stickyTopRightRowContainerCtrl,
-
-            centerHeaderRowContainerCtrl: this.centerHeaderRowContainerCtrl,
-            leftHeaderRowContainerCtrl: this.leftHeaderRowContainerCtrl,
-            rightHeaderRowContainerCtrl: this.rightHeaderRowContainerCtrl,
-
-            fakeHScrollComp: this.fakeHScrollComp,
-            fakeVScrollComp: this.fakeVScrollComp,
-            gridBodyCtrl: this.gridBodyCtrl,
-            gridCtrl: this.gridCtrl,
-            gridHeaderCtrl: this.gridHeaderCtrl,
-        };
-    }
-
-    public registerFakeHScrollComp(comp: FakeHScrollComp): void {
-        this.fakeHScrollComp = comp;
-        this.checkReady();
-    }
-
-    public registerFakeVScrollComp(comp: FakeVScrollComp): void {
-        this.fakeVScrollComp = comp;
-        this.checkReady();
-    }
-
-    public registerGridHeaderCtrl(gridHeaderCtrl: GridHeaderCtrl): void {
-        this.gridHeaderCtrl = gridHeaderCtrl;
-        this.checkReady();
-    }
-
-    public registerCenterRowContainerCtrl(ctrl: RowContainerCtrl): void {
-        this.centerRowContainerCtrl = ctrl;
-        this.checkReady();
-    }
-
-    public registerLeftRowContainerCtrl(ctrl: RowContainerCtrl): void {
-        this.leftRowContainerCtrl = ctrl;
-        this.checkReady();
-    }
-
-    public registerRightRowContainerCtrl(ctrl: RowContainerCtrl): void {
-        this.rightRowContainerCtrl = ctrl;
-        this.checkReady();
-    }
-
-    public registerTopCenterRowContainerCtrl(ctrl: RowContainerCtrl): void {
-        this.topCenterRowContainerCtrl = ctrl;
-        this.checkReady();
-    }
-
-    public registerTopLeftRowContainerCon(ctrl: RowContainerCtrl): void {
-        this.topLeftRowContainerCtrl = ctrl;
-        this.checkReady();
-    }
-
-    public registerTopRightRowContainerCtrl(ctrl: RowContainerCtrl): void {
-        this.topRightRowContainerCtrl = ctrl;
-        this.checkReady();
-    }
-
-    public registerStickyTopCenterRowContainerCtrl(ctrl: RowContainerCtrl): void {
-        this.stickyTopCenterRowContainerCtrl = ctrl;
-        this.checkReady();
-    }
-
-    public registerStickyTopLeftRowContainerCon(ctrl: RowContainerCtrl): void {
-        this.stickyTopLeftRowContainerCtrl = ctrl;
-        this.checkReady();
-    }
-
-    public registerStickyTopRightRowContainerCtrl(ctrl: RowContainerCtrl): void {
-        this.stickyTopRightRowContainerCtrl = ctrl;
-        this.checkReady();
-    }
-
-    public registerBottomCenterRowContainerCtrl(ctrl: RowContainerCtrl): void {
-        this.bottomCenterRowContainerCtrl = ctrl;
-        this.checkReady();
-    }
-
-    public registerBottomLeftRowContainerCtrl(ctrl: RowContainerCtrl): void {
-        this.bottomLeftRowContainerCtrl = ctrl;
-        this.checkReady();
-    }
-
-    public registerBottomRightRowContainerCtrl(ctrl: RowContainerCtrl): void {
-        this.bottomRightRowContainerCtrl = ctrl;
+    public register<K extends CtrlType, T extends ReadyParams[K]>(ctrlType: K, ctrl: T): void {
+        this.params[ctrlType] = ctrl;
         this.checkReady();
     }
 
     public registerHeaderContainer(ctrl: HeaderRowContainerCtrl, pinned: ColumnPinnedType): void {
         switch (pinned) {
             case 'left':
-                this.leftHeaderRowContainerCtrl = ctrl;
+                this.params.leftHeader = ctrl;
                 break;
             case 'right':
-                this.rightHeaderRowContainerCtrl = ctrl;
+                this.params.rightHeader = ctrl;
                 break;
-            default: this.centerHeaderRowContainerCtrl = ctrl;
+            default: this.params.centerHeader = ctrl;
                 break;
         }
         this.checkReady();
     }
+    
 
-    public registerGridBodyCtrl(ctrl: GridBodyCtrl): void {
-        this.gridBodyCtrl = ctrl;
-        this.checkReady();
+    public get<K extends CtrlType>(ctrlType: K): ReadyParams[K] {
+        return this.params[ctrlType];
     }
-
-    public registerGridCtrl(ctrl: GridCtrl): void {
-        this.gridCtrl = ctrl;
-        this.checkReady();
-    }
-
-    public getFakeHScrollComp(): FakeHScrollComp {
-        return this.fakeHScrollComp;
-    }
-
-    public getFakeVScrollComp(): FakeVScrollComp {
-        return this.fakeVScrollComp;
-    }
-
-    public getGridHeaderCtrl(): GridHeaderCtrl {
-        return this.gridHeaderCtrl;
-    }
-
-    public getGridCtrl(): GridCtrl {
-        return this.gridCtrl;
-    }
-
-    public getCenterRowContainerCtrl(): RowContainerCtrl {
-        return this.centerRowContainerCtrl;
-    }
-
-    public getTopCenterRowContainerCtrl(): RowContainerCtrl {
-        return this.topCenterRowContainerCtrl;
-    }
-
-    public getBottomCenterRowContainerCtrl(): RowContainerCtrl {
-        return this.bottomCenterRowContainerCtrl;
-    }
-
-    public getStickyTopCenterRowContainerCtrl(): RowContainerCtrl {
-        return this.stickyTopCenterRowContainerCtrl;
+    public getParams(): Readonly<ReadyParams> {
+        return this.params;
     }
 
     public getGridBodyCtrl(): GridBodyCtrl {
-        return this.gridBodyCtrl;
+        return this.params.gridBodyCtrl;
     }
 
     public getHeaderRowContainerCtrls(): HeaderRowContainerCtrl[] {
-        return [this.leftHeaderRowContainerCtrl, this.rightHeaderRowContainerCtrl, this.centerHeaderRowContainerCtrl];
+        return [this.params.leftHeader, this.params.rightHeader, this.params.centerHeader];
     }
 
     public getHeaderRowContainerCtrl(pinned?: ColumnPinnedType): HeaderRowContainerCtrl {
         switch (pinned) {
-            case 'left': return this.leftHeaderRowContainerCtrl;
-            case 'right': return this.rightHeaderRowContainerCtrl;
-            default: return this.centerHeaderRowContainerCtrl;
+            case 'left': return this.params.leftHeader;
+            case 'right': return this.params.rightHeader;
+            default: return this.params.centerHeader;
         }
     }
 }

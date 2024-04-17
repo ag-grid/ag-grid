@@ -51,7 +51,7 @@ export class HorizontalResizeService extends BeanStub {
 
     private setResizeIcons(): void {
 
-        const ctrl = this.ctrlsService.getGridCtrl();
+        const ctrl = this.ctrlsService.get('gridCtrl');
         // change the body cursor, so when drag moves out of the drag bar, the cursor is still 'resize' (or 'move'
         ctrl.setResizeCursor(true);
         // we don't want text selection outside the grid (otherwise it looks weird as text highlights when we move)
@@ -64,7 +64,7 @@ export class HorizontalResizeService extends BeanStub {
     }
 
     private resetIcons(): void {
-        const ctrl = this.ctrlsService.getGridCtrl();
+        const ctrl = this.ctrlsService.get('gridCtrl');
         ctrl.setResizeCursor(false);
         ctrl.disableUserSelect(false);
     }

@@ -24,6 +24,11 @@ export const EditorPanel = () => {
                     <ParamEditor param="borderRadius" label="Widget radius" showDocs />
                 </EvenSplitRow>
             </Section>
+            <Section heading="Borders (temporary)">
+                <ParamEditor param="wrapperBorder" label="Around grid" />
+                <ParamEditor param="rowBorder" label="Rows" />
+                <ParamEditor param="columnBorder" label="Columns" />
+            </Section>
             <Section heading="Header">
                 <ParamEditor param="headerBackgroundColor" label="Background color" />
                 <ParamEditor param="headerTextColor" label="Text color" />
@@ -38,6 +43,7 @@ export const EditorPanel = () => {
                 </FormField>
             </Section>
             <Section heading="Cells">
+                <ParamEditor param="dataColor" label="Text color" />
                 <ParamEditor param="oddRowBackgroundColor" label="Odd row background" />
                 <ParamEditor param="rowVerticalPaddingScale" label="Adjust vertical padding" />
                 <ParamEditor param="cellHorizontalPaddingScale" label="Adjust horizontal padding" />
@@ -129,15 +135,21 @@ const AccordionContent = styled(Accordion.Content)`
 
 const Trigger = styled(Accordion.Trigger)`
     all: unset;
-    color: var(--color-fg-primary) !important;
+    color: var(--color-fg-secondary) !important;
     background: none !important;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 15px;
+    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
     cursor: pointer;
+    transition: all 0.5s;
+    opacity: 0.9;
+    &:hover {
+        opacity: 0.6;
+        transition: all 0.5s;
+    }
 `;
 
 const EvenSplitRow = styled('div')`
@@ -160,6 +172,7 @@ const LeftBiasRow = styled('div')`
 `;
 
 const OpenCloseChevron = styled(ChevronDown)`
+    opacity: 0.6;
     transition: transform 300ms cubic-bezier(0.87, 0, 0.13, 1);
     [data-state='open'] & {
         transform: rotate(180deg);

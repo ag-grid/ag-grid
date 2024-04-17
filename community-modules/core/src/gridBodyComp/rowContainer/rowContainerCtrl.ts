@@ -175,19 +175,17 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private registerWithCtrlsService(): void {
+
         switch (this.name) {
-            case RowContainerName.CENTER: this.ctrlsService.registerCenterRowContainerCtrl(this); break;
-            case RowContainerName.LEFT: this.ctrlsService.registerLeftRowContainerCtrl(this); break;
-            case RowContainerName.RIGHT: this.ctrlsService.registerRightRowContainerCtrl(this); break;
-            case RowContainerName.TOP_CENTER: this.ctrlsService.registerTopCenterRowContainerCtrl(this); break;
-            case RowContainerName.TOP_LEFT: this.ctrlsService.registerTopLeftRowContainerCon(this); break;
-            case RowContainerName.TOP_RIGHT: this.ctrlsService.registerTopRightRowContainerCtrl(this); break;
-            case RowContainerName.STICKY_TOP_CENTER: this.ctrlsService.registerStickyTopCenterRowContainerCtrl(this); break;
-            case RowContainerName.STICKY_TOP_LEFT: this.ctrlsService.registerStickyTopLeftRowContainerCon(this); break;
-            case RowContainerName.STICKY_TOP_RIGHT: this.ctrlsService.registerStickyTopRightRowContainerCtrl(this); break;
-            case RowContainerName.BOTTOM_CENTER: this.ctrlsService.registerBottomCenterRowContainerCtrl(this); break;
-            case RowContainerName.BOTTOM_LEFT: this.ctrlsService.registerBottomLeftRowContainerCtrl(this); break;
-            case RowContainerName.BOTTOM_RIGHT: this.ctrlsService.registerBottomRightRowContainerCtrl(this); break;
+            case RowContainerName.FULL_WIDTH:
+            case RowContainerName.TOP_FULL_WIDTH:
+            case RowContainerName.STICKY_TOP_FULL_WIDTH:
+            case RowContainerName.BOTTOM_FULL_WIDTH:
+                // we don't register full width containers
+                return;
+            default:{
+                this.ctrlsService.register(this.name, this);
+            }
         }
     }
 

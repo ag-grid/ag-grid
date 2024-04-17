@@ -346,7 +346,6 @@ export { GridComp } from "./gridComp/gridComp";
 export { GridCtrl, IGridComp } from "./gridComp/gridCtrl";
 export { Logger, LoggerFactory } from "./logger";
 export { SortController, SortModelItem } from "./sortController";
-export { TemplateService } from "./templateService";
 export { LocaleService } from './localeService';
 export * from "./utils/index"; // please leave this as is - we want it to be explicit for build reasons
 export { ColumnSortState } from "./utils/aria";

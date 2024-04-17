@@ -11,6 +11,7 @@ export type InputProps = {
     onFocus?: () => void;
     onBlur?: () => void;
     onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
+    onKeyPress?: KeyboardEventHandler<HTMLInputElement>;
     isError?: boolean;
     className?: string;
 };

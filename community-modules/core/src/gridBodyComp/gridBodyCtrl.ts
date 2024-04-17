@@ -121,7 +121,7 @@ export class GridBodyCtrl extends BeanStub {
 
         this.filterManager.setupAdvancedFilterHeaderComp(eTop);
 
-        this.ctrlsService.registerGridBodyCtrl(this);
+        this.ctrlsService.register('gridBodyCtrl',this);
     }
 
     public getComp(): IGridBodyComp {
@@ -326,7 +326,7 @@ export class GridBodyCtrl extends BeanStub {
 
         const { target } = (mouseEvent || touch)!;
 
-        if (target === this.eBodyViewport || target === this.ctrlsService.getCenterRowContainerCtrl().getViewportElement()) {
+        if (target === this.eBodyViewport || target === this.ctrlsService.get('center').getViewportElement()) {
             // show it
             this.menuService.showContextMenu({ mouseEvent, touchEvent, value: null, anchorToElement: this.eGridBody } as EventShowContextMenuParams);
         }
@@ -422,7 +422,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private setStickyTopOffsetTop(): void {
-        const headerCtrl = this.ctrlsService.getGridHeaderCtrl();
+        const headerCtrl = this.ctrlsService.get('gridHeaderCtrl');
         const headerHeight = headerCtrl.getHeaderHeight() + this.filterManager.getHeaderHeight();
         const pinnedTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
 

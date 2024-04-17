@@ -3,6 +3,7 @@ import { ThemeBuilder } from '@components/theme-builder/ThemeBuilder';
 import { getCollection } from 'astro:content';
 import { getDocsPages } from '../features/docs/utils/pageData';
 import Layout from '../layouts/Layout.astro';
+import { EmptyState } from '@components/theme-builder/EmptyState';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
@@ -14,6 +15,7 @@ export async function getStaticPaths() {
     <div class:list={['contentViewport layout-grid']}>
         <main is="div">
             <ThemeBuilder client:only />
+            <EmptyState />
         </main>
     </div>
 </Layout>

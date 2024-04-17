@@ -130,8 +130,8 @@ export class RowRenderer extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.ctrlsService.whenReady(() => {
-            this.gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        this.ctrlsService.whenReady((p) => {
+            this.gridBodyCtrl = p.gridBodyCtrl;
             this.initialise();
         });
     }
@@ -794,12 +794,10 @@ export class RowRenderer extends BeanStub {
 
         rowNodes.forEach(rowNode => {
             const id = rowNode.id!;
-            if (rowNode.rowPinned === 'top') {
-                res.top[id] = rowNode;
-            } else if (rowNode.rowPinned === 'bottom') {
-                res.bottom[id] = rowNode;
-            } else {
-                res.normal[id] = rowNode;
+            switch (rowNode.rowPinned) {
+                case 'top': res.top[id] = rowNode; break;
+                case 'bottom': res.bottom[id] = rowNode; break;
+                default: res.normal[id] = rowNode; break;
             }
         });
 
@@ -811,15 +809,11 @@ export class RowRenderer extends BeanStub {
         const id = rowNode.id!;
         const floating = rowNode.rowPinned;
 
-        if (floating === 'bottom') {
-            return rowIdsMap.bottom[id] != null;
+        switch (floating) {
+            case 'top': return rowIdsMap.top[id] != null;
+            case 'bottom': return rowIdsMap.bottom[id] != null;
+            default: return rowIdsMap.normal[id] != null;
         }
-
-        if (floating === 'top') {
-            return rowIdsMap.top[id] != null;
-        }
-
-        return rowIdsMap.normal[id] != null;
     }
 
     /**

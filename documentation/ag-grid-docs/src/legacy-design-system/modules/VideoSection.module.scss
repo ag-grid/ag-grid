@@ -16,10 +16,47 @@
     font-size: var(--text-fs-lg);
 }
 
-.ytIframe {
+.ytContainer {
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        margin: auto;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 24px;
+        height: 24px;
+        background-color: white; // Set the background color to white
+        z-index: 0; // Ensures the background is behind the SVG
+      }
+}
+
+.ytIcon {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 75px;
+    height: 75px;
+    fill: #E62117;
+
+    
+}
+
+.ytThumbnail {
     aspect-ratio: 16/9;
     border-radius: var(--radius-md);
     border: 2px solid var(--color-border-secondary);
+    object-fit: cover;
+
+    @media screen and (max-width: $breakpoint-docs-home-small) {
+        width: 100%;
+    }
 
     @media screen and (min-width: $breakpoint-docs-home-small) {
         max-width: 16rem;

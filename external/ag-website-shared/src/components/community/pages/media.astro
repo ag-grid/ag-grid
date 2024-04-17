@@ -1,0 +1,30 @@
+---
+import CommunityLayout from '@ag-website-shared/components/community/layout/CommunityLayout.astro';
+import Blogs from '@ag-website-shared/components/community/components/news-updates/Blogs';
+import Podcasts from '@ag-website-shared/components/community/components/news-updates/Podcasts';
+import Videos from '@ag-website-shared/components/community/components/news-updates/Videos';
+
+import blogs from '@ag-website-shared/content/community/news-updates/blogs.json';
+import podcasts from '@ag-website-shared/content/community/news-updates/podcasts.json';
+import videos from '@ag-website-shared/content/community/news-updates/videos.json';
+---
+
+<CommunityLayout
+    title="AG Grid: Media"
+    description="AG Grid has an entire ecosystem of community-built tools, extensions and utilities to help you create your next project, no matter which language or framework you're using."
+    pageTitle="Media"
+    pageDescription="The AG Grid team regularly appear in community podcasts, publications, conferences, and more. Read our blogs, watch our videos, or listen to our podcasts to hear the latest news & updates directly from our team."
+>
+    <section>
+        <h2>Videos</h2>
+        <Videos client:load videos={videos} />
+    </section>
+    <section>
+        <h2>Podcasts</h2>
+        <Podcasts client:load podcasts={podcasts} />
+    </section>
+    <section>
+        <h2>Blogs</h2>
+        <Blogs client:visible blogs={blogs} />
+    </section>
+</CommunityLayout>

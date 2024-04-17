@@ -1,0 +1,18 @@
+---
+import CommunityLayout from '@ag-website-shared/components/community/layout/CommunityLayout.astro';
+import Events from '@ag-website-shared/components/community/components/Events';
+
+import eventImages from '@ag-website-shared/content/community/events-images.json';
+import events from '@ag-website-shared/content/community/events.json';
+---
+
+<CommunityLayout
+    title="AG Grid: Events"
+    description="AG Grid is a regular sponsor and speaker at some of the biggest conferences in the world. Take a look at where we'll be this year or browse through all the events we've sponsored and held since 2018."
+    pageTitle="Events"
+    pageDescription="AG Grid is a regular sponsor and speaker at some of the biggest conferences in the world. Take a look at where we'll be this year or browse through all the events we've sponsored and held since 2017."
+>
+    <section>
+        <Events client:load images={eventImages} events={events} />
+    </section>
+</CommunityLayout>

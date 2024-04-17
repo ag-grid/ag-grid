@@ -190,6 +190,17 @@ export class ColumnMoveHelper {
         return count;
     }
 
+    private static getDisplayedColumns(columnModel: ColumnModel, type: ColumnPinnedType): Column[] {
+        switch (type) {
+            case 'left':
+                return columnModel.getDisplayedLeftColumns();
+            case 'right':
+                return columnModel.getDisplayedRightColumns();
+            default:
+                return columnModel.getDisplayedCenterColumns();
+        }
+    }
+
     private static calculateValidMoves(params: {
         movingCols: Column[],
         draggingRight: boolean,
@@ -203,7 +214,7 @@ export class ColumnMoveHelper {
 
         if (isMoveBlocked) { return []; }
         // this is the list of cols on the screen, so it's these we use when comparing the x mouse position
-        const allDisplayedCols = columnModel.getDisplayedColumns(pinned);
+        const allDisplayedCols = this.getDisplayedColumns(columnModel, pinned);
         // but this list is the list of all cols, when we move a col it's the index within this list that gets used,
         // so the result we return has to be and index location for this list
         const allGridCols = columnModel.getAllGridColumns();
@@ -327,7 +338,7 @@ export class ColumnMoveHelper {
 
         // adjust for scroll only if centre container (the pinned containers don't scroll)
         if (pinned == null) {
-            x += ctrlsService.getCenterRowContainerCtrl().getCenterViewportScrollLeft();
+            x += ctrlsService.get('center').getCenterViewportScrollLeft();
         }
 
         return x;

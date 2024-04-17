@@ -55,7 +55,7 @@ export class GridHeaderCtrl extends BeanStub {
         this.addManagedListener(this.eGui, 'contextmenu', listener);
         this.mockContextMenuForIPad(listener);
 
-        this.ctrlsService.registerGridHeaderCtrl(this);
+        this.ctrlsService.register('gridHeaderCtrl',this);
     }
 
     private setupHeaderHeight(): void {

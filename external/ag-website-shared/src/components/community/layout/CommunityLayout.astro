@@ -1,0 +1,35 @@
+---
+import Layout from '@layouts/Layout.astro';
+import CommunityMenu from '@ag-website-shared/components/community/components/CommunityMenu';
+import styles from './CommunityLayout.module.scss';
+import menu from '@ag-website-shared/content/community/community-menu.json';
+
+interface Props {
+    title: string;
+    description: string;
+    pageTitle: string;
+    pageDescription: string;
+}
+
+const { title, description, pageTitle, pageDescription } = Astro.props as Props;
+---
+
+<Layout showSearchBar={true} showDocsNav={false} title={title} description={description}>
+    <div class="layout-max-width-large">
+        <div class={styles.header}>
+            <CommunityMenu client:load path={Astro.url.pathname} menu={menu} />
+        </div>
+        <div class="layout-max-width-small">
+            <div class={styles.container}>
+                <div class={styles.content}>
+                    <!-- Title & Description -->
+                    <h1>{pageTitle}</h1>
+                    <p class={styles.description}>
+                        {pageDescription}
+                    </p>
+                    <slot />
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>

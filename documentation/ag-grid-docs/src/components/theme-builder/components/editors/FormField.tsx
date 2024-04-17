@@ -40,7 +40,8 @@ const StyledInformation = styled(Information)`
 `;
 
 const Label = styled('span')`
-    color: var(--color-fg-quinary);
+    color: var(--color-fg-secondary);
+    opacity: 0.8;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
 `;

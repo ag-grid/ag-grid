@@ -13,10 +13,15 @@
       "default": "./dist/package/main.cjs.js"
     },
     "./styles/ag-grid.css": "./styles/ag-grid.css",
+    "./styles/ag-grid.min.css": "./styles/ag-grid.min.css",
     "./styles/ag-theme-alpine.css": "./styles/ag-theme-alpine.css",
+    "./styles/ag-theme-alpine.min.css": "./styles/ag-theme-alpine.min.css",
     "./styles/ag-theme-balham.css": "./styles/ag-theme-balham.css",
+    "./styles/ag-theme-balham.min.css": "./styles/ag-theme-balham.min.css",
     "./styles/ag-theme-material.css": "./styles/ag-theme-material.css",
+    "./styles/ag-theme-material.min.css": "./styles/ag-theme-material.min.css",
     "./styles/ag-theme-quartz.css": "./styles/ag-theme-quartz.css",
+    "./styles/ag-theme-quartz.min.css": "./styles/ag-theme-quartz.min.css",
     "./styles": "./styles/_index.scss"
   },
   "repository": {
@@ -57,7 +62,7 @@
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
     "ag-grid-community": "31.2.0",
-    "ag-charts-community": "9.2.1-beta.20240415"
+    "ag-charts-community": "9.2.1-beta.20240417.1115"
   },
   "devDependencies": {
     "source-map-loader": "^5.0.0",

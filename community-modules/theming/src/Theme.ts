@@ -43,7 +43,7 @@ export const defineTheme = <P extends Part, V extends object = ParamTypes>(
 
     // apply override params passed to this method
     for (const [name, value] of Object.entries(overrideParams)) {
-        if (value === undefined) continue;
+        if (value == null) continue;
         if (allowedParams.has(name)) {
             if (validateParam(name, value, allowedParams)) {
                 mergedParams[name] = value;
