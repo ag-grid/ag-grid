@@ -275,11 +275,11 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             compPromise.then(comp => {
                 if (comp) {
                     const parentModel = filterManager.getCurrentFloatingFilterParentModel(this.column);
-                    comp.onParentModelChanged(parentModel, this.gos.addGridCommonParams<FilterChangedEvent>({
-                        columns: event?.columns ?? [],
+                    comp.onParentModelChanged(parentModel, event ? this.gos.addGridCommonParams<FilterChangedEvent>({
+                        columns: event.columns ?? [],
                         type: Events.EVENT_FILTER_CHANGED,
-                        source: event?.source === 'api' ? 'api' : 'columnFilter'
-                    }));
+                        source: event.source === 'api' ? 'api' : 'columnFilter'
+                    }) : null);
                 }
             });
         };
