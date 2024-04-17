@@ -9,8 +9,12 @@ export const EmptyState = () => {
             <div className={styles.emptyWrapper}>
                 <ThemePlaceholderLight className={styles.iconLight} />
                 <ThemePlaceholderDark className={styles.iconDark} />
-                <h2 className={styles.headingEmpty}>Theme Builder isn't available on mobile</h2>
-                <p className={styles.paragraphyEmpty}>Visit ag-grid.com on desktop or tablet to use this</p>
+                <h2 className={styles.headingEmpty}>Sorry Theme Builder isn’t available on mobile</h2>
+                <p className={styles.paragraphyEmpty}>
+                    Visit us on a larger device to explore our many preset themes, customise colours, spacing, and
+                    typography and download your own{' '}
+                    <a href="https://ag-grid.com/react-data-grid/themes/">AG Grid theme</a>.
+                </p>
             </div>
         </>
     );
