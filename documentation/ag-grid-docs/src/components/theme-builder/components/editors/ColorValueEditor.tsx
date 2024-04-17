@@ -26,10 +26,6 @@ export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps) =
         placement: 'bottom-start',
     });
 
-    if (param.property === 'headerBackgroundColor') {
-        console.log('render');
-    }
-
     useClickAwayListener(() => setShowPicker(false), [elements.domReference, elements.floating]);
 
     useEffect(() => {
@@ -48,9 +44,21 @@ export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps) =
             const isValid = colorIsValid(newValue);
             setValid(isValid);
             if (isValid) {
-                onChange(newValue.trim() || null);
+                onChange(coerceToValidValue(newValue));
             }
         }
+    };
+
+    const coerceToValidValue = (input: string) => {
+        let color = RGBAColor.parseCss(input);
+        if (!color) {
+            color = RGBAColor.reinterpretCss(input);
+        }
+        if (!color) return input;
+        if (preventTransparency[param.property]) {
+            color.a = 1;
+        }
+        return color.toCSSHex();
     };
 
     const ColorPicker = preventTransparency[param.property] ? HexColorPicker : HexAlphaColorPicker;
@@ -65,10 +73,10 @@ export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps) =
                     onChange={handleInput}
                     onFocus={() => {
                         setShowPicker(true);
-                        setEditorValue(RGBAColor.reinterpretCss(value)?.toCSSHex() || value);
+                        setEditorValue(coerceToValidValue(value));
                     }}
                     onBlur={() => {
-                        setEditorValue(RGBAColor.reinterpretCss(value)?.toCSSHex() || value);
+                        setEditorValue(coerceToValidValue(value));
                         setValid(colorIsValid(value));
                     }}
                     onKeyDown={(e) => {
@@ -90,13 +98,7 @@ export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps) =
     );
 };
 
-const colorIsValid = (value: string) => {
-    const valid = RGBAColor.reinterpretCss(value) != null;
-    if (!valid) {
-        console.log('Invalid color:', value);
-    }
-    return valid;
-};
+const colorIsValid = (value: string) => RGBAColor.reinterpretCss(value) != null;
 
 const Wrapper = styled('div')`
     position: relative;

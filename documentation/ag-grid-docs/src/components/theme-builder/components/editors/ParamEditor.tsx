@@ -7,6 +7,7 @@ import { withErrorBoundary } from '../general/ErrorBoundary';
 import { ColorValueEditor } from './ColorValueEditor';
 import { CssValueEditor } from './CssValueEditor';
 import { FormField } from './FormField';
+import { NumberValueEditor } from './NumberValueEditor';
 import type { ValueEditorProps } from './ValueEditorProps';
 
 export type ParamEditorProps = {
@@ -40,8 +41,7 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
 
 const valueEditors: Record<ParamType, FC<ValueEditorProps>> = {
     color: ColorValueEditor,
-    // length: LengthValueEditor,
-    length: CssValueEditor,
+    length: NumberValueEditor,
     // border: BorderValueEditor,
     border: CssValueEditor,
     // borderStyle: BorderStyleValueEditor,

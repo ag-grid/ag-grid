@@ -1,6 +1,7 @@
 {
     "name": "@ag-grid-enterprise/theming",
     "version": "31.2.0",
+    "private": true,
     "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
     "scripts": {
         "codegen:prod": "tsx scripts/codegen.ts",
