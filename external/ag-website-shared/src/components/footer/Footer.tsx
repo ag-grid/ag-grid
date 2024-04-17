@@ -1,13 +1,13 @@
 import type { FooterItem } from '@ag-grid-types';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { SiteLogo } from '@components/SiteLogo';
-import { SITE_BASE_URL } from '@constants';
-import styles from '@legacy-design-system/modules/Footer.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
 
+import styles from './Footer.module.scss';
+
 interface FooterProps {
-    path: string;
+    showMicrosoftMessage?: boolean;
     footerItems: FooterItem[];
 }
 
@@ -28,7 +28,7 @@ const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) =>
         </div>
     ));
 
-export const Footer = ({ path, footerItems }: FooterProps) => {
+export const Footer = ({ showMicrosoftMessage, footerItems }: FooterProps) => {
     return (
         <footer className={styles.footer}>
             <div className={classNames(styles.footerColumns, 'layout-grid')}>
@@ -43,7 +43,7 @@ export const Footer = ({ path, footerItems }: FooterProps) => {
                         AG Grid Ltd registered in the United Kingdom. Company&nbsp;No.&nbsp;07318192.
                     </p>
 
-                    {(path === SITE_BASE_URL || path === undefined) && (
+                    {showMicrosoftMessage && (
                         <p className="text-sm">
                             The Microsoft logo is a trademark of the Microsoft group of companies.
                         </p>
