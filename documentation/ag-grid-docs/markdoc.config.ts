@@ -264,7 +264,7 @@ export default defineMarkdocConfig({
             },
         },
         figmaPreview: {
-            render: component('./src/components/figma-preview/FigmaPreview', 'FigmaPreview'),
+            render: component('./src/components/figma-preview/FigmaPreview.astro'),
         }
     },
 });
