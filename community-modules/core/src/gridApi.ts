@@ -1065,10 +1065,6 @@ export class GridApi<TData = any> {
     public getValue<TValue = any>(colKey: string | Column<TValue>, rowNode: IRowNode): TValue | null | undefined {
         this.logDeprecation('31.3','getValue', 'getCellValue');
 
-        const v = this.getCellValue(colKey, rowNode);
-        const v2 = this.getCellValue(colKey, rowNode, {useFormatter: false});
-        const v3 = this.getCellValue(colKey, rowNode, {useFormatter: true});
-
         return this.getCellValue(colKey, rowNode);
     }
 
