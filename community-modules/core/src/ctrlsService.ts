@@ -48,7 +48,7 @@ export class CtrlsService extends BeanStub {
 
     public static readonly NAME = 'ctrlsService';
 
-    private params: ReadyParams;
+    private params: ReadyParams = {} as ReadyParams;
     private ready = false;
     private readyCallbacks: ((p: ReadyParams) => void)[] = [];
 
