@@ -1,10 +1,7 @@
 import { Autowired, Bean, Context, Optional, PostConstruct } from "../context/context";
 import { ColumnModel } from "../columns/columnModel";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
-import { GridApi } from "../gridApi";
-import { ExpressionService } from "../valueService/expressionService";
 import { RowRenderer } from "./rowRenderer";
-import { TemplateService } from "../templateService";
 import { ValueService } from "../valueService/valueService";
 import { EventService } from "../eventService";
 import { ColumnAnimationService } from "./columnAnimationService";
@@ -55,10 +52,8 @@ export class Beans {
     @Autowired('paginationProxy') public readonly paginationProxy: PaginationProxy;
     @Autowired('context') public readonly context: Context;
     @Autowired('gridOptionsService') public readonly gos: GridOptionsService;
-    @Autowired('expressionService') public readonly expressionService: ExpressionService;
     @Autowired('environment') public readonly environment: Environment;
     @Autowired('rowRenderer') public readonly rowRenderer: RowRenderer;
-    @Autowired('templateService') public readonly templateService: TemplateService;
     @Autowired('valueService') public readonly valueService: ValueService;
     @Autowired('eventService') public readonly eventService: EventService;
     @Autowired('columnModel') public readonly columnModel: ColumnModel;
