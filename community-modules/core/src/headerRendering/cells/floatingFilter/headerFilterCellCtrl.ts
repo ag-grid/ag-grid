@@ -1,12 +1,9 @@
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { KeyCode } from '../../../constants/keyCode';
-import { Autowired } from '../../../context/context';
 import { Column } from '../../../entities/column';
-import { Events, FilterChangedEvent } from '../../../events';
-import { FilterManager } from '../../../filter/filterManager';
+import { Events, ColumnEvent, FilterChangedEvent } from '../../../events';
 import { IFloatingFilter } from '../../../filter/floating/floatingFilter';
-import { ColumnHoverService } from '../../../rendering/columnHoverService';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { AgPromise } from '../../../utils';
 import { isElementChildOfClass } from '../../../utils/dom';
@@ -269,7 +266,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         if (!this.active) { return; }
         const { filterManager } = this.beans;
 
-        const syncWithFilter = (filterChangedEvent: FilterChangedEvent | null) => {
+        const syncWithFilter = (event: ColumnEvent | null) => {
+            if (event?.source === 'filterDestroyed') { return; }
             const compPromise = this.comp.getFloatingFilterComp();
 
             if (!compPromise) { return; }
@@ -277,7 +275,11 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             compPromise.then(comp => {
                 if (comp) {
                     const parentModel = filterManager.getCurrentFloatingFilterParentModel(this.column);
-                    comp.onParentModelChanged(parentModel, filterChangedEvent);
+                    comp.onParentModelChanged(parentModel, this.gos.addGridCommonParams<FilterChangedEvent>({
+                        columns: event?.columns ?? [],
+                        type: Events.EVENT_FILTER_CHANGED,
+                        source: event?.source === 'api' ? 'api' : 'columnFilter'
+                    }));
                 }
             });
         };
