@@ -81,8 +81,8 @@ export class UndoRedoService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DRAG_END, this.clearStacks);
 
-        this.ctrlsService.whenReady(() => {
-            this.gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        this.ctrlsService.whenReady((p) => {
+            this.gridBodyCtrl = p.gridBodyCtrl;
         });
     }
 

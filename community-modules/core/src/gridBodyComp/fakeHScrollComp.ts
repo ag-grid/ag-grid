@@ -41,7 +41,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.addManagedPropertyListener('domLayout', spacerWidthsListener);
 
-        this.ctrlsService.registerFakeHScrollComp(this);
+        this.ctrlsService.register('fakeHScrollComp', this);
         this.createManagedBean(new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`));
 
         this.addManagedPropertyListeners(['suppressHorizontalScroll'], this.onScrollVisibilityChanged.bind(this));

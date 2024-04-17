@@ -78,8 +78,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
-        this.ctrlsService.whenReady(() => {
-            const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        this.ctrlsService.whenReady((p) => {
+            const gridBodyCon = p.gridBodyCtrl;
             this.autoScrollService = new AutoScrollService({
                 scrollContainer: gridBodyCon.getBodyViewportElement(),
                 scrollAxis: 'y',

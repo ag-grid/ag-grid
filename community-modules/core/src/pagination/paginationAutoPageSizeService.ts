@@ -12,7 +12,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
-    private centerRowContainerCon: RowContainerCtrl;
+    private centerRowsCtrl: RowContainerCtrl;
 
     // Once the body is rendered, we debounce changes to the page size,
     // but we do not want to debounce the first time the body is rendered.
@@ -21,7 +21,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         this.ctrlsService.whenReady(p => {
-            this.centerRowContainerCon = p.centerRowContainerCtrl;
+            this.centerRowsCtrl = p.center;
 
             this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.checkPageSize.bind(this));
             this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.checkPageSize.bind(this));
@@ -32,7 +32,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
     }
 
     private notActive(): boolean {
-        return !this.gos.get('paginationAutoPageSize') || this.centerRowContainerCon == null;
+        return !this.gos.get('paginationAutoPageSize') || this.centerRowsCtrl == null;
     }
 
     private onPaginationAutoSizeChanged(): void {
@@ -46,7 +46,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
     private checkPageSize(): void {
         if (this.notActive()) { return; }
 
-        const bodyHeight = this.centerRowContainerCon.getViewportSizeFeature()!.getBodyHeight();
+        const bodyHeight = this.centerRowsCtrl.getViewportSizeFeature()!.getBodyHeight();
 
         if (bodyHeight > 0) {
             const update = () => {

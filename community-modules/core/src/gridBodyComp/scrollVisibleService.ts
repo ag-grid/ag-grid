@@ -3,7 +3,6 @@ import { BeanStub } from "../context/beanStub";
 import { Events, ScrollVisibilityChangedEvent } from "../events";
 import { CtrlsService } from "../ctrlsService";
 import { WithoutGridCommon } from "../interfaces/iCommon";
-import { debounce } from "../utils/function";
 import { ColumnAnimationService } from "../rendering/columnAnimationService";
 
 export interface SetScrollsVisibleParams {
@@ -52,7 +51,7 @@ export class ScrollVisibleService extends BeanStub {
     }
 
     private updateImpl(): void {
-        const centerRowCtrl = this.ctrlsService.getCenterRowContainerCtrl();
+        const centerRowCtrl = this.ctrlsService.get('center');
 
         if (!centerRowCtrl || this.columnAnimationService.isActive()) { return; }
 

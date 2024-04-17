@@ -234,8 +234,8 @@ export class GridApi<TData = any> {
                 break;
         }
 
-        this.ctrlsService.whenReady(() => {
-            this.gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        this.ctrlsService.whenReady((p) => {
+            this.gridBodyCtrl = p.gridBodyCtrl;
         });
     }
 
@@ -1125,10 +1125,7 @@ export class GridApi<TData = any> {
         this.destroyCalled = true;
 
         // destroy the UI first (as they use the services)
-        const gridCtrl = this.ctrlsService.getGridCtrl();
-        if (gridCtrl) {
-            gridCtrl.destroyGridUi();
-        }
+        this.ctrlsService.get('gridCtrl')?.destroyGridUi();
 
         // destroy the services
         this.context.destroy();
