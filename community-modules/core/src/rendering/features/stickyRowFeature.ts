@@ -131,93 +131,103 @@ export class StickyRowFeature extends BeanStub {
         // if not expandable, then this row shouldn't be sticky currently.
         return Number.MAX_SAFE_INTEGER;
     }
+    
+    private updateStickyRows(container: 'top' | 'bottom'): boolean {
+        const isTop = container === 'top';
+        let newStickyContainerHeight = 0;
 
-    private updateStickyTopRows(): boolean {
-        let topHeight = 0;
-
-        if (!this.gos.isGroupRowsSticky()) {
-            return this.refreshNodesAndContainerHeight('top', [], topHeight);
+        if (!this.canRowsBeSticky()) {
+            return this.refreshNodesAndContainerHeight(container, new Set(), newStickyContainerHeight);
         }
 
-        // Group and footer nodes are sticky when the children are in viewport, but they are not.
-        const firstPixel = this.rowRenderer.getFirstVisibleVerticalPixel();
-        const stickyRowsTop: RowNode[] = [];
+        const pixelAtContainerBoundary = isTop
+            ? this.rowRenderer.getFirstVisibleVerticalPixel() : this.rowRenderer.getLastVisibleVerticalPixel();
+        const newStickyRows = new Set<RowNode>();
+
         const addStickyRow = (stickyRow: RowNode) => {
-            stickyRowsTop.push(stickyRow);
+            newStickyRows.add(stickyRow);
 
-            // get the pixel which stops this node being sticky.
-            let lastChildBottom: number = this.getLastPixelOfGroup(stickyRow);
-
-            const stickRowBottom = firstPixel + topHeight + stickyRow.rowHeight!;
-            if (lastChildBottom < stickRowBottom) {
-                stickyRow.stickyRowTop = topHeight + (lastChildBottom - stickRowBottom);
+            if (isTop) {
+                // get the pixel which stops this node being sticky.
+                const lastChildBottom = this.getLastPixelOfGroup(stickyRow);
+                const stickRowBottom = pixelAtContainerBoundary + newStickyContainerHeight + stickyRow.rowHeight!;
+                if (lastChildBottom < stickRowBottom) {
+                    stickyRow.stickyRowTop = newStickyContainerHeight + (lastChildBottom - stickRowBottom);
+                } else {
+                    stickyRow.stickyRowTop = newStickyContainerHeight;
+                }
             } else {
-                stickyRow.stickyRowTop = topHeight;
+                // get the pixel which stops this node being sticky.
+                const lastChildBottom = this.getFirstPixelOfGroup(stickyRow);
+                const stickRowTop = pixelAtContainerBoundary - (newStickyContainerHeight + stickyRow.rowHeight!);
+                if (lastChildBottom > stickRowTop) {
+                    stickyRow.stickyRowTop = newStickyContainerHeight - (lastChildBottom - stickRowTop);
+                } else {
+                    stickyRow.stickyRowTop = newStickyContainerHeight;
+                }
             }
 
             // have to recalculate height after each row has been added, to allow
             // calculating the next sticky row
-            topHeight = 0;
-            stickyRowsTop.forEach(rowNode => {
+            newStickyContainerHeight = 0;
+            newStickyRows.forEach(rowNode => {
                 const thisRowLastPx = rowNode.stickyRowTop + rowNode.rowHeight!;
-                if (topHeight < thisRowLastPx) {
-                    topHeight = thisRowLastPx;
+                if (newStickyContainerHeight < thisRowLastPx) {
+                    newStickyContainerHeight = thisRowLastPx;
                 }
             });
 
         };
+ 
+        const suppressFootersSticky = this.gos.get('suppressStickyTotalRow');
+        const suppressGroupsSticky = this.gos.get('suppressGroupRowsSticky');
+        const isRowSticky = (row: RowNode) => {
+            if (row.footer) {
+                if (suppressFootersSticky === true) { return false; }
+                if (suppressFootersSticky === 'grand' && row.level === -1) { return false };
+                if (suppressFootersSticky === 'group' && row.level > -1) { return false };
 
-        let counter = 0;
-        while (true) {
-            const firstPixelAfterStickyRows = firstPixel + topHeight;
+                const alreadySticking = newStickyRows.has(row);
+                return !alreadySticking && row.displayed;
+            }
+
+            if (row.isExpandable()) {
+                if (suppressGroupsSticky === true) { return false };
+                const alreadySticking = newStickyRows.has(row);
+                return !alreadySticking && row.displayed && row.expanded;
+            }
+
+            return false;
+        }
+
+        // arbitrary counter to prevent infinite loop break out of the loop when the row calculation
+        // changes while rows are becoming sticky (happens with auto height)
+        for (let i = 0; i < 100; i++) {
+            let firstPixelAfterStickyRows = pixelAtContainerBoundary + newStickyContainerHeight;
+            if (!isTop) {
+                firstPixelAfterStickyRows = pixelAtContainerBoundary - newStickyContainerHeight;
+            }
             const firstIndex = this.rowModel.getRowIndexAtPixel(firstPixelAfterStickyRows);
             const firstRow = this.rowModel.getRow(firstIndex);
 
             if (firstRow == null) {  break; }
 
-            // added logic to break out of the loop when the row calculation
-            // changes while rows are becoming sticky (happens with auto height)
-            if (counter++ === 100) { break; }
-
-            const parents: RowNode[] = [];
-            let p = firstRow.footer ? firstRow.sibling : firstRow.parent;
-            while (p) {
-                if (p.sibling) {
-                    parents.push(p.sibling);
-                }
-                parents.push(p);
-                p = p.parent!;
-            }
-
-            const suppressFootersSticky = this.gos.get('suppressStickyTotalRow');
-            const suppressGroupsSticky = this.gos.get('suppressGroupRowsSticky');
-            const isRowSticky = (row: RowNode) => {
-                if (row.footer) {
-                    if (suppressFootersSticky === true) { return false; }
-                    if (suppressFootersSticky === 'grand' && row.level === -1) { return false };
-                    if (suppressFootersSticky === 'group' && row.level > -1) { return false };
-
-                    const alreadySticking = stickyRowsTop.indexOf(row) >= 0;
-                    return !alreadySticking && row.displayed;
-                }
-
-                if (row.isExpandable()) {
-                    if (suppressGroupsSticky === true) { return false };
-                    const alreadySticking = stickyRowsTop.indexOf(row) >= 0;
-                    return !alreadySticking && row.displayed && row.expanded;
-                }
-
-                return false;
-            }
-            const firstMissingParent = parents.reverse().find(parent => parent.rowIndex! < firstIndex && isRowSticky(parent));
+            const ancestors: RowNode[] = this.getStickyAncestors(firstRow);
+            const firstMissingParent = ancestors.find(parent => (
+                    isTop ? parent.rowIndex! < firstIndex : parent.rowIndex! > firstIndex
+                ) && isRowSticky(parent)
+            );
             if (firstMissingParent) {
                 addStickyRow(firstMissingParent);
                 continue;
             }
 
+            const isFirstRowOutsideViewport = isTop
+                ? firstRow.rowTop! < firstPixelAfterStickyRows
+                : (firstRow.rowTop! + firstRow.rowHeight!) > firstPixelAfterStickyRows;
             // if first row is an open group, and partially shown, it needs
             // to be stuck
-            if (firstRow.rowTop! < firstPixelAfterStickyRows && isRowSticky(firstRow)) {
+            if (isFirstRowOutsideViewport && isRowSticky(firstRow)) {
                 addStickyRow(firstRow);
                 continue;
             }
@@ -225,120 +235,49 @@ export class StickyRowFeature extends BeanStub {
             break;
         }
 
-        return this.refreshNodesAndContainerHeight('top', stickyRowsTop, topHeight);
+        if (!isTop) {
+            // Because sticky bottom rows are calculated inverted, we need to invert the top position
+            newStickyRows.forEach(rowNode => {
+                rowNode.stickyRowTop = newStickyContainerHeight - (rowNode.stickyRowTop + rowNode.rowHeight!);
+            });
+        }
+
+        return this.refreshNodesAndContainerHeight(container, newStickyRows, newStickyContainerHeight);
     }
 
-    private updateStickyBottomRows(): boolean {
-        let bottomHeight = 0;
+    private canRowsBeSticky(): boolean {
+        const isStickyEnabled = this.gos.isGroupRowsSticky();
+        const suppressFootersSticky = this.gos.get('suppressStickyTotalRow');
+        const suppressGroupsSticky = this.gos.get('suppressGroupRowsSticky');
+        return isStickyEnabled && !suppressFootersSticky && !suppressGroupsSticky;
+    }
 
-        if (!this.gos.isGroupRowsSticky()) {
-            return this.refreshNodesAndContainerHeight('bottom', [], bottomHeight);
+    private getStickyAncestors(rowNode: RowNode): RowNode[] {
+        const ancestors: RowNode[] = [];
+        let p = rowNode.footer ? rowNode.sibling : rowNode.parent;
+        while (p) {
+            if (p.sibling) {
+                ancestors.push(p.sibling);
+            }
+            ancestors.push(p);
+            p = p.parent!;
         }
-
-
-        const lastPixel = this.rowRenderer.getLastVisibleVerticalPixel();
-        let stickyRowsBottom: RowNode[] = [];
-        const addStickyRowBottom = (stickyRow: RowNode) => {
-            stickyRowsBottom.push(stickyRow);
-
-            let firstChildTop: number = this.getFirstPixelOfGroup(stickyRow);
-
-            const stickRowTop = lastPixel - (bottomHeight + stickyRow.rowHeight!);
-            if (firstChildTop! > stickRowTop) {
-                stickyRow.stickyRowTop = bottomHeight - (firstChildTop! - stickRowTop);
-            } else {
-                stickyRow.stickyRowTop = bottomHeight;
-            }
-
-            // need to keep the running height tally, to calculate next sticky row
-            bottomHeight = 0;
-            stickyRowsBottom.forEach(rowNode => {
-                const thisRowLastPx = rowNode.stickyRowTop + rowNode.rowHeight!;
-                if (bottomHeight < thisRowLastPx) {
-                    bottomHeight = thisRowLastPx;
-                }
-            });
-        };
-
-        
-        let count = 0;
-        while (true) {
-            const lastPixelBeforeStickyRows = lastPixel - bottomHeight;
-            const lastIndex = this.rowModel.getRowIndexAtPixel(lastPixelBeforeStickyRows);
-            const lastRow = this.rowModel.getRow(lastIndex);
-
-            if (lastRow == null) {  break; }
-
-            // added logic to break out of the loop when the row calculation
-            // changes while rows are becoming sticky (happens with auto height)
-            if (count++ === 100) { break; }
-
-            const parents: RowNode[] = [];
-            let p = lastRow.parent!;
-            while (p) {
-                if (p.sibling) {
-                    parents.push(p.sibling);
-                }
-                p = p.parent!;
-            }
- 
-            const suppressFootersSticky = this.gos.get('suppressStickyTotalRow');
-            const suppressGroupsSticky = this.gos.get('suppressGroupRowsSticky');
-            const isRowSticky = (row: RowNode) => {
-                if (row.footer) {
-                    if (suppressFootersSticky === true) { return false; }
-                    if (suppressFootersSticky === 'grand' && row.level === -1) { return false };
-                    if (suppressFootersSticky === 'group' && row.level > -1) { return false };
-
-                    const alreadySticking = stickyRowsBottom.indexOf(row) >= 0;
-                    return !alreadySticking && row.displayed;
-                }
-
-                if (row.isExpandable()) {
-                    if (suppressGroupsSticky === true) { return false };
-                    const alreadySticking = stickyRowsBottom.indexOf(row) >= 0;
-                    return !alreadySticking && row.displayed && row.expanded;
-                }
-
-                return false;
-            }
-            const firstMissingTotal = parents.reverse().find(parent => parent.rowIndex! > lastIndex && isRowSticky(parent));
-            if (firstMissingTotal) {
-                addStickyRowBottom(firstMissingTotal);
-                continue;
-            }
-
-            // if last row is a footer, and partially shown, it needs
-            // to be stuck
-            if ((lastRow.rowTop! + lastRow.rowHeight!) > lastPixelBeforeStickyRows && isRowSticky(lastRow)) {
-                addStickyRowBottom(lastRow);
-                continue;
-            }
-
-            break;
-        }
-
-        // Because sticky bottom rows are calculated inverted, we need to invert the top position
-        stickyRowsBottom.forEach(rowNode => {
-            rowNode.stickyRowTop = bottomHeight - (rowNode.stickyRowTop + rowNode.rowHeight!);
-        });
-
-        return this.refreshNodesAndContainerHeight('bottom', stickyRowsBottom, bottomHeight);
+        return ancestors.reverse();
     }
 
     public checkStickyRows(): boolean {
-        const hasTopUpdated = this.updateStickyTopRows();
-        const hasBottomUpdated = this.updateStickyBottomRows();
+        const hasTopUpdated = this.updateStickyRows('top');
+        const hasBottomUpdated = this.updateStickyRows('bottom');
         return hasTopUpdated || hasBottomUpdated;
     }
 
     public refreshStickyNode(stickRowNode:  RowNode): void {
+        const allStickyNodes = new Set<RowNode>();
         if (this.stickyTopRowCtrls.some(ctrl => ctrl.getRowNode() === stickRowNode)) {
-            const allStickyNodes: RowNode[] = [];
             for (let i = 0; i < this.stickyTopRowCtrls.length; i++) {
                 const currentNode = this.stickyTopRowCtrls[i].getRowNode();
                 if (currentNode !== stickRowNode) {
-                    allStickyNodes.push(currentNode);
+                    allStickyNodes.add(currentNode);
                 }
             }
     
@@ -348,11 +287,10 @@ export class StickyRowFeature extends BeanStub {
             return;
         }
 
-        const allStickyNodes: RowNode[] = [];
         for (let i = 0; i < this.stickyBottomRowCtrls.length; i++) {
             const currentNode = this.stickyBottomRowCtrls[i].getRowNode();
             if (currentNode !== stickRowNode) {
-                allStickyNodes.push(currentNode);
+                allStickyNodes.add(currentNode);
             }
         }
 
@@ -361,61 +299,82 @@ export class StickyRowFeature extends BeanStub {
         }
     }
 
-    private refreshNodesAndContainerHeight(topOrBottom: 'top' | 'bottom', allStickyNodes: RowNode[], height: number): boolean {
-        let stickyRowsChanged = false;
+    /**
+     * Destroy old ctrls and create new ctrls where necessary.
+     */
+    private refreshNodesAndContainerHeight(container: 'top' | 'bottom', newStickyNodes: Set<RowNode>, height: number): boolean {
+        const isTop = container === 'top';
+        const previousCtrls = isTop ? this.stickyTopRowCtrls : this.stickyBottomRowCtrls;
 
-        let ctrls = topOrBottom === 'top' ? this.stickyTopRowCtrls : this.stickyBottomRowCtrls;
+        // find removed ctrls and remaining ctrls
+        const removedCtrlsMap: RowCtrlByRowNodeIdMap = {};
+        const remainingCtrls: RowCtrl[] = [];
+        for(let i = 0; i < previousCtrls.length; i++) {
+            const node = previousCtrls[i].getRowNode();
+            const hasBeenRemoved = !newStickyNodes.has(node);
+            if (hasBeenRemoved) {
+                removedCtrlsMap[node.id!] = previousCtrls[i];
 
-        const removedCtrls = ctrls.filter(ctrl => allStickyNodes.indexOf(ctrl.getRowNode()) === -1);
-        const addedNodes = allStickyNodes.filter(rowNode => ctrls.findIndex(ctrl => ctrl.getRowNode() === rowNode) === -1);
-
-        if (removedCtrls.length || addedNodes.length) {
-            stickyRowsChanged = true;
-        }
-
-        const ctrlsToDestroy: RowCtrlByRowNodeIdMap = {};
-        removedCtrls.forEach(removedCtrl => {
-            ctrlsToDestroy[removedCtrl.getRowNode().id!] = removedCtrl;
-            if (topOrBottom === 'top') {
-                this.stickyTopRowCtrls = ctrls.filter(ctrl => ctrl !== removedCtrl);
-                ctrls = this.stickyTopRowCtrls;
-            } else {
-                this.stickyBottomRowCtrls = ctrls.filter(ctrl => ctrl !== removedCtrl);
-                ctrls = this.stickyBottomRowCtrls;
+                // if no longer sticky, remove sticky flag.
+                node.sticky = false;
+                continue;
             }
-        });
 
-        for (const ctrl of Object.values(ctrlsToDestroy)) {
-            ctrl.getRowNode().sticky = false;
+            remainingCtrls.push(previousCtrls[i]);
         }
 
-        this.destroyRowCtrls(ctrlsToDestroy, false);
-
-        const newCtrls = addedNodes.map(rowNode => {
-            rowNode.sticky = true;
-            return this.createRowCon(rowNode, false, false);
-        });
-
-        ctrls.push(...newCtrls);
-        ctrls.forEach(ctrl => ctrl.setRowTop(ctrl.getRowNode().stickyRowTop));
-
-        if (topOrBottom === 'top') {
-            ctrls.sort((a, b) => b.getRowNode().rowIndex! - a.getRowNode().rowIndex!);
-        } else {
-            ctrls.sort((a, b) => a.getRowNode().rowIndex! - b.getRowNode().rowIndex!);
+        // get set of existing nodes for quick lookup
+        const existingNodes = new Set<RowNode>();
+        for (let i = 0; i < remainingCtrls.length; i++) {
+            existingNodes.add(remainingCtrls[i].getRowNode());
         }
 
-        if ((topOrBottom === 'top' ? this.topContainerHeight : this.bottomContainerHeight) !== height) {
-            if (topOrBottom === 'top') {
+        // find the new ctrls to add
+        const newCtrls: RowCtrl[] = [];
+        newStickyNodes.forEach(node => {
+            if (existingNodes.has(node)) { return; }
+            // ensure new node is set to sticky and create the new ctrl
+            node.sticky = true;
+            newCtrls.push(this.createRowCon(node, false, false));
+        });
+
+        // check if anything has changed
+        let hasSomethingChanged = !!newCtrls.length || remainingCtrls.length !== previousCtrls.length;
+        if (isTop) {
+            if (this.topContainerHeight !== height) {
                 this.topContainerHeight = height;
                 this.gridBodyCtrl.setStickyTopHeight(height);
-            } else {
+                hasSomethingChanged = true;
+            }
+        } else {
+            if (this.bottomContainerHeight !== height) {
                 this.bottomContainerHeight = height;
                 this.gridBodyCtrl.setStickyBottomHeight(height);
+                hasSomethingChanged = true;
             }
-            stickyRowsChanged = true;
         }
 
-        return stickyRowsChanged;
+        if (!hasSomethingChanged) {
+            return false;
+        }
+
+        // clean up removed ctrls
+        this.destroyRowCtrls(removedCtrlsMap, false);
+
+        // set up new ctrls list
+        const newCtrlsList = [...remainingCtrls, ...newCtrls];
+        newCtrlsList.sort((a, b) => b.getRowNode().rowIndex! - a.getRowNode().rowIndex!);
+        if (!isTop) {
+            newCtrlsList.reverse();
+        }
+        newCtrlsList.forEach(ctrl => ctrl.setRowTop(ctrl.getRowNode().stickyRowTop));
+
+        if (isTop) {
+            this.stickyTopRowCtrls = newCtrlsList;
+        } else {
+            this.stickyBottomRowCtrls = newCtrlsList;
+        }
+
+        return true;
     }
 }

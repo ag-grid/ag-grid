@@ -492,7 +492,6 @@ export class GridOptionsService {
 
     public isGroupRowsSticky(): boolean {
         if (
-            this.get('suppressGroupRowsSticky') ||
             this.get('paginateChildRows') ||
             this.get('groupHideOpenParents') ||
             this.isDomLayout('print')
