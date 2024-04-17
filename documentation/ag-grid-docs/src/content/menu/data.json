@@ -6,6 +6,10 @@
                 "path": "/example"
             },
             {
+                "title": "Theme Builder",
+                "path": "/theme-builder"
+            },
+            {
                 "title": "Docs",
                 "path": "./getting-started"
             },
@@ -27,21 +31,6 @@
                 "icon": "github",
                 "github": "true"
             }
-        ]
-    },
-    "product": {
-        "items": [
-            {
-                "title": "AG Grid",
-                "description": "Best JavaScript Grid in the World",
-                "url": "https://ag-grid.com"
-            },
-            {
-                "title": "AG Charts",
-                "description": "Best JavaScript Charts in the World",
-                "url": "https://charts.ag-grid.com"
-            }
-            
         ]
     },
     "api": {
@@ -1456,7 +1445,7 @@
                             {
                                 "title": "Custom Components",
                                 "path": "components"
-                            },                            
+                            },
                             {
                                 "title": "Best Practices",
                                 "path": "framework-data-flow",

@@ -472,12 +472,18 @@ export interface ExcelHeaderFooterConfig {
     /** The configuration for header and footer on even numbered pages only. */
     even?: ExcelHeaderFooter;
 }
-export interface ExcelHeaderFooter {
+
+type ExcelHeader = {
     /** An array of maximum 3 items (`Left`, `Center`, `Right`), containing header configurations. */
-    header?: ExcelHeaderFooterContent[];
-    /** An array of maximum 3 items (`Left`, `Center`, `Right`), containing footer configurations. */
-    footer?: ExcelHeaderFooterContent[];
+    header: ExcelHeaderFooterContent[];
 }
+
+type ExcelFooter = {
+    /** An array of maximum 3 items (`Left`, `Center`, `Right`), containing footer configurations. */
+    footer: ExcelHeaderFooterContent[]
+}
+
+export type ExcelHeaderFooter = ExcelFooter | ExcelHeader | (ExcelFooter & ExcelHeader);
 
 export interface ExcelHeaderFooterContent {
     /** The value of the text to be included in the header. */

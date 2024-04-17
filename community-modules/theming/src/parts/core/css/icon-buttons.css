@@ -1,0 +1,47 @@
+.ag-header-cell-menu-button,
+.ag-header-cell-filter-button,
+.ag-panel-title-bar-button,
+.ag-header-expand-icon,
+.ag-column-group-icons,
+.ag-set-filter-group-icons,
+.ag-group-expanded .ag-icon,
+.ag-group-contracted .ag-icon,
+.ag-chart-settings-prev,
+.ag-chart-settings-next,
+.ag-group-title-bar-icon,
+.ag-column-select-header-icon,
+.ag-floating-filter-button-button,
+.ag-filter-toolpanel-expand,
+.ag-panel-title-bar-button-icon,
+.ag-chart-menu-icon,
+.ag-chart-menu-close {
+    &:hover {
+        border-radius: 1px;
+        background-color: var(--ag-icon-button-hover-color);
+        box-shadow: 0 0 0 4px var(--ag-icon-button-hover-color);
+    }
+}
+
+.ag-filter-active {
+    --ag-icon-button-hover-color: color-mix(in srgb, transparent, var(--ag-accent-color) 28%);
+
+    position: relative;
+    border-radius: 1px;
+    background-color: color-mix(in srgb, transparent, var(--ag-accent-color) 14%);
+    box-shadow: 0 0 0 4px color-mix(in srgb, transparent, var(--ag-accent-color) 14%);
+
+    &::after {
+        content: '';
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        top: -1px;
+        right: -1px;
+        border-radius: 50%;
+        background-color: var(--ag-accent-color);
+    }
+
+    .ag-icon-filter {
+        clip-path: path('M8,0C8,4.415 11.585,8 16,8L16,16L0,16L0,0L8,0Z');
+    }
+}

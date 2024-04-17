@@ -49,9 +49,12 @@ In the container repository:
 
 ```
 git subrepo pull [dest-folder]
+```
 
-# Grid/Charts
-git subrepo pull external/ag-website-shared
+⚠️ In grid/charts, there is a script that wraps the `git subrepo pull` command:
+
+```
+yarn run subrepo pull [--verbose]
 ```
 
 ### Updating this shared repository
@@ -69,9 +72,12 @@ There are 2 ways to update this shared repository:
 
         ```
         git subrepo push [dest-folder]
+        ```
 
-        # Grid/Charts
-        git subrepo push external/ag-website-shared
+        ⚠️ In grid/charts, there is a script that wraps the `git subrepo push` command:
+
+        ```
+        yarn run subrepo pull [--verbose]
         ```
 
         If there are changes already on the shared repository, you will get the following error:

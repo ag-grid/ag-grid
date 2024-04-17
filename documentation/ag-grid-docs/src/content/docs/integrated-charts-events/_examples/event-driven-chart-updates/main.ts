@@ -11,9 +11,10 @@ import {
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { ModuleRegistry } from "@ag-grid-community/core";
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, MenuModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, MenuModule, RowGroupingModule]);
 
 let gridApi: GridApi;
 

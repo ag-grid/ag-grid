@@ -3,7 +3,8 @@
   "version": "32.0.2",
   "license": "MIT",
   "scripts": {
-    "build-generators":"nx run-many -p ag-grid-generate-code-reference-files,ag-grid-task-autogen -t build",
+    "build-generators":"nx run-many -p ag-grid-generate-code-reference-files,ag-grid-task-autogen -t build && nx run @ag-grid-community/theming:codegen",
+    "subrepo": "yarn run tsx external/ag-website-shared/scripts/subrepo",
     "postinstall": "patch-package && yarn run build-generators",
     "bootstrap": "YARN_REGISTRY=\"http://52.50.158.57:4873\" yarn"
   },
@@ -55,6 +56,7 @@
       "community-modules/core",
       "community-modules/client-side-row-model",
       "community-modules/styles",
+      "community-modules/theming",
       "community-modules/csv-export",
       "community-modules/infinite-row-model",
       "community-modules/angular",

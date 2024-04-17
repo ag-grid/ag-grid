@@ -1,0 +1,68 @@
+---
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { HeaderNav } from './HeaderNav';
+import { getEntry } from 'astro:content';
+import { FRAMEWORKS } from '@constants';
+import styles from './SiteHeader.module.scss';
+import { SiteLogo } from '@components/SiteLogo';
+import Search from '@ag-website-shared/components/search/Search';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { ProductDropdown } from '@ag-website-shared/components/product-dropdown/ProductDropdown';
+import productItems from '@ag-website-shared/content/products/menu.json';
+
+export interface Props {
+    showSearchBar?: boolean;
+    showDocsNav?: boolean;
+    apiPaths?: string[];
+}
+
+const { showSearchBar, showDocsNav, apiPaths = [] } = Astro.props;
+
+const { pathname } = Astro.url;
+const { data: menuData } = await getEntry('menu', 'data');
+const topNavItems = menuData.header?.items || [];
+const frameworkPaths = FRAMEWORKS.map((framework) => ({
+    title: 'Docs',
+    path: urlWithBaseUrl(framework),
+}));
+const allPaths = [
+    ...topNavItems, // NOTE: Prioritise API paths over framework paths - for doc pages which are in
+    //  the API section
+    ...apiPaths,
+    ...frameworkPaths,
+];
+---
+
+<header class:list={[styles.header, 'site-header']}>
+    <div class:list={[styles.headerInner, 'layout-page-max-width']}>
+        <SiteLogo client:load />
+
+        <ProductDropdown client:load items={productItems} children={null} />
+
+        {
+            (showDocsNav || showSearchBar) && (
+                <div class={styles.docsNavBtnSearchContainer}>
+                    {showDocsNav && (
+                        <button
+                            id="top-bar-docs-button"
+                            class:list={[styles.mobileNavButton, 'button-secondary']}
+                            type="button"
+                            data-toggle="collapse"
+                            data-target="#side-nav"
+                            aria-controls="side-nav"
+                            aria-expanded="false"
+                            aria-label="Toggle docs page navigation"
+                        >
+                            <span>Docs</span>
+                            <Icon name="collapseCategories" />
+                        </button>
+                    )}
+
+                    {showSearchBar && <Search client:load />}
+                </div>
+            )
+        }
+
+        <HeaderNav currentPath={pathname} items={topNavItems} allPaths={allPaths} apiPaths={apiPaths} client:load />
+    </div>
+</header>

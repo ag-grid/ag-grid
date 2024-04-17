@@ -139,7 +139,7 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
         return <Code code={escapedLines} keepMarkup={true} />;
     }
 
-    let props = {};
+    let props: any = {};
     let interfaceOverrides: Overrides = {};
     if (Object.keys(overrides).length) {
         interfaceOverrides = overrides[interfaceName];
@@ -148,7 +148,16 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
         }
     }
 
-    const typeProps = Object.entries(li.type);
+    let typeProps: any[] = [];
+    if(typeof li.type === 'string'){
+        if(interfaceOverrides){
+            typeProps = Object.entries(interfaceOverrides);
+        }else{
+            console.error(`Please provide an override for type alias: ${interfaceName}`);
+        }
+    }else{
+        typeProps = Object.entries(li.type);
+    }
     sortAndFilterProperties(typeProps, framework).forEach(([k, v]) => {
         // interfaces include the ? as part of the name. We want to remove this for the <interface-documentation> component
         // Instead the type will be unioned with undefined as part of the propertyType
@@ -545,7 +554,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         !(config.suppressMissingPropCheck || definition.overrideMissingPropCheck)
     ) {
         throw new Error(
-            `We could not find a type for "${id}" -> "${name}" from the code sources ${config.codeSrcProvided.join()}. Has this property been removed from the source code / or is there a typo?`
+            `We could not find a type for "${id}" -> "${name}" from the code sources ${config.codeSrcProvided.join()}. Has this property been removed from the source code / or is there a typo? Alternatively, if this type has an override you can suppress this error by setting meta.suppressMissingPropCheck to true in the override config.`
         );
     }
 

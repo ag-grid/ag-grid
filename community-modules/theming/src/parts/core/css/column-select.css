@@ -1,0 +1,99 @@
+.ag-column-select {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex: 3 1 0px;
+}
+
+.ag-column-select-header {
+    position: relative;
+    flex: none;
+    display: flex;
+    align-items: center;
+    padding-left: var(--ag-widget-container-horizontal-padding);
+    padding-right: var(--ag-widget-container-horizontal-padding);
+    /* match header height instead of using vertical padding, because this is
+     often displayed aligned with headers and it looks neater */
+    height: var(--ag-header-height);
+    gap: var(--ag-widget-horizontal-spacing);
+}
+
+.ag-column-select-column,
+.ag-column-select-column-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: var(--ag-widget-horizontal-spacing);
+}
+
+.ag-column-select-virtual-list-item:focus-visible {
+    box-shadow: inset var(--ag-focus-shadow);
+}
+
+.ag-column-select-header-icon {
+    position: relative;
+    cursor: pointer;
+    width: var(--ag-icon-size);
+    height: var(--ag-icon-size);
+    border-radius: var(--ag-border-radius);
+
+    &:focus-visible {
+        box-shadow: var(--ag-focus-shadow);
+    }
+}
+
+.ag-column-select-header-filter-wrapper {
+    flex: 1 1 auto;
+}
+
+.ag-column-select-header-filter {
+    width: 100%;
+}
+
+.ag-column-select-list {
+    flex: 1 1 0px;
+    overflow: hidden;
+}
+
+.ag-column-select-column {
+    padding-left: calc(var(--ag-indentation-level) * var(--ag-column-select-indent-size));
+}
+
+.ag-column-select-add-group-indent {
+    /* indent items without icons to the same level as siblings with icons */
+    margin-left: calc(var(--ag-icon-size) + var(--ag-widget-horizontal-spacing));
+}
+
+.ag-column-select-column-group,
+.ag-column-select-column {
+    &:not(:last-child) {
+        margin-bottom: var(--ag-widget-vertical-spacing);
+    }
+}
+
+.ag-column-select-column-readonly,
+.ag-column-select-column-group-readonly {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.ag-column-select-virtual-list-viewport {
+    padding: calc(var(--ag-widget-container-vertical-padding) * 0.5) 0px;
+}
+
+.ag-column-select-virtual-list-item {
+    padding: 0 var(--ag-widget-container-horizontal-padding);
+}
+
+.ag-column-select-column-label {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ag-column-select-checkbox {
+    display: flex;
+}

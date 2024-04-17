@@ -1,8 +1,24 @@
-import { describe, beforeAll, afterAll, test, expect } from '@jest/globals';
+import { describe, beforeAll, afterAll, test, expect, jest } from '@jest/globals';
 import { AgSparkline, SparklineFactoryOptions } from './agSparkline';
 import 'jest-canvas-mock';
 import { ColumnFormat, ColumnFormatterParams, MarkerFormat, MarkerFormatterParams } from '@ag-grid-community/core';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
+
+// mock the DOMMatrix
+const matrixMock = jest.fn(() => ({
+    a: 1,
+    b: 0,
+    c: 0,
+    d: 1,
+    e: 0,
+    f: 0,
+    multiplySelf: () => matrixMock,
+    preMultiplySelf: () => matrixMock,
+    inverse: () => matrixMock,
+    invertSelf: () => matrixMock,
+}));
+
+global.DOMMatrix = matrixMock as any;
 
 const data = [
     7,
