@@ -60,6 +60,10 @@ export class StickyRowFeature extends BeanStub {
             return row.sibling!.rowTop! + row.sibling!.rowHeight! - 1;
         }
 
+        if (row.group) {
+            return row.rowTop! - 1;
+        }
+
         // only footer nodes stick bottom, so shouldn't reach this.
         return 0;
     }
@@ -98,11 +102,12 @@ export class StickyRowFeature extends BeanStub {
         }
 
         if (row.isExpandable() || row.footer) {
+            const grandTotalAtTop = row.footer && row.rowIndex === 0;
             // if no siblings, we search the children for the last displayed row, to get last px.
             // equally, if sibling but sibling is contiguous ('top') then sibling cannot be used
             // to find last px
             const noOrContiguousSiblings = !row.sibling || Math.abs(row.sibling.rowIndex! - row.rowIndex!) === 1;
-            if (noOrContiguousSiblings) {
+            if (grandTotalAtTop || noOrContiguousSiblings) {
                 let lastAncestor = row.footer ? row.sibling : row;
                 while (lastAncestor.isExpandable() && lastAncestor.expanded) {
                     if (lastAncestor.master) {
