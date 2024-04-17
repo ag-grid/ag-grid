@@ -1,7 +1,8 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import styles from '@legacy-design-system/modules/OpenInCTA.module.scss';
 import classnames from 'classnames';
 import type { FunctionComponent, MouseEventHandler, ReactNode } from 'react';
+
+import styles from './OpenInCTA.module.scss';
 
 type CtaType = 'newTab' | 'plunker' | 'stackblitz' | 'codesandbox';
 

@@ -1,5 +1,5 @@
 import type { InternalFramework } from '@ag-grid-types';
-import { OpenInCTA } from '@components/open-in-cta/OpenInCTA';
+import { OpenInCTA } from '@ag-website-shared/components/open-in-cta/OpenInCTA';
 import type { FileContents } from '@features/example-generator/types';
 import { stripOutDarkModeCode } from '@features/example-runner/components/CodeViewer';
 import { fetchTextFile } from '@utils/fetchTextFile';
