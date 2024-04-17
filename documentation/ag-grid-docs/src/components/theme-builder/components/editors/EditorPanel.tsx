@@ -135,15 +135,21 @@ const AccordionContent = styled(Accordion.Content)`
 
 const Trigger = styled(Accordion.Trigger)`
     all: unset;
-    color: var(--color-fg-primary) !important;
+    color: var(--color-fg-secondary) !important;
     background: none !important;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 15px;
+    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
     cursor: pointer;
+    transition: all 0.5s;
+    opacity: 0.9;
+    &:hover {
+        opacity: 0.6;
+        transition: all 0.5s;
+    }
 `;
 
 const EvenSplitRow = styled('div')`
@@ -166,6 +172,7 @@ const LeftBiasRow = styled('div')`
 `;
 
 const OpenCloseChevron = styled(ChevronDown)`
+    opacity: 0.6;
     transition: transform 300ms cubic-bezier(0.87, 0, 0.13, 1);
     [data-state='open'] & {
         transform: rotate(180deg);
