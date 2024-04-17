@@ -1,8 +1,8 @@
 ---
 import CommunityLayout from '@ag-website-shared/components/community/layout/CommunityLayout.astro';
-import Blogs from '@components/community-section/news-updates/Blogs';
-import Podcasts from '@components/community-section/news-updates/Podcasts';
-import Videos from '@components/community-section/news-updates/Videos';
+import Blogs from '@ag-website-shared/components/community/components/news-updates/Blogs';
+import Podcasts from '@ag-website-shared/components/community/components/news-updates/Podcasts';
+import Videos from '@ag-website-shared/components/community/components/news-updates/Videos';
 import { getEntry } from 'astro:content';
 
 const { data: blogs } = await getEntry('community', 'news-updates/blogs');

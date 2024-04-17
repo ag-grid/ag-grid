@@ -1,4 +1,4 @@
-import ScrollingGallery from '@components/community-section/events/ScrollingGallery';
+import ScrollingGallery from '@ag-website-shared/components/community/components/events/ScrollingGallery';
 import styles from '@legacy-design-system/modules/CommunityEvents.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
