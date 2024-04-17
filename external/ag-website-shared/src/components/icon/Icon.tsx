@@ -171,6 +171,7 @@ export const ICON_MAP = {
     codeResult: CodeResult,
     headingResult: HeadingResult,
     listBoxes: CarbonIcon.List,
+    figmaCommunity: CarbonIcon.Wikis,
     ...SOCIALS_ICON_MAP,
     ...DOCS_CATEGORIES_ICON_MAP,
     ...HOMEPAGE_FEATURES_ICON_MAP,

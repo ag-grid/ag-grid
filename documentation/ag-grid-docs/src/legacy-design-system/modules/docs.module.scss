@@ -66,6 +66,7 @@
     @media screen and (max-width: $breakpoint-docs-nav-large) {
         border: none;
     }
+
     @media screen and (max-width: $breakpoint-docs-nav-medium) {
         padding-top: 0;
     }
@@ -119,11 +120,8 @@
         }
     }
 
-    :global(a) {
-    }
-
     :global(#{$selector-darkmode}) & {
-        :global(a) {
+        :global(a):not(:global(.button)) {
             color: var(--color-brand-300);
         }
 
