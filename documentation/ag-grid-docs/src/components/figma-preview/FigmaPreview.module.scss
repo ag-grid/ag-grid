@@ -21,7 +21,7 @@
     width: 100%;
     height: 100%;
     background-image: url('/images/ag-grid-figma-thumb.png');
-    background-size: cover;
+    background-size: auto 100%;
     background-position: center;
 
     &::after {
