@@ -49,7 +49,6 @@ const TooltipImpl = ({ title, children }: TooltipProps) => {
             {isOpen && (
                 <FloatingPortal>
                     <TooltipPopup ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
-                        <FloatingArrow ref={arrowRef} context={context} fill="var(--color-gray-500)" />
                         {title}
                     </TooltipPopup>
                 </FloatingPortal>
@@ -64,6 +63,6 @@ const TooltipPopup = styled('div')`
     background: var(--color-bg-primary);
     padding: 8px;
     border-radius: 6px;
-    border: solid 1px var(--color-gray-500);
+    border: solid 1px var(--color-border-primary);
     box-shadow: var(--shadow-md);
 `;
