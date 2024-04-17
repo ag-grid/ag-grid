@@ -4,7 +4,7 @@ import { atom, useAtom } from 'jotai';
 
 import type { PersistentAtom } from './JSONStorage';
 import { atomWithJSONStorage } from './JSONStorage';
-import { titleCase } from './utils';
+import { memoize, titleCase } from './utils';
 
 const variantsByPartId: Record<PartId, Part[]> = {
     colorScheme: themes.allColorSchemes,
@@ -74,3 +74,5 @@ export class VariantModel {
         this.variantId = variant.variantId || '';
     }
 }
+
+export const allPartModels = memoize(() => Object.keys(partDocs).map((partId) => PartModel.for(partId as PartId)));

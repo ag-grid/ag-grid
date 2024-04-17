@@ -12,12 +12,14 @@ import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
+import { useApplicationConfig } from '@components/theme-builder/model/application-config';
 import styled from '@emotion/styled';
 import { memo, useState } from 'react';
 import root from 'react-shadow';
 
 import { useSetPreviewGridApi, useSetPreviewGridContainer } from '../../model/rendered-theme';
 import { useGridOptions } from '../grid-config/grid-config-atom';
+import { allPresets } from '../presets/PresetSelector';
 import { useSetGridDom } from '../presets/grid-dom';
 import { withErrorBoundary } from './ErrorBoundary';
 
@@ -48,8 +50,10 @@ const GridPreview = () => {
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
     const setGridDom = useSetGridDom();
 
+    const background = useApplicationConfig('previewPaneBackgroundColor') || allPresets[0].pageBackgroundColor;
+
     return (
-        <Wrapper>
+        <Wrapper style={{ backgroundColor: background }}>
             <GridSizer>
                 <root.div style={{ height: '100%' }}>
                     <div
@@ -116,7 +120,6 @@ const Wrapper = styled('div')`
     align-items: center;
     justify-content: center;
     border-radius: 12px;
-    background-color: color-mix(in srgb, transparent, var(--color-fg-primary) 3%);
     border: solid 1px color-mix(in srgb, transparent, var(--color-fg-primary) 7%);
 
     /* These styles should not be applied to the grid because we render in a Shadow DOM */

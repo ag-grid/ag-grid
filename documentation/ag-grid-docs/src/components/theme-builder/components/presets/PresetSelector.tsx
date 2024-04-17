@@ -1,22 +1,29 @@
+import {
+    type CoreParam,
+    type PartId,
+    borderValueToCss,
+    corePart,
+    opaqueForeground,
+    ref,
+} from '@ag-grid-community/theming';
+import { allPartModels } from '@components/theme-builder/model/PartModel';
+import { getApplicationConfigAtom } from '@components/theme-builder/model/application-config';
 import styled from '@emotion/styled';
 import { useStore } from 'jotai';
 import { memo, useEffect, useRef } from 'react';
 
-import { opaqueForeground, ref } from '../../../../../../../community-modules/theming/src/css-helpers';
-import { corePart } from '../../../../../../../community-modules/theming/src/parts/core/core-part';
-import { borderValueToCss } from '../../../../../../../community-modules/theming/src/theme-types';
 import { allParamModels } from '../../model/ParamModel';
 import { PresetRender } from './PresetRender';
 
 type Preset = {
     pageBackgroundColor: string;
-    params: Record<string, string>;
+    params?: Partial<Record<CoreParam, string>>;
+    parts?: Partial<Record<PartId, string>>;
 };
 
-const presets: Preset[] = [
+export const allPresets: Preset[] = [
     {
         pageBackgroundColor: '#fff',
-        params: {},
     },
     {
         pageBackgroundColor: '#000',
@@ -36,12 +43,25 @@ const presets: Preset[] = [
             gridSize: '4px',
         },
     },
+    {
+        pageBackgroundColor: 'rgb(75, 153, 154)',
+        params: {
+            backgroundColor: 'rgb(241, 237, 225)',
+            foregroundColor: 'rgb(46, 55, 66)',
+            chromeBackgroundColor: ref('backgroundColor'),
+            fontFamily: 'monospace',
+            gridSize: '4px',
+        },
+        parts: {
+            iconSet: 'material',
+        },
+    },
 ];
 
 export const PresetSelector = memo(() => (
     <Scroller>
         <Horizontal>
-            {presets.map((preset, i) => (
+            {allPresets.map((preset, i) => (
                 <SelectButton key={i} preset={preset} />
             ))}
         </Horizontal>
@@ -61,7 +81,7 @@ const SelectButton = ({ preset }: SelectButtonProps) => {
             for (const [key, value] of Object.entries(corePart.defaults)) {
                 wrapper.style.setProperty(paramToVariableName(key), borderValueToCss(value));
             }
-            for (const [key, value] of Object.entries(preset.params)) {
+            for (const [key, value] of Object.entries(preset.params || {})) {
                 wrapper.style.setProperty(paramToVariableName(key), value);
             }
             wrapper.style.setProperty('--page-background-color', preset.pageBackgroundColor);
@@ -71,12 +91,30 @@ const SelectButton = ({ preset }: SelectButtonProps) => {
     const store = useStore();
 
     const applyPreset = () => {
+        const presetParams: any = preset.params || {};
         for (const { property, valueAtom } of allParamModels()) {
-            if (store.get(valueAtom) != null || preset.params[property] != null) {
-                console.log('setting', property, store.get(valueAtom));
-                store.set(valueAtom, preset.params[property] || null);
+            if (store.get(valueAtom) != null || presetParams[property] != null) {
+                store.set(valueAtom, presetParams[property] || null);
             }
         }
+
+        const presetParts = preset.parts || {};
+        for (const part of allPartModels()) {
+            const newVariantId = presetParts[part.partId];
+            if (store.get(part.variantAtom) != null || newVariantId != null) {
+                const newVariant =
+                    newVariantId == null
+                        ? part.defaultVariant
+                        : part.variants.find((v) => v.variantId === newVariantId);
+                if (!newVariant) {
+                    throw new Error(
+                        `Invalid variant ${newVariantId} for part ${part.partId}, use one of: ${part.variants.map((v) => v.variantId).join(', ')}`
+                    );
+                }
+                store.set(part.variantAtom, newVariant);
+            }
+        }
+        store.set(getApplicationConfigAtom('previewPaneBackgroundColor'), preset.pageBackgroundColor || null);
     };
 
     return (

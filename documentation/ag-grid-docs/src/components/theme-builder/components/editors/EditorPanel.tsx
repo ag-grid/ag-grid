@@ -38,6 +38,7 @@ export const EditorPanel = () => {
                 </FormField>
             </Section>
             <Section heading="Cells">
+                <ParamEditor param="dataColor" label="Text color" />
                 <ParamEditor param="oddRowBackgroundColor" label="Odd row background" />
                 <ParamEditor param="rowVerticalPaddingScale" label="Adjust vertical padding" />
                 <ParamEditor param="cellHorizontalPaddingScale" label="Adjust horizontal padding" />
