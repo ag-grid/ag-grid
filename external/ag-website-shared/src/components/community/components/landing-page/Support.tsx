@@ -1,5 +1,6 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import styles from '@legacy-design-system/modules/CommunitySupport.module.scss';
+
+import styles from './Support.module.scss';
 
 const Support = ({ supportSites }) => {
     return (

@@ -1,5 +1,6 @@
-import styles from '@legacy-design-system/modules/CommunityPodcasts.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+import styles from './Podcasts.module.scss';
 
 const Podcasts = ({ podcasts }) => {
     const guestsToString = (arr) => {

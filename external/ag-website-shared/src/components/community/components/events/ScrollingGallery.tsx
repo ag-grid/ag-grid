@@ -1,6 +1,7 @@
-import styles from '@legacy-design-system/modules/CommunityScrollingGallery.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { useEffect, useRef, useState } from 'react';
+
+import styles from './ScrollingGallery.module.scss';
 
 const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {

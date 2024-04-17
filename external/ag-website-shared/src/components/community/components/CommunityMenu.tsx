@@ -1,6 +1,7 @@
-import styles from '@legacy-design-system/modules/CommunityMenu.module.scss';
 import { pathJoin } from '@utils/pathJoin';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+import styles from './CommunityMenu.module.scss';
 
 const getPageFromPath = (path) => {
     const prefix = urlWithBaseUrl('/community');

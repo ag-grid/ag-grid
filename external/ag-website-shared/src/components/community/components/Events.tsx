@@ -1,8 +1,8 @@
 import ScrollingGallery from '@ag-website-shared/components/community/components/events/ScrollingGallery';
-import styles from '@legacy-design-system/modules/CommunityEvents.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { useState } from 'react';
+
+import styles from './Events.module.scss';
 
 const separateEventsByDate = (events) => {
     const upcomingEvents = [];

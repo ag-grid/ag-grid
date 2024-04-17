@@ -1,5 +1,6 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import styles from '@legacy-design-system/modules/CommunitySocials.module.scss';
+
+import styles from './Socials.module.scss';
 
 const Socials = ({ socialChannels }) => {
     return (

@@ -1,5 +1,6 @@
-import styles from '@legacy-design-system/modules/CommunityBlogs.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+import styles from './Blogs.module.scss';
 
 const Blogs = ({ blogs }) => {
     return (
