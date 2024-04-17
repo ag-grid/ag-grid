@@ -1060,10 +1060,28 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Gets the value for a column for a particular `rowNode` (row).
-     * This is useful if you want the raw value of a cell e.g. if implementing your own CSV export.
+     * @deprecated v31.3 Use `getCellValue` instead.
      */
     public getValue<TValue = any>(colKey: string | Column<TValue>, rowNode: IRowNode): TValue | null | undefined {
+        this.logDeprecation('31.3','getValue', 'getCellValue');
+
+        const v = this.getCellValue(colKey, rowNode);
+        const v2 = this.getCellValue(colKey, rowNode, {useFormatter: false});
+        const v3 = this.getCellValue(colKey, rowNode, {useFormatter: true});
+
+        return this.getCellValue(colKey, rowNode);
+    }
+
+
+    /**
+     * Gets the cell value for the given column and `rowNode` (row).
+     * Will return the cell value or the formatted value depending on the value of `params.useFormatter: true`. Default is the cell value.
+     * If `params.useFormatter: true` but the column does not have a formatter the cell value will be returned.
+     */
+    public getCellValue<TValue = any>(colKey: string | Column<TValue>, rowNode: IRowNode, params: {useFormatter: true}): TValue | string | null | undefined;
+    public getCellValue<TValue = any>(colKey: string | Column<TValue>, rowNode: IRowNode, params: {useFormatter: false}): TValue | null | undefined;
+    public getCellValue<TValue = any>(colKey: string | Column<TValue>, rowNode: IRowNode, params?: undefined): TValue | null | undefined;
+    public getCellValue<TValue = any>(colKey: string | Column<TValue>, rowNode: IRowNode, params?: {useFormatter?: boolean}): TValue | null | undefined | string {
         let column = this.columnModel.getPrimaryColumn(colKey);
         if (missing(column)) {
             column = this.columnModel.getGridColumn(colKey);
@@ -1071,7 +1089,12 @@ export class GridApi<TData = any> {
         if (missing(column)) {
             return null;
         }
-        return this.valueService.getValue(column, rowNode);
+        const value = this.valueService.getValue(column, rowNode);
+        if(params?.useFormatter){
+            const formattedValue = this.valueService.formatValue(column, rowNode, value);
+            return formattedValue ?? value;
+        }
+        return value
     }
 
     /**

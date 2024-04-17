@@ -346,7 +346,7 @@ export class CellCtrl extends BeanStub {
         return colDef.cellRenderer != null || colDef.cellRendererSelector != null;
     }
     public getValueToDisplay(): any {
-        return this.valueFormatted != null ? this.valueFormatted : this.value;
+        return this.valueFormatted ?? this.value;
     }
 
     private showValue(forceNewCellRendererInstance = false): void {

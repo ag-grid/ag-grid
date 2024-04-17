@@ -37,7 +37,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     filterValueGetter: (params: ValueGetterParams) => {
       if (params.node) {
         var colGettingGrouped = params.colDef.showRowGroup + ''
-        return params.api.getValue(colGettingGrouped, params.node)
+        return params.api.getCellValue(colGettingGrouped, params.node)
       }
     },
   },
