@@ -1,31 +1,5 @@
 ---
-import CommunityLayout from '@layouts/CommunityLayout.astro';
-import Blogs from '@components/community-section/news-updates/Blogs';
-import Podcasts from '@components/community-section/news-updates/Podcasts';
-import Videos from '@components/community-section/news-updates/Videos';
-import { getEntry } from 'astro:content';
-
-const { data: blogs } = await getEntry('community', 'news-updates/blogs');
-const { data: podcasts } = await getEntry('community', 'news-updates/podcasts');
-const { data: videos } = await getEntry('community', 'news-updates/videos');
+import Media from '@ag-website-shared/components/community/pages/media.astro';
 ---
 
-<CommunityLayout
-    title="AG Grid: Media"
-    description="AG Grid has an entire ecosystem of community-built tools, extensions and utilities to help you create your next project, no matter which language or framework you're using."
-    pageTitle="Media"
-    pageDescription="The AG Grid team regularly appear in community podcasts, publications, conferences, and more. Read our blogs, watch our videos, or listen to our podcasts to hear the latest news & updates directly from our team."
->
-    <section>
-        <h2>Videos</h2>
-        <Videos client:load videos={videos} />
-    </section>
-    <section>
-        <h2>Podcasts</h2>
-        <Podcasts client:load podcasts={podcasts} />
-    </section>
-    <section>
-        <h2>Blogs</h2>
-        <Blogs client:visible blogs={blogs} />
-    </section>
-</CommunityLayout>
+<Media />
