@@ -1,0 +1,39 @@
+@use 'design-system' as *;
+
+.emptyWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    height: 80vh;
+    justify-content: center;
+    @media screen and (min-width: 800px) {
+        display: none;
+    }
+}
+
+.headingEmpty {
+    margin-bottom: 8px;
+    color: var(--color-text-secondary);
+}
+
+.iconLight {
+    #{$selector-darkmode} & {
+        display: none;
+    }
+}
+
+.iconDark {
+    display: none;
+
+    #{$selector-darkmode} & {
+        display: block;
+    }
+}
+.paragraphyEmpty {
+    text-align: center;
+    line-height: 1.5;
+}
+.lineGrid {
+    white-space: nowrap;
+}
