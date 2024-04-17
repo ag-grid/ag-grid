@@ -2,18 +2,18 @@
   "javascript": [
     {
       "title": "Getting Started with AG Grid Community",
-      "url": "https://www.youtube.com/watch?v=j-Odsb0EjVo&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
+      "url": "https://www.youtube.com/watch?v=Ww7-LC6rU6U&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
       "thumbnail": {
         "image": "AgGridVideo.png",
         "altText": "Getting Started with AG Grid Community"
       },
       "keyPoints": [
-        "Set up Rows and Columns",
-        "Simple Grid Properties",
-        "Use Grid's API",
-        "Listen to Grid Events"
+        "Basic Setup",
+        "Displaying Data",
+        "Working with Data",
+        "Themes & Customisation"
       ],
-      "runningTime": "6:43"
+      "runningTime": "10:24"
     },
     {
       "title": "Getting Started with AG Grid Enterprise",
@@ -289,18 +289,18 @@
   "angular": [
     {
       "title": "Getting Started with AG Grid Community",
-      "url": "https://www.youtube.com/watch?v=_cRDVM6NlPk&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
+      "url": "https://www.youtube.com/watch?v=X_Ip_jGDtho&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
       "thumbnail": {
-        "image": "AgGridVideo_SC.png",
+        "image": "AgGridVideo.png",
         "altText": "Getting Started with AG Grid Community"
       },
       "keyPoints": [
-        "Set up Rows and Columns",
-        "Simple Grid Properties",
-        "Use Grid's API",
-        "Listen to Grid Events"
+        "Basic Setup",
+        "Displaying Data",
+        "Working with Data",
+        "Themes & Customisation"
       ],
-      "runningTime": "8:01"
+      "runningTime": "11:21"
     },
     {
       "title": "Getting Started with AG Grid Enterprise",
