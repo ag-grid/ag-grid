@@ -401,11 +401,7 @@
     },
     "clientRowModel": {
         "meta": {
-            "displayName": "RowModel: Client-Side",
-            "page": {
-                "name": "Client-Side Row Model",
-                "url": "./client-side-model/"
-            }
+            "displayName": "RowModel: Client-Side"
         },
         "rowDataUpdated": {
             "more": {

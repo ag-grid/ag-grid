@@ -51,7 +51,7 @@ The example below shows simple managed dragging. The following can be noted:
 
 The logic for managed dragging is simple and has the following constraints:
 
-* Works with [Client-Side](./client-side-model/) row model only; not with the [Infinite](./infinite-scrolling/), [Server-Side](./server-side-model/) or [Viewport](./viewport/) row models.
+* Works with [Client-Side](./row-models/#client-side) row model only; not with the [Infinite](./infinite-scrolling/), [Server-Side](./server-side-model/) or [Viewport](./viewport/) row models.
 * Does not work if [Pagination](./row-pagination/) is enabled.
 * Does not work when sorting is applied. This is because the sort order of the rows depends on the data and moving the data would break the sort order.
 * Does not work when filtering is applied. This is because a filter removes rows making it impossible to know what 'real' order of rows when some are missing.

@@ -13,7 +13,7 @@ Check out the [developer documentation](https://www.ag-grid.com/documentation/?u
 
 ## Client Side Row Model Module
 
-This package is the feature module for the [Client Side Row Model](https://ag-grid.com/javascript-data-grid/client-side-model/) to be used when working with AG Grid module setup in order to minimise your bundle size.  
+This package is the feature module for the [Client Side Row Model](https://ag-grid.com/javascript-data-grid/row-models/#client-side/) to be used when working with AG Grid module setup in order to minimise your bundle size.  
 
 For more details on working with AG Grid modules visit our [modules documentation](https://ag-grid.com/javascript-data-grid/modules/).
 
