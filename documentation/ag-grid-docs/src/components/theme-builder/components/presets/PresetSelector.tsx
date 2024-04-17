@@ -26,7 +26,7 @@ export const allPresets: Preset[] = [
         pageBackgroundColor: '#fff',
     },
     {
-        pageBackgroundColor: '#000',
+        pageBackgroundColor: '#1D2634',
         params: {
             backgroundColor: '#1f2836',
             foregroundColor: '#FFF',
@@ -44,16 +44,32 @@ export const allPresets: Preset[] = [
         },
     },
     {
-        pageBackgroundColor: 'rgb(75, 153, 154)',
+        pageBackgroundColor: '#948B8E',
         params: {
-            backgroundColor: 'rgb(241, 237, 225)',
+            backgroundColor: '#E4E0E2',
+            headerBackgroundColor: '#807078',
+            headerTextColor: '#EEECED',
+            // headerBackgroundColor: '#807078',
             foregroundColor: 'rgb(46, 55, 66)',
             chromeBackgroundColor: ref('backgroundColor'),
-            fontFamily: 'monospace',
-            gridSize: '4px',
+            fontFamily: 'Arial',
+            gridSize: '8px',
+            wrapperBorderRadius: '0px',
+            headerFontWeight: '600',
         },
-        parts: {
-            iconSet: 'material',
+    },
+    {
+        pageBackgroundColor: '#ffffff',
+        params: {
+            backgroundColor: '#ffffff',
+            headerBackgroundColor: '#F9FAFB',
+            headerTextColor: '#919191',
+            foregroundColor: 'rgb(46, 55, 66)',
+            fontFamily: 'Arial',
+            gridSize: '8px',
+            wrapperBorderRadius: '0px',
+            headerFontWeight: '600',
+            oddRowBackgroundColor: '#F9FAFB',
         },
     },
 ];
