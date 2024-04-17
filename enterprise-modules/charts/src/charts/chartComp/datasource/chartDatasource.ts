@@ -36,6 +36,7 @@ export interface ChartDatasourceParams {
 interface IData {
     chartData: any[];
     columnNames: { [key: string]: string[]; };
+    groupChartData?: any[];
 }
 
 export class ChartDatasource extends BeanStub {
@@ -102,11 +103,40 @@ export class ChartDatasource extends BeanStub {
             }
         }
 
-        for (let i = 0; i < numRows; i++) {
-            const data: any = {};
+        if (numRows > 0) {
+            valueCols.forEach(col => {
+                let columnNamesArr: string[] = [];
 
+                // pivot keys should be added first
+                const pivotKeys = col.getColDef().pivotKeys;
+                if (pivotKeys) {
+                    columnNamesArr = pivotKeys.slice();
+                }
+
+                // then add column header name to results
+                const headerName = col.getColDef().headerName;
+                if (headerName) {
+                    columnNamesArr.push(headerName);
+                }
+
+                // add array of column names to results
+                if (columnNamesArr.length > 0) {
+                    columnNames[col.getId()] = columnNamesArr;
+                }
+            });
+        }
+
+        let numRemovedNodes = 0;
+
+        for (let i = 0; i < numRows; i++) {
             const rowNode = crossFiltering ? allRowNodes[i] : this.gridRowModel.getRow(i + startRow)!;
 
+            if (rowNode.footer) {
+                numRemovedNodes++;
+                continue;
+            }
+
+            const data: any = {};
             // first get data for dimensions columns
             dimensionCols.forEach(col => {
                 const colId = col.colId;
@@ -130,7 +160,7 @@ export class ChartDatasource extends BeanStub {
 
                         // keep track of group node indexes, so they can be padded when other groups are expanded
                         if (rowNode.group) {
-                            groupNodeIndexes[labels.toString()] = i;
+                            groupNodeIndexes[labels.toString()] = i - numRemovedNodes;
                         }
 
                         // if node (group or leaf) has parents then it is expanded and should be removed
@@ -151,25 +181,6 @@ export class ChartDatasource extends BeanStub {
 
             // then get data for value columns
             valueCols.forEach(col => {
-                let columnNamesArr: string[] = [];
-
-                // pivot keys should be added first
-                const pivotKeys = col.getColDef().pivotKeys;
-                if (pivotKeys) {
-                    columnNamesArr = pivotKeys.slice();
-                }
-
-                // then add column header name to results
-                const headerName = col.getColDef().headerName;
-                if (headerName) {
-                    columnNamesArr.push(headerName);
-                }
-
-                // add array of column names to results
-                if (columnNamesArr.length > 0) {
-                    columnNames[col.getId()] = columnNamesArr;
-                }
-
                 const colId = col.getColId();
                 if (crossFiltering) {
                     const filteredOutColId = colId + '-filtered-out';
@@ -199,24 +210,24 @@ export class ChartDatasource extends BeanStub {
                 }
             });
 
-            // row data from footer nodes should not be included in charts
-            if (rowNode.footer) {
-                // 'stamping' data as footer to avoid impacting previously calculated `groupIndexesToRemove` and will
-                // be removed from the results along with any expanded group nodes
-                data.footer = true;
-            }
-
             // add data to results
             extractedRowData.push(data);
         }
 
+        let groupChartData: any[] | undefined;
         if (grouping) {
             const groupIndexesToRemove = _.values(groupsToRemove);
-            const filterFunc = (data: any, index: number) => !data.footer && !_.includes(groupIndexesToRemove, index);
-            extractedRowData = extractedRowData.filter(filterFunc);
+            const allData = extractedRowData;
+            extractedRowData = [];
+            groupChartData = [];
+            for (let i = 0; i < allData.length; i++) {
+                (
+                    _.includes(groupIndexesToRemove, i) ? groupChartData : extractedRowData
+                ).push(allData[i]);
+            }
         }
 
-        return { chartData: extractedRowData, columnNames };
+        return { chartData: extractedRowData, columnNames, groupChartData };
     }
 
     private aggregateRowsByDimension(params: ChartDatasourceParams, dataFromGrid: any[]): any[] {

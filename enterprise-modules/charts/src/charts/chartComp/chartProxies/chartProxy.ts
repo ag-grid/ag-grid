@@ -46,6 +46,7 @@ export interface FieldDefinition {
 
 export interface UpdateParams {
     data: any[];
+    groupData?: any[];
     grouping: boolean;
     categories: {
         id: string;

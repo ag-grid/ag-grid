@@ -185,6 +185,7 @@ export class ChartController extends BeanStub {
 
         const params: UpdateParams = {
             data,
+            groupData: this.model.groupChartData,
             grouping: this.isGrouping(),
             categories: selectedDimensions.map((selectedDimension) => ({
                 id: selectedDimension.colId,

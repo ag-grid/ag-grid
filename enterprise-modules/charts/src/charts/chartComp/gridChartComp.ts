@@ -19,7 +19,6 @@ import {
     FocusService,
     PartialCellRange,
 } from "@ag-grid-community/core";
-
 import { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-community";
 import { ChartMenu } from "./menu/chartMenu";
 import { TitleEdit } from "./chartTitle/titleEdit";
@@ -35,8 +34,6 @@ import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
 import { RangeChartProxy } from "./chartProxies/statistical/rangeChartProxy";
 import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
 import { BoxPlotChartProxy } from "./chartProxies/statistical/boxPlotChartProxy";
-import { TreemapChartProxy } from "./chartProxies/hierarchical/treemapChartProxy";
-import { SunburstChartProxy } from "./chartProxies/hierarchical/sunburstChartProxy";
 import { HeatmapChartProxy } from './chartProxies/specialized/heatmapChartProxy';
 import { WaterfallChartProxy } from './chartProxies/cartesian/waterfallChartProxy';
 import { ChartTranslationKey, ChartTranslationService } from "./services/chartTranslationService";
@@ -49,6 +46,7 @@ import { ChartMenuParamsFactory } from './menu/chartMenuParamsFactory';
 import { ChartMenuContext } from "./menu/chartMenuContext";
 import { deepMerge } from './utils/object';
 import { ChartMenuService, CHART_TOOL_PANEL_MENU_OPTIONS } from "./services/chartMenuService";
+import { HierarchicalChartProxy } from "./chartProxies/hierarchical/hierarchicalChartProxy";
 
 export interface GridChartParams {
     chartId: string;
@@ -274,9 +272,8 @@ export class GridChartComp extends Component {
             case 'boxPlot':
                 return new BoxPlotChartProxy(chartProxyParams);
             case 'treemap':
-                return new TreemapChartProxy(chartProxyParams);
             case 'sunburst':
-                return new SunburstChartProxy(chartProxyParams);
+                return new HierarchicalChartProxy(chartProxyParams);
             case 'heatmap':
                 return new HeatmapChartProxy(chartProxyParams);
             case 'waterfall':
