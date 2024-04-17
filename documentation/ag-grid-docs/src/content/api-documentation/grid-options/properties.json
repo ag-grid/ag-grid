@@ -1402,10 +1402,6 @@
     "clientRowModel": {
         "meta": {
             "displayName": "RowModel: Client-Side",
-            "page": {
-                "name": "Client-Side Row Model",
-                "url": "./client-side-model/"
-            },
             "description": "Row data uses the [generic type](./typescript-generics) `TData` if provided via `GridOptions&lt;TData&gt;`. Otherwise `TData` will default to `any`."
         },
         "rowData": {

@@ -127,23 +127,22 @@ changes, consider avoiding this feature.
 
 ## Suppress Model Updates
 
-Sometimes it's required to do transaction updates and not have the rows re-sort / re-filter / re-group / re-aggregate.
-This is useful if the user is interacting with the data and you don't want the rows moving.
-
-To prevent sorting, filtering and grouping after an update transaction, set the grid property
-`suppressModelUpdateAfterUpdateTransaction=true`.
+To perform update transactions and prevent the grid from automatically reprocessing grouping, filters, aggregation and sorting, enable the `suppressModelUpdateAfterUpdateTransaction` grid option. This can be helpful to prevent data moving while the user is in an edit state for a row.
 
 Note that this property is only used when transactions are applied that only have updates. If the transaction
 contains any adds or removes, the sorting, filtering and grouping will always be applied.
 
-The example below is identical to the previous example except `suppressModelUpdateAfterUpdateTransaction=true`.
-Note the following:
+To trigger the the Client-side Row Model to refresh, use the Grid API `refreshClientSideRowModel(startingStage)`. As the stages are sequential, the Client-side Row Model will refresh at the provided stage and then all the stages after it will also refresh. In order, these stages are: group, filter, pivot, aggregate, sort, and map.
 
-1. When data is updated (**Update** button), the grid does not re-execute sorting, filtering or aggregation.
-1. When data is added (**Duplicate** button) or removed (**Delete** button), the grid does execute sorting, filtering and aggregation.
-1. After data is updated, hitting **Update Model** gets the grid to sort, filter and aggregate.
+{% apiDocumentation source="grid-api/api.json" section="data" names=["refreshClientSideRowModel"] /%}
 
 {% gridExampleRunner title="Suppress Update Model" name="suppress-update-model" /%}
+
+In the example above `suppressModelUpdateAfterUpdateTransaction=true`.
+Note the following:
+
+1. When data is updated, using the **Apply Transaction** button, the grid does not re-execute sorting or filtering.
+1. After data is updated, hitting **Update Model** triggers the grid to sort and filter using `refreshClientSideRowModel('filter')`.
 
 ## Delta Sorting
 
