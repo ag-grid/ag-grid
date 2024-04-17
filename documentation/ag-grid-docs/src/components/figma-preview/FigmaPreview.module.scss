@@ -1,0 +1,9 @@
+@use 'design-system' as *;
+
+.previewIframe {
+    width: 100%;
+    margin-bottom: $spacing-size-4;
+    border-radius: var(--radius-md);
+    border: none;
+    aspect-ratio: 9/5;
+}

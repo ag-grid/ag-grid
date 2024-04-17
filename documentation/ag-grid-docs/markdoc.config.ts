@@ -263,5 +263,8 @@ export default defineMarkdocConfig({
                 text: { type: String },
             },
         },
+        figmaPreview: {
+            render: component('./src/components/figma-preview/FigmaPreview', 'FigmaPreview'),
+        }
     },
 });
