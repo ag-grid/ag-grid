@@ -1,10 +1,9 @@
 ---
 import CommunityLayout from '@ag-website-shared/components/community/layout/CommunityLayout.astro';
 import Events from '@ag-website-shared/components/community/components/Events';
-import { getEntry } from 'astro:content';
 
-const { data: eventImages } = await getEntry('community', 'events-images');
-const { data: events } = await getEntry('community', 'events');
+import eventImages from '@ag-website-shared/content/community/events-images.json';
+import events from '@ag-website-shared/content/community/events.json';
 ---
 
 <CommunityLayout

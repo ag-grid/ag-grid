@@ -3,11 +3,10 @@ import CommunityLayout from '@ag-website-shared/components/community/layout/Comm
 import Blogs from '@ag-website-shared/components/community/components/news-updates/Blogs';
 import Podcasts from '@ag-website-shared/components/community/components/news-updates/Podcasts';
 import Videos from '@ag-website-shared/components/community/components/news-updates/Videos';
-import { getEntry } from 'astro:content';
 
-const { data: blogs } = await getEntry('community', 'news-updates/blogs');
-const { data: podcasts } = await getEntry('community', 'news-updates/podcasts');
-const { data: videos } = await getEntry('community', 'news-updates/videos');
+import blogs from '@ag-website-shared/content/community/news-updates/blogs.json';
+import podcasts from '@ag-website-shared/content/community/news-updates/podcasts.json';
+import videos from '@ag-website-shared/content/community/news-updates/videos.json';
 ---
 
 <CommunityLayout

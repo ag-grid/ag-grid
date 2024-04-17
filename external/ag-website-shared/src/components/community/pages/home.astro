@@ -9,14 +9,13 @@ import Support from '@ag-website-shared/components/community/components/landing-
 import Socials from '@ag-website-shared/components/community/components/landing-page/Socials';
 import ToolsExtensions from '@ag-website-shared/components/community/components/ToolsExtensions';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { getEntry } from 'astro:content';
 
-const { data: eventImages } = await getEntry('community', 'events-images');
-const { data: socialChannels } = await getEntry('community', 'socials');
-const { data: supportSites } = await getEntry('community', 'support');
-const { data: events } = await getEntry('community', 'events');
-const { data: showcase } = await getEntry('community', 'showcase');
-const { data: videos } = await getEntry('community', 'news-updates/videos');
+import eventImages from '@ag-website-shared/content/community/events-images.json';
+import socialChannels from '@ag-website-shared/content/community/socials.json';
+import supportSites from '@ag-website-shared/content/community/support.json';
+import events from '@ag-website-shared/content/community/events.json';
+import showcase from '@ag-website-shared/content/community/showcase.json';
+import videos from '@ag-website-shared/content/community/news-updates/videos.json';
 ---
 
 <CommunityLayout

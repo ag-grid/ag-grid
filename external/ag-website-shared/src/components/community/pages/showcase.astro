@@ -1,9 +1,8 @@
 ---
 import CommunityLayout from '@ag-website-shared/components/community/layout/CommunityLayout.astro';
 import Showcase from '@ag-website-shared/components/community/components/Showcase';
-import { getEntry } from 'astro:content';
 
-const { data: showcase } = await getEntry('community', 'showcase');
+import showcase from '@ag-website-shared/content/community/showcase.json';
 ---
 
 <CommunityLayout
