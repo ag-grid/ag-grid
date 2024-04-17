@@ -24,6 +24,11 @@ export const EditorPanel = () => {
                     <ParamEditor param="borderRadius" label="Widget radius" showDocs />
                 </EvenSplitRow>
             </Section>
+            <Section heading="Borders (temporary)">
+                <ParamEditor param="wrapperBorder" label="Around grid" />
+                <ParamEditor param="rowBorder" label="Rows" />
+                <ParamEditor param="columnBorder" label="Columns" />
+            </Section>
             <Section heading="Header">
                 <ParamEditor param="headerBackgroundColor" label="Background color" />
                 <ParamEditor param="headerTextColor" label="Text color" />
