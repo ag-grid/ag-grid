@@ -167,6 +167,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular/.angular" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/styles" />
+      <excludeFolder url="file://$MODULE_DIR$/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore" />
     </content>
     <content url="file://$MODULE_DIR$/community-modules/angular/dist" />
     <content url="file://$MODULE_DIR$/community-modules/react/dev" />

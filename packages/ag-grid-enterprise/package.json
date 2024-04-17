@@ -13,10 +13,15 @@
       "default": "./dist/package/main.cjs.js"
     },
     "./styles/ag-grid.css": "./styles/ag-grid.css",
+    "./styles/ag-grid.min.css": "./styles/ag-grid.min.css",
     "./styles/ag-theme-alpine.css": "./styles/ag-theme-alpine.css",
+    "./styles/ag-theme-alpine.min.css": "./styles/ag-theme-alpine.min.css",
     "./styles/ag-theme-balham.css": "./styles/ag-theme-balham.css",
+    "./styles/ag-theme-balham.min.css": "./styles/ag-theme-balham.min.css",
     "./styles/ag-theme-material.css": "./styles/ag-theme-material.css",
+    "./styles/ag-theme-material.min.css": "./styles/ag-theme-material.min.css",
     "./styles/ag-theme-quartz.css": "./styles/ag-theme-quartz.css",
+    "./styles/ag-theme-quartz.min.css": "./styles/ag-theme-quartz.min.css",
     "./styles": "./styles/_index.scss"
   },
   "repository": {
