@@ -260,6 +260,7 @@ export default defineMarkdocConfig({
             attributes: {
                 id: { type: String },
                 title: { type: String },
+                playlist: { type: String },
                 showHeader: { type: Boolean },
             },
         },
