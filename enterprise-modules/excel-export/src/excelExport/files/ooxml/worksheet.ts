@@ -283,9 +283,7 @@ const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElem
                 headersAndFooters.push({
                     name: `${namePrefix}${nameSuffix}`,
                     properties: {
-                        rawMap: {
-                            'xml:space': 'preserve'
-                        }
+                        rawMap: { 'xml:space': 'preserve' }
                     },
                     textNode: processHeaderFooterContent(value, location)
                 });

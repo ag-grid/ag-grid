@@ -5,7 +5,7 @@ const getShapeLayout = (): XmlElement => ({
     name: "o:shapelayout",
     properties: {
         prefixedAttributes: [{
-            prefix: "v",
+            prefix: "v:",
             map: {
                 ext: "edit"
             },
@@ -16,12 +16,14 @@ const getShapeLayout = (): XmlElement => ({
             name: "o:idmap",
             properties: {
                 prefixedAttributes: [{
-                    prefix: "v",
+                    prefix: "v:",
                     map: {
                         ext: "edit",
-                        data: "1"
                     },
                 }],
+                rawMap: {
+                    data: '1'
+                }
             }
         }
     ]
@@ -51,23 +53,54 @@ const getFormulas = (formulas: string[]): XmlElement => ({
 const getPath = (): XmlElement => ({
     name: "v:path",
     properties: {
+        prefixedAttributes: [{
+            prefix: "o:",
+            map: {
+                connecttype: 'rect',
+                extrusionok:'f'
+            },
+        }],
         rawMap: {
-            extrusionok: "f",
             gradientshapeok: "t",
-            connecttype: "rect"
         }
     }
 });
 
-const getLock = (): XmlElement => ({
-    name: "o:lock",
+const getLock = (params?: { aspectratio?: boolean; rotation?: boolean }): XmlElement => {
+    const { aspectratio, rotation } = params || {};
+    const rawMap: { aspectratio?: 't'; rotation?: 't'; } = {};
+
+    if (aspectratio) {
+        rawMap.aspectratio = 't'
+    }
+
+    if (rotation) {
+        rawMap.rotation = 't';
+    }
+
+    return {
+        name: "o:lock",
+        properties: {
+            prefixedAttributes: [{
+                prefix: "v:",
+                map: {
+                    ext: 'edit'
+                },
+            }],
+            rawMap
+        }
+    }
+};
+
+const getImageData = (): XmlElement => ({
+    name: "v:imagedata",
     properties: {
         prefixedAttributes: [{
-            prefix: "v",
+            prefix: "o:",
             map: {
-                ext: "edit",
-                aspectratio: "t"
-            },
+                relid:'rId1',
+                title: 'output-onlinepngtools'
+            }
         }],
     }
 });
@@ -92,17 +125,17 @@ const getShapeType = (): XmlElement => {
         name: "v:shapetype",
         properties: {
             prefixedAttributes: [{
-                prefix: "id",
+                prefix: "o:",
                 map: {
-                    _x0000_t75: ""
-                },
+                    spt:'75',
+                    preferrelative: 't'
+                }
             }],
             rawMap: {
                 coordsize: "21600,21600",
-                o: "spt",
-                preferrelative: "t",
-                path: "m@4@5l@4@11@9@11@9@5xe",
                 filled: "f",
+                id: '_x0000_t75',
+                path: "m@4@5l@4@11@9@11@9@5xe",
                 stroked: "f"
             }
         },
@@ -110,15 +143,30 @@ const getShapeType = (): XmlElement => {
             getStroke(),
             getFormulas(formulas),
             getPath(),
-            getLock()
+            getLock({ aspectratio: true })
         ],
     }
 }
 
+const getShape = (): XmlElement => ({
+    name: "v:shape",
+    properties: {
+        rawMap: {
+            id: "LH",
+            'o:spid': '_x0000_s1025',
+            style: "position:absolute;margin-left:0;margin-top:0;width:10in;height:250pt;   z-index:1",
+            type:"#_x0000_t75"
+        }
+    },
+    children: [
+        getImageData(),
+        getLock({ rotation: true })
+    ],
+});
 
 const vmlDrawingFactory: ExcelOOXMLTemplate = {
     getTemplate() {
-        const children: XmlElement[] = [getShapeLayout(), getShapeType()];
+        const children: XmlElement[] = [getShapeLayout(), getShapeType(), getShape()];
 
         return {
             name: "xml",
