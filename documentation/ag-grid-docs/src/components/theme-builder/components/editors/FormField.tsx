@@ -42,7 +42,7 @@ const StyledInformation = styled(Information)`
 const Label = styled('span')`
     color: var(--color-fg-secondary);
     opacity: 0.8;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 400;
     transition: all 0.3s;
     svg {
