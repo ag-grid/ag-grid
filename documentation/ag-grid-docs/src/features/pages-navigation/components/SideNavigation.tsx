@@ -1,7 +1,7 @@
+import { navigate, scrollIntoViewById } from '@ag-website-shared/utils/navigation';
 import { useScrollSpy } from '@features/pages-navigation/hooks/useScrollSpy';
 import styles from '@legacy-design-system/modules/SideNavigation.module.scss';
 import { addNonBreakingSpaceBetweenLastWords } from '@utils/addNonBreakingSpaceBetweenLastWords';
-import { navigate, scrollIntoViewById } from '@utils/navigation';
 import type { MarkdownHeading } from 'astro';
 
 interface Props {
