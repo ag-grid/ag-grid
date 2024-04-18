@@ -8,7 +8,7 @@ import type { Framework, MenuItem, MenuSection } from '@ag-grid-types';
 import { getDocsPages } from '@features/docs/utils/pageData';
 import { SideNavigation } from '@features/pages-navigation/components/SideNavigation';
 import { getFirstParagraphText } from '@utils/markdoc/getFirstParagraphText';
-import { DOCS_TAB_ITEM_ID_PREFIX } from '@constants';
+import { DOCS_TAB_ITEM_ID_PREFIX } from '@ag-website-shared/constants';
 import { getFilteredMenuSections } from '@features/pages-navigation/utils/getFilteredMenuSections';
 import { getHeadings } from '@utils/markdoc/getHeadings';
 import { isApiMenuPath } from '@utils/apiMenuPath';
@@ -36,7 +36,7 @@ const apiMenuSections: MenuSection[] = getFilteredMenuSections({
     framework: currentFramework,
 });
 
-const appendSeoToDescription = `Download AG Grid today: The best ${getFrameworkDisplayText(currentFramework)} Data Table in the world.`
+const appendSeoToDescription = `Download AG Grid today: The best ${getFrameworkDisplayText(currentFramework)} Data Table in the world.`;
 const description = page.data.description || `${getFirstParagraphText(page.body)} ${appendSeoToDescription}`;
 const isApiPage = isApiMenuPath({
     pageName,

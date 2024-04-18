@@ -7,10 +7,17 @@
         "linkText": "Read article"
     },
     {
-        "title": "Whats New in AG Grid 31.1",
-        "description": "What's New in AG Grid 31.1 - integrated Enterprise Charts, Column Menu Redesign, Custom Menu Item Components, Compression of Excel files and more",
+        "title": "Whats New in AG Grid 31.2",
+        "description": "What's New in AG Grid 31.2 - Updated Integrated Enterprise Charts Menu, Tooltips for truncated text, Export to Excel Table, Material Dark Theme",
         "image": "/community/events/news/grid-table.png",
-        "link": "https://blog.ag-grid.com/whats-new-in-ag-grid-31-1/",
+        "link": "https://blog.ag-grid.com/whats-new-in-ag-grid-31-2/",
+        "linkText": "Read article"
+    },
+    {
+        "title": "What's New in AG Charts 9.2",
+        "description": "What's New in AG Charts 9.2 - New Map Series types - geographic, lines and markers series, Rounded Corners for all Bar Series types",
+        "image": "/community/events/news/integrated.png",
+        "link": "https://blog.ag-grid.com/whats-new-in-ag-charts-9-2/",
         "linkText": "Read article"
     },
     {
@@ -18,13 +25,6 @@
         "description": "A look back on 2023, reflecting on our achievements and to thank our community for their unwavering support",
         "image": "/community/events/news/grid-2.png",
         "link": "https://blog.ag-grid.com/ag-grid-a-look-back-on-2023/",
-        "linkText": "Read article"
-    },
-    {
-        "title": "Whats New in AG Charts 9.1",
-        "description": "What's New in AG Charts 9.1 - Enterprise Charts are integrated into AG Grid, Synchronized Charts, Mini Chart in Navigator, Asynchronous Data Loading",
-        "image": "/community/events/news/integrated.png",
-        "link": "https://blog.ag-grid.com/whats-new-in-ag-charts-9-1/",
         "linkText": "Read article"
     }
 ]

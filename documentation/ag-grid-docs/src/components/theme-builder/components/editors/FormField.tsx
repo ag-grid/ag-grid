@@ -33,7 +33,7 @@ const StyledFormField = styled('div')`
 `;
 
 const StyledInformation = styled(Information)`
-    margin-left: 12px;
+    margin-left: 4px;
     margin-bottom: 2px;
     width: 13px;
     height: 13px;
@@ -42,7 +42,7 @@ const StyledInformation = styled(Information)`
 const Label = styled('span')`
     color: var(--color-fg-secondary);
     opacity: 0.8;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 400;
     transition: all 0.3s;
     svg {
