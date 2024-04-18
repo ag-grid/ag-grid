@@ -44,4 +44,15 @@ const Label = styled('span')`
     opacity: 0.8;
     font-size: 14px;
     font-weight: 400;
+    transition: all 0.3s;
+    svg {
+        cursor: pointer;
+    }
+
+    &:hover {
+        svg path {
+            fill: var(--color-black);
+            transition: all 0.3s;
+        }
+    }
 `;
