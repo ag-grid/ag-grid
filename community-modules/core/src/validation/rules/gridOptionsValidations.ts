@@ -38,8 +38,8 @@ const GRID_OPTION_DEPRECATIONS: Deprecations<GridOptions> = {
 
     enableCellChangeFlash: { version: '31.2', message: 'Use `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns.'},
 
-    groupIncludeFooter: { version: '32', message: 'Use `groupTotalRow` instead.' },
-    groupIncludeTotalFooter: { version: '32', message: 'Use `grandTotalRow` instead.' },
+    groupIncludeFooter: { version: '31.3', message: 'Use `groupTotalRow` instead.' },
+    groupIncludeTotalFooter: { version: '31.3', message: 'Use `grandTotalRow` instead.' },
 };
 
 // Leave untyped. so it can be inferred.
