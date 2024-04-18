@@ -1009,7 +1009,7 @@
             "displayName": "Miscellaneous"
         },
         "getCellValue": {
-            "description": "Gets the cell value for the given column and `rowNode` (row). Will return the cell value or the formatted value depending on the value of `params.useFormatter: true`. Default is the cell value."
+            "description": "Gets the cell value for the given column and `rowNode` (row). Will return the cell value or the formatted value depending on the value of `params.useFormatter`."
         },
         "destroy": {},
         "isDestroyed": {},

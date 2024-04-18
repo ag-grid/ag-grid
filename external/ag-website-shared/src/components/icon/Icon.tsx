@@ -9,6 +9,7 @@ import ColumnsIcon from '@ag-website-shared/images/inline-svgs/columns.svg?react
 import CrossIcon from '@ag-website-shared/images/inline-svgs/cross.svg?react';
 import EnterpriseIcon from '@ag-website-shared/images/inline-svgs/enterprise.svg?react';
 import EscapeIcon from '@ag-website-shared/images/inline-svgs/escape.svg?react';
+import FigmaIcon from '@ag-website-shared/images/inline-svgs/figma-logo.svg?react';
 import HeadingResult from '@ag-website-shared/images/inline-svgs/heading-result.svg?react';
 import IntegratedChartsIcon from '@ag-website-shared/images/inline-svgs/integrated-chart.svg?react';
 import maximizeIcon from '@ag-website-shared/images/inline-svgs/maximize.svg?react';
@@ -126,7 +127,6 @@ const CHARTS_ICON_MAP = {
 export const ICON_MAP = {
     info: CarbonIcon.Information,
     warning: CarbonIcon.WarningAlt,
-    email: CarbonIcon.Email,
     creditCard: CarbonIcon.Purchase,
     lightBulb: CarbonIcon.Idea,
     enterprise: EnterpriseIcon,
@@ -171,6 +171,7 @@ export const ICON_MAP = {
     codeResult: CodeResult,
     headingResult: HeadingResult,
     listBoxes: CarbonIcon.List,
+    figmaCommunity: FigmaIcon,
     ...SOCIALS_ICON_MAP,
     ...DOCS_CATEGORIES_ICON_MAP,
     ...HOMEPAGE_FEATURES_ICON_MAP,

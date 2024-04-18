@@ -95,6 +95,7 @@ export class AlignedGridsService extends BeanStub {
 
         // iterate through the aligned grids, and pass each aligned grid service to the callback
         this.getAlignedGridApis().forEach((api) => {
+            if(api.isDestroyed()) { return; }
             const alignedGridService = api.__getAlignedGridService();
             callback(alignedGridService);
         });        

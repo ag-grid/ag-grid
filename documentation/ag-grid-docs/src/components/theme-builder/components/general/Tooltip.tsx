@@ -61,13 +61,11 @@ const TooltipPopup = styled('div')`
     @keyframes scaleIn {
         from {
             opacity: 0;
-            transform: scale(0);
-            transform: translateY(8px);
+            transform: scale(0) translateY(8px); // Merged transform
         }
         to {
             opacity: 1;
-            transform: scale(1);
-            transform: translateY(0px);
+            transform: scale(1) translateY(0px); // Merged transform
         }
     }
 
@@ -81,7 +79,8 @@ const TooltipPopup = styled('div')`
         box-shadow: var(--shadow-md);
         font-size: 14px;
         color: var(--color-text-primary);
+        animation-name: scaleIn;
+        animation-duration: 0.3s;
         animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-        animation: scaleIn 0.2s;
     }
 `;

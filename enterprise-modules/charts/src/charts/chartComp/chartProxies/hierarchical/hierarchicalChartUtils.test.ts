@@ -337,6 +337,8 @@ describe(createAutoGroupHierarchy as any, () => {
                                 y: 7,
                             },
                         ],
+                        "ag-Grid-AutoColumn": { labels: ["foo", "x"] },
+                        z: 9,
                     },
                     {
                         'AG-GRID-DEFAULT-LABEL-KEY': 'baz',

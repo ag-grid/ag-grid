@@ -233,6 +233,10 @@ export class ChartTranslationService extends BeanStub {
         direction: 'Direction',
         horizontal: 'Horizontal',
         vertical: 'Vertical',
+        seriesGroupType: 'Group Type',
+        groupedSeriesGroupType: 'Grouped',
+        stackedSeriesGroupType: 'Stacked',
+        normalizedSeriesGroupType: '100% Stacked',
     };
 
     public translate(toTranslate: ChartTranslationKey): string {

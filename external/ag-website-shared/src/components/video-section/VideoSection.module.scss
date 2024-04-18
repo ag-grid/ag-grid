@@ -31,10 +31,10 @@
         height: 24px;
         background-color: white; // Set the background color to white
         z-index: 0; // Ensures the background is behind the SVG
-      }
+    }
 }
 
-.ytIcon {
+svg.ytIcon {
     margin: auto;
     position: absolute;
     top: 0;
@@ -43,9 +43,7 @@
     right: 0;
     width: 75px;
     height: 75px;
-    fill: #E62117;
-
-    
+    fill: #e62117;
 }
 
 .ytThumbnail {

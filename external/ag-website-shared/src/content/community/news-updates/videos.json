@@ -18,6 +18,15 @@
         "id": "4dhBnvgb5H0"
     },
     {
+        "title": "Intro + Demo of AG Charts w/ Mana Peirov",
+        "link": "https://www.youtube.com/embed/AIgxkOO_pkM",
+        "description": "In this video, Mana provides a quick Hello World demo of AG Charts, followed by Q&A.",
+        "author": "Mana Peirov",
+        "type": "Video",
+        "published": "04/2024",
+        "id": "AIgxkOO_pkM"
+    },
+    {
         "title": "Patterns for Performance",
         "link": "https://www.youtube.com/embed/qR608qHWTCA",
         "description": "When working with React it is important that we use the right tool for the right job. If not we will be missing out on the best performance and developer experience. While optimising AG Grid React Table we discovered a number of patterns that made significant improvements to the tables performance.",

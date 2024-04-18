@@ -1,4 +1,4 @@
-import { _, AgChartTheme as GridAgChartTheme, ChartType, SeriesChartType } from "@ag-grid-community/core";
+import { _, AgChartTheme as GridAgChartTheme, ChartType, SeriesChartType, SeriesGroupType } from "@ag-grid-community/core";
 import {
     _Theme,
     _ModuleSupport,
@@ -14,7 +14,7 @@ import {
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 import { deproxy } from "../utils/integration";
-import { applyThemeOverrides, createAgChartTheme, lookupCustomChartTheme } from './chartTheme';
+import { createAgChartTheme, lookupCustomChartTheme } from './chartTheme';
 import { get } from "../utils/object";
 
 export interface ChartProxyParams {
@@ -46,6 +46,7 @@ export interface FieldDefinition {
 
 export interface UpdateParams {
     data: any[];
+    groupData?: any[];
     grouping: boolean;
     categories: {
         id: string;
@@ -57,6 +58,7 @@ export interface UpdateParams {
     getCrossFilteringContext: () => CrossFilteringContext,
     seriesChartTypes: SeriesChartType[];
     updatedOverrides?: AgChartThemeOverrides;
+    seriesGroupType?: SeriesGroupType;
 }
 
 export abstract class ChartProxy<TOptions extends AgChartOptions = AgChartOptions, TSeries extends ChartSeriesType = ChartSeriesType> {
@@ -152,6 +154,10 @@ export abstract class ChartProxy<TOptions extends AgChartOptions = AgChartOption
         return lookupCustomChartTheme(this.chartProxyParams, themeName);
     }
 
+    public getSeriesGroupType(): SeriesGroupType | undefined {
+        return undefined;
+    }
+
     protected transformCategoryData(data: any[], categoryKey: string): any[] {
         // replace the values for the selected category with a complex object to allow for duplicated categories
         return data.map((d, index) => {
@@ -171,13 +177,13 @@ export abstract class ChartProxy<TOptions extends AgChartOptions = AgChartOption
         const formattingPanelOverrides = this.chart != null ? this.getActiveFormattingPanelOverrides() : undefined;
         this.clearThemeOverrides = false;
 
-        // Create a base theme and apply the various layers of overrides.
-        const baseTheme = createAgChartTheme(this.chartProxyParams, this, this.isEnterpriseCharts);
-        const chartThemeDefaults = this.getChartThemeDefaults();
-        const theme = applyThemeOverrides(baseTheme, [
-            chartThemeDefaults,
-            updatedOverrides ?? formattingPanelOverrides,
-        ]);
+        const theme = createAgChartTheme(
+            this.chartProxyParams,
+            this,
+            this.isEnterpriseCharts,
+            this.getChartThemeDefaults(),
+            updatedOverrides ?? formattingPanelOverrides
+        );
 
         const newOptions = {
             ...existingOptions,

@@ -23,11 +23,9 @@ type Preset = {
     parts?: Partial<Record<PartId, string>>;
 };
 
-const googleFontsToLoad = ['Press Start 2P', 'Jacquard 24'];
-
 export const allPresets: Preset[] = [
     {
-        pageBackgroundColor: '#fff',
+        pageBackgroundColor: '#FAFAFA',
     },
     {
         pageBackgroundColor: '#1D2634',
@@ -43,7 +41,7 @@ export const allPresets: Preset[] = [
             backgroundColor: 'rgb(241, 237, 225)',
             foregroundColor: 'rgb(46, 55, 66)',
             chromeBackgroundColor: ref('backgroundColor'),
-            fontFamily: 'Press Start 2P',
+            fontFamily: 'google:Press Start 2P',
             gridSize: '4px',
         },
     },
@@ -56,10 +54,27 @@ export const allPresets: Preset[] = [
             // headerBackgroundColor: '#807078',
             foregroundColor: 'rgb(46, 55, 66)',
             chromeBackgroundColor: ref('backgroundColor'),
-            fontFamily: 'Jacquard 24',
+            fontFamily: 'google:Jacquard 24',
             gridSize: '8px',
             wrapperBorderRadius: '0px',
             headerFontWeight: '600',
+        },
+    },
+    {
+        pageBackgroundColor: '#212124',
+        params: {
+            backgroundColor: '#252A33',
+            headerBackgroundColor: '#8AB4F9',
+            headerTextColor: '#252A33',
+            // headerBackgroundColor: '#807078',
+            foregroundColor: '#BDC2C7',
+            chromeBackgroundColor: ref('backgroundColor'),
+            fontFamily: 'google:Plus Jakarta Sans',
+            gridSize: '8px',
+            wrapperBorderRadius: '12px',
+            headerFontWeight: '600',
+            accentColor: '#8AB4F9',
+            rowVerticalPaddingScale: '0.6',
         },
     },
     {
@@ -74,20 +89,39 @@ export const allPresets: Preset[] = [
             wrapperBorderRadius: '0px',
             headerFontWeight: '600',
             oddRowBackgroundColor: '#F9FAFB',
+            rowBorder: 'none',
+            wrapperBorder: 'none',
         },
     },
 ];
 
-export const PresetSelector = memo(() => (
-    <Scroller>
-        <TmpLoadGoogleFonts />
-        <Horizontal>
-            {allPresets.map((preset, i) => (
-                <SelectButton key={i} preset={preset} />
-            ))}
-        </Horizontal>
-    </Scroller>
-));
+export const PresetSelector = memo(() => {
+    // find and load any google fonts that might be used by presets
+    const googleFonts = [corePart.defaults, ...allPresets.map((p) => p.params)]
+        .map((params) =>
+            Object.values(params || {})
+                .filter((v) => String(v).startsWith('google:'))
+                .map((v) => String(v).replace('google:', ''))
+        )
+        .flat()
+        .sort()
+        .map(
+            (font) =>
+                `@import url('https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}&display=swap');`
+        )
+        .join('\n');
+
+    return (
+        <Scroller>
+            <style>{googleFonts}</style>
+            <Horizontal>
+                {allPresets.map((preset, i) => (
+                    <SelectButton key={i} preset={preset} />
+                ))}
+            </Horizontal>
+        </Scroller>
+    );
+});
 
 type SelectButtonProps = {
     preset: Preset;
@@ -149,18 +183,6 @@ const SelectButton = ({ preset }: SelectButtonProps) => {
         </SelectButtonWrapper>
     );
 };
-
-export const TmpLoadGoogleFonts = () => (
-    <>
-        {googleFontsToLoad.map((font) => (
-            <link
-                key={font}
-                href={`https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}&display=swap`}
-                rel="stylesheet"
-            />
-        ))}
-    </>
-);
 
 const SelectButtonWrapper = styled('div')`
     display: inline-block;

@@ -1,0 +1,27 @@
+---
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import styles from './VideoSection.module.scss';
+
+/**
+ * Show a YouTube thumbnail that links to the video
+ */
+interface Props {
+    id: string;
+    title: string;
+    playlist?: string;
+    showHeader?: boolean;
+}
+
+const { id, title = 'Video', playlist, showHeader } = Astro.props as Props;
+const link = `https://www.youtube.com/watch?v=${id}${playlist ? `&list=${playlist}` : ''}`;
+---
+
+<div class={styles.videoSection}>
+    <div class:list={{ [styles.header]: showHeader }}><slot /></div>
+    <a href={link} target="_blank">
+        <div class={styles.ytContainer}>
+            <img src={`https://img.youtube.com/vi/${id}/0.jpg`} alt={`${title} thumbnail`} class={styles.ytThumbnail} />
+            <Icon name="youtube" svgClasses={styles.ytIcon} />
+        </div>
+    </a>
+</div>

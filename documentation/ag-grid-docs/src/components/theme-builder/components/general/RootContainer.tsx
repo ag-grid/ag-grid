@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useRenderedTheme } from '../../model/rendered-theme';
 import { EditorPanel } from '../editors/EditorPanel';
 import { GridConfigDropdownButton } from '../grid-config/GridConfigDropdown';
-import { PresetSelector, TmpLoadGoogleFonts } from '../presets/PresetSelector';
+import { PresetSelector } from '../presets/PresetSelector';
 import { DownloadThemeButton } from './Download';
 import { GridPreview } from './GridPreview';
 
@@ -11,7 +11,6 @@ export const RootContainer = () => {
     useRenderedTheme();
     return (
         <Container>
-            <TmpLoadGoogleFonts />
             <Menu>
                 <EditorScroller>
                     <EditorPanel />

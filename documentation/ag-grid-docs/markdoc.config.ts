@@ -1,5 +1,6 @@
 import { kbd } from '@ag-website-shared/markdoc/tags/kbd';
 import { tabItem, tabs } from '@ag-website-shared/markdoc/tags/tabs';
+import { videoSection } from '@ag-website-shared/markdoc/tags/videoSection';
 import { Markdoc, component, defineMarkdocConfig, nodes } from '@astrojs/markdoc/config';
 
 import { agGridVersion } from './src/constants';
@@ -52,6 +53,7 @@ export default defineMarkdocConfig({
         kbd,
         tabs,
         tabItem,
+        videoSection,
         br: {
             render: 'br',
         },
@@ -162,9 +164,6 @@ export default defineMarkdocConfig({
         iconsPanel: {
             render: component('./src/components/icon/IconsPanel.astro'),
         },
-        downloadDSButton: {
-            render: component('./src/components/download-ds-button/DownloadDSButton.astro'),
-        },
         image: {
             render: component('./src/components/image/Image.astro'),
             attributes: {
@@ -238,15 +237,6 @@ export default defineMarkdocConfig({
                 },
             },
         },
-        videoSection: {
-            render: component('./src/components/video-section/VideoSection.astro'),
-            attributes: {
-                id: { type: String },
-                title: { type: String },
-                playlist: { type: String },
-                showHeader: { type: Boolean },
-            },
-        },
         learningVideos: {
             render: component('./src/components/learning-videos/LearningVideos.astro'),
             attributes: {
@@ -262,6 +252,12 @@ export default defineMarkdocConfig({
                 href: { type: String, required: true },
                 text: { type: String },
             },
+        },
+        figmaPreview: {
+            render: component('./src/components/figma-preview/FigmaPreview.astro'),
+        },
+        figmaCommunityButton: {
+            render: component('./src/components/figma-community-button/FigmaCommunityButton.astro'),
         },
     },
 });

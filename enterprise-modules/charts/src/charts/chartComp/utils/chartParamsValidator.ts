@@ -173,7 +173,7 @@ export class ChartParamsValidator {
             },
         ];
 
-        return ChartParamsValidator.validateProperties(params, validations, [...ChartParamsValidator.baseUpdateChartParams, 'cellRange', 'suppressChartRanges', 'switchCategorySeries', 'aggFunc', 'seriesChartTypes'], 'UpdateRangeChartParams');
+        return ChartParamsValidator.validateProperties(params, validations, [...ChartParamsValidator.baseUpdateChartParams, 'cellRange', 'suppressChartRanges', 'switchCategorySeries', 'aggFunc', 'seriesChartTypes', 'seriesGroupType'], 'UpdateRangeChartParams');
     }
 
     private static validateUpdatePivotChartParams(params: UpdatePivotChartParams): boolean | UpdatePivotChartParams {

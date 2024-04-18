@@ -1,6 +1,6 @@
-import { ChevronDown } from '@carbon/icons-react';
 import styled from '@emotion/styled';
 import * as Accordion from '@radix-ui/react-accordion';
+import { ChevronDown } from 'lucide-react';
 import { type ReactNode } from 'react';
 
 import { FormField } from './FormField';
@@ -62,7 +62,7 @@ const Section = (props: { heading: string; children: ReactNode }) => (
     <AccordionItem value={props.heading}>
         <AccordionHeader>
             <Trigger>
-                {props.heading} <OpenCloseChevron />
+                {props.heading} <OpenCloseChevron size={16} />
             </Trigger>
         </AccordionHeader>
         <AccordionContent>

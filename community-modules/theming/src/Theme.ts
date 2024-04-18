@@ -36,10 +36,10 @@ export const defineTheme = <P extends Part, V extends object = ParamTypes>(
     partOrParts: P | P[],
     parameters: PickVariables<P, V>
 ): Theme => {
-    const result: Theme = {
-        css: '',
-        paramDefaults: {},
-    };
+    let css = fileHeader(parameters);
+    const paramDefaults: Record<string, string> = {};
+
+    const googleFonts = new Set<string>();
 
     // For parts with a partId, only allow one variant allowed, last variant wins
     const removeDuplicates: Record<string, Part> = { [corePart.partId]: corePart };
@@ -82,28 +82,41 @@ export const defineTheme = <P extends Part, V extends object = ParamTypes>(
         if (type === 'border') {
             value = borderValueToCss(value);
         } else if (type === 'fontFamily') {
+            const googlePrefix = 'google:';
+            if (value.startsWith(googlePrefix)) {
+                value = value.slice(googlePrefix.length);
+                googleFonts.add(value);
+            }
             value = fontFamilyValueToCss(value);
         }
         if (typeof value === 'string' && value) {
             variableDefaults += `\t${paramToVariableName(name)}: ${value};\n`;
-            result.paramDefaults[name] = value;
+            paramDefaults[name] = value;
         }
     }
-    variableDefaults += '}';
+    variableDefaults += '}\n';
+
+    css += Array.from(googleFonts)
+        .sort()
+        .map(
+            (font) =>
+                `@import url('https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}&display=swap');\n`
+        )
+        .join('');
+
+    css += variableDefaults;
 
     // combine CSS
-    const mainCSS: string[] = [variableDefaults];
     for (const part of parts) {
         if (part.css) {
-            mainCSS.push(`/* Part ${part.partId}/${part.variantId} */`);
-            mainCSS.push(...part.css.map((p) => (typeof p === 'function' ? p() : p)));
+            css += (`/* Part ${part.partId}/${part.variantId} */`);
+            css += part.css.map((p) => (typeof p === 'function' ? p() : p)).join('\n') + '\n';
         }
     }
-    result.css = fileHeader(parameters) + mainCSS.join('\n');
 
-    checkForUnsupportedVariables(result.css, Object.keys(mergedParams));
+    checkForUnsupportedVariables(css, Object.keys(mergedParams));
 
-    return result;
+    return {css, paramDefaults};
 };
 
 export const checkForUnsupportedVariables = (css: string, params: string[]) => {
