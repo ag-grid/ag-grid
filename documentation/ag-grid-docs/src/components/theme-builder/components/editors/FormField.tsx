@@ -33,7 +33,7 @@ const StyledFormField = styled('div')`
 `;
 
 const StyledInformation = styled(Information)`
-    margin-left: 12px;
+    margin-left: 4px;
     margin-bottom: 2px;
     width: 13px;
     height: 13px;
