@@ -5,6 +5,7 @@ import { findMatch } from "./filterExpressionOperators";
 import {
     AutocompleteUpdate,
     checkAndUpdateExpression,
+    FilterExpressionFunction,
     FilterExpressionFunctionParams,
     FilterExpressionParserParams,
     FilterExpressionValidationError,
@@ -58,7 +59,7 @@ class OperatorParser {
         return this.validationError;
     }
 
-    public getFunction(): string {
+    public getFunction(): '&&' | '||' {
         return this.parsedOperator === 'OR' ? '||' : '&&';
     }
 
@@ -263,12 +264,19 @@ export class JoinFilterExpressionParser {
         return null;
     }
 
-    public getFunction(params: FilterExpressionFunctionParams): string {
+    public getFunctionString(params: FilterExpressionFunctionParams): string {
         const hasMultipleExpressions = this.expressionParsers.length > 1;
         const expression = this.expressionParsers.map(
-            expressionParser => expressionParser.getFunction(params)).join(` ${this.operatorParser.getFunction()} `
+            expressionParser => expressionParser.getFunctionString(params)).join(` ${this.operatorParser.getFunction()} `
         );
         return hasMultipleExpressions ? `(${expression})` : expression;
+    }
+
+    public getFunctionParsed(params: FilterExpressionFunctionParams): FilterExpressionFunction {
+        const operator = this.operatorParser.getFunction();
+        const funcs = this.expressionParsers.map(expressionParser => expressionParser.getFunctionParsed(params));
+        const arrayFunc = operator === '&&' ? 'every' : 'some';
+        return (expressionProxy, node, p) => funcs[arrayFunc](func => func(expressionProxy, node, p));
     }
 
     public getAutocompleteListParams(position: number): AutocompleteListParams | undefined {
