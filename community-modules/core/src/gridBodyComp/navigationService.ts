@@ -384,10 +384,9 @@ export class NavigationService extends BeanStub {
             // in order for the tab navigation to work, we need to focus the browser back onto the
             // previous cell.
             if (previous instanceof CellCtrl) {
+                keyboardEvent.preventDefault();
                 previous.focusCell(true);
-            }
-
-            if (this.focusService.focusNextGridCoreContainer(backwards)) {
+            } else if (this.focusService.focusNextGridCoreContainer(backwards)) {
                 keyboardEvent.preventDefault();
             }
         }
