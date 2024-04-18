@@ -1,15 +1,12 @@
-import styles from '@legacy-design-system/modules/WhatsNew.module.scss';
-import { chartsUrlWithPrefix } from '@utils/chartsUrlWithPrefix';
+import { chartsUrlWithPrefix } from '@ag-website-shared/utils/chartsUrlWithPrefix';
+import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
-const parseVersion = (version: string) => {
-    const [major, minor, patch] = version.split('.').map(Number);
-    return { major, minor, patch, isMajor: !minor && !patch };
-};
+import styles from '../WhatsNew.module.scss';
 
-type VersionProps = {
+export type VersionProps = {
     date: string;
     version: string;
     blogUrl?: string;
@@ -40,8 +37,7 @@ function Highlight({ url, path, chartsPath, text }: HighlightParams) {
 }
 
 export const Version = ({ date, version, blogUrl, highlights, notesPath, isLatest }: VersionProps) => {
-    const { major, minor, isMajor } = parseVersion(version);
-    const blogHref = blogUrl || `https://blog.ag-grid.com/whats-new-in-ag-grid-${minor ? `${major}-${minor}` : major}/`;
+    const { isMajor } = parseVersion(version);
     const framework = useFrameworkFromStore();
 
     return (
@@ -58,7 +54,7 @@ export const Version = ({ date, version, blogUrl, highlights, notesPath, isLates
                     </div>
                     <div className={styles.flex}>
                         <b>Version {version}</b>
-                        <a className={styles.bloglink} href={blogHref}>
+                        <a className={styles.bloglink} href={blogUrl}>
                             Read more →
                         </a>
                     </div>
