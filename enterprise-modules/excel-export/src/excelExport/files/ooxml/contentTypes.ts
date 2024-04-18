@@ -12,14 +12,7 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
             PartName: `/xl/worksheets/sheet${i + 1}.xml`
         }));
 
-        let sheetsWithImages = 0;
-
-        for (const [sheetId, images] of ExcelXlsxFactory.worksheetImages) {
-            if (images.some(value => !value.position?.headerPosition && !value.position?.footerPosition)) {
-                sheetsWithImages++;
-            }
-        }
-
+        const sheetsWithImages = ExcelXlsxFactory.worksheetImages.size;
         const headerFooterImages = ExcelXlsxFactory.worksheetHeaderFooterImages.size;
         const sheetsWithTables = ExcelXlsxFactory.worksheetDataTables.size;
         const imageTypesObject: { [ key: string ]: boolean } = {};

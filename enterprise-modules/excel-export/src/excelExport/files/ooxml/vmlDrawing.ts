@@ -1,5 +1,6 @@
-import { XmlElement } from '@ag-grid-community/core';
-import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
+import { XmlElement, ExcelOOXMLTemplate } from '@ag-grid-community/core';
+import { ExcelXlsxFactory } from '../../excelXlsxFactory';
+import { ExcelHeaderFooterImage } from '../../assets/excelInterfaces';
 
 const getShapeLayout = (): XmlElement => ({
     name: "o:shapelayout",
@@ -148,11 +149,11 @@ const getShapeType = (): XmlElement => {
     }
 }
 
-const getShape = (): XmlElement => ({
+const getShape = (image: ExcelHeaderFooterImage): XmlElement => ({
     name: "v:shape",
     properties: {
         rawMap: {
-            id: "LH",
+            id: image.headerFooterPosition,
             'o:spid': '_x0000_s1025',
             style: "position:absolute;margin-left:0;margin-top:0;width:10in;height:250pt;   z-index:1",
             type:"#_x0000_t75"
@@ -165,8 +166,9 @@ const getShape = (): XmlElement => ({
 });
 
 const vmlDrawingFactory: ExcelOOXMLTemplate = {
-    getTemplate() {
-        const children: XmlElement[] = [getShapeLayout(), getShapeType(), getShape()];
+    getTemplate(params: { sheetIndex: number }) {
+        const headerFooterImages = ExcelXlsxFactory.worksheetHeaderFooterImages.get(params.sheetIndex) || [];
+        const children: XmlElement[] = [getShapeLayout(), getShapeType(), ...headerFooterImages.map(getShape)];
 
         return {
             name: "xml",

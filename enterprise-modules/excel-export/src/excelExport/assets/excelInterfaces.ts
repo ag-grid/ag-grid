@@ -63,6 +63,12 @@ export interface Fill {
     bgRgb?: string;
 }
 
+export type ExcelHeaderFooterPosition = 'LH' | 'CH' | 'RH' | 'LF' | 'CF' | 'RF';
+
+export interface ExcelHeaderFooterImage extends ExcelImage {
+    headerFooterPosition: ExcelHeaderFooterPosition;
+}
+
 export interface ExcelCalculatedImage extends ExcelImage {
     totalWidth: number;
     totalHeight: number;

@@ -12,7 +12,7 @@ import {
     ExcelFont,
     _,
 } from '@ag-grid-community/core';
-import { ExcelDataTable } from '../../assets/excelInterfaces';
+import { ExcelDataTable, ExcelHeaderFooterPosition } from '../../assets/excelInterfaces';
 
 import columnFactory from './column';
 import rowFactory from './row';
@@ -205,7 +205,7 @@ const replaceHeaderFooterTokens = (value: string): string => {
     return value;
 };
 
-const getHeaderPosition = (position?: string): string => {
+const getHeaderPosition = (position?: string): 'L' | 'C' | 'R' => {
     if (position === 'Center') { return 'C'; }
     if (position === 'Right') { return 'R'; }
 
@@ -237,7 +237,7 @@ const applyHeaderFontStyle = (headerString: string, font?: ExcelFont): string =>
     return headerString;
 };
 
-const processHeaderFooterContent = (content: ExcelHeaderFooterContent[], location: 'header' | 'footer'): string =>
+const processHeaderFooterContent = (content: ExcelHeaderFooterContent[], location: 'H' | 'F'): string =>
     content.reduce((prev, curr, idx) => {
         const pos = getHeaderPosition(curr.position);
         const output = applyHeaderFontStyle(`${prev}&amp;${pos}`, curr.font);
@@ -249,17 +249,8 @@ const processHeaderFooterContent = (content: ExcelHeaderFooterContent[], locatio
 
         const { image } = curr;
         if (curr.value === '&[Picture]' && image) {
-            if (!image.position) {
-                image.position = {}
-            }
-
-            if (location === 'header') {
-                image.position.headerPosition = curr.position;
-            } else {
-                image.position.footerPosition = curr.position;
-            }
-
-            ExcelXlsxFactory.buildImageMap(image)
+            const imagePosition: ExcelHeaderFooterPosition = `${pos}${location}`;
+            ExcelXlsxFactory.addHeaderFooterImageToMap(image, imagePosition);
         }
 
         return `${output}${_.escapeString(replaceHeaderFooterTokens(curr.value))}`;
@@ -277,7 +268,7 @@ const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElem
 
         for (const [key, value] of Object.entries<ExcelHeaderFooterContent[]>(headerFooter)) {
             const nameSuffix = `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
-            const location = key as 'header' | 'footer';
+            const location: 'H' | 'F' = key[0].toUpperCase() as 'H' | 'F';
 
             if (value) {
                 headersAndFooters.push({
@@ -344,7 +335,7 @@ const addExcelTableRel = (excelTable?: ExcelDataTable) => {
 const addDrawingRel = (currentSheet: number) => {
     return (params: ComposedWorksheetParams) => {
         const worksheetImages = ExcelXlsxFactory.worksheetImages.get(currentSheet);
-        if (worksheetImages && worksheetImages.some(img => !img.position?.headerPosition && img.position?.footerPosition)) {
+        if (worksheetImages?.length) {
             params.children.push({
                 name: 'drawing',
                 properties: {

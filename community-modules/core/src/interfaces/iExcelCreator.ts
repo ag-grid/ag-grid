@@ -250,14 +250,6 @@ export interface ExcelImagePosition {
     /** The column containing this image. This property is set automatically, don't change it unless you know what you are doing. */
     column?: number;
     /**
-     * The header position containing this image.
-     */
-    headerPosition?: ExcelHeaderFooterPosition;
-    /**
-     * The footer position containing this image.
-     */
-    footerPosition?: ExcelHeaderFooterPosition;
-    /**
      * The amount of columns this image will cover. Only relevant when not associated with a Header or Footer.
      * @default 1
      */
@@ -500,7 +492,7 @@ export interface ExcelHeaderFooterContent {
     /** The value of the text to be included in the header. */
     value: string;
     /**
-     * When value is `&[Picture]`, this should be used to container the image.
+     * When value is `&[Picture]`, this should be used as the referenced image.
      */
     image?: ExcelImage;
     /**
