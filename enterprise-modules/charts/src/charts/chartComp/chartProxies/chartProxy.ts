@@ -1,4 +1,4 @@
-import { _, AgChartTheme as GridAgChartTheme, ChartType, SeriesChartType } from "@ag-grid-community/core";
+import { _, AgChartTheme as GridAgChartTheme, ChartType, SeriesChartType, SeriesGroupType } from "@ag-grid-community/core";
 import {
     _Theme,
     _ModuleSupport,
@@ -58,6 +58,7 @@ export interface UpdateParams {
     getCrossFilteringContext: () => CrossFilteringContext,
     seriesChartTypes: SeriesChartType[];
     updatedOverrides?: AgChartThemeOverrides;
+    seriesGroupType?: SeriesGroupType;
 }
 
 export abstract class ChartProxy<TOptions extends AgChartOptions = AgChartOptions, TSeries extends ChartSeriesType = ChartSeriesType> {
@@ -151,6 +152,10 @@ export abstract class ChartProxy<TOptions extends AgChartOptions = AgChartOption
 
     public lookupCustomChartTheme(themeName: string) {
         return lookupCustomChartTheme(this.chartProxyParams, themeName);
+    }
+
+    public getSeriesGroupType(): SeriesGroupType | undefined {
+        return undefined;
     }
 
     protected transformCategoryData(data: any[], categoryKey: string): any[] {

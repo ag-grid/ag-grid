@@ -1,7 +1,7 @@
-import { ChartType, CHART_TYPE_TO_SERIES_TYPE, COMBO_CHART_TYPES } from "@ag-grid-community/core";
+import { ChartType, ChartMappings } from "@ag-grid-community/core";
 import { AgChartThemeOverrides } from "ag-charts-community";
 
-export type ChartSeriesType = typeof CHART_TYPE_TO_SERIES_TYPE[keyof typeof CHART_TYPE_TO_SERIES_TYPE] & keyof AgChartThemeOverrides;
+export type ChartSeriesType = typeof ChartMappings.CHART_TYPE_TO_SERIES_TYPE[keyof typeof ChartMappings.CHART_TYPE_TO_SERIES_TYPE] & keyof AgChartThemeOverrides;
 
 // these values correspond to top level object names in `AgChartThemeOverrides`
 export type ChartThemeOverridesSeriesType = keyof AgChartThemeOverrides & (ChartSeriesType | 'common');
@@ -111,7 +111,7 @@ export function isSeriesType(seriesType: ChartSeriesType): boolean {
 }
 
 export function isComboChart(chartType: ChartType): boolean {
-    return COMBO_CHART_TYPES.includes(chartType as typeof COMBO_CHART_TYPES[number]);
+    return ChartMappings.COMBO_CHART_TYPES.includes(chartType as typeof ChartMappings.COMBO_CHART_TYPES[number]);
 }
 
 function doesSeriesHaveProperty(seriesType: ChartSeriesType, prop: keyof SeriesParams): boolean {
@@ -148,7 +148,7 @@ export function getCanonicalChartType(chartType: ChartType): Exclude<ChartType, 
 }
 
 export function getSeriesTypeIfExists(chartType: ChartType): ChartSeriesType | undefined {
-    return CHART_TYPE_TO_SERIES_TYPE[chartType as keyof typeof CHART_TYPE_TO_SERIES_TYPE];
+    return ChartMappings.CHART_TYPE_TO_SERIES_TYPE[chartType as keyof typeof ChartMappings.CHART_TYPE_TO_SERIES_TYPE];
 }
 
 export function getSeriesType(chartType: ChartType): ChartSeriesType {

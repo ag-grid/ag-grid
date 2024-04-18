@@ -1,21 +1,11 @@
-import {ChartProxy, ChartProxyParams, UpdateParams} from '../chartProxy';
+import { ChartProxy, ChartProxyParams, UpdateParams } from '../chartProxy';
 import {
-    AgNightingaleSeriesOptions,
     AgPolarAxisOptions,
     AgPolarChartOptions,
-    AgRadarAreaSeriesOptions,
-    AgRadarLineSeriesOptions,
-    AgRadialBarSeriesOptions,
-    AgRadialColumnSeriesOptions
+    AgPolarSeriesOptions,
+    AgRadarAreaSeriesOptions
 } from 'ag-charts-community';
-
-type AgPolarSeriesOptions =
-    AgRadarLineSeriesOptions |
-    AgRadarAreaSeriesOptions |
-    AgNightingaleSeriesOptions |
-    AgRadialBarSeriesOptions |
-    AgRadialColumnSeriesOptions;
-
+import { SeriesGroupType } from '@ag-grid-community/core';
 export class PolarChartProxy extends ChartProxy<AgPolarChartOptions, 'radar-line' | 'radar-area' | 'nightingale' | 'radial-column' | 'radial-bar'> {
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -30,9 +20,10 @@ export class PolarChartProxy extends ChartProxy<AgPolarChartOptions, 'radar-line
     }
 
     public getSeries(params: UpdateParams): AgPolarSeriesOptions[] {
-        const {fields} = params;
-        const [category] = params.categories;
+        const { fields, categories, seriesGroupType } = params;
+        const [category] = categories;
         const radialBar = this.standaloneChartType === 'radial-bar';
+        const seriesGroupTypeOptions = this.getSeriesGroupTypeOptions(seriesGroupType);
 
         return fields.map(f => ({
             type: this.standaloneChartType as AgRadarAreaSeriesOptions['type'],
@@ -40,7 +31,22 @@ export class PolarChartProxy extends ChartProxy<AgPolarChartOptions, 'radar-line
             angleName: radialBar ? (f.displayName ?? undefined) : category.name,
             radiusKey: radialBar ? category.id : f.colId,
             radiusName: radialBar ? category.name : (f.displayName ?? undefined),
+            ...seriesGroupTypeOptions
         }));
+    }
+
+    public getSeriesGroupType(): SeriesGroupType | undefined {
+        const standaloneChartType = this.standaloneChartType;
+        if (!['nightingale', 'radial-bar', 'radial-column'].includes(standaloneChartType)) {
+            return undefined;
+        }
+        const firstSeriesProperties = this.getChart().series?.[0]?.properties.toJson();
+        const getStackedValue = () => firstSeriesProperties.normalizedTo ? 'normalized' : 'stacked';
+        if (standaloneChartType === 'nightingale') {
+            return firstSeriesProperties.grouped ? 'grouped' : getStackedValue();
+        } else {
+            return firstSeriesProperties.stacked ? getStackedValue() : 'grouped';
+        }
     }
 
     protected getUpdateOptions(params: UpdateParams, commonChartOptions: AgPolarChartOptions): AgPolarChartOptions {
@@ -62,5 +68,14 @@ export class PolarChartProxy extends ChartProxy<AgPolarChartOptions, 'radar-line
         } else {
             return params.data;
         }
+    }
+
+    private getSeriesGroupTypeOptions(seriesGroupType?: SeriesGroupType): Partial<AgPolarSeriesOptions> {
+        if (!seriesGroupType) { return {}; }
+        return {
+            grouped: seriesGroupType === 'grouped' || undefined,
+            stacked: seriesGroupType !== 'grouped' || undefined,
+            normalizedTo: seriesGroupType === 'normalized' ? 100 : undefined
+        };
     }
 }

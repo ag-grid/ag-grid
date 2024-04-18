@@ -404,9 +404,8 @@ export class GridChartComp extends Component {
         const { chartProxy } = this;
 
         const selectedCols = this.chartController.getSelectedValueColState();
-        const fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
         const data = this.chartController.getChartData();
-        const chartEmpty = this.handleEmptyChart(data, fields);
+        const chartEmpty = this.handleEmptyChart(data, selectedCols.length);
 
         this.chartEmpty = chartEmpty;
         if (chartEmpty) {
@@ -445,7 +444,7 @@ export class GridChartComp extends Component {
         return this.chartProxy.getChartImageDataURL(fileFormat);
     }
 
-    private handleEmptyChart(data: any[], fields: any[]): boolean {
+    private handleEmptyChart(data: any[], numFields: number): boolean {
         const pivotModeDisabled = this.chartController.isPivotChart() && !this.chartController.isPivotMode();
         
         // Determine the minimum number of fields based on the chart type
@@ -457,7 +456,7 @@ export class GridChartComp extends Component {
             minFieldsRequired = 0;
         }
 
-        const isEmptyChart = fields.length < minFieldsRequired || data.length === 0;
+        const isEmptyChart = numFields < minFieldsRequired || data.length === 0;
 
         if (this.eChart) {
             const isEmpty = pivotModeDisabled || isEmptyChart;
