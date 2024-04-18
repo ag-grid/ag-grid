@@ -27,7 +27,7 @@ const googleFontsToLoad = ['Press Start 2P', 'Jacquard 24'];
 
 export const allPresets: Preset[] = [
     {
-        pageBackgroundColor: '#fff',
+        pageBackgroundColor: '#FAFAFA',
     },
     {
         pageBackgroundColor: '#1D2634',

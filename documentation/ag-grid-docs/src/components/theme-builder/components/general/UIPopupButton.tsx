@@ -41,7 +41,7 @@ export const UIPopupButton = (props: UIPopupButtonProps) => {
             </Button>
             {show && (
                 <DropdownArea ref={refs.setFloating} style={floatingStyles}>
-                    {props.dropdownContent}
+                    <div className="dropdownWrapper">{props.dropdownContent}</div>
                 </DropdownArea>
             )}
         </>
@@ -84,5 +84,23 @@ const DropdownArea = styled(Card)`
     pointer-events: all;
     max-height: calc(100vh - 16px);
     margin-left: 8px;
-    padding: 12px;
+    padding: 16px;
+
+    .dropdownWrapper {
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0);
+                transform: translateY(5px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+                transform: translateY(0px);
+            }
+        }
+
+        animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+        animation: scaleIn 0.1s;
+    }
 `;
