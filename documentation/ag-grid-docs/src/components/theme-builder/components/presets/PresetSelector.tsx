@@ -23,7 +23,7 @@ type Preset = {
     parts?: Partial<Record<PartId, string>>;
 };
 
-const googleFontsToLoad = ['Press Start 2P', 'Jacquard 24'];
+export const googleFontsToLoad = ['Press Start 2P', 'Jacquard 24'];
 
 export const allPresets: Preset[] = [
     {
@@ -56,7 +56,7 @@ export const allPresets: Preset[] = [
             // headerBackgroundColor: '#807078',
             foregroundColor: 'rgb(46, 55, 66)',
             chromeBackgroundColor: ref('backgroundColor'),
-            fontFamily: 'Jacquard 24',
+            fontFamily: 'google:Jacquard 24',
             gridSize: '8px',
             wrapperBorderRadius: '0px',
             headerFontWeight: '600',
@@ -80,7 +80,6 @@ export const allPresets: Preset[] = [
 
 export const PresetSelector = memo(() => (
     <Scroller>
-        <TmpLoadGoogleFonts />
         <Horizontal>
             {allPresets.map((preset, i) => (
                 <SelectButton key={i} preset={preset} />
@@ -149,18 +148,6 @@ const SelectButton = ({ preset }: SelectButtonProps) => {
         </SelectButtonWrapper>
     );
 };
-
-export const TmpLoadGoogleFonts = () => (
-    <>
-        {googleFontsToLoad.map((font) => (
-            <link
-                key={font}
-                href={`https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}&display=swap`}
-                rel="stylesheet"
-            />
-        ))}
-    </>
-);
 
 const SelectButtonWrapper = styled('div')`
     display: inline-block;

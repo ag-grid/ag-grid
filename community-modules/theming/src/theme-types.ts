@@ -73,6 +73,7 @@ export type FontFamilyValue = string; // TODO add `| string[]`, will need to upd
 export const fontFamilyValueToCss = (value: FontFamilyValue): string => {
     if (Array.isArray(value)) return value.map(fontFamilyValueToCss).join(', ');
     // quote values with spaces that are not already quoted and do not include function expressions
+    value = value.replace(/^google:/i, '');
     if (/\s/.test(value) && !/[()'"]/.test(value)) return `'${value}'`;
     return value;
 };

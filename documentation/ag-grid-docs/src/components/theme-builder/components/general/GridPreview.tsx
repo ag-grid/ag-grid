@@ -19,7 +19,7 @@ import root from 'react-shadow';
 
 import { useSetPreviewGridApi, useSetPreviewGridContainer } from '../../model/rendered-theme';
 import { useGridOptions } from '../grid-config/grid-config-atom';
-import { TmpLoadGoogleFonts, allPresets } from '../presets/PresetSelector';
+import { allPresets } from '../presets/PresetSelector';
 import { useSetGridDom } from '../presets/grid-dom';
 import { withErrorBoundary } from './ErrorBoundary';
 
@@ -56,7 +56,6 @@ const GridPreview = () => {
         <Wrapper style={{ backgroundColor: background }}>
             <GridSizer>
                 <root.div style={{ height: '100%' }}>
-                    <TmpLoadGoogleFonts />
                     <div
                         ref={(el) => {
                             setContainer(el);
