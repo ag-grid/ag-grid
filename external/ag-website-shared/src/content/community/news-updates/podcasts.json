@@ -1,5 +1,15 @@
 [
-    
+    {
+        "title": "AG Grid & Figma - What's Awesome and What's Coming",
+        "website": "https://www.spreaker.com/episode/a-show-s7-e8-ag-grid-figma-what-s-awesome-what-s-coming-diarmuid-mac-cormack-stephen-cooper--59494851",
+        "link": "https://api.spreaker.com/v2/episodes/59494851/play.mp3",
+        "description": "Diarmuid and Stephen come on the show to discuss AG Grid and their use of Figma to build out design systems and integrate it into their product development process. Come learn what a design system is, how AG Grid built one and how the company thinks about where and how design systems fit into their engineering team.",
+        "host": "Brian Love",
+        "publication": "The Angular Plus Show",
+        "guests": ["Diarmuid MacCormac", "Stephen Cooper"],
+        "published": "April, 2024",
+        "publicationLogo": "angular-plus-show.webp"
+    },
     {
         "title": "AG Grid with Stephen Cooper on Web Rush #212",
         "website": "https://www.webrush.io/episodes/episode-212-ag-grid-with-stephen-cooper",
