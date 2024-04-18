@@ -127,7 +127,6 @@ const CHARTS_ICON_MAP = {
 export const ICON_MAP = {
     info: CarbonIcon.Information,
     warning: CarbonIcon.WarningAlt,
-    email: CarbonIcon.Email,
     creditCard: CarbonIcon.Purchase,
     lightBulb: CarbonIcon.Idea,
     enterprise: EnterpriseIcon,
