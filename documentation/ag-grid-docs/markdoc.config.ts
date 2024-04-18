@@ -1,7 +1,8 @@
 import { kbd } from '@ag-website-shared/markdoc/tags/kbd';
+import { tabItem, tabs } from '@ag-website-shared/markdoc/tags/tabs';
 import { Markdoc, component, defineMarkdocConfig, nodes } from '@astrojs/markdoc/config';
 
-import { DOCS_TAB_ITEM_ID_PREFIX, agGridVersion } from './src/constants';
+import { agGridVersion } from './src/constants';
 import { includeMarkdoc } from './src/utils/markdoc/tags/include-markdoc';
 import { link } from './src/utils/markdoc/tags/link';
 
@@ -49,6 +50,8 @@ export default defineMarkdocConfig({
     },
     tags: {
         kbd,
+        tabs,
+        tabItem,
         br: {
             render: 'br',
         },
@@ -233,26 +236,6 @@ export default defineMarkdocConfig({
                 mobileWrap: {
                     type: Boolean,
                 },
-            },
-        },
-        tabs: {
-            render: component('./src/components/tabs/TabsWithHtmlChildren.astro'),
-            attributes: {
-                omitFromOverview: { type: Boolean, default: false },
-                tabItemIdPrefix: {
-                    type: String,
-                    default: DOCS_TAB_ITEM_ID_PREFIX,
-                },
-                headerLinks: {
-                    type: Array,
-                },
-            },
-        },
-        tabItem: {
-            render: component('./src/components/tabs/TabHtmlContent', 'TabHtmlContent'),
-            attributes: {
-                id: { type: String, required: true },
-                label: { type: String },
             },
         },
         videoSection: {

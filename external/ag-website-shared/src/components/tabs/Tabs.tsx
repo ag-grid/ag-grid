@@ -1,9 +1,9 @@
-import styles from '@legacy-design-system/modules/Tabs.module.scss';
 import classnames from 'classnames';
 import type { FunctionComponent, ReactElement } from 'react';
 import { Children, useState } from 'react';
 
 import { TabNavItem } from './TabNavItem';
+import styles from './Tabs.module.scss';
 import { TABS_LINKS_PROP, TAB_LABEL_PROP } from './constants';
 
 interface Props {

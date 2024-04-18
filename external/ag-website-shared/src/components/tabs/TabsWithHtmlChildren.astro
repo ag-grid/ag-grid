@@ -2,7 +2,7 @@
 import { extractTabsData, getTabId } from './utils';
 import { type TabHeaderLink } from './types.d';
 import { OpenInCTA } from '@ag-website-shared/components/open-in-cta/OpenInCTA';
-import styles from '@legacy-design-system/modules/Tabs.module.scss';
+import styles from './Tabs.module.scss';
 
 interface Props {
     tabItemIdPrefix?: string;
@@ -137,3 +137,4 @@ const { tabItemIdPrefix, headerLinks } = Astro.props as Props;
 
     customElements.define('tabs-with-html-children', TabsWithHtmlChildren);
 </script>
+./types

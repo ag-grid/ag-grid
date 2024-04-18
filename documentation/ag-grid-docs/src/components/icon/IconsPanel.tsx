@@ -1,9 +1,8 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { Tabs } from '@ag-website-shared/components/tabs/Tabs';
 import styles from '@legacy-design-system/modules/IconsPanel.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
-
-import { Tabs } from '../tabs/Tabs';
 
 type Theme = 'quartz' | 'balham' | 'material' | 'alpine';
 const THEMES: Theme[] = ['quartz', 'balham', 'material', 'alpine'];
