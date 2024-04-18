@@ -27,7 +27,7 @@ const TooltipImpl = ({ title, children }: TooltipProps) => {
     const { refs, floatingStyles, context } = useFloating({
         open: isOpen,
         onOpenChange: setIsOpen,
-        placement: 'right',
+        placement: 'top',
         middleware: [
             offset(8),
             shift({ padding: 8 }),
@@ -61,7 +61,7 @@ const TooltipPopup = styled('div')`
     @keyframes scaleIn {
         from {
             opacity: 0;
-            transform: scale(0) translateY(-8px); // Merged transform
+            transform: scale(0) translateY(8px); // Merged transform
         }
         to {
             opacity: 1;
