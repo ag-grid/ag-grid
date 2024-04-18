@@ -29,7 +29,8 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     const centerTemplate = name === RowContainerName.CENTER
         || name === RowContainerName.TOP_CENTER
         || name === RowContainerName.BOTTOM_CENTER
-        || name === RowContainerName.STICKY_TOP_CENTER;
+        || name === RowContainerName.STICKY_TOP_CENTER
+        || name === RowContainerName.STICKY_BOTTOM_CENTER;
 
     const topLevelRef = centerTemplate ? eViewport : eContainer;
 

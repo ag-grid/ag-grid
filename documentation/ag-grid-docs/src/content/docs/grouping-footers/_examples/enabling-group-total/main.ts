@@ -24,8 +24,7 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     minWidth: 300,
   },
-  groupIncludeFooter: true,
-  groupIncludeTotalFooter: true,
+  groupTotalRow: 'bottom',
   rowData: getData(),
 }
 
