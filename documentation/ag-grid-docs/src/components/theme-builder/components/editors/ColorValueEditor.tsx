@@ -141,7 +141,7 @@ const ColorSwatchColor = styled('div')`
 
 const DropdownArea = styled(Card)`
     .colorPickerWrapper {
-        @keyframes scaleIn {
+        @keyframes scaleInUp {
             from {
                 opacity: 0;
                 transform: scale(0);
@@ -155,7 +155,7 @@ const DropdownArea = styled(Card)`
         }
 
         animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-        animation: scaleIn 0.1s;
+        animation: scaleInUp 0.1s;
     }
 
     z-index: 1000;
