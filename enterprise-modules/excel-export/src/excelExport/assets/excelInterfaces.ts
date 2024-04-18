@@ -63,7 +63,13 @@ export interface Fill {
     bgRgb?: string;
 }
 
-export type ExcelHeaderFooterPosition = 'LH' | 'CH' | 'RH' | 'LF' | 'CF' | 'RF';
+type ExcelHeaderFooterSide = 'L' | 'C' | 'R'
+type ExcelHeaderPosition = 'H';
+type ExcelFooterPosition = 'F';
+type ExcelHeaderFooterFirst = 'FIRST';
+type ExcelHeaderFooterEven = 'EVEN';
+
+export type ExcelHeaderFooterPosition = `${ExcelHeaderFooterSide}${ExcelHeaderPosition | ExcelFooterPosition}${ExcelHeaderFooterFirst | ExcelHeaderFooterEven | ''}`;
 
 export interface ExcelHeaderFooterImage extends ExcelImage {
     headerFooterPosition: ExcelHeaderFooterPosition;

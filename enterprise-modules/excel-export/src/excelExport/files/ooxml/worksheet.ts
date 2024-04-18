@@ -237,7 +237,7 @@ const applyHeaderFontStyle = (headerString: string, font?: ExcelFont): string =>
     return headerString;
 };
 
-const processHeaderFooterContent = (content: ExcelHeaderFooterContent[], location: 'H' | 'F'): string =>
+const processHeaderFooterContent = (content: ExcelHeaderFooterContent[], location: 'H' | 'F', rule: 'EVEN' | 'FIRST' | ''): string =>
     content.reduce((prev, curr, idx) => {
         const pos = getHeaderPosition(curr.position);
         const output = applyHeaderFontStyle(`${prev}&amp;${pos}`, curr.font);
@@ -249,7 +249,7 @@ const processHeaderFooterContent = (content: ExcelHeaderFooterContent[], locatio
 
         const { image } = curr;
         if (curr.value === '&[Picture]' && image) {
-            const imagePosition: ExcelHeaderFooterPosition = `${pos}${location}`;
+            const imagePosition: ExcelHeaderFooterPosition = `${pos}${location}${rule}`;
             ExcelXlsxFactory.addHeaderFooterImageToMap(image, imagePosition);
         }
 
@@ -271,12 +271,13 @@ const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElem
             const location: 'H' | 'F' = key[0].toUpperCase() as 'H' | 'F';
 
             if (value) {
+                const normalizedRule: 'FIRST' | 'EVEN' | '' = rule === 'all' ? '' : (rule.toUpperCase() as 'FIRST' | 'EVEN');
                 headersAndFooters.push({
                     name: `${namePrefix}${nameSuffix}`,
                     properties: {
                         rawMap: { 'xml:space': 'preserve' }
                     },
-                    textNode: processHeaderFooterContent(value, location)
+                    textNode: processHeaderFooterContent(value, location, normalizedRule)
                 });
             }
         }

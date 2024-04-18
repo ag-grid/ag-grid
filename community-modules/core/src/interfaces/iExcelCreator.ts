@@ -484,8 +484,6 @@ type ExcelFooter = {
     footer: ExcelHeaderFooterContent[]
 }
 
-type ExcelHeaderFooterPosition = 'Left' | 'Center' | 'Right'
-
 export type ExcelHeaderFooter = ExcelFooter | ExcelHeader | (ExcelFooter & ExcelHeader);
 
 export interface ExcelHeaderFooterContent {
@@ -499,7 +497,7 @@ export interface ExcelHeaderFooterContent {
      * Configures where the text should be added: `Left`, `Center` or `Right`.
      * @default 'Left'
      */
-    position?: ExcelHeaderFooterPosition;
+    position?: 'Left' | 'Center' | 'Right';
     /** The font style of the header/footer value. */
     font?: ExcelFont;
 }
