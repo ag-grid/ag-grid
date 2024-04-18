@@ -115,6 +115,7 @@ export class RowRenderer extends BeanStub {
     private pinningRight: boolean;
 
     private firstVisibleVPixel: number;
+    private lastVisibleVPixel: number;
 
     // we only allow one refresh at a time, otherwise the internal memory structure here
     // will get messed up. this can happen if the user has a cellRenderer, and inside the
@@ -130,8 +131,8 @@ export class RowRenderer extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.ctrlsService.whenReady(() => {
-            this.gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        this.ctrlsService.whenReady((p) => {
+            this.gridBodyCtrl = p.gridBodyCtrl;
             this.initialise();
         });
     }
@@ -191,8 +192,15 @@ export class RowRenderer extends BeanStub {
     public getStickyTopRowCtrls(): RowCtrl[] {
         if (!this.stickyRowFeature) { return []; }
 
-        return this.stickyRowFeature.getStickyRowCtrls();
+        return this.stickyRowFeature.getStickyTopRowCtrls();
     }
+
+    public getStickyBottomRowCtrls(): RowCtrl[] {
+        if (!this.stickyRowFeature) { return []; }
+
+        return this.stickyRowFeature.getStickyBottomRowCtrls();
+    }
+
     private updateAllRowCtrls(): void {
         const liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
         const zombieList = getAllValuesInObject(this.zombieRowCtrls);
@@ -678,8 +686,9 @@ export class RowRenderer extends BeanStub {
     }
 
     private getAllRowCtrls(): RowCtrl[] {
-        const stickyRowCtrls = (this.stickyRowFeature && this.stickyRowFeature.getStickyRowCtrls()) || [];
-        const res = [...this.topRowCtrls, ...this.bottomRowCtrls, ...stickyRowCtrls];
+        const stickyTopRowCtrls = (this.stickyRowFeature && this.stickyRowFeature.getStickyTopRowCtrls()) || [];
+        const stickyBottomRowCtrls = (this.stickyRowFeature && this.stickyRowFeature.getStickyBottomRowCtrls()) || [];
+        const res = [...this.topRowCtrls, ...this.bottomRowCtrls, ...stickyTopRowCtrls, ...stickyBottomRowCtrls];
 
         for (const key in this.rowCtrlsByRowIndex) {
             res.push(this.rowCtrlsByRowIndex[key]);
@@ -794,12 +803,10 @@ export class RowRenderer extends BeanStub {
 
         rowNodes.forEach(rowNode => {
             const id = rowNode.id!;
-            if (rowNode.rowPinned === 'top') {
-                res.top[id] = rowNode;
-            } else if (rowNode.rowPinned === 'bottom') {
-                res.bottom[id] = rowNode;
-            } else {
-                res.normal[id] = rowNode;
+            switch (rowNode.rowPinned) {
+                case 'top': res.top[id] = rowNode; break;
+                case 'bottom': res.bottom[id] = rowNode; break;
+                default: res.normal[id] = rowNode; break;
             }
         });
 
@@ -811,15 +818,11 @@ export class RowRenderer extends BeanStub {
         const id = rowNode.id!;
         const floating = rowNode.rowPinned;
 
-        if (floating === 'bottom') {
-            return rowIdsMap.bottom[id] != null;
+        switch (floating) {
+            case 'top': return rowIdsMap.top[id] != null;
+            case 'bottom': return rowIdsMap.bottom[id] != null;
+            default: return rowIdsMap.normal[id] != null;
         }
-
-        if (floating === 'top') {
-            return rowIdsMap.top[id] != null;
-        }
-
-        return rowIdsMap.normal[id] != null;
     }
 
     /**
@@ -1233,6 +1236,7 @@ export class RowRenderer extends BeanStub {
                 }
 
                 this.firstVisibleVPixel = Math.max(bodyTopPixel + paginationOffset, pageFirstPixel) + divStretchOffset;
+                this.lastVisibleVPixel = Math.min(bodyBottomPixel + paginationOffset, pageLastPixel) + divStretchOffset;
 
                 // if the rows we are about to display get their heights changed, then that upsets the calcs from above.
                 rowHeightsChanged = this.ensureAllRowsInRangeHaveHeightsCalculated(firstPixel, lastPixel);
@@ -1326,6 +1330,10 @@ export class RowRenderer extends BeanStub {
         return this.firstVisibleVPixel;
     }
 
+    public getLastVisibleVerticalPixel(): number {
+        return this.lastVisibleVPixel;
+    }
+
     public getFirstVirtualRenderedRow() {
         return this.firstRenderedRow;
     }
@@ -1413,6 +1421,10 @@ export class RowRenderer extends BeanStub {
                 rowCtrl = this.rowCtrlsByRowIndex[rowIndex];
                 if (!rowCtrl) {
                     rowCtrl = this.getStickyTopRowCtrls().find(ctrl => ctrl.getRowNode().rowIndex === rowIndex) || null;
+
+                    if (!rowCtrl) {
+                        rowCtrl = this.getStickyBottomRowCtrls().find(ctrl => ctrl.getRowNode().rowIndex === rowIndex) || null;
+                    }
                 }
                 break;
         }

@@ -300,12 +300,12 @@ export class NavigationService extends BeanStub {
     }
 
     private getViewportHeight(): number {
-        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
-        const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
+        const {gridBodyCtrl, center } = this.ctrlsService.getParams();
+        const scrollPosition = gridBodyCtrl.getScrollFeature().getVScrollPosition();
         const scrollbarWidth = this.gos.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
-        if (this.ctrlsService.getCenterRowContainerCtrl().isHorizontalScrollShowing()) {
+        if (center.isHorizontalScrollShowing()) {
             pixelsInOnePage -= scrollbarWidth;
         }
 
@@ -384,10 +384,9 @@ export class NavigationService extends BeanStub {
             // in order for the tab navigation to work, we need to focus the browser back onto the
             // previous cell.
             if (previous instanceof CellCtrl) {
+                keyboardEvent.preventDefault();
                 previous.focusCell(true);
-            }
-
-            if (this.focusService.focusNextGridCoreContainer(backwards)) {
+            } else if (this.focusService.focusNextGridCoreContainer(backwards)) {
                 keyboardEvent.preventDefault();
             }
         }

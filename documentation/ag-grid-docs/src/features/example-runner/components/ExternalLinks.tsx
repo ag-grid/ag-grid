@@ -1,7 +1,7 @@
 import type { InternalFramework } from '@ag-grid-types';
-import { OpenInCodeSandbox } from '@features/codeSandbox/components/OpenInCodeSandbox';
+import { OpenInCodeSandbox } from '@ag-website-shared/components/codeSandbox/components/OpenInCodeSandbox';
+import { OpenInPlunkr } from '@ag-website-shared/components/plunkr/components/OpenInPlunkr';
 import type { FileContents } from '@features/example-generator/types';
-import { OpenInPlunkr } from '@features/plunkr/components/OpenInPlunkr';
 
 export function ExternalLinks({
     title,

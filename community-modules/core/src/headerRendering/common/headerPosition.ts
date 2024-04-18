@@ -26,12 +26,10 @@ export class HeaderPositionUtils extends BeanStub {
 
     public findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition | undefined {
         let nextColumn: Column | ColumnGroup;
-        let getGroupMethod: 'getDisplayedGroupBefore' | 'getDisplayedGroupAfter';
         let getColMethod: 'getDisplayedColBefore' | 'getDisplayedColAfter';
 
         if (focusedHeader.column instanceof ColumnGroup) {
-            getGroupMethod = `getDisplayedGroup${direction}` as any;
-            nextColumn = this.columnModel[getGroupMethod](focusedHeader.column)!;
+            nextColumn = this.columnModel.getDisplayedGroupAtDirection(focusedHeader.column, direction)!
         } else {
             getColMethod = `getDisplayedCol${direction}` as any;
             nextColumn = this.columnModel[getColMethod](focusedHeader.column)!;

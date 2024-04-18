@@ -1,11 +1,14 @@
 import {
     AgCheckbox,
     AgGroupComponent,
+    AgSelect,
     AgToggleButton,
     AutoScrollService,
     Autowired,
+    ChartMappings,
     DragAndDropService,
     DropTarget,
+    ListOption,
     PostConstruct,
     _
 } from "@ag-grid-community/core";
@@ -14,11 +17,14 @@ import { ColState } from "../../model/chartDataModel";
 import { ChartOptionsService } from "../../services/chartOptionsService";
 import { DragDataPanel } from "./dragDataPanel";
 import { ChartMenuService } from "../../services/chartMenuService";
+import { getSeriesType } from "../../utils/seriesTypeMapper";
 
 export class SeriesDataPanel extends DragDataPanel {
     private static TEMPLATE = /* html */`<div id="seriesGroup"></div>`;
 
     @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
+
+    private groupTypeSelect: AgSelect;
 
     constructor(
         chartController: ChartController,
@@ -76,6 +82,7 @@ export class SeriesDataPanel extends DragDataPanel {
                         this.columnComps.get(col.colId)!.setLabel(getSeriesLabel(col));
                     });
                 }
+                this.refreshGroupTypeSelect();
             } else {
                 this.recreate(valueCols);
             }
@@ -96,6 +103,30 @@ export class SeriesDataPanel extends DragDataPanel {
 
     private createSeriesGroup(columns: ColState[]): void {
         this.createGroup(columns, this.generateGetSeriesLabel(columns), 'seriesAdd', 'seriesSelect');
+        this.groupTypeSelect = this.groupComp.createManagedBean(new AgSelect({
+            label: this.chartTranslationService.translate('seriesGroupType'),
+            onValueChange: value => this.chartController.setSeriesGroupType(value)
+        }));
+        this.refreshGroupTypeSelect();
+        this.groupComp.addItem(this.groupTypeSelect);
+    }
+
+    private refreshGroupTypeSelect(): void {
+        this.groupTypeSelect.clearOptions();
+        const seriesType = getSeriesType(this.chartController.getChartType());
+        const groupTypeEnabled = [
+            'nightingale', 'radial-bar', 'radial-column'
+        ].includes(seriesType);
+
+        _.setDisplayed(this.groupTypeSelect.getGui(), groupTypeEnabled);
+        if (!groupTypeEnabled) { return; }
+
+        const options: ListOption[] = ChartMappings.SERIES_GROUP_TYPES.map(value => ({
+            value,
+            text: this.chartTranslationService.translate(`${value}SeriesGroupType`)
+        }));
+        const value = this.chartController.getSeriesGroupType();
+        this.groupTypeSelect.addOptions(options).setValue(value);
     }
 
     private createLegacySeriesGroup(columns: ColState[]): void {

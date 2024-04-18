@@ -1,11 +1,11 @@
 import { type Framework } from '@ag-grid-types';
 import { EnterpriseIcon } from '@ag-website-shared/components/icon/EnterpriseIcon';
-import styles from '@legacy-design-system/modules/MatrixTable.module.scss';
 import { transformMarkdoc } from '@utils/markdoc/transformMarkdoc';
 import classnames from 'classnames';
 import { useMemo } from 'react';
 
 import { createRowDataFilter } from '../utils/createRowDataFilter';
+import styles from './MatrixTable.module.scss';
 import { FeaturesTickCross, TickCross } from './renderers/TickCross';
 
 type Columns = Record<string, string>;

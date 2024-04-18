@@ -100,28 +100,4 @@ export class RowPositionUtils extends BeanStub {
         }
         return rowA.rowIndex < rowB.rowIndex;
     }
-
-    public rowMax(rows: RowPosition[]): RowPosition | undefined {
-        let max: RowPosition | undefined;
-
-        rows.forEach((row) => {
-            if (max === undefined || this.before(max, row)) {
-                max = row;
-            }
-        });
-
-        return max;
-    }
-
-    public rowMin(rows: RowPosition[]): RowPosition | undefined {
-        let min: RowPosition | undefined;
-
-        rows.forEach((row) => {
-            if (min === undefined || this.before(row, min)) {
-                min = row;
-            }
-        });
-
-        return min;
-    }
 }

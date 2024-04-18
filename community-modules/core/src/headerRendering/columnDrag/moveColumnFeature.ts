@@ -26,7 +26,7 @@ export class MoveColumnFeature implements DropListener {
     private intervalCount: number;
 
     private pinned: ColumnPinnedType;
-    private centerContainer: boolean;
+    private isCenterContainer: boolean;
 
     private lastDraggingEvent: DraggingEvent;
     private lastMovedInfo: { columns: Column[]; toIndex: number; } | null = null;
@@ -36,18 +36,15 @@ export class MoveColumnFeature implements DropListener {
     // the 'hold and pin' functionality
     private failedMoveAttempts: number;
 
-    private eContainer: HTMLElement;
-
-    constructor(pinned: ColumnPinnedType, eContainer: HTMLElement) {
+    constructor(pinned: ColumnPinnedType) {
         this.pinned = pinned;
-        this.eContainer = eContainer;
-        this.centerContainer = !exists(pinned);
+        this.isCenterContainer = !exists(pinned);
     }
 
     @PostConstruct
     public init(): void {
-        this.ctrlsService.whenReady(() => {
-            this.gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        this.ctrlsService.whenReady((p) => {
+            this.gridBodyCon = p.gridBodyCtrl;
         });
     }
 
@@ -104,11 +101,12 @@ export class MoveColumnFeature implements DropListener {
     }
 
     private checkCenterForScrolling(xAdjustedForScroll: number): void {
-        if (this.centerContainer) {
+        if (this.isCenterContainer) {
             // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
             // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
-            const firstVisiblePixel = this.ctrlsService.getCenterRowContainerCtrl().getCenterViewportScrollLeft();
-            const lastVisiblePixel = firstVisiblePixel + this.ctrlsService.getCenterRowContainerCtrl().getCenterWidth();
+            const centerCtrl = this.ctrlsService.get('center');
+            const firstVisiblePixel = centerCtrl.getCenterViewportScrollLeft();
+            const lastVisiblePixel = firstVisiblePixel + centerCtrl.getCenterWidth();
 
             if (this.gos.get('enableRtl')) {
                 this.needToMoveRight = xAdjustedForScroll < (firstVisiblePixel + 50);

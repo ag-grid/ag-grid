@@ -49,8 +49,7 @@ const TooltipImpl = ({ title, children }: TooltipProps) => {
             {isOpen && (
                 <FloatingPortal>
                     <TooltipPopup ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
-                        <FloatingArrow ref={arrowRef} context={context} fill="var(--color-gray-500)" />
-                        {title}
+                        <div className="tooltipChild">{title}</div>
                     </TooltipPopup>
                 </FloatingPortal>
             )}
@@ -59,11 +58,29 @@ const TooltipImpl = ({ title, children }: TooltipProps) => {
 };
 
 const TooltipPopup = styled('div')`
-    z-index: 10000;
-    max-width: 400px;
-    background: var(--color-bg-primary);
-    padding: 8px;
-    border-radius: 6px;
-    border: solid 1px var(--color-gray-500);
-    box-shadow: var(--shadow-md);
+    @keyframes scaleIn {
+        from {
+            opacity: 0;
+            transform: scale(0) translateY(8px); // Merged transform
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0px); // Merged transform
+        }
+    }
+
+    .tooltipChild {
+        z-index: 10000;
+        max-width: 400px;
+        background: var(--color-bg-primary);
+        padding: 8px;
+        border-radius: 6px;
+        border: solid 1px var(--color-border-primary);
+        box-shadow: var(--shadow-md);
+        font-size: 14px;
+        color: var(--color-text-primary);
+        animation-name: scaleIn;
+        animation-duration: 0.3s;
+        animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    }
 `;

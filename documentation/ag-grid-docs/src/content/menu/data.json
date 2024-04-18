@@ -526,6 +526,10 @@
                                 "path": "row-pagination"
                             },
                             {
+                                "title": "Accessing Rows",
+                                "path": "accessing-data"
+                            },
+                            {
                                 "title": "Advanced",
                                 "items": [
                                     {
@@ -811,41 +815,24 @@
                         ]
                     },
                     {
-                        "title": "Client-Side Data",
+                        "title": "Updating Data",
+                        "path": "data-update",
                         "items": [
                             {
-                                "title": "Overview",
-                                "path": "client-side-model"
+                                "title": "Row Data",
+                                "path": "data-update-row-data"
                             },
                             {
-                                "title": "Accessing Data",
-                                "path": "accessing-data"
+                                "title": "Single Row / Cell",
+                                "path": "data-update-single-row-cell"
                             },
                             {
-                                "title": "Updating Data",
-                                "path": "data-update",
-                                "items": [
-                                    {
-                                        "title": "Row Data",
-                                        "path": "data-update-row-data"
-                                    },
-                                    {
-                                        "title": "Single Row / Cell",
-                                        "path": "data-update-single-row-cell"
-                                    },
-                                    {
-                                        "title": "Transactions",
-                                        "path": "data-update-transactions"
-                                    },
-                                    {
-                                        "title": "High Frequency",
-                                        "path": "data-update-high-frequency"
-                                    }
-                                ]
+                                "title": "Transactions",
+                                "path": "data-update-transactions"
                             },
                             {
-                                "title": "Data Stages",
-                                "path": "client-side-row-stages"
+                                "title": "High Frequency",
+                                "path": "data-update-high-frequency"
                             }
                         ]
                     },
@@ -970,11 +957,6 @@
                                         ]
                                     },
                                     {
-                                        "title": "Group Footers",
-                                        "path": "grouping-footers",
-                                        "isEnterprise": true
-                                    },
-                                    {
                                         "title": "Opening Groups",
                                         "path": "grouping-opening-groups",
                                         "isEnterprise": true
@@ -1009,6 +991,11 @@
                                     {
                                         "title": "Other",
                                         "path": "aggregation-other",
+                                        "isEnterprise": true
+                                    },
+                                    {
+                                        "title": "Total Rows",
+                                        "path": "grouping-footers",
                                         "isEnterprise": true
                                     }
                                 ]
@@ -1185,7 +1172,8 @@
                                     },
                                     {
                                         "title": "Loading Cell Renderer",
-                                        "path": "component-loading-cell-renderer"
+                                        "path": "component-loading-cell-renderer",
+                                        "isEnterprise": true
                                     },
                                     {
                                         "title": "Changing Columns",

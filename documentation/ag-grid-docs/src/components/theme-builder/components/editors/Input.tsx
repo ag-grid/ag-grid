@@ -11,6 +11,7 @@ export type InputProps = {
     onFocus?: () => void;
     onBlur?: () => void;
     onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
+    onKeyPress?: KeyboardEventHandler<HTMLInputElement>;
     isError?: boolean;
     className?: string;
 };
@@ -31,6 +32,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => (
 
 export const StyledInput = styled('input')`
     width: 100%;
+    font-size: 14px;
     &.is-error {
         border-color: var(--color-input-error) !important;
 

@@ -6,7 +6,9 @@ import { useRenderedTheme } from '../../model/rendered-theme';
 import { withErrorBoundary } from '../general/ErrorBoundary';
 import { ColorValueEditor } from './ColorValueEditor';
 import { CssValueEditor } from './CssValueEditor';
+import { FontFamilyValueEditor } from './FontFamilyValueEditor';
 import { FormField } from './FormField';
+import { LengthValueEditor } from './LengthValueEditor';
 import type { ValueEditorProps } from './ValueEditorProps';
 
 export type ParamEditorProps = {
@@ -40,15 +42,14 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
 
 const valueEditors: Record<ParamType, FC<ValueEditorProps>> = {
     color: ColorValueEditor,
-    // length: LengthValueEditor,
-    length: CssValueEditor,
+    length: LengthValueEditor,
     // border: BorderValueEditor,
     border: CssValueEditor,
     // borderStyle: BorderStyleValueEditor,
     borderStyle: CssValueEditor,
     shadow: CssValueEditor,
     image: CssValueEditor,
-    fontFamily: CssValueEditor,
+    fontFamily: FontFamilyValueEditor,
     fontWeight: CssValueEditor,
     display: CssValueEditor,
     duration: CssValueEditor,

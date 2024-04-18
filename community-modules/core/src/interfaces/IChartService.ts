@@ -1,4 +1,4 @@
-import { ChartToolPanelName, ChartType, CrossFilterChartType, SeriesChartType } from "./iChartOptions";
+import { ChartToolPanelName, ChartType, CrossFilterChartType, SeriesChartType, SeriesGroupType } from "./iChartOptions";
 import { ChartRef } from "../entities/gridOptions";
 import { CellRangeParams } from "./IRangeService";
 import { IAggFunc } from "../entities/colDef";
@@ -67,6 +67,7 @@ export interface ChartModel {
     aggFunc?: string | IAggFunc;
     unlinkChart?: boolean;
     seriesChartTypes?: SeriesChartType[];
+    seriesGroupType?: SeriesGroupType;
 }
 
 export interface IChartService {
@@ -110,6 +111,8 @@ export interface CreateRangeChartParams extends BaseCreateChartParams {
     aggFunc?: string | IAggFunc;
     /** The series chart type configurations used in combination charts. */
     seriesChartTypes?: SeriesChartType[];
+    /** Group type for chart types that support grouped series. */
+    seriesGroupType?: SeriesGroupType;
 }
 export interface CreateCrossFilterChartParams extends BaseCreateChartParams {
     /** The type of cross-filter chart to create. */
@@ -153,6 +156,8 @@ export interface UpdateRangeChartParams extends BaseUpdateChartParams {
     aggFunc?: string | IAggFunc;
     /** The series chart type configurations used in combination charts. */
     seriesChartTypes?: SeriesChartType[];
+    /** Group type for chart types that support grouped series. */
+    seriesGroupType?: SeriesGroupType;
 }
 
 // When updating, also update `ChartParamsValidator`

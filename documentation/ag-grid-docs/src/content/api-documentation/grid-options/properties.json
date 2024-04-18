@@ -1231,18 +1231,19 @@
                 "url": "./grouping-locking-group-columns"
             }
         },
-        "groupIncludeFooter": {
+        "groupTotalRow": {
             "more": {
-                "name": "Enabling Group Footers",
-                "url": "./grouping-footers/#enabling-group-footers"
+                "name": "Group Total Rows",
+                "url": "./grouping-footers/#group-total-rows"
             }
         },
-        "groupIncludeTotalFooter": {
+        "grandTotalRow": {
             "more": {
-                "name": "Enabling Group Footers",
-                "url": "./grouping-footers/#enabling-group-footers"
+                "name": "Grand Total Row",
+                "url": "./grouping-footers/#grand-total-row"
             }
         },
+        "suppressStickyTotalRow": {},
         "groupSuppressBlankHeader": {},
         "groupSelectsFiltered": {
             "more": {
@@ -1402,10 +1403,6 @@
     "clientRowModel": {
         "meta": {
             "displayName": "RowModel: Client-Side",
-            "page": {
-                "name": "Client-Side Row Model",
-                "url": "./client-side-model/"
-            },
             "description": "Row data uses the [generic type](./typescript-generics) `TData` if provided via `GridOptions&lt;TData&gt;`. Otherwise `TData` will default to `any`."
         },
         "rowData": {

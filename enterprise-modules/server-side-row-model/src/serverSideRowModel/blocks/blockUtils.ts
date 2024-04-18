@@ -109,7 +109,7 @@ export class BlockUtils extends BeanStub {
             }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
         }
 
-        const getGroupIncludeFooter = this.beans.gos.getGroupIncludeFooter();
+        const getGroupIncludeFooter = this.beans.gos.getGroupTotalRowCallback();
         const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
         if (doesRowShowFooter) {
             rowNode.createFooter();
@@ -138,7 +138,7 @@ export class BlockUtils extends BeanStub {
             this.setChildCountIntoRowNode(rowNode);
 
             if (!rowNode.footer) {
-                const getGroupIncludeFooter = this.beans.gos.getGroupIncludeFooter();
+                const getGroupIncludeFooter = this.beans.gos.getGroupTotalRowCallback();
                 const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
                 if (doesRowShowFooter) {
                     if (rowNode.sibling) {

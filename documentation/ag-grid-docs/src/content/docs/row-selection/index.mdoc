@@ -15,7 +15,7 @@ Configure row selection with the following properties:
 
 * `suppressRowClickSelection`: If `true`, rows won't be selected when clicked. Use, for example, when you want checkbox selection or your managing selection from a custom component and don't want to select the row when the row is clicked.
 
-When you pass data to the grid, it wraps each data item in a node object. This is explained in the section [Client-Side Row Model](./client-side-model/). When you query for the selected rows, there are two method types: ones that return nodes, and ones that return data items. To get the selected nodes / rows from the grid, use the following API methods:
+When you pass data to the grid, it wraps each data item in a node object. When you query for the selected rows, there are two method types: ones that return nodes, and ones that return data items. To get the selected nodes / rows from the grid, use the following API methods:
 
 {% apiDocumentation source="grid-api/api.json" section="selection" names=["getSelectedNodes", "getSelectedRows"] /%}
 

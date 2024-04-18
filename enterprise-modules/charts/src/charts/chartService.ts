@@ -22,6 +22,7 @@ import {
     PartialCellRange,
     PreDestroy,
     SeriesChartType,
+    SeriesGroupType,
     UpdateChartParams,
     _
 } from "@ag-grid-community/core";
@@ -46,6 +47,7 @@ export interface CommonCreateChartParams extends BaseCreateChartParams {
     chartOptionsToRestore?: AgChartThemeOverrides,
     chartPaletteToRestore?: AgChartThemePalette,
     seriesChartTypes?: SeriesChartType[],
+    seriesGroupType?: SeriesGroupType
 }
 
 @Bean('chartService')

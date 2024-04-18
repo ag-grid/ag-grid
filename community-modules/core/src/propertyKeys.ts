@@ -139,7 +139,8 @@ export class PropertyKeys {
     public static STRING_PROPERTIES: KeysOfType<string>[] = [
         'rowSelection', 'overlayLoadingTemplate', 'overlayNoRowsTemplate', 'gridId', 'quickFilterText', 'rowModelType', 'editType', 'domLayout', 
         'clipboardDelimiter', 'rowGroupPanelShow', 'multiSortKey', 'pivotColumnGroupTotals', 'pivotRowTotals', 'pivotPanelShow', 'fillHandleDirection',
-        'groupDisplayType', 'treeDataDisplayType', 'colResizeDefault', 'tooltipTrigger', 'serverSidePivotResultFieldSeparator', 'columnMenu', 'tooltipShowMode'
+        'groupDisplayType', 'treeDataDisplayType', 'colResizeDefault', 'tooltipTrigger', 'serverSidePivotResultFieldSeparator', 'columnMenu', 'tooltipShowMode',
+        'grandTotalRow',
     ];
 
     public static OBJECT_PROPERTIES: KeysLike<object | HTMLElement>[] = [
@@ -155,6 +156,7 @@ export class PropertyKeys {
         'rowClass', 'paginationPageSizeSelector',
     ];
 
+    // These properties are coerced at runtime, do not do union types
     public static NUMBER_PROPERTIES: KeysOfType<number>[] = [
         'rowHeight', 'detailRowHeight', 'rowBuffer', 'headerHeight', 'groupHeaderHeight', 'groupLockGroupColumns', 'floatingFiltersHeight',
         'pivotHeaderHeight', 'pivotGroupHeaderHeight', 'groupDefaultExpanded', 'pivotDefaultExpanded', 'viewportRowModelPageSize',
@@ -164,6 +166,7 @@ export class PropertyKeys {
         'cellFlashDelay', 'cellFadeDelay', 'cellFlashDuration', 'cellFadeDuration', 'tabIndex', 'pivotMaxGeneratedColumns',
     ];
 
+    // These properties are coerced at runtime, do not do union types
     public static BOOLEAN_PROPERTIES: KeysOfType<boolean>[] = [
         'suppressMakeColumnVisibleAfterUnGroup', 'suppressRowClickSelection', 'suppressCellFocus', 'suppressHeaderFocus', 'suppressHorizontalScroll', 'groupSelectsChildren',
         'alwaysShowHorizontalScroll', 'alwaysShowVerticalScroll', 'debug', 'enableBrowserTooltips', 'enableCellExpressions', 'groupIncludeTotalFooter',
@@ -194,6 +197,11 @@ export class PropertyKeys {
         'suppressGroupMaintainValueType', 'reactiveCustomComponents', 'applyQuickFilterBeforePivotOrAgg', 'suppressServerSideFullWidthLoadingRow',
     ];
 
+    // If property does not fit above, i.e union that should not be coerced.
+    public static OTHER_PROPERTIES: GridOptionKey[] = [
+        'suppressStickyTotalRow',
+    ];
+
     /** You do not need to include event callbacks in this list, as they are generated automatically. */
     public static FUNCTIONAL_PROPERTIES: FunctionKeys[] = [
         'doesExternalFilterPass', 'processPivotResultColDef', 'processPivotResultColGroupDef', 'getBusinessKeyForNode',  'isRowSelectable', 'rowDragText',
@@ -210,7 +218,7 @@ export class PropertyKeys {
         'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup', 'createChartContainer',
         'getChartToolbarItems', 'fillOperation', 'isApplyServerSideTransaction','getServerSideGroupLevelParams', 'isServerSideGroupOpenByDefault',
         'isGroupOpenByDefault', 'initialGroupOrderComparator', 'groupIncludeFooter', 'loadingCellRendererSelector', 'getRowId', 'groupAggFiltering',
-        'chartMenuItems'
+        'chartMenuItems', 'groupTotalRow',
     ];
 
     public static FUNCTION_PROPERTIES: GridOptionKey[] = [
@@ -224,6 +232,7 @@ export class PropertyKeys {
         ...PropertyKeys.STRING_PROPERTIES,
         ...PropertyKeys.NUMBER_PROPERTIES,
         ...PropertyKeys.FUNCTION_PROPERTIES,
-        ...PropertyKeys.BOOLEAN_PROPERTIES
+        ...PropertyKeys.BOOLEAN_PROPERTIES,
+        ...PropertyKeys.OTHER_PROPERTIES,
     ];
 }

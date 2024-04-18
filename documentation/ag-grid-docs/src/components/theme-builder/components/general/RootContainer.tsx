@@ -36,10 +36,14 @@ const Container = styled('div')`
     margin-top: 16px;
     display: flex;
 
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'IBM Plex Sans', sans-serif;
 
     .tooltip {
         max-width: 400px;
+    }
+
+    @media screen and (max-width: 800px) {
+        display: none;
     }
 `;
 

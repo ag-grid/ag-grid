@@ -1,15 +1,5 @@
 ---
-import CommunityLayout from '@layouts/CommunityLayout.astro';
-import ToolsExtensions from '@components/community-section/ToolsExtensions';
+import ToolsExtensions from '@ag-website-shared/components/community/pages/tools-extensions.astro';
 ---
 
-<CommunityLayout
-    title="AG Grid: Tools & Extensions"
-    description="AG Grid has an entire ecosystem of community-built tools, extensions and utilities to help you create your next project, no matter which language or framework you're using."
-    pageTitle="Tools & Extensions"
-    pageDescription="AG Grid has an entire ecosystem of community-built tools, extensions and utilities to help you create your next project, no matter which language or framework you're using."
->
-    <section>
-        <ToolsExtensions client:load />
-    </section>
-</CommunityLayout>
+<ToolsExtensions />

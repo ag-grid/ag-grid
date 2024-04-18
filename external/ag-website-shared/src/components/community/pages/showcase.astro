@@ -1,0 +1,22 @@
+---
+import CommunityLayout from '@ag-website-shared/components/community/layout/CommunityLayout.astro';
+import Showcase from '@ag-website-shared/components/community/components/Showcase';
+
+import showcase from '@ag-website-shared/content/community/showcase.json';
+---
+
+<CommunityLayout
+    title="AG Grid: Showcase"
+    description="AG Grid's products are downloaded millions of times per week. Most projects are internal and closed source, but we've hand-picked 200+ open-source examples to help inspire your next project."
+    pageTitle="Showcase"
+    pageDescription="AG Grid's products are downloaded millions of times per week. Most projects are internal and closed source, but we've hand-picked 200+ open-source examples to help inspire your next project."
+>
+    <section>
+        <h2>Our Favourites</h2>
+        <Showcase client:load showcase={showcase} favouritesOnly={true} />
+    </section>
+    <section>
+        <h2>Full Showcase</h2>
+        <Showcase client:visible showcase={showcase} />
+    </section>
+</CommunityLayout>

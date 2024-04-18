@@ -24,7 +24,7 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     minWidth: 300,
     cellRendererParams: {
-      footerValueGetter: (params: any) => {
+      totalValueGetter: (params: any) => {
         const isRootLevel = params.node.level === -1
         if (isRootLevel) {
           return 'Grand Total'

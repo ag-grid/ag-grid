@@ -113,7 +113,7 @@ export interface IColumnLimit {
     maxWidth?: number;
 }
 
-export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
+type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
 export type Maybe<T> = T | null | undefined;
 
 @Bean('columnModel')
@@ -458,19 +458,6 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    // used by clipboard service, to know what columns to paste into
-    public getDisplayedColumnsStartingAt(column: Column): Column[] {
-        let currentColumn: Column | null = column;
-        const columns: Column[] = [];
-
-        while (currentColumn != null) {
-            columns.push(currentColumn);
-            currentColumn = this.getDisplayedColAfter(currentColumn);
-        }
-
-        return columns;
-    }
-
     // checks what columns are currently displayed due to column virtualisation. dispatches an event
     // if the list of columns has changed.
     // + setColumnWidth(), setViewportPosition(), setColumnDefs(), sizeColumnsToFit()
@@ -512,7 +499,7 @@ export class ColumnModel extends BeanStub {
 
     private isPivotSettingAllowed(pivot: boolean): boolean {
         if (pivot && this.gos.get('treeData')) {
-            console.warn("AG Grid: Pivot mode not available in conjunction Tree Data i.e. 'gridOptions.treeData: true'");
+            warnOnce("Pivot mode not available with treeData.");
             return false;
         }
 
@@ -1524,7 +1511,7 @@ export class ColumnModel extends BeanStub {
         this.columnAnimationService.finish();
     }
 
-    public doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean {
+    private doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean {
         // make a copy of what the grid columns would look like after the move
         const proposedColumnOrder = this.getProposedColumnOrder(columnsToMove, toIndex);
         return this.doesOrderPassRules(proposedColumnOrder);
@@ -1586,7 +1573,7 @@ export class ColumnModel extends BeanStub {
         return rulePassed;
     }
 
-    public doesMovePassMarryChildren(allColumnsCopy: Column[]): boolean {
+    private doesMovePassMarryChildren(allColumnsCopy: Column[]): boolean {
         let rulePassed = true;
 
         depthFirstOriginalTreeSearch(null, this.gridBalancedTree, child => {
@@ -1730,17 +1717,6 @@ export class ColumnModel extends BeanStub {
         return this.displayedColumnsRight;
     }
 
-    public getDisplayedColumns(type: ColumnPinnedType): Column[] {
-        switch (type) {
-            case 'left':
-                return this.getDisplayedLeftColumns();
-            case 'right':
-                return this.getDisplayedRightColumns();
-            default:
-                return this.getDisplayedCenterColumns();
-        }
-    }
-
     // used by:
     // + clientSideRowController -> sorting, building quick filter text
     // + headerRenderer -> sorting (clearing icon)
@@ -1759,10 +1735,6 @@ export class ColumnModel extends BeanStub {
     // + moveColumnController
     public getAllGridColumns(): Column[] {
         return this.gridColumns ?? [];
-    }
-
-    public isEmpty(): boolean {
-        return missingOrEmpty(this.gridColumns);
     }
 
     public isRowGroupEmpty(): boolean {
@@ -1884,14 +1856,6 @@ export class ColumnModel extends BeanStub {
         }
 
         return null;
-    }
-
-    public getDisplayedGroupAfter(columnGroup: ColumnGroup): ColumnGroup | null {
-        return this.getDisplayedGroupAtDirection(columnGroup, 'After');
-    }
-
-    public getDisplayedGroupBefore(columnGroup: ColumnGroup): ColumnGroup | null {
-        return this.getDisplayedGroupAtDirection(columnGroup, 'Before');
     }
 
     public getDisplayedGroupAtDirection(columnGroup: ColumnGroup, direction: 'After' | 'Before'): ColumnGroup | null {

@@ -19,7 +19,8 @@ import {
     UpdateChartParams,
     UpdateRangeChartParams,
     IAggFunc,
-    PartialCellRange
+    PartialCellRange,
+    SeriesGroupType
 } from "@ag-grid-community/core";
 import { ChartDataModel, ChartModelParams, ColState } from "./model/chartDataModel";
 import { ChartProxy, FieldDefinition, UpdateParams } from "./chartProxies/chartProxy";
@@ -115,6 +116,7 @@ export class ChartController extends BeanStub {
                 chartModelParams.aggFunc = params.aggFunc ?? this.model.aggFunc;
                 chartModelParams.seriesChartTypes = params.seriesChartTypes;
                 chartModelParams.suppressChartRanges = params.suppressChartRanges ?? this.model.suppressChartRanges;
+                chartModelParams.seriesGroupType = params.seriesGroupType ?? this.model.seriesGroupType;
                 break;
             case 'crossFilterChartUpdate':
                 chartModelParams.cellRange = this.createCellRange(params) ?? this.model.suppliedCellRange;
@@ -185,6 +187,7 @@ export class ChartController extends BeanStub {
 
         const params: UpdateParams = {
             data,
+            groupData: this.model.groupChartData,
             grouping: this.isGrouping(),
             categories: selectedDimensions.map((selectedDimension) => ({
                 id: selectedDimension.colId,
@@ -195,7 +198,8 @@ export class ChartController extends BeanStub {
             chartId: this.getChartId(),
             getCrossFilteringContext: () => ({ lastSelectedChartId: 'xxx' }), //this.params.crossFilteringContext, //TODO
             seriesChartTypes: this.getSeriesChartTypes(),
-            updatedOverrides: updatedOverrides
+            updatedOverrides: updatedOverrides,
+            seriesGroupType: this.model.seriesGroupType
         };
 
         return (this.isCategorySeriesSwitched() ? this.invertCategorySeriesParams(params) : params);
@@ -253,7 +257,8 @@ export class ChartController extends BeanStub {
             suppressChartRanges: this.model.suppressChartRanges,
             aggFunc: this.model.aggFunc,
             unlinkChart: this.model.unlinked,
-            seriesChartTypes
+            seriesChartTypes,
+            seriesGroupType: this.model.seriesGroupType
         };
     }
 
@@ -280,6 +285,8 @@ export class ChartController extends BeanStub {
         this.model.switchCategorySeries = false;
 
         this.model.categoryAxisType = undefined;
+
+        this.model.seriesGroupType = undefined;
 
         this.raiseChartModelUpdateEvent();
         this.raiseChartOptionsChangedEvent();
@@ -602,6 +609,15 @@ export class ChartController extends BeanStub {
 
     public setCategoryAxisType(categoryAxisType?: AgCartesianAxisType): void {
         this.model.categoryAxisType = categoryAxisType;
+        this.raiseChartModelUpdateEvent();
+    }
+
+    public getSeriesGroupType(): SeriesGroupType | undefined {
+        return this.model.seriesGroupType ?? this.chartProxy.getSeriesGroupType();
+    }
+
+    public setSeriesGroupType(seriesGroupType?: SeriesGroupType): void {
+        this.model.seriesGroupType = seriesGroupType;
         this.raiseChartModelUpdateEvent();
     }
 

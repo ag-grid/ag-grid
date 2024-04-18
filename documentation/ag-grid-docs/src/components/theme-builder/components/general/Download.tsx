@@ -1,4 +1,4 @@
-import { VERSION } from '@ag-grid-community/theming';
+import { gridVersionTieWarning, installDocsUrl } from '@ag-grid-community/theming';
 import { Alert } from '@ag-website-shared/components/alert/Alert';
 import styled from '@emotion/styled';
 
@@ -20,19 +20,13 @@ const DownloadThemeDialog = () => {
             <Header>Download Theme</Header>
             <Paragraph>
                 Download a CSS file to integrate into an application. See the{' '}
-                <a
-                    href="https://www.ag-grid.com/javascript-data-grid/global-style-customisation-theme-builder-integration/"
-                    target="_blank"
-                >
+                <a href={installDocsUrl} target="_blank">
                     integration documentation
                 </a>{' '}
                 for instructions on how to use the file.
             </Paragraph>
             <StyledAlert type="info">
-                <b>Note</b>: we are working to remove this restriction, but themes exported from the Theme Builder are
-                for the current grid version ({VERSION}) and will not be automatically updated with new features and bug
-                fixes in later versions. If you upgrade your application's grid version and experience issues, return to
-                the Theme Builder to download an updated version of your theme.
+                <b>Note</b>: {gridVersionTieWarning}
             </StyledAlert>
             <DownloadLink href={downloadLink} download="ag-grid-theme-builder.css">
                 {downloadIcon} Download CSS File
@@ -56,7 +50,7 @@ const DownloadThemeWrapper = styled('div')`
     display: flex;
     flex-direction: column;
     gap: 16px;
-    max-width: 400px;
+    width: 400px;
 `;
 
 const DownloadLink = styled('a')`

@@ -1,25 +1,36 @@
+import {
+    type CoreParam,
+    type PartId,
+    borderValueToCss,
+    corePart,
+    fontFamilyValueToCss,
+    getParamType,
+    opaqueForeground,
+    ref,
+} from '@ag-grid-community/theming';
+import { allPartModels } from '@components/theme-builder/model/PartModel';
+import { getApplicationConfigAtom } from '@components/theme-builder/model/application-config';
 import styled from '@emotion/styled';
 import { useStore } from 'jotai';
 import { memo, useEffect, useRef } from 'react';
 
-import { opaqueForeground, ref } from '../../../../../../../community-modules/theming/src/css-helpers';
-import { corePart } from '../../../../../../../community-modules/theming/src/parts/core/core-part';
-import { borderValueToCss } from '../../../../../../../community-modules/theming/src/theme-types';
 import { allParamModels } from '../../model/ParamModel';
 import { PresetRender } from './PresetRender';
 
 type Preset = {
     pageBackgroundColor: string;
-    params: Record<string, string>;
+    params?: Partial<Record<CoreParam, string>>;
+    parts?: Partial<Record<PartId, string>>;
 };
 
-const presets: Preset[] = [
+export const googleFontsToLoad = ['Press Start 2P', 'Jacquard 24'];
+
+export const allPresets: Preset[] = [
     {
-        pageBackgroundColor: '#fff',
-        params: {},
+        pageBackgroundColor: '#FAFAFA',
     },
     {
-        pageBackgroundColor: '#000',
+        pageBackgroundColor: '#1D2634',
         params: {
             backgroundColor: '#1f2836',
             foregroundColor: '#FFF',
@@ -32,8 +43,56 @@ const presets: Preset[] = [
             backgroundColor: 'rgb(241, 237, 225)',
             foregroundColor: 'rgb(46, 55, 66)',
             chromeBackgroundColor: ref('backgroundColor'),
-            fontFamily: 'monospace',
+            fontFamily: 'Press Start 2P',
             gridSize: '4px',
+        },
+    },
+    {
+        pageBackgroundColor: '#948B8E',
+        params: {
+            backgroundColor: '#E4E0E2',
+            headerBackgroundColor: '#807078',
+            headerTextColor: '#EEECED',
+            // headerBackgroundColor: '#807078',
+            foregroundColor: 'rgb(46, 55, 66)',
+            chromeBackgroundColor: ref('backgroundColor'),
+            fontFamily: 'google:Jacquard 24',
+            gridSize: '8px',
+            wrapperBorderRadius: '0px',
+            headerFontWeight: '600',
+        },
+    },
+    {
+        pageBackgroundColor: '#212124',
+        params: {
+            backgroundColor: '#252A33',
+            headerBackgroundColor: '#8AB4F9',
+            headerTextColor: '#252A33',
+            // headerBackgroundColor: '#807078',
+            foregroundColor: '#BDC2C7',
+            chromeBackgroundColor: ref('backgroundColor'),
+            fontFamily: 'google:Plus Jakarta Sans',
+            gridSize: '8px',
+            wrapperBorderRadius: '12px',
+            headerFontWeight: '600',
+            accentColor: '#8AB4F9',
+            rowVerticalPaddingScale: '0.6',
+        },
+    },
+    {
+        pageBackgroundColor: '#ffffff',
+        params: {
+            backgroundColor: '#ffffff',
+            headerBackgroundColor: '#F9FAFB',
+            headerTextColor: '#919191',
+            foregroundColor: 'rgb(46, 55, 66)',
+            fontFamily: 'Arial',
+            gridSize: '8px',
+            wrapperBorderRadius: '0px',
+            headerFontWeight: '600',
+            oddRowBackgroundColor: '#F9FAFB',
+            rowBorder: 'none',
+            wrapperBorder: 'none',
         },
     },
 ];
@@ -41,7 +100,7 @@ const presets: Preset[] = [
 export const PresetSelector = memo(() => (
     <Scroller>
         <Horizontal>
-            {presets.map((preset, i) => (
+            {allPresets.map((preset, i) => (
                 <SelectButton key={i} preset={preset} />
             ))}
         </Horizontal>
@@ -58,11 +117,16 @@ const SelectButton = ({ preset }: SelectButtonProps) => {
     useEffect(() => {
         const wrapper = wrapperRef.current;
         if (wrapper) {
-            for (const [key, value] of Object.entries(corePart.defaults)) {
-                wrapper.style.setProperty(paramToVariableName(key), borderValueToCss(value));
-            }
-            for (const [key, value] of Object.entries(preset.params)) {
-                wrapper.style.setProperty(paramToVariableName(key), value);
+            const params = { ...corePart.defaults, ...preset.params };
+            for (const [key, value] of Object.entries(params)) {
+                let type = getParamType(key);
+                let rendered: string;
+                if (type === 'fontFamily') {
+                    rendered = fontFamilyValueToCss(value as any);
+                } else {
+                    rendered = borderValueToCss(value);
+                }
+                wrapper.style.setProperty(paramToVariableName(key), rendered);
             }
             wrapper.style.setProperty('--page-background-color', preset.pageBackgroundColor);
         }
@@ -71,12 +135,30 @@ const SelectButton = ({ preset }: SelectButtonProps) => {
     const store = useStore();
 
     const applyPreset = () => {
+        const presetParams: any = preset.params || {};
         for (const { property, valueAtom } of allParamModels()) {
-            if (store.get(valueAtom) != null || preset.params[property] != null) {
-                console.log('setting', property, store.get(valueAtom));
-                store.set(valueAtom, preset.params[property] || null);
+            if (store.get(valueAtom) != null || presetParams[property] != null) {
+                store.set(valueAtom, presetParams[property] || null);
             }
         }
+
+        const presetParts = preset.parts || {};
+        for (const part of allPartModels()) {
+            const newVariantId = presetParts[part.partId];
+            if (store.get(part.variantAtom) != null || newVariantId != null) {
+                const newVariant =
+                    newVariantId == null
+                        ? part.defaultVariant
+                        : part.variants.find((v) => v.variantId === newVariantId);
+                if (!newVariant) {
+                    throw new Error(
+                        `Invalid variant ${newVariantId} for part ${part.partId}, use one of: ${part.variants.map((v) => v.variantId).join(', ')}`
+                    );
+                }
+                store.set(part.variantAtom, newVariant);
+            }
+        }
+        store.set(getApplicationConfigAtom('previewPaneBackgroundColor'), preset.pageBackgroundColor || null);
     };
 
     return (

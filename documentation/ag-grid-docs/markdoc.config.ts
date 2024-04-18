@@ -1,7 +1,9 @@
 import { kbd } from '@ag-website-shared/markdoc/tags/kbd';
+import { tabItem, tabs } from '@ag-website-shared/markdoc/tags/tabs';
+import { videoSection } from '@ag-website-shared/markdoc/tags/videoSection';
 import { Markdoc, component, defineMarkdocConfig, nodes } from '@astrojs/markdoc/config';
 
-import { DOCS_TAB_ITEM_ID_PREFIX, agGridVersion } from './src/constants';
+import { agGridVersion } from './src/constants';
 import { includeMarkdoc } from './src/utils/markdoc/tags/include-markdoc';
 import { link } from './src/utils/markdoc/tags/link';
 
@@ -49,6 +51,9 @@ export default defineMarkdocConfig({
     },
     tags: {
         kbd,
+        tabs,
+        tabItem,
+        videoSection,
         br: {
             render: 'br',
         },
@@ -159,9 +164,6 @@ export default defineMarkdocConfig({
         iconsPanel: {
             render: component('./src/components/icon/IconsPanel.astro'),
         },
-        downloadDSButton: {
-            render: component('./src/components/download-ds-button/DownloadDSButton.astro'),
-        },
         image: {
             render: component('./src/components/image/Image.astro'),
             attributes: {
@@ -235,34 +237,6 @@ export default defineMarkdocConfig({
                 },
             },
         },
-        tabs: {
-            render: component('./src/components/tabs/TabsWithHtmlChildren.astro'),
-            attributes: {
-                omitFromOverview: { type: Boolean, default: false },
-                tabItemIdPrefix: {
-                    type: String,
-                    default: DOCS_TAB_ITEM_ID_PREFIX,
-                },
-                headerLinks: {
-                    type: Array,
-                },
-            },
-        },
-        tabItem: {
-            render: component('./src/components/tabs/TabHtmlContent', 'TabHtmlContent'),
-            attributes: {
-                id: { type: String, required: true },
-                label: { type: String },
-            },
-        },
-        videoSection: {
-            render: component('./src/components/video-section/VideoSection.astro'),
-            attributes: {
-                id: { type: String },
-                title: { type: String },
-                showHeader: { type: Boolean },
-            },
-        },
         learningVideos: {
             render: component('./src/components/learning-videos/LearningVideos.astro'),
             attributes: {
@@ -272,12 +246,18 @@ export default defineMarkdocConfig({
             },
         },
         openInCTA: {
-            render: component('./src/components/open-in-cta/OpenInCTA.astro'),
+            render: component('../../external/ag-website-shared/src/components/open-in-cta/OpenInCTA.astro'),
             attributes: {
                 type: { type: String, required: true },
                 href: { type: String, required: true },
                 text: { type: String },
             },
+        },
+        figmaPreview: {
+            render: component('./src/components/figma-preview/FigmaPreview.astro'),
+        },
+        figmaCommunityButton: {
+            render: component('./src/components/figma-community-button/FigmaCommunityButton.astro'),
         },
     },
 });

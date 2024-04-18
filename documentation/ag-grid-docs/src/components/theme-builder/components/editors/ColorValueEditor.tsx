@@ -26,10 +26,6 @@ export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps) =
         placement: 'bottom-start',
     });
 
-    if (param.property === 'headerBackgroundColor') {
-        console.log('render');
-    }
-
     useClickAwayListener(() => setShowPicker(false), [elements.domReference, elements.floating]);
 
     useEffect(() => {
@@ -48,9 +44,21 @@ export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps) =
             const isValid = colorIsValid(newValue);
             setValid(isValid);
             if (isValid) {
-                onChange(newValue.trim() || null);
+                onChange(coerceToValidValue(newValue));
             }
         }
+    };
+
+    const coerceToValidValue = (input: string) => {
+        let color = RGBAColor.parseCss(input);
+        if (!color) {
+            color = RGBAColor.reinterpretCss(input);
+        }
+        if (!color) return input;
+        if (preventTransparency[param.property]) {
+            color.a = 1;
+        }
+        return color.toCSSHex();
     };
 
     const ColorPicker = preventTransparency[param.property] ? HexColorPicker : HexAlphaColorPicker;
@@ -65,10 +73,10 @@ export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps) =
                     onChange={handleInput}
                     onFocus={() => {
                         setShowPicker(true);
-                        setEditorValue(RGBAColor.reinterpretCss(value)?.toCSSHex() || value);
+                        setEditorValue(coerceToValidValue(value));
                     }}
                     onBlur={() => {
-                        setEditorValue(RGBAColor.reinterpretCss(value)?.toCSSHex() || value);
+                        setEditorValue(coerceToValidValue(value));
                         setValid(colorIsValid(value));
                     }}
                     onKeyDown={(e) => {
@@ -77,26 +85,22 @@ export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps) =
                         }
                     }}
                 />
-                <ColorSwatch>
+                <ColorSwatch onClick={() => setShowPicker(true)}>
                     <ColorSwatchColor style={{ backgroundColor: value }} />
                 </ColorSwatch>
             </Wrapper>
             {showPicker && (
                 <DropdownArea ref={refs.setFloating} style={floatingStyles}>
-                    <ColorPicker color={hexValue} onChange={(h) => handleInput(h.toUpperCase())} />
+                    <div className="colorPickerWrapper">
+                        <ColorPicker color={hexValue} onChange={(h) => handleInput(h.toUpperCase())} />
+                    </div>
                 </DropdownArea>
             )}
         </>
     );
 };
 
-const colorIsValid = (value: string) => {
-    const valid = RGBAColor.reinterpretCss(value) != null;
-    if (!valid) {
-        console.log('Invalid color:', value);
-    }
-    return valid;
-};
+const colorIsValid = (value: string) => RGBAColor.reinterpretCss(value) != null;
 
 const Wrapper = styled('div')`
     position: relative;
@@ -123,6 +127,10 @@ const ColorSwatch = styled('div')`
     background-image: url('${alphaPatternSvg}');
     background-repeat: repeat;
     background-size: 8px;
+    cursor: pointer;
+    &:hover {
+        outline: 1px solid rgba(0, 0, 0, 0.15);
+    }
 `;
 
 const ColorSwatchColor = styled('div')`
@@ -131,6 +139,24 @@ const ColorSwatchColor = styled('div')`
 `;
 
 const DropdownArea = styled(Card)`
+    .colorPickerWrapper {
+        @keyframes scaleInUp {
+            from {
+                opacity: 0;
+                transform: scale(0);
+                transform: translateY(5px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+                transform: translateY(0px);
+            }
+        }
+
+        animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+        animation: scaleInUp 0.1s;
+    }
+
     z-index: 1000;
     position: absolute;
     pointer-events: all;

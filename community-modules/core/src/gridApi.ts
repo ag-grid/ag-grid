@@ -138,6 +138,7 @@ import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { ManagedGridOptionKey, ManagedGridOptions } from "./propertyKeys";
 import { WithoutGridCommon } from "./interfaces/iCommon";
 import { MenuService, IContextMenuParams } from "./misc/menuService";
+import { escapeString } from "./utils/string";
 
 export interface DetailGridInfo {
     /**
@@ -160,6 +161,15 @@ export interface StartEditingCellParams {
     rowPinned?: RowPinnedType;
     /** The key to pass to the cell editor */
     key?: string;
+}
+
+export interface GetCellValueParams<TValue = any>{
+    /** The row node to get the value from */
+    rowNode: IRowNode;
+    /** The column to get the value from */
+    colKey: string | Column<TValue>;
+    /** If `true` formatted value will be returned. */
+    useFormatter?: boolean;
 }
 
 export function unwrapUserComp<T>(comp: T): T {
@@ -234,8 +244,8 @@ export class GridApi<TData = any> {
                 break;
         }
 
-        this.ctrlsService.whenReady(() => {
-            this.gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        this.ctrlsService.whenReady((p) => {
+            this.gridBodyCtrl = p.gridBodyCtrl;
         });
     }
 
@@ -1060,18 +1070,32 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Gets the value for a column for a particular `rowNode` (row).
-     * This is useful if you want the raw value of a cell e.g. if implementing your own CSV export.
+     * @deprecated v31.3 Use `getCellValue` instead.
      */
     public getValue<TValue = any>(colKey: string | Column<TValue>, rowNode: IRowNode): TValue | null | undefined {
-        let column = this.columnModel.getPrimaryColumn(colKey);
-        if (missing(column)) {
-            column = this.columnModel.getGridColumn(colKey);
-        }
+        this.logDeprecation('31.3','getValue', 'getCellValue');
+        return this.getCellValue({colKey, rowNode}) as TValue | null | undefined;
+    }
+
+    /**
+     * Gets the cell value for the given column and `rowNode` (row).
+     * Based on params.useFormatter with either return the value as specified by the `field` or `valueGetter` on the column definition or the formatted value.
+     */
+    public getCellValue<TValue = any>(params: {rowNode: IRowNode; colKey: string | Column<TValue>; useFormatter: true} ): string | null | undefined;
+    public getCellValue<TValue = any>(params: GetCellValueParams<TValue>): TValue | null | undefined;
+    public getCellValue<TValue = any>(params: GetCellValueParams<TValue>) {
+        const {colKey, rowNode, useFormatter} = params;
+        let column = this.columnModel.getPrimaryColumn(colKey) ?? this.columnModel.getGridColumn(colKey);
         if (missing(column)) {
             return null;
         }
-        return this.valueService.getValue(column, rowNode);
+        const value = this.valueService.getValue(column, rowNode);
+        if(useFormatter){
+            const formattedValue = this.valueService.formatValue(column, rowNode, value);
+            // Match the logic in the default cell renderer insertValueWithoutCellRenderer if no formatter is used
+            return formattedValue ?? escapeString(value, true);
+        }
+        return value;
     }
 
     /**
@@ -1125,10 +1149,7 @@ export class GridApi<TData = any> {
         this.destroyCalled = true;
 
         // destroy the UI first (as they use the services)
-        const gridCtrl = this.ctrlsService.getGridCtrl();
-        if (gridCtrl) {
-            gridCtrl.destroyGridUi();
-        }
+        this.ctrlsService.get('gridCtrl')?.destroyGridUi();
 
         // destroy the services
         this.context.destroy();

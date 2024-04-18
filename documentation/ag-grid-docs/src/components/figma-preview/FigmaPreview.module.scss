@@ -1,0 +1,57 @@
+@use 'design-system' as *;
+
+.previewOuter {
+    position: relative;
+    margin-bottom: $spacing-size-6;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.previewIframe {
+    display: block;
+    width: 100%;
+    border: none;
+    aspect-ratio: 9/5;
+}
+
+.loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/ag-grid-figma-thumb.png');
+    background-size: auto 100%;
+    background-position: center;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: $spacing-size-2;
+        background-color: var(--color-logo-aqua);
+
+        & :local {
+            animation: progress var(--faux-loading-delay) linear;
+        }
+    }
+
+    svg {
+        transform: scale(3);
+        position: absolute;
+        bottom: 21%;
+        left: 13.5%;
+    }
+}
+
+@keyframes progress {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}

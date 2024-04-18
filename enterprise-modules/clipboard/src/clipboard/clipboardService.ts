@@ -405,6 +405,18 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         this.iterateActiveRanges(false, rowCallback);
     }
 
+    private getDisplayedColumnsStartingAt(column: Column): Column[] {
+        let currentColumn: Column | null = column;
+        const columns: Column[] = [];
+
+        while (currentColumn != null) {
+            columns.push(currentColumn);
+            currentColumn = this.columnModel.getDisplayedColAfter(currentColumn);
+        }
+
+        return columns;
+    }
+
     private pasteStartingFromFocusedCell(
         parsedData: string[][],
         cellsToFlash: any,
@@ -415,7 +427,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         if (!focusedCell) { return; }
 
         const currentRow: RowPosition = { rowIndex: focusedCell.rowIndex, rowPinned: focusedCell.rowPinned };
-        const columnsToPasteInto = this.columnModel.getDisplayedColumnsStartingAt(focusedCell.column);
+        const columnsToPasteInto = this.getDisplayedColumnsStartingAt(focusedCell.column);
 
         if (this.isPasteSingleValueIntoRange(parsedData)) {
             this.pasteSingleValueIntoRange(parsedData, updatedRowNodes, cellsToFlash, changedPath);

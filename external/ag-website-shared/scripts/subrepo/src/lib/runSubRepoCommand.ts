@@ -64,7 +64,7 @@ export function runSubRepoCommand({ command, subRepoFolder, isVerbose }: Subrepo
     }
 
     const subRepoCmdOut = getExecValue(`git subrepo ${command} ${subRepoFolder}`);
-    const isUpToDate = subRepoCmdOut.includes('is up to date');
+    const isUpToDate = subRepoCmdOut.includes('is up to date') || subRepoCmdOut.includes('has no new commits');
 
     if (isUpToDate) {
         console.log(`✅ Subrepo ${tc.cyan}${subRepoFolder}${tc.reset} is up to date`);

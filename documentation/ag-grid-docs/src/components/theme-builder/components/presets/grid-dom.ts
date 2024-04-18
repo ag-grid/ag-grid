@@ -1,4 +1,5 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai';
+import { useRef } from 'react';
 
 export const gridDomAtom = atom<HTMLElement | null>(null);
 
@@ -48,4 +49,9 @@ const deleteAll = (parent: HTMLElement, selector: string) => {
     parent.querySelectorAll(selector).forEach((el) => el.remove());
 };
 
-export const useGridPreviewHTML = () => useAtomValue(gridPreviewHTML);
+export const useGridPreviewHTML = () => {
+    const previewHTML = useAtomValue(gridPreviewHTML);
+    const lastNonEmptyValue = useRef(previewHTML);
+    lastNonEmptyValue.current ||= previewHTML;
+    return lastNonEmptyValue.current;
+};

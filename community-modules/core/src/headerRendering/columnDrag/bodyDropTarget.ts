@@ -43,23 +43,23 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
             switch (this.pinned) {
                 case 'left':
                     this.eSecondaryContainers = [
-                        [p.gridBodyCtrl.getBodyViewportElement(), p.leftRowContainerCtrl.getContainerElement()],
-                        [p.bottomLeftRowContainerCtrl.getContainerElement()],
-                        [p.topLeftRowContainerCtrl.getContainerElement()]
+                        [p.gridBodyCtrl.getBodyViewportElement(), p.left.getContainerElement()],
+                        [p.bottomLeft.getContainerElement()],
+                        [p.topLeft.getContainerElement()]
                     ];
                     break;
                 case 'right':
                     this.eSecondaryContainers = [
-                        [p.gridBodyCtrl.getBodyViewportElement(), p.rightRowContainerCtrl.getContainerElement()],
-                        [p.bottomRightRowContainerCtrl.getContainerElement()],
-                        [p.topRightRowContainerCtrl.getContainerElement()]
+                        [p.gridBodyCtrl.getBodyViewportElement(), p.right.getContainerElement()],
+                        [p.bottomRight.getContainerElement()],
+                        [p.topRight.getContainerElement()]
                     ];
                     break;
                 default:
                     this.eSecondaryContainers = [
-                        [p.gridBodyCtrl.getBodyViewportElement(), p.centerRowContainerCtrl.getViewportElement()],
-                        [p.bottomCenterRowContainerCtrl.getViewportElement()],
-                        [p.topCenterRowContainerCtrl.getViewportElement()]
+                        [p.gridBodyCtrl.getBodyViewportElement(), p.center.getViewportElement()],
+                        [p.bottomCenter.getViewportElement()],
+                        [p.topCenter.getViewportElement()]
                     ];
                     break;
             }
@@ -81,7 +81,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
 
     @PostConstruct
     private init(): void {
-        this.moveColumnFeature = this.createManagedBean(new MoveColumnFeature(this.pinned, this.eContainer));
+        this.moveColumnFeature = this.createManagedBean(new MoveColumnFeature(this.pinned));
         this.bodyDropPivotTarget = this.createManagedBean(new BodyDropPivotTarget(this.pinned));
 
         this.dragAndDropService.addDropTarget(this);

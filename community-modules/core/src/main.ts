@@ -204,7 +204,7 @@ export { ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParam
 export { AnimateShowChangeCellRenderer } from "./rendering/cellRenderers/animateShowChangeCellRenderer";
 export { AnimateSlideCellRenderer } from "./rendering/cellRenderers/animateSlideCellRenderer";
 export { GroupCellRenderer, } from "./rendering/cellRenderers/groupCellRenderer";
-export { GroupCellRendererParams, IGroupCellRendererParams, IGroupCellRendererFullRowParams, FooterValueGetterFunc, IGroupCellRenderer, GroupCellRendererCtrl, GroupCheckboxSelectionCallback, GroupCheckboxSelectionCallbackParams } from "./rendering/cellRenderers/groupCellRendererCtrl";
+export { GroupCellRendererParams, IGroupCellRendererParams, IGroupCellRendererFullRowParams, FooterValueGetterFunc, TotalValueGetterFunc, IGroupCellRenderer, GroupCellRendererCtrl, GroupCheckboxSelectionCallback, GroupCheckboxSelectionCallbackParams } from "./rendering/cellRenderers/groupCellRendererCtrl";
 
 // status bar components
 export { StatusPanelDef, IStatusPanel, IStatusPanelComp, IStatusPanelParams, AggregationStatusPanelAggFunc, IAggregationStatusPanelParams, AggregationStatusPanelParams } from "./interfaces/iStatusPanel";
@@ -334,7 +334,7 @@ export { AlignedGridsService } from "./alignedGridsService";
 export { KeyCode } from "./constants/keyCode";
 export { VerticalDirection, HorizontalDirection } from "./constants/direction";
 export { Grid, GridParams, Params, GridCoreCreator, createGrid, provideGlobalGridOptions } from "./grid";
-export { GridApi, DetailGridInfo, StartEditingCellParams } from "./gridApi";
+export { GridApi, DetailGridInfo, StartEditingCellParams, GetCellValueParams } from "./gridApi";
 export { Events } from "./eventKeys";
 export { FocusService } from "./focusService";
 export { GridOptionsService, PropertyChangedEvent } from "./gridOptionsService";
@@ -346,7 +346,6 @@ export { GridComp } from "./gridComp/gridComp";
 export { GridCtrl, IGridComp } from "./gridComp/gridCtrl";
 export { Logger, LoggerFactory } from "./logger";
 export { SortController, SortModelItem } from "./sortController";
-export { TemplateService } from "./templateService";
 export { LocaleService } from './localeService';
 export * from "./utils/index"; // please leave this as is - we want it to be explicit for build reasons
 export { ColumnSortState } from "./utils/aria";
@@ -497,6 +496,7 @@ export {
     LoadingCellRendererSelectorResult,
     DomLayoutType,
     UseGroupFooter,
+    UseGroupTotalRow,
     GetChartMenuItems
 } from "./entities/gridOptions";
 

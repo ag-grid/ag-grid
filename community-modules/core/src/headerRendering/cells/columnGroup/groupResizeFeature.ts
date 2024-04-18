@@ -118,7 +118,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         let groupAfter: ColumnGroup | null = null;
 
         if (shiftKey) {
-            groupAfter = this.columnModel.getDisplayedGroupAfter(this.columnGroup);
+            groupAfter = this.columnModel.getDisplayedGroupAtDirection(this.columnGroup, 'After');
         }
 
         if (groupAfter) {

@@ -26,6 +26,8 @@ export type ParamDefaults<T extends string> = {
 // ParamTypes so that you can only reference values of the correct type export
 // type Ref = { ref: Param }; type BrandedType<B extends string, T = any> = {__type?: B } & T;
 
+// TODO use valueToCss(param, value) that both validates and converts values in one step
+
 export type ColorValue = string;
 
 export const colorValueToCss = (value: ColorValue) => String(value);
@@ -66,11 +68,18 @@ export const displayValueToCss = (value: DisplayValue) => String(value);
 
 export const isDisplayValue = (value: unknown): value is DisplayValue => typeof value === 'string';
 
-export type FontFamilyValue = string;
+export type FontFamilyValue = string; // TODO add `| string[]`, will need to update uses borderValueToCss to use a more generic valueToCss(paramName, value)
 
-export const fontFamilyValueToCss = (value: FontFamilyValue) => String(value);
+export const fontFamilyValueToCss = (value: FontFamilyValue): string => {
+    if (Array.isArray(value)) return value.map(fontFamilyValueToCss).join(', ');
+    // quote values with spaces that are not already quoted and do not include function expressions
+    value = value.replace(/^google:/i, '');
+    if (/\s/.test(value) && !/[()'"]/.test(value)) return `'${value}'`;
+    return value;
+};
 
-export const isFontFamilyValue = (value: unknown): value is FontFamilyValue => typeof value === 'string';
+export const isFontFamilyValue = (value: unknown): value is FontFamilyValue =>
+    typeof value === 'string' || (Array.isArray(value) && value.every((v) => typeof v === 'string'));
 
 export type FontWeightValue = string; // TODO allow number and treat as unitless
 

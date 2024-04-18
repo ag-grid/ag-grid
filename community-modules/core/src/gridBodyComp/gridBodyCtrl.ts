@@ -42,6 +42,9 @@ export interface IGridBodyComp extends LayoutView {
     setStickyTopHeight(height: string): void;
     setStickyTopTop(offsetTop: string): void;
     setStickyTopWidth(width: string): void;
+    setStickyBottomHeight(height: string): void;
+    setStickyBottomBottom(offsetBottom: string): void;
+    setStickyBottomWidth(width: string): void;
     setColumnCount(count: number): void;
     setRowCount(count: number): void;
     setRowAnimationCssOnBodyViewport(cssClass: string, animate: boolean): void;
@@ -75,7 +78,9 @@ export class GridBodyCtrl extends BeanStub {
     private eBottom: HTMLElement;
     private eStickyTop: HTMLElement;
     private stickyTopHeight: number = 0;
-
+    private eStickyBottom: HTMLElement;
+    private stickyBottomHeight: number = 0;
+    
     private bodyScrollFeature: GridBodyScrollFeature;
     private rowDragFeature: RowDragFeature;
 
@@ -93,7 +98,8 @@ export class GridBodyCtrl extends BeanStub {
         eBodyViewport: HTMLElement,
         eTop: HTMLElement,
         eBottom: HTMLElement,
-        eStickyTop: HTMLElement
+        eStickyTop: HTMLElement,
+        eStickyBottom: HTMLElement,
     ): void {
         this.comp = comp;
         this.eGridBody = eGridBody;
@@ -101,6 +107,7 @@ export class GridBodyCtrl extends BeanStub {
         this.eTop = eTop;
         this.eBottom = eBottom;
         this.eStickyTop = eStickyTop;
+        this.eStickyBottom = eStickyBottom;
 
         this.setCellTextSelection(this.gos.get('enableCellTextSelection'));
         this.addManagedPropertyListener('enableCellTextSelection', (props) => this.setCellTextSelection(props.currentValue));
@@ -112,7 +119,7 @@ export class GridBodyCtrl extends BeanStub {
         this.setupRowAnimationCssClass();
 
         this.addEventListeners();
-        this.addFocusListeners([eTop, eBodyViewport, eBottom, eStickyTop]);
+        this.addFocusListeners([eTop, eBodyViewport, eBottom, eStickyTop, eStickyBottom]);
         this.onGridColumnsChanged();
         this.addBodyViewportListener();
         this.setFloatingHeights();
@@ -121,7 +128,7 @@ export class GridBodyCtrl extends BeanStub {
 
         this.filterManager.setupAdvancedFilterHeaderComp(eTop);
 
-        this.ctrlsService.registerGridBodyCtrl(this);
+        this.ctrlsService.register('gridBodyCtrl',this);
     }
 
     public getComp(): IGridBodyComp {
@@ -176,7 +183,8 @@ export class GridBodyCtrl extends BeanStub {
     private onScrollVisibilityChanged(): void {
         const visible = this.scrollVisibleService.isVerticalScrollShowing();
         this.setVerticalScrollPaddingVisible(visible);
-        this.setStickyTopWidth(visible);
+        this.setStickyWidth(visible);
+        this.setStickyBottomOffsetBottom();
 
         const scrollbarWidth = visible ? (this.gos.getScrollbarWidth() || 0) : 0;
         const pad = isInvisibleScrollbar() ? 16 : 0;
@@ -232,7 +240,7 @@ export class GridBodyCtrl extends BeanStub {
             }
         };
 
-        const viewports = [this.eBodyViewport, this.eBottom, this.eTop, this.eStickyTop];
+        const viewports = [this.eBodyViewport, this.eBottom, this.eTop, this.eStickyTop, this.eStickyBottom];
 
         viewports.forEach(viewport => this.addManagedListener(viewport, 'focusout', focusOutListener));
     }
@@ -290,7 +298,8 @@ export class GridBodyCtrl extends BeanStub {
         this.mockContextMenuForIPad(listener);
 
         this.addManagedListener(this.eBodyViewport, 'wheel', this.onBodyViewportWheel.bind(this));
-        this.addManagedListener(this.eStickyTop, 'wheel', this.onStickyTopWheel.bind(this));
+        this.addManagedListener(this.eStickyTop, 'wheel', this.onStickyWheel.bind(this));
+        this.addManagedListener(this.eStickyBottom, 'wheel', this.onStickyWheel.bind(this));
 
         // allow mouseWheel on the Full Width Container to Scroll the Viewport
         this.addFullWidthContainerWheelListener();
@@ -326,7 +335,7 @@ export class GridBodyCtrl extends BeanStub {
 
         const { target } = (mouseEvent || touch)!;
 
-        if (target === this.eBodyViewport || target === this.ctrlsService.getCenterRowContainerCtrl().getViewportElement()) {
+        if (target === this.eBodyViewport || target === this.ctrlsService.get('center').getViewportElement()) {
             // show it
             this.menuService.showContextMenu({ mouseEvent, touchEvent, value: null, anchorToElement: this.eGridBody } as EventShowContextMenuParams);
         }
@@ -353,7 +362,7 @@ export class GridBodyCtrl extends BeanStub {
         }
     }
 
-    private onStickyTopWheel(e: WheelEvent): void {
+    private onStickyWheel(e: WheelEvent): void {
         e.preventDefault();
 
         if (e.offsetY) {
@@ -396,6 +405,7 @@ export class GridBodyCtrl extends BeanStub {
         this.comp.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
         this.comp.setBottomDisplay(floatingBottomHeight ? 'inherit' : 'none');
         this.setStickyTopOffsetTop();
+        this.setStickyBottomOffsetBottom();
     }
 
     public setStickyTopHeight(height: number = 0): void {
@@ -408,12 +418,23 @@ export class GridBodyCtrl extends BeanStub {
         return this.stickyTopHeight;
     }
 
-    private setStickyTopWidth(vScrollVisible: boolean) {
+    public setStickyBottomHeight(height: number = 0): void {
+        this.comp.setStickyBottomHeight(`${height}px`);
+        this.stickyBottomHeight = height;
+    }
+
+    public getStickyBottomHeight(): number {
+        return this.stickyBottomHeight;
+    }
+
+    private setStickyWidth(vScrollVisible: boolean) {
         if (!vScrollVisible) {
             this.comp.setStickyTopWidth('100%');
+            this.comp.setStickyBottomWidth('100%');
         } else {
             const scrollbarWidth = this.gos.getScrollbarWidth();
             this.comp.setStickyTopWidth(`calc(100% - ${scrollbarWidth}px)`);
+            this.comp.setStickyBottomWidth(`calc(100% - ${scrollbarWidth}px)`);
         }
     }
 
@@ -422,7 +443,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private setStickyTopOffsetTop(): void {
-        const headerCtrl = this.ctrlsService.getGridHeaderCtrl();
+        const headerCtrl = this.ctrlsService.get('gridHeaderCtrl');
         const headerHeight = headerCtrl.getHeaderHeight() + this.filterManager.getHeaderHeight();
         const pinnedTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
 
@@ -432,6 +453,15 @@ export class GridBodyCtrl extends BeanStub {
         if (pinnedTopHeight > 0) { height += pinnedTopHeight + 1; }
 
         this.comp.setStickyTopTop(`${height}px`);
+    }
+
+    private setStickyBottomOffsetBottom(): void {
+        const pinnedBottomHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
+        const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
+        const scrollbarWidth = hScrollShowing ? (this.gos.getScrollbarWidth() || 0) : 0;
+        const height = pinnedBottomHeight + scrollbarWidth;
+
+        this.comp.setStickyBottomBottom(`${height}px`);
     }
 
     // method will call itself if no available width. this covers if the grid

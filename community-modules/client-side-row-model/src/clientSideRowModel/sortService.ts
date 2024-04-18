@@ -7,7 +7,6 @@ import {
     Bean,
     ChangedPath,
     ColumnModel,
-    PostConstruct,
     RowNode,
     BeanStub,
     WithoutGridCommon,
