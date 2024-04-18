@@ -1,15 +1,15 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import Layout from '@layouts/Layout.astro';
-import { PagesNavigation } from '@features/pages-navigation/components/PagesNavigation';
+import { PagesNavigation } from '@components/pages-navigation/components/PagesNavigation';
 import { Header } from '@features/docs/components/Header';
 import { getFrameworkDisplayText } from '@utils/framework';
 import type { Framework, MenuItem, MenuSection } from '@ag-grid-types';
 import { getDocsPages } from '@features/docs/utils/pageData';
-import { SideNavigation } from '@features/pages-navigation/components/SideNavigation';
+import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
 import { getFirstParagraphText } from '@utils/markdoc/getFirstParagraphText';
 import { DOCS_TAB_ITEM_ID_PREFIX } from '@ag-website-shared/constants';
-import { getFilteredMenuSections } from '@features/pages-navigation/utils/getFilteredMenuSections';
+import { getFilteredMenuSections } from '@components/pages-navigation/utils/getFilteredMenuSections';
 import { getHeadings } from '@utils/markdoc/getHeadings';
 import { isApiMenuPath } from '@utils/apiMenuPath';
 import styles from '@legacy-design-system/modules/docs.module.scss';
