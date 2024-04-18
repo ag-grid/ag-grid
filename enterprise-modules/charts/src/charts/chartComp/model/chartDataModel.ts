@@ -64,6 +64,7 @@ export class ChartDataModel extends BeanStub {
     public chartThemeName: string;
     public unlinked = false;
     public chartData: any[] = [];
+    public groupChartData: any[] | undefined;
     public valueColState: ColState[] = [];
     public dimensionColState: ColState[] = [];
     public columnNames: { [p: string]: string[]; } = {};
@@ -182,9 +183,10 @@ export class ChartDataModel extends BeanStub {
             isScatter: _.includes(['scatter', 'bubble'], this.chartType)
         };
 
-        const { chartData, columnNames } = this.datasource.getData(params);
+        const { chartData, columnNames, groupChartData } = this.datasource.getData(params);
 
         this.chartData = chartData;
+        this.groupChartData = groupChartData;
         this.columnNames = columnNames;
         this.categoryAxisType = undefined;
     }
