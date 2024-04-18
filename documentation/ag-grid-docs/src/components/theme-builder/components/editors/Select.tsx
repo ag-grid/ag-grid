@@ -59,7 +59,7 @@ export function Select<O extends SelectOption>({ value, options, onChange }: Sel
                         ))}
                     </StyledSelectViewport>
                     <RadixSelect.ScrollDownButton className="SelectScrollButton">
-                        <ChevronDown />
+                        <ChevronDown className="selectIcon" />
                     </RadixSelect.ScrollDownButton>
                 </StyledSelectContent>
             </RadixSelect.Portal>
@@ -83,11 +83,12 @@ const StyledTrigger = styled(RadixSelect.Trigger)`
     align-items: center;
     border-radius: var(--radius-sm);
     font-weight: normal;
-    height: 36px;
-    gap: 6px;
+    height: 32px;
+    gap: 16px;
     color: var(--color-fg-primary);
     background-color: var(--color-bg-primary);
     border: 1px solid var(--color-input-border);
+    font-size: 14px;
 
     &:hover {
         color: var(--color-fg-primary);
@@ -121,7 +122,7 @@ const StyledSelectViewport = styled(RadixSelect.Viewport)`
 `;
 
 const StyledSelectItem = styled(RadixSelect.Item)`
-    font-size: 14px;
+    font-size: 14px !important;
     line-height: 1;
     color: var(--violet-11);
     border-radius: 3px;
