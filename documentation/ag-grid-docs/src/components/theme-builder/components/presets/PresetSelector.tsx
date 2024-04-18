@@ -74,6 +74,8 @@ export const allPresets: Preset[] = [
             wrapperBorderRadius: '0px',
             headerFontWeight: '600',
             oddRowBackgroundColor: '#F9FAFB',
+            rowBorder: 'none',
+            wrapperBorder: 'none',
         },
     },
 ];
