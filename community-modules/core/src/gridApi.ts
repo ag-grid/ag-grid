@@ -266,7 +266,7 @@ export class GridApi<TData = any> {
 
     /** Unregister a detail grid from the master grid when it is destroyed. */
     public removeDetailGridInfo(id: string): void {
-        this.detailGridInfoMap[id] = undefined;
+        delete this.detailGridInfoMap[id];
     }
 
     /** Returns the `DetailGridInfo` corresponding to the supplied `detailGridId`. */
@@ -1153,6 +1153,8 @@ export class GridApi<TData = any> {
 
         // destroy the services
         this.context.destroy();
+
+        this.detailGridInfoMap = {};
 
         // some users were raising support issues with regards memory leaks. the problem was the customers applications
         // were keeping references to the API. trying to educate them all would be difficult, easier to just remove
