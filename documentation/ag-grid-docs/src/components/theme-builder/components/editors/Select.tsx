@@ -1,6 +1,7 @@
-import { Checkmark, ChevronDown, ChevronUp } from '@carbon/icons-react';
+import { Checkmark, ChevronUp } from '@carbon/icons-react';
 import styled from '@emotion/styled';
 import * as RadixSelect from '@radix-ui/react-select';
+import { ChevronDown } from 'lucide-react';
 import { type ReactElement, forwardRef } from 'react';
 
 type SelectOption = {
@@ -59,7 +60,7 @@ export function Select<O extends SelectOption>({ value, options, onChange }: Sel
                         ))}
                     </StyledSelectViewport>
                     <RadixSelect.ScrollDownButton className="SelectScrollButton">
-                        <ChevronDown className="selectIcon" />
+                        <ChevronDown />
                     </RadixSelect.ScrollDownButton>
                 </StyledSelectContent>
             </RadixSelect.Portal>
@@ -89,6 +90,12 @@ const StyledTrigger = styled(RadixSelect.Trigger)`
     background-color: var(--color-bg-primary);
     border: 1px solid var(--color-input-border);
     font-size: 14px;
+    justify-content: space-between;
+    svg {
+        opacity: 0.5;
+        height: 16px;
+        width: 16px;
+    }
 
     &:hover {
         color: var(--color-fg-primary);
@@ -100,7 +107,8 @@ const StyledTrigger = styled(RadixSelect.Trigger)`
 const StyledSelectContent = styled(RadixSelect.Content)`
     position: absolute;
     overflow: hidden;
-    background-color: white;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-primary);
     border-radius: 6px;
     box-shadow:
         0px 10px 38px -10px rgba(22, 23, 24, 0.35),
@@ -133,6 +141,7 @@ const StyledSelectItem = styled(RadixSelect.Item)`
     position: relative;
     user-select: none;
     cursor: pointer;
+    justity-content: space-between;
 
     &[data-disabled] {
         color: var(--mauve-8);
@@ -141,7 +150,7 @@ const StyledSelectItem = styled(RadixSelect.Item)`
 
     &[data-highlighted] {
         outline: none;
-        background-color: rgba(0, 0, 0, 0.05);
+        background-color: var(--color-util-gray-100);
     }
 `;
 
