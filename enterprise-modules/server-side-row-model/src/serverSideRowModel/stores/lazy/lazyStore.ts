@@ -277,10 +277,21 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.displayIndexStart = displayIndexSeq.peek();
         this.topPx = nextRowTop.value;
 
+        const footerNode = this.parentRowNode.level > -1 && this.gos.getGroupTotalRowCallback()({ node: this.parentRowNode });
+        if (!footerNode) {
+            this.parentRowNode.destroyFooter();
+        }
+
+        if (footerNode === 'top') {
+            this.parentRowNode.createFooter();
+            this.blockUtils.setDisplayIndex(this.parentRowNode.sibling, displayIndexSeq, nextRowTop);
+        }
+
         // delegate to the store to set the row display indexes
         this.cache.setDisplayIndexes(displayIndexSeq, nextRowTop);
 
-        if (this.parentRowNode.sibling) {
+        if (footerNode === 'bottom') {
+            this.parentRowNode.createFooter();
             this.blockUtils.setDisplayIndex(this.parentRowNode.sibling, displayIndexSeq, nextRowTop);
         }
 
@@ -439,6 +450,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         if (pixel >= this.topPx + this.heightPx) {
             return this.getDisplayIndexEnd()! - 1;
         }
+
+        if (this.parentRowNode.sibling && pixel > this.parentRowNode.sibling.rowTop! && pixel < this.parentRowNode.sibling.rowTop! + this.parentRowNode.sibling.rowHeight!) {
+            return this.parentRowNode.sibling.rowIndex!;
+        }
+
     
         let distToPreviousNodeTop: number = Number.MAX_SAFE_INTEGER;
         let previousNode: RowNode | null = null;

@@ -10,6 +10,7 @@ import { RowNode } from "../../entities/rowNode";
 import { IRowNode } from "../../interfaces/iRowNode";
 import { removeAriaExpanded, setAriaExpanded } from "../../utils/aria";
 import { isElementInEventPath, isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../utils/event";
+import { warnOnce } from "../../utils/function";
 import { missing } from "../../utils/generic";
 import { createIconNoSpan } from "../../utils/icon";
 import { cloneObject } from "../../utils/object";
@@ -32,6 +33,10 @@ export interface FooterValueGetterFunc {
     (params: GroupCellRendererParams): any;
 }
 
+export interface TotalValueGetterFunc {
+    (params: GroupCellRendererParams): any;
+}
+
 export type GroupCheckboxSelectionCallbackParams<TData = any, TValue = any> = ColumnFunctionCallbackParams<TData> & GroupCellRendererParams<TData, TValue>;
 
 export interface GroupCheckboxSelectionCallback<TData = any, TValue = any> {
@@ -48,8 +53,10 @@ export interface IGroupCellRendererParams<TData = any, TValue = any> {
     suppressDoubleClickExpand?: boolean;
     /** Set to `true` to suppress expand on <kbd>↵ Enter</kbd> */
     suppressEnterExpand?: boolean;
-    /** The value getter for the footer text. Can be a function or expression. */
+    /** The value getter for the footer text. Can be a function or expression. @deprecated use `totalValueGetter` */
     footerValueGetter?: string | FooterValueGetterFunc;
+    /** The value getter for the total row text. Can be a function or expression. */
+    totalValueGetter?: string | TotalValueGetterFunc;
     /** If `true`, count is not displayed beside the name. */
     suppressCount?: boolean;
     /** 
@@ -394,7 +401,14 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private addFooterValue(): void {
-        const footerValueGetter = this.params.footerValueGetter;
+        let footerValueGetter = this.params.totalValueGetter;
+        if (!footerValueGetter) {
+            const legacyGetter = this.params.footerValueGetter;
+            if (legacyGetter) {
+                footerValueGetter = legacyGetter;
+                warnOnce('AG Grid: footerValueGetter is deprecated, please use totalValueGetter instead.');
+            }
+        }
         let footerValue = '';
 
         if (footerValueGetter) {

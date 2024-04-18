@@ -204,7 +204,7 @@ export { ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParam
 export { AnimateShowChangeCellRenderer } from "./rendering/cellRenderers/animateShowChangeCellRenderer";
 export { AnimateSlideCellRenderer } from "./rendering/cellRenderers/animateSlideCellRenderer";
 export { GroupCellRenderer, } from "./rendering/cellRenderers/groupCellRenderer";
-export { GroupCellRendererParams, IGroupCellRendererParams, IGroupCellRendererFullRowParams, FooterValueGetterFunc, IGroupCellRenderer, GroupCellRendererCtrl, GroupCheckboxSelectionCallback, GroupCheckboxSelectionCallbackParams } from "./rendering/cellRenderers/groupCellRendererCtrl";
+export { GroupCellRendererParams, IGroupCellRendererParams, IGroupCellRendererFullRowParams, FooterValueGetterFunc, TotalValueGetterFunc, IGroupCellRenderer, GroupCellRendererCtrl, GroupCheckboxSelectionCallback, GroupCheckboxSelectionCallbackParams } from "./rendering/cellRenderers/groupCellRendererCtrl";
 
 // status bar components
 export { StatusPanelDef, IStatusPanel, IStatusPanelComp, IStatusPanelParams, AggregationStatusPanelAggFunc, IAggregationStatusPanelParams, AggregationStatusPanelParams } from "./interfaces/iStatusPanel";
@@ -496,6 +496,7 @@ export {
     LoadingCellRendererSelectorResult,
     DomLayoutType,
     UseGroupFooter,
+    UseGroupTotalRow,
     GetChartMenuItems
 } from "./entities/gridOptions";
 

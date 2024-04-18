@@ -144,7 +144,8 @@ import {
     GetGroupAggFilteringParams,
     GetGroupIncludeFooterParams,
     ProcessUnpinnedColumnsParams,
-    GetChartMenuItemsParams
+    GetChartMenuItemsParams,
+    GetGroupIncludeTotalRowParams
 } from "../interfaces/iCallbackParams";
 
 import { SideBarDef } from "../interfaces/iSideBar";
@@ -1135,13 +1136,36 @@ export interface GridOptions<TData = any> {
      * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.
      * If a callback function is provided, it can used to select which groups will have a footer added.
      * @default false
+     * 
+     * @deprecated v31.3 - use `groupTotalRow` instead.
      */
     groupIncludeFooter?: boolean | UseGroupFooter<TData>;
     /**
      * Set to `true` to show a 'grand total' group footer across all groups.
      * @default false
+     * 
+     * @deprecated v31.3 - use `grandTotalRow` instead.
      */
     groupIncludeTotalFooter?: boolean;
+
+    /**
+     * When provided, an extra row group total row will be inserted into row groups at the specified position, to display 
+     * when the group is expanded. This row will contain the aggregate values for the group. If a callback function is
+     * provided, it can be used to selectively determine which groups will have a total row added.
+     */
+    groupTotalRow?: 'top' | 'bottom' | UseGroupTotalRow<TData>;
+
+    /**
+     * When provided, an extra grand total row will be inserted into the grid at the specified position.
+     * This row displays the aggregate totals of all rows in the grid.
+     */
+    grandTotalRow?: 'top' | 'bottom';
+
+    /**
+     * Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
+     */
+    suppressStickyTotalRow?: boolean | 'grand' | 'group';
+
     /**
      * If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand.
      * @default false
@@ -2297,6 +2321,10 @@ export interface IsRowFilterable<TData = any> {
 
 export interface UseGroupFooter<TData = any> {
     (params: GetGroupIncludeFooterParams<TData>): boolean;
+}
+
+export interface UseGroupTotalRow<TData = any> {
+    (params: GetGroupIncludeTotalRowParams<TData>): 'top' | 'bottom' | undefined;
 }
 
 export interface IsApplyServerSideTransaction {
