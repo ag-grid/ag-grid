@@ -23,8 +23,6 @@ type Preset = {
     parts?: Partial<Record<PartId, string>>;
 };
 
-export const googleFontsToLoad = ['Press Start 2P', 'Jacquard 24'];
-
 export const allPresets: Preset[] = [
     {
         pageBackgroundColor: '#FAFAFA',
@@ -43,7 +41,7 @@ export const allPresets: Preset[] = [
             backgroundColor: 'rgb(241, 237, 225)',
             foregroundColor: 'rgb(46, 55, 66)',
             chromeBackgroundColor: ref('backgroundColor'),
-            fontFamily: 'Press Start 2P',
+            fontFamily: 'google:Press Start 2P',
             gridSize: '4px',
         },
     },
@@ -97,15 +95,33 @@ export const allPresets: Preset[] = [
     },
 ];
 
-export const PresetSelector = memo(() => (
-    <Scroller>
-        <Horizontal>
-            {allPresets.map((preset, i) => (
-                <SelectButton key={i} preset={preset} />
-            ))}
-        </Horizontal>
-    </Scroller>
-));
+export const PresetSelector = memo(() => {
+    // find and load any google fonts that might be used by presets
+    const googleFonts = [corePart.defaults, ...allPresets.map((p) => p.params)]
+        .map((params) =>
+            Object.values(params || {})
+                .filter((v) => String(v).startsWith('google:'))
+                .map((v) => String(v).replace('google:', ''))
+        )
+        .flat()
+        .sort()
+        .map(
+            (font) =>
+                `@import url('https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}&display=swap');`
+        )
+        .join('\n');
+
+    return (
+        <Scroller>
+            <style>{googleFonts}</style>
+            <Horizontal>
+                {allPresets.map((preset, i) => (
+                    <SelectButton key={i} preset={preset} />
+                ))}
+            </Horizontal>
+        </Scroller>
+    );
+});
 
 type SelectButtonProps = {
     preset: Preset;

@@ -1,4 +1,13 @@
-import { calc, foregroundBorder, opaqueForeground, ref, transparentAccent, transparentBackground, transparentForeground, transparentRef } from '../../css-helpers';
+import {
+    calc,
+    foregroundBorder,
+    opaqueForeground,
+    ref,
+    transparentAccent,
+    transparentBackground,
+    transparentForeground,
+    transparentRef,
+} from '../../css-helpers';
 import { definePart } from '../../theme-utils';
 import { coreCSS } from './GENERATED-core';
 import indent from './indent';
@@ -23,8 +32,7 @@ const coreDefaults = {
     sideButtonSelectedBorder: true,
     sideButtonSelectedBackgroundColor: ref('backgroundColor'),
     sideBarBackgroundColor: ref('chromeBackgroundColor'),
-    fontFamily:
-        "'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif",
+    fontFamily: 'google:IBM Plex Sans',
     chromeBackgroundColor: transparentForeground(0.02),
     headerBackgroundColor: ref('chromeBackgroundColor'),
     headerFontFamily: ref('fontFamily'),
