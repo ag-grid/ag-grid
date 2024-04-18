@@ -16,6 +16,8 @@ export function createAgChartTheme(
     chartProxyParams: ChartProxyParams,
     proxy: ChartProxy,
     isEnterprise: boolean,
+    chartThemeDefaults?: AgChartThemeOverrides,
+    updatedOverrides?: AgChartThemeOverrides
 ): AgChartTheme {
     const { chartOptionsToRestore, chartPaletteToRestore, chartThemeToRestore } = chartProxyParams;
     const themeName = getSelectedTheme(chartProxyParams);
@@ -32,9 +34,6 @@ export function createAgChartTheme(
     const crossFilteringOverrides = chartProxyParams.crossFiltering
         ? createCrossFilterThemeOverrides(proxy, chartProxyParams, standaloneChartType)
         : undefined;
-    const formattingPanelOverrides: AgChartThemeOverrides = {
-        ...(chartOptionsToRestore ?? {}),
-    };
 
     const isTitleEnabled = () => {
         const isTitleEnabled = (obj: any) => {
@@ -47,10 +46,12 @@ export function createAgChartTheme(
     // Overrides in ascending precedence ordering.
     const overrides: (AgChartThemeOverrides | undefined)[] = [
         stockTheme ? inbuiltStockThemeOverrides(chartProxyParams, isEnterprise, isTitleEnabled()) : undefined,
+        chartThemeDefaults,
         crossFilteringOverrides,
         gridOptionsThemeOverrides,
         apiThemeOverrides,
-        formattingPanelOverrides,
+        { ...(chartOptionsToRestore ?? {}) },
+        updatedOverrides
     ];
 
     // Recursively nest theme overrides so they are applied with correct precedence in
@@ -77,22 +78,6 @@ export function createAgChartTheme(
     }
 
     return theme;
-}
-
-export function applyThemeOverrides(
-    baseTheme: AgChartTheme,
-    overrides: Array<AgChartThemeOverrides | null | undefined>
-): AgChartTheme {
-    return overrides.reduce(
-        (baseTheme, overrides) => {
-            if (!overrides) return baseTheme;
-            return {
-                baseTheme: baseTheme as any,
-                overrides,
-            };
-        },
-        baseTheme,
-    );
 }
 
 function isIdenticalPalette(paletteA: AgChartThemePalette, paletteB: AgChartThemePalette) {
