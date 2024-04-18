@@ -6,7 +6,6 @@ import {
     ColumnPanelItemDragStartEvent,
     DragSourceType,
     Events,
-    GridOptionsService,
     ProvidedColumnGroup,
     PostConstruct,
     VirtualList,
@@ -20,7 +19,6 @@ import { ToolPanelColumnComp } from "./toolPanelColumnComp";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('gridOptionsService') protected readonly gos: GridOptionsService;
 
     constructor(
         private readonly comp: PrimaryColsListPanel,
