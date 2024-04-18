@@ -114,7 +114,6 @@ const alphaPatternSvg =
     'data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgba(128, 128, 128, 0.3)"><path d="M8 0h8v8H8zM0 8h8v8H0z"/></svg>';
 
 const ColorSwatch = styled('div')`
-    pointer-events: none;
     border-radius: 5px;
     overflow: hidden;
     position: absolute;

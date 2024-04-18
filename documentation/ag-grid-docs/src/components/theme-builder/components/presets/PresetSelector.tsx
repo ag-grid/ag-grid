@@ -63,6 +63,23 @@ export const allPresets: Preset[] = [
         },
     },
     {
+        pageBackgroundColor: '#212124',
+        params: {
+            backgroundColor: '#252A33',
+            headerBackgroundColor: '#8AB4F9',
+            headerTextColor: '#252A33',
+            // headerBackgroundColor: '#807078',
+            foregroundColor: '#BDC2C7',
+            chromeBackgroundColor: ref('backgroundColor'),
+            fontFamily: 'google:Plus Jakarta Sans',
+            gridSize: '8px',
+            wrapperBorderRadius: '12px',
+            headerFontWeight: '600',
+            accentColor: '#8AB4F9',
+            rowVerticalPaddingScale: '0.6',
+        },
+    },
+    {
         pageBackgroundColor: '#ffffff',
         params: {
             backgroundColor: '#ffffff',

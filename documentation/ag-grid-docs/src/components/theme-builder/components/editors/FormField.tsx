@@ -51,7 +51,7 @@ const Label = styled('span')`
 
     &:hover {
         svg path {
-            fill: var(--color-black);
+            fill: var(--color-fg-primary);
             transition: all 0.3s;
         }
     }
