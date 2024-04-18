@@ -1,7 +1,9 @@
 import type { ParamTypes } from './GENERATED-param-types';
+import { getParamType } from './main';
 import { corePart } from './parts/core/core-part';
-import { InferParams, Part, borderValueToCss, getPartParams } from './theme-types';
+import { InferParams, Part, borderValueToCss, fontFamilyValueToCss, getPartParams } from './theme-types';
 import { camelCase, paramToVariableName } from './theme-utils';
+import { VERSION } from './version';
 
 export type Theme = {
     css: string;
@@ -11,6 +13,24 @@ export type Theme = {
 export type PickVariables<P extends Part, V extends object> = {
     [K in InferParams<P>]?: K extends keyof V ? V[K] : never;
 };
+
+export const installDocsUrl =
+    'https://www.ag-grid.com/javascript-data-grid/global-style-customisation-theme-builder-integration/';
+
+// TODO remove this when public theme builder API released
+export const gridVersionTieWarning = `we are working to remove this restriction, but themes exported from the Theme Builder are for the current grid version (${VERSION}) and will not be automatically updated with new features and bug fixes in later versions. If you upgrade your application's grid version and experience issues, return to the Theme Builder to download an updated version of your theme.`;
+
+const fileHeader = (parameters: any) => `/*
+ * This file is a theme downloaded from the AG Grid Theme Builder.
+ * 
+ * To use this file in your application, follow the instructions at ${installDocsUrl}
+ * 
+ * NOTE: ${gridVersionTieWarning}
+ * 
+ * The following parameters have been changed from their default values: ${JSON.stringify(Object.fromEntries(Object.entries(parameters).filter(([, value]) => value != null)), null, 2).replaceAll('\n', '\n * ')}
+ */
+
+`;
 
 export const defineTheme = <P extends Part, V extends object = ParamTypes>(
     partOrParts: P | P[],
@@ -58,8 +78,11 @@ export const defineTheme = <P extends Part, V extends object = ParamTypes>(
     let variableDefaults = ':where(:root, :host > *) {\n';
     for (const name of Object.keys(mergedParams)) {
         let value = mergedParams[name];
-        if (isBorderParam(name)) {
+        let type = getParamType(name);
+        if (type === 'border') {
             value = borderValueToCss(value);
+        } else if (type === 'fontFamily') {
+            value = fontFamilyValueToCss(value);
         }
         if (typeof value === 'string' && value) {
             variableDefaults += `\t${paramToVariableName(name)}: ${value};\n`;
@@ -76,7 +99,7 @@ export const defineTheme = <P extends Part, V extends object = ParamTypes>(
             mainCSS.push(...part.css.map((p) => (typeof p === 'function' ? p() : p)));
         }
     }
-    result.css = mainCSS.join('\n');
+    result.css = fileHeader(parameters) + mainCSS.join('\n');
 
     checkForUnsupportedVariables(result.css, Object.keys(mergedParams));
 

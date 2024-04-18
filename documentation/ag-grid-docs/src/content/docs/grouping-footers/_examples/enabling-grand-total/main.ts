@@ -23,18 +23,8 @@ const gridOptions: GridOptions = {
   },
   autoGroupColumnDef: {
     minWidth: 300,
-    cellRendererParams: {
-      totalValueGetter: (params: any) => {
-        const isRootLevel = params.node.level === -1
-        if (isRootLevel) {
-          return 'Grand Total'
-        }
-        return `Sub Total (${params.value})`
-      },
-    },
   },
-  groupIncludeFooter: true,
-  groupIncludeTotalFooter: true,
+  grandTotalRow: 'bottom',
   rowData: getData(),
 }
 

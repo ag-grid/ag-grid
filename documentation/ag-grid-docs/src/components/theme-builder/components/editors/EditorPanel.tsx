@@ -18,6 +18,7 @@ export const EditorPanel = () => {
                 <ParamEditor param="backgroundColor" />
                 <ParamEditor param="foregroundColor" />
                 <ParamEditor param="accentColor" />
+                <ParamEditor param="borderColor" />
                 <ParamEditor param="gridSize" label="Spacing" showDocs />
                 <EvenSplitRow>
                     <ParamEditor param="wrapperBorderRadius" label="Wrapper radius" showDocs />
@@ -28,6 +29,7 @@ export const EditorPanel = () => {
                 <ParamEditor param="wrapperBorder" label="Around grid" />
                 <ParamEditor param="rowBorder" label="Rows" />
                 <ParamEditor param="columnBorder" label="Columns" />
+                <ParamEditor param="sidePanelBorder" label="Side panel" />
             </Section>
             <Section heading="Header">
                 <ParamEditor param="headerBackgroundColor" label="Background color" />

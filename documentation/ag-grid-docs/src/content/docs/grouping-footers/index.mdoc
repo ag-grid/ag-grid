@@ -1,88 +1,81 @@
 ---
-title: "Row Grouping - Group Footers"
+title: "Total Rows"
 enterprise: true
 ---
 
-This section shows how to add group footers to show group level totals.
+This section shows how to include group and grand total rows in the grid.
 
-## Enabling Group Footers
+## Grand Total Row
 
-If you want to include a footer with each group, set the property `groupIncludeFooter` to true. It is also possible to
-include a 'grand' total footer for all groups using the property `groupIncludeTotalFooter`.
+To include a grand total row in the grid, set the property `grandTotalRow` to either 'top' or 'bottom', this determines
+whether the grand total row will be included as the first or last row in the grid.
+
+{% gridExampleRunner title="Enabling Grand Total Row" name="enabling-grand-total"  exampleHeight=503 /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    // adds subtotals
-    groupIncludeFooter: true,
-    // includes grand total
-    groupIncludeTotalFooter: true,
+    // adds subtotals to the bottom of each row group
+    grandTotalRow: 'bottom',
 }
 ```
 
-Note that these properties can be used together to produce totals across all group levels.
+## Group Total Rows
 
-The following example demonstrates these properties. Note the following:
+To include a total row in each group, set the property `groupTotalRow` to either 'top' or 'bottom', this determines
+whether the total row will be included as the first or last row in the group.
 
-* Expanding groups reveals subtotal footers as `groupIncludeFooter = true`.
-* A grand total footer is shown as the `groupIncludeTotalFooter = true`.
-* The medal totals are [aggregated](./aggregation/) via the `aggFunc: 'sum'` column property.
-
-{% gridExampleRunner title="Enabling Group Footers" name="enabling-group-footers"  exampleHeight=503 /%}
-
-## Dynamic Group Footers
-
-If you want a group footer to only be enabled for certain groups but not others, you can dynamically specify which groups to add footers for through passing a custom callback function to the property `groupIncludeFooter` instead of a boolean.
-
-For example, to enable group footers for the second level of groups and groups with name 'France':
+{% gridExampleRunner title="Enabling Group Total Row" name="enabling-group-total"  exampleHeight=503 /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-   // adds a group footer to the second level of groups and groups with name 'France'
-   groupIncludeFooter: (params) => {
+    // adds subtotals to the bottom of each row group
+    groupTotalRow: 'bottom',
+}
+```
+
+The following example demonstrates this property. Note the following:
+
+* Expanding groups reveals subtotal rows at the bottom of each group as `groupTotalRow = 'bottom'`.
+* The medal totals are [aggregated](./aggregation/) via the `aggFunc: 'sum'` column property.
+
+
+### Dynamically Display Group Total Rows
+
+To only display a group total row in some groups but not others, you can dynamically specify which groups to add the row
+to by providing a callback function to the property `groupTotalRow` instead of 'top' or 'bottom'.
+
+{% gridExampleRunner title="Customising Enabling Group Footers" name="customising-enabling-group-total-rows"  exampleHeight=588 /%}
+
+The example above demonstrates custom group footers. Note the following:
+
+* Group Total Row is shown for the second level of groups
+* Group Total Row is shown for the group called `France`
+* No Group Total Rows are shown for any other groups.
+
+The code for implementing this behaviour is shown below:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+   // adds a group total row at the bottom of the second level of groups, and groups with name 'France'
+   groupTotalRow: (params) => {
        const node = params.node;
-       if (node && node.level === 1) return true;
-       if (node && node.key === 'France') return true;
-       return false;
+       if (node && node.level === 1) return 'bottom';
+       if (node && node.key === 'France') return 'bottom';
+       return undefined;
    }
 }
 ```
 
-The following example demonstrates a custom group footer enablement. Note the following:
+## Customising Group Column Total Values
 
-* Group Footer is shown for the second level of groups
-* Group Footer is shown for the group called `France`
-* No Group Footers are shown for any other groups.
-
-{% gridExampleRunner title="Customising Enabling Group Footers" name="customising-enabling-group-footers"  exampleHeight=588 /%}
-
-### Example: Group Column Footers
-
-To enable group footer for a particular row group column, you could do the following:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    // adds a group footer to rows grouped by the country column
-    groupIncludeFooter: (params) => params.node.rowGroupColumn.getId() === 'country' 
-}
-```
-
-The following example demonstrates a custom group footer enablement for rows grouped by a country column. Note the following:
-
-* Group Footer is shown for rows grouped by the country column.
-* Group Footer are not shown for any other groups
-
-{% gridExampleRunner title="Customising Enabling Group Footers" name="customising-enabling-group-footers-row-grouped"  exampleHeight=488 /%}
-
-## Customising Footer Values
-
-By default, the footer will display the word 'Total' followed by the group key. However, this can be changed using the
-`footerValueGetter` supplied to the [Group Cell Renderer](./group-cell-renderer/) params as shown below:
+By default, the footer cell in the group column will display the word 'Total' followed by the group key. However, this can be changed using the
+`totalValueGetter` supplied to the [Group Cell Renderer](./group-cell-renderer/) params as shown below:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     autoGroupColumnDef: { 
         cellRendererParams: {
-            footerValueGetter: params =>  {
+            totalValueGetter: params =>  {
                 const isRootLevel = params.node.level === -1;
                 if (isRootLevel) {
                     return 'Grand Total';
@@ -94,14 +87,14 @@ const gridOptions = {
 }
 ```
 
-Note in the snippet above that the `footerValueGetter` contains special handling to display Subtotals and Grand Totals
+Note in the snippet above that the `totalValueGetter` contains special handling to display Subtotals and Grand Totals
 differently. This is demonstrated in the example below.
 
 {% gridExampleRunner title="Customising Footer Values" name="customising-footer-values"  exampleHeight=503 /%}
 
-## Customising Footer Cells
+## Customising Group Total Cells
 
-In most cases [Customising Footer Values](./grouping-footers/#customising-footer-values) is sufficient, however it is
+In most cases [Customising Group Column Values](./grouping-footers/#customising-group-column-total-values) is sufficient, however it is
 also possible to customise the footer cell using the `innerCellRenderer` supplied to the
 [Group Cell Renderer](./group-cell-renderer/) params as shown below:
 
@@ -114,7 +107,7 @@ non-footer cells differently.
 It is also possible to customise footer cells using: `cellRendererParams.innerRendererSelector`. For more details see the [Group Cell Renderer](./group-cell-renderer/) section.
 {% /note %}
 
-## Group Footer Limitations
+## Total Row Limitations
 
 Group footers are a UI concept only in the grid. It is the grids way of showing aggregated data (which belongs to the group) appearing after the group's children. Because the footer is a UI concept only, the following should be noted:
 
@@ -124,4 +117,4 @@ Group footers are a UI concept only in the grid. It is the grids way of showing 
 
 ## Next Up
 
-Continue to the next section to learn about [Opening Groups](./grouping-opening-groups/).
+Continue to the next section to learn about [Tree Data](./tree-data/).

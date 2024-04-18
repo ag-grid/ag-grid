@@ -12,6 +12,7 @@ import { last } from "./utils/array";
 import { KeyCode } from './constants/keyCode';
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { RowRenderer } from "./rendering/rowRenderer";
+import { RowCtrl } from "./rendering/row/rowCtrl";
 
 @Bean('cellNavigationService')
 export class CellNavigationService extends BeanStub {
@@ -196,9 +197,18 @@ export class CellNavigationService extends BeanStub {
     private getNextStickyPosition(rowNode?: RowNode, up?: boolean): RowPosition | undefined {
         if (!this.gos.isGroupRowsSticky() || !rowNode || !rowNode.sticky) { return; }
 
-        const stickyRowCtrls = [...this.rowRenderer.getStickyTopRowCtrls()].sort(
-            (a, b) => a.getRowNode().rowIndex! - b.getRowNode().rowIndex!
-        );
+        const isTopCtrls = this.rowRenderer.getStickyTopRowCtrls().some(ctrl => ctrl.getRowNode().rowIndex === rowNode.rowIndex);
+
+        let stickyRowCtrls: RowCtrl[] = [];
+        if (isTopCtrls) {
+            stickyRowCtrls = [...this.rowRenderer.getStickyTopRowCtrls()].sort(
+                (a, b) => a.getRowNode().rowIndex! - b.getRowNode().rowIndex!
+            );
+        } else {
+            stickyRowCtrls = [...this.rowRenderer.getStickyBottomRowCtrls()].sort(
+                (a, b) => b.getRowNode().rowIndex! - a.getRowNode().rowIndex!
+            );
+        }
 
         const diff = up ? -1 : 1;
         const idx = stickyRowCtrls.findIndex(ctrl => ctrl.getRowNode().rowIndex === rowNode.rowIndex);

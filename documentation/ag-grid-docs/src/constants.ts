@@ -55,8 +55,6 @@ export const PUBLISHED_UMD_URLS = {
     'ag-grid-enterprise': `${NPM_CDN}/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise@${agGridVersion}/dist/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise.js`,
 };
 
-export const DOCS_TAB_ITEM_ID_PREFIX = 'reference-';
-
 export const getEnterprisePackageName = () =>
     `ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise`;
 

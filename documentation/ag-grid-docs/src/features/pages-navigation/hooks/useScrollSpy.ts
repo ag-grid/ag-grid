@@ -1,4 +1,4 @@
-import { useLocation } from '@utils/navigation';
+import { useLocation } from '@ag-website-shared/utils/navigation';
 import { scrollspy } from '@utils/scrollspy';
 import type { MarkdownHeading } from 'astro';
 import { useEffect, useRef } from 'react';

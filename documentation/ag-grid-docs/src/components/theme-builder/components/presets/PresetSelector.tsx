@@ -3,6 +3,8 @@ import {
     type PartId,
     borderValueToCss,
     corePart,
+    fontFamilyValueToCss,
+    getParamType,
     opaqueForeground,
     ref,
 } from '@ag-grid-community/theming';
@@ -20,6 +22,8 @@ type Preset = {
     params?: Partial<Record<CoreParam, string>>;
     parts?: Partial<Record<PartId, string>>;
 };
+
+const googleFontsToLoad = ['Press Start 2P', 'Jacquard 24'];
 
 export const allPresets: Preset[] = [
     {
@@ -39,7 +43,7 @@ export const allPresets: Preset[] = [
             backgroundColor: 'rgb(241, 237, 225)',
             foregroundColor: 'rgb(46, 55, 66)',
             chromeBackgroundColor: ref('backgroundColor'),
-            fontFamily: 'monospace',
+            fontFamily: 'Press Start 2P',
             gridSize: '4px',
         },
     },
@@ -52,7 +56,7 @@ export const allPresets: Preset[] = [
             // headerBackgroundColor: '#807078',
             foregroundColor: 'rgb(46, 55, 66)',
             chromeBackgroundColor: ref('backgroundColor'),
-            fontFamily: 'Arial',
+            fontFamily: 'Jacquard 24',
             gridSize: '8px',
             wrapperBorderRadius: '0px',
             headerFontWeight: '600',
@@ -76,6 +80,7 @@ export const allPresets: Preset[] = [
 
 export const PresetSelector = memo(() => (
     <Scroller>
+        <TmpLoadGoogleFonts />
         <Horizontal>
             {allPresets.map((preset, i) => (
                 <SelectButton key={i} preset={preset} />
@@ -94,11 +99,16 @@ const SelectButton = ({ preset }: SelectButtonProps) => {
     useEffect(() => {
         const wrapper = wrapperRef.current;
         if (wrapper) {
-            for (const [key, value] of Object.entries(corePart.defaults)) {
-                wrapper.style.setProperty(paramToVariableName(key), borderValueToCss(value));
-            }
-            for (const [key, value] of Object.entries(preset.params || {})) {
-                wrapper.style.setProperty(paramToVariableName(key), value);
+            const params = { ...corePart.defaults, ...preset.params };
+            for (const [key, value] of Object.entries(params)) {
+                let type = getParamType(key);
+                let rendered: string;
+                if (type === 'fontFamily') {
+                    rendered = fontFamilyValueToCss(value as any);
+                } else {
+                    rendered = borderValueToCss(value);
+                }
+                wrapper.style.setProperty(paramToVariableName(key), rendered);
             }
             wrapper.style.setProperty('--page-background-color', preset.pageBackgroundColor);
         }
@@ -139,6 +149,18 @@ const SelectButton = ({ preset }: SelectButtonProps) => {
         </SelectButtonWrapper>
     );
 };
+
+export const TmpLoadGoogleFonts = () => (
+    <>
+        {googleFontsToLoad.map((font) => (
+            <link
+                key={font}
+                href={`https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}&display=swap`}
+                rel="stylesheet"
+            />
+        ))}
+    </>
+);
 
 const SelectButtonWrapper = styled('div')`
     display: inline-block;

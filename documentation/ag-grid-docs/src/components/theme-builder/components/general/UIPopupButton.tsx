@@ -84,4 +84,5 @@ const DropdownArea = styled(Card)`
     pointer-events: all;
     max-height: calc(100vh - 16px);
     margin-left: 8px;
+    padding: 12px;
 `;
