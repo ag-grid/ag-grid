@@ -1,4 +1,5 @@
 import { kbd } from '@ag-website-shared/markdoc/tags/kbd';
+import { oneTrustCookies } from '@ag-website-shared/markdoc/tags/oneTrustCookies';
 import { tabItem, tabs } from '@ag-website-shared/markdoc/tags/tabs';
 import { videoSection } from '@ag-website-shared/markdoc/tags/videoSection';
 import { Markdoc, component, defineMarkdocConfig, nodes } from '@astrojs/markdoc/config';
@@ -51,13 +52,14 @@ export default defineMarkdocConfig({
     },
     tags: {
         kbd,
+        link,
+        oneTrustCookies,
         tabs,
         tabItem,
         videoSection,
         br: {
             render: 'br',
         },
-        link,
         enterpriseIcon: {
             render: component('../../external/ag-website-shared/src/components/icon/EnterpriseIcon', 'EnterpriseIcon'),
         },
