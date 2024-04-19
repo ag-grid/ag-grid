@@ -1081,20 +1081,24 @@ export class GridApi<TData = any> {
      * Gets the cell value for the given column and `rowNode` (row).
      * Based on params.useFormatter with either return the value as specified by the `field` or `valueGetter` on the column definition or the formatted value.
      */
-    public getCellValue<TValue = any>(params: {rowNode: IRowNode; colKey: string | Column<TValue>; useFormatter: true} ): string | null | undefined;
+    public getCellValue<TValue = any>(params: { rowNode: IRowNode; colKey: string | Column<TValue>; useFormatter: true } ): string | null | undefined;
     public getCellValue<TValue = any>(params: GetCellValueParams<TValue>): TValue | null | undefined;
     public getCellValue<TValue = any>(params: GetCellValueParams<TValue>) {
-        const {colKey, rowNode, useFormatter} = params;
+        const { colKey, rowNode, useFormatter } = params;
+
         let column = this.columnModel.getPrimaryColumn(colKey) ?? this.columnModel.getGridColumn(colKey);
         if (missing(column)) {
             return null;
         }
+
         const value = this.valueService.getValue(column, rowNode);
-        if(useFormatter){
+
+        if (useFormatter) {
             const formattedValue = this.valueService.formatValue(column, rowNode, value);
             // Match the logic in the default cell renderer insertValueWithoutCellRenderer if no formatter is used
             return formattedValue ?? escapeString(value, true);
         }
+
         return value;
     }
 
