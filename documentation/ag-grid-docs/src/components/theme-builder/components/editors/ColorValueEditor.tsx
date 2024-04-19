@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { autoUpdate, useFloating } from '@floating-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { HexAlphaColorPicker, HexColorPicker } from 'react-colorful';
 
 import { useClickAwayListener } from '../component-utils';
@@ -17,6 +17,7 @@ export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps) =
     const hexValue = RGBAColor.reinterpretCss(value)?.toCSSHex();
     const [editorValue, setEditorValue] = useState(hexValue || value);
     const [valid, setValid] = useState(() => colorIsValid(editorValue));
+    const wrapperRef = useRef<HTMLDivElement>(null);
 
     const [showPicker, setShowPicker] = useState(false);
     const { refs, floatingStyles, elements } = useFloating({
@@ -26,7 +27,7 @@ export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps) =
         placement: 'bottom-start',
     });
 
-    useClickAwayListener(() => setShowPicker(false), [elements.domReference, elements.floating]);
+    useClickAwayListener(() => setShowPicker(false), [elements.domReference, elements.floating, wrapperRef.current]);
 
     useEffect(() => {
         if (!showPicker) {
@@ -65,7 +66,7 @@ export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps) =
 
     return (
         <>
-            <Wrapper>
+            <Wrapper ref={wrapperRef}>
                 <StyledInput
                     ref={refs.setReference}
                     className={valid ? undefined : 'is-error'}
@@ -85,7 +86,7 @@ export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps) =
                         }
                     }}
                 />
-                <ColorSwatch onClick={() => setShowPicker(true)}>
+                <ColorSwatch onClick={() => setShowPicker(!showPicker)}>
                     <ColorSwatchColor style={{ backgroundColor: value }} />
                 </ColorSwatch>
             </Wrapper>

@@ -27,50 +27,82 @@ export type ParamDefaults<T extends string> = {
 // type Ref = { ref: Param }; type BrandedType<B extends string, T = any> = {__type?: B } & T;
 
 // TODO use valueToCss(param, value) that both validates and converts values in one step
+export type ParamType =
+    | 'color'
+    | 'length'
+    | 'scale'
+    | 'border'
+    | 'borderStyle'
+    | 'shadow'
+    | 'image'
+    | 'fontFamily'
+    | 'fontWeight'
+    | 'display'
+    | 'duration';
+
+export const getParamType = (param: string): ParamType => {
+    if (/Color$/.test(param)) return 'color';
+    if (/Scale?$/.test(param)) return 'scale';
+    if (/(Padding|Spacing|Size|Width|Height|Radius|Indent)(Start|End|Top|Bottom|Horizontal|Vertical)?$/.test(param))
+        return 'length';
+    if (/Border$/.test(param)) return 'border';
+    if (/BorderStyle$/.test(param)) return 'borderStyle';
+    if (/Shadow$/.test(param)) return 'shadow';
+    if (/Image$/.test(param)) return 'image';
+    if (/[fF]ontFamily$/.test(param)) return 'fontFamily';
+    if (/[fF]ontWeight$/.test(param)) return 'fontWeight';
+    if (/Duration$/.test(param)) return 'duration';
+    if (/Display$/.test(param)) return 'display';
+    throw new Error(`Param "${param}" does not have a recognised suffix.`);
+};
+
+const stringDirectToCss = (value: unknown): string | Error => {
+    if (typeof value === 'string') return value;
+    return Error(`Expected a string`);
+};
+
+const stringOrNumberDirectToCss = (value: unknown): string | Error => {
+    if (typeof value === 'string' || (typeof value === 'number' && !isNaN(value))) return String(value);
+    return Error(`Expected a string or number`);
+};
 
 export type ColorValue = string;
 
-export const colorValueToCss = (value: ColorValue) => String(value);
+export type LengthValue = string | number;
 
-export const isColorValue = (value: unknown): value is ColorValue => typeof value === 'string';
-
-export type LengthValue = string; // TODO allow number and treat as px
-
-export const lengthValueToCss = (value: LengthValue) => String(value);
-
-export const isLengthValue = (value: unknown): value is LengthValue => typeof value === 'string';
-
-export type BorderValue = string | boolean; // TODO allow boolean and treat as treat as "1px solid var(--ag-border-color)" / "none"
-
-export const borderValueToCss = (value: BorderValue) => {
-    if (value === true) return 'solid 1px var(--ag-border-color)';
-    if (value === false) return 'none';
-    return String(value);
+const lengthValueToCss = (value: unknown): string | Error => {
+    if (typeof value === 'string') return value;
+    if (typeof value === 'number' && !isNaN(value)) return `${value}px`;
+    return Error(`Expected a string or number`);
 };
 
-export const isBorderValue = (value: unknown): value is BorderValue => typeof value === 'string';
+export type ScaleValue = string; // TODO allow number and treat as px
+
+export type BorderValue = string | boolean;
+
+const borderValueToCss = (value: BorderValue) => {
+    if (value === true) return 'solid 1px var(--ag-border-color)';
+    if (value === false) return 'false';
+    if (typeof value === 'string') return value;
+    return Error(`Expected a string or boolean`);
+};
 
 export type ShadowValue = string; // TODO object shorthand for common shadows? Or maybe just allow var(accentColor) in value
 
-export const shadowValueToCss = (value: ShadowValue) => String(value);
-
-export const isShadowValue = (value: unknown): value is ShadowValue => typeof value === 'string';
-
 export type BorderStyleValue = string;
 
-export const borderStyleValueToCss = (value: BorderStyleValue) => String(value);
+export type DisplayValue = string | boolean;
 
-export const isBorderStyleValue = (value: unknown): value is BorderStyleValue => typeof value === 'string';
+const displayValueToCss = (value: DisplayValue) => {
+    if (value === true) return 'block';
+    if (value === false) return 'none';
+    if (typeof value === 'string') return value;
+    return Error(`Expected a string or boolean`);
+};
 
-export type DisplayValue = string; // TODO allow boolean and treat as block/none
+export type FontFamilyValue = string | string[];
 
-export const displayValueToCss = (value: DisplayValue) => String(value);
-
-export const isDisplayValue = (value: unknown): value is DisplayValue => typeof value === 'string';
-
-export type FontFamilyValue = string; // TODO add `| string[]`, will need to update uses borderValueToCss to use a more generic valueToCss(paramName, value)
-
-export const fontFamilyValueToCss = (value: FontFamilyValue): string => {
+const fontFamilyValueToCss = (value: FontFamilyValue): string => {
     if (Array.isArray(value)) return value.map(fontFamilyValueToCss).join(', ');
     // quote values with spaces that are not already quoted and do not include function expressions
     value = value.replace(/^google:/i, '');
@@ -78,23 +110,27 @@ export const fontFamilyValueToCss = (value: FontFamilyValue): string => {
     return value;
 };
 
-export const isFontFamilyValue = (value: unknown): value is FontFamilyValue =>
-    typeof value === 'string' || (Array.isArray(value) && value.every((v) => typeof v === 'string'));
-
-export type FontWeightValue = string; // TODO allow number and treat as unitless
-
-export const fontWeightValueToCss = (value: FontWeightValue) => String(value);
-
-export const isFontWeightValue = (value: unknown): value is FontWeightValue => typeof value === 'string';
+export type FontWeightValue = string | number;
 
 export type ImageValue = string;
 
-export const imageValueToCss = (value: ImageValue) => String(value);
-
-export const isImageValue = (value: unknown): value is ImageValue => typeof value === 'string';
-
 export type DurationValue = string;
 
-export const durationValueToCss = (value: DurationValue) => String(value);
+const paramValidators: Record<ParamType, (value: unknown) => string | Error> = {
+    color: stringDirectToCss,
+    length: lengthValueToCss,
+    scale: stringOrNumberDirectToCss,
+    border: borderValueToCss,
+    borderStyle: stringDirectToCss,
+    shadow: stringDirectToCss,
+    image: stringDirectToCss,
+    fontFamily: fontFamilyValueToCss,
+    fontWeight: stringOrNumberDirectToCss,
+    display: displayValueToCss,
+    duration: stringDirectToCss,
+};
 
-export const isDurationValue = (value: unknown): value is DurationValue => typeof value === 'string';
+export const paramValueToCss = (param: string, value: unknown): string | Error => {
+    const type = getParamType(param);
+    return paramValidators[type](value);
+};

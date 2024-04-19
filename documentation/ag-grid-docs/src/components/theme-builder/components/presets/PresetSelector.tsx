@@ -1,11 +1,9 @@
 import {
     type CoreParam,
     type PartId,
-    borderValueToCss,
     corePart,
-    fontFamilyValueToCss,
-    getParamType,
     opaqueForeground,
+    paramValueToCss,
     ref,
 } from '@ag-grid-community/theming';
 import { allPartModels } from '@components/theme-builder/model/PartModel';
@@ -135,14 +133,10 @@ const SelectButton = ({ preset }: SelectButtonProps) => {
         if (wrapper) {
             const params = { ...corePart.defaults, ...preset.params };
             for (const [key, value] of Object.entries(params)) {
-                let type = getParamType(key);
-                let rendered: string;
-                if (type === 'fontFamily') {
-                    rendered = fontFamilyValueToCss(value as any);
-                } else {
-                    rendered = borderValueToCss(value);
+                let rendered = paramValueToCss(key, value);
+                if (typeof rendered === 'string') {
+                    wrapper.style.setProperty(paramToVariableName(key), rendered);
                 }
-                wrapper.style.setProperty(paramToVariableName(key), rendered);
             }
             wrapper.style.setProperty('--page-background-color', preset.pageBackgroundColor);
         }

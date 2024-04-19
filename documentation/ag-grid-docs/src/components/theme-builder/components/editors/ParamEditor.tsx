@@ -24,8 +24,8 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
     const theme = useRenderedTheme();
     let editorValue = value;
     if (editorValue == null) {
-        if (param.property in theme.paramDefaults) {
-            editorValue = theme.paramDefaults[param.property];
+        if (param.property in theme.paramCSSValues) {
+            editorValue = theme.paramCSSValues[param.property];
         } else {
             throw new Error(`Param "${param.property}" does not exist.`);
         }
@@ -43,6 +43,7 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
 const valueEditors: Record<ParamType, FC<ValueEditorProps>> = {
     color: ColorValueEditor,
     length: LengthValueEditor,
+    scale: LengthValueEditor,
     // border: BorderValueEditor,
     border: CssValueEditor,
     // borderStyle: BorderStyleValueEditor,

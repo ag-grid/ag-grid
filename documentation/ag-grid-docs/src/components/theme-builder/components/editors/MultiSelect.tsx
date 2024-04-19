@@ -141,7 +141,7 @@ const StyledSelectItem = styled(RadixSelect.Item)`
     position: relative;
     user-select: none;
     cursor: pointer;
-    justify-content: space-between;
+    justity-content: space-between;
 
     &[data-disabled] {
         color: var(--mauve-8);
