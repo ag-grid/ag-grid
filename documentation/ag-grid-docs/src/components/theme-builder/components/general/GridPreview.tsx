@@ -19,8 +19,8 @@ import root from 'react-shadow';
 
 import { useSetPreviewGridApi, useSetPreviewGridContainer } from '../../model/rendered-theme';
 import { useGridOptions } from '../grid-config/grid-config-atom';
-import { allPresets } from '../presets/PresetSelector';
 import { useSetGridDom } from '../presets/grid-dom';
+import { allPresets } from '../presets/presets';
 import { withErrorBoundary } from './ErrorBoundary';
 
 ModuleRegistry.registerModules([
