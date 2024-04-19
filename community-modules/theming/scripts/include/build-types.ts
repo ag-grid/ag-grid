@@ -1,12 +1,11 @@
 import { join } from 'path';
-import type { ParamType } from '../../src/metadata/docs';
-import type { Part } from '../../src/theme-types';
+import { type Part, type ParamType, getParamType } from '../../src/theme-types';
 import { DEV_MODE, fatalError, getProjectDir, writeTsFile } from './utils';
 
 export const generateDocsFile = async () => {
     const mainExports = await import('../../src/main');
     const { allParts } = await import('../../src/parts/parts');
-    const { getParamDocs, getParamDocsKeys, getParamType } = await import('../../src/metadata/docs');
+    const { getParamDocs, getParamDocsKeys } = await import('../../src/metadata/docs');
     const { getPartParams } = await import('../../src/theme-types');
 
     const exportedParts = new Set<Part>();
@@ -105,6 +104,9 @@ const paramExtraDocs: Record<ParamType, string[]> = {
         'A CSS dimension value with length units, e.g. "1px" or "2em". A JavaScript number will be interpreted as a length in pixel units, e.g.',
         '- `4` -> "4px"',
         // TODO add {ref: 'paramName'} when implemented as well as length extensions
+    ],
+    scale: [
+        'A number without units to multiply the original value by.'
     ],
     duration: ['A CSS time value with second or millisecond units e.g. `"0.3s"` or `"300ms"`.'],
     shadow: [

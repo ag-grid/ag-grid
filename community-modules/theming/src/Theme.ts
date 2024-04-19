@@ -1,13 +1,14 @@
 import type { ParamTypes } from './GENERATED-param-types';
 import { getParamType } from './main';
 import { corePart } from './parts/core/core-part';
-import { InferParams, Part, borderValueToCss, fontFamilyValueToCss, getPartParams } from './theme-types';
+import { InferParams, Part, paramValueToCss, getPartParams } from './theme-types';
 import { camelCase, paramToVariableName } from './theme-utils';
 import { VERSION } from './version';
 
 export type Theme = {
     css: string;
-    paramDefaults: Record<string, string>;
+    paramJSValues: Record<string, unknown>;
+    paramCSSValues: Record<string, string>;
 };
 
 export type PickVariables<P extends Part, V extends object> = {
@@ -37,7 +38,6 @@ export const defineTheme = <P extends Part, V extends object = ParamTypes>(
     parameters: PickVariables<P, V>
 ): Theme => {
     let css = fileHeader(parameters);
-    const paramDefaults: Record<string, string> = {};
 
     const googleFonts = new Set<string>();
 
@@ -52,7 +52,8 @@ export const defineTheme = <P extends Part, V extends object = ParamTypes>(
     const parts = Object.values(removeDuplicates);
 
     const overrideParams = parameters as Record<string, any>;
-    const mergedParams: Record<string, any> = {};
+    const mergedParams: Record<string, unknown> = {};
+    const renderedParams: Record<string, string> = {};
 
     // merge part defaults
     for (const part of parts) {
@@ -65,11 +66,29 @@ export const defineTheme = <P extends Part, V extends object = ParamTypes>(
     for (const [name, value] of Object.entries(overrideParams)) {
         if (value == null) continue;
         if (allowedParams.has(name)) {
-            if (validateParam(name, value, allowedParams)) {
-                mergedParams[name] = value;
-            }
+            mergedParams[name] = value;
         } else {
-            logErrorMessageOnce(`Invalid theme parameter ${name} provided. ${invalidParamMessage}`);
+            logErrorMessageOnce(
+                `Invalid theme parameter ${name} provided. It may be misspelled, or defined by a theme part that you aren't currently using.`
+            );
+        }
+    }
+
+    // find Google fonts
+    for (const [name, value] of Object.entries(mergedParams)) {
+        const convertFontValue = (value: unknown) => {
+            if (typeof value !== 'string') return;
+            const googlePrefix = 'google:';
+            if (value.startsWith(googlePrefix)) {
+                googleFonts.add(value);
+            }
+        };
+        if (getParamType(name) === 'fontFamily') {
+            if (Array.isArray(value)) {
+                value.forEach(convertFontValue);
+            } else {
+                convertFontValue(value);
+            }
         }
     }
 
@@ -77,21 +96,13 @@ export const defineTheme = <P extends Part, V extends object = ParamTypes>(
     // `html { --ag-foreground-color: red; }` will override this
     let variableDefaults = ':where(:root, :host > *) {\n';
     for (const name of Object.keys(mergedParams)) {
-        let value = mergedParams[name];
-        let type = getParamType(name);
-        if (type === 'border') {
-            value = borderValueToCss(value);
-        } else if (type === 'fontFamily') {
-            const googlePrefix = 'google:';
-            if (value.startsWith(googlePrefix)) {
-                value = value.slice(googlePrefix.length);
-                googleFonts.add(value);
-            }
-            value = fontFamilyValueToCss(value);
-        }
-        if (typeof value === 'string' && value) {
-            variableDefaults += `\t${paramToVariableName(name)}: ${value};\n`;
-            paramDefaults[name] = value;
+        const value = mergedParams[name];
+        const rendered = paramValueToCss(name, value);
+        if (rendered instanceof Error) {
+            logErrorMessageOnce(`Invalid value for ${name} - ${describeValue(value)} - ${rendered.message}`);
+        } else if (rendered) {
+            variableDefaults += `\t${paramToVariableName(name)}: ${rendered};\n`;
+            renderedParams[name] = rendered;
         }
     }
     variableDefaults += '}\n';
@@ -109,14 +120,18 @@ export const defineTheme = <P extends Part, V extends object = ParamTypes>(
     // combine CSS
     for (const part of parts) {
         if (part.css) {
-            css += (`/* Part ${part.partId}/${part.variantId} */`);
+            css += `/* Part ${part.partId}/${part.variantId} */`;
             css += part.css.map((p) => (typeof p === 'function' ? p() : p)).join('\n') + '\n';
         }
     }
 
     checkForUnsupportedVariables(css, Object.keys(mergedParams));
 
-    return {css, paramDefaults};
+    return {
+        css,
+        paramCSSValues: renderedParams,
+        paramJSValues: mergedParams,
+    };
 };
 
 export const checkForUnsupportedVariables = (css: string, params: string[]) => {
@@ -129,30 +144,6 @@ export const checkForUnsupportedVariables = (css: string, params: string[]) => {
         }
     }
 };
-
-const isBorderParam = (property: string) => property.startsWith('borders') || property.endsWith('Border');
-
-const validateParam = (property: string, value: unknown, allowedParams: Set<string>): boolean => {
-    const actualType = typeof value;
-    if (isBorderParam(property) && actualType === 'boolean') return true;
-    if (actualType !== 'string') {
-        logErrorMessageOnce(`Invalid value for ${property} (expected a string, got ${describeValue(value)})`);
-        return false;
-    }
-    if (typeof value === 'string') {
-        for (const varMatch of value.matchAll(/var\(--ag-([a-z-]+)[^)]*\)/g)) {
-            const paramName = camelCase(varMatch[1]);
-            if (!allowedParams.has(paramName)) {
-                logErrorMessageOnce(
-                    `Invalid value provided to theme parameter ${property}. Expression "${varMatch[0]}" refers to non-existent parameter ${paramName}. ${invalidParamMessage}`
-                );
-            }
-        }
-    }
-    return true;
-};
-
-const invalidParamMessage = "It may be misspelled, or defined by a theme part that you aren't currently using";
 
 const describeValue = (value: any): string => {
     if (value == null) return String(value);

@@ -1,17 +1,7 @@
 import styled from '@emotion/styled';
-import {
-    FloatingArrow,
-    FloatingPortal,
-    arrow,
-    flip,
-    offset,
-    shift,
-    useFloating,
-    useHover,
-    useInteractions,
-} from '@floating-ui/react';
-import { cloneElement, useRef, useState } from 'react';
+import { FloatingPortal, arrow, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react';
 import type { ReactElement, ReactNode } from 'react';
+import { cloneElement, useRef, useState } from 'react';
 
 export type TooltipProps = {
     title: ReactNode | null;
@@ -32,7 +22,6 @@ const TooltipImpl = ({ title, children }: TooltipProps) => {
             offset(8),
             shift({ padding: 8 }),
             flip({ crossAxis: true, mainAxis: true }),
-            // autoPlacement({}),
             arrow({
                 element: arrowRef,
             }),

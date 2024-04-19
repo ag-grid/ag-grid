@@ -13,6 +13,7 @@ const gridPreviewHTML = atom((get) => {
     const clone = liveGrid.cloneNode(true) as HTMLDivElement;
     // remove elements that don't look good in previews
     deleteAll(clone, '.ag-advanced-filter-header');
+    deleteAll(clone, '.ag-header-row-column-filter');
     deleteAll(clone, '.ag-header-row:not(:last-of-type)'); // leave last header row, column grouping doesn't look good
 
     // trim down the DOM, removing invisible items for performance
@@ -21,7 +22,7 @@ const gridPreviewHTML = atom((get) => {
     deleteAll(clone, '.ag-paging-panel');
     deleteAll(clone, '.ag-hidden');
     deleteAll(clone, '.ag-row:not(:nth-of-type(-n+7))'); // leave first 7 rows
-    deleteAll(clone, ':is(.ag-cell, .ag-header-cell):not(:nth-of-type(-n+2))'); // leave first 2 columns
+    deleteAll(clone, ':is(.ag-cell, .ag-header-cell):not(:nth-of-type(-n+3))'); // leave first 3 columns
 
     // remove the explicit heights set by grid code so that the preview grids
     // can respond to variables like --ag-row-height
@@ -52,6 +53,6 @@ const deleteAll = (parent: HTMLElement, selector: string) => {
 export const useGridPreviewHTML = () => {
     const previewHTML = useAtomValue(gridPreviewHTML);
     const lastNonEmptyValue = useRef(previewHTML);
-    lastNonEmptyValue.current ||= previewHTML;
+    lastNonEmptyValue.current = previewHTML || lastNonEmptyValue.current;
     return lastNonEmptyValue.current;
 };

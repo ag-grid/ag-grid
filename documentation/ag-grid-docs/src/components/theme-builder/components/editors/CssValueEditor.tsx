@@ -56,6 +56,7 @@ const cssStringIsValid = (value: string, type: ParamType): boolean => {
 const cssPropertyForParamType: Record<ParamType, keyof CSSStyleDeclaration> = {
     color: 'backgroundColor',
     length: 'paddingLeft',
+    scale: 'lineHeight',
     border: 'borderLeft',
     borderStyle: 'borderTopStyle',
     shadow: 'boxShadow',

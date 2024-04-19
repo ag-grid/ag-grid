@@ -418,10 +418,39 @@ const scatterSeriesThemeOverrides = {
     },
 };
 
+const hierarchicalSeriesThemeOverrides = {
+    series: {
+        tooltip: {
+            renderer: params => {
+                const findDatum = datum => datum.children ? findDatum(datum.children[0]) : datum;
+                const datum = findDatum(params.datum);
+                const sizeValue = params.sizeName + ': $' + formatThousands(datum[params.sizeKey]);
+                let colorValue = ''
+                if (params.colorKey) {
+                    colorValue = params.colorName + ': $' + formatThousands(datum[params.colorKey]);
+                }
+                return {
+                    content: sizeValue + '<br>' + colorValue,
+                };
+            },
+        },
+    },
+};
+
 const chartThemeOverrides = {
     common: {
         axes: {
             number: {
+                label: {
+                    formatter: axisLabelFormatter,
+                },
+            },
+            'angle-number': {
+                label: {
+                    formatter: axisLabelFormatter,
+                },
+            },
+            'radius-number': {
                 label: {
                     formatter: axisLabelFormatter,
                 },
@@ -454,6 +483,20 @@ const chartThemeOverrides = {
                     // Without a yKey, the value is a count of the population of the bin.
                     content: params.yKey ? formatThousands(Math.round(params.datum.total)) : params.datum.frequency,
                 }),
+            },
+        },
+    },
+    treemap: hierarchicalSeriesThemeOverrides,
+    sunburst: hierarchicalSeriesThemeOverrides,
+    heatmap: {
+        series: {
+            tooltip: {
+                renderer: ({ xKey, yKey, colorKey, yName, datum }) => {
+                    return {
+                        title: '',
+                        content: `<b>${yName}:</b> ${datum[yKey]}<br><b>${datum[xKey]}:</b> $${formatThousands(datum[colorKey])}`,
+                    };
+                },
             },
         },
     },

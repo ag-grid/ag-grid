@@ -11,7 +11,8 @@ import {
     PostConstruct,
     RefSelector,
     AgSelectParams,
-    AgToggleButtonParams
+    AgToggleButtonParams,
+    ChartMappings
 } from "@ag-grid-community/core";
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 import { ShadowPanel } from "./shadowPanel";
@@ -49,51 +50,51 @@ export class SeriesPanel extends Component {
     
     private chartMenuUtils: ChartMenuParamsFactory;
     private chartOptions: ChartOptionsProxy;
-    private seriesSelectOptions: Map<ChartSeriesType, ListOption>;
 
     private activePanels: Component[] = [];
     private seriesType: ChartSeriesType;
 
-    private widgetFuncs: {[name: string]: () => void}= {
-        'lineWidth': () => this.initStrokeWidth('lineWidth'),
-        'strokeWidth': () => this.initStrokeWidth('strokeWidth'),
-        'lineColor': () => this.initLineColor(),
-        'lineDash': () => this.initLineDash(),
-        'lineOpacity': () => this.initLineOpacity(),
-        'fillOpacity': () => this.initFillOpacity(),
-        'markers': () => this.initMarkers(),
-        'labels': () => this.initLabels(),
-        'shadow': () => this.initShadow(),
-        'tooltips': () => this.initTooltips(),
-        'bins': () => this.initBins(),
-        'whiskers': () => this.initWhiskers(),
-        'caps': () => this.initCaps(),
-        'connectorLine': () => this.initConnectorLine(),
-        'seriesItems': () => this.initSeriesItemsPanel(),
-        'tileSpacing': () => this.initTileSpacingPanel(),
-    };
+    private readonly widgetFuncs = {
+        lineWidth: () => this.initStrokeWidth('lineWidth'),
+        strokeWidth: () => this.initStrokeWidth('strokeWidth'),
+        lineColor: () => this.initLineColor(),
+        lineDash: () => this.initLineDash(),
+        lineOpacity: () => this.initLineOpacity(),
+        fillOpacity: () => this.initFillOpacity(),
+        markers: () => this.initMarkers(),
+        labels: () => this.initLabels(),
+        shadow: () => this.initShadow(),
+        tooltips: () => this.initTooltips(),
+        bins: () => this.initBins(),
+        whiskers: () => this.initWhiskers(),
+        caps: () => this.initCaps(),
+        connectorLine: () => this.initConnectorLine(),
+        seriesItems: () => this.initSeriesItemsPanel(),
+        tileSpacing: () => this.initTileSpacingPanel(),
+        groupType: () => this.initGroupType()
+    } as const;
 
-    private seriesWidgetMappings: { [K in ChartSeriesType]?: string[] } = {
-        'bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
-        'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
-        'donut': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
-        'line': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
-        'scatter': ['tooltips', 'markers', 'labels'],
-        'bubble': ['tooltips', 'markers', 'labels'],
-        'area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
-        'histogram': ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
-        'radial-column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
-        'radial-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+    private readonly seriesWidgetMappings: { [K in ChartSeriesType]?: (keyof typeof this.widgetFuncs)[] } = {
+        bar: ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        pie: ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        donut: ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        line: ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
+        scatter: ['tooltips', 'markers', 'labels'],
+        bubble: ['tooltips', 'markers', 'labels'],
+        area: ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
+        histogram: ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'radial-column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'groupType'],
+        'radial-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'groupType'],
         'radar-line': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
         'radar-area': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels'],
-        'nightingale': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+        nightingale: ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'groupType'],
         'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
         'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'range-area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
-        'treemap': ['tooltips', 'tileSpacing'],
-        'sunburst': ['tooltips'],
-        'heatmap': ['tooltips', 'labels', 'lineColor', 'lineWidth', 'lineOpacity'],
-        'waterfall': ['tooltips', 'connectorLine', 'seriesItems'],
+        treemap: ['tooltips', 'tileSpacing'],
+        sunburst: ['tooltips'],
+        heatmap: ['tooltips', 'labels', 'lineColor', 'lineWidth', 'lineOpacity'],
+        waterfall: ['tooltips', 'connectorLine', 'seriesItems'],
     }
 
     constructor({
@@ -353,38 +354,41 @@ export class SeriesPanel extends Component {
         this.addWidget(tileSpacingPanelComp);
     }
 
+    private initGroupType(): void {
+        const groupTypeSelect = this.createBean(new AgSelect({
+            label: this.chartTranslationService.translate('seriesGroupType'),
+            options: ChartMappings.SERIES_GROUP_TYPES.map(value => ({
+                value,
+                text: this.chartTranslationService.translate(`${value}SeriesGroupType`)
+            })),
+            value: this.chartController.getSeriesGroupType(),
+            onValueChange: value => this.chartController.setSeriesGroupType(value)
+        }));
+        this.addWidget(groupTypeSelect);
+    }
+
     private addWidget(widget: Component): void {
         this.seriesGroup.addItem(widget);
         this.activePanels.push(widget);
     }
 
     private getSeriesSelectOptions(): ListOption[] {
-        if (!this.seriesSelectOptions) {
-            // lazy init options as they are only required for combo charts
-            this.seriesSelectOptions = new Map<ChartSeriesType, ListOption>([
-                ['area', {value: 'area', text: this.translate('area')}],
-                ['bar', {value: 'bar', text: this.translate('column')}],
-                ['line', {value: 'line', text: this.translate('line')}],
-            ]);
-        }
-
-        const seriesSelectOptions = new Set<ListOption>();
-        this.chartController.getActiveSeriesChartTypes().forEach(s => {
-            const chartType = getSeriesType(s.chartType);
-            const option = this.seriesSelectOptions.get(chartType);
-            if (option) {
-                seriesSelectOptions.add(option);
-            }
-        });
-        return Array.from(seriesSelectOptions);
+        const activeSeriesTypes = this.getActiveSeriesTypes();
+        return (['area', 'bar', 'line'] as const)
+            .filter(seriesType => activeSeriesTypes.includes(seriesType))
+            .map(value => ({ value, text: this.translate(value) }));
     }
 
     private updateSeriesType() {
-        const activeChartTypes = this.chartController.getActiveSeriesChartTypes().map(s => getSeriesType(s.chartType));
-        const invalidSeriesType = !activeChartTypes.includes(this.seriesType);
-        if (invalidSeriesType && activeChartTypes.length > 0) {
-            this.seriesType = activeChartTypes[0]; // default to first active series type
+        const activeSeriesTypes = this.getActiveSeriesTypes();
+        const invalidSeriesType = !activeSeriesTypes.includes(this.seriesType);
+        if (invalidSeriesType && activeSeriesTypes.length > 0) {
+            this.seriesType = activeSeriesTypes[0]; // default to first active series type
         }
+    }
+
+    private getActiveSeriesTypes(): ChartSeriesType[] {
+        return this.chartController.getActiveSeriesChartTypes().map(s => getSeriesType(s.chartType));
     }
 
     private translate(key: ChartTranslationKey) {
