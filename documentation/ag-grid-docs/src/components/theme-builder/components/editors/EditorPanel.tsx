@@ -3,6 +3,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDown } from 'lucide-react';
 import { type ReactNode } from 'react';
 
+import { BordersEditor } from './BordersEditor';
 import { FormField } from './FormField';
 import { ParamEditor } from './ParamEditor';
 import { PartEditor } from './PartEditor';
@@ -19,17 +20,12 @@ export const EditorPanel = () => {
                 <ParamEditor param="foregroundColor" />
                 <ParamEditor param="accentColor" />
                 <ParamEditor param="borderColor" />
+                <BordersEditor />
                 <ParamEditor param="gridSize" label="Spacing" showDocs />
                 <EvenSplitRow>
                     <ParamEditor param="wrapperBorderRadius" label="Wrapper radius" showDocs />
                     <ParamEditor param="borderRadius" label="Widget radius" showDocs />
                 </EvenSplitRow>
-            </Section>
-            <Section heading="Borders (temporary)">
-                <ParamEditor param="wrapperBorder" label="Around grid" />
-                <ParamEditor param="rowBorder" label="Rows" />
-                <ParamEditor param="columnBorder" label="Columns" />
-                <ParamEditor param="sidePanelBorder" label="Side panel" />
             </Section>
             <Section heading="Header">
                 <ParamEditor param="headerBackgroundColor" label="Background color" />
