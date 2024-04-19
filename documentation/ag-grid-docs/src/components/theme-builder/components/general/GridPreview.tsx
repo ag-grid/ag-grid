@@ -12,16 +12,18 @@ import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
-import { useApplicationConfig } from '@components/theme-builder/model/application-config';
+import { useApplicationConfigAtom } from '@components/theme-builder/model/application-config';
 import styled from '@emotion/styled';
 import { memo, useState } from 'react';
 import root from 'react-shadow';
 
 import { useSetPreviewGridApi, useSetPreviewGridContainer } from '../../model/rendered-theme';
+import { ColorEditor } from '../editors/ColorValueEditor';
 import { useGridOptions } from '../grid-config/grid-config-atom';
 import { useSetGridDom } from '../presets/grid-dom';
 import { allPresets } from '../presets/presets';
 import { withErrorBoundary } from './ErrorBoundary';
+import { InfoTooltip } from './Tooltip';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -50,10 +52,15 @@ const GridPreview = () => {
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
     const setGridDom = useSetGridDom();
 
-    const background = useApplicationConfig('previewPaneBackgroundColor') || allPresets[0].pageBackgroundColor;
+    const [backgroundValue, setBackground] = useApplicationConfigAtom('previewPaneBackgroundColor');
+    const backgroundColor = backgroundValue || allPresets[0].pageBackgroundColor;
 
     return (
-        <Wrapper style={{ backgroundColor: background }}>
+        <Wrapper style={{ backgroundColor }}>
+            <ColorPickerWrapper>
+                <ColorEditor value={backgroundColor} onChange={setBackground} preventTransparency />
+                <StyledInfoTooltip title="Page background color - this is not part of your theme" />
+            </ColorPickerWrapper>
             <GridSizer>
                 <root.div style={{ height: '100%' }}>
                     <div
@@ -113,7 +120,23 @@ const GridPreviewWrapped = memo(withErrorBoundary(GridPreview));
 
 export { GridPreviewWrapped as GridPreview };
 
+const ColorPickerWrapper = styled('div')`
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 130px;
+    display: flex;
+    justify-content: end;
+`;
+
+const StyledInfoTooltip = styled(InfoTooltip)`
+    position: absolute;
+    right: 6px;
+    top: 8px;
+`;
+
 const Wrapper = styled('div')`
+    position: relative;
     width: 100%;
     height: 100%;
     display: flex;

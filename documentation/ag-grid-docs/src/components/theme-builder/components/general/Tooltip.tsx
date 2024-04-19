@@ -1,5 +1,16 @@
+import { Information } from '@carbon/icons-react';
 import styled from '@emotion/styled';
-import { FloatingPortal, arrow, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react';
+import {
+    FloatingArrow,
+    FloatingPortal,
+    arrow,
+    flip,
+    offset,
+    shift,
+    useFloating,
+    useHover,
+    useInteractions,
+} from '@floating-ui/react';
 import type { ReactElement, ReactNode } from 'react';
 import { cloneElement, useRef, useState } from 'react';
 
@@ -38,7 +49,8 @@ const TooltipImpl = ({ title, children }: TooltipProps) => {
             {isOpen && (
                 <FloatingPortal>
                     <TooltipPopup ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
-                        <div className="tooltipChild">{title}</div>
+                        <FloatingArrow ref={arrowRef} context={context} fill="var(--color-gray-500)" />
+                        <StyledTooltip>{title}</StyledTooltip>
                     </TooltipPopup>
                 </FloatingPortal>
             )}
@@ -46,7 +58,9 @@ const TooltipImpl = ({ title, children }: TooltipProps) => {
     );
 };
 
-const TooltipPopup = styled('div')`
+const TooltipPopup = styled('div')``;
+
+const StyledTooltip = styled('div')`
     @keyframes scaleIn {
         from {
             opacity: 0;
@@ -58,18 +72,37 @@ const TooltipPopup = styled('div')`
         }
     }
 
-    .tooltipChild {
-        z-index: 10000;
-        max-width: 400px;
-        background: var(--color-bg-primary);
-        padding: 8px;
-        border-radius: 6px;
-        border: solid 1px var(--color-border-primary);
-        box-shadow: var(--shadow-md);
-        font-size: 14px;
-        color: var(--color-text-primary);
-        animation-name: scaleIn;
-        animation-duration: 0.3s;
-        animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-    }
+    z-index: 100000;
+    max-width: 400px;
+    background: var(--color-bg-primary);
+    padding: 8px;
+    border-radius: 6px;
+    border: solid 1px var(--color-border-primary);
+    box-shadow: var(--shadow-md);
+    font-size: 14px;
+    color: var(--color-text-primary);
+    animation-name: scaleIn;
+    animation-duration: 0.3s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+`;
+
+export type InfoTooltipProps = {
+    title: ReactNode | null;
+    className?: string;
+};
+
+export const InfoTooltip = ({ title, className }: InfoTooltipProps) => (
+    <Tooltip title={title}>
+        <StyledInformation className={className} />
+    </Tooltip>
+);
+
+const StyledInformation = styled(Information)`
+    margin-left: 4px;
+    margin-bottom: 2px;
+    width: 13px;
+    height: 13px;
+    box-sizing: content-box;
+    border: solid 1px transparent;
+    cursor: pointer;
 `;
