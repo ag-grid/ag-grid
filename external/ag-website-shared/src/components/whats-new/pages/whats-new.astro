@@ -3,17 +3,24 @@ import Layout from '@layouts/Layout.astro';
 import { PagesNavigationFromLocalStorage } from '@components/pages-navigation/components/PagesNavigationFromLocalStorage';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { Version, type VersionProps } from '../components/Version';
-import type { Framework, MenuSection, Library } from '@ag-grid-types';
+import type { Framework, MenuSection, Library, MenuData } from '@ag-grid-types';
 import styles from '../WhatsNew.module.scss';
 import whatsNewData from '@ag-website-shared/content/whats-new/data.json';
 
 interface Props {
     site: Library;
     versionsData: VersionProps[];
-    allMenuSections: MenuSection[];
+    /**
+     * Grid menu
+     */
+    allMenuSections?: MenuSection[];
+    /**
+     * Charts menu
+     */
+    menuData?: MenuData;
 }
 
-const { site, versionsData, allMenuSections } = Astro.props;
+const { site, versionsData, allMenuSections, menuData } = Astro.props;
 const pageName = Astro.params.pageName as Framework;
 
 const { name, blogPrefix } = whatsNewData[site];
@@ -21,7 +28,7 @@ const { name, blogPrefix } = whatsNewData[site];
 
 <Layout title={"What's new"} showDocsNav={true} showSearchBar={true}>
     <div class:list={['contentViewport layout-grid']}>
-        <PagesNavigationFromLocalStorage client:load allMenuSections={allMenuSections} pageName={pageName} />
+        <PagesNavigationFromLocalStorage client:load allMenuSections={allMenuSections} pageName={pageName} menuData={menuData} />
 
         <div class={styles.whatsNewContainer}>
             <h1>What's New in {name}</h1>
