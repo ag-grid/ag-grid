@@ -228,10 +228,7 @@ export class SetValueModel<V> implements IEventEmitter {
                     this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
                     this.providedValues = null;
                 } else {
-                    const isArrayOfCallback = Array.isArray(values) && values.length > 0 && typeof values[0] === 'function';
-                    this.valuesType = isArrayOfCallback ?
-                        SetFilterModelValuesType.PROVIDED_CALLBACK :
-                        SetFilterModelValuesType.PROVIDED_LIST;
+                    this.valuesType = Array.isArray(values) ? SetFilterModelValuesType.PROVIDED_LIST : SetFilterModelValuesType.PROVIDED_CALLBACK;
                 }
 
                 const currentModel = this.getModel();
