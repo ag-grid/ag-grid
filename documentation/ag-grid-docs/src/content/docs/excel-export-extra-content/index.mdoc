@@ -32,8 +32,22 @@ The header and footer object accepts the following placeholders:
 * `&[Tab]`: Prints the current sheet name.
 * `&[Path]`: Prints the file path.
 * `&[File]`: Prints the file name.
+* `&[Picture]`: Adds an image to the Header or Footer, see more [Adding Images to the Header or Footer](#adding-images-to-the-header-or-footer).
 
 {% gridExampleRunner title="Excel Export - Custom Header and Footer" name="excel-export-header-footer"  exampleHeight=815 /%}
+
+## Export Cover Page
+
+In addition to exporting the Grid in the Excel file, you can also provide additional content on a separate sheet of the Excel file. This can be useful when you'd like to add a cover page to provide your users additional details on the data in this file.
+
+{% gridExampleRunner title="Excel Export - Cover Page" name="excel-export-cover-page" /%}
+
+## Adding Images to the Header or Footer
+
+In addition to exporting the Grid in the Excel file, you can also provide pictures on Header or Footer of the Worksheet. This can be useful when want to use images as watermark for example.
+
+{% gridExampleRunner title="Excel Export - Header Image" name="excel-export-header-image" /%}
+
 
 ### ExcelHeaderFooterConfig
 
@@ -47,11 +61,10 @@ The header and footer object accepts the following placeholders:
 
 {% interfaceDocumentation interfaceName="ExcelHeaderFooterContent" overrideSrc="excel-export-api/excel-api.json" /%}
 
-## Export Cover Page
+### ExcelHeaderFooterImage
 
-In addition to exporting the Grid in the Excel file, you can also provide additional content on a separate sheet of the Excel file. This can be useful when you'd like to add a cover page to provide your users additional details on the data in this file.
+{% interfaceDocumentation interfaceName="ExcelHeaderFooterImage" overrideSrc="excel-export-api/excel-api.json" /%}
 
-{% gridExampleRunner title="Excel Export - Cover Page" name="excel-export-cover-page" /%}
 
 ## Next Up
 

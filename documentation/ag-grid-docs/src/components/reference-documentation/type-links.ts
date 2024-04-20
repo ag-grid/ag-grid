@@ -44,6 +44,7 @@ const TYPE_LINKS : Record<string, string> = {
     ExcelExportParams: './excel-export-api/#excelexportparams',
     ExcelExportMultipleSheetParams: './excel-export-api/#excelexportmultiplesheetparams',
     ExcelFont: './excel-export-api/#excelfont',
+    ExcelHeaderFooterConfig: './excel-export-api/#excelheaderfooterconfig',
     ExcelHeaderFooter: './excel-export-api/#excelheaderfooter',
     ExcelHeaderFooterContent: './excel-export-api/#excelheaderfootercontent',
     ExcelHeaderFooterImage: './excel-export-api/#excelheaderfooterimage',

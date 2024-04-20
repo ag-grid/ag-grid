@@ -55,8 +55,9 @@
         "footer": {
             "description": "An array of maximum 3 items (`Left`, `Center`, `Right`), containing footer configurations.",
             "type": "ExcelHeaderFooterContent[]"
-        }    
+        }
     },
+    "ExcelHeaderFooterConfig": {},
     "ExcelHeaderFooterContent": {
         "value": {
             "isRequired": true
