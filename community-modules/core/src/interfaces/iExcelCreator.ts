@@ -266,7 +266,7 @@ export interface ExcelImagePosition {
     offsetY?: number;
 }
 
-export interface ExcelImage {
+interface BaseImage {
     /**
      * The image `id`. This field is required so the same image doesn't get imported multiple times.
      */
@@ -279,6 +279,18 @@ export interface ExcelImage {
     imageType: 'jpg' | 'png' | 'gif';
     /** Alt Text for the image. */
     altText?: string;
+}
+
+export interface ExcelHeaderFooterImage extends BaseImage {
+    /** Set this property to select a preset that changes the appearance of the image. */
+    recolor?: 'Grayscale' | 'Black & White' | 'Washout';
+    /** The width of the image in pixels. */
+    width: number;
+    /** The height of the image in pixels. */
+    height: number;
+}
+
+export interface ExcelImage extends BaseImage {
     /**
      * If set to `true`, the image will cover the whole cell that is being imported to.
      * This property does not apply to images in the Header/Footer
@@ -492,7 +504,7 @@ export interface ExcelHeaderFooterContent {
     /**
      * When value is `&[Picture]`, this should be used as the referenced image.
      */
-    image?: ExcelImage;
+    image?: ExcelHeaderFooterImage;
     /**
      * Configures where the text should be added: `Left`, `Center` or `Right`.
      * @default 'Left'

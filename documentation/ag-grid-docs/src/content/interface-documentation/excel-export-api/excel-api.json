@@ -66,5 +66,27 @@
         "id": {
             "isRequired": true
         }
+    },
+    "ExcelHeaderFooterImage": {
+        "meta": {},
+        "id": {
+            "isRequired": true
+        },
+        "imageType": {
+            "isRequired": true
+        },
+        "base64": {
+            "isRequired": true,
+            "more": {
+                "name": "Base64",
+                "url": "https://en.wikipedia.org/wiki/Base64"
+            }
+        },
+        "width": {
+            "isRequired": true
+        },
+        "height": {
+            "isRequired": true
+        }
     }
 }

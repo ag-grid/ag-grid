@@ -7,6 +7,7 @@ import {
     ExcelWorksheet,
     ExcelTableConfig,
     RowHeightCallbackParams,
+    ExcelHeaderFooterImage,
     _
 } from '@ag-grid-community/core';
 
@@ -22,7 +23,7 @@ import worksheetFactory from './files/ooxml/worksheet';
 import relationshipsFactory from './files/ooxml/relationships';
 
 import { setExcelImageTotalHeight, setExcelImageTotalWidth, createXmlPart } from './assets/excelUtils';
-import { ImageIdMap, ExcelCalculatedImage, ExcelDataTable, ExcelHeaderFooterImage, ExcelHeaderFooterPosition } from './assets/excelInterfaces';
+import { ImageIdMap, ExcelCalculatedImage, ExcelDataTable, ExcelHeaderFooterCalculatedImage, ExcelHeaderFooterPosition } from './assets/excelInterfaces';
 import { ExcelGridSerializingParams } from './excelSerializingSession';
 import vmlDrawingFactory from './files/ooxml/vmlDrawing';
 
@@ -37,11 +38,11 @@ export class ExcelXlsxFactory {
     private static sheetNames: string[] = [];
 
     /** Maps images to sheet */
-    public static images: Map<string, { sheetId: number, image: (ExcelCalculatedImage | ExcelHeaderFooterImage)[] }[]> = new Map();
+    public static images: Map<string, { sheetId: number, image: (ExcelCalculatedImage | ExcelHeaderFooterCalculatedImage)[] }[]> = new Map();
     /** Maps sheets to images */
     public static worksheetImages: Map<number, ExcelCalculatedImage[]> = new Map();
     /** Maps sheets to header/footer images */
-    public static worksheetHeaderFooterImages: Map<number, ExcelHeaderFooterImage[]> = new Map();
+    public static worksheetHeaderFooterImages: Map<number, ExcelHeaderFooterCalculatedImage[]> = new Map();
     /** Maps all workbook images to a global Id */
     public static workbookImageIds: ImageIdMap = new Map();
     /** Maps all sheet images to unique Ids */
@@ -171,9 +172,9 @@ export class ExcelXlsxFactory {
         });
     }
 
-    public static addHeaderFooterImageToMap(image: ExcelImage, position: ExcelHeaderFooterPosition): void {
+    public static addHeaderFooterImageToMap(image: ExcelHeaderFooterImage, position: ExcelHeaderFooterPosition): void {
         const sheetIndex = this.sheetNames.length - 1;
-        const headerFooterImage = image as ExcelHeaderFooterImage;
+        const headerFooterImage = image as ExcelHeaderFooterCalculatedImage;
 
         headerFooterImage.headerFooterPosition = position
 
@@ -187,7 +188,7 @@ export class ExcelXlsxFactory {
         }
 
         if (!headerFooterImagesForSheet.find(img => img.id === image.id)) {
-            headerFooterImagesForSheet.push(image as ExcelHeaderFooterImage);
+            headerFooterImagesForSheet.push(image as ExcelHeaderFooterCalculatedImage);
         }
     }
 
@@ -232,7 +233,7 @@ export class ExcelXlsxFactory {
     }
 
     private static buildImageMap(params: {
-        imageToAdd: ExcelCalculatedImage | ExcelHeaderFooterImage;
+        imageToAdd: ExcelCalculatedImage | ExcelHeaderFooterCalculatedImage;
         idx: number,
     }): void {
         const { imageToAdd, idx } = params;
@@ -396,10 +397,13 @@ export class ExcelXlsxFactory {
 
             if (!workbookImage) { continue; }
 
+            const { index, type } = workbookImage;
+            const imageType = type === 'jpg' ? 'jpeg' : type;
+
             XMLArr.push({
                 Id: `rId${i + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
-                Target: `../media/image${workbookImage.index + 1}.${workbookImage.type}`
+                Target: `../media/image${index + 1}.${imageType}`
             });
         }
 

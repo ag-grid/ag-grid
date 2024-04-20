@@ -45,8 +45,10 @@ const createExcelXMLCoreFolderStructure = (): void => {
 
     images.forEach(value => {
         const firstImage = value[0].image[0];
-        const ext = firstImage.imageType;
-        ZipContainer.addFile(`xl/media/image${++imgCounter}.${ext}`, firstImage.base64, true);
+        const { base64, imageType } = firstImage;
+        const ext = imageType === 'jpg' ? 'jpeg' : imageType;
+
+        ZipContainer.addFile(`xl/media/image${++imgCounter}.${ext}`, base64, true);
     });
 }
 

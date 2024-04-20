@@ -1,4 +1,4 @@
-import { ExcelFont, ExcelImage } from "@ag-grid-community/core";
+import { ExcelFont, ExcelImage, ExcelHeaderFooterImage } from "@ag-grid-community/core";
 
 export type ImageIdMap = Map</** imageId */string, { type: string, index: number }>;
 export type BorderProperty = string | undefined;
@@ -71,7 +71,7 @@ type ExcelHeaderFooterEven = 'EVEN';
 
 export type ExcelHeaderFooterPosition = `${ExcelHeaderFooterSide}${ExcelHeaderPosition | ExcelFooterPosition}${ExcelHeaderFooterFirst | ExcelHeaderFooterEven | ''}`;
 
-export interface ExcelHeaderFooterImage extends ExcelImage {
+export interface ExcelHeaderFooterCalculatedImage extends ExcelHeaderFooterImage {
     headerFooterPosition: ExcelHeaderFooterPosition;
 }
 

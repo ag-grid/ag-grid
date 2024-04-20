@@ -1,6 +1,6 @@
 import { XmlElement, ExcelOOXMLTemplate } from '@ag-grid-community/core';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
-import { ExcelHeaderFooterImage } from '../../assets/excelInterfaces';
+import { ExcelHeaderFooterCalculatedImage } from '../../assets/excelInterfaces';
 
 const getShapeLayout = (): XmlElement => ({
     name: "o:shapelayout",
@@ -93,18 +93,47 @@ const getLock = (params?: { aspectratio?: boolean; rotation?: boolean }): XmlEle
     }
 };
 
-const getImageData = (): XmlElement => ({
-    name: "v:imagedata",
-    properties: {
-        prefixedAttributes: [{
-            prefix: "o:",
-            map: {
-                relid:'rId1',
-                title: 'output-onlinepngtools'
-            }
-        }],
+const getImageData = (image: ExcelHeaderFooterCalculatedImage, idx: number): XmlElement => {
+    let rawMap: any;
+    let isGrayscale = false;
+    let isBlackAndWhite = false;
+    let isWashout;
+
+    const { recolor, id } = image;
+
+    if (recolor) {
+        rawMap = {};
+        isGrayscale = recolor === 'Grayscale';
+        isBlackAndWhite = recolor === 'Black & White';
+        isWashout = recolor === 'Washout';
     }
-});
+
+    if (isWashout || isGrayscale) {
+        rawMap.gain = '19661f';
+        rawMap.blacklevel = '22938f';
+    }
+
+    if (isBlackAndWhite || isGrayscale) {
+        rawMap.grayscale = 't';
+        if (isBlackAndWhite) {
+            rawMap.bilevel = 't';
+        }
+    }
+
+    return {
+        name: "v:imagedata",
+        properties: {
+            prefixedAttributes: [{
+                prefix: "o:",
+                map: {
+                    relid:`rId${idx}`,
+                    title: id
+                }
+            }],
+            rawMap
+        }
+    }
+};
 
 const getShapeType = (): XmlElement => {
     const formulas = [
@@ -149,26 +178,37 @@ const getShapeType = (): XmlElement => {
     }
 }
 
-const getShape = (image: ExcelHeaderFooterImage): XmlElement => ({
-    name: "v:shape",
-    properties: {
-        rawMap: {
-            id: image.headerFooterPosition,
-            'o:spid': '_x0000_s1025',
-            style: "position:absolute;margin-left:0;margin-top:0;width:10in;height:250pt;   z-index:1",
-            type:"#_x0000_t75"
-        }
-    },
-    children: [
-        getImageData(),
-        getLock({ rotation: true })
-    ],
-});
+const pixelToPoint = (value?: number) => Math.floor((value ?? 0) * 0.74999943307122);
+
+const getShape = (image: ExcelHeaderFooterCalculatedImage, idx: number): XmlElement => {
+    const { width = 0, height = 0, altText } = image;
+
+    const imageWidth = pixelToPoint(width);
+    const imageHeight = pixelToPoint(height);
+
+    return {
+        name: "v:shape",
+        properties: {
+            rawMap: {
+                id: image.headerFooterPosition,
+                'o:spid': '_x0000_s1025',
+                style: `position: absolute; margin-left: 0; margin-top: 10in; margin-bottom: 0; margin-right: 0; width: ${imageWidth}pt; height: ${imageHeight}pt; z-index: ${idx + 1}`,
+                type:"#_x0000_t75",
+                alt: altText
+            }
+        },
+        children: [
+            getImageData(image, idx + 1),
+            getLock({ rotation: true })
+        ],
+    }
+    
+};
 
 const vmlDrawingFactory: ExcelOOXMLTemplate = {
     getTemplate(params: { sheetIndex: number }) {
         const headerFooterImages = ExcelXlsxFactory.worksheetHeaderFooterImages.get(params.sheetIndex) || [];
-        const children: XmlElement[] = [getShapeLayout(), getShapeType(), ...headerFooterImages.map(getShape)];
+        const children: XmlElement[] = [getShapeLayout(), getShapeType(), ...headerFooterImages.map((img, idx) => getShape(img, idx))];
 
         return {
             name: "xml",
