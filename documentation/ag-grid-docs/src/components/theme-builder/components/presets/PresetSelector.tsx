@@ -1,97 +1,11 @@
-import {
-    type CoreParam,
-    type PartId,
-    corePart,
-    opaqueForeground,
-    paramValueToCss,
-    ref,
-} from '@ag-grid-community/theming';
-import { allPartModels } from '@components/theme-builder/model/PartModel';
-import { getApplicationConfigAtom } from '@components/theme-builder/model/application-config';
+import { corePart, paramValueToCss } from '@ag-grid-community/theming';
+import { getChangedModelItemCount } from '@components/theme-builder/model/changed-model-items';
 import styled from '@emotion/styled';
 import { useStore } from 'jotai';
 import { memo, useEffect, useRef } from 'react';
 
-import { allParamModels } from '../../model/ParamModel';
 import { PresetRender } from './PresetRender';
-
-type Preset = {
-    pageBackgroundColor: string;
-    params?: Partial<Record<CoreParam, string>>;
-    parts?: Partial<Record<PartId, string>>;
-};
-
-export const allPresets: Preset[] = [
-    {
-        pageBackgroundColor: '#FAFAFA',
-    },
-    {
-        pageBackgroundColor: '#1D2634',
-        params: {
-            backgroundColor: '#1f2836',
-            foregroundColor: '#FFF',
-            chromeBackgroundColor: opaqueForeground(0.07),
-        },
-    },
-    {
-        pageBackgroundColor: 'rgb(75, 153, 154)',
-        params: {
-            backgroundColor: 'rgb(241, 237, 225)',
-            foregroundColor: 'rgb(46, 55, 66)',
-            chromeBackgroundColor: ref('backgroundColor'),
-            fontFamily: 'google:Press Start 2P',
-            gridSize: '4px',
-        },
-    },
-    {
-        pageBackgroundColor: '#948B8E',
-        params: {
-            backgroundColor: '#E4E0E2',
-            headerBackgroundColor: '#807078',
-            headerTextColor: '#EEECED',
-            // headerBackgroundColor: '#807078',
-            foregroundColor: 'rgb(46, 55, 66)',
-            chromeBackgroundColor: ref('backgroundColor'),
-            fontFamily: 'google:Jacquard 24',
-            gridSize: '8px',
-            wrapperBorderRadius: '0px',
-            headerFontWeight: '600',
-        },
-    },
-    {
-        pageBackgroundColor: '#212124',
-        params: {
-            backgroundColor: '#252A33',
-            headerBackgroundColor: '#8AB4F9',
-            headerTextColor: '#252A33',
-            // headerBackgroundColor: '#807078',
-            foregroundColor: '#BDC2C7',
-            chromeBackgroundColor: ref('backgroundColor'),
-            fontFamily: 'google:Plus Jakarta Sans',
-            gridSize: '8px',
-            wrapperBorderRadius: '12px',
-            headerFontWeight: '600',
-            accentColor: '#8AB4F9',
-            rowVerticalPaddingScale: '0.6',
-        },
-    },
-    {
-        pageBackgroundColor: '#ffffff',
-        params: {
-            backgroundColor: '#ffffff',
-            headerBackgroundColor: '#F9FAFB',
-            headerTextColor: '#919191',
-            foregroundColor: 'rgb(46, 55, 66)',
-            fontFamily: 'Arial',
-            gridSize: '8px',
-            wrapperBorderRadius: '0px',
-            headerFontWeight: '600',
-            oddRowBackgroundColor: '#F9FAFB',
-            rowBorder: 'none',
-            wrapperBorder: 'none',
-        },
-    },
-];
+import { type Preset, allPresets, applyPreset } from './presets';
 
 export const PresetSelector = memo(() => {
     // find and load any google fonts that might be used by presets
@@ -144,35 +58,18 @@ const SelectButton = ({ preset }: SelectButtonProps) => {
 
     const store = useStore();
 
-    const applyPreset = () => {
-        const presetParams: any = preset.params || {};
-        for (const { property, valueAtom } of allParamModels()) {
-            if (store.get(valueAtom) != null || presetParams[property] != null) {
-                store.set(valueAtom, presetParams[property] || null);
-            }
-        }
-
-        const presetParts = preset.parts || {};
-        for (const part of allPartModels()) {
-            const newVariantId = presetParts[part.partId];
-            if (store.get(part.variantAtom) != null || newVariantId != null) {
-                const newVariant =
-                    newVariantId == null
-                        ? part.defaultVariant
-                        : part.variants.find((v) => v.variantId === newVariantId);
-                if (!newVariant) {
-                    throw new Error(
-                        `Invalid variant ${newVariantId} for part ${part.partId}, use one of: ${part.variants.map((v) => v.variantId).join(', ')}`
-                    );
-                }
-                store.set(part.variantAtom, newVariant);
-            }
-        }
-        store.set(getApplicationConfigAtom('previewPaneBackgroundColor'), preset.pageBackgroundColor || null);
-    };
-
     return (
-        <SelectButtonWrapper ref={wrapperRef} onClick={applyPreset}>
+        <SelectButtonWrapper
+            ref={wrapperRef}
+            onClick={() => {
+                if (getChangedModelItemCount(store) > 1) {
+                    if (!confirm('Applying a preset will reset your changes, are you sure?')) {
+                        return;
+                    }
+                }
+                applyPreset(store, preset);
+            }}
+        >
             <PresetRender />
         </SelectButtonWrapper>
     );
@@ -192,7 +89,9 @@ const Scroller = styled('div')`
     min-height: 160px;
     overflow-x: auto;
     padding-bottom: 6px;
+    z-index: 0;
 `;
+//  👆 z-index is required to prevent a Safari rendering bug where scrollbars appear over tooltips
 
 const paramToVariableName = (param: string) => `--ag-${kebabCase(param)}`;
 const kebabCase = (str: string) => str.replace(/[A-Z]/g, (m) => `-${m}`).toLowerCase();

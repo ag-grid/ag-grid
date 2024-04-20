@@ -1,4 +1,4 @@
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtom } from 'jotai';
 
 import { type PersistentAtom, atomWithJSONStorage } from './JSONStorage';
 
@@ -13,8 +13,5 @@ export const getApplicationConfigAtom = <K extends keyof ApplicationConfig>(
 ): PersistentAtom<ApplicationConfig[K] | null> =>
     configAtoms[key] || (configAtoms[key] = atomWithJSONStorage<ApplicationConfig[K] | null>(key, null));
 
-export const useApplicationConfig = <K extends keyof ApplicationConfig>(key: K) =>
-    useAtomValue(getApplicationConfigAtom(key));
-
-export const useSetApplicationConfig = <K extends keyof ApplicationConfig>(key: K) =>
-    useSetAtom(getApplicationConfigAtom(key));
+export const useApplicationConfigAtom = <K extends keyof ApplicationConfig>(key: K) =>
+    useAtom(getApplicationConfigAtom(key));

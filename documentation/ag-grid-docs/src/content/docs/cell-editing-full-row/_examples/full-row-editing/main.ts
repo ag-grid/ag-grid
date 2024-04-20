@@ -4,11 +4,9 @@ import {
 } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
-
-import { NumericCellEditor } from './numericCellEditor';
+import { NumericCellEditor } from './numericCellEditor_typescript';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule]);
-
 
 let gridApi: GridApi;
 
@@ -51,7 +49,7 @@ function onCellValueChanged(event: CellValueChangedEvent) {
 }
 
 function onRowValueChanged(event: RowValueChangedEvent) {
-  var data = event.data
+  const data = event.data
   console.log(
     'onRowValueChanged: (' +
     data.make +
@@ -66,8 +64,8 @@ function onRowValueChanged(event: RowValueChangedEvent) {
 }
 
 function getRowData() {
-  var rowData = []
-  for (var i = 0; i < 10; i++) {
+  const rowData = []
+  for (let i = 0; i < 10; i++) {
     rowData.push({
       make: 'Toyota',
       model: 'Celica',
@@ -111,6 +109,6 @@ function onBtStartEditing() {
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(eGridDiv, gridOptions);
 })

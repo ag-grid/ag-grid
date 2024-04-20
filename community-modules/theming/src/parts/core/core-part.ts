@@ -28,7 +28,7 @@ const coreDefaults = {
     columnHeaderBorderHeight: '100%',
     pinnedColumnBorder: true,
     pinnedRowBorder: true,
-    sidePanelBorder: ref('wrapperBorder'),
+    sidePanelBorder: true,
     sideButtonSelectedBorder: true,
     sideButtonSelectedBackgroundColor: ref('backgroundColor'),
     sideBarBackgroundColor: ref('chromeBackgroundColor'),
