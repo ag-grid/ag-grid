@@ -169,12 +169,12 @@ export class ValidationService extends BeanStub {
             validProperties
         );
 
-        iterateObject<any>(invalidProperties, (key, value) => {
+        iterateObject(invalidProperties, (key, value) => {
             warnOnce(`invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(', ')}`);
         });
 
         if (Object.keys(invalidProperties).length > 0 && docsUrl) {
-            const url = this.getFrameworkOverrides().getDocLink(docsUrl);            
+            const url = this.getFrameworkOverrides().getDocLink(docsUrl);
             warnOnce(`to see all the valid ${containerName} properties please check: ${url}`);
         }
     }

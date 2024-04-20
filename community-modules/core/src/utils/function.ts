@@ -130,8 +130,8 @@ export function waitUntil(condition: () => boolean, callback: () => void, timeou
     }
 }
 
-export function compose(...fns: Function[]) {
-    return (arg: any) => fns.reduce((composed, f) => f(composed), arg);
+export function compose<T>(...fns: Function[]) {
+    return (arg: T) => fns.reduce<T>((composed, f) => f(composed), arg);
 }
 
 export const noop = () => { return; };

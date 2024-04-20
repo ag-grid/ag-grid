@@ -340,7 +340,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
         if (!addedImage) { return; }
 
-        ExcelXlsxFactory.buildImageMap(addedImage.image, rowIndex, column, this.columnsToExport, this.config.rowHeight);
+        ExcelXlsxFactory.addBodyImageToMap(addedImage.image, rowIndex, column, this.columnsToExport, this.config.rowHeight);
 
         return addedImage;
     }

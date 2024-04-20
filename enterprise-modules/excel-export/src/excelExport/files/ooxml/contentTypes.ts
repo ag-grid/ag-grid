@@ -1,6 +1,7 @@
 import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 import contentTypeFactory from './contentType';
+import { XmlElement } from '@ag-grid-community/core';
 
 const contentTypesFactory: ExcelOOXMLTemplate = {
     getTemplate(sheetLen: number) {
@@ -12,11 +13,13 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
         }));
 
         const sheetsWithImages = ExcelXlsxFactory.worksheetImages.size;
+        const headerFooterImages = ExcelXlsxFactory.worksheetHeaderFooterImages.size;
         const sheetsWithTables = ExcelXlsxFactory.worksheetDataTables.size;
-        const imageTypesObject: { [ key: string ]: boolean} = {};
+        const imageTypesObject: { [ key: string ]: boolean } = {};
 
         ExcelXlsxFactory.workbookImageIds.forEach((v) => {
-            imageTypesObject[v.type] = true;
+            const type = v.type === 'jpg' ? 'jpeg' : v.type;
+            imageTypesObject[type] = true;
         });
 
         const imageDocs = new Array(sheetsWithImages).fill(undefined).map((v, i) => ({
@@ -25,6 +28,7 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
             PartName: `/xl/drawings/drawing${i + 1}.xml`
         }));
 
+        
         const tableDocs = new Array(sheetsWithTables).fill(undefined).map((v, i) => ({
             name: 'Override',
             ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml',
@@ -37,7 +41,15 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
             Extension: ext
         }));
 
-        const children = [
+        if (headerFooterImages) {
+            imageTypes.push({
+                name: 'Default',
+                Extension: 'vml',
+                ContentType: 'application/vnd.openxmlformats-officedocument.vmlDrawing'
+            });
+        }
+
+        const children: XmlElement[] = [
             ...imageTypes,
             {
                 name: 'Default',

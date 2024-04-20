@@ -30,39 +30,48 @@ const createExcelXMLCoreFolderStructure = (): void => {
         'xl/worksheets/'
     ]);
 
-    if (!ExcelXlsxFactory.images.size) { return; }
+    const { images } = ExcelXlsxFactory
+
+    if (!images.size) { return; }
 
     ZipContainer.addFolders([
         'xl/worksheets/_rels',
         'xl/drawings/',
         'xl/drawings/_rels',
         'xl/media/',
-
     ]);
 
     let imgCounter = 0;
-    ExcelXlsxFactory.images.forEach(value => {
+
+    images.forEach(value => {
         const firstImage = value[0].image[0];
-        const ext = firstImage.imageType;
-        ZipContainer.addFile(`xl/media/image${++imgCounter}.${ext}`, firstImage.base64, true);
+        const { base64, imageType } = firstImage;
+        const ext = imageType === 'jpg' ? 'jpeg' : imageType;
+
+        ZipContainer.addFile(`xl/media/image${++imgCounter}.${ext}`, base64, true);
     });
 }
 
 const createExcelXmlWorksheets = (data: string[]): void => {
     let imageRelationCounter = 0;
+    let headerFooterImageCounter = 0;
     let tableRelationCounter = 0;
+
+    const { images, worksheetDataTables, worksheetImages, worksheetHeaderFooterImages } = ExcelXlsxFactory;
 
     for (let i = 0; i < data.length; i++) {
         const value = data[i];
         ZipContainer.addFile(`xl/worksheets/sheet${i + 1}.xml`, value, false);
 
-        const hasImages = ExcelXlsxFactory.images.size > 0 && ExcelXlsxFactory.worksheetImages.has(i);
-        const hasTables = ExcelXlsxFactory.worksheetDataTables.size > 0 && ExcelXlsxFactory.worksheetDataTables.has(i);
+        const hasImages = images.size > 0 && worksheetImages.has(i);
+        const hasTables = worksheetDataTables.size > 0 && worksheetDataTables.has(i);
+        const hasHeaderFooterImages = images.size && worksheetHeaderFooterImages.has(i);
 
-        if (!hasImages && !hasTables) { continue; }
+        if (!hasImages && !hasTables && !hasHeaderFooterImages) { continue; }
 
         let tableIndex: number | undefined;
         let drawingIndex: number | undefined;
+        let vmlDrawingIndex: number | undefined;
 
         if (hasImages) {
             createExcelXmlDrawings(i, imageRelationCounter);
@@ -70,18 +79,27 @@ const createExcelXmlWorksheets = (data: string[]): void => {
             imageRelationCounter++;
         }
 
+        if (hasHeaderFooterImages) {
+            createExcelVmlDrawings(i, headerFooterImageCounter);
+            vmlDrawingIndex = headerFooterImageCounter;
+            headerFooterImageCounter++
+        }
+
         if (hasTables) {
-            tableIndex = tableRelationCounter;
-            tableRelationCounter++;
+            tableIndex = tableRelationCounter++;
         }
 
         const worksheetRelFile = `xl/worksheets/_rels/sheet${i + 1}.xml.rels`;
+
         ZipContainer.addFile(
             worksheetRelFile,
-            ExcelXlsxFactory.createRelationships({ tableIndex, drawingIndex }),
+            ExcelXlsxFactory.createRelationships({
+                tableIndex,
+                drawingIndex,
+                vmlDrawingIndex
+            }),
         );
     }
-
 }
 
 const createExcelXmlDrawings = (sheetIndex: number, drawingIndex: number): void => {
@@ -93,8 +111,19 @@ const createExcelXmlDrawings = (sheetIndex: number, drawingIndex: number): void 
     ZipContainer.addFile(drawingFileName, ExcelXlsxFactory.createDrawing(sheetIndex));
 };
 
+const createExcelVmlDrawings = (sheetIndex: number, drawingIndex: number): void => {
+    const drawingFolder = 'xl/drawings';
+    const drawingFileName = `${drawingFolder}/vmlDrawing${drawingIndex + 1}.vml`;
+    const relFileName = `${drawingFolder}/_rels/vmlDrawing${drawingIndex + 1}.vml.rels`;
+
+    ZipContainer.addFile(drawingFileName, ExcelXlsxFactory.createVmlDrawing(sheetIndex));
+    ZipContainer.addFile(relFileName, ExcelXlsxFactory.createVmlDrawingRel(sheetIndex));
+};
+
 const createExcelXmlTables = (): void => {
-    const tablesDataByWorksheet = ExcelXlsxFactory.worksheetDataTables;
+    const { worksheetDataTables } = ExcelXlsxFactory;
+
+    const tablesDataByWorksheet = worksheetDataTables;
     const worksheetKeys = Array.from(tablesDataByWorksheet.keys());
 
     for (let i = 0; i < worksheetKeys.length; i++) {
@@ -146,6 +175,7 @@ const createExcelFileForExcel = (data: string[], options: {
     createExcelXmlCoreSheets(fontSize, author, data.length);
 
     ExcelXlsxFactory.resetFactory();
+
     return true;
 }
 

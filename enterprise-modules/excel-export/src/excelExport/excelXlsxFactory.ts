@@ -1,8 +1,5 @@
 import {
     Column,
-    ColGroupDef,
-    ColDef,
-    ColumnModel,
     ExcelFactoryMode,
     ExcelImage,
     ExcelRelationship,
@@ -10,6 +7,7 @@ import {
     ExcelWorksheet,
     ExcelTableConfig,
     RowHeightCallbackParams,
+    ExcelHeaderFooterImage,
     _
 } from '@ag-grid-community/core';
 
@@ -25,8 +23,9 @@ import worksheetFactory from './files/ooxml/worksheet';
 import relationshipsFactory from './files/ooxml/relationships';
 
 import { setExcelImageTotalHeight, setExcelImageTotalWidth, createXmlPart } from './assets/excelUtils';
-import { ImageIdMap, ExcelCalculatedImage, ExcelDataTable } from './assets/excelInterfaces';
+import { ImageIdMap, ExcelCalculatedImage, ExcelDataTable, ExcelHeaderFooterCalculatedImage, ExcelHeaderFooterPosition } from './assets/excelInterfaces';
 import { ExcelGridSerializingParams } from './excelSerializingSession';
+import vmlDrawingFactory from './files/ooxml/vmlDrawing';
 
 /**
  * See links for more info on the Office Open XML format being used:
@@ -39,9 +38,11 @@ export class ExcelXlsxFactory {
     private static sheetNames: string[] = [];
 
     /** Maps images to sheet */
-    public static images: Map<string, { sheetId: number, image: ExcelCalculatedImage[] }[]> = new Map();
+    public static images: Map<string, { sheetId: number, image: (ExcelCalculatedImage | ExcelHeaderFooterCalculatedImage)[] }[]> = new Map();
     /** Maps sheets to images */
     public static worksheetImages: Map<number, ExcelCalculatedImage[]> = new Map();
+    /** Maps sheets to header/footer images */
+    public static worksheetHeaderFooterImages: Map<number, ExcelHeaderFooterCalculatedImage[]> = new Map();
     /** Maps all workbook images to a global Id */
     public static workbookImageIds: ImageIdMap = new Map();
     /** Maps all sheet images to unique Ids */
@@ -92,10 +93,6 @@ export class ExcelXlsxFactory {
         return `table${idx + 1}`;
     }
 
-    public static getTableRelIdFromIndex(idx: number) {
-        return `tableRelId${idx + 1}`;
-    }
-
     public static getSanitizedTableName(name: string) {
         return name.replace(/^[^a-zA-Z_]+/, '_')
                    .replace(/\s/g, '_')
@@ -109,42 +106,6 @@ export class ExcelXlsxFactory {
         }
 
         this.worksheetDataTables.set(sheetIndex, table);
-    }
-
-    public static buildImageMap(image: ExcelImage, rowIndex: number, col: Column, columnsToExport: Column[], rowHeight?: number | ((params: RowHeightCallbackParams) => number)): void {
-        const currentSheetIndex = this.sheetNames.length;
-        const registeredImage = this.images.get(image.id);
-
-        if (!image.position || !image.position.row || !image.position.column) {
-            if (!image.position) { image.position = {}; }
-
-            image.position = Object.assign({}, image.position, {
-                row: rowIndex,
-                column: columnsToExport.indexOf(col) + 1
-            });
-        }
-
-        const calculatedImage = image as ExcelCalculatedImage;
-
-        setExcelImageTotalWidth(calculatedImage, columnsToExport);
-        setExcelImageTotalHeight(calculatedImage, rowHeight);
-
-        if (registeredImage) {
-            const currentSheetImages = registeredImage.find(currentImage => currentImage.sheetId === currentSheetIndex);
-            if (currentSheetImages) {
-                currentSheetImages.image.push(calculatedImage);
-            } else {
-                registeredImage.push({
-                    sheetId: currentSheetIndex,
-                    image: [calculatedImage]
-                });
-            }
-        } else {
-            this.images.set(calculatedImage.id, [{ sheetId: currentSheetIndex, image: [calculatedImage] }]);
-            this.workbookImageIds.set(calculatedImage.id, { type: calculatedImage.imageType, index: this.workbookImageIds.size });
-        }
-
-        this.buildSheetImageMap(currentSheetIndex, calculatedImage);
     }
 
     private static processTableConfig(
@@ -211,7 +172,46 @@ export class ExcelXlsxFactory {
         });
     }
 
-    private static buildSheetImageMap(sheetIndex: number, image: ExcelCalculatedImage): void {
+    public static addHeaderFooterImageToMap(image: ExcelHeaderFooterImage, position: ExcelHeaderFooterPosition): void {
+        const sheetIndex = this.sheetNames.length - 1;
+        const headerFooterImage = image as ExcelHeaderFooterCalculatedImage;
+
+        headerFooterImage.headerFooterPosition = position
+
+        this.buildImageMap({ imageToAdd: headerFooterImage, idx: sheetIndex });
+
+        let headerFooterImagesForSheet = this.worksheetHeaderFooterImages.get(sheetIndex);
+
+        if (!headerFooterImagesForSheet) {
+            headerFooterImagesForSheet = [];
+            this.worksheetHeaderFooterImages.set(sheetIndex, headerFooterImagesForSheet)
+        }
+
+        if (!headerFooterImagesForSheet.find(img => img.id === image.id)) {
+            headerFooterImagesForSheet.push(image as ExcelHeaderFooterCalculatedImage);
+        }
+    }
+
+    public static addBodyImageToMap(image: ExcelImage, rowIndex: number, col: Column, columnsToExport?: Column[], rowHeight?: number | ((params: RowHeightCallbackParams) => number)): void {
+        let sheetIndex = this.sheetNames.length;
+        const { row, column } = image.position || {};
+        const calculatedImage = image as ExcelCalculatedImage;
+
+        if (columnsToExport) {
+            if (rowIndex != null && col != null && (!row || !column)) {
+                if (!image.position) { image.position = {}; }
+
+                image.position = Object.assign({}, image.position, {
+                    row: rowIndex,
+                    column: columnsToExport.indexOf(col) + 1
+                });
+            }
+            setExcelImageTotalWidth(calculatedImage, columnsToExport);
+            setExcelImageTotalHeight(calculatedImage, rowHeight);
+        }
+
+        this.buildImageMap({ imageToAdd: calculatedImage, idx: sheetIndex });
+
         let worksheetImageIdMap = this.worksheetImageIds.get(sheetIndex);
 
         if (!worksheetImageIdMap) {
@@ -222,13 +222,36 @@ export class ExcelXlsxFactory {
         const sheetImages = this.worksheetImages.get(sheetIndex);
 
         if (!sheetImages) {
-            this.worksheetImages.set(sheetIndex, [image]);
-            worksheetImageIdMap.set(image.id, { index: 0, type: image.imageType });
+            this.worksheetImages.set(sheetIndex, [calculatedImage]);
         } else {
-            sheetImages.push(image);
-            if (!worksheetImageIdMap.get(image.id)) {
-                worksheetImageIdMap.set(image.id, { index: worksheetImageIdMap.size, type: image.imageType });
+            sheetImages.push(calculatedImage);
+        }
+
+        if (!worksheetImageIdMap.get(image.id)) {
+            worksheetImageIdMap.set(image.id, { index: worksheetImageIdMap.size, type: image.imageType });
+        }
+    }
+
+    private static buildImageMap(params: {
+        imageToAdd: ExcelCalculatedImage | ExcelHeaderFooterCalculatedImage;
+        idx: number,
+    }): void {
+        const { imageToAdd, idx } = params;
+        const mappedImagesToSheet = this.images.get(imageToAdd.id);
+
+        if (mappedImagesToSheet) {
+            const currentSheetImages = mappedImagesToSheet.find(currentImage => currentImage.sheetId === idx);
+            if (currentSheetImages) {
+                currentSheetImages.image.push(imageToAdd);
+            } else {
+                mappedImagesToSheet.push({
+                    sheetId: idx,
+                    image: [imageToAdd]
+                });
             }
+        } else {
+            this.images.set(imageToAdd.id, [{ sheetId: idx, image: [imageToAdd] }]);
+            this.workbookImageIds.set(imageToAdd.id, { type: imageToAdd.imageType, index: this.workbookImageIds.size });
         }
     }
 
@@ -263,6 +286,7 @@ export class ExcelXlsxFactory {
 
         this.images = new Map();
         this.worksheetImages = new Map();
+        this.worksheetHeaderFooterImages = new Map();
 
         this.workbookImageIds = new Map();
         this.worksheetImageIds = new Map();
@@ -345,69 +369,82 @@ export class ExcelXlsxFactory {
     }
 
     public static createDrawingRel(sheetIndex: number) {
-        const worksheetImageIds = this.worksheetImageIds.get(sheetIndex);
+        const worksheetImageIds = this.worksheetImageIds.get(sheetIndex) || [];
         const XMLArr: ExcelRelationship[] = [];
 
-        worksheetImageIds!.forEach((value, key) => {
+        for (const[ key, value ] of worksheetImageIds) {
             XMLArr.push({
                 Id: `rId${value.index + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
                 Target: `../media/image${this.workbookImageIds.get(key)!.index + 1}.${value.type}`
             });
-        });
+        }
 
         return createXmlPart(relationshipsFactory.getTemplate(XMLArr));
     }
 
-    public static createWorksheetDrawingRel(currentRelationIndex: number) {
-        const rs = relationshipsFactory.getTemplate([{
-            Id: 'rId1',
-            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing',
-            Target: `../drawings/drawing${currentRelationIndex + 1}.xml`
-        }]);
-
-        return createXmlPart(rs);
+    public static createVmlDrawing(sheetIndex: number) {
+        return createXmlPart(vmlDrawingFactory.getTemplate({ sheetIndex }), true)
     }
 
-    public static createWorksheetTableRel(currentRelationIndex: number) {
-        const tableId = this.getTableNameFromIndex(currentRelationIndex);
-        const tableRelId = this.getTableRelIdFromIndex(currentRelationIndex);
-        const rs = relationshipsFactory.getTemplate([{
-            Id: tableRelId,
-            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
-            Target: `../tables/${tableId}.xml`
-        }]);
+    public static createVmlDrawingRel(sheetIndex: number) {
+        const worksheetHeaderFooterImages = this.worksheetHeaderFooterImages.get(sheetIndex) || [];
+        const XMLArr: ExcelRelationship[] = [];
 
-        return createXmlPart(rs);
+        for (let i = 0; i < worksheetHeaderFooterImages.length; i++) {
+            const headerFooterImage = worksheetHeaderFooterImages[i];
+            const workbookImage = this.workbookImageIds.get(headerFooterImage.id);
+
+            if (!workbookImage) { continue; }
+
+            const { index, type } = workbookImage;
+            const imageType = type === 'jpg' ? 'jpeg' : type;
+
+            XMLArr.push({
+                Id: `rId${i + 1}`,
+                Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
+                Target: `../media/image${index + 1}.${imageType}`
+            });
+        }
+
+        return createXmlPart(relationshipsFactory.getTemplate(XMLArr));
     }
 
     public static createRelationships({
         drawingIndex,
+        vmlDrawingIndex,
         tableIndex,
     } : {
-        drawingIndex?: number,
-        tableIndex?: number,
+        drawingIndex?: number;
+        vmlDrawingIndex?: number;
+        tableIndex?: number;
     } = {}) {
-        if (drawingIndex === undefined && tableIndex === undefined) {
+        if (drawingIndex === undefined && vmlDrawingIndex === undefined && tableIndex === undefined) {
             return '';
         }
 
         const config = [];
-        if (typeof drawingIndex === 'number') {
+        if (drawingIndex != null) {
             config.push({
-                Id: 'rId1',
+                Id: `rId${config.length + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing',
                 Target: `../drawings/drawing${drawingIndex + 1}.xml`
             });
         }
 
-        if (typeof tableIndex === 'number') {
-            const tableId = this.getTableNameFromIndex(tableIndex);
-            const tableRelId = this.getTableRelIdFromIndex(tableIndex);
+        if (vmlDrawingIndex != null) {
             config.push({
-                Id: tableRelId,
+                Id: `rId${config.length + 1}`,
+                Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing',
+                Target: `../drawings/vmlDrawing${vmlDrawingIndex + 1}.vml`
+            });
+        }
+
+        if (tableIndex != null) {
+            config.push({
+                Id: `rId${config.length + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
-                Target: `../tables/${tableId}.xml`
+                Target: `../tables/${this.getTableNameFromIndex(tableIndex)}.xml`
             });
         }
 
