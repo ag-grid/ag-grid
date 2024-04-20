@@ -250,7 +250,7 @@ export interface ExcelImagePosition {
     /** The column containing this image. This property is set automatically, don't change it unless you know what you are doing. */
     column?: number;
     /**
-     * The amount of columns this image will cover. Only relevant when not associated with a Header or Footer.
+     * The amount of columns this image will cover.
      * @default 1
      */
     colSpan?: number;
