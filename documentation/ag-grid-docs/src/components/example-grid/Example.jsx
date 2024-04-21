@@ -418,10 +418,66 @@ const scatterSeriesThemeOverrides = {
     },
 };
 
+const gradientLegendThemeOverrides = {
+    scale: {
+        label: {
+            formatter: ({ value }) => {
+                const num = Number(value);
+                return isNaN(num) ? value : '$' + formatThousands(num);
+            },
+        },
+    },
+};
+
+const hierarchicalSeriesThemeOverrides = {
+    series: {
+        tooltip: {
+            renderer: params => {
+                // temporary workaround until fixed in standalone
+                if (!params.sizeName) { return {}; }
+                const findDatum = datum => datum.children ? findDatum(datum.children[0]) : datum;
+                const datum = findDatum(params.datum);
+                const sizeValue = params.sizeName + ': $' + formatThousands(datum[params.sizeKey]);
+                let colorValue = ''
+                if (params.colorKey) {
+                    colorValue = params.colorName + ': $' + formatThousands(datum[params.colorKey]);
+                }
+                return {
+                    content: sizeValue + '<br>' + colorValue,
+                };
+            },
+        },
+    },
+    gradientLegend: gradientLegendThemeOverrides,
+};
+
+const rangeSeriesThemeOverrides = {
+    series: {
+        tooltip: {
+            renderer: ({ xName, xKey, yLowName, yLowKey, yHighName, yHighKey, datum }) => {
+                return {
+                    content: `${xName}: ${datum[xKey]}<br>${yLowName}: $${formatThousands(datum[yLowKey])}<br>`
+                        + `${yHighName}: $${formatThousands(datum[yHighKey])}`
+                };
+            },
+        },
+    },
+};
+
 const chartThemeOverrides = {
     common: {
         axes: {
             number: {
+                label: {
+                    formatter: axisLabelFormatter,
+                },
+            },
+            'angle-number': {
+                label: {
+                    formatter: axisLabelFormatter,
+                },
+            },
+            'radius-number': {
                 label: {
                     formatter: axisLabelFormatter,
                 },
@@ -457,6 +513,36 @@ const chartThemeOverrides = {
             },
         },
     },
+    treemap: hierarchicalSeriesThemeOverrides,
+    sunburst: hierarchicalSeriesThemeOverrides,
+    heatmap: {
+        series: {
+            tooltip: {
+                renderer: ({ xKey, yKey, colorKey, yName, datum }) => {
+                    return {
+                        title: '',
+                        content: `<b>${yName}:</b> ${datum[yKey]}<br><b>${datum[xKey]}:</b> $${formatThousands(datum[colorKey])}`,
+                    };
+                },
+            },
+        },
+        gradientLegend: gradientLegendThemeOverrides,
+    },
+    'box-plot': {
+        series: {
+            tooltip: {
+                renderer: ({ xName, xKey, minName, minKey, q1Name, q1Key, medianName, medianKey, q3Name, q3Key, maxName, maxKey, datum }) => {
+                    return {
+                        content: `${xName}: ${datum[xKey]}<br>${minName}: $${formatThousands(datum[minKey])}<br>`
+                            + `${q1Name}: $${formatThousands(datum[q1Key])}<br>${medianName}: $${formatThousands(datum[medianKey])}<br>`
+                            + `${q3Name}: $${formatThousands(datum[q3Key])}<br>${maxName}: $${formatThousands(datum[maxKey])}`
+                    };
+                },
+            },
+        },
+    },
+    'range-bar': rangeSeriesThemeOverrides,
+    'range-area': rangeSeriesThemeOverrides,
 };
 
 const ExampleInner = ({ darkMode }) => {

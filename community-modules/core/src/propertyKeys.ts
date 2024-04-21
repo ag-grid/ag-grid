@@ -195,6 +195,7 @@ export class PropertyKeys {
         'resetRowDataOnUpdate', 'removePivotHeaderRowWhenSingleValueColumn', 'suppressCopySingleCellRanges', 'suppressGroupRowsSticky', 'suppressCutToClipboard',
         'suppressServerSideInfiniteScroll', 'rowGroupPanelSuppressSort', 'allowShowChangeAfterFilter','enableAdvancedFilter', 'masterDetail', 'treeData',
         'suppressGroupMaintainValueType', 'reactiveCustomComponents', 'applyQuickFilterBeforePivotOrAgg', 'suppressServerSideFullWidthLoadingRow',
+        'suppressAdvancedFilterEval',
     ];
 
     // If property does not fit above, i.e union that should not be coerced.

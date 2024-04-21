@@ -13,9 +13,7 @@ export async function getStaticPaths() {
 
 <Layout title="AG Grid Theme Builder" showDocsNav={true} showSearchBar={true} hideFooter>
     <div class:list={['contentViewport layout-grid']}>
-        <main is="div">
-            <ThemeBuilder client:only />
-            <EmptyState />
-        </main>
+        <ThemeBuilder client:only />
+        <EmptyState />
     </div>
 </Layout>

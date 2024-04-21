@@ -1,7 +1,7 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import { PagesNavigationFromLocalStorage } from '@features/pages-navigation/components/PagesNavigationFromLocalStorage';
+import { PagesNavigationFromLocalStorage } from '@components/pages-navigation/components/PagesNavigationFromLocalStorage';
 import { getDocsPages } from '../features/docs/utils/pageData';
 import type { Framework, MenuSection } from '@ag-grid-types';
 import { Pipeline } from '@components/pipeline/Pipeline';
@@ -21,8 +21,6 @@ const allMenuSections = menu.main.sections as MenuSection[];
     <div class:list={['contentViewport layout-grid']}>
         <PagesNavigationFromLocalStorage client:load allMenuSections={allMenuSections} pageName={pageName} />
 
-        <main is="div">
-            <Pipeline client:only />
-        </main>
+        <Pipeline client:only />
     </div>
 </Layout>

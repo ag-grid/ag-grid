@@ -64,6 +64,7 @@ export {
     ExcelHeaderFooterContent,
     ExcelImage,
     ExcelImagePosition,
+    ExcelHeaderFooterImage,
     ExcelSheetMargin,
     ExcelExportMultipleSheetParams,
     ExcelSheetPageSetup,

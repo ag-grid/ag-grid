@@ -1397,6 +1397,10 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
+  "suppressAdvancedFilterEval": {
+    "typeName": "boolean",
+    "typesToInclude": []
+  },
   "suppressStickyTotalRow": {
     "typeName": "boolean | 'grand' | 'group'",
     "typesToInclude": []

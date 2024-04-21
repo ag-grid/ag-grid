@@ -10,9 +10,9 @@ import {
     ExcelHeaderFooterContent,
     ExcelHeaderFooterConfig,
     ExcelFont,
-    _
+    _,
 } from '@ag-grid-community/core';
-import { ExcelDataTable } from '../../assets/excelInterfaces';
+import { ExcelDataTable, ExcelHeaderFooterPosition } from '../../assets/excelInterfaces';
 
 import columnFactory from './column';
 import rowFactory from './row';
@@ -20,6 +20,7 @@ import mergeCellFactory from './mergeCell';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 import { getExcelColumnName } from '../../assets/excelUtils';
 import { ExcelGridSerializingParams } from '../../excelSerializingSession';
+
 
 const getMergedCellsAndAddColumnGroups = (rows: ExcelRow[], cols: ExcelColumn[], suppressColumnOutline: boolean): string[] => {
     const mergedCells: string[] = [];
@@ -111,33 +112,33 @@ const getPageSize = (pageSize?: string): number => {
 };
 
 const addColumns = (columns: ExcelColumn[]) => {
-    return (children: XmlElement[]) => {
+    return (params: ComposedWorksheetParams) => {
         if (columns.length) {
-            children.push({
+            params.children.push({
                 name: 'cols',
                 children: columns.map(column => columnFactory.getTemplate(column))
             });
         }
-        return children;
+        return params;
     };
 };
 
 const addSheetData = (rows: ExcelRow[], sheetNumber: number) => {
-    return (children: XmlElement[]) => {
+    return (params: ComposedWorksheetParams) => {
         if (rows.length) {
-            children.push({
+            params.children.push({
                 name: 'sheetData',
                 children: rows.map((row, idx) => rowFactory.getTemplate(row, idx, sheetNumber))
             });
         }
-        return children;
+        return params;
     };
 };
 
 const addMergeCells = (mergeCells: string[]) => {
-    return (children: XmlElement[]) => {
+    return (params: ComposedWorksheetParams) => {
         if (mergeCells.length) {
-            children.push({
+            params.children.push({
                 name: 'mergeCells',
                 properties: {
                     rawMap: {
@@ -147,29 +148,29 @@ const addMergeCells = (mergeCells: string[]) => {
                 children: mergeCells.map(mergedCell => mergeCellFactory.getTemplate(mergedCell))
             });
         }
-        return children;
+        return params;
     };
 };
 
 const addPageMargins = (margins: ExcelSheetMargin) => {
-    return (children: XmlElement[]) => {
+    return (params: ComposedWorksheetParams) => {
         const { top = 0.75, right = 0.7, bottom = 0.75, left = 0.7, header = 0.3, footer = 0.3 } = margins;
 
-        children.push({
+        params.children.push({
             name: 'pageMargins',
             properties: {
                 rawMap: { bottom, footer, header, left, right, top }
             }
         });
 
-        return children;
+        return params;
     };
 };
 
 const addPageSetup = (pageSetup?: ExcelSheetPageSetup) => {
-    return (children: XmlElement[]) => {
+    return (params: ComposedWorksheetParams) => {
         if (pageSetup) {
-            children.push({
+            params.children.push({
                 name: 'pageSetup',
                 properties: {
                     rawMap: {
@@ -181,7 +182,7 @@ const addPageSetup = (pageSetup?: ExcelSheetPageSetup) => {
                 }
             });
         }
-        return children;
+        return params;
     };
 };
 
@@ -193,7 +194,8 @@ const replaceHeaderFooterTokens = (value: string): string => {
         '&[Time]': '&T',
         '&[Tab]': '&A',
         '&[Path]': '&Z',
-        '&[File]': '&F'
+        '&[File]': '&F',
+        '&[Picture]': '&G'
     };
 
     _.iterateObject<string>(map, (key, val) => {
@@ -203,7 +205,7 @@ const replaceHeaderFooterTokens = (value: string): string => {
     return value;
 };
 
-const getHeaderPosition = (position?: string): string => {
+const getHeaderPosition = (position?: string): 'L' | 'C' | 'R' => {
     if (position === 'Center') { return 'C'; }
     if (position === 'Right') { return 'R'; }
 
@@ -235,10 +237,21 @@ const applyHeaderFontStyle = (headerString: string, font?: ExcelFont): string =>
     return headerString;
 };
 
-const processHeaderFooterContent = (content: ExcelHeaderFooterContent[]): string =>
-    content.reduce((prev, curr) => {
+const processHeaderFooterContent = (content: ExcelHeaderFooterContent[], location: 'H' | 'F', rule: 'EVEN' | 'FIRST' | ''): string =>
+    content.reduce((prev, curr, idx) => {
         const pos = getHeaderPosition(curr.position);
         const output = applyHeaderFontStyle(`${prev}&amp;${pos}`, curr.font);
+        const PositionMap: ['Left', 'Center', 'Right'] = ['Left', 'Center', 'Right'];
+
+        if (!curr.position) {
+            curr.position = PositionMap[idx];
+        }
+
+        const { image } = curr;
+        if (curr.value === '&[Picture]' && image) {
+            const imagePosition: ExcelHeaderFooterPosition = `${pos}${location}${rule}`;
+            ExcelXlsxFactory.addHeaderFooterImageToMap(image, imagePosition);
+        }
 
         return `${output}${_.escapeString(replaceHeaderFooterTokens(curr.value))}`;
     }, '');
@@ -255,16 +268,16 @@ const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElem
 
         for (const [key, value] of Object.entries<ExcelHeaderFooterContent[]>(headerFooter)) {
             const nameSuffix = `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
+            const location: 'H' | 'F' = key[0].toUpperCase() as 'H' | 'F';
 
             if (value) {
+                const normalizedRule: 'FIRST' | 'EVEN' | '' = rule === 'all' ? '' : (rule.toUpperCase() as 'FIRST' | 'EVEN');
                 headersAndFooters.push({
                     name: `${namePrefix}${nameSuffix}`,
                     properties: {
-                        rawMap: {
-                            'xml:space': 'preserve'
-                        }
+                        rawMap: { 'xml:space': 'preserve' }
                     },
-                    textNode: processHeaderFooterContent(value)
+                    textNode: processHeaderFooterContent(value, location, normalizedRule)
                 });
             }
         }
@@ -273,14 +286,15 @@ const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElem
     return headersAndFooters;
 };
 
-const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig) => {
-    return (children: XmlElement[]) => {
-        if (!headerFooterConfig) { return children; }
+const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig
+) => {
+    return (params: ComposedWorksheetParams) => {
+        if (!headerFooterConfig) { return params; }
 
         const differentFirst = headerFooterConfig.first != null ? 1 : 0;
         const differentOddEven = headerFooterConfig.even != null ? 1 : 0;
 
-        children.push({
+        params.children.push({
             name: 'headerFooter',
             properties: {
                 rawMap: {
@@ -288,60 +302,76 @@ const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig) => {
                     differentOddEven
                 }
             },
-            children: buildHeaderFooter(headerFooterConfig)
+            children: buildHeaderFooter(headerFooterConfig),
         });
-        return children;
+        return params;
     };
 };
 
-const addExcelTableParts = (excelTable?: ExcelDataTable, index?: number) => {
-    if (!excelTable) {
-        return (children: XmlElement[]) => children;
-    }
-
-    const rId = ExcelXlsxFactory.getTableRelIdFromIndex(index || 0);
-    return (children: XmlElement[]) => {
-        children.push({
-            name: 'tableParts',
-            properties: {
-                rawMap: {
-                    count: '1',
-                }
-            },
-            children: [{
-                name: 'tablePart',
+const addExcelTableRel = (excelTable?: ExcelDataTable) => {
+    return (params: ComposedWorksheetParams) => {
+        if (excelTable) {
+            params.children.push({
+                name: 'tableParts',
                 properties: {
                     rawMap: {
-                        'r:id': rId,
+                        count: '1',
                     }
-                }
-            }],
-        });
+                },
+                children: [{
+                    name: 'tablePart',
+                    properties: {
+                        rawMap: {
+                            'r:id': `rId${++params.rIdCounter}`
+                        }
+                    }
+                }],
+            });
+        }
 
-        return children;
+        return params;
     };
 };
 
 const addDrawingRel = (currentSheet: number) => {
-    return (children: XmlElement[]) => {
-        if (ExcelXlsxFactory.worksheetImages.get(currentSheet)) {
-            children.push({
+    return (params: ComposedWorksheetParams) => {
+        const worksheetImages = ExcelXlsxFactory.worksheetImages.get(currentSheet);
+        if (worksheetImages?.length) {
+            params.children.push({
                 name: 'drawing',
                 properties: {
                     rawMap: {
-                        'r:id': 'rId1'
+                        'r:id': `rId${++params.rIdCounter}`
                     }
                 }
             });
         }
 
-        return children;
+        return params;
+    };
+};
+
+
+const addVmlDrawingRel = (currentSheet: number) => {
+    return (params: ComposedWorksheetParams) => {
+        if (ExcelXlsxFactory.worksheetHeaderFooterImages.get(currentSheet)) {
+            params.children.push({
+                name: 'legacyDrawingHF',
+                properties: {
+                    rawMap: {
+                        'r:id': `rId${++params.rIdCounter}`
+                    }
+                }
+            });
+        }
+
+        return params;
     };
 };
 
 const addSheetPr = () => {
-    return (children: XmlElement[]) => {
-        children.push({
+    return (params: { children: XmlElement[] }) => {
+        params.children.push({
             name: 'sheetPr',
             children: [{
                 name: 'outlinePr',
@@ -352,12 +382,12 @@ const addSheetPr = () => {
                 }
             }]
         });
-        return children;
+        return params;
     }
 }
 
 const addSheetFormatPr = (rows: ExcelRow[]) => {
-    return (children: XmlElement[]) => {
+    return (params: ComposedWorksheetParams) => {
         const maxOutline = rows.reduce((prev: number, row: ExcelRow) => {
             if (row.outlineLevel && row.outlineLevel > prev) {
                 return row.outlineLevel;
@@ -365,7 +395,7 @@ const addSheetFormatPr = (rows: ExcelRow[]) => {
             return prev;
         }, 0);
 
-        children.push({
+        params.children.push({
             name: 'sheetFormatPr',
             properties: {
                 rawMap: {
@@ -375,8 +405,13 @@ const addSheetFormatPr = (rows: ExcelRow[]) => {
                 }
             }
         });
-        return children;
+        return params;
     }
+}
+
+type ComposedWorksheetParams = {
+    children: XmlElement[];
+    rIdCounter: number;
 }
 
 const worksheetFactory: ExcelOOXMLTemplate = {
@@ -392,9 +427,10 @@ const worksheetFactory: ExcelOOXMLTemplate = {
         const { rows, columns } = table;
         const mergedCells = (columns && columns.length) ? getMergedCellsAndAddColumnGroups(rows, columns, !!suppressColumnOutline) : [];
 
-        const worksheetExcelTables = ExcelXlsxFactory.worksheetDataTables.get(currentSheet);
+        const { worksheetDataTables } = ExcelXlsxFactory;
+        const worksheetExcelTables = worksheetDataTables.get(currentSheet);
 
-        const createWorksheetChildren = _.compose(
+        const createWorksheetChildren = _.compose<ComposedWorksheetParams>(
             addSheetPr(),
             addSheetFormatPr(rows),
             addColumns(columns),
@@ -404,10 +440,11 @@ const worksheetFactory: ExcelOOXMLTemplate = {
             addPageSetup(pageSetup),
             addHeaderFooter(headerFooterConfig),
             addDrawingRel(currentSheet),
-            addExcelTableParts(worksheetExcelTables, currentSheet),
+            addVmlDrawingRel(currentSheet),
+            addExcelTableRel(worksheetExcelTables)
         );
 
-        const children = createWorksheetChildren([]);
+        const { children } = createWorksheetChildren({ children: [], rIdCounter: 0 });
 
         return {
             name: "worksheet",

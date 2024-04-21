@@ -4,6 +4,8 @@ import * as RadixSelect from '@radix-ui/react-select';
 import { ChevronDown } from 'lucide-react';
 import { type ReactElement, forwardRef } from 'react';
 
+import { SharedContent, SharedIndicator, SharedItem, SharedTrigger } from './dropdown-shared';
+
 type SelectOption = {
     value: string;
     label?: string;
@@ -43,26 +45,26 @@ export function Select<O extends SelectOption>({ value, options, onChange }: Sel
             <StyledTrigger tabIndex={0}>
                 <RadixSelect.Value placeholder="Choose..." />
                 <RadixSelect.Icon>
-                    <ChevronDown />
+                    <StyledChevronDown />
                 </RadixSelect.Icon>
             </StyledTrigger>
             <RadixSelect.Portal>
-                <StyledSelectContent>
-                    <RadixSelect.ScrollUpButton>
+                <StyledContent>
+                    <RadixSelect.ScrollUpButton className="SelectScrollButton">
                         <ChevronUp />
                     </RadixSelect.ScrollUpButton>
                     <StyledSelectViewport>
                         {Object.entries(content).map(([groupLabel, items]) => (
-                            <RadixSelect.Group>
+                            <RadixSelect.Group key={groupLabel}>
                                 {groupLabel && <StyledSelectLabel>{groupLabel}</StyledSelectLabel>}
                                 {items}
                             </RadixSelect.Group>
                         ))}
                     </StyledSelectViewport>
                     <RadixSelect.ScrollDownButton className="SelectScrollButton">
-                        <ChevronDown />
+                        <StyledChevronDown />
                     </RadixSelect.ScrollDownButton>
-                </StyledSelectContent>
+                </StyledContent>
             </RadixSelect.Portal>
         </RadixSelect.Root>
     );
@@ -79,80 +81,19 @@ const SelectItem = forwardRef(({ children, className, ...props }: any, forwarded
     );
 });
 
-const StyledTrigger = styled(RadixSelect.Trigger)`
-    display: flex;
-    align-items: center;
-    border-radius: var(--radius-sm);
-    font-weight: normal;
-    height: 32px;
-    gap: 16px;
-    color: var(--color-fg-primary);
-    background-color: var(--color-bg-primary);
-    border: 1px solid var(--color-input-border);
-    font-size: 14px;
-    justify-content: space-between;
-    svg {
-        opacity: 0.5;
-        height: 16px;
-        width: 16px;
-    }
+const StyledTrigger = SharedTrigger.withComponent(RadixSelect.Trigger);
 
-    &:hover {
-        color: var(--color-fg-primary);
-        background-color: var(--color-bg-primary);
-        border: 1px solid var(--color-input-border-hover);
-    }
+const StyledChevronDown = styled(ChevronDown)`
+    opacity: 0.5;
+    height: 16px;
+    width: 16px;
 `;
 
-const StyledSelectContent = styled(RadixSelect.Content)`
-    position: absolute;
-    overflow: hidden;
-    background-color: var(--color-bg-primary);
-    border: 1px solid var(--color-border-primary);
-    border-radius: 6px;
-    box-shadow:
-        0px 10px 38px -10px rgba(22, 23, 24, 0.35),
-        0px 10px 20px -15px rgba(22, 23, 24, 0.2);
-    z-index: 1000;
+const StyledContent = SharedContent.withComponent(RadixSelect.Content);
 
-    .SelectScrollButton {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 25px;
-        color: var(--violet-11);
-        cursor: default;
-    }
-`;
+const StyledSelectViewport = styled(RadixSelect.Viewport)``;
 
-const StyledSelectViewport = styled(RadixSelect.Viewport)`
-    padding: 5px;
-`;
-
-const StyledSelectItem = styled(RadixSelect.Item)`
-    font-size: 14px !important;
-    line-height: 1;
-    color: var(--violet-11);
-    border-radius: 3px;
-    display: flex;
-    align-items: center;
-    height: 25px;
-    padding: 0 24px;
-    position: relative;
-    user-select: none;
-    cursor: pointer;
-    justity-content: space-between;
-
-    &[data-disabled] {
-        color: var(--mauve-8);
-        pointer-events: none;
-    }
-
-    &[data-highlighted] {
-        outline: none;
-        background-color: var(--color-util-gray-100);
-    }
-`;
+const StyledSelectItem = SharedItem.withComponent(RadixSelect.Item);
 
 const StyledSelectLabel = styled(RadixSelect.Label)`
     padding: 0 12px;
@@ -162,11 +103,4 @@ const StyledSelectLabel = styled(RadixSelect.Label)`
     color: var(--mauve-11);
 `;
 
-const StyledSelectItemIndicator = styled(RadixSelect.ItemIndicator)`
-    position: absolute;
-    left: 0;
-    width: 25px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-`;
+const StyledSelectItemIndicator = SharedIndicator.withComponent(RadixSelect.ItemIndicator);

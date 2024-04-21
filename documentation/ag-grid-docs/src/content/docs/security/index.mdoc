@@ -39,6 +39,8 @@ const gridOptions = {
 }
 ```
 
+By default, [Advanced Filter](./filter-advanced) also requires `unsafe-eval`, however this can be disabled by [Suppressing Advanced Filter Function Evaluation](./filter-advanced/#suppress-advanced-filter-function-evaluation).
+
 ### style-src
 
 The `style-src` policy requires the `unsafe-inline` due to the [DOM Row and Column Virtualisation](./dom-virtualisation/). The technique the grid uses to display position rows requires explicit positioning of the rows and columns. This positioning is only possible using CSS style attributes to set explicit X and Y positions. This is a feature that all data grids have. Without it, the data grid would have a very low limit on the amount of data that could be displayed.

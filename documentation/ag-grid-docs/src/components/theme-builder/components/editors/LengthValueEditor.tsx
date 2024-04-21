@@ -5,8 +5,6 @@ import { Input } from './Input';
 import { type ValueEditorProps } from './ValueEditorProps';
 
 export const LengthValueEditor = ({ param, value, onChange }: ValueEditorProps) => {
-    const units = param.property.endsWith('Scale') ? '' : 'px';
-
     const [editorValue, setEditorValue] = useState(value);
     const [valid, setValid] = useState(() => numberIsValid(editorValue));
     const focusRef = useRef(false);
@@ -27,7 +25,7 @@ export const LengthValueEditor = ({ param, value, onChange }: ValueEditorProps) 
             const isValid = numberIsValid(newValue);
             setValid(isValid);
             if (isValid) {
-                onChange(parseFloat(newValue) + units);
+                onChange(parseFloat(newValue) + (param.type === 'scale' ? '' : 'px'));
             }
         }
     };
@@ -59,7 +57,7 @@ export const LengthValueEditor = ({ param, value, onChange }: ValueEditorProps) 
                         handleInput(string);
                     };
                     let amount = e.shiftKey || e.ctrlKey || e.altKey || e.metaKey ? 10 : 1;
-                    if (units === '') {
+                    if (param.type === 'scale') {
                         amount /= 10;
                     }
                     if (e.key === 'ArrowUp') {

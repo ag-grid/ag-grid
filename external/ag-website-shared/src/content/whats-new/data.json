@@ -1,0 +1,10 @@
+{
+    "grid": {
+        "name": "AG Grid",
+        "blogPrefix": "https://blog.ag-grid.com/whats-new-in-ag-grid-"
+    },
+    "charts": {
+        "name": "AG Charts",
+        "blogPrefix": "https://blog.ag-grid.com/whats-new-in-ag-charts-"
+    }
+}

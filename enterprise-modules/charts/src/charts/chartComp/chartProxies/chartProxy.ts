@@ -14,7 +14,7 @@ import {
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 import { deproxy } from "../utils/integration";
-import { applyThemeOverrides, createAgChartTheme, lookupCustomChartTheme } from './chartTheme';
+import { createAgChartTheme, lookupCustomChartTheme } from './chartTheme';
 import { get } from "../utils/object";
 
 export interface ChartProxyParams {
@@ -177,13 +177,13 @@ export abstract class ChartProxy<TOptions extends AgChartOptions = AgChartOption
         const formattingPanelOverrides = this.chart != null ? this.getActiveFormattingPanelOverrides() : undefined;
         this.clearThemeOverrides = false;
 
-        // Create a base theme and apply the various layers of overrides.
-        const baseTheme = createAgChartTheme(this.chartProxyParams, this, this.isEnterpriseCharts);
-        const chartThemeDefaults = this.getChartThemeDefaults();
-        const theme = applyThemeOverrides(baseTheme, [
-            chartThemeDefaults,
-            updatedOverrides ?? formattingPanelOverrides,
-        ]);
+        const theme = createAgChartTheme(
+            this.chartProxyParams,
+            this,
+            this.isEnterpriseCharts,
+            this.getChartThemeDefaults(),
+            updatedOverrides ?? formattingPanelOverrides
+        );
 
         const newOptions = {
             ...existingOptions,

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { autoUpdate, useFloating } from '@floating-ui/react';
-import { useEffect, useState } from 'react';
+import { autoPlacement, autoUpdate, useFloating } from '@floating-ui/react';
+import { useEffect, useRef, useState } from 'react';
 import { HexAlphaColorPicker, HexColorPicker } from 'react-colorful';
 
 import { useClickAwayListener } from '../component-utils';
@@ -9,24 +9,31 @@ import { Input } from './Input';
 import { RGBAColor } from './RGBAColor';
 import { type ValueEditorProps } from './ValueEditorProps';
 
-const preventTransparency: Record<string, boolean | undefined> = {
-    backgroundColor: true,
+export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps) => (
+    <ColorEditor preventTransparency={param.property === 'backgroundColor'} value={value} onChange={onChange} />
+);
+
+export type ColorEditorProps = {
+    preventTransparency: boolean;
+    value: string;
+    onChange: (newValue: string | null) => void;
 };
 
-export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps) => {
+export const ColorEditor = ({ preventTransparency, value, onChange }: ColorEditorProps) => {
     const hexValue = RGBAColor.reinterpretCss(value)?.toCSSHex();
     const [editorValue, setEditorValue] = useState(hexValue || value);
     const [valid, setValid] = useState(() => colorIsValid(editorValue));
+    const wrapperRef = useRef<HTMLDivElement>(null);
 
     const [showPicker, setShowPicker] = useState(false);
     const { refs, floatingStyles, elements } = useFloating({
         open: showPicker,
         onOpenChange: setShowPicker,
         whileElementsMounted: autoUpdate,
-        placement: 'bottom-start',
+        middleware: [autoPlacement({ allowedPlacements: ['bottom-start', 'bottom-end'] })],
     });
 
-    useClickAwayListener(() => setShowPicker(false), [elements.domReference, elements.floating]);
+    useClickAwayListener(() => setShowPicker(false), [elements.domReference, elements.floating, wrapperRef.current]);
 
     useEffect(() => {
         if (!showPicker) {
@@ -55,17 +62,17 @@ export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps) =
             color = RGBAColor.reinterpretCss(input);
         }
         if (!color) return input;
-        if (preventTransparency[param.property]) {
+        if (preventTransparency) {
             color.a = 1;
         }
         return color.toCSSHex();
     };
 
-    const ColorPicker = preventTransparency[param.property] ? HexColorPicker : HexAlphaColorPicker;
+    const ColorPicker = preventTransparency ? HexColorPicker : HexAlphaColorPicker;
 
     return (
         <>
-            <Wrapper>
+            <Wrapper ref={wrapperRef}>
                 <StyledInput
                     ref={refs.setReference}
                     className={valid ? undefined : 'is-error'}
@@ -80,12 +87,12 @@ export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps) =
                         setValid(colorIsValid(value));
                     }}
                     onKeyDown={(e) => {
-                        if (e.key === 'Tab') {
+                        if (e.key === 'Tab' || e.key === 'Escape') {
                             setShowPicker(false);
                         }
                     }}
                 />
-                <ColorSwatch onClick={() => setShowPicker(true)}>
+                <ColorSwatch onClick={() => setShowPicker(!showPicker)}>
                     <ColorSwatchColor style={{ backgroundColor: value }} />
                 </ColorSwatch>
             </Wrapper>

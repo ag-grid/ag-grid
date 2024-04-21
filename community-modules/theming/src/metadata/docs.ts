@@ -1,29 +1,4 @@
-export type ParamType =
-    | 'color'
-    | 'length'
-    | 'border'
-    | 'borderStyle'
-    | 'shadow'
-    | 'image'
-    | 'fontFamily'
-    | 'fontWeight'
-    | 'display'
-    | 'duration';
-
-export const getParamType = (param: string): ParamType => {
-    if (/Color$/.test(param)) return 'color';
-    if (/(Padding|Spacing|Size|Width|Height|Radius|Indent|Scale)(Start|End|Top|Bottom|Horizontal|Vertical)?$/.test(param))
-        return 'length';
-    if (/Border$/.test(param)) return 'border';
-    if (/BorderStyle$/.test(param)) return 'borderStyle';
-    if (/Shadow$/.test(param)) return 'shadow';
-    if (/Image$/.test(param)) return 'image';
-    if (/[fF]ontFamily$/.test(param)) return 'fontFamily';
-    if (/[fF]ontWeight$/.test(param)) return 'fontWeight';
-    if (/Duration$/.test(param)) return 'duration';
-    if (/Display$/.test(param)) return 'display';
-    throw new Error(`Param "${param}" does not have a recognised suffix.`);
-};
+import { ParamType } from "../theme-types";
 
 
 const docs: Record<string, string | undefined> = {

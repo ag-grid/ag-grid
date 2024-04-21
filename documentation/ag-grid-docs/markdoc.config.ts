@@ -1,6 +1,13 @@
+import { br } from '@ag-website-shared/markdoc/tags/br';
+import { enterpriseIcon } from '@ag-website-shared/markdoc/tags/enterpriseIcon';
+import { idea } from '@ag-website-shared/markdoc/tags/idea';
 import { kbd } from '@ag-website-shared/markdoc/tags/kbd';
+import { note } from '@ag-website-shared/markdoc/tags/note';
+import { oneTrustCookies } from '@ag-website-shared/markdoc/tags/oneTrustCookies';
+import { openInCTA } from '@ag-website-shared/markdoc/tags/openInCTA';
 import { tabItem, tabs } from '@ag-website-shared/markdoc/tags/tabs';
 import { videoSection } from '@ag-website-shared/markdoc/tags/videoSection';
+import { warning } from '@ag-website-shared/markdoc/tags/warning';
 import { Markdoc, component, defineMarkdocConfig, nodes } from '@astrojs/markdoc/config';
 
 import { agGridVersion } from './src/constants';
@@ -51,16 +58,17 @@ export default defineMarkdocConfig({
     },
     tags: {
         kbd,
+        link,
+        oneTrustCookies,
         tabs,
         tabItem,
         videoSection,
-        br: {
-            render: 'br',
-        },
-        link,
-        enterpriseIcon: {
-            render: component('../../external/ag-website-shared/src/components/icon/EnterpriseIcon', 'EnterpriseIcon'),
-        },
+        br,
+        note,
+        warning,
+        idea,
+        openInCTA,
+        enterpriseIcon,
         includeMarkdoc,
         gridExampleRunner: {
             render: component('./src/features/docs/components/DocsExampleRunner.astro'),
@@ -120,15 +128,6 @@ export default defineMarkdocConfig({
                  */
                 cellRenderer: { type: Object },
             },
-        },
-        note: {
-            render: component('../../external/ag-website-shared/src/components/alert/Note'),
-        },
-        warning: {
-            render: component('../../external/ag-website-shared/src/components/alert/Warning'),
-        },
-        idea: {
-            render: component('../../external/ag-website-shared/src/components/alert/Idea'),
         },
         gif: {
             render: component('./src/components/image/Gif.astro'),
@@ -243,14 +242,6 @@ export default defineMarkdocConfig({
                 id: { type: String },
                 title: { type: String },
                 showHeader: { type: Boolean },
-            },
-        },
-        openInCTA: {
-            render: component('../../external/ag-website-shared/src/components/open-in-cta/OpenInCTA.astro'),
-            attributes: {
-                type: { type: String, required: true },
-                href: { type: String, required: true },
-                text: { type: String },
             },
         },
         figmaPreview: {

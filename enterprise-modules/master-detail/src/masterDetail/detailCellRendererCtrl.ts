@@ -124,7 +124,10 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
         const rowNode = this.params.node as RowNode;
 
-        // register with api
+        // register with api if the master api is still alive
+        if(masterGridApi.isDestroyed()) { 
+            return; 
+        }
         masterGridApi.addDetailGridInfo(rowId, gridInfo);
 
         // register with node
@@ -134,7 +137,9 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             // the gridInfo can be stale if a refresh happens and
             // a new row is created before the old one is destroyed.
             if (rowNode.detailGridInfo !== gridInfo) { return; }
-            masterGridApi.removeDetailGridInfo(rowId); // unregister from api
+            if(!masterGridApi.isDestroyed()) { 
+                masterGridApi.removeDetailGridInfo(rowId); // unregister from api
+             }
             rowNode.detailGridInfo = null; // unregister from node
         });
     }

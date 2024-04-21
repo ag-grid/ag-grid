@@ -11,7 +11,8 @@ import {
     findEndPosition,
     findStartPosition,
     FilterExpressionValidationError,
-    FilterExpressionFunctionParams
+    FilterExpressionFunctionParams,
+    FilterExpressionFunction
 } from "./filterExpressionUtils";
 
 interface Parser {
@@ -346,23 +347,23 @@ export class ColFilterExpressionParser {
         return null;
     }
 
-    public getFunction(params: FilterExpressionFunctionParams): string {
-        const colId = this.columnParser!.getColId();
-        const escapedColId = escapeQuotes(colId);
-        const operator = this.operatorParser?.getOperatorKey();
-        const { operators, evaluatorParams, operands } = params;
-        const operatorForColumn = this.params.advancedFilterExpressionService.getExpressionOperator(this.columnParser!.baseCellDataType, operator);
-        const operatorIndex = this.addToListAndGetIndex(operators, operatorForColumn);
-        const evaluatorParamsForColumn = this.params.advancedFilterExpressionService.getExpressionEvaluatorParams(colId);
-        const evaluatorParamsIndex = this.addToListAndGetIndex(evaluatorParams, evaluatorParamsForColumn);
-        let operand: string;
-        if (this.operatorParser?.expectedNumOperands === 0) {
-            operand = '';
-        } else {
-            const operandIndex = this.addToListAndGetIndex(operands, this.getOperandValue());
-            operand = `, params.operands[${operandIndex}]`;
-        }
-        return `params.operators[${operatorIndex}].evaluator(expressionProxy.getValue('${escapedColId}', node), node, params.evaluatorParams[${evaluatorParamsIndex}]${operand})`;
+    public getFunctionString(params: FilterExpressionFunctionParams): string {
+        return this.getFunctionCommon(params, (operandIndex, operatorIndex, colId, evaluatorParamsIndex) => {
+            const escapedColId = escapeQuotes(colId);
+            const operand = operandIndex == null ? '' : `, params.operands[${operandIndex}]`;
+            return `params.operators[${operatorIndex}].evaluator(expressionProxy.getValue('${escapedColId}', node), node, params.evaluatorParams[${evaluatorParamsIndex}]${operand})`;
+        })
+    }
+
+    public getFunctionParsed(params: FilterExpressionFunctionParams): FilterExpressionFunction {
+        return this.getFunctionCommon(params, (operandIndex, operatorIndex, colId, evaluatorParamsIndex) => {
+            return (expressionProxy, node, p) => p.operators[operatorIndex].evaluator(
+                expressionProxy.getValue(colId, node),
+                node,
+                p.evaluatorParams[evaluatorParamsIndex],
+                operandIndex == null ? undefined : p.operands[operandIndex]
+            );
+        });
     }
 
     public getAutocompleteListParams(position: number): AutocompleteListParams | undefined {
@@ -433,6 +434,20 @@ export class ColFilterExpressionParser {
             (model as any).filter = this.operandParser!.getModelValue();
         }
         return model as AdvancedFilterModel;
+    }
+
+    private getFunctionCommon<T>(params: FilterExpressionFunctionParams, processFunc: (
+        operandIndex: number | undefined, operatorIndex: number, colId: string, evaluatorParamsIndex: number
+    ) => T) {
+        const colId = this.columnParser!.getColId();
+        const operator = this.operatorParser?.getOperatorKey();
+        const { operators, evaluatorParams, operands } = params;
+        const operatorForColumn = this.params.advancedFilterExpressionService.getExpressionOperator(this.columnParser!.baseCellDataType, operator);
+        const operatorIndex = this.addToListAndGetIndex(operators, operatorForColumn);
+        const evaluatorParamsForColumn = this.params.advancedFilterExpressionService.getExpressionEvaluatorParams(colId);
+        const evaluatorParamsIndex = this.addToListAndGetIndex(evaluatorParams, evaluatorParamsForColumn);
+        const operandIndex = this.operatorParser?.expectedNumOperands === 0 ? undefined : this.addToListAndGetIndex(operands, this.getOperandValue());
+        return processFunc(operandIndex, operatorIndex, colId, evaluatorParamsIndex);
     }
 
     private getOperandValue(): any {
