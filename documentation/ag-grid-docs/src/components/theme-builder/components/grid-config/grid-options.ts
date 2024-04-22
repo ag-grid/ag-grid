@@ -137,9 +137,9 @@ const buildSimpleColumnDefs = (): ColDef[] => [
   { field: 'name' },
   { field: 'sport' },
   { field: 'country' },
-  { field: 'winningsTotal', headerName: 'Total winnings', valueFormatter: cashFormatter },
-  { field: 'winnings2023', headerName: '2023 winnings', valueFormatter: cashFormatter },
-  { field: 'winnings2022', headerName: '2022 winnings', valueFormatter: cashFormatter },
+  { field: 'winningsTotal', headerName: 'Total winnings', type: 'rightAligned', valueFormatter: cashFormatter },
+  { field: 'winnings2023', headerName: '2023 winnings', type: 'rightAligned', valueFormatter: cashFormatter },
+  { field: 'winnings2022', headerName: '2022 winnings', type: 'rightAligned', valueFormatter: cashFormatter },
 ];
 
 const buildGroupColumnDefs = (columns: ColDef[]): ColGroupDef[] => [
