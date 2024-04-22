@@ -128,6 +128,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
   return options;
 };
 
+// Currently breaks rowGrouping
 const cashFormatter = (params) => {
     return "$" + params.value.toLocaleString();
 };
@@ -137,15 +138,17 @@ const buildSimpleColumnDefs = (): ColDef[] => [
   { field: 'sport' },
   { field: 'country' },
   { field: 'winningsTotal', headerName: 'Total winnings', valueFormatter: cashFormatter },
+  { field: 'winnings2023', headerName: '2023 winnings', valueFormatter: cashFormatter },
+  { field: 'winnings2022', headerName: '2022 winnings', valueFormatter: cashFormatter },
 ];
 
 const buildGroupColumnDefs = (columns: ColDef[]): ColGroupDef[] => [
-//   {
-//     headerName: 'Car',
-//     children: columns.filter((c) => c.field === 'make' || c.field === 'model'),
-//   },
-//   {
-//     headerName: 'Data',
-//     children: columns.filter((c) => c.field !== 'make' && c.field !== 'model'),
-//   },
+  {
+    headerName: 'Name',
+    children: columns.filter((c) => c.field === 'sport' || c.field === 'country'),
+  },
+  {
+    headerName: 'Sport',
+    children: columns.filter((c) => c.field !== 'name' && c.field !== 'country'),
+  },
 ];
