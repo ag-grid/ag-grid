@@ -33,8 +33,8 @@ const gridOptions: GridOptions = {
       },
     },
   },
-  groupIncludeFooter: true,
-  groupIncludeTotalFooter: true,
+  groupTotalRow: 'bottom',
+  grandTotalRow: 'bottom',
   rowData: getData(),
 }
 

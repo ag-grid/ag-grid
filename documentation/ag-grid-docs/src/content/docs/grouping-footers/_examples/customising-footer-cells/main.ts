@@ -30,8 +30,8 @@ const gridOptions: GridOptions = {
             innerRenderer: MyInnerRenderer
         }
     },
-    groupIncludeFooter: true,
-    groupIncludeTotalFooter: true,
+    groupTotalRow: 'bottom',
+    grandTotalRow: 'bottom',
     rowData: getData(),
 }
 
