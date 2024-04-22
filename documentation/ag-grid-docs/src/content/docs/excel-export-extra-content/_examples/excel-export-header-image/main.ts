@@ -42,7 +42,7 @@ const gridOptions: GridOptions<IOlympicData> = {
             width: 720,
             height: 250,
             imageType: 'png',
-            recolor: 'Washout'
+            recolor: 'Grayscale'
           },
           position: 'Center'
         }]
