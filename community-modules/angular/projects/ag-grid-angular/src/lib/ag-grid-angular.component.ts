@@ -1508,15 +1508,21 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.
          */
     @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null)) | undefined = undefined;
-    /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.
+    /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused.
+         * Return the next header position to navigate to, `true` to stay on the current header,
+         * or `false` to let the browser handle the tab behaviour.
+         * As of v31.3, returning `null` is deprecated.
          */
-    @Input() public tabToNextHeader: ((params: TabToNextHeaderParams<TData>) => (HeaderPosition | null)) | undefined = undefined;
+    @Input() public tabToNextHeader: ((params: TabToNextHeaderParams<TData>) => (HeaderPosition | boolean | null)) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.
          */
     @Input() public navigateToNextCell: ((params: NavigateToNextCellParams<TData>) => (CellPosition | null)) | undefined = undefined;
-    /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.
+    /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused.
+         * Return the next cell position to navigate to, `true` to stay on the current cell,
+         * or `false` to let the browser handle the tab behaviour.
+         * As of v31.3, returning `null` is deprecated.
          */
-    @Input() public tabToNextCell: ((params: TabToNextCellParams<TData>) => (CellPosition | null)) | undefined = undefined;
+    @Input() public tabToNextCell: ((params: TabToNextCellParams<TData>) => (CellPosition | boolean | null)) | undefined = undefined;
     /** A callback for localising text within the grid.
          * @initial
          */
