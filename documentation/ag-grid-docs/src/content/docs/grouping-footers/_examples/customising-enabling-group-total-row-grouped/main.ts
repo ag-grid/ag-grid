@@ -1,8 +1,9 @@
-import { GridApi, createGrid, GridOptions, GetGroupIncludeFooterParams } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { ModuleRegistry } from "@ag-grid-community/core";
+import { GetGroupIncludeTotalRowParams } from '../../../../../../../../community-modules/core/src/interfaces/iCallbackParams';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
@@ -23,12 +24,12 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     minWidth: 300,
   },
-  groupIncludeFooter: (params: GetGroupIncludeFooterParams) => {
+  groupTotalRow: (params: GetGroupIncludeTotalRowParams) => {
     const node = params.node;
     if (!node || !node.rowGroupColumn) {
-      return false;
+      return undefined;
     }
-    return node.rowGroupColumn.getId() === 'country';
+    return node.rowGroupColumn.getId() === 'country' ? 'bottom' : undefined;
   },
   groupDefaultExpanded: 1
 }

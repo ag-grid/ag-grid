@@ -449,8 +449,9 @@ export class GridBodyCtrl extends BeanStub {
 
         let height = 0;
 
-        if (headerHeight > 0) { height += headerHeight + 1; }
-        if (pinnedTopHeight > 0) { height += pinnedTopHeight + 1; }
+        if (headerHeight > 0) { height += headerHeight; }
+        if (pinnedTopHeight > 0) { height += pinnedTopHeight; }
+        if (height > 0) { height += 1; }
 
         this.comp.setStickyTopTop(`${height}px`);
     }

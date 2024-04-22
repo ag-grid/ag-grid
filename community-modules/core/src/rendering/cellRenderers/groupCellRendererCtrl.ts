@@ -228,7 +228,8 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private isTopLevelFooter(): boolean {
-        if (!this.gos.get('groupIncludeTotalFooter')) { return false; }
+        const totalRow = this.gos.get('grandTotalRow') ?? this.gos.get('groupIncludeTotalFooter');
+        if (!totalRow) { return false; }
 
         if (this.params.value != null || this.params.node.level != -1) { return false; }
 
@@ -406,7 +407,7 @@ export class GroupCellRendererCtrl extends BeanStub {
             const legacyGetter = this.params.footerValueGetter;
             if (legacyGetter) {
                 footerValueGetter = legacyGetter;
-                warnOnce('`footerValueGetter` is deprecated as of v31.2, please use `totalValueGetter` instead.');
+                warnOnce('As of v31.3, footerValueGetter is deprecated. Use `totalValueGetter` instead.');
             }
         }
         let footerValue = '';

@@ -768,16 +768,22 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         const isOpenGroup = this.group && this.expanded && !this.footer && !lockedClosedGroup;
 
+        let includeFooter = false;
         // are we showing group footers
-        const getGroupIncludeFooter = this.beans.gos.getGroupTotalRowCallback();
-        const groupFootersEnabled = getGroupIncludeFooter({ node: this });
+        const groupIncludeFooterOpt = this.beans.gos.get('groupTotalRow') ?? this.beans.gos.get('groupIncludeFooter');
+        if (typeof groupIncludeFooterOpt !== 'function') {
+            includeFooter = !!groupIncludeFooterOpt;
+        } else {
+            const groupIncludeFooterCb: any = this.beans.gos.getCallback('groupTotalRow' as any) ?? this.beans.gos.getCallback('groupIncludeFooter' as any);
+            includeFooter = !!groupIncludeFooterCb({ node: this });
+        }
 
         // if doing footers, we normally don't show agg data at group level when group is open
         const groupAlwaysShowAggData = this.beans.gos.get('groupSuppressBlankHeader');
 
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
-        const ignoreAggData = (isOpenGroup && groupFootersEnabled) && !groupAlwaysShowAggData;
+        const ignoreAggData = (isOpenGroup && includeFooter) && !groupAlwaysShowAggData;
 
         const value = this.beans.valueService.getValue(column, this, false, ignoreAggData);
 

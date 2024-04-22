@@ -532,9 +532,9 @@ export class GridOptionsService {
 
         const legacyValue = this.get('groupIncludeFooter');
         if (typeof legacyValue === 'function') {
-            return () => {
-                const legacyRes = this.getCallback('groupIncludeFooter' as any);
-                return legacyRes ? 'bottom' : undefined;
+            const legacyCallback = this.getCallback('groupIncludeFooter' as any) as any;
+            return (p: GetGroupIncludeFooterParams) => {
+                return legacyCallback(p) ? 'bottom' : undefined;
             };
         }
         return () => legacyValue ? 'bottom' : undefined;

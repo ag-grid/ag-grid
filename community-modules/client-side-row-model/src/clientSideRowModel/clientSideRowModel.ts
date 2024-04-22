@@ -161,7 +161,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             'removePivotHeaderRowWhenSingleValueColumn', 'pivotRowTotals', 'pivotColumnGroupTotals', 'suppressExpandablePivotGroups',
         ]);
         const aggregateStageRefreshProps: Set<keyof GridOptions> = new Set([
-            'getGroupRowAgg', 'alwaysAggregateAtRootLevel', 'groupIncludeTotalFooter', 'suppressAggFilteredOnly',
+            'getGroupRowAgg', 'alwaysAggregateAtRootLevel', 'groupIncludeTotalFooter', 'suppressAggFilteredOnly', 'grandTotalRow',
         ]);
         const sortStageRefreshProps: Set<keyof GridOptions> = new Set([
             'postSortRows', 'groupDisplayType', 'accentedSort',
@@ -169,7 +169,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         const filterAggStageRefreshProps: Set<keyof GridOptions> = new Set([
         ]);
         const flattenStageRefreshProps: Set<keyof GridOptions> = new Set([
-            'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren', 'groupIncludeFooter',
+            'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren', 'groupIncludeFooter', 'groupTotalRow',
         ]);
 
         const allProps = [
@@ -872,7 +872,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         const isRootNode = parentNode === this.rootNode;
         if (isRootNode) {
-            const totalFooters = this.gos.get('groupIncludeTotalFooter');
+            const totalFooters = this.gos.get('grandTotalRow') ?? this.gos.get('groupIncludeTotalFooter');
             if (!totalFooters) return index;
         } else {
             const isGroupIncludeFooter = this.gos.getGroupTotalRowCallback();
