@@ -4,8 +4,9 @@ import { buildGridOptions, type GridConfig } from './grid-options';
 import { useMemo, useRef } from 'react';
 
 const gridConfigAtom = atomWithJSONStorage<GridConfig>('grid-config', {
+    columnResizing: true,
+    pagination: true,
     rowSelection: true,
-    pagination: true
 });
 
 export const useGridConfigAtom = () => useAtom(gridConfigAtom);
