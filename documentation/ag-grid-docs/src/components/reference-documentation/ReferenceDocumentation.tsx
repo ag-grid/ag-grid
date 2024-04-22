@@ -1,12 +1,12 @@
 import type { Framework } from '@ag-grid-types';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import Code from '@components/Code';
-import styles from '@legacy-design-system/modules/ApiReference.module.scss';
 import { trackApiDocumentation } from '@utils/analytics';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { Fragment, type FunctionComponent, type ReactElement, useEffect, useRef, useState } from 'react';
 
+import styles from './ApiReference.module.scss';
 import {
     convertMarkdown,
     escapeGenericCode,
@@ -149,13 +149,13 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
     }
 
     let typeProps: any[] = [];
-    if(typeof li.type === 'string'){
-        if(interfaceOverrides){
+    if (typeof li.type === 'string') {
+        if (interfaceOverrides) {
             typeProps = Object.entries(interfaceOverrides);
-        }else{
+        } else {
             console.error(`Please provide an override for type alias: ${interfaceName}`);
         }
-    }else{
+    } else {
         typeProps = Object.entries(li.type);
     }
     sortAndFilterProperties(typeProps, framework).forEach(([k, v]) => {

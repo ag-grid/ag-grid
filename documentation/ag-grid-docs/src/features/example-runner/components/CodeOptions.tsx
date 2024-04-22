@@ -1,10 +1,11 @@
 import type { ImportType, InternalFramework } from '@ag-grid-types';
 import { USE_PACKAGES } from '@constants';
-import styles from '@legacy-design-system/modules/CodeOptions.module.scss';
 import { setImportType, setInternalFramework } from '@stores/frameworkStore';
 import { isReactInternalFramework, isVueInternalFramework } from '@utils/framework';
 import { useImportType } from '@utils/hooks/useImportType';
 import { useCallback } from 'react';
+
+import styles from './CodeOptions.module.scss';
 
 type SelectorType = 'typescript' | 'react' | 'vue';
 interface SelectorConfig {

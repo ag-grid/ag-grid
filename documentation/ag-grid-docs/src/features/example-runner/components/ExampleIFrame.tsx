@@ -1,9 +1,9 @@
-import styles from '@legacy-design-system/modules/ExampleIFrame.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import classnames from 'classnames';
 import { type FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
 
+import styles from './ExampleIFrame.module.scss';
 import exampleRuntimeInjectedStyles from './exampleRuntimeInjectedStyles';
 
 interface Props {

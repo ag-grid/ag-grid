@@ -1,7 +1,8 @@
-import styles from '@legacy-design-system/modules/ChevronButtonRenderer.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
+
+import styles from './ChevronButtonRenderer.module.scss';
 
 const TreeClosed = urlWithBaseUrl('/theme-icons/quartz/tree-closed.svg');
 

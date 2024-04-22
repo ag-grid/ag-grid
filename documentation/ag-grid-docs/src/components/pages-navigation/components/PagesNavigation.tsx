@@ -2,9 +2,6 @@ import type { Framework, MenuSection } from '@ag-grid-types';
 import type { MenuItem } from '@ag-grid-types';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Collapsible } from '@components/Collapsible';
-// TODO: Remove ag-grid menu styles
-import gridStyles from '@legacy-design-system/modules/Menu.module.scss';
-import styles from '@legacy-design-system/modules/PagesNavigation.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import { Fragment, useEffect, useState } from 'react';
@@ -15,6 +12,9 @@ import {
     getLinkUrl,
     toElementId,
 } from '../utils/pageNavigationHelpers';
+// TODO: Remove ag-grid menu styles
+import gridStyles from './LegacyPagesNavigation.module.scss';
+import styles from './PagesNavigation.module.scss';
 
 function EnterpriseIcon() {
     return (

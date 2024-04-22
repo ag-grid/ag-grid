@@ -3,12 +3,13 @@ import fwLogos from '@ag-website-shared/images/fw-logos';
 import { FRAMEWORKS } from '@constants';
 import { DOCS_FRAMEWORK_REDIRECT_PAGE } from '@features/docs/constants';
 import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
-import styles from '@legacy-design-system/modules/FrameworkSelectorInsideDocs.module.scss';
 import { getFrameworkDisplayText } from '@utils/framework';
 import { getNewFrameworkPath } from '@utils/framework';
 import { getMenuItemFromPageName } from '@utils/getMenuItemFromPageName';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
+
+import styles from './FrameworkSelectorInsideDocs.module.scss';
 
 interface Props {
     path: string;

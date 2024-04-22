@@ -4,14 +4,15 @@ import { createAutomatedIntegratedCharts } from '@components/automated-examples/
 import { INTEGRATED_CHARTS_ID } from '@components/automated-examples/lib/constants';
 import LogoMark from '@components/logo/LogoMark';
 import breakpoints from '@design-system/breakpoint.module.scss';
-import automatedExamplesVars from '@legacy-design-system/modules/AutomatedExamplesVars.module.scss';
-import styles from '@legacy-design-system/modules/AutomatedIntegratedCharts.module.scss';
 import { trackHomepageExampleIntegratedCharts, trackOnceHomepageExampleIntegratedCharts } from '@utils/analytics';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
 import { useCallback, useEffect, useRef, useState } from 'react';
+
+import automatedExamplesVars from './AutomatedExamplesVars.module.scss';
+import styles from './AutomatedIntegratedCharts.module.scss';
 
 const AUTOMATED_EXAMPLE_MEDIUM_WIDTH = parseInt(breakpoints['automated-row-grouping-medium'], 10);
 const AUTOMATED_EXAMPLE_MOBILE_SCALE = parseFloat(automatedExamplesVars['mobile-grid-scale']);

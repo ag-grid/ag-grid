@@ -1,7 +1,7 @@
-import styles from '@legacy-design-system/modules/Quotes.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
 
+import styles from './Quotes.module.scss';
 import type { QuotesData, QuotesDataItem } from './quotesData';
 
 function filterAndSortByKey(data: QuotesData, sortKey: keyof QuotesDataItem) {
