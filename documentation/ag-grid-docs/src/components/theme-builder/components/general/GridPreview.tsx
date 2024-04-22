@@ -156,6 +156,6 @@ const Wrapper = styled('div')`
 `;
 
 const GridSizer = styled('div')`
-    width: min(80%, 800px);
-    height: min(80%, 500px);
+    width: min(80%, 1020px);
+    height: min(80%, 654px);
 `;
