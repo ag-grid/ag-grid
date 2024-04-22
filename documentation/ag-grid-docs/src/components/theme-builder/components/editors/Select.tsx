@@ -2,7 +2,7 @@ import { Checkmark, ChevronUp } from '@carbon/icons-react';
 import styled from '@emotion/styled';
 import * as RadixSelect from '@radix-ui/react-select';
 import { ChevronDown } from 'lucide-react';
-import { type ReactElement, forwardRef } from 'react';
+import { type ReactElement, type ReactNode, forwardRef } from 'react';
 
 import { SharedContent, SharedIndicator, SharedItem, SharedTrigger } from './dropdown-shared';
 
@@ -16,9 +16,10 @@ type SelectProps<O> = {
     value: O;
     onChange: (value: O) => void;
     options: O[];
+    renderItem?: (item: O) => ReactNode;
 };
 
-export function Select<O extends SelectOption>({ value, options, onChange }: SelectProps<O>) {
+export function Select<O extends SelectOption>({ value, options, onChange, renderItem }: SelectProps<O>) {
     const optionsByValue = new Map<string, O>();
     const content: Record<string, ReactElement[]> = {};
     for (const option of options) {
@@ -26,7 +27,7 @@ export function Select<O extends SelectOption>({ value, options, onChange }: Sel
         content[group] ||= [];
         content[group].push(
             <SelectItem key={option.value} value={option.value}>
-                {option.label || option.value}
+                {renderItem ? renderItem(option) : option.label || option.value}
             </SelectItem>
         );
         optionsByValue.set(option.value, option);

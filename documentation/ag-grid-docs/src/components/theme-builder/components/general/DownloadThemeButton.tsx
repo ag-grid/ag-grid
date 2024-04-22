@@ -1,5 +1,6 @@
 import { gridVersionTieWarning, installDocsUrl } from '@ag-grid-community/theming';
 import { Alert } from '@ag-website-shared/components/alert/Alert';
+import { convertProductionUrlsForStaging } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
 
 import { useRenderedTheme } from '../../model/rendered-theme';
@@ -11,16 +12,18 @@ export const DownloadThemeButton = () => (
     </UIPopupButton>
 );
 
+const localInstallDocsUrl = convertProductionUrlsForStaging(installDocsUrl);
+
 const DownloadThemeDialog = () => {
     const theme = useRenderedTheme();
-    const downloadLink = `data:text/css;charset=utf-8,${encodeURIComponent(theme.css)}`;
+    const downloadLink = `data:text/css;charset=utf-8,${encodeURIComponent(convertProductionUrlsForStaging(theme.css))}`;
 
     return (
         <DownloadThemeWrapper>
             <Header>Download Theme</Header>
             <Paragraph>
                 Download a CSS file to integrate into an application. See the{' '}
-                <a href={installDocsUrl} target="_blank">
+                <a href={localInstallDocsUrl} target="_blank">
                     integration documentation
                 </a>{' '}
                 for instructions on how to use the file.

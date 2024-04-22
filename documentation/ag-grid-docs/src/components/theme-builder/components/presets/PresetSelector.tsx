@@ -8,24 +8,8 @@ import { PresetRender } from './PresetRender';
 import { type Preset, allPresets, applyPreset } from './presets';
 
 export const PresetSelector = memo(() => {
-    // find and load any google fonts that might be used by presets
-    const googleFonts = [corePart.defaults, ...allPresets.map((p) => p.params)]
-        .map((params) =>
-            Object.values(params || {})
-                .filter((v) => String(v).startsWith('google:'))
-                .map((v) => String(v).replace('google:', ''))
-        )
-        .flat()
-        .sort()
-        .map(
-            (font) =>
-                `@import url('https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}&display=swap');`
-        )
-        .join('\n');
-
     return (
         <Scroller>
-            <style>{googleFonts}</style>
             <Horizontal>
                 {allPresets.map((preset, i) => (
                     <SelectButton key={i} preset={preset} />

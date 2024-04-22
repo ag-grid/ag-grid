@@ -1,7 +1,9 @@
+import { memoize } from '@components/theme-builder/model/utils';
+
 const sports = [
     '🏀 Basketball',
     '🏈 American Football',
-    '⚽ Soccer Ball',
+    '⚽ Soccer',
     '⚾ Baseball',
     '🥎 Softball',
     '🎾 Tennis',
@@ -130,11 +132,11 @@ const countryNames = [
     'Luxembourg',
 ];
 
-const getRandomFromList = (list) => {
-    return list[Math.floor(Math.random() * list.length)]
+const getRandomFromList = <T>(list: T[]): T => {
+    return list[Math.floor(Math.random() * list.length)];
 };
 
-const getRandomCash = (min, max) => {
+const getRandomCash = (min: number, max: number) => {
     return Math.floor((Math.random() * (max - min) + min) * 100);
 };
 
@@ -148,12 +150,12 @@ const getRandomRow = () => {
         country: getRandomFromList(countryNames),
         winningsTotal: winnings2023 + winnings2022,
         winnings2023: winnings2023,
-        winnings2022: winnings2022
+        winnings2022: winnings2022,
     };
 };
 
 const numberOfRows = 500;
 
-export const defaultRowData = () => {
-    return Array.from({length: numberOfRows}, () => getRandomRow());
-};
+export const defaultRowData = memoize(() => {
+    return Array.from({ length: numberOfRows }, () => getRandomRow());
+});
