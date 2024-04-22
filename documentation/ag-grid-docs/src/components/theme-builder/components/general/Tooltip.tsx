@@ -1,16 +1,6 @@
 import { Information } from '@carbon/icons-react';
 import styled from '@emotion/styled';
-import {
-    FloatingArrow,
-    FloatingPortal,
-    arrow,
-    flip,
-    offset,
-    shift,
-    useFloating,
-    useHover,
-    useInteractions,
-} from '@floating-ui/react';
+import { FloatingPortal, arrow, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react';
 import type { ReactElement, ReactNode } from 'react';
 import { cloneElement, useRef, useState } from 'react';
 
@@ -49,7 +39,6 @@ const TooltipImpl = ({ title, children }: TooltipProps) => {
             {isOpen && (
                 <FloatingPortal>
                     <TooltipPopup ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
-                        <FloatingArrow ref={arrowRef} context={context} fill="var(--color-gray-500)" />
                         <StyledTooltip>{title}</StyledTooltip>
                     </TooltipPopup>
                 </FloatingPortal>
