@@ -14,7 +14,7 @@ import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { ModuleNames } from "../../modules/moduleNames";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { setAriaExpanded, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
-import { isElementChildOfClass } from "../../utils/dom";
+import { isElementChildOfClass, isVisible } from "../../utils/dom";
 import { isStopPropagationForAgGrid } from "../../utils/event";
 import { warnOnce, executeNextVMTurn } from "../../utils/function";
 import { exists, makeNull } from "../../utils/generic";
@@ -875,6 +875,14 @@ export class RowCtrl extends BeanStub {
             return this.fullWidthGui.element;
         }
         return null;
+    }
+
+    public getRowYPosition(): number {
+        const displayedEl = this.allRowGuis.find(el => isVisible(el.element))?.element;
+
+        if (displayedEl) { return displayedEl.getBoundingClientRect().top }
+
+        return 0;
     }
 
     public onFullWidthRowFocused(event?: CellFocusedEvent) {
