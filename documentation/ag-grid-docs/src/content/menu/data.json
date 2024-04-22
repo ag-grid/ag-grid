@@ -170,13 +170,7 @@
                             },
                             {
                                 "title": "Compatibility",
-                                "path": "react-compatibility",
-                                "frameworks": ["react"]
-                            },
-                            {
-                                "title": "Compatibility",
-                                "path": "angular-compatibility",
-                                "frameworks": ["angular"]
+                                "path": "compatibility"
                             },
                             {
                                 "title": "Security",
