@@ -7,7 +7,6 @@ import type { ValueEditorProps } from './ValueEditorProps';
 export const FontFamilyValueEditor = ({ param, value, onChange }: ValueEditorProps) => {
     const options = param.property === 'fontFamily' ? topLevelOptions : subLevelOptions;
     const selectedOption = options.find((o) => o.value === value) || options[0];
-    console.log(value);
 
     return (
         <Select
