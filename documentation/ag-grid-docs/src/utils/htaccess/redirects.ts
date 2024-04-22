@@ -2665,6 +2665,9 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/client-side-model/', to: '/react-data-grid/row-models/' },
     { from: '/vue-data-grid/client-side-model/', to: '/vue-data-grid/row-models/' },
 
+    { from: '/angular-data-grid/angular-compatibility/', to: '/angular-data-grid/compatibility/' },
+    { from: '/react-data-grid/react-compatibility/', to: '/react-data-grid/compatibility/' },
+
     { from: '/cookies.php', to: '/cookies' },
     { from: '/privacy.php', to: '/privacy' },
     { from: '/about.php', to: '/about' },

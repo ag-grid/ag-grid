@@ -55,12 +55,11 @@ const floatingOptions: Partial<UseFloatingOptions> = {
 };
 
 export const Button = styled('button')`
-    width: 48px;
-    height: 48px;
-    border-radius: 48px;
+    height: 44px;
+    border-radius: 8px;
     font-weight: 500;
     display: flex;
-    padding: 0;
+    padding: 0 12px;
     align-items: center;
     justify-content: center;
     gap: 8px;

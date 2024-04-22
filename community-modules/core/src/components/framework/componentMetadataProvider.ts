@@ -39,7 +39,8 @@ export class ComponentMetadataProvider extends BeanStub {
             },
             loadingCellRenderer: {
                 mandatoryMethodList: [],
-                optionalMethodList: []
+                optionalMethodList: [],
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             loadingOverlayComponent: {
                 mandatoryMethodList: [],

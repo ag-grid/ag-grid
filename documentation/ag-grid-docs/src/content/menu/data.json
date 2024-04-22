@@ -170,13 +170,7 @@
                             },
                             {
                                 "title": "Compatibility",
-                                "path": "react-compatibility",
-                                "frameworks": ["react"]
-                            },
-                            {
-                                "title": "Compatibility",
-                                "path": "angular-compatibility",
-                                "frameworks": ["angular"]
+                                "path": "compatibility"
                             },
                             {
                                 "title": "Security",
@@ -989,13 +983,13 @@
                                         "isEnterprise": true
                                     },
                                     {
-                                        "title": "Other",
-                                        "path": "aggregation-other",
+                                        "title": "Total Rows",
+                                        "path": "grouping-footers",
                                         "isEnterprise": true
                                     },
                                     {
-                                        "title": "Total Rows",
-                                        "path": "grouping-footers",
+                                        "title": "Other",
+                                        "path": "aggregation-other",
                                         "isEnterprise": true
                                     }
                                 ]

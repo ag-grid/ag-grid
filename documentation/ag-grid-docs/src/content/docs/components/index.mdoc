@@ -296,7 +296,7 @@ The below table gives a summary of the components, where they are configured and
 | Group Row Inner Cell Component | Grid Option               | innerRenderer{% br /%}innerRendererParams            |
 | Detail Cell Component          | Grid Option               | detailCellRenderer{% br /%}detailCellRendererParams        |
 | Full Width Cell Component      | Grid Option               | fullWidthCellRenderer{% br /%}fullWidthCellRendererParams        |
-| Loading Cell Component         | Grid Option               | loadingCellRenderer{% br /%}loadingCellRendererParams       |
+| Loading Cell Component         | Grid Option{%br /%}Column Definition               | loadingCellRenderer{% br /%}loadingCellRendererParams       |
 | Loading Overlay               | Grid Option               | loadingOverlayComponent{% br /%}loadingOverlayComponentParams       |
 | No Rows Overlay               | Grid Option               | noRowsOverlayComponent{% br /%}noRowsOverlayComponentParams        |
 | Date Component                | Grid Option               | dateComponent{% br /%}dateComponentParams                  |
@@ -341,6 +341,7 @@ The grid comes with pre-registered components that can be used. Each component p
 | agAnimateSlideCellRenderer | Cell Component that animates value changes | 
 | agGroupCellRenderer | Cell Component for displaying group information | 
 | agLoadingCellRenderer {% enterpriseIcon /%} | Cell Component for loading row when using Enterprise row model | 
+| agSkeletonCellRenderer {% enterpriseIcon /%} | Cell Component for displaying skeleton cells |
 | agCheckboxCellRenderer | Cell Component that displays a checkbox for boolean values | 
 
 | Overlays | |
@@ -375,6 +376,7 @@ It is also possible to override components. Where the grid uses a default value,
 * **agColumnHeader**: To change the default column header across all columns.
 * **agColumnGroupHeader**: To change the default column group header across all columns.
 * **agLoadingCellRenderer**: To change the default loading cell renderer for Enterprise Row Model.
+* **agSkeletonCellRenderer**: To change the default skeleton loading cell renderer for Enterprise Row Model.
 * **agLoadingOverlay**: To change the default 'loading' overlay.
 * **agNoRowsOverlay**: To change the default loading 'no rows' overlay.
 * **agCellEditor**: To change the default cell editor.

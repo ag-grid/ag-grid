@@ -493,6 +493,8 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     ariaSearchFilterValues: 'Search filter values',
     ariaPageSizeSelectorLabel: 'Page Size',
     ariaChartMenuClose: 'Close Chart Edit Menu',
+    ariaSkeletonCellLoadingFailed: 'Row failed to load',
+    ariaSkeletonCellLoading: 'Row data is loading',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Row Groups',

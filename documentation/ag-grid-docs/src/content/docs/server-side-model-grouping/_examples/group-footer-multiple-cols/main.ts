@@ -38,7 +38,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowSelection: 'multiple',
   isServerSideGroupOpenByDefault: isServerSideGroupOpenByDefault,
   getRowId: getRowId,
-  groupIncludeFooter: true,
+  groupTotalRow: 'bottom',
   groupDisplayType: 'multipleColumns',
 }
 

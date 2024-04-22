@@ -11,6 +11,13 @@ import { PartEditor } from './PartEditor';
 export const EditorPanel = () => {
     return (
         <AccordionRoot type="multiple" defaultValue={['General']}>
+            <div className="pageHeading">
+                <h1 className="pageTitle">Theme Builder </h1>
+                <a className="iconDoc" href="https://ag-grid.com/react-data-grid/themes/" target="_blank">
+                    <span>↗</span>
+                </a>
+            </div>
+            {/* <p className="pageDescription">Prototype & customise your data grid theme</p> */}
             <Section heading="General">
                 <LeftBiasRow>
                     <ParamEditor param="fontFamily" />
@@ -72,6 +79,7 @@ const Note = styled('div')`
     font-size: 14px;
     font-style: italic;
     margin-left: 12px;
+    margin-bottom: 8px;
 `;
 
 const SectionContent = styled('div')`
@@ -86,6 +94,44 @@ const AccordionRoot = styled(Accordion.Root)`
     display: flex;
     flex-direction: column;
     width: 100%;
+
+    .iconDoc {
+        margin-left: 8px;
+        color: var(--color-fg-quinary);
+        font-size: var(--text-size-sm);
+        transition: all 0.3s ease;
+        &:hover {
+            color: var(--color-fg-primary);
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+    }
+
+    .pageHeading {
+        display: flex;
+        margin-bottom: 8px;
+        align-items: center;
+        position: sticky;
+        padding-bottom: 8px;
+        top: 0px;
+        background: linear-gradient(var(--color-bg-primary) 65%, rgba(255, 255, 255, 0));
+        z-index: 1;
+    }
+
+    .pageTitle {
+        color: var(--color-fg-secondary);
+        font-weight: var(--text-semibold);
+        font-size: var(--text-fs-base);
+        padding-left: 6px;
+        margin-bottom: 0;
+    }
+
+    .pageDescription {
+        color: var(--color-text-secondary);
+        font-size: var(--text-fs-sm);
+        opacity: 0.7;
+        padding-left: 4px;
+    }
 `;
 
 const AccordionItem = styled(Accordion.Item)`

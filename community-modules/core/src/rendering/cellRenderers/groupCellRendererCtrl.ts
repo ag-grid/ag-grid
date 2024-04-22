@@ -53,7 +53,7 @@ export interface IGroupCellRendererParams<TData = any, TValue = any> {
     suppressDoubleClickExpand?: boolean;
     /** Set to `true` to suppress expand on <kbd>↵ Enter</kbd> */
     suppressEnterExpand?: boolean;
-    /** The value getter for the footer text. Can be a function or expression. @deprecated use `totalValueGetter` */
+    /** The value getter for the footer text. Can be a function or expression. @deprecated v31.2 use `totalValueGetter` */
     footerValueGetter?: string | FooterValueGetterFunc;
     /** The value getter for the total row text. Can be a function or expression. */
     totalValueGetter?: string | TotalValueGetterFunc;
@@ -406,7 +406,7 @@ export class GroupCellRendererCtrl extends BeanStub {
             const legacyGetter = this.params.footerValueGetter;
             if (legacyGetter) {
                 footerValueGetter = legacyGetter;
-                warnOnce('AG Grid: footerValueGetter is deprecated, please use totalValueGetter instead.');
+                warnOnce('`footerValueGetter` is deprecated as of v31.2, please use `totalValueGetter` instead.');
             }
         }
         let footerValue = '';

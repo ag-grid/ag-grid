@@ -10,19 +10,49 @@ export const FontFamilyValueEditor = ({ param, value, onChange }: ValueEditorPro
 
 const fontOptions = [
     {
+        label: 'System',
+        value: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',
+    },
+    {
+        label: 'Arial',
+        value: '"Arial" , sans-serif',
+    },
+    {
+        label: 'Inter',
+        value: 'google:Inter',
+    },
+    {
+        label: 'IBM Plex Sans',
+        value: 'google:IBM Plex Sans',
+    },
+    {
+        label: 'IBM Plex Mono',
+        value: 'google:IBM Plex Mono',
+    },
+    {
+        label: 'Roboto',
+        value: 'google:Roboto',
+    },
+    {
         label: 'Times New Roman',
         value: 'Times New Roman',
+    },
+    {
+        label: 'Inclusive Sans',
+        value: 'google:Inclusive Sans',
+    },
+    {
+        label: 'Open Sans',
+        value: 'google:Open Sans',
+    },
+    {
+        label: 'Lato',
+        value: 'google:Lato',
     },
     {
         label: 'Jacquard 24',
         value: 'google:Jacquard 24',
     },
-    {
-        label: 'System',
-        value: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',
-    },
 ];
 const topLevelOptions = [{ label: 'Same as application', value: 'inherit' }, ...fontOptions];
 const subLevelOptions = [{ label: 'Unchanged', value: 'inherit' }, ...fontOptions];
-
-const fontOptionsByValue = new Map(fontOptions.map((option) => [option.value, option]));

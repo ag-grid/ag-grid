@@ -1,0 +1,53 @@
+---
+import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
+import { getPageImages } from '@features/docs/utils/filesData';
+
+interface Props {
+    pageName?: string;
+    imagePath: string;
+    alt: string;
+    width?: string;
+    height?: string;
+    minWidth?: string;
+    maxWidth?: string;
+    margin?: string;
+}
+
+const {
+    pageName: propPageName,
+    imagePath,
+    alt,
+    width,
+    minWidth,
+    maxWidth,
+    height,
+    margin,
+    ...props
+} = Astro.props as Props;
+
+const pageName = propPageName ? propPageName : getPageNameFromPath(Astro.url.pathname);
+
+const { imageSrc } = await getPageImages({
+    pageName,
+    imagePath,
+});
+
+const style: any = {};
+if (width !== undefined) {
+    style.width = width;
+}
+if (minWidth !== undefined) {
+    style.minWidth = minWidth;
+}
+if (maxWidth !== undefined) {
+    style.maxWidth = maxWidth;
+}
+if (height !== undefined) {
+    style.height = height;
+}
+if (margin !== undefined) {
+    style.margin = margin;
+}
+---
+
+{imageSrc && <img style={style} src={imageSrc} alt={alt} {...props} />}

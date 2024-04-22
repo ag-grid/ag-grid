@@ -49,8 +49,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
   },
 
-  groupIncludeFooter: true,
-  groupIncludeTotalFooter: true,
+  groupTotalRow: 'bottom',
+  grandTotalRow: 'bottom',
 
   popupParent: document.body,
   defaultExcelExportParams: getParams()

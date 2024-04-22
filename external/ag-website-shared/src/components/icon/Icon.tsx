@@ -122,6 +122,7 @@ const CHARTS_ICON_MAP = {
     chartsBullet: CarbonIcon.ChartBullet,
     chartsMap: CarbonIcon.Plan,
     chartsCandlestick: CarbonIcon.ChartCandlestick,
+    chartsOHLC: CarbonIcon.ChartHighLow,
 };
 
 export const ICON_MAP = {

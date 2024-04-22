@@ -65,7 +65,7 @@ export function setAriaLabel(element: Element, label?: string | null): void {
     toggleAriaAttribute(element, 'label', label);
 }
 
-export function setAriaLabelledBy(element: Element, labelledBy: string): void {
+export function setAriaLabelledBy(element: Element, labelledBy?: string): void {
     toggleAriaAttribute(element, 'labelledby', labelledBy);
 }
 

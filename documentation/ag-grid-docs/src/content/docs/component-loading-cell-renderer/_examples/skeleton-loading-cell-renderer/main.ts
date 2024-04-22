@@ -71,7 +71,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
           // inform the grid request failed
           params.fail()
         }
-      }, 1000)
+      }, 4000)
     },
   }
 }
