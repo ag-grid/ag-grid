@@ -16,6 +16,7 @@ export const PresetSelector = memo(() => {
                 .map((v) => String(v).replace('google:', ''))
         )
         .flat()
+        .concat(['Roboto', 'Inter', 'Open Sans', 'Lato', 'IBM Plex Sans', 'IBM Plex Mono', 'Inclusive Sans'])
         .sort()
         .map(
             (font) =>
