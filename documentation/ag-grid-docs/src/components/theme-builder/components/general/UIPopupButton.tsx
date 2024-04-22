@@ -59,7 +59,7 @@ export const Button = styled('button')`
     border-radius: 8px;
     font-weight: 500;
     display: flex;
-    padding: 0 12px;
+    padding: 0 16px;
     align-items: center;
     justify-content: center;
     gap: 8px;

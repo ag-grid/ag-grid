@@ -98,7 +98,7 @@ const AccordionRoot = styled(Accordion.Root)`
     .iconDoc {
         margin-left: 8px;
         color: var(--color-fg-quinary);
-        font-size: var(--text-size-sm);
+        font-size: var(--text-fs-sm);
         transition: all 0.3s ease;
         &:hover {
             color: var(--color-fg-primary);

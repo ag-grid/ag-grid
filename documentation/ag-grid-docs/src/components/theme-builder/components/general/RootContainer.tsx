@@ -17,7 +17,6 @@ export const RootContainer = () => {
                 </EditorScroller>
                 <MenuBottom>
                     <DownloadThemeButton />
-                    <Spacer />
                     <GridConfigDropdownButton />
                 </MenuBottom>
             </Menu>
