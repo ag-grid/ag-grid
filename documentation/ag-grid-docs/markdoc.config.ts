@@ -4,6 +4,7 @@ import { heading } from '@ag-website-shared/markdoc/nodes/heading';
 import { br } from '@ag-website-shared/markdoc/tags/br';
 import { enterpriseIcon } from '@ag-website-shared/markdoc/tags/enterpriseIcon';
 import { idea } from '@ag-website-shared/markdoc/tags/idea';
+import { image } from '@ag-website-shared/markdoc/tags/image';
 import { kbd } from '@ag-website-shared/markdoc/tags/kbd';
 import { note } from '@ag-website-shared/markdoc/tags/note';
 import { oneTrustCookies } from '@ag-website-shared/markdoc/tags/oneTrustCookies';
@@ -53,6 +54,7 @@ export default defineMarkdocConfig({
         tabs,
         tabItem,
         videoSection,
+        image,
         br,
         note,
         warning,
@@ -152,24 +154,6 @@ export default defineMarkdocConfig({
         },
         iconsPanel: {
             render: component('./src/components/icon/IconsPanel.astro'),
-        },
-        image: {
-            render: component('./src/components/image/Image.astro'),
-            attributes: {
-                /**
-                 * Docs page name in `src/content/[pageName]
-                 *
-                 * If not provided, will default to the location of the markdoc file
-                 */
-                pageName: { type: String },
-                imagePath: { type: String, required: true },
-                alt: { type: String, required: true },
-                width: { type: String },
-                height: { type: String },
-                minWidth: { type: String },
-                maxWidth: { type: String },
-                margin: { type: String },
-            },
         },
         imageCaption: {
             render: component('./src/components/image/ImageCaption.astro'),
