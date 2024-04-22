@@ -1,17 +1,159 @@
-export const defaultRowData = () => [
-    { make: 'Toyota', model: 'Celica', year: 2001, price: 35000 },
-    { make: 'Toyota', model: 'Celica', year: 2002, price: 36000 },
-    { make: 'Toyota', model: 'Celica', year: 2003, price: 37000 },
-    { make: 'Toyota', model: 'Celica', year: 2004, price: 38000 },
-    { make: 'Toyota', model: 'Celica', year: 2005, price: 39000 },
-    { make: 'Ford', model: 'Mondeo', year: 2001, price: 32000 },
-    { make: 'Ford', model: 'Mondeo', year: 2002, price: 33000 },
-    { make: 'Ford', model: 'Mondeo', year: 2003, price: 34000 },
-    { make: 'Ford', model: 'Mondeo', year: 2004, price: 35000 },
-    { make: 'Ford', model: 'Mondeo', year: 2005, price: 36000 },
-    { make: 'Porsche', model: 'Boxster', year: 2001, price: 73000 },
-    { make: 'Porsche', model: 'Boxster', year: 2002, price: 74000 },
-    { make: 'Porsche', model: 'Boxster', year: 2003, price: 75000 },
-    { make: 'Porsche', model: 'Boxster', year: 2004, price: 76000 },
-    { make: 'Porsche', model: 'Boxster', year: 2005, price: 77000 },
+const sports = [
+    '🏀 Basketball',
+    '🏈 American Football',
+    '⚽ Soccer Ball',
+    '⚾ Baseball',
+    '🥎 Softball',
+    '🎾 Tennis',
+    '🏐 Volleyball',
+    '🏉 Rugby',
+    '🎱 Billiards',
+    '🏓 Ping Pong',
+    '🏸 Badminton',
+    '🏒 Ice Hockey',
+    '🏑 Field Hockey',
+    '🥍 Lacrosse',
+    '🏏 Cricket',
+    '🎿 Skiing',
+    '🛷 Bobsleigh',
+    '🛹 Skateboarding',
+    '⛸️ Speed Skating',
+    '🥌 Curling',
+    '🎯 Darts',
+    '🎳 Bowling',
+    '🚴 Cycling ',
+    '🏇 Horse Racing',
+    '🏂 Snowboarding',
+    '🏊 Swimming',
+    '🚣 Rowing',
+    '🏹 Archery',
 ];
+
+const firstNames = [
+    'Tony',
+    'Andrew',
+    'Kevin',
+    'Bricker',
+    'Dimple',
+    'Gil',
+    'Sophie',
+    'Isabelle',
+    'Emily',
+    'Olivia',
+    'Lily',
+    'Chloe',
+    'Isabella',
+    'Amelia',
+    'Jessica',
+    'Sophia',
+    'Ava',
+    'Charlotte',
+    'Mia',
+    'Lucy',
+    'Grace',
+    'Ruby',
+    'Ella',
+    'Evie',
+    'Freya',
+    'Isla',
+    'Poppy',
+    'Daisy',
+    'Layla',
+];
+
+const lastNames = [
+    'Smith',
+    'Connell',
+    'Flanagan',
+    'McGee',
+    'Unalkat',
+    'Lopes',
+    'Beckham',
+    'Black',
+    'Braxton',
+    'Brennan',
+    'Brock',
+    'Bryson',
+    'Cadwell',
+    'Cage',
+    'Carson',
+    'Chandler',
+    'Cohen',
+    'Cole',
+    'Corbin',
+    'Dallas',
+    'Dalton',
+    'Dane',
+    'Donovan',
+    'Easton',
+    'Fisher',
+    'Fletcher',
+    'Grady',
+    'Greyson',
+    'Griffin',
+    'Gunner',
+    'Hayden',
+    'Hudson',
+    'Hunter',
+    'Jacoby',
+    'Jagger',
+    'Jaxon',
+    'Jett',
+    'Kade',
+    'Kane',
+    'Keating',
+    'Keegan',
+    'Kingston',
+    'Kobe',
+];
+
+const countryNames = [
+    'Argentina',
+    'Brazil',
+    'Colombia',
+    'France',
+    'Germany',
+    'Greece',
+    'Iceland',
+    'Ireland',
+    'Italy',
+    'Malta',
+    'Portugal',
+    'Norway',
+    'Peru',
+    'Spain',
+    'Sweden',
+    'United Kingdom',
+    'Uruguay',
+    'Venezuela',
+    'Belgium',
+    'Luxembourg',
+];
+
+const getRandomFromList = (list) => {
+    return list[Math.floor(Math.random() * list.length)]
+};
+
+const getRandomCash = (min, max) => {
+    return Math.floor((Math.random() * (max - min) + min) * 100);
+};
+
+const getRandomRow = () => {
+    const winnings2023 = getRandomCash(10, 500);
+    const winnings2022 = getRandomCash(10, 500);
+
+    return {
+        name: `${getRandomFromList(firstNames)} ${getRandomFromList(lastNames)}`,
+        sport: getRandomFromList(sports),
+        country: getRandomFromList(countryNames),
+        winningsTotal: winnings2023 + winnings2022,
+        winnings2023: winnings2023,
+        winnings2022: winnings2022
+    };
+};
+
+const numberOfRows = 500;
+
+export const defaultRowData = () => {
+    return Array.from({length: numberOfRows}, () => getRandomRow());
+};

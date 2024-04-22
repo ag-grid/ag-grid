@@ -128,30 +128,24 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
   return options;
 };
 
+const cashFormatter = (params) => {
+    return "$" + params.value.toLocaleString();
+};
+
 const buildSimpleColumnDefs = (): ColDef[] => [
-  { field: 'make' },
-  {
-    field: 'model',
-    filter: 'agSetColumnFilter',
-    filterParams: {
-      buttons: ['reset', 'apply'],
-    },
-    cellEditor: 'agRichSelectCellEditor',
-    cellEditorParams: {
-      values: Array.from(new Set(defaultRowData().map((row) => row.model))).sort(),
-    },
-  },
-  { field: 'year' },
-  { field: 'price' },
+  { field: 'name' },
+  { field: 'sport' },
+  { field: 'country' },
+  { field: 'winningsTotal', headerName: 'Total winnings', valueFormatter: cashFormatter },
 ];
 
 const buildGroupColumnDefs = (columns: ColDef[]): ColGroupDef[] => [
-  {
-    headerName: 'Car',
-    children: columns.filter((c) => c.field === 'make' || c.field === 'model'),
-  },
-  {
-    headerName: 'Data',
-    children: columns.filter((c) => c.field !== 'make' && c.field !== 'model'),
-  },
+//   {
+//     headerName: 'Car',
+//     children: columns.filter((c) => c.field === 'make' || c.field === 'model'),
+//   },
+//   {
+//     headerName: 'Data',
+//     children: columns.filter((c) => c.field !== 'make' && c.field !== 'model'),
+//   },
 ];
