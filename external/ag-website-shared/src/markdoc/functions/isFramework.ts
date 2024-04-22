@@ -1,7 +1,6 @@
-import { type Render, component } from '@astrojs/markdoc/config';
-import type { Config, Schema } from '@markdoc/markdoc';
+import type { Config, ConfigFunction, Schema } from '@markdoc/markdoc';
 
-export const isFramework: Schema<Config, Render> = {
+export const isFramework: Schema<Config, ConfigFunction> = {
     transform(parameters, context) {
         const pageFramework = context.variables?.framework;
         return Object.values(parameters).includes(pageFramework);
