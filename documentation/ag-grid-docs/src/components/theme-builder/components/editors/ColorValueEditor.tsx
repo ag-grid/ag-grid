@@ -121,22 +121,22 @@ const alphaPatternSvg =
     'data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgba(128, 128, 128, 0.3)"><path d="M8 0h8v8H8zM0 8h8v8H0z"/></svg>';
 
 const ColorSwatch = styled('div')`
-    border-radius: 5px;
+    border-radius: 4px;
     overflow: hidden;
     position: absolute;
     top: 50%;
-    margin-top: -10px;
-    left: 10px;
-    width: 20px;
-    height: 20px;
-    border: 1px solid var(--color-border-secondary);
+    margin-top: -11px;
+    left: 6px;
+    width: 22px;
+    height: 22px;
+    outline: 1px solid var(--color-border-primary);
     background-color: var(--color-bg-primary);
     background-image: url('${alphaPatternSvg}');
     background-repeat: repeat;
     background-size: 8px;
     cursor: pointer;
     &:hover {
-        outline: 1px solid rgba(0, 0, 0, 0.15);
+        outline: 1px solid rgba(0, 0, 0, 0.3);
     }
 `;
 
