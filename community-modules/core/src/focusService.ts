@@ -27,6 +27,7 @@ import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR, isVisible } from "./utils/dom";
 import { TabGuardClassNames } from "./widgets/tabGuardCtrl";
 import { FilterManager } from "./filter/filterManager";
 import { IAdvancedFilterService } from "./interfaces/iAdvancedFilterService";
+import { warnOnce } from "./utils/function";
 
 @Bean('focusService')
 export class FocusService extends BeanStub {
@@ -348,7 +349,17 @@ export class FocusService extends BeanStub {
                         nextHeaderPosition: headerPosition,
                         headerRowCount,
                     };
-                    headerPosition = userFunc(params);
+                    const userResult = userFunc(params);
+                    if (userResult === true || userResult === null) {
+                        if (userResult === null) {
+                            warnOnce('Returning `null` from tabToNextHeader is deprecated. Return `true` to stay on the current header, or `false` to let the browser handle the tab behaviour.');
+                        }
+                        headerPosition = currentPosition;
+                    } else if (userResult === false) {
+                        headerPosition = null;
+                    } else {
+                        headerPosition = userResult;
+                    }
                 }
             } else {
                 const userFunc = this.gos.getCallback('navigateToNextHeader');
