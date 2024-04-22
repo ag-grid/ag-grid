@@ -1,0 +1,17 @@
+export const defaultRowData = () => [
+    { make: 'Toyota', model: 'Celica', year: 2001, price: 35000 },
+    { make: 'Toyota', model: 'Celica', year: 2002, price: 36000 },
+    { make: 'Toyota', model: 'Celica', year: 2003, price: 37000 },
+    { make: 'Toyota', model: 'Celica', year: 2004, price: 38000 },
+    { make: 'Toyota', model: 'Celica', year: 2005, price: 39000 },
+    { make: 'Ford', model: 'Mondeo', year: 2001, price: 32000 },
+    { make: 'Ford', model: 'Mondeo', year: 2002, price: 33000 },
+    { make: 'Ford', model: 'Mondeo', year: 2003, price: 34000 },
+    { make: 'Ford', model: 'Mondeo', year: 2004, price: 35000 },
+    { make: 'Ford', model: 'Mondeo', year: 2005, price: 36000 },
+    { make: 'Porsche', model: 'Boxster', year: 2001, price: 73000 },
+    { make: 'Porsche', model: 'Boxster', year: 2002, price: 74000 },
+    { make: 'Porsche', model: 'Boxster', year: 2003, price: 75000 },
+    { make: 'Porsche', model: 'Boxster', year: 2004, price: 76000 },
+    { make: 'Porsche', model: 'Boxster', year: 2005, price: 77000 },
+];
