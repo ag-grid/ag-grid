@@ -384,7 +384,6 @@ export class NavigationService extends BeanStub {
             // in order for the tab navigation to work, we need to focus the browser back onto the
             // previous cell.
             if (previous instanceof CellCtrl) {
-                keyboardEvent.preventDefault();
                 previous.focusCell(true);
             } else if (this.focusService.focusNextGridCoreContainer(backwards)) {
                 keyboardEvent.preventDefault();
@@ -551,19 +550,24 @@ export class NavigationService extends BeanStub {
                     previousCellPosition: previousPosition,
                     nextCellPosition: nextPosition ? nextPosition : null
                 };
-                const userCell = userFunc(params);
-                if (exists(userCell)) {
-                    if ((userCell as any).floating) {
+                const userResult = userFunc(params);
+                if (userResult === true || userResult === null) {
+                    if (userResult === null) {
+                        warnOnce('Returning `null` from tabToNextCell is deprecated. Return `true` to stay on the current cell, or `false` to let the browser handle the tab behaviour.');
+                    }
+                    nextPosition = previousPosition;
+                } else if (userResult === false) {
+                    nextPosition = null;
+                } else {
+                    if ((userResult as any).floating) {
                         warnOnce(`tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`);
-                        userCell.rowPinned = (userCell as any).floating;
+                        userResult.rowPinned = (userResult as any).floating;
                     }
                     nextPosition = {
-                        rowIndex: userCell.rowIndex,
-                        column: userCell.column,
-                        rowPinned: userCell.rowPinned
+                        rowIndex: userResult.rowIndex,
+                        column: userResult.column,
+                        rowPinned: userResult.rowPinned
                     } as CellPosition;
-                } else {
-                    nextPosition = null;
                 }
             }
 

@@ -616,7 +616,7 @@
     ]
   },
   "tabToNextHeader": {
-    "typeName": "(params: TabToNextHeaderParams<TData>) => (HeaderPosition | null)",
+    "typeName": "(params: TabToNextHeaderParams<TData>) => (HeaderPosition | boolean | null)",
     "typesToInclude": [
       "TabToNextHeaderParams",
       "HeaderPosition"
@@ -630,7 +630,7 @@
     ]
   },
   "tabToNextCell": {
-    "typeName": "(params: TabToNextCellParams<TData>) => (CellPosition | null)",
+    "typeName": "(params: TabToNextCellParams<TData>) => (CellPosition | boolean | null)",
     "typesToInclude": [
       "TabToNextCellParams",
       "CellPosition"
