@@ -40,6 +40,7 @@ export const OVERRIDABLE_AG_COMPONENTS = [
     'agColumnHeader',
     'agColumnGroupHeader',
     'agLoadingCellRenderer',
+    'agSkeletonCellRenderer',
     'agLoadingOverlay',
     'agNoRowsOverlay',
     'agTextCellEditor',
