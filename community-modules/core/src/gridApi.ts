@@ -370,7 +370,7 @@ export class GridApi<TData = any> {
     }
 
     private logDeprecation(version: string, apiMethod: StartsWithGridApi, replacement: StartsWithGridApi, message?: string) {
-        warnOnce(`Since ${version} api.${apiMethod} is deprecated. Please use ${replacement} instead. ${message}`);
+        warnOnce(`Since ${version} api.${apiMethod} is deprecated. Please use ${replacement} instead. ${message ?? ''}`);
     }
 
     /** Gets the number of top pinned rows. */
