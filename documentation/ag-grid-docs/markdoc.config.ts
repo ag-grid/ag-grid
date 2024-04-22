@@ -1,3 +1,6 @@
+import { isFramework } from '@ag-website-shared/markdoc/functions/isFramework';
+import { isNotJavascriptFramework } from '@ag-website-shared/markdoc/functions/isNotJavascriptFramework';
+import { heading } from '@ag-website-shared/markdoc/nodes/heading';
 import { br } from '@ag-website-shared/markdoc/tags/br';
 import { enterpriseIcon } from '@ag-website-shared/markdoc/tags/enterpriseIcon';
 import { idea } from '@ag-website-shared/markdoc/tags/idea';
@@ -19,10 +22,7 @@ export default defineMarkdocConfig({
         agGridVersion,
     },
     nodes: {
-        heading: {
-            ...nodes.heading, // Preserve default anchor link generation
-            render: component('./src/components/Heading.astro'),
-        },
+        heading,
         link,
         fence: {
             attributes: {
@@ -43,18 +43,8 @@ export default defineMarkdocConfig({
         },
     },
     functions: {
-        isFramework: {
-            transform(parameters, context) {
-                const pageFramework = context.variables?.framework;
-                return Object.values(parameters).includes(pageFramework);
-            },
-        },
-        isNotJavascriptFramework: {
-            transform(_, context) {
-                const pageFramework = context.variables?.framework;
-                return pageFramework !== 'javascript';
-            },
-        },
+        isFramework,
+        isNotJavascriptFramework,
     },
     tags: {
         kbd,
