@@ -7,7 +7,7 @@ import { UIPopupButton } from './UIPopupButton';
 
 export const DownloadThemeButton = () => (
     <UIPopupButton dropdownContent={<DownloadThemeDialog />} variant="primary">
-        {downloadIcon}
+        {downloadIcon} Download
     </UIPopupButton>
 );
 
@@ -60,13 +60,13 @@ const DownloadLink = styled('a')`
 `;
 
 const downloadIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" fill="none">
         <path
             stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M8 15V1m0 14L2 9m6 6 6-6m1 10H1"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M2.5 10c0 1.885 0 2.829.586 3.414C3.671 14 4.615 14 6.5 14h4c1.885 0 2.829 0 3.414-.586.586-.585.586-1.529.586-3.414m-6-8v8.667m0 0 2.667-2.917M8.5 10.667 5.833 7.75"
         />
     </svg>
 );

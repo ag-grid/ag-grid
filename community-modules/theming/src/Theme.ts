@@ -80,7 +80,7 @@ export const defineTheme = <P extends Part, V extends object = ParamTypes>(
             if (typeof value !== 'string') return;
             const googlePrefix = 'google:';
             if (value.startsWith(googlePrefix)) {
-                googleFonts.add(value);
+                googleFonts.add(value.replace(googlePrefix, ''));
             }
         };
         if (getParamType(name) === 'fontFamily') {

@@ -4,7 +4,7 @@ import { useRenderedTheme } from '../../model/rendered-theme';
 import { EditorPanel } from '../editors/EditorPanel';
 import { GridConfigDropdownButton } from '../grid-config/GridConfigDropdown';
 import { PresetSelector } from '../presets/PresetSelector';
-import { DownloadThemeButton } from './Download';
+import { DownloadThemeButton } from './DownloadThemeButton';
 import { GridPreview } from './GridPreview';
 
 export const RootContainer = () => {
@@ -69,8 +69,7 @@ const MenuBottom = styled('div')`
     right: 0;
     bottom: 0;
     display: flex;
-    gap: 20px;
-    padding-right: 20px;
+    justify-content: space-between;
 
     &:after {
         content: '';

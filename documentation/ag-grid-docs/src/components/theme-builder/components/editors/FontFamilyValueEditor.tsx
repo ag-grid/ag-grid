@@ -56,5 +56,3 @@ const fontOptions = [
 ];
 const topLevelOptions = [{ label: 'Same as application', value: 'inherit' }, ...fontOptions];
 const subLevelOptions = [{ label: 'Unchanged', value: 'inherit' }, ...fontOptions];
-
-const fontOptionsByValue = new Map(fontOptions.map((option) => [option.value, option]));
