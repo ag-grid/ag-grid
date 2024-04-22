@@ -1,6 +1,6 @@
-import type { Config, ConfigFunction, Schema } from '@markdoc/markdoc';
+import type { ConfigFunction } from '@markdoc/markdoc';
 
-export const isNotJavascriptFramework: Schema<Config, ConfigFunction> = {
+export const isNotJavascriptFramework: ConfigFunction = {
     transform(_, context) {
         const pageFramework = context.variables?.framework;
         return pageFramework !== 'javascript';
