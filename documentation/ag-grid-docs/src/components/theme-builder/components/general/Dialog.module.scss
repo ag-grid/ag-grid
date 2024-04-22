@@ -1,0 +1,93 @@
+/* Overlay fade in and out */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Dialog slide in and out */
+@keyframes slideIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+}
+
+.overlay {
+    &[data-status='open'],
+    &[data-status='initial'] {
+        animation: fadeIn 0.3s ease-out forwards;
+    }
+    &[data-status='close'] {
+        animation: fadeOut 0.3s ease-out forwards;
+    }
+    display: grid;
+    place-items: center;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.content {
+    background-color: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    max-width: 500px;
+    &[data-status='initial'],
+    &[data-status='open'] {
+        animation: slideIn 0.3s ease-out forwards;
+    }
+    &[data-status='close'] {
+        animation: slideOut 0.3s ease-out forwards;
+    }
+}
+
+/* body is body content wrapping */
+.body {
+    padding: 24px;
+}
+
+.heading {
+    font-size: var(--text-fs-lg);
+    margin-bottom: 8px;
+    color: var(--color-text-secondary);
+}
+
+.bodyText {
+    font-size: var(--text-fs-sm);
+}
+
+.footer {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    justify-content: end;
+    border-top: 1px solid var(--color-border-secondary);
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-right: 20px;
+}

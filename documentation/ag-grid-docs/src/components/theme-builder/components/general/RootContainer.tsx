@@ -1,16 +1,53 @@
 import styled from '@emotion/styled';
+import { useEffect, useState } from 'react';
 
 import { useRenderedTheme } from '../../model/rendered-theme';
 import { EditorPanel } from '../editors/EditorPanel';
 import { GridConfigDropdownButton } from '../grid-config/GridConfigDropdown';
 import { PresetSelector } from '../presets/PresetSelector';
+import {
+    Dialog,
+    DialogBody,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeading,
+    DialogTrigger,
+} from './Dialog';
 import { DownloadThemeButton } from './DownloadThemeButton';
 import { GridPreview } from './GridPreview';
 
 export const RootContainer = () => {
+    const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setOpen(true);
+            console.log('open modal');
+        });
+        return () => clearTimeout(timeout);
+    }, []);
+
     useRenderedTheme();
     return (
         <Container>
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger>My trigger</DialogTrigger>
+                <DialogContent>
+                    <DialogBody>
+                        {' '}
+                        <DialogHeading>Are you sure you want to reset? </DialogHeading>
+                        <DialogDescription>
+                            Applying a preset will reset any changes you've made to a theme. Changes will be lost.
+                        </DialogDescription>
+                    </DialogBody>
+                    <DialogFooter>
+                        <DialogClose>Cancel</DialogClose>
+                        <button className="button-primary">Continue</button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
             <Menu>
                 <EditorScroller>
                     <EditorPanel />

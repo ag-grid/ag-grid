@@ -115,7 +115,6 @@ const AccordionRoot = styled(Accordion.Root)`
         padding-bottom: 8px;
         top: 0px;
         background: linear-gradient(var(--color-bg-primary) 65%, rgba(255, 255, 255, 0));
-        z-index: 1;
     }
 
     .pageTitle {
