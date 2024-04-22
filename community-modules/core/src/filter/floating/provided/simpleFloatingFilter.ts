@@ -6,8 +6,11 @@ import { OptionsFactory } from '../../provided/optionsFactory';
 import { ScalarFilterParams } from '../../provided/scalarFilter';
 import { FilterChangedEvent } from '../../../events';
 import { ProvidedFilterParams } from '../../provided/providedFilter';
+import { Autowired } from '../../../context/context';
+import { ColumnModel } from '../../../columns/columnModel';
 
 export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp<ISimpleFilter> {
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
     // this method is on IFloatingFilterComp. because it's not implemented at this level, we have to
     // define it as an abstract method. it gets implemented in sub classes.
@@ -137,5 +140,11 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
             !this.isReadOnly() &&
             this.doesFilterHaveSingleInput(type) &&
             uneditableTypes.indexOf(type) < 0;
+    }
+
+    protected getAriaLabel(params: IFloatingFilterParams): string {
+        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
+        const translate = this.localeService.getLocaleTextFunc();
+        return `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`
     }
 }
