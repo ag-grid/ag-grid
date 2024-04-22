@@ -35,7 +35,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         enableRowGroup: true,
         floatingFilter: config.floatingFilters,
         editable: true,
-        flex: config.printLayout ? undefined : 1,
+        flex: 1,
     };
     const columnDefs = buildSimpleColumnDefs();
     const sideBar: string[] = [];
@@ -86,6 +86,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
             headerName: 'Group',
             field: 'name',
             headerCheckboxSelection: true,
+            minWidth: 250,
             cellRendererParams: {
                 checkbox: true,
             },
@@ -136,9 +137,9 @@ const cashFormatter = (params: any) => {
 };
 
 const buildSimpleColumnDefs = (): ColDef[] => [
-    { field: 'name' },
-    { field: 'sport' },
     { field: 'country' },
+    { field: 'sport' },
+    { field: 'name' },
     { field: 'winningsTotal', headerName: 'Total winnings', type: 'rightAligned', valueFormatter: cashFormatter },
     { field: 'winnings2023', headerName: '2023 winnings', type: 'rightAligned', valueFormatter: cashFormatter },
     { field: 'winnings2022', headerName: '2022 winnings', type: 'rightAligned', valueFormatter: cashFormatter },

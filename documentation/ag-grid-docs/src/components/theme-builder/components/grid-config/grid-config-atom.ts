@@ -19,7 +19,7 @@ export const useGridOptions = () => {
     const gridOptions = useMemo(() => {
         return buildGridOptions(config);
     }, [config]);
-    const state = useRef({ updateCount: 1, prevConfig: config, gridState: null as any });
+    const state = useRef({ updateCount: 1, prevConfig: config });
     if (config !== state.current.prevConfig) {
         state.current.updateCount += 1;
         state.current.prevConfig = config;
@@ -28,9 +28,5 @@ export const useGridOptions = () => {
         gridOptions,
         config,
         updateCount: state.current.updateCount,
-        onGridPreDestroyed: (e: any) => {
-            debugger;
-            state.current.gridState = e.state;
-        },
     };
 };
