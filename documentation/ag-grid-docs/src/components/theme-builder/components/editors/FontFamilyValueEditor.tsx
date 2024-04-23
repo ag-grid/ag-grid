@@ -75,22 +75,6 @@ const topLevelOptions = [{ label: 'Same as application', value: 'inherit' }, ...
 const subLevelOptions = [{ label: 'Unchanged', value: 'inherit' }, ...fontOptions];
 
 export const PreloadFontSelection = () => {
-    // const fontUrls = fontOptions
-    //     .map(({ value }) => value)
-    //     .filter((v) => String(v).startsWith('google:'))
-    //     .map((v) => String(v).replace('google:', ''))
-    //     .sort()
-    //     .map(
-    //         (font) =>
-    //             `@import url('https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@100;200;300;400;500;600;700&display=swap');`
-    //     );
-    // return (
-    //     <>
-    //         {fontUrls.map((url) => (
-    //             <link rel="stylesheet" href={url} />
-    //         ))}
-    //     </>
-    // );
     const css = fontOptions
         .map(({ value }) => value)
         .filter((v) => String(v).startsWith('google:'))

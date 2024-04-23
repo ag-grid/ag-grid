@@ -55,7 +55,6 @@ const getSelectedBordersLabel = (selectedBorders: string[]) => {
 const BorderItem = (props: BorderProps) => {
     const param = ParamModel.for(props.param);
     const [value, setValue] = useParamAtom(param);
-    console.log(param.property, value);
 
     const theme = useRenderedTheme();
     let editorValue = value;
