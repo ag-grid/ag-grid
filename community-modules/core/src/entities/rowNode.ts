@@ -699,10 +699,9 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.beans.rowNodeEventThrottle.dispatchExpanded(event, forceSync);
 
         // when using footers we need to refresh the group row, as the aggregation
-        // values jump between group and footer
-        if (this.sibling) {
-            this.beans.rowRenderer.refreshCells({ rowNodes: [this] });
-        }
+        // values jump between group and footer, because the footer can be callback
+        // we refresh regardless as the output of the callback could be a moving target
+        this.beans.rowRenderer.refreshCells({ rowNodes: [this] });
     }
 
     private createGlobalRowEvent(type: string): RowEvent<TData> {
