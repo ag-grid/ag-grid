@@ -7600,12 +7600,12 @@ adjust-sourcemap-loader@^4.0.0:
     loader-utils "^2.0.0"
     regex-parser "^2.2.11"
 
-ag-charts-community@9.3.0-beta.20240423:
+ag-charts-community@9.3.0-beta.20240423, ag-charts-community@~9.3.0-beta.20240423:
   version "9.3.0-beta.20240423"
   resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-9.3.0-beta.20240423.tgz#619adae537918b56949e2a5471d8af54c25ea0de"
   integrity sha512-ttTxvxOCsX+H8+xEQgLcYLgKg3QUjTsNcnpgnBLln+BUEXcE9SWiSVPogxcFFxRhWtZlv7+XrGbmhfc5vpjUMQ==
 
-ag-charts-enterprise@9.3.0-beta.20240423:
+ag-charts-enterprise@~9.3.0-beta.20240423:
   version "9.3.0-beta.20240423"
   resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-9.3.0-beta.20240423.tgz#58550d4d59833492745db5269064e0e8bbcdf269"
   integrity sha512-Sj5vvwpoAtnWOjstf1WTNYHhHwbBormlJjhj/z+9RfEDWcPtu0E1w3+vwz+t53OouuMnaS2RWntxMiG/60DpMA==

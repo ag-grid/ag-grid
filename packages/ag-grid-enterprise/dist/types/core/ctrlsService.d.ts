@@ -1,0 +1,51 @@
+import { GridCtrl } from "./gridComp/gridCtrl";
+import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
+import { RowContainerCtrl } from "./gridBodyComp/rowContainer/rowContainerCtrl";
+import { BeanStub } from "./context/beanStub";
+import { GridHeaderCtrl } from "./headerRendering/gridHeaderCtrl";
+import { HeaderRowContainerCtrl } from "./headerRendering/rowContainer/headerRowContainerCtrl";
+import { ColumnPinnedType } from "./entities/column";
+import { FakeHScrollComp } from "./gridBodyComp/fakeHScrollComp";
+import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
+interface ReadyParams {
+    gridCtrl: GridCtrl;
+    gridBodyCtrl: GridBodyCtrl;
+    center: RowContainerCtrl;
+    left: RowContainerCtrl;
+    right: RowContainerCtrl;
+    bottomCenter: RowContainerCtrl;
+    bottomLeft: RowContainerCtrl;
+    bottomRight: RowContainerCtrl;
+    topCenter: RowContainerCtrl;
+    topLeft: RowContainerCtrl;
+    topRight: RowContainerCtrl;
+    stickyTopCenter: RowContainerCtrl;
+    stickyTopLeft: RowContainerCtrl;
+    stickyTopRight: RowContainerCtrl;
+    stickyBottomCenter: RowContainerCtrl;
+    stickyBottomLeft: RowContainerCtrl;
+    stickyBottomRight: RowContainerCtrl;
+    fakeHScrollComp: FakeHScrollComp;
+    fakeVScrollComp: FakeVScrollComp;
+    gridHeaderCtrl: GridHeaderCtrl;
+    centerHeader: HeaderRowContainerCtrl;
+    leftHeader: HeaderRowContainerCtrl;
+    rightHeader: HeaderRowContainerCtrl;
+}
+type CtrlType = keyof ReadyParams;
+export declare class CtrlsService extends BeanStub {
+    static readonly NAME = "ctrlsService";
+    private params;
+    private ready;
+    private readyCallbacks;
+    private checkReady;
+    whenReady(callback: (p: ReadyParams) => void): void;
+    register<K extends CtrlType, T extends ReadyParams[K]>(ctrlType: K, ctrl: T): void;
+    registerHeaderContainer(ctrl: HeaderRowContainerCtrl, pinned: ColumnPinnedType): void;
+    get<K extends CtrlType>(ctrlType: K): ReadyParams[K];
+    getParams(): Readonly<ReadyParams>;
+    getGridBodyCtrl(): GridBodyCtrl;
+    getHeaderRowContainerCtrls(): HeaderRowContainerCtrl[];
+    getHeaderRowContainerCtrl(pinned?: ColumnPinnedType): HeaderRowContainerCtrl;
+}
+export {};

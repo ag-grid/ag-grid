@@ -1,0 +1,37 @@
+import { DropTarget, Column, PillDragComp, ColumnModel, DragItem, DragSourceType } from "@ag-grid-community/core";
+import { TDropZone } from "./baseDropZonePanel";
+export declare class DropZoneColumnComp extends PillDragComp<Column> {
+    private column;
+    private dropZonePurpose;
+    private readonly popupService;
+    private readonly sortController;
+    protected readonly columnModel: ColumnModel;
+    private readonly aggFuncService?;
+    private eSortIndicator;
+    private displayName;
+    private popupShowing;
+    constructor(column: Column, dragSourceDropTarget: DropTarget, ghost: boolean, dropZonePurpose: TDropZone, horizontal: boolean);
+    init(): void;
+    getItem(): Column;
+    protected getDisplayName(): string;
+    protected getTooltip(): string | null | undefined;
+    protected addAdditionalAriaInstructions(ariaInstructions: string[], translate: (key: string, defaultValue: string) => string): void;
+    protected isDraggable(): boolean;
+    protected isRemovable(): boolean;
+    private isReadOnly;
+    protected getAriaDisplayName(): string;
+    private getColumnAndAggFuncName;
+    setupSort(): void;
+    protected getDefaultIconName(): string;
+    protected createGetDragItem(): () => DragItem;
+    protected setupComponents(): void;
+    protected onKeyDown(e: KeyboardEvent): void;
+    protected getDisplayValue(): string;
+    private onShowAggFuncSelection;
+    private createAggSelect;
+    private isGroupingAndLocked;
+    private isAggregationZone;
+    private isGroupingZone;
+    protected getDragSourceType(): DragSourceType;
+    protected destroy(): void;
+}

@@ -1,0 +1,18 @@
+{
+  "name": "ag-grid-generate-code-reference-files",
+  "version": "31.3.0",
+  "private": true,
+  "dependencies": {
+    "glob": "8.0.3",
+    "typescript": "^4.9.5",
+    "@nx/devkit": "17.2.6",
+    "@swc/helpers": "0.5.3"
+  },
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "typings": "./dist/src/index.d.ts",
+  "executors": "./executors.json",
+  "scripts": {
+    "copySrcFilesForGeneration": "node ./src/copySrcFilesForGeneration.js"
+  }
+}

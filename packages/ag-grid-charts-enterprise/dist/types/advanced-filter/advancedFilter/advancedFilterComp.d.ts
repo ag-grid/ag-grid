@@ -1,0 +1,31 @@
+import { Component, ITooltipParams, WithoutGridCommon } from 'ag-grid-community';
+export declare class AdvancedFilterComp extends Component {
+    private eAutocomplete;
+    private eApplyFilterButton;
+    private eBuilderFilterButton;
+    private eBuilderFilterButtonIcon;
+    private eBuilderFilterButtonLabel;
+    private advancedFilterService;
+    private advancedFilterExpressionService;
+    private filterManager;
+    private expressionParser;
+    private isApplyDisabled;
+    private builderOpen;
+    constructor();
+    private postConstruct;
+    refresh(): void;
+    setInputDisabled(disabled: boolean): void;
+    getTooltipParams(): WithoutGridCommon<ITooltipParams>;
+    private setupApplyButton;
+    private setupBuilderButton;
+    private onValueChanged;
+    private onValueConfirmed;
+    private onOptionSelected;
+    private validateValue;
+    private onValidChanged;
+    private generateAutocompleteListParams;
+    private updateExpression;
+    private forceLastSelection;
+    private openBuilder;
+    private closeBuilder;
+}

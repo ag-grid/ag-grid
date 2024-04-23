@@ -1,0 +1,35 @@
+import { Column, ColumnPinnedType } from "../../entities/column";
+import { DraggingEvent } from "../../dragAndDrop/dragAndDropService";
+import { DropListener } from "./bodyDropTarget";
+import { ColumnEventType } from "../../events";
+import { CtrlsService } from "../../ctrlsService";
+export declare class MoveColumnFeature implements DropListener {
+    private columnModel;
+    private dragAndDropService;
+    private gos;
+    ctrlsService: CtrlsService;
+    private gridBodyCon;
+    private needToMoveLeft;
+    private needToMoveRight;
+    private movingIntervalId;
+    private intervalCount;
+    private pinned;
+    private isCenterContainer;
+    private lastDraggingEvent;
+    private lastMovedInfo;
+    private failedMoveAttempts;
+    constructor(pinned: ColumnPinnedType);
+    init(): void;
+    getIconName(): string;
+    onDragEnter(draggingEvent: DraggingEvent): void;
+    onDragLeave(): void;
+    setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType): void;
+    setColumnsPinned(columns: Column[] | null | undefined, pinned: ColumnPinnedType, source: ColumnEventType): void;
+    onDragStop(): void;
+    private checkCenterForScrolling;
+    onDragging(draggingEvent?: DraggingEvent, fromEnter?: boolean, fakeEvent?: boolean, finished?: boolean): void;
+    private normaliseDirection;
+    private ensureIntervalStarted;
+    private ensureIntervalCleared;
+    private moveInterval;
+}

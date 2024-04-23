@@ -19,33 +19,3 @@ archive*.zip
 .angular
 tmp
 
-# latest only
-dist
-
-packages/ag-grid-community/styles/**
-packages/ag-grid-enterprise/styles/**
-packages/ag-grid-charts-enterprise/styles/**
-
-# compiled CSS files
-community-modules/styles/*.css
-packages/ag-grid-community/styles
-packages/ag-grid-enterprise/styles
-packages/ag-grid-charts-enterprise/styles
-# compiled css files as SCSS
-community-modules/styles/_css-content.scss
-
-community-modules/vue/lib/**
-community-modules/vue/dist/**
-community-modules/vue3/lib/**
-community-modules/vue3/dist/**
-community-modules/vue3/main.js
-
-packages/ag-grid-vue/lib
-
-plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/modules.ts
-plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventKeys.ts
-plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/propertyKeys.ts
-plugins/ag-grid-generate-code-reference-files/src/executors/generate/_copiedFromCore/eventKeys.ts
-
-# Astro generated file
-src/env.d.ts

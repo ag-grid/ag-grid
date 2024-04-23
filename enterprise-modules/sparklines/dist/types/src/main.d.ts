@@ -1,0 +1,1 @@
+export { SparklinesModule } from './sparklinesModule';
