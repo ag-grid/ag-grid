@@ -9,7 +9,7 @@ import { useGridConfigAtom } from './grid-config-atom';
 import { gridConfigBooleanFields } from './grid-options';
 
 export const GridConfigDropdownButton = () => {
-    return <UIPopupButton dropdownContent={<GridConfigDropdown />}>{configIcon} Grid options</UIPopupButton>;
+    return <UIPopupButton dropdownContent={<GridConfigDropdown />}>{configIcon} Grid features</UIPopupButton>;
 };
 
 const GridConfigDropdown = () => {
