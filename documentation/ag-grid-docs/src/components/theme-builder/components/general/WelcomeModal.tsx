@@ -15,7 +15,7 @@ export const WelcomeModal = () => {
             defaultOpen
         >
             <Dialog.Portal>
-                <StyledOverlay />
+                <StyledOverlay className={styles.overlay} />
                 <StyledContent>
                     <img className={styles.lightImage} src="/theme-builder/theme-builder.gif"></img>
                     <img className={styles.darkImage} src="/theme-builder/theme-builder-dark.gif"></img>
@@ -39,7 +39,7 @@ const StyledOverlay = styled(Dialog.Overlay)`
             opacity: 0;
         }
         to {
-            opacity: 1;
+            opacity: 0.8;
         }
     }
 
@@ -66,7 +66,7 @@ const StyledContent = styled(Dialog.Content)`
     animation: scaleFadeInUp 200ms cubic-bezier(0.4, 0, 1, 1);
 
     background-color: var(--color-bg-primary);
-    border-radius: 6px;
+    border-radius: 12px;
     box-shadow:
         hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
         hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
@@ -113,5 +113,12 @@ const StyledClose = styled(Dialog.Close)`
     &.hover {
         background-color: var(--color-button-tertiary-bg-hover);
         color: var(--color-button-tertiary-fg);
+    }
+
+    &:focus-visible,
+    &.focus {
+        box-shadow:
+            0 0 0 $spacing-size-1 var(--color-button-primary-shadow-focus),
+            var(--shadow-xs);
     }
 `;

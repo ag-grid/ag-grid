@@ -16,3 +16,10 @@
     max-width: 500px;
     border-bottom: 1px solid var(--color-border-secondary);
 }
+
+.overlay {
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-black), var(--color-bg-primary) 35%);
+        opacity: 0.8;
+    }
+}
