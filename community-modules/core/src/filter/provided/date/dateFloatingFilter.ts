@@ -122,8 +122,9 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     private createDateComponent(): void {
-        this.dateComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, this.getDateComponentParams(), this.eDateWrapper);
-        this.dateComp.setInputAriaLabel(this.getAriaLabel(this.params));
+        this.dateComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, this.getDateComponentParams(), this.eDateWrapper, dateComp => {
+            dateComp.setInputAriaLabel(this.getAriaLabel(this.params));
+        });
 
         this.addDestroyFunc(() => this.dateComp.destroy());
     }
