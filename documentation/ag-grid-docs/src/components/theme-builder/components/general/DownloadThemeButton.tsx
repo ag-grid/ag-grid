@@ -1,4 +1,4 @@
-import { gridVersionTieWarning, installDocsUrl } from '@ag-grid-community/theming';
+import { installDocsUrl } from '@ag-grid-community/theming';
 import { Alert } from '@ag-website-shared/components/alert/Alert';
 import { convertProductionUrlsForStaging } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
@@ -28,9 +28,6 @@ const DownloadThemeDialog = () => {
                 </a>{' '}
                 for instructions on how to use the file.
             </Paragraph>
-            <StyledAlert type="info">
-                <b>Note</b>: {gridVersionTieWarning}
-            </StyledAlert>
             <DownloadLink href={downloadLink} download="ag-grid-theme-builder.css">
                 {downloadIcon} Download CSS File
             </DownloadLink>
