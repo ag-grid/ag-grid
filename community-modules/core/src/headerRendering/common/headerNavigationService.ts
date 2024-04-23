@@ -124,6 +124,15 @@ export class HeaderNavigationService extends BeanStub {
                 allowUserOverride: true,
                 event
             });
+        } else if (fromTab) {
+            const userFunc = this.gos.getCallback('tabToNextHeader');
+            if (userFunc) {
+                return this.focusService.focusHeaderPositionFromUserFunc({
+                    userFunc,
+                    headerPosition: nextHeader,
+                    direction: normalisedDirection
+                });
+            }
         }
 
         return this.focusNextHeaderRow(focusedHeader, normalisedDirection, event);
