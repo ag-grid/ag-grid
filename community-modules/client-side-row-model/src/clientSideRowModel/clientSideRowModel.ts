@@ -833,6 +833,30 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         const { nodes, callback, recursionType, includeFooterNodes } = params;
         let { index } = params;
 
+        const parentNode = nodes[0]?.parent;
+        const grandTotal = includeFooterNodes && !!parentNode && (this.gos.get('grandTotalRow') ?? (this.gos.get('groupIncludeTotalFooter') ? 'bottom' : false));
+        const isGroupIncludeFooter = this.gos.getGroupTotalRowCallback();
+        const groupTotal = includeFooterNodes && !!parentNode && isGroupIncludeFooter({ node: parentNode });
+        const addFooters = (position: 'top' | 'bottom') => {
+            if (!parentNode) return;
+            
+            const isRootNode = parentNode === this.rootNode;
+            if (isRootNode) {
+                if (grandTotal === position) {
+                    parentNode.createFooter();
+                    callback(parentNode.sibling, index++);
+                }
+                return;
+            }
+            
+            if (groupTotal === position) {
+                parentNode.createFooter();
+                callback(parentNode.sibling, index++);
+            }
+        }
+
+        addFooters('top');
+
         for (let i = 0; i < nodes.length; i++) {
             const node = nodes[i];
             callback(node, index++);
@@ -866,21 +890,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 }
             }
         }
-
-        const parentNode = nodes[0]?.parent;
-        if (!includeFooterNodes || !parentNode) return index;
-
-        const isRootNode = parentNode === this.rootNode;
-        if (isRootNode) {
-            const totalFooters = this.gos.get('grandTotalRow') ?? this.gos.get('groupIncludeTotalFooter');
-            if (!totalFooters) return index;
-        } else {
-            const isGroupIncludeFooter = this.gos.getGroupTotalRowCallback();
-            if (!isGroupIncludeFooter({ node: parentNode })) return index;
-        }
-
-        parentNode.createFooter();
-        callback(parentNode.sibling, index++);
+        addFooters('bottom');
         return index;
     }
 

@@ -335,6 +335,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeep
      */
     forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode<any>, index: number) => void, sequence = new NumberSequence(), includeFooterNodes = false): void {
+        const footerNode = this.parentRowNode.level > -1 && this.gos.getGroupTotalRowCallback()({ node: this.parentRowNode });
+        if (footerNode === 'top') {
+            callback(this.parentRowNode.sibling, sequence.next());
+        }
+
         const orderedNodes = this.cache.getOrderedNodeMap();
         for (let key in orderedNodes) {
             const lazyNode = orderedNodes[key];
@@ -345,7 +350,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
 
-        if (includeFooterNodes && this.parentRowNode.sibling) {
+        if(footerNode === 'bottom') {
             callback(this.parentRowNode.sibling, sequence.next());
         }
     }
