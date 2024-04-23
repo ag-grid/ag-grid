@@ -19,36 +19,64 @@ import { DownloadThemeButton } from './DownloadThemeButton';
 import { GridPreview } from './GridPreview';
 
 export const RootContainer = () => {
-    const [open, setOpen] = useState(false);
+    const [resetDialogOpen, setResetDialogOpen] = useState(false);
+    const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false);
 
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            setOpen(true);
-        });
-        return () => clearTimeout(timeout);
+        const resetTimeout = setTimeout(() => {
+            setResetDialogOpen(true);
+        }, 1000); // Delay for the reset dialog to appear
+        const welcomeTimeout = setTimeout(() => {
+            setWelcomeDialogOpen(true);
+        }, 5000); // Delay for the welcome dialog to appear
+
+        return () => {
+            clearTimeout(resetTimeout);
+            clearTimeout(welcomeTimeout);
+        };
     }, []);
 
     useRenderedTheme();
     return (
         <Container>
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger>My trigger</DialogTrigger>
-                <DialogContent>
-                    <DialogBody>
-                        {' '}
-                        <DialogHeading>Are you sure you want to reset? </DialogHeading>
-                        <DialogDescription>
-                            Applying a preset will reset any changes you've made to a theme. Changes will be lost.
-                        </DialogDescription>
-                    </DialogBody>
-                    <DialogFooter>
-                        <DialogClose>Cancel</DialogClose>
-                        <button className="button-primary">Continue</button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
             <Menu>
                 <EditorScroller>
+                    <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+                        <DialogTrigger>Reset</DialogTrigger>
+                        <DialogContent>
+                            <DialogBody>
+                                {' '}
+                                <DialogHeading>Are you sure you want to reset? </DialogHeading>
+                                <DialogDescription>
+                                    Applying a preset will reset any changes you've made to a theme. Changes will be
+                                    lost.
+                                </DialogDescription>
+                            </DialogBody>
+                            <DialogFooter>
+                                <DialogClose>Cancel</DialogClose>
+                                <button className="button-primary">Continue</button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+
+                    <Dialog open={welcomeDialogOpen} onOpenChange={setWelcomeDialogOpen}>
+                        <DialogTrigger>Welcome</DialogTrigger>
+                        <DialogContent>
+                            <DialogBody>
+                                {' '}
+                                <DialogHeading>Are you sure you want to reset? </DialogHeading>
+                                <DialogDescription>
+                                    Applying a preset will reset any changes you've made to a theme. Changes will be
+                                    lost.
+                                </DialogDescription>
+                            </DialogBody>
+                            <DialogFooter>
+                                <DialogClose>Cancel</DialogClose>
+                                <button className="button-primary">Continue</button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+
                     <EditorPanel />
                 </EditorScroller>
                 <MenuBottom>
