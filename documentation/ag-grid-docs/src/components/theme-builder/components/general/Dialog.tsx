@@ -210,9 +210,6 @@ export const DialogClose = React.forwardRef<HTMLButtonElement, React.ButtonHTMLA
 export const DialogFooter = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>((props, ref) => {
     const { context } = useDialogContext();
 
-    // Only render the footer if the dialog is open
-    if (!context.open) return null;
-
     return (
         <div ref={ref} className={styles.footer} {...props}>
             {props.children}
@@ -222,9 +219,6 @@ export const DialogFooter = React.forwardRef<HTMLDivElement, React.HTMLProps<HTM
 
 export const DialogBody = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>((props, ref) => {
     const { context } = useDialogContext();
-
-    // Only render the footer if the dialog is open
-    if (!context.open) return null;
 
     return (
         <div ref={ref} className={styles.body} {...props}>
