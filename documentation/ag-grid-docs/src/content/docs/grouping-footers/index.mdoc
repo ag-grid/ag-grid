@@ -79,6 +79,18 @@ const gridOptions = {
 }
 ```
 
+## Suppress Sticky Total Rows
+
+By default, all total rows are sticky, meaning they will remain visible when scrolling vertically. This behaviour can be changed by using the property `suppressStickyTotalRow`.
+
+{% gridExampleRunner title="Suppress Sticky Total Rows" name="suppress-sticky-total-rows" /%}
+
+In the example above, note the following:
+- Clicking the **Suppress Grand Total Row** button sets the `suppressStickyTotalRow` property to `'grand'` and prevents the grand total from sticking.
+- Clicking the **Suppress Group Total Row** button sets the `suppressStickyTotalRow` property to `'group'` and prevents the group total rows from sticking.
+- Clicking the **Suppress All Total Rows** button sets the `suppressStickyTotalRow` property to `true` and prevents both group and grand total rows from sticking.
+- Clicking the **Suppress No Total Rows** button sets the `suppressStickyTotalRow` property to `false` and allows both group and grand total rows to stick.
+
 ## Customising Group Column Total Values
 
 By default, the footer cell in the group column will display the word 'Total' followed by the group key. However, this can be changed using the
