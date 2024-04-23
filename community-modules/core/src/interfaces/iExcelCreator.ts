@@ -288,6 +288,10 @@ export interface ExcelHeaderFooterImage extends BaseImage {
     width: number;
     /** The height of the image in pixels. */
     height: number;
+    /** The brightness of the image between 0 and 1 (if `recolor` is used, this value will only be applied for `Grayscale`). Default 0.5 */
+    brightness: number;
+    /** The contrast of the image between 0 and  1 (if `recolor` is used, this value will only be applied for `Grayscale`.). Default 0.5 */
+    contrast: number;
 }
 
 export interface ExcelImage extends BaseImage {
