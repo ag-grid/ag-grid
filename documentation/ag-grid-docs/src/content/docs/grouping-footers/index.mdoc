@@ -48,8 +48,8 @@ to by providing a callback function to the property `groupTotalRow` instead of '
 
 The example above demonstrates custom group footers. Note the following:
 
-* Group Total Row is shown for the second level of groups
-* Group Total Row is shown for the group called `France`
+* Group Total Row is shown for the group called `United States`
+* Group Total Row is shown for the `year` level of groups
 * No Group Total Rows are shown for any other groups.
 
 The code for implementing this behaviour is shown below:
@@ -63,6 +63,19 @@ const gridOptions = {
        if (node && node.key === 'France') return 'bottom';
        return undefined;
    }
+}
+```
+
+### Showing Values in Group and Total Rows
+
+By default, when a group is expanded the aggregation values show in the total row, and are hidden from the group row.
+This behaviour can be changed to show values both in the expanded group and the total row by enabling the option `groupSuppressBlankHeader`.
+
+{% gridExampleRunner title="Suppress Blank Groups" name="suppress-blank-groups" /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    groupSuppressBlankHeader: true,
 }
 ```
 
