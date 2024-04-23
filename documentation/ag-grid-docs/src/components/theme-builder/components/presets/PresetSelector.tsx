@@ -2,17 +2,19 @@ import { corePart, paramValueToCss } from '@ag-grid-community/theming';
 import { getChangedModelItemCount } from '@components/theme-builder/model/changed-model-items';
 import styled from '@emotion/styled';
 import { useStore } from 'jotai';
-import { memo, useEffect, useRef } from 'react';
+import { type RefObject, memo, useEffect, useRef } from 'react';
 
 import { PresetRender } from './PresetRender';
 import { type Preset, allPresets, applyPreset } from './presets';
 
 export const PresetSelector = memo(() => {
+    const scrollerRef = useRef<HTMLDivElement>(null);
+
     return (
-        <Scroller>
+        <Scroller ref={scrollerRef}>
             <Horizontal>
                 {allPresets.map((preset, i) => (
-                    <SelectButton key={i} preset={preset} />
+                    <SelectButton key={i} preset={preset} scrollerRef={scrollerRef} />
                 ))}
             </Horizontal>
         </Scroller>
@@ -21,9 +23,10 @@ export const PresetSelector = memo(() => {
 
 type SelectButtonProps = {
     preset: Preset;
+    scrollerRef: RefObject<HTMLDivElement>;
 };
 
-const SelectButton = ({ preset }: SelectButtonProps) => {
+const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
     const wrapperRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -52,6 +55,13 @@ const SelectButton = ({ preset }: SelectButtonProps) => {
                     }
                 }
                 applyPreset(store, preset);
+
+                // Scroll to the snap center position
+                const scrollLeft = wrapperRef.current.offsetLeft - wrapperRef.current.clientWidth / 2;
+                scrollerRef.current.scrollTo({
+                    left: scrollLeft,
+                    behavior: 'smooth',
+                });
             }}
         >
             <PresetRender />
