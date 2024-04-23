@@ -14,7 +14,6 @@ export const GridConfigDropdownButton = () => {
             <UIPopupButton placement="left-start" dropdownContent={<GridConfigDropdown />}>
                 {configIcon} Grid features
             </UIPopupButton>
-            ;
         </GridFeatureButtonWrapper>
     );
 };
