@@ -1,13 +1,21 @@
 import styled from '@emotion/styled';
+import { useEffect, useState } from 'react';
 
 import { useRenderedTheme } from '../../model/rendered-theme';
 import { EditorPanel } from '../editors/EditorPanel';
 import { GridConfigDropdownButton } from '../grid-config/GridConfigDropdown';
 import { PresetSelector } from '../presets/PresetSelector';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './DialogModal';
 import { DownloadThemeButton } from './Download';
 import { GridPreview } from './GridPreview';
 
 export const RootContainer = () => {
+    const [isDialogOpen, setDialogOpen] = useState(false);
+
+    useEffect(() => {
+        setDialogOpen(true); // Automatically open the dialog
+    }, []);
+
     useRenderedTheme();
     return (
         <Container>
@@ -22,6 +30,21 @@ export const RootContainer = () => {
                 </MenuBottom>
             </Menu>
             <Main>
+                {isDialogOpen && (
+                    <Dialog>
+                        <DialogTrigger>Open</DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <img src="/theme-builder/theme-builder.gif"></img>
+
+                                <DialogTitle>Welcome to Theme Builder</DialogTitle>
+                                <DialogDescription>
+                                    Here you can customise your grid's colors, spacing, typography all from one place.
+                                </DialogDescription>
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
+                )}
                 <PresetSelector />
                 <GridPreview />
             </Main>
