@@ -32,6 +32,7 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
         const eDocument = this.gos.getDocument();
         const skeletonEffect = eDocument.createElement('div');
         skeletonEffect.classList.add('ag-skeleton-effect');
+        
         this.getGui().appendChild(skeletonEffect);
 
         const localeTextFunc = this.localeService.getLocaleTextFunc();

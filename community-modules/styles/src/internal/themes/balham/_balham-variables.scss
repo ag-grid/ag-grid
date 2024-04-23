@@ -113,6 +113,8 @@
     --ag-range-selection-chart-background-color: #{color.change(#2da6ff, $alpha: 0.5)};
     --ag-input-focus-box-shadow: 0 0 4px 1.5px var(--ag-input-focus-border-color);
 
+    --ag-skeleton-loading-effect-color:  #{color.change(#cacbcc, $alpha: 0.4)};;
+
     color-scheme: dark;
 }
 
