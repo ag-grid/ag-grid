@@ -1,6 +1,7 @@
 import { XmlElement, ExcelOOXMLTemplate } from '@ag-grid-community/core';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 import { ExcelHeaderFooterCalculatedImage } from '../../assets/excelInterfaces';
+import { _ } from '@ag-grid-community/core';
 
 const getShapeLayout = (): XmlElement => ({
     name: "o:shapelayout",
@@ -93,30 +94,41 @@ const getLock = (params?: { aspectratio?: boolean; rotation?: boolean }): XmlEle
     }
 };
 
+function mapNumber(value: number, startSource: number, endSource: number, startTarget: number, endTarget: number): number {
+    return ((value - startSource) / (endSource - startSource)) * (endTarget - startTarget) + startTarget;
+}
+
 const getImageData = (image: ExcelHeaderFooterCalculatedImage, idx: number): XmlElement => {
     let rawMap: any;
-    let isGrayscale = false;
-    let isBlackAndWhite = false;
-    let isWashout;
 
-    const { recolor, id } = image;
+    const { recolor, brightness, contrast, id } = image;
 
     if (recolor) {
         rawMap = {};
-        isGrayscale = recolor === 'Grayscale';
-        isBlackAndWhite = recolor === 'Black & White';
-        isWashout = recolor === 'Washout';
+        if (recolor === 'Washout' || recolor === 'Grayscale') {
+            rawMap.gain = '19661f';
+            rawMap.blacklevel = '22938f';
+        }
+
+        if (recolor === 'Black & White' || recolor === 'Grayscale') {
+            rawMap.grayscale = 't';
+            if (recolor === 'Black & White') {
+                rawMap.bilevel = 't';
+            }
+        }
     }
 
-    if (isWashout || isGrayscale) {
-        rawMap.gain = '19661f';
-        rawMap.blacklevel = '22938f';
-    }
+    if (!recolor || recolor === 'Grayscale') {
+        if (!rawMap) {
+            rawMap = {};
+        }
 
-    if (isBlackAndWhite || isGrayscale) {
-        rawMap.grayscale = 't';
-        if (isBlackAndWhite) {
-            rawMap.bilevel = 't';
+        if (contrast != null && contrast !== 0.5) {
+            rawMap.gain = mapNumber(contrast, 0, 1, -0.5, 0.5).toString();
+        }
+
+        if (brightness != null && brightness !== 0.5) {
+            rawMap.blacklevel = mapNumber(brightness, 0, 1, -0.5, 0.5).toString();
         }
     }
 

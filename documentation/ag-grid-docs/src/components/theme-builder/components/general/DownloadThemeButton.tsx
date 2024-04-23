@@ -1,4 +1,4 @@
-import { gridVersionTieWarning, installDocsUrl } from '@ag-grid-community/theming';
+import { installDocsUrl } from '@ag-grid-community/theming';
 import { Alert } from '@ag-website-shared/components/alert/Alert';
 import { convertProductionUrlsForStaging } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
@@ -7,9 +7,11 @@ import { useRenderedTheme } from '../../model/rendered-theme';
 import { UIPopupButton } from './UIPopupButton';
 
 export const DownloadThemeButton = () => (
-    <UIPopupButton dropdownContent={<DownloadThemeDialog />} variant="primary">
-        {downloadIcon} Download
-    </UIPopupButton>
+    <ButtonWrapper>
+        <UIPopupButton placement="right-start" dropdownContent={<DownloadThemeDialog />} variant="primary">
+            {downloadIcon} Download
+        </UIPopupButton>
+    </ButtonWrapper>
 );
 
 const localInstallDocsUrl = convertProductionUrlsForStaging(installDocsUrl);
@@ -28,9 +30,6 @@ const DownloadThemeDialog = () => {
                 </a>{' '}
                 for instructions on how to use the file.
             </Paragraph>
-            <StyledAlert type="info">
-                <b>Note</b>: {gridVersionTieWarning}
-            </StyledAlert>
             <DownloadLink href={downloadLink} download="ag-grid-theme-builder.css">
                 {downloadIcon} Download CSS File
             </DownloadLink>
@@ -53,7 +52,11 @@ const DownloadThemeWrapper = styled('div')`
     display: flex;
     flex-direction: column;
     gap: 16px;
-    width: 400px;
+`;
+
+const ButtonWrapper = styled('div')`
+    width: 100%;
+    margin-right: 24px;
 `;
 
 const DownloadLink = styled('a')`

@@ -228,7 +228,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private isTopLevelFooter(): boolean {
-        const totalRow = this.gos.get('grandTotalRow') ?? this.gos.get('groupIncludeTotalFooter');
+        const totalRow = this.gos.getGrandTotalRow();
         if (!totalRow) { return false; }
 
         if (this.params.value != null || this.params.node.level != -1) { return false; }
