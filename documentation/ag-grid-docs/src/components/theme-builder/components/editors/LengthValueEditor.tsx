@@ -1,32 +1,56 @@
 import styled from '@emotion/styled';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Input } from './Input';
 import { type ValueEditorProps } from './ValueEditorProps';
 
+const getPropEditorValue = ({ isScale, updateValue }: { isScale: boolean; updateValue: string | number }) => {
+    const cleanedValue = typeof updateValue === 'string' ? parseFloat(updateValue.trim()) : updateValue;
+    const scaledValue = isScale ? toScalePercentageString(cleanedValue) : cleanedValue;
+    const newEditorValue = scaledValue + (isScale ? '%' : '');
+    const isValid = scaledValue === '' || numberIsValid(scaledValue);
+
+    return isValid ? newEditorValue : '';
+};
+
+const getUpdateValues = ({ isScale, updateValue }: { isScale: boolean; updateValue: string }) => {
+    const newValue = parseFloat(updateValue.trim());
+    const newEditorValue = newValue + (isScale ? '%' : '');
+    const isValid = newValue === '' || numberIsValid(newValue);
+
+    let onChangeValue = null;
+    if (newValue !== '' && isValid) {
+        const floatValue = parseFloat(newValue);
+        onChangeValue = isScale ? scalePercentageValue(floatValue) : floatValue;
+    }
+
+    return {
+        isValid,
+        newValue,
+        newEditorValue,
+        onChangeValue,
+    };
+};
+
 export const LengthValueEditor = ({ param, value, onChange }: ValueEditorProps) => {
-    const [editorValue, setEditorValue] = useState(value);
+    const isScale = param.type === 'scale';
+    const [editorValue, setEditorValue] = useState(getPropEditorValue({ isScale, updateValue: value }));
     const [valid, setValid] = useState(() => numberIsValid(editorValue));
     const focusRef = useRef(false);
 
     useEffect(() => {
         if (!focusRef.current) {
-            setEditorValue(value);
+            setEditorValue(getPropEditorValue({ isScale, updateValue: value }));
         }
     }, [value]);
 
-    const handleInput = (newValue: string) => {
-        newValue = newValue.trim();
-        setEditorValue(newValue);
-        if (newValue === '') {
-            onChange(null);
-            setValid(true);
-        } else {
-            const isValid = numberIsValid(newValue);
-            setValid(isValid);
-            if (isValid) {
-                onChange(parseFloat(newValue) + (param.type === 'scale' ? '' : 'px'));
-            }
+    const handleInput = (value: string) => {
+        const { isValid, newValue, newEditorValue, onChangeValue } = getUpdateValues({ isScale, updateValue: value });
+
+        setEditorValue(newEditorValue);
+        setValid(isValid);
+        if (isValid) {
+            onChange(onChangeValue);
         }
     };
 
@@ -38,11 +62,11 @@ export const LengthValueEditor = ({ param, value, onChange }: ValueEditorProps) 
                 onChange={handleInput}
                 onFocus={() => {
                     focusRef.current = true;
-                    setEditorValue(String(parseFloat(value) || ''));
+                    setEditorValue(getPropEditorValue({ isScale, updateValue: value }));
                 }}
                 onBlur={() => {
                     focusRef.current = false;
-                    setEditorValue(value);
+                    setEditorValue(getPropEditorValue({ isScale, updateValue: value }));
                     setValid(numberIsValid(value));
                 }}
                 onKeyDown={(e) => {
@@ -57,9 +81,6 @@ export const LengthValueEditor = ({ param, value, onChange }: ValueEditorProps) 
                         handleInput(string);
                     };
                     let amount = e.shiftKey || e.ctrlKey || e.altKey || e.metaKey ? 10 : 1;
-                    if (param.type === 'scale') {
-                        amount /= 10;
-                    }
                     if (e.key === 'ArrowUp') {
                         adjustBy(amount);
                     } else if (e.key === 'ArrowDown') {
@@ -71,7 +92,9 @@ export const LengthValueEditor = ({ param, value, onChange }: ValueEditorProps) 
     );
 };
 
-const numberIsValid = (value: string) => !isNaN(parseFloat(value.trim()));
+const numberIsValid = (value: string | number) => (typeof value === 'number' ? true : !isNaN(parseFloat(value.trim())));
+const scalePercentageValue = (value: number) => value / 100;
+const toScalePercentageString = (value: number) => value * 100;
 
 const Wrapper = styled('div')`
     position: relative;
