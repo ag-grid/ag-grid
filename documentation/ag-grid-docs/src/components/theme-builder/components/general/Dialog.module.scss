@@ -70,16 +70,21 @@ $animation-time: 0.3s;
 
 /* body is body content wrapping */
 .body {
-    padding: 24px;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
 }
 
 .heading {
+    padding-top: 24px;
+    padding-left: 24px;
     font-size: var(--text-fs-lg);
     margin-bottom: 8px;
     color: var(--color-text-secondary);
 }
 
 .bodyText {
+    padding-left: 24px;
+    padding-bottom: 24px;
     font-size: var(--text-fs-sm);
 }
 

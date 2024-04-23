@@ -63,16 +63,14 @@ export const RootContainer = () => {
                         <DialogTrigger>Welcome</DialogTrigger>
                         <DialogContent>
                             <DialogBody>
-                                {' '}
-                                <DialogHeading>Are you sure you want to reset? </DialogHeading>
+                                <img src="/theme-builder/theme-builder.gif"></img>{' '}
+                                <DialogHeading>Welcome to Theme Builder </DialogHeading>
                                 <DialogDescription>
-                                    Applying a preset will reset any changes you've made to a theme. Changes will be
-                                    lost.
+                                    Here you can customise your grid’s colors, spacing, typography all from one place.
                                 </DialogDescription>
                             </DialogBody>
                             <DialogFooter>
-                                <DialogClose>Cancel</DialogClose>
-                                <button className="button-primary">Continue</button>
+                                <DialogClose>Continue</DialogClose>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
