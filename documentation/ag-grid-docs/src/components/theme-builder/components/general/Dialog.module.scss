@@ -1,3 +1,5 @@
+$animation-time: 0.3s;
+
 /* Overlay fade in and out */
 @keyframes fadeIn {
     from {
@@ -43,10 +45,10 @@
 .overlay {
     &[data-status='open'],
     &[data-status='initial'] {
-        animation: fadeIn 0.3s ease-out forwards;
+        animation: fadeIn $animation-time ease-out forwards;
     }
     &[data-status='close'] {
-        animation: fadeOut 0.3s ease-out forwards;
+        animation: fadeOut $animation-time ease-out forwards;
     }
     display: grid;
     place-items: center;
@@ -59,10 +61,10 @@
     max-width: 500px;
     &[data-status='initial'],
     &[data-status='open'] {
-        animation: slideIn 0.3s ease-out forwards;
+        animation: slideIn $animation-time ease-out forwards;
     }
     &[data-status='close'] {
-        animation: slideOut 0.3s ease-out forwards;
+        animation: slideOut $animation-time ease-out forwards;
     }
 }
 
