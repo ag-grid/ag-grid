@@ -34,14 +34,37 @@ export const WelcomeModal = () => {
 };
 
 const StyledOverlay = styled(Dialog.Overlay)`
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
     background-color: color-mix(in srgb, var(--color-black), var(--color-black) 45%);
     z-index: 1000;
     position: fixed;
     inset: 0;
     opacity: 0.8;
+    animation: fadeIn 300ms ease-out;
 `;
 
 const StyledContent = styled(Dialog.Content)`
+    @keyframes scaleFadeInUp {
+        from {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+    }
+
+    animation: scaleFadeInUp 200ms cubic-bezier(0.4, 0, 1, 1);
+
     background-color: var(--color-bg-primary);
     border-radius: 6px;
     box-shadow:
