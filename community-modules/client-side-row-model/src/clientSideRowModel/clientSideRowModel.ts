@@ -833,12 +833,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         const { nodes, callback, recursionType, includeFooterNodes } = params;
         let { index } = params;
 
-        const parentNode = nodes[0]?.parent;
-        const grandTotal = includeFooterNodes && !!parentNode && (this.gos.get('grandTotalRow') ?? (this.gos.get('groupIncludeTotalFooter') ? 'bottom' : false));
-        const isGroupIncludeFooter = this.gos.getGroupTotalRowCallback();
-        const groupTotal = includeFooterNodes && !!parentNode && isGroupIncludeFooter({ node: parentNode });
         const addFooters = (position: 'top' | 'bottom') => {
+            const parentNode = nodes[0]?.parent;
+
             if (!parentNode) return;
+        
+            const grandTotal = includeFooterNodes && this.gos.getGrandTotalRow();
+            const isGroupIncludeFooter = this.gos.getGroupTotalRowCallback();
+            const groupTotal = includeFooterNodes && isGroupIncludeFooter({ node: parentNode });
             
             const isRootNode = parentNode === this.rootNode;
             if (isRootNode) {

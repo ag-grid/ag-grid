@@ -519,6 +519,19 @@ export class GridOptionsService {
         return undefined;
     }
 
+    public getGrandTotalRow(): 'top' | 'bottom' | undefined {
+        const userValue = this.gridOptions.grandTotalRow;
+        if (userValue) {
+            return userValue;
+        }
+
+        const legacyValue = this.gridOptions.groupIncludeTotalFooter;
+        if (legacyValue) {
+            return 'bottom';
+        }
+        return undefined;
+    }
+
     public getGroupTotalRowCallback(): (params: WithoutGridCommon<GetGroupIncludeFooterParams>) => 'top' | 'bottom' | undefined {
         const userValue = this.get('groupTotalRow');
 

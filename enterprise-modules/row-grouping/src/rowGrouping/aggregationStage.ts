@@ -62,7 +62,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
 
         const aggDetails: AggregationDetails = {
             alwaysAggregateAtRootLevel: this.gos.get('alwaysAggregateAtRootLevel'),
-            groupIncludeTotalFooter: !!(this.gos.get('grandTotalRow') ?? this.gos.get('groupIncludeTotalFooter')),
+            groupIncludeTotalFooter: !!this.gos.getGrandTotalRow(),
             changedPath: params.changedPath!,
             valueColumns: measureColumns,
             pivotColumns: pivotColumns,
