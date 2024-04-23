@@ -17,13 +17,12 @@ export const RootContainer = () => {
                 </EditorScroller>
                 <MenuBottom>
                     <DownloadThemeButton />
-                    <Spacer />
-                    <GridConfigDropdownButton />
                 </MenuBottom>
             </Menu>
             <Main>
                 <PresetSelector />
                 <GridPreview />
+                <GridConfigDropdownButton />
             </Main>
         </Container>
     );

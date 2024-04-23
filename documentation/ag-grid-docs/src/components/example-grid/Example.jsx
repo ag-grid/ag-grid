@@ -22,11 +22,11 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
-import styles from '@legacy-design-system/modules/Example.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import classnames from 'classnames';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 
+import styles from './Example.module.scss';
 import { Toolbar } from './Toolbar';
 import {
     COUNTRY_CODES,
@@ -432,13 +432,15 @@ const gradientLegendThemeOverrides = {
 const hierarchicalSeriesThemeOverrides = {
     series: {
         tooltip: {
-            renderer: params => {
+            renderer: (params) => {
                 // temporary workaround until fixed in standalone
-                if (!params.sizeName) { return {}; }
-                const findDatum = datum => datum.children ? findDatum(datum.children[0]) : datum;
+                if (!params.sizeName) {
+                    return {};
+                }
+                const findDatum = (datum) => (datum.children ? findDatum(datum.children[0]) : datum);
                 const datum = findDatum(params.datum);
                 const sizeValue = params.sizeName + ': $' + formatThousands(datum[params.sizeKey]);
-                let colorValue = ''
+                let colorValue = '';
                 if (params.colorKey) {
                     colorValue = params.colorName + ': $' + formatThousands(datum[params.colorKey]);
                 }
@@ -456,8 +458,9 @@ const rangeSeriesThemeOverrides = {
         tooltip: {
             renderer: ({ xName, xKey, yLowName, yLowKey, yHighName, yHighKey, datum }) => {
                 return {
-                    content: `${xName}: ${datum[xKey]}<br>${yLowName}: $${formatThousands(datum[yLowKey])}<br>`
-                        + `${yHighName}: $${formatThousands(datum[yHighKey])}`
+                    content:
+                        `${xName}: ${datum[xKey]}<br>${yLowName}: $${formatThousands(datum[yLowKey])}<br>` +
+                        `${yHighName}: $${formatThousands(datum[yHighKey])}`,
                 };
             },
         },
@@ -531,11 +534,26 @@ const chartThemeOverrides = {
     'box-plot': {
         series: {
             tooltip: {
-                renderer: ({ xName, xKey, minName, minKey, q1Name, q1Key, medianName, medianKey, q3Name, q3Key, maxName, maxKey, datum }) => {
+                renderer: ({
+                    xName,
+                    xKey,
+                    minName,
+                    minKey,
+                    q1Name,
+                    q1Key,
+                    medianName,
+                    medianKey,
+                    q3Name,
+                    q3Key,
+                    maxName,
+                    maxKey,
+                    datum,
+                }) => {
                     return {
-                        content: `${xName}: ${datum[xKey]}<br>${minName}: $${formatThousands(datum[minKey])}<br>`
-                            + `${q1Name}: $${formatThousands(datum[q1Key])}<br>${medianName}: $${formatThousands(datum[medianKey])}<br>`
-                            + `${q3Name}: $${formatThousands(datum[q3Key])}<br>${maxName}: $${formatThousands(datum[maxKey])}`
+                        content:
+                            `${xName}: ${datum[xKey]}<br>${minName}: $${formatThousands(datum[minKey])}<br>` +
+                            `${q1Name}: $${formatThousands(datum[q1Key])}<br>${medianName}: $${formatThousands(datum[medianKey])}<br>` +
+                            `${q3Name}: $${formatThousands(datum[q3Key])}<br>${maxName}: $${formatThousands(datum[maxKey])}`,
                     };
                 },
             },

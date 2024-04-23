@@ -22,13 +22,11 @@ export const installDocsUrl =
 export const gridVersionTieWarning = `we are working to remove this restriction, but themes exported from the Theme Builder are for the current grid version (${VERSION}) and will not be automatically updated with new features and bug fixes in later versions. If you upgrade your application's grid version and experience issues, return to the Theme Builder to download an updated version of your theme.`;
 
 const fileHeader = (parameters: any) => `/*
- * This file is a theme downloaded from the AG Grid Theme Builder.
+ * This file is a theme downloaded from the AG Grid Theme Builder for AG Grid ${VERSION}.
+ *
+ * See installation docs at ${installDocsUrl}
  * 
- * To use this file in your application, follow the instructions at ${installDocsUrl}
- * 
- * NOTE: ${gridVersionTieWarning}
- * 
- * The following parameters have been changed from their default values: ${JSON.stringify(Object.fromEntries(Object.entries(parameters).filter(([, value]) => value != null)), null, 2).replaceAll('\n', '\n * ')}
+ * Theme generated based on these settings: ${JSON.stringify(Object.fromEntries(Object.entries(parameters).filter(([, value]) => value != null)), null, 2).replaceAll('\n', '\n * ')}
  */
 
 `;
@@ -40,6 +38,7 @@ export const defineTheme = <P extends Part, V extends object = ParamTypes>(
     let css = fileHeader(parameters);
 
     const googleFonts = new Set<string>();
+    const fontWeights = new Set<number>([400]);
 
     // For parts with a partId, only allow one variant allowed, last variant wins
     const removeDuplicates: Record<string, Part> = { [corePart.partId]: corePart };
@@ -83,11 +82,19 @@ export const defineTheme = <P extends Part, V extends object = ParamTypes>(
                 googleFonts.add(value.replace(googlePrefix, ''));
             }
         };
-        if (getParamType(name) === 'fontFamily') {
+        const paramType = getParamType(name)
+        if (paramType === 'fontFamily') {
             if (Array.isArray(value)) {
                 value.forEach(convertFontValue);
             } else {
                 convertFontValue(value);
+            }
+        } else if (paramType === 'fontWeight') {
+            const parsed = parseFloat(value as string);
+            if (!isNaN(parsed)) {
+                fontWeights.add(parsed);
+            } else if (value === 'bold') {
+                fontWeights.add(700);
             }
         }
     }
@@ -107,11 +114,13 @@ export const defineTheme = <P extends Part, V extends object = ParamTypes>(
     }
     variableDefaults += '}\n';
 
+    // TODO provide an API to control whether we automatically link Google Fonts
+    const weights = ':wght@' + Array.from(fontWeights).sort().join(';');
     css += Array.from(googleFonts)
         .sort()
         .map(
             (font) =>
-                `@import url('https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}&display=swap');\n`
+                `@import url('https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}${weights}&display=swap');\n`
         )
         .join('');
 

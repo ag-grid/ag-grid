@@ -472,6 +472,10 @@
         "--ag-advanced-filter-value-pill-color": {
             "description": "Colour of the value pills in the Advanced Filter Builder",
             "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-row-loading-skeleton-effect-colour": {
+            "description": "Colour of the skeleton loading effect used in the SSRM",
+            "type": "CSS color (e.g. `red` or `#fff`)"
         }
     }
 }

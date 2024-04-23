@@ -1,7 +1,9 @@
 import { Provider, createStore } from 'jotai';
 import { useLayoutEffect, useMemo, useState } from 'react';
 
+import { PreloadFontSelection } from './components/editors/FontFamilyValueEditor';
 import { RootContainer } from './components/general/RootContainer';
+import { WelcomeModal } from './components/general/WelcomeModal';
 import { applyPreset, darkModePreset, lightModePreset } from './components/presets/presets';
 import { allParamModels } from './model/ParamModel';
 import { allPartModels } from './model/PartModel';
@@ -38,5 +40,11 @@ export const ThemeBuilder = () => {
         return () => listeners.forEach((listener) => listener());
     }, []);
 
-    return <Provider store={store}>{initialised && <RootContainer />}</Provider>;
+    return (
+        <Provider store={store}>
+            <PreloadFontSelection />
+            {initialised && <RootContainer />}
+            <WelcomeModal />
+        </Provider>
+    );
 };

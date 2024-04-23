@@ -31,14 +31,12 @@ export const renderedThemeAtom = atom((get): Theme => {
     if (container) {
         installTheme(theme, container);
         const api: any = get(previewGridApi);
-        setTimeout(() => {
-            if (api && !api.destroyCalled) {
-                // TODO this is a hack to force the grid to recalculate its
-                // sizes, we should add a public API for this
-                api.gos.environment.calculatedSizes = {};
-                api.eventService.dispatchEvent({ type: 'gridStylesChanged' });
-            }
-        }, 1);
+        if (api && !api.destroyCalled) {
+            // TODO this is a hack to force the grid to recalculate its
+            // sizes, we should add a public API for this
+            api.gos.environment.calculatedSizes = {};
+            api.eventService.dispatchEvent({ type: 'gridStylesChanged' });
+        }
     }
 
     // also install the theme at the top level, as its variables are used in UI controls

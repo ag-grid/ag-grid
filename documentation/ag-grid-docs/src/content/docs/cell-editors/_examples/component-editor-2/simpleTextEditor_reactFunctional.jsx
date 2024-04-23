@@ -1,6 +1,6 @@
-import React, {forwardRef, useEffect, useRef } from 'react';
+import React, {useEffect, useRef } from 'react';
 
-export default forwardRef(({ value, onValueChange, eventKey, rowIndex, column }, ref) => {
+export default ({ value, onValueChange, eventKey, rowIndex, column }, ref) => {
     const updateValue = (val) => {
         onValueChange(val === '' ? null : val);
     };
@@ -34,4 +34,4 @@ export default forwardRef(({ value, onValueChange, eventKey, rowIndex, column },
             className="my-simple-editor"
         />
     );
-})
+}

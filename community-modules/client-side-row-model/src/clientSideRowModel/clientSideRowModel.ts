@@ -161,7 +161,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             'removePivotHeaderRowWhenSingleValueColumn', 'pivotRowTotals', 'pivotColumnGroupTotals', 'suppressExpandablePivotGroups',
         ]);
         const aggregateStageRefreshProps: Set<keyof GridOptions> = new Set([
-            'getGroupRowAgg', 'alwaysAggregateAtRootLevel', 'groupIncludeTotalFooter', 'suppressAggFilteredOnly',
+            'getGroupRowAgg', 'alwaysAggregateAtRootLevel', 'groupIncludeTotalFooter', 'suppressAggFilteredOnly', 'grandTotalRow',
         ]);
         const sortStageRefreshProps: Set<keyof GridOptions> = new Set([
             'postSortRows', 'groupDisplayType', 'accentedSort',
@@ -169,7 +169,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         const filterAggStageRefreshProps: Set<keyof GridOptions> = new Set([
         ]);
         const flattenStageRefreshProps: Set<keyof GridOptions> = new Set([
-            'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren', 'groupIncludeFooter',
+            'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren', 'groupIncludeFooter', 'groupTotalRow',
         ]);
 
         const allProps = [
@@ -833,6 +833,32 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         const { nodes, callback, recursionType, includeFooterNodes } = params;
         let { index } = params;
 
+        const addFooters = (position: 'top' | 'bottom') => {
+            const parentNode = nodes[0]?.parent;
+
+            if (!parentNode) return;
+        
+            const grandTotal = includeFooterNodes && this.gos.getGrandTotalRow();
+            const isGroupIncludeFooter = this.gos.getGroupTotalRowCallback();
+            const groupTotal = includeFooterNodes && isGroupIncludeFooter({ node: parentNode });
+            
+            const isRootNode = parentNode === this.rootNode;
+            if (isRootNode) {
+                if (grandTotal === position) {
+                    parentNode.createFooter();
+                    callback(parentNode.sibling, index++);
+                }
+                return;
+            }
+            
+            if (groupTotal === position) {
+                parentNode.createFooter();
+                callback(parentNode.sibling, index++);
+            }
+        }
+
+        addFooters('top');
+
         for (let i = 0; i < nodes.length; i++) {
             const node = nodes[i];
             callback(node, index++);
@@ -866,21 +892,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 }
             }
         }
-
-        const parentNode = nodes[0]?.parent;
-        if (!includeFooterNodes || !parentNode) return index;
-
-        const isRootNode = parentNode === this.rootNode;
-        if (isRootNode) {
-            const totalFooters = this.gos.get('groupIncludeTotalFooter');
-            if (!totalFooters) return index;
-        } else {
-            const isGroupIncludeFooter = this.gos.getGroupTotalRowCallback();
-            if (!isGroupIncludeFooter({ node: parentNode })) return index;
-        }
-
-        parentNode.createFooter();
-        callback(parentNode.sibling, index++);
+        addFooters('bottom');
         return index;
     }
 

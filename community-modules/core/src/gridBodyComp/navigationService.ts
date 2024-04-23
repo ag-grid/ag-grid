@@ -358,10 +358,12 @@ export class NavigationService extends BeanStub {
         const backwards = keyboardEvent.shiftKey;
         const movedToNextCell = this.tabToNextCellCommon(previous, backwards, keyboardEvent);
 
-        if (movedToNextCell) {
+        if (movedToNextCell !== false) {
             // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
             // to the normal tabbing so user can exit the grid.
-            keyboardEvent.preventDefault();
+            if (movedToNextCell) {
+                keyboardEvent.preventDefault();
+            }
             return;
         }
 
@@ -409,10 +411,10 @@ export class NavigationService extends BeanStub {
             }
         }
 
-        return this.tabToNextCellCommon(cellOrRow, backwards, event);
+        return !!this.tabToNextCellCommon(cellOrRow, backwards, event);
     }
 
-    private tabToNextCellCommon(previous: CellCtrl | RowCtrl, backwards: boolean, event?: KeyboardEvent): boolean {
+    private tabToNextCellCommon(previous: CellCtrl | RowCtrl, backwards: boolean, event?: KeyboardEvent): boolean | null {
         let editing = previous.isEditing();
 
         // if cell is not editing, there is still chance row is editing if it's Full Row Editing
@@ -424,7 +426,7 @@ export class NavigationService extends BeanStub {
             }
         }
 
-        let res: boolean;
+        let res: boolean | null;
 
         if (editing) {
             // if we are editing, we know it's not a Full Width Row (RowComp)
@@ -437,11 +439,16 @@ export class NavigationService extends BeanStub {
             res = this.moveToNextCellNotEditing(previous, backwards);
         }
 
+        if (res === null) {
+            return res;
+        }
+
         // if a cell wasn't found, it's possible that focus was moved to the header
         return res || !!this.focusService.getFocusedHeader();
     }
 
-    private moveToNextEditingCell(previousCell: CellCtrl, backwards: boolean, event: KeyboardEvent | null = null): boolean {
+    // returns null if no navigation should be performed
+    private moveToNextEditingCell(previousCell: CellCtrl, backwards: boolean, event: KeyboardEvent | null = null): boolean | null {
         const previousPos = previousCell.getCellPosition();
 
         // before we stop editing, we need to focus the cell element
@@ -455,8 +462,8 @@ export class NavigationService extends BeanStub {
         previousCell.stopEditing();
 
         // find the next cell to start editing
-        const nextCell = this.findNextCellToFocusOn(previousPos, backwards, true) as CellCtrl;
-
+        const nextCell = this.findNextCellToFocusOn(previousPos, backwards, true) as CellCtrl | false;
+        if (nextCell === false) { return null; }
         if (nextCell == null) { return false; }
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
@@ -466,11 +473,13 @@ export class NavigationService extends BeanStub {
         return true;
     }
 
-    private moveToNextEditingRow(previousCell: CellCtrl, backwards: boolean, event: KeyboardEvent | null = null): boolean {
+    // returns null if no navigation should be performed
+    private moveToNextEditingRow(previousCell: CellCtrl, backwards: boolean, event: KeyboardEvent | null = null): boolean | null {
         const previousPos = previousCell.getCellPosition();
 
         // find the next cell to start editing
-        const nextCell = this.findNextCellToFocusOn(previousPos, backwards, true) as CellCtrl;
+        const nextCell = this.findNextCellToFocusOn(previousPos, backwards, true) as CellCtrl | false;
+        if (nextCell === false) { return null; }
         if (nextCell == null) { return false; }
 
         const nextPos = nextCell.getCellPosition();
@@ -502,7 +511,8 @@ export class NavigationService extends BeanStub {
         return true;
     }
 
-    private moveToNextCellNotEditing(previousCell: CellCtrl | RowCtrl, backwards: boolean): boolean {
+    // returns null if no navigation should be performed
+    private moveToNextCellNotEditing(previousCell: CellCtrl | RowCtrl, backwards: boolean): boolean | null {
         const displayedColumns = this.columnModel.getAllDisplayedColumns();
         let cellPos: CellPosition;
 
@@ -519,6 +529,7 @@ export class NavigationService extends BeanStub {
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
+        if (nextCell === false) { return null; }
         if (nextCell instanceof CellCtrl) {
             nextCell.focusCell(true);
         } else if (nextCell) {
@@ -528,10 +539,12 @@ export class NavigationService extends BeanStub {
         return exists(nextCell);
     }
 
-    // called by the cell, when tab is pressed while editing.
-    // @return: RenderedCell when navigation successful, otherwise null
-    private findNextCellToFocusOn(previousPosition: CellPosition, backwards: boolean, startEditing: boolean): CellCtrl | RowCtrl | null {
-        let nextPosition: CellPosition | null = previousPosition;
+    /**
+     * called by the cell, when tab is pressed while editing.
+     * @return: RenderedCell when navigation successful, false if navigation should not be performed, otherwise null
+     */
+    private findNextCellToFocusOn(previousPosition: CellPosition, backwards: boolean, startEditing: boolean): CellCtrl | RowCtrl | null | false {
+        let nextPosition: CellPosition | null | undefined = previousPosition;
 
         while (true) {
             if (previousPosition !== nextPosition) { previousPosition = nextPosition; }
@@ -551,19 +564,24 @@ export class NavigationService extends BeanStub {
                     previousCellPosition: previousPosition,
                     nextCellPosition: nextPosition ? nextPosition : null
                 };
-                const userCell = userFunc(params);
-                if (exists(userCell)) {
-                    if ((userCell as any).floating) {
+                const userResult = userFunc(params);
+                if (userResult === true || userResult === null) {
+                    if (userResult === null) {
+                        warnOnce('Returning `null` from tabToNextCell is deprecated. Return `true` to stay on the current cell, or `false` to let the browser handle the tab behaviour.');
+                    }
+                    nextPosition = previousPosition;
+                } else if (userResult === false) {
+                    return false;
+                } else {
+                    if ((userResult as any).floating) {
                         warnOnce(`tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`);
-                        userCell.rowPinned = (userCell as any).floating;
+                        userResult.rowPinned = (userResult as any).floating;
                     }
                     nextPosition = {
-                        rowIndex: userCell.rowIndex,
-                        column: userCell.column,
-                        rowPinned: userCell.rowPinned
+                        rowIndex: userResult.rowIndex,
+                        column: userResult.column,
+                        rowPinned: userResult.rowPinned
                     } as CellPosition;
-                } else {
-                    nextPosition = null;
                 }
             }
 

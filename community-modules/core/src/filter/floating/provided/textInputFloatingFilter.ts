@@ -2,11 +2,10 @@ import { IFloatingFilterParams } from '../floatingFilter';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { debounce } from '../../../utils/function';
 import { ProvidedFilter } from '../../provided/providedFilter';
-import { PostConstruct, Autowired } from '../../../context/context';
+import { PostConstruct } from '../../../context/context';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
 import { FilterChangedEvent } from '../../../events';
 import { AgInputTextField, AgInputTextFieldParams } from '../../../widgets/agInputTextField';
-import { ColumnModel } from '../../../columns/columnModel';
 import { KeyCode } from '../../../constants/keyCode';
 import { TextFilterParams, TextFilter, TextFilterModel } from '../../provided/text/textFilter';
 import { NumberFilter, NumberFilterModel } from '../../provided/number/numberFilter';
@@ -89,7 +88,6 @@ export interface ITextInputFloatingFilterParams extends IFloatingFilterParams<Te
 
 type ModelUnion = TextFilterModel | NumberFilterModel;
 export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @RefSelector('eFloatingFilterInputContainer') private readonly eFloatingFilterInputContainer: HTMLElement;
     private floatingFilterInputService: FloatingFilterInputService;
 
@@ -167,12 +165,6 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         this.destroyBean(this.floatingFilterInputService);
         this.setupFloatingFilterInputService(params);
         this.floatingFilterInputService.setValue(value, true);
-    }
-
-    private getAriaLabel(params: ITextInputFloatingFilterParams): string {
-        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
-        const translate = this.localeService.getLocaleTextFunc();
-        return `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`
     }
 
     private syncUpWithParentFilter(e: KeyboardEvent): void {

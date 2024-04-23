@@ -4945,6 +4945,27 @@
   dependencies:
     "@babel/runtime" "^7.13.10"
 
+"@radix-ui/react-dialog@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.npmjs.org/@radix-ui/react-dialog/-/react-dialog-1.0.5.tgz#71657b1b116de6c7a0b03242d7d43e01062c7300"
+  integrity sha512-GjWJX/AUpB703eEBanuBnIWdIXg6NvJFCXcNlSZk4xdszCdhrJgBoUd1cGk67vFO+WdA2pfI/plOpqz/5GUP6Q==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/primitive" "1.0.1"
+    "@radix-ui/react-compose-refs" "1.0.1"
+    "@radix-ui/react-context" "1.0.1"
+    "@radix-ui/react-dismissable-layer" "1.0.5"
+    "@radix-ui/react-focus-guards" "1.0.1"
+    "@radix-ui/react-focus-scope" "1.0.4"
+    "@radix-ui/react-id" "1.0.1"
+    "@radix-ui/react-portal" "1.0.4"
+    "@radix-ui/react-presence" "1.0.1"
+    "@radix-ui/react-primitive" "1.0.3"
+    "@radix-ui/react-slot" "1.0.2"
+    "@radix-ui/react-use-controllable-state" "1.0.1"
+    aria-hidden "^1.1.1"
+    react-remove-scroll "2.5.5"
+
 "@radix-ui/react-direction@1.0.1":
   version "1.0.1"
   resolved "https://registry.npmjs.org/@radix-ui/react-direction/-/react-direction-1.0.1.tgz#9cb61bf2ccf568f3421422d182637b7f47596c9b"
@@ -7579,17 +7600,17 @@ adjust-sourcemap-loader@^4.0.0:
     loader-utils "^2.0.0"
     regex-parser "^2.2.11"
 
-ag-charts-community@9.2.1-beta.20240421:
-  version "9.2.1-beta.20240421"
-  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-9.2.1-beta.20240421.tgz#a4d25b3a700f311b030f1b5a56cd17446b829369"
-  integrity sha512-nmuUMYRRUxgsZe9Wg5acjl4hImbf61Se4qm+cZXLhwEmEwN4P4GVOmEBA9oqyIiqPRwaWqigPGY7J73y3r94Lg==
+ag-charts-community@9.2.1-beta.20240423:
+  version "9.2.1-beta.20240423"
+  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-9.2.1-beta.20240423.tgz#2eb5d34f6b41362cf336d2d821984870c06e0c61"
+  integrity sha512-iF1t+lUKhykbDzQ4I+P+Tf+DaxxNsJpt5/lw33DdpfT+T492krVyXR1JDAZZ47ceZajl9/aL+o7LsQ/itgUqjg==
 
-ag-charts-enterprise@9.2.1-beta.20240421:
-  version "9.2.1-beta.20240421"
-  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-9.2.1-beta.20240421.tgz#42d15b9873d992481259f4fecf0d94709cc46dfa"
-  integrity sha512-HmNSmcJ1/GrgZv8ZFB7WDM6ruR4So0FAvTHSK2ml45U/MCRbqqoYBke7FBo1NjZIGhgbFZQpFkgDzcfAMN424w==
+ag-charts-enterprise@9.2.1-beta.20240423:
+  version "9.2.1-beta.20240423"
+  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-9.2.1-beta.20240423.tgz#f947f3a6e549b34416737f0aa6c690a59a16be12"
+  integrity sha512-+9QR3BV8a8VVXa/0wJqMVk9dNcB0pYQQW+j+Hg4BgtJaF8UYo3zO+sACGd1lHXT6eE5JQbkFVPgo7JEo8xTVbg==
   dependencies:
-    ag-charts-community "9.2.1-beta.20240421"
+    ag-charts-community "9.2.1-beta.20240423"
 
 agent-base@4, agent-base@^4.1.0, agent-base@^4.3.0:
   version "4.3.0"

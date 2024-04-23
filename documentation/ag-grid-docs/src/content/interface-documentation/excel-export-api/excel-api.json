@@ -57,7 +57,17 @@
             "type": "ExcelHeaderFooterContent[]"
         }
     },
-    "ExcelHeaderFooterConfig": {},
+    "ExcelHeaderFooterConfig": {
+        "all": {          
+            "type": "ExcelHeaderFooter"
+        },
+        "first": {          
+            "type": "ExcelHeaderFooter"
+        },
+        "even": {          
+            "type": "ExcelHeaderFooter"
+        }
+    },
     "ExcelHeaderFooterContent": {
         "value": {
             "isRequired": true

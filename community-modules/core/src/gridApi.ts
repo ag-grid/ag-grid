@@ -370,7 +370,7 @@ export class GridApi<TData = any> {
     }
 
     private logDeprecation(version: string, apiMethod: StartsWithGridApi, replacement: StartsWithGridApi, message?: string) {
-        warnOnce(`Since ${version} api.${apiMethod} is deprecated. Please use ${replacement} instead. ${message}`);
+        warnOnce(`Since ${version} api.${apiMethod} is deprecated. Please use ${replacement} instead. ${message ?? ''}`);
     }
 
     /** Gets the number of top pinned rows. */
@@ -1348,7 +1348,7 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Displays the AG Grid's context menu
+     * Displays the AG Grid context menu
      */
     public showContextMenu(params?: IContextMenuParams) {
         const { rowNode, column, value, x, y } = params || {};

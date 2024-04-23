@@ -12,12 +12,19 @@ export type UIPopupButtonProps = {
     endDecorator?: React.ReactNode;
     className?: string;
     variant?: 'primary' | 'secondary';
+    placement?: 'left-start' | 'right-start';
 };
 
 /**
  * A version of MUI's menu component that can contain interactive UI in the dropdown. It doesn't close until you click outside the dropdown.
  */
 export const UIPopupButton = (props: UIPopupButtonProps) => {
+    const { placement = 'left-start' } = props;
+    const floatingOptions: Partial<UseFloatingOptions> = {
+        whileElementsMounted: autoUpdate,
+        placement,
+        middleware: [shift({ padding: 8 })],
+    };
     const { refs, floatingStyles, elements } = useFloating(floatingOptions);
     const [show, setShow] = useState(false);
 
@@ -48,27 +55,22 @@ export const UIPopupButton = (props: UIPopupButtonProps) => {
     );
 };
 
-const floatingOptions: Partial<UseFloatingOptions> = {
-    whileElementsMounted: autoUpdate,
-    placement: 'right-start',
-    middleware: [shift({ padding: 8 })],
-};
-
 export const Button = styled('button')`
     height: 44px;
     border-radius: 8px;
     font-weight: 500;
     display: flex;
-    padding: 0 12px;
+    padding: 0 16px;
     align-items: center;
     justify-content: center;
     gap: 8px;
     box-shadow: 0px 3.76px 3.76px 0px hsla(0, 0%, 0%, 0.06);
+    width: 100%;
 
     &.variant-secondary {
-        border: solid 1px var(--color-input-border);
-        color: var(--color-fg-tertiary);
-        background-color: var(--color-bg-primary);
+        background-color: var(--color-button-tertiary-bg);
+        color: var(--color-button-tertiary-fg);
+        border: 1px solid var(--color-button-tertiary-border);
 
         &:hover {
             color: var(--color-fg-primary);
@@ -84,6 +86,7 @@ const DropdownArea = styled(Card)`
     max-height: calc(100vh - 16px);
     margin-left: 8px;
     padding: 16px;
+    width: 350px;
 
     .dropdownWrapper {
         @keyframes scaleIn {

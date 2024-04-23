@@ -2,39 +2,47 @@ import { Checkmark, ChevronUp } from '@carbon/icons-react';
 import styled from '@emotion/styled';
 import * as RadixSelect from '@radix-ui/react-select';
 import { ChevronDown } from 'lucide-react';
-import { type ReactElement, forwardRef } from 'react';
+import { type ReactElement, type ReactNode, forwardRef } from 'react';
 
 import { SharedContent, SharedIndicator, SharedItem, SharedTrigger } from './dropdown-shared';
 
-type SelectOption = {
-    value: string;
-    label?: string;
-    groupLabel?: string;
-};
-
 type SelectProps<O> = {
-    value: O;
-    onChange: (value: O) => void;
     options: O[];
+    value: O;
+    onChange: (newValue: O) => void;
+    renderItem?: (item: O) => ReactNode;
+    getKey?: (item: O) => string;
+    getLabel?: (item: O) => string;
+    getGroupLabel?: (item: O) => string;
 };
 
-export function Select<O extends SelectOption>({ value, options, onChange }: SelectProps<O>) {
+export function Select<O>({
+    value,
+    options,
+    onChange,
+    renderItem,
+    getKey = defaultGetKey,
+    getLabel = defaultGetLabel,
+    getGroupLabel = defaultGetGroupLabel,
+}: SelectProps<O>) {
     const optionsByValue = new Map<string, O>();
     const content: Record<string, ReactElement[]> = {};
     for (const option of options) {
-        const group = option.groupLabel || '';
+        const group = getGroupLabel(option) || '';
+        const key = getKey(option) || '';
+        const label = getLabel(option) || '';
         content[group] ||= [];
         content[group].push(
-            <SelectItem key={option.value} value={option.value}>
-                {option.label || option.value}
+            <SelectItem key={key} value={key}>
+                {renderItem ? renderItem(option) : label || key}
             </SelectItem>
         );
-        optionsByValue.set(option.value, option);
+        optionsByValue.set(key, option);
     }
 
     return (
         <RadixSelect.Root
-            value={value.value}
+            value={getKey(value)}
             onValueChange={(newValue) => {
                 const chosen = optionsByValue.get(newValue);
                 if (chosen) {
@@ -69,6 +77,18 @@ export function Select<O extends SelectOption>({ value, options, onChange }: Sel
         </RadixSelect.Root>
     );
 }
+
+const defaultGetKey = (option: any) => {
+    const valueProperty = option?.value;
+    if (typeof valueProperty !== 'string') {
+        throw new Error('option.value must be a string or getOptionValue must be provided');
+    }
+    return valueProperty;
+};
+
+const defaultGetLabel = (option: any) => option?.label || 'undefined';
+
+const defaultGetGroupLabel = (option: any) => option?.groupLabel;
 
 const SelectItem = forwardRef(({ children, className, ...props }: any, forwardedRef) => {
     return (

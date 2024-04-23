@@ -389,7 +389,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     private getCellValue(type: ExcelOOXMLDataType, value: string | null): { value: string | null, escaped?: boolean } {
         let escaped = false;
 
-        if (value == null) {
+        if (value == null || value === '') {
             type = 's';
             value = '';
         }
@@ -404,7 +404,13 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         } else if (type === 'f') {
             value = value.slice(1);
         } else  if (type === 'n') {
-            value = Number(value).toString();
+            const numberValue = Number(value);
+
+            if (isNaN(numberValue)) {
+                value = '';
+            } else {
+                value = numberValue.toString();
+            }
         }
 
         return { value, escaped };

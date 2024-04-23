@@ -1,3 +1,6 @@
+import styled from '@emotion/styled';
+
+import { paramValueToCss } from '../../../../../../../community-modules/theming/src/theme-types';
 import { Select } from './Select';
 import type { ValueEditorProps } from './ValueEditorProps';
 
@@ -5,8 +8,22 @@ export const FontFamilyValueEditor = ({ param, value, onChange }: ValueEditorPro
     const options = param.property === 'fontFamily' ? topLevelOptions : subLevelOptions;
     const selectedOption = options.find((o) => o.value === value) || options[0];
 
-    return <Select options={options} value={selectedOption} onChange={(newValue) => onChange(newValue.value)} />;
+    return (
+        <Select
+            options={options}
+            value={selectedOption}
+            onChange={(newValue) => onChange(newValue.value)}
+            renderItem={(o) => {
+                const font = paramValueToCss('fontFamily', o.value);
+                return (
+                    <FontItem style={{ fontFamily: typeof font === 'string' ? font : undefined }}>{o.label}</FontItem>
+                );
+            }}
+        />
+    );
 };
+
+const FontItem = styled('span')``;
 
 const fontOptions = [
     {
@@ -56,3 +73,17 @@ const fontOptions = [
 ];
 const topLevelOptions = [{ label: 'Same as application', value: 'inherit' }, ...fontOptions];
 const subLevelOptions = [{ label: 'Unchanged', value: 'inherit' }, ...fontOptions];
+
+export const PreloadFontSelection = () => {
+    const css = fontOptions
+        .map(({ value }) => value)
+        .filter((v) => String(v).startsWith('google:'))
+        .map((v) => String(v).replace('google:', ''))
+        .sort()
+        .map(
+            (font) =>
+                `@import url('https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@100;200;300;400;500;600;700&display=swap');`
+        )
+        .join('\n');
+    return <style>{css}</style>;
+};

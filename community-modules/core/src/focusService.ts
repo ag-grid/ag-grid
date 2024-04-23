@@ -27,6 +27,7 @@ import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR, isVisible } from "./utils/dom";
 import { TabGuardClassNames } from "./widgets/tabGuardCtrl";
 import { FilterManager } from "./filter/filterManager";
 import { IAdvancedFilterService } from "./interfaces/iAdvancedFilterService";
+import { warnOnce } from "./utils/function";
 
 @Bean('focusService')
 export class FocusService extends BeanStub {
@@ -342,13 +343,13 @@ export class FocusService extends BeanStub {
             if (fromTab) {
                 const userFunc = this.gos.getCallback('tabToNextHeader');
                 if (userFunc) {
-                    const params: WithoutGridCommon<TabToNextHeaderParams> = {
-                        backwards: direction === 'Before',
-                        previousHeaderPosition: currentPosition,
-                        nextHeaderPosition: headerPosition,
-                        headerRowCount,
-                    };
-                    headerPosition = userFunc(params);
+                    headerPosition = this.getHeaderPositionFromUserFunc({
+                        userFunc,
+                        direction,
+                        currentPosition,
+                        headerPosition,
+                        headerRowCount
+                    });
                 }
             } else {
                 const userFunc = this.gos.getCallback('navigateToNextHeader');
@@ -367,6 +368,74 @@ export class FocusService extends BeanStub {
 
         if (!headerPosition) { return false; }
 
+        return this.focusProvidedHeaderPosition({
+            headerPosition,
+            direction,
+            event,
+            fromCell,
+            rowWithoutSpanValue
+        });
+    }
+
+    public focusHeaderPositionFromUserFunc(params: {
+        userFunc: (params: WithoutGridCommon<TabToNextHeaderParams>) => boolean | HeaderPosition | null,
+        headerPosition: HeaderPosition | null;
+        direction?: 'Before' | 'After' | null;
+        event?: KeyboardEvent;
+    }): boolean {
+        if (this.gos.get('suppressHeaderFocus')) { return false; }
+        const { userFunc, headerPosition, direction, event } = params;
+        const currentPosition = this.getFocusedHeader();
+        const headerRowCount = this.headerNavigationService.getHeaderRowCount();
+        const newHeaderPosition = this.getHeaderPositionFromUserFunc({
+            userFunc,
+            direction,
+            currentPosition,
+            headerPosition,
+            headerRowCount
+        });
+        return !!newHeaderPosition && this.focusProvidedHeaderPosition({
+            headerPosition: newHeaderPosition,
+            direction,
+            event
+        });
+    }
+
+    private getHeaderPositionFromUserFunc(params: {
+        userFunc: (params: WithoutGridCommon<TabToNextHeaderParams>) => boolean | HeaderPosition | null;
+        direction?: 'Before' | 'After' | null;
+        currentPosition: HeaderPosition | null;
+        headerPosition: HeaderPosition | null;
+        headerRowCount: number;
+    }): HeaderPosition | null {
+        const { userFunc, direction, currentPosition, headerPosition, headerRowCount } = params;
+        const userFuncParams: WithoutGridCommon<TabToNextHeaderParams> = {
+            backwards: direction === 'Before',
+            previousHeaderPosition: currentPosition,
+            nextHeaderPosition: headerPosition,
+            headerRowCount,
+        };
+        const userResult = userFunc(userFuncParams);
+        if (userResult === true || userResult === null) {
+            if (userResult === null) {
+                warnOnce('Returning `null` from tabToNextHeader is deprecated. Return `true` to stay on the current header, or `false` to let the browser handle the tab behaviour.');
+            }
+            return currentPosition;
+        }
+        if (userResult === false) {
+            return null;
+        }
+        return userResult;
+    }
+
+    private focusProvidedHeaderPosition(params: {
+        headerPosition: HeaderPosition;
+        direction?: 'Before' | 'After' | null;
+        event?: KeyboardEvent;
+        fromCell?: boolean;
+        rowWithoutSpanValue?: number;
+    }): boolean {
+        const { headerPosition, direction, fromCell, rowWithoutSpanValue, event } = params;
         if (headerPosition.headerRowIndex === -1) {
             if (this.filterManager.isAdvancedFilterHeaderActive()) {
                 return this.focusAdvancedFilter(headerPosition);

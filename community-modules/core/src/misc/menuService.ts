@@ -105,7 +105,10 @@ export class MenuService extends BeanStub {
         const eGui = this.getCellGui(rowCtrl, column);
 
         if (!eGui) {
-            return { x: 0, y: 0 }
+            if (rowCtrl) {
+                return { x: 0, y: rowCtrl.getRowYPosition() };
+            }
+            return { x: 0, y: 0 };
         }
 
         const rect = eGui.getBoundingClientRect();

@@ -1,8 +1,8 @@
-import { GridApi, createGrid, GridOptions, GetGroupIncludeFooterParams, FirstDataRenderedEvent } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions, FirstDataRenderedEvent } from '@ag-grid-community/core';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { ModuleRegistry, GetGroupIncludeTotalRowParams } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
@@ -23,16 +23,16 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     minWidth: 300,
   },
-  groupIncludeFooter: (params: GetGroupIncludeFooterParams) => {
+  groupTotalRow: (params: GetGroupIncludeTotalRowParams) => {
     const node = params.node;
-    if (node && node.level === 1) return true;
-    if (node && node.key === 'France') return true;
+    if (node && node.level === 1) return 'bottom';
+    if (node && node.key === 'United States') return 'bottom';
 
-    return false;
+    return undefined;
   },
   onFirstDataRendered: (params: FirstDataRenderedEvent) => {
     params.api.forEachNode((node) => {
-      if (node.key === 'France' || node.key === 'South Korea') {
+      if (node.key === 'United States' || node.key === 'Australia') {
         params.api.setRowNodeExpanded(node, true);
       }
     });
@@ -46,5 +46,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data.slice(0, 50)))
 })

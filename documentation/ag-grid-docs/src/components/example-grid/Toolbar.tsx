@@ -1,8 +1,8 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import styles from '@legacy-design-system/modules/Toolbar.module.scss';
 import { trackDemoToolbar, trackOnceDemoToolbar } from '@utils/analytics';
 import React, { useDeferredValue, useEffect, useState } from 'react';
 
+import styles from './Toolbar.module.scss';
 import { createDataSizeValue } from './utils';
 
 const IS_SSR = typeof window === 'undefined';

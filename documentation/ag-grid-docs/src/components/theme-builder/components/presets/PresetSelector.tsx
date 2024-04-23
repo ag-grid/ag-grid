@@ -2,33 +2,19 @@ import { corePart, paramValueToCss } from '@ag-grid-community/theming';
 import { getChangedModelItemCount } from '@components/theme-builder/model/changed-model-items';
 import styled from '@emotion/styled';
 import { useStore } from 'jotai';
-import { memo, useEffect, useRef } from 'react';
+import { type RefObject, memo, useEffect, useRef } from 'react';
 
 import { PresetRender } from './PresetRender';
 import { type Preset, allPresets, applyPreset } from './presets';
 
 export const PresetSelector = memo(() => {
-    // find and load any google fonts that might be used by presets
-    const googleFonts = [corePart.defaults, ...allPresets.map((p) => p.params)]
-        .map((params) =>
-            Object.values(params || {})
-                .filter((v) => String(v).startsWith('google:'))
-                .map((v) => String(v).replace('google:', ''))
-        )
-        .flat()
-        .sort()
-        .map(
-            (font) =>
-                `@import url('https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}&display=swap');`
-        )
-        .join('\n');
+    const scrollerRef = useRef<HTMLDivElement>(null);
 
     return (
-        <Scroller>
-            <style>{googleFonts}</style>
+        <Scroller ref={scrollerRef}>
             <Horizontal>
                 {allPresets.map((preset, i) => (
-                    <SelectButton key={i} preset={preset} />
+                    <SelectButton key={i} preset={preset} scrollerRef={scrollerRef} />
                 ))}
             </Horizontal>
         </Scroller>
@@ -37,9 +23,10 @@ export const PresetSelector = memo(() => {
 
 type SelectButtonProps = {
     preset: Preset;
+    scrollerRef: RefObject<HTMLDivElement>;
 };
 
-const SelectButton = ({ preset }: SelectButtonProps) => {
+const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
     const wrapperRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -68,6 +55,13 @@ const SelectButton = ({ preset }: SelectButtonProps) => {
                     }
                 }
                 applyPreset(store, preset);
+
+                // Scroll to the snap center position
+                const scrollLeft = wrapperRef.current.offsetLeft - wrapperRef.current.clientWidth / 2;
+                scrollerRef.current.scrollTo({
+                    left: scrollLeft,
+                    behavior: 'smooth',
+                });
             }}
         >
             <PresetRender />
@@ -78,6 +72,12 @@ const SelectButton = ({ preset }: SelectButtonProps) => {
 const SelectButtonWrapper = styled('div')`
     display: inline-block;
     margin-right: 12px;
+    scroll-snap-align: center;
+
+    // Higher z index than blur container z index
+    &:first-of-type {
+        z-index: 2;
+    }
 `;
 
 const Horizontal = styled('div')`
@@ -90,6 +90,37 @@ const Scroller = styled('div')`
     overflow-x: auto;
     padding-bottom: 6px;
     z-index: 0;
+    scroll-snap-type: x mandatory;
+
+    // Blur beginning and end
+    &:before,
+    &:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100px;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    &:before {
+        left: 0;
+        background: linear-gradient(
+            to right,
+            color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 50%) 0%,
+            transparent 100%
+        );
+    }
+
+    &:after {
+        right: 0;
+        background: linear-gradient(
+            to left,
+            color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 50%) 0%,
+            transparent 100%
+        );
+    }
 `;
 //  👆 z-index is required to prevent a Safari rendering bug where scrollbars appear over tooltips
 

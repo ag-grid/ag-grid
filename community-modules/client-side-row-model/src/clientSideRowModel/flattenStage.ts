@@ -68,7 +68,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
             groupRemoveSingleChildren,
             isGroupMultiAutoColumn: this.gos.isGroupMultiAutoColumn(),
             hideOpenParents: this.gos.get('groupHideOpenParents'),
-            grandTotalRow: this.gos.get('grandTotalRow') ?? (this.gos.get('groupIncludeTotalFooter') ? 'bottom' : undefined),
+            grandTotalRow: this.gos.getGrandTotalRow(),
             groupTotalRow: this.gos.getGroupTotalRowCallback(),
         };
     }

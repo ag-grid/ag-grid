@@ -127,6 +127,10 @@ export class DefaultDateComponent extends Component implements IDateComp {
         this.eDateInput.setInputPlaceholder(placeholder);
     }
 
+    public setInputAriaLabel(ariaLabel: string): void {
+        this.eDateInput.setAriaLabel(ariaLabel);
+    }
+
     public setDisabled(disabled: boolean): void {
         this.eDateInput.setDisabled(disabled);
     }

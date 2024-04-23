@@ -530,6 +530,7 @@ export {
     GetLocaleTextParams,
     GetGroupAggFilteringParams,
     GetGroupIncludeFooterParams,
+    GetGroupIncludeTotalRowParams,
     IMenuActionParams
 } from "./interfaces/iCallbackParams";
 export {

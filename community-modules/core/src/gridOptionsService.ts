@@ -519,6 +519,19 @@ export class GridOptionsService {
         return undefined;
     }
 
+    public getGrandTotalRow(): 'top' | 'bottom' | undefined {
+        const userValue = this.gridOptions.grandTotalRow;
+        if (userValue) {
+            return userValue;
+        }
+
+        const legacyValue = this.gridOptions.groupIncludeTotalFooter;
+        if (legacyValue) {
+            return 'bottom';
+        }
+        return undefined;
+    }
+
     public getGroupTotalRowCallback(): (params: WithoutGridCommon<GetGroupIncludeFooterParams>) => 'top' | 'bottom' | undefined {
         const userValue = this.get('groupTotalRow');
 
@@ -532,9 +545,9 @@ export class GridOptionsService {
 
         const legacyValue = this.get('groupIncludeFooter');
         if (typeof legacyValue === 'function') {
-            return () => {
-                const legacyRes = this.getCallback('groupIncludeFooter' as any);
-                return legacyRes ? 'bottom' : undefined;
+            const legacyCallback = this.getCallback('groupIncludeFooter' as any) as any;
+            return (p: GetGroupIncludeFooterParams) => {
+                return legacyCallback(p) ? 'bottom' : undefined;
             };
         }
         return () => legacyValue ? 'bottom' : undefined;

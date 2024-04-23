@@ -121,6 +121,8 @@
     --ag-advanced-filter-option-pill-color: #5a3168;
     --ag-advanced-filter-value-pill-color: #374c86;
 
+    --ag-row-loading-skeleton-effect-colour: #{color.change(#cacbcc, $alpha: 0.4)};
+
     color-scheme: dark;
 }
 

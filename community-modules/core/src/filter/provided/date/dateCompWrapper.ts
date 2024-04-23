@@ -16,7 +16,7 @@ export class DateCompWrapper {
     private context: Context;
     private eParent: HTMLElement;
 
-    constructor(context: Context, userComponentFactory: UserComponentFactory, dateComponentParams: WithoutGridCommon<IDateParams>, eParent: HTMLElement) {
+    constructor(context: Context, userComponentFactory: UserComponentFactory, dateComponentParams: WithoutGridCommon<IDateParams>, eParent: HTMLElement, onReady?: (comp: DateCompWrapper) => void) {
         this.context = context;
         this.eParent = eParent;
 
@@ -46,6 +46,8 @@ export class DateCompWrapper {
             if (this.disabled != null) {
                 this.setDateCompDisabled(this.disabled);
             }
+
+            onReady?.(this);
         });
     }
 

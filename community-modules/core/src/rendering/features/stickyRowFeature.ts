@@ -179,7 +179,7 @@ export class StickyRowFeature extends BeanStub {
 
         };
  
-        const suppressFootersSticky = this.gos.get('suppressStickyTotalRow');
+        const suppressFootersSticky = this.areFooterRowsStickySuppressed();
         const suppressGroupsSticky = this.gos.get('suppressGroupRowsSticky');
         const isRowSticky = (row: RowNode) => {
             if (row.footer) {
@@ -245,11 +245,32 @@ export class StickyRowFeature extends BeanStub {
         return this.refreshNodesAndContainerHeight(container, newStickyRows, newStickyContainerHeight);
     }
 
+    private areFooterRowsStickySuppressed(): boolean | 'grand' | 'group' {
+        const suppressFootersSticky = this.gos.get('suppressStickyTotalRow');
+        if (suppressFootersSticky === true) { return true; }
+
+        const suppressGroupRows = !!this.gos.get('groupIncludeFooter') || suppressFootersSticky === 'group';
+        const suppressGrandRows = !!this.gos.get('groupIncludeTotalFooter') || suppressFootersSticky === 'grand';
+        if (suppressGroupRows && suppressGrandRows) {
+            return true;
+        }
+
+        if (suppressGrandRows) {
+            return 'grand';
+        }
+
+        if (suppressGroupRows) {
+            return 'group';
+        }
+
+        return false;
+    }
+
     private canRowsBeSticky(): boolean {
         const isStickyEnabled = this.gos.isGroupRowsSticky();
-        const suppressFootersSticky = this.gos.get('suppressStickyTotalRow');
+        const suppressFootersSticky = this.areFooterRowsStickySuppressed();
         const suppressGroupsSticky = this.gos.get('suppressGroupRowsSticky');
-        return isStickyEnabled && !suppressFootersSticky && !suppressGroupsSticky;
+        return isStickyEnabled && (!suppressFootersSticky || !suppressGroupsSticky);
     }
 
     private getStickyAncestors(rowNode: RowNode): RowNode[] {
@@ -353,10 +374,7 @@ export class StickyRowFeature extends BeanStub {
                 hasSomethingChanged = true;
             }
         }
-
-        if (!hasSomethingChanged) {
-            return false;
-        }
+        
 
         // clean up removed ctrls
         this.destroyRowCtrls(removedCtrlsMap, false);
@@ -369,6 +387,11 @@ export class StickyRowFeature extends BeanStub {
         }
         newCtrlsList.forEach(ctrl => ctrl.setRowTop(ctrl.getRowNode().stickyRowTop));
 
+
+        if (!hasSomethingChanged) {
+            return false;
+        }
+        
         if (isTop) {
             this.stickyTopRowCtrls = newCtrlsList;
         } else {

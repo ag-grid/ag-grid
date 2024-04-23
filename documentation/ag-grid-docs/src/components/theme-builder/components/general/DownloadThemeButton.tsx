@@ -1,33 +1,35 @@
-import { gridVersionTieWarning, installDocsUrl } from '@ag-grid-community/theming';
+import { installDocsUrl } from '@ag-grid-community/theming';
 import { Alert } from '@ag-website-shared/components/alert/Alert';
+import { convertProductionUrlsForStaging } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
 
 import { useRenderedTheme } from '../../model/rendered-theme';
 import { UIPopupButton } from './UIPopupButton';
 
 export const DownloadThemeButton = () => (
-    <UIPopupButton dropdownContent={<DownloadThemeDialog />} variant="primary">
-        {downloadIcon} Download
-    </UIPopupButton>
+    <ButtonWrapper>
+        <UIPopupButton placement="right-start" dropdownContent={<DownloadThemeDialog />} variant="primary">
+            {downloadIcon} Download
+        </UIPopupButton>
+    </ButtonWrapper>
 );
+
+const localInstallDocsUrl = convertProductionUrlsForStaging(installDocsUrl);
 
 const DownloadThemeDialog = () => {
     const theme = useRenderedTheme();
-    const downloadLink = `data:text/css;charset=utf-8,${encodeURIComponent(theme.css)}`;
+    const downloadLink = `data:text/css;charset=utf-8,${encodeURIComponent(convertProductionUrlsForStaging(theme.css))}`;
 
     return (
         <DownloadThemeWrapper>
             <Header>Download Theme</Header>
             <Paragraph>
                 Download a CSS file to integrate into an application. See the{' '}
-                <a href={installDocsUrl} target="_blank">
+                <a href={localInstallDocsUrl} target="_blank">
                     integration documentation
                 </a>{' '}
                 for instructions on how to use the file.
             </Paragraph>
-            <StyledAlert type="info">
-                <b>Note</b>: {gridVersionTieWarning}
-            </StyledAlert>
             <DownloadLink href={downloadLink} download="ag-grid-theme-builder.css">
                 {downloadIcon} Download CSS File
             </DownloadLink>
@@ -50,7 +52,11 @@ const DownloadThemeWrapper = styled('div')`
     display: flex;
     flex-direction: column;
     gap: 16px;
-    width: 400px;
+`;
+
+const ButtonWrapper = styled('div')`
+    width: 100%;
+    margin-right: 24px;
 `;
 
 const DownloadLink = styled('a')`
@@ -63,9 +69,9 @@ const downloadIcon = (
     <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" fill="none">
         <path
             stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
             d="M2.5 10c0 1.885 0 2.829.586 3.414C3.671 14 4.615 14 6.5 14h4c1.885 0 2.829 0 3.414-.586.586-.585.586-1.529.586-3.414m-6-8v8.667m0 0 2.667-2.917M8.5 10.667 5.833 7.75"
         />
     </svg>

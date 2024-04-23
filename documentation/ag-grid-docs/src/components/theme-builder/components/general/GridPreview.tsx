@@ -19,6 +19,7 @@ import root from 'react-shadow';
 
 import { useSetPreviewGridApi, useSetPreviewGridContainer } from '../../model/rendered-theme';
 import { ColorEditor } from '../editors/ColorValueEditor';
+import { PreloadFontSelection } from '../editors/FontFamilyValueEditor';
 import { useGridOptions } from '../grid-config/grid-config-atom';
 import { useSetGridDom } from '../presets/grid-dom';
 import { allPresets } from '../presets/presets';
@@ -63,6 +64,7 @@ const GridPreview = () => {
             </ColorPickerWrapper>
             <GridSizer>
                 <root.div style={{ height: '100%' }}>
+                    <PreloadFontSelection />
                     <div
                         ref={(el) => {
                             setContainer(el);
@@ -102,8 +104,12 @@ const GridPreview = () => {
                                         api.showLoadingOverlay();
                                     }
                                 }}
-                                onFirstDataRendered={() => {
+                                onFirstDataRendered={(params: any) => {
                                     setGridDom(container.querySelector('.ag-root-wrapper') as HTMLDivElement);
+
+                                    // Select some nodes by default
+                                    params.api.getRowNode(1).setSelected(true);
+                                    params.api.getRowNode(3).setSelected(true);
                                 }}
                                 key={updateCount}
                                 {...gridOptions}
@@ -156,6 +162,6 @@ const Wrapper = styled('div')`
 `;
 
 const GridSizer = styled('div')`
-    width: min(80%, 800px);
-    height: min(80%, 500px);
+    width: min(80%, 1020px);
+    height: min(80%, 654px);
 `;
