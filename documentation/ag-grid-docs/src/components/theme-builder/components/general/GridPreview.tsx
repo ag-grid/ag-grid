@@ -104,8 +104,12 @@ const GridPreview = () => {
                                         api.showLoadingOverlay();
                                     }
                                 }}
-                                onFirstDataRendered={() => {
+                                onFirstDataRendered={(params) => {
                                     setGridDom(container.querySelector('.ag-root-wrapper') as HTMLDivElement);
+
+                                    // Select some nodes by default
+                                    params.api.getRowNode(1).setSelected(true);
+                                    params.api.getRowNode(3).setSelected(true);
                                 }}
                                 key={updateCount}
                                 {...gridOptions}
