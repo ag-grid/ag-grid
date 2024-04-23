@@ -80,7 +80,7 @@ const Container = styled('div')`
 
 const GridFeatureButtonWrapper = styled('div')`
     position: absolute;
-    bottom: -8px;
+    bottom: 16px;
     right: 16px;
 `;
 
