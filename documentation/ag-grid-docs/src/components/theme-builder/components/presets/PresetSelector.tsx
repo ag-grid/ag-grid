@@ -73,6 +73,11 @@ const SelectButtonWrapper = styled('div')`
     display: inline-block;
     margin-right: 12px;
     scroll-snap-align: center;
+
+    // Higher z index than blur container z index
+    &:first-of-type {
+        z-index: 2;
+    }
 `;
 
 const Horizontal = styled('div')`
@@ -86,6 +91,36 @@ const Scroller = styled('div')`
     padding-bottom: 6px;
     z-index: 0;
     scroll-snap-type: x mandatory;
+
+    // Blur beginning and end
+    &:before,
+    &:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100px;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    &:before {
+        left: 0;
+        background: linear-gradient(
+            to right,
+            color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 50%) 0%,
+            transparent 100%
+        );
+    }
+
+    &:after {
+        right: 0;
+        background: linear-gradient(
+            to left,
+            color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 50%) 0%,
+            transparent 100%
+        );
+    }
 `;
 //  👆 z-index is required to prevent a Safari rendering bug where scrollbars appear over tooltips
 
