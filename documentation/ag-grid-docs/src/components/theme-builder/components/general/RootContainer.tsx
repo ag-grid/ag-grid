@@ -24,7 +24,6 @@ export const RootContainer = () => {
     useEffect(() => {
         const timeout = setTimeout(() => {
             setOpen(true);
-            console.log('open modal');
         });
         return () => clearTimeout(timeout);
     }, []);
