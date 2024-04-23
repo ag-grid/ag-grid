@@ -104,7 +104,7 @@ const GridPreview = () => {
                                         api.showLoadingOverlay();
                                     }
                                 }}
-                                onFirstDataRendered={(params) => {
+                                onFirstDataRendered={(params: any) => {
                                     setGridDom(container.querySelector('.ag-root-wrapper') as HTMLDivElement);
 
                                     // Select some nodes by default

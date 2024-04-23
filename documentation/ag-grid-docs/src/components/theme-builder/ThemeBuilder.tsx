@@ -3,6 +3,7 @@ import { useLayoutEffect, useMemo, useState } from 'react';
 
 import { PreloadFontSelection } from './components/editors/FontFamilyValueEditor';
 import { RootContainer } from './components/general/RootContainer';
+import { WelcomeModal } from './components/general/WelcomeModal';
 import { applyPreset, darkModePreset, lightModePreset } from './components/presets/presets';
 import { allParamModels } from './model/ParamModel';
 import { allPartModels } from './model/PartModel';
@@ -43,6 +44,7 @@ export const ThemeBuilder = () => {
         <Provider store={store}>
             <PreloadFontSelection />
             {initialised && <RootContainer />}
+            <WelcomeModal />
         </Provider>
     );
 };
