@@ -7,9 +7,11 @@ import { useRenderedTheme } from '../../model/rendered-theme';
 import { UIPopupButton } from './UIPopupButton';
 
 export const DownloadThemeButton = () => (
-    <UIPopupButton dropdownContent={<DownloadThemeDialog />} variant="primary">
-        {downloadIcon} Download
-    </UIPopupButton>
+    <ButtonWrapper>
+        <UIPopupButton placement="right-start" dropdownContent={<DownloadThemeDialog />} variant="primary">
+            {downloadIcon} Download
+        </UIPopupButton>
+    </ButtonWrapper>
 );
 
 const localInstallDocsUrl = convertProductionUrlsForStaging(installDocsUrl);
@@ -53,7 +55,11 @@ const DownloadThemeWrapper = styled('div')`
     display: flex;
     flex-direction: column;
     gap: 16px;
-    width: 400px;
+`;
+
+const ButtonWrapper = styled('div')`
+    width: 100%;
+    margin-right: 24px;
 `;
 
 const DownloadLink = styled('a')`
