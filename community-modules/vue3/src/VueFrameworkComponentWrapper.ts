@@ -2,8 +2,6 @@ import {BaseComponentWrapper, WrappableInterface} from '@ag-grid-community/core'
 import {VueComponentFactory} from './VueComponentFactory';
 
 interface VueWrappableInterface extends WrappableInterface {
-    overrideProcessing(methodName: string): boolean;
-
     processMethod(methodName: string, args: IArguments): any;
 }
 
@@ -55,10 +53,6 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
                 (wrapper as any)[name] = callback;
             }
 
-            public overrideProcessing(methodName: string): boolean {
-                return that.parent!.autoParamsRefresh && methodName === 'refresh';
-            }
-
             public processMethod(methodName: string, args: IArguments): any {
                 if (methodName === 'refresh') {
                     this.getFrameworkComponentInstance().params = args[0];
@@ -86,10 +80,6 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
 
     protected createMethodProxy(wrapper: VueWrappableInterface, methodName: string, mandatory: boolean): () => any {
         return function () {
-            if (wrapper.overrideProcessing(methodName)) {
-                return wrapper.processMethod(methodName, arguments);
-            }
-
             if (wrapper.hasMethod(methodName)) {
                 return wrapper.callMethod(methodName, arguments);
             }
