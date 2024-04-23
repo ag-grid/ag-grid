@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { autoPlacement, autoUpdate, useFloating } from '@floating-ui/react';
+import { FloatingPortal, autoPlacement, autoUpdate, useFloating } from '@floating-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { HexAlphaColorPicker, HexColorPicker } from 'react-colorful';
 
@@ -30,7 +30,7 @@ export const ColorEditor = ({ preventTransparency, value, onChange }: ColorEdito
         open: showPicker,
         onOpenChange: setShowPicker,
         whileElementsMounted: autoUpdate,
-        middleware: [autoPlacement({ allowedPlacements: ['bottom-start', 'bottom-end'] })],
+        middleware: [autoPlacement({ allowedPlacements: ['bottom-start', 'bottom-end', 'top-start', 'top-end'] })],
     });
 
     useClickAwayListener(() => setShowPicker(false), [elements.domReference, elements.floating, wrapperRef.current]);
@@ -97,11 +97,13 @@ export const ColorEditor = ({ preventTransparency, value, onChange }: ColorEdito
                 </ColorSwatch>
             </Wrapper>
             {showPicker && (
-                <DropdownArea ref={refs.setFloating} style={floatingStyles}>
-                    <div className="colorPickerWrapper">
-                        <ColorPicker color={hexValue} onChange={(h) => handleInput(h.toUpperCase())} />
-                    </div>
-                </DropdownArea>
+                <FloatingPortal>
+                    <DropdownArea ref={refs.setFloating} style={floatingStyles}>
+                        <div className="colorPickerWrapper">
+                            <ColorPicker color={hexValue} onChange={(h) => handleInput(h.toUpperCase())} />
+                        </div>
+                    </DropdownArea>
+                </FloatingPortal>
             )}
         </>
     );
