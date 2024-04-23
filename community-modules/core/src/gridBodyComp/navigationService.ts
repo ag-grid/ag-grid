@@ -386,8 +386,8 @@ export class NavigationService extends BeanStub {
             // in order for the tab navigation to work, we need to focus the browser back onto the
             // previous cell.
             if (previous instanceof CellCtrl) {
-                previous.focusCell(true);
                 keyboardEvent.preventDefault();
+                previous.focusCell(true);
             } else if (this.focusService.focusNextGridCoreContainer(backwards)) {
                 keyboardEvent.preventDefault();
             }
@@ -463,11 +463,8 @@ export class NavigationService extends BeanStub {
 
         // find the next cell to start editing
         const nextCell = this.findNextCellToFocusOn(previousPos, backwards, true) as CellCtrl | false;
-        if (nextCell === false) {
-            return null;
-        } else if (nextCell == null) {
-            return false;
-        }
+        if (nextCell === false) { return null; }
+        if (nextCell == null) { return false; }
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
@@ -482,11 +479,8 @@ export class NavigationService extends BeanStub {
 
         // find the next cell to start editing
         const nextCell = this.findNextCellToFocusOn(previousPos, backwards, true) as CellCtrl | false;
-        if (nextCell === false) {
-            return null;
-        } else if (nextCell == null) {
-            return false;
-        }
+        if (nextCell === false) { return null; }
+        if (nextCell == null) { return false; }
 
         const nextPos = nextCell.getCellPosition();
 
@@ -535,9 +529,8 @@ export class NavigationService extends BeanStub {
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
-        if (nextCell === false) {
-            return null;
-        } else if (nextCell instanceof CellCtrl) {
+        if (nextCell === false) { return null; }
+        if (nextCell instanceof CellCtrl) {
             nextCell.focusCell(true);
         } else if (nextCell) {
             return this.tryToFocusFullWidthRow(nextCell.getRowPosition(), backwards);

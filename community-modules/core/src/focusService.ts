@@ -421,11 +421,11 @@ export class FocusService extends BeanStub {
                 warnOnce('Returning `null` from tabToNextHeader is deprecated. Return `true` to stay on the current header, or `false` to let the browser handle the tab behaviour.');
             }
             return currentPosition;
-        } else if (userResult === false) {
-            return null;
-        } else {
-            return userResult;
         }
+        if (userResult === false) {
+            return null;
+        }
+        return userResult;
     }
 
     private focusProvidedHeaderPosition(params: {
