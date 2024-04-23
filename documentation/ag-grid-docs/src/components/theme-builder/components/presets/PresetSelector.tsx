@@ -62,6 +62,7 @@ const SelectButton = ({ preset }: SelectButtonProps) => {
 const SelectButtonWrapper = styled('div')`
     display: inline-block;
     margin-right: 12px;
+    scroll-snap-align: center;
 `;
 
 const Horizontal = styled('div')`
@@ -74,6 +75,7 @@ const Scroller = styled('div')`
     overflow-x: auto;
     padding-bottom: 6px;
     z-index: 0;
+    scroll-snap-type: x mandatory;
 `;
 //  👆 z-index is required to prevent a Safari rendering bug where scrollbars appear over tooltips
 
