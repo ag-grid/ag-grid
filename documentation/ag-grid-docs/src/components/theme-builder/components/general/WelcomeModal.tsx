@@ -7,13 +7,13 @@ import welcomeStyles from './WelcomeModal.module.scss';
 
 export const WelcomeModal = () => {
     const [dismissed, setDismissed] = useApplicationConfigAtom('welcomeModalDismissed');
-    if (dismissed) return null;
+
     return (
         <Dialog.Root
+            open={!dismissed}
             onOpenChange={(open) => {
-                if (!open) setDismissed(true);
+                setDismissed(!open);
             }}
-            defaultOpen
         >
             <Dialog.Portal>
                 <Dialog.Overlay className={styles.overlay} />
