@@ -7,9 +7,9 @@ export const EmptyState = () => {
     return (
         <>
             <div className={styles.emptyWrapper}>
-                <ThemePlaceholderLight className={styles.iconLight} />
-                <ThemePlaceholderDark className={styles.iconDark} />
-                <h2 className={styles.headingEmpty}>Sorry Theme Builder isn’t available on mobile</h2>
+                <img className={styles.lightImage} src="/theme-builder/theme-builder.gif"></img>
+                <img className={styles.darkImage} src="/theme-builder/theme-builder-dark.gif"></img>
+                <h2 className={styles.headingEmpty}>Sorry Theme Builder isn’t available on smaller devices</h2>
                 <p className={styles.paragraphyEmpty}>
                     Visit us on a larger device to explore our many preset themes, customise colours, spacing, and
                     typography and download your own{' '}
