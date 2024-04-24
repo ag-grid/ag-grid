@@ -109,10 +109,19 @@ $content-animation-time: 200ms;
 }
 
 .actions {
-    padding: $spacing-size-4 $spacing-size-4;
+    padding: $spacing-size-4;
     display: flex;
     justify-content: flex-end;
     gap: $spacing-size-2;
     border-top: 1px solid var(--color-border-secondary);
     font-size: 14px;
+
+    &.noSeparator {
+        padding: 0 $spacing-size-6 $spacing-size-6;
+        border-top: none;
+    }
+}
+
+.fullWidth {
+    width: 100%;
 }
