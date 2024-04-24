@@ -1,6 +1,6 @@
 @use 'design-system' as *;
 
-$overlay-animation-time: 300ms;
+$overlay-animation-time: 250ms;
 $content-animation-time: 200ms;
 
 @keyframes fadeIn {
@@ -56,7 +56,7 @@ $content-animation-time: 200ms;
     opacity: 0.8;
 
     &[data-state='open'] {
-        animation: fadeIn $overlay-animation-time ease-out;
+        animation: fadeIn $overlay-animation-time ease-in;
     }
     &[data-state='closed'] {
         animation: fadeOut $overlay-animation-time ease-in;
@@ -65,7 +65,7 @@ $content-animation-time: 200ms;
 
 .content {
     background-color: var(--color-bg-primary);
-    border-radius: 12px;
+    border-radius: 8px;
     box-shadow:
         hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
         hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
@@ -114,4 +114,5 @@ $content-animation-time: 200ms;
     justify-content: flex-end;
     gap: $spacing-size-2;
     border-top: 1px solid var(--color-border-secondary);
+    font-size: 14px;
 }
