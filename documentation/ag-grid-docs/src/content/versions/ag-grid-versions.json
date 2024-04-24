@@ -94,7 +94,7 @@
             },
             {
                 "text": "Typing, filtering, async population of values in Rich Select Editor",
-                "path": "./provided-cell-editors/#rich-select-cell-editor"
+                "path": "./provided-cell-editors-rich-select/"
             },
             {
                 "text": "Dynamic Group Footer Rows",
@@ -115,7 +115,7 @@
             },
             {
                 "text": "Rebuilt Rich Select Editor",
-                "path": "./provided-cell-editors/#rich-select-cell-editor"
+                "path": "./provided-cell-editors-rich-select/"
             },
             {
                 "text": "Figma Design System to design and customize AG Grid",
@@ -145,7 +145,7 @@
             },
             {
                 "text": "Group footer rows when using server-side row model",
-                "path": "./server-side-model-grouping/#row-group-footers"
+                "path": "./server-side-model-grouping/#group-total-rows"
             },
             {
                 "text": "Module registration is no longer global and is per-grid",

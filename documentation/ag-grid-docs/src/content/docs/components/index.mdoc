@@ -156,7 +156,6 @@ export class CellRendererComponent implements ICellRendererAngularComp {
 Note that although we've used `componentParent` as the property name here it can
 be anything - the main point is that you can use the `context` mechanism to share
 information between the components.
-A working example of this can be found in the [Cell Renderer](./component-cell-renderer/#example-dynamic-components) docs.
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -229,8 +228,6 @@ export default {
 Note that although we've used `componentParent` as the property name here it can
 be anything - the main point is that you can use the `context` mechanism to share
 information between the components.
-
-A working example of this can be found in the [Cell Renderer](./component-cell-renderer/#example-dynamic-components) docs.
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -449,6 +446,6 @@ const MyApp = {
 Overridable grid components are the only components you need to additionally specify with `components` in order to tie their usage to the
 actual component. All other registration types specify their usage in column definitions or on the `AgGridVue` component itself.
 
-For an example of this please refer to the [Date Component](./filter-date/#registering-date-components) documentation.
+For an example of this please refer to the [Date Component](./filter-date/#custom-selection-component) documentation.
 {% /note %}
 {% /if %}

@@ -316,7 +316,7 @@
         "cellRendererSelector": {
             "more": {
                 "name": "Many Renderers One Column",
-                "url": "./component-cell-renderer/#dynamic-selection"
+                "url": "./component-cell-renderer/#dynamic-component-selection"
             }
         },
         "loadingCellRenderer": {
