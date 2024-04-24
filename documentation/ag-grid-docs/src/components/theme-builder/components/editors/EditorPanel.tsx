@@ -43,9 +43,6 @@ export const EditorPanel = () => {
                 </LeftBiasRow>
                 <ParamEditor param="headerFontWeight" label="Font weight" />
                 <ParamEditor param="headerVerticalPaddingScale" label="Adjust vertical padding" />
-                <FormField label="Adjust horizontal padding">
-                    <Note>(See cell horizontal padding)</Note>
-                </FormField>
             </Section>
             <Section heading="Cells">
                 <ParamEditor param="dataColor" label="Text color" />
