@@ -30,7 +30,7 @@ export const ResetChangesModal = ({ showDialog, setShowDialog, onSuccess }: Prop
                                 setShowDialog(false);
                             }}
                         >
-                            Continue
+                            Reset
                         </button>
                     </div>
                 </Dialog.Content>

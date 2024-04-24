@@ -25,7 +25,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     filter: true,
   },
   enableAdvancedFilter: true,
-  popupParent: document.getElementById('wrapper'),
+  popupParent: document.body,
   onGridReady: (params: GridReadyEvent) => {
     // could also be provided via grid option `advancedFilterParent`
     params.api.setGridOption('advancedFilterParent', document.getElementById('advancedFilterParent'));

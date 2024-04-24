@@ -3,29 +3,11 @@ title: "Columns Tool Panel"
 enterprise: true
 ---
 
-The Columns Tool Panel provides functions for managing the grid's columns.
+The Columns Tool Panel provides controls for managing the grid's columns.
 
 ## Example
 
-Below shows an example of the Columns Tool Panel. The following can be noted:
-
-* Grid property `sideBar='columns'` which shows only the Columns Tool Panel.
-* Grid property `defaultColDef` has `enableValue`, `enableRowGroup` and `enablePivot` set. This means all columns can be dragged to any of the Row Groups, Values and Column sections. Although each column can be dragged to these sections, it does not make sense to do so. For example, it does not make sense to aggregate the country column, but it does make sense to group rows by country.
-
-Things to try:
-
-* Checking / unchecking columns will show / hide the columns.
-* Drag and Drop a column inside the columns sections to reorder columns in the grid.
-* Drag a column (e.g. Country) to Row Groups to group rows.
-* Drag a column (e.g. Gold) to Values to aggregate.
-* Reset (refresh) the demo and do the following:
-
-  * Click 'Pivot Mode'.
-  * Drag 'Country' to 'Row Groups'.
-  * Drag 'Year' to 'Column Labels'.
-  * Drag 'Gold' to 'Values'.
-
-  You will now have a pivot grid showing total gold medals for each country (rows showing countries) by year (columns showing years).
+In the example below the Columns Tool Panel can be used to show / hide / reorder columns, group rows and aggregate data and perform pivot operations.
 
 {% gridExampleRunner title="Tool Panel Simple" name="simple"  exampleHeight=630 /%}
 

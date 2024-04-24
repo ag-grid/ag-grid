@@ -13,23 +13,23 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
   {
     headerName: 'Athlete',
     children: [
-      { field: 'athlete', filter: 'agTextColumnFilter', minWidth: 200 },
-      { field: 'age' },
-      { field: 'country', minWidth: 200 },
+      { field: 'athlete', filter: 'agTextColumnFilter', enableRowGroup: true, enablePivot: true, minWidth: 150 },
+      { field: 'age', enableRowGroup: true, enablePivot: true, },
+      { field: 'country', enableRowGroup: true, enablePivot: true, minWidth: 125 },
     ],
   },
   {
     headerName: 'Competition',
-    children: [{ field: 'year' }, { field: 'date', minWidth: 180 }],
+    children: [{ field: 'year', enableRowGroup: true, enablePivot: true, }, { field: 'date', enableRowGroup: true, enablePivot: true, minWidth: 180 }],
   },
-  { field: 'sport', minWidth: 200 },
+  { field: 'sport', enableRowGroup: true, enablePivot: true, minWidth: 125 },
   {
     headerName: 'Medals',
     children: [
-      { field: 'gold' },
-      { field: 'silver' },
-      { field: 'bronze' },
-      { field: 'total' },
+      { field: 'gold', enableValue: true, },
+      { field: 'silver', enableValue: true, },
+      { field: 'bronze', enableValue: true, },
+      { field: 'total', enableValue: true, },
     ],
   },
 ]
@@ -41,12 +41,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    // allow every column to be aggregated
-    enableValue: true,
-    // allow every column to be grouped
-    enableRowGroup: true,
-    // allow every column to be pivoted
-    enablePivot: true,
     filter: true,
   },
   autoGroupColumnDef: {

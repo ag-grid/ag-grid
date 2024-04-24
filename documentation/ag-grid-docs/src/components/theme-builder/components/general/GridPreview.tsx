@@ -100,7 +100,7 @@ const GridPreview = () => {
                                                 ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
                                         }, 1);
                                     }
-                                    if (config.showOverlay) {
+                                    if (config.loadingOverlay) {
                                         api.showLoadingOverlay();
                                     }
                                 }}

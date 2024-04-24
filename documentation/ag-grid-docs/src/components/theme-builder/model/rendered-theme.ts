@@ -39,7 +39,14 @@ export const renderedThemeAtom = atom((get): Theme => {
                 lastApi.gos.environment.calculatedSizes = {};
                 lastApi.eventService.dispatchEvent({ type: 'gridStylesChanged' });
             }
-        }, 0);
+            // TODO this timeout exists because stylesheet parsing is
+            // asynchronous so we need to wait "a while" before asking the grid
+            // to update itself. Potential solutions include polling to detect
+            // when parsing is done (see
+            // https://stackoverflow.com/questions/4488567/is-there-any-way-to-detect-when-a-css-file-has-been-fully-loaded)
+            // or using replaceSync (we're not using it now because it requires
+            // that we use constructed stylesheets, which have higher specificity)
+        }, 250);
     }
 
     // also install the theme at the top level, as its variables are used in UI controls

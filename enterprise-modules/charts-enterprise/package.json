@@ -12,11 +12,11 @@
     "default": "./dist/package/main.cjs.js"
   },
   "dependencies": {
-    "@ag-grid-community/core": "~31.3.0",
-    "@ag-grid-enterprise/core": "~31.3.0",
-    "@ag-grid-enterprise/charts": "~31.3.0",
-    "ag-charts-community": "~9.3.0-beta.20240423",
-    "ag-charts-enterprise": "~9.3.0-beta.20240423"
+    "@ag-grid-community/core": "31.3.0",
+    "@ag-grid-enterprise/core": "31.3.0",
+    "@ag-grid-enterprise/charts": "31.3.0",
+    "ag-charts-community": "9.3.0-beta.20240424",
+    "ag-charts-enterprise": "9.3.0-beta.20240424"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",

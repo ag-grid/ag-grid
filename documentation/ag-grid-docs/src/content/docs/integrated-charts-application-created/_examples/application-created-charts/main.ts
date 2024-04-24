@@ -85,6 +85,13 @@ function onFirstDataRendered(params: any) {
     suppressChartRanges: true,
     chartType: 'groupedColumn',
     aggFunc: 'sum',
+    chartThemeOverrides: {
+      common: {
+          animation: {
+            enabled: false,
+          }
+      }
+    }
   });
 }
 

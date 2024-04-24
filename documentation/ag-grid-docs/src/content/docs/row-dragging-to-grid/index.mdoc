@@ -11,7 +11,7 @@ Row Drag Between Grids is concerned with seamless integration among different gr
 To allow adding a grid as DropZone, the `getRowDropZoneParams` API method should be used in the target grid and the `addRowDropZone` in the source grid.
 
 ```js
-var dropZoneParams = targetGridApi.getRowDropZoneParams({
+const dropZoneParams = targetGridApi.getRowDropZoneParams({
     onDragStop: function() {
         alert('Record Dropped!');
     }
