@@ -1,15 +1,49 @@
 @use 'design-system' as *;
 
-.overlay {
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 0.8;
-        }
-    }
+$overlay-animation-time: 300ms;
+$content-animation-time: 200ms;
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 0.8;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 0.8;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes scaleFadeInUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes scaleFadeOutDown {
+    from {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+}
+
+.overlay {
     #{$selector-darkmode} & {
         background-color: color-mix(in srgb, var(--color-black), var(--color-bg-primary) 35%);
         opacity: 0.8;
@@ -20,23 +54,16 @@
     position: fixed;
     inset: 0;
     opacity: 0.8;
-    animation: fadeIn 300ms ease-out;
+
+    &[data-state='open'] {
+        animation: fadeIn $overlay-animation-time ease-out;
+    }
+    &[data-state='closed'] {
+        animation: fadeOut $overlay-animation-time ease-in;
+    }
 }
 
 .content {
-    @keyframes scaleFadeInUp {
-        from {
-            opacity: 0;
-            transform: translate(-50%, -50%) scale(0.95);
-        }
-        to {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-        }
-    }
-
-    animation: scaleFadeInUp 200ms cubic-bezier(0.4, 0, 1, 1);
-
     background-color: var(--color-bg-primary);
     border-radius: 12px;
     box-shadow:
@@ -54,6 +81,13 @@
         outline: none;
     }
     overflow: hidden;
+
+    &[data-state='open'] {
+        animation: scaleFadeInUp $content-animation-time cubic-bezier(0.4, 0, 1, 1);
+    }
+    &[data-state='closed'] {
+        animation: scaleFadeOutDown $content-animation-time cubic-bezier(1, 1, 0, 0.4);
+    }
 }
 
 .title {
