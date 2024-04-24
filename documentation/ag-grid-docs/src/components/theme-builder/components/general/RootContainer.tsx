@@ -29,8 +29,10 @@ export const RootContainer = () => {
 };
 
 const Container = styled('div')`
+    --layout-site-header-height: 120px;
+
     width: 100%;
-    height: calc(100vh - var(--header-nav-height) - 32px);
+    height: calc(100vh - var(--layout-site-header-height) - 32px);
     min-height: 600px;
     margin-top: 16px;
     display: flex;
@@ -43,6 +45,10 @@ const Container = styled('div')`
 
     @media screen and (max-width: 800px) {
         display: none;
+    }
+
+    @media (min-width: 1052px) {
+        --layout-site-header-height: 64px;
     }
 `;
 
