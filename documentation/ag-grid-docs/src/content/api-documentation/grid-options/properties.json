@@ -642,7 +642,7 @@
         "loadingCellRendererSelector": {
             "more": {
                 "name": "Loading Cell Renderer Selector",
-                "url": "./component-loading-cell-renderer/#dynamic-selection"
+                "url": "./component-loading-cell-renderer/#dynamic-loading-row-selection"
             }
         }
     },
