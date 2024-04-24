@@ -111,6 +111,9 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
                     super.onKeyDown(e);
                 }
                 break;
+            case KeyCode.ESCAPE:
+                super.onKeyDown(e);
+                break;
         }
     }
 
