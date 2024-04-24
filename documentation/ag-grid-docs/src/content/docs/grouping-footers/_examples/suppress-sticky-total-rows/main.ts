@@ -1,10 +1,10 @@
-import { GridApi, createGrid, GridOptions, FirstDataRenderedEvent } from '@ag-grid-community/core';
-
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { ModuleRegistry, GetGroupIncludeTotalRowParams } from "@ag-grid-community/core";
+import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+
 
 let gridApi: GridApi;
 
@@ -23,20 +23,13 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     minWidth: 300,
   },
-  groupTotalRow: (params: GetGroupIncludeTotalRowParams) => {
-    const node = params.node;
-    if (node && node.level === 1) return 'bottom';
-    if (node && node.key === 'United States') return 'bottom';
+  groupDefaultExpanded: -1,
+  groupTotalRow: 'bottom',
+  grandTotalRow: 'bottom',
+}
 
-    return undefined;
-  },
-  onFirstDataRendered: (params: FirstDataRenderedEvent) => {
-    params.api.forEachNode((node) => {
-      if (node.key === 'United States' || node.key === 'Australia') {
-        params.api.setRowNodeExpanded(node, true);
-      }
-    });
-  }
+function suppressTotalRows(type: 'group' | 'grand' | boolean) {
+  gridApi.setGridOption('suppressStickyTotalRow', type);
 }
 
 // setup the grid after the page has finished loading
@@ -46,5 +39,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data.slice(0, 50)))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

@@ -1244,7 +1244,12 @@
             }
         },
         "suppressStickyTotalRow": {},
-        "groupSuppressBlankHeader": {},
+        "groupSuppressBlankHeader": {
+            "more:": {
+                "name": "Showing Values in Group and Total Rows",
+                "url": "./grouping-footers/#showing-values-in-group-and-total-rows"
+            }
+        },
         "groupSelectsFiltered": {
             "more": {
                 "name": "Group Selection",
@@ -1742,8 +1747,8 @@
         },
         "sortingOrder": {
             "more": {
-                "name": "Example Sorting Order and Animation",
-                "url": "./row-sorting/#example-sorting-order-and-animation"
+                "name": "Example Sorting Order",
+                "url": "./row-sorting/#example-sorting-order"
             }
         },
         "accentedSort": {

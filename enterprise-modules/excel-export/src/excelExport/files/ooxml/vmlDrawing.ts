@@ -1,6 +1,7 @@
 import { XmlElement, ExcelOOXMLTemplate } from '@ag-grid-community/core';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 import { ExcelHeaderFooterCalculatedImage } from '../../assets/excelInterfaces';
+import { _ } from '@ag-grid-community/core';
 
 const getShapeLayout = (): XmlElement => ({
     name: "o:shapelayout",
@@ -93,30 +94,69 @@ const getLock = (params?: { aspectratio?: boolean; rotation?: boolean }): XmlEle
     }
 };
 
+function mapNumber(value: number, startSource: number, endSource: number, startTarget: number, endTarget: number): number {
+    return ((value - startSource) / (endSource - startSource)) * (endTarget - startTarget) + startTarget;
+}
+
+const gainMap: { [key: number]: string } = {
+    0: '0',
+    5: '6554f',
+    10: '13107f',
+    15: '19661f',
+    20: '26214f',
+    25: '.5',
+    30: '39322f',
+    35: '45875f',
+    40: '52429f',
+    45: '58982f',
+    50: '1',
+    55: '72818f',
+    60: '1.25',
+    65: '93623f',
+    70: '109227f',
+    75: '2',
+    80: '2.5',
+    85: '3.4',
+    90: '5',
+    95: '10',
+    96: '12.5',
+    97: '1092267f',
+    98: '25',
+    99: '50',
+    100: '2147483647f'
+};
+
 const getImageData = (image: ExcelHeaderFooterCalculatedImage, idx: number): XmlElement => {
     let rawMap: any;
-    let isGrayscale = false;
-    let isBlackAndWhite = false;
-    let isWashout;
 
-    const { recolor, id } = image;
+    const { recolor, brightness, contrast, id } = image;
 
     if (recolor) {
         rawMap = {};
-        isGrayscale = recolor === 'Grayscale';
-        isBlackAndWhite = recolor === 'Black & White';
-        isWashout = recolor === 'Washout';
+        if (recolor === 'Washout' || recolor === 'Grayscale') {
+            rawMap.gain = '19661f';
+            rawMap.blacklevel = '22938f';
+        }
+
+        if (recolor === 'Black & White' || recolor === 'Grayscale') {
+            rawMap.grayscale = 't';
+            if (recolor === 'Black & White') {
+                rawMap.bilevel = 't';
+            }
+        }
     }
 
-    if (isWashout || isGrayscale) {
-        rawMap.gain = '19661f';
-        rawMap.blacklevel = '22938f';
-    }
+    if (!recolor || recolor === 'Grayscale') {
+        if (!rawMap) {
+            rawMap = {};
+        }
 
-    if (isBlackAndWhite || isGrayscale) {
-        rawMap.grayscale = 't';
-        if (isBlackAndWhite) {
-            rawMap.bilevel = 't';
+        if (contrast != null && contrast !== 50) {
+            rawMap.gain = gainMap[contrast] ?? '1';
+        }
+
+        if (brightness != null && brightness !== 50) {
+            rawMap.blacklevel = mapNumber(brightness, 0, 100, -0.5, 0.5).toString();
         }
     }
 

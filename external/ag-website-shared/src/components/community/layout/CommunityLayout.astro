@@ -8,7 +8,6 @@ interface Props {
     title: string;
     description: string;
     pageTitle: string;
-    pageDescription: string;
 }
 
 const { title, description, pageTitle, pageDescription } = Astro.props as Props;
@@ -22,11 +21,8 @@ const { title, description, pageTitle, pageDescription } = Astro.props as Props;
         <div class="layout-max-width-small">
             <div class={styles.container}>
                 <div class={styles.content}>
-                    <!-- Title & Description -->
-                    <h1>{pageTitle}</h1>
-                    <p class={styles.description}>
-                        {pageDescription}
-                    </p>
+                    <!-- Title -->
+                    <h1 class={styles.title}>{pageTitle}</h1>
                     <slot />
                 </div>
             </div>

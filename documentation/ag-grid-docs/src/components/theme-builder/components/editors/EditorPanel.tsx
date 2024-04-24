@@ -13,9 +13,6 @@ export const EditorPanel = () => {
         <AccordionRoot type="multiple" defaultValue={['General']}>
             <div className="pageHeading">
                 <h1 className="pageTitle">Theme Builder </h1>
-                <a className="iconDoc" href="https://ag-grid.com/react-data-grid/themes/" target="_blank">
-                    <span>↗</span>
-                </a>
             </div>
             {/* <p className="pageDescription">Prototype & customise your data grid theme</p> */}
             <Section heading="General">
@@ -43,9 +40,6 @@ export const EditorPanel = () => {
                 </LeftBiasRow>
                 <ParamEditor param="headerFontWeight" label="Font weight" />
                 <ParamEditor param="headerVerticalPaddingScale" label="Adjust vertical padding" />
-                <FormField label="Adjust horizontal padding">
-                    <Note>(See cell horizontal padding)</Note>
-                </FormField>
             </Section>
             <Section heading="Cells">
                 <ParamEditor param="dataColor" label="Text color" />

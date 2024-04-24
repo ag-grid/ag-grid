@@ -11,19 +11,17 @@
         background: linear-gradient(transparent, rgba(255, 255, 255, 0.05));
     }
 
-    h1 {
-        margin-bottom: $spacing-size-2;
-
-        @media screen and (max-width: $breakpoint-community-small) {
-            display: flex;
-            justify-content: center;
-        }
-    }
+    
 
     p {
         color: var(--color-text-tertiary);
         text-align: center;
     }
+}
+
+.title {
+    display: flex;
+    justify-content: center;
 }
 
 .description {

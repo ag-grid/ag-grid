@@ -50,6 +50,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
 
         const { eSelect, valueService, gos } = this;
         const { values, value, eventKey } = params;
+
         if (missing(values)) {
             console.warn('AG Grid: no values found for select cellEditor');
             return;

@@ -48,8 +48,8 @@ to by providing a callback function to the property `groupTotalRow` instead of '
 
 The example above demonstrates custom group footers. Note the following:
 
-* Group Total Row is shown for the second level of groups
-* Group Total Row is shown for the group called `France`
+* Group Total Row is shown for the group called `United States`
+* Group Total Row is shown for the `year` level of groups
 * No Group Total Rows are shown for any other groups.
 
 The code for implementing this behaviour is shown below:
@@ -60,11 +60,36 @@ const gridOptions = {
    groupTotalRow: (params) => {
        const node = params.node;
        if (node && node.level === 1) return 'bottom';
-       if (node && node.key === 'France') return 'bottom';
+       if (node && node.key === 'United States') return 'bottom';
        return undefined;
    }
 }
 ```
+
+### Showing Values in Group and Total Rows
+
+By default, when a group is expanded the aggregation values show in the total row, and are hidden from the group row.
+This behaviour can be changed to show values both in the expanded group and the total row by enabling the option `groupSuppressBlankHeader`.
+
+{% gridExampleRunner title="Suppress Blank Groups" name="suppress-blank-groups" /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    groupSuppressBlankHeader: true,
+}
+```
+
+## Suppress Sticky Total Rows
+
+By default, all total rows are sticky, meaning they will remain visible when scrolling vertically. This behaviour can be changed by using the property `suppressStickyTotalRow`.
+
+{% gridExampleRunner title="Suppress Sticky Total Rows" name="suppress-sticky-total-rows" /%}
+
+In the example above, note the following:
+- Clicking the **Suppress Grand Total Row** button sets the `suppressStickyTotalRow` property to `'grand'` and prevents the grand total from sticking.
+- Clicking the **Suppress Group Total Row** button sets the `suppressStickyTotalRow` property to `'group'` and prevents the group total rows from sticking.
+- Clicking the **Suppress All Total Rows** button sets the `suppressStickyTotalRow` property to `true` and prevents both group and grand total rows from sticking.
+- Clicking the **Suppress No Total Rows** button sets the `suppressStickyTotalRow` property to `false` and allows both group and grand total rows to stick.
 
 ## Customising Group Column Total Values
 
