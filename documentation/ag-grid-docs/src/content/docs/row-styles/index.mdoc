@@ -52,7 +52,7 @@ const gridOptions = {
 
 ## Row Class Rules
 
-You can define rules which can be applied to include certain CSS classes via the grid option `rowClassRules`. These rules are provided as a JavaScript map where the keys are class names and the values are expressions that if evaluated to `true`, the class gets used. The expression can either be a JavaScript function, or a string which is treated as a shorthand for a function by the grid.
+You can define rules which can be applied to include certain CSS classes via the grid option `rowClassRules`. These rules are provided as a map where the keys are class names and the values are expressions that if evaluated to `true`, the class gets used. The expression can either be a function, or a string which is treated as a shorthand for a function by the grid.
 
 {% apiDocumentation source="grid-options/properties.json" section="styling" names=["rowClassRules"] /%}
 
@@ -62,16 +62,18 @@ The following snippet shows `rowClassRules` that use functions and the value fro
 const gridOptions = {
     rowClassRules: {
         // apply green to 2008
-        'rag-green-outer': function(params) { return params.data.year === 2008; },
+        'rag-green-outer': (params) => { return params.data.year === 2008; },
 
         // apply amber 2004
-        'rag-amber-outer': function(params) { return params.data.year === 2004; },
+        'rag-amber-outer': (params) => { return params.data.year === 2004; },
 
         // apply red to 2000
-        'rag-red-outer': function(params) { return params.data.year === 2000; }
+        'rag-red-outer': (params) => { return params.data.year === 2000; }
     }
 }
 ```
+
+## Row Style/Class Functions
 
 All rowStyle, rowClass and rowClassRules functions take a `RowClassParams` params object.
 
@@ -145,9 +147,7 @@ In this example Column highlighting is disabled by default and Row highlighting 
 
 {% gridExampleRunner title="No Highlighting Rows And Columns" name="highlight-nothing" /%}
 
-Rows highlight by default as this is a common requirement. Column highlighting is less common and as such needs to be opted in.
-
-Row Highlighting works by the grid adding the CSS class `ag-row-hover` to the row's getting hovered. The grid cannot depend on using CSS `:hover` selector as this will not highlight the entire row if Columns are pinned.
+Row Highlighting works by the grid adding the CSS class `ag-row-hover` to the rows getting hovered. The grid cannot depend on using CSS `:hover` selector as this will not highlight the entire row if Columns are pinned.
 
 Column Highlighting works by the grid adding the CSS class `ag-column-hover`
 to all Cells to be highlighted.

@@ -53,14 +53,6 @@ const GridExample = () => {
         }
     }, []);
 
-    const onGridReady = useCallback((params: GridReadyEvent) => {
-        fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then(resp => resp.json())
-            .then((data: IOlympicData[]) => {
-                setRowData(data);
-            });
-    }, []);
-
     const onBtShowLoading = useCallback(() => {
         gridRef.current!.api.showLoadingOverlay();
     }, [])
@@ -93,7 +85,6 @@ const GridExample = () => {
                         noRowsOverlayComponent={noRowsOverlayComponent}
                         noRowsOverlayComponentParams={noRowsOverlayComponentParams}
                         reactiveCustomComponents
-                        onGridReady={onGridReady}
                     />
                 </div>
             </div>

@@ -11,7 +11,6 @@ import { BeanStub } from '../context/beanStub';
 import { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { AgPromise } from '../utils/promise';
 import { TooltipFeature } from './tooltipFeature';
-import { Beans } from '../rendering/beans';
 import { IMenuConfigParams, IMenuItemComp,  MenuItemDef } from '../interfaces/menuItem';
 import { IComponent } from '../interfaces/iComponent';
 import { WithoutGridCommon } from '../interfaces/iCommon';
@@ -361,8 +360,6 @@ export class AgMenuItemComponent extends BeanStub {
     }
 
     private configureDefaults(params?: IMenuConfigParams): void {
-        this.tooltip = this.params.tooltip;
-
         if (!this.menuItemComp) {
             // need to wait for init to complete
             setTimeout(() => this.configureDefaults(params));
@@ -389,7 +386,7 @@ export class AgMenuItemComponent extends BeanStub {
             }
         }
         if (!params?.suppressTooltip) {
-            this.refreshTooltip();
+            this.refreshTooltip(this.params.tooltip);
         }
         this.suppressAria = !!params?.suppressAria;
         if (!this.suppressAria) {
