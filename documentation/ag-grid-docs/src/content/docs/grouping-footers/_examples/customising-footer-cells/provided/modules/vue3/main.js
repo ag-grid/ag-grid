@@ -20,8 +20,8 @@ const VueExample = {
                     :columnDefs="columnDefs"
                     :defaultColDef="defaultColDef"
                     :autoGroupColumnDef="autoGroupColumnDef"
-                    :groupIncludeFooter="true"
-                    :groupIncludeTotalFooter="true"
+                    :groupTotalRow="'bottom'"
+                    :grandTotalRow="'bottom'"
                     :rowData="rowData"></ag-grid-vue>
         </div>
     `,
