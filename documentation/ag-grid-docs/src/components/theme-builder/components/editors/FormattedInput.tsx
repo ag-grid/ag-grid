@@ -154,4 +154,7 @@ const IconWrapper = styled('div')`
     display: flex;
     align-items: center;
     justify-content: center;
+    svg {
+        stroke: var(--color-fg-quinary);
+    }
 `;
