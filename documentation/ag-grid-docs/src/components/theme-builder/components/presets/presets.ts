@@ -7,6 +7,7 @@ import { resetChangedModelItems } from '@components/theme-builder/model/changed-
 import type { Store } from '../../model/store';
 
 export type Preset = {
+    name?: string;
     pageBackgroundColor: string;
     params?: Partial<Record<CoreParam, string>>;
     parts?: Partial<Record<PartId, string>>;
@@ -32,6 +33,7 @@ export const allPresets: Preset[] = [
     lightModePreset,
     darkModePreset,
     {
+        name: 'Windows95',
         pageBackgroundColor: 'rgb(75, 153, 154)',
         params: {
             backgroundColor: 'rgb(241, 237, 225)',
@@ -71,6 +73,32 @@ export const allPresets: Preset[] = [
             headerFontWeight: '600',
             accentColor: '#8AB4F9',
             rowVerticalPaddingScale: '0.6',
+        },
+    },
+    {
+        name: 'Elite',
+        pageBackgroundColor: '#182323',
+        params: {
+            fontFamily: 'google:IBM Plex Mono',
+            fontSize: '12px',
+            backgroundColor: '#21222C',
+            foregroundColor: '#68FF8E',
+            accentColor: '#00A2FF',
+            borderColor: '#429356',
+            gridSize: '4px',
+            wrapperBorderRadius: '0px',
+            borderRadius: '0px',
+            headerBackgroundColor: '#21222C',
+            headerTextColor: '#68FF8E',
+            // headerFontFamily: "",
+            headerFontSize: '14px',
+            headerFontWeight: '700',
+            headerVerticalPaddingScale: '1.5',
+            dataColor: '#50F178',
+            oddRowBackgroundColor: '#21222C',
+            rowVerticalPaddingScale: '1.5',
+            cellHorizontalPaddingScale: '0.8',
+            // iconSize: "",
         },
     },
     {
