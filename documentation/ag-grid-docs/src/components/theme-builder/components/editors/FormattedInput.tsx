@@ -106,6 +106,7 @@ export const FormattedInput = ({
                         inputRef.current?.focus();
                         onIconClick?.();
                     }}
+                    cursor={getIconSwipeAdjustment ? 'ew-resize' : undefined}
                     onPointerDown={
                         getIconSwipeAdjustment
                             ? (e) => {
@@ -148,7 +149,7 @@ const IconWrapper = styled('div')`
     left: 6px;
     width: 22px;
     height: 22px;
-    cursor: pointer;
+    cursor: ${(props: { cursor?: string }) => props.cursor || 'pointer'};
 
     display: flex;
     align-items: center;
