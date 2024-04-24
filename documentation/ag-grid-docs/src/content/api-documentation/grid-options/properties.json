@@ -1747,8 +1747,8 @@
         },
         "sortingOrder": {
             "more": {
-                "name": "Example Sorting Order and Animation",
-                "url": "./row-sorting/#example-sorting-order-and-animation"
+                "name": "Example Sorting Order",
+                "url": "./row-sorting/#example-sorting-order"
             }
         },
         "accentedSort": {

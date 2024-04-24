@@ -152,7 +152,7 @@ const getImageData = (image: ExcelHeaderFooterCalculatedImage, idx: number): Xml
         }
 
         if (contrast != null && contrast !== 50) {
-            rawMap.gain = gainMap[contrast] ?? '0.5';
+            rawMap.gain = gainMap[contrast] ?? '1';
         }
 
         if (brightness != null && brightness !== 50) {
