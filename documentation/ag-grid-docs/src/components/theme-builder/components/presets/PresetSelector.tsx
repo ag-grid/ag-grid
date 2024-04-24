@@ -99,7 +99,8 @@ const Scroller = styled('div')`
         position: absolute;
         top: 0;
         bottom: 0;
-        width: 100px;
+        width: 165px;
+        height: 140px;
         pointer-events: none;
         z-index: 1;
     }
@@ -108,7 +109,7 @@ const Scroller = styled('div')`
         left: 0;
         background: linear-gradient(
             to right,
-            color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 50%) 0%,
+            color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 20%) 5%,
             transparent 100%
         );
     }
@@ -117,7 +118,7 @@ const Scroller = styled('div')`
         right: 0;
         background: linear-gradient(
             to left,
-            color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 50%) 0%,
+            color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 20%) 0%,
             transparent 100%
         );
     }
