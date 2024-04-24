@@ -87,7 +87,8 @@ const SelectButtonWrapper = styled('div')`
     margin-bottom: 8px;
 
     // Higher z index than blur container z index
-    &:first-of-type {
+    &:first-of-type,
+    &:last-of-type {
         z-index: 2;
     }
 `;
@@ -96,6 +97,7 @@ const Horizontal = styled('div')`
     display: flex;
     height: 100%;
 `;
+
 const Scroller = styled('div')`
     width: 100%;
     min-height: 160px;
@@ -111,27 +113,30 @@ const Scroller = styled('div')`
         position: absolute;
         top: 0;
         bottom: 0;
-        width: 165px;
-        height: 200px;
+        height: 142px;
         pointer-events: none;
         z-index: 1;
     }
 
     &:before {
-        left: 0;
+        width: 48px;
+        left: 10px;
         background: linear-gradient(
             to right,
-            color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 20%) 5%,
-            transparent 100%
+            var(--color-bg-primary),
+            color-mix(in srgb, var(--color-bg-primary), transparent 88%) 22%,
+            transparent
         );
     }
 
     &:after {
+        width: 128px;
         right: 0;
         background: linear-gradient(
             to left,
-            color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 20%) 0%,
-            transparent 100%
+            var(--color-bg-primary),
+            color-mix(in srgb, var(--color-bg-primary), transparent 33%) 10%,
+            transparent
         );
     }
 `;
