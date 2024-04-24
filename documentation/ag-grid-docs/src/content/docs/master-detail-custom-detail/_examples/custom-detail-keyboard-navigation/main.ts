@@ -1,4 +1,4 @@
-import { GridApi, createGrid, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core';
+import { GridApi, createGrid, FirstDataRenderedEvent, GridOptions, IsGroupOpenByDefaultParams } from '@ag-grid-community/core';
 import { DetailCellRenderer } from './detailCellRenderer_typescript'
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
@@ -25,7 +25,6 @@ const gridOptions: GridOptions<IAccount> = {
   masterDetail: true,
   detailCellRenderer: DetailCellRenderer,
   detailRowHeight: 70,
-  groupDefaultExpanded: 1,
   onFirstDataRendered: onFirstDataRendered,
 }
 
