@@ -93,13 +93,13 @@ export function validGridChartsVersion({ gridVersion, chartsVersion }: {
   }
 
   const [gridMajor, gridMinor] = gridVersion.split('.') || [];
-  const [chartsMajor, chartsMinor] = chartsVersion.split('.') || [];
+  const [chartsMajor, chartsMinor, chartsPatch] = chartsVersion.split('.') || [];
   const isValidMajor = isValidMajorVersion({
     gridMajorVersion: gridMajor,
     chartsMajorVersion: chartsMajor
   })
 
-  if (isValidMajor && gridMinor === chartsMinor) {
+  if ((isValidMajor && gridMinor === chartsMinor) || chartsPatch.includes("beta")) {
     return {
       isValid: true
     }
