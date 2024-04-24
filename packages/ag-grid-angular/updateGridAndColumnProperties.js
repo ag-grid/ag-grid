@@ -52,24 +52,25 @@ function extractTypesFromNode(srcFile, node, { typeLookup, eventTypeLookup, publ
 
 function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, docLookup }) {
     const skippableProperties = ['gridOptions', 'reactiveCustomComponents'];
-
+    const skippableEvents = ['gridPreDestroyed'];
     let propsToWrite = [];
     const typeKeysOrder = Object.keys(typeLookup);
 
     compUtils.ALL_PROPERTIES.forEach((property) => {
-        if (skippableProperties.indexOf(property) === -1) {
-            const typeName = typeLookup[property];
-            const inputType = getSafeType(typeName);
-            let line = addDocLine(docLookup, property, '');
-            let inputTypeWithGenerics = inputType;
-            if (property == 'columnDefs') {
-                // Use the Generic hint types for improved type checking by updating the columnDefs property
-                inputTypeWithGenerics = inputType.replace('ColDef<TData>', 'TColDef');
-            }
-            line += `    @Input() public ${property}: ${inputTypeWithGenerics} = undefined;${EOL}`;
-            const order = typeKeysOrder.findIndex(p => p === property);
-            propsToWrite.push({ order, line });
+        if (skippableProperties.includes(property)) return;
+        
+        const typeName = typeLookup[property];
+        const inputType = getSafeType(typeName);
+        let line = addDocLine(docLookup, property, '');
+        let inputTypeWithGenerics = inputType;
+        if (property == 'columnDefs') {
+            // Use the Generic hint types for improved type checking by updating the columnDefs property
+            inputTypeWithGenerics = inputType.replace('ColDef<TData>', 'TColDef');
         }
+        line += `    @Input() public ${property}: ${inputTypeWithGenerics} = undefined;${EOL}`;
+        const order = typeKeysOrder.findIndex(p => p === property);
+        propsToWrite.push({ order, line });
+        
     });
 
     let result = writeSortedLines(propsToWrite, '');
@@ -77,6 +78,8 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
     let eventsToWrite = [];
     const missingEventTypes = [];
     compUtils.PUBLIC_EVENTS.forEach((event) => {
+        if(skippableEvents.includes(event)) return;
+
         const onEvent = compUtils.getCallbackForEvent(event);
         const eventType = eventTypeLookup[onEvent];
         if (eventType) {
