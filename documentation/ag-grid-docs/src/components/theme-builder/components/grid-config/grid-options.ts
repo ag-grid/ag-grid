@@ -19,7 +19,7 @@ export const gridConfigBooleanFields = [
     'showIntegratedChartPopup',
     'statusBar',
     'pagination',
-    'showOverlay',
+    'loadingOverlay',
 ] as const;
 
 type GridConfigBooleanField = (typeof gridConfigBooleanFields)[number];

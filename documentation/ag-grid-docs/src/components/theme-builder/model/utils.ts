@@ -49,3 +49,5 @@ export const convertProductionUrlsForStaging = (url: string) => {
     if (!host) return url;
     return url.replace(/:\/\/(www\.)?ag-grid.com/, `://${host}`);
 };
+
+export const stripFloatingPointErrors = (value: number) => value.toFixed(10).replace(/\.?0+$/, '');

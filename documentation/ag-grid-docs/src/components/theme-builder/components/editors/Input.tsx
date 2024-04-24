@@ -14,6 +14,7 @@ export type InputProps = {
     onKeyPress?: KeyboardEventHandler<HTMLInputElement>;
     isError?: boolean;
     className?: string;
+    additionalPaddingLeft?: number;
 };
 
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => (
@@ -27,12 +28,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => (
         onBlur={props.onBlur}
         onKeyDown={props.onKeyDown}
         className={combineClassNames(props.className, props.isError && 'is-error')}
+        additionalPaddingLeft={props.additionalPaddingLeft || 0}
     />
 ));
+
+export type StyledInputProps = {
+    additionalPaddingLeft: number;
+};
 
 export const StyledInput = styled('input')`
     width: 100%;
     font-size: 14px;
+    padding-left: ${(props: StyledInputProps) => 8 + props.additionalPaddingLeft}px !important;
     &.is-error {
         border-color: var(--color-input-error) !important;
 

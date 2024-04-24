@@ -4,13 +4,13 @@ import { ChevronDown } from 'lucide-react';
 import { type ReactNode } from 'react';
 
 import { BordersEditor } from './BordersEditor';
-import { FormField } from './FormField';
 import { ParamEditor } from './ParamEditor';
 import { PartEditor } from './PartEditor';
+import { horizontalSpacingIcon, verticalSpacingIcon } from './icons';
 
 export const EditorPanel = () => {
     return (
-        <AccordionRoot type="multiple" defaultValue={['General']}>
+        <AccordionRoot type="multiple" defaultValue={['Header']}>
             <div className="pageHeading">
                 <h1 className="pageTitle">Theme Builder </h1>
             </div>
@@ -39,13 +39,25 @@ export const EditorPanel = () => {
                     <ParamEditor param="headerFontSize" label="Font size" />
                 </LeftBiasRow>
                 <ParamEditor param="headerFontWeight" label="Font weight" />
-                <ParamEditor param="headerVerticalPaddingScale" label="Adjust vertical padding" />
+                <ParamEditor
+                    param="headerVerticalPaddingScale"
+                    label="Adjust vertical padding"
+                    icon={verticalSpacingIcon}
+                />
             </Section>
             <Section heading="Cells">
                 <ParamEditor param="dataColor" label="Text color" />
                 <ParamEditor param="oddRowBackgroundColor" label="Odd row background" />
-                <ParamEditor param="rowVerticalPaddingScale" label="Adjust vertical padding" />
-                <ParamEditor param="cellHorizontalPaddingScale" label="Adjust horizontal padding" />
+                <ParamEditor
+                    param="rowVerticalPaddingScale"
+                    label="Adjust vertical padding"
+                    icon={verticalSpacingIcon}
+                />
+                <ParamEditor
+                    param="cellHorizontalPaddingScale"
+                    label="Adjust horizontal padding"
+                    icon={horizontalSpacingIcon}
+                />
             </Section>
             <Section heading="Icons">
                 <PartEditor part="iconSet" />

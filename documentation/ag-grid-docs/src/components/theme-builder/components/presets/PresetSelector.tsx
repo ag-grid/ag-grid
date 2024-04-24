@@ -50,11 +50,14 @@ const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
         applyPreset(store, preset);
 
         // Scroll to the snap center position
-        const scrollLeft = wrapperRef.current.offsetLeft - wrapperRef.current.clientWidth / 2;
-        scrollerRef.current.scrollTo({
-            left: scrollLeft,
-            behavior: 'smooth',
-        });
+        const wrapper = wrapperRef.current;
+        if (wrapper) {
+            const scrollLeft = wrapper.offsetLeft - wrapper.clientWidth / 2;
+            scrollerRef.current?.scrollTo({
+                left: scrollLeft,
+                behavior: 'smooth',
+            });
+        }
     }, [store, preset, wrapperRef.current, scrollerRef.current]);
 
     return (

@@ -1,5 +1,5 @@
 import type { ParamType } from '@ag-grid-community/theming';
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 
 import { ParamModel, useParamAtom } from '../../model/ParamModel';
 import { useRenderedTheme } from '../../model/rendered-theme';
@@ -9,12 +9,14 @@ import { CssValueEditor } from './CssValueEditor';
 import { FontFamilyValueEditor } from './FontFamilyValueEditor';
 import { FormField } from './FormField';
 import { LengthValueEditor } from './LengthValueEditor';
+import { ScaleValueEditor } from './ScaleValueEditor';
 import type { ValueEditorProps } from './ValueEditorProps';
 
 export type ParamEditorProps = {
     param: string;
     label?: string;
     showDocs?: boolean;
+    icon?: ReactNode;
 };
 
 export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
@@ -35,7 +37,7 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
 
     return (
         <FormField label={props.label || param.label} docs={props.showDocs ? param.docs : null}>
-            <ValueEditorComponent param={param} value={editorValue} onChange={setValue} />
+            <ValueEditorComponent param={param} value={editorValue} onChange={setValue} icon={props.icon} />
         </FormField>
     );
 });
@@ -43,7 +45,7 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
 const valueEditors: Record<ParamType, FC<ValueEditorProps>> = {
     color: ColorValueEditor,
     length: LengthValueEditor,
-    scale: LengthValueEditor,
+    scale: ScaleValueEditor,
     // border: BorderValueEditor,
     border: CssValueEditor,
     // borderStyle: BorderStyleValueEditor,
