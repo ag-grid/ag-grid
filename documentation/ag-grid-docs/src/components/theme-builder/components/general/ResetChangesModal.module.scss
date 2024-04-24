@@ -1,0 +1,20 @@
+@use 'design-system' as *;
+
+.overlay {
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-black), var(--color-bg-primary) 35%);
+        opacity: 0.8;
+    }
+}
+
+.contentModal {
+    padding: $spacing-size-6;
+}
+
+.actions {
+    padding: $spacing-size-4 $spacing-size-4;
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-size-2;
+    border-top: 1px solid var(--color-border-secondary);
+}
