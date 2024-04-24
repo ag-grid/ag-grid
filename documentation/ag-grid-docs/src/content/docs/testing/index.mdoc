@@ -246,7 +246,7 @@ We can now run our test by executing the following command:
 {% if isFramework("javascript") %}
 ## Checking Grid Data
 
-We can match grid data by looking for rows by matching `div[row="&lt;row id>"]` and then column
+We can match grid data by looking for rows by matching `div[row="<row id>"]` and then column
 values within these rows by looking for `div`'s with a class of `.ag-cell-value`:
 
 {% /if %}
@@ -411,7 +411,7 @@ In order to test AG Grid with Jest you'll need to make the following configurati
 
 In `jest.config.js` add the following line:
 
-`resolver: '&lt;rootDir>myResolver.js',`
+`resolver: '<rootDir>myResolver.js',`
 
 Then create a file called `myResolver.js` in the root directory of your project:
 {% /if %}
