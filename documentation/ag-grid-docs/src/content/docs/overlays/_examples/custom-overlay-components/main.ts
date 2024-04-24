@@ -30,8 +30,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     filter: true,
   },
 
-  // set rowData to null or undefined to show loading panel by default
-  rowData: null,
   columnDefs: columnDefs,
 
   loadingOverlayComponent: CustomLoadingOverlay,
@@ -60,10 +58,4 @@ function onBtHide() {
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(gridDiv, gridOptions);
-
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(data => {
-      gridApi!.setGridOption('rowData', data)
-    })
 })

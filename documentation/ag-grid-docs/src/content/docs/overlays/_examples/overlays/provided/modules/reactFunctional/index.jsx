@@ -36,13 +36,6 @@ const GridExample = () => {
         }
     }, []);
 
-    const onGridReady = useCallback((params) => {
-
-        fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then(resp => resp.json())
-            .then(data => setRowData(data));
-    }, []);
-
     const onBtShowLoading = useCallback(() => {
         gridRef.current.api.showLoadingOverlay();
     }, [])
@@ -71,7 +64,6 @@ const GridExample = () => {
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
-                        onGridReady={onGridReady}
                     />
                 </div>
             </div>
