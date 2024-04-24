@@ -190,6 +190,7 @@ export class CartesianAxisPanel extends Component {
             ].includes(chartType) ||
             this.chartController.isGrouping() ||
             !this.isCategoryAxis() ||
+            this.chartController.isCategorySeriesSwitched() ||
             !supportsNumericalAxis()
         ) {
             return [];
