@@ -106,7 +106,7 @@ export const FormattedInput = ({
                         inputRef.current?.focus();
                         onIconClick?.();
                     }}
-                    cursor={getIconSwipeAdjustment ? 'ns-resize' : undefined}
+                    cursor={getIconSwipeAdjustment ? 'ew-resize' : undefined}
                     onPointerDown={
                         getIconSwipeAdjustment
                             ? (e) => {
