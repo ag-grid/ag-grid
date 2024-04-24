@@ -81,6 +81,7 @@ const SelectButtonWrapper = styled('div')`
     display: inline-block;
     margin-right: 12px;
     scroll-snap-align: center;
+    margin-bottom: 8px;
 
     // Higher z index than blur container z index
     &:first-of-type {
@@ -108,7 +109,7 @@ const Scroller = styled('div')`
         top: 0;
         bottom: 0;
         width: 165px;
-        height: 140px;
+        height: 200px;
         pointer-events: none;
         z-index: 1;
     }
