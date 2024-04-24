@@ -38,6 +38,7 @@ const gridOptions: GridOptions = {
   },
   autoGroupColumnDef: {
     minWidth: 300,
+    sortable: true,
   },
   groupDefaultExpanded: 1,
   rowData: getData(),
