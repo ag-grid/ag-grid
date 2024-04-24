@@ -27,6 +27,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   paginationPageSize: 10,
   paginationPageSizeSelector: [10, 20, 50, 100],
   paginateChildRows: true,
+  animateRows: false,
   defaultColDef: {
     editable: true,
     filter: true,
