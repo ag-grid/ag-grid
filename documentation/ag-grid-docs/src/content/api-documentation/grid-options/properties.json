@@ -1245,7 +1245,7 @@
         },
         "suppressStickyTotalRow": {},
         "groupSuppressBlankHeader": {
-            "more:": {
+            "more": {
                 "name": "Showing Values in Group and Total Rows",
                 "url": "./grouping-footers/#showing-values-in-group-and-total-rows"
             }
