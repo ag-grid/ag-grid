@@ -21,7 +21,6 @@ import { useSetPreviewGridApi, useSetPreviewGridContainer } from '../../model/re
 import { ColorEditor } from '../editors/ColorValueEditor';
 import { PreloadFontSelection } from '../editors/FontFamilyValueEditor';
 import { useGridOptions } from '../grid-config/grid-config-atom';
-import { useSetGridDom } from '../presets/grid-dom';
 import { allPresets } from '../presets/presets';
 import { withErrorBoundary } from './ErrorBoundary';
 import { InfoTooltip } from './Tooltip';
@@ -51,7 +50,6 @@ const GridPreview = () => {
     const setPreviewGridContainer = useSetPreviewGridContainer();
     const setPreviewGridApi = useSetPreviewGridApi();
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
-    const setGridDom = useSetGridDom();
 
     const [backgroundValue, setBackground] = useApplicationConfigAtom('previewPaneBackgroundColor');
     const backgroundColor = backgroundValue || allPresets[0].pageBackgroundColor;
@@ -105,8 +103,6 @@ const GridPreview = () => {
                                     }
                                 }}
                                 onFirstDataRendered={(params: any) => {
-                                    setGridDom(container.querySelector('.ag-root-wrapper') as HTMLDivElement);
-
                                     // Select some nodes by default
                                     params.api.getRowNode(1).setSelected(true);
                                     params.api.getRowNode(3).setSelected(true);
