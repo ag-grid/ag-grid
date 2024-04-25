@@ -119,12 +119,13 @@ const Scroller = styled('div')`
     }
 
     &:before {
-        width: 48px;
+        width: 100px;
         left: 10px;
+        height: 100%;
         background: linear-gradient(
             to right,
             var(--color-bg-primary),
-            color-mix(in srgb, var(--color-bg-primary), transparent 88%) 22%,
+            color-mix(in srgb, var(--color-bg-primary), transparent 88%) 80%,
             transparent
         );
     }
@@ -132,10 +133,11 @@ const Scroller = styled('div')`
     &:after {
         width: 128px;
         right: 0;
+        height: 100%;
         background: linear-gradient(
             to left,
             var(--color-bg-primary),
-            color-mix(in srgb, var(--color-bg-primary), transparent 33%) 10%,
+            color-mix(in srgb, var(--color-bg-primary), transparent 33%) 50%,
             transparent
         );
     }
