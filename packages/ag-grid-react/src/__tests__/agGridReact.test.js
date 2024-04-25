@@ -72,7 +72,6 @@ class App extends Component {
 
     onGridReady = params => {
         this.api = params.api;
-        this.columnApi = params.columnApi;
     };
 
     handleSelectAll = event => {

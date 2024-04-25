@@ -284,7 +284,6 @@ export class ValueService extends BeanStub {
             rowPinned: rowNode.rowPinned,
             column: params.column,
             api: params.api!,
-            columnApi: params.columnApi!,
             colDef: params.colDef,
             context: params.context,
             data: rowNode.data,
@@ -312,7 +311,6 @@ export class ValueService extends BeanStub {
                     colDef: event.colDef,
                     column: event.column,
                     api: event.api,
-                    columnApi: event.columnApi,
                     context: event.context
                 });
             });

@@ -1,5 +1,4 @@
 import {
-    ColumnApi,
     GridApi,
     GridOptions,
     ICellEditor,
@@ -10,7 +9,6 @@ import {
     IHeader,
     IHeaderGroup,
     ILoadingOverlay,
-    IMenuItem,
     INoRowsOverlay,
     IStatusPanel,
     IToolPanel,
@@ -33,7 +31,7 @@ export interface SharedProps<TData = any> extends GridOptions<TData> {
     modules?: Module[];
     containerStyle?: any;
     className?: string;
-    setGridApi?: (gridApi: GridApi<TData>, columnApi: ColumnApi) => void;
+    setGridApi?: (gridApi: GridApi<TData>) => void;
     componentWrappingElement?: string; // only used when putting React into JS
     maxComponentCreationTimeMs?: number; // only used when putting React into JS
     children?: any;
