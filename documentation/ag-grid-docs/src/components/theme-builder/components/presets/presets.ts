@@ -16,9 +16,8 @@ export type Preset = {
 export const lightModePreset: Preset = {
     pageBackgroundColor: '#FAFAFA',
     params: {
-        accentColor: '#044B93'
-    }
-    
+        headerFontSize: '14px',
+    },
 };
 export const darkModePreset: Preset = {
     pageBackgroundColor: '#1D2634',
@@ -26,6 +25,7 @@ export const darkModePreset: Preset = {
         backgroundColor: '#1f2836',
         foregroundColor: '#FFF',
         chromeBackgroundColor: opaqueForeground(0.07),
+        headerFontSize: '14px',
     },
 };
 
@@ -47,7 +47,6 @@ export const allPresets: Preset[] = [
             borderRadius: '0px',
             headerBackgroundColor: '#21222C',
             headerTextColor: '#68FF8E',
-            // headerFontFamily: "",
             headerFontSize: '14px',
             headerFontWeight: '700',
             headerVerticalPaddingScale: '1.5',
@@ -55,7 +54,6 @@ export const allPresets: Preset[] = [
             oddRowBackgroundColor: '#21222C',
             rowVerticalPaddingScale: '1.5',
             cellHorizontalPaddingScale: '0.8',
-            // iconSize: "",
         },
     },
     {
@@ -67,6 +65,7 @@ export const allPresets: Preset[] = [
             chromeBackgroundColor: ref('backgroundColor'),
             fontFamily: 'google:Press Start 2P',
             gridSize: '4px',
+            headerFontSize: '14px',
         },
     },
     {
@@ -75,13 +74,13 @@ export const allPresets: Preset[] = [
             backgroundColor: '#E4E0E2',
             headerBackgroundColor: '#807078',
             headerTextColor: '#EEECED',
-            // headerBackgroundColor: '#807078',
             foregroundColor: 'rgb(46, 55, 66)',
             chromeBackgroundColor: ref('backgroundColor'),
             fontFamily: 'google:Jacquard 24',
             gridSize: '8px',
             wrapperBorderRadius: '0px',
             headerFontWeight: '600',
+            headerFontSize: '14px',
         },
     },
     {
@@ -90,7 +89,6 @@ export const allPresets: Preset[] = [
             backgroundColor: '#252A33',
             headerBackgroundColor: '#8AB4F9',
             headerTextColor: '#252A33',
-            // headerBackgroundColor: '#807078',
             foregroundColor: '#BDC2C7',
             chromeBackgroundColor: ref('backgroundColor'),
             fontFamily: 'google:Plus Jakarta Sans',
@@ -99,9 +97,9 @@ export const allPresets: Preset[] = [
             headerFontWeight: '600',
             accentColor: '#8AB4F9',
             rowVerticalPaddingScale: '0.6',
+            headerFontSize: '14px',
         },
     },
- 
     {
         pageBackgroundColor: '#ffffff',
         params: {
@@ -116,6 +114,7 @@ export const allPresets: Preset[] = [
             oddRowBackgroundColor: '#F9FAFB',
             rowBorder: 'none',
             wrapperBorder: 'none',
+            headerFontSize: '14px',
         },
     },
 ];
