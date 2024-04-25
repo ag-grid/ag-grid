@@ -23,7 +23,7 @@ import {
     GetDataPath,
     GROUP_AUTO_COLUMN_ID,
     IRowNode,
-    ColDef,
+    DataTypeService
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemExpandedChangedEvent, SetFilterListItemParams, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
@@ -40,6 +40,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('valueService') private readonly valueService: ValueService;
+    @Autowired('dataTypeService') private readonly dataTypeService: DataTypeService;
 
     private valueModel: SetValueModel<V> | null = null;
     private setFilterParams: SetFilterParams<any, V> | null = null;
@@ -166,7 +167,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         // Those params have a large impact and should trigger a reload when they change.
         const paramsThatForceReload: (keyof SetFilterParams<any, V>)[] = [
-            'treeList', 'treeListFormatter', 'treeListPathGetter', 'keyCreator', 'convertValuesToStrings',
+            'treeList', 'treeListFormatter', 'treeListPathGetter', 'convertValuesToStrings',
             'caseSensitive', 'comparator', 'suppressSelectAll', 'excelMode'
         ];
 
@@ -174,7 +175,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             return false;
         }
 
-        if (this.haveColDefParamsChanged(params.colDef)) {
+        if (this.haveColDefParamsChanged(params)) {
             return false;
         }
 
@@ -196,12 +197,13 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return true;
     }
 
-    private haveColDefParamsChanged(colDef: ColDef): boolean {
-        const paramsThatForceReload: (keyof ColDef)[] = [
-            'keyCreator', 'filterValueGetter',
-        ];
-        const existingColDef = this.setFilterParams?.colDef;
-        return paramsThatForceReload.some(param => colDef[param] !== existingColDef?.[param]);
+    private haveColDefParamsChanged(params: SetFilterParams<any, V>): boolean {
+        const { colDef, keyCreator } = params;
+        const { colDef: existingColDef, keyCreator: existingKeyCreator } = this.setFilterParams ?? {};
+        const processedKeyCreator = keyCreator ?? colDef.keyCreator;
+        return colDef.filterValueGetter !== existingColDef?.filterValueGetter ||
+            processedKeyCreator !== (existingKeyCreator ?? existingColDef?.keyCreator) ||
+            (this.dataTypeService.getFormatValue(colDef.cellDataType as string) === processedKeyCreator && colDef.valueFormatter !== existingColDef?.valueFormatter);
     }
 
     private setModelAndRefresh(values: SetFilterModelValue | null): AgPromise<void> {
