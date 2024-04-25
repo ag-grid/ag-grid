@@ -157,4 +157,5 @@ const IconWrapper = styled('div')`
     svg {
         stroke: var(--color-fg-quinary);
     }
+    transform: scale(0.7);
 `;
