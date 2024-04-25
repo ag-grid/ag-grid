@@ -1,8 +1,8 @@
 import type { ParamTypes } from './GENERATED-param-types';
 import { getParamType } from './main';
 import { corePart } from './parts/core/core-part';
-import { InferParams, Part, paramValueToCss, getPartParams } from './theme-types';
-import { camelCase, paramToVariableName } from './theme-utils';
+import { InferParams, Part, getPartParams, paramValueToCss } from './theme-types';
+import { paramToVariableName } from './theme-utils';
 import { VERSION } from './version';
 
 export type Theme = {
@@ -82,7 +82,7 @@ export const defineTheme = <P extends Part, V extends object = ParamTypes>(
                 googleFonts.add(value.replace(googlePrefix, ''));
             }
         };
-        const paramType = getParamType(name)
+        const paramType = getParamType(name);
         if (paramType === 'fontFamily') {
             if (Array.isArray(value)) {
                 value.forEach(convertFontValue);

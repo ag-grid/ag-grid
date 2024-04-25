@@ -67,6 +67,10 @@ const fontOptions = [
         value: 'google:Lato',
     },
     {
+        label: ' Press Start 2P',
+        value: 'google:Press Start 2P',
+    },
+    {
         label: 'Jacquard 24',
         value: 'google:Jacquard 24',
     },

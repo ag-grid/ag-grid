@@ -20,13 +20,7 @@ The Side Bar is configured using the grid property `sideBar`. The property takes
 
 The default Side Bar contains the Columns and Filters Tool Panels. To use the default Side Bar, set the grid property `sideBar=true`. The Columns panel will be open by default.
 
-The default configuration doesn't allow customisation of the Tool Panels. More detailed configuration are explained below.
-
-In the following example note the following:
-
-* The grid property `sideBar` is set to `true`.
-* The Side Bar is displayed with Tool Panels Columns and Filters.
-* The Columns panel is displayed by default.
+The default configuration doesn't allow customisation of the Tool Panels.
 
 {% gridExampleRunner title="Boolean Configuration" name="boolean-configuration" /%}
 
@@ -190,7 +184,7 @@ const gridOptions = {
 
 ## Side Bar Customisation
 
-If you are using the long form (providing a `SideBarDef` object) then it is possible to customise. The example below shows changing the label and icon for the columns and filters tab.
+If you are using the long form (providing a `SideBarDef` object) then it is possible to customise. The example below changes the filter label and icon.
 
 {% gridExampleRunner title="Side Bar Fine Tuning" name="fine-tuning" /%}
 
@@ -218,7 +212,7 @@ const gridOptions = {
 }
 ```
 
-This example configures the Columns Tool Panel. See the [Columns Tool Panel](./tool-panel-columns/) documentation for the full list of possible parameters to this Tool Panel.
+See the [Columns Tool Panel](./tool-panel-columns/) documentation for the full list of possible parameters to this Tool Panel.
 
 ## Side Bar API
 

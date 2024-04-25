@@ -187,8 +187,7 @@ The example below demonstrates entire row dragging with [Multi-Row Dragging](./r
 
 ## Suppress Row Drag
 
-You can hide the draggable area by calling the grid API `setGridOption('suppressRowDrag', suppressed)`
-or by setting the bound property `suppressRowDrag`.
+You can hide the draggable area by setting the grid option `suppressRowDrag = true`.
 
 The example below is almost identical to the [Managed Dragging](#managed-dragging) example with the following differences:
 
@@ -252,8 +251,6 @@ The example above works, however it is not intuitive as the user is given no vis
 ## Other Row Models
 
 Unmanaged row dragging will work with any of the row models [Infinite](./infinite-scrolling/), [Server-Side](./server-side-model/) and [Viewport](./viewport/). With unmanaged dragging, the implementation of what happens when a particular drag happens is up to your application.
-
-Because the grid implementation with regard to row dragging is identical to the above, examples of row dragging with the other row models are not given. How your application behaves with regards to the row drag events is the difficult bit, but that part is specific to your application and how your application stores its state. Giving an example here with a different data store would be redundant.
 
 ## Customisation
 
@@ -362,13 +359,12 @@ ngAfterViewInit() {
 ```js
 // your custom cell renderer code
 
-// this will hold the reference to the element you want to
-// to act as row dragger.
-myRef = React.createRef();
+// this will hold the reference to the element you want to act as row dragger.
+const myRef = useRef(null);
 
-componentDidMount() {
-    this.props.registerRowDragger(this.myRef.current);
-}
+useEffect(() => {
+    props.registerRowDragger(myRef.current!);
+});
 ```
 {% /if %}
 

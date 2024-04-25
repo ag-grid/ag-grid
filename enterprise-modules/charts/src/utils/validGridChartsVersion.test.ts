@@ -103,6 +103,8 @@ describe.each([
       gridVersion: '29.0.0',
     })
   },
+  {gridVersion: '31.3.0', chartsVersion: '9.3.0-beta.20240423', isValid: true},
+  {gridVersion: '31.2.0', chartsVersion: '9.3.0-beta.20240423', isValid: true},
 ])('validGridChartsVersion', ({
   gridVersion,
   chartsVersion,

@@ -7,10 +7,10 @@ const DetailCellRenderer = ({ data, node, api }: CustomCellRendererProps) => {
 
   useEffect(() => {
     return () => {
-      console.log("removing detail grid info with id: ", rowId);
-
-      // the detail grid is automatically destroyed as it is a React component
-      api.removeDetailGridInfo(rowId);
+      if (!api.isDestroyed()) {
+        console.log('removing detail grid info with id: ', rowId);
+        api.removeDetailGridInfo(rowId);
+      }
     };
   }, []);
 

@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { ParamModel } from '../../model/ParamModel';
 
 export type ValueEditorProps = {
@@ -5,4 +7,5 @@ export type ValueEditorProps = {
     value: string;
     // onChange(null) to reset default
     onChange: (newValue: string | null) => void;
+    icon?: ReactNode;
 };

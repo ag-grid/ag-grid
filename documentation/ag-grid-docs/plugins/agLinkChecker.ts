@@ -7,22 +7,20 @@ type Options = {
     include: boolean;
 };
 
-const IGNORED_PATHS = [
-    '/archive',
-];
+const IGNORED_PATHS = ['/archive'];
 
 const findAllFiles = (dir: string): string[] => {
     const results: string[] = [];
     const files = readdirSync(dir, { recursive: true });
-    files.forEach(file => {
+    files.forEach((file) => {
         results.push(file);
     });
     return results;
-}
+};
 
 const filePathToUrl = (filePath: string) => {
     return `/${filePath.replace('index.html', '')}`;
-}
+};
 
 const checkLinks = async (dir: string, files: string[]) => {
     const anchors = new Set<string>();
@@ -39,15 +37,15 @@ const checkLinks = async (dir: string, files: string[]) => {
 
         // uses a stream as ingesting the entire file was causing memory crashes.
         const fileStream = fs.createReadStream(join(dir, filePath));
-        await new Promise<void>(resolve => {
-            fileStream.on('readable', function() {
+        await new Promise<void>((resolve) => {
+            fileStream.on('readable', function () {
                 let prev;
                 let active = false;
                 let str = '';
                 var chunk;
                 while (null !== (chunk = fileStream.read(16384))) {
                     const strChunk = chunk.toString();
-                    for(let i = 0; i < strChunk.length; i++) {
+                    for (let i = 0; i < strChunk.length; i++) {
                         const chr = strChunk[i];
                         if (!prev || prev === '<') {
                             if (chr === 'a') {
@@ -58,16 +56,16 @@ const checkLinks = async (dir: string, files: string[]) => {
                             anchorTags.push(str);
                             str = '';
                         }
-                        
+
                         if (active) {
                             str += chr;
-    
+
                             if (str.length >= 2 && !str.startsWith('a ')) {
                                 active = false;
                                 str = '';
                             }
                         }
-    
+
                         prev = chr;
                     }
                 }
@@ -79,7 +77,7 @@ const checkLinks = async (dir: string, files: string[]) => {
         });
         fileStream.close();
 
-        anchorTags.forEach(tag => {
+        anchorTags.forEach((tag) => {
             const regex = /.*href="(.*?)".*/g;
             const match = regex.exec(tag);
             if (match) {
@@ -99,11 +97,12 @@ const checkLinks = async (dir: string, files: string[]) => {
         });
     }
 
-    const errors = [];
+    const errors: string[] = [];
     // validate the unchecked links
     for (let link of linksToValidate) {
         if (IGNORED_PATHS.includes(link)) continue;
 
+        const originalLink = link;
         if (link.startsWith('/')) link = link.slice(1);
 
         if (!link.includes('#')) {
@@ -129,6 +128,11 @@ const checkLinks = async (dir: string, files: string[]) => {
 
             errors.push(`Link to ${link} could not be resolved.`);
             continue;
+        } else {
+            // check if the hash exists in the file
+            if (!anchors.has(originalLink)) {
+                errors.push(`Link to ${originalLink} could not be resolved.`);
+            }
         }
     }
 
@@ -140,7 +144,7 @@ const checkLinks = async (dir: string, files: string[]) => {
     } else {
         console.log('Link checker completed with no issues.');
     }
-}
+};
 
 export default function createPlugin(options: Options): AstroIntegration {
     return {

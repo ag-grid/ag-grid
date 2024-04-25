@@ -2,8 +2,9 @@ import { corePart, paramValueToCss } from '@ag-grid-community/theming';
 import { getChangedModelItemCount } from '@components/theme-builder/model/changed-model-items';
 import styled from '@emotion/styled';
 import { useStore } from 'jotai';
-import { type RefObject, memo, useEffect, useRef } from 'react';
+import { type RefObject, memo, useCallback, useEffect, useRef, useState } from 'react';
 
+import { ResetChangesModal } from '../general/ResetChangesModal';
 import { PresetRender } from './PresetRender';
 import { type Preset, allPresets, applyPreset } from './presets';
 
@@ -27,6 +28,7 @@ type SelectButtonProps = {
 };
 
 const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
+    const [showDialog, setShowDialog] = useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -44,28 +46,37 @@ const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
     }, [preset]);
 
     const store = useStore();
+    const selectNewPreset = useCallback(() => {
+        applyPreset(store, preset);
+
+        // Scroll to the snap center position
+        const wrapper = wrapperRef.current;
+        if (wrapper) {
+            const scrollLeft = wrapper.offsetLeft - wrapper.clientWidth / 2;
+            scrollerRef.current?.scrollTo({
+                left: scrollLeft,
+                behavior: 'smooth',
+            });
+        }
+    }, [store, preset, wrapperRef.current, scrollerRef.current]);
 
     return (
-        <SelectButtonWrapper
-            ref={wrapperRef}
-            onClick={() => {
-                if (getChangedModelItemCount(store) > 1) {
-                    if (!confirm('Applying a preset will reset your changes, are you sure?')) {
+        <>
+            <SelectButtonWrapper
+                ref={wrapperRef}
+                onClick={() => {
+                    if (getChangedModelItemCount(store) > 1) {
+                        setShowDialog(true);
                         return;
                     }
-                }
-                applyPreset(store, preset);
+                    selectNewPreset();
+                }}
+            >
+                <PresetRender />
+            </SelectButtonWrapper>
 
-                // Scroll to the snap center position
-                const scrollLeft = wrapperRef.current.offsetLeft - wrapperRef.current.clientWidth / 2;
-                scrollerRef.current.scrollTo({
-                    left: scrollLeft,
-                    behavior: 'smooth',
-                });
-            }}
-        >
-            <PresetRender />
-        </SelectButtonWrapper>
+            <ResetChangesModal showDialog={showDialog} setShowDialog={setShowDialog} onSuccess={selectNewPreset} />
+        </>
     );
 };
 
@@ -73,6 +84,7 @@ const SelectButtonWrapper = styled('div')`
     display: inline-block;
     margin-right: 12px;
     scroll-snap-align: center;
+    margin-bottom: 8px;
 
     // Higher z index than blur container z index
     &:first-of-type {
@@ -99,7 +111,8 @@ const Scroller = styled('div')`
         position: absolute;
         top: 0;
         bottom: 0;
-        width: 100px;
+        width: 165px;
+        height: 200px;
         pointer-events: none;
         z-index: 1;
     }
@@ -108,7 +121,7 @@ const Scroller = styled('div')`
         left: 0;
         background: linear-gradient(
             to right,
-            color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 50%) 0%,
+            color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 20%) 5%,
             transparent 100%
         );
     }
@@ -117,7 +130,7 @@ const Scroller = styled('div')`
         right: 0;
         background: linear-gradient(
             to left,
-            color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 50%) 0%,
+            color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 20%) 0%,
             transparent 100%
         );
     }

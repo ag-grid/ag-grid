@@ -326,7 +326,13 @@ export class SetFilterListItem<V> extends Component {
                     return el.scrollWidth > el.clientWidth;
                 }
             }
-            this.setTooltip({ newTooltipText, location: 'setFilterValue', shouldDisplayTooltip });
+            this.setTooltip({
+                newTooltipText,
+                location: 'setFilterValue',
+                getColDef: () => this.params.colDef,
+                getColumn: () => this.params.column,
+                shouldDisplayTooltip
+            });
         }
 
         this.cellRendererParams = this.gos.addGridCommonParams({
@@ -335,7 +341,13 @@ export class SetFilterListItem<V> extends Component {
             colDef: this.params.colDef,
             column: this.params.column,
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
-                this.setTooltip({ newTooltipText: value, location:'setFilterValue', shouldDisplayTooltip });
+                this.setTooltip({ 
+                    newTooltipText: value,
+                    getColDef: () => this.params.colDef,
+                    getColumn: () => this.params.column,
+                    location:'setFilterValue',
+                    shouldDisplayTooltip 
+                });
             }
         });
     }

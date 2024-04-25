@@ -4,6 +4,7 @@ import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { MySimpleEditor } from './mySimple-editor.component';
 import { ColDef, GridReadyEvent } from '@ag-grid-community/core';
 import { AgGridAngular } from '@ag-grid-community/angular';
+import "./style.css";
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';

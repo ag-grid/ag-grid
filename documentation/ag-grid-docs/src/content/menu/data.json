@@ -158,7 +158,7 @@
                         ]
                     },
                     {
-                        "title": "Build and Tooling",
+                        "title": "Build & Tooling",
                         "items": [
                             {
                                 "title": "Modules",
@@ -1392,6 +1392,9 @@
                         "title": "Migration",
                         "items": [
                             {
+                                "title": "Upgrading to AG Grid 31.3",
+                                "path": "upgrading-to-ag-grid-31-3"
+                            },                            {
                                 "title": "Upgrading to AG Grid 31.2",
                                 "path": "upgrading-to-ag-grid-31-2"
                             },

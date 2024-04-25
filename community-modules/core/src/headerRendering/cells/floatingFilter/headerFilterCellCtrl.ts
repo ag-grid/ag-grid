@@ -267,7 +267,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         const { filterManager } = this.beans;
 
         const syncWithFilter = (event: ColumnEvent | null) => {
-            if (event?.source === 'filterDestroyed') { return; }
+            if (event?.source === 'filterDestroyed' && this.context.isDestroyed()) { return; }
             const compPromise = this.comp.getFloatingFilterComp();
 
             if (!compPromise) { return; }

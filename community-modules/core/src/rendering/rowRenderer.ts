@@ -152,6 +152,8 @@ export class RowRenderer extends BeanStub {
             'rowStyle', 'getRowStyle',
             'rowClass', 'getRowClass', 'rowClassRules',
 
+            'suppressStickyTotalRow',
+
             'groupRowRenderer', 'groupRowRendererParams', // maybe only needs to refresh FW rows...
             'loadingCellRenderer', 'loadingCellRendererParams',
             'detailCellRenderer', 'detailCellRendererParams',

@@ -20,7 +20,7 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'symbol', maxWidth: 120 },
+    { field: 'symbol', maxWidth: 100 },
     { field: 'name', minWidth: 250 },
     {
       field: 'change',
@@ -46,7 +46,8 @@ const gridOptions: GridOptions = {
     {
       field: 'volume',
       type: 'numericColumn',
-      maxWidth: 140,
+      minWidth: 160,
+      maxWidth: 160,
     },
   ],
   defaultColDef: {

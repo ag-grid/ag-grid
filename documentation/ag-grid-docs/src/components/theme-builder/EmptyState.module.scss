@@ -15,6 +15,7 @@
 .headingEmpty {
     margin-bottom: 8px;
     color: var(--color-text-secondary);
+    text-align: center;
 }
 
 .iconLight {
@@ -36,4 +37,27 @@
 }
 .lineGrid {
     white-space: nowrap;
+}
+
+.lightImage {
+    #{$selector-darkmode} & {
+        display: none;
+    }
+    border-radius: var(--radius-lg);
+    max-width: 456px;
+    width: 100%;
+    margin-bottom: 24px;
+    border: 1px solid var(--color-border-secondary);
+}
+
+.darkImage {
+    display: none;
+    #{$selector-darkmode} & {
+        display: block;
+        border: 1px solid var(--color-border-primary);
+        max-width: 500px;
+        width: 100%;
+        margin-bottom: 24px;
+        border-radius: var(--radius-lg);
+    }
 }

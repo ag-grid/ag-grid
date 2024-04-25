@@ -1,5 +1,31 @@
 [
     {
+        "version": "31.3.0",
+        "date": "April 30th 2024",
+        "highlights": [
+            {
+                "text": "Sticky Group Total and Grand Total Rows",
+                "path": "./grouping-footers"
+            },
+            {
+                "text": "Skeleton content displayed in loading grid cells",
+                "path": "./component-loading-cell-renderer/#skeleton-loading"
+            },
+            {
+                "text": "Global grid options to apply to all AG Grid instances",
+                "path": "./grid-interface/#global-grid-options"
+            },
+            {
+                "text": "Add a background image in Excel export files",
+                "path": "./excel-export-extra-content/#adding-images-to-the-header-or-footer"
+            },
+            {
+                "text": "Placeholder"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-31-3"
+    },
+    {
         "version": "31.2.0",
         "date": "March 20th 2024",
         "highlights": [
@@ -94,7 +120,7 @@
             },
             {
                 "text": "Typing, filtering, async population of values in Rich Select Editor",
-                "path": "./provided-cell-editors/#rich-select-cell-editor"
+                "path": "./provided-cell-editors-rich-select/"
             },
             {
                 "text": "Dynamic Group Footer Rows",
@@ -115,7 +141,7 @@
             },
             {
                 "text": "Rebuilt Rich Select Editor",
-                "path": "./provided-cell-editors/#rich-select-cell-editor"
+                "path": "./provided-cell-editors-rich-select/"
             },
             {
                 "text": "Figma Design System to design and customize AG Grid",
@@ -145,7 +171,7 @@
             },
             {
                 "text": "Group footer rows when using server-side row model",
-                "path": "./server-side-model-grouping/#row-group-footers"
+                "path": "./server-side-model-grouping/#group-total-rows"
             },
             {
                 "text": "Module registration is no longer global and is per-grid",

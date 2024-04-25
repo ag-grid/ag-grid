@@ -45,6 +45,12 @@ body {
   line-height: 1rem;
 }
 
+.custom-element a:focus-visible {
+  outline: 2px solid blue;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 a {
   color: inherit;
 }

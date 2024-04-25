@@ -25,7 +25,6 @@ const gridOptions: GridOptions<IAccount> = {
   masterDetail: true,
   detailCellRenderer: DetailCellRenderer,
   detailRowHeight: 70,
-  groupDefaultExpanded: 1,
   onFirstDataRendered: onFirstDataRendered,
 }
 
