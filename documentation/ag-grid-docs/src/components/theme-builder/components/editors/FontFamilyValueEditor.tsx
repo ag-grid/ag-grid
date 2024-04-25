@@ -67,8 +67,8 @@ const fontOptions = [
         value: 'google:Lato',
     },
     {
-        label: ' Press Start 2P',
-        value: 'google:Press Start 2P',
+        label: 'Pixelify Sans',
+        value: 'google:Pixelify Sans',
     },
     {
         label: 'Jacquard 24',
