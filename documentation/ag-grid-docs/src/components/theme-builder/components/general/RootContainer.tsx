@@ -58,10 +58,6 @@ const EditorScroller = styled('div')`
     overflow-y: auto;
 `;
 
-const Spacer = styled('div')`
-    flex-grow: 1;
-`;
-
 const Menu = styled('div')`
     min-width: 300px;
     flex: 0;

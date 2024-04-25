@@ -1,3 +1,4 @@
+import { useApplicationConfigAtom } from '@components/theme-builder/model/application-config';
 import styled from '@emotion/styled';
 import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDown } from 'lucide-react';
@@ -9,8 +10,9 @@ import { PartEditor } from './PartEditor';
 import { horizontalSpacingIcon, verticalSpacingIcon } from './icons';
 
 export const EditorPanel = () => {
+    const [expanded, setExpanded] = useApplicationConfigAtom('expandedEditors');
     return (
-        <AccordionRoot type="multiple" defaultValue={['Header']}>
+        <AccordionRoot type="multiple" defaultValue={expanded || ['General']} onValueChange={setExpanded}>
             <div className="pageHeading">
                 <h1 className="pageTitle">Theme Builder </h1>
             </div>

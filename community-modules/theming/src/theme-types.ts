@@ -6,6 +6,7 @@ export type Part<T extends string = string> = {
     partId: PartId;
     variantId: string;
     dependencies: () => Part[];
+    // TODO make this Partial<ParamTypes>
     defaults: { [K in T]: K extends Param ? ParamTypes[K] : any };
     css: Array<string | (() => string)>;
 };

@@ -18,7 +18,7 @@ const borders = {
 export const BordersEditor = withErrorBoundary(() => {
     const theme = useRenderedTheme();
     const selectedBorders = Object.entries(borders)
-        .filter(([param]) => borderIsEnabled(theme.paramJSValues[param]))
+        .filter(([param]) => borderIsEnabled(theme.getRenderedParams()[param]))
         .map(([, label]) => label);
 
     return (
@@ -59,8 +59,10 @@ const BorderItem = (props: BorderProps) => {
     const theme = useRenderedTheme();
     let editorValue = value;
     if (editorValue == null) {
-        if (param.property in theme.paramCSSValues) {
-            editorValue = theme.paramCSSValues[param.property];
+        const params = theme.getRenderedParams();
+        if (param.property in params) {
+            editorValue = params[param.property];
+            console.log(param.property, editorValue);
         } else {
             throw new Error(`Param "${param.property}" does not exist.`);
         }
