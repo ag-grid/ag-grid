@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { FloatingPortal, autoPlacement, autoUpdate, useFloating } from '@floating-ui/react';
+import { FloatingPortal, autoPlacement, autoUpdate, offset, useFloating } from '@floating-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { HexAlphaColorPicker, HexColorPicker } from 'react-colorful';
 
@@ -30,7 +30,12 @@ export const ColorEditor = ({ preventTransparency, value, onChange }: ColorEdito
         open: showPicker,
         onOpenChange: setShowPicker,
         whileElementsMounted: autoUpdate,
-        middleware: [autoPlacement({ allowedPlacements: ['bottom-start', 'bottom-end', 'top-start', 'top-end'] })],
+        middleware: [
+            autoPlacement({
+                allowedPlacements: ['bottom-start', 'bottom-end', 'top-start', 'bottom-end'],
+            }),
+            offset({ mainAxis: 6 }),
+        ],
     });
 
     useClickAwayListener(() => setShowPicker(false), [elements.domReference, elements.floating, wrapperRef.current]);
@@ -170,7 +175,6 @@ const DropdownArea = styled(Card)`
     position: absolute;
     pointer-events: all;
     max-height: calc(100vh - 16px);
-    margin-top: 6px;
     padding: 6px;
 
     .react-colorful {

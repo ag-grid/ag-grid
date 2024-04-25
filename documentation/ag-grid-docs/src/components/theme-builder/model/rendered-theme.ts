@@ -21,6 +21,8 @@ export const useSetPreviewGridApi = () => useSetAtom(previewGridApi);
 export const renderedThemeAtom = atom((get): Theme => {
     get(changeDetection);
 
+    document.body.classList.add('ag-theme-custom');
+
     const params = Object.fromEntries(allParamModels().map((param) => [param.property, get(param.valueAtom)]));
 
     const iconSet = get(PartModel.for('iconSet').variantAtom).variant;
