@@ -372,7 +372,7 @@
             {
                 "label": {
                     "name": "Enterprise Support",
-                    "link": "https://ag-grid.com/react-data-grid/licensing/"
+                    "link": "https://www.ag-grid.com/react-data-grid/licensing/"
                 },
                 "community": {
                     "value": false,
@@ -390,7 +390,7 @@
             {
                 "label": {
                     "name": "Perpetual License",
-                    "link": "https://ag-grid.com/react-data-grid/licensing/"
+                    "link": "https://www.ag-grid.com/react-data-grid/licensing/"
                 },
                 "community": {
                     "value": false,
