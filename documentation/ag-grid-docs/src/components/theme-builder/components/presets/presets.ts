@@ -187,7 +187,7 @@ export const applyPreset = (store: Store, preset: Preset) => {
     const presetParams: any = preset.params || {};
     for (const { property, valueAtom } of allParamModels()) {
         if (store.get(valueAtom) != null || presetParams[property] != null) {
-            store.set(valueAtom, presetParams[property] || null);
+            store.set(valueAtom, presetParams[property] ?? null);
         }
     }
 
