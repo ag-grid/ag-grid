@@ -1,4 +1,3 @@
-import { useApplicationConfigAtom } from '@components/theme-builder/model/application-config';
 import * as Dialog from '@radix-ui/react-dialog';
 
 import styles from './Dialog.module.scss';

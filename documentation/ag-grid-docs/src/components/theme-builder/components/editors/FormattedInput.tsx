@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Input } from './Input';
+import './formatted-input-global-styles.css';
 
 export type FormattedInputProps = {
     value: string;
@@ -114,6 +115,7 @@ export const FormattedInput = ({
                                   inputRef.current?.blur();
                                   const startX = e.clientX;
                                   const startY = e.clientY;
+                                  document.body.classList.add('force-resize-cursor');
                                   const handleMove = (e: PointerEvent) => {
                                       const movementX = e.clientX - startX;
                                       const movementY = startY - e.clientY; // invert Y movement so up is higher
@@ -124,6 +126,7 @@ export const FormattedInput = ({
                                   const handleUp = () => {
                                       document.body.removeEventListener('pointermove', handleMove);
                                       document.body.removeEventListener('pointerup', handleUp);
+                                      document.body.classList.remove('force-resize-cursor');
                                   };
                                   document.body.addEventListener('pointermove', handleMove);
                                   document.body.addEventListener('pointerup', handleUp);
@@ -157,4 +160,5 @@ const IconWrapper = styled('div')`
     svg {
         stroke: var(--color-fg-quinary);
     }
+    transform: scale(0.7);
 `;

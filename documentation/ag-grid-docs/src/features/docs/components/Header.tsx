@@ -35,7 +35,7 @@ export const Header: FunctionComponent<Props> = ({
                     <div className={styles.pageTitleGroup}>
                         {!suppressFrameworkHeader && (
                             <span className={styles.headerFramework}>
-                                {getFrameworkDisplayText(framework)} Data Grid
+                                {`${getFrameworkDisplayText(framework)} Data Grid`}
                             </span>
                         )}
                         <h1>{title}</h1>

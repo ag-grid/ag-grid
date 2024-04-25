@@ -26,8 +26,9 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
     const theme = useRenderedTheme();
     let editorValue = value;
     if (editorValue == null) {
-        if (param.property in theme.paramCSSValues) {
-            editorValue = theme.paramCSSValues[param.property];
+        const params = theme.getRenderedParams();
+        if (param.property in params) {
+            editorValue = params[param.property];
         } else {
             throw new Error(`Param "${param.property}" does not exist.`);
         }

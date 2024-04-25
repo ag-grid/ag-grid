@@ -15,6 +15,7 @@ const App = {
         :class="themeClass"
         :columnDefs="columnDefs"
         :rowData="rowData"
+        :defaultColDef="defaultColDef"
     >
     </ag-grid-vue>
     `,
@@ -39,6 +40,9 @@ const App = {
         { field: "price" },
         { field: "electric" }
       ],
+      defaultColDef: {
+        flex: 1,
+      },
       themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
     };
   }
