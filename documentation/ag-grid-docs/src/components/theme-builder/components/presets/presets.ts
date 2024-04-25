@@ -33,6 +33,7 @@ export const allPresets: Preset[] = [
     lightModePreset,
     darkModePreset,
     {
+        // ROW, GRID, & TOOLPANEL BORDERS
         name: 'Elite',
         pageBackgroundColor: '#182323',
         params: {
@@ -57,6 +58,7 @@ export const allPresets: Preset[] = [
         },
     },
     {
+        // ONLY ROW & TOOLPANEL BORDERS
         name: 'DenseAndDull',
         pageBackgroundColor: '#F6F8F9',
         params: {
@@ -77,6 +79,31 @@ export const allPresets: Preset[] = [
             cellTextColor: '#4F5760',
             rowVerticalPaddingScale: '0.8',
             cellHorizontalPaddingScale: '0.7',
+        },
+    },
+    {
+        // NO BORDERS
+        name: 'JustinHawkins',
+        pageBackgroundColor: '#141516',
+        params: {
+            fontFamily: 'google:Roboto',
+            fontSize: '16px',
+            backgroundColor: '#0C0C0D',
+            foregroundColor: '#BBBEC9',
+            accentColor: '#15BDE8',
+            borderColor: '#D7E2E6',
+            chromeBackgroundColor: ref('backgroundColor'),
+            gridSize: '8px',
+            wrapperBorderRadius: '0px',
+            borderRadius: '20px',
+            headerBackgroundColor: '#1E222A',
+            headerTextColor: '#FFFFFF',
+            headerFontSize: '16px',
+            headerFontWeight: '500',
+            headerVerticalPaddingScale: '0.9',
+            cellTextColor: '#BBBEC9',
+            rowVerticalPaddingScale: '1.2',
+            cellHorizontalPaddingScale: '1',
         },
     },
     {
