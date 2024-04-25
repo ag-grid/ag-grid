@@ -112,6 +112,8 @@ export const FormattedInput = ({
                         getIconSwipeAdjustment
                             ? (e) => {
                                   e.preventDefault();
+                                  const pointerId = e.pointerId;
+                                  const wrapper = e.currentTarget;
                                   inputRef.current?.blur();
                                   const startX = e.clientX;
                                   const startY = e.clientY;
@@ -124,12 +126,14 @@ export const FormattedInput = ({
                                       onChange?.(getIconSwipeAdjustment(value, movement));
                                   };
                                   const handleUp = () => {
-                                      document.body.removeEventListener('pointermove', handleMove);
-                                      document.body.removeEventListener('pointerup', handleUp);
+                                      wrapper.removeEventListener('pointermove', handleMove);
+                                      wrapper.removeEventListener('pointerup', handleUp);
                                       document.body.classList.remove('force-resize-cursor');
+                                      wrapper.releasePointerCapture(pointerId);
                                   };
-                                  document.body.addEventListener('pointermove', handleMove);
-                                  document.body.addEventListener('pointerup', handleUp);
+                                  wrapper.addEventListener('pointermove', handleMove);
+                                  wrapper.addEventListener('pointerup', handleUp);
+                                  wrapper.setPointerCapture(pointerId);
                               }
                             : undefined
                     }
