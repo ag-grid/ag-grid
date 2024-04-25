@@ -27,6 +27,7 @@ interface IRow {
       [class]="themeClass"
       [rowData]="rowData"
       [columnDefs]="colDefs"
+      [defaultColDef]="defaultColDef"
     >
     </ag-grid-angular>
   </div>
@@ -53,4 +54,8 @@ export class AppComponent {
     { field: "price" },
     { field: "electric" }
   ];
+  
+  defaultColDef: ColDef = {
+    flex: 1,
+  }
 }

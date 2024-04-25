@@ -31,6 +31,9 @@ const gridOptions: GridOptions<IRow> = {
       { field: "price" },
       { field: "electric" }
     ],
+    defaultColDef: {
+      flex: 1,
+    }
 }
 // Create Grid: Create new grid within the #myGrid div, using the Grid Options object
 gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
