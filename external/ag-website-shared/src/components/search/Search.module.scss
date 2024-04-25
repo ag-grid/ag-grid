@@ -7,7 +7,7 @@
     width: 100%;
     padding: $spacing-size-2 $spacing-size-3;
     border-radius: var(--radius-lg);
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.15);
     color: var(--color-fg-white);
     cursor: pointer;
     transition: all 0.5s;
@@ -15,7 +15,7 @@
     font-weight: var(--text-semibold);
 
     @media screen and (min-width: $breakpoint-site-header-medium) {
-        max-width: 400px;
+        max-width: 512px;
         margin-left: auto;
         margin-right: auto;
     }
@@ -39,7 +39,7 @@
         background-color: rgba(255, 255, 255, 0.15);
         transition: all 0.5s;
         box-shadow: var(--shadow-lg);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     &::-webkit-search-decoration,
@@ -71,7 +71,7 @@
 }
 
 .placeholder {
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 .kbdShortcut {
