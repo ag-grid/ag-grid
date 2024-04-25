@@ -335,7 +335,7 @@ export function vanillaToReactFunctionalTs(
                 .replace(/params\.api(!?)\.setGridOption\('rowData', data\)/g, 'setRowData(data)')
                 .replace(/gridApi(!?)\./g, 'gridRef.current!.api.')
                 .replace(/gridApi;/g, 'gridRef.current!.api;')
-                .replace(/gridRef\.current\.api(!?)\.setGridOption\(\'rowData\',/g, 'setRowData(')
+                .replace(/gridRef\.current(!?)\.api(!?)\.setGridOption\(\'rowData\',/g, 'setRowData(')
                 .replace(/gridApi/g, 'gridRef.current!.api');
 
         const template = getTemplate(bindings, componentProps.map(thisReferenceConverter), rowDataGeneric, exampleConfig);
