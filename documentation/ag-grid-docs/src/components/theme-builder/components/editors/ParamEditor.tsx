@@ -7,6 +7,7 @@ import { withErrorBoundary } from '../general/ErrorBoundary';
 import { ColorValueEditor } from './ColorValueEditor';
 import { CssValueEditor } from './CssValueEditor';
 import { FontFamilyValueEditor } from './FontFamilyValueEditor';
+import { FontWeightValueEditor } from './FontWeightValueEditor';
 import { FormField } from './FormField';
 import { LengthValueEditor } from './LengthValueEditor';
 import { ScaleValueEditor } from './ScaleValueEditor';
@@ -54,7 +55,7 @@ const valueEditors: Record<ParamType, FC<ValueEditorProps>> = {
     shadow: CssValueEditor,
     image: CssValueEditor,
     fontFamily: FontFamilyValueEditor,
-    fontWeight: CssValueEditor,
+    fontWeight: FontWeightValueEditor,
     display: CssValueEditor,
     duration: CssValueEditor,
 };
