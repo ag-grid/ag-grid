@@ -34,18 +34,8 @@ const GridExample = () => {
 
     const columnDefs = useMemo(() => [
         {
-            headerName: 'Doubling',
-            field: 'number',
-            cellEditor: DoublingEditor,
-            editable: true,
-            width: 300,
-        },
-        {
-            field: 'mood',
-            cellRenderer: MoodRenderer,
-            cellEditor: MoodEditor,
-            cellEditorPopup: true,
-            editable: true,
+            headerName: 'Provided Text',
+            field: 'name',
             width: 300,
         },
         {

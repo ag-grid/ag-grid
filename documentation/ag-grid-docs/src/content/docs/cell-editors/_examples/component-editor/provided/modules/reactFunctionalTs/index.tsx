@@ -34,22 +34,12 @@ const GridExample = () => {
 
     const columnDefs = useMemo<ColDef[]>(() => [
         {
-            headerName: 'Doubling',
-            field: 'number',
-            cellEditor: DoublingEditor,
-            editable: true,
+            headerName: 'Provided Text',
+            field: 'name',
             width: 300,
         },
         {
-            field: 'mood',
-            cellRenderer: MoodRenderer,
-            cellEditor: MoodEditor,
-            cellEditorPopup: true,
-            editable: true,
-            width: 300,
-        },
-        {
-            headerName: 'Numeric',
+            headerName: 'Custom Numeric',
             field: 'number',
             cellEditor: NumericEditor,
             editable: true,
