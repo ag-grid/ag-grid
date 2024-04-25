@@ -43,7 +43,7 @@ const Container = styled('div')`
         max-width: 400px;
     }
 
-    @media screen and (max-width: 800px) {
+    @media screen and (max-width: 799px) {
         display: none;
     }
 

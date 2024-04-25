@@ -1,16 +1,21 @@
 import { useApplicationConfigAtom } from '@components/theme-builder/model/application-config';
+import breakpoints from '@design-system/breakpoint.module.scss';
 import * as Dialog from '@radix-ui/react-dialog';
+import { useIsSmallScreenSize } from '@utils/hooks/useIsSmallScreenSize';
 import classnames from 'classnames';
 
 import styles from './Dialog.module.scss';
 import welcomeStyles from './WelcomeModal.module.scss';
 
+const SMALL_SCREEN_WIDTH = 800;
+
 export const WelcomeModal = () => {
     const [dismissed, setDismissed] = useApplicationConfigAtom('welcomeModalDismissed');
+    const isSmallScreenSize = useIsSmallScreenSize(SMALL_SCREEN_WIDTH);
 
     return (
         <Dialog.Root
-            open={!dismissed}
+            open={!isSmallScreenSize && !dismissed}
             onOpenChange={(open) => {
                 setDismissed(!open);
             }}
