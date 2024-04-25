@@ -7,7 +7,7 @@ import { type ReactNode } from 'react';
 import { BordersEditor } from './BordersEditor';
 import { ParamEditor } from './ParamEditor';
 import { PartEditor } from './PartEditor';
-import { horizontalSpacingIcon, verticalSpacingIcon } from './icons';
+import { horizontalSpacingIcon, radiusIcon, verticalSpacingIcon } from './icons';
 
 export const EditorPanel = () => {
     const [expanded, setExpanded] = useApplicationConfigAtom('expandedEditors');
@@ -27,10 +27,10 @@ export const EditorPanel = () => {
                 <ParamEditor param="accentColor" />
                 <ParamEditor param="borderColor" />
                 <BordersEditor />
-                <ParamEditor param="gridSize" label="Spacing" showDocs />
+                <ParamEditor param="gridSize" label="Spacing" showDocs icon={verticalSpacingIcon} />
                 <EvenSplitRow>
-                    <ParamEditor param="wrapperBorderRadius" label="Wrapper radius" showDocs />
-                    <ParamEditor param="borderRadius" label="Widget radius" showDocs />
+                    <ParamEditor param="wrapperBorderRadius" label="Wrapper radius" showDocs icon={radiusIcon} />
+                    <ParamEditor param="borderRadius" label="Widget radius" showDocs icon={radiusIcon} />
                 </EvenSplitRow>
             </Section>
             <Section heading="Header">
