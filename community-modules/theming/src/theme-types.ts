@@ -81,9 +81,9 @@ export type ScaleValue = string; // TODO allow number and treat as px
 
 export type BorderValue = string | boolean;
 
-const borderValueToCss = (value: BorderValue) => {
+const borderValueToCss = (value: BorderValue, param: string) => {
     if (value === true) return 'solid 1px var(--ag-border-color)';
-    if (value === false) return 'false';
+    if (value === false) return param === "columnBorder" ? 'solid 1px transparent' : 'false';
     if (typeof value === 'string') return value;
     return Error(`Expected a string or boolean`);
 };
@@ -117,7 +117,7 @@ export type ImageValue = string;
 
 export type DurationValue = string;
 
-const paramValidators: Record<ParamType, (value: unknown) => string | Error> = {
+const paramValidators: Record<ParamType, (value: unknown, param: string) => string | Error> = {
     color: stringDirectToCss,
     length: lengthValueToCss,
     scale: stringOrNumberDirectToCss,
@@ -133,5 +133,5 @@ const paramValidators: Record<ParamType, (value: unknown) => string | Error> = {
 
 export const paramValueToCss = (param: string, value: unknown): string | Error => {
     const type = getParamType(param);
-    return paramValidators[type](value);
+    return paramValidators[type](value, param);
 };

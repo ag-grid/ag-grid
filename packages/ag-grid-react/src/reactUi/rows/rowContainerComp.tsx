@@ -60,6 +60,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
             const updateRowCtrlsOrdered = (useFlushSync: boolean) => {
                 const next = getNextValueIfDifferent(prevRowCtrlsRef.current, rowCtrlsRef.current, domOrderRef.current)!;
                 if (next !== prevRowCtrlsRef.current) {
+                    prevRowCtrlsRef.current = next;
                     agFlushSync(useFlushSync, () => setRowCtrlsOrdered(next));
                 }
             }
@@ -72,7 +73,6 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
                 },
                 setRowCtrls: ({ rowCtrls, useFlushSync }: { rowCtrls: RowCtrl[], useFlushSync?: boolean }) => {
                     const useFlush = !!useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
-                    prevRowCtrlsRef.current = rowCtrlsRef.current;
                     // Keep a record of the rowCtrls in case we need to reset the Dom order.
                     rowCtrlsRef.current = rowCtrls;
                     updateRowCtrlsOrdered(useFlush);

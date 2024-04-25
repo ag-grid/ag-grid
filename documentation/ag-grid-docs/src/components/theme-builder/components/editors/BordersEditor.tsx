@@ -4,6 +4,7 @@ import { useRenderedTheme } from '@components/theme-builder/model/rendered-theme
 import styled from '@emotion/styled';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 
+import { paramValueToCss } from '../../../../../../../community-modules/theming/src/theme-types';
 import { withErrorBoundary } from '../general/ErrorBoundary';
 import { FormField } from './FormField';
 import { SharedContent, SharedIndicator, SharedItem, SharedTrigger } from './dropdown-shared';
@@ -18,7 +19,7 @@ const borders = {
 export const BordersEditor = withErrorBoundary(() => {
     const theme = useRenderedTheme();
     const selectedBorders = Object.entries(borders)
-        .filter(([param]) => borderIsEnabled(theme.getRenderedParams()[param]))
+        .filter(([param]) => borderIsEnabled(param, theme.getRenderedParams()[param]))
         .map(([, label]) => label);
 
     return (
@@ -68,7 +69,7 @@ const BorderItem = (props: BorderProps) => {
         }
     }
 
-    const checked = borderIsEnabled(editorValue);
+    const checked = borderIsEnabled(props.param, editorValue);
 
     return (
         <StyledItem
@@ -86,7 +87,8 @@ const BorderItem = (props: BorderProps) => {
     );
 };
 
-const borderIsEnabled = (value: unknown) => !(value === false || value === 'none');
+const borderIsEnabled = (param: string, value: string) =>
+    typeof value === 'boolean' ? value : paramValueToCss(param, false) !== value;
 
 const StyledTrigger = SharedTrigger.withComponent(RadixDropdown.Trigger);
 const StyledContent = SharedContent.withComponent(RadixDropdown.Content);

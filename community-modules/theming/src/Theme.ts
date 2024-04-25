@@ -205,7 +205,7 @@ export class Theme {
     private makeVariablesChunk(): ThemeCssChunk {
         // render variable defaults using :where(:root) to ensure lowest specificity so that
         // `html { --ag-foreground-color: red; }` will override this
-        let css = ':where(:root, :host > *) {\n';
+        let css = '.ag-theme-custom {\n';
         for (const [name, rendered] of Object.entries(this.getRenderedParams())) {
             css += `\t${paramToVariableName(name)}: ${rendered};\n`;
         }

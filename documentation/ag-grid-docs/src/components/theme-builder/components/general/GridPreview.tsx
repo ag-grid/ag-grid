@@ -70,7 +70,7 @@ const GridPreview = () => {
                             setContainer(el);
                             setPreviewGridContainer(el);
                         }}
-                        className="ag-theme-change-trigger"
+                        className="ag-theme-custom"
                         style={{ height: '100%' }}
                     >
                         {container && (
