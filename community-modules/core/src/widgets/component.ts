@@ -16,6 +16,9 @@ import { ITooltipParams, TooltipLocation } from "../rendering/tooltipComponent";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { CssClassManager } from "../rendering/cssClassManager";
 import { TooltipFeature } from "./tooltipFeature";
+import { Column } from "../entities/column";
+import { ColumnGroup } from "../entities/columnGroup";
+import { ColDef, ColGroupDef } from "../entities/colDef";
 
 const compIdSequence = new NumberSequence();
 
@@ -82,6 +85,8 @@ export class Component extends BeanStub {
         showDelayOverride?: number;
         hideDelayOverride?: number; 
         location?: TooltipLocation;
+        getColumn?(): Column | ColumnGroup;
+        getColDef?(): ColDef | ColGroupDef;
         shouldDisplayTooltip?: () => boolean
     }): void {
         const { newTooltipText, showDelayOverride, hideDelayOverride, location, shouldDisplayTooltip } = params || {};
@@ -101,6 +106,8 @@ export class Component extends BeanStub {
                 getTooltipValue,
                 getGui: () => this.getGui(),
                 getLocation: () => location ?? 'UNKNOWN',
+                getColDef: params?.getColDef,
+                getColumn: params?.getColumn,
                 getTooltipShowDelayOverride: showDelayOverride != null ? (() => showDelayOverride) : undefined,
                 getTooltipHideDelayOverride: hideDelayOverride != null ? (() => hideDelayOverride) : undefined,
                 shouldDisplayTooltip

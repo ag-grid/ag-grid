@@ -14,6 +14,10 @@ export type Preset = {
 
 export const lightModePreset: Preset = {
     pageBackgroundColor: '#FAFAFA',
+    params: {
+        accentColor: '#044B93'
+    }
+    
 };
 export const darkModePreset: Preset = {
     pageBackgroundColor: '#1D2634',
