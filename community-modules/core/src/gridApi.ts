@@ -1947,7 +1947,7 @@ export class GridApi<TData = any> {
     public autoSizeAllColumns(skipHeader?: boolean): void { this.columnModel.autoSizeAllColumns('api', skipHeader); }
 
     /** Set the pivot result columns. */
-    public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.columnModel.setSecondaryColumns(colDefs, 'api'); }
+    public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[] | null): void { this.columnModel.setSecondaryColumns(colDefs, 'api'); }
 
     /** Returns the grid's pivot result columns. */
     public getPivotResultColumns(): Column[] | null { return this.columnModel.getSecondaryColumns(); }
