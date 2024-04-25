@@ -33,7 +33,6 @@ export const allPresets: Preset[] = [
     lightModePreset,
     darkModePreset,
     {
-        // ROW, GRID, & TOOLPANEL BORDERS
         name: 'Elite',
         pageBackgroundColor: '#182323',
         params: {
@@ -55,6 +54,10 @@ export const allPresets: Preset[] = [
             oddRowBackgroundColor: '#21222C',
             rowVerticalPaddingScale: '1.5',
             cellHorizontalPaddingScale: '0.8',
+            wrapperBorder: true,
+            rowBorder: true,
+            columnBorder: true,
+            sidePanelBorder: true,
         },
     },
     {
@@ -79,10 +82,13 @@ export const allPresets: Preset[] = [
             cellTextColor: '#4F5760',
             rowVerticalPaddingScale: '0.8',
             cellHorizontalPaddingScale: '0.7',
+            wrapperBorder: false,
+            rowBorder: true,
+            columnBorder: false,
+            sidePanelBorder: true,
         },
     },
     {
-        // NO BORDERS
         name: 'JustinHawkins',
         pageBackgroundColor: '#141516',
         params: {
@@ -108,6 +114,7 @@ export const allPresets: Preset[] = [
             rowBorder: false,
             columnBorder: false,
             sidePanelBorder: false,
+            iconSize: '20px',
         },
     },
     {
@@ -133,18 +140,32 @@ export const allPresets: Preset[] = [
         },
     },
     {
-        pageBackgroundColor: '#948B8E',
+        name: 'EphTea',
+        pageBackgroundColor: '#FFEAC1',
         params: {
-            backgroundColor: '#E4E0E2',
-            headerBackgroundColor: '#807078',
-            headerTextColor: '#EEECED',
-            foregroundColor: 'rgb(46, 55, 66)',
+            fontFamily: 'google:Merriweather',
+            fontSize: '13px',
+            backgroundColor: '#FFDEB4',
+            foregroundColor: '#593F2B',
+            accentColor: '#064DB9',
+            borderColor: '#E9CBA4',
             chromeBackgroundColor: ref('backgroundColor'),
-            fontFamily: 'google:Jacquard 24',
-            gridSize: '8px',
+            gridSize: '6px',
             wrapperBorderRadius: '0px',
+            borderRadius: '0',
+            headerBackgroundColor: '#FAD0A3',
+            headerTextColor: '#4C3F35',
+            headerFontFamily: 'google:UnifrakturCook',
+            headerFontSize: '22px',
             headerFontWeight: '600',
-            headerFontSize: '14px',
+            headerVerticalPaddingScale: '1.6',
+            cellTextColor: '#BBBEC9',
+            rowVerticalPaddingScale: '1',
+            cellHorizontalPaddingScale: '1',
+            wrapperBorder: false,
+            rowBorder: true,
+            columnBorder: false,
+            sidePanelBorder: true,
         },
     },
     {

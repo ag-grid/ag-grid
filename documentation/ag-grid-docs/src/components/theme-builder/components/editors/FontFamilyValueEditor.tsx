@@ -51,10 +51,6 @@ const fontOptions = [
         value: 'google:Roboto',
     },
     {
-        label: 'Times New Roman',
-        value: 'Times New Roman',
-    },
-    {
         label: 'Inclusive Sans',
         value: 'google:Inclusive Sans',
     },
@@ -67,12 +63,20 @@ const fontOptions = [
         value: 'google:Lato',
     },
     {
-        label: 'Pixelify Sans',
-        value: 'google:Pixelify Sans',
+        label: 'Times New Roman',
+        value: 'Times New Roman',
     },
     {
-        label: 'Jacquard 24',
-        value: 'google:Jacquard 24',
+        label: 'Merriweather',
+        value: 'google:Merriweather',
+    },
+    {
+        label: 'UnifrakturCook',
+        value: 'google:UnifrakturCook',
+    },
+    {
+        label: 'Pixelify Sans',
+        value: 'google:Pixelify Sans',
     },
 ];
 const topLevelOptions = [{ label: 'Same as application', value: 'inherit' }, ...fontOptions];
