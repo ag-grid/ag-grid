@@ -104,6 +104,10 @@ export const allPresets: Preset[] = [
             cellTextColor: '#BBBEC9',
             rowVerticalPaddingScale: '1.2',
             cellHorizontalPaddingScale: '1',
+            wrapperBorder: false,
+            rowBorder: false,
+            columnBorder: false,
+            sidePanelBorder: false,
         },
     },
     {
