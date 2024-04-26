@@ -99,6 +99,8 @@ const Horizontal = styled('div')`
 `;
 
 const Scroller = styled('div')`
+    --scroller-height: 160px;
+
     width: 100%;
     min-height: 160px;
     overflow-x: auto;
@@ -113,7 +115,7 @@ const Scroller = styled('div')`
         position: absolute;
         top: 0;
         bottom: 0;
-        height: 142px;
+        height: calc(var(--scroller-height) - 20px);
         pointer-events: none;
         z-index: 1;
     }
@@ -121,7 +123,6 @@ const Scroller = styled('div')`
     &:before {
         width: 100px;
         left: 10px;
-        height: 100%;
         background: linear-gradient(
             to right,
             var(--color-bg-primary),
@@ -133,7 +134,6 @@ const Scroller = styled('div')`
     &:after {
         width: 128px;
         right: 0;
-        height: 100%;
         background: linear-gradient(
             to left,
             var(--color-bg-primary),
