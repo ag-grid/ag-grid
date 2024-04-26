@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { GridApi, ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import { AdvancedFilterModule } from '@ag-grid-enterprise/advanced-filter';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
+// import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
@@ -34,7 +34,7 @@ ModuleRegistry.registerModules([
     MenuModule,
     RangeSelectionModule,
     RowGroupingModule,
-    GridChartsModule,
+    // GridChartsModule,
     SetFilterModule,
     RichSelectModule,
     StatusBarModule,
