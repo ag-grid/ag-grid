@@ -4,6 +4,7 @@ import { useRenderedTheme } from '@components/theme-builder/model/rendered-theme
 import styled from '@emotion/styled';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 
+import { paramValueToCss } from '../../../../../../../community-modules/theming/src/theme-types';
 import { withErrorBoundary } from '../general/ErrorBoundary';
 import { FormField } from './FormField';
 import { SharedContent, SharedIndicator, SharedItem, SharedTrigger } from './dropdown-shared';
@@ -18,7 +19,7 @@ const borders = {
 export const BordersEditor = withErrorBoundary(() => {
     const theme = useRenderedTheme();
     const selectedBorders = Object.entries(borders)
-        .filter(([param]) => borderIsEnabled(theme.paramJSValues[param]))
+        .filter(([param]) => borderIsEnabled(param, theme.getRenderedParams()[param]))
         .map(([, label]) => label);
 
     return (
@@ -59,14 +60,16 @@ const BorderItem = (props: BorderProps) => {
     const theme = useRenderedTheme();
     let editorValue = value;
     if (editorValue == null) {
-        if (param.property in theme.paramCSSValues) {
-            editorValue = theme.paramCSSValues[param.property];
+        const params = theme.getRenderedParams();
+        if (param.property in params) {
+            editorValue = params[param.property];
+            console.log(param.property, editorValue);
         } else {
             throw new Error(`Param "${param.property}" does not exist.`);
         }
     }
 
-    const checked = borderIsEnabled(editorValue);
+    const checked = borderIsEnabled(props.param, editorValue);
 
     return (
         <StyledItem
@@ -84,7 +87,8 @@ const BorderItem = (props: BorderProps) => {
     );
 };
 
-const borderIsEnabled = (value: unknown) => !(value === false || value === 'none');
+const borderIsEnabled = (param: string, value: string) =>
+    typeof value === 'boolean' ? value : paramValueToCss(param, false) !== value;
 
 const StyledTrigger = SharedTrigger.withComponent(RadixDropdown.Trigger);
 const StyledContent = SharedContent.withComponent(RadixDropdown.Content);

@@ -1,9 +1,5 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
-import { DoublingEditor } from './doublingEditor_typescript'
-import { MoodRenderer } from './moodRenderer_typescript'
-import { MoodEditor } from './moodEditor_typescript'
 import { NumericEditor } from './numericEditor_typescript'
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ModuleRegistry } from "@ag-grid-community/core";
 
@@ -14,27 +10,17 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
   columnDefs: [
     {
-      headerName: 'Doubling',
-      field: 'number',
-      cellEditor: DoublingEditor,
-      editable: true,
+      headerName: 'Provided Text',
+      field: 'name',
       width: 300,
-    },
-    {
-      field: 'mood',
-      cellRenderer: MoodRenderer,
-      cellEditor: MoodEditor,
-      cellEditorPopup: true,
-      editable: true,
-      width: 300,
-    },
-    {
-      headerName: 'Numeric',
+  },
+  {
+      headerName: 'Custom Numeric',
       field: 'number',
       cellEditor: NumericEditor,
       editable: true,
       width: 280,
-    },
+  },
   ],
   rowData: [
     { name: 'Bob', mood: 'Happy', number: 10 },

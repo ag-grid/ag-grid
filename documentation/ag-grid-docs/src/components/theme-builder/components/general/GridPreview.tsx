@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { GridApi, ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import { AdvancedFilterModule } from '@ag-grid-enterprise/advanced-filter';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
+// import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
@@ -21,7 +21,6 @@ import { useSetPreviewGridApi, useSetPreviewGridContainer } from '../../model/re
 import { ColorEditor } from '../editors/ColorValueEditor';
 import { PreloadFontSelection } from '../editors/FontFamilyValueEditor';
 import { useGridOptions } from '../grid-config/grid-config-atom';
-import { useSetGridDom } from '../presets/grid-dom';
 import { allPresets } from '../presets/presets';
 import { withErrorBoundary } from './ErrorBoundary';
 import { InfoTooltip } from './Tooltip';
@@ -35,7 +34,7 @@ ModuleRegistry.registerModules([
     MenuModule,
     RangeSelectionModule,
     RowGroupingModule,
-    GridChartsModule,
+    // GridChartsModule,
     SetFilterModule,
     RichSelectModule,
     StatusBarModule,
@@ -51,7 +50,6 @@ const GridPreview = () => {
     const setPreviewGridContainer = useSetPreviewGridContainer();
     const setPreviewGridApi = useSetPreviewGridApi();
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
-    const setGridDom = useSetGridDom();
 
     const [backgroundValue, setBackground] = useApplicationConfigAtom('previewPaneBackgroundColor');
     const backgroundColor = backgroundValue || allPresets[0].pageBackgroundColor;
@@ -70,7 +68,7 @@ const GridPreview = () => {
                             setContainer(el);
                             setPreviewGridContainer(el);
                         }}
-                        className="ag-theme-change-trigger"
+                        className="ag-theme-custom"
                         style={{ height: '100%' }}
                     >
                         {container && (
@@ -82,7 +80,7 @@ const GridPreview = () => {
                                             cellRange: {
                                                 rowStartIndex: 0,
                                                 rowEndIndex: 14,
-                                                columns: ['model', 'year', 'price'],
+                                                columns: ['name', 'winnings2023', 'winnings2022'],
                                             },
                                             chartType: 'groupedColumn',
                                             chartThemeOverrides: {
@@ -105,8 +103,6 @@ const GridPreview = () => {
                                     }
                                 }}
                                 onFirstDataRendered={(params: any) => {
-                                    setGridDom(container.querySelector('.ag-root-wrapper') as HTMLDivElement);
-
                                     // Select some nodes by default
                                     params.api.getRowNode(1).setSelected(true);
                                     params.api.getRowNode(3).setSelected(true);

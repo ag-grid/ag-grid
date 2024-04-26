@@ -7,6 +7,7 @@ import { withErrorBoundary } from '../general/ErrorBoundary';
 import { ColorValueEditor } from './ColorValueEditor';
 import { CssValueEditor } from './CssValueEditor';
 import { FontFamilyValueEditor } from './FontFamilyValueEditor';
+import { FontWeightValueEditor } from './FontWeightValueEditor';
 import { FormField } from './FormField';
 import { LengthValueEditor } from './LengthValueEditor';
 import { ScaleValueEditor } from './ScaleValueEditor';
@@ -26,8 +27,9 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
     const theme = useRenderedTheme();
     let editorValue = value;
     if (editorValue == null) {
-        if (param.property in theme.paramCSSValues) {
-            editorValue = theme.paramCSSValues[param.property];
+        const params = theme.getRenderedParams();
+        if (param.property in params) {
+            editorValue = params[param.property];
         } else {
             throw new Error(`Param "${param.property}" does not exist.`);
         }
@@ -53,7 +55,7 @@ const valueEditors: Record<ParamType, FC<ValueEditorProps>> = {
     shadow: CssValueEditor,
     image: CssValueEditor,
     fontFamily: FontFamilyValueEditor,
-    fontWeight: CssValueEditor,
+    fontWeight: FontWeightValueEditor,
     display: CssValueEditor,
     duration: CssValueEditor,
 };

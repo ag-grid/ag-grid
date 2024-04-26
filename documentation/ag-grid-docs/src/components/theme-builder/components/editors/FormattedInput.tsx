@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Input } from './Input';
+import './formatted-input-global-styles.css';
 
 export type FormattedInputProps = {
     value: string;
@@ -111,9 +112,12 @@ export const FormattedInput = ({
                         getIconSwipeAdjustment
                             ? (e) => {
                                   e.preventDefault();
+                                  const pointerId = e.pointerId;
+                                  const wrapper = e.currentTarget;
                                   inputRef.current?.blur();
                                   const startX = e.clientX;
                                   const startY = e.clientY;
+                                  document.body.classList.add('force-resize-cursor');
                                   const handleMove = (e: PointerEvent) => {
                                       const movementX = e.clientX - startX;
                                       const movementY = startY - e.clientY; // invert Y movement so up is higher
@@ -122,11 +126,14 @@ export const FormattedInput = ({
                                       onChange?.(getIconSwipeAdjustment(value, movement));
                                   };
                                   const handleUp = () => {
-                                      document.body.removeEventListener('pointermove', handleMove);
-                                      document.body.removeEventListener('pointerup', handleUp);
+                                      wrapper.removeEventListener('pointermove', handleMove);
+                                      wrapper.removeEventListener('pointerup', handleUp);
+                                      document.body.classList.remove('force-resize-cursor');
+                                      wrapper.releasePointerCapture(pointerId);
                                   };
-                                  document.body.addEventListener('pointermove', handleMove);
-                                  document.body.addEventListener('pointerup', handleUp);
+                                  wrapper.addEventListener('pointermove', handleMove);
+                                  wrapper.addEventListener('pointerup', handleUp);
+                                  wrapper.setPointerCapture(pointerId);
                               }
                             : undefined
                     }
@@ -157,4 +164,5 @@ const IconWrapper = styled('div')`
     svg {
         stroke: var(--color-fg-quinary);
     }
+    transform: scale(0.7);
 `;

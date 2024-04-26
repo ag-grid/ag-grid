@@ -5,6 +5,7 @@ import { type PersistentAtom, atomWithJSONStorage } from './JSONStorage';
 export type ApplicationConfig = {
     previewPaneBackgroundColor: string;
     welcomeModalDismissed: boolean | undefined;
+    expandedEditors: string[];
 };
 
 const configAtoms: Record<string, any> = {};

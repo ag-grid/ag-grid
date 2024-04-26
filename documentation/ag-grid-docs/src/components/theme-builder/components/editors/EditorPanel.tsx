@@ -1,3 +1,4 @@
+import { useApplicationConfigAtom } from '@components/theme-builder/model/application-config';
 import styled from '@emotion/styled';
 import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDown } from 'lucide-react';
@@ -6,11 +7,12 @@ import { type ReactNode } from 'react';
 import { BordersEditor } from './BordersEditor';
 import { ParamEditor } from './ParamEditor';
 import { PartEditor } from './PartEditor';
-import { horizontalSpacingIcon, verticalSpacingIcon } from './icons';
+import { horizontalSpacingIcon, radiusIcon, verticalSpacingIcon } from './icons';
 
 export const EditorPanel = () => {
+    const [expanded, setExpanded] = useApplicationConfigAtom('expandedEditors');
     return (
-        <AccordionRoot type="multiple" defaultValue={['Header']}>
+        <AccordionRoot type="multiple" defaultValue={expanded || ['General']} onValueChange={setExpanded}>
             <div className="pageHeading">
                 <h1 className="pageTitle">Theme Builder </h1>
             </div>
@@ -25,10 +27,10 @@ export const EditorPanel = () => {
                 <ParamEditor param="accentColor" />
                 <ParamEditor param="borderColor" />
                 <BordersEditor />
-                <ParamEditor param="gridSize" label="Spacing" showDocs />
+                <ParamEditor param="gridSize" label="Spacing" showDocs icon={verticalSpacingIcon} />
                 <EvenSplitRow>
-                    <ParamEditor param="wrapperBorderRadius" label="Wrapper radius" showDocs />
-                    <ParamEditor param="borderRadius" label="Widget radius" showDocs />
+                    <ParamEditor param="wrapperBorderRadius" label="Wrapper radius" showDocs icon={radiusIcon} />
+                    <ParamEditor param="borderRadius" label="Widget radius" showDocs icon={radiusIcon} />
                 </EvenSplitRow>
             </Section>
             <Section heading="Header">

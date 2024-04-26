@@ -11,7 +11,7 @@ import { gridConfigBooleanFields } from './grid-options';
 export const GridConfigDropdownButton = () => {
     return (
         <GridFeatureButtonWrapper>
-            <UIPopupButton placement="left-start" dropdownContent={<GridConfigDropdown />}>
+            <UIPopupButton placement="left-end" offset={16} dropdownContent={<GridConfigDropdown />}>
                 {configIcon} Grid features
             </UIPopupButton>
         </GridFeatureButtonWrapper>

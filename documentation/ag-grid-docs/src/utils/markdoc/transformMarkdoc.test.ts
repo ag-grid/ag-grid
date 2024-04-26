@@ -38,7 +38,7 @@ describe('transformMarkdoc', () => {
 
     it('renders links', () => {
         const framework = 'javascript';
-        const markdocContent = '[AG Grid](https://ag-grid.com/)';
+        const markdocContent = '[AG Grid](https://www.ag-grid.com/)';
         const { renderTree } = transformMarkdoc({ framework, markdocContent });
 
         expect(renderTree).toMatchInlineSnapshot(`
@@ -53,7 +53,7 @@ describe('transformMarkdoc', () => {
                   Tag {
                     "$$mdtype": "Tag",
                     "attributes": {
-                      "href": "https://ag-grid.com/",
+                      "href": "https://www.ag-grid.com/",
                     },
                     "children": [
                       "AG Grid",
