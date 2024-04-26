@@ -1,7 +1,6 @@
 export class Events {
 
     /** Everything has changed with the columns. Either complete new set of columns set, or user called applyColumnState() */
-    /** @deprecated - grid no longer uses this, and setSate() also fires individual events */
     public static EVENT_COLUMN_EVERYTHING_CHANGED: 'columnEverythingChanged' = 'columnEverythingChanged';
 
     /** User has set in new columns. */
@@ -252,14 +251,6 @@ export class Events {
 
     // environment
     public static EVENT_GRID_STYLES_CHANGED: 'gridStylesChanged' = 'gridStylesChanged';
-
-    // these are used for server side group and agg - only used by CS with Viewport Row Model - intention is
-    // to design these better around server side functions and then release to general public when fully working with
-    // all the row models.
-    public static EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST: 'columnRowGroupChangeRequest' = 'columnRowGroupChangeRequest';
-    public static EVENT_COLUMN_PIVOT_CHANGE_REQUEST: 'columnPivotChangeRequest' = 'columnPivotChangeRequest';
-    public static EVENT_COLUMN_VALUE_CHANGE_REQUEST: 'columnValueChangeRequest' = 'columnValueChangeRequest';
-    public static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST: 'columnAggFuncChangeRequest' = 'columnAggFuncChangeRequest';
 
     public static EVENT_STORE_UPDATED: 'storeUpdated' = 'storeUpdated';
 

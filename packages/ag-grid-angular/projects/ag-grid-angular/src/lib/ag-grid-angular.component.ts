@@ -47,7 +47,6 @@ import {
     ColGroupDef,
     ColTypeDef,
     Column,
-    ColumnAggFuncChangeRequestEvent,
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
     ColumnHeaderClickedEvent,
@@ -57,13 +56,10 @@ import {
     ColumnMenuVisibleChangedEvent,
     ColumnMovedEvent,
     ColumnPinnedEvent,
-    ColumnPivotChangeRequestEvent,
     ColumnPivotChangedEvent,
     ColumnPivotModeChangedEvent,
     ColumnResizedEvent,
-    ColumnRowGroupChangeRequestEvent,
     ColumnRowGroupChangedEvent,
-    ColumnValueChangeRequestEvent,
     ColumnValueChangedEvent,
     ColumnVisibleEvent,
     ComponentStateChangedEvent,
@@ -682,10 +678,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
-    /** @deprecated As of v29, no longer used.
-         * @initial
-         */
-    @Input() public enableChartToolPanelsButton: boolean | undefined = undefined;
     /** Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons. Only applies when using AG Charts Community.
          * @default false
          * @initial
@@ -1447,10 +1439,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public deltaSort: boolean | undefined = undefined;
     /**/
     @Input() public treeDataDisplayType: TreeDataDisplayType | undefined = undefined;
-    /** @deprecated v29.2
-         * @initial
-         */
-    @Input() public functionsPassive: boolean | undefined = undefined;
     /** @initial
          */
     @Input() public enableGroupEdit: boolean | undefined = undefined;
@@ -1885,14 +1873,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Sort has changed. The grid also listens for this and updates the model.
          */
     @Output() public sortChanged: EventEmitter<SortChangedEvent<TData>> = new EventEmitter<SortChangedEvent<TData>>();
-    /** @deprecated v29.2     */
-    @Output() public columnRowGroupChangeRequest: EventEmitter<ColumnRowGroupChangeRequestEvent<TData>> = new EventEmitter<ColumnRowGroupChangeRequestEvent<TData>>();
-    /** @deprecated v29.2     */
-    @Output() public columnPivotChangeRequest: EventEmitter<ColumnPivotChangeRequestEvent<TData>> = new EventEmitter<ColumnPivotChangeRequestEvent<TData>>();
-    /** @deprecated v29.2     */
-    @Output() public columnValueChangeRequest: EventEmitter<ColumnValueChangeRequestEvent<TData>> = new EventEmitter<ColumnValueChangeRequestEvent<TData>>();
-    /** @deprecated v29.2     */
-    @Output() public columnAggFuncChangeRequest: EventEmitter<ColumnAggFuncChangeRequestEvent<TData>> = new EventEmitter<ColumnAggFuncChangeRequestEvent<TData>>();
 
 
     // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"' 
@@ -1947,7 +1927,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_alwaysAggregateAtRootLevel: boolean | null | '';
     static ngAcceptInputType_suppressAggAtRootLevel: boolean | null | '';
     static ngAcceptInputType_suppressFocusAfterRefresh: boolean | null | '';
-    static ngAcceptInputType_functionsPassive: boolean | null | '';
     static ngAcceptInputType_functionsReadOnly: boolean | null | '';
     static ngAcceptInputType_animateRows: boolean | null | '';
     static ngAcceptInputType_groupSelectsFiltered: boolean | null | '';
@@ -1995,7 +1974,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressClipboardPaste: boolean | null | '';
     static ngAcceptInputType_suppressLastEmptyLineOnPaste: boolean | null | '';
     static ngAcceptInputType_enableCharts: boolean | null | '';
-    static ngAcceptInputType_enableChartToolPanelsButton: boolean | null | '';
     static ngAcceptInputType_suppressChartToolPanelsButton: boolean | null | '';
     static ngAcceptInputType_suppressMaintainUnsortedOrder: boolean | null | '';
     static ngAcceptInputType_enableCellTextSelection: boolean | null | '';

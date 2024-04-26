@@ -22,19 +22,15 @@ import {
     ChartDestroyed,
     ChartOptionsChanged,
     ChartRangeSelectionChanged,
-    ColumnAggFuncChangeRequestEvent,
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
     ColumnMovedEvent,
     ColumnPinnedEvent,
     ColumnPivotChangedEvent,
-    ColumnPivotChangeRequestEvent,
     ColumnPivotModeChangedEvent,
     ColumnResizedEvent,
     ColumnRowGroupChangedEvent,
-    ColumnRowGroupChangeRequestEvent,
     ColumnValueChangedEvent,
-    ColumnValueChangeRequestEvent,
     ColumnVisibleEvent,
     ComponentStateChangedEvent,
     ContextMenuVisibleChangedEvent,
@@ -611,11 +607,6 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     chartThemeOverrides?: AgChartThemeOverrides;
-    /**
-     * @deprecated As of v29, no longer used.
-     * @initial
-     */
-    enableChartToolPanelsButton?: boolean;
     /**
      * Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons. Only applies when using AG Charts Community.
      * @default false
@@ -1624,12 +1615,6 @@ export interface GridOptions<TData = any> {
     treeDataDisplayType?: TreeDataDisplayType;
 
     /**
-     * @deprecated v29.2
-     * @initial
-     */
-    functionsPassive?: boolean;
-
-    /**
      * @initial
      */
     enableGroupEdit?: boolean;
@@ -2293,19 +2278,6 @@ export interface GridOptions<TData = any> {
      * Sort has changed. The grid also listens for this and updates the model.
      */
     onSortChanged?(event: SortChangedEvent<TData>): void;
-
-    /**
-     * @deprecated v29.2 */
-    onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent<TData>): void;
-    /**
-     * @deprecated v29.2 */
-    onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent<TData>): void;
-    /**
-     * @deprecated v29.2 */
-    onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent<TData>): void;
-    /**
-     * @deprecated v29.2 */
-    onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData>): void;
 
     /**
      * @deprecated Since v31 api is no longer attached to GridOptions. See https://ag-grid.com/javascript-data-grid/grid-interface/#grid-api for how to access the api in your framework.

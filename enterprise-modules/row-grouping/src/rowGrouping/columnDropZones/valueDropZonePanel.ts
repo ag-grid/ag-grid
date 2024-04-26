@@ -1,7 +1,6 @@
 import {
     _,
     Column,
-    ColumnValueChangeRequestEvent,
     DragAndDropService,
     DraggingEvent,
     Events,
@@ -56,15 +55,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     }
 
     protected updateItems(columns: Column[]): void {
-        if (this.gos.get('functionsPassive')) {
-            const event: WithoutGridCommon<ColumnValueChangeRequestEvent> = {
-                type: Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
-                columns: columns
-            };
-            this.eventService.dispatchEvent(event);
-        } else {
-            this.columnModel.setValueColumns(columns, "toolPanelUi");
-        }
+        this.columnModel.setValueColumns(columns, "toolPanelUi");
     }
 
     protected getExistingItems(): Column[] {

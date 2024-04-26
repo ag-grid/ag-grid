@@ -10,7 +10,6 @@ import {
     IHeader,
     IHeaderGroup,
     ILoadingOverlay,
-    IMenuItem,
     INoRowsOverlay,
     IStatusPanel,
     IToolPanel,

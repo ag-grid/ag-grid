@@ -11,13 +11,6 @@ import { ComponentUtil } from "../../components/componentUtil";
  * If the property was simply renamed, use the `renamed` property. The value will be implicitly copied to the new property.
  */
 const GRID_OPTION_DEPRECATIONS: Deprecations<GridOptions> = {
-
-    enableChartToolPanelsButton: { version: '29' },
-    functionsPassive: { version: '29.2' },
-    onColumnRowGroupChangeRequest: { version: '29.2' },
-    onColumnPivotChangeRequest: { version: '29.2' },
-    onColumnValueChangeRequest: { version: '29.2' },
-    onColumnAggFuncChangeRequest: { version: '29.2' },
     
     serverSideFilterAllLevels: { version: '30', message: 'All server-side group levels are now filtered by default. This can be toggled using `serverSideOnlyRefreshFilteredGroups`.' },
     suppressAggAtRootLevel: { version: '30', message: 'The root level aggregation is now suppressed by default. This can be toggled using  `alwaysAggregateAtRootLevel`.' },
@@ -214,7 +207,6 @@ export const GRID_OPTION_DEFAULTS = {
     deltaSort: false,
     enableGroupEdit: false,
     suppressGroupMaintainValueType: false,
-    functionsPassive: false,
     groupLockGroupColumns: 0,
     serverSideEnableClientSideSort: false,
     suppressServerSideFullWidthLoadingRow: false,

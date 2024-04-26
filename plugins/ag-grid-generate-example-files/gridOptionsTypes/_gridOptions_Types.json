@@ -1005,10 +1005,6 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "functionsPassive": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
   "functionsReadOnly": {
     "typeName": "boolean",
     "typesToInclude": []
@@ -1194,10 +1190,6 @@
     "typesToInclude": []
   },
   "enableCharts": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "enableChartToolPanelsButton": {
     "typeName": "boolean",
     "typesToInclude": []
   },
