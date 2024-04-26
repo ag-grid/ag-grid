@@ -99,7 +99,7 @@
       );
     }
   }
-  
+
   .ag-toggle-button-input-wrapper {
     box-sizing: border-box;
     width: var(--ag-toggle-button-width);
@@ -155,134 +155,134 @@
     }
   }
 
-.ag-radio-button-input-wrapper {
-  @include -check-button-base();
+  .ag-radio-button-input-wrapper {
+    @include -check-button-base();
 
-  border-radius: var(--ag-icon-size);
+    border-radius: var(--ag-icon-size);
 
-  // ::after used for icon font glyph - most icons use ::before but widgets
-  // are the other way round for backwards compatibility
-  &::after {
-    content: ag.icon-content(radio-button-off);
-    color: var(--ag-checkbox-unchecked-color);
-    display: var(--ag-icon-font-display-radio-button-off, var(--ag-icon-font-display));
-    position: absolute;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-  }
-
-  &.ag-checked::after {
-    content: ag.icon-content(radio-button-on);
-    color: var(--ag-checkbox-checked-color);
-    display: var(--ag-icon-font-display-radio-button-on, var(--ag-icon-font-display));
-    position: absolute;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-  }
-
-  // ::before used for icon images
-  &::before {
-    content: '';
-    background: transparent center/contain no-repeat;
-    position: absolute;
-    inset: 0;
-    background-image: var(--ag-icon-image-radio-button-off, var(--ag-icon-image));
-    display: var(--ag-icon-image-display-radio-button-off, var(--ag-icon-image-display));
-    opacity: var(--ag-icon-image-opacity-radio-button-off, var(--ag-icon-image-opacity, 0.9));
-  }
-
-  &.ag-checked::before {
-    background-image: var(--ag-icon-image-radio-button-on, var(--ag-icon-image));
-    display: var(--ag-icon-image-display-radio-button-on, var(--ag-icon-image-display));
-    opacity: var(--ag-icon-image-opacity-radio-button-on, var(--ag-icon-image-opacity, 0.9));
-  }
-}
-
-    input[class^='ag-'][type='range'] {
-        -webkit-appearance: none;
-        width: 100%;
-        height: 100%;
-        background: none;
-        overflow: visible;
-
-        &::-webkit-slider-runnable-track {
-            @include -ag-range-track;
-        }
-
-        &::-moz-range-track {
-            @include -ag-range-track;
-        }
-
-        &::-ms-track {
-            @include -ag-range-track;
-            color: transparent;
-            width: calc(100% - 2px);
-        }
-
-        &::-webkit-slider-thumb {
-            @include -ag-range-thumb;
-            transform: translateY(calc(var(--ag-icon-size) * -0.5 + 1.5px));
-        }
-
-        &::-ms-thumb {
-            @include -ag-range-thumb;
-        }
-        &::-moz-ag-range-thumb {
-            @include -ag-range-thumb;
-        }
-
-        &:focus {
-            outline: none;
-
-            &::-webkit-slider-runnable-track {
-                @include -ag-focus-range-track;
-            }
-            &::-moz-ag-range-track {
-                @include -ag-focus-range-track;
-            }
-            &::-ms-track {
-                @include -ag-focus-range-track;
-            }
-
-            &::-webkit-slider-thumb {
-                @include -ag-focus-range-thumb;
-            }
-            &::-ms-thumb {
-                @include -ag-focus-range-thumb;
-            }
-            &::-moz-ag-range-thumb {
-                @include -ag-focus-range-thumb;
-            }
-        }
-
-        &:active {
-            &::-webkit-slider-runnable-track {
-                @include -ag-active-range-track;
-            }
-            &::-moz-ag-range-track {
-                @include -ag-active-range-track;
-            }
-            &::-ms-track {
-                @include -ag-active-range-track;
-            }
-
-            &::-webkit-slider-thumb {
-                @include -ag-active-range-thumb;
-            }
-            &::-ms-thumb {
-                @include -ag-active-range-thumb;
-            }
-            &::-moz-ag-range-thumb {
-                @include -ag-active-range-thumb;
-            }
-        }
-
-        &:disabled {
-            opacity: 0.5;
-        }
+    // ::after used for icon font glyph - most icons use ::before but widgets
+    // are the other way round for backwards compatibility
+    &::after {
+      content: ag.icon-content(radio-button-off);
+      color: var(--ag-checkbox-unchecked-color);
+      display: var(--ag-icon-font-display-radio-button-off, var(--ag-icon-font-display));
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
     }
+
+    &.ag-checked::after {
+      content: ag.icon-content(radio-button-on);
+      color: var(--ag-checkbox-checked-color);
+      display: var(--ag-icon-font-display-radio-button-on, var(--ag-icon-font-display));
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+
+    // ::before used for icon images
+    &::before {
+      content: '';
+      background: transparent center/contain no-repeat;
+      position: absolute;
+      inset: 0;
+      background-image: var(--ag-icon-image-radio-button-off, var(--ag-icon-image));
+      display: var(--ag-icon-image-display-radio-button-off, var(--ag-icon-image-display));
+      opacity: var(--ag-icon-image-opacity-radio-button-off, var(--ag-icon-image-opacity, 0.9));
+    }
+
+    &.ag-checked::before {
+      background-image: var(--ag-icon-image-radio-button-on, var(--ag-icon-image));
+      display: var(--ag-icon-image-display-radio-button-on, var(--ag-icon-image-display));
+      opacity: var(--ag-icon-image-opacity-radio-button-on, var(--ag-icon-image-opacity, 0.9));
+    }
+  }
+
+  input[class^='ag-'][type='range'] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 100%;
+    background: none;
+    overflow: visible;
+
+    &::-webkit-slider-runnable-track {
+      @include -ag-range-track;
+    }
+
+    &::-moz-range-track {
+      @include -ag-range-track;
+    }
+
+    &::-ms-track {
+      @include -ag-range-track;
+      color: transparent;
+      width: calc(100% - 2px);
+    }
+
+    &::-webkit-slider-thumb {
+      @include -ag-range-thumb;
+      transform: translateY(calc(var(--ag-icon-size) * -0.5 + 1.5px));
+    }
+
+    &::-ms-thumb {
+      @include -ag-range-thumb;
+    }
+    &::-moz-ag-range-thumb {
+      @include -ag-range-thumb;
+    }
+
+    &:focus {
+      outline: none;
+
+      &::-webkit-slider-runnable-track {
+        @include -ag-focus-range-track;
+      }
+      &::-moz-ag-range-track {
+        @include -ag-focus-range-track;
+      }
+      &::-ms-track {
+        @include -ag-focus-range-track;
+      }
+
+      &::-webkit-slider-thumb {
+        @include -ag-focus-range-thumb;
+      }
+      &::-ms-thumb {
+        @include -ag-focus-range-thumb;
+      }
+      &::-moz-ag-range-thumb {
+        @include -ag-focus-range-thumb;
+      }
+    }
+
+    &:active {
+      &::-webkit-slider-runnable-track {
+        @include -ag-active-range-track;
+      }
+      &::-moz-ag-range-track {
+        @include -ag-active-range-track;
+      }
+      &::-ms-track {
+        @include -ag-active-range-track;
+      }
+
+      &::-webkit-slider-thumb {
+        @include -ag-active-range-thumb;
+      }
+      &::-ms-thumb {
+        @include -ag-active-range-thumb;
+      }
+      &::-moz-ag-range-thumb {
+        @include -ag-active-range-thumb;
+      }
+    }
+
+    &:disabled {
+      opacity: 0.5;
+    }
+  }
 }
 
 @mixin -ag-range-track {

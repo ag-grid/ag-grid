@@ -515,7 +515,7 @@
     padding: var(--ag-grid-size);
     font-weight: 600;
   }
-  
+
   .ag-advanced-filter-builder-item-button-disabled,
   .ag-disabled,
   .ag-column-select-column-group-readonly,
@@ -564,7 +564,7 @@
       );
     }
   }
-  
+
   .ag-text-field-input[disabled],
   .ag-menu-option-disabled {
     cursor: not-allowed;
@@ -580,7 +580,7 @@
   input[class^='ag-'][type='range'] {
     cursor: pointer;
   }
-  
+
   .ag-details-row {
     padding: calc(var(--ag-grid-size) * 3.75);
   }
@@ -606,4 +606,3 @@
     opacity: 0.8;
   }
 }
-

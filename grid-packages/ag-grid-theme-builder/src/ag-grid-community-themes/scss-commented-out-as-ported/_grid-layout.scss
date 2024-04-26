@@ -310,10 +310,10 @@
     }
   }
 
-    .ag-floating-top {
-      border-bottom: var(--ag-borders-critical) var(--ag-border-color);
-    }
-    .ag-floating-bottom {
-      border-top: var(--ag-borders-critical) var(--ag-border-color);
-    }
+  .ag-floating-top {
+    border-bottom: var(--ag-borders-critical) var(--ag-border-color);
   }
+  .ag-floating-bottom {
+    border-top: var(--ag-borders-critical) var(--ag-border-color);
+  }
+}

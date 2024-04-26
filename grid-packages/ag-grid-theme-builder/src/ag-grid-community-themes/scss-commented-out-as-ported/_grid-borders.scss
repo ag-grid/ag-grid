@@ -2,16 +2,24 @@
 
 @mixin output {
   .ag-cell {
-      @include ag.unthemed-rtl(( border-right: var(--ag-cell-horizontal-border) ));
-      @include ag.unthemed-rtl(( border-right-width: 1px ));
+    @include ag.unthemed-rtl(
+      (
+        border-right: var(--ag-cell-horizontal-border),
+      )
+    );
+    @include ag.unthemed-rtl(
+      (
+        border-right-width: 1px,
+      )
+    );
   }
 
   .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left):not(.ag-cell-range-single-cell) {
-      border-left: var(--ag-borders-critical) var(--ag-border-color);
+    border-left: var(--ag-borders-critical) var(--ag-border-color);
   }
 
   .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right):not(.ag-cell-range-single-cell) {
-      border-right: var(--ag-borders-critical) var(--ag-border-color);
+    border-right: var(--ag-borders-critical) var(--ag-border-color);
   }
 
   // we do not want to color the range color when the cell is also focused

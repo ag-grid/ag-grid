@@ -47,16 +47,13 @@
     }
   }
 
-  //  unused
-  // .ag-icon-row-drag::before {
-  //     content: var(--ag-icon-font-code-grip);
-  // }
-  // unused
-  // .ag-left-arrow::before {
-  //     content: var(--ag-icon-font-code-left);
-  // }
-  // unused
-  // .ag-right-arrow::before {
-  //     content: var(--ag-icon-font-code-right);
-  // }
+  .ag-icon-row-drag::before {
+    content: var(--ag-icon-font-code-grip);
+  }
+  .ag-left-arrow::before {
+    content: var(--ag-icon-font-code-left);
+  }
+  .ag-right-arrow::before {
+    content: var(--ag-icon-font-code-right);
+  }
 }

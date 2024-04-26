@@ -58,5 +58,6 @@
         "dist",
         "typings"
     ],
-    "typescript.enablePromptUseWorkspaceTsdk": true
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "editor.formatOnSave": true
 }
