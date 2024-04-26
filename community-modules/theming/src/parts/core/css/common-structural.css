@@ -498,6 +498,7 @@ ag-grid-aurelia {
     width: 100%;
     position: relative;
     display: flex;
+    border-bottom: var(--ag-pinned-row-border);
 }
 
 .ag-pinned-left-floating-top {
@@ -520,6 +521,7 @@ ag-grid-aurelia {
     width: 100%;
     position: relative;
     display: flex;
+    border-top: var(--ag-pinned-row-border);
 }
 
 .ag-pinned-left-floating-bottom {

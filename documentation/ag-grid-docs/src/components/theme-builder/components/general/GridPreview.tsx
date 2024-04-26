@@ -80,7 +80,7 @@ const GridPreview = () => {
                                             cellRange: {
                                                 rowStartIndex: 0,
                                                 rowEndIndex: 14,
-                                                columns: ['model', 'year', 'price'],
+                                                columns: ['name', 'winnings2023', 'winnings2022'],
                                             },
                                             chartType: 'groupedColumn',
                                             chartThemeOverrides: {
