@@ -1,3 +1,7 @@
+.ag-side-bar {
+    position: relative;
+}
+
 .ag-side-bar-left .ag-tool-panel-horizontal-resize {
     right: -3px;
 }

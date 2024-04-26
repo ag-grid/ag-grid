@@ -2,10 +2,6 @@
     border-radius: 0px;
 }
 
-.ag-button:hover {
-    background-color: transparent;
-}
-
 .ag-standard-button {
     font-family: inherit;
     appearance: none;

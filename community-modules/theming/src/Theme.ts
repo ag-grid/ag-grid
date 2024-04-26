@@ -153,6 +153,16 @@ export class Theme {
             }
         }
 
+        // Uncomment to print a console error when rendered CSS contains a variable that doesn't match a theme param
+        // const allowedVariables = new Set(Object.keys(this.getParams()).map(paramToVariableName));
+        // allowedVariables.add('--ag-line-height');
+        // allowedVariables.add('--ag-indentation-level');
+        // for (const [, variable] of this.getCSS().matchAll(/var\((--ag-[\w-]+)[^)]*\)/g)) {
+        //     if (!allowedVariables.has(variable) && !variable.startsWith('--ag-internal')) {
+        //         logErrorMessageOnce(`${variable} does not match a theme param`);
+        //     }
+        // }
+
         await Promise.all(loadPromises);
     }
 
