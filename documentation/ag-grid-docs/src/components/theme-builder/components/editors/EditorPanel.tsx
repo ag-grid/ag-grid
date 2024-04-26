@@ -187,7 +187,7 @@ const AccordionContent = styled(Accordion.Content)`
 
 const Trigger = styled(Accordion.Trigger)`
     all: unset;
-    color: var(--color-fg-secondary) !important;
+    color: var(--color-fg-secondary);
     background: none !important;
     font-size: 15px;
     font-weight: 700;
@@ -196,11 +196,18 @@ const Trigger = styled(Accordion.Trigger)`
     justify-content: space-between;
     width: 100%;
     cursor: pointer;
-    transition: all 0.5s;
-    opacity: 0.9;
+    transition:
+        opacity 0.25s ease-in-out,
+        color 0.25s ease-in-out;
+    opacity: 0.85;
+
     &:hover {
-        opacity: 0.6;
-        transition: all 0.5s;
+        opacity: 1;
+        color: var(--color-brand-500);
+
+        [data-dark-mode='true'] & {
+            color: var(--color-brand-300);
+        }
     }
 `;
 
