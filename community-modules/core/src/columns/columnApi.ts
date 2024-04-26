@@ -13,13 +13,13 @@ import { ApplyColumnStateParams, ColumnState } from "./columnModel";
 @Bean('columnApi')
 export class ColumnApi {
 
-    @Autowired('gridApi') private api: GridApi;
+    @Autowired('gridApi') private api: any;
 
     constructor(gridAp: GridApi) {
         this.api = gridAp;
      }
 
-    private viaApi = <K extends keyof ColumnApi & keyof GridApi>(funcName: keyof ColumnApi & keyof GridApi, ...args: Parameters<ColumnApi[K]>) => {
+    private viaApi = <K extends keyof ColumnApi & keyof GridApi>(funcName: any, ...args: Parameters<ColumnApi[K]>) => {
         warnOnce(`Since v31, 'columnApi.${funcName}' is deprecated and moved to 'api.${funcName}'.`);
         return (this.api[funcName] as any)(...args);
     }
