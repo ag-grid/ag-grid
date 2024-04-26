@@ -274,7 +274,7 @@ export class ChartDatasource extends BeanStub {
             });
         });
 
-        if (ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation', this.context.getGridId())) {
+        if (ModuleRegistry.__assert(ModuleNames.RowGroupingModule, 'Charting Aggregation', this.context.getGridId())) {
             const aggStage = this.aggregationStage!;
             dataAggregated.forEach(groupItem => params.valueCols.forEach(col => {
 

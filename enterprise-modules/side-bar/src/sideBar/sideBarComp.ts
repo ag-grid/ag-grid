@@ -249,13 +249,13 @@ export class SideBarComp extends Component implements ISideBar {
         // helpers, in case user doesn't have the right module loaded
         if (def.toolPanel === 'agColumnsToolPanel') {
             const moduleMissing =
-                !ModuleRegistry.__assertRegistered(ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel', this.context.getGridId());
+                !ModuleRegistry.__assert(ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel', this.context.getGridId());
             if (moduleMissing) { return false; }
         }
 
         if (def.toolPanel === 'agFiltersToolPanel') {
             const moduleMissing =
-                !ModuleRegistry.__assertRegistered(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.context.getGridId());
+                !ModuleRegistry.__assert(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.context.getGridId());
             if (moduleMissing) { return false; }
             if (this.filterManager.isAdvancedFilterEnabled()) {
                 _.warnOnce('Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.');                

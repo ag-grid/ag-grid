@@ -7,41 +7,13 @@ import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { CellPosition } from "./entities/cellPositionUtils";
 import { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from "./entities/colDef";
 import { Column, ColumnPinnedType } from "./entities/column";
+import { ColumnGroup } from "./entities/columnGroup";
 import {
-    ChartRef,
-    DomLayoutType,
-    GetChartToolbarItems,
-    GetContextMenuItems,
-    GetMainMenuItems,
-    GetRowIdFunc,
-    GetServerSideGroupKey,
-    GridOptions,
-    IsApplyServerSideTransaction,
-    IsRowMaster,
-    IsRowSelectable,
-    IsServerSideGroup,
-    RowClassParams,
-    RowGroupingDisplayType,
-    ServerSideGroupLevelParams,
-    UseGroupFooter
+    ChartRef, GridOptions
 } from "./entities/gridOptions";
-import {
-    GetGroupRowAggParams,
-    GetServerSideGroupLevelParamsParams,
-    InitialGroupOrderComparatorParams,
-    IsFullWidthRowParams,
-    IsServerSideGroupOpenByDefaultParams,
-    NavigateToNextCellParams,
-    NavigateToNextHeaderParams,
-    PaginationNumberFormatterParams,
-    PostProcessPopupParams,
-    PostSortRowsParams,
-    ProcessRowParams,
-    RowHeightParams,
-    TabToNextCellParams,
-    TabToNextHeaderParams
-} from "./interfaces/iCallbackParams";
-import { IRowNode, RowPinnedType } from "./interfaces/iRowNode";
+import { ProvidedColumnGroup } from "./entities/providedColumnGroup";
+import { RowNode } from "./entities/rowNode";
+import { Events } from './eventKeys';
 import { AgEvent, AgEventListener, AgGlobalEventListener, ColumnEventType, FilterChangedEventSourceType, GridPreDestroyedEvent, SelectionEventSourceType } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";
@@ -50,8 +22,9 @@ import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
 import { GridOptionsService } from "./gridOptionsService";
-import { HeaderPosition } from "./headerRendering/common/headerPosition";
-import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
+import { AdvancedFilterModel } from "./interfaces/advancedFilterModel";
+import { CsvExportParams } from "./interfaces/exportParams";
+import { GridState } from "./interfaces/gridState";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { ICellEditor } from "./interfaces/iCellEditor";
 import {
@@ -63,45 +36,54 @@ import {
     CreateRangeChartParams,
     GetChartImageDataUrlParams,
     IChartService,
-    OpenChartToolPanelParams, UpdateChartParams,
+    OpenChartToolPanelParams, UpdateChartParams
 } from './interfaces/IChartService';
 import { ClientSideRowModelStep, IClientSideRowModel } from "./interfaces/iClientSideRowModel";
 import { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService } from "./interfaces/iClipboardService";
 import { IColumnToolPanel } from "./interfaces/iColumnToolPanel";
+import { WithoutGridCommon } from "./interfaces/iCommon";
 import { ICsvCreator } from "./interfaces/iCsvCreator";
-import { IDatasource } from "./interfaces/iDatasource";
 import {
     ExcelExportMultipleSheetParams,
     ExcelExportParams,
     ExcelFactoryMode,
     IExcelCreator
 } from "./interfaces/iExcelCreator";
+import { IExpansionService } from "./interfaces/iExpansionService";
 import { FilterModel, IFilter } from "./interfaces/iFilter";
 import { IFiltersToolPanel } from "./interfaces/iFiltersToolPanel";
+import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
+import { IHeaderColumn } from "./interfaces/iHeaderColumn";
 import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 import { CellRange, CellRangeParams, IRangeService } from "./interfaces/IRangeService";
 import { IRowModel, RowModelType } from "./interfaces/iRowModel";
-import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
+import { IRowNode, RowPinnedType } from "./interfaces/iRowNode";
+import { ISelectionService } from "./interfaces/iSelectionService";
 import {
     IServerSideRowModel,
     IServerSideTransactionManager,
     RefreshServerSideParams
 } from "./interfaces/iServerSideRowModel";
+import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
 import { ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
 import { ISideBarService, SideBarDef } from "./interfaces/iSideBar";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanel } from "./interfaces/iStatusPanel";
 import { IToolPanel } from "./interfaces/iToolPanel";
-import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { RowDataTransaction } from "./interfaces/rowDataTransaction";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { AnimationFrameService } from "./misc/animationFrameService";
+import { ApiEventService } from "./misc/apiEventService";
+import { IContextMenuParams, MenuService } from "./misc/menuService";
+import { StateService } from "./misc/stateService";
 import { ModuleNames } from "./modules/moduleNames";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
+import { ManagedGridOptionKey, ManagedGridOptions } from "./propertyKeys";
 import { ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
+import { OverlayService } from "./rendering/overlays/overlayService";
 import {
     FlashCellsParams,
     GetCellEditorInstancesParams,
@@ -110,35 +92,16 @@ import {
     RefreshCellsParams,
     RowRenderer
 } from "./rendering/rowRenderer";
+import { LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { SortController } from "./sortController";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
-import { exists, missing } from "./utils/generic";
+import { warnOnce } from "./utils/function";
+import { exists } from "./utils/generic";
 import { iterateObject, removeAllReferences } from "./utils/object";
+import { escapeString } from "./utils/string";
 import { ValueCache } from "./valueService/valueCache";
 import { ValueService } from "./valueService/valueService";
-import { ISelectionService } from "./interfaces/iSelectionService";
-import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
-import { DataTypeDefinition } from "./entities/dataType";
-import { RowNode } from "./entities/rowNode";
-import { AdvancedFilterModel } from "./interfaces/advancedFilterModel";
-import { LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
-import { Events } from './eventKeys';
-import { IAdvancedFilterBuilderParams } from "./interfaces/iAdvancedFilterBuilderParams";
-import { IHeaderColumn } from "./interfaces/iHeaderColumn";
-import { ProvidedColumnGroup } from "./entities/providedColumnGroup";
-import { ColumnGroup } from "./entities/columnGroup";
-import { OverlayService } from "./rendering/overlays/overlayService";
-import { GridState } from "./interfaces/gridState";
-import { StateService } from "./misc/stateService";
-import { IExpansionService } from "./interfaces/iExpansionService";
-import { warnOnce } from "./utils/function";
-import { ApiEventService } from "./misc/apiEventService";
-import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
-import { ManagedGridOptionKey, ManagedGridOptions } from "./propertyKeys";
-import { WithoutGridCommon } from "./interfaces/iCommon";
-import { MenuService, IContextMenuParams } from "./misc/menuService";
-import { escapeString } from "./utils/string";
 
 export interface DetailGridInfo {
     /**
@@ -1158,15 +1121,16 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
 
     @PostConstruct
     private init(): void {
-        switch (this.rowModel.getType()) {
+        const rowModel = this.rowModel;
+        switch (rowModel.getType()) {
             case 'clientSide':
-                this.clientSideRowModel = this.rowModel as IClientSideRowModel;
+                this.clientSideRowModel = rowModel as IClientSideRowModel;
                 break;
             case 'infinite':
-                this.infiniteRowModel = this.rowModel as IInfiniteRowModel;
+                this.infiniteRowModel = rowModel as IInfiniteRowModel;
                 break;
             case 'serverSide':
-                this.serverSideRowModel = this.rowModel as IServerSideRowModel;
+                this.serverSideRowModel = rowModel as IServerSideRowModel;
                 break;
         }
 
@@ -1206,54 +1170,59 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
         });
     }
 
+    private assert(module: ModuleNames, method: string) {
+        return ModuleRegistry.__assert(module, method, this.context.getGridId());
+    }
+
     public getDataAsCsv(params?: CsvExportParams): string | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv', this.context.getGridId())) {
+        if (this.assert(ModuleNames.CsvExportModule, 'api.getDataAsCsv')) {
             return this.csvCreator!.getDataAsCsv(params);
         }
     }
 
     public exportDataAsCsv(params?: CsvExportParams): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.exportDataAsCsv', this.context.getGridId())) {
+        if (this.assert(ModuleNames.CsvExportModule, 'api.exportDataAsCsv')) {
             this.csvCreator!.exportDataAsCsv(params);
         }
     }
 
-    private assertNotExcelMultiSheet(method: keyof GridApi, params?: ExcelExportParams): boolean {
-        if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method, this.context.getGridId())) { return false }
+    private assertNotExcelMultiSheet(method: keyof GridApi): boolean {
+        const apiMethod = 'api.' + method;
+        if (!this.assert(ModuleNames.ExcelExportModule, apiMethod)) { return false }
         if (this.excelCreator!.getFactoryMode() === ExcelFactoryMode.MULTI_SHEET) {
-            console.warn("AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'");
+            warnOnce(apiMethod + " The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'");
             return false;
         }
         return true;
     }
 
     public getDataAsExcel(params?: ExcelExportParams): string | Blob | undefined {
-        if (this.assertNotExcelMultiSheet('getDataAsExcel', params)) {
+        if (this.assertNotExcelMultiSheet('getDataAsExcel')) {
             return this.excelCreator!.getDataAsExcel(params);
         }
     }
 
     public exportDataAsExcel(params?: ExcelExportParams): void {
-        if (this.assertNotExcelMultiSheet('exportDataAsExcel', params)) {
+        if (this.assertNotExcelMultiSheet('exportDataAsExcel')) {
             this.excelCreator!.exportDataAsExcel(params);
         }
     }
 
     public getSheetDataForExcel(params?: ExcelExportParams): string | undefined {
-        if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel', this.context.getGridId())) { return; }
+        if (!this.assert(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel')) { return; }
         this.excelCreator!.setFactoryMode(ExcelFactoryMode.MULTI_SHEET);
 
         return this.excelCreator!.getSheetDataForExcel(params);
     }
 
     public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel', this.context.getGridId())) {
+        if (this.assert(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel')) {
             return this.excelCreator!.getMultipleSheetsAsExcel(params);
         }
     }
 
     public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel', this.context.getGridId())) {
+        if (this.assert(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel')) {
             this.excelCreator!.exportMultipleSheetsAsExcel(params);
         }
     }
@@ -1281,15 +1250,12 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     public getPinnedTopRowCount(): number {
         return this.pinnedRowModel.getPinnedTopRowCount();
     }
-
     public getPinnedBottomRowCount(): number {
         return this.pinnedRowModel.getPinnedBottomRowCount();
     }
-
     public getPinnedTopRow(index: number): IRowNode | undefined {
         return this.pinnedRowModel.getPinnedTopRow(index);
     }
-
     public getPinnedBottomRow(index: number): IRowNode | undefined {
         return this.pinnedRowModel.getPinnedBottomRow(index);
     }
@@ -1352,7 +1318,7 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     }
 
     public onGroupExpandedOrCollapsed() {
-        if (missing(this.clientSideRowModel)) {
+        if (!this.clientSideRowModel) {
             this.logMissingRowModel('onGroupExpandedOrCollapsed', 'clientSide');
             return;
         }
@@ -1360,7 +1326,7 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     }
 
     public refreshClientSideRowModel(step?: ClientSideRowModelStep): any {
-        if (missing(this.clientSideRowModel)) {
+        if (!this.clientSideRowModel) {
             this.logMissingRowModel('refreshClientSideRowModel', 'clientSide');
             return;
         }
@@ -1415,7 +1381,7 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     }
 
     public getAdvancedFilterModel(): AdvancedFilterModel | null {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.getAdvancedFilterModel', this.context.getGridId())) {
+        if (this.assert(ModuleNames.AdvancedFilterModule, 'api.getAdvancedFilterModel')) {
             return this.filterManager.getAdvancedFilterModel();
         }
         return null;
@@ -1426,7 +1392,7 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     }
 
     public showAdvancedFilterBuilder(): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.setAdvancedFilterModel', this.context.getGridId())) {
+        if (this.assert(ModuleNames.AdvancedFilterModule, 'api.setAdvancedFilterModel')) {
             this.filterManager.showAdvancedFilterBuilder('api');
         }
     }
@@ -1470,7 +1436,7 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     }
 
     public getServerSideSelectionState(): IServerSideSelectionState | IServerSideGroupSelectionState | null {
-        if (missing(this.serverSideRowModel)) {
+        if (!this.serverSideRowModel) {
             this.logMissingRowModel('getServerSideSelectionState', 'serverSide');
             return null;
         }
@@ -1479,7 +1445,7 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     }
 
     public setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState) {
-        if (missing(this.serverSideRowModel)) {
+        if (!this.serverSideRowModel) {
             this.logMissingRowModel('setServerSideSelectionState', 'serverSide');
             return;
         }
@@ -1512,7 +1478,7 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     }
 
     public getBestCostNodeSelection(): IRowNode<TData>[] | undefined {
-        if (missing(this.clientSideRowModel)) {
+        if (!this.clientSideRowModel) {
             this.logMissingRowModel('getBestCostNodeSelection', 'clientSide');
             return;
         }
@@ -1537,7 +1503,7 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     }
 
     public forEachLeafNode(callback: (rowNode: IRowNode<TData>) => void) {
-        if (missing(this.clientSideRowModel)) {
+        if (!this.clientSideRowModel) {
             this.logMissingRowModel('forEachLeafNode', 'clientSide');
             return;
         }
@@ -1549,7 +1515,7 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     }
 
     public forEachNodeAfterFilter(callback: (rowNode: IRowNode<TData>, index: number) => void) {
-        if (missing(this.clientSideRowModel)) {
+        if (!this.clientSideRowModel) {
             this.logMissingRowModel('forEachNodeAfterFilter', 'clientSide');
             return;
         }
@@ -1557,7 +1523,7 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     }
 
     public forEachNodeAfterFilterAndSort(callback: (rowNode: IRowNode<TData>, index: number) => void) {
-        if (missing(this.clientSideRowModel)) {
+        if (!this.clientSideRowModel) {
             this.logMissingRowModel('forEachNodeAfterFilterAndSort', 'clientSide');
             return;
         }
@@ -1584,7 +1550,7 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     }
 
     public getStatusPanel<TStatusPanel = IStatusPanel>(key: string): TStatusPanel | undefined {
-        if (!ModuleRegistry.__assertRegistered(ModuleNames.StatusBarModule, 'api.getStatusPanel', this.context.getGridId())) { return; }
+        if (!this.assert(ModuleNames.StatusBarModule, 'api.getStatusPanel')) { return; }
         const comp = this.statusBarService!.getStatusPanel(key);
         return unwrapUserComp(comp) as any;
     }
@@ -1648,61 +1614,61 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
         return this.gridBodyCtrl.getRowDragFeature().getRowDropZone(events);
     }
 
-    private assertSideBarLoaded(apiMethod: keyof GridApi): boolean {
-        return ModuleRegistry.__assertRegistered(ModuleNames.SideBarModule, 'api.' + apiMethod, this.context.getGridId());
+    private assertSideBar(apiMethod: keyof GridApi): boolean {
+        return this.assert(ModuleNames.SideBarModule, 'api.' + apiMethod);
     }
 
     public isSideBarVisible(): boolean {
-        return this.assertSideBarLoaded('isSideBarVisible') && this.sideBarService!.getSideBarComp().isDisplayed();
+        return this.assertSideBar('isSideBarVisible') && this.sideBarService!.getSideBarComp().isDisplayed();
     }
     public setSideBarVisible(show: boolean) {
-        if (this.assertSideBarLoaded('setSideBarVisible')) {
+        if (this.assertSideBar('setSideBarVisible')) {
             this.sideBarService!.getSideBarComp().setDisplayed(show);
         }
     }
     public setSideBarPosition(position: 'left' | 'right') {
-        if (this.assertSideBarLoaded('setSideBarPosition')) {
+        if (this.assertSideBar('setSideBarPosition')) {
             this.sideBarService!.getSideBarComp().setSideBarPosition(position);
         }
     }
 
     public openToolPanel(key: string) {
-        if (this.assertSideBarLoaded('openToolPanel')) {
+        if (this.assertSideBar('openToolPanel')) {
             this.sideBarService!.getSideBarComp().openToolPanel(key, 'api');
         }
     }
     public closeToolPanel() {
-        if (this.assertSideBarLoaded('closeToolPanel')) {
+        if (this.assertSideBar('closeToolPanel')) {
             this.sideBarService!.getSideBarComp().close('api');
         }
     }
 
     public getOpenedToolPanel(): string | null {
-        if (this.assertSideBarLoaded('getOpenedToolPanel')) {
+        if (this.assertSideBar('getOpenedToolPanel')) {
             return this.sideBarService!.getSideBarComp().openedItem()
         }
         return null;
     }
 
     public refreshToolPanel(): void {
-        if (this.assertSideBarLoaded('refreshToolPanel')) {
+        if (this.assertSideBar('refreshToolPanel')) {
             this.sideBarService!.getSideBarComp().refresh();
         }
     }
 
     public isToolPanelShowing(): boolean {
-        return this.assertSideBarLoaded('isToolPanelShowing') && this.sideBarService!.getSideBarComp().isToolPanelShowing();
+        return this.assertSideBar('isToolPanelShowing') && this.sideBarService!.getSideBarComp().isToolPanelShowing();
     }
 
     public getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined {
-        if (this.assertSideBarLoaded('getToolPanelInstance')) {
+        if (this.assertSideBar('getToolPanelInstance')) {
             const comp = this.sideBarService!.getSideBarComp().getToolPanelInstance(id);
             return unwrapUserComp(comp) as any;
         }
     }
 
     public getSideBar(): SideBarDef | undefined {
-        if (this.assertSideBarLoaded('getSideBar')) {
+        if (this.assertSideBar('getSideBar')) {
             return this.sideBarService!.getSideBarComp().getDef();
         }
         return undefined;
@@ -1756,7 +1722,7 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
         const { colKey, rowNode, useFormatter } = params;
 
         let column = this.columnModel.getPrimaryColumn(colKey) ?? this.columnModel.getGridColumn(colKey);
-        if (missing(column)) {
+        if (!column) {
             return null;
         }
 
@@ -1825,27 +1791,22 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     }
 
     public getCellRanges(): CellRange[] | null {
-        if (this.rangeService) {
-            return this.rangeService.getCellRanges();
+        if (this.assert(ModuleNames.RangeSelectionModule, 'api.getCellRanges')) {
+            return this.rangeService!.getCellRanges();
         }
-
-        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'api.getCellRanges', this.context.getGridId());
         return null;
     }
 
     public addCellRange(params: CellRangeParams): void {
-        if (this.rangeService) {
-            this.rangeService.addCellRange(params);
-            return;
+        if (this.assert(ModuleNames.RangeSelectionModule, 'api.addCellRange')) {
+            this.rangeService!.addCellRange(params);
         }
-        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'api.addCellRange', this.context.getGridId());
     }
 
     public clearRangeSelection(): void {
-        if (this.rangeService) {
-            this.rangeService.removeAllCellRanges();
+        if (this.assert(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection')) {
+            this.rangeService!.removeAllCellRanges();
         }
-        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection', this.context.getGridId());
     }
 
     public undoCellEditing(): void {
@@ -1862,7 +1823,7 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     }
 
     private assertChart<T>(methodName: keyof GridApi ,func: () => T): T | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.' + methodName, this.context.getGridId())) {
+        if (this.assert(ModuleNames.GridChartsModule, 'api.' + methodName)) {
             return this.frameworkOverrides.wrapIncoming(() => func());
         }
     }
@@ -1912,7 +1873,7 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     }
 
     private assertClipboard<T>(methodName: keyof GridApi, func: () => T ): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api' + methodName, this.context.getGridId())) {
+        if (this.assert(ModuleNames.ClipboardModule, 'api' + methodName)) {
             func();
         }
     }
@@ -2051,7 +2012,8 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     }
 
     public startEditingCell(params: StartEditingCellParams): void {
-        const column = this.columnModel.getGridColumn(params.colKey);
+        const { columnModel, navigationService, focusService } = this;
+        const column = columnModel.getGridColumn(params.colKey);
         if (!column) {
             console.warn(`AG Grid: no column found for ${params.colKey}`);
             return;
@@ -2068,10 +2030,10 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
 
         this.ensureColumnVisible(params.colKey);
 
-        const cell = this.navigationService.getCellByPosition(cellPosition);
+        const cell = navigationService.getCellByPosition(cellPosition);
         if (!cell) { return; }
-        if (!this.focusService.isCellFocused(cellPosition)) {
-            this.focusService.setFocusedCell(cellPosition);
+        if (!focusService.isCellFocused(cellPosition)) {
+            focusService.setFocusedCell(cellPosition);
         }
         cell.startRowOrCellEdit(params.key);
     }
@@ -2085,14 +2047,10 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     }
 
     public addAggFuncs(aggFuncs: { [key: string]: IAggFunc; }): void {
-        if (this.aggFuncService) {
-            this.aggFuncService.addAggFuncs(aggFuncs);
-        }
+        this.aggFuncService?.addAggFuncs(aggFuncs);
     }
     public clearAggFuncs(): void {
-        if (this.aggFuncService) {
-            this.aggFuncService.clear();
-        }
+        this.aggFuncService?.clear();
     }
 
     public applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {

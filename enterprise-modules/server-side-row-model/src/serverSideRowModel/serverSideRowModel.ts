@@ -256,7 +256,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     public generateSecondaryColumns(pivotFields: string[]) {
 
         if (!this.pivotColDefService) {
-            ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'pivotResultFields', this.context.getGridId());
+            ModuleRegistry.__assert(ModuleNames.RowGroupingModule, 'pivotResultFields', this.context.getGridId());
             return;
         }
 

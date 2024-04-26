@@ -7,7 +7,7 @@ export class ChartMenuItemMapper extends BeanStub {
 
     public getChartItems(key: 'pivotChart' | 'chartRange'): MenuItemDef | undefined {
         if (!this.chartService) {
-            ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, `the Context Menu key "${key}"`, this.context.getGridId());
+            ModuleRegistry.__assert(ModuleNames.GridChartsModule, `the Context Menu key "${key}"`, this.context.getGridId());
             return undefined;
         }
 

@@ -417,7 +417,7 @@ export class GridCoreCreator {
             return;
         }
 
-        if (!ModuleRegistry.__assertRegistered(rowModelModuleNames[rowModelType], `rowModelType = '${rowModelType}'`, gridId)) {
+        if (!ModuleRegistry.__assert(rowModelModuleNames[rowModelType], `rowModelType = '${rowModelType}'`, gridId)) {
             return;
         }
 

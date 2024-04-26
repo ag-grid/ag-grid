@@ -109,7 +109,7 @@ export class ModuleRegistry {
     }
 
     /** AG GRID INTERNAL - Assert a given module has been register, globally or individually with this grid. */
-    public static __assertRegistered(moduleName: ModuleNames, reason: string, gridId: string): boolean {
+    public static __assert(moduleName: ModuleNames, reason: string, gridId: string): boolean {
         if (this.__isRegistered(moduleName, gridId)) {
             return true;
         }
