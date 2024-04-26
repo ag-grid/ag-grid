@@ -29,8 +29,20 @@ export const EditorPanel = () => {
                 <BordersEditor />
                 <ParamEditor param="gridSize" label="Spacing" showDocs icon={verticalSpacingIcon} />
                 <EvenSplitRow>
-                    <ParamEditor param="wrapperBorderRadius" label="Wrapper radius" showDocs icon={radiusIcon} />
-                    <ParamEditor param="borderRadius" label="Widget radius" showDocs icon={radiusIcon} />
+                    <ParamEditor
+                        param="wrapperBorderRadius"
+                        label="Wrapper radius"
+                        showDocs
+                        icon={radiusIcon}
+                        swipeAdjustmentDivisor={20}
+                    />
+                    <ParamEditor
+                        param="borderRadius"
+                        label="Widget radius"
+                        showDocs
+                        icon={radiusIcon}
+                        swipeAdjustmentDivisor={20}
+                    />
                 </EvenSplitRow>
             </Section>
             <Section heading="Header">

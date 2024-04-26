@@ -3,7 +3,7 @@ import { stripFloatingPointErrors } from '@components/theme-builder/model/utils'
 import { FormattedInput } from './FormattedInput';
 import { type ValueEditorProps } from './ValueEditorProps';
 
-export const ScaleValueEditor = ({ value, onChange, icon }: ValueEditorProps) => {
+export const ScaleValueEditor = ({ value, onChange, icon, swipeAdjustmentDivisor = 175 }: ValueEditorProps) => {
     return (
         <FormattedInput
             value={value}
@@ -19,7 +19,7 @@ export const ScaleValueEditor = ({ value, onChange, icon }: ValueEditorProps) =>
             getIconSwipeAdjustment={(value, pixels) => {
                 const proportion = parseFloat(value);
                 if (isNaN(proportion)) return value;
-                return stripFloatingPointErrors(proportion + pixels / 100);
+                return stripFloatingPointErrors(proportion + pixels / swipeAdjustmentDivisor);
             }}
         />
     );

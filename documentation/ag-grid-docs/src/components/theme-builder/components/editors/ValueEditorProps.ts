@@ -8,4 +8,5 @@ export type ValueEditorProps = {
     // onChange(null) to reset default
     onChange: (newValue: string | null) => void;
     icon?: ReactNode;
+    swipeAdjustmentDivisor?: number;
 };
