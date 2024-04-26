@@ -20,8 +20,8 @@ import { PostConstruct } from "./context/context";
 import { ProvidedColumnGroup } from "./entities/providedColumnGroup";
 import { BeanStub } from "./context/beanStub";
 import { CtrlsService } from "./ctrlsService";
-import { GridApi } from "./gridApi";
 import { errorOnce } from "./utils/function";
+import { IAlignedGridApi } from "./gridApi";
 
 @Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {
@@ -40,7 +40,7 @@ export class AlignedGridsService extends BeanStub {
         this.logger = loggerFactory.create('AlignedGridsService');
     }
 
-    private getAlignedGridApis(): GridApi[]{
+    private getAlignedGridApis(): IAlignedGridApi[]{
         let alignedGrids = this.gos.get('alignedGrids') ?? [];
         const isCallbackConfig = typeof alignedGrids === 'function';
         if (typeof alignedGrids === 'function') {
@@ -57,22 +57,22 @@ export class AlignedGridsService extends BeanStub {
                 errorOnce(seeUrl())
                 return; 
             } 
-            if (alignedGrid instanceof GridApi) {
-                return alignedGrid;
+            if ('__getAlignedGridService' in alignedGrid) {
+                return alignedGrid as IAlignedGridApi;
             }
-            // Extract the GridApi from a ref or component
+            // Extract the IAlignedGridProvider from a ref or component
             const refOrComp = alignedGrid;
             if ('current' in refOrComp) {
                 return refOrComp.current?.api;
             } else {
-                if (!refOrComp.api) {
+                if (!(refOrComp as any).api) {
                     errorOnce(`alignedGrids - No api found on the linked grid. If you are passing gridOptions to alignedGrids since v31 this is no longer valid. ${seeUrl()}`);
                 }
-                return refOrComp.api;
+                return (refOrComp as any).api as IAlignedGridApi;
             }
         }).filter(api => !!api && !api.isDestroyed());
 
-        return apis as GridApi[];
+        return apis as IAlignedGridApi[];
     }
 
     @PostConstruct

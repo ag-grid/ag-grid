@@ -8,7 +8,7 @@ import { FilterManager } from "./filter/filterManager";
 import { ValueService } from "./valueService/valueService";
 import { EventService } from "./eventService";
 import { GridBodyComp } from "./gridBodyComp/gridBodyComp";
-import { GridApi } from "./gridApi";
+import { GridApi, GridApiService } from "./gridApi";
 import { ColumnFactory } from "./columns/columnFactory";
 import { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
 import { ExpressionService } from "./valueService/expressionService";
@@ -424,7 +424,7 @@ export class GridCoreCreator {
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
         const beans = [
             Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
-            PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
+            PaginationAutoPageSizeService, GridApiService, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             RowContainerHeightService, HorizontalResizeService, LocaleService, ValidationService,
             PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsService,

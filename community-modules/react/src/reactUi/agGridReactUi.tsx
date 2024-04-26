@@ -149,7 +149,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
         prevProps.current = props;
         processWhenReady(() => {
             if (apiRef.current) {
-                ComponentUtil.processOnChange(changes, apiRef.current)
+                ComponentUtil.processOnChange(changes, apiRef.current as any)
             }
         });
     }, [props]);

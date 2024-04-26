@@ -4,7 +4,6 @@ import { Column, ColumnPinnedType } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { ColumnEventType } from "../events";
-import { GridApi } from "../gridApi";
 import { IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { warnOnce } from "../utils/function";
 import { ApplyColumnStateParams, ColumnState } from "./columnModel";
@@ -13,13 +12,13 @@ import { ApplyColumnStateParams, ColumnState } from "./columnModel";
 @Bean('columnApi')
 export class ColumnApi {
 
-    @Autowired('gridApi') private api: GridApi;
+    @Autowired('gridApi') private api: any;
 
-    constructor(gridAp: GridApi) {
+    constructor(gridAp: any) {
         this.api = gridAp;
      }
 
-    private viaApi = <K extends keyof ColumnApi & keyof GridApi>(funcName: keyof ColumnApi & keyof GridApi, ...args: Parameters<ColumnApi[K]>) => {
+    private viaApi = <K extends keyof ColumnApi & keyof any>(funcName: keyof ColumnApi & keyof any, ...args: Parameters<ColumnApi[K]>) => {
         warnOnce(`Since v31, 'columnApi.${funcName}' is deprecated and moved to 'api.${funcName}'.`);
         return (this.api[funcName] as any)(...args);
     }

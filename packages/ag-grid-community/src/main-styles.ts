@@ -109,7 +109,6 @@ export {FloatingFilterMapper} from "@ag-grid-community/core";
 export {FocusService} from "@ag-grid-community/core";
 export {GROUP_AUTO_COLUMN_ID} from "@ag-grid-community/core";
 export {Grid} from "@ag-grid-community/core";
-export {GridApi} from "@ag-grid-community/core";
 export {GridBodyComp} from "@ag-grid-community/core";
 export {GridBodyCtrl} from "@ag-grid-community/core";
 export {GridComp} from "@ag-grid-community/core";

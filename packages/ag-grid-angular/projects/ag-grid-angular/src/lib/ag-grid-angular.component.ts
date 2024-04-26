@@ -279,7 +279,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
                  Object.entries(changes).forEach(([key, value]: [string, any]) => {
                      gridOptions[key as keyof GridOptions] = value.currentValue;
                  });
-                 ComponentUtil.processOnChange(gridOptions, this.api);
+                 ComponentUtil.processOnChange(gridOptions, this.api as any);
              });
          }
     }
