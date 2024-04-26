@@ -793,6 +793,13 @@ export class ColumnModel extends BeanStub {
 
         return null;
     }
+    public getDisplayedTree(tree: 'left' | 'right' | 'centre'): IHeaderColumn[] {
+        switch (tree) {
+            case 'left': return this.displayedTreeLeft;
+            case 'right': return this.displayedTreeRight;
+            case 'centre': return this.displayedTreeCentre;
+        }
+    }
 
     // + columnSelectPanel
     public getPrimaryColumnTree(): IProvidedColumn[] {
@@ -802,21 +809,6 @@ export class ColumnModel extends BeanStub {
     // + gridPanel -> for resizing the body and setting top margin
     public getHeaderRowCount(): number {
         return this.gridHeaderRowCount;
-    }
-
-    // + headerRenderer -> setting pinned body width
-    public getDisplayedTreeLeft(): IHeaderColumn[] {
-        return this.displayedTreeLeft;
-    }
-
-    // + headerRenderer -> setting pinned body width
-    public getDisplayedTreeRight(): IHeaderColumn[] {
-        return this.displayedTreeRight;
-    }
-
-    // + headerRenderer -> setting pinned body width
-    public getDisplayedTreeCentre(): IHeaderColumn[] {
-        return this.displayedTreeCentre;
     }
 
     // gridPanel -> ensureColumnVisible
