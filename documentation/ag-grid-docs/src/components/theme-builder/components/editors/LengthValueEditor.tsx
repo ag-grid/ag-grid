@@ -20,7 +20,7 @@ export const LengthValueEditor = ({ value, onChange, icon }: ValueEditorProps) =
                 const proportion = parseFloat(value);
                 if (isNaN(proportion)) return value;
 
-                const rawAdjustment = parseFloat(Math.max(parseFloat(proportion + pixels), 0).toFixed(1));
+                const rawAdjustment = parseFloat(Math.max(proportion + pixels / 100, 0).toFixed(1));
                 return stripFloatingPointErrors(rawAdjustment) + 'px';
             }}
         />
