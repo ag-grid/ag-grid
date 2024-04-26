@@ -16,13 +16,6 @@ import {
     Module
 } from '@ag-grid-community/core';
 
-/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */
-export enum ChangeDetectionStrategyType {
-    IdentityCheck = 'IdentityCheck',
-    DeepValueCheck = 'DeepValueCheck',
-    NoCheck = 'NoCheck'
-}
-
 export interface SharedProps<TData = any> extends GridOptions<TData> {
     gridOptions?: GridOptions<TData>;
     /**
