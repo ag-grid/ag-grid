@@ -28,7 +28,12 @@ export const WelcomeModal = () => {
                     <div className={styles.contentModal}>
                         <Dialog.Title className={styles.title}>Welcome to Theme Builder</Dialog.Title>
                         <Dialog.Description className={styles.description}>
-                            Here you can customise your grid's colors, spacing, typography all from one place.
+                            Here you can customise your grid's <b>spacing</b>, <b>colors</b>, and <b>typography</b> all
+                            in one place.
+                            <br />
+                            <br />
+                            Select from presets above the grid to get inspired. Then configure the controls on the left
+                            to find your perfect theme.
                         </Dialog.Description>
                     </div>
                     <div className={classnames(styles.actions, styles.noSeparator)}>

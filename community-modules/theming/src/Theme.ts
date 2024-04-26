@@ -111,42 +111,59 @@ export class Theme {
     }
 
     /**
-     * Inject CSS for this theme into the head of the current page
+     * Inject CSS for this theme into the head of the current page. A promise is
+     * returned that resolves when all inserted stylesheets have loaded.
+     *
+     * Only one theme can be loaded at a time. Calling this method will replace
+     * any previously installed theme.
      *
      * @param args.container The container that the grid is rendered within. If
      * the grid is rendered inside a shadow DOM root, you must pass the grid's
      * parent element to ensure that the styles are adopted into the shadow DOM.
      */
-    public install(args: ThemeInstallArgs = {}) {
+    public async install(args: ThemeInstallArgs = {}) {
         let container = args.container || null;
+        const loadPromises: Promise<void>[] = [];
         if (!container) {
             container = document.querySelector('head');
             if (!container) throw new Error("Can't install theme before document head is created");
         }
-        for (const chunk of this.getCSSChunks()) {
-            const documentStyles = document.adoptedStyleSheets as AnnotatedStylesheet[];
-            let style = documentStyles.find((s) => s._agId === chunk.id);
+        const chunks = this.getCSSChunks();
+        const activeChunkIds = new Set(chunks.map((chunk) => chunk.id));
+        const existingStyles = Array.from(
+            container.querySelectorAll(':scope > [data-ag-injected-style-id]')
+        ) as AnnotatedStyleElement[];
+        existingStyles.forEach((style) => {
+            if (!activeChunkIds.has(style.dataset.agInjectedStyleId!)) {
+                style.remove();
+            }
+        });
+        for (const chunk of chunks) {
+            let style = existingStyles.find((s) => s.dataset.agInjectedStyleId === chunk.id);
             if (!style) {
-                style = new CSSStyleSheet();
-                style._agId = chunk.id;
-                document.adoptedStyleSheets.push(style);
+                style = document.createElement('style');
+                style.dataset.agInjectedStyleId = chunk.id;
+                const lastExistingStyle = existingStyles[existingStyles.length - 1];
+                container.insertBefore(style, lastExistingStyle?.nextSibling || null);
             }
             if (style._agTextContent !== chunk.css) {
-                style.replaceSync(chunk.css);
+                style.textContent = chunk.css;
                 style._agTextContent = chunk.css;
-            }
-            const shadowRoot = container.getRootNode();
-            if (shadowRoot instanceof ShadowRoot) {
-                const allDocumentStyles = new Set(documentStyles);
-                shadowRoot.adoptedStyleSheets = shadowRoot.adoptedStyleSheets.filter((s) => allDocumentStyles.has(s));
-                const allShadowStyles = new Set(shadowRoot.adoptedStyleSheets);
-                for (const style of documentStyles) {
-                    if (!allShadowStyles.has(style)) {
-                        shadowRoot.adoptedStyleSheets.push(style);
-                    }
-                }
+                loadPromises.push(resolveOnLoad(style));
             }
         }
+
+        // Uncomment to print a console error when rendered CSS contains a variable that doesn't match a theme param
+        // const allowedVariables = new Set(Object.keys(this.getParams()).map(paramToVariableName));
+        // allowedVariables.add('--ag-line-height');
+        // allowedVariables.add('--ag-indentation-level');
+        // for (const [, variable] of this.getCSS().matchAll(/var\((--ag-[\w-]+)[^)]*\)/g)) {
+        //     if (!allowedVariables.has(variable) && !variable.startsWith('--ag-internal')) {
+        //         logErrorMessageOnce(`${variable} does not match a theme param`);
+        //     }
+        // }
+
+        await Promise.all(loadPromises);
     }
 
     public getCSS(): string {
@@ -217,13 +234,21 @@ export class Theme {
     }
 }
 
+const resolveOnLoad = (element: HTMLStyleElement) =>
+    new Promise<void>((resolve) => {
+        const handler = () => {
+            element.removeEventListener('load', handler);
+            resolve();
+        };
+        element.addEventListener('load', handler);
+    });
+
 export type ThemeCssChunk = {
     css: string;
     id: string;
 };
 
-type AnnotatedStylesheet = CSSStyleSheet & {
-    _agId?: string;
+type AnnotatedStyleElement = HTMLStyleElement & {
     _agTextContent?: string;
 };
 

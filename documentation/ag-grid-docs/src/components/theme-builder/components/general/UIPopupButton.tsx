@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { type UseFloatingOptions, autoUpdate, shift, useFloating } from '@floating-ui/react';
+import { type UseFloatingOptions, autoUpdate, offset, shift, useFloating } from '@floating-ui/react';
 import { type ReactNode, useState } from 'react';
 
 import { combineClassNames, useClickAwayListener } from '../component-utils';
@@ -12,18 +12,19 @@ export type UIPopupButtonProps = {
     endDecorator?: React.ReactNode;
     className?: string;
     variant?: 'primary' | 'secondary';
-    placement?: 'left-start' | 'right-start';
+    placement?: 'left-start' | 'left-end' | 'right-start' | 'right-end';
+    offset?: number;
 };
 
 /**
  * A version of MUI's menu component that can contain interactive UI in the dropdown. It doesn't close until you click outside the dropdown.
  */
 export const UIPopupButton = (props: UIPopupButtonProps) => {
-    const { placement = 'left-start' } = props;
+    const { placement = 'left-start', offset: offsetValue = 0 } = props;
     const floatingOptions: Partial<UseFloatingOptions> = {
         whileElementsMounted: autoUpdate,
         placement,
-        middleware: [shift({ padding: 8 })],
+        middleware: [shift({ padding: 8 }), offset(offsetValue)],
     };
     const { refs, floatingStyles, elements } = useFloating(floatingOptions);
     const [show, setShow] = useState(false);

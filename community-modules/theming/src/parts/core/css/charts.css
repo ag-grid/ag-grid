@@ -203,7 +203,8 @@
 }
 
 .ag-chart-data-wrapper,
-.ag-chart-format-wrapper {
+.ag-chart-format-wrapper,
+.ag-chart-advanced-settings-wrapper {
     display: flex;
     flex-direction: column;
     position: relative;
@@ -211,15 +212,36 @@
     padding-bottom: 16px;
 }
 
-.ag-chart-data-wrapper {
+.ag-chart-data-wrapper,
+.ag-chart-advanced-settings-wrapper {
     height: 100%;
     overflow-y: auto;
 }
 
+.ag-chart-advanced-settings {
+    background-color: var(--ag-chrome-background-color);
+}
+
+.ag-chart-advanced-settings-wrapper,
+.ag-chart-advanced-settings {
+    width: 100%;
+}
+
+.ag-chart-advanced-settings-wrapper {
+    padding-bottom: 0;
+}
+
 .ag-chart-data-section,
-.ag-chart-format-section {
+.ag-chart-format-section,
+.ag-chart-advanced-settings-section {
     display: flex;
     margin: 0;
+}
+
+.ag-chart-advanced-settings-section {
+    border-bottom: 1px solid var(--ag-border-color);
+    padding-top: calc(var(--ag-grid-size) * 2);
+    padding-bottom: calc(var(--ag-grid-size) * 2);
 }
 
 .ag-chart-empty-text {
@@ -240,14 +262,19 @@
     display: block;
 }
 
-.ag-chart .ag-chart-tool-panel-button-enable .ag-chart-menu {
-    display: flex;
-    flex-direction: row;
-    top: 8px;
-    right: calc(var(--ag-cell-horizontal-padding) + var(--ag-grid-size) - 4px);
-    gap: 20px;
-    width: auto;
-    justify-content: right;
+.ag-chart {
+    .ag-chart-tool-panel-button-enable,
+    .ag-chart-menu-wrapper {
+        .ag-chart-menu {
+            display: flex;
+            flex-direction: row;
+            top: 8px;
+            right: calc(var(--ag-cell-horizontal-padding) + var(--ag-grid-size) - 4px);
+            gap: 20px;
+            width: auto;
+            justify-content: right;
+        }
+    }
 }
 
 .ag-chart-menu-close {
@@ -310,6 +337,10 @@ when that's fixed, nest them in the above block */
     position: relative;
 }
 
+.ag-charts-data-group-item:not(:last-child) {
+    margin-bottom: var(--ag-grid-size);
+}
+
 .ag-chart-menu {
     border-radius: var(--ag-border-radius);
     background: var(--ag-background-color);
@@ -327,6 +358,13 @@ when that's fixed, nest them in the above block */
     }
 }
 
+.ag-chart-menu-toolbar-button {
+    border: 0;
+    background-color: unset;
+    padding: 0 2px;
+    border-radius: 1px;
+}
+
 .ag-chart-mini-thumbnail {
     border: 1px solid var(--ag-border-color);
     border-radius: 5px;
@@ -341,21 +379,45 @@ when that's fixed, nest them in the above block */
     margin-left: var(--ag-grid-size);
 }
 
+.ag-charts-settings-group-title-bar,
+.ag-charts-data-group-title-bar,
+.ag-charts-format-top-level-group-title-bar {
+    position: relative;
+}
+
+.ag-charts-advanced-settings-top-level-group-title-bar {
+    position: relative;
+    background-color: unset;
+}
+
+.ag-charts-settings-group-title-bar:focus-visible,
+.ag-charts-data-group-title-bar:focus-visible,
+.ag-charts-format-top-level-group-title-bar:focus-visible,
+.ag-charts-advanced-settings-top-level-group-title-bar:focus-visible {
+    box-shadow: inset var(--ag-focus-shadow);
+}
+
 .ag-charts-data-group-container {
     padding: calc(var(--ag-widget-container-vertical-padding) * 0.5) var(--ag-widget-container-horizontal-padding);
 
-    .ag-charts-data-group-item:not(.ag-charts-format-sub-level-group) {
+    .ag-charts-data-group-item:not(.ag-charts-format-sub-level-group):not(.ag-pill-select):not(.ag-select) {
         height: var(--ag-list-item-height);
+    }
+
+    .ag-charts-data-group-item.ag-picker-field {
+        margin-top: var(--ag-grid-size);
     }
 }
 
-.ag-charts-format-top-level-group-container {
+.ag-charts-format-top-level-group-container,
+.ag-charts-advanced-settings-top-level-group-container {
     /*rtl:ignore*/
     margin-left: calc(var(--ag-grid-size) * 2);
     padding: var(--ag-grid-size);
 }
 
-.ag-charts-format-top-level-group-item {
+.ag-charts-format-top-level-group-item,
+.ag-charts-advanced-settings-top-level-group-item {
     margin: var(--ag-grid-size) 0;
 }
 
@@ -421,6 +483,13 @@ when that's fixed, nest them in the above block */
 
 .ag-charts-format-top-level-group-item {
     padding-bottom: 12px;
+    margin-top: calc(var(--ag-grid-size) * 2);
+    margin-bottom: 0;
+}
+
+.ag-charts-advanced-settings-top-level-group-item {
+    margin-top: calc(var(--ag-grid-size) * 2);
+    margin-bottom: 0;
 }
 
 .ag-charts-settings-group-container {
@@ -432,7 +501,8 @@ when that's fixed, nest them in the above block */
     padding-right: 0;
 }
 
-.ag-charts-format-top-level-group-toolbar {
+.ag-charts-format-top-level-group-toolbar,
+.ag-charts-advanced-settings-top-level-group-toolbar {
     margin-top: var(--ag-grid-size);
     padding-left: calc(var(--ag-grid-size) * 2);
 }
@@ -443,15 +513,11 @@ when that's fixed, nest them in the above block */
     margin-top: calc(var(--ag-grid-size) * 2);
 }
 
-.ag-charts-format-top-level-group-container {
+.ag-charts-format-top-level-group-container,
+.ag-charts-advanced-settings-top-level-group-container {
     padding: 0;
     padding-left: 0;
     padding-right: var(--ag-widget-container-horizontal-padding);
-}
-
-.ag-charts-format-top-level-group-item {
-    margin-top: calc(var(--ag-grid-size) * 2);
-    margin-bottom: 0;
 }
 
 .ag-chart-mini-thumbnail {
@@ -467,7 +533,7 @@ when that's fixed, nest them in the above block */
     margin-bottom: calc(var(--ag-grid-size) * 2);
 }
 
-.ag-charts-format-sub-level-group-title-bar {
+.ag-charts-format-sub-level-group-title-bar, .ag-charts-advanced-settings-top-level-group-title-bar {
     padding-top: 0;
     padding-bottom: 0;
     background: none;
