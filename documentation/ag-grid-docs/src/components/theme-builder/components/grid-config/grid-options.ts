@@ -16,7 +16,7 @@ export const gridConfigBooleanFields = [
     'floatingFilters',
     'printLayout',
     'legacyColumnMenu',
-    // 'showIntegratedChartPopup',
+    'showIntegratedChartPopup',
     'statusBar',
     'pagination',
     'loadingOverlay',
@@ -42,7 +42,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
     const options: GridOptions = {
         defaultColDef,
         sideBar,
-        // enableCharts: true,
+        enableCharts: true,
         columnHoverHighlight: config.columnHover,
         enableRangeSelection: true,
         rowData: defaultRowData(),

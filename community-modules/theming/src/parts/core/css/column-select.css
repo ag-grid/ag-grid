@@ -63,7 +63,7 @@
 
 .ag-column-select-add-group-indent {
     /* indent items without icons to the same level as siblings with icons */
-    margin-left: calc(var(--ag-icon-size) + var(--ag-widget-horizontal-spacing));
+    margin-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 1.5);
 }
 
 .ag-column-select-column-group,
