@@ -33,6 +33,7 @@
   //
   // TABS
   //
+
   .ag-tab {
     padding: var(--ag-grid-size);
     border-left: var(--ag-borders) transparent;
@@ -67,10 +68,17 @@
   }
 
   .ag-menu {
+    color: color-mix(in srgb, transparent, var(--ag-foreground-color) 95%);
+
     &.ag-tabs {
       // min width only on top-level popup menu to stop it switching as we change tab
       min-width: 290px;
     }
+  }
+
+  .ag-panel-content-wrapper .ag-column-select {
+    background-color: var(--ag-control-panel-background-color);
+    color: color-mix(in srgb, transparent, var(--ag-foreground-color) 95%);
   }
 
   .ag-menu-option .ag-icon {
@@ -99,6 +107,7 @@
     display: flex;
     background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%);
   }
+
   //
   // VERTICAL TABS
   //
@@ -171,9 +180,15 @@
     }
   }
 
+  .ag-chart-advanced-settings-section {
+    padding-top: calc(var(--ag-grid-size) * 2);
+    padding-bottom: calc(var(--ag-grid-size) * 2);
+  }
+
   .ag-charts-settings-group-title-bar,
   .ag-charts-data-group-title-bar,
   .ag-charts-format-top-level-group-title-bar,
+  .ag-charts-advanced-settings-top-level-group-title-bar,
   .ag-charts-settings-group-container {
     border-top: none;
     padding: 0 calc(var(--ag-grid-size) * 1.5);
@@ -182,6 +197,13 @@
 
   .ag-charts-format-top-level-group-item {
     padding-bottom: 12px;
+    margin-top: calc(var(--ag-grid-size) * 2);
+    margin-bottom: 0;
+  }
+
+  .ag-charts-advanced-settings-top-level-group-item {
+    margin-top: calc(var(--ag-grid-size) * 2);
+    margin-bottom: 0;
   }
 
   .ag-charts-settings-group-container {
@@ -201,7 +223,8 @@
     );
   }
 
-  .ag-charts-format-top-level-group-toolbar {
+  .ag-charts-format-top-level-group-toolbar,
+  .ag-charts-advanced-settings-top-level-group-toolbar {
     margin-top: var(--ag-grid-size);
     @include ag.theme-rtl(
       (
@@ -216,19 +239,15 @@
     margin-top: calc(var(--ag-grid-size) * 2);
   }
 
-  .ag-charts-format-top-level-group-container {
+  .ag-charts-format-top-level-group-container,
+  .ag-charts-advanced-settings-top-level-group-container {
     padding: 0;
     @include ag.theme-rtl(
       (
-        padding-left: 0,
+        padding-left: var(--ag-grid-size),
         padding-right: var(--ag-widget-container-horizontal-padding),
       )
     );
-  }
-
-  .ag-charts-format-top-level-group-item {
-    margin-top: calc(var(--ag-grid-size) * 2);
-    margin-bottom: 0;
   }
 
   .ag-chart-mini-thumbnail {
@@ -308,7 +327,6 @@
     cursor: pointer;
 
     &:hover {
-      // TODO different variable
       background-color: var(--ag-row-hover-color);
     }
 
@@ -397,7 +415,7 @@
 
   .ag-chart-menu-close {
     // use an opaque hover effect because we don't know what colour we're,
-    // overlaying on top of, the user might have set a custom background color
+    // overlaying on top of, the user might have set a custom
     --ag-quartz-icon-hover-color: color-mix(
       in srgb,
       var(--ag-background-color),
@@ -459,6 +477,7 @@
       )
     );
   }
+
   .ag-multi-filter-group-title-bar {
     padding: calc(var(--ag-grid-size) * 1.5) var(--ag-grid-size);
   }
@@ -563,6 +582,14 @@
         )
       );
     }
+  }
+
+  .ag-column-select-add-group-indent {
+    @include ag.theme-rtl(
+      (
+        margin-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 1.5),
+      )
+    );
   }
 
   .ag-text-field-input[disabled],

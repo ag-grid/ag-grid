@@ -8,6 +8,8 @@
   .ag-icon {
     @include ag.icon();
 
+    width: var(--ag-icon-size);
+    height: var(--ag-icon-size);
     position: relative;
 
     // ::before used for icon font glyph, content is overridden by
@@ -20,14 +22,9 @@
     &::after {
       background: transparent var(--ag-icon-image, none) center/contain no-repeat;
       display: var(--ag-icon-image-display);
+      opacity: var(--ag-icon-image-opacity, 0.9);
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: var(--ag-icon-size);
-      height: var(--ag-icon-size);
-      opacity: 0.9;
+      inset: 0;
       content: '';
     }
   }
@@ -40,19 +37,23 @@
     }
     .ag-icon-#{$icon-name}::before {
       content: ag.icon-content($icon-name);
+      display: var(--ag-icon-font-display-#{$icon-name}, var(--ag-icon-font-display));
     }
     .ag-icon-#{$icon-name}::after {
       background-image: var(--ag-icon-image-#{$icon-name}, var(--ag-icon-image));
       display: var(--ag-icon-image-display-#{$icon-name}, var(--ag-icon-image-display));
+      opacity: var(--ag-icon-image-opacity-#{$icon-name}, var(--ag-icon-image-opacity, 0.9));
     }
   }
 
   .ag-icon-row-drag::before {
     content: var(--ag-icon-font-code-grip);
   }
+
   .ag-left-arrow::before {
     content: var(--ag-icon-font-code-left);
   }
+
   .ag-right-arrow::before {
     content: var(--ag-icon-font-code-right);
   }

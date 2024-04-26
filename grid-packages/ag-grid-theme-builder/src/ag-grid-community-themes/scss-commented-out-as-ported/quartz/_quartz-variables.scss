@@ -79,8 +79,8 @@
   --ag-input-border-color: var(--ag-border-color);
   --ag-input-border-color-invalid: var(--ag-invalid-color);
   --ag-disabled-foreground-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 50%);
-  --ag-background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 7%);
-  --ag-border-color: color-mix(
+  --ag-chip-background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 7%);
+  --ag-chip-border-color: color-mix(
     in srgb,
     var(--ag-header-background-color),
     var(--ag-foreground-color) 13%
@@ -187,6 +187,8 @@
   --ag-advanced-filter-value-pill-color: #374c86;
 
   --ag-popup-shadow: 0 0px 20px rgba(0, 0, 0, 0.3);
+
+  --ag-row-loading-skeleton-effect-colour: #{color.change(#cacbcc, $alpha: 0.4)};
 
   color-scheme: dark;
 }

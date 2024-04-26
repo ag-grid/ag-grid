@@ -187,7 +187,8 @@
   .ag-body-horizontal-scroll-viewport,
   .ag-body-vertical-scroll-viewport,
   .ag-virtual-list-viewport,
-  .ag-sticky-top-viewport {
+  .ag-sticky-top-viewport,
+  .ag-sticky-bottom-viewport {
     position: relative;
     height: 100%;
     min-width: 0px;
@@ -249,7 +250,8 @@
   .ag-full-width-container,
   .ag-floating-bottom-full-width-container,
   .ag-virtual-list-container,
-  .ag-sticky-top-container {
+  .ag-sticky-top-container,
+  .ag-sticky-bottom-container {
     position: relative;
   }
 
@@ -257,7 +259,8 @@
   .ag-header-container,
   .ag-floating-top-container,
   .ag-floating-bottom-container,
-  .ag-sticky-top-container {
+  .ag-sticky-top-container,
+  .ag-sticky-bottom-container {
     height: 100%;
     white-space: nowrap;
   }
@@ -281,7 +284,8 @@
   .ag-full-width-container,
   .ag-floating-top-full-width-container,
   .ag-floating-bottom-full-width-container,
-  .ag-sticky-top-full-width-container {
+  .ag-sticky-top-full-width-container,
+  .ag-sticky-bottom-full-width-container {
     position: absolute;
     top: 0px;
     @include ag.unthemed-rtl(
@@ -782,7 +786,6 @@
 
   .ag-cell-wrap-text {
     white-space: normal;
-    word-break: break-all;
   }
 
   .ag-cell-wrapper {
@@ -842,7 +845,7 @@
 
   .ag-set-filter-item-checkbox {
     display: flex;
-    overflow: hidden;
+    width: 100%;
     height: 100%;
   }
 
@@ -1047,7 +1050,8 @@
   //  * Sticky Top
   //  ****************************
   // */
-  .ag-sticky-top {
+  .ag-sticky-top,
+  .ag-sticky-bottom {
     position: absolute;
     display: flex;
     width: 100%;
@@ -1060,7 +1064,8 @@
     overflow: hidden;
   }
 
-  .ag-sticky-top-full-width-container {
+  .ag-sticky-top-full-width-container,
+  .ag-sticky-bottom-full-width-container {
     overflow: hidden;
     width: 100%;
     height: 100%;
@@ -1592,8 +1597,7 @@
   }
 
   .ag-group-title {
-    display: block;
-    flex: 1 1 auto;
+    display: inline;
     min-width: 0;
     overflow: hidden;
     white-space: nowrap;
@@ -1847,6 +1851,15 @@
     }
   }
 
+  .ag-pill-select {
+    display: flex;
+    flex-direction: column;
+
+    .ag-column-drop {
+      flex: unset;
+    }
+  }
+
   .ag-ltr {
     direction: ltr;
     .ag-body,
@@ -1854,6 +1867,7 @@
     .ag-floating-bottom,
     .ag-header,
     .ag-sticky-top,
+    .ag-sticky-bottom,
     .ag-body-viewport,
     .ag-body-horizontal-scroll {
       flex-direction: row;
@@ -1867,6 +1881,7 @@
     .ag-floating-bottom,
     .ag-header,
     .ag-sticky-top,
+    .ag-sticky-bottom,
     .ag-body-viewport,
     .ag-body-horizontal-scroll {
       flex-direction: row-reverse;

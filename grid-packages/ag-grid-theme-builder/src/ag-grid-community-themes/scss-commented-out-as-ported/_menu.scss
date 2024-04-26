@@ -84,6 +84,26 @@
     display: flex;
   }
 
+  .ag-tabs-header-wrapper {
+    display: flex;
+
+    .ag-tabs-header {
+      flex: 1;
+    }
+  }
+
+  .ag-tabs-close-button-wrapper {
+    border: 0;
+    border-right: var(--ag-borders) var(--ag-border-color);
+    padding: var(--ag-grid-size);
+  }
+
+  .ag-tabs-close-button {
+    border: 0;
+    background-color: unset;
+    padding: 0;
+  }
+
   .ag-tab {
     border-bottom: var(--ag-selected-tab-underline-width) solid transparent;
     transition: border-bottom var(--ag-selected-tab-underline-transition-speed);

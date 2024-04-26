@@ -36,7 +36,7 @@
     background-color: var(--ag-header-background-color);
     color: var(--ag-secondary-foreground-color);
     height: var(--ag-header-height);
-    // border-bottom: var(--ag-borders) var(--ag-border-color);
+    border-bottom: var(--ag-borders) var(--ag-border-color);
 
     @include ag.unthemed-rtl(
       (
@@ -45,9 +45,13 @@
     );
   }
 
-  // .ag-column-drop-horizontal-half-width:not(:last-child) {
-  //     @include ag.unthemed-rtl((border-right: var(--ag-borders) var(--ag-border-color)));
-  // }
+  .ag-column-drop-horizontal-half-width:not(:last-child) {
+    @include ag.unthemed-rtl(
+      (
+        border-right: var(--ag-borders) var(--ag-border-color),
+      )
+    );
+  }
 
   .ag-column-drop-horizontal-cell-separator {
     margin: 0 var(--ag-grid-size);
@@ -131,7 +135,6 @@
     display: flex;
   }
 
-  // TODO remove this and replace with flex gap in column drop, already done for header
   .ag-sort-indicator-icon {
     @include ag.unthemed-rtl(
       (

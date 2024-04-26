@@ -7,7 +7,7 @@
 
   .ag-root-wrapper {
     border-radius: var(--ag-wrapper-border-radius);
-    // border: var(--ag-borders) var(--ag-border-color);
+    border: var(--ag-borders) var(--ag-border-color);
   }
 
   // support 100 levels here because row group indentation is used for tree data which can be quite deep
@@ -84,9 +84,15 @@
   }
 
   .ag-row {
+    height: var(--ag-row-height);
     background-color: var(--ag-background-color);
     color: var(--ag-data-color);
-    // border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
+    border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
+  }
+
+  .ag-sticky-bottom .ag-row {
+    border-bottom: none;
+    border-top: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
   }
 
   .ag-row-highlight-above::after,
@@ -194,19 +200,19 @@
   .ag-cell,
   .ag-full-width-row .ag-cell-wrapper.ag-row-group {
     // assign internal variables to simplify the `line-height` value
-    // --ag-internal-calculated-line-height: var(
-    //   --ag-line-height,
-    //   calc(var(--ag-row-height) - var(--ag-row-border-width))
-    // );
-    // --ag-internal-padded-row-height: calc(var(--ag-row-height) - var(--ag-row-border-width));
+    --ag-internal-calculated-line-height: var(
+      --ag-line-height,
+      calc(var(--ag-row-height) - var(--ag-row-border-width))
+    );
+    --ag-internal-padded-row-height: calc(var(--ag-row-height) - var(--ag-row-border-width));
     // draw a transparent border so that the cell size doesn't change when we add a range border
-    // border: 1px solid transparent;
+    border: 1px solid transparent;
     // adjust for transparent border
     // Needed to capitalize min, because it clashes with old versions of Sass
-    // line-height: Min(
-    //   var(--ag-internal-calculated-line-height),
-    //   var(--ag-internal-padded-row-height)
-    // );
+    line-height: Min(
+      var(--ag-internal-calculated-line-height),
+      var(--ag-internal-padded-row-height)
+    );
     padding-left: calc(var(--ag-cell-horizontal-padding) - 1px);
     padding-right: calc(var(--ag-cell-horizontal-padding) - 1px);
     -webkit-font-smoothing: subpixel-antialiased;
@@ -270,9 +276,36 @@
   .ag-overlay-loading-center {
     @include ag.card();
   }
+
   // in auto-height mode with no rows, add padding to prevent grid being too small
   .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
     padding-top: 30px;
+  }
+
+  .ag-skeleton-container {
+    width: 100%;
+    height: 100%;
+    align-content: center;
+  }
+
+  .ag-skeleton-effect {
+    background-color: var(--ag-row-loading-skeleton-effect-colour);
+    width: 100%;
+    height: 1em;
+    border-radius: 0.25rem;
+    animation: ag-skeleton-loading 1.5s ease-in-out 0.5s infinite;
+  }
+
+  @keyframes ag-skeleton-loading {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+    100% {
+      opacity: 1;
+    }
   }
 
   .ag-loading {

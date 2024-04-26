@@ -72,6 +72,8 @@
     --ag-value-change-delta-up-color: #43a047;
     --ag-value-change-delta-down-color: #e53935;
 
+    --ag-row-loading-skeleton-effect-colour: rgba(66, 66, 66, 0.2);
+
     --ag-chip-background-color: transparent;
     --ag-chip-border-color: var(--ag-chip-background-color);
 
@@ -119,6 +121,7 @@
     --ag-invalid-color: red;
     --ag-input-disabled-border-color: var(--ag-input-border-color);
     --ag-input-disabled-background-color: transparent;
+
     --ag-checkbox-background-color: transparent;
     --ag-checkbox-border-radius: var(--ag-border-radius);
     --ag-checkbox-checked-color: var(--ag-foreground-color);
@@ -134,6 +137,7 @@
     --ag-toggle-button-border-width: 1px;
     --ag-toggle-button-height: var(--ag-icon-size);
     --ag-toggle-button-width: calc(var(--ag-toggle-button-height) * 2);
+
     --ag-input-focus-box-shadow: none;
     --ag-input-focus-border-color: none;
 

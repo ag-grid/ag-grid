@@ -1,6 +1,7 @@
 @mixin output {
   .ag-root-wrapper,
   .ag-sticky-top,
+  .ag-sticky-bottom,
   .ag-dnd-ghost {
     background-color: var(--ag-background-color);
   }

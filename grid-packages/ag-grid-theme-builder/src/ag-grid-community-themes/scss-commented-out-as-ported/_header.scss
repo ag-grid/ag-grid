@@ -4,7 +4,7 @@
   .ag-header,
   .ag-advanced-filter-header {
     background-color: var(--ag-header-background-color);
-    // border-bottom: var(--ag-borders-critical) var(--ag-border-color);
+    border-bottom: var(--ag-borders-critical) var(--ag-border-color);
   }
 
   .ag-header-row {
@@ -78,12 +78,12 @@
     );
   }
 
-  // .ag-header-row:not(:first-child) {
-  //     .ag-header-cell:not(.ag-header-span-height.ag-header-span-total),
-  //     .ag-header-group-cell.ag-header-group-cell-with-group {
-  //         border-top: var(--ag-borders-critical) var(--ag-border-color);
-  //     }
-  // }
+  .ag-header-row:not(:first-child) {
+    .ag-header-cell:not(.ag-header-span-height.ag-header-span-total),
+    .ag-header-group-cell.ag-header-group-cell-with-group {
+      border-top: var(--ag-borders-critical) var(--ag-border-color);
+    }
+  }
 
   // This logic with :not(.ag-column-resizing) is to prevent a mouseover effect
   // being applied to the adjacent cell as the user resizes a cell, because
@@ -98,14 +98,6 @@
     }
   }
 
-  .ag-header-cell,
-  .ag-header-group-cell {
-    &.ag-header-cell-moving {
-      // NOTE: when header cell hover is reinstated, the moving color should always be the hover colour
-      background-color: var(--ag-header-cell-moving-background-color);
-    }
-  }
-
   .ag-header-cell::before,
   .ag-header-group-cell:not(.ag-header-span-height.ag-header-group-cell-no-group)::before {
     content: '';
@@ -113,7 +105,6 @@
     z-index: 1;
     display: var(--ag-header-column-separator-display);
     width: var(--ag-header-column-separator-width);
-    // TODO In old themes this was a %, now it should be calc(--var(--ag-header-height) * 0.5)
     height: var(--ag-header-column-separator-height);
     top: calc(50% - var(--ag-header-column-separator-height) * 0.5);
     background-color: var(--ag-header-column-separator-color);
@@ -136,7 +127,6 @@
     z-index: 1;
     display: var(--ag-header-column-resize-handle-display);
     width: var(--ag-header-column-resize-handle-width);
-    // TODO In old themes this was a %, now it should be calc(--var(--ag-header-height) * 0.5)
     height: var(--ag-header-column-resize-handle-height);
     top: calc(50% - var(--ag-header-column-resize-handle-height) * 0.5);
     background-color: var(--ag-header-column-resize-handle-color);

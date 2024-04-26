@@ -2,8 +2,8 @@
 
 @mixin output {
   .ag-paging-panel {
-    // border-top: 1px solid;
-    // border-top-color: var(--ag-border-color);
+    border-top: 1px solid;
+    border-top-color: var(--ag-border-color);
     color: var(--ag-secondary-foreground-color);
     height: var(--ag-header-height);
 
@@ -33,7 +33,7 @@
   }
 
   .ag-status-bar {
-    // border-top: var(--ag-borders) var(--ag-border-color);
+    border-top: var(--ag-borders) var(--ag-border-color);
     color: var(--ag-disabled-foreground-color);
     padding-right: calc(var(--ag-grid-size) * 4);
     padding-left: calc(var(--ag-grid-size) * 4);
