@@ -1,4 +1,3 @@
-/* PORTED
 @use 'ag';
 
 @mixin output {
@@ -132,12 +131,12 @@
       overflow: hidden;
     }
   }
-  */
+
 
 ////////////////////////////////////////
 // Selection checkbox
 ////////////////////////////////////////
-/* PORTED
+
   .ag-row-drag,
   .ag-selection-checkbox,
   .ag-group-expanded,
@@ -660,6 +659,3 @@
     padding-right: var(--ag-cell-horizontal-padding);
   }
 }
-
-
-  */

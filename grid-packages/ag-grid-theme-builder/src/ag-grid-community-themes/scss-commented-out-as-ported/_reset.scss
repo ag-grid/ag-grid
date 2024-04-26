@@ -1,7 +1,6 @@
 // IMPORTANT! All resets must be scoped to elements with an [class^='ag-'] attribute to
 // avoid messing with custom component styles
 
-/* PORTED
 @mixin output {
   [class^='ag-'],
   [class^='ag-']:focus,
@@ -15,4 +14,3 @@
     display: none;
   }
 }
-*/
