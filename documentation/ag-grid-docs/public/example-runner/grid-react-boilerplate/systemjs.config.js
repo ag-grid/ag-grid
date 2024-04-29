@@ -1,20 +1,23 @@
 (function (global) {
     System.config({
-        transpiler: 'plugin-babel',
-        defaultExtension: 'js',
-        paths:
-            {
-                // paths serve as alias
-                "npm:": "https://cdn.jsdelivr.net/npm/",
-                ...systemJsPaths
-            },
+        transpiler: 'ts',
+        typescriptOptions: {
+            module: 'system',
+            moduleResolution: 'node',
+            target: 'es2015',
+            noImplicitAny: false,
+            sourceMap: true,
+            jsx: 'react',
+            lib: ['es2015', 'dom'],
+        },
+        paths: {
+            // paths serve as alias
+            'npm:': 'https://cdn.jsdelivr.net/npm/',
+            ...systemJsPaths
+        },
         map: {
             css: (boilerplatePath.length === 0 ? `./` : `${boilerplatePath}/`) + "css.js",
             // 'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
-
-            // babel transpiler
-            'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
-            'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
 
             // react
             react: 'npm:react@18.2.0',
@@ -24,35 +27,27 @@
             'react-redux': 'npm:react-redux@8.0.5',
             'prop-types': 'npm:prop-types@15.8.1',
 
-            app: appLocation + 'app',
+            ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
+            typescript: "npm:typescript@4.3.5/lib/typescript.min.js",
+
+            app: appLocation,
             // systemJsMap comes from index.html
             ...systemJsMap
         },
         packages: {
+            css: {},
             react: {
-                main: './umd/react.production.min.js'
+                main: './umd/react.production.min.js',
             },
             'react-dom': {
-                main: './umd/react-dom.production.min.js'
+                main: './umd/react-dom.production.min.js',
             },
             'react-dom/server': {
-                main: '../umd/react-dom-server.browser.production.min.js'
+                main: '../umd/react-dom-server.browser.production.min.js',
             },
-            redux: {
-                main: './dist/redux.min.js',
-                defaultExtension: 'js'
-            },
-            'react-redux': {
-                main: './dist/react-redux.min.js',
-                defaultExtension: 'js'
-            },
-            'prop-types': {
-                main: './prop-types.min.js',
-                defaultExtension: 'js',
-            },
-
             app: {
-                defaultExtension: 'jsx'
+                main: './index.jsx',
+                defaultExtension: 'jsx',
             },
             '@ag-grid-community/react': {
                 main: './dist/package/index.cjs.js',
@@ -161,13 +156,11 @@
             },
         },
         meta: {
-            '*.jsx': {
-                babelOptions: {
-                    react: true
-                }
+            typescript: {
+                exports: 'ts',
             },
-            '*.css': {loader: 'css'}
-        }
+            '*.css': {loader: 'css'},
+        },
     });
 })(this);
 
