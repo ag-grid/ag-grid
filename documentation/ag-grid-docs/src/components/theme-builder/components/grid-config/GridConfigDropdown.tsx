@@ -6,7 +6,7 @@ import { Checkbox } from '../general/Checkbox';
 import { Tooltip } from '../general/Tooltip';
 import { UIPopupButton } from '../general/UIPopupButton';
 import { useGridConfigAtom } from './grid-config-atom';
-import { allConfigFields, incompatibleGridConfigProperties, productionConfigFields, type GridConfigField } from './grid-options';
+import { allConfigFields, incompatibleGridConfigProperties, productionConfigFields } from './grid-options';
 
 export const GridConfigDropdownButton = () => {
     return (
@@ -23,30 +23,26 @@ const GridConfigDropdown = () => {
 
     const fields = document.location.search.includes('allConfigFields') ? allConfigFields : productionConfigFields;
 
-
     return (
         <Container>
             {fields.toSorted().map((property) => {
                 const incompatibleProperty = incompatibleGridConfigProperties[property];
-                const warning = incompatibleProperty && gridConfig[property] && gridConfig[incompatibleProperty] ? `${titleCase(property)} does not work with ${titleCase(incompatibleProperty)}. ${titleCase(property)} has been disabled.` : null;
+                const warning =
+                    incompatibleProperty && gridConfig[property] && gridConfig[incompatibleProperty]
+                        ? `${titleCase(property)} does not work with ${titleCase(incompatibleProperty)}. ${titleCase(property)} has been disabled.`
+                        : null;
                 const item = (
                     <Checkbox
                         key={property}
                         checked={!!gridConfig[property]}
                         onChange={() => setGridConfig({ ...gridConfig, [property]: !gridConfig[property] })}
                     >
-                        <Label className={warning ? 'has-warning' : undefined}>
-                            {titleCase(String(property))}
-                        </Label>
+                        <Label className={warning ? 'has-warning' : undefined}>{titleCase(String(property))}</Label>
                         {warning && <WarningAltFilled color="var(--color-warning-500)" />}
                     </Checkbox>
                 );
                 return warning ? (
-                    <Tooltip
-                        key={property}
-                        title={warning}
-                        suppressPortal
-                    >
+                    <Tooltip key={property} title={warning} suppressPortal>
                         {item}
                     </Tooltip>
                 ) : (
