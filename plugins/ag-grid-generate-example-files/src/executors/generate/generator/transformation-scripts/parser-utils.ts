@@ -22,7 +22,7 @@ export function readAsJsFile(
         tsFile = tsFile.replace(/export /g, '');
     }
 
-    const jsFile = transform(tsFile, { transforms: ['typescript'] }).code; ///disableESTransforms: true
+    const jsFile = transform(tsFile, { transforms: ['typescript'], disableESTransforms: true }).code;
     return jsFile;
 }
 
