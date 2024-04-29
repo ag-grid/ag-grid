@@ -269,15 +269,10 @@ export type PickVariables<P extends Part, V extends object> = {
 export const installDocsUrl =
     'https://www.ag-grid.com/javascript-data-grid/global-style-customisation-theme-builder-integration/';
 
-// TODO remove this when public theme builder API released
-export const gridVersionTieWarning = `we are working to remove this restriction, but themes exported from the Theme Builder are for the current grid version (${VERSION}) and will not be automatically updated with new features and bug fixes in later versions. If you upgrade your application's grid version and experience issues, return to the Theme Builder to download an updated version of your theme.`;
-
 const fileHeader = (parameters: Record<string, unknown>) => `/*
  * This file is a theme downloaded from the AG Grid Theme Builder for AG Grid ${VERSION}.
  *
  * See installation docs at ${installDocsUrl}
- * 
- * Theme generated based on these settings: ${JSON.stringify(Object.fromEntries(Object.entries(parameters).filter(([, value]) => value != null)), null, 2).replaceAll('\n', '\n * ')}
  */
 
 `;

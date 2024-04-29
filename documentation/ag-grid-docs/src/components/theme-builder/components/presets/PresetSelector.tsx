@@ -89,7 +89,7 @@ const SelectButtonWrapper = styled('div')`
     // Higher z index than blur container z index
     &:first-of-type,
     &:last-of-type {
-        z-index: 2;
+        z-index: 3;
     }
 `;
 
@@ -99,10 +99,10 @@ const Horizontal = styled('div')`
 `;
 
 const Scroller = styled('div')`
-    --scroller-height: 160px;
+    --scroller-height: 192px;
 
     width: 100%;
-    min-height: 160px;
+    min-height: var(--scroller-height);
     overflow-x: auto;
     padding-bottom: 6px;
     z-index: 0;
@@ -115,9 +115,9 @@ const Scroller = styled('div')`
         position: absolute;
         top: 0;
         bottom: 0;
-        height: calc(var(--scroller-height) - 20px);
+        height: calc(var(--scroller-height) - 14px);
         pointer-events: none;
-        z-index: 1;
+        z-index: 2;
     }
 
     &:before {

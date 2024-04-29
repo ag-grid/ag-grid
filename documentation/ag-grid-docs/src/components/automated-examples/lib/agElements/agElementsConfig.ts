@@ -1,8 +1,9 @@
 import { type GetElement } from '.';
 import {
+    AG_CHART_MENU_TOOLBAR_BUTTON_SELECTOR,
     AG_CHART_SERIES_GROUP_TITLE_SELECTOR,
-    AG_CHART_TOOL_PANEL_BUTTON_SELECTOR,
     AG_CHART_TOOL_PANEL_TAB_SELECTOR,
+    AG_CHECKBOX_LABEL_SELECTOR,
     AG_COLUMN_DROP_SELECTOR,
     AG_GROUP_CONTRACTED,
     AG_GROUP_EXPANDED,
@@ -13,10 +14,11 @@ import {
     AG_HEADER_CELL_TEXT_SELECTOR,
     AG_LABEL_SELECTOR,
     AG_MENU_OPTION_TEXT_SELECTOR,
+    AG_PICKER_FIELD_DISPLAY_SELECTOR,
     AG_PICKER_FIELD_SELECTOR,
     AG_PICKER_FIELD_WRAPPER_SELECTOR,
     AG_POPUP_SELECTOR,
-    AG_RANGE_FIELD_INOUT_SELECTOR,
+    AG_RANGE_FIELD_INPUT_SELECTOR,
     AG_SELECT_LIST_ITEM_SELECTOR,
     AG_SLIDER_SELECTOR,
 } from '../constants';
@@ -47,7 +49,7 @@ export type AgElementsConfig = AgElementBySelectorConfig | AgElementByInnerTextC
 export interface AgElementsConfigItem {
     popup: AgElementBySelectorConfig;
     columnDropArea: AgElementBySelectorConfig;
-    chartToolPanelButton: AgElementBySelectorConfig;
+    chartMenuToolbarButton: AgElementBySelectorConfig;
 
     contextMenuItem: AgElementByInnerTextConfig;
     chartToolPanelTab: AgElementByInnerTextConfig;
@@ -70,6 +72,12 @@ export interface AgElementsConfigItem {
     chartToolPanelPickerField: AgElementByFindConfig<{
         groupTitle: string;
         selectLabel: string;
+        usePickerDisplayFieldSelector?: boolean;
+    }>;
+    chartToolPanelCheckbox: AgElementByFindConfig<{
+        groupTitle: string;
+        checkboxLabel: string;
+        index?: number;
     }>;
     chartToolPanelSliderInput: AgElementByFindConfig<{
         groupTitle: string;
@@ -89,8 +97,8 @@ export const agElementsConfig: AgElementsConfigItem = {
     columnDropArea: {
         selector: AG_COLUMN_DROP_SELECTOR,
     },
-    chartToolPanelButton: {
-        selector: AG_CHART_TOOL_PANEL_BUTTON_SELECTOR,
+    chartMenuToolbarButton: {
+        selector: AG_CHART_MENU_TOOLBAR_BUTTON_SELECTOR,
     },
 
     // Find by inner text
@@ -198,7 +206,7 @@ export const agElementsConfig: AgElementsConfigItem = {
     },
     chartToolPanelPickerField: {
         find: ({ getElement, params }) => {
-            const { groupTitle, selectLabel } = params;
+            const { groupTitle, selectLabel, usePickerDisplayFieldSelector } = params;
             const groupTitleEl = getElement('chartToolPanelGroupTitle', {
                 text: groupTitle,
             })?.get();
@@ -210,7 +218,7 @@ export const agElementsConfig: AgElementsConfigItem = {
 
             const labelEl = findElementWithInnerText({
                 containerEl: groupEl,
-                selector: AG_LABEL_SELECTOR,
+                selector: usePickerDisplayFieldSelector ? AG_PICKER_FIELD_DISPLAY_SELECTOR : AG_LABEL_SELECTOR,
                 text: selectLabel,
             });
             if (!labelEl) {
@@ -226,6 +234,34 @@ export const agElementsConfig: AgElementsConfigItem = {
             const picker = pickerFieldContainer.querySelector(AG_PICKER_FIELD_WRAPPER_SELECTOR) as HTMLElement;
 
             return picker || undefined;
+        },
+    },
+    chartToolPanelCheckbox: {
+        find: ({ getElement, params }) => {
+            const { groupTitle, checkboxLabel, index } = params;
+            const groupTitleEl = getElement('chartToolPanelGroupTitle', {
+                text: groupTitle,
+            })?.get();
+            const groupEl = groupTitleEl?.closest(AG_GROUP_SELECTOR) as HTMLElement;
+            if (!groupEl) {
+                console.error(`No group title found: ${groupTitle}`);
+                return;
+            }
+
+            const checkboxLabelEl = findElementWithInnerText({
+                containerEl: groupEl,
+                selector: AG_CHECKBOX_LABEL_SELECTOR,
+                text: checkboxLabel,
+                index,
+            });
+            if (!checkboxLabelEl) {
+                console.error(`No label title found: ${checkboxLabel}`);
+                return;
+            }
+            const { id } = checkboxLabelEl;
+            const checkbox = document.querySelector(`[aria-labelledby=${id}]`) as HTMLElement;
+
+            return checkbox || undefined;
         },
     },
     chartToolPanelSliderInput: {
@@ -256,7 +292,7 @@ export const agElementsConfig: AgElementsConfigItem = {
                 return;
             }
 
-            return (sliderContainer.querySelector(AG_RANGE_FIELD_INOUT_SELECTOR) as HTMLElement) || undefined;
+            return (sliderContainer.querySelector(AG_RANGE_FIELD_INPUT_SELECTOR) as HTMLElement) || undefined;
         },
     },
 };

@@ -2,8 +2,46 @@
 title: "Adding Theme Builder exports to your application"
 ---
 
-Key points:
+The [Theme Builder](/theme-builder) exports a CSS file that includes all styles
+required for the grid.
 
-1. The Theme Builder exports a CSS file that includes all styles required for the grid. Include this file in your page and do not include and other ag-grid CSS files or themes in the same page.
-2. Follow the new application setup guide - https://www.ag-grid.com/react-data-grid/getting-started/ - as usual but include your Theme Builder download instead of `ag-grid.css` or `ag-theme-themename.css`.
-3. This warning has been removed form the theme builder and should be put on this page instead in a way that's clear but doesn't overstate how much of an issue this will be. Note: we are working to remove this restriction, but themes exported from the Theme Builder are for the current grid version and will not be automatically updated with new features and bug fixes in later versions. If you upgrade your application's grid version and experience issues, return to the Theme Builder to download an updated version of your theme
+To integrate a Theme Builder export into an application, :
+
+1. Prepare an AG Grid application that _does not_ use the built-in CSS files that come with the distribution:
+  - If you have not already created an application, follow the [Getting Started](./getting-started/) guide for your framework and skip the step where you are asked to link `ag-grid.css` and
+`ag-theme-{theme-name}.css`.
+  - For an existing application, remove the existing links to `ag-grid.css` and `ag-theme-{theme-name}.css`.
+
+2. Download the `ag-grid-theme-builder.css` file from the Theme Builder and save it to your application.
+
+3. Arrange for the new CSS file to be included in the application page. How to do this depends on how your application is set up.
+
+If your application is configured to allow importing of CSS files from JavaScript you can import the CSS file from your application's entry point:
+
+```js
+import './path/to/ag-grid-theme-builder.css';
+```
+
+Otherwise, arrange for the CSS file to be served by your application and link it from your HTML file:
+
+```html
+<link rel="stylesheet" href="/path/to/ag-grid-theme-builder.css">
+```
+
+5. Use the `ag-theme-custom` theme for your application.
+
+The downloaded CSS file uses the theme name `ag-theme-custom`. Apply this CSS class name to the container element of the grid:
+
+```html
+<div id="myGrid" class="ag-theme-custom" style="height: 100%"></div>
+```
+
+If you would prefer a different theme name you can edit the exported CSS file.
+
+### Updating to new Grid releases
+
+Themes exported from the Theme Builder are for the current grid at the time of download, and will not be automatically updated with new features and bug fixes in later versions. We are working to remove this restriction in an upcoming release.
+
+If you upgrade your application's grid version and experience issues, return to the Theme Builder to download an updated version of your theme.
+
+For this reason, if you want to make changes to the downloaded theme, we recommend that you avoid editing the downloaded CSS. Instead add your changes to a separate CSS file and include it in your application after the Theme Builder export. You will then be able to update the THeme Builder export without losing your changes.

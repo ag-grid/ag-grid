@@ -160,3 +160,6 @@
 .ag-icon-grip::before {
     mask-image: url(./material-svg-icons/grip.svg);
 }
+.ag-icon-settings::before {
+    mask-image: url(./material-svg-icons/settings.svg);
+}
