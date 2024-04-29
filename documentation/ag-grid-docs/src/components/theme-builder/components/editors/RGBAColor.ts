@@ -42,6 +42,22 @@ export class RGBAColor {
 
     static parseCss(css: string): RGBAColor | null {
         css = css.trim().toLowerCase();
+        if (/^#[0-9a-f]{6}([0-9a-f]{2})?$/.test(css)) {
+            const hex = css.slice(1);
+            const r = parseInt(hex.slice(0, 2), 16) / 255;
+            const g = parseInt(hex.slice(2, 4), 16) / 255;
+            const b = parseInt(hex.slice(4, 6), 16) / 255;
+            const a = hex.length === 8 ? parseInt(hex.slice(6, 8), 16) / 255 : 1;
+            return new RGBAColor(r, g, b, a);
+        }
+        if (/^#[0-9a-f]{3}([0-9a-f]{4})?$/.test(css)) {
+            const hex = css.slice(1);
+            const r = parseInt(hex.slice(0, 1), 16) / 255;
+            const g = parseInt(hex.slice(1, 2), 16) / 255;
+            const b = parseInt(hex.slice(2, 3), 16) / 255;
+            const a = hex.length === 4 ? parseInt(hex.slice(3, 4), 16) / 255 : 1;
+            return new RGBAColor(r, g, b, a);
+        }
         const numbers = Array.from(css.matchAll(/[\d.%-]+/g)).map(([m]) =>
             m.endsWith('%') ? parseFloat(m) / 100 : parseFloat(m)
         );
