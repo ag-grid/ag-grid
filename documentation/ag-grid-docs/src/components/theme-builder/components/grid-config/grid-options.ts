@@ -57,6 +57,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         domLayout: config.printLayout ? 'print' : undefined,
         columnMenu: config.legacyColumnMenu ? 'legacy' : 'new',
         animateRows: false,
+        rowDragManaged: true,
     };
 
     if (config.advancedFilter) {
