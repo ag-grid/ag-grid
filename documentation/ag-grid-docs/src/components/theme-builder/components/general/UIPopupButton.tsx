@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { type UseFloatingOptions, autoUpdate, offset, shift, useFloating } from '@floating-ui/react';
+import { FloatingPortal, type UseFloatingOptions, autoUpdate, offset, shift, useFloating } from '@floating-ui/react';
 import { type ReactNode, useState } from 'react';
 
 import { combineClassNames, useClickAwayListener } from '../component-utils';
