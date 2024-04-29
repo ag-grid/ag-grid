@@ -15,6 +15,10 @@ Once you have downloaded the [Theme Builder](/theme-builder) CSS, follow the bel
 `ag-theme-{theme-name}.css`.
     - For an existing application, remove the existing links to `ag-grid.css` and `ag-theme-{theme-name}.css`.
 
+{% note %}
+We distribute a UMD bundle that automatically injects `ag-grid.css` into your page. Because of this, it is not possible to use the UMD bundle with a Theme Builder export. If you are loading AG Grid from a URL like https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js then you are using the UMD bundle, and it will be necessary to switch to using our packages or modules from NPM.
+{% /note %}
+
 2. Download the `ag-grid-theme-builder.css` file from the Theme Builder and save it to your application.
 
 3. Arrange for the new CSS file to be included in the application page. If your application is configured to allow importing of CSS files from JavaScript, you can import the CSS file from your application's entry point:
