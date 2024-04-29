@@ -6,7 +6,7 @@ import { Checkbox } from '../general/Checkbox';
 import { Tooltip } from '../general/Tooltip';
 import { UIPopupButton } from '../general/UIPopupButton';
 import { useGridConfigAtom } from './grid-config-atom';
-import { gridConfigBooleanFields } from './grid-options';
+import { allConfigFields, productionConfigFields } from './grid-options';
 
 export const GridConfigDropdownButton = () => {
     return (
@@ -22,9 +22,11 @@ const GridConfigDropdown = () => {
     const [gridConfig, setGridConfig] = useGridConfigAtom();
     const filtersConflict = gridConfig.advancedFilter && gridConfig.filtersToolPanel;
 
+    const configFields = document.location.search.includes('allConfigFields') ? allConfigFields : productionConfigFields
+
     return (
         <Container>
-            {gridConfigBooleanFields.toSorted().map((property) => {
+            {configFields.toSorted().map((property) => {
                 const showFiltersWarning = filtersConflict && property === 'filtersToolPanel';
                 const item = (
                     <Checkbox
@@ -75,7 +77,6 @@ const Container = styled('div')`
     display: flex;
     flex-direction: column;
     gap: 8px;
-}
 `;
 
 const GridFeatureButtonWrapper = styled('div')`

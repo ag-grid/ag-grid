@@ -2,9 +2,8 @@ import type { ColDef, ColGroupDef, GridOptions } from '@ag-grid-community/core';
 
 import { defaultRowData } from './grid-data';
 
-export const gridConfigBooleanFields = [
+export const productionConfigFields = [
     'advancedFilter',
-    'filtersToolPanel',
     'columnsToolPanel',
     'columnGroups',
     'columnHover',
@@ -14,18 +13,25 @@ export const gridConfigBooleanFields = [
     'rowSelection',
     'rightToLeft',
     'floatingFilters',
-    'printLayout',
-    'legacyColumnMenu',
     'showIntegratedChartPopup',
     'statusBar',
     'pagination',
-    'loadingOverlay',
 ] as const;
 
-type GridConfigBooleanField = (typeof gridConfigBooleanFields)[number];
+const debugConfigFields = [
+    'filtersToolPanel',
+    'legacyColumnMenu',
+    'loadingOverlay',
+    'printLayout',
+] as const;
+
+
+export const allConfigFields = [...productionConfigFields, ...debugConfigFields] as const;
+
+type GridConfigField = (typeof allConfigFields)[number];
 
 export type GridConfig = {
-    [K in GridConfigBooleanField]?: boolean;
+    [K in GridConfigField]?: boolean;
 };
 
 export const buildGridOptions = (config: GridConfig): GridOptions => {
