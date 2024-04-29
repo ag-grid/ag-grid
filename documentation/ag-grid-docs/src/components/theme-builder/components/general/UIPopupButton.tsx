@@ -12,7 +12,8 @@ export type UIPopupButtonProps = {
     endDecorator?: React.ReactNode;
     className?: string;
     variant?: 'primary' | 'secondary';
-    placement?: 'left-start' | 'right-start' | 'top-start';
+    placement?: 'left-start' | 'right-start' | 'top-end';
+    offset?: number;
 };
 
 /**

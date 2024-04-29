@@ -11,7 +11,7 @@ import { allConfigFields, productionConfigFields } from './grid-options';
 export const GridConfigDropdownButton = () => {
     return (
         <GridFeatureButtonWrapper>
-            <UIPopupButton placement="top-start" dropdownContent={<GridConfigDropdown />}>
+            <UIPopupButton placement="top-end" offset={8} dropdownContent={<GridConfigDropdown />}>
                 {configIcon} Grid features
             </UIPopupButton>
         </GridFeatureButtonWrapper>
