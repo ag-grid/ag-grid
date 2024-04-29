@@ -105,8 +105,10 @@ const GridPreview = () => {
                                 }}
                                 onFirstDataRendered={(params: any) => {
                                     // Select some nodes by default
-                                    params.api.getRowNode(1).setSelected(true);
-                                    params.api.getRowNode(3).setSelected(true);
+                                    if (gridOptions.rowSelection) {
+                                        params.api.getRowNode(1).setSelected(true);
+                                        params.api.getRowNode(3).setSelected(true);
+                                    }
                                 }}
                                 key={updateCount}
                                 {...gridOptions}
