@@ -12,7 +12,7 @@ export const GridConfigDropdownButton = () => {
     return (
         <GridFeatureButtonWrapper>
             <UIPopupButton placement="top-end" offset={8} dropdownContent={<GridConfigDropdown />}>
-                {configIcon} Grid features
+                {configIcon} Grid Features
             </UIPopupButton>
         </GridFeatureButtonWrapper>
     );
@@ -22,7 +22,9 @@ const GridConfigDropdown = () => {
     const [gridConfig, setGridConfig] = useGridConfigAtom();
     const filtersConflict = gridConfig.advancedFilter && gridConfig.filtersToolPanel;
 
-    const configFields = document.location.search.includes('allConfigFields') ? allConfigFields : productionConfigFields
+    const configFields = document.location.search.includes('allConfigFields')
+        ? allConfigFields
+        : productionConfigFields;
 
     return (
         <Container>
