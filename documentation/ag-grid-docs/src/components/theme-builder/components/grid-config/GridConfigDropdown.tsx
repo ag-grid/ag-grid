@@ -6,13 +6,13 @@ import { Checkbox } from '../general/Checkbox';
 import { Tooltip } from '../general/Tooltip';
 import { UIPopupButton } from '../general/UIPopupButton';
 import { useGridConfigAtom } from './grid-config-atom';
-import { allConfigFields, productionConfigFields } from './grid-options';
+import { allConfigFields, incompatibleGridConfigProperties, productionConfigFields } from './grid-options';
 
 export const GridConfigDropdownButton = () => {
     return (
         <GridFeatureButtonWrapper>
             <UIPopupButton placement="top-end" offset={8} dropdownContent={<GridConfigDropdown />}>
-                {configIcon} Grid features
+                {configIcon} Grid Features
             </UIPopupButton>
         </GridFeatureButtonWrapper>
     );
@@ -20,31 +20,29 @@ export const GridConfigDropdownButton = () => {
 
 const GridConfigDropdown = () => {
     const [gridConfig, setGridConfig] = useGridConfigAtom();
-    const filtersConflict = gridConfig.advancedFilter && gridConfig.filtersToolPanel;
 
-    const configFields = document.location.search.includes('allConfigFields') ? allConfigFields : productionConfigFields
+    const fields = document.location.search.includes('allConfigFields') ? allConfigFields : productionConfigFields;
 
     return (
         <Container>
-            {configFields.toSorted().map((property) => {
-                const showFiltersWarning = filtersConflict && property === 'filtersToolPanel';
+            {fields.toSorted().map((property) => {
+                const incompatibleProperty = incompatibleGridConfigProperties[property];
+                const warning =
+                    incompatibleProperty && gridConfig[property] && gridConfig[incompatibleProperty]
+                        ? `${titleCase(property)} does not work with ${titleCase(incompatibleProperty)}. ${titleCase(property)} has been disabled.`
+                        : null;
                 const item = (
                     <Checkbox
                         key={property}
                         checked={!!gridConfig[property]}
                         onChange={() => setGridConfig({ ...gridConfig, [property]: !gridConfig[property] })}
                     >
-                        <Label className={showFiltersWarning ? 'has-warning' : undefined}>
-                            {titleCase(String(property))}
-                        </Label>
-                        {showFiltersWarning && <WarningAltFilled color="var(--color-warning-500)" />}
+                        <Label className={warning ? 'has-warning' : undefined}>{titleCase(String(property))}</Label>
+                        {warning && <WarningAltFilled color="var(--color-warning-500)" />}
                     </Checkbox>
                 );
-                return showFiltersWarning ? (
-                    <Tooltip
-                        key={property}
-                        title="Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled."
-                    >
+                return warning ? (
+                    <Tooltip key={property} title={warning} suppressPortal>
                         {item}
                     </Tooltip>
                 ) : (

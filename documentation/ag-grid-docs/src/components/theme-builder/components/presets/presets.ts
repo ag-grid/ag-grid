@@ -93,7 +93,7 @@ export const allPresets: Preset[] = [
             backgroundColor: '#0C0C0D',
             foregroundColor: '#BBBEC9',
             accentColor: '#15BDE8',
-            borderColor: '#D7E2E6',
+            borderColor: '#ffffff00',
             chromeBackgroundColor: ref('backgroundColor'),
             gridSize: '8px',
             wrapperBorderRadius: '0px',

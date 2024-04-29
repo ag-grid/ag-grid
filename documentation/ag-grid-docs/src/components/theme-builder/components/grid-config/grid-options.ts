@@ -18,23 +18,31 @@ export const productionConfigFields = [
     'pagination',
 ] as const;
 
-const debugConfigFields = [
-    'filtersToolPanel',
-    'legacyColumnMenu',
-    'loadingOverlay',
-    'printLayout',
-] as const;
-
+const debugConfigFields = ['filtersToolPanel', 'legacyColumnMenu', 'loadingOverlay', 'printLayout'] as const;
 
 export const allConfigFields = [...productionConfigFields, ...debugConfigFields] as const;
 
-type GridConfigField = (typeof allConfigFields)[number];
+export type GridConfigField = (typeof allConfigFields)[number];
 
 export type GridConfig = {
     [K in GridConfigField]?: boolean;
 };
 
+export const incompatibleGridConfigProperties: Partial<Record<GridConfigField, GridConfigField>> = {
+    filtersToolPanel: 'advancedFilter',
+    floatingFilters: 'advancedFilter',
+    rowDrag: 'rowGrouping',
+    pagination: 'rowDrag',
+};
+
 export const buildGridOptions = (config: GridConfig): GridOptions => {
+    config = { ...config };
+    for (const [property, incompatibleProperty] of Object.entries(incompatibleGridConfigProperties)) {
+        if (config[property as GridConfigField] && config[incompatibleProperty]) {
+            config[property as GridConfigField] = false;
+        }
+    }
+
     const defaultColDef: ColDef = {
         sortable: true,
         resizable: config.columnResizing,
@@ -42,6 +50,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         floatingFilter: config.floatingFilters,
         editable: true,
         flex: 1,
+        filter: true,
     };
     const columnDefs = buildSimpleColumnDefs();
     const sideBar: string[] = [];
@@ -58,6 +67,12 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         columnMenu: config.legacyColumnMenu ? 'legacy' : 'new',
         animateRows: false,
         rowDragManaged: true,
+        autoGroupColumnDef: {
+            headerName: 'Group',
+            field: 'name',
+            headerCheckboxSelection: config.rowSelection,
+            minWidth: 250,
+        },
     };
 
     if (config.advancedFilter) {
@@ -65,7 +80,6 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         options.advancedFilterBuilderParams = {
             showMoveButtons: true,
         };
-        defaultColDef.filter = true;
     }
 
     if (config.columnsToolPanel) {
@@ -74,11 +88,10 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
 
     if (config.filtersToolPanel) {
         sideBar.push('filters');
-        defaultColDef.filter = true;
     }
 
     if (config.rowDrag) {
-        columnDefs[0].rowDrag = true;
+        columnDefs[0].rowDrag = !config.rowGrouping;
     }
 
     if (config.rowGrouping) {
@@ -89,14 +102,8 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
 
     if (config.rowSelection) {
         options.rowSelection = 'multiple';
-        options.autoGroupColumnDef = {
-            headerName: 'Group',
-            field: 'name',
-            headerCheckboxSelection: true,
-            minWidth: 250,
-            cellRendererParams: {
-                checkbox: true,
-            },
+        options.autoGroupColumnDef!.cellRendererParams = {
+            checkbox: true,
         };
 
         if (!config.rowGrouping) {
@@ -147,18 +154,36 @@ const buildSimpleColumnDefs = (): ColDef[] => [
     { field: 'country' },
     { field: 'sport' },
     { field: 'name' },
-    { field: 'winningsTotal', headerName: 'Total winnings', type: 'rightAligned', valueFormatter: cashFormatter },
-    { field: 'winnings2023', headerName: '2023 winnings', type: 'rightAligned', valueFormatter: cashFormatter },
-    { field: 'winnings2022', headerName: '2022 winnings', type: 'rightAligned', valueFormatter: cashFormatter },
+    {
+        field: 'winningsTotal',
+        headerName: 'Total winnings',
+        type: 'rightAligned',
+        valueFormatter: cashFormatter,
+        filter: 'agNumberColumnFilter',
+    },
+    {
+        field: 'winnings2023',
+        headerName: '2023 winnings',
+        type: 'rightAligned',
+        valueFormatter: cashFormatter,
+        filter: 'agNumberColumnFilter',
+    },
+    {
+        field: 'winnings2022',
+        headerName: '2022 winnings',
+        type: 'rightAligned',
+        valueFormatter: cashFormatter,
+        filter: 'agNumberColumnFilter',
+    },
 ];
 
 const buildGroupColumnDefs = (columns: ColDef[]): ColGroupDef[] => [
     {
-        headerName: 'Name',
-        children: columns.filter((c) => c.field === 'sport' || c.field === 'country'),
+        headerName: 'Athlete',
+        children: columns.filter((c) => ['country', 'sport', 'name'].includes(c.field!)),
     },
     {
-        headerName: 'Sport',
-        children: columns.filter((c) => c.field !== 'name' && c.field !== 'country'),
+        headerName: 'Winnings',
+        children: columns.filter((c) => !['country', 'sport', 'name'].includes(c.field!)),
     },
 ];
