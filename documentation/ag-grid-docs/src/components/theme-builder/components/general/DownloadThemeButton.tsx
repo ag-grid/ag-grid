@@ -23,9 +23,9 @@ const DownloadThemeDialog = () => {
         <DownloadThemeWrapper>
             <Header>Download Theme</Header>
             <Paragraph>
-                Download a CSS file to integrate into an application. See the{' '}
+                Download a CSS file to integrate into an application. See{' '}
                 <a href={localInstallDocsUrl} target="_blank">
-                    integration documentation
+                    Applying Theme Builder Styling to AG Grid
                 </a>{' '}
                 for instructions on how to use the file.
             </Paragraph>

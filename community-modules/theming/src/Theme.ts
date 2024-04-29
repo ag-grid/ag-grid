@@ -267,7 +267,7 @@ export type PickVariables<P extends Part, V extends object> = {
 };
 
 export const installDocsUrl =
-    'https://www.ag-grid.com/javascript-data-grid/global-style-customisation-theme-builder-integration/';
+    'https://www.ag-grid.com/javascript-data-grid/applying-theme-builder-styling-grid/';
 
 const fileHeader = (parameters: Record<string, unknown>) => `/*
  * This file is a theme downloaded from the AG Grid Theme Builder for AG Grid ${VERSION}.
