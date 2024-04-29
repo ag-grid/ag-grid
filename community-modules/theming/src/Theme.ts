@@ -204,13 +204,19 @@ export class Theme {
             }
         }
 
-        const weights = ':wght@' + Array.from(fontWeights).sort().join(';');
         const css = Array.from(googleFonts)
             .sort()
-            .map(
-                (font) =>
-                    `@import url('https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}${weights}&display=swap');\n`
-            )
+            .map((font) => {
+                const weights = Array.from(fontWeights).filter((w) => tmpKnownGoogleFontWeights[font]?.includes(w));
+                if (weights.length === 0) {
+                    const firstKnownWeight = tmpKnownGoogleFontWeights[font]?.[0];
+                    if (firstKnownWeight) {
+                        weights.push(firstKnownWeight);
+                    }
+                }
+                const weightsUrlPart = weights.length ? ':wght@' + weights.sort().join(';') : '';
+                return `@import url('https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}${weightsUrlPart}&display=swap');\n`;
+            })
             .join('');
 
         return {
@@ -243,6 +249,20 @@ const resolveOnLoad = (element: HTMLStyleElement) =>
         element.addEventListener('load', handler);
     });
 
+// TODO remove this, API should explicitly ask Google Fonts to be loaded.
+const tmpKnownGoogleFontWeights: Record<string, number[] | undefined> = {
+    Inter: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+    'IBM Plex Sans': [100, 200, 300, 400, 500, 600, 700],
+    'IBM Plex Mono': [100, 200, 300, 400, 500, 600, 700],
+    Roboto: [100, 300, 400, 500, 700, 900],
+    'Inclusive Sans': [400],
+    'Open Sans': [100, 300, 500, 600, 700, 800],
+    Lato: [100, 300, 400, 700, 900],
+    Merriweather: [300, 400, 700, 900],
+    UnifrakturCook: [700],
+    'Pixelify Sans': [400, 500, 600, 700],
+};
+
 export type ThemeCssChunk = {
     css: string;
     id: string;
@@ -267,7 +287,7 @@ export type PickVariables<P extends Part, V extends object> = {
 };
 
 export const installDocsUrl =
-    'https://www.ag-grid.com/javascript-data-grid/global-style-customisation-theme-builder-integration/';
+    'https://www.ag-grid.com/javascript-data-grid/applying-theme-builder-styling-grid/';
 
 const fileHeader = (parameters: Record<string, unknown>) => `/*
  * This file is a theme downloaded from the AG Grid Theme Builder for AG Grid ${VERSION}.
