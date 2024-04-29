@@ -18,19 +18,7 @@ export class PriceRenderer implements ICellRendererAngularComp {
   arr!: any[];
 
   agInit(params: ICellRendererParams): void {
-    if (params.value > 5000000000) {
-      this.priceMultiplier = 2
-    }
-    if (params.value > 10000000000) {
-      this.priceMultiplier = 3
-    }
-    if (params.value > 20000000000) {
-      this.priceMultiplier = 4
-    }
-    if (params.value > 300000000000) {
-      this.priceMultiplier = 5
-    }
-    this.arr = new Array(this.priceMultiplier);
+    this.refresh(params);
   }
 
   // Return Cell Value

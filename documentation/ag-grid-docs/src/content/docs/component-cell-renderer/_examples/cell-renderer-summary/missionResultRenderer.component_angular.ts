@@ -23,12 +23,12 @@ export class MissionResultRenderer implements ICellRendererAngularComp {
   // Init Cell Value
   public value!: string;
   agInit(params: ICellRendererParams): void {
-    this.value = params.value ? 'tick-in-circle' : 'cross-in-circle';
+    this.refresh(params);
   }
 
   // Return Cell Value
   refresh(params: ICellRendererParams): boolean {
-    this.value = params.value;
+    this.value = params.value ? 'tick-in-circle' : 'cross-in-circle';
     return true;
   }
 }
