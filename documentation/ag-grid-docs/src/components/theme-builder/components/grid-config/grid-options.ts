@@ -18,13 +18,7 @@ export const productionConfigFields = [
     'pagination',
 ] as const;
 
-const debugConfigFields = [
-    'filtersToolPanel',
-    'legacyColumnMenu',
-    'loadingOverlay',
-    'printLayout',
-] as const;
-
+const debugConfigFields = ['filtersToolPanel', 'legacyColumnMenu', 'loadingOverlay', 'printLayout'] as const;
 
 export const allConfigFields = [...productionConfigFields, ...debugConfigFields] as const;
 
@@ -42,6 +36,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         floatingFilter: config.floatingFilters,
         editable: true,
         flex: 1,
+        filter: true,
     };
     const columnDefs = buildSimpleColumnDefs();
     const sideBar: string[] = [];
@@ -65,7 +60,6 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         options.advancedFilterBuilderParams = {
             showMoveButtons: true,
         };
-        defaultColDef.filter = true;
     }
 
     if (config.columnsToolPanel) {
@@ -74,7 +68,6 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
 
     if (config.filtersToolPanel) {
         sideBar.push('filters');
-        defaultColDef.filter = true;
     }
 
     if (config.rowDrag) {
@@ -147,9 +140,27 @@ const buildSimpleColumnDefs = (): ColDef[] => [
     { field: 'country' },
     { field: 'sport' },
     { field: 'name' },
-    { field: 'winningsTotal', headerName: 'Total winnings', type: 'rightAligned', valueFormatter: cashFormatter },
-    { field: 'winnings2023', headerName: '2023 winnings', type: 'rightAligned', valueFormatter: cashFormatter },
-    { field: 'winnings2022', headerName: '2022 winnings', type: 'rightAligned', valueFormatter: cashFormatter },
+    {
+        field: 'winningsTotal',
+        headerName: 'Total winnings',
+        type: 'rightAligned',
+        valueFormatter: cashFormatter,
+        filter: 'agNumberColumnFilter',
+    },
+    {
+        field: 'winnings2023',
+        headerName: '2023 winnings',
+        type: 'rightAligned',
+        valueFormatter: cashFormatter,
+        filter: 'agNumberColumnFilter',
+    },
+    {
+        field: 'winnings2022',
+        headerName: '2022 winnings',
+        type: 'rightAligned',
+        valueFormatter: cashFormatter,
+        filter: 'agNumberColumnFilter',
+    },
 ];
 
 const buildGroupColumnDefs = (columns: ColDef[]): ColGroupDef[] => [

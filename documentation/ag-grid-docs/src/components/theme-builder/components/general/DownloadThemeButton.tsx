@@ -8,7 +8,7 @@ import { UIPopupButton } from './UIPopupButton';
 export const DownloadThemeButton = () => (
     <ButtonWrapper>
         <UIPopupButton placement="right-end" dropdownContent={<DownloadThemeDialog />} variant="primary">
-            {downloadIcon} Download theme
+            {downloadIcon} Download Theme
         </UIPopupButton>
     </ButtonWrapper>
 );

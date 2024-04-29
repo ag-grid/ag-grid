@@ -20,7 +20,8 @@
                 "path": "./excel-export-extra-content/#adding-images-to-the-header-or-footer"
             },
             {
-                "text": "Placeholder"
+                "text": "Accessibility improvements",
+                "path": "./keyboard-navigation/"
             }
         ],
         "notesPath": "./upgrading-to-ag-grid-31-3"
@@ -30,7 +31,7 @@
         "date": "March 20th 2024",
         "highlights": [
             {
-                "text": "Integrated Enterprise Charts Menu Redesign",
+                "text": "Integrated Enterprise Charts Menu redesign",
                 "path": "./integrated-charts"
             },
             {
