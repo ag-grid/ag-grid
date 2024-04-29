@@ -149,6 +149,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
         prevProps.current = props;
         processWhenReady(() => {
             if (apiRef.current) {
+                // InternalGridApi is not exposed in the public API, so we cast to any
                 ComponentUtil.processOnChange(changes, apiRef.current as any)
             }
         });

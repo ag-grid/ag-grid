@@ -90,6 +90,7 @@ export const AgGridVue = defineComponent({
                 };
                 // decouple the row data - if we don't when the grid changes row data directly that'll trigger this component to react to rowData changes,
                 // which can reset grid state (ie row selection)
+                // InternalGridApi is not exposed in the public API, so we cast to any
                 ComponentUtil.processOnChange(options, this.api as any);
             }
         },

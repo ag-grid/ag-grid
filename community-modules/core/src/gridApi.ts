@@ -1142,6 +1142,13 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     public __getAlignedGridService(): AlignedGridsService {
         return this.alignedGridsService;
     }
+    public __dispatchEvent(event: AgEvent): void {
+        this.eventService.dispatchEvent(event);
+    }
+    /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
+    public __internalUpdateGridOptions(options: GridOptions): void {
+        this.gos.updateGridOptions({ options, source: 'gridOptionsUpdated' });
+    }
 
     public getGridId(): string {
         return this.context.getGridId();
@@ -1748,10 +1755,6 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     }
     public removeGlobalListener(listener: Function): void {
         this.apiEventService.removeGlobalListener(listener as AgGlobalEventListener);
-    }
-
-    public __dispatchEvent(event: AgEvent): void {
-        this.eventService.dispatchEvent(event);
     }
 
     public destroy(): void {
@@ -2378,12 +2381,6 @@ export class GridApiService<TData = any> implements GridApi, IAlignedGridApi, In
     public updateGridOptions(options: ManagedGridOptions): void {
         this.gos.updateGridOptions({ options });
     }
-
-    /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-    public __internalUpdateGridOptions(options: GridOptions): void {
-        this.gos.updateGridOptions({ options, source: 'gridOptionsUpdated' });
-    }
-
 }
 
 /** Utility type to support adding params to a grid api method. */

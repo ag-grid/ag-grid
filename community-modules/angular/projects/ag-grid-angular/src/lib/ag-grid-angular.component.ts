@@ -279,6 +279,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
                  Object.entries(changes).forEach(([key, value]: [string, any]) => {
                      gridOptions[key as keyof GridOptions] = value.currentValue;
                  });
+                 // InternalGridApi is not exposed in the public API, so we cast to any
                  ComponentUtil.processOnChange(gridOptions, this.api as any);
              });
          }
