@@ -12,8 +12,7 @@ export type UIPopupButtonProps = {
     endDecorator?: React.ReactNode;
     className?: string;
     variant?: 'primary' | 'secondary';
-    placement?: 'left-start' | 'left-end' | 'right-start' | 'right-end';
-    offset?: number;
+    placement?: 'left-start' | 'right-start' | 'top-start';
 };
 
 /**
@@ -37,7 +36,7 @@ export const UIPopupButton = (props: UIPopupButtonProps) => {
                 className={combineClassNames(
                     props.className,
                     show && 'is-dropdown-visible',
-                    `variant-${props.variant || 'secondary'}`
+                    `variant-${props.variant || 'primary'}`
                 )}
                 onClick={() => setShow(!show)}
                 ref={refs.setReference}
