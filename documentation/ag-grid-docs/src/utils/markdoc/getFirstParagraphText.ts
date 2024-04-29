@@ -1,6 +1,7 @@
+import { Framework } from '@ag-grid-types';
 import Markdoc from '@markdoc/markdoc';
 
-export function getFirstParagraphText(markdocContent: string) {
+export function getFirstParagraphText(markdocContent: string, currentFramework: Framework) {
     const root = Markdoc.parse(markdocContent);
 
     function findFirstParagraph(node) {
@@ -8,8 +9,23 @@ export function getFirstParagraphText(markdocContent: string) {
             return node;
         }
 
-        // Handle VideoSection
-        for (let child of node.children || []) {
+        if (node.type === 'tag') {
+            if (node.tag === 'if') {
+                if (node.annotations[0].value.parameters[0] === currentFramework) {
+                    return findFirstParagraph(node.children[0]);
+                }
+            }
+
+            if (node.tag === 'videoSection') {
+                return findFirstParagraph(node.children[0]);
+            }
+        }
+
+        return null;
+    }
+
+    function getDescription(node) {
+        for (const child of node.children || []) {
             const found: boolean = findFirstParagraph(child);
             if (found) {
                 return found;
@@ -19,7 +35,7 @@ export function getFirstParagraphText(markdocContent: string) {
         return null;
     }
 
-    const firstParagraph = findFirstParagraph(root);
+    const firstParagraph = getDescription(root);
 
     if (!firstParagraph) {
         return;
