@@ -30,6 +30,7 @@ export type GridConfig = {
 
 export const incompatibleGridConfigProperties: Partial<Record<GridConfigField, GridConfigField>> = {
     filtersToolPanel: 'advancedFilter',
+    floatingFilters: 'advancedFilter',
     rowDrag: 'rowGrouping',
     pagination: 'rowDrag',
 };
