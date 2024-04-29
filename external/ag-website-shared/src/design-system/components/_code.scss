@@ -81,8 +81,8 @@ pre.code > code,
     position: relative;
     display: inline-block;
     min-width: 100%;
-    margin-bottom: -8px;
-    padding: $vertical-padding $spacing-size-4;
+    margin-bottom: -6px;
+    padding: $vertical-padding + 2px $spacing-size-4 $vertical-padding;
     font-size: 15px;
     background-color: var(--color-code-background);
     background-size: 3em 3em;
