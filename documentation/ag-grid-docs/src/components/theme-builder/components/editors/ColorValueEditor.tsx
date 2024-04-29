@@ -20,12 +20,13 @@ export type ColorEditorProps = {
 };
 
 export const ColorEditor = ({ preventTransparency, value, onChange }: ColorEditorProps) => {
-    const hexValue = RGBAColor.reinterpretCss(value)?.toCSSHex();
+    const hexValue = coerceToValidValue(value, preventTransparency);
     const [editorValue, setEditorValue] = useState(hexValue || value);
     const [valid, setValid] = useState(() => colorIsValid(editorValue));
     const wrapperRef = useRef<HTMLDivElement>(null);
 
     const [showPicker, setShowPicker] = useState(false);
+
     const { refs, floatingStyles, elements } = useFloating({
         open: showPicker,
         onOpenChange: setShowPicker,
@@ -56,21 +57,9 @@ export const ColorEditor = ({ preventTransparency, value, onChange }: ColorEdito
             const isValid = colorIsValid(newValue);
             setValid(isValid);
             if (isValid) {
-                onChange(coerceToValidValue(newValue));
+                onChange(coerceToValidValue(newValue, preventTransparency));
             }
         }
-    };
-
-    const coerceToValidValue = (input: string) => {
-        let color = RGBAColor.parseCss(input);
-        if (!color) {
-            color = RGBAColor.reinterpretCss(input);
-        }
-        if (!color) return input;
-        if (preventTransparency) {
-            color.a = 1;
-        }
-        return color.toCSSHex();
     };
 
     const ColorPicker = preventTransparency ? HexColorPicker : HexAlphaColorPicker;
@@ -85,10 +74,10 @@ export const ColorEditor = ({ preventTransparency, value, onChange }: ColorEdito
                     onChange={handleInput}
                     onFocus={() => {
                         setShowPicker(true);
-                        setEditorValue(coerceToValidValue(value));
+                        setEditorValue(coerceToValidValue(value, preventTransparency));
                     }}
                     onBlur={() => {
-                        setEditorValue(coerceToValidValue(value));
+                        setEditorValue(coerceToValidValue(value, preventTransparency));
                         setValid(colorIsValid(value));
                     }}
                     onKeyDown={(e) => {
@@ -112,6 +101,19 @@ export const ColorEditor = ({ preventTransparency, value, onChange }: ColorEdito
             )}
         </>
     );
+};
+
+
+const coerceToValidValue = (input: string, preventTransparency: boolean) => {
+    let color = RGBAColor.parseCss(input);
+    if (!color) {
+        color = RGBAColor.reinterpretCss(input);
+    }
+    if (!color) return input;
+    if (preventTransparency) {
+        color.a = 1;
+    }
+    return color.toCSSHex();
 };
 
 const colorIsValid = (value: string) => RGBAColor.reinterpretCss(value) != null;
