@@ -92,6 +92,7 @@ const GridPreview = () => {
                                                 },
                                             },
                                         });
+                                        api.expandAll();
                                         setTimeout(() => {
                                             document
                                                 .querySelector('.ag-chart .ag-icon-expanded')

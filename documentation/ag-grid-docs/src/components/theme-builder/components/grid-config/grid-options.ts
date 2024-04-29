@@ -22,13 +22,26 @@ const debugConfigFields = ['filtersToolPanel', 'legacyColumnMenu', 'loadingOverl
 
 export const allConfigFields = [...productionConfigFields, ...debugConfigFields] as const;
 
-type GridConfigField = (typeof allConfigFields)[number];
+export type GridConfigField = (typeof allConfigFields)[number];
 
 export type GridConfig = {
     [K in GridConfigField]?: boolean;
 };
 
+export const incompatibleGridConfigProperties: Partial<Record<GridConfigField, GridConfigField>> = {
+    filtersToolPanel: 'advancedFilter',
+    rowDrag: 'rowGrouping',
+    pagination: 'rowDrag',
+};
+
 export const buildGridOptions = (config: GridConfig): GridOptions => {
+    config = { ...config };
+    for (const [property, incompatibleProperty] of Object.entries(incompatibleGridConfigProperties)) {
+        if (config[property as GridConfigField] && config[incompatibleProperty]) {
+            config[property as GridConfigField] = false;
+        }
+    }
+
     const defaultColDef: ColDef = {
         sortable: true,
         resizable: config.columnResizing,
@@ -53,6 +66,12 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         columnMenu: config.legacyColumnMenu ? 'legacy' : 'new',
         animateRows: false,
         rowDragManaged: true,
+        autoGroupColumnDef: {
+            headerName: 'Group',
+            field: 'name',
+            headerCheckboxSelection: config.rowSelection,
+            minWidth: 250,
+        },
     };
 
     if (config.advancedFilter) {
@@ -71,7 +90,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
     }
 
     if (config.rowDrag) {
-        columnDefs[0].rowDrag = true;
+        columnDefs[0].rowDrag = !config.rowGrouping;
     }
 
     if (config.rowGrouping) {
@@ -82,14 +101,8 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
 
     if (config.rowSelection) {
         options.rowSelection = 'multiple';
-        options.autoGroupColumnDef = {
-            headerName: 'Group',
-            field: 'name',
-            headerCheckboxSelection: true,
-            minWidth: 250,
-            cellRendererParams: {
-                checkbox: true,
-            },
+        options.autoGroupColumnDef!.cellRendererParams = {
+            checkbox: true,
         };
 
         if (!config.rowGrouping) {
@@ -165,11 +178,11 @@ const buildSimpleColumnDefs = (): ColDef[] => [
 
 const buildGroupColumnDefs = (columns: ColDef[]): ColGroupDef[] => [
     {
-        headerName: 'Name',
-        children: columns.filter((c) => c.field === 'sport' || c.field === 'country'),
+        headerName: 'Athlete',
+        children: columns.filter((c) => ['country', 'sport', 'name'].includes(c.field!)),
     },
     {
-        headerName: 'Sport',
-        children: columns.filter((c) => c.field !== 'name' && c.field !== 'country'),
+        headerName: 'Winnings',
+        children: columns.filter((c) => !['country', 'sport', 'name'].includes(c.field!)),
     },
 ];
