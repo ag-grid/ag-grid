@@ -20,7 +20,7 @@ export const AG_MENU_OPTION_TEXT_SELECTOR = '.ag-menu-option-text';
 export const AG_MENU_OPTION_ACTIVE_CLASSNAME = 'ag-menu-option-active';
 export const AG_MENU_OPTION_DISABLED_CLASSNAME = 'ag-menu-option-disabled';
 
-export const AG_CHART_TOOL_PANEL_BUTTON_SELECTOR = '.ag-chart-tool-panel-button-enable .ag-chart-menu-close';
+export const AG_CHART_MENU_TOOLBAR_BUTTON_SELECTOR = '.ag-chart-menu-toolbar-button';
 
 export const AG_POPUP_SELECTOR = '.ag-popup';
 export const AG_POPUP_DIALOG_SELECTOR = '.ag-popup [role="dialog"]';
@@ -36,11 +36,13 @@ export const AG_GROUP_ITEM_SELECTOR = '.ag-group-item';
 export const AG_GROUP_TITLE_BAR_SELECTOR = '.ag-group-title-bar';
 
 export const AG_PICKER_FIELD_SELECTOR = '.ag-picker-field';
+export const AG_PICKER_FIELD_DISPLAY_SELECTOR = '.ag-picker-field-display';
 export const AG_PICKER_FIELD_WRAPPER_SELECTOR = '.ag-picker-field-wrapper';
 export const AG_LABEL_SELECTOR = '.ag-label';
+export const AG_CHECKBOX_LABEL_SELECTOR = '.ag-checkbox-label';
 export const AG_SELECT_LIST_ITEM_SELECTOR = '.ag-select-list-item';
 export const AG_SLIDER_SELECTOR = '.ag-slider';
-export const AG_RANGE_FIELD_INOUT_SELECTOR = '.ag-range-field-input';
+export const AG_RANGE_FIELD_INPUT_SELECTOR = '.ag-range-field-input';
 
 // Row group toggle
 export const AG_GROUP_CONTRACTED = '.ag-group-contracted';
