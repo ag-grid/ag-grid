@@ -4,7 +4,12 @@ import * as RadixSelect from '@radix-ui/react-select';
 import { ChevronDown } from 'lucide-react';
 import { type ReactElement, type ReactNode, forwardRef } from 'react';
 
-import { SharedContent, SharedIndicator, SharedItem, SharedTrigger } from './dropdown-shared';
+import {
+    SharedContent,
+    SharedIndicator,
+    SharedItem,
+    SharedTrigger,
+} from '../../../../../documentation/ag-grid-docs/src/components/theme-builder/components/editors/dropdown-shared';
 
 type SelectProps<O> = {
     options: O[];
