@@ -57,6 +57,7 @@ svg.ytIcon {
     }
 
     @media screen and (min-width: $breakpoint-docs-home-small) {
+        min-width: $spacing-size-64;
         max-width: 16rem;
     }
 }

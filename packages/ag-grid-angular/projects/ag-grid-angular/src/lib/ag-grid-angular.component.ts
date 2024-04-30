@@ -1250,12 +1250,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
     /** When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
          * @default false
-         * @deprecated
+         * @deprecated v31.1
          */
     @Input() public serverSideSortOnServer: boolean | undefined = undefined;
     /** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
          * @default false
-         * @deprecated
+         * @deprecated v31.1
          */
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
     /** Used to split pivot field strings for generating pivot result columns when `pivotResultFields` is provided as part of a `getRows` success.

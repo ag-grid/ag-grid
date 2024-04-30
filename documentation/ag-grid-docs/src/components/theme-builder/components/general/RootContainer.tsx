@@ -43,7 +43,7 @@ const Container = styled('div')`
         max-width: 400px;
     }
 
-    @media screen and (max-width: 800px) {
+    @media screen and (max-width: 799px) {
         display: none;
     }
 
@@ -56,10 +56,6 @@ const EditorScroller = styled('div')`
     position: absolute;
     inset: 0 0 48px 0;
     overflow-y: auto;
-`;
-
-const Spacer = styled('div')`
-    flex-grow: 1;
 `;
 
 const Menu = styled('div')`

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { FloatingPortal, autoPlacement, autoUpdate, useFloating } from '@floating-ui/react';
+import { FloatingPortal, autoPlacement, autoUpdate, offset, useFloating } from '@floating-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { HexAlphaColorPicker, HexColorPicker } from 'react-colorful';
 
@@ -20,17 +20,23 @@ export type ColorEditorProps = {
 };
 
 export const ColorEditor = ({ preventTransparency, value, onChange }: ColorEditorProps) => {
-    const hexValue = RGBAColor.reinterpretCss(value)?.toCSSHex();
+    const hexValue = coerceToValidValue(value, preventTransparency);
     const [editorValue, setEditorValue] = useState(hexValue || value);
     const [valid, setValid] = useState(() => colorIsValid(editorValue));
     const wrapperRef = useRef<HTMLDivElement>(null);
 
     const [showPicker, setShowPicker] = useState(false);
+
     const { refs, floatingStyles, elements } = useFloating({
         open: showPicker,
         onOpenChange: setShowPicker,
         whileElementsMounted: autoUpdate,
-        middleware: [autoPlacement({ allowedPlacements: ['bottom-start', 'bottom-end', 'top-start', 'top-end'] })],
+        middleware: [
+            autoPlacement({
+                allowedPlacements: ['bottom-start', 'bottom-end', 'top-start', 'bottom-end'],
+            }),
+            offset({ mainAxis: 6 }),
+        ],
     });
 
     useClickAwayListener(() => setShowPicker(false), [elements.domReference, elements.floating, wrapperRef.current]);
@@ -51,21 +57,9 @@ export const ColorEditor = ({ preventTransparency, value, onChange }: ColorEdito
             const isValid = colorIsValid(newValue);
             setValid(isValid);
             if (isValid) {
-                onChange(coerceToValidValue(newValue));
+                onChange(coerceToValidValue(newValue, preventTransparency));
             }
         }
-    };
-
-    const coerceToValidValue = (input: string) => {
-        let color = RGBAColor.parseCss(input);
-        if (!color) {
-            color = RGBAColor.reinterpretCss(input);
-        }
-        if (!color) return input;
-        if (preventTransparency) {
-            color.a = 1;
-        }
-        return color.toCSSHex();
     };
 
     const ColorPicker = preventTransparency ? HexColorPicker : HexAlphaColorPicker;
@@ -80,10 +74,10 @@ export const ColorEditor = ({ preventTransparency, value, onChange }: ColorEdito
                     onChange={handleInput}
                     onFocus={() => {
                         setShowPicker(true);
-                        setEditorValue(coerceToValidValue(value));
+                        setEditorValue(coerceToValidValue(value, preventTransparency));
                     }}
                     onBlur={() => {
-                        setEditorValue(coerceToValidValue(value));
+                        setEditorValue(coerceToValidValue(value, preventTransparency));
                         setValid(colorIsValid(value));
                     }}
                     onKeyDown={(e) => {
@@ -107,6 +101,19 @@ export const ColorEditor = ({ preventTransparency, value, onChange }: ColorEdito
             )}
         </>
     );
+};
+
+
+const coerceToValidValue = (input: string, preventTransparency: boolean) => {
+    let color = RGBAColor.parseCss(input);
+    if (!color) {
+        color = RGBAColor.reinterpretCss(input);
+    }
+    if (!color) return input;
+    if (preventTransparency) {
+        color.a = 1;
+    }
+    return color.toCSSHex();
 };
 
 const colorIsValid = (value: string) => RGBAColor.reinterpretCss(value) != null;
@@ -170,7 +177,6 @@ const DropdownArea = styled(Card)`
     position: absolute;
     pointer-events: all;
     max-height: calc(100vh - 16px);
-    margin-top: 6px;
     padding: 6px;
 
     .react-colorful {

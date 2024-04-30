@@ -79,7 +79,7 @@ export const SITE_BASE_URL =
 export const SITE_URL = import.meta.env?.SITE_URL || import.meta.env?.PUBLIC_SITE_URL;
 
 export const STAGING_SITE_URL = 'https://grid-staging.ag-grid.com';
-export const PRODUCTION_SITE_URL = 'https://ag-grid.com';
+export const PRODUCTION_SITE_URL = 'https://www.ag-grid.com';
 export const USE_PUBLISHED_PACKAGES = ['1', 'true'].includes(import.meta.env?.PUBLIC_USE_PUBLISHED_PACKAGES);
 
 /**

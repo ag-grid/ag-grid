@@ -7,11 +7,12 @@ import { cloneElement, useRef, useState } from 'react';
 export type TooltipProps = {
     title: ReactNode | null;
     children: ReactElement;
+    suppressPortal?: boolean;
 };
 
 export const Tooltip = (props: TooltipProps) => (props.title ? <TooltipImpl {...props} /> : props.children);
 
-const TooltipImpl = ({ title, children }: TooltipProps) => {
+const TooltipImpl = ({ title, children, suppressPortal }: TooltipProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const arrowRef = useRef(null);
 
@@ -33,16 +34,16 @@ const TooltipImpl = ({ title, children }: TooltipProps) => {
 
     const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
 
+    const content = (
+        <TooltipPopup ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
+            <StyledTooltip>{title}</StyledTooltip>
+        </TooltipPopup>
+    );
+
     return (
         <>
             {cloneElement(children, { ref: refs.setReference, ...getReferenceProps() })}
-            {isOpen && (
-                <FloatingPortal>
-                    <TooltipPopup ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
-                        <StyledTooltip>{title}</StyledTooltip>
-                    </TooltipPopup>
-                </FloatingPortal>
-            )}
+            {isOpen && (suppressPortal ? content : <FloatingPortal>{content}</FloatingPortal>)}
         </>
     );
 };

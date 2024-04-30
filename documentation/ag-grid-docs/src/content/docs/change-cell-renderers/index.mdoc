@@ -29,7 +29,7 @@ In the example above:
 
 To change the length of the effect, use the grid options `cellFlashDuration` and `cellFadeDuration`.
 
-Changes due to changes in filters are not reflected with flashing. This behaviour can be toggled by enabling the grid option `allowShowChangeAfterFilter`
+By default, value changes caused by updates to column filters are not highlighted with cell flashing. This behaviour can be toggled by enabling the grid option `allowShowChangeAfterFilter`
 
 ### Flash Cells using the API
 
@@ -49,8 +49,7 @@ In the example above, all three buttons use the `flashCells(params)` API. Note t
 
 ### Customise Flash Colour
 
-Each time the call value is changed, the grid adds the CSS class `ag-cell-data-changed` for 500ms by default, and then then CSS class `ag-cell-data-changed-animation` for 1,000ms by default. The grid provided themes use this to apply a background color.
-To override the flash background color, this has to be done by overriding the relevant CSS class.
+Each time the cell value is changed, the grid adds the CSS class `ag-cell-data-changed` for 500ms by default, and then the CSS class `ag-cell-data-changed-animation` for 1,000ms by default. The grid-provided themes use this to apply a background color. To override the flash background color, override the relevant CSS class.
 
 {% gridExampleRunner title="Customising Flashing" name="customising-flashing" /%}
 
@@ -62,7 +61,7 @@ Interesting animations for data changes can be achieved using [Cell Components](
 
 ### Animate Show Changed Cells
 
-The previous value is temporarily shown beside the old value with a directional arrow showing increase or decrease in value. The old value is then faded out.
+The difference between the previous and new value is temporarily shown beside the new value and is then faded out. This difference is shown in either green or red, for an increase or decrease in value respectively, alongside an arrow indicating the direction of change.
 
 {% gridExampleRunner title="Animate Show Change Renderer" name="animate-show-change-renderer"  exampleHeight=530 /%}
 
@@ -84,7 +83,7 @@ const gridOptions = {
 
 ### Animate Slide Cells
 
-The previous value shown in a faded fashion and slides, giving a ghosting effect as the old value fades and slides away.
+The previous value is shown in a faded fashion and slides, giving a ghosting effect as the old value fades and slides away.
 
 {% gridExampleRunner title="Animate Slide Renderer" name="animate-slide-renderer"  exampleHeight=530 /%}
 

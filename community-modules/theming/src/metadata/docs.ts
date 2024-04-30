@@ -212,6 +212,7 @@ const docs: Record<string, string | undefined> = {
     inputInvalidBorder:
         'Border around text inputs in an invalid state. By default the border is drawn all around the input, when using Material Design inputs the border is drawn underneath',
     inputInvalidTextColor: 'Color of text within text inputs in an invalid state',
+    rowLoadingSkeletonEffectColor: 'Colour of the skeleton loading effect used when loading row data with the Server-side Row Model',
 };
 
 export const getParamDocs = (param: string): string | undefined => {

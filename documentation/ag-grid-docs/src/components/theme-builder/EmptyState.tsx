@@ -14,7 +14,7 @@ export const EmptyState = () => {
                     Visit us on a larger device to explore our many preset themes, customise colours, spacing, and
                     typography and download your own{' '}
                     <span className={styles.lineGrid}>
-                        <a href="https://ag-grid.com/react-data-grid/themes/">AG Grid theme</a>
+                        <a href="https://www.ag-grid.com/react-data-grid/themes/">AG Grid theme</a>
                     </span>
                     .
                 </p>

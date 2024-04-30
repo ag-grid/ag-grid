@@ -56,8 +56,8 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/javascript-data-grid/building-typescript/', to: '/javascript-data-grid/installation/' },
     { from: '/ag-grid-building/', to: '/javascript-data-grid/installation/' },
     { from: '/javascript-data-grid/building/', to: '/javascript-data-grid/installation/' },
-    { from: '/javascript-data-grid/npm/', to: '/javascript-data-grid/installation/'},
-    { from: '/javascript-data-grid/download/', to: '/javascript-data-grid/installation'},
+    { from: '/javascript-data-grid/npm/', to: '/javascript-data-grid/installation/' },
+    { from: '/javascript-data-grid/download/', to: '/javascript-data-grid/installation' },
     {
         from: '/ag-grid-datagrid-crud-part-1/',
         to: 'https://medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-1-bf7f9715166e',
@@ -2525,10 +2525,10 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/grid-features/', to: 'https://www.ag-grid.com/' },
     { from: '/vue-data-grid/grid-features/', to: 'https://www.ag-grid.com/' },
 
-    { fromPattern: '^/javascript-data-grid/$', to: 'https://ag-grid.com/javascript-data-grid/getting-started/' },
-    { fromPattern: '^/react-data-grid/$', to: 'https://ag-grid.com/react-data-grid/getting-started/' },
-    { fromPattern: '^/angular-data-grid/$', to: 'https://ag-grid.com/angular-data-grid/getting-started/' },
-    { fromPattern: '^/vue-data-grid/$', to: 'https://ag-grid.com/vue-data-grid/getting-started/' },
+    { fromPattern: '^/javascript-data-grid/$', to: 'https://www.ag-grid.com/javascript-data-grid/getting-started/' },
+    { fromPattern: '^/react-data-grid/$', to: 'https://www.ag-grid.com/react-data-grid/getting-started/' },
+    { fromPattern: '^/angular-data-grid/$', to: 'https://www.ag-grid.com/angular-data-grid/getting-started/' },
+    { fromPattern: '^/vue-data-grid/$', to: 'https://www.ag-grid.com/vue-data-grid/getting-started/' },
 
     {
         from: '/javascript-data-grid/integrated-charts-api-downloading-image/',

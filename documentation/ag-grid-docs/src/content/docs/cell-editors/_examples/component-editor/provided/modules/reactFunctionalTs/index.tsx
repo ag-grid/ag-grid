@@ -5,9 +5,6 @@ import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColDef, ModuleRegistry } from '@ag-grid-community/core';
-import DoublingEditor from './doublingEditor';
-import MoodEditor from './moodEditor';
-import MoodRenderer from './moodRenderer';
 import NumericEditor from './numericEditor';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
@@ -34,22 +31,12 @@ const GridExample = () => {
 
     const columnDefs = useMemo<ColDef[]>(() => [
         {
-            headerName: 'Doubling',
-            field: 'number',
-            cellEditor: DoublingEditor,
-            editable: true,
+            headerName: 'Provided Text',
+            field: 'name',
             width: 300,
         },
         {
-            field: 'mood',
-            cellRenderer: MoodRenderer,
-            cellEditor: MoodEditor,
-            cellEditorPopup: true,
-            editable: true,
-            width: 300,
-        },
-        {
-            headerName: 'Numeric',
+            headerName: 'Custom Numeric',
             field: 'number',
             cellEditor: NumericEditor,
             editable: true,

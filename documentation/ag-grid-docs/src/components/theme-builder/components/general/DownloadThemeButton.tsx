@@ -1,5 +1,4 @@
 import { installDocsUrl } from '@ag-grid-community/theming';
-import { Alert } from '@ag-website-shared/components/alert/Alert';
 import { convertProductionUrlsForStaging } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
 
@@ -8,8 +7,8 @@ import { UIPopupButton } from './UIPopupButton';
 
 export const DownloadThemeButton = () => (
     <ButtonWrapper>
-        <UIPopupButton placement="right-start" dropdownContent={<DownloadThemeDialog />} variant="primary">
-            {downloadIcon} Download theme
+        <UIPopupButton placement="right-end" dropdownContent={<DownloadThemeDialog />} variant="primary">
+            {downloadIcon} Download Theme
         </UIPopupButton>
     </ButtonWrapper>
 );
@@ -18,15 +17,15 @@ const localInstallDocsUrl = convertProductionUrlsForStaging(installDocsUrl);
 
 const DownloadThemeDialog = () => {
     const theme = useRenderedTheme();
-    const downloadLink = `data:text/css;charset=utf-8,${encodeURIComponent(convertProductionUrlsForStaging(theme.css))}`;
+    const downloadLink = `data:text/css;charset=utf-8,${encodeURIComponent(convertProductionUrlsForStaging(theme.getCSS()))}`;
 
     return (
         <DownloadThemeWrapper>
             <Header>Download Theme</Header>
             <Paragraph>
-                Download a CSS file to integrate into an application. See the{' '}
+                Download a CSS file to integrate into an application. See{' '}
                 <a href={localInstallDocsUrl} target="_blank">
-                    integration documentation
+                    Applying Theme Builder Styling to AG Grid
                 </a>{' '}
                 for instructions on how to use the file.
             </Paragraph>
@@ -43,10 +42,6 @@ const Header = styled('div')`
 `;
 
 const Paragraph = styled('div')``;
-
-const StyledAlert = styled(Alert)`
-    margin: 5px 0;
-`;
 
 const DownloadThemeWrapper = styled('div')`
     display: flex;

@@ -5,6 +5,28 @@
     border-bottom: var(--ag-tab-bar-border);
 }
 
+.ag-tabs-header-wrapper {
+    display: flex;
+
+    .ag-tabs-header {
+        flex: 1;
+    }
+}
+
+.ag-tabs-close-button-wrapper {
+    border: 0;
+    /* TODO var to control this style */
+    border-right: solid 1px var(--ag-border-color);
+    padding: var(--ag-grid-size);
+}
+
+.ag-tabs-close-button {
+    border: 0;
+    background-color: unset;
+    cursor: pointer;
+    padding: 0;
+}
+
 .ag-tab {
     position: relative;
     display: flex;

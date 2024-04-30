@@ -3,6 +3,7 @@ import {
   createGrid,
   GridOptions,
   GridSizeChangedEvent,
+  FirstDataRenderedEvent,
 } from '@ag-grid-community/core';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -25,11 +26,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     { field: 'bronze', minWidth: 80 },
     { field: 'total', minWidth: 80 },
   ],
-
-  autoSizeStrategy: {
-    type: 'fitGridWidth'
-  },
   onGridSizeChanged: onGridSizeChanged,
+  onFirstDataRendered: onFirstDataRendered,
 }
 
 function onGridSizeChanged(params: GridSizeChangedEvent) {
@@ -65,6 +63,10 @@ function onGridSizeChanged(params: GridSizeChangedEvent) {
   window.setTimeout(() => {
     params.api.sizeColumnsToFit();
   }, 10)
+}
+
+function onFirstDataRendered(params: FirstDataRenderedEvent) {
+  params.api.sizeColumnsToFit();
 }
 
 // setup the grid after the page has finished loading

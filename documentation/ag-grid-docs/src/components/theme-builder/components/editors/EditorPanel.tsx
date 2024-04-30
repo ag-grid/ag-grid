@@ -1,3 +1,4 @@
+import { useApplicationConfigAtom } from '@components/theme-builder/model/application-config';
 import styled from '@emotion/styled';
 import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDown } from 'lucide-react';
@@ -6,11 +7,12 @@ import { type ReactNode } from 'react';
 import { BordersEditor } from './BordersEditor';
 import { ParamEditor } from './ParamEditor';
 import { PartEditor } from './PartEditor';
-import { horizontalSpacingIcon, verticalSpacingIcon } from './icons';
+import { horizontalSpacingIcon, radiusIcon, verticalSpacingIcon } from './icons';
 
 export const EditorPanel = () => {
+    const [expanded, setExpanded] = useApplicationConfigAtom('expandedEditors');
     return (
-        <AccordionRoot type="multiple" defaultValue={['Header']}>
+        <AccordionRoot type="multiple" defaultValue={expanded || ['General']} onValueChange={setExpanded}>
             <div className="pageHeading">
                 <h1 className="pageTitle">Theme Builder </h1>
             </div>
@@ -25,10 +27,22 @@ export const EditorPanel = () => {
                 <ParamEditor param="accentColor" />
                 <ParamEditor param="borderColor" />
                 <BordersEditor />
-                <ParamEditor param="gridSize" label="Spacing" showDocs />
+                <ParamEditor param="gridSize" label="Spacing" showDocs icon={verticalSpacingIcon} />
                 <EvenSplitRow>
-                    <ParamEditor param="wrapperBorderRadius" label="Wrapper radius" showDocs />
-                    <ParamEditor param="borderRadius" label="Widget radius" showDocs />
+                    <ParamEditor
+                        param="wrapperBorderRadius"
+                        label="Wrapper radius"
+                        showDocs
+                        icon={radiusIcon}
+                        swipeAdjustmentDivisor={20}
+                    />
+                    <ParamEditor
+                        param="borderRadius"
+                        label="Widget radius"
+                        showDocs
+                        icon={radiusIcon}
+                        swipeAdjustmentDivisor={20}
+                    />
                 </EvenSplitRow>
             </Section>
             <Section heading="Header">
@@ -185,7 +199,7 @@ const AccordionContent = styled(Accordion.Content)`
 
 const Trigger = styled(Accordion.Trigger)`
     all: unset;
-    color: var(--color-fg-secondary) !important;
+    color: var(--color-fg-secondary);
     background: none !important;
     font-size: 15px;
     font-weight: 700;
@@ -194,11 +208,18 @@ const Trigger = styled(Accordion.Trigger)`
     justify-content: space-between;
     width: 100%;
     cursor: pointer;
-    transition: all 0.5s;
-    opacity: 0.9;
+    transition:
+        opacity 0.25s ease-in-out,
+        color 0.25s ease-in-out;
+    opacity: 0.85;
+
     &:hover {
-        opacity: 0.6;
-        transition: all 0.5s;
+        opacity: 1;
+        color: var(--color-brand-500);
+
+        [data-dark-mode='true'] & {
+            color: var(--color-brand-300);
+        }
     }
 `;
 

@@ -796,13 +796,7 @@
                 "url": "./change-detection/#triggering-value-change-detection"
             }
         },
-        "debug": {},
-        "reactiveCustomComponents": {
-            "more": {
-                "name": "Registering Custom Components",
-                "url": "./components/#registering-custom-components"
-            }
-        }
+        "debug": {}
     },
     "overlays": {
         "meta": {
@@ -1245,7 +1239,7 @@
         },
         "suppressStickyTotalRow": {},
         "groupSuppressBlankHeader": {
-            "more:": {
+            "more": {
                 "name": "Showing Values in Group and Total Rows",
                 "url": "./grouping-footers/#showing-values-in-group-and-total-rows"
             }
