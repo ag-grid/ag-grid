@@ -58,7 +58,7 @@ In this example, `gridPreDestroyed` saves column widths before grid destruction.
 
 {% if isFramework("angular") %}
 ### Angular PreDestroy Setup
-When using Angular, register the `gridPreDestroyed` event handler in the grid options instead of on the grid element directly.
+When using Angular, the `gridPreDestroyed` event handler must be registered via grid options instead of as an Output event handler to work correctly.
 
 For example:
 {% /if %}
@@ -73,18 +73,3 @@ this.gridOptions = {
 ```
 {% /if %}
 
-{% if isFramework("angular") %}
-Rather than:
-{% /if %}
-
-{% if isFramework("angular") %}
-```js
-<ag-grid-angular 
- (gridPreDestroyed)="onGridPreDestroyed($event)"
-></ag-grid-angular>
-```
-{% /if %}
-
-{% if isFramework("angular") %}
-This approach ensures proper clean-up during Angular's change detection cycle.
-{% /if %}
