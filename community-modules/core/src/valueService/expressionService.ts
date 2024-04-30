@@ -29,7 +29,7 @@ export class ExpressionService extends BeanStub {
             // value a params can have, which makes whatever is in the params available.
             const result = javaScriptFunction(params.value, params.context,
                 params.oldValue, params.newValue, params.value, params.node,
-                params.data, params.colDef, params.rowIndex, params.api, params.columnApi,
+                params.data, params.colDef, params.rowIndex, params.api,
                 params.getValue, params.column, params.columnGroup);
             return result;
         } catch (e) {
@@ -54,7 +54,7 @@ export class ExpressionService extends BeanStub {
         }
         // if not found in cache, return the function
         const functionBody = this.createFunctionBody(expression);
-        const theFunction = new Function('x, ctx, oldValue, newValue, value, node, data, colDef, rowIndex, api, columnApi, getValue, column, columnGroup', functionBody);
+        const theFunction = new Function('x, ctx, oldValue, newValue, value, node, data, colDef, rowIndex, api, getValue, column, columnGroup', functionBody);
 
         // store in cache
         this.expressionToFunctionCache[expression] = theFunction;

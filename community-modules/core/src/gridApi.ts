@@ -1,5 +1,4 @@
 import { AlignedGridsService } from "./alignedGridsService";
-import { ColumnApi } from "./columns/columnApi";
 import { ApplyColumnStateParams, ColumnModel, ColumnState, ISizeColumnsToFitParams } from "./columns/columnModel";
 import { Autowired, Bean, Context, Optional, PostConstruct } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
@@ -148,8 +147,6 @@ export interface DetailGridInfo {
     id: string;
     /** Grid api of the detail grid. */
     api?: GridApi;
-    /** @deprecated v31 ColumnApi has been deprecated and all methods moved to the api. */
-    columnApi?: ColumnApi;
 }
 
 export interface StartEditingCellParams {
@@ -1735,8 +1732,6 @@ export class GridApi<TData = any> {
     public paginationGoToPage(page: number): void {
         this.paginationProxy.goToPage(page);
     }
-
-    // Methods migrated from old ColumnApi
 
     /**
      * Adjusts the size of columns to fit the available horizontal space.

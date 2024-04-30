@@ -47,7 +47,7 @@ export function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | un
         // 'simple object' means a bunch of key/value pairs, eg {filter: 'myFilter'}. it does
         // NOT include the following:
         // 1) arrays
-        // 2) functions or classes (eg ColumnAPI instance)
+        // 2) functions or classes (eg api instance)
         const sourceIsSimpleObject = isNonNullObject(value) && value.constructor === Object;
 
         if (sourceIsSimpleObject) {
@@ -94,7 +94,7 @@ export function mergeDeep(dest: any, source: any, copyUndefined = true, makeCopy
 
             if (objectIsDueToBeCopied) {
                 // 'simple object' means a bunch of key/value pairs, eg {filter: 'myFilter'}, as opposed
-                // to a Class instance (such as ColumnAPI instance).
+                // to a Class instance (such as api instance).
                 const sourceIsSimpleObject = typeof sourceValue === 'object' && sourceValue.constructor === Object;
                 const dontCopy = sourceIsSimpleObject;
 

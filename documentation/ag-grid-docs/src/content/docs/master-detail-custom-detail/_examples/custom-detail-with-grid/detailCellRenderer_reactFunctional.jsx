@@ -30,7 +30,6 @@ const DetailCellRenderer = ({ data, node, api }) => {
     const gridInfo = {
       id: node.id,
       api: params.api,
-      columnApi: params.columnApi
     };
 
     console.log("adding detail grid info with id: ", rowId);
