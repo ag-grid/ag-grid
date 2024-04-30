@@ -897,10 +897,6 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "suppressParentsInRowNodes": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
   "suppressColumnMoveAnimation": {
     "typeName": "boolean",
     "typesToInclude": []
@@ -994,10 +990,6 @@
     "typesToInclude": []
   },
   "alwaysAggregateAtRootLevel": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "suppressAggAtRootLevel": {
     "typeName": "boolean",
     "typesToInclude": []
   },
@@ -1101,10 +1093,6 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "excludeHiddenColumnsFromQuickFilter": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
   "ensureDomOrder": {
     "typeName": "boolean",
     "typesToInclude": []
@@ -1146,14 +1134,6 @@
     "typesToInclude": []
   },
   "suppressMultiRangeSelection": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "enterMovesDown": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "enterMovesDownAfterEdit": {
     "typeName": "boolean",
     "typesToInclude": []
   },
@@ -1258,10 +1238,6 @@
     "typesToInclude": []
   },
   "detailRowAutoHeight": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "serverSideFilterAllLevels": {
     "typeName": "boolean",
     "typesToInclude": []
   },
