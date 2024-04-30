@@ -155,7 +155,7 @@ if [[ $count -ne 3 ]]
 then
   echo "!!!!! packages/ag-grid-vue/dist should have 3 umd files"
   exit 1
-fithey
+fi
 count=`ls -l packages/ag-grid-vue/lib/*.*js | wc -l | tr -d ' '`
 if [[ $count -ne 4 ]]
 then
