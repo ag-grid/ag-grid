@@ -2,10 +2,8 @@ import {
     PopupService,
     Component,
     Autowired,
-    Events,
     DropTarget,
     Column,
-    ColumnAggFuncChangeRequestEvent,
     RefSelector,
     Optional,
     IAggFuncService,
@@ -14,7 +12,6 @@ import {
     _,
     SortController,
     SortIndicatorComp,
-    WithoutGridCommon,
     PillDragComp,
     ColumnModel,
     DragItem,
@@ -305,16 +302,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
 
         const itemSelected = () => {
             hidePopup();
-            if (this.gos.get('functionsPassive')) {
-                const event: WithoutGridCommon<ColumnAggFuncChangeRequestEvent> = {
-                    type: Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
-                    columns: [this.column],
-                    aggFunc: value
-                };
-                this.eventService.dispatchEvent(event);
-            } else {
-                this.columnModel.setColumnAggFunc(this.column, value, "toolPanelDragAndDrop");
-            }
+            this.columnModel.setColumnAggFunc(this.column, value, "toolPanelDragAndDrop");
         };
 
         const localeTextFunc = this.localeService.getLocaleTextFunc();

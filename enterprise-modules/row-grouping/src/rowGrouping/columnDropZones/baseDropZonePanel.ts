@@ -83,16 +83,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     private isRowGroupPanel() {
         return this.dropZonePurpose === 'rowGroup';
     }
-
-    protected refreshOnDragStop(): boolean {
-        // If the function is passive, then we don't refresh, as we assume the client application
-        // is going to call setRowGroups / setPivots / setValues at a later point which will then
-        // cause a refresh. This gives a nice GUI where the ghost stays until the app has caught
-        // up with the changes. However, if there was no change in the order, then we do need to
-        // refresh to reset the columns
-        return !this.gos.get('functionsPassive');
-    }
-
+    
     protected createPillComponent(column: Column, dropTarget: DropTarget, ghost: boolean, horizontal: boolean): DropZoneColumnComp {
         return new DropZoneColumnComp(column, dropTarget, ghost, this.dropZonePurpose, horizontal);
     }

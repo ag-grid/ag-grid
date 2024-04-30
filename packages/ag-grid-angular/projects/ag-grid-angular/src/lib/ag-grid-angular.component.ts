@@ -46,7 +46,6 @@ import {
     ColGroupDef,
     ColTypeDef,
     Column,
-    ColumnAggFuncChangeRequestEvent,
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
     ColumnHeaderClickedEvent,
@@ -56,13 +55,10 @@ import {
     ColumnMenuVisibleChangedEvent,
     ColumnMovedEvent,
     ColumnPinnedEvent,
-    ColumnPivotChangeRequestEvent,
     ColumnPivotChangedEvent,
     ColumnPivotModeChangedEvent,
     ColumnResizedEvent,
-    ColumnRowGroupChangeRequestEvent,
     ColumnRowGroupChangedEvent,
-    ColumnValueChangeRequestEvent,
     ColumnValueChangedEvent,
     ColumnVisibleEvent,
     ComponentStateChangedEvent,
@@ -544,12 +540,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public stopEditingWhenCellsLoseFocus: boolean | undefined = undefined;
-    /** @deprecated As of v30, no longer used. To navigate with the Enter key use `enterNavigatesVertically`.
-         */
-    @Input() public enterMovesDown: boolean | undefined = undefined;
-    /** @deprecated As of v30, no longer used. To navigate with the Enter key after edit use `enterNavigatesVerticallyAfterEdit`.
-         */
-    @Input() public enterMovesDownAfterEdit: boolean | undefined = undefined;
     /** Set to `true` along with `enterNavigatesVerticallyAfterEdit` to have Excel-style behaviour for the `Enter` key.
          * i.e. pressing the `Enter` key will move down to the cell beneath and `Shift+Enter` will move up to the cell above.
          * @default false
@@ -598,10 +588,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public cacheQuickFilter: boolean | undefined = undefined;
-    /** @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. This can be toggled using `includeHiddenColumnsInQuickFilter`.
-         * @initial
-         */
-    @Input() public excludeHiddenColumnsFromQuickFilter: boolean | undefined = undefined;
     /** Hidden columns are excluded from the Quick Filter by default.
          * To include hidden columns, set to `true`.
          * @default false
@@ -666,10 +652,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
-    /** @deprecated As of v29, no longer used.
-         * @initial
-         */
-    @Input() public enableChartToolPanelsButton: boolean | undefined = undefined;
     /** Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons. Only applies when using AG Charts Community.
          * @default false
          * @initial
@@ -761,13 +743,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public enableCellExpressions: boolean | undefined = undefined;
-    /** @deprecated v30.2 If `true`, row nodes do not have their parents set.
-         * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.
-         * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`.
-         * @default false
-         * @initial
-         */
-    @Input() public suppressParentsInRowNodes: boolean | undefined = undefined;
     /** Disables touch support (but does not remove the browser's efforts to simulate mouse events on touch).
          * @default false
          * @initial
@@ -915,10 +890,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @default false
          */
     @Input() public alwaysAggregateAtRootLevel: boolean | undefined = undefined;
-    /** @deprecated v30 - made default and toggled via alwaysAggregateAtRootLevel
-         * @initial
-         */
-    @Input() public suppressAggAtRootLevel: boolean | undefined = undefined;
     /** When using change detection, only the updated column will be re-aggregated.
          * @default false
          */
@@ -1239,9 +1210,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public serverSideOnlyRefreshFilteredGroups: boolean | undefined = undefined;
-    /** @deprecated v30 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead.
-         */
-    @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
     /** When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
          * @default false
          * @deprecated v31.1
@@ -1431,10 +1399,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public deltaSort: boolean | undefined = undefined;
     /**/
     @Input() public treeDataDisplayType: TreeDataDisplayType | undefined = undefined;
-    /** @deprecated v29.2
-         * @initial
-         */
-    @Input() public functionsPassive: boolean | undefined = undefined;
     /** @initial
          */
     @Input() public enableGroupEdit: boolean | undefined = undefined;
@@ -1866,14 +1830,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Sort has changed. The grid also listens for this and updates the model.
          */
     @Output() public sortChanged: EventEmitter<SortChangedEvent<TData>> = new EventEmitter<SortChangedEvent<TData>>();
-    /** @deprecated v29.2     */
-    @Output() public columnRowGroupChangeRequest: EventEmitter<ColumnRowGroupChangeRequestEvent<TData>> = new EventEmitter<ColumnRowGroupChangeRequestEvent<TData>>();
-    /** @deprecated v29.2     */
-    @Output() public columnPivotChangeRequest: EventEmitter<ColumnPivotChangeRequestEvent<TData>> = new EventEmitter<ColumnPivotChangeRequestEvent<TData>>();
-    /** @deprecated v29.2     */
-    @Output() public columnValueChangeRequest: EventEmitter<ColumnValueChangeRequestEvent<TData>> = new EventEmitter<ColumnValueChangeRequestEvent<TData>>();
-    /** @deprecated v29.2     */
-    @Output() public columnAggFuncChangeRequest: EventEmitter<ColumnAggFuncChangeRequestEvent<TData>> = new EventEmitter<ColumnAggFuncChangeRequestEvent<TData>>();
 
 
     // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"' 
@@ -1901,7 +1857,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressNoRowsOverlay: boolean | null | '';
     static ngAcceptInputType_suppressAutoSize: boolean | null | '';
     static ngAcceptInputType_skipHeaderOnAutoSize: boolean | null | '';
-    static ngAcceptInputType_suppressParentsInRowNodes: boolean | null | '';
     static ngAcceptInputType_suppressColumnMoveAnimation: boolean | null | '';
     static ngAcceptInputType_suppressMovableColumns: boolean | null | '';
     static ngAcceptInputType_suppressFieldDotNotation: boolean | null | '';
@@ -1926,9 +1881,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressAggFuncInHeader: boolean | null | '';
     static ngAcceptInputType_suppressColumnVirtualisation: boolean | null | '';
     static ngAcceptInputType_alwaysAggregateAtRootLevel: boolean | null | '';
-    static ngAcceptInputType_suppressAggAtRootLevel: boolean | null | '';
     static ngAcceptInputType_suppressFocusAfterRefresh: boolean | null | '';
-    static ngAcceptInputType_functionsPassive: boolean | null | '';
     static ngAcceptInputType_functionsReadOnly: boolean | null | '';
     static ngAcceptInputType_animateRows: boolean | null | '';
     static ngAcceptInputType_groupSelectsFiltered: boolean | null | '';
@@ -1953,7 +1906,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_purgeClosedRowNodes: boolean | null | '';
     static ngAcceptInputType_cacheQuickFilter: boolean | null | '';
     static ngAcceptInputType_includeHiddenColumnsInQuickFilter: boolean | null | '';
-    static ngAcceptInputType_excludeHiddenColumnsFromQuickFilter: boolean | null | '';
     static ngAcceptInputType_ensureDomOrder: boolean | null | '';
     static ngAcceptInputType_accentedSort: boolean | null | '';
     static ngAcceptInputType_suppressChangeDetection: boolean | null | '';
@@ -1965,8 +1917,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressCsvExport: boolean | null | '';
     static ngAcceptInputType_includeHiddenColumnsInAdvancedFilter: boolean | null | '';
     static ngAcceptInputType_suppressMultiRangeSelection: boolean | null | '';
-    static ngAcceptInputType_enterMovesDown: boolean | null | '';
-    static ngAcceptInputType_enterMovesDownAfterEdit: boolean | null | '';
     static ngAcceptInputType_enterNavigatesVerticallyAfterEdit: boolean | null | '';
     static ngAcceptInputType_enterNavigatesVertically: boolean | null | '';
     static ngAcceptInputType_suppressPropertyNamesCheck: boolean | null | '';
@@ -1976,7 +1926,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressClipboardPaste: boolean | null | '';
     static ngAcceptInputType_suppressLastEmptyLineOnPaste: boolean | null | '';
     static ngAcceptInputType_enableCharts: boolean | null | '';
-    static ngAcceptInputType_enableChartToolPanelsButton: boolean | null | '';
     static ngAcceptInputType_suppressChartToolPanelsButton: boolean | null | '';
     static ngAcceptInputType_suppressMaintainUnsortedOrder: boolean | null | '';
     static ngAcceptInputType_enableCellTextSelection: boolean | null | '';
@@ -1994,7 +1943,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressExpandablePivotGroups: boolean | null | '';
     static ngAcceptInputType_debounceVerticalScrollbar: boolean | null | '';
     static ngAcceptInputType_detailRowAutoHeight: boolean | null | '';
-    static ngAcceptInputType_serverSideFilterAllLevels: boolean | null | '';
     static ngAcceptInputType_serverSideSortAllLevels: boolean | null | '';
     static ngAcceptInputType_serverSideEnableClientSideSort: boolean | null | '';
     static ngAcceptInputType_serverSideOnlyRefreshFilteredGroups: boolean | null | '';
