@@ -111,7 +111,7 @@ const GridPreview = () => {
                                     rangeSelection: stateRef.current.rangeSelection,
                                 }}
                                 onSelectionChanged={({ api }) => {
-                                    stateRef.current.rowSelection = api.getState().rowSelection;
+                                    stateRef.current.rowSelection = api.getState().rowSelection || [];
                                 }}
                                 onRangeSelectionChanged={({ api }) => {
                                     stateRef.current.rangeSelection = api.getState().rangeSelection;
