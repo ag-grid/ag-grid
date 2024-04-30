@@ -4009,7 +4009,7 @@ var _CartesianAxisPanel = class _CartesianAxisPanel extends import_core22.Compon
       "rangeBar",
       "scatter",
       "bubble"
-    ].includes(chartType) || this.chartController.isGrouping() || !this.isCategoryAxis() || !supportsNumericalAxis()) {
+    ].includes(chartType) || this.chartController.isGrouping() || !this.isCategoryAxis() || this.chartController.isCategorySeriesSwitched() || !supportsNumericalAxis()) {
       return [];
     }
     return ["category", "number", "time"].map((value) => ({
@@ -12157,12 +12157,12 @@ function validGridChartsVersion({ gridVersion, chartsVersion }) {
     };
   }
   const [gridMajor, gridMinor] = gridVersion.split(".") || [];
-  const [chartsMajor, chartsMinor] = chartsVersion.split(".") || [];
+  const [chartsMajor, chartsMinor, chartsPatch] = chartsVersion.split(".") || [];
   const isValidMajor = isValidMajorVersion({
     gridMajorVersion: gridMajor,
     chartsMajorVersion: chartsMajor
   });
-  if (isValidMajor && gridMinor === chartsMinor) {
+  if (isValidMajor && gridMinor === chartsMinor || chartsPatch.includes("beta")) {
     return {
       isValid: true
     };

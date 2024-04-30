@@ -98,7 +98,7 @@
   --ag-range-selection-chart-category-background-color: rgba(26, 177, 74, 0.5);
   --ag-range-selection-chart-background-color: rgba(45, 166, 255, 0.5);
   --ag-input-focus-box-shadow: 0 0 4px 1.5px var(--ag-input-focus-border-color);
-  --ag-row-loading-skeleton-effect-colour: rgba(202, 203, 204, 0.4);
+  --ag-row-loading-skeleton-effect-color: rgba(202, 203, 204, 0.4);
   color-scheme: dark;
 }
 
@@ -141,7 +141,7 @@
     --ag-range-selection-chart-category-background-color: rgba(26, 177, 74, 0.5);
     --ag-range-selection-chart-background-color: rgba(45, 166, 255, 0.5);
     --ag-input-focus-box-shadow: 0 0 4px 1.5px var(--ag-input-focus-border-color);
-    --ag-row-loading-skeleton-effect-colour: rgba(202, 203, 204, 0.4);
+    --ag-row-loading-skeleton-effect-color: rgba(202, 203, 204, 0.4);
     color-scheme: dark;
   }
 }

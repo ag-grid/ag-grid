@@ -4,8 +4,8 @@
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "dependencies": {
     "tslib": "^2.3.0",
-    "@ag-grid-community/core": "~31.3.0",
-    "@ag-grid-enterprise/core": "~31.3.0"
+    "@ag-grid-community/core": "31.3.0",
+    "@ag-grid-enterprise/core": "31.3.0"
   },
   "main": "./src/main.js",
   "types": "./dist/types/src/main.d.ts",

@@ -99,7 +99,7 @@
   --ag-advanced-filter-option-pill-color: #5a3168;
   --ag-advanced-filter-value-pill-color: #374c86;
   --ag-popup-shadow: 0 0px 20px rgba(0, 0, 0, 0.30);
-  --ag-row-loading-skeleton-effect-colour: rgba(202, 203, 204, 0.4);
+  --ag-row-loading-skeleton-effect-color: rgba(202, 203, 204, 0.4);
   color-scheme: dark;
 }
 
@@ -128,7 +128,7 @@
     --ag-advanced-filter-option-pill-color: #5a3168;
     --ag-advanced-filter-value-pill-color: #374c86;
     --ag-popup-shadow: 0 0px 20px rgba(0, 0, 0, 0.30);
-    --ag-row-loading-skeleton-effect-colour: rgba(202, 203, 204, 0.4);
+    --ag-row-loading-skeleton-effect-color: rgba(202, 203, 204, 0.4);
     color-scheme: dark;
   }
 }

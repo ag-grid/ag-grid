@@ -107,7 +107,7 @@
   --ag-value-change-delta-up-color: #43a047a8;
   --ag-value-change-delta-down-color: #e53935ff;
   --ag-menu-background-color: #2c2c2cff;
-  --ag-row-loading-skeleton-effect-colour: rgba(202, 203, 204, 0.4);
+  --ag-row-loading-skeleton-effect-color: rgba(202, 203, 204, 0.4);
   color-scheme: dark;
 }
 
@@ -155,7 +155,7 @@
     --ag-value-change-delta-up-color: #43a047a8;
     --ag-value-change-delta-down-color: #e53935ff;
     --ag-menu-background-color: #2c2c2cff;
-    --ag-row-loading-skeleton-effect-colour: rgba(202, 203, 204, 0.4);
+    --ag-row-loading-skeleton-effect-color: rgba(202, 203, 204, 0.4);
     color-scheme: dark;
   }
 }

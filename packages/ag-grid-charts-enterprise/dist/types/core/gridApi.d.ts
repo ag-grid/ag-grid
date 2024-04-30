@@ -848,7 +848,7 @@ export declare class GridApi<TData = any> {
      */
     autoSizeAllColumns(skipHeader?: boolean): void;
     /** Set the pivot result columns. */
-    setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[]): void;
+    setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[] | null): void;
     /** Returns the grid's pivot result columns. */
     getPivotResultColumns(): Column[] | null;
     /** Get the current state of the grid. Can be used in conjunction with the `initialState` grid option to save and restore grid state. */

@@ -11367,6 +11367,8 @@ var _Component = class _Component extends BeanStub {
         getTooltipValue,
         getGui: () => this.getGui(),
         getLocation: () => location != null ? location : "UNKNOWN",
+        getColDef: params == null ? void 0 : params.getColDef,
+        getColumn: params == null ? void 0 : params.getColumn,
         getTooltipShowDelayOverride: showDelayOverride != null ? () => showDelayOverride : void 0,
         getTooltipHideDelayOverride: hideDelayOverride != null ? () => hideDelayOverride : void 0,
         shouldDisplayTooltip
@@ -13708,6 +13710,9 @@ var _AgSelect = class _AgSelect extends AgPickerField {
         } else {
           super.onKeyDown(e);
         }
+        break;
+      case KeyCode.ESCAPE:
+        super.onKeyDown(e);
         break;
     }
   }
@@ -30114,9 +30119,9 @@ var NavigationService = class extends BeanStub {
       }
     } else {
       if (previous instanceof CellCtrl) {
-        keyboardEvent.preventDefault();
         previous.focusCell(true);
-      } else if (this.focusService.focusNextGridCoreContainer(backwards)) {
+      }
+      if (this.focusService.focusNextGridCoreContainer(backwards)) {
         keyboardEvent.preventDefault();
       }
     }
@@ -32519,7 +32524,7 @@ var HeaderFilterCellCtrl = class extends AbstractHeaderCellCtrl {
     }
     const { filterManager } = this.beans;
     const syncWithFilter = (event) => {
-      if ((event == null ? void 0 : event.source) === "filterDestroyed") {
+      if ((event == null ? void 0 : event.source) === "filterDestroyed" && this.context.isDestroyed()) {
         return;
       }
       const compPromise = this.comp.getFloatingFilterComp();
@@ -40841,7 +40846,6 @@ var _AgMenuItemComponent = class _AgMenuItemComponent extends BeanStub {
   }
   configureDefaults(params) {
     var _a, _b, _c;
-    this.tooltip = this.params.tooltip;
     if (!this.menuItemComp) {
       setTimeout(() => this.configureDefaults(params));
       return;
@@ -40864,7 +40868,7 @@ var _AgMenuItemComponent = class _AgMenuItemComponent extends BeanStub {
       }
     }
     if (!(params == null ? void 0 : params.suppressTooltip)) {
-      this.refreshTooltip();
+      this.refreshTooltip(this.params.tooltip);
     }
     this.suppressAria = !!(params == null ? void 0 : params.suppressAria);
     if (!this.suppressAria) {

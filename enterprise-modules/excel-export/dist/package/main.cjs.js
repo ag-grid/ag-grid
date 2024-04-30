@@ -2698,7 +2698,35 @@ var getLock = (params) => {
 function mapNumber(value, startSource, endSource, startTarget, endTarget) {
   return (value - startSource) / (endSource - startSource) * (endTarget - startTarget) + startTarget;
 }
+var gainMap = {
+  0: "0",
+  5: "6554f",
+  10: "13107f",
+  15: "19661f",
+  20: "26214f",
+  25: ".5",
+  30: "39322f",
+  35: "45875f",
+  40: "52429f",
+  45: "58982f",
+  50: "1",
+  55: "72818f",
+  60: "1.25",
+  65: "93623f",
+  70: "109227f",
+  75: "2",
+  80: "2.5",
+  85: "3.4",
+  90: "5",
+  95: "10",
+  96: "12.5",
+  97: "1092267f",
+  98: "25",
+  99: "50",
+  100: "2147483647f"
+};
 var getImageData = (image, idx) => {
+  var _a;
   let rawMap;
   const { recolor, brightness, contrast, id } = image;
   if (recolor) {
@@ -2718,11 +2746,11 @@ var getImageData = (image, idx) => {
     if (!rawMap) {
       rawMap = {};
     }
-    if (contrast != null && contrast !== 0.5) {
-      rawMap.gain = mapNumber(contrast, 0, 1, -0.5, 0.5).toString();
+    if (contrast != null && contrast !== 50) {
+      rawMap.gain = (_a = gainMap[contrast]) != null ? _a : "1";
     }
-    if (brightness != null && brightness !== 0.5) {
-      rawMap.blacklevel = mapNumber(brightness, 0, 1, -0.5, 0.5).toString();
+    if (brightness != null && brightness !== 50) {
+      rawMap.blacklevel = mapNumber(brightness, 0, 100, -0.5, 0.5).toString();
     }
   }
   return {
@@ -3440,7 +3468,7 @@ var ExcelSerializingSession = class extends import_csv_export2.BaseGridSerializi
   }
   getCellValue(type, value) {
     let escaped = false;
-    if (value == null || value === "") {
+    if (value == null) {
       type = "s";
       value = "";
     }
@@ -3456,7 +3484,7 @@ var ExcelSerializingSession = class extends import_csv_export2.BaseGridSerializi
       const numberValue = Number(value);
       if (isNaN(numberValue)) {
         value = "";
-      } else {
+      } else if (value !== "") {
         value = numberValue.toString();
       }
     }

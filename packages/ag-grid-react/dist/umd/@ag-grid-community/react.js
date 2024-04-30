@@ -239,13 +239,14 @@ var ReactComponent = class {
   }
   createOrUpdatePortal(params) {
     if (!this.isStatelessComponent()) {
-      params.ref = (element) => {
+      this.ref = (element) => {
         var _a;
         this.componentInstance = element;
         this.addParentContainerStyleAndClasses();
         (_a = this.resolveInstanceCreated) == null ? void 0 : _a.call(this, true);
         this.resolveInstanceCreated = void 0;
       };
+      params.ref = this.ref;
     }
     this.reactElement = this.createElement(this.reactComponent, __spreadProps(__spreadValues({}, params), { key: this.key }));
     this.portal = (0, import_react_dom.createPortal)(
@@ -1890,6 +1891,7 @@ var RowContainerComp = (params) => {
       const updateRowCtrlsOrdered = (useFlushSync) => {
         const next = getNextValueIfDifferent(prevRowCtrlsRef.current, rowCtrlsRef.current, domOrderRef.current);
         if (next !== prevRowCtrlsRef.current) {
+          prevRowCtrlsRef.current = next;
           agFlushSync(useFlushSync, () => setRowCtrlsOrdered(next));
         }
       };
@@ -1901,7 +1903,6 @@ var RowContainerComp = (params) => {
         },
         setRowCtrls: ({ rowCtrls, useFlushSync }) => {
           const useFlush = !!useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
-          prevRowCtrlsRef.current = rowCtrlsRef.current;
           rowCtrlsRef.current = rowCtrls;
           updateRowCtrlsOrdered(useFlush);
         },

@@ -1246,7 +1246,13 @@ var _SetFilterListItem = class _SetFilterListItem extends import_core4.Component
           return el.scrollWidth > el.clientWidth;
         };
       }
-      this.setTooltip({ newTooltipText, location: "setFilterValue", shouldDisplayTooltip });
+      this.setTooltip({
+        newTooltipText,
+        location: "setFilterValue",
+        getColDef: () => this.params.colDef,
+        getColumn: () => this.params.column,
+        shouldDisplayTooltip
+      });
     }
     this.cellRendererParams = this.gos.addGridCommonParams({
       value,
@@ -1254,7 +1260,13 @@ var _SetFilterListItem = class _SetFilterListItem extends import_core4.Component
       colDef: this.params.colDef,
       column: this.params.column,
       setTooltip: (value2, shouldDisplayTooltip) => {
-        this.setTooltip({ newTooltipText: value2, location: "setFilterValue", shouldDisplayTooltip });
+        this.setTooltip({
+          newTooltipText: value2,
+          getColDef: () => this.params.colDef,
+          getColumn: () => this.params.column,
+          location: "setFilterValue",
+          shouldDisplayTooltip
+        });
       }
     });
   }

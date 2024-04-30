@@ -35,12 +35,12 @@
     "lint": "npx vue-cli-service lint"
   },
   "dependencies": {
-    "ag-grid-community": "~31.3.0"
+    "ag-grid-community": "31.3.0"
   },
   "devDependencies": {
     "gulp": "^4.0.0",
     "gulp-replace": "^1.0.0",
-    "@ag-grid-community/core": "~31.3.0",
+    "@ag-grid-community/core": "31.3.0",
     "@types/node": "18.19.10",
     "@vue/cli-plugin-typescript": "^3.11.0",
     "@vue/cli-plugin-unit-jest": "^3.11.0",

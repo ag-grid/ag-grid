@@ -3,6 +3,9 @@ import { AgStackComponentsRegistry } from "../components/agStackComponentsRegist
 import { BeanStub } from "../context/beanStub";
 import { ITooltipParams, TooltipLocation } from "../rendering/tooltipComponent";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { Column } from "../entities/column";
+import { ColumnGroup } from "../entities/columnGroup";
+import { ColDef, ColGroupDef } from "../entities/colDef";
 export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
@@ -28,6 +31,8 @@ export declare class Component extends BeanStub {
         showDelayOverride?: number;
         hideDelayOverride?: number;
         location?: TooltipLocation;
+        getColumn?(): Column | ColumnGroup;
+        getColDef?(): ColDef | ColGroupDef;
         shouldDisplayTooltip?: () => boolean;
     }): void;
     private createChildComponentsFromTags;

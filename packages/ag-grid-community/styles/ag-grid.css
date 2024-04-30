@@ -1045,7 +1045,7 @@
   --ag-value-change-value-highlight-background-color: rgba(22, 160, 133, 0.5);
   --ag-value-change-delta-up-color: #43a047;
   --ag-value-change-delta-down-color: #e53935;
-  --ag-row-loading-skeleton-effect-colour: rgba(66, 66, 66, 0.2);
+  --ag-row-loading-skeleton-effect-color: rgba(66, 66, 66, 0.2);
   --ag-chip-background-color: transparent;
   --ag-chip-border-color: var(--ag-chip-background-color);
   --ag-borders: solid 1px;
@@ -6096,7 +6096,7 @@ input[class^=ag-][type=button]:focus, button[class^=ag-]:focus {
 }
 
 .ag-skeleton-effect {
-  background-color: var(--ag-row-loading-skeleton-effect-colour);
+  background-color: var(--ag-row-loading-skeleton-effect-color);
   width: 100%;
   height: 1em;
   border-radius: 0.25rem;
