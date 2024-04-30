@@ -1,15 +1,10 @@
 import { Checkmark, ChevronUp } from '@carbon/icons-react';
-import styled from '@emotion/styled';
 import * as RadixSelect from '@radix-ui/react-select';
+import classnames from 'classnames';
 import { ChevronDown } from 'lucide-react';
 import { type ReactElement, type ReactNode, forwardRef } from 'react';
 
-import {
-    SharedContent,
-    SharedIndicator,
-    SharedItem,
-    SharedTrigger,
-} from '../../../../../documentation/ag-grid-docs/src/components/theme-builder/components/editors/dropdown-shared';
+import styles from './Select.module.scss';
 
 type SelectProps<O> = {
     options: O[];
@@ -55,29 +50,31 @@ export function Select<O>({
                 }
             }}
         >
-            <StyledTrigger tabIndex={0}>
+            <RadixSelect.Trigger tabIndex={0} className={styles.trigger}>
                 <RadixSelect.Value placeholder="Choose..." />
                 <RadixSelect.Icon>
-                    <StyledChevronDown />
+                    <ChevronDown className={styles.chevronDown} />
                 </RadixSelect.Icon>
-            </StyledTrigger>
+            </RadixSelect.Trigger>
             <RadixSelect.Portal>
-                <StyledContent>
+                <RadixSelect.Content className={styles.content}>
                     <RadixSelect.ScrollUpButton className="SelectScrollButton">
                         <ChevronUp />
                     </RadixSelect.ScrollUpButton>
-                    <StyledSelectViewport>
+                    <RadixSelect.Viewport>
                         {Object.entries(content).map(([groupLabel, items]) => (
                             <RadixSelect.Group key={groupLabel}>
-                                {groupLabel && <StyledSelectLabel>{groupLabel}</StyledSelectLabel>}
+                                {groupLabel && (
+                                    <RadixSelect.Label className={styles.label}>{groupLabel}</RadixSelect.Label>
+                                )}
                                 {items}
                             </RadixSelect.Group>
                         ))}
-                    </StyledSelectViewport>
+                    </RadixSelect.Viewport>
                     <RadixSelect.ScrollDownButton className="SelectScrollButton">
-                        <StyledChevronDown />
+                        <ChevronDown className={styles.chevronDown} />
                     </RadixSelect.ScrollDownButton>
-                </StyledContent>
+                </RadixSelect.Content>
             </RadixSelect.Portal>
         </RadixSelect.Root>
     );
@@ -97,35 +94,11 @@ const defaultGetGroupLabel = (option: any) => option?.groupLabel;
 
 const SelectItem = forwardRef(({ children, className, ...props }: any, forwardedRef) => {
     return (
-        <StyledSelectItem className={className} {...props} ref={forwardedRef}>
+        <RadixSelect.Item className={classnames(styles.item, className)} {...props} ref={forwardedRef}>
             <RadixSelect.ItemText>{children}</RadixSelect.ItemText>
-            <StyledSelectItemIndicator>
+            <RadixSelect.ItemIndicator>
                 <Checkmark />
-            </StyledSelectItemIndicator>
-        </StyledSelectItem>
+            </RadixSelect.ItemIndicator>
+        </RadixSelect.Item>
     );
 });
-
-const StyledTrigger = SharedTrigger.withComponent(RadixSelect.Trigger);
-
-const StyledChevronDown = styled(ChevronDown)`
-    opacity: 0.5;
-    height: 16px;
-    width: 16px;
-`;
-
-const StyledContent = SharedContent.withComponent(RadixSelect.Content);
-
-const StyledSelectViewport = styled(RadixSelect.Viewport)``;
-
-const StyledSelectItem = SharedItem.withComponent(RadixSelect.Item);
-
-const StyledSelectLabel = styled(RadixSelect.Label)`
-    padding: 0 12px;
-    font-size: 14px;
-    line-height: 25px;
-    font-weight: 600;
-    color: var(--mauve-11);
-`;
-
-const StyledSelectItemIndicator = SharedIndicator.withComponent(RadixSelect.ItemIndicator);
