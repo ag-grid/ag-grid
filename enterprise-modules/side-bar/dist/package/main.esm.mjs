@@ -924,7 +924,7 @@ ToolPanelColDefService = __decorateClass([
 ], ToolPanelColDefService);
 
 // enterprise-modules/side-bar/src/version.ts
-var VERSION = "31.3.0";
+var VERSION = "31.3.1";
 
 // enterprise-modules/side-bar/src/sideBar/sideBarService.ts
 import { Bean as Bean2, BeanStub as BeanStub2 } from "@ag-grid-community/core";

@@ -2160,7 +2160,7 @@ SparklineTooltipSingleton = __decorateClass([
 ], SparklineTooltipSingleton);
 
 // enterprise-modules/sparklines/src/version.ts
-var VERSION = "31.3.0";
+var VERSION = "31.3.1";
 
 // enterprise-modules/sparklines/src/sparklinesModule.ts
 var SparklinesModule = {

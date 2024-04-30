@@ -546,7 +546,7 @@ __decorateClass([
 ], WatermarkComp.prototype, "postConstruct", 1);
 
 // enterprise-modules/core/src/version.ts
-var VERSION = "31.3.0";
+var VERSION = "31.3.1";
 
 // enterprise-modules/core/src/agGridEnterpriseModule.ts
 var EnterpriseCoreModule = {

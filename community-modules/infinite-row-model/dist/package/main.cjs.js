@@ -651,7 +651,7 @@ InfiniteRowModel = __decorateClass([
 ], InfiniteRowModel);
 
 // community-modules/infinite-row-model/src/version.ts
-var VERSION = "31.3.0";
+var VERSION = "31.3.1";
 
 // community-modules/infinite-row-model/src/infiniteRowModelModule.ts
 var InfiniteRowModelModule = {
