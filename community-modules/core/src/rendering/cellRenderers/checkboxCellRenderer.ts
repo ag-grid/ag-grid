@@ -101,14 +101,14 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
     }
 
     private onCheckboxChanged(isSelected?: boolean): void {
-        const { column, node, rowIndex, value } = this.params;
+        const { column, node, value } = this.params;
         const eventStarted: WithoutGridCommon<CellEditingStartedEvent> = {
             type: Events.EVENT_CELL_EDITING_STARTED,
             column: column!,
             colDef: column?.getColDef()!,
             data: node.data,
             node,
-            rowIndex,
+            rowIndex: node.rowIndex,
             rowPinned: node.rowPinned,
             value
         };
@@ -122,7 +122,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             colDef: column?.getColDef()!,
             data: node.data,
             node,
-            rowIndex,
+            rowIndex: node.rowIndex,
             rowPinned: node.rowPinned,
             value,
             oldValue: value,

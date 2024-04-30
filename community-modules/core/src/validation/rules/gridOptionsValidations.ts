@@ -12,13 +12,6 @@ import { ComponentUtil } from "../../components/componentUtil";
  */
 const GRID_OPTION_DEPRECATIONS: Deprecations<GridOptions> = {
     
-    serverSideFilterAllLevels: { version: '30', message: 'All server-side group levels are now filtered by default. This can be toggled using `serverSideOnlyRefreshFilteredGroups`.' },
-    suppressAggAtRootLevel: { version: '30', message: 'The root level aggregation is now suppressed by default. This can be toggled using  `alwaysAggregateAtRootLevel`.' },
-    excludeHiddenColumnsFromQuickFilter: { version: '30', message: 'Hidden columns are now excluded from the Quick Filter by default. This can be toggled using `includeHiddenColumnsInQuickFilter`.' },
-    enterMovesDown: { version: '30', renamed: 'enterNavigatesVertically' },
-    enterMovesDownAfterEdit: { version: '30', renamed: 'enterNavigatesVerticallyAfterEdit' },
-    suppressParentsInRowNodes: { version: '30.2', message: 'Using suppressParentsInRowNodes is no longer recommended. To serialize nodes it is now recommended to instead remove the parent node reference before serialization.'},
-
     advancedFilterModel: { version: '31', message: 'Use `initialState.filter.advancedFilterModel` instead.'},
     suppressAsyncEvents: { version: '31', message: 'Events should be handled asynchronously.'},
 
@@ -295,11 +288,6 @@ const GRID_OPTION_VALIDATIONS: Validations<GridOptions> = {
         dependencies: {
             rowSelection: ['multiple'],
         }
-    },
-    suppressParentsInRowNodes: {
-        dependencies: {
-            groupSelectsChildren: [undefined, false],
-        },
     },
 
     viewportDatasource: {

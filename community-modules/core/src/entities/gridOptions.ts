@@ -450,14 +450,6 @@ export interface GridOptions<TData = any> {
      */
     stopEditingWhenCellsLoseFocus?: boolean;
     /**
-     * @deprecated As of v30, no longer used. To navigate with the Enter key use `enterNavigatesVertically`.
-     */
-    enterMovesDown?: boolean,
-    /**
-     * @deprecated As of v30, no longer used. To navigate with the Enter key after edit use `enterNavigatesVerticallyAfterEdit`.
-     */
-    enterMovesDownAfterEdit?: boolean,
-    /**
      * Set to `true` along with `enterNavigatesVerticallyAfterEdit` to have Excel-style behaviour for the `Enter` key.
      * i.e. pressing the `Enter` key will move down to the cell beneath and `Shift+Enter` will move up to the cell above.
      * @default false
@@ -521,11 +513,6 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     cacheQuickFilter?: boolean;
-    /**
-     * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. This can be toggled using `includeHiddenColumnsInQuickFilter`.
-     * @initial
-     */
-    excludeHiddenColumnsFromQuickFilter?: boolean;
     /**
      * Hidden columns are excluded from the Quick Filter by default.
      * To include hidden columns, set to `true`.
@@ -732,14 +719,6 @@ export interface GridOptions<TData = any> {
      */
     enableCellExpressions?: boolean;
     /**
-     * @deprecated v30.2 If `true`, row nodes do not have their parents set.
-     * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.
-     * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`.
-     * @default false
-     * @initial
-     */
-    suppressParentsInRowNodes?: boolean;
-    /**
      * Disables touch support (but does not remove the browser's efforts to simulate mouse events on touch).
      * @default false
      * @initial
@@ -930,11 +909,6 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     alwaysAggregateAtRootLevel?: boolean;
-    /**
-     * @deprecated v30 - made default and toggled via alwaysAggregateAtRootLevel
-     * @initial
-     */
-    suppressAggAtRootLevel?: boolean;
     /**
      * When using change detection, only the updated column will be re-aggregated.
      * @default false
@@ -1358,10 +1332,6 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     serverSideOnlyRefreshFilteredGroups?: boolean;
-    /**
-     * @deprecated v30 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead.
-     */
-    serverSideFilterAllLevels?: boolean;
     /**
      * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
      * @default false
