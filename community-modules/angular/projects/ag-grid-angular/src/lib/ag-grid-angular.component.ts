@@ -4,7 +4,6 @@ import {
     ElementRef,
     EventEmitter,
     Input,
-    NgZone,
     OnChanges,
     OnDestroy,
     Output,
@@ -12,7 +11,7 @@ import {
     ViewEncapsulation
 } from "@angular/core";
 
-import { AgPromise, ComponentUtil, GridApi, ColumnApi, GridOptions, GridParams, Module, createGrid } from "@ag-grid-community/core";
+import { AgPromise, ComponentUtil, GridApi, GridOptions, GridParams, Module, createGrid } from "@ag-grid-community/core";
 
 // @START_IMPORTS@
 import {
@@ -213,11 +212,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
 
     /** Grid Api available after onGridReady event has fired. */
     public api: GridApi<TData>;
-    /**
-     * @deprecated v31 - The `columnApi` has been deprecated and all the methods are now present of the `api`.
-     * Please use the `api` instead.
-     */
-    public columnApi: ColumnApi;
 
     constructor(elementDef: ElementRef,
         private viewContainerRef: ViewContainerRef,
@@ -246,16 +240,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
           const api = createGrid(this._nativeElement, mergedGridOps, this.gridParams);
           if (api) {
                this.api = api;
-               this.columnApi = new ColumnApi(api);
-          }
-
-          // For RxJs compatibility we need to check for observed v7+ or observers v6
-          const gridPreDestroyedEmitter = this.gridPreDestroyed as any;
-          if (gridPreDestroyedEmitter.observed ?? gridPreDestroyedEmitter.observers.length > 0) {
-               console.warn(
-                    'AG Grid: gridPreDestroyed event listener registered via (gridPreDestroyed)="method($event)" will be ignored! ' +
-                         'Please assign via gridOptions.gridPreDestroyed and pass to the grid as [gridOptions]="gridOptions"'
-               );
           }
 
           this._initialised = true;
@@ -1252,12 +1236,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
     /** When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
          * @default false
-         * @deprecated
+         * @deprecated v31.1
          */
     @Input() public serverSideSortOnServer: boolean | undefined = undefined;
     /** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
          * @default false
-         * @deprecated
+         * @deprecated v31.1
          */
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
     /** Used to split pivot field strings for generating pivot result columns when `pivotResultFields` is provided as part of a `getRows` success.
@@ -1755,9 +1739,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>> = new EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>>();
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet      */
     @Output() public gridReady: EventEmitter<GridReadyEvent<TData>> = new EventEmitter<GridReadyEvent<TData>>();
-    /** Invoked immediately before the grid is destroyed. This is useful for cleanup logic that needs to run before the grid is torn down.
-         */
-    @Output() public gridPreDestroyed: EventEmitter<GridPreDestroyedEvent<TData>> = new EventEmitter<GridPreDestroyedEvent<TData>>();
     /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents     */
     @Output() public firstDataRendered: EventEmitter<FirstDataRenderedEvent<TData>> = new EventEmitter<FirstDataRenderedEvent<TData>>();
     /** The size of the grid `div` has changed. In other words, the grid was resized.

@@ -1,5 +1,4 @@
 import { AlignedGridsService } from "./alignedGridsService";
-import { ColumnApi } from "./columns/columnApi";
 import { ApplyColumnStateParams, ColumnModel, ColumnState, ISizeColumnsToFitParams } from "./columns/columnModel";
 import { Autowired, Bean, Context, Optional, PostConstruct } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
@@ -148,8 +147,6 @@ export interface DetailGridInfo {
     id: string;
     /** Grid api of the detail grid. */
     api?: GridApi;
-    /** @deprecated v31 ColumnApi has been deprecated and all methods moved to the api. */
-    columnApi?: ColumnApi;
 }
 
 export interface StartEditingCellParams {
@@ -1736,8 +1733,6 @@ export class GridApi<TData = any> {
         this.paginationProxy.goToPage(page);
     }
 
-    // Methods migrated from old ColumnApi
-
     /**
      * Adjusts the size of columns to fit the available horizontal space.
      *
@@ -1947,7 +1942,7 @@ export class GridApi<TData = any> {
     public autoSizeAllColumns(skipHeader?: boolean): void { this.columnModel.autoSizeAllColumns('api', skipHeader); }
 
     /** Set the pivot result columns. */
-    public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.columnModel.setSecondaryColumns(colDefs, 'api'); }
+    public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[] | null): void { this.columnModel.setSecondaryColumns(colDefs, 'api'); }
 
     /** Returns the grid's pivot result columns. */
     public getPivotResultColumns(): Column[] | null { return this.columnModel.getSecondaryColumns(); }

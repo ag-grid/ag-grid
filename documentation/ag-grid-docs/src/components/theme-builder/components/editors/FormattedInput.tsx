@@ -157,12 +157,18 @@ const IconWrapper = styled('div')`
     width: 22px;
     height: 22px;
     cursor: ${(props: { cursor?: string }) => props.cursor || 'pointer'};
-
     display: flex;
     align-items: center;
     justify-content: center;
-    svg {
-        stroke: var(--color-fg-quinary);
-    }
     transform: scale(0.7);
+
+    svg,
+    svg * {
+        stroke: var(--color-brand-400);
+        stroke-width: 2.2px;
+
+        [data-dark-mode='true'] & {
+            stroke: var(--color-brand-300);
+        }
+    }
 `;

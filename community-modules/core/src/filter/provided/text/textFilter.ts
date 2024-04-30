@@ -297,7 +297,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     protected evaluateNonNullValue(values: Tuple<string>, cellValue: string, filterModel: TextFilterModel, params: IDoesFilterPassParams): boolean {
         const formattedValues = values.map(v => this.formatter(v)) || [];
         const cellValueFormatted = this.formatter(cellValue);
-        const {api, colDef, column, columnApi, context, textFormatter} = this.textFilterParams;
+        const {api, colDef, column, context, textFormatter} = this.textFilterParams;
 
         if (filterModel.type === SimpleFilter.BLANK) {
             return this.isBlank(cellValue);
@@ -309,7 +309,6 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
             api,
             colDef,
             column,
-            columnApi,
             context,
             node: params.node,
             data: params.data,

@@ -48,7 +48,6 @@ function createFilter(filterParams: any = {}): MultiFilter {
     const baseFilterParams: ProvidedFilterParams = {
         // @ts-ignore
         api: null,
-        columnApi: null,
         column,
         colDef,
         rowModel,

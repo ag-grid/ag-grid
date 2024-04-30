@@ -1,5 +1,5 @@
 import {
-    BaseComponentWrapper, ColumnApi, ComponentType,
+    BaseComponentWrapper, ComponentType,
     ComponentUtil,
     Context, CtrlsService, FrameworkComponentWrapper,
     FrameworkOverridesIncomingSource,
@@ -100,7 +100,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
                 const api = apiRef.current;
                 if (api) {
                     if (props.setGridApi) {
-                        props.setGridApi(api, new ColumnApi(api));
+                        props.setGridApi(api);
                     }
                 }
             });
@@ -315,8 +315,8 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
         }
     }, []);
 
-    const setGridApi = useCallback((api: GridApi, columnApi: ColumnApi) => {
-        ctrlRef.current?.registerDetailWithMaster(api, columnApi)
+    const setGridApi = useCallback((api: GridApi) => {
+        ctrlRef.current?.registerDetailWithMaster(api)
     }, []);
 
     return (

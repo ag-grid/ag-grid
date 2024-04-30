@@ -1,4 +1,3 @@
-import { ColumnApi } from "./columns/columnApi";
 import { ComponentUtil } from "./components/componentUtil";
 import { Autowired, Bean, PostConstruct, PreDestroy } from "./context/context";
 import { DomLayoutType, GridOptions } from "./entities/gridOptions";
@@ -84,9 +83,7 @@ export class GridOptionsService {
     private domDataKey = '__AG_' + Math.random().toString();
 
     // Store locally to avoid retrieving many times as these are requested for every callback
-    @Autowired('gridApi') private readonly api: GridApi;
-    /** @deprecated v31 ColumnApi has been deprecated and all methods moved to the api. */
-    private columnApi: ColumnApi;
+    @Autowired('gridApi') private readonly api: GridApi;    
     // This is quicker then having code call gridOptionsService.get('context')
     private get context() {
         return this.gridOptions['context'];
@@ -97,7 +94,6 @@ export class GridOptionsService {
 
     @PostConstruct
     public init(): void {
-        this.columnApi = new ColumnApi(this.api);
         const async = !this.get('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandlerFactory().bind(this), async);
         this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
@@ -111,7 +107,6 @@ export class GridOptionsService {
     @PreDestroy
     private destroy(): void {
         this.destroyed = true;
-        this.columnApi = undefined as any;
     }
 
     /**
@@ -123,7 +118,7 @@ export class GridOptionsService {
     }
 
     /**
-     * Get the GridOption callback but wrapped so that the common params of api,columnApi and context are automatically applied to the params.
+     * Get the GridOption callback but wrapped so that the common params of api and context are automatically applied to the params.
      * @param property GridOption callback properties based on the fact that this property has a callback with params extending AgGridCommon
      */
     public getCallback<K extends CallbackProps>(property: K): WrappedCallback<K, GridOptions[K]> {
@@ -139,9 +134,9 @@ export class GridOptionsService {
     }
 
     /**
-    * Wrap the user callback and attach the api, columnApi and context to the params object on the way through.
+    * Wrap the user callback and attach the api and context to the params object on the way through.
     * @param callback User provided callback
-    * @returns Wrapped callback where the params object not require api, columnApi and context
+    * @returns Wrapped callback where the params object not require api and context
     */
     private mergeGridCommonParams<P extends AgGridCommon<any, any>, T>(callback: ((params: P) => T) | undefined):
         ((params: WithoutGridCommon<P>) => T) | undefined {
@@ -149,7 +144,6 @@ export class GridOptionsService {
             const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
                 const mergedParams = callbackParams as P;
                 mergedParams.api = this.api;
-                mergedParams.columnApi = this.columnApi;
                 mergedParams.context = this.context;
 
                 return callback(mergedParams);
@@ -571,7 +565,6 @@ export class GridOptionsService {
     public getGridCommonParams<TData = any, TContext = any>(): AgGridCommon<TData, TContext> {
         return {
             api: this.api,
-            columnApi: this.columnApi,
             context: this.context
         };
     }
@@ -579,7 +572,6 @@ export class GridOptionsService {
     public addGridCommonParams<T extends AgGridCommon<TData, TContext>, TData = any, TContext = any>(params: WithoutGridCommon<T>): T {
         const updatedParams = params as T;
         updatedParams.api = this.api;
-        updatedParams.columnApi = this.columnApi;
         updatedParams.context = this.context;
         return updatedParams;
     }

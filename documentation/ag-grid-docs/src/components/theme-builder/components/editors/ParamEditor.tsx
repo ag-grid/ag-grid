@@ -18,6 +18,7 @@ export type ParamEditorProps = {
     label?: string;
     showDocs?: boolean;
     icon?: ReactNode;
+    swipeAdjustmentDivisor?: number;
 };
 
 export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
@@ -39,7 +40,13 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
 
     return (
         <FormField label={props.label || param.label} docs={props.showDocs ? param.docs : null}>
-            <ValueEditorComponent param={param} value={editorValue} onChange={setValue} icon={props.icon} />
+            <ValueEditorComponent
+                param={param}
+                value={editorValue}
+                onChange={setValue}
+                icon={props.icon}
+                swipeAdjustmentDivisor={props.swipeAdjustmentDivisor}
+            />
         </FormField>
     );
 });

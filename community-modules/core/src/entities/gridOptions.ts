@@ -1365,13 +1365,13 @@ export interface GridOptions<TData = any> {
     /**
      * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
      * @default false
-     * @deprecated
+     * @deprecated v31.1
      */
     serverSideSortOnServer?: boolean;
     /**
      * When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
      * @default false
-     * @deprecated
+     * @deprecated v31.1
      */
     serverSideFilterOnServer?: boolean;
 
@@ -2283,10 +2283,6 @@ export interface GridOptions<TData = any> {
      * @deprecated Since v31 api is no longer attached to GridOptions. See https://ag-grid.com/javascript-data-grid/grid-interface/#grid-api for how to access the api in your framework.
      */
     api?: never;
-    /**
-     * @deprecated Since v31 `columnApi` is deprecated and all methods are now on the grid `api`. See https://ag-grid.com/javascript-data-grid/grid-interface/#grid-api for how to access the api in your framework.
-     */
-    columnApi?: never;
 }
 
 export type RowGroupingDisplayType = 'singleColumn' | 'multipleColumns' | 'groupRows' | 'custom';
