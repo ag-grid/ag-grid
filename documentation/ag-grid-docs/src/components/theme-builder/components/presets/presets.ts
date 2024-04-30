@@ -33,7 +33,6 @@ export const allPresets: Preset[] = [
     lightModePreset,
     darkModePreset,
     {
-        name: 'Elite',
         pageBackgroundColor: '#182323',
         params: {
             fontFamily: 'google:IBM Plex Mono',
@@ -61,7 +60,6 @@ export const allPresets: Preset[] = [
         },
     },
     {
-        name: 'DenseAndDull',
         pageBackgroundColor: '#F6F8F9',
         params: {
             fontFamily: 'google:Inter',
@@ -88,7 +86,6 @@ export const allPresets: Preset[] = [
         },
     },
     {
-        name: 'JustinHawkins',
         pageBackgroundColor: '#141516',
         params: {
             fontFamily: 'google:Roboto',
@@ -96,7 +93,7 @@ export const allPresets: Preset[] = [
             backgroundColor: '#0C0C0D',
             foregroundColor: '#BBBEC9',
             accentColor: '#15BDE8',
-            borderColor: '#D7E2E6',
+            borderColor: '#ffffff00',
             chromeBackgroundColor: ref('backgroundColor'),
             gridSize: '8px',
             wrapperBorderRadius: '0px',
@@ -117,7 +114,6 @@ export const allPresets: Preset[] = [
         },
     },
     {
-        name: 'populistNightmare',
         pageBackgroundColor: '#ffffff',
         params: {
             backgroundColor: '#ffffff',
@@ -138,7 +134,6 @@ export const allPresets: Preset[] = [
     },
 
     {
-        name: 'EphTea',
         pageBackgroundColor: '#FFEAC1',
         params: {
             fontFamily: 'google:Merriweather',
@@ -167,7 +162,6 @@ export const allPresets: Preset[] = [
         },
     },
     {
-        name: 'Windows95',
         pageBackgroundColor: 'rgb(75, 153, 154)',
         params: {
             fontFamily: 'google:Pixelify Sans',

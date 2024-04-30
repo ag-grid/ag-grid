@@ -150,7 +150,8 @@ ag-grid-aurelia {
 .ag-body-horizontal-scroll-viewport,
 .ag-body-vertical-scroll-viewport,
 .ag-virtual-list-viewport,
-.ag-sticky-top-viewport {
+.ag-sticky-top-viewport,
+.ag-sticky-bottom-viewport {
     position: relative;
     height: 100%;
     min-width: 0px;
@@ -212,14 +213,16 @@ ag-grid-aurelia {
 .ag-full-width-container,
 .ag-floating-bottom-full-width-container,
 .ag-virtual-list-container,
-.ag-sticky-top-container {
+.ag-sticky-top-container,
+.ag-sticky-bottom-container {
     position: relative;
 }
 
 .ag-header-container,
 .ag-floating-top-container,
 .ag-floating-bottom-container,
-.ag-sticky-top-container {
+.ag-sticky-top-container,
+.ag-sticky-bottom-container {
     height: 100%;
     white-space: nowrap;
 }
@@ -243,7 +246,8 @@ ag-grid-aurelia {
 .ag-full-width-container,
 .ag-floating-top-full-width-container,
 .ag-floating-bottom-full-width-container,
-.ag-sticky-top-full-width-container {
+.ag-sticky-top-full-width-container,
+.ag-sticky-bottom-full-width-container {
     position: absolute;
     top: 0px;
     left: 0;
@@ -498,6 +502,7 @@ ag-grid-aurelia {
     width: 100%;
     position: relative;
     display: flex;
+    border-bottom: var(--ag-pinned-row-border);
 }
 
 .ag-pinned-left-floating-top {
@@ -520,6 +525,7 @@ ag-grid-aurelia {
     width: 100%;
     position: relative;
     display: flex;
+    border-top: var(--ag-pinned-row-border);
 }
 
 .ag-pinned-left-floating-bottom {
@@ -541,7 +547,8 @@ ag-grid-aurelia {
  * Sticky Top
  ****************************
  */
-.ag-sticky-top {
+.ag-sticky-top,
+.ag-sticky-bottom {
     position: absolute;
     display: flex;
     width: 100%;
@@ -555,7 +562,8 @@ ag-grid-aurelia {
     overflow: hidden;
 }
 
-.ag-sticky-top-full-width-container {
+.ag-sticky-top-full-width-container,
+.ag-sticky-bottom-full-width-container {
     overflow: hidden;
     width: 100%;
     height: 100%;
@@ -677,6 +685,34 @@ ag-grid-aurelia {
     }
 }
 
+.ag-pill-select {
+    display: flex;
+    flex-direction: column;
+
+    .ag-column-drop {
+        flex: unset;
+        border-bottom: 0;
+        min-height: unset;
+    }
+
+    .ag-column-drop-list {
+        padding: 0;
+    }
+
+    .ag-select {
+        padding-top: var(--ag-grid-size);
+    }
+
+    .ag-picker-field-wrapper {
+        background-color: transparent;
+        border: 0;
+    }
+
+    .ag-picker-field-display {
+        cursor: pointer;
+    }
+}
+
 .ag-ltr {
     direction: ltr;
     .ag-body,
@@ -684,6 +720,7 @@ ag-grid-aurelia {
     .ag-floating-bottom,
     .ag-header,
     .ag-sticky-top,
+    .ag-sticky-bottom,
     .ag-body-viewport,
     .ag-body-horizontal-scroll {
         flex-direction: row;
@@ -697,6 +734,7 @@ ag-grid-aurelia {
     .ag-floating-bottom,
     .ag-header,
     .ag-sticky-top,
+    .ag-sticky-bottom,
     .ag-body-viewport,
     .ag-body-horizontal-scroll {
         flex-direction: row-reverse;

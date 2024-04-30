@@ -50,7 +50,6 @@ const columnDefs: ColDef[] = [
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-    reactiveCustomComponents: true,
     columnDefs: columnDefs,
     rowData: getData(),
     defaultColDef: {

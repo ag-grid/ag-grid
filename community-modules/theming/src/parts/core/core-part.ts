@@ -140,6 +140,7 @@ const coreDefaults = {
     advancedFilterBuilderValuePillColor: '#85c0e4',
     filterToolPanelGroupIndent: calc('gridSize'),
     iconButtonHoverBackgroundColor: transparentForeground(0.1),
+    rowLoadingSkeletonEffectColor: 'rgba(66, 66, 66, 0.2)',
 } as const;
 
 /**

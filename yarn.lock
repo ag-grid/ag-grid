@@ -6218,17 +6218,10 @@
   resolved "http://52.50.158.57:4873/@types/range-parser/-/range-parser-1.2.7.tgz#50ae4353eaaddc04044279812f52c8c65857dbcb"
   integrity sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==
 
-"@types/react-dom@^18.2.18":
-  version "18.2.24"
-  resolved "http://52.50.158.57:4873/@types/react-dom/-/react-dom-18.2.24.tgz#8dda8f449ae436a7a6e91efed8035d4ab03ff759"
-  integrity sha512-cN6upcKd8zkGy4HU9F1+/s98Hrp6D4MOcippK4PoE8OZRngohHZpbJn1GsaDLz87MqvHNoT13nHvNqM9ocRHZg==
-  dependencies:
-    "@types/react" "*"
-
-"@types/react-dom@~18.0.0":
-  version "18.0.11"
-  resolved "http://52.50.158.57:4873/@types/react-dom/-/react-dom-18.0.11.tgz#321351c1459bc9ca3d216aefc8a167beec334e33"
-  integrity sha512-O38bPbI2CWtgw/OoQoY+BRelw7uysmXbWvw3nLWO21H1HSh+GOlqPuXshJfjmpNlKiiSDG9cc1JZAaMmVdcTlw==
+"@types/react-dom@~18.2.0":
+  version "18.2.25"
+  resolved "https://registry.npmjs.org/@types/react-dom/-/react-dom-18.2.25.tgz#2946a30081f53e7c8d585eb138277245caedc521"
+  integrity sha512-o/V48vf4MQh7juIKZU2QGDfli6p1+OOi5oXx36Hffpc9adsHeXjVp8rHuPkjd8VT8sOJ2Zp05HR7CdpGTIUFUA==
   dependencies:
     "@types/react" "*"
 
@@ -6241,21 +6234,12 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
-"@types/react@^18.2.47":
-  version "18.2.75"
-  resolved "http://52.50.158.57:4873/@types/react/-/react-18.2.75.tgz#45d18f384939306d35312def1bf532eb38a68562"
-  integrity sha512-+DNnF7yc5y0bHkBTiLKqXFe+L4B3nvOphiMY3tuA5X10esmjqk7smyBZzbGTy2vsiy/Bnzj8yFIBL8xhRacoOg==
+"@types/react@~18.2.0":
+  version "18.2.79"
+  resolved "https://registry.npmjs.org/@types/react/-/react-18.2.79.tgz#c40efb4f255711f554d47b449f796d1c7756d865"
+  integrity sha512-RwGAGXPl9kSXwdNTafkOEuFrTBD5SA2B3iEB96xi8+xu5ddUa/cpvyVCSNn+asgLCTHkb5ZxN8gbuibYJi4s1w==
   dependencies:
     "@types/prop-types" "*"
-    csstype "^3.0.2"
-
-"@types/react@~18.0.0":
-  version "18.0.38"
-  resolved "http://52.50.158.57:4873/@types/react/-/react-18.0.38.tgz#02a23bef8848b360a0d1dceef4432c15c21c600c"
-  integrity sha512-ExsidLLSzYj4cvaQjGnQCk4HFfVT9+EZ9XZsQ8Hsrcn8QNgXtpZ3m9vSIC2MWtx7jHictK6wYhQgGh6ic58oOw==
-  dependencies:
-    "@types/prop-types" "*"
-    "@types/scheduler" "*"
     csstype "^3.0.2"
 
 "@types/resolve@1.17.1":
@@ -7600,17 +7584,17 @@ adjust-sourcemap-loader@^4.0.0:
     loader-utils "^2.0.0"
     regex-parser "^2.2.11"
 
-ag-charts-community@9.3.0-beta.20240425:
-  version "9.3.0-beta.20240425"
-  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-9.3.0-beta.20240425.tgz#94099f2f6623e080dd3a5423688a1fd6ff3c063c"
-  integrity sha512-ClTu8xz+KduoRR6xAwKJofvf0Aju9IOmxc4mv7RIp3Ygnw1oo0rmhNGwfrS4wy2wtsZ28QP1N3Sw8263A6cGjQ==
+ag-charts-community@9.3.0-beta.20240429.1633:
+  version "9.3.0-beta.20240429.1633"
+  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-9.3.0-beta.20240429.1633.tgz#cbb38c27a9ed40f176c1521806cca56ec3bb401c"
+  integrity sha512-8lLExMAzguXl3BsBdeqCibQ2pqgXrpWTODsoKXH7+gD4v4962u2dEXZZJm0g/qPiEjQQYb6dK2ckzM/5Q6Brag==
 
-ag-charts-enterprise@9.3.0-beta.20240425:
-  version "9.3.0-beta.20240425"
-  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-9.3.0-beta.20240425.tgz#bf2894ba46fe3415e358c2e61cc1f4e807a92f6d"
-  integrity sha512-8alGxDoUCxfUzFuiiLunF+amtJyvswwrdbxo07NLDB3pov5Uwe2sDhNdvq40VpdX+dSuHfdfwItz9Nx4S7yADg==
+ag-charts-enterprise@9.3.0-beta.20240429.1633:
+  version "9.3.0-beta.20240429.1633"
+  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-9.3.0-beta.20240429.1633.tgz#037bb36ee5b8b370ae167c43d805fd30e98684a1"
+  integrity sha512-FhUZDAgqHyh8b3O1P/GBNRIBnsXOVz1hhfp0uKjmTZkmTAuSqqnaE4oR4BEoSeK8w1+685KB++GayAzr5mASGw==
   dependencies:
-    ag-charts-community "9.3.0-beta.20240425"
+    ag-charts-community "9.3.0-beta.20240429.1633"
 
 agent-base@4, agent-base@^4.1.0, agent-base@^4.3.0:
   version "4.3.0"
@@ -26186,9 +26170,9 @@ react-dom@^16.9.0:
     prop-types "^15.6.2"
     scheduler "^0.19.1"
 
-react-dom@^18.2.0:
+react-dom@~18.2.0:
   version "18.2.0"
-  resolved "http://52.50.158.57:4873/react-dom/-/react-dom-18.2.0.tgz#22aaf38708db2674ed9ada224ca4aa708d821e3d"
+  resolved "https://registry.npmjs.org/react-dom/-/react-dom-18.2.0.tgz#22aaf38708db2674ed9ada224ca4aa708d821e3d"
   integrity sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==
   dependencies:
     loose-envify "^1.1.0"
@@ -26318,9 +26302,9 @@ react@^16.9.0:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
 
-react@^18.2.0:
+react@~18.2.0:
   version "18.2.0"
-  resolved "http://52.50.158.57:4873/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"
+  resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
   dependencies:
     loose-envify "^1.1.0"
@@ -27511,9 +27495,9 @@ scheduler@^0.19.1:
     object-assign "^4.1.1"
 
 scheduler@^0.23.0:
-  version "0.23.0"
-  resolved "http://52.50.158.57:4873/scheduler/-/scheduler-0.23.0.tgz#ba8041afc3d30eb206a487b6b384002e4e61fdfe"
-  integrity sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==
+  version "0.23.2"
+  resolved "https://registry.npmjs.org/scheduler/-/scheduler-0.23.2.tgz#414ba64a3b282892e944cf2108ecc078d115cdc3"
+  integrity sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==
   dependencies:
     loose-envify "^1.1.0"
 

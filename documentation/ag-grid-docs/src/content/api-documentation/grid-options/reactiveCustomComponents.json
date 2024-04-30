@@ -1,0 +1,17 @@
+{
+    "_config_": {
+        "codeSrc": "grid-options.AUTO.json"
+    },
+    "gridOptions": {
+        "meta": {
+            "displayName": "Reactive Components"
+        },
+        "reactiveCustomComponents": {
+            "more": {
+                "name": "Registering Custom Components",
+                "url": "./components/#registering-custom-components"
+            },
+            "tags": [{ "name": "initial" }]
+        }
+    }
+}
