@@ -110,6 +110,7 @@ export const Toolbar = ({
 
                     {dataSizeOption && (
                         <Select
+                            isPopper
                             options={dataSizeOptions}
                             value={dataSizeOption}
                             onChange={onDataSizeChanged}
@@ -121,6 +122,7 @@ export const Toolbar = ({
 
                     <label htmlFor="grid-theme">Theme:</label>
                     <Select
+                        isPopper
                         options={themeOptions}
                         value={themeOption}
                         onChange={onThemeChanged}
