@@ -6,16 +6,9 @@
         // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
         transpiler: "ts",
         typescriptOptions: {
-            // Copy of compiler options in standard tsconfig.json
             target: "es2020",
-            module: "system", //gets rid of console warning
-            moduleResolution: "node",
-            sourceMap: true,
             emitDecoratorMetadata: true,
-            experimentalDecorators: true,
-            lib: ["es2020", "dom"],
-            noImplicitAny: true,
-            suppressImplicitAnyIndexErrors: true
+            experimentalDecorators: true
         },
         meta: {
             typescript: {
@@ -48,7 +41,6 @@
                 'rxjs': "npm:rxjs@7.8.1/dist/bundles/rxjs.umd.min.js",
                 'rxjs/operators': "npm:rxjs@7.8.1/dist/bundles/rxjs.umd.min.js",
 
-                // css: boilerplatePath + "css.js",
                 'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
                 ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
