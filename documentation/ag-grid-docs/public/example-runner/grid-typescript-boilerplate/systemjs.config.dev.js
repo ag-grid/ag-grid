@@ -6,9 +6,7 @@
     System.config({
         // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
         transpiler: "ts",
-        typescriptOptions: {
-            target: 'es2020'
-        },
+        typescriptOptions: {},
         meta: {
             typescript: {
                 exports: "ts"
@@ -22,12 +20,11 @@
         },
         // map tells the System loader where to look for things
         map: {
-            // css: boilerplatePath + "css.js",
             'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
             ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
             tslib: "npm:tslib@2.3.1/tslib.js",
-            typescript: "npm:typescript@4.3.5/lib/typescript.min.js",
+            typescript: "npm:typescript@5.4.5/lib/typescript.min.js",
 
             // appLocation comes from index.html
             app: appLocation,
