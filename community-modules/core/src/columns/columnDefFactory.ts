@@ -7,8 +7,11 @@ import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 @Bean('columnDefFactory')
 export class ColumnDefFactory {
 
+    #testPrivateField: string;
+
     public buildColumnDefs(cols: Column[], rowGroupColumns: Column[], pivotColumns: Column[]): (ColDef | ColGroupDef)[] {
 
+        this.#testPrivateField = 'test';
         const res: (ColDef | ColGroupDef)[] = [];
 
         const colGroupDefs: {[id: string]: ColGroupDef} = {};
@@ -76,6 +79,8 @@ export class ColumnDefFactory {
         if (defCloned) {
             defCloned.groupId = group.getGroupId();
         }
+        console.log(this.#testPrivateField);
+        const children = group?.getChildren();
 
         return defCloned;
     }

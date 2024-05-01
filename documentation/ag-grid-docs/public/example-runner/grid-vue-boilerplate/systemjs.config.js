@@ -151,7 +151,7 @@
                 babelOptions: {
                     stage1: true,
                     stage2: true,
-                    es2015: true
+                    es2016: true
                 }
             },
             '*.css': {loader: 'css'}

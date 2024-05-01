@@ -37,7 +37,7 @@
     "@types/node": "18.16.9",
     "@typescript-eslint/eslint-plugin": "^6.9.1",
     "@typescript-eslint/parser": "^6.9.1",
-    "esbuild": "^0.19.2",
+    "esbuild": "^0.20.2",
     "esbuild-plugin-umd-wrapper": "^2.0.0",
     "eslint": "~8.48.0",
     "eslint-config-prettier": "^9.0.0",

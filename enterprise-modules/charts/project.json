@@ -73,7 +73,7 @@
           "ag-charts-community"
         ],
         "platform": "browser",
-        "target": "es6",
+        "target": "es2022",
         "format": [
           "cjs",
           "esm"

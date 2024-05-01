@@ -4,13 +4,13 @@
         transpiler: "ts",
         typescriptOptions: {
             // Copy of compiler options in standard tsconfig.json
-            target: "es2015",
+            target: "es2016",
             module: "system", //gets rid of console warning
             moduleResolution: "node",
             sourceMap: false,
             emitDecoratorMetadata: true,
             experimentalDecorators: true,
-            lib: ["es2015", "dom"],
+            lib: ["es2016", "dom"],
             noImplicitAny: true,
             suppressImplicitAnyIndexErrors: true
         },

@@ -62,7 +62,7 @@
         "external": ["@ag-grid-community/core", "react", "react-dom"],
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
-        "target": "es6",
+        "target": "es2022",
         "format": ["cjs", "esm"],
         "sourcemap": true
       },
@@ -85,7 +85,7 @@
         "tsConfig": "community-modules/react/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
-        "target": "es6",
+        "target": "es2022",
         "bundle": true,
         "thirdParty": true,
         "skipTypeCheck": true,

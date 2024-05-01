@@ -63,9 +63,10 @@
         "tsConfig": "community-modules/core/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
-        "target": "es6",
+        "target": "es2022",
         "format": ["cjs", "esm"],
-        "sourcemap": true
+        "sourcemap": true,
+        "metafile": true
       },
       "configurations": {
         "watch": {

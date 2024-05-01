@@ -68,7 +68,7 @@
         "esbuildConfig": "esbuild.config.cjs",
         "external": ["@ag-grid-community/core", "@ag-grid-enterprise/core", "@ag-grid-enterprise/row-grouping", "@ag-grid-enterprise/side-bar"],
         "platform": "browser",
-        "target": "es6",
+        "target": "es2022",
         "format": [
           "cjs",
           "esm"

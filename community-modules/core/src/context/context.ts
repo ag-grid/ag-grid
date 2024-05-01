@@ -39,9 +39,9 @@ interface BeanWrapper {
 
 export class Context {
 
-    private beanWrappers: { [key: string]: BeanWrapper; } = {};
+    #beanWrappers: { [key: string]: BeanWrapper; } = {};
     private contextParams: ContextParams;
-    private logger: ILogger;
+    #logger: ILogger;
 
     private destroyed = false;
 
@@ -52,8 +52,8 @@ export class Context {
 
         this.contextParams = params;
 
-        this.logger = logger;
-        this.logger.log(">> creating ag-Application Context");
+        this.#logger = logger;
+        this.#logger.log(">> creating ag-Application Context");
 
         this.createBeans();
 
@@ -61,11 +61,11 @@ export class Context {
 
         this.wireBeans(beanInstances);
 
-        this.logger.log(">> ag-Application Context ready - component is alive");
+        this.#logger.log(">> ag-Application Context ready - component is alive");
     }
 
     private getBeanInstances(): any[] {
-        return values(this.beanWrappers).map(beanEntry => beanEntry.beanInstance);
+        return values(this.#beanWrappers).map(beanEntry => beanEntry.beanInstance);
     }
 
     public createBean<T extends any>(bean: T, afterPreCreateCallback?: (comp: Component) => void): T {
@@ -97,7 +97,7 @@ export class Context {
         // register override beans, these will overwrite beans above of same name
 
         // instantiate all beans - overridden beans will be left out
-        iterateObject(this.beanWrappers, (key: string, beanEntry: BeanWrapper) => {
+        iterateObject(this.#beanWrappers, (key: string, beanEntry: BeanWrapper) => {
             let constructorParamsMeta: any;
             if (beanEntry.bean.__agBeanMetaData && beanEntry.bean.__agBeanMetaData.autowireMethods && beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor) {
                 constructorParamsMeta = beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor;
@@ -107,8 +107,8 @@ export class Context {
             beanEntry.beanInstance = newInstance;
         });
 
-        const createdBeanNames = Object.keys(this.beanWrappers).join(', ');
-        this.logger.log(`created beans: ${createdBeanNames}`);
+        const createdBeanNames = Object.keys(this.#beanWrappers).join(', ');
+        this.#logger.log(`created beans: ${createdBeanNames}`);
     }
 
     // tslint:disable-next-line
@@ -132,7 +132,7 @@ export class Context {
             beanName: metaData.beanName
         };
 
-        this.beanWrappers[metaData.beanName] = beanEntry;
+        this.#beanWrappers[metaData.beanName] = beanEntry;
     }
 
     private autoWireBeans(beanInstances: any[]): void {
@@ -206,7 +206,7 @@ export class Context {
 
     private lookupBeanInstance(wiringBean: string, beanName: BeanName, optional = false): any {
         if (this.destroyed) {
-            this.logger.log(`AG Grid: bean reference ${beanName} is used after the grid is destroyed!`);
+            this.#logger.log(`AG Grid: bean reference ${beanName} is used after the grid is destroyed!`);
             return null;
         }
 
@@ -218,7 +218,7 @@ export class Context {
             return this.contextParams.providedBeanInstances[beanName];
         }
 
-        const beanEntry = this.beanWrappers[beanName];
+        const beanEntry = this.#beanWrappers[beanName];
 
         if (beanEntry) {
             return beanEntry.beanInstance;
@@ -266,7 +266,7 @@ export class Context {
         // we are marked as destroyed already to prevent running destroy() twice
         this.destroyed = true;
 
-        this.logger.log(">> Shutting down ag-Application Context");
+        this.#logger.log(">> Shutting down ag-Application Context");
 
         const beanInstances = this.getBeanInstances();
         this.destroyBeans(beanInstances);
@@ -275,7 +275,7 @@ export class Context {
 
         ModuleRegistry.__unRegisterGridModules(this.contextParams.gridId);
 
-        this.logger.log(">> ag-Application Context shut down - component is dead");
+        this.#logger.log(">> ag-Application Context shut down - component is dead");
     }
 
     public destroyBean<T>(bean: T): undefined {

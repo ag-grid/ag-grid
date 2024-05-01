@@ -8,11 +8,11 @@
         typescriptOptions: {
             module: 'system',
             moduleResolution: 'node',
-            target: 'es2020',
+            target: 'es2022',
             noImplicitAny: false,
             sourceMap: false,
             jsx: 'react',
-            lib: ['es2020', 'dom'],
+            lib: ['es2022', 'dom'],
         },
         paths: {
             // paths serve as alias

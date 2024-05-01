@@ -7,7 +7,7 @@ import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 @Bean('eventService')
 export class EventService implements IEventEmitter {
 
-    private allSyncListeners = new Map<string, Set<AgEventListener>>();
+    #allSyncListeners = new Map<string, Set<AgEventListener>>();
     private allAsyncListeners = new Map<string, Set<AgEventListener>>();
 
     private globalSyncListeners = new Set<AgGlobalEventListener>();
@@ -55,7 +55,7 @@ export class EventService implements IEventEmitter {
     }
 
     private getListeners(eventType: string, async: boolean, autoCreateListenerCollection: boolean): Set<AgEventListener> | undefined {
-        const listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
+        const listenerMap = async ? this.allAsyncListeners : this.#allSyncListeners;
         let listeners = listenerMap.get(eventType);
 
         // Note: 'autoCreateListenerCollection' should only be 'true' if a listener is about to be added. For instance
@@ -71,7 +71,7 @@ export class EventService implements IEventEmitter {
     }
 
     public noRegisteredListenersExist(): boolean {
-        return this.allSyncListeners.size === 0 && this.allAsyncListeners.size === 0 &&
+        return this.#allSyncListeners.size === 0 && this.allAsyncListeners.size === 0 &&
             this.globalSyncListeners.size === 0 && this.globalAsyncListeners.size === 0;
     }
 
@@ -86,7 +86,7 @@ export class EventService implements IEventEmitter {
         listeners.delete(listener);
 
         if (listeners.size === 0) {
-            const listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
+            const listenerMap = async ? this.allAsyncListeners : this.#allSyncListeners;
             listenerMap.delete(eventType);
         }
     }

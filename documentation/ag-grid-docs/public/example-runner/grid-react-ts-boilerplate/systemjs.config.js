@@ -4,11 +4,11 @@
         typescriptOptions: {
             module: 'system',
             moduleResolution: 'node',
-            target: 'es2015',
+            target: 'es2016',
             noImplicitAny: false,
             sourceMap: true,
             jsx: 'react',
-            lib: ['es2015', 'dom'],
+            lib: ['es2016', 'dom'],
         },
         paths: {
             // paths serve as alias

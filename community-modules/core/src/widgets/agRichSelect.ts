@@ -179,7 +179,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     private renderSelectedValue(): void {
         const { value, eDisplayField, config } = this;
         const { allowTyping, initialInputValue } = this.config;
-        const valueFormatted = this.config.valueFormatter ? this.config.valueFormatter(value) : value;
+        const valueFormatted = this.config.valueFormatter ? this.config.valueFormatter(value!) : value;
 
         if (allowTyping) {
             this.eInput.setValue(initialInputValue ?? valueFormatted)

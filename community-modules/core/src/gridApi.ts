@@ -6,41 +6,13 @@ import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { CellPosition } from "./entities/cellPositionUtils";
 import { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from "./entities/colDef";
 import { Column, ColumnPinnedType } from "./entities/column";
+import { ColumnGroup } from "./entities/columnGroup";
 import {
-    ChartRef,
-    DomLayoutType,
-    GetChartToolbarItems,
-    GetContextMenuItems,
-    GetMainMenuItems,
-    GetRowIdFunc,
-    GetServerSideGroupKey,
-    GridOptions,
-    IsApplyServerSideTransaction,
-    IsRowMaster,
-    IsRowSelectable,
-    IsServerSideGroup,
-    RowClassParams,
-    RowGroupingDisplayType,
-    ServerSideGroupLevelParams,
-    UseGroupFooter
+    ChartRef, GridOptions
 } from "./entities/gridOptions";
-import {
-    GetGroupRowAggParams,
-    GetServerSideGroupLevelParamsParams,
-    InitialGroupOrderComparatorParams,
-    IsFullWidthRowParams,
-    IsServerSideGroupOpenByDefaultParams,
-    NavigateToNextCellParams,
-    NavigateToNextHeaderParams,
-    PaginationNumberFormatterParams,
-    PostProcessPopupParams,
-    PostSortRowsParams,
-    ProcessRowParams,
-    RowHeightParams,
-    TabToNextCellParams,
-    TabToNextHeaderParams
-} from "./interfaces/iCallbackParams";
-import { IRowNode, RowPinnedType } from "./interfaces/iRowNode";
+import { ProvidedColumnGroup } from "./entities/providedColumnGroup";
+import { RowNode } from "./entities/rowNode";
+import { Events } from './eventKeys';
 import { AgEvent, AgEventListener, AgGlobalEventListener, ColumnEventType, FilterChangedEventSourceType, GridPreDestroyedEvent, SelectionEventSourceType } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";
@@ -49,8 +21,9 @@ import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
 import { GridOptionsService } from "./gridOptionsService";
-import { HeaderPosition } from "./headerRendering/common/headerPosition";
-import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
+import { AdvancedFilterModel } from "./interfaces/advancedFilterModel";
+import { CsvExportParams } from "./interfaces/exportParams";
+import { GridState } from "./interfaces/gridState";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { ICellEditor } from "./interfaces/iCellEditor";
 import {
@@ -62,45 +35,54 @@ import {
     CreateRangeChartParams,
     GetChartImageDataUrlParams,
     IChartService,
-    OpenChartToolPanelParams, UpdateChartParams,
+    OpenChartToolPanelParams, UpdateChartParams
 } from './interfaces/IChartService';
 import { ClientSideRowModelStep, IClientSideRowModel } from "./interfaces/iClientSideRowModel";
 import { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService } from "./interfaces/iClipboardService";
 import { IColumnToolPanel } from "./interfaces/iColumnToolPanel";
+import { WithoutGridCommon } from "./interfaces/iCommon";
 import { ICsvCreator } from "./interfaces/iCsvCreator";
-import { IDatasource } from "./interfaces/iDatasource";
 import {
     ExcelExportMultipleSheetParams,
     ExcelExportParams,
     ExcelFactoryMode,
     IExcelCreator
 } from "./interfaces/iExcelCreator";
+import { IExpansionService } from "./interfaces/iExpansionService";
 import { FilterModel, IFilter } from "./interfaces/iFilter";
 import { IFiltersToolPanel } from "./interfaces/iFiltersToolPanel";
+import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
+import { IHeaderColumn } from "./interfaces/iHeaderColumn";
 import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 import { CellRange, CellRangeParams, IRangeService } from "./interfaces/IRangeService";
 import { IRowModel, RowModelType } from "./interfaces/iRowModel";
-import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
+import { IRowNode, RowPinnedType } from "./interfaces/iRowNode";
+import { ISelectionService } from "./interfaces/iSelectionService";
 import {
     IServerSideRowModel,
     IServerSideTransactionManager,
     RefreshServerSideParams
 } from "./interfaces/iServerSideRowModel";
+import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
 import { ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
 import { ISideBarService, SideBarDef } from "./interfaces/iSideBar";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanel } from "./interfaces/iStatusPanel";
 import { IToolPanel } from "./interfaces/iToolPanel";
-import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { RowDataTransaction } from "./interfaces/rowDataTransaction";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { AnimationFrameService } from "./misc/animationFrameService";
+import { ApiEventService } from "./misc/apiEventService";
+import { IContextMenuParams, MenuService } from "./misc/menuService";
+import { StateService } from "./misc/stateService";
 import { ModuleNames } from "./modules/moduleNames";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
+import { ManagedGridOptionKey, ManagedGridOptions } from "./propertyKeys";
 import { ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
+import { OverlayService } from "./rendering/overlays/overlayService";
 import {
     FlashCellsParams,
     GetCellEditorInstancesParams,
@@ -109,35 +91,16 @@ import {
     RefreshCellsParams,
     RowRenderer
 } from "./rendering/rowRenderer";
+import { LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { SortController } from "./sortController";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
+import { warnOnce } from "./utils/function";
 import { exists, missing } from "./utils/generic";
 import { iterateObject, removeAllReferences } from "./utils/object";
+import { escapeString } from "./utils/string";
 import { ValueCache } from "./valueService/valueCache";
 import { ValueService } from "./valueService/valueService";
-import { ISelectionService } from "./interfaces/iSelectionService";
-import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
-import { DataTypeDefinition } from "./entities/dataType";
-import { RowNode } from "./entities/rowNode";
-import { AdvancedFilterModel } from "./interfaces/advancedFilterModel";
-import { LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
-import { Events } from './eventKeys';
-import { IAdvancedFilterBuilderParams } from "./interfaces/iAdvancedFilterBuilderParams";
-import { IHeaderColumn } from "./interfaces/iHeaderColumn";
-import { ProvidedColumnGroup } from "./entities/providedColumnGroup";
-import { ColumnGroup } from "./entities/columnGroup";
-import { OverlayService } from "./rendering/overlays/overlayService";
-import { GridState } from "./interfaces/gridState";
-import { StateService } from "./misc/stateService";
-import { IExpansionService } from "./interfaces/iExpansionService";
-import { warnOnce } from "./utils/function";
-import { ApiEventService } from "./misc/apiEventService";
-import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
-import { ManagedGridOptionKey, ManagedGridOptions } from "./propertyKeys";
-import { WithoutGridCommon } from "./interfaces/iCommon";
-import { MenuService, IContextMenuParams } from "./misc/menuService";
-import { escapeString } from "./utils/string";
 
 export interface DetailGridInfo {
     /**
@@ -196,7 +159,7 @@ export class GridApi<TData = any> {
     @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
     @Autowired('menuService') private readonly menuService: MenuService;
     @Autowired('valueCache') private readonly valueCache: ValueCache;
-    @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
+    @Autowired('animationFrameService') readonly animationFrameService: AnimationFrameService;
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
     @Autowired('overlayService') private readonly overlayService: OverlayService;
     @Autowired('stateService') private readonly stateService: StateService;

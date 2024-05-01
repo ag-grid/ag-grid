@@ -97,82 +97,82 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
     
     @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
-    private frameworkEventListenerService: FrameworkEventListenerService | null;
+    #frameworkEventListenerService: FrameworkEventListenerService | null;
 
-    private readonly colId: any;
-    private colDef: ColDef<any, TValue>;
+    #colId: any;
+    #colDef: ColDef<any, TValue>;
 
     // used by React (and possibly other frameworks) as key for rendering. also used to
     // identify old vs new columns for destroying cols when no longer used.
-    private instanceId = getNextColInstanceId();
+    #instanceId = getNextColInstanceId();
 
     // We do NOT use this anywhere, we just keep a reference. this is to check object equivalence
     // when the user provides an updated list of columns - so we can check if we have a column already
-    // existing for a col def. we cannot use the this.colDef as that is the result of a merge.
+    // existing for a col def. we cannot use the this.#colDef as that is the result of a merge.
     // This is used in ColumnFactory
-    private userProvidedColDef: ColDef<any, TValue> | null;
+    #userProvidedColDef: ColDef<any, TValue> | null;
 
-    private actualWidth: any;
+    #actualWidth: any;
 
     // The measured height of this column's header when autoHeaderHeight is enabled
-    private autoHeaderHeight: number | null = null;
+    #autoHeaderHeight: number | null = null;
 
-    private visible: any;
-    private pinned: ColumnPinnedType;
-    private left: number | null;
-    private oldLeft: number | null;
-    private aggFunc: string | IAggFunc | null | undefined;
-    private sort: SortDirection | undefined;
-    private sortIndex: number | null | undefined;
-    private moving = false;
-    private menuVisible = false;
+    #visible: any;
+    #pinned: ColumnPinnedType;
+    #left: number | null;
+    #oldLeft: number | null;
+    #aggFunc: string | IAggFunc | null | undefined;
+    #sort: SortDirection | undefined;
+    #sortIndex: number | null | undefined;
+    #moving = false;
+    #menuVisible = false;
 
-    private lastLeftPinned: boolean = false;
-    private firstRightPinned: boolean = false;
+    #lastLeftPinned: boolean = false;
+    #firstRightPinned: boolean = false;
 
-    private minWidth: number | null | undefined;
-    private maxWidth: number | null | undefined;
+    #minWidth: number | null | undefined;
+    #maxWidth: number | null | undefined;
 
-    private filterActive = false;
+    #filterActive = false;
 
-    private eventService: EventService = new EventService();
+    #eventService: EventService = new EventService();
 
-    private fieldContainsDots: boolean;
-    private tooltipFieldContainsDots: boolean;
-    private tooltipEnabled = false;
+    #fieldContainsDots: boolean;
+    #tooltipFieldContainsDots: boolean;
+    #tooltipEnabled = false;
 
-    private rowGroupActive = false;
-    private pivotActive = false;
-    private aggregationActive = false;
-    private flex: number | null | undefined;
+    #rowGroupActive = false;
+    #pivotActive = false;
+    #aggregationActive = false;
+    #flex: number | null | undefined;
 
-    private readonly primary: boolean;
+    #primary: boolean;
 
-    private parent: ColumnGroup;
-    private originalParent: ProvidedColumnGroup | null;
+    #parent: ColumnGroup;
+    #originalParent: ProvidedColumnGroup | null;
 
     constructor(colDef: ColDef<any, TValue>, userProvidedColDef: ColDef<any, TValue> | null, colId: string, primary: boolean) {
-        this.colDef = colDef;
-        this.userProvidedColDef = userProvidedColDef;
-        this.colId = colId;
-        this.primary = primary;
+        this.#colDef = colDef;
+        this.#userProvidedColDef = userProvidedColDef;
+        this.#colId = colId;
+        this.#primary = primary;
 
-        this.setState(colDef);
+        this.#setState(colDef);
     }
 
     public getInstanceId(): ColumnInstanceId {
-        return this.instanceId;
+        return this.#instanceId;
     }
 
-    private setState(colDef: ColDef): void {
+    #setState(colDef: ColDef): void {
         // sort
         if (colDef.sort !== undefined) {
             if (colDef.sort === 'asc' || colDef.sort === 'desc') {
-                this.sort = colDef.sort;
+                this.#sort = colDef.sort;
             }
         } else {
             if (colDef.initialSort === 'asc' || colDef.initialSort === 'desc') {
-                this.sort = colDef.initialSort;
+                this.#sort = colDef.initialSort;
             }
         }
 
@@ -181,11 +181,11 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         const initialSortIndex = colDef.initialSortIndex;
         if (sortIndex !== undefined) {
             if (sortIndex !== null) {
-                this.sortIndex = sortIndex;
+                this.#sortIndex = sortIndex;
             }
         } else {
             if (initialSortIndex !== null) {
-                this.sortIndex = initialSortIndex;
+                this.#sortIndex = initialSortIndex;
             }
         }
 
@@ -194,9 +194,9 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         const initialHide = colDef.initialHide;
 
         if (hide !== undefined) {
-            this.visible = !hide;
+            this.#visible = !hide;
         } else {
-            this.visible = !initialHide;
+            this.#visible = !initialHide;
         }
 
         // pinned
@@ -210,20 +210,20 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         const flex = colDef.flex;
         const initialFlex = colDef.initialFlex;
         if (flex !== undefined) {
-            this.flex = flex;
+            this.#flex = flex;
         } else if (initialFlex !== undefined) {
-            this.flex = initialFlex;
+            this.#flex = initialFlex;
         }
     }
 
     // gets called when user provides an alternative colDef, eg
     public setColDef(colDef: ColDef<any, TValue>, userProvidedColDef: ColDef<any, TValue> | null, source: ColumnEventType): void {
-        this.colDef = colDef;
-        this.userProvidedColDef = userProvidedColDef;
-        this.initMinAndMaxWidths();
-        this.initDotNotation();
-        this.initTooltip();
-        this.eventService.dispatchEvent(this.createColumnEvent('colDefChanged', source));
+        this.#colDef = colDef;
+        this.#userProvidedColDef = userProvidedColDef;
+        this.#initMinAndMaxWidths();
+        this.#initDotNotation();
+        this.#initTooltip();
+        this.#eventService.dispatchEvent(this.#createColumnEvent('colDefChanged', source));
     }
 
     /**
@@ -232,20 +232,20 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
      * However it's useful for comparison, eg to know which application column definition matches that column.
      */
     public getUserProvidedColDef(): ColDef<any, TValue> | null {
-        return this.userProvidedColDef;
+        return this.#userProvidedColDef;
     }
 
     public setParent(parent: ColumnGroup): void {
-        this.parent = parent;
+        this.#parent = parent;
     }
 
     /** Returns the parent column group, if column grouping is active. */
     public getParent(): ColumnGroup {
-        return this.parent;
+        return this.#parent;
     }
 
     public setOriginalParent(originalParent: ProvidedColumnGroup | null): void {
-        this.originalParent = originalParent;
+        this.#originalParent = originalParent;
     }
 
     /**
@@ -254,46 +254,46 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
      * Parent may contain a duplicate but not identical group when the group is split.
      */
     public getOriginalParent(): ProvidedColumnGroup | null {
-        return this.originalParent;
+        return this.#originalParent;
     }
 
     // this is done after constructor as it uses gridOptionsService
     @PostConstruct
     private initialise(): void {
-        this.initMinAndMaxWidths();
+        this.#initMinAndMaxWidths();
 
         this.resetActualWidth('gridInitializing');
 
-        this.initDotNotation();
+        this.#initDotNotation();
 
-        this.initTooltip();
+        this.#initTooltip();
     }
 
-    private initDotNotation(): void {
+    #initDotNotation(): void {
         const suppressDotNotation = this.gos.get('suppressFieldDotNotation');
-        this.fieldContainsDots = exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
-        this.tooltipFieldContainsDots = exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
+        this.#fieldContainsDots = exists(this.#colDef.field) && this.#colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
+        this.#tooltipFieldContainsDots = exists(this.#colDef.tooltipField) && this.#colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
     }
 
-    private initMinAndMaxWidths(): void {
-        const colDef = this.colDef;
+    #initMinAndMaxWidths(): void {
+        const colDef = this.#colDef;
 
-        this.minWidth = colDef.minWidth ?? this.environment.getMinColWidth();
-        this.maxWidth = colDef.maxWidth ?? Number.MAX_SAFE_INTEGER;
+        this.#minWidth = colDef.minWidth ?? this.environment.getMinColWidth();
+        this.#maxWidth = colDef.maxWidth ?? Number.MAX_SAFE_INTEGER;
     }
 
-    private initTooltip(): void {
-        this.tooltipEnabled = exists(this.colDef.tooltipField) ||
-            exists(this.colDef.tooltipValueGetter) ||
-            exists(this.colDef.tooltipComponent);
+    #initTooltip(): void {
+        this.#tooltipEnabled = exists(this.#colDef.tooltipField) ||
+            exists(this.#colDef.tooltipValueGetter) ||
+            exists(this.#colDef.tooltipComponent);
     }
 
     public resetActualWidth(source: ColumnEventType): void {
-        const initialWidth = this.calculateColInitialWidth(this.colDef);
+        const initialWidth = this.#calculateColInitialWidth(this.#colDef);
         this.setActualWidth(initialWidth, source, true);
     }
 
-    private calculateColInitialWidth(colDef: ColDef): number {
+    #calculateColInitialWidth(colDef: ColDef): number {
         const minColWidth = colDef.minWidth ?? this.environment.getMinColWidth();
         const maxColWidth = colDef.maxWidth ?? Number.MAX_SAFE_INTEGER;
     
@@ -317,57 +317,57 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     public isRowGroupDisplayed(colId: string): boolean {
-        if (missing(this.colDef) || missing(this.colDef.showRowGroup)) {
+        if (missing(this.#colDef) || missing(this.#colDef.showRowGroup)) {
             return false;
         }
 
-        const showingAllGroups = this.colDef.showRowGroup === true;
-        const showingThisGroup = this.colDef.showRowGroup === colId;
+        const showingAllGroups = this.#colDef.showRowGroup === true;
+        const showingThisGroup = this.#colDef.showRowGroup === colId;
 
         return showingAllGroups || showingThisGroup;
     }
 
     /** Returns `true` if column is a primary column, `false` if secondary. Secondary columns are used for pivoting. */
     public isPrimary(): boolean {
-        return this.primary;
+        return this.#primary;
     }
 
     /** Returns `true` if column filtering is allowed. */
     public isFilterAllowed(): boolean {
         // filter defined means it's a string, class or true.
         // if its false, null or undefined then it's false.
-        const filterDefined = !!this.colDef.filter;
+        const filterDefined = !!this.#colDef.filter;
         return filterDefined;
     }
 
     public isFieldContainsDots(): boolean {
-        return this.fieldContainsDots;
+        return this.#fieldContainsDots;
     }
 
     public isTooltipEnabled(): boolean {
-        return this.tooltipEnabled;
+        return this.#tooltipEnabled;
     }
 
     public isTooltipFieldContainsDots(): boolean {
-        return this.tooltipFieldContainsDots;
+        return this.#tooltipFieldContainsDots;
     }
 
     /** Add an event listener to the column. */
     public addEventListener(eventType: ColumnEventName, userListener: Function): void {
-        if (this.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
+        if (this.frameworkOverrides.shouldWrapOutgoing && !this.#frameworkEventListenerService) {
             // Only construct if we need it, as it's an overhead for column construction
-            this.eventService.setFrameworkOverrides(this.frameworkOverrides);
-            this.frameworkEventListenerService = new FrameworkEventListenerService(this.frameworkOverrides);
+            this.#eventService.setFrameworkOverrides(this.frameworkOverrides);
+            this.#frameworkEventListenerService = new FrameworkEventListenerService(this.frameworkOverrides);
         }
-        const listener = this.frameworkEventListenerService?.wrap(userListener as AgEventListener) ?? userListener;
+        const listener = this.#frameworkEventListenerService?.wrap(userListener as AgEventListener) ?? userListener;
 
-        this.eventService.addEventListener(eventType, listener as AgEventListener);
+        this.#eventService.addEventListener(eventType, listener as AgEventListener);
     }
 
     /** Remove event listener from the column. */
     public removeEventListener(eventType: ColumnEventName, userListener: Function): void {
-        const listener = this.frameworkEventListenerService?.unwrap(userListener as AgEventListener) ?? userListener;
-        this.eventService.removeEventListener(eventType, listener as AgEventListener);
+        const listener = this.#frameworkEventListenerService?.unwrap(userListener as AgEventListener) ?? userListener;
+        this.#eventService.removeEventListener(eventType, listener as AgEventListener);
     }
 
     public createColumnFunctionCallbackParams(rowNode: IRowNode): ColumnFunctionCallbackParams {
@@ -375,20 +375,20 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
             node: rowNode,
             data: rowNode.data,
             column: this,
-            colDef: this.colDef
+            colDef: this.#colDef
         });
     }
 
     public isSuppressNavigable(rowNode: IRowNode): boolean {
         // if boolean set, then just use it
-        if (typeof this.colDef.suppressNavigable === 'boolean') {
-            return this.colDef.suppressNavigable;
+        if (typeof this.#colDef.suppressNavigable === 'boolean') {
+            return this.#colDef.suppressNavigable;
         }
 
         // if function, then call the function to find out
-        if (typeof this.colDef.suppressNavigable === 'function') {
+        if (typeof this.#colDef.suppressNavigable === 'function') {
             const params = this.createColumnFunctionCallbackParams(rowNode);
-            const userFunc = this.colDef.suppressNavigable;
+            const userFunc = this.#colDef.suppressNavigable;
             return userFunc(params);
         }
 
@@ -404,47 +404,47 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
             return false;
         }
 
-        return this.isColumnFunc(rowNode, this.colDef.editable);
+        return this.#isColumnFunc(rowNode, this.#colDef.editable);
     }
 
     public isSuppressFillHandle(): boolean {
-        return !!this.colDef.suppressFillHandle;
+        return !!this.#colDef.suppressFillHandle;
     }
 
     public isAutoHeight(): boolean {
-        return !!this.colDef.autoHeight;
+        return !!this.#colDef.autoHeight;
     }
 
     public isAutoHeaderHeight(): boolean {
-        return !!this.colDef.autoHeaderHeight;
+        return !!this.#colDef.autoHeaderHeight;
     }
 
     public isRowDrag(rowNode: IRowNode): boolean {
-        return this.isColumnFunc(rowNode, this.colDef.rowDrag);
+        return this.#isColumnFunc(rowNode, this.#colDef.rowDrag);
     }
 
     public isDndSource(rowNode: IRowNode): boolean {
-        return this.isColumnFunc(rowNode, this.colDef.dndSource);
+        return this.#isColumnFunc(rowNode, this.#colDef.dndSource);
     }
 
     public isCellCheckboxSelection(rowNode: IRowNode): boolean {
-        return this.isColumnFunc(rowNode, this.colDef.checkboxSelection);
+        return this.#isColumnFunc(rowNode, this.#colDef.checkboxSelection);
     }
 
     public isSuppressPaste(rowNode: IRowNode): boolean {
-        return this.isColumnFunc(rowNode, this.colDef ? this.colDef.suppressPaste : null);
+        return this.#isColumnFunc(rowNode, this.#colDef ? this.#colDef.suppressPaste : null);
     }
 
     public isResizable(): boolean {
-        return !!this.getColDefValue('resizable');
+        return !!this.#getColDefValue('resizable');
     }
     
     /** Get value from ColDef or default if it exists. */
-    private getColDefValue<K extends keyof ColDef>(key: K): ColDef[K] {
-        return this.colDef[key] ?? COL_DEF_DEFAULTS[key];
+    #getColDefValue<K extends keyof ColDef>(key: K): ColDef[K] {
+        return this.#colDef[key] ?? COL_DEF_DEFAULTS[key];
     }
 
-    private isColumnFunc(rowNode: IRowNode, value?: boolean | ((params: ColumnFunctionCallbackParams) => boolean) | null): boolean {
+    #isColumnFunc(rowNode: IRowNode, value?: boolean | ((params: ColumnFunctionCallbackParams) => boolean) | null): boolean {
         // if boolean set, then just use it
         if (typeof value === 'boolean') {
             return value;
@@ -461,11 +461,11 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     public setMoving(moving: boolean, source: ColumnEventType): void {
-        this.moving = moving;
-        this.eventService.dispatchEvent(this.createColumnEvent('movingChanged', source));
+        this.#moving = moving;
+        this.#eventService.dispatchEvent(this.#createColumnEvent('movingChanged', source));
     }
 
-    private createColumnEvent(type: ColumnEventName, source: ColumnEventType): ColumnEvent {
+    #createColumnEvent(type: ColumnEventName, source: ColumnEventType): ColumnEvent {
         return this.gos.addGridCommonParams({
             type: type,
             column: this,
@@ -475,108 +475,108 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     public isMoving(): boolean {
-        return this.moving;
+        return this.#moving;
     }
 
     /** If sorting is active, returns the sort direction e.g. `'asc'` or `'desc'`. */
     public getSort(): SortDirection | undefined {
-        return this.sort;
+        return this.#sort;
     }
 
     public setSort(sort: SortDirection | undefined, source: ColumnEventType): void {
-        if (this.sort !== sort) {
-            this.sort = sort;
-            this.eventService.dispatchEvent(this.createColumnEvent('sortChanged', source));
+        if (this.#sort !== sort) {
+            this.#sort = sort;
+            this.#eventService.dispatchEvent(this.#createColumnEvent('sortChanged', source));
         }
-        this.dispatchStateUpdatedEvent('sort');
+        this.#dispatchStateUpdatedEvent('sort');
     }
 
     public setMenuVisible(visible: boolean, source: ColumnEventType): void {
-        if (this.menuVisible !== visible) {
-            this.menuVisible = visible;
-            this.eventService.dispatchEvent(this.createColumnEvent('menuVisibleChanged', source));
+        if (this.#menuVisible !== visible) {
+            this.#menuVisible = visible;
+            this.#eventService.dispatchEvent(this.#createColumnEvent('menuVisibleChanged', source));
         }
     }
 
     public isMenuVisible(): boolean {
-        return this.menuVisible;
+        return this.#menuVisible;
     }
 
     public isSortable(): boolean {
-        return !!this.getColDefValue('sortable');
+        return !!this.#getColDefValue('sortable');
     }
 
     public isSortAscending(): boolean {
-        return this.sort === 'asc';
+        return this.#sort === 'asc';
     }
 
     public isSortDescending(): boolean {
-        return this.sort === 'desc';
+        return this.#sort === 'desc';
     }
 
     public isSortNone(): boolean {
-        return missing(this.sort);
+        return missing(this.#sort);
     }
 
     public isSorting(): boolean {
-        return exists(this.sort);
+        return exists(this.#sort);
     }
 
     public getSortIndex(): number | null | undefined {
-        return this.sortIndex;
+        return this.#sortIndex;
     }
 
     public setSortIndex(sortOrder?: number | null): void {
-        this.sortIndex = sortOrder;
-        this.dispatchStateUpdatedEvent('sortIndex');
+        this.#sortIndex = sortOrder;
+        this.#dispatchStateUpdatedEvent('sortIndex');
     }
 
     public setAggFunc(aggFunc: string | IAggFunc | null | undefined): void {
-        this.aggFunc = aggFunc;
-        this.dispatchStateUpdatedEvent('aggFunc');
+        this.#aggFunc = aggFunc;
+        this.#dispatchStateUpdatedEvent('aggFunc');
     }
 
     /** If aggregation is set for the column, returns the aggregation function. */
     public getAggFunc(): string | IAggFunc | null | undefined {
-        return this.aggFunc;
+        return this.#aggFunc;
     }
 
     public getLeft(): number | null {
-        return this.left;
+        return this.#left;
     }
 
     public getOldLeft(): number | null {
-        return this.oldLeft;
+        return this.#oldLeft;
     }
 
     public getRight(): number {
-        return this.left + this.actualWidth;
+        return this.#left + this.#actualWidth;
     }
 
     public setLeft(left: number | null, source: ColumnEventType) {
-        this.oldLeft = this.left;
-        if (this.left !== left) {
-            this.left = left;
-            this.eventService.dispatchEvent(this.createColumnEvent('leftChanged', source));
+        this.#oldLeft = this.#left;
+        if (this.#left !== left) {
+            this.#left = left;
+            this.#eventService.dispatchEvent(this.#createColumnEvent('leftChanged', source));
         }
     }
 
     /** Returns `true` if filter is active on the column. */
     public isFilterActive(): boolean {
-        return this.filterActive;
+        return this.#filterActive;
     }
 
     // additionalEventAttributes is used by provided simple floating filter, so it can add 'floatingFilter=true' to the event
     public setFilterActive(active: boolean, source: ColumnEventType, additionalEventAttributes?: any): void {
-        if (this.filterActive !== active) {
-            this.filterActive = active;
-            this.eventService.dispatchEvent(this.createColumnEvent('filterActiveChanged', source));
+        if (this.#filterActive !== active) {
+            this.#filterActive = active;
+            this.#eventService.dispatchEvent(this.#createColumnEvent('filterActiveChanged', source));
         }
-        const filterChangedEvent = this.createColumnEvent('filterChanged', source);
+        const filterChangedEvent = this.#createColumnEvent('filterChanged', source);
         if (additionalEventAttributes) {
             mergeDeep(filterChangedEvent, additionalEventAttributes);
         }
-        this.eventService.dispatchEvent(filterChangedEvent);
+        this.#eventService.dispatchEvent(filterChangedEvent);
     }
 
     /** Returns `true` when this `Column` is hovered, otherwise `false` */
@@ -586,64 +586,64 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
 
     public setPinned(pinned: ColumnPinnedType): void {
         if (pinned === true || pinned === 'left') {
-            this.pinned = 'left';
+            this.#pinned = 'left';
         } else if (pinned === 'right') {
-            this.pinned = 'right';
+            this.#pinned = 'right';
         } else {
-            this.pinned = null;
+            this.#pinned = null;
         }
-        this.dispatchStateUpdatedEvent('pinned');
+        this.#dispatchStateUpdatedEvent('pinned');
     }
 
     public setFirstRightPinned(firstRightPinned: boolean, source: ColumnEventType): void {
-        if (this.firstRightPinned !== firstRightPinned) {
-            this.firstRightPinned = firstRightPinned;
-            this.eventService.dispatchEvent(this.createColumnEvent('firstRightPinnedChanged', source));
+        if (this.#firstRightPinned !== firstRightPinned) {
+            this.#firstRightPinned = firstRightPinned;
+            this.#eventService.dispatchEvent(this.#createColumnEvent('firstRightPinnedChanged', source));
         }
     }
 
     public setLastLeftPinned(lastLeftPinned: boolean, source: ColumnEventType): void {
-        if (this.lastLeftPinned !== lastLeftPinned) {
-            this.lastLeftPinned = lastLeftPinned;
-            this.eventService.dispatchEvent(this.createColumnEvent('lastLeftPinnedChanged', source));
+        if (this.#lastLeftPinned !== lastLeftPinned) {
+            this.#lastLeftPinned = lastLeftPinned;
+            this.#eventService.dispatchEvent(this.#createColumnEvent('lastLeftPinnedChanged', source));
         }
     }
 
     public isFirstRightPinned(): boolean {
-        return this.firstRightPinned;
+        return this.#firstRightPinned;
     }
 
     public isLastLeftPinned(): boolean {
-        return this.lastLeftPinned;
+        return this.#lastLeftPinned;
     }
 
     public isPinned(): boolean {
-        return this.pinned === 'left' || this.pinned === 'right';
+        return this.#pinned === 'left' || this.#pinned === 'right';
     }
 
     public isPinnedLeft(): boolean {
-        return this.pinned === 'left';
+        return this.#pinned === 'left';
     }
 
     public isPinnedRight(): boolean {
-        return this.pinned === 'right';
+        return this.#pinned === 'right';
     }
 
     public getPinned(): ColumnPinnedType {
-        return this.pinned;
+        return this.#pinned;
     }
 
     public setVisible(visible: boolean, source: ColumnEventType): void {
         const newValue = visible === true;
-        if (this.visible !== newValue) {
-            this.visible = newValue;
-            this.eventService.dispatchEvent(this.createColumnEvent('visibleChanged', source));
+        if (this.#visible !== newValue) {
+            this.#visible = newValue;
+            this.#eventService.dispatchEvent(this.#createColumnEvent('visibleChanged', source));
         }
-        this.dispatchStateUpdatedEvent('hide');
+        this.#dispatchStateUpdatedEvent('hide');
     }
 
     public isVisible(): boolean {
-        return this.visible;
+        return this.#visible;
     }
 
     public isSpanHeaderHeight(): boolean {
@@ -676,163 +676,163 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
      *
      * Equivalent: `getDefinition` */
     public getColDef(): ColDef<any, TValue> {
-        return this.colDef;
+        return this.#colDef;
     }
 
     public getColumnGroupShow(): ColumnGroupShowType | undefined {
-        return this.colDef.columnGroupShow;
+        return this.#colDef.columnGroupShow;
     }
     /**
      * Returns the unique ID for the column.
      *
      * Equivalent: `getId`, `getUniqueId` */
     public getColId(): string {
-        return this.colId;
+        return this.#colId;
     }
     /**
      * Returns the unique ID for the column.
      *
      * Equivalent: `getColId`, `getUniqueId` */
     public getId(): string {
-        return this.colId;
+        return this.#colId;
     }
     /**
      * Returns the unique ID for the column.
      *
      * Equivalent: `getColId`, `getId` */
     public getUniqueId(): HeaderColumnId {
-        return this.colId;
+        return this.#colId;
     }
 
     public getDefinition(): AbstractColDef<any, TValue> {
-        return this.colDef;
+        return this.#colDef;
     }
 
     /** Returns the current width of the column. If the column is resized, the actual width is the new size. */
     public getActualWidth(): number {
-        return this.actualWidth;
+        return this.#actualWidth;
     }
 
     public getAutoHeaderHeight(): number | null {
-        return this.autoHeaderHeight;
+        return this.#autoHeaderHeight;
     }
 
     /** Returns true if the header height has changed */
     public setAutoHeaderHeight(height: number): boolean {
-        const changed = height !== this.autoHeaderHeight;
-        this.autoHeaderHeight = height;
+        const changed = height !== this.#autoHeaderHeight;
+        this.#autoHeaderHeight = height;
         return changed;
     }
 
-    private createBaseColDefParams(rowNode: IRowNode): BaseColDefParams {
+    #createBaseColDefParams(rowNode: IRowNode): BaseColDefParams {
         const params: BaseColDefParams = this.gos.addGridCommonParams({
             node: rowNode,
             data: rowNode.data,
-            colDef: this.colDef,
+            colDef: this.#colDef,
             column: this
         });
         return params;
     }
 
     public getColSpan(rowNode: IRowNode): number {
-        if (missing(this.colDef.colSpan)) { return 1; }
-        const params: ColSpanParams = this.createBaseColDefParams(rowNode);
-        const colSpan = this.colDef.colSpan(params);
+        if (missing(this.#colDef.colSpan)) { return 1; }
+        const params: ColSpanParams = this.#createBaseColDefParams(rowNode);
+        const colSpan = this.#colDef.colSpan(params);
         // colSpan must be number equal to or greater than 1
 
         return Math.max(colSpan, 1);
     }
 
     public getRowSpan(rowNode: IRowNode): number {
-        if (missing(this.colDef.rowSpan)) { return 1; }
-        const params: RowSpanParams = this.createBaseColDefParams(rowNode);
-        const rowSpan = this.colDef.rowSpan(params);
+        if (missing(this.#colDef.rowSpan)) { return 1; }
+        const params: RowSpanParams = this.#createBaseColDefParams(rowNode);
+        const rowSpan = this.#colDef.rowSpan(params);
         // rowSpan must be number equal to or greater than 1
 
         return Math.max(rowSpan, 1);
     }
 
     public setActualWidth(actualWidth: number, source: ColumnEventType, silent: boolean = false): void {
-        if (this.minWidth != null) {
-            actualWidth = Math.max(actualWidth, this.minWidth);
+        if (this.#minWidth != null) {
+            actualWidth = Math.max(actualWidth, this.#minWidth);
         }
-        if (this.maxWidth != null) {
-            actualWidth = Math.min(actualWidth, this.maxWidth);
+        if (this.#maxWidth != null) {
+            actualWidth = Math.min(actualWidth, this.#maxWidth);
         }
-        if (this.actualWidth !== actualWidth) {
+        if (this.#actualWidth !== actualWidth) {
             // disable flex for this column if it was manually resized.
-            this.actualWidth = actualWidth;
-            if (this.flex && source !== 'flex' && source !== 'gridInitializing') {
-                this.flex = null;
+            this.#actualWidth = actualWidth;
+            if (this.#flex && source !== 'flex' && source !== 'gridInitializing') {
+                this.#flex = null;
             }
 
             if (!silent) {
                 this.fireColumnWidthChangedEvent(source);
             }
         }
-        this.dispatchStateUpdatedEvent('width');
+        this.#dispatchStateUpdatedEvent('width');
     }
 
     public fireColumnWidthChangedEvent(source: ColumnEventType): void {
-        this.eventService.dispatchEvent(this.createColumnEvent('widthChanged', source));
+        this.#eventService.dispatchEvent(this.#createColumnEvent('widthChanged', source));
     }
 
     public isGreaterThanMax(width: number): boolean {
-        if (this.maxWidth != null) {
-            return width > this.maxWidth;
+        if (this.#maxWidth != null) {
+            return width > this.#maxWidth;
         }
         return false;
     }
 
     public getMinWidth(): number | null | undefined {
-        return this.minWidth;
+        return this.#minWidth;
     }
 
     public getMaxWidth(): number | null | undefined {
-        return this.maxWidth;
+        return this.#maxWidth;
     }
 
     public getFlex(): number {
-        return this.flex || 0;
+        return this.#flex || 0;
     }
 
     // this method should only be used by the columnModel to
     // change flex when required by the applyColumnState method.
     public setFlex(flex: number | null) {
-        if (this.flex !== flex) { this.flex = flex; }
-        this.dispatchStateUpdatedEvent('flex');
+        if (this.#flex !== flex) { this.#flex = flex; }
+        this.#dispatchStateUpdatedEvent('flex');
     }
 
     public setMinimum(source: ColumnEventType): void {
-        if (exists(this.minWidth)) {
-            this.setActualWidth(this.minWidth, source);
+        if (exists(this.#minWidth)) {
+            this.setActualWidth(this.#minWidth, source);
         }
     }
 
     public setRowGroupActive(rowGroup: boolean, source: ColumnEventType): void {
-        if (this.rowGroupActive !== rowGroup) {
-            this.rowGroupActive = rowGroup;
-            this.eventService.dispatchEvent(this.createColumnEvent('columnRowGroupChanged', source));
+        if (this.#rowGroupActive !== rowGroup) {
+            this.#rowGroupActive = rowGroup;
+            this.#eventService.dispatchEvent(this.#createColumnEvent('columnRowGroupChanged', source));
         }
-        this.dispatchStateUpdatedEvent('rowGroup');
+        this.#dispatchStateUpdatedEvent('rowGroup');
     }
 
     /** Returns `true` if row group is currently active for this column. */
     public isRowGroupActive(): boolean {
-        return this.rowGroupActive;
+        return this.#rowGroupActive;
     }
 
     public setPivotActive(pivot: boolean, source: ColumnEventType): void {
-        if (this.pivotActive !== pivot) {
-            this.pivotActive = pivot;
-            this.eventService.dispatchEvent(this.createColumnEvent('columnPivotChanged', source));
+        if (this.#pivotActive !== pivot) {
+            this.#pivotActive = pivot;
+            this.#eventService.dispatchEvent(this.#createColumnEvent('columnPivotChanged', source));
         }
-        this.dispatchStateUpdatedEvent('pivot');
+        this.#dispatchStateUpdatedEvent('pivot');
     }
 
     /** Returns `true` if pivot is currently active for this column. */
     public isPivotActive(): boolean {
-        return this.pivotActive;
+        return this.#pivotActive;
     }
 
     public isAnyFunctionActive(): boolean {
@@ -844,27 +844,27 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     public setValueActive(value: boolean, source: ColumnEventType): void {
-        if (this.aggregationActive !== value) {
-            this.aggregationActive = value;
-            this.eventService.dispatchEvent(this.createColumnEvent('columnValueChanged', source));
+        if (this.#aggregationActive !== value) {
+            this.#aggregationActive = value;
+            this.#eventService.dispatchEvent(this.#createColumnEvent('columnValueChanged', source));
         }
     }
 
     /** Returns `true` if value (aggregation) is currently active for this column. */
     public isValueActive(): boolean {
-        return this.aggregationActive;
+        return this.#aggregationActive;
     }
 
     public isAllowPivot(): boolean {
-        return this.colDef.enablePivot === true;
+        return this.#colDef.enablePivot === true;
     }
 
     public isAllowValue(): boolean {
-        return this.colDef.enableValue === true;
+        return this.#colDef.enableValue === true;
     }
 
     public isAllowRowGroup(): boolean {
-        return this.colDef.enableRowGroup === true;
+        return this.#colDef.enableRowGroup === true;
     }
 
     /**
@@ -881,8 +881,8 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         return menuTabs;
     }
 
-    private dispatchStateUpdatedEvent(key: keyof ColumnState): void {
-        this.eventService.dispatchEvent({
+    #dispatchStateUpdatedEvent(key: keyof ColumnState): void {
+        this.#eventService.dispatchEvent({
             type: Column.EVENT_STATE_UPDATED,
             key
         } as AgEvent);

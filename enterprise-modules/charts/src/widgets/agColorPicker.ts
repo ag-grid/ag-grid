@@ -95,6 +95,6 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
     }
 
     public getValue(): string {
-        return this.value;
+        return this.value!;
     }
 }

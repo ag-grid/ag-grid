@@ -50,7 +50,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     protected variableWidth: boolean;
     protected minPickerWidth: string | undefined;
     protected maxPickerWidth: string | undefined;
-    protected value: TValue;
+    // protected value: TValue;
 
 
     private skipClick: boolean = false;
