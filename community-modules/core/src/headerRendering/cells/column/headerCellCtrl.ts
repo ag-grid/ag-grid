@@ -108,7 +108,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     
         const newWidth = Math.min(Math.max(actualWidth + delta, minWidth), maxWidth);
 
-        this.beans.columnModel.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true, 'uiColumnResized');
+        this.beans.columnSizeService.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true, 'uiColumnResized');
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
@@ -136,7 +136,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             fromEnter: false,
             fakeEvent: false,
             gos,
-            columnModel: this.beans.columnModel
+            columnModel: this.beans.columnModel,
+            columnMoveService: this.beans.columnMoveService,
+            presentedColsService: this.beans.visibleColsService
         });
 
         ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
@@ -354,13 +356,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
                     const unlockedColumns = dragItem?.columns?.filter(col => !col.getColDef().lockVisible) || [];
-                    columnModel.setColumnsVisible(unlockedColumns, true, "uiColumnMoved");
+                    columnModel.setColsVisible(unlockedColumns, true, "uiColumnMoved");
                 }
             },
             onGridExit: (dragItem) => {
                 if (hideColumnOnExit) {
                     const unlockedColumns = dragItem?.columns?.filter(col => !col.getColDef().lockVisible) || [];
-                    columnModel.setColumnsVisible(unlockedColumns, false, "uiColumnMoved");
+                    columnModel.setColsVisible(unlockedColumns, false, "uiColumnMoved");
                 }
             },
         };
@@ -430,7 +432,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     private calculateDisplayName(): string | null {
-        return this.beans.columnModel.getDisplayNameForColumn(this.column, 'header', true);
+        return this.beans.columnNameService.getDisplayNameForColumn(this.column, 'header', true);
     }
 
     private checkDisplayName(): void {
@@ -598,7 +600,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
                     return;
                 }
             }
-            columnModel.setColumnHeaderHeight(this.column, autoHeight);
+            columnModel.setColHeaderHeight(this.column, autoHeight);
         };
 
         let isMeasuring = false;

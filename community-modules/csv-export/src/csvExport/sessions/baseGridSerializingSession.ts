@@ -1,6 +1,8 @@
 import {
     Column,
     ColumnModel,
+    ColumnNameService,
+    FuncColsService,
     GridOptionsService,
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
@@ -14,6 +16,8 @@ import { GridSerializingParams, GridSerializingSession, RowAccumulator, RowSpann
 
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    public funcColsService: FuncColsService;
     public valueService: ValueService;
     public gos: GridOptionsService;
     public processCellCallback?: (params: ProcessCellForExportParams) => string;
@@ -26,6 +30,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     constructor(config: GridSerializingParams) {
         const {
             columnModel,
+            funcColsService,
+            columnNameService,
             valueService,
             gos,
             processCellCallback,
@@ -35,6 +41,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         } = config;
 
         this.columnModel = columnModel;
+        this.funcColsService = funcColsService;
+        this.columnNameService = columnNameService;
         this.valueService = valueService;
         this.gos = gos;
         this.processCellCallback = processCellCallback;
@@ -102,7 +110,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 const colDef = column.getColDef();
                 const isFullWidth = colDef == null || colDef.showRowGroup === true;
 
-                return isFullWidth || colDef.showRowGroup === this.columnModel.getRowGroupColumns()[0].getId();
+                return isFullWidth || colDef.showRowGroup === this.funcColsService.getRowGroupColumns()[0].getId();
             }
         }
 
@@ -116,7 +124,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             return callback(this.gos.addGridCommonParams({ column }));
         }
 
-        return this.columnModel.getDisplayNameForColumn(column, 'csv', true);
+        return this.columnNameService.getDisplayNameForColumn(column, 'csv', true);
     }
 
     private createValueForGroupNode(column: Column, node: RowNode): string {

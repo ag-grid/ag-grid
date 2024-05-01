@@ -105,7 +105,7 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     private buildTreeFromProvidedColumnDefs(): void {
-        const columnTree: IProvidedColumn[] = this.columnModel.getPrimaryColumnTree();
+        const columnTree: IProvidedColumn[] = this.columnModel.getColDefColTree();
         this.recreateFilters(columnTree);
     }
 

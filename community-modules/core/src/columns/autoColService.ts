@@ -7,16 +7,18 @@ import { BeanStub } from "../context/beanStub";
 import { _mergeDeep } from "../utils/object";
 import { _missing } from "../utils/generic";
 import { ColumnEventType } from "../events";
+import { ColumnNameService } from "./columnNameService";
 
 export const GROUP_AUTO_COLUMN_ID: 'ag-Grid-AutoColumn' = 'ag-Grid-AutoColumn';
-@Bean('autoGroupColService')
-export class AutoGroupColService extends BeanStub {
+@Bean('autoColService')
+export class AutoColService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
 
-    public createAutoGroupColumns(rowGroupColumns: Column[]): Column[] {
-        const groupAutoColumns: Column[] = [];
+    public createAutoCols(rowGroupCols: Column[]): Column[] {
+        const autoCols: Column[] = [];
 
         const doingTreeData = this.gos.get('treeData');
         let doingMultiAutoColumn = this.gos.isGroupMultiAutoColumn();
@@ -29,22 +31,22 @@ export class AutoGroupColService extends BeanStub {
         // if doing groupDisplayType = "multipleColumns", then we call the method multiple times, once
         // for each column we are grouping by
         if (doingMultiAutoColumn) {
-            rowGroupColumns.forEach((rowGroupCol: Column, index: number) => {
-                groupAutoColumns.push(this.createOneAutoGroupColumn(rowGroupCol, index));
+            rowGroupCols.forEach((rowGroupCol: Column, index: number) => {
+                autoCols.push(this.createOneAutoCol(rowGroupCol, index));
             });
         } else {
-            groupAutoColumns.push(this.createOneAutoGroupColumn());
+            autoCols.push(this.createOneAutoCol());
         }
 
-        return groupAutoColumns;
+        return autoCols;
     }
 
-    public updateAutoGroupColumns(autoGroupColumns: Column[], source: ColumnEventType) {
-        autoGroupColumns.forEach((column: Column, index: number) => this.updateOneAutoGroupColumn(column, index, source));
+    public updateAutoCols(autoGroupCols: Column[], source: ColumnEventType) {
+        autoGroupCols.forEach((col: Column, index: number) => this.updateOneAutoCol(col, index, source));
     }
 
     // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
-    private createOneAutoGroupColumn(rowGroupCol?: Column, index?: number): Column {
+    private createOneAutoCol(rowGroupCol?: Column, index?: number): Column {
         // if doing multi, set the field
         let colId: string;
         if (rowGroupCol) {
@@ -53,7 +55,7 @@ export class AutoGroupColService extends BeanStub {
             colId = GROUP_AUTO_COLUMN_ID;
         }
 
-        const colDef = this.createAutoGroupColDef(colId, rowGroupCol, index);
+        const colDef = this.createAutoColDef(colId, rowGroupCol, index);
         colDef.colId = colId;
 
         const newCol = new Column(colDef, null, colId, true);
@@ -64,17 +66,17 @@ export class AutoGroupColService extends BeanStub {
     /**
      * Refreshes an auto group col to load changes from defaultColDef or autoGroupColDef
      */
-    private updateOneAutoGroupColumn(colToUpdate: Column, index: number, source: ColumnEventType) {
+    private updateOneAutoCol(colToUpdate: Column, index: number, source: ColumnEventType) {
         const oldColDef = colToUpdate.getColDef();
         const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
-        const underlyingColumn = underlyingColId!=null ? this.columnModel.getPrimaryColumn(underlyingColId) : undefined;
-        const colDef = this.createAutoGroupColDef(colToUpdate.getId(), underlyingColumn??undefined, index);
+        const underlyingColumn = underlyingColId!=null ? this.columnModel.getColDefCol(underlyingColId) : undefined;
+        const colDef = this.createAutoColDef(colToUpdate.getId(), underlyingColumn??undefined, index);
 
         colToUpdate.setColDef(colDef, null, source);
         this.columnFactory.applyColumnState(colToUpdate, colDef, source);
     }
 
-    private createAutoGroupColDef(colId: string, underlyingColumn?: Column, index?: number): ColDef {
+    private createAutoColDef(colId: string, underlyingColumn?: Column, index?: number): ColDef {
         // if one provided by user, use it, otherwise create one
         let res: ColDef = this.createBaseColDef(underlyingColumn);
 
@@ -136,7 +138,7 @@ export class AutoGroupColService extends BeanStub {
             const colDef = rowGroupCol.getColDef();
             Object.assign(res, {
                 // cellRendererParams.groupKey: colDefToCopy.field;
-                headerName: this.columnModel.getDisplayNameForColumn(rowGroupCol, 'header'),
+                headerName: this.columnNameService.getDisplayNameForColumn(rowGroupCol, 'header'),
                 headerValueGetter: colDef.headerValueGetter
             });
 

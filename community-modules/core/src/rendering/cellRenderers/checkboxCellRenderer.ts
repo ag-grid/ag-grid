@@ -7,7 +7,7 @@ import { CellEditingStartedEvent, CellEditingStoppedEvent, Events } from "../../
 import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { KeyCode } from "../../constants/keyCode";
 import { _getAriaCheckboxStateName, _setAriaLive } from "../../utils/aria";
-import { GROUP_AUTO_COLUMN_ID } from "../../columns/autoGroupColService";
+import { GROUP_AUTO_COLUMN_ID } from "../../columns/autoColService";
 
 export interface ICheckboxCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, boolean, TContext> {
     /** Set to `true` for the input to be disabled. */

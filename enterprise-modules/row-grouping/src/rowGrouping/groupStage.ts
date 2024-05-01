@@ -23,7 +23,9 @@ import {
     _existsAndNotEmpty,
     _removeFromArray,
     _sortRowNodesByOrder,
-    _warnOnce
+    _warnOnce,
+    FuncColsService,
+    ShowRowGroupColsService,
 } from "@ag-grid-community/core";
 import { BatchRemover } from "./batchRemover";
 
@@ -58,10 +60,12 @@ interface GroupingDetails {
 export class GroupStage extends BeanStub implements IRowNodeStage {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('selectableService') private selectableService: SelectableService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('beans') private beans: Beans;
     @Autowired('selectionService') private selectionService: ISelectionService;
+    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
 
     // when grouping, these items are of note:
     // rowNode.parent: RowNode: set to the parent
@@ -125,7 +129,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
         const usingTreeData = this.gos.get('treeData');
 
-        const groupedCols = usingTreeData ? null : this.columnModel.getRowGroupColumns();
+        const groupedCols = usingTreeData ? null : this.funcColsService.getRowGroupColumns();
 
         const details: GroupingDetails = {
             expandByDefault: this.gos.get('groupDefaultExpanded'),
@@ -485,7 +489,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
         let noFurtherProcessingNeeded = false;
 
-        const groupDisplayColumns = this.columnModel.getGroupDisplayColumns();
+        const groupDisplayColumns = this.showRowGroupColsService.getShowRowGroupCols();
         const newGroupDisplayColIds = groupDisplayColumns ?
             groupDisplayColumns.map(c => c.getId()).join('-') : '';
 
@@ -657,7 +661,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo, details: GroupingDetails): void {
         groupNode.groupData = {};
-        const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
+        const groupDisplayCols: Column[] = this.showRowGroupColsService.getShowRowGroupCols();
         groupDisplayCols.forEach(col => {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so

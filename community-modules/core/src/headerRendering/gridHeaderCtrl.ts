@@ -1,4 +1,5 @@
 import { ColumnModel } from "../columns/columnModel";
+import { VisibleColsService } from "../columns/visibleColsService";
 import { KeyCode } from "../constants/keyCode";
 import { BeanStub } from "../context/beanStub";
 import { Autowired } from "../context/context";
@@ -23,6 +24,7 @@ export class GridHeaderCtrl extends BeanStub {
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('menuService') private menuService: MenuService;
@@ -124,7 +126,7 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private onDisplayedColumnsChanged(): void {
-        const columns = this.columnModel.getAllDisplayedColumns();
+        const columns = this.visibleColsService.getAllCols();
         const shouldAllowOverflow = columns.some(col => col.isSpanHeaderHeight());
 
         this.comp.addOrRemoveCssClass('ag-header-allow-overflow', shouldAllowOverflow);

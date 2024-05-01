@@ -20,7 +20,8 @@ import {
     _exists,
     _makeNull,
     _warnOnce,
-    _defaultComparator
+    _defaultComparator,
+    FuncColsService
 } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
@@ -36,6 +37,7 @@ export enum SetFilterModelValuesType {
 export interface SetValueModelParams<V> {
     gos: GridOptionsService,
     columnModel: ColumnModel,
+    funcColsService: FuncColsService,
     valueService: ValueService,
     filterParams: SetFilterParams<any, V>,
     setIsLoading: (loading: boolean) => void,
@@ -107,6 +109,7 @@ export class SetValueModel<V> implements IEventEmitter {
         const {
             usingComplexObjects,
             columnModel,
+            funcColsService,
             valueService,
             treeDataTreeList,
             groupingTreeList,
@@ -166,7 +169,7 @@ export class SetValueModel<V> implements IEventEmitter {
                 this.filterParams,
                 this.createKey,
                 this.caseFormat,
-                columnModel,
+                funcColsService,
                 valueService,
                 treeDataOrGrouping,
                 !!treeDataTreeList,

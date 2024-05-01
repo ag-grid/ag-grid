@@ -139,7 +139,7 @@ export class FilterManager extends BeanStub {
 
             // at this point, processedFields contains data for which we don't have a filter working yet
             modelKeys.forEach(colId => {
-                const column = this.columnModel.getPrimaryColumn(colId) || this.columnModel.getGridColumn(colId);
+                const column = this.columnModel.getColDefCol(colId) || this.columnModel.getCol(colId);
 
                 if (!column) {
                     console.warn('AG Grid: setFilterModel() - no column found for colId: ' + colId);
@@ -533,7 +533,7 @@ export class FilterManager extends BeanStub {
 
     private createGetValue(filterColumn: Column): IFilterParams['getValue'] {
         return (rowNode, column) => {
-            const columnToUse = column ? this.columnModel.getGridColumn(column) : filterColumn;
+            const columnToUse = column ? this.columnModel.getCol(column) : filterColumn;
             return columnToUse ? this.valueService.getValue(columnToUse, rowNode, true) : undefined;
         };
     }
@@ -674,9 +674,9 @@ export class FilterManager extends BeanStub {
         this.allColumnFilters.forEach((wrapper, colId) => {
             let currentColumn: Column | null;
             if (wrapper.column.isPrimary()) {
-                currentColumn = this.columnModel.getPrimaryColumn(colId);
+                currentColumn = this.columnModel.getColDefCol(colId);
             } else {
-                currentColumn = this.columnModel.getGridColumn(colId);
+                currentColumn = this.columnModel.getCol(colId);
             }
             // group columns can be recreated with the same colId
             if (currentColumn && currentColumn === wrapper.column) { return; }
@@ -699,7 +699,7 @@ export class FilterManager extends BeanStub {
     private updateDependantFilters(): void {
         // Group column filters can be dependant on underlying column filters, but don't normally get created until they're used for the first time.
         // Instead, create them by default when any filter changes.
-        const groupColumns = this.columnModel.getGroupAutoColumns();
+        const groupColumns = this.columnModel.getAutoCols();
         groupColumns?.forEach(groupColumn => {
             if (groupColumn.getColDef().filter === 'agGroupColumnFilter') {
                 this.getOrCreateFilterWrapper(groupColumn, 'NO_UI');
@@ -934,7 +934,7 @@ export class FilterManager extends BeanStub {
 
     public hasFloatingFilters(): boolean {
         if (this.isAdvancedFilterEnabled()) { return false; }
-        const gridColumns = this.columnModel.getAllGridColumns();
+        const gridColumns = this.columnModel.getCols();
         return gridColumns.some(col => col.getColDef().floatingFilter);
     }
 
@@ -961,7 +961,7 @@ export class FilterManager extends BeanStub {
     }
 
     private getFilterInstanceImpl(key: string | Column, callback: (filter: IFilter) => void): IFilter | null | undefined {
-        const column = this.columnModel.getPrimaryColumn(key);
+        const column = this.columnModel.getColDefCol(key);
 
         if (!column) { return undefined; }
 
@@ -1025,7 +1025,7 @@ export class FilterManager extends BeanStub {
             return promise;
         }
 
-        const column = this.columnModel.getPrimaryColumn(key);
+        const column = this.columnModel.getColDefCol(key);
         const filterWrapper = column ? this.getOrCreateFilterWrapper(column, 'NO_UI') : null;
         const convertPromise = <T>(promise: AgPromise<T>): Promise<T> => {
             return new Promise(resolve => {
@@ -1037,7 +1037,7 @@ export class FilterManager extends BeanStub {
     }
 
     private getFilterWrapper(key: string | Column): FilterWrapper | null {
-        const column = this.columnModel.getPrimaryColumn(key);
+        const column = this.columnModel.getColDefCol(key);
         return column ? this.cachedFilter(column) ?? null : null;
     }
 

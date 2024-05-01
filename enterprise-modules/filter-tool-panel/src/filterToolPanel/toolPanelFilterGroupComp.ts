@@ -15,7 +15,8 @@ import {
     AgGroupComponentParams,
     WithoutGridCommon,
     _createIconNoSpan,
-    _clearElement
+    _clearElement,
+    ColumnNameService
 } from "@ag-grid-community/core";
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";
 
@@ -30,6 +31,7 @@ export class ToolPanelFilterGroupComp extends Component {
     @RefSelector('filterGroupComp') private filterGroupComp: AgGroupComponent;
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
 
     private readonly depth: number;
     private readonly columnGroup: IProvidedColumn;
@@ -243,11 +245,11 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private getColumnGroupName(columnGroup: ProvidedColumnGroup): string | null {
-        return this.columnModel.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'filterToolPanel');
+        return this.columnNameService.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'filterToolPanel');
     }
 
     private getColumnName(column: Column): string | null {
-        return this.columnModel.getDisplayNameForColumn(column, 'filterToolPanel', false);
+        return this.columnNameService.getDisplayNameForColumn(column, 'filterToolPanel', false);
     }
 
     private destroyFilters() {

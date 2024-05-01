@@ -23,7 +23,8 @@ import {
     StoreRefreshedEvent,
     ISelectionService,
     LoadSuccessParams,
-    _missing
+    _missing,
+    FuncColsService
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../../serverSideRowModel";
 import { StoreUtils } from "../storeUtils";
@@ -36,6 +37,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('selectionService') private selectionService: ISelectionService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
 
     // display indexes
     private displayIndexStart: number | undefined;
@@ -88,7 +90,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         if (!usingTreeData && this.group) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field!;
-            this.rowGroupColumn = this.columnModel.getRowGroupColumns()[this.level];
+            this.rowGroupColumn = this.funcColsService.getRowGroupColumns()[this.level];
         }
     }
 

@@ -445,7 +445,7 @@ export class FillHandle extends AbstractSelectionHandle {
             const currentColumn = currentPosition.column;
 
             if (initialColumn === currentColumn) { return; }
-            const displayedColumns = this.columnModel.getAllDisplayedColumns();
+            const displayedColumns = this.visibleColsService.getAllCols();
             const initialIndex = displayedColumns.indexOf(initialColumn);
             const currentIndex = displayedColumns.indexOf(currentColumn);
 
@@ -536,7 +536,7 @@ export class FillHandle extends AbstractSelectionHandle {
     }
 
     private extendHorizontal(initialPosition: CellPosition, endPosition: CellPosition, isMovingLeft?: boolean) {
-        const allCols = this.columnModel.getAllDisplayedColumns();
+        const allCols = this.visibleColsService.getAllCols();
         const startCol = allCols.indexOf(isMovingLeft ? endPosition.column : initialPosition.column);
         const endCol = allCols.indexOf(isMovingLeft ? this.getCellRange().columns[0] : endPosition.column);
         const offset = isMovingLeft ? 0 : 1;
@@ -577,7 +577,7 @@ export class FillHandle extends AbstractSelectionHandle {
     }
 
     private reduceHorizontal(initialPosition: CellPosition, endPosition: CellPosition) {
-        const allCols = this.columnModel.getAllDisplayedColumns();
+        const allCols = this.visibleColsService.getAllCols();
         const startCol = allCols.indexOf(endPosition.column);
         const endCol = allCols.indexOf(initialPosition.column);
 

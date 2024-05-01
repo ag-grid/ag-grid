@@ -37,6 +37,7 @@ import {
     CssVariablesChanged,
     _insertIntoArray,
     _missingOrEmpty,
+    FuncColsService,
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -55,6 +56,7 @@ export interface RowNodeMap {
 export class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('selectionService') private selectionService: ISelectionService;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('beans') private beans: Beans;
@@ -120,7 +122,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.rootNode = new RowNode(this.beans);
         this.nodeManager = new ClientSideNodeManager(this.rootNode,
             this.gos,
-            this.eventService, this.columnModel,
+            this.eventService,
+            this.funcColsService,
             this.selectionService, this.beans);
     }
 
@@ -583,7 +586,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void {
-        if (!this.hasStarted || this.isRefreshingModel || this.columnModel.shouldRowModelIgnoreRefresh()) { return; }
+        if (!this.hasStarted || this.isRefreshingModel || this.columnModel.isChangeEventsDispatching()) { return; }
 
         let params = typeof paramsOrStep === 'object' && "step" in paramsOrStep ? paramsOrStep : this.buildRefreshModelParams(paramsOrStep);
 

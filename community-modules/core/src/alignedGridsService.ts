@@ -22,12 +22,16 @@ import { BeanStub } from "./context/beanStub";
 import { CtrlsService } from "./ctrlsService";
 import { GridApi } from "./gridApi";
 import { _errorOnce } from "./utils/function";
+import { ColumnSizeService } from "./columns/columnSizeService";
+import { ColumnApplyStateService } from "./columns/columnApplyStateService";
 
 @Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
 
     private logger: Logger;
 
@@ -189,7 +193,7 @@ export class AlignedGridsService extends BeanStub {
     
             if (masterGroup) {
                 const groupId = masterGroup.getGroupId();
-                otherColumnGroup = this.columnModel.getProvidedColumnGroup(groupId);
+                otherColumnGroup = this.columnModel.getProvidedColGroup(groupId);
             }
     
             if (masterGroup && !otherColumnGroup) { return; }
@@ -206,7 +210,7 @@ export class AlignedGridsService extends BeanStub {
         let otherColumn: Column | null = null;
 
         if (masterColumn) {
-            otherColumn = this.columnModel.getPrimaryColumn(masterColumn.getColId());
+            otherColumn = this.columnModel.getColDefCol(masterColumn.getColId());
         }
         // if event was with respect to a master column, that is not present in this
         // grid, then we ignore the event
@@ -225,7 +229,7 @@ export class AlignedGridsService extends BeanStub {
                     const movedEvent = colEvent as ColumnMovedEvent;
                     const srcColState = colEvent.api.getColumnState();
                     const destColState = srcColState.map(s => ({ colId: s.colId }));
-                    this.columnModel.applyColumnState(
+                    this.columnApplyStateService.applyColumnState(
                         { state: destColState, applyOrder: true }, "alignedGridChanged"
                     );
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} toIndex = ${movedEvent.toIndex}`);
@@ -239,7 +243,7 @@ export class AlignedGridsService extends BeanStub {
                     const visibleEvent = colEvent as ColumnVisibleEvent;
                     const srcColState = colEvent.api.getColumnState();
                     const destColState = srcColState.map(s => ({ colId: s.colId, hide: s.hide }));
-                    this.columnModel.applyColumnState({ state: destColState }, "alignedGridChanged");
+                    this.columnApplyStateService.applyColumnState({ state: destColState }, "alignedGridChanged");
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} visible = ${visibleEvent.visible}`);
                 }
                 break;
@@ -248,7 +252,7 @@ export class AlignedGridsService extends BeanStub {
                     const pinnedEvent = colEvent as ColumnPinnedEvent;
                     const srcColState = colEvent.api.getColumnState();
                     const destColState = srcColState.map(s => ({ colId: s.colId, pinned: s.pinned }));
-                    this.columnModel.applyColumnState({state: destColState}, "alignedGridChanged");
+                    this.columnApplyStateService.applyColumnState({state: destColState}, "alignedGridChanged");
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} pinned = ${pinnedEvent.pinned}`);
                 }
                 break;
@@ -271,7 +275,7 @@ export class AlignedGridsService extends BeanStub {
                         delete columnWidths[col.getId()];
                     }
                 });
-                this.columnModel.setColumnWidths(Object.values(columnWidths), false, resizedEvent.finished, "alignedGridChanged");
+                this.columnSizeService.setColumnWidths(Object.values(columnWidths), false, resizedEvent.finished, "alignedGridChanged");
                 break;
         }
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();

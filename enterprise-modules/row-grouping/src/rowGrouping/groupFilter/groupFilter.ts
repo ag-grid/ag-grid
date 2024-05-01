@@ -3,7 +3,6 @@ import {
     AgSelect,
     Autowired,
     Column,
-    ColumnModel,
     Events,
     FilterManager,
     IAfterGuiAttachedParams,
@@ -17,6 +16,8 @@ import {
     _loadTemplate,
     _setDisplayed,
     _warnOnce,
+    ColumnNameService,
+    FuncColsService,
 } from '@ag-grid-community/core';
 
 interface FilterColumnPair {
@@ -29,7 +30,8 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
     public static EVENT_SELECTED_COLUMN_CHANGED = 'selectedColumnChanged';
 
     @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
+    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
 
     @RefSelector('eGroupField') private readonly eGroupField: HTMLElement;
     @RefSelector('eUnderlyingFilter') private readonly eUnderlyingFilter: HTMLElement;
@@ -89,7 +91,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
             _warnOnce('Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.');
             return [];
         }
-        const sourceColumns = this.columnModel.getSourceColumnsForGroupColumn(this.groupColumn);
+        const sourceColumns = this.funcColsService.getSourceColumnsForGroupColumn(this.groupColumn);
         if (!sourceColumns) {
             _warnOnce('Group Column Filter only works on group columns. Please use a different filter.');
             return [];
@@ -136,7 +138,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         this.eGroupFieldSelect.setLabelAlignment('top');
         this.eGroupFieldSelect.addOptions(sourceColumns.map(sourceColumn => ({
             value: sourceColumn.getId(),
-            text: this.columnModel.getDisplayNameForColumn(sourceColumn, 'groupFilter', false) ?? undefined
+            text: this.columnNameService.getDisplayNameForColumn(sourceColumn, 'groupFilter', false) ?? undefined
         })));
         this.eGroupFieldSelect.setValue(this.selectedColumn!.getId());
         this.eGroupFieldSelect.onValueChange((newValue) => this.updateSelectedColumn(newValue));

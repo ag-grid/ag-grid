@@ -1,5 +1,6 @@
 import { AlignedGridsService } from "./alignedGridsService";
-import { ApplyColumnStateParams, ColumnModel, ColumnState, ISizeColumnsToFitParams } from "./columns/columnModel";
+import { ColumnModel } from "./columns/columnModel";
+import { VisibleColsService } from "./columns/visibleColsService";
 import { Autowired, Bean, Context, Optional, PostConstruct } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
@@ -101,6 +102,17 @@ import { _iterateObject, _removeAllReferences } from "./utils/object";
 import { _escapeString } from "./utils/string";
 import { ValueCache } from "./valueService/valueCache";
 import { ValueService } from "./valueService/valueService";
+import { ColumnAutosizeService } from "./columns/columnAutosizeService";
+import { ColumnGetStateService } from "./columns/columnGetStateService";
+import { ApplyColumnStateParams, ColumnApplyStateService, ColumnState } from "./columns/columnApplyStateService";
+import { ColumnGroupStateService } from "./columns/columnGroupStateService";
+import { ColumnMoveService } from "./columns/columnMoveService";
+import { FuncColsService } from "./columns/funcColsService";
+import { ColumnSizeService, ISizeColumnsToFitParams } from "./columns/columnSizeService";
+import { ColumnNameService } from "./columns/columnNameService";
+import { ColumnViewportService } from "./columns/columnViewportService";
+import { PivotResultColsService } from "./columns/pivotResultColsService";
+
 
 export interface DetailGridInfo {
     /**
@@ -145,6 +157,17 @@ export class GridApi<TData = any> {
     @Autowired('navigationService') private readonly navigationService: NavigationService;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnNameService') private readonly columnNameService: ColumnNameService;
+    @Autowired('pivotResultColsService') private readonly pivotResultColsService: PivotResultColsService;
+    @Autowired('columnViewportService') private readonly columnViewportService: ColumnViewportService;
+    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
+    @Autowired('columnSizeService') private readonly columnSizeService: ColumnSizeService;
+    @Autowired('columnGetStateService') private readonly columnGetStateService: ColumnGetStateService;
+    @Autowired('columnGroupStateService') private readonly columnGroupStateService: ColumnGroupStateService;
+    @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
+    @Autowired('columnAutosizeService') private readonly columnAutosizeService: ColumnAutosizeService;
+    @Autowired('columnMoveService') private readonly columnMoveService: ColumnMoveService;
+    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
     @Autowired('selectionService') private readonly selectionService: ISelectionService;
     @Autowired('gridOptionsService') private readonly gos: GridOptionsService;
     @Autowired('valueService') private readonly valueService: ValueService;
@@ -798,7 +821,7 @@ export class GridApi<TData = any> {
 
     /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */
     public destroyFilter(key: string | Column) {
-        const column = this.columnModel.getPrimaryColumn(key);
+        const column = this.columnModel.getColDefCol(key);
         if (column) {
             return this.filterManager.destroyFilter(column, 'api');
         }
@@ -812,7 +835,7 @@ export class GridApi<TData = any> {
     }
 
     public getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null {
-        const column = this.columnModel.getPrimaryColumn(key);
+        const column = this.columnModel.getColDefCol(key);
         if (column) {
             return column.getColDef();
         }
@@ -1004,7 +1027,7 @@ export class GridApi<TData = any> {
      */
     public setRowCount(rowCount: number, maxRowFound?: boolean): void {
         if (this.serverSideRowModel) {
-            if (this.columnModel.isRowGroupEmpty()) {
+            if (this.funcColsService.isRowGroupEmpty()) {
                 this.serverSideRowModel.setRowCount(rowCount, maxRowFound);
                 return;
             }
@@ -1046,7 +1069,7 @@ export class GridApi<TData = any> {
     public getCellValue<TValue = any>(params: GetCellValueParams<TValue>) {
         const { colKey, rowNode, useFormatter } = params;
 
-        const column = this.columnModel.getPrimaryColumn(colKey) ?? this.columnModel.getGridColumn(colKey);
+        const column = this.columnModel.getColDefCol(colKey) ?? this.columnModel.getCol(colKey);
         if (_missing(column)) {
             return null;
         }
@@ -1280,7 +1303,7 @@ export class GridApi<TData = any> {
     public showColumnMenuAfterButtonClick(colKey: string | Column, buttonElement: HTMLElement): void {
         _warnOnce(`'showColumnMenuAfterButtonClick' is deprecated. Use 'IHeaderParams.showColumnMenu' within a header component, or 'api.showColumnMenu' elsewhere.`);
         // use grid column so works with pivot mode
-        const column = this.columnModel.getGridColumn(colKey)!;
+        const column = this.columnModel.getCol(colKey)!;
         this.menuService.showColumnMenu({
             column,
             buttonElement,
@@ -1292,9 +1315,9 @@ export class GridApi<TData = any> {
     public showColumnMenuAfterMouseClick(colKey: string | Column, mouseEvent: MouseEvent | Touch): void {
         _warnOnce(`'showColumnMenuAfterMouseClick' is deprecated. Use 'IHeaderParams.showColumnMenuAfterMouseClick' within a header component, or 'api.showColumnMenu' elsewhere.`);
         // use grid column so works with pivot mode
-        let column = this.columnModel.getGridColumn(colKey);
+        let column = this.columnModel.getCol(colKey);
         if (!column) {
-            column = this.columnModel.getPrimaryColumn(colKey);
+            column = this.columnModel.getColDefCol(colKey);
         }
         if (!column) {
             console.error(`AG Grid: column '${colKey}' not found`);
@@ -1337,7 +1360,7 @@ export class GridApi<TData = any> {
 
     /** Show the filter for the provided column. */
     public showColumnFilter(colKey: string | Column): void {
-        const column = this.columnModel.getGridColumn(colKey);
+        const column = this.columnModel.getCol(colKey);
         if (!column) {
             console.error(`AG Grid: column '${colKey}' not found`);
             return;
@@ -1351,7 +1374,7 @@ export class GridApi<TData = any> {
 
     /** Show the column menu for the provided column. */
     public showColumnMenu(colKey: string | Column): void {
-        const column = this.columnModel.getGridColumn(colKey);
+        const column = this.columnModel.getCol(colKey);
         if (!column) {
             console.error(`AG Grid: column '${colKey}' not found`);
             return;
@@ -1408,7 +1431,7 @@ export class GridApi<TData = any> {
 
     /** Start editing the provided cell. If another cell is editing, the editing will be stopped in that other cell. */
     public startEditingCell(params: StartEditingCellParams): void {
-        const column = this.columnModel.getGridColumn(params.colKey);
+        const column = this.columnModel.getCol(params.colKey);
         if (!column) {
             console.warn(`AG Grid: no column found for ${params.colKey}`);
             return;
@@ -1709,7 +1732,7 @@ export class GridApi<TData = any> {
      **/
     public sizeColumnsToFit(paramsOrGridWidth?: ISizeColumnsToFitParams | number) {
         if (typeof paramsOrGridWidth === 'number') {
-            this.columnModel.sizeColumnsToFit(paramsOrGridWidth, 'api');
+            this.columnSizeService.sizeColumnsToFit(paramsOrGridWidth, 'api');
         } else {
             this.gridBodyCtrl.sizeColumnsToFit(paramsOrGridWidth);
         }
@@ -1718,56 +1741,56 @@ export class GridApi<TData = any> {
     /** Call this if you want to open or close a column group. */
     public setColumnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void { this.columnModel.setColumnGroupOpened(group, newValue, 'api'); }
     /** Returns the column group with the given name. */
-    public getColumnGroup(name: string, instanceId?: number): ColumnGroup | null { return this.columnModel.getColumnGroup(name, instanceId); }
+    public getColumnGroup(name: string, instanceId?: number): ColumnGroup | null { return this.visibleColsService.getColumnGroup(name, instanceId); }
     /** Returns the provided column group with the given name. */
-    public getProvidedColumnGroup(name: string): ProvidedColumnGroup | null { return this.columnModel.getProvidedColumnGroup(name); }
+    public getProvidedColumnGroup(name: string): ProvidedColumnGroup | null { return this.columnModel.getProvidedColGroup(name); }
 
     /** Returns the display name for a column. Useful if you are doing your own header rendering and want the grid to work out if `headerValueGetter` is used, or if you are doing your own column management GUI, to know what to show as the column name. */
-    public getDisplayNameForColumn(column: Column, location: HeaderLocation): string { return this.columnModel.getDisplayNameForColumn(column, location) || ''; }
+    public getDisplayNameForColumn(column: Column, location: HeaderLocation): string { return this.columnNameService.getDisplayNameForColumn(column, location) || ''; }
     /** Returns the display name for a column group (when grouping columns). */
-    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string { return this.columnModel.getDisplayNameForColumnGroup(columnGroup, location) || ''; }
+    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string { return this.columnNameService.getDisplayNameForColumnGroup(columnGroup, location) || ''; }
 
     /** Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object). */
-    public getColumn<TValue = any>(key: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null { return this.columnModel.getPrimaryColumn(key); }
+    public getColumn<TValue = any>(key: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null { return this.columnModel.getColDefCol(key); }
     /** Returns all the columns, regardless of visible or not. */
-    public getColumns(): Column[] | null { return this.columnModel.getAllPrimaryColumns(); }
+    public getColumns(): Column[] | null { return this.columnModel.getColDefCols(); }
     /** Applies the state of the columns from a previous state. Returns `false` if one or more columns could not be found. */
-    public applyColumnState(params: ApplyColumnStateParams): boolean { return this.columnModel.applyColumnState(params, 'api'); }
+    public applyColumnState(params: ApplyColumnStateParams): boolean { return this.columnApplyStateService.applyColumnState(params, 'api'); }
     /** Gets the state of the columns. Typically used when saving column state. */
-    public getColumnState(): ColumnState[] { return this.columnModel.getColumnState(); }
+    public getColumnState(): ColumnState[] { return this.columnGetStateService.getColumnState(); }
     /** Sets the state back to match the originally provided column definitions. */
-    public resetColumnState(): void { this.columnModel.resetColumnState('api'); }
+    public resetColumnState(): void { this.columnApplyStateService.resetColumnState('api'); }
     /** Gets the state of the column groups. Typically used when saving column group state. */
-    public getColumnGroupState(): { groupId: string, open: boolean }[] { return this.columnModel.getColumnGroupState(); }
+    public getColumnGroupState(): { groupId: string, open: boolean }[] { return this.columnGroupStateService.getColumnGroupState(); }
     /** Sets the state of the column group state from a previous state. */
-    public setColumnGroupState(stateItems: ({ groupId: string, open: boolean })[]): void { this.columnModel.setColumnGroupState(stateItems, 'api'); }
+    public setColumnGroupState(stateItems: ({ groupId: string, open: boolean })[]): void { this.columnGroupStateService.setColumnGroupState(stateItems, 'api'); }
     /** Sets the state back to match the originally provided column definitions. */
-    public resetColumnGroupState(): void { this.columnModel.resetColumnGroupState('api'); }
+    public resetColumnGroupState(): void { this.columnGroupStateService.resetColumnGroupState('api'); }
 
     /** Returns `true` if pinning left or right, otherwise `false`. */
-    public isPinning(): boolean { return this.columnModel.isPinningLeft() || this.columnModel.isPinningRight(); }
+    public isPinning(): boolean { return this.visibleColsService.isPinningLeft() || this.visibleColsService.isPinningRight(); }
     /** Returns `true` if pinning left, otherwise `false`. */
-    public isPinningLeft(): boolean { return this.columnModel.isPinningLeft(); }
+    public isPinningLeft(): boolean { return this.visibleColsService.isPinningLeft(); }
     /** Returns `true` if pinning right, otherwise `false`. */
-    public isPinningRight(): boolean { return this.columnModel.isPinningRight(); }
+    public isPinningRight(): boolean { return this.visibleColsService.isPinningRight(); }
     /** Returns the column to the right of the provided column, taking into consideration open / closed column groups and visible columns. This is useful if you need to know what column is beside yours e.g. if implementing your own cell navigation. */
-    public getDisplayedColAfter(col: Column): Column | null { return this.columnModel.getDisplayedColAfter(col); }
+    public getDisplayedColAfter(col: Column): Column | null { return this.visibleColsService.getColAfter(col); }
     /** Same as `getVisibleColAfter` except gives column to the left. */
-    public getDisplayedColBefore(col: Column): Column | null { return this.columnModel.getDisplayedColBefore(col); }
+    public getDisplayedColBefore(col: Column): Column | null { return this.visibleColsService.getColBefore(col); }
     /** @deprecated v31.1 setColumnVisible(key, visible) deprecated, please use setColumnsVisible([key], visible) instead. */
     public setColumnVisible(key: string | Column, visible: boolean): void { 
         this.logDeprecation('v31.1', 'setColumnVisible(key,visible)', 'setColumnsVisible([key],visible)');
-        this.columnModel.setColumnsVisible([key], visible, 'api'); 
+        this.columnModel.setColsVisible([key], visible, 'api'); 
     }
     /** Sets the visibility of columns. Key can be the column ID or `Column` object. */
-    public setColumnsVisible(keys: (string | Column)[], visible: boolean): void { this.columnModel.setColumnsVisible(keys, visible, 'api'); }
+    public setColumnsVisible(keys: (string | Column)[], visible: boolean): void { this.columnModel.setColsVisible(keys, visible, 'api'); }
     /** @deprecated v31.1 setColumnPinned(key, pinned) deprecated, please use setColumnsPinned([key], pinned) instead. */
     public setColumnPinned(key: string | ColDef | Column, pinned: ColumnPinnedType): void { 
         this.logDeprecation('v31.1', 'setColumnPinned(key,pinned)', 'setColumnsPinned([key],pinned)');
-        this.columnModel.setColumnsPinned([key], pinned, 'api'); 
+        this.columnModel.setColsPinned([key], pinned, 'api'); 
     }
     /** Set a column's pinned / unpinned state. Key can be the column ID, field, `ColDef` object or `Column` object. */
-    public setColumnsPinned(keys: (string | ColDef |Column)[], pinned: ColumnPinnedType): void { this.columnModel.setColumnsPinned(keys, pinned, 'api'); }
+    public setColumnsPinned(keys: (string | ColDef |Column)[], pinned: ColumnPinnedType): void { this.columnModel.setColsPinned(keys, pinned, 'api'); }
 
     /**
      * Returns all the grid columns, same as `getColumns()`, except
@@ -1776,116 +1799,116 @@ export class GridApi<TData = any> {
      *
      *  b) it's after the 'pivot' step, so if pivoting, has the value columns for the pivot.
      */
-    public getAllGridColumns(): Column[] { return this.columnModel.getAllGridColumns(); }
+    public getAllGridColumns(): Column[] { return this.columnModel.getCols(); }
     /** Same as `getAllDisplayedColumns` but just for the pinned left portion of the grid. */
-    public getDisplayedLeftColumns(): Column[] { return this.columnModel.getDisplayedLeftColumns(); }
+    public getDisplayedLeftColumns(): Column[] { return this.visibleColsService.getLeftCols(); }
     /** Same as `getAllDisplayedColumns` but just for the center portion of the grid. */
-    public getDisplayedCenterColumns(): Column[] { return this.columnModel.getDisplayedCenterColumns(); }
+    public getDisplayedCenterColumns(): Column[] { return this.visibleColsService.getCenterCols(); }
     /** Same as `getAllDisplayedColumns` but just for the pinned right portion of the grid. */
-    public getDisplayedRightColumns(): Column[] { return this.columnModel.getDisplayedRightColumns(); }
+    public getDisplayedRightColumns(): Column[] { return this.visibleColsService.getRightCols(); }
     /** Returns all columns currently displayed (e.g. are visible and if in a group, the group is showing the columns) for the pinned left, centre and pinned right portions of the grid. */
-    public getAllDisplayedColumns(): Column[] { return this.columnModel.getAllDisplayedColumns(); }
+    public getAllDisplayedColumns(): Column[] { return this.visibleColsService.getAllCols(); }
     /** Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns that are not within the viewport and therefore not rendered, due to column virtualisation, are not displayed. */
-    public getAllDisplayedVirtualColumns(): Column[] { return this.columnModel.getViewportColumns(); }
+    public getAllDisplayedVirtualColumns(): Column[] { return this.columnViewportService.getViewportColumns(); }
 
     /** @deprecated v31.1 moveColumn(key, toIndex) deprecated, please use moveColumns([key], toIndex) instead. */
     public moveColumn(key: string | ColDef | Column, toIndex: number): void {
         this.logDeprecation('v31.1', 'moveColumn(key, toIndex)', 'moveColumns([key], toIndex)');
-        this.columnModel.moveColumns([key], toIndex, 'api');
+        this.columnMoveService.moveColumns([key], toIndex, 'api');
     }
     /** Moves the column at `fromIdex` to `toIndex`. The column is first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
-    public moveColumnByIndex(fromIndex: number, toIndex: number): void { this.columnModel.moveColumnByIndex(fromIndex, toIndex, 'api'); }
+    public moveColumnByIndex(fromIndex: number, toIndex: number): void { this.columnMoveService.moveColumnByIndex(fromIndex, toIndex, 'api'); }
     /** Moves columns to `toIndex`. The columns are first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
-    public moveColumns(columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number) { this.columnModel.moveColumns(columnsToMoveKeys, toIndex, 'api'); }
+    public moveColumns(columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number) { this.columnMoveService.moveColumns(columnsToMoveKeys, toIndex, 'api'); }
     /** Move the column to a new position in the row grouping order. */
-    public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.columnModel.moveRowGroupColumn(fromIndex, toIndex, 'api'); }
+    public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.funcColsService.moveRowGroupColumn(fromIndex, toIndex, 'api'); }
     /** Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function. */
-    public setColumnAggFunc(key: string | ColDef | Column, aggFunc: string | IAggFunc | null | undefined): void { this.columnModel.setColumnAggFunc(key, aggFunc, 'api'); }
+    public setColumnAggFunc(key: string | ColDef | Column, aggFunc: string | IAggFunc | null | undefined): void { this.funcColsService.setColumnAggFunc(key, aggFunc, 'api'); }
     /** @deprecated v31.1 setColumnWidths(key, newWidth) deprecated, please use setColumnWidths( [{key: newWidth}] ) instead. */
     public setColumnWidth(key: string | ColDef | Column, newWidth: number, finished: boolean = true, source: ColumnEventType = 'api'): void {
         this.logDeprecation('v31.1', 'setColumnWidth(col, width)', 'setColumnWidths([{key: col, newWidth: width}])');
-        this.columnModel.setColumnWidths([{ key, newWidth }], false, finished, source);
+        this.columnSizeService.setColumnWidths([{ key, newWidth }], false, finished, source);
     }
     /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
     public setColumnWidths(columnWidths: { key: string | ColDef | Column, newWidth: number }[], finished: boolean = true, source: ColumnEventType = 'api'): void {
-        this.columnModel.setColumnWidths(columnWidths, false, finished, source);
+        this.columnSizeService.setColumnWidths(columnWidths, false, finished, source);
     }
 
     /** Get the pivot mode. */
     public isPivotMode(): boolean { return this.columnModel.isPivotMode(); }
 
     /** Returns the pivot result column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */
-    public getPivotResultColumn<TValue = any>(pivotKeys: string[], valueColKey: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null { return this.columnModel.getSecondaryPivotColumn(pivotKeys, valueColKey); }
+    public getPivotResultColumn<TValue = any>(pivotKeys: string[], valueColKey: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null { return this.pivotResultColsService.lookupPivotResultCol(pivotKeys, valueColKey); }
 
     /** Set the value columns to the provided list of columns. */
-    public setValueColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.setValueColumns(colKeys, 'api'); }
+    public setValueColumns(colKeys: (string | ColDef | Column)[]): void { this.funcColsService.setValueColumns(colKeys, 'api'); }
     /** Get a list of the existing value columns. */
-    public getValueColumns(): Column[] { return this.columnModel.getValueColumns(); }
+    public getValueColumns(): Column[] { return this.funcColsService.getValueColumns(); }
     /** @deprecated v31.1 removeValueColumn(colKey) deprecated, please use removeValueColumns([colKey]) instead. */
     public removeValueColumn(colKey: (string | ColDef | Column)): void {
         this.logDeprecation('v31.1', 'removeValueColumn(colKey)', 'removeValueColumns([colKey])');
-        this.columnModel.removeValueColumns([colKey], 'api'); 
+        this.funcColsService.removeValueColumns([colKey], 'api'); 
     }
     /** Remove the given list of columns from the existing set of value columns. */
-    public removeValueColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.removeValueColumns(colKeys, 'api'); }
+    public removeValueColumns(colKeys: (string | ColDef | Column)[]): void { this.funcColsService.removeValueColumns(colKeys, 'api'); }
     /** @deprecated v31.1 addValueColumn(colKey) deprecated, please use addValueColumns([colKey]) instead. */
     public addValueColumn(colKey: (string | ColDef | Column)): void {
         this.logDeprecation('v31.1', 'addValueColumn(colKey)', 'addValueColumns([colKey])');
-        this.columnModel.addValueColumns([colKey], 'api');
+        this.funcColsService.addValueColumns([colKey], 'api');
     }
     /** Add the given list of columns to the existing set of value columns. */
-    public addValueColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.addValueColumns(colKeys, 'api'); }
+    public addValueColumns(colKeys: (string | ColDef | Column)[]): void { this.funcColsService.addValueColumns(colKeys, 'api'); }
 
     /** Set the row group columns. */
-    public setRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.setRowGroupColumns(colKeys, 'api'); }
+    public setRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.funcColsService.setRowGroupColumns(colKeys, 'api'); }
     /** @deprecated v31.1 removeRowGroupColumn(colKey) deprecated, please use removeRowGroupColumns([colKey]) instead. */
     public removeRowGroupColumn(colKey: string | ColDef | Column): void {
         this.logDeprecation('v31.1', 'removeRowGroupColumn(colKey)', 'removeRowGroupColumns([colKey])');
-        this.columnModel.removeRowGroupColumns([colKey], 'api');
+        this.funcColsService.removeRowGroupColumns([colKey], 'api');
     }
     /** Remove columns from the row groups. */
-    public removeRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.removeRowGroupColumns(colKeys, 'api'); }
+    public removeRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.funcColsService.removeRowGroupColumns(colKeys, 'api'); }
     /** @deprecated v31.1 addRowGroupColumn(colKey) deprecated, please use addRowGroupColumns([colKey]) instead. */
     public addRowGroupColumn(colKey: string | ColDef | Column): void { 
         this.logDeprecation('v31.1', 'addRowGroupColumn(colKey)', 'addRowGroupColumns([colKey])');
-        this.columnModel.addRowGroupColumns([colKey], 'api');
+        this.funcColsService.addRowGroupColumns([colKey], 'api');
     }
     /** Add columns to the row groups. */
-    public addRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.addRowGroupColumns(colKeys, 'api'); }
+    public addRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.funcColsService.addRowGroupColumns(colKeys, 'api'); }
     /** Get row group columns. */
-    public getRowGroupColumns(): Column[] { return this.columnModel.getRowGroupColumns(); }
+    public getRowGroupColumns(): Column[] { return this.funcColsService.getRowGroupColumns(); }
 
     /** Set the pivot columns. */
-    public setPivotColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.setPivotColumns(colKeys, 'api'); }
+    public setPivotColumns(colKeys: (string | ColDef | Column)[]): void { this.funcColsService.setPivotColumns(colKeys, 'api'); }
     /** @deprecated v31.1 removePivotColumn(colKey) deprecated, please use removePivotColumns([colKey]) instead. */
     public removePivotColumn(colKey: string | ColDef | Column): void {
         this.logDeprecation('v31.1', 'removePivotColumn(colKey)', 'removePivotColumns([colKey])');
-        this.columnModel.removePivotColumns([colKey], 'api');
+        this.funcColsService.removePivotColumns([colKey], 'api');
     }
     /** Remove pivot columns. */
-    public removePivotColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.removePivotColumns(colKeys, 'api'); }
+    public removePivotColumns(colKeys: (string | ColDef | Column)[]): void { this.funcColsService.removePivotColumns(colKeys, 'api'); }
     /** @deprecated v31.1 addPivotColumn(colKey) deprecated, please use addPivotColumns([colKey]) instead. */
     public addPivotColumn(colKey: string | ColDef | Column): void {
         this.logDeprecation('v31.1', 'addPivotColumn(colKey)', 'addPivotColumns([colKey])');
-        this.columnModel.addPivotColumns([colKey], 'api');
+        this.funcColsService.addPivotColumns([colKey], 'api');
     }
     /** Add pivot columns. */
-    public addPivotColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.addPivotColumns(colKeys, 'api'); }
+    public addPivotColumns(colKeys: (string | ColDef | Column)[]): void { this.funcColsService.addPivotColumns(colKeys, 'api'); }
     /** Get the pivot columns. */
-    public getPivotColumns(): Column[] { return this.columnModel.getPivotColumns(); }
+    public getPivotColumns(): Column[] { return this.funcColsService.getPivotColumns(); }
 
     /** Same as `getAllDisplayedColumnGroups` but just for the pinned left portion of the grid. */
-    public getLeftDisplayedColumnGroups(): IHeaderColumn[] { return this.columnModel.getDisplayedTreeLeft(); }
+    public getLeftDisplayedColumnGroups(): IHeaderColumn[] { return this.visibleColsService.getTreeLeft(); }
     /** Same as `getAllDisplayedColumnGroups` but just for the center portion of the grid. */
-    public getCenterDisplayedColumnGroups(): IHeaderColumn[] { return this.columnModel.getDisplayedTreeCentre(); }
+    public getCenterDisplayedColumnGroups(): IHeaderColumn[] { return this.visibleColsService.getTreeCenter(); }
     /** Same as `getAllDisplayedColumnGroups` but just for the pinned right portion of the grid. */
-    public getRightDisplayedColumnGroups(): IHeaderColumn[] { return this.columnModel.getDisplayedTreeRight(); }
+    public getRightDisplayedColumnGroups(): IHeaderColumn[] { return this.visibleColsService.getTreeRight(); }
     /** Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping, these return the top level groups - you can navigate down through each one to get the other lower level headers and finally the columns at the bottom. */
-    public getAllDisplayedColumnGroups(): IHeaderColumn[] | null { return this.columnModel.getAllDisplayedTrees(); }
+    public getAllDisplayedColumnGroups(): IHeaderColumn[] | null { return this.visibleColsService.getAllTrees(); }
     /** @deprecated v31.1 autoSizeColumn(key) deprecated, please use autoSizeColumns([colKey]) instead. */
     public autoSizeColumn(key: string | ColDef | Column, skipHeader?: boolean): void {
         this.logDeprecation('v31.1', 'autoSizeColumn(key, skipHeader)', 'autoSizeColumns([key], skipHeader)');
-        return this.columnModel.autoSizeColumns({ columns: [key], skipHeader: skipHeader, source: 'api'});
+        return this.columnAutosizeService.autoSizeCols({ colKeys: [key], skipHeader: skipHeader, source: 'api'});
     }
 
     /**
@@ -1894,7 +1917,7 @@ export class GridApi<TData = any> {
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      */
     public autoSizeColumns(keys: (string | ColDef | Column)[], skipHeader?: boolean): void {
-        this.columnModel.autoSizeColumns({ columns: keys, skipHeader: skipHeader, source: 'api'});
+        this.columnAutosizeService.autoSizeCols({ colKeys: keys, skipHeader: skipHeader, source: 'api'});
     }
 
     /**
@@ -1902,13 +1925,16 @@ export class GridApi<TData = any> {
      * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      */
-    public autoSizeAllColumns(skipHeader?: boolean): void { this.columnModel.autoSizeAllColumns('api', skipHeader); }
+    public autoSizeAllColumns(skipHeader?: boolean): void { this.columnAutosizeService.autoSizeAllColumns('api', skipHeader); }
 
     /** Set the pivot result columns. */
-    public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[] | null): void { this.columnModel.setSecondaryColumns(colDefs, 'api'); }
+    public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[] | null): void { this.pivotResultColsService.setPivotResultCols(colDefs, 'api'); }
 
     /** Returns the grid's pivot result columns. */
-    public getPivotResultColumns(): Column[] | null { return this.columnModel.getSecondaryColumns(); }
+    public getPivotResultColumns(): Column[] | null { 
+        const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
+        return pivotResultCols ? pivotResultCols.list : null;
+    }
 
     /** Get the current state of the grid. Can be used in conjunction with the `initialState` grid option to save and restore grid state. */
     public getState(): GridState {

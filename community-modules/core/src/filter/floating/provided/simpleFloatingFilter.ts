@@ -1,3 +1,4 @@
+
 import { Component } from '../../../widgets/component';
 import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
 import { ProvidedFilterModel } from '../../../interfaces/iFilter';
@@ -7,10 +8,11 @@ import { ScalarFilterParams } from '../../provided/scalarFilter';
 import { FilterChangedEvent } from '../../../events';
 import { ProvidedFilterParams } from '../../provided/providedFilter';
 import { Autowired } from '../../../context/context';
-import { ColumnModel } from '../../../columns/columnModel';
+import { ColumnNameService } from '@ag-grid-community/core';
 
 export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp<ISimpleFilter> {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
 
     // this method is on IFloatingFilterComp. because it's not implemented at this level, we have to
     // define it as an abstract method. it gets implemented in sub classes.
@@ -143,7 +145,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     protected getAriaLabel(params: IFloatingFilterParams): string {
-        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
+        const displayName = this.columnNameService.getDisplayNameForColumn(params.column, 'header', true);
         const translate = this.localeService.getLocaleTextFunc();
         return `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`
     }

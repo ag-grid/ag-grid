@@ -12,7 +12,8 @@ import {
     ISelectionService,
     RowDataUpdateStartedEvent,
     _cloneObject,
-    _sortRowNodesByOrder
+    _sortRowNodesByOrder,
+    FuncColsService
 } from "@ag-grid-community/core";
 
 export class ClientSideNodeManager {
@@ -23,7 +24,7 @@ export class ClientSideNodeManager {
 
     private gos: GridOptionsService;
     private eventService: EventService;
-    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
     private selectionService: ISelectionService;
     private beans: Beans;
 
@@ -38,11 +39,12 @@ export class ClientSideNodeManager {
     private allNodesMap: { [id: string]: RowNode } = {};
 
     constructor(rootNode: RowNode, gos: GridOptionsService, eventService: EventService,
-        columnModel: ColumnModel, selectionService: ISelectionService, beans: Beans) {
+        funcColsService: FuncColsService, 
+        selectionService: ISelectionService, beans: Beans) {
         this.rootNode = rootNode;
         this.gos = gos;
         this.eventService = eventService;
-        this.columnModel = columnModel;
+        this.funcColsService = funcColsService;
         this.beans = beans;
         this.selectionService = selectionService;
 
@@ -330,7 +332,7 @@ export class ClientSideNodeManager {
             }
 
             if (setExpanded) {
-                const rowGroupColumns = this.columnModel.getRowGroupColumns();
+                const rowGroupColumns = this.funcColsService.getRowGroupColumns();
                 const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
 
                 // need to take row group into account when determining level

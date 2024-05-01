@@ -52,7 +52,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     protected updateItems(columns: Column[]) {
-        this.columnModel.setRowGroupColumns(columns, "toolPanelUi");
+        this.funcColsService.setRowGroupColumns(columns, "toolPanelUi");
     }
 
     protected getIconName(): string {
@@ -60,6 +60,6 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): Column[] {
-        return this.columnModel.getRowGroupColumns();
+        return this.funcColsService.getRowGroupColumns();
     }
 }

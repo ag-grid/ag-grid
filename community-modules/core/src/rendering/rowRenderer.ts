@@ -37,6 +37,7 @@ import { AnimationFrameService } from "../misc/animationFrameService";
 import { _browserSupportsPreventScroll } from "../utils/browser";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IRowNode } from "../interfaces/iRowNode";
+import { VisibleColsService } from "../columns/visibleColsService";
 
 type RowCtrlIdMap = Record<RowCtrlInstanceId, RowCtrl>;
 type RowCtrlByRowIndex = Record<number, RowCtrl>;
@@ -87,6 +88,7 @@ export class RowRenderer extends BeanStub {
     @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
     @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
     @Autowired("columnModel") private columnModel: ColumnModel;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
     @Autowired("rowModel") private rowModel: IRowModel;
     @Autowired("focusService") private focusService: FocusService;
@@ -316,7 +318,7 @@ export class RowRenderer extends BeanStub {
     private refreshListenersToColumnsForCellComps(): void {
         this.removeGridColumnListeners();
 
-        const cols = this.columnModel.getAllGridColumns();
+        const cols = this.columnModel.getCols();
 
         cols.forEach(col => {
             const forEachCellWithThisCol = (callback: (cellCtrl: CellCtrl) => void) => {
@@ -850,7 +852,7 @@ export class RowRenderer extends BeanStub {
         if (_exists(columns)) {
             colIdsMap = {};
             columns.forEach((colKey: string | Column) => {
-                const column: Column | null = this.columnModel.getGridColumn(colKey);
+                const column: Column | null = this.columnModel.getCol(colKey);
                 if (_exists(column)) {
                     colIdsMap[column.getId()] = true;
                 }
@@ -1068,8 +1070,8 @@ export class RowRenderer extends BeanStub {
     }
 
     private onDisplayedColumnsChanged(): void {
-        const pinningLeft = this.columnModel.isPinningLeft();
-        const pinningRight = this.columnModel.isPinningRight();
+        const pinningLeft = this.visibleColsService.isPinningLeft();
+        const pinningRight = this.visibleColsService.isPinningRight();
         const atLeastOneChanged = this.pinningLeft !== pinningLeft || pinningRight !== this.pinningRight;
 
         if (atLeastOneChanged) {

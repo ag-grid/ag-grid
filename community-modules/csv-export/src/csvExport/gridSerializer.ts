@@ -7,7 +7,6 @@ import {
     ColumnGroup,
     IHeaderColumn,
     GROUP_AUTO_COLUMN_ID,
-    DisplayedGroupCreator,
     ExportParams,
     GroupInstanceIdCreator,
     IClientSideRowModel,
@@ -21,7 +20,9 @@ import {
     RowNodeSorter,
     SortController,
     _compose,
-    _last
+    _last,
+    VisibleColsService,
+    ColumnNameService
 } from "@ag-grid-community/core";
 import { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "./interfaces";
 
@@ -32,8 +33,9 @@ export enum RowType { HEADER_GROUPING, HEADER, BODY }
 @Bean("gridSerializer")
 export class GridSerializer extends BeanStub {
 
-    @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('selectionService') private selectionService: ISelectionService;
@@ -139,7 +141,7 @@ export class GridSerializer extends BeanStub {
         return (gridSerializingSession) => {
             if (!params.skipColumnGroupHeaders) {
                 const groupInstanceIdCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
-                const displayedGroups: IHeaderColumn[] = this.displayedGroupCreator.createDisplayedGroups(
+                const displayedGroups: IHeaderColumn[] = this.visibleColsService.createGroups(
                     columnsToExport,
                     groupInstanceIdCreator,
                     null
@@ -297,7 +299,7 @@ export class GridSerializer extends BeanStub {
         const isPivotMode = this.columnModel.isPivotMode();
 
         if (columnKeys && columnKeys.length) {
-            return this.columnModel.getGridColumns(columnKeys);
+            return this.columnModel.getColsForKeys(columnKeys);
         }
 
         const isTreeData = this.gos.get('treeData');
@@ -305,9 +307,9 @@ export class GridSerializer extends BeanStub {
         let columnsToExport: Column[] = [];
 
         if (allColumns && !isPivotMode) {
-            columnsToExport =  this.columnModel.getAllGridColumns();
+            columnsToExport =  this.columnModel.getCols();
         } else {
-            columnsToExport = this.columnModel.getAllDisplayedColumns();
+            columnsToExport = this.visibleColsService.getAllCols();
         }
 
         if (skipRowGroups && !isTreeData) {
@@ -348,7 +350,7 @@ export class GridSerializer extends BeanStub {
                     columnGroup: columnGroup
                 }));
             } else {
-                name = this.columnModel.getDisplayNameForColumnGroup(columnGroup, 'header')!;
+                name = this.columnNameService.getDisplayNameForColumnGroup(columnGroup, 'header')!;
             }
 
             const collapsibleGroupRanges = columnGroup.getLeafColumns().reduce((collapsibleGroups: number[][], currentColumn, currentIdx, arr) => {

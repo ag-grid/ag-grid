@@ -211,7 +211,7 @@ export class ValueService extends BeanStub {
      * @returns `True` if the value has been updated, otherwise`False`.
      */
     public setValue(rowNode: IRowNode, colKey: string | Column, newValue: any, eventSource?: string): boolean {
-        const column = this.columnModel.getPrimaryColumn(colKey);
+        const column = this.columnModel.getColDefCol(colKey);
 
         if (!rowNode || !column) {
             return false;
@@ -396,7 +396,7 @@ export class ValueService extends BeanStub {
     }
 
     private getValueCallback(node: IRowNode, field: string | Column): any {
-        const otherColumn = this.columnModel.getPrimaryColumn(field);
+        const otherColumn = this.columnModel.getColDefCol(field);
 
         if (otherColumn) {
             return this.getValue(otherColumn, node);

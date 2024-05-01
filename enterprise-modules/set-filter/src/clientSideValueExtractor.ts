@@ -10,6 +10,7 @@ import {
     ValueService,
     _makeNull,
     _toStringOrNull,
+    FuncColsService,
 } from '@ag-grid-community/core';
 
 /** @param V type of value in the Set Filter */
@@ -19,7 +20,7 @@ export class ClientSideValuesExtractor<V> {
         private readonly filterParams: SetFilterParams<any, V>,
         private readonly createKey: (value: V | null | undefined, node?: RowNode) => string | null,
         private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
-        private readonly columnModel: ColumnModel,
+        private readonly funcColsService: FuncColsService,
         private readonly valueService: ValueService,
         private readonly treeDataOrGrouping: boolean,
         private readonly treeData: boolean,
@@ -47,7 +48,7 @@ export class ClientSideValuesExtractor<V> {
         const existingFormattedKeys = this.extractExistingFormattedKeys(existingValues);
         const formattedKeys: Set<string | null> = new Set();
         const treeData = this.treeData && !!this.getDataPath;
-        const groupedCols = this.columnModel.getRowGroupColumns();
+        const groupedCols = this.funcColsService.getRowGroupColumns();
 
         const addValue = (unformattedKey: string | null, value: V | null | undefined) => {
             const formattedKey = this.caseFormat(unformattedKey);

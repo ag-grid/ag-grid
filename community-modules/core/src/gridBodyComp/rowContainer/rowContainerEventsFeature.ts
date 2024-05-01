@@ -17,7 +17,6 @@ import { UndoRedoService } from "../../undoRedo/undoRedoService";
 import { _missingOrEmpty } from "../../utils/generic";
 import { _last } from "../../utils/array";
 import { _normaliseQwertyAzerty } from "../../utils/keyboard";
-import { ColumnModel } from "../../columns/columnModel";
 import { PaginationProxy } from "../../pagination/paginationProxy";
 import { PinnedRowModel } from "../../pinnedRowModel/pinnedRowModel";
 import { IRangeService } from "../../interfaces/IRangeService";
@@ -25,6 +24,7 @@ import { IClipboardService } from "../../interfaces/iClipboardService";
 import { CellCtrl } from "../../rendering/cell/cellCtrl";
 import { RowPinnedType } from "../../interfaces/iRowNode";
 import { MenuService, EventShowContextMenuParams } from "../../misc/menuService";
+import { VisibleColsService } from "../../columns/visibleColsService";
 
 export class RowContainerEventsFeature extends BeanStub {
 
@@ -35,7 +35,7 @@ export class RowContainerEventsFeature extends BeanStub {
     @Autowired('navigationService') private navigationService: NavigationService;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('undoRedoService') private undoRedoService: UndoRedoService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
 
@@ -275,7 +275,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 rowEnd = pinnedRowModel.getPinnedBottomRowData().length - 1;
             }
 
-            const allDisplayedColumns = this.columnModel.getAllDisplayedColumns();
+            const allDisplayedColumns = this.visibleColsService.getAllCols();
             if (_missingOrEmpty(allDisplayedColumns)) { return; }
 
             rangeService.setCellRange({
