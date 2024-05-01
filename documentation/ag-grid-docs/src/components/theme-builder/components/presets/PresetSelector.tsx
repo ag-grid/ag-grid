@@ -105,7 +105,7 @@ const Scroller = styled('div')`
     min-height: var(--scroller-height);
     overflow-x: auto;
     padding-bottom: 6px;
-    z-index: 0;
+    z-index: 0; // z-index:0 prevents a Safari rendering bug where scrollbars appear over tooltips
     scroll-snap-type: x mandatory;
 
     // Blur beginning and end
@@ -142,7 +142,6 @@ const Scroller = styled('div')`
         );
     }
 `;
-//  👆 z-index is required to prevent a Safari rendering bug where scrollbars appear over tooltips
 
 const paramToVariableName = (param: string) => `--ag-${kebabCase(param)}`;
 const kebabCase = (str: string) => str.replace(/[A-Z]/g, (m) => `-${m}`).toLowerCase();

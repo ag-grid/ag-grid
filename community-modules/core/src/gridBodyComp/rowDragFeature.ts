@@ -130,19 +130,19 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return (draggingEvent.dragItem.rowNodes || []) as RowNode[];
         }
 
-        const isRowDragMultiRow = this.gos.get('rowDragMultiRow');
-        const selectedNodes = [...this.selectionService.getSelectedNodes()].sort(
-            (a, b) => {
-                if (a.rowIndex == null || b.rowIndex == null) { return 0; }
-
-                return this.getRowIndexNumber(a) - this.getRowIndexNumber(b);
-            }
-        );
-
         const currentNode = draggingEvent.dragItem.rowNode! as RowNode;
-
-        if (isRowDragMultiRow && selectedNodes.indexOf(currentNode) !== -1) {
-            return selectedNodes;
+        const isRowDragMultiRow = this.gos.get('rowDragMultiRow');
+        if (isRowDragMultiRow) {
+            const selectedNodes = [...this.selectionService.getSelectedNodes()].sort(
+                (a, b) => {
+                    if (a.rowIndex == null || b.rowIndex == null) { return 0; }
+    
+                    return this.getRowIndexNumber(a) - this.getRowIndexNumber(b);
+                }
+            );
+            if (selectedNodes.indexOf(currentNode) !== -1) {
+                return selectedNodes;
+            }
         }
 
         return [currentNode];

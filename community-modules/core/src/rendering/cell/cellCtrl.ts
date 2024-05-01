@@ -557,7 +557,6 @@ export class CellCtrl extends BeanStub {
             pinned: this.column.getPinned() as any,
             colDef: this.column.getColDef(),
             column: this.column,
-            rowIndex: this.getCellPosition().rowIndex,
             refreshCell: this.refreshCell.bind(this),
             eGridCell: this.getGui(),
             eParentOfValue: this.cellComp.getParentOfValue()!,

@@ -8,11 +8,11 @@ See the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-31-3/) for 
 
 ## Codemods
 
-Follow these steps to upgrade your project's AG Grid version to `31.3.0`:
+Follow these steps to upgrade your project's AG Grid version to `31.3.1`:
 
 1. Locate your project's `package.json` and note the version of AG Grid that you are currently using.
 
-1. Update any AG Grid dependencies listed in your project's `package.json` to version `31.3.0`.
+1. Update any AG Grid dependencies listed in your project's `package.json` to version `31.3.1`.
 
 1. Open a terminal and navigate to your project's root folder.
 
@@ -38,10 +38,13 @@ See the [Codemods](./codemods/) documentation for more details.
 
 This release includes the following deprecations:
 
+`ToolPanelColumnCompParams` - deprecated, use `IToolPanelColumnCompParams` instead.
+
 ### GridOptions
 
 - `groupIncludeFooter` - deprecated, use `groupTotalRow` instead.
 - `groupIncludeTotalFooter` - deprecated, use `grandTotalRow` instead.
+- `footerValueGetter` - deprecated, use `totalValueGetter` instead.
 
 ### Grid API
 

@@ -1,7 +1,6 @@
 import {
     _,
     Column,
-    ColumnRowGroupChangeRequestEvent,
     DragAndDropService,
     DraggingEvent,
     Events,
@@ -53,16 +52,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     protected updateItems(columns: Column[]) {
-        if (this.gos.get('functionsPassive')) {
-            const event: WithoutGridCommon<ColumnRowGroupChangeRequestEvent> = {
-                type: Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
-                columns: columns
-            };
-
-            this.eventService.dispatchEvent(event);
-        } else {
-            this.columnModel.setRowGroupColumns(columns, "toolPanelUi");
-        }
+        this.columnModel.setRowGroupColumns(columns, "toolPanelUi");
     }
 
     protected getIconName(): string {

@@ -63,7 +63,7 @@ export interface AbstractColDef<TData = any, TValue = any> {
 export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
     /** A list containing a mix of columns and column groups. */
     children: (ColDef<TData> | ColGroupDef<TData>)[];
-    /** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the column API. */
+    /** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the API. */
     groupId?: string;
     /**
      * Set to `true` if this group should be opened by default.

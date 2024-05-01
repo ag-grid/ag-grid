@@ -12,23 +12,6 @@ import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 
 export enum CellCompState { ShowValue, EditValue }
 
-const checkCellEditorDeprecations = (popup: boolean, cellEditor: ICellEditor, cellCtrl: CellCtrl) => {
-
-    const col = cellCtrl.getColumn();
-
-    // cellEditor is written to be a popup editor, however colDef.cellEditorPopup is not set
-    if (!popup && cellEditor.isPopup && cellEditor.isPopup()) {
-        const msg = `AG Grid: Found an issue in column ${col.getColId()}. If using React, specify an editor is a popup using colDef.cellEditorPopup=true. AG Grid React cannot depend on the editor component specifying if it's in a popup (via the isPopup() method on the editor), as React needs to know this information BEFORE the component is created.`;
-        _.doOnce(() => console.warn(msg), 'jsEditorComp-isPopup-' + cellCtrl.getColumn().getColId());
-    }
-
-    // cellEditor is a popup and is trying to position itself the deprecated way
-    if (popup && cellEditor.getPopupPosition && cellEditor.getPopupPosition()!=null) {
-        const msg = `AG Grid: Found an issue in column ${col.getColId()}. If using React, specify an editor popup position using colDef.cellEditorPopupPosition=true. AG Grid React cannot depend on the editor component specifying it's position (via the getPopupPosition() method on the editor), as React needs to know this information BEFORE the component is created.`;
-        _.doOnce(() => console.warn(msg), 'jsEditorComp-getPopupPosition-' + cellCtrl.getColumn().getColId());
-    }
-}
-
 const jsxEditorProxy = (
     editDetails: EditDetails,
     CellEditorClass: any,
@@ -224,7 +207,6 @@ const CellComp = (props: {
     const setCellEditorRef = useCallback((popup: boolean, cellEditor: ICellEditor | undefined) => {
         cellEditorRef.current = cellEditor;
         if (cellEditor) {
-            checkCellEditorDeprecations(popup, cellEditor, cellCtrl);
             const editingCancelledByUserComp = cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart();
             if (editingCancelledByUserComp) {
                 // we cannot set state inside render, so hack is to do it in next VM turn

@@ -305,26 +305,17 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.state = PillDropZonePanel.STATE_NOT_DRAGGING;
     }
 
-    protected refreshOnDragStop(): boolean {
-        return true;
-    }
-
     private onDragStop(): void {
         if (this.isPotentialDndItems()) {
-            let success = false;
 
             if (this.state === PillDropZonePanel.STATE_NEW_ITEMS_IN) {
                 this.addItems(this.potentialDndItems);
-                success = true;
             } else {
-                success = this.rearrangeItems(this.potentialDndItems);
+                this.rearrangeItems(this.potentialDndItems);
             }
 
             this.potentialDndItems = [];
-
-            if (this.refreshOnDragStop() || !success) {
-                this.refreshGui();
-            }
+            this.refreshGui();
         }
 
         this.state = PillDropZonePanel.STATE_NOT_DRAGGING;

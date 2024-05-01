@@ -11,21 +11,7 @@ import { ComponentUtil } from "../../components/componentUtil";
  * If the property was simply renamed, use the `renamed` property. The value will be implicitly copied to the new property.
  */
 const GRID_OPTION_DEPRECATIONS: Deprecations<GridOptions> = {
-
-    enableChartToolPanelsButton: { version: '29' },
-    functionsPassive: { version: '29.2' },
-    onColumnRowGroupChangeRequest: { version: '29.2' },
-    onColumnPivotChangeRequest: { version: '29.2' },
-    onColumnValueChangeRequest: { version: '29.2' },
-    onColumnAggFuncChangeRequest: { version: '29.2' },
     
-    serverSideFilterAllLevels: { version: '30', message: 'All server-side group levels are now filtered by default. This can be toggled using `serverSideOnlyRefreshFilteredGroups`.' },
-    suppressAggAtRootLevel: { version: '30', message: 'The root level aggregation is now suppressed by default. This can be toggled using  `alwaysAggregateAtRootLevel`.' },
-    excludeHiddenColumnsFromQuickFilter: { version: '30', message: 'Hidden columns are now excluded from the Quick Filter by default. This can be toggled using `includeHiddenColumnsInQuickFilter`.' },
-    enterMovesDown: { version: '30', renamed: 'enterNavigatesVertically' },
-    enterMovesDownAfterEdit: { version: '30', renamed: 'enterNavigatesVerticallyAfterEdit' },
-    suppressParentsInRowNodes: { version: '30.2', message: 'Using suppressParentsInRowNodes is no longer recommended. To serialize nodes it is now recommended to instead remove the parent node reference before serialization.'},
-
     advancedFilterModel: { version: '31', message: 'Use `initialState.filter.advancedFilterModel` instead.'},
     suppressAsyncEvents: { version: '31', message: 'Events should be handled asynchronously.'},
 
@@ -214,7 +200,6 @@ export const GRID_OPTION_DEFAULTS = {
     deltaSort: false,
     enableGroupEdit: false,
     suppressGroupMaintainValueType: false,
-    functionsPassive: false,
     groupLockGroupColumns: 0,
     serverSideEnableClientSideSort: false,
     suppressServerSideFullWidthLoadingRow: false,
@@ -304,11 +289,6 @@ const GRID_OPTION_VALIDATIONS: Validations<GridOptions> = {
             rowSelection: ['multiple'],
         }
     },
-    suppressParentsInRowNodes: {
-        dependencies: {
-            groupSelectsChildren: [undefined, false],
-        },
-    },
 
     viewportDatasource: {
         supportedRowModels: ['viewport'],
@@ -342,7 +322,7 @@ export const GRID_OPTIONS_VALIDATORS: OptionsValidator<GridOptions> = {
         ...PropertyKeys.ALL_PROPERTIES,
         ...ComponentUtil.EVENT_CALLBACKS,
     ],
-    propertyExceptions: ['api', 'columnApi'],
+    propertyExceptions: ['api'],
     docsUrl: 'grid-options/',
     deprecations: GRID_OPTION_DEPRECATIONS,
     validations: GRID_OPTION_VALIDATIONS,

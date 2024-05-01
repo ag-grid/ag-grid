@@ -24,7 +24,7 @@ export const EditorPanel = () => {
                 </LeftBiasRow>
                 <ParamEditor param="backgroundColor" />
                 <ParamEditor param="foregroundColor" />
-                <ParamEditor param="accentColor" />
+                <ParamEditor param="accentColor" showDocs />
                 <ParamEditor param="borderColor" />
                 <BordersEditor />
                 <ParamEditor param="gridSize" label="Spacing" showDocs icon={verticalSpacingIcon} />
@@ -93,14 +93,6 @@ const Section = (props: { heading: string; children: ReactNode }) => (
         </AccordionContent>
     </AccordionItem>
 );
-
-const Note = styled('div')`
-    color: var(--color-fg-tertiary);
-    font-size: 14px;
-    font-style: italic;
-    margin-left: 12px;
-    margin-bottom: 8px;
-`;
 
 const SectionContent = styled('div')`
     display: flex;

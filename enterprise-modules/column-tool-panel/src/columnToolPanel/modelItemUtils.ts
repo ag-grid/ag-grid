@@ -1,8 +1,6 @@
 import { ColumnModelItem } from "./columnModelItem";
 import {
     ColumnModel,
-    Events,
-    ColumnPivotChangeRequestEvent,
     GridOptionsService,
     ColumnEventType,
     Bean,
@@ -12,7 +10,6 @@ import {
     EventService,
     ColumnState,
     _,
-    WithoutGridCommon,
     IAggFunc
 } from "@ag-grid-community/core";
 
@@ -80,83 +77,7 @@ export class ModelItemUtils {
     }
 
     private setAllPivot(columns: Column[], value: boolean, eventType: ColumnEventType): void {
-        if (this.gos.get('functionsPassive')) {
-            this.setAllPivotPassive(columns, value);
-        } else {
-            this.setAllPivotActive(columns, value, eventType);
-        }
-    }
-
-    private setAllPivotPassive(columns: Column[], value: boolean): void {
-
-        const copyOfPivotColumns = this.columnModel.getPivotColumns().slice();
-        const copyOfValueColumns = this.columnModel.getValueColumns().slice();
-        const copyOfRowGroupColumns = this.columnModel.getRowGroupColumns().slice();
-
-        let pivotChanged = false;
-        let valueChanged = false;
-        let rowGroupChanged = false;
-
-        const turnOnAction = (col: Column) => {
-            // don't change any column that's already got a function active
-            if (col.isAnyFunctionActive()) { return; }
-
-            if (col.isAllowValue()) {
-                copyOfValueColumns.push(col);
-                valueChanged = true;
-            } else if (col.isAllowRowGroup()) {
-                copyOfRowGroupColumns.push(col);
-                pivotChanged = true;
-            } else if (col.isAllowPivot()) {
-                copyOfPivotColumns.push(col);
-                rowGroupChanged = true;
-            }
-        };
-
-        const turnOffAction = (col: Column) => {
-            if (!col.isAnyFunctionActive()) { return; }
-
-            if (copyOfPivotColumns.indexOf(col) >= 0) {
-                _.removeFromArray(copyOfPivotColumns, col);
-                pivotChanged = true;
-            }
-            if (copyOfValueColumns.indexOf(col) >= 0) {
-                _.removeFromArray(copyOfValueColumns, col);
-                valueChanged = true;
-            }
-            if (copyOfRowGroupColumns.indexOf(col) >= 0) {
-                _.removeFromArray(copyOfRowGroupColumns, col);
-                rowGroupChanged = true;
-            }
-        };
-
-        const action = value ? turnOnAction : turnOffAction;
-
-        columns.forEach(action);
-
-        if (pivotChanged) {
-            const event: WithoutGridCommon<ColumnPivotChangeRequestEvent> = {
-                type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
-                columns: copyOfPivotColumns
-            };
-            this.eventService.dispatchEvent(event);
-        }
-
-        if (rowGroupChanged) {
-            const event: WithoutGridCommon<ColumnPivotChangeRequestEvent> = {
-                type: Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
-                columns: copyOfRowGroupColumns
-            };
-            this.eventService.dispatchEvent(event);
-        }
-
-        if (valueChanged) {
-            const event: WithoutGridCommon<ColumnPivotChangeRequestEvent> = {
-                type: Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
-                columns: copyOfRowGroupColumns
-            };
-            this.eventService.dispatchEvent(event);
-        }
+        this.setAllPivotActive(columns, value, eventType);
     }
 
     private setAllPivotActive(columns: Column[], value: boolean, eventType: ColumnEventType): void {
