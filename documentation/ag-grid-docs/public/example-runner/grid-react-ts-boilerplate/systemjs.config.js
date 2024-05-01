@@ -2,13 +2,8 @@
     System.config({
         transpiler: 'ts',
         typescriptOptions: {
-            module: 'system',
-            moduleResolution: 'node',
-            target: 'es2015',
-            noImplicitAny: false,
-            sourceMap: true,
-            jsx: 'react',
-            lib: ['es2015', 'dom'],
+            target: 'es2020',
+            jsx: 'react'
         },
         paths: {
             // paths serve as alias

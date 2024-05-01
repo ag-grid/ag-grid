@@ -3,16 +3,7 @@
         // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
         transpiler: "ts",
         typescriptOptions: {
-            // Copy of compiler options in standard tsconfig.json
-            target: "es2015",
-            module: "system", //gets rid of console warning
-            moduleResolution: "node",
-            sourceMap: false,
-            emitDecoratorMetadata: true,
-            experimentalDecorators: true,
-            lib: ["es2015", "dom"],
-            noImplicitAny: true,
-            suppressImplicitAnyIndexErrors: true
+            target: "es2020"
         },
         meta: {
             typescript: {

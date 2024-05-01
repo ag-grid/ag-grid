@@ -6,13 +6,8 @@
     System.config({
         transpiler: 'ts',
         typescriptOptions: {
-            module: 'system',
-            moduleResolution: 'node',
             target: 'es2020',
-            noImplicitAny: false,
-            sourceMap: false,
-            jsx: 'react',
-            lib: ['es2020', 'dom'],
+            jsx: 'react'
         },
         paths: {
             // paths serve as alias
