@@ -4,21 +4,38 @@
         sjsPaths = systemJsPaths;
     }
     System.config({
-        transpiler: 'plugin-babel',
+        // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
+        transpiler: "ts",
+        typescriptOptions: {
+            // Copy of compiler options in standard tsconfig.json
+            target: "es2015",
+            module: "system", //gets rid of console warning
+            moduleResolution: "node",
+            sourceMap: false,
+            emitDecoratorMetadata: true,
+            experimentalDecorators: true,
+            lib: ["es2015", "dom"],
+            noImplicitAny: true,
+            suppressImplicitAnyIndexErrors: true
+        },
+        meta: {
+            typescript: {
+                exports: "ts"
+            },
+            '*.css': {loader: 'css'}
+        },
         defaultExtension: 'js',
         paths: {
             'npm:': 'https://cdn.jsdelivr.net/npm/',
             ...sjsPaths,
         },
         map: {
-            // babel transpiler
-            'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
-            'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
-
-            // css: boilerplatePath + "css.js",
             'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
-            // vuejsw
+            ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
+            tslib: "npm:tslib@2.3.1/tslib.js",
+            typescript: 'npm:typescript@5.4.5/lib/typescript.min.js',
+
             'vue': 'npm:vue@2.6.12/dist/vue.min.js',
             // vue property decorator
             'vue-class-component': 'npm:vue-class-component@6.3.2/dist/vue-class-component.min.js',
@@ -197,16 +214,6 @@
                 format: 'cjs',
             }
         },
-        meta: {
-            '*.js': {
-                babelOptions: {
-                    stage1: true,
-                    stage2: true,
-                    es2015: true
-                }
-            },
-            '*.css': {loader: 'css'}
-        }
     });
 })(this);
 

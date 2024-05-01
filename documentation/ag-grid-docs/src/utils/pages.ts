@@ -88,6 +88,8 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     '@ag-grid-community/react/src/**': 'community-modules/react/src/**/*.{tsx,ts}',
     '@ag-grid-community/angular/fesm2015/ag-grid-community-angular.mjs':
         'community-modules/angular/dist/ag-grid-angular/fesm2015/ag-grid-community-angular.mjs',
+    '@ag-grid-community/angular/fesm2020/ag-grid-community-angular.mjs':
+        'community-modules/angular/dist/ag-grid-angular/fesm2020/ag-grid-community-angular.mjs',
     '@ag-grid-community/vue/dist/**': 'community-modules/vue/dist/**/*.{cjs,mjs,js,map}',
     '@ag-grid-community/vue3/dist/**': 'community-modules/vue3/dist/**/*.{cjs,mjs,js,map}',
 
@@ -112,6 +114,8 @@ if (USE_PACKAGES) {
     FILES_PATH_MAP['ag-grid-react/dist/**'] = `packages/ag-grid-react/dist/**/*.{cjs,js,map}`;
     FILES_PATH_MAP['ag-grid-angular/fesm2015/ag-grid-angular.mjs'] =
         'packages/ag-grid-angular/dist/ag-grid-angular/fesm2015/ag-grid-angular.mjs';
+    FILES_PATH_MAP['ag-grid-angular/fesm2020/ag-grid-angular.mjs'] =
+        'packages/ag-grid-angular/dist/ag-grid-angular/fesm2020/ag-grid-angular.mjs';
     FILES_PATH_MAP['ag-grid-vue/lib/**'] = 'packages/ag-grid-vue/lib/**/*.{cjs,mjs,js,map}';
     FILES_PATH_MAP['ag-grid-vue3/dist/**'] = 'packages/ag-grid-vue3/dist/**/*.{cjs,mjs,js,map}';
 }
