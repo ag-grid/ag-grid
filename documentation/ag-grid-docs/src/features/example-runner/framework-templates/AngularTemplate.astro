@@ -62,7 +62,8 @@ const startFile = pathJoin(appLocation, entryFileName);
         <script is:inline>
             document.write('<base href="' + document.location + '" />');
         </script>
-        <script src="https://cdn.jsdelivr.net/npm/zone.js@0.14.3/bundles/zone.umd.min.js"></script>
+        <script is:inline src="https://cdn.jsdelivr.net/npm/core-js-bundle@3.6.5/minified.js"></script>
+        <script is:inline src="https://cdn.jsdelivr.net/npm/zone.js@0.14.3/bundles/zone.umd.min.js"></script>
 
         {scriptFiles && <Scripts baseUrl={appLocation} files={scriptFiles} />}
         <SystemJs
