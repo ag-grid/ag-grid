@@ -1,4 +1,5 @@
 import type { Framework, MenuItem } from '@ag-grid-types';
+import { Select } from '@ag-website-shared/components/select/Select';
 import fwLogos from '@ag-website-shared/images/fw-logos';
 import { FRAMEWORKS } from '@constants';
 import { DOCS_FRAMEWORK_REDIRECT_PAGE } from '@features/docs/constants';
@@ -8,6 +9,7 @@ import { getNewFrameworkPath } from '@utils/framework';
 import { getMenuItemFromPageName } from '@utils/getMenuItemFromPageName';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
+import { useMemo } from 'react';
 
 import styles from './FrameworkSelectorInsideDocs.module.scss';
 
@@ -18,6 +20,18 @@ interface Props {
 }
 
 export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems }: Props) => {
+    const frameworkOptions = useMemo(() => {
+        return FRAMEWORKS.map((framework) => ({
+            label: getFrameworkDisplayText(framework),
+            value: framework,
+        }));
+    }, [FRAMEWORKS]);
+
+    const frameworkOption = useMemo(
+        () => frameworkOptions.find((o: { value: string }) => o.value === currentFramework) || frameworkOptions[0],
+        [frameworkOptions, currentFramework]
+    );
+
     const handleFrameworkChange = (selectedFramework: Framework) => {
         const pageName = getPageNameFromPath(path);
         const menuItem = getMenuItemFromPageName({ menuItems: menuItems, pageName });
@@ -48,26 +62,21 @@ export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems 
     const currentFrameworkLogo = currentFramework ? fwLogos[currentFramework] : null;
 
     return (
-        <div className={classnames(styles.frameworkSelector)}>
-            <div className={styles.selectFrameworkContainer}>
-                {currentFrameworkLogo && (
-                    <img src={currentFrameworkLogo} alt={`${currentFramework} logo`} className={styles.frameworkLogo} />
-                )}
-                <span className={styles.divider}></span>
-                <select
-                    value={currentFramework}
-                    onChange={(event) => handleFrameworkChange(event.target.value as Framework)}
-                    onClick={(event) => event.stopPropagation()} // Prevent event propagation
-                    className={styles.select}
-                    aria-label="Framework selector"
-                >
-                    {FRAMEWORKS.map((framework) => (
-                        <option value={framework} key={framework}>
-                            {getFrameworkDisplayText(framework)}
-                        </option>
-                    ))}
-                </select>
-            </div>
-        </div>
+        currentFramework && (
+            <Select
+                isPopper
+                options={frameworkOptions}
+                value={frameworkOption}
+                onChange={(newValue) => handleFrameworkChange(newValue.value as Framework)}
+                renderItem={(o) => {
+                    return (
+                        <span className={styles.frameworkItem}>
+                            <img src={fwLogos[o.value]} alt={`${o.value} logo`} className={styles.frameworkLogo} />
+                            {o.label}
+                        </span>
+                    );
+                }}
+            />
+        )
     );
 };
