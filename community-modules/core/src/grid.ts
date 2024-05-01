@@ -101,6 +101,8 @@ import { ApiEventService } from "./misc/apiEventService";
 import { PageSizeSelectorComp } from "./pagination/pageSizeSelector/pageSizeSelectorComp";
 import { AriaAnnouncementService } from "./rendering/ariaAnnouncementService";
 import { MenuService } from "./misc/menuService";
+import { ColumnStateService } from "./columns/columnStateService";
+import { ColumnEventDispatcher } from "./columns/columnEventDispatcher";
 
 export interface GridParams {
     // INTERNAL - used by Web Components
@@ -428,7 +430,8 @@ export class GridCoreCreator {
             UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory, RowCssClassCalculator, 
             RowNodeBlockLoader, RowNodeSorter, CtrlsService, PinnedWidthService, RowNodeEventThrottle,
             CtrlsFactory, DataTypeService, QuickFilterService, SyncService, OverlayService, StateService,
-            ExpansionService, ApiEventService, AriaAnnouncementService, MenuService
+            ExpansionService, ApiEventService, AriaAnnouncementService, MenuService,
+            ColumnStateService, ColumnEventDispatcher
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);
