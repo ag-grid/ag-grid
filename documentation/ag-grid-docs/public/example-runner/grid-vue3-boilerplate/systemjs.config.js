@@ -23,7 +23,7 @@
 
             ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
             tslib: "npm:tslib@2.3.1/tslib.js",
-            typescript: "npm:typescript@4.3.5/lib/typescript.min.js",
+            typescript: 'npm:typescript@5.4.5/lib/typescript.min.js',
 
             'vue': 'npm:vue@3.2.29/dist/vue.esm-browser.js',
             '@vue/reactivity': 'npm:@vue/reactivity@3.0.0/dist/reactivity.esm-browser.prod.js',

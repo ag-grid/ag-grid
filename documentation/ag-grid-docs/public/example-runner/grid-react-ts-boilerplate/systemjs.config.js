@@ -19,7 +19,7 @@
             'react-dom/client': 'npm:react-dom@18.2.0',
 
             ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
-            typescript: "npm:typescript@4.3.5/lib/typescript.min.js",
+            typescript: 'npm:typescript@5.4.5/lib/typescript.min.js',
 
             app: appLocation,
             // systemJsMap comes from index.html
