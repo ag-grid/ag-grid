@@ -14,6 +14,7 @@ type SelectProps<O> = {
     getKey?: (item: O) => string;
     getLabel?: (item: O) => string;
     getGroupLabel?: (item: O) => string;
+    isPopper?: boolean;
 };
 
 export function Select<O>({
@@ -24,6 +25,7 @@ export function Select<O>({
     getKey = defaultGetKey,
     getLabel = defaultGetLabel,
     getGroupLabel = defaultGetGroupLabel,
+    isPopper,
 }: SelectProps<O>) {
     const optionsByValue = new Map<string, O>();
     const content: Record<string, ReactElement[]> = {};
@@ -57,7 +59,10 @@ export function Select<O>({
                 </RadixSelect.Icon>
             </RadixSelect.Trigger>
             <RadixSelect.Portal>
-                <RadixSelect.Content className={styles.content}>
+                <RadixSelect.Content
+                    position={isPopper ? 'popper' : 'item-aligned'}
+                    className={classnames(styles.content, { [styles.popper]: isPopper })}
+                >
                     <RadixSelect.ScrollUpButton className="SelectScrollButton">
                         <ChevronUp />
                     </RadixSelect.ScrollUpButton>

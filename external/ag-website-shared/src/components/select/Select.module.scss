@@ -1,3 +1,5 @@
+@use 'design-system' as *;
+
 .trigger {
     display: flex;
     align-items: center;
@@ -16,6 +18,17 @@
         color: var(--color-fg-primary);
         background-color: var(--color-bg-primary);
         border: 1px solid var(--color-input-border-hover);
+
+        #{$selector-darkmode} & {
+            border: 1px solid var(--color-brand-200);
+        }
+    }
+    &:focus-visible {
+        #{$selector-darkmode} & {
+            box-shadow:
+                0 0 0 4px color-mix(in srgb, var(--color-brand-200), var(--color-bg-primary) 60%),
+                var(--shadow-xs);
+        }
     }
 }
 
@@ -32,6 +45,11 @@
     z-index: 1000;
     padding: 6px;
 
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 12%);
+        border: 1px solid color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 22%);
+    }
+
     .SelectScrollButton {
         display: flex;
         align-items: center;
@@ -45,7 +63,7 @@
 .item {
     font-size: 14px !important;
     line-height: 1;
-    color: var(--violet-11);
+    color: var(--color-text-primary);
     border-radius: 3px;
     display: flex;
     align-items: center;
@@ -56,6 +74,10 @@
     cursor: pointer;
     justify-content: space-between;
 
+    #{$selector-darkmode} & {
+        color: var(--color-fg-white);
+    }
+
     &[data-disabled] {
         opacity: 0.5;
         pointer-events: none;
@@ -63,7 +85,11 @@
 
     &[data-highlighted] {
         outline: none;
-        background-color: var(--color-util-gray-100);
+        background-color: var(--color-util-brand-50);
+
+        #{$selector-darkmode} & {
+            background-color: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 20%);
+        }
     }
 }
 
@@ -88,4 +114,39 @@
     line-height: 25px;
     font-weight: 600;
     color: var(--mauve-11);
+}
+
+$fade-animation-time: 150ms;
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 0.8;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes selectScaleInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0px) scale(1);
+    }
+}
+
+.content.popper[data-state='open'] {
+    animation: selectScaleInDown $fade-animation-time cubic-bezier(0.4, 0, 1, 1);
 }
