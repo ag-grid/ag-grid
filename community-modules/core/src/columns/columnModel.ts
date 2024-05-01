@@ -51,6 +51,7 @@ import { WithoutGridCommon } from '../interfaces/iCommon';
 import { PropertyChangedSource } from '../gridOptionsService';
 import { ColumnStateService, ModifyColumnsNoEventsCallbacks } from './columnStateService';
 import { ColumnEventDispatcher } from './columnEventDispatcher';
+import { ColumnMoveService } from './columnMoveService';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -134,6 +135,7 @@ export class ColumnModel extends BeanStub {
     @Autowired('columnDefFactory') private columnDefFactory: ColumnDefFactory;
     @Autowired('columnStateService') private columnStateService: ColumnStateService;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
+    @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
 
     @Optional('aggFuncService') private aggFuncService?: IAggFuncService;
 
@@ -423,7 +425,7 @@ export class ColumnModel extends BeanStub {
         const otherCols = this.gridColumns.filter(col => primaryColsOrdered.indexOf(col) < 0);
 
         this.gridColumns = [...otherCols, ...primaryColsOrdered];
-        this.gridColumns = this.placeLockedColumns(this.gridColumns);
+        this.gridColumns = this.columnMoveService.placeLockedColumns(this.gridColumns);
     }
 
     public getAllDisplayedAutoHeightCols(): Column[] {
@@ -680,6 +682,10 @@ export class ColumnModel extends BeanStub {
         }
 
         return null;
+    }
+
+    public getGridBalancedTree(): IProvidedColumn[] {
+        return this.gridBalancedTree;
     }
 
     // + columnSelectPanel
@@ -1392,7 +1398,7 @@ export class ColumnModel extends BeanStub {
     }
 
     public doesOrderPassRules(gridOrder: Column[]) {
-        if (!this.doesMovePassMarryChildren(gridOrder)) {
+        if (!this.columnMoveService.doesMovePassMarryChildren(gridOrder)) {
             return false;
         }
         if (!this.doesMovePassLockedPositions(gridOrder)) {
@@ -1447,42 +1453,6 @@ export class ColumnModel extends BeanStub {
         return rulePassed;
     }
 
-    private doesMovePassMarryChildren(allColumnsCopy: Column[]): boolean {
-        let rulePassed = true;
-
-        depthFirstOriginalTreeSearch(null, this.gridBalancedTree, child => {
-            if (!(child instanceof ProvidedColumnGroup)) { return; }
-
-            const columnGroup = child;
-            const colGroupDef = columnGroup.getColGroupDef();
-            const marryChildren = colGroupDef && colGroupDef.marryChildren;
-
-            if (!marryChildren) { return; }
-
-            const newIndexes: number[] = [];
-            columnGroup.getLeafColumns().forEach(col => {
-                const newColIndex = allColumnsCopy.indexOf(col);
-                newIndexes.push(newColIndex);
-            });
-
-            const maxIndex = Math.max.apply(Math, newIndexes);
-            const minIndex = Math.min.apply(Math, newIndexes);
-
-            // spread is how far the first column in this group is away from the last column
-            const spread = maxIndex - minIndex;
-            const maxSpread = columnGroup.getLeafColumns().length - 1;
-
-            // if the columns
-            if (spread > maxSpread) {
-                rulePassed = false;
-            }
-
-            // console.log(`maxIndex = ${maxIndex}, minIndex = ${minIndex}, spread = ${spread}, maxSpread = ${maxSpread}, fail = ${spread > (count-1)}`)
-            // console.log(allColumnsCopy.map( col => col.getColDef().field).join(','));
-        });
-
-        return rulePassed;
-    }
 
     public moveColumnByIndex(fromIndex: number, toIndex: number, source: ColumnEventType): void {
         if (!this.gridColumns) { return; }
@@ -2004,7 +1974,7 @@ export class ColumnModel extends BeanStub {
             // autogroup cols with nothing else, apply the default
             autoGroupColsCopy.forEach(applyDefaultsFunc);
 
-            this.applyOrderAfterApplyState(params);
+            this.gridColumns = this.columnStateService.applyOrderAfterApplyState(params, this.gridColumns, this.gridColumnsMap);
             this.updateDisplayedColumns(source);
             this.eventDispatcher.everythingChanged(source);
 
@@ -2032,56 +2002,7 @@ export class ColumnModel extends BeanStub {
 
         return unmatchedCount === 0; // Successful if no states unaccounted for
     }
-
-    private applyOrderAfterApplyState(params: ApplyColumnStateParams): void {
-        if (!params.applyOrder || !params.state) { return; }
-
-        let newOrder: Column[] = [];
-        const processedColIds: { [id: string]: boolean } = {};
-
-        params.state.forEach(item => {
-            if (!item.colId || processedColIds[item.colId]) { return; }
-            const col = this.gridColumnsMap[item.colId];
-            if (col) {
-                newOrder.push(col);
-                processedColIds[item.colId] = true;
-            }
-        });
-
-        // add in all other columns
-        let autoGroupInsertIndex = 0;
-        this.gridColumns.forEach(col => {
-            const colId = col.getColId();
-            const alreadyProcessed = processedColIds[colId] != null;
-            if (alreadyProcessed) { return; }
-
-            const isAutoGroupCol = colId.startsWith(GROUP_AUTO_COLUMN_ID);
-            if (isAutoGroupCol) {
-                // auto group columns, if missing from state list, are added to the start.
-                // it's common to have autoGroup missing, as grouping could be on by default
-                // on a column, but the user could of since removed the grouping via the UI.
-                // if we don't inc the insert index, autoGroups will be inserted in reverse order
-                insertIntoArray(newOrder, col, autoGroupInsertIndex++);
-            } else {
-                // normal columns, if missing from state list, are added at the end
-                newOrder.push(col);
-            }
-        });
-
-        // this is already done in updateGridColumns, however we changed the order above (to match the order of the state
-        // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
-        // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
-        // is less sexy for the code here, but it keeps consistency.
-        newOrder = this.placeLockedColumns(newOrder);
-
-        if (!this.doesMovePassMarryChildren(newOrder)) {
-            console.warn('AG Grid: Applying column order broke a group where columns should be married together. Applying new order has been discarded.');
-            return;
-        }
-
-        this.gridColumns = newOrder;
-    }
-
+    
     public getGridColumns(keys: ColKey[]): Column[] {
         return this.getColumns(keys, this.getGridColumn.bind(this));
     }
@@ -2811,7 +2732,7 @@ export class ColumnModel extends BeanStub {
         this.addAutoGroupToGridColumns();
         this.orderGridColsLike(sortOrderToRecover);
 
-        this.gridColumns = this.placeLockedColumns(this.gridColumns);
+        this.gridColumns = this.columnMoveService.placeLockedColumns(this.gridColumns);
         this.calculateColumnsForGroupDisplay();
         this.refreshQuickFilterColumns();
         this.clearDisplayedAndViewportColumns();
@@ -2926,23 +2847,6 @@ export class ColumnModel extends BeanStub {
         this.columnsForQuickFilter = this.gos.get('includeHiddenColumnsInQuickFilter')
             ? columnsForQuickFilter
             : columnsForQuickFilter.filter(col => col.isVisible() || col.isRowGroupActive());
-    }
-
-    private placeLockedColumns(cols: Column[]): Column[] {
-        const left: Column[] = [];
-        const normal: Column[] = [];
-        const right: Column[] = [];
-        cols.forEach((col) => {
-            const position = col.getColDef().lockPosition;
-            if (position === 'right') {
-                right.push(col);
-            } else if (position === 'left' || position === true) {
-                left.push(col);
-            } else {
-                normal.push(col);
-            }
-        });
-        return [...left, ...normal, ...right];
     }
 
     private addAutoGroupToGridColumns(): void {

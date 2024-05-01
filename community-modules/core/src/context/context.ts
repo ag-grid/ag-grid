@@ -451,6 +451,7 @@ export type BeanName =
 | 'columnHoverService'
 | 'columnMenuFactory'
 | 'columnModel'
+| 'columnMoveService'
 | 'columnPositionService'
 | 'columnStateService'
 | 'columnUtils'

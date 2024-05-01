@@ -7,10 +7,12 @@ import {
 } from '../events';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { SortController } from "../sortController";
-import { areEqual } from '../utils/array';
+import { areEqual, insertIntoArray } from '../utils/array';
 import { exists } from '../utils/generic';
+import { GROUP_AUTO_COLUMN_ID } from "./autoGroupColService";
 import { ColumnEventDispatcher } from './columnEventDispatcher';
-import { ColumnModel, ColumnState, ColumnStateParams } from './columnModel';
+import { ApplyColumnStateParams, ColumnModel, ColumnState, ColumnStateParams } from './columnModel';
+import { ColumnMoveService } from "./columnMoveService";
 
 export interface ModifyColumnsNoEventsCallbacks {
     addGroupCol(col: Column): void;
@@ -27,7 +29,58 @@ export class ColumnStateService extends BeanStub {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
     @Autowired('sortController') private sortController: SortController;
+    @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
+
     
+    public applyOrderAfterApplyState(params: ApplyColumnStateParams, gridColumns: Column[], gridColumnsMap: { [id: string]: Column }): Column[] {
+        if (!params.applyOrder || !params.state) { return gridColumns; }
+
+        let newOrder: Column[] = [];
+        const processedColIds: { [id: string]: boolean } = {};
+
+        params.state.forEach(item => {
+            if (!item.colId || processedColIds[item.colId]) { return; }
+            const col = gridColumnsMap[item.colId];
+            if (col) {
+                newOrder.push(col);
+                processedColIds[item.colId] = true;
+            }
+        });
+
+        // add in all other columns
+        let autoGroupInsertIndex = 0;
+        gridColumns.forEach(col => {
+            const colId = col.getColId();
+            const alreadyProcessed = processedColIds[colId] != null;
+            if (alreadyProcessed) { return; }
+
+            const isAutoGroupCol = colId.startsWith(GROUP_AUTO_COLUMN_ID);
+            if (isAutoGroupCol) {
+                // auto group columns, if missing from state list, are added to the start.
+                // it's common to have autoGroup missing, as grouping could be on by default
+                // on a column, but the user could of since removed the grouping via the UI.
+                // if we don't inc the insert index, autoGroups will be inserted in reverse order
+                insertIntoArray(newOrder, col, autoGroupInsertIndex++);
+            } else {
+                // normal columns, if missing from state list, are added at the end
+                newOrder.push(col);
+            }
+        });
+
+        // this is already done in updateGridColumns, however we changed the order above (to match the order of the state
+        // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
+        // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
+        // is less sexy for the code here, but it keeps consistency.
+        newOrder = this.columnMoveService.placeLockedColumns(newOrder);
+
+        if (!this.columnMoveService.doesMovePassMarryChildren(newOrder)) {
+            console.warn('AG Grid: Applying column order broke a group where columns should be married together. Applying new order has been discarded.');
+            return gridColumns;
+        }
+
+        return newOrder;
+    }
+
     public compareColumnStatesAndDispatchEvents(source: ColumnEventType): () => void {
 
         const startState = {
