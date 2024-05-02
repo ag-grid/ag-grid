@@ -60,7 +60,7 @@
                 defaultExtension: "ts",
             },
             "@ag-grid-community/angular": {
-                main: "./fesm2020/ag-grid-community-angular.mjs",
+                main: "./fesm2022/ag-grid-community-angular.mjs",
                 defaultExtension: "mjs"
             },
             '@ag-grid-community/core': {
@@ -151,7 +151,7 @@
                 format: 'cjs',
             },
             'ag-grid-angular': {
-                main: './fesm2020/ag-grid-angular.mjs',
+                main: './fesm2022/ag-grid-angular.mjs',
                 defaultExtension: 'mjs',
             },
             'ag-enterprise-community': {
