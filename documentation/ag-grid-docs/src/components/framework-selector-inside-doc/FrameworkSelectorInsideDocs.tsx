@@ -63,20 +63,23 @@ export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems 
 
     return (
         currentFramework && (
-            <Select
-                isPopper
-                options={frameworkOptions}
-                value={frameworkOption}
-                onChange={(newValue) => handleFrameworkChange(newValue.value as Framework)}
-                renderItem={(o) => {
-                    return (
-                        <span className={styles.frameworkItem}>
-                            <img src={fwLogos[o.value]} alt={`${o.value} logo`} className={styles.frameworkLogo} />
-                            {o.label}
-                        </span>
-                    );
-                }}
-            />
+            <div className={styles.frameworkSelector}>
+                <Select
+                    isLarge
+                    isPopper
+                    options={frameworkOptions}
+                    value={frameworkOption}
+                    onChange={(newValue) => handleFrameworkChange(newValue.value as Framework)}
+                    renderItem={(o) => {
+                        return (
+                            <span className={styles.frameworkItem}>
+                                <img src={fwLogos[o.value]} alt={`${o.value} logo`} className={styles.frameworkLogo} />
+                                {o.label}
+                            </span>
+                        );
+                    }}
+                />
+            </div>
         )
     );
 };
