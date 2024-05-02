@@ -1,3 +1,4 @@
+import { ColumnAutosizeService } from "community-modules/core/src/columns/columnAutosizeService";
 import { ColumnModel } from "../../../columns/columnModel";
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
@@ -17,6 +18,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
 
     private pinned: ColumnPinnedType;
     private column: Column;
@@ -68,7 +70,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
                 const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
 
                 const autoSizeColListener = () => {
-                    this.columnModel.autoSizeColumn(this.column, "uiColumnResized", skipHeaderOnAutoSize);
+                    this.columnAutosizeService.autoSizeColumn(this.column, "uiColumnResized", skipHeaderOnAutoSize);
                 };
 
                 this.eResize.addEventListener('dblclick', autoSizeColListener);

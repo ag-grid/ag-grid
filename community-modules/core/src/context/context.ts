@@ -441,6 +441,7 @@ export type BeanName =
 | 'chartTranslationService'
 | 'chartService'
 | 'clipboardService'
+| 'columnAutosizeService'
 | 'columnChooserFactory'
 | 'columnController'
 | 'columnDefFactory'

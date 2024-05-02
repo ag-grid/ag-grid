@@ -138,6 +138,7 @@ import { ManagedGridOptionKey, ManagedGridOptions } from "./propertyKeys";
 import { WithoutGridCommon } from "./interfaces/iCommon";
 import { MenuService, IContextMenuParams } from "./misc/menuService";
 import { escapeString } from "./utils/string";
+import { ColumnAutosizeService } from "./columns/columnAutosizeService";
 
 export interface DetailGridInfo {
     /**
@@ -182,6 +183,7 @@ export class GridApi<TData = any> {
     @Autowired('navigationService') private readonly navigationService: NavigationService;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnAutosizeService') private readonly columnAutosizeService: ColumnAutosizeService;
     @Autowired('selectionService') private readonly selectionService: ISelectionService;
     @Autowired('gridOptionsService') private readonly gos: GridOptionsService;
     @Autowired('valueService') private readonly valueService: ValueService;
@@ -1922,7 +1924,7 @@ export class GridApi<TData = any> {
     /** @deprecated v31.1 autoSizeColumn(key) deprecated, please use autoSizeColumns([colKey]) instead. */
     public autoSizeColumn(key: string | ColDef | Column, skipHeader?: boolean): void {
         this.logDeprecation('v31.1', 'autoSizeColumn(key, skipHeader)', 'autoSizeColumns([key], skipHeader)');
-        return this.columnModel.autoSizeColumns({ columns: [key], skipHeader: skipHeader, source: 'api'});
+        return this.columnAutosizeService.autoSizeColumns({ columns: [key], skipHeader: skipHeader, source: 'api'});
     }
 
     /**
@@ -1931,7 +1933,7 @@ export class GridApi<TData = any> {
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      */
     public autoSizeColumns(keys: (string | ColDef | Column)[], skipHeader?: boolean): void {
-        this.columnModel.autoSizeColumns({ columns: keys, skipHeader: skipHeader, source: 'api'});
+        this.columnAutosizeService.autoSizeColumns({ columns: keys, skipHeader: skipHeader, source: 'api'});
     }
 
     /**
@@ -1939,7 +1941,7 @@ export class GridApi<TData = any> {
      * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      */
-    public autoSizeAllColumns(skipHeader?: boolean): void { this.columnModel.autoSizeAllColumns('api', skipHeader); }
+    public autoSizeAllColumns(skipHeader?: boolean): void { this.columnAutosizeService.autoSizeAllColumns('api', skipHeader); }
 
     /** Set the pivot result columns. */
     public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[] | null): void { this.columnModel.setSecondaryColumns(colDefs, 'api'); }

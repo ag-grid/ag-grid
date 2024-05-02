@@ -52,6 +52,7 @@ import { PropertyChangedSource } from '../gridOptionsService';
 import { ColumnStateService, ModifyColumnsNoEventsCallbacks } from './columnStateService';
 import { ColumnEventDispatcher } from './columnEventDispatcher';
 import { ColumnMoveService } from './columnMoveService';
+import { ColumnAutosizeService } from './columnAutosizeService';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -116,7 +117,7 @@ export interface IColumnLimit {
     maxWidth?: number;
 }
 
-type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
+export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
 export type Maybe<T> = T | null | undefined;
 
 @Bean('columnModel')
@@ -136,6 +137,7 @@ export class ColumnModel extends BeanStub {
     @Autowired('columnStateService') private columnStateService: ColumnStateService;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
     @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
+    @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
 
     @Optional('aggFuncService') private aggFuncService?: IAggFuncService;
 
@@ -283,6 +285,10 @@ export class ColumnModel extends BeanStub {
         this.addManagedPropertyListeners(['defaultColDef', 'columnTypes', 'suppressFieldDotNotation'], event => this.recreateColumnDefs(convertSourceType(event.source)));
         this.addManagedPropertyListener('pivotMode', event => this.setPivotMode(this.gos.get('pivotMode'), convertSourceType(event.source)));
         this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => this.onFirstDataRendered());
+    }
+
+    public pushResizeOperation(func: ()=> void): void {
+        this.resizeOperationQueue.push(func);
     }
 
     private buildAutoGroupColumns(source: ColumnEventType) {
@@ -546,6 +552,7 @@ export class ColumnModel extends BeanStub {
         });
     }
 
+/*
     public autoSizeColumns(params: {
         columns: ColKey[];
         skipHeader?: boolean;
@@ -653,7 +660,7 @@ export class ColumnModel extends BeanStub {
         const allDisplayedColumns = this.getAllDisplayedColumns();
         this.autoSizeColumns({ columns: allDisplayedColumns, skipHeader, source });
     }
-
+*/
     // Possible candidate for reuse (alot of recursive traversal duplication)
     private getColumnsFromTree(rootColumns: IProvidedColumn[]): Column[] {
         const result: Column[] = [];
@@ -1096,7 +1103,7 @@ export class ColumnModel extends BeanStub {
             source
         );
     }
-
+/*
     // returns the width we can set to this col, taking into consideration min and max widths
     private normaliseColumnWidth(column: Column, newWidth: number): number {
         const minWidth = column.getMinWidth();
@@ -1112,7 +1119,7 @@ export class ColumnModel extends BeanStub {
 
         return newWidth;
     }
-
+*/
     private getPrimaryOrGridColumn(key: ColKey): Column | null {
         const column = this.getPrimaryColumn(key);
 
@@ -1638,7 +1645,7 @@ export class ColumnModel extends BeanStub {
     // columns based on key, getting a list of effected columns, and then updated the event
     // with either one column (if it was just one col) or a list of columns
     // used by: autoResize, setVisible, setPinned
-    private actionOnGridColumns(// the column keys this action will be on
+    public actionOnGridColumns(// the column keys this action will be on
         keys: Maybe<ColKey>[],
         // the action to do - if this returns false, the column was skipped
         // and won't be included in the event
@@ -3728,13 +3735,13 @@ export class ColumnModel extends BeanStub {
         // ensure render has finished
         setTimeout(() => {
             if (columns) {
-                this.autoSizeColumns({
+                this.columnAutosizeService.autoSizeColumns({
                     columns,
                     skipHeader,
                     source: 'autosizeColumns'
                 });
             } else {
-                this.autoSizeAllColumns('autosizeColumns', skipHeader);
+                this.columnAutosizeService.autoSizeAllColumns('autosizeColumns', skipHeader);
             }
         });
     }

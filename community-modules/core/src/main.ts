@@ -11,6 +11,7 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 // columns
 export { ColumnFactory } from "./columns/columnFactory";
 export { ColumnModel, ColumnState, ColumnStateParams, ApplyColumnStateParams, ISizeColumnsToFitParams, IColumnLimit } from "./columns/columnModel";
+export { ColumnAutosizeService } from "./columns/columnAutosizeService";
 export { ColumnKeyCreator } from "./columns/columnKeyCreator";
 export { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
 export { GroupInstanceIdCreator } from "./columns/groupInstanceIdCreator";

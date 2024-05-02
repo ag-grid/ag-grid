@@ -15,6 +15,7 @@ import {
     RowPositionUtils,
     MenuService,
     SortController,
+    ColumnAutosizeService
 } from '@ag-grid-community/core';
 import { ChartMenuItemMapper } from './chartMenuItemMapper';
 
@@ -28,7 +29,8 @@ export class MenuItemMapper extends BeanStub {
     @Autowired('chartMenuItemMapper') private readonly chartMenuItemMapper: ChartMenuItemMapper;
     @Autowired('menuService') private readonly menuService: MenuService;
     @Autowired('sortController') private readonly sortController: SortController;
-    
+    @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
+
     @Optional('clipboardService') private readonly clipboardService?: IClipboardService;
     @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
 
@@ -112,12 +114,12 @@ export class MenuItemMapper extends BeanStub {
             case 'autoSizeThis':
                 return {
                     name: localeTextFunc('autosizeThiscolumn', 'Autosize This Column'),
-                    action: () => this.columnModel.autoSizeColumn(column, "contextMenu", skipHeaderOnAutoSize)
+                    action: () => this.columnAutosizeService.autoSizeColumn(column, "contextMenu", skipHeaderOnAutoSize)
                 };
             case 'autoSizeAll':
                 return {
                     name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
-                    action: () => this.columnModel.autoSizeAllColumns("contextMenu", skipHeaderOnAutoSize)
+                    action: () => this.columnAutosizeService.autoSizeAllColumns("contextMenu", skipHeaderOnAutoSize)
                 };
             case 'rowGroup':
                 return {
