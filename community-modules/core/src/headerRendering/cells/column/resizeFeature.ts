@@ -1,3 +1,4 @@
+import { ColumnSizeService } from "@ag-grid-community/core";
 import { ColumnAutosizeService } from "community-modules/core/src/columns/columnAutosizeService";
 import { ColumnModel } from "../../../columns/columnModel";
 import { BeanStub } from "../../../context/beanStub";
@@ -18,6 +19,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
     @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
 
     private pinned: ColumnPinnedType;
@@ -127,7 +129,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
         this.lastResizeAmount = resizeAmountNormalised;
 
-        this.columnModel.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnResized");
+        this.columnSizeService.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnResized");
 
         if (finished) {
             this.toggleColumnResizing(false);

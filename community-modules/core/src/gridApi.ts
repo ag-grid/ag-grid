@@ -1,5 +1,5 @@
 import { AlignedGridsService } from "./alignedGridsService";
-import { ApplyColumnStateParams, ColumnModel, ColumnState, ISizeColumnsToFitParams } from "./columns/columnModel";
+import { ApplyColumnStateParams, ColumnModel, ColumnState } from "./columns/columnModel";
 import { Autowired, Bean, Context, Optional, PostConstruct } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
@@ -143,6 +143,8 @@ import { ColumnGetStateService } from "./columns/columnGetStateService";
 import { ColumnApplyStateService } from "./columns/columnApplyStateService";
 import { ColumnGroupStateService } from "./columns/columnGroupStateService";
 import { ColumnMoveService } from "./columns/columnMoveService";
+import { ColumnSizeService, ISizeColumnsToFitParams } from "./columns/columnSizeService";
+
 
 export interface DetailGridInfo {
     /**
@@ -187,6 +189,7 @@ export class GridApi<TData = any> {
     @Autowired('navigationService') private readonly navigationService: NavigationService;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnSizeService') private readonly columnSizeService: ColumnSizeService;
     @Autowired('columnGetStateService') private readonly columnGetStateService: ColumnGetStateService;
     @Autowired('columnGroupStateService') private readonly columnGroupStateService: ColumnGroupStateService;
     @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
@@ -1756,7 +1759,7 @@ export class GridApi<TData = any> {
      **/
     public sizeColumnsToFit(paramsOrGridWidth?: ISizeColumnsToFitParams | number) {
         if (typeof paramsOrGridWidth === 'number') {
-            this.columnModel.sizeColumnsToFit(paramsOrGridWidth, 'api');
+            this.columnSizeService.sizeColumnsToFit(paramsOrGridWidth, 'api');
         } else {
             this.gridBodyCtrl.sizeColumnsToFit(paramsOrGridWidth);
         }
@@ -1851,11 +1854,11 @@ export class GridApi<TData = any> {
     /** @deprecated v31.1 setColumnWidths(key, newWidth) deprecated, please use setColumnWidths( [{key: newWidth}] ) instead. */
     public setColumnWidth(key: string | ColDef | Column, newWidth: number, finished: boolean = true, source: ColumnEventType = 'api'): void {
         this.logDeprecation('v31.1', 'setColumnWidth(col, width)', 'setColumnWidths([{key: col, newWidth: width}])');
-        this.columnModel.setColumnWidths([{ key, newWidth }], false, finished, source);
+        this.columnSizeService.setColumnWidths([{ key, newWidth }], false, finished, source);
     }
     /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
     public setColumnWidths(columnWidths: { key: string | ColDef | Column, newWidth: number }[], finished: boolean = true, source: ColumnEventType = 'api'): void {
-        this.columnModel.setColumnWidths(columnWidths, false, finished, source);
+        this.columnSizeService.setColumnWidths(columnWidths, false, finished, source);
     }
 
     /** Get the pivot mode. */

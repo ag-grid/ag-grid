@@ -94,7 +94,7 @@ export class ColumnMoveService {
        });
 
        return rulePassed;
-   }
+    }
 
     public doesMovePassMarryChildren(allColumnsCopy: Column[]): boolean {
         let rulePassed = true;

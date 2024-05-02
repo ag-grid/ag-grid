@@ -20,12 +20,6 @@ export class ColumnAutosizeService extends BeanStub {
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
-    private shouldQueueResizeOperations: boolean;
-
-    public setShouldQueueResizeOperations(value: boolean): void {
-        this.shouldQueueResizeOperations = value;
-    }
-
     public autoSizeColumns(params: {
         columns: ColKey[];
         skipHeader?: boolean;
@@ -33,7 +27,7 @@ export class ColumnAutosizeService extends BeanStub {
         stopAtGroup?: ColumnGroup;
         source?: ColumnEventType;
     }): void {
-        if (this.shouldQueueResizeOperations) {
+        if (this.columnModel.isShouldQueueResizeOperations()) {
             this.columnModel.pushResizeOperation(() => this.autoSizeColumns(params));
             return;
         }
@@ -125,7 +119,7 @@ export class ColumnAutosizeService extends BeanStub {
     }
 
     public autoSizeAllColumns(source: ColumnEventType, skipHeader?: boolean): void {
-        if (this.shouldQueueResizeOperations) {
+        if (this.columnModel.isShouldQueueResizeOperations()) {
             this.columnModel.pushResizeOperation(() => this.autoSizeAllColumns(source, skipHeader));
             return;
         }

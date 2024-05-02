@@ -24,4 +24,8 @@ export class ColumnUtilsFeature extends BeanStub {
 
         return result;
     }
+
+    public getWidthOfColsInList(columnList: Column[]) {
+        return columnList.reduce((width, col) => width + col.getActualWidth(), 0);
+    }
 }

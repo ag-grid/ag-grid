@@ -1,5 +1,5 @@
 import { ColumnEventType } from "../../../events";
-import { ColumnModel, ColumnResizeSet } from "../../../columns/columnModel";
+import { ColumnModel } from "../../../columns/columnModel";
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
 import { Column, ColumnPinnedType } from "../../../entities/column";
@@ -9,6 +9,7 @@ import { HorizontalResizeService } from "../../common/horizontalResizeService";
 import { IHeaderGroupCellComp } from "./headerGroupCellCtrl";
 import { IHeaderResizeFeature } from "../abstractCell/abstractHeaderCellCtrl";
 import { ColumnAutosizeService } from "community-modules/core/src/columns/columnAutosizeService";
+import { ColumnSizeService, ColumnResizeSet } from "../../../columns/columnSizeService";
 
 interface ColumnSizeAndRatios {
     columnsToResize: Column[];
@@ -36,6 +37,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     @Autowired('horizontalResizeService') private readonly horizontalResizeService: HorizontalResizeService;
     @Autowired('autoWidthCalculator') private readonly autoWidthCalculator: AutoWidthCalculator;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnSizeService') private readonly columnSizeService: ColumnSizeService;
     @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
 
     constructor(comp: IHeaderGroupCellComp, eResize: HTMLElement,  pinned: ColumnPinnedType, columnGroup: ColumnGroup) {
@@ -207,7 +209,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             });
         }
 
-        this.columnModel.resizeColumnSets({
+        this.columnSizeService.resizeColumnSets({
             resizeSets,
             finished,
             source: source

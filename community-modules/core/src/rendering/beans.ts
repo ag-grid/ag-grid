@@ -40,6 +40,7 @@ import { Environment } from "../environment";
 import { SyncService } from "../syncService";
 import { AriaAnnouncementService } from "./ariaAnnouncementService";
 import { ColumnMoveService } from "../columns/columnMoveService";
+import { ColumnSizeService } from "../columns/columnSizeService";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -59,6 +60,7 @@ export class Beans {
     @Autowired('eventService') public readonly eventService: EventService;
     @Autowired('columnModel') public readonly columnModel: ColumnModel;
     @Autowired('columnMoveService') public readonly columnMoveService: ColumnMoveService;
+    @Autowired('columnSizeService') public readonly columnSizeService: ColumnSizeService;
     @Autowired('headerNavigationService') public readonly headerNavigationService: HeaderNavigationService;
     @Autowired('navigationService') public readonly navigationService: NavigationService;
     @Autowired('columnAnimationService') public readonly columnAnimationService: ColumnAnimationService;

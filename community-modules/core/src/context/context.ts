@@ -448,6 +448,7 @@ export type BeanName =
 | 'columnEditorFactory'
 | 'columnEventDispatcher'
 | 'columnGetStateService'
+| 'columnSizeService'
 | 'columnFactory'
 | 'columnAnimationService'
 | 'columnHoverService'

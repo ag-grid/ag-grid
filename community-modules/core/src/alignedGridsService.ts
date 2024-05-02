@@ -22,11 +22,13 @@ import { BeanStub } from "./context/beanStub";
 import { CtrlsService } from "./ctrlsService";
 import { GridApi } from "./gridApi";
 import { errorOnce } from "./utils/function";
+import { ColumnSizeService } from "./columns/columnSizeService";
 
 @Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private logger: Logger;
@@ -271,7 +273,7 @@ export class AlignedGridsService extends BeanStub {
                         delete columnWidths[col.getId()];
                     }
                 });
-                this.columnModel.setColumnWidths(Object.values(columnWidths), false, resizedEvent.finished, "alignedGridChanged");
+                this.columnSizeService.setColumnWidths(Object.values(columnWidths), false, resizedEvent.finished, "alignedGridChanged");
                 break;
         }
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();

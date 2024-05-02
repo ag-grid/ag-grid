@@ -11,6 +11,7 @@ import { WithoutGridCommon } from "../interfaces/iCommon";
 import { PinnedWidthService } from "./pinnedWidthService";
 import { Column } from "../entities/column";
 import { ProcessUnpinnedColumnsParams } from "../interfaces/iCallbackParams";
+import { ColumnSizeService } from "../columns/columnSizeService";
 
 // listens to changes in the center viewport size, for column and row virtualisation,
 // and adjusts grid as necessary. there are two viewports, one for horizontal and one for
@@ -20,6 +21,7 @@ export class ViewportSizeFeature extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
     private centerContainerCtrl: RowContainerCtrl;
@@ -68,7 +70,7 @@ export class ViewportSizeFeature extends BeanStub {
 
             if (newWidth !== this.centerWidth) {
                 this.centerWidth = newWidth;
-                this.columnModel.refreshFlexedColumns(
+                this.columnSizeService.refreshFlexedColumns(
                     { viewportWidth: this.centerWidth, updateBodyWidths: true, fireResizedEvent: true }
                 );
             }

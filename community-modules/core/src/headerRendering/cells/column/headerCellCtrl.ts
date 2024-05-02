@@ -108,7 +108,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     
         const newWidth = Math.min(Math.max(actualWidth + delta, minWidth), maxWidth);
 
-        this.beans.columnModel.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true, 'uiColumnResized');
+        this.beans.columnSizeService.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true, 'uiColumnResized');
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
