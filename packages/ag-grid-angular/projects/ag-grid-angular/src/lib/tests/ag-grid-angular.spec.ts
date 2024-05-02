@@ -18,7 +18,7 @@ import { AgGridAngular } from '../ag-grid-angular.component';
         [modules]="modules"
         (gridReady)="onGridReady($event)"
         [suppressBrowserResizeObserver]="suppressBrowserResizeObserver"
-        (firstDataRendered)="onFirstDataRendered($event)"></ag-grid-angular>`,
+        (firstDataRendered)="onFirstDataRendered($event)" />`,
 })
 export class GridWrapperComponent {
     modules: Module[] = [ClientSideRowModelModule];

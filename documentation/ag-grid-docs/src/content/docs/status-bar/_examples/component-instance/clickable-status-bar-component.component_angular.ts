@@ -1,17 +1,17 @@
-import { NgIf } from "@angular/common";
 import { IStatusPanelParams } from "@ag-grid-community/core";
 import { Component } from "@angular/core";
 import { IStatusPanelAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     standalone: true,
-    imports: [NgIf],
     template: `
-        <div class="container" *ngIf="visible">
-            <div>
-                <span class="component">Status Bar Component <input type="button" (click)="onClick()" value="Click Me"/></span>
+        @if (visible) {
+            <div class="container">
+                <div>
+                    <span class="component">Status Bar Component <input type="button" (click)="onClick()" value="Click Me"/></span>
+                </div>
             </div>
-        </div>
+        }
     `
 })
 export class ClickableStatusBarComponent implements IStatusPanelAngularComp {

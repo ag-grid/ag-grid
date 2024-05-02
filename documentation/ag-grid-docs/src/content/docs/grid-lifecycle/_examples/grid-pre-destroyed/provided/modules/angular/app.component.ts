@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {NgFor, NgIf} from '@angular/common';
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
@@ -19,38 +18,45 @@ interface ColumnWidth {
 
 @Component({
     standalone: true,
-    imports: [AgGridAngular, NgIf, NgFor],
+    imports: [AgGridAngular],
     selector: 'my-app',
     template: `
         <div class="test-container">
             <div class="test-header">
-                <div *ngIf="isVisible" id="exampleButtons" style="margin-bottom: 1rem;">
-                    <button (click)="updateColumnWidth()">Change Columns Width</button>
-                    <button (click)="destroyGrid()">Destroy Grid</button>
-                </div>
-                <div *ngIf="showPreDestroyState" id="gridPreDestroyedState">
-                    State captured on grid pre-destroyed event:<br/>
-                    <strong>Column fields and widths</strong>
-                    <div className="values">
-                        <ul>
-                            <li *ngFor="let item of columnsWidthOnPreDestroyed">
-                                Field: {{item.field}} | Width: {{item.width}}px
-                            </li>
-                        </ul>
+                @if(isVisible) {
+                    <div id="exampleButtons" style="margin-bottom: 1rem;">
+                        <button (click)="updateColumnWidth()">Change Columns Width</button>
+                        <button (click)="destroyGrid()">Destroy Grid</button>
                     </div>
-                    <button (click)="reloadGrid()">Reload Grid</button>
-                </div>
+                }
+                @if(showPreDestroyState) {
+                    <div id="gridPreDestroyedState">
+                        State captured on grid pre-destroyed event:<br/>
+                        <strong>Column fields and widths</strong>
+                        <div className="values">
+                            <ul>
+                                @for (item of columnsWidthOnPreDestroyed; track item.field) {
+                                    <li>
+                                        Field: {{item.field}} | Width: {{item.width}}px
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <button (click)="reloadGrid()">Reload Grid</button>
+                    </div>
+                }
             </div>
-            <ag-grid-angular
-                style="width: 100%; height: 100%;"
-                *ngIf="isVisible"
-                [class]="themeClass"
-                [columnDefs]="columnDefs"
-                [defaultColDef]="defaultColDef"
-                [rowData]="rowData"
-                [gridOptions]="gridOptions"
-                (gridReady)="onGridReady($event)"
-            ></ag-grid-angular>
+            @if(isVisible) {
+                <ag-grid-angular
+                    style="width: 100%; height: 100%;"
+                    [class]="themeClass"
+                    [columnDefs]="columnDefs"
+                    [defaultColDef]="defaultColDef"
+                    [rowData]="rowData"
+                    [gridOptions]="gridOptions"
+                    (gridReady)="onGridReady($event)"
+                />
+            }
         </div>
     `
 })

@@ -22,7 +22,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
       <div id="numberOfRows">Number of rows: {{displayedRows}}</div>
     </div>
     <ag-grid-angular style="width: 100%; height: 100%;" [class]="themeClass" [columnDefs]="columnDefs"
-      [rowData]="rowData" [quickFilterText]="quickFilterText" (modelUpdated)="onModelUpdated($event)"></ag-grid-angular>
+      [rowData]="rowData" [quickFilterText]="quickFilterText" (modelUpdated)="onModelUpdated($event)" />
   </div>`
 })
 

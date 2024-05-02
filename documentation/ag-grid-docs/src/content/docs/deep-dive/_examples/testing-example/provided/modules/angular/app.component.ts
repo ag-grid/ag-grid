@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { NgIf } from '@angular/common';
 import { ModuleRegistry, CellValueChangedEvent, ColDef, GridReadyEvent, ICellRendererParams, SelectionChangedEvent, ValueFormatterParams } from '@ag-grid-community/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import "@ag-grid-community/styles/ag-grid.css";
@@ -24,14 +23,15 @@ interface IRow {
 @Component({
   selector: 'app-mission-result-renderer',
   standalone: true,
-  imports: [NgIf],
   template:`
-  <span *ngIf="value" >
-    <img
-      [alt]="value"
-      [src]="'https://www.ag-grid.com/example-assets/icons/' + value + '.png'"
-      [height]="30"
-    />
+  <span>
+    @if (value) {
+      <img
+        [alt]="value"
+        [src]="'https://www.ag-grid.com/example-assets/icons/' + value + '.png'"
+        [height]="30"
+      />
+    }
   </span>
   `,
   styles: ["img { width: auto; height: auto; } span {display: flex; height: 100%; justify-content: center; align-items: center} "]
@@ -54,15 +54,16 @@ export class MissionResultRenderer implements ICellRendererAngularComp {
 @Component({
   selector: 'app-company-logo-renderer',
   standalone: true,
-  imports: [NgIf],
   template: `
-  <span *ngIf="value" >
-    <img
-      [alt]="value"
-      [src]="'https://www.ag-grid.com/example-assets/space-company-logos/' + value.toLowerCase() + '.png'"
-      [height]="30"
-    />
-    <p>{{ value }}</p>
+  <span>
+    @if (value) {
+      <img
+        [alt]="value"
+        [src]="'https://www.ag-grid.com/example-assets/space-company-logos/' + value.toLowerCase() + '.png'"
+        [height]="30"
+      />
+      <p>{{ value }}</p>
+    }
   </span>
   `,
   styles: ["img {display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1);} span {display: flex; height: 100%; width: 100%; align-items: center} p { text-overflow: ellipsis; overflow: hidden; white-space: nowrap }"]
@@ -99,8 +100,7 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
       (gridReady)="onGridReady($event)"
       (cellValueChanged)="onCellValueChanged($event)"
       (selectionChanged)="onSelectionChanged($event)"
-    >
-    </ag-grid-angular>
+    />
   </div>
   `
 })

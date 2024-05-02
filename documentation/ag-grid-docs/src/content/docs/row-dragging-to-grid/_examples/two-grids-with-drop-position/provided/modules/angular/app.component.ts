@@ -37,8 +37,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
                         [suppressMoveWhenRowDragging]="true"
                         [rowData]="leftRowData"
                         [columnDefs]="columns"
-                        (gridReady)="onGridReady($event, 'Left')">
-                    </ag-grid-angular>
+                        (gridReady)="onGridReady($event, 'Left')" />           
                 </div>
             </div>
 
@@ -71,8 +70,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
                         [suppressMoveWhenRowDragging]="true"
                         [rowData]="rightRowData"
                         [columnDefs]="columns"
-                        (gridReady)="onGridReady($event, 'Right')">
-                    </ag-grid-angular>
+                        (gridReady)="onGridReady($event, 'Right')" />
                 </div>
             </div>
 

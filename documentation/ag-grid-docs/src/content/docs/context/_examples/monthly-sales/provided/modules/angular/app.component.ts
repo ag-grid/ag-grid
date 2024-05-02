@@ -62,7 +62,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, Set
       [rowData]="rowData"
       [class]="themeClass"
       (gridReady)="onGridReady($event)"
-    ></ag-grid-angular>
+     />
   </div>`,
 })
 export class AppComponent {

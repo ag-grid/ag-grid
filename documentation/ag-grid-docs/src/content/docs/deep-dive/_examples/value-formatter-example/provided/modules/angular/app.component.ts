@@ -34,8 +34,7 @@ interface IRow {
       [defaultColDef]="defaultColDef" 
       (gridReady)="onGridReady($event)"
       [pagination]="true"
-    >
-    </ag-grid-angular>
+    />
   </div>
   `
 })

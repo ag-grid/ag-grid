@@ -1,5 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { IHeaderAngularComp } from '@ag-grid-community/angular'
 import { IHeaderParams } from '@ag-grid-community/core'
 
@@ -9,18 +9,21 @@ export interface ICustomHeaderParams {
 
 @Component({
     standalone: true,
-    imports: [NgIf, NgClass],
+    imports: [NgClass],
     template: `
       <div class="headerWrapper">
-      <div *ngIf="params.enableMenu" #menuButton class="customHeaderMenuButton" (click)="onMenuClicked($event)"><i class="fa {{params.menuIcon}}"></i>
-      </div>
-      <div #label class="customHeaderLabel">{{ params.displayName }}</div>
-      <div *ngIf="params.enableSorting" (click)="onSortRequested('asc', $event)" [ngClass]="ascSort" class="customSortDownLabel"><i
-          class="fa fa-long-arrow-alt-down"></i></div>
-      <div *ngIf="params.enableSorting" (click)="onSortRequested('desc', $event)" [ngClass]="descSort" class="customSortUpLabel"><i
-          class="fa fa-long-arrow-alt-up"></i></div>
-      <div *ngIf="params.enableSorting" (click)="onSortRequested('', $event)" [ngClass]="noSort" class="customSortRemoveLabel"><i
-          class="fa fa-times"></i></div>
+        @if (params.enableMenu) {
+            <div #menuButton class="customHeaderMenuButton" (click)="onMenuClicked($event)"><i class="fa {{params.menuIcon}}"></i> </div>
+        }
+        <div #label class="customHeaderLabel">{{ params.displayName }}</div>
+        @if (params.enableSorting) {
+            <div (click)="onSortRequested('asc', $event)" [ngClass]="ascSort" class="customSortDownLabel"><i
+                class="fa fa-long-arrow-alt-down"></i></div>
+            <div (click)="onSortRequested('desc', $event)" [ngClass]="descSort" class="customSortUpLabel"><i
+                class="fa fa-long-arrow-alt-up"></i></div>
+            <div (click)="onSortRequested('', $event)" [ngClass]="noSort" class="customSortRemoveLabel"><i
+                class="fa fa-times"></i></div>
+        }
       </div>
     `,
     styles: [

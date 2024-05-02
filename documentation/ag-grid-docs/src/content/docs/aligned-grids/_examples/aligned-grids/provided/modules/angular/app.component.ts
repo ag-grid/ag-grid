@@ -31,8 +31,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
                 [rowData]="rowData"
                 [gridOptions]="topOptions"
                 [alignedGrids]="[bottomGrid]"
-                [columnDefs]="columnDefs">
-        </ag-grid-angular>
+                [columnDefs]="columnDefs" />
 
         <div style='height: 5%'></div>
 
@@ -43,8 +42,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
                 [rowData]="rowData"
                 [gridOptions]="bottomOptions"
                 [alignedGrids]="[topGrid]"
-                [columnDefs]="columnDefs">
-        </ag-grid-angular>
+                [columnDefs]="columnDefs" />
     `
 })
 export class AppComponent {

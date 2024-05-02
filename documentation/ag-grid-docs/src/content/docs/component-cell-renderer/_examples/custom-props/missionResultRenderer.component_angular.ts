@@ -1,6 +1,5 @@
 import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 import { ICellRendererParams } from "@ag-grid-community/core";
-import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 
 interface MissionCellRendererParams extends ICellRendererParams {
@@ -10,15 +9,16 @@ interface MissionCellRendererParams extends ICellRendererParams {
 @Component({
 selector: 'app-mission-result-renderer',
 standalone: true,
-imports: [NgIf],
 template:`
-<span *ngIf="value" :class="missionSpan" >
-  <img
-    [alt]="value"
-    [src]="value"
-    [height]="30"
-    :class="missionIcon"
-  />
+<span :class="missionSpan" >
+  @if (value) {
+    <img
+      [alt]="value"
+      [src]="value"
+      [height]="30"
+      :class="missionIcon"
+    />
+  }
 </span>
 `,
 styles: ["img { width: auto; height: auto; } span {display: flex; height: 100%; justify-content: center; align-items: center} "]

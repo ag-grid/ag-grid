@@ -18,8 +18,7 @@ The filter value uses two way data binding, via `[(ngModel)]=quickFilterText`, t
 
 <ag-grid-angular 
    [quickFilterText]="quickFilterText" 
-   (modelUpdated)="onModelUpdated($event)">
-</ag-grid-angular>
+   (modelUpdated)="onModelUpdated($event)" />
 ```
 
 The current number of displayed rows is shown in the template and is kept up to date by adding an event listener to the `(modelUpdated)` output.

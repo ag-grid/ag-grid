@@ -114,8 +114,7 @@ import {CubeComponent} from './cube.component';
 @Component({
   selector: 'app-root',
   template: `
-      <ag-grid-angular [context]="context" /* ...other properties */>
-      </ag-grid-angular>
+      <ag-grid-angular [context]="context" /* ...other properties */ />
   `
 })
 export class AppComponent {
@@ -403,7 +402,7 @@ const gridOptions = {
          class="ag-theme-quartz"
          [components]="components"
          ...other properties...  
-     ></ag-grid-angular>
+      />
    `
 })
 export class AppComponent {

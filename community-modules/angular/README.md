@@ -107,8 +107,7 @@ export class AppComponent {
 	style="width: 500px; height: 500px;"
 	class="ag-theme-quartz"
 	[rowData]="rowData"
-	[columnDefs]="columnDefs">
-</ag-grid-angular>
+	[columnDefs]="columnDefs" />
 ```
 
 ## Issue Reporting

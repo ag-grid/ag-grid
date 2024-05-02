@@ -1,14 +1,14 @@
 import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 import { ICellRendererParams } from "@ag-grid-community/core";
-import { NgFor } from '@angular/common';
 import { Component } from '@angular/core';
 
 @Component({
   standalone: true,
-  imports: [NgFor],
   template: `
       <span :class="imgSpan" >
-          <img *ngFor="let number of arr" [src]="src" :class="priceIcon" />
+        @for (number of arr; track $index) {
+          <img [src]="src" :class="priceIcon" />
+        }
       </span>
   `,
 })
