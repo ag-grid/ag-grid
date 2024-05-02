@@ -42,6 +42,7 @@ import { WithoutGridCommon } from "../interfaces/iCommon";
 import { debounce } from "../utils/function";
 import { ColumnAnimationService } from "../rendering/columnAnimationService";
 import { Column } from "../entities/column";
+import { ColumnGetStateService } from "../columns/columnGetStateService";
 
 @Bean('stateService')
 export class StateService extends BeanStub {
@@ -49,6 +50,7 @@ export class StateService extends BeanStub {
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnGetStateService') private readonly columnGetStateService: ColumnGetStateService;
     @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
     @Autowired('rowModel') private readonly rowModel: IRowModel;
     @Autowired('selectionService') private readonly selectionService: ISelectionService;
@@ -244,7 +246,7 @@ export class StateService extends BeanStub {
         const columnSizes: ColumnSizeState[] = [];
         const columns: string[] = [];
 
-        const columnState = this.columnModel.getColumnState();
+        const columnState = this.columnGetStateService.getColumnState();
         for (let i = 0; i < columnState.length; i++) {
             const {
                 colId,

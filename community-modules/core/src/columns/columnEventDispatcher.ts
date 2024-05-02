@@ -12,7 +12,7 @@ import { WithoutGridCommon } from '../interfaces/iCommon';
 
 /* 
 Created this class to:
-a) common methods, eg some methods here called by ColumnModel and also ColumnStateService
+a) common methods, eg some methods here called by ColumnModel and also ColumnApplyStateService
 b) to remove plumbing code from ColumnModel, to help make ColumnModel more maintainable
 */
 @Bean('columnEventDispatcher')

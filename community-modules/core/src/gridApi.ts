@@ -139,6 +139,8 @@ import { WithoutGridCommon } from "./interfaces/iCommon";
 import { MenuService, IContextMenuParams } from "./misc/menuService";
 import { escapeString } from "./utils/string";
 import { ColumnAutosizeService } from "./columns/columnAutosizeService";
+import { ColumnGetStateService } from "./columns/columnGetStateService";
+import { ColumnApplyStateService } from "./columns/columnApplyStateService";
 
 export interface DetailGridInfo {
     /**
@@ -183,6 +185,8 @@ export class GridApi<TData = any> {
     @Autowired('navigationService') private readonly navigationService: NavigationService;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnGetStateService') private readonly columnGetStateService: ColumnGetStateService;
+    @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
     @Autowired('columnAutosizeService') private readonly columnAutosizeService: ColumnAutosizeService;
     @Autowired('selectionService') private readonly selectionService: ISelectionService;
     @Autowired('gridOptionsService') private readonly gos: GridOptionsService;
@@ -1773,9 +1777,9 @@ export class GridApi<TData = any> {
     /** Applies the state of the columns from a previous state. Returns `false` if one or more columns could not be found. */
     public applyColumnState(params: ApplyColumnStateParams): boolean { return this.columnModel.applyColumnState(params, 'api'); }
     /** Gets the state of the columns. Typically used when saving column state. */
-    public getColumnState(): ColumnState[] { return this.columnModel.getColumnState(); }
+    public getColumnState(): ColumnState[] { return this.columnGetStateService.getColumnState(); }
     /** Sets the state back to match the originally provided column definitions. */
-    public resetColumnState(): void { this.columnModel.resetColumnState('api'); }
+    public resetColumnState(): void { this.columnApplyStateService.resetColumnState('api'); }
     /** Gets the state of the column groups. Typically used when saving column group state. */
     public getColumnGroupState(): { groupId: string, open: boolean }[] { return this.columnModel.getColumnGroupState(); }
     /** Sets the state of the column group state from a previous state. */
