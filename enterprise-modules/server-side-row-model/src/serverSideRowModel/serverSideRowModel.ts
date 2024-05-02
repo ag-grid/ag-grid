@@ -32,7 +32,8 @@ import {
     FilterModel,
     AdvancedFilterModel,
     ModuleRegistry,
-    ModuleNames
+    ModuleNames,
+    FunctionColumnsService
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
@@ -56,6 +57,7 @@ export interface SSRMParams {
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -182,9 +184,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         // check if anything pertaining to fetching data has changed, and if it has, reset, but if
         // it has not, don't reset
-        const rowGroupColumnVos = this.columnsToValueObjects(this.columnModel.getRowGroupColumns());
-        const valueColumnVos = this.columnsToValueObjects(this.columnModel.getValueColumns());
-        const pivotColumnVos = this.columnsToValueObjects(this.columnModel.getPivotColumns());
+        const rowGroupColumnVos = this.columnsToValueObjects(this.functionColumnsService.getRowGroupColumns());
+        const valueColumnVos = this.columnsToValueObjects(this.functionColumnsService.getValueColumns());
+        const pivotColumnVos = this.columnsToValueObjects(this.functionColumnsService.getPivotColumns());
 
         // compares two sets of columns, ensuring no columns have been added or removed (unless specified via allowRemovedColumns)
         // if the columns are found, also ensures the field and aggFunc properties have not been changed.
@@ -342,9 +344,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private createStoreParams(): SSRMParams {
 
-        const rowGroupColumnVos = this.columnsToValueObjects(this.columnModel.getRowGroupColumns());
-        const valueColumnVos = this.columnsToValueObjects(this.columnModel.getValueColumns());
-        const pivotColumnVos = this.columnsToValueObjects(this.columnModel.getPivotColumns());
+        const rowGroupColumnVos = this.columnsToValueObjects(this.functionColumnsService.getRowGroupColumns());
+        const valueColumnVos = this.columnsToValueObjects(this.functionColumnsService.getValueColumns());
+        const pivotColumnVos = this.columnsToValueObjects(this.functionColumnsService.getPivotColumns());
 
         const dynamicRowHeight = this.gos.isGetRowHeightFunction();
 

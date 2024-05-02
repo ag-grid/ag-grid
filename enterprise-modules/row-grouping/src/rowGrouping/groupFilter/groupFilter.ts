@@ -14,6 +14,7 @@ import {
     RefSelector,
     TabGuardComp,
     FilterWrapperComp,
+    FunctionColumnsService,
 } from '@ag-grid-community/core';
 
 interface FilterColumnPair {
@@ -27,6 +28,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
 
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('functionColumnsService') private readonly functionColumnsService: FunctionColumnsService;
 
     @RefSelector('eGroupField') private readonly eGroupField: HTMLElement;
     @RefSelector('eUnderlyingFilter') private readonly eUnderlyingFilter: HTMLElement;
@@ -86,7 +88,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
             _.warnOnce('Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.');
             return [];
         }
-        const sourceColumns = this.columnModel.getSourceColumnsForGroupColumn(this.groupColumn);
+        const sourceColumns = this.functionColumnsService.getSourceColumnsForGroupColumn(this.groupColumn);
         if (!sourceColumns) {
             _.warnOnce('Group Column Filter only works on group columns. Please use a different filter.');
             return [];

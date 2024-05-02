@@ -15,6 +15,7 @@ import { ColumnGetStateService } from "./columnGetStateService";
 import { ApplyColumnStateParams, ColumnModel, ColumnState, ColumnStateParams } from './columnModel';
 import { ColumnMoveService } from "./columnMoveService";
 import { ColumnUtilsFeature } from "./columnUtilsFeature";
+import { FunctionColumnsService } from "./functionColumnsService";
 
 export interface ModifyColumnsNoEventsCallbacks {
     addGroupCol(col: Column): void;
@@ -33,7 +34,8 @@ export class ColumnApplyStateService extends BeanStub {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
     @Autowired('columnGetStateService') private columnGetStateService: ColumnGetStateService;
-    
+    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
+
     private columnUtilsFeature: ColumnUtilsFeature;
 
     @PostConstruct
@@ -250,9 +252,9 @@ export class ColumnApplyStateService extends BeanStub {
     public compareColumnStatesAndDispatchEvents(source: ColumnEventType): () => void {
 
         const startState = {
-            rowGroupColumns: this.columnModel.getRowGroupColumns().slice(),
-            pivotColumns: this.columnModel.getPivotColumns().slice(),
-            valueColumns: this.columnModel.getValueColumns().slice()
+            rowGroupColumns: this.functionColumnsService.getRowGroupColumns().slice(),
+            pivotColumns: this.functionColumnsService.getPivotColumns().slice(),
+            valueColumns: this.functionColumnsService.getValueColumns().slice()
         };
 
         const columnStateBefore = this.columnGetStateService.getColumnState();
@@ -312,13 +314,13 @@ export class ColumnApplyStateService extends BeanStub {
 
             dispatchWhenListsDifferent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
                 startState.rowGroupColumns,
-                this.columnModel.getRowGroupColumns(),
+                this.functionColumnsService.getRowGroupColumns(),
                 columnIdMapper
             );
 
             dispatchWhenListsDifferent(Events.EVENT_COLUMN_PIVOT_CHANGED,
                 startState.pivotColumns,
-                this.columnModel.getPivotColumns(),
+                this.functionColumnsService.getPivotColumns(),
                 columnIdMapper
             );
 

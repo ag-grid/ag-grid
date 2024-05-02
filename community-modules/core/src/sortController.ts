@@ -2,6 +2,7 @@ import { Autowired, Bean } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
 import { ColumnModel } from "./columns/columnModel";
+import { FunctionColumnsService } from "./columns/functionColumnsService";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
 import { SortOption } from "./rowNodes/rowNodeSorter";
 import { WithoutGridCommon } from "./interfaces/iCommon";
@@ -20,6 +21,7 @@ export class SortController extends BeanStub {
     private static DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
 
     public progressSort(column: Column, multiSort: boolean, source: ColumnEventType): void {
         const nextDirection = this.getNextSortDirection(column);
@@ -36,7 +38,7 @@ export class SortController extends BeanStub {
         let columnsToUpdate = [column];
         if (isColumnsSortingCoupledToGroup) {
             if (column.getColDef().showRowGroup) {
-                const rowGroupColumns = this.columnModel.getSourceColumnsForGroupColumn(column);
+                const rowGroupColumns = this.functionColumnsService.getSourceColumnsForGroupColumn(column);
                 const sortableRowGroupColumns = rowGroupColumns?.filter(col => col.isSortable());
                 
                 if (sortableRowGroupColumns) {
@@ -178,7 +180,7 @@ export class SortController extends BeanStub {
             });
         }
 
-        const sortedRowGroupCols = this.columnModel.getRowGroupColumns()
+        const sortedRowGroupCols = this.functionColumnsService.getRowGroupColumns()
             .filter(col => !!col.getSort());
 
         // when both cols are missing sortIndex, we use the position of the col in all cols list.
@@ -263,7 +265,7 @@ export class SortController extends BeanStub {
     }
 
     public getDisplaySortForColumn(column: Column): SortDirection | 'mixed' | undefined {
-        const linkedColumns = this.columnModel.getSourceColumnsForGroupColumn(column);
+        const linkedColumns = this.functionColumnsService.getSourceColumnsForGroupColumn(column);
         if (!this.canColumnDisplayMixedSort(column) || !linkedColumns?.length) {
             return column.getSort();
         }

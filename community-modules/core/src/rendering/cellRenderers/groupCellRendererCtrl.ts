@@ -1,4 +1,5 @@
 import { ColumnModel } from "../../columns/columnModel";
+import { FunctionColumnsService } from "../../columns/functionColumnsService";
 import { UserCompDetails, UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { KeyCode } from "../../constants/keyCode";
 import { BeanStub } from "../../context/beanStub";
@@ -97,6 +98,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired("ctrlsService") private ctrlsService: CtrlsService;
+    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
 
     private params: GroupCellRendererParams;
 
@@ -157,7 +159,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.findDisplayedGroupNode();
 
         if (!topLevelFooter) {
-            const showingFooterTotal = params.node.footer && params.node.rowGroupIndex === this.columnModel.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup);
+            const showingFooterTotal = params.node.footer && params.node.rowGroupIndex === this.functionColumnsService.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup);
             // if we're always showing a group value
             const isAlwaysShowing = this.gos.get('groupDisplayType') != 'multipleColumns' || this.gos.get('treeData');
             // if the cell is populated with a parent value due to `showOpenedGroup`
@@ -167,7 +169,7 @@ export class GroupCellRendererCtrl extends BeanStub {
                         !params.node.group ||
                         (
                             params.node.rowGroupIndex != null &&
-                            params.node.rowGroupIndex > this.columnModel.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup)
+                            params.node.rowGroupIndex > this.functionColumnsService.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup)
                         )
                     )
                 ))
@@ -243,7 +245,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         if (colDef!.showRowGroup === true) { return true; }
 
-        const rowGroupCols = this.columnModel.getRowGroupColumns();
+        const rowGroupCols = this.functionColumnsService.getRowGroupColumns();
         // this is a sanity check, rowGroupCols should always be present
         if (!rowGroupCols || rowGroupCols.length === 0) { return true; }
 

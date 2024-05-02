@@ -1,12 +1,13 @@
-import { Autowired, Bean, ColumnModel } from "@ag-grid-community/core";
+import { Autowired, Bean, ColumnModel, FunctionColumnsService } from "@ag-grid-community/core";
 
 @Bean('ssrmListenerUtils')
 export class ListenerUtils {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
 
     public isSortingWithValueColumn(changedColumnsInSort: string[]): boolean {
-        const valueColIds = this.columnModel.getValueColumns().map(col => col.getColId());
+        const valueColIds = this.functionColumnsService.getValueColumns().map(col => col.getColId());
 
         for (let i = 0; i < changedColumnsInSort.length; i++) {
             if (valueColIds.indexOf(changedColumnsInSort[i]) > -1) {

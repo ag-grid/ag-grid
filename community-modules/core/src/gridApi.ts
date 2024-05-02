@@ -143,6 +143,7 @@ import { ColumnGetStateService } from "./columns/columnGetStateService";
 import { ColumnApplyStateService } from "./columns/columnApplyStateService";
 import { ColumnGroupStateService } from "./columns/columnGroupStateService";
 import { ColumnMoveService } from "./columns/columnMoveService";
+import { FunctionColumnsService } from "./columns/functionColumnsService";
 import { ColumnSizeService, ISizeColumnsToFitParams } from "./columns/columnSizeService";
 
 
@@ -195,6 +196,7 @@ export class GridApi<TData = any> {
     @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
     @Autowired('columnAutosizeService') private readonly columnAutosizeService: ColumnAutosizeService;
     @Autowired('columnMoveService') private readonly columnMoveService: ColumnMoveService;
+    @Autowired('functionColumnsService') private readonly functionColumnsService: FunctionColumnsService;
     @Autowired('selectionService') private readonly selectionService: ISelectionService;
     @Autowired('gridOptionsService') private readonly gos: GridOptionsService;
     @Autowired('valueService') private readonly valueService: ValueService;
@@ -1054,7 +1056,7 @@ export class GridApi<TData = any> {
      */
     public setRowCount(rowCount: number, maxRowFound?: boolean): void {
         if (this.serverSideRowModel) {
-            if (this.columnModel.isRowGroupEmpty()) {
+            if (this.functionColumnsService.isRowGroupEmpty()) {
                 this.serverSideRowModel.setRowCount(rowCount, maxRowFound);
                 return;
             }
@@ -1848,7 +1850,7 @@ export class GridApi<TData = any> {
     /** Moves columns to `toIndex`. The columns are first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
     public moveColumns(columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number) { this.columnMoveService.moveColumns(columnsToMoveKeys, toIndex, 'api'); }
     /** Move the column to a new position in the row grouping order. */
-    public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.columnModel.moveRowGroupColumn(fromIndex, toIndex, 'api'); }
+    public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.functionColumnsService.moveRowGroupColumn(fromIndex, toIndex, 'api'); }
     /** Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function. */
     public setColumnAggFunc(key: string | ColDef | Column, aggFunc: string | IAggFunc | null | undefined): void { this.columnModel.setColumnAggFunc(key, aggFunc, 'api'); }
     /** @deprecated v31.1 setColumnWidths(key, newWidth) deprecated, please use setColumnWidths( [{key: newWidth}] ) instead. */
@@ -1868,61 +1870,61 @@ export class GridApi<TData = any> {
     public getPivotResultColumn<TValue = any>(pivotKeys: string[], valueColKey: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null { return this.columnModel.getSecondaryPivotColumn(pivotKeys, valueColKey); }
 
     /** Set the value columns to the provided list of columns. */
-    public setValueColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.setValueColumns(colKeys, 'api'); }
+    public setValueColumns(colKeys: (string | ColDef | Column)[]): void { this.functionColumnsService.setValueColumns(colKeys, 'api'); }
     /** Get a list of the existing value columns. */
-    public getValueColumns(): Column[] { return this.columnModel.getValueColumns(); }
+    public getValueColumns(): Column[] { return this.functionColumnsService.getValueColumns(); }
     /** @deprecated v31.1 removeValueColumn(colKey) deprecated, please use removeValueColumns([colKey]) instead. */
     public removeValueColumn(colKey: (string | ColDef | Column)): void {
         this.logDeprecation('v31.1', 'removeValueColumn(colKey)', 'removeValueColumns([colKey])');
-        this.columnModel.removeValueColumns([colKey], 'api'); 
+        this.functionColumnsService.removeValueColumns([colKey], 'api'); 
     }
     /** Remove the given list of columns from the existing set of value columns. */
-    public removeValueColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.removeValueColumns(colKeys, 'api'); }
+    public removeValueColumns(colKeys: (string | ColDef | Column)[]): void { this.functionColumnsService.removeValueColumns(colKeys, 'api'); }
     /** @deprecated v31.1 addValueColumn(colKey) deprecated, please use addValueColumns([colKey]) instead. */
     public addValueColumn(colKey: (string | ColDef | Column)): void {
         this.logDeprecation('v31.1', 'addValueColumn(colKey)', 'addValueColumns([colKey])');
-        this.columnModel.addValueColumns([colKey], 'api');
+        this.functionColumnsService.addValueColumns([colKey], 'api');
     }
     /** Add the given list of columns to the existing set of value columns. */
-    public addValueColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.addValueColumns(colKeys, 'api'); }
+    public addValueColumns(colKeys: (string | ColDef | Column)[]): void { this.functionColumnsService.addValueColumns(colKeys, 'api'); }
 
     /** Set the row group columns. */
-    public setRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.setRowGroupColumns(colKeys, 'api'); }
+    public setRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.functionColumnsService.setRowGroupColumns(colKeys, 'api'); }
     /** @deprecated v31.1 removeRowGroupColumn(colKey) deprecated, please use removeRowGroupColumns([colKey]) instead. */
     public removeRowGroupColumn(colKey: string | ColDef | Column): void {
         this.logDeprecation('v31.1', 'removeRowGroupColumn(colKey)', 'removeRowGroupColumns([colKey])');
-        this.columnModel.removeRowGroupColumns([colKey], 'api');
+        this.functionColumnsService.removeRowGroupColumns([colKey], 'api');
     }
     /** Remove columns from the row groups. */
-    public removeRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.removeRowGroupColumns(colKeys, 'api'); }
+    public removeRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.functionColumnsService.removeRowGroupColumns(colKeys, 'api'); }
     /** @deprecated v31.1 addRowGroupColumn(colKey) deprecated, please use addRowGroupColumns([colKey]) instead. */
     public addRowGroupColumn(colKey: string | ColDef | Column): void { 
         this.logDeprecation('v31.1', 'addRowGroupColumn(colKey)', 'addRowGroupColumns([colKey])');
-        this.columnModel.addRowGroupColumns([colKey], 'api');
+        this.functionColumnsService.addRowGroupColumns([colKey], 'api');
     }
     /** Add columns to the row groups. */
-    public addRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.addRowGroupColumns(colKeys, 'api'); }
+    public addRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.functionColumnsService.addRowGroupColumns(colKeys, 'api'); }
     /** Get row group columns. */
-    public getRowGroupColumns(): Column[] { return this.columnModel.getRowGroupColumns(); }
+    public getRowGroupColumns(): Column[] { return this.functionColumnsService.getRowGroupColumns(); }
 
     /** Set the pivot columns. */
-    public setPivotColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.setPivotColumns(colKeys, 'api'); }
+    public setPivotColumns(colKeys: (string | ColDef | Column)[]): void { this.functionColumnsService.setPivotColumns(colKeys, 'api'); }
     /** @deprecated v31.1 removePivotColumn(colKey) deprecated, please use removePivotColumns([colKey]) instead. */
     public removePivotColumn(colKey: string | ColDef | Column): void {
         this.logDeprecation('v31.1', 'removePivotColumn(colKey)', 'removePivotColumns([colKey])');
-        this.columnModel.removePivotColumns([colKey], 'api');
+        this.functionColumnsService.removePivotColumns([colKey], 'api');
     }
     /** Remove pivot columns. */
-    public removePivotColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.removePivotColumns(colKeys, 'api'); }
+    public removePivotColumns(colKeys: (string | ColDef | Column)[]): void { this.functionColumnsService.removePivotColumns(colKeys, 'api'); }
     /** @deprecated v31.1 addPivotColumn(colKey) deprecated, please use addPivotColumns([colKey]) instead. */
     public addPivotColumn(colKey: string | ColDef | Column): void {
         this.logDeprecation('v31.1', 'addPivotColumn(colKey)', 'addPivotColumns([colKey])');
-        this.columnModel.addPivotColumns([colKey], 'api');
+        this.functionColumnsService.addPivotColumns([colKey], 'api');
     }
     /** Add pivot columns. */
-    public addPivotColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.addPivotColumns(colKeys, 'api'); }
+    public addPivotColumns(colKeys: (string | ColDef | Column)[]): void { this.functionColumnsService.addPivotColumns(colKeys, 'api'); }
     /** Get the pivot columns. */
-    public getPivotColumns(): Column[] { return this.columnModel.getPivotColumns(); }
+    public getPivotColumns(): Column[] { return this.functionColumnsService.getPivotColumns(); }
 
     /** Same as `getAllDisplayedColumnGroups` but just for the pinned left portion of the grid. */
     public getLeftDisplayedColumnGroups(): IHeaderColumn[] { return this.columnModel.getDisplayedTreeLeft(); }

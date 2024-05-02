@@ -40,7 +40,8 @@ import {
     Optional,
     CtrlsService,
     WithoutGridCommon,
-    ProcessRowGroupForExportParams
+    ProcessRowGroupForExportParams,
+    FunctionColumnsService
 } from "@ag-grid-community/core";
 
 interface RowCallback {
@@ -79,6 +80,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
@@ -960,7 +962,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             let column = node.rowGroupColumn as Column;
 
             if (!column && node.footer && node.level === -1) {
-                column = this.columnModel.getRowGroupColumns()[0];
+                column = this.functionColumnsService.getRowGroupColumns()[0];
             }
             return processCellForClipboard({
                 value,

@@ -4,11 +4,13 @@ import { ColumnModel } from "../../columns/columnModel";
 import { Autowired } from "../../context/context";
 import { GridOptionsService } from "../../gridOptionsService";
 import { DropListener } from "./bodyDropTarget";
+import { FunctionColumnsService } from "../../columns/functionColumnsService";
 
 export class BodyDropPivotTarget implements DropListener {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('gridOptionsService') private gos: GridOptionsService;
+    @Autowired('functionColumnsService') private readonly functionColumnsService: FunctionColumnsService;
 
     private columnsToAggregate: Column[] = [];
     private columnsToGroup: Column[] = [];
@@ -76,14 +78,13 @@ export class BodyDropPivotTarget implements DropListener {
     /** Callback for when drag stops */
     public onDragStop(draggingEvent: DraggingEvent): void {
         if (this.columnsToAggregate.length > 0) {
-            this.columnModel.addValueColumns(this.columnsToAggregate, "toolPanelDragAndDrop");
+            this.functionColumnsService.addValueColumns(this.columnsToAggregate, "toolPanelDragAndDrop");
         }
         if (this.columnsToGroup.length > 0) {
-            this.columnModel.addRowGroupColumns(this.columnsToGroup, "toolPanelDragAndDrop");
+            this.functionColumnsService.addRowGroupColumns(this.columnsToGroup, "toolPanelDragAndDrop");
         }
         if (this.columnsToPivot.length > 0) {
-            this.columnModel.addPivotColumns(this.columnsToPivot, "toolPanelDragAndDrop");
+            this.functionColumnsService.addPivotColumns(this.columnsToPivot, "toolPanelDragAndDrop");
         }
     }
-
 }

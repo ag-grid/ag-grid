@@ -8,7 +8,8 @@ import {
     GetServerSideGroupLevelParamsParams,
     ColumnModel,
     WithoutGridCommon,
-    GridOptionsService
+    GridOptionsService,
+    FunctionColumnsService
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 import { FullStore } from "./fullStore";
@@ -19,6 +20,7 @@ export class StoreFactory {
 
     @Autowired('gridOptionsService') private gos: GridOptionsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
 
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
         const storeParams = this.getStoreParams(ssrmParams, parentNode);
@@ -100,8 +102,8 @@ export class StoreFactory {
         const params: WithoutGridCommon<GetServerSideGroupLevelParamsParams> = {
             level: parentNode.level + 1,
             parentRowNode: parentNode.level >= 0 ? parentNode : undefined,
-            rowGroupColumns: this.columnModel.getRowGroupColumns(),
-            pivotColumns: this.columnModel.getPivotColumns(),
+            rowGroupColumns: this.functionColumnsService.getRowGroupColumns(),
+            pivotColumns: this.functionColumnsService.getPivotColumns(),
             pivotMode: this.columnModel.isPivotMode()
         };
 

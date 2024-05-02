@@ -33,6 +33,7 @@ import { parseDateTimeFromString, serialiseDate } from '../utils/date';
 import { AgEventListener, AgGridEvent, DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { ColumnApplyStateService } from './columnApplyStateService';
+import { FunctionColumnsService } from './functionColumnsService';
 
 interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;
@@ -58,6 +59,7 @@ const MONTH_KEYS: (keyof typeof MONTH_LOCALE_TEXT)[] = ['january', 'february', '
 export class DataTypeService extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnApplyStateService') private columnApplyStateService: ColumnApplyStateService;
 
@@ -474,7 +476,7 @@ export class DataTypeService extends BeanStub {
             }
         });
         if (columnTypeOverridesExist) {
-            state.push(...this.columnModel.generateColumnStateForRowGroupAndPivotIndexes(newRowGroupColumnStateWithoutIndex, newPivotColumnStateWithoutIndex));
+            state.push(...this.functionColumnsService.generateColumnStateForRowGroupAndPivotIndexes(newRowGroupColumnStateWithoutIndex, newPivotColumnStateWithoutIndex));
         }
         if (state.length) {
             this.columnModel.applyColumnState({ state }, 'cellDataTypeInferred');

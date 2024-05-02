@@ -29,6 +29,7 @@ import {
     IsApplyServerSideTransactionParams,
     IRowNode,
     ISelectionService,
+    FunctionColumnsService,
 } from "@ag-grid-community/core";
 import { SSRMParams, ServerSideRowModel } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
@@ -40,7 +41,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
     @Autowired('sortController') private sortController: SortController;
@@ -99,7 +100,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         if (!this.usingTreeData && this.groupLevel) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field!;
-            this.rowGroupColumn = this.columnModel.getRowGroupColumns()[this.level];
+            this.rowGroupColumn = this.functionColumnsService.getRowGroupColumns()[this.level];
         }
 
 

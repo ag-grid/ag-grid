@@ -483,6 +483,7 @@ export type BeanName =
 | 'filterStage'
 | 'flattenStage'
 | 'focusService'
+| 'functionColumnsService'
 | 'frameworkComponentWrapper'
 | 'frameworkOverrides'
 | 'globalEventListener'

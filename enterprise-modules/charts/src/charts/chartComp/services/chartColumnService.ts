@@ -5,6 +5,7 @@ import {
     Column,
     ColumnModel,
     Events,
+    FunctionColumnsService,
     PostConstruct,
     RowNode,
     RowPositionUtils,
@@ -14,6 +15,7 @@ import {
 @Bean("chartColumnService")
 export class ChartColumnService extends BeanStub {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
 
@@ -39,7 +41,7 @@ export class ChartColumnService extends BeanStub {
     }
 
     public getRowGroupColumns(): Column[] {
-        return this.columnModel.getRowGroupColumns();
+        return this.functionColumnsService.getRowGroupColumns();
     }
 
     public getGroupDisplayColumns(): Column[] {

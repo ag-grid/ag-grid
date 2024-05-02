@@ -15,6 +15,7 @@ import {
     GetGroupRowAggParams,
     WithoutGridCommon,
     GridOptions,
+    FunctionColumnsService,
 } from "@ag-grid-community/core";
 import { AggFuncService } from "./aggFuncService";
 
@@ -34,6 +35,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('aggFuncService') private aggFuncService: AggFuncService;
+    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
 
     // it's possible to recompute the aggregate without doing the other parts
     // + api.refreshClientSideRowModel('aggregate')
@@ -43,7 +45,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         // and there is no cleanup to be done (as value columns don't change between transactions or change
         // detections). if no value columns and no changed path, means we have to go through all nodes in
         // case we need to clean up agg data from before.
-        const noValueColumns = _.missingOrEmpty(this.columnModel.getValueColumns());
+        const noValueColumns = _.missingOrEmpty(this.functionColumnsService.getValueColumns());
         const noUserAgg = !this.gos.getCallback('getGroupRowAgg');
         const changedPathActive = params.changedPath && params.changedPath.isActive();
         if (noValueColumns && noUserAgg && changedPathActive) { return; }
@@ -57,8 +59,8 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
 
         const pivotActive = this.columnModel.isPivotActive();
 
-        const measureColumns = this.columnModel.getValueColumns();
-        const pivotColumns = pivotActive ? this.columnModel.getPivotColumns() : [];
+        const measureColumns = this.functionColumnsService.getValueColumns();
+        const pivotColumns = pivotActive ? this.functionColumnsService.getPivotColumns() : [];
 
         const aggDetails: AggregationDetails = {
             alwaysAggregateAtRootLevel: this.gos.get('alwaysAggregateAtRootLevel'),

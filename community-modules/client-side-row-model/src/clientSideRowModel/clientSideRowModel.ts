@@ -30,6 +30,7 @@ import {
     SelectionChangedEvent,
     ISelectionService,
     GridOptions,
+    FunctionColumnsService,
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -48,6 +49,7 @@ export interface RowNodeMap {
 export class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
     @Autowired('selectionService') private selectionService: ISelectionService;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('beans') private beans: Beans;
@@ -114,6 +116,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.nodeManager = new ClientSideNodeManager(this.rootNode,
             this.gos,
             this.eventService, this.columnModel,
+            this.functionColumnsService,
             this.selectionService, this.beans);
     }
 

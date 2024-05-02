@@ -1,4 +1,4 @@
-import { Autowired, BeanStub, IRowModel, IRowNode, IServerSideGroupSelectionState, RowNode, SelectionEventSourceType, ISetNodesSelectedParams, ColumnModel, FilterManager, PostConstruct, Events, IServerSideStore, ISelectionService } from "@ag-grid-community/core";
+import { Autowired, BeanStub, IRowModel, IRowNode, IServerSideGroupSelectionState, RowNode, SelectionEventSourceType, ISetNodesSelectedParams, ColumnModel, FilterManager, PostConstruct, Events, IServerSideStore, ISelectionService, FunctionColumnsService } from "@ag-grid-community/core";
 import { ServerSideRowModel } from "../../../serverSideRowModel";
 import { ISelectionStrategy } from "./iSelectionStrategy";
 
@@ -9,9 +9,8 @@ interface SelectionState {
 
 export class GroupSelectsChildrenStrategy extends BeanStub implements ISelectionStrategy {
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
     @Autowired('selectionService') private selectionService: ISelectionService;
 
     private selectedState: SelectionState = { selectAllChildren: false, toggledNodes: new Map() };
@@ -33,7 +32,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 nodeId,
             };
     
-            if (treeData || level <= this.columnModel.getRowGroupColumns().length) {
+            if (treeData || level <= this.functionColumnsService.getRowGroupColumns().length) {
                 normalisedState.selectAllChildren = state.selectAllChildren;
             }
     

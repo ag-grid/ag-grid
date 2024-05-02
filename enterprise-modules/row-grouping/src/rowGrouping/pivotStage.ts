@@ -14,7 +14,8 @@ import {
     StageExecuteParams,
     ValueService,
     WithoutGridCommon,
-    _
+    _,
+    FunctionColumnsService
 } from "@ag-grid-community/core";
 import { PivotColDefService } from "./pivotColDefService";
 
@@ -24,6 +25,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     // these should go into the pivot column creator
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
     @Autowired('pivotColDefService') private pivotColDefService: PivotColDefService;
 
     private uniqueValues: any = {};
@@ -66,7 +68,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     }
 
     private executePivotOn(changedPath: ChangedPath): void {
-        const numberOfAggregationColumns = this.columnModel.getValueColumns().length ?? 1;
+        const numberOfAggregationColumns = this.functionColumnsService.getValueColumns().length ?? 1;
 
         // As unique values creates one column per aggregation column, divide max columns by number of aggregation columns
         // to get the max number of unique values.
@@ -93,7 +95,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
 
         const uniqueValuesChanged = this.setUniqueValues(uniqueValues);
 
-        const aggregationColumns = this.columnModel.getValueColumns();
+        const aggregationColumns = this.functionColumnsService.getValueColumns();
         const aggregationColumnsHash = aggregationColumns.map((column) => `${column.getId()}-${column.getColDef().headerName}`).join('#');
         const aggregationFuncsHash = aggregationColumns.map((column) => column.getAggFunc()!.toString()).join('#');
 
@@ -102,7 +104,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         this.aggregationColumnsHashLastTime = aggregationColumnsHash;
         this.aggregationFuncsHashLastTime = aggregationFuncsHash;
 
-        const groupColumnsHash = this.columnModel.getRowGroupColumns().map((column) => column.getId()).join('#');
+        const groupColumnsHash = this.functionColumnsService.getRowGroupColumns().map((column) => column.getId()).join('#');
         const groupColumnsChanged = groupColumnsHash !== this.groupColumnsHashLastTime;
         this.groupColumnsHashLastTime = groupColumnsHash;
 
@@ -178,7 +180,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
 
     private bucketRowNode(rowNode: RowNode, uniqueValues: any): void {
 
-        const pivotColumns = this.columnModel.getPivotColumns();
+        const pivotColumns = this.functionColumnsService.getPivotColumns();
 
         if (pivotColumns.length === 0) {
             rowNode.childrenMapped = null;

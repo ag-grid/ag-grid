@@ -10,14 +10,17 @@ import {
     ColumnModel,
     ColumnEventType,
     Events,
-    DragSourceType
+    DragSourceType,
+    FunctionColumnsService
 } from "@ag-grid-community/core";
 import { DropZoneColumnComp } from "./dropZoneColumnComp";
 
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, Column> {
+
     @Autowired('columnModel') protected readonly columnModel: ColumnModel;
+    @Autowired('functionColumnsService') protected readonly functionColumnsService: FunctionColumnsService;
 
     constructor(horizontal: boolean, private dropZonePurpose: TDropZone) {
         super(horizontal);
@@ -42,7 +45,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
 
     protected minimumAllowedNewInsertIndex(): number {
         const numberOfLockedCols = this.gos.get('groupLockGroupColumns');
-        const numberOfGroupCols = this.columnModel.getRowGroupColumns().length;
+        const numberOfGroupCols = this.functionColumnsService.getRowGroupColumns().length;
         if (numberOfLockedCols === -1) {
             return numberOfGroupCols;
         }

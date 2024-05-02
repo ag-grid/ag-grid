@@ -3,11 +3,13 @@ import { Column } from "../entities/column";
 import { missing } from "../utils/generic";
 import { convertToMap } from "../utils/map";
 import { ColumnModel, ColumnState } from "./columnModel";
+import { FunctionColumnsService } from "./functionColumnsService";
 
 @Bean('columnGetStateService')
 export class ColumnGetStateService {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
 
     public getColumnState(): ColumnState[] {
         const primaryCols = this.columnModel.getAllPrimaryColumns();
@@ -24,8 +26,8 @@ export class ColumnGetStateService {
     }
 
     private createStateItemFromColumn(column: Column): ColumnState {
-        const rowGorupColumns = this.columnModel.getRowGroupColumns();
-        const pivotColumns = this.columnModel.getPivotColumns();
+        const rowGorupColumns = this.functionColumnsService.getRowGroupColumns();
+        const pivotColumns = this.functionColumnsService.getPivotColumns();
 
         const rowGroupIndex = column.isRowGroupActive() ? rowGorupColumns.indexOf(column) : null;
         const pivotIndex = column.isPivotActive() ? pivotColumns.indexOf(column) : null;

@@ -16,7 +16,8 @@ import {
     MenuService,
     SortController,
     ColumnAutosizeService,
-    ColumnApplyStateService
+    ColumnApplyStateService,
+    FunctionColumnsService
 } from '@ag-grid-community/core';
 import { ChartMenuItemMapper } from './chartMenuItemMapper';
 
@@ -25,6 +26,7 @@ export class MenuItemMapper extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
+    @Autowired('functionColumnsService') private readonly functionColumnsService: FunctionColumnsService;
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
@@ -127,7 +129,7 @@ export class MenuItemMapper extends BeanStub {
                 return {
                     name: localeTextFunc('groupBy', 'Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
                     disabled: column?.isRowGroupActive() || !column?.getColDef().enableRowGroup,
-                    action: () => this.columnModel.addRowGroupColumns([column], "contextMenu"),
+                    action: () => this.functionColumnsService.addRowGroupColumns([column], "contextMenu"),
                     icon: _.createIconNoSpan('menuAddRowGroup', this.gos, null)
                 };
             case 'rowUnGroup':
@@ -138,8 +140,8 @@ export class MenuItemMapper extends BeanStub {
                 if (showRowGroup === true) {
                     return {
                         name: localeTextFunc('ungroupAll', 'Un-Group All'),
-                        disabled: lockedGroups === -1 || lockedGroups >= this.columnModel.getRowGroupColumns().length,
-                        action: () => this.columnModel.setRowGroupColumns(this.columnModel.getRowGroupColumns().slice(0, lockedGroups), "contextMenu"),
+                        disabled: lockedGroups === -1 || lockedGroups >= this.functionColumnsService.getRowGroupColumns().length,
+                        action: () => this.functionColumnsService.setRowGroupColumns(this.functionColumnsService.getRowGroupColumns().slice(0, lockedGroups), "contextMenu"),
                         icon: icon
                     };
                 }
@@ -150,7 +152,7 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName,
                         disabled: underlyingColumn != null && this.columnModel.isColumnGroupingLocked(underlyingColumn),
-                        action: () => this.columnModel.removeRowGroupColumns([showRowGroup], "contextMenu"),
+                        action: () => this.functionColumnsService.removeRowGroupColumns([showRowGroup], "contextMenu"),
                         icon: icon
                     };
                 }
@@ -158,7 +160,7 @@ export class MenuItemMapper extends BeanStub {
                 return {
                     name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
                     disabled: !column?.isRowGroupActive() || !column?.getColDef().enableRowGroup || this.columnModel.isColumnGroupingLocked(column),
-                    action: () => this.columnModel.removeRowGroupColumns([column], "contextMenu"),
+                    action: () => this.functionColumnsService.removeRowGroupColumns([column], "contextMenu"),
                     icon: icon
                 };
             case 'resetColumns':
@@ -336,7 +338,7 @@ export class MenuItemMapper extends BeanStub {
             result.push({
                 name: localeTextFunc('noAggregation', 'None'),
                 action: () => {
-                    this.columnModel.removeValueColumns([columnToUse!], "contextMenu");
+                    this.functionColumnsService.removeValueColumns([columnToUse!], "contextMenu");
                     this.columnModel.setColumnAggFunc(columnToUse, undefined, "contextMenu");
                 },
                 checked: !columnIsAlreadyAggValue
@@ -347,7 +349,7 @@ export class MenuItemMapper extends BeanStub {
                     name: localeTextFunc(funcName, aggFuncService.getDefaultFuncLabel(funcName)),
                     action: () => {
                         this.columnModel.setColumnAggFunc(columnToUse, funcName, "contextMenu");
-                        this.columnModel.addValueColumns([columnToUse!], "contextMenu");
+                        this.functionColumnsService.addValueColumns([columnToUse!], "contextMenu");
                     },
                     checked: columnIsAlreadyAggValue && columnToUse!.getAggFunc() === funcName
                 });
