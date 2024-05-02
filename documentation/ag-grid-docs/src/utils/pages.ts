@@ -86,10 +86,8 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     // Framework libraries
     '@ag-grid-community/react/dist/**': 'community-modules/react/dist/**/*.{cjs,mjs,js,map}',
     '@ag-grid-community/react/src/**': 'community-modules/react/src/**/*.{tsx,ts}',
-    '@ag-grid-community/angular/fesm2015/ag-grid-community-angular.mjs':
-        'community-modules/angular/dist/ag-grid-angular/fesm2015/ag-grid-community-angular.mjs',
-    '@ag-grid-community/angular/fesm2020/ag-grid-community-angular.mjs':
-        'community-modules/angular/dist/ag-grid-angular/fesm2020/ag-grid-community-angular.mjs',
+    '@ag-grid-community/angular/fesm2022/ag-grid-community-angular.mjs':
+        'community-modules/angular/dist/ag-grid-angular/fesm2022/ag-grid-community-angular.mjs',    
     '@ag-grid-community/vue3/dist/**': 'community-modules/vue3/dist/**/*.{cjs,mjs,js,map}',
 
     // TODO: Dynamically map files
@@ -111,10 +109,8 @@ if (USE_PACKAGES) {
     FILES_PATH_MAP['ag-grid-charts-enterprise/styles/**'] = `packages/ag-grid-charts-enterprise/styles/**/*.css`;
     FILES_PATH_MAP[`ag-grid-charts-enterprise/dist/**`] = `packages/ag-grid-charts-enterprise/dist/**/*.{cjs,js,map}`;
     FILES_PATH_MAP['ag-grid-react/dist/**'] = `packages/ag-grid-react/dist/**/*.{cjs,js,map}`;
-    FILES_PATH_MAP['ag-grid-angular/fesm2015/ag-grid-angular.mjs'] =
-        'packages/ag-grid-angular/dist/ag-grid-angular/fesm2015/ag-grid-angular.mjs';
-    FILES_PATH_MAP['ag-grid-angular/fesm2020/ag-grid-angular.mjs'] =
-        'packages/ag-grid-angular/dist/ag-grid-angular/fesm2020/ag-grid-angular.mjs';
+    FILES_PATH_MAP['ag-grid-angular/fesm2022/ag-grid-angular.mjs'] =
+        'packages/ag-grid-angular/dist/ag-grid-angular/fesm2022/ag-grid-angular.mjs';
     FILES_PATH_MAP['ag-grid-vue3/dist/**'] = 'packages/ag-grid-vue3/dist/**/*.{cjs,mjs,js,map}';
 }
 

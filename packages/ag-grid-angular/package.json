@@ -5,7 +5,7 @@
     "build": "./node_modules/.bin/ng build"
   },
   "license": "MIT",
-  "module": "./dist/ag-grid-angular/fesm2015/ag-grid-community-angular.mjs",
+  "module": "./dist/ag-grid-angular/fesm2022/ag-grid-community-angular.mjs",
   "typings": "./dist/ag-grid-angular/index.d.ts",
   "dependencies": {
     "@angular/animations": "^16.2.12",
