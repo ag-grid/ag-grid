@@ -7,7 +7,7 @@ import { useCallback } from 'react';
 
 import styles from './CodeOptions.module.scss';
 
-type SelectorType = 'typescript' | 'react' | 'vue';
+type SelectorType = 'typescript' | 'react';
 interface SelectorConfig {
     label: string;
     labelValues: Record<string, string>;
@@ -26,14 +26,7 @@ const SELECTOR_CONFIG: Record<SelectorType, SelectorConfig> = {
             Javascript: 'reactFunctional',
             Typescript: 'reactFunctionalTs',
         },
-    },
-    vue: {
-        label: 'Version',
-        labelValues: {
-            'Vue 2': 'vue',
-            'Vue 3': 'vue3',
-        },
-    },
+    }
 };
 const IMPORT_TYPE_CONFIG: Record<ImportType, string> = {
     modules: 'Modules',
@@ -157,7 +150,6 @@ export const CodeOptions = ({
 }) => {
     let showTypescriptSelector = internalFramework === 'vanilla' || internalFramework === 'typescript';
     const showReactSelector = isReactInternalFramework(internalFramework);
-    const showVueSelector = isVueInternalFramework(internalFramework);
 
     if (supportedFrameworks?.length > 0) {
         showTypescriptSelector = showTypescriptSelector && supportedFrameworks.includes('vanilla');
@@ -169,8 +161,6 @@ export const CodeOptions = ({
                 <CodeOptionSelector id={id} type="typescript" internalFramework={internalFramework} />
             )}
             {showReactSelector && <CodeOptionSelector id={id} type="react" internalFramework={internalFramework} />}
-
-            {showVueSelector && <CodeOptionSelector id={id} type="vue" internalFramework={internalFramework} />}
 
             {internalFramework !== 'vanilla' && (
                 <ImportTypeSelector id={id} supportedImportTypes={supportedImportTypes} />

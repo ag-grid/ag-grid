@@ -93,7 +93,7 @@ const isValidFrameworkFile = (internalFramework: InternalFramework, framework: I
     if (internalFramework === framework){
         return true;
     }
-    if (internalFramework === 'vue3' && framework === 'vue'){
+    if (internalFramework === 'vue3'){
         // Let vue3 share vue files
         return true;
     }
@@ -146,8 +146,7 @@ export const getOtherScriptFiles = async ({
     });
 
     const contents = { ...otherTsGeneratedFileContents, ...otherJsFileContents, ...componentFiles } as FileContents;
-    const frameworkComponentSuffix = (framework: InternalFramework) =>
-        framework === 'vue' || framework === 'vue3' ? 'Vue' : '';
+    const frameworkComponentSuffix = (framework: InternalFramework) => framework === 'vue3' ? 'Vue' : '';
     const filteredToFramework = {};
     const others = {};
     Object.entries(contents).forEach(([file, content]) => {
@@ -181,7 +180,6 @@ export function convertModuleToPackageImports(file: any) {
         .replace(/@ag-grid-community\/core/g, 'ag-grid-community')
         .replace(/@ag-grid-community\/react/g, 'ag-grid-react')
         .replace(/@ag-grid-community\/angular/g, 'ag-grid-angular')
-        .replace(/@ag-grid-community\/vue/g, 'ag-grid-vue')
         .replace(/@ag-grid-community\/vue3/g, 'ag-grid-vue3')
         .replace(/@ag-grid-community\/styles/g, 'ag-grid-community/styles');
 }
