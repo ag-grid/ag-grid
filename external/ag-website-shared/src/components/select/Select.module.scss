@@ -1,5 +1,12 @@
 @use 'design-system' as *;
 
+.trigger.large {
+    height: 36px;
+    span {
+        font-size: var(--text-fs-base);
+    }
+}
+
 .trigger {
     display: flex;
     align-items: center;
@@ -32,6 +39,10 @@
     }
 }
 
+.content.large {
+    min-width: 150px; // TODO: refactor to fit content, currently used in just framework selector
+}
+
 .content {
     min-width: max(230px, var(--radix-popper-anchor-width, 230px));
     position: absolute;
@@ -60,15 +71,20 @@
     }
 }
 
+.item.large {
+    font-size: var(--text-fs-base);
+    height: 32px;
+}
+
 .item {
-    font-size: 14px !important;
+    font-size: 14px;
     line-height: 1;
     color: var(--color-text-primary);
     border-radius: 3px;
     display: flex;
     align-items: center;
-    height: 25px;
-    padding: 0 24px;
+    height: 28px;
+    padding: 0 12px;
     position: relative;
     user-select: none;
     cursor: pointer;

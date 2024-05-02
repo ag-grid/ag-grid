@@ -15,6 +15,7 @@ type SelectProps<O> = {
     getLabel?: (item: O) => string;
     getGroupLabel?: (item: O) => string;
     isPopper?: boolean;
+    isLarge?: boolean;
 };
 
 export function Select<O>({
@@ -26,6 +27,7 @@ export function Select<O>({
     getLabel = defaultGetLabel,
     getGroupLabel = defaultGetGroupLabel,
     isPopper,
+    isLarge,
 }: SelectProps<O>) {
     const optionsByValue = new Map<string, O>();
     const content: Record<string, ReactElement[]> = {};
@@ -35,7 +37,7 @@ export function Select<O>({
         const label = getLabel(option) || '';
         content[group] ||= [];
         content[group].push(
-            <SelectItem key={key} value={key}>
+            <SelectItem key={key} value={key} isLarge={isLarge}>
                 {renderItem ? renderItem(option) : label || key}
             </SelectItem>
         );
@@ -52,7 +54,7 @@ export function Select<O>({
                 }
             }}
         >
-            <RadixSelect.Trigger tabIndex={0} className={styles.trigger}>
+            <RadixSelect.Trigger tabIndex={0} className={classnames(styles.trigger, { [styles.large]: isLarge })}>
                 <RadixSelect.Value placeholder="Choose..." />
                 <RadixSelect.Icon>
                     <ChevronDown className={styles.chevronDown} />
@@ -61,7 +63,10 @@ export function Select<O>({
             <RadixSelect.Portal>
                 <RadixSelect.Content
                     position={isPopper ? 'popper' : 'item-aligned'}
-                    className={classnames(styles.content, { [styles.popper]: isPopper })}
+                    className={classnames(styles.content, {
+                        [styles.popper]: isPopper,
+                        [styles.large]: isLarge,
+                    })}
                 >
                     <RadixSelect.ScrollUpButton className="SelectScrollButton">
                         <ChevronUp />
@@ -97,9 +102,15 @@ const defaultGetLabel = (option: any) => option?.label || 'undefined';
 
 const defaultGetGroupLabel = (option: any) => option?.groupLabel;
 
-const SelectItem = forwardRef(({ children, className, ...props }: any, forwardedRef) => {
+const SelectItem = forwardRef(({ children, className, isLarge, ...props }: any, forwardedRef) => {
     return (
-        <RadixSelect.Item className={classnames(styles.item, className)} {...props} ref={forwardedRef}>
+        <RadixSelect.Item
+            className={classnames(styles.item, className, {
+                [styles.large]: isLarge,
+            })}
+            {...props}
+            ref={forwardedRef}
+        >
             <RadixSelect.ItemText>{children}</RadixSelect.ItemText>
             <RadixSelect.ItemIndicator>
                 <Checkmark />
