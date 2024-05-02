@@ -25,7 +25,6 @@ export type InternalFramework =
     | 'reactFunctional'
     | 'reactFunctionalTs'
     | 'angular'
-    | 'vue'
     | 'vue3';
 
 export const TYPESCRIPT_INTERNAL_FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctionalTs', 'angular'];

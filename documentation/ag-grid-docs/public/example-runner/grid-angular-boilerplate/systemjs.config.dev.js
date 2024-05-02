@@ -196,10 +196,6 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
-            'ag-grid-vue': {
-                main: './main.js',
-                defaultExtension: 'js'
-            },
             'ag-grid-angular': {
                 main: './fesm2020/ag-grid-angular.mjs',
                 defaultExtension: 'mjs',

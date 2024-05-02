@@ -2,7 +2,7 @@
 
 # dumb repetitive and basic - can rework post release
 
-excluded=("react" "vue" "vue3" "angular" "ag-grid-react" "ag-grid-vue" "ag-grid-vue3" "ag-grid-angular" "styles")
+excluded=("react" "vue3" "angular" "ag-grid-react" "ag-grid-vue3" "ag-grid-angular" "styles")
 
 for directory in `ls community-modules`;
 do
@@ -94,7 +94,7 @@ do
   fi
 done
 
-frameworks=("react" "vue" "vue3" "angular")
+frameworks=("react" "vue3" "angular")
 for framework in "${frameworks[@]}"
 do
   if [[ ! -d "community-modules/$framework/dist" ]]
@@ -113,7 +113,7 @@ do
   fi
 done
 
-frameworks=("ag-grid-react" "ag-grid-vue" "ag-grid-vue3" "ag-grid-angular")
+frameworks=("ag-grid-react" "ag-grid-vue3" "ag-grid-angular")
 for framework in "${frameworks[@]}"
 do
   if [[ ! -d "packages/$framework/dist" ]]

@@ -5,7 +5,6 @@ import { vanillaToAngular } from '../transformation-scripts/grid-vanilla-to-angu
 import { vanillaToReactFunctional } from '../transformation-scripts/grid-vanilla-to-react-functional';
 import { vanillaToReactFunctionalTs } from '../transformation-scripts/grid-vanilla-to-react-functional-ts';
 import { vanillaToTypescript } from '../transformation-scripts/grid-vanilla-to-typescript';
-import { vanillaToVue } from '../transformation-scripts/grid-vanilla-to-vue';
 import { vanillaToVue3 } from '../transformation-scripts/grid-vanilla-to-vue3';
 import { getIntegratedDarkModeCode, readAsJsFile, removeModuleRegistration } from '../transformation-scripts/parser-utils';
 import { InternalFramework, ParsedBindings } from '../types';
@@ -214,10 +213,6 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             },
         };
     },
-    vue: createVueFilesGenerator({
-        sourceGenerator: vanillaToVue,
-        internalFramework: 'vue',
-    }),
     vue3: createVueFilesGenerator({
         sourceGenerator: vanillaToVue3,
         internalFramework: 'vue3',

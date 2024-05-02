@@ -6,7 +6,6 @@ import { doOnEnter } from '@utils/doOnEnter';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
 
-import { POST_INIT_MESSAGE_END, POST_INIT_MESSAGE_START } from '../constants';
 import { CodeOptions } from './CodeOptions';
 import styles from './CodeViewer.module.scss';
 
