@@ -7,7 +7,6 @@ import { ColumnFactory, depthFirstOriginalTreeSearch } from './columnFactory';
 import { DisplayedGroupCreator } from './displayedGroupCreator';
 import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import { IProvidedColumn } from '../interfaces/iProvidedColumn';
-import { Logger, LoggerFactory } from '../logger';
 import {
     ColumnEvent,
     ColumnEventType,
@@ -54,6 +53,7 @@ import { ColumnEventDispatcher } from './columnEventDispatcher';
 import { ColumnMoveService } from './columnMoveService';
 import { ColumnAutosizeService } from './columnAutosizeService';
 import { ColumnUtilsFeature } from './columnUtilsFeature';
+import { ColumnGroupStateService } from './columnGroupStateService';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -136,6 +136,7 @@ export class ColumnModel extends BeanStub {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('columnDefFactory') private columnDefFactory: ColumnDefFactory;
     @Autowired('columnApplyStateService') private columnApplyStateService: ColumnApplyStateService;
+    @Autowired('columnGroupStateService') private columnGroupStateService: ColumnGroupStateService;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
     @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
     @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
@@ -246,7 +247,6 @@ export class ColumnModel extends BeanStub {
 
     private ready = false;
     private changeEventsDispatching = false;
-    private logger: Logger;
 
     public autoGroupsNeedBuilding = false;
     private forceRecreateAutoGroups = false;
@@ -535,11 +535,7 @@ export class ColumnModel extends BeanStub {
         return foundColumn;
     }
 
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('columnModel');
-    }
-
-    private setFirstRightAndLastLeftPinned(source: ColumnEventType): void {
+    public setFirstRightAndLastLeftPinned(source: ColumnEventType): void {
         let lastLeft: Column | null;
         let firstRight: Column | null;
 
@@ -1362,7 +1358,7 @@ export class ColumnModel extends BeanStub {
     }
 
     // after setColumnWidth or updateGroupsAndDisplayedColumns
-    private updateBodyWidths(): void {
+    public updateBodyWidths(): void {
         const newBodyWidth = this.getWidthOfColsInList(this.displayedColumnsCenter);
         const newLeftWidth = this.getWidthOfColsInList(this.displayedColumnsLeft);
         const newRightWidth = this.getWidthOfColsInList(this.displayedColumnsRight);
@@ -1623,7 +1619,7 @@ export class ColumnModel extends BeanStub {
             this.secondaryColumns || [],
         ]);
     }
-    
+
     // niall note - this method should be in columnApplyStateService,
     // but is uses so many methods and variables of ColumnModel, it's
     // difficult to extract out
@@ -2160,69 +2156,7 @@ export class ColumnModel extends BeanStub {
         );
     }
 
-    public resetColumnGroupState(source: ColumnEventType): void {
-        if (!this.primaryColumnTree) { return; }
 
-        const stateItems: { groupId: string, open: boolean | undefined; }[] = [];
-
-        depthFirstOriginalTreeSearch(null, this.primaryColumnTree, child => {
-            if (child instanceof ProvidedColumnGroup) {
-                const colGroupDef = child.getColGroupDef();
-                const groupState = {
-                    groupId: child.getGroupId(),
-                    open: !colGroupDef ? undefined : colGroupDef.openByDefault
-                };
-                stateItems.push(groupState);
-            }
-        });
-
-        this.setColumnGroupState(stateItems, source);
-    }
-
-    public getColumnGroupState(): { groupId: string, open: boolean; }[] {
-        const columnGroupState: { groupId: string, open: boolean; }[] = [];
-
-        depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
-            if (node instanceof ProvidedColumnGroup) {
-                columnGroupState.push({
-                    groupId: node.getGroupId(),
-                    open: node.isExpanded()
-                });
-            }
-        });
-
-        return columnGroupState;
-    }
-
-    public setColumnGroupState(stateItems: { groupId: string, open: boolean | undefined; }[], source: ColumnEventType): void {
-        if (!this.gridBalancedTree) { return; }
-
-        this.columnAnimationService.start();
-
-        const impactedGroups: ProvidedColumnGroup[] = [];
-
-        stateItems.forEach(stateItem => {
-            const groupKey = stateItem.groupId;
-            const newValue = stateItem.open;
-            const providedColumnGroup: ProvidedColumnGroup | null = this.getProvidedColumnGroup(groupKey);
-
-            if (!providedColumnGroup) { return; }
-            if (providedColumnGroup.isExpanded() === newValue) { return; }
-
-            this.logger.log('columnGroupOpened(' + providedColumnGroup.getGroupId() + ',' + newValue + ')');
-            providedColumnGroup.setExpanded(newValue);
-            impactedGroups.push(providedColumnGroup);
-        });
-
-        this.updateGroupsAndDisplayedColumns(source);
-        this.setFirstRightAndLastLeftPinned(source);
-
-        if (impactedGroups.length) {
-            this.eventDispatcher.groupOpened(impactedGroups);
-        }
-
-        this.columnAnimationService.finish();
-    }
 
     // called by headerRenderer - when a header is opened or closed
     public setColumnGroupOpened(key: ProvidedColumnGroup | string | null, newValue: boolean, source: ColumnEventType): void {
@@ -2233,7 +2167,7 @@ export class ColumnModel extends BeanStub {
         } else {
             keyAsString = key || '';
         }
-        this.setColumnGroupState([{ groupId: keyAsString, open: newValue }], source);
+        this.columnGroupStateService.setColumnGroupState([{ groupId: keyAsString, open: newValue }], source);
     }
 
     public getProvidedColumnGroup(key: string): ProvidedColumnGroup | null {
@@ -2620,7 +2554,7 @@ export class ColumnModel extends BeanStub {
         this.viewportColumnsHash = '';
     }
 
-    private updateGroupsAndDisplayedColumns(source: ColumnEventType) {
+    public updateGroupsAndDisplayedColumns(source: ColumnEventType) {
 
         this.updateOpenClosedVisibilityInColumnGroups();
         this.deriveDisplayedColumns(source);

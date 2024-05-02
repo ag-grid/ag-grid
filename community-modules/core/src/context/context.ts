@@ -455,6 +455,7 @@ export type BeanName =
 | 'columnModel'
 | 'columnMoveService'
 | 'columnPositionService'
+| 'columnGroupStateService'
 | 'columnApplyStateService'
 | 'columnUtils'
 | 'componentMetadataProvider'

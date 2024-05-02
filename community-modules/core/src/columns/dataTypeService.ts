@@ -32,6 +32,7 @@ import { IRowNode } from '../interfaces/iRowNode';
 import { parseDateTimeFromString, serialiseDate } from '../utils/date';
 import { AgEventListener, AgGridEvent, DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
 import { WithoutGridCommon } from '../interfaces/iCommon';
+import { ColumnApplyStateService } from './columnApplyStateService';
 
 interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;
@@ -58,6 +59,7 @@ export class DataTypeService extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueService') private valueService: ValueService;
+    @Autowired('columnApplyStateService') private columnApplyStateService: ColumnApplyStateService;
 
     private dataTypeDefinitions: { [cellDataType: string]: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter } = {};
     private dataTypeMatchers: { [cellDataType: string]: ((value: any) => boolean) | undefined };
@@ -481,7 +483,7 @@ export class DataTypeService extends BeanStub {
     }
 
     private getUpdatedColumnState(column: Column, columnStateUpdates: Set<keyof ColumnStateParams>): ColumnState {
-        const columnState = this.columnModel.getColumnStateFromColDef(column);
+        const columnState = this.columnApplyStateService.getColumnStateFromColDef(column);
         columnStateUpdates.forEach(key => {
             // if the column state has been updated, don't update again
             delete columnState[key];

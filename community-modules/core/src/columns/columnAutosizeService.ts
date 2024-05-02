@@ -14,12 +14,13 @@ import { ColKey, ColumnModel, Maybe } from "./columnModel";
 @Bean('columnAutosizeService')
 export class ColumnAutosizeService extends BeanStub {
 
-    private shouldQueueResizeOperations: boolean;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+
+    private shouldQueueResizeOperations: boolean;
 
     public setShouldQueueResizeOperations(value: boolean): void {
         this.shouldQueueResizeOperations = value;

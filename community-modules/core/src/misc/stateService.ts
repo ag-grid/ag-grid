@@ -43,6 +43,7 @@ import { debounce } from "../utils/function";
 import { ColumnAnimationService } from "../rendering/columnAnimationService";
 import { Column } from "../entities/column";
 import { ColumnGetStateService } from "../columns/columnGetStateService";
+import { ColumnGroupStateService } from "../columns/columnGroupStateService";
 
 @Bean('stateService')
 export class StateService extends BeanStub {
@@ -50,6 +51,7 @@ export class StateService extends BeanStub {
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnGroupStateService') private readonly columnGroupStateService: ColumnGroupStateService;
     @Autowired('columnGetStateService') private readonly columnGetStateService: ColumnGetStateService;
     @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
     @Autowired('rowModel') private readonly rowModel: IRowModel;
@@ -416,12 +418,12 @@ export class StateService extends BeanStub {
 
         if (columnGroupStates) {
             // no easy/performant way of knowing which column groups are pivot column groups
-            this.columnModel.setColumnGroupState(columnGroupStates, 'gridInitializing');
+            this.columnGroupStateService.setColumnGroupState(columnGroupStates, 'gridInitializing');
         }
     }
 
     private getColumnGroupState(): ColumnGroupState | undefined {
-        const columnGroupState = this.columnModel.getColumnGroupState();
+        const columnGroupState = this.columnGroupStateService.getColumnGroupState();
         const openColumnGroups: string[] = [];
         columnGroupState.forEach(({ groupId, open }) => {
             if (open) {
@@ -435,7 +437,7 @@ export class StateService extends BeanStub {
         if (!initialState.hasOwnProperty('columnGroup')) { return; }
 
         const openColumnGroups =  new Set(initialState.columnGroup?.openColumnGroupIds);
-        const existingColumnGroupState = this.columnModel.getColumnGroupState();
+        const existingColumnGroupState = this.columnGroupStateService.getColumnGroupState();
         const stateItems = existingColumnGroupState.map(({ groupId }) => {
             const open = openColumnGroups.has(groupId);
             if (open) {
@@ -456,7 +458,7 @@ export class StateService extends BeanStub {
         if (stateItems.length) {
             this.columnGroupStates = stateItems;
         }
-        this.columnModel.setColumnGroupState(stateItems, 'gridInitializing');
+        this.columnGroupStateService.setColumnGroupState(stateItems, 'gridInitializing');
     }
 
     private getFilterState(): FilterState | undefined {

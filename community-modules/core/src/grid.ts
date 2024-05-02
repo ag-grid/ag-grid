@@ -106,6 +106,7 @@ import { ColumnEventDispatcher } from "./columns/columnEventDispatcher";
 import { ColumnMoveService } from "./columns/columnMoveService";
 import { ColumnAutosizeService } from "./columns/columnAutosizeService";
 import { ColumnGetStateService } from "./columns/columnGetStateService";
+import { ColumnGroupStateService } from "./columns/columnGroupStateService";
 
 export interface GridParams {
     // INTERNAL - used by Web Components
@@ -435,7 +436,7 @@ export class GridCoreCreator {
             CtrlsFactory, DataTypeService, QuickFilterService, SyncService, OverlayService, StateService,
             ExpansionService, ApiEventService, AriaAnnouncementService, MenuService,
             ColumnApplyStateService, ColumnEventDispatcher, ColumnMoveService, ColumnAutosizeService,
-            ColumnGetStateService
+            ColumnGetStateService, ColumnGroupStateService
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);

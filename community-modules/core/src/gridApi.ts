@@ -141,6 +141,7 @@ import { escapeString } from "./utils/string";
 import { ColumnAutosizeService } from "./columns/columnAutosizeService";
 import { ColumnGetStateService } from "./columns/columnGetStateService";
 import { ColumnApplyStateService } from "./columns/columnApplyStateService";
+import { ColumnGroupStateService } from "./columns/columnGroupStateService";
 
 export interface DetailGridInfo {
     /**
@@ -186,6 +187,7 @@ export class GridApi<TData = any> {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnGetStateService') private readonly columnGetStateService: ColumnGetStateService;
+    @Autowired('columnGroupStateService') private readonly columnGroupStateService: ColumnGroupStateService;
     @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
     @Autowired('columnAutosizeService') private readonly columnAutosizeService: ColumnAutosizeService;
     @Autowired('selectionService') private readonly selectionService: ISelectionService;
@@ -1781,11 +1783,11 @@ export class GridApi<TData = any> {
     /** Sets the state back to match the originally provided column definitions. */
     public resetColumnState(): void { this.columnApplyStateService.resetColumnState('api'); }
     /** Gets the state of the column groups. Typically used when saving column group state. */
-    public getColumnGroupState(): { groupId: string, open: boolean }[] { return this.columnModel.getColumnGroupState(); }
+    public getColumnGroupState(): { groupId: string, open: boolean }[] { return this.columnGroupStateService.getColumnGroupState(); }
     /** Sets the state of the column group state from a previous state. */
-    public setColumnGroupState(stateItems: ({ groupId: string, open: boolean })[]): void { this.columnModel.setColumnGroupState(stateItems, 'api'); }
+    public setColumnGroupState(stateItems: ({ groupId: string, open: boolean })[]): void { this.columnGroupStateService.setColumnGroupState(stateItems, 'api'); }
     /** Sets the state back to match the originally provided column definitions. */
-    public resetColumnGroupState(): void { this.columnModel.resetColumnGroupState('api'); }
+    public resetColumnGroupState(): void { this.columnGroupStateService.resetColumnGroupState('api'); }
 
     /** Returns `true` if pinning left or right, otherwise `false`. */
     public isPinning(): boolean { return this.columnModel.isPinningLeft() || this.columnModel.isPinningRight(); }

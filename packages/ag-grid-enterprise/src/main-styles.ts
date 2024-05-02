@@ -118,6 +118,7 @@ export {CheckboxCellRenderer} from "@ag-grid-community/core";
 export {CheckboxSelectionComponent} from "@ag-grid-community/core";
 export {ClientSideRowModelSteps} from "@ag-grid-community/core";
 export {Column} from "@ag-grid-community/core";
+export {ColumnApplyStateService} from "@ag-grid-community/core";
 export {ColumnAutosizeService} from "@ag-grid-community/core";
 export {ColumnFactory} from "@ag-grid-community/core";
 export {ColumnGroup} from "@ag-grid-community/core";

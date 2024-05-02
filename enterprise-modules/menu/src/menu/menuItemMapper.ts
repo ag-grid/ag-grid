@@ -15,7 +15,8 @@ import {
     RowPositionUtils,
     MenuService,
     SortController,
-    ColumnAutosizeService
+    ColumnAutosizeService,
+    ColumnApplyStateService
 } from '@ag-grid-community/core';
 import { ChartMenuItemMapper } from './chartMenuItemMapper';
 
@@ -23,6 +24,7 @@ import { ChartMenuItemMapper } from './chartMenuItemMapper';
 export class MenuItemMapper extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
@@ -162,7 +164,7 @@ export class MenuItemMapper extends BeanStub {
             case 'resetColumns':
                 return {
                     name: localeTextFunc('resetColumns', 'Reset Columns'),
-                    action: () => this.columnModel.resetColumnState("contextMenu")
+                    action: () => this.columnApplyStateService.resetColumnState("contextMenu")
                 };
             case 'expandAll':
                 return {
