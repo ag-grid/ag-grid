@@ -13,6 +13,7 @@ export { ColumnFactory } from "./columns/columnFactory";
 export { ColumnModel, ColumnState, ColumnStateParams, ApplyColumnStateParams, ISizeColumnsToFitParams, IColumnLimit } from "./columns/columnModel";
 export { ColumnAutosizeService } from "./columns/columnAutosizeService";
 export { ColumnApplyStateService } from "./columns/columnApplyStateService";
+export { ColumnMoveService } from "./columns/columnMoveService";
 export { ColumnKeyCreator } from "./columns/columnKeyCreator";
 export { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
 export { GroupInstanceIdCreator } from "./columns/groupInstanceIdCreator";

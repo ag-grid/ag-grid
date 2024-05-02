@@ -10,21 +10,9 @@ import { IProvidedColumn } from '../interfaces/iProvidedColumn';
 import {
     ColumnEvent,
     ColumnEventType,
-    ColumnEverythingChangedEvent,
-    ColumnGroupOpenedEvent,
-    ColumnMovedEvent,
     ColumnPinnedEvent,
-    ColumnPivotModeChangedEvent,
-    ColumnResizedEvent,
-    ColumnRowGroupChangedEvent,
-    ColumnValueChangedEvent,
-    ColumnVisibleEvent,
-    DisplayedColumnsChangedEvent,
     DisplayedColumnsWidthChangedEvent,
     Events,
-    GridColumnsChangedEvent,
-    NewColumnsLoadedEvent,
-    VirtualColumnsChangedEvent,
     ColumnContainerWidthChanged
 } from '../events';
 import { BeanStub } from "../context/beanStub";
@@ -45,7 +33,6 @@ import { ColumnDefFactory } from "./columnDefFactory";
 import { convertToMap } from '../utils/map';
 import { warnOnce } from '../utils/function';
 import { CtrlsService } from '../ctrlsService';
-import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { PropertyChangedSource } from '../gridOptionsService';
 import { ColumnApplyStateService, ModifyColumnsNoEventsCallbacks } from './columnApplyStateService';
@@ -128,12 +115,9 @@ export class ColumnModel extends BeanStub {
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
     @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('autoGroupColService') private autoGroupColService: AutoGroupColService;
     @Autowired('valueCache') private valueCache: ValueCache;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('sortController') private sortController: SortController;
     @Autowired('columnDefFactory') private columnDefFactory: ColumnDefFactory;
     @Autowired('columnApplyStateService') private columnApplyStateService: ColumnApplyStateService;
     @Autowired('columnGroupStateService') private columnGroupStateService: ColumnGroupStateService;
@@ -1230,52 +1214,6 @@ export class ColumnModel extends BeanStub {
         this.eventDispatcher.rowGroupChanged(impactedColumns, source);
     }
 
-    public moveColumns(columnsToMoveKeys: ColKey[], toIndex: number, source: ColumnEventType, finished: boolean = true): void {
-        if (!this.gridColumns) { return; }
-
-        this.columnAnimationService.start();
-
-        if (toIndex > this.gridColumns.length - columnsToMoveKeys.length) {
-            console.warn('AG Grid: tried to insert columns in invalid location, toIndex = ' + toIndex);
-            console.warn('AG Grid: remember that you should not count the moving columns when calculating the new index');
-            return;
-        }
-
-        // we want to pull all the columns out first and put them into an ordered list
-        const movedColumns = this.getGridColumns(columnsToMoveKeys);
-        const failedRules = !this.doesMovePassRules(movedColumns, toIndex);
-
-        if (failedRules) { return; }
-
-        moveInArray(this.gridColumns, movedColumns, toIndex);
-        this.updateDisplayedColumns(source);
-
-        this.eventDispatcher.columnMoved({ movedColumns, source, toIndex, finished });
-        this.columnAnimationService.finish();
-    }
-
-    private doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean {
-        // make a copy of what the grid columns would look like after the move
-        const proposedColumnOrder = this.getProposedColumnOrder(columnsToMove, toIndex);
-        return this.doesOrderPassRules(proposedColumnOrder);
-    }
-
-    public doesOrderPassRules(gridOrder: Column[]) {
-        if (!this.columnMoveService.doesMovePassMarryChildren(gridOrder)) {
-            return false;
-        }
-        if (!this.doesMovePassLockedPositions(gridOrder)) {
-            return false;
-        }
-        return true;
-    }
-
-    public getProposedColumnOrder(columnsToMove: Column[], toIndex: number): Column[] {
-        const proposedColumnOrder = this.gridColumns.slice();
-        moveInArray(proposedColumnOrder, columnsToMove, toIndex);
-        return proposedColumnOrder;
-    }
-
     // returns the provided cols sorted in same order as they appear in grid columns. eg if grid columns
     // contains [a,b,c,d,e] and col passed is [e,a] then the passed cols are sorted into [a,e]
     public sortColumnsLikeGridColumns(cols: Column[]): void {
@@ -1289,39 +1227,6 @@ export class ColumnModel extends BeanStub {
             const indexB = this.gridColumns.indexOf(b);
             return indexA - indexB;
         });
-    }
-
-    public doesMovePassLockedPositions(proposedColumnOrder: Column[]): boolean {
-         // Placement is a number indicating 'left' 'center' or 'right' as 0 1 2
-        let lastPlacement = 0;
-        let rulePassed = true;
-        const lockPositionToPlacement = (position: ColDef['lockPosition']) => {
-            if (!position) { // false or undefined
-                return 1;
-            }
-            if (position === true) {
-                return 0;
-            }
-            return position === 'left' ? 0 : 2; // Otherwise 'right'
-        };
-
-        proposedColumnOrder.forEach(col => {
-            const placement = lockPositionToPlacement(col.getColDef().lockPosition);
-            if (placement < lastPlacement) { // If placement goes down, we're not in the correct order
-                rulePassed = false;
-            }
-            lastPlacement = placement;
-        });
-
-        return rulePassed;
-    }
-
-
-    public moveColumnByIndex(fromIndex: number, toIndex: number, source: ColumnEventType): void {
-        if (!this.gridColumns) { return; }
-
-        const column = this.gridColumns[fromIndex];
-        this.moveColumns([column], toIndex, source);
     }
 
     public getColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
@@ -2257,6 +2162,11 @@ export class ColumnModel extends BeanStub {
 
     public getGroupDisplayColumnForGroup(rowGroupColumnId: string): Column | undefined {
         return this.groupDisplayColumnsMap[rowGroupColumnId];
+    }
+
+    public moveInGridColumns(movedColumns: Column[], toIndex: number, source: ColumnEventType): void {
+        moveInArray(this.gridColumns, movedColumns, toIndex);
+        this.updateDisplayedColumns(source);
     }
 
     private updateDisplayedColumns(source: ColumnEventType): void {

@@ -1,4 +1,5 @@
 import { ColumnModel } from "../columns/columnModel";
+import { ColumnMoveService } from "../columns/columnMoveService";
 import { HorizontalDirection } from "../constants/direction";
 import { CtrlsService } from "../ctrlsService";
 import { Column, ColumnPinnedType } from "../entities/column";
@@ -19,9 +20,10 @@ export class ColumnMoveHelper {
         fakeEvent: boolean,
         pinned: ColumnPinnedType,
         gos: GridOptionsService,
-        columnModel: ColumnModel
+        columnModel: ColumnModel,
+        columnMoveService: ColumnMoveService
     }): { columns: Column[], toIndex: number } | null | undefined {
-        const { isFromHeader, hDirection, xPosition, fromEnter, fakeEvent, pinned, gos, columnModel } = params; 
+        const { isFromHeader, hDirection, xPosition, fromEnter, fakeEvent, pinned, gos, columnModel, columnMoveService } = params; 
 
         const draggingLeft = hDirection === HorizontalDirection.Left;
         const draggingRight = hDirection === HorizontalDirection.Right;
@@ -120,9 +122,9 @@ export class ColumnMoveHelper {
         for (let i = 0; i < validMoves.length; i++) {
             const move: number = validMoves[i];
 
-            const order = columnModel.getProposedColumnOrder(allMovingColumnsOrdered, move);
+            const order = columnMoveService.getProposedColumnOrder(allMovingColumnsOrdered, move);
 
-            if (!columnModel.doesOrderPassRules(order)) {
+            if (!columnMoveService.doesOrderPassRules(order)) {
                 continue;
             }
             const displayedOrder = order.filter((col) => displayedCols.includes(col));
@@ -142,11 +144,11 @@ export class ColumnMoveHelper {
         // The best move is the move with least group fragmentation
         potentialMoves.sort((a, b) => a.fragCount - b.fragCount);
 
-        return this.moveColumns(allMovingColumns, potentialMoves[0].move, 'uiColumnMoved', false, columnModel);
+        return this.moveColumns(allMovingColumns, potentialMoves[0].move, 'uiColumnMoved', false, columnMoveService);
     }
 
-    public static moveColumns(columns: Column[], toIndex: number, source: ColumnEventType, finished: boolean, columnModel: ColumnModel): { columns: Column[], toIndex: number } | null {
-        columnModel.moveColumns(columns, toIndex, source, finished);
+    public static moveColumns(columns: Column[], toIndex: number, source: ColumnEventType, finished: boolean, columnMoveService: ColumnMoveService): { columns: Column[], toIndex: number } | null {
+        columnMoveService.moveColumns(columns, toIndex, source, finished);
 
         return finished ? null : { columns, toIndex };
     }

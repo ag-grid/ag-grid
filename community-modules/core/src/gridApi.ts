@@ -142,6 +142,7 @@ import { ColumnAutosizeService } from "./columns/columnAutosizeService";
 import { ColumnGetStateService } from "./columns/columnGetStateService";
 import { ColumnApplyStateService } from "./columns/columnApplyStateService";
 import { ColumnGroupStateService } from "./columns/columnGroupStateService";
+import { ColumnMoveService } from "./columns/columnMoveService";
 
 export interface DetailGridInfo {
     /**
@@ -190,6 +191,7 @@ export class GridApi<TData = any> {
     @Autowired('columnGroupStateService') private readonly columnGroupStateService: ColumnGroupStateService;
     @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
     @Autowired('columnAutosizeService') private readonly columnAutosizeService: ColumnAutosizeService;
+    @Autowired('columnMoveService') private readonly columnMoveService: ColumnMoveService;
     @Autowired('selectionService') private readonly selectionService: ISelectionService;
     @Autowired('gridOptionsService') private readonly gos: GridOptionsService;
     @Autowired('valueService') private readonly valueService: ValueService;
@@ -1836,12 +1838,12 @@ export class GridApi<TData = any> {
     /** @deprecated v31.1 moveColumn(key, toIndex) deprecated, please use moveColumns([key], toIndex) instead. */
     public moveColumn(key: string | ColDef | Column, toIndex: number): void {
         this.logDeprecation('v31.1', 'moveColumn(key, toIndex)', 'moveColumns([key], toIndex)');
-        this.columnModel.moveColumns([key], toIndex, 'api');
+        this.columnMoveService.moveColumns([key], toIndex, 'api');
     }
     /** Moves the column at `fromIdex` to `toIndex`. The column is first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
-    public moveColumnByIndex(fromIndex: number, toIndex: number): void { this.columnModel.moveColumnByIndex(fromIndex, toIndex, 'api'); }
+    public moveColumnByIndex(fromIndex: number, toIndex: number): void { this.columnMoveService.moveColumnByIndex(fromIndex, toIndex, 'api'); }
     /** Moves columns to `toIndex`. The columns are first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
-    public moveColumns(columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number) { this.columnModel.moveColumns(columnsToMoveKeys, toIndex, 'api'); }
+    public moveColumns(columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number) { this.columnMoveService.moveColumns(columnsToMoveKeys, toIndex, 'api'); }
     /** Move the column to a new position in the row grouping order. */
     public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.columnModel.moveRowGroupColumn(fromIndex, toIndex, 'api'); }
     /** Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function. */

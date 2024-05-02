@@ -130,7 +130,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             fromEnter: false,
             fakeEvent: false,
             gos: gos,
-            columnModel: beans.columnModel
+            columnModel: beans.columnModel,
+            columnMoveService: beans.columnMoveService
         });
 
         const displayedLeafColumns = column.getDisplayedLeafColumns();

@@ -84,6 +84,7 @@ export {ColumnFactory} from "@ag-grid-community/core";
 export {ColumnGroup} from "@ag-grid-community/core";
 export {ColumnKeyCreator} from "@ag-grid-community/core";
 export {ColumnModel} from "@ag-grid-community/core";
+export {ColumnMoveService} from "@ag-grid-community/core";
 export {Component} from "@ag-grid-community/core";
 export {ComponentUtil} from "@ag-grid-community/core";
 export {Context} from "@ag-grid-community/core";

@@ -11,14 +11,17 @@ import {
     VirtualList,
     VirtualListDragFeature,
     _,
-    VirtualListDragItem
+    VirtualListDragItem,
+    ColumnMoveService
 } from "@ag-grid-community/core";
 
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
 import { ToolPanelColumnComp } from "./toolPanelColumnComp";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {
+
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
 
     constructor(
         private readonly comp: PrimaryColsListPanel,
@@ -79,7 +82,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         const columnsToMove: Column[] = this.getCurrentColumns(currentDragValue);
 
         if (targetIndex != null) {
-            this.columnModel.moveColumns(columnsToMove, targetIndex, 'toolPanelUi');
+            this.columnMoveService.moveColumns(columnsToMove, targetIndex, 'toolPanelUi');
         }
     }
 
