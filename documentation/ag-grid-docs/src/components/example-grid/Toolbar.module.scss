@@ -124,3 +124,12 @@
         }
     }
 }
+.filterLabel {
+    margin-left: $spacing-size-2;
+    font-size: var(--text-fs-sm);
+}
+
+.filterInput {
+    margin-left: 0;
+    font-size: var(--text-fs-sm);
+}

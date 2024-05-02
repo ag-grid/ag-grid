@@ -106,7 +106,9 @@ export const Toolbar = ({
         <div className={styles.toolbar}>
             <div className={styles.controlsContainer}>
                 <div className={styles.controls}>
-                    <label htmlFor="data-size">Data Size:</label>
+                    <label htmlFor="data-size" className="text-sm">
+                        Data Size:
+                    </label>
 
                     {dataSizeOption && (
                         <Select
@@ -120,7 +122,9 @@ export const Toolbar = ({
                         />
                     )}
 
-                    <label htmlFor="grid-theme">Theme:</label>
+                    <label htmlFor="grid-theme" className="text-sm">
+                        Theme:
+                    </label>
                     <Select
                         isPopper
                         options={themeOptions}
@@ -131,8 +135,11 @@ export const Toolbar = ({
                         }}
                     />
 
-                    <label htmlFor="global-filter">Filter:</label>
+                    <label htmlFor="global-filter" className={styles.filterLabel}>
+                        Filter:
+                    </label>
                     <input
+                        className={styles.filterInput}
                         placeholder="Filter any column..."
                         type="text"
                         onInput={onFilterChanged}
