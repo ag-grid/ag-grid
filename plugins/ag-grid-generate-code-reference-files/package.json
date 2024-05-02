@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "glob": "8.0.3",
-    "typescript": "^4.9.5",
+    "typescript": "^5.1.6",
     "@nx/devkit": "17.2.6",
     "@swc/helpers": "0.5.3"
   },
