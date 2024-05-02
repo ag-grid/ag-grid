@@ -10,12 +10,6 @@ Importing AG Grid with packages ensures every grid feature is implicitly availab
 
 If you want to minimise your application bundle size, use modules to include only the functionality you need. You will need to [Register Modules](./modules/#registering-ag-grid-modules) in your application. Modules default to **ES6 ES Modules** but not all tooling supports ESM out of the box yet (specifically testing tools such as Jest). These tools can be accommodated with extra configuration (see [Testing](./testing)).
 
-{% if isFramework("vue") %}
-{% note %}
-Note that the following describes the setup for Vue 3. For Vue 2, use `@ag-grid-community/vue` instead of `@ag-grid-community/vue3`.
-{% /note %}
-{% /if %}
-
 ## Modules
 
 The table below summarises the modules provided in AG Grid Community and AG Grid Enterprise. See [Module Examples](./modules/#module-examples) to learn how the Example Runner can be used to determine the module required for a given feature.
