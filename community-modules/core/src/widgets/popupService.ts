@@ -87,7 +87,7 @@ export interface AddPopupResult {
     hideFunc: (params?: PopupEventParams) => void;
 }
 
-@Bean('popupService')
+//@Bean('popupService')
 export class PopupService extends BeanStub {
 
     // really this should be using eGridDiv, not sure why it's not working.

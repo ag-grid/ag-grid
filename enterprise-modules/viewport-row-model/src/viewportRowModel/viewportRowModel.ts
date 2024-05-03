@@ -18,7 +18,7 @@ import {
     RowModelType
 } from "@ag-grid-community/core";
 
-@Bean('rowModel')
+//@Bean('rowModel')
 export class ViewportRowModel extends BeanStub implements IRowModel {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;

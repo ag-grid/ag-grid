@@ -18,7 +18,7 @@ import { ServerSideExpansionService } from "../services/serverSideExpansionServi
 
 export const GROUP_MISSING_KEY_ID: 'ag-Grid-MissingKey' = 'ag-Grid-MissingKey';
 
-@Bean('ssrmBlockUtils')
+//@Bean('ssrmBlockUtils')
 export class BlockUtils extends BeanStub {
 
     @Autowired('valueService') private valueService: ValueService;

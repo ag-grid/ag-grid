@@ -13,7 +13,7 @@ import { IRowNode } from "../interfaces/iRowNode";
 import { RowNode } from "../entities/rowNode";
 import { DataTypeService } from "../columns/dataTypeService";
 
-@Bean('valueService')
+//@Bean('valueService')
 export class ValueService extends BeanStub {
 
     @Autowired('expressionService') private expressionService: ExpressionService;

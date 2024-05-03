@@ -10,7 +10,7 @@ import {
     ValueService
 } from "@ag-grid-community/core";
 
-@Bean("chartCrossFilterService")
+//@Bean("chartCrossFilterService")
 export class ChartCrossFilterService extends BeanStub {
 
     @Autowired('gridApi') private readonly gridApi: GridApi;

@@ -34,7 +34,7 @@ import { CheckboxCellRenderer } from "../../rendering/cellRenderers/checkboxCell
 import { CheckboxCellEditor } from "../../rendering/cellEditors/checkboxCellEditor";
 import { AgMenuItemRenderer } from "../../widgets/agMenuItemRenderer";
 
-@Bean('userComponentRegistry')
+//@Bean('userComponentRegistry')
 export class UserComponentRegistry extends BeanStub {
 
     private agGridDefaults: { [key: string]: any } = {

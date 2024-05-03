@@ -39,7 +39,7 @@ interface NavigateParams {
     isAsync?: boolean;
 }
 
-@Bean('navigationService')
+//@Bean('navigationService')
 export class NavigationService extends BeanStub {
 
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;

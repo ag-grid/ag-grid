@@ -4,7 +4,7 @@ import { SparklineTooltip } from '../sparkline/tooltip/sparklineTooltip';
 /**
  * This 'bean' creates a single sparkline tooltip that is bound to the grid lifecycle.
  */
-@Bean('sparklineTooltipSingleton')
+//@Bean('sparklineTooltipSingleton')
 export class SparklineTooltipSingleton extends BeanStub {
     private tooltip!: SparklineTooltip;
 

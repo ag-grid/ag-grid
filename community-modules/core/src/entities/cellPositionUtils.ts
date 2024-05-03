@@ -9,7 +9,7 @@ export interface CellPosition extends RowPosition {
     column: Column;
 }
 
-@Bean('cellPositionUtils')
+//@Bean('cellPositionUtils')
 export class CellPositionUtils extends BeanStub {
 
     public createId(cellPosition: CellPosition): string {

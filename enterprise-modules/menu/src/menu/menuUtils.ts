@@ -19,7 +19,7 @@ export interface MenuRestoreFocusParams {
     eventSource?: HTMLElement;
 }
 
-@Bean('menuUtils')
+//@Bean('menuUtils')
 export class MenuUtils extends BeanStub {
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;

@@ -18,7 +18,7 @@ export interface SortedRowNode {
 
 // this logic is used by both SSRM and CSRM
 
-@Bean('rowNodeSorter')
+//@Bean('rowNodeSorter')
 export class RowNodeSorter extends BeanStub {
 
     @Autowired('valueService') private valueService: ValueService;

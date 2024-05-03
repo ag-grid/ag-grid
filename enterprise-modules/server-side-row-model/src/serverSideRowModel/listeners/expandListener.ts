@@ -14,7 +14,7 @@ import {
 import { ServerSideRowModel } from "../serverSideRowModel";
 import { StoreFactory } from "../stores/storeFactory";
 
-@Bean('ssrmExpandListener')
+//@Bean('ssrmExpandListener')
 export class ExpandListener extends BeanStub {
 
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;

@@ -116,7 +116,6 @@ export interface IColumnLimit {
 type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
 export type Maybe<T> = T | null | undefined;
 
-@Bean('columnModel')
 export class ColumnModel extends BeanStub {
 
     @Autowired('expressionService') private expressionService: ExpressionService;

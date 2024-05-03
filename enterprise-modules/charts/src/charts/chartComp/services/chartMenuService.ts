@@ -31,7 +31,7 @@ export const CHART_TOOL_PANEL_MENU_OPTIONS: { [key in ChartToolPanelName]: Chart
     format: "chartFormat"
 }
 
-@Bean('chartMenuService')
+//@Bean('chartMenuService')
 export class ChartMenuService extends BeanStub {
     @Autowired('chartService') private readonly chartService: ChartService;
     @Autowired('advancedSettingsMenuFactory') private readonly advancedSettingsMenuFactory: AdvancedSettingsMenuFactory;

@@ -11,7 +11,7 @@ export interface HorizontalResizeParams {
     onResizeEnd: (delta: number) => void;
 }
 
-@Bean('horizontalResizeService')
+//@Bean('horizontalResizeService')
 export class HorizontalResizeService extends BeanStub {
 
     @Autowired('dragService') private dragService: DragService;

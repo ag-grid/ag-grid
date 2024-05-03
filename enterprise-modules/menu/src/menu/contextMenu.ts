@@ -35,7 +35,7 @@ import { MenuUtils } from "./menuUtils";
 const CSS_MENU = 'ag-menu';
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
 
-@Bean('contextMenuFactory')
+//@Bean('contextMenuFactory')
 export class ContextMenuFactory extends BeanStub implements IContextMenuFactory {
 
     @Autowired('popupService') private popupService: PopupService;

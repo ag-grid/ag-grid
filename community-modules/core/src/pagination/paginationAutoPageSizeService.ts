@@ -6,7 +6,7 @@ import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl"
 import { debounce } from "../utils/function";
 import { PaginationProxy } from "./paginationProxy";
 
-@Bean('paginationAutoPageSizeService')
+//@Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
 
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;

@@ -29,7 +29,7 @@ import { FilterManager } from "./filter/filterManager";
 import { IAdvancedFilterService } from "./interfaces/iAdvancedFilterService";
 import { warnOnce } from "./utils/function";
 
-@Bean('focusService')
+//@Bean('focusService')
 export class FocusService extends BeanStub {
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;

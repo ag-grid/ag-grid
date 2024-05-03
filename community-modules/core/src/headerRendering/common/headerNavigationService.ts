@@ -15,7 +15,7 @@ export enum HeaderNavigationDirection {
     RIGHT
 }
 
-@Bean('headerNavigationService')
+//@Bean('headerNavigationService')
 export class HeaderNavigationService extends BeanStub {
 
     @Autowired('focusService') private focusService: FocusService;

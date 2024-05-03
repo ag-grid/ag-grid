@@ -10,7 +10,7 @@ export interface SetScrollsVisibleParams {
     verticalScrollShowing: boolean;
 }
 
-@Bean('scrollVisibleService')
+//@Bean('scrollVisibleService')
 export class ScrollVisibleService extends BeanStub {
 
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;

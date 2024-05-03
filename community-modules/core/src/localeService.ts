@@ -3,7 +3,7 @@ import { BeanStub } from "./context/beanStub";
 import { GetLocaleTextParams } from "./interfaces/iCallbackParams";
 import { WithoutGridCommon } from "./interfaces/iCommon";
 
-@Bean('localeService')
+//@Bean('localeService')
 export class LocaleService extends BeanStub {
     public getLocaleTextFunc(): (key: string, defaultValue: string, variableValues?: string[]) => string {
 

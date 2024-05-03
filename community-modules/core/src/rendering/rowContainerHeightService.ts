@@ -10,7 +10,7 @@ import { Logger, LoggerFactory } from "../logger";
  * the max div height actually allows.
  */
 
-@Bean('rowContainerHeightService')
+//@Bean('rowContainerHeightService')
 export class RowContainerHeightService extends BeanStub {
 
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;

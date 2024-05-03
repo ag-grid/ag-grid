@@ -2,7 +2,7 @@ import { Bean, BeanStub } from "@ag-grid-community/core";
 
 export type ChartTranslationKey = keyof typeof ChartTranslationService.DEFAULT_TRANSLATIONS;
 
-@Bean("chartTranslationService")
+//@Bean("chartTranslationService")
 export class ChartTranslationService extends BeanStub {
     public static readonly DEFAULT_TRANSLATIONS = {
         pivotChartTitle: 'Pivot Chart',

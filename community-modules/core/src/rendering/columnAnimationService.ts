@@ -3,7 +3,7 @@ import { BeanStub } from "../context/beanStub";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CtrlsService } from "../ctrlsService";
 
-@Bean('columnAnimationService')
+//@Bean('columnAnimationService')
 export class ColumnAnimationService extends BeanStub {
 
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;

@@ -13,7 +13,7 @@ import {
 } from "@ag-grid-community/core";
 import { MenuItemMapper } from "./menuItemMapper";
 
-@Bean('columnMenuFactory')
+//@Bean('columnMenuFactory')
 export class ColumnMenuFactory extends BeanStub {
     @Autowired('menuItemMapper') private readonly menuItemMapper: MenuItemMapper;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;

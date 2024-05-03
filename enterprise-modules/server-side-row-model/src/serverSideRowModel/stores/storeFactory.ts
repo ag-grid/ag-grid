@@ -14,7 +14,7 @@ import { SSRMParams } from "../serverSideRowModel";
 import { FullStore } from "./fullStore";
 import { LazyStore } from "./lazy/lazyStore";
 
-@Bean('ssrmStoreFactory')
+//@Bean('ssrmStoreFactory')
 export class StoreFactory {
 
     @Autowired('gridOptionsService') private gos: GridOptionsService;

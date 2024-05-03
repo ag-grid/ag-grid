@@ -9,7 +9,7 @@ import { exists } from "../utils/generic";
 import { CtrlsService } from "../ctrlsService";
 import { CellCtrl } from "../rendering/cell/cellCtrl";
 
-@Bean('mouseEventService')
+//@Bean('mouseEventService')
 export class MouseEventService extends BeanStub {
 
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;

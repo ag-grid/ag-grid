@@ -16,7 +16,7 @@ export interface RowPosition {
     rowPinned: RowPinnedType;
 }
 
-@Bean('rowPositionUtils')
+//@Bean('rowPositionUtils')
 export class RowPositionUtils extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;

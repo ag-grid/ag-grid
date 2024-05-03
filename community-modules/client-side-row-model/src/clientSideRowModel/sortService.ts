@@ -16,7 +16,6 @@ import {
 } from "@ag-grid-community/core";
 
 
-@Bean('sortService')
 export class SortService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;

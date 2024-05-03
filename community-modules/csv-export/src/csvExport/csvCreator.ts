@@ -14,7 +14,7 @@ import { Downloader } from "./downloader";
 import { GridSerializer } from "./gridSerializer";
 import { CsvSerializingSession } from "./sessions/csvSerializingSession";
 
-@Bean('csvCreator')
+//@Bean('csvCreator')
 export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSession, CsvExportParams> implements ICsvCreator {
 
     @Autowired('columnModel') private columnModel: ColumnModel;

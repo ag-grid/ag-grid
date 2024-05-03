@@ -14,7 +14,7 @@ import { PaginationProxy } from "./pagination/paginationProxy";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { RowCtrl } from "./rendering/row/rowCtrl";
 
-@Bean('cellNavigationService')
+//@Bean('cellNavigationService')
 export class CellNavigationService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;

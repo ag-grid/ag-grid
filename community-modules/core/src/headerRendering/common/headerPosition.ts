@@ -18,7 +18,7 @@ export interface HeaderFuturePosition extends HeaderPosition {
     headerRowIndexWithoutSpan?: number;
 }
 
-@Bean('headerPositionUtils')
+//@Bean('headerPositionUtils')
 export class HeaderPositionUtils extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;

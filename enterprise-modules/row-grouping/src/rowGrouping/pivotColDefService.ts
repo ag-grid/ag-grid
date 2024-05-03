@@ -17,7 +17,7 @@ export interface PivotColDefServiceResult {
     pivotColumnDefs: ColDef[];
 }
 
-@Bean('pivotColDefService')
+//@Bean('pivotColDefService')
 export class PivotColDefService extends BeanStub implements IPivotColDefService {
 
     public static PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';

@@ -9,7 +9,7 @@ import { IRowModel } from "../interfaces/iRowModel";
 import { exists } from "../utils/generic";
 import { ValueService } from "../valueService/valueService";
 
-@Bean('quickFilterService')
+//@Bean('quickFilterService')
 export class QuickFilterService extends BeanStub {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;

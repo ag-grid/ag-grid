@@ -2,7 +2,7 @@ import { Bean, PostConstruct } from "../context/context";
 import { RowNode } from "../entities/rowNode";
 import { BeanStub } from "../context/beanStub";
 
-@Bean('valueCache')
+//@Bean('valueCache')
 export class ValueCache extends BeanStub {
 
     private cacheVersion = 0;

@@ -5,7 +5,7 @@ import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRend
 import { BeanStub } from "../../context/beanStub";
 import { loadTemplate } from "../../utils/dom";
 
-@Bean("agComponentUtils")
+//@Bean("agComponentUtils")
 export class AgComponentUtils extends BeanStub {
 
     @Autowired("componentMetadataProvider")

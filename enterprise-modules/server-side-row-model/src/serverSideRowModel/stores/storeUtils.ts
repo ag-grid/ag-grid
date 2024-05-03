@@ -16,7 +16,7 @@ import {
 import { SSRMParams, ServerSideRowModel } from "../serverSideRowModel";
 import { StoreFactory } from "./storeFactory";
 
-@Bean('ssrmStoreUtils')
+//@Bean('ssrmStoreUtils')
 export class StoreUtils extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;

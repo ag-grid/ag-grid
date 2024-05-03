@@ -1,7 +1,7 @@
 import { _, Autowired, Bean, BeanStub, PreConstruct } from '@ag-grid-community/core';
 import {ILicenseManager, LicenseManager} from "./shared/licenseManager";
 
-@Bean('licenseManager')
+//@Bean('licenseManager')
 export class GridLicenseManager extends BeanStub {
     private licenseManager: LicenseManager;
 

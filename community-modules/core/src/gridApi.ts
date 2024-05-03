@@ -138,7 +138,6 @@ export function unwrapUserComp<T>(comp: T): T {
     return isProxy ? compAsAny.getFrameworkComponentInstance() : comp;
 }
 
-@Bean('gridApi')
 export class GridApi<TData = any> {
     
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;

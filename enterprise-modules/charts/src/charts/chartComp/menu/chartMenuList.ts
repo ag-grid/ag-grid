@@ -18,7 +18,7 @@ import { ChartMenuService } from '../services/chartMenuService';
 import { ChartTranslationService } from '../services/chartTranslationService';
 import { ChartMenuContext } from './chartMenuContext';
 
-@Bean('chartMenuListFactory')
+//@Bean('chartMenuListFactory')
 export class ChartMenuListFactory extends BeanStub {
     @Autowired('popupService') private readonly popupService: PopupService;
     @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;

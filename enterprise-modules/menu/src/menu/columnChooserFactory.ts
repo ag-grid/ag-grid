@@ -16,7 +16,7 @@ import {
 import { PrimaryColsPanel } from "@ag-grid-enterprise/column-tool-panel";
 import { MenuUtils } from "./menuUtils";
 
-@Bean('columnChooserFactory')
+//@Bean('columnChooserFactory')
 export class ColumnChooserFactory extends BeanStub implements IColumnChooserFactory {
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('menuUtils') private readonly menuUtils: MenuUtils;

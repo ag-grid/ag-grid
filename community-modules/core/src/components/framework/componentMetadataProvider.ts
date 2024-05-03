@@ -9,7 +9,7 @@ export interface ComponentMetadata {
     functionAdapter?: (callback: any) => { new(): IComponent<any> };
 }
 
-@Bean("componentMetadataProvider")
+//@Bean("componentMetadataProvider")
 export class ComponentMetadataProvider extends BeanStub {
 
     private componentMetaData: { [key: string]: ComponentMetadata };

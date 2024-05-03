@@ -3,7 +3,7 @@ import { Bean, PostConstruct } from "../context/context";
 import { AgEventListener, AgGlobalEventListener, ALWAYS_SYNC_GLOBAL_EVENTS } from "../events";
 import { FrameworkEventListenerService } from "./frameworkEventListenerService";
 
-@Bean('apiEventService')
+//@Bean('apiEventService')
 export class ApiEventService extends BeanStub {
     private syncEventListeners: Map<string, Set<AgEventListener>> = new Map();
     private asyncEventListeners: Map<string, Set<AgEventListener>> = new Map();

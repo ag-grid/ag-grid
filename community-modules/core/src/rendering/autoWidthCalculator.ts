@@ -7,7 +7,7 @@ import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl"
 import { RowCssClassCalculator } from "./row/rowCssClassCalculator";
 import { ColumnGroup } from "../entities/columnGroup";
 
-@Bean('autoWidthCalculator')
+//@Bean('autoWidthCalculator')
 export class AutoWidthCalculator extends BeanStub {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;

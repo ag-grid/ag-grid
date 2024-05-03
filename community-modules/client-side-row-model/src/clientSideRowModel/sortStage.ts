@@ -12,7 +12,6 @@ import {
 
 import { SortService } from "./sortService";
 
-@Bean('sortStage')
 export class SortStage extends BeanStub implements IRowNodeStage {
 
     @Autowired('sortService') private sortService: SortService;

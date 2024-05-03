@@ -7,7 +7,7 @@ import {
     BeanStub
 } from "@ag-grid-community/core";
 
-@Bean("filterService")
+//@Bean("filterService")
 export class FilterService extends BeanStub {
 
     @Autowired('filterManager') private filterManager: FilterManager;

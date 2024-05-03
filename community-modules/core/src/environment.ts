@@ -89,7 +89,7 @@ const SASS_PROPERTY_BUILDER: { [key in SASS_PROPERTIES]: string[] } = {
     chartMenuPanelWidth: ['ag-chart-docked-container']
 };
 
-@Bean('environment')
+//@Bean('environment')
 export class Environment extends BeanStub {
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;

@@ -137,7 +137,7 @@ export interface DraggingEvent {
     dropZoneTarget: HTMLElement;
 }
 
-@Bean('dragAndDropService')
+//@Bean('dragAndDropService')
 export class DragAndDropService extends BeanStub {
 
     @Autowired('dragService') private dragService: DragService;

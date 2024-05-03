@@ -4,7 +4,7 @@ import { setAriaAtomic, setAriaLive, setAriaRelevant } from "../utils/aria";
 import { clearElement } from "../utils/dom";
 import { debounce } from "../utils/function";
 
-@Bean('ariaAnnouncementService')
+//@Bean('ariaAnnouncementService')
 export class AriaAnnouncementService extends BeanStub {
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;

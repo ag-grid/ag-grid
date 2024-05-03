@@ -1,7 +1,7 @@
 import { BeanStub } from "./context/beanStub";
 import { Bean, ControllerMeta } from "./context/context";
 
-@Bean('ctrlsFactory')
+//@Bean('ctrlsFactory')
 export class CtrlsFactory extends BeanStub {
 
     private registry: {[name: string]: new () => Object} = {};

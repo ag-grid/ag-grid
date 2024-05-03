@@ -47,7 +47,7 @@ interface ReadyParams {
 
 type CtrlType = keyof ReadyParams;
 
-@Bean(CtrlsService.NAME)
+//@Bean(CtrlsService.NAME)
 export class CtrlsService extends BeanStub {
 
     public static readonly NAME = 'ctrlsService';

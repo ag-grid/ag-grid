@@ -24,7 +24,7 @@ export interface RowCssClassCalculatorParams {
     fadeRowIn?: boolean;
 }
 
-@Bean('rowCssClassCalculator')
+//@Bean('rowCssClassCalculator')
 export class RowCssClassCalculator {
 
     @Autowired('stylingService') public stylingService: StylingService;

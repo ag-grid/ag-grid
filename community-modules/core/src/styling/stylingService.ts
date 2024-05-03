@@ -4,7 +4,7 @@ import { ExpressionService } from "../valueService/expressionService";
 import { BeanStub } from "../context/beanStub";
 import { RowClassParams } from "../entities/gridOptions";
 
-@Bean('stylingService')
+//@Bean('stylingService')
 export class StylingService extends BeanStub {
 
     @Autowired('expressionService') private expressionService: ExpressionService;

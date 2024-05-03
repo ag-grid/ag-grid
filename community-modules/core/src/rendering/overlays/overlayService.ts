@@ -10,7 +10,7 @@ import { ILoadingOverlayParams } from "./loadingOverlayComponent";
 import { INoRowsOverlayParams } from "./noRowsOverlayComponent";
 import { GridOptions } from "../../entities/gridOptions";
 
-@Bean('overlayService')
+//@Bean('overlayService')
 export class OverlayService extends BeanStub {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
     @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;

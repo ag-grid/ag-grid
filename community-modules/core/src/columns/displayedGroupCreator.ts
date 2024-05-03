@@ -8,7 +8,7 @@ import { BeanStub } from "../context/beanStub";
 import { exists } from "../utils/generic";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
-@Bean('displayedGroupCreator')
+//@Bean('displayedGroupCreator')
 export class DisplayedGroupCreator extends BeanStub {
 
     public createDisplayedGroups(

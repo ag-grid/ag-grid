@@ -23,7 +23,6 @@ import { CtrlsService } from "./ctrlsService";
 import { GridApi } from "./gridApi";
 import { errorOnce } from "./utils/function";
 
-@Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;

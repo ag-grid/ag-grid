@@ -28,7 +28,7 @@ type ProcessGroupHeaderCallback = (params: ProcessGroupHeaderForExportParams) =>
 
 export enum RowType { HEADER_GROUPING, HEADER, BODY }
 
-@Bean("gridSerializer")
+//@Bean("gridSerializer")
 export class GridSerializer extends BeanStub {
 
     @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;

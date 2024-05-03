@@ -49,7 +49,7 @@ interface EnterpriseColumnMenu {
     showTabBasedOnPreviousSelection?(): void;
 }
 
-@Bean('enterpriseMenuFactory')
+//@Bean('enterpriseMenuFactory')
 export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     @Autowired('popupService') private readonly popupService: PopupService;
     @Autowired('focusService') private readonly focusService: FocusService;

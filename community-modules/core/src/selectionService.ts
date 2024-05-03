@@ -14,7 +14,7 @@ import { ISelectionService, ISetNodesSelectedParams } from "./interfaces/iSelect
 import { last } from "./utils/array";
 import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from "./interfaces/selectionState";
 
-@Bean('selectionService')
+//@Bean('selectionService')
 export class SelectionService extends BeanStub implements ISelectionService {
 
     @Autowired('rowModel') private rowModel: IRowModel;

@@ -66,7 +66,6 @@ export interface IContextMenuParams extends ShowContextMenuParams {
     y?: number;
 }
 
-@Bean('menuService')
 export class MenuService extends BeanStub {
     @Autowired('filterMenuFactory') private readonly filterMenuFactory: IMenuFactory;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;

@@ -1,6 +1,6 @@
 import { Bean, BeanStub, IStatusPanelComp, IStatusBarService } from '@ag-grid-community/core';
 
-@Bean('statusBarService')
+//@Bean('statusBarService')
 export class StatusBarService extends BeanStub implements IStatusBarService {
 
     private allComponents: Map<string, IStatusPanelComp> = new Map();

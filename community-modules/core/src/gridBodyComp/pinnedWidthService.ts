@@ -4,7 +4,7 @@ import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
 import { ColumnModel } from "../columns/columnModel";
 
-@Bean('pinnedWidthService')
+//@Bean('pinnedWidthService')
 export class PinnedWidthService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;

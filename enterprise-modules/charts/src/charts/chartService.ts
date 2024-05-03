@@ -50,7 +50,7 @@ export interface CommonCreateChartParams extends BaseCreateChartParams {
     seriesGroupType?: SeriesGroupType
 }
 
-@Bean('chartService')
+//@Bean('chartService')
 export class ChartService extends BeanStub implements IChartService {
 
     @Autowired('columnModel') private columnModel: ColumnModel;

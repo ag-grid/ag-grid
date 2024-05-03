@@ -14,7 +14,7 @@ import { warnOnce } from '../utils/function';
 import { ColumnEventType } from '../events';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
-@Bean('columnFactory')
+//@Bean('columnFactory')
 export class ColumnFactory extends BeanStub {
 
     @Autowired('dataTypeService') private dataTypeService: DataTypeService;

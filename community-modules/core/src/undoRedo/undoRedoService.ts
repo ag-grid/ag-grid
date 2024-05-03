@@ -23,7 +23,7 @@ import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
-@Bean('undoRedoService')
+//@Bean('undoRedoService')
 export class UndoRedoService extends BeanStub {
 
     @Autowired('focusService') private focusService: FocusService;

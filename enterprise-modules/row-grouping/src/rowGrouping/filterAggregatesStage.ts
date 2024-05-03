@@ -10,7 +10,7 @@ import {
     GridOptions,
 } from "@ag-grid-community/core";
 
-@Bean('filterAggregatesStage')
+//@Bean('filterAggregatesStage')
 export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
 
     @Autowired('filterManager') private filterManager: FilterManager;

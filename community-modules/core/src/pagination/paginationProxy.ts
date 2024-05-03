@@ -7,7 +7,7 @@ import { missing, exists } from "../utils/generic";
 import { RowPosition } from "../entities/rowPositionUtils";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
-@Bean('paginationProxy')
+//@Bean('paginationProxy')
 export class PaginationProxy extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;

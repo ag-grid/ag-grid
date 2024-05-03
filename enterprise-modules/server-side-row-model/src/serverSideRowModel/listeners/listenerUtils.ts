@@ -1,6 +1,6 @@
 import { Autowired, Bean, ColumnModel } from "@ag-grid-community/core";
 
-@Bean('ssrmListenerUtils')
+//@Bean('ssrmListenerUtils')
 export class ListenerUtils {
 
     @Autowired('columnModel') private columnModel: ColumnModel;

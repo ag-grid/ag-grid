@@ -6,7 +6,7 @@ import { IRowModel } from "../interfaces/iRowModel";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { _ } from "../utils";
 
-@Bean('rowNodeBlockLoader')
+//@Bean('rowNodeBlockLoader')
 export class RowNodeBlockLoader extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     

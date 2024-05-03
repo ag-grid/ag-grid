@@ -26,7 +26,7 @@ import {
     TextFilterExpressionOperators,
 } from './filterExpressionOperators';
 
-@Bean('advancedFilterExpressionService')
+//@Bean('advancedFilterExpressionService')
 export class AdvancedFilterExpressionService extends BeanStub {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;

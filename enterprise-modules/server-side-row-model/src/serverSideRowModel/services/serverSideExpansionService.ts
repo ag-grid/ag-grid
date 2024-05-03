@@ -10,7 +10,7 @@ import {
 } from "@ag-grid-community/core";
 import { ServerSideRowModel } from "../serverSideRowModel";
 
-@Bean('expansionService')
+//@Bean('expansionService')
 export class ServerSideExpansionService extends ExpansionService implements IExpansionService {
     @Autowired('rowModel') private readonly serverSideRowModel: ServerSideRowModel;
 

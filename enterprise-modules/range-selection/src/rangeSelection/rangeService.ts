@@ -31,7 +31,7 @@ import {
     ValueService
 } from "@ag-grid-community/core";
 
-@Bean('rangeService')
+//@Bean('rangeService')
 export class RangeService extends BeanStub implements IRangeService {
 
     @Autowired('rowModel') private rowModel: IRowModel;

@@ -18,7 +18,7 @@ import {
 } from '@ag-grid-community/core';
 import { ChartMenuItemMapper } from './chartMenuItemMapper';
 
-@Bean('menuItemMapper')
+//@Bean('menuItemMapper')
 export class MenuItemMapper extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;

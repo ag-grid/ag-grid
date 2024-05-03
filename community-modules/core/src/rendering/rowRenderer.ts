@@ -81,7 +81,7 @@ export interface RedrawRowsParams<TData = any> {
     rowNodes?: IRowNode<TData>[];
 }
 
-@Bean("rowRenderer")
+//@Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
 
     @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;

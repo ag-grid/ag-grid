@@ -67,7 +67,7 @@ const apiError = (method: string) => `AG Grid: Unable to use the Clipboard API (
 'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
 'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.';
 
-@Bean('clipboardService')
+//@Bean('clipboardService')
 export class ClipboardService extends BeanStub implements IClipboardService {
 
     @Autowired('csvCreator') private csvCreator: ICsvCreator;

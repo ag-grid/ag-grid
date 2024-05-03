@@ -9,7 +9,7 @@ import { missing } from "../utils/generic";
 import { ColumnEventType } from "../events";
 
 export const GROUP_AUTO_COLUMN_ID: 'ag-Grid-AutoColumn' = 'ag-Grid-AutoColumn';
-@Bean('autoGroupColService')
+//@Bean('autoGroupColService')
 export class AutoGroupColService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;

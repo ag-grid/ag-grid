@@ -11,7 +11,7 @@ import {
     ValueService
 } from "@ag-grid-community/core";
 
-@Bean("chartColumnService")
+//@Bean("chartColumnService")
 export class ChartColumnService extends BeanStub {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('valueService') private readonly valueService: ValueService;

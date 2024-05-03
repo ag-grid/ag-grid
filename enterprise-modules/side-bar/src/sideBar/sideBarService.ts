@@ -1,6 +1,6 @@
 import { Bean, BeanStub, ISideBar, ISideBarService } from "@ag-grid-community/core";
 
-@Bean('sideBarService')
+//@Bean('sideBarService')
 export class SideBarService extends BeanStub implements ISideBarService {
     private sideBarComp: ISideBar;
 

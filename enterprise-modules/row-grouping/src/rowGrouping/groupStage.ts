@@ -49,7 +49,7 @@ interface GroupingDetails {
     keyCreators: (((params: KeyCreatorParams) => string) | undefined)[];
 }
 
-@Bean('groupStage')
+//@Bean('groupStage')
 export class GroupStage extends BeanStub implements IRowNodeStage {
 
     @Autowired('columnModel') private columnModel: ColumnModel;

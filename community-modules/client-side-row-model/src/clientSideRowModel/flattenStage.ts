@@ -20,7 +20,7 @@ interface FlattenDetails {
     groupTotalRow: (params: WithoutGridCommon<GetGroupIncludeFooterParams<any, any>>) => 'top' | 'bottom' | undefined;
 }
 
-@Bean('flattenStage')
+//@Bean('flattenStage')
 export class FlattenStage extends BeanStub implements IRowNodeStage {
 
     @Autowired('beans') private beans: Beans;

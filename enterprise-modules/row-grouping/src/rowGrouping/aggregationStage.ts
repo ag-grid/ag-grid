@@ -28,7 +28,7 @@ interface AggregationDetails {
     userAggFunc: ((params: WithoutGridCommon<GetGroupRowAggParams<any, any>>) => any) | undefined;
 }
 
-@Bean('aggregationStage')
+//@Bean('aggregationStage')
 export class AggregationStage extends BeanStub implements IRowNodeStage {
 
     @Autowired('columnModel') private columnModel: ColumnModel;

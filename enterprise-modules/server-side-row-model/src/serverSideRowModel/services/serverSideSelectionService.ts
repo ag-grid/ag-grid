@@ -19,7 +19,7 @@ import { DefaultStrategy } from "./selection/strategies/defaultStrategy";
 import { GroupSelectsChildrenStrategy } from "./selection/strategies/groupSelectsChildrenStrategy";
 import { ISelectionStrategy } from "./selection/strategies/iSelectionStrategy";
 
-@Bean('selectionService')
+//@Bean('selectionService')
 export class ServerSideSelectionService extends BeanStub implements ISelectionService {
     @Autowired('rowModel') private rowModel: IRowModel;
     private selectionStrategy: ISelectionStrategy;

@@ -11,7 +11,7 @@ import { ChartTranslationService } from "../../services/chartTranslationService"
 import { ChartMenuContext } from "../chartMenuContext";
 import { AdvancedSettingsPanel } from "./advancedSettingsPanel";
 
-@Bean('advancedSettingsMenuFactory')
+//@Bean('advancedSettingsMenuFactory')
 export class AdvancedSettingsMenuFactory extends BeanStub {
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;

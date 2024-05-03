@@ -12,7 +12,7 @@ import {
 import { ClientSideRowModel } from "./clientSideRowModel";
 
 
-@Bean('immutableService')
+//@Bean('immutableService')
 export class ImmutableService extends BeanStub implements IImmutableService {
 
     @Autowired('rowModel') private rowModel: IRowModel;

@@ -10,7 +10,7 @@ import { Autowired, Bean, PostConstruct } from "../context/context";
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { ModuleRegistry } from "../modules/moduleRegistry";
 
-@Bean('validationService')
+//@Bean('validationService')
 export class ValidationService extends BeanStub {
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
 

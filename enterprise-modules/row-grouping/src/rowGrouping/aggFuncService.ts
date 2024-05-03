@@ -19,7 +19,7 @@ const defaultAggFuncNames: { [key: string]: string } = {
     avg: 'Average',
 };
 
-@Bean('aggFuncService')
+//@Bean('aggFuncService')
 export class AggFuncService extends BeanStub implements IAggFuncService {
 
     private static AGG_SUM = 'sum';

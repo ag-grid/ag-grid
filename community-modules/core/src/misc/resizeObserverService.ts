@@ -2,7 +2,7 @@ import { Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 
 const DEBOUNCE_DELAY = 50;
-@Bean('resizeObserverService')
+//@Bean('resizeObserverService')
 export class ResizeObserverService extends BeanStub {
 
     private polyfillFunctions: (() => void)[] = [];

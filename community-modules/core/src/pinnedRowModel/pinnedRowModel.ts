@@ -8,7 +8,7 @@ import { last } from "../utils/array";
 import { Beans } from "../rendering/beans";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
-@Bean('pinnedRowModel')
+//@Bean('pinnedRowModel')
 export class PinnedRowModel extends BeanStub {
 
     @Autowired('beans') private beans: Beans;

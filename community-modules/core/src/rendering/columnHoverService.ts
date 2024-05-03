@@ -4,7 +4,7 @@ import { Column } from "../entities/column";
 import { ColumnHoverChangedEvent, Events } from "../events";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
-@Bean('columnHoverService')
+//@Bean('columnHoverService')
 export class ColumnHoverService extends BeanStub {
 
     private selectedColumns: Column[] | null;

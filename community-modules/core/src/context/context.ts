@@ -126,13 +126,21 @@ export class Context {
             return;
         }
 
+        let name = metaData.beanName;
+        if(!name) {
+            name = getFunctionName(BeanClass);
+            console.error(`Bean missing bean name: ${name}`);
+            name = name.replace('_', '');
+            name = name.charAt(0).toLowerCase() + name.slice(1);
+        }
+
         const beanEntry = {
             bean: BeanClass,
             beanInstance: null as any,
-            beanName: metaData.beanName
+            beanName: name
         };
 
-        this.beanWrappers[metaData.beanName] = beanEntry;
+        this.beanWrappers[name] = beanEntry;
     }
 
     private autoWireBeans(beanInstances: any[]): void {

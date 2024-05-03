@@ -43,7 +43,7 @@ import { debounce } from "../utils/function";
 import { ColumnAnimationService } from "../rendering/columnAnimationService";
 import { Column } from "../entities/column";
 
-@Bean('stateService')
+//@Bean('stateService')
 export class StateService extends BeanStub {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;

@@ -18,7 +18,7 @@ import {
 } from "@ag-grid-community/core";
 import { PivotColDefService } from "./pivotColDefService";
 
-@Bean('pivotStage')
+//@Bean('pivotStage')
 export class PivotStage extends BeanStub implements IRowNodeStage {
 
     // these should go into the pivot column creator

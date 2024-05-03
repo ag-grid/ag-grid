@@ -28,7 +28,7 @@ import { QuickFilterService } from './quickFilterService';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
-@Bean('filterManager')
+//@Bean('filterManager')
 export class FilterManager extends BeanStub {
 
     @Autowired('valueService') private valueService: ValueService;

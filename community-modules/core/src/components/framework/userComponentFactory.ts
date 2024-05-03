@@ -71,7 +71,7 @@ export interface UserCompDetails {
     newAgStackInstance: () => AgPromise<any>;
 }
 
-@Bean('userComponentFactory')
+//@Bean('userComponentFactory')
 export class UserComponentFactory extends BeanStub {
 
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;

@@ -14,7 +14,7 @@ interface TaskList {
     sorted: boolean;
 }
 
-@Bean('animationFrameService')
+//@Bean('animationFrameService')
 export class AnimationFrameService extends BeanStub {
 
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;

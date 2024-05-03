@@ -9,7 +9,7 @@ import {
 
 import { FilterService } from "./filterService";
 
-@Bean('filterStage')
+//@Bean('filterStage')
 export class FilterStage extends BeanStub implements IRowNodeStage {
     @Autowired('filterService') private filterService: FilterService;
 

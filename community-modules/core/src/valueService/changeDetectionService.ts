@@ -10,7 +10,7 @@ import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 
 // Matches value in clipboard module
 const SOURCE_PASTE = 'paste';
-@Bean('changeDetectionService')
+//@Bean('changeDetectionService')
 export class ChangeDetectionService extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;

@@ -67,7 +67,7 @@ export interface PropertyValueChangedEvent<K extends keyof GridOptions> extends 
 export type PropertyChangedListener = (event: PropertyChangedEvent) => void
 export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: PropertyValueChangedEvent<K>) => void
 
-@Bean('gridOptionsService')
+// //@Bean('gridOptionsService')
 export class GridOptionsService {
 
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;

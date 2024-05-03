@@ -5,7 +5,7 @@ import { IRowModel } from "../interfaces/iRowModel";
 import { ClientSideRowModelSteps, IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { IRowNode } from "../interfaces/iRowNode";
 
-@Bean('expansionService')
+//@Bean('expansionService')
 export class ExpansionService extends BeanStub implements IExpansionService {
     @Autowired('rowModel') private readonly rowModel: IRowModel;
 

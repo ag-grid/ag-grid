@@ -45,7 +45,7 @@ import { AriaAnnouncementService } from "./ariaAnnouncementService";
  * and cellComp. So for performance reasons, RowComp and CellComp do not get autowired
  * with the IoC. Instead they get passed this object which is all the beans the RowComp
  * and CellComp need. Not autowiring all the cells gives performance improvement. */
-@Bean('beans')
+//@Bean('beans')
 export class Beans {
 
     @Autowired('resizeObserverService') public readonly resizeObserverService: ResizeObserverService;

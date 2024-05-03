@@ -3,7 +3,7 @@ import { LazyCache } from "./lazyCache";
 import { ServerSideRowModel } from "../../serverSideRowModel";
 import { LazyStore } from "./lazyStore";
 
-@Bean('lazyBlockLoadingService')
+//@Bean('lazyBlockLoadingService')
 export class LazyBlockLoadingService extends BeanStub {
     public static DEFAULT_BLOCK_SIZE = 100;
 

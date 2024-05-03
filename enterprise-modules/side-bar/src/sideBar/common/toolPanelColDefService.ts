@@ -12,7 +12,7 @@ import {
     IProvidedColumn
 } from "@ag-grid-community/core";
 
-@Bean('toolPanelColDefService')
+//@Bean('toolPanelColDefService')
 export class ToolPanelColDefService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;

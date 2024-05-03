@@ -3,7 +3,7 @@ import { Bean } from "./context/context";
 import { Qualifier } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 
-@Bean('loggerFactory')
+//@Bean('loggerFactory')
 export class LoggerFactory extends BeanStub {
 
     private logging: boolean;

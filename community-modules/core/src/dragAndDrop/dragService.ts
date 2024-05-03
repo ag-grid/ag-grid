@@ -11,7 +11,7 @@ import { isFocusableFormField } from "../utils/dom";
 
 /** Adds drag listening onto an element. In AG Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
-@Bean('dragService')
+//@Bean('dragService')
 export class DragService extends BeanStub {
 
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;

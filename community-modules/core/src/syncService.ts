@@ -12,7 +12,7 @@ import { Events } from "./eventKeys";
 import { PropertyValueChangedEvent } from "./gridOptionsService";
 import { ColDef, ColGroupDef } from "./entities/colDef";
 
-@Bean('syncService')
+//@Bean('syncService')
 export class SyncService extends BeanStub {
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;

@@ -22,7 +22,7 @@ import { AdvancedFilterCtrl } from "./advancedFilterCtrl";
 import { AdvancedFilterExpressionService } from "./advancedFilterExpressionService";
 import { ExpressionProxy, FilterExpressionFunction, FilterExpressionFunctionParams } from "./filterExpressionUtils";
 
-@Bean('advancedFilterService')
+//@Bean('advancedFilterService')
 export class AdvancedFilterService extends BeanStub implements IAdvancedFilterService {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;

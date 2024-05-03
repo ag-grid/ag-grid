@@ -12,7 +12,7 @@ import {
 import { ServerSideRowModel } from "../serverSideRowModel";
 import { ListenerUtils } from "./listenerUtils";
 
-@Bean('ssrmFilterListener')
+//@Bean('ssrmFilterListener')
 export class FilterListener extends BeanStub {
 
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;

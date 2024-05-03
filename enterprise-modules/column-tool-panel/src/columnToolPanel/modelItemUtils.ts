@@ -13,7 +13,7 @@ import {
     IAggFunc
 } from "@ag-grid-community/core";
 
-@Bean('modelItemUtils')
+//@Bean('modelItemUtils')
 export class ModelItemUtils {
 
     @Autowired('aggFuncService') aggFuncService: IAggFuncService;

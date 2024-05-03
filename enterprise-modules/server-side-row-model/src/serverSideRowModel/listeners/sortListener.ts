@@ -15,7 +15,7 @@ import {
 import { ServerSideRowModel } from "../serverSideRowModel";
 import { ListenerUtils } from "./listenerUtils";
 
-@Bean('ssrmSortService')
+//@Bean('ssrmSortService')
 export class SortListener extends BeanStub {
 
     @Autowired('sortController') private sortController: SortController;

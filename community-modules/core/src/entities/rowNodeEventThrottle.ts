@@ -5,7 +5,7 @@ import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { IRowModel } from "../interfaces/iRowModel";
 import { AnimationFrameService } from "../misc/animationFrameService";
 
-@Bean('rowNodeEventThrottle')
+//@Bean('rowNodeEventThrottle')
 export class RowNodeEventThrottle extends BeanStub {
 
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;

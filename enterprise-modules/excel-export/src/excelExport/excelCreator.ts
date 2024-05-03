@@ -217,7 +217,7 @@ export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetPara
     });
 };
 
-@Bean('excelCreator')
+//@Bean('excelCreator')
 export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSession, ExcelExportParams> implements IExcelCreator {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
