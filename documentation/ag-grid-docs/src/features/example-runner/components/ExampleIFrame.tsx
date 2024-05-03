@@ -13,7 +13,7 @@ interface Props {
     loadingIFrameId: string;
 }
 
-export const ExampleIFrame: FunctionComponent<Props> = ({ string, isHidden, url, loadingIFrameId }) => {
+export const ExampleIFrame: FunctionComponent<Props> = ({ title, isHidden, url, loadingIFrameId }) => {
     const [isIntersecting, setIsIntersecting] = useState(false);
     const iFrameRef = useRef<HTMLIFrameElement>(null);
     const [darkMode] = useDarkmode();
