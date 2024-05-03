@@ -37,7 +37,7 @@ import { getElementSize } from "../../utils/dom";
 import { setAriaColIndex } from "../../utils/aria";
 import { CssClassApplier } from "../../headerRendering/cells/cssClassApplier";
 import { FlashCellsParams } from "../rowRenderer";
-import { BrandedType } from "../../utils";
+import { BrandedType } from "../../interfaces/brandedType";
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';

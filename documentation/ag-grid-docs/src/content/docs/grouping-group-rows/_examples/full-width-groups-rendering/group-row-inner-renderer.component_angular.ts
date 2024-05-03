@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { NgIf } from '@angular/common';
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 import { GroupCellRendererParams, IRowNode } from '@ag-grid-community/core';
 
@@ -9,10 +8,11 @@ interface GroupRowParams extends GroupCellRendererParams {
 
 @Component({
     standalone: true,
-    imports: [NgIf],
     template: `
         <div class="row">
-            <img *ngIf="flagCode" class="flag" border="0" width="20" height="15" [src]="flagCodeImg" />
+            @if (flagCode) {
+                <img class="flag" border="0" width="20" height="15" [src]="flagCodeImg" />
+            }
             <span class="groupTitle">{{node.key}}</span>
             <span class="medal gold" attr.aria-label="{{node.key}} - {{node.aggData.gold}} gold medals"><i class="fas fa-medal"></i>{{node.aggData.gold}}</span>
             <span class="medal silver" attr.aria-label="{{node.key}} - {{node.aggData.silver}} silver medals"><i class="fas fa-medal"></i>{{node.aggData.silver}}</span>

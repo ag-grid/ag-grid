@@ -86,7 +86,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExpor
     [popupParent]="popupParent"
     [rowData]="rowData"
     (gridReady)="onGridReady($event)"
-    ></ag-grid-angular>
+     />
     </div>
 </div>`
 })

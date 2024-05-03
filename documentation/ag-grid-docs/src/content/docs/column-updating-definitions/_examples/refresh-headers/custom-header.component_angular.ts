@@ -1,15 +1,15 @@
 import { IHeaderAngularComp } from '@ag-grid-community/angular';
 import { IHeaderParams } from '@ag-grid-community/core';
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { NgIf } from '@angular/common';
 
 @Component({
     standalone: true,
-    imports: [NgIf],
     template: `
         <div style="display: flex">
-            <span *ngIf="params.enableMenu" #menuButton class="ag-icon ag-icon-menu"
-                  (click)="onMenuClicked($event)"></span>
+            @if (params.enableMenu) {
+                <span #menuButton class="ag-icon ag-icon-menu"
+                    (click)="onMenuClicked($event)"></span>
+            }
             <div style="flex-grow: 1;"><span ref="eText">{{params.displayName}}</span></div>
         </div>
     `

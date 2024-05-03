@@ -5,7 +5,6 @@ import { getInternalFramework } from '@utils/framework';
 
 export type FrameworkContext = {
     useTypescript: string;
-    useVue3: string;
     importType: ImportType;
 };
 
@@ -18,7 +17,6 @@ export const $internalFramework = persistentAtom<InternalFramework>(
 );
 export const $frameworkContext = persistentMap<FrameworkContext>(`${LOCALSTORAGE_PREFIX}:context`, {
     useTypescript: 'true',
-    useVue3: 'false',
     importType: 'modules',
 });
 
@@ -35,10 +33,6 @@ export const setInternalFramework = (internalFramework: InternalFramework) => {
         $frameworkContext.setKey('useTypescript', 'false');
     } else if (internalFramework === 'reactFunctionalTs') {
         $frameworkContext.setKey('useTypescript', 'true');
-    } else if (internalFramework === 'vue') {
-        $frameworkContext.setKey('useVue3', 'false');
-    } else if (internalFramework === 'vue3') {
-        $frameworkContext.setKey('useVue3', 'true');
     }
 
     if (INTERNAL_FRAMEWORKS.includes(internalFramework)) {
@@ -89,7 +83,6 @@ export const getFrameworkContextKey = (key: keyof FrameworkContext): string => {
 export const updateInternalFrameworkBasedOnFramework = (framework: Framework) => {
     const internalFramework = getInternalFramework({
         framework,
-        useVue3: getFrameworkContextKeyBoolean('useVue3'),
         useTypescript: getFrameworkContextKeyBoolean('useTypescript'),
     });
 

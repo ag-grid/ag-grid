@@ -1,7 +1,6 @@
-// @ts-expect-error
 // import { trackBuyButton } from '@utils/analytics';
 import classnames from 'classnames';
-import { FunctionComponent, useState } from 'react';
+import { type FunctionComponent, useState } from 'react';
 
 import chartsFeaturesData from '../../content/license-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '../../content/license-features/gridFeaturesMatrix.json';
@@ -72,7 +71,10 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     },
 ];
 
-const Price = ({ priceFullDollars, launchPrice }) => {
+const Price: FunctionComponent<{ priceFullDollars: string; launchPrice: string }> = ({
+    priceFullDollars,
+    launchPrice,
+}) => {
     const price = launchPrice ? launchPrice : priceFullDollars;
     const hasCost = price !== '0';
 
@@ -94,7 +96,7 @@ const Price = ({ priceFullDollars, launchPrice }) => {
     );
 };
 
-const License = (props: LicenseData) => {
+const License: FunctionComponent<LicenseData> = (props: LicenseData) => {
     const { id, description, subHeading, priceFullDollars, launchPrice, buyLink } = props;
 
     return (

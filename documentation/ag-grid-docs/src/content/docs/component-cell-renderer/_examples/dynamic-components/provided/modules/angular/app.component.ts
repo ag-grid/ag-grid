@@ -36,7 +36,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
                 [context]="context"
                 [defaultColDef]="defaultColDef"
                 (gridReady)="onGridReady($event)"
-        ></ag-grid-angular>
+         />
         </div>`
 })
 export class AppComponent {

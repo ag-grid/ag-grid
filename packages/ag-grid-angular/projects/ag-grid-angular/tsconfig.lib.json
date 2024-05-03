@@ -4,7 +4,6 @@
   "compilerOptions": {
     "outDir": "../../out-tsc/lib",
     "declarationMap": true,
-    "target": "es2022",
     "declaration": true,
     "inlineSources": true,
     "types": [],

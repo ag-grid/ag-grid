@@ -21,7 +21,7 @@ import {
 import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { warnOnce } from "../utils/function";
-import { BrandedType } from "../utils";
+import { BrandedType } from "../interfaces/brandedType";
 import { Environment } from "../environment";
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;

@@ -55,7 +55,6 @@ const getInternalFramework = (
                 reactFunctional: ['reactFunctionalTs', 'typescript', 'vanilla'],
                 reactFunctionalTs: ['reactFunctional', 'typescript', 'vanilla'],
                 angular: ['typescript', 'vanilla'],
-                vue: ['typescript', 'vanilla'],
                 vue3: ['typescript', 'vanilla'],
             };
             const alternatives = bestAlternative[docsInternalFramework];

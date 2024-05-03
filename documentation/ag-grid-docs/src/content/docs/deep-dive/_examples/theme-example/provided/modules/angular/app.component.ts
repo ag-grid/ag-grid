@@ -30,8 +30,7 @@ interface IRow {
       [class]="themeClass"
       [rowData]="rowData"
       [columnDefs]="colDefs"
-    >
-    </ag-grid-angular>
+    />
   </div>
   `
 })

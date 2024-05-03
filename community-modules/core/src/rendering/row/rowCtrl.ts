@@ -26,7 +26,7 @@ import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { RowDragComp } from "./rowDragComp";
 import { GridOptionsService } from "../../gridOptionsService";
 import { ITooltipFeatureCtrl, TooltipFeature } from "../../widgets/tooltipFeature";
-import { BrandedType } from "../../utils";
+import { BrandedType } from "../../interfaces/brandedType";
 
 enum RowType {
     Normal = 'Normal',

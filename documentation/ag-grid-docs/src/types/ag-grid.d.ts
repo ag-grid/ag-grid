@@ -8,7 +8,6 @@ export type InternalFramework =
     | 'reactFunctional'
     | 'reactFunctionalTs'
     | 'angular'
-    | 'vue'
     | 'vue3';
 
 export type Library = 'charts' | 'grid';

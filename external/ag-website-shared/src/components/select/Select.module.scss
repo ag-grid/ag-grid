@@ -1,0 +1,168 @@
+@use 'design-system' as *;
+
+.trigger.large {
+    height: 36px;
+    span {
+        font-size: var(--text-fs-base);
+    }
+}
+
+.trigger {
+    display: flex;
+    align-items: center;
+    border-radius: var(--radius-sm);
+    font-weight: normal;
+    height: 32px;
+    gap: 16px;
+    color: var(--color-fg-primary);
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-input-border);
+    font-size: 14px;
+    justify-content: space-between;
+
+    &:hover,
+    &:active {
+        color: var(--color-fg-primary);
+        background-color: var(--color-bg-primary);
+        border: 1px solid var(--color-input-border-hover);
+
+        #{$selector-darkmode} & {
+            border: 1px solid var(--color-brand-200);
+        }
+    }
+    &:focus-visible {
+        #{$selector-darkmode} & {
+            box-shadow:
+                0 0 0 4px color-mix(in srgb, var(--color-brand-200), var(--color-bg-primary) 60%),
+                var(--shadow-xs);
+        }
+    }
+}
+
+.content.large {
+    min-width: 175px; // TODO: refactor to fit content, currently used in just framework selector
+}
+
+.content {
+    min-width: max(230px, var(--radix-popper-anchor-width, 230px));
+    position: absolute;
+    overflow: hidden;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 6px;
+    box-shadow:
+        0px 10px 38px -10px rgba(22, 23, 24, 0.35),
+        0px 10px 20px -15px rgba(22, 23, 24, 0.2);
+    z-index: 1000;
+    padding: 6px;
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 12%);
+        border: 1px solid color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 22%);
+    }
+
+    .SelectScrollButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 25px;
+        color: var(--violet-11);
+        cursor: default;
+    }
+}
+
+.item.large {
+    font-size: var(--text-fs-base);
+    height: 32px;
+}
+
+.item {
+    font-size: 14px;
+    line-height: 1;
+    color: var(--color-text-primary);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 12px;
+    position: relative;
+    user-select: none;
+    cursor: pointer;
+    justify-content: space-between;
+
+    #{$selector-darkmode} & {
+        color: var(--color-fg-white);
+    }
+
+    &[data-disabled] {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    &[data-highlighted] {
+        outline: none;
+        background-color: var(--color-util-brand-50);
+
+        #{$selector-darkmode} & {
+            background-color: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 20%);
+        }
+    }
+}
+
+.indicator {
+    position: absolute;
+    left: 0;
+    width: 25px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chevronDown {
+    opacity: 0.5;
+    height: 16px;
+    width: 16px;
+}
+
+.label {
+    padding: 0 12px;
+    font-size: 14px;
+    line-height: 25px;
+    font-weight: 600;
+    color: var(--mauve-11);
+}
+
+$fade-animation-time: 150ms;
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 0.8;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes selectScaleInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0px) scale(1);
+    }
+}
+
+.content.popper[data-state='open'] {
+    animation: selectScaleInDown $fade-animation-time cubic-bezier(0.4, 0, 1, 1);
+}

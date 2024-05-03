@@ -63,7 +63,7 @@ function tsNodeIsSimpleFetchRequest(node) {
 
 function processColDefsForFunctionalReactOrVue(propertyName: string, providedExamples) {
     if (propertyName === 'columnDefs') {
-        return !(providedExamples['reactFunctional'] && providedExamples['vue'] && providedExamples['vue3']);
+        return !(providedExamples['reactFunctional'] && providedExamples['vue3']);
     }
 
     return false;
@@ -71,7 +71,7 @@ function processColDefsForFunctionalReactOrVue(propertyName: string, providedExa
 
 function processComponentsForVue(propertyName: string, providedExamples) {
     if (propertyName === 'components') {
-        return !(providedExamples['vue'] && providedExamples['vue3']);
+        return !(providedExamples['vue3']);
     }
 
     return false;
@@ -79,7 +79,7 @@ function processComponentsForVue(propertyName: string, providedExamples) {
 
 function processVueProperties(propertyName: string, providedExamples) {
     if (propertyName === 'statusBar' || propertyName === 'sideBar') {
-        return !(providedExamples['vue'] && providedExamples['vue3']);
+        return !(providedExamples['vue3']);
     }
 
     return false;
@@ -87,7 +87,7 @@ function processVueProperties(propertyName: string, providedExamples) {
 
 function processDefaultColumnDefForVue(propertyName: string, providedExamples) {
     if (propertyName === 'defaultColDef') {
-        return !(providedExamples['vue'] && providedExamples['vue3']);
+        return !(providedExamples['vue3']);
     }
 
     return false;
@@ -97,7 +97,7 @@ const GLOBAL_COMPONENTS = ['dateComponent', 'loadingCellRenderer', 'loadingOverl
 
 function processGlobalComponentsForVue(propertyName: string, providedExamples) {
     if (GLOBAL_COMPONENTS.indexOf(propertyName) !== -1) {
-        return !(providedExamples['vue'] && providedExamples['vue3']);
+        return !(providedExamples['vue3']);
     }
 
     return false;

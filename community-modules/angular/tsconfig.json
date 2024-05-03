@@ -26,7 +26,8 @@
         "dist/ag-grid-angular/ag-grid-angular",
         "dist/ag-grid-angular"
       ]
-    }
+    },
+    "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

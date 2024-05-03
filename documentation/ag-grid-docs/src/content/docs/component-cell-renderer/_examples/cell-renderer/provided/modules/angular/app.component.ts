@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { NgFor } from '@angular/common';
 import { AgGridAngular } from '@ag-grid-community/angular';
 import {
     ColDef,
@@ -51,10 +50,11 @@ export interface ImageCellRendererParams extends ICellRendererParams {
 }
 @Component({
     standalone: true,
-    imports: [NgFor],
     template: `
         <span>
-            <img *ngFor="let number of arr" [src]="src" />
+            @for (number of arr; track $index) {
+                <img [src]="src" />
+            }
         </span>
     `,
 })
@@ -94,7 +94,7 @@ export class IconRenderer implements ICellRenderer {
                 [columnDefs]="columnDefs"
                 [defaultColDef]="defaultColDef"
                 (gridReady)="onGridReady($event)"
-            ></ag-grid-angular>
+             />
         </div>
     `,
 })

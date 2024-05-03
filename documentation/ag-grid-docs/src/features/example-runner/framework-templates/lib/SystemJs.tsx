@@ -26,14 +26,12 @@ const localBuildAndArchiveConfiguration: Configuration = {
         '@ag-grid-community/styles': `${localPrefix}/@ag-grid-community/styles`,
         '@ag-grid-community/react': `${localPrefix}/@ag-grid-community/react`,
         '@ag-grid-community/angular': `${localPrefix}/@ag-grid-community/angular`,
-        '@ag-grid-community/vue': `${localPrefix}/@ag-grid-community/vue`,
         '@ag-grid-community/vue3': `${localPrefix}/@ag-grid-community/vue3`,
         'ag-grid-community': `${localPrefix}/ag-grid-community`,
         'ag-grid-enterprise': `${localPrefix}/ag-grid-enterprise`,
         'ag-grid-charts-enterprise': `${localPrefix}/ag-grid-charts-enterprise`,
         'ag-grid-angular': `${localPrefix}/ag-grid-angular`,
         'ag-grid-react': `${localPrefix}/ag-grid-react`,
-        'ag-grid-vue': `${localPrefix}/ag-grid-vue`,
         'ag-grid-vue3': `${localPrefix}/ag-grid-vue3`,
     },
     gridCommunityPaths: {
@@ -123,12 +121,11 @@ const publishedConfiguration: Configuration = {
 function getRelevantConfig(configuration: Configuration, framework: InternalFramework) {
     const filterByFramework = ([k]: string[]) => {
         const inverseFrameworks: Record<string, string[]> = {
-            reactFunctional: ['angular', 'vue', 'vue3'],
-            reactFunctionalTs: ['angular', 'vue', 'vue3'],
-            angular: ['react', 'vue', 'vue3'],
-            vue: ['angular', 'react', 'vue3'],
-            vue3: ['angular', 'react', 'vue'],
-            typescript: ['angular', 'react', 'vue', 'vue3'],
+            reactFunctional: ['angular', 'vue3'],
+            reactFunctionalTs: ['angular', 'vue3'],
+            angular: ['react', 'vue3'],
+            vue3: ['angular', 'react'],
+            typescript: ['angular', 'react', 'vue3'],
         };
         return !inverseFrameworks[framework].some((f) => k.endsWith(f));
     };

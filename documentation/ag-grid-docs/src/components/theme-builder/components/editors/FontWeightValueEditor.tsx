@@ -1,4 +1,5 @@
-import { Select } from './Select';
+import { Select } from '@ag-website-shared/components/select/Select';
+
 import type { ValueEditorProps } from './ValueEditorProps';
 
 export const FontWeightValueEditor = ({ value, onChange }: ValueEditorProps) => {

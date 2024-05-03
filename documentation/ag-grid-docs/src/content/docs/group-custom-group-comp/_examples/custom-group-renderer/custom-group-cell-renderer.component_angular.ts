@@ -1,25 +1,24 @@
 import {Component} from "@angular/core";
-import { NgIf } from "@angular/common";
 import { ICellRendererParams } from "@ag-grid-community/core";
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     standalone: true,
-    imports: [NgIf],
     template: `
         <div
             [style.paddingLeft.px]="paddingLeft"
         >
-            <div
-                *ngIf="isGroup"
-                [style.transform]="rotation"
-                [style.cursor]="'pointer'"
-                [style.display]="'inline-block'"
+            @if (isGroup) {
+                <div
+                    [style.transform]="rotation"
+                    [style.cursor]="'pointer'"
+                    [style.display]="'inline-block'"
 
-                (click)="onClick()"
-            >
-                &rarr;
-            </div>
+                    (click)="onClick()"
+                >
+                    &rarr;
+                </div>
+            }
             &nbsp;
             {{params.value}}
         </div>

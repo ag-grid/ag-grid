@@ -5,7 +5,6 @@ import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 import { AgGridAngular } from '@ag-grid-community/angular';
 import { Component } from '@angular/core';
-import { NgIf } from '@angular/common';
 import { getData } from './data';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -14,7 +13,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 @Component({
   standalone: true,
-  imports: [AgGridAngular, NgIf],
+  imports: [AgGridAngular],
   selector: "my-app",
   template: `
     <div class="test-container">
@@ -29,15 +28,16 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
           </button>
         </div>
       </div>
-      <ag-grid-angular
-        *ngIf="isVisible"
-        style="width: 100%; height: 100%;"
-        [class]="themeClass"
-        [columnDefs]="columnDefs"
-        [rowData]="rowData"
-        [rowSelection]="rowSelection"
-        (gridReady)="onGridReady($event)"
-      ></ag-grid-angular>
+      @if(isVisible) {
+        <ag-grid-angular
+          style="width: 100%; height: 100%;"
+          [class]="themeClass"
+          [columnDefs]="columnDefs"
+          [rowData]="rowData"
+          [rowSelection]="rowSelection"
+          (gridReady)="onGridReady($event)"
+        />
+      }
     </div>
   `,
 })
