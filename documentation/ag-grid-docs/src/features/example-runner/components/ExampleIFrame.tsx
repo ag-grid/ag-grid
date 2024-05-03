@@ -7,12 +7,13 @@ import styles from './ExampleIFrame.module.scss';
 import exampleRuntimeInjectedStyles from './exampleRuntimeInjectedStyles';
 
 interface Props {
+    title: string;
     isHidden?: boolean;
     url?: string;
     loadingIFrameId: string;
 }
 
-export const ExampleIFrame: FunctionComponent<Props> = ({ isHidden, url, loadingIFrameId }) => {
+export const ExampleIFrame: FunctionComponent<Props> = ({ string, isHidden, url, loadingIFrameId }) => {
     const [isIntersecting, setIsIntersecting] = useState(false);
     const iFrameRef = useRef<HTMLIFrameElement>(null);
     const [darkMode] = useDarkmode();
@@ -75,6 +76,7 @@ export const ExampleIFrame: FunctionComponent<Props> = ({ isHidden, url, loading
             {/*`exampleRunner` class is used by the dark mode toggle to post a message to this iFrame*/}
             <iframe
                 id={loadingIFrameId}
+                title={title}
                 ref={iFrameRef}
                 className={classnames('exampleRunner', styles.iframe)}
                 style={{ visibility: 'hidden' }}
