@@ -1,6 +1,6 @@
 import { AlignedGridsService } from "./alignedGridsService";
 import { ApplyColumnStateParams, ColumnModel, ColumnState, ISizeColumnsToFitParams } from "./columns/columnModel";
-import { Autowired, Bean, Context, Optional, PostConstruct } from "./context/context";
+import { Autowired, AutowiredAll, Bean, Context, Optional, PostConstruct } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { CellPosition } from "./entities/cellPositionUtils";
@@ -140,7 +140,14 @@ export function unwrapUserComp<T>(comp: T): T {
 
 export class GridApi<TData = any> {
     
-    @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
+    private rowRenderer: RowRenderer;
+
+    @AutowiredAll()
+    setupBeans(params:any) {
+        console.log('setupBeans', params);  
+        this.rowRenderer = params.rowRenderer;      
+    }
+
     @Autowired('navigationService') private readonly navigationService: NavigationService;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;

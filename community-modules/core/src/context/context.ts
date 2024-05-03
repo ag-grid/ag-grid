@@ -58,6 +58,7 @@ export class Context {
         this.createBeans();
 
         const beanInstances = this.getBeanInstances();
+        callbacks.forEach(callback => callback(beanInstances));
 
         this.wireBeans(beanInstances);
 
@@ -78,7 +79,7 @@ export class Context {
 
     private wireBeans(beanInstances: any[], afterPreCreateCallback?: (comp: Component) => void): void {
         this.autoWireBeans(beanInstances);
-        this.methodWireBeans(beanInstances);
+        this.methodWireBeans(beanInstances);        
 
         this.callLifeCycleMethods(beanInstances, 'preConstructMethods');
 
@@ -129,8 +130,7 @@ export class Context {
         let name = metaData.beanName;
         if(!name) {
             name = getFunctionName(BeanClass);
-            console.error(`Bean missing bean name: ${name}`);
-            name = name.replace('_', '');
+            name = name.replace('_', ''); // Classes with static properties have _ in their name
             name = name.charAt(0).toLowerCase() + name.slice(1);
         }
 
@@ -355,6 +355,16 @@ export function Autowired(name?: BeanName): Function {
     };
 }
 
+const callbacks: any[] = [];
+
+export function AutowiredAll(): Function {
+    return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+        callbacks.push((b: any) => target[propertyKey].call(target, ...b));
+        console.error("AG Grid: AutowiredAll should be on an attribute", callbacks);
+    };
+}
+
+
 export function Optional(name?: BeanName): Function {
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
         autowiredFunc(target, name, true, target, propertyKey, null);
@@ -415,6 +425,15 @@ function getOrCreateProps(target: any): any {
     }
 
     return target.__agBeanMetaData;
+}
+
+export interface IBean {
+   
+   [key: string]: any;
+
+   getBeanConfig?:() => {
+    beanName?: BeanName;
+   }
 }
 
 export type BeanName =
@@ -499,7 +518,7 @@ export type BeanName =
 | 'horizontalResizeService'
 | 'immutableService'
 | 'lazyBlockLoadingService'
-| 'licenseManager'
+| 'gridLicenseManager'
 | 'localeService'
 | 'loggerFactory'
 | 'menuItemMapper'

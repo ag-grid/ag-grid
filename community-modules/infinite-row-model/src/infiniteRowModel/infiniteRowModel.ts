@@ -22,7 +22,7 @@ import {
 } from "@ag-grid-community/core";
 import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 
-//@Bean('rowModel')
+@Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     @Autowired('filterManager') private readonly filterManager: FilterManager;

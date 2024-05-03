@@ -1,4 +1,4 @@
-import { Autowired, Bean, Context, Optional, PostConstruct } from "../context/context";
+import { Autowired, Context, Optional, PostConstruct } from "../context/context";
 import { ColumnModel } from "../columns/columnModel";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { RowRenderer } from "./rowRenderer";

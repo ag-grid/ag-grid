@@ -1,6 +1,6 @@
 import { Bean, RowNode, PreDestroy } from "@ag-grid-community/core";
 
-//@Bean('ssrmNodeManager')
+@Bean('ssrmNodeManager')
 export class NodeManager {
 
     private rowNodes: {[id: string]: RowNode | undefined } = {};

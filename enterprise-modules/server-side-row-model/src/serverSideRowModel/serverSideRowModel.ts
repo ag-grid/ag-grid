@@ -52,7 +52,7 @@ export interface SSRMParams {
     datasource?: IServerSideDatasource;
 }
 
-//@Bean('rowModel')
+@Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
