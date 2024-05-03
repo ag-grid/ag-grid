@@ -7,7 +7,7 @@ const docs = defineCollection({
         title: z.string(),
         description: z.string().optional(),
         enterprise: z.boolean().optional(),
-        frameworks: z.array(z.string()).optional(),
+        frameworks: z.array(z.enum(FRAMEWORKS as any)).optional(),
         /**
          * Hide right hand side menu
          */
