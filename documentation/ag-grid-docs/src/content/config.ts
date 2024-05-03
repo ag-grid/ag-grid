@@ -1,4 +1,5 @@
 import { ICON_MAP } from '@ag-website-shared/components/icon/Icon';
+import { FRAMEWORKS } from '@constants';
 import { defineCollection, z } from 'astro:content';
 
 const docs = defineCollection({
@@ -34,9 +35,7 @@ const menuItemBase = {
      */
     newWindow: z.boolean().optional(),
     icon: z.enum(Object.keys(ICON_MAP) as any).optional(),
-    // TODO: Add frameworks back
-    // frameworks: z.array(z.enum(FRAMEWORKS as any)).optional(),
-    frameworks: z.array(z.string()).optional(),
+    frameworks: z.array(z.enum(FRAMEWORKS as any)).optional(),
 
     isEnterprise: z.boolean().optional(),
 };
