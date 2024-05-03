@@ -8,6 +8,7 @@ import {
     Column,
     ColumnAdvancedFilterModel,
     ColumnModel,
+    ColumnNameService,
     DataTypeService,
     JoinAdvancedFilterModel,
     PostConstruct,
@@ -30,6 +31,7 @@ import {
 export class AdvancedFilterExpressionService extends BeanStub {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('dataTypeService') private dataTypeService: DataTypeService;
 
     private columnNameToIdMap: { [columnNameUpperCase: string]: { colId: string, columnName: string } } = {};
@@ -157,7 +159,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
             if (column.getColDef().filter && (includeHiddenColumns || column.isVisible() || column.isRowGroupActive())) {
                 entries.push({
                     key: column.getColId(),
-                    displayValue: this.columnModel.getDisplayNameForColumn(column, 'advancedFilter')!
+                    displayValue: this.columnNameService.getDisplayNameForColumn(column, 'advancedFilter')!
                 });
             }
         });

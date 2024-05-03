@@ -20,7 +20,8 @@ import {
     ShouldRowBeSkippedParams,
     RowNodeSorter,
     SortController,
-    DisplayedColumnsService
+    DisplayedColumnsService,
+    ColumnNameService
 } from "@ag-grid-community/core";
 import { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "./interfaces";
 
@@ -33,6 +34,7 @@ export class GridSerializer extends BeanStub {
 
     @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('selectionService') private selectionService: ISelectionService;
@@ -347,7 +349,7 @@ export class GridSerializer extends BeanStub {
                     columnGroup: columnGroup
                 }));
             } else {
-                name = this.columnModel.getDisplayNameForColumnGroup(columnGroup, 'header')!;
+                name = this.columnNameService.getDisplayNameForColumnGroup(columnGroup, 'header')!;
             }
 
             const collapsibleGroupRanges = columnGroup.getLeafColumns().reduce((collapsibleGroups: number[][], currentColumn, currentIdx, arr) => {

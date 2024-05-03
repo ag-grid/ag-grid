@@ -17,7 +17,8 @@ import {
     SortController,
     ColumnAutosizeService,
     ColumnApplyStateService,
-    FunctionColumnsService
+    FunctionColumnsService,
+    ColumnNameService
 } from '@ag-grid-community/core';
 import { ChartMenuItemMapper } from './chartMenuItemMapper';
 
@@ -25,6 +26,7 @@ import { ChartMenuItemMapper } from './chartMenuItemMapper';
 export class MenuItemMapper extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
     @Autowired('functionColumnsService') private readonly functionColumnsService: FunctionColumnsService;
     @Autowired('gridApi') private readonly gridApi: GridApi;
@@ -127,7 +129,7 @@ export class MenuItemMapper extends BeanStub {
                 };
             case 'rowGroup':
                 return {
-                    name: localeTextFunc('groupBy', 'Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
+                    name: localeTextFunc('groupBy', 'Group by') + ' ' + _.escapeString(this.columnNameService.getDisplayNameForColumn(column, 'header')),
                     disabled: column?.isRowGroupActive() || !column?.getColDef().enableRowGroup,
                     action: () => this.functionColumnsService.addRowGroupColumns([column], "contextMenu"),
                     icon: _.createIconNoSpan('menuAddRowGroup', this.gos, null)
@@ -148,7 +150,7 @@ export class MenuItemMapper extends BeanStub {
                 // Handle multiple auto group columns
                 if (typeof showRowGroup === 'string') {
                     const underlyingColumn = this.columnModel.getPrimaryColumn(showRowGroup);
-                    const ungroupByName = (underlyingColumn != null) ? _.escapeString(this.columnModel.getDisplayNameForColumn(underlyingColumn, 'header')) : showRowGroup;
+                    const ungroupByName = (underlyingColumn != null) ? _.escapeString(this.columnNameService.getDisplayNameForColumn(underlyingColumn, 'header')) : showRowGroup;
                     return {
                         name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName,
                         disabled: underlyingColumn != null && this.columnModel.isColumnGroupingLocked(underlyingColumn),
@@ -158,7 +160,7 @@ export class MenuItemMapper extends BeanStub {
                 }
                 // Handle primary column
                 return {
-                    name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
+                    name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escapeString(this.columnNameService.getDisplayNameForColumn(column, 'header')),
                     disabled: !column?.isRowGroupActive() || !column?.getColDef().enableRowGroup || this.columnModel.isColumnGroupingLocked(column),
                     action: () => this.functionColumnsService.removeRowGroupColumns([column], "contextMenu"),
                     icon: icon

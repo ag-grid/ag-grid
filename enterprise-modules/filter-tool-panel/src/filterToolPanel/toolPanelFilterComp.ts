@@ -2,7 +2,6 @@ import {
     _,
     Autowired,
     Column,
-    ColumnModel,
     Component,
     Events,
     FilterManager,
@@ -11,7 +10,8 @@ import {
     KeyCode,
     PostConstruct,
     RefSelector,
-    FilterWrapperComp
+    FilterWrapperComp,
+    ColumnNameService
 } from "@ag-grid-community/core";
 
 export class ToolPanelFilterComp extends Component {
@@ -32,7 +32,7 @@ export class ToolPanelFilterComp extends Component {
     @RefSelector('eExpand') private eExpand: Element;
 
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
 
     private eExpandChecked: Element;
     private eExpandUnchecked: Element;
@@ -57,7 +57,7 @@ export class ToolPanelFilterComp extends Component {
 
     public setColumn(column: Column): void {
         this.column = column;
-        this.eFilterName.innerText = this.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
+        this.eFilterName.innerText = this.columnNameService.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', this.onKeyDown.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
@@ -100,7 +100,7 @@ export class ToolPanelFilterComp extends Component {
     }
 
     public getColumnFilterName(): string | null {
-        return this.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false);
+        return this.columnNameService.getDisplayNameForColumn(this.column, 'filterToolPanel', false);
     }
 
     public addCssClassToTitleBar(cssClass: string) {

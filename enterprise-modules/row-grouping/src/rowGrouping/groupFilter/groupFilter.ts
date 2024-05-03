@@ -4,7 +4,6 @@ import {
     AgSelect,
     Autowired,
     Column,
-    ColumnModel,
     Events,
     FilterManager,
     IAfterGuiAttachedParams,
@@ -15,6 +14,7 @@ import {
     TabGuardComp,
     FilterWrapperComp,
     FunctionColumnsService,
+    ColumnNameService,
 } from '@ag-grid-community/core';
 
 interface FilterColumnPair {
@@ -27,7 +27,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
     public static EVENT_SELECTED_COLUMN_CHANGED = 'selectedColumnChanged';
 
     @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('functionColumnsService') private readonly functionColumnsService: FunctionColumnsService;
 
     @RefSelector('eGroupField') private readonly eGroupField: HTMLElement;
@@ -135,7 +135,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         this.eGroupFieldSelect.setLabelAlignment('top');
         this.eGroupFieldSelect.addOptions(sourceColumns.map(sourceColumn => ({
             value: sourceColumn.getId(),
-            text: this.columnModel.getDisplayNameForColumn(sourceColumn, 'groupFilter', false) ?? undefined
+            text: this.columnNameService.getDisplayNameForColumn(sourceColumn, 'groupFilter', false) ?? undefined
         })));
         this.eGroupFieldSelect.setValue(this.selectedColumn!.getId());
         this.eGroupFieldSelect.onValueChange((newValue) => this.updateSelectedColumn(newValue));

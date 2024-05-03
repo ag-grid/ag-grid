@@ -7,12 +7,14 @@ import { BeanStub } from "../context/beanStub";
 import { mergeDeep } from "../utils/object";
 import { missing } from "../utils/generic";
 import { ColumnEventType } from "../events";
+import { ColumnNameService } from "./columnNameService";
 
 export const GROUP_AUTO_COLUMN_ID: 'ag-Grid-AutoColumn' = 'ag-Grid-AutoColumn';
 @Bean('autoGroupColService')
 export class AutoGroupColService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
 
     public createAutoGroupColumns(rowGroupColumns: Column[]): Column[] {
@@ -136,7 +138,7 @@ export class AutoGroupColService extends BeanStub {
             const colDef = rowGroupCol.getColDef();
             Object.assign(res, {
                 // cellRendererParams.groupKey: colDefToCopy.field;
-                headerName: this.columnModel.getDisplayNameForColumn(rowGroupCol, 'header'),
+                headerName: this.columnNameService.getDisplayNameForColumn(rowGroupCol, 'header'),
                 headerValueGetter: colDef.headerValueGetter
             });
 

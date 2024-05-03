@@ -2,6 +2,7 @@ import {
     Column,
     ColumnGroup,
     ColumnModel,
+    ColumnNameService,
     FunctionColumnsService,
     GridOptionsService,
     ProcessCellForExportParams,
@@ -29,6 +30,7 @@ export interface RowSpanningAccumulator {
 export interface GridSerializingParams {
     columnModel: ColumnModel;
     functionColumnsService: FunctionColumnsService;
+    columnNameService: ColumnNameService,
     valueService: ValueService;
     gos: GridOptionsService;
     processCellCallback?: (params: ProcessCellForExportParams) => string;

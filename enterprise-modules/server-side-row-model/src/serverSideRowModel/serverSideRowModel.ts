@@ -33,7 +33,8 @@ import {
     AdvancedFilterModel,
     ModuleRegistry,
     ModuleNames,
-    FunctionColumnsService
+    FunctionColumnsService,
+    ColumnNameService
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
@@ -57,6 +58,7 @@ export interface SSRMParams {
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sortController') private sortController: SortController;
@@ -337,7 +339,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return columns.map(col => ({
             id: col.getId(),
             aggFunc: col.getAggFunc(),
-            displayName: this.columnModel.getDisplayNameForColumn(col, 'model'),
+            displayName: this.columnNameService.getDisplayNameForColumn(col, 'model'),
             field: col.getColDef().field
         }) as ColumnVO);
     }

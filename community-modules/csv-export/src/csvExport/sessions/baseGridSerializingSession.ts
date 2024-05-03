@@ -1,6 +1,7 @@
 import {
     Column,
     ColumnModel,
+    ColumnNameService,
     FunctionColumnsService,
     GridOptionsService,
     ProcessCellForExportParams,
@@ -15,6 +16,7 @@ import { GridSerializingParams, GridSerializingSession, RowAccumulator, RowSpann
 
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
     public functionColumnsService: FunctionColumnsService;
     public valueService: ValueService;
     public gos: GridOptionsService;
@@ -29,6 +31,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         const {
             columnModel,
             functionColumnsService,
+            columnNameService,
             valueService,
             gos,
             processCellCallback,
@@ -39,6 +42,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
         this.columnModel = columnModel;
         this.functionColumnsService = functionColumnsService;
+        this.columnNameService = columnNameService;
         this.valueService = valueService;
         this.gos = gos;
         this.processCellCallback = processCellCallback;
@@ -120,7 +124,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             return callback(this.gos.addGridCommonParams({ column }));
         }
 
-        return this.columnModel.getDisplayNameForColumn(column, 'csv', true);
+        return this.columnNameService.getDisplayNameForColumn(column, 'csv', true);
     }
 
     private createValueForGroupNode(column: Column, node: RowNode): string {

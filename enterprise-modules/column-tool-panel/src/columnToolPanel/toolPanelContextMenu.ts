@@ -4,6 +4,7 @@ import {
     Autowired,
     Column,
     ColumnModel,
+    ColumnNameService,
     Component,
     FocusService,
     FunctionColumnsService,
@@ -37,6 +38,7 @@ export class ToolPanelContextMenu extends Component {
     private displayName: string | null = null;
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
     @Autowired('popupService') private readonly popupService: PopupService;
     @Autowired('focusService') private readonly focusService: FocusService;
@@ -55,9 +57,9 @@ export class ToolPanelContextMenu extends Component {
         this.buildMenuItemMap();
 
         if (this.column instanceof Column) {
-            this.displayName = this.columnModel.getDisplayNameForColumn(this.column, 'columnToolPanel');
+            this.displayName = this.columnNameService.getDisplayNameForColumn(this.column, 'columnToolPanel');
         } else {
-            this.displayName = this.columnModel.getDisplayNameForProvidedColumnGroup(null, this.column, 'columnToolPanel');
+            this.displayName = this.columnNameService.getDisplayNameForProvidedColumnGroup(null, this.column, 'columnToolPanel');
         }
 
         if (this.isActive()) {

@@ -432,7 +432,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     private calculateDisplayName(): string | null {
-        return this.beans.columnModel.getDisplayNameForColumn(this.column, 'header', true);
+        return this.beans.columnNameService.getDisplayNameForColumn(this.column, 'header', true);
     }
 
     private checkDisplayName(): void {

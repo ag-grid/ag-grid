@@ -15,7 +15,8 @@ import {
     ExcelRow,
     CssClassApplier,
     ColumnGroup,
-    FunctionColumnsService
+    FunctionColumnsService,
+    ColumnNameService
 } from '@ag-grid-community/core';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
 import { BaseCreator, Downloader, GridSerializer, RowType, ZipContainer } from "@ag-grid-community/csv-export";
@@ -222,6 +223,7 @@ export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetPara
 export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSession, ExcelExportParams> implements IExcelCreator {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('stylingService') private stylingService: StylingService;
@@ -314,7 +316,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
     }
 
     public createSerializingSession(params: ExcelExportParams): ExcelSerializingSession {
-        const { columnModel, functionColumnsService, valueService, gos } = this;
+        const { columnModel, columnNameService, functionColumnsService, valueService, gos } = this;
 
         let sheetName: string;
         if (params.sheetName != null) {
@@ -332,6 +334,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             ...params,
             sheetName,
             columnModel,
+            columnNameService,
             functionColumnsService,
             valueService,
             gos,

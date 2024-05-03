@@ -16,7 +16,8 @@ import {
     ColumnModel,
     DragItem,
     DragSourceType,
-    DragAndDropService
+    DragAndDropService,
+    ColumnNameService
 } from "@ag-grid-community/core";
 import { TDropZone } from "./baseDropZonePanel";
 
@@ -24,7 +25,8 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     @Autowired('popupService') private readonly popupService: PopupService;
     @Autowired('sortController') private readonly sortController: SortController;
     @Autowired('columnModel') protected readonly columnModel: ColumnModel;
-    
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
+
     @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
 
     @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
@@ -52,7 +54,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     }
 
     public init(): void {
-        this.displayName = this.columnModel.getDisplayNameForColumn(this.column, 'columnDrop');
+        this.displayName = this.columnNameService.getDisplayNameForColumn(this.column, 'columnDrop');
 
         super.init();
 
