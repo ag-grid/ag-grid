@@ -44,6 +44,7 @@ import { ColumnAnimationService } from "../rendering/columnAnimationService";
 import { Column } from "../entities/column";
 import { ColumnGetStateService } from "../columns/columnGetStateService";
 import { ColumnGroupStateService } from "../columns/columnGroupStateService";
+import { DisplayedColumnsService } from "../columns/displayedColumnsService";
 
 @Bean('stateService')
 export class StateService extends BeanStub {
@@ -51,6 +52,7 @@ export class StateService extends BeanStub {
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
     @Autowired('columnGroupStateService') private readonly columnGroupStateService: ColumnGroupStateService;
     @Autowired('columnGetStateService') private readonly columnGetStateService: ColumnGetStateService;
     @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
@@ -510,7 +512,7 @@ export class StateService extends BeanStub {
             let startColumn = this.columnModel.getGridColumn(cellRange.startColId);
             if (!startColumn) {
                 // find the first remaining column
-                const allColumns = this.columnModel.getAllDisplayedColumns();
+                const allColumns = this.displayedColumnsService.getAllDisplayedColumns();
                 const columnSet = new Set(columns);
                 startColumn = allColumns.find(column => columnSet.has(column))!;
             }

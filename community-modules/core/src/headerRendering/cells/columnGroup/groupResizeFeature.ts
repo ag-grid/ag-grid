@@ -10,6 +10,7 @@ import { IHeaderGroupCellComp } from "./headerGroupCellCtrl";
 import { IHeaderResizeFeature } from "../abstractCell/abstractHeaderCellCtrl";
 import { ColumnAutosizeService } from "community-modules/core/src/columns/columnAutosizeService";
 import { ColumnSizeService, ColumnResizeSet } from "../../../columns/columnSizeService";
+import { DisplayedColumnsService } from "@ag-grid-community/core";
 
 interface ColumnSizeAndRatios {
     columnsToResize: Column[];
@@ -37,6 +38,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     @Autowired('horizontalResizeService') private readonly horizontalResizeService: HorizontalResizeService;
     @Autowired('autoWidthCalculator') private readonly autoWidthCalculator: AutoWidthCalculator;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
     @Autowired('columnSizeService') private readonly columnSizeService: ColumnSizeService;
     @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
 
@@ -122,7 +124,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         let groupAfter: ColumnGroup | null = null;
 
         if (shiftKey) {
-            groupAfter = this.columnModel.getDisplayedGroupAtDirection(this.columnGroup, 'After');
+            groupAfter = this.displayedColumnsService.getDisplayedGroupAtDirection(this.columnGroup, 'After');
         }
 
         if (groupAfter) {

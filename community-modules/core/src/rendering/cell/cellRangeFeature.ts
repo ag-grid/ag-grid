@@ -120,17 +120,17 @@ export class CellRangeFeature {
         let left = false;
 
         const thisCol = this.cellCtrl.getCellPosition().column;
-        const columnModel = this.beans.columnModel;
+        const displayedColumnsService = this.beans.displayedColumnsService;
 
         let leftCol: Column | null;
         let rightCol: Column | null;
 
         if (isRtl) {
-            leftCol = columnModel.getDisplayedColAfter(thisCol);
-            rightCol = columnModel.getDisplayedColBefore(thisCol);
+            leftCol = displayedColumnsService.getDisplayedColAfter(thisCol);
+            rightCol = displayedColumnsService.getDisplayedColBefore(thisCol);
         } else {
-            leftCol = columnModel.getDisplayedColBefore(thisCol);
-            rightCol = columnModel.getDisplayedColAfter(thisCol);
+            leftCol = displayedColumnsService.getDisplayedColBefore(thisCol);
+            rightCol = displayedColumnsService.getDisplayedColAfter(thisCol);
         }
 
         const ranges = this.rangeService.getCellRanges().filter(

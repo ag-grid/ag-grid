@@ -137,7 +137,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             fakeEvent: false,
             gos,
             columnModel: this.beans.columnModel,
-            columnMoveService: this.beans.columnMoveService
+            columnMoveService: this.beans.columnMoveService,
+            displayedColumnsService: this.beans.displayedColumnsService
         });
 
         ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');

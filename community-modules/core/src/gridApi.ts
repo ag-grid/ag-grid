@@ -1,5 +1,6 @@
 import { AlignedGridsService } from "./alignedGridsService";
 import { ApplyColumnStateParams, ColumnModel, ColumnState } from "./columns/columnModel";
+import { DisplayedColumnsService } from "./columns/displayedColumnsService";
 import { Autowired, Bean, Context, Optional, PostConstruct } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
@@ -190,6 +191,7 @@ export class GridApi<TData = any> {
     @Autowired('navigationService') private readonly navigationService: NavigationService;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
     @Autowired('columnSizeService') private readonly columnSizeService: ColumnSizeService;
     @Autowired('columnGetStateService') private readonly columnGetStateService: ColumnGetStateService;
     @Autowired('columnGroupStateService') private readonly columnGroupStateService: ColumnGroupStateService;
@@ -1770,7 +1772,7 @@ export class GridApi<TData = any> {
     /** Call this if you want to open or close a column group. */
     public setColumnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void { this.columnModel.setColumnGroupOpened(group, newValue, 'api'); }
     /** Returns the column group with the given name. */
-    public getColumnGroup(name: string, instanceId?: number): ColumnGroup | null { return this.columnModel.getColumnGroup(name, instanceId); }
+    public getColumnGroup(name: string, instanceId?: number): ColumnGroup | null { return this.displayedColumnsService.getColumnGroup(name, instanceId); }
     /** Returns the provided column group with the given name. */
     public getProvidedColumnGroup(name: string): ProvidedColumnGroup | null { return this.columnModel.getProvidedColumnGroup(name); }
 
@@ -1797,15 +1799,15 @@ export class GridApi<TData = any> {
     public resetColumnGroupState(): void { this.columnGroupStateService.resetColumnGroupState('api'); }
 
     /** Returns `true` if pinning left or right, otherwise `false`. */
-    public isPinning(): boolean { return this.columnModel.isPinningLeft() || this.columnModel.isPinningRight(); }
+    public isPinning(): boolean { return this.displayedColumnsService.isPinningLeft() || this.displayedColumnsService.isPinningRight(); }
     /** Returns `true` if pinning left, otherwise `false`. */
-    public isPinningLeft(): boolean { return this.columnModel.isPinningLeft(); }
+    public isPinningLeft(): boolean { return this.displayedColumnsService.isPinningLeft(); }
     /** Returns `true` if pinning right, otherwise `false`. */
-    public isPinningRight(): boolean { return this.columnModel.isPinningRight(); }
+    public isPinningRight(): boolean { return this.displayedColumnsService.isPinningRight(); }
     /** Returns the column to the right of the provided column, taking into consideration open / closed column groups and visible columns. This is useful if you need to know what column is beside yours e.g. if implementing your own cell navigation. */
-    public getDisplayedColAfter(col: Column): Column | null { return this.columnModel.getDisplayedColAfter(col); }
+    public getDisplayedColAfter(col: Column): Column | null { return this.displayedColumnsService.getDisplayedColAfter(col); }
     /** Same as `getVisibleColAfter` except gives column to the left. */
-    public getDisplayedColBefore(col: Column): Column | null { return this.columnModel.getDisplayedColBefore(col); }
+    public getDisplayedColBefore(col: Column): Column | null { return this.displayedColumnsService.getDisplayedColBefore(col); }
     /** @deprecated v31.1 setColumnVisible(key, visible) deprecated, please use setColumnsVisible([key], visible) instead. */
     public setColumnVisible(key: string | Column, visible: boolean): void { 
         this.logDeprecation('v31.1', 'setColumnVisible(key,visible)', 'setColumnsVisible([key],visible)');
@@ -1830,13 +1832,13 @@ export class GridApi<TData = any> {
      */
     public getAllGridColumns(): Column[] { return this.columnModel.getAllGridColumns(); }
     /** Same as `getAllDisplayedColumns` but just for the pinned left portion of the grid. */
-    public getDisplayedLeftColumns(): Column[] { return this.columnModel.getDisplayedLeftColumns(); }
+    public getDisplayedLeftColumns(): Column[] { return this.displayedColumnsService.getDisplayedLeftColumns(); }
     /** Same as `getAllDisplayedColumns` but just for the center portion of the grid. */
-    public getDisplayedCenterColumns(): Column[] { return this.columnModel.getDisplayedCenterColumns(); }
+    public getDisplayedCenterColumns(): Column[] { return this.displayedColumnsService.getDisplayedCenterColumns(); }
     /** Same as `getAllDisplayedColumns` but just for the pinned right portion of the grid. */
-    public getDisplayedRightColumns(): Column[] { return this.columnModel.getDisplayedRightColumns(); }
+    public getDisplayedRightColumns(): Column[] { return this.displayedColumnsService.getDisplayedRightColumns(); }
     /** Returns all columns currently displayed (e.g. are visible and if in a group, the group is showing the columns) for the pinned left, centre and pinned right portions of the grid. */
-    public getAllDisplayedColumns(): Column[] { return this.columnModel.getAllDisplayedColumns(); }
+    public getAllDisplayedColumns(): Column[] { return this.displayedColumnsService.getAllDisplayedColumns(); }
     /** Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns that are not within the viewport and therefore not rendered, due to column virtualisation, are not displayed. */
     public getAllDisplayedVirtualColumns(): Column[] { return this.columnModel.getViewportColumns(); }
 
@@ -1927,13 +1929,13 @@ export class GridApi<TData = any> {
     public getPivotColumns(): Column[] { return this.functionColumnsService.getPivotColumns(); }
 
     /** Same as `getAllDisplayedColumnGroups` but just for the pinned left portion of the grid. */
-    public getLeftDisplayedColumnGroups(): IHeaderColumn[] { return this.columnModel.getDisplayedTreeLeft(); }
+    public getLeftDisplayedColumnGroups(): IHeaderColumn[] { return this.displayedColumnsService.getDisplayedTreeLeft(); }
     /** Same as `getAllDisplayedColumnGroups` but just for the center portion of the grid. */
-    public getCenterDisplayedColumnGroups(): IHeaderColumn[] { return this.columnModel.getDisplayedTreeCentre(); }
+    public getCenterDisplayedColumnGroups(): IHeaderColumn[] { return this.displayedColumnsService.getDisplayedTreeCentre(); }
     /** Same as `getAllDisplayedColumnGroups` but just for the pinned right portion of the grid. */
-    public getRightDisplayedColumnGroups(): IHeaderColumn[] { return this.columnModel.getDisplayedTreeRight(); }
+    public getRightDisplayedColumnGroups(): IHeaderColumn[] { return this.displayedColumnsService.getDisplayedTreeRight(); }
     /** Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping, these return the top level groups - you can navigate down through each one to get the other lower level headers and finally the columns at the bottom. */
-    public getAllDisplayedColumnGroups(): IHeaderColumn[] | null { return this.columnModel.getAllDisplayedTrees(); }
+    public getAllDisplayedColumnGroups(): IHeaderColumn[] | null { return this.displayedColumnsService.getAllDisplayedTrees(); }
     /** @deprecated v31.1 autoSizeColumn(key) deprecated, please use autoSizeColumns([colKey]) instead. */
     public autoSizeColumn(key: string | ColDef | Column, skipHeader?: boolean): void {
         this.logDeprecation('v31.1', 'autoSizeColumn(key, skipHeader)', 'autoSizeColumns([key], skipHeader)');

@@ -7,6 +7,7 @@ import {
     ColumnChooserParams,
     ColumnMenuVisibleChangedEvent,
     ColumnModel,
+    DisplayedColumnsService,
     Events,
     FocusService,
     IColumnChooserFactory,
@@ -21,6 +22,7 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('menuUtils') private readonly menuUtils: MenuUtils;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
 
     private activeColumnChooser: PrimaryColsPanel | undefined;
     private activeColumnChooserDialog: AgDialog | undefined;
@@ -63,7 +65,7 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
 
         const columnSelectPanel = this.createColumnSelectPanel(this, column, true, chooserParams);
         const translate = this.localeService.getLocaleTextFunc();
-        const columnIndex = this.columnModel.getAllDisplayedColumns().indexOf(column!);
+        const columnIndex = this.displayedColumnsService.getAllDisplayedColumns().indexOf(column!);
         const headerPosition = column ? this.focusService.getFocusedHeader() : null;
 
         this.activeColumnChooserDialog = this.createBean(new AgDialog({

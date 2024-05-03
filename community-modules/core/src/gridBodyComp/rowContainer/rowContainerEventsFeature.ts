@@ -25,6 +25,7 @@ import { IClipboardService } from "../../interfaces/iClipboardService";
 import { CellCtrl } from "../../rendering/cell/cellCtrl";
 import { RowPinnedType } from "../../interfaces/iRowNode";
 import { MenuService, EventShowContextMenuParams } from "../../misc/menuService";
+import { DisplayedColumnsService } from "../../columns/displayedColumnsService";
 
 export class RowContainerEventsFeature extends BeanStub {
 
@@ -36,6 +37,7 @@ export class RowContainerEventsFeature extends BeanStub {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('undoRedoService') private undoRedoService: UndoRedoService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
 
@@ -275,7 +277,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 rowEnd = pinnedRowModel.getPinnedBottomRowData().length - 1;
             }
 
-            const allDisplayedColumns = this.columnModel.getAllDisplayedColumns();
+            const allDisplayedColumns = this.displayedColumnsService.getAllDisplayedColumns();
             if (missingOrEmpty(allDisplayedColumns)) { return; }
 
             rangeService.setCellRange({

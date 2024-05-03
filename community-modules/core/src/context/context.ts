@@ -466,7 +466,7 @@ export type BeanName =
 | 'ctrlsService'
 | 'csvCreator'
 | 'dataTypeService'
-| 'displayedGroupCreator'
+| 'displayedColumnsService'
 | 'dragAndDropService'
 | 'dragService'
 | 'excelCreator'

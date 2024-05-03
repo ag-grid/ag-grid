@@ -1,5 +1,6 @@
 import { ColumnModel } from "../columns/columnModel";
 import { ColumnMoveService } from "../columns/columnMoveService";
+import { DisplayedColumnsService } from "../columns/displayedColumnsService";
 import { HorizontalDirection } from "../constants/direction";
 import { CtrlsService } from "../ctrlsService";
 import { Column, ColumnPinnedType } from "../entities/column";
@@ -21,9 +22,10 @@ export class ColumnMoveHelper {
         pinned: ColumnPinnedType,
         gos: GridOptionsService,
         columnModel: ColumnModel,
-        columnMoveService: ColumnMoveService
+        columnMoveService: ColumnMoveService,
+        displayedColumnsService: DisplayedColumnsService
     }): { columns: Column[], toIndex: number } | null | undefined {
-        const { isFromHeader, hDirection, xPosition, fromEnter, fakeEvent, pinned, gos, columnModel, columnMoveService } = params; 
+        const { isFromHeader, hDirection, xPosition, fromEnter, fakeEvent, pinned, gos, columnModel, columnMoveService, displayedColumnsService } = params; 
 
         const draggingLeft = hDirection === HorizontalDirection.Left;
         const draggingRight = hDirection === HorizontalDirection.Right;
@@ -72,7 +74,8 @@ export class ColumnMoveHelper {
             xPosition,
             pinned,
             gos,
-            columnModel
+            columnModel,
+            displayedColumnsService
         });
 
         // if cols are not adjacent, then this returns null. when moving, we constrain the direction of the move
@@ -114,7 +117,7 @@ export class ColumnMoveHelper {
         // Remember what that move would look like in terms of displayed cols
         // keep going with further moves until we find a different result in displayed output
         // In this way potentialMoves contains all potential moves over 'hidden' columns
-        const displayedCols = columnModel.getAllDisplayedColumns();
+        const displayedCols = displayedColumnsService.getAllDisplayedColumns();
 
         let potentialMoves: { move: number, fragCount: number }[] = [];
         let targetOrder: Column[] | null = null;
@@ -192,14 +195,14 @@ export class ColumnMoveHelper {
         return count;
     }
 
-    private static getDisplayedColumns(columnModel: ColumnModel, type: ColumnPinnedType): Column[] {
+    private static getDisplayedColumns(displayedColumnsService: DisplayedColumnsService, type: ColumnPinnedType): Column[] {
         switch (type) {
             case 'left':
-                return columnModel.getDisplayedLeftColumns();
+                return displayedColumnsService.getDisplayedLeftColumns();
             case 'right':
-                return columnModel.getDisplayedRightColumns();
+                return displayedColumnsService.getDisplayedRightColumns();
             default:
-                return columnModel.getDisplayedCenterColumns();
+                return displayedColumnsService.getDisplayedCenterColumns();
         }
     }
 
@@ -209,14 +212,15 @@ export class ColumnMoveHelper {
         xPosition: number,
         pinned: ColumnPinnedType,
         gos: GridOptionsService,
-        columnModel: ColumnModel
+        columnModel: ColumnModel,
+        displayedColumnsService: DisplayedColumnsService
     }): number[] {
-        const { movingCols, draggingRight, xPosition, pinned, gos, columnModel } = params;
+        const { movingCols, draggingRight, xPosition, pinned, gos, columnModel, displayedColumnsService } = params;
         const isMoveBlocked = gos.get('suppressMovableColumns') || movingCols.some(col => col.getColDef().suppressMovable);
 
         if (isMoveBlocked) { return []; }
         // this is the list of cols on the screen, so it's these we use when comparing the x mouse position
-        const allDisplayedCols = this.getDisplayedColumns(columnModel, pinned);
+        const allDisplayedCols = this.getDisplayedColumns(displayedColumnsService, pinned);
         // but this list is the list of all cols, when we move a col it's the index within this list that gets used,
         // so the result we return has to be and index location for this list
         const allGridCols = columnModel.getAllGridColumns();

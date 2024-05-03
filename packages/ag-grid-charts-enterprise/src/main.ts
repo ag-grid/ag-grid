@@ -120,7 +120,7 @@ export {DataTypeService} from "@ag-grid-community/core";
 export {DateCellEditor} from "@ag-grid-community/core";
 export {DateFilter} from "@ag-grid-community/core";
 export {DateStringCellEditor} from "@ag-grid-community/core";
-export {DisplayedGroupCreator} from "@ag-grid-community/core";
+export {DisplayedColumnsService} from "@ag-grid-community/core";
 export {DragAndDropService} from "@ag-grid-community/core";
 export {DragService} from "@ag-grid-community/core";
 export {DragSourceType} from "@ag-grid-community/core";

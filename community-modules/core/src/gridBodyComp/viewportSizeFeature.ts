@@ -12,6 +12,7 @@ import { PinnedWidthService } from "./pinnedWidthService";
 import { Column } from "../entities/column";
 import { ProcessUnpinnedColumnsParams } from "../interfaces/iCallbackParams";
 import { ColumnSizeService } from "../columns/columnSizeService";
+import { DisplayedColumnsService } from "../columns/displayedColumnsService";
 
 // listens to changes in the center viewport size, for column and row virtualisation,
 // and adjusts grid as necessary. there are two viewports, one for horizontal and one for
@@ -21,6 +22,7 @@ export class ViewportSizeFeature extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
     @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
@@ -109,8 +111,8 @@ export class ViewportSizeFeature extends BeanStub {
 
         if (totalPinnedWidth < viewportWidth) { return []; }
 
-        const pinnedLeftColumns: Column[] = [...this.columnModel.getDisplayedLeftColumns()];
-        const pinnedRightColumns: Column[] = [...this.columnModel.getDisplayedRightColumns()];
+        const pinnedLeftColumns: Column[] = [...this.displayedColumnsService.getDisplayedLeftColumns()];
+        const pinnedRightColumns: Column[] = [...this.displayedColumnsService.getDisplayedRightColumns()];
 
         let indexRight = 0;
         let indexLeft = 0;

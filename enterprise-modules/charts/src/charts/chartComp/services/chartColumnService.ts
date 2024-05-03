@@ -4,6 +4,7 @@ import {
     BeanStub,
     Column,
     ColumnModel,
+    DisplayedColumnsService,
     Events,
     FunctionColumnsService,
     PostConstruct,
@@ -15,6 +16,7 @@ import {
 @Bean("chartColumnService")
 export class ChartColumnService extends BeanStub {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
     @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
@@ -33,7 +35,7 @@ export class ChartColumnService extends BeanStub {
     }
 
     public getAllDisplayedColumns(): Column[] {
-        return this.columnModel.getAllDisplayedColumns();
+        return this.displayedColumnsService.getAllDisplayedColumns();
     }
 
     public getColDisplayName(col: Column): string | null {

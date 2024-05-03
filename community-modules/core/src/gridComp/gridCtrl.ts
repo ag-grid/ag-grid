@@ -7,12 +7,12 @@ import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { Events } from "../eventKeys";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { GridSizeChangedEvent } from "../events";
-import { ColumnModel } from "../columns/columnModel";
 import { CtrlsService } from "../ctrlsService";
 import { MouseEventService } from "../gridBodyComp/mouseEventService";
 import { last } from "../utils/array";
 import { DragAndDropService, DragSourceType } from "../dragAndDrop/dragAndDropService";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { DisplayedColumnsService } from "../columns/displayedColumnsService";
 
 export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
@@ -27,7 +27,7 @@ export class GridCtrl extends BeanStub {
 
     @Autowired('focusService') protected readonly focusService: FocusService;
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
     @Autowired('mouseEventService') private readonly mouseEventService: MouseEventService;
     @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
@@ -130,7 +130,7 @@ export class GridCtrl extends BeanStub {
 
     public focusInnerElement(fromBottom?: boolean): boolean {
         const focusableContainers = this.view.getFocusableContainers();
-        const allColumns = this.columnModel.getAllDisplayedColumns();
+        const allColumns = this.displayedColumnsService.getAllDisplayedColumns();
 
         if (fromBottom) {
             if (focusableContainers.length > 1) {

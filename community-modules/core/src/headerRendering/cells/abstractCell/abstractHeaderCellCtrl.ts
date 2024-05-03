@@ -116,13 +116,13 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
     private refreshFirstAndLastStyles(): void {
         const { comp, column, beans } = this;
-        CssClassApplier.refreshFirstAndLastStyles(comp, (column as unknown as Column | ColumnGroup), beans.columnModel);
+        CssClassApplier.refreshFirstAndLastStyles(comp, (column as unknown as Column | ColumnGroup), beans.displayedColumnsService);
     }
 
     private refreshAriaColIndex(): void {
         const { beans, column } = this;
 
-        const colIdx = beans.columnModel.getAriaColumnIndex(column as unknown as Column | ColumnGroup);
+        const colIdx = beans.displayedColumnsService.getAriaColumnIndex(column as unknown as Column | ColumnGroup);
         setAriaColIndex(this.eGui, colIdx); // for react, we don't use JSX, as it slowed down column moving
     }
 

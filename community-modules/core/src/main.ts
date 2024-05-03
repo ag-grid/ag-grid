@@ -17,7 +17,7 @@ export { ColumnApplyStateService } from "./columns/columnApplyStateService";
 export { ColumnMoveService } from "./columns/columnMoveService";
 export { ColumnSizeService, IColumnLimit, ISizeColumnsToFitParams } from "./columns/columnSizeService";
 export { ColumnKeyCreator } from "./columns/columnKeyCreator";
-export { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
+export { DisplayedColumnsService } from "./columns/displayedColumnsService";
 export { GroupInstanceIdCreator } from "./columns/groupInstanceIdCreator";
 export { GROUP_AUTO_COLUMN_ID } from "./columns/autoGroupColService";
 export {
