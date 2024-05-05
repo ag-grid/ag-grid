@@ -12,8 +12,8 @@ export const DEFAULT_INTERNAL_FRAMEWORK: InternalFramework = 'reactFunctional';
 export const USE_PACKAGES = true; // process.env?.USE_PACKAGES ?? false;
 
 export const INTERNAL_FRAMEWORKS: readonly InternalFramework[] = USE_PACKAGES
-    ? ['vanilla', 'typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue', 'vue3']
-    : (['typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue', 'vue3'] as const);
+    ? ['vanilla', 'typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue3']
+    : (['typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue3'] as const);
 
 export const FRAMEWORK_DISPLAY_TEXT: Record<Framework, string> = {
     javascript: 'JavaScript',
@@ -36,14 +36,12 @@ export const PUBLISHED_URLS = {
     '@ag-grid-community/styles': `${NPM_CDN}/@ag-grid-community/styles@${agGridVersion}`,
     '@ag-grid-community/react': `${NPM_CDN}/@ag-grid-community/react@${agGridReactVersion}/`,
     '@ag-grid-community/angular': `${NPM_CDN}/@ag-grid-community/angular@${agGridAngularVersion}/`,
-    '@ag-grid-community/vue': `${NPM_CDN}/@ag-grid-community/vue@${agGridVueVersion}/`,
     '@ag-grid-community/vue3': `${NPM_CDN}/@ag-grid-community/vue3@${agGridVue3Version}/`,
     'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}`,
     'ag-grid-enterprise': `${NPM_CDN}/ag-grid-enterprise@${agGridEnterpriseVersion}/`,
     'ag-grid-charts-enterprise': `${NPM_CDN}/ag-grid-charts-enterprise@${agGridEnterpriseVersion}/`,
     'ag-grid-angular': `${NPM_CDN}/ag-grid-angular@${agGridAngularVersion}/`,
     'ag-grid-react': `${NPM_CDN}/ag-grid-react@${agGridReactVersion}/`,
-    'ag-grid-vue': `${NPM_CDN}/ag-grid-vue@${agGridVueVersion}/`,
     'ag-grid-vue3': `${NPM_CDN}/ag-grid-vue3@${agGridVue3Version}/`,
 };
 

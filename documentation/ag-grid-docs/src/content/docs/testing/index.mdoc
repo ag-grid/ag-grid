@@ -459,7 +459,7 @@ Before we can test our component we need to configure the `TestBed`. In this exa
     imports: [AgGridAngular],
     template: `<ag-grid-angular
         [rowData]="rowData"
-        [columnDefs]="columnDefs"></ag-grid-angular>`,
+        [columnDefs]="columnDefs" />`,
 })
 export class TestHostComponent {
 
@@ -604,8 +604,7 @@ export class EditorComponent implements ICellEditorAngularComp {
                 [columnDefs]="columnDefs"
                 [rowData]="rowData"
                 [stopEditingWhenCellsLoseFocus]="false"
-                (gridReady)="onGridReady($event)">
-            </ag-grid-angular>
+                (gridReady)="onGridReady($event)" />
         </div>`
 })
 class TestHostComponent {
@@ -674,7 +673,7 @@ It is also possible to use [Angular Testing Library](https://testing-library.com
 {% if isFramework("angular") %}
 ```js
 <div data-testid="rowClicked">Row Clicked: {{ rowClicked?.make }}</div>
-<ag-grid-angular [columnDefs]="columnDefs" [rowData]="rowData" (onRowClicked)="onRowClicked($event)"> </ag-grid-angular>
+<ag-grid-angular [columnDefs]="columnDefs" [rowData]="rowData" (onRowClicked)="onRowClicked($event)" />
 ```
 {% /if %}
 

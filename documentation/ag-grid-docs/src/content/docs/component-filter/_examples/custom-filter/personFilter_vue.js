@@ -19,7 +19,7 @@ export default {
         },
 
         doesFilterPass(params) {
-            const { api, colDef, column, columnApi, context } = this.params;
+            const { api, colDef, column, context } = this.params;
             const { node } = params;
 
             // make sure each word passes separately, ie search for firstname, lastname

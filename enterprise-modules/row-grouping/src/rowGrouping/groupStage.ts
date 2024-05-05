@@ -18,7 +18,6 @@ import {
     ISelectionService,
     WithoutGridCommon,
     InitialGroupOrderComparatorParams,
-    GridOptions,
     KeyCreatorParams
 } from "@ag-grid-community/core";
 import { BatchRemover } from "./batchRemover";
@@ -32,7 +31,6 @@ interface GroupInfo {
 
 interface GroupingDetails {
     pivotMode: boolean;
-    includeParents: boolean;
     expandByDefault: number;
     changedPath: ChangedPath;
     rootNode: RowNode;
@@ -125,9 +123,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         const groupedCols = usingTreeData ? null : this.columnModel.getRowGroupColumns();
 
         const details: GroupingDetails = {
-            // someone complained that the parent attribute was causing some change detection
-            // to break in an angular add-on.  Taking the parent out breaks a cyclic dependency, hence this flag got introduced.
-            includeParents: !this.gos.get('suppressParentsInRowNodes'),
             expandByDefault: this.gos.get('groupDefaultExpanded'),
             groupedCols: groupedCols!,
             rootNode: rowNode,
@@ -627,7 +622,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         groupNode.childrenMapped = {};
         groupNode.updateHasChildren();
 
-        groupNode.parent = details.includeParents ? parent : null;
+        groupNode.parent = parent;
 
         this.setExpandedInitialValue(details, groupNode);
 

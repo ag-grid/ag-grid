@@ -124,13 +124,7 @@ export interface CustomTooltipProps<TData = any, TValue = any, TContext = any> e
 // *** Callbacks ***
 
 /** Callbacks for custom cell editor components */
-export interface CustomCellEditorCallbacks extends BaseCellEditor {
-    /** @deprecated v27 Use `colDef.cellEditorPopup` instead. */
-    isPopup?(): boolean;
-    
-    /** @deprecated v27 Use `colDef.cellEditorPopupPosition` instead. */
-    getPopupPosition?(): 'over' | 'under' | undefined;
-}
+export interface CustomCellEditorCallbacks extends BaseCellEditor {}
 
 /** Callbacks for custom date components */
 export interface CustomDateCallbacks extends BaseDate {}

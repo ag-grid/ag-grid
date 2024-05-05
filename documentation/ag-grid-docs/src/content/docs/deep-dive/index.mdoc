@@ -179,8 +179,7 @@ First we need to hook into the `gridReady` event by adding `(gridReady)="onGridR
  [rowData]="rowData"
  [columnDefs]="colDefs"
  (gridReady)="onGridReady($event)"
->
-</ag-grid-angular>
+ />
 ```
 
 _Note: [Grid Events](./deep-dive/#handle-grid-events) are covered in more detail later on_
@@ -423,8 +422,7 @@ The example above demonstrates how to configure a single column. To apply this c
    <ag-grid-angular
      ...
      [defaultColDef]="defaultColDef"
-   >
-   </ag-grid-angular>
+    />
  </div>
  `,
  // ...
@@ -559,8 +557,7 @@ Grid Options are passed to the grid via attributes on the `ag-grid-angular` comp
 <ag-grid-angular
  ...
  [pagination]="true"
->
-</ag-grid-angular>
+ />
 ```
 
 We should now see Pagination has been enabled on the grid:
@@ -824,7 +821,7 @@ Let's try this by creating a new component to display the company logo in the 'c
  selector: 'app-company-logo-renderer',
  standalone: true,
  imports: [CommonModule],
- template: `<span *ngIf="value" ><img [alt]="value" [src]="'https://www.ag-grid.com/example-assets/space-company-logos/' + value.toLowerCase() + '.png'" /> <p>{{ value }}</p></span>`,
+ template: `<span>@if(value){<img [alt]="value" [src]="'https://www.ag-grid.com/example-assets/space-company-logos/' + value.toLowerCase() + '.png'" /> <p>{{ value }}</p>}</span>`,
  styles: ["img {display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.2);} span {display: flex; height: 100%; width: 100%; align-items: center} p { text-overflow: ellipsis; overflow: hidden; white-space: nowrap }"]
 })
 
@@ -1020,8 +1017,7 @@ Finally, let's add the `gridReady` attribute to the `ag-grid-angular` component,
 <ag-grid-angular
  (gridReady)="onGridReady($event)"
  ...
->
-</ag-grid-angular>
+ />
 ```
 
 Now, when we click on a cell we should be able to edit it and see the new value logged to the console:

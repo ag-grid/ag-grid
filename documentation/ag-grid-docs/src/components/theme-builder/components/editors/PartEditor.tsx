@@ -1,9 +1,9 @@
 import type { PartId } from '@ag-grid-community/theming';
+import { Select } from '@ag-website-shared/components/select/Select';
 
 import { PartModel, VariantModel, useSelectedVariant } from '../../model/PartModel';
 import { withErrorBoundary } from '../general/ErrorBoundary';
 import { FormField } from './FormField';
-import { Select } from './Select';
 
 export type VariantSelectorProps = {
     part: PartId;

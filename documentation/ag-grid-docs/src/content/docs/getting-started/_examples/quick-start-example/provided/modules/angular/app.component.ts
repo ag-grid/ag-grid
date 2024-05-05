@@ -28,8 +28,7 @@ interface IRow {
       [rowData]="rowData"
       [columnDefs]="colDefs"
       [defaultColDef]="defaultColDef"
-    >
-    </ag-grid-angular>
+    />
   </div>
   `
 })

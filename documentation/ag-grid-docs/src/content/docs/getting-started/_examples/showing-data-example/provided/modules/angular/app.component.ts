@@ -35,7 +35,7 @@ export class CustomButtonComponent implements ICellRendererAngularComp {
     [columnDefs]="columnDefs"
     [class]="themeClass"
     
-    ></ag-grid-angular>`
+     />`
 })
 export class AppComponent {
     public rowData: any[] | null = [

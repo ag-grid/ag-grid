@@ -720,22 +720,6 @@ export interface AsyncTransactionsFlushed<TData = any, TContext = any> extends A
     results: (RowNodeTransaction<TData> | ServerSideTransactionResult)[];
 }
 
-// not documented, was put in for CS - more thought needed of how server side grouping / pivoting
-// is done and how these should be used before we fully document and share with the world.
-export interface ColumnRequestEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
-    columns: Column[];
-}
-
-export interface ColumnRowGroupChangeRequestEvent<TData = any, TContext = any> extends ColumnRequestEvent<TData, TContext> { }
-
-export interface ColumnPivotChangeRequestEvent<TData = any, TContext = any> extends ColumnRequestEvent<TData, TContext> { }
-
-export interface ColumnValueChangeRequestEvent<TData = any, TContext = any> extends ColumnRequestEvent<TData, TContext> { }
-
-export interface ColumnAggFuncChangeRequestEvent<TData = any, TContext = any> extends ColumnRequestEvent<TData, TContext> {
-    aggFunc: any;
-}
-
 export interface StoreRefreshedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** The route of the store which has finished refreshing, undefined if root level */
     route?: string[];
@@ -779,4 +763,4 @@ export interface FieldPickerValueSelectedEvent<TData = any, TContext = any> exte
     fromEnterKey: boolean;
 }
 
-export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED, Events.EVENT_FILL_START]);
+export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED, Events.EVENT_FILL_START, Events.EVENT_PASTE_START]);

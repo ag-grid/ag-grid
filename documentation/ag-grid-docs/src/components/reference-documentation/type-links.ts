@@ -28,7 +28,6 @@ const TYPE_LINKS : Record<string, string> = {
     AbstractColDef: './column-properties/',
     Column: './column-object/',
     ColumnEventType: './column-object/#reference-events',
-    ColumnApi: './column-api/',
     CreatePivotChartParams: './integrated-charts-api-pivot-chart/#pivot-chart-api',
     CreateRangeChartParams: './integrated-charts-api-range-chart/#range-chart-api',
     GetChartImageDataUrlParams: './integrated-charts-api-downloading-image',

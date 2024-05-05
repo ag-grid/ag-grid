@@ -21,7 +21,7 @@ import { WithoutGridCommon } from "../../../interfaces/iCommon";
 import { MenuService } from "../../../misc/menuService";
 import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
 import { getInnerWidth } from "../../../utils/dom";
-import { BrandedType } from "@ag-grid-community/core";
+import { BrandedType } from "../../../interfaces/brandedType";
 
 let instanceIdSequence = 0;
 

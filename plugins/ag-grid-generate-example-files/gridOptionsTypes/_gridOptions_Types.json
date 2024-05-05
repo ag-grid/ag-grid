@@ -897,10 +897,6 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "suppressParentsInRowNodes": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
   "suppressColumnMoveAnimation": {
     "typeName": "boolean",
     "typesToInclude": []
@@ -997,15 +993,7 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "suppressAggAtRootLevel": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
   "suppressFocusAfterRefresh": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "functionsPassive": {
     "typeName": "boolean",
     "typesToInclude": []
   },
@@ -1105,10 +1093,6 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "excludeHiddenColumnsFromQuickFilter": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
   "ensureDomOrder": {
     "typeName": "boolean",
     "typesToInclude": []
@@ -1153,14 +1137,6 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "enterMovesDown": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "enterMovesDownAfterEdit": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
   "enterNavigatesVerticallyAfterEdit": {
     "typeName": "boolean",
     "typesToInclude": []
@@ -1194,10 +1170,6 @@
     "typesToInclude": []
   },
   "enableCharts": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "enableChartToolPanelsButton": {
     "typeName": "boolean",
     "typesToInclude": []
   },
@@ -1266,10 +1238,6 @@
     "typesToInclude": []
   },
   "detailRowAutoHeight": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "serverSideFilterAllLevels": {
     "typeName": "boolean",
     "typesToInclude": []
   },

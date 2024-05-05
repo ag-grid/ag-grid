@@ -161,7 +161,7 @@ function getTemplate(bindings: ParsedBindings, exampleConfig: ExampleConfig, att
     ${exampleConfig.myGridReference ? 'id="myGrid"' : ''}
     ${style}
     ${attributes.join('\n    ')}
-    ></ag-grid-angular>`;
+     />`;
 
     const template = bindings.template ? bindings.template.replace(templatePlaceholder, agGridTag) : agGridTag;
 

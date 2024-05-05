@@ -2,7 +2,6 @@ import { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colD
 import { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/providedFilter';
 import { Column } from '../entities/column';
 import { GridApi } from '../gridApi';
-import { ColumnApi } from '../columns/columnApi';
 import { IFilterParams, ProvidedFilterModel } from './iFilter';
 import { AgPromise } from '../utils/promise';
 import { ITooltipParams } from '../rendering/tooltipComponent';
@@ -83,7 +82,6 @@ export interface SetFilterValuesFuncParams<TData = any, V = string> {
     colDef: ColDef<TData>;
     /** Column from which the set filter is invoked. */
     column: Column;
-    columnApi: ColumnApi;
     api: GridApi<TData>;
     /** The context as provided on `gridOptions.context` */
     context: any;

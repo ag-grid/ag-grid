@@ -2,7 +2,7 @@ import { AbstractColDef } from "../entities/colDef";
 import { IEventEmitter } from "./iEventEmitter";
 import { ColumnGroup, ColumnGroupShowType } from "../entities/columnGroup";
 import { ColumnPinnedType } from "../entities/column";
-import { BrandedType } from "../utils";
+import { BrandedType } from "../interfaces/brandedType";
 
 export type HeaderColumnId = BrandedType<string, 'HeaderColumnId'>;
 

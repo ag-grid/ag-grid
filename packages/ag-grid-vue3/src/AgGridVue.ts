@@ -95,7 +95,7 @@ export const AgGridVue = defineComponent({
         },
         checkForBindingConflicts() {
             const thisAsAny = (this as any);
-            if ((thisAsAny.rowData || this.gridOptions.rowData) &&
+            if (((thisAsAny.rowData && thisAsAny.rowData !== 'AG-VUE-OMITTED-PROPERTY') || this.gridOptions.rowData) &&
                 thisAsAny.modelValue) {
                 console.warn('AG Grid: Using both rowData and v-model. rowData will be ignored.');
             }

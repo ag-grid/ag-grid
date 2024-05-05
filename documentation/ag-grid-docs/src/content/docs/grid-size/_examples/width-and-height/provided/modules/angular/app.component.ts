@@ -28,9 +28,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
                 #agGrid
                 [class]="themeClass"
                 [rowData]="rowData"
-                [columnDefs]="columnDefs"
-        >
-        </ag-grid-angular>
+                [columnDefs]="columnDefs" />
     </div>
 </div>
 `

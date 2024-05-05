@@ -56,6 +56,7 @@ const EditorScroller = styled('div')`
     position: absolute;
     inset: 0 0 48px 0;
     overflow-y: auto;
+    z-index: 0; // z-index:0 prevents a Safari rendering bug where scrollbars appear over tooltips
 `;
 
 const Menu = styled('div')`

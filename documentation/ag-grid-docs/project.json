@@ -146,7 +146,6 @@
     "community-modules/infinite-row-model",
     "community-modules/angular",
     "community-modules/react",
-    "community-modules/vue",
     "community-modules/vue3",
     "enterprise-modules/core",
     "enterprise-modules/advanced-filter",

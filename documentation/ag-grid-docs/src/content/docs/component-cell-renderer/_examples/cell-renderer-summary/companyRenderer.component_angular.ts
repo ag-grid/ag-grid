@@ -13,8 +13,7 @@ export class CompanyRenderer implements ICellRendererAngularComp {
   public value!: string;
   public parsedValue!: string;
   agInit(params: ICellRendererParams): void {
-    this.value = params.value;
-    this.parsedValue = new URL(params.value).hostname;
+    this.refresh(params);
   }
 
   // Return Cell Value
