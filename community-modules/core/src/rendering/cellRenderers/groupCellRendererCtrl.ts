@@ -98,43 +98,43 @@ export class GroupCellRendererCtrl extends BeanStub {
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired("ctrlsService") private ctrlsService: CtrlsService;
 
-    private params: GroupCellRendererParams;
+    #params: GroupCellRendererParams;
 
     // will be true if the node was pulled down
-    private showingValueForOpenedParent: boolean;
+    #showingValueForOpenedParent: boolean;
 
     // this is normally the rowNode of this row, however when doing hideOpenParents, it will
     // be the parent who's details we are actually showing if the data was pulled down.
-    private displayedGroupNode: RowNode;
+    #displayedGroupNode: RowNode;
 
-    private eGui: HTMLElement;
-    private eExpanded: HTMLElement;
-    private eContracted: HTMLElement;
-    private eCheckbox: HTMLElement;
-    private expandListener: (() => null) | null;
+    #eGui: HTMLElement;
+    #eExpanded: HTMLElement;
+    #eContracted: HTMLElement;
+    #eCheckbox: HTMLElement;
+    #expandListener: (() => null) | null;
 
     // keep reference to this, so we can remove again when indent changes
-    private indentClass: string;
+    #indentClass: string;
 
-    private comp: IGroupCellRenderer;
-    private compClass: any;
+    #comp: IGroupCellRenderer;
+    #compClass: any;
 
     public init(comp: IGroupCellRenderer, eGui: HTMLElement, eCheckbox: HTMLElement, eExpanded: HTMLElement, eContracted: HTMLElement, compClass: any, params: GroupCellRendererParams): void {
-        this.params = params;
-        this.eGui = eGui;
-        this.eCheckbox = eCheckbox;
-        this.eExpanded = eExpanded;
-        this.eContracted = eContracted;
-        this.comp = comp;
-        this.compClass = compClass;
+        this.#params = params;
+        this.#eGui = eGui;
+        this.#eCheckbox = eCheckbox;
+        this.#eExpanded = eExpanded;
+        this.#eContracted = eContracted;
+        this.#comp = comp;
+        this.#compClass = compClass;
 
 
         const { node, value, colDef } = params;
-        const topLevelFooter = this.isTopLevelFooter();
+        const topLevelFooter = this.#isTopLevelFooter();
 
         // logic for skipping cells follows, never skip top level footer cell.
         if (!topLevelFooter) {
-            const embeddedRowMismatch = this.isEmbeddedRowMismatch();
+            const embeddedRowMismatch = this.#isEmbeddedRowMismatch();
             if (embeddedRowMismatch) {
                 return;
             }
@@ -153,8 +153,8 @@ export class GroupCellRendererCtrl extends BeanStub {
             }
         }
 
-        this.setupShowingValueForOpenedParent();
-        this.findDisplayedGroupNode();
+        this.#setupShowingValueForOpenedParent();
+        this.#findDisplayedGroupNode();
 
         if (!topLevelFooter) {
             const showingFooterTotal = params.node.footer && params.node.rowGroupIndex === this.columnModel.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup);
@@ -173,47 +173,47 @@ export class GroupCellRendererCtrl extends BeanStub {
                 ))
             );
             // not showing a leaf value (field/valueGetter)
-            const leafWithValues = !node.group && (this.params.colDef?.field || this.params.colDef?.valueGetter);
+            const leafWithValues = !node.group && (this.#params.colDef?.field || this.#params.colDef?.valueGetter);
             // doesn't have expand/collapse chevron
-            const isExpandable = this.isExpandable();
+            const isExpandable = this.#isExpandable();
             // is showing pivot leaf cell
             const showPivotModeLeafValue = this.columnModel.isPivotMode() && node.leafGroup && node.rowGroupColumn?.getColId() === params.column?.getColDef().showRowGroup;
 
             // if not showing any values or chevron, skip cell.
-            const canSkipRenderingCell = !this.showingValueForOpenedParent && !isExpandable && !leafWithValues && !showOpenGroupValue && !showingFooterTotal && !showPivotModeLeafValue;
+            const canSkipRenderingCell = !this.#showingValueForOpenedParent && !isExpandable && !leafWithValues && !showOpenGroupValue && !showingFooterTotal && !showPivotModeLeafValue;
             if (canSkipRenderingCell) {
                 return;
             }
         }
 
-        this.addExpandAndContract();
-        this.addFullWidthRowDraggerIfNeeded();
-        this.addCheckboxIfNeeded();
-        this.addValueElement();
-        this.setupIndent();
-        this.refreshAriaExpanded();
+        this.#addExpandAndContract();
+        this.#addFullWidthRowDraggerIfNeeded();
+        this.#addCheckboxIfNeeded();
+        this.#addValueElement();
+        this.#setupIndent();
+        this.#refreshAriaExpanded();
     }
 
     public getCellAriaRole(): string {
-        const colDefAriaRole = this.params.colDef?.cellAriaRole;
-        const columnColDefAriaRole = this.params.column?.getColDef().cellAriaRole;
+        const colDefAriaRole = this.#params.colDef?.cellAriaRole;
+        const columnColDefAriaRole = this.#params.column?.getColDef().cellAriaRole;
         return colDefAriaRole || columnColDefAriaRole || 'gridcell';
     }
 
     protected destroy(): void {
         super.destroy();
         // property cleanup to avoid memory leaks
-        this.expandListener = null;
+        this.#expandListener = null;
     }
 
-    private refreshAriaExpanded(): void {
-        const { node, eGridCell } = this.params;
+    #refreshAriaExpanded(): void {
+        const { node, eGridCell } = this.#params;
 
-        if (this.expandListener) {
-            this.expandListener = this.expandListener();
+        if (this.#expandListener) {
+            this.#expandListener = this.#expandListener();
         }
 
-        if (!this.isExpandable()) {
+        if (!this.#isExpandable()) {
             removeAriaExpanded(eGridCell);
             return;
         }
@@ -223,21 +223,21 @@ export class GroupCellRendererCtrl extends BeanStub {
             setAriaExpanded(eGridCell, !!node.expanded);
         };
 
-        this.expandListener = this.addManagedListener(node, RowNode.EVENT_EXPANDED_CHANGED, listener) || null;
+        this.#expandListener = this.addManagedListener(node, RowNode.EVENT_EXPANDED_CHANGED, listener) || null;
         listener();
     }
 
-    private isTopLevelFooter(): boolean {
+    #isTopLevelFooter(): boolean {
         const totalRow = this.gos.getGrandTotalRow();
         if (!totalRow) { return false; }
 
-        if (this.params.value != null || this.params.node.level != -1) { return false; }
+        if (this.#params.value != null || this.#params.node.level != -1) { return false; }
 
         // at this point, we know it's the root node and there is no value present, so it's a footer cell.
         // the only thing to work out is if we are displaying groups  across multiple
         // columns (groupDisplayType: 'multipleColumns'), we only want 'total' to appear in the first column.
 
-        const colDef = this.params.colDef;
+        const colDef = this.#params.colDef;
         const doingFullWidth = colDef == null;
         if (doingFullWidth) { return true; }
 
@@ -255,11 +255,11 @@ export class GroupCellRendererCtrl extends BeanStub {
     // if we are doing embedded full width rows, we only show the renderer when
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
     // in the right section. otherwise we would have the cell repeated in each section.
-    private isEmbeddedRowMismatch(): boolean {
-        if (!this.params.fullWidth || !this.gos.get('embedFullWidthRows')) { return false; }
+    #isEmbeddedRowMismatch(): boolean {
+        if (!this.#params.fullWidth || !this.gos.get('embedFullWidthRows')) { return false; }
 
-        const pinnedLeftCell = this.params.pinned === 'left';
-        const pinnedRightCell = this.params.pinned === 'right';
+        const pinnedLeftCell = this.#params.pinned === 'left';
+        const pinnedRightCell = this.#params.pinned === 'right';
         const bodyCell = !pinnedLeftCell && !pinnedRightCell;
 
         if (this.gos.get('enableRtl')) {
@@ -276,16 +276,16 @@ export class GroupCellRendererCtrl extends BeanStub {
         return !bodyCell;
     }
 
-    private findDisplayedGroupNode(): void {
-        const column = this.params.column;
-        const rowNode = this.params.node as RowNode;
+    #findDisplayedGroupNode(): void {
+        const column = this.#params.column;
+        const rowNode = this.#params.node as RowNode;
 
-        if (this.showingValueForOpenedParent) {
+        if (this.#showingValueForOpenedParent) {
             let pointer = rowNode.parent;
 
             while (pointer != null) {
                 if (pointer.rowGroupColumn && column!.isRowGroupDisplayed(pointer.rowGroupColumn.getId())) {
-                    this.displayedGroupNode = pointer;
+                    this.#displayedGroupNode = pointer;
                     break;
                 }
                 pointer = pointer.parent;
@@ -293,19 +293,19 @@ export class GroupCellRendererCtrl extends BeanStub {
         }
 
         // if we didn't find a displayed group, set it to the row node
-        if (missing(this.displayedGroupNode)) {
-            this.displayedGroupNode = rowNode;
+        if (missing(this.#displayedGroupNode)) {
+            this.#displayedGroupNode = rowNode;
         }
     }
 
-    private setupShowingValueForOpenedParent(): void {
+    #setupShowingValueForOpenedParent(): void {
         // note - this code depends on sortService.updateGroupDataForHiddenOpenParents, where group data
         // is updated to reflect the dragged down parents
-        const rowNode = this.params.node;
-        const column = this.params.column as Column;
+        const rowNode = this.#params.node;
+        const column = this.#params.column as Column;
 
         if (!this.gos.get('groupHideOpenParents')) {
-            this.showingValueForOpenedParent = false;
+            this.#showingValueForOpenedParent = false;
             return;
         }
 
@@ -314,7 +314,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         // if no groupData at all, we are not showing a parent value
         if (!rowNode.groupData) {
-            this.showingValueForOpenedParent = false;
+            this.#showingValueForOpenedParent = false;
             return;
         }
 
@@ -326,7 +326,7 @@ export class GroupCellRendererCtrl extends BeanStub {
             const configuredToShowThisGroupLevel = column.isRowGroupDisplayed(keyOfGroupingColumn);
             // if showing group as normal, we didn't take group info from parent
             if (configuredToShowThisGroupLevel) {
-                this.showingValueForOpenedParent = false;
+                this.#showingValueForOpenedParent = false;
                 return;
             }
         }
@@ -335,33 +335,33 @@ export class GroupCellRendererCtrl extends BeanStub {
         // is not grouping by this Displayed Group, we must of gotten the value from a parent node
         const valPresent = rowNode.groupData[column.getId()] != null;
 
-        this.showingValueForOpenedParent = valPresent;
+        this.#showingValueForOpenedParent = valPresent;
     }
 
-    private addValueElement(): void {
-        if (this.displayedGroupNode.footer) {
-            this.addFooterValue();
+    #addValueElement(): void {
+        if (this.#displayedGroupNode.footer) {
+            this.#addFooterValue();
         } else {
-            this.addGroupValue();
-            this.addChildCount();
+            this.#addGroupValue();
+            this.#addChildCount();
         }
     }
 
-    private addGroupValue(): void {
+    #addGroupValue(): void {
 
         // we try and use the cellRenderer of the column used for the grouping if we can
-        const paramsAdjusted = this.adjustParamsWithDetailsFromRelatedColumn();
-        const innerCompDetails = this.getInnerCompDetails(paramsAdjusted);
+        const paramsAdjusted = this.#adjustParamsWithDetailsFromRelatedColumn();
+        const innerCompDetails = this.#getInnerCompDetails(paramsAdjusted);
 
         const { valueFormatted, value } = paramsAdjusted;
 
         let valueWhenNoRenderer = valueFormatted;
         if (valueWhenNoRenderer == null) {
             const isGroupColForNode = (
-                this.displayedGroupNode.rowGroupColumn && this.params.column?.isRowGroupDisplayed(this.displayedGroupNode.rowGroupColumn.getId())
+                this.#displayedGroupNode.rowGroupColumn && this.#params.column?.isRowGroupDisplayed(this.#displayedGroupNode.rowGroupColumn.getId())
             );
 
-            if (this.displayedGroupNode.key === "" && this.displayedGroupNode.group && isGroupColForNode) {
+            if (this.#displayedGroupNode.key === "" && this.#displayedGroupNode.group && isGroupColForNode) {
                 const localeTextFunc = this.localeService.getLocaleTextFunc();
                 valueWhenNoRenderer = localeTextFunc('blanks', '(Blanks)');
             } else {
@@ -369,25 +369,25 @@ export class GroupCellRendererCtrl extends BeanStub {
             }
         }
 
-        this.comp.setInnerRenderer(innerCompDetails, valueWhenNoRenderer);
+        this.#comp.setInnerRenderer(innerCompDetails, valueWhenNoRenderer);
     }
 
-    private adjustParamsWithDetailsFromRelatedColumn(): GroupCellRendererParams {
+    #adjustParamsWithDetailsFromRelatedColumn(): GroupCellRendererParams {
 
-        const relatedColumn = this.displayedGroupNode.rowGroupColumn;
-        const column = this.params.column;
+        const relatedColumn = this.#displayedGroupNode.rowGroupColumn;
+        const column = this.#params.column;
 
-        if (!relatedColumn) { return this.params; }
+        if (!relatedColumn) { return this.#params; }
 
         const notFullWidth = column != null;
         if (notFullWidth) {
             const showingThisRowGroup = column!.isRowGroupDisplayed(relatedColumn.getId());
-            if (!showingThisRowGroup) { return this.params; }
+            if (!showingThisRowGroup) { return this.#params; }
         }
 
-        const params = this.params;
+        const params = this.#params;
 
-        const { value, node } = this.params;
+        const { value, node } = this.#params;
         const valueFormatted = this.valueService.formatValue(relatedColumn, node, value);
 
         // we don't update the original params, as they could of come through React,
@@ -401,10 +401,10 @@ export class GroupCellRendererCtrl extends BeanStub {
         return paramsAdjusted;
     }
 
-    private addFooterValue(): void {
-        let footerValueGetter = this.params.totalValueGetter;
+    #addFooterValue(): void {
+        let footerValueGetter = this.#params.totalValueGetter;
         if (!footerValueGetter) {
-            const legacyGetter = this.params.footerValueGetter;
+            const legacyGetter = this.#params.footerValueGetter;
             if (legacyGetter) {
                 footerValueGetter = legacyGetter;
                 warnOnce('As of v31.3, footerValueGetter is deprecated. Use `totalValueGetter` instead.');
@@ -414,8 +414,8 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         if (footerValueGetter) {
             // params is same as we were given, except we set the value as the item to display
-            const paramsClone = cloneObject(this.params);
-            paramsClone.value = this.params.value;
+            const paramsClone = cloneObject(this.#params);
+            paramsClone.value = this.#params.value;
 
             if (typeof footerValueGetter === 'function') {
                 footerValue = footerValueGetter(paramsClone);
@@ -427,15 +427,15 @@ export class GroupCellRendererCtrl extends BeanStub {
         } else {
             const localeTextFunc = this.localeService.getLocaleTextFunc();
             const footerTotalPrefix = localeTextFunc('footerTotal', 'Total');
-            footerValue = footerTotalPrefix + ' ' + (this.params.value != null ? this.params.value : '');
+            footerValue = footerTotalPrefix + ' ' + (this.#params.value != null ? this.#params.value : '');
         }
 
-        const innerCompDetails = this.getInnerCompDetails(this.params);
+        const innerCompDetails = this.#getInnerCompDetails(this.#params);
 
-        this.comp.setInnerRenderer(innerCompDetails, footerValue);
+        this.#comp.setInnerRenderer(innerCompDetails, footerValue);
     }
 
-    private getInnerCompDetails(params: GroupCellRendererParams): UserCompDetails | undefined {
+    #getInnerCompDetails(params: GroupCellRendererParams): UserCompDetails | undefined {
 
         // for full width rows, we don't do any of the below
         if (params.fullWidth) {
@@ -462,14 +462,14 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         // avoid using GroupCellRenderer again, otherwise stack overflow, as we insert same renderer again and again.
         // this covers off chance user is grouping by a column that is also configured with GroupCellRenderer
-        const isGroupRowRenderer = (details: UserCompDetails | undefined) => details && details.componentClass == this.compClass;
+        const isGroupRowRenderer = (details: UserCompDetails | undefined) => details && details.componentClass == this.#compClass;
 
         if (innerCompDetails && !isGroupRowRenderer(innerCompDetails)) {
             // use the renderer defined in cellRendererParams.innerRenderer
             return innerCompDetails;
         }
 
-        const relatedColumn = this.displayedGroupNode.rowGroupColumn;
+        const relatedColumn = this.#displayedGroupNode.rowGroupColumn;
         const relatedColDef = relatedColumn ? relatedColumn.getColDef() : undefined;
 
         if (!relatedColDef) {
@@ -495,143 +495,145 @@ export class GroupCellRendererCtrl extends BeanStub {
         }
     }
 
-    private addChildCount(): void {
+    #addChildCount(): void {
         // only include the child count if it's included, eg if user doing custom aggregation,
         // then this could be left out, or set to -1, ie no child count
-        if (this.params.suppressCount) { return; }
+        if (this.#params.suppressCount) { return; }
 
-        this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, this.updateChildCount.bind(this));
+        this.addManagedListener(this.#displayedGroupNode, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, this.#updateChildCount.bind(this));
 
         // filtering changes the child count, so need to cater for it
-        this.updateChildCount();
+        this.#updateChildCount();
     }
 
-    private updateChildCount(): void {
-        const allChildrenCount = this.displayedGroupNode.allChildrenCount;
-        const showingGroupForThisNode = this.isShowRowGroupForThisRow();
+    #updateChildCount(): void {
+        const allChildrenCount = this.#displayedGroupNode.allChildrenCount;
+        const showingGroupForThisNode = this.#isShowRowGroupForThisRow();
         const showCount = showingGroupForThisNode && allChildrenCount != null && allChildrenCount >= 0;
         const countString = showCount ? `(${allChildrenCount})` : ``;
-        this.comp.setChildCount(countString);
+        this.#comp.setChildCount(countString);
     }
 
-    private isShowRowGroupForThisRow(): boolean {
+    #isShowRowGroupForThisRow(): boolean {
         if (this.gos.get('treeData')) { return true; }
 
-        const rowGroupColumn = this.displayedGroupNode.rowGroupColumn;
+        const rowGroupColumn = this.#displayedGroupNode.rowGroupColumn;
 
         if (!rowGroupColumn) { return false; }
 
         // column is null for fullWidthRows
-        const column = this.params.column;
+        const column = this.#params.column;
         const thisColumnIsInterested = column == null || column.isRowGroupDisplayed(rowGroupColumn.getId());
 
         return thisColumnIsInterested;
     }
 
-    private addExpandAndContract(): void {
-        const params = this.params;
+    #addExpandAndContract(): void {
+        const params = this.#params;
         const eExpandedIcon = createIconNoSpan('groupExpanded', this.gos, null);
         const eContractedIcon = createIconNoSpan('groupContracted', this.gos, null);
 
         if (eExpandedIcon) {
-            this.eExpanded.appendChild(eExpandedIcon);
+            this.#eExpanded.appendChild(eExpandedIcon);
         }
 
         if (eContractedIcon) {
-            this.eContracted.appendChild(eContractedIcon);
+            this.#eContracted.appendChild(eContractedIcon);
         }
 
         const eGroupCell = params.eGridCell;
 
         // if editing groups, then double click is to start editing
-        const isDoubleClickEdit = this.params.column?.isCellEditable(params.node) && this.gos.get('enableGroupEdit');
-        if (!isDoubleClickEdit && this.isExpandable() && !params.suppressDoubleClickExpand) {
-            this.addManagedListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
+        const isDoubleClickEdit = this.#params.column?.isCellEditable(params.node) && this.gos.get('enableGroupEdit');
+        if (!isDoubleClickEdit && this.#isExpandable() && !params.suppressDoubleClickExpand) {
+            this.addManagedListener(eGroupCell, 'dblclick', this.#onCellDblClicked.bind(this));
         }
 
-        this.addManagedListener(this.eExpanded, 'click', this.onExpandClicked.bind(this));
-        this.addManagedListener(this.eContracted, 'click', this.onExpandClicked.bind(this));
+        this.addManagedListener(this.#eExpanded, 'click', this.#onExpandClicked.bind(this));
+        this.addManagedListener(this.#eContracted, 'click', this.#onExpandClicked.bind(this));
 
         // expand / contract as the user hits enter
-        this.addManagedListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
-        this.addManagedListener(params.node, RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
+        this.addManagedListener(eGroupCell, 'keydown', this.#onKeyDown.bind(this));
+        this.addManagedListener(params.node, RowNode.EVENT_EXPANDED_CHANGED, this.#showExpandAndContractIcons.bind(this));
 
-        this.showExpandAndContractIcons();
+        this.#showExpandAndContractIcons();
 
         // because we don't show the expand / contract when there are no children, we need to check every time
         // the number of children change.
-        const expandableChangedListener = this.onRowNodeIsExpandableChanged.bind(this);
-        this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, expandableChangedListener);
-        this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_MASTER_CHANGED, expandableChangedListener);
-        this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_GROUP_CHANGED, expandableChangedListener);
-        this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_HAS_CHILDREN_CHANGED, expandableChangedListener);
+        const expandableChangedListener = this.#onRowNodeIsExpandableChanged.bind(this);
+        this.addManagedListener(this.#displayedGroupNode, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, expandableChangedListener);
+        this.addManagedListener(this.#displayedGroupNode, RowNode.EVENT_MASTER_CHANGED, expandableChangedListener);
+        this.addManagedListener(this.#displayedGroupNode, RowNode.EVENT_GROUP_CHANGED, expandableChangedListener);
+        this.addManagedListener(this.#displayedGroupNode, RowNode.EVENT_HAS_CHILDREN_CHANGED, expandableChangedListener);
     }
 
-    private onExpandClicked(mouseEvent: MouseEvent): void {
+    #onExpandClicked(mouseEvent: MouseEvent): void {
         if (isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         // so if we expand a node, it does not also get selected.
         stopPropagationForAgGrid(mouseEvent);
 
-        this.onExpandOrContract(mouseEvent);
+        this.#onExpandOrContract(mouseEvent);
     }
 
-    private onExpandOrContract(e: MouseEvent | KeyboardEvent): void {
+    #onExpandOrContract(e: MouseEvent | KeyboardEvent): void {
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
-        const rowNode: RowNode = this.displayedGroupNode;
+        const rowNode: RowNode = this.#displayedGroupNode;
         const nextExpandState = !rowNode.expanded;
 
         if (!nextExpandState && rowNode.sticky) {
-            this.scrollToStickyNode(rowNode);
+            this.#scrollToStickyNode(rowNode);
         }
 
         rowNode.setExpanded(nextExpandState, e);
     }
 
-    private scrollToStickyNode(rowNode: RowNode): void {
+    #scrollToStickyNode(rowNode: RowNode): void {
         const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
         const scrollFeature = gridBodyCtrl.getScrollFeature();
 
         scrollFeature.setVerticalScrollPosition(rowNode.rowTop! - rowNode.stickyRowTop);
     }
 
-    private isExpandable(): boolean {
-        if (this.showingValueForOpenedParent) { return true; }
+    #isExpandable(): boolean {
+        if (this.#showingValueForOpenedParent) { return true; }
 
-        const rowNode = this.displayedGroupNode;
+        const rowNode = this.#displayedGroupNode;
         const reducedLeafNode = this.columnModel.isPivotMode() && rowNode.leafGroup;
         const expandableGroup = rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode;
 
         if (!expandableGroup) { return false; }
 
         // column is null for fullWidthRows
-        const column = this.params.column;
+        const column = this.#params.column;
         const displayingForOneColumnOnly = column != null && typeof column.getColDef().showRowGroup === 'string';
 
         if (displayingForOneColumnOnly) {
-            const showing = this.isShowRowGroupForThisRow();
+            const showing = this.#isShowRowGroupForThisRow();
             return showing;
         }
 
         return true;
     }
 
-    private showExpandAndContractIcons(): void {
-        const { params, displayedGroupNode: displayedGroup, columnModel } = this;
+    #showExpandAndContractIcons(): void {
+        const { columnModel } = this;
+        const params = this.#params;
+        const displayedGroup = this.#displayedGroupNode;
         const { node } = params;
 
-        const isExpandable = this.isExpandable();
+        const isExpandable = this.#isExpandable();
 
         if (isExpandable) {
             // if expandable, show one based on expand state.
             // if we were dragged down, means our parent is always expanded
-            const expanded = this.showingValueForOpenedParent ? true : node.expanded;
-            this.comp.setExpandedDisplayed(expanded);
-            this.comp.setContractedDisplayed(!expanded);
+            const expanded = this.#showingValueForOpenedParent ? true : node.expanded;
+            this.#comp.setExpandedDisplayed(expanded);
+            this.#comp.setContractedDisplayed(!expanded);
         } else {
             // it not expandable, show neither
-            this.comp.setExpandedDisplayed(false);
-            this.comp.setContractedDisplayed(false);
+            this.#comp.setExpandedDisplayed(false);
+            this.#comp.setContractedDisplayed(false);
         }
 
         // compensation padding for leaf nodes, so there is blank space instead of the expand icon
@@ -640,43 +642,43 @@ export class GroupCellRendererCtrl extends BeanStub {
         const addExpandableCss = isExpandable && !pivotModeAndLeafGroup;
         const isTotalFooterNode = node.footer && node.level === -1;
 
-        this.comp.addOrRemoveCssClass('ag-cell-expandable', addExpandableCss);
-        this.comp.addOrRemoveCssClass('ag-row-group', addExpandableCss);
+        this.#comp.addOrRemoveCssClass('ag-cell-expandable', addExpandableCss);
+        this.#comp.addOrRemoveCssClass('ag-row-group', addExpandableCss);
 
         if (pivotMode) {
-            this.comp.addOrRemoveCssClass('ag-pivot-leaf-group', pivotModeAndLeafGroup);
+            this.#comp.addOrRemoveCssClass('ag-pivot-leaf-group', pivotModeAndLeafGroup);
         } else if (!isTotalFooterNode) {
-            this.comp.addOrRemoveCssClass('ag-row-group-leaf-indent', !addExpandableCss);
+            this.#comp.addOrRemoveCssClass('ag-row-group-leaf-indent', !addExpandableCss);
         }
     }
 
-    private onRowNodeIsExpandableChanged(): void {
+    #onRowNodeIsExpandableChanged(): void {
         // maybe if no children now, we should hide the expand / contract icons
-        this.showExpandAndContractIcons();
+        this.#showExpandAndContractIcons();
 
         // if we have no children, this impacts the indent
-        this.setIndent();
+        this.#setIndent();
 
-        this.refreshAriaExpanded();
+        this.#refreshAriaExpanded();
     }
 
-    private setupIndent(): void {
+    #setupIndent(): void {
         // only do this if an indent - as this overwrites the padding that
         // the theme set, which will make things look 'not aligned' for the
         // first group level.
-        const node: IRowNode = this.params.node;
-        const suppressPadding = this.params.suppressPadding;
+        const node: IRowNode = this.#params.node;
+        const suppressPadding = this.#params.suppressPadding;
 
         if (!suppressPadding) {
-            this.addManagedListener(node, RowNode.EVENT_UI_LEVEL_CHANGED, this.setIndent.bind(this));
-            this.setIndent();
+            this.addManagedListener(node, RowNode.EVENT_UI_LEVEL_CHANGED, this.#setIndent.bind(this));
+            this.#setIndent();
         }
     }
 
-    private setIndent(): void {
+    #setIndent(): void {
         if (this.gos.get('groupHideOpenParents')) { return; }
 
-        const params = this.params;
+        const params = this.#params;
         const rowNode: IRowNode = params.node;
         // if we are only showing one group column, we don't want to be indenting based on level
         const fullWithRow = !!params.colDef;
@@ -684,33 +686,33 @@ export class GroupCellRendererCtrl extends BeanStub {
         const manyDimensionThisColumn = !fullWithRow || treeData || params.colDef!.showRowGroup === true;
         const paddingCount = manyDimensionThisColumn ? rowNode.uiLevel : 0;
 
-        if (this.indentClass) {
-            this.comp.addOrRemoveCssClass(this.indentClass, false);
+        if (this.#indentClass) {
+            this.#comp.addOrRemoveCssClass(this.#indentClass, false);
         }
 
-        this.indentClass = 'ag-row-group-indent-' + paddingCount;
-        this.comp.addOrRemoveCssClass(this.indentClass, true);
+        this.#indentClass = 'ag-row-group-indent-' + paddingCount;
+        this.#comp.addOrRemoveCssClass(this.#indentClass, true);
     }
 
-    private addFullWidthRowDraggerIfNeeded(): void {
-        if (!this.params.fullWidth || !this.params.rowDrag) { return; }
+    #addFullWidthRowDraggerIfNeeded(): void {
+        if (!this.#params.fullWidth || !this.#params.rowDrag) { return; }
 
-        const rowDragComp = new RowDragComp(() => this.params.value, this.params.node as RowNode);
+        const rowDragComp = new RowDragComp(() => this.#params.value, this.#params.node as RowNode);
         this.createManagedBean(rowDragComp, this.context);
 
-        this.eGui.insertAdjacentElement('afterbegin', rowDragComp.getGui());
+        this.#eGui.insertAdjacentElement('afterbegin', rowDragComp.getGui());
     }
 
-    private isUserWantsSelected(): boolean {
-        const paramsCheckbox = this.params.checkbox;
+    #isUserWantsSelected(): boolean {
+        const paramsCheckbox = this.#params.checkbox;
 
         // if a function, we always return true as change detection can show or hide the checkbox.
         return typeof paramsCheckbox === 'function' || paramsCheckbox === true;
     }
 
-    private addCheckboxIfNeeded(): void {
-        const rowNode = this.displayedGroupNode;
-        const checkboxNeeded = this.isUserWantsSelected() &&
+    #addCheckboxIfNeeded(): void {
+        const rowNode = this.#displayedGroupNode;
+        const checkboxNeeded = this.#isUserWantsSelected() &&
             // footers cannot be selected
             !rowNode.footer &&
             // pinned rows cannot be selected
@@ -723,34 +725,34 @@ export class GroupCellRendererCtrl extends BeanStub {
             this.getContext().createBean(cbSelectionComponent);
 
             cbSelectionComponent.init({
-                rowNode: this.params.node as RowNode, // when groupHideOpenParents = true and group expanded, we want the checkbox to refer to leaf node state (not group node state)
-                column: this.params.column,
+                rowNode: this.#params.node as RowNode, // when groupHideOpenParents = true and group expanded, we want the checkbox to refer to leaf node state (not group node state)
+                column: this.#params.column,
                 overrides: {
-                    isVisible: this.params.checkbox,
-                    callbackParams: this.params,
+                    isVisible: this.#params.checkbox,
+                    callbackParams: this.#params,
                     removeHidden: true,
                 },
             });
-            this.eCheckbox.appendChild(cbSelectionComponent.getGui());
+            this.#eCheckbox.appendChild(cbSelectionComponent.getGui());
             this.addDestroyFunc(() => this.getContext().destroyBean(cbSelectionComponent));
         }
 
-        this.comp.setCheckboxVisible(checkboxNeeded);
+        this.#comp.setCheckboxVisible(checkboxNeeded);
     }
 
-    private onKeyDown(event: KeyboardEvent): void {
+    #onKeyDown(event: KeyboardEvent): void {
         const isEnterKey = event.key === KeyCode.ENTER;
 
-        if (!isEnterKey || this.params.suppressEnterExpand) { return; }
+        if (!isEnterKey || this.#params.suppressEnterExpand) { return; }
 
-        const cellEditable = this.params.column && this.params.column.isCellEditable(this.params.node);
+        const cellEditable = this.#params.column && this.#params.column.isCellEditable(this.#params.node);
 
         if (cellEditable) { return; }
 
-        this.onExpandOrContract(event);
+        this.#onExpandOrContract(event);
     }
 
-    private onCellDblClicked(mouseEvent: MouseEvent): void {
+    #onCellDblClicked(mouseEvent: MouseEvent): void {
         if (isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         // we want to avoid acting on double click events on the expand / contract icon,
@@ -758,11 +760,11 @@ export class GroupCellRendererCtrl extends BeanStub {
         // the icon was double clicked, we would get 'click', 'click', 'dblclick' which
         // is open->close->open, however double click should be open->close only.
         const targetIsExpandIcon
-            = isElementInEventPath(this.eExpanded, mouseEvent)
-            || isElementInEventPath(this.eContracted, mouseEvent);
+            = isElementInEventPath(this.#eExpanded, mouseEvent)
+            || isElementInEventPath(this.#eContracted, mouseEvent);
 
         if (!targetIsExpandIcon) {
-            this.onExpandOrContract(mouseEvent);
+            this.#onExpandOrContract(mouseEvent);
         }
     }
 }

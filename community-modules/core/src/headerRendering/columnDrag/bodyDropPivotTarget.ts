@@ -10,19 +10,19 @@ export class BodyDropPivotTarget implements DropListener {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('gridOptionsService') private gos: GridOptionsService;
 
-    private columnsToAggregate: Column[] = [];
-    private columnsToGroup: Column[] = [];
-    private columnsToPivot: Column[] = [];
+    #columnsToAggregate: Column[] = [];
+    #columnsToGroup: Column[] = [];
+    #columnsToPivot: Column[] = [];
 
-    private pinned: ColumnPinnedType;
+    #pinned: ColumnPinnedType;
 
     constructor(pinned: ColumnPinnedType) {
-        this.pinned = pinned;
+        this.#pinned = pinned;
     }
 
     /** Callback for when drag enters */
     public onDragEnter(draggingEvent: DraggingEvent): void {
-        this.clearColumnsList();
+        this.#clearColumnsList();
 
         // in pivot mode, we don't accept any drops if functions are read only
         if (this.gos.get('functionsReadOnly')) { return; }
@@ -38,20 +38,20 @@ export class BodyDropPivotTarget implements DropListener {
             if (column.isAnyFunctionActive()) { return; }
 
             if (column.isAllowValue()) {
-                this.columnsToAggregate.push(column);
+                this.#columnsToAggregate.push(column);
             } else if (column.isAllowRowGroup()) {
-                this.columnsToGroup.push(column);
+                this.#columnsToGroup.push(column);
             } else if (column.isAllowPivot()) {
-                this.columnsToPivot.push(column);
+                this.#columnsToPivot.push(column);
             }
 
         });
     }
 
     public getIconName(): string | null {
-        const totalColumns = this.columnsToAggregate.length + this.columnsToGroup.length + this.columnsToPivot.length;
+        const totalColumns = this.#columnsToAggregate.length + this.#columnsToGroup.length + this.#columnsToPivot.length;
         if (totalColumns > 0) {
-            return this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;
+            return this.#pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;
         }
 
         return null;
@@ -60,13 +60,13 @@ export class BodyDropPivotTarget implements DropListener {
     /** Callback for when drag leaves */
     public onDragLeave(draggingEvent: DraggingEvent): void {
         // if we are taking columns out of the center, then we remove them from the report
-        this.clearColumnsList();
+        this.#clearColumnsList();
     }
 
-    private clearColumnsList(): void {
-        this.columnsToAggregate.length = 0;
-        this.columnsToGroup.length = 0;
-        this.columnsToPivot.length = 0;
+    #clearColumnsList(): void {
+        this.#columnsToAggregate.length = 0;
+        this.#columnsToGroup.length = 0;
+        this.#columnsToPivot.length = 0;
     }
 
     /** Callback for when dragging */
@@ -75,14 +75,14 @@ export class BodyDropPivotTarget implements DropListener {
 
     /** Callback for when drag stops */
     public onDragStop(draggingEvent: DraggingEvent): void {
-        if (this.columnsToAggregate.length > 0) {
-            this.columnModel.addValueColumns(this.columnsToAggregate, "toolPanelDragAndDrop");
+        if (this.#columnsToAggregate.length > 0) {
+            this.columnModel.addValueColumns(this.#columnsToAggregate, "toolPanelDragAndDrop");
         }
-        if (this.columnsToGroup.length > 0) {
-            this.columnModel.addRowGroupColumns(this.columnsToGroup, "toolPanelDragAndDrop");
+        if (this.#columnsToGroup.length > 0) {
+            this.columnModel.addRowGroupColumns(this.#columnsToGroup, "toolPanelDragAndDrop");
         }
-        if (this.columnsToPivot.length > 0) {
-            this.columnModel.addPivotColumns(this.columnsToPivot, "toolPanelDragAndDrop");
+        if (this.#columnsToPivot.length > 0) {
+            this.columnModel.addPivotColumns(this.#columnsToPivot, "toolPanelDragAndDrop");
         }
     }
 

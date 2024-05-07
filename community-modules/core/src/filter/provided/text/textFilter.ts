@@ -150,14 +150,14 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         }
     }
 
-    private readonly eValuesFrom: AgInputTextField[] = [];
-    private readonly eValuesTo: AgInputTextField[] = [];
+    readonly #eValuesFrom: AgInputTextField[] = [];
+    readonly #eValuesTo: AgInputTextField[] = [];
 
-    private matcher: TextMatcher;
-    private formatter: TextFormatter;
+    #matcher: TextMatcher;
+    #formatter: TextFormatter;
 
-    private textFilterParams: TextFilterParams;
-    private filterModelFormatter: TextFilterModelFormatter;
+    #textFilterParams: TextFilterParams;
+    #filterModelFormatter: TextFilterModelFormatter;
 
     constructor() {
         super('textFilter');
@@ -175,23 +175,23 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     }
 
     protected setParams(params: TextFilterParams): void {
-        this.textFilterParams = params;
+        this.#textFilterParams = params;
 
         super.setParams(params);
 
-        this.matcher = this.getTextMatcher();
-        this.formatter = this.textFilterParams.textFormatter ||
-            (this.textFilterParams.caseSensitive ? TextFilter.DEFAULT_FORMATTER : TextFilter.DEFAULT_LOWERCASE_FORMATTER);
-        this.filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
+        this.#matcher = this.#getTextMatcher();
+        this.#formatter = this.#textFilterParams.textFormatter ||
+            (this.#textFilterParams.caseSensitive ? TextFilter.DEFAULT_FORMATTER : TextFilter.DEFAULT_LOWERCASE_FORMATTER);
+        this.#filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
     }
 
-    private getTextMatcher(): TextMatcher {
-        const legacyComparator = (this.textFilterParams as any).textCustomComparator;
+    #getTextMatcher(): TextMatcher {
+        const legacyComparator = (this.#textFilterParams as any).textCustomComparator;
         if (legacyComparator) {
             _.warnOnce('textCustomComparator is deprecated, use textMatcher instead.');
             return ({ filterOption, value, filterText }) => legacyComparator(filterOption, value, filterText);
         }
-        return this.textFilterParams.textMatcher || TextFilter.DEFAULT_MATCHER
+        return this.#textFilterParams.textMatcher || TextFilter.DEFAULT_MATCHER;
     }
 
     protected createCondition(position: number): TextFilterModel {
@@ -202,7 +202,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
             type,
         };
 
-        const values = this.getValuesWithSideEffects(position, true);
+        const values = this.#getValuesWithSideEffects(position, true);
         if (values.length > 0) {
             model.filter = values[0];
         }
@@ -224,22 +224,22 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     }
 
     protected getInputs(position: number): Tuple<AgInputTextField> {
-        if (position >= this.eValuesFrom.length) {
+        if (position >= this.#eValuesFrom.length) {
             return [null, null];
         }
-        return [this.eValuesFrom[position], this.eValuesTo[position]];
+        return [this.#eValuesFrom[position], this.#eValuesTo[position]];
     }
 
     protected getValues(position: number): Tuple<string> {
-        return this.getValuesWithSideEffects(position, false);
+        return this.#getValuesWithSideEffects(position, false);
     }
 
-    private getValuesWithSideEffects(position: number, applySideEffects: boolean): Tuple<string> {
+    #getValuesWithSideEffects(position: number, applySideEffects: boolean): Tuple<string> {
         const result: Tuple<string> = [];
         this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
             if (index < numberOfInputs) {
                 let value = makeNull(element.getValue());
-                if (applySideEffects && this.textFilterParams.trimInput) {
+                if (applySideEffects && this.#textFilterParams.trimInput) {
                     value = TextFilter.trimInput(value) ?? null;
                     element.setValue(value, true); // ensure clean value is visible
                 }
@@ -259,13 +259,13 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         eCondition.classList.add('ag-filter-body');
         setAriaRole(eCondition, 'presentation');
 
-        this.createFromToElement(eCondition, this.eValuesFrom, 'from');
-        this.createFromToElement(eCondition, this.eValuesTo, 'to');
+        this.#createFromToElement(eCondition, this.#eValuesFrom, 'from');
+        this.#createFromToElement(eCondition, this.#eValuesTo, 'to');
 
         return eCondition;
     }
 
-    private createFromToElement(eCondition: HTMLElement, eValues: AgInputTextField[], fromTo: string): void {
+    #createFromToElement(eCondition: HTMLElement, eValues: AgInputTextField[], fromTo: string): void {
         const eValue = this.createManagedBean(new AgInputTextField());
         eValue.addCssClass(`ag-filter-${fromTo}`);
         eValue.addCssClass('ag-filter-filter');
@@ -274,8 +274,8 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     }
 
     protected removeValueElements(startPosition: number, deleteCount?: number): void {
-        this.removeComponents(this.eValuesFrom, startPosition, deleteCount);
-        this.removeComponents(this.eValuesTo, startPosition, deleteCount);
+        this.removeComponents(this.#eValuesFrom, startPosition, deleteCount);
+        this.removeComponents(this.#eValuesTo, startPosition, deleteCount);
     }
 
     protected mapValuesFromModel(filterModel: TextFilterModel | null): Tuple<string> {
@@ -295,9 +295,9 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     }
 
     protected evaluateNonNullValue(values: Tuple<string>, cellValue: string, filterModel: TextFilterModel, params: IDoesFilterPassParams): boolean {
-        const formattedValues = values.map(v => this.formatter(v)) || [];
-        const cellValueFormatted = this.formatter(cellValue);
-        const {api, colDef, column, context, textFormatter} = this.textFilterParams;
+        const formattedValues = values.map(v => this.#formatter(v)) || [];
+        const cellValueFormatted = this.#formatter(cellValue);
+        const {api, colDef, column, context, textFormatter} = this.#textFilterParams;
 
         if (filterModel.type === SimpleFilter.BLANK) {
             return this.isBlank(cellValue);
@@ -317,10 +317,10 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
             textFormatter,
         };
 
-        return formattedValues.some(v => this.matcher({ ...matcherParams, filterText: v }));
+        return formattedValues.some(v => this.#matcher({ ...matcherParams, filterText: v }));
     }
 
     public getModelAsString(model: ISimpleFilterModel): string {
-        return this.filterModelFormatter.getModelAsString(model) ?? '';
+        return this.#filterModelFormatter.getModelAsString(model) ?? '';
     }
 }

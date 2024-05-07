@@ -15,7 +15,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
 
     @RefSelector('eResize') private eResize: HTMLElement;
 
-    private headerGroupComp: IHeaderGroupComp | undefined;
+    #headerGroupComp: IHeaderGroupComp | undefined;
 
     constructor(ctrl: HeaderGroupCellCtrl) {
         super(HeaderGroupCellComp.TEMPLATE, ctrl);
@@ -35,18 +35,18 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
             setResizableDisplayed: (displayed) => setDisplayed(this.eResize, displayed),
             setWidth: width => eGui.style.width = width,
             setAriaExpanded: expanded => setAttribute('aria-expanded', expanded),
-            setUserCompDetails: details => this.setUserCompDetails(details),
-            getUserCompInstance: () => this.headerGroupComp,
+            setUserCompDetails: details => this.#setUserCompDetails(details),
+            getUserCompInstance: () => this.#headerGroupComp,
         };
 
         this.ctrl.setComp(compProxy, eGui, this.eResize);
     }
 
-    private setUserCompDetails(details: UserCompDetails): void {
-        details.newAgStackInstance()!.then(comp => this.afterHeaderCompCreated(comp));
+    #setUserCompDetails(details: UserCompDetails): void {
+        details.newAgStackInstance()!.then(comp => this.#afterHeaderCompCreated(comp));
     }
 
-    private afterHeaderCompCreated(headerGroupComp: IHeaderGroupComp): void {
+    #afterHeaderCompCreated(headerGroupComp: IHeaderGroupComp): void {
         const destroyFunc = () => this.destroyBean(headerGroupComp);
 
         if (!this.isAlive()) {
@@ -60,7 +60,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         eGui.appendChild(eHeaderGroupGui);
         this.addDestroyFunc(destroyFunc);
 
-        this.headerGroupComp = headerGroupComp;
+        this.#headerGroupComp = headerGroupComp;
         this.ctrl.setDragSource(eGui);
     }
 

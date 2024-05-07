@@ -7,8 +7,8 @@ interface IInputRange extends AgInputFieldParams {
 }
 
 export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string, IInputRange> {
-    private min: number;
-    private max: number;
+    #min: number;
+    #max: number;
 
     constructor(config?: IInputRange) {
         super(config, 'ag-range-field', 'range');
@@ -39,7 +39,7 @@ export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string,
     }
 
     public setMinValue(value: number): this {
-        this.min = value;
+        this.#min = value;
 
         this.eInput.setAttribute('min', value.toString());
 
@@ -47,7 +47,7 @@ export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string,
     }
 
     public setMaxValue(value: number): this {
-        this.max = value;
+        this.#max = value;
 
         this.eInput.setAttribute('max', value.toString());
 
@@ -61,12 +61,12 @@ export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string,
     }
 
     public setValue(value: string, silent?: boolean): this {
-        if (this.min != null) {
-            value = Math.max(parseFloat(value), this.min).toString();
+        if (this.#min != null) {
+            value = Math.max(parseFloat(value), this.#min).toString();
         }
 
-        if (this.max != null) {
-            value = Math.min(parseFloat(value), this.max).toString();
+        if (this.#max != null) {
+            value = Math.min(parseFloat(value), this.#max).toString();
         }
 
         const ret = super.setValue(value, silent);

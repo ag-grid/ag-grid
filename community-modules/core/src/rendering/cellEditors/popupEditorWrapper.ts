@@ -14,10 +14,10 @@ export class PopupEditorWrapper extends PopupComponent {
     @PostConstruct
     private postConstruct(): void {
         this.gos.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
-        this.addKeyDownListener();
+        this.#addKeyDownListener();
     }
 
-    private addKeyDownListener(): void {
+    #addKeyDownListener(): void {
         const eGui = this.getGui();
         const params = this.params;
         const listener = (event: KeyboardEvent) => {

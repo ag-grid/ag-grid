@@ -15,7 +15,7 @@ export class AgInputTextField<TConfig extends AgInputTextFieldParams = AgInputTe
         super.postConstruct();
 
         if (this.config.allowedCharPattern) {
-            this.preventDisallowedCharacters();
+            this.#preventDisallowedCharacters();
         }
     }
 
@@ -33,7 +33,7 @@ export class AgInputTextField<TConfig extends AgInputTextFieldParams = AgInputTe
         this.setValue(value, true);
     }
 
-    private preventDisallowedCharacters(): void {
+    #preventDisallowedCharacters(): void {
         const pattern = new RegExp(`[${this.config.allowedCharPattern}]`);
 
         const preventCharacters = (event: KeyboardEvent) => {

@@ -34,18 +34,18 @@ export class UndoRedoService extends BeanStub {
 
     @Optional('rangeService') private readonly rangeService?: IRangeService;
 
-    private gridBodyCtrl: GridBodyCtrl;
+    #gridBodyCtrl: GridBodyCtrl;
 
-    private cellValueChanges: CellValueChange[] = [];
+    #cellValueChanges: CellValueChange[] = [];
 
-    private undoStack: UndoRedoStack;
-    private redoStack: UndoRedoStack;
+    #undoStack: UndoRedoStack;
+    #redoStack: UndoRedoStack;
 
-    private activeCellEdit: CellPosition | null = null;
-    private activeRowEdit: RowPosition | null = null;
+    #activeCellEdit: CellPosition | null = null;
+    #activeRowEdit: RowPosition | null = null;
 
-    private isPasting = false;
-    private isRangeInAction = false;
+    #isPasting = false;
+    #isRangeInAction = false;
 
     @PostConstruct
     public init(): void {
@@ -55,43 +55,43 @@ export class UndoRedoService extends BeanStub {
 
         if (undoRedoLimit <= 0) { return; }
 
-        this.undoStack = new UndoRedoStack(undoRedoLimit);
-        this.redoStack = new UndoRedoStack(undoRedoLimit);
+        this.#undoStack = new UndoRedoStack(undoRedoLimit);
+        this.#redoStack = new UndoRedoStack(undoRedoLimit);
 
-        this.addRowEditingListeners();
-        this.addCellEditingListeners();
-        this.addPasteListeners();
-        this.addFillListeners();
-        this.addCellKeyListeners();
+        this.#addRowEditingListeners();
+        this.#addCellEditingListeners();
+        this.#addPasteListeners();
+        this.#addFillListeners();
+        this.#addCellKeyListeners();
 
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged);
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.#onCellValueChanged);
         // undo / redo is restricted to actual editing so we clear the stacks when other operations are
         // performed that change the order of the row / cols.
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, e => {
             if (!e.keepUndoRedoStack) {
-                this.clearStacks();
+                this.#clearStacks();
             }
         });
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DRAG_END, this.clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.#clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.#clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.#clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.#clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.#clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.#clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.#clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_DRAG_END, this.#clearStacks);
 
         this.ctrlsService.whenReady((p) => {
-            this.gridBodyCtrl = p.gridBodyCtrl;
+            this.#gridBodyCtrl = p.gridBodyCtrl;
         });
     }
 
-    private onCellValueChanged = (event: CellValueChangedEvent): void => {
+    #onCellValueChanged = (event: CellValueChangedEvent): void => {
         const eventCell: CellPosition = { column: event.column, rowIndex: event.rowIndex!, rowPinned: event.rowPinned };
-        const isCellEditing = this.activeCellEdit !== null && this.cellPositionUtils.equals(this.activeCellEdit, eventCell);
-        const isRowEditing = this.activeRowEdit !== null && this.rowPositionUtils.sameRow(this.activeRowEdit, eventCell);
+        const isCellEditing = this.#activeCellEdit !== null && this.cellPositionUtils.equals(this.#activeCellEdit, eventCell);
+        const isRowEditing = this.#activeRowEdit !== null && this.rowPositionUtils.sameRow(this.#activeRowEdit, eventCell);
 
-        const shouldCaptureAction = isCellEditing || isRowEditing || this.isPasting || this.isRangeInAction;
+        const shouldCaptureAction = isCellEditing || isRowEditing || this.#isPasting || this.#isRangeInAction;
 
         if (!shouldCaptureAction) { return; }
 
@@ -105,20 +105,20 @@ export class UndoRedoService extends BeanStub {
             oldValue
         };
 
-        this.cellValueChanges.push(cellValueChange);
-    }
+        this.#cellValueChanges.push(cellValueChange);
+    };
 
-    private clearStacks = () => {
-        this.undoStack.clear();
-        this.redoStack.clear();
-    }
+    #clearStacks = () => {
+        this.#undoStack.clear();
+        this.#redoStack.clear();
+    };
 
     public getCurrentUndoStackSize(): number {
-        return this.undoStack ? this.undoStack.getCurrentStackSize() : 0;
+        return this.#undoStack ? this.#undoStack.getCurrentStackSize() : 0;
     }
 
     public getCurrentRedoStackSize(): number {
-        return this.redoStack ? this.redoStack.getCurrentStackSize() : 0;
+        return this.#redoStack ? this.#redoStack.getCurrentStackSize() : 0;
     }
 
     public undo(source: 'api' | 'ui'): void {
@@ -128,7 +128,7 @@ export class UndoRedoService extends BeanStub {
         }
         this.eventService.dispatchEvent(startEvent);
 
-        const operationPerformed = this.undoRedo(this.undoStack, this.redoStack, 'initialRange', 'oldValue', 'undo');
+        const operationPerformed = this.#undoRedo(this.#undoStack, this.#redoStack, 'initialRange', 'oldValue', 'undo');
 
         const endEvent: WithoutGridCommon<UndoEndedEvent> = {
             type: Events.EVENT_UNDO_ENDED,
@@ -145,7 +145,7 @@ export class UndoRedoService extends BeanStub {
         }
         this.eventService.dispatchEvent(startEvent);
 
-        const operationPerformed = this.undoRedo(this.redoStack, this.undoStack, 'finalRange', 'newValue', 'redo');
+        const operationPerformed = this.#undoRedo(this.#redoStack, this.#undoStack, 'finalRange', 'newValue', 'redo');
 
         const endEvent: WithoutGridCommon<RedoEndedEvent> = {
             type: Events.EVENT_REDO_ENDED,
@@ -155,7 +155,7 @@ export class UndoRedoService extends BeanStub {
         this.eventService.dispatchEvent(endEvent);
     }
 
-    private undoRedo(
+    #undoRedo(
         undoRedoStack: UndoRedoStack,
         opposingUndoRedoStack: UndoRedoStack,
         rangeProperty: 'initialRange' | 'finalRange',
@@ -168,12 +168,12 @@ export class UndoRedoService extends BeanStub {
 
         if (!undoRedoAction || !undoRedoAction.cellValueChanges) { return false; }
 
-        this.processAction(undoRedoAction, (cellValueChange: CellValueChange) => cellValueChange[cellValueChangeProperty], source);
+        this.#processAction(undoRedoAction, (cellValueChange: CellValueChange) => cellValueChange[cellValueChangeProperty], source);
 
         if (undoRedoAction instanceof RangeUndoRedoAction) {
-            this.processRange(this.rangeService!, undoRedoAction.ranges || [undoRedoAction[rangeProperty]]);
+            this.#processRange(this.rangeService!, undoRedoAction.ranges || [undoRedoAction[rangeProperty]]);
         } else {
-            this.processCell(undoRedoAction.cellValueChanges);
+            this.#processCell(undoRedoAction.cellValueChanges);
         }
 
         opposingUndoRedoStack.push(undoRedoAction);
@@ -181,7 +181,11 @@ export class UndoRedoService extends BeanStub {
         return true;
     }
 
-    private processAction(action: UndoRedoAction, valueExtractor: (cellValueChange: CellValueChange) => any, source: string) {
+    #processAction(
+        action: UndoRedoAction,
+        valueExtractor: (cellValueChange: CellValueChange) => any,
+        source: string
+    ) {
         action.cellValueChanges.forEach(cellValueChange => {
             const { rowIndex, rowPinned, columnId } = cellValueChange;
             const rowPosition: RowPosition = { rowIndex, rowPinned };
@@ -194,7 +198,7 @@ export class UndoRedoService extends BeanStub {
         });
     }
 
-    private processRange(rangeService: IRangeService, ranges: (CellRange | undefined)[]) {
+    #processRange(rangeService: IRangeService, ranges: (CellRange | undefined)[]) {
         let lastFocusedCell: LastFocusedCell;
 
         rangeService.removeAllCellRanges(true);
@@ -211,7 +215,7 @@ export class UndoRedoService extends BeanStub {
                     columnId: range.startColumn.getColId()
                 };
 
-                this.setLastFocusedCell(lastFocusedCell);
+                this.#setLastFocusedCell(lastFocusedCell);
             }
 
             const cellRangeParams: CellRangeParams = {
@@ -227,7 +231,7 @@ export class UndoRedoService extends BeanStub {
         });
     }
 
-    private processCell(cellValueChanges: CellValueChange[]) {
+    #processCell(cellValueChanges: CellValueChange[]) {
         const cellValueChange = cellValueChanges[0];
         const { rowIndex, rowPinned } = cellValueChange;
         const rowPosition: RowPosition = { rowIndex, rowPinned };
@@ -242,12 +246,12 @@ export class UndoRedoService extends BeanStub {
         // when single cells are being processed, they should be considered
         // as ranges when the rangeService is present (singleCellRanges).
         // otherwise focus will be restore but the range will not.
-        this.setLastFocusedCell(lastFocusedCell, this.rangeService);
+        this.#setLastFocusedCell(lastFocusedCell, this.rangeService);
     }
 
-    private setLastFocusedCell(lastFocusedCell: LastFocusedCell, rangeService?: IRangeService) {
+    #setLastFocusedCell(lastFocusedCell: LastFocusedCell, rangeService?: IRangeService) {
         const { rowIndex, columnId, rowPinned } = lastFocusedCell;
-        const scrollFeature = this.gridBodyCtrl.getScrollFeature();
+        const scrollFeature = this.#gridBodyCtrl.getScrollFeature();
 
         const column: Column | null = this.columnModel.getGridColumn(columnId);
 
@@ -262,80 +266,80 @@ export class UndoRedoService extends BeanStub {
         rangeService?.setRangeToCell(cellPosition);
     }
 
-    private addRowEditingListeners(): void {
+    #addRowEditingListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_EDITING_STARTED, (e: RowEditingStartedEvent) => {
-            this.activeRowEdit = { rowIndex: e.rowIndex!, rowPinned: e.rowPinned};
+            this.#activeRowEdit = { rowIndex: e.rowIndex!, rowPinned: e.rowPinned};
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_ROW_EDITING_STOPPED, () => {
-            const action = new UndoRedoAction(this.cellValueChanges);
-            this.pushActionsToUndoStack(action);
-            this.activeRowEdit = null;
+            const action = new UndoRedoAction(this.#cellValueChanges);
+            this.#pushActionsToUndoStack(action);
+            this.#activeRowEdit = null;
         });
     }
 
-    private addCellEditingListeners(): void {
+    #addCellEditingListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_CELL_EDITING_STARTED, (e: CellEditingStartedEvent) => {
-            this.activeCellEdit = { column: e.column, rowIndex: e.rowIndex!, rowPinned: e.rowPinned };
+            this.#activeCellEdit = { column: e.column, rowIndex: e.rowIndex!, rowPinned: e.rowPinned };
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_CELL_EDITING_STOPPED, (e: CellEditingStoppedEvent) => {
-            this.activeCellEdit = null;
+            this.#activeCellEdit = null;
 
-            const shouldPushAction = e.valueChanged && !this.activeRowEdit && !this.isPasting && !this.isRangeInAction;
+            const shouldPushAction = e.valueChanged && !this.#activeRowEdit && !this.#isPasting && !this.#isRangeInAction;
 
             if (shouldPushAction) {
-                const action = new UndoRedoAction(this.cellValueChanges);
-                this.pushActionsToUndoStack(action);
+                const action = new UndoRedoAction(this.#cellValueChanges);
+                this.#pushActionsToUndoStack(action);
             }
         });
     }
 
-    private addPasteListeners(): void {
+    #addPasteListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_PASTE_START, () => {
-            this.isPasting = true;
+            this.#isPasting = true;
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_PASTE_END, () => {
-            const action = new UndoRedoAction(this.cellValueChanges);
-            this.pushActionsToUndoStack(action);
-            this.isPasting = false;
+            const action = new UndoRedoAction(this.#cellValueChanges);
+            this.#pushActionsToUndoStack(action);
+            this.#isPasting = false;
         });
     }
 
-    private addFillListeners(): void {
+    #addFillListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_FILL_START, () => {
-            this.isRangeInAction = true;
+            this.#isRangeInAction = true;
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_FILL_END, (event: FillEndEvent) => {
-            const action = new RangeUndoRedoAction(this.cellValueChanges, event.initialRange, event.finalRange);
-            this.pushActionsToUndoStack(action);
-            this.isRangeInAction = false;
+            const action = new RangeUndoRedoAction(this.#cellValueChanges, event.initialRange, event.finalRange);
+            this.#pushActionsToUndoStack(action);
+            this.#isRangeInAction = false;
         });
     }
 
-    private addCellKeyListeners(): void {
+    #addCellKeyListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START, () => {
-            this.isRangeInAction = true;
+            this.#isRangeInAction = true;
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END, () => {
             let action: UndoRedoAction;
             if (this.rangeService && this.gos.get('enableRangeSelection')) {
-                action = new RangeUndoRedoAction(this.cellValueChanges, undefined, undefined, [...this.rangeService.getCellRanges()]);
+                action = new RangeUndoRedoAction(this.#cellValueChanges, undefined, undefined, [...this.rangeService.getCellRanges()]);
             } else {
-                action = new UndoRedoAction(this.cellValueChanges);
+                action = new UndoRedoAction(this.#cellValueChanges);
             }
-            this.pushActionsToUndoStack(action);
-            this.isRangeInAction = false;
+            this.#pushActionsToUndoStack(action);
+            this.#isRangeInAction = false;
         });
     }
 
-    private pushActionsToUndoStack(action: UndoRedoAction) {
-        this.undoStack.push(action);
+    #pushActionsToUndoStack(action: UndoRedoAction) {
+        this.#undoStack.push(action);
 
-        this.cellValueChanges = [];
-        this.redoStack.clear();
+        this.#cellValueChanges = [];
+        this.#redoStack.clear();
     }
 }

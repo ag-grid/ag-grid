@@ -26,7 +26,7 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
 
     protected postConstruct() {
         super.postConstruct();
-        this.setInputType();
+        this.#setInputType();
 
         this.eLabel.classList.add(`${this.className}-label`);
         this.eWrapper.classList.add(`${this.className}-input-wrapper`);
@@ -51,7 +51,7 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
         this.addManagedListener(this.eInput, 'input', e => this.setValue(e.target.value));
     }
 
-    private setInputType() {
+    #setInputType() {
         if (this.displayFieldTag === 'input') {
             this.eInput.setAttribute('type', this.inputType!);
         }

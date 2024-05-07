@@ -16,8 +16,8 @@ export class BeanStub implements IEventEmitter {
 
     protected localEventService: EventService;
 
-    private destroyFunctions: (() => void)[] = [];
-    private destroyed = false;
+    #destroyFunctions: (() => void)[] = [];
+    #destroyed = false;
 
     // for vue 3 - prevents Vue from trying to make this (and obviously any sub classes) from being reactive
     // prevents vue from creating proxies for created objects and prevents identity related issues
@@ -47,7 +47,7 @@ export class BeanStub implements IEventEmitter {
 
     // Enable multiple grid properties to be updated together by the user but only trigger shared logic once.
     // Closely related to logic in ComponentUtil.ts
-    private lastChangeSetIdLookup: Record<string, number> = {};
+    #lastChangeSetIdLookup: Record<string, number> = {};
 
     // CellComp and GridComp and override this because they get the FrameworkOverrides from the Beans bean
     protected getFrameworkOverrides(): IFrameworkOverrides {
@@ -65,11 +65,11 @@ export class BeanStub implements IEventEmitter {
         // const constructorString = constructor.toString();
         // const beanName = constructorString.substring(9, constructorString.indexOf("("));
 
-        for (let i = 0; i < this.destroyFunctions.length; i++) {
-            this.destroyFunctions[i]();
+        for (let i = 0; i < this.#destroyFunctions.length; i++) {
+            this.#destroyFunctions[i]();
         }
-        this.destroyFunctions.length = 0;
-        this.destroyed = true;
+        this.#destroyFunctions.length = 0;
+        this.#destroyed = true;
 
         this.dispatchEvent({ type: BeanStub.EVENT_DESTROYED });
     }
@@ -99,7 +99,7 @@ export class BeanStub implements IEventEmitter {
         event: string,
         listener: (event?: any) => void
     ): (() => null) | undefined {
-        if (this.destroyed) {
+        if (this.#destroyed) {
             return;
         }
 
@@ -114,33 +114,30 @@ export class BeanStub implements IEventEmitter {
             return null;
         };
 
-        this.destroyFunctions.push(destroyFunc);
+        this.#destroyFunctions.push(destroyFunc);
 
         return () => {
             destroyFunc();
             // Only remove if manually called before bean is destroyed
-            this.destroyFunctions = this.destroyFunctions.filter(fn => fn !== destroyFunc);
+            this.#destroyFunctions = this.#destroyFunctions.filter(fn => fn !== destroyFunc);
             return null;
         };
     }
 
-    private setupGridOptionListener<K extends keyof GridOptions>(
-        event: keyof GridOptions,
-        listener: PropertyValueChangedListener<K>
-    ): (() => null) {
+    #setupGridOptionListener<K extends keyof GridOptions>(event: keyof GridOptions, listener: PropertyValueChangedListener<K>): (() => null) {
         this.gos.addEventListener(event, listener);
         const destroyFunc: () => null = () => {
             this.gos.removeEventListener(event, listener);
             return null;
         };
-        this.destroyFunctions.push(destroyFunc);
+        this.#destroyFunctions.push(destroyFunc);
 
         return () => {
             destroyFunc();
             // Only remove if manually called before bean is destroyed
-            this.destroyFunctions = this.destroyFunctions.filter((fn) => fn !== destroyFunc);
+            this.#destroyFunctions = this.#destroyFunctions.filter((fn) => fn !== destroyFunc);
             return null;
-        }
+        };
     }
 
     /**
@@ -152,14 +149,14 @@ export class BeanStub implements IEventEmitter {
         event: K,
         listener: PropertyValueChangedListener<K>
     ): (() => null) {
-        if (this.destroyed) {
+        if (this.#destroyed) {
             return () => null;
         }
 
-        return this.setupGridOptionListener(event, listener);
+        return this.#setupGridOptionListener(event, listener);
     }
 
-    private propertyListenerId = 0;
+    #propertyListenerId = 0;
     /**
      * Setup managed property listeners for the given set of GridOption properties.
      * The listener will be run if any of the property changes but will only run once if
@@ -172,22 +169,22 @@ export class BeanStub implements IEventEmitter {
         events: (keyof GridOptions)[],
         listener: PropertyChangedListener
     ): void {
-        if (this.destroyed) {
+        if (this.#destroyed) {
             return;
         }
 
         // Ensure each set of events can run for the same changeSetId
-        const eventsKey = events.join('-') + this.propertyListenerId++;
+        const eventsKey = events.join('-') + this.#propertyListenerId++;
 
         const wrappedListener = (event: PropertyValueChangedEvent<any>) => {
             if (event.changeSet) {
                 // ChangeSet is only set when the property change is part of a group of changes from ComponentUtils
                 // Direct api calls should always be run as 
-                if (event.changeSet && event.changeSet.id === this.lastChangeSetIdLookup[eventsKey]) {
+                if (event.changeSet && event.changeSet.id === this.#lastChangeSetIdLookup[eventsKey]) {
                     // Already run the listener for this set of prop changes so don't run again
                     return;
                 }
-                this.lastChangeSetIdLookup[eventsKey] = event.changeSet.id;
+                this.#lastChangeSetIdLookup[eventsKey] = event.changeSet.id;
             }
             // Don't expose the underlying event value changes to the group listener.
             const propertiesChangeEvent: PropertyChangedEvent = {
@@ -198,15 +195,15 @@ export class BeanStub implements IEventEmitter {
             listener(propertiesChangeEvent);
         };
 
-        events.forEach((event) => this.setupGridOptionListener(event, wrappedListener));
+        events.forEach((event) => this.#setupGridOptionListener(event, wrappedListener));
     }
 
-    public isAlive = (): boolean => !this.destroyed;
+    public isAlive = (): boolean => !this.#destroyed;
 
     public addDestroyFunc(func: () => void): void {
         // if we are already destroyed, we execute the func now
         if (this.isAlive()) {
-            this.destroyFunctions.push(func);
+            this.#destroyFunctions.push(func);
         } else {
             func();
         }

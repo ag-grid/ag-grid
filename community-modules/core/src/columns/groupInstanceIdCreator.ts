@@ -11,10 +11,10 @@
 export class GroupInstanceIdCreator {
 
     // this map contains keys to numbers, so we remember what the last call was
-    private existingIds: any = {};
+    #existingIds: any = {};
 
     public getInstanceIdForKey(key: string): number {
-        const lastResult = this.existingIds[key];
+        const lastResult = this.#existingIds[key];
         let result: number;
         if (typeof lastResult !== 'number') {
             // first time this key
@@ -23,7 +23,7 @@ export class GroupInstanceIdCreator {
             result = lastResult + 1;
         }
 
-        this.existingIds[key] = result;
+        this.#existingIds[key] = result;
 
         return result;
     }

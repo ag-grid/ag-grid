@@ -7,12 +7,12 @@ import { missing, exists } from "../../utils/generic";
 
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
 
-    private eCurrent: HTMLElement;
-    private ePrevious: HTMLElement | null;
+    #eCurrent: HTMLElement;
+    #ePrevious: HTMLElement | null;
 
-    private lastValue: any;
+    #lastValue: any;
 
-    private refreshCount = 0;
+    #refreshCount = 0;
 
     @Autowired('filterManager') private filterManager: FilterManager;
 
@@ -26,7 +26,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
 
         this.setTemplateFromElement(template);
 
-        this.eCurrent = this.queryForHtmlElement('.ag-value-slide-current');
+        this.#eCurrent = this.queryForHtmlElement('.ag-value-slide-current');
     }
 
     public init(params: any): void {
@@ -34,38 +34,38 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
     }
 
     public addSlideAnimation(): void {
-        this.refreshCount++;
+        this.#refreshCount++;
 
         // below we keep checking this, and stop working on the animation
         // if it no longer matches - this means another animation has started
         // and this one is stale.
-        const refreshCountCopy = this.refreshCount;
+        const refreshCountCopy = this.#refreshCount;
 
         // if old animation, remove it
-        if (this.ePrevious) {
-            this.getGui().removeChild(this.ePrevious);
+        if (this.#ePrevious) {
+            this.getGui().removeChild(this.#ePrevious);
         }
 
         const prevElement = document.createElement('span');
         prevElement.setAttribute('class','ag-value-slide-previous ag-value-slide-out');
-        this.ePrevious = prevElement;
+        this.#ePrevious = prevElement;
 
-        this.ePrevious.textContent = this.eCurrent.textContent;
-        this.getGui().insertBefore(this.ePrevious, this.eCurrent);
+        this.#ePrevious.textContent = this.#eCurrent.textContent;
+        this.getGui().insertBefore(this.#ePrevious, this.#eCurrent);
 
         // having timeout of 0 allows use to skip to the next css turn,
         // so we know the previous css classes have been applied. so the
         // complex set of setTimeout below creates the animation
         this.getFrameworkOverrides().wrapIncoming(() => {
             window.setTimeout(() => {
-                if (refreshCountCopy !== this.refreshCount) { return; }
-                this.ePrevious!.classList.add('ag-value-slide-out-end');
+                if (refreshCountCopy !== this.#refreshCount) { return; }
+                this.#ePrevious!.classList.add('ag-value-slide-out-end');
             }, 50);
 
             window.setTimeout(() => {
-                if (refreshCountCopy !== this.refreshCount) { return; }
-                this.getGui().removeChild(this.ePrevious!);
-                this.ePrevious = null;
+                if (refreshCountCopy !== this.#refreshCount) { return; }
+                this.getGui().removeChild(this.#ePrevious!);
+                this.#ePrevious = null;
             }, 3000);
         });
     }
@@ -77,7 +77,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
             value = '';
         }
 
-        if (value === this.lastValue) {
+        if (value === this.#lastValue) {
             return false;
         }
 
@@ -91,14 +91,14 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
             this.addSlideAnimation();
         }
 
-        this.lastValue = value;
+        this.#lastValue = value;
 
         if (exists(params.valueFormatted)) {
-            this.eCurrent.textContent = params.valueFormatted;
+            this.#eCurrent.textContent = params.valueFormatted;
         } else if (exists(params.value)) {
-            this.eCurrent.textContent = value;
+            this.#eCurrent.textContent = value;
         } else {
-            clearElement(this.eCurrent);
+            clearElement(this.#eCurrent);
         }
 
         return true;

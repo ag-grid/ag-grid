@@ -26,13 +26,13 @@ export class CellNavigationService extends BeanStub {
     // returns null if no cell to focus on, ie at the end of the grid
     public getNextCellToFocus(key: string, focusedCell: CellPosition, ctrlPressed: boolean = false): CellPosition | null {
         if (ctrlPressed) {
-            return this.getNextCellToFocusWithCtrlPressed(key, focusedCell);
+            return this.#getNextCellToFocusWithCtrlPressed(key, focusedCell);
         }
 
-        return this.getNextCellToFocusWithoutCtrlPressed(key, focusedCell);
+        return this.#getNextCellToFocusWithoutCtrlPressed(key, focusedCell);
     }
 
-    private getNextCellToFocusWithCtrlPressed(key: string, focusedCell: CellPosition): CellPosition | null {
+    #getNextCellToFocusWithCtrlPressed(key: string, focusedCell: CellPosition): CellPosition | null {
         const upKey = key === KeyCode.UP;
         const downKey = key === KeyCode.DOWN;
         const leftKey = key === KeyCode.LEFT;
@@ -57,7 +57,7 @@ export class CellNavigationService extends BeanStub {
         };
     }
 
-    private getNextCellToFocusWithoutCtrlPressed(key: string, focusedCell: CellPosition): CellPosition | null {
+    #getNextCellToFocusWithoutCtrlPressed(key: string, focusedCell: CellPosition): CellPosition | null {
         // starting with the provided cell, we keep moving until we find a cell we can
         // focus on.
         let pointer: CellPosition | null = focusedCell;
@@ -70,23 +70,23 @@ export class CellNavigationService extends BeanStub {
 
             switch (key) {
                 case KeyCode.UP:
-                    pointer = this.getCellAbove(pointer);
+                    pointer = this.#getCellAbove(pointer);
                     break;
                 case KeyCode.DOWN:
-                    pointer = this.getCellBelow(pointer);
+                    pointer = this.#getCellBelow(pointer);
                     break;
                 case KeyCode.RIGHT:
                     if (this.gos.get('enableRtl')) {
-                        pointer = this.getCellToLeft(pointer);
+                        pointer = this.#getCellToLeft(pointer);
                     } else {
-                        pointer = this.getCellToRight(pointer);
+                        pointer = this.#getCellToRight(pointer);
                     }
                     break;
                 case KeyCode.LEFT:
                     if (this.gos.get('enableRtl')) {
-                        pointer = this.getCellToRight(pointer);
+                        pointer = this.#getCellToRight(pointer);
                     } else {
-                        pointer = this.getCellToLeft(pointer);
+                        pointer = this.#getCellToLeft(pointer);
                     }
                     break;
                 default:
@@ -96,7 +96,7 @@ export class CellNavigationService extends BeanStub {
             }
 
             if (pointer) {
-                finished = this.isCellGoodToFocusOn(pointer);
+                finished = this.#isCellGoodToFocusOn(pointer);
             } else {
                 finished = true;
             }
@@ -105,7 +105,7 @@ export class CellNavigationService extends BeanStub {
         return pointer;
     }
 
-    private isCellGoodToFocusOn(gridCell: CellPosition): boolean {
+    #isCellGoodToFocusOn(gridCell: CellPosition): boolean {
         const column: Column = gridCell.column;
         let rowNode: RowNode | undefined;
 
@@ -127,7 +127,7 @@ export class CellNavigationService extends BeanStub {
         return !suppressNavigable;
     }
 
-    private getCellToLeft(lastCell: CellPosition | null): CellPosition | null {
+    #getCellToLeft(lastCell: CellPosition | null): CellPosition | null {
         if (!lastCell) { return null; }
 
         const colToLeft = this.columnModel.getDisplayedColBefore(lastCell.column);
@@ -140,7 +140,7 @@ export class CellNavigationService extends BeanStub {
         } as CellPosition;
     }
 
-    private getCellToRight(lastCell: CellPosition | null): CellPosition | null {
+    #getCellToRight(lastCell: CellPosition | null): CellPosition | null {
         if (!lastCell) { return null; }
 
         const colToRight = this.columnModel.getDisplayedColAfter(lastCell.column);
@@ -158,7 +158,7 @@ export class CellNavigationService extends BeanStub {
         // if already on top row, do nothing
         const index = rowPosition.rowIndex;
         const pinned = rowPosition.rowPinned;
-        if (this.isLastRowInContainer(rowPosition)) {
+        if (this.#isLastRowInContainer(rowPosition)) {
             switch (pinned) {
                 case 'bottom':
                     // never any rows after pinned bottom
@@ -185,7 +185,7 @@ export class CellNavigationService extends BeanStub {
         }
 
         const rowNode = this.rowModel.getRow(rowPosition.rowIndex);
-        const nextStickyPosition = this.getNextStickyPosition(rowNode);
+        const nextStickyPosition = this.#getNextStickyPosition(rowNode);
 
         if (nextStickyPosition) {
             return nextStickyPosition;
@@ -194,7 +194,7 @@ export class CellNavigationService extends BeanStub {
         return { rowIndex: index + 1, rowPinned: pinned } as RowPosition;
     }
 
-    private getNextStickyPosition(rowNode?: RowNode, up?: boolean): RowPosition | undefined {
+    #getNextStickyPosition(rowNode?: RowNode, up?: boolean): RowPosition | undefined {
         if (!this.gos.isGroupRowsSticky() || !rowNode || !rowNode.sticky) { return; }
 
         const isTopCtrls = this.rowRenderer.getStickyTopRowCtrls().some(ctrl => ctrl.getRowNode().rowIndex === rowNode.rowIndex);
@@ -219,7 +219,7 @@ export class CellNavigationService extends BeanStub {
         }
     }
 
-    private getCellBelow(lastCell: CellPosition | null): CellPosition | null {
+    #getCellBelow(lastCell: CellPosition | null): CellPosition | null {
         if (!lastCell) { return null; }
 
         const rowBelow = this.getRowBelow(lastCell);
@@ -234,7 +234,7 @@ export class CellNavigationService extends BeanStub {
         return null;
     }
 
-    private isLastRowInContainer(rowPosition: RowPosition): boolean {
+    #isLastRowInContainer(rowPosition: RowPosition): boolean {
         const pinned = rowPosition.rowPinned;
         const index = rowPosition.rowIndex;
 
@@ -264,25 +264,25 @@ export class CellNavigationService extends BeanStub {
 
             if (!pinned) {
                 if (this.pinnedRowModel.isRowsToRender('top')) {
-                    return this.getLastFloatingTopRow();
+                    return this.#getLastFloatingTopRow();
                 }
                 return null;
             }
 
             // last floating bottom
             if (this.rowModel.isRowsToRender()) {
-                return this.getLastBodyCell();
+                return this.#getLastBodyCell();
             }
 
             if (this.pinnedRowModel.isRowsToRender('top')) {
-                return this.getLastFloatingTopRow();
+                return this.#getLastFloatingTopRow();
             }
 
             return null;
         }
 
         const rowNode = this.rowModel.getRow(rowPosition.rowIndex);
-        const nextStickyPosition = this.getNextStickyPosition(rowNode, true);
+        const nextStickyPosition = this.#getNextStickyPosition(rowNode, true);
 
         if (nextStickyPosition) {
             return nextStickyPosition;
@@ -291,7 +291,7 @@ export class CellNavigationService extends BeanStub {
         return { rowIndex: index - 1, rowPinned: pinned } as RowPosition;
     }
 
-    private getCellAbove(lastCell: CellPosition | null): CellPosition | null {
+    #getCellAbove(lastCell: CellPosition | null): CellPosition | null {
         if (!lastCell) { return null; }
 
         const rowAbove = this.getRowAbove({ rowIndex: lastCell.rowIndex, rowPinned: lastCell.rowPinned });
@@ -307,13 +307,13 @@ export class CellNavigationService extends BeanStub {
         return null;
     }
 
-    private getLastBodyCell(): RowPosition {
+    #getLastBodyCell(): RowPosition {
         const lastBodyRow = this.paginationProxy.getPageLastRow();
 
         return { rowIndex: lastBodyRow, rowPinned: null } as RowPosition;
     }
 
-    private getLastFloatingTopRow(): RowPosition {
+    #getLastFloatingTopRow(): RowPosition {
         const lastFloatingRow = this.pinnedRowModel.getPinnedTopRowData().length - 1;
 
         return { rowIndex: lastFloatingRow, rowPinned: 'top' } as RowPosition;

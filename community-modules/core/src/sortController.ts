@@ -22,7 +22,7 @@ export class SortController extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     public progressSort(column: Column, multiSort: boolean, source: ColumnEventType): void {
-        const nextDirection = this.getNextSortDirection(column);
+        const nextDirection = this.#getNextSortDirection(column);
         this.setSortForColumn(column, nextDirection, multiSort, source);
     }
 
@@ -52,18 +52,18 @@ export class SortController extends BeanStub {
         // clear sort on all columns except those changed, and update the icons
         const updatedColumns: Column[] = [];
         if (!doingMultiSort) {
-            const clearedColumns = this.clearSortBarTheseColumns(columnsToUpdate, source);
+            const clearedColumns = this.#clearSortBarTheseColumns(columnsToUpdate, source);
             updatedColumns.push(...clearedColumns);
         } 
 
         // sortIndex used for knowing order of cols when multi-col sort
-        this.updateSortIndex(column);
+        this.#updateSortIndex(column);
 
         updatedColumns.push(...columnsToUpdate);
         this.dispatchSortChangedEvents(source, updatedColumns);
     }
 
-    private updateSortIndex(lastColToChange: Column) {
+    #updateSortIndex(lastColToChange: Column) {
         const isCoupled = this.gos.isColumnsSortingCoupledToGroup();
         const groupParent = this.columnModel.getGroupDisplayColumnForGroup(lastColToChange.getId());
         const lastSortIndexCol = isCoupled ? groupParent || lastColToChange : lastColToChange;
@@ -107,7 +107,7 @@ export class SortController extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    private clearSortBarTheseColumns(columnsToSkip: Column[], source: ColumnEventType): Column[] {
+    #clearSortBarTheseColumns(columnsToSkip: Column[], source: ColumnEventType): Column[] {
         const clearedColumns: Column[] = [];
         this.columnModel.getPrimaryAndSecondaryAndAutoColumns().forEach((columnToClear: Column) => {
             // Do not clear if either holding shift, or if column in question was clicked
@@ -124,7 +124,7 @@ export class SortController extends BeanStub {
         return clearedColumns;
     }
 
-    private getNextSortDirection(column: Column): SortDirection {
+    #getNextSortDirection(column: Column): SortDirection {
         let sortingOrder: (SortDirection)[] | null | undefined;
 
         if (column.getColDef().sortingOrder) {
@@ -163,7 +163,7 @@ export class SortController extends BeanStub {
     /**
      * @returns a map of sort indexes for every sorted column, if groups sort primaries then they will have equivalent indices
      */
-    private getIndexedSortMap(): Map<Column, number> {
+    #getIndexedSortMap(): Map<Column, number> {
         // pull out all the columns that have sorting set
         let allSortedCols = this.columnModel.getPrimaryAndSecondaryAndAutoColumns()
             .filter(col => !!col.getSort());
@@ -232,7 +232,7 @@ export class SortController extends BeanStub {
 
     public getColumnsWithSortingOrdered(): Column[] {
         // pull out all the columns that have sorting set
-        return [...this.getIndexedSortMap().entries()]
+        return [...this.#getIndexedSortMap().entries()]
             .sort(([col1, idx1], [col2, idx2]) => idx1 - idx2)
             .map(([col]) => col);
     }
@@ -282,6 +282,6 @@ export class SortController extends BeanStub {
     }
 
     public getDisplaySortIndexForColumn(column: Column): number | null | undefined {
-        return this.getIndexedSortMap().get(column);
+        return this.#getIndexedSortMap().get(column);
     }
 }

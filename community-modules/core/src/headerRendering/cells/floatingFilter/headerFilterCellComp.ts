@@ -21,8 +21,8 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
     @RefSelector('eButtonWrapper') private readonly eButtonWrapper: HTMLElement;
     @RefSelector('eButtonShowMainFilter') private readonly eButtonShowMainFilter: HTMLElement;
 
-    private floatingFilterComp: IFloatingFilterComp | undefined;
-    private compPromise: AgPromise<IFloatingFilterComp> | null;
+    #floatingFilterComp: IFloatingFilterComp | undefined;
+    #compPromise: AgPromise<IFloatingFilterComp> | null;
 
     constructor(ctrl: HeaderFilterCellCtrl) {
         super(HeaderFilterCellComp.TEMPLATE, ctrl);
@@ -36,8 +36,8 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             addOrRemoveBodyCssClass: (cssClassName, on) => this.eFloatingFilterBody.classList.toggle(cssClassName, on),
             setButtonWrapperDisplayed: (displayed) => setDisplayed(this.eButtonWrapper, displayed),
-            setCompDetails: compDetails => this.setCompDetails(compDetails),
-            getFloatingFilterComp: () => this.compPromise,
+            setCompDetails: compDetails => this.#setCompDetails(compDetails),
+            getFloatingFilterComp: () => this.#compPromise,
             setWidth: width => eGui.style.width = width,
             setMenuIcon: eIcon => this.eButtonShowMainFilter.appendChild(eIcon)
         };
@@ -45,26 +45,26 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         this.ctrl.setComp(compProxy, eGui, this.eButtonShowMainFilter, this.eFloatingFilterBody);
     }
 
-    private setCompDetails(compDetails?: UserCompDetails | null): void {
+    #setCompDetails(compDetails?: UserCompDetails | null): void {
         if (!compDetails) {
             this.destroyFloatingFilterComp();
-            this.compPromise = null;
+            this.#compPromise = null;
             return;
         }
         // because we are providing defaultFloatingFilterType, we know it will never be undefined;
-        this.compPromise = compDetails.newAgStackInstance();
-        this.compPromise.then(comp => this.afterCompCreated(comp));
+        this.#compPromise = compDetails.newAgStackInstance();
+        this.#compPromise.then(comp => this.#afterCompCreated(comp));
     }
 
     @PreDestroy
     private destroyFloatingFilterComp(): void {
-        if (this.floatingFilterComp) {
-            this.eFloatingFilterBody.removeChild(this.floatingFilterComp.getGui());
-            this.floatingFilterComp = this.destroyBean(this.floatingFilterComp);
+        if (this.#floatingFilterComp) {
+            this.eFloatingFilterBody.removeChild(this.#floatingFilterComp.getGui());
+            this.#floatingFilterComp = this.destroyBean(this.#floatingFilterComp);
         }
     }
 
-    private afterCompCreated(comp: IFloatingFilterComp | null): void {
+    #afterCompCreated(comp: IFloatingFilterComp | null): void {
         if (!comp) { return; }
 
         if (!this.isAlive()) {
@@ -74,7 +74,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
 
         this.destroyFloatingFilterComp();
 
-        this.floatingFilterComp = comp;
+        this.#floatingFilterComp = comp;
         this.eFloatingFilterBody.appendChild(comp.getGui());
 
         if (comp.afterGuiAttached) {

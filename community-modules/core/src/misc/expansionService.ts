@@ -9,15 +9,15 @@ import { IRowNode } from "../interfaces/iRowNode";
 export class ExpansionService extends BeanStub implements IExpansionService {
     @Autowired('rowModel') private readonly rowModel: IRowModel;
 
-    private isClientSideRowModel: boolean;
+    #isClientSideRowModel: boolean;
 
     @PostConstruct
     protected postConstruct(): void {
-        this.isClientSideRowModel = this.rowModel.getType() === 'clientSide';
+        this.#isClientSideRowModel = this.rowModel.getType() === 'clientSide';
     }
 
     public expandRows(rowIds: string[]): void {
-        if (!this.isClientSideRowModel) { return; }
+        if (!this.#isClientSideRowModel) { return; }
 
         const rowIdSet = new Set(rowIds);
         this.rowModel.forEachNode(node => {
@@ -39,7 +39,7 @@ export class ExpansionService extends BeanStub implements IExpansionService {
     }
 
     public expandAll(value: boolean): void {
-        if (!this.isClientSideRowModel) { return; }
+        if (!this.#isClientSideRowModel) { return; }
         (this.rowModel as IClientSideRowModel).expandOrCollapseAll(value);
     }
 
@@ -55,7 +55,7 @@ export class ExpansionService extends BeanStub implements IExpansionService {
     }
 
     public onGroupExpandedOrCollapsed(): void {
-        if (!this.isClientSideRowModel) { return; }
+        if (!this.#isClientSideRowModel) { return; }
          // we don't really want the user calling this if only one rowNode was expanded, instead they should be
         // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
         // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,

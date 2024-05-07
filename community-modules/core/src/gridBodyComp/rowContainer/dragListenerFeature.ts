@@ -8,14 +8,14 @@ export class DragListenerFeature extends BeanStub {
     @Autowired('dragService') private dragService: DragService;
     @Optional('rangeService') private rangeService?: IRangeService;
 
-    private eContainer: HTMLElement;
+    #eContainer: HTMLElement;
 
     constructor(eContainer: HTMLElement) {
         super();
-        this.eContainer = eContainer;
+        this.#eContainer = eContainer;
     }
 
-    private params: DragListenerParams;
+    #params: DragListenerParams;
 
     @PostConstruct
     private postConstruct(): void {
@@ -23,8 +23,8 @@ export class DragListenerFeature extends BeanStub {
             return;
         }
 
-        this.params = {
-            eElement: this.eContainer,
+        this.#params = {
+            eElement: this.#eContainer,
             onDragStart: this.rangeService.onDragStart.bind(this.rangeService),
             onDragStop: this.rangeService.onDragStop.bind(this.rangeService),
             onDragging: this.rangeService.onDragging.bind(this.rangeService)
@@ -33,25 +33,25 @@ export class DragListenerFeature extends BeanStub {
         this.addManagedPropertyListener('enableRangeSelection', (props) => {
             const isEnabled = props.currentValue;
             if (isEnabled) {
-                this.enableFeature();
+                this.#enableFeature();
                 return;
             }
-            this.disableFeature();
+            this.#disableFeature();
         });
 
-        this.addDestroyFunc(() => this.disableFeature());
+        this.addDestroyFunc(() => this.#disableFeature());
 
         const isRangeSelection = this.gos.get('enableRangeSelection');
         if (isRangeSelection) {
-            this.enableFeature();
+            this.#enableFeature();
         }
     }
 
-    private enableFeature() {
-        this.dragService.addDragSource(this.params);
+    #enableFeature() {
+        this.dragService.addDragSource(this.#params);
     }
 
-    private disableFeature() {
-        this.dragService.removeDragSource(this.params);
+    #disableFeature() {
+        this.dragService.removeDragSource(this.#params);
     }
 }

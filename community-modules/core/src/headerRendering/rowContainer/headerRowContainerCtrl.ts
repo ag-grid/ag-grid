@@ -36,45 +36,45 @@ export class HeaderRowContainerCtrl extends BeanStub {
     @Autowired('focusService') public focusService: FocusService;
     @Autowired('filterManager') public filterManager: FilterManager;
 
-    private pinned: ColumnPinnedType;
-    private comp: IHeaderRowContainerComp;
-    private hidden: boolean = false;
-    private includeFloatingFilter: boolean = false;
+    #pinned: ColumnPinnedType;
+    #comp: IHeaderRowContainerComp;
+    #hidden: boolean = false;
+    #includeFloatingFilter: boolean = false;
 
-    private filtersRowCtrl: HeaderRowCtrl | undefined;
-    private columnsRowCtrl: HeaderRowCtrl | undefined;
-    private groupsRowCtrls: HeaderRowCtrl[] = [];
-    private eViewport: HTMLElement;
+    #filtersRowCtrl: HeaderRowCtrl | undefined;
+    #columnsRowCtrl: HeaderRowCtrl | undefined;
+    #groupsRowCtrls: HeaderRowCtrl[] = [];
+    #eViewport: HTMLElement;
 
     constructor(pinned: ColumnPinnedType) {
         super();
-        this.pinned = pinned;
+        this.#pinned = pinned;
     }
 
     public setComp(comp: IHeaderRowContainerComp, eGui: HTMLElement): void {
-        this.comp = comp;
-        this.eViewport = eGui;
+        this.#comp = comp;
+        this.#eViewport = eGui;
 
-        this.setupCenterWidth();
-        this.setupPinnedWidth();
+        this.#setupCenterWidth();
+        this.#setupPinnedWidth();
 
-        this.setupDragAndDrop(this.eViewport);
+        this.#setupDragAndDrop(this.#eViewport);
 
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.#onGridColumnsChanged.bind(this));
 
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.#onDisplayedColumnsChanged.bind(this));
 
-        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.#onDisplayedColumnsChanged.bind(this));
 
-        this.ctrlsService.registerHeaderContainer(this, this.pinned);
+        this.ctrlsService.registerHeaderContainer(this, this.#pinned);
 
         if (this.columnModel.isReady()) {
             this.refresh();
         }
     }
 
-    private setupDragAndDrop(dropContainer: HTMLElement): void {
-        const bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
+    #setupDragAndDrop(dropContainer: HTMLElement): void {
+        const bodyDropTarget = new BodyDropTarget(this.#pinned, dropContainer);
         this.createManagedBean(bodyDropTarget);
     }
 
@@ -85,53 +85,53 @@ export class HeaderRowContainerCtrl extends BeanStub {
         const refreshColumnGroups = () => {
             const groupRowCount = this.columnModel.getHeaderRowCount() - 1;
 
-            this.groupsRowCtrls = this.destroyBeans(this.groupsRowCtrls);
+            this.#groupsRowCtrls = this.destroyBeans(this.#groupsRowCtrls);
 
             for (let i = 0; i < groupRowCount; i++) {
-                const ctrl = this.createBean(new HeaderRowCtrl(sequence.next(), this.pinned, HeaderRowType.COLUMN_GROUP));
-                this.groupsRowCtrls.push(ctrl);
+                const ctrl = this.createBean(new HeaderRowCtrl(sequence.next(), this.#pinned, HeaderRowType.COLUMN_GROUP));
+                this.#groupsRowCtrls.push(ctrl);
             }
         };
 
         const refreshColumns = () => {
             const rowIndex = sequence.next();
 
-            const needNewInstance = !this.hidden && (this.columnsRowCtrl == null || !keepColumns || this.columnsRowCtrl.getRowIndex() !== rowIndex);
-            const shouldDestroyInstance = needNewInstance || this.hidden;
+            const needNewInstance = !this.#hidden && (this.#columnsRowCtrl == null || !keepColumns || this.#columnsRowCtrl.getRowIndex() !== rowIndex);
+            const shouldDestroyInstance = needNewInstance || this.#hidden;
 
             if (shouldDestroyInstance) {
-                this.columnsRowCtrl = this.destroyBean(this.columnsRowCtrl);
+                this.#columnsRowCtrl = this.destroyBean(this.#columnsRowCtrl);
             }
 
             if (needNewInstance) {
-                this.columnsRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.COLUMN));
+                this.#columnsRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.#pinned, HeaderRowType.COLUMN));
             }
 
         };
 
         const refreshFilters = () => {
-            this.includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.hidden;
+            this.#includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.#hidden;
 
             const destroyPreviousComp = () => {
-                this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
+                this.#filtersRowCtrl = this.destroyBean(this.#filtersRowCtrl);
             };
 
-            if (!this.includeFloatingFilter) {
+            if (!this.#includeFloatingFilter) {
                 destroyPreviousComp();
                 return;
             }
 
             const rowIndex = sequence.next();
 
-            if (this.filtersRowCtrl) {
-                const rowIndexMismatch = this.filtersRowCtrl.getRowIndex() !== rowIndex;
+            if (this.#filtersRowCtrl) {
+                const rowIndexMismatch = this.#filtersRowCtrl.getRowIndex() !== rowIndex;
                 if (!keepColumns || rowIndexMismatch) {
                     destroyPreviousComp();
                 }
             }
 
-            if (!this.filtersRowCtrl) {
-                this.filtersRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.FLOATING_FILTER));
+            if (!this.#filtersRowCtrl) {
+                this.#filtersRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.#pinned, HeaderRowType.FLOATING_FILTER));
             }
         };
 
@@ -139,27 +139,27 @@ export class HeaderRowContainerCtrl extends BeanStub {
         refreshColumns();
         refreshFilters();
 
-        const allCtrls = this.getAllCtrls();
-        this.comp.setCtrls(allCtrls);
+        const allCtrls = this.#getAllCtrls();
+        this.#comp.setCtrls(allCtrls);
 
-        this.restoreFocusOnHeader(focusedHeaderPosition);
+        this.#restoreFocusOnHeader(focusedHeaderPosition);
     }
 
-    private restoreFocusOnHeader(position: HeaderPosition | null): void {
-        if (position == null || position.column.getPinned() != this.pinned) { return; }
+    #restoreFocusOnHeader(position: HeaderPosition | null): void {
+        if (position == null || position.column.getPinned() != this.#pinned) { return; }
 
         this.focusService.focusHeaderPosition({ headerPosition: position });
     }
 
-    private getAllCtrls(): HeaderRowCtrl[] {
-        const res: HeaderRowCtrl[] = [...this.groupsRowCtrls];
+    #getAllCtrls(): HeaderRowCtrl[] {
+        const res: HeaderRowCtrl[] = [...this.#groupsRowCtrls];
 
-        if (this.columnsRowCtrl) {
-            res.push(this.columnsRowCtrl);
+        if (this.#columnsRowCtrl) {
+            res.push(this.#columnsRowCtrl);
         }
 
-        if (this.filtersRowCtrl) {
-            res.push(this.filtersRowCtrl);
+        if (this.#filtersRowCtrl) {
+            res.push(this.#filtersRowCtrl);
         }
 
         return res;
@@ -167,41 +167,41 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
     // grid cols have changed - this also means the number of rows in the header can have
     // changed. so we remove all the old rows and insert new ones for a complete refresh
-    private onGridColumnsChanged() {
+    #onGridColumnsChanged() {
         this.refresh(true);
     }
 
-    private onDisplayedColumnsChanged(): void {
-        const includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.hidden;
-        if (this.includeFloatingFilter !== includeFloatingFilter) {
+    #onDisplayedColumnsChanged(): void {
+        const includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.#hidden;
+        if (this.#includeFloatingFilter !== includeFloatingFilter) {
             this.refresh(true);
         }
     }
 
-    private setupCenterWidth(): void {
-        if (this.pinned != null) { return; }
+    #setupCenterWidth(): void {
+        if (this.#pinned != null) { return; }
 
-        this.createManagedBean(new CenterWidthFeature(width => this.comp.setCenterWidth(`${width}px`), true));
+        this.createManagedBean(new CenterWidthFeature(width => this.#comp.setCenterWidth(`${width}px`), true));
     }
 
     public setHorizontalScroll(offset: number): void {
-        this.comp.setViewportScrollLeft(offset);
+        this.#comp.setViewportScrollLeft(offset);
     }
 
-    private setupPinnedWidth(): void {
-        if (this.pinned == null) { return; }
+    #setupPinnedWidth(): void {
+        if (this.#pinned == null) { return; }
 
-        const pinningLeft = this.pinned === 'left';
-        const pinningRight = this.pinned === 'right';
+        const pinningLeft = this.#pinned === 'left';
+        const pinningRight = this.#pinned === 'right';
 
-        this.hidden = true;
+        this.#hidden = true;
 
         const listener = () => {
             const width = pinningLeft ? this.pinnedWidthService.getPinnedLeftWidth() : this.pinnedWidthService.getPinnedRightWidth();
             if (width == null) { return; } // can happen at initialisation, width not yet set
 
             const hidden = (width == 0);
-            const hiddenChanged = this.hidden !== hidden;
+            const hiddenChanged = this.#hidden !== hidden;
             const isRtl = this.gos.get('enableRtl');
             const scrollbarWidth = this.gos.getScrollbarWidth();
 
@@ -211,11 +211,11 @@ export class HeaderRowContainerCtrl extends BeanStub {
             const addPaddingForScrollbar = this.scrollVisibleService.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
             const widthWithPadding = addPaddingForScrollbar ? width + scrollbarWidth : width;
 
-            this.comp.setPinnedContainerWidth(`${widthWithPadding}px`);
-            this.comp.setDisplayed(!hidden);
+            this.#comp.setPinnedContainerWidth(`${widthWithPadding}px`);
+            this.#comp.setDisplayed(!hidden);
 
             if (hiddenChanged) {
-                this.hidden = hidden;
+                this.#hidden = hidden;
                 this.refresh();
             }
         };
@@ -230,14 +230,14 @@ export class HeaderRowContainerCtrl extends BeanStub {
     public getHeaderCtrlForColumn(column: ColumnGroup): HeaderGroupCellCtrl | undefined;
     public getHeaderCtrlForColumn(column: any): any {
         if (column instanceof Column) {
-            if (!this.columnsRowCtrl) { return; }
-            return this.columnsRowCtrl.getHeaderCellCtrl(column);
+            if (!this.#columnsRowCtrl) { return; }
+            return this.#columnsRowCtrl.getHeaderCellCtrl(column);
         }
 
-        if (this.groupsRowCtrls.length === 0) { return; }
+        if (this.#groupsRowCtrls.length === 0) { return; }
 
-        for (let i = 0; i < this.groupsRowCtrls.length; i++) {
-            const ctrl = this.groupsRowCtrls[i].getHeaderCellCtrl(column);
+        for (let i = 0; i < this.#groupsRowCtrls.length; i++) {
+            const ctrl = this.#groupsRowCtrls[i].getHeaderCellCtrl(column);
 
             if (ctrl) { return ctrl; }
         }
@@ -256,13 +256,13 @@ export class HeaderRowContainerCtrl extends BeanStub {
     }
 
     public getRowType(rowIndex: number): HeaderRowType | undefined {
-        const allCtrls = this.getAllCtrls();
+        const allCtrls = this.#getAllCtrls();
         const ctrl = allCtrls[rowIndex];
         return ctrl ? ctrl.getType() : undefined;
     }
 
     public focusHeader(rowIndex: number, column: IHeaderColumn, event?: KeyboardEvent): boolean {
-        const allCtrls = this.getAllCtrls();
+        const allCtrls = this.#getAllCtrls();
         const ctrl = allCtrls[rowIndex];
         if (!ctrl) { return false; }
 
@@ -270,24 +270,24 @@ export class HeaderRowContainerCtrl extends BeanStub {
     }
 
     public getViewport(): HTMLElement {
-        return this.eViewport;
+        return this.#eViewport;
     }
 
     public getRowCount(): number {
-        return this.groupsRowCtrls.length + (this.columnsRowCtrl ? 1 : 0) + (this.filtersRowCtrl ? 1 : 0);
+        return this.#groupsRowCtrls.length + (this.#columnsRowCtrl ? 1 : 0) + (this.#filtersRowCtrl ? 1 : 0);
     }
 
     protected destroy(): void {
-        if (this.filtersRowCtrl) {
-            this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
+        if (this.#filtersRowCtrl) {
+            this.#filtersRowCtrl = this.destroyBean(this.#filtersRowCtrl);
         }
 
-        if (this.columnsRowCtrl) {
-            this.columnsRowCtrl = this.destroyBean(this.columnsRowCtrl);
+        if (this.#columnsRowCtrl) {
+            this.#columnsRowCtrl = this.destroyBean(this.#columnsRowCtrl);
         }
 
-        if (this.groupsRowCtrls && this.groupsRowCtrls.length) {
-            this.groupsRowCtrls = this.destroyBeans(this.groupsRowCtrls);
+        if (this.#groupsRowCtrls && this.#groupsRowCtrls.length) {
+            this.#groupsRowCtrls = this.destroyBeans(this.#groupsRowCtrls);
         }
 
         super.destroy();

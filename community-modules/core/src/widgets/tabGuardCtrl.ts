@@ -17,24 +17,24 @@ export class TabGuardCtrl extends BeanStub {
 
     @Autowired('focusService') private readonly focusService: FocusService;
 
-    private readonly comp: ITabGuard;
-    private readonly eTopGuard: HTMLElement;
-    private readonly eBottomGuard: HTMLElement;
+    readonly #comp: ITabGuard;
+    readonly #eTopGuard: HTMLElement;
+    readonly #eBottomGuard: HTMLElement;
 
-    private readonly eFocusableElement: HTMLElement;
-    private readonly focusTrapActive: boolean;
-    private readonly forceFocusOutWhenTabGuardsAreEmpty: boolean;
+    readonly #eFocusableElement: HTMLElement;
+    readonly #focusTrapActive: boolean;
+    readonly #forceFocusOutWhenTabGuardsAreEmpty: boolean;
 
-    private readonly providedFocusInnerElement?: (fromBottom: boolean) => void;
-    private readonly providedFocusIn?: (event: FocusEvent) => void;
-    private readonly providedFocusOut?: (event: FocusEvent) => void;
+    readonly #providedFocusInnerElement?: (fromBottom: boolean) => void;
+    readonly #providedFocusIn?: (event: FocusEvent) => void;
+    readonly #providedFocusOut?: (event: FocusEvent) => void;
 
-    private readonly providedShouldStopEventPropagation?: () => boolean;
-    private readonly providedOnTabKeyDown?: (e: KeyboardEvent) => void;
-    private readonly providedHandleKeyDown?: (e: KeyboardEvent) => void;
+    readonly #providedShouldStopEventPropagation?: () => boolean;
+    readonly #providedOnTabKeyDown?: (e: KeyboardEvent) => void;
+    readonly #providedHandleKeyDown?: (e: KeyboardEvent) => void;
 
-    private skipTabGuardFocus: boolean = false;
-    private forcingFocusOut: boolean = false;
+    #skipTabGuardFocus: boolean = false;
+    #forcingFocusOut: boolean = false;
 
     constructor(params: {
         comp: ITabGuard,
@@ -67,100 +67,100 @@ export class TabGuardCtrl extends BeanStub {
             eFocusableElement
         } = params;
 
-        this.comp = comp;
+        this.#comp = comp;
 
-        this.eTopGuard = eTopGuard;
-        this.eBottomGuard = eBottomGuard;
-        this.providedFocusInnerElement = focusInnerElement;
-        this.eFocusableElement = eFocusableElement;
-        this.focusTrapActive = !!focusTrapActive;
-        this.forceFocusOutWhenTabGuardsAreEmpty = !!forceFocusOutWhenTabGuardsAreEmpty
+        this.#eTopGuard = eTopGuard;
+        this.#eBottomGuard = eBottomGuard;
+        this.#providedFocusInnerElement = focusInnerElement;
+        this.#eFocusableElement = eFocusableElement;
+        this.#focusTrapActive = !!focusTrapActive;
+        this.#forceFocusOutWhenTabGuardsAreEmpty = !!forceFocusOutWhenTabGuardsAreEmpty
 
-        this.providedFocusIn = onFocusIn;
-        this.providedFocusOut = onFocusOut;
-        this.providedShouldStopEventPropagation = shouldStopEventPropagation;
-        this.providedOnTabKeyDown = onTabKeyDown;
-        this.providedHandleKeyDown = handleKeyDown;
+        this.#providedFocusIn = onFocusIn;
+        this.#providedFocusOut = onFocusOut;
+        this.#providedShouldStopEventPropagation = shouldStopEventPropagation;
+        this.#providedOnTabKeyDown = onTabKeyDown;
+        this.#providedHandleKeyDown = handleKeyDown;
     }
 
     @PostConstruct
     private postConstruct() {
         this.createManagedBean(new ManagedFocusFeature(
-            this.eFocusableElement,
+            this.#eFocusableElement,
             {
-                shouldStopEventPropagation: () => this.shouldStopEventPropagation(),
+                shouldStopEventPropagation: () => this.#shouldStopEventPropagation(),
                 onTabKeyDown: e => this.onTabKeyDown(e),
-                handleKeyDown: e => this.handleKeyDown(e),
-                onFocusIn: e => this.onFocusIn(e),
-                onFocusOut: e => this.onFocusOut(e)
+                handleKeyDown: e => this.#handleKeyDown(e),
+                onFocusIn: e => this.#onFocusIn(e),
+                onFocusOut: e => this.#onFocusOut(e)
             }
         ));
 
-        this.activateTabGuards();
+        this.#activateTabGuards();
 
-        [this.eTopGuard, this.eBottomGuard].forEach(
-            guard => this.addManagedListener(guard, 'focus', this.onFocus.bind(this))
+        [this.#eTopGuard, this.#eBottomGuard].forEach(
+            guard => this.addManagedListener(guard, 'focus', this.#onFocus.bind(this))
         );
     }
 
-    private handleKeyDown(e: KeyboardEvent): void {
-        if (this.providedHandleKeyDown) {
-            this.providedHandleKeyDown(e);
+    #handleKeyDown(e: KeyboardEvent): void {
+        if (this.#providedHandleKeyDown) {
+            this.#providedHandleKeyDown(e);
         }
     }
 
-    private tabGuardsAreActive(): boolean {
-        return !!this.eTopGuard && this.eTopGuard.hasAttribute('tabIndex');
+    #tabGuardsAreActive(): boolean {
+        return !!this.#eTopGuard && this.#eTopGuard.hasAttribute('tabIndex');
     }
 
-    private shouldStopEventPropagation(): boolean {
-        if (this.providedShouldStopEventPropagation) {
-            return this.providedShouldStopEventPropagation();
+    #shouldStopEventPropagation(): boolean {
+        if (this.#providedShouldStopEventPropagation) {
+            return this.#providedShouldStopEventPropagation();
         }
         return false;
     }
 
-    private activateTabGuards(): void {
+    #activateTabGuards(): void {
         // Do not activate tabs while focus is being forced out
-        if (this.forcingFocusOut) { return; }
+        if (this.#forcingFocusOut) { return; }
         const tabIndex = this.gos.get('tabIndex');
-        this.comp.setTabIndex(tabIndex.toString());
+        this.#comp.setTabIndex(tabIndex.toString());
     }
 
-    private deactivateTabGuards(): void {
-        this.comp.setTabIndex();
+    #deactivateTabGuards(): void {
+        this.#comp.setTabIndex();
     }
 
-    private onFocus(e: FocusEvent): void {
-        if (this.skipTabGuardFocus) {
-            this.skipTabGuardFocus = false;
+    #onFocus(e: FocusEvent): void {
+        if (this.#skipTabGuardFocus) {
+            this.#skipTabGuardFocus = false;
             return;
         }
 
         // when there are no focusable items within the TabGuard, focus gets stuck
         // in the TabGuard itself and has nowhere to go, so we need to manually find
         // the closest element to focus by calling `forceFocusOutWhenTabGuardAreEmpty`.
-        if (this.forceFocusOutWhenTabGuardsAreEmpty) {
-            const isEmpty = this.focusService.findFocusableElements(this.eFocusableElement, '.ag-tab-guard').length === 0;
+        if (this.#forceFocusOutWhenTabGuardsAreEmpty) {
+            const isEmpty = this.focusService.findFocusableElements(this.#eFocusableElement, '.ag-tab-guard').length === 0;
             if (isEmpty) {
-                this.findNextElementOutsideAndFocus(e.target === this.eBottomGuard);
+                this.#findNextElementOutsideAndFocus(e.target === this.#eBottomGuard);
                 return;
             }
         }
 
-        const fromBottom = e.target === this.eBottomGuard;
+        const fromBottom = e.target === this.#eBottomGuard;
 
-        if (this.providedFocusInnerElement) {
-            this.providedFocusInnerElement(fromBottom);
+        if (this.#providedFocusInnerElement) {
+            this.#providedFocusInnerElement(fromBottom);
         } else {
             this.focusInnerElement(fromBottom);
         }
     }
 
-    private findNextElementOutsideAndFocus(up: boolean) {
+    #findNextElementOutsideAndFocus(up: boolean) {
         const eDocument = this.gos.getDocument();
         const focusableEls = this.focusService.findFocusableElements(eDocument.body, null, true);
-        const index = focusableEls.indexOf(up ? this.eTopGuard : this.eBottomGuard);
+        const index = focusableEls.indexOf(up ? this.#eTopGuard : this.#eBottomGuard);
 
         if (index === -1) { return; }
 
@@ -191,41 +191,41 @@ export class TabGuardCtrl extends BeanStub {
         focusableRange[up ? (focusableRange.length - 1) : 0].focus();
     }
 
-    private onFocusIn(e: FocusEvent): void {
-        if (this.focusTrapActive) { return; }
+    #onFocusIn(e: FocusEvent): void {
+        if (this.#focusTrapActive) { return; }
 
-        if (this.providedFocusIn) {
-            this.providedFocusIn(e);
+        if (this.#providedFocusIn) {
+            this.#providedFocusIn(e);
         }
 
-        this.deactivateTabGuards();
+        this.#deactivateTabGuards();
     }
 
-    private onFocusOut(e: FocusEvent): void {
-        if (this.focusTrapActive) { return; }
+    #onFocusOut(e: FocusEvent): void {
+        if (this.#focusTrapActive) { return; }
 
-        if (this.providedFocusOut) {
-            this.providedFocusOut(e);
+        if (this.#providedFocusOut) {
+            this.#providedFocusOut(e);
         }
 
-        if (!this.eFocusableElement.contains(e.relatedTarget as HTMLElement)) {
-            this.activateTabGuards();
+        if (!this.#eFocusableElement.contains(e.relatedTarget as HTMLElement)) {
+            this.#activateTabGuards();
         }
     }
 
     public onTabKeyDown(e: KeyboardEvent): void {
-        if (this.providedOnTabKeyDown) {
-            this.providedOnTabKeyDown(e);
+        if (this.#providedOnTabKeyDown) {
+            this.#providedOnTabKeyDown(e);
             return;
         }
 
-        if (this.focusTrapActive) { return; }
+        if (this.#focusTrapActive) { return; }
         if (e.defaultPrevented) { return; }
 
-        const tabGuardsAreActive = this.tabGuardsAreActive();
+        const tabGuardsAreActive = this.#tabGuardsAreActive();
 
         if (tabGuardsAreActive) {
-            this.deactivateTabGuards();
+            this.#deactivateTabGuards();
         }
 
         const nextRoot = this.getNextFocusableElement(e.shiftKey);
@@ -233,7 +233,7 @@ export class TabGuardCtrl extends BeanStub {
         if (tabGuardsAreActive) {
             // ensure the tab guards are only re-instated once the event has finished processing, to avoid the browser
             // tabbing to the tab guard from inside the component
-            setTimeout(() => this.activateTabGuards(), 0);
+            setTimeout(() => this.#activateTabGuards(), 0);
         }
 
         if (!nextRoot) { return; }
@@ -243,9 +243,9 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     public focusInnerElement(fromBottom = false): void {
-        const focusable = this.focusService.findFocusableElements(this.eFocusableElement);
+        const focusable = this.focusService.findFocusableElements(this.#eFocusableElement);
 
-        if (this.tabGuardsAreActive()) {
+        if (this.#tabGuardsAreActive()) {
             // remove tab guards from this component from list of focusable elements
             focusable.splice(0, 1);
             focusable.splice(focusable.length - 1, 1);
@@ -257,29 +257,29 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     public getNextFocusableElement(backwards?: boolean): HTMLElement | null {
-        return this.focusService.findNextFocusableElement(this.eFocusableElement, false, backwards);
+        return this.focusService.findNextFocusableElement(this.#eFocusableElement, false, backwards);
     }
 
     public forceFocusOutOfContainer(up: boolean = false): void {
         // avoid multiple calls to `forceFocusOutOfContainer`
-        if (this.forcingFocusOut) { return; }
+        if (this.#forcingFocusOut) { return; }
 
-        const tabGuardToFocus = up ? this.eTopGuard : this.eBottomGuard;
+        const tabGuardToFocus = up ? this.#eTopGuard : this.#eBottomGuard;
 
-        this.activateTabGuards();
-        this.skipTabGuardFocus = true;
-        this.forcingFocusOut = true;
+        this.#activateTabGuards();
+        this.#skipTabGuardFocus = true;
+        this.#forcingFocusOut = true;
 
         // this focus will set `this.skipTabGuardFocus` to false;
         tabGuardToFocus.focus();
 
         window.setTimeout(() => {
-            this.forcingFocusOut = false;
-            this.activateTabGuards();
+            this.#forcingFocusOut = false;
+            this.#activateTabGuards();
         });
     }
 
     public isTabGuard(element: HTMLElement): boolean {
-        return element === this.eTopGuard || element === this.eBottomGuard;
+        return element === this.#eTopGuard || element === this.#eBottomGuard;
     }
 }

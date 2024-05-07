@@ -28,40 +28,40 @@ export class HeaderRowCtrl extends BeanStub {
 
     @Autowired('beans') private beans: Beans;
 
-    private comp: IHeaderRowComp;
-    private rowIndex: number;
-    private pinned: ColumnPinnedType;
-    private type: HeaderRowType;
-    private headerRowClass: string;
+    #comp: IHeaderRowComp;
+    #rowIndex: number;
+    #pinned: ColumnPinnedType;
+    #type: HeaderRowType;
+    #headerRowClass: string;
 
-    private instanceId : HeaderRowCtrlInstanceId = instanceIdSequence++ as HeaderRowCtrlInstanceId;
+    #instanceId: HeaderRowCtrlInstanceId = instanceIdSequence++ as HeaderRowCtrlInstanceId;
 
-    private headerCellCtrls: Map<HeaderColumnId, AbstractHeaderCellCtrl> | undefined;
+    #headerCellCtrls: Map<HeaderColumnId, AbstractHeaderCellCtrl> | undefined;
 
-    private isPrintLayout: boolean;
-    private isEnsureDomOrder: boolean;
+    #isPrintLayout: boolean;
+    #isEnsureDomOrder: boolean;
 
     constructor(rowIndex: number, pinned: ColumnPinnedType, type: HeaderRowType) {
         super();
-        this.rowIndex = rowIndex;
-        this.pinned = pinned;
-        this.type = type;
+        this.#rowIndex = rowIndex;
+        this.#pinned = pinned;
+        this.#type = type;
 
         const typeClass = type == HeaderRowType.COLUMN_GROUP ? `ag-header-row-column-group` :
             type == HeaderRowType.FLOATING_FILTER ? `ag-header-row-column-filter` : `ag-header-row-column`;
-        this.headerRowClass = `ag-header-row ${typeClass}`;
+        this.#headerRowClass = `ag-header-row ${typeClass}`;
 
     }
 
     @PostConstruct
     private postConstruct(): void {
-        this.isPrintLayout = this.gos.isDomLayout('print');
-        this.isEnsureDomOrder = this.gos.get('ensureDomOrder');
+        this.#isPrintLayout = this.gos.isDomLayout('print');
+        this.#isEnsureDomOrder = this.gos.get('ensureDomOrder');
     }
 
 
     public getInstanceId(): HeaderRowCtrlInstanceId {
-        return this.instanceId;
+        return this.#instanceId;
     }
 
     /**
@@ -70,75 +70,75 @@ export class HeaderRowCtrl extends BeanStub {
      * @param initCompState Should the component be initialised with the current state of the controller. Default: true
      */
     public setComp(comp: IHeaderRowComp, initCompState: boolean = true): void {
-        this.comp = comp;
+        this.#comp = comp;
 
         if (initCompState) {
-            this.onRowHeightChanged();
-            this.onVirtualColumnsChanged();
+            this.#onRowHeightChanged();
+            this.#onVirtualColumnsChanged();
         }
         // width is managed directly regardless of framework and so is not included in initCompState
-        this.setWidth(); 
+        this.#setWidth(); 
 
-        this.addEventListeners();
+        this.#addEventListeners();
     }
 
     public getHeaderRowClass(): string {
-        return this.headerRowClass;
+        return this.#headerRowClass;
     }
     public getAriaRowIndex(): number {
-        return this.rowIndex + 1;
+        return this.#rowIndex + 1;
     }
 
-    private addEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, (params: VirtualColumnsChangedEvent) => this.onVirtualColumnsChanged(params.afterScroll));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onRowHeightChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onRowHeightChanged.bind(this));
+    #addEventListeners(): void {
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.#onColumnResized.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.#onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, (params: VirtualColumnsChangedEvent) => this.#onVirtualColumnsChanged(params.afterScroll));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, this.#onRowHeightChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.#onRowHeightChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.#onRowHeightChanged.bind(this));
 
         // when print layout changes, it changes what columns are in what section
-        this.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
-        this.addManagedPropertyListener('ensureDomOrder', (e) => this.isEnsureDomOrder = e.currentValue);
+        this.addManagedPropertyListener('domLayout', this.#onDisplayedColumnsChanged.bind(this));
+        this.addManagedPropertyListener('ensureDomOrder', (e) => this.#isEnsureDomOrder = e.currentValue);
 
-        this.addManagedPropertyListener('headerHeight', this.onRowHeightChanged.bind(this));
-        this.addManagedPropertyListener('pivotHeaderHeight', this.onRowHeightChanged.bind(this));
-        this.addManagedPropertyListener('groupHeaderHeight', this.onRowHeightChanged.bind(this));
-        this.addManagedPropertyListener('pivotGroupHeaderHeight', this.onRowHeightChanged.bind(this));
-        this.addManagedPropertyListener('floatingFiltersHeight', this.onRowHeightChanged.bind(this));
+        this.addManagedPropertyListener('headerHeight', this.#onRowHeightChanged.bind(this));
+        this.addManagedPropertyListener('pivotHeaderHeight', this.#onRowHeightChanged.bind(this));
+        this.addManagedPropertyListener('groupHeaderHeight', this.#onRowHeightChanged.bind(this));
+        this.addManagedPropertyListener('pivotGroupHeaderHeight', this.#onRowHeightChanged.bind(this));
+        this.addManagedPropertyListener('floatingFiltersHeight', this.#onRowHeightChanged.bind(this));
     }
 
     public getHeaderCellCtrl(column: ColumnGroup): HeaderGroupCellCtrl | undefined;
     public getHeaderCellCtrl(column: Column): HeaderCellCtrl | undefined;
     public getHeaderCellCtrl(column: any): any {
-        if (!this.headerCellCtrls) { return; }
-        return values(this.headerCellCtrls).find(cellCtrl => cellCtrl.getColumnGroupChild() === column);
+        if (!this.#headerCellCtrls) { return; }
+        return values(this.#headerCellCtrls).find(cellCtrl => cellCtrl.getColumnGroupChild() === column);
     }
 
-    private onDisplayedColumnsChanged(): void {
-        this.isPrintLayout = this.gos.isDomLayout('print');
-        this.onVirtualColumnsChanged();
-        this.setWidth();
-        this.onRowHeightChanged();
+    #onDisplayedColumnsChanged(): void {
+        this.#isPrintLayout = this.gos.isDomLayout('print');
+        this.#onVirtualColumnsChanged();
+        this.#setWidth();
+        this.#onRowHeightChanged();
     }
 
     public getType(): HeaderRowType {
-        return this.type;
+        return this.#type;
     }
 
-    private onColumnResized(): void {
-        this.setWidth();
+    #onColumnResized(): void {
+        this.#setWidth();
     }
 
-    private setWidth(): void {
-        const width = this.getWidthForRow();
-        this.comp.setWidth(`${width}px`);
+    #setWidth(): void {
+        const width = this.#getWidthForRow();
+        this.#comp.setWidth(`${width}px`);
     }
 
-    private getWidthForRow(): number {
+    #getWidthForRow(): number {
         const { columnModel } = this.beans;
-        if (this.isPrintLayout) {
-            const pinned = this.pinned != null;
+        if (this.#isPrintLayout) {
+            const pinned = this.#pinned != null;
             if (pinned) { return 0; }
 
             return columnModel.getContainerWidth('right')
@@ -147,14 +147,14 @@ export class HeaderRowCtrl extends BeanStub {
         }
 
         // if not printing, just return the width as normal
-        return columnModel.getContainerWidth(this.pinned);
+        return columnModel.getContainerWidth(this.#pinned);
     }
 
-    private onRowHeightChanged(): void {
+    #onRowHeightChanged(): void {
         var { topOffset, rowHeight } = this.getTopAndHeight();
 
-        this.comp.setTop(topOffset + 'px');
-        this.comp.setHeight(rowHeight + 'px');
+        this.#comp.setTop(topOffset + 'px');
+        this.#comp.setHeight(rowHeight + 'px');
     }
 
     public getTopAndHeight() {
@@ -183,33 +183,33 @@ export class HeaderRowCtrl extends BeanStub {
 
         let topOffset = 0;
 
-        for (let i = 0; i < this.rowIndex; i++) { topOffset += sizes[i]; }
+        for (let i = 0; i < this.#rowIndex; i++) { topOffset += sizes[i]; }
 
-        const rowHeight = sizes[this.rowIndex];
+        const rowHeight = sizes[this.#rowIndex];
         return { topOffset, rowHeight };
     }
 
     public getPinned(): ColumnPinnedType {
-        return this.pinned;
+        return this.#pinned;
     }
 
     public getRowIndex(): number {
-        return this.rowIndex;
+        return this.#rowIndex;
     }
 
-    private onVirtualColumnsChanged(afterScroll: boolean = false): void {
+    #onVirtualColumnsChanged(afterScroll: boolean = false): void {
         const ctrlsToDisplay = this.getHeaderCtrls();
-        const forceOrder = this.isEnsureDomOrder || this.isPrintLayout;
-        this.comp.setHeaderCtrls(ctrlsToDisplay, forceOrder, afterScroll);
+        const forceOrder = this.#isEnsureDomOrder || this.#isPrintLayout;
+        this.#comp.setHeaderCtrls(ctrlsToDisplay, forceOrder, afterScroll);
     }
 
     public getHeaderCtrls() {
-        const oldCtrls = this.headerCellCtrls;
-        this.headerCellCtrls = new Map();
-        const columns = this.getColumnsInViewport();
+        const oldCtrls = this.#headerCellCtrls;
+        this.#headerCellCtrls = new Map();
+        const columns = this.#getColumnsInViewport();
 
         for (const child of columns) {
-            this.recycleAndCreateHeaderCtrls(child, oldCtrls)
+            this.#recycleAndCreateHeaderCtrls(child, oldCtrls)
         }
 
         // we want to keep columns that are focused, otherwise keyboard navigation breaks
@@ -226,7 +226,7 @@ export class HeaderRowCtrl extends BeanStub {
             for (const [id, oldCtrl] of oldCtrls) {
                 const keepCtrl = isFocusedAndDisplayed(oldCtrl as HeaderCellCtrl);
                 if (keepCtrl) {
-                    this.headerCellCtrls.set(id, oldCtrl);
+                    this.#headerCellCtrls.set(id, oldCtrl);
                 } else {
                     this.destroyBean(oldCtrl);
                 }
@@ -234,12 +234,15 @@ export class HeaderRowCtrl extends BeanStub {
         }
 
 
-        const ctrlsToDisplay = Array.from(this.headerCellCtrls.values());
+        const ctrlsToDisplay = Array.from(this.#headerCellCtrls.values());
         return ctrlsToDisplay;
     }
 
-    private recycleAndCreateHeaderCtrls(headerColumn: IHeaderColumn, oldCtrls?: Map<HeaderColumnId, AbstractHeaderCellCtrl>): void {
-        if (!this.headerCellCtrls) { return; }
+    #recycleAndCreateHeaderCtrls(
+        headerColumn: IHeaderColumn,
+        oldCtrls?: Map<HeaderColumnId, AbstractHeaderCellCtrl>
+    ): void {
+        if (!this.#headerCellCtrls) { return; }
         // skip groups that have no displayed children. this can happen when the group is broken,
         // and this section happens to have nothing to display for the open / closed state.
         // (a broken group is one that is split, ie columns in the group have a non-group column
@@ -266,7 +269,7 @@ export class HeaderRowCtrl extends BeanStub {
         }
 
         if (headerCtrl == null) {
-            switch (this.type) {
+            switch (this.#type) {
                 case HeaderRowType.FLOATING_FILTER:
                     headerCtrl = this.createBean(new HeaderFilterCellCtrl(headerColumn as Column, this.beans, this));
                     break;
@@ -279,19 +282,19 @@ export class HeaderRowCtrl extends BeanStub {
             }
         }
 
-        this.headerCellCtrls.set(idOfChild, headerCtrl);
+        this.#headerCellCtrls.set(idOfChild, headerCtrl);
     }
 
-    private getColumnsInViewport(): IHeaderColumn[] {
-        return this.isPrintLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
+    #getColumnsInViewport(): IHeaderColumn[] {
+        return this.#isPrintLayout ? this.#getColumnsInViewportPrintLayout() : this.#getColumnsInViewportNormalLayout();
     }
 
-    private getColumnsInViewportPrintLayout(): IHeaderColumn[] {
+    #getColumnsInViewportPrintLayout(): IHeaderColumn[] {
         // for print layout, we add all columns into the center
-        if (this.pinned != null) { return []; }
+        if (this.#pinned != null) { return []; }
 
         let viewportColumns: IHeaderColumn[] = [];
-        const actualDepth = this.getActualDepth();
+        const actualDepth = this.#getActualDepth();
         const { columnModel } = this.beans;
 
         (['left', null, 'right'] as ColumnPinnedType[]).forEach(pinned => {
@@ -302,19 +305,19 @@ export class HeaderRowCtrl extends BeanStub {
         return viewportColumns;
     }
 
-    private getActualDepth(): number {
-        return this.type == HeaderRowType.FLOATING_FILTER ? this.rowIndex - 1 : this.rowIndex;
+    #getActualDepth(): number {
+        return this.#type == HeaderRowType.FLOATING_FILTER ? this.#rowIndex - 1 : this.#rowIndex;
     }
 
-    private getColumnsInViewportNormalLayout(): IHeaderColumn[] {
+    #getColumnsInViewportNormalLayout(): IHeaderColumn[] {
         // when in normal layout, we add the columns for that container only
-        return this.beans.columnModel.getVirtualHeaderGroupRow(this.pinned, this.getActualDepth());
+        return this.beans.columnModel.getVirtualHeaderGroupRow(this.#pinned, this.#getActualDepth());
     }
 
     public focusHeader(column: IHeaderColumn, event?: KeyboardEvent): boolean {
-        if (!this.headerCellCtrls) { return false; }
+        if (!this.#headerCellCtrls) { return false; }
 
-        const allCtrls = Array.from(this.headerCellCtrls.values());
+        const allCtrls = Array.from(this.#headerCellCtrls.values());
         const ctrl: AbstractHeaderCellCtrl | undefined = allCtrls.find(ctrl => ctrl.getColumnGroupChild() == column);
 
         if (!ctrl) { return false; }
@@ -323,12 +326,12 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     protected destroy(): void {
-        if (this.headerCellCtrls) {
-            this.headerCellCtrls.forEach((ctrl) => {
+        if (this.#headerCellCtrls) {
+            this.#headerCellCtrls.forEach((ctrl) => {
                 this.destroyBean(ctrl);
             });
         }
-        this.headerCellCtrls = undefined;
+        this.#headerCellCtrls = undefined;
         super.destroy();
     }
 }

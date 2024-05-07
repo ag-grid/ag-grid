@@ -26,17 +26,17 @@ export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
 
 export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCellComp, Column> {
 
-    private eButtonShowMainFilter: HTMLElement;
-    private eFloatingFilterBody: HTMLElement;
+    #eButtonShowMainFilter: HTMLElement;
+    #eFloatingFilterBody: HTMLElement;
 
-    private suppressFilterButton: boolean;
-    private highlightFilterButtonWhenActive: boolean;
-    private active: boolean;
-    private iconCreated: boolean = false;
+    #suppressFilterButton: boolean;
+    #highlightFilterButtonWhenActive: boolean;
+    #active: boolean;
+    #iconCreated: boolean = false;
 
-    private userCompDetails?: UserCompDetails | null;
-    private destroySyncListener: (() => null) | undefined;
-    private destroyFilterChangedListener: (() => null) | undefined;
+    #userCompDetails?: UserCompDetails | null;
+    #destroySyncListener: (() => null) | undefined;
+    #destroyFilterChangedListener: (() => null) | undefined;
 
     constructor(column: Column, beans: Beans, parentRowCtrl: HeaderRowCtrl) {
         super(column, beans, parentRowCtrl);
@@ -45,25 +45,25 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     public setComp(comp: IHeaderFilterCellComp, eGui: HTMLElement, eButtonShowMainFilter: HTMLElement, eFloatingFilterBody: HTMLElement): void {
         this.comp = comp;
-        this.eButtonShowMainFilter = eButtonShowMainFilter;
-        this.eFloatingFilterBody = eFloatingFilterBody;
+        this.#eButtonShowMainFilter = eButtonShowMainFilter;
+        this.#eFloatingFilterBody = eFloatingFilterBody;
 
         this.setGui(eGui);
-        this.setupActive();
+        this.#setupActive();
 
-        this.setupWidth();
-        this.setupLeft();
-        this.setupHover();
-        this.setupFocus();
-        this.setupAria();
-        this.setupFilterButton();
-        this.setupUserComp();
-        this.setupSyncWithFilter();
-        this.setupUi();
+        this.#setupWidth();
+        this.#setupLeft();
+        this.#setupHover();
+        this.#setupFocus();
+        this.#setupAria();
+        this.#setupFilterButton();
+        this.#setupUserComp();
+        this.#setupSyncWithFilter();
+        this.#setupUi();
 
-        this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
-        this.setupFilterChangedListener();
-        this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
+        this.addManagedListener(this.#eButtonShowMainFilter, 'click', this.#showParentFilter.bind(this));
+        this.#setupFilterChangedListener();
+        this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.#onColDefChanged.bind(this));
     }
 
     // empty abstract method
@@ -71,47 +71,47 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     // empty abstract method
     protected moveHeader(): void {}
 
-    private setupActive(): void {
+    #setupActive(): void {
         const colDef = this.column.getColDef();
         const filterExists = !!colDef.filter;
         const floatingFilterExists = !!colDef.floatingFilter;
-        this.active = filterExists && floatingFilterExists;
+        this.#active = filterExists && floatingFilterExists;
     }
 
-    private setupUi(): void {
-        this.comp.setButtonWrapperDisplayed(!this.suppressFilterButton && this.active);
+    #setupUi(): void {
+        this.comp.setButtonWrapperDisplayed(!this.#suppressFilterButton && this.#active);
         
-        this.comp.addOrRemoveBodyCssClass('ag-floating-filter-full-body', this.suppressFilterButton);
-        this.comp.addOrRemoveBodyCssClass('ag-floating-filter-body', !this.suppressFilterButton);
+        this.comp.addOrRemoveBodyCssClass('ag-floating-filter-full-body', this.#suppressFilterButton);
+        this.comp.addOrRemoveBodyCssClass('ag-floating-filter-body', !this.#suppressFilterButton);
         
-        if (!this.active || this.iconCreated) { return; }
+        if (!this.#active || this.#iconCreated) { return; }
 
         const eMenuIcon = createIconNoSpan('filter', this.gos, this.column);
 
         if (eMenuIcon) {
-            this.iconCreated = true;
-            this.eButtonShowMainFilter.appendChild(eMenuIcon);
+            this.#iconCreated = true;
+            this.#eButtonShowMainFilter.appendChild(eMenuIcon);
         }
     }
 
-    private setupFocus(): void {
+    #setupFocus(): void {
         this.createManagedBean(new ManagedFocusFeature(
             this.eGui,
             {
                 shouldStopEventPropagation: this.shouldStopEventPropagation.bind(this),
-                onTabKeyDown: this.onTabKeyDown.bind(this),
+                onTabKeyDown: this.#onTabKeyDown.bind(this),
                 handleKeyDown: this.handleKeyDown.bind(this),
-                onFocusIn: this.onFocusIn.bind(this)
+                onFocusIn: this.#onFocusIn.bind(this)
             }
         ));
     }
 
-    private setupAria(): void {
+    #setupAria(): void {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
-        setAriaLabel(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
+        setAriaLabel(this.#eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
     }
 
-    private onTabKeyDown(e: KeyboardEvent) {
+    #onTabKeyDown(e: KeyboardEvent) {
         const activeEl = this.gos.getActiveDomElement();
         const wrapperHasFocus = activeEl === this.eGui;
 
@@ -126,7 +126,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             return;
         }
 
-        const nextFocusableColumn = this.findNextColumnWithFloatingFilter(e.shiftKey);
+        const nextFocusableColumn = this.#findNextColumnWithFloatingFilter(e.shiftKey);
 
         if (!nextFocusableColumn) { return; }
 
@@ -141,7 +141,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         }
     }
 
-    private findNextColumnWithFloatingFilter(backwards: boolean): Column | null {
+    #findNextColumnWithFloatingFilter(backwards: boolean): Column | null {
         const columnModel = this.beans.columnModel;
         let nextCol: Column | null = this.column;
 
@@ -186,7 +186,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         }
     }
 
-    private onFocusIn(e: FocusEvent): void {
+    #onFocusIn(e: FocusEvent): void {
         const isRelatedWithin = this.eGui.contains(e.relatedTarget as HTMLElement);
 
         // when the focus is already within the component,
@@ -211,7 +211,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.beans.focusService.setFocusedHeader(rowIndex, this.column);
     }
 
-    private setupHover(): void {
+    #setupHover(): void {
         this.createManagedBean(new HoverFeature([this.column], this.eGui));
 
         const listener = () => {
@@ -224,36 +224,36 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         listener();
     }
 
-    private setupLeft(): void {
+    #setupLeft(): void {
         const setLeftFeature = new SetLeftFeature(this.column, this.eGui, this.beans);
         this.createManagedBean(setLeftFeature);
     }
 
-    private setupFilterButton(): void {
-        this.suppressFilterButton = !this.menuService.isFloatingFilterButtonEnabled(this.column);
-        this.highlightFilterButtonWhenActive = !this.menuService.isLegacyMenuEnabled();
+    #setupFilterButton(): void {
+        this.#suppressFilterButton = !this.menuService.isFloatingFilterButtonEnabled(this.column);
+        this.#highlightFilterButtonWhenActive = !this.menuService.isLegacyMenuEnabled();
     }
 
-    private setupUserComp(): void {
-        if (!this.active) { return; }
+    #setupUserComp(): void {
+        if (!this.#active) { return; }
 
         const compDetails = this.beans.filterManager.getFloatingFilterCompDetails(
             this.column,
-            () => this.showParentFilter()
+            () => this.#showParentFilter()
         );
 
         if (compDetails) {
-            this.setCompDetails(compDetails);
+            this.#setCompDetails(compDetails);
         }
     }
 
-    private setCompDetails(compDetails?: UserCompDetails | null): void {
-        this.userCompDetails = compDetails;
+    #setCompDetails(compDetails?: UserCompDetails | null): void {
+        this.#userCompDetails = compDetails;
         this.comp.setCompDetails(compDetails);
     }
 
-    private showParentFilter() {
-        const eventSource = this.suppressFilterButton ? this.eFloatingFilterBody : this.eButtonShowMainFilter;
+    #showParentFilter() {
+        const eventSource = this.#suppressFilterButton ? this.#eFloatingFilterBody : this.#eButtonShowMainFilter;
         this.menuService.showFilterMenu({
             column: this.column,
             buttonElement: eventSource,
@@ -262,8 +262,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         });
     }
 
-    private setupSyncWithFilter(): void {
-        if (!this.active) { return; }
+    #setupSyncWithFilter(): void {
+        if (!this.#active) { return; }
         const { filterManager } = this.beans;
 
         const syncWithFilter = (event: ColumnEvent | null) => {
@@ -284,14 +284,14 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             });
         };
 
-        this.destroySyncListener = this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, syncWithFilter);
+        this.#destroySyncListener = this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, syncWithFilter);
 
         if (filterManager.isFilterActive(this.column)) {
             syncWithFilter(null);
         }
     }
 
-    private setupWidth(): void {
+    #setupWidth(): void {
         const listener = () => {
             const width = `${this.column.getActualWidth()}px`;
             this.comp.setWidth(width);
@@ -301,66 +301,66 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         listener();
     }
 
-    private setupFilterChangedListener(): void {
-        if (this.active) {
-            this.destroyFilterChangedListener = this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.updateFilterButton.bind(this));
-            this.updateFilterButton();
+    #setupFilterChangedListener(): void {
+        if (this.#active) {
+            this.#destroyFilterChangedListener = this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.#updateFilterButton.bind(this));
+            this.#updateFilterButton();
         }
     }
 
-    private updateFilterButton(): void {
-        if (!this.suppressFilterButton && this.comp) {
+    #updateFilterButton(): void {
+        if (!this.#suppressFilterButton && this.comp) {
             const isFilterAllowed = this.beans.filterManager.isFilterAllowed(this.column);
             this.comp.setButtonWrapperDisplayed(isFilterAllowed);
-            if (this.highlightFilterButtonWhenActive && isFilterAllowed) {
-                this.eButtonShowMainFilter.classList.toggle('ag-filter-active', this.column.isFilterActive());
+            if (this.#highlightFilterButtonWhenActive && isFilterAllowed) {
+                this.#eButtonShowMainFilter.classList.toggle('ag-filter-active', this.column.isFilterActive());
             }
         }
     }
 
-    private onColDefChanged(): void {
-        const wasActive = this.active;
-        this.setupActive();
-        const becomeActive = !wasActive && this.active;
-        if (wasActive && !this.active) {
-            this.destroySyncListener?.();
-            this.destroyFilterChangedListener?.();
+    #onColDefChanged(): void {
+        const wasActive = this.#active;
+        this.#setupActive();
+        const becomeActive = !wasActive && this.#active;
+        if (wasActive && !this.#active) {
+            this.#destroySyncListener?.();
+            this.#destroyFilterChangedListener?.();
         }
 
-        const newCompDetails = this.active
+        const newCompDetails = this.#active
             ? this.beans.filterManager.getFloatingFilterCompDetails(
                 this.column,
-                () => this.showParentFilter()
+                () => this.#showParentFilter()
             )
             : null;
 
         const compPromise = this.comp.getFloatingFilterComp();
         if (!compPromise || !newCompDetails) {
-            this.updateCompDetails(newCompDetails, becomeActive);
+            this.#updateCompDetails(newCompDetails, becomeActive);
         } else {
             compPromise.then(compInstance => {
-                if (!compInstance || this.beans.filterManager.areFilterCompsDifferent(this.userCompDetails ?? null, newCompDetails)) {
-                    this.updateCompDetails(newCompDetails, becomeActive);
+                if (!compInstance || this.beans.filterManager.areFilterCompsDifferent(this.#userCompDetails ?? null, newCompDetails)) {
+                    this.#updateCompDetails(newCompDetails, becomeActive);
                 } else {
-                    this.updateFloatingFilterParams(newCompDetails);
+                    this.#updateFloatingFilterParams(newCompDetails);
                 }
             });
         }
     }
 
-    private updateCompDetails(compDetails: UserCompDetails | null | undefined, becomeActive: boolean): void {
+    #updateCompDetails(compDetails: UserCompDetails | null | undefined, becomeActive: boolean): void {
         if (!this.isAlive()) { return; }
-        this.setCompDetails(compDetails);
+        this.#setCompDetails(compDetails);
         // filter button and UI can change based on params, so always want to update
-        this.setupFilterButton();
-        this.setupUi();
+        this.#setupFilterButton();
+        this.#setupUi();
         if (becomeActive) {
-            this.setupSyncWithFilter();
-            this.setupFilterChangedListener();
+            this.#setupSyncWithFilter();
+            this.#setupFilterChangedListener();
         }
     }
 
-    private updateFloatingFilterParams(userCompDetails?: UserCompDetails | null): void {
+    #updateFloatingFilterParams(userCompDetails?: UserCompDetails | null): void {
         if (!userCompDetails) { return; }
 
         const params = userCompDetails.params;
@@ -386,10 +386,10 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     protected destroy(): void {
         super.destroy();
 
-        (this.eButtonShowMainFilter as any) = null;
-        (this.eFloatingFilterBody as any) = null;
-        (this.userCompDetails as any) = null;
-        (this.destroySyncListener as any) = null;
-        (this.destroyFilterChangedListener as any) = null;
+        (this.#eButtonShowMainFilter as any) = null;
+        (this.#eFloatingFilterBody as any) = null;
+        (this.#userCompDetails as any) = null;
+        (this.#destroySyncListener as any) = null;
+        (this.#destroyFilterChangedListener as any) = null;
     }
 }

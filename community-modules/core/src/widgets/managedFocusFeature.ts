@@ -43,7 +43,7 @@ export class ManagedFocusFeature extends BeanStub {
     protected postConstruct(): void {
         this.eFocusableElement.classList.add(ManagedFocusFeature.FOCUS_MANAGED_CLASS);
 
-        this.addKeyDownListeners(this.eFocusableElement);
+        this.#addKeyDownListeners(this.eFocusableElement);
 
         if (this.callbacks.onFocusIn) {
             this.addManagedListener(this.eFocusableElement, 'focusin', this.callbacks.onFocusIn);
@@ -54,7 +54,7 @@ export class ManagedFocusFeature extends BeanStub {
         }
     }
 
-    private addKeyDownListeners(eGui: HTMLElement): void {
+    #addKeyDownListeners(eGui: HTMLElement): void {
         this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
             if (e.defaultPrevented || isStopPropagationForAgGrid(e)) { return; }
 

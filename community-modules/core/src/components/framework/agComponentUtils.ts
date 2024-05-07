@@ -22,28 +22,28 @@ export class AgComponentUtils extends BeanStub {
     public adaptCellRendererFunction(callback: any): { new(): IComponent<ICellRendererParams>; } {
         class Adapter implements ICellRendererComp {
 
-            private eGui: HTMLElement;
+            #eGui: HTMLElement;
 
             refresh(params: ICellRendererParams): boolean {
                 return false;
             }
 
             getGui(): HTMLElement {
-                return this.eGui;
+                return this.#eGui;
             }
 
             init?(params: ICellRendererParams): void {
                 const callbackResult: string | HTMLElement = callback(params);
                 const type = typeof callbackResult;
                 if (type === 'string' || type === 'number' || type === 'boolean') {
-                    this.eGui = loadTemplate('<span>' + callbackResult + '</span>');
+                    this.#eGui = loadTemplate('<span>' + callbackResult + '</span>');
                     return;
                 }
                 if (callbackResult==null) {
-                    this.eGui = loadTemplate('<span></span>');
+                    this.#eGui = loadTemplate('<span></span>');
                     return;
                 }
-                this.eGui =  callbackResult as HTMLElement;
+                this.#eGui =  callbackResult as HTMLElement;
             }
         }
 

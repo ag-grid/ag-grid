@@ -10,12 +10,12 @@ const ARROW_DOWN = '\u2193';
 
 export class AnimateShowChangeCellRenderer extends Component implements ICellRenderer {
 
-    private lastValue: number;
+    #lastValue: number;
 
-    private eValue: HTMLElement;
-    private eDelta: HTMLElement;
+    #eValue: HTMLElement;
+    #eDelta: HTMLElement;
 
-    private refreshCount = 0;
+    #refreshCount = 0;
 
     @Autowired('filterManager') private filterManager: FilterManager;
 
@@ -36,13 +36,13 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
     }
 
     public init(params: any): void {
-        this.eValue = this.queryForHtmlElement('.ag-value-change-value');
-        this.eDelta = this.queryForHtmlElement('.ag-value-change-delta');
+        this.#eValue = this.queryForHtmlElement('.ag-value-change-value');
+        this.#eDelta = this.queryForHtmlElement('.ag-value-change-delta');
 
         this.refresh(params, true);
     }
 
-    private showDelta(params: any, delta: number): void {
+    #showDelta(params: any, delta: number): void {
 
         const absDelta = Math.abs(delta);
         const valueFormatted = params.formatValue(absDelta);
@@ -52,49 +52,49 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         const deltaUp = (delta >= 0);
 
         if (deltaUp) {
-            this.eDelta.textContent = ARROW_UP + valueToUse;
+            this.#eDelta.textContent = ARROW_UP + valueToUse;
         } else {
             // because negative, use ABS to remove sign
-            this.eDelta.textContent = ARROW_DOWN + valueToUse;
+            this.#eDelta.textContent = ARROW_DOWN + valueToUse;
         }
 
-        this.eDelta.classList.toggle('ag-value-change-delta-up', deltaUp);
-        this.eDelta.classList.toggle('ag-value-change-delta-down', !deltaUp);
+        this.#eDelta.classList.toggle('ag-value-change-delta-up', deltaUp);
+        this.#eDelta.classList.toggle('ag-value-change-delta-down', !deltaUp);
     }
 
-    private setTimerToRemoveDelta(): void {
+    #setTimerToRemoveDelta(): void {
         // the refreshCount makes sure that if the value updates again while
         // the below timer is waiting, then the below timer will realise it
         // is not the most recent and will not try to remove the delta value.
-        this.refreshCount++;
-        const refreshCountCopy = this.refreshCount;
+        this.#refreshCount++;
+        const refreshCountCopy = this.#refreshCount;
         this.getFrameworkOverrides().wrapIncoming(() => {
             window.setTimeout(() => {
-                if (refreshCountCopy === this.refreshCount) {
-                    this.hideDeltaValue();
+                if (refreshCountCopy === this.#refreshCount) {
+                    this.#hideDeltaValue();
                 }
             }, 2000);
         });
     }
 
-    private hideDeltaValue(): void {
-        this.eValue.classList.remove('ag-value-change-value-highlight');
-        clearElement(this.eDelta);
+    #hideDeltaValue(): void {
+        this.#eValue.classList.remove('ag-value-change-value-highlight');
+        clearElement(this.#eDelta);
     }
 
     public refresh(params: any, isInitialRender: boolean = false): boolean {
         const value = params.value;
 
-        if (value === this.lastValue) {
+        if (value === this.#lastValue) {
             return false;
         }
 
         if (exists(params.valueFormatted)) {
-            this.eValue.textContent = params.valueFormatted;
+            this.#eValue.textContent = params.valueFormatted;
         } else if (exists(params.value)) {
-            this.eValue.textContent = value;
+            this.#eValue.textContent = value;
         } else {
-            clearElement(this.eValue);
+            clearElement(this.#eValue);
         }
 
         // we don't show the delta if we are in the middle of a filter. see comment on FilterManager
@@ -103,22 +103,22 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
             return false;
         }
 
-        if (typeof value === 'number' && typeof this.lastValue === 'number') {
-            const delta = value - this.lastValue;
-            this.showDelta(params, delta);
+        if (typeof value === 'number' && typeof this.#lastValue === 'number') {
+            const delta = value - this.#lastValue;
+            this.#showDelta(params, delta);
         }
 
         // highlight the current value, but only if it's not new, otherwise it
         // would get highlighted first time the value is shown
-        if (this.lastValue) {
-            this.eValue.classList.add('ag-value-change-value-highlight');
+        if (this.#lastValue) {
+            this.#eValue.classList.add('ag-value-change-value-highlight');
         }
 
         if (!isInitialRender) {
-            this.setTimerToRemoveDelta();
+            this.#setTimerToRemoveDelta();
         }
 
-        this.lastValue = value;
+        this.#lastValue = value;
 
         return true;
     }

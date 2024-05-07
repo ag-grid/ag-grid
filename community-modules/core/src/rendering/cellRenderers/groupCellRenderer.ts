@@ -24,7 +24,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     @RefSelector('eChildCount') private eChildCount: HTMLElement;
 
     // this cell renderer
-    private innerCellRenderer: ICellRendererComp;
+    #innerCellRenderer: ICellRendererComp;
 
     constructor() {
         super(GroupCellRenderer.TEMPLATE);
@@ -33,7 +33,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     public init(params: GroupCellRendererParams): void {
 
         const compProxy: IGroupCellRenderer = {
-            setInnerRenderer: (compDetails, valueToDisplay) => this.setRenderDetails(compDetails, valueToDisplay),
+            setInnerRenderer: (compDetails, valueToDisplay) => this.#setRenderDetails(compDetails, valueToDisplay),
             setChildCount: count => this.eChildCount.textContent = count,
             addOrRemoveCssClass: (cssClass, value) => this.addOrRemoveCssClass(cssClass, value),
             setContractedDisplayed: expanded => setDisplayed(this.eContracted, expanded),
@@ -51,7 +51,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         }
     }
 
-    private setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any): void {
+    #setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any): void {
 
         if (compDetails) {
             const componentPromise = compDetails.newAgStackInstance();
@@ -74,7 +74,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to have public here instead of private or protected
     public destroy(): void {
-        this.getContext().destroyBean(this.innerCellRenderer);
+        this.getContext().destroyBean(this.#innerCellRenderer);
         super.destroy();
     }
 

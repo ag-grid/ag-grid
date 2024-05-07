@@ -31,16 +31,16 @@ export interface INumberCellEditorParams<TData = any, TContext = any> extends IC
 }
 
 class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditorParams, AgInputNumberField> {
-    private eInput: AgInputNumberField;
-    private params: INumberCellEditorParams;
+    #eInput: AgInputNumberField;
+    #params: INumberCellEditorParams;
 
     public getTemplate() {
         return /* html */`<ag-input-number-field class="ag-cell-editor" ref="eInput"></ag-input-number-field>`;
     }
 
     public init(eInput: AgInputNumberField, params: INumberCellEditorParams): void {
-        this.eInput = eInput;
-        this.params = params;
+        this.#eInput = eInput;
+        this.#params = params;
         if (params.max != null) {
             eInput.setMax(params.max);
         }
@@ -56,24 +56,24 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
 
         const inputEl = eInput.getInputElement();
         if (params.preventStepping) {
-            eInput.addManagedListener(inputEl, 'keydown', this.preventStepping);
+            eInput.addManagedListener(inputEl, 'keydown', this.#preventStepping);
         } else if (params.showStepperButtons) {
             inputEl.classList.add('ag-number-field-input-stepper');
         }
     }
 
-    private preventStepping(e: KeyboardEvent): void {
+    #preventStepping(e: KeyboardEvent): void {
         if (e.key === KeyCode.UP || e.key === KeyCode.DOWN) {
             e.preventDefault();
         }
     }
 
     public getValue(): number | null | undefined {
-        const value = this.eInput.getValue();
-        if (!exists(value) && !exists(this.params.value)) {
-            return this.params.value;
+        const value = this.#eInput.getValue();
+        if (!exists(value) && !exists(this.#params.value)) {
+            return this.#params.value;
         }
-        let parsedValue = this.params.parseValue(value!);
+        let parsedValue = this.#params.parseValue(value!);
         if (parsedValue == null) {
             return parsedValue;
         }
@@ -87,7 +87,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
     }
 
     public getStartValue(): string | null | undefined {
-        return this.params.value as any;
+        return this.#params.value as any;
     }
 }
 

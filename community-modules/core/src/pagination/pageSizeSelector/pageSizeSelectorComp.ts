@@ -12,8 +12,8 @@ export class PageSizeSelectorComp extends Component {
 
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
-    private selectPageSizeComp: AgSelect | undefined;
-    private hasEmptyOption = false;
+    #selectPageSizeComp: AgSelect | undefined;
+    #hasEmptyOption = false;
 
     constructor() {
         super(/* html */`<span class="ag-paging-page-size"></span>`);
@@ -22,20 +22,20 @@ export class PageSizeSelectorComp extends Component {
     @PostConstruct
     private init() {
         this.addManagedPropertyListener('paginationPageSizeSelector', () => {
-            this.onPageSizeSelectorValuesChange();
+            this.#onPageSizeSelectorValuesChange();
         });
 
         this.addManagedListener(
             this.eventService,
             Events.EVENT_PAGINATION_CHANGED,
-            (event) => this.handlePaginationChanged(event),
+            (event) => this.#handlePaginationChanged(event),
         );
     }
 
-    private handlePageSizeItemSelected = (): void => {
-        if (!this.selectPageSizeComp) { return; }
+    #handlePageSizeItemSelected = (): void => {
+        if (!this.#selectPageSizeComp) { return; }
 
-        const newValue = this.selectPageSizeComp.getValue();
+        const newValue = this.#selectPageSizeComp.getValue();
 
         if (!newValue) { return; }
 
@@ -49,24 +49,24 @@ export class PageSizeSelectorComp extends Component {
 
         this.paginationProxy.setPageSize(paginationPageSize, 'pageSizeSelector');
 
-        if (this.hasEmptyOption) {
+        if (this.#hasEmptyOption) {
             // Toggle the selector to force a refresh of the options and hide the empty option,
             // as it's no longer needed.
             this.toggleSelectDisplay(true);
         }
 
-        this.selectPageSizeComp.getFocusableElement().focus();
+        this.#selectPageSizeComp.getFocusableElement().focus();
     };
 
-    private handlePaginationChanged(paginationChangedEvent?: WithoutGridCommon<PaginationChangedEvent>): void {
-        if (!this.selectPageSizeComp || !paginationChangedEvent?.newPageSize) { return; }
+    #handlePaginationChanged(paginationChangedEvent?: WithoutGridCommon<PaginationChangedEvent>): void {
+        if (!this.#selectPageSizeComp || !paginationChangedEvent?.newPageSize) { return; }
 
         const paginationPageSize = this.paginationProxy.getPageSize();
-        if (this.getPageSizeSelectorValues().includes(paginationPageSize)) {
-            this.selectPageSizeComp.setValue(paginationPageSize.toString());
+        if (this.#getPageSizeSelectorValues().includes(paginationPageSize)) {
+            this.#selectPageSizeComp.setValue(paginationPageSize.toString());
         } else {
-            if (this.hasEmptyOption) {
-                this.selectPageSizeComp.setValue('');
+            if (this.#hasEmptyOption) {
+                this.#selectPageSizeComp.setValue('');
             } else {
                 this.toggleSelectDisplay(true);
             }
@@ -74,33 +74,33 @@ export class PageSizeSelectorComp extends Component {
     }
 
     public toggleSelectDisplay(show: boolean) {
-        if (this.selectPageSizeComp) {
-            this.reset();
+        if (this.#selectPageSizeComp) {
+            this.#reset();
         }
 
         if (!show) { return; }
 
-        this.reloadPageSizesSelector();
+        this.#reloadPageSizesSelector();
 
-        if (!this.selectPageSizeComp) { return; }
+        if (!this.#selectPageSizeComp) { return; }
 
-        this.appendChild(this.selectPageSizeComp);
+        this.appendChild(this.#selectPageSizeComp);
     }
 
-    private reset(): void {
+    #reset(): void {
         clearElement(this.getGui());
 
-        if (!this.selectPageSizeComp) { return; }
+        if (!this.#selectPageSizeComp) { return; }
 
-        this.destroyBean(this.selectPageSizeComp);
-        this.selectPageSizeComp = undefined;
+        this.destroyBean(this.#selectPageSizeComp);
+        this.#selectPageSizeComp = undefined;
     }
 
-    private onPageSizeSelectorValuesChange(): void {
-        if (!this.selectPageSizeComp) { return; }
+    #onPageSizeSelectorValuesChange(): void {
+        if (!this.#selectPageSizeComp) { return; }
 
         if (this.shouldShowPageSizeSelector()) {
-            this.reloadPageSizesSelector();
+            this.#reloadPageSizesSelector();
         }
     }
 
@@ -113,8 +113,8 @@ export class PageSizeSelectorComp extends Component {
         );
     }
 
-    private reloadPageSizesSelector(): void {
-        const pageSizeOptions: (number | string)[] = this.getPageSizeSelectorValues();
+    #reloadPageSizesSelector(): void {
+        const pageSizeOptions: (number | string)[] = this.#getPageSizeSelectorValues();
         const paginationPageSizeOption: number = this.paginationProxy.getPageSize();
         const shouldAddAndSelectEmptyOption = !paginationPageSizeOption || !pageSizeOptions.includes(paginationPageSizeOption)
         if (shouldAddAndSelectEmptyOption) {
@@ -129,9 +129,9 @@ export class PageSizeSelectorComp extends Component {
             );
         }
 
-        if (this.selectPageSizeComp) {
-            this.destroyBean(this.selectPageSizeComp);
-            this.selectPageSizeComp = undefined;
+        if (this.#selectPageSizeComp) {
+            this.destroyBean(this.#selectPageSizeComp);
+            this.#selectPageSizeComp = undefined;
         }
 
         const localeTextFunc = this.localeService.getLocaleTextFunc();
@@ -144,23 +144,23 @@ export class PageSizeSelectorComp extends Component {
 
         const localisedAriaLabel = localeTextFunc('ariaPageSizeSelectorLabel', 'Page Size');
 
-        this.selectPageSizeComp = this.createManagedBean(new AgSelect())
+        this.#selectPageSizeComp = this.createManagedBean(new AgSelect())
             .addOptions(options)
             .setValue(String(shouldAddAndSelectEmptyOption ? '' : paginationPageSizeOption))
             .setAriaLabel(localisedAriaLabel)
             .setLabel(localisedLabel)
-            .onValueChange(() => this.handlePageSizeItemSelected());
+            .onValueChange(() => this.#handlePageSizeItemSelected());
 
-        this.hasEmptyOption = shouldAddAndSelectEmptyOption;
+        this.#hasEmptyOption = shouldAddAndSelectEmptyOption;
     }
 
-    private getPageSizeSelectorValues(): number[] {
+    #getPageSizeSelectorValues(): number[] {
         const defaultValues = [20, 50, 100];
         const paginationPageSizeSelectorValues = this.gos.get('paginationPageSizeSelector');
 
         if (
             !Array.isArray(paginationPageSizeSelectorValues) ||
-            !this.validateValues(paginationPageSizeSelectorValues)
+            !this.#validateValues(paginationPageSizeSelectorValues)
         ) {
             return defaultValues;
         }
@@ -168,7 +168,7 @@ export class PageSizeSelectorComp extends Component {
         return [...paginationPageSizeSelectorValues].sort((a, b) => a - b);
     }
 
-    private validateValues(values: number[]): boolean {
+    #validateValues(values: number[]): boolean {
         if (!values.length) {
             warnOnce(
                 `The paginationPageSizeSelector grid option is an empty array. This is most likely a mistake.

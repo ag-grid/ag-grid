@@ -43,65 +43,65 @@ export class RowContainerComp extends Component {
     @RefSelector('eViewport') private eViewport: HTMLElement;
     @RefSelector('eContainer') private eContainer: HTMLElement;
 
-    private readonly name: RowContainerName;
-    private readonly type: RowContainerType;
+    readonly #name: RowContainerName;
+    readonly #type: RowContainerType;
 
-    private rowComps: {[id: RowCtrlInstanceId]: RowComp} = {};
+    #rowComps: {[id: RowCtrlInstanceId]: RowComp} = {};
 
     // we ensure the rows are in the dom in the order in which they appear on screen when the
     // user requests this via gridOptions.ensureDomOrder. this is typically used for screen readers.
-    private domOrder: boolean;
-    private lastPlacedElement: HTMLElement | null;
+    #domOrder: boolean;
+    #lastPlacedElement: HTMLElement | null;
 
     constructor() {
         super(templateFactory());
-        this.name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
-        this.type = getRowContainerTypeForName(this.name);
+        this.#name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
+        this.#type = getRowContainerTypeForName(this.#name);
     }
 
     @PostConstruct
     private postConstruct(): void {
         const compProxy: IRowContainerComp = {
             setViewportHeight: height => this.eViewport.style.height = height,
-            setRowCtrls: ({ rowCtrls }) => this.setRowCtrls(rowCtrls),
+            setRowCtrls: ({ rowCtrls }) => this.#setRowCtrls(rowCtrls),
             setDomOrder: domOrder => {
-                this.domOrder = domOrder;
+                this.#domOrder = domOrder;
             },
             setContainerWidth: width => this.eContainer.style.width = width
         };
 
-        const ctrl = this.createManagedBean(new RowContainerCtrl(this.name));
+        const ctrl = this.createManagedBean(new RowContainerCtrl(this.#name));
         ctrl.setComp(compProxy, this.eContainer, this.eViewport);
     }
 
     @PreDestroy
     private preDestroy(): void {
         // destroys all row comps
-        this.setRowCtrls([]);
+        this.#setRowCtrls([]);
     }
 
-    private setRowCtrls(rowCtrls: RowCtrl[]): void {
-        const oldRows = {...this.rowComps};
-        this.rowComps = {};
+    #setRowCtrls(rowCtrls: RowCtrl[]): void {
+        const oldRows = {...this.#rowComps};
+        this.#rowComps = {};
 
-        this.lastPlacedElement = null;
+        this.#lastPlacedElement = null;
 
         const processRow = (rowCon: RowCtrl) => {
             const instanceId = rowCon.getInstanceId();
             const existingRowComp = oldRows[instanceId];
 
             if (existingRowComp) {
-                this.rowComps[instanceId] = existingRowComp;
+                this.#rowComps[instanceId] = existingRowComp;
                 delete oldRows[instanceId];
-                this.ensureDomOrder(existingRowComp.getGui());
+                this.#ensureDomOrder(existingRowComp.getGui());
             } else {
                 // don't create new row comps for rows which are not displayed. still want the existing components
                 // as they may be animating out.
                 if (!rowCon.getRowNode().displayed) {
                     return;
                 }
-                const rowComp = new RowComp(rowCon, this.beans, this.type);
-                this.rowComps[instanceId] = rowComp;
+                const rowComp = new RowComp(rowCon, this.beans, this.#type);
+                this.#rowComps[instanceId] = rowComp;
                 this.appendRow(rowComp.getGui());
             }
         };
@@ -116,18 +116,18 @@ export class RowContainerComp extends Component {
     }
 
     public appendRow(element: HTMLElement) {
-        if (this.domOrder) {
-            insertWithDomOrder(this.eContainer, element, this.lastPlacedElement);
+        if (this.#domOrder) {
+            insertWithDomOrder(this.eContainer, element, this.#lastPlacedElement);
         } else {
             this.eContainer.appendChild(element);
         }
-        this.lastPlacedElement = element;
+        this.#lastPlacedElement = element;
     }
 
-    private ensureDomOrder(eRow: HTMLElement): void {
-        if (this.domOrder) {
-            ensureDomOrder(this.eContainer, eRow, this.lastPlacedElement);
-            this.lastPlacedElement = eRow;
+    #ensureDomOrder(eRow: HTMLElement): void {
+        if (this.#domOrder) {
+            ensureDomOrder(this.eContainer, eRow, this.#lastPlacedElement);
+            this.#lastPlacedElement = eRow;
         }
     }
 

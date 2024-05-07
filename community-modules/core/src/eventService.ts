@@ -7,20 +7,20 @@ import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 //@Bean('eventService')
 export class EventService implements IEventEmitter {
 
-    private allSyncListeners = new Map<string, Set<AgEventListener>>();
-    private allAsyncListeners = new Map<string, Set<AgEventListener>>();
+    #allSyncListeners = new Map<string, Set<AgEventListener>>();
+    #allAsyncListeners = new Map<string, Set<AgEventListener>>();
 
-    private globalSyncListeners = new Set<AgGlobalEventListener>();
-    private globalAsyncListeners = new Set<AgGlobalEventListener>();
+    #globalSyncListeners = new Set<AgGlobalEventListener>();
+    #globalAsyncListeners = new Set<AgGlobalEventListener>();
 
-    private frameworkOverrides: IFrameworkOverrides;
-    private gos?: GridOptionsService;
+    #frameworkOverrides: IFrameworkOverrides;
+    #gos?: GridOptionsService;
 
-    private asyncFunctionsQueue: Function[] = [];
-    private scheduled = false;
+    #asyncFunctionsQueue: Function[] = [];
+    #scheduled = false;
 
     // using an object performs better than a Set for the number of different events we have
-    private firedEvents: { [key: string]: boolean; } = {};
+    #firedEvents: { [key: string]: boolean; } = {};
 
     // because this class is used both inside the context and outside the context, we do not
     // use autowired attributes, as that would be confusing, as sometimes the attributes
@@ -37,8 +37,8 @@ export class EventService implements IEventEmitter {
         @Qualifier('globalEventListener') globalEventListener: AgGlobalEventListener | null = null,
         @Qualifier('globalSyncEventListener') globalSyncEventListener: AgGlobalEventListener | null = null
     ) {
-        this.frameworkOverrides = frameworkOverrides;
-        this.gos = gos;
+        this.#frameworkOverrides = frameworkOverrides;
+        this.#gos = gos;
 
         if (globalEventListener) {
             const async = gos.useAsyncEvents();
@@ -51,11 +51,11 @@ export class EventService implements IEventEmitter {
     }
 
     public setFrameworkOverrides(frameworkOverrides: IFrameworkOverrides): void {
-        this.frameworkOverrides = frameworkOverrides;
+        this.#frameworkOverrides = frameworkOverrides;
     }
 
-    private getListeners(eventType: string, async: boolean, autoCreateListenerCollection: boolean): Set<AgEventListener> | undefined {
-        const listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
+    #getListeners(eventType: string, async: boolean, autoCreateListenerCollection: boolean): Set<AgEventListener> | undefined {
+        const listenerMap = async ? this.#allAsyncListeners : this.#allSyncListeners;
         let listeners = listenerMap.get(eventType);
 
         // Note: 'autoCreateListenerCollection' should only be 'true' if a listener is about to be added. For instance
@@ -71,55 +71,55 @@ export class EventService implements IEventEmitter {
     }
 
     public noRegisteredListenersExist(): boolean {
-        return this.allSyncListeners.size === 0 && this.allAsyncListeners.size === 0 &&
-            this.globalSyncListeners.size === 0 && this.globalAsyncListeners.size === 0;
+        return this.#allSyncListeners.size === 0 && this.#allAsyncListeners.size === 0 &&
+            this.#globalSyncListeners.size === 0 && this.#globalAsyncListeners.size === 0;
     }
 
     public addEventListener(eventType: string, listener: AgEventListener, async = false): void {
-        this.getListeners(eventType, async, true)!.add(listener);
+        this.#getListeners(eventType, async, true)!.add(listener);
     }
 
     public removeEventListener(eventType: string, listener: AgEventListener, async = false): void {
-        const listeners = this.getListeners(eventType, async, false);
+        const listeners = this.#getListeners(eventType, async, false);
         if (!listeners) { return; }
 
         listeners.delete(listener);
 
         if (listeners.size === 0) {
-            const listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
+            const listenerMap = async ? this.#allAsyncListeners : this.#allSyncListeners;
             listenerMap.delete(eventType);
         }
     }
 
     public addGlobalListener(listener: AgGlobalEventListener, async = false): void {
-        (async ? this.globalAsyncListeners : this.globalSyncListeners).add(listener);
+        (async ? this.#globalAsyncListeners : this.#globalSyncListeners).add(listener);
     }
 
     public removeGlobalListener(listener: AgGlobalEventListener, async = false): void {
-        (async ? this.globalAsyncListeners : this.globalSyncListeners).delete(listener);
+        (async ? this.#globalAsyncListeners : this.#globalSyncListeners).delete(listener);
     }
 
     public dispatchEvent(event: AgEvent): void {
         let agEvent = event as AgGridEvent<any>;
-        if (this.gos) {
+        if (this.#gos) {
             // Apply common properties to all dispatched events if this event service has had its beans set with gridOptionsService.
             // Note there are multiple instances of EventService that are used local to components which do not set gridOptionsService.
-            this.gos.addGridCommonParams(agEvent);
+            this.#gos.addGridCommonParams(agEvent);
         }
 
-        this.dispatchToListeners(agEvent, true);
-        this.dispatchToListeners(agEvent, false);
+        this.#dispatchToListeners(agEvent, true);
+        this.#dispatchToListeners(agEvent, false);
 
-        this.firedEvents[agEvent.type] = true;
+        this.#firedEvents[agEvent.type] = true;
     }
 
     public dispatchEventOnce(event: AgEvent): void {
-        if (!this.firedEvents[event.type]) {
+        if (!this.#firedEvents[event.type]) {
             this.dispatchEvent(event);
         }
     }
 
-    private dispatchToListeners(event: AgGridEvent, async: boolean) {
+    #dispatchToListeners(event: AgGridEvent, async: boolean) {
         const eventType = event.type;
 
         if (async && 'event' in event) {
@@ -136,33 +136,33 @@ export class EventService implements IEventEmitter {
                 // A listener could have been removed by a previously processed listener. In this case we don't want to call 
                 return;
             }
-            const callback = this.frameworkOverrides
-                ? () => this.frameworkOverrides.wrapIncoming(() => listener(event))
+            const callback = this.#frameworkOverrides
+                ? () => this.#frameworkOverrides.wrapIncoming(() => listener(event))
                 : () => listener(event);
 
             if (async) {
-                this.dispatchAsync(callback)
+                this.#dispatchAsync(callback)
             } else {
                 callback();
             }
         });
 
-        const originalListeners = this.getListeners(eventType, async, false) ?? new Set<AgEventListener>();
+        const originalListeners = this.#getListeners(eventType, async, false) ?? new Set<AgEventListener>();
         // create a shallow copy to prevent listeners cyclically adding more listeners to capture this event
         const listeners = new Set<AgEventListener>(originalListeners);
         if (listeners.size > 0) {
             processEventListeners(listeners, originalListeners);
         }
 
-        const globalListeners = new Set(async ? this.globalAsyncListeners : this.globalSyncListeners);
+        const globalListeners = new Set(async ? this.#globalAsyncListeners : this.#globalSyncListeners);
 
         globalListeners.forEach((listener) => {
-            const callback = this.frameworkOverrides
-                ? () => this.frameworkOverrides.wrapIncoming(() => listener(eventType, event))
+            const callback = this.#frameworkOverrides
+                ? () => this.#frameworkOverrides.wrapIncoming(() => listener(eventType, event))
                 : () => listener(eventType, event);
            
             if (async) {
-                this.dispatchAsync(callback);
+                this.#dispatchAsync(callback);
             } else {
                 callback()
             }
@@ -173,35 +173,35 @@ export class EventService implements IEventEmitter {
     // wants to set async. the grid then batches the events into one setTimeout()
     // because setTimeout() is an expensive operation. ideally we would have
     // each event in it's own setTimeout(), but we batch for performance.
-    private dispatchAsync(func: Function): void {
+    #dispatchAsync(func: Function): void {
         // add to the queue for executing later in the next VM turn
-        this.asyncFunctionsQueue.push(func);
+        this.#asyncFunctionsQueue.push(func);
 
         // check if timeout is already scheduled. the first time the grid calls
         // this within it's thread turn, this should be false, so it will schedule
         // the 'flush queue' method the first time it comes here. then the flag is
         // set to 'true' so it will know it's already scheduled for subsequent calls.
-        if (!this.scheduled) {
+        if (!this.#scheduled) {
             // if not scheduled, schedule one
-            this.frameworkOverrides.wrapIncoming(() => {
-                window.setTimeout(this.flushAsyncQueue.bind(this), 0);
+            this.#frameworkOverrides.wrapIncoming(() => {
+                window.setTimeout(this.#flushAsyncQueue.bind(this), 0);
             });
             // mark that it is scheduled
-            this.scheduled = true;
+            this.#scheduled = true;
         }
     }
 
     // this happens in the next VM turn only, and empties the queue of events
-    private flushAsyncQueue(): void {
-        this.scheduled = false;
+    #flushAsyncQueue(): void {
+        this.#scheduled = false;
 
         // we take a copy, because the event listener could be using
         // the grid, which would cause more events, which would be potentially
         // added to the queue, so safe to take a copy, the new events will
         // get executed in a later VM turn rather than risk updating the
         // queue as we are flushing it.
-        const queueCopy = this.asyncFunctionsQueue.slice();
-        this.asyncFunctionsQueue = [];
+        const queueCopy = this.#asyncFunctionsQueue.slice();
+        this.#asyncFunctionsQueue = [];
 
         // execute the queue
         queueCopy.forEach(func => func());

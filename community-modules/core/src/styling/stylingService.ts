@@ -16,7 +16,7 @@ export class StylingService extends BeanStub {
         onNotApplicableClass?: (className: string) => void
     ) {
         this.processClassRules(undefined, colDef.cellClassRules, params, onApplicableClass, onNotApplicableClass);
-        this.processStaticCellClasses(colDef, params, onApplicableClass);
+        this.#processStaticCellClasses(colDef, params, onApplicableClass);
     }
 
     public processClassRules(
@@ -99,7 +99,7 @@ export class StylingService extends BeanStub {
         return classOrClasses || [];
     }
 
-    private processStaticCellClasses(
+    #processStaticCellClasses(
         colDef: ColDef,
         params: CellClassParams,
         onApplicableClass: (className: string) => void

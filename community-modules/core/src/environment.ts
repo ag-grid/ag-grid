@@ -94,9 +94,9 @@ export class Environment extends BeanStub {
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
-    private calculatedSizes: HardCodedSize | null = {};
-    private calculatedTheme: ThemeDetails | null = null;
-    private mutationObserver: MutationObserver;
+    #calculatedSizes: HardCodedSize | null = {};
+    #calculatedTheme: ThemeDetails | null = null;
+    #mutationObserver: MutationObserver;
 
     @PostConstruct
     private postConstruct(): void {
@@ -104,51 +104,51 @@ export class Environment extends BeanStub {
 
         this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeightVariable());
 
-        this.mutationObserver = new MutationObserver(() => {
-            this.calculatedSizes = {};
-            this.calculatedTheme = null;
-            this.calculatedTheme = this.getTheme();
-            this.fireGridStylesChangedEvent();
+        this.#mutationObserver = new MutationObserver(() => {
+            this.#calculatedSizes = {};
+            this.#calculatedTheme = null;
+            this.#calculatedTheme = this.getTheme();
+            this.#fireGridStylesChangedEvent();
         });
 
-        this.mutationObserver.observe(el || this.eGridDiv, {
+        this.#mutationObserver.observe(el || this.eGridDiv, {
             attributes: true,
             attributeFilter: ['class']
         });
     }
 
-    private fireGridStylesChangedEvent(): void {
+    #fireGridStylesChangedEvent(): void {
         const event: WithoutGridCommon<CssVariablesChanged> = {
             type: Events.EVENT_GRID_STYLES_CHANGED
         }
         this.eventService.dispatchEvent(event);
     }
 
-    private getSassVariable(key: SASS_PROPERTIES): number | undefined {
+    #getSassVariable(key: SASS_PROPERTIES): number | undefined {
         const { themeFamily, el } = this.getTheme();
 
         if (!themeFamily || themeFamily.indexOf('ag-theme') !== 0) { return; }
 
-        if (!this.calculatedSizes) {
-            this.calculatedSizes = {};
+        if (!this.#calculatedSizes) {
+            this.#calculatedSizes = {};
         }
 
-        if (!this.calculatedSizes[themeFamily]) {
-            this.calculatedSizes[themeFamily] = {};
+        if (!this.#calculatedSizes[themeFamily]) {
+            this.#calculatedSizes[themeFamily] = {};
         }
 
-        const size = this.calculatedSizes[themeFamily][key];
+        const size = this.#calculatedSizes[themeFamily][key];
 
         if (size != null) {
             return size;
         }
 
-        this.calculatedSizes[themeFamily][key] = this.calculateValueForSassProperty(key, themeFamily, el);
+        this.#calculatedSizes[themeFamily][key] = this.#calculateValueForSassProperty(key, themeFamily, el);
 
-        return this.calculatedSizes[themeFamily][key];
+        return this.#calculatedSizes[themeFamily][key];
     }
 
-    private calculateValueForSassProperty(property: SASS_PROPERTIES, theme: string, themeElement?: HTMLElement): number | undefined {
+    #calculateValueForSassProperty(property: SASS_PROPERTIES, theme: string, themeElement?: HTMLElement): number | undefined {
         const useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : theme.match('balham') ? 'balham' : theme.match('alpine') ? 'alpine' : 'custom');
         const defaultValue = HARD_CODED_SIZES[useTheme][property];
         const eDocument = this.gos.getDocument();
@@ -195,12 +195,12 @@ export class Environment extends BeanStub {
     }
 
     public chartMenuPanelWidth(): number | undefined {
-        return this.getSassVariable('chartMenuPanelWidth');
+        return this.#getSassVariable('chartMenuPanelWidth');
     }
 
     public getTheme():  ThemeDetails {
-        if (this.calculatedTheme) {
-            return this.calculatedTheme;
+        if (this.#calculatedTheme) {
+            return this.#calculatedTheme;
         }
 
         const reg = /\bag-(material|(?:theme-([\w\-]*)))\b/g;
@@ -225,8 +225,8 @@ export class Environment extends BeanStub {
 
         const theme = themeMatch[0];
 
-        this.calculatedTheme = { theme, el, themeFamily: theme.replace(/-dark$/, ''), allThemes };
-        return this.calculatedTheme;
+        this.#calculatedTheme = { theme, el, themeFamily: theme.replace(/-dark$/, ''), allThemes };
+        return this.#calculatedTheme;
     }
 
     // Material data table has strict guidelines about whitespace, and these values are different than the ones
@@ -234,7 +234,7 @@ export class Environment extends BeanStub {
     public getFromTheme(defaultValue: number, sassVariableName: SASS_PROPERTIES): number;
     public getFromTheme(defaultValue: null, sassVariableName: SASS_PROPERTIES): number | null | undefined;
     public getFromTheme(defaultValue: any, sassVariableName: SASS_PROPERTIES): any {
-        return this.getSassVariable(sassVariableName) ?? defaultValue;
+        return this.#getSassVariable(sassVariableName) ?? defaultValue;
     }
 
     public getDefaultRowHeight(): number {
@@ -272,10 +272,10 @@ export class Environment extends BeanStub {
     }
 
     protected destroy(): void {
-        this.calculatedSizes = null;
+        this.#calculatedSizes = null;
 
-        if (this.mutationObserver) {
-            this.mutationObserver.disconnect();
+        if (this.#mutationObserver) {
+            this.#mutationObserver.disconnect();
         }
 
         super.destroy();

@@ -17,16 +17,16 @@ export class HorizontalResizeService extends BeanStub {
     @Autowired('dragService') private dragService: DragService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
-    private dragStartX: number;
-    private resizeAmount: number;
+    #dragStartX: number;
+    #resizeAmount: number;
 
     public addResizeBar(params: HorizontalResizeParams): () => void {
         const dragSource: DragListenerParams = {
             dragStartPixels: params.dragStartPixels || 0,
             eElement: params.eResizeBar,
-            onDragStart: this.onDragStart.bind(this, params),
-            onDragStop: this.onDragStop.bind(this, params),
-            onDragging: this.onDragging.bind(this, params),
+            onDragStart: this.#onDragStart.bind(this, params),
+            onDragStop: this.#onDragStop.bind(this, params),
+            onDragging: this.#onDragging.bind(this, params),
             includeTouch: true,
             stopPropagationForTouch: true
         };
@@ -40,16 +40,16 @@ export class HorizontalResizeService extends BeanStub {
         return finishedWithResizeFunc;
     }
 
-    private onDragStart(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {
-        this.dragStartX = mouseEvent.clientX;
+    #onDragStart(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {
+        this.#dragStartX = mouseEvent.clientX;
 
-        this.setResizeIcons();
+        this.#setResizeIcons();
 
         const shiftKey = mouseEvent instanceof MouseEvent && mouseEvent.shiftKey === true;
         params.onResizeStart(shiftKey);
     }
 
-    private setResizeIcons(): void {
+    #setResizeIcons(): void {
 
         const ctrl = this.ctrlsService.get('gridCtrl');
         // change the body cursor, so when drag moves out of the drag bar, the cursor is still 'resize' (or 'move'
@@ -58,20 +58,20 @@ export class HorizontalResizeService extends BeanStub {
         ctrl.disableUserSelect(true);
     }
 
-    private onDragStop(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {
-        params.onResizeEnd(this.resizeAmount);
-        this.resetIcons();
+    #onDragStop(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {
+        params.onResizeEnd(this.#resizeAmount);
+        this.#resetIcons();
     }
 
-    private resetIcons(): void {
+    #resetIcons(): void {
         const ctrl = this.ctrlsService.get('gridCtrl');
         ctrl.setResizeCursor(false);
         ctrl.disableUserSelect(false);
     }
 
-    private onDragging(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {
-        this.resizeAmount = mouseEvent.clientX - this.dragStartX;
-        params.onResizing(this.resizeAmount);
+    #onDragging(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {
+        this.#resizeAmount = mouseEvent.clientX - this.#dragStartX;
+        params.onResizing(this.#resizeAmount);
     }
 
 }

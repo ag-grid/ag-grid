@@ -29,15 +29,15 @@ export class AgDialog extends AgPanel<DialogOptions> {
 
     @Autowired('popupService') private popupService: PopupService;
 
-    private isMaximizable: boolean = false;
-    private isMaximized: boolean = false;
-    private maximizeListeners: (() => void)[] = [];
-    private maximizeButtonComp: Component | undefined;
-    private maximizeIcon: Element | undefined;
-    private minimizeIcon: Element | undefined;
-    private resizeListenerDestroy: (() => void) | null | undefined = null;
+    #isMaximizable: boolean = false;
+    #isMaximized: boolean = false;
+    #maximizeListeners: (() => void)[] = [];
+    #maximizeButtonComp: Component | undefined;
+    #maximizeIcon: Element | undefined;
+    #minimizeIcon: Element | undefined;
+    #resizeListenerDestroy: (() => void) | null | undefined = null;
 
-    private lastPosition = {
+    #lastPosition = {
         x: 0,
         y: 0,
         width: 0,
@@ -74,7 +74,7 @@ export class AgDialog extends AgPanel<DialogOptions> {
             modal,
             eChild: eGui,
             closeOnEsc: true,
-            closedCallback: this.onClosed.bind(this),
+            closedCallback: this.#onClosed.bind(this),
             alwaysOnTop,
             ariaLabel: title || translate('ariaLabelDialog', 'Dialog'),
             afterGuiAttached
@@ -85,53 +85,53 @@ export class AgDialog extends AgPanel<DialogOptions> {
         }
     }
 
-    private onClosed(event?: MouseEvent | TouchEvent | KeyboardEvent): void {
+    #onClosed(event?: MouseEvent | TouchEvent | KeyboardEvent): void {
         this.destroy();
         this.config.closedCallback?.(event);
     }
 
-    private toggleMaximize() {
+    #toggleMaximize() {
         const position = this.positionableFeature.getPosition();
-        if (this.isMaximized) {
-            const { x, y, width, height } = this.lastPosition;
+        if (this.#isMaximized) {
+            const { x, y, width, height } = this.#lastPosition;
             this.setWidth(width);
             this.setHeight(height);
             this.positionableFeature.offsetElement(x, y);
         } else {
-            this.lastPosition.width = this.getWidth()!;
-            this.lastPosition.height = this.getHeight()!;
-            this.lastPosition.x = position.x;
-            this.lastPosition.y = position.y;
+            this.#lastPosition.width = this.getWidth()!;
+            this.#lastPosition.height = this.getHeight()!;
+            this.#lastPosition.x = position.x;
+            this.#lastPosition.y = position.y;
             this.positionableFeature.offsetElement(0, 0);
             this.setHeight('100%');
             this.setWidth('100%');
         }
 
-        this.isMaximized = !this.isMaximized;
-        this.refreshMaximizeIcon();
+        this.#isMaximized = !this.#isMaximized;
+        this.#refreshMaximizeIcon();
     }
 
-    private refreshMaximizeIcon() {
-        setDisplayed(this.maximizeIcon!, !this.isMaximized);
-        setDisplayed(this.minimizeIcon!, this.isMaximized);
+    #refreshMaximizeIcon() {
+        setDisplayed(this.#maximizeIcon!, !this.#isMaximized);
+        setDisplayed(this.#minimizeIcon!, this.#isMaximized);
     }
 
-    private clearMaximizebleListeners() {
-        if (this.maximizeListeners.length) {
-            this.maximizeListeners.forEach(destroyListener => destroyListener());
-            this.maximizeListeners.length = 0;
+    #clearMaximizebleListeners() {
+        if (this.#maximizeListeners.length) {
+            this.#maximizeListeners.forEach(destroyListener => destroyListener());
+            this.#maximizeListeners.length = 0;
         }
 
-        if (this.resizeListenerDestroy) {
-            this.resizeListenerDestroy();
-            this.resizeListenerDestroy = null;
+        if (this.#resizeListenerDestroy) {
+            this.#resizeListenerDestroy();
+            this.#resizeListenerDestroy = null;
         }
     }
 
     protected destroy(): void {
-        this.maximizeButtonComp = this.destroyBean(this.maximizeButtonComp);
+        this.#maximizeButtonComp = this.destroyBean(this.#maximizeButtonComp);
 
-        this.clearMaximizebleListeners();
+        this.#clearMaximizebleListeners();
         super.destroy();
     }
 
@@ -145,49 +145,49 @@ export class AgDialog extends AgPanel<DialogOptions> {
 
     public setMaximizable(maximizable: boolean) {
         if (!maximizable) {
-            this.clearMaximizebleListeners();
+            this.#clearMaximizebleListeners();
 
-            if (this.maximizeButtonComp) {
-                this.destroyBean(this.maximizeButtonComp);
-                this.maximizeButtonComp = this.maximizeIcon = this.minimizeIcon = undefined;
+            if (this.#maximizeButtonComp) {
+                this.destroyBean(this.#maximizeButtonComp);
+                this.#maximizeButtonComp = this.#maximizeIcon = this.#minimizeIcon = undefined;
             }
             return;
         }
 
         const eTitleBar = this.eTitleBar;
 
-        if (!eTitleBar || maximizable === this.isMaximizable) { return; }
+        if (!eTitleBar || maximizable === this.#isMaximizable) { return; }
 
-        const maximizeButtonComp = this.buildMaximizeAndMinimizeElements();
-        this.refreshMaximizeIcon();
+        const maximizeButtonComp = this.#buildMaximizeAndMinimizeElements();
+        this.#refreshMaximizeIcon();
 
-        maximizeButtonComp.addManagedListener(maximizeButtonComp.getGui(), 'click', this.toggleMaximize.bind(this));
+        maximizeButtonComp.addManagedListener(maximizeButtonComp.getGui(), 'click', this.#toggleMaximize.bind(this));
 
         this.addTitleBarButton(maximizeButtonComp, 0);
 
-        this.maximizeListeners.push(
-            this.addManagedListener(eTitleBar, 'dblclick', this.toggleMaximize.bind(this))!
+        this.#maximizeListeners.push(
+            this.addManagedListener(eTitleBar, 'dblclick', this.#toggleMaximize.bind(this))!
         );
 
-        this.resizeListenerDestroy = this.addManagedListener(this, 'resize', () => {
-            this.isMaximized = false;
-            this.refreshMaximizeIcon();
+        this.#resizeListenerDestroy = this.addManagedListener(this, 'resize', () => {
+            this.#isMaximized = false;
+            this.#refreshMaximizeIcon();
         });
     }
 
-    private buildMaximizeAndMinimizeElements(): Component{
-        const maximizeButtonComp = this.maximizeButtonComp =
+    #buildMaximizeAndMinimizeElements(): Component {
+        const maximizeButtonComp = this.#maximizeButtonComp =
         this.createBean(new Component(/* html */`<div class="ag-dialog-button"></span>`));
 
         const eGui = maximizeButtonComp.getGui();
 
-        this.maximizeIcon = createIconNoSpan('maximize', this.gos)!;
-        eGui.appendChild(this.maximizeIcon);
-        this.maximizeIcon.classList.add('ag-panel-title-bar-button-icon');
+        this.#maximizeIcon = createIconNoSpan('maximize', this.gos)!;
+        eGui.appendChild(this.#maximizeIcon);
+        this.#maximizeIcon.classList.add('ag-panel-title-bar-button-icon');
 
-        this.minimizeIcon = createIconNoSpan('minimize', this.gos)!;
-        eGui.appendChild(this.minimizeIcon);
-        this.minimizeIcon.classList.add('ag-panel-title-bar-button-icon');
+        this.#minimizeIcon = createIconNoSpan('minimize', this.gos)!;
+        eGui.appendChild(this.#minimizeIcon);
+        this.#minimizeIcon.classList.add('ag-panel-title-bar-button-icon');
 
         return maximizeButtonComp;
     }

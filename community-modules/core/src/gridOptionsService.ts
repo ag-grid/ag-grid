@@ -77,19 +77,19 @@ export class GridOptionsService {
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
     @Autowired('validationService') private validationService: ValidationService;
 
-    private destroyed = false;
+    #destroyed = false;
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
-    private scrollbarWidth: number;
-    private domDataKey = '__AG_' + Math.random().toString();
+    #scrollbarWidth: number;
+    #domDataKey = '__AG_' + Math.random().toString();
 
     // Store locally to avoid retrieving many times as these are requested for every callback
     @Autowired('gridApi') private readonly api: GridApi;    
     // This is quicker then having code call gridOptionsService.get('context')
-    private get context() {
+    get #context() {
         return this.gridOptions['context'];
     }
 
-    private propertyEventService: EventService = new EventService();
+    #propertyEventService: EventService = new EventService();
 
 
     @PostConstruct
@@ -99,14 +99,14 @@ export class GridOptionsService {
         this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
 
         // Ensure the propertyEventService has framework overrides set so that it can fire events outside of angular
-        this.propertyEventService.setFrameworkOverrides(this.frameworkOverrides);
+        this.#propertyEventService.setFrameworkOverrides(this.frameworkOverrides);
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
 
     }
     @PreDestroy
     private destroy(): void {
-        this.destroyed = true;
+        this.#destroyed = true;
     }
 
     /**
@@ -122,7 +122,7 @@ export class GridOptionsService {
      * @param property GridOption callback properties based on the fact that this property has a callback with params extending AgGridCommon
      */
     public getCallback<K extends CallbackProps>(property: K): WrappedCallback<K, GridOptions[K]> {
-        return this.mergeGridCommonParams(this.gridOptions[property]);
+        return this.#mergeGridCommonParams(this.gridOptions[property]);
     }
 
     /**
@@ -138,13 +138,13 @@ export class GridOptionsService {
     * @param callback User provided callback
     * @returns Wrapped callback where the params object not require api and context
     */
-    private mergeGridCommonParams<P extends AgGridCommon<any, any>, T>(callback: ((params: P) => T) | undefined):
+    #mergeGridCommonParams<P extends AgGridCommon<any, any>, T>(callback: ((params: P) => T) | undefined):
         ((params: WithoutGridCommon<P>) => T) | undefined {
         if (callback) {
             const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
                 const mergedParams = callbackParams as P;
                 mergedParams.api = this.api;
-                mergedParams.context = this.context;
+                mergedParams.context = this.#context;
 
                 return callback(mergedParams);
             };
@@ -265,15 +265,15 @@ export class GridOptionsService {
             if (this.gridOptions.debug) {
                 console.log(`AG Grid: Updated property ${event.type} from `, event.previousValue, ' to  ', event.currentValue);
             }
-            this.propertyEventService.dispatchEvent(event);
+            this.#propertyEventService.dispatchEvent(event);
         });
     }
 
     addEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
-        this.propertyEventService.addEventListener(key, listener as any);
+        this.#propertyEventService.addEventListener(key, listener as any);
     }
     removeEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
-        this.propertyEventService.removeEventListener(key, listener as any);
+        this.#propertyEventService.removeEventListener(key, listener as any);
     }
 
     // responsible for calling the onXXX functions on gridOptions
@@ -283,7 +283,7 @@ export class GridOptionsService {
     globalEventHandlerFactory = (restrictToSyncOnly?: boolean) => {
         return (eventName: string, event?: any) => {
             // prevent events from being fired _after_ the grid has been destroyed
-            if (this.destroyed) {
+            if (this.#destroyed) {
                 return;
             }
 
@@ -299,7 +299,7 @@ export class GridOptionsService {
                     eventHandler(event);
                 })
             }
-        }
+        };
     };
 
     // *************** Helper methods ************************** //
@@ -310,12 +310,12 @@ export class GridOptionsService {
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
     // allow the user to provide the scroll width before we work it out.
     public getScrollbarWidth() {
-        if (this.scrollbarWidth == null) {
+        if (this.#scrollbarWidth == null) {
             const useGridOptions = typeof this.gridOptions.scrollbarWidth === 'number' && this.gridOptions.scrollbarWidth >= 0;
             const scrollbarWidth = useGridOptions ? this.gridOptions.scrollbarWidth : getScrollbarWidth();
 
             if (scrollbarWidth != null) {
-                this.scrollbarWidth = scrollbarWidth;
+                this.#scrollbarWidth = scrollbarWidth;
 
                 this.eventService.dispatchEvent({
                     type: Events.EVENT_SCROLLBAR_WIDTH_CHANGED
@@ -323,7 +323,7 @@ export class GridOptionsService {
             }
         }
 
-        return this.scrollbarWidth;
+        return this.#scrollbarWidth;
     }
 
     public isRowModelType(rowModelType: RowModelType): boolean {
@@ -369,7 +369,7 @@ export class GridOptionsService {
 
             const height = this.getCallback('getRowHeight')!(params);
 
-            if (this.isNumeric(height)) {
+            if (this.#isNumeric(height)) {
                 if (height === 0) {
                     warnOnce('The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.');
                 }
@@ -378,15 +378,15 @@ export class GridOptionsService {
         }
 
         if (rowNode.detail && this.get('masterDetail')) {
-            return this.getMasterDetailRowHeight();
+            return this.#getMasterDetailRowHeight();
         }
 
-        const rowHeight = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ? this.gridOptions.rowHeight : defaultRowHeight;
+        const rowHeight = this.gridOptions.rowHeight && this.#isNumeric(this.gridOptions.rowHeight) ? this.gridOptions.rowHeight : defaultRowHeight;
 
         return { height: rowHeight, estimated: false };
     }
 
-    private getMasterDetailRowHeight(): { height: number, estimated: boolean } {
+    #getMasterDetailRowHeight(): { height: number, estimated: boolean } {
         // if autoHeight, we want the height to grow to the new height starting at 1, as otherwise a flicker would happen,
         // as the detail goes to the default (eg 200px) and then immediately shrink up/down to the new measured height
         // (due to auto height) which looks bad, especially if doing row animation.
@@ -394,7 +394,7 @@ export class GridOptionsService {
             return { height: 1, estimated: false };
         }
 
-        if (this.isNumeric(this.gridOptions.detailRowHeight)) {
+        if (this.#isNumeric(this.gridOptions.detailRowHeight)) {
             return { height: this.gridOptions.detailRowHeight, estimated: false };
         }
 
@@ -417,12 +417,12 @@ export class GridOptionsService {
         return this.environment.getDefaultRowHeight();
     }
 
-    private isNumeric(value: any): value is number {
+    #isNumeric(value: any): value is number {
         return !isNaN(value) && typeof value === 'number' && isFinite(value);
     }
 
     public getDomDataKey(): string {
-        return this.domDataKey;
+        return this.#domDataKey;
     }
 
     // returns the dom data, or undefined if not found
@@ -565,14 +565,14 @@ export class GridOptionsService {
     public getGridCommonParams<TData = any, TContext = any>(): AgGridCommon<TData, TContext> {
         return {
             api: this.api,
-            context: this.context
+            context: this.#context
         };
     }
 
     public addGridCommonParams<T extends AgGridCommon<TData, TContext>, TData = any, TContext = any>(params: WithoutGridCommon<T>): T {
         const updatedParams = params as T;
         updatedParams.api = this.api;
-        updatedParams.context = this.context;
+        updatedParams.context = this.#context;
         return updatedParams;
     }
 }

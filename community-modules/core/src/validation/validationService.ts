@@ -20,20 +20,20 @@ export class ValidationService extends BeanStub {
     }
 
     public processGridOptions(options: GridOptions): void {
-        this.processOptions(options, GRID_OPTIONS_VALIDATORS);
+        this.#processOptions(options, GRID_OPTIONS_VALIDATORS);
     }
 
     public processColumnDefs(options: ColDef | ColGroupDef): void {
-        this.processOptions(options, COL_DEF_VALIDATORS);
+        this.#processOptions(options, COL_DEF_VALIDATORS);
     }
 
-    private processOptions<T extends {}>(options: T, validator: OptionsValidator<T>): void {
+    #processOptions<T extends {}>(options: T, validator: OptionsValidator<T>): void {
         const { validations, deprecations, allProperties, propertyExceptions, objectName, docsUrl } = validator;
         
         if (allProperties && this.gridOptions.suppressPropertyNamesCheck !== true) {
-            this.checkProperties(
+            this.#checkProperties(
                 options,
-                [...propertyExceptions ?? [], ...Object.keys(deprecations)],
+                [...(propertyExceptions ?? []), ...Object.keys(deprecations)],
                 allProperties,
                 objectName,
                 docsUrl,
@@ -77,11 +77,11 @@ export class ValidationService extends BeanStub {
                     const value = options[key];
                     if (Array.isArray(value)) {
                         value.forEach(item => {
-                            this.processOptions(item, fromGetter);
+                            this.#processOptions(item, fromGetter);
                         });
                         return;
                     }
-                    this.processOptions(options[key] as any, fromGetter);
+                    this.#processOptions(options[key] as any, fromGetter);
                     return;
                 }
 
@@ -116,7 +116,7 @@ export class ValidationService extends BeanStub {
             }
 
             if (dependencies) {                
-                const warning = this.checkForWarning(key, dependencies, options);
+                const warning = this.#checkForWarning(key, dependencies, options);
                 if (warning) {
                     warnings.add(warning);
                     return;
@@ -130,7 +130,7 @@ export class ValidationService extends BeanStub {
         }
     };
 
-    private checkForWarning<T extends {}>(key: keyof T, validator: DependencyValidator<T>, options: T): string | null {
+    #checkForWarning<T extends {}>(key: keyof T, validator: DependencyValidator<T>, options: T): string | null {
         if (typeof validator === 'function') {
             return validator(options, this.gridOptions);    
         }
@@ -153,10 +153,12 @@ export class ValidationService extends BeanStub {
         return `'${String(key)}' requires '${failedKey}' to be ${possibleOptions[0]}.`;
     }
 
-    private checkProperties<T extends {}>(
+    #checkProperties<T extends {}>(
         object: T,
-        exceptions: string[], // deprecated properties generally
-        validProperties: string[], // properties to recommend
+        // deprecated properties generally
+        exceptions: string[],
+        // properties to recommend
+        validProperties: string[],
         containerName: string,
         docsUrl?: string
     ): void {

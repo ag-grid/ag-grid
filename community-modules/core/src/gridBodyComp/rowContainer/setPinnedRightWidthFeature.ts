@@ -8,23 +8,23 @@ export class SetPinnedRightWidthFeature extends BeanStub {
 
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
 
-    private element: HTMLElement;
+    #element: HTMLElement;
 
     constructor(element: HTMLElement) {
         super();
-        this.element = element;
+        this.#element = element;
     }
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, this.onPinnedRightWidthChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, this.#onPinnedRightWidthChanged.bind(this));
     }
 
-    private onPinnedRightWidthChanged(): void {
+    #onPinnedRightWidthChanged(): void {
         const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
         const displayed = rightWidth > 0;
-        setDisplayed(this.element, displayed);
-        setFixedWidth(this.element, rightWidth);
+        setDisplayed(this.#element, displayed);
+        setFixedWidth(this.#element, rightWidth);
     }
 
     public getWidth(): number {

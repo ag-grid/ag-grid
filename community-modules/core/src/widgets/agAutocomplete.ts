@@ -38,17 +38,17 @@ export class AgAutocomplete extends Component {
 
     @RefSelector('eAutocompleteInput') private eAutocompleteInput: AgInputTextField;
 
-    private isListOpen = false;
-    private autocompleteList: AgAutocompleteList | null;
-    private hidePopup: () => void;
-    private autocompleteListParams: AutocompleteListParams;
-    private lastPosition: number = 0;
-    private valid: boolean = true;
-    private validationMessage: string | null;
-    private listAriaLabel: string;
-    private listGenerator?: (value: string | null, position: number) => AutocompleteListParams;
-    private validator?: (value: string | null) => string | null;
-    private forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
+    #isListOpen = false;
+    #autocompleteList: AgAutocompleteList | null;
+    #hidePopup: () => void;
+    #autocompleteListParams: AutocompleteListParams;
+    #lastPosition: number = 0;
+    #valid: boolean = true;
+    #validationMessage: string | null;
+    #listAriaLabel: string;
+    #listGenerator?: (value: string | null, position: number) => AutocompleteListParams;
+    #validator?: (value: string | null) => string | null;
+    #forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
 
     constructor() {
         super(/* html */`
@@ -59,71 +59,71 @@ export class AgAutocomplete extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.eAutocompleteInput.onValueChange(value => this.onValueChanged(value));
+        this.eAutocompleteInput.onValueChange(value => this.#onValueChanged(value));
         this.eAutocompleteInput.getInputElement().setAttribute('autocomplete', 'off');
 
-        this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
+        this.addGuiEventListener('keydown', this.#onKeyDown.bind(this));
 
-        this.addGuiEventListener('click', this.updatePositionAndList.bind(this));
+        this.addGuiEventListener('click', this.#updatePositionAndList.bind(this));
 
         this.addDestroyFunc(() => {
-            this.destroyBean(this.autocompleteList);
+            this.destroyBean(this.#autocompleteList);
         });
 
-        this.addGuiEventListener('focusout', () => this.onFocusOut());
+        this.addGuiEventListener('focusout', () => this.#onFocusOut());
     }
 
-    private onValueChanged(value?: string | null): void {
+    #onValueChanged(value?: string | null): void {
         const parsedValue = makeNull(value);
-        this.updateValue(parsedValue);
-        this.updateAutocompleteList(parsedValue);
+        this.#updateValue(parsedValue);
+        this.#updateAutocompleteList(parsedValue);
     }
 
-    private updateValue(value: string | null): void {
-        this.updateLastPosition();
+    #updateValue(value: string | null): void {
+        this.#updateLastPosition();
         this.dispatchEvent<AutocompleteValueChangedEvent>({
             type: AgAutocomplete.EVENT_VALUE_CHANGED,
             value
         });
-        this.validate(value);
+        this.#validate(value);
     }
 
-    private updateAutocompleteList(value: string | null): void {
-        const autocompleteListParams = this.listGenerator?.(value, this.lastPosition) ?? { enabled: false };
-        if (!autocompleteListParams.type || autocompleteListParams.type !== this.autocompleteListParams?.type) {
-            if (this.isListOpen) {
-                this.closeList();
+    #updateAutocompleteList(value: string | null): void {
+        const autocompleteListParams = this.#listGenerator?.(value, this.#lastPosition) ?? { enabled: false };
+        if (!autocompleteListParams.type || autocompleteListParams.type !== this.#autocompleteListParams?.type) {
+            if (this.#isListOpen) {
+                this.#closeList();
             }
         }
-        this.autocompleteListParams = autocompleteListParams;
-        if (this.autocompleteListParams?.enabled) {
-            if (!this.isListOpen) {
-               this.openList();
+        this.#autocompleteListParams = autocompleteListParams;
+        if (this.#autocompleteListParams?.enabled) {
+            if (!this.#isListOpen) {
+               this.#openList();
             }
-            const { searchString } = this.autocompleteListParams;
-            this.autocompleteList!.setSearch(searchString ?? '');
+            const { searchString } = this.#autocompleteListParams;
+            this.#autocompleteList!.setSearch(searchString ?? '');
         } else {
-            if (this.isListOpen) {
-                this.closeList();
+            if (this.#isListOpen) {
+                this.#closeList();
             }
         }
     }
 
-    private onKeyDown(event: KeyboardEvent): void {
+    #onKeyDown(event: KeyboardEvent): void {
         const key = event.key;
 
-        this.updateLastPosition();
+        this.#updateLastPosition();
 
         switch (key) {
             case KeyCode.ENTER:
-                this.onEnterKeyDown(event);
+                this.#onEnterKeyDown(event);
                 break;
             case KeyCode.TAB:
-                this.onTabKeyDown(event);
+                this.#onTabKeyDown(event);
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:
-                this.onUpDownKeyDown(event, key);
+                this.#onUpDownKeyDown(event, key);
                 break;
             case KeyCode.LEFT:
             case KeyCode.RIGHT:
@@ -131,80 +131,80 @@ export class AgAutocomplete extends Component {
             case KeyCode.PAGE_END:
                 // input position is updated after this is called, so do async
                 setTimeout(() => {
-                    this.updatePositionAndList();
+                    this.#updatePositionAndList();
                 });
                 break;
             case KeyCode.ESCAPE:
-                this.onEscapeKeyDown(event);
+                this.#onEscapeKeyDown(event);
                 break;
             case KeyCode.SPACE:
-                if (event.ctrlKey && !this.isListOpen) {
+                if (event.ctrlKey && !this.#isListOpen) {
                     event.preventDefault();
-                    this.forceOpenList();
+                    this.#forceOpenList();
                 }
                 break;
         }
     }
 
-    private confirmSelection(): void {
-        const selectedValue = this.autocompleteList?.getSelectedValue();
+    #confirmSelection(): void {
+        const selectedValue = this.#autocompleteList?.getSelectedValue();
         if (selectedValue) {
-            this.closeList();
+            this.#closeList();
             this.dispatchEvent<AutocompleteOptionSelectedEvent>({
                 type: AgAutocomplete.EVENT_OPTION_SELECTED,
                 value: this.getValue()!,
-                position: this.lastPosition,
+                position: this.#lastPosition,
                 updateEntry: selectedValue,
-                autocompleteType: this.autocompleteListParams.type
+                autocompleteType: this.#autocompleteListParams.type
             });
         }
     }
     
-    private onTabKeyDown(event: KeyboardEvent): void {
-        if (this.isListOpen) {
+    #onTabKeyDown(event: KeyboardEvent): void {
+        if (this.#isListOpen) {
             event.preventDefault();
             event.stopPropagation();
-            this.confirmSelection();
+            this.#confirmSelection();
         }    
     }
     
-    private onEnterKeyDown(event: KeyboardEvent): void {
+    #onEnterKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (this.isListOpen) {
-            this.confirmSelection();
+        if (this.#isListOpen) {
+            this.#confirmSelection();
         } else {
-            this.onCompleted();
+            this.#onCompleted();
         }
     }
 
-    private onUpDownKeyDown(event: KeyboardEvent, key: string): void {
+    #onUpDownKeyDown(event: KeyboardEvent, key: string): void {
         event.preventDefault();
-        if (!this.isListOpen) {
-            this.forceOpenList();
+        if (!this.#isListOpen) {
+            this.#forceOpenList();
         } else {
-            this.autocompleteList?.onNavigationKeyDown(event, key);
+            this.#autocompleteList?.onNavigationKeyDown(event, key);
         }
     }
 
-    private onEscapeKeyDown(event: KeyboardEvent): void {
-        if (this.isListOpen) {
+    #onEscapeKeyDown(event: KeyboardEvent): void {
+        if (this.#isListOpen) {
             event.preventDefault();
             event.stopPropagation();
-            this.closeList();
-            this.setCaret(this.lastPosition, true);
+            this.#closeList();
+            this.#setCaret(this.#lastPosition, true);
         }
     }
 
-    private onFocusOut(): void {
-        if (this.isListOpen) { this.closeList(); }
+    #onFocusOut(): void {
+        if (this.#isListOpen) { this.#closeList(); }
     }
 
-    private updatePositionAndList(): void {
-        this.updateLastPosition();
-        this.updateAutocompleteList(this.eAutocompleteInput.getValue() ?? null);
+    #updatePositionAndList(): void {
+        this.#updateLastPosition();
+        this.#updateAutocompleteList(this.eAutocompleteInput.getValue() ?? null);
     }
 
-    private setCaret(position: number, setFocus?: boolean): void {
+    #setCaret(position: number, setFocus?: boolean): void {
         const eDocument = this.gos.getDocument();
         const activeEl = this.gos.getActiveDomElement();
         if (setFocus && (!activeEl || activeEl === eDocument.body)) {
@@ -219,35 +219,35 @@ export class AgAutocomplete extends Component {
         }
     }
 
-    private forceOpenList(): void {
-        this.onValueChanged(this.eAutocompleteInput.getValue());
+    #forceOpenList(): void {
+        this.#onValueChanged(this.eAutocompleteInput.getValue());
     }
 
-    private updateLastPosition(): void {
-        this.lastPosition = this.eAutocompleteInput.getInputElement().selectionStart ?? 0;
+    #updateLastPosition(): void {
+        this.#lastPosition = this.eAutocompleteInput.getInputElement().selectionStart ?? 0;
     }
 
-    private validate(value: string | null): void {
-        if (!this.validator) { return; }
-        this.validationMessage = this.validator(value);
-        this.eAutocompleteInput.getInputElement().setCustomValidity(this.validationMessage ?? '');
-        this.valid = !this.validationMessage;
+    #validate(value: string | null): void {
+        if (!this.#validator) { return; }
+        this.#validationMessage = this.#validator(value);
+        this.eAutocompleteInput.getInputElement().setCustomValidity(this.#validationMessage ?? '');
+        this.#valid = !this.#validationMessage;
         this.dispatchEvent<AutocompleteValidChangedEvent>({
             type: AgAutocomplete.EVENT_VALID_CHANGED,
-            isValid: this.valid,
-            validationMessage: this.validationMessage
+            isValid: this.#valid,
+            validationMessage: this.#validationMessage
         })
     }
 
-    private openList(): void {
-        this.isListOpen = true;
+    #openList(): void {
+        this.#isListOpen = true;
         // this is unmanaged as it gets destroyed/created each time it is opened
-        this.autocompleteList = this.createBean(new AgAutocompleteList({
-            autocompleteEntries: this.autocompleteListParams.entries!,
-            onConfirmed: () => this.confirmSelection(),
-            forceLastSelection: this.forceLastSelection
+        this.#autocompleteList = this.createBean(new AgAutocompleteList({
+            autocompleteEntries: this.#autocompleteListParams.entries!,
+            onConfirmed: () => this.#confirmSelection(),
+            forceLastSelection: this.#forceLastSelection
         }));
-        const ePopupGui = this.autocompleteList.getGui();
+        const ePopupGui = this.#autocompleteList.getGui();
 
         const positionParams: PopupPositionParams & { type: string, eventSource: HTMLElement } = {
             ePopup: ePopupGui,
@@ -262,22 +262,22 @@ export class AgAutocomplete extends Component {
             eChild: ePopupGui,
             anchorToElement: this.getGui(),
             positionCallback: () => this.popupService.positionPopupByComponent(positionParams),
-            ariaLabel: this.listAriaLabel
+            ariaLabel: this.#listAriaLabel
         });
-        this.hidePopup = addPopupRes.hideFunc;
+        this.#hidePopup = addPopupRes.hideFunc;
 
-        this.autocompleteList.afterGuiAttached();
+        this.#autocompleteList.afterGuiAttached();
     }
 
-    private closeList(): void {
-        this.isListOpen = false;
-        this.hidePopup();
-        this.destroyBean(this.autocompleteList);
-        this.autocompleteList = null;
+    #closeList(): void {
+        this.#isListOpen = false;
+        this.#hidePopup();
+        this.destroyBean(this.#autocompleteList);
+        this.#autocompleteList = null;
     }
 
-    private onCompleted(): void {
-        if (this.isListOpen) { this.closeList(); }
+    #onCompleted(): void {
+        if (this.#isListOpen) { this.#closeList(); }
         this.dispatchEvent<AutocompleteValueConfirmedEvent>({
             type: AgAutocomplete.EVENT_VALUE_CONFIRMED,
             value: this.getValue(),
@@ -300,22 +300,22 @@ export class AgAutocomplete extends Component {
     }
 
     public setListAriaLabel(label: string): this {
-        this.listAriaLabel = label;
+        this.#listAriaLabel = label;
         return this;
     }
 
     public setListGenerator(listGenerator?: (value: string | null, position: number) => AutocompleteListParams): this {
-        this.listGenerator = listGenerator;
+        this.#listGenerator = listGenerator;
         return this;
     }
 
     public setValidator(validator?: (value: string | null) => string | null): this {
-        this.validator = validator;
+        this.#validator = validator;
         return this;
     }
 
     public isValid(): boolean {
-        return this.valid;
+        return this.#valid;
     }
 
     public setValue(params: {
@@ -327,17 +327,17 @@ export class AgAutocomplete extends Component {
     }): void {
         const { value, position, silent, updateListOnlyIfOpen, restoreFocus } = params;
         this.eAutocompleteInput.setValue(value, true);
-        this.setCaret(position ?? this.lastPosition, restoreFocus);
+        this.#setCaret(position ?? this.#lastPosition, restoreFocus);
         if (!silent) {
-            this.updateValue(value);
+            this.#updateValue(value);
         }
-        if (!updateListOnlyIfOpen || this.isListOpen) {
-            this.updateAutocompleteList(value);
+        if (!updateListOnlyIfOpen || this.#isListOpen) {
+            this.#updateAutocompleteList(value);
         }
     }
 
     public setForceLastSelection(forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean): this {
-        this.forceLastSelection = forceLastSelection;
+        this.#forceLastSelection = forceLastSelection;
         return this;
     }
 

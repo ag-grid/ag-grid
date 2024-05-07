@@ -21,42 +21,42 @@ export enum HeaderRowType {
 
 export class HeaderRowComp extends Component {
 
-    private ctrl: HeaderRowCtrl;
+    #ctrl: HeaderRowCtrl;
 
-    private headerComps: { [key: HeaderCellCtrlInstanceId]: AbstractHeaderCellComp<AbstractHeaderCellCtrl>; } = {};
+    #headerComps: { [key: HeaderCellCtrlInstanceId]: AbstractHeaderCellComp<AbstractHeaderCellCtrl>; } = {};
 
     constructor(ctrl: HeaderRowCtrl) {
         super();
 
-        this.ctrl = ctrl;
-        this.setTemplate(/* html */`<div class="${this.ctrl.getHeaderRowClass()}" role="row"></div>`);
+        this.#ctrl = ctrl;
+        this.setTemplate(/* html */`<div class="${this.#ctrl.getHeaderRowClass()}" role="row"></div>`);
     }
 
     //noinspection JSUnusedLocalSymbols
     @PostConstruct
     private init(): void {
-        setAriaRowIndex(this.getGui(), this.ctrl.getAriaRowIndex());
+        setAriaRowIndex(this.getGui(), this.#ctrl.getAriaRowIndex());
 
         const compProxy: IHeaderRowComp = {
             setHeight: height => this.getGui().style.height = height,
             setTop: top => this.getGui().style.top = top,
-            setHeaderCtrls: (ctrls, forceOrder) => this.setHeaderCtrls(ctrls, forceOrder),
+            setHeaderCtrls: (ctrls, forceOrder) => this.#setHeaderCtrls(ctrls, forceOrder),
             setWidth: width => this.getGui().style.width = width,
         };
 
-        this.ctrl.setComp(compProxy);
+        this.#ctrl.setComp(compProxy);
     }
 
     @PreDestroy
     private destroyHeaderCtrls(): void {
-        this.setHeaderCtrls([], false);
+        this.#setHeaderCtrls([], false);
     }
 
-    private setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean): void {
+    #setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean): void {
         if (!this.isAlive()) { return; }
 
-        const oldComps = this.headerComps;
-        this.headerComps = {};
+        const oldComps = this.#headerComps;
+        this.#headerComps = {};
 
         ctrls.forEach(ctrl => {
             const id = ctrl.getInstanceId();
@@ -64,11 +64,11 @@ export class HeaderRowComp extends Component {
             delete oldComps[id];
 
             if (comp == null) {
-                comp = this.createHeaderComp(ctrl);
+                comp = this.#createHeaderComp(ctrl);
                 this.getGui().appendChild(comp.getGui());
             }
 
-            this.headerComps[id] = comp;
+            this.#headerComps[id] = comp;
         });
 
         iterateObject(oldComps, (id: string, comp: AbstractHeaderCellComp<AbstractHeaderCellCtrl>) => {
@@ -77,7 +77,7 @@ export class HeaderRowComp extends Component {
         });
 
         if (forceOrder) {
-            const comps = getAllValuesInObject(this.headerComps);
+            const comps = getAllValuesInObject(this.#headerComps);
             // ordering the columns by left position orders them in the order they appear on the screen
             comps.sort((a: AbstractHeaderCellComp<AbstractHeaderCellCtrl>, b: AbstractHeaderCellComp<AbstractHeaderCellCtrl>) => {
                 const leftA = a.getCtrl().getColumnGroupChild().getLeft()!;
@@ -89,11 +89,11 @@ export class HeaderRowComp extends Component {
         }
     }
 
-    private createHeaderComp(headerCtrl: AbstractHeaderCellCtrl): AbstractHeaderCellComp<AbstractHeaderCellCtrl> {
+    #createHeaderComp(headerCtrl: AbstractHeaderCellCtrl): AbstractHeaderCellComp<AbstractHeaderCellCtrl> {
 
         let result: AbstractHeaderCellComp<AbstractHeaderCellCtrl>;
 
-        switch (this.ctrl.getType()) {
+        switch (this.#ctrl.getType()) {
             case HeaderRowType.COLUMN_GROUP:
                 result = new HeaderGroupCellComp(headerCtrl as HeaderGroupCellCtrl);
                 break;

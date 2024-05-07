@@ -24,19 +24,19 @@ interface VirtualListParams {
 }
 
 export class VirtualList<C extends Component = Component> extends TabGuardComp {
-    private readonly cssIdentifier: string;
-    private readonly ariaRole: string;
-    private listName?: string;
+    readonly #cssIdentifier: string;
+    readonly #ariaRole: string;
+    #listName?: string;
 
-    private model: VirtualListModel;
-    private renderedRows = new Map<number, { rowComponent: C; eDiv: HTMLDivElement; value: any; }>();
-    private componentCreator: (value: any, listItemElement: HTMLElement) => C;
-    private componentUpdater: (value: any, component: C) => void;
-    private rowHeight = 20;
-    private pageSize = -1;
-    private isScrolling = false;
-    private lastFocusedRowIndex: number | null;
-    private isHeightFromTheme: boolean = true;
+    #model: VirtualListModel;
+    #renderedRows = new Map<number, { rowComponent: C; eDiv: HTMLDivElement; value: any; }>();
+    #componentCreator: (value: any, listItemElement: HTMLElement) => C;
+    #componentUpdater: (value: any, component: C) => void;
+    #rowHeight = 20;
+    #pageSize = -1;
+    #isScrolling = false;
+    #lastFocusedRowIndex: number | null;
+    #isHeightFromTheme: boolean = true;
 
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
@@ -47,16 +47,16 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
 
         const { cssIdentifier = 'default', ariaRole = 'listbox', listName } = params || {};
 
-        this.cssIdentifier = cssIdentifier;
-        this.ariaRole = ariaRole;
-        this.listName = listName;
+        this.#cssIdentifier = cssIdentifier;
+        this.#ariaRole = ariaRole;
+        this.#listName = listName;
     }
 
     @PostConstruct
     private postConstruct(): void {
-        this.addScrollListener();
-        this.rowHeight = this.getItemHeight();
-        this.addResizeObserver();
+        this.#addScrollListener();
+        this.#rowHeight = this.#getItemHeight();
+        this.#addResizeObserver();
 
         this.initialiseTabGuard({
             onFocusIn: (e: FocusEvent) => this.onFocusIn(e),
@@ -66,46 +66,46 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
             handleKeyDown: e => this.handleKeyDown(e)
         });
 
-        this.setAriaProperties();
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onGridStylesChanged.bind(this));
+        this.#setAriaProperties();
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.#onGridStylesChanged.bind(this));
     }
 
-    private onGridStylesChanged(): void {
-        this.rowHeight = this.getItemHeight();
+    #onGridStylesChanged(): void {
+        this.#rowHeight = this.#getItemHeight();
         this.refresh();
     }
 
-    private setAriaProperties(): void {
+    #setAriaProperties(): void {
         const translate = this.localeService.getLocaleTextFunc();
-        const listName = translate('ariaDefaultListName', this.listName || 'List');
+        const listName = translate('ariaDefaultListName', this.#listName || 'List');
         const ariaEl = this.eContainer;
 
-        setAriaRole(ariaEl, this.ariaRole);
+        setAriaRole(ariaEl, this.#ariaRole);
         setAriaLabel(ariaEl, listName);
     }
 
-    private addResizeObserver(): void {
+    #addResizeObserver(): void {
         // do this in an animation frame to prevent loops
-        const listener = () => this.animationFrameService.requestAnimationFrame(() => this.drawVirtualRows());
+        const listener = () => this.animationFrameService.requestAnimationFrame(() => this.#drawVirtualRows());
         const destroyObserver = this.resizeObserverService.observeResize(this.getGui(), listener);
         this.addDestroyFunc(destroyObserver);
     }
 
     protected focusInnerElement(fromBottom: boolean): void {
-        this.focusRow(fromBottom ? this.model.getRowCount() - 1 : 0);
+        this.focusRow(fromBottom ? this.#model.getRowCount() - 1 : 0);
     }
 
     protected onFocusIn(e: FocusEvent): void {
         const target = e.target as HTMLElement;
 
         if (target.classList.contains('ag-virtual-list-item')) {
-            this.lastFocusedRowIndex = getAriaPosInSet(target) - 1;
+            this.#lastFocusedRowIndex = getAriaPosInSet(target) - 1;
         }
     }
 
     protected onFocusOut(e: FocusEvent): void {
         if (!this.getFocusableElement().contains(e.relatedTarget as HTMLElement)) {
-            this.lastFocusedRowIndex = null;
+            this.#lastFocusedRowIndex = null;
         }
     }
 
@@ -113,7 +113,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         switch (e.key) {
             case KeyCode.UP:
             case KeyCode.DOWN:
-                if (this.navigate(e.key === KeyCode.UP)) {
+                if (this.#navigate(e.key === KeyCode.UP)) {
                     e.preventDefault();
                 }
 
@@ -130,7 +130,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {
-        if (this.navigate(e.shiftKey)) {
+        if (this.#navigate(e.shiftKey)) {
             e.preventDefault();
         } else {
             stopPropagationForAgGrid(e);
@@ -138,12 +138,12 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         }
     }
 
-    private navigate(up: boolean): boolean {
-        if (this.lastFocusedRowIndex == null) { return false; }
+    #navigate(up: boolean): boolean {
+        if (this.#lastFocusedRowIndex == null) { return false; }
 
-        const nextRow = this.lastFocusedRowIndex + (up ? -1 : 1);
+        const nextRow = this.#lastFocusedRowIndex + (up ? -1 : 1);
 
-        if (nextRow < 0 || nextRow >= this.model.getRowCount()) { return false; }
+        if (nextRow < 0 || nextRow >= this.#model.getRowCount()) { return false; }
 
         this.focusRow(nextRow);
 
@@ -158,7 +158,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
             hasFocus = true;
         }
 
-        const rowCount = this.model.getRowCount() - 1;
+        const rowCount = this.#model.getRowCount() - 1;
 
         let newIndex = -1;
 
@@ -167,9 +167,9 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         } else if (key === KeyCode.PAGE_END) {
             newIndex = rowCount;
         } else if (key === KeyCode.PAGE_DOWN) {
-            newIndex = Math.min(fromItem + this.pageSize, rowCount);
+            newIndex = Math.min(fromItem + this.#pageSize, rowCount);
         } else if (key === KeyCode.PAGE_UP) {
-            newIndex = Math.max(fromItem - this.pageSize, 0)
+            newIndex = Math.max(fromItem - this.#pageSize, 0)
         }
 
         if (newIndex === -1) {
@@ -186,19 +186,19 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     }
 
     public getLastFocusedRow(): number | null {
-        return this.lastFocusedRowIndex;
+        return this.#lastFocusedRowIndex;
     }
 
     public focusRow(rowNumber: number): void {
-        if (this.isScrolling) { return; }
-        this.isScrolling = true;
+        if (this.#isScrolling) { return; }
+        this.#isScrolling = true;
 
         this.ensureIndexVisible(rowNumber);
 
         this.animationFrameService.requestAnimationFrame(() => {
-            this.isScrolling = false;
+            this.#isScrolling = false;
             if (!this.isAlive()) { return; }
-            const renderedRow = this.renderedRows.get(rowNumber);
+            const renderedRow = this.#renderedRows.get(rowNumber);
 
             if (renderedRow) {
                 renderedRow.eDiv.focus();
@@ -207,26 +207,27 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     }
 
     public getComponentAt(rowIndex: number): C | undefined {
-        const comp = this.renderedRows.get(rowIndex);
+        const comp = this.#renderedRows.get(rowIndex);
 
         return comp && comp.rowComponent;
     }
 
     public forEachRenderedRow(func: (comp: C, idx: number) => void): void {
-        this.renderedRows.forEach((value, key)  => func(value.rowComponent, key));
+        this.#renderedRows.forEach((value, key)  => func(value.rowComponent, key));
     }
 
     private static getTemplate(cssIdentifier: string) {
-        return (/* html */
-            `<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
-                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer"></div>
-            </div>`
+        return (
+            /* html */
+            (`<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
+    <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer"></div>
+</div>`)
         );
     }
 
-    private getItemHeight(): number {
-        if (!this.isHeightFromTheme) {
-            return this.rowHeight;
+    #getItemHeight(): number {
+        if (!this.#isHeightFromTheme) {
+            return this.#rowHeight;
         }
         return this.environment.getListItemHeight();
     }
@@ -235,22 +236,22 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
      * Returns true if the view had to be scrolled, otherwise, false.
      */
     public ensureIndexVisible(index: number, scrollPartialIntoView: boolean = true): boolean {
-        const lastRow = this.model.getRowCount();
+        const lastRow = this.#model.getRowCount();
 
         if (typeof index !== 'number' || index < 0 || index >= lastRow) {
             console.warn('AG Grid: invalid row index for ensureIndexVisible: ' + index);
             return false;
         }
 
-        const rowTopPixel = index * this.rowHeight;
-        const rowBottomPixel = rowTopPixel + this.rowHeight;
+        const rowTopPixel = index * this.#rowHeight;
+        const rowBottomPixel = rowTopPixel + this.#rowHeight;
         const eGui = this.getGui();
 
         const viewportTopPixel = eGui.scrollTop;
         const viewportHeight = eGui.offsetHeight;
         const viewportBottomPixel = viewportTopPixel + viewportHeight;
 
-        const diff = scrollPartialIntoView ? 0 : this.rowHeight;
+        const diff = scrollPartialIntoView ? 0 : this.#rowHeight;
         const viewportScrolledPastRow = viewportTopPixel > rowTopPixel + diff;
         const viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel - diff;
 
@@ -271,15 +272,15 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     }
 
     public setComponentCreator(componentCreator: (value: any, listItemElement: HTMLElement) => C): void {
-        this.componentCreator = componentCreator;
+        this.#componentCreator = componentCreator;
     }
 
     public setComponentUpdater(componentUpdater: (value: any, component: C) => void): void {
-        this.componentUpdater = componentUpdater;
+        this.#componentUpdater = componentUpdater;
     }
 
     public getRowHeight(): number {
-        return this.rowHeight;
+        return this.#rowHeight;
     }
 
     public getScrollTop(): number {
@@ -287,139 +288,139 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     }
 
     public setRowHeight(rowHeight: number): void {
-        this.isHeightFromTheme = false;
-        this.rowHeight = rowHeight;
+        this.#isHeightFromTheme = false;
+        this.#rowHeight = rowHeight;
         this.refresh();
     }
 
     public refresh(softRefresh?: boolean): void {
-        if (this.model == null || !this.isAlive()) { return; }
+        if (this.#model == null || !this.isAlive()) { return; }
 
-        const rowCount = this.model.getRowCount();
-        this.eContainer.style.height = `${rowCount * this.rowHeight}px`;
+        const rowCount = this.#model.getRowCount();
+        this.eContainer.style.height = `${rowCount * this.#rowHeight}px`;
 
         // ensure height is applied before attempting to redraw rows
-        waitUntil(() => this.eContainer.clientHeight >= rowCount * this.rowHeight,
+        waitUntil(() => this.eContainer.clientHeight >= rowCount * this.#rowHeight,
             () => {
                 if (!this.isAlive()) { return; }
 
-                if (this.canSoftRefresh(softRefresh)) {
-                    this.drawVirtualRows(true);
+                if (this.#canSoftRefresh(softRefresh)) {
+                    this.#drawVirtualRows(true);
                 } else {
-                    this.clearVirtualRows();
-                    this.drawVirtualRows();
+                    this.#clearVirtualRows();
+                    this.#drawVirtualRows();
                 }
             }
         );
     }
 
-    private canSoftRefresh(softRefresh: boolean | undefined): boolean {
-        return !!(softRefresh && this.renderedRows.size && typeof this.model.areRowsEqual === 'function' && this.componentUpdater);
+    #canSoftRefresh(softRefresh: boolean | undefined): boolean {
+        return !!(softRefresh && this.#renderedRows.size && typeof this.#model.areRowsEqual === 'function' && this.#componentUpdater);
     }
 
-    private clearVirtualRows() {
-        this.renderedRows.forEach((_, rowIndex) => this.removeRow(rowIndex));
+    #clearVirtualRows() {
+        this.#renderedRows.forEach((_, rowIndex) => this.#removeRow(rowIndex));
     }
 
-    private drawVirtualRows(softRefresh?: boolean) {
-        if (!this.isAlive() || !this.model) { return; }
+    #drawVirtualRows(softRefresh?: boolean) {
+        if (!this.isAlive() || !this.#model) { return; }
 
         const gui = this.getGui();
         const topPixel = gui.scrollTop;
         const bottomPixel = topPixel + gui.offsetHeight;
-        const firstRow = Math.floor(topPixel / this.rowHeight);
-        const lastRow = Math.floor(bottomPixel / this.rowHeight);
-        this.pageSize = Math.floor((bottomPixel - topPixel) / this.rowHeight);
+        const firstRow = Math.floor(topPixel / this.#rowHeight);
+        const lastRow = Math.floor(bottomPixel / this.#rowHeight);
+        this.#pageSize = Math.floor((bottomPixel - topPixel) / this.#rowHeight);
 
-        this.ensureRowsRendered(firstRow, lastRow, softRefresh);
+        this.#ensureRowsRendered(firstRow, lastRow, softRefresh);
     }
 
-    private ensureRowsRendered(start: number, finish: number, softRefresh?: boolean) {
+    #ensureRowsRendered(start: number, finish: number, softRefresh?: boolean) {
         // remove any rows that are no longer required
-        this.renderedRows.forEach((_, rowIndex) => {
-            if ((rowIndex < start || rowIndex > finish) && rowIndex !== this.lastFocusedRowIndex) {
-                this.removeRow(rowIndex);
+        this.#renderedRows.forEach((_, rowIndex) => {
+            if ((rowIndex < start || rowIndex > finish) && rowIndex !== this.#lastFocusedRowIndex) {
+                this.#removeRow(rowIndex);
             }
         });
 
         if (softRefresh) {
             // refresh any existing rows
-            this.refreshRows();
+            this.#refreshRows();
         }
 
         // insert any required new rows
         for (let rowIndex = start; rowIndex <= finish; rowIndex++) {
-            if (this.renderedRows.has(rowIndex)) { continue; }
+            if (this.#renderedRows.has(rowIndex)) { continue; }
 
             // check this row actually exists (in case overflow buffer window exceeds real data)
-            if (rowIndex < this.model.getRowCount()) {
-                this.insertRow(rowIndex);
+            if (rowIndex < this.#model.getRowCount()) {
+                this.#insertRow(rowIndex);
             }
         }
     }
 
-    private insertRow(rowIndex: number): void {
-        const value = this.model.getRow(rowIndex);
+    #insertRow(rowIndex: number): void {
+        const value = this.#model.getRow(rowIndex);
         const eDiv = document.createElement('div');
 
-        eDiv.classList.add('ag-virtual-list-item', `ag-${this.cssIdentifier}-virtual-list-item`);
-        setAriaRole(eDiv, this.ariaRole === 'tree' ? 'treeitem' : 'option');
-        setAriaSetSize(eDiv, this.model.getRowCount());
+        eDiv.classList.add('ag-virtual-list-item', `ag-${this.#cssIdentifier}-virtual-list-item`);
+        setAriaRole(eDiv, this.#ariaRole === 'tree' ? 'treeitem' : 'option');
+        setAriaSetSize(eDiv, this.#model.getRowCount());
         setAriaPosInSet(eDiv, rowIndex + 1);
         eDiv.setAttribute('tabindex', '-1');
 
-        eDiv.style.height = `${this.rowHeight}px`;
-        eDiv.style.top = `${this.rowHeight * rowIndex}px`;
+        eDiv.style.height = `${this.#rowHeight}px`;
+        eDiv.style.top = `${this.#rowHeight * rowIndex}px`;
 
-        const rowComponent = this.componentCreator(value, eDiv);
+        const rowComponent = this.#componentCreator(value, eDiv);
 
-        rowComponent.addGuiEventListener('focusin', () => this.lastFocusedRowIndex = rowIndex);
+        rowComponent.addGuiEventListener('focusin', () => this.#lastFocusedRowIndex = rowIndex);
 
         eDiv.appendChild(rowComponent.getGui());
 
         // keep the DOM order consistent with the order of the rows
-        if (this.renderedRows.has(rowIndex - 1)) {
-            this.renderedRows.get(rowIndex - 1)!.eDiv.insertAdjacentElement('afterend', eDiv);
-        } else if (this.renderedRows.has(rowIndex + 1)) {
-            this.renderedRows.get(rowIndex + 1)!.eDiv.insertAdjacentElement('beforebegin', eDiv);
+        if (this.#renderedRows.has(rowIndex - 1)) {
+            this.#renderedRows.get(rowIndex - 1)!.eDiv.insertAdjacentElement('afterend', eDiv);
+        } else if (this.#renderedRows.has(rowIndex + 1)) {
+            this.#renderedRows.get(rowIndex + 1)!.eDiv.insertAdjacentElement('beforebegin', eDiv);
         } else {
             this.eContainer.appendChild(eDiv);
         }
 
-        this.renderedRows.set(rowIndex, { rowComponent, eDiv, value });
+        this.#renderedRows.set(rowIndex, { rowComponent, eDiv, value });
     }
 
-    private removeRow(rowIndex: number) {
-        const component = this.renderedRows.get(rowIndex)!;
+    #removeRow(rowIndex: number) {
+        const component = this.#renderedRows.get(rowIndex)!;
 
         this.eContainer.removeChild(component.eDiv);
         this.destroyBean(component.rowComponent);
-        this.renderedRows.delete(rowIndex);
+        this.#renderedRows.delete(rowIndex);
     }
 
-    private refreshRows(): void {
-        const rowCount = this.model.getRowCount();
-        this.renderedRows.forEach((row, rowIndex) => {
+    #refreshRows(): void {
+        const rowCount = this.#model.getRowCount();
+        this.#renderedRows.forEach((row, rowIndex) => {
             if (rowIndex >= rowCount) {
-                this.removeRow(rowIndex);
+                this.#removeRow(rowIndex);
             } else {
-                const newValue = this.model.getRow(rowIndex);
-                if (this.model.areRowsEqual?.(row.value, newValue)) {
-                    this.componentUpdater(newValue, row.rowComponent);
+                const newValue = this.#model.getRow(rowIndex);
+                if (this.#model.areRowsEqual?.(row.value, newValue)) {
+                    this.#componentUpdater(newValue, row.rowComponent);
                 } else {
                     // to be replaced later
-                    this.removeRow(rowIndex);
+                    this.#removeRow(rowIndex);
                 }
             }
         });
     }
 
-    private addScrollListener() {
-        this.addGuiEventListener('scroll', () => this.drawVirtualRows(), { passive: true });
+    #addScrollListener() {
+        this.addGuiEventListener('scroll', () => this.#drawVirtualRows(), { passive: true });
     }
 
     public setModel(model: VirtualListModel): void {
-        this.model = model;
+        this.#model = model;
     }
 
     public getAriaElement(): Element {
@@ -429,7 +430,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     public destroy(): void {
         if (!this.isAlive()) { return; }
 
-        this.clearVirtualRows();
+        this.#clearVirtualRows();
         super.destroy();
     }
 }

@@ -18,8 +18,8 @@ export class DefaultDateComponent extends Component implements IDateComp {
         );
     }
 
-    private params: IDateParams;
-    private usingSafariDatePicker: boolean;
+    #params: IDateParams;
+    #usingSafariDatePicker: boolean;
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
@@ -28,15 +28,15 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public init(params: IDateParams): void {
-        this.params = params;
-        this.setParams(params);
+        this.#params = params;
+        this.#setParams(params);
 
         const inputElement = this.eDateInput.getInputElement();
 
         // ensures that the input element is focussed when a clear button is clicked,
         // unless using safari as there is no clear button and focus does not work properly
         this.addManagedListener(inputElement, 'mousedown', () => {
-            if (this.eDateInput.isDisabled() || this.usingSafariDatePicker) { return; }
+            if (this.eDateInput.isDisabled() || this.#usingSafariDatePicker) { return; }
             inputElement.focus();
         });
         
@@ -44,16 +44,16 @@ export class DefaultDateComponent extends Component implements IDateComp {
             if (e.target !== this.gos.getActiveDomElement()) { return; }
             if (this.eDateInput.isDisabled()) { return; }
             
-            this.params.onDateChanged();
+            this.#params.onDateChanged();
         });
         
     }
 
-    private setParams(params: IDateParams): void {
+    #setParams(params: IDateParams): void {
         const inputElement = this.eDateInput.getInputElement();
 
-        const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
-        this.usingSafariDatePicker = shouldUseBrowserDatePicker && isBrowserSafari();
+        const shouldUseBrowserDatePicker = this.#shouldUseBrowserDatePicker(params);
+        this.#usingSafariDatePicker = shouldUseBrowserDatePicker && isBrowserSafari();
 
         inputElement.type = shouldUseBrowserDatePicker ? 'date' : 'text';
 
@@ -111,8 +111,8 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public refresh(params: IDateParams): void {
-        this.params = params;
-        this.setParams(params);
+        this.#params = params;
+        this.#setParams(params);
     }
 
     public getDate(): Date | null {
@@ -141,7 +141,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         }
     }
 
-    private shouldUseBrowserDatePicker(params: IDateParams): boolean {
+    #shouldUseBrowserDatePicker(params: IDateParams): boolean {
         if (params.filterParams && params.filterParams.browserDatePicker != null) {
             return params.filterParams.browserDatePicker;
         }

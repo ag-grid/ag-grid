@@ -21,15 +21,15 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         </div>`;
 
     @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
-    private params: ICheckboxCellRendererParams;
+    #params: ICheckboxCellRendererParams;
 
     constructor() {
         super(CheckboxCellRenderer.TEMPLATE);
     }
 
     public init(params: ICheckboxCellRendererParams): void {
-        this.params = params;
-        this.updateCheckbox(params);
+        this.#params = params;
+        this.#updateCheckbox(params);
         const inputEl = this.eCheckbox.getInputElement();
         inputEl.setAttribute('tabindex', '-1');
         setAriaLive(inputEl, 'polite');
@@ -43,32 +43,32 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
     
             const isSelected = this.eCheckbox.getValue();
     
-            this.onCheckboxChanged(isSelected)
+            this.#onCheckboxChanged(isSelected)
         });
 
         this.addManagedListener(inputEl, 'dblclick', (event: Event) => {
             stopPropagationForAgGrid(event);
         });
 
-        this.addManagedListener(this.params.eGridCell, 'keydown', (event: KeyboardEvent) => {
+        this.addManagedListener(this.#params.eGridCell, 'keydown', (event: KeyboardEvent) => {
             if (event.key === KeyCode.SPACE && !this.eCheckbox.isDisabled()) {
-                if (this.params.eGridCell === this.gos.getActiveDomElement()) {
+                if (this.#params.eGridCell === this.gos.getActiveDomElement()) {
                     this.eCheckbox.toggle();
                 }
                 const isSelected = this.eCheckbox.getValue();
-                this.onCheckboxChanged(isSelected);
+                this.#onCheckboxChanged(isSelected);
                 event.preventDefault();
             }
         });
     }
 
     public refresh(params: ICheckboxCellRendererParams): boolean {
-        this.params = params;
-        this.updateCheckbox(params);
+        this.#params = params;
+        this.#updateCheckbox(params);
         return true;
     }
 
-    private updateCheckbox(params: ICheckboxCellRendererParams): void {
+    #updateCheckbox(params: ICheckboxCellRendererParams): void {
         let isSelected: boolean | undefined;
         let displayed = true;
         if (params.node.group && params.column) {
@@ -100,8 +100,8 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         this.eCheckbox.setInputAriaLabel(ariaLabel);
     }
 
-    private onCheckboxChanged(isSelected?: boolean): void {
-        const { column, node, value } = this.params;
+    #onCheckboxChanged(isSelected?: boolean): void {
+        const { column, node, value } = this.#params;
         const eventStarted: WithoutGridCommon<CellEditingStartedEvent> = {
             type: Events.EVENT_CELL_EDITING_STARTED,
             column: column!,
@@ -114,7 +114,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         };
         this.eventService.dispatchEvent(eventStarted);
 
-        const valueChanged = this.params.node.setDataValue(this.params.column!, isSelected, 'edit');
+        const valueChanged = this.#params.node.setDataValue(this.#params.column!, isSelected, 'edit');
 
         const eventStopped: WithoutGridCommon<CellEditingStoppedEvent> = {
             type: Events.EVENT_CELL_EDITING_STOPPED,

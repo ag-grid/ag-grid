@@ -24,16 +24,16 @@ export class RowNodeSorter extends BeanStub {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
 
-    private isAccentedSort: boolean;
-    private primaryColumnsSortGroups: boolean;
+    #isAccentedSort: boolean;
+    #primaryColumnsSortGroups: boolean;
 
     @PostConstruct
     public init(): void {
-        this.isAccentedSort = this.gos.get('accentedSort');
-        this.primaryColumnsSortGroups = this.gos.isColumnsSortingCoupledToGroup();
+        this.#isAccentedSort = this.gos.get('accentedSort');
+        this.#primaryColumnsSortGroups = this.gos.isColumnsSortingCoupledToGroup();
 
-        this.addManagedPropertyListener('accentedSort', (propChange) => this.isAccentedSort = propChange.currentValue);
-        this.addManagedPropertyListener('autoGroupColumnDef', () => this.primaryColumnsSortGroups = this.gos.isColumnsSortingCoupledToGroup());
+        this.addManagedPropertyListener('accentedSort', (propChange) => this.#isAccentedSort = propChange.currentValue);
+        this.addManagedPropertyListener('autoGroupColumnDef', () => this.#primaryColumnsSortGroups = this.gos.isColumnsSortingCoupledToGroup());
     }
 
     public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
@@ -55,17 +55,17 @@ export class RowNodeSorter extends BeanStub {
             const sortOption = sortOptions[i];
             const isDescending = sortOption.sort === 'desc';
 
-            const valueA: any = this.getValue(nodeA, sortOption.column);
-            const valueB: any = this.getValue(nodeB, sortOption.column);
+            const valueA: any = this.#getValue(nodeA, sortOption.column);
+            const valueB: any = this.#getValue(nodeB, sortOption.column);
 
             let comparatorResult: number;
-            const providedComparator = this.getComparator(sortOption, nodeA);
+            const providedComparator = this.#getComparator(sortOption, nodeA);
             if (providedComparator) {
                 //if comparator provided, use it
                 comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isDescending);
             } else {
                 //otherwise do our own comparison
-                comparatorResult = _.defaultComparator(valueA, valueB, this.isAccentedSort);
+                comparatorResult = _.defaultComparator(valueA, valueB, this.#isAccentedSort);
             }
 
             // user provided comparators can return 'NaN' if they don't correctly handle 'undefined' values, this
@@ -80,7 +80,7 @@ export class RowNodeSorter extends BeanStub {
         return sortedNodeA.currentPos - sortedNodeB.currentPos;
     }
 
-    private getComparator(sortOption: SortOption, rowNode: RowNode):
+    #getComparator(sortOption: SortOption, rowNode: RowNode):
         ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isDescending: boolean) => number) | undefined {
 
         const column = sortOption.column;
@@ -103,8 +103,8 @@ export class RowNodeSorter extends BeanStub {
         return primaryColumn.getColDef().comparator;
     }
 
-    private getValue(node: RowNode, column: Column): any {
-        if (!this.primaryColumnsSortGroups) {
+    #getValue(node: RowNode, column: Column): any {
+        if (!this.#primaryColumnsSortGroups) {
             return this.valueService.getValue(column, node, false, false);
         }
 

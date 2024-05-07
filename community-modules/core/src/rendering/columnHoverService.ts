@@ -7,10 +7,10 @@ import { WithoutGridCommon } from "../interfaces/iCommon";
 //@Bean('columnHoverService')
 export class ColumnHoverService extends BeanStub {
 
-    private selectedColumns: Column[] | null;
+    #selectedColumns: Column[] | null;
 
     public setMouseOver(columns: Column[]): void {
-        this.selectedColumns = columns;
+        this.#selectedColumns = columns;
         const event: WithoutGridCommon<ColumnHoverChangedEvent> = {
             type: Events.EVENT_COLUMN_HOVER_CHANGED
         };
@@ -18,7 +18,7 @@ export class ColumnHoverService extends BeanStub {
     }
 
     public clearMouseOver(): void {
-        this.selectedColumns = null;
+        this.#selectedColumns = null;
         const event: WithoutGridCommon<ColumnHoverChangedEvent> = {
             type: Events.EVENT_COLUMN_HOVER_CHANGED
         };
@@ -26,6 +26,6 @@ export class ColumnHoverService extends BeanStub {
     }
 
     public isHovered(column: Column): boolean {
-        return !!this.selectedColumns && this.selectedColumns.indexOf(column) >= 0;
+        return !!this.#selectedColumns && this.#selectedColumns.indexOf(column) >= 0;
     }
 }

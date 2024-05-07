@@ -79,7 +79,7 @@ export class RowCssClassCalculator {
         }
 
         pushAll(classes, this.processClassesFromGridOptions(params.rowNode));
-        pushAll(classes, this.preProcessRowClassRules(params.rowNode));
+        pushAll(classes, this.#preProcessRowClassRules(params.rowNode));
 
         // we use absolute position unless we are doing print layout
         classes.push(params.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute');
@@ -141,7 +141,7 @@ export class RowCssClassCalculator {
         return res;
     }
 
-    private preProcessRowClassRules(rowNode: RowNode): string[] {
+    #preProcessRowClassRules(rowNode: RowNode): string[] {
         const res: string[] = [];
 
         this.processRowClassRules(rowNode, (className: string) => {

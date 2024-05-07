@@ -48,10 +48,10 @@ export abstract class PillDragComp<TItem> extends Component {
         this.setTemplate(this.template ?? PillDragComp.TEMPLATE);
         const eGui = this.getGui();
 
-        this.addElementClasses(eGui);
-        this.addElementClasses(this.eDragHandle, 'drag-handle');
-        this.addElementClasses(this.eText, 'text');
-        this.addElementClasses(this.eButton, 'button');
+        this.#addElementClasses(eGui);
+        this.#addElementClasses(this.eDragHandle, 'drag-handle');
+        this.#addElementClasses(this.eText, 'text');
+        this.#addElementClasses(this.eButton, 'button');
 
         this.eDragHandle.appendChild(createIconNoSpan('columnDrag', this.gos)!);
 
@@ -60,12 +60,12 @@ export abstract class PillDragComp<TItem> extends Component {
         this.setupComponents();
 
         if (!this.ghost && this.isDraggable()) {
-            this.addDragSource();
+            this.#addDragSource();
         }
 
         this.setupAria();
 
-        this.setupTooltip();
+        this.#setupTooltip();
         this.activateTabIndex();
 
         this.refreshDraggable();
@@ -96,7 +96,7 @@ export abstract class PillDragComp<TItem> extends Component {
         }
     }
 
-    private setupTooltip(): void {
+    #setupTooltip(): void {
         const refresh = () => {
             const newTooltipText = this.getTooltip();
             this.setTooltip({ newTooltipText });
@@ -115,26 +115,26 @@ export abstract class PillDragComp<TItem> extends Component {
         return DragAndDropService.ICON_NOT_ALLOWED;
     }
 
-    private addDragSource(): void {
-        const { dragAndDropService, eDragHandle } = this;
+    #addDragSource(): void {
+        
         const getDragItem = this.createGetDragItem();
         const defaultIconName = this.getDefaultIconName();
         const dragSource: DragSource = {
             type: this.getDragSourceType(),
             sourceId: this.getDragSourceId(),
-            eElement: eDragHandle,
+            eElement: this.eDragHandle,
             getDefaultIconName: () => defaultIconName,
             getDragItem,
             dragItemName: this.getDisplayName()
         };
 
-        dragAndDropService.addDragSource(dragSource, true);
-        this.addDestroyFunc(() => dragAndDropService.removeDragSource(dragSource));
+        this.dragAndDropService.addDragSource(dragSource, true);
+        this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
     }
 
     protected setupComponents(): void {
-        this.setTextValue();
-        this.setupRemove();
+        this.#setTextValue();
+        this.#setupRemove();
 
         if (this.ghost) {
             this.addCssClass('ag-column-drop-cell-ghost');
@@ -149,7 +149,7 @@ export abstract class PillDragComp<TItem> extends Component {
         setDisplayed(this.eButton, this.isRemovable());
     }
 
-    private setupRemove(): void {
+    #setupRemove(): void {
         this.refreshRemove();
 
         const agEvent: AgEvent = { type: PillDragComp.EVENT_COLUMN_REMOVE };
@@ -183,14 +183,14 @@ export abstract class PillDragComp<TItem> extends Component {
         return this.getDisplayName();
     }
 
-    private setTextValue(): void {
+    #setTextValue(): void {
         const displayValue = this.getDisplayValue();
         const displayValueSanitised: any = escapeString(displayValue);
 
         this.eText.innerHTML = displayValueSanitised;
     }
 
-    private addElementClasses(el: HTMLElement, suffix?: string) {
+    #addElementClasses(el: HTMLElement, suffix?: string) {
         suffix = suffix ? `-${suffix}` : '';
         const direction = this.horizontal ? 'horizontal' : 'vertical';
         el.classList.add(`ag-column-drop-cell${suffix}`, `ag-column-drop-${direction}-cell${suffix}`);

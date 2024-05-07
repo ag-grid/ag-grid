@@ -37,7 +37,7 @@ import { AgMenuItemRenderer } from "../../widgets/agMenuItemRenderer";
 //@Bean('userComponentRegistry')
 export class UserComponentRegistry extends BeanStub {
 
-    private agGridDefaults: { [key: string]: any } = {
+    #agGridDefaults: { [key: string]: any } = {
         //date
         agDateInput: DefaultDateComponent,
 
@@ -88,7 +88,7 @@ export class UserComponentRegistry extends BeanStub {
     };
 
     /** Used to provide useful error messages if a user is trying to use an enterprise component without loading the module. */
-    private enterpriseAgDefaultCompsModule: Record<string, ModuleNames> = {
+    #enterpriseAgDefaultCompsModule: Record<string, ModuleNames> = {
         agSetColumnFilter: ModuleNames.SetFilterModule,
         agSetColumnFloatingFilter: ModuleNames.SetFilterModule,
         agMultiColumnFilter: ModuleNames.MultiFilterModule,
@@ -99,30 +99,30 @@ export class UserComponentRegistry extends BeanStub {
         agRichSelectCellEditor: ModuleNames.RichSelectModule,
         agDetailCellRenderer: ModuleNames.MasterDetailModule,
         agSparklineCellRenderer: ModuleNames.SparklinesModule
-    }
+    };
 
-    private jsComps: { [key: string]: any } = {};
+    #jsComps: { [key: string]: any } = {};
 
     @PostConstruct
     private init(): void {
         const comps = this.gos.get('components');
         if (comps != null) {
-            iterateObject(comps, (key, component) => this.registerJsComponent(key, component));
+            iterateObject(comps, (key, component) => this.#registerJsComponent(key, component));
         }
     }
 
     public registerDefaultComponent(name: string, component: any) {
 
-        if (this.agGridDefaults[name]) {
+        if (this.#agGridDefaults[name]) {
             console.error(`Trying to overwrite a default component. You should call registerComponent`);
             return;
         }
 
-        this.agGridDefaults[name] = component;
+        this.#agGridDefaults[name] = component;
     }
 
-    private registerJsComponent(name: string, component: any) {
-        this.jsComps[name] = component;
+    #registerJsComponent(name: string, component: any) {
+        this.#jsComps[name] = component;
     }
 
     public retrieve(propertyName: string, name: string): { componentFromFramework: boolean, component: any } | null {
@@ -137,32 +137,32 @@ export class UserComponentRegistry extends BeanStub {
             return createResult(registeredViaFrameworkComp, true);
         }
 
-        const jsComponent = this.jsComps[name];
+        const jsComponent = this.#jsComps[name];
         if (jsComponent) {
             const isFwkComp = this.getFrameworkOverrides().isFrameworkComponent(jsComponent);
             return createResult(jsComponent, isFwkComp);
         }
 
-        const defaultComponent = this.agGridDefaults[name];
+        const defaultComponent = this.#agGridDefaults[name];
         if (defaultComponent) {
             return createResult(defaultComponent, false);
         }
 
-        const moduleForComponent = this.enterpriseAgDefaultCompsModule[name];
+        const moduleForComponent = this.#enterpriseAgDefaultCompsModule[name];
         if (moduleForComponent) {
             ModuleRegistry.__assertRegistered(moduleForComponent, `AG Grid '${propertyName}' component: ${name}`, this.context.getGridId());
         } else {
-            doOnce(() => { this.warnAboutMissingComponent(propertyName, name) }, "MissingComp" + name);
+            doOnce(() => { this.#warnAboutMissingComponent(propertyName, name) }, "MissingComp" + name);
         }
 
         return null;
     }
 
-    private warnAboutMissingComponent(propertyName: string, componentName: string) {
+    #warnAboutMissingComponent(propertyName: string, componentName: string) {
         const validComponents = [
             // Don't include the old names / internals in potential suggestions
-            ...Object.keys(this.agGridDefaults).filter(k => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)),
-            ...Object.keys(this.jsComps)];
+            ...Object.keys(this.#agGridDefaults).filter(k => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)),
+            ...Object.keys(this.#jsComps)];
         const suggestions = fuzzySuggestions(componentName, validComponents, true, 0.8).values;
 
         console.warn(`AG Grid: Could not find '${componentName}' component. It was configured as "${propertyName}: '${componentName}'" but it wasn't found in the list of registered components.`);

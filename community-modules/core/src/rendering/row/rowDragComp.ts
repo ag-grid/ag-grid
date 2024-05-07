@@ -16,7 +16,7 @@ export interface IRowDragItem extends DragItem {
 
 export class RowDragComp extends Component {
 
-    private dragSource: DragSource | null = null;
+    #dragSource: DragSource | null = null;
 
     @Autowired('beans') private readonly beans: Beans;
 
@@ -38,12 +38,12 @@ export class RowDragComp extends Component {
         if (!this.customGui) {
             this.setTemplate(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`);
             this.getGui().appendChild(createIconNoSpan('rowDrag', this.gos, null)!);
-            this.addDragSource();
+            this.#addDragSource();
         } else {
             this.setDragElement(this.customGui, this.dragStartPixels);
         }
 
-        this.checkCompatibility();
+        this.#checkCompatibility();
 
         if (!this.suppressVisibilityChange) {
             const strategy = this.gos.get('rowDragManaged') ?
@@ -56,10 +56,10 @@ export class RowDragComp extends Component {
 
     public setDragElement(dragElement: HTMLElement, dragStartPixels?: number) {
         this.setTemplateFromElement(dragElement);
-        this.addDragSource(dragStartPixels);
+        this.#addDragSource(dragStartPixels);
     }
 
-    private getSelectedNodes(): RowNode[] {
+    #getSelectedNodes(): RowNode[] {
         const isRowDragMultiRow = this.gos.get('rowDragMultiRow');
         if (!isRowDragMultiRow) { return [this.rowNode]; }
 
@@ -69,7 +69,7 @@ export class RowDragComp extends Component {
     }
 
     // returns true if all compatibility items work out
-    private checkCompatibility(): void {
+    #checkCompatibility(): void {
         const managed = this.gos.get('rowDragManaged');
         const treeData = this.gos.get('treeData');
 
@@ -78,16 +78,16 @@ export class RowDragComp extends Component {
         }
     }
 
-    private getDragItem(): IRowDragItem {
+    #getDragItem(): IRowDragItem {
         return {
             rowNode: this.rowNode,
-            rowNodes: this.getSelectedNodes(),
+            rowNodes: this.#getSelectedNodes(),
             columns: this.column ? [this.column] : undefined,
             defaultTextValue: this.cellValueFn(),
         };
     }
 
-    private getRowDragText(column?: Column) {
+    #getRowDragText(column?: Column) {
         if (column) {
             const colDef = column.getColDef();
             if (colDef.rowDragText) {
@@ -97,77 +97,77 @@ export class RowDragComp extends Component {
         return this.gos.get('rowDragText');
     }
 
-    private addDragSource(dragStartPixels: number = 4): void {
+    #addDragSource(dragStartPixels: number = 4): void {
         // if this is changing the drag element, delete the previous dragSource
-        if (this.dragSource) { this.removeDragSource(); }
+        if (this.#dragSource) { this.removeDragSource(); }
 
         const translate = this.localeService.getLocaleTextFunc();
 
-        this.dragSource = {
+        this.#dragSource = {
             type: DragSourceType.RowDrag,
             eElement: this.getGui(),
             dragItemName: () => {
-                const dragItem = this.getDragItem();
+                const dragItem = this.#getDragItem();
                 const dragItemCount = dragItem.rowNodes?.length || 1;
 
-                const rowDragText = this.getRowDragText(this.column);
+                const rowDragText = this.#getRowDragText(this.column);
                 if (rowDragText) {
                     return rowDragText(dragItem, dragItemCount);
                 }
 
                 return dragItemCount === 1 ? this.cellValueFn() : `${dragItemCount} ${translate('rowDragRows', 'rows')}`;
             },
-            getDragItem: () => this.getDragItem(),
+            getDragItem: () => this.#getDragItem(),
             dragStartPixels,
             dragSourceDomDataKey: this.gos.getDomDataKey()
         };
 
-        this.beans.dragAndDropService.addDragSource(this.dragSource, true);
+        this.beans.dragAndDropService.addDragSource(this.#dragSource, true);
     }
 
     @PreDestroy
     private removeDragSource() {
-        if (this.dragSource) {
-            this.beans.dragAndDropService.removeDragSource(this.dragSource);
+        if (this.#dragSource) {
+            this.beans.dragAndDropService.removeDragSource(this.#dragSource);
         }
-        this.dragSource = null;
+        this.#dragSource = null;
     }
 }
 
 class VisibilityStrategy extends BeanStub {
-    private readonly parent: RowDragComp;
-    private readonly column: Column | undefined;
+    readonly #parent: RowDragComp;
+    readonly #column: Column | undefined;
     protected readonly rowNode: RowNode;
 
     constructor(parent: RowDragComp, rowNode: RowNode, column?: Column) {
         super();
-        this.parent = parent;
+        this.#parent = parent;
         this.rowNode = rowNode;
-        this.column = column;
+        this.#column = column;
     }
 
     protected setDisplayedOrVisible(neverDisplayed: boolean): void {
         const displayedOptions = { skipAriaHidden: true };
         if (neverDisplayed) {
-            this.parent.setDisplayed(false, displayedOptions);
+            this.#parent.setDisplayed(false, displayedOptions);
         } else {
             let shown: boolean = true;
             let isShownSometimes: boolean = false;
 
-            if (this.column) {
-                shown = this.column.isRowDrag(this.rowNode) || this.parent.isCustomGui();
-                isShownSometimes = isFunction(this.column.getColDef().rowDrag);
+            if (this.#column) {
+                shown = this.#column.isRowDrag(this.rowNode) || this.#parent.isCustomGui();
+                isShownSometimes = isFunction(this.#column.getColDef().rowDrag);
             }
 
             // if shown sometimes, them some rows can have drag handle while other don't,
             // so we use setVisible to keep the handles horizontally aligned (as setVisible
             // keeps the empty space, whereas setDisplayed looses the space)
             if (isShownSometimes) {
-                this.parent.setDisplayed(true, displayedOptions);
-                this.parent.setVisible(shown, displayedOptions);
+                this.#parent.setDisplayed(true, displayedOptions);
+                this.#parent.setVisible(shown, displayedOptions);
             } else {
-                this.parent.setDisplayed(shown, displayedOptions);
-                this.parent.setVisible(true, displayedOptions);
+                this.#parent.setDisplayed(shown, displayedOptions);
+                this.#parent.setVisible(true, displayedOptions);
             }
         }
     }
@@ -175,7 +175,7 @@ class VisibilityStrategy extends BeanStub {
 
 // when non managed, the visibility depends on suppressRowDrag property only
 class NonManagedVisibilityStrategy extends VisibilityStrategy {
-    private readonly beans: Beans;
+    readonly beans: Beans;
 
     constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column?: Column) {
         super(parent, rowNode, column);
@@ -184,22 +184,22 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedPropertyListener('suppressRowDrag', this.onSuppressRowDrag.bind(this));
+        this.addManagedPropertyListener('suppressRowDrag', this.#onSuppressRowDrag.bind(this));
 
         // in case data changes, then we need to update visibility of drag item
-        this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.workOutVisibility.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.#workOutVisibility.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.#workOutVisibility.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.#workOutVisibility.bind(this));
+        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.#workOutVisibility.bind(this));
 
-        this.workOutVisibility();
+        this.#workOutVisibility();
     }
 
-    private onSuppressRowDrag(): void {
-        this.workOutVisibility();
+    #onSuppressRowDrag(): void {
+        this.#workOutVisibility();
     }
 
-    private workOutVisibility(): void {
+    #workOutVisibility(): void {
         // only show the drag if both sort and filter are not present
         const neverDisplayed = this.gos.get('suppressRowDrag');
         this.setDisplayedOrVisible(neverDisplayed);
@@ -209,7 +209,7 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
 // when managed, the visibility depends on sort, filter and row group, as well as suppressRowDrag property
 class ManagedVisibilityStrategy extends VisibilityStrategy {
 
-    private readonly beans: Beans;
+    readonly beans: Beans;
 
     constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column?: Column) {
         super(parent, rowNode, column);
@@ -220,25 +220,25 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
     private postConstruct(): void {
         // we do not show the component if sort, filter or grouping is active
 
-        this.addManagedListener(this.beans.eventService, Events.EVENT_SORT_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(this.beans.eventService, Events.EVENT_FILTER_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(this.beans.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.workOutVisibility.bind(this));
+        this.addManagedListener(this.beans.eventService, Events.EVENT_SORT_CHANGED, this.#workOutVisibility.bind(this));
+        this.addManagedListener(this.beans.eventService, Events.EVENT_FILTER_CHANGED, this.#workOutVisibility.bind(this));
+        this.addManagedListener(this.beans.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.#workOutVisibility.bind(this));
+        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.#workOutVisibility.bind(this));
 
         // in case data changes, then we need to update visibility of drag item
-        this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.#workOutVisibility.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.#workOutVisibility.bind(this));
 
-        this.addManagedPropertyListener('suppressRowDrag', this.onSuppressRowDrag.bind(this));
+        this.addManagedPropertyListener('suppressRowDrag', this.#onSuppressRowDrag.bind(this));
 
-        this.workOutVisibility();
+        this.#workOutVisibility();
     }
 
-    private onSuppressRowDrag(): void {
-        this.workOutVisibility();
+    #onSuppressRowDrag(): void {
+        this.#workOutVisibility();
     }
 
-    private workOutVisibility(): void {
+    #workOutVisibility(): void {
         // only show the drag if both sort and filter are not present
         const gridBodyCon = this.beans.ctrlsService.getGridBodyCtrl();
         const rowDragFeature = gridBodyCon.getRowDragFeature();

@@ -24,15 +24,15 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
     }
 
     public init(params: ILoadingCellRendererParams): void {
-        params.node.failedLoad ? this.setupFailed() : this.setupLoading();
+        params.node.failedLoad ? this.#setupFailed() : this.#setupLoading();
     }
 
-    private setupFailed(): void {
+    #setupFailed(): void {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         this.eLoadingText.innerText = localeTextFunc('loadingError', 'ERR');
     }
 
-    private setupLoading(): void {
+    #setupLoading(): void {
         const eLoadingIcon = createIconNoSpan('groupLoading', this.gos, null);
         if (eLoadingIcon) {
             this.eLoadingIcon.appendChild(eLoadingIcon);

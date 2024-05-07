@@ -22,13 +22,13 @@ export class HeaderNavigationService extends BeanStub {
     @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
-    private gridBodyCon: GridBodyCtrl;
-    private currentHeaderRowWithoutSpan: number = -1;
+    #gridBodyCon: GridBodyCtrl;
+    #currentHeaderRowWithoutSpan: number = -1;
 
     @PostConstruct
     private postConstruct(): void {
         this.ctrlsService.whenReady(p => {
-            this.gridBodyCon = p.gridBodyCtrl;
+            this.#gridBodyCon = p.gridBodyCtrl;
         });
 
         const eDocument = this.gos.getDocument();
@@ -71,7 +71,7 @@ export class HeaderNavigationService extends BeanStub {
             nextRow = -1; // -1 indicates the focus should move to grid rows.
             this.setCurrentHeaderRowWithoutSpan(-1);
         } else if (headerRowIndexWithoutSpan !== undefined) {
-            this.currentHeaderRowWithoutSpan = headerRowIndexWithoutSpan;
+            this.#currentHeaderRowWithoutSpan = headerRowIndexWithoutSpan;
         }
 
 
@@ -87,7 +87,7 @@ export class HeaderNavigationService extends BeanStub {
     }
 
     public setCurrentHeaderRowWithoutSpan(row: number): void {
-        this.currentHeaderRowWithoutSpan = row;
+        this.#currentHeaderRowWithoutSpan = row;
     }
 
     /*
@@ -102,10 +102,10 @@ export class HeaderNavigationService extends BeanStub {
         let normalisedDirection: 'Before' |  'After';
 
         // either navigating to the left or isRtl (cannot be both)
-        if (this.currentHeaderRowWithoutSpan !== -1) {
-            focusedHeader.headerRowIndex = this.currentHeaderRowWithoutSpan;
+        if (this.#currentHeaderRowWithoutSpan !== -1) {
+            focusedHeader.headerRowIndex = this.#currentHeaderRowWithoutSpan;
         } else {
-            this.currentHeaderRowWithoutSpan = focusedHeader.headerRowIndex;
+            this.#currentHeaderRowWithoutSpan = focusedHeader.headerRowIndex;
         }
 
         if (isLeft !== isRtl) {
@@ -135,10 +135,14 @@ export class HeaderNavigationService extends BeanStub {
             }
         }
 
-        return this.focusNextHeaderRow(focusedHeader, normalisedDirection, event);
+        return this.#focusNextHeaderRow(focusedHeader, normalisedDirection, event);
     }
 
-    private focusNextHeaderRow(focusedHeader: HeaderPosition, direction: 'Before' | 'After', event: KeyboardEvent): boolean {
+    #focusNextHeaderRow(
+        focusedHeader: HeaderPosition,
+        direction: 'Before' | 'After',
+        event: KeyboardEvent
+    ): boolean {
         const currentIndex = focusedHeader.headerRowIndex;
         let nextPosition: HeaderPosition | null = null;
         let nextRowIndex: number;
@@ -146,13 +150,13 @@ export class HeaderNavigationService extends BeanStub {
         if (direction === 'Before') {
             if (currentIndex > 0) {
                 nextRowIndex = currentIndex - 1;
-                this.currentHeaderRowWithoutSpan -= 1;
+                this.#currentHeaderRowWithoutSpan -= 1;
                 nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'end')!;
             }
         } else {
             nextRowIndex = currentIndex + 1;
-            if (this.currentHeaderRowWithoutSpan < this.getHeaderRowCount()) {
-                this.currentHeaderRowWithoutSpan += 1;
+            if (this.#currentHeaderRowWithoutSpan < this.getHeaderRowCount()) {
+                this.#currentHeaderRowWithoutSpan += 1;
             } else {
                 this.setCurrentHeaderRowWithoutSpan(-1);
             }
@@ -184,6 +188,6 @@ export class HeaderNavigationService extends BeanStub {
             columnToScrollTo = column;
         }
 
-        this.gridBodyCon.getScrollFeature().ensureColumnVisible(columnToScrollTo);
+        this.#gridBodyCon.getScrollFeature().ensureColumnVisible(columnToScrollTo);
     }
 }

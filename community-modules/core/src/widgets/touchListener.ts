@@ -20,46 +20,46 @@ export class TouchListener implements IEventEmitter {
 
     private static DOUBLE_TAP_MILLIS = 500;
 
-    private eElement: Element;
+    #eElement: Element;
 
-    private destroyFuncs: Function[] = [];
+    #destroyFuncs: Function[] = [];
 
-    private moved: boolean;
+    #moved: boolean;
 
-    private touching = false;
-    private touchStart: Touch;
+    #touching = false;
+    #touchStart: Touch;
 
-    private lastTapTime: number | null;
+    #lastTapTime: number | null;
 
-    private eventService: EventService = new EventService();
+    #eventService: EventService = new EventService();
 
     // private mostRecentTouch: Touch;
 
-    private preventMouseClick: boolean;
+    #preventMouseClick: boolean;
 
     constructor(eElement: Element, preventMouseClick = false) {
-        this.eElement = eElement;
-        this.preventMouseClick = preventMouseClick;
+        this.#eElement = eElement;
+        this.#preventMouseClick = preventMouseClick;
 
-        const startListener = this.onTouchStart.bind(this);
-        const moveListener = this.onTouchMove.bind(this);
-        const endListener = this.onTouchEnd.bind(this);
+        const startListener = this.#onTouchStart.bind(this);
+        const moveListener = this.#onTouchMove.bind(this);
+        const endListener = this.#onTouchEnd.bind(this);
 
-        this.eElement.addEventListener("touchstart", startListener, { passive: true } as any);
-        this.eElement.addEventListener("touchmove", moveListener, { passive: true } as any);
+        this.#eElement.addEventListener("touchstart", startListener, { passive: true } as any);
+        this.#eElement.addEventListener("touchmove", moveListener, { passive: true } as any);
         // we set passive=false, as we want to prevent default on this event
-        this.eElement.addEventListener("touchend", endListener, { passive: false } as any);
+        this.#eElement.addEventListener("touchend", endListener, { passive: false } as any);
 
-        this.destroyFuncs.push(() => {
-            this.eElement.removeEventListener("touchstart", startListener, { passive: true } as any);
-            this.eElement.removeEventListener("touchmove", moveListener, { passive: true } as any);
-            this.eElement.removeEventListener("touchend", endListener, { passive: false } as any);
+        this.#destroyFuncs.push(() => {
+            this.#eElement.removeEventListener("touchstart", startListener, { passive: true } as any);
+            this.#eElement.removeEventListener("touchmove", moveListener, { passive: true } as any);
+            this.#eElement.removeEventListener("touchend", endListener, { passive: false } as any);
         });
     }
 
-    private getActiveTouch(touchList: TouchList): Touch | null {
+    #getActiveTouch(touchList: TouchList): Touch | null {
         for (let i = 0; i < touchList.length; i++) {
-            const matches = touchList[i].identifier === this.touchStart.identifier;
+            const matches = touchList[i].identifier === this.#touchStart.identifier;
             if (matches) {
                 return touchList[i];
             }
@@ -69,104 +69,104 @@ export class TouchListener implements IEventEmitter {
     }
 
     public addEventListener(eventType: string, listener: AgEventListener): void {
-        this.eventService.addEventListener(eventType, listener);
+        this.#eventService.addEventListener(eventType, listener);
     }
 
     public removeEventListener(eventType: string, listener: AgEventListener): void {
-        this.eventService.removeEventListener(eventType, listener);
+        this.#eventService.removeEventListener(eventType, listener);
     }
 
-    private onTouchStart(touchEvent: TouchEvent): void {
+    #onTouchStart(touchEvent: TouchEvent): void {
         // only looking at one touch point at any time
-        if (this.touching) {
+        if (this.#touching) {
             return;
         }
 
-        this.touchStart = touchEvent.touches[0];
-        this.touching = true;
+        this.#touchStart = touchEvent.touches[0];
+        this.#touching = true;
 
-        this.moved = false;
+        this.#moved = false;
 
-        const touchStartCopy = this.touchStart;
+        const touchStartCopy = this.#touchStart;
 
         window.setTimeout(() => {
-            const touchesMatch = this.touchStart === touchStartCopy;
+            const touchesMatch = this.#touchStart === touchStartCopy;
 
-            if (this.touching && touchesMatch && !this.moved) {
-                this.moved = true;
+            if (this.#touching && touchesMatch && !this.#moved) {
+                this.#moved = true;
                 const event: LongTapEvent = {
                     type: TouchListener.EVENT_LONG_TAP,
-                    touchStart: this.touchStart,
+                    touchStart: this.#touchStart,
                     touchEvent: touchEvent
                 };
-                this.eventService.dispatchEvent(event);
+                this.#eventService.dispatchEvent(event);
             }
         }, 500);
     }
 
-    private onTouchMove(touchEvent: TouchEvent): void {
-        if (!this.touching) {
+    #onTouchMove(touchEvent: TouchEvent): void {
+        if (!this.#touching) {
             return;
         }
 
-        const touch = this.getActiveTouch(touchEvent.touches);
+        const touch = this.#getActiveTouch(touchEvent.touches);
         if (!touch) {
             return;
         }
 
-        const eventIsFarAway = !areEventsNear(touch, this.touchStart, 4);
+        const eventIsFarAway = !areEventsNear(touch, this.#touchStart, 4);
         if (eventIsFarAway) {
-            this.moved = true;
+            this.#moved = true;
         }
     }
 
-    private onTouchEnd(touchEvent: TouchEvent): void {
-        if (!this.touching) {
+    #onTouchEnd(touchEvent: TouchEvent): void {
+        if (!this.#touching) {
             return;
         }
 
-        if (!this.moved) {
+        if (!this.#moved) {
             const event: TapEvent = {
                 type: TouchListener.EVENT_TAP,
-                touchStart: this.touchStart
+                touchStart: this.#touchStart
             };
-            this.eventService.dispatchEvent(event);
-            this.checkForDoubleTap();
+            this.#eventService.dispatchEvent(event);
+            this.#checkForDoubleTap();
         }
 
         // stops the tap from also been processed as a mouse click
-        if (this.preventMouseClick && touchEvent.cancelable) {
+        if (this.#preventMouseClick && touchEvent.cancelable) {
             touchEvent.preventDefault();
         }
 
-        this.touching = false;
+        this.#touching = false;
     }
 
-    private checkForDoubleTap(): void {
+    #checkForDoubleTap(): void {
         const now = new Date().getTime();
 
-        if (this.lastTapTime && this.lastTapTime > 0) {
+        if (this.#lastTapTime && this.#lastTapTime > 0) {
             // if previous tap, see if duration is short enough to be considered double tap
-            const interval = now - this.lastTapTime;
+            const interval = now - this.#lastTapTime;
             if (interval > TouchListener.DOUBLE_TAP_MILLIS) {
                 // dispatch double tap event
                 const event: TapEvent = {
                     type: TouchListener.EVENT_DOUBLE_TAP,
-                    touchStart: this.touchStart
+                    touchStart: this.#touchStart
                 };
-                this.eventService.dispatchEvent(event);
+                this.#eventService.dispatchEvent(event);
 
                 // this stops a tripple tap ending up as two double taps
-                this.lastTapTime = null;
+                this.#lastTapTime = null;
             } else {
-                this.lastTapTime = now;
+                this.#lastTapTime = now;
             }
         } else {
-            this.lastTapTime = now;
+            this.#lastTapTime = now;
         }
     }
 
     public destroy(): void {
-        this.destroyFuncs.forEach(func => func());
+        this.#destroyFuncs.forEach(func => func());
     }
 }

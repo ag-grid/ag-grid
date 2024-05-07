@@ -50,15 +50,14 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     protected variableWidth: boolean;
     protected minPickerWidth: string | undefined;
     protected maxPickerWidth: string | undefined;
-    protected value: TValue;
 
 
-    private skipClick: boolean = false;
-    private pickerGap: number = 4;
+    #skipClick: boolean = false;
+    #pickerGap: number = 4;
 
-    private hideCurrentPicker: (() => void) | null = null;
-    private destroyMouseWheelFunc: (() => null) | undefined;
-    private ariaRole?: string;
+    #hideCurrentPicker: (() => void) | null = null;
+    #destroyMouseWheelFunc: (() => null) | undefined;
+    #ariaRole?: string;
 
     @Autowired('popupService') protected popupService: PopupService;
 
@@ -70,16 +69,16 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     constructor(config?: TConfig) {
         super(config, config?.template || TEMPLATE, config?.className);
 
-        this.ariaRole = config?.ariaRole;
-        this.onPickerFocusIn = this.onPickerFocusIn.bind(this);
-        this.onPickerFocusOut = this.onPickerFocusOut.bind(this);
+        this.#ariaRole = config?.ariaRole;
+        // this.#onPickerFocusIn = this.#onPickerFocusIn.bind(this);
+        // this.#onPickerFocusOut = this.#onPickerFocusOut.bind(this);
 
         if (!config) { return; }
 
         const { pickerGap, maxPickerHeight, variableWidth, minPickerWidth, maxPickerWidth } = config;
 
         if (pickerGap != null) {
-            this.pickerGap = pickerGap;
+            this.#pickerGap = pickerGap;
         }
 
         this.variableWidth = !!variableWidth;
@@ -108,8 +107,8 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
         const ariaEl = this.getAriaElement();
         this.addManagedListener(ariaEl, 'keydown', this.onKeyDown.bind(this));
 
-        this.addManagedListener(this.eLabel, 'mousedown', this.onLabelOrWrapperMouseDown.bind(this));
-        this.addManagedListener(this.eWrapper, 'mousedown', this.onLabelOrWrapperMouseDown.bind(this));
+        this.addManagedListener(this.eLabel, 'mousedown', this.#onLabelOrWrapperMouseDown.bind(this));
+        this.addManagedListener(this.eWrapper, 'mousedown', this.#onLabelOrWrapperMouseDown.bind(this));
 
         const { pickerIcon, inputWidth } = this.config;
 
@@ -132,12 +131,12 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
 
         setAriaExpanded(ariaEl, false);
 
-        if (this.ariaRole) {
-            setAriaRole(ariaEl, this.ariaRole);
+        if (this.#ariaRole) {
+            setAriaRole(ariaEl, this.#ariaRole);
         }
     }
 
-    private onLabelOrWrapperMouseDown(e?: MouseEvent): void {
+    #onLabelOrWrapperMouseDown(e?: MouseEvent): void {
         if (e) {
             const focusableEl = this.getFocusableElement();
             // if the focusableEl is not the wrapper and the mousedown
@@ -153,8 +152,8 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
             this.getFocusableElement().focus();
         }
 
-        if (this.skipClick) {
-            this.skipClick = false;
+        if (this.#skipClick) {
+            this.#skipClick = false;
             return;
         }
 
@@ -174,14 +173,14 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
             case KeyCode.ENTER:
             case KeyCode.SPACE:
                 e.preventDefault();
-                this.onLabelOrWrapperMouseDown();
+                this.#onLabelOrWrapperMouseDown();
                 break;
             case KeyCode.ESCAPE:
                 if (this.isPickerDisplayed) {
                     e.preventDefault();
                     e.stopPropagation();
-                    if (this.hideCurrentPicker) {
-                        this.hideCurrentPicker();
+                    if (this.#hideCurrentPicker) {
+                        this.#hideCurrentPicker();
                     }
                 }
                 break;
@@ -196,10 +195,10 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
         }
 
         const pickerGui = this.pickerComponent.getGui();
-        pickerGui.addEventListener('focusin', this.onPickerFocusIn);
-        pickerGui.addEventListener('focusout', this.onPickerFocusOut);
+        pickerGui.addEventListener('focusin', this.#onPickerFocusIn);
+        pickerGui.addEventListener('focusout', this.#onPickerFocusOut);
 
-        this.hideCurrentPicker = this.renderAndPositionPicker();
+        this.#hideCurrentPicker = this.renderAndPositionPicker();
 
         this.toggleExpandedStyles(true);
     }
@@ -209,7 +208,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
         const ePicker = this.pickerComponent!.getGui();
 
         if (!this.gos.get('suppressScrollWhenPopupsAreOpen')) {
-            this.destroyMouseWheelFunc = this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, () => {
+            this.#destroyMouseWheelFunc = this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, () => {
                 this.hidePicker();
             });
         }
@@ -264,7 +263,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
         if (!this.pickerComponent) { return; } 
 
         const { pickerType } = this.config;
-        const { pickerGap } = this;
+        const pickerGap = this.#pickerGap;
 
         const alignSide = this.gos.get('enableRtl') ? 'right' : 'left';
 
@@ -280,21 +279,21 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     }
 
     protected beforeHidePicker(): void {
-        if (this.destroyMouseWheelFunc) {
-            this.destroyMouseWheelFunc();
-            this.destroyMouseWheelFunc = undefined;
+        if (this.#destroyMouseWheelFunc) {
+            this.#destroyMouseWheelFunc();
+            this.#destroyMouseWheelFunc = undefined;
         }
 
         this.toggleExpandedStyles(false);
 
         const pickerGui = this.pickerComponent!.getGui();
 
-        pickerGui.removeEventListener('focusin', this.onPickerFocusIn);
-        pickerGui.removeEventListener('focusout', this.onPickerFocusOut);
+        pickerGui.removeEventListener('focusin', this.#onPickerFocusIn);
+        pickerGui.removeEventListener('focusout', this.#onPickerFocusOut);
 
         this.isPickerDisplayed = false;
         this.pickerComponent = undefined;
-        this.hideCurrentPicker = null;
+        this.#hideCurrentPicker = null;
     }
 
     protected toggleExpandedStyles(expanded: boolean): void {
@@ -308,25 +307,25 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
         this.eWrapper.classList.toggle('ag-picker-collapsed', !expanded);
     }
 
-    private onPickerFocusIn(): void {
-        this.togglePickerHasFocus(true);
+    #onPickerFocusIn(): void {
+        this.#togglePickerHasFocus(true);
     }
 
-    private onPickerFocusOut(e: FocusEvent): void {
+    #onPickerFocusOut(e: FocusEvent): void {
         if (!this.pickerComponent?.getGui().contains(e.relatedTarget as Element)) {
-            this.togglePickerHasFocus(false);
+            this.#togglePickerHasFocus(false);
         }
     }
 
-    private togglePickerHasFocus(focused: boolean): void {
+    #togglePickerHasFocus(focused: boolean): void {
         if (!this.pickerComponent) { return; }
 
         this.eWrapper.classList.toggle('ag-picker-has-focus', focused);
     }
 
     public hidePicker(): void {
-        if (this.hideCurrentPicker) {
-            this.hideCurrentPicker();
+        if (this.#hideCurrentPicker) {
+            this.#hideCurrentPicker();
         }
     }
 
@@ -340,7 +339,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     }
 
     public setPickerGap(gap: number): this {
-        this.pickerGap = gap;
+        this.#pickerGap = gap;
 
         return this;
     }

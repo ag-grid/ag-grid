@@ -7,8 +7,8 @@ import { LocaleService } from '../../localeService';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
 
 class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
-    private uiModel: ProvidedFilterModel;
-    private modelHasChanged = false;
+    #uiModel: ProvidedFilterModel;
+    #modelHasChanged = false;
 
     constructor(params: ProvidedFilterParams, rowModelType: RowModelType = 'clientSide') {
         super('textFilter');
@@ -54,7 +54,7 @@ class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
     }
 
     protected areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean {
-        return !this.modelHasChanged;
+        return !this.#modelHasChanged;
     }
 
     protected getFilterType(): string {
@@ -62,11 +62,11 @@ class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
     }
 
     public getModelFromUi(): ProvidedFilterModel {
-        return this.uiModel;
+        return this.#uiModel;
     }
 
     public setModelHasChanged(hasChanged: boolean): void {
-        this.modelHasChanged = hasChanged;
+        this.#modelHasChanged = hasChanged;
     }
 
     public apply(afterFloatingFilter = false, afterDataChange = false): void {

@@ -30,12 +30,12 @@ interface SelectCellEditorParams<TData = any, TValue = any, TContext = any> exte
 
 export class SelectCellEditor extends PopupComponent implements ICellEditorComp {
 
-    private focusAfterAttached: boolean;
+    #focusAfterAttached: boolean;
 
     @Autowired('valueService') private valueService: ValueService;
     @RefSelector('eSelect') private eSelect: AgSelect;
 
-    private startedByEnter: boolean = false;
+    #startedByEnter: boolean = false;
 
     constructor() {
         super(/* html */
@@ -46,7 +46,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
     }
 
     public init(params: SelectCellEditorParams): void {
-        this.focusAfterAttached = params.cellStartedEdit;
+        this.#focusAfterAttached = params.cellStartedEdit;
 
         const { eSelect, valueService, gos } = this;
         const { values, value, eventKey } = params;
@@ -56,7 +56,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
             return;
         }
 
-        this.startedByEnter = eventKey != null ? eventKey === KeyCode.ENTER : false;
+        this.#startedByEnter = eventKey != null ? eventKey === KeyCode.ENTER : false;
 
         let hasValue = false;
         values.forEach((currentValue: any) => {
@@ -97,11 +97,11 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
     }
 
     public afterGuiAttached() {
-        if (this.focusAfterAttached) {
+        if (this.#focusAfterAttached) {
             this.eSelect.getFocusableElement().focus();
         }
 
-        if (this.startedByEnter) {
+        if (this.#startedByEnter) {
             setTimeout(() => {
                 if (this.isAlive()) {
                     this.eSelect.showPicker();

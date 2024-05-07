@@ -21,77 +21,77 @@ const CSS_CELL_RANGE_LEFT = 'ag-cell-range-left';
 
 export class CellRangeFeature {
 
-    private beans: Beans;
-    private rangeService: IRangeService;
-    private selectionHandleFactory: ISelectionHandleFactory;
-    private cellComp: ICellComp;
-    private cellCtrl: CellCtrl;
-    private eGui: HTMLElement;
+    #beans: Beans;
+    #rangeService: IRangeService;
+    #selectionHandleFactory: ISelectionHandleFactory;
+    #cellComp: ICellComp;
+    #cellCtrl: CellCtrl;
+    #eGui: HTMLElement;
 
-    private rangeCount: number;
-    private hasChartRange: boolean;
+    #rangeCount: number;
+    #hasChartRange: boolean;
 
-    private selectionHandle: ISelectionHandle | null | undefined;
+    #selectionHandle: ISelectionHandle | null | undefined;
 
     constructor(beans: Beans, ctrl: CellCtrl) {
-        this.beans = beans;
+        this.#beans = beans;
         // We know these are defined otherwise the feature wouldn't be registered
-        this.rangeService = beans.rangeService!;
-        this.selectionHandleFactory = beans.selectionHandleFactory!;
-        this.cellCtrl = ctrl;
+        this.#rangeService = beans.rangeService!;
+        this.#selectionHandleFactory = beans.selectionHandleFactory!;
+        this.#cellCtrl = ctrl;
     }
 
     public setComp(cellComp: ICellComp, eGui: HTMLElement): void {
-        this.cellComp = cellComp;
-        this.eGui = eGui;
+        this.#cellComp = cellComp;
+        this.#eGui = eGui;
         this.onRangeSelectionChanged();
     }
 
     public onRangeSelectionChanged(): void {
         // when using reactUi, given UI is async, it's possible this method is called before the comp is registered
-        if (!this.cellComp) { return; }
+        if (!this.#cellComp) { return; }
 
-        this.rangeCount = this.rangeService.getCellRangeCount(this.cellCtrl.getCellPosition());
-        this.hasChartRange = this.getHasChartRange();
+        this.#rangeCount = this.#rangeService.getCellRangeCount(this.#cellCtrl.getCellPosition());
+        this.#hasChartRange = this.#getHasChartRange();
 
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SELECTED, this.rangeCount !== 0);
-        this.cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-1`, this.rangeCount === 1);
-        this.cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-2`, this.rangeCount === 2);
-        this.cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-3`, this.rangeCount === 3);
-        this.cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-4`, this.rangeCount >= 4);
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART, this.hasChartRange);
+        this.#cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SELECTED, this.#rangeCount !== 0);
+        this.#cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-1`, this.#rangeCount === 1);
+        this.#cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-2`, this.#rangeCount === 2);
+        this.#cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-3`, this.#rangeCount === 3);
+        this.#cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-4`, this.#rangeCount >= 4);
+        this.#cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART, this.#hasChartRange);
 
-        setAriaSelected(this.eGui, this.rangeCount > 0 ? true : undefined);
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SINGLE_CELL, this.isSingleCell());
+        setAriaSelected(this.#eGui, this.#rangeCount > 0 ? true : undefined);
+        this.#cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SINGLE_CELL, this.#isSingleCell());
 
-        this.updateRangeBorders();
+        this.#updateRangeBorders();
 
         this.refreshHandle();
     }
 
-    private updateRangeBorders(): void {
-        const rangeBorders = this.getRangeBorders();
-        const isSingleCell = this.isSingleCell();
+    #updateRangeBorders(): void {
+        const rangeBorders = this.#getRangeBorders();
+        const isSingleCell = this.#isSingleCell();
         const isTop = !isSingleCell && rangeBorders.top;
         const isRight = !isSingleCell && rangeBorders.right;
         const isBottom = !isSingleCell && rangeBorders.bottom;
         const isLeft = !isSingleCell && rangeBorders.left;
 
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_TOP, isTop);
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_RIGHT, isRight);
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_BOTTOM, isBottom);
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_LEFT, isLeft);
+        this.#cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_TOP, isTop);
+        this.#cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_RIGHT, isRight);
+        this.#cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_BOTTOM, isBottom);
+        this.#cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_LEFT, isLeft);
     }
 
-    private isSingleCell(): boolean {
-        const { rangeService } = this.beans;
-        return this.rangeCount === 1 && !!rangeService && !rangeService.isMoreThanOneCell();
+    #isSingleCell(): boolean {
+        const { rangeService } = this.#beans;
+        return this.#rangeCount === 1 && !!rangeService && !rangeService.isMoreThanOneCell();
     }
 
-    private getHasChartRange(): boolean {
-        const { rangeService } = this.beans;
+    #getHasChartRange(): boolean {
+        const { rangeService } = this.#beans;
 
-        if (!this.rangeCount || !rangeService) { return false; }
+        if (!this.#rangeCount || !rangeService) { return false; }
 
         const cellRanges = rangeService.getCellRanges();
 
@@ -100,27 +100,27 @@ export class CellRangeFeature {
 
     public updateRangeBordersIfRangeCount(): void {
         // we only need to update range borders if we are in a range
-        if (this.rangeCount > 0) {
-            this.updateRangeBorders();
+        if (this.#rangeCount > 0) {
+            this.#updateRangeBorders();
             this.refreshHandle();
         }
     }
 
-    private getRangeBorders(): {
+    #getRangeBorders(): {
         top: boolean,
         right: boolean,
         bottom: boolean,
         left: boolean;
     } {
-        const isRtl = this.beans.gos.get('enableRtl');
+        const isRtl = this.#beans.gos.get('enableRtl');
 
         let top = false;
         let right = false;
         let bottom = false;
         let left = false;
 
-        const thisCol = this.cellCtrl.getCellPosition().column;
-        const columnModel = this.beans.columnModel;
+        const thisCol = this.#cellCtrl.getCellPosition().column;
+        const columnModel = this.#beans.columnModel;
 
         let leftCol: Column | null;
         let rightCol: Column | null;
@@ -133,8 +133,8 @@ export class CellRangeFeature {
             rightCol = columnModel.getDisplayedColAfter(thisCol);
         }
 
-        const ranges = this.rangeService.getCellRanges().filter(
-            range => this.rangeService.isCellInSpecificRange(this.cellCtrl.getCellPosition(), range)
+        const ranges = this.#rangeService.getCellRanges().filter(
+            range => this.#rangeService.isCellInSpecificRange(this.#cellCtrl.getCellPosition(), range)
         );
 
         // this means we are the first column in the grid
@@ -151,14 +151,14 @@ export class CellRangeFeature {
             if (top && right && bottom && left) { break; }
 
             const range = ranges[i];
-            const startRow = this.rangeService.getRangeStartRow(range);
-            const endRow = this.rangeService.getRangeEndRow(range);
+            const startRow = this.#rangeService.getRangeStartRow(range);
+            const endRow = this.#rangeService.getRangeEndRow(range);
 
-            if (!top && this.beans.rowPositionUtils.sameRow(startRow, this.cellCtrl.getCellPosition())) {
+            if (!top && this.#beans.rowPositionUtils.sameRow(startRow, this.#cellCtrl.getCellPosition())) {
                 top = true;
             }
 
-            if (!bottom && this.beans.rowPositionUtils.sameRow(endRow, this.cellCtrl.getCellPosition())) {
+            if (!bottom && this.#beans.rowPositionUtils.sameRow(endRow, this.#cellCtrl.getCellPosition())) {
                 bottom = true;
             }
 
@@ -175,72 +175,72 @@ export class CellRangeFeature {
     }
 
     public refreshHandle(): void {
-        if (this.beans.context.isDestroyed()) { return; }
+        if (this.#beans.context.isDestroyed()) { return; }
 
-        const shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
+        const shouldHaveSelectionHandle = this.#shouldHaveSelectionHandle();
 
-        if (this.selectionHandle && !shouldHaveSelectionHandle) {
-            this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);
+        if (this.#selectionHandle && !shouldHaveSelectionHandle) {
+            this.#selectionHandle = this.#beans.context.destroyBean(this.#selectionHandle);
         }
 
         if (shouldHaveSelectionHandle) {
-            this.addSelectionHandle();
+            this.#addSelectionHandle();
         }
 
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_HANDLE, !!this.selectionHandle);
+        this.#cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_HANDLE, !!this.#selectionHandle);
     }
 
-    private shouldHaveSelectionHandle(): boolean {
-        const gos = this.beans.gos;
-        const cellRanges = this.rangeService.getCellRanges();
+    #shouldHaveSelectionHandle(): boolean {
+        const gos = this.#beans.gos;
+        const cellRanges = this.#rangeService.getCellRanges();
         const rangesLen = cellRanges.length;
 
-        if (this.rangeCount < 1 || rangesLen < 1) {
+        if (this.#rangeCount < 1 || rangesLen < 1) {
             return false;
         }
 
         const cellRange = last(cellRanges);
-        const cellPosition = this.cellCtrl.getCellPosition();
-        const isFillHandleAvailable = gos.get('enableFillHandle') && !this.cellCtrl.isSuppressFillHandle();
+        const cellPosition = this.#cellCtrl.getCellPosition();
+        const isFillHandleAvailable = gos.get('enableFillHandle') && !this.#cellCtrl.isSuppressFillHandle();
         const isRangeHandleAvailable = gos.get('enableRangeHandle');
 
-        let handleIsAvailable = rangesLen === 1 && !this.cellCtrl.isEditing() && (
+        let handleIsAvailable = rangesLen === 1 && !this.#cellCtrl.isEditing() && (
             isFillHandleAvailable || isRangeHandleAvailable
         );
 
-        if (this.hasChartRange) {
+        if (this.#hasChartRange) {
             const hasCategoryRange = cellRanges[0].type === CellRangeType.DIMENSION;
-            const isCategoryCell = hasCategoryRange && this.rangeService.isCellInSpecificRange(cellPosition, cellRanges[0]);
+            const isCategoryCell = hasCategoryRange && this.#rangeService.isCellInSpecificRange(cellPosition, cellRanges[0]);
 
-            this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART_CATEGORY, isCategoryCell);
+            this.#cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART_CATEGORY, isCategoryCell);
             handleIsAvailable = cellRange.type === CellRangeType.VALUE;
         }
 
         return handleIsAvailable &&
             cellRange.endRow != null &&
-            this.rangeService.isContiguousRange(cellRange) &&
-            this.rangeService.isBottomRightCell(cellRange, cellPosition);
+            this.#rangeService.isContiguousRange(cellRange) &&
+            this.#rangeService.isBottomRightCell(cellRange, cellPosition);
     }
 
-    private addSelectionHandle() {
-        const gos = this.beans.gos;
-        const cellRangeType = last(this.rangeService.getCellRanges()).type;
+    #addSelectionHandle() {
+        const gos = this.#beans.gos;
+        const cellRangeType = last(this.#rangeService.getCellRanges()).type;
         const selectionHandleFill = gos.get('enableFillHandle') && missing(cellRangeType);
         const type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;
 
-        if (this.selectionHandle && this.selectionHandle.getType() !== type) {
-            this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);
+        if (this.#selectionHandle && this.#selectionHandle.getType() !== type) {
+            this.#selectionHandle = this.#beans.context.destroyBean(this.#selectionHandle);
         }
 
-        if (!this.selectionHandle) {
-            this.selectionHandle = this.selectionHandleFactory.createSelectionHandle(type);
+        if (!this.#selectionHandle) {
+            this.#selectionHandle = this.#selectionHandleFactory.createSelectionHandle(type);
         }
 
-        this.selectionHandle.refresh(this.cellCtrl);
+        this.#selectionHandle.refresh(this.#cellCtrl);
     }
 
     public destroy(): void {
-        this.beans.context.destroyBean(this.selectionHandle);
+        this.#beans.context.destroyBean(this.#selectionHandle);
     }
 
 }

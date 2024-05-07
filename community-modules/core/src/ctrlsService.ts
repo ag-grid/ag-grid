@@ -52,13 +52,13 @@ export class CtrlsService extends BeanStub {
 
     public static readonly NAME = 'ctrlsService';
 
-    private params: ReadyParams = {} as ReadyParams;
-    private ready = false;
-    private readyCallbacks: ((p: ReadyParams) => void)[] = [];
+    #params: ReadyParams = {} as ReadyParams;
+    #ready = false;
+    #readyCallbacks: ((p: ReadyParams) => void)[] = [];
 
-    private checkReady(): void {
-        const params = this.params;
-        this.ready =
+    #checkReady(): void {
+        const params = this.#params;
+        this.#ready =
             params.gridCtrl != null
             && params.gridBodyCtrl != null
 
@@ -90,59 +90,59 @@ export class CtrlsService extends BeanStub {
             && params.fakeVScrollComp != null
             && params.gridHeaderCtrl != null;
 
-        if (this.ready) {
-            this.readyCallbacks.forEach(c => c(params));
-            this.readyCallbacks.length = 0;
+        if (this.#ready) {
+            this.#readyCallbacks.forEach(c => c(params));
+            this.#readyCallbacks.length = 0;
         }
     }
 
     public whenReady(callback: (p: ReadyParams) => void): void {
-        if (this.ready) {
-            callback(this.params);
+        if (this.#ready) {
+            callback(this.#params);
         } else {
-            this.readyCallbacks.push(callback);
+            this.#readyCallbacks.push(callback);
         }
     }
 
     public register<K extends CtrlType, T extends ReadyParams[K]>(ctrlType: K, ctrl: T): void {
-        this.params[ctrlType] = ctrl;
-        this.checkReady();
+        this.#params[ctrlType] = ctrl;
+        this.#checkReady();
     }
 
     public registerHeaderContainer(ctrl: HeaderRowContainerCtrl, pinned: ColumnPinnedType): void {
         switch (pinned) {
             case 'left':
-                this.params.leftHeader = ctrl;
+                this.#params.leftHeader = ctrl;
                 break;
             case 'right':
-                this.params.rightHeader = ctrl;
+                this.#params.rightHeader = ctrl;
                 break;
-            default: this.params.centerHeader = ctrl;
+            default: this.#params.centerHeader = ctrl;
                 break;
         }
-        this.checkReady();
+        this.#checkReady();
     }
     
     public get<K extends CtrlType>(ctrlType: K): ReadyParams[K] {
-        return this.params[ctrlType];
+        return this.#params[ctrlType];
     }
     public getParams(): Readonly<ReadyParams> {
-        return this.params;
+        return this.#params;
     }
 
     public getGridBodyCtrl(): GridBodyCtrl {
-        return this.params.gridBodyCtrl;
+        return this.#params.gridBodyCtrl;
     }
 
     public getHeaderRowContainerCtrls(): HeaderRowContainerCtrl[] {
-        return [this.params.leftHeader, this.params.rightHeader, this.params.centerHeader];
+        return [this.#params.leftHeader, this.#params.rightHeader, this.#params.centerHeader];
     }
 
     public getHeaderRowContainerCtrl(pinned?: ColumnPinnedType): HeaderRowContainerCtrl {
         switch (pinned) {
-            case 'left': return this.params.leftHeader;
-            case 'right': return this.params.rightHeader;
-            default: return this.params.centerHeader;
+            case 'left': return this.#params.leftHeader;
+            case 'right': return this.#params.rightHeader;
+            default: return this.#params.centerHeader;
         }
     }
 }

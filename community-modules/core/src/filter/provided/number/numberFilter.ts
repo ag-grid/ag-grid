@@ -84,18 +84,18 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         ScalarFilter.NOT_BLANK,
     ];
 
-    private readonly eValuesFrom: (AgInputTextField | AgInputNumberField)[] = [];
-    private readonly eValuesTo: (AgInputTextField | AgInputNumberField)[] = [];
+    readonly #eValuesFrom: (AgInputTextField | AgInputNumberField)[] = [];
+    readonly #eValuesTo: (AgInputTextField | AgInputNumberField)[] = [];
 
-    private numberFilterParams: NumberFilterParams;
-    private filterModelFormatter: SimpleFilterModelFormatter;
+    #numberFilterParams: NumberFilterParams;
+    #filterModelFormatter: SimpleFilterModelFormatter;
 
     constructor() {
         super('numberFilter');
     }
 
     refresh(params: NumberFilterParams): boolean {
-        if (this.numberFilterParams.allowedCharPattern !== params.allowedCharPattern) {
+        if (this.#numberFilterParams.allowedCharPattern !== params.allowedCharPattern) {
             return false;
         }
 
@@ -105,8 +105,8 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     protected mapValuesFromModel(filterModel: NumberFilterModel | null): Tuple<number> {
         const { filter, filterTo, type } = filterModel || {};
         return [
-            this.processValue(filter),
-            this.processValue(filterTo),
+            this.#processValue(filter),
+            this.#processValue(filterTo),
         ].slice(0, this.getNumberOfInputs(type));
     }
 
@@ -123,10 +123,10 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     }
 
     protected setParams(params: NumberFilterParams): void {
-        this.numberFilterParams = params;
+        this.#numberFilterParams = params;
 
         super.setParams(params);
-        this.filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory, this.numberFilterParams.numberFormatter);
+        this.#filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory, this.#numberFilterParams.numberFormatter);
     }
 
     protected getDefaultFilterOptions(): string[] {
@@ -135,26 +135,31 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
     protected setElementValue(element: AgInputTextField | AgInputNumberField, value: number | null, fromFloatingFilter?: boolean): void {
         // values from floating filter are directly from the input, not from the model
-        const valueToSet = !fromFloatingFilter && this.numberFilterParams.numberFormatter
-            ? this.numberFilterParams.numberFormatter(value ?? null)
+        const valueToSet = !fromFloatingFilter && this.#numberFilterParams.numberFormatter
+            ? this.#numberFilterParams.numberFormatter(value ?? null)
             : value;
         super.setElementValue(element, valueToSet as any);
     }
 
     protected createValueElement(): HTMLElement {
-        const allowedCharPattern = getAllowedCharPattern(this.numberFilterParams);
+        const allowedCharPattern = getAllowedCharPattern(this.#numberFilterParams);
 
         const eCondition = document.createElement('div');
         eCondition.classList.add('ag-filter-body');
         setAriaRole(eCondition, 'presentation');
 
-        this.createFromToElement(eCondition, this.eValuesFrom, 'from', allowedCharPattern);
-        this.createFromToElement(eCondition, this.eValuesTo, 'to', allowedCharPattern);
+        this.#createFromToElement(eCondition, this.#eValuesFrom, 'from', allowedCharPattern);
+        this.#createFromToElement(eCondition, this.#eValuesTo, 'to', allowedCharPattern);
 
         return eCondition;
     }
 
-    private createFromToElement(eCondition: HTMLElement, eValues: (AgInputTextField | AgInputNumberField)[], fromTo: string, allowedCharPattern: string | null): void {
+    #createFromToElement(
+        eCondition: HTMLElement,
+        eValues: (AgInputTextField | AgInputNumberField)[],
+        fromTo: string,
+        allowedCharPattern: string | null
+    ): void {
         const eValue = this.createManagedBean(allowedCharPattern ? new AgInputTextField({ allowedCharPattern }) : new AgInputNumberField());
         eValue.addCssClass(`ag-filter-${fromTo}`);
         eValue.addCssClass('ag-filter-filter');
@@ -163,15 +168,15 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     }
 
     protected removeValueElements(startPosition: number, deleteCount?: number): void {
-        this.removeComponents(this.eValuesFrom, startPosition, deleteCount);
-        this.removeComponents(this.eValuesTo, startPosition, deleteCount);
+        this.removeComponents(this.#eValuesFrom, startPosition, deleteCount);
+        this.removeComponents(this.#eValuesTo, startPosition, deleteCount);
     }
 
     protected getValues(position: number): Tuple<number> {
         const result: Tuple<number> = [];
         this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
             if (index < numberOfInputs) {
-                result.push(this.processValue(this.stringToFloat(element.getValue())));
+                result.push(this.#processValue(this.#stringToFloat(element.getValue())));
             }
         });
 
@@ -188,14 +193,14 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return 'number';
     }
 
-    private processValue(value?: number | null): number | null {
+    #processValue(value?: number | null): number | null {
         if (value == null) {
             return null;
         }
         return isNaN(value) ? null : value;
     }
 
-    private stringToFloat(value?: string | number | null): number | null {
+    #stringToFloat(value?: string | number | null): number | null {
         if (typeof value === 'number') {
             return value;
         }
@@ -206,8 +211,8 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
             filterText = null;
         }
 
-        if (this.numberFilterParams.numberParser) {
-            return this.numberFilterParams.numberParser(filterText);
+        if (this.#numberFilterParams.numberParser) {
+            return this.#numberFilterParams.numberParser(filterText);
         }
 
         return filterText == null || filterText.trim() === '-' ? null : parseFloat(filterText);
@@ -232,14 +237,14 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     }
 
     protected getInputs(position: number): Tuple<AgInputTextField | AgInputNumberField> {
-        if (position >= this.eValuesFrom.length) {
+        if (position >= this.#eValuesFrom.length) {
             return [null, null];
         }
-        return [this.eValuesFrom[position], this.eValuesTo[position]];
+        return [this.#eValuesFrom[position], this.#eValuesTo[position]];
     }
 
     public getModelAsString(model: ISimpleFilterModel): string {
-        return this.filterModelFormatter.getModelAsString(model) ?? '';
+        return this.#filterModelFormatter.getModelAsString(model) ?? '';
     }
 
     protected hasInvalidInputs(): boolean {

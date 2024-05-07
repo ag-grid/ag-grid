@@ -14,7 +14,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
     @RefSelector('eFloatingFilterText') private eFloatingFilterText: AgInputTextField;
     @Autowired('columnModel') private columnModel: ColumnModel;
 
-    private params: IFloatingFilterParams;
+    #params: IFloatingFilterParams;
 
     constructor() {
         super(/* html */`
@@ -30,7 +30,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
     }
 
     public init(params: IFloatingFilterParams): void {
-        this.params = params;
+        this.#params = params;
         const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
         const translate = this.localeService.getLocaleTextFunc();
         this.eFloatingFilterText
@@ -44,7 +44,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
             return;
         }
 
-        this.params.parentFilterInstance(filterInstance => {
+        this.#params.parentFilterInstance(filterInstance => {
             // it would be nice to check if getModelAsString was present before creating this component,
             // however that is not possible, as React Hooks and VueJS don't attached the methods to the Filter until
             // AFTER the filter is created, not allowing inspection before this (we create floating filters as columns

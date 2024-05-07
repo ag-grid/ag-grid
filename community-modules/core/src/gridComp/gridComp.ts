@@ -17,18 +17,18 @@ export class GridComp extends TabGuardComp {
     @RefSelector('sideBar') private readonly sideBarComp: ISideBar & Component;
     @RefSelector('rootWrapperBody') private readonly eRootWrapperBody: HTMLElement;
 
-    private logger: Logger;
-    private eGridDiv: HTMLElement;
-    private ctrl: GridCtrl;
+    #logger: Logger;
+    #eGridDiv: HTMLElement;
+    #ctrl: GridCtrl;
 
     constructor(eGridDiv: HTMLElement) {
         super();
-        this.eGridDiv = eGridDiv;
+        this.#eGridDiv = eGridDiv;
     }
 
     @PostConstruct
     private postConstruct(): void {
-        this.logger = this.loggerFactory.create('GridComp');
+        this.#logger = this.loggerFactory.create('GridComp');
 
         const compProxy: IGridComp = {
             destroyGridUi:
@@ -36,7 +36,7 @@ export class GridComp extends TabGuardComp {
             setRtlClass:
                 (cssClass: string) => this.addCssClass(cssClass),
             forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
-            updateLayoutClasses: this.updateLayoutClasses.bind(this),
+            updateLayoutClasses: this.#updateLayoutClasses.bind(this),
             getFocusableContainers: this.getFocusableContainers.bind(this),
             setUserSelect: value => {
                 this.getGui().style.userSelect = value != null ? value : '';
@@ -47,33 +47,33 @@ export class GridComp extends TabGuardComp {
             }
         };
 
-        this.ctrl = this.createManagedBean(new GridCtrl());
+        this.#ctrl = this.createManagedBean(new GridCtrl());
 
-        const template = this.createTemplate();
+        const template = this.#createTemplate();
         this.setTemplate(template);
 
-        this.ctrl.setComp(compProxy, this.eGridDiv, this.getGui());
+        this.#ctrl.setComp(compProxy, this.#eGridDiv, this.getGui());
 
-        this.insertGridIntoDom();
+        this.#insertGridIntoDom();
 
         this.initialiseTabGuard({
             // we want to override the default behaviour to do nothing for onTabKeyDown
             onTabKeyDown: () => undefined,
-            focusInnerElement: fromBottom => this.ctrl.focusInnerElement(fromBottom),
+            focusInnerElement: fromBottom => this.#ctrl.focusInnerElement(fromBottom),
             forceFocusOutWhenTabGuardsAreEmpty: true
         });
     }
 
-    private insertGridIntoDom(): void {
+    #insertGridIntoDom(): void {
         const eGui = this.getGui();
-        this.eGridDiv.appendChild(eGui);
+        this.#eGridDiv.appendChild(eGui);
         this.addDestroyFunc(() => {
-            this.eGridDiv.removeChild(eGui);
-            this.logger.log('Grid removed from DOM');
+            this.#eGridDiv.removeChild(eGui);
+            this.#logger.log('Grid removed from DOM');
         });
     }
 
-    private updateLayoutClasses(cssClass: string, params: UpdateLayoutClassesParams): void {
+    #updateLayoutClasses(cssClass: string, params: UpdateLayoutClassesParams): void {
         const eRootWrapperBodyClassList = this.eRootWrapperBody.classList;
         eRootWrapperBodyClassList.toggle(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
         eRootWrapperBodyClassList.toggle(LayoutCssClasses.NORMAL, params.normal);
@@ -84,11 +84,11 @@ export class GridComp extends TabGuardComp {
         this.addOrRemoveCssClass(LayoutCssClasses.PRINT, params.print);
     }
 
-    private createTemplate(): string {
-        const dropZones = this.ctrl.showDropZones() ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
-        const sideBar = this.ctrl.showSideBar() ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
-        const statusBar = this.ctrl.showStatusBar() ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
-        const watermark = this.ctrl.showWatermark() ? '<ag-watermark></ag-watermark>' : '';
+    #createTemplate(): string {
+        const dropZones = this.#ctrl.showDropZones() ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
+        const sideBar = this.#ctrl.showSideBar() ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
+        const statusBar = this.#ctrl.showStatusBar() ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
+        const watermark = this.#ctrl.showWatermark() ? '<ag-watermark></ag-watermark>' : '';
 
         const template = /* html */
             `<div class="ag-root-wrapper" role="presentation">

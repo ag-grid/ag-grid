@@ -21,9 +21,9 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
     protected readonly column: Column;
     protected readonly pinned: ColumnPinnedType;
 
-    private headerComp: IHeaderComp | undefined;
-    private headerCompGui: HTMLElement | undefined;
-    private headerCompVersion = 0;
+    #headerComp: IHeaderComp | undefined;
+    #headerCompGui: HTMLElement | undefined;
+    #headerCompVersion = 0;
 
     constructor(ctrl: HeaderCellCtrl) {
         super(HeaderCellComp.TEMPLATE, ctrl);
@@ -49,8 +49,8 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
             setWidth: width => eGui.style.width = width,
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setAriaSort: sort => sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui),
-            setUserCompDetails: compDetails => this.setUserCompDetails(compDetails),
-            getUserCompInstance: () => this.headerComp
+            setUserCompDetails: compDetails => this.#setUserCompDetails(compDetails),
+            getUserCompInstance: () => this.#headerComp
         };
 
         this.ctrl.setComp(compProxy, this.getGui(), this.eResize, this.eHeaderCompWrapper);
@@ -61,33 +61,33 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
 
     @PreDestroy
     private destroyHeaderComp(): void {
-        if (this.headerComp) {
-            this.eHeaderCompWrapper.removeChild(this.headerCompGui!);
-            this.headerComp = this.destroyBean(this.headerComp);
-            this.headerCompGui = undefined;
+        if (this.#headerComp) {
+            this.eHeaderCompWrapper.removeChild(this.#headerCompGui!);
+            this.#headerComp = this.destroyBean(this.#headerComp);
+            this.#headerCompGui = undefined;
         }
     }
 
-    private setUserCompDetails(compDetails: UserCompDetails): void {
-        this.headerCompVersion++;
+    #setUserCompDetails(compDetails: UserCompDetails): void {
+        this.#headerCompVersion++;
 
-        const versionCopy = this.headerCompVersion;
+        const versionCopy = this.#headerCompVersion;
 
-        compDetails.newAgStackInstance()!.then(comp => this.afterCompCreated(versionCopy, comp));
+        compDetails.newAgStackInstance()!.then(comp => this.#afterCompCreated(versionCopy, comp));
     }
 
-    private afterCompCreated(version: number, headerComp: IHeaderComp): void {
+    #afterCompCreated(version: number, headerComp: IHeaderComp): void {
 
-        if (version != this.headerCompVersion || !this.isAlive()) {
+        if (version != this.#headerCompVersion || !this.isAlive()) {
             this.destroyBean(headerComp);
             return;
         }
 
         this.destroyHeaderComp();
 
-        this.headerComp = headerComp;
-        this.headerCompGui = headerComp.getGui();
-        this.eHeaderCompWrapper.appendChild(this.headerCompGui);
+        this.#headerComp = headerComp;
+        this.#headerCompGui = headerComp.getGui();
+        this.eHeaderCompWrapper.appendChild(this.#headerCompGui);
         this.ctrl.setDragSource(this.getGui()!);
     }
 }

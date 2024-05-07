@@ -140,12 +140,12 @@ export function unwrapUserComp<T>(comp: T): T {
 
 export class GridApi<TData = any> {
     
-    private rowRenderer: RowRenderer;
+    #rowRenderer: RowRenderer;
 
     @AutowiredAll()
     setupBeans(params:any) {
         console.log('setupBeans', params);  
-        this.rowRenderer = params.rowRenderer;      
+        this.#rowRenderer = params.rowRenderer;      
     }
 
     @Autowired('navigationService') private readonly navigationService: NavigationService;
@@ -185,33 +185,33 @@ export class GridApi<TData = any> {
     @Optional('ssrmTransactionManager') private readonly serverSideTransactionManager?: IServerSideTransactionManager;
     @Optional('sideBarService') private readonly sideBarService?: ISideBarService;
     
-    private gridBodyCtrl: GridBodyCtrl;
+    #gridBodyCtrl: GridBodyCtrl;
 
-    private clientSideRowModel: IClientSideRowModel;
-    private infiniteRowModel: IInfiniteRowModel;
+    #clientSideRowModel: IClientSideRowModel;
+    #infiniteRowModel: IInfiniteRowModel;
 
-    private serverSideRowModel: IServerSideRowModel;
+    #serverSideRowModel: IServerSideRowModel;
 
-    private detailGridInfoMap: { [id: string]: DetailGridInfo | undefined; } = {};
+    #detailGridInfoMap: { [id: string]: DetailGridInfo | undefined; } = {};
 
-    private destroyCalled = false;
+    #destroyCalled = false;
 
     @PostConstruct
     private init(): void {
         switch (this.rowModel.getType()) {
             case 'clientSide':
-                this.clientSideRowModel = this.rowModel as IClientSideRowModel;
+                this.#clientSideRowModel = this.rowModel as IClientSideRowModel;
                 break;
             case 'infinite':
-                this.infiniteRowModel = this.rowModel as IInfiniteRowModel;
+                this.#infiniteRowModel = this.rowModel as IInfiniteRowModel;
                 break;
             case 'serverSide':
-                this.serverSideRowModel = this.rowModel as IServerSideRowModel;
+                this.#serverSideRowModel = this.rowModel as IServerSideRowModel;
                 break;
         }
 
         this.ctrlsService.whenReady((p) => {
-            this.gridBodyCtrl = p.gridBodyCtrl;
+            this.#gridBodyCtrl = p.gridBodyCtrl;
         });
     }
 
@@ -227,23 +227,23 @@ export class GridApi<TData = any> {
 
     /** Register a detail grid with the master grid when it is created. */
     public addDetailGridInfo(id: string, gridInfo: DetailGridInfo): void {
-        this.detailGridInfoMap[id] = gridInfo;
+        this.#detailGridInfoMap[id] = gridInfo;
     }
 
     /** Unregister a detail grid from the master grid when it is destroyed. */
     public removeDetailGridInfo(id: string): void {
-        delete this.detailGridInfoMap[id];
+        delete this.#detailGridInfoMap[id];
     }
 
     /** Returns the `DetailGridInfo` corresponding to the supplied `detailGridId`. */
     public getDetailGridInfo(id: string): DetailGridInfo | undefined {
-        return this.detailGridInfoMap[id];
+        return this.#detailGridInfoMap[id];
     }
 
     /** Iterates through each `DetailGridInfo` in the grid and calls the supplied callback on each. */
     public forEachDetailGridInfo(callback: (gridInfo: DetailGridInfo, index: number) => void) {
         let index = 0;
-        iterateObject(this.detailGridInfoMap, (id: string, gridInfo: DetailGridInfo) => {
+        iterateObject(this.#detailGridInfoMap, (id: string, gridInfo: DetailGridInfo) => {
             // check for undefined, as old references will still be lying around
             if (exists(gridInfo)) {
                 callback(gridInfo, index);
@@ -266,7 +266,7 @@ export class GridApi<TData = any> {
         }
     }
 
-    private assertNotExcelMultiSheet(method: keyof GridApi, params?: ExcelExportParams): boolean {
+    #assertNotExcelMultiSheet(method: keyof GridApi, params?: ExcelExportParams): boolean {
         if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method, this.context.getGridId())) { return false }
         if (this.excelCreator!.getFactoryMode() === ExcelFactoryMode.MULTI_SHEET) {
             console.warn("AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'");
@@ -277,14 +277,14 @@ export class GridApi<TData = any> {
 
     /** Similar to `exportDataAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     public getDataAsExcel(params?: ExcelExportParams): string | Blob | undefined {
-        if (this.assertNotExcelMultiSheet('getDataAsExcel', params)) {
+        if (this.#assertNotExcelMultiSheet('getDataAsExcel', params)) {
             return this.excelCreator!.getDataAsExcel(params);
         }
     }
 
     /** Downloads an Excel export of the grid's data. */
     public exportDataAsExcel(params?: ExcelExportParams): void {
-        if (this.assertNotExcelMultiSheet('exportDataAsExcel', params)) {
+        if (this.#assertNotExcelMultiSheet('exportDataAsExcel', params)) {
             this.excelCreator!.exportDataAsExcel(params);
         }
     }
@@ -331,11 +331,16 @@ export class GridApi<TData = any> {
 
     }
 
-    private logMissingRowModel(apiMethod: keyof GridApi, ...requiredRowModels: RowModelType[]) {
+    #logMissingRowModel(apiMethod: keyof GridApi, ...requiredRowModels: RowModelType[]) {
         console.error(`AG Grid: api.${apiMethod} can only be called when gridOptions.rowModelType is ${requiredRowModels.join(' or ')}`);
     }
 
-    private logDeprecation(version: string, apiMethod: StartsWithGridApi, replacement: StartsWithGridApi, message?: string) {
+    #logDeprecation(
+        version: string,
+        apiMethod: StartsWithGridApi,
+        replacement: StartsWithGridApi,
+        message?: string
+    ) {
         warnOnce(`Since ${version} api.${apiMethod} is deprecated. Please use ${replacement} instead. ${message ?? ''}`);
     }
 
@@ -369,7 +374,7 @@ export class GridApi<TData = any> {
      *  - `bottom`: The bottom pixel position of the current scroll in the grid
      */
     public getVerticalPixelRange(): { top: number, bottom: number; } {
-        return this.gridBodyCtrl.getScrollFeature().getVScrollPosition();
+        return this.#gridBodyCtrl.getScrollFeature().getVScrollPosition();
     }
 
     /**
@@ -378,12 +383,12 @@ export class GridApi<TData = any> {
      * - `right`: The right pixel position of the current scroll in the grid
      */
     public getHorizontalPixelRange(): { left: number, right: number; } {
-        return this.gridBodyCtrl.getScrollFeature().getHScrollPosition();
+        return this.#gridBodyCtrl.getScrollFeature().getHScrollPosition();
     }
 
     /** Performs change detection on all cells, refreshing cells where required. */
     public refreshCells(params: RefreshCellsParams<TData> = {}): void {
-        this.frameworkOverrides.wrapIncoming(() => this.rowRenderer.refreshCells(params));
+        this.frameworkOverrides.wrapIncoming(() => this.#rowRenderer.refreshCells(params));
     }
 
     /** Flash rows, columns or individual cells. */
@@ -392,13 +397,13 @@ export class GridApi<TData = any> {
         if (exists(params.fadeDelay)) { warning('fade') }
         if (exists(params.flashDelay)) { warning('flash') }
 
-        this.frameworkOverrides.wrapIncoming(() => this.rowRenderer.flashCells(params));
+        this.frameworkOverrides.wrapIncoming(() => this.#rowRenderer.flashCells(params));
     }
 
     /** Remove row(s) from the DOM and recreate them again from scratch. */
     public redrawRows(params: RedrawRowsParams<TData> = {}): void {
         const rowNodes = params ? params.rowNodes : undefined;
-        this.frameworkOverrides.wrapIncoming(() => this.rowRenderer.redrawRows(rowNodes));
+        this.frameworkOverrides.wrapIncoming(() => this.#rowRenderer.redrawRows(rowNodes));
     }
 
     /** Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed. */
@@ -448,8 +453,8 @@ export class GridApi<TData = any> {
      * across multiple groups and you want to update the grid view in a single rerender instead of on every group change.
      */
     public onGroupExpandedOrCollapsed() {
-        if (missing(this.clientSideRowModel)) {
-            this.logMissingRowModel('onGroupExpandedOrCollapsed', 'clientSide');
+        if (missing(this.#clientSideRowModel)) {
+            this.#logMissingRowModel('onGroupExpandedOrCollapsed', 'clientSide');
             return;
         }
         this.expansionService.onGroupExpandedOrCollapsed();
@@ -460,12 +465,12 @@ export class GridApi<TData = any> {
      * Optionally provide the step you wish the refresh to apply from. Defaults to `everything`.
      */
     public refreshClientSideRowModel(step?: ClientSideRowModelStep): any {
-        if (missing(this.clientSideRowModel)) {
-            this.logMissingRowModel('refreshClientSideRowModel', 'clientSide');
+        if (missing(this.#clientSideRowModel)) {
+            this.#logMissingRowModel('refreshClientSideRowModel', 'clientSide');
             return;
         }
 
-        this.clientSideRowModel.refreshModel(step);
+        this.#clientSideRowModel.refreshModel(step);
     }
 
     /** Returns `true` when there are no more animation frames left to process. */
@@ -500,19 +505,19 @@ export class GridApi<TData = any> {
 
     /** Expand all groups. */
     public expandAll() {
-        if (this.clientSideRowModel || this.serverSideRowModel) {
+        if (this.#clientSideRowModel || this.#serverSideRowModel) {
             this.expansionService.expandAll(true);
         } else {
-            this.logMissingRowModel('expandAll', 'clientSide', 'serverSide');
+            this.#logMissingRowModel('expandAll', 'clientSide', 'serverSide');
         }
     }
 
     /** Collapse all groups. */
     public collapseAll() {
-        if (this.clientSideRowModel || this.serverSideRowModel) {
+        if (this.#clientSideRowModel || this.#serverSideRowModel) {
             this.expansionService.expandAll(false);
         } else {
-            this.logMissingRowModel('collapseAll', 'clientSide', 'serverSide');
+            this.#logMissingRowModel('collapseAll', 'clientSide', 'serverSide');
         }
     }
 
@@ -524,7 +529,7 @@ export class GridApi<TData = any> {
      * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists.
      */
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function) {
-        this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback as any);
+        this.#rowRenderer.addRenderedRowListener(eventName, rowIndex, callback as any);
     }
 
     /** Get the current Quick Filter text from the grid, or `undefined` if none is set. */
@@ -620,8 +625,8 @@ export class GridApi<TData = any> {
      * If `groupSelectsChildren=true` the returned object will be hierarchical, and will conform to IServerSideGroupSelectionState.
      */
     public getServerSideSelectionState(): IServerSideSelectionState | IServerSideGroupSelectionState | null {
-        if (missing(this.serverSideRowModel)) {
-            this.logMissingRowModel('getServerSideSelectionState', 'serverSide');
+        if (missing(this.#serverSideRowModel)) {
+            this.#logMissingRowModel('getServerSideSelectionState', 'serverSide');
             return null;
         }
 
@@ -635,8 +640,8 @@ export class GridApi<TData = any> {
      * If `groupSelectsChildren=true` the param will be hierarchical, and should conform to IServerSideGroupSelectionState.
      */
     public setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState) {
-        if (missing(this.serverSideRowModel)) {
-            this.logMissingRowModel('setServerSideSelectionState', 'serverSide');
+        if (missing(this.#serverSideRowModel)) {
+            this.#logMissingRowModel('setServerSideSelectionState', 'serverSide');
             return;
         }
 
@@ -693,8 +698,8 @@ export class GridApi<TData = any> {
      * Designed for use with `'children'` as the group selection type, where groups don't actually appear in the selection normally.
      */
     public getBestCostNodeSelection(): IRowNode<TData>[] | undefined {
-        if (missing(this.clientSideRowModel)) {
-            this.logMissingRowModel('getBestCostNodeSelection', 'clientSide');
+        if (missing(this.#clientSideRowModel)) {
+            this.#logMissingRowModel('getBestCostNodeSelection', 'clientSide');
             return;
         }
         return this.selectionService.getBestCostNodeSelection();
@@ -702,7 +707,7 @@ export class GridApi<TData = any> {
 
     /** Retrieve rendered nodes. Due to virtualisation this will contain only the current visible rows and those in the buffer. */
     public getRenderedNodes(): IRowNode<TData>[] {
-        return this.rowRenderer.getRenderedNodes();
+        return this.#rowRenderer.getRenderedNodes();
     }
 
     /**
@@ -718,7 +723,7 @@ export class GridApi<TData = any> {
      * - `end` - Scrolls the column to the end of the viewport.
     */
     public ensureColumnVisible(key: string | Column, position: 'auto' | 'start' | 'middle' | 'end' = 'auto') {
-        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureColumnVisible(key, position), 'ensureVisible');
+        this.frameworkOverrides.wrapIncoming(() => this.#gridBodyCtrl.getScrollFeature().ensureColumnVisible(key, position), 'ensureVisible');
     }
 
     /**
@@ -727,7 +732,7 @@ export class GridApi<TData = any> {
      * This will have no effect before the firstDataRendered event has fired.
      */
     public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null) {
-        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureIndexVisible(index, position), 'ensureVisible');
+        this.frameworkOverrides.wrapIncoming(() => this.#gridBodyCtrl.getScrollFeature().ensureIndexVisible(index, position), 'ensureVisible');
     }
 
     /**
@@ -739,7 +744,7 @@ export class GridApi<TData = any> {
         nodeSelector: TData | IRowNode<TData> | ((row: IRowNode<TData>) => boolean),
         position: 'top' | 'bottom' | 'middle' | null = null
     ) {
-        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureNodeVisible(nodeSelector, position), 'ensureVisible');
+        this.frameworkOverrides.wrapIncoming(() => this.#gridBodyCtrl.getScrollFeature().ensureNodeVisible(nodeSelector, position), 'ensureVisible');
     }
 
     /**
@@ -749,11 +754,11 @@ export class GridApi<TData = any> {
      * but excluding groups the grid created where gaps were missing in the hierarchy.
      */
     public forEachLeafNode(callback: (rowNode: IRowNode<TData>) => void) {
-        if (missing(this.clientSideRowModel)) {
-            this.logMissingRowModel('forEachLeafNode', 'clientSide');
+        if (missing(this.#clientSideRowModel)) {
+            this.#logMissingRowModel('forEachLeafNode', 'clientSide');
             return;
         }
-        this.clientSideRowModel.forEachLeafNode(callback);
+        this.#clientSideRowModel.forEachLeafNode(callback);
     }
 
     /**
@@ -768,20 +773,20 @@ export class GridApi<TData = any> {
 
     /** Similar to `forEachNode`, except skips any filtered out data. */
     public forEachNodeAfterFilter(callback: (rowNode: IRowNode<TData>, index: number) => void) {
-        if (missing(this.clientSideRowModel)) {
-            this.logMissingRowModel('forEachNodeAfterFilter', 'clientSide');
+        if (missing(this.#clientSideRowModel)) {
+            this.#logMissingRowModel('forEachNodeAfterFilter', 'clientSide');
             return;
         }
-        this.clientSideRowModel.forEachNodeAfterFilter(callback);
+        this.#clientSideRowModel.forEachNodeAfterFilter(callback);
     }
 
     /** Similar to `forEachNodeAfterFilter`, except the callbacks are called in the order the rows are displayed in the grid. */
     public forEachNodeAfterFilterAndSort(callback: (rowNode: IRowNode<TData>, index: number) => void) {
-        if (missing(this.clientSideRowModel)) {
-            this.logMissingRowModel('forEachNodeAfterFilterAndSort', 'clientSide');
+        if (missing(this.#clientSideRowModel)) {
+            this.#logMissingRowModel('forEachNodeAfterFilterAndSort', 'clientSide');
             return;
         }
-        this.clientSideRowModel.forEachNodeAfterFilterAndSort(callback);
+        this.#clientSideRowModel.forEachNodeAfterFilterAndSort(callback);
     }
 
     /**
@@ -896,7 +901,7 @@ export class GridApi<TData = any> {
 
     /** Adds a drop zone outside of the grid where rows can be dropped. */
     public addRowDropZone(params: RowDropZoneParams): void {
-        this.gridBodyCtrl.getRowDragFeature().addRowDropZone(params);
+        this.#gridBodyCtrl.getRowDragFeature().addRowDropZone(params);
     }
 
     /** Removes an external drop zone added by `addRowDropZone`. */
@@ -910,49 +915,49 @@ export class GridApi<TData = any> {
 
     /** Returns the `RowDropZoneParams` to be used by another grid's `addRowDropZone` method. */
     public getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams {
-        return this.gridBodyCtrl.getRowDragFeature().getRowDropZone(events);
+        return this.#gridBodyCtrl.getRowDragFeature().getRowDropZone(events);
     }
 
-    private assertSideBarLoaded(apiMethod: keyof GridApi): boolean {
+    #assertSideBarLoaded(apiMethod: keyof GridApi): boolean {
         return ModuleRegistry.__assertRegistered(ModuleNames.SideBarModule, 'api.' + apiMethod, this.context.getGridId());
     }
 
     /** Returns `true` if the side bar is visible. */
     public isSideBarVisible(): boolean {
-        return this.assertSideBarLoaded('isSideBarVisible') && this.sideBarService!.getSideBarComp().isDisplayed();
+        return this.#assertSideBarLoaded('isSideBarVisible') && this.sideBarService!.getSideBarComp().isDisplayed();
     }
 
     /** Show/hide the entire side bar, including any visible panel and the tab buttons. */
     public setSideBarVisible(show: boolean) {
-        if (this.assertSideBarLoaded('setSideBarVisible')) {
+        if (this.#assertSideBarLoaded('setSideBarVisible')) {
             this.sideBarService!.getSideBarComp().setDisplayed(show);
         }
     }
 
     /** Sets the side bar position relative to the grid. Possible values are `'left'` or `'right'`. */
     public setSideBarPosition(position: 'left' | 'right') {
-        if (this.assertSideBarLoaded('setSideBarPosition')) {
+        if (this.#assertSideBarLoaded('setSideBarPosition')) {
             this.sideBarService!.getSideBarComp().setSideBarPosition(position);
         }
     }
 
     /** Opens a particular tool panel. Provide the ID of the tool panel to open. */
     public openToolPanel(key: string) {
-        if (this.assertSideBarLoaded('openToolPanel')) {
+        if (this.#assertSideBarLoaded('openToolPanel')) {
             this.sideBarService!.getSideBarComp().openToolPanel(key, 'api');
         }
     }
 
     /** Closes the currently open tool panel (if any). */
     public closeToolPanel() {
-        if (this.assertSideBarLoaded('closeToolPanel')) {
+        if (this.#assertSideBarLoaded('closeToolPanel')) {
             this.sideBarService!.getSideBarComp().close('api');
         }
     }
 
     /** Returns the ID of the currently shown tool panel if any, otherwise `null`. */
     public getOpenedToolPanel(): string | null {
-        if (this.assertSideBarLoaded('getOpenedToolPanel')) {
+        if (this.#assertSideBarLoaded('getOpenedToolPanel')) {
             return this.sideBarService!.getSideBarComp().openedItem()
         }
         return null;
@@ -960,14 +965,14 @@ export class GridApi<TData = any> {
 
     /** Force refresh all tool panels by calling their `refresh` method. */
     public refreshToolPanel(): void {
-        if (this.assertSideBarLoaded('refreshToolPanel')) {
+        if (this.#assertSideBarLoaded('refreshToolPanel')) {
             this.sideBarService!.getSideBarComp().refresh();
         }
     }
 
     /** Returns `true` if the tool panel is showing, otherwise `false`. */
     public isToolPanelShowing(): boolean {
-        return this.assertSideBarLoaded('isToolPanelShowing') && this.sideBarService!.getSideBarComp().isToolPanelShowing();
+        return this.#assertSideBarLoaded('isToolPanelShowing') && this.sideBarService!.getSideBarComp().isToolPanelShowing();
     }
 
     public getToolPanelInstance(id: 'columns'): IColumnToolPanel | undefined;
@@ -976,7 +981,7 @@ export class GridApi<TData = any> {
     public getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined;
     /** Gets the tool panel instance corresponding to the supplied `id`. */
     public getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined {
-        if (this.assertSideBarLoaded('getToolPanelInstance')) {
+        if (this.#assertSideBarLoaded('getToolPanelInstance')) {
             const comp = this.sideBarService!.getSideBarComp().getToolPanelInstance(id);
             return unwrapUserComp(comp) as any;
         }
@@ -984,7 +989,7 @@ export class GridApi<TData = any> {
 
     /** Returns the current side bar configuration. If a shortcut was used, returns the detailed long form. */
     public getSideBar(): SideBarDef | undefined {
-        if (this.assertSideBarLoaded('getSideBar')) {
+        if (this.#assertSideBarLoaded('getSideBar')) {
             return this.sideBarService!.getSideBarComp().getDef();
         }
         return undefined;
@@ -992,12 +997,12 @@ export class GridApi<TData = any> {
 
     /** Tells the grid to recalculate the row heights. */
     public resetRowHeights() {
-        if (exists(this.clientSideRowModel)) {
+        if (exists(this.#clientSideRowModel)) {
             if (this.columnModel.isAutoRowHeightActive()) {
                 console.warn('AG Grid: calling gridApi.resetRowHeights() makes no sense when using Auto Row Height.');
                 return;
             }
-            this.clientSideRowModel.resetRowHeights();
+            this.#clientSideRowModel.resetRowHeights();
         }
     }
 
@@ -1009,29 +1014,29 @@ export class GridApi<TData = any> {
      * Use this method if you add or remove rows into the dataset and need to reset the number of rows or instruct the grid that the entire row count is no longer known.
      */
     public setRowCount(rowCount: number, maxRowFound?: boolean): void {
-        if (this.serverSideRowModel) {
+        if (this.#serverSideRowModel) {
             if (this.columnModel.isRowGroupEmpty()) {
-                this.serverSideRowModel.setRowCount(rowCount, maxRowFound);
+                this.#serverSideRowModel.setRowCount(rowCount, maxRowFound);
                 return;
             }
             console.error('AG Grid: setRowCount cannot be used while using row grouping.');
             return;
         }
 
-        if (this.infiniteRowModel) {
-            this.infiniteRowModel.setRowCount(rowCount, maxRowFound);
+        if (this.#infiniteRowModel) {
+            this.#infiniteRowModel.setRowCount(rowCount, maxRowFound);
             return;
         }
 
-        this.logMissingRowModel('setRowCount', 'infinite', 'serverSide');
+        this.#logMissingRowModel('setRowCount', 'infinite', 'serverSide');
     }
 
     /** Tells the grid a row height has changed. To be used after calling `rowNode.setRowHeight(newHeight)`. */
     public onRowHeightChanged() {
-        if (this.clientSideRowModel) {
-            this.clientSideRowModel.onRowHeightChanged();
-        } else if (this.serverSideRowModel) {
-            this.serverSideRowModel.onRowHeightChanged();
+        if (this.#clientSideRowModel) {
+            this.#clientSideRowModel.onRowHeightChanged();
+        } else if (this.#serverSideRowModel) {
+            this.#serverSideRowModel.onRowHeightChanged();
         }
     }
 
@@ -1039,7 +1044,7 @@ export class GridApi<TData = any> {
      * @deprecated v31.3 Use `getCellValue` instead.
      */
     public getValue<TValue = any>(colKey: string | Column<TValue>, rowNode: IRowNode): TValue | null | undefined {
-        this.logDeprecation('31.3','getValue', 'getCellValue');
+        this.#logDeprecation('31.3','getValue', 'getCellValue');
         return this.getCellValue({colKey, rowNode}) as TValue | null | undefined;
     }
 
@@ -1107,7 +1112,7 @@ export class GridApi<TData = any> {
 
         // this is needed as GridAPI is a bean, and GridAPI.destroy() is called as part
         // of context.destroy(). so we need to stop the infinite loop.
-        if (this.destroyCalled) { return; }
+        if (this.#destroyCalled) { return; }
 
         const event: WithoutGridCommon<GridPreDestroyedEvent<TData>> = {
             type: Events.EVENT_GRID_PRE_DESTROYED,
@@ -1116,7 +1121,7 @@ export class GridApi<TData = any> {
         this.dispatchEvent(event);
 
         // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
-        this.destroyCalled = true;
+        this.#destroyCalled = true;
 
         // destroy the UI first (as they use the services)
         this.ctrlsService.get('gridCtrl')?.destroyGridUi();
@@ -1124,7 +1129,7 @@ export class GridApi<TData = any> {
         // destroy the services
         this.context.destroy();
 
-        this.detailGridInfoMap = {};
+        this.#detailGridInfoMap = {};
 
         // some users were raising support issues with regards memory leaks. the problem was the customers applications
         // were keeping references to the API. trying to educate them all would be difficult, easier to just remove
@@ -1134,7 +1139,7 @@ export class GridApi<TData = any> {
 
     /** Returns `true` if the grid has been destroyed. */
     public isDestroyed(): boolean {
-        return this.destroyCalled;
+        return this.#destroyCalled;
     }
 
     /** Reset the Quick Filter cache text on every rowNode. */
@@ -1186,7 +1191,7 @@ export class GridApi<TData = any> {
         return this.undoRedoService.getCurrentRedoStackSize();
     }
 
-    private assertChart<T>(methodName: keyof GridApi ,func: () => T): T | undefined {
+    #assertChart<T>(methodName: keyof GridApi, func: () => T): T | undefined {
         if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.' + methodName, this.context.getGridId())) {
             return this.frameworkOverrides.wrapIncoming(() => func());
         }
@@ -1194,92 +1199,92 @@ export class GridApi<TData = any> {
 
     /** Returns a list of models with information about the charts that are currently rendered from the grid. */
     public getChartModels(): ChartModel[] | undefined {
-        return this.assertChart('getChartModels', () => this.chartService!.getChartModels());
+        return this.#assertChart('getChartModels', () => this.chartService!.getChartModels());
     }
 
     /** Returns the `ChartRef` using the supplied `chartId`. */
     public getChartRef(chartId: string): ChartRef | undefined {
-        return this.assertChart('getChartRef', () => this.chartService!.getChartRef(chartId));
+        return this.#assertChart('getChartRef', () => this.chartService!.getChartRef(chartId));
     }
 
     /** Returns a base64-encoded image data URL for the referenced chartId. */
     public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
-        return this.assertChart('getChartImageDataURL', () => this.chartService!.getChartImageDataURL(params));
+        return this.#assertChart('getChartImageDataURL', () => this.chartService!.getChartImageDataURL(params));
     }
 
     /** Starts a browser-based image download for the referenced chartId. */
     public downloadChart(params: ChartDownloadParams) {
-        return this.assertChart('downloadChart', () => this.chartService!.downloadChart(params));
+        return this.#assertChart('downloadChart', () => this.chartService!.downloadChart(params));
     }
 
     /** Open the Chart Tool Panel. */
     public openChartToolPanel(params: OpenChartToolPanelParams) {
-        return this.assertChart('openChartToolPanel', () => this.chartService!.openChartToolPanel(params));
+        return this.#assertChart('openChartToolPanel', () => this.chartService!.openChartToolPanel(params));
     }
 
     /** Close the Chart Tool Panel. */
     public closeChartToolPanel(params: CloseChartToolPanelParams) {
-        return this.assertChart('closeChartToolPanel', () => this.chartService!.closeChartToolPanel(params.chartId));
+        return this.#assertChart('closeChartToolPanel', () => this.chartService!.closeChartToolPanel(params.chartId));
     }
 
     /** Used to programmatically create charts from a range. */
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
-        return this.assertChart('createRangeChart', () => this.chartService!.createRangeChart(params));
+        return this.#assertChart('createRangeChart', () => this.chartService!.createRangeChart(params));
     }
 
     /** Used to programmatically create pivot charts from a grid. */
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
-        return this.assertChart('createPivotChart', () => this.chartService!.createPivotChart(params));
+        return this.#assertChart('createPivotChart', () => this.chartService!.createPivotChart(params));
     }
 
     /** Used to programmatically create cross filter charts from a range. */
     public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
-        return this.assertChart('createCrossFilterChart', () => this.chartService!.createCrossFilterChart(params));
+        return this.#assertChart('createCrossFilterChart', () => this.chartService!.createCrossFilterChart(params));
     }
 
     /** Used to programmatically update a chart. */
     public updateChart(params: UpdateChartParams): void {
-        return this.assertChart('updateChart', () => this.chartService!.updateChart(params));
+        return this.#assertChart('updateChart', () => this.chartService!.updateChart(params));
     }
 
     /** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */
     public restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
-        return this.assertChart('restoreChart', () => this.chartService!.restoreChart(chartModel, chartContainer));
+        return this.#assertChart('restoreChart', () => this.chartService!.restoreChart(chartModel, chartContainer));
     }
 
-    private assertClipboard<T>(methodName: keyof GridApi, func: () => T ): void {
+    #assertClipboard<T>(methodName: keyof GridApi, func: () => T): void {
         if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api' + methodName, this.context.getGridId())) {
             func();
         }
     }
     /** Copies data to clipboard by following the same rules as pressing Ctrl+C. */
     public copyToClipboard(params?: IClipboardCopyParams) {
-        this.assertClipboard('copyToClipboard', () => this.clipboardService!.copyToClipboard(params));
+        this.#assertClipboard('copyToClipboard', () => this.clipboardService!.copyToClipboard(params));
     }
 
     /** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */
     public cutToClipboard(params?: IClipboardCopyParams) {
-        this.assertClipboard('cutToClipboard', () => this.clipboardService!.cutToClipboard(params));
+        this.#assertClipboard('cutToClipboard', () => this.clipboardService!.cutToClipboard(params));
     }
 
     /** Copies the selected rows to the clipboard. */
     public copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void {
-        this.assertClipboard('copySelectedRowsToClipboard', () => this.clipboardService!.copySelectedRowsToClipboard(params));
+        this.#assertClipboard('copySelectedRowsToClipboard', () => this.clipboardService!.copySelectedRowsToClipboard(params));
     }
 
     /** Copies the selected ranges to the clipboard. */
     public copySelectedRangeToClipboard(params?: IClipboardCopyParams): void {
-        this.assertClipboard('copySelectedRangeToClipboard', () => this.clipboardService!.copySelectedRangeToClipboard(params));
+        this.#assertClipboard('copySelectedRangeToClipboard', () => this.clipboardService!.copySelectedRangeToClipboard(params));
     }
 
     /** Copies the selected range down, similar to `Ctrl + D` in Excel. */
     public copySelectedRangeDown(): void {
-        this.assertClipboard('copySelectedRangeDown', () => this.clipboardService!.copyRangeDown());
+        this.#assertClipboard('copySelectedRangeDown', () => this.clipboardService!.copyRangeDown());
     }
 
     /** Pastes the data from the Clipboard into the focused cell of the grid. If no grid cell is focused, calling this method has no effect. */
     public pasteFromClipboard(): void {
-        this.assertClipboard('pasteFromClipboard', () => this.clipboardService!.pasteFromClipboard());
+        this.#assertClipboard('pasteFromClipboard', () => this.clipboardService!.pasteFromClipboard());
     }
 
     /** @deprecated v31.1 Use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere. */
@@ -1390,26 +1395,26 @@ export class GridApi<TData = any> {
 
     /** Returns the list of active cell renderer instances. */
     public getCellRendererInstances(params: GetCellRendererInstancesParams<TData> = {}): ICellRenderer[] {
-        const res = this.rowRenderer.getCellRendererInstances(params);
+        const res = this.#rowRenderer.getCellRendererInstances(params);
         const unwrapped = res.map(unwrapUserComp);
         return unwrapped;
     }
 
     /** Returns the list of active cell editor instances. Optionally provide parameters to restrict to certain columns / row nodes. */
     public getCellEditorInstances(params: GetCellEditorInstancesParams<TData> = {}): ICellEditor[] {
-        const res = this.rowRenderer.getCellEditorInstances(params);
+        const res = this.#rowRenderer.getCellEditorInstances(params);
         const unwrapped = res.map(unwrapUserComp);
         return unwrapped;
     }
 
     /** If the grid is editing, returns back details of the editing cell(s). */
     public getEditingCells(): CellPosition[] {
-        return this.rowRenderer.getEditingCells();
+        return this.#rowRenderer.getEditingCells();
     }
 
     /** If a cell is editing, it stops the editing. Pass `true` if you want to cancel the editing (i.e. don't accept changes). */
     public stopEditing(cancel: boolean = false): void {
-        this.rowRenderer.stopEditing(cancel);
+        this.#rowRenderer.stopEditing(cancel);
     }
 
     /** Start editing the provided cell. If another cell is editing, the editing will be stopped in that other cell. */
@@ -1441,7 +1446,7 @@ export class GridApi<TData = any> {
 
     /** @deprecated v31.1 addAggFunc(key, func) is  deprecated, please use addAggFuncs({ key: func }) instead. */
     public addAggFunc(key: string, aggFunc: IAggFunc): void {
-        this.logDeprecation('v31.1', 'addAggFunc(key, func)', 'addAggFuncs({ key: func })');
+        this.#logDeprecation('v31.1', 'addAggFunc(key, func)', 'addAggFuncs({ key: func })');
         if (this.aggFuncService) {
             this.aggFuncService.addAggFuncs({ key: aggFunc });
         }
@@ -1464,7 +1469,7 @@ export class GridApi<TData = any> {
     /** Apply transactions to the server side row model. */
     public applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {
         if (!this.serverSideTransactionManager) {
-            this.logMissingRowModel('applyServerSideTransaction', 'serverSide');
+            this.#logMissingRowModel('applyServerSideTransaction', 'serverSide');
             return;
         }
         return this.serverSideTransactionManager.applyTransaction(transaction);
@@ -1473,7 +1478,7 @@ export class GridApi<TData = any> {
     /** Batch apply transactions to the server side row model. */
     public applyServerSideTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
         if (!this.serverSideTransactionManager) {
-            this.logMissingRowModel('applyServerSideTransactionAsync', 'serverSide');
+            this.#logMissingRowModel('applyServerSideTransactionAsync', 'serverSide');
             return;
         }
         return this.serverSideTransactionManager.applyTransactionAsync(transaction, callback);
@@ -1491,25 +1496,25 @@ export class GridApi<TData = any> {
             return;
         }
 
-        if (this.serverSideRowModel) {
-            this.serverSideRowModel.applyRowData(params.successParams, startRow, route);
+        if (this.#serverSideRowModel) {
+            this.#serverSideRowModel.applyRowData(params.successParams, startRow, route);
         } else {
-            this.logMissingRowModel('applyServerSideRowData', 'serverSide');
+            this.#logMissingRowModel('applyServerSideRowData', 'serverSide');
         }
     }
 
     /** Gets all failed server side loads to retry. */
     public retryServerSideLoads(): void {
-        if (!this.serverSideRowModel) {
-            this.logMissingRowModel('retryServerSideLoads', 'serverSide');
+        if (!this.#serverSideRowModel) {
+            this.#logMissingRowModel('retryServerSideLoads', 'serverSide');
             return;
         }
-        this.serverSideRowModel.retryLoads();
+        this.#serverSideRowModel.retryLoads();
     }
 
     public flushServerSideAsyncTransactions(): void {
         if (!this.serverSideTransactionManager) {
-            this.logMissingRowModel('flushServerSideAsyncTransactions', 'serverSide');
+            this.#logMissingRowModel('flushServerSideAsyncTransactions', 'serverSide');
             return;
         }
         return this.serverSideTransactionManager.flushAsyncTransactions();
@@ -1517,29 +1522,29 @@ export class GridApi<TData = any> {
 
     /** Update row data. Pass a transaction object with lists for `add`, `remove` and `update`. */
     public applyTransaction(rowDataTransaction: RowDataTransaction<TData>): RowNodeTransaction<TData> | null | undefined {
-        if (!this.clientSideRowModel) {
-            this.logMissingRowModel('applyTransaction', 'clientSide');
+        if (!this.#clientSideRowModel) {
+            this.#logMissingRowModel('applyTransaction', 'clientSide');
             return;
         }
-        return this.frameworkOverrides.wrapIncoming(() => this.clientSideRowModel.updateRowData(rowDataTransaction));
+        return this.frameworkOverrides.wrapIncoming(() => this.#clientSideRowModel.updateRowData(rowDataTransaction));
     }
 
     /** Same as `applyTransaction` except executes asynchronously for efficiency. */
     public applyTransactionAsync(rowDataTransaction: RowDataTransaction<TData>, callback?: (res: RowNodeTransaction<TData>) => void): void {
-        if (!this.clientSideRowModel) {
-            this.logMissingRowModel('applyTransactionAsync', 'clientSide');
+        if (!this.#clientSideRowModel) {
+            this.#logMissingRowModel('applyTransactionAsync', 'clientSide');
             return;
         }
-        this.frameworkOverrides.wrapIncoming(() => this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback));
+        this.frameworkOverrides.wrapIncoming(() => this.#clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback));
     }
 
     /** Executes any remaining asynchronous grid transactions, if any are waiting to be executed. */
     public flushAsyncTransactions(): void {
-        if (!this.clientSideRowModel) {
-            this.logMissingRowModel('flushAsyncTransactions', 'clientSide');
+        if (!this.#clientSideRowModel) {
+            this.#logMissingRowModel('flushAsyncTransactions', 'clientSide');
             return;
         }
-        this.frameworkOverrides.wrapIncoming(() => this.clientSideRowModel.flushAsyncTransactions());
+        this.frameworkOverrides.wrapIncoming(() => this.#clientSideRowModel.flushAsyncTransactions());
     }
 
     /**
@@ -1548,10 +1553,10 @@ export class GridApi<TData = any> {
      * The old data will continue to be displayed until the new data is loaded.
      */
     public refreshInfiniteCache(): void {
-        if (this.infiniteRowModel) {
-            this.infiniteRowModel.refreshCache();
+        if (this.#infiniteRowModel) {
+            this.#infiniteRowModel.refreshCache();
         } else {
-            this.logMissingRowModel('refreshInfiniteCache', 'infinite');
+            this.#logMissingRowModel('refreshInfiniteCache', 'infinite');
         }
     }
 
@@ -1562,10 +1567,10 @@ export class GridApi<TData = any> {
      * Use this to immediately remove the old data from the user.
      */
     public purgeInfiniteCache(): void {
-        if (this.infiniteRowModel) {
-            this.infiniteRowModel.purgeCache();
+        if (this.#infiniteRowModel) {
+            this.#infiniteRowModel.purgeCache();
         } else {
-            this.logMissingRowModel('purgeInfiniteCache', 'infinite');
+            this.#logMissingRowModel('purgeInfiniteCache', 'infinite');
         }
     }
 
@@ -1576,37 +1581,37 @@ export class GridApi<TData = any> {
      * Once the store refresh is complete, the storeRefreshed event is fired.
      */
     public refreshServerSide(params?: RefreshServerSideParams): void {
-        if (!this.serverSideRowModel) {
-            this.logMissingRowModel('refreshServerSide', 'serverSide');
+        if (!this.#serverSideRowModel) {
+            this.#logMissingRowModel('refreshServerSide', 'serverSide');
             return;
         }
-        this.serverSideRowModel.refreshStore(params);
+        this.#serverSideRowModel.refreshStore(params);
     }
 
     /** Returns info on all server side group levels. */
     public getServerSideGroupLevelState(): ServerSideGroupLevelState[] {
-        if (!this.serverSideRowModel) {
-            this.logMissingRowModel('getServerSideGroupLevelState', 'serverSide')
+        if (!this.#serverSideRowModel) {
+            this.#logMissingRowModel('getServerSideGroupLevelState', 'serverSide')
             return [];
         }
-        return this.serverSideRowModel.getStoreState();
+        return this.#serverSideRowModel.getStoreState();
     }
 
     /** The row count defines how many rows the grid allows scrolling to. */
     public getInfiniteRowCount(): number | undefined {
-        if (this.infiniteRowModel) {
-            return this.infiniteRowModel.getRowCount();
+        if (this.#infiniteRowModel) {
+            return this.#infiniteRowModel.getRowCount();
         } else {
-            this.logMissingRowModel('getInfiniteRowCount', 'infinite')
+            this.#logMissingRowModel('getInfiniteRowCount', 'infinite')
         }
     }
 
     /** Returns `true` if grid allows for scrolling past the last row to load more rows, thus providing infinite scroll. */
     public isLastRowIndexKnown(): boolean | undefined {
-        if (this.infiniteRowModel) {
-            return this.infiniteRowModel.isLastRowIndexKnown();
+        if (this.#infiniteRowModel) {
+            return this.#infiniteRowModel.isLastRowIndexKnown();
         } else {
-            this.logMissingRowModel('isLastRowIndexKnown', 'infinite');
+            this.#logMissingRowModel('isLastRowIndexKnown', 'infinite');
         }
     }
 
@@ -1619,22 +1624,22 @@ export class GridApi<TData = any> {
 
     /** @deprecated v31.1 `getFirstDisplayedRow` is deprecated. Please use `getFirstDisplayedRowIndex` instead. */
     public getFirstDisplayedRow(): number {
-        this.logDeprecation('v31.1', 'getFirstDisplayedRow', 'getFirstDisplayedRowIndex');
+        this.#logDeprecation('v31.1', 'getFirstDisplayedRow', 'getFirstDisplayedRowIndex');
         return this.getFirstDisplayedRowIndex();
     }
     /** Get the index of the first displayed row due to scrolling (includes invisible rendered rows in the buffer). */
     public getFirstDisplayedRowIndex(): number {
-        return this.rowRenderer.getFirstVirtualRenderedRow();
+        return this.#rowRenderer.getFirstVirtualRenderedRow();
     }
 
     /** @deprecated v31.1 `getLastDisplayedRow` is deprecated. Please use `getLastDisplayedRowIndex` instead. */
     public getLastDisplayedRow(): number {
-        this.logDeprecation('v31.1', 'getLastDisplayedRow', 'getLastDisplayedRowIndex');
+        this.#logDeprecation('v31.1', 'getLastDisplayedRow', 'getLastDisplayedRowIndex');
         return this.getLastDisplayedRowIndex();
     }
     /** Get the index of the last displayed row due to scrolling (includes invisible rendered rows in the buffer). */
     public getLastDisplayedRowIndex(): number {
-        return this.rowRenderer.getLastVirtualRenderedRow();
+        return this.#rowRenderer.getLastVirtualRenderedRow();
     }
 
     /** Returns the displayed `RowNode` at the given `index`. */
@@ -1717,7 +1722,7 @@ export class GridApi<TData = any> {
         if (typeof paramsOrGridWidth === 'number') {
             this.columnModel.sizeColumnsToFit(paramsOrGridWidth, 'api');
         } else {
-            this.gridBodyCtrl.sizeColumnsToFit(paramsOrGridWidth);
+            this.#gridBodyCtrl.sizeColumnsToFit(paramsOrGridWidth);
         }
     }
 
@@ -1762,14 +1767,14 @@ export class GridApi<TData = any> {
     public getDisplayedColBefore(col: Column): Column | null { return this.columnModel.getDisplayedColBefore(col); }
     /** @deprecated v31.1 setColumnVisible(key, visible) deprecated, please use setColumnsVisible([key], visible) instead. */
     public setColumnVisible(key: string | Column, visible: boolean): void { 
-        this.logDeprecation('v31.1', 'setColumnVisible(key,visible)', 'setColumnsVisible([key],visible)');
+        this.#logDeprecation('v31.1', 'setColumnVisible(key,visible)', 'setColumnsVisible([key],visible)');
         this.columnModel.setColumnsVisible([key], visible, 'api'); 
     }
     /** Sets the visibility of columns. Key can be the column ID or `Column` object. */
     public setColumnsVisible(keys: (string | Column)[], visible: boolean): void { this.columnModel.setColumnsVisible(keys, visible, 'api'); }
     /** @deprecated v31.1 setColumnPinned(key, pinned) deprecated, please use setColumnsPinned([key], pinned) instead. */
     public setColumnPinned(key: string | ColDef | Column, pinned: ColumnPinnedType): void { 
-        this.logDeprecation('v31.1', 'setColumnPinned(key,pinned)', 'setColumnsPinned([key],pinned)');
+        this.#logDeprecation('v31.1', 'setColumnPinned(key,pinned)', 'setColumnsPinned([key],pinned)');
         this.columnModel.setColumnsPinned([key], pinned, 'api'); 
     }
     /** Set a column's pinned / unpinned state. Key can be the column ID, field, `ColDef` object or `Column` object. */
@@ -1796,7 +1801,7 @@ export class GridApi<TData = any> {
 
     /** @deprecated v31.1 moveColumn(key, toIndex) deprecated, please use moveColumns([key], toIndex) instead. */
     public moveColumn(key: string | ColDef | Column, toIndex: number): void {
-        this.logDeprecation('v31.1', 'moveColumn(key, toIndex)', 'moveColumns([key], toIndex)');
+        this.#logDeprecation('v31.1', 'moveColumn(key, toIndex)', 'moveColumns([key], toIndex)');
         this.columnModel.moveColumns([key], toIndex, 'api');
     }
     /** Moves the column at `fromIdex` to `toIndex`. The column is first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
@@ -1809,7 +1814,7 @@ export class GridApi<TData = any> {
     public setColumnAggFunc(key: string | ColDef | Column, aggFunc: string | IAggFunc | null | undefined): void { this.columnModel.setColumnAggFunc(key, aggFunc, 'api'); }
     /** @deprecated v31.1 setColumnWidths(key, newWidth) deprecated, please use setColumnWidths( [{key: newWidth}] ) instead. */
     public setColumnWidth(key: string | ColDef | Column, newWidth: number, finished: boolean = true, source: ColumnEventType = 'api'): void {
-        this.logDeprecation('v31.1', 'setColumnWidth(col, width)', 'setColumnWidths([{key: col, newWidth: width}])');
+        this.#logDeprecation('v31.1', 'setColumnWidth(col, width)', 'setColumnWidths([{key: col, newWidth: width}])');
         this.columnModel.setColumnWidths([{ key, newWidth }], false, finished, source);
     }
     /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
@@ -1829,14 +1834,14 @@ export class GridApi<TData = any> {
     public getValueColumns(): Column[] { return this.columnModel.getValueColumns(); }
     /** @deprecated v31.1 removeValueColumn(colKey) deprecated, please use removeValueColumns([colKey]) instead. */
     public removeValueColumn(colKey: (string | ColDef | Column)): void {
-        this.logDeprecation('v31.1', 'removeValueColumn(colKey)', 'removeValueColumns([colKey])');
+        this.#logDeprecation('v31.1', 'removeValueColumn(colKey)', 'removeValueColumns([colKey])');
         this.columnModel.removeValueColumns([colKey], 'api'); 
     }
     /** Remove the given list of columns from the existing set of value columns. */
     public removeValueColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.removeValueColumns(colKeys, 'api'); }
     /** @deprecated v31.1 addValueColumn(colKey) deprecated, please use addValueColumns([colKey]) instead. */
     public addValueColumn(colKey: (string | ColDef | Column)): void {
-        this.logDeprecation('v31.1', 'addValueColumn(colKey)', 'addValueColumns([colKey])');
+        this.#logDeprecation('v31.1', 'addValueColumn(colKey)', 'addValueColumns([colKey])');
         this.columnModel.addValueColumns([colKey], 'api');
     }
     /** Add the given list of columns to the existing set of value columns. */
@@ -1846,14 +1851,14 @@ export class GridApi<TData = any> {
     public setRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.setRowGroupColumns(colKeys, 'api'); }
     /** @deprecated v31.1 removeRowGroupColumn(colKey) deprecated, please use removeRowGroupColumns([colKey]) instead. */
     public removeRowGroupColumn(colKey: string | ColDef | Column): void {
-        this.logDeprecation('v31.1', 'removeRowGroupColumn(colKey)', 'removeRowGroupColumns([colKey])');
+        this.#logDeprecation('v31.1', 'removeRowGroupColumn(colKey)', 'removeRowGroupColumns([colKey])');
         this.columnModel.removeRowGroupColumns([colKey], 'api');
     }
     /** Remove columns from the row groups. */
     public removeRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.removeRowGroupColumns(colKeys, 'api'); }
     /** @deprecated v31.1 addRowGroupColumn(colKey) deprecated, please use addRowGroupColumns([colKey]) instead. */
     public addRowGroupColumn(colKey: string | ColDef | Column): void { 
-        this.logDeprecation('v31.1', 'addRowGroupColumn(colKey)', 'addRowGroupColumns([colKey])');
+        this.#logDeprecation('v31.1', 'addRowGroupColumn(colKey)', 'addRowGroupColumns([colKey])');
         this.columnModel.addRowGroupColumns([colKey], 'api');
     }
     /** Add columns to the row groups. */
@@ -1865,14 +1870,14 @@ export class GridApi<TData = any> {
     public setPivotColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.setPivotColumns(colKeys, 'api'); }
     /** @deprecated v31.1 removePivotColumn(colKey) deprecated, please use removePivotColumns([colKey]) instead. */
     public removePivotColumn(colKey: string | ColDef | Column): void {
-        this.logDeprecation('v31.1', 'removePivotColumn(colKey)', 'removePivotColumns([colKey])');
+        this.#logDeprecation('v31.1', 'removePivotColumn(colKey)', 'removePivotColumns([colKey])');
         this.columnModel.removePivotColumns([colKey], 'api');
     }
     /** Remove pivot columns. */
     public removePivotColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.removePivotColumns(colKeys, 'api'); }
     /** @deprecated v31.1 addPivotColumn(colKey) deprecated, please use addPivotColumns([colKey]) instead. */
     public addPivotColumn(colKey: string | ColDef | Column): void {
-        this.logDeprecation('v31.1', 'addPivotColumn(colKey)', 'addPivotColumns([colKey])');
+        this.#logDeprecation('v31.1', 'addPivotColumn(colKey)', 'addPivotColumns([colKey])');
         this.columnModel.addPivotColumns([colKey], 'api');
     }
     /** Add pivot columns. */
@@ -1890,7 +1895,7 @@ export class GridApi<TData = any> {
     public getAllDisplayedColumnGroups(): IHeaderColumn[] | null { return this.columnModel.getAllDisplayedTrees(); }
     /** @deprecated v31.1 autoSizeColumn(key) deprecated, please use autoSizeColumns([colKey]) instead. */
     public autoSizeColumn(key: string | ColDef | Column, skipHeader?: boolean): void {
-        this.logDeprecation('v31.1', 'autoSizeColumn(key, skipHeader)', 'autoSizeColumns([key], skipHeader)');
+        this.#logDeprecation('v31.1', 'autoSizeColumn(key, skipHeader)', 'autoSizeColumns([key], skipHeader)');
         return this.columnModel.autoSizeColumns({ columns: [key], skipHeader: skipHeader, source: 'api'});
     }
 

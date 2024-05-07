@@ -178,7 +178,7 @@ export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOption
 export class Grid {
     protected logger: Logger;
 
-    private readonly gridOptions: any; // Not typed to enable setting api for backwards compatibility
+    readonly #gridOptions: any; // Not typed to enable setting api for backwards compatibility
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
       warnOnce('Since v31 new Grid(...) is deprecated. Use createGrid instead: `const gridApi = createGrid(...)`. The grid api is returned from createGrid and will not be available on gridOptions.');
@@ -188,7 +188,7 @@ export class Grid {
             return;
         }
 
-        this.gridOptions = gridOptions as any;
+        this.#gridOptions = gridOptions as any;
 
         const api = new GridCoreCreator().create(
             eGridDiv,
@@ -205,16 +205,16 @@ export class Grid {
         );
         
         // Maintain existing behaviour by mutating gridOptions with the apis for deprecated new Grid()
-        this.gridOptions.api = api;
+        this.#gridOptions.api = api;
     }
 
     public destroy(): void {
-        if (this.gridOptions) {
-            this.gridOptions.api?.destroy();
+        if (this.#gridOptions) {
+            this.#gridOptions.api?.destroy();
             // need to remove these, as we don't own the lifecycle of the gridOptions, we need to
             // remove the references in case the user keeps the grid options, we want the rest
             // of the grid to be picked up by the garbage collector
-            delete this.gridOptions.api;
+            delete this.#gridOptions.api;
         }
     }
 }
@@ -241,10 +241,10 @@ export class GridCoreCreator {
         const debug = !!gridOptions.debug;
         const gridId = gridOptions.gridId ?? String(nextGridId++);
 
-        const registeredModules = this.getRegisteredModules(params, gridId);
+        const registeredModules = this.#getRegisteredModules(params, gridId);
 
-        const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules, gridId);
-        const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
+        const beanClasses = this.#createBeansList(gridOptions.rowModelType, registeredModules, gridId);
+        const providedBeanInstances = this.#createProvidedBeans(eGridDiv, gridOptions, params);
 
         if (!beanClasses) { 
             // Detailed error message will have been printed by createBeansList
@@ -264,9 +264,9 @@ export class GridCoreCreator {
         const context = new Context(contextParams, contextLogger);
         const beans = context.getBean('beans') as Beans;
 
-        this.registerModuleUserComponents(beans, registeredModules);
-        this.registerStackComponents(beans, registeredModules);
-        this.registerControllers(beans, registeredModules);
+        this.#registerModuleUserComponents(beans, registeredModules);
+        this.#registerStackComponents(beans, registeredModules);
+        this.#registerControllers(beans, registeredModules);
 
         createUi(context);
 
@@ -278,7 +278,7 @@ export class GridCoreCreator {
         return gridApi;
     }
 
-    private registerControllers(beans: Beans, registeredModules: Module[]): void {
+    #registerControllers(beans: Beans, registeredModules: Module[]): void {
         registeredModules.forEach(module => {
             if (module.controllers) {
                 module.controllers.forEach(meta => beans.ctrlsFactory.register(meta));
@@ -286,12 +286,12 @@ export class GridCoreCreator {
         });
     }
 
-    private registerStackComponents(beans: Beans, registeredModules: Module[]): void {
-        const agStackComponents = this.createAgStackComponentsList(registeredModules);
+    #registerStackComponents(beans: Beans, registeredModules: Module[]): void {
+        const agStackComponents = this.#createAgStackComponentsList(registeredModules);
         beans.agStackComponentsRegistry.setupComponents(agStackComponents);
     }
 
-    private getRegisteredModules(params: GridParams | undefined, gridId: string): Module[] {
+    #getRegisteredModules(params: GridParams | undefined, gridId: string): Module[] {
         const passedViaConstructor: Module[] | undefined | null = params ? params.modules : null;
         const registered = ModuleRegistry.__getRegisteredModules(gridId);
 
@@ -325,9 +325,9 @@ export class GridCoreCreator {
         return allModules;
     }
 
-    private registerModuleUserComponents(beans: Beans, registeredModules: Module[]): void {
+    #registerModuleUserComponents(beans: Beans, registeredModules: Module[]): void {
         const moduleUserComps: { componentName: string, componentClass: any; }[]
-            = this.extractModuleEntity(registeredModules,
+            = this.#extractModuleEntity(registeredModules,
                 (module) => module.userComponents ? module.userComponents : []);
 
         moduleUserComps.forEach(compMeta => {
@@ -335,7 +335,7 @@ export class GridCoreCreator {
         });
     }
 
-    private createProvidedBeans(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams): any {
+    #createProvidedBeans(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams): any {
         let frameworkOverrides = params ? params.frameworkOverrides : null;
         if (missing(frameworkOverrides)) {
             frameworkOverrides = new VanillaFrameworkOverrides();
@@ -355,7 +355,7 @@ export class GridCoreCreator {
         return seed;
     }
 
-    private createAgStackComponentsList(registeredModules: Module[]): any[] {
+    #createAgStackComponentsList(registeredModules: Module[]): any[] {
         let components: ComponentMeta[] = [
             { componentName: 'AgCheckbox', componentClass: AgCheckbox },
             { componentName: 'AgRadioButton', componentClass: AgRadioButton },
@@ -381,7 +381,7 @@ export class GridCoreCreator {
             { componentName: 'AgAutocomplete', componentClass: AgAutocomplete },
         ];
 
-        const moduleAgStackComps = this.extractModuleEntity(registeredModules,
+        const moduleAgStackComps = this.#extractModuleEntity(registeredModules,
             (module) => module.agStackComponents ? module.agStackComponents : []);
 
         components = components.concat(moduleAgStackComps);
@@ -389,7 +389,11 @@ export class GridCoreCreator {
         return components;
     }
 
-    private createBeansList(rowModelType: RowModelType | undefined = 'clientSide', registeredModules: Module[], gridId: string): any[] | undefined {
+    #createBeansList(
+        rowModelType: RowModelType | undefined = 'clientSide',
+        registeredModules: Module[],
+        gridId: string
+    ): any[] | undefined {
         // only load beans matching the required row model
         const rowModelModules = registeredModules.filter(module => !module.rowModel || module.rowModel === rowModelType);
 
@@ -431,7 +435,7 @@ export class GridCoreCreator {
             ExpansionService, ApiEventService, AriaAnnouncementService, MenuService
         ];
 
-        const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);
+        const moduleBeans = this.#extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);
         beans.push(...moduleBeans);
 
         // check for duplicates, as different modules could include the same beans that
@@ -446,7 +450,7 @@ export class GridCoreCreator {
         return beansNoDuplicates;
     }
 
-    private extractModuleEntity(moduleEntities: any[], extractor: (module: any) => any) {
+    #extractModuleEntity(moduleEntities: any[], extractor: (module: any) => any) {
         return [].concat(...moduleEntities.map(extractor));
     }
 }

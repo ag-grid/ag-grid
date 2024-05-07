@@ -24,7 +24,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         this.createManagedBean(new SetHeightFeature(this.eContainer));
         this.ctrlsService.register('fakeVScrollComp',this);
 
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED, this.onRowContainerHeightChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED, this.#onRowContainerHeightChanged.bind(this));
     }
 
     protected setScrollVisible(): void {
@@ -41,7 +41,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         this.setDisplayed(vScrollShowing, { skipAriaHidden: true });
     }
 
-    private onRowContainerHeightChanged(): void {
+    #onRowContainerHeightChanged(): void {
         const { ctrlsService } = this;
         const gridBodyCtrl = ctrlsService.getGridBodyCtrl();
         const gridBodyViewportEl = gridBodyCtrl.getBodyViewportElement();

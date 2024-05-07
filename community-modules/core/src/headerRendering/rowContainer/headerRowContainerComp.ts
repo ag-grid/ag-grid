@@ -21,25 +21,25 @@ export class HeaderRowContainerComp extends Component {
 
     @RefSelector('eCenterContainer') private eCenterContainer: HTMLElement;
 
-    private eRowContainer: HTMLElement;
+    #eRowContainer: HTMLElement;
 
-    private pinned: ColumnPinnedType;
+    #pinned: ColumnPinnedType;
 
-    private headerRowComps: {[ctrlId: HeaderRowCtrlInstanceId]: HeaderRowComp} = {};
-    private rowCompsList: HeaderRowComp[] = [];
+    #headerRowComps: {[ctrlId: HeaderRowCtrlInstanceId]: HeaderRowComp} = {};
+    #rowCompsList: HeaderRowComp[] = [];
 
     constructor(pinned: ColumnPinnedType) {
         super();
-        this.pinned = pinned;
+        this.#pinned = pinned;
     }
 
     @PostConstruct
     private init(): void {
-        this.selectAndSetTemplate();
+        this.#selectAndSetTemplate();
 
         const compProxy: IHeaderRowContainerComp = {
             setDisplayed: displayed => this.setDisplayed(displayed),
-            setCtrls: ctrls => this.setCtrls(ctrls),
+            setCtrls: ctrls => this.#setCtrls(ctrls),
 
             // only gets called for center section
             setCenterWidth: width => this.eCenterContainer.style.width = width,
@@ -54,13 +54,13 @@ export class HeaderRowContainerComp extends Component {
             }
         };
 
-        const ctrl = this.createManagedBean(new HeaderRowContainerCtrl(this.pinned));
+        const ctrl = this.createManagedBean(new HeaderRowContainerCtrl(this.#pinned));
         ctrl.setComp(compProxy, this.getGui());
     }
 
-    private selectAndSetTemplate(): void {
-        const pinnedLeft = this.pinned == 'left';
-        const pinnedRight = this.pinned == 'right';
+    #selectAndSetTemplate(): void {
+        const pinnedLeft = this.#pinned == 'left';
+        const pinnedRight = this.#pinned == 'right';
 
         const template = pinnedLeft ? HeaderRowContainerComp.PINNED_LEFT_TEMPLATE :
                          pinnedRight ? HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE : HeaderRowContainerComp.CENTER_TEMPLATE;
@@ -69,36 +69,36 @@ export class HeaderRowContainerComp extends Component {
 
         // for left and right, we add rows directly to the root element,
         // but for center container we add elements to the child container.
-        this.eRowContainer = this.eCenterContainer ? this.eCenterContainer : this.getGui();
+        this.#eRowContainer = this.eCenterContainer ? this.eCenterContainer : this.getGui();
     }
 
     @PreDestroy
     private destroyRowComps(): void {
-        this.setCtrls([]);
+        this.#setCtrls([]);
     }
 
-    private destroyRowComp(rowComp: HeaderRowComp): void {
+    #destroyRowComp(rowComp: HeaderRowComp): void {
         this.destroyBean(rowComp);
-        this.eRowContainer.removeChild(rowComp.getGui());
+        this.#eRowContainer.removeChild(rowComp.getGui());
     }
 
-    private setCtrls(ctrls: HeaderRowCtrl[]): void {
+    #setCtrls(ctrls: HeaderRowCtrl[]): void {
 
-        const oldRowComps = this.headerRowComps;
-        this.headerRowComps = {};
-        this.rowCompsList = [];
+        const oldRowComps = this.#headerRowComps;
+        this.#headerRowComps = {};
+        this.#rowCompsList = [];
 
         let prevGui: HTMLElement;
 
         const appendEnsuringDomOrder = (rowComp: HeaderRowComp) => {
             const eGui = rowComp.getGui();
 
-            const notAlreadyIn = eGui.parentElement != this.eRowContainer;
+            const notAlreadyIn = eGui.parentElement != this.#eRowContainer;
             if (notAlreadyIn) {
-                this.eRowContainer.appendChild(eGui);
+                this.#eRowContainer.appendChild(eGui);
             }
             if (prevGui) {
-                ensureDomOrder(this.eRowContainer, eGui, prevGui);
+                ensureDomOrder(this.#eRowContainer, eGui, prevGui);
             }
 
             prevGui = eGui;
@@ -110,12 +110,12 @@ export class HeaderRowContainerComp extends Component {
             delete oldRowComps[ctrlId];
 
             const rowComp = existingComp ? existingComp : this.createBean(new HeaderRowComp(ctrl));
-            this.headerRowComps[ctrlId] = rowComp;
-            this.rowCompsList.push(rowComp);
+            this.#headerRowComps[ctrlId] = rowComp;
+            this.#rowCompsList.push(rowComp);
 
             appendEnsuringDomOrder(rowComp);
         });
 
-        getAllValuesInObject(oldRowComps).forEach(c => this.destroyRowComp(c));
+        getAllValuesInObject(oldRowComps).forEach(c => this.#destroyRowComp(c));
     }
 }

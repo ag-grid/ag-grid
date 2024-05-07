@@ -38,17 +38,17 @@ export class RangeUndoRedoAction extends UndoRedoAction {
 export class UndoRedoStack {
     private static DEFAULT_STACK_SIZE = 10;
 
-    private readonly maxStackSize: number;
+    readonly #maxStackSize: number;
 
-    private actionStack: UndoRedoAction[] = [];
+    #actionStack: UndoRedoAction[] = [];
 
     constructor(maxStackSize?: number) {
-        this.maxStackSize = maxStackSize ? maxStackSize : UndoRedoStack.DEFAULT_STACK_SIZE;
-        this.actionStack = new Array<UndoRedoAction>(this.maxStackSize);
+        this.#maxStackSize = maxStackSize ? maxStackSize : UndoRedoStack.DEFAULT_STACK_SIZE;
+        this.#actionStack = new Array<UndoRedoAction>(this.#maxStackSize);
     }
 
     public pop(): UndoRedoAction | undefined {
-        return this.actionStack.pop();
+        return this.#actionStack.pop();
     }
 
     public push(item: UndoRedoAction): void {
@@ -56,18 +56,18 @@ export class UndoRedoStack {
 
         if (!shouldAddActions) { return; }
 
-        if (this.actionStack.length === this.maxStackSize) {
-            this.actionStack.shift();
+        if (this.#actionStack.length === this.#maxStackSize) {
+            this.#actionStack.shift();
         }
 
-        this.actionStack.push(item);
+        this.#actionStack.push(item);
     }
 
     public clear(): void {
-        this.actionStack = [];
+        this.#actionStack = [];
     }
 
     public getCurrentStackSize(): number {
-        return this.actionStack.length;
+        return this.#actionStack.length;
     }
 }

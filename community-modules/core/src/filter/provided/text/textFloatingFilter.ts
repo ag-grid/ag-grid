@@ -6,11 +6,11 @@ export interface ITextFloatingFilterParams extends ITextInputFloatingFilterParam
 }
 
 export class TextFloatingFilter extends TextInputFloatingFilter<TextFilterModel> {
-    private filterModelFormatter: SimpleFilterModelFormatter;
+    #filterModelFormatter: SimpleFilterModelFormatter;
 
     public init(params: ITextFloatingFilterParams): void {
         super.init(params);
-        this.filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
+        this.#filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
     }
 
     public onParamsUpdated(params: ITextFloatingFilterParams): void {
@@ -19,7 +19,7 @@ export class TextFloatingFilter extends TextInputFloatingFilter<TextFilterModel>
 
     public refresh(params: ITextFloatingFilterParams): void {
         super.refresh(params);
-        this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
+        this.#filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
     }
 
     protected getDefaultFilterOptions(): string[] {
@@ -27,7 +27,7 @@ export class TextFloatingFilter extends TextInputFloatingFilter<TextFilterModel>
     }
 
     protected getFilterModelFormatter(): SimpleFilterModelFormatter {
-        return this.filterModelFormatter;
+        return this.#filterModelFormatter;
     }
 
     protected createFloatingFilterInputService(): FloatingFilterInputService {

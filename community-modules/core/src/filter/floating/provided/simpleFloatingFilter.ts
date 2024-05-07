@@ -21,11 +21,11 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
 
     protected abstract getFilterModelFormatter(): SimpleFilterModelFormatter;
 
-    private lastType: string | null | undefined;
+    #lastType: string | null | undefined;
 
     protected optionsFactory: OptionsFactory;
 
-    private readOnly: boolean;
+    #readOnly: boolean;
 
     protected getDefaultDebounceMs(): number {
         return 0;
@@ -46,17 +46,17 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     protected getLastType(): string | null | undefined {
-        return this.lastType;
+        return this.#lastType;
     }
 
     protected isReadOnly(): boolean {
-        return this.readOnly;
+        return this.#readOnly;
     }
 
     protected setLastTypeFromModel(model: ProvidedFilterModel): void {
         // if no model provided by the parent filter use default
         if (!model) {
-            this.lastType = this.optionsFactory.getDefaultOption();
+            this.#lastType = this.optionsFactory.getDefaultOption();
             return;
         }
 
@@ -71,14 +71,14 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
             condition = model as ISimpleFilterModel;
         }
 
-        this.lastType = condition.type;
+        this.#lastType = condition.type;
     }
 
     protected canWeEditAfterModelFromParentFilter(model: ProvidedFilterModel): boolean {
         if (!model) {
             // if no model, then we can edit as long as the lastType is something we can edit, as this
             // is the type we will provide to the parent filter if the user decides to use the floating filter.
-            return this.isTypeEditable(this.lastType);
+            return this.#isTypeEditable(this.#lastType);
         }
 
         // never allow editing if the filter is combined (ie has two parts)
@@ -90,31 +90,31 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
 
         const simpleModel = model as ISimpleFilterModel;
 
-        return this.isTypeEditable(simpleModel.type);
+        return this.#isTypeEditable(simpleModel.type);
     }
 
     public init(params: IFloatingFilterParams): void {
-       this.setSimpleParams(params, false);
+       this.#setSimpleParams(params, false);
     }
 
-    private setSimpleParams(params: IFloatingFilterParams, update: boolean = true): void {
+    #setSimpleParams(params: IFloatingFilterParams, update: boolean = true): void {
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params.filterParams as ScalarFilterParams, this.getDefaultFilterOptions());
 
         // Initial call
         if (!update) {
-            this.lastType = this.optionsFactory.getDefaultOption();
+            this.#lastType = this.optionsFactory.getDefaultOption();
         }
 
         // readOnly is a property of ProvidedFilterParams - we need to find a better (type-safe)
         // way to support reading this in the future.
-        this.readOnly = !!(params.filterParams as ProvidedFilterParams).readOnly;
+        this.#readOnly = !!(params.filterParams as ProvidedFilterParams).readOnly;
 
         // we are editable if:
         // 1) there is a type (user has configured filter wrong if not type)
         //  AND
         // 2) the default type is not 'inRange'
-        const editable = this.isTypeEditable(this.optionsFactory.getDefaultOption());
+        const editable = this.#isTypeEditable(this.optionsFactory.getDefaultOption());
         this.setEditable(editable);
     }
 
@@ -123,22 +123,22 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     public refresh(params: IFloatingFilterParams): void {
-        this.setSimpleParams(params);
+        this.#setSimpleParams(params);
     }
 
-    private doesFilterHaveSingleInput(filterType: string) {
+    #doesFilterHaveSingleInput(filterType: string) {
         const customFilterOption = this.optionsFactory.getCustomOption(filterType);
         const { numberOfInputs } = customFilterOption || {};
         return numberOfInputs == null || numberOfInputs == 1;
     }
 
-    private isTypeEditable(type?: string | null): boolean {
+    #isTypeEditable(type?: string | null): boolean {
         const uneditableTypes: string[] = [
             SimpleFilter.IN_RANGE, SimpleFilter.EMPTY, SimpleFilter.BLANK, SimpleFilter.NOT_BLANK,
         ];
         return !!type &&
             !this.isReadOnly() &&
-            this.doesFilterHaveSingleInput(type) &&
+            this.#doesFilterHaveSingleInput(type) &&
             uneditableTypes.indexOf(type) < 0;
     }
 

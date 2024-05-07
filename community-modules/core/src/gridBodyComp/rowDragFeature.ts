@@ -62,37 +62,37 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     @Optional('rangeService') private rangeService?: IRangeService;
 
-    private clientSideRowModel: IClientSideRowModel;
-    private eContainer: HTMLElement;
-    private lastDraggingEvent: DraggingEvent;
-    private autoScrollService: AutoScrollService;
+    #clientSideRowModel: IClientSideRowModel;
+    #eContainer: HTMLElement;
+    #lastDraggingEvent: DraggingEvent;
+    #autoScrollService: AutoScrollService;
 
     constructor(eContainer: HTMLElement) {
         super();
-        this.eContainer = eContainer;
+        this.#eContainer = eContainer;
     }
 
     @PostConstruct
     private postConstruct(): void {
         if (this.gos.isRowModelType('clientSide')) {
-            this.clientSideRowModel = this.rowModel as IClientSideRowModel;
+            this.#clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
         this.ctrlsService.whenReady((p) => {
             const gridBodyCon = p.gridBodyCtrl;
-            this.autoScrollService = new AutoScrollService({
+            this.#autoScrollService = new AutoScrollService({
                 scrollContainer: gridBodyCon.getBodyViewportElement(),
                 scrollAxis: 'y',
                 getVerticalPosition: () => gridBodyCon.getScrollFeature().getVScrollPosition().top,
                 setVerticalPosition: (position) => gridBodyCon.getScrollFeature().setVerticalScrollPosition(position),
-                onScrollCallback: () => { this.onDragging(this.lastDraggingEvent); }
+                onScrollCallback: () => { this.onDragging(this.#lastDraggingEvent); }
             });
         });
     }
 
 
     public getContainer(): HTMLElement {
-        return this.eContainer;
+        return this.#eContainer;
     }
 
     public isInterestedIn(type: DragSourceType): boolean {
@@ -125,8 +125,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return false;
     }
 
-    private getRowNodes(draggingEvent: DraggingEvent): RowNode[] {
-        if (!this.isFromThisGrid(draggingEvent)) {
+    #getRowNodes(draggingEvent: DraggingEvent): RowNode[] {
+        if (!this.#isFromThisGrid(draggingEvent)) {
             return (draggingEvent.dragItem.rowNodes || []) as RowNode[];
         }
 
@@ -137,7 +137,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 (a, b) => {
                     if (a.rowIndex == null || b.rowIndex == null) { return 0; }
     
-                    return this.getRowIndexNumber(a) - this.getRowIndexNumber(b);
+                    return this.#getRowIndexNumber(a) - this.#getRowIndexNumber(b);
                 }
             );
             if (selectedNodes.indexOf(currentNode) !== -1) {
@@ -150,30 +150,30 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     public onDragEnter(draggingEvent: DraggingEvent): void {
         // builds a lits of all rows being dragged before firing events
-        draggingEvent.dragItem.rowNodes = this.getRowNodes(draggingEvent);
+        draggingEvent.dragItem.rowNodes = this.#getRowNodes(draggingEvent);
 
         // when entering, we fire the enter event, then in onEnterOrDragging,
         // we also fire the move event. so we get both events when entering.
-        this.dispatchGridEvent(Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
+        this.#dispatchGridEvent(Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
 
-        this.getRowNodes(draggingEvent).forEach(rowNode => {
+        this.#getRowNodes(draggingEvent).forEach(rowNode => {
             rowNode.setDragging(true);
         });
 
-        this.onEnterOrDragging(draggingEvent);
+        this.#onEnterOrDragging(draggingEvent);
     }
 
     public onDragging(draggingEvent: DraggingEvent): void {
-        this.onEnterOrDragging(draggingEvent);
+        this.#onEnterOrDragging(draggingEvent);
     }
 
-    private isFromThisGrid(draggingEvent: DraggingEvent) {
+    #isFromThisGrid(draggingEvent: DraggingEvent) {
         const { dragSourceDomDataKey } = draggingEvent.dragSource;
 
         return dragSourceDomDataKey === this.gos.getDomDataKey();
     }
 
-    private isDropZoneWithinThisGrid(draggingEvent: DraggingEvent): boolean {
+    #isDropZoneWithinThisGrid(draggingEvent: DraggingEvent): boolean {
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const gridGui = gridBodyCon.getGui();
         const { dropZoneTarget } = draggingEvent;
@@ -181,24 +181,24 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return !gridGui.contains(dropZoneTarget);
     }
 
-    private onEnterOrDragging(draggingEvent: DraggingEvent): void {
+    #onEnterOrDragging(draggingEvent: DraggingEvent): void {
         // this event is fired for enter and move
-        this.dispatchGridEvent(Events.EVENT_ROW_DRAG_MOVE, draggingEvent);
+        this.#dispatchGridEvent(Events.EVENT_ROW_DRAG_MOVE, draggingEvent);
 
-        this.lastDraggingEvent = draggingEvent;
+        this.#lastDraggingEvent = draggingEvent;
 
         const pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
         const managedDrag = this.gos.get('rowDragManaged');
 
         if (managedDrag) {
-            this.doManagedDrag(draggingEvent, pixel);
+            this.#doManagedDrag(draggingEvent, pixel);
         }
 
-        this.autoScrollService.check(draggingEvent.event);
+        this.#autoScrollService.check(draggingEvent.event);
     }
 
-    private doManagedDrag(draggingEvent: DraggingEvent, pixel: number): void {
-        const isFromThisGrid = this.isFromThisGrid(draggingEvent);
+    #doManagedDrag(draggingEvent: DraggingEvent, pixel: number): void {
+        const isFromThisGrid = this.#isFromThisGrid(draggingEvent);
         const managedDrag = this.gos.get('rowDragManaged');
         const rowNodes = draggingEvent.dragItem.rowNodes! as RowNode[];
 
@@ -207,61 +207,61 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
 
         if (this.gos.get('suppressMoveWhenRowDragging') || !isFromThisGrid) {
-            if (!this.isDropZoneWithinThisGrid(draggingEvent)) {
-                this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
+            if (!this.#isDropZoneWithinThisGrid(draggingEvent)) {
+                this.#clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
             }
         } else {
-            this.moveRows(rowNodes, pixel);
+            this.#moveRows(rowNodes, pixel);
         }
     }
 
-    private getRowIndexNumber(rowNode: RowNode): number {
+    #getRowIndexNumber(rowNode: RowNode): number {
         return parseInt(last(rowNode.getRowIndexString().split('-')), 10);
     }
 
-    private moveRowAndClearHighlight(draggingEvent: DraggingEvent): void {
-        const lastHighlightedRowNode = this.clientSideRowModel.getLastHighlightedRowNode();
+    #moveRowAndClearHighlight(draggingEvent: DraggingEvent): void {
+        const lastHighlightedRowNode = this.#clientSideRowModel.getLastHighlightedRowNode();
         const isBelow = lastHighlightedRowNode && lastHighlightedRowNode.highlighted === RowHighlightPosition.Below;
         const pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
         const rowNodes = draggingEvent.dragItem.rowNodes as RowNode[];
 
         let increment = isBelow ? 1 : 0;
 
-        if (this.isFromThisGrid(draggingEvent)) {
+        if (this.#isFromThisGrid(draggingEvent)) {
             rowNodes!.forEach(rowNode => {
                 if (rowNode.rowTop! < pixel) {
                     increment -= 1;
                 }
             });
-            this.moveRows(rowNodes!, pixel, increment);
+            this.#moveRows(rowNodes!, pixel, increment);
         } else {
             const getRowIdFunc = this.gos.getCallback('getRowId');
 
-            let addIndex = this.clientSideRowModel.getRowIndexAtPixel(pixel) + 1;
+            let addIndex = this.#clientSideRowModel.getRowIndexAtPixel(pixel) + 1;
 
-            if (this.clientSideRowModel.getHighlightPosition(pixel) === RowHighlightPosition.Above) {
+            if (this.#clientSideRowModel.getHighlightPosition(pixel) === RowHighlightPosition.Above) {
                 addIndex--;
             }
 
-            this.clientSideRowModel.updateRowData({
+            this.#clientSideRowModel.updateRowData({
                 add: rowNodes!
                     .map(node => node.data)
-                    .filter(data => !this.clientSideRowModel.getRowNode(
+                    .filter(data => !this.#clientSideRowModel.getRowNode(
                         getRowIdFunc ? getRowIdFunc({ data, level: 0 }) : data.id)
                     ),
                 addIndex
             });
         }
 
-        this.clearRowHighlight();
+        this.#clearRowHighlight();
     }
 
-    private clearRowHighlight(): void {
-        this.clientSideRowModel.highlightRowAtPixel(null);
+    #clearRowHighlight(): void {
+        this.#clientSideRowModel.highlightRowAtPixel(null);
     }
 
-    private moveRows(rowNodes: RowNode[], pixel: number, increment: number = 0): void {
-        const rowWasMoved = this.clientSideRowModel.ensureRowsAtPixel(rowNodes, pixel, increment);
+    #moveRows(rowNodes: RowNode[], pixel: number, increment: number = 0): void {
+        const rowWasMoved = this.#clientSideRowModel.ensureRowsAtPixel(rowNodes, pixel, increment);
 
         if (rowWasMoved) {
             this.focusService.clearFocusedCell();
@@ -289,22 +289,22 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         } else {
             if (params.onDragEnter) {
                 processedParams.onDragEnter = (e) => {
-                    params.onDragEnter!(this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_ENTER, e as any));
+                    params.onDragEnter!(this.#draggingToRowDragEvent(Events.EVENT_ROW_DRAG_ENTER, e as any));
                 };
             }
             if (params.onDragLeave) {
                 processedParams.onDragLeave = (e) => {
-                    params.onDragLeave!(this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_LEAVE, e as any));
+                    params.onDragLeave!(this.#draggingToRowDragEvent(Events.EVENT_ROW_DRAG_LEAVE, e as any));
                 };
             }
             if (params.onDragging) {
                 processedParams.onDragging = (e) => {
-                    params.onDragging!(this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_MOVE, e as any));
+                    params.onDragging!(this.#draggingToRowDragEvent(Events.EVENT_ROW_DRAG_MOVE, e as any));
                 };
             }
             if (params.onDragStop) {
                 processedParams.onDragStop = (e) => {
-                    params.onDragStop!(this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_END, e as any));
+                    params.onDragStop!(this.#draggingToRowDragEvent(Events.EVENT_ROW_DRAG_END, e as any));
                 };
             }
         }
@@ -333,32 +333,32 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             onDragEnter: events.onDragEnter
                 ? ((e) => {
                     onDragEnter(e);
-                    events.onDragEnter!(this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_ENTER, e as any));
+                    events.onDragEnter!(this.#draggingToRowDragEvent(Events.EVENT_ROW_DRAG_ENTER, e as any));
                 })
                 : onDragEnter,
             onDragLeave: events.onDragLeave
                 ? ((e) => {
                     onDragLeave(e);
-                    events.onDragLeave!(this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_LEAVE, e as any));
+                    events.onDragLeave!(this.#draggingToRowDragEvent(Events.EVENT_ROW_DRAG_LEAVE, e as any));
                 })
                 : onDragLeave,
             onDragging: events.onDragging
                 ? ((e) => {
                     onDragging(e);
-                    events.onDragging!(this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_MOVE, e as any));
+                    events.onDragging!(this.#draggingToRowDragEvent(Events.EVENT_ROW_DRAG_MOVE, e as any));
                 })
                 : onDragging,
             onDragStop: events.onDragStop
                 ? ((e) => {
                     onDragStop(e);
-                    events.onDragStop!(this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_END, e as any));
+                    events.onDragStop!(this.#draggingToRowDragEvent(Events.EVENT_ROW_DRAG_END, e as any));
                 })
                 : onDragStop,
             fromGrid: true /* @private */
         } as RowDropZoneParams;
     }
 
-    private draggingToRowDragEvent(type: string, draggingEvent: DraggingEvent): RowDragEvent {
+    #draggingToRowDragEvent(type: string, draggingEvent: DraggingEvent): RowDragEvent {
         const yNormalised = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
         const mouseIsPastLastRow = yNormalised > this.paginationProxy.getCurrentPageHeight();
 
@@ -398,38 +398,38 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return event;
     }
 
-    private dispatchGridEvent(type: string, draggingEvent: DraggingEvent): void {
-        const event = this.draggingToRowDragEvent(type, draggingEvent);
+    #dispatchGridEvent(type: string, draggingEvent: DraggingEvent): void {
+        const event = this.#draggingToRowDragEvent(type, draggingEvent);
 
         this.eventService.dispatchEvent(event);
     }
 
     public onDragLeave(draggingEvent: DraggingEvent): void {
-        this.dispatchGridEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
-        this.stopDragging(draggingEvent);
+        this.#dispatchGridEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
+        this.#stopDragging(draggingEvent);
 
         if (this.gos.get('rowDragManaged')) {
-            this.clearRowHighlight();
+            this.#clearRowHighlight();
         }
     }
 
     public onDragStop(draggingEvent: DraggingEvent): void {
-        this.dispatchGridEvent(Events.EVENT_ROW_DRAG_END, draggingEvent);
-        this.stopDragging(draggingEvent);
+        this.#dispatchGridEvent(Events.EVENT_ROW_DRAG_END, draggingEvent);
+        this.#stopDragging(draggingEvent);
 
         if (
             this.gos.get('rowDragManaged') &&
-            (this.gos.get('suppressMoveWhenRowDragging') || !this.isFromThisGrid(draggingEvent)) &&
-            !this.isDropZoneWithinThisGrid(draggingEvent)
+            (this.gos.get('suppressMoveWhenRowDragging') || !this.#isFromThisGrid(draggingEvent)) &&
+            !this.#isDropZoneWithinThisGrid(draggingEvent)
         ) {
-            this.moveRowAndClearHighlight(draggingEvent);
+            this.#moveRowAndClearHighlight(draggingEvent);
         }
     }
 
-    private stopDragging(draggingEvent: DraggingEvent): void {
-        this.autoScrollService.ensureCleared();
+    #stopDragging(draggingEvent: DraggingEvent): void {
+        this.#autoScrollService.ensureCleared();
 
-        this.getRowNodes(draggingEvent).forEach(rowNode => {
+        this.#getRowNodes(draggingEvent).forEach(rowNode => {
             rowNode.setDragging(false);
         });
     }

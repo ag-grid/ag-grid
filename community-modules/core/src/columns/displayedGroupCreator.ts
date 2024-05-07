@@ -20,7 +20,7 @@ export class DisplayedGroupCreator extends BeanStub {
         pinned: ColumnPinnedType,
         // we try to reuse old groups if we can, to allow gui to do animation
         oldDisplayedGroups?: IHeaderColumn[]): IHeaderColumn[] {
-        const oldColumnsMapped = this.mapOldGroupsById(oldDisplayedGroups!);
+        const oldColumnsMapped = this.#mapOldGroupsById(oldDisplayedGroups!);
 
         /**
          * The following logic starts at the leaf level of columns, iterating through them to build their parent
@@ -63,7 +63,7 @@ export class DisplayedGroupCreator extends BeanStub {
 
                 // the parent differs from the previous node, so we create a group from the previous node
                 // and add all to the result array, except the current node.
-                const newGroup = this.createColumnGroup(
+                const newGroup = this.#createColumnGroup(
                     previousNodeParent,
                     groupInstanceIdCreator,
                     oldColumnsMapped,
@@ -94,16 +94,16 @@ export class DisplayedGroupCreator extends BeanStub {
                 createGroupToIndex(currentlyIterating.length);
             }
         }
-        this.setupParentsIntoColumns(topLevelResultCols, null);
+        this.#setupParentsIntoColumns(topLevelResultCols, null);
         return topLevelResultCols;
     }
 
-    private createColumnGroup(
-            providedGroup: ProvidedColumnGroup,
-            groupInstanceIdCreator: GroupInstanceIdCreator,
-            oldColumnsMapped: {[key: string]: ColumnGroup},
-            pinned: ColumnPinnedType
-        ): ColumnGroup {
+    #createColumnGroup(
+        providedGroup: ProvidedColumnGroup,
+        groupInstanceIdCreator: GroupInstanceIdCreator,
+        oldColumnsMapped: {[key: string]: ColumnGroup},
+        pinned: ColumnPinnedType
+    ): ColumnGroup {
 
         const groupId = providedGroup.getGroupId();
         const instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
@@ -130,7 +130,7 @@ export class DisplayedGroupCreator extends BeanStub {
     }
 
     // returns back a 2d map of ColumnGroup as follows: groupId -> instanceId -> ColumnGroup
-    private mapOldGroupsById(displayedGroups: IHeaderColumn[]): {[uniqueId: string]: ColumnGroup} {
+    #mapOldGroupsById(displayedGroups: IHeaderColumn[]): {[uniqueId: string]: ColumnGroup} {
         const result: {[uniqueId: HeaderColumnId]: ColumnGroup} = {};
 
         const recursive = (columnsOrGroups: IHeaderColumn[] | null) => {
@@ -150,12 +150,12 @@ export class DisplayedGroupCreator extends BeanStub {
         return result;
     }
 
-    private setupParentsIntoColumns(columnsOrGroups: IHeaderColumn[] | null, parent: ColumnGroup | null): void {
+    #setupParentsIntoColumns(columnsOrGroups: IHeaderColumn[] | null, parent: ColumnGroup | null): void {
         columnsOrGroups!.forEach(columnsOrGroup => {
             columnsOrGroup.setParent(parent);
             if (columnsOrGroup instanceof ColumnGroup) {
                 const columnGroup = columnsOrGroup;
-                this.setupParentsIntoColumns(columnGroup.getChildren(), columnGroup);
+                this.#setupParentsIntoColumns(columnGroup.getChildren(), columnGroup);
             }
         });
     }

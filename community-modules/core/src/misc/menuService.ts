@@ -77,31 +77,31 @@ export class MenuService extends BeanStub {
     @Optional('contextMenuFactory') private readonly contextMenuFactory?: IContextMenuFactory;
     @Optional('enterpriseMenuFactory') private readonly enterpriseMenuFactory? : IMenuFactory;
 
-    private activeMenuFactory: IMenuFactory;
+    #activeMenuFactory: IMenuFactory;
 
     @PostConstruct
     private postConstruct(): void {
-        this.activeMenuFactory = this.enterpriseMenuFactory ?? this.filterMenuFactory;
+        this.#activeMenuFactory = this.enterpriseMenuFactory ?? this.filterMenuFactory;
     }
 
     public showColumnMenu(params: ShowColumnMenuParams): void {
-        this.showColumnMenuCommon(this.activeMenuFactory, params, 'columnMenu');
+        this.#showColumnMenuCommon(this.#activeMenuFactory, params, 'columnMenu');
     }
 
     public showFilterMenu(params: ShowFilterMenuParams): void {
         const menuFactory: IMenuFactory = this.enterpriseMenuFactory && this.isLegacyMenuEnabled()
             ? this.enterpriseMenuFactory
             : this.filterMenuFactory;
-        this.showColumnMenuCommon(menuFactory, params, params.containerType, true);
+        this.#showColumnMenuCommon(menuFactory, params, params.containerType, true);
     }
 
     public showHeaderContextMenu(column: Column | undefined, mouseEvent?: MouseEvent, touchEvent?: TouchEvent): void {
-        this.activeMenuFactory.showMenuAfterContextMenuEvent(column, mouseEvent, touchEvent);
+        this.#activeMenuFactory.showMenuAfterContextMenuEvent(column, mouseEvent, touchEvent);
     }
 
     public getContextMenuPosition(rowNode?: RowNode | null, column?: Column | null): { x: number, y: number } {
-        const rowCtrl = this.getRowCtrl(rowNode);
-        const eGui = this.getCellGui(rowCtrl, column);
+        const rowCtrl = this.#getRowCtrl(rowNode);
+        const eGui = this.#getCellGui(rowCtrl, column);
 
         if (!eGui) {
             if (rowCtrl) {
@@ -129,7 +129,7 @@ export class MenuService extends BeanStub {
         }
 
         if (anchorToElement == null) {
-            anchorToElement = this.getContextMenuAnchorElement(rowNode, column)
+            anchorToElement = this.#getContextMenuAnchorElement(rowNode, column)
         }
 
         this.contextMenuFactory?.onContextMenu(
@@ -150,7 +150,7 @@ export class MenuService extends BeanStub {
         // hide the context menu if in enterprise
         this.contextMenuFactory?.hideActiveMenu();
         // and hide the column menu always
-        this.activeMenuFactory.hideActiveMenu();
+        this.#activeMenuFactory.hideActiveMenu();
     }
 
     public hideColumnChooser(): void {
@@ -160,7 +160,7 @@ export class MenuService extends BeanStub {
     public isColumnMenuInHeaderEnabled(column: Column): boolean {
         const { suppressMenu, suppressHeaderMenuButton } = column.getColDef();
         const isSuppressMenuButton = suppressHeaderMenuButton ?? suppressMenu;
-        return !isSuppressMenuButton && this.activeMenuFactory.isMenuEnabled(column) && (this.isLegacyMenuEnabled() || !!this.enterpriseMenuFactory);
+        return !isSuppressMenuButton && this.#activeMenuFactory.isMenuEnabled(column) && (this.isLegacyMenuEnabled() || !!this.enterpriseMenuFactory);
     }
 
     public isFilterMenuInHeaderEnabled(column: Column): boolean {
@@ -168,11 +168,11 @@ export class MenuService extends BeanStub {
     }
 
     public isHeaderContextMenuEnabled(column?: Column): boolean {
-        return !column?.getColDef().suppressHeaderContextMenu && this.getColumnMenuType() === 'new';
+        return !column?.getColDef().suppressHeaderContextMenu && this.#getColumnMenuType() === 'new';
     }
 
     public isHeaderMenuButtonAlwaysShowEnabled(): boolean {
-        return this.isSuppressMenuHide();
+        return this.#isSuppressMenuHide();
     }
 
     public isHeaderMenuButtonEnabled(): boolean {
@@ -180,7 +180,7 @@ export class MenuService extends BeanStub {
         // However if suppressMenuHide is set to true the menu will be displayed alwasys, so it's ok
         // to show it on iPad in this case (as hover isn't needed). If suppressMenuHide
         // is false (default) user will need to use longpress to display the menu.
-        const menuHides = !this.isSuppressMenuHide();
+        const menuHides = !this.#isSuppressMenuHide();
 
         const onIpadAndMenuHides = isIOSUserAgent() && menuHides;
 
@@ -188,12 +188,12 @@ export class MenuService extends BeanStub {
     }
 
     public isHeaderFilterButtonEnabled(column: Column): boolean {
-        return this.isFilterMenuInHeaderEnabled(column) && !this.isLegacyMenuEnabled() && !this.isFloatingFilterButtonDisplayed(column);
+        return this.isFilterMenuInHeaderEnabled(column) && !this.isLegacyMenuEnabled() && !this.#isFloatingFilterButtonDisplayed(column);
     }
 
     public isFilterMenuItemEnabled(column: Column): boolean {
         return this.filterManager.isFilterAllowed(column) && !this.isLegacyMenuEnabled() &&
-            !this.isFilterMenuInHeaderEnabled(column) && !this.isFloatingFilterButtonDisplayed(column);
+            !this.isFilterMenuInHeaderEnabled(column) && !this.#isFloatingFilterButtonDisplayed(column);
     }
 
     public isColumnMenuAnchoringEnabled(): boolean {
@@ -201,11 +201,11 @@ export class MenuService extends BeanStub {
     }
 
     public areAdditionalColumnMenuItemsEnabled(): boolean {
-        return this.getColumnMenuType() === 'new';
+        return this.#getColumnMenuType() === 'new';
     }
 
     public isLegacyMenuEnabled(): boolean {
-        return this.getColumnMenuType() === 'legacy';
+        return this.#getColumnMenuType() === 'legacy';
     }
 
     public isFloatingFilterButtonEnabled(column: Column): boolean {
@@ -217,15 +217,15 @@ export class MenuService extends BeanStub {
         return colDef.suppressFloatingFilterButton == null ? !legacySuppressFilterButton : !colDef.suppressFloatingFilterButton;
     }
 
-    private getColumnMenuType(): 'legacy' | 'new' {
+    #getColumnMenuType(): 'legacy' | 'new' {
         return this.gos.get('columnMenu') ?? 'legacy';
     }
 
-    private isFloatingFilterButtonDisplayed(column: Column): boolean {
+    #isFloatingFilterButtonDisplayed(column: Column): boolean {
         return !!column.getColDef().floatingFilter && this.isFloatingFilterButtonEnabled(column);
     }
 
-    private isSuppressMenuHide(): boolean {
+    #isSuppressMenuHide(): boolean {
         const suppressMenuHide = this.gos.get('suppressMenuHide');
         if (this.isLegacyMenuEnabled()) {
             return suppressMenuHide;
@@ -235,7 +235,12 @@ export class MenuService extends BeanStub {
         }
     }
 
-    private showColumnMenuCommon(menuFactory: IMenuFactory, params: ShowColumnMenuParams, containerType: ContainerType, filtersOnly?: boolean): void {
+    #showColumnMenuCommon(
+        menuFactory: IMenuFactory,
+        params: ShowColumnMenuParams,
+        containerType: ContainerType,
+        filtersOnly?: boolean
+    ): void {
         const { column, positionBy } = params;
         if (positionBy === 'button') {
             const { buttonElement } = params;
@@ -254,7 +259,7 @@ export class MenuService extends BeanStub {
         }
     }
 
-    private getRowCtrl(rowNode?: RowNode | null): RowCtrl | undefined {
+    #getRowCtrl(rowNode?: RowNode | null): RowCtrl | undefined {
         const { rowIndex, rowPinned } = rowNode || {};
 
         if (rowIndex == null) {
@@ -265,7 +270,7 @@ export class MenuService extends BeanStub {
 
     }
 
-    private getCellGui(rowCtrl?: RowCtrl, column?: Column | null): HTMLElement | undefined {
+    #getCellGui(rowCtrl?: RowCtrl, column?: Column | null): HTMLElement | undefined {
         if (!rowCtrl || !column) { return; }
 
         const cellCtrl = rowCtrl.getCellCtrl(column);
@@ -273,15 +278,15 @@ export class MenuService extends BeanStub {
         return cellCtrl?.getGui() || undefined;
     }
 
-    private getContextMenuAnchorElement(rowNode?: RowNode | null, column?: Column | null): HTMLElement {
+    #getContextMenuAnchorElement(rowNode?: RowNode | null, column?: Column | null): HTMLElement {
         const gridBodyEl = this.ctrlsService.getGridBodyCtrl().getGridBodyElement();
-        const rowCtrl = this.getRowCtrl(rowNode);
+        const rowCtrl = this.#getRowCtrl(rowNode);
 
         if (!rowCtrl) {
             return gridBodyEl;
         }
 
-        const cellGui = this.getCellGui(rowCtrl, column);
+        const cellGui = this.#getCellGui(rowCtrl, column);
 
         if (cellGui) {
             return cellGui;

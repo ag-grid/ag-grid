@@ -14,12 +14,12 @@ export class AutoWidthCalculator extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('rowCssClassCalculator') public rowCssClassCalculator: RowCssClassCalculator;
 
-    private centerRowContainerCtrl: RowContainerCtrl;
+    #centerRowContainerCtrl: RowContainerCtrl;
 
     @PostConstruct
     private postConstruct(): void {
         this.ctrlsService.whenReady(p => {
-            this.centerRowContainerCtrl = p.center;
+            this.#centerRowContainerCtrl = p.center;
         });
     }
 
@@ -28,7 +28,7 @@ export class AutoWidthCalculator extends BeanStub {
     // as we don't need it any more.
     // drawback: only the cells visible on the screen are considered
     public getPreferredWidthForColumn(column: Column, skipHeader?: boolean): number {
-        const eHeaderCell = this.getHeaderCellForColumn(column);
+        const eHeaderCell = this.#getHeaderCellForColumn(column);
         // cell isn't visible
         if (!eHeaderCell) { return -1; }
 
@@ -41,18 +41,18 @@ export class AutoWidthCalculator extends BeanStub {
             elements.push(eHeaderCell);
         }
 
-        return this.addElementsToContainerAndGetWidth(elements);
+        return this.#addElementsToContainerAndGetWidth(elements);
     }
 
     public getPreferredWidthForColumnGroup(columnGroup: ColumnGroup): number {
-        const eHeaderCell = this.getHeaderCellForColumn(columnGroup);
+        const eHeaderCell = this.#getHeaderCellForColumn(columnGroup);
 
         if (!eHeaderCell) { return -1; }
 
-        return this.addElementsToContainerAndGetWidth([eHeaderCell]);
+        return this.#addElementsToContainerAndGetWidth([eHeaderCell]);
     }
 
-    private addElementsToContainerAndGetWidth(elements: HTMLElement[]): number {
+    #addElementsToContainerAndGetWidth(elements: HTMLElement[]): number {
         // this element has to be a form, otherwise form elements within a cell
         // will be validated while being cloned. This can cause issues such as 
         // radio buttons being reset and losing their values.
@@ -62,9 +62,9 @@ export class AutoWidthCalculator extends BeanStub {
 
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
-        const eBodyContainer = this.centerRowContainerCtrl.getContainerElement();
+        const eBodyContainer = this.#centerRowContainerCtrl.getContainerElement();
 
-        elements.forEach(el => this.cloneItemIntoDummy(el, eDummyContainer));
+        elements.forEach(el => this.#cloneItemIntoDummy(el, eDummyContainer));
 
         // only append the dummyContainer to the DOM after it contains all the necessary items
         eBodyContainer.appendChild(eDummyContainer);
@@ -78,19 +78,19 @@ export class AutoWidthCalculator extends BeanStub {
 
         // we add padding as I found sometimes the gui still put '...' after some of the texts. so the
         // user can configure the grid to add a few more pixels after the calculated width
-        const autoSizePadding = this.getAutoSizePadding();
+        const autoSizePadding = this.#getAutoSizePadding();
 
         return dummyContainerWidth + autoSizePadding;
     }
 
-    private getAutoSizePadding(): number {
+    #getAutoSizePadding(): number {
         return this.gos.get('autoSizePadding');
     }
 
     /* tslint:disable */
-    private getHeaderCellForColumn(column: ColumnGroup): HTMLElement | null;
-    private getHeaderCellForColumn(column: Column): HTMLElement | null;
-    private getHeaderCellForColumn(column: any): any {
+    #getHeaderCellForColumn(column: ColumnGroup): HTMLElement | null;
+    #getHeaderCellForColumn(column: Column): HTMLElement | null;
+    #getHeaderCellForColumn(column: any): any {
     /* tslint:enable */
         let element: HTMLElement | null = null;
 
@@ -103,7 +103,7 @@ export class AutoWidthCalculator extends BeanStub {
         return element;
     }
 
-    private cloneItemIntoDummy(eCell: HTMLElement, eDummyContainer: HTMLElement): void {
+    #cloneItemIntoDummy(eCell: HTMLElement, eDummyContainer: HTMLElement): void {
         // make a deep clone of the cell
         const eCellClone: HTMLElement = eCell.cloneNode(true) as HTMLElement;
         // the original has a fixed width, we remove this to allow the natural width based on content

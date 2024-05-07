@@ -5,8 +5,8 @@ const DEBOUNCE_DELAY = 50;
 //@Bean('resizeObserverService')
 export class ResizeObserverService extends BeanStub {
 
-    private polyfillFunctions: (() => void)[] = [];
-    private polyfillScheduled: boolean;
+    #polyfillFunctions: (() => void)[] = [];
+    #polyfillScheduled: boolean;
 
     public observeResize(element: HTMLElement, callback: () => void): () => void {
         const win = this.gos.getWindow();
@@ -37,7 +37,7 @@ export class ResizeObserverService extends BeanStub {
                         callback();
                     }
 
-                    this.doNextPolyfillTurn(periodicallyCheckWidthAndHeight);
+                    this.#doNextPolyfillTurn(periodicallyCheckWidthAndHeight);
                 }
             };
 
@@ -58,26 +58,26 @@ export class ResizeObserverService extends BeanStub {
     }
 
 
-    private doNextPolyfillTurn(func: () => void): void {
-        this.polyfillFunctions.push(func);
-        this.schedulePolyfill();
+    #doNextPolyfillTurn(func: () => void): void {
+        this.#polyfillFunctions.push(func);
+        this.#schedulePolyfill();
     }
 
-    private schedulePolyfill(): void {
-        if (this.polyfillScheduled) { return; }
+    #schedulePolyfill(): void {
+        if (this.#polyfillScheduled) { return; }
 
         const executeAllFuncs = () => {
-            const funcs = this.polyfillFunctions;
+            const funcs = this.#polyfillFunctions;
 
             // make sure set scheduled to false and clear clear array
             // before executing the funcs, as the funcs could add more funcs
-            this.polyfillScheduled = false;
-            this.polyfillFunctions = [];
+            this.#polyfillScheduled = false;
+            this.#polyfillFunctions = [];
 
             funcs.forEach(f => f());
         };
 
-        this.polyfillScheduled = true;
+        this.#polyfillScheduled = true;
         window.setTimeout(executeAllFuncs, DEBOUNCE_DELAY);
     }
 

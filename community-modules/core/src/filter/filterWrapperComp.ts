@@ -16,7 +16,7 @@ export class FilterWrapperComp extends Component {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
-    private filterWrapper: FilterWrapper | null = null;
+    #filterWrapper: FilterWrapper | null = null;
 
     constructor(private readonly column: Column, private readonly source: FilterRequestSource) {
         super(/* html */`<div class="ag-filter"></div>`);
@@ -24,40 +24,40 @@ export class FilterWrapperComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.createFilter(true);
+        this.#createFilter(true);
 
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_DESTROYED, this.onFilterDestroyed.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_FILTER_DESTROYED, this.#onFilterDestroyed.bind(this));
     }
 
     public hasFilter(): boolean {
-        return !!this.filterWrapper;
+        return !!this.#filterWrapper;
     }
 
     public getFilter(): AgPromise<IFilterComp> | null {
-        return this.filterWrapper?.filterPromise ?? null;
+        return this.#filterWrapper?.filterPromise ?? null;
     }
 
     public afterInit(): AgPromise<void> {
-        return this.filterWrapper?.filterPromise?.then(() => {}) ?? AgPromise.resolve();
+        return this.#filterWrapper?.filterPromise?.then(() => {}) ?? AgPromise.resolve();
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
-        this.filterWrapper?.filterPromise?.then(filter => {
+        this.#filterWrapper?.filterPromise?.then(filter => {
             filter?.afterGuiAttached?.(params);
         })
     }
 
     public afterGuiDetached(): void {
-        this.filterWrapper?.filterPromise?.then(filter => {
+        this.#filterWrapper?.filterPromise?.then(filter => {
             filter?.afterGuiDetached?.();
         });
     }
 
-    private createFilter(init?: boolean): void {
+    #createFilter(init?: boolean): void {
         const { column, source } = this;
-        this.filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, source);
-        if (!this.filterWrapper?.filterPromise) { return; }
-        this.filterWrapper.filterPromise.then(filter => {
+        this.#filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, source);
+        if (!this.#filterWrapper?.filterPromise) { return; }
+        this.#filterWrapper.filterPromise.then(filter => {
             let guiFromFilter = filter!.getGui();
 
             if (!exists(guiFromFilter)) {
@@ -85,7 +85,7 @@ export class FilterWrapperComp extends Component {
         });
     }
 
-    private onFilterDestroyed(event: FilterDestroyedEvent): void {
+    #onFilterDestroyed(event: FilterDestroyedEvent): void {
         if (
             (event.source === 'api' || event.source === 'paramsUpdated') &&
             event.column.getId() === this.column.getId() &&
@@ -93,12 +93,12 @@ export class FilterWrapperComp extends Component {
         ) {
             // filter has been destroyed by the API or params changing. If the column still exists, need to recreate UI component
             clearElement(this.getGui());
-            this.createFilter();
+            this.#createFilter();
         }
     }
 
     protected destroy(): void {
-        this.filterWrapper = null;
+        this.#filterWrapper = null;
         super.destroy();
     }
 }

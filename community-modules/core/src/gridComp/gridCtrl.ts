@@ -32,32 +32,32 @@ export class GridCtrl extends BeanStub {
     @Autowired('mouseEventService') private readonly mouseEventService: MouseEventService;
     @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
 
-    private view: IGridComp;
-    private eGridHostDiv: HTMLElement;
-    private eGui: HTMLElement;
+    #view: IGridComp;
+    #eGridHostDiv: HTMLElement;
+    #eGui: HTMLElement;
 
     public setComp(view: IGridComp, eGridDiv: HTMLElement, eGui: HTMLElement): void {
-        this.view = view;
-        this.eGridHostDiv = eGridDiv;
-        this.eGui = eGui;
+        this.#view = view;
+        this.#eGridHostDiv = eGridDiv;
+        this.#eGui = eGui;
 
-        this.eGui.setAttribute('grid-id', this.context.getGridId());
+        this.#eGui.setAttribute('grid-id', this.context.getGridId());
 
         // this drop target is just used to see if the drop event is inside the grid
         this.dragAndDropService.addDropTarget({
-            getContainer: () => this.eGui,
+            getContainer: () => this.#eGui,
             isInterestedIn: (type) => type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel,
             getIconName: () => DragAndDropService.ICON_NOT_ALLOWED,
         });
 
         this.mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);
 
-        this.createManagedBean(new LayoutFeature(this.view));
+        this.createManagedBean(new LayoutFeature(this.#view));
 
-        this.addRtlSupport();
+        this.#addRtlSupport();
 
         const unsubscribeFromResize = this.resizeObserverService.observeResize(
-            this.eGridHostDiv, this.onGridSizeChanged.bind(this));
+            this.#eGridHostDiv, this.#onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
 
         this.ctrlsService.register('gridCtrl',this);
@@ -85,38 +85,38 @@ export class GridCtrl extends BeanStub {
         return ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.context.getGridId());
     }
 
-    private onGridSizeChanged(): void {
+    #onGridSizeChanged(): void {
         const event: WithoutGridCommon<GridSizeChangedEvent> = {
             type: Events.EVENT_GRID_SIZE_CHANGED,
-            clientWidth: this.eGridHostDiv.clientWidth,
-            clientHeight: this.eGridHostDiv.clientHeight
+            clientWidth: this.#eGridHostDiv.clientWidth,
+            clientHeight: this.#eGridHostDiv.clientHeight
         };
         this.eventService.dispatchEvent(event);
     }
 
-    private addRtlSupport(): void {
+    #addRtlSupport(): void {
         const cssClass = this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
-        this.view.setRtlClass(cssClass);
+        this.#view.setRtlClass(cssClass);
     }
 
     public destroyGridUi(): void {
-        this.view.destroyGridUi();
+        this.#view.destroyGridUi();
     }
 
     public getGui(): HTMLElement {
-        return this.eGui;
+        return this.#eGui;
     }
 
     public setResizeCursor(on: boolean): void {
-        this.view.setCursor(on ? 'ew-resize' : null);
+        this.#view.setCursor(on ? 'ew-resize' : null);
     }
 
     public disableUserSelect(on: boolean): void {
-        this.view.setUserSelect(on ? 'none' : null);
+        this.#view.setUserSelect(on ? 'none' : null);
     }
 
     public focusNextInnerContainer(backwards: boolean): boolean {
-        const focusableContainers = this.view.getFocusableContainers();
+        const focusableContainers = this.#view.getFocusableContainers();
         const activeEl = this.gos.getActiveDomElement();
         const idxWithFocus = focusableContainers.findIndex(container => container.contains(activeEl));
         const nextIdx = idxWithFocus + (backwards ? -1 : 1);
@@ -129,7 +129,7 @@ export class GridCtrl extends BeanStub {
     }
 
     public focusInnerElement(fromBottom?: boolean): boolean {
-        const focusableContainers = this.view.getFocusableContainers();
+        const focusableContainers = this.#view.getFocusableContainers();
         const allColumns = this.columnModel.getAllDisplayedColumns();
 
         if (fromBottom) {
@@ -158,6 +158,6 @@ export class GridCtrl extends BeanStub {
     }
 
     public forceFocusOutOfContainer(up = false): void {
-        this.view.forceFocusOutOfContainer(up);
+        this.#view.forceFocusOutOfContainer(up);
     }
 }

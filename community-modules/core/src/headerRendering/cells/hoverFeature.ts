@@ -7,34 +7,34 @@ export class HoverFeature extends BeanStub {
 
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
 
-    private readonly columns: Column[];
+    readonly #columns: Column[];
 
-    private element: HTMLElement;
+    #element: HTMLElement;
 
     constructor(columns: Column[], element: HTMLElement) {
         super();
-        this.columns = columns;
-        this.element = element;
+        this.#columns = columns;
+        this.#element = element;
     }
 
     @PostConstruct
     private postConstruct(): void {
         if (this.gos.get('columnHoverHighlight')) {
-            this.addMouseHoverListeners();
+            this.#addMouseHoverListeners();
         }
     }
 
-    private addMouseHoverListeners(): void {
-        this.addManagedListener(this.element, 'mouseout', this.onMouseOut.bind(this));
-        this.addManagedListener(this.element, 'mouseover', this.onMouseOver.bind(this));
+    #addMouseHoverListeners(): void {
+        this.addManagedListener(this.#element, 'mouseout', this.#onMouseOut.bind(this));
+        this.addManagedListener(this.#element, 'mouseover', this.#onMouseOver.bind(this));
     }
 
-    private onMouseOut(): void {
+    #onMouseOut(): void {
         this.columnHoverService.clearMouseOver();
     }
 
-    private onMouseOver(): void {
-        this.columnHoverService.setMouseOver(this.columns);
+    #onMouseOver(): void {
+        this.columnHoverService.setMouseOver(this.#columns);
     }
 
 }

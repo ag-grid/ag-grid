@@ -1,13 +1,13 @@
 export class CssClassManager {
 
-    private getGui: () => HTMLElement | undefined | null;
+    #getGui: () => HTMLElement | undefined | null;
 
     // to minimise DOM hits, we only apply CSS classes if they have changed. as adding a CSS class that is already
     // there, or removing one that wasn't present, all takes CPU.
-    private cssClassStates: { [cssClass: string]: boolean } = {};
+    #cssClassStates: { [cssClass: string]: boolean } = {};
 
     constructor(getGui: () => (HTMLElement | undefined | null)) {
-        this.getGui = getGui;
+        this.#getGui = getGui;
     }
 
     public addCssClass(className: string): void {
@@ -18,13 +18,13 @@ export class CssClassManager {
             return;
         }
 
-        const updateNeeded = this.cssClassStates[className] !== true;
+        const updateNeeded = this.#cssClassStates[className] !== true;
         if (updateNeeded && className.length) {
-            const eGui = this.getGui();
+            const eGui = this.#getGui();
             if (eGui) {
                 eGui.classList.add(className);
             }
-            this.cssClassStates[className] = true;
+            this.#cssClassStates[className] = true;
         }
     }
 
@@ -36,19 +36,19 @@ export class CssClassManager {
             return;
         }
 
-        const updateNeeded = this.cssClassStates[className] !== false;
+        const updateNeeded = this.#cssClassStates[className] !== false;
         if (updateNeeded && className.length) {
-            const eGui = this.getGui();
+            const eGui = this.#getGui();
             if (eGui) {
                 eGui.classList.remove(className);
             }
 
-            this.cssClassStates[className] = false;
+            this.#cssClassStates[className] = false;
         }
     }
 
     public containsCssClass(className: string): boolean {
-        const eGui = this.getGui();
+        const eGui = this.#getGui();
         if (!eGui) { return false; }
 
         return eGui.classList.contains(className);
@@ -67,14 +67,14 @@ export class CssClassManager {
             }
         }
 
-        const updateNeeded = this.cssClassStates[className] !== addOrRemove;
+        const updateNeeded = this.#cssClassStates[className] !== addOrRemove;
         if (updateNeeded && className.length) {
-            const eGui = this.getGui();
+            const eGui = this.#getGui();
             if (eGui) {
                 eGui.classList.toggle(className, addOrRemove);
             }
             
-            this.cssClassStates[className] = addOrRemove;
+            this.#cssClassStates[className] = addOrRemove;
         }
     }
 }

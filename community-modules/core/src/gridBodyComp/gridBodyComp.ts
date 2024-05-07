@@ -68,7 +68,7 @@ export class GridBodyComp extends Component {
     @RefSelector('gridHeader') headerRootComp: GridHeaderComp;
     @RefSelector('eBody') private eBody: HTMLElement;
 
-    private ctrl: GridBodyCtrl;
+    #ctrl: GridBodyCtrl;
 
     constructor() {
         super(GRID_BODY_TEMPLATE);
@@ -84,7 +84,7 @@ export class GridBodyComp extends Component {
         };
 
         const compProxy: IGridBodyComp = {
-            setRowAnimationCssOnBodyViewport: (cssClass, animate) => this.setRowAnimationCssOnBodyViewport(cssClass, animate),
+            setRowAnimationCssOnBodyViewport: (cssClass, animate) => this.#setRowAnimationCssOnBodyViewport(cssClass, animate),
             setColumnCount: count => setAriaColCount(this.getGui(), count),
             setRowCount: count => setAriaRowCount(this.getGui(), count),
             setTopHeight: height => setHeight(height, this.eTop),
@@ -128,8 +128,8 @@ export class GridBodyComp extends Component {
             setBodyViewportWidth: width => this.eBodyViewport.style.width = width
         };
 
-        this.ctrl = this.createManagedBean(new GridBodyCtrl());
-        this.ctrl.setComp(
+        this.#ctrl = this.createManagedBean(new GridBodyCtrl());
+        this.#ctrl.setComp(
             compProxy,
             this.getGui(),
             this.eBodyViewport,
@@ -144,7 +144,7 @@ export class GridBodyComp extends Component {
         }
     }
 
-    private setRowAnimationCssOnBodyViewport(cssClass: string, animateRows: boolean): void {
+    #setRowAnimationCssOnBodyViewport(cssClass: string, animateRows: boolean): void {
         const bodyViewportClassList = this.eBodyViewport.classList;
         bodyViewportClassList.toggle(RowAnimationCssClasses.ANIMATION_ON, animateRows);
         bodyViewportClassList.toggle(RowAnimationCssClasses.ANIMATION_OFF, !animateRows);

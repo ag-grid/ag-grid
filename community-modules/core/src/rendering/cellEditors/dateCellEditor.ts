@@ -19,16 +19,16 @@ export interface IDateCellEditorParams<TData = any, TContext = any> extends ICel
 }
 
 class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams, AgInputDateField> {
-    private eInput: AgInputDateField;
-    private params: IDateCellEditorParams;
+    #eInput: AgInputDateField;
+    #params: IDateCellEditorParams;
 
     public getTemplate() {
         return /* html */`<ag-input-date-field class="ag-cell-editor" ref="eInput"></ag-input-date-field>`;
     }
 
     public init(eInput: AgInputDateField, params: IDateCellEditorParams): void {
-        this.eInput = eInput;
-        this.params = params;
+        this.#eInput = eInput;
+        this.#params = params;
         if (params.min != null) {
             eInput.setMin(params.min);
         }
@@ -41,15 +41,15 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
     }
 
     getValue(): Date | null | undefined {
-        const value = this.eInput.getDate();
-        if (!exists(value) && !exists(this.params.value)) {
-            return this.params.value;
+        const value = this.#eInput.getDate();
+        if (!exists(value) && !exists(this.#params.value)) {
+            return this.#params.value;
         }
         return value ?? null;
     }
 
     public getStartValue(): string | null | undefined {
-        const { value } = this.params;
+        const { value } = this.#params;
         if (!(value instanceof Date)) {
             return undefined
         }

@@ -18,10 +18,10 @@ export class QuickFilterService extends BeanStub {
     public static readonly EVENT_QUICK_FILTER_CHANGED = 'quickFilterChanged';
     private static readonly QUICK_FILTER_SEPARATOR = '\n';
 
-    private quickFilter: string | null = null;
-    private quickFilterParts: string[] | null = null;
-    private parser?: (quickFilter: string) => string[];
-    private matcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
+    #quickFilter: string | null = null;
+    #quickFilterParts: string[] | null = null;
+    #parser?: (quickFilter: string) => string[];
+    #matcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
 
     @PostConstruct
     private postConstruct(): void {
@@ -34,33 +34,33 @@ export class QuickFilterService extends BeanStub {
             }
         });
 
-        this.addManagedPropertyListener('quickFilterText', (e) => this.setQuickFilter(e.currentValue));
+        this.addManagedPropertyListener('quickFilterText', (e) => this.#setQuickFilter(e.currentValue));
         this.addManagedPropertyListeners([
             'includeHiddenColumnsInQuickFilter', 'applyQuickFilterBeforePivotOrAgg'
-        ], () => this.onQuickFilterColumnConfigChanged());
+        ], () => this.#onQuickFilterColumnConfigChanged());
 
-        this.quickFilter = this.parseQuickFilter(this.gos.get('quickFilterText'));
-        this.parser = this.gos.get('quickFilterParser');
-        this.matcher = this.gos.get('quickFilterMatcher');
-        this.setQuickFilterParts();
+        this.#quickFilter = this.#parseQuickFilter(this.gos.get('quickFilterText'));
+        this.#parser = this.gos.get('quickFilterParser');
+        this.#matcher = this.gos.get('quickFilterMatcher');
+        this.#setQuickFilterParts();
 
-        this.addManagedPropertyListeners(['quickFilterMatcher', 'quickFilterParser'], () => this.setQuickFilterParserAndMatcher());
+        this.addManagedPropertyListeners(['quickFilterMatcher', 'quickFilterParser'], () => this.#setQuickFilterParserAndMatcher());
     }
 
     public isQuickFilterPresent(): boolean {
-        return this.quickFilter !== null;
+        return this.#quickFilter !== null;
     }
 
     public doesRowPassQuickFilter(node: RowNode): boolean {
         const usingCache = this.gos.get('cacheQuickFilter');
 
-        if (this.matcher) {
-            return this.doesRowPassQuickFilterMatcher(usingCache, node);
+        if (this.#matcher) {
+            return this.#doesRowPassQuickFilterMatcher(usingCache, node);
         }
 
         // each part must pass, if any fails, then the whole filter fails
-        return this.quickFilterParts!.every(part =>
-            usingCache ? this.doesRowPassQuickFilterCache(node, part) : this.doesRowPassQuickFilterNoCache(node, part)
+        return this.#quickFilterParts!.every(part =>
+            usingCache ? this.#doesRowPassQuickFilterCache(node, part) : this.#doesRowPassQuickFilterNoCache(node, part)
         );
     }
 
@@ -68,16 +68,17 @@ export class QuickFilterService extends BeanStub {
         this.rowModel.forEachNode(node => node.quickFilterAggregateText = null);
     }
 
-    private setQuickFilterParts(): void {
-        const { quickFilter, parser } = this;
+    #setQuickFilterParts(): void {
+        const quickFilter = this.#quickFilter;
+        const parser = this.#parser;
         if (quickFilter) {
-            this.quickFilterParts = parser ? parser(quickFilter) : quickFilter.split(' ');
+            this.#quickFilterParts = parser ? parser(quickFilter) : quickFilter.split(' ');
         } else {
-            this.quickFilterParts = null;
+            this.#quickFilterParts = null;
         }
     }
 
-    private parseQuickFilter(newFilter?: string): string | null {
+    #parseQuickFilter(newFilter?: string): string | null {
         if (!exists(newFilter)) {
             return null;
         }
@@ -90,34 +91,34 @@ export class QuickFilterService extends BeanStub {
         return newFilter.toUpperCase();
     }
 
-    private setQuickFilter(newFilter: string | undefined): void {
+    #setQuickFilter(newFilter: string | undefined): void {
         if (newFilter != null && typeof newFilter !== 'string') {
             console.warn(`AG Grid - Grid option quickFilterText only supports string inputs, received: ${typeof newFilter}`);
             return;
         }
 
-        const parsedFilter = this.parseQuickFilter(newFilter);
+        const parsedFilter = this.#parseQuickFilter(newFilter);
 
-        if (this.quickFilter !== parsedFilter) {
-            this.quickFilter = parsedFilter;
-            this.setQuickFilterParts();
+        if (this.#quickFilter !== parsedFilter) {
+            this.#quickFilter = parsedFilter;
+            this.#setQuickFilterParts();
             this.dispatchEvent({ type: QuickFilterService.EVENT_QUICK_FILTER_CHANGED });
         }
     }
 
-    private setQuickFilterParserAndMatcher(): void {
+    #setQuickFilterParserAndMatcher(): void {
         const parser = this.gos.get('quickFilterParser');
         const matcher = this.gos.get('quickFilterMatcher');
-        const hasChanged = parser !== this.parser || matcher !== this.matcher;
-        this.parser = parser;
-        this.matcher = matcher;
+        const hasChanged = parser !== this.#parser || matcher !== this.#matcher;
+        this.#parser = parser;
+        this.#matcher = matcher;
         if (hasChanged) {
-            this.setQuickFilterParts();
+            this.#setQuickFilterParts();
             this.dispatchEvent({ type: QuickFilterService.EVENT_QUICK_FILTER_CHANGED });
         }
     }
 
-    private onQuickFilterColumnConfigChanged(): void {
+    #onQuickFilterColumnConfigChanged(): void {
         this.columnModel.refreshQuickFilterColumns();
         this.resetQuickFilterCache();
         if (this.isQuickFilterPresent()) {
@@ -125,41 +126,41 @@ export class QuickFilterService extends BeanStub {
         }
     }
 
-    private doesRowPassQuickFilterNoCache(node: RowNode, filterPart: string): boolean {
+    #doesRowPassQuickFilterNoCache(node: RowNode, filterPart: string): boolean {
         const columns = this.columnModel.getAllColumnsForQuickFilter();
 
         return columns.some(column => {
-            const part = this.getQuickFilterTextForColumn(column, node);
+            const part = this.#getQuickFilterTextForColumn(column, node);
 
             return exists(part) && part.indexOf(filterPart) >= 0;
         });
     }
 
-    private doesRowPassQuickFilterCache(node: RowNode, filterPart: string): boolean {
-        this.checkGenerateQuickFilterAggregateText(node);
+    #doesRowPassQuickFilterCache(node: RowNode, filterPart: string): boolean {
+        this.#checkGenerateQuickFilterAggregateText(node);
 
         return node.quickFilterAggregateText!.indexOf(filterPart) >= 0;
     }
 
-    private doesRowPassQuickFilterMatcher(usingCache: boolean, node: RowNode): boolean {
+    #doesRowPassQuickFilterMatcher(usingCache: boolean, node: RowNode): boolean {
         let quickFilterAggregateText: string;
         if (usingCache) {
-            this.checkGenerateQuickFilterAggregateText(node);
+            this.#checkGenerateQuickFilterAggregateText(node);
             quickFilterAggregateText = node.quickFilterAggregateText!;
         } else {
-            quickFilterAggregateText = this.getQuickFilterAggregateText(node);
+            quickFilterAggregateText = this.#getQuickFilterAggregateText(node);
         }
-        const { quickFilterParts, matcher } = this;
-        return matcher!(quickFilterParts!, quickFilterAggregateText);
+        
+        return this.#matcher!(this.#quickFilterParts!, quickFilterAggregateText);
     }
 
-    private checkGenerateQuickFilterAggregateText(node: RowNode): void {
+    #checkGenerateQuickFilterAggregateText(node: RowNode): void {
         if (!node.quickFilterAggregateText) {
-            node.quickFilterAggregateText = this.getQuickFilterAggregateText(node)
+            node.quickFilterAggregateText = this.#getQuickFilterAggregateText(node)
         }
     }
 
-    private getQuickFilterTextForColumn(column: Column, node: RowNode): string {
+    #getQuickFilterTextForColumn(column: Column, node: RowNode): string {
         let value = this.valueService.getValue(column, node, true);
         const colDef = column.getColDef();
 
@@ -178,12 +179,12 @@ export class QuickFilterService extends BeanStub {
         return exists(value) ? value.toString().toUpperCase() : null;
     }
 
-    private getQuickFilterAggregateText(node: RowNode): string {
+    #getQuickFilterAggregateText(node: RowNode): string {
         const stringParts: string[] = [];
         const columns = this.columnModel.getAllColumnsForQuickFilter();
 
         columns.forEach(column => {
-            const part = this.getQuickFilterTextForColumn(column, node);
+            const part = this.#getQuickFilterTextForColumn(column, node);
 
             if (exists(part)) {
                 stringParts.push(part);

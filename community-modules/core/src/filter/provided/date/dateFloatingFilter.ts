@@ -21,10 +21,10 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     @RefSelector('eReadOnlyText') private readonly eReadOnlyText: AgInputTextField;
     @RefSelector('eDateWrapper') private readonly eDateWrapper: HTMLInputElement;
 
-    private dateComp: DateCompWrapper;
-    private params: IFloatingFilterParams<DateFilter>;
-    private filterParams: DateFilterParams;
-    private filterModelFormatter: DateFilterModelFormatter;
+    #dateComp: DateCompWrapper;
+    #params: IFloatingFilterParams<DateFilter>;
+    #filterParams: DateFilterParams;
+    #filterModelFormatter: DateFilterModelFormatter;
 
     constructor() {
         super(/* html */`
@@ -40,11 +40,11 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     public init(params: IFloatingFilterParams<DateFilter>): void {
         super.init(params);
-        this.params = params;
-        this.filterParams = params.filterParams;
+        this.#params = params;
+        this.#filterParams = params.filterParams;
 
-        this.createDateComponent();
-        this.filterModelFormatter = new DateFilterModelFormatter(this.filterParams, this.localeService, this.optionsFactory);
+        this.#createDateComponent();
+        this.#filterModelFormatter = new DateFilterModelFormatter(this.#filterParams, this.localeService, this.optionsFactory);
         const translate = this.localeService.getLocaleTextFunc();
         this.eReadOnlyText
             .setDisabled(true)
@@ -57,15 +57,15 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     public refresh(params: IFloatingFilterParams<DateFilter>): void {
         super.refresh(params);
-        this.params = params;
-        this.filterParams = params.filterParams;
+        this.#params = params;
+        this.#filterParams = params.filterParams;
 
-        this.updateDateComponent();
-        this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory, dateFilterParams: this.filterParams })
-        this.updateCompOnModelChange(params.currentParentModel());
+        this.#updateDateComponent();
+        this.#filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory, dateFilterParams: this.#filterParams })
+        this.#updateCompOnModelChange(params.currentParentModel());
     }
 
-    private updateCompOnModelChange(model: any): void {
+    #updateCompOnModelChange(model: any): void {
         // Update the read-only text field
         const allowEditing = !this.isReadOnly() && this.canWeEditAfterModelFromParentFilter(model);
         this.setEditable(allowEditing);
@@ -73,15 +73,15 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         if (allowEditing) {
             if (model) {
                 const dateModel = model as DateFilterModel;
-                this.dateComp.setDate(parseDateTimeFromString(dateModel.dateFrom));
+                this.#dateComp.setDate(parseDateTimeFromString(dateModel.dateFrom));
             } else {
-                this.dateComp.setDate(null);
+                this.#dateComp.setDate(null);
             }
 
             this.eReadOnlyText.setValue('');
         } else {
-            this.eReadOnlyText.setValue(this.filterModelFormatter.getModelAsString(model));
-            this.dateComp.setDate(null);
+            this.eReadOnlyText.setValue(this.#filterModelFormatter.getModelAsString(model));
+            this.#dateComp.setDate(null);
         }
     }
 
@@ -98,14 +98,14 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         if (this.isEventFromFloatingFilter(event) || this.isEventFromDataChange(event)) { return; }
 
         super.setLastTypeFromModel(model);
-        this.updateCompOnModelChange(model);
+        this.#updateCompOnModelChange(model);
     }
 
-    private onDateChanged(): void {
-        const filterValueDate = this.dateComp.getDate();
+    #onDateChanged(): void {
+        const filterValueDate = this.#dateComp.getDate();
         const filterValueText = serialiseDate(filterValueDate);
 
-        this.params.parentFilterInstance(filterInstance => {
+        this.#params.parentFilterInstance(filterInstance => {
             if (filterInstance) {
                 const date = parseDateTimeFromString(filterValueText);
                 filterInstance.onFloatingFilterChanged(this.getLastType() || null, date);
@@ -113,28 +113,28 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         });
     }
 
-    private getDateComponentParams(): WithoutGridCommon<IDateParams> {
-        const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
+    #getDateComponentParams(): WithoutGridCommon<IDateParams> {
+        const debounceMs = ProvidedFilter.getDebounceMs(this.#params.filterParams, this.getDefaultDebounceMs());
         return {
-            onDateChanged: debounce(this.onDateChanged.bind(this), debounceMs),
-            filterParams: this.params.column.getColDef().filterParams
+            onDateChanged: debounce(this.#onDateChanged.bind(this), debounceMs),
+            filterParams: this.#params.column.getColDef().filterParams
         };
     }
 
-    private createDateComponent(): void {
-        this.dateComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, this.getDateComponentParams(), this.eDateWrapper, dateComp => {
-            dateComp.setInputAriaLabel(this.getAriaLabel(this.params));
+    #createDateComponent(): void {
+        this.#dateComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, this.#getDateComponentParams(), this.eDateWrapper, dateComp => {
+            dateComp.setInputAriaLabel(this.getAriaLabel(this.#params));
         });
 
-        this.addDestroyFunc(() => this.dateComp.destroy());
+        this.addDestroyFunc(() => this.#dateComp.destroy());
     }
 
-    private updateDateComponent(): void {
-        const params = this.gos.addGridCommonParams(this.getDateComponentParams());
-        this.dateComp.updateParams(params);
+    #updateDateComponent(): void {
+        const params = this.gos.addGridCommonParams(this.#getDateComponentParams());
+        this.#dateComp.updateParams(params);
     }
 
     protected getFilterModelFormatter(): SimpleFilterModelFormatter {
-        return this.filterModelFormatter;
+        return this.#filterModelFormatter;
     }
 }

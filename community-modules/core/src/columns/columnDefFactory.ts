@@ -14,7 +14,7 @@ export class ColumnDefFactory {
         const colGroupDefs: {[id: string]: ColGroupDef} = {};
 
         cols.forEach(col => {
-            const colDef = this.createDefFromColumn(col, rowGroupColumns, pivotColumns);
+            const colDef = this.#createDefFromColumn(col, rowGroupColumns, pivotColumns);
 
             let addToResult = true;
 
@@ -45,7 +45,7 @@ export class ColumnDefFactory {
                     break;
                 }
 
-                parentDef = this.createDefFromGroup(pointer);
+                parentDef = this.#createDefFromGroup(pointer);
 
                 if (parentDef) {
                     parentDef.children = [childDef];
@@ -70,7 +70,7 @@ export class ColumnDefFactory {
         return res;
     }
 
-    private createDefFromGroup(group: ProvidedColumnGroup): ColGroupDef | null | undefined {
+    #createDefFromGroup(group: ProvidedColumnGroup): ColGroupDef | null | undefined {
         const defCloned = deepCloneDefinition(group.getColGroupDef(), ['children']);
 
         if (defCloned) {
@@ -80,7 +80,7 @@ export class ColumnDefFactory {
         return defCloned;
     }
 
-    private createDefFromColumn(col: Column, rowGroupColumns: Column[], pivotColumns: Column[]): ColDef {
+    #createDefFromColumn(col: Column, rowGroupColumns: Column[], pivotColumns: Column[]): ColDef {
         const colDefCloned = deepCloneDefinition(col.getColDef())!;
 
         colDefCloned.colId = col.getColId();

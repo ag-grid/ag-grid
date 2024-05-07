@@ -8,28 +8,28 @@ import { CellStyleFunc, CellStyle } from "../../entities/colDef";
 
 export class CellCustomStyleFeature extends BeanStub {
 
-    private readonly cellCtrl: CellCtrl;
-    private readonly column: Column;
-    private readonly rowNode: RowNode;
-    private readonly beans: Beans;
-    private staticClasses: string[] = [];
+    readonly #cellCtrl: CellCtrl;
+    readonly #column: Column;
+    readonly #rowNode: RowNode;
+    readonly #beans: Beans;
+    #staticClasses: string[] = [];
 
-    private cellComp: ICellComp;
+    #cellComp: ICellComp;
 
-    private cellClassRules?: CellClassRules;
+    #cellClassRules?: CellClassRules;
 
     constructor(ctrl: CellCtrl, beans: Beans) {
         super();
 
-        this.cellCtrl = ctrl;
-        this.beans = beans;
+        this.#cellCtrl = ctrl;
+        this.#beans = beans;
 
-        this.column = ctrl.getColumn();
-        this.rowNode = ctrl.getRowNode();
+        this.#column = ctrl.getColumn();
+        this.#rowNode = ctrl.getRowNode();
     }
 
     public setComp(comp: ICellComp): void {
-        this.cellComp = comp;
+        this.#cellComp = comp;
 
         this.applyUserStyles();
         this.applyCellClassRules();
@@ -37,43 +37,43 @@ export class CellCustomStyleFeature extends BeanStub {
     }
 
     public applyCellClassRules(): void {
-        const colDef = this.column.getColDef();
+        const colDef = this.#column.getColDef();
         const { cellClassRules } = colDef;
-        const cellClassParams: CellClassParams = this.beans.gos.addGridCommonParams({
-            value: this.cellCtrl.getValue(),
-            data: this.rowNode.data,
-            node: this.rowNode,
+        const cellClassParams: CellClassParams = this.#beans.gos.addGridCommonParams({
+            value: this.#cellCtrl.getValue(),
+            data: this.#rowNode.data,
+            node: this.#rowNode,
             colDef: colDef,
-            column: this.column,
-            rowIndex: this.rowNode.rowIndex!
+            column: this.#column,
+            rowIndex: this.#rowNode.rowIndex!
         });
 
-        this.beans.stylingService.processClassRules(
+        this.#beans.stylingService.processClassRules(
             // if current was previous, skip
-            cellClassRules === this.cellClassRules ? undefined : this.cellClassRules,
+            cellClassRules === this.#cellClassRules ? undefined : this.#cellClassRules,
             cellClassRules,
             cellClassParams,
-            className => this.cellComp.addOrRemoveCssClass(className, true),
-            className => this.cellComp.addOrRemoveCssClass(className, false)
+            className => this.#cellComp.addOrRemoveCssClass(className, true),
+            className => this.#cellComp.addOrRemoveCssClass(className, false)
         );
-        this.cellClassRules = cellClassRules;
+        this.#cellClassRules = cellClassRules;
     }
 
     public applyUserStyles() {
-        const colDef = this.column.getColDef();
+        const colDef = this.#column.getColDef();
 
         if (!colDef.cellStyle) { return; }
 
         let styles: CellStyle | null | undefined;
 
         if (typeof colDef.cellStyle === 'function') {
-            const cellStyleParams: CellClassParams = this.beans.gos.addGridCommonParams({
-                column: this.column,
-                value: this.cellCtrl.getValue(),
+            const cellStyleParams: CellClassParams = this.#beans.gos.addGridCommonParams({
+                column: this.#column,
+                value: this.#cellCtrl.getValue(),
                 colDef: colDef,
-                data: this.rowNode.data,
-                node: this.rowNode,
-                rowIndex: this.rowNode.rowIndex!
+                data: this.#rowNode.data,
+                node: this.#rowNode,
+                rowIndex: this.#rowNode.rowIndex!
             });
             const cellStyleFunc = colDef.cellStyle as CellStyleFunc;
             styles = cellStyleFunc(cellStyleParams);
@@ -82,29 +82,29 @@ export class CellCustomStyleFeature extends BeanStub {
         }
 
         if (styles) {
-            this.cellComp.setUserStyles(styles);
+            this.#cellComp.setUserStyles(styles);
         }
     }
 
     public applyClassesFromColDef() {
-        const colDef = this.column.getColDef();
-        const cellClassParams: CellClassParams = this.beans.gos.addGridCommonParams({
-            value: this.cellCtrl.getValue(),
-            data: this.rowNode.data,
-            node: this.rowNode,
-            column: this.column,
+        const colDef = this.#column.getColDef();
+        const cellClassParams: CellClassParams = this.#beans.gos.addGridCommonParams({
+            value: this.#cellCtrl.getValue(),
+            data: this.#rowNode.data,
+            node: this.#rowNode,
+            column: this.#column,
             colDef: colDef,
-            rowIndex: this.rowNode.rowIndex!
+            rowIndex: this.#rowNode.rowIndex!
         });
 
-        if (this.staticClasses.length) {
-            this.staticClasses.forEach(className => this.cellComp.addOrRemoveCssClass(className, false));
+        if (this.#staticClasses.length) {
+            this.#staticClasses.forEach(className => this.#cellComp.addOrRemoveCssClass(className, false));
         }
 
-        this.staticClasses = this.beans.stylingService.getStaticCellClasses(colDef, cellClassParams);
+        this.#staticClasses = this.#beans.stylingService.getStaticCellClasses(colDef, cellClassParams);
 
-        if (this.staticClasses.length) {
-            this.staticClasses.forEach(className => this.cellComp.addOrRemoveCssClass(className, true));
+        if (this.#staticClasses.length) {
+            this.#staticClasses.forEach(className => this.#cellComp.addOrRemoveCssClass(className, true));
         }
     }
 

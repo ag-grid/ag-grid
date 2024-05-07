@@ -12,104 +12,104 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
     public static EVENT_EXPANDABLE_CHANGED = 'expandableChanged';
 
-    private localEventService = new EventService();
+    #localEventService = new EventService();
 
-    private colGroupDef: ColGroupDef | null;
-    private originalParent: ProvidedColumnGroup | null;
+    #colGroupDef: ColGroupDef | null;
+    #originalParent: ProvidedColumnGroup | null;
 
-    private children: IProvidedColumn[];
-    private groupId: string;
-    private expandable = false;
+    #children: IProvidedColumn[];
+    #groupId: string;
+    #expandable = false;
 
-    private expanded: boolean;
-    private padding: boolean;
+    #expanded: boolean;
+    #padding: boolean;
 
-    private level: number;
+    #level: number;
 
     // used by React (and possibly other frameworks) as key for rendering. also used to
     // identify old vs new columns for destroying cols when no longer used.
-    private instanceId = getNextColInstanceId();
+    #instanceId = getNextColInstanceId();
 
-    private expandableListenerRemoveCallback: (() => void) | null = null;
+    #expandableListenerRemoveCallback: (() => void) | null = null;
 
     constructor(colGroupDef: ColGroupDef | null, groupId: string, padding: boolean, level: number) {
-        this.colGroupDef = colGroupDef;
-        this.groupId = groupId;
-        this.expanded = !!colGroupDef && !!colGroupDef.openByDefault;
-        this.padding = padding;
-        this.level = level;
+        this.#colGroupDef = colGroupDef;
+        this.#groupId = groupId;
+        this.#expanded = !!colGroupDef && !!colGroupDef.openByDefault;
+        this.#padding = padding;
+        this.#level = level;
     }
 
     @PreDestroy
     private destroy() {
-        if (this.expandableListenerRemoveCallback) {
+        if (this.#expandableListenerRemoveCallback) {
             this.reset(null, undefined);
         }
     }
 
     public reset(colGroupDef: ColGroupDef | null, level: number | undefined): void {
-        this.colGroupDef = colGroupDef;
-        this.level = level!;
+        this.#colGroupDef = colGroupDef;
+        this.#level = level!;
 
-        this.originalParent = null;
+        this.#originalParent = null;
 
-        if (this.expandableListenerRemoveCallback) {
-            this.expandableListenerRemoveCallback();
+        if (this.#expandableListenerRemoveCallback) {
+            this.#expandableListenerRemoveCallback();
         }
 
         // we use ! below, as we want to set the object back to the
         // way it was when it was first created
-        this.children = undefined!;
-        this.expandable = undefined!;
+        this.#children = undefined!;
+        this.#expandable = undefined!;
     }
 
     public getInstanceId(): ColumnInstanceId {
-        return this.instanceId;
+        return this.#instanceId;
     }
 
     public setOriginalParent(originalParent: ProvidedColumnGroup | null): void {
-        this.originalParent = originalParent;
+        this.#originalParent = originalParent;
     }
 
     public getOriginalParent(): ProvidedColumnGroup | null {
-        return this.originalParent;
+        return this.#originalParent;
     }
 
     public getLevel(): number {
-        return this.level;
+        return this.#level;
     }
 
     public isVisible(): boolean {
         // return true if at least one child is visible
-        if (this.children) {
-            return this.children.some(child => child.isVisible());
+        if (this.#children) {
+            return this.#children.some(child => child.isVisible());
         }
 
         return false;
     }
 
     public isPadding(): boolean {
-        return this.padding;
+        return this.#padding;
     }
 
     public setExpanded(expanded: boolean | undefined): void {
-        this.expanded = expanded === undefined ? false : expanded;
+        this.#expanded = expanded === undefined ? false : expanded;
         const event: AgEvent = {
             type: ProvidedColumnGroup.EVENT_EXPANDED_CHANGED
         };
-        this.localEventService.dispatchEvent(event);
+        this.#localEventService.dispatchEvent(event);
     }
 
     public isExpandable(): boolean {
-        return this.expandable;
+        return this.#expandable;
     }
 
     public isExpanded(): boolean {
-        return this.expanded;
+        return this.#expanded;
     }
 
     public getGroupId(): string {
-        return this.groupId;
+        return this.#groupId;
     }
 
     public getId(): string {
@@ -117,37 +117,37 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
     }
 
     public setChildren(children: IProvidedColumn[]): void {
-        this.children = children;
+        this.#children = children;
     }
 
     public getChildren(): IProvidedColumn[] {
-        return this.children;
+        return this.#children;
     }
 
     public getColGroupDef(): ColGroupDef | null {
-        return this.colGroupDef;
+        return this.#colGroupDef;
     }
 
     public getLeafColumns(): Column[] {
         const result: Column[] = [];
-        this.addLeafColumns(result);
+        this.#addLeafColumns(result);
         return result;
     }
 
-    private addLeafColumns(leafColumns: Column[]): void {
-        if (!this.children) { return; }
+    #addLeafColumns(leafColumns: Column[]): void {
+        if (!this.#children) { return; }
 
-        this.children.forEach((child: IProvidedColumn) => {
+        this.#children.forEach((child: IProvidedColumn) => {
             if (child instanceof Column) {
                 leafColumns.push(child);
             } else if (child instanceof ProvidedColumnGroup) {
-                child.addLeafColumns(leafColumns);
+                child.#addLeafColumns(leafColumns);
             }
         });
     }
 
     public getColumnGroupShow(): ColumnGroupShowType | undefined {
-        const colGroupDef = this.colGroupDef;
+        const colGroupDef = this.#colGroupDef;
 
         if (!colGroupDef) { return; }
 
@@ -160,14 +160,14 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
     public setupExpandable() {
         this.setExpandable();
 
-        if (this.expandableListenerRemoveCallback) { this.expandableListenerRemoveCallback(); }
+        if (this.#expandableListenerRemoveCallback) { this.#expandableListenerRemoveCallback(); }
 
-        const listener = this.onColumnVisibilityChanged.bind(this);
+        const listener = this.#onColumnVisibilityChanged.bind(this);
         this.getLeafColumns().forEach(col => col.addEventListener('visibleChanged', listener));
 
-        this.expandableListenerRemoveCallback = () => {
+        this.#expandableListenerRemoveCallback = () => {
             this.getLeafColumns().forEach(col => col.removeEventListener('visibleChanged', listener));
-            this.expandableListenerRemoveCallback = null;
+            this.#expandableListenerRemoveCallback = null;
         };
     }
 
@@ -180,7 +180,7 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
         // want to make sure the group has something to show / hide
         let atLeastOneChangeable = false;
 
-        const children = this.findChildrenRemovingPadding();
+        const children = this.#findChildrenRemovingPadding();
 
         for (let i = 0, j = children.length; i < j; i++) {
             const abstractColumn = children[i];
@@ -204,16 +204,16 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
 
         const expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
 
-        if (this.expandable !== expandable) {
-            this.expandable = expandable;
+        if (this.#expandable !== expandable) {
+            this.#expandable = expandable;
             const event: AgEvent = {
                 type: ProvidedColumnGroup.EVENT_EXPANDABLE_CHANGED
             };
-            this.localEventService.dispatchEvent(event);
+            this.#localEventService.dispatchEvent(event);
         }
     }
 
-    private findChildrenRemovingPadding(): IProvidedColumn[] {
+    #findChildrenRemovingPadding(): IProvidedColumn[] {
         const res: IProvidedColumn[] = [];
 
         const process = (items: IProvidedColumn[]) => {
@@ -221,27 +221,27 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
                 // if padding, we add this children instead of the padding
                 const skipBecausePadding = item instanceof ProvidedColumnGroup && item.isPadding();
                 if (skipBecausePadding) {
-                    process((item as ProvidedColumnGroup).children);
+                    process((item as ProvidedColumnGroup).#children);
                 } else {
                     res.push(item);
                 }
             });
         };
 
-        process(this.children);
+        process(this.#children);
 
         return res;
     }
 
-    private onColumnVisibilityChanged(): void {
+    #onColumnVisibilityChanged(): void {
         this.setExpandable();
     }
 
     public addEventListener(eventType: string, listener: AgEventListener): void {
-        this.localEventService.addEventListener(eventType, listener);
+        this.#localEventService.addEventListener(eventType, listener);
     }
 
     public removeEventListener(eventType: string, listener: AgEventListener): void {
-        this.localEventService.removeEventListener(eventType, listener);
+        this.#localEventService.removeEventListener(eventType, listener);
     }
 }

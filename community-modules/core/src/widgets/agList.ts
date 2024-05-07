@@ -15,11 +15,11 @@ export class AgList<TValue = string> extends Component {
     public static EVENT_ITEM_SELECTED = 'selectedItem';
     private static ACTIVE_CLASS = 'ag-active-item';
 
-    private options: ListOption<TValue>[] = [];
-    private itemEls: HTMLElement[] = [];
-    private highlightedEl: HTMLElement | null;
-    private value: TValue | null;
-    private displayValue: string | null;
+    #options: ListOption<TValue>[] = [];
+    #itemEls: HTMLElement[] = [];
+    #highlightedEl: HTMLElement | null;
+    #value: TValue | null;
+    #displayValue: string | null;
 
     constructor(private readonly cssIdentifier = 'default', private readonly unFocusable: boolean = false) {
         super(/* html */`<div class="ag-list ag-${cssIdentifier}-list" role="listbox"></div>`);
@@ -28,7 +28,7 @@ export class AgList<TValue = string> extends Component {
     @PostConstruct
     private init(): void {
         const eGui = this.getGui();
-        this.addManagedListener(eGui, 'mouseleave', () => this.clearHighlighted());
+        this.addManagedListener(eGui, 'mouseleave', () => this.#clearHighlighted());
         if (this.unFocusable) { return; }
         this.addManagedListener(eGui, 'keydown', this.handleKeyDown.bind(this));
     }
@@ -37,51 +37,51 @@ export class AgList<TValue = string> extends Component {
         const key = e.key;
         switch (key) {
             case KeyCode.ENTER:
-                if (!this.highlightedEl) {
+                if (!this.#highlightedEl) {
                     this.setValue(this.getValue());
                 } else {
-                    const pos = this.itemEls.indexOf(this.highlightedEl);
+                    const pos = this.#itemEls.indexOf(this.#highlightedEl);
                     this.setValueByIndex(pos);
                 }
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:
                 e.preventDefault();
-                this.navigate(key);
+                this.#navigate(key);
                 break;
             case KeyCode.PAGE_DOWN:
             case KeyCode.PAGE_UP:
             case KeyCode.PAGE_HOME:
             case KeyCode.PAGE_END:
                 e.preventDefault();
-                this.navigateToPage(key);
+                this.#navigateToPage(key);
                 break;
         }
     }
 
-    private navigate(key: 'ArrowUp' | 'ArrowDown'): void {
+    #navigate(key: 'ArrowUp' | 'ArrowDown'): void {
         const isDown = key === KeyCode.DOWN;
         let itemToHighlight: HTMLElement;
 
-        if (!this.highlightedEl) {
-            itemToHighlight = this.itemEls[isDown ? 0 : this.itemEls.length - 1];
+        if (!this.#highlightedEl) {
+            itemToHighlight = this.#itemEls[isDown ? 0 : this.#itemEls.length - 1];
         } else {
-            const currentIdx = this.itemEls.indexOf(this.highlightedEl);
+            const currentIdx = this.#itemEls.indexOf(this.#highlightedEl);
             let nextPos = currentIdx + (isDown ? 1 : -1);
-            nextPos = Math.min(Math.max(nextPos, 0), this.itemEls.length - 1);
-            itemToHighlight = this.itemEls[nextPos];
+            nextPos = Math.min(Math.max(nextPos, 0), this.#itemEls.length - 1);
+            itemToHighlight = this.#itemEls[nextPos];
         }
-        this.highlightItem(itemToHighlight);
+        this.#highlightItem(itemToHighlight);
     }
 
-    private navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): void {
-        if (!this.highlightedEl || this.itemEls.length === 0) {
+    #navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): void {
+        if (!this.#highlightedEl || this.#itemEls.length === 0) {
             return;
         }
 
-        const currentIdx = this.itemEls.indexOf(this.highlightedEl);
-        const rowCount = this.options.length - 1;
-        const itemHeight = this.itemEls[0].clientHeight;
+        const currentIdx = this.#itemEls.indexOf(this.#highlightedEl);
+        const rowCount = this.#options.length - 1;
+        const itemHeight = this.#itemEls[0].clientHeight;
         const pageSize = Math.floor(this.getGui().clientHeight / itemHeight);
 
         let newIndex = -1;
@@ -100,7 +100,7 @@ export class AgList<TValue = string> extends Component {
             return;
         }
 
-        this.highlightItem(this.itemEls[newIndex]);
+        this.#highlightItem(this.#itemEls[newIndex]);
     }
 
     public addOptions(listOptions: ListOption<TValue>[]): this {
@@ -112,24 +112,24 @@ export class AgList<TValue = string> extends Component {
         const { value, text } = listOption;
         const valueToRender = text || value as any;
 
-        this.options.push({ value, text: valueToRender });
-        this.renderOption(value, valueToRender);
+        this.#options.push({ value, text: valueToRender });
+        this.#renderOption(value, valueToRender);
 
-        this.updateIndices();
+        this.#updateIndices();
 
         return this;
     }
 
     public clearOptions(): void {
-        this.options = [];
-        this.reset(true);
-        this.itemEls.forEach(itemEl => {
+        this.#options = [];
+        this.#reset(true);
+        this.#itemEls.forEach(itemEl => {
             removeFromParent(itemEl);
         });
-        this.itemEls = [];
+        this.#itemEls = [];
     }
 
-    private updateIndices(): void {
+    #updateIndices(): void {
         const options = this.getGui().querySelectorAll('.ag-list-item');
         options.forEach((option: HTMLElement, idx) => {
             setAriaPosInSet(option, idx + 1);
@@ -137,7 +137,7 @@ export class AgList<TValue = string> extends Component {
         });
     }
 
-    private renderOption(value: TValue, text: string): void {
+    #renderOption(value: TValue, text: string): void {
         const eDocument = this.gos.getDocument();
         const itemEl = eDocument.createElement('div');
 
@@ -151,9 +151,9 @@ export class AgList<TValue = string> extends Component {
             itemEl.tabIndex = -1;
         }
 
-        this.itemEls.push(itemEl);
+        this.#itemEls.push(itemEl);
 
-        this.addManagedListener(itemEl, 'mousemove', () => this.highlightItem(itemEl));
+        this.addManagedListener(itemEl, 'mousemove', () => this.#highlightItem(itemEl));
         this.addManagedListener(itemEl, 'mousedown', (e) => { e.preventDefault(); this.setValue(value) });
         this.createManagedBean(new TooltipFeature({
             getTooltipValue: () => text,
@@ -167,27 +167,27 @@ export class AgList<TValue = string> extends Component {
     }
 
     public setValue(value?: TValue | null, silent?: boolean): this {
-        if (this.value === value) {
-            this.fireItemSelected();
+        if (this.#value === value) {
+            this.#fireItemSelected();
             return this;
         }
 
         if (value == null) {
-            this.reset(silent);
+            this.#reset(silent);
             return this;
         }
 
-        const idx = this.options.findIndex(option => option.value === value);
+        const idx = this.#options.findIndex(option => option.value === value);
 
         if (idx !== -1) {
-            const option = this.options[idx];
+            const option = this.#options[idx];
 
-            this.value = option.value;
-            this.displayValue = option.text!;
-            this.highlightItem(this.itemEls[idx]);
+            this.#value = option.value;
+            this.#displayValue = option.text!;
+            this.#highlightItem(this.#itemEls[idx]);
 
             if (!silent) {
-                this.fireChangeEvent();
+                this.#fireChangeEvent();
             }
         }
 
@@ -195,43 +195,43 @@ export class AgList<TValue = string> extends Component {
     }
 
     public setValueByIndex(idx: number): this {
-        return this.setValue(this.options[idx].value);
+        return this.setValue(this.#options[idx].value);
     }
 
     public getValue(): TValue | null {
-        return this.value;
+        return this.#value;
     }
 
     public getDisplayValue(): string | null {
-        return this.displayValue;
+        return this.#displayValue;
     }
 
     public refreshHighlighted(): void {
-        this.clearHighlighted();
-        const idx = this.options.findIndex(option => option.value === this.value);
+        this.#clearHighlighted();
+        const idx = this.#options.findIndex(option => option.value === this.#value);
 
         if (idx !== -1) {
-            this.highlightItem(this.itemEls[idx]);
+            this.#highlightItem(this.#itemEls[idx]);
         }
     }
 
-    private reset(silent?: boolean): void {
-        this.value = null;
-        this.displayValue = null;
-        this.clearHighlighted();
+    #reset(silent?: boolean): void {
+        this.#value = null;
+        this.#displayValue = null;
+        this.#clearHighlighted();
         if (!silent) {
-            this.fireChangeEvent();
+            this.#fireChangeEvent();
         }
     }
 
-    private highlightItem(el: HTMLElement): void {
+    #highlightItem(el: HTMLElement): void {
         if (!isVisible(el)) { return; }
 
-        this.clearHighlighted();
-        this.highlightedEl = el;
+        this.#clearHighlighted();
+        this.#highlightedEl = el;
 
-        this.highlightedEl.classList.add(AgList.ACTIVE_CLASS);
-        setAriaSelected(this.highlightedEl, true);
+        this.#highlightedEl.classList.add(AgList.ACTIVE_CLASS);
+        setAriaSelected(this.#highlightedEl, true);
 
         const eGui = this.getGui();
 
@@ -239,29 +239,29 @@ export class AgList<TValue = string> extends Component {
         const { offsetTop, offsetHeight } = el;
 
         if (((offsetTop + offsetHeight) > scrollTop + clientHeight) || (offsetTop < scrollTop)) {
-            this.highlightedEl.scrollIntoView({ block: 'nearest' })
+            this.#highlightedEl.scrollIntoView({ block: 'nearest' })
         }
 
         if (!this.unFocusable) {
-            this.highlightedEl.focus();
+            this.#highlightedEl.focus();
         }
     }
 
-    private clearHighlighted(): void {
-        if (!this.highlightedEl || !isVisible(this.highlightedEl)) { return; }
+    #clearHighlighted(): void {
+        if (!this.#highlightedEl || !isVisible(this.#highlightedEl)) { return; }
 
-        this.highlightedEl.classList.remove(AgList.ACTIVE_CLASS);
-        setAriaSelected(this.highlightedEl, false);
+        this.#highlightedEl.classList.remove(AgList.ACTIVE_CLASS);
+        setAriaSelected(this.#highlightedEl, false);
 
-        this.highlightedEl = null;
+        this.#highlightedEl = null;
     }
 
-    private fireChangeEvent(): void {
+    #fireChangeEvent(): void {
         this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
-        this.fireItemSelected();
+        this.#fireItemSelected();
     }
 
-    private fireItemSelected(): void {
+    #fireItemSelected(): void {
         this.dispatchEvent({ type: AgList.EVENT_ITEM_SELECTED });
     }
 }

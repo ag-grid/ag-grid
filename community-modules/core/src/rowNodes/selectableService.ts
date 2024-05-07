@@ -13,17 +13,17 @@ export class SelectableService extends BeanStub {
     
     @PostConstruct
     private init() {
-        this.addManagedPropertyListener('isRowSelectable', () => this.updateSelectable());
+        this.addManagedPropertyListener('isRowSelectable', () => this.#updateSelectable());
     }
 
     /**
      * Used by CSRM only, to update selectable state after group state changes.
      */
     public updateSelectableAfterGrouping(): void {
-        this.updateSelectable(true);
+        this.#updateSelectable(true);
     }
 
-    private updateSelectable(skipLeafNodes = false) {
+    #updateSelectable(skipLeafNodes = false) {
         const isRowSelecting = !!this.gos.get('rowSelection');
         const isRowSelectable = this.gos.get('isRowSelectable');
 

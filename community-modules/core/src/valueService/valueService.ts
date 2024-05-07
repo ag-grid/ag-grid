@@ -21,29 +21,29 @@ export class ValueService extends BeanStub {
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('dataTypeService') private dataTypeService: DataTypeService;
 
-    private cellExpressions: boolean;
+    #cellExpressions: boolean;
     // Store locally for performance reasons and keep updated via property listener
-    private isTreeData: boolean;
+    #isTreeData: boolean;
 
-    private initialised = false;
+    #initialised = false;
 
-    private isSsrm = false;
+    #isSsrm = false;
 
     @PostConstruct
     public init(): void {
-        this.isSsrm = this.gos.isRowModelType('serverSide');
-        this.cellExpressions = this.gos.get('enableCellExpressions');
-        this.isTreeData = this.gos.get('treeData');
-        this.initialised = true;
+        this.#isSsrm = this.gos.isRowModelType('serverSide');
+        this.#cellExpressions = this.gos.get('enableCellExpressions');
+        this.#isTreeData = this.gos.get('treeData');
+        this.#initialised = true;
 
         // We listen to our own event and use it to call the columnSpecific callback,
         // this way the handler calls are correctly interleaved with other global events
-        const listener = (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event);
+        const listener = (event: CellValueChangedEvent) => this.#callColumnCellValueChangedHandler(event);
         const async = this.gos.useAsyncEvents();
         this.eventService.addEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async);
         this.addDestroyFunc(() => this.eventService.removeEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async));
 
-        this.addManagedPropertyListener('treeData', (propChange) => this.isTreeData = propChange.currentValue);
+        this.addManagedPropertyListener('treeData', (propChange) => this.#isTreeData = propChange.currentValue);
     }
 
     public getValue(column: Column,
@@ -53,7 +53,7 @@ export class ValueService extends BeanStub {
 
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
-        if (!this.initialised) {
+        if (!this.#initialised) {
             this.init();
         }
 
@@ -74,23 +74,23 @@ export class ValueService extends BeanStub {
         const aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
 
         // SSRM agg data comes from the data attribute, so ignore that instead
-        const ignoreSsrmAggData = this.isSsrm && ignoreAggData && !!column.getColDef().aggFunc;
-        const ssrmFooterGroupCol = this.isSsrm && rowNode.footer && rowNode.field && (column.getColDef().showRowGroup === true || column.getColDef().showRowGroup === rowNode.field);
+        const ignoreSsrmAggData = this.#isSsrm && ignoreAggData && !!column.getColDef().aggFunc;
+        const ssrmFooterGroupCol = this.#isSsrm && rowNode.footer && rowNode.field && (column.getColDef().showRowGroup === true || column.getColDef().showRowGroup === rowNode.field);
 
         if (forFilter && colDef.filterValueGetter) {
-            result = this.executeFilterValueGetter(colDef.filterValueGetter, data, column, rowNode);
-        } else if (this.isTreeData && aggDataExists) {
+            result = this.#executeFilterValueGetter(colDef.filterValueGetter, data, column, rowNode);
+        } else if (this.#isTreeData && aggDataExists) {
             result = rowNode.aggData[colId];
-        } else if (this.isTreeData && colDef.valueGetter) {
-            result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
-        } else if (this.isTreeData && (field && data)) {
+        } else if (this.#isTreeData && colDef.valueGetter) {
+            result = this.#executeValueGetter(colDef.valueGetter, data, column, rowNode);
+        } else if (this.#isTreeData && (field && data)) {
             result = getValueUsingField(data, field, column.isFieldContainsDots());
         } else if (groupDataExists) {
             result = rowNode.groupData![colId];
         } else if (aggDataExists) {
             result = rowNode.aggData[colId];
         } else if (colDef.valueGetter) {
-            result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
+            result = this.#executeValueGetter(colDef.valueGetter, data, column, rowNode);
         } else if (ssrmFooterGroupCol) {
             // this is for group footers in SSRM, as the SSRM row won't have groupData, need to extract
             // the group value from the data using the row field
@@ -100,13 +100,13 @@ export class ValueService extends BeanStub {
         }
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
-        if (this.cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
+        if (this.#cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
             const cellValueGetter = result.substring(1);
-            result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
+            result = this.#executeValueGetter(cellValueGetter, data, column, rowNode);
         }
 
         if (result == null) {
-            const openedGroup = this.getOpenedGroup(rowNode, column);
+            const openedGroup = this.#getOpenedGroup(rowNode, column);
             if (openedGroup != null) {
                 return openedGroup;
             }
@@ -181,7 +181,7 @@ export class ValueService extends BeanStub {
         return result;
     }
 
-    private getOpenedGroup(rowNode: IRowNode, column: Column): any {
+    #getOpenedGroup(rowNode: IRowNode, column: Column): any {
 
         if (!this.gos.get('showOpenedGroup')) { return; }
 
@@ -254,7 +254,7 @@ export class ValueService extends BeanStub {
                 valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
             }
         } else {
-            valueWasDifferent = this.setValueUsingField(rowNode.data, field, newValue, column.isFieldContainsDots());
+            valueWasDifferent = this.#setValueUsingField(rowNode.data, field, newValue, column.isFieldContainsDots());
         }
 
         // in case user forgot to return something (possible if they are not using TypeScript
@@ -299,7 +299,7 @@ export class ValueService extends BeanStub {
         return true;
     }
 
-    private callColumnCellValueChangedHandler(event: CellValueChangedEvent) {
+    #callColumnCellValueChangedHandler(event: CellValueChangedEvent) {
         const onCellValueChanged = event.colDef.onCellValueChanged;
         if (typeof onCellValueChanged === 'function') {
             this.getFrameworkOverrides().wrapOutgoing(() => {
@@ -317,7 +317,12 @@ export class ValueService extends BeanStub {
         }
     }
 
-    private setValueUsingField(data: any, field: string | undefined, newValue: any, isFieldContainsDots: boolean): boolean {
+    #setValueUsingField(
+        data: any,
+        field: string | undefined,
+        newValue: any,
+        isFieldContainsDots: boolean
+    ): boolean {
         if (!field) {
             return false;
         }
@@ -348,13 +353,18 @@ export class ValueService extends BeanStub {
         return !valuesAreSame;
     }
 
-    private executeFilterValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: IRowNode): any {
+    #executeFilterValueGetter(
+        valueGetter: string | Function,
+        data: any,
+        column: Column,
+        rowNode: IRowNode
+    ): any {
         const params: ValueGetterParams = this.gos.addGridCommonParams({
             data: data,
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            getValue: this.getValueCallback.bind(this, rowNode)
+            getValue: this.#getValueCallback.bind(this, rowNode)
         });
 
         if (typeof valueGetter === 'function') {
@@ -363,7 +373,12 @@ export class ValueService extends BeanStub {
         return this.expressionService.evaluate(valueGetter, params);
     }
 
-    private executeValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: IRowNode): any {
+    #executeValueGetter(
+        valueGetter: string | Function,
+        data: any,
+        column: Column,
+        rowNode: IRowNode
+    ): any {
 
         const colId = column.getColId();
 
@@ -379,7 +394,7 @@ export class ValueService extends BeanStub {
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            getValue: this.getValueCallback.bind(this, rowNode)
+            getValue: this.#getValueCallback.bind(this, rowNode)
         });
 
         let result;
@@ -395,7 +410,7 @@ export class ValueService extends BeanStub {
         return result;
     }
 
-    private getValueCallback(node: IRowNode, field: string | Column): any {
+    #getValueCallback(node: IRowNode, field: string | Column): any {
         const otherColumn = this.columnModel.getPrimaryColumn(field);
 
         if (otherColumn) {

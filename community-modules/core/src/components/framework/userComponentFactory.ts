@@ -81,99 +81,105 @@ export class UserComponentFactory extends BeanStub {
     @Optional('frameworkComponentWrapper') private readonly frameworkComponentWrapper?: FrameworkComponentWrapper;
 
     public getHeaderCompDetails(colDef: ColDef, params: WithoutGridCommon<IHeaderParams>): UserCompDetails | undefined {
-        return this.getCompDetails(colDef, HeaderComponent, 'agColumnHeader', params);
+        return this.#getCompDetails(colDef, HeaderComponent, 'agColumnHeader', params);
     }
 
     public getHeaderGroupCompDetails(params: WithoutGridCommon<IHeaderGroupParams>): UserCompDetails | undefined {
         const colGroupDef = params.columnGroup.getColGroupDef()!;
-        return this.getCompDetails(colGroupDef, HeaderGroupComponent, 'agColumnGroupHeader', params);
+        return this.#getCompDetails(colGroupDef, HeaderGroupComponent, 'agColumnGroupHeader', params);
     }
 
     // this one is unusual, as it can be LoadingCellRenderer, DetailCellRenderer, FullWidthCellRenderer or GroupRowRenderer.
     // so we have to pass the type in.
     public getFullWidthCellRendererDetails(params: WithoutGridCommon<ICellRendererParams>): UserCompDetails {
-        return this.getCompDetails(this.gridOptions, FullWidth, null, params, true)!;
+        return this.#getCompDetails(this.gridOptions, FullWidth, null, params, true)!;
     }
 
     public getFullWidthLoadingCellRendererDetails(params: WithoutGridCommon<ICellRendererParams>): UserCompDetails {
-        return this.getCompDetails(this.gridOptions, FullWidthLoading, 'agLoadingCellRenderer', params, true)!;
+        return this.#getCompDetails(this.gridOptions, FullWidthLoading, 'agLoadingCellRenderer', params, true)!;
     }
 
     public getFullWidthGroupCellRendererDetails(params: WithoutGridCommon<ICellRendererParams>): UserCompDetails {
-        return this.getCompDetails(this.gridOptions, FullWidthGroup, 'agGroupRowRenderer', params, true)!;
+        return this.#getCompDetails(this.gridOptions, FullWidthGroup, 'agGroupRowRenderer', params, true)!;
     }
 
     public getFullWidthDetailCellRendererDetails(params: WithoutGridCommon<ICellRendererParams>): UserCompDetails {
-        return this.getCompDetails(this.gridOptions, FullWidthDetail, 'agDetailCellRenderer', params, true)!;
+        return this.#getCompDetails(this.gridOptions, FullWidthDetail, 'agDetailCellRenderer', params, true)!;
     }
 
     // CELL RENDERER
     public getInnerRendererDetails(def: GroupCellRendererParams, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined {
-        return this.getCompDetails(def, InnerRendererComponent, null, params);
+        return this.#getCompDetails(def, InnerRendererComponent, null, params);
     }
     public getFullWidthGroupRowInnerCellRenderer(def: any, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined {
-        return this.getCompDetails(def, InnerRendererComponent, null, params);
+        return this.#getCompDetails(def, InnerRendererComponent, null, params);
     }
 
     public getCellRendererDetails(def: ColDef | RichSelectParams, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined {
-        return this.getCompDetails(def, CellRendererComponent, null, params);
+        return this.#getCompDetails(def, CellRendererComponent, null, params);
     }
 
     public getLoadingCellRendererDetails(def: ColDef | RichSelectParams, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined {
-        return this.getCompDetails(def, LoadingCellRendererComponent, 'agSkeletonCellRenderer', params, true);
+        return this.#getCompDetails(def, LoadingCellRendererComponent, 'agSkeletonCellRenderer', params, true);
     }
 
     // CELL EDITOR
     public getCellEditorDetails(def: ColDef, params: WithoutGridCommon<ICellEditorParams>): UserCompDetails | undefined {
-        return this.getCompDetails(def, CellEditorComponent, 'agCellEditor', params, true);
+        return this.#getCompDetails(def, CellEditorComponent, 'agCellEditor', params, true);
     }
 
     // FILTER
     public getFilterDetails(def: IFilterDef, params: WithoutGridCommon<IFilterParams>, defaultFilter: string): UserCompDetails | undefined {
-        return this.getCompDetails(def, FilterComponent, defaultFilter, params, true);
+        return this.#getCompDetails(def, FilterComponent, defaultFilter, params, true);
     }
 
     public getDateCompDetails(params: WithoutGridCommon<IDateParams>): UserCompDetails {
-        return this.getCompDetails(this.gridOptions, DateComponent, 'agDateInput', params, true)!;
+        return this.#getCompDetails(this.gridOptions, DateComponent, 'agDateInput', params, true)!;
     }
 
     public getLoadingOverlayCompDetails(params: WithoutGridCommon<ILoadingOverlayParams>): UserCompDetails {
-        return this.getCompDetails(this.gridOptions, LoadingOverlayComponent, 'agLoadingOverlay', params, true)!;
+        return this.#getCompDetails(this.gridOptions, LoadingOverlayComponent, 'agLoadingOverlay', params, true)!;
     }
 
     public getNoRowsOverlayCompDetails(params: WithoutGridCommon<INoRowsOverlayParams>): UserCompDetails {
-        return this.getCompDetails(this.gridOptions, NoRowsOverlayComponent, 'agNoRowsOverlay', params, true)!;
+        return this.#getCompDetails(this.gridOptions, NoRowsOverlayComponent, 'agNoRowsOverlay', params, true)!;
     }
 
     public getTooltipCompDetails(params: WithoutGridCommon<ITooltipParams>): UserCompDetails {
-        return this.getCompDetails(params.colDef!, TooltipComponent, 'agTooltipComponent', params, true)!;
+        return this.#getCompDetails(params.colDef!, TooltipComponent, 'agTooltipComponent', params, true)!;
     }
 
     public getSetFilterCellRendererDetails<TData, V>(def: SetFilterParams<TData, V>, params: WithoutGridCommon<ISetFilterCellRendererParams>): UserCompDetails | undefined {
-        return this.getCompDetails(def, CellRendererComponent, null, params);
+        return this.#getCompDetails(def, CellRendererComponent, null, params);
     }
 
     public getFloatingFilterCompDetails(def: IFilterDef, params: WithoutGridCommon<IFloatingFilterParams<any>>, defaultFloatingFilter: string | null): UserCompDetails | undefined {
-        return this.getCompDetails(def, FloatingFilterComponent, defaultFloatingFilter, params);
+        return this.#getCompDetails(def, FloatingFilterComponent, defaultFloatingFilter, params);
     }
 
     public getToolPanelCompDetails(toolPanelDef: ToolPanelDef, params: WithoutGridCommon<IToolPanelParams>): UserCompDetails {
-        return this.getCompDetails(toolPanelDef, ToolPanelComponent, null, params, true)!;
+        return this.#getCompDetails(toolPanelDef, ToolPanelComponent, null, params, true)!;
     }
 
     public getStatusPanelCompDetails(def: StatusPanelDef, params: WithoutGridCommon<IStatusPanelParams>): UserCompDetails {
-        return this.getCompDetails(def, StatusPanelComponent, null, params, true)!;
+        return this.#getCompDetails(def, StatusPanelComponent, null, params, true)!;
     }
 
     public getMenuItemCompDetails(def: MenuItemDef, params: WithoutGridCommon<IMenuItemParams>): UserCompDetails {
-        return this.getCompDetails(def, MenuItemComponent, 'agMenuItem', params, true)!;
+        return this.#getCompDetails(def, MenuItemComponent, 'agMenuItem', params, true)!;
     }
 
-    private getCompDetails(defObject: DefinitionObject, type: ComponentType, defaultName: string | null | undefined, params: any, mandatory = false): UserCompDetails | undefined {
+    #getCompDetails(
+        defObject: DefinitionObject,
+        type: ComponentType,
+        defaultName: string | null | undefined,
+        params: any,
+        mandatory = false
+    ): UserCompDetails | undefined {
 
         const { propertyName, cellRenderer } = type;
 
-        let { compName, jsComp, fwComp, paramsFromSelector, popupFromSelector, popupPositionFromSelector } = this.getCompKeys(defObject, type, params);
+        let { compName, jsComp, fwComp, paramsFromSelector, popupFromSelector, popupPositionFromSelector } = this.#getCompKeys(defObject, type, params);
 
         const lookupFromRegistry = (key: string) => {
             const item = this.userComponentRegistry.retrieve(propertyName, key);
@@ -217,11 +223,11 @@ export class UserComponentFactory extends BeanStub {
             type: type,
             popupFromSelector,
             popupPositionFromSelector,
-            newAgStackInstance: () => this.newAgStackInstance(componentClass, componentFromFramework, paramsMerged, type)
+            newAgStackInstance: () => this.#newAgStackInstance(componentClass, componentFromFramework, paramsMerged, type)
         };
     }
 
-    private getCompKeys(defObject: DefinitionObject, type: ComponentType, params?: any): {
+    #getCompKeys(defObject: DefinitionObject, type: ComponentType, params?: any): {
         compName?: string,
         jsComp: any,
         fwComp: any,
@@ -280,7 +286,7 @@ export class UserComponentFactory extends BeanStub {
         return { compName, jsComp, fwComp, paramsFromSelector, popupFromSelector, popupPositionFromSelector };
     }
 
-    private newAgStackInstance(
+    #newAgStackInstance(
         ComponentClass: any,
         componentFromFramework: boolean,
         params: any,
@@ -304,7 +310,7 @@ export class UserComponentFactory extends BeanStub {
             );
         }
 
-        const deferredInit = this.initComponent(instance, params);
+        const deferredInit = this.#initComponent(instance, params);
 
         if (deferredInit == null) {
             return AgPromise.resolve(instance);
@@ -340,7 +346,7 @@ export class UserComponentFactory extends BeanStub {
         return params;
     }
 
-    private initComponent(component: any, params: any): AgPromise<void> | void {
+    #initComponent(component: any, params: any): AgPromise<void> | void {
         this.context.createBean(component);
         if (component.init == null) { return; }
         return component.init(params);
@@ -352,7 +358,7 @@ export class UserComponentFactory extends BeanStub {
         let defaultFloatingFilterType: string | null = null;
 
         let { compName, jsComp, fwComp }
-            = this.getCompKeys(def, FilterComponent);
+            = this.#getCompKeys(def, FilterComponent);
 
         if (compName) {
             // will be undefined if not in the map

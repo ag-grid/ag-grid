@@ -21,11 +21,11 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
     @RefSelector('eOverlayWrapper') eOverlayWrapper: HTMLElement;
 
-    private activeOverlay: Component;
-    private inProgress = false;
-    private destroyRequested = false;
-    private activeOverlayWrapperCssClass: string;
-    private updateListenerDestroyFunc?: () => null;
+    #activeOverlay: Component;
+    #inProgress = false;
+    #destroyRequested = false;
+    #activeOverlayWrapperCssClass: string;
+    #updateListenerDestroyFunc?: () => null;
 
     constructor() {
         super(OverlayWrapperComponent.TEMPLATE);
@@ -46,36 +46,36 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.overlayService.registerOverlayWrapperComp(this);
     }
 
-    private setWrapperTypeClass(overlayWrapperCssClass: string): void {
+    #setWrapperTypeClass(overlayWrapperCssClass: string): void {
         const overlayWrapperClassList = this.eOverlayWrapper.classList;
-        if (this.activeOverlayWrapperCssClass) {
-            overlayWrapperClassList.toggle(this.activeOverlayWrapperCssClass, false);
+        if (this.#activeOverlayWrapperCssClass) {
+            overlayWrapperClassList.toggle(this.#activeOverlayWrapperCssClass, false);
         }
-        this.activeOverlayWrapperCssClass = overlayWrapperCssClass;
+        this.#activeOverlayWrapperCssClass = overlayWrapperCssClass;
         overlayWrapperClassList.toggle(overlayWrapperCssClass, true);
     }
 
     public showOverlay(overlayComp: AgPromise<Component> | null, overlayWrapperCssClass: string, updateListenerDestroyFunc: () => null): void {
-        if (this.inProgress) {
+        if (this.#inProgress) {
             return;
         }
 
-        this.setWrapperTypeClass(overlayWrapperCssClass);
-        this.destroyActiveOverlay();
+        this.#setWrapperTypeClass(overlayWrapperCssClass);
+        this.#destroyActiveOverlay();
 
-        this.inProgress = true;
+        this.#inProgress = true;
 
         if (overlayComp) {
             overlayComp.then(comp => {
-                this.inProgress = false;
+                this.#inProgress = false;
 
                 this.eOverlayWrapper.appendChild(comp!.getGui());
-                this.activeOverlay = comp!;
-                this.updateListenerDestroyFunc = updateListenerDestroyFunc;
+                this.#activeOverlay = comp!;
+                this.#updateListenerDestroyFunc = updateListenerDestroyFunc;
 
-                if (this.destroyRequested) {
-                    this.destroyRequested = false;
-                    this.destroyActiveOverlay();
+                if (this.#destroyRequested) {
+                    this.#destroyRequested = false;
+                    this.#destroyActiveOverlay();
                 }
             });
         }
@@ -83,29 +83,29 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.setDisplayed(true, { skipAriaHidden: true });
     }
 
-    private destroyActiveOverlay(): void {
-        if (this.inProgress) {
-            this.destroyRequested = true;
+    #destroyActiveOverlay(): void {
+        if (this.#inProgress) {
+            this.#destroyRequested = true;
             return;
         }
 
-        if (!this.activeOverlay) {
+        if (!this.#activeOverlay) {
             return;
         }
 
-        this.activeOverlay = this.getContext().destroyBean(this.activeOverlay)!;
-        this.updateListenerDestroyFunc?.();
+        this.#activeOverlay = this.getContext().destroyBean(this.#activeOverlay)!;
+        this.#updateListenerDestroyFunc?.();
 
         clearElement(this.eOverlayWrapper);
     }
 
     public hideOverlay(): void {
-        this.destroyActiveOverlay();
+        this.#destroyActiveOverlay();
         this.setDisplayed(false, { skipAriaHidden: true });
     }
 
     public destroy(): void {
-        this.destroyActiveOverlay();
+        this.#destroyActiveOverlay();
         super.destroy();
     }
 }

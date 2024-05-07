@@ -47,7 +47,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             <span ref="agClosed" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed"></span>
         </div>`;
 
-    private params: IHeaderGroupParams;
+    #params: IHeaderGroupParams;
 
     @RefSelector("agOpened") private eOpenIcon: HTMLElement;
     @RefSelector("agClosed") private eCloseIcon: HTMLElement;
@@ -63,38 +63,38 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     }
 
     public init(params: IHeaderGroupParams): void {
-        this.params = params;
+        this.#params = params;
 
-        this.checkWarnings();
+        this.#checkWarnings();
 
-        this.setupLabel();
-        this.addGroupExpandIcon();
-        this.setupExpandIcons();
+        this.#setupLabel();
+        this.#addGroupExpandIcon();
+        this.#setupExpandIcons();
     }
 
-    private checkWarnings(): void {
-        const paramsAny = this.params as any;
+    #checkWarnings(): void {
+        const paramsAny = this.#params as any;
 
         if (paramsAny.template) {
             warnOnce(`A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)`);
         }
     }
 
-    private setupExpandIcons(): void {
-        this.addInIcon("columnGroupOpened", "agOpened");
-        this.addInIcon("columnGroupClosed", "agClosed");
+    #setupExpandIcons(): void {
+        this.#addInIcon("columnGroupOpened", "agOpened");
+        this.#addInIcon("columnGroupClosed", "agClosed");
 
         const expandAction = (event: MouseEvent) => {
             if (isStopPropagationForAgGrid(event)) {
                 return;
             }
 
-            const newExpandedValue = !this.params.columnGroup.isExpanded();
-            this.columnModel.setColumnGroupOpened(this.params.columnGroup.getProvidedColumnGroup(), newExpandedValue, "uiColumnExpanded");
+            const newExpandedValue = !this.#params.columnGroup.isExpanded();
+            this.columnModel.setColumnGroupOpened(this.#params.columnGroup.getProvidedColumnGroup(), newExpandedValue, "uiColumnExpanded");
         };
 
-        this.addTouchAndClickListeners(this.eCloseIcon, expandAction);
-        this.addTouchAndClickListeners(this.eOpenIcon, expandAction);
+        this.#addTouchAndClickListeners(this.eCloseIcon, expandAction);
+        this.#addTouchAndClickListeners(this.eOpenIcon, expandAction);
 
         const stopPropagationAction = (event: MouseEvent) => {
             stopPropagationForAgGrid(event);
@@ -110,14 +110,14 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
         this.addManagedListener(this.getGui(), "dblclick", expandAction);
 
-        this.updateIconVisibility();
+        this.#updateIconVisibility();
 
-        const providedColumnGroup = this.params.columnGroup.getProvidedColumnGroup();
-        this.addManagedListener(providedColumnGroup, ProvidedColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibility.bind(this));
-        this.addManagedListener(providedColumnGroup, ProvidedColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
+        const providedColumnGroup = this.#params.columnGroup.getProvidedColumnGroup();
+        this.addManagedListener(providedColumnGroup, ProvidedColumnGroup.EVENT_EXPANDED_CHANGED, this.#updateIconVisibility.bind(this));
+        this.addManagedListener(providedColumnGroup, ProvidedColumnGroup.EVENT_EXPANDABLE_CHANGED, this.#updateIconVisibility.bind(this));
     }
 
-    private addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent) => void): void {
+    #addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent) => void): void {
         const touchListener = new TouchListener(eElement, true);
 
         this.addManagedListener(touchListener, TouchListener.EVENT_TAP, action);
@@ -125,10 +125,10 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         this.addManagedListener(eElement, "click", action);
     }
 
-    private updateIconVisibility(): void {
-        const columnGroup = this.params.columnGroup;
+    #updateIconVisibility(): void {
+        const columnGroup = this.#params.columnGroup;
         if (columnGroup.isExpandable()) {
-            const expanded = this.params.columnGroup.isExpanded();
+            const expanded = this.#params.columnGroup.isExpanded();
             setDisplayed(this.eOpenIcon, expanded);
             setDisplayed(this.eCloseIcon, !expanded);
         } else {
@@ -137,24 +137,24 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         }
     }
 
-    private addInIcon(iconName: string, refName: string): void {
+    #addInIcon(iconName: string, refName: string): void {
         const eIcon = createIconNoSpan(iconName, this.gos, null);
         if (eIcon) {
             this.getRefElement(refName).appendChild(eIcon);
         }
     }
 
-    private addGroupExpandIcon() {
-        if (!this.params.columnGroup.isExpandable()) {
+    #addGroupExpandIcon() {
+        if (!this.#params.columnGroup.isExpandable()) {
             setDisplayed(this.eOpenIcon, false);
             setDisplayed(this.eCloseIcon, false);
             return;
         }
     }
 
-    private setupLabel(): void {
+    #setupLabel(): void {
         // no renderer, default text render
-        const { displayName, columnGroup } = this.params;
+        const { displayName, columnGroup } = this.#params;
 
         if (exists(displayName)) {
             const displayNameSanitised = escapeString(displayName, true);

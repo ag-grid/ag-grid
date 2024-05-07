@@ -18,7 +18,7 @@ export class CenterWidthFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        const listener = this.setWidth.bind(this);
+        const listener = this.#setWidth.bind(this);
         this.addManagedPropertyListener('domLayout', listener);
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_CONTAINER_WIDTH_CHANGED, listener);
@@ -31,10 +31,10 @@ export class CenterWidthFeature extends BeanStub {
             this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, listener);
         }
 
-        this.setWidth();
+        this.#setWidth();
     }
 
-    private setWidth(): void {
+    #setWidth(): void {
         const {columnModel} = this;
 
         const printLayout = this.gos.isDomLayout('print');

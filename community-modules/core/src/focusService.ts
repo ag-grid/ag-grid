@@ -46,12 +46,12 @@ export class FocusService extends BeanStub {
     @Optional('rangeService') private readonly rangeService?: IRangeService;
     @Optional('advancedFilterService') public readonly advancedFilterService?: IAdvancedFilterService;
 
-    private gridCtrl: GridCtrl;
-    private focusedCellPosition: CellPosition | null;
-    private restoredFocusedCellPosition: CellPosition | null;
-    private focusedHeaderPosition: HeaderPosition | null;
+    #gridCtrl: GridCtrl;
+    #focusedCellPosition: CellPosition | null;
+    #restoredFocusedCellPosition: CellPosition | null;
+    #focusedHeaderPosition: HeaderPosition | null;
     /** the column that had focus before it moved into the advanced filter */
-    private advancedFilterFocusColumn: Column | undefined;
+    #advancedFilterFocusColumn: Column | undefined;
 
     private static keyboardModeActive: boolean = false;
     private static instanceCount: number = 0;
@@ -95,14 +95,14 @@ export class FocusService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverythingChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
-        this.registerKeyboardFocusEvents();
+        this.#registerKeyboardFocusEvents();
 
         this.ctrlsService.whenReady(p => {
-            this.gridCtrl = p.gridCtrl;
+            this.#gridCtrl = p.gridCtrl;
         });
     }
 
-    private registerKeyboardFocusEvents(): void {
+    #registerKeyboardFocusEvents(): void {
         const eDocument = this.gos.getDocument();
         FocusService.addKeyboardModeEvents(eDocument);
 
@@ -116,9 +116,9 @@ export class FocusService extends BeanStub {
     public onColumnEverythingChanged(): void {
         // if the columns change, check and see if this column still exists. if it does, then
         // we can keep the focused cell. if it doesn't, then we need to drop the focused cell.
-        if (!this.focusedCellPosition) { return; }
+        if (!this.#focusedCellPosition) { return; }
 
-        const col = this.focusedCellPosition.column;
+        const col = this.#focusedCellPosition.column;
         const colFromColumnModel = this.columnModel.getGridColumn(col.getId());
 
         if (col !== colFromColumnModel) {
@@ -138,35 +138,35 @@ export class FocusService extends BeanStub {
     // grid cell will still be focused as far as the grid is concerned,
     // however the browser focus will have moved somewhere else.
     public getFocusCellToUseAfterRefresh(): CellPosition | null {
-        if (this.gos.get('suppressFocusAfterRefresh') || !this.focusedCellPosition) {
+        if (this.gos.get('suppressFocusAfterRefresh') || !this.#focusedCellPosition) {
             return null;
         }
 
         // we check that the browser is actually focusing on the grid, if it is not, then
         // we have nothing to worry about. we check for ROW data, as this covers both focused Rows (for Full Width Rows)
         // and Cells (covers cells as cells live in rows)
-        if (this.isDomDataMissingInHierarchy(this.gos.getActiveDomElement(), RowCtrl.DOM_DATA_KEY_ROW_CTRL)) {
+        if (this.#isDomDataMissingInHierarchy(this.gos.getActiveDomElement(), RowCtrl.DOM_DATA_KEY_ROW_CTRL)) {
             return null;
         }
 
-        return this.focusedCellPosition;
+        return this.#focusedCellPosition;
     }
 
     public getFocusHeaderToUseAfterRefresh(): HeaderPosition | null {
-        if (this.gos.get('suppressFocusAfterRefresh') || !this.focusedHeaderPosition) {
+        if (this.gos.get('suppressFocusAfterRefresh') || !this.#focusedHeaderPosition) {
             return null;
         }
 
         // we check that the browser is actually focusing on the grid, if it is not, then
         // we have nothing to worry about
-        if (this.isDomDataMissingInHierarchy(this.gos.getActiveDomElement(), AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL)) {
+        if (this.#isDomDataMissingInHierarchy(this.gos.getActiveDomElement(), AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL)) {
             return null;
         }
 
-        return this.focusedHeaderPosition;
+        return this.#focusedHeaderPosition;
     }
 
-    private isDomDataMissingInHierarchy(eBrowserCell: Node | null, key: string): boolean {
+    #isDomDataMissingInHierarchy(eBrowserCell: Node | null, key: string): boolean {
         let ePointer = eBrowserCell;
 
         while (ePointer) {
@@ -183,38 +183,38 @@ export class FocusService extends BeanStub {
     }
 
     public getFocusedCell(): CellPosition | null {
-        return this.focusedCellPosition;
+        return this.#focusedCellPosition;
     }
 
     public shouldRestoreFocus(cell: CellPosition): boolean {
-        if (this.isCellRestoreFocused(cell)) {
+        if (this.#isCellRestoreFocused(cell)) {
 
             setTimeout(() => {
                 // Clear the restore focused cell position after the timeout to avoid
                 // the cell being focused again and stealing focus from another part of the app.
-                this.restoredFocusedCellPosition = null;
+                this.#restoredFocusedCellPosition = null;
             }, 0);
             return true;
         }
         return false;
     }
 
-    private isCellRestoreFocused(cellPosition: CellPosition): boolean {
-        if (this.restoredFocusedCellPosition == null) { return false; }
+    #isCellRestoreFocused(cellPosition: CellPosition): boolean {
+        if (this.#restoredFocusedCellPosition == null) { return false; }
 
-        return this.cellPositionUtils.equals(cellPosition, this.restoredFocusedCellPosition);
+        return this.cellPositionUtils.equals(cellPosition, this.#restoredFocusedCellPosition);
     }
 
     public setRestoreFocusedCell(cellPosition: CellPosition): void {
         if (this.getFrameworkOverrides().renderingEngine === 'react') {
             // The restoredFocusedCellPosition is used in the React Rendering engine as we have to be able
             // to support restoring focus after an async rendering.
-            this.restoredFocusedCellPosition = cellPosition;
+            this.#restoredFocusedCellPosition = cellPosition;
         }
     }
 
-    private getFocusEventParams(): CommonCellFocusParams {
-        const { rowIndex, rowPinned, column } = this.focusedCellPosition!;
+    #getFocusEventParams(): CommonCellFocusParams {
+        const { rowIndex, rowPinned, column } = this.#focusedCellPosition!;
 
         const params: CommonCellFocusParams = {
             rowIndex: rowIndex,
@@ -233,15 +233,15 @@ export class FocusService extends BeanStub {
     }
 
     public clearFocusedCell(): void {
-        this.restoredFocusedCellPosition = null;
-        if (this.focusedCellPosition == null) { return; }
+        this.#restoredFocusedCellPosition = null;
+        if (this.#focusedCellPosition == null) { return; }
 
         const event: WithoutGridCommon<CellFocusClearedEvent> = {
             type: Events.EVENT_CELL_FOCUS_CLEARED,
-            ...this.getFocusEventParams(),
+            ...this.#getFocusEventParams(),
         };
 
-        this.focusedCellPosition = null;
+        this.#focusedCellPosition = null;
 
         this.eventService.dispatchEvent(event);
     }
@@ -261,11 +261,11 @@ export class FocusService extends BeanStub {
         // and the focused cell is in a column that no longer exists. after columns change, the grid refreshes and tries
         // to re-focus the focused cell.
         if (!gridColumn) {
-            this.focusedCellPosition = null;
+            this.#focusedCellPosition = null;
             return;
         }
 
-        this.focusedCellPosition = gridColumn ? {
+        this.#focusedCellPosition = gridColumn ? {
             rowIndex: rowIndex!,
             rowPinned: makeNull(rowPinned),
             column: gridColumn
@@ -273,7 +273,7 @@ export class FocusService extends BeanStub {
 
         const event: WithoutGridCommon<CellFocusedEvent> = {
             type: Events.EVENT_CELL_FOCUSED,
-            ...this.getFocusEventParams(),
+            ...this.#getFocusEventParams(),
             forceBrowserFocus,
             preventScrollOnBrowserFocus,
             floating: null
@@ -283,9 +283,9 @@ export class FocusService extends BeanStub {
     }
 
     public isCellFocused(cellPosition: CellPosition): boolean {
-        if (this.focusedCellPosition == null) { return false; }
+        if (this.#focusedCellPosition == null) { return false; }
 
-        return this.cellPositionUtils.equals(cellPosition, this.focusedCellPosition);
+        return this.cellPositionUtils.equals(cellPosition, this.#focusedCellPosition);
     }
 
     public isRowNodeFocused(rowNode: RowNode): boolean {
@@ -293,13 +293,13 @@ export class FocusService extends BeanStub {
     }
 
     public isHeaderWrapperFocused(headerCtrl: HeaderCellCtrl): boolean {
-        if (this.focusedHeaderPosition == null) { return false; }
+        if (this.#focusedHeaderPosition == null) { return false; }
 
         const column = headerCtrl.getColumnGroupChild();
         const headerRowIndex = headerCtrl.getRowIndex();
         const pinned = headerCtrl.getPinned();
 
-        const { column: focusedColumn, headerRowIndex: focusedHeaderRowIndex } = this.focusedHeaderPosition;
+        const { column: focusedColumn, headerRowIndex: focusedHeaderRowIndex } = this.#focusedHeaderPosition;
 
         return column === focusedColumn &&
             headerRowIndex === focusedHeaderRowIndex &&
@@ -307,15 +307,15 @@ export class FocusService extends BeanStub {
     }
 
     public clearFocusedHeader(): void {
-        this.focusedHeaderPosition = null;
+        this.#focusedHeaderPosition = null;
     }
 
     public getFocusedHeader(): HeaderPosition | null {
-        return this.focusedHeaderPosition;
+        return this.#focusedHeaderPosition;
     }
 
     public setFocusedHeader(headerRowIndex: number, column: ColumnGroup | Column): void {
-        this.focusedHeaderPosition = { headerRowIndex, column };
+        this.#focusedHeaderPosition = { headerRowIndex, column };
     }
 
     public focusHeaderPosition(params: {
@@ -333,7 +333,7 @@ export class FocusService extends BeanStub {
         let { headerPosition } = params;
 
         if (fromCell && this.filterManager.isAdvancedFilterHeaderActive()) {
-            return this.focusAdvancedFilter(headerPosition);
+            return this.#focusAdvancedFilter(headerPosition);
         }
 
         if (allowUserOverride) {
@@ -343,7 +343,7 @@ export class FocusService extends BeanStub {
             if (fromTab) {
                 const userFunc = this.gos.getCallback('tabToNextHeader');
                 if (userFunc) {
-                    headerPosition = this.getHeaderPositionFromUserFunc({
+                    headerPosition = this.#getHeaderPositionFromUserFunc({
                         userFunc,
                         direction,
                         currentPosition,
@@ -368,7 +368,7 @@ export class FocusService extends BeanStub {
 
         if (!headerPosition) { return false; }
 
-        return this.focusProvidedHeaderPosition({
+        return this.#focusProvidedHeaderPosition({
             headerPosition,
             direction,
             event,
@@ -387,27 +387,29 @@ export class FocusService extends BeanStub {
         const { userFunc, headerPosition, direction, event } = params;
         const currentPosition = this.getFocusedHeader();
         const headerRowCount = this.headerNavigationService.getHeaderRowCount();
-        const newHeaderPosition = this.getHeaderPositionFromUserFunc({
+        const newHeaderPosition = this.#getHeaderPositionFromUserFunc({
             userFunc,
             direction,
             currentPosition,
             headerPosition,
             headerRowCount
         });
-        return !!newHeaderPosition && this.focusProvidedHeaderPosition({
+        return !!newHeaderPosition && this.#focusProvidedHeaderPosition({
             headerPosition: newHeaderPosition,
             direction,
             event
         });
     }
 
-    private getHeaderPositionFromUserFunc(params: {
-        userFunc: (params: WithoutGridCommon<TabToNextHeaderParams>) => boolean | HeaderPosition | null;
-        direction?: 'Before' | 'After' | null;
-        currentPosition: HeaderPosition | null;
-        headerPosition: HeaderPosition | null;
-        headerRowCount: number;
-    }): HeaderPosition | null {
+    #getHeaderPositionFromUserFunc(
+        params: {
+            userFunc: (params: WithoutGridCommon<TabToNextHeaderParams>) => boolean | HeaderPosition | null;
+            direction?: 'Before' | 'After' | null;
+            currentPosition: HeaderPosition | null;
+            headerPosition: HeaderPosition | null;
+            headerRowCount: number;
+        }
+    ): HeaderPosition | null {
         const { userFunc, direction, currentPosition, headerPosition, headerRowCount } = params;
         const userFuncParams: WithoutGridCommon<TabToNextHeaderParams> = {
             backwards: direction === 'Before',
@@ -428,17 +430,19 @@ export class FocusService extends BeanStub {
         return userResult;
     }
 
-    private focusProvidedHeaderPosition(params: {
-        headerPosition: HeaderPosition;
-        direction?: 'Before' | 'After' | null;
-        event?: KeyboardEvent;
-        fromCell?: boolean;
-        rowWithoutSpanValue?: number;
-    }): boolean {
+    #focusProvidedHeaderPosition(
+        params: {
+            headerPosition: HeaderPosition;
+            direction?: 'Before' | 'After' | null;
+            event?: KeyboardEvent;
+            fromCell?: boolean;
+            rowWithoutSpanValue?: number;
+        }
+    ): boolean {
         const { headerPosition, direction, fromCell, rowWithoutSpanValue, event } = params;
         if (headerPosition.headerRowIndex === -1) {
             if (this.filterManager.isAdvancedFilterHeaderActive()) {
-                return this.focusAdvancedFilter(headerPosition);
+                return this.#focusAdvancedFilter(headerPosition);
             }
             return this.focusGridView(headerPosition.column as Column);
         }
@@ -487,19 +491,19 @@ export class FocusService extends BeanStub {
 
     public focusPreviousFromFirstCell(event?: KeyboardEvent): boolean {
         if (this.filterManager.isAdvancedFilterHeaderActive()) {
-            return this.focusAdvancedFilter(null);
+            return this.#focusAdvancedFilter(null);
         }
         return this.focusLastHeader(event);
     }
 
     public isAnyCellFocused(): boolean {
-        return !!this.focusedCellPosition;
+        return !!this.#focusedCellPosition;
     }
 
     public isRowFocused(rowIndex: number, floating?: string | null): boolean {
-        if (this.focusedCellPosition == null) { return false; }
+        if (this.#focusedCellPosition == null) { return false; }
 
-        return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === makeNull(floating);
+        return this.#focusedCellPosition.rowIndex === rowIndex && this.#focusedCellPosition.rowPinned === makeNull(floating);
     }
 
     public findFocusableElements(rootNode: HTMLElement, exclude?: string | null, onlyUnmanaged = false): HTMLElement[] {
@@ -653,24 +657,24 @@ export class FocusService extends BeanStub {
     }
 
     public focusNextGridCoreContainer(backwards: boolean, forceOut: boolean = false): boolean {
-        if (!forceOut && this.gridCtrl.focusNextInnerContainer(backwards)) {
+        if (!forceOut && this.#gridCtrl.focusNextInnerContainer(backwards)) {
             return true;
         }
 
-        if (forceOut || (!backwards && !this.gridCtrl.isDetailGrid())) {
-            this.gridCtrl.forceFocusOutOfContainer(backwards);
+        if (forceOut || (!backwards && !this.#gridCtrl.isDetailGrid())) {
+            this.#gridCtrl.forceFocusOutOfContainer(backwards);
         }
 
         return false;
     }
 
-    private focusAdvancedFilter(position: HeaderPosition | null): boolean {
-        this.advancedFilterFocusColumn = position?.column as Column | undefined;
+    #focusAdvancedFilter(position: HeaderPosition | null): boolean {
+        this.#advancedFilterFocusColumn = position?.column as Column | undefined;
         return this.advancedFilterService?.getCtrl().focusHeaderComp() ?? false;
     }
 
     public focusNextFromAdvancedFilter(backwards?: boolean, forceFirstColumn?: boolean): boolean {
-        const column = (forceFirstColumn ? undefined : this.advancedFilterFocusColumn) ?? this.columnModel.getAllDisplayedColumns()?.[0];
+        const column = (forceFirstColumn ? undefined : this.#advancedFilterFocusColumn) ?? this.columnModel.getAllDisplayedColumns()?.[0];
         if (backwards) {
             return this.focusHeaderPosition({
                 headerPosition: {
@@ -684,6 +688,6 @@ export class FocusService extends BeanStub {
     }
 
     public clearAdvancedFilterColumn(): void {
-        this.advancedFilterFocusColumn = undefined;
+        this.#advancedFilterFocusColumn = undefined;
     }
 }

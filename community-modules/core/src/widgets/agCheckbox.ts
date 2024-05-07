@@ -11,9 +11,9 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
 
     protected labelAlignment: LabelAlignment = 'right';
 
-    private selected?: boolean = false;
-    private readOnly = false;
-    private passive = false;
+    #selected?: boolean = false;
+    #readOnly = false;
+    #passive = false;
 
     constructor(config?: TConfig, className = 'ag-checkbox', inputType = 'checkbox') {
         super(config, className, inputType);
@@ -28,26 +28,26 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
     }
 
     protected addInputListeners() {
-        this.addManagedListener(this.eInput, 'click', this.onCheckboxClick.bind(this));
+        this.addManagedListener(this.eInput, 'click', this.#onCheckboxClick.bind(this));
         this.addManagedListener(this.eLabel, 'click', this.toggle.bind(this));
     }
 
     public getNextValue(): boolean {
-        return this.selected === undefined ? true : !this.selected;
+        return this.#selected === undefined ? true : !this.#selected;
     }
 
     public setPassive(passive: boolean): void {
-        this.passive = passive;
+        this.#passive = passive;
     }
 
     public isReadOnly(): boolean {
-        return this.readOnly;
+        return this.#readOnly;
     }
 
     public setReadOnly(readOnly: boolean): void {
         this.eWrapper.classList.toggle('ag-disabled', readOnly);
         this.eInput.disabled = readOnly;
-        this.readOnly = readOnly;
+        this.#readOnly = readOnly;
     }
 
     public setDisabled(disabled: boolean): this {
@@ -62,8 +62,8 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
         const previousValue = this.isSelected();
         const nextValue = this.getNextValue();
 
-        if (this.passive) {
-            this.dispatchChange(nextValue, previousValue);
+        if (this.#passive) {
+            this.#dispatchChange(nextValue, previousValue);
         } else {
             this.setValue(nextValue);
         }
@@ -74,8 +74,8 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
     }
 
     public setValue(value?: boolean, silent?: boolean): this {
-        this.refreshSelectedClass(value);
-        this.setSelected(value, silent);
+        this.#refreshSelectedClass(value);
+        this.#setSelected(value, silent);
 
         return this;
     }
@@ -88,26 +88,30 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
     }
 
     protected isSelected(): boolean | undefined {
-        return this.selected;
+        return this.#selected;
     }
 
-    private setSelected(selected?: boolean, silent?: boolean): void {
+    #setSelected(selected?: boolean, silent?: boolean): void {
         if (this.isSelected() === selected) {
             return;
         }
 
         this.previousValue = this.isSelected();
 
-        selected = this.selected = typeof selected === 'boolean' ? selected : undefined;
+        selected = this.#selected = typeof selected === 'boolean' ? selected : undefined;
         this.eInput.checked = selected!;
         this.eInput.indeterminate = selected === undefined;
 
         if (!silent) {
-            this.dispatchChange(this.selected, this.previousValue);
+            this.#dispatchChange(this.#selected, this.previousValue);
         }
     }
 
-    private dispatchChange(selected: boolean | undefined, previousValue: boolean | undefined, event?: MouseEvent) {
+    #dispatchChange(
+        selected: boolean | undefined,
+        previousValue: boolean | undefined,
+        event?: MouseEvent
+    ) {
         this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED, selected, previousValue, event });
 
         const input = this.getInputElement();
@@ -122,15 +126,15 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
         this.eventService.dispatchEvent(checkboxChangedEvent);
     }
 
-    private onCheckboxClick(e: MouseEvent) {
-        if (this.passive || this.eInput.disabled) { return; }
+    #onCheckboxClick(e: MouseEvent) {
+        if (this.#passive || this.eInput.disabled) { return; }
         const previousValue = this.isSelected();
-        const selected = this.selected = (e.target as HTMLInputElement).checked;
-        this.refreshSelectedClass(selected);
-        this.dispatchChange(selected, previousValue, e);
+        const selected = this.#selected = (e.target as HTMLInputElement).checked;
+        this.#refreshSelectedClass(selected);
+        this.#dispatchChange(selected, previousValue, e);
     }
 
-    private refreshSelectedClass(value?: boolean | null) {
+    #refreshSelectedClass(value?: boolean | null) {
         this.eWrapper.classList.toggle('ag-checked', value === true);
         this.eWrapper.classList.toggle('ag-indeterminate', value == null);
     }

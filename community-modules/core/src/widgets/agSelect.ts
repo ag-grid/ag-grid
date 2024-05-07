@@ -30,7 +30,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
 
     protected postConstruct(): void {
         super.postConstruct();
-        this.createListComponent();
+        this.#createListComponent();
         this.eWrapper.tabIndex = this.gos.get('tabIndex');
 
         const { options, value, placeholder } = this.config;
@@ -45,16 +45,16 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
             this.eDisplayField.textContent = placeholder;
         }
 
-        this.addManagedListener(this.eWrapper, 'focusout', this.onWrapperFocusOut.bind(this));
+        this.addManagedListener(this.eWrapper, 'focusout', this.#onWrapperFocusOut.bind(this));
     }
 
-    private onWrapperFocusOut(e: FocusEvent): void {
+    #onWrapperFocusOut(e: FocusEvent): void {
         if (!this.eWrapper.contains(e.relatedTarget as Element)) {
             this.hidePicker();
         }
     }
 
-    private createListComponent(): void {
+    #createListComponent(): void {
         this.listComponent = this.createBean(new AgList('select', true));
         this.listComponent.setParentComponent(this);
 

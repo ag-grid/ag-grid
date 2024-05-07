@@ -34,11 +34,11 @@ export abstract class RowNodeBlock extends BeanStub {
     public static STATE_LOADED = 'loaded';
     public static STATE_FAILED = 'failed';
 
-    private readonly id: number;
+    readonly #id: number;
 
-    private state = RowNodeBlock.STATE_WAITING_TO_LOAD;
+    #state = RowNodeBlock.STATE_WAITING_TO_LOAD;
 
-    private version = 0;
+    #version = 0;
 
     public abstract getBlockStateJson(): { id: string, state: any };
 
@@ -50,40 +50,40 @@ export abstract class RowNodeBlock extends BeanStub {
 
     protected constructor(id: number) {
         super();
-        this.id = id;
+        this.#id = id;
     }
 
     public getId(): number {
-        return this.id;
+        return this.#id;
     }
 
     public load(): void {
-        this.state = RowNodeBlock.STATE_LOADING;
+        this.#state = RowNodeBlock.STATE_LOADING;
         this.loadFromDatasource();
     }
 
     public getVersion(): number {
-        return this.version;
+        return this.#version;
     }
 
     public setStateWaitingToLoad(): void {
         // in case any current loads in progress, this will have their results ignored
-        this.version++;
-        this.state = RowNodeBlock.STATE_WAITING_TO_LOAD;
+        this.#version++;
+        this.#state = RowNodeBlock.STATE_WAITING_TO_LOAD;
     }
 
     public getState(): string {
-        return this.state;
+        return this.#state;
     }
 
     protected pageLoadFailed(version: number) {
-        const requestMostRecentAndLive = this.isRequestMostRecentAndLive(version);
+        const requestMostRecentAndLive = this.#isRequestMostRecentAndLive(version);
         if (requestMostRecentAndLive) {
-            this.state = RowNodeBlock.STATE_FAILED;
+            this.#state = RowNodeBlock.STATE_FAILED;
             this.processServerFail();
         }
 
-        this.dispatchLoadCompleted(false);
+        this.#dispatchLoadCompleted(false);
     }
 
     protected success(version: number, params: LoadSuccessParams): void {
@@ -94,10 +94,10 @@ export abstract class RowNodeBlock extends BeanStub {
         this.successCommon(version, { rowData: rows, rowCount: lastRow });
     }
 
-    private isRequestMostRecentAndLive(version: number): boolean {
+    #isRequestMostRecentAndLive(version: number): boolean {
         // thisIsMostRecentRequest - if block was refreshed, then another request
         // could of been sent after this one.
-        const thisIsMostRecentRequest = version === this.version;
+        const thisIsMostRecentRequest = version === this.#version;
 
         // weAreNotDestroyed - if InfiniteStore is purged, then blocks are destroyed
         // and new blocks created. so data loads of old blocks are discarded.
@@ -111,17 +111,17 @@ export abstract class RowNodeBlock extends BeanStub {
         // need to dispatch load complete before processing the data, as PaginationComp checks
         // RowNodeBlockLoader to see if it is still loading, so the RowNodeBlockLoader needs to
         // be updated first (via LoadComplete event) before PaginationComp updates (via processServerResult method)
-        this.dispatchLoadCompleted();
+        this.#dispatchLoadCompleted();
 
-        const requestMostRecentAndLive = this.isRequestMostRecentAndLive(version);
+        const requestMostRecentAndLive = this.#isRequestMostRecentAndLive(version);
 
         if (requestMostRecentAndLive) {
-            this.state = RowNodeBlock.STATE_LOADED;
+            this.#state = RowNodeBlock.STATE_LOADED;
             this.processServerResult(params);
         }
     }
 
-    private dispatchLoadCompleted(success = true) {
+    #dispatchLoadCompleted(success = true) {
         // we fire event regardless of processing data or now, as we want
         // the concurrentLoadRequests count to be reduced in BlockLoader
         const event: LoadCompleteEvent = {

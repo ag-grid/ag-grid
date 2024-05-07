@@ -5,9 +5,9 @@ export enum AgPromiseStatus {
 }
 
 export class AgPromise<T> {
-    private status: AgPromiseStatus = AgPromiseStatus.IN_PROGRESS;
-    private resolution: T | null = null;
-    private waiters: ((value: T | null) => void)[] = [];
+    #status: AgPromiseStatus = AgPromiseStatus.IN_PROGRESS;
+    #resolution: T | null = null;
+    #waiters: ((value: T | null) => void)[] = [];
 
     static all<T>(promises: AgPromise<T | null>[]): AgPromise<(T | null)[]> {
         return new AgPromise(resolve => {
@@ -32,31 +32,31 @@ export class AgPromise<T> {
     }
 
     constructor(callback: ResolveAndRejectCallback<T>) {
-        callback(value => this.onDone(value), params => this.onReject(params));
+        callback(value => this.#onDone(value), params => this.#onReject(params));
     }
 
     public then<V>(func: (result: T | null) => V): AgPromise<V> {
         return new AgPromise(resolve => {
-            if (this.status === AgPromiseStatus.RESOLVED) {
-                resolve(func(this.resolution));
+            if (this.#status === AgPromiseStatus.RESOLVED) {
+                resolve(func(this.#resolution));
             } else {
-                this.waiters.push(value => resolve(func(value)));
+                this.#waiters.push(value => resolve(func(value)));
             }
         });
     }
 
     public resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T | null) => Z): Z {
-        return this.status === AgPromiseStatus.RESOLVED ? ifResolved(this.resolution) : ifNotResolvedValue;
+        return this.#status === AgPromiseStatus.RESOLVED ? ifResolved(this.#resolution) : ifNotResolvedValue;
     }
 
-    private onDone(value: T | null): void {
-        this.status = AgPromiseStatus.RESOLVED;
-        this.resolution = value;
+    #onDone(value: T | null): void {
+        this.#status = AgPromiseStatus.RESOLVED;
+        this.#resolution = value;
 
-        this.waiters.forEach(waiter => waiter(value));
+        this.#waiters.forEach(waiter => waiter(value));
     }
 
-    private onReject(params: any): void {
+    #onReject(params: any): void {
         console.warn('TBI');
     }
 }

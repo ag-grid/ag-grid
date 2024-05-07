@@ -71,25 +71,25 @@ export class GridBodyCtrl extends BeanStub {
     @Autowired('rowModel') public rowModel: IRowModel;
     @Autowired('filterManager') private filterManager: FilterManager;
 
-    private comp: IGridBodyComp;
-    private eGridBody: HTMLElement;
-    private eBodyViewport: HTMLElement;
-    private eTop: HTMLElement;
-    private eBottom: HTMLElement;
-    private eStickyTop: HTMLElement;
-    private stickyTopHeight: number = 0;
-    private eStickyBottom: HTMLElement;
-    private stickyBottomHeight: number = 0;
+    #comp: IGridBodyComp;
+    #eGridBody: HTMLElement;
+    #eBodyViewport: HTMLElement;
+    #eTop: HTMLElement;
+    #eBottom: HTMLElement;
+    #eStickyTop: HTMLElement;
+    #stickyTopHeight: number = 0;
+    #eStickyBottom: HTMLElement;
+    #stickyBottomHeight: number = 0;
     
-    private bodyScrollFeature: GridBodyScrollFeature;
-    private rowDragFeature: RowDragFeature;
+    #bodyScrollFeature: GridBodyScrollFeature;
+    #rowDragFeature: RowDragFeature;
 
     public getScrollFeature(): GridBodyScrollFeature {
-        return this.bodyScrollFeature;
+        return this.#bodyScrollFeature;
     }
 
     public getBodyViewportElement(): HTMLElement {
-        return this.eBodyViewport;
+        return this.#eBodyViewport;
     }
 
     public setComp(
@@ -101,30 +101,30 @@ export class GridBodyCtrl extends BeanStub {
         eStickyTop: HTMLElement,
         eStickyBottom: HTMLElement,
     ): void {
-        this.comp = comp;
-        this.eGridBody = eGridBody;
-        this.eBodyViewport = eBodyViewport;
-        this.eTop = eTop;
-        this.eBottom = eBottom;
-        this.eStickyTop = eStickyTop;
-        this.eStickyBottom = eStickyBottom;
+        this.#comp = comp;
+        this.#eGridBody = eGridBody;
+        this.#eBodyViewport = eBodyViewport;
+        this.#eTop = eTop;
+        this.#eBottom = eBottom;
+        this.#eStickyTop = eStickyTop;
+        this.#eStickyBottom = eStickyBottom;
 
         this.setCellTextSelection(this.gos.get('enableCellTextSelection'));
         this.addManagedPropertyListener('enableCellTextSelection', (props) => this.setCellTextSelection(props.currentValue));
 
-        this.createManagedBean(new LayoutFeature(this.comp));
-        this.bodyScrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
-        this.addRowDragListener();
+        this.createManagedBean(new LayoutFeature(this.#comp));
+        this.#bodyScrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.#eBodyViewport));
+        this.#addRowDragListener();
 
-        this.setupRowAnimationCssClass();
+        this.#setupRowAnimationCssClass();
 
-        this.addEventListeners();
-        this.addFocusListeners([eTop, eBodyViewport, eBottom, eStickyTop, eStickyBottom]);
-        this.onGridColumnsChanged();
-        this.addBodyViewportListener();
-        this.setFloatingHeights();
-        this.disableBrowserDragging();
-        this.addStopEditingWhenGridLosesFocus();
+        this.#addEventListeners();
+        this.#addFocusListeners([eTop, eBodyViewport, eBottom, eStickyTop, eStickyBottom]);
+        this.#onGridColumnsChanged();
+        this.#addBodyViewportListener();
+        this.#setFloatingHeights();
+        this.#disableBrowserDragging();
+        this.#addStopEditingWhenGridLosesFocus();
 
         this.filterManager.setupAdvancedFilterHeaderComp(eTop);
 
@@ -132,17 +132,17 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public getComp(): IGridBodyComp {
-        return this.comp;
+        return this.#comp;
     }
 
-    private addEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
+    #addEventListeners(): void {
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.#onGridColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.#onScrollVisibilityChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.#onPinnedRowDataChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.#onHeaderHeightChanged.bind(this));
     }
 
-    private addFocusListeners(elements: HTMLElement[]): void {
+    #addFocusListeners(elements: HTMLElement[]): void {
         elements.forEach(element => {
             this.addManagedListener(element, 'focusin', (e: FocusEvent) => {
                 const { target } = e;
@@ -173,35 +173,35 @@ export class GridBodyCtrl extends BeanStub {
 
     // used by ColumnAnimationService
     public setColumnMovingCss(moving: boolean): void {
-        this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_MOVING, moving);
+        this.#comp.setColumnMovingCss(CSS_CLASS_COLUMN_MOVING, moving);
     }
 
     public setCellTextSelection(selectable: boolean = false): void {
-        this.comp.setCellSelectableCss(CSS_CLASS_CELL_SELECTABLE, selectable);
+        this.#comp.setCellSelectableCss(CSS_CLASS_CELL_SELECTABLE, selectable);
     }
 
-    private onScrollVisibilityChanged(): void {
+    #onScrollVisibilityChanged(): void {
         const visible = this.scrollVisibleService.isVerticalScrollShowing();
         this.setVerticalScrollPaddingVisible(visible);
-        this.setStickyWidth(visible);
-        this.setStickyBottomOffsetBottom();
+        this.#setStickyWidth(visible);
+        this.#setStickyBottomOffsetBottom();
 
         const scrollbarWidth = visible ? (this.gos.getScrollbarWidth() || 0) : 0;
         const pad = isInvisibleScrollbar() ? 16 : 0;
         const width = `calc(100% + ${scrollbarWidth + pad}px)`;
 
-        this.animationFrameService.requestAnimationFrame(() => this.comp.setBodyViewportWidth(width));
+        this.animationFrameService.requestAnimationFrame(() => this.#comp.setBodyViewportWidth(width));
     }
 
-    private onGridColumnsChanged(): void {
+    #onGridColumnsChanged(): void {
         const columns = this.columnModel.getAllGridColumns();
-        this.comp.setColumnCount(columns.length);
+        this.#comp.setColumnCount(columns.length);
     }
 
     // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)
     // and then that will start the browser native drag n' drop, which messes up with our own drag and drop.
-    private disableBrowserDragging(): void {
-        this.addManagedListener(this.eGridBody, 'dragstart', (event: MouseEvent) => {
+    #disableBrowserDragging(): void {
+        this.addManagedListener(this.#eGridBody, 'dragstart', (event: MouseEvent) => {
             if (event.target instanceof HTMLImageElement) {
                 event.preventDefault();
                 return false;
@@ -209,7 +209,7 @@ export class GridBodyCtrl extends BeanStub {
         });
     }
 
-    private addStopEditingWhenGridLosesFocus(): void {
+    #addStopEditingWhenGridLosesFocus(): void {
         if (!this.gos.get('stopEditingWhenCellsLoseFocus')) { return; }
 
         const focusOutListener = (event: FocusEvent): void => {
@@ -240,7 +240,7 @@ export class GridBodyCtrl extends BeanStub {
             }
         };
 
-        const viewports = [this.eBodyViewport, this.eBottom, this.eTop, this.eStickyTop, this.eStickyBottom];
+        const viewports = [this.#eBodyViewport, this.#eBottom, this.#eTop, this.#eStickyTop, this.#eStickyBottom];
 
         viewports.forEach(viewport => this.addManagedListener(viewport, 'focusout', focusOutListener));
     }
@@ -251,33 +251,33 @@ export class GridBodyCtrl extends BeanStub {
         const rowCount = this.rowModel.isLastRowIndexKnown() ? this.rowModel.getRowCount() : -1;
         const total = rowCount === -1 ? -1 : (headerCount + rowCount);
 
-        this.comp.setRowCount(total);
+        this.#comp.setRowCount(total);
     }
 
     public registerBodyViewportResizeListener(listener: (() => void)): void {
-        this.comp.registerBodyViewportResizeListener(listener);
+        this.#comp.registerBodyViewportResizeListener(listener);
     }
 
     public setVerticalScrollPaddingVisible(visible: boolean): void {
         const overflowY = visible ? 'scroll' : 'hidden';
-        this.comp.setPinnedTopBottomOverflowY(overflowY);
+        this.#comp.setPinnedTopBottomOverflowY(overflowY);
     }
 
     public isVerticalScrollShowing(): boolean {
         const show = this.gos.get('alwaysShowVerticalScroll');
         const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
         const allowVerticalScroll = this.gos.isDomLayout('normal');
-        this.comp.setAlwaysVerticalScrollClass(cssClass, show);
-        return show || (allowVerticalScroll && isVerticalScrollShowing(this.eBodyViewport));
+        this.#comp.setAlwaysVerticalScrollClass(cssClass, show);
+        return show || (allowVerticalScroll && isVerticalScrollShowing(this.#eBodyViewport));
     }
 
-    private setupRowAnimationCssClass(): void {
+    #setupRowAnimationCssClass(): void {
         const listener = () => {
             // we don't want to use row animation if scaling, as rows jump strangely as you scroll,
             // when scaling and doing row animation.
             const animateRows = this.gos.isAnimateRows() && !this.rowContainerHeightService.isStretching();
             const animateRowsCssClass = animateRows ? RowAnimationCssClasses.ANIMATION_ON : RowAnimationCssClasses.ANIMATION_OFF;
-            this.comp.setRowAnimationCssOnBodyViewport(animateRowsCssClass, animateRows);
+            this.#comp.setRowAnimationCssOnBodyViewport(animateRowsCssClass, animateRows);
         };
 
         listener();
@@ -287,34 +287,34 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public getGridBodyElement(): HTMLElement {
-        return this.eGridBody;
+        return this.#eGridBody;
     }
 
-    private addBodyViewportListener(): void {
+    #addBodyViewportListener(): void {
         // we want to listen for clicks directly on the eBodyViewport, so the user has a way of showing
         // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
-        const listener = this.onBodyViewportContextMenu.bind(this);
-        this.addManagedListener(this.eBodyViewport, 'contextmenu', listener);
-        this.mockContextMenuForIPad(listener);
+        const listener = this.#onBodyViewportContextMenu.bind(this);
+        this.addManagedListener(this.#eBodyViewport, 'contextmenu', listener);
+        this.#mockContextMenuForIPad(listener);
 
-        this.addManagedListener(this.eBodyViewport, 'wheel', this.onBodyViewportWheel.bind(this));
-        this.addManagedListener(this.eStickyTop, 'wheel', this.onStickyWheel.bind(this));
-        this.addManagedListener(this.eStickyBottom, 'wheel', this.onStickyWheel.bind(this));
+        this.addManagedListener(this.#eBodyViewport, 'wheel', this.#onBodyViewportWheel.bind(this));
+        this.addManagedListener(this.#eStickyTop, 'wheel', this.#onStickyWheel.bind(this));
+        this.addManagedListener(this.#eStickyBottom, 'wheel', this.#onStickyWheel.bind(this));
 
         // allow mouseWheel on the Full Width Container to Scroll the Viewport
-        this.addFullWidthContainerWheelListener();
+        this.#addFullWidthContainerWheelListener();
     }
 
-    private addFullWidthContainerWheelListener(): void {
-        const fullWidthContainer = this.eBodyViewport.querySelector('.ag-full-width-container');
-        const eCenterColsViewport = this.eBodyViewport.querySelector('.ag-center-cols-viewport');
+    #addFullWidthContainerWheelListener(): void {
+        const fullWidthContainer = this.#eBodyViewport.querySelector('.ag-full-width-container');
+        const eCenterColsViewport = this.#eBodyViewport.querySelector('.ag-center-cols-viewport');
 
         if (fullWidthContainer && eCenterColsViewport) {
-            this.addManagedListener(fullWidthContainer, 'wheel', (e: WheelEvent) => this.onFullWidthContainerWheel(e, eCenterColsViewport));
+            this.addManagedListener(fullWidthContainer, 'wheel', (e: WheelEvent) => this.#onFullWidthContainerWheel(e, eCenterColsViewport));
         }
     }
 
-    private onFullWidthContainerWheel(e: WheelEvent, eCenterColsViewport: Element): void {
+    #onFullWidthContainerWheel(e: WheelEvent, eCenterColsViewport: Element): void {
         if (
             !e.deltaX ||
             Math.abs(e.deltaY) > Math.abs(e.deltaX) ||
@@ -325,7 +325,7 @@ export class GridBodyCtrl extends BeanStub {
         eCenterColsViewport.scrollBy({ left: e.deltaX });
     }
 
-    private onBodyViewportContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
+    #onBodyViewportContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
         if (!mouseEvent && !touchEvent) { return; }
 
         if (this.gos.get('preventDefaultOnContextMenu')) {
@@ -335,17 +335,19 @@ export class GridBodyCtrl extends BeanStub {
 
         const { target } = (mouseEvent || touch)!;
 
-        if (target === this.eBodyViewport || target === this.ctrlsService.get('center').getViewportElement()) {
+        if (target === this.#eBodyViewport || target === this.ctrlsService.get('center').getViewportElement()) {
             // show it
-            this.menuService.showContextMenu({ mouseEvent, touchEvent, value: null, anchorToElement: this.eGridBody } as EventShowContextMenuParams);
+            this.menuService.showContextMenu({ mouseEvent, touchEvent, value: null, anchorToElement: this.#eGridBody } as EventShowContextMenuParams);
         }
     }
 
-    private mockContextMenuForIPad(listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void): void {
+    #mockContextMenuForIPad(
+        listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
+    ): void {
         // we do NOT want this when not in iPad
         if (!isIOSUserAgent()) { return; }
 
-        const touchListener = new TouchListener(this.eBodyViewport);
+        const touchListener = new TouchListener(this.#eBodyViewport);
         const longTapListener = (event: LongTapEvent) => {
             listener(undefined, event.touchStart, event.touchEvent);
         };
@@ -354,7 +356,7 @@ export class GridBodyCtrl extends BeanStub {
         this.addDestroyFunc(() => touchListener.destroy());
     }
 
-    private onBodyViewportWheel(e: WheelEvent): void {
+    #onBodyViewportWheel(e: WheelEvent): void {
         if (!this.gos.get('suppressScrollWhenPopupsAreOpen')) { return; }
 
         if (this.popupService.hasAnchoredPopup()) {
@@ -362,7 +364,7 @@ export class GridBodyCtrl extends BeanStub {
         }
     }
 
-    private onStickyWheel(e: WheelEvent): void {
+    #onStickyWheel(e: WheelEvent): void {
         e.preventDefault();
 
         if (e.offsetY) {
@@ -371,78 +373,78 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public getGui(): HTMLElement {
-        return this.eGridBody;
+        return this.#eGridBody;
     }
 
     // called by rowDragFeature
     public scrollVertically(pixels: number): number {
-        const oldScrollPosition = this.eBodyViewport.scrollTop;
+        const oldScrollPosition = this.#eBodyViewport.scrollTop;
 
-        this.bodyScrollFeature.setVerticalScrollPosition(oldScrollPosition + pixels);
-        return this.eBodyViewport.scrollTop - oldScrollPosition;
+        this.#bodyScrollFeature.setVerticalScrollPosition(oldScrollPosition + pixels);
+        return this.#eBodyViewport.scrollTop - oldScrollPosition;
     }
 
-    private addRowDragListener(): void {
-        this.rowDragFeature = this.createManagedBean(new RowDragFeature(this.eBodyViewport));
-        this.dragAndDropService.addDropTarget(this.rowDragFeature);
+    #addRowDragListener(): void {
+        this.#rowDragFeature = this.createManagedBean(new RowDragFeature(this.#eBodyViewport));
+        this.dragAndDropService.addDropTarget(this.#rowDragFeature);
     }
 
     public getRowDragFeature(): RowDragFeature {
-        return this.rowDragFeature;
+        return this.#rowDragFeature;
     }
 
-    private onPinnedRowDataChanged(): void {
-        this.setFloatingHeights();
+    #onPinnedRowDataChanged(): void {
+        this.#setFloatingHeights();
     }
 
-    private setFloatingHeights(): void {
+    #setFloatingHeights(): void {
         const { pinnedRowModel } = this;
 
         let floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
         let floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight();
-        this.comp.setTopHeight(floatingTopHeight);
-        this.comp.setBottomHeight(floatingBottomHeight);
-        this.comp.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
-        this.comp.setBottomDisplay(floatingBottomHeight ? 'inherit' : 'none');
-        this.setStickyTopOffsetTop();
-        this.setStickyBottomOffsetBottom();
+        this.#comp.setTopHeight(floatingTopHeight);
+        this.#comp.setBottomHeight(floatingBottomHeight);
+        this.#comp.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
+        this.#comp.setBottomDisplay(floatingBottomHeight ? 'inherit' : 'none');
+        this.#setStickyTopOffsetTop();
+        this.#setStickyBottomOffsetBottom();
     }
 
     public setStickyTopHeight(height: number = 0): void {
         // console.log('setting sticky top height ' + height);
-        this.comp.setStickyTopHeight(`${height}px`);
-        this.stickyTopHeight = height;
+        this.#comp.setStickyTopHeight(`${height}px`);
+        this.#stickyTopHeight = height;
     }
 
     public getStickyTopHeight(): number {
-        return this.stickyTopHeight;
+        return this.#stickyTopHeight;
     }
 
     public setStickyBottomHeight(height: number = 0): void {
-        this.comp.setStickyBottomHeight(`${height}px`);
-        this.stickyBottomHeight = height;
+        this.#comp.setStickyBottomHeight(`${height}px`);
+        this.#stickyBottomHeight = height;
     }
 
     public getStickyBottomHeight(): number {
-        return this.stickyBottomHeight;
+        return this.#stickyBottomHeight;
     }
 
-    private setStickyWidth(vScrollVisible: boolean) {
+    #setStickyWidth(vScrollVisible: boolean) {
         if (!vScrollVisible) {
-            this.comp.setStickyTopWidth('100%');
-            this.comp.setStickyBottomWidth('100%');
+            this.#comp.setStickyTopWidth('100%');
+            this.#comp.setStickyBottomWidth('100%');
         } else {
             const scrollbarWidth = this.gos.getScrollbarWidth();
-            this.comp.setStickyTopWidth(`calc(100% - ${scrollbarWidth}px)`);
-            this.comp.setStickyBottomWidth(`calc(100% - ${scrollbarWidth}px)`);
+            this.#comp.setStickyTopWidth(`calc(100% - ${scrollbarWidth}px)`);
+            this.#comp.setStickyBottomWidth(`calc(100% - ${scrollbarWidth}px)`);
         }
     }
 
-    private onHeaderHeightChanged(): void {
-        this.setStickyTopOffsetTop();
+    #onHeaderHeightChanged(): void {
+        this.#setStickyTopOffsetTop();
     }
 
-    private setStickyTopOffsetTop(): void {
+    #setStickyTopOffsetTop(): void {
         const headerCtrl = this.ctrlsService.get('gridHeaderCtrl');
         const headerHeight = headerCtrl.getHeaderHeight() + this.filterManager.getHeaderHeight();
         const pinnedTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
@@ -453,16 +455,16 @@ export class GridBodyCtrl extends BeanStub {
         if (pinnedTopHeight > 0) { height += pinnedTopHeight; }
         if (height > 0) { height += 1; }
 
-        this.comp.setStickyTopTop(`${height}px`);
+        this.#comp.setStickyTopTop(`${height}px`);
     }
 
-    private setStickyBottomOffsetBottom(): void {
+    #setStickyBottomOffsetBottom(): void {
         const pinnedBottomHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
         const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
         const scrollbarWidth = hScrollShowing ? (this.gos.getScrollbarWidth() || 0) : 0;
         const height = pinnedBottomHeight + scrollbarWidth;
 
-        this.comp.setStickyBottomBottom(`${height}px`);
+        this.#comp.setStickyBottomBottom(`${height}px`);
     }
 
     // method will call itself if no available width. this covers if the grid
@@ -475,7 +477,7 @@ export class GridBodyCtrl extends BeanStub {
         const scrollWidthToRemove = removeScrollWidth ? this.gos.getScrollbarWidth() : 0;
         // bodyViewportWidth should be calculated from eGridBody, not eBodyViewport
         // because we change the width of the bodyViewport to hide the real browser scrollbar
-        const bodyViewportWidth = getInnerWidth(this.eGridBody);
+        const bodyViewportWidth = getInnerWidth(this.#eGridBody);
         const availableWidth = bodyViewportWidth - scrollWidthToRemove;
 
         if (availableWidth > 0) {
@@ -503,11 +505,11 @@ export class GridBodyCtrl extends BeanStub {
 
     // + rangeService
     public addScrollEventListener(listener: () => void): void {
-        this.eBodyViewport.addEventListener('scroll', listener, { passive: true });
+        this.#eBodyViewport.addEventListener('scroll', listener, { passive: true });
     }
 
     // + focusService
     public removeScrollEventListener(listener: () => void): void {
-        this.eBodyViewport.removeEventListener('scroll', listener);
+        this.#eBodyViewport.removeEventListener('scroll', listener);
     }
 }

@@ -29,39 +29,39 @@ export interface Comparator<T> {
 }
 
 export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputTextField> extends SimpleFilter<M, V, E> {
-    private scalarFilterParams: ScalarFilterParams;
+    #scalarFilterParams: ScalarFilterParams;
 
     protected abstract comparator(): Comparator<V>;
 
     protected setParams(params: ScalarFilterParams): void {
         super.setParams(params);
-        this.scalarFilterParams = params;
+        this.#scalarFilterParams = params;
     }
 
     protected evaluateNullValue(filterType?: ISimpleFilterModelType | null) {
         switch (filterType) {
             case ScalarFilter.EQUALS:
             case ScalarFilter.NOT_EQUAL:
-                if (this.scalarFilterParams.includeBlanksInEquals) {
+                if (this.#scalarFilterParams.includeBlanksInEquals) {
                     return true;
                 }
                 break;
 
             case ScalarFilter.GREATER_THAN:
             case ScalarFilter.GREATER_THAN_OR_EQUAL:
-                if (this.scalarFilterParams.includeBlanksInGreaterThan) {
+                if (this.#scalarFilterParams.includeBlanksInGreaterThan) {
                     return true;
                 }
                 break;
 
             case ScalarFilter.LESS_THAN:
             case ScalarFilter.LESS_THAN_OR_EQUAL:
-                if (this.scalarFilterParams.includeBlanksInLessThan) {
+                if (this.#scalarFilterParams.includeBlanksInLessThan) {
                     return true;
                 }
                 break;
             case ScalarFilter.IN_RANGE:
-                if (this.scalarFilterParams.includeBlanksInRange) {
+                if (this.#scalarFilterParams.includeBlanksInRange) {
                     return true;
                 }
                 break;
@@ -100,7 +100,7 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
             case ScalarFilter.IN_RANGE: {
                 const compareToResult = comparator(values[1]!, cellValue);
 
-                return this.scalarFilterParams.inRangeInclusive ?
+                return this.#scalarFilterParams.inRangeInclusive ?
                     compareResult >= 0 && compareToResult <= 0 :
                     compareResult > 0 && compareToResult < 0;
             }

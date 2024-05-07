@@ -12,14 +12,14 @@ export interface ComponentMetadata {
 //@Bean("componentMetadataProvider")
 export class ComponentMetadataProvider extends BeanStub {
 
-    private componentMetaData: { [key: string]: ComponentMetadata };
+    #componentMetaData: { [key: string]: ComponentMetadata };
 
     @Autowired("agComponentUtils")
     private agComponentUtils: AgComponentUtils;
 
     @PostConstruct
     public postConstruct() {
-        this.componentMetaData = {
+        this.#componentMetaData = {
             dateComponent: {
                 mandatoryMethodList: ['getDate', 'setDate'],
                 optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder', 'setInputAriaLabel', 'setDisabled', 'onParamsUpdated', 'refresh']
@@ -102,6 +102,6 @@ export class ComponentMetadataProvider extends BeanStub {
     }
 
     public retrieve(name: string): ComponentMetadata {
-        return this.componentMetaData[name];
+        return this.#componentMetaData[name];
     }
 }

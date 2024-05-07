@@ -17,10 +17,10 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
         this.addDestroyFunc(() => setAriaLabelledBy(params.eParentOfValue));
         setAriaLabelledBy(params.eParentOfValue, id);
 
-        params.node.failedLoad ? this.setupFailed() : this.setupLoading();
+        params.node.failedLoad ? this.#setupFailed() : this.#setupLoading();
     }
 
-    private setupFailed(): void {
+    #setupFailed(): void {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         this.getGui().innerText = localeTextFunc('loadingError', 'ERR');
 
@@ -28,7 +28,7 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
         setAriaLabel(this.getGui(), ariaFailed);
     }
 
-    private setupLoading(): void {
+    #setupLoading(): void {
         const eDocument = this.gos.getDocument();
         const skeletonEffect = eDocument.createElement('div');
         skeletonEffect.classList.add('ag-skeleton-effect');

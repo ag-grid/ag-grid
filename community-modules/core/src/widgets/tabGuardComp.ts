@@ -5,9 +5,9 @@ import { setAriaRole } from "../utils/aria";
 
 export class TabGuardComp extends Component {
 
-    private eTopGuard: HTMLElement;
-    private eBottomGuard: HTMLElement;
-    private eFocusableElement: HTMLElement;
+    #eTopGuard: HTMLElement;
+    #eBottomGuard: HTMLElement;
+    #eFocusableElement: HTMLElement;
 
     protected tabGuardCtrl: TabGuardCtrl;
 
@@ -33,11 +33,11 @@ export class TabGuardComp extends Component {
          */
         forceFocusOutWhenTabGuardsAreEmpty?: boolean;
     }) {
-        this.eTopGuard = this.createTabGuard('top');
-        this.eBottomGuard = this.createTabGuard('bottom');
-        this.eFocusableElement = this.getFocusableElement();
+        this.#eTopGuard = this.#createTabGuard('top');
+        this.#eBottomGuard = this.#createTabGuard('bottom');
+        this.#eFocusableElement = this.getFocusableElement();
 
-        const tabGuards = [this.eTopGuard, this.eBottomGuard];
+        const tabGuards = [this.#eTopGuard, this.#eBottomGuard];
 
         const compProxy: ITabGuard = {
             setTabIndex: tabIndex => {
@@ -45,14 +45,14 @@ export class TabGuardComp extends Component {
             }
         };
 
-        this.addTabGuards(this.eTopGuard, this.eBottomGuard);
+        this.#addTabGuards(this.#eTopGuard, this.#eBottomGuard);
 
         this.tabGuardCtrl = this.createManagedBean(new TabGuardCtrl({
             comp: compProxy,
             focusTrapActive: !!params.focusTrapActive,
-            eTopGuard: this.eTopGuard,
-            eBottomGuard: this.eBottomGuard,
-            eFocusableElement: this.eFocusableElement,
+            eTopGuard: this.#eTopGuard,
+            eBottomGuard: this.#eBottomGuard,
+            eFocusableElement: this.#eFocusableElement,
             onFocusIn: params.onFocusIn,
             onFocusOut: params.onFocusOut,
             focusInnerElement: params.focusInnerElement,
@@ -63,7 +63,7 @@ export class TabGuardComp extends Component {
         }));
     }
 
-    private createTabGuard(side: 'top' | 'bottom'): HTMLElement {
+    #createTabGuard(side: 'top' | 'bottom'): HTMLElement {
         const tabGuard = document.createElement('div');
         const cls = side === 'top' ? TabGuardClassNames.TAB_GUARD_TOP : TabGuardClassNames.TAB_GUARD_BOTTOM;
 
@@ -73,15 +73,15 @@ export class TabGuardComp extends Component {
         return tabGuard;
     }
 
-    private addTabGuards(topTabGuard: HTMLElement, bottomTabGuard: HTMLElement): void {
-        this.eFocusableElement.insertAdjacentElement('afterbegin', topTabGuard);
-        this.eFocusableElement.insertAdjacentElement('beforeend', bottomTabGuard);
+    #addTabGuards(topTabGuard: HTMLElement, bottomTabGuard: HTMLElement): void {
+        this.#eFocusableElement.insertAdjacentElement('afterbegin', topTabGuard);
+        this.#eFocusableElement.insertAdjacentElement('beforeend', bottomTabGuard);
     }
 
     protected removeAllChildrenExceptTabGuards(): void {
-        const tabGuards: [HTMLElement, HTMLElement] = [this.eTopGuard, this.eBottomGuard];
+        const tabGuards: [HTMLElement, HTMLElement] = [this.#eTopGuard, this.#eBottomGuard];
         clearElement(this.getFocusableElement());
-        this.addTabGuards(...tabGuards);
+        this.#addTabGuards(...tabGuards);
     }
 
     public forceFocusOutOfContainer(up: boolean = false): void {
@@ -96,7 +96,7 @@ export class TabGuardComp extends Component {
             newChild = (newChild as Component).getGui();
         }
 
-        const { eBottomGuard: bottomTabGuard } = this;
+        const bottomTabGuard = this.#eBottomGuard;
 
         if (bottomTabGuard) {
             bottomTabGuard.insertAdjacentElement('beforebegin', newChild as HTMLElement);

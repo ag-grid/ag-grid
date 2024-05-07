@@ -10,15 +10,15 @@ export class OptionsFactory {
 
     public init(params: ScalarFilterParams, defaultOptions: string[]): void {
         this.filterOptions = params.filterOptions || defaultOptions;
-        this.mapCustomOptions();
-        this.selectDefaultItem(params);
+        this.#mapCustomOptions();
+        this.#selectDefaultItem(params);
     }
 
     public getFilterOptions(): (IFilterOptionDef | string)[] {
         return this.filterOptions;
     }
 
-    private mapCustomOptions(): void {
+    #mapCustomOptions(): void {
         if (!this.filterOptions) { return; }
 
         this.filterOptions.forEach(filterOption => {
@@ -43,7 +43,7 @@ export class OptionsFactory {
         });
     }
 
-    private selectDefaultItem(params: SimpleFilterParams): void {
+    #selectDefaultItem(params: SimpleFilterParams): void {
         if (params.defaultOption) {
             this.defaultOption = params.defaultOption;
         } else if (this.filterOptions.length >= 1) {

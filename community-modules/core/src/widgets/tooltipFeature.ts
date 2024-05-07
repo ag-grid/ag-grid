@@ -28,10 +28,10 @@ export interface ITooltipFeatureCtrl {
 
 export class TooltipFeature extends BeanStub {
 
-    private tooltip: any;
+    #tooltip: any;
 
-    private tooltipManager: TooltipStateManager | undefined;
-    private browserTooltips: boolean;
+    #tooltipManager: TooltipStateManager | undefined;
+    #browserTooltips: boolean;
 
     @Autowired('beans') private beans: Beans;
 
@@ -49,7 +49,7 @@ export class TooltipFeature extends BeanStub {
     }
 
 
-    private setBrowserTooltip(tooltip: string | null) {
+    #setBrowserTooltip(tooltip: string | null) {
         const name = 'title';
         const eGui = this.ctrl.getGui();
 
@@ -62,19 +62,19 @@ export class TooltipFeature extends BeanStub {
         }
     }
 
-    private updateTooltipText(): void {
-        this.tooltip = this.ctrl.getTooltipValue();
+    #updateTooltipText(): void {
+        this.#tooltip = this.ctrl.getTooltipValue();
     }
 
-    private createTooltipFeatureIfNeeded(): void {
-        if (this.tooltipManager != null) { return; }
+    #createTooltipFeatureIfNeeded(): void {
+        if (this.#tooltipManager != null) { return; }
 
         const parent: TooltipParentComp = {
             getTooltipParams: () => this.getTooltipParams(),
             getGui: () => this.ctrl.getGui()
         };
 
-        this.tooltipManager = this.createBean(new TooltipStateManager(
+        this.#tooltipManager = this.createBean(new TooltipStateManager(
             parent,
             this.ctrl.getTooltipShowDelayOverride?.(),
             this.ctrl.getTooltipHideDelayOverride?.(),
@@ -83,17 +83,17 @@ export class TooltipFeature extends BeanStub {
     }
 
     public refreshToolTip() {
-        this.browserTooltips = this.beans.gos.get('enableBrowserTooltips');
-        this.updateTooltipText();
+        this.#browserTooltips = this.beans.gos.get('enableBrowserTooltips');
+        this.#updateTooltipText();
 
-        if (this.browserTooltips) {
-            this.setBrowserTooltip(this.tooltip);
-            if (this.tooltipManager) {
-                this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
+        if (this.#browserTooltips) {
+            this.#setBrowserTooltip(this.#tooltip);
+            if (this.#tooltipManager) {
+                this.#tooltipManager = this.destroyBean(this.#tooltipManager, this.beans.context);
             }
         } else {
-            this.setBrowserTooltip(null);
-            this.createTooltipFeatureIfNeeded();
+            this.#setBrowserTooltip(null);
+            this.#createTooltipFeatureIfNeeded();
         }
     }
 
@@ -110,21 +110,21 @@ export class TooltipFeature extends BeanStub {
             rowIndex: ctrl.getRowIndex ? ctrl.getRowIndex() : undefined,
             node: rowNode,
             data: rowNode ? rowNode.data : undefined,
-            value: this.getTooltipText(),
+            value: this.#getTooltipText(),
             valueFormatted: ctrl.getValueFormatted ? ctrl.getValueFormatted() : undefined,
-            hideTooltipCallback: () => this.tooltipManager?.hideTooltip(true)
+            hideTooltipCallback: () => this.#tooltipManager?.hideTooltip(true)
         };
 
     }
 
-    private getTooltipText() {
-        return this.tooltip;
+    #getTooltipText() {
+        return this.#tooltip;
     }
 
     // overriding to make public, as we don't dispose this bean via context
     public destroy() {
-        if (this.tooltipManager) {
-            this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
+        if (this.#tooltipManager) {
+            this.#tooltipManager = this.destroyBean(this.#tooltipManager, this.beans.context);
         }
         super.destroy();
     }

@@ -30,21 +30,21 @@ export class AutoGroupColService extends BeanStub {
         // for each column we are grouping by
         if (doingMultiAutoColumn) {
             rowGroupColumns.forEach((rowGroupCol: Column, index: number) => {
-                groupAutoColumns.push(this.createOneAutoGroupColumn(rowGroupCol, index));
+                groupAutoColumns.push(this.#createOneAutoGroupColumn(rowGroupCol, index));
             });
         } else {
-            groupAutoColumns.push(this.createOneAutoGroupColumn());
+            groupAutoColumns.push(this.#createOneAutoGroupColumn());
         }
 
         return groupAutoColumns;
     }
 
     public updateAutoGroupColumns(autoGroupColumns: Column[], source: ColumnEventType) {
-        autoGroupColumns.forEach((column: Column, index: number) => this.updateOneAutoGroupColumn(column, index, source));
+        autoGroupColumns.forEach((column: Column, index: number) => this.#updateOneAutoGroupColumn(column, index, source));
     }
 
     // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
-    private createOneAutoGroupColumn(rowGroupCol?: Column, index?: number): Column {
+    #createOneAutoGroupColumn(rowGroupCol?: Column, index?: number): Column {
         // if doing multi, set the field
         let colId: string;
         if (rowGroupCol) {
@@ -53,7 +53,7 @@ export class AutoGroupColService extends BeanStub {
             colId = GROUP_AUTO_COLUMN_ID;
         }
 
-        const colDef = this.createAutoGroupColDef(colId, rowGroupCol, index);
+        const colDef = this.#createAutoGroupColDef(colId, rowGroupCol, index);
         colDef.colId = colId;
 
         const newCol = new Column(colDef, null, colId, true);
@@ -64,19 +64,19 @@ export class AutoGroupColService extends BeanStub {
     /**
      * Refreshes an auto group col to load changes from defaultColDef or autoGroupColDef
      */
-    private updateOneAutoGroupColumn(colToUpdate: Column, index: number, source: ColumnEventType) {
+    #updateOneAutoGroupColumn(colToUpdate: Column, index: number, source: ColumnEventType) {
         const oldColDef = colToUpdate.getColDef();
         const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
         const underlyingColumn = underlyingColId!=null ? this.columnModel.getPrimaryColumn(underlyingColId) : undefined;
-        const colDef = this.createAutoGroupColDef(colToUpdate.getId(), underlyingColumn??undefined, index);
+        const colDef = this.#createAutoGroupColDef(colToUpdate.getId(), underlyingColumn??undefined, index);
 
         colToUpdate.setColDef(colDef, null, source);
         this.columnFactory.applyColumnState(colToUpdate, colDef, source);
     }
 
-    private createAutoGroupColDef(colId: string, underlyingColumn?: Column, index?: number): ColDef {
+    #createAutoGroupColDef(colId: string, underlyingColumn?: Column, index?: number): ColDef {
         // if one provided by user, use it, otherwise create one
-        let res: ColDef = this.createBaseColDef(underlyingColumn);
+        let res: ColDef = this.#createBaseColDef(underlyingColumn);
 
         const autoGroupColumnDef = this.gos.get('autoGroupColumnDef');
         mergeDeep(res, autoGroupColumnDef);
@@ -114,7 +114,7 @@ export class AutoGroupColService extends BeanStub {
         return res;
     }
 
-    private createBaseColDef(rowGroupCol?: Column): ColDef {
+    #createBaseColDef(rowGroupCol?: Column): ColDef {
         const userDef = this.gos.get('autoGroupColumnDef');
         const localeTextFunc = this.localeService.getLocaleTextFunc();
 

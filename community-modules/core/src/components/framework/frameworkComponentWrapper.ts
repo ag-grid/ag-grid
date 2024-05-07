@@ -29,11 +29,11 @@ export abstract class BaseComponentWrapper<F extends WrappableInterface> impleme
         const wrapper: F = this.createWrapper(OriginalConstructor, componentType);
 
         mandatoryMethodList.forEach((methodName => {
-            this.createMethod(wrapper, methodName, true);
+            this.#createMethod(wrapper, methodName, true);
         }));
 
         optionalMethodList.forEach((methodName => {
-            this.createMethod(wrapper, methodName, false);
+            this.#createMethod(wrapper, methodName, false);
         }));
 
         return wrapper as any as A;
@@ -46,7 +46,7 @@ export abstract class BaseComponentWrapper<F extends WrappableInterface> impleme
 
     abstract createWrapper(OriginalConstructor: { new(): any }, componentType: ComponentType): F;
 
-    private createMethod(wrapper: F, methodName: string, mandatory: boolean): void {
+    #createMethod(wrapper: F, methodName: string, mandatory: boolean): void {
         wrapper.addMethod(methodName, this.createMethodProxy(wrapper, methodName, mandatory));
     }
 

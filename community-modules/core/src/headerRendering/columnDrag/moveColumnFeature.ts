@@ -18,38 +18,38 @@ export class MoveColumnFeature implements DropListener {
     @Autowired('gridOptionsService') private gos: GridOptionsService;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
 
-    private gridBodyCon: GridBodyCtrl;
+    #gridBodyCon: GridBodyCtrl;
 
-    private needToMoveLeft = false;
-    private needToMoveRight = false;
-    private movingIntervalId: number | null;
-    private intervalCount: number;
+    #needToMoveLeft = false;
+    #needToMoveRight = false;
+    #movingIntervalId: number | null;
+    #intervalCount: number;
 
-    private pinned: ColumnPinnedType;
-    private isCenterContainer: boolean;
+    #pinned: ColumnPinnedType;
+    #isCenterContainer: boolean;
 
-    private lastDraggingEvent: DraggingEvent;
-    private lastMovedInfo: { columns: Column[]; toIndex: number; } | null = null;
+    #lastDraggingEvent: DraggingEvent;
+    #lastMovedInfo: { columns: Column[]; toIndex: number; } | null = null;
 
     // this counts how long the user has been trying to scroll by dragging and failing,
     // if they fail x amount of times, then the column will get pinned. this is what gives
     // the 'hold and pin' functionality
-    private failedMoveAttempts: number;
+    #failedMoveAttempts: number;
 
     constructor(pinned: ColumnPinnedType) {
-        this.pinned = pinned;
-        this.isCenterContainer = !exists(pinned);
+        this.#pinned = pinned;
+        this.#isCenterContainer = !exists(pinned);
     }
 
     @PostConstruct
     public init(): void {
         this.ctrlsService.whenReady((p) => {
-            this.gridBodyCon = p.gridBodyCtrl;
+            this.#gridBodyCon = p.gridBodyCtrl;
         });
     }
 
     public getIconName(): string {
-        return this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;
+        return this.#pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;
     }
 
     public onDragEnter(draggingEvent: DraggingEvent): void {
@@ -71,13 +71,13 @@ export class MoveColumnFeature implements DropListener {
             this.setColumnsVisible(visibleColumns, true, "uiColumnDragged");
         }
 
-        this.setColumnsPinned(columns, this.pinned, "uiColumnDragged");
+        this.setColumnsPinned(columns, this.#pinned, "uiColumnDragged");
         this.onDragging(draggingEvent, true, true);
     }
 
     public onDragLeave(): void {
-        this.ensureIntervalCleared();
-        this.lastMovedInfo = null;
+        this.#ensureIntervalCleared();
+        this.#lastMovedInfo = null;
     }
 
     public setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType) {
@@ -95,13 +95,13 @@ export class MoveColumnFeature implements DropListener {
     }
 
     public onDragStop(): void {
-        this.onDragging(this.lastDraggingEvent, false, true, true);
-        this.ensureIntervalCleared();
-        this.lastMovedInfo = null;
+        this.onDragging(this.#lastDraggingEvent, false, true, true);
+        this.#ensureIntervalCleared();
+        this.#lastMovedInfo = null;
     }
 
-    private checkCenterForScrolling(xAdjustedForScroll: number): void {
-        if (this.isCenterContainer) {
+    #checkCenterForScrolling(xAdjustedForScroll: number): void {
+        if (this.#isCenterContainer) {
             // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
             // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
             const centerCtrl = this.ctrlsService.get('center');
@@ -109,30 +109,30 @@ export class MoveColumnFeature implements DropListener {
             const lastVisiblePixel = firstVisiblePixel + centerCtrl.getCenterWidth();
 
             if (this.gos.get('enableRtl')) {
-                this.needToMoveRight = xAdjustedForScroll < (firstVisiblePixel + 50);
-                this.needToMoveLeft = xAdjustedForScroll > (lastVisiblePixel - 50);
+                this.#needToMoveRight = xAdjustedForScroll < (firstVisiblePixel + 50);
+                this.#needToMoveLeft = xAdjustedForScroll > (lastVisiblePixel - 50);
             } else {
-                this.needToMoveLeft = xAdjustedForScroll < (firstVisiblePixel + 50);
-                this.needToMoveRight = xAdjustedForScroll > (lastVisiblePixel - 50);
+                this.#needToMoveLeft = xAdjustedForScroll < (firstVisiblePixel + 50);
+                this.#needToMoveRight = xAdjustedForScroll > (lastVisiblePixel - 50);
             }
 
-            if (this.needToMoveLeft || this.needToMoveRight) {
-                this.ensureIntervalStarted();
+            if (this.#needToMoveLeft || this.#needToMoveRight) {
+                this.#ensureIntervalStarted();
             } else {
-                this.ensureIntervalCleared();
+                this.#ensureIntervalCleared();
             }
         }
     }
 
-    public onDragging(draggingEvent: DraggingEvent = this.lastDraggingEvent, fromEnter = false, fakeEvent = false, finished = false): void {
+    public onDragging(draggingEvent: DraggingEvent = this.#lastDraggingEvent, fromEnter = false, fakeEvent = false, finished = false): void {
         if (finished) {
-            if (this.lastMovedInfo) {
-                const { columns, toIndex } = this.lastMovedInfo;
+            if (this.#lastMovedInfo) {
+                const { columns, toIndex } = this.#lastMovedInfo;
                 ColumnMoveHelper.moveColumns(columns, toIndex, 'uiColumnMoved', true, this.columnModel);
             }
             return;
         }
-        this.lastDraggingEvent = draggingEvent;
+        this.#lastDraggingEvent = draggingEvent;
 
         // if moving up or down (ie not left or right) then do nothing
         if (missing(draggingEvent.hDirection)) {
@@ -141,7 +141,7 @@ export class MoveColumnFeature implements DropListener {
 
         const mouseX = ColumnMoveHelper.normaliseX(
             draggingEvent.x,
-            this.pinned,
+            this.#pinned,
             false,
             this.gos,
             this.ctrlsService
@@ -151,10 +151,10 @@ export class MoveColumnFeature implements DropListener {
         // we don't want to scroll the grid this time, it would appear like the table is jumping
         // each time a column is dragged in.
         if (!fromEnter) {
-            this.checkCenterForScrolling(mouseX);
+            this.#checkCenterForScrolling(mouseX);
         }
 
-        const hDirection = this.normaliseDirection(draggingEvent.hDirection);
+        const hDirection = this.#normaliseDirection(draggingEvent.hDirection);
 
         const dragSourceType: DragSourceType = draggingEvent.dragSource.type;
 
@@ -162,7 +162,7 @@ export class MoveColumnFeature implements DropListener {
             if (col.getColDef().lockPinned) {
                 // if locked return true only if both col and container are same pin type.
                 // double equals (==) here on purpose so that null==undefined is true (for not pinned options)
-                return col.getPinned() == this.pinned;
+                return col.getPinned() == this.#pinned;
             }
             // if not pin locked, then always allowed to be in this container
             return true;
@@ -173,7 +173,7 @@ export class MoveColumnFeature implements DropListener {
             isFromHeader: dragSourceType === DragSourceType.HeaderCell,
             hDirection,
             xPosition: mouseX,
-            pinned: this.pinned,
+            pinned: this.#pinned,
             fromEnter,
             fakeEvent,
             gos: this.gos,
@@ -181,11 +181,11 @@ export class MoveColumnFeature implements DropListener {
         });
 
         if (lastMovedInfo) {
-            this.lastMovedInfo = lastMovedInfo;
+            this.#lastMovedInfo = lastMovedInfo;
         }
     }
 
-    private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection | undefined {
+    #normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection | undefined {
         if (this.gos.get('enableRtl')) {
             switch (hDirection) {
                 case HorizontalDirection.Left: return HorizontalDirection.Right;
@@ -197,12 +197,12 @@ export class MoveColumnFeature implements DropListener {
         }
     }
 
-    private ensureIntervalStarted(): void {
-        if (!this.movingIntervalId) {
-            this.intervalCount = 0;
-            this.failedMoveAttempts = 0;
-            this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), 100);
-            if (this.needToMoveLeft) {
+    #ensureIntervalStarted(): void {
+        if (!this.#movingIntervalId) {
+            this.#intervalCount = 0;
+            this.#failedMoveAttempts = 0;
+            this.#movingIntervalId = window.setInterval(this.#moveInterval.bind(this), 100);
+            if (this.#needToMoveLeft) {
                 this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_LEFT, true);
             } else {
                 this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_RIGHT, true);
@@ -210,47 +210,47 @@ export class MoveColumnFeature implements DropListener {
         }
     }
 
-    private ensureIntervalCleared(): void {
-        if (this.movingIntervalId) {
-            window.clearInterval(this.movingIntervalId);
-            this.movingIntervalId = null;
+    #ensureIntervalCleared(): void {
+        if (this.#movingIntervalId) {
+            window.clearInterval(this.#movingIntervalId);
+            this.#movingIntervalId = null;
             this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_MOVE);
         }
     }
 
-    private moveInterval(): void {
+    #moveInterval(): void {
         // the amounts we move get bigger at each interval, so the speed accelerates, starting a bit slow
         // and getting faster. this is to give smoother user experience. we max at 100px to limit the speed.
         let pixelsToMove: number;
-        this.intervalCount++;
-        pixelsToMove = 10 + (this.intervalCount * 5);
+        this.#intervalCount++;
+        pixelsToMove = 10 + (this.#intervalCount * 5);
         if (pixelsToMove > 100) {
             pixelsToMove = 100;
         }
 
         let pixelsMoved: number | null = null;
-        const scrollFeature = this.gridBodyCon.getScrollFeature();
-        if (this.needToMoveLeft) {
+        const scrollFeature = this.#gridBodyCon.getScrollFeature();
+        if (this.#needToMoveLeft) {
             pixelsMoved = scrollFeature.scrollHorizontally(-pixelsToMove);
-        } else if (this.needToMoveRight) {
+        } else if (this.#needToMoveRight) {
             pixelsMoved = scrollFeature.scrollHorizontally(pixelsToMove);
         }
 
         if (pixelsMoved !== 0) {
-            this.onDragging(this.lastDraggingEvent);
-            this.failedMoveAttempts = 0;
+            this.onDragging(this.#lastDraggingEvent);
+            this.#failedMoveAttempts = 0;
         } else {
             // we count the failed move attempts. if we fail to move 7 times, then we pin the column.
             // this is how we achieve pining by dragging the column to the edge of the grid.
-            this.failedMoveAttempts++;
+            this.#failedMoveAttempts++;
 
-            const columns = this.lastDraggingEvent.dragItem.columns;
+            const columns = this.#lastDraggingEvent.dragItem.columns;
             const columnsThatCanPin = columns!.filter(c => !c.getColDef().lockPinned);
 
             if (columnsThatCanPin.length > 0) {
                 this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
-                if (this.failedMoveAttempts > 7) {
-                    const pinType = this.needToMoveLeft ? 'left' : 'right';
+                if (this.#failedMoveAttempts > 7) {
+                    const pinType = this.#needToMoveLeft ? 'left' : 'right';
                     this.setColumnsPinned(columnsThatCanPin, pinType, "uiColumnDragged");
                     this.dragAndDropService.nudge();
                 }

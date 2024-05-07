@@ -9,7 +9,7 @@ export class AriaAnnouncementService extends BeanStub {
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
-    private descriptionContainer: HTMLElement | null = null;
+    #descriptionContainer: HTMLElement | null = null;
 
     constructor() {
         super();
@@ -20,7 +20,7 @@ export class AriaAnnouncementService extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         const eDocument = this.gos.getDocument();
-        const div = this.descriptionContainer = eDocument.createElement('div');
+        const div = this.#descriptionContainer = eDocument.createElement('div');
         div.classList.add('ag-aria-description-container');
 
         setAriaLive(div, 'polite');
@@ -31,13 +31,13 @@ export class AriaAnnouncementService extends BeanStub {
     }
 
     public announceValue(value: string): void {
-        if (!this.descriptionContainer) { return; }
+        if (!this.#descriptionContainer) { return; }
         // screen readers announce a change in content, so we set it to an empty value
         // and then use a setTimeout to force the Screen Reader announcement 
-        this.descriptionContainer!.textContent = '';
+        this.#descriptionContainer!.textContent = '';
         setTimeout(() => {
-            if (this.isAlive() && this.descriptionContainer) {
-                this.descriptionContainer.textContent = value;
+            if (this.isAlive() && this.#descriptionContainer) {
+                this.#descriptionContainer.textContent = value;
             }
         }, 50);
     }
@@ -45,7 +45,7 @@ export class AriaAnnouncementService extends BeanStub {
     public destroy(): void {
         super.destroy();
 
-        const { descriptionContainer } = this;
+        const descriptionContainer = this.#descriptionContainer;
 
         if (descriptionContainer) {
             clearElement(descriptionContainer);
@@ -53,7 +53,7 @@ export class AriaAnnouncementService extends BeanStub {
                 descriptionContainer.parentElement.removeChild(descriptionContainer);
             }
         }
-        this.descriptionContainer = null;
+        this.#descriptionContainer = null;
         (this.eGridDiv as any) = null;
     }
 }

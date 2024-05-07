@@ -24,7 +24,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
 
-    private enableRtl: boolean;
+    #enableRtl: boolean;
 
     constructor() {
         super(FakeHScrollComp.TEMPLATE, 'horizontal');
@@ -35,10 +35,10 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         super.postConstruct();
 
         // When doing printing, this changes whether cols are pinned or not
-        const spacerWidthsListener = this.setFakeHScrollSpacerWidths.bind(this);
+        const spacerWidthsListener = this.#setFakeHScrollSpacerWidths.bind(this);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, spacerWidthsListener);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, spacerWidthsListener);
-        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.#onPinnedRowDataChanged.bind(this));
         this.addManagedPropertyListener('domLayout', spacerWidthsListener);
 
         this.ctrlsService.register('fakeHScrollComp', this);
@@ -50,19 +50,19 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     protected initialiseInvisibleScrollbar(): void {
         if (this.invisibleScrollbar !== undefined) { return; }
 
-        this.enableRtl = this.gos.get('enableRtl');
+        this.#enableRtl = this.gos.get('enableRtl');
         super.initialiseInvisibleScrollbar();
 
         if (this.invisibleScrollbar) {
-            this.refreshCompBottom();
+            this.#refreshCompBottom();
         }
     }
 
-    private onPinnedRowDataChanged(): void {
-        this.refreshCompBottom();
+    #onPinnedRowDataChanged(): void {
+        this.#refreshCompBottom();
     }
 
-    private refreshCompBottom(): void {
+    #refreshCompBottom(): void {
         if (!this.invisibleScrollbar) { return; }
         const bottomPinnedHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
 
@@ -71,16 +71,16 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
     protected onScrollVisibilityChanged(): void {
         super.onScrollVisibilityChanged();
-        this.setFakeHScrollSpacerWidths();
+        this.#setFakeHScrollSpacerWidths();
     }
 
-    private setFakeHScrollSpacerWidths(): void {
+    #setFakeHScrollSpacerWidths(): void {
         const vScrollShowing = this.scrollVisibleService.isVerticalScrollShowing();
 
         // we pad the right based on a) if cols are pinned to the right and
         // b) if v scroll is showing on the right (normal position of scroll)
         let rightSpacing = this.columnModel.getDisplayedColumnsRightWidth();
-        const scrollOnRight = !this.enableRtl && vScrollShowing;
+        const scrollOnRight = !this.#enableRtl && vScrollShowing;
         const scrollbarWidth = this.gos.getScrollbarWidth();
 
         if (scrollOnRight) {
@@ -92,7 +92,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         // we pad the left based on a) if cols are pinned to the left and
         // b) if v scroll is showing on the left (happens in LTR layout only)
         let leftSpacing = this.columnModel.getDisplayedColumnsLeftWidth();
-        const scrollOnLeft = this.enableRtl && vScrollShowing;
+        const scrollOnLeft = this.#enableRtl && vScrollShowing;
 
         if (scrollOnLeft) {
             leftSpacing += scrollbarWidth;
@@ -118,11 +118,11 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     }
 
     public getScrollPosition(): number {
-        return getScrollLeft(this.getViewport(), this.enableRtl);
+        return getScrollLeft(this.getViewport(), this.#enableRtl);
     }
 
     public setScrollPosition(value: number): void {
         if (!isVisible(this.getViewport())) { this.attemptSettingScrollPosition(value); }
-        setScrollLeft(this.getViewport(), value, this.enableRtl);
+        setScrollLeft(this.getViewport(), value, this.#enableRtl);
     }
 }

@@ -15,8 +15,8 @@ import { VirtualList } from "./virtualList";
 
 export class RichSelectRow<TValue> extends Component {
 
-    private value: TValue;
-    private parsedValue: string | null;
+    #value: TValue;
+    #parsedValue: string | null;
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
@@ -26,7 +26,7 @@ export class RichSelectRow<TValue> extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.getGui(), 'click', this.onClick.bind(this));
+        this.addManagedListener(this.getGui(), 'click', this.#onClick.bind(this));
     }
 
     public setState(value: TValue): void {
@@ -35,16 +35,16 @@ export class RichSelectRow<TValue> extends Component {
         if (this.params.valueFormatter) {
             formattedValue = this.params.valueFormatter(value);
         }
-        const rendererSuccessful = this.populateWithRenderer(value, formattedValue);
+        const rendererSuccessful = this.#populateWithRenderer(value, formattedValue);
         if (!rendererSuccessful) {
-            this.populateWithoutRenderer(value, formattedValue);
+            this.#populateWithoutRenderer(value, formattedValue);
         }
 
-        this.value = value;
+        this.#value = value;
     }
 
     public highlightString(matchString: string): void {
-        const { parsedValue } = this;
+        const parsedValue = this.#parsedValue;
 
         if (this.params.cellRenderer || !exists(parsedValue)) { return; }
 
@@ -57,14 +57,14 @@ export class RichSelectRow<TValue> extends Component {
                 const startPart = escapeString(parsedValue.slice(0, index), true);
                 const highlightedPart = escapeString(parsedValue.slice(index, highlightEndIndex), true);
                 const endPart = escapeString(parsedValue.slice(highlightEndIndex));
-                this.renderValueWithoutRenderer(`${startPart}<span class="ag-rich-select-row-text-highlight">${highlightedPart}</span>${endPart}`);
+                this.#renderValueWithoutRenderer(`${startPart}<span class="ag-rich-select-row-text-highlight">${highlightedPart}</span>${endPart}`);
             } else {
                 hasMatch = false;
             }
         }
 
         if (!hasMatch) {
-            this.renderValueWithoutRenderer(parsedValue);
+            this.#renderValueWithoutRenderer(parsedValue);
         }
     }
 
@@ -84,7 +84,7 @@ export class RichSelectRow<TValue> extends Component {
         this.addOrRemoveCssClass('ag-rich-select-row-selected', highlighted);
     }
 
-    private populateWithoutRenderer(value: any, valueFormatted: any) {
+    #populateWithoutRenderer(value: any, valueFormatted: any) {
         const eDocument = this.gos.getDocument();
         const eGui = this.getGui();
 
@@ -92,23 +92,23 @@ export class RichSelectRow<TValue> extends Component {
         span.style.overflow = 'hidden';
         span.style.textOverflow = 'ellipsis';
         const parsedValue = escapeString(exists(valueFormatted) ? valueFormatted : value, true);
-        this.parsedValue = exists(parsedValue) ? parsedValue : null;
+        this.#parsedValue = exists(parsedValue) ? parsedValue : null;
 
         eGui.appendChild(span);
-        this.renderValueWithoutRenderer(parsedValue);
+        this.#renderValueWithoutRenderer(parsedValue);
         this.setTooltip ({
-            newTooltipText: this.parsedValue,
+            newTooltipText: this.#parsedValue,
             shouldDisplayTooltip: () => span.scrollWidth > span.clientWidth
         });
     }
 
-    private renderValueWithoutRenderer(value: string | null): void {
+    #renderValueWithoutRenderer(value: string | null): void {
         const span = this.getGui().querySelector('span');
         if (!span) { return; }
         span.innerHTML = exists(value) ? value : '&nbsp;'
     }
 
-    private populateWithRenderer(value: TValue, valueFormatted: string): boolean {
+    #populateWithRenderer(value: TValue, valueFormatted: string): boolean {
         // bad coder here - we are not populating all values of the cellRendererParams
         let cellRendererPromise: AgPromise<any> | undefined;
         let userCompDetails: UserCompDetails | undefined;
@@ -144,12 +144,12 @@ export class RichSelectRow<TValue> extends Component {
         return false;
     }
 
-    private onClick(): void {
+    #onClick(): void {
         const parent = this.getParentComponent();
         const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
             type: Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
             fromEnterKey: false,
-            value: this.value
+            value: this.#value
         };
 
         parent?.dispatchEvent(event);

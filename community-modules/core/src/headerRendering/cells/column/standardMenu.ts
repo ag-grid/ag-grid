@@ -27,7 +27,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
     private hidePopup: () => void;
     private tabListener: () => null;
-    private activeMenu?: FilterWrapperComp;
+    #activeMenu?: FilterWrapperComp;
 
     public hideActiveMenu(): void {
         if (this.hidePopup) {
@@ -36,7 +36,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     public showMenuAfterMouseEvent(column: Column | undefined, mouseEvent: MouseEvent | Touch, containerType: ContainerType): void {
-        this.showPopup(column, eMenu => {
+        this.#showPopup(column, eMenu => {
             this.popupService.positionPopupUnderMouseEvent({
                 column,
                 type: containerType,
@@ -58,7 +58,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         let nudgeX = isLegacyMenuEnabled ? undefined : (4 * multiplier);
         let nudgeY = isLegacyMenuEnabled ? undefined : 4;
 
-        this.showPopup(column, eMenu => {
+        this.#showPopup(column, eMenu => {
             this.popupService.positionPopupByComponent({
                 type: containerType,
                 eventSource,
@@ -73,7 +73,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         }, containerType, eventSource, isLegacyMenuEnabled);
     }
 
-    private showPopup(
+    #showPopup(
         column: Column | undefined,
         positionCallback: (eMenu: HTMLElement) => void,
         containerType: ContainerType,
@@ -81,7 +81,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         isLegacyMenuEnabled: boolean
     ): void {
         const comp = column ? this.createBean(new FilterWrapperComp(column, 'COLUMN_MENU')) : undefined;
-        this.activeMenu = comp;
+        this.#activeMenu = comp;
         if (!comp?.hasFilter() || !column) {
             throw new Error('AG Grid - unable to show popup filter, filter instantiation failed');
         }
@@ -94,7 +94,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             eMenu.classList.add('ag-filter-menu');
         }
 
-        this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu))!;
+        this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.#trapFocusWithin(e, eMenu))!;
 
         eMenu.appendChild(comp?.getGui()!);
 
@@ -117,8 +117,8 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
                 if (focusableEl) { focusableEl.focus(); }
             }
             afterGuiDetached();
-            this.destroyBean(this.activeMenu);
-            this.dispatchVisibleChangedEvent(false, containerType, column);
+            this.destroyBean(this.#activeMenu);
+            this.#dispatchVisibleChangedEvent(false, containerType, column);
         };
 
         const translate = this.localeService.getLocaleTextFunc();
@@ -151,10 +151,10 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         column.setMenuVisible(true, 'contextMenu');
 
-        this.dispatchVisibleChangedEvent(true, containerType, column);
+        this.#dispatchVisibleChangedEvent(true, containerType, column);
     }
 
-    private trapFocusWithin(e: KeyboardEvent, menu: HTMLElement) {
+    #trapFocusWithin(e: KeyboardEvent, menu: HTMLElement) {
         if (e.key !== KeyCode.TAB ||
             e.defaultPrevented ||
             this.focusService.findNextFocusableElement(menu, false, e.shiftKey)) {
@@ -166,7 +166,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         this.focusService.focusInto(menu, e.shiftKey);
     }
 
-    private dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: Column): void {
+    #dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: Column): void {
         const displayedEvent: WithoutGridCommon<ColumnMenuVisibleChangedEvent> = {
             type: Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED,
             visible,
@@ -187,7 +187,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     protected destroy(): void {
-        this.destroyBean(this.activeMenu);
+        this.destroyBean(this.#activeMenu);
         super.destroy();
     }
 }

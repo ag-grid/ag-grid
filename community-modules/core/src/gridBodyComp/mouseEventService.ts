@@ -17,13 +17,13 @@ export class MouseEventService extends BeanStub {
     private static gridInstanceSequence = new NumberSequence();
     private static GRID_DOM_KEY = '__ag_grid_instance';
 
-    private gridInstanceId = MouseEventService.gridInstanceSequence.next();
+    #gridInstanceId = MouseEventService.gridInstanceSequence.next();
 
     // we put the instance id onto the main DOM element. this is used for events, when grids are inside grids,
     // so the grid can work out if the even came from this grid or a grid inside this one. see the ctrl+v logic
     // for where this is used.
     public stampTopLevelGridCompWithGridInstance(eGridDiv: HTMLElement): void {
-        (eGridDiv as any)[MouseEventService.GRID_DOM_KEY] = this.gridInstanceId;
+        (eGridDiv as any)[MouseEventService.GRID_DOM_KEY] = this.#gridInstanceId;
     }
 
     public getRenderedCellForEvent(event: Event): CellCtrl | null {
@@ -43,7 +43,7 @@ export class MouseEventService extends BeanStub {
         while (pointer) {
             const instanceId = (pointer as any)[MouseEventService.GRID_DOM_KEY];
             if (exists(instanceId)) {
-                const eventFromThisGrid = instanceId === this.gridInstanceId;
+                const eventFromThisGrid = instanceId === this.#gridInstanceId;
                 return eventFromThisGrid;
             }
             pointer = pointer.parentElement;

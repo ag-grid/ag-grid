@@ -14,8 +14,8 @@ export interface CellEditorInput<TValue, P extends ICellEditorParams, I extends 
 }
 
 export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgInputTextField> extends PopupComponent implements ICellEditorComp {
-    private highlightAllOnFocus: boolean;
-    private focusAfterAttached: boolean;
+    #highlightAllOnFocus: boolean;
+    #focusAfterAttached: boolean;
     protected params: ICellEditorParams;
     @RefSelector('eInput') protected eInput: I;
 
@@ -36,7 +36,7 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
 
         // cellStartedEdit is only false if we are doing fullRow editing
         if (params.cellStartedEdit) {
-            this.focusAfterAttached = true;
+            this.#focusAfterAttached = true;
             const eventKey = params.eventKey;
 
             if (eventKey === KeyCode.BACKSPACE || params.eventKey === KeyCode.DELETE) {
@@ -47,12 +47,12 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
                 startValue = this.cellEditorInput.getStartValue();
 
                 if (eventKey !== KeyCode.F2) {
-                    this.highlightAllOnFocus = true;
+                    this.#highlightAllOnFocus = true;
                 }
             }
 
         } else {
-            this.focusAfterAttached = false;
+            this.#focusAfterAttached = false;
             startValue = this.cellEditorInput.getStartValue();
         }
 
@@ -75,7 +75,7 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
 
         eInput.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
 
-        if (!this.focusAfterAttached) { return; }
+        if (!this.#focusAfterAttached) { return; }
         // Added for AG-3238. We can't remove this explicit focus() because Chrome requires an input
         // to be focused before setSelectionRange will work. But it triggers a bug in Safari where
         // explicitly focusing then blurring an empty field will cause the parent container to scroll.
@@ -85,7 +85,7 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
 
         const inputEl = eInput.getInputElement();
 
-        if (this.highlightAllOnFocus) {
+        if (this.#highlightAllOnFocus) {
             inputEl.select();
         } else {
             this.cellEditorInput.setCaret?.();

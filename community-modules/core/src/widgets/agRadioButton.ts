@@ -25,7 +25,7 @@ export class AgRadioButton extends AgCheckbox<AgRadioButtonParams> {
     protected addInputListeners() {
         super.addInputListeners();
 
-        this.addManagedListener(this.eventService, Events.EVENT_CHECKBOX_CHANGED, this.onChange.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_CHECKBOX_CHANGED, this.#onChange.bind(this));
     }
 
     /**
@@ -34,7 +34,7 @@ export class AgRadioButton extends AgCheckbox<AgRadioButtonParams> {
      * elements are styled correctly in IE11, and the DOM 'changed' event is only fired when a button is selected,
      * not deselected, so we need to use our own event.
      */
-    private onChange(event: CheckboxChangedEvent) {
+    #onChange(event: CheckboxChangedEvent) {
         if (event.selected &&
             event.name &&
             this.eInput.name &&

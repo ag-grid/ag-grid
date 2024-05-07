@@ -29,17 +29,17 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
             <ag-input-text-area ref="eTextArea" class="ag-large-text-input"></ag-input-text-area>
         </div>`;
 
-    private params: ILargeTextEditorParams;
+    #params: ILargeTextEditorParams;
     @RefSelector("eTextArea") private eTextArea: AgInputTextArea;
-    private focusAfterAttached: boolean;
+    #focusAfterAttached: boolean;
 
     constructor() {
         super(LargeTextCellEditor.TEMPLATE);
     }
 
     public init(params: ILargeTextEditorParams): void {
-        this.params = params;
-        this.focusAfterAttached = params.cellStartedEdit;
+        this.#params = params;
+        this.#focusAfterAttached = params.cellStartedEdit;
 
         this.eTextArea
             .setMaxLength(params.maxLength || 200)
@@ -50,11 +50,11 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
             this.eTextArea.setValue(params.value.toString(), true);
         }
 
-        this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
+        this.addGuiEventListener('keydown', this.#onKeyDown.bind(this));
         this.activateTabIndex();
     }
 
-    private onKeyDown(event: KeyboardEvent): void {
+    #onKeyDown(event: KeyboardEvent): void {
         const key = event.key;
 
         if (key === KeyCode.LEFT ||
@@ -71,16 +71,16 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
 
         this.eTextArea.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
 
-        if (this.focusAfterAttached) {
+        if (this.#focusAfterAttached) {
             this.eTextArea.getFocusableElement().focus();
         }
     }
 
     public getValue(): any {
         const value = this.eTextArea.getValue();
-        if (!exists(value) && !exists(this.params.value)) {
-            return this.params.value;
+        if (!exists(value) && !exists(this.#params.value)) {
+            return this.#params.value;
         }
-        return this.params.parseValue(value!);
+        return this.#params.parseValue(value!);
     }
 }

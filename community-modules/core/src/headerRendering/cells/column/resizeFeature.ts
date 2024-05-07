@@ -18,16 +18,16 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
 
-    private pinned: ColumnPinnedType;
-    private column: Column;
-    private eResize: HTMLElement;
-    private comp: IHeaderCellComp;
+    #pinned: ColumnPinnedType;
+    #column: Column;
+    #eResize: HTMLElement;
+    #comp: IHeaderCellComp;
 
-    private lastResizeAmount: number;
-    private resizeStartWidth: number;
-    private resizeWithShiftKey: boolean;
+    #lastResizeAmount: number;
+    #resizeStartWidth: number;
+    #resizeWithShiftKey: boolean;
 
-    private ctrl: HeaderCellCtrl;
+    #ctrl: HeaderCellCtrl;
 
     constructor(
         pinned: ColumnPinnedType,
@@ -37,11 +37,11 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         ctrl: HeaderCellCtrl
     ) {
         super();
-        this.pinned = pinned;
-        this.column = column;
-        this.eResize = eResize;
-        this.comp = comp;
-        this.ctrl = ctrl;
+        this.#pinned = pinned;
+        this.#column = column;
+        this.#eResize = eResize;
+        this.#comp = comp;
+        this.#ctrl = ctrl;
     }
 
     @PostConstruct
@@ -52,15 +52,15 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         let canAutosize: boolean;
 
         const addResize = () => {
-            setDisplayed(this.eResize, canResize);
+            setDisplayed(this.#eResize, canResize);
 
             if (!canResize) { return; }
 
             const finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
-                eResizeBar: this.eResize,
-                onResizeStart: this.onResizeStart.bind(this),
-                onResizing: this.onResizing.bind(this, false),
-                onResizeEnd: this.onResizing.bind(this, true)
+                eResizeBar: this.#eResize,
+                onResizeStart: this.#onResizeStart.bind(this),
+                onResizing: this.#onResizing.bind(this, false),
+                onResizeEnd: this.#onResizing.bind(this, true)
             });
             destroyResizeFuncs.push(finishedWithResizeFunc);
 
@@ -68,15 +68,15 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
                 const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
 
                 const autoSizeColListener = () => {
-                    this.columnModel.autoSizeColumn(this.column, "uiColumnResized", skipHeaderOnAutoSize);
+                    this.columnModel.autoSizeColumn(this.#column, "uiColumnResized", skipHeaderOnAutoSize);
                 };
 
-                this.eResize.addEventListener('dblclick', autoSizeColListener);
-                const touchListener: TouchListener = new TouchListener(this.eResize);
+                this.#eResize.addEventListener('dblclick', autoSizeColListener);
+                const touchListener: TouchListener = new TouchListener(this.#eResize);
                 touchListener.addEventListener(TouchListener.EVENT_DOUBLE_TAP, autoSizeColListener);
 
                 destroyResizeFuncs.push(() => {
-                    this.eResize.removeEventListener('dblclick', autoSizeColListener);
+                    this.#eResize.removeEventListener('dblclick', autoSizeColListener);
                     touchListener.removeEventListener(TouchListener.EVENT_DOUBLE_TAP, autoSizeColListener);
                     touchListener.destroy();
                 });
@@ -89,8 +89,8 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         };
 
         const refresh = () => {
-            const resize = this.column.isResizable();
-            const autoSize = !this.gos.get('suppressAutoSize') && !this.column.getColDef().suppressAutoSize;
+            const resize = this.#column.isResizable();
+            const autoSize = !this.gos.get('suppressAutoSize') && !this.#column.getColDef().suppressAutoSize;
             const propertyChange = resize !== canResize || autoSize !== canAutosize;
             if (propertyChange) {
                 canResize = resize;
@@ -102,18 +102,20 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
         refresh();
         this.addDestroyFunc(removeResize);
-        this.ctrl.addRefreshFunction(refresh);
+        this.#ctrl.addRefreshFunction(refresh);
     }
 
-    private onResizing(finished: boolean, resizeAmount: number): void {
-        const { column: key, lastResizeAmount, resizeStartWidth } = this;
+    #onResizing(finished: boolean, resizeAmount: number): void {
+        const key = this.#column;
+        const lastResizeAmount = this.#lastResizeAmount;
+        const resizeStartWidth = this.#resizeStartWidth;
 
-        const resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
+        const resizeAmountNormalised = this.#normaliseResizeAmount(resizeAmount);
         const newWidth = resizeStartWidth + resizeAmountNormalised;
 
         const columnWidths = [{ key, newWidth }];
 
-        if (this.column.getPinned()) {
+        if (this.#column.getPinned()) {
             const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
             const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
             const bodyWidth = getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
@@ -123,34 +125,34 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
             }
         }
 
-        this.lastResizeAmount = resizeAmountNormalised;
+        this.#lastResizeAmount = resizeAmountNormalised;
 
-        this.columnModel.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnResized");
+        this.columnModel.setColumnWidths(columnWidths, this.#resizeWithShiftKey, finished, "uiColumnResized");
 
         if (finished) {
             this.toggleColumnResizing(false);
         }
     }
 
-    private onResizeStart(shiftKey: boolean): void {
-        this.resizeStartWidth = this.column.getActualWidth();
-        this.lastResizeAmount = 0;
-        this.resizeWithShiftKey = shiftKey;
+    #onResizeStart(shiftKey: boolean): void {
+        this.#resizeStartWidth = this.#column.getActualWidth();
+        this.#lastResizeAmount = 0;
+        this.#resizeWithShiftKey = shiftKey;
 
         this.toggleColumnResizing(true);
     }
 
     public toggleColumnResizing(resizing: boolean): void {
-        this.comp.addOrRemoveCssClass('ag-column-resizing', resizing);
+        this.#comp.addOrRemoveCssClass('ag-column-resizing', resizing);
     }
 
     // optionally inverts the drag, depending on pinned and RTL
     // note - this method is duplicated in RenderedHeaderGroupCell - should refactor out?
-    private normaliseResizeAmount(dragChange: number): number {
+    #normaliseResizeAmount(dragChange: number): number {
         let result = dragChange;
 
-        const notPinningLeft = this.pinned !== 'left';
-        const pinningRight = this.pinned === 'right';
+        const notPinningLeft = this.#pinned !== 'left';
+        const pinningRight = this.#pinned === 'right';
 
         if (this.gos.get('enableRtl')) {
             // for RTL, dragging left makes the col bigger, except when pinning left

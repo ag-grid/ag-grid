@@ -41,17 +41,17 @@ export class AgGroupComponent extends Component {
     public static EVENT_COLLAPSED = 'collapsed';
     public static EVENT_ENABLE_CHANGE = 'enableChange';
 
-    private items: GroupItem[];
-    private cssIdentifier: string;
-    private enabled: boolean;
-    private expanded: boolean;
-    private suppressEnabledCheckbox: boolean = true;
-    private suppressToggleExpandOnEnableChange: boolean = false;
-    private alignItems: Align | undefined;
-    private useToggle: boolean;
+    #items: GroupItem[];
+    #cssIdentifier: string;
+    #enabled: boolean;
+    #expanded: boolean;
+    #suppressEnabledCheckbox: boolean = true;
+    #suppressToggleExpandOnEnableChange: boolean = false;
+    #alignItems: Align | undefined;
+    #useToggle: boolean;
 
-    private eToggle?: AgToggleButton;
-    private eTitleBar?: DefaultTitleBar;
+    #eToggle?: AgToggleButton;
+    #eTitleBar?: DefaultTitleBar;
 
     @RefSelector('eToolbar') private eToolbar: HTMLElement;
     @RefSelector('cbGroupEnabled') private cbGroupEnabled: AgCheckbox;
@@ -64,22 +64,22 @@ export class AgGroupComponent extends Component {
             enabled, items, suppressEnabledCheckbox, expanded, suppressToggleExpandOnEnableChange, useToggle: toggleMode
         } = params;
 
-        this.cssIdentifier = params.cssIdentifier || 'default';
-        this.enabled = enabled != null ? enabled : true;
-        this.items = items || [];
-        this.useToggle = toggleMode ?? false;
+        this.#cssIdentifier = params.cssIdentifier || 'default';
+        this.#enabled = enabled != null ? enabled : true;
+        this.#items = items || [];
+        this.#useToggle = toggleMode ?? false;
 
-        this.alignItems = params.alignItems || 'center';
+        this.#alignItems = params.alignItems || 'center';
 
         // expanded by default
-        this.expanded = expanded == null ? true : expanded;
+        this.#expanded = expanded == null ? true : expanded;
 
         if (suppressEnabledCheckbox != null) {
-            this.suppressEnabledCheckbox = suppressEnabledCheckbox;
+            this.#suppressEnabledCheckbox = suppressEnabledCheckbox;
         }
 
         if (suppressToggleExpandOnEnableChange != null) {
-            this.suppressToggleExpandOnEnableChange = suppressToggleExpandOnEnableChange;
+            this.#suppressToggleExpandOnEnableChange = suppressToggleExpandOnEnableChange;
         }
     }
 
@@ -99,11 +99,11 @@ export class AgGroupComponent extends Component {
 
     @PostConstruct
     private postConstruct() {
-        this.setupTitleBar();
+        this.#setupTitleBar();
 
-        if (this.items.length) {
-            const initialItems = this.items;
-            this.items = [];
+        if (this.#items.length) {
+            const initialItems = this.#items;
+            this.#items = [];
 
             this.addItems(initialItems);
         }
@@ -111,23 +111,23 @@ export class AgGroupComponent extends Component {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         this.cbGroupEnabled.setLabel(localeTextFunc('enabled', 'Enabled'));
 
-        if (this.enabled) {
-            this.setEnabled(this.enabled, undefined, true);
+        if (this.#enabled) {
+            this.setEnabled(this.#enabled, undefined, true);
         }
 
-        this.setAlignItems(this.alignItems);
+        this.setAlignItems(this.#alignItems);
 
         const { onEnableChange, suppressOpenCloseIcons } = this.params;
 
-        this.hideEnabledCheckbox(this.suppressEnabledCheckbox);
+        this.hideEnabledCheckbox(this.#suppressEnabledCheckbox);
         this.hideOpenCloseIcons(suppressOpenCloseIcons ?? false);
 
-        this.refreshChildDisplay();
-        setDisplayed(this.eContainer, this.expanded);
+        this.#refreshChildDisplay();
+        setDisplayed(this.eContainer, this.#expanded);
 
         this.cbGroupEnabled.onValueChange((newSelection: boolean) => {
-            this.setEnabled(newSelection, true, this.suppressToggleExpandOnEnableChange);
-            this.dispatchEnableChangeEvent(newSelection);
+            this.setEnabled(newSelection, true, this.#suppressToggleExpandOnEnableChange);
+            this.#dispatchEnableChangeEvent(newSelection);
         });
 
         if (onEnableChange != null) {
@@ -135,22 +135,22 @@ export class AgGroupComponent extends Component {
         }
     }
 
-    private refreshChildDisplay(): void {
-        setDisplayed(this.eToolbar, this.expanded && !this.suppressEnabledCheckbox);
-        this.eTitleBar?.refreshOnExpand(this.expanded);
+    #refreshChildDisplay(): void {
+        setDisplayed(this.eToolbar, this.#expanded && !this.#suppressEnabledCheckbox);
+        this.#eTitleBar?.refreshOnExpand(this.#expanded);
     }
 
     public isExpanded(): boolean {
-        return this.expanded;
+        return this.#expanded;
     }
 
     public setAlignItems(alignment: AgGroupComponentParams['alignItems']): this {
-        if (this.alignItems !== alignment) {
-            this.removeCssClass(`ag-group-item-alignment-${this.alignItems}`);
+        if (this.#alignItems !== alignment) {
+            this.removeCssClass(`ag-group-item-alignment-${this.#alignItems}`);
         }
 
-        this.alignItems = alignment;
-        const newCls = `ag-group-item-alignment-${this.alignItems}`;
+        this.#alignItems = alignment;
+        const newCls = `ag-group-item-alignment-${this.#alignItems}`;
 
         this.addCssClass(newCls);
 
@@ -159,19 +159,19 @@ export class AgGroupComponent extends Component {
 
     public toggleGroupExpand(expanded?: boolean): this {
         let silent = false;
-        if (this.eTitleBar?.isSuppressCollapse() && !this.useToggle) {
+        if (this.#eTitleBar?.isSuppressCollapse() && !this.#useToggle) {
             expanded = true;
             silent = true;
         } else {
-            expanded = expanded != null ? expanded : !this.expanded;
+            expanded = expanded != null ? expanded : !this.#expanded;
 
-            if (this.expanded === expanded) {
+            if (this.#expanded === expanded) {
                 return this;
             }
         }
 
-        this.expanded = expanded;
-        this.refreshChildDisplay();
+        this.#expanded = expanded;
+        this.#refreshChildDisplay();
 
         setDisplayed(this.eContainer, expanded);
 
@@ -187,53 +187,53 @@ export class AgGroupComponent extends Component {
     }
 
     public prependItem(item: GroupItem) {
-        this.insertItem(item, true);
+        this.#insertItem(item, true);
     }
 
     public addItem(item: GroupItem) {
-        this.insertItem(item, false);
+        this.#insertItem(item, false);
     }
 
-    private insertItem(item: GroupItem, prepend?: boolean) {
+    #insertItem(item: GroupItem, prepend?: boolean) {
         const container = this.eContainer;
         const el = item instanceof Component ? item.getGui() : item;
 
-        el.classList.add('ag-group-item', `ag-${this.cssIdentifier}-group-item`);
+        el.classList.add('ag-group-item', `ag-${this.#cssIdentifier}-group-item`);
 
         if (prepend) {
             container.insertAdjacentElement('afterbegin', el);
-            this.items.unshift(el);
+            this.#items.unshift(el);
         } else {
             container.appendChild(el);
-            this.items.push(el);
+            this.#items.push(el);
         }
     }
 
     public hideItem(hide: boolean, index: number) {
-        const itemToHide = this.items[index] as HTMLElement;
+        const itemToHide = this.#items[index] as HTMLElement;
         setDisplayed(itemToHide, !hide);
     }
 
     public getItemIndex(item: GroupItem): number | -1 {
         const el = item instanceof Component ? item.getGui() : item;
-        return this.items.indexOf(el);
+        return this.#items.indexOf(el);
     }
 
     public setTitle(title: string): this {
-        this.eTitleBar?.setTitle(title);
+        this.#eTitleBar?.setTitle(title);
         return this;
     }
 
     public addTitleBarWidget(el: Element): this {
-        this.eTitleBar?.addWidget(el);
+        this.#eTitleBar?.addWidget(el);
         return this;
     }
 
     public addCssClassToTitleBar(cssClass: string) {
-        this.eTitleBar?.addCssClass(cssClass);
+        this.#eTitleBar?.addCssClass(cssClass);
     }
 
-    private dispatchEnableChangeEvent(enabled: boolean): void {
+    #dispatchEnableChangeEvent(enabled: boolean): void {
         const event: EnableChangeEvent = {
             type: AgGroupComponent.EVENT_ENABLE_CHANGE,
             enabled
@@ -242,8 +242,8 @@ export class AgGroupComponent extends Component {
     }
 
     public setEnabled(enabled: boolean, skipToggle?: boolean, skipExpand?: boolean): this {
-        this.enabled = enabled;
-        this.refreshDisabledStyles();
+        this.#enabled = enabled;
+        this.#refreshDisabledStyles();
 
         if (!skipExpand) {
             this.toggleGroupExpand(enabled);
@@ -251,14 +251,14 @@ export class AgGroupComponent extends Component {
 
         if (!skipToggle) {
             this.cbGroupEnabled.setValue(enabled);
-            this.eToggle?.setValue(enabled);
+            this.#eToggle?.setValue(enabled);
         }
 
         return this;
     }
 
     public isEnabled(): boolean {
-        return this.enabled;
+        return this.#enabled;
     }
 
     public onEnableChange(callbackFn: (enabled: boolean) => void): this {
@@ -268,53 +268,53 @@ export class AgGroupComponent extends Component {
     }
 
     public hideEnabledCheckbox(hide: boolean): this {
-        this.suppressEnabledCheckbox = hide;
-        this.refreshChildDisplay();
-        this.refreshDisabledStyles();
+        this.#suppressEnabledCheckbox = hide;
+        this.#refreshChildDisplay();
+        this.#refreshDisabledStyles();
         return this;
     }
 
     public hideOpenCloseIcons(hide: boolean): this {
-        this.eTitleBar?.hideOpenCloseIcons(hide);
+        this.#eTitleBar?.hideOpenCloseIcons(hide);
 
         return this;
     }
 
-    private refreshDisabledStyles() {
-        const disabled = !this.enabled;
+    #refreshDisabledStyles() {
+        const disabled = !this.#enabled;
         this.eContainer.classList.toggle('ag-disabled', disabled);
-        this.eTitleBar?.refreshDisabledStyles(this.suppressEnabledCheckbox && disabled);
+        this.#eTitleBar?.refreshDisabledStyles(this.#suppressEnabledCheckbox && disabled);
         this.eContainer.classList.toggle('ag-disabled-group-container', disabled);
     }
 
-    private setupTitleBar(): void {
-        const titleBar = this.useToggle ? this.createToggleTitleBar() : this.createDefaultTitleBar();
+    #setupTitleBar(): void {
+        const titleBar = this.#useToggle ? this.#createToggleTitleBar() : this.#createDefaultTitleBar();
         this.eToolbar.insertAdjacentElement('beforebegin', titleBar.getGui());
     }
 
-    private createDefaultTitleBar(): DefaultTitleBar {
+    #createDefaultTitleBar(): DefaultTitleBar {
         const titleBar = this.createManagedBean(new DefaultTitleBar(this.params));
-        this.eTitleBar = titleBar;
-        titleBar.refreshOnExpand(this.expanded);
+        this.#eTitleBar = titleBar;
+        titleBar.refreshOnExpand(this.#expanded);
         this.addManagedListener(titleBar, DefaultTitleBar.EVENT_EXPAND_CHANGED, (event: ExpandChangedEvent) => this.toggleGroupExpand(event.expanded));
         return titleBar;
     }
 
-    private createToggleTitleBar(): AgToggleButton {
+    #createToggleTitleBar(): AgToggleButton {
         const eToggle = this.createManagedBean(new AgToggleButton({
-            value: this.enabled,
+            value: this.#enabled,
             label: this.params.title,
             labelAlignment: 'left',
             labelWidth: 'flex',
             onValueChange: enabled => {
                 this.setEnabled(enabled, true);
-                this.dispatchEnableChangeEvent(enabled);
+                this.#dispatchEnableChangeEvent(enabled);
             }
         }));
         eToggle.addCssClass('ag-group-title-bar')
         eToggle.addCssClass(`ag-${this.params.cssIdentifier ?? 'default'}-group-title-bar ag-unselectable`);
-        this.eToggle = eToggle;
-        this.toggleGroupExpand(this.enabled);
+        this.#eToggle = eToggle;
+        this.toggleGroupExpand(this.#enabled);
         return eToggle;
     }
 }
@@ -324,8 +324,8 @@ const TITLE_BAR_DISABLED_CLASS = 'ag-disabled-group-title-bar';
 class DefaultTitleBar extends Component {
     public static EVENT_EXPAND_CHANGED = 'expandedChanged';
 
-    private title: string | undefined;
-    private suppressOpenCloseIcons: boolean = false;
+    #title: string | undefined;
+    #suppressOpenCloseIcons: boolean = false;
 
     @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
     @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
@@ -337,11 +337,11 @@ class DefaultTitleBar extends Component {
         const { title, suppressOpenCloseIcons } = params;
 
         if (!!title && title.length > 0) {
-            this.title = title;
+            this.#title = title;
         }
 
         if (suppressOpenCloseIcons != null) {
-            this.suppressOpenCloseIcons = suppressOpenCloseIcons;
+            this.#suppressOpenCloseIcons = suppressOpenCloseIcons;
         }
     }
 
@@ -359,56 +359,56 @@ class DefaultTitleBar extends Component {
 
     @PostConstruct
     private postConstruct() {
-        this.setTitle(this.title);
+        this.setTitle(this.#title);
 
-        this.hideOpenCloseIcons(this.suppressOpenCloseIcons);
+        this.hideOpenCloseIcons(this.#suppressOpenCloseIcons);
 
-        this.setupExpandContract();
+        this.#setupExpandContract();
     }
 
-    private setupExpandContract(): void {
+    #setupExpandContract(): void {
         this.eGroupClosedIcon.appendChild(createIcon('columnSelectClosed', this.gos, null));
         this.eGroupOpenedIcon.appendChild(createIcon('columnSelectOpen', this.gos, null));
-        this.addManagedListener(this.getGui(), 'click', () => this.dispatchExpandChanged());
+        this.addManagedListener(this.getGui(), 'click', () => this.#dispatchExpandChanged());
         this.addManagedListener(this.getGui(), 'keydown', (e: KeyboardEvent) => {
             switch (e.key) {
                 case KeyCode.ENTER:
                 case KeyCode.SPACE:
                     e.preventDefault();
-                    this.dispatchExpandChanged();
+                    this.#dispatchExpandChanged();
                     break;
                 case KeyCode.RIGHT:
                 case KeyCode.LEFT:
                     e.preventDefault();
-                    this.dispatchExpandChanged(e.key === KeyCode.RIGHT);
+                    this.#dispatchExpandChanged(e.key === KeyCode.RIGHT);
                     break;
             }
         });
     }
 
     public refreshOnExpand(expanded: boolean): void {
-        this.refreshAriaStatus(expanded);
-        this.refreshOpenCloseIcons(expanded);
+        this.#refreshAriaStatus(expanded);
+        this.#refreshOpenCloseIcons(expanded);
     }
 
-    private refreshAriaStatus(expanded: boolean): void {
-        if (!this.suppressOpenCloseIcons) {
+    #refreshAriaStatus(expanded: boolean): void {
+        if (!this.#suppressOpenCloseIcons) {
             setAriaExpanded(this.getGui(), expanded);
         }
     }
 
-    private refreshOpenCloseIcons(expanded: boolean): void {
-        const showIcon = !this.suppressOpenCloseIcons;
+    #refreshOpenCloseIcons(expanded: boolean): void {
+        const showIcon = !this.#suppressOpenCloseIcons;
 
         setDisplayed(this.eGroupOpenedIcon, showIcon && expanded);
         setDisplayed(this.eGroupClosedIcon, showIcon && !expanded);
     }
 
     public isSuppressCollapse(): boolean {
-        return this.suppressOpenCloseIcons;
+        return this.#suppressOpenCloseIcons;
     }
 
-    private dispatchExpandChanged(expanded?: boolean): void {
+    #dispatchExpandChanged(expanded?: boolean): void {
         const event: ExpandChangedEvent = {
             type: DefaultTitleBar.EVENT_EXPAND_CHANGED,
             expanded
@@ -424,8 +424,8 @@ class DefaultTitleBar extends Component {
         this.eTitle.textContent = title ?? '';
         setDisplayed(eGui, hasTitle);
 
-        if (title !== this.title) {
-            this.title = title;
+        if (title !== this.#title) {
+            this.#title = title;
         }
 
         const disabled = eGui.classList.contains(TITLE_BAR_DISABLED_CLASS);
@@ -441,10 +441,10 @@ class DefaultTitleBar extends Component {
     }
 
     public hideOpenCloseIcons(hide: boolean): this {
-        this.suppressOpenCloseIcons = hide;
+        this.#suppressOpenCloseIcons = hide;
 
         if (hide) {
-            this.dispatchExpandChanged(true);
+            this.#dispatchExpandChanged(true);
         }
 
         return this;
@@ -457,7 +457,7 @@ class DefaultTitleBar extends Component {
             eGui.removeAttribute('tabindex');
         } else {
             eGui.classList.remove(TITLE_BAR_DISABLED_CLASS);
-            if (typeof this.title === 'string') {
+            if (typeof this.#title === 'string') {
                 eGui.setAttribute('tabindex', '0');
             } else {
                 eGui.removeAttribute('tabindex');

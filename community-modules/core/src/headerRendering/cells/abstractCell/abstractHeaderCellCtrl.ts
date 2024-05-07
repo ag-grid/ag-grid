@@ -47,12 +47,12 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     @Autowired('menuService') protected readonly menuService: MenuService;
 
     protected readonly beans: Beans;
-    private instanceId: HeaderCellCtrlInstanceId;
-    private columnGroupChild: IHeaderColumn;
-    private parentRowCtrl: HeaderRowCtrl;
+    #instanceId: HeaderCellCtrlInstanceId;
+    #columnGroupChild: IHeaderColumn;
+    #parentRowCtrl: HeaderRowCtrl;
 
-    private isResizing: boolean;
-    private resizeToggleTimeout = 0;
+    #isResizing: boolean;
+    #resizeToggleTimeout = 0;
     protected resizeMultiplier = 1;
 
     protected eGui: HTMLElement;
@@ -70,17 +70,17 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     constructor(columnGroupChild: IHeaderColumn, beans: Beans, parentRowCtrl: HeaderRowCtrl) {
         super();
 
-        this.columnGroupChild = columnGroupChild;
-        this.parentRowCtrl = parentRowCtrl;
+        this.#columnGroupChild = columnGroupChild;
+        this.#parentRowCtrl = parentRowCtrl;
         this.beans = beans;
 
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
-        this.instanceId = columnGroupChild.getUniqueId() + '-' + instanceIdSequence++ as HeaderCellCtrlInstanceId;
+        this.#instanceId = columnGroupChild.getUniqueId() + '-' + instanceIdSequence++ as HeaderCellCtrlInstanceId;
     }
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedPropertyListeners(['suppressHeaderFocus'], () => this.refreshTabIndex());
+        this.addManagedPropertyListeners(['suppressHeaderFocus'], () => this.#refreshTabIndex());
     }
 
     protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
@@ -102,24 +102,24 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
     protected setGui(eGui: HTMLElement): void {
         this.eGui = eGui;
-        this.addDomData();
+        this.#addDomData();
         this.addManagedListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.onDisplayedColumnsChanged();
-        this.refreshTabIndex();
+        this.#refreshTabIndex();
     }
 
     protected onDisplayedColumnsChanged(): void {
         if (!this.comp || !this.column) { return; }
-        this.refreshFirstAndLastStyles();
-        this.refreshAriaColIndex();
+        this.#refreshFirstAndLastStyles();
+        this.#refreshAriaColIndex();
     }
 
-    private refreshFirstAndLastStyles(): void {
+    #refreshFirstAndLastStyles(): void {
         const { comp, column, beans } = this;
         CssClassApplier.refreshFirstAndLastStyles(comp, (column as unknown as Column | ColumnGroup), beans.columnModel);
     }
 
-    private refreshAriaColIndex(): void {
+    #refreshAriaColIndex(): void {
         const { beans, column } = this;
 
         const colIdx = beans.columnModel.getAriaColumnIndex(column as unknown as Column | ColumnGroup);
@@ -129,11 +129,11 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     protected addResizeAndMoveKeyboardListeners(): void {
         if (!this.resizeFeature) { return; }
 
-        this.addManagedListener(this.eGui, 'keydown', this.onGuiKeyDown.bind(this));
-        this.addManagedListener(this.eGui, 'keyup', this.onGuiKeyUp.bind(this));
+        this.addManagedListener(this.eGui, 'keydown', this.#onGuiKeyDown.bind(this));
+        this.addManagedListener(this.eGui, 'keyup', this.#onGuiKeyUp.bind(this));
     }
 
-    private refreshTabIndex(): void {
+    #refreshTabIndex(): void {
         const suppressHeaderFocus = this.gos.get('suppressHeaderFocus');
         if (suppressHeaderFocus) {
             this.eGui.removeAttribute('tabindex');
@@ -142,12 +142,12 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         }
     }
 
-    private onGuiKeyDown(e: KeyboardEvent): void {
+    #onGuiKeyDown(e: KeyboardEvent): void {
         const activeEl = this.gos.getActiveDomElement();
 
         const isLeftOrRight = e.key === KeyCode.LEFT || e.key === KeyCode.RIGHT;
 
-        if (this.isResizing) {
+        if (this.#isResizing) {
             e.preventDefault();
             e.stopImmediatePropagation();
         }
@@ -159,7 +159,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
             (!e.shiftKey && !e.altKey)
         ) { return; }
 
-        if (this.isResizing || isLeftOrRight) {
+        if (this.#isResizing || isLeftOrRight) {
             e.preventDefault();
             e.stopImmediatePropagation();
         }
@@ -170,9 +170,9 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         const direction = HorizontalDirection[isLeft ? 'Left' : 'Right' ];
 
         if (e.altKey) {
-            this.isResizing = true;
+            this.#isResizing = true;
             this.resizeMultiplier += 1;
-            const diff = this.getViewportAdjustedResizeDiff(e);
+            const diff = this.#getViewportAdjustedResizeDiff(e);
             this.resizeHeader(diff, e.shiftKey);
             this.resizeFeature?.toggleColumnResizing(true);
         } else {
@@ -180,8 +180,8 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         }
     }
 
-    private getViewportAdjustedResizeDiff(e: KeyboardEvent): number {
-        let diff = this.getResizeDiff(e);
+    #getViewportAdjustedResizeDiff(e: KeyboardEvent): number {
+        let diff = this.#getResizeDiff(e);
 
         const pinned = this.column.getPinned();
         if (pinned) {
@@ -202,7 +202,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         return diff;
     }
 
-    private getResizeDiff(e: KeyboardEvent): number {
+    #getResizeDiff(e: KeyboardEvent): number {
         let isLeft = (e.key === KeyCode.LEFT) !== this.gos.get('enableRtl');
 
         const pinned = this.column.getPinned();
@@ -216,17 +216,17 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         return (isLeft ? -1 : 1) * this.resizeMultiplier;
     }
 
-    private onGuiKeyUp(): void {
-        if (!this.isResizing) { return; }
-        if (this.resizeToggleTimeout) {
-            window.clearTimeout(this.resizeToggleTimeout);
-            this.resizeToggleTimeout = 0;
+    #onGuiKeyUp(): void {
+        if (!this.#isResizing) { return; }
+        if (this.#resizeToggleTimeout) {
+            window.clearTimeout(this.#resizeToggleTimeout);
+            this.#resizeToggleTimeout = 0;
         }
 
-        this.isResizing = false;
+        this.#isResizing = false;
         this.resizeMultiplier = 1;
 
-        this.resizeToggleTimeout = setTimeout(() => {
+        this.#resizeToggleTimeout = setTimeout(() => {
             this.resizeFeature?.toggleColumnResizing(false);
         }, 150);
     }
@@ -245,7 +245,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         }
     }
 
-    private addDomData(): void {
+    #addDomData(): void {
         const key = AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL;
         this.gos.setDomData(this.eGui, key, this);
         this.addDestroyFunc(() => this.gos.setDomData(this.eGui, key, null));
@@ -264,23 +264,23 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     public getRowIndex(): number {
-        return this.parentRowCtrl.getRowIndex();
+        return this.#parentRowCtrl.getRowIndex();
     }
 
     public getParentRowCtrl(): HeaderRowCtrl {
-        return this.parentRowCtrl;
+        return this.#parentRowCtrl;
     }
 
     public getPinned(): ColumnPinnedType {
-        return this.parentRowCtrl.getPinned();
+        return this.#parentRowCtrl.getPinned();
     }
 
     public getInstanceId(): HeaderCellCtrlInstanceId {
-        return this.instanceId;
+        return this.#instanceId;
     }
 
     public getColumnGroupChild(): IHeaderColumn {
-        return this.columnGroupChild;
+        return this.#columnGroupChild;
     }
 
     protected removeDragSource(): void {
@@ -320,8 +320,8 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         (this.column as any) = null;
         (this.resizeFeature as any) = null;
         (this.lastFocusEvent as any) = null;
-        (this.columnGroupChild as any) = null;
-        (this.parentRowCtrl as any) = null;
+        (this.#columnGroupChild as any) = null;
+        (this.#parentRowCtrl as any) = null;
         (this.eGui as any) = null;
     }
 }

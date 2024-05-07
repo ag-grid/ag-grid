@@ -131,20 +131,20 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         ScalarFilter.NOT_BLANK,
     ];
 
-    private readonly eConditionPanelsFrom: HTMLElement[] = [];
-    private readonly eConditionPanelsTo: HTMLElement[] = [];
+    readonly #eConditionPanelsFrom: HTMLElement[] = [];
+    readonly #eConditionPanelsTo: HTMLElement[] = [];
 
-    private readonly dateConditionFromComps: DateCompWrapper[] = [];
-    private readonly dateConditionToComps: DateCompWrapper[] = [];
+    readonly #dateConditionFromComps: DateCompWrapper[] = [];
+    readonly #dateConditionToComps: DateCompWrapper[] = [];
 
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
-    private dateFilterParams: DateFilterParams;
-    private minValidYear: number = DEFAULT_MIN_YEAR;
-    private maxValidYear: number = DEFAULT_MAX_YEAR;
-    private minValidDate: Date | null = null;
-    private maxValidDate: Date | null = null;
-    private filterModelFormatter: DateFilterModelFormatter;
+    #dateFilterParams: DateFilterParams;
+    #minValidYear: number = DEFAULT_MIN_YEAR;
+    #maxValidYear: number = DEFAULT_MAX_YEAR;
+    #minValidDate: Date | null = null;
+    #maxValidDate: Date | null = null;
+    #filterModelFormatter: DateFilterModelFormatter;
 
     constructor() {
         super('dateFilter');
@@ -153,7 +153,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         super.afterGuiAttached(params);
 
-        this.dateConditionFromComps[0].afterGuiAttached(params);
+        this.#dateConditionFromComps[0].afterGuiAttached(params);
     }
 
     protected mapValuesFromModel(filterModel: DateFilterModel | null): Tuple<Date> {
@@ -173,10 +173,10 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     protected comparator(): Comparator<Date> {
-        return this.dateFilterParams.comparator ? this.dateFilterParams.comparator : this.defaultComparator.bind(this);
+        return this.#dateFilterParams.comparator ? this.#dateFilterParams.comparator : this.#defaultComparator.bind(this);
     }
 
-    private defaultComparator(filterDate: Date, cellValue: any): number {
+    #defaultComparator(filterDate: Date, cellValue: any): number {
         // The default comparator assumes that the cellValue is a date
         const cellAsDate = cellValue as Date;
 
@@ -187,7 +187,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     protected setParams(params: DateFilterParams): void {
-        this.dateFilterParams = params;
+        this.#dateFilterParams = params;
 
         super.setParams(params);
 
@@ -203,30 +203,30 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
             return fallback;
         };
 
-        this.minValidYear = yearParser('minValidYear', DEFAULT_MIN_YEAR);
-        this.maxValidYear = yearParser('maxValidYear', DEFAULT_MAX_YEAR);
+        this.#minValidYear = yearParser('minValidYear', DEFAULT_MIN_YEAR);
+        this.#maxValidYear = yearParser('maxValidYear', DEFAULT_MAX_YEAR);
 
-        if (this.minValidYear > this.maxValidYear) {
+        if (this.#minValidYear > this.#maxValidYear) {
             console.warn(`AG Grid: DateFilter minValidYear should be <= maxValidYear`);
         }
 
         if (params.minValidDate) {
-            this.minValidDate = params.minValidDate instanceof Date ? params.minValidDate : parseDateTimeFromString(params.minValidDate);
+            this.#minValidDate = params.minValidDate instanceof Date ? params.minValidDate : parseDateTimeFromString(params.minValidDate);
         } else {
-            this.minValidDate = null;
+            this.#minValidDate = null;
         }
 
         if (params.maxValidDate) {
-            this.maxValidDate = params.maxValidDate instanceof Date ? params.maxValidDate : parseDateTimeFromString(params.maxValidDate);
+            this.#maxValidDate = params.maxValidDate instanceof Date ? params.maxValidDate : parseDateTimeFromString(params.maxValidDate);
         } else {
-            this.maxValidDate = null;
+            this.#maxValidDate = null;
         }
 
-        if (this.minValidDate && this.maxValidDate && this.minValidDate > this.maxValidDate) {
+        if (this.#minValidDate && this.#maxValidDate && this.#minValidDate > this.#maxValidDate) {
             console.warn(`AG Grid: DateFilter minValidDate should be <= maxValidDate`);
         }
 
-        this.filterModelFormatter = new DateFilterModelFormatter(this.dateFilterParams, this.localeService, this.optionsFactory);
+        this.#filterModelFormatter = new DateFilterModelFormatter(this.#dateFilterParams, this.localeService, this.optionsFactory);
     }
 
     createDateCompWrapper(element: HTMLElement): DateCompWrapper {
@@ -235,7 +235,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
             this.userComponentFactory,
             {
                 onDateChanged: () => this.onUiChanged(),
-                filterParams: this.dateFilterParams
+                filterParams: this.#dateFilterParams
             },
             element
         );
@@ -264,13 +264,18 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         const eCondition = eDocument.createElement('div');
         eCondition.classList.add('ag-filter-body');
 
-        this.createFromToElement(eCondition, this.eConditionPanelsFrom, this.dateConditionFromComps, 'from');
-        this.createFromToElement(eCondition, this.eConditionPanelsTo, this.dateConditionToComps, 'to');
+        this.#createFromToElement(eCondition, this.#eConditionPanelsFrom, this.#dateConditionFromComps, 'from');
+        this.#createFromToElement(eCondition, this.#eConditionPanelsTo, this.#dateConditionToComps, 'to');
 
         return eCondition;
     }
 
-    private createFromToElement(eCondition: HTMLElement, eConditionPanels: HTMLElement[], dateConditionComps: DateCompWrapper[], fromTo: string): void {
+    #createFromToElement(
+        eCondition: HTMLElement,
+        eConditionPanels: HTMLElement[],
+        dateConditionComps: DateCompWrapper[],
+        fromTo: string
+    ): void {
         const eDocument = this.gos.getDocument();
         const eConditionPanel = eDocument.createElement('div');
         eConditionPanel.classList.add(`ag-filter-${fromTo}`);
@@ -281,10 +286,10 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     protected removeValueElements(startPosition: number, deleteCount?: number): void {
-        this.removeDateComps(this.dateConditionFromComps, startPosition, deleteCount);
-        this.removeDateComps(this.dateConditionToComps, startPosition, deleteCount);
-        this.removeItems(this.eConditionPanelsFrom, startPosition, deleteCount);
-        this.removeItems(this.eConditionPanelsTo, startPosition, deleteCount);
+        this.removeDateComps(this.#dateConditionFromComps, startPosition, deleteCount);
+        this.removeDateComps(this.#dateConditionToComps, startPosition, deleteCount);
+        this.removeItems(this.#eConditionPanelsFrom, startPosition, deleteCount);
+        this.removeItems(this.#eConditionPanelsTo, startPosition, deleteCount);
     }
 
     protected removeDateComps(components: DateCompWrapper[], startPosition: number, deleteCount?: number): void {
@@ -292,27 +297,27 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         removedComponents.forEach(comp => comp.destroy());
     }
     
-    private isValidDateValue(value: Date | null): boolean {
+    #isValidDateValue(value: Date | null): boolean {
         if (value === null) {
             return false;
         }
 
-        if (this.minValidDate) {
-            if (value < this.minValidDate) {
+        if (this.#minValidDate) {
+            if (value < this.#minValidDate) {
                 return false;
             }
         } else {
-            if (value.getUTCFullYear() < this.minValidYear) {
+            if (value.getUTCFullYear() < this.#minValidYear) {
                 return false;
             }
         }
 
-        if (this.maxValidDate) {
-            if (value > this.maxValidDate) {
+        if (this.#maxValidDate) {
+            if (value > this.#maxValidDate) {
                 return false;
             }
         } else {
-            if (value.getUTCFullYear() > this.maxValidYear) {
+            if (value.getUTCFullYear() > this.#maxValidYear) {
                 return false;
             }
         }
@@ -330,7 +335,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
             if (elPosition !== position || !valid || index >= numberOfInputs) {
                 return;
             }
-            valid = valid && this.isValidDateValue(element.getDate());
+            valid = valid && this.#isValidDateValue(element.getDate());
         });
 
         return valid;
@@ -379,10 +384,10 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     protected getInputs(position: number): Tuple<DateCompWrapper> {
-        if (position >= this.dateConditionFromComps.length) {
+        if (position >= this.#dateConditionFromComps.length) {
             return [null, null];
         }
-        return [this.dateConditionFromComps[position], this.dateConditionToComps[position]];
+        return [this.#dateConditionFromComps[position], this.#dateConditionToComps[position]];
     }
 
     protected getValues(position: number): Tuple<Date> {
@@ -407,6 +412,6 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     public getModelAsString(model: ISimpleFilterModel): string {
-        return this.filterModelFormatter.getModelAsString(model) ?? '';
+        return this.#filterModelFormatter.getModelAsString(model) ?? '';
     }
 }

@@ -27,13 +27,13 @@ export class GridHeaderCtrl extends BeanStub {
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('menuService') private menuService: MenuService;
 
-    private comp: IGridHeaderComp;
-    private eGui: HTMLElement;
-    private headerHeight: number;
+    #comp: IGridHeaderComp;
+    #eGui: HTMLElement;
+    #headerHeight: number;
 
     public setComp(comp: IGridHeaderComp, eGui: HTMLElement, eFocusableElement: HTMLElement): void {
-        this.comp = comp;
-        this.eGui = eGui;
+        this.#comp = comp;
+        this.#eGui = eGui;
 
         this.createManagedBean(new ManagedFocusFeature(
             eFocusableElement,
@@ -45,21 +45,21 @@ export class GridHeaderCtrl extends BeanStub {
         ));
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.#onPivotModeChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.#onDisplayedColumnsChanged.bind(this));
 
-        this.onPivotModeChanged();
-        this.setupHeaderHeight();
+        this.#onPivotModeChanged();
+        this.#setupHeaderHeight();
 
-        const listener = this.onHeaderContextMenu.bind(this)
-        this.addManagedListener(this.eGui, 'contextmenu', listener);
-        this.mockContextMenuForIPad(listener);
+        const listener = this.#onHeaderContextMenu.bind(this)
+        this.addManagedListener(this.#eGui, 'contextmenu', listener);
+        this.#mockContextMenuForIPad(listener);
 
         this.ctrlsService.register('gridHeaderCtrl',this);
     }
 
-    private setupHeaderHeight(): void {
-        const listener = this.setHeaderHeight.bind(this);
+    #setupHeaderHeight(): void {
+        const listener = this.#setHeaderHeight.bind(this);
         listener();
 
         this.addManagedPropertyListener('headerHeight', listener);
@@ -75,10 +75,10 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     public getHeaderHeight(): number {
-        return this.headerHeight;
+        return this.#headerHeight;
     }
 
-    private setHeaderHeight(): void {
+    #setHeaderHeight(): void {
         const { columnModel } = this;
 
         let numberOfFloating = 0;
@@ -102,32 +102,32 @@ export class GridHeaderCtrl extends BeanStub {
         totalHeaderHeight += numberOfGroups * groupHeight!;
         totalHeaderHeight += headerHeight!;
 
-        if (this.headerHeight === totalHeaderHeight) { return; }
+        if (this.#headerHeight === totalHeaderHeight) { return; }
 
-        this.headerHeight = totalHeaderHeight;
+        this.#headerHeight = totalHeaderHeight;
 
         // one extra pixel is needed here to account for the
         // height of the border
         const px = `${totalHeaderHeight + 1}px`;
-        this.comp.setHeightAndMinHeight(px);
+        this.#comp.setHeightAndMinHeight(px);
 
         this.eventService.dispatchEvent({
             type: Events.EVENT_HEADER_HEIGHT_CHANGED
         });
     }
 
-    private onPivotModeChanged(): void {
+    #onPivotModeChanged(): void {
         const pivotMode = this.columnModel.isPivotMode();
 
-        this.comp.addOrRemoveCssClass('ag-pivot-on', pivotMode);
-        this.comp.addOrRemoveCssClass('ag-pivot-off', !pivotMode);
+        this.#comp.addOrRemoveCssClass('ag-pivot-on', pivotMode);
+        this.#comp.addOrRemoveCssClass('ag-pivot-off', !pivotMode);
     }
 
-    private onDisplayedColumnsChanged(): void {
+    #onDisplayedColumnsChanged(): void {
         const columns = this.columnModel.getAllDisplayedColumns();
         const shouldAllowOverflow = columns.some(col => col.isSpanHeaderHeight());
 
-        this.comp.addOrRemoveCssClass('ag-header-allow-overflow', shouldAllowOverflow);
+        this.#comp.addOrRemoveCssClass('ag-header-allow-overflow', shouldAllowOverflow);
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {
@@ -173,28 +173,30 @@ export class GridHeaderCtrl extends BeanStub {
     protected onFocusOut(e: FocusEvent): void {
         const { relatedTarget } = e;
 
-        if (!relatedTarget && this.eGui.contains(this.gos.getActiveDomElement())) { return; }
+        if (!relatedTarget && this.#eGui.contains(this.gos.getActiveDomElement())) { return; }
 
-        if (!this.eGui.contains(relatedTarget as HTMLElement)) {
+        if (!this.#eGui.contains(relatedTarget as HTMLElement)) {
             this.focusService.clearFocusedHeader();
         }
     }
 
-    private onHeaderContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
+    #onHeaderContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
         if ((!mouseEvent && !touchEvent) || !this.menuService.isHeaderContextMenuEnabled()) { return; }
 
         const { target } = (mouseEvent ?? touch)!;
 
-        if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl().getViewport()) {
+        if (target === this.#eGui || target === this.ctrlsService.getHeaderRowContainerCtrl().getViewport()) {
             this.menuService.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
         }
     }
 
-    private mockContextMenuForIPad(listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void): void {
+    #mockContextMenuForIPad(
+        listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
+    ): void {
         // we do NOT want this when not in iPad
         if (!isIOSUserAgent()) { return; }
 
-        const touchListener = new TouchListener(this.eGui);
+        const touchListener = new TouchListener(this.#eGui);
         const longTapListener = (event: LongTapEvent) => {
             listener(undefined, event.touchStart, event.touchEvent);
         };

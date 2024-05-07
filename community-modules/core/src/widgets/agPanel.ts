@@ -146,7 +146,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             eGui.appendChild(child);
 
             this.addTitleBarButton(closeButtonComp);
-            closeButtonComp.addManagedListener(eGui, 'click', this.onBtClose.bind(this));
+            closeButtonComp.addManagedListener(eGui, 'click', this.#onBtClose.bind(this));
         } else if (this.closeButtonComp) {
             const eGui = this.closeButtonComp.getGui();
             eGui.parentElement!.removeChild(eGui);
@@ -199,7 +199,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
     }
 
     // called when user hits the 'x' in the top right
-    private onBtClose() {
+    #onBtClose() {
         this.close();
     }
 

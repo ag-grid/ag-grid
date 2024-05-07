@@ -30,10 +30,10 @@ export class PaginationComp extends Component {
 
     @RefSelector('pageSizeComp') private pageSizeComp: PageSizeSelectorComp;
 
-    private previousAndFirstButtonsDisabled = false;
-    private nextButtonDisabled = false;
-    private lastButtonDisabled = false;
-    private areListenersSetup = false;
+    #previousAndFirstButtonsDisabled = false;
+    #nextButtonDisabled = false;
+    #lastButtonDisabled = false;
+    #areListenersSetup = false;
 
     constructor() {
         super();
@@ -42,7 +42,7 @@ export class PaginationComp extends Component {
     @PostConstruct
     protected postConstruct(): void {
         const isRtl = this.gos.get('enableRtl');
-        this.setTemplate(this.getTemplate());
+        this.setTemplate(this.#getTemplate());
 
         const { btFirst, btPrevious, btNext, btLast, pageSizeComp } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast])
@@ -52,20 +52,20 @@ export class PaginationComp extends Component {
         btNext.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'previous' : 'next', this.gos)!);
         btLast.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'first' : 'last', this.gos)!);
 
-        this.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
-        this.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
+        this.addManagedPropertyListener('pagination', this.#onPaginationChanged.bind(this));
+        this.addManagedPropertyListener('suppressPaginationPanel', this.#onPaginationChanged.bind(this));
         this.addManagedPropertyListeners(['paginationPageSizeSelector', 'paginationAutoPageSize', 'suppressPaginationPanel'],
-            () => this.onPageSizeRelatedOptionsChange(),
+            () => this.#onPageSizeRelatedOptionsChange(),
         );
 
         this.pageSizeComp.toggleSelectDisplay(
             this.pageSizeComp.shouldShowPageSizeSelector()
         );
 
-        this.onPaginationChanged();
+        this.#onPaginationChanged();
     }
 
-    private onPaginationChanged(): void {
+    #onPaginationChanged(): void {
         const isPaging = this.gos.get('pagination');
         const paginationPanelEnabled = isPaging && !this.gos.get('suppressPaginationPanel');
 
@@ -74,30 +74,30 @@ export class PaginationComp extends Component {
             return;
         }
 
-        this.setupListeners();
+        this.#setupListeners();
 
-        this.enableOrDisableButtons();
-        this.updateRowLabels();
-        this.setCurrentPageLabel();
-        this.setTotalLabels();
-        this.onPageSizeRelatedOptionsChange();
+        this.#enableOrDisableButtons();
+        this.#updateRowLabels();
+        this.#setCurrentPageLabel();
+        this.#setTotalLabels();
+        this.#onPageSizeRelatedOptionsChange();
     }
 
-    private onPageSizeRelatedOptionsChange(): void {
+    #onPageSizeRelatedOptionsChange(): void {
         this.pageSizeComp.toggleSelectDisplay(
             this.pageSizeComp.shouldShowPageSizeSelector()
         );
     }
 
-    private setupListeners() {
-        if (!this.areListenersSetup) {
-            this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
+    #setupListeners() {
+        if (!this.#areListenersSetup) {
+            this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.#onPaginationChanged.bind(this));
 
             [
-                { el: this.btFirst, fn: this.onBtFirst.bind(this) },
-                { el: this.btPrevious, fn: this.onBtPrevious.bind(this) },
-                { el: this.btNext, fn: this.onBtNext.bind(this) },
-                { el: this.btLast, fn: this.onBtLast.bind(this) }
+                { el: this.btFirst, fn: this.#onBtFirst.bind(this) },
+                { el: this.btPrevious, fn: this.#onBtPrevious.bind(this) },
+                { el: this.btNext, fn: this.#onBtNext.bind(this) },
+                { el: this.btLast, fn: this.#onBtLast.bind(this) }
             ].forEach(item => {
                 const { el, fn } = item;
                 this.addManagedListener(el, 'click', fn);
@@ -108,25 +108,25 @@ export class PaginationComp extends Component {
                     }
                 });
             });
-            this.areListenersSetup = true;
+            this.#areListenersSetup = true;
         }
     }
 
-    private onBtFirst() {
-        if (!this.previousAndFirstButtonsDisabled) {
+    #onBtFirst() {
+        if (!this.#previousAndFirstButtonsDisabled) {
             this.paginationProxy.goToFirstPage();
         }
     }
 
-    private setCurrentPageLabel(): void {
+    #setCurrentPageLabel(): void {
         const pagesExist = this.paginationProxy.getTotalPages() > 0;
         const currentPage = this.paginationProxy.getCurrentPage();
         const toDisplay = pagesExist ? currentPage + 1 : 0;
 
-        this.lbCurrent.textContent = this.formatNumber(toDisplay);
+        this.lbCurrent.textContent = this.#formatNumber(toDisplay);
     }
 
-    private formatNumber(value: number): string {
+    #formatNumber(value: number): string {
         const userFunc = this.gos.getCallback('paginationNumberFormatter');
 
         if (userFunc) {
@@ -141,7 +141,7 @@ export class PaginationComp extends Component {
         return formatNumberCommas(value, thousandSeparator, decimalSeparator);
     }
 
-    private getTemplate(): string {
+    #getTemplate(): string {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
 
         const strPage = localeTextFunc('page', 'Page');
@@ -177,49 +177,49 @@ export class PaginationComp extends Component {
             </div>`;
     }
 
-    private onBtNext() {
-        if (!this.nextButtonDisabled) {
+    #onBtNext() {
+        if (!this.#nextButtonDisabled) {
             this.paginationProxy.goToNextPage();
         }
     }
 
-    private onBtPrevious() {
-        if (!this.previousAndFirstButtonsDisabled) {
+    #onBtPrevious() {
+        if (!this.#previousAndFirstButtonsDisabled) {
             this.paginationProxy.goToPreviousPage();
         }
     }
 
-    private onBtLast() {
-        if (!this.lastButtonDisabled) {
+    #onBtLast() {
+        if (!this.#lastButtonDisabled) {
             this.paginationProxy.goToLastPage();
         }
     }
 
-    private enableOrDisableButtons() {
+    #enableOrDisableButtons() {
         const currentPage = this.paginationProxy.getCurrentPage();
         const maxRowFound = this.paginationProxy.isLastPageFound();
         const totalPages = this.paginationProxy.getTotalPages();
 
-        this.previousAndFirstButtonsDisabled = currentPage === 0;
-        this.toggleButtonDisabled(this.btFirst, this.previousAndFirstButtonsDisabled);
-        this.toggleButtonDisabled(this.btPrevious, this.previousAndFirstButtonsDisabled);
+        this.#previousAndFirstButtonsDisabled = currentPage === 0;
+        this.#toggleButtonDisabled(this.btFirst, this.#previousAndFirstButtonsDisabled);
+        this.#toggleButtonDisabled(this.btPrevious, this.#previousAndFirstButtonsDisabled);
 
-        const zeroPagesToDisplay = this.isZeroPagesToDisplay();
+        const zeroPagesToDisplay = this.#isZeroPagesToDisplay();
         const onLastPage = currentPage === (totalPages - 1);
 
-        this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
-        this.lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
+        this.#nextButtonDisabled = onLastPage || zeroPagesToDisplay;
+        this.#lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
 
-        this.toggleButtonDisabled(this.btNext, this.nextButtonDisabled);
-        this.toggleButtonDisabled(this.btLast, this.lastButtonDisabled);
+        this.#toggleButtonDisabled(this.btNext, this.#nextButtonDisabled);
+        this.#toggleButtonDisabled(this.btLast, this.#lastButtonDisabled);
     }
 
-    private toggleButtonDisabled(button: HTMLElement, disabled: boolean) {
+    #toggleButtonDisabled(button: HTMLElement, disabled: boolean) {
         setAriaDisabled(button, disabled);
         button.classList.toggle('ag-disabled', disabled);
     }
 
-    private updateRowLabels() {
+    #updateRowLabels() {
         const currentPage = this.paginationProxy.getCurrentPage();
         const pageSize = this.paginationProxy.getPageSize();
         const maxRowFound = this.paginationProxy.isLastPageFound();
@@ -229,7 +229,7 @@ export class PaginationComp extends Component {
         let startRow: any;
         let endRow: any;
 
-        if (this.isZeroPagesToDisplay()) {
+        if (this.#isZeroPagesToDisplay()) {
             startRow = endRow = 0;
         } else {
             startRow = (pageSize * currentPage) + 1;
@@ -239,22 +239,22 @@ export class PaginationComp extends Component {
             }
         }
 
-        this.lbFirstRowOnPage.textContent = this.formatNumber(startRow);
+        this.lbFirstRowOnPage.textContent = this.#formatNumber(startRow);
         if (this.rowNodeBlockLoader.isLoading()) {
             const translate = this.localeService.getLocaleTextFunc();
             this.lbLastRowOnPage.innerHTML = translate('pageLastRowUnknown', '?');
         } else {
-            this.lbLastRowOnPage.textContent = this.formatNumber(endRow);
+            this.lbLastRowOnPage.textContent = this.#formatNumber(endRow);
         }
     }
 
-    private isZeroPagesToDisplay() {
+    #isZeroPagesToDisplay() {
         const maxRowFound = this.paginationProxy.isLastPageFound();
         const totalPages = this.paginationProxy.getTotalPages();
         return maxRowFound && totalPages === 0;
     }
 
-    private setTotalLabels() {
+    #setTotalLabels() {
         const lastPageFound = this.paginationProxy.isLastPageFound();
         const totalPages = this.paginationProxy.getTotalPages();
         const rowCount = lastPageFound ? this.paginationProxy.getMasterRowCount() : null;
@@ -268,14 +268,14 @@ export class PaginationComp extends Component {
             // a group node with no group or agg data will not be visible to users
             const hiddenGroupRow = firstRow && firstRow.group && !(firstRow.groupData || firstRow.aggData);
             if (hiddenGroupRow) {
-                this.setTotalLabelsToZero();
+                this.#setTotalLabelsToZero();
                 return;
             }
         }
 
         if (lastPageFound) {
-            this.lbTotal.textContent = this.formatNumber(totalPages);
-            this.lbRecordCount.textContent = this.formatNumber(rowCount!);
+            this.lbTotal.textContent = this.#formatNumber(totalPages);
+            this.lbRecordCount.textContent = this.#formatNumber(rowCount!);
         } else {
             const moreText = this.localeService.getLocaleTextFunc()('more', 'more');
             this.lbTotal.innerHTML = moreText;
@@ -283,11 +283,11 @@ export class PaginationComp extends Component {
         }
     }
 
-    private setTotalLabelsToZero() {
-        this.lbFirstRowOnPage.textContent = this.formatNumber(0);
-        this.lbCurrent.textContent = this.formatNumber(0);
-        this.lbLastRowOnPage.textContent = this.formatNumber(0);
-        this.lbTotal.textContent = this.formatNumber(0);
-        this.lbRecordCount.textContent = this.formatNumber(0);
+    #setTotalLabelsToZero() {
+        this.lbFirstRowOnPage.textContent = this.#formatNumber(0);
+        this.lbCurrent.textContent = this.#formatNumber(0);
+        this.lbLastRowOnPage.textContent = this.#formatNumber(0);
+        this.lbTotal.textContent = this.#formatNumber(0);
+        this.lbRecordCount.textContent = this.#formatNumber(0);
     }
 }

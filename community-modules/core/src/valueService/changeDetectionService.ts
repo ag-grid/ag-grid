@@ -16,18 +16,18 @@ export class ChangeDetectionService extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
-    private clientSideRowModel: IClientSideRowModel;
+    #clientSideRowModel: IClientSideRowModel;
 
     @PostConstruct
     private init(): void {
         if (this.rowModel.getType() === 'clientSide') {
-            this.clientSideRowModel = this.rowModel as IClientSideRowModel;
+            this.#clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.#onCellValueChanged.bind(this));
     }
 
-    private onCellValueChanged(event: CellValueChangedEvent): void {
+    #onCellValueChanged(event: CellValueChangedEvent): void {
 
         // Clipboard service manages its own change detection, so no need to do it here.
         // The clipboard manages its own as otherwise this would happen once for every cell
@@ -37,20 +37,20 @@ export class ChangeDetectionService extends BeanStub {
         // into one change detection).
         if (event.source === SOURCE_PASTE) { return; }
 
-        this.doChangeDetection(event.node as RowNode, event.column);
+        this.#doChangeDetection(event.node as RowNode, event.column);
     }
 
-    private doChangeDetection(rowNode: RowNode, column: Column): void {
+    #doChangeDetection(rowNode: RowNode, column: Column): void {
         if (this.gos.get('suppressChangeDetection')) { return; }
 
         const nodesToRefresh: RowNode[] = [rowNode];
 
         // step 1 of change detection is to update the aggregated values
-        if (this.clientSideRowModel && !rowNode.isRowPinned()) {
+        if (this.#clientSideRowModel && !rowNode.isRowPinned()) {
             const onlyChangedColumns = this.gos.get('aggregateOnlyChangedColumns');
-            const changedPath = new ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
+            const changedPath = new ChangedPath(onlyChangedColumns, this.#clientSideRowModel.getRootNode());
             changedPath.addParentNode(rowNode.parent, [column]);
-            this.clientSideRowModel.doAggregate(changedPath);
+            this.#clientSideRowModel.doAggregate(changedPath);
 
             // add all nodes impacted by aggregation, as they need refreshed also.
             changedPath.forEachChangedNodeDepthFirst(rowNode => {

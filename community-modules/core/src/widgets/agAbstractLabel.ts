@@ -20,7 +20,7 @@ export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelPar
     protected labelSeparator: string = '';
     protected labelAlignment: LabelAlignment = 'left';
     protected disabled: boolean = false;
-    private label: HTMLElement | string = '';
+    #label: HTMLElement | string = '';
 
     constructor(config?: TConfig, template?: string) {
         super(template);
@@ -58,13 +58,13 @@ export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelPar
     protected refreshLabel() {
         clearElement(this.eLabel);
 
-        if (typeof this.label === 'string') {
-            this.eLabel.innerText = this.label + this.labelSeparator;
-        } else if (this.label) {
-            this.eLabel.appendChild(this.label);
+        if (typeof this.#label === 'string') {
+            this.eLabel.innerText = this.#label + this.labelSeparator;
+        } else if (this.#label) {
+            this.eLabel.appendChild(this.#label);
         }
 
-        if (this.label === '') {
+        if (this.#label === '') {
             setDisplayed(this.eLabel, false);
             setAriaRole(this.eLabel, 'presentation');
         } else {
@@ -80,7 +80,7 @@ export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelPar
 
         this.labelSeparator = labelSeparator;
 
-        if (this.label != null) {
+        if (this.#label != null) {
             this.refreshLabel();
         }
 
@@ -94,15 +94,15 @@ export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelPar
     }
 
     public getLabel(): HTMLElement | string {
-        return this.label;
+        return this.#label;
     }
 
     public setLabel(label: HTMLElement | string): this {
-        if (this.label === label) {
+        if (this.#label === label) {
             return this;
         }
 
-        this.label = label;
+        this.#label = label;
 
         this.refreshLabel();
 
@@ -127,7 +127,7 @@ export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelPar
     }
 
     public setLabelWidth(width: number | 'flex'): this {
-        if (this.label == null) {
+        if (this.#label == null) {
             return this;
         }
 

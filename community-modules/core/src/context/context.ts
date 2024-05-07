@@ -39,49 +39,49 @@ interface BeanWrapper {
 
 export class Context {
 
-    private beanWrappers: { [key: string]: BeanWrapper; } = {};
-    private contextParams: ContextParams;
-    private logger: ILogger;
+    #beanWrappers: { [key: string]: BeanWrapper; } = {};
+    #contextParams: ContextParams;
+    #logger: ILogger;
 
-    private destroyed = false;
+    #destroyed = false;
 
     public constructor(params: ContextParams, logger: ILogger) {
         if (!params || !params.beanClasses) {
             return;
         }
 
-        this.contextParams = params;
+        this.#contextParams = params;
 
-        this.logger = logger;
-        this.logger.log(">> creating ag-Application Context");
+        this.#logger = logger;
+        this.#logger.log(">> creating ag-Application Context");
 
-        this.createBeans();
+        this.#createBeans();
 
-        const beanInstances = this.getBeanInstances();
+        const beanInstances = this.#getBeanInstances();
         callbacks.forEach(callback => callback(beanInstances));
 
-        this.wireBeans(beanInstances);
+        this.#wireBeans(beanInstances);
 
-        this.logger.log(">> ag-Application Context ready - component is alive");
+        this.#logger.log(">> ag-Application Context ready - component is alive");
     }
 
-    private getBeanInstances(): any[] {
-        return values(this.beanWrappers).map(beanEntry => beanEntry.beanInstance);
+    #getBeanInstances(): any[] {
+        return values(this.#beanWrappers).map(beanEntry => beanEntry.beanInstance);
     }
 
     public createBean<T extends any>(bean: T, afterPreCreateCallback?: (comp: Component) => void): T {
         if (!bean) {
             throw Error(`Can't wire to bean since it is null`);
         }
-        this.wireBeans([bean], afterPreCreateCallback);
+        this.#wireBeans([bean], afterPreCreateCallback);
         return bean;
     }
 
-    private wireBeans(beanInstances: any[], afterPreCreateCallback?: (comp: Component) => void): void {
-        this.autoWireBeans(beanInstances);
-        this.methodWireBeans(beanInstances);        
+    #wireBeans(beanInstances: any[], afterPreCreateCallback?: (comp: Component) => void): void {
+        this.#autoWireBeans(beanInstances);
+        this.#methodWireBeans(beanInstances);        
 
-        this.callLifeCycleMethods(beanInstances, 'preConstructMethods');
+        this.#callLifeCycleMethods(beanInstances, 'preConstructMethods');
 
         // the callback sets the attributes, so the component has access to attributes
         // before postConstruct methods in the component are executed
@@ -89,31 +89,31 @@ export class Context {
             beanInstances.forEach(afterPreCreateCallback);
         }
 
-        this.callLifeCycleMethods(beanInstances, 'postConstructMethods');
+        this.#callLifeCycleMethods(beanInstances, 'postConstructMethods');
     }
 
-    private createBeans(): void {
+    #createBeans(): void {
         // register all normal beans
-        this.contextParams.beanClasses.forEach(this.createBeanWrapper.bind(this));
+        this.#contextParams.beanClasses.forEach(this.#createBeanWrapper.bind(this));
         // register override beans, these will overwrite beans above of same name
 
         // instantiate all beans - overridden beans will be left out
-        iterateObject(this.beanWrappers, (key: string, beanEntry: BeanWrapper) => {
+        iterateObject(this.#beanWrappers, (key: string, beanEntry: BeanWrapper) => {
             let constructorParamsMeta: any;
             if (beanEntry.bean.__agBeanMetaData && beanEntry.bean.__agBeanMetaData.autowireMethods && beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor) {
                 constructorParamsMeta = beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor;
             }
-            const constructorParams = this.getBeansForParameters(constructorParamsMeta, beanEntry.bean.name);
+            const constructorParams = this.#getBeansForParameters(constructorParamsMeta, beanEntry.bean.name);
             const newInstance = new (beanEntry.bean.bind.apply(beanEntry.bean, [null, ...constructorParams]));
             beanEntry.beanInstance = newInstance;
         });
 
-        const createdBeanNames = Object.keys(this.beanWrappers).join(', ');
-        this.logger.log(`created beans: ${createdBeanNames}`);
+        const createdBeanNames = Object.keys(this.#beanWrappers).join(', ');
+        this.#logger.log(`created beans: ${createdBeanNames}`);
     }
 
     // tslint:disable-next-line
-    private createBeanWrapper(BeanClass: new () => Object): void {
+    #createBeanWrapper(BeanClass: new () => Object): void {
         const metaData = (BeanClass as any).__agBeanMetaData;
 
         if (!metaData) {
@@ -140,41 +140,41 @@ export class Context {
             beanName: name
         };
 
-        this.beanWrappers[name] = beanEntry;
+        this.#beanWrappers[name] = beanEntry;
     }
 
-    private autoWireBeans(beanInstances: any[]): void {
+    #autoWireBeans(beanInstances: any[]): void {
         beanInstances.forEach(beanInstance => {
-            this.forEachMetaDataInHierarchy(beanInstance, (metaData: any, beanName: string) => {
+            this.#forEachMetaDataInHierarchy(beanInstance, (metaData: any, beanName: string) => {
                 const attributes = metaData.agClassAttributes;
                 if (!attributes) {
                     return;
                 }
 
                 attributes.forEach((attribute: any) => {
-                    const otherBean = this.lookupBeanInstance(beanName, attribute.beanName, attribute.optional);
+                    const otherBean = this.#lookupBeanInstance(beanName, attribute.beanName, attribute.optional);
                     beanInstance[attribute.attributeName] = otherBean;
                 });
             });
         });
     }
 
-    private methodWireBeans(beanInstances: any[]): void {
+    #methodWireBeans(beanInstances: any[]): void {
         beanInstances.forEach(beanInstance => {
-            this.forEachMetaDataInHierarchy(beanInstance, (metaData: any, beanName: BeanName) => {
+            this.#forEachMetaDataInHierarchy(beanInstance, (metaData: any, beanName: BeanName) => {
                 iterateObject(metaData.autowireMethods, (methodName: string, wireParams: any[]) => {
                     // skip constructor, as this is dealt with elsewhere
                     if (methodName === "agConstructor") {
                         return;
                     }
-                    const initParams = this.getBeansForParameters(wireParams, beanName);
+                    const initParams = this.#getBeansForParameters(wireParams, beanName);
                     beanInstance[methodName].apply(beanInstance, initParams);
                 });
             });
         });
     }
 
-    private forEachMetaDataInHierarchy(beanInstance: any, callback: (metaData: any, beanName: string) => void): void {
+    #forEachMetaDataInHierarchy(beanInstance: any, callback: (metaData: any, beanName: string) => void): void {
 
         let prototype: any = Object.getPrototypeOf(beanInstance);
         while (prototype != null) {
@@ -183,7 +183,7 @@ export class Context {
 
             if (constructor.hasOwnProperty('__agBeanMetaData')) {
                 const metaData = constructor.__agBeanMetaData;
-                const beanName = this.getBeanName(constructor);
+                const beanName = this.#getBeanName(constructor);
                 callback(metaData, beanName);
             }
 
@@ -191,7 +191,7 @@ export class Context {
         }
     }
 
-    private getBeanName(constructor: any): string {
+    #getBeanName(constructor: any): string {
         if (constructor.__agBeanMetaData && constructor.__agBeanMetaData.beanName) {
             return constructor.__agBeanMetaData.beanName;
         }
@@ -201,20 +201,20 @@ export class Context {
         return beanName;
     }
 
-    private getBeansForParameters(parameters: any, beanName: BeanName): any[] {
+    #getBeansForParameters(parameters: any, beanName: BeanName): any[] {
         const beansList: any[] = [];
         if (parameters) {
             iterateObject(parameters, (paramIndex: string, otherBeanName: BeanName) => {
-                const otherBean = this.lookupBeanInstance(beanName, otherBeanName);
+                const otherBean = this.#lookupBeanInstance(beanName, otherBeanName);
                 beansList[Number(paramIndex)] = otherBean;
             });
         }
         return beansList;
     }
 
-    private lookupBeanInstance(wiringBean: string, beanName: BeanName, optional = false): any {
-        if (this.destroyed) {
-            this.logger.log(`AG Grid: bean reference ${beanName} is used after the grid is destroyed!`);
+    #lookupBeanInstance(wiringBean: string, beanName: BeanName, optional = false): any {
+        if (this.#destroyed) {
+            this.#logger.log(`AG Grid: bean reference ${beanName} is used after the grid is destroyed!`);
             return null;
         }
 
@@ -222,11 +222,11 @@ export class Context {
             return this;
         }
 
-        if (this.contextParams.providedBeanInstances && this.contextParams.providedBeanInstances.hasOwnProperty(beanName)) {
-            return this.contextParams.providedBeanInstances[beanName];
+        if (this.#contextParams.providedBeanInstances && this.#contextParams.providedBeanInstances.hasOwnProperty(beanName)) {
+            return this.#contextParams.providedBeanInstances[beanName];
         }
 
-        const beanEntry = this.beanWrappers[beanName];
+        const beanEntry = this.#beanWrappers[beanName];
 
         if (beanEntry) {
             return beanEntry.beanInstance;
@@ -239,16 +239,16 @@ export class Context {
         return null;
     }
 
-    private callLifeCycleMethods(beanInstances: any[], lifeCycleMethod: string): void {
-        beanInstances.forEach(beanInstance => this.callLifeCycleMethodsOnBean(beanInstance, lifeCycleMethod));
+    #callLifeCycleMethods(beanInstances: any[], lifeCycleMethod: string): void {
+        beanInstances.forEach(beanInstance => this.#callLifeCycleMethodsOnBean(beanInstance, lifeCycleMethod));
     }
 
-    private callLifeCycleMethodsOnBean(beanInstance: any, lifeCycleMethod: string, methodToIgnore?: string): void {
+    #callLifeCycleMethodsOnBean(beanInstance: any, lifeCycleMethod: string, methodToIgnore?: string): void {
         // putting all methods into a map removes duplicates
         const allMethods: { [methodName: string]: boolean; } = {};
 
         // dump methods from each level of the metadata hierarchy
-        this.forEachMetaDataInHierarchy(beanInstance, (metaData: any) => {
+        this.#forEachMetaDataInHierarchy(beanInstance, (metaData: any) => {
             const methods = metaData[lifeCycleMethod] as string[];
             if (methods) {
                 methods.forEach(methodName => {
@@ -264,26 +264,26 @@ export class Context {
     }
 
     public getBean(name: BeanName): any {
-        return this.lookupBeanInstance("getBean", name, true);
+        return this.#lookupBeanInstance("getBean", name, true);
     }
 
     public destroy(): void {
-        if (this.destroyed) { return; }
+        if (this.#destroyed) { return; }
 
         // Set before doing the destroy, so if context.destroy() gets called via another bean
         // we are marked as destroyed already to prevent running destroy() twice
-        this.destroyed = true;
+        this.#destroyed = true;
 
-        this.logger.log(">> Shutting down ag-Application Context");
+        this.#logger.log(">> Shutting down ag-Application Context");
 
-        const beanInstances = this.getBeanInstances();
+        const beanInstances = this.#getBeanInstances();
         this.destroyBeans(beanInstances);
 
-        this.contextParams.providedBeanInstances = null;
+        this.#contextParams.providedBeanInstances = null;
 
-        ModuleRegistry.__unRegisterGridModules(this.contextParams.gridId);
+        ModuleRegistry.__unRegisterGridModules(this.#contextParams.gridId);
 
-        this.logger.log(">> ag-Application Context shut down - component is dead");
+        this.#logger.log(">> ag-Application Context shut down - component is dead");
     }
 
     public destroyBean<T>(bean: T): undefined {
@@ -296,7 +296,7 @@ export class Context {
         if (!beans) { return []; }
 
         beans.forEach(bean => {
-            this.callLifeCycleMethodsOnBean(bean, 'preDestroyMethods', 'destroy');
+            this.#callLifeCycleMethodsOnBean(bean, 'preDestroyMethods', 'destroy');
 
             // call destroy() explicitly if it exists
             const beanAny = bean as any;
@@ -310,11 +310,11 @@ export class Context {
     }
 
     public isDestroyed(): boolean {
-        return this.destroyed;
+        return this.#destroyed;
     }
 
     public getGridId(): string {
-        return this.contextParams.gridId;
+        return this.#contextParams.gridId;
     }
 }
 

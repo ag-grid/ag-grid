@@ -25,29 +25,29 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     private static STATE_NEW_ITEMS_IN = 'newItemsIn';
     private static STATE_REARRANGE_ITEMS = 'rearrangeItems';
 
-    private state = PillDropZonePanel.STATE_NOT_DRAGGING;
+    #state = PillDropZonePanel.STATE_NOT_DRAGGING;
 
-    private dropTarget: DropTarget;
+    #dropTarget: DropTarget;
 
     // when we are considering a drop from a dnd event,
     // the items to be dropped go in here
-    private potentialDndItems: TItem[];
+    #potentialDndItems: TItem[];
 
-    private guiDestroyFunctions: (() => void)[] = [];
+    #guiDestroyFunctions: (() => void)[] = [];
 
-    private params: PillDropZonePanelParams;
+    #params: PillDropZonePanelParams;
 
-    private childPillComponents: TPill[] = [];
-    private insertIndex: number;
+    #childPillComponents: TPill[] = [];
+    #insertIndex: number;
 
     // when this component is refreshed, we rip out all DOM elements and build it up
     // again from scratch. one exception is ePillDropList, as we want to maintain the
     // scroll position between the refreshes, so we create one instance of it here and
     // reuse it.
-    private ePillDropList: HTMLElement;
+    #ePillDropList: HTMLElement;
 
-    private positionableFeature: PositionableFeature;
-    private resizeEnabled: boolean = false;
+    #positionableFeature: PositionableFeature;
+    #resizeEnabled: boolean = false;
 
     protected abstract isItemDroppable(item: TItem, draggingEvent: DraggingEvent): boolean;
     protected abstract updateItems(items: TItem[]): void;
@@ -60,10 +60,10 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
     constructor(private horizontal: boolean) {
         super(/* html */ `<div class="ag-unselectable" role="presentation"></div>`);
-        this.addElementClasses(this.getGui());
-        this.ePillDropList = document.createElement('div');
-        this.addElementClasses(this.ePillDropList, 'list');
-        setAriaRole(this.ePillDropList, 'listbox');
+        this.#addElementClasses(this.getGui());
+        this.#ePillDropList = document.createElement('div');
+        this.#addElementClasses(this.#ePillDropList, 'list');
+        setAriaRole(this.#ePillDropList, 'listbox');
     }
 
     public isHorizontal(): boolean {
@@ -71,8 +71,8 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     }
 
     public toggleResizable(resizable: boolean) {
-        this.positionableFeature.setResizable(resizable ? { bottom: true } : false);
-        this.resizeEnabled = resizable;
+        this.#positionableFeature.setResizable(resizable ? { bottom: true } : false);
+        this.#resizeEnabled = resizable;
     }
 
     protected isSourceEventFromTarget(draggingEvent: DraggingEvent): boolean {
@@ -81,38 +81,38 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     }
 
     protected destroy(): void {
-        this.destroyGui();
+        this.#destroyGui();
         super.destroy();
     }
 
-    private destroyGui(): void {
-        this.guiDestroyFunctions.forEach(func => func());
-        this.guiDestroyFunctions.length = 0;
-        this.childPillComponents.length = 0;
+    #destroyGui(): void {
+        this.#guiDestroyFunctions.forEach(func => func());
+        this.#guiDestroyFunctions.length = 0;
+        this.#childPillComponents.length = 0;
         clearElement(this.getGui());
-        clearElement(this.ePillDropList);
+        clearElement(this.#ePillDropList);
     }
 
     public init(params?: PillDropZonePanelParams): void {
-        this.params = params ?? {};
+        this.#params = params ?? {};
 
         this.createManagedBean(new ManagedFocusFeature(
             this.getFocusableElement(),
             {
-                handleKeyDown: this.handleKeyDown.bind(this)
+                handleKeyDown: this.#handleKeyDown.bind(this)
             }
         ));
 
-        this.setupDropTarget();
+        this.#setupDropTarget();
 
-        this.positionableFeature = new PositionableFeature(this.getGui(), { minHeight: 100 });
-        this.createManagedBean(this.positionableFeature);
+        this.#positionableFeature = new PositionableFeature(this.getGui(), { minHeight: 100 });
+        this.createManagedBean(this.#positionableFeature);
 
         this.refreshGui();
-        setAriaLabel(this.ePillDropList, this.getAriaLabel());
+        setAriaLabel(this.#ePillDropList, this.getAriaLabel());
     }
 
-    private handleKeyDown(e: KeyboardEvent) {
+    #handleKeyDown(e: KeyboardEvent) {
         const isVertical = !this.horizontal;
 
         let isNext = e.key === KeyCode.DOWN;
@@ -138,32 +138,32 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         }
     }
 
-    private addElementClasses(el: Element, suffix?: string) {
+    #addElementClasses(el: Element, suffix?: string) {
         suffix = suffix ? `-${suffix}` : '';
         const direction = this.horizontal ? 'horizontal' : 'vertical';
         el.classList.add(`ag-column-drop${suffix}`, `ag-column-drop-${direction}${suffix}`);
     }
 
-    private setupDropTarget(): void {
-        this.dropTarget = {
+    #setupDropTarget(): void {
+        this.#dropTarget = {
             getContainer: this.getGui.bind(this),
             getIconName: this.getIconName.bind(this),
-            onDragging: this.onDragging.bind(this),
-            onDragEnter: this.onDragEnter.bind(this),
-            onDragLeave: this.onDragLeave.bind(this),
-            onDragStop: this.onDragStop.bind(this),
+            onDragging: this.#onDragging.bind(this),
+            onDragEnter: this.#onDragEnter.bind(this),
+            onDragLeave: this.#onDragLeave.bind(this),
+            onDragStop: this.#onDragStop.bind(this),
             isInterestedIn: this.isInterestedIn.bind(this)
         };
 
-        this.dragAndDropService.addDropTarget(this.dropTarget);
+        this.dragAndDropService.addDropTarget(this.#dropTarget);
     }
 
     protected minimumAllowedNewInsertIndex(): number {
         return 0;
     }
 
-    private checkInsertIndex(draggingEvent: DraggingEvent): boolean {
-        const newIndex = this.getNewInsertIndex(draggingEvent);
+    #checkInsertIndex(draggingEvent: DraggingEvent): boolean {
+        const newIndex = this.#getNewInsertIndex(draggingEvent);
 
         // <0 happens when drag is no a direction we are interested in, eg drag is up/down but in horizontal panel
         if (newIndex < 0) {
@@ -173,20 +173,20 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const minimumAllowedIndex = this.minimumAllowedNewInsertIndex();
         const newAdjustedIndex = Math.max(minimumAllowedIndex, newIndex);
 
-        const changed = newAdjustedIndex !== this.insertIndex;
+        const changed = newAdjustedIndex !== this.#insertIndex;
 
         if (changed) {
-            this.insertIndex = newAdjustedIndex;
+            this.#insertIndex = newAdjustedIndex;
         }
 
         return changed;
     }
 
-    private getNewInsertIndex(draggingEvent: DraggingEvent): number {
+    #getNewInsertIndex(draggingEvent: DraggingEvent): number {
         const mouseEvent = draggingEvent.event;
         const mouseLocation = this.horizontal ? mouseEvent.clientX : mouseEvent.clientY;
 
-        const boundsList = this.childPillComponents.map(comp => (
+        const boundsList = this.#childPillComponents.map(comp => (
             comp.getGui().getBoundingClientRect()
         ));
         // find the non-ghost component we're hovering
@@ -208,7 +208,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             ));
 
             if (isLast) {
-                return enableRtl && this.horizontal ? 0 : this.childPillComponents.length;
+                return enableRtl && this.horizontal ? 0 : this.#childPillComponents.length;
             }
 
             // if mouse is above or left of all components, new index is first
@@ -217,132 +217,132 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             ));
 
             if (isFirst) {
-                return enableRtl && this.horizontal ? this.childPillComponents.length : 0;
+                return enableRtl && this.horizontal ? this.#childPillComponents.length : 0;
             }
             
             // must be hovering a ghost, don't change the index
-            return this.insertIndex;
+            return this.#insertIndex;
         }
 
         // if the old index is equal to or less than the index of our new target
         // we need to shift right, to insert after rather than before
-        if (this.insertIndex <= hoveredIndex) {
+        if (this.#insertIndex <= hoveredIndex) {
             return hoveredIndex + 1;
         }
         return hoveredIndex;
     }
 
 
-    private checkDragStartedBySelf(draggingEvent: DraggingEvent): void {
-        if (this.state !== PillDropZonePanel.STATE_NOT_DRAGGING) {
+    #checkDragStartedBySelf(draggingEvent: DraggingEvent): void {
+        if (this.#state !== PillDropZonePanel.STATE_NOT_DRAGGING) {
             return;
         }
 
-        this.state = PillDropZonePanel.STATE_REARRANGE_ITEMS;
+        this.#state = PillDropZonePanel.STATE_REARRANGE_ITEMS;
 
-        this.potentialDndItems = this.getItems(draggingEvent.dragSource.getDragItem());
+        this.#potentialDndItems = this.getItems(draggingEvent.dragSource.getDragItem());
         this.refreshGui();
 
-        this.checkInsertIndex(draggingEvent);
+        this.#checkInsertIndex(draggingEvent);
         this.refreshGui();
     }
 
-    private onDragging(draggingEvent: DraggingEvent): void {
-        this.checkDragStartedBySelf(draggingEvent);
+    #onDragging(draggingEvent: DraggingEvent): void {
+        this.#checkDragStartedBySelf(draggingEvent);
 
-        if (this.checkInsertIndex(draggingEvent)) {
+        if (this.#checkInsertIndex(draggingEvent)) {
             this.refreshGui();
         }
     }
 
     protected handleDragEnterEnd(draggingEvent: DraggingEvent): void {}
 
-    private onDragEnter(draggingEvent: DraggingEvent): void {
+    #onDragEnter(draggingEvent: DraggingEvent): void {
         // this will contain all items that are potential drops
         const dragItems = this.getItems(draggingEvent.dragSource.getDragItem());
-        this.state = PillDropZonePanel.STATE_NEW_ITEMS_IN;
+        this.#state = PillDropZonePanel.STATE_NEW_ITEMS_IN;
         // take out items that are not droppable
         const goodDragItems = dragItems.filter(item => this.isItemDroppable(item, draggingEvent));
-        const alreadyPresent = goodDragItems.every(item => this.childPillComponents.map(cmp => cmp.getItem()).indexOf(item) !== -1);
+        const alreadyPresent = goodDragItems.every(item => this.#childPillComponents.map(cmp => cmp.getItem()).indexOf(item) !== -1);
 
         if (goodDragItems.length === 0) { return; }
 
-        this.potentialDndItems = goodDragItems;
+        this.#potentialDndItems = goodDragItems;
 
         if (alreadyPresent) {
-            this.state = PillDropZonePanel.STATE_NOT_DRAGGING;
+            this.#state = PillDropZonePanel.STATE_NOT_DRAGGING;
             return; 
         }
 
         this.handleDragEnterEnd(draggingEvent);
 
-        this.checkInsertIndex(draggingEvent);
+        this.#checkInsertIndex(draggingEvent);
         this.refreshGui();
     }
 
     protected isPotentialDndItems(): boolean {
-        return existsAndNotEmpty(this.potentialDndItems);
+        return existsAndNotEmpty(this.#potentialDndItems);
     }
 
     protected handleDragLeaveEnd(draggingEvent: DraggingEvent): void {}
 
-    private onDragLeave(draggingEvent: DraggingEvent): void {
+    #onDragLeave(draggingEvent: DraggingEvent): void {
         // if the dragging started from us, we remove the group, however if it started
         // some place else, then we don't, as it was only 'asking'
 
-        if (this.state === PillDropZonePanel.STATE_REARRANGE_ITEMS) {
+        if (this.#state === PillDropZonePanel.STATE_REARRANGE_ITEMS) {
             const items = this.getItems(draggingEvent.dragSource.getDragItem());
-            this.removeItems(items);
+            this.#removeItems(items);
         }
 
         if (this.isPotentialDndItems()) {
             this.handleDragLeaveEnd(draggingEvent);
 
-            this.potentialDndItems = [];
+            this.#potentialDndItems = [];
             this.refreshGui();
         }
 
-        this.state = PillDropZonePanel.STATE_NOT_DRAGGING;
+        this.#state = PillDropZonePanel.STATE_NOT_DRAGGING;
     }
 
-    private onDragStop(): void {
+    #onDragStop(): void {
         if (this.isPotentialDndItems()) {
 
-            if (this.state === PillDropZonePanel.STATE_NEW_ITEMS_IN) {
-                this.addItems(this.potentialDndItems);
+            if (this.#state === PillDropZonePanel.STATE_NEW_ITEMS_IN) {
+                this.#addItems(this.#potentialDndItems);
             } else {
-                this.rearrangeItems(this.potentialDndItems);
+                this.#rearrangeItems(this.#potentialDndItems);
             }
 
-            this.potentialDndItems = [];
+            this.#potentialDndItems = [];
             this.refreshGui();
         }
 
-        this.state = PillDropZonePanel.STATE_NOT_DRAGGING;
+        this.#state = PillDropZonePanel.STATE_NOT_DRAGGING;
     }
 
-    private removeItems(itemsToRemove: TItem[]): void {
+    #removeItems(itemsToRemove: TItem[]): void {
         const newItemList = this.getExistingItems().filter(item => !includes(itemsToRemove, item));
         this.updateItems(newItemList);
     }
 
-    private addItems(itemsToAdd: TItem[]): void {
+    #addItems(itemsToAdd: TItem[]): void {
         if (!itemsToAdd) { return; }
         const newItemList = this.getExistingItems().slice();
         const itemsToAddNoDuplicates = itemsToAdd.filter(item => newItemList.indexOf(item) < 0);
-        insertArrayIntoArray(newItemList, itemsToAddNoDuplicates, this.insertIndex);
+        insertArrayIntoArray(newItemList, itemsToAddNoDuplicates, this.#insertIndex);
         this.updateItems(newItemList);
     }
 
     public addItem(item: TItem): void {
-        this.insertIndex = this.getExistingItems().length;
-        this.addItems([item]);
+        this.#insertIndex = this.getExistingItems().length;
+        this.#addItems([item]);
         this.refreshGui();
     }
 
-    private rearrangeItems(itemsToAdd: TItem[]): boolean {
-        const newItemList = this.getNonGhostItems().slice();
-        insertArrayIntoArray(newItemList, itemsToAdd, this.insertIndex);
+    #rearrangeItems(itemsToAdd: TItem[]): boolean {
+        const newItemList = this.#getNonGhostItems().slice();
+        insertArrayIntoArray(newItemList, itemsToAdd, this.#insertIndex);
 
         if (areEqual(newItemList, this.getExistingItems())) {
             return false;
@@ -359,9 +359,9 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         // out the list which sets scroll to zero. so the user could be just
         // reordering the list - we want to prevent the resetting of the scroll.
         // this is relevant for vertical display only (as horizontal has no scroll)
-        const scrollTop = this.ePillDropList.scrollTop;
-        const resizeEnabled = this.resizeEnabled;
-        const focusedIndex = this.getFocusedItem();
+        const scrollTop = this.#ePillDropList.scrollTop;
+        const resizeEnabled = this.#resizeEnabled;
+        const focusedIndex = this.#getFocusedItem();
 
         let alternateElement = this.focusService.findNextFocusableElement();
 
@@ -370,14 +370,14 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         }
 
         this.toggleResizable(false);
-        this.destroyGui();
+        this.#destroyGui();
 
-        this.addIconAndTitleToGui();
-        this.addEmptyMessageToGui();
-        this.addItemsToGui();
+        this.#addIconAndTitleToGui();
+        this.#addEmptyMessageToGui();
+        this.#addItemsToGui();
 
         if (!this.isHorizontal()) {
-            this.ePillDropList.scrollTop = scrollTop;
+            this.#ePillDropList.scrollTop = scrollTop;
         }
 
         if (resizeEnabled) {
@@ -388,11 +388,11 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         // otherwise mouse clicks will cause containers to scroll
         // without no apparent reason.
         if (this.focusService.isKeyboardMode()) {
-            this.restoreFocus(focusedIndex, alternateElement!);
+            this.#restoreFocus(focusedIndex, alternateElement!);
         }
     }
 
-    private getFocusedItem(): number {
+    #getFocusedItem(): number {
         const eGui = this.getGui();
         const activeElement = this.gos.getActiveDomElement();
 
@@ -403,7 +403,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         return items.indexOf(activeElement as HTMLElement);
     }
 
-    private restoreFocus(index: number, alternateElement: HTMLElement): void {
+    #restoreFocus(index: number, alternateElement: HTMLElement): void {
         const eGui = this.getGui();
         const items = Array.from(eGui.querySelectorAll('.ag-column-drop-cell'));
 
@@ -420,87 +420,87 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     }
 
     public focusList(fromBottom?: boolean): void {
-        const index = fromBottom ? this.childPillComponents.length - 1 : 0;
-        this.restoreFocus(index, this.getFocusableElement());
+        const index = fromBottom ? this.#childPillComponents.length - 1 : 0;
+        this.#restoreFocus(index, this.getFocusableElement());
     }
 
-    private getNonGhostItems(): TItem[] {
+    #getNonGhostItems(): TItem[] {
         const existingItems = this.getExistingItems();
 
         if (this.isPotentialDndItems()) {
-            return existingItems.filter(item => !includes(this.potentialDndItems, item));
+            return existingItems.filter(item => !includes(this.#potentialDndItems, item));
         }
         return existingItems;
     }
 
-    private addItemsToGui(): void {
-        const nonGhostItems = this.getNonGhostItems();
+    #addItemsToGui(): void {
+        const nonGhostItems = this.#getNonGhostItems();
         const itemsToAddToGui: TPill[] = nonGhostItems.map(item => (
-            this.createItemComponent(item, false)
+            this.#createItemComponent(item, false)
         ));
 
         if (this.isPotentialDndItems()) {
-            const dndItems = this.potentialDndItems.map(item => (
-                this.createItemComponent(item, true)
+            const dndItems = this.#potentialDndItems.map(item => (
+                this.#createItemComponent(item, true)
             ));
-            if (this.insertIndex >= itemsToAddToGui.length) {
+            if (this.#insertIndex >= itemsToAddToGui.length) {
                 itemsToAddToGui.push(...dndItems);
             } else {
-                itemsToAddToGui.splice(this.insertIndex, 0, ...dndItems);
+                itemsToAddToGui.splice(this.#insertIndex, 0, ...dndItems);
             }
         }
 
-        this.appendChild(this.ePillDropList);
+        this.appendChild(this.#ePillDropList);
 
         itemsToAddToGui.forEach((itemComponent, index) => {
             if (index > 0) {
-                this.addArrow(this.ePillDropList);
+                this.#addArrow(this.#ePillDropList);
             }
 
-            this.ePillDropList.appendChild(itemComponent.getGui());
+            this.#ePillDropList.appendChild(itemComponent.getGui());
         });
 
-        this.addAriaLabelsToComponents();
+        this.#addAriaLabelsToComponents();
     }
 
-    private addAriaLabelsToComponents(): void {
-        this.childPillComponents.forEach((comp, idx) => {
+    #addAriaLabelsToComponents(): void {
+        this.#childPillComponents.forEach((comp, idx) => {
             const eGui = comp.getGui();
             setAriaPosInSet(eGui, idx + 1);
-            setAriaSetSize(eGui, this.childPillComponents.length);
+            setAriaSetSize(eGui, this.#childPillComponents.length);
         });
     }
 
-    private createItemComponent(item: TItem, ghost: boolean): TPill {
-        const itemComponent = this.createPillComponent(item, this.dropTarget, ghost, this.horizontal);
-        itemComponent.addEventListener(PillDragComp.EVENT_COLUMN_REMOVE, this.removeItems.bind(this, [item]));
+    #createItemComponent(item: TItem, ghost: boolean): TPill {
+        const itemComponent = this.createPillComponent(item, this.#dropTarget, ghost, this.horizontal);
+        itemComponent.addEventListener(PillDragComp.EVENT_COLUMN_REMOVE, this.#removeItems.bind(this, [item]));
 
         this.context.createBean(itemComponent);
-        this.guiDestroyFunctions.push(() => this.destroyBean(itemComponent));
+        this.#guiDestroyFunctions.push(() => this.destroyBean(itemComponent));
 
         if (!ghost) {
-            this.childPillComponents.push(itemComponent);
+            this.#childPillComponents.push(itemComponent);
         }
 
         return itemComponent;
     }
 
-    private addIconAndTitleToGui(): void {
-        const { title, icon: eGroupIcon } = this.params;
+    #addIconAndTitleToGui(): void {
+        const { title, icon: eGroupIcon } = this.#params;
         if (!title || !eGroupIcon) { 
             return;
         }
         const eTitleBar = document.createElement('div');
         setAriaHidden(eTitleBar, true);
-        this.addElementClasses(eTitleBar, 'title-bar');
-        this.addElementClasses(eGroupIcon, 'icon');
-        this.addOrRemoveCssClass('ag-column-drop-empty', this.isExistingItemsEmpty());
+        this.#addElementClasses(eTitleBar, 'title-bar');
+        this.#addElementClasses(eGroupIcon, 'icon');
+        this.addOrRemoveCssClass('ag-column-drop-empty', this.#isExistingItemsEmpty());
 
         eTitleBar.appendChild(eGroupIcon);
 
         if (!this.horizontal) {
             const eTitle = document.createElement('span');
-            this.addElementClasses(eTitle, 'title');
+            this.#addElementClasses(eTitle, 'title');
             eTitle.innerHTML = title;
 
             eTitleBar.appendChild(eTitle);
@@ -509,29 +509,29 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.appendChild(eTitleBar);
     }
 
-    private isExistingItemsEmpty(): boolean {
+    #isExistingItemsEmpty(): boolean {
         return this.getExistingItems().length === 0;
     }
 
-    private addEmptyMessageToGui(): void {
-        const { emptyMessage } =  this.params;
-        if (!emptyMessage || !this.isExistingItemsEmpty() || this.isPotentialDndItems()) {
+    #addEmptyMessageToGui(): void {
+        const { emptyMessage } =  this.#params;
+        if (!emptyMessage || !this.#isExistingItemsEmpty() || this.isPotentialDndItems()) {
             return;
         }
 
         const eMessage = document.createElement('span');
         eMessage.innerHTML = emptyMessage;
-        this.addElementClasses(eMessage, 'empty-message');
-        this.ePillDropList.appendChild(eMessage);
+        this.#addElementClasses(eMessage, 'empty-message');
+        this.#ePillDropList.appendChild(eMessage);
     }
 
-    private addArrow(eParent: HTMLElement): void {
+    #addArrow(eParent: HTMLElement): void {
         // only add the arrows if the layout is horizontal
         if (this.horizontal) {
             // for RTL it's a left arrow, otherwise it's a right arrow
             const enableRtl = this.gos.get('enableRtl');
             const icon = createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.gos)!;
-            this.addElementClasses(icon, 'cell-separator');
+            this.#addElementClasses(icon, 'cell-separator');
             eParent.appendChild(icon);
         }
     }

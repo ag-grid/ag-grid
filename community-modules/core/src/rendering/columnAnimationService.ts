@@ -8,31 +8,31 @@ export class ColumnAnimationService extends BeanStub {
 
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
-    private gridBodyCtrl: GridBodyCtrl;
+    #gridBodyCtrl: GridBodyCtrl;
 
-    private executeNextFuncs: Function[] = [];
-    private executeLaterFuncs: Function[] = [];
+    #executeNextFuncs: Function[] = [];
+    #executeLaterFuncs: Function[] = [];
 
-    private active = false;
-    private suppressAnimation = false;
+    #active = false;
+    #suppressAnimation = false;
 
-    private animationThreadCount = 0;
+    #animationThreadCount = 0;
 
     @PostConstruct
     private postConstruct(): void {
-        this.ctrlsService.whenReady(p => this.gridBodyCtrl = p.gridBodyCtrl);
+        this.ctrlsService.whenReady(p => this.#gridBodyCtrl = p.gridBodyCtrl);
     }
 
     public isActive(): boolean {
-        return this.active && !this.suppressAnimation;
+        return this.#active && !this.#suppressAnimation;
     }
 
     public setSuppressAnimation(suppress: boolean): void {
-        this.suppressAnimation = suppress;
+        this.#suppressAnimation = suppress;
     }
 
     public start(): void {
-        if (this.active) { return; }
+        if (this.#active) { return; }
 
         if (this.gos.get('suppressColumnMoveAnimation')) { return; }
 
@@ -41,49 +41,49 @@ export class ColumnAnimationService extends BeanStub {
         // columns that actually get their coordinates updated)
         if (this.gos.get('enableRtl')) { return; }
 
-        this.ensureAnimationCssClassPresent();
+        this.#ensureAnimationCssClassPresent();
 
-        this.active = true;
+        this.#active = true;
     }
 
     public finish(): void {
-        if (!this.active) { return; }
-        this.flush(() => { this.active = false });
+        if (!this.#active) { return; }
+        this.#flush(() => { this.#active = false });
     }
 
     public executeNextVMTurn(func: Function): void {
-        if (this.active) {
-            this.executeNextFuncs.push(func);
+        if (this.#active) {
+            this.#executeNextFuncs.push(func);
         } else {
             func();
         }
     }
 
     public executeLaterVMTurn(func: Function): void {
-        if (this.active) {
-            this.executeLaterFuncs.push(func);
+        if (this.#active) {
+            this.#executeLaterFuncs.push(func);
         } else {
             func();
         }
     }
 
-    private ensureAnimationCssClassPresent(): void {
+    #ensureAnimationCssClassPresent(): void {
         // up the count, so we can tell if someone else has updated the count
         // by the time the 'wait' func executes
-        this.animationThreadCount++;
-        const animationThreadCountCopy = this.animationThreadCount;
-        this.gridBodyCtrl.setColumnMovingCss(true);
+        this.#animationThreadCount++;
+        const animationThreadCountCopy = this.#animationThreadCount;
+        this.#gridBodyCtrl.setColumnMovingCss(true);
 
-        this.executeLaterFuncs.push(() => {
+        this.#executeLaterFuncs.push(() => {
             // only remove the class if this thread was the last one to update it
-            if (this.animationThreadCount === animationThreadCountCopy) {
-                this.gridBodyCtrl.setColumnMovingCss(false);
+            if (this.#animationThreadCount === animationThreadCountCopy) {
+                this.#gridBodyCtrl.setColumnMovingCss(false);
             }
         });
     }
 
-    private flush(callback: () => void): void {
-        if (this.executeNextFuncs.length === 0 && this.executeLaterFuncs.length === 0) { 
+    #flush(callback: () => void): void {
+        if (this.#executeNextFuncs.length === 0 && this.#executeLaterFuncs.length === 0) { 
             callback();
             return; 
         }
@@ -96,9 +96,9 @@ export class ColumnAnimationService extends BeanStub {
         }
 
         this.getFrameworkOverrides().wrapIncoming(() => {
-            window.setTimeout(() => runFuncs(this.executeNextFuncs), 0);
+            window.setTimeout(() => runFuncs(this.#executeNextFuncs), 0);
             window.setTimeout(() => {
-                runFuncs(this.executeLaterFuncs);
+                runFuncs(this.#executeLaterFuncs);
                 callback();
             }, 200);
         });

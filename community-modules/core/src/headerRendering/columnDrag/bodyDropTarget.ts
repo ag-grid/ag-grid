@@ -21,42 +21,42 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
-    private pinned: ColumnPinnedType;
+    #pinned: ColumnPinnedType;
     // public because it's part of the DropTarget interface
-    private eContainer: HTMLElement;
+    #eContainer: HTMLElement;
     // public because it's part of the DropTarget interface
-    private eSecondaryContainers: HTMLElement[][];
-    private currentDropListener: DropListener;
+    #eSecondaryContainers: HTMLElement[][];
+    #currentDropListener: DropListener;
 
-    private moveColumnFeature: MoveColumnFeature;
-    private bodyDropPivotTarget: BodyDropPivotTarget;
+    #moveColumnFeature: MoveColumnFeature;
+    #bodyDropPivotTarget: BodyDropPivotTarget;
 
     constructor(pinned: ColumnPinnedType, eContainer: HTMLElement) {
         super();
-        this.pinned = pinned;
-        this.eContainer = eContainer;
+        this.#pinned = pinned;
+        this.#eContainer = eContainer;
     }
 
     @PostConstruct
     private postConstruct(): void {
         this.ctrlsService.whenReady(p => {
-            switch (this.pinned) {
+            switch (this.#pinned) {
                 case 'left':
-                    this.eSecondaryContainers = [
+                    this.#eSecondaryContainers = [
                         [p.gridBodyCtrl.getBodyViewportElement(), p.left.getContainerElement()],
                         [p.bottomLeft.getContainerElement()],
                         [p.topLeft.getContainerElement()]
                     ];
                     break;
                 case 'right':
-                    this.eSecondaryContainers = [
+                    this.#eSecondaryContainers = [
                         [p.gridBodyCtrl.getBodyViewportElement(), p.right.getContainerElement()],
                         [p.bottomRight.getContainerElement()],
                         [p.topRight.getContainerElement()]
                     ];
                     break;
                 default:
-                    this.eSecondaryContainers = [
+                    this.#eSecondaryContainers = [
                         [p.gridBodyCtrl.getBodyViewportElement(), p.center.getViewportElement()],
                         [p.bottomCenter.getViewportElement()],
                         [p.topCenter.getViewportElement()]
@@ -72,29 +72,29 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     }
 
     public getSecondaryContainers(): HTMLElement[][] {
-        return this.eSecondaryContainers;
+        return this.#eSecondaryContainers;
     }
 
     public getContainer(): HTMLElement {
-        return this.eContainer;
+        return this.#eContainer;
     }
 
     @PostConstruct
     private init(): void {
-        this.moveColumnFeature = this.createManagedBean(new MoveColumnFeature(this.pinned));
-        this.bodyDropPivotTarget = this.createManagedBean(new BodyDropPivotTarget(this.pinned));
+        this.#moveColumnFeature = this.createManagedBean(new MoveColumnFeature(this.#pinned));
+        this.#bodyDropPivotTarget = this.createManagedBean(new BodyDropPivotTarget(this.#pinned));
 
         this.dragAndDropService.addDropTarget(this);
     }
 
     public getIconName(): string | null {
-        return this.currentDropListener.getIconName();
+        return this.#currentDropListener.getIconName();
     }
 
     // we want to use the bodyPivotTarget if the user is dragging columns in from the toolPanel
     // and we are in pivot mode, as it has to logic to set pivot/value/group on the columns when
     // dropped into the grid's body.
-    private isDropColumnInPivotMode(draggingEvent: DraggingEvent): boolean {
+    #isDropColumnInPivotMode(draggingEvent: DraggingEvent): boolean {
         // in pivot mode, then if moving a column (ie didn't come from toolpanel) then it's
         // a standard column move, however if it came from the toolpanel, then we are introducing
         // dimensions or values to the grid
@@ -105,20 +105,20 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         // we pick the drop listener depending on whether we are in pivot mode are not. if we are
         // in pivot mode, then dropping cols changes the row group, pivot, value stats. otherwise
         // we change visibility state and position.
-        this.currentDropListener = this.isDropColumnInPivotMode(draggingEvent) ? this.bodyDropPivotTarget : this.moveColumnFeature;
-        this.currentDropListener.onDragEnter(draggingEvent);
+        this.#currentDropListener = this.#isDropColumnInPivotMode(draggingEvent) ? this.#bodyDropPivotTarget : this.#moveColumnFeature;
+        this.#currentDropListener.onDragEnter(draggingEvent);
     }
 
     public onDragLeave(params: DraggingEvent): void {
-        this.currentDropListener.onDragLeave(params);
+        this.#currentDropListener.onDragLeave(params);
     }
 
     public onDragging(params: DraggingEvent): void {
-        this.currentDropListener.onDragging(params);
+        this.#currentDropListener.onDragging(params);
     }
 
     public onDragStop(params: DraggingEvent): void {
-        this.currentDropListener.onDragStop(params);
+        this.#currentDropListener.onDragStop(params);
     }
 
 }

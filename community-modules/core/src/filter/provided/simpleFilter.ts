@@ -217,15 +217,15 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     protected readonly eJoinOperatorsAnd: AgRadioButton[] = [];
     protected readonly eJoinOperatorsOr: AgRadioButton[] = [];
     protected readonly eConditionBodies: HTMLElement[] = [];
-    private readonly listener = () => this.onUiChanged();
+    readonly #listener = () => this.onUiChanged();
 
-    private maxNumConditions: number;
-    private numAlwaysVisibleConditions: number;
-    private defaultJoinOperator: JoinOperator;
-    private filterPlaceholder: SimpleFilterParams['filterPlaceholder'];
-    private lastUiCompletePosition: number | null = null;
-    private joinOperatorId = 0;
-    private filterListOptions: ListOption[];
+    #maxNumConditions: number;
+    #numAlwaysVisibleConditions: number;
+    #defaultJoinOperator: JoinOperator;
+    #filterPlaceholder: SimpleFilterParams['filterPlaceholder'];
+    #lastUiCompletePosition: number | null = null;
+    #joinOperatorId = 0;
+    #filterListOptions: ListOption[];
 
     protected optionsFactory: OptionsFactory;
     protected abstract getDefaultFilterOptions(): string[];
@@ -279,12 +279,12 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     // floating filter calls this when user applies filter from floating filter
     public onFloatingFilterChanged(type: string | null | undefined, value: V | null): void {
-        this.setTypeFromFloatingFilter(type);
-        this.setValueFromFloatingFilter(value);
+        this.#setTypeFromFloatingFilter(type);
+        this.#setValueFromFloatingFilter(value);
         this.onUiChanged(true);
     }
 
-    private setTypeFromFloatingFilter(type?: string | null): void {
+    #setTypeFromFloatingFilter(type?: string | null): void {
         this.eTypes.forEach((eType, position) => {
             if (position === 0) {
                 eType.setValue(type, true);
@@ -295,12 +295,12 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     public getModelFromUi(): M | ICombinedSimpleModel<M> | null {
-        const conditions = this.getUiCompleteConditions();
+        const conditions = this.#getUiCompleteConditions();
         if (conditions.length === 0) {
             return null;
         }
 
-        if (this.maxNumConditions > 1 && conditions.length > 1) {
+        if (this.#maxNumConditions > 1 && conditions.length > 1) {
             return {
                 filterType: this.getFilterType(),
                 operator: this.getJoinOperator(),
@@ -323,7 +323,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     protected getJoinOperator(): JoinOperator {
         if (this.eJoinOperatorsOr.length === 0) {
-            return this.defaultJoinOperator;
+            return this.#defaultJoinOperator;
         }
         return this.eJoinOperatorsOr[0].getValue() === true ? 'OR' : 'AND';
     }
@@ -360,7 +360,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return res;
     }
 
-    private shouldRefresh(newParams: SimpleFilterParams): boolean {
+    #shouldRefresh(newParams: SimpleFilterParams): boolean {
         const model = this.getModel();
         const conditions: ISimpleFilterModel[] | null = model ? ((<any>model).conditions ?? [model]) : null;
 
@@ -384,7 +384,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     refresh(newParams: SimpleFilterParams): boolean {
-        if (!this.shouldRefresh(newParams)) {
+        if (!this.#shouldRefresh(newParams)) {
             return false;
         }
 
@@ -394,8 +394,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         }
 
         this.setParams(newParams);
-        this.removeConditionsAndOperators(0);
-        this.createOption();
+        this.#removeConditionsAndOperators(0);
+        this.#createOption();
         this.setModel(this.getModel());
 
         return true;
@@ -413,14 +413,14 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
                 ];
             }
 
-            const numConditions = this.validateAndUpdateConditions(combinedModel.conditions);
-            const numPrevConditions = this.getNumConditions();
+            const numConditions = this.#validateAndUpdateConditions(combinedModel.conditions);
+            const numPrevConditions = this.#getNumConditions();
             if (numConditions < numPrevConditions) {
-                this.removeConditionsAndOperators(numConditions);
+                this.#removeConditionsAndOperators(numConditions);
             } else if (numConditions > numPrevConditions) {
                 for (let i = numPrevConditions; i < numConditions; i++) {
-                    this.createJoinOperatorPanel();
-                    this.createOption();
+                    this.#createJoinOperatorPanel();
+                    this.#createOption();
                 }
             }
 
@@ -430,34 +430,34 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
             combinedModel.conditions.forEach((condition, position) => {
                 this.eTypes[position].setValue(condition.type, true);
-                this.setConditionIntoUi(condition, position);
+                this.#setConditionIntoUi(condition, position);
             });
         } else {
             const simpleModel = model as M;
 
-            if (this.getNumConditions() > 1) {
-                this.removeConditionsAndOperators(1);
+            if (this.#getNumConditions() > 1) {
+                this.#removeConditionsAndOperators(1);
             }
 
             this.eTypes[0].setValue(simpleModel.type, true);
-            this.setConditionIntoUi(simpleModel, 0);
+            this.#setConditionIntoUi(simpleModel, 0);
         }
 
-        this.lastUiCompletePosition = this.getNumConditions() - 1;
+        this.#lastUiCompletePosition = this.#getNumConditions() - 1;
 
-        this.createMissingConditionsAndOperators();
+        this.#createMissingConditionsAndOperators();
 
         this.onUiChanged();
 
         return AgPromise.resolve();
     }
 
-    private validateAndUpdateConditions(conditions: M[]): number {
+    #validateAndUpdateConditions(conditions: M[]): number {
         let numConditions = conditions.length;
-        if (numConditions > this.maxNumConditions) {
-            conditions.splice(this.maxNumConditions);
+        if (numConditions > this.#maxNumConditions) {
+            conditions.splice(this.#maxNumConditions);
             warnOnce('Filter Model contains more conditions than "filterParams.maxNumConditions". Additional conditions have been ignored.');
-            numConditions = this.maxNumConditions;
+            numConditions = this.#maxNumConditions;
         }
         return numConditions;
     }
@@ -486,17 +486,17 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     protected setParams(params: SimpleFilterParams): void {
         super.setParams(params);
 
-        this.setNumConditions(params);
+        this.#setNumConditions(params);
 
-        this.defaultJoinOperator = this.getDefaultJoinOperator(params.defaultJoinOperator);
-        this.filterPlaceholder = params.filterPlaceholder;
+        this.#defaultJoinOperator = this.#getDefaultJoinOperator(params.defaultJoinOperator);
+        this.#filterPlaceholder = params.filterPlaceholder;
 
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params, this.getDefaultFilterOptions());
-        this.createFilterListOptions();
+        this.#createFilterListOptions();
 
-        this.createOption();
-        this.createMissingConditionsAndOperators();
+        this.#createOption();
+        this.#createMissingConditionsAndOperators();
 
         if (this.isReadOnly()) {
             // only do this when read only (so no other focusable elements), otherwise the tab order breaks
@@ -505,30 +505,30 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         }
     }
 
-    private setNumConditions(params: SimpleFilterParams): void {
+    #setNumConditions(params: SimpleFilterParams): void {
         if (params.suppressAndOrCondition != null) {
             warnOnce('Since v29.2 "filterParams.suppressAndOrCondition" is deprecated. Use "filterParams.maxNumConditions = 1" instead.');
         }
         if (params.alwaysShowBothConditions != null) {
             warnOnce('Since v29.2 "filterParams.alwaysShowBothConditions" is deprecated. Use "filterParams.numAlwaysVisibleConditions = 2" instead.');
         }
-        this.maxNumConditions = params.maxNumConditions ?? (params.suppressAndOrCondition ? 1 : 2);
-        if (this.maxNumConditions < 1) {
+        this.#maxNumConditions = params.maxNumConditions ?? (params.suppressAndOrCondition ? 1 : 2);
+        if (this.#maxNumConditions < 1) {
             warnOnce('"filterParams.maxNumConditions" must be greater than or equal to zero.');
-            this.maxNumConditions = 1;
+            this.#maxNumConditions = 1;
         }
-        this.numAlwaysVisibleConditions = params.numAlwaysVisibleConditions ?? (params.alwaysShowBothConditions ? 2 : 1);
-        if (this.numAlwaysVisibleConditions < 1) {
+        this.#numAlwaysVisibleConditions = params.numAlwaysVisibleConditions ?? (params.alwaysShowBothConditions ? 2 : 1);
+        if (this.#numAlwaysVisibleConditions < 1) {
             warnOnce('"filterParams.numAlwaysVisibleConditions" must be greater than or equal to zero.');
-            this.numAlwaysVisibleConditions = 1;
+            this.#numAlwaysVisibleConditions = 1;
         }
-        if (this.numAlwaysVisibleConditions > this.maxNumConditions) {
+        if (this.#numAlwaysVisibleConditions > this.#maxNumConditions) {
             warnOnce('"filterParams.numAlwaysVisibleConditions" cannot be greater than "filterParams.maxNumConditions".');
-            this.numAlwaysVisibleConditions = this.maxNumConditions;
+            this.#numAlwaysVisibleConditions = this.#maxNumConditions;
         }
     }
 
-    private createOption(): void {
+    #createOption(): void {
         const eType = this.createManagedBean(new AgSelect());
         this.eTypes.push(eType);
         eType.addCssClass('ag-filter-select');
@@ -538,35 +538,39 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         this.eConditionBodies.push(eConditionBody);
         this.eFilterBody.appendChild(eConditionBody);
 
-        this.putOptionsIntoDropdown(eType);
-        this.resetType(eType);
-        const position = this.getNumConditions() - 1;
-        this.forEachPositionInput(position, (element) => this.resetInput(element));
-        this.addChangedListeners(eType, position);
+        this.#putOptionsIntoDropdown(eType);
+        this.#resetType(eType);
+        const position = this.#getNumConditions() - 1;
+        this.forEachPositionInput(position, (element) => this.#resetInput(element));
+        this.#addChangedListeners(eType, position);
     }
 
-    private createJoinOperatorPanel(): void {
+    #createJoinOperatorPanel(): void {
         const eJoinOperatorPanel = document.createElement('div');
         this.eJoinOperatorPanels.push(eJoinOperatorPanel);
         eJoinOperatorPanel.classList.add('ag-filter-condition');
 
-        const eJoinOperatorAnd =  this.createJoinOperator(this.eJoinOperatorsAnd, eJoinOperatorPanel, 'and');
-        const eJoinOperatorOr = this.createJoinOperator(this.eJoinOperatorsOr, eJoinOperatorPanel, 'or');
+        const eJoinOperatorAnd =  this.#createJoinOperator(this.eJoinOperatorsAnd, eJoinOperatorPanel, 'and');
+        const eJoinOperatorOr = this.#createJoinOperator(this.eJoinOperatorsOr, eJoinOperatorPanel, 'or');
 
         this.eFilterBody.appendChild(eJoinOperatorPanel);
 
         const index = this.eJoinOperatorPanels.length - 1;
-        const uniqueGroupId = this.joinOperatorId++;
-        this.resetJoinOperatorAnd(eJoinOperatorAnd, index, uniqueGroupId);
-        this.resetJoinOperatorOr(eJoinOperatorOr, index, uniqueGroupId);
+        const uniqueGroupId = this.#joinOperatorId++;
+        this.#resetJoinOperatorAnd(eJoinOperatorAnd, index, uniqueGroupId);
+        this.#resetJoinOperatorOr(eJoinOperatorOr, index, uniqueGroupId);
 
         if (!this.isReadOnly()) {
-            eJoinOperatorAnd.onValueChange(this.listener);
-            eJoinOperatorOr.onValueChange(this.listener);
+            eJoinOperatorAnd.onValueChange(this.#listener);
+            eJoinOperatorOr.onValueChange(this.#listener);
         }
     }
 
-    private createJoinOperator(eJoinOperators: AgRadioButton[], eJoinOperatorPanel: HTMLElement, andOr: string): AgRadioButton {
+    #createJoinOperator(
+        eJoinOperators: AgRadioButton[],
+        eJoinOperatorPanel: HTMLElement,
+        andOr: string
+    ): AgRadioButton {
         const eJoinOperator = this.createManagedBean(new AgRadioButton());
         eJoinOperators.push(eJoinOperator);
         eJoinOperator.addCssClass('ag-filter-condition-operator');
@@ -575,35 +579,35 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return eJoinOperator;
     }
 
-    private getDefaultJoinOperator(defaultJoinOperator?: JoinOperator): JoinOperator {
+    #getDefaultJoinOperator(defaultJoinOperator?: JoinOperator): JoinOperator {
         return defaultJoinOperator === 'AND' || defaultJoinOperator === 'OR' ? defaultJoinOperator : 'AND';
     }
 
-    private createFilterListOptions(): void {
+    #createFilterListOptions(): void {
         const filterOptions = this.optionsFactory.getFilterOptions();
 
-        this.filterListOptions = filterOptions.map(option => 
+        this.#filterListOptions = filterOptions.map(option => 
             typeof option === 'string' ?
-                this.createBoilerplateListOption(option) :
-                this.createCustomListOption(option)
+                this.#createBoilerplateListOption(option) :
+                this.#createCustomListOption(option)
         );
     }
 
-    private putOptionsIntoDropdown(eType: AgSelect): void {
+    #putOptionsIntoDropdown(eType: AgSelect): void {
         // Add specified options to condition drop-down.
-        this.filterListOptions.forEach(listOption => {
+        this.#filterListOptions.forEach(listOption => {
             eType.addOption(listOption);
         });
 
         // Make drop-downs read-only if there is only one option.
-        eType.setDisabled(this.filterListOptions.length <= 1);
+        eType.setDisabled(this.#filterListOptions.length <= 1);
     }
 
-    private createBoilerplateListOption(option: string): ListOption {
+    #createBoilerplateListOption(option: string): ListOption {
         return { value: option, text: this.translate(option as keyof typeof FILTER_LOCALE_TEXT) };
     }
 
-    private createCustomListOption(option: IFilterOptionDef): ListOption {
+    #createCustomListOption(option: IFilterOptionDef): ListOption {
         const { displayKey } = option;
         const customOption = this.optionsFactory.getCustomOption(option.displayKey);
         return {
@@ -618,7 +622,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
      * @deprecated As of v29.2 filters can have more than two conditions. Check `colDef.filterParams.maxNumConditions` instead.
      */
     public isAllowTwoConditions(): boolean {
-        return this.maxNumConditions >= 2;
+        return this.#maxNumConditions >= 2;
     }
 
     protected createBodyTemplate(): string {
@@ -632,47 +636,47 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     protected updateUiVisibility(): void {
         const joinOperator = this.getJoinOperator();
-        this.updateNumConditions();
+        this.#updateNumConditions();
 
         // from here, the number of elements in all the collections is correct, so can just update the values/statuses
-        this.updateConditionStatusesAndValues(this.lastUiCompletePosition!, joinOperator);
+        this.#updateConditionStatusesAndValues(this.#lastUiCompletePosition!, joinOperator);
     }
 
-    private updateNumConditions(): void {
+    #updateNumConditions(): void {
         // Collection sizes are already correct if updated via API, so only need to handle UI updates here
         let lastUiCompletePosition = -1;
         let areAllConditionsUiComplete = true;
-        for (let position = 0; position < this.getNumConditions(); position++) {
+        for (let position = 0; position < this.#getNumConditions(); position++) {
             if (this.isConditionUiComplete(position)) {
                 lastUiCompletePosition = position
             } else {
                 areAllConditionsUiComplete = false;
             }
         }
-        if (this.shouldAddNewConditionAtEnd(areAllConditionsUiComplete)) {
-            this.createJoinOperatorPanel();
-            this.createOption();
+        if (this.#shouldAddNewConditionAtEnd(areAllConditionsUiComplete)) {
+            this.#createJoinOperatorPanel();
+            this.#createOption();
         } else {
-            const activePosition = this.lastUiCompletePosition ?? this.getNumConditions() - 2;
+            const activePosition = this.#lastUiCompletePosition ?? this.#getNumConditions() - 2;
             if (lastUiCompletePosition < activePosition) {
                 // remove any incomplete conditions at the end, excluding the active position
-                this.removeConditionsAndOperators(activePosition + 1);
+                this.#removeConditionsAndOperators(activePosition + 1);
                 const removeStartPosition = lastUiCompletePosition + 1;
                 const numConditionsToRemove = activePosition - removeStartPosition;
                 if (numConditionsToRemove > 0) {
-                    this.removeConditionsAndOperators(removeStartPosition, numConditionsToRemove);
+                    this.#removeConditionsAndOperators(removeStartPosition, numConditionsToRemove);
                 }
-                this.createMissingConditionsAndOperators();
+                this.#createMissingConditionsAndOperators();
             }
         }
-        this.lastUiCompletePosition = lastUiCompletePosition;
+        this.#lastUiCompletePosition = lastUiCompletePosition;
     }
 
-    private updateConditionStatusesAndValues(lastUiCompletePosition: number, joinOperator?: JoinOperator): void {
+    #updateConditionStatusesAndValues(lastUiCompletePosition: number, joinOperator?: JoinOperator): void {
         this.eTypes.forEach((eType, position) => {
-            const disabled = this.isConditionDisabled(position, lastUiCompletePosition);
+            const disabled = this.#isConditionDisabled(position, lastUiCompletePosition);
 
-            eType.setDisabled(disabled || this.filterListOptions.length <= 1);
+            eType.setDisabled(disabled || this.#filterListOptions.length <= 1);
             if (position === 1) {
                 setDisabled(this.eJoinOperatorPanels[0], disabled);
                 this.eJoinOperatorsAnd[0].setDisabled(disabled);
@@ -681,7 +685,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         });
 
         this.eConditionBodies.forEach((element, index) => {
-            setDisplayed(element, this.isConditionBodyVisible(index));
+            setDisplayed(element, this.#isConditionBodyVisible(index));
         });
 
         const orChecked = (joinOperator ?? this.getJoinOperator()) === 'OR';
@@ -694,30 +698,30 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
         this.forEachInput((element, index, position, numberOfInputs) => {
             this.setElementDisplayed(element, index < numberOfInputs);
-            this.setElementDisabled(element, this.isConditionDisabled(position, lastUiCompletePosition));
+            this.setElementDisabled(element, this.#isConditionDisabled(position, lastUiCompletePosition));
         });
 
         this.resetPlaceholder();
     }
 
-    private shouldAddNewConditionAtEnd(areAllConditionsUiComplete: boolean): boolean {
-        return areAllConditionsUiComplete && this.getNumConditions() < this.maxNumConditions && !this.isReadOnly();
+    #shouldAddNewConditionAtEnd(areAllConditionsUiComplete: boolean): boolean {
+        return areAllConditionsUiComplete && this.#getNumConditions() < this.#maxNumConditions && !this.isReadOnly();
     }
 
-    private removeConditionsAndOperators(startPosition: number, deleteCount?: number): void {
-        if (startPosition >= this.getNumConditions()) {
+    #removeConditionsAndOperators(startPosition: number, deleteCount?: number): void {
+        if (startPosition >= this.#getNumConditions()) {
             return;
         }
         this.removeComponents(this.eTypes, startPosition, deleteCount);
-        this.removeElements(this.eConditionBodies, startPosition, deleteCount);
+        this.#removeElements(this.eConditionBodies, startPosition, deleteCount);
         this.removeValueElements(startPosition, deleteCount);
         const joinOperatorIndex = Math.max(startPosition - 1, 0);
-        this.removeElements(this.eJoinOperatorPanels, joinOperatorIndex, deleteCount);
+        this.#removeElements(this.eJoinOperatorPanels, joinOperatorIndex, deleteCount);
         this.removeComponents(this.eJoinOperatorsAnd, joinOperatorIndex, deleteCount);
         this.removeComponents(this.eJoinOperatorsOr, joinOperatorIndex, deleteCount);
     }
 
-    private removeElements(elements: HTMLElement[], startPosition: number, deleteCount?: number): void {
+    #removeElements(elements: HTMLElement[], startPosition: number, deleteCount?: number): void {
         const removedElements = this.removeItems(elements, startPosition, deleteCount);
         removedElements.forEach(element => removeFromParent(element));
     }
@@ -768,17 +772,17 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         let updatedLastUiCompletePosition = -1;
         let conditionsRemoved = false;
         const joinOperator = this.getJoinOperator();
-        for (let position = this.getNumConditions() - 1; position >= 0; position--) {
+        for (let position = this.#getNumConditions() - 1; position >= 0; position--) {
             if (this.isConditionUiComplete(position)) {
                 if (lastUiCompletePosition === -1) {
                     lastUiCompletePosition = position;
                     updatedLastUiCompletePosition = position;
                 }
             } else {
-                const shouldRemovePositionAtEnd = position >= this.numAlwaysVisibleConditions && !this.isConditionUiComplete(position - 1);
+                const shouldRemovePositionAtEnd = position >= this.#numAlwaysVisibleConditions && !this.isConditionUiComplete(position - 1);
                 const positionBeforeLastUiCompletePosition = position < lastUiCompletePosition;
                 if (shouldRemovePositionAtEnd || positionBeforeLastUiCompletePosition) {
-                    this.removeConditionsAndOperators(position, 1);
+                    this.#removeConditionsAndOperators(position, 1);
                     conditionsRemoved = true;
                     if (positionBeforeLastUiCompletePosition) {
                         updatedLastUiCompletePosition--;
@@ -787,29 +791,29 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             }
         }
         let shouldUpdateConditionStatusesAndValues = false;
-        if (this.getNumConditions() < this.numAlwaysVisibleConditions) {
+        if (this.#getNumConditions() < this.#numAlwaysVisibleConditions) {
             // if conditions have been removed, need to recreate new ones at the end up to the number required
-            this.createMissingConditionsAndOperators();
+            this.#createMissingConditionsAndOperators();
             shouldUpdateConditionStatusesAndValues = true;
         }
-        if (this.shouldAddNewConditionAtEnd(updatedLastUiCompletePosition === this.getNumConditions() - 1)) {
-            this.createJoinOperatorPanel();
-            this.createOption();
+        if (this.#shouldAddNewConditionAtEnd(updatedLastUiCompletePosition === this.#getNumConditions() - 1)) {
+            this.#createJoinOperatorPanel();
+            this.#createOption();
             shouldUpdateConditionStatusesAndValues = true;
         }
         if (shouldUpdateConditionStatusesAndValues) {
-            this.updateConditionStatusesAndValues(updatedLastUiCompletePosition, joinOperator);
+            this.#updateConditionStatusesAndValues(updatedLastUiCompletePosition, joinOperator);
         }
         if (conditionsRemoved) {
-            this.updateJoinOperatorsDisabled();
+            this.#updateJoinOperatorsDisabled();
         }
-        this.lastUiCompletePosition = updatedLastUiCompletePosition;
+        this.#lastUiCompletePosition = updatedLastUiCompletePosition;
     }
 
-    private getPlaceholderText(defaultPlaceholder: keyof typeof FILTER_LOCALE_TEXT, position: number): string {
+    #getPlaceholderText(defaultPlaceholder: keyof typeof FILTER_LOCALE_TEXT, position: number): string {
         let placeholder = this.translate(defaultPlaceholder);
-        if (isFunction(this.filterPlaceholder)) {
-            const filterPlaceholderFn = this.filterPlaceholder as FilterPlaceholderFunction;
+        if (isFunction(this.#filterPlaceholder)) {
+            const filterPlaceholderFn = this.#filterPlaceholder as FilterPlaceholderFunction;
             const filterOptionKey = this.eTypes[position].getValue() as ISimpleFilterModelType;
             const filterOption = this.translate(filterOptionKey);
             placeholder = filterPlaceholderFn({
@@ -817,8 +821,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
                 filterOption,
                 placeholder
             });
-        } else if (typeof this.filterPlaceholder === 'string') {
-            placeholder = this.filterPlaceholder;
+        } else if (typeof this.#filterPlaceholder === 'string') {
+            placeholder = this.#filterPlaceholder;
         }
 
         return placeholder;
@@ -842,7 +846,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
                 index === 0 ? globalTranslate('ariaFilterValue', 'Filter Value') :
                 globalTranslate('ariaFilterToValue', 'Filter to Value');
 
-            element.setInputPlaceholder(this.getPlaceholderText(placeholder, position));
+            element.setInputPlaceholder(this.#getPlaceholderText(placeholder, position));
             element.setInputAriaLabel(ariaLabel);
         });
     }
@@ -873,16 +877,20 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     protected forEachInput(cb: (element: E, index: number, position: number, numberOfInputs: number) => void): void {
         this.getConditionTypes().forEach((type, position) => {
-            this.forEachPositionTypeInput(position, type, cb);
+            this.#forEachPositionTypeInput(position, type, cb);
         });
     }
 
     protected forEachPositionInput(position: number, cb: (element: E, index: number, position: number, numberOfInputs: number) => void): void {
         const type = this.getConditionType(position);
-        this.forEachPositionTypeInput(position, type, cb);
+        this.#forEachPositionTypeInput(position, type, cb);
     }
 
-    private forEachPositionTypeInput(position: number, type: ISimpleFilterModelType | null, cb: (element: E, index: number, position: number, numberOfInputs: number) => void): void {
+    #forEachPositionTypeInput(
+        position: number,
+        type: ISimpleFilterModelType | null,
+        cb: (element: E, index: number, position: number, numberOfInputs: number) => void
+    ): void {
         const numberOfInputs = this.getNumberOfInputs(type);
         const inputs = this.getInputs(position);
         for (let index = 0; index < inputs.length; index++) {
@@ -893,7 +901,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         }
     }
 
-    private isConditionDisabled(position: number, lastUiCompletePosition: number): boolean {
+    #isConditionDisabled(position: number, lastUiCompletePosition: number): boolean {
         if (this.isReadOnly()) { return true; } // Read-only mode trumps everything.
         if (position === 0) { return false; } // Position 0 should typically be editable.
 
@@ -901,7 +909,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return position > lastUiCompletePosition + 1;
     }
 
-    private isConditionBodyVisible(position: number): boolean {
+    #isConditionBodyVisible(position: number): boolean {
         // Check that the condition needs inputs.
         const type = this.getConditionType(position);
         const numberOfInputs = this.getNumberOfInputs(type);
@@ -911,7 +919,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     // returns true if the UI represents a working filter, eg all parts are filled out.
     // eg if text filter and textfield blank then returns false.
     protected isConditionUiComplete(position: number): boolean {
-        if (position >= this.getNumConditions()) { return false; } // Condition doesn't exist.
+        if (position >= this.#getNumConditions()) { return false; } // Condition doesn't exist.
 
         const type = this.getConditionType(position);
 
@@ -924,13 +932,13 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return true;
     }
 
-    private getNumConditions(): number {
+    #getNumConditions(): number {
         return this.eTypes.length;
     }
 
-    private getUiCompleteConditions(): M[] {
+    #getUiCompleteConditions(): M[] {
         const conditions: M[] = [];
-        for (let position = 0; position < this.getNumConditions(); position++) {
+        for (let position = 0; position < this.#getNumConditions(); position++) {
             if (this.isConditionUiComplete(position)) {
                 conditions.push(this.createCondition(position));
             }
@@ -938,30 +946,30 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return conditions;
     }
 
-    private createMissingConditionsAndOperators(): void {
+    #createMissingConditionsAndOperators(): void {
         if (this.isReadOnly()) { return; } // don't show incomplete conditions when read only
-        for (let i = this.getNumConditions(); i < this.numAlwaysVisibleConditions; i++) {
-            this.createJoinOperatorPanel();
-            this.createOption();
+        for (let i = this.#getNumConditions(); i < this.#numAlwaysVisibleConditions; i++) {
+            this.#createJoinOperatorPanel();
+            this.#createOption();
         }
     }
 
     protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
-        this.removeConditionsAndOperators(this.isReadOnly() ? 1 : this.numAlwaysVisibleConditions);
+        this.#removeConditionsAndOperators(this.isReadOnly() ? 1 : this.#numAlwaysVisibleConditions);
 
-        this.eTypes.forEach(eType => this.resetType(eType));
+        this.eTypes.forEach(eType => this.#resetType(eType));
 
-        this.eJoinOperatorsAnd.forEach((eJoinOperatorAnd, index) => this.resetJoinOperatorAnd(eJoinOperatorAnd, index, this.joinOperatorId + index));
-        this.eJoinOperatorsOr.forEach((eJoinOperatorOr, index) => this.resetJoinOperatorOr(eJoinOperatorOr, index, this.joinOperatorId + index));
-        this.joinOperatorId++
+        this.eJoinOperatorsAnd.forEach((eJoinOperatorAnd, index) => this.#resetJoinOperatorAnd(eJoinOperatorAnd, index, this.#joinOperatorId + index));
+        this.eJoinOperatorsOr.forEach((eJoinOperatorOr, index) => this.#resetJoinOperatorOr(eJoinOperatorOr, index, this.#joinOperatorId + index));
+        this.#joinOperatorId++
 
-        this.forEachInput((element) => this.resetInput(element));
+        this.forEachInput((element) => this.#resetInput(element));
 
         this.resetPlaceholder();
 
-        this.createMissingConditionsAndOperators();
+        this.#createMissingConditionsAndOperators();
 
-        this.lastUiCompletePosition = null;
+        this.#lastUiCompletePosition = null;
 
         if (!silent) {
             this.onUiChanged();
@@ -970,25 +978,31 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return AgPromise.resolve();
     }
 
-    private resetType(eType: AgSelect): void {
+    #resetType(eType: AgSelect): void {
         const translate = this.localeService.getLocaleTextFunc();
         const filteringLabel = translate('ariaFilteringOperator', 'Filtering operator');
         eType
             .setValue(this.optionsFactory.getDefaultOption(), true)
             .setAriaLabel(filteringLabel)
-            .setDisabled(this.isReadOnly() || this.filterListOptions.length <= 1);
+            .setDisabled(this.isReadOnly() || this.#filterListOptions.length <= 1);
     }
 
-    private resetJoinOperatorAnd(eJoinOperatorAnd: AgRadioButton, index: number, uniqueGroupId: number): void {
-        this.resetJoinOperator(eJoinOperatorAnd, index, this.isDefaultOperator('AND'), this.translate('andCondition'), uniqueGroupId);
+    #resetJoinOperatorAnd(eJoinOperatorAnd: AgRadioButton, index: number, uniqueGroupId: number): void {
+        this.#resetJoinOperator(eJoinOperatorAnd, index, this.#isDefaultOperator('AND'), this.translate('andCondition'), uniqueGroupId);
     }
    
-    private resetJoinOperatorOr(eJoinOperatorOr: AgRadioButton, index: number, uniqueGroupId: number): void {
-        this.resetJoinOperator(eJoinOperatorOr, index, this.isDefaultOperator('OR'), this.translate('orCondition'), uniqueGroupId);
+    #resetJoinOperatorOr(eJoinOperatorOr: AgRadioButton, index: number, uniqueGroupId: number): void {
+        this.#resetJoinOperator(eJoinOperatorOr, index, this.#isDefaultOperator('OR'), this.translate('orCondition'), uniqueGroupId);
     }
 
-    private resetJoinOperator(eJoinOperator: AgRadioButton, index: number, value: boolean, label: string, uniqueGroupId: number): void {
-        this.updateJoinOperatorDisabled(
+    #resetJoinOperator(
+        eJoinOperator: AgRadioButton,
+        index: number,
+        value: boolean,
+        label: string,
+        uniqueGroupId: number
+    ): void {
+        this.#updateJoinOperatorDisabled(
             eJoinOperator
                 .setValue(value, true)
                 .setName(`ag-simple-filter-and-or-${this.getCompId()}-${uniqueGroupId}`)
@@ -997,22 +1011,22 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         );
     }
 
-    private updateJoinOperatorsDisabled(): void {
-        this.eJoinOperatorsAnd.forEach((eJoinOperator, index) => this.updateJoinOperatorDisabled(eJoinOperator, index));
-        this.eJoinOperatorsOr.forEach((eJoinOperator, index) => this.updateJoinOperatorDisabled(eJoinOperator, index));
+    #updateJoinOperatorsDisabled(): void {
+        this.eJoinOperatorsAnd.forEach((eJoinOperator, index) => this.#updateJoinOperatorDisabled(eJoinOperator, index));
+        this.eJoinOperatorsOr.forEach((eJoinOperator, index) => this.#updateJoinOperatorDisabled(eJoinOperator, index));
     }
 
-    private updateJoinOperatorDisabled(eJoinOperator: AgRadioButton, index: number): void {
+    #updateJoinOperatorDisabled(eJoinOperator: AgRadioButton, index: number): void {
         eJoinOperator.setDisabled(this.isReadOnly() || index > 0);
     }
 
-    private resetInput(element: E): void {
+    #resetInput(element: E): void {
         this.setElementValue(element, null);
         this.setElementDisabled(element, this.isReadOnly());
     }
 
     // puts model values into the UI
-    private setConditionIntoUi(model: M | null, position: number): void {
+    #setConditionIntoUi(model: M | null, position: number): void {
         const values = this.mapValuesFromModel(model);
         this.forEachInput((element, index, elPosition, _) => {
             if (elPosition !== position) { return; }
@@ -1023,25 +1037,25 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     // after floating filter changes, this sets the 'value' section. this is implemented by the base class
     // (as that's where value is controlled), the 'type' part from the floating filter is dealt with in this class.
-    private setValueFromFloatingFilter(value: V | null): void {
+    #setValueFromFloatingFilter(value: V | null): void {
         this.forEachInput((element, index, position, _) => {
             this.setElementValue(element, index === 0 && position === 0 ? value : null, true);
         });
     }
 
-    private isDefaultOperator(operator: JoinOperator): boolean {
-        return operator === this.defaultJoinOperator;
+    #isDefaultOperator(operator: JoinOperator): boolean {
+        return operator === this.#defaultJoinOperator;
     }
 
-    private addChangedListeners(eType: AgSelect, position: number) {
+    #addChangedListeners(eType: AgSelect, position: number) {
         if (this.isReadOnly()) {
             return;
         }
 
-        eType.onValueChange(this.listener);
+        eType.onValueChange(this.#listener);
 
         this.forEachPositionInput(position, (element) => {
-            this.attachElementOnChange(element, this.listener);
+            this.attachElementOnChange(element, this.#listener);
         });
     }
 

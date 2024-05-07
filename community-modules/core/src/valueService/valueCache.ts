@@ -5,30 +5,30 @@ import { BeanStub } from "../context/beanStub";
 //@Bean('valueCache')
 export class ValueCache extends BeanStub {
 
-    private cacheVersion = 0;
-    private active: boolean;
-    private neverExpires: boolean;
+    #cacheVersion = 0;
+    #active: boolean;
+    #neverExpires: boolean;
 
     @PostConstruct
     public init(): void {
-        this.active = this.gos.get('valueCache');
-        this.neverExpires = this.gos.get('valueCacheNeverExpires');
+        this.#active = this.gos.get('valueCache');
+        this.#neverExpires = this.gos.get('valueCacheNeverExpires');
     }
 
     public onDataChanged(): void {
-        if (this.neverExpires) { return; }
+        if (this.#neverExpires) { return; }
 
         this.expire();
     }
 
     public expire(): void {
-        this.cacheVersion++;
+        this.#cacheVersion++;
     }
 
     public setValue(rowNode: RowNode, colId: string, value: any): any {
-        if (this.active) {
-            if (rowNode.__cacheVersion !== this.cacheVersion) {
-                rowNode.__cacheVersion = this.cacheVersion;
+        if (this.#active) {
+            if (rowNode.__cacheVersion !== this.#cacheVersion) {
+                rowNode.__cacheVersion = this.#cacheVersion;
                 rowNode.__cacheData = {};
             }
 
@@ -37,7 +37,7 @@ export class ValueCache extends BeanStub {
     }
 
     public getValue(rowNode: RowNode, colId: string): any {
-        if (!this.active || rowNode.__cacheVersion !== this.cacheVersion) {
+        if (!this.#active || rowNode.__cacheVersion !== this.#cacheVersion) {
             return undefined;
         }
 

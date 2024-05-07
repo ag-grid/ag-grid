@@ -21,8 +21,8 @@ export interface IDateStringCellEditorParams<TData = any, TContext = any> extend
 }
 
 class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCellEditorParams, AgInputDateField> {
-    private eInput: AgInputDateField;
-    private params: IDateStringCellEditorParams;
+    #eInput: AgInputDateField;
+    #params: IDateStringCellEditorParams;
 
     constructor(private getDataTypeService: () => DataTypeService) {}
 
@@ -31,8 +31,8 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     }
 
     public init(eInput: AgInputDateField, params: IDateStringCellEditorParams): void {
-        this.eInput = eInput;
-        this.params = params;
+        this.#eInput = eInput;
+        this.#params = params;
         if (params.min != null) {
             eInput.setMin(params.min);
         }
@@ -45,23 +45,23 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     }
 
     public getValue(): string | null | undefined {
-        const value = this.formatDate(this.eInput.getDate());
-        if (!exists(value) && !exists(this.params.value)) {
-            return this.params.value;
+        const value = this.#formatDate(this.#eInput.getDate());
+        if (!exists(value) && !exists(this.#params.value)) {
+            return this.#params.value;
         }
-        return this.params.parseValue(value ?? '');
+        return this.#params.parseValue(value ?? '');
     }
 
     public getStartValue(): string | null | undefined {
-        return serialiseDate(this.parseDate(this.params.value ?? undefined) ?? null, false);
+        return serialiseDate(this.#parseDate(this.#params.value ?? undefined) ?? null, false);
     }
 
-    private parseDate(value: string | undefined): Date | undefined {
-        return this.getDataTypeService().getDateParserFunction(this.params.column)(value);
+    #parseDate(value: string | undefined): Date | undefined {
+        return this.getDataTypeService().getDateParserFunction(this.#params.column)(value);
     }
 
-    private formatDate(value: Date | undefined): string | undefined {
-        return this.getDataTypeService().getDateFormatterFunction(this.params.column)(value);
+    #formatDate(value: Date | undefined): string | undefined {
+        return this.getDataTypeService().getDateFormatterFunction(this.#params.column)(value);
     }
 }
 
