@@ -198,7 +198,6 @@ export { UpdateLayoutClassesParams, LayoutCssClasses } from "./styling/layoutFea
 export { AgAbstractField, FieldElement, AgFieldParams } from "./widgets/agAbstractField";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { TabGuardComp } from "./widgets/tabGuardComp";
-export { VirtualList, VirtualListModel } from "./widgets/virtualList";
 
 export { AgAbstractLabel, AgLabelParams } from "./widgets/agAbstractLabel";
 
@@ -245,12 +244,10 @@ export { RowNodeSorter, SortedRowNode, SortOption } from "./rowNodes/rowNodeSort
 export { CtrlsService } from "./ctrlsService";
 export { GridComp } from "./gridComp/gridComp";
 export { GridCtrl, IGridComp } from "./gridComp/gridCtrl";
-export { Logger, LoggerFactory } from "./logger";
 export { LocaleService } from './localeService';
 export * from "./utils/index"; // please leave this as is - we want it to be explicit for build reasons
 export { ColumnSortState } from "./utils/aria";
 export { ValueService } from "./valueService/valueService";
-export { ValueCache } from "./valueService/valueCache";
 
 //state
 export {

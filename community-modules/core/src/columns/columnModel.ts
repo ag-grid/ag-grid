@@ -1,20 +1,19 @@
-import { ColumnGroup } from '../entities/columnGroup';
+import { BeanStub } from "../context/beanStub";
+import { Autowired, Bean, Optional, PostConstruct, PreDestroy } from '../context/context';
+import { CtrlsService } from '../ctrlsService';
+import { AbstractColDef, ColDef, ColGroupDef, HeaderLocation, HeaderValueGetterParams, IAggFunc } from '../entities/colDef';
 import { Column, ColumnInstanceId, ColumnPinnedType } from '../entities/column';
-import { AbstractColDef, ColDef, ColGroupDef, IAggFunc, HeaderValueGetterParams, HeaderLocation } from '../entities/colDef';
-import { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
-import { ColumnFactory, depthFirstOriginalTreeSearch } from './columnFactory';
-import { IProvidedColumn } from '../interfaces/iProvidedColumn';
-import { Logger, LoggerFactory } from '../logger';
+import { ColumnGroup } from '../entities/columnGroup';
+import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import { RowNode } from '../entities/rowNode';
 import {
+    ColumnContainerWidthChanged,
     ColumnEvent,
     ColumnEventType,
     ColumnEverythingChangedEvent,
-    ColumnGroupOpenedEvent,
     ColumnMovedEvent,
     ColumnPinnedEvent,
-    ColumnPivotModeChangedEvent,
     ColumnResizedEvent,
-    ColumnRowGroupChangedEvent,
     ColumnValueChangedEvent,
     ColumnVisibleEvent,
     DisplayedColumnsChangedEvent,
@@ -22,24 +21,20 @@ import {
     Events,
     GridColumnsChangedEvent,
     NewColumnsLoadedEvent,
-    VirtualColumnsChangedEvent,
-    ColumnContainerWidthChanged
+    VirtualColumnsChangedEvent
 } from '../events';
-import { BeanStub } from "../context/beanStub";
-import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
-import { Autowired, Bean, Optional, PostConstruct, PreDestroy, Qualifier } from '../context/context';
-import { IAggFuncService } from '../interfaces/iAggFuncService';
-import { RowNode } from '../entities/rowNode';
-import { ValueCache } from '../valueService/valueCache';
-import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromUnorderedArray, removeFromUnorderedArray } from '../utils/array';
-import { AnimationFrameService } from "../misc/animationFrameService";
-import { missingOrEmpty, exists, missing, attrToBoolean, attrToNumber } from '../utils/generic';
-import { camelCaseToHumanText } from '../utils/string';
-import { convertToMap } from '../utils/map';
-import { warnOnce } from '../utils/function';
-import { CtrlsService } from '../ctrlsService';
-import { WithoutGridCommon } from '../interfaces/iCommon';
 import { PropertyChangedSource } from '../gridOptionsService';
+import { IAggFuncService } from '../interfaces/iAggFuncService';
+import { WithoutGridCommon } from '../interfaces/iCommon';
+import { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
+import { IProvidedColumn } from '../interfaces/iProvidedColumn';
+import { AnimationFrameService } from "../misc/animationFrameService";
+import { areEqual, includes, insertIntoArray, last, moveInArray, removeAllFromUnorderedArray, removeFromArray, removeFromUnorderedArray } from '../utils/array';
+import { warnOnce } from '../utils/function';
+import { attrToBoolean, attrToNumber, exists, missing, missingOrEmpty } from '../utils/generic';
+import { convertToMap } from '../utils/map';
+import { camelCaseToHumanText } from '../utils/string';
+import { ColumnFactory, depthFirstOriginalTreeSearch } from './columnFactory';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -218,7 +213,6 @@ export class ColumnModel extends BeanStub {
 
     private ready = false;
     private changeEventsDispatching = false;
-    private logger: Logger;
 
     private autoGroupsNeedBuilding = false;
     private forceRecreateAutoGroups = false;

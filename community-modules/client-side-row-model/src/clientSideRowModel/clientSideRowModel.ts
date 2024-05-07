@@ -1,35 +1,32 @@
 import {
-    _,
+    AsyncTransactionsFlushed,
     Autowired,
     Bean,
     BeanStub,
+    Beans,
     ChangedPath,
+    ClientSideRowModelStep,
+    ClientSideRowModelSteps,
     ColumnModel,
     Events,
     ExpandCollapseAllEvent,
     FilterChangedEvent,
+    GridOptions,
     IClientSideRowModel,
     IRowNodeStage,
     ModelUpdatedEvent,
     Optional,
     PostConstruct,
     RefreshModelParams,
-    ClientSideRowModelSteps,
-    ClientSideRowModelStep,
     RowBounds,
     RowDataTransaction,
     RowDataUpdatedEvent,
-    RowNode,
     RowHighlightPosition,
-    RowNodeTransaction,
-    ValueCache,
-    AsyncTransactionsFlushed,
-    Beans,
-    WithoutGridCommon,
     RowModelType,
-    SelectionChangedEvent,
-    ISelectionService,
-    GridOptions,
+    RowNode,
+    RowNodeTransaction,
+    WithoutGridCommon,
+    _
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -48,7 +45,6 @@ export interface RowNodeMap {
 export class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('beans') private beans: Beans;
 
     // standard stages
@@ -1089,8 +1085,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private executeBatchUpdateRowData(): void {
-        this.valueCache.onDataChanged();
-
         const callbackFuncsBound: Function[] = [];
         const rowNodeTrans: RowNodeTransaction[] = [];
 
@@ -1133,8 +1127,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: { [id: string]: number; }): RowNodeTransaction | null {
-
-        this.valueCache.onDataChanged();
 
         const rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
 

@@ -3,7 +3,6 @@ import { Autowired, Bean, PostConstruct, Qualifier } from "../context/context";
 import { Events } from "../eventKeys";
 import { getMaxDivHeight } from "../utils/browser";
 import { CtrlsService } from "../ctrlsService";
-import { Logger, LoggerFactory } from "../logger";
 
 /**
  * This class solves the 'max height' problem, where the user might want to show more data than
@@ -37,17 +36,11 @@ export class RowContainerHeightService extends BeanStub {
     // the max scroll position
     private maxScrollY: number;
 
-    private logger: Logger;
-
-    public agWire(@Qualifier("loggerFactory") loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create("RowContainerHeightService");
-    }
 
     @PostConstruct
     private postConstruct(): void {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
         this.maxDivHeight = getMaxDivHeight();
-        this.logger.log('maxDivHeight = ' + this.maxDivHeight);
     }
 
     public isStretching(): boolean {
@@ -81,8 +74,6 @@ export class RowContainerHeightService extends BeanStub {
         const scrollPercent = this.scrollY / this.maxScrollY;
 
         const divStretchOffset = scrollPercent * this.pixelsToShave;
-
-        this.logger.log(`Div Stretch Offset = ${divStretchOffset} (${this.pixelsToShave} * ${scrollPercent})`);
 
         this.setDivStretchOffset(divStretchOffset);
     }

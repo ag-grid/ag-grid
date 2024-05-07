@@ -1,5 +1,4 @@
 import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
-import { Logger, LoggerFactory } from "../logger";
 import { Autowired, PostConstruct } from "../context/context";
 import { Component } from "../widgets/component";
 import { ISideBar } from "../interfaces/iSideBar";
@@ -11,13 +10,10 @@ import { TabGuardComp } from "../widgets/tabGuardComp";
 
 export class GridComp extends TabGuardComp {
 
-    @Autowired('loggerFactory') private readonly loggerFactory: LoggerFactory;
-
     @RefSelector('gridBody') private readonly gridBodyComp: GridBodyComp;
     @RefSelector('sideBar') private readonly sideBarComp: ISideBar & Component;
     @RefSelector('rootWrapperBody') private readonly eRootWrapperBody: HTMLElement;
 
-    private logger: Logger;
     private eGridDiv: HTMLElement;
     private ctrl: GridCtrl;
 
@@ -28,8 +24,6 @@ export class GridComp extends TabGuardComp {
 
     @PostConstruct
     private postConstruct(): void {
-        this.logger = this.loggerFactory.create('GridComp');
-
         const compProxy: IGridComp = {
             destroyGridUi:
                 () => this.destroyBean(this),
@@ -69,7 +63,6 @@ export class GridComp extends TabGuardComp {
         this.eGridDiv.appendChild(eGui);
         this.addDestroyFunc(() => {
             this.eGridDiv.removeChild(eGui);
-            this.logger.log('Grid removed from DOM');
         });
     }
 

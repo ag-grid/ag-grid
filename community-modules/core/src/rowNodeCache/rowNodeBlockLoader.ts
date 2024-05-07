@@ -1,7 +1,6 @@
 import { RowNodeBlock } from "./rowNodeBlock";
 import { Autowired, Bean, PostConstruct, Qualifier } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { Logger, LoggerFactory } from "../logger";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { _ } from "../utils";
@@ -18,7 +17,6 @@ export class RowNodeBlockLoader extends BeanStub {
 
     private activeBlockLoadsCount = 0;
     private blocks: RowNodeBlock[] = [];
-    private logger: Logger;
     private active = true;
 
     @PostConstruct
@@ -29,10 +27,6 @@ export class RowNodeBlockLoader extends BeanStub {
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
             this.checkBlockToLoadDebounce = _.debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
         }
-    }
-
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('RowNodeBlockLoader');
     }
 
     private getMaxConcurrentDatasourceRequests(): number | undefined {
@@ -82,10 +76,7 @@ export class RowNodeBlockLoader extends BeanStub {
     private performCheckBlocksToLoad(): void {
         if (!this.active) { return; }
 
-        this.printCacheStatus();
-
         if (this.maxConcurrentRequests != null && this.activeBlockLoadsCount >= this.maxConcurrentRequests) {
-            this.logger.log(`checkBlockToLoad: max loads exceeded`);
             return;
         }
 
@@ -96,7 +87,6 @@ export class RowNodeBlockLoader extends BeanStub {
 
         this.registerLoads(blocksToLoad.length);
         blocksToLoad.forEach(block => block.load());
-        this.printCacheStatus();
     }
 
     public getBlockState() {
@@ -111,14 +101,6 @@ export class RowNodeBlockLoader extends BeanStub {
             result[id] = state;
         });
         return result;
-    }
-
-    private printCacheStatus(): void {
-
-        if (this.logger.isLogging()) {
-            this.logger.log(`printCacheStatus: activePageLoadsCount = ${this.activeBlockLoadsCount},`
-                + ` blocks = ${JSON.stringify(this.getBlockState())}`);
-        }
     }
 
     public isLoading(): boolean {

@@ -1,26 +1,17 @@
-import { Logger, LoggerFactory } from '../logger';
-import { ColDef, ColGroupDef } from "../entities/colDef";
-import { ColumnKeyCreator } from "./columnKeyCreator";
-import { IProvidedColumn } from "../interfaces/iProvidedColumn";
-import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
-import { Column } from "../entities/column";
-import { Autowired, Bean, Qualifier } from "../context/context";
-import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 import { BeanStub } from "../context/beanStub";
-import { iterateObject, mergeDeep } from '../utils/object';
-import { attrToNumber, attrToBoolean } from '../utils/generic';
-import { warnOnce } from '../utils/function';
+import { Bean, Qualifier } from "../context/context";
+import { ColDef, ColGroupDef } from "../entities/colDef";
+import { Column } from "../entities/column";
+import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { ColumnEventType } from '../events';
+import { IProvidedColumn } from "../interfaces/iProvidedColumn";
+import { attrToBoolean, attrToNumber } from '../utils/generic';
+import { mergeDeep } from '../utils/object';
+import { ColumnKeyCreator } from "./columnKeyCreator";
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')
 export class ColumnFactory extends BeanStub {
-
-    private logger: Logger;
-
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('ColumnFactory');
-    }
 
     public createColumnTree(defs: (ColDef | ColGroupDef)[] | null, primaryColumns: boolean, existingTree: IProvidedColumn[] | undefined, source: ColumnEventType)
         : { columnTree: IProvidedColumn[], treeDept: number; } {
@@ -37,7 +28,6 @@ export class ColumnFactory extends BeanStub {
         const unbalancedTree = this.recursivelyCreateColumns(defs, 0, primaryColumns,
             existingCols, columnKeyCreator, existingGroups, source);
         const treeDept = this.findMaxDept(unbalancedTree, 0);
-        this.logger.log('Number of levels for grouped columns is ' + treeDept);
         const columnTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
 
         const deptFirstCallback = (child: IProvidedColumn, parent: ProvidedColumnGroup) => {

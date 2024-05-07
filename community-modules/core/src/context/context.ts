@@ -41,19 +41,15 @@ export class Context {
 
     private beanWrappers: { [key: string]: BeanWrapper; } = {};
     private contextParams: ContextParams;
-    private logger: ILogger;
 
     private destroyed = false;
 
-    public constructor(params: ContextParams, logger: ILogger) {
+    public constructor(params: ContextParams) {
         if (!params || !params.beanClasses) {
             return;
         }
 
         this.contextParams = params;
-
-        this.logger = logger;
-        this.logger.log(">> creating ag-Application Context");
 
         this.createBeans();
 
@@ -61,7 +57,6 @@ export class Context {
 
         this.wireBeans(beanInstances);
 
-        this.logger.log(">> ag-Application Context ready - component is alive");
     }
 
     private getBeanInstances(): any[] {
@@ -107,8 +102,6 @@ export class Context {
             beanEntry.beanInstance = newInstance;
         });
 
-        const createdBeanNames = Object.keys(this.beanWrappers).join(', ');
-        this.logger.log(`created beans: ${createdBeanNames}`);
     }
 
     // tslint:disable-next-line
@@ -206,7 +199,6 @@ export class Context {
 
     private lookupBeanInstance(wiringBean: string, beanName: BeanName, optional = false): any {
         if (this.destroyed) {
-            this.logger.log(`AG Grid: bean reference ${beanName} is used after the grid is destroyed!`);
             return null;
         }
 
@@ -266,8 +258,6 @@ export class Context {
         // we are marked as destroyed already to prevent running destroy() twice
         this.destroyed = true;
 
-        this.logger.log(">> Shutting down ag-Application Context");
-
         const beanInstances = this.getBeanInstances();
         this.destroyBeans(beanInstances);
 
@@ -275,7 +265,6 @@ export class Context {
 
         ModuleRegistry.__unRegisterGridModules(this.contextParams.gridId);
 
-        this.logger.log(">> ag-Application Context shut down - component is dead");
     }
 
     public destroyBean<T>(bean: T): undefined {

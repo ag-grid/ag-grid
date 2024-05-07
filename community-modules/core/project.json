@@ -65,7 +65,8 @@
         "platform": "browser",
         "target": "es6",
         "format": ["cjs", "esm"],
-        "sourcemap": true
+        "sourcemap": true,
+        "metafile": true
       },
       "configurations": {
         "watch": {

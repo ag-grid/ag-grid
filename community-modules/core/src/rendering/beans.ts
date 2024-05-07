@@ -23,7 +23,6 @@ import { ResizeObserverService } from "../misc/resizeObserverService";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { StylingService } from "../styling/stylingService";
 import { SyncService } from "../syncService";
-import { ValueCache } from "../valueService/valueCache";
 import { ValueService } from "../valueService/valueService";
 import { AriaAnnouncementService } from "./ariaAnnouncementService";
 import { ColumnHoverService } from "./columnHoverService";
@@ -63,7 +62,6 @@ export class Beans {
     @Autowired('ctrlsService') public readonly ctrlsService: CtrlsService;
     @Autowired('ctrlsFactory') public readonly ctrlsFactory: CtrlsFactory;
     @Autowired('agStackComponentsRegistry') public readonly agStackComponentsRegistry: AgStackComponentsRegistry;
-    @Autowired('valueCache') public readonly valueCache: ValueCache;
     @Autowired('rowNodeEventThrottle') public readonly rowNodeEventThrottle: RowNodeEventThrottle;
     @Autowired('localeService') public readonly localeService: LocaleService;
     @Autowired('syncService') public readonly syncService: SyncService;

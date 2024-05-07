@@ -1,21 +1,18 @@
 import { ColumnModel } from "../columns/columnModel";
-import { ValueGetterParams, KeyCreatorParams, ValueSetterParams, ValueParserParams, ValueFormatterParams } from "../entities/colDef";
+import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../context/context";
+import { KeyCreatorParams, ValueFormatterParams, ValueGetterParams, ValueParserParams, ValueSetterParams } from "../entities/colDef";
 import { Column } from "../entities/column";
 import { CellValueChangedEvent, Events } from "../events";
-import { ValueCache } from "./valueCache";
-import { BeanStub } from "../context/beanStub";
-import { getValueUsingField } from "../utils/object";
-import { missing, exists } from "../utils/generic";
-import { warnOnce } from "../utils/function";
 import { IRowNode } from "../interfaces/iRowNode";
-import { RowNode } from "../entities/rowNode";
+import { warnOnce } from "../utils/function";
+import { exists, missing } from "../utils/generic";
+import { getValueUsingField } from "../utils/object";
 
 @Bean('valueService')
 export class ValueService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('valueCache') private valueCache: ValueCache;
 
     private cellExpressions: boolean;
     // Store locally for performance reasons and keep updated via property listener
@@ -258,8 +255,6 @@ export class ValueService extends BeanStub {
         // reset quick filter on this row
         rowNode.resetQuickFilterAggregateText();
 
-        this.valueCache.onDataChanged();
-
         params.newValue = this.getValue(column, rowNode);
 
         const event: CellValueChangedEvent = {
@@ -352,13 +347,6 @@ export class ValueService extends BeanStub {
 
         const colId = column.getColId();
 
-        // if inside the same turn, just return back the value we got last time
-        const valueFromCache = this.valueCache.getValue(rowNode as RowNode, colId);
-
-        if (valueFromCache !== undefined) {
-            return valueFromCache;
-        }
-
         const params: ValueGetterParams = this.gos.addGridCommonParams({
             data: data,
             node: rowNode,
@@ -373,9 +361,6 @@ export class ValueService extends BeanStub {
         } else {
             result = undefined;
         }
-
-        // if a turn is active, store the value in case the grid asks for it again
-        this.valueCache.setValue(rowNode as RowNode, colId, result);
 
         return result;
     }
