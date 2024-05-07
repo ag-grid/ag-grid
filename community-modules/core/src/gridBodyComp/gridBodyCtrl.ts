@@ -1,4 +1,4 @@
-import { ColumnModel, ISizeColumnsToFitParams } from "../columns/columnModel";
+import { ColumnModel } from "../columns/columnModel";
 import { BeanStub } from "../context/beanStub";
 import { Autowired } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
@@ -8,8 +8,7 @@ import { IRowModel } from "../interfaces/iRowModel";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
 import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
-import { isInvisibleScrollbar } from "../utils/browser";
-import { getInnerWidth, isElementChildOfClass, isVerticalScrollShowing } from "../utils/dom";
+import { isElementChildOfClass, isVerticalScrollShowing } from "../utils/dom";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
 
 export enum RowAnimationCssClasses {
@@ -301,17 +300,6 @@ export class GridBodyCtrl extends BeanStub {
         return this.stickyBottomHeight;
     }
 
-    private setStickyWidth(vScrollVisible: boolean) {
-        if (!vScrollVisible) {
-            this.comp.setStickyTopWidth('100%');
-            this.comp.setStickyBottomWidth('100%');
-        } else {
-            const scrollbarWidth = this.gos.getScrollbarWidth();
-            this.comp.setStickyTopWidth(`calc(100% - ${scrollbarWidth}px)`);
-            this.comp.setStickyBottomWidth(`calc(100% - ${scrollbarWidth}px)`);
-        }
-    }
-
     private onHeaderHeightChanged(): void {
         this.setStickyTopOffsetTop();
     }
@@ -326,42 +314,6 @@ export class GridBodyCtrl extends BeanStub {
         this.comp.setStickyTopTop(`${height}px`);
     }
 
-
-    // method will call itself if no available width. this covers if the grid
-    // isn't visible, but is just about to be visible.
-    public sizeColumnsToFit(
-        params?: ISizeColumnsToFitParams,
-        nextTimeout?: number,
-    ) {
-        const removeScrollWidth = this.isVerticalScrollShowing();
-        const scrollWidthToRemove = removeScrollWidth ? this.gos.getScrollbarWidth() : 0;
-        // bodyViewportWidth should be calculated from eGridBody, not eBodyViewport
-        // because we change the width of the bodyViewport to hide the real browser scrollbar
-        const bodyViewportWidth = getInnerWidth(this.eGridBody);
-        const availableWidth = bodyViewportWidth - scrollWidthToRemove;
-
-        if (availableWidth > 0) {
-            this.columnModel.sizeColumnsToFit(availableWidth, "sizeColumnsToFit", false, params);
-            return;
-        }
-
-        if (nextTimeout === undefined) {
-            window.setTimeout(() => {
-                this.sizeColumnsToFit(params, 100);
-            }, 0);
-        } else if (nextTimeout === 100) {
-            window.setTimeout(() => {
-                this.sizeColumnsToFit(params, 500);
-            }, 100);
-        } else if (nextTimeout === 500) {
-            window.setTimeout(() => {
-                this.sizeColumnsToFit(params, -1);
-            }, 500);
-        } else {
-            console.warn('AG Grid: tried to call sizeColumnsToFit() but the grid is coming back with ' +
-                'zero width, maybe the grid is not visible yet on the screen?');
-        }
-    }
 
     // + rangeService
     public addScrollEventListener(listener: () => void): void {

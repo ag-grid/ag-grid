@@ -58,62 +58,13 @@ export class SetLeftFeature extends BeanStub {
     }
 
     private setLeftFirstTime(): void {
-        const suppressMoveAnimation = this.beans.gos.get('suppressColumnMoveAnimation');
-        const oldLeftExists = exists(this.columnOrGroup.getOldLeft());
-        const animateColumnMove = false;
-        if (animateColumnMove) {
-            this.animateInLeft();
-        } else {
             this.onLeftChanged();
-        }
     }
-
-    private animateInLeft(): void {
-        const colOrGroup = this.getColumnOrGroup();
-
-        const left = colOrGroup.getLeft();
-        const oldLeft = colOrGroup.getOldLeft();
-
-        const oldActualLeft = this.modifyLeftForPrintLayout(colOrGroup, oldLeft!);
-        const actualLeft = this.modifyLeftForPrintLayout(colOrGroup, left!);
-
-        this.setLeft(oldActualLeft!);
-
-        // we must keep track of the left we want to set to, as this would otherwise lead to a race
-        // condition, if the user changed the left value many times in one VM turn, then we want to make
-        // make sure the actualLeft we set in the timeout below (in the next VM turn) is the correct left
-        // position. eg if user changes column position twice, then setLeft() below executes twice in next
-        // VM turn, but only one (the correct one) should get applied.
-        this.actualLeft = actualLeft;
-
-
-    }
-
     private onLeftChanged(): void {
         const colOrGroup = this.getColumnOrGroup();
         const left = colOrGroup.getLeft();
-        this.actualLeft = this.modifyLeftForPrintLayout(colOrGroup, left!);
+        this.actualLeft = left!;
         this.setLeft(this.actualLeft);
-    }
-
-    private modifyLeftForPrintLayout(colOrGroup: IHeaderColumn, leftPosition: number): number {
-        const printLayout = this.beans.gos.isDomLayout('print');
-
-        if (!printLayout) { return leftPosition; }
-
-        if (colOrGroup.getPinned() === 'left') {
-            return leftPosition;
-        }
-
-        const leftWidth = this.beans.columnModel.getDisplayedColumnsLeftWidth();
-
-        if (colOrGroup.getPinned() === 'right') {
-            const bodyWidth = this.beans.columnModel.getBodyContainerWidth();
-            return leftWidth + bodyWidth + leftPosition;
-        }
-
-        // is in body
-        return leftWidth + leftPosition;
     }
 
     private setLeft(value: number): void {

@@ -116,9 +116,6 @@ export class RowRenderer extends BeanStub {
     // then it will be trying to draw rows in the middle of a refresh.
     private refreshInProgress = false;
 
-    private printLayout: boolean;
-    private embedFullWidthRows: boolean;
-
     private dataFirstRenderedFired = false;
 
     @PostConstruct
@@ -156,8 +153,6 @@ export class RowRenderer extends BeanStub {
         this.registerCellEventListeners();
 
         this.initialiseCache();
-        this.printLayout = this.gos.isDomLayout('print');
-        this.embedFullWidthRows = this.printLayout || this.gos.get('embedFullWidthRows');
 
         this.redrawAfterModelUpdate();
     }
@@ -207,16 +202,6 @@ export class RowRenderer extends BeanStub {
             this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onDisplayedColumnsChanged());
         });
 
-        // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
-        // then changing the width of the containers will impact left position. eg the center cols all have their
-        // left position adjusted by the width of the left pinned column, so if the pinned left column width changes,
-        // all the center cols need to be shifted to accommodate this. when in normal layout, the pinned cols are
-        // in different containers so doesn't impact.
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => {
-            if (this.printLayout) {
-                this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onLeftChanged());
-            }
-        });
 
         this.setupRangeSelectionListeners();
 
@@ -322,19 +307,6 @@ export class RowRenderer extends BeanStub {
     }
 
     private onDomLayoutChanged(): void {
-        const printLayout = this.gos.isDomLayout('print');
-        const embedFullWidthRows = printLayout || this.gos.get('embedFullWidthRows');
-
-        // if moving towards or away from print layout, means we need to destroy all rows, as rows are not laid
-        // out using absolute positioning when doing print layout
-        const destroyRows = embedFullWidthRows !== this.embedFullWidthRows || this.printLayout !== printLayout;
-
-        this.printLayout = printLayout;
-        this.embedFullWidthRows = embedFullWidthRows;
-
-        if (destroyRows) {
-            this.redrawAfterModelUpdate({ domLayoutChanged: true });
-        }
     }
 
     // for row models that have datasources, when we update the datasource, we need to force the rowRenderer
@@ -494,11 +466,6 @@ export class RowRenderer extends BeanStub {
     }
 
     private updateContainerHeights(): void {
-        // when doing print layout, we don't explicitly set height on the containers
-        if (this.printLayout) {
-            this.rowContainerHeightService.setModelHeight(null);
-            return;
-        }
 
         let containerHeight = this.paginationProxy.getCurrentPageHeight();
         // we need at least 1 pixel for the horizontal scroll to work. so if there are now rows,
@@ -822,7 +789,7 @@ export class RowRenderer extends BeanStub {
         // never animate when doing print layout - as we want to get things ready to print as quickly as possible,
         // otherwise we risk the printer printing a row that's half faded (half way through fading in)
         // Don't animate rows that have been added or removed as part of scrolling
-        if (this.printLayout || afterScroll) {
+        if ( afterScroll) {
             animate = false;
         }
         
@@ -839,7 +806,7 @@ export class RowRenderer extends BeanStub {
         });
 
         if (rowsToRecycle) {
-            const useAnimationFrame = afterScroll && !this.gos.get('suppressAnimationFrame') && !this.printLayout;
+            const useAnimationFrame = afterScroll && !this.gos.get('suppressAnimationFrame');
             if (useAnimationFrame) {
                 this.beans.animationFrameService.addDestroyTask(() => {
                     this.destroyRowCtrls(rowsToRecycle, animate);
@@ -969,10 +936,6 @@ export class RowRenderer extends BeanStub {
         if (!this.paginationProxy.isRowsToRender()) {
             newFirst = 0;
             newLast = -1; // setting to -1 means nothing in range
-        } else if (this.printLayout) {
-            this.environment.refreshRowHeightVariable();
-            newFirst = this.paginationProxy.getPageFirstRow();
-            newLast = this.paginationProxy.getPageLastRow();
         } else {
             const bufferPixels = this.getRowBufferInPixels();
             const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
@@ -1134,14 +1097,14 @@ export class RowRenderer extends BeanStub {
         // having animation frames for other times makes the grid look 'jumpy'.
 
         const suppressAnimationFrame = this.gos.get('suppressAnimationFrame');
-        const useAnimationFrameForCreate = afterScroll && !suppressAnimationFrame && !this.printLayout;
+        const useAnimationFrameForCreate = afterScroll && !suppressAnimationFrame;
 
         const res = new RowCtrl(
             rowNode,
             this.beans,
             animate,
             useAnimationFrameForCreate,
-            this.printLayout
+            false
         );
 
         return res;
