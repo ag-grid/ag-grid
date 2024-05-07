@@ -134,14 +134,6 @@ export class HeaderRowCtrl extends BeanStub {
 
     private getWidthForRow(): number {
         const { columnModel } = this.beans;
-        if (this.isPrintLayout) {
-            const pinned = this.pinned != null;
-            if (pinned) { return 0; }
-
-            return columnModel.getContainerWidth('right')
-                + columnModel.getContainerWidth('left')
-                + columnModel.getContainerWidth(null);
-        }
 
         // if not printing, just return the width as normal
         return columnModel.getContainerWidth(this.pinned);
@@ -269,23 +261,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getColumnsInViewport(): IHeaderColumn[] {
-        return this.isPrintLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
-    }
-
-    private getColumnsInViewportPrintLayout(): IHeaderColumn[] {
-        // for print layout, we add all columns into the center
-        if (this.pinned != null) { return []; }
-
-        let viewportColumns: IHeaderColumn[] = [];
-        const actualDepth = this.getActualDepth();
-        const { columnModel } = this.beans;
-
-        (['left', null, 'right'] as ColumnPinnedType[]).forEach(pinned => {
-            const items = columnModel.getVirtualHeaderGroupRow(pinned, actualDepth);
-            viewportColumns = viewportColumns.concat(items);
-        });
-
-        return viewportColumns;
+        return this.getColumnsInViewportNormalLayout();
     }
 
     private getActualDepth(): number {

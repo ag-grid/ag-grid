@@ -76,7 +76,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
         // we pad the right based on a) if cols are pinned to the right and
         // b) if v scroll is showing on the right (normal position of scroll)
-        let rightSpacing = this.columnModel.getDisplayedColumnsRightWidth();
+        let rightSpacing = 0;
         const scrollOnRight = !this.enableRtl && vScrollShowing;
         const scrollbarWidth = this.gos.getScrollbarWidth();
 
@@ -88,7 +88,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
         // we pad the left based on a) if cols are pinned to the left and
         // b) if v scroll is showing on the left (happens in LTR layout only)
-        let leftSpacing = this.columnModel.getDisplayedColumnsLeftWidth();
+        let leftSpacing = 0;
         const scrollOnLeft = this.enableRtl && vScrollShowing;
 
         if (scrollOnLeft) {

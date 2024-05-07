@@ -35,17 +35,13 @@ export class CenterWidthFeature extends BeanStub {
     private setWidth(): void {
         const {columnModel} = this;
 
-        const printLayout = this.gos.isDomLayout('print');
-
         const centerWidth = columnModel.getBodyContainerWidth();
-        const leftWidth = columnModel.getDisplayedColumnsLeftWidth();
-        const rightWidth = columnModel.getDisplayedColumnsRightWidth();
+        const leftWidth = 0;
+        const rightWidth = 0;
 
         let totalWidth: number;
 
-        if (printLayout) {
-            totalWidth = centerWidth + leftWidth + rightWidth;
-        } else {
+
             totalWidth = centerWidth;
 
             if (this.addSpacer) {
@@ -54,7 +50,6 @@ export class CenterWidthFeature extends BeanStub {
                     totalWidth += this.gos.getScrollbarWidth();
                 }
             }
-        }
 
         this.callback(totalWidth);
     }

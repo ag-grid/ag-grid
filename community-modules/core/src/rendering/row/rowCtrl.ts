@@ -341,9 +341,9 @@ export class RowCtrl extends BeanStub {
     }
 
     private areAllContainersReady(): boolean {
-        const isLeftReady = !!this.leftGui || !this.beans.columnModel.isPinningLeft();
+        const isLeftReady = !!this.leftGui;
         const isCenterReady = !!this.centerGui;
-        const isRightReady = !!this.rightGui || !this.beans.columnModel.isPinningRight();
+        const isRightReady = !!this.rightGui;
 
         return isLeftReady && isCenterReady && isRightReady;
     }
@@ -475,12 +475,6 @@ export class RowCtrl extends BeanStub {
         } else {
             const centerCols = columnModel.getViewportCenterColumnsForRow(this.rowNode);
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, centerCols);
-
-            const leftCols = columnModel.getDisplayedLeftColumnsForRow(this.rowNode);
-            this.leftCellCtrls = this.createCellCtrls(this.leftCellCtrls, leftCols, 'left');
-
-            const rightCols = columnModel.getDisplayedRightColumnsForRow(this.rowNode);
-            this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols, 'right');
         }
     }
 
@@ -525,8 +519,6 @@ export class RowCtrl extends BeanStub {
         if (this.isSticky() || !animateIn) { return; }
 
         const oldRowTopExists = exists(this.rowNode.oldRowTop);
-        const pinningLeft = this.beans.columnModel.isPinningLeft();
-        const pinningRight = this.beans.columnModel.isPinningRight();
 
         if (oldRowTopExists) {
             if (!this.gos.get('embedFullWidthRows')) {
@@ -536,8 +528,6 @@ export class RowCtrl extends BeanStub {
 
             // if the row had a previous position, we slide it in
             this.slideInAnimation.center = true;
-            this.slideInAnimation.left = pinningLeft;
-            this.slideInAnimation.right = pinningRight;
         } else {
             if ( !this.gos.get('embedFullWidthRows')) {
                 this.fadeInAnimation.fullWidth = true;
@@ -546,8 +536,6 @@ export class RowCtrl extends BeanStub {
 
             // if the row had no previous position, we fade it in
             this.fadeInAnimation.center = true;
-            this.fadeInAnimation.left = pinningLeft;
-            this.fadeInAnimation.right = pinningRight;
         }
     }
 

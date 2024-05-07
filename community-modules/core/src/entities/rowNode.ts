@@ -580,10 +580,10 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
                     let activeColsForRow: Column[] = [];
                     switch (col.getPinned()) {
                         case 'left':
-                            activeColsForRow = this.beans.columnModel.getDisplayedLeftColumnsForRow(this);
+                            activeColsForRow = [];
                             break;
                         case 'right':
-                            activeColsForRow = this.beans.columnModel.getDisplayedRightColumnsForRow(this);
+                            activeColsForRow = [];
                             break;
                         case null:
                             activeColsForRow = this.beans.columnModel.getViewportCenterColumnsForRow(this);

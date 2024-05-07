@@ -130,7 +130,7 @@ export class CellPositionFeature extends BeanStub {
 
     public onLeftChanged(): void {
         if (!this.eGui) { return; }
-        const left = this.modifyLeftForPrintLayout(this.getCellLeft());
+        const left = this.getCellLeft();
         this.eGui.style.left = left + 'px';
     }
 
@@ -144,22 +144,6 @@ export class CellPositionFeature extends BeanStub {
         }
 
         return mostLeftCol.getLeft();
-    }
-
-    private modifyLeftForPrintLayout(leftPosition: number | null): number | null {
-        if (!this.cellCtrl.isPrintLayout() || this.column.getPinned() === 'left') {
-            return leftPosition;
-        }
-
-        const leftWidth = this.beans.columnModel.getDisplayedColumnsLeftWidth();
-
-        if (this.column.getPinned() === 'right') {
-            const bodyWidth = this.beans.columnModel.getBodyContainerWidth();
-            return leftWidth + bodyWidth + (leftPosition || 0);
-        }
-
-        // is in body
-        return leftWidth + (leftPosition || 0);
     }
 
     private applyRowSpan(force?: boolean): void {

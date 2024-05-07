@@ -50,10 +50,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.setGui(eGui);
         this.updateState();
         this.setupWidth();
-        this.setupMovingCss();
-        this.setupWrapTextClass();
         this.refreshSpanHeaderHeight();
-        this.setupAutoHeight(eHeaderCompWrapper);
         this.addColumnHoverListener();
         this.setupClassesFromColDef();
         this.addActiveHeaderMouseListeners();
@@ -73,28 +70,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {
-        if (!this.column.isResizable()) { return; }
-
-        const actualWidth = this.column.getActualWidth();
-        const minWidth = this.column.getMinWidth() ?? 0;
-        const maxWidth = this.column.getMaxWidth() ?? Number.MAX_SAFE_INTEGER;
-    
-        const newWidth = Math.min(Math.max(actualWidth + delta, minWidth), maxWidth);
-
-        this.beans.columnModel.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true, 'uiColumnResized');
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
-        const { eGui, column, gos, ctrlsService } = this;
-        const pinned = this.getPinned();
-        const left = eGui.getBoundingClientRect().left;
-        const width = column.getActualWidth();
-        const isRtl = gos.get('enableRtl');
-        const isLeft = hDirection === HorizontalDirection.Left !== isRtl;
 
-       
-
-        ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
     }
 
     private setupUserComp(): void {
@@ -280,28 +259,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         listener();
     }
 
-    private setupMovingCss(): void {
-        const listener = () => {
-            // this is what makes the header go dark when it is been moved (gives impression to
-            // user that the column was picked up).
-            this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.column.isMoving());
-        };
-
-        this.addManagedListener(this.column, Column.EVENT_MOVING_CHANGED, listener);
-        listener();
-    }
-
-
-
-    private setupWrapTextClass() {
-        const listener = () => {
-            const wrapText = !!this.column.getColDef().wrapHeaderText;
-            this.comp.addOrRemoveCssClass('ag-header-cell-wrap-text', wrapText);
-        };
-        listener();
-        this.addRefreshFunction(listener);
-    }
-
     protected onDisplayedColumnsChanged(): void {
         super.onDisplayedColumnsChanged();
         if (!this.isAlive()) { return; }
@@ -348,83 +305,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
         eGui.style.setProperty('top', `${-extraHeight}px`);
         eGui.style.setProperty('height', `${headerHeight + extraHeight}px`);
-    }
-
-    private setupAutoHeight(wrapperElement: HTMLElement) {
-        const { columnModel, resizeObserverService } = this.beans;
-        const measureHeight = (timesCalled: number) => {
-            if (!this.isAlive()) { return; }
-
-            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = getElementSize(this.getGui());
-            const extraHeight = paddingTop + paddingBottom + borderBottomWidth + borderTopWidth;
-
-            const wrapperHeight = wrapperElement.offsetHeight;
-            const autoHeight = wrapperHeight + extraHeight;
-
-            if (timesCalled < 5) {
-                // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
-                // maybe it will be ready next VM turn
-                const doc = this.beans.gos.getDocument();
-                const notYetInDom = !doc || !doc.contains(wrapperElement);
-
-                // this happens in React, where React hasn't put any content in. we say 'possibly'
-                // as a) may not be React and b) the cell could be empty anyway
-                const possiblyNoContentYet = autoHeight == 0;
-
-                if (notYetInDom || possiblyNoContentYet) {
-                    window.setTimeout(() => measureHeight(timesCalled + 1), 0);
-                    return;
-                }
-            }
-            columnModel.setColumnHeaderHeight(this.column, autoHeight);
-        };
-
-        let isMeasuring = false;
-        let stopResizeObserver: (() => void) | undefined;
-
-        const checkMeasuring = () => {
-            const newValue = this.column.isAutoHeaderHeight();
-
-            if (newValue && !isMeasuring) {
-                startMeasuring();
-            }
-            if (!newValue && isMeasuring) {
-                stopMeasuring();
-            }
-        };
-
-        const startMeasuring = () => {
-            isMeasuring = true;
-            measureHeight(0);
-            this.comp.addOrRemoveCssClass('ag-header-cell-auto-height', true);
-            stopResizeObserver = resizeObserverService.observeResize(wrapperElement, () => measureHeight(0));
-        };
-
-        const stopMeasuring = () => {
-            isMeasuring = false;
-            if (stopResizeObserver) {
-                stopResizeObserver();
-            }
-            this.comp.addOrRemoveCssClass('ag-header-cell-auto-height', false);
-            stopResizeObserver = undefined;
-        };
-
-        checkMeasuring();
-
-        this.addDestroyFunc(() => stopMeasuring());
-
-        // In theory we could rely on the resize observer for everything - but since it's debounced
-        // it can be a little janky for smooth movement. in this case its better to react to our own events
-        // And unfortunately we cant _just_ rely on our own events, since custom components can change whenever
-        this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, () => isMeasuring && measureHeight(0));
-        // Displaying the sort icon changes the available area for text, so sort changes can affect height
-        this.addManagedListener(this.eventService, Column.EVENT_SORT_CHANGED, () => {
-            // Rendering changes for sort, happen after the event... not ideal
-            if (isMeasuring) {
-                window.setTimeout(() => measureHeight(0));
-            }
-        });
-        this.addRefreshFunction(checkMeasuring);
     }
 
     public setAriaDescriptionProperty(property: HeaderAriaDescriptionKey, value: string | null): void {

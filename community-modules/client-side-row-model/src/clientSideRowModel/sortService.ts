@@ -146,7 +146,7 @@ export class SortService extends BeanStub {
 
         const sortedChangedRows = touchedRows
             .map(mapNodeToSortedNode)
-            .sort((a, b) => this.rowNodeSorter.compareRowNodes(sortOptions, a, b));
+            .sort((a, b) => 0);
 
         return this.mergeSortedArrays(
             sortOptions,
@@ -169,7 +169,7 @@ export class SortService extends BeanStub {
             // of second array. If yes, store first
             // array element and increment first array
             // index. Otherwise do same with second array
-            const compareResult = this.rowNodeSorter.compareRowNodes(sortOptions, arr1[i], arr2[j]);
+            const compareResult = 0;
             if (compareResult < 0) {
                 res.push(arr1[i++]);
             } else {

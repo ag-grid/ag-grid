@@ -91,19 +91,4 @@ export class HeaderNavigationService extends BeanStub {
         return false;
     }
 
-
-    public scrollToColumn(column: Column | ColumnGroup, direction: 'Before' | 'After' | null = 'After'): void {
-        if (column.getPinned()) { return; }
-
-        let columnToScrollTo: Column;
-
-        if (column instanceof ColumnGroup) {
-            const columns = column.getDisplayedLeafColumns();
-            columnToScrollTo = direction === 'Before' ? last(columns) : columns[0];
-        } else {
-            columnToScrollTo = column;
-        }
-
-        this.gridBodyCon.getScrollFeature().ensureColumnVisible(columnToScrollTo);
-    }
 }
