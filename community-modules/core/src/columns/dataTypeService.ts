@@ -37,6 +37,8 @@ interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;
 }
 
+type FormatValueFunc = (params: { column: Column, node: IRowNode | null, value: any }) => string;
+
 const MONTH_LOCALE_TEXT = {
     january: 'January',
     february: 'February',
@@ -61,6 +63,7 @@ export class DataTypeService extends BeanStub {
 
     private dataTypeDefinitions: { [cellDataType: string]: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter } = {};
     private dataTypeMatchers: { [cellDataType: string]: ((value: any) => boolean) | undefined };
+    private formatValueFuncs: { [cellDataType: string]: FormatValueFunc };
     private isWaitingForRowData: boolean = false;
     private hasObjectValueParser: boolean;
     private hasObjectValueFormatter: boolean;
@@ -88,11 +91,24 @@ export class DataTypeService extends BeanStub {
     private processDataTypeDefinitions(): void {
         const defaultDataTypes = this.getDefaultDataTypes();
         this.dataTypeDefinitions = {};
+        this.formatValueFuncs = {};
+        const generateFormatValueFunc = (dataTypeDefinition: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter): FormatValueFunc => {
+            return params => {
+                const { column, node, value } = params;
+                let valueFormatter = column.getColDef().valueFormatter;
+                if (valueFormatter === dataTypeDefinition.groupSafeValueFormatter) {
+                    valueFormatter = dataTypeDefinition.valueFormatter;
+                }
+                return this.valueService.formatValue(column, node, value, valueFormatter as any)!;
+            };
+        }
         Object.entries(defaultDataTypes).forEach(([cellDataType, dataTypeDefinition]) => {
-            this.dataTypeDefinitions[cellDataType] = {
+            const mergedDataTypeDefinition = {
                 ...dataTypeDefinition,
                 groupSafeValueFormatter: this.createGroupSafeValueFormatter(dataTypeDefinition)
             };
+            this.dataTypeDefinitions[cellDataType] = mergedDataTypeDefinition;
+            this.formatValueFuncs[cellDataType] = generateFormatValueFunc(mergedDataTypeDefinition);
         });
         const dataTypeDefinitions = this.gos.get('dataTypeDefinitions') ?? {};
         this.dataTypeMatchers = {};
@@ -104,6 +120,7 @@ export class DataTypeService extends BeanStub {
                 if (dataTypeDefinition.dataTypeMatcher) {
                     this.dataTypeMatchers[cellDataType] = dataTypeDefinition.dataTypeMatcher;
                 }
+                this.formatValueFuncs[cellDataType] = generateFormatValueFunc(mergedDataTypeDefinition);
             }
         });
         this.checkObjectValueHandlers(defaultDataTypes);
@@ -304,7 +321,7 @@ export class DataTypeService extends BeanStub {
             colDef.valueParser = dataTypeDefinition.valueParser;
         }
         if (!dataTypeDefinition.suppressDefaultProperties) {
-            this.setColDefPropertiesForBaseDataType(colDef, dataTypeDefinition, colId);
+            this.setColDefPropertiesForBaseDataType(colDef, cellDataType, dataTypeDefinition, colId);
         }
         return dataTypeDefinition.columnTypes;
     }
@@ -450,8 +467,7 @@ export class DataTypeService extends BeanStub {
     private processColumnsPendingInference(firstRowData: any, columnTypeOverridesExist: boolean): void {
         this.initialData = firstRowData;
         const state: ColumnState[] = [];
-        this.columnStateUpdateListenerDestroyFuncs.forEach(destroyFunc => destroyFunc());
-        this.columnStateUpdateListenerDestroyFuncs = [];
+        this.destroyColumnStateUpdateListeners();
         const newRowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
         const newPivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
         Object.entries(this.columnStateUpdatesPendingInference).forEach(([colId, columnStateUpdates]) => {
@@ -566,18 +582,17 @@ export class DataTypeService extends BeanStub {
         }
     }
 
+    public getFormatValue(cellDataType: string): FormatValueFunc | undefined {
+        return this.formatValueFuncs[cellDataType];
+    }
+
     private setColDefPropertiesForBaseDataType(
         colDef: ColDef,
+        cellDataType: string,
         dataTypeDefinition: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter,
         colId: string
     ): void {
-        const formatValue = (column: Column, node: IRowNode | null, value: any) => {
-            let valueFormatter = column.getColDef().valueFormatter;
-            if (valueFormatter === dataTypeDefinition.groupSafeValueFormatter) {
-                valueFormatter = dataTypeDefinition.valueFormatter;
-            }
-            return this.valueService.formatValue(column, node, value, valueFormatter as any);
-        }
+        const formatValue = this.formatValueFuncs[cellDataType];
         const usingSetFilter = ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.context.getGridId());
         const translate = this.localeService.getLocaleTextFunc();
         const mergeFilterParams = (params: any) => {
@@ -640,11 +655,11 @@ export class DataTypeService extends BeanStub {
             }
             case 'date': {
                 colDef.cellEditor = 'agDateCellEditor';
-                colDef.keyCreator = (params: KeyCreatorParams) => formatValue(params.column, params.node, params.value)!;
+                colDef.keyCreator = formatValue;
                 if (usingSetFilter) {
                     mergeFilterParams({
                         valueFormatter: (params: ValueFormatterParams) => {
-                            const valueFormatted = formatValue(params.column, params.node, params.value);
+                            const valueFormatted = formatValue(params);
                             return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         },
                         treeList: true,
@@ -661,12 +676,12 @@ export class DataTypeService extends BeanStub {
             }
             case 'dateString': {
                 colDef.cellEditor = 'agDateStringCellEditor';
-                colDef.keyCreator = (params: KeyCreatorParams) => formatValue(params.column, params.node, params.value)!;
+                colDef.keyCreator = formatValue;
                 const convertToDate = (dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
                 if (usingSetFilter) {
                     mergeFilterParams({
                         valueFormatter: (params: ValueFormatterParams) => {
-                            const valueFormatted = formatValue(params.column, params.node, params.value);
+                            const valueFormatted = formatValue(params);
                             return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         },
                         treeList: true,
@@ -704,25 +719,25 @@ export class DataTypeService extends BeanStub {
                     if (!column || !colDef) {
                         return 0;
                     }
-                    const valA = a == null ? '' : formatValue(column, null, a)!;
-                    const valB = b == null ? '' : formatValue(column, null, b)!;
+                    const valA = a == null ? '' : formatValue({ column, node: null, value: a });
+                    const valB = b == null ? '' : formatValue({ column, node: null, value: b });
                     if (valA === valB) return 0;
                     return valA > valB ? 1 : -1;
                 };
-                colDef.keyCreator = (params: KeyCreatorParams) => formatValue(params.column, params.node, params.value)!;
+                colDef.keyCreator = formatValue;
                 if (usingSetFilter) {
                     mergeFilterParams({
                         valueFormatter: (params: ValueFormatterParams) => {
-                            const valueFormatted = formatValue(params.column, params.node, params.value);
+                            const valueFormatted = formatValue(params);
                             return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         }
                     });
                 } else {
-                    colDef.filterValueGetter = (params: ValueGetterParams) => formatValue(
-                        params.column,
-                        params.node,
-                        this.valueService.getValue(params.column, params.node)
-                    );
+                    colDef.filterValueGetter = (params: ValueGetterParams) => formatValue({
+                        column: params.column,
+                        node: params.node,
+                        value: this.valueService.getValue(params.column, params.node)
+                    });
                 }
                 break;
             }
@@ -793,5 +808,19 @@ export class DataTypeService extends BeanStub {
                 valueFormatter: (params: ValueFormatterLiteParams<any, any>) => toStringOrNull(params.value) ?? '',
             }
         }
+    }
+
+    private destroyColumnStateUpdateListeners(): void {
+        this.columnStateUpdateListenerDestroyFuncs.forEach(destroyFunc => destroyFunc());
+        this.columnStateUpdateListenerDestroyFuncs = [];
+    }
+
+    protected destroy(): void {
+        this.dataTypeDefinitions = {};
+        this.dataTypeMatchers = {};
+        this.formatValueFuncs = {};
+        this.columnStateUpdatesPendingInference = {};
+        this.destroyColumnStateUpdateListeners();
+        super.destroy();
     }
 }
