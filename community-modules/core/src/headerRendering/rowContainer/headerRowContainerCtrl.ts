@@ -10,7 +10,6 @@ import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
 import { NumberSequence } from "../../utils";
 import { HeaderRowType } from "../row/headerRowComp";
 import { HeaderRowCtrl } from "../row/headerRowCtrl";
-import { FocusService } from "../../focusService";
 import { HeaderPosition } from "../common/headerPosition";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { HeaderCellCtrl } from "../cells/column/headerCellCtrl";
@@ -26,9 +25,7 @@ export interface IHeaderRowContainerComp {
 export class HeaderRowContainerCtrl extends BeanStub {
 
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('focusService') public focusService: FocusService;
 
     private pinned: ColumnPinnedType;
     private comp: IHeaderRowContainerComp;
@@ -66,19 +63,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
     public refresh(keepColumns = false): void {
         const sequence = new NumberSequence();
-        const focusedHeaderPosition = this.focusService.getFocusHeaderToUseAfterRefresh();
-
-        const refreshColumnGroups = () => {
-            const groupRowCount = this.columnModel.getHeaderRowCount() - 1;
-
-            this.groupsRowCtrls = this.destroyBeans(this.groupsRowCtrls);
-
-            for (let i = 0; i < groupRowCount; i++) {
-                const ctrl = this.createBean(new HeaderRowCtrl(sequence.next(), this.pinned, HeaderRowType.COLUMN_GROUP));
-                this.groupsRowCtrls.push(ctrl);
-            }
-        };
-
         const refreshColumns = () => {
             const rowIndex = sequence.next();
 
@@ -95,47 +79,14 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
         };
 
-        const refreshFilters = () => {
 
-            const destroyPreviousComp = () => {
-                this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
-            };
 
-            if (!this.includeFloatingFilter) {
-                destroyPreviousComp();
-                return;
-            }
-
-            const rowIndex = sequence.next();
-
-            if (this.filtersRowCtrl) {
-                const rowIndexMismatch = this.filtersRowCtrl.getRowIndex() !== rowIndex;
-                if (!keepColumns || rowIndexMismatch) {
-                    destroyPreviousComp();
-                }
-            }
-
-            if (!this.filtersRowCtrl) {
-                this.filtersRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.FLOATING_FILTER));
-            }
-        };
-
-        refreshColumnGroups();
         refreshColumns();
-        refreshFilters();
 
         const allCtrls = this.getAllCtrls();
         this.comp.setCtrls(allCtrls);
 
-        this.restoreFocusOnHeader(focusedHeaderPosition);
     }
-
-    private restoreFocusOnHeader(position: HeaderPosition | null): void {
-        if (position == null || position.column.getPinned() != this.pinned) { return; }
-
-        this.focusService.focusHeaderPosition({ headerPosition: position });
-    }
-
     private getAllCtrls(): HeaderRowCtrl[] {
         const res: HeaderRowCtrl[] = [...this.groupsRowCtrls];
 

@@ -1,5 +1,4 @@
 import { Autowired } from "../context/context";
-import { FocusService } from "../focusService";
 import { BeanStub } from "../context/beanStub";
 import { ModuleRegistry } from "../modules/moduleRegistry";
 import { ModuleNames } from "../modules/moduleNames";
@@ -9,7 +8,6 @@ import { ResizeObserverService } from "../misc/resizeObserverService";
 import { GridSizeChangedEvent } from "../events";
 import { ColumnModel } from "../columns/columnModel";
 import { CtrlsService } from "../ctrlsService";
-import { MouseEventService } from "../gridBodyComp/mouseEventService";
 import { last } from "../utils/array";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
@@ -24,11 +22,9 @@ export interface IGridComp extends LayoutView {
 
 export class GridCtrl extends BeanStub {
 
-    @Autowired('focusService') protected readonly focusService: FocusService;
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
-    @Autowired('mouseEventService') private readonly mouseEventService: MouseEventService;
 
     private view: IGridComp;
     private eGridHostDiv: HTMLElement;
@@ -40,8 +36,6 @@ export class GridCtrl extends BeanStub {
         this.eGui = eGui;
 
         this.eGui.setAttribute('grid-id', this.context.getGridId());
-
-        this.mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);
 
         this.createManagedBean(new LayoutFeature(this.view));
 
@@ -55,9 +49,7 @@ export class GridCtrl extends BeanStub {
     }
 
     public isDetailGrid(): boolean {
-        const el = this.focusService.findTabbableParent(this.getGui());
-
-        return el?.getAttribute('row-id')?.startsWith('detail') || false;
+        return false;
     }
 
     public showDropZones(): boolean {
@@ -116,36 +108,11 @@ export class GridCtrl extends BeanStub {
             return false;
         }
 
-        return this.focusService.focusInto(focusableContainers[nextIdx]);
+        return false;
     }
 
     public focusInnerElement(fromBottom?: boolean): boolean {
-        const focusableContainers = this.view.getFocusableContainers();
-        const allColumns = this.columnModel.getAllDisplayedColumns();
-
-        if (fromBottom) {
-            if (focusableContainers.length > 1) {
-                return this.focusService.focusInto(last(focusableContainers), true);
-            }
-
-            const lastColumn = last(allColumns);
-            if (this.focusService.focusGridView(lastColumn, true)) { return true; }
-        }
-
-        if (this.gos.get('headerHeight') === 0 || this.gos.get('suppressHeaderFocus')) {
-            if (this.focusService.focusGridView(allColumns[0])) {
-                return true;
-            }
-
-            for (let i = 1; i < focusableContainers.length; i++) {
-                if (this.focusService.focusInto(focusableContainers[i])) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        return this.focusService.focusFirstHeader();
+      return false;
     }
 
     public forceFocusOutOfContainer(up = false): void {

@@ -1,7 +1,6 @@
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, PostConstruct } from "../../context/context";
 import { Events } from "../../eventKeys";
-import { RowContainerEventsFeature } from "./rowContainerEventsFeature";
 import { CtrlsService } from "../../ctrlsService";
 import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isInDOM, setScrollLeft } from "../../utils/dom";
 import { ColumnModel } from "../../columns/columnModel";
@@ -221,7 +220,6 @@ export class RowContainerCtrl extends BeanStub {
         this.eContainer = eContainer;
         this.eViewport = eViewport;
 
-        this.createManagedBean(new RowContainerEventsFeature(this.eContainer));
         this.listenOnDomOrder();
         this.stopHScrollOnPinnedRows();
 
@@ -366,7 +364,7 @@ export class RowContainerCtrl extends BeanStub {
             // this just justifies if the ctrl is in the correct place, this will be fed with zombie rows by the
             // row renderer, so should not block them as they still need to animate -  the row renderer
             // will clean these up when they finish animating
-            const fullWidthRow = rowCtrl.isFullWidth();
+            const fullWidthRow = false;
 
             const match = this.isFullWithContainer ?
                 !embedFW && fullWidthRow

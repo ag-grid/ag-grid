@@ -7,12 +7,10 @@ import { HeaderNavigationService } from "../headerRendering/common/headerNavigat
 import { IRowModel } from "../interfaces/iRowModel";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
-import { RowRenderer } from "../rendering/rowRenderer";
 import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { isInvisibleScrollbar } from "../utils/browser";
 import { getInnerWidth, isElementChildOfClass, isVerticalScrollShowing } from "../utils/dom";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
-import { MouseEventService } from "./mouseEventService";
 import { ScrollVisibleService } from "./scrollVisibleService";
 
 export enum RowAnimationCssClasses {
@@ -55,7 +53,6 @@ export class GridBodyCtrl extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
-    @Autowired('mouseEventService') public mouseEventService: MouseEventService;
     @Autowired('rowModel') public rowModel: IRowModel;
 
     private comp: IGridBodyComp;
@@ -245,29 +242,8 @@ export class GridBodyCtrl extends BeanStub {
         this.addManagedListener(this.eStickyTop, 'wheel', this.onStickyWheel.bind(this));
         this.addManagedListener(this.eStickyBottom, 'wheel', this.onStickyWheel.bind(this));
 
-        // allow mouseWheel on the Full Width Container to Scroll the Viewport
-        this.addFullWidthContainerWheelListener();
     }
 
-    private addFullWidthContainerWheelListener(): void {
-        const fullWidthContainer = this.eBodyViewport.querySelector('.ag-full-width-container');
-        const eCenterColsViewport = this.eBodyViewport.querySelector('.ag-center-cols-viewport');
-
-        if (fullWidthContainer && eCenterColsViewport) {
-            this.addManagedListener(fullWidthContainer, 'wheel', (e: WheelEvent) => this.onFullWidthContainerWheel(e, eCenterColsViewport));
-        }
-    }
-
-    private onFullWidthContainerWheel(e: WheelEvent, eCenterColsViewport: Element): void {
-        if (
-            !e.deltaX ||
-            Math.abs(e.deltaY) > Math.abs(e.deltaX) ||
-            !this.mouseEventService.isEventFromThisGrid(e)
-        ) { return; }
-
-        e.preventDefault();
-        eCenterColsViewport.scrollBy({ left: e.deltaX });
-    }
 
     private onBodyViewportContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
         if (!mouseEvent && !touchEvent) { return; }

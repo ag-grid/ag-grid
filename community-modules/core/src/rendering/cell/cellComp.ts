@@ -294,8 +294,6 @@ export class CellComp extends Component {
     //
     // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
     public destroy(): void {
-        this.cellCtrl.stopEditing();
-
         this.destroyEditorAndRenderer();
 
         super.destroy();

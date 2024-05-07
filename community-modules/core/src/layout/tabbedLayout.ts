@@ -5,13 +5,10 @@ import { clearElement } from '../utils/dom';
 import { setAriaLabel, setAriaRole } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
 import { PostConstruct, Autowired } from '../context/context';
-import { FocusService } from '../focusService';
 import { TabGuardComp } from '../widgets/tabGuardComp';
 import { createIconNoSpan } from '../utils/icon';
 
 export class TabbedLayout extends TabGuardComp {
-
-    @Autowired('focusService') private focusService: FocusService;
 
     @RefSelector('eHeader') private readonly eHeader: HTMLElement;
     @RefSelector('eBody') private readonly eBody: HTMLElement;
@@ -127,7 +124,7 @@ export class TabbedLayout extends TabGuardComp {
     protected onTabKeyDown(e: KeyboardEvent) {
         if (e.defaultPrevented) { return; }
 
-        const { focusService, eHeader, eBody, activeItem, params } = this;
+        const { eHeader, eBody, activeItem, params } = this;
         const { suppressTrapFocus, enableCloseButton } = params;
 
         const activeElement = this.gos.getActiveDomElement();
@@ -139,7 +136,6 @@ export class TabbedLayout extends TabGuardComp {
             if (enableCloseButton && backwards && !this.eCloseButton?.contains(activeElement)) {
                 this.eCloseButton?.focus();
             } else if (suppressTrapFocus && backwards) {
-                this.focusService.findFocusableElementBeforeTabGuard(this.gos.getDocument().body, target)?.focus();
             } else {
                 // focus is in header, move into body of popup
                 this.focusBody(e.shiftKey);
@@ -149,18 +145,8 @@ export class TabbedLayout extends TabGuardComp {
 
         let nextEl: HTMLElement | null = null;
 
-        if (focusService.isTargetUnderManagedComponent(eBody, target)) {
-            if (backwards) {
-                nextEl = this.focusService.findFocusableElementBeforeTabGuard(eBody, target);
-            }
-
-            if (!nextEl && !suppressTrapFocus) {
-                nextEl = activeItem.eHeaderButton;
-            }
-        }
 
         if (!nextEl && eBody.contains(activeElement)) {
-            nextEl = focusService.findNextFocusableElement(eBody, false, backwards);
 
             if (!nextEl) {
                 e.preventDefault();
@@ -177,7 +163,6 @@ export class TabbedLayout extends TabGuardComp {
 
         if (nextEl) {
             e.preventDefault();
-            nextEl.focus();
         }
     }
 
@@ -194,7 +179,6 @@ export class TabbedLayout extends TabGuardComp {
     }
 
     private focusBody(fromBottom?: boolean): void {
-        this.focusService.focusInto(this.eBody, fromBottom);
     }
 
     public setAfterAttachedParams(params: IAfterGuiAttachedParams): void {
@@ -253,11 +237,8 @@ export class TabbedLayout extends TabGuardComp {
 
         tabbedItem.bodyPromise.then((body: HTMLElement) => {
             this.eBody.appendChild(body);
-            const onlyUnmanaged = !this.focusService.isKeyboardMode();
 
-            if (!this.params.suppressFocusBodyOnOpen) {
-                this.focusService.focusInto(this.eBody, false, onlyUnmanaged);
-            }
+          
 
             if (tabbedItem.afterAttachedCallback) {
                 tabbedItem.afterAttachedCallback(this.afterAttachedParams);

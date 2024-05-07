@@ -10,8 +10,6 @@ import { RowNodeEventThrottle } from "../entities/rowNodeEventThrottle";
 import { RowPositionUtils } from "../entities/rowPositionUtils";
 import { Environment } from "../environment";
 import { EventService } from "../eventService";
-import { FocusService } from "../focusService";
-import { NavigationService } from "../gridBodyComp/navigationService";
 import { GridOptionsService } from "../gridOptionsService";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { IRangeService, ISelectionHandleFactory } from "../interfaces/IRangeService";
@@ -52,9 +50,7 @@ export class Beans {
     @Autowired('eventService') public readonly eventService: EventService;
     @Autowired('columnModel') public readonly columnModel: ColumnModel;
     @Autowired('headerNavigationService') public readonly headerNavigationService: HeaderNavigationService;
-    @Autowired('navigationService') public readonly navigationService: NavigationService;
     @Autowired('columnAnimationService') public readonly columnAnimationService: ColumnAnimationService;
-    @Autowired('focusService') public readonly focusService: FocusService;
     @Autowired('stylingService') public readonly stylingService: StylingService;
     @Autowired('columnHoverService') public readonly columnHoverService: ColumnHoverService;
     @Autowired('userComponentFactory') public readonly userComponentFactory: UserComponentFactory;

@@ -4,9 +4,7 @@ import { BeanStub } from "../context/beanStub";
 import { Autowired } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
-import { FocusService } from "../focusService";
 import { exists } from "../utils/generic";
-import { ManagedFocusFeature } from "../widgets/managedFocusFeature";
 import { HeaderNavigationDirection, HeaderNavigationService } from "./common/headerNavigationService";
 
 export interface IGridHeaderComp {
@@ -17,7 +15,6 @@ export interface IGridHeaderComp {
 export class GridHeaderCtrl extends BeanStub {
 
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
-    @Autowired('focusService') private focusService: FocusService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
@@ -28,15 +25,6 @@ export class GridHeaderCtrl extends BeanStub {
     public setComp(comp: IGridHeaderComp, eGui: HTMLElement, eFocusableElement: HTMLElement): void {
         this.comp = comp;
         this.eGui = eGui;
-
-        this.createManagedBean(new ManagedFocusFeature(
-            eFocusableElement,
-            {
-                onTabKeyDown: this.onTabKeyDown.bind(this),
-                handleKeyDown: this.handleKeyDown.bind(this),
-                onFocusOut: this.onFocusOut.bind(this)
-            }
-        ));
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
@@ -118,16 +106,7 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {
-        const isRtl = this.gos.get('enableRtl');
-        const direction = e.shiftKey !== isRtl
-            ? HeaderNavigationDirection.LEFT
-            : HeaderNavigationDirection.RIGHT;
 
-        if (this.headerNavigationService.navigateHorizontally(direction, true, e) ||
-            this.focusService.focusNextGridCoreContainer(e.shiftKey)
-        ) {
-            e.preventDefault();
-        }
      }
 
     protected handleKeyDown(e: KeyboardEvent): void {
@@ -161,10 +140,6 @@ export class GridHeaderCtrl extends BeanStub {
         const { relatedTarget } = e;
 
         if (!relatedTarget && this.eGui.contains(this.gos.getActiveDomElement())) { return; }
-
-        if (!this.eGui.contains(relatedTarget as HTMLElement)) {
-            this.focusService.clearFocusedHeader();
-        }
     }
 
     private onHeaderContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {

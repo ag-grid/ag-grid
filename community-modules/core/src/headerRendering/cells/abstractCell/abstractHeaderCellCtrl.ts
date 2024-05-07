@@ -8,7 +8,6 @@ import { ColumnGroup } from "../../../entities/columnGroup";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { Events } from "../../../eventKeys";
 import { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent } from "../../../events";
-import { FocusService } from "../../../focusService";
 import { BrandedType } from "../../../interfaces/brandedType";
 import { WithoutGridCommon } from "../../../interfaces/iCommon";
 import { IHeaderColumn } from "../../../interfaces/iHeaderColumn";
@@ -35,7 +34,6 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
     public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
 
-    @Autowired('focusService') protected readonly focusService: FocusService;
     @Autowired('userComponentFactory') protected readonly userComponentFactory: UserComponentFactory;
     @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
 
@@ -75,14 +73,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
-        const { headerRowIndex, column } = this.focusService.getFocusedHeader()!;
-
-        return isUserSuppressingHeaderKeyboardEvent(
-            this.gos,
-            e,
-            headerRowIndex,
-            column
-        );
+        return false;
     }
 
     protected getWrapperHasFocus(): boolean {

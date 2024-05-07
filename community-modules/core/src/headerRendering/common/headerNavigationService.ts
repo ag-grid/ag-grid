@@ -3,7 +3,6 @@ import { Autowired, Bean, PostConstruct } from "../../context/context";
 import { CtrlsService } from "../../ctrlsService";
 import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
-import { FocusService } from "../../focusService";
 import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
 import { last } from "../../utils/array";
 import { HeaderPosition, HeaderPositionUtils } from "./headerPosition";
@@ -18,7 +17,6 @@ export enum HeaderNavigationDirection {
 @Bean('headerNavigationService')
 export class HeaderNavigationService extends BeanStub {
 
-    @Autowired('focusService') private focusService: FocusService;
     @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
@@ -46,7 +44,6 @@ export class HeaderNavigationService extends BeanStub {
      */
     public navigateVertically(direction: HeaderNavigationDirection, fromHeader: HeaderPosition | null, event: KeyboardEvent): boolean {
         if (!fromHeader) {
-            fromHeader = this.focusService.getFocusedHeader();
         }
 
         if (!fromHeader) { return false; }
@@ -79,11 +76,7 @@ export class HeaderNavigationService extends BeanStub {
             return false;
         }
 
-        return this.focusService.focusHeaderPosition({
-            headerPosition: { headerRowIndex: nextRow, column: nextFocusColumn! },
-            allowUserOverride:  true,
-            event
-        });
+        return false;
     }
 
     public setCurrentHeaderRowWithoutSpan(row: number): void {
@@ -95,82 +88,9 @@ export class HeaderNavigationService extends BeanStub {
      * @return {boolean} true to preventDefault on the event that caused this navigation.
      */
     public navigateHorizontally(direction: HeaderNavigationDirection, fromTab: boolean = false, event: KeyboardEvent): boolean {
-        const focusedHeader = this.focusService.getFocusedHeader()!;
-        const isLeft = direction === HeaderNavigationDirection.LEFT;
-        const isRtl = this.gos.get('enableRtl');
-        let nextHeader: HeaderPosition;
-        let normalisedDirection: 'Before' |  'After';
-
-        // either navigating to the left or isRtl (cannot be both)
-        if (this.currentHeaderRowWithoutSpan !== -1) {
-            focusedHeader.headerRowIndex = this.currentHeaderRowWithoutSpan;
-        } else {
-            this.currentHeaderRowWithoutSpan = focusedHeader.headerRowIndex;
-        }
-
-        if (isLeft !== isRtl) {
-            normalisedDirection = 'Before';
-            nextHeader = this.headerPositionUtils.findHeader(focusedHeader, normalisedDirection)!;
-        } else {
-            normalisedDirection = 'After';
-            nextHeader = this.headerPositionUtils.findHeader(focusedHeader, normalisedDirection)!;
-        }
-
-        if (nextHeader || !fromTab) {
-            return this.focusService.focusHeaderPosition({
-                headerPosition: nextHeader,
-                direction: normalisedDirection,
-                fromTab,
-                allowUserOverride: true,
-                event
-            });
-        } else if (fromTab) {
-            const userFunc = this.gos.getCallback('tabToNextHeader');
-            if (userFunc) {
-                return this.focusService.focusHeaderPositionFromUserFunc({
-                    userFunc,
-                    headerPosition: nextHeader,
-                    direction: normalisedDirection
-                });
-            }
-        }
-
-        return this.focusNextHeaderRow(focusedHeader, normalisedDirection, event);
+        return false;
     }
 
-    private focusNextHeaderRow(focusedHeader: HeaderPosition, direction: 'Before' | 'After', event: KeyboardEvent): boolean {
-        const currentIndex = focusedHeader.headerRowIndex;
-        let nextPosition: HeaderPosition | null = null;
-        let nextRowIndex: number;
-
-        if (direction === 'Before') {
-            if (currentIndex > 0) {
-                nextRowIndex = currentIndex - 1;
-                this.currentHeaderRowWithoutSpan -= 1;
-                nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'end')!;
-            }
-        } else {
-            nextRowIndex = currentIndex + 1;
-            if (this.currentHeaderRowWithoutSpan < this.getHeaderRowCount()) {
-                this.currentHeaderRowWithoutSpan += 1;
-            } else {
-                this.setCurrentHeaderRowWithoutSpan(-1);
-            }
-            nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'start')!;
-        }
-
-        if (!nextPosition) { return false; }
-
-        const { column, headerRowIndex } = this.headerPositionUtils.getHeaderIndexToFocus(nextPosition.column, nextPosition?.headerRowIndex)
-
-        return this.focusService.focusHeaderPosition({
-            headerPosition: { column, headerRowIndex },
-            direction,
-            fromTab: true,
-            allowUserOverride: true,
-            event
-        });
-    }
 
     public scrollToColumn(column: Column | ColumnGroup, direction: 'Before' | 'After' | null = 'After'): void {
         if (column.getPinned()) { return; }

@@ -10,7 +10,6 @@ import { Beans } from "../../../rendering/beans";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 import { ColumnSortState } from "../../../utils/aria";
 import { getElementSize } from "../../../utils/dom";
-import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
 import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
@@ -63,16 +62,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
         this.createManagedBean(new HoverFeature([this.column], eGui));
         this.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
-        this.createManagedBean(new ManagedFocusFeature(
-            eGui,
-            {
-                shouldStopEventPropagation: e => this.shouldStopEventPropagation(e),
-                onTabKeyDown: () => null,
-                handleKeyDown: this.handleKeyDown.bind(this),
-                onFocusIn: this.onFocusIn.bind(this),
-                onFocusOut: this.onFocusOut.bind(this)
-            }
-        ));
 
         this.addResizeAndMoveKeyboardListeners();
 
@@ -191,25 +180,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
 
 
-    private onFocusIn(e: FocusEvent) {
-        if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
-            const rowIndex = this.getRowIndex();
-            this.focusService.setFocusedHeader(rowIndex, this.column);
-            this.announceAriaDescription();
-        }
-
-        if (this.focusService.isKeyboardMode()) {
-            this.setActiveHeader(true);
-        }
-    }
-
-    private onFocusOut(e: FocusEvent) {
-        if (
-            this.getGui().contains(e.relatedTarget as HTMLElement)
-        ) { return; }
-
-        this.setActiveHeader(false);
-    }
 
     private setupClassesFromColDef(): void {
         const refreshHeaderClasses = () => {

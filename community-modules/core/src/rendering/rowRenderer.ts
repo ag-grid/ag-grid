@@ -13,7 +13,6 @@ import {
 } from "../events";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { ColumnModel } from "../columns/columnModel";
-import { FocusService } from "../focusService";
 import { CellPosition } from "../entities/cellPositionUtils";
 import { BeanStub } from "../context/beanStub";
 import { PaginationProxy } from "../pagination/paginationProxy";
@@ -31,7 +30,6 @@ import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
 import { removeFromArray } from "../utils/array";
 import { AnimationFrameService } from "../misc/animationFrameService";
-import { browserSupportsPreventScroll } from "../utils/browser";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IRowNode } from "../interfaces/iRowNode";
 
@@ -85,7 +83,6 @@ export class RowRenderer extends BeanStub {
     @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
     @Autowired("columnModel") private columnModel: ColumnModel;
     @Autowired("rowModel") private rowModel: IRowModel;
-    @Autowired("focusService") private focusService: FocusService;
     @Autowired("beans") private beans: Beans;
     @Autowired("rowContainerHeightService") private rowContainerHeightService: RowContainerHeightService;
     @Autowired("ctrlsService") private ctrlsService: CtrlsService;
@@ -198,27 +195,10 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    private onCellFocusChanged(event?: CellFocusedEvent) {
-        this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onCellFocused(event));
-        this.getFullWidthRowCtrls().forEach(rowCtrl => rowCtrl.onFullWidthRowFocused(event));
-    }
-
     // in a clean design, each cell would register for each of these events. however when scrolling, all the cells
     // registering and de-registering for events is a performance bottleneck. so we register here once and inform
     // all active cells.
     private registerCellEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, (event: CellFocusedEvent) => {
-            this.onCellFocusChanged(event);
-        });
-
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUS_CLEARED, () => {
-            this.onCellFocusChanged();
-        });
-
-        this.addManagedListener(this.eventService, Events.EVENT_FLASH_CELLS, event => {
-            this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onFlashCells(event));
-        });
-
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, () => {
             this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onColumnHover());
         });
@@ -464,25 +444,6 @@ export class RowRenderer extends BeanStub {
         this.redrawAfterModelUpdate();
     }
 
-    private getCellToRestoreFocusToAfterRefresh(params?: RefreshViewParams): CellPosition | null {
-        const focusedCell = (params?.suppressKeepFocus) ? null : this.focusService.getFocusCellToUseAfterRefresh();
-
-        if (focusedCell == null) { return null; }
-
-        // if the dom is not actually focused on a cell, then we don't try to refocus. the problem this
-        // solves is with editing - if the user is editing, eg focus is on a text field, and not on the
-        // cell itself, then the cell can be registered as having focus, however it's the text field that
-        // has the focus and not the cell div. therefore, when the refresh is finished, the grid will focus
-        // the cell, and not the textfield. that means if the user is in a text field, and the grid refreshes,
-        // the focus is lost from the text field. we do not want this.
-        const activeElement = this.gos.getActiveDomElement();
-        const cellDomData = this.gos.getDomData(activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
-        const rowDomData = this.gos.getDomData(activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
-
-        const gridElementFocused = cellDomData || rowDomData;
-
-        return gridElementFocused ? focusedCell : null;
-    }
 
     // gets called from:
     // +) initialisation (in registerGridComp) params = null
@@ -492,8 +453,6 @@ export class RowRenderer extends BeanStub {
     // +) redrawRows (from Grid API), recycleRows = true/false
     private redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
         this.getLockOnRefresh();
-
-        const focusedCell: CellPosition | null = this.getCellToRestoreFocusToAfterRefresh(params);
 
         this.updateContainerHeights();
         this.scrollToTopIfNewData(params);
@@ -521,11 +480,6 @@ export class RowRenderer extends BeanStub {
         }
 
         this.dispatchDisplayedRowsChanged();
-
-        // if a cell was focused before, ensure focus now.
-        if (focusedCell != null) {
-            this.restoreFocusedCell(focusedCell);
-        }
 
         this.releaseLockOnRefresh();
     }
@@ -581,33 +535,6 @@ export class RowRenderer extends BeanStub {
         return this.refreshInProgress;
     }
 
-    // sets the focus to the provided cell, if the cell is provided. this way, the user can call refresh without
-    // worry about the focus been lost. this is important when the user is using keyboard navigation to do edits
-    // and the cellEditor is calling 'refresh' to get other cells to update (as other cells might depend on the
-    // edited cell).
-    private restoreFocusedCell(cellPosition: CellPosition | null): void {
-        if (cellPosition) {
-            // we don't wish to dispatch an event as the rowRenderer is not capable of changing the selected cell,
-            // so we mock a change event for the full width rows and cells to ensure they update to the newly selected
-            // state
-            this.focusService.setRestoreFocusedCell(cellPosition);
-
-            this.onCellFocusChanged(this.beans.gos.addGridCommonParams<CellFocusedEvent>({
-                rowIndex: cellPosition.rowIndex,
-                column: cellPosition.column,
-                rowPinned: cellPosition.rowPinned,
-                forceBrowserFocus: true,
-                preventScrollOnBrowserFocus: true,
-                type: 'mock',
-            }));
-        }
-    }
-
-    public stopEditing(cancel: boolean = false) {
-        this.getAllRowCtrls().forEach(rowCtrl => {
-            rowCtrl.stopEditing(cancel);
-        });
-    }
 
     public getAllCellCtrls(): CellCtrl[] {
         const res: CellCtrl[] = [];
@@ -642,11 +569,6 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    public flashCells(params: FlashCellsParams = {}): void {
-        this.getCellCtrls(params.rowNodes, params.columns)
-            .forEach(cellCtrl => cellCtrl.flashCell(params));
-    }
-
     public refreshCells(params: RefreshCellsParams = {}): void {
         const refreshCellParams = {
             forceRefresh: params.force,
@@ -657,16 +579,7 @@ export class RowRenderer extends BeanStub {
             .forEach(cellCtrl => cellCtrl.refreshOrDestroyCell(refreshCellParams));
 
         if (params.rowNodes) {
-            // refresh the full width rows too
-            this.getRowCtrls(params.rowNodes).forEach(rowCtrl => {
-                if (!rowCtrl.isFullWidth()) {
-                    return;
-                }
-                const refreshed = rowCtrl.refreshFullWidth();
-                if (!refreshed) {
-                    this.redrawRow(rowCtrl.getRowNode(), true);
-                }
-            });
+           
             this.dispatchDisplayedRowsChanged(false);
         }
     }
@@ -848,15 +761,6 @@ export class RowRenderer extends BeanStub {
         this.releaseLockOnRefresh();
         // AfterScroll results in flushSync in React but we need to disable flushSync for sticky row group changes to avoid flashing
         this.dispatchDisplayedRowsChanged(afterScroll && !hasStickyRowChanges);
-
-        if (cellFocused != null) {
-            const newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
-
-            if (cellFocused != null && newFocusedCell == null) {
-                this.animationFrameService.flushAllFrames();
-                this.restoreFocusedCell(cellFocused);
-            }
-        }
     }
 
     private removeRowCompsNotToDraw(indexesToDraw: number[], suppressAnimation: boolean): void {
@@ -963,44 +867,9 @@ export class RowRenderer extends BeanStub {
         if (atLeastOneChanged) {
             this.pinningLeft = pinningLeft;
             this.pinningRight = pinningRight;
-
-            if (this.embedFullWidthRows) {
-                this.redrawFullWidthEmbeddedRows();
-            }
         }
     }
 
-    // when embedding, what gets showed in each section depends on what is pinned. eg if embedding group expand / collapse,
-    // then it should go into the pinned left area if pinning left, or the center area if not pinning.
-    private redrawFullWidthEmbeddedRows(): void {
-        // if either of the pinned panels has shown / hidden, then need to redraw the fullWidth bits when
-        // embedded, as what appears in each section depends on whether we are pinned or not
-        const rowsToRemove: string[] = [];
-
-        this.getFullWidthRowCtrls().forEach(fullWidthCtrl => {
-            const rowIndex = fullWidthCtrl.getRowNode().rowIndex;
-            rowsToRemove.push(rowIndex!.toString());
-        });
-
-        this.refreshFloatingRowComps();
-        this.removeRowCtrls(rowsToRemove);
-        this.redraw({ afterScroll: true });
-    }
-
-    public getFullWidthRowCtrls(rowNodes?: IRowNode[]): RowCtrl[] {
-        const rowNodesMap = this.mapRowNodes(rowNodes);
-        
-        return this.getAllRowCtrls().filter((rowCtrl: RowCtrl) => {
-            // include just full width
-            if (!rowCtrl.isFullWidth()) { return false; }
-
-            // if Row Nodes provided, we exclude where Row Node is missing
-            const rowNode = rowCtrl.getRowNode();
-            if (rowNodesMap != null && !this.isRowInMap(rowNode, rowNodesMap)) { return false; }
-
-            return true;
-        });
-    }
 
     private createOrUpdateRowCtrl(
         rowIndex: number,
@@ -1249,25 +1118,7 @@ export class RowRenderer extends BeanStub {
     //    after detail panel is scrolled out of / into view.
     private doNotUnVirtualiseRow(rowComp: RowCtrl): boolean {
         const REMOVE_ROW: boolean = false;
-        const KEEP_ROW: boolean = true;
-        const rowNode = rowComp.getRowNode();
-
-        const rowHasFocus = this.focusService.isRowNodeFocused(rowNode);
-        const rowIsEditing = rowComp.isEditing();
-        const rowIsDetail = rowNode.detail;
-
-        const mightWantToKeepRow = rowHasFocus || rowIsEditing || rowIsDetail;
-
-        // if we deffo don't want to keep it,
-        if (!mightWantToKeepRow) {
             return REMOVE_ROW;
-        }
-
-        // editing row, only remove if it is no longer rendered, eg filtered out or new data set.
-        // the reason we want to keep is if user is scrolling up and down, we don't want to loose
-        // the context of the editing in process.
-        const rowNodePresent = this.paginationProxy.isRowPresent(rowNode);
-        return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
     }
 
     private createRowCon(rowNode: RowNode, animate: boolean, afterScroll: boolean): RowCtrl {

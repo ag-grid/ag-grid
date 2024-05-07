@@ -1,5 +1,4 @@
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
-import { KeyCode } from "../../constants/keyCode";
 import { BeanStub } from "../../context/beanStub";
 import { CellPosition } from "../../entities/cellPositionUtils";
 import { CellStyle } from "../../entities/colDef";
@@ -11,8 +10,7 @@ import {
     CellEditingStoppedEvent,
     CellEvent,
     CellFocusedEvent,
-    Events,
-    FlashCellsEvent
+    Events
 } from "../../events";
 import { CssClassApplier } from "../../headerRendering/cells/cssClassApplier";
 import { BrandedType } from "../../interfaces/brandedType";
@@ -20,15 +18,12 @@ import { ICellEditor, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { CellChangedEvent } from "../../interfaces/iRowNode";
 import { setAriaColIndex } from "../../utils/aria";
 import { getElementSize } from "../../utils/dom";
-import { exists, makeNull } from "../../utils/generic";
+import { makeNull } from "../../utils/generic";
 import { escapeString } from "../../utils/string";
 import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRenderer";
 import { RowCtrl } from "../row/rowCtrl";
-import { FlashCellsParams } from "../rowRenderer";
 import { Beans } from "./../beans";
 import { CellCustomStyleFeature } from "./cellCustomStyleFeature";
-import { CellKeyboardListenerFeature } from "./cellKeyboardListenerFeature";
-import { CellMouseListenerFeature } from "./cellMouseListenerFeature";
 import { CellPositionFeature } from "./cellPositionFeature";
 import { CellRangeFeature } from "./cellRangeFeature";
 
@@ -86,8 +81,6 @@ export class CellCtrl extends BeanStub {
     private cellRangeFeature: CellRangeFeature | null = null;
     private cellPositionFeature: CellPositionFeature | null = null;
     private cellCustomStyleFeature: CellCustomStyleFeature | null = null;
-    private cellMouseListenerFeature: CellMouseListenerFeature | null = null;
-    private cellKeyboardListenerFeature: CellKeyboardListenerFeature | null = null;
 
     private cellPosition: CellPosition;
     private editing: boolean;
@@ -125,10 +118,6 @@ export class CellCtrl extends BeanStub {
         this.updateAndFormatValue(false);
     }
 
-    public shouldRestoreFocus(): boolean {
-        // Used in React to determine if the cell should restore focus after re-rendering
-        return this.beans.focusService.shouldRestoreFocus(this.cellPosition);
-    }
 
 
     private addFeatures(): void {
@@ -138,11 +127,6 @@ export class CellCtrl extends BeanStub {
         this.cellCustomStyleFeature = new CellCustomStyleFeature(this, this.beans);
         this.addDestroyFunc(() => { this.cellCustomStyleFeature?.destroy(); this.cellCustomStyleFeature = null; });
 
-        this.cellMouseListenerFeature = new CellMouseListenerFeature(this, this.beans, this.column);
-        this.addDestroyFunc(() => { this.cellMouseListenerFeature?.destroy(); this.cellMouseListenerFeature = null; });
-
-        this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(this, this.beans, this.column, this.rowNode, this.rowCtrl);
-        this.addDestroyFunc(() => { this.cellKeyboardListenerFeature?.destroy(); this.cellKeyboardListenerFeature = null; });
     }
 
 
@@ -159,7 +143,6 @@ export class CellCtrl extends BeanStub {
 
         this.addDomData();
 
-        this.onCellFocused(this.focusEventToRestore);
         this.applyStaticCssClasses();
         this.setWrapText();
 
@@ -175,15 +158,10 @@ export class CellCtrl extends BeanStub {
 
         this.cellPositionFeature?.setComp(eGui);
         this.cellCustomStyleFeature?.setComp(comp);
-        this.cellKeyboardListenerFeature?.setComp(this.eGui);
 
-        if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp, eGui); }
 
-        if (startEditing && this.isCellEditable()) {
-            this.startEditing();
-        } else {
             this.showValue();
-        }
+    
 
         if (this.onCellCompAttachedFuncs.length) {
             this.onCellCompAttachedFuncs.forEach(func => func());
@@ -310,205 +288,11 @@ export class CellCtrl extends BeanStub {
         return selectionChanged || rowDragChanged || dndSourceChanged || autoHeightChanged;
     }
 
-    // either called internally if single cell editing, or called by rowRenderer if row editing
-    public startEditing(key: string | null = null, cellStartedEdit = false, event: KeyboardEvent | MouseEvent | null = null): void {
-        if (!this.isCellEditable() || this.editing) { return; }
 
-        // because of async in React, the cellComp may not be set yet, if no cellComp then we are
-        // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
-        if (!this.cellComp) {
-            this.onCellCompAttachedFuncs.push(() => { this.startEditing(key, cellStartedEdit, event); });
-            return;
-        }
 
-        const editorParams = this.createCellEditorParams(key, cellStartedEdit);
-        const colDef = this.column.getColDef();
-        const compDetails = this.beans.userComponentFactory.getCellEditorDetails(colDef, editorParams);
-        this.editCompDetails = compDetails;
 
-        // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
-        const popup = compDetails?.popupFromSelector != null ? compDetails.popupFromSelector : !!colDef.cellEditorPopup ;
-        const position: 'over' | 'under' | undefined = compDetails?.popupPositionFromSelector != null ? compDetails.popupPositionFromSelector : colDef.cellEditorPopupPosition;
 
-        this.setEditing(true);
-        this.cellComp.setEditDetails(compDetails, popup, position, this.beans.gos.get('reactiveCustomComponents'));
 
-        const e: CellEditingStartedEvent = this.createEvent(event, Events.EVENT_CELL_EDITING_STARTED);
-        this.beans.eventService.dispatchEvent(e);
-    }
-
-    private setEditing(editing: boolean): void {
-        if (this.editing === editing) { return; }
-
-        this.editing = editing;
-        this.cellRangeFeature?.refreshHandle();
-    }
-
-    // pass in 'true' to cancel the editing.
-    public stopRowOrCellEdit(cancel: boolean = false) {
-        if (this.beans.gos.get('editType') === 'fullRow') {
-            this.rowCtrl.stopEditing(cancel);
-        } else {
-            this.stopEditing(cancel);
-        }
-    }
-
-    public onPopupEditorClosed(): void {
-        if (!this.isEditing()) { return; }
-        // note: this happens because of a click outside of the grid or if the popupEditor
-        // is closed with `Escape` key. if another cell was clicked, then the editing will
-        // have already stopped and returned on the conditional above.
-        this.stopEditingAndFocus();
-    }
-
-    private takeValueFromCellEditor(cancel: boolean): { newValue?: any, newValueExists: boolean } {
-        const noValueResult = { newValueExists: false };
-
-        if (cancel) { return noValueResult; }
-
-        const cellEditor =  this.cellComp.getCellEditor();
-
-        if (!cellEditor) { return noValueResult; }
-
-        const userWantsToCancel = cellEditor.isCancelAfterEnd && cellEditor.isCancelAfterEnd();
-
-        if (userWantsToCancel) { return noValueResult; }
-
-        const newValue = cellEditor.getValue();
-
-        return {
-            newValue: newValue,
-            newValueExists: true
-        };
-    }
-
-    /**
-     * @returns `True` if the value changes, otherwise `False`.
-     */
-    private saveNewValue(oldValue: any, newValue: any): boolean {
-        if (newValue === oldValue) { return false; }
-
-        // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
-        // getting triggered, which results in all cells getting refreshed. we do not want this refresh
-        // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
-        // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
-        this.suppressRefreshCell = true;
-        const valueChanged = this.rowNode.setDataValue(this.column, newValue, 'edit');
-        this.suppressRefreshCell = false;
-
-        return valueChanged;
-    }
-
-    /**
-     * Ends the Cell Editing
-     * @param cancel `True` if the edit process is being canceled.
-     * @returns `True` if the value of the `GridCell` has been updated, otherwise `False`.
-     */
-    public stopEditing(cancel = false): boolean {
-        if (!this.editing) { return false; }
-
-        const { newValue, newValueExists } = this.takeValueFromCellEditor(cancel);
-        const oldValue = this.rowNode.getValueFromValueService(this.column);
-        let valueChanged = false;
-
-        if (newValueExists) {
-            valueChanged = this.saveNewValue(oldValue, newValue);
-        }
-
-        this.setEditing(false);
-        this.cellComp.setEditDetails(); // passing nothing stops editing
-        this.editCompDetails = undefined;
-
-        this.updateAndFormatValue(false);
-        this.refreshCell({ forceRefresh: true, suppressFlash: true });
-        this.dispatchEditingStoppedEvent(oldValue, newValue, !cancel && !!valueChanged);
-
-        return valueChanged;
-    }
-
-    private dispatchEditingStoppedEvent(oldValue: any, newValue: any, valueChanged: boolean): void {
-        const editingStoppedEvent: CellEditingStoppedEvent = {
-            ...this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED),
-            oldValue,
-            newValue,
-            valueChanged
-        };
-
-        this.beans.eventService.dispatchEvent(editingStoppedEvent);
-    }
-
-    private createCellEditorParams(key: string | null, cellStartedEdit: boolean): ICellEditorParams {
-        return this.beans.gos.addGridCommonParams({
-            value: this.rowNode.getValueFromValueService(this.column),
-            eventKey: key,
-            column: this.column,
-            colDef: this.column.getColDef(),
-            rowIndex: this.getCellPosition().rowIndex,
-            node: this.rowNode,
-            data: this.rowNode.data,
-            cellStartedEdit: cellStartedEdit,
-            onKeyDown: this.onKeyDown.bind(this),
-            stopEditing: this.stopEditingAndFocus.bind(this),
-            eGridCell: this.getGui(),
-            parseValue: this.parseValue.bind(this),
-            formatValue: this.formatValue.bind(this)
-        });
-    }
-
-    private createCellRendererParams(): ICellRendererParams {
-        const res: ICellRendererParams = this.beans.gos.addGridCommonParams({
-            value: this.value,
-            valueFormatted: this.valueFormatted,
-            getValue: () => this.rowNode.getValueFromValueService(this.column),
-            setValue: (value:any) => this.beans.valueService.setValue(this.rowNode, this.column, value),
-            formatValue: this.formatValue.bind(this),
-            data: this.rowNode.data,
-            node: this.rowNode,
-            pinned: this.column.getPinned() as any,
-            colDef: this.column.getColDef(),
-            column: this.column,
-            refreshCell: this.refreshCell.bind(this),
-            eGridCell: this.getGui(),
-            eParentOfValue: this.cellComp.getParentOfValue()!,
-
-            registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels: number, value?: string, suppressVisibilityChange?: boolean) => {},
-            setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
-            }
-
-        });
-
-        return res;
-    }
-
-    private parseValue(newValue: any): any {
-        return this.beans.valueService.parseValue(this.column, this.rowNode, newValue, this.getValue());
-    }
-
-    public setFocusOutOnEditor(): void {
-        if (!this.editing) { return; }
-
-        const cellEditor = this.cellComp.getCellEditor();
-
-        if (cellEditor && cellEditor.focusOut) {
-            cellEditor.focusOut();
-        }
-    }
-
-    public setFocusInOnEditor(): void {
-        if (!this.editing) { return; }
-
-        const cellEditor = this.cellComp.getCellEditor();
-
-        if (cellEditor && cellEditor.focusIn) {
-            // if the editor is present, then we just focus it
-            cellEditor.focusIn();
-        } else {
-            // if the editor is not present, it means async cell editor (eg React fibre)
-            // and we are trying to set focus before the cell editor is present, so we
-            // focus the cell instead
-            this.focusCell(true);
-        }
-    }
 
     public onCellChanged(event: CellChangedEvent): void {
         const eventImpactsThisCell = event.column === this.column;
@@ -566,14 +350,6 @@ export class CellCtrl extends BeanStub {
             // then we are not showing a movement in the stock price, rather we are showing different stock.
             this.showValue(newData);
 
-
-            const flashCell = !suppressFlash &&
-                (this.beans.gos.get('enableCellChangeFlash') || colDef.enableCellChangeFlash);
-
-            if (flashCell) {
-                this.flashCell();
-            }
-
             this.cellCustomStyleFeature?.applyUserStyles();
             this.cellCustomStyleFeature?.applyClassesFromColDef();
         }
@@ -583,82 +359,9 @@ export class CellCtrl extends BeanStub {
         this.cellCustomStyleFeature?.applyCellClassRules();
     }
 
-    // cell editors call this, when they want to stop for reasons other
-    // than what we pick up on. eg selecting from a dropdown ends editing.
-    public stopEditingAndFocus(suppressNavigateAfterEdit = false, shiftKey: boolean = false): void {
-        this.stopRowOrCellEdit();
-        this.focusCell(true);
-
-        if (!suppressNavigateAfterEdit) {
-            this.navigateAfterEdit(shiftKey);
-        }
-    }
-
-    private navigateAfterEdit(shiftKey: boolean): void {
-        const enterNavigatesVerticallyAfterEdit = this.beans.gos.get('enterNavigatesVerticallyAfterEdit');
-
-        if (enterNavigatesVerticallyAfterEdit) {
-            const key = shiftKey ? KeyCode.UP : KeyCode.DOWN;
-            this.beans.navigationService.navigateToNextCell(null, key, this.getCellPosition(), false);
-        }
-    }
-
-    // user can also call this via API
-    public flashCell(delays?: Pick<FlashCellsParams, 'fadeDelay' | 'flashDelay' | 'fadeDuration' | 'flashDuration'>): void {
-        const flashDuration = delays?.flashDuration ?? delays?.flashDelay;
-        const fadeDuration = delays?.fadeDuration ?? delays?.fadeDelay;
-
-        this.animateCell('data-changed', flashDuration, fadeDuration);
-    }
-
-    private animateCell(cssName: string, flashDuration?: number | null, fadeDuration?: number | null): void {
-        if (!this.cellComp) { return; }
-
-        const fullName = `ag-cell-${cssName}`;
-        const animationFullName = `ag-cell-${cssName}-animation`;
-        const { gos } = this.beans;
-
-        if (!flashDuration) {
-            flashDuration = gos.get('cellFlashDuration');
-        }
-
-        if (!exists(fadeDuration)) {
-            fadeDuration = gos.get('cellFadeDuration');
-        }
-
-        // we want to highlight the cells, without any animation
-        this.cellComp.addOrRemoveCssClass(fullName, true);
-        this.cellComp.addOrRemoveCssClass(animationFullName, false);
-
-        // then once that is applied, we remove the highlight with animation
-        this.beans.frameworkOverrides.wrapIncoming(() => {
-            window.setTimeout(() => {
-                if (!this.isAlive()) { return; }
-                this.cellComp.addOrRemoveCssClass(fullName, false);
-                this.cellComp.addOrRemoveCssClass(animationFullName, true);
-
-                this.eGui.style.transition = `background-color ${fadeDuration}ms`;
-                window.setTimeout(() => {
-                    if (!this.isAlive()) { return; }
-                    // and then to leave things as we got them, we remove the animation
-                    this.cellComp.addOrRemoveCssClass(animationFullName, false);
-                    this.eGui.style.transition = '';
-                }, fadeDuration!);
-            }, flashDuration!);
-        });
-    }
-
-    public onFlashCells(event: FlashCellsEvent): void {
-        if (!this.cellComp) { return; }
-        const cellId = this.beans.cellPositionUtils.createId(this.getCellPosition());
-        const shouldFlash = event.cells[cellId];
-        if (shouldFlash) {
-            this.animateCell('highlight');
-        }
-    }
 
     public isCellEditable(): boolean {
-        return this.column.isCellEditable(this.rowNode);
+        return false;
     }
 
     public isSuppressFillHandle(): boolean {
@@ -723,24 +426,8 @@ export class CellCtrl extends BeanStub {
         return event;
     }
 
-    public processCharacter(event: KeyboardEvent): void {
-        this.cellKeyboardListenerFeature?.processCharacter(event);
-    }
-
-    public onKeyDown(event: KeyboardEvent): void {
-        this.cellKeyboardListenerFeature?.onKeyDown(event);
-    }
-
-    public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        this.cellMouseListenerFeature?.onMouseEvent(eventName, mouseEvent);
-    }
-
     public getGui(): HTMLElement {
         return this.eGui;
-    }
-
-    public getColSpanningList(): Column[] {
-        return this.cellPositionFeature!.getColSpanningList();
     }
 
     public onLeftChanged(): void {
@@ -793,21 +480,7 @@ export class CellCtrl extends BeanStub {
     }
 
     // called by rowRenderer when user navigates via tab key
-    public startRowOrCellEdit(key?: string | null, event: KeyboardEvent | MouseEvent | null = null): void {
-        
-        // because of async in React, the cellComp may not be set yet, if no cellComp then we are
-        // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
-        if (!this.cellComp) {
-            this.onCellCompAttachedFuncs.push(() => { this.startRowOrCellEdit(key, event); });
-            return;
-        }
-        
-        if (this.beans.gos.get('editType') === 'fullRow') {
-            this.rowCtrl.startRowEditing(key, this);
-        } else {
-            this.startEditing(key, true, event);
-        }
-    }
+
 
     public getRowCtrl(): RowCtrl {
         return this.rowCtrl;
@@ -839,12 +512,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public focusCell(forceBrowserFocus = false): void {
-        this.beans.focusService.setFocusedCell({
-            rowIndex: this.getCellPosition().rowIndex,
-            column: this.column,
-            rowPinned: this.rowNode.rowPinned,
-            forceBrowserFocus
-        });
+
     }
 
     public onRowIndexChanged(): void {
@@ -852,7 +520,6 @@ export class CellCtrl extends BeanStub {
         // grid cell so they are working off the new index.
         this.createCellPosition();
         // when the index of the row changes, ie means the cell may have lost or gained focus
-        this.onCellFocused();
         // check range selection
         if (this.cellRangeFeature) {
             this.cellRangeFeature.onRangeSelectionChanged();
@@ -869,43 +536,6 @@ export class CellCtrl extends BeanStub {
         if (!this.cellComp) { return; }
         const lastLeftPinned = this.column.isLastLeftPinned();
         this.cellComp.addOrRemoveCssClass(CSS_CELL_LAST_LEFT_PINNED, lastLeftPinned);
-    }
-
-    public onCellFocused(event?: CellFocusedEvent): void {
-        if (this.beans.gos.get('suppressCellFocus')) {
-            return;
-        }
-        const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
-
-        if (!this.cellComp) {
-            if (cellFocused && event?.forceBrowserFocus) {
-                // The cell comp has not been rendered yet, but the browser focus is being forced for this cell
-                // so lets save the event to apply it when setComp is called in the next turn.
-                this.focusEventToRestore = event;
-            }
-            return;
-        }
-        // Clear the saved focus event
-        this.focusEventToRestore = undefined;
-
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_FOCUS, cellFocused);
-
-        // see if we need to force browser focus - this can happen if focus is programmatically set
-        if (cellFocused && event && event.forceBrowserFocus) {
-            const focusEl = this.cellComp.getFocusableElement();
-            focusEl.focus({ preventScroll: !!event.preventScrollOnBrowserFocus });
-        }
-
-        // if another cell was focused, and we are editing, then stop editing
-        const fullRowEdit = this.beans.gos.get('editType') === 'fullRow';
-
-        if (!cellFocused && !fullRowEdit && this.editing) {
-            this.stopRowOrCellEdit();
-        }
-
-        if (cellFocused) {
-            this.rowCtrl.announceDescription();
-        }
     }
 
     private createCellPosition(): void {
@@ -942,18 +572,8 @@ export class CellCtrl extends BeanStub {
 
         this.setWrapText();
 
-        if (!this.editing) {
             this.refreshOrDestroyCell({ forceRefresh: true, suppressFlash: true });
-        } else {
-            const cellEditor = this.getCellEditor();
-            if (cellEditor?.refresh) {
-                const { eventKey, cellStartedEdit } = this.editCompDetails!.params;
-                const editorParams = this.createCellEditorParams(eventKey, cellStartedEdit);
-                const colDef = this.column.getColDef();
-                const compDetails = this.beans.userComponentFactory.getCellEditorDetails(colDef, editorParams);
-                cellEditor.refresh(compDetails!.params);
-            }
-        }
+       
     }
 
     private setWrapText(): void {

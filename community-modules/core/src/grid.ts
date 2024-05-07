@@ -9,8 +9,6 @@ import { ColumnFactory } from "./columns/columnFactory";
 import { Logger, LoggerFactory } from "./logger";
 import { ComponentMeta, Context, ContextParams } from "./context/context";
 import { GridComp } from "./gridComp/gridComp";
-import { FocusService } from "./focusService";
-import { MouseEventService } from "./gridBodyComp/mouseEventService";
 import { CellNavigationService } from "./cellNavigationService";
 import { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
@@ -29,7 +27,6 @@ import { ComponentMetadataProvider } from "./components/framework/componentMetad
 import { Beans } from "./rendering/beans";
 import { Environment } from "./environment";
 import { AnimationFrameService } from "./misc/animationFrameService";
-import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowContainerHeightService } from "./rendering/rowContainerHeightService";
 import { ResizeObserverService } from "./misc/resizeObserverService";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
@@ -302,8 +299,8 @@ export class GridCoreCreator {
             EventService, GridOptionsService,
             ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ColumnFactory,
-            NavigationService, ValueCache, ValueService, LoggerFactory,
-            FocusService, MouseEventService, Environment, CellNavigationService, StylingService,
+             ValueCache, ValueService, LoggerFactory,
+              Environment, CellNavigationService, StylingService,
             ScrollVisibleService, ColumnHoverService, ColumnAnimationService,
             ChangeDetectionService, AnimationFrameService,
             AgStackComponentsRegistry, ColumnDefFactory, RowCssClassCalculator, 

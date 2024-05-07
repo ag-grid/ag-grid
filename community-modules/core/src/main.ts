@@ -115,8 +115,6 @@ export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 export { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from "./gridBodyComp/gridBodyCtrl";
 export { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
-export { MouseEventService } from "./gridBodyComp/mouseEventService";
-export { NavigationService } from "./gridBodyComp/navigationService";
 
 // rowContainer
 export { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
@@ -200,9 +198,7 @@ export { UpdateLayoutClassesParams, LayoutCssClasses } from "./styling/layoutFea
 // widgets
 export { AgAbstractField, FieldElement, AgFieldParams } from "./widgets/agAbstractField";
 export { Component, VisibleChangedEvent } from "./widgets/component";
-export { ManagedFocusFeature, ManagedFocusCallbacks } from "./widgets/managedFocusFeature";
 export { TabGuardComp } from "./widgets/tabGuardComp";
-export { TabGuardCtrl, ITabGuard, TabGuardClassNames } from "./widgets/tabGuardCtrl";
 export { VirtualList, VirtualListModel } from "./widgets/virtualList";
 
 export { AgAbstractLabel, AgLabelParams } from "./widgets/agAbstractLabel";
@@ -244,7 +240,6 @@ export { KeyCode } from "./constants/keyCode";
 export { VerticalDirection, HorizontalDirection } from "./constants/direction";
 export { GridParams, Params, GridCoreCreator, createGrid, provideGlobalGridOptions } from "./grid";
 export { Events } from "./eventKeys";
-export { FocusService } from "./focusService";
 export { GridOptionsService, PropertyChangedEvent } from "./gridOptionsService";
 export { EventService } from "./eventService";
 export { RowNodeSorter, SortedRowNode, SortOption } from "./rowNodes/rowNodeSorter";
