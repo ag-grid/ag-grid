@@ -1227,7 +1227,6 @@ export class ColumnModel extends BeanStub {
         return groupLockGroupColumns > colIndex;
     }
 
-
     private applyAutosizeStrategy(): void {
         const autoSizeStrategy = this.gos.get('autoSizeStrategy');
         if (!autoSizeStrategy) { return; }
@@ -1277,26 +1276,6 @@ export function convertSourceType(source: PropertyChangedSource): ColumnEventTyp
     // unfortunately they do not match so need to perform conversion
     return source === 'gridOptionsUpdated' ? 'gridOptionsChanged' : source;
 }
-
-export function depthFirstAllColumnTreeSearch(
-    tree: IHeaderColumn[] | null,
-    useDisplayedChildren: boolean,
-    callback: (treeNode: IHeaderColumn) => void
-): void {
-    if (!tree) {
-        return;
-    }
-
-    for (let i = 0; i < tree.length; i++) {
-        const child = tree[i];
-        if (child instanceof ColumnGroup) {
-            const childTree = useDisplayedChildren ? child.getDisplayedChildren() : child.getChildren();
-            depthFirstAllColumnTreeSearch(childTree, useDisplayedChildren, callback);
-        }
-        callback(child);
-    }
-}
-
 
 // sort the lists according to the indexes that were provided
 const comparatorByIndex = (indexes: { [key: string]: number; }, oldList: Column[], colA: Column, colB: Column) => {

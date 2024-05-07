@@ -9,7 +9,7 @@ import { exists } from "../utils/generic";
 import { ColumnContainerWidthChanged, ColumnEventType, DisplayedColumnsWidthChangedEvent, Events } from "../events";
 import { last, removeAllFromUnorderedArray } from "../utils/array";
 import { RowNode } from "../entities/rowNode";
-import { ColumnModel, depthFirstAllColumnTreeSearch } from "./columnModel";
+import { ColumnModel } from "./columnModel";
 import { ColumnUtilsFeature } from "./columnUtilsFeature";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
@@ -755,5 +755,24 @@ export class DisplayedColumnsService extends BeanStub {
                 this.setupParentsIntoColumns(columnGroup.getChildren(), columnGroup);
             }
         });
+    }
+}
+
+function depthFirstAllColumnTreeSearch(
+    tree: IHeaderColumn[] | null,
+    useDisplayedChildren: boolean,
+    callback: (treeNode: IHeaderColumn) => void
+): void {
+    if (!tree) {
+        return;
+    }
+
+    for (let i = 0; i < tree.length; i++) {
+        const child = tree[i];
+        if (child instanceof ColumnGroup) {
+            const childTree = useDisplayedChildren ? child.getDisplayedChildren() : child.getChildren();
+            depthFirstAllColumnTreeSearch(childTree, useDisplayedChildren, callback);
+        }
+        callback(child);
     }
 }
