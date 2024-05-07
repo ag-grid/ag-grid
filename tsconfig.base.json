@@ -9,7 +9,7 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "esModuleInterop": true,
-    "target": "ES6",
+    "target": "ES2022",
     "module": "commonjs",
     "lib": [
       "ES2022",

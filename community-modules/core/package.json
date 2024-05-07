@@ -3,6 +3,8 @@
   "version": "31.2.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "dependencies": {
+    "@types/jscodeshift": "^0.11.11",
+    "jscodeshift": "^0.15.2",
     "tslib": "^2.3.0"
   },
   "main": "./dist/package/main.cjs.js",
