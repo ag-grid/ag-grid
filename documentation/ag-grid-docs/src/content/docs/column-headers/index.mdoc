@@ -54,8 +54,8 @@ When `autoHeaderHeight=true` the Grid automatically disables Span Header Height,
 
 By default the grid uses the provided Header Component. To use a Custom Header Component set `headerComponent` on the Column Definition.
 
-{% includeMarkdoc file="column-headers/_column-def-javascript.mdoc" /%}
-{% includeMarkdoc file="column-headers/_column-def-vue.mdoc" /%}
+{% partial file="./_column-def-javascript.mdoc" /%}
+{% partial file="./_column-def-vue.mdoc" /%}
 
 See [Registering Components](./components/) for an overview of registering componnets.
 
@@ -150,9 +150,9 @@ Column Headers by default use the Provided Header Component. The default can be 
 The interface for a custom header component is:
 {% /if %}
 
-{% includeMarkdoc file="column-headers/_component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="column-headers/_component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="column-headers/_component-interface-vue.mdoc" /%}
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript") %}
 The `init(params)` method takes a params object with the items listed below.

@@ -6,10 +6,10 @@ This section provides key information for configuring and interacting with a gri
 
 ## Grid Options
 
-{% includeMarkdoc file="grid-interface/_index-javascript.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_index-angular.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_index-react.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_index-vue.mdoc" /%}
+{% partial file="./_index-javascript.mdoc" /%}
+{% partial file="./_index-angular.mdoc" /%}
+{% partial file="./_index-react.mdoc" /%}
+{% partial file="./_index-vue.mdoc" /%}
 
 ### Updating Grid Options
 
@@ -102,10 +102,10 @@ provideGlobalGridOptions({
 
 As a user interacts with the grid events will be fired to enable your application to respond to specific actions.
 
-{% includeMarkdoc file="grid-interface/_events-javascript.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_events-angular.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_events-react.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_events-vue.mdoc" /%}
+{% partial file="./_events-javascript.mdoc" /%}
+{% partial file="./_events-angular.mdoc" /%}
+{% partial file="./_events-react.mdoc" /%}
+{% partial file="./_events-vue.mdoc" /%}
 
 {% note %}
 TypeScript users can take advantage of the events' interfaces. Construct the interface name by suffixing the event name with `Event`. For example, the `cellClicked` event uses the interface `CellClickedEvent`. All events support [TypeScript Generics](./typescript-generics/).
@@ -115,10 +115,10 @@ For a full list of events see: [Grid Events](./grid-events).
 
 ## Grid API
 
-{% includeMarkdoc file="grid-interface/_api-javascript.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_api-angular.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_api-react.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_api-vue.mdoc" /%}
+{% partial file="./_api-javascript.mdoc" /%}
+{% partial file="./_api-angular.mdoc" /%}
+{% partial file="./_api-react.mdoc" /%}
+{% partial file="./_api-vue.mdoc" /%}
 
 For a full list of api methods see: [Grid API](./grid-api).
 

@@ -86,10 +86,10 @@ In the example below:
 
 {% gridExampleRunner title="Custom Tooltip Component" name="custom-tooltip-component" /%}
 
-{% includeMarkdoc file="tooltips/_component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="tooltips/_component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="tooltips/_component-interface-react.mdoc" /%}
-{% includeMarkdoc file="tooltips/_component-interface-vue.mdoc" /%}
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-react.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="ITooltipParams" /%}

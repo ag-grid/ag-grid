@@ -72,7 +72,7 @@ Using your own Cell Renderer hands over rendering of the group row to your custo
 the customer Cell Renderer will also need to provide expand / collapse functionality.
 
 {% if isFramework("javascript", "angular", "react") %}
-{% includeMarkdoc file="grouping-group-rows/_group-config-common.mdoc" /%}
+{% partial file="./_group-config-common.mdoc" /%}
 {% /if %}
 
 {% if isFramework("vue") %}
