@@ -8,8 +8,6 @@ import { ColumnModel } from "../../columns/columnModel";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
 import { ViewportSizeFeature } from "../viewportSizeFeature";
 import { convertToMap } from "../../utils/map";
-import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
-import { SetPinnedRightWidthFeature } from "./setPinnedRightWidthFeature";
 import { SetHeightFeature } from "./setHeightFeature";
 import { CenterWidthFeature } from "../centerWidthFeature";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
@@ -165,7 +163,6 @@ export class RowContainerCtrl extends BeanStub {
     private enableRtl: boolean;
 
     private viewportSizeFeature: ViewportSizeFeature | undefined; // only center has this
-    private pinnedWidthFeature: SetPinnedLeftWidthFeature | SetPinnedRightWidthFeature | undefined;
     private visible: boolean = true;
     // Maintaining a constant reference enables optimization in React.
     private EMPTY_CTRLS = [];
@@ -231,17 +228,7 @@ export class RowContainerCtrl extends BeanStub {
         const allMiddle = [RowContainerName.CENTER, RowContainerName.LEFT, RowContainerName.RIGHT, RowContainerName.FULL_WIDTH];
 
         const allCenter = [RowContainerName.CENTER, RowContainerName.TOP_CENTER, RowContainerName.STICKY_TOP_CENTER, RowContainerName.BOTTOM_CENTER, RowContainerName.STICKY_BOTTOM_CENTER];
-        const allLeft = [RowContainerName.LEFT, RowContainerName.BOTTOM_LEFT, RowContainerName.TOP_LEFT, RowContainerName.STICKY_TOP_LEFT, RowContainerName.STICKY_BOTTOM_LEFT];
-        const allRight = [RowContainerName.RIGHT, RowContainerName.BOTTOM_RIGHT, RowContainerName.TOP_RIGHT, RowContainerName.STICKY_TOP_RIGHT, RowContainerName.STICKY_BOTTOM_RIGHT];
 
-        this.forContainers(allLeft, () => {
-            this.pinnedWidthFeature = this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer));
-            this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, () => this.onPinnedWidthChanged());
-        });
-        this.forContainers(allRight, () => {
-            this.pinnedWidthFeature = this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer));
-            this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, () => this.onPinnedWidthChanged());
-        });
         this.forContainers(allMiddle, () => this.createManagedBean(new SetHeightFeature(this.eContainer, this.name === RowContainerName.CENTER ? eViewport : undefined)));
 
         this.forContainers(allCenter, () => this.createManagedBean(
@@ -360,19 +347,6 @@ export class RowContainerCtrl extends BeanStub {
     public setCenterViewportScrollLeft(value: number): void {
         // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
         setScrollLeft(this.eViewport, value, this.enableRtl);
-    }
-
-    private isContainerVisible(): boolean {
-        const pinned = RowContainerCtrl.getPinned(this.name);
-        return !pinned || (!!this.pinnedWidthFeature && this.pinnedWidthFeature.getWidth() > 0);
-    }
-
-    private onPinnedWidthChanged(): void {
-        const visible = this.isContainerVisible();
-        if (this.visible != visible) {
-            this.visible = visible;
-            this.onDisplayedRowsChanged();
-        }
     }
 
     private onDisplayedRowsChanged(afterScroll: boolean = false): void {

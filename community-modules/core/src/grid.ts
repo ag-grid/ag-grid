@@ -9,7 +9,6 @@ import { ColumnFactory } from "./columns/columnFactory";
 import { Logger, LoggerFactory } from "./logger";
 import { ComponentMeta, Context, ContextParams } from "./context/context";
 import { GridComp } from "./gridComp/gridComp";
-import { SortController } from "./sortController";
 import { FocusService } from "./focusService";
 import { MouseEventService } from "./gridBodyComp/mouseEventService";
 import { CellNavigationService } from "./cellNavigationService";
@@ -50,7 +49,6 @@ import { RowNodeSorter } from "./rowNodes/rowNodeSorter";
 import { CtrlsService } from "./ctrlsService";
 import { CtrlsFactory } from "./ctrlsFactory";
 import { FakeHScrollComp } from "./gridBodyComp/fakeHScrollComp";
-import { PinnedWidthService } from "./gridBodyComp/pinnedWidthService";
 import { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
 import { RowNodeEventThrottle } from "./entities/rowNodeEventThrottle";
 import { GridOptionsService } from "./gridOptionsService";
@@ -306,10 +304,10 @@ export class GridCoreCreator {
             PaginationProxy, RowRenderer, ColumnFactory,
             NavigationService, ValueCache, ValueService, LoggerFactory,
             FocusService, MouseEventService, Environment, CellNavigationService, StylingService,
-            ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
+            ScrollVisibleService, ColumnHoverService, ColumnAnimationService,
             ChangeDetectionService, AnimationFrameService,
             AgStackComponentsRegistry, ColumnDefFactory, RowCssClassCalculator, 
-            RowNodeBlockLoader, RowNodeSorter, CtrlsService, PinnedWidthService, RowNodeEventThrottle,
+            RowNodeBlockLoader, RowNodeSorter, CtrlsService, RowNodeEventThrottle,
             CtrlsFactory, SyncService, OverlayService,
             ApiEventService, AriaAnnouncementService
         ];

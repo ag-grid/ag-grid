@@ -1,5 +1,4 @@
 import { RowPosition } from "../entities/rowPositionUtils";
-import { SortModelItem } from "../sortController";
 import { AdvancedFilterModel } from "./advancedFilterModel";
 import { FilterModel } from "./iFilter";
 import { CellRangeType } from "./IRangeService";
@@ -67,7 +66,7 @@ export interface PaginationState {
 
 export interface SortState {
     /** Sorted columns and directions in order */
-    sortModel: SortModelItem[];
+    sortModel: any[];
 }
 
 export interface RowGroupState {

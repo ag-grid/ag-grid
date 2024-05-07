@@ -34,7 +34,6 @@ import { RowNode } from '../entities/rowNode';
 import { ValueCache } from '../valueService/valueCache';
 import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromUnorderedArray, removeFromUnorderedArray } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
-import { SortController } from "../sortController";
 import { missingOrEmpty, exists, missing, attrToBoolean, attrToNumber } from '../utils/generic';
 import { camelCaseToHumanText } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
@@ -118,7 +117,6 @@ export class ColumnModel extends BeanStub {
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('sortController') private sortController: SortController;
     @Autowired('columnDefFactory') private columnDefFactory: ColumnDefFactory;
 
     @Optional('aggFuncService') private aggFuncService?: IAggFuncService;
@@ -2284,12 +2282,6 @@ export class ColumnModel extends BeanStub {
 
             const visibilityChangePredicate = (cs: ColumnState, c: Column) => cs.hide == c.isVisible();
             this.dispatchColumnVisibleEvent(getChangedColumns(visibilityChangePredicate), source);
-
-            const sortChangePredicate = (cs: ColumnState, c: Column) => cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
-            const changedColumns = getChangedColumns(sortChangePredicate);
-            if (changedColumns.length > 0) {
-                this.sortController.dispatchSortChangedEvents(source, changedColumns);
-            }
 
             // special handling for moved column events
             this.normaliseColumnMovedEventForColumnState(columnStateBefore, source);

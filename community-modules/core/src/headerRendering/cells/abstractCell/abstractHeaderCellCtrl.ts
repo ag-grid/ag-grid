@@ -1,25 +1,23 @@
+import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
+import { HorizontalDirection } from "../../../constants/direction";
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
-import { IHeaderColumn } from "../../../interfaces/iHeaderColumn";
-import { FocusService } from "../../../focusService";
-import { isUserSuppressingHeaderKeyboardEvent } from "../../../utils/keyboard";
-import { HeaderRowCtrl } from "../../row/headerRowCtrl";
-import { KeyCode } from "../.././../constants/keyCode";
-import { Beans } from "../../../rendering/beans";
-import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import { Column, ColumnPinnedType } from "../../../entities/column";
 import { CtrlsService } from "../../../ctrlsService";
-import { HorizontalDirection } from "../../../constants/direction";
-import { CssClassApplier } from "../cssClassApplier";
+import { Column, ColumnPinnedType } from "../../../entities/column";
 import { ColumnGroup } from "../../../entities/columnGroup";
-import { setAriaColIndex } from "../../../utils/aria";
+import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { Events } from "../../../eventKeys";
 import { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent } from "../../../events";
-import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
-import { WithoutGridCommon } from "../../../interfaces/iCommon";
-import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
-import { getInnerWidth } from "../../../utils/dom";
+import { FocusService } from "../../../focusService";
 import { BrandedType } from "../../../interfaces/brandedType";
+import { WithoutGridCommon } from "../../../interfaces/iCommon";
+import { IHeaderColumn } from "../../../interfaces/iHeaderColumn";
+import { Beans } from "../../../rendering/beans";
+import { setAriaColIndex } from "../../../utils/aria";
+import { isUserSuppressingHeaderKeyboardEvent } from "../../../utils/keyboard";
+import { KeyCode } from "../.././../constants/keyCode";
+import { HeaderRowCtrl } from "../../row/headerRowCtrl";
+import { CssClassApplier } from "../cssClassApplier";
 
 let instanceIdSequence = 0;
 
@@ -37,7 +35,6 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
     public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
 
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('focusService') protected readonly focusService: FocusService;
     @Autowired('userComponentFactory') protected readonly userComponentFactory: UserComponentFactory;
     @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
@@ -175,24 +172,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     private getViewportAdjustedResizeDiff(e: KeyboardEvent): number {
-        let diff = this.getResizeDiff(e);
-
-        const pinned = this.column.getPinned();
-        if (pinned) {
-            const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
-            const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
-            const bodyWidth = getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
-
-            if (leftWidth + rightWidth + diff > bodyWidth) {
-                if (bodyWidth > leftWidth + rightWidth) {
-                    // allow body width to ignore resize multiplier and fill space for last tick
-                    diff = bodyWidth - leftWidth - rightWidth;
-                } else {
-                    return 0;
-                }
-            }
-        }
-        
+        let diff = this.getResizeDiff(e);        
         return diff;
     }
 

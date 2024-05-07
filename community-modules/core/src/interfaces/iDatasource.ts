@@ -1,4 +1,3 @@
-import { SortModelItem } from "../sortController";
 
 /** Datasource used by both PaginationController and InfiniteRowModel */
 export interface IDatasource {
@@ -31,7 +30,7 @@ export interface IGetRowsParams {
     failCallback(): void;
 
     /** If doing server side sorting, contains the sort model */
-    sortModel: SortModelItem[];
+    sortModel: any[];
 
     /** If doing server side filtering, contains the filter model */
     filterModel: any;

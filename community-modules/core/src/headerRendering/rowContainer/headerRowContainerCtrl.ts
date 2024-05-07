@@ -6,7 +6,6 @@ import { Column, ColumnPinnedType } from "../../entities/column";
 import { IHeaderColumn } from "../../interfaces/iHeaderColumn";
 import { Events } from "../../eventKeys";
 import { CenterWidthFeature } from "../../gridBodyComp/centerWidthFeature";
-import { PinnedWidthService } from "../../gridBodyComp/pinnedWidthService";
 import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
 import { NumberSequence } from "../../utils";
 import { HeaderRowType } from "../row/headerRowComp";
@@ -28,7 +27,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('focusService') public focusService: FocusService;
 
@@ -52,7 +50,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
         this.eViewport = eGui;
 
         this.setupCenterWidth();
-        this.setupPinnedWidth();
 
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
 
@@ -170,44 +167,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
     public setHorizontalScroll(offset: number): void {
         this.comp.setViewportScrollLeft(offset);
-    }
-
-    private setupPinnedWidth(): void {
-        if (this.pinned == null) { return; }
-
-        const pinningLeft = this.pinned === 'left';
-        const pinningRight = this.pinned === 'right';
-
-        this.hidden = true;
-
-        const listener = () => {
-            const width = pinningLeft ? this.pinnedWidthService.getPinnedLeftWidth() : this.pinnedWidthService.getPinnedRightWidth();
-            if (width == null) { return; } // can happen at initialisation, width not yet set
-
-            const hidden = (width == 0);
-            const hiddenChanged = this.hidden !== hidden;
-            const isRtl = this.gos.get('enableRtl');
-            const scrollbarWidth = this.gos.getScrollbarWidth();
-
-            // if there is a scroll showing (and taking up space, so Windows, and not iOS)
-            // in the body, then we add extra space to keep header aligned with the body,
-            // as body width fits the cols and the scrollbar
-            const addPaddingForScrollbar = this.scrollVisibleService.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
-            const widthWithPadding = addPaddingForScrollbar ? width + scrollbarWidth : width;
-
-            this.comp.setPinnedContainerWidth(`${widthWithPadding}px`);
-            this.comp.setDisplayed(!hidden);
-
-            if (hiddenChanged) {
-                this.hidden = hidden;
-                this.refresh();
-            }
-        };
-
-        this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, listener);
     }
 
     public getHeaderCtrlForColumn(column: Column): HeaderCellCtrl | undefined;

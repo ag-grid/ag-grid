@@ -2,12 +2,10 @@ import {
     _,
     Autowired,
     Bean,
-    SortController,
     StageExecuteParams,
     BeanStub,
     SortOption,
     IRowNodeStage,
-    GridOptions
 } from "@ag-grid-community/core";
 
 import { SortService } from "./sortService";
@@ -16,10 +14,9 @@ import { SortService } from "./sortService";
 export class SortStage extends BeanStub implements IRowNodeStage {
 
     @Autowired('sortService') private sortService: SortService;
-    @Autowired('sortController') private sortController: SortController;
 
     public execute(params: StageExecuteParams): void {
-        const sortOptions: SortOption[] = this.sortController.getSortOptions();
+        const sortOptions: SortOption[] = [];
 
         const sortActive = _.exists(sortOptions) && sortOptions.length > 0;
         const deltaSort = sortActive

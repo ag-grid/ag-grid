@@ -3,7 +3,6 @@
 // over the wire
 import { ColumnVO } from "./iColumnVO";
 import { LoadSuccessParams } from "../rowNodeCache/rowNodeBlock";
-import { SortModelItem } from "../sortController";
 import { AgGridCommon } from "./iCommon";
 import { IRowNode } from "./iRowNode";
 import { FilterModel } from "./iFilter";
@@ -31,7 +30,7 @@ export interface IServerSideGetRowsRequest {
      */
     filterModel: FilterModel | AdvancedFilterModel | null;
     /** If sorting, what the sort model is.  */
-    sortModel: SortModelItem[];
+    sortModel: any[];
 }
 
 export interface IServerSideGetRowsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
