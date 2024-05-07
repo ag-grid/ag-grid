@@ -183,7 +183,7 @@ export class GridCoreCreator {
 
         if (acceptChanges) { acceptChanges(context); }
         
-        return undefined;
+        return context.getBean('gridOptionsService');
     }
 
     private registerControllers(beans: Beans, registeredModules: Module[]): void {

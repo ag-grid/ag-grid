@@ -107,17 +107,17 @@
                 format: 'cjs',
             },
             'ag-grid-community': {
-                main: './dist/package/main.cjs.js',
+                main: './dist/package/main.cjs',
                 defaultExtension: 'js',
                 format: 'cjs',
             },
             'ag-grid-enterprise': {
-                main: './dist/package/main.cjs.js',
+                main: './dist/package/main.cjs',
                 defaultExtension: 'js',
                 format: 'cjs',
             },
             'ag-grid-charts-enterprise': {
-                main: './dist/package/main.cjs.js',
+                main: './dist/package/main.cjs',
                 defaultExtension: 'js',
                 format: 'cjs',
             },
