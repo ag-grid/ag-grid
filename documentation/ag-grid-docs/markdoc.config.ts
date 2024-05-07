@@ -12,10 +12,9 @@ import { openInCTA } from '@ag-website-shared/markdoc/tags/openInCTA';
 import { tabItem, tabs } from '@ag-website-shared/markdoc/tags/tabs';
 import { videoSection } from '@ag-website-shared/markdoc/tags/videoSection';
 import { warning } from '@ag-website-shared/markdoc/tags/warning';
-import { Markdoc, component, defineMarkdocConfig, nodes } from '@astrojs/markdoc/config';
+import { Markdoc, component, defineMarkdocConfig } from '@astrojs/markdoc/config';
 
 import { agGridVersion } from './src/constants';
-import { includeMarkdoc } from './src/utils/markdoc/tags/include-markdoc';
 import { link } from './src/utils/markdoc/tags/link';
 
 export default defineMarkdocConfig({
@@ -61,7 +60,6 @@ export default defineMarkdocConfig({
         idea,
         openInCTA,
         enterpriseIcon,
-        includeMarkdoc,
         gridExampleRunner: {
             render: component('./src/features/docs/components/DocsExampleRunner.astro'),
             attributes: {

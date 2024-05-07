@@ -34,18 +34,18 @@ The full list of component types you can provide in the grid are as follows:
 
 The remainder of this page gives information that is common across all the component types.
 
-{% includeMarkdoc file="components/_declare-vue.mdoc" /%}
+{% partial file="./_declare-vue.mdoc" /%}
 
 ## Registering Custom Components
 
-{% includeMarkdoc file="components/_register-javascript.mdoc" /%}
-{% includeMarkdoc file="components/_register-angular.mdoc" /%}
-{% includeMarkdoc file="components/_register-react.mdoc" /%}
-{% includeMarkdoc file="components/_register-vue.mdoc" /%}
+{% partial file="./_register-javascript.mdoc" /%}
+{% partial file="./_register-angular.mdoc" /%}
+{% partial file="./_register-react.mdoc" /%}
+{% partial file="./_register-vue.mdoc" /%}
 
 {% gridExampleRunner title="Registering Components" name="register"  exampleHeight=580 /%}
 
-{% includeMarkdoc file="components/_advantages-vue.mdoc" /%}
+{% partial file="./_advantages-vue.mdoc" /%}
 
 ## Providing Additional Parameters
 
@@ -67,10 +67,10 @@ const gridOptions = {
 }
 ```
 
-{% includeMarkdoc file="components/_js-fw-angular.mdoc" /%}
-{% includeMarkdoc file="components/_js-fw-react.mdoc" /%}
-{% includeMarkdoc file="components/_js-fw-vue.mdoc" /%}
-{% includeMarkdoc file="components/_js-fw-common-end.mdoc" /%}
+{% partial file="./_js-fw-angular.mdoc" /%}
+{% partial file="./_js-fw-react.mdoc" /%}
+{% partial file="./_js-fw-vue.mdoc" /%}
+{% partial file="./_js-fw-common-end.mdoc" /%}
 
 {% if isFramework("react") %}
 ## Higher Order Components

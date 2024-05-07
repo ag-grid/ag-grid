@@ -190,8 +190,8 @@ The example below demonstrates using the `headerTooltip` property in the grid co
 
 By default the grid uses the provided Header Group Component. To use a Custom Group Component set `headerGroupComponent` on the Column Definition.
 
-{% includeMarkdoc file="column-groups/_column-def-javascript.mdoc" /%}
-{% includeMarkdoc file="column-groups/_column-def-vue.mdoc" /%}
+{% partial file="./_column-def-javascript.mdoc" /%}
+{% partial file="./_column-def-vue.mdoc" /%}
 
 See [Registering Components](./components/) for an overview of registering componnets.
 
@@ -205,10 +205,10 @@ As with Column Headers, the grid will always handle resize and column moving. Th
 
 * **Group Open / Close:** If the group can expand (one or more columns visibility depends on the open / closed state of the group) then the Custom Component should handle the interaction with the user for opening and closing groups.
 
-{% includeMarkdoc file="column-groups/_group-component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="column-groups/_group-component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="column-groups/_group-component-interface-react.mdoc" /%}
-{% includeMarkdoc file="column-groups/_group-component-interface-vue.mdoc" /%}
+{% partial file="./_group-component-interface-javascript.mdoc" /%}
+{% partial file="./_group-component-interface-angular.mdoc" /%}
+{% partial file="./_group-component-interface-react.mdoc" /%}
+{% partial file="./_group-component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="IHeaderGroupParams" /%}
@@ -218,10 +218,10 @@ As with Column Headers, the grid will always handle resize and column moving. Th
 {% interfaceDocumentation interfaceName="CustomHeaderGroupProps" /%}
 {% /if %}
 
-{% includeMarkdoc file="column-groups/_open-close-javascript.mdoc" /%}
-{% includeMarkdoc file="column-groups/_open-close-angular.mdoc" /%}
-{% includeMarkdoc file="column-groups/_open-close-react.mdoc" /%}
-{% includeMarkdoc file="column-groups/_open-close-vue.mdoc" /%}
+{% partial file="./_open-close-javascript.mdoc" /%}
+{% partial file="./_open-close-angular.mdoc" /%}
+{% partial file="./_open-close-react.mdoc" /%}
+{% partial file="./_open-close-vue.mdoc" /%}
 
 ### Dynamic Tooltips
 

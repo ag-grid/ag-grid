@@ -11,10 +11,10 @@ The example below provides a 'Custom Stats' Tool Panel to demonstrates how to cr
 
 ## Implementing a Tool Panel Component
 
-{% includeMarkdoc file="component-tool-panel/_component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="component-tool-panel/_component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="component-tool-panel/_component-interface-react.mdoc" /%}
-{% includeMarkdoc file="component-tool-panel/_component-interface-vue.mdoc" /%}
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-react.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="IToolPanelParams" /%}
@@ -36,9 +36,9 @@ Registering a Tool Panel component follows the same approach as any other custom
 
 Once the Tool Panel Component is registered with the grid it needs to be included into the Side Bar. The following snippet illustrates this:
 
-{% includeMarkdoc file="component-tool-panel/_configure-javascript.mdoc" /%}
-{% includeMarkdoc file="component-tool-panel/_configure-angular.mdoc" /%}
-{% includeMarkdoc file="component-tool-panel/_configure-react.mdoc" /%}
-{% includeMarkdoc file="component-tool-panel/_configure-vue.mdoc" /%}
+{% partial file="./_configure-javascript.mdoc" /%}
+{% partial file="./_configure-angular.mdoc" /%}
+{% partial file="./_configure-react.mdoc" /%}
+{% partial file="./_configure-vue.mdoc" /%}
 
 For more details on the configuration properties above, refer to the [Side Bar Configuration](./side-bar/#sidebardef-configuration) section.

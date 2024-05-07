@@ -46,10 +46,10 @@ The grid comes with some Cell Components out of the box. These Provided Cell Com
 
 ## Custom Components
 
-{% includeMarkdoc file="component-cell-renderer/_component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_component-interface-react.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_component-interface-vue.mdoc" /%}
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-react.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="ICellRendererParams" config={"description":""} /%}
@@ -59,15 +59,15 @@ The grid comes with some Cell Components out of the box. These Provided Cell Com
 {% interfaceDocumentation interfaceName="CustomCellRendererProps" config={"description":""} /%}
 {% /if %}
 
-{% includeMarkdoc file="component-cell-renderer/_params_vue.mdoc" /%}
+{% partial file="./_params_vue.mdoc" /%}
 
 {% note %}
 Note that if [Row Selection](./row-selection/) is enabled, it is recommended to set `suppressKeyboardEvent` on the column definition to prevent the {% kbd "␣ Space" /%} key from triggering both row selection and toggling the checkbox.
 {% /note %}
 
-{% includeMarkdoc file="component-cell-renderer/_renderer-function-javascript.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_renderer-function-angular.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_renderer-function-vue.mdoc" /%}
+{% partial file="./_renderer-function-javascript.mdoc" /%}
+{% partial file="./_renderer-function-angular.mdoc" /%}
+{% partial file="./_renderer-function-vue.mdoc" /%}
 
 ### Selecting Components
 
@@ -185,8 +185,8 @@ The result is an object with `component` and `params` to use instead of `cellRen
 
 This following shows the Selector always returning back a Mood Cell Renderer:
 
-{% includeMarkdoc file="component-cell-renderer/_selector-common.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_selector-vue.mdoc" /%}
+{% partial file="./_selector-common.mdoc" /%}
+{% partial file="./_selector-vue.mdoc" /%}
 
 Here is a full example.
 
@@ -240,10 +240,10 @@ The `props` passed to the Cell Component can be complimented with custom props. 
 
 Compliment props to a cell renderer using the Column Definition attribute  `cellRendererParams`. When provided, these props will be merged with the grid provided props.
 
-{% includeMarkdoc file="component-cell-renderer/_complementing-component-javascript.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_complementing-component-angular.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_complementing-component-react.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_complementing-component-vue.mdoc" /%}
+{% partial file="./_complementing-component-javascript.mdoc" /%}
+{% partial file="./_complementing-component-angular.mdoc" /%}
+{% partial file="./_complementing-component-react.mdoc" /%}
+{% partial file="./_complementing-component-vue.mdoc" /%}
 
 This example shows rendering an image with and without custom props and using custom props to pass a callback to a button.
 The `Refresh Data` button triggers the cell components to refresh by randomising the success data.
