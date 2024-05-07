@@ -17,7 +17,7 @@ import {
     SortController,
     ValueService,
     PartialCellRange,
-    ColumnPivotService,
+    PivotResultColsService
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "../model/chartDataModel";
 
@@ -42,7 +42,7 @@ interface IData {
 
 export class ChartDatasource extends BeanStub {
     @Autowired('rowModel') private readonly gridRowModel: IRowModel;
-    @Autowired('columnPivotService') private readonly columnPivotService: ColumnPivotService;
+    @Autowired('pivotResultColsService') private readonly pivotResultColsService: PivotResultColsService;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('rowNodeSorter') private readonly rowNodeSorter: RowNodeSorter;
@@ -314,7 +314,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private updatePivotKeysForSSRM() {
-        const secondaryColumns = this.columnPivotService.getPivotResultCols();
+        const secondaryColumns = this.pivotResultColsService.getPivotResultCols();
 
         if (!secondaryColumns) { return; }
 

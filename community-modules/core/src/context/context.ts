@@ -461,7 +461,7 @@ export type BeanName =
 | 'columnGroupStateService'
 | 'columnApplyStateService'
 | 'columnUtils'
-| 'columnPivotService'
+| 'pivotResultColsService'
 | 'componentMetadataProvider'
 | 'context'
 | 'contextMenuFactory'

@@ -14,9 +14,8 @@ import {
     _,
     GetGroupRowAggParams,
     WithoutGridCommon,
-    GridOptions,
     FunctionColumnsService,
-    ColumnPivotService,
+    PivotResultColsService,
 } from "@ag-grid-community/core";
 import { AggFuncService } from "./aggFuncService";
 
@@ -37,7 +36,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('aggFuncService') private aggFuncService: AggFuncService;
     @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
-    @Autowired('columnPivotService') private columnPivotService: ColumnPivotService;
+    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
 
     // it's possible to recompute the aggregate without doing the other parts
     // + api.refreshClientSideRowModel('aggregate')
@@ -142,7 +141,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     private aggregateRowNodeUsingValuesAndPivot(rowNode: RowNode): any {
         const result: any = {};
 
-        const secondaryColumns = this.columnPivotService.getPivotResultCols() ?? [];
+        const secondaryColumns = this.pivotResultColsService.getPivotResultCols() ?? [];
         let canSkipTotalColumns = true;
         for (let i = 0; i < secondaryColumns.length; i++) {
             const secondaryCol = secondaryColumns[i];

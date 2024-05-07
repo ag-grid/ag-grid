@@ -35,7 +35,7 @@ import {
     ModuleNames,
     FunctionColumnsService,
     ColumnNameService,
-    ColumnPivotService
+    PivotResultColsService
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
@@ -60,7 +60,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('columnPivotService') private columnPivotService: ColumnPivotService;
+    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
     @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sortController') private sortController: SortController;
@@ -268,7 +268,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         const pivotColumnGroupDefs = this.pivotColDefService.createColDefsFromFields(pivotFields);
         this.managingPivotResultColumns = true;
-        this.columnPivotService.setPivotResultCols(pivotColumnGroupDefs, "rowModelUpdated");
+        this.pivotResultColsService.setPivotResultCols(pivotColumnGroupDefs, "rowModelUpdated");
     };
 
     public resetRowHeights(): void {
@@ -327,7 +327,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         if (this.managingPivotResultColumns) {
             // if managing pivot columns, also reset secondary columns.
-            this.columnPivotService.setPivotResultCols(null, 'api');
+            this.pivotResultColsService.setPivotResultCols(null, 'api');
             this.managingPivotResultColumns = false;
         }
 

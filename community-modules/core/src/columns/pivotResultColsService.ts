@@ -10,8 +10,8 @@ import { ColumnFactory } from "./columnFactory";
 import { ColKey, ColumnModel } from "./columnModel";
 import { ColumnUtilsFeature } from "./columnUtilsFeature";
 
-@Bean('columnPivotService')
-export class ColumnPivotService extends BeanStub {
+@Bean('pivotResultColsService')
+export class PivotResultColsService extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnFactory') private readonly columnFactory: ColumnFactory;
@@ -82,12 +82,10 @@ export class ColumnPivotService extends BeanStub {
     public setPivotResultCols(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void {
         if (this.columnModel.isGridColsMising()) { return; }
 
-        const newColsPresent = colDefs;
-
         // if not cols passed, and we had no cols anyway, then do nothing
-        if (!newColsPresent && missing(this.pivotResultCols)) { return; }
+        if (colDefs==null && this.pivotResultCols==null) { return; }
 
-        if (newColsPresent) {
+        if (colDefs) {
             this.processPivotResultColDef(colDefs);
             const balancedTreeResult = this.columnFactory.createColumnTree(
                 colDefs,
@@ -143,6 +141,4 @@ export class ColumnPivotService extends BeanStub {
             searchForColDefs(colDefs);
         }
     }
-
-
 }

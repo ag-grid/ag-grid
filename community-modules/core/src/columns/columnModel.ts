@@ -41,7 +41,7 @@ import { ColumnGroupStateService } from './columnGroupStateService';
 import { ColumnSizeService } from './columnSizeService';
 import { FunctionColumnsService } from './functionColumnsService';
 import { ColumnViewportService } from './columnViewportService';
-import { ColumnPivotService } from './columnPivotService';
+import { PivotResultColsService } from './pivotResultColsService';
 
 export interface ColumnStateParams {
     /** True if the column is hidden */
@@ -92,7 +92,7 @@ export class ColumnModel extends BeanStub {
     @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
     @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
     @Autowired('columnViewportService') private columnViewportService: ColumnViewportService;
-    @Autowired('columnPivotService') private columnPivotService: ColumnPivotService;
+    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('autoGroupColService') private autoGroupColService: AutoGroupColService;
@@ -542,7 +542,7 @@ export class ColumnModel extends BeanStub {
         return ([] as Column[]).concat(...[
             this.primaryColumns || [],
             this.groupAutoColumns || [],
-            this.columnPivotService.getPivotResultCols() || [],
+            this.pivotResultColsService.getPivotResultCols() || [],
         ]);
     }
 
@@ -642,8 +642,8 @@ export class ColumnModel extends BeanStub {
         if (unmatchedAndAutoStates.length > 0 || exists(params.defaultState)) {
             unmatchedCount = applyStates(
                 unmatchedAndAutoStates,
-                this.columnPivotService.getPivotResultCols() || [],
-                (id) => this.columnPivotService.getPivotResultCol(id)
+                this.pivotResultColsService.getPivotResultCols() || [],
+                (id) => this.pivotResultColsService.getPivotResultCol(id)
             ).unmatchedCount;
         }
         this.columnAnimationService.finish();
@@ -773,7 +773,7 @@ export class ColumnModel extends BeanStub {
     private calculateColumnsForDisplay(): Column[] {
         let columnsForDisplay: Column[];
 
-        const pivotResultCols = this.columnPivotService.getPivotResultCols();
+        const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
         if (this.pivotMode && pivotResultCols==null) {
             // pivot mode is on, but we are not pivoting, so we only
             // show columns we are aggregating on
@@ -860,9 +860,9 @@ export class ColumnModel extends BeanStub {
 
         let sortOrderToRecover: Column[] | undefined;
 
-        const pivotResultCols = this.columnPivotService.getPivotResultCols();
-        const pivotResultColsTree = this.columnPivotService.getPivotResultBalancedTree();
-        const pivotResultHeaderRowCount = this.columnPivotService.getPivotResultHeaderRowCount();
+        const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
+        const pivotResultColsTree = this.pivotResultColsService.getPivotResultBalancedTree();
+        const pivotResultHeaderRowCount = this.pivotResultColsService.getPivotResultHeaderRowCount();
 
         if (pivotResultCols && pivotResultColsTree) {
             const hasSameColumns = pivotResultCols.some((col) => {
@@ -1039,7 +1039,7 @@ export class ColumnModel extends BeanStub {
     //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
     public refreshQuickFilterColumns(): void {
         let columnsForQuickFilter = (
-            this.isPivotMode() && !this.gos.get('applyQuickFilterBeforePivotOrAgg') ? this.columnPivotService.getPivotResultCols() : this.primaryColumns
+            this.isPivotMode() && !this.gos.get('applyQuickFilterBeforePivotOrAgg') ? this.pivotResultColsService.getPivotResultCols() : this.primaryColumns
         ) ?? [];
         if (this.groupAutoColumns) {
             columnsForQuickFilter = columnsForQuickFilter.concat(this.groupAutoColumns);

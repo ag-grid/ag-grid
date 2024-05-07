@@ -16,7 +16,7 @@ import {
     WithoutGridCommon,
     _,
     FunctionColumnsService,
-    ColumnPivotService
+    PivotResultColsService
 } from "@ag-grid-community/core";
 import { PivotColDefService } from "./pivotColDefService";
 
@@ -26,7 +26,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     // these should go into the pivot column creator
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnPivotService') private columnPivotService: ColumnPivotService;
+    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
     @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
     @Autowired('pivotColDefService') private pivotColDefService: PivotColDefService;
 
@@ -61,8 +61,8 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     private executePivotOff(changedPath: ChangedPath): void {
         this.aggregationColumnsHashLastTime = null;
         this.uniqueValues = {};
-        if (this.columnPivotService.isPivotResultColsPresent()) {
-            this.columnPivotService.setPivotResultCols(null, "rowModelUpdated");
+        if (this.pivotResultColsService.isPivotResultColsPresent()) {
+            this.pivotResultColsService.setPivotResultCols(null, "rowModelUpdated");
             if (changedPath) {
                 changedPath.setInactive();
             }
@@ -83,7 +83,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         } catch(e) {
             // message is checked rather than inheritance as the build seems to break instanceof
             if (e.message === PivotStage.EXCEEDED_MAX_UNIQUE_VALUES) {
-                this.columnPivotService.setPivotResultCols([], "rowModelUpdated");
+                this.pivotResultColsService.setPivotResultCols([], "rowModelUpdated");
                 const event: WithoutGridCommon<PivotMaxColumnsExceededEvent> = {
                     type: Events.EVENT_PIVOT_MAX_COLUMNS_EXCEEDED,
                     message: e.message,
@@ -128,7 +128,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         if (this.lastTimeFailed || uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged || anyGridOptionsChanged) {
             const {pivotColumnGroupDefs, pivotColumnDefs} = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
             this.pivotColumnDefs = pivotColumnDefs;
-            this.columnPivotService.setPivotResultCols(pivotColumnGroupDefs, "rowModelUpdated");
+            this.pivotResultColsService.setPivotResultCols(pivotColumnGroupDefs, "rowModelUpdated");
             // because the secondary columns have changed, then the aggregation needs to visit the whole
             // tree again, so we make the changedPath not active, to force aggregation to visit all paths.
             if (changedPath) {

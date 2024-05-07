@@ -45,13 +45,13 @@ import { Column } from "../entities/column";
 import { ColumnGetStateService } from "../columns/columnGetStateService";
 import { ColumnGroupStateService } from "../columns/columnGroupStateService";
 import { DisplayedColumnsService } from "../columns/displayedColumnsService";
-import { ColumnPivotService } from "../columns/columnPivotService";
+import { PivotResultColsService } from "../columns/pivotResultColsService";
 
 @Bean('stateService')
 export class StateService extends BeanStub {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
-    @Autowired('columnPivotService') private columnPivotService: ColumnPivotService;
+    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
@@ -404,12 +404,12 @@ export class StateService extends BeanStub {
         const columnGroupStates = this.columnGroupStates;
         this.columnGroupStates = undefined;
 
-        if (!this.columnPivotService.isPivotResultColsPresent()) { return; }
+        if (!this.pivotResultColsService.isPivotResultColsPresent()) { return; }
 
         if (columnStates) {
             let secondaryColumnStates: ColumnState[] = [];
             for (const columnState of columnStates) {
-                if (this.columnPivotService.getPivotResultCol(columnState.colId)) {
+                if (this.pivotResultColsService.getPivotResultCol(columnState.colId)) {
                     secondaryColumnStates.push(columnState);
                 }
             }
