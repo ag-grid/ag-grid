@@ -13,6 +13,7 @@ import { Column } from "../entities/column";
 import { ProcessUnpinnedColumnsParams } from "../interfaces/iCallbackParams";
 import { ColumnSizeService } from "../columns/columnSizeService";
 import { DisplayedColumnsService } from "../columns/displayedColumnsService";
+import { ColumnViewportService } from "../columns/columnViewportService";
 
 // listens to changes in the center viewport size, for column and row virtualisation,
 // and adjusts grid as necessary. there are two viewports, one for horizontal and one for
@@ -25,6 +26,7 @@ export class ViewportSizeFeature extends BeanStub {
     @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
     @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
+    @Autowired('columnViewportService') public columnViewportService: ColumnViewportService;
 
     private centerContainerCtrl: RowContainerCtrl;
     private gridBodyCtrl: GridBodyCtrl;
@@ -202,6 +204,6 @@ export class ViewportSizeFeature extends BeanStub {
         const scrollWidth = this.centerContainerCtrl.getCenterWidth();
         const scrollPosition = this.centerContainerCtrl.getViewportScrollLeft();
 
-        this.columnModel.setViewportPosition(scrollWidth, scrollPosition);
+        this.columnViewportService.setScrollPosition(scrollWidth, scrollPosition);
     }
 }

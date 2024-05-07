@@ -147,6 +147,7 @@ import { ColumnMoveService } from "./columns/columnMoveService";
 import { FunctionColumnsService } from "./columns/functionColumnsService";
 import { ColumnSizeService, ISizeColumnsToFitParams } from "./columns/columnSizeService";
 import { ColumnNameService } from "./columns/columnNameService";
+import { ColumnViewportService } from "./columns/columnViewportService";
 
 
 export interface DetailGridInfo {
@@ -193,6 +194,7 @@ export class GridApi<TData = any> {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnNameService') private readonly columnNameService: ColumnNameService;
+    @Autowired('columnViewportService') private readonly columnViewportService: ColumnViewportService;
     @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
     @Autowired('columnSizeService') private readonly columnSizeService: ColumnSizeService;
     @Autowired('columnGetStateService') private readonly columnGetStateService: ColumnGetStateService;
@@ -1842,7 +1844,7 @@ export class GridApi<TData = any> {
     /** Returns all columns currently displayed (e.g. are visible and if in a group, the group is showing the columns) for the pinned left, centre and pinned right portions of the grid. */
     public getAllDisplayedColumns(): Column[] { return this.displayedColumnsService.getAllDisplayedColumns(); }
     /** Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns that are not within the viewport and therefore not rendered, due to column virtualisation, are not displayed. */
-    public getAllDisplayedVirtualColumns(): Column[] { return this.columnModel.getViewportColumns(); }
+    public getAllDisplayedVirtualColumns(): Column[] { return this.columnViewportService.getViewportColumns(); }
 
     /** @deprecated v31.1 moveColumn(key, toIndex) deprecated, please use moveColumns([key], toIndex) instead. */
     public moveColumn(key: string | ColDef | Column, toIndex: number): void {

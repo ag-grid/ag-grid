@@ -40,6 +40,7 @@ import { ColumnUtilsFeature } from './columnUtilsFeature';
 import { ColumnGroupStateService } from './columnGroupStateService';
 import { ColumnSizeService } from './columnSizeService';
 import { FunctionColumnsService } from './functionColumnsService';
+import { ColumnViewportService } from './columnViewportService';
 
 export interface ColumnStateParams {
     /** True if the column is hidden */
@@ -89,6 +90,7 @@ export class ColumnModel extends BeanStub {
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
     @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
     @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
+    @Autowired('columnViewportService') private columnViewportService: ColumnViewportService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('autoGroupColService') private autoGroupColService: AutoGroupColService;
@@ -146,28 +148,12 @@ export class ColumnModel extends BeanStub {
     // displayed columns -> columns that are 1) visible and 2) parent groups are opened. thus can be rendered
     // viewport columns -> centre columns only, what columns are to be rendered due to column virtualisation
 
-    // all columns to be rendered in the centre
-    private viewportColumnsCenter: Column[] = [];
-    // same as viewportColumnsCenter, except we always include columns with headerAutoHeight
-    private headerViewportColumnsCenter: Column[] = [];
-    
-    // A hash key to keep track of changes in viewport columns
-    private viewportColumnsHash: string = '';
-
-    // all columns & groups to be rendered, index by row. used by header rows to get all items
-    // to render for that row.
-    private viewportRowLeft: { [row: number]: IHeaderColumn[]; } = {};
-    private viewportRowRight: { [row: number]: IHeaderColumn[]; } = {};
-    private viewportRowCenter: { [row: number]: IHeaderColumn[]; } = {};
-
     // true if we are doing column spanning
     private colSpanActive: boolean;
 
     // grid columns that have colDef.autoHeight set
     private autoHeightActive: boolean;
     private autoHeightActiveAtLeastOnce = false;
-
-    private suppressColumnVirtualisation: boolean;
 
     private groupAutoColumns: Column[] | null;
 
@@ -182,13 +168,6 @@ export class ColumnModel extends BeanStub {
     private groupDisplayColumns: Column[];
     private groupDisplayColumnsMap: { [originalColumnId: string]: Column };
 
-    // for horizontal visualisation of columns
-    private scrollWidth: number;
-    private scrollPosition: number;
-
-    private viewportLeft: number;
-    private viewportRight: number;
-
     // when we're waiting for cell data types to be inferred, we need to defer column resizing
     private shouldQueueResizeOperations: boolean = false;
     private resizeOperationQueue: (() => void)[] = [];
@@ -198,8 +177,6 @@ export class ColumnModel extends BeanStub {
     @PostConstruct
     public init(): void {
         this.columnUtilsFeature = this.createManagedBean(new ColumnUtilsFeature());
-
-        this.suppressColumnVirtualisation = this.gos.get('suppressColumnVirtualisation');
 
         const pivotMode = this.gos.get('pivotMode');
 
@@ -322,7 +299,7 @@ export class ColumnModel extends BeanStub {
                 this.orderGridColumnsLikePrimary();
             }
             this.updateDisplayedColumns(source);
-            this.checkViewportColumns();
+            this.columnViewportService.checkViewportColumns();
         }
 
         // this event is not used by AG Grid, but left here for backwards compatibility,
@@ -339,7 +316,7 @@ export class ColumnModel extends BeanStub {
 
         this.eventDispatcher.newColumnsLoaded(source);
         if (source === 'gridInitializing') {
-            this.onColumnsReady();
+            this.applyAutosizeStrategy();
         }
     }
 
@@ -357,48 +334,6 @@ export class ColumnModel extends BeanStub {
 
         this.gridColumns = [...otherCols, ...primaryColsOrdered];
         this.gridColumns = this.columnMoveService.placeLockedColumns(this.gridColumns);
-    }
-
-    private setViewport(): void {
-        if (this.gos.get('enableRtl')) {
-            const bodyWidth = this.displayedColumnsService.getBodyContainerWidth();
-            this.viewportLeft = bodyWidth - this.scrollPosition - this.scrollWidth;
-            this.viewportRight = bodyWidth - this.scrollPosition;
-        } else {
-            this.viewportLeft = this.scrollPosition;
-            this.viewportRight = this.scrollWidth + this.scrollPosition;
-        }
-    }
-
-    // checks what columns are currently displayed due to column virtualisation. dispatches an event
-    // if the list of columns has changed.
-    // + setColumnWidth(), setViewportPosition(), setColumnDefs(), sizeColumnsToFit()
-    public checkViewportColumns(afterScroll: boolean = false): void {
-        // check displayCenterColumnTree exists first, as it won't exist when grid is initialising
-        if (this.displayedColumnsService.getDisplayedColumnsCenter() == null) { return; }
-
-        const viewportColumnsChanged = this.extractViewport();
-
-        if (!viewportColumnsChanged) { return; }
-
-        this.eventDispatcher.virtualColumnsChanged(afterScroll);
-    }
-
-    public setViewportPosition(scrollWidth: number, scrollPosition: number, afterScroll: boolean = false): void {
-        const bodyWidthDirty = this.displayedColumnsService.isBodyWidthDirty();
-        if (scrollWidth !== this.scrollWidth || scrollPosition !== this.scrollPosition || bodyWidthDirty) {
-            this.scrollWidth = scrollWidth;
-            this.scrollPosition = scrollPosition;
-            // we need to call setVirtualViewportLeftAndRight() at least once after the body width changes,
-            // as the viewport can stay the same, but in RTL, if body width changes, we need to work out the
-            // virtual columns again
-            this.displayedColumnsService.setBodyWidthDirty();
-            this.setViewport();
-
-            if (this.ready) {
-                this.checkViewportColumns(afterScroll);
-            }
-        }
     }
 
     public isPivotMode(): boolean {
@@ -476,69 +411,8 @@ export class ColumnModel extends BeanStub {
         return this.gridHeaderRowCount;
     }
 
-    public getViewportColumns(): Column[] {
-        const leftCols = this.displayedColumnsService.getDisplayedLeftColumns();
-        const rightCols = this.displayedColumnsService.getDisplayedRightColumns();
-        const res = this.viewportColumnsCenter.concat(leftCols).concat(rightCols);
-        return res;
-    }
-
     public isColSpanActive(): boolean {
         return this.colSpanActive;
-    }
-
-    // + rowRenderer
-    // if we are not column spanning, this just returns back the virtual centre columns,
-    // however if we are column spanning, then different rows can have different virtual
-    // columns, so we have to work out the list for each individual row.
-    public getViewportCenterColumnsForRow(rowNode: RowNode): Column[] {
-        if (!this.colSpanActive) {
-            return this.viewportColumnsCenter;
-        }
-
-        const emptySpaceBeforeColumn = (col: Column) => {
-            const left = col.getLeft();
-
-            return exists(left) && left > this.viewportLeft;
-        };
-
-        // if doing column virtualisation, then we filter based on the viewport.
-        const inViewportCallback = this.isColumnVirtualisationSuppressed() ? null : this.isColumnInRowViewport.bind(this);
-        const displayedColumnsCenter = this.displayedColumnsService.getDisplayedColumnsCenter();
-
-        return this.displayedColumnsService.getDisplayedColumnsForRow(
-            rowNode,
-            displayedColumnsCenter,
-            inViewportCallback,
-            emptySpaceBeforeColumn
-        );
-    }
-
-    private isColumnInHeaderViewport(col: Column): boolean {
-        // for headers, we never filter out autoHeaderHeight columns, if calculating
-        if (col.isAutoHeaderHeight()) { return true; }
-
-        return this.isColumnInRowViewport(col);
-    }
-
-    private isColumnInRowViewport(col: Column): boolean {
-        // we never filter out autoHeight columns, as we need them in the DOM for calculating Auto Height
-        if (col.isAutoHeight()) { return true; }
-
-        const columnLeft = col.getLeft() || 0;
-        const columnRight = columnLeft + col.getActualWidth();
-
-        // adding 200 for buffer size, so some cols off viewport are rendered.
-        // this helps horizontal scrolling so user rarely sees white space (unless
-        // they scroll horizontally fast). however we are conservative, as the more
-        // buffer the slower the vertical redraw speed
-        const leftBounds = this.viewportLeft - 200;
-        const rightBounds = this.viewportRight + 200;
-
-        const columnToMuchLeft = columnLeft < leftBounds && columnRight < leftBounds;
-        const columnToMuchRight = columnLeft > rightBounds && columnRight > rightBounds;
-
-        return !columnToMuchLeft && !columnToMuchRight;
     }
 
     // niall note - temp method, should not be exposing this variable in final version
@@ -1142,7 +1016,13 @@ export class ColumnModel extends BeanStub {
         this.gridColumns = this.columnMoveService.placeLockedColumns(this.gridColumns);
         this.calculateColumnsForGroupDisplay();
         this.refreshQuickFilterColumns();
-        this.clearDisplayedAndViewportColumns();
+
+        // make sure any part of the gui that tries to draw, eg the header,
+        // will get empty lists of columns rather than stale columns.
+        // for example, the header will received gridColumnsChanged event, so will try and draw,
+        // but it will draw successfully when it acts on the virtualColumnsChanged event
+        this.displayedColumnsService.clear();
+        this.columnViewportService.clear();
 
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
 
@@ -1306,27 +1186,12 @@ export class ColumnModel extends BeanStub {
         this.gridBalancedTree = newAutoColsTree.concat(this.gridBalancedTree);
     }
 
-    // gets called after we copy down grid columns, to make sure any part of the gui
-    // that tries to draw, eg the header, it will get empty lists of columns rather
-    // than stale columns. for example, the header will received gridColumnsChanged
-    // event, so will try and draw, but it will draw successfully when it acts on the
-    // virtualColumnsChanged event
-    private clearDisplayedAndViewportColumns(): void {
-        this.viewportRowLeft = {};
-        this.viewportRowRight = {};
-        this.viewportRowCenter = {};
-
-        this.displayedColumnsService.clear();
-
-        this.viewportColumnsHash = '';
-    }
-
     public updateGroupsAndDisplayedColumns(source: ColumnEventType) {
 
         this.displayedColumnsService.updateOpenClosedVisibilityInColumnGroups();
         this.displayedColumnsService.deriveDisplayedColumns(source);
         this.columnSizeService.refreshFlexedColumns();
-        this.extractViewport();
+        this.columnViewportService.extractViewport();
         this.displayedColumnsService.updateBodyWidths();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
 
@@ -1339,122 +1204,6 @@ export class ColumnModel extends BeanStub {
 
     public wasAutoRowHeightEverActive(): boolean {
         return this.autoHeightActiveAtLeastOnce;
-    }
-
-    private isColumnVirtualisationSuppressed(){
-        // When running within jsdom the viewportRight is always 0, so we need to return true to allow
-        // tests to validate all the columns.
-        return this.suppressColumnVirtualisation || this.viewportRight === 0;
-    }
-
-    private extractViewportColumns(): void {
-        const displayedColumnsCenter = this.displayedColumnsService.getDisplayedCenterColumns();
-        if (this.isColumnVirtualisationSuppressed()) {
-            // no virtualisation, so don't filter
-            this.viewportColumnsCenter = displayedColumnsCenter;
-            this.headerViewportColumnsCenter = displayedColumnsCenter;
-        } else {
-            // filter out what should be visible
-            this.viewportColumnsCenter = displayedColumnsCenter.filter(this.isColumnInRowViewport.bind(this));
-            this.headerViewportColumnsCenter = displayedColumnsCenter.filter(this.isColumnInHeaderViewport.bind(this));
-        }
-    }
-
-    public getVirtualHeaderGroupRow(type: ColumnPinnedType, dept: number): IHeaderColumn[] {
-        let result: IHeaderColumn[];
-
-        switch (type) {
-            case 'left':
-                result = this.viewportRowLeft[dept];
-                break;
-            case 'right':
-                result = this.viewportRowRight[dept];
-                break;
-            default:
-                result = this.viewportRowCenter[dept];
-                break;
-        }
-
-        if (missing(result)) {
-            result = [];
-        }
-
-        return result;
-    }
-
-    private calculateHeaderRows(): void {
-
-        // go through each group, see if any of it's cols are displayed, and if yes,
-        // then this group is included
-        this.viewportRowLeft = {};
-        this.viewportRowRight = {};
-        this.viewportRowCenter = {};
-
-        // for easy lookup when building the groups.
-        const renderedColIds: { [key: string]: boolean; } = {};
-
-        const renderedColsLeft = this.displayedColumnsService.getDisplayedLeftColumns();
-        const renderedColsRight = this.displayedColumnsService.getDisplayedRightColumns();
-        const allRenderedCols = this.headerViewportColumnsCenter
-            .concat(renderedColsLeft)
-            .concat(renderedColsRight);
-
-        allRenderedCols.forEach(col => renderedColIds[col.getId()] = true);
-
-        const testGroup = (
-            children: IHeaderColumn[],
-            result: { [row: number]: IHeaderColumn[]; },
-            dept: number): boolean => {
-
-            let returnValue = false;
-
-            for (let i = 0; i < children.length; i++) {
-                // see if this item is within viewport
-                const child = children[i];
-                let addThisItem = false;
-
-                if (child instanceof Column) {
-                    // for column, test if column is included
-                    addThisItem = renderedColIds[child.getId()] === true;
-                } else {
-                    // if group, base decision on children
-                    const columnGroup = child as ColumnGroup;
-                    const displayedChildren = columnGroup.getDisplayedChildren();
-
-                    if (displayedChildren) {
-                        addThisItem = testGroup(displayedChildren, result, dept + 1);
-                    }
-                }
-
-                if (addThisItem) {
-                    returnValue = true;
-                    if (!result[dept]) {
-                        result[dept] = [];
-                    }
-                    result[dept].push(child);
-                }
-            }
-            return returnValue;
-        };
-
-        testGroup(this.displayedColumnsService.getDisplayedTreeLeft(), this.viewportRowLeft, 0);
-        testGroup(this.displayedColumnsService.getDisplayedTreeRight(), this.viewportRowRight, 0);
-        testGroup(this.displayedColumnsService.getDisplayedTreeCentre(), this.viewportRowCenter, 0);
-    }
-
-    private extractViewport(): boolean {
-        const hashColumn = (c: Column) => `${c.getId()}-${c.getPinned() || 'normal'}`;
-
-        this.extractViewportColumns();
-        const newHash = this.getViewportColumns().map(hashColumn).join('#');
-        const changed = this.viewportColumnsHash !== newHash;
-
-        if (changed) {
-            this.viewportColumnsHash = newHash;
-            this.calculateHeaderRows();
-        }
-
-        return changed;
     }
 
     public getGroupAutoColumns(): Column[] | null {
@@ -1598,7 +1347,7 @@ export class ColumnModel extends BeanStub {
     }
 
 
-    private onColumnsReady(): void {
+    private applyAutosizeStrategy(): void {
         const autoSizeStrategy = this.gos.get('autoSizeStrategy');
         if (!autoSizeStrategy) { return; }
 

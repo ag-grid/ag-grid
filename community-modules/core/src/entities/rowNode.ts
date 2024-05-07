@@ -614,7 +614,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
                             activeColsForRow = this.beans.displayedColumnsService.getDisplayedRightColumnsForRow(this);
                             break;
                         case null:
-                            activeColsForRow = this.beans.columnModel.getViewportCenterColumnsForRow(this);
+                            activeColsForRow = this.beans.columnViewportService.getColsWithinViewport(this);
                             break;
                     }
                     if (activeColsForRow.includes(col)) {

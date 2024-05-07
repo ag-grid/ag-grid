@@ -292,10 +292,10 @@ export class HeaderRowCtrl extends BeanStub {
 
         let viewportColumns: IHeaderColumn[] = [];
         const actualDepth = this.getActualDepth();
-        const { columnModel } = this.beans;
+        const { columnViewportService } = this.beans;
 
         (['left', null, 'right'] as ColumnPinnedType[]).forEach(pinned => {
-            const items = columnModel.getVirtualHeaderGroupRow(pinned, actualDepth);
+            const items = columnViewportService.getHeadersToRender(pinned, actualDepth);
             viewportColumns = viewportColumns.concat(items);
         });
 
@@ -308,7 +308,7 @@ export class HeaderRowCtrl extends BeanStub {
 
     private getColumnsInViewportNormalLayout(): IHeaderColumn[] {
         // when in normal layout, we add the columns for that container only
-        return this.beans.columnModel.getVirtualHeaderGroupRow(this.pinned, this.getActualDepth());
+        return this.beans.columnViewportService.getHeadersToRender(this.pinned, this.getActualDepth());
     }
 
     public focusHeader(column: IHeaderColumn, event?: KeyboardEvent): boolean {

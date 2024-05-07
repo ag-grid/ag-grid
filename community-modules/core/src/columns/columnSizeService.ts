@@ -7,6 +7,7 @@ import { exists } from "../utils/generic";
 import { ColumnEventDispatcher } from "./columnEventDispatcher";
 import { ColKey, ColumnModel } from "./columnModel";
 import { ColumnUtilsFeature } from "./columnUtilsFeature";
+import { ColumnViewportService } from "./columnViewportService";
 import { DisplayedColumnsService } from "./displayedColumnsService";
 
 export interface ColumnResizeSet {
@@ -38,6 +39,7 @@ export interface ISizeColumnsToFitParams {
 export class ColumnSizeService extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnViewportService') private readonly columnViewportService: ColumnViewportService;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
     @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
    
@@ -230,7 +232,7 @@ export class ColumnSizeService extends BeanStub {
             flexedCols = this.refreshFlexedColumns({ resizingCols: allResizedCols, skipSetLeft: true });
             this.displayedColumnsService.setLeftValues(source);
             this.displayedColumnsService.updateBodyWidths();
-            this.columnModel.checkViewportColumns();
+            this.columnViewportService.checkViewportColumns();
         }
 
         // check for change first, to avoid unnecessary firing of events

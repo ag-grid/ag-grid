@@ -557,14 +557,14 @@ export class RowCtrl extends BeanStub {
     }
 
     private createAllCellCtrls() {
-        const columnModel = this.beans.columnModel;
+        const columnViewportService = this.beans.columnViewportService;
         const displayedColumnsService = this.beans.displayedColumnsService;
         if (this.printLayout) {
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, displayedColumnsService.getAllDisplayedColumns());
             this.leftCellCtrls = { list: [], map: {} };
             this.rightCellCtrls = { list: [], map: {} };
         } else {
-            const centerCols = columnModel.getViewportCenterColumnsForRow(this.rowNode);
+            const centerCols = columnViewportService.getColsWithinViewport(this.rowNode);
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, centerCols);
 
             const leftCols = displayedColumnsService.getDisplayedLeftColumnsForRow(this.rowNode);
