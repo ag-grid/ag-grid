@@ -1,15 +1,16 @@
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, Bean, Optional } from "../../context/context";
-import { CellEditorSelectorFunc, CellEditorSelectorResult, CellRendererSelectorFunc, ColDef, ColGroupDef } from "../../entities/colDef";
+import { CellEditorSelectorFunc, CellEditorSelectorResult, CellRendererSelectorFunc, ColDef } from "../../entities/colDef";
 import { GridOptions } from "../../entities/gridOptions";
-import { ToolPanelDef } from "../../interfaces/iSideBar";
 import { IHeaderParams } from "../../headerRendering/cells/column/headerComp";
+import { IDateParams } from "../../interfaces/dateComponent";
 import { ICellEditorParams } from "../../interfaces/iCellEditor";
+import { AgGridCommon, WithoutGridCommon } from "../../interfaces/iCommon";
 import { IFilterDef, IFilterParams } from "../../interfaces/iFilter";
+import { ToolPanelDef } from "../../interfaces/iSideBar";
 import { IStatusPanelParams, StatusPanelDef } from "../../interfaces/iStatusPanel";
 import { IToolPanelParams } from "../../interfaces/iToolPanel";
-import { ICellRendererParams, ISetFilterCellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
-import { IDateParams } from "../../interfaces/dateComponent";
+import { IMenuItemParams, MenuItemDef } from "../../interfaces/menuItem";
 import { ILoadingOverlayParams } from "../../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayParams } from "../../rendering/overlays/noRowsOverlayComponent";
 import { AgPromise } from "../../utils";
@@ -18,30 +19,18 @@ import { AgComponentUtils } from "./agComponentUtils";
 import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
 import {
     CellEditorComponent,
-    CellRendererComponent,
     ComponentType,
     DateComponent,
     FilterComponent,
-    FloatingFilterComponent,
-    FullWidth,
-    FullWidthDetail,
-    FullWidthGroup,
-    FullWidthLoading,
     HeaderComponent,
-    HeaderGroupComponent,
-    InnerRendererComponent,
-    LoadingCellRendererComponent,
     LoadingOverlayComponent,
     MenuItemComponent,
     NoRowsOverlayComponent,
     StatusPanelComponent,
-    ToolPanelComponent,
-    TooltipComponent
+    ToolPanelComponent
 } from "./componentTypes";
 import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
 import { UserComponentRegistry } from "./userComponentRegistry";
-import { AgGridCommon, WithoutGridCommon } from "../../interfaces/iCommon";
-import { IMenuItemParams, MenuItemDef } from "../../interfaces/menuItem";
 
 export type DefinitionObject =
     any;
