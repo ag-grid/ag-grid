@@ -378,33 +378,11 @@ export class RowContainerCtrl extends BeanStub {
 
     private getRowCtrls(): RowCtrl[] {
         switch (this.name) {
-            case RowContainerName.TOP_CENTER:
-            case RowContainerName.TOP_LEFT:
-            case RowContainerName.TOP_RIGHT:
-            case RowContainerName.TOP_FULL_WIDTH:
-                return this.rowRenderer.getTopRowCtrls();
 
-            case RowContainerName.STICKY_TOP_CENTER:
-            case RowContainerName.STICKY_TOP_LEFT:
-            case RowContainerName.STICKY_TOP_RIGHT:
-            case RowContainerName.STICKY_TOP_FULL_WIDTH:
-                return this.rowRenderer.getStickyTopRowCtrls();
-
-
-            case RowContainerName.STICKY_BOTTOM_CENTER:
-            case RowContainerName.STICKY_BOTTOM_LEFT:
-            case RowContainerName.STICKY_BOTTOM_RIGHT:
-            case RowContainerName.STICKY_BOTTOM_FULL_WIDTH:
-                return this.rowRenderer.getStickyBottomRowCtrls();
-
-            case RowContainerName.BOTTOM_CENTER:
-            case RowContainerName.BOTTOM_LEFT:
-            case RowContainerName.BOTTOM_RIGHT:
-            case RowContainerName.BOTTOM_FULL_WIDTH:
-                return this.rowRenderer.getBottomRowCtrls();
-
-            default:
+            case RowContainerName.CENTER:
                 return this.rowRenderer.getCentreRowCtrls();
+            default:
+                return [];
         }
     }
 }

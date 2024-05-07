@@ -1,37 +1,34 @@
-import { RowCtrl, RowCtrlInstanceId } from "./row/rowCtrl";
+import { ColumnModel } from "../columns/columnModel";
+import { BeanStub } from "../context/beanStub";
+import { Autowired, Bean, PostConstruct } from "../context/context";
+import { CtrlsService } from "../ctrlsService";
+import { CellPosition } from "../entities/cellPositionUtils";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
+import { RowPosition } from "../entities/rowPositionUtils";
 import {
     AgEventListener,
     BodyScrollEvent,
-    CellFocusedEvent,
     DisplayedRowsChangedEvent,
     Events,
     FirstDataRenderedEvent,
     ModelUpdatedEvent,
     ViewportChangedEvent
 } from "../events";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { ColumnModel } from "../columns/columnModel";
-import { CellPosition } from "../entities/cellPositionUtils";
-import { BeanStub } from "../context/beanStub";
-import { PaginationProxy } from "../pagination/paginationProxy";
-import { Beans } from "./beans";
-import { RowContainerHeightService } from "./rowContainerHeightService";
-import { ICellEditor } from "../interfaces/iCellEditor";
-import { IRowModel } from "../interfaces/iRowModel";
-import { RowPosition } from "../entities/rowPositionUtils";
-import { exists } from "../utils/generic";
-import { getAllValuesInObject, iterateObject } from "../utils/object";
-import { createArrayOfNumbers } from "../utils/number";
-import { executeInAWhile } from "../utils/function";
-import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
-import { CellCtrl } from "./cell/cellCtrl";
-import { removeFromArray } from "../utils/array";
-import { AnimationFrameService } from "../misc/animationFrameService";
+import { ICellEditor } from "../interfaces/iCellEditor";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IRowNode } from "../interfaces/iRowNode";
+import { PaginationProxy } from "../pagination/paginationProxy";
+import { removeFromArray } from "../utils/array";
+import { executeInAWhile } from "../utils/function";
+import { exists } from "../utils/generic";
+import { createArrayOfNumbers } from "../utils/number";
+import { getAllValuesInObject, iterateObject } from "../utils/object";
+import { Beans } from "./beans";
+import { CellCtrl } from "./cell/cellCtrl";
+import { RowCtrl, RowCtrlInstanceId } from "./row/rowCtrl";
+import { RowContainerHeightService } from "./rowContainerHeightService";
 
 type RowCtrlIdMap = Record<RowCtrlInstanceId, RowCtrl>;
 type RowCtrlByRowIndex = Record<number, RowCtrl>;
@@ -79,10 +76,8 @@ export interface RedrawRowsParams<TData = any> {
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
 
-    @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
     @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
     @Autowired("columnModel") private columnModel: ColumnModel;
-    @Autowired("rowModel") private rowModel: IRowModel;
     @Autowired("beans") private beans: Beans;
     @Autowired("rowContainerHeightService") private rowContainerHeightService: RowContainerHeightService;
     @Autowired("ctrlsService") private ctrlsService: CtrlsService;
@@ -100,12 +95,6 @@ export class RowRenderer extends BeanStub {
     private zombieRowCtrls: RowCtrlIdMap = {};
     private cachedRowCtrls: RowCtrlCache;
     private allRowCtrls: RowCtrl[] = [];
-
-    private topRowCtrls: RowCtrl[] = [];
-    private bottomRowCtrls: RowCtrl[] = [];
-
-    private pinningLeft: boolean;
-    private pinningRight: boolean;
 
     private firstVisibleVPixel: number;
     private lastVisibleVPixel: number;
@@ -128,8 +117,6 @@ export class RowRenderer extends BeanStub {
 
     private initialise(): void {
         this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.onBodyScroll.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redraw.bind(this));
 
@@ -152,30 +139,9 @@ export class RowRenderer extends BeanStub {
 
         this.registerCellEventListeners();
 
-        this.initialiseCache();
-
         this.redrawAfterModelUpdate();
     }
 
-    private initialiseCache(): void {
-        if (this.gos.get('keepDetailRows')) {
-            const countProp = this.getKeepDetailRowsCount();
-            const count = countProp != null ? countProp : 3;
-            this.cachedRowCtrls = new RowCtrlCache(count);
-        }
-    }
-
-    private getKeepDetailRowsCount(): number {
-        return this.gos.get('keepDetailRowsCount');
-    }
-
-    public getStickyTopRowCtrls(): RowCtrl[] {
-        return [];
-    }
-
-    public getStickyBottomRowCtrls(): RowCtrl[] {
-       return [];
-    }
 
     private updateAllRowCtrls(): void {
         const liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
@@ -348,7 +314,7 @@ export class RowRenderer extends BeanStub {
     }
 
     public getTopRowCtrls(): RowCtrl[] {
-        return this.topRowCtrls;
+        return [];
     }
 
     public getCentreRowCtrls(): RowCtrl[] {
@@ -356,11 +322,7 @@ export class RowRenderer extends BeanStub {
     }
 
     public getBottomRowCtrls(): RowCtrl[] {
-        return this.bottomRowCtrls;
-    }
-
-    private onPinnedRowDataChanged(): void {
-        
+        return [];
     }
 
     public redrawRow(rowNode: RowNode, suppressEvent = false) {
@@ -386,12 +348,6 @@ export class RowRenderer extends BeanStub {
             }
 
             switch (rowNode.rowPinned) {
-                case 'top':
-                    destroyAndRecreateCtrl(this.topRowCtrls);
-                    break;
-                case 'bottom':
-                    destroyAndRecreateCtrl(this.bottomRowCtrls);
-                    break;
                 default:
                     destroyAndRecreateCtrl(this.rowCtrlsByRowIndex);
                     this.updateAllRowCtrls();
@@ -446,10 +402,6 @@ export class RowRenderer extends BeanStub {
         this.recycleRows(rowsToRecycle, animate);
 
         this.gridBodyCtrl.updateRowCount();
-
-        if (!params.onlyBody) {
-            this.refreshFloatingRowComps();
-        }
 
         this.dispatchDisplayedRowsChanged();
 
@@ -521,7 +473,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private getAllRowCtrls(): RowCtrl[] {
-        const res = [...this.topRowCtrls, ...this.bottomRowCtrls];
+        const res = [];
 
         for (const key in this.rowCtrlsByRowIndex) {
             res.push(this.rowCtrlsByRowIndex[key]);
@@ -826,17 +778,6 @@ export class RowRenderer extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    private onDisplayedColumnsChanged(): void {
-        const pinningLeft = this.columnModel.isPinningLeft();
-        const pinningRight = this.columnModel.isPinningRight();
-        const atLeastOneChanged = this.pinningLeft !== pinningLeft || pinningRight !== this.pinningRight;
-
-        if (atLeastOneChanged) {
-            this.pinningLeft = pinningLeft;
-            this.pinningRight = pinningRight;
-        }
-    }
-
 
     private createOrUpdateRowCtrl(
         rowIndex: number,
@@ -1118,25 +1059,7 @@ export class RowRenderer extends BeanStub {
     public getRowByPosition(rowPosition: RowPosition): RowCtrl | null {
         let rowCtrl: RowCtrl | null;
         const {rowIndex} = rowPosition;
-        switch (rowPosition.rowPinned) {
-            case 'top':
-                rowCtrl = this.topRowCtrls[rowIndex];
-                break;
-            case 'bottom':
-                rowCtrl = this.bottomRowCtrls[rowIndex];
-                break;
-            default:
-                rowCtrl = this.rowCtrlsByRowIndex[rowIndex];
-                if (!rowCtrl) {
-                    rowCtrl = this.getStickyTopRowCtrls().find(ctrl => ctrl.getRowNode().rowIndex === rowIndex) || null;
-
-                    if (!rowCtrl) {
-                        rowCtrl = this.getStickyBottomRowCtrls().find(ctrl => ctrl.getRowNode().rowIndex === rowIndex) || null;
-                    }
-                }
-                break;
-        }
-
+        rowCtrl = this.rowCtrlsByRowIndex[rowIndex];
         return rowCtrl;
     }
 

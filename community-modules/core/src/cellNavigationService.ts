@@ -174,39 +174,7 @@ export class CellNavigationService extends BeanStub {
             }
         }
 
-        const rowNode = this.rowModel.getRow(rowPosition.rowIndex);
-        const nextStickyPosition = this.getNextStickyPosition(rowNode);
-
-        if (nextStickyPosition) {
-            return nextStickyPosition;
-        }
-
         return { rowIndex: index + 1, rowPinned: pinned } as RowPosition;
-    }
-
-    private getNextStickyPosition(rowNode?: RowNode, up?: boolean): RowPosition | undefined {
-        if (!this.gos.isGroupRowsSticky() || !rowNode || !rowNode.sticky) { return; }
-
-        const isTopCtrls = this.rowRenderer.getStickyTopRowCtrls().some(ctrl => ctrl.getRowNode().rowIndex === rowNode.rowIndex);
-
-        let stickyRowCtrls: RowCtrl[] = [];
-        if (isTopCtrls) {
-            stickyRowCtrls = [...this.rowRenderer.getStickyTopRowCtrls()].sort(
-                (a, b) => a.getRowNode().rowIndex! - b.getRowNode().rowIndex!
-            );
-        } else {
-            stickyRowCtrls = [...this.rowRenderer.getStickyBottomRowCtrls()].sort(
-                (a, b) => b.getRowNode().rowIndex! - a.getRowNode().rowIndex!
-            );
-        }
-
-        const diff = up ? -1 : 1;
-        const idx = stickyRowCtrls.findIndex(ctrl => ctrl.getRowNode().rowIndex === rowNode.rowIndex);
-        const nextCtrl = stickyRowCtrls[idx + diff];
-
-        if (nextCtrl) {
-            return { rowIndex: nextCtrl.getRowNode().rowIndex!, rowPinned: null };
-        }
     }
 
     private getCellBelow(lastCell: CellPosition | null): CellPosition | null {
@@ -255,13 +223,6 @@ export class CellNavigationService extends BeanStub {
 
             
             return null;
-        }
-
-        const rowNode = this.rowModel.getRow(rowPosition.rowIndex);
-        const nextStickyPosition = this.getNextStickyPosition(rowNode, true);
-
-        if (nextStickyPosition) {
-            return nextStickyPosition;
         }
 
         return { rowIndex: index - 1, rowPinned: pinned } as RowPosition;
