@@ -1,7 +1,7 @@
+import { Select } from '@ag-website-shared/components/select/Select';
 import styled from '@emotion/styled';
 
 import { paramValueToCss } from '../../../../../../../community-modules/theming/src/theme-types';
-import { Select } from './Select';
 import type { ValueEditorProps } from './ValueEditorProps';
 
 export const FontFamilyValueEditor = ({ param, value, onChange }: ValueEditorProps) => {
@@ -51,10 +51,6 @@ const fontOptions = [
         value: 'google:Roboto',
     },
     {
-        label: 'Times New Roman',
-        value: 'Times New Roman',
-    },
-    {
         label: 'Inclusive Sans',
         value: 'google:Inclusive Sans',
     },
@@ -67,12 +63,20 @@ const fontOptions = [
         value: 'google:Lato',
     },
     {
-        label: ' Press Start 2P',
-        value: 'google:Press Start 2P',
+        label: 'Times New Roman',
+        value: 'Times New Roman',
     },
     {
-        label: 'Jacquard 24',
-        value: 'google:Jacquard 24',
+        label: 'Merriweather',
+        value: 'google:Merriweather',
+    },
+    {
+        label: 'UnifrakturCook',
+        value: 'google:UnifrakturCook',
+    },
+    {
+        label: 'Pixelify Sans',
+        value: 'google:Pixelify Sans',
     },
 ];
 const topLevelOptions = [{ label: 'Same as application', value: 'inherit' }, ...fontOptions];

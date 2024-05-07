@@ -87,8 +87,9 @@ const SelectButtonWrapper = styled('div')`
     margin-bottom: 8px;
 
     // Higher z index than blur container z index
-    &:first-of-type {
-        z-index: 2;
+    &:first-of-type,
+    &:last-of-type {
+        z-index: 3;
     }
 `;
 
@@ -96,12 +97,15 @@ const Horizontal = styled('div')`
     display: flex;
     height: 100%;
 `;
+
 const Scroller = styled('div')`
+    --scroller-height: 192px;
+
     width: 100%;
-    min-height: 160px;
+    min-height: var(--scroller-height);
     overflow-x: auto;
     padding-bottom: 6px;
-    z-index: 0;
+    z-index: 0; // z-index:0 prevents a Safari rendering bug where scrollbars appear over tooltips
     scroll-snap-type: x mandatory;
 
     // Blur beginning and end
@@ -111,31 +115,33 @@ const Scroller = styled('div')`
         position: absolute;
         top: 0;
         bottom: 0;
-        width: 165px;
-        height: 200px;
+        height: calc(var(--scroller-height) - 14px);
         pointer-events: none;
-        z-index: 1;
+        z-index: 2;
     }
 
     &:before {
-        left: 0;
+        width: 100px;
+        left: 10px;
         background: linear-gradient(
             to right,
-            color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 20%) 5%,
-            transparent 100%
+            var(--color-bg-primary),
+            color-mix(in srgb, var(--color-bg-primary), transparent 88%) 80%,
+            transparent
         );
     }
 
     &:after {
+        width: 128px;
         right: 0;
         background: linear-gradient(
             to left,
-            color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 20%) 0%,
-            transparent 100%
+            var(--color-bg-primary),
+            color-mix(in srgb, var(--color-bg-primary), transparent 33%) 50%,
+            transparent
         );
     }
 `;
-//  👆 z-index is required to prevent a Safari rendering bug where scrollbars appear over tooltips
 
 const paramToVariableName = (param: string) => `--ag-${kebabCase(param)}`;
 const kebabCase = (str: string) => str.replace(/[A-Z]/g, (m) => `-${m}`).toLowerCase();

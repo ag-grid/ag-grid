@@ -1,7 +1,6 @@
 import { GridOptions } from "../entities/gridOptions";
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columns/columnApi";
 import { IRowNode } from "./iRowNode";
 
 export interface IDetailCellRenderer<TData = any> {
@@ -48,6 +47,6 @@ interface TemplateFunc<TData = any> {
 
 export interface IDetailCellRendererCtrl {
     init(comp: IDetailCellRenderer, params: IDetailCellRendererParams): void;
-    registerDetailWithMaster(api: GridApi, columnApi: ColumnApi): void;
+    registerDetailWithMaster(api: GridApi): void;
     refresh(): boolean;
 }

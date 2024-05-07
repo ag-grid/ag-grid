@@ -37,7 +37,7 @@ import { getElementSize } from "../../utils/dom";
 import { setAriaColIndex } from "../../utils/aria";
 import { CssClassApplier } from "../../headerRendering/cells/cssClassApplier";
 import { FlashCellsParams } from "../rowRenderer";
-import { BrandedType } from "../../utils";
+import { BrandedType } from "../../interfaces/brandedType";
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -557,7 +557,6 @@ export class CellCtrl extends BeanStub {
             pinned: this.column.getPinned() as any,
             colDef: this.column.getColDef(),
             column: this.column,
-            rowIndex: this.getCellPosition().rowIndex,
             refreshCell: this.refreshCell.bind(this),
             eGridCell: this.getGui(),
             eParentOfValue: this.cellComp.getParentOfValue()!,

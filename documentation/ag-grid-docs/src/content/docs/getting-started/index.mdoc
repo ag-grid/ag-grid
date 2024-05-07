@@ -239,8 +239,7 @@ template:
  <!-- The AG Grid component -->
  <ag-grid-angular
    [rowData]="rowData"
-   [columnDefs]="colDefs">
- </ag-grid-angular>
+   [columnDefs]="colDefs" />
 `
 ```
 
@@ -262,8 +261,7 @@ Add the `class` and `style` props to the `ag-grid-angular` component.
  class="ag-theme-quartz"
  style="height: 500px;"
  ...
->
-</ag-grid-angular>
+ />
 ```
 {% /if %}
 
@@ -671,7 +669,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css"; // import Quartz theme
    <ag-grid-angular
      // ...
      [class]="themeClass"
-   ></ag-grid-angular>
+    />
  </div>`,
 // ...
 public themeClass: string = "ag-theme-quartz";

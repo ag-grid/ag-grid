@@ -1,7 +1,6 @@
 import { BeanStub } from "../context/beanStub";
 import { PostConstruct, Bean, Autowired, PreDestroy } from "../context/context";
 import { Column } from "../entities/column";
-import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 import { DragService, DragListenerParams } from "./dragService";
 import { MouseEventService } from "../gridBodyComp/mouseEventService";
@@ -135,8 +134,6 @@ export interface DraggingEvent {
     dragItem: DragItem;
     fromNudge: boolean;
     api: GridApi;
-    /** @deprecated v31 ColumnApi has been deprecated and all methods moved to the api. */
-    columnApi: ColumnApi;
     dropZoneTarget: HTMLElement;
 }
 
@@ -145,7 +142,6 @@ export class DragAndDropService extends BeanStub {
 
     @Autowired('dragService') private dragService: DragService;
     @Autowired('mouseEventService') private readonly mouseEventService: MouseEventService;
-    @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
     public static ICON_PINNED = 'pinned';
@@ -432,11 +428,11 @@ export class DragAndDropService extends BeanStub {
         // localise x and y to the target
         const dropZoneTarget = dropTarget.getContainer();
         const rect = dropZoneTarget.getBoundingClientRect();
-        const { gridApi: api, columnApi, dragItem, dragSource } = this;
+        const { gridApi: api, dragItem, dragSource } = this;
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        return { event, x, y, vDirection, hDirection, dragSource, fromNudge, dragItem: dragItem as DragItem, api, columnApi, dropZoneTarget };
+        return { event, x, y, vDirection, hDirection, dragSource, fromNudge, dragItem: dragItem as DragItem, api, dropZoneTarget };
     }
 
     private positionGhost(event: MouseEvent): void {

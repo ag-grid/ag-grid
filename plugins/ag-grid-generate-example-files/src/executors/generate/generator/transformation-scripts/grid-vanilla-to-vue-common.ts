@@ -1,8 +1,8 @@
-import { getFunctionName, isInstanceMethod, removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
-import { convertTemplate, toAssignment, toConst, toInput, toMember } from './vue-utils';
-import { templatePlaceholder } from './grid-vanilla-src-parser';
 import * as JSON5 from 'json5';
-import { ExampleConfig, ParsedBindings, ImportType } from '../types';
+import { ExampleConfig, ParsedBindings } from '../types';
+import { templatePlaceholder } from './grid-vanilla-src-parser';
+import { getFunctionName, removeFunctionKeyword } from './parser-utils';
+import { convertTemplate } from './vue-utils';
 
 export const GRID_WIDE_COMPONENTS = [
     'loadingCellRenderer',

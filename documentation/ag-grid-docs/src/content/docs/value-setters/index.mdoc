@@ -77,8 +77,7 @@ const gridOptions = {
 <ag-grid-angular
    [readOnlyEdit]="true"
    (cellEditRequest)="onCellEditRequest($event)"
-   /* other grid options ... */>
-</ag-grid-angular>
+   /* other grid options ... */ />
 
 this.onCellEditRequest = event => {
    console.log('Cell Editing updated a cell, but the grid did nothing!');

@@ -150,7 +150,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             'treeData', 'masterDetail',
         ]);
         const groupStageRefreshProps: Set<keyof GridOptions> = new Set([
-            'suppressParentsInRowNodes', 'groupDefaultExpanded',
+            'groupDefaultExpanded',
             'groupAllowUnbalanced', 'initialGroupOrderComparator',
             'groupHideOpenParents', 'groupDisplayType',
         ]);

@@ -55,7 +55,6 @@ const getInternalFramework = (
                 reactFunctional: ['reactFunctionalTs', 'typescript', 'vanilla'],
                 reactFunctionalTs: ['reactFunctional', 'typescript', 'vanilla'],
                 angular: ['typescript', 'vanilla'],
-                vue: ['typescript', 'vanilla'],
                 vue3: ['typescript', 'vanilla'],
             };
             const alternatives = bestAlternative[docsInternalFramework];
@@ -66,13 +65,21 @@ const getInternalFramework = (
         }
     }
 
-    if(internalFramework === 'vanilla' && importType === 'modules') {
+    if (internalFramework === 'vanilla' && importType === 'modules') {
         internalFramework = 'typescript';
     }
     return internalFramework;
 };
 
-const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, overrideImportType, pageName, isDev }: Props) => {
+const DocsExampleRunnerInner = ({
+    name,
+    title,
+    exampleHeight,
+    typescriptOnly,
+    overrideImportType,
+    pageName,
+    isDev,
+}: Props) => {
     const exampleName = name;
     const id = `example-${name}`;
     const loadingIFrameId = getLoadingIFrameId({ pageName, exampleName: name });
@@ -88,21 +95,26 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, ov
         [internalFramework, pageName, exampleName, importType]
     );
 
-    const { data: [contents] = [undefined, undefined], isError} = useQuery(
+    const { data: [contents] = [undefined, undefined], isError } = useQuery(
         ['docsExampleContents', pageName, exampleName, internalFramework, importType],
         () =>
-            Promise.all([fetch(getExampleContentsUrl(urlConfig)).then((res) => res.json()).then(json => {
-                const isTs = internalFramework === 'reactFunctionalTs' || internalFramework === 'typescript' || internalFramework === 'angular';
-                if (!isTs) {
-                    delete json.files['interfaces.ts'];
-                };
-                if (internalFramework.startsWith('vue') || internalFramework.startsWith('react')) {
-                    delete json.files['index.html'];
-                }
-                return json;
-            })]) as Promise<
-                [GeneratedContents]
-            >,
+            Promise.all([
+                fetch(getExampleContentsUrl(urlConfig))
+                    .then((res) => res.json())
+                    .then((json) => {
+                        const isTs =
+                            internalFramework === 'reactFunctionalTs' ||
+                            internalFramework === 'typescript' ||
+                            internalFramework === 'angular';
+                        if (!isTs) {
+                            delete json.files['interfaces.ts'];
+                        }
+                        if (internalFramework.startsWith('vue') || internalFramework.startsWith('react')) {
+                            delete json.files['index.html'];
+                        }
+                        return json;
+                    }),
+            ]) as Promise<[GeneratedContents]>,
         queryOptions
     );
     const urls = {
@@ -113,7 +125,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, ov
     };
 
     useEffect(() => {
-        if(isError) {
+        if (isError) {
             setSupportedFrameworks(['typescript']);
         }
 
@@ -146,6 +158,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, ov
     return validFramework ? (
         <ExampleRunner
             id={id}
+            title={title}
             exampleUrl={urls.exampleUrl}
             exampleRunnerExampleUrl={urls.exampleRunnerExampleUrl}
             exampleHeight={exampleHeight}

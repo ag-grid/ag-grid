@@ -112,6 +112,8 @@ export const FormattedInput = ({
                         getIconSwipeAdjustment
                             ? (e) => {
                                   e.preventDefault();
+                                  const pointerId = e.pointerId;
+                                  const wrapper = e.currentTarget;
                                   inputRef.current?.blur();
                                   const startX = e.clientX;
                                   const startY = e.clientY;
@@ -124,12 +126,14 @@ export const FormattedInput = ({
                                       onChange?.(getIconSwipeAdjustment(value, movement));
                                   };
                                   const handleUp = () => {
-                                      document.body.removeEventListener('pointermove', handleMove);
-                                      document.body.removeEventListener('pointerup', handleUp);
+                                      wrapper.removeEventListener('pointermove', handleMove);
+                                      wrapper.removeEventListener('pointerup', handleUp);
                                       document.body.classList.remove('force-resize-cursor');
+                                      wrapper.releasePointerCapture(pointerId);
                                   };
-                                  document.body.addEventListener('pointermove', handleMove);
-                                  document.body.addEventListener('pointerup', handleUp);
+                                  wrapper.addEventListener('pointermove', handleMove);
+                                  wrapper.addEventListener('pointerup', handleUp);
+                                  wrapper.setPointerCapture(pointerId);
                               }
                             : undefined
                     }
@@ -153,12 +157,18 @@ const IconWrapper = styled('div')`
     width: 22px;
     height: 22px;
     cursor: ${(props: { cursor?: string }) => props.cursor || 'pointer'};
-
     display: flex;
     align-items: center;
     justify-content: center;
-    svg {
-        stroke: var(--color-fg-quinary);
-    }
     transform: scale(0.7);
+
+    svg,
+    svg * {
+        stroke: var(--color-brand-400);
+        stroke-width: 2.2px;
+
+        [data-dark-mode='true'] & {
+            stroke: var(--color-brand-300);
+        }
+    }
 `;

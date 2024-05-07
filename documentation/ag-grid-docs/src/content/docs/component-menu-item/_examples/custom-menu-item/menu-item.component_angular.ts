@@ -1,5 +1,4 @@
 import { Component } from "@angular/core";
-import { NgIf } from "@angular/common";
 import { IMenuItemAngularComp } from "@ag-grid-community/angular";
 import { IMenuConfigParams, IMenuItemParams } from "@ag-grid-community/core";
 import { FormsModule } from "@angular/forms";
@@ -10,14 +9,16 @@ export interface CustomMenuItemParams extends IMenuItemParams {
 
 @Component({
     standalone: true,
-    imports: [FormsModule, NgIf],
+    imports: [FormsModule],
     template: `
         <div>
             <span class="ag-menu-option-part ag-menu-option-icon" role="presentation"></span>
             <span class="ag-menu-option-part ag-menu-option-text">{{name}}</span>
             <span class="ag-menu-option-part ag-menu-option-shortcut"><button (click)=onClick()>{{buttonValue}}</button></span>
             <span class="ag-menu-option-part ag-menu-option-popup-pointer">
-                <span *ngIf="showSubMenu" class="ag-icon ag-icon-small-right" unselectable="on" role="presentation"></span>
+                @if (showSubMenu) {
+                    <span class="ag-icon ag-icon-small-right" unselectable="on" role="presentation"></span>
+                }
             </span>
         </div>
     `

@@ -1,4 +1,5 @@
-import type { ImportType, InternalFramework, Library } from '@ag-grid-types';
+import type { InternalFramework, Library } from '@ag-grid-types';
+import type { ImageMetadata } from 'astro';
 import type { CollectionEntry } from 'astro:content';
 import fs from 'fs/promises';
 import glob from 'glob';
@@ -86,9 +87,8 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     // Framework libraries
     '@ag-grid-community/react/dist/**': 'community-modules/react/dist/**/*.{cjs,mjs,js,map}',
     '@ag-grid-community/react/src/**': 'community-modules/react/src/**/*.{tsx,ts}',
-    '@ag-grid-community/angular/fesm2015/ag-grid-community-angular.mjs':
-        'community-modules/angular/dist/ag-grid-angular/fesm2015/ag-grid-community-angular.mjs',
-    '@ag-grid-community/vue/dist/**': 'community-modules/vue/dist/**/*.{cjs,mjs,js,map}',
+    '@ag-grid-community/angular/fesm2022/ag-grid-community-angular.mjs':
+        'community-modules/angular/dist/ag-grid-angular/fesm2022/ag-grid-community-angular.mjs',
     '@ag-grid-community/vue3/dist/**': 'community-modules/vue3/dist/**/*.{cjs,mjs,js,map}',
 
     // TODO: Dynamically map files
@@ -110,9 +110,8 @@ if (USE_PACKAGES) {
     FILES_PATH_MAP['ag-grid-charts-enterprise/styles/**'] = `packages/ag-grid-charts-enterprise/styles/**/*.css`;
     FILES_PATH_MAP[`ag-grid-charts-enterprise/dist/**`] = `packages/ag-grid-charts-enterprise/dist/**/*.{cjs,js,map}`;
     FILES_PATH_MAP['ag-grid-react/dist/**'] = `packages/ag-grid-react/dist/**/*.{cjs,js,map}`;
-    FILES_PATH_MAP['ag-grid-angular/fesm2015/ag-grid-angular.mjs'] =
-        'packages/ag-grid-angular/dist/ag-grid-angular/fesm2015/ag-grid-angular.mjs';
-    FILES_PATH_MAP['ag-grid-vue/lib/**'] = 'packages/ag-grid-vue/lib/**/*.{cjs,mjs,js,map}';
+    FILES_PATH_MAP['ag-grid-angular/fesm2022/ag-grid-angular.mjs'] =
+        'packages/ag-grid-angular/dist/ag-grid-angular/fesm2022/ag-grid-angular.mjs';
     FILES_PATH_MAP['ag-grid-vue3/dist/**'] = 'packages/ag-grid-vue3/dist/**/*.{cjs,mjs,js,map}';
 }
 
@@ -134,11 +133,8 @@ export function getJsonFile(fileKey: FileKey) {
  * The root url where the monorepo exists
  */
 export const getRootUrl = (): URL => {
-    const root = getIsDev()
-        ? // Relative to the folder of this file
-          '../../../../'
-        : // TODO: Relative to `/dist/chunks/pages` folder (Nx specific)
-          '../../../../../';
+    // Relative to the folder of this file
+    const root = '../../../../';
     return new URL(root, import.meta.url);
 };
 
@@ -154,11 +150,8 @@ export const getExampleRootFileUrl = (): URL => {
  * The `ag-charts-website` root url where the monorepo exists
  */
 const getWebsiteRootUrl = ({ isDev = getIsDev() }: { isDev?: boolean } = { isDev: getIsDev() }): URL => {
-    const root = isDev
-        ? // Relative to the folder of this file
-          '../../'
-        : // Relative to `/dist/chunks/pages` folder (Nx specific)
-          '../../../';
+    // Relative to the folder of this file
+    const root = '../../';
     return new URL(root, import.meta.url);
 };
 
@@ -295,3 +288,12 @@ export const getBoilerPlateUrl = ({
 
     return boilerplatePath;
 };
+
+export function getDocsGifs() {
+    const gifsGlob = import.meta.glob<{ default: ImageMetadata }>('../content/docs/**/*.gif');
+    const docsGifs = Object.keys(gifsGlob).map((fullPath) => {
+        return fullPath.replace('../content/docs/', '');
+    });
+
+    return docsGifs;
+}

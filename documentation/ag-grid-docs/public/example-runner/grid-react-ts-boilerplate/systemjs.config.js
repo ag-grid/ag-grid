@@ -2,13 +2,8 @@
     System.config({
         transpiler: 'ts',
         typescriptOptions: {
-            module: 'system',
-            moduleResolution: 'node',
-            target: 'es2015',
-            noImplicitAny: false,
-            sourceMap: true,
-            jsx: 'react',
-            lib: ['es2015', 'dom'],
+            target: 'es2020',
+            jsx: 'react'
         },
         paths: {
             // paths serve as alias
@@ -17,18 +12,14 @@
         },
         map: {
             css: (boilerplatePath.length === 0 ? `./` : `${boilerplatePath}/`) + "css.js",
-            // 'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
             // react
             react: 'npm:react@18.2.0',
             'react-dom': 'npm:react-dom@18.2.0',
             'react-dom/client': 'npm:react-dom@18.2.0',
-            redux: 'npm:redux@4.2.1',
-            'react-redux': 'npm:react-redux@8.0.5',
-            'prop-types': 'npm:prop-types@15.8.1',
 
             ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
-            typescript: "npm:typescript@4.3.5/lib/typescript.min.js",
+            typescript: 'npm:typescript@5.4.5/lib/typescript.min.js',
 
             app: appLocation,
             // systemJsMap comes from index.html

@@ -131,6 +131,26 @@
             },
             {
                 "label": {
+                    "name": "Candlestick",
+                    "icon": "chartsCandlestick",
+                    "link": "https://charts.ag-grid.com/react/candlestick-series/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "OHLC",
+                    "icon": "chartsOHLC",
+                    "link": "https://charts.ag-grid.com/react/ohlc-series/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
                     "name": "Heatmap",
                     "icon": "chartsHeatmap",
                     "link": "https://charts.ag-grid.com/react/heatmap-series/"
@@ -290,6 +310,15 @@
             "name": "Interactivity"
         },
         "items": [
+            {
+                "label": {
+                    "name": "Accessibility",
+                    "link": "https://charts.ag-grid.com/react/accessibility/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
             {
                 "label": {
                     "name": "Series Highlighting",

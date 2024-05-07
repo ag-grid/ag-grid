@@ -418,7 +418,7 @@ export class FocusService extends BeanStub {
         const userResult = userFunc(userFuncParams);
         if (userResult === true || userResult === null) {
             if (userResult === null) {
-                warnOnce('Returning `null` from tabToNextHeader is deprecated. Return `true` to stay on the current header, or `false` to let the browser handle the tab behaviour.');
+                warnOnce('Since v31.3 Returning `null` from tabToNextHeader is deprecated. Return `true` to stay on the current header, or `false` to let the browser handle the tab behaviour.');
             }
             return currentPosition;
         }

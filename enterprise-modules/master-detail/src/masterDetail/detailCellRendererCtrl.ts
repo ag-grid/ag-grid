@@ -1,7 +1,6 @@
 import {
     Autowired,
     BeanStub,
-    ColumnApi,
     DetailGridInfo,
     GridApi,
     IDetailCellRendererCtrl,
@@ -102,7 +101,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
         // we clone the detail grid options, as otherwise it would be shared
         // across many instances, and that would be a problem because we set
-        // api and columnApi into gridOptions
+        // api into gridOptions
         const gridOptions = {...this.params.detailGridOptions};
 
         if (autoHeight) {
@@ -112,14 +111,13 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         this.comp.setDetailGrid(gridOptions);
     }
 
-    public registerDetailWithMaster(api: GridApi, columnApi: ColumnApi): void {
+    public registerDetailWithMaster(api: GridApi): void {
         const rowId = this.params.node.id!;
         const masterGridApi = this.params.api;
 
         const gridInfo: DetailGridInfo = {
             id: rowId,
             api: api,
-            columnApi: columnApi
         };
 
         const rowNode = this.params.node as RowNode;

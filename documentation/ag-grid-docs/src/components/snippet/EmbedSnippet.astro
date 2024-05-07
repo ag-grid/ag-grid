@@ -26,4 +26,13 @@ if (src) {
 ---
 
 {snippet && <Code code={snippet} language={language} lineNumbers={lineNumbers} />}
-{url && <SnippetFromRemoteUrl client:only url={urlWithBaseUrl(url)} language={language} lineNumbers={lineNumbers} />}
+{
+    url && (
+        <SnippetFromRemoteUrl
+            client:only="react"
+            url={urlWithBaseUrl(url)}
+            language={language}
+            lineNumbers={lineNumbers}
+        />
+    )
+}

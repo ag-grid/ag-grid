@@ -1,6 +1,5 @@
 import { GridOptions } from "./entities/gridOptions";
 import { SelectionService } from "./selectionService";
-import { ColumnApi } from "./columns/columnApi";
 import { ColumnModel } from "./columns/columnModel";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { GridHeaderComp } from "./headerRendering/gridHeaderComp";
@@ -157,7 +156,7 @@ export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOption
         context.createBean(gridComp);
     }, undefined, params);
 
-    // @deprecated v31 api / columnApi no longer mutated onto the provided gridOptions
+    // @deprecated v31 api no longer mutated onto the provided gridOptions
     // Instead we place a getter that will log an error when accessed and direct users to the docs
     // Only apply for direct usages of createGrid, not for frameworks
     if (!Object.isFrozen(gridOptions) && !(params as GridParams)?.frameworkOverrides) {
@@ -168,14 +167,7 @@ export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOption
                 return undefined;
             },
             configurable: true,
-        },);
-        Object.defineProperty(gridOptions, 'columnApi', {
-            get: () => {
-                errorOnce(`gridOptions.columnApi is no longer supported and all methods moved to the grid api. See ${apiUrl}.`);
-                return undefined;
-            },
-            configurable: true,
-        });
+        },);       
     }
     
     return api;
@@ -186,7 +178,7 @@ export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOption
 export class Grid {
     protected logger: Logger;
 
-    private readonly gridOptions: any; // Not typed to enable setting api / columnApi for backwards compatibility
+    private readonly gridOptions: any; // Not typed to enable setting api for backwards compatibility
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
       warnOnce('Since v31 new Grid(...) is deprecated. Use createGrid instead: `const gridApi = createGrid(...)`. The grid api is returned from createGrid and will not be available on gridOptions.');
@@ -214,7 +206,6 @@ export class Grid {
         
         // Maintain existing behaviour by mutating gridOptions with the apis for deprecated new Grid()
         this.gridOptions.api = api;
-        this.gridOptions.columnApi = new ColumnApi(api);
     }
 
     public destroy(): void {
@@ -224,7 +215,6 @@ export class Grid {
             // remove the references in case the user keeps the grid options, we want the rest
             // of the grid to be picked up by the garbage collector
             delete this.gridOptions.api;
-            delete this.gridOptions.columnApi;
         }
     }
 }
@@ -431,7 +421,7 @@ export class GridCoreCreator {
             PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory,
             AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,
-            AutoWidthCalculator, StandardMenuFactory, DragAndDropService, ColumnApi,
+            AutoWidthCalculator, StandardMenuFactory, DragAndDropService,
             FocusService, MouseEventService, Environment, CellNavigationService, StylingService,
             ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,

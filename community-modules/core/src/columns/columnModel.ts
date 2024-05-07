@@ -423,7 +423,6 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    // this event is legacy, no grid code listens to it. instead the grid listens to New Columns Loaded
     private dispatchEverythingChanged(source: ColumnEventType): void {
         const eventEverythingChanged: WithoutGridCommon<ColumnEverythingChangedEvent> = {
             type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,

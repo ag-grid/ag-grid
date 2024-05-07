@@ -289,8 +289,7 @@ export class ToolPanelColumnComp extends Component {
         this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !canBeDragged);
         this.addOrRemoveCssClass('ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
 
-        const checkboxPassive = isPivotMode && this.gos.get('functionsPassive');
-        this.cbSelect.setPassive(checkboxPassive);
+        this.cbSelect.setPassive(false);
 
         this.processingColumnStateChange = false;
     }

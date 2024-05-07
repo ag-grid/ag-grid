@@ -1,6 +1,6 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import classNames from 'classnames';
-import { FunctionComponent, ReactNode } from 'react';
+import { type FunctionComponent, type ReactNode } from 'react';
 
 import styles from './Alert.module.scss';
 

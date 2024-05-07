@@ -11,6 +11,7 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { PUBLISHED_URLS, USE_PUBLISHED_PACKAGES, agGridVersion } from '@constants';
 import { pathJoin } from '@utils/pathJoin';
 import { getExtraFileUrl } from '@utils/extraFileUrl';
+import { Image } from 'astro:assets';
 
 const frameworksData = [
     {
@@ -114,12 +115,16 @@ const enterpriseGridUrl = USE_PUBLISHED_PACKAGES
                 </p>
             </div>
             <div class={styles.chartsExample}>
-                <img
+                <Image
+                    width={720}
+                    height={322}
                     class={styles.chartsExampleLight}
                     src={urlWithBaseUrl('images/ag-charts-gallery-light.webp')}
                     alt="AG Charts"
                 />
-                <img
+                <Image
+                    width={720}
+                    height={322}
                     class={styles.chartsExampleDark}
                     src={urlWithBaseUrl('images/ag-charts-gallery-dark.webp')}
                     alt="AG Charts"
@@ -128,7 +133,7 @@ const enterpriseGridUrl = USE_PUBLISHED_PACKAGES
         </div>
     </div>
 
-    <AutomatedExamples client:only />
+    <AutomatedExamples client:only="react" />
 
     <div class={styles.homepageSponsorship}>
         <section class:list={[styles.sponsorshipInner, 'layout-max-width-small']}>

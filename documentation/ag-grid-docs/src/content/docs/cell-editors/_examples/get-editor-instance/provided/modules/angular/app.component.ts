@@ -22,8 +22,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
           [columnDefs]="columnDefs"
           [defaultColDef]="defaultColDef"
           [rowData]="rowData"
-          (gridReady)="onGridReady($event)">
-      </ag-grid-angular>
+          (gridReady)="onGridReady($event)" />
     `
 })
 export class AppComponent implements OnDestroy {

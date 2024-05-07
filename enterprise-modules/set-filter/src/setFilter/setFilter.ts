@@ -861,7 +861,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             node: node,
             data: node?.data,
             api: this.setFilterParams!.api,
-            columnApi: this.setFilterParams!.columnApi,
             context: this.setFilterParams!.context
         }
     }

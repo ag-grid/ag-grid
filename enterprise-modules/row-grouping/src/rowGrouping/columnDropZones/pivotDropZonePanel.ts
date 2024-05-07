@@ -1,7 +1,6 @@
 import {
     _,
     Column,
-    ColumnPivotChangeRequestEvent,
     DragAndDropService,
     DraggingEvent,
     Events,
@@ -86,16 +85,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     protected updateItems(columns: Column[]): void {
-        if (this.gos.get('functionsPassive')) {
-            const event: WithoutGridCommon<ColumnPivotChangeRequestEvent> = {
-                type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
-                columns: columns
-            };
-
-            this.eventService.dispatchEvent(event);
-        } else {
-            this.columnModel.setPivotColumns(columns, "toolPanelUi");
-        }
+        this.columnModel.setPivotColumns(columns, "toolPanelUi");
     }
 
     protected getIconName(): string {

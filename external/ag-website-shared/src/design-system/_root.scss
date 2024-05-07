@@ -9,6 +9,10 @@
     --layout-site-header-height: 64px;
     --layout-scroll-offset: 80px;
 
+    body[data-scroll-locked] {
+        margin-right: 0px !important; // fixes scroll on select menu in framework selector
+    }
+
     @media screen and (min-width: $breakpoint-horizontal-margins-large) {
         --layout-horizontal-margins: #{$spacing-size-5};
     }

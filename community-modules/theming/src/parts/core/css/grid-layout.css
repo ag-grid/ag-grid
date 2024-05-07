@@ -80,6 +80,11 @@
     --ag-internal-content-line-height: min(calc(var(--ag-row-height) - 1px), var(--ag-line-height, 1000px));
 }
 
+.ag-sticky-bottom .ag-row {
+    border-bottom: none;
+    border-top: var(--ag-row-border);
+}
+
 .ag-group-expanded,
 .ag-group-contracted {
     cursor: pointer;
@@ -239,6 +244,32 @@
 /* in auto-height mode with no rows, add padding to prevent grid being too small */
 .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
     padding-top: 60px;
+}
+
+.ag-skeleton-container {
+    width: 100%;
+    height: 100%;
+    align-content: center;
+}
+
+.ag-skeleton-effect {
+    background-color: var(--ag-row-loading-skeleton-effect-color);
+    width: 100%;
+    height: 1em;
+    border-radius: 0.25rem;
+    animation: ag-skeleton-loading 1.5s ease-in-out 0.5s infinite;
+}
+
+@keyframes ag-skeleton-loading {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 .ag-loading {

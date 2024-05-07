@@ -12,7 +12,7 @@ import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
 import { values } from "../../utils/generic";
 import { Beans } from "../../rendering/beans";
-import { BrandedType } from "../../utils";
+import { BrandedType } from "../../interfaces/brandedType";
 
 export interface IHeaderRowComp {
     setTop(top: string): void;

@@ -39,7 +39,7 @@ ModuleRegistry.registerModules([
                     [columnDefs]="columns"
                     enableRangeSelection
                     enableCharts
-                ></ag-grid-angular>
+                 />
             </div>
 
             <div class="inner-col">
@@ -51,7 +51,7 @@ ModuleRegistry.registerModules([
                     [columnDefs]="columns"
                     enableRangeSelection
                     enableCharts
-                ></ag-grid-angular>
+                 />
             </div>
         </div>
     `,

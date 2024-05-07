@@ -22,7 +22,7 @@ export function readAsJsFile(
         tsFile = tsFile.replace(/export /g, '');
     }
 
-    const jsFile = transform(tsFile, { transforms: ['typescript'] }).code; ///disableESTransforms: true
+    const jsFile = transform(tsFile, { transforms: ['typescript'], disableESTransforms: true }).code;
     return jsFile;
 }
 
@@ -454,8 +454,6 @@ export function convertImportPath(modulePackage: string, convertToPackage: boole
             '"@ag-grid-community/angular"': "'ag-grid-angular'",
             "'@ag-grid-community/vue3'": "'ag-grid-vue3'",
             '"@ag-grid-community/vue3"': "'ag-grid-vue3'",
-            "'@ag-grid-community/vue'": "'ag-grid-vue'",
-            '"@ag-grid-community/vue"': "'ag-grid-vue'",
             "'@ag-grid-community/react'": "'ag-grid-react'",
             '"@ag-grid-community/react"': "'ag-grid-react'",
         };

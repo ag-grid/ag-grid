@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import { AdvancedFilterModule } from '@ag-grid-enterprise/advanced-filter';
 import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
@@ -14,14 +14,14 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import { useApplicationConfigAtom } from '@components/theme-builder/model/application-config';
 import styled from '@emotion/styled';
-import { memo, useState } from 'react';
+import { memo, useRef, useState } from 'react';
 import root from 'react-shadow';
 
+import type { GridState } from '../../../../../../../packages/ag-grid-community/dist/types/core/main';
 import { useSetPreviewGridApi, useSetPreviewGridContainer } from '../../model/rendered-theme';
 import { ColorEditor } from '../editors/ColorValueEditor';
 import { PreloadFontSelection } from '../editors/FontFamilyValueEditor';
 import { useGridOptions } from '../grid-config/grid-config-atom';
-import { useSetGridDom } from '../presets/grid-dom';
 import { allPresets } from '../presets/presets';
 import { withErrorBoundary } from './ErrorBoundary';
 import { InfoTooltip } from './Tooltip';
@@ -43,18 +43,17 @@ ModuleRegistry.registerModules([
 
 ModuleRegistry.registerModules([SetFilterModule]);
 
-const AgGridReactUntyped = AgGridReact as any;
-
 const GridPreview = () => {
     const { config, gridOptions, updateCount } = useGridOptions();
 
     const setPreviewGridContainer = useSetPreviewGridContainer();
     const setPreviewGridApi = useSetPreviewGridApi();
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
-    const setGridDom = useSetGridDom();
 
     const [backgroundValue, setBackground] = useApplicationConfigAtom('previewPaneBackgroundColor');
     const backgroundColor = backgroundValue || allPresets[0].pageBackgroundColor;
+
+    const stateRef = useRef<GridState>({});
 
     return (
         <Wrapper style={{ backgroundColor }}>
@@ -74,15 +73,15 @@ const GridPreview = () => {
                         style={{ height: '100%' }}
                     >
                         {container && (
-                            <AgGridReactUntyped
-                                onGridReady={({ api }: { api: GridApi }) => {
+                            <AgGridReact
+                                onGridReady={({ api }) => {
                                     setPreviewGridApi(api);
                                     if (config.showIntegratedChartPopup) {
                                         api.createRangeChart({
                                             cellRange: {
                                                 rowStartIndex: 0,
                                                 rowEndIndex: 14,
-                                                columns: ['model', 'year', 'price'],
+                                                columns: ['name', 'winnings2023', 'winnings2022'],
                                             },
                                             chartType: 'groupedColumn',
                                             chartThemeOverrides: {
@@ -94,6 +93,7 @@ const GridPreview = () => {
                                                 },
                                             },
                                         });
+                                        api.expandAll();
                                         setTimeout(() => {
                                             document
                                                 .querySelector('.ag-chart .ag-icon-expanded')
@@ -104,12 +104,17 @@ const GridPreview = () => {
                                         api.showLoadingOverlay();
                                     }
                                 }}
-                                onFirstDataRendered={(params: any) => {
-                                    setGridDom(container.querySelector('.ag-root-wrapper') as HTMLDivElement);
-
-                                    // Select some nodes by default
-                                    params.api.getRowNode(1).setSelected(true);
-                                    params.api.getRowNode(3).setSelected(true);
+                                initialState={{
+                                    rowSelection: config.rowSelection
+                                        ? stateRef.current.rowSelection || ['5', '3']
+                                        : undefined,
+                                    rangeSelection: stateRef.current.rangeSelection,
+                                }}
+                                onSelectionChanged={({ api }) => {
+                                    stateRef.current.rowSelection = api.getState().rowSelection || [];
+                                }}
+                                onRangeSelectionChanged={({ api }) => {
+                                    stateRef.current.rangeSelection = api.getState().rangeSelection;
                                 }}
                                 key={updateCount}
                                 {...gridOptions}

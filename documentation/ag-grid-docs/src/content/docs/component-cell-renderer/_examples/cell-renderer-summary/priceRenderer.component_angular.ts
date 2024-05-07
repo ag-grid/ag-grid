@@ -1,14 +1,14 @@
 import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 import { ICellRendererParams } from "@ag-grid-community/core";
-import { NgFor } from '@angular/common';
 import { Component } from '@angular/core';
 
 @Component({
   standalone: true,
-  imports: [NgFor],
   template: `
       <span :class="imgSpan" >
-          <img *ngFor="let number of arr" [src]="src" :class="priceIcon" />
+        @for (number of arr; track $index) {
+          <img [src]="src" :class="priceIcon" />
+        }
       </span>
   `,
 })
@@ -18,19 +18,7 @@ export class PriceRenderer implements ICellRendererAngularComp {
   arr!: any[];
 
   agInit(params: ICellRendererParams): void {
-    if (params.value > 5000000000) {
-      this.priceMultiplier = 2
-    }
-    if (params.value > 10000000000) {
-      this.priceMultiplier = 3
-    }
-    if (params.value > 20000000000) {
-      this.priceMultiplier = 4
-    }
-    if (params.value > 300000000000) {
-      this.priceMultiplier = 5
-    }
-    this.arr = new Array(this.priceMultiplier);
+    this.refresh(params);
   }
 
   // Return Cell Value

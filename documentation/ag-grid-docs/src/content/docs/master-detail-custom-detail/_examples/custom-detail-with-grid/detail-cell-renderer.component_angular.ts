@@ -19,9 +19,7 @@ import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-c
                  [columnDefs]="colDefs"
                  [defaultColDef]="defaultColDef"
                  [rowData]="rowData"
-                 (gridReady)="onGridReady($event)"
-             >
-            </ag-grid-angular>
+                 (gridReady)="onGridReady($event)" />
         </div>`
 })
 export class DetailCellRenderer implements ICellRendererAngularComp {

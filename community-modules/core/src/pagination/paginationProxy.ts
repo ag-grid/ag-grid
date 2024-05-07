@@ -101,15 +101,16 @@ export class PaginationProxy extends BeanStub {
         if (!this.active || this.currentPage === page || typeof this.currentPage !== 'number') { return; }
 
         this.currentPage = page;
-        const event: WithoutGridCommon<ModelUpdatedEvent> = {
-            type: Events.EVENT_MODEL_UPDATED,
+        this.calculatePages();
+        const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
+            type: Events.EVENT_PAGINATION_CHANGED,
             animate: false,
-            keepRenderedRows: false,
             newData: false,
             newPage: true,
-            newPageSize: false
+            newPageSize: false,
+            keepRenderedRows: false,
         };
-        this.onModelUpdated(event);
+        this.eventService.dispatchEvent(paginationChangedEvent);
     }
 
     public getPixelOffset(): number {
@@ -265,14 +266,17 @@ export class PaginationProxy extends BeanStub {
         this.pageSizeAutoCalculated = undefined;
 
         if (this.pageSize === oldPageSize) { return; }
-        this.onModelUpdated({
-            type: Events.EVENT_MODEL_UPDATED,
+
+        this.calculatePages();
+        const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
+            type: Events.EVENT_PAGINATION_CHANGED,
             animate: false,
-            keepRenderedRows: false,
             newData: false,
             newPage: false,
             newPageSize: true,
-        });
+            keepRenderedRows: false
+        };
+        this.eventService.dispatchEvent(paginationChangedEvent);
     }
 
     public setPageSize(size: number, source: 'autoCalculated' | 'pageSizeSelector' | 'initialState' | 'gridOptions'): void {
@@ -297,16 +301,16 @@ export class PaginationProxy extends BeanStub {
         }
 
         if (currentSize !== this.pageSize) {
-            const event: WithoutGridCommon<ModelUpdatedEvent> = {
-                type: Events.EVENT_MODEL_UPDATED,
+            this.calculatePages();
+            const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
+                type: Events.EVENT_PAGINATION_CHANGED,
                 animate: false,
-                keepRenderedRows: false,
                 newData: false,
                 newPage: false,
                 newPageSize: true,
+                keepRenderedRows: true
             };
-
-            this.onModelUpdated(event);
+            this.eventService.dispatchEvent(paginationChangedEvent);
         }
     }
 

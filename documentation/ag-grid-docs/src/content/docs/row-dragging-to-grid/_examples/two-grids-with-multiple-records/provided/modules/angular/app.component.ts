@@ -71,8 +71,7 @@ export class SportRenderer implements ICellRendererAngularComp {
                                     [suppressMoveWhenRowDragging]="true"
                                     [rowData]="leftRowData"
                                     [columnDefs]="leftColumns"
-                                    (gridReady)="onGridReady($event, 0)">
-                            </ag-grid-angular>
+                                    (gridReady)="onGridReady($event, 0)" />
                         </div>
                     </div>
                 </div>
@@ -88,8 +87,7 @@ export class SportRenderer implements ICellRendererAngularComp {
                                     [rowDragManaged]="true"
                                     [rowData]="rightRowData"
                                     [columnDefs]="rightColumns"
-                                    (gridReady)="onGridReady($event, 1)">
-                            </ag-grid-angular>
+                                    (gridReady)="onGridReady($event, 1)" />
                         </div>
                     </div>
                 </div>

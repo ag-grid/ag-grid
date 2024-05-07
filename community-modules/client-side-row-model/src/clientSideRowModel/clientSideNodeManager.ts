@@ -288,8 +288,7 @@ export class ClientSideNodeManager {
         node.group = false;
         this.setMasterForRow(node, dataItem, level, true);
 
-        const suppressParentsInRowNodes = this.gos.get('suppressParentsInRowNodes');
-        if (parent && !suppressParentsInRowNodes) {
+        if (parent) {
             node.parent = parent;
         }
         node.level = level;

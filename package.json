@@ -49,7 +49,7 @@
     "react-instantsearch": "^7.7.0",
     "ts-jest": "^29.1.0",
     "ts-node": "10.9.1",
-    "typescript": "^4.9.5"
+    "typescript": "^5.1.6"
   },
   "workspaces": {
     "packages": [
@@ -61,7 +61,6 @@
       "community-modules/infinite-row-model",
       "community-modules/angular",
       "community-modules/react",
-      "community-modules/vue",
       "community-modules/vue3",
       "enterprise-modules/core",
       "enterprise-modules/advanced-filter",
@@ -88,7 +87,6 @@
       "packages/ag-grid-charts-enterprise",
       "packages/ag-grid-react",
       "packages/ag-grid-angular",
-      "packages/ag-grid-vue",
       "packages/ag-grid-vue3",
       "documentation/ag-grid-docs",
       "documentation/update-algolia-indices",

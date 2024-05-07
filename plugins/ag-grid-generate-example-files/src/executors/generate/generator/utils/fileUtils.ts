@@ -16,7 +16,6 @@ export const getBoilerPlateName = (internalFramework: InternalFramework) => {
             return boilerPlateTemplate('react-ts');
         case 'typescript':
         case 'angular':
-        case 'vue':
         case 'vue3':
             return boilerPlateTemplate(internalFramework);
         default:
@@ -74,7 +73,6 @@ export const getFrameworkFromInternalFramework = (internalFramework: InternalFra
         case 'reactFunctionalTs':
         case 'reactFunctional':
             return 'react';
-        case 'vue':
         case 'vue3':
             return 'vue';
         default:
@@ -95,7 +93,6 @@ export const getEntryFileName = (internalFramework: InternalFramework) => {
         case 'reactFunctionalTs':
             return 'index.tsx';
         case 'vanilla':
-        case 'vue':
         case 'vue3':
             return 'main.js';
         default:

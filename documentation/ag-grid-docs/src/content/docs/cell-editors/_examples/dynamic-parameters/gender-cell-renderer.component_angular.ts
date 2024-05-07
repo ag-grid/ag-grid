@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
-import { NgIf } from '@angular/common';
 import { ICellRendererParams } from "@ag-grid-community/core";
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     standalone: true,
-    imports: [NgIf],
     template: `
-        <span *ngIf="value">
+     @if (value) {
+        <span >
             <i [class]="iconClass"> </i> {{ value }}
         </span>
+     }
     `
 })
 export class GenderCellRenderer implements ICellRendererAngularComp {

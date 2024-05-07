@@ -1,5 +1,4 @@
 import {
-    ColumnApi,
     GridApi,
     GridOptions,
     ICellEditor,
@@ -10,19 +9,11 @@ import {
     IHeader,
     IHeaderGroup,
     ILoadingOverlay,
-    IMenuItem,
     INoRowsOverlay,
     IStatusPanel,
     IToolPanel,
     Module
 } from 'ag-grid-community';
-
-/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */
-export enum ChangeDetectionStrategyType {
-    IdentityCheck = 'IdentityCheck',
-    DeepValueCheck = 'DeepValueCheck',
-    NoCheck = 'NoCheck'
-}
 
 export interface SharedProps<TData = any> extends GridOptions<TData> {
     gridOptions?: GridOptions<TData>;
@@ -33,7 +24,7 @@ export interface SharedProps<TData = any> extends GridOptions<TData> {
     modules?: Module[];
     containerStyle?: any;
     className?: string;
-    setGridApi?: (gridApi: GridApi<TData>, columnApi: ColumnApi) => void;
+    setGridApi?: (gridApi: GridApi<TData>) => void;
     componentWrappingElement?: string; // only used when putting React into JS
     maxComponentCreationTimeMs?: number; // only used when putting React into JS
     children?: any;
