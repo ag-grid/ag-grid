@@ -146,19 +146,13 @@ export class ColumnModel extends BeanStub {
     // displayed columns -> columns that are 1) visible and 2) parent groups are opened. thus can be rendered
     // viewport columns -> centre columns only, what columns are to be rendered due to column virtualisation
 
-    // all columns to be rendered
-    private viewportColumns: Column[] = [];
-
-    // A hash key to keep track of changes in viewport columns
-    private viewportColumnsHash: string = '';
-
-    // same as viewportColumns, except we always include columns with headerAutoHeight
-    private headerViewportColumns: Column[] = [];
-
     // all columns to be rendered in the centre
     private viewportColumnsCenter: Column[] = [];
     // same as viewportColumnsCenter, except we always include columns with headerAutoHeight
     private headerViewportColumnsCenter: Column[] = [];
+    
+    // A hash key to keep track of changes in viewport columns
+    private viewportColumnsHash: string = '';
 
     // all columns & groups to be rendered, index by row. used by header rows to get all items
     // to render for that row.
@@ -483,7 +477,10 @@ export class ColumnModel extends BeanStub {
     }
 
     public getViewportColumns(): Column[] {
-        return this.viewportColumns;
+        const leftCols = this.displayedColumnsService.getDisplayedLeftColumns();
+        const rightCols = this.displayedColumnsService.getDisplayedRightColumns();
+        const res = this.viewportColumnsCenter.concat(leftCols).concat(rightCols);
+        return res;
     }
 
     public isColSpanActive(): boolean {
@@ -1321,8 +1318,6 @@ export class ColumnModel extends BeanStub {
 
         this.displayedColumnsService.clear();
 
-        this.viewportColumns = [];
-        this.headerViewportColumns = [];
         this.viewportColumnsHash = '';
     }
 
@@ -1354,8 +1349,6 @@ export class ColumnModel extends BeanStub {
 
     private extractViewportColumns(): void {
         const displayedColumnsCenter = this.displayedColumnsService.getDisplayedCenterColumns();
-        const displayedColumnsLeft = this.displayedColumnsService.getDisplayedLeftColumns();
-        const displayedColumnsRight = this.displayedColumnsService.getDisplayedRightColumns();
         if (this.isColumnVirtualisationSuppressed()) {
             // no virtualisation, so don't filter
             this.viewportColumnsCenter = displayedColumnsCenter;
@@ -1365,14 +1358,6 @@ export class ColumnModel extends BeanStub {
             this.viewportColumnsCenter = displayedColumnsCenter.filter(this.isColumnInRowViewport.bind(this));
             this.headerViewportColumnsCenter = displayedColumnsCenter.filter(this.isColumnInHeaderViewport.bind(this));
         }
-
-        this.viewportColumns = this.viewportColumnsCenter
-            .concat(displayedColumnsLeft)
-            .concat(displayedColumnsRight);
-
-        this.headerViewportColumns = this.headerViewportColumnsCenter
-            .concat(displayedColumnsLeft)
-            .concat(displayedColumnsRight);
     }
 
     public getVirtualHeaderGroupRow(type: ColumnPinnedType, dept: number): IHeaderColumn[] {
@@ -1406,8 +1391,15 @@ export class ColumnModel extends BeanStub {
         this.viewportRowCenter = {};
 
         // for easy lookup when building the groups.
-        const virtualColIds: { [key: string]: boolean; } = {};
-        this.headerViewportColumns.forEach(col => virtualColIds[col.getId()] = true);
+        const renderedColIds: { [key: string]: boolean; } = {};
+
+        const renderedColsLeft = this.displayedColumnsService.getDisplayedLeftColumns();
+        const renderedColsRight = this.displayedColumnsService.getDisplayedRightColumns();
+        const allRenderedCols = this.headerViewportColumnsCenter
+            .concat(renderedColsLeft)
+            .concat(renderedColsRight);
+
+        allRenderedCols.forEach(col => renderedColIds[col.getId()] = true);
 
         const testGroup = (
             children: IHeaderColumn[],
@@ -1423,7 +1415,7 @@ export class ColumnModel extends BeanStub {
 
                 if (child instanceof Column) {
                     // for column, test if column is included
-                    addThisItem = virtualColIds[child.getId()] === true;
+                    addThisItem = renderedColIds[child.getId()] === true;
                 } else {
                     // if group, base decision on children
                     const columnGroup = child as ColumnGroup;
@@ -1454,7 +1446,7 @@ export class ColumnModel extends BeanStub {
         const hashColumn = (c: Column) => `${c.getId()}-${c.getPinned() || 'normal'}`;
 
         this.extractViewportColumns();
-        const newHash = this.viewportColumns.map(hashColumn).join('#');
+        const newHash = this.getViewportColumns().map(hashColumn).join('#');
         const changed = this.viewportColumnsHash !== newHash;
 
         if (changed) {
