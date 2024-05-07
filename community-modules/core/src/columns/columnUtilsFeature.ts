@@ -1,7 +1,8 @@
 import { BeanStub } from "../context/beanStub";
-import { Column } from "../entities/column";
+import { Column, ColumnInstanceId } from "../entities/column";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { IProvidedColumn } from "../interfaces/iProvidedColumn";
+import { depthFirstOriginalTreeSearch } from "./columnFactory";
 
 export class ColumnUtilsFeature extends BeanStub {
 
@@ -27,5 +28,27 @@ export class ColumnUtilsFeature extends BeanStub {
 
     public getWidthOfColsInList(columnList: Column[]) {
         return columnList.reduce((width, col) => width + col.getActualWidth(), 0);
+    }
+
+    public destroyOldColumns(oldTree: IProvidedColumn[] | null, newTree?: IProvidedColumn[] | null): void {
+        const oldObjectsById: {[id: ColumnInstanceId]: IProvidedColumn | null} = {};
+
+        if (!oldTree) { return; }
+
+        // add in all old columns to be destroyed
+        depthFirstOriginalTreeSearch(null, oldTree, child => {
+            oldObjectsById[child.getInstanceId()] = child;
+        });
+
+        // however we don't destroy anything in the new tree. if destroying the grid, there is no new tree
+        if (newTree) {
+            depthFirstOriginalTreeSearch(null, newTree, child => {
+                oldObjectsById[child.getInstanceId()] = null;
+            });
+        }
+
+        // what's left can be destroyed
+        const colsToDestroy = Object.values(oldObjectsById).filter(item => item != null);
+        this.destroyBeans(colsToDestroy);
     }
 }

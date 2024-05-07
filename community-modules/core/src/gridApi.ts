@@ -148,6 +148,7 @@ import { FunctionColumnsService } from "./columns/functionColumnsService";
 import { ColumnSizeService, ISizeColumnsToFitParams } from "./columns/columnSizeService";
 import { ColumnNameService } from "./columns/columnNameService";
 import { ColumnViewportService } from "./columns/columnViewportService";
+import { ColumnPivotService } from "./columns/columnPivotService";
 
 
 export interface DetailGridInfo {
@@ -194,6 +195,7 @@ export class GridApi<TData = any> {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnNameService') private readonly columnNameService: ColumnNameService;
+    @Autowired('columnPivotService') private readonly columnPivotService: ColumnPivotService;
     @Autowired('columnViewportService') private readonly columnViewportService: ColumnViewportService;
     @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
     @Autowired('columnSizeService') private readonly columnSizeService: ColumnSizeService;
@@ -1873,7 +1875,7 @@ export class GridApi<TData = any> {
     public isPivotMode(): boolean { return this.columnModel.isPivotMode(); }
 
     /** Returns the pivot result column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */
-    public getPivotResultColumn<TValue = any>(pivotKeys: string[], valueColKey: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null { return this.columnModel.getSecondaryPivotColumn(pivotKeys, valueColKey); }
+    public getPivotResultColumn<TValue = any>(pivotKeys: string[], valueColKey: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null { return this.columnPivotService.getSecondaryPivotColumn(pivotKeys, valueColKey); }
 
     /** Set the value columns to the provided list of columns. */
     public setValueColumns(colKeys: (string | ColDef | Column)[]): void { this.functionColumnsService.setValueColumns(colKeys, 'api'); }
@@ -1963,10 +1965,10 @@ export class GridApi<TData = any> {
     public autoSizeAllColumns(skipHeader?: boolean): void { this.columnAutosizeService.autoSizeAllColumns('api', skipHeader); }
 
     /** Set the pivot result columns. */
-    public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[] | null): void { this.columnModel.setSecondaryColumns(colDefs, 'api'); }
+    public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[] | null): void { this.columnPivotService.setSecondaryColumns(colDefs, 'api'); }
 
     /** Returns the grid's pivot result columns. */
-    public getPivotResultColumns(): Column[] | null { return this.columnModel.getSecondaryColumns(); }
+    public getPivotResultColumns(): Column[] | null { return this.columnPivotService.getSecondaryColumns(); }
 
     /** Get the current state of the grid. Can be used in conjunction with the `initialState` grid option to save and restore grid state. */
     public getState(): GridState {

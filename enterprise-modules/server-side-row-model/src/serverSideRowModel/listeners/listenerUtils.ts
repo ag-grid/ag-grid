@@ -1,9 +1,9 @@
-import { Autowired, Bean, ColumnModel, FunctionColumnsService } from "@ag-grid-community/core";
+import { Autowired, Bean, FunctionColumnsService, ColumnPivotService } from "@ag-grid-community/core";
 
 @Bean('ssrmListenerUtils')
 export class ListenerUtils {
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnPivotService') private columnPivotService: ColumnPivotService;
     @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
 
     public isSortingWithValueColumn(changedColumnsInSort: string[]): boolean {
@@ -19,11 +19,11 @@ export class ListenerUtils {
     }
 
     public isSortingWithSecondaryColumn(changedColumnsInSort: string[]): boolean {
-        if (!this.columnModel.getSecondaryColumns()) {
+        if (!this.columnPivotService.getSecondaryColumns()) {
             return false;
         }
 
-        const secondaryColIds = this.columnModel.getSecondaryColumns()!.map(col => col.getColId());
+        const secondaryColIds = this.columnPivotService.getSecondaryColumns()!.map(col => col.getColId());
 
         for (let i = 0; i < changedColumnsInSort.length; i++) {
             if (secondaryColIds.indexOf(changedColumnsInSort[i]) > -1) {
