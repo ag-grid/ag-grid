@@ -45,7 +45,7 @@ export class RowComp extends Component {
         const compProxy: IRowComp = {
             setDomOrder: domOrder => this.domOrder = domOrder,
             setCellCtrls: cellCtrls => this.setCellCtrls(cellCtrls),
-            showFullWidth: compDetails => this.showFullWidth(compDetails),
+            showFullWidth: compDetails => {},
             getFullWidthCellRenderer: () => this.getFullWidthCellRenderer(),
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
             setUserStyles: (styles: RowStyle | undefined) => addStylesToElement(eGui, styles),
@@ -66,26 +66,6 @@ export class RowComp extends Component {
     private getInitialStyle(containerType: RowContainerType): string {
         const transform = this.rowCtrl.getInitialTransform(containerType);
         return transform ? `transform: ${transform}` : `top: ${this.rowCtrl.getInitialRowTop(containerType)}`;
-    }
-
-    private showFullWidth(compDetails: UserCompDetails): void {
-        const callback = (cellRenderer: ICellRendererComp) => {
-            if (this.isAlive()) {
-                const eGui = cellRenderer.getGui();
-                this.getGui().appendChild(eGui);
-                this.rowCtrl.setupDetailRowAutoHeight(eGui);
-                this.setFullWidthRowComp(cellRenderer);
-            } else {
-                this.beans.context.destroyBean(cellRenderer);
-            }
-        };
-
-        // if not in cache, create new one
-        const res = compDetails.newAgStackInstance();
-
-        if (!res) { return; }
-
-        res.then(callback);
     }
 
     private setCellCtrls(cellCtrls: CellCtrl[]): void {

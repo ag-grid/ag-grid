@@ -86,8 +86,6 @@ export class RowCtrl extends BeanStub {
 
     private active = true;
 
-    private stoppingRowEdit: boolean;
-    private editingRow: boolean;
     private rowFocused: boolean;
 
     private centerCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
@@ -113,8 +111,6 @@ export class RowCtrl extends BeanStub {
     private readonly useAnimationFrameForCreate: boolean;
 
     private paginationPage: number;
-
-    private lastMouseDownOnDragger = false;
 
     private rowLevel: number;
     private rowStyles: RowStyle | undefined;
@@ -148,8 +144,6 @@ export class RowCtrl extends BeanStub {
         this.instanceId = rowNode.id + '-' + instanceIdSequence++ as RowCtrlInstanceId;
         this.rowId = escapeString(rowNode.id);
 
-        this.initRowBusinessKey();
-
         this.rowLevel = beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
 
         this.setRowType();
@@ -157,17 +151,6 @@ export class RowCtrl extends BeanStub {
         this.rowStyles = this.processStylesFromGridOptions();
 
         this.addListeners();
-    }
-
-    private initRowBusinessKey(): void {
-        this.businessKeyForNodeFunc = this.gos.get('getBusinessKeyForNode');
-        this.updateRowBusinessKey();
-    }
-
-    private updateRowBusinessKey(): void {
-        if (typeof this.businessKeyForNodeFunc !== 'function') { return; }
-        const businessKey = this.businessKeyForNodeFunc(this.rowNode);
-        this.businessKeySanitised = escapeString(businessKey!);
     }
 
     public getRowId() {
@@ -255,10 +238,6 @@ export class RowCtrl extends BeanStub {
         this.updateRowIndexes(gui);
         this.setStylesFromGridOptions(false, gui); // no need to calculate styles already set in constructor
 
-        if (gos.isRowSelection() && this.rowNode.selectable) {
-            this.onRowSelected(gui);
-        }
-
         this.updateColumnLists(!this.useAnimationFrameForCreate);
 
         const comp = gui.rowComp;
@@ -280,18 +259,6 @@ export class RowCtrl extends BeanStub {
         this.addDestroyFunc(
             () => gos.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null)
         );
-
-        // adding hover functionality adds listener to this row, so we
-        // do it lazily in an animation frame
-        if (this.useAnimationFrameForCreate) {
-            this.beans.animationFrameService.createTask(
-                this.addHoverFunctionality.bind(this, gui.element),
-                this.rowNode.rowIndex!,
-                'createTasksP2'
-            );
-        } else {
-            this.addHoverFunctionality(gui.element);
-        }
 
         if (this.useAnimationFrameForCreate) {
             // the height animation we only want active after the row is alive for 1 second.
@@ -586,9 +553,6 @@ export class RowCtrl extends BeanStub {
 
 
     private addListeners(): void {
-        this.addManagedListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, () => this.onRowHeightChanged());
-        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, () => this.onRowSelected());
-
         this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.updateExpandedCss.bind(this));
@@ -648,16 +612,8 @@ export class RowCtrl extends BeanStub {
         // as data has changed update the dom row id attributes
         this.allRowGuis.forEach(gui => {
             this.setRowCompRowId(gui.rowComp);
-            this.updateRowBusinessKey();
             this.setRowCompRowBusinessKey(gui.rowComp);
         });
-
-        // check for selected also, as this could be after lazy loading of the row data, in which case
-        // the id might of just gotten set inside the row and the row selected state may of changed
-        // as a result. this is what happens when selected rows are loaded in virtual pagination.
-        // - niall note - since moving to the stub component, this may no longer be true, as replacing
-        // the stub component now replaces the entire row
-        this.onRowSelected();
 
         // as data has changed, then the style and class needs to be recomputed
         this.postProcessCss();
@@ -793,7 +749,6 @@ export class RowCtrl extends BeanStub {
     }
 
     private onRowMouseDown(mouseEvent: MouseEvent) {
-        this.lastMouseDownOnDragger = isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-row-drag', 3);
 
     }
 
@@ -804,46 +759,6 @@ export class RowCtrl extends BeanStub {
     public isRowSelectionBlocked(): boolean {
         return true;
     }
-
-    public setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {
-        if (this.rowType !== RowType.FullWidthDetail) { return; }
-
-        if (!this.gos.get('detailRowAutoHeight')) { return; }
-
-        const checkRowSizeFunc = () => {
-            const clientHeight = eDetailGui.clientHeight;
-
-            // if the UI is not ready, the height can be 0, which we ignore, as otherwise a flicker will occur
-            // as UI goes from the default height, to 0, then to the real height as UI becomes ready. this means
-            // it's not possible for have 0 as auto-height, however this is an improbable use case, as even an
-            // empty detail grid would still have some styling around it giving at least a few pixels.
-            if (clientHeight != null && clientHeight > 0) {
-                // we do the update in a timeout, to make sure we are not calling from inside the grid
-                // doing another update
-                const updateRowHeightFunc = () => {
-                    this.rowNode.setRowHeight(clientHeight);
-                    if (this.beans.clientSideRowModel) {
-                        this.beans.clientSideRowModel.onRowHeightChanged();
-                    } else if (this.beans.serverSideRowModel) {
-                        this.beans.serverSideRowModel.onRowHeightChanged();
-                    }
-                };
-                window.setTimeout(updateRowHeightFunc, 0);
-            }
-        };
-
-        const resizeObserverDestroyFunc = this.beans.resizeObserverService.observeResize(eDetailGui, checkRowSizeFunc);
-
-        this.addDestroyFunc(resizeObserverDestroyFunc);
-
-        checkRowSizeFunc();
-    }
-
-    private createFullWidthCompDetails(eRow: HTMLElement, pinned: ColumnPinnedType): UserCompDetails {
-       return undefined as any;
-    }
-
-   
 
     private onUiLevelChanged(): void {
         const newLevel = this.beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
@@ -916,18 +831,8 @@ export class RowCtrl extends BeanStub {
         this.forEachGui(gui, gui => gui.rowComp.setUserStyles(this.rowStyles));
     }
 
-    private getPinnedForContainer(rowContainerType: RowContainerType): ColumnPinnedType {
-        const pinned = rowContainerType === RowContainerType.LEFT
-            ? 'left'
-            : rowContainerType === RowContainerType.RIGHT
-                ? 'right'
-                : null;
-        return pinned;
-    }
 
     private getInitialRowClasses(rowContainerType: RowContainerType): string[] {
-        const pinned = this.getPinnedForContainer(rowContainerType);
-
         const params: RowCssClassCalculatorParams = {
             rowNode: this.rowNode,
             rowFocused: this.rowFocused,
@@ -939,7 +844,7 @@ export class RowCtrl extends BeanStub {
             lastRowOnPage: this.isLastRowOnPage(),
             printLayout: this.printLayout,
             expandable: this.rowNode.isExpandable(),
-            pinned: pinned
+            pinned: null
         };
         return this.beans.rowCssClassCalculator.getInitialRowClasses(params);
     }
@@ -972,21 +877,6 @@ export class RowCtrl extends BeanStub {
         return this.emptyStyle;
     }
 
-    private onRowSelected(gui?: RowGui): void {
-        // Treat undefined as false, if we pass undefined down it gets treated as toggle class, rather than explicitly
-        // setting the required value
-        const selected = !!this.rowNode.isSelected();
-        this.forEachGui(gui, gui => {
-            gui.rowComp.addOrRemoveCssClass('ag-row-selected', selected);
-            setAriaSelected(gui.element, selected);
-
-            const hasFocus = gui.element.contains(this.beans.gos.getActiveDomElement());
-            if (hasFocus && (gui === this.centerGui || gui === this.fullWidthGui)) {
-                this.announceDescription();
-            }
-        });
-    }
-
     public announceDescription(): void {
         if (this.isRowSelectionBlocked()) { return; }
 
@@ -1000,42 +890,6 @@ export class RowCtrl extends BeanStub {
         );
 
         this.beans.ariaAnnouncementService.announceValue(label);
-    }
-
-    public addHoverFunctionality(eRow: HTMLElement): void {
-        // because we use animation frames to do this, it's possible the row no longer exists
-        // by the time we get to add it
-        if (!this.active) { return; }
-
-        // because mouseenter and mouseleave do not propagate, we cannot listen on the gridPanel
-        // like we do for all the other mouse events.
-
-        // because of the pinning, we cannot simply add / remove the class based on the eRow. we
-        // have to check all eRow's (body & pinned). so the trick is if any of the rows gets a
-        // mouse hover, it sets such in the rowNode, and then all three reflect the change as
-        // all are listening for event on the row node.
-
-        // step 1 - add listener, to set flag on row node
-        this.addManagedListener(eRow, 'mouseenter', () => this.rowNode.onMouseEnter());
-        this.addManagedListener(eRow, 'mouseleave', () => this.rowNode.onMouseLeave());
-
-        // step 2 - listen for changes on row node (which any eRow can trigger)
-        this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, () => {
-            // if hover turned off, we don't add the class. we do this here so that if the application
-            // toggles this property mid way, we remove the hover form the last row, but we stop
-            // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
-            if (
-                !this.gos.get('suppressRowHoverHighlight')
-            ) {
-                eRow.classList.add('ag-row-hover');
-                this.rowNode.setHovered(true);
-            }
-        });
-
-        this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, () => {
-            eRow.classList.remove('ag-row-hover');
-            this.rowNode.setHovered(false);
-        });
     }
 
     // for animation, we don't want to animate entry or exit to a very far away pixel,
