@@ -61,8 +61,8 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     private executePivotOff(changedPath: ChangedPath): void {
         this.aggregationColumnsHashLastTime = null;
         this.uniqueValues = {};
-        if (this.columnPivotService.isSecondaryColumnsPresent()) {
-            this.columnPivotService.setSecondaryColumns(null, "rowModelUpdated");
+        if (this.columnPivotService.isPivotResultColsPresent()) {
+            this.columnPivotService.setPivotResultCols(null, "rowModelUpdated");
             if (changedPath) {
                 changedPath.setInactive();
             }
@@ -83,7 +83,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         } catch(e) {
             // message is checked rather than inheritance as the build seems to break instanceof
             if (e.message === PivotStage.EXCEEDED_MAX_UNIQUE_VALUES) {
-                this.columnPivotService.setSecondaryColumns([], "rowModelUpdated");
+                this.columnPivotService.setPivotResultCols([], "rowModelUpdated");
                 const event: WithoutGridCommon<PivotMaxColumnsExceededEvent> = {
                     type: Events.EVENT_PIVOT_MAX_COLUMNS_EXCEEDED,
                     message: e.message,
@@ -128,7 +128,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         if (this.lastTimeFailed || uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged || anyGridOptionsChanged) {
             const {pivotColumnGroupDefs, pivotColumnDefs} = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
             this.pivotColumnDefs = pivotColumnDefs;
-            this.columnPivotService.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
+            this.columnPivotService.setPivotResultCols(pivotColumnGroupDefs, "rowModelUpdated");
             // because the secondary columns have changed, then the aggregation needs to visit the whole
             // tree again, so we make the changedPath not active, to force aggregation to visit all paths.
             if (changedPath) {

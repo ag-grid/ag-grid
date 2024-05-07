@@ -134,11 +134,11 @@ export class ColumnModel extends BeanStub {
     private gridHeaderRowCount = 0;
 
     private lastPrimaryOrder: Column[];
-    private lastSecondaryOrder: Column[];
+    private lastPivotResultColOrder: Column[];
     private gridColsArePrimary: boolean;
 
     // primary columns -> what the user provides
-    // secondary columns -> columns generated as a result of a pivot
+    // pivot result columns -> columns generated as a result of a pivot
     // displayed columns -> columns that are 1) visible and 2) parent groups are opened. thus can be rendered
     // viewport columns -> centre columns only, what columns are to be rendered due to column virtualisation
 
@@ -224,8 +224,8 @@ export class ColumnModel extends BeanStub {
 
     @PreDestroy
     private destroyColumns(): void {
-        this.columnUtilsFeature.destroyOldColumns(this.primaryColumnTree);
-        this.columnUtilsFeature.destroyOldColumns(this.groupAutoColsBalancedTree);
+        this.columnUtilsFeature.destroyColumns(this.primaryColumnTree);
+        this.columnUtilsFeature.destroyColumns(this.groupAutoColsBalancedTree);
     }
 
     private createColumnsFromColumnDefs(colsPreviouslyExisted: boolean, source: ColumnEventType): void {
@@ -245,7 +245,7 @@ export class ColumnModel extends BeanStub {
         const oldPrimaryTree = this.primaryColumnTree;
         const balancedTreeResult = this.columnFactory.createColumnTree(this.columnDefs, true, oldPrimaryTree, source);
 
-        this.columnUtilsFeature.destroyOldColumns(this.primaryColumnTree, balancedTreeResult.columnTree);
+        this.columnUtilsFeature.destroyColumns(this.primaryColumnTree, balancedTreeResult.columnTree);
         this.primaryColumnTree = balancedTreeResult.columnTree;
         this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;
 
@@ -257,7 +257,7 @@ export class ColumnModel extends BeanStub {
 
         this.ready = true;
 
-        // if we are showing secondary columns, then no need to update grid columns
+        // if we are showing pivot result cols, then no need to update grid columns
         // unless the auto column needs rebuilt, as it's the pivot service responsibility to change these
         // if we are no longer pivoting (ie and need to revert back to primary, otherwise
         // we shouldn't be touching the primary).
@@ -538,11 +538,11 @@ export class ColumnModel extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public getPrimaryAndSecondaryAndAutoColumns(): Column[] {
+    public getPrimaryAndPivotResultAndAutoColumns(): Column[] {
         return ([] as Column[]).concat(...[
             this.primaryColumns || [],
             this.groupAutoColumns || [],
-            this.columnPivotService.getSecondaryColumns() || [],
+            this.columnPivotService.getPivotResultCols() || [],
         ]);
     }
 
@@ -570,7 +570,7 @@ export class ColumnModel extends BeanStub {
             const pivotIndexes: { [key: string]: number; } = {};
             const autoGroupColumnStates: ColumnState[] = [];
             // If pivoting is modified, these are the states we try to reapply after
-            // the secondary columns are re-generated
+            // the pivot result cols are re-generated
             const unmatchedAndAutoStates: ColumnState[] = [];
             let unmatchedCount = 0;
 
@@ -626,7 +626,7 @@ export class ColumnModel extends BeanStub {
             this.updateDisplayedColumns(source);
             this.eventDispatcher.everythingChanged(source);
 
-            dispatchEventsFunc(); // Will trigger secondary column changes if pivoting modified
+            dispatchEventsFunc(); // Will trigger pivot result col changes if pivoting modified
             return { unmatchedAndAutoStates, unmatchedCount };
         };
 
@@ -638,12 +638,12 @@ export class ColumnModel extends BeanStub {
         } = applyStates(params.state || [], this.primaryColumns || [], (id) => this.getPrimaryColumn(id));
 
         // If there are still states left over, see if we can apply them to newly generated
-        // secondary or auto columns. Also if defaults exist, ensure they are applied to secondary cols
+        // pivot result cols or auto cols. Also if defaults exist, ensure they are applied to pivot resul cols
         if (unmatchedAndAutoStates.length > 0 || exists(params.defaultState)) {
             unmatchedCount = applyStates(
                 unmatchedAndAutoStates,
-                this.columnPivotService.getSecondaryColumns() || [],
-                (id) => this.columnPivotService.getSecondaryColumn(id)
+                this.columnPivotService.getPivotResultCols() || [],
+                (id) => this.columnPivotService.getPivotResultCol(id)
             ).unmatchedCount;
         }
         this.columnAnimationService.finish();
@@ -773,8 +773,8 @@ export class ColumnModel extends BeanStub {
     private calculateColumnsForDisplay(): Column[] {
         let columnsForDisplay: Column[];
 
-        const secondaryColumns = this.columnPivotService.getSecondaryColumns();
-        if (this.pivotMode && missing(secondaryColumns)) {
+        const pivotResultCols = this.columnPivotService.getPivotResultCols();
+        if (this.pivotMode && pivotResultCols==null) {
             // pivot mode is on, but we are not pivoting, so we only
             // show columns we are aggregating on
             const valueColumns = this.functionColumnsService.getValueColumns();
@@ -786,7 +786,7 @@ export class ColumnModel extends BeanStub {
 
         } else {
             // otherwise continue as normal. this can be working on the primary
-            // or secondary columns, whatever the gridColumns are set to
+            // or pivot result cols, whatever the gridColumns are set to
             columnsForDisplay = this.gridColumns.filter(column => {
                 // keep col if a) it's auto-group or b) it's visible
                 const isAutoGroupCol = this.groupAutoColumns && includes(this.groupAutoColumns, column);
@@ -831,13 +831,13 @@ export class ColumnModel extends BeanStub {
         return (!this.gridColumns);
     }
 
-    // called from: applyColumnState, setColumnDefs, setSecondaryColumns
+    // called from: applyColumnState, setColumnDefs, setPivotResultCols
     public updateGridColumns(): void {
         const prevGridCols = this.gridBalancedTree;
         if (this.gridColsArePrimary) {
             this.lastPrimaryOrder = this.gridColumns;
         } else {
-            this.lastSecondaryOrder = this.gridColumns;
+            this.lastPivotResultColOrder = this.gridColumns;
         }
 
         // create the new auto columns
@@ -852,32 +852,32 @@ export class ColumnModel extends BeanStub {
                 this.lastPrimaryOrder = [...this.groupAutoColumns!, ...this.lastPrimaryOrder];
             }
 
-            if (this.lastSecondaryOrder) {
-                this.lastSecondaryOrder = this.lastSecondaryOrder.filter(col => !groupAutoColsMap.has(col));
-                this.lastSecondaryOrder = [...this.groupAutoColumns!, ...this.lastSecondaryOrder];
+            if (this.lastPivotResultColOrder) {
+                this.lastPivotResultColOrder = this.lastPivotResultColOrder.filter(col => !groupAutoColsMap.has(col));
+                this.lastPivotResultColOrder = [...this.groupAutoColumns!, ...this.lastPivotResultColOrder];
             }
         }
 
         let sortOrderToRecover: Column[] | undefined;
 
-        const secondaryCols = this.columnPivotService.getSecondaryColumns();
-        const secondaryTree = this.columnPivotService.getSecondaryBalancedTree();
-        const secondaryHeaderRowCount = this.columnPivotService.getSecondaryHeaderRowCount();
+        const pivotResultCols = this.columnPivotService.getPivotResultCols();
+        const pivotResultColsTree = this.columnPivotService.getPivotResultBalancedTree();
+        const pivotResultHeaderRowCount = this.columnPivotService.getPivotResultHeaderRowCount();
 
-        if (secondaryCols && secondaryTree) {
-            const hasSameColumns = secondaryCols.some((col) => {
+        if (pivotResultCols && pivotResultColsTree) {
+            const hasSameColumns = pivotResultCols.some((col) => {
                 return this.gridColumnsMap[col.getColId()] !== undefined;
             });
-            this.gridBalancedTree = secondaryTree.slice();
-            this.gridHeaderRowCount = secondaryHeaderRowCount;
-            this.gridColumns = secondaryCols.slice();
+            this.gridBalancedTree = pivotResultColsTree.slice();
+            this.gridHeaderRowCount = pivotResultHeaderRowCount;
+            this.gridColumns = pivotResultCols.slice();
             this.gridColsArePrimary = false;
 
             // If the current columns are the same or a subset of the previous
             // we keep the previous order, otherwise we go back to the order the pivot
             // cols are generated in
             if (hasSameColumns) {
-                sortOrderToRecover = this.lastSecondaryOrder;
+                sortOrderToRecover = this.lastPivotResultColOrder;
             }
         } else if (this.primaryColumns) {
             this.gridBalancedTree = this.primaryColumnTree.slice();
@@ -968,7 +968,7 @@ export class ColumnModel extends BeanStub {
         const lastOrderMapped = convertToMap<Column, number>(colsOrder.map((col, index) => [col, index]));
 
         // only do the sort if at least one column is accounted for. columns will be not accounted for
-        // if changing from secondary to primary columns
+        // if changing from pivot result cols to primary columns
         let noColsFound = true;
         this.gridColumns.forEach(col => {
             if (lastOrderMapped.has(col)) {
@@ -1039,7 +1039,7 @@ export class ColumnModel extends BeanStub {
     //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
     public refreshQuickFilterColumns(): void {
         let columnsForQuickFilter = (
-            this.isPivotMode() && !this.gos.get('applyQuickFilterBeforePivotOrAgg') ? this.columnPivotService.getSecondaryColumns() : this.primaryColumns
+            this.isPivotMode() && !this.gos.get('applyQuickFilterBeforePivotOrAgg') ? this.columnPivotService.getPivotResultCols() : this.primaryColumns
         ) ?? [];
         if (this.groupAutoColumns) {
             columnsForQuickFilter = columnsForQuickFilter.concat(this.groupAutoColumns);
@@ -1052,7 +1052,7 @@ export class ColumnModel extends BeanStub {
     private addAutoGroupToGridColumns(): void {
 
         if (missing(this.groupAutoColumns)) {
-            this.columnUtilsFeature.destroyOldColumns(this.groupAutoColsBalancedTree);
+            this.columnUtilsFeature.destroyColumns(this.groupAutoColsBalancedTree);
             this.groupAutoColsBalancedTree = null;
             return;
         }
@@ -1061,7 +1061,7 @@ export class ColumnModel extends BeanStub {
 
         const newAutoColsTree = this.columnFactory.createForAutoGroups(this.groupAutoColumns, this.gridBalancedTree);
 
-        this.columnUtilsFeature.destroyOldColumns(this.groupAutoColsBalancedTree, newAutoColsTree);
+        this.columnUtilsFeature.destroyColumns(this.groupAutoColsBalancedTree, newAutoColsTree);
         this.groupAutoColsBalancedTree = newAutoColsTree;
 
         this.gridBalancedTree = newAutoColsTree.concat(this.gridBalancedTree);

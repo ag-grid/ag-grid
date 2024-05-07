@@ -404,12 +404,12 @@ export class StateService extends BeanStub {
         const columnGroupStates = this.columnGroupStates;
         this.columnGroupStates = undefined;
 
-        if (!this.columnPivotService.isSecondaryColumnsPresent()) { return; }
+        if (!this.columnPivotService.isPivotResultColsPresent()) { return; }
 
         if (columnStates) {
             let secondaryColumnStates: ColumnState[] = [];
             for (const columnState of columnStates) {
-                if (this.columnPivotService.getSecondaryColumn(columnState.colId)) {
+                if (this.columnPivotService.getPivotResultCol(columnState.colId)) {
                     secondaryColumnStates.push(columnState);
                 }
             }

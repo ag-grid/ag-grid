@@ -16,7 +16,7 @@ export class ColumnGetStateService {
 
         if (missing(primaryCols) || !this.columnModel.isAlive()) { return []; }
 
-        const colsForState = this.columnModel.getPrimaryAndSecondaryAndAutoColumns();
+        const colsForState = this.columnModel.getPrimaryAndPivotResultAndAutoColumns();
         const res: ColumnState[] = colsForState.map(this.createStateItemFromColumn.bind(this));
 
         this.orderColumnStateList(res);

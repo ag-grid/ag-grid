@@ -30,7 +30,7 @@ export class ColumnUtilsFeature extends BeanStub {
         return columnList.reduce((width, col) => width + col.getActualWidth(), 0);
     }
 
-    public destroyOldColumns(oldTree: IProvidedColumn[] | null, newTree?: IProvidedColumn[] | null): void {
+    public destroyColumns(oldTree: IProvidedColumn[] | null, newTree?: IProvidedColumn[] | null): void {
         const oldObjectsById: {[id: ColumnInstanceId]: IProvidedColumn | null} = {};
 
         if (!oldTree) { return; }

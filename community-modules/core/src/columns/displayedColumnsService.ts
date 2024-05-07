@@ -133,7 +133,7 @@ export class DisplayedColumnsService extends BeanStub {
         if (!primaryCols) { return; }
 
         // go through each list of displayed columns
-        const allColumns = this.columnModel.getPrimaryAndSecondaryAndAutoColumns().slice(0);
+        const allColumns = this.columnModel.getPrimaryAndPivotResultAndAutoColumns().slice(0);
 
         // let totalColumnWidth = this.getWidthOfColsInList()
         const doingRtl = this.gos.get('enableRtl');

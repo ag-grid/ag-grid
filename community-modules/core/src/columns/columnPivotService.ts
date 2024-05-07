@@ -14,15 +14,15 @@ import { ColumnUtilsFeature } from "./columnUtilsFeature";
 export class ColumnPivotService extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('columnFactory') private columnFactory: ColumnFactory;
+    @Autowired('columnFactory') private readonly columnFactory: ColumnFactory;
 
         // if pivoting, these are the generated columns as a result of the pivot
-    private secondaryBalancedTree: IProvidedColumn[] | null;
-    private secondaryColumns: Column[] | null;
-    private secondaryColumnsMap: { [id: string]: Column };
-    private secondaryHeaderRowCount = 0;
+    private pivotResultBalancedTree: IProvidedColumn[] | null;
+    private pivotResultCols: Column[] | null;
+    private pivotResultColsMap: { [id: string]: Column };
+    private pivotResultHeaderRowCount = 0;
     // Saved when pivot is disabled, available to re-use when pivot is restored
-    private previousSecondaryColumns: IProvidedColumn[] | null;
+    private previousPivotResultCols: IProvidedColumn[] | null;
 
     private columnUtilsFeature: ColumnUtilsFeature;
 
@@ -33,21 +33,21 @@ export class ColumnPivotService extends BeanStub {
 
     @PreDestroy
     private destroyColumns(): void {
-        this.columnUtilsFeature.destroyOldColumns(this.secondaryBalancedTree);
+        this.columnUtilsFeature.destroyColumns(this.pivotResultBalancedTree);
     }
 
-    public isSecondaryColumnsPresent(): boolean {
-        return exists(this.secondaryColumns);
+    public isPivotResultColsPresent(): boolean {
+        return this.pivotResultCols != null;
     }
 
-    public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: ColKey): Column | null {
-        if (missing(this.secondaryColumns)) { return null; }
+    public lookupPivotResultCol(pivotKeys: string[], valueColKey: ColKey): Column | null {
+        if (this.pivotResultCols == null) { return null; }
 
         const valueColumnToFind = this.columnModel.getPrimaryColumn(valueColKey);
 
         let foundColumn: Column | null = null;
 
-        this.secondaryColumns.forEach(column => {
+        this.pivotResultCols.forEach(column => {
             const thisPivotKeys = column.getColDef().pivotKeys;
             const pivotValueColumn = column.getColDef().pivotValueColumn;
 
@@ -62,61 +62,60 @@ export class ColumnPivotService extends BeanStub {
         return foundColumn;
     }
 
-    public getSecondaryColumns(): Column[] | null {
-        return this.secondaryColumns ? this.secondaryColumns : null;
+    public getPivotResultCols(): Column[] | null {
+        return this.pivotResultCols ? this.pivotResultCols : null;
     }
 
-    public getSecondaryBalancedTree(): IProvidedColumn[] | null {
-        return this.secondaryBalancedTree ? this.secondaryBalancedTree : null;
+    public getPivotResultCol(key: ColKey): Column | null {
+        if (!this.pivotResultCols) { return null; }
+        return this.columnModel.getColumn(key, this.pivotResultCols, this.pivotResultColsMap);
     }
 
-    public getSecondaryHeaderRowCount(): number {
-        return this.secondaryHeaderRowCount;
+    public getPivotResultBalancedTree(): IProvidedColumn[] | null {
+        return this.pivotResultBalancedTree ? this.pivotResultBalancedTree : null;
     }
 
-    public getSecondaryColumn(key: ColKey): Column | null {
-        if (!this.secondaryColumns) { return null; }
-        return this.columnModel.getColumn(key, this.secondaryColumns, this.secondaryColumnsMap);
+    public getPivotResultHeaderRowCount(): number {
+        return this.pivotResultHeaderRowCount;
     }
     
-    
-    public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void {
+    public setPivotResultCols(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void {
         if (this.columnModel.isGridColsMising()) { return; }
 
         const newColsPresent = colDefs;
 
         // if not cols passed, and we had no cols anyway, then do nothing
-        if (!newColsPresent && missing(this.secondaryColumns)) { return; }
+        if (!newColsPresent && missing(this.pivotResultCols)) { return; }
 
         if (newColsPresent) {
-            this.processSecondaryColumnDefinitions(colDefs);
+            this.processPivotResultColDef(colDefs);
             const balancedTreeResult = this.columnFactory.createColumnTree(
                 colDefs,
                 false,
-                this.secondaryBalancedTree || this.previousSecondaryColumns || undefined,
+                this.pivotResultBalancedTree || this.previousPivotResultCols || undefined,
                 source
             );
-            this.columnUtilsFeature.destroyOldColumns(this.secondaryBalancedTree, balancedTreeResult.columnTree);
-            this.secondaryBalancedTree = balancedTreeResult.columnTree;
-            this.secondaryHeaderRowCount = balancedTreeResult.treeDept + 1;
-            this.secondaryColumns = this.columnUtilsFeature.getColumnsFromTree(this.secondaryBalancedTree);
+            this.columnUtilsFeature.destroyColumns(this.pivotResultBalancedTree, balancedTreeResult.columnTree);
+            this.pivotResultBalancedTree = balancedTreeResult.columnTree;
+            this.pivotResultHeaderRowCount = balancedTreeResult.treeDept + 1;
+            this.pivotResultCols = this.columnUtilsFeature.getColumnsFromTree(this.pivotResultBalancedTree);
 
-            this.secondaryColumnsMap = {};
-            this.secondaryColumns.forEach(col => this.secondaryColumnsMap[col.getId()] = col);
-            this.previousSecondaryColumns = null;
+            this.pivotResultColsMap = {};
+            this.pivotResultCols.forEach(col => this.pivotResultColsMap[col.getId()] = col);
+            this.previousPivotResultCols = null;
         } else {
-            this.previousSecondaryColumns = this.secondaryBalancedTree;
-            this.secondaryBalancedTree = null;
-            this.secondaryHeaderRowCount = -1;
-            this.secondaryColumns = null;
-            this.secondaryColumnsMap = {};
+            this.previousPivotResultCols = this.pivotResultBalancedTree;
+            this.pivotResultBalancedTree = null;
+            this.pivotResultHeaderRowCount = -1;
+            this.pivotResultCols = null;
+            this.pivotResultColsMap = {};
         }
 
         this.columnModel.updateGridColumns();
         this.columnModel.updateDisplayedColumns(source);
     }
 
-    private processSecondaryColumnDefinitions(colDefs: (ColDef | ColGroupDef)[] | null) {
+    private processPivotResultColDef(colDefs: (ColDef | ColGroupDef)[] | null) {
         const columnCallback = this.gos.get('processPivotResultColDef');
         const groupCallback = this.gos.get('processPivotResultColGroupDef');
 

@@ -268,7 +268,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         const pivotColumnGroupDefs = this.pivotColDefService.createColDefsFromFields(pivotFields);
         this.managingPivotResultColumns = true;
-        this.columnPivotService.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
+        this.columnPivotService.setPivotResultCols(pivotColumnGroupDefs, "rowModelUpdated");
     };
 
     public resetRowHeights(): void {
@@ -327,7 +327,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         if (this.managingPivotResultColumns) {
             // if managing pivot columns, also reset secondary columns.
-            this.columnPivotService.setSecondaryColumns(null, 'api');
+            this.columnPivotService.setPivotResultCols(null, 'api');
             this.managingPivotResultColumns = false;
         }
 

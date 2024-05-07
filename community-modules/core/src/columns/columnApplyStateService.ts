@@ -265,7 +265,7 @@ export class ColumnApplyStateService extends BeanStub {
         });
 
         return () => {
-            const colsForState = this.columnModel.getPrimaryAndSecondaryAndAutoColumns();
+            const colsForState = this.columnModel.getPrimaryAndPivotResultAndAutoColumns();
 
             // dispatches generic ColumnEvents where all columns are returned rather than what has changed
             const dispatchWhenListsDifferent = (eventType: string, colsBefore: Column[], colsAfter: Column[], idMapper: (column: Column) => string) => {
