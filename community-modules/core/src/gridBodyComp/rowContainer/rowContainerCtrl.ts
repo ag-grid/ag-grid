@@ -2,7 +2,6 @@ import { BeanStub } from "../../context/beanStub";
 import { Autowired, PostConstruct } from "../../context/context";
 import { Events } from "../../eventKeys";
 import { RowContainerEventsFeature } from "./rowContainerEventsFeature";
-import { DragService } from "../../dragAndDrop/dragService";
 import { CtrlsService } from "../../ctrlsService";
 import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isInDOM, setScrollLeft } from "../../utils/dom";
 import { ColumnModel } from "../../columns/columnModel";
@@ -12,7 +11,6 @@ import { convertToMap } from "../../utils/map";
 import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
 import { SetPinnedRightWidthFeature } from "./setPinnedRightWidthFeature";
 import { SetHeightFeature } from "./setHeightFeature";
-import { DragListenerFeature } from "./dragListenerFeature";
 import { CenterWidthFeature } from "../centerWidthFeature";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
 import { RowRenderer } from "../../rendering/rowRenderer";
@@ -153,7 +151,6 @@ export class RowContainerCtrl extends BeanStub {
         }
     }
 
-    @Autowired('dragService') private dragService: DragService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
@@ -228,16 +225,8 @@ export class RowContainerCtrl extends BeanStub {
         this.eViewport = eViewport;
 
         this.createManagedBean(new RowContainerEventsFeature(this.eContainer));
-        this.addPreventScrollWhileDragging();
         this.listenOnDomOrder();
         this.stopHScrollOnPinnedRows();
-
-        const allTopNoFW = [RowContainerName.TOP_CENTER, RowContainerName.TOP_LEFT, RowContainerName.TOP_RIGHT];
-        const allStickyTopNoFW = [RowContainerName.STICKY_TOP_CENTER, RowContainerName.STICKY_TOP_LEFT, RowContainerName.STICKY_TOP_RIGHT];
-        const allStickyBottomNoFW = [RowContainerName.STICKY_BOTTOM_CENTER, RowContainerName.STICKY_BOTTOM_LEFT, RowContainerName.STICKY_BOTTOM_RIGHT];
-        const allBottomNoFW = [RowContainerName.BOTTOM_CENTER, RowContainerName.BOTTOM_LEFT, RowContainerName.BOTTOM_RIGHT];
-        const allMiddleNoFW = [RowContainerName.CENTER, RowContainerName.LEFT, RowContainerName.RIGHT];
-        const allNoFW = [...allTopNoFW, ...allBottomNoFW, ...allMiddleNoFW, ...allStickyTopNoFW, ...allStickyBottomNoFW];
 
         const allMiddle = [RowContainerName.CENTER, RowContainerName.LEFT, RowContainerName.RIGHT, RowContainerName.FULL_WIDTH];
 
@@ -254,7 +243,6 @@ export class RowContainerCtrl extends BeanStub {
             this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, () => this.onPinnedWidthChanged());
         });
         this.forContainers(allMiddle, () => this.createManagedBean(new SetHeightFeature(this.eContainer, this.name === RowContainerName.CENTER ? eViewport : undefined)));
-        this.forContainers(allNoFW, () => this.createManagedBean(new DragListenerFeature(this.eContainer)));
 
         this.forContainers(allCenter, () => this.createManagedBean(
             new CenterWidthFeature(width => this.comp.setContainerWidth(`${width}px`))
@@ -314,18 +302,6 @@ export class RowContainerCtrl extends BeanStub {
 
     private onDisplayedColumnsWidthChanged(): void {
         this.forContainers([RowContainerName.CENTER], () => this.onHorizontalViewportChanged());
-    }
-    // this methods prevents the grid views from being scrolled while the dragService is being used
-    // eg. the view should not scroll up and down while dragging rows using the rowDragComp.
-    private addPreventScrollWhileDragging(): void {
-        const preventScroll = (e: TouchEvent) => {
-            if (this.dragService.isDragging()) {
-                if (e.cancelable) { e.preventDefault(); }
-            }
-        };
-
-        this.eContainer.addEventListener('touchmove', preventScroll, { passive: false });
-        this.addDestroyFunc(() => this.eContainer.removeEventListener('touchmove', preventScroll));
     }
 
     // this gets called whenever a change in the viewport, so we can inform column controller it has to work

@@ -1,11 +1,12 @@
-import { Beans } from "./../beans";
-import { Column } from "../../entities/column";
-import { CellStyle } from "../../entities/colDef";
-import { RowNode } from "../../entities/rowNode";
-import { CellChangedEvent } from "../../interfaces/iRowNode";
+import { UserCompDetails } from "../../components/framework/userComponentFactory";
+import { KeyCode } from "../../constants/keyCode";
+import { BeanStub } from "../../context/beanStub";
 import { CellPosition } from "../../entities/cellPositionUtils";
+import { CellStyle } from "../../entities/colDef";
+import { Column } from "../../entities/column";
+import { RowNode } from "../../entities/rowNode";
+import { RowPosition } from "../../entities/rowPositionUtils";
 import {
-    CellContextMenuEvent,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
     CellEvent,
@@ -13,31 +14,23 @@ import {
     Events,
     FlashCellsEvent
 } from "../../events";
-import { CellRangeFeature } from "./cellRangeFeature";
-import { exists, makeNull } from "../../utils/generic";
-import { BeanStub } from "../../context/beanStub";
-import { CellPositionFeature } from "./cellPositionFeature";
-import { escapeString } from "../../utils/string";
-import { CellCustomStyleFeature } from "./cellCustomStyleFeature";
-import { TooltipFeature, ITooltipFeatureCtrl } from "../../widgets/tooltipFeature";
-import { RowPosition } from "../../entities/rowPositionUtils";
-import { RowCtrl } from "../row/rowCtrl";
-import { CellMouseListenerFeature } from "./cellMouseListenerFeature";
-import { CellKeyboardListenerFeature } from "./cellKeyboardListenerFeature";
-import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRenderer";
-import { ICellEditor, ICellEditorParams } from "../../interfaces/iCellEditor";
-import { KeyCode } from "../../constants/keyCode";
-import { UserCompDetails } from "../../components/framework/userComponentFactory";
-import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
-import { DndSourceComp } from "../dndSourceComp";
-import { warnOnce } from "../../utils/function";
-import { RowDragComp } from "../row/rowDragComp";
-import { getValueUsingField } from "../../utils/object";
-import { getElementSize } from "../../utils/dom";
-import { setAriaColIndex } from "../../utils/aria";
 import { CssClassApplier } from "../../headerRendering/cells/cssClassApplier";
-import { FlashCellsParams } from "../rowRenderer";
 import { BrandedType } from "../../interfaces/brandedType";
+import { ICellEditor, ICellEditorParams } from "../../interfaces/iCellEditor";
+import { CellChangedEvent } from "../../interfaces/iRowNode";
+import { setAriaColIndex } from "../../utils/aria";
+import { getElementSize } from "../../utils/dom";
+import { exists, makeNull } from "../../utils/generic";
+import { escapeString } from "../../utils/string";
+import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRenderer";
+import { RowCtrl } from "../row/rowCtrl";
+import { FlashCellsParams } from "../rowRenderer";
+import { Beans } from "./../beans";
+import { CellCustomStyleFeature } from "./cellCustomStyleFeature";
+import { CellKeyboardListenerFeature } from "./cellKeyboardListenerFeature";
+import { CellMouseListenerFeature } from "./cellMouseListenerFeature";
+import { CellPositionFeature } from "./cellPositionFeature";
+import { CellRangeFeature } from "./cellRangeFeature";
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -93,7 +86,6 @@ export class CellCtrl extends BeanStub {
     private cellRangeFeature: CellRangeFeature | null = null;
     private cellPositionFeature: CellPositionFeature | null = null;
     private cellCustomStyleFeature: CellCustomStyleFeature | null = null;
-    private tooltipFeature: TooltipFeature | null = null;
     private cellMouseListenerFeature: CellMouseListenerFeature | null = null;
     private cellKeyboardListenerFeature: CellKeyboardListenerFeature | null = null;
 
@@ -110,7 +102,6 @@ export class CellCtrl extends BeanStub {
     private suppressRefreshCell = false;
 
     // this comp used only for custom row drag handle (ie when user calls params.registerRowDragger)
-    private customRowDragComp: RowDragComp;
 
     private onCellCompAttachedFuncs: (() => void)[] = [];
 
@@ -152,81 +143,8 @@ export class CellCtrl extends BeanStub {
 
         this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(this, this.beans, this.column, this.rowNode, this.rowCtrl);
         this.addDestroyFunc(() => { this.cellKeyboardListenerFeature?.destroy(); this.cellKeyboardListenerFeature = null; });
-
-        if (this.column.isTooltipEnabled()) {
-            this.enableTooltipFeature();
-            this.addDestroyFunc(() => { this.disableTooltipFeature(); });
-        }
-
-        const rangeSelectionEnabled = this.beans.rangeService && this.beans.gos.get('enableRangeSelection');
-        if (rangeSelectionEnabled) {
-            this.cellRangeFeature = new CellRangeFeature(this.beans, this);
-            this.addDestroyFunc(() => { this.cellRangeFeature?.destroy(); this.cellRangeFeature = null; });
-        }
     }
 
-    private enableTooltipFeature(value?: string, shouldDisplayTooltip?: () => boolean): void {
-        const getTooltipValue = () => {
-            const colDef = this.column.getColDef();
-            const data = this.rowNode.data;
-
-            if (colDef.tooltipField && exists(data)) {
-                return getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
-            }
-
-            const valueGetter = colDef.tooltipValueGetter;
-
-            if (valueGetter) {
-                return valueGetter(this.beans.gos.addGridCommonParams({
-                    location: 'cell',
-                    colDef: this.column.getColDef(),
-                    column: this.column,
-                    rowIndex: this.cellPosition.rowIndex,
-                    node: this.rowNode,
-                    data: this.rowNode.data,
-                    value: this.value,
-                    valueFormatted: this.valueFormatted,
-                }));
-            }
-
-            return null;
-        };
-
-        const isTooltipWhenTruncated = this.beans.gos.get('tooltipShowMode') === 'whenTruncated';
-
-        if (!shouldDisplayTooltip && isTooltipWhenTruncated && !this.isCellRenderer()) {
-            shouldDisplayTooltip = () => {
-                const eGui = this.getGui()
-                const textEl = eGui.children.length === 0 ? eGui : eGui.querySelector('.ag-cell-value');
-                if (!textEl) { return true; }
-
-                return textEl.scrollWidth > textEl.clientWidth;
-            }
-        }
-
-        const tooltipCtrl: ITooltipFeatureCtrl = {
-            getColumn: () => this.column,
-            getColDef: () => this.column.getColDef(),
-            getRowIndex: () => this.cellPosition.rowIndex,
-            getRowNode: () => this.rowNode,
-            getGui: () => this.getGui(),
-            getLocation: () => 'cell',
-            getTooltipValue: value != null ? () => value : getTooltipValue,
-
-            // this makes no sense, why is the cell formatted value passed to the tooltip???
-            getValueFormatted: () => this.valueFormatted,
-            shouldDisplayTooltip
-        };
-
-        this.tooltipFeature = new TooltipFeature(tooltipCtrl, this.beans);
-    }
-
-    private disableTooltipFeature() {
-        if (!this.tooltipFeature) { return; }
-
-        this.tooltipFeature.destroy();
-        this.tooltipFeature = null;
-    }
 
     public setComp(
         comp: ICellComp,
@@ -257,7 +175,6 @@ export class CellCtrl extends BeanStub {
 
         this.cellPositionFeature?.setComp(eGui);
         this.cellCustomStyleFeature?.setComp(comp);
-        this.tooltipFeature?.refreshToolTip();
         this.cellKeyboardListenerFeature?.setComp(this.eGui);
 
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp, eGui); }
@@ -353,13 +270,6 @@ export class CellCtrl extends BeanStub {
         const valueToDisplay = this.getValueToDisplay();
         let compDetails: UserCompDetails | undefined;
 
-        if (this.rowNode.stub) {
-            const params = this.createCellRendererParams();
-            compDetails = this.beans.userComponentFactory.getLoadingCellRendererDetails(this.column.getColDef(), params);
-        } else if (this.isCellRenderer()) {
-            const params = this.createCellRendererParams();
-            compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
-        }
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         this.cellRangeFeature?.refreshHandle();
     }
@@ -561,13 +471,8 @@ export class CellCtrl extends BeanStub {
             eGridCell: this.getGui(),
             eParentOfValue: this.cellComp.getParentOfValue()!,
 
-            registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels: number, value?: string, suppressVisibilityChange?: boolean) => this.registerRowDragger(rowDraggerElement, dragStartPixels, suppressVisibilityChange),
+            registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels: number, value?: string, suppressVisibilityChange?: boolean) => {},
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
-                if (this.tooltipFeature) {
-                    this.disableTooltipFeature();
-                }
-                this.enableTooltipFeature(value, shouldDisplayTooltip);
-                this.tooltipFeature?.refreshToolTip();
             }
 
         });
@@ -661,11 +566,8 @@ export class CellCtrl extends BeanStub {
             // then we are not showing a movement in the stock price, rather we are showing different stock.
             this.showValue(newData);
 
-            // we don't want to flash the cells when processing a filter change, as otherwise the UI would
-            // be to busy. see comment in FilterManager with regards processingFilterChange
-            const processingFilterChange = this.beans.filterManager.isSuppressFlashingCellsBecauseFiltering();
 
-            const flashCell = !suppressFlash && !processingFilterChange &&
+            const flashCell = !suppressFlash &&
                 (this.beans.gos.get('enableCellChangeFlash') || colDef.enableCellChangeFlash);
 
             if (flashCell) {
@@ -675,8 +577,6 @@ export class CellCtrl extends BeanStub {
             this.cellCustomStyleFeature?.applyUserStyles();
             this.cellCustomStyleFeature?.applyClassesFromColDef();
         }
-
-        this.tooltipFeature?.refreshToolTip();
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
@@ -1040,14 +940,6 @@ export class CellCtrl extends BeanStub {
     public onColDefChanged(): void {
         if (!this.cellComp) { return; }
 
-        const isTooltipEnabled = this.column.isTooltipEnabled();
-        if (isTooltipEnabled) {
-            this.disableTooltipFeature();
-            this.enableTooltipFeature();
-        } else {
-            this.disableTooltipFeature();
-        }
-
         this.setWrapText();
 
         if (!this.editing) {
@@ -1070,22 +962,6 @@ export class CellCtrl extends BeanStub {
         this.cellComp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, value);
     }
 
-    public dispatchCellContextMenuEvent(event: Event | null) {
-        const colDef = this.column.getColDef();
-        const cellContextMenuEvent: CellContextMenuEvent = this.createEvent(event, Events.EVENT_CELL_CONTEXT_MENU);
-
-        this.beans.eventService.dispatchEvent(cellContextMenuEvent);
-
-        if (colDef.onCellContextMenu) {
-            // to make the callback async, do in a timeout
-            window.setTimeout(() => {
-                this.beans.frameworkOverrides.wrapOutgoing(() => {
-                    (colDef.onCellContextMenu as any)(cellContextMenuEvent)
-                });
-            }, 0);
-        }
-    }
-
     public getCellRenderer(): ICellRenderer | null {
         return this.cellComp ? this.cellComp.getCellRenderer() : null;
     }
@@ -1099,68 +975,4 @@ export class CellCtrl extends BeanStub {
         super.destroy();
     }
 
-    public createSelectionCheckbox(): CheckboxSelectionComponent {
-        const cbSelectionComponent = new CheckboxSelectionComponent();
-
-        this.beans.context.createBean(cbSelectionComponent);
-        cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column });
-
-        // put the checkbox in before the value
-        return cbSelectionComponent;
-    }
-
-    public createDndSource(): DndSourceComp {
-        const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.eGui);
-        this.beans.context.createBean(dndSourceComp);
-
-        return dndSourceComp;
-    }
-
-    public registerRowDragger(
-        customElement: HTMLElement,
-        dragStartPixels?: number,
-        suppressVisibilityChange?: boolean
-    ): void {
-        // if previously existed, then we are only updating
-        if (this.customRowDragComp) {
-            this.customRowDragComp.setDragElement(customElement, dragStartPixels);
-            return;
-        }
-
-        const newComp = this.createRowDragComp(customElement, dragStartPixels, suppressVisibilityChange);
-
-        if (newComp) {
-            this.customRowDragComp = newComp;
-            this.addDestroyFunc(() => { this.beans.context.destroyBean(newComp); (this.customRowDragComp as any) = null; });
-        }
-    }
-
-    public createRowDragComp(
-        customElement?: HTMLElement,
-        dragStartPixels?: number,
-        suppressVisibilityChange?: boolean
-    ): RowDragComp | undefined {
-        const pagination = this.beans.gos.get('pagination');
-        const rowDragManaged = this.beans.gos.get('rowDragManaged');
-        const clientSideRowModelActive = this.beans.gos.isRowModelType('clientSide');
-
-        if (rowDragManaged) {
-            // row dragging only available in default row model
-            if (!clientSideRowModelActive) {
-                warnOnce('managed row dragging is only allowed in the Client Side Row Model');
-                return;
-            }
-
-            if (pagination) {
-                warnOnce('managed row dragging is not possible when doing pagination');
-                return;
-            }
-        }
-
-        // otherwise (normal case) we are creating a RowDraggingComp for the first time
-        const rowDragComp = new RowDragComp(() => this.value, this.rowNode, this.column, customElement, dragStartPixels, suppressVisibilityChange);
-        this.beans.context.createBean(rowDragComp);
-
-        return rowDragComp;
-    }
 }

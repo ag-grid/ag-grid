@@ -4,13 +4,9 @@ import { BeanStub } from "../context/beanStub";
 import { Autowired } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
-import { FilterManager } from "../filter/filterManager";
 import { FocusService } from "../focusService";
-import { MenuService } from "../misc/menuService";
-import { isIOSUserAgent } from "../utils/browser";
 import { exists } from "../utils/generic";
 import { ManagedFocusFeature } from "../widgets/managedFocusFeature";
-import { LongTapEvent, TouchListener } from "../widgets/touchListener";
 import { HeaderNavigationDirection, HeaderNavigationService } from "./common/headerNavigationService";
 
 export interface IGridHeaderComp {
@@ -24,8 +20,6 @@ export class GridHeaderCtrl extends BeanStub {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('menuService') private menuService: MenuService;
 
     private comp: IGridHeaderComp;
     private eGui: HTMLElement;
@@ -84,13 +78,6 @@ export class GridHeaderCtrl extends BeanStub {
         let numberOfFloating = 0;
         let headerRowCount = columnModel.getHeaderRowCount();
         let totalHeaderHeight: number;
-
-        const hasFloatingFilters = this.filterManager.hasFloatingFilters();
-
-        if (hasFloatingFilters) {
-            headerRowCount++;
-            numberOfFloating = 1;
-        }
 
         const groupHeight = this.columnModel.getColumnGroupHeaderRowHeight();
         const headerHeight = this.columnModel.getColumnHeaderRowHeight();
@@ -181,25 +168,10 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private onHeaderContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
-        if ((!mouseEvent && !touchEvent) || !this.menuService.isHeaderContextMenuEnabled()) { return; }
 
-        const { target } = (mouseEvent ?? touch)!;
-
-        if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl().getViewport()) {
-            this.menuService.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
-        }
     }
 
     private mockContextMenuForIPad(listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void): void {
-        // we do NOT want this when not in iPad
-        if (!isIOSUserAgent()) { return; }
 
-        const touchListener = new TouchListener(this.eGui);
-        const longTapListener = (event: LongTapEvent) => {
-            listener(undefined, event.touchStart, event.touchEvent);
-        };
-
-        this.addManagedListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
-        this.addDestroyFunc(() => touchListener.destroy());
     }
 }

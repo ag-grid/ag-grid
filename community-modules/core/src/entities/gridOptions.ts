@@ -107,8 +107,6 @@ import { RowModelType } from "../interfaces/iRowModel";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
-import { IRowDragItem } from "../rendering/row/rowDragComp";
-import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 import { CellPosition } from "./cellPositionUtils";
 import { ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from "./colDef";
 import {
@@ -149,7 +147,6 @@ import { IRowNode } from "../interfaces/iRowNode";
 import { DataTypeDefinition } from "./dataType";
 import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
 import { IAdvancedFilterBuilderParams } from "../interfaces/iAdvancedFilterBuilderParams";
-import { AlignedGrid } from "../interfaces/iAlignedGrid";
 import { GridState } from "../interfaces/gridState";
 import { SizeColumnsToContentStrategy, SizeColumnsToFitProvidedWidthStrategy, SizeColumnsToFitGridStrategy } from "../interfaces/autoSizeStrategy";
 import { Column } from "./column";
@@ -687,7 +684,7 @@ export interface GridOptions<TData = any> {
      * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
      * If grids are aligned then the columns and horizontal scrolling will be kept in sync.
      */
-    alignedGrids?: AlignedGrid[] | (() => AlignedGrid[]);
+    alignedGrids?: any;
     /**
      * Change this value to set the tabIndex order of the Grid within your application.
      * @default 0
@@ -1032,7 +1029,7 @@ export interface GridOptions<TData = any> {
      * `rowDragEntireRow=true`.
      * @initial
      */
-    rowDragText?: (params: IRowDragItem, dragItemCount: number) => string;
+    rowDragText?: (params: any, dragItemCount: number) => string;
 
     // *** Row Full Width *** //
 
@@ -2380,7 +2377,7 @@ export interface ServerSideGroupLevelParams {
 export interface ServerSideStoreParams extends ServerSideGroupLevelParams { }
 
 export interface LoadingCellRendererSelectorFunc<TData = any> {
-    (params: ILoadingCellRendererParams<TData>): LoadingCellRendererSelectorResult | undefined;
+    (params: any): LoadingCellRendererSelectorResult | undefined;
 }
 export interface LoadingCellRendererSelectorResult {
     /**

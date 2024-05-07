@@ -9,15 +9,12 @@ import { CenterWidthFeature } from "../../gridBodyComp/centerWidthFeature";
 import { PinnedWidthService } from "../../gridBodyComp/pinnedWidthService";
 import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
 import { NumberSequence } from "../../utils";
-import { BodyDropTarget } from "../columnDrag/bodyDropTarget";
 import { HeaderRowType } from "../row/headerRowComp";
 import { HeaderRowCtrl } from "../row/headerRowCtrl";
 import { FocusService } from "../../focusService";
 import { HeaderPosition } from "../common/headerPosition";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { HeaderCellCtrl } from "../cells/column/headerCellCtrl";
-import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
-import { FilterManager } from "../../filter/filterManager";
 
 export interface IHeaderRowContainerComp {
     setCenterWidth(width: string): void;
@@ -34,7 +31,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('focusService') public focusService: FocusService;
-    @Autowired('filterManager') public filterManager: FilterManager;
 
     private pinned: ColumnPinnedType;
     private comp: IHeaderRowContainerComp;
@@ -58,8 +54,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
         this.setupCenterWidth();
         this.setupPinnedWidth();
 
-        this.setupDragAndDrop(this.eViewport);
-
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
 
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
@@ -71,11 +65,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
         if (this.columnModel.isReady()) {
             this.refresh();
         }
-    }
-
-    private setupDragAndDrop(dropContainer: HTMLElement): void {
-        const bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
-        this.createManagedBean(bodyDropTarget);
     }
 
     public refresh(keepColumns = false): void {
@@ -110,7 +99,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
         };
 
         const refreshFilters = () => {
-            this.includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.hidden;
 
             const destroyPreviousComp = () => {
                 this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
@@ -172,10 +160,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
     }
 
     private onDisplayedColumnsChanged(): void {
-        const includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.hidden;
-        if (this.includeFloatingFilter !== includeFloatingFilter) {
-            this.refresh(true);
-        }
     }
 
     private setupCenterWidth(): void {
@@ -227,7 +211,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
     }
 
     public getHeaderCtrlForColumn(column: Column): HeaderCellCtrl | undefined;
-    public getHeaderCtrlForColumn(column: ColumnGroup): HeaderGroupCellCtrl | undefined;
     public getHeaderCtrlForColumn(column: any): any {
         if (column instanceof Column) {
             if (!this.columnsRowCtrl) { return; }

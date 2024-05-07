@@ -1,46 +1,21 @@
-import { BeanStub } from "../../context/beanStub";
-import { getCtrlForEventTarget, isStopPropagationForAgGrid, isEventSupported } from "../../utils/event";
-import { Autowired, Optional, PostConstruct } from "../../context/context";
-import { MouseEventService } from "./../mouseEventService";
-import { RowCtrl } from "../../rendering/row/rowCtrl";
-import { ValueService } from "../../valueService/valueService";
-import { Column } from "../../entities/column";
-import { isIOSUserAgent } from "../../utils/browser";
-import { LongTapEvent, TouchListener } from "../../widgets/touchListener";
-import { CtrlsService } from "../../ctrlsService";
-import { isEventFromPrintableCharacter, isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
-import { CellKeyDownEvent, Events, FullWidthCellKeyDownEvent } from "../../events";
-import { NavigationService } from "./../navigationService";
-import { FocusService } from "../../focusService";
 import { KeyCode } from "../../constants/keyCode";
-import { UndoRedoService } from "../../undoRedo/undoRedoService";
-import { missingOrEmpty } from "../../utils/generic";
-import { last } from "../../utils/array";
-import { normaliseQwertyAzerty } from "../../utils/keyboard";
-import { ColumnModel } from "../../columns/columnModel";
-import { PaginationProxy } from "../../pagination/paginationProxy";
-import { PinnedRowModel } from "../../pinnedRowModel/pinnedRowModel";
-import { IRangeService } from "../../interfaces/IRangeService";
-import { IClipboardService } from "../../interfaces/iClipboardService";
+import { BeanStub } from "../../context/beanStub";
+import { Autowired, PostConstruct } from "../../context/context";
+import { Column } from "../../entities/column";
+import { CellKeyDownEvent, Events, FullWidthCellKeyDownEvent } from "../../events";
+import { FocusService } from "../../focusService";
 import { CellCtrl } from "../../rendering/cell/cellCtrl";
-import { RowPinnedType } from "../../interfaces/iRowNode";
-import { MenuService, EventShowContextMenuParams } from "../../misc/menuService";
+import { RowCtrl } from "../../rendering/row/rowCtrl";
+import { getCtrlForEventTarget, isEventSupported, isStopPropagationForAgGrid } from "../../utils/event";
+import { isEventFromPrintableCharacter, isUserSuppressingKeyboardEvent, normaliseQwertyAzerty } from "../../utils/keyboard";
+import { MouseEventService } from "./../mouseEventService";
+import { NavigationService } from "./../navigationService";
 
 export class RowContainerEventsFeature extends BeanStub {
 
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('menuService') private menuService: MenuService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('navigationService') private navigationService: NavigationService;
     @Autowired('focusService') private focusService: FocusService;
-    @Autowired('undoRedoService') private undoRedoService: UndoRedoService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-
-    @Optional('rangeService') private rangeService?: IRangeService;
-    @Optional('clipboardService') private clipboardService?: IClipboardService;
 
     private element: HTMLElement;
 
@@ -53,7 +28,6 @@ export class RowContainerEventsFeature extends BeanStub {
     public postConstruct(): void {
         this.addKeyboardListeners();
         this.addMouseListeners();
-        this.mockContextMenuForIPad();
     }
 
     private addKeyboardListeners(): void {
@@ -84,7 +58,6 @@ export class RowContainerEventsFeature extends BeanStub {
         const cellCtrl = this.mouseEventService.getRenderedCellForEvent(mouseEvent)!;
 
         if (eventName === "contextmenu") {
-            this.handleContextMenuMouseEvent(mouseEvent, undefined, rowComp, cellCtrl);
         } else {
             if (cellCtrl) {
                 cellCtrl.onMouseEvent(eventName, mouseEvent);
@@ -93,22 +66,6 @@ export class RowContainerEventsFeature extends BeanStub {
                 rowComp.onMouseEvent(eventName, mouseEvent);
             }
         }
-    }
-
-    private mockContextMenuForIPad(): void {
-        // we do NOT want this when not in iPad, otherwise we will be doing
-        if (!isIOSUserAgent()) { return; }
-
-        const touchListener = new TouchListener(this.element);
-        const longTapListener = (event: LongTapEvent) => {
-            const rowComp = this.getRowForEvent(event.touchEvent);
-            const cellComp = this.mouseEventService.getRenderedCellForEvent(event.touchEvent)!;
-
-            this.handleContextMenuMouseEvent(undefined, event.touchEvent, rowComp, cellComp);
-        };
-
-        this.addManagedListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
-        this.addDestroyFunc(() => touchListener.destroy());
     }
 
     private getRowForEvent(event: Event): RowCtrl | null {
@@ -124,24 +81,6 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         return null;
-    }
-
-    private handleContextMenuMouseEvent(mouseEvent: MouseEvent | undefined, touchEvent: TouchEvent | undefined, rowComp: RowCtrl | null, cellCtrl: CellCtrl) {
-        const rowNode = rowComp ? rowComp.getRowNode() : null;
-        const column = cellCtrl ? cellCtrl.getColumn() : null;
-        let value = null;
-
-        if (column) {
-            const event = mouseEvent ? mouseEvent : touchEvent;
-            cellCtrl.dispatchCellContextMenuEvent(event ?? null);
-            value = this.valueService.getValue(column, rowNode);
-        }
-
-        // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel
-        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
-        const anchorToElement = cellCtrl ? cellCtrl.getGui() : gridBodyCon.getGridBodyElement();
-
-        this.menuService.showContextMenu({ mouseEvent, touchEvent, rowNode, column, value, anchorToElement } as EventShowContextMenuParams);
     }
 
     private getControlsForEventTarget(target: EventTarget | null): { cellCtrl: CellCtrl | null, rowCtrl: RowCtrl | null } {
@@ -245,107 +184,9 @@ export class RowContainerEventsFeature extends BeanStub {
 
         const keyCode = normaliseQwertyAzerty(keyboardEvent);
 
-        if (keyCode === KeyCode.A) { return this.onCtrlAndA(keyboardEvent); }
-        if (keyCode === KeyCode.C) { return this.onCtrlAndC(keyboardEvent); }
-        if (keyCode === KeyCode.D) { return this.onCtrlAndD(keyboardEvent); }
-        if (keyCode === KeyCode.V) { return this.onCtrlAndV(keyboardEvent); }
-        if (keyCode === KeyCode.X) { return this.onCtrlAndX(keyboardEvent); }
-        if (keyCode === KeyCode.Y) { return this.onCtrlAndY(); }
-        if (keyCode === KeyCode.Z) { return this.onCtrlAndZ(keyboardEvent); }
-    }
-
-    private onCtrlAndA(event: KeyboardEvent): void {
-        const { pinnedRowModel, paginationProxy, rangeService } = this;
-
-        if (rangeService && paginationProxy.isRowsToRender()) {
-            const [isEmptyPinnedTop, isEmptyPinnedBottom] = [
-                pinnedRowModel.isEmpty('top'),
-                pinnedRowModel.isEmpty('bottom')
-            ];
-
-            const floatingStart: RowPinnedType = isEmptyPinnedTop ? null : 'top';
-            let floatingEnd: RowPinnedType;
-            let rowEnd: number;
-
-            if (isEmptyPinnedBottom) {
-                floatingEnd = null;
-                rowEnd = this.paginationProxy.getRowCount() - 1;
-            } else {
-                floatingEnd = 'bottom';
-                rowEnd = pinnedRowModel.getPinnedBottomRowData().length - 1;
-            }
-
-            const allDisplayedColumns = this.columnModel.getAllDisplayedColumns();
-            if (missingOrEmpty(allDisplayedColumns)) { return; }
-
-            rangeService.setCellRange({
-                rowStartIndex: 0,
-                rowStartPinned: floatingStart,
-                rowEndIndex: rowEnd,
-                rowEndPinned: floatingEnd,
-                columnStart: allDisplayedColumns[0],
-                columnEnd: last(allDisplayedColumns)
-            });
-        }
-        event.preventDefault();
-    }
-
-    private onCtrlAndC(event: KeyboardEvent): void {
-        if (!this.clipboardService || this.gos.get('enableCellTextSelection')) { return; }
-
-        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
-
-        if (cellCtrl?.isEditing() || rowCtrl?.isEditing()) { return; }
-
-        event.preventDefault();
-        this.clipboardService.copyToClipboard();
-    }
-
-    private onCtrlAndX(event: KeyboardEvent): void {
-        if (
-            !this.clipboardService ||
-            this.gos.get('enableCellTextSelection') ||
-            this.gos.get('suppressCutToClipboard')
-        ) { return; }
-
-        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
-
-        if (cellCtrl?.isEditing() || rowCtrl?.isEditing()) { return; }
-
-            event.preventDefault();
-            this.clipboardService.cutToClipboard(undefined, 'ui');
     }
 
 
-    private onCtrlAndV(event: KeyboardEvent): void {
-        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
 
-        if (cellCtrl?.isEditing() || rowCtrl?.isEditing()) { return; }
-        if (this.clipboardService && !this.gos.get('suppressClipboardPaste')) {
-            this.clipboardService.pasteFromClipboard();
-        }
-    }
-
-    private onCtrlAndD(event: KeyboardEvent): void {
-        if (this.clipboardService && !this.gos.get('suppressClipboardPaste')) {
-            this.clipboardService.copyRangeDown();
-        }
-        event.preventDefault();
-    }
-
-    private onCtrlAndZ(event: KeyboardEvent): void {
-        if (!this.gos.get('undoRedoCellEditing')) { return; }
-        event.preventDefault();
-
-        if (event.shiftKey) {
-            this.undoRedoService.redo('ui');
-        } else {
-            this.undoRedoService.undo('ui');
-        }
-    }
-
-    private onCtrlAndY(): void {
-        this.undoRedoService.redo('ui');
-    }
 
 }

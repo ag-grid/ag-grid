@@ -5,7 +5,6 @@ import { GetGroupAggFilteringParams, GetGroupIncludeFooterParams, RowHeightParam
 import { Environment } from "./environment";
 import { AgEvent, ALWAYS_SYNC_GLOBAL_EVENTS, Events } from "./events";
 import { EventService } from "./eventService";
-import { GridApi } from "./gridApi";
 import { AgGridCommon, WithoutGridCommon } from "./interfaces/iCommon";
 import { RowModelType } from "./interfaces/iRowModel";
 import { AnyGridOptions, INITIAL_GRID_OPTION_KEYS, PropertyKeys } from "./propertyKeys";
@@ -13,9 +12,185 @@ import { warnOnce } from "./utils/function";
 import { exists, missing } from "./utils/generic";
 import { getScrollbarWidth } from './utils/browser';
 import { IRowNode } from "./interfaces/iRowNode";
-import { GRID_OPTION_DEFAULTS } from "./validation/rules/gridOptionsValidations";
-import { ValidationService } from "./validation/validationService";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
+
+// Leave untyped. so it can be inferred.
+export const GRID_OPTION_DEFAULTS = {
+    suppressContextMenu: false,
+    preventDefaultOnContextMenu: false,
+    allowContextMenuWithControlKey: false,
+    suppressMenuHide: false,
+    enableBrowserTooltips: false,
+    tooltipTrigger: 'hover',
+    tooltipShowDelay: 2000,
+    tooltipHideDelay: 10000,
+    tooltipMouseTrack: false,
+    tooltipShowMode: 'standard',
+    tooltipInteraction: false,
+    copyHeadersToClipboard: false,
+    copyGroupHeadersToClipboard: false,
+    clipboardDelimiter: '\t',
+    suppressCopyRowsToClipboard: false,
+    suppressCopySingleCellRanges: false,
+    suppressLastEmptyLineOnPaste: false,
+    suppressClipboardPaste: false,
+    suppressClipboardApi: false,
+    suppressCutToClipboard: false,
+    maintainColumnOrder: false,
+    suppressFieldDotNotation: false,
+    allowDragFromColumnsToolPanel: false,
+    suppressMovableColumns: false,
+    suppressColumnMoveAnimation: false,
+    suppressDragLeaveHidesColumns: false,
+    suppressRowGroupHidesColumns: false,
+    suppressAutoSize: false,
+    autoSizePadding: 20,
+    skipHeaderOnAutoSize: false,
+    singleClickEdit: false,
+    suppressClickEdit: false,
+    readOnlyEdit: false,
+    stopEditingWhenCellsLoseFocus: false,
+    enterNavigatesVertically: false,
+    enterNavigatesVerticallyAfterEdit: false,
+    enableCellEditingOnBackspace: false,
+    undoRedoCellEditing: false,
+    undoRedoCellEditingLimit: 10,
+    suppressCsvExport: false,
+    suppressExcelExport: false,
+    cacheQuickFilter: false,
+    includeHiddenColumnsInQuickFilter: false,
+    excludeChildrenWhenTreeDataFiltering: false,
+    enableAdvancedFilter: false,
+    includeHiddenColumnsInAdvancedFilter: false,
+    enableCharts: false,
+    suppressChartToolPanelsButton: false,
+    masterDetail: false,
+    keepDetailRows: false,
+    keepDetailRowsCount: 10,
+    detailRowAutoHeight: false,
+    tabIndex: 0,
+    rowBuffer: 10,
+    valueCache: false,
+    valueCacheNeverExpires: false,
+    enableCellExpressions: false,
+    suppressTouch: false,
+    suppressFocusAfterRefresh: false,
+    suppressAsyncEvents: false,
+    suppressBrowserResizeObserver: false,
+    suppressPropertyNamesCheck: false,
+    suppressChangeDetection: false,
+    debug: false,
+    suppressLoadingOverlay: false,
+    suppressNoRowsOverlay: false,
+    pagination: false,
+    paginationPageSize: 100,
+    paginationPageSizeSelector: true,
+    paginationAutoPageSize: false,
+    paginateChildRows: false,
+    suppressPaginationPanel: false,
+    pivotMode: false,
+    pivotPanelShow: 'never',
+    pivotDefaultExpanded: 0,
+    pivotSuppressAutoColumn: false,
+    suppressExpandablePivotGroups: false,
+    functionsReadOnly: false,
+    suppressAggFuncInHeader: false,
+    alwaysAggregateAtRootLevel: false,
+    aggregateOnlyChangedColumns: false,
+    suppressAggFilteredOnly: false,
+    removePivotHeaderRowWhenSingleValueColumn: false,
+    animateRows: true,
+    enableCellChangeFlash: false,
+    cellFlashDelay: 500,
+    cellFlashDuration: 500,
+    cellFadeDelay: 1000,
+    cellFadeDuration: 1000,
+    allowShowChangeAfterFilter: false,
+    domLayout: 'normal',
+    ensureDomOrder: false,
+    enableRtl: false,
+    suppressColumnVirtualisation: false,
+    suppressMaxRenderedRowRestriction: false,
+    suppressRowVirtualisation: false,
+    rowDragManaged: false,
+    suppressRowDrag: false,
+    suppressMoveWhenRowDragging: false,
+    rowDragEntireRow: false,
+    rowDragMultiRow: false,
+    embedFullWidthRows: false,
+    groupDisplayType: 'singleColumn',
+    groupDefaultExpanded: 0,
+    groupMaintainOrder: false,
+    groupSelectsChildren: false,
+    groupIncludeTotalFooter: false,
+    groupSuppressBlankHeader: false,
+    groupSelectsFiltered: false,
+    showOpenedGroup: false,
+    groupRemoveSingleChildren: false,
+    groupRemoveLowestSingleChildren: false,
+    groupHideOpenParents: false,
+    groupAllowUnbalanced: false,
+    rowGroupPanelShow: 'never',
+    suppressMakeColumnVisibleAfterUnGroup: false,
+    treeData: false,
+    rowGroupPanelSuppressSort: false,
+    suppressGroupRowsSticky: false,
+    rowModelType: 'clientSide',
+    asyncTransactionWaitMillis: 50,
+    suppressModelUpdateAfterUpdateTransaction: false,
+    cacheOverflowSize: 1,
+    infiniteInitialRowCount: 1,
+    serverSideInitialRowCount: 1,
+    suppressServerSideInfiniteScroll: false,
+    cacheBlockSize: 100,
+    maxBlocksInCache: -1,
+    maxConcurrentDatasourceRequests: 2,
+    blockLoadDebounceMillis: 0,
+    purgeClosedRowNodes: false,
+    serverSideSortAllLevels: false,
+    serverSideOnlyRefreshFilteredGroups: false,
+    serverSideSortOnServer: false,
+    serverSideFilterOnServer: false,
+    serverSidePivotResultFieldSeparator: '_',
+    viewportRowModelPageSize: 5,
+    viewportRowModelBufferSize: 5,
+    alwaysShowHorizontalScroll: false,
+    alwaysShowVerticalScroll: false,
+    debounceVerticalScrollbar: false,
+    suppressHorizontalScroll: false,
+    suppressScrollOnNewData: false,
+    suppressScrollWhenPopupsAreOpen: false,
+    suppressAnimationFrame: false,
+    suppressMiddleClickScrolls: false,
+    suppressPreventDefaultOnMouseWheel: false,
+    rowMultiSelectWithClick: false,
+    suppressRowDeselection: false,
+    suppressRowClickSelection: false,
+    suppressCellFocus: false,
+    suppressHeaderFocus: false,
+    suppressMultiRangeSelection: false,
+    enableCellTextSelection: false,
+    enableRangeSelection: false,
+    enableRangeHandle: false,
+    enableFillHandle: false,
+    fillHandleDirection: 'xy',
+    suppressClearOnFillReduction: false,
+    accentedSort: false,
+    unSortIcon: false,
+    suppressMultiSort: false,
+    alwaysMultiSort: false,
+    suppressMaintainUnsortedOrder: false,
+    suppressRowHoverHighlight: false,
+    suppressRowTransform: false,
+    columnHoverHighlight: false,
+    deltaSort: false,
+    enableGroupEdit: false,
+    suppressGroupMaintainValueType: false,
+    groupLockGroupColumns: 0,
+    serverSideEnableClientSideSort: false,
+    suppressServerSideFullWidthLoadingRow: false,
+    pivotMaxGeneratedColumns: -1,
+} as const;
 
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never
@@ -75,7 +250,6 @@ export class GridOptionsService {
     @Autowired('environment') private readonly environment: Environment;
     @Autowired('frameworkOverrides') frameworkOverrides: IFrameworkOverrides;
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
-    @Autowired('validationService') private validationService: ValidationService;
 
     private destroyed = false;
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
@@ -83,7 +257,6 @@ export class GridOptionsService {
     private domDataKey = '__AG_' + Math.random().toString();
 
     // Store locally to avoid retrieving many times as these are requested for every callback
-    @Autowired('gridApi') private readonly api: GridApi;    
     // This is quicker then having code call gridOptionsService.get('context')
     private get context() {
         return this.gridOptions['context'];
@@ -143,7 +316,6 @@ export class GridOptionsService {
         if (callback) {
             const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
                 const mergedParams = callbackParams as P;
-                mergedParams.api = this.api;
                 mergedParams.context = this.context;
 
                 return callback(mergedParams);
@@ -256,7 +428,6 @@ export class GridOptionsService {
             }
         });
 
-        this.validationService.processGridOptions(this.gridOptions);
 
         // changeSet should just include the properties that have changed.
         changeSet.properties = events.map(event => event.type);
@@ -564,14 +735,12 @@ export class GridOptionsService {
 
     public getGridCommonParams<TData = any, TContext = any>(): AgGridCommon<TData, TContext> {
         return {
-            api: this.api,
             context: this.context
         };
     }
 
     public addGridCommonParams<T extends AgGridCommon<TData, TContext>, TData = any, TContext = any>(params: WithoutGridCommon<T>): T {
         const updatedParams = params as T;
-        updatedParams.api = this.api;
         updatedParams.context = this.context;
         return updatedParams;
     }

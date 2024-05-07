@@ -1,5 +1,4 @@
 import { GridOptions } from '../entities/gridOptions';
-import { GridApi } from '../gridApi';
 import { ComponentStateChangedEvent, Events } from '../events';
 import { PropertyKeys } from '../propertyKeys';
 import { iterateObject } from '../utils/object';
@@ -99,7 +98,7 @@ export class ComponentUtil {
         return mergedOptions;
     }
 
-    public static processOnChange(changes: any, api: GridApi): void {
+    public static processOnChange(changes: any, api: any): void {
         if (!changes) {
             return;
         }

@@ -6,7 +6,6 @@ import { CellPosition } from "./entities/cellPositionUtils";
 import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
 import { RowPosition } from "./entities/rowPositionUtils";
-import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 import { missing } from "./utils/generic";
 import { last } from "./utils/array";
 import { KeyCode } from './constants/keyCode';
@@ -20,7 +19,6 @@ export class CellNavigationService extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     // returns null if no cell to focus on, ie at the end of the grid
@@ -111,10 +109,8 @@ export class CellNavigationService extends BeanStub {
 
         switch (gridCell.rowPinned) {
             case 'top':
-                rowNode = this.pinnedRowModel.getPinnedTopRow(gridCell.rowIndex);
                 break;
             case 'bottom':
-                rowNode = this.pinnedRowModel.getPinnedBottomRow(gridCell.rowIndex);
                 break;
             default:
                 rowNode = this.rowModel.getRow(gridCell.rowIndex);
@@ -170,16 +166,10 @@ export class CellNavigationService extends BeanStub {
                         return { rowIndex: this.paginationProxy.getPageFirstRow(), rowPinned: null } as RowPosition;
                     }
 
-                    if (this.pinnedRowModel.isRowsToRender('bottom')) {
-                        return { rowIndex: 0, rowPinned: 'bottom' } as RowPosition;
-                    }
-
+                  
                     return null;
                 default:
-                    // if in the main body, then try pinned bottom, otherwise return nothing
-                    if (this.pinnedRowModel.isRowsToRender('bottom')) {
-                        return { rowIndex: 0, rowPinned: 'bottom' } as RowPosition;
-                    }
+                  
                     return null;
             }
         }
@@ -238,16 +228,7 @@ export class CellNavigationService extends BeanStub {
         const pinned = rowPosition.rowPinned;
         const index = rowPosition.rowIndex;
 
-        if (pinned === 'top') {
-            const lastTopIndex = this.pinnedRowModel.getPinnedTopRowData().length - 1;
-            return lastTopIndex <= index;
-        }
-
-        if (pinned === 'bottom') {
-            const lastBottomIndex = this.pinnedRowModel.getPinnedBottomRowData().length - 1;
-            return lastBottomIndex <= index;
-        }
-
+       
         const lastBodyIndex = this.paginationProxy.getPageLastRow();
         return lastBodyIndex <= index;
     }
@@ -263,9 +244,7 @@ export class CellNavigationService extends BeanStub {
             if (pinned === 'top') { return null; }
 
             if (!pinned) {
-                if (this.pinnedRowModel.isRowsToRender('top')) {
-                    return this.getLastFloatingTopRow();
-                }
+               
                 return null;
             }
 
@@ -274,10 +253,7 @@ export class CellNavigationService extends BeanStub {
                 return this.getLastBodyCell();
             }
 
-            if (this.pinnedRowModel.isRowsToRender('top')) {
-                return this.getLastFloatingTopRow();
-            }
-
+            
             return null;
         }
 
@@ -313,11 +289,7 @@ export class CellNavigationService extends BeanStub {
         return { rowIndex: lastBodyRow, rowPinned: null } as RowPosition;
     }
 
-    private getLastFloatingTopRow(): RowPosition {
-        const lastFloatingRow = this.pinnedRowModel.getPinnedTopRowData().length - 1;
 
-        return { rowIndex: lastFloatingRow, rowPinned: 'top' } as RowPosition;
-    }
 
     public getNextTabbedCell(gridCell: CellPosition, backwards: boolean): CellPosition | null {
         if (backwards) {

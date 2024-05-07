@@ -1,6 +1,5 @@
 import { AgEvent, AgEventListener, Events, RowEvent, RowSelectedEvent, SelectionEventSourceType } from "../events";
 import { EventService } from "../eventService";
-import { DetailGridInfo } from "../gridApi";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
@@ -89,7 +88,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     public detailNode: RowNode;
 
     /** If master detail, this contains details about the detail grid */
-    public detailGridInfo: DetailGridInfo | null;
+    public detailGridInfo: any | null;
 
     /** `true` if this node is a group and the group is the bottom level in the tree. */
     public leafGroup: boolean;

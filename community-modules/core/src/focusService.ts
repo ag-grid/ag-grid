@@ -1,33 +1,30 @@
-import { Autowired, Bean, Optional, PostConstruct } from "./context/context";
-import { BeanStub } from "./context/beanStub";
-import { Column } from "./entities/column";
-import { CellFocusedParams, CellFocusedEvent, Events, CellFocusClearedEvent, CommonCellFocusParams } from "./events";
 import { ColumnModel } from "./columns/columnModel";
-import { CellPosition, CellPositionUtils } from "./entities/cellPositionUtils";
-import { RowNode } from "./entities/rowNode";
-import { HeaderPosition, HeaderPositionUtils } from "./headerRendering/common/headerPosition";
-import { RowPositionUtils } from "./entities/rowPositionUtils";
-import { IRangeService } from "./interfaces/IRangeService";
-import { RowRenderer } from "./rendering/rowRenderer";
-import { HeaderNavigationService } from "./headerRendering/common/headerNavigationService";
-import { ColumnGroup } from "./entities/columnGroup";
-import { ManagedFocusFeature } from "./widgets/managedFocusFeature";
-import { getTabIndex } from './utils/browser';
-import { makeNull } from './utils/generic';
-import { GridCtrl } from "./gridComp/gridCtrl";
-import { NavigationService } from "./gridBodyComp/navigationService";
-import { RowCtrl } from "./rendering/row/rowCtrl";
+import { BeanStub } from "./context/beanStub";
+import { Autowired, Bean, PostConstruct } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
-import { HeaderCellCtrl } from "./headerRendering/cells/column/headerCellCtrl";
+import { CellPosition, CellPositionUtils } from "./entities/cellPositionUtils";
+import { Column } from "./entities/column";
+import { ColumnGroup } from "./entities/columnGroup";
+import { RowNode } from "./entities/rowNode";
+import { RowPositionUtils } from "./entities/rowPositionUtils";
+import { CellFocusClearedEvent, CellFocusedEvent, CellFocusedParams, CommonCellFocusParams, Events } from "./events";
+import { NavigationService } from "./gridBodyComp/navigationService";
+import { GridCtrl } from "./gridComp/gridCtrl";
 import { AbstractHeaderCellCtrl } from "./headerRendering/cells/abstractCell/abstractHeaderCellCtrl";
-import { last } from "./utils/array";
+import { HeaderCellCtrl } from "./headerRendering/cells/column/headerCellCtrl";
+import { HeaderNavigationService } from "./headerRendering/common/headerNavigationService";
+import { HeaderPosition, HeaderPositionUtils } from "./headerRendering/common/headerPosition";
 import { NavigateToNextHeaderParams, TabToNextHeaderParams } from "./interfaces/iCallbackParams";
 import { WithoutGridCommon } from "./interfaces/iCommon";
+import { RowCtrl } from "./rendering/row/rowCtrl";
+import { RowRenderer } from "./rendering/rowRenderer";
+import { last } from "./utils/array";
+import { getTabIndex } from './utils/browser';
 import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR, isVisible } from "./utils/dom";
-import { TabGuardClassNames } from "./widgets/tabGuardCtrl";
-import { FilterManager } from "./filter/filterManager";
-import { IAdvancedFilterService } from "./interfaces/iAdvancedFilterService";
 import { warnOnce } from "./utils/function";
+import { makeNull } from './utils/generic';
+import { ManagedFocusFeature } from "./widgets/managedFocusFeature";
+import { TabGuardClassNames } from "./widgets/tabGuardCtrl";
 
 @Bean('focusService')
 export class FocusService extends BeanStub {
@@ -41,10 +38,6 @@ export class FocusService extends BeanStub {
     @Autowired('cellPositionUtils') private readonly cellPositionUtils: CellPositionUtils;
     @Autowired('navigationService') public navigationService: NavigationService;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('filterManager') public filterManager: FilterManager;
-
-    @Optional('rangeService') private readonly rangeService?: IRangeService;
-    @Optional('advancedFilterService') public readonly advancedFilterService?: IAdvancedFilterService;
 
     private gridCtrl: GridCtrl;
     private focusedCellPosition: CellPosition | null;
@@ -332,9 +325,6 @@ export class FocusService extends BeanStub {
         const { direction, fromTab, allowUserOverride, event, fromCell, rowWithoutSpanValue } = params;
         let { headerPosition } = params;
 
-        if (fromCell && this.filterManager.isAdvancedFilterHeaderActive()) {
-            return this.focusAdvancedFilter(headerPosition);
-        }
 
         if (allowUserOverride) {
             const currentPosition = this.getFocusedHeader();
@@ -437,9 +427,6 @@ export class FocusService extends BeanStub {
     }): boolean {
         const { headerPosition, direction, fromCell, rowWithoutSpanValue, event } = params;
         if (headerPosition.headerRowIndex === -1) {
-            if (this.filterManager.isAdvancedFilterHeaderActive()) {
-                return this.focusAdvancedFilter(headerPosition);
-            }
             return this.focusGridView(headerPosition.column as Column);
         }
 
@@ -486,9 +473,7 @@ export class FocusService extends BeanStub {
     }
 
     public focusPreviousFromFirstCell(event?: KeyboardEvent): boolean {
-        if (this.filterManager.isAdvancedFilterHeaderActive()) {
-            return this.focusAdvancedFilter(null);
-        }
+
         return this.focusLastHeader(event);
     }
 
@@ -647,8 +632,6 @@ export class FocusService extends BeanStub {
             forceBrowserFocus: true
         });
 
-        this.rangeService?.setRangeToCell({ rowIndex, rowPinned, column });
-
         return true;
     }
 
@@ -662,11 +645,6 @@ export class FocusService extends BeanStub {
         }
 
         return false;
-    }
-
-    private focusAdvancedFilter(position: HeaderPosition | null): boolean {
-        this.advancedFilterFocusColumn = position?.column as Column | undefined;
-        return this.advancedFilterService?.getCtrl().focusHeaderComp() ?? false;
     }
 
     public focusNextFromAdvancedFilter(backwards?: boolean, forceFirstColumn?: boolean): boolean {

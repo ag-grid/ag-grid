@@ -3,20 +3,15 @@ import { Autowired, Bean, Optional } from "../../context/context";
 import { CellEditorSelectorFunc, CellEditorSelectorResult, CellRendererSelectorFunc, ColDef, ColGroupDef } from "../../entities/colDef";
 import { GridOptions } from "../../entities/gridOptions";
 import { ToolPanelDef } from "../../interfaces/iSideBar";
-import { IFloatingFilterParams } from "../../filter/floating/floatingFilter";
 import { IHeaderParams } from "../../headerRendering/cells/column/headerComp";
-import { IHeaderGroupParams } from "../../headerRendering/cells/columnGroup/headerGroupComp";
 import { ICellEditorParams } from "../../interfaces/iCellEditor";
 import { IFilterDef, IFilterParams } from "../../interfaces/iFilter";
-import { SetFilterParams } from "../../interfaces/iSetFilter";
 import { IStatusPanelParams, StatusPanelDef } from "../../interfaces/iStatusPanel";
 import { IToolPanelParams } from "../../interfaces/iToolPanel";
-import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRendererCtrl";
 import { ICellRendererParams, ISetFilterCellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
 import { IDateParams } from "../../interfaces/dateComponent";
 import { ILoadingOverlayParams } from "../../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayParams } from "../../rendering/overlays/noRowsOverlayComponent";
-import { ITooltipParams } from "../../rendering/tooltipComponent";
 import { AgPromise } from "../../utils";
 import { mergeDeep } from '../../utils/object';
 import { AgComponentUtils } from "./agComponentUtils";
@@ -45,21 +40,11 @@ import {
 } from "./componentTypes";
 import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
 import { UserComponentRegistry } from "./userComponentRegistry";
-import { FloatingFilterMapper } from '../../filter/floating/floatingFilterMapper';
 import { AgGridCommon, WithoutGridCommon } from "../../interfaces/iCommon";
-import { RichSelectParams } from "../../widgets/agRichSelect";
 import { IMenuItemParams, MenuItemDef } from "../../interfaces/menuItem";
 
 export type DefinitionObject =
-    GridOptions
-    | ColDef
-    | ColGroupDef
-    | IFilterDef
-    | SetFilterParams
-    | RichSelectParams
-    | ToolPanelDef
-    | StatusPanelDef
-    | MenuItemDef;
+    any;
 
 export interface UserCompDetails {
     componentClass: any;
@@ -84,45 +69,6 @@ export class UserComponentFactory extends BeanStub {
         return this.getCompDetails(colDef, HeaderComponent, 'agColumnHeader', params);
     }
 
-    public getHeaderGroupCompDetails(params: WithoutGridCommon<IHeaderGroupParams>): UserCompDetails | undefined {
-        const colGroupDef = params.columnGroup.getColGroupDef()!;
-        return this.getCompDetails(colGroupDef, HeaderGroupComponent, 'agColumnGroupHeader', params);
-    }
-
-    // this one is unusual, as it can be LoadingCellRenderer, DetailCellRenderer, FullWidthCellRenderer or GroupRowRenderer.
-    // so we have to pass the type in.
-    public getFullWidthCellRendererDetails(params: WithoutGridCommon<ICellRendererParams>): UserCompDetails {
-        return this.getCompDetails(this.gridOptions, FullWidth, null, params, true)!;
-    }
-
-    public getFullWidthLoadingCellRendererDetails(params: WithoutGridCommon<ICellRendererParams>): UserCompDetails {
-        return this.getCompDetails(this.gridOptions, FullWidthLoading, 'agLoadingCellRenderer', params, true)!;
-    }
-
-    public getFullWidthGroupCellRendererDetails(params: WithoutGridCommon<ICellRendererParams>): UserCompDetails {
-        return this.getCompDetails(this.gridOptions, FullWidthGroup, 'agGroupRowRenderer', params, true)!;
-    }
-
-    public getFullWidthDetailCellRendererDetails(params: WithoutGridCommon<ICellRendererParams>): UserCompDetails {
-        return this.getCompDetails(this.gridOptions, FullWidthDetail, 'agDetailCellRenderer', params, true)!;
-    }
-
-    // CELL RENDERER
-    public getInnerRendererDetails(def: GroupCellRendererParams, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined {
-        return this.getCompDetails(def, InnerRendererComponent, null, params);
-    }
-    public getFullWidthGroupRowInnerCellRenderer(def: any, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined {
-        return this.getCompDetails(def, InnerRendererComponent, null, params);
-    }
-
-    public getCellRendererDetails(def: ColDef | RichSelectParams, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined {
-        return this.getCompDetails(def, CellRendererComponent, null, params);
-    }
-
-    public getLoadingCellRendererDetails(def: ColDef | RichSelectParams, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined {
-        return this.getCompDetails(def, LoadingCellRendererComponent, 'agSkeletonCellRenderer', params, true);
-    }
-
     // CELL EDITOR
     public getCellEditorDetails(def: ColDef, params: WithoutGridCommon<ICellEditorParams>): UserCompDetails | undefined {
         return this.getCompDetails(def, CellEditorComponent, 'agCellEditor', params, true);
@@ -143,18 +89,6 @@ export class UserComponentFactory extends BeanStub {
 
     public getNoRowsOverlayCompDetails(params: WithoutGridCommon<INoRowsOverlayParams>): UserCompDetails {
         return this.getCompDetails(this.gridOptions, NoRowsOverlayComponent, 'agNoRowsOverlay', params, true)!;
-    }
-
-    public getTooltipCompDetails(params: WithoutGridCommon<ITooltipParams>): UserCompDetails {
-        return this.getCompDetails(params.colDef!, TooltipComponent, 'agTooltipComponent', params, true)!;
-    }
-
-    public getSetFilterCellRendererDetails<TData, V>(def: SetFilterParams<TData, V>, params: WithoutGridCommon<ISetFilterCellRendererParams>): UserCompDetails | undefined {
-        return this.getCompDetails(def, CellRendererComponent, null, params);
-    }
-
-    public getFloatingFilterCompDetails(def: IFilterDef, params: WithoutGridCommon<IFloatingFilterParams<any>>, defaultFloatingFilter: string | null): UserCompDetails | undefined {
-        return this.getCompDetails(def, FloatingFilterComponent, defaultFloatingFilter, params);
     }
 
     public getToolPanelCompDetails(toolPanelDef: ToolPanelDef, params: WithoutGridCommon<IToolPanelParams>): UserCompDetails {
@@ -344,26 +278,5 @@ export class UserComponentFactory extends BeanStub {
         this.context.createBean(component);
         if (component.init == null) { return; }
         return component.init(params);
-    }
-
-    public getDefaultFloatingFilterType(def: IFilterDef, getFromDefault: () => string): string | null {
-        if (def == null) { return null; }
-
-        let defaultFloatingFilterType: string | null = null;
-
-        let { compName, jsComp, fwComp }
-            = this.getCompKeys(def, FilterComponent);
-
-        if (compName) {
-            // will be undefined if not in the map
-            defaultFloatingFilterType = FloatingFilterMapper.getFloatingFilterType(compName);
-        } else {
-            const usingDefaultFilter = (jsComp == null && fwComp == null) && (def.filter === true);
-            if (usingDefaultFilter) {
-                defaultFloatingFilterType = getFromDefault();
-            }
-        }
-
-        return defaultFloatingFilterType;
     }
 }

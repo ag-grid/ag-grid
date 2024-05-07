@@ -3,28 +3,19 @@ import { SelectionService } from "./selectionService";
 import { ColumnModel } from "./columns/columnModel";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { GridHeaderComp } from "./headerRendering/gridHeaderComp";
-import { FilterManager } from "./filter/filterManager";
 import { ValueService } from "./valueService/valueService";
 import { EventService } from "./eventService";
 import { GridBodyComp } from "./gridBodyComp/gridBodyComp";
-import { GridApi } from "./gridApi";
 import { ColumnFactory } from "./columns/columnFactory";
 import { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
-import { ExpressionService } from "./valueService/expressionService";
-import { PopupService } from "./widgets/popupService";
 import { Logger, LoggerFactory } from "./logger";
 import { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
-import { HorizontalResizeService } from "./headerRendering/common/horizontalResizeService";
 import { ComponentMeta, Context, ContextParams } from "./context/context";
 import { GridComp } from "./gridComp/gridComp";
-import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
-import { DragService } from "./dragAndDrop/dragService";
 import { SortController } from "./sortController";
 import { FocusService } from "./focusService";
 import { MouseEventService } from "./gridBodyComp/mouseEventService";
 import { CellNavigationService } from "./cellNavigationService";
-import { AgCheckbox } from "./widgets/agCheckbox";
-import { AgRadioButton } from "./widgets/agRadioButton";
 import { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
@@ -33,11 +24,9 @@ import { ColumnHoverService } from "./rendering/columnHoverService";
 import { ColumnAnimationService } from "./rendering/columnAnimationService";
 import { AutoGroupColService } from "./columns/autoGroupColService";
 import { PaginationProxy } from "./pagination/paginationProxy";
-import { PaginationAutoPageSizeService } from "./pagination/paginationAutoPageSizeService";
 import { RowModelType } from "./interfaces/iRowModel";
 import { ValueCache } from "./valueService/valueCache";
 import { ChangeDetectionService } from "./valueService/changeDetectionService";
-import { AlignedGridsService } from "./alignedGridsService";
 import { UserComponentFactory } from "./components/framework/userComponentFactory";
 import { UserComponentRegistry } from "./components/framework/userComponentRegistry";
 import { AgComponentUtils } from "./components/framework/agComponentUtils";
@@ -48,25 +37,13 @@ import { AnimationFrameService } from "./misc/animationFrameService";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowContainerHeightService } from "./rendering/rowContainerHeightService";
 import { SelectableService } from "./rowNodes/selectableService";
-import { PaginationComp } from "./pagination/paginationComp";
 import { ResizeObserverService } from "./misc/resizeObserverService";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 import { Module } from "./interfaces/iModule";
-import { AgGroupComponent } from "./widgets/agGroupComponent";
-import { AgInputTextField } from "./widgets/agInputTextField";
-import { AgInputTextArea } from "./widgets/agInputTextArea";
-import { AgSlider } from "./widgets/agSlider";
-import { AgInputNumberField } from "./widgets/agInputNumberField";
-import { AgInputRange } from "./widgets/agInputRange";
-import { AgSelect } from "./widgets/agSelect";
-import { AgRichSelect } from "./widgets/agRichSelect";
-import { AgToggleButton } from "./widgets/agToggleButton";
 import { RowPositionUtils } from "./entities/rowPositionUtils";
 import { CellPositionUtils } from "./entities/cellPositionUtils";
-import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { ModuleNames } from "./modules/moduleNames";
-import { UndoRedoService } from "./undoRedo/undoRedoService";
 import { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
 import { HeaderPositionUtils } from "./headerRendering/common/headerPosition";
 import { HeaderNavigationService } from "./headerRendering/common/headerNavigationService";
@@ -81,26 +58,17 @@ import { FakeHScrollComp } from "./gridBodyComp/fakeHScrollComp";
 import { PinnedWidthService } from "./gridBodyComp/pinnedWidthService";
 import { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
 import { RowNodeEventThrottle } from "./entities/rowNodeEventThrottle";
-import { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu";
-import { SortIndicatorComp } from "./headerRendering/cells/column/sortIndicatorComp";
 import { GridOptionsService } from "./gridOptionsService";
 import { LocaleService } from "./localeService";
 import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
 import { DataTypeService } from "./columns/dataTypeService";
-import { AgInputDateField } from "./widgets/agInputDateField";
-import { AgAutocomplete } from "./widgets/agAutocomplete";
-import { QuickFilterService } from "./filter/quickFilterService";
 import { warnOnce, errorOnce } from "./utils/function";
 import { mergeDeep } from "./utils/object";
 import { SyncService } from "./syncService";
 import { OverlayService } from "./rendering/overlays/overlayService";
-import { StateService } from "./misc/stateService";
 import { ExpansionService } from "./misc/expansionService";
-import { ValidationService } from "./validation/validationService";
 import { ApiEventService } from "./misc/apiEventService";
-import { PageSizeSelectorComp } from "./pagination/pageSizeSelector/pageSizeSelectorComp";
 import { AriaAnnouncementService } from "./rendering/ariaAnnouncementService";
-import { MenuService } from "./misc/menuService";
 
 export interface GridParams {
     // INTERNAL - used by Web Components
@@ -145,79 +113,20 @@ export function provideGlobalGridOptions(gridOptions: GridOptions): void {
  * @param params Individually register AG Grid Modules to this grid.
  * @returns api to be used to interact with the grid.
  */
-export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOptions<TData>, params?: Params): GridApi<TData>{
+export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOptions<TData>, params?: Params){
 
     if (!gridOptions) {
         errorOnce('No gridOptions provided to createGrid');
-        return {} as GridApi;
+        return {};
     }   
     const api = new GridCoreCreator().create(eGridDiv, gridOptions, context => {
         const gridComp = new GridComp(eGridDiv);
         context.createBean(gridComp);
     }, undefined, params);
-
-    // @deprecated v31 api no longer mutated onto the provided gridOptions
-    // Instead we place a getter that will log an error when accessed and direct users to the docs
-    // Only apply for direct usages of createGrid, not for frameworks
-    if (!Object.isFrozen(gridOptions) && !(params as GridParams)?.frameworkOverrides) {
-        const apiUrl = 'https://ag-grid.com/javascript-data-grid/grid-interface/#grid-api';
-        Object.defineProperty(gridOptions, 'api', {
-            get: () => {
-                errorOnce(`gridOptions.api is no longer supported. See ${apiUrl}.`);
-                return undefined;
-            },
-            configurable: true,
-        },);       
-    }
     
     return api;
 }
-/**
- * @deprecated v31 use createGrid() instead
- */
-export class Grid {
-    protected logger: Logger;
 
-    private readonly gridOptions: any; // Not typed to enable setting api for backwards compatibility
-
-    constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
-      warnOnce('Since v31 new Grid(...) is deprecated. Use createGrid instead: `const gridApi = createGrid(...)`. The grid api is returned from createGrid and will not be available on gridOptions.');
-
-        if (!gridOptions) {
-            errorOnce('No gridOptions provided to the grid');
-            return;
-        }
-
-        this.gridOptions = gridOptions as any;
-
-        const api = new GridCoreCreator().create(
-            eGridDiv,
-            gridOptions,
-            (context) => {
-                const gridComp = new GridComp(eGridDiv);
-                const bean = context.createBean(gridComp);
-                bean.addDestroyFunc(() => {
-                    this.destroy()
-                });
-            },
-            undefined,
-            params
-        );
-        
-        // Maintain existing behaviour by mutating gridOptions with the apis for deprecated new Grid()
-        this.gridOptions.api = api;
-    }
-
-    public destroy(): void {
-        if (this.gridOptions) {
-            this.gridOptions.api?.destroy();
-            // need to remove these, as we don't own the lifecycle of the gridOptions, we need to
-            // remove the references in case the user keeps the grid options, we want the rest
-            // of the grid to be picked up by the garbage collector
-            delete this.gridOptions.api;
-        }
-    }
-}
 
 let nextGridId = 1;
 
@@ -225,7 +134,7 @@ let nextGridId = 1;
 // their own UI
 export class GridCoreCreator {
 
-    public create(eGridDiv: HTMLElement, providedOptions: GridOptions, createUi: (context: Context) => void, acceptChanges?: (context: Context) => void, params?: GridParams): GridApi {
+    public create(eGridDiv: HTMLElement, providedOptions: GridOptions, createUi: (context: Context) => void, acceptChanges?: (context: Context) => void, params?: GridParams) {
 
         let mergedGridOps: GridOptions = {};
         if (GlobalGridOptions.gridOptions) {
@@ -274,8 +183,7 @@ export class GridCoreCreator {
 
         if (acceptChanges) { acceptChanges(context); }
         
-        const gridApi = context.getBean('gridApi') as GridApi;
-        return gridApi;
+        return undefined;
     }
 
     private registerControllers(beans: Beans, registeredModules: Module[]): void {
@@ -357,28 +265,12 @@ export class GridCoreCreator {
 
     private createAgStackComponentsList(registeredModules: Module[]): any[] {
         let components: ComponentMeta[] = [
-            { componentName: 'AgCheckbox', componentClass: AgCheckbox },
-            { componentName: 'AgRadioButton', componentClass: AgRadioButton },
-            { componentName: 'AgToggleButton', componentClass: AgToggleButton },
-            { componentName: 'AgInputTextField', componentClass: AgInputTextField },
-            { componentName: 'AgInputTextArea', componentClass: AgInputTextArea },
-            { componentName: 'AgInputNumberField', componentClass: AgInputNumberField },
-            { componentName: 'AgInputDateField', componentClass: AgInputDateField },
-            { componentName: 'AgInputRange', componentClass: AgInputRange },
-            { componentName: 'AgRichSelect', componentClass: AgRichSelect },
-            { componentName: 'AgSelect', componentClass: AgSelect },
-            { componentName: 'AgSlider', componentClass: AgSlider },
             { componentName: 'AgGridBody', componentClass: GridBodyComp },
             { componentName: 'AgHeaderRoot', componentClass: GridHeaderComp },
-            { componentName: 'AgSortIndicator', componentClass: SortIndicatorComp },
-            { componentName: 'AgPagination', componentClass: PaginationComp },
-            { componentName: 'AgPageSizeSelector', componentClass: PageSizeSelectorComp },
             { componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent },
-            { componentName: 'AgGroupComponent', componentClass: AgGroupComponent },
             { componentName: 'AgRowContainer', componentClass: RowContainerComp },
             { componentName: 'AgFakeHorizontalScroll', componentClass: FakeHScrollComp },
             { componentName: 'AgFakeVerticalScroll', componentClass: FakeVScrollComp },
-            { componentName: 'AgAutocomplete', componentClass: AgAutocomplete },
         ];
 
         const moduleAgStackComps = this.extractModuleEntity(registeredModules,
@@ -413,22 +305,21 @@ export class GridCoreCreator {
 
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
         const beans = [
-            Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
-            PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
+            Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
-            RowContainerHeightService, HorizontalResizeService, LocaleService, ValidationService,
-            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsService,
-            PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
-            PaginationProxy, RowRenderer, ExpressionService, ColumnFactory,
-            AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,
-            AutoWidthCalculator, StandardMenuFactory, DragAndDropService,
+            RowContainerHeightService, LocaleService,              
+            DisplayedGroupCreator, EventService, GridOptionsService,
+            SelectionService, ColumnModel, HeaderNavigationService,
+            PaginationProxy, RowRenderer, ColumnFactory,
+            NavigationService, ValueCache, ValueService, LoggerFactory,
+            AutoWidthCalculator,
             FocusService, MouseEventService, Environment, CellNavigationService, StylingService,
             ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
-            UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory, RowCssClassCalculator, 
+            AgStackComponentsRegistry, ColumnDefFactory, RowCssClassCalculator, 
             RowNodeBlockLoader, RowNodeSorter, CtrlsService, PinnedWidthService, RowNodeEventThrottle,
-            CtrlsFactory, DataTypeService, QuickFilterService, SyncService, OverlayService, StateService,
-            ExpansionService, ApiEventService, AriaAnnouncementService, MenuService
+            CtrlsFactory, DataTypeService, SyncService, OverlayService,
+            ExpansionService, ApiEventService, AriaAnnouncementService
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);

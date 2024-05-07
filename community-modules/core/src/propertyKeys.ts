@@ -147,7 +147,7 @@ export class PropertyKeys {
     ];
 
     public static ARRAY_PROPERTIES: KeysOfType<any[]>[] = [
-        'sortingOrder', 'alignedGrids', 'rowData', 'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData', 'chartThemes',
+        'sortingOrder', 'rowData', 'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData', 'chartThemes',
         'rowClass', 'paginationPageSizeSelector',
     ];
 
@@ -200,7 +200,7 @@ export class PropertyKeys {
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */
     public static FUNCTIONAL_PROPERTIES: FunctionKeys[] = [
-        'doesExternalFilterPass', 'processPivotResultColDef', 'processPivotResultColGroupDef', 'getBusinessKeyForNode',  'isRowSelectable', 'rowDragText',
+        'doesExternalFilterPass', 'processPivotResultColDef', 'processPivotResultColGroupDef', 'getBusinessKeyForNode',  'isRowSelectable', 
         'groupRowRenderer', 'fullWidthCellRenderer', 'loadingCellRenderer',  'loadingOverlayComponent', 'noRowsOverlayComponent', 'detailCellRenderer',
         'quickFilterParser', 'quickFilterMatcher'
     ];

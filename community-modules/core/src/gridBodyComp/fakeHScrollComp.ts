@@ -3,7 +3,6 @@ import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
 import { getScrollLeft, isVisible, setFixedHeight, setFixedWidth, setScrollLeft } from "../utils/dom";
 import { ColumnModel } from "../columns/columnModel";
 import { Events } from "../eventKeys";
-import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { CenterWidthFeature } from "./centerWidthFeature";
 
@@ -22,7 +21,6 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     @RefSelector('eRightSpacer') private eRightSpacer: HTMLElement;
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
 
     private enableRtl: boolean;
 
@@ -64,9 +62,8 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
     private refreshCompBottom(): void {
         if (!this.invisibleScrollbar) { return; }
-        const bottomPinnedHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
 
-        this.getGui().style.bottom = `${bottomPinnedHeight}px`
+        this.getGui().style.bottom = `${0}px`
     }
 
     protected onScrollVisibilityChanged(): void {

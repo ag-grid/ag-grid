@@ -1,5 +1,4 @@
 import { IComponent } from "../interfaces/iComponent";
-import { DateFilterParams } from "../filter/provided/date/dateFilter";
 import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
 import { AgGridCommon } from "../interfaces/iCommon";
 
@@ -42,7 +41,7 @@ export interface IDate extends BaseDate {
 }
 
 export interface BaseDateParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    filterParams: DateFilterParams;
+    filterParams: any
 }
 
 export interface IDateParams<TData = any, TContext = any> extends BaseDateParams<TData, TContext> {

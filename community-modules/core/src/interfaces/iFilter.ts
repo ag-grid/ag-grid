@@ -1,6 +1,5 @@
 import { ColDef, ValueGetterFunc } from '../entities/colDef';
 import { Column } from '../entities/column';
-import { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 import { AgPromise } from '../utils';
 import { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 import { IComponent } from './iComponent';
@@ -9,7 +8,7 @@ import { IRowModel } from './iRowModel';
 import { IRowNode } from './iRowNode';
 
 export type IFilterType = string | { new(): IFilterComp; } | boolean;
-export type IFloatingFilterType = string | { new(): IFloatingFilterComp; };
+export type IFloatingFilterType = string | { new(): any; };
 
 export interface IFilterDef {
     /**

@@ -1,7 +1,6 @@
 import { Column, ColumnPinnedType } from './entities/column';
 import { ColDef } from './entities/colDef';
 import { ProvidedColumnGroup } from './entities/providedColumnGroup';
-import { FilterRequestSource } from './filter/filterManager';
 import { ChartType } from './interfaces/iChartOptions';
 import { IFilterComp } from './interfaces/iFilter';
 import { CellRange, CellRangeParams } from './interfaces/IRangeService';
@@ -166,7 +165,7 @@ export interface FilterOpenedEvent<TData = any, TContext = any> extends AgGridEv
     /** Column / OriginalColumnGroup that contains the filter */
     column: Column | ProvidedColumnGroup;
     /** Source of the open request */
-    source: FilterRequestSource;
+    source: any;
     /** Parent element of the filter */
     eGui: HTMLElement;
 }

@@ -10,7 +10,6 @@ import { UserComponentFactory } from '../../../components/framework/userComponen
 import { Column, ColumnPinnedType } from "../../../entities/column";
 import { CtrlsService } from "../../../ctrlsService";
 import { HorizontalDirection } from "../../../constants/direction";
-import { DragAndDropService, DragSource } from "../../../dragAndDrop/dragAndDropService";
 import { CssClassApplier } from "../cssClassApplier";
 import { ColumnGroup } from "../../../entities/columnGroup";
 import { setAriaColIndex } from "../../../utils/aria";
@@ -18,7 +17,6 @@ import { Events } from "../../../eventKeys";
 import { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent } from "../../../events";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { WithoutGridCommon } from "../../../interfaces/iCommon";
-import { MenuService } from "../../../misc/menuService";
 import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
 import { getInnerWidth } from "../../../utils/dom";
 import { BrandedType } from "../../../interfaces/brandedType";
@@ -43,8 +41,6 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     @Autowired('focusService') protected readonly focusService: FocusService;
     @Autowired('userComponentFactory') protected readonly userComponentFactory: UserComponentFactory;
     @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
-    @Autowired('dragAndDropService') protected readonly dragAndDropService: DragAndDropService;
-    @Autowired('menuService') protected readonly menuService: MenuService;
 
     protected readonly beans: Beans;
     private instanceId: HeaderCellCtrlInstanceId;
@@ -61,8 +57,6 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     protected column: TColumn
 
     public lastFocusEvent: KeyboardEvent | null = null;
-
-    protected dragSource: DragSource | null = null;
 
     protected abstract resizeHeader(delta: number, shiftKey: boolean): void;
     protected abstract moveHeader(direction: HorizontalDirection): void;
@@ -284,20 +278,12 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     protected removeDragSource(): void {
-        if (this.dragSource) {
-            this.dragAndDropService.removeDragSource(this.dragSource);
-            this.dragSource = null;
-        }
     }
 
     protected handleContextMenuMouseEvent(mouseEvent: MouseEvent | undefined, touchEvent: TouchEvent | undefined, column: Column | ProvidedColumnGroup): void {
         const event = mouseEvent ?? touchEvent!;
         if (this.gos.get('preventDefaultOnContextMenu')) {
             event.preventDefault();
-        }
-        const columnToUse = column instanceof Column ? column : undefined;
-        if (this.menuService.isHeaderContextMenuEnabled(columnToUse)) {
-            this.menuService.showHeaderContextMenu(columnToUse, mouseEvent, touchEvent);
         }
 
         this.dispatchColumnMouseEvent(Events.EVENT_COLUMN_HEADER_CONTEXT_MENU, column);

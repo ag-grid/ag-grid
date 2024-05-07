@@ -3,8 +3,6 @@ import { ICellEditorParams } from "../interfaces/iCellEditor";
 import { AgGridCommon } from "../interfaces/iCommon";
 import { IFilterDef } from '../interfaces/iFilter';
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
-import { IRowDragItem } from "../rendering/row/rowDragComp";
-import { ITooltipParams } from "../rendering/tooltipComponent";
 import { Column } from "./column";
 import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
 import { RowClassParams, GetMainMenuItems, GetContextMenuItems } from "./gridOptions";
@@ -208,7 +206,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.
      * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.
      */
-    tooltipValueGetter?: (params: ITooltipParams<TData, TValue>) => string | any;
+    tooltipValueGetter?: (params: any) => string | any;
     /**
      * Set to `true` (or return `true` from function) to render a selection checkbox in the column.
      * @default false
@@ -541,7 +539,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * If this callback is not set, the `rowDragText` callback in the `gridOptions` will be used and
      * if there is no callback in the `gridOptions` the current cell value will be used.
      */
-    rowDragText?: (params: IRowDragItem, dragItemCount: number) => string;
+    rowDragText?: (params: any, dragItemCount: number) => string;
 
     /**
      * `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop.

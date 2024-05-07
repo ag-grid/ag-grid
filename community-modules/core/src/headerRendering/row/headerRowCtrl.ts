@@ -6,9 +6,7 @@ import { HeaderColumnId, IHeaderColumn } from "../../interfaces/iHeaderColumn";
 import { Events } from "../../eventKeys";
 import { VirtualColumnsChangedEvent } from "../../events";
 import { AbstractHeaderCellCtrl } from "../cells/abstractCell/abstractHeaderCellCtrl";
-import { HeaderFilterCellCtrl } from "../cells/floatingFilter/headerFilterCellCtrl";
 import { HeaderCellCtrl } from "../cells/column/headerCellCtrl";
-import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
 import { values } from "../../utils/generic";
 import { Beans } from "../../rendering/beans";
@@ -108,7 +106,6 @@ export class HeaderRowCtrl extends BeanStub {
         this.addManagedPropertyListener('floatingFiltersHeight', this.onRowHeightChanged.bind(this));
     }
 
-    public getHeaderCellCtrl(column: ColumnGroup): HeaderGroupCellCtrl | undefined;
     public getHeaderCellCtrl(column: Column): HeaderCellCtrl | undefined;
     public getHeaderCellCtrl(column: any): any {
         if (!this.headerCellCtrls) { return; }
@@ -158,16 +155,11 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     public getTopAndHeight() {
-        const { columnModel, filterManager } = this.beans;
+        const { columnModel } = this.beans;
         let headerRowCount = columnModel.getHeaderRowCount();
         const sizes: number[] = [];
 
         let numberOfFloating = 0;
-
-        if (filterManager.hasFloatingFilters()) {
-            headerRowCount++;
-            numberOfFloating = 1;
-        }
 
         const groupHeight = columnModel.getColumnGroupHeaderRowHeight();
         const headerHeight = columnModel.getColumnHeaderRowHeight();
@@ -268,10 +260,8 @@ export class HeaderRowCtrl extends BeanStub {
         if (headerCtrl == null) {
             switch (this.type) {
                 case HeaderRowType.FLOATING_FILTER:
-                    headerCtrl = this.createBean(new HeaderFilterCellCtrl(headerColumn as Column, this.beans, this));
                     break;
                 case HeaderRowType.COLUMN_GROUP:
-                    headerCtrl = this.createBean(new HeaderGroupCellCtrl(headerColumn as ColumnGroup, this.beans, this));
                     break;
                 default:
                     headerCtrl = this.createBean(new HeaderCellCtrl(headerColumn as Column, this.beans, this));
@@ -279,7 +269,7 @@ export class HeaderRowCtrl extends BeanStub {
             }
         }
 
-        this.headerCellCtrls.set(idOfChild, headerCtrl);
+        this.headerCellCtrls.set(idOfChild, headerCtrl!);
     }
 
     private getColumnsInViewport(): IHeaderColumn[] {

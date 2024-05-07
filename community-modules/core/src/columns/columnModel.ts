@@ -2,7 +2,6 @@ import { ColumnGroup } from '../entities/columnGroup';
 import { Column, ColumnInstanceId, ColumnPinnedType } from '../entities/column';
 import { AbstractColDef, ColDef, ColGroupDef, IAggFunc, HeaderValueGetterParams, HeaderLocation } from '../entities/colDef';
 import { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
-import { ExpressionService } from '../valueService/expressionService';
 import { ColumnFactory, depthFirstOriginalTreeSearch } from './columnFactory';
 import { DisplayedGroupCreator } from './displayedGroupCreator';
 import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
@@ -46,7 +45,6 @@ import { ColumnDefFactory } from "./columnDefFactory";
 import { convertToMap } from '../utils/map';
 import { warnOnce } from '../utils/function';
 import { CtrlsService } from '../ctrlsService';
-import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { PropertyChangedSource } from '../gridOptionsService';
 
@@ -119,7 +117,6 @@ export type Maybe<T> = T | null | undefined;
 @Bean('columnModel')
 export class ColumnModel extends BeanStub {
 
-    @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
     @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
@@ -736,19 +733,7 @@ export class ColumnModel extends BeanStub {
             }
         });
 
-        let headerGroupCtrl: HeaderGroupCellCtrl | undefined;
-
         const resizedColumns: Column[] = [];
-
-        for (const columnGroup of columnGroups) {
-            for (const headerContainerCtrl of this.ctrlsService.getHeaderRowContainerCtrls()) {
-                headerGroupCtrl = headerContainerCtrl.getHeaderCtrlForColumn(columnGroup);
-                if (headerGroupCtrl) { break; }
-            }
-            if (headerGroupCtrl) {
-                headerGroupCtrl.resizeLeafColumnsToFit(source);
-            }
-        }
 
         return resizedColumns;
     }
@@ -2711,9 +2696,6 @@ export class ColumnModel extends BeanStub {
             if (typeof headerValueGetter === 'function') {
                 // valueGetter is a function, so just call it
                 return headerValueGetter(params);
-            } else if (typeof headerValueGetter === 'string') {
-                // valueGetter is an expression, so execute the expression
-                return this.expressionService.evaluate(headerValueGetter, params);
             }
             console.warn('AG Grid: headerValueGetter must be a function or a string');
             return '';

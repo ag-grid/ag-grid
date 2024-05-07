@@ -85,19 +85,6 @@ export {
     ExcelSheetNameGetterParams,
 } from "./interfaces/iExcelCreator";
 
-// dragAndDrop
-export {
-    DragAndDropService,
-    DragSourceType,
-    DropTarget,
-    DragSource,
-    DragItem,
-    DraggingEvent
-} from "./dragAndDrop/dragAndDropService";
-export { RowDropZoneParams, RowDropZoneEvents } from "./gridBodyComp/rowDragFeature";
-export { DragService, DragListenerParams } from "./dragAndDrop/dragService";
-export { IRowDragItem } from "./rendering/row/rowDragComp";
-export { VirtualListDragFeature, VirtualListDragItem, VirtualListDragParams } from "./dragAndDrop/virtualListDragFeature";
 
 // entities
 export { Column, ColumnPinnedType } from "./entities/column";
@@ -108,24 +95,6 @@ export { RowHighlightPosition, RowPinnedType, IRowNode } from "./interfaces/iRow
 
 // filter
 export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType, FilterModel, BaseFilter, BaseFilterParams } from "./interfaces/iFilter";
-export { ISetFilter, SetFilterModel, ISetFilterParams, SetFilterParams, SetFilterValues, SetFilterModelValue, SetFilterValuesFunc, SetFilterValuesFuncParams, ISetFilterTreeListTooltipParams } from "./interfaces/iSetFilter";
-export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
-export { IMultiFilter, IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, MultiFilterParams, IMultiFilterDef } from './interfaces/iMultiFilter';
-export { FilterWrapperComp } from './filter/filterWrapperComp';
-
-export { ProvidedFilter, IProvidedFilter, IProvidedFilterParams, ProvidedFilterParams } from "./filter/provided/providedFilter";
-export { ISimpleFilter, SimpleFilter, ISimpleFilterParams, SimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel, JoinOperator, IFilterPlaceholderFunctionParams, FilterPlaceholderFunction } from "./filter/provided/simpleFilter";
-export { ScalarFilter, IScalarFilterParams, ScalarFilterParams } from "./filter/provided/scalarFilter";
-
-export { NumberFilter, INumberFilterParams, NumberFilterParams, NumberFilterModel } from "./filter/provided/number/numberFilter";
-export { TextFilter, ITextFilterParams, TextFilterParams, TextFilterModel, TextFormatter, TextMatcherParams, TextMatcher } from "./filter/provided/text/textFilter";
-export { DateFilter, IDateFilterParams, DateFilterParams, DateFilterModel } from "./filter/provided/date/dateFilter";
-
-export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange, IFloatingFilterParent, IFloatingFilterParentCallback, BaseFloatingFilter } from "./filter/floating/floatingFilter";
-export { TextFloatingFilter, ITextFloatingFilterParams } from './filter/provided/text/textFloatingFilter';
-export { INumberFloatingFilterParams } from './filter/provided/number/numberFloatingFilter';
-export { HeaderFilterCellComp } from './headerRendering/cells/floatingFilter/headerFilterCellComp';
-export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
 
 export {
     AdvancedFilterModel,
@@ -157,8 +126,6 @@ export { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
 export { RowContainerName, IRowContainerComp, RowContainerCtrl, RowContainerType, getRowContainerTypeForName } from "./gridBodyComp/rowContainer/rowContainerCtrl";
 
 // headerRendering
-export { BodyDropPivotTarget } from "./headerRendering/columnDrag/bodyDropPivotTarget";
-export { BodyDropTarget } from "./headerRendering/columnDrag/bodyDropTarget";
 export { CssClassApplier } from "./headerRendering/cells/cssClassApplier";
 export { HeaderRowContainerComp } from "./headerRendering/rowContainer/headerRowContainerComp";
 export { GridHeaderComp } from "./headerRendering/gridHeaderComp";
@@ -166,14 +133,8 @@ export { GridHeaderCtrl, IGridHeaderComp } from "./headerRendering/gridHeaderCtr
 export { HeaderRowComp, HeaderRowType } from "./headerRendering/row/headerRowComp";
 export { HeaderRowCtrl, IHeaderRowComp } from "./headerRendering/row/headerRowCtrl";
 export { HeaderCellCtrl, IHeaderCellComp } from "./headerRendering/cells/column/headerCellCtrl";
-export { SortIndicatorComp } from "./headerRendering/cells/column/sortIndicatorComp";
-export { HeaderFilterCellCtrl, IHeaderFilterCellComp } from "./headerRendering/cells/floatingFilter/headerFilterCellCtrl";
-export { HeaderGroupCellCtrl, IHeaderGroupCellComp } from "./headerRendering/cells/columnGroup/headerGroupCellCtrl";
 export { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "./headerRendering/cells/abstractCell/abstractHeaderCellCtrl";
 export { HeaderRowContainerCtrl, IHeaderRowContainerComp } from "./headerRendering/rowContainer/headerRowContainerCtrl";
-export { HorizontalResizeService } from "./headerRendering/common/horizontalResizeService";
-export { MoveColumnFeature } from "./headerRendering/columnDrag/moveColumnFeature";
-export { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu";
 
 // layout
 export { TabbedLayout, TabbedItem } from "./layout/tabbedLayout";
@@ -182,30 +143,16 @@ export { TabbedLayout, TabbedItem } from "./layout/tabbedLayout";
 export { ResizeObserverService } from "./misc/resizeObserverService";
 export { IImmutableService } from "./interfaces/iImmutableService";
 export { AnimationFrameService } from "./misc/animationFrameService";
-export { AlignedGrid } from "./interfaces/iAlignedGrid";
 export { ExpansionService } from "./misc/expansionService";
-export { MenuService, IContextMenuParams } from "./misc/menuService";
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from "./interfaces/iCellEditor";
-export { LargeTextCellEditor, ILargeTextEditorParams } from "./rendering/cellEditors/largeTextCellEditor";
-export { PopupEditorWrapper } from "./rendering/cellEditors/popupEditorWrapper";
-export { SelectCellEditor, ISelectCellEditorParams } from "./rendering/cellEditors/selectCellEditor";
-export { TextCellEditor, ITextCellEditorParams } from "./rendering/cellEditors/textCellEditor";
-export { NumberCellEditor, INumberCellEditorParams } from "./rendering/cellEditors/numberCellEditor";
-export { DateCellEditor, IDateCellEditorParams } from "./rendering/cellEditors/dateCellEditor";
-export { DateStringCellEditor, IDateStringCellEditorParams } from "./rendering/cellEditors/dateStringCellEditor";
 export { IRichCellEditorParams, RichCellEditorValuesCallback, RichCellEditorParams } from "./interfaces/iRichCellEditorParams";
-export { CheckboxCellEditor } from "./rendering/cellEditors/checkboxCellEditor";
 
 
 // rendering / cellRenderers
 export { Beans } from "./rendering/beans";
 export { ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParams, ISetFilterCellRendererParams } from "./rendering/cellRenderers/iCellRenderer";
-export { AnimateShowChangeCellRenderer } from "./rendering/cellRenderers/animateShowChangeCellRenderer";
-export { AnimateSlideCellRenderer } from "./rendering/cellRenderers/animateSlideCellRenderer";
-export { GroupCellRenderer, } from "./rendering/cellRenderers/groupCellRenderer";
-export { GroupCellRendererParams, IGroupCellRendererParams, IGroupCellRendererFullRowParams, FooterValueGetterFunc, TotalValueGetterFunc, IGroupCellRenderer, GroupCellRendererCtrl, GroupCheckboxSelectionCallback, GroupCheckboxSelectionCallbackParams } from "./rendering/cellRenderers/groupCellRendererCtrl";
 
 // status bar components
 export { StatusPanelDef, IStatusPanel, IStatusPanelComp, IStatusPanelParams, AggregationStatusPanelAggFunc, IAggregationStatusPanelParams, AggregationStatusPanelParams } from "./interfaces/iStatusPanel";
@@ -222,21 +169,16 @@ export { INoRowsOverlayComp, INoRowsOverlayParams, INoRowsOverlay } from "./rend
 
 // features
 export { SetLeftFeature } from "./rendering/features/setLeftFeature";
-export { PositionableFeature, ResizableStructure, ResizableSides, PositionableOptions } from "./rendering/features/positionableFeature";
 
 // rendering
 export { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
-export { CheckboxSelectionComponent } from "./rendering/checkboxSelectionComponent";
 export { CellComp } from "./rendering/cell/cellComp";
 export { CellCtrl, ICellComp } from "./rendering/cell/cellCtrl";
 export { RowCtrl, IRowComp } from "./rendering/row/rowCtrl";
 export { RowRenderer, FlashCellsParams, GetCellRendererInstancesParams, RefreshCellsParams, RedrawRowsParams, GetCellEditorInstancesParams } from "./rendering/rowRenderer";
-export { ILoadingCellRenderer, ILoadingCellRendererComp, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
 export { CssClassManager } from "./rendering/cssClassManager";
-export { CheckboxCellRenderer, ICheckboxCellRendererParams } from "./rendering/cellRenderers/checkboxCellRenderer";
 
 // row models
-export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 export { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 export { RowDataTransaction } from "./interfaces/rowDataTransaction";
 export { ServerSideTransaction, ServerSideTransactionResult, ServerSideTransactionResultStatus } from "./interfaces/serverSideTransaction";
@@ -262,40 +204,13 @@ export { UpdateLayoutClassesParams, LayoutCssClasses } from "./styling/layoutFea
 
 // widgets
 export { AgAbstractField, FieldElement, AgFieldParams } from "./widgets/agAbstractField";
-export { AgCheckbox, AgCheckboxParams } from "./widgets/agCheckbox";
-export { AgRadioButton, AgRadioButtonParams } from "./widgets/agRadioButton";
-export { AgToggleButton, AgToggleButtonParams } from "./widgets/agToggleButton";
-export { AgInputTextField, AgInputTextFieldParams } from "./widgets/agInputTextField";
-export { AgInputTextArea } from "./widgets/agInputTextArea";
-export { AgInputNumberField, AgInputNumberFieldParams } from "./widgets/agInputNumberField";
-export { AgInputDateField } from "./widgets/agInputDateField";
-export { AgInputRange } from "./widgets/agInputRange";
-export { AgRichSelect, RichSelectParams } from "./widgets/agRichSelect";
-export { AgSelect, AgSelectParams } from "./widgets/agSelect";
-export { AgSlider, AgSliderParams } from "./widgets/agSlider";
-export { AgGroupComponent, AgGroupComponentParams } from "./widgets/agGroupComponent";
-export { AgMenuItemRenderer } from "./widgets/agMenuItemRenderer";
-export { AgMenuItemComponent, MenuItemActivatedEvent, CloseMenuEvent } from "./widgets/agMenuItemComponent";
-export { AgMenuList } from "./widgets/agMenuList";
-export { AgMenuPanel } from "./widgets/agMenuPanel";
-export { AgDialog } from "./widgets/agDialog";
-export { AgPanel } from "./widgets/agPanel";
-export { ListOption } from "./widgets/agList";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { ManagedFocusFeature, ManagedFocusCallbacks } from "./widgets/managedFocusFeature";
 export { TabGuardComp } from "./widgets/tabGuardComp";
 export { TabGuardCtrl, ITabGuard, TabGuardClassNames } from "./widgets/tabGuardCtrl";
-export { PopupComponent } from "./widgets/popupComponent";
-export { PopupService, AgPopup, PopupPositionParams, PopupEventParams } from "./widgets/popupService";
-export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 export { VirtualList, VirtualListModel } from "./widgets/virtualList";
 
 export { AgAbstractLabel, AgLabelParams } from "./widgets/agAbstractLabel";
-export { AgPickerField, AgPickerFieldParams } from "./widgets/agPickerField";
-export { AgAutocomplete, AutocompleteOptionSelectedEvent, AutocompleteValidChangedEvent, AutocompleteValueChangedEvent, AutocompleteValueConfirmedEvent } from "./widgets/agAutocomplete";
-export { AutocompleteEntry, AutocompleteListParams } from "./widgets/autocompleteParams";
-export { PillDragComp } from "./widgets/pillDragComp";
-export { PillDropZonePanel, PillDropZonePanelParams } from "./widgets/pillDropZonePanel";
 
 // range
 export {
@@ -316,7 +231,6 @@ export {
 } from './interfaces/IChartService';
 
 // master detail
-export { IDetailCellRendererParams, GetDetailRowData, GetDetailRowDataParams, IDetailCellRenderer, IDetailCellRendererCtrl } from './interfaces/masterDetail';
 
 // exporter
 export {
@@ -331,11 +245,9 @@ export { ICsvCreator } from "./interfaces/iCsvCreator";
 export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 export { CellNavigationService } from "./cellNavigationService";
-export { AlignedGridsService } from "./alignedGridsService";
 export { KeyCode } from "./constants/keyCode";
 export { VerticalDirection, HorizontalDirection } from "./constants/direction";
-export { Grid, GridParams, Params, GridCoreCreator, createGrid, provideGlobalGridOptions } from "./grid";
-export { GridApi, DetailGridInfo, StartEditingCellParams, GetCellValueParams } from "./gridApi";
+export { GridParams, Params, GridCoreCreator, createGrid, provideGlobalGridOptions } from "./grid";
 export { Events } from "./eventKeys";
 export { FocusService } from "./focusService";
 export { GridOptionsService, PropertyChangedEvent } from "./gridOptionsService";
@@ -352,7 +264,6 @@ export * from "./utils/index"; // please leave this as is - we want it to be exp
 export { ColumnSortState } from "./utils/aria";
 export { ValueService } from "./valueService/valueService";
 export { ValueCache } from "./valueService/valueCache";
-export { ExpressionService } from "./valueService/expressionService";
 
 //state
 export {
@@ -549,13 +460,9 @@ export { IAfterGuiAttachedParams, ContainerType } from "./interfaces/iAfterGuiAt
 export { IComponent } from "./interfaces/iComponent";
 export { IEventEmitter } from "./interfaces/iEventEmitter";
 export { IHeaderParams, IHeaderComp, IHeader } from "./headerRendering/cells/column/headerComp";
-export { IHeaderGroupParams, IHeaderGroup, IHeaderGroupComp } from "./headerRendering/cells/columnGroup/headerGroupComp";
 export { WrappableInterface, BaseComponentWrapper, FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 export { IFrameworkOverrides, FrameworkOverridesIncomingSource } from "./interfaces/iFrameworkOverrides";
 export { Environment } from "./environment";
-export { ITooltipComp, ITooltipParams, TooltipLocation } from "./rendering/tooltipComponent";
-export { TooltipFeature } from "./widgets/tooltipFeature";
-export { TooltipStateManager } from "./widgets/tooltipStateManager";
 export { IAggregationStage } from "./interfaces/iAggregationStage";
 export { MenuItemLeafDef, MenuItemDef, IMenuConfigParams, IMenuItemParams, IMenuItem, IMenuItemComp, BaseMenuItem, BaseMenuItemParams } from "./interfaces/menuItem";
 

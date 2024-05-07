@@ -19,11 +19,9 @@ import { BeanStub } from "../context/beanStub";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { Beans } from "./beans";
 import { RowContainerHeightService } from "./rowContainerHeightService";
-import { ICellRenderer } from "./cellRenderers/iCellRenderer";
 import { ICellEditor } from "../interfaces/iCellEditor";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowPosition } from "../entities/rowPositionUtils";
-import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
@@ -32,7 +30,6 @@ import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
 import { removeFromArray } from "../utils/array";
-import { StickyRowFeature } from "./features/stickyRowFeature";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { browserSupportsPreventScroll } from "../utils/browser";
 import { WithoutGridCommon } from "../interfaces/iCommon";
@@ -87,7 +84,6 @@ export class RowRenderer extends BeanStub {
     @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
     @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
     @Autowired("columnModel") private columnModel: ColumnModel;
-    @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
     @Autowired("rowModel") private rowModel: IRowModel;
     @Autowired("focusService") private focusService: FocusService;
     @Autowired("beans") private beans: Beans;
@@ -125,7 +121,6 @@ export class RowRenderer extends BeanStub {
 
     private printLayout: boolean;
     private embedFullWidthRows: boolean;
-    private stickyRowFeature: StickyRowFeature;
 
     private dataFirstRenderedFired = false;
 
@@ -160,15 +155,6 @@ export class RowRenderer extends BeanStub {
             'enableRangeSelection', 'enableCellTextSelection',
         ], () => this.redrawRows());
 
-        if (this.gos.isGroupRowsSticky()) {
-            const rowModelType = this.rowModel.getType();
-            if (rowModelType === 'clientSide' || rowModelType === 'serverSide') {
-                this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(
-                    this.createRowCon.bind(this),
-                    this.destroyRowCtrls.bind(this)
-                ));
-            }
-        }
 
         this.registerCellEventListeners();
 
@@ -192,15 +178,11 @@ export class RowRenderer extends BeanStub {
     }
 
     public getStickyTopRowCtrls(): RowCtrl[] {
-        if (!this.stickyRowFeature) { return []; }
-
-        return this.stickyRowFeature.getStickyTopRowCtrls();
+        return [];
     }
 
     public getStickyBottomRowCtrls(): RowCtrl[] {
-        if (!this.stickyRowFeature) { return []; }
-
-        return this.stickyRowFeature.getStickyBottomRowCtrls();
+       return [];
     }
 
     private updateAllRowCtrls(): void {
@@ -411,15 +393,6 @@ export class RowRenderer extends BeanStub {
     }
 
     public refreshFloatingRowComps(): void {
-        this.refreshFloatingRows(
-            this.topRowCtrls,
-            this.pinnedRowModel.getPinnedTopRowData()
-        );
-
-        this.refreshFloatingRows(
-            this.bottomRowCtrls,
-            this.pinnedRowModel.getPinnedBottomRowData()
-        );
     }
 
     public getTopRowCtrls(): RowCtrl[] {
@@ -434,42 +407,12 @@ export class RowRenderer extends BeanStub {
         return this.bottomRowCtrls;
     }
 
-    private refreshFloatingRows(rowComps: RowCtrl[], rowNodes: RowNode[]): void {
-        rowComps.forEach((row: RowCtrl) => {
-            row.destroyFirstPass();
-            row.destroySecondPass();
-        });
-
-        rowComps.length = 0;
-
-        if (!rowNodes) { return; }
-
-        rowNodes.forEach(rowNode => {
-            const rowCtrl = new RowCtrl(
-                rowNode,
-                this.beans,
-                false,
-                false,
-                this.printLayout
-            );
-
-            rowComps.push(rowCtrl);
-        });
-    }
-
     private onPinnedRowDataChanged(): void {
-        // recycling rows in order to ensure cell editing is not cancelled
-        const params: RefreshViewParams = {
-            recycleRows: true
-        };
-
-        this.redrawAfterModelUpdate(params);
+        
     }
 
     public redrawRow(rowNode: RowNode, suppressEvent = false) {
-        if (rowNode.sticky) {
-            this.stickyRowFeature.refreshStickyNode(rowNode);
-        } else if (this.cachedRowCtrls?.has(rowNode)) {
+        if (this.cachedRowCtrls?.has(rowNode)) {
             // delete row from cache if it needs redrawn
             // if it's in the cache no updates need fired, as nothing
             // has been rendered
@@ -568,10 +511,6 @@ export class RowRenderer extends BeanStub {
         }
 
         this.workOutFirstAndLastRowsToRender();
-
-        if (this.stickyRowFeature) {
-            this.stickyRowFeature.checkStickyRows();
-        }
 
         this.recycleRows(rowsToRecycle, animate);
 
@@ -688,9 +627,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private getAllRowCtrls(): RowCtrl[] {
-        const stickyTopRowCtrls = (this.stickyRowFeature && this.stickyRowFeature.getStickyTopRowCtrls()) || [];
-        const stickyBottomRowCtrls = (this.stickyRowFeature && this.stickyRowFeature.getStickyBottomRowCtrls()) || [];
-        const res = [...this.topRowCtrls, ...this.bottomRowCtrls, ...stickyTopRowCtrls, ...stickyBottomRowCtrls];
+        const res = [...this.topRowCtrls, ...this.bottomRowCtrls];
 
         for (const key in this.rowCtrlsByRowIndex) {
             res.push(this.rowCtrlsByRowIndex[key]);
@@ -734,36 +671,8 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    public getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRenderer[] {
-        const cellRenderers = this.getCellCtrls(params.rowNodes, params.columns)
-            .map(cellCtrl => cellCtrl.getCellRenderer())
-            .filter(renderer => renderer != null) as ICellRenderer[];
-        if (params.columns?.length) {
-            return cellRenderers;
-        }
-
-        const fullWidthRenderers: ICellRenderer[] = [];
-        const rowIdMap = this.mapRowNodes(params.rowNodes);
-
-        this.getAllRowCtrls().forEach(rowCtrl => {
-            if (rowIdMap && !this.isRowInMap(rowCtrl.getRowNode(), rowIdMap)) {
-                return;
-            }
-
-            if (!rowCtrl.isFullWidth()) {
-                return;
-            }
-
-            const renderers = rowCtrl.getFullWidthCellRenderers();
-            for (let i = 0; i < renderers.length; i++) {
-                const renderer = renderers[i];
-                if (renderer != null) {
-                    fullWidthRenderers.push(renderer);
-                }
-            }
-        });
-
-        return [...fullWidthRenderers, ...cellRenderers];
+    public getCellRendererInstances(params: GetCellRendererInstancesParams): any[] {
+       return [];
     }
 
     public getCellEditorInstances(params: GetCellRendererInstancesParams): ICellEditor[] {
@@ -783,14 +692,6 @@ export class RowRenderer extends BeanStub {
 
     public getEditingCells(): CellPosition[] {
         const res: CellPosition[] = [];
-
-        this.getAllCellCtrls().forEach(cellCtrl => {
-            if (cellCtrl.isEditing()) {
-                const cellPosition = cellCtrl.getCellPosition();
-                res.push(cellPosition);
-            }
-        });
-
         return res;
     }
 
@@ -931,21 +832,12 @@ export class RowRenderer extends BeanStub {
         const { afterScroll } = params;
         let cellFocused: CellPosition | undefined;
 
-        // only try to refocus cells shifting in and out of sticky container
-        // if the browser supports focus ({ preventScroll })
-        if (this.stickyRowFeature && browserSupportsPreventScroll()) {
-            cellFocused = this.getCellToRestoreFocusToAfterRefresh() || undefined;
-        }
 
         const oldFirstRow = this.firstRenderedRow;
         const oldLastRow = this.lastRenderedRow;
         this.workOutFirstAndLastRowsToRender();
 
         let hasStickyRowChanges = false;
-
-        if (this.stickyRowFeature) {
-            hasStickyRowChanges = this.stickyRowFeature.checkStickyRows();
-        }
 
         const rangeChanged = this.firstRenderedRow !== oldFirstRow || this.lastRenderedRow !== oldLastRow;
 

@@ -1,4 +1,3 @@
-import { ExpressionService } from "./expressionService";
 import { ColumnModel } from "../columns/columnModel";
 import { ValueGetterParams, KeyCreatorParams, ValueSetterParams, ValueParserParams, ValueFormatterParams } from "../entities/colDef";
 import { Autowired, Bean, PostConstruct } from "../context/context";
@@ -16,7 +15,6 @@ import { DataTypeService } from "../columns/dataTypeService";
 @Bean('valueService')
 export class ValueService extends BeanStub {
 
-    @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('dataTypeService') private dataTypeService: DataTypeService;
@@ -132,7 +130,6 @@ export class ValueService extends BeanStub {
             if (typeof valueParser === 'function') {
                 return valueParser(params);
             }
-            return this.expressionService.evaluate(valueParser, params);
         }
         return newValue;
     }
@@ -166,8 +163,6 @@ export class ValueService extends BeanStub {
             });
             if (typeof formatter === 'function') {
                 result = formatter(params);
-            } else {
-                result = this.expressionService.evaluate(formatter, params);
             }
         } else if (colDef.refData) {
             return colDef.refData[value] || '';
@@ -245,14 +240,12 @@ export class ValueService extends BeanStub {
 
         params.newValue = newValue;
 
-        let valueWasDifferent: boolean;
+        let valueWasDifferent: boolean = false;
 
         if (exists(valueSetter)) {
             if (typeof valueSetter === 'function') {
                 valueWasDifferent = valueSetter(params)
-            } else {
-                valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
-            }
+            } 
         } else {
             valueWasDifferent = this.setValueUsingField(rowNode.data, field, newValue, column.isFieldContainsDots());
         }
@@ -360,7 +353,7 @@ export class ValueService extends BeanStub {
         if (typeof valueGetter === 'function') {
             return valueGetter(params);
         }
-        return this.expressionService.evaluate(valueGetter, params);
+        return undefined;
     }
 
     private executeValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: IRowNode): any {
@@ -386,7 +379,7 @@ export class ValueService extends BeanStub {
         if (typeof valueGetter === 'function') {
             result = valueGetter(params)
         } else {
-            result = this.expressionService.evaluate(valueGetter, params);
+            result = undefined;
         }
 
         // if a turn is active, store the value in case the grid asks for it again

@@ -1,26 +1,19 @@
+import { ColumnModel, ISizeColumnsToFitParams } from "../columns/columnModel";
 import { BeanStub } from "../context/beanStub";
 import { Autowired } from "../context/context";
-import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
-import { Events } from "../eventKeys";
-import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
 import { CtrlsService } from "../ctrlsService";
-import { ColumnModel, ISizeColumnsToFitParams } from "../columns/columnModel";
-import { ScrollVisibleService } from "./scrollVisibleService";
-import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
-import { getInnerWidth, isElementChildOfClass, isVerticalScrollShowing } from "../utils/dom";
+import { Events } from "../eventKeys";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
-import { RowDragFeature } from "./rowDragFeature";
-import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
-import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { getTabIndex, isInvisibleScrollbar, isIOSUserAgent } from "../utils/browser";
-import { RowRenderer } from "../rendering/rowRenderer";
-import { PopupService } from "../widgets/popupService";
-import { MouseEventService } from "./mouseEventService";
 import { IRowModel } from "../interfaces/iRowModel";
-import { TouchListener, LongTapEvent } from "../widgets/touchListener";
 import { AnimationFrameService } from "../misc/animationFrameService";
-import { FilterManager } from "../filter/filterManager";
-import { MenuService, EventShowContextMenuParams } from "../misc/menuService";
+import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
+import { RowRenderer } from "../rendering/rowRenderer";
+import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
+import { isInvisibleScrollbar } from "../utils/browser";
+import { getInnerWidth, isElementChildOfClass, isVerticalScrollShowing } from "../utils/dom";
+import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
+import { MouseEventService } from "./mouseEventService";
+import { ScrollVisibleService } from "./scrollVisibleService";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -61,15 +54,9 @@ export class GridBodyCtrl extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
-    @Autowired('menuService') private menuService: MenuService;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('popupService') public popupService: PopupService;
     @Autowired('mouseEventService') public mouseEventService: MouseEventService;
     @Autowired('rowModel') public rowModel: IRowModel;
-    @Autowired('filterManager') private filterManager: FilterManager;
 
     private comp: IGridBodyComp;
     private eGridBody: HTMLElement;
@@ -82,7 +69,6 @@ export class GridBodyCtrl extends BeanStub {
     private stickyBottomHeight: number = 0;
     
     private bodyScrollFeature: GridBodyScrollFeature;
-    private rowDragFeature: RowDragFeature;
 
     public getScrollFeature(): GridBodyScrollFeature {
         return this.bodyScrollFeature;
@@ -114,7 +100,6 @@ export class GridBodyCtrl extends BeanStub {
 
         this.createManagedBean(new LayoutFeature(this.comp));
         this.bodyScrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
-        this.addRowDragListener();
 
         this.setupRowAnimationCssClass();
 
@@ -124,9 +109,6 @@ export class GridBodyCtrl extends BeanStub {
         this.addBodyViewportListener();
         this.setFloatingHeights();
         this.disableBrowserDragging();
-        this.addStopEditingWhenGridLosesFocus();
-
-        this.filterManager.setupAdvancedFilterHeaderComp(eTop);
 
         this.ctrlsService.register('gridBodyCtrl',this);
     }
@@ -138,7 +120,6 @@ export class GridBodyCtrl extends BeanStub {
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
     }
 
@@ -209,44 +190,8 @@ export class GridBodyCtrl extends BeanStub {
         });
     }
 
-    private addStopEditingWhenGridLosesFocus(): void {
-        if (!this.gos.get('stopEditingWhenCellsLoseFocus')) { return; }
-
-        const focusOutListener = (event: FocusEvent): void => {
-            // this is the element the focus is moving to
-            const elementWithFocus = event.relatedTarget as HTMLElement;
-
-            if (getTabIndex(elementWithFocus) === null) {
-                this.rowRenderer.stopEditing();
-                return;
-            }
-
-            let clickInsideGrid =
-                // see if click came from inside the viewports
-                viewports.some(viewport => viewport.contains(elementWithFocus))
-                // and also that it's not from a detail grid
-                && this.mouseEventService.isElementInThisGrid(elementWithFocus);
-
-            if (!clickInsideGrid) {
-                const popupService = this.popupService;
-
-                clickInsideGrid =
-                    popupService.getActivePopups().some(popup => popup.contains(elementWithFocus)) ||
-                    popupService.isElementWithinCustomPopup(elementWithFocus);
-            }
-
-            if (!clickInsideGrid) {
-                this.rowRenderer.stopEditing();
-            }
-        };
-
-        const viewports = [this.eBodyViewport, this.eBottom, this.eTop, this.eStickyTop, this.eStickyBottom];
-
-        viewports.forEach(viewport => this.addManagedListener(viewport, 'focusout', focusOutListener));
-    }
-
     public updateRowCount(): void {
-        const headerCount = this.headerNavigationService.getHeaderRowCount() + this.filterManager.getHeaderRowCount();
+        const headerCount = this.headerNavigationService.getHeaderRowCount();
 
         const rowCount = this.rowModel.isLastRowIndexKnown() ? this.rowModel.getRowCount() : -1;
         const total = rowCount === -1 ? -1 : (headerCount + rowCount);
@@ -295,7 +240,6 @@ export class GridBodyCtrl extends BeanStub {
         // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
         const listener = this.onBodyViewportContextMenu.bind(this);
         this.addManagedListener(this.eBodyViewport, 'contextmenu', listener);
-        this.mockContextMenuForIPad(listener);
 
         this.addManagedListener(this.eBodyViewport, 'wheel', this.onBodyViewportWheel.bind(this));
         this.addManagedListener(this.eStickyTop, 'wheel', this.onStickyWheel.bind(this));
@@ -337,29 +281,15 @@ export class GridBodyCtrl extends BeanStub {
 
         if (target === this.eBodyViewport || target === this.ctrlsService.get('center').getViewportElement()) {
             // show it
-            this.menuService.showContextMenu({ mouseEvent, touchEvent, value: null, anchorToElement: this.eGridBody } as EventShowContextMenuParams);
         }
     }
 
-    private mockContextMenuForIPad(listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void): void {
-        // we do NOT want this when not in iPad
-        if (!isIOSUserAgent()) { return; }
-
-        const touchListener = new TouchListener(this.eBodyViewport);
-        const longTapListener = (event: LongTapEvent) => {
-            listener(undefined, event.touchStart, event.touchEvent);
-        };
-
-        this.addManagedListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
-        this.addDestroyFunc(() => touchListener.destroy());
-    }
+  
 
     private onBodyViewportWheel(e: WheelEvent): void {
         if (!this.gos.get('suppressScrollWhenPopupsAreOpen')) { return; }
 
-        if (this.popupService.hasAnchoredPopup()) {
-            e.preventDefault();
-        }
+       
     }
 
     private onStickyWheel(e: WheelEvent): void {
@@ -382,24 +312,9 @@ export class GridBodyCtrl extends BeanStub {
         return this.eBodyViewport.scrollTop - oldScrollPosition;
     }
 
-    private addRowDragListener(): void {
-        this.rowDragFeature = this.createManagedBean(new RowDragFeature(this.eBodyViewport));
-        this.dragAndDropService.addDropTarget(this.rowDragFeature);
-    }
-
-    public getRowDragFeature(): RowDragFeature {
-        return this.rowDragFeature;
-    }
-
-    private onPinnedRowDataChanged(): void {
-        this.setFloatingHeights();
-    }
-
-    private setFloatingHeights(): void {
-        const { pinnedRowModel } = this;
-
-        let floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
-        let floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight();
+       private setFloatingHeights(): void {
+        let floatingTopHeight = 0;
+        let floatingBottomHeight = 0;
         this.comp.setTopHeight(floatingTopHeight);
         this.comp.setBottomHeight(floatingBottomHeight);
         this.comp.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
@@ -444,23 +359,18 @@ export class GridBodyCtrl extends BeanStub {
 
     private setStickyTopOffsetTop(): void {
         const headerCtrl = this.ctrlsService.get('gridHeaderCtrl');
-        const headerHeight = headerCtrl.getHeaderHeight() + this.filterManager.getHeaderHeight();
-        const pinnedTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
 
         let height = 0;
 
-        if (headerHeight > 0) { height += headerHeight; }
-        if (pinnedTopHeight > 0) { height += pinnedTopHeight; }
         if (height > 0) { height += 1; }
 
         this.comp.setStickyTopTop(`${height}px`);
     }
 
     private setStickyBottomOffsetBottom(): void {
-        const pinnedBottomHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
         const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
         const scrollbarWidth = hScrollShowing ? (this.gos.getScrollbarWidth() || 0) : 0;
-        const height = pinnedBottomHeight + scrollbarWidth;
+        const height = scrollbarWidth;
 
         this.comp.setStickyBottomBottom(`${height}px`);
     }

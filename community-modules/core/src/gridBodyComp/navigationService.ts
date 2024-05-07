@@ -19,7 +19,6 @@ import { RowPosition, RowPositionUtils } from "../entities/rowPositionUtils";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { CellNavigationService } from "../cellNavigationService";
-import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { NavigateToNextCellParams, TabToNextCellParams } from "../interfaces/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { Events } from "../eventKeys";
@@ -52,9 +51,7 @@ export class NavigationService extends BeanStub {
     @Autowired('headerNavigationService') public headerNavigationService: HeaderNavigationService;
     @Autowired("rowPositionUtils") private rowPositionUtils: RowPositionUtils;
     @Autowired("cellNavigationService") private cellNavigationService: CellNavigationService;
-    @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
     
-    @Optional('rangeService') private rangeService?: IRangeService;
 
     private gridBodyCon: GridBodyCtrl;
 
@@ -75,7 +72,6 @@ export class NavigationService extends BeanStub {
         const key = event.key;
         const alt = event.altKey;
         const ctrl = event.ctrlKey || event.metaKey;
-        const rangeServiceShouldHandleShift = !!this.rangeService && event.shiftKey;
 
         // home and end can be processed without knowing the currently selected cell, this can occur for full width rows.
         const currentCell: CellPosition | null = this.mouseEventService.getCellPositionForEvent(event);
@@ -98,10 +94,7 @@ export class NavigationService extends BeanStub {
                 if (!currentCell) { return false; }
                 // handle when ctrl is pressed only, if shift is pressed
                 // it will be handled by the rangeService
-                if (ctrl && !alt && !rangeServiceShouldHandleShift) {
-                    this.onCtrlUpDownLeftRight(key, currentCell);
-                    processed = true;
-                }
+               
                 break;
             case KeyCode.PAGE_DOWN:
             case KeyCode.PAGE_UP:
@@ -162,7 +155,6 @@ export class NavigationService extends BeanStub {
         // highlighted.
         this.focusService.setFocusedCell({ rowIndex: focusIndex, column: focusColumn, rowPinned: null, forceBrowserFocus: true });
 
-        this.rangeService?.setRangeToCell({ rowIndex: focusIndex, rowPinned: null, column: focusColumn });
     }
 
     // this method is throttled, see the `constructor`
@@ -635,7 +627,6 @@ export class NavigationService extends BeanStub {
 
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
-            this.rangeService?.setRangeToCell(nextPosition);
 
             // we successfully tabbed onto a grid cell, so return true
             return nextCell;
@@ -660,14 +651,7 @@ export class NavigationService extends BeanStub {
     }
 
     private lookupRowNodeForCell(cell: CellPosition) {
-        if (cell.rowPinned === 'top') {
-            return this.pinnedRowModel.getPinnedTopRow(cell.rowIndex);
-        }
-
-        if (cell.rowPinned === 'bottom') {
-            return this.pinnedRowModel.getPinnedBottomRow(cell.rowIndex);
-        }
-
+       
         return this.paginationProxy.getRow(cell.rowIndex);
     }
 
@@ -817,7 +801,6 @@ export class NavigationService extends BeanStub {
             forceBrowserFocus: true
         });
 
-        this.rangeService?.setRangeToCell(cellPosition);
     }
 
     private isValidNavigateCell(cell: CellPosition): boolean {

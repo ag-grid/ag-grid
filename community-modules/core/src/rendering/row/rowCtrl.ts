@@ -1,32 +1,27 @@
-import { ProcessRowParams } from "../../interfaces/iCallbackParams";
-import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { BeanStub } from "../../context/beanStub";
 import { CellPosition } from "../../entities/cellPositionUtils";
 import { Column, ColumnInstanceId, ColumnPinnedType } from "../../entities/column";
 import { RowClassParams, RowStyle } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
-import { DataChangedEvent, IRowNode, RowHighlightPosition } from "../../interfaces/iRowNode";
 import { RowPosition } from "../../entities/rowPositionUtils";
 import { AgEventListener, CellFocusedEvent, Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent, RowValueChangedEvent, VirtualRowRemovedEvent } from "../../events";
 import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
+import { GridOptionsService } from "../../gridOptionsService";
+import { BrandedType } from "../../interfaces/brandedType";
+import { ProcessRowParams } from "../../interfaces/iCallbackParams";
+import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
-import { ModuleNames } from "../../modules/moduleNames";
-import { ModuleRegistry } from "../../modules/moduleRegistry";
+import { DataChangedEvent, IRowNode, RowHighlightPosition } from "../../interfaces/iRowNode";
 import { setAriaExpanded, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
 import { isElementChildOfClass, isVisible } from "../../utils/dom";
 import { isStopPropagationForAgGrid } from "../../utils/event";
-import { warnOnce, executeNextVMTurn } from "../../utils/function";
+import { executeNextVMTurn } from "../../utils/function";
 import { exists, makeNull } from "../../utils/generic";
 import { escapeString } from "../../utils/string";
 import { Beans } from "../beans";
 import { CellCtrl } from "../cell/cellCtrl";
-import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRenderer";
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
-import { RowDragComp } from "./rowDragComp";
-import { GridOptionsService } from "../../gridOptionsService";
-import { ITooltipFeatureCtrl, TooltipFeature } from "../../widgets/tooltipFeature";
-import { BrandedType } from "../../interfaces/brandedType";
 
 enum RowType {
     Normal = 'Normal',
@@ -44,14 +39,14 @@ export interface IRowComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean): void;
     showFullWidth(compDetails: UserCompDetails): void;
-    getFullWidthCellRenderer(): ICellRenderer | null | undefined;
+    getFullWidthCellRenderer(): any;
     setTop(top: string): void;
     setTransform(transform: string): void;
     setRowIndex(rowIndex: string): void;
     setRowId(rowId: string): void;
     setRowBusinessKey(businessKey: string): void;
     setUserStyles(styles: RowStyle | undefined): void;
-    refreshFullWidth(getUpdatedParams: () => ICellRendererParams): boolean;
+    refreshFullWidth(getUpdatedParams: () => any): boolean;
 }
 
 interface RowGui {
@@ -76,7 +71,6 @@ export class RowCtrl extends BeanStub {
     // The RowCtrl is never Wired, so it needs its own access
     // to the gridOptionsService to be able to call `addManagedPropertyListener`
     protected readonly gos: GridOptionsService;
-    private tooltipFeature: TooltipFeature | undefined;
 
     private rowType: RowType;
 
@@ -306,14 +300,6 @@ export class RowCtrl extends BeanStub {
             this.addHoverFunctionality(gui.element);
         }
 
-        if (this.isFullWidth()) {
-            this.setupFullWidth(gui);
-        }
-
-        if (gos.get('rowDragEntireRow')) {
-            this.addRowDraggerToRow(gui);
-        }
-
         if (this.useAnimationFrameForCreate) {
             // the height animation we only want active after the row is alive for 1 second.
             // this stops the row animation working when rows are initially created. otherwise
@@ -364,47 +350,12 @@ export class RowCtrl extends BeanStub {
             this.fadeInAnimation[containerType] = false;
         }
     }
-
-    private addRowDraggerToRow(gui: RowGui) {
-        if (this.gos.get('enableRangeSelection')) {
-            warnOnce('Setting `rowDragEntireRow: true` in the gridOptions doesn\'t work with `enableRangeSelection: true`');
-            return;
-        }
-        const translate = this.beans.localeService.getLocaleTextFunc();
-        const rowDragComp = new RowDragComp(
-            () => `1 ${translate('rowDragRow', 'row')}`,
-            this.rowNode,
-            undefined,
-            gui.element,
-            undefined, true
-        );
-        const rowDragBean = this.createBean(rowDragComp, this.beans.context);
-        this.rowDragComps.push(rowDragBean);
-    }
-
-    private setupFullWidth(gui: RowGui): void {
-
-        const pinned = this.getPinnedForContainer(gui.containerType);
-
-        if (this.rowType == RowType.FullWidthDetail) {
-            if (!ModuleRegistry.__assertRegistered(ModuleNames.MasterDetailModule, "cell renderer 'agDetailCellRenderer' (for master detail)", this.beans.context.getGridId())) {
-                return;
-            }
-        }
-
-        const compDetails = this.createFullWidthCompDetails(gui.element, pinned);
-        gui.rowComp.showFullWidth(compDetails);
-    }
-
     public isPrintLayout(): boolean {
         return this.printLayout;
     }
 
-    public getFullWidthCellRenderers(): (ICellRenderer<any> | null | undefined)[] {
-        if (this.gos.get('embedFullWidthRows')) {
-            return this.allRowGuis.map(gui => gui?.rowComp?.getFullWidthCellRenderer());
-        }
-        return [this.fullWidthGui?.rowComp?.getFullWidthCellRenderer()];
+    public getFullWidthCellRenderers(): (any)[] {
+        return [undefined];
     }
 
     // use by autoWidthCalculator, as it clones the elements
@@ -705,21 +656,8 @@ export class RowCtrl extends BeanStub {
 
         this.addDestroyFunc(() => {
             this.destroyBeans(this.rowDragComps, this.beans.context);
-            if (this.tooltipFeature) {
-                this.tooltipFeature = this.destroyBean(this.tooltipFeature, this.beans.context);
-            }
-        });
-        this.addManagedPropertyListeners(['rowDragEntireRow'], () => {
-            const useRowDragEntireRow = this.gos.get('rowDragEntireRow');
-            if (useRowDragEntireRow) {
-                this.allRowGuis.forEach(gui => {
-                    this.addRowDraggerToRow(gui);
-                });
-                return;
-            }
-            this.destroyBeans(this.rowDragComps, this.beans.context);
-            this.rowDragComps = [];
-        });
+           
+        });       
 
         this.addListenersForCellComps();
     }
@@ -1076,65 +1014,10 @@ export class RowCtrl extends BeanStub {
     }
 
     private createFullWidthCompDetails(eRow: HTMLElement, pinned: ColumnPinnedType): UserCompDetails {
-        const params = this.gos.addGridCommonParams({
-            fullWidth: true,
-            data: this.rowNode.data,
-            node: this.rowNode,
-            value: this.rowNode.key,
-            valueFormatted: this.rowNode.key,
-            // these need to be taken out, as part of 'afterAttached' now
-            eGridCell: eRow,
-            eParentOfValue: eRow,
-            pinned: pinned,
-            addRenderedRowListener: this.addEventListener.bind(this),
-            registerRowDragger: (rowDraggerElement, dragStartPixels, value, suppressVisibilityChange) => this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value, suppressVisibilityChange),
-            setTooltip: (value, shouldDisplayTooltip) => this.refreshRowTooltip(value, shouldDisplayTooltip)
-        } as WithoutGridCommon<ICellRendererParams>);
-
-        switch (this.rowType) {
-            case RowType.FullWidthDetail:
-                return this.beans.userComponentFactory.getFullWidthDetailCellRendererDetails(params);
-            case RowType.FullWidthGroup:
-                return this.beans.userComponentFactory.getFullWidthGroupCellRendererDetails(params);
-            case RowType.FullWidthLoading:
-                return this.beans.userComponentFactory.getFullWidthLoadingCellRendererDetails(params);
-            default:
-                return this.beans.userComponentFactory.getFullWidthCellRendererDetails(params);
-        }
+       return undefined as any;
     }
 
-    private refreshRowTooltip(value: string, shouldDisplayTooltip?: () => boolean) {
-        if (!this.fullWidthGui) { return; }
-
-        const tooltipParams: ITooltipFeatureCtrl = {
-            getGui: () => this.fullWidthGui!.element,
-            getTooltipValue: () => value,
-            getLocation: () => 'fullWidthRow',
-            shouldDisplayTooltip
-        }
-
-        if (this.tooltipFeature) {
-            this.destroyBean(this.tooltipFeature, this.beans.context);
-        }
-
-        this.tooltipFeature = this.createBean(new TooltipFeature(tooltipParams, this.beans));
-    }
-
-    private addFullWidthRowDragging(
-        rowDraggerElement?: HTMLElement,
-        dragStartPixels?: number,
-        value: string = '',
-        suppressVisibilityChange?: boolean
-    ): void {
-        if (!this.isFullWidth()) { return; }
-
-        const rowDragComp = new RowDragComp(() => value, this.rowNode, undefined, rowDraggerElement, dragStartPixels, suppressVisibilityChange);
-        this.createBean(rowDragComp, this.beans.context);
-
-        this.addDestroyFunc(() =>{
-            this.destroyBean(rowDragComp, this.beans.context);
-        });
-    }
+   
 
     private onUiLevelChanged(): void {
         const newLevel = this.beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
@@ -1384,7 +1267,6 @@ export class RowCtrl extends BeanStub {
             // toggles this property mid way, we remove the hover form the last row, but we stop
             // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
             if (
-                !this.beans.dragService.isDragging() &&
                 !this.gos.get('suppressRowHoverHighlight')
             ) {
                 eRow.classList.add('ag-row-hover');
@@ -1664,7 +1546,7 @@ export class RowCtrl extends BeanStub {
 
     private updateRowIndexes(gui?: RowGui): void {
         const rowIndexStr = this.rowNode.getRowIndexString();
-        const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount() + this.beans.filterManager.getHeaderRowCount();
+        const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
         const rowIsEven = this.rowNode.rowIndex! % 2 === 0;
         const ariaRowIndex = headerRowCount + this.rowNode.rowIndex! + 1;
 

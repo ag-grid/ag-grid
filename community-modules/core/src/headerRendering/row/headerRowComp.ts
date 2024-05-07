@@ -7,10 +7,6 @@ import { AbstractHeaderCellComp } from '../cells/abstractCell/abstractHeaderCell
 import { AbstractHeaderCellCtrl, HeaderCellCtrlInstanceId } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { HeaderCellComp } from '../cells/column/headerCellComp';
 import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
-import { HeaderGroupCellComp } from '../cells/columnGroup/headerGroupCellComp';
-import { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
-import { HeaderFilterCellComp } from '../cells/floatingFilter/headerFilterCellComp';
-import { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
 import { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 
 export enum HeaderRowType {
@@ -95,19 +91,17 @@ export class HeaderRowComp extends Component {
 
         switch (this.ctrl.getType()) {
             case HeaderRowType.COLUMN_GROUP:
-                result = new HeaderGroupCellComp(headerCtrl as HeaderGroupCellCtrl);
                 break;
             case HeaderRowType.FLOATING_FILTER:
-                result = new HeaderFilterCellComp(headerCtrl as HeaderFilterCellCtrl);
                 break;
             default:
                 result = new HeaderCellComp(headerCtrl as HeaderCellCtrl);
                 break;
         }
 
-        this.createBean(result);
-        result.setParentComponent(this);
+        this.createBean(result!);
+        result!.setParentComponent(this);
 
-        return result;
+        return result!;
     }
 }

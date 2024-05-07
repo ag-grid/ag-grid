@@ -1,24 +1,21 @@
-import { AgEvent } from "../events";
-import { Autowired, PreConstruct } from "../context/context";
 import { AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
 import { BeanStub } from "../context/beanStub";
-import { NumberSequence } from "../utils";
-import {
-    isNodeOrElement,
-    copyNodeList,
-    iterateNamedNodeMap,
-    loadTemplate,
-    setVisible,
-    setDisplayed
-} from '../utils/dom';
-import { getFunctionName } from '../utils/function';
-import { ITooltipParams, TooltipLocation } from "../rendering/tooltipComponent";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { CssClassManager } from "../rendering/cssClassManager";
-import { TooltipFeature } from "./tooltipFeature";
+import { Autowired, PreConstruct } from "../context/context";
+import { ColDef, ColGroupDef } from "../entities/colDef";
 import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
-import { ColDef, ColGroupDef } from "../entities/colDef";
+import { AgEvent } from "../events";
+import { CssClassManager } from "../rendering/cssClassManager";
+import { NumberSequence } from "../utils";
+import {
+    copyNodeList,
+    isNodeOrElement,
+    iterateNamedNodeMap,
+    loadTemplate,
+    setDisplayed,
+    setVisible
+} from '../utils/dom';
+import { getFunctionName } from '../utils/function';
 
 const compIdSequence = new NumberSequence();
 
@@ -52,7 +49,6 @@ export class Component extends BeanStub {
 
     protected usingBrowserTooltips: boolean;
     private tooltipText: string | null | undefined;
-    private tooltipFeature: TooltipFeature | undefined;
 
     constructor(template?: string) {
         super();
@@ -73,7 +69,7 @@ export class Component extends BeanStub {
         return this.compId;
     }
 
-    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
+    public getTooltipParams() {
         return {
             value: this.tooltipText,
             location: 'UNKNOWN'
@@ -84,35 +80,17 @@ export class Component extends BeanStub {
         newTooltipText?: string | null;
         showDelayOverride?: number;
         hideDelayOverride?: number; 
-        location?: TooltipLocation;
+        location?: any;
         getColumn?(): Column | ColumnGroup;
         getColDef?(): ColDef | ColGroupDef;
         shouldDisplayTooltip?: () => boolean
     }): void {
         const { newTooltipText, showDelayOverride, hideDelayOverride, location, shouldDisplayTooltip } = params || {};
 
-        if (this.tooltipFeature) {
-            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
-        }
-
         if (this.tooltipText !== newTooltipText) {
             this.tooltipText = newTooltipText;
         }
 
-        const getTooltipValue = () => this.tooltipText;
-
-        if (newTooltipText != null) {
-            this.tooltipFeature = this.createBean(new TooltipFeature({
-                getTooltipValue,
-                getGui: () => this.getGui(),
-                getLocation: () => location ?? 'UNKNOWN',
-                getColDef: params?.getColDef,
-                getColumn: params?.getColumn,
-                getTooltipShowDelayOverride: showDelayOverride != null ? (() => showDelayOverride) : undefined,
-                getTooltipHideDelayOverride: hideDelayOverride != null ? (() => hideDelayOverride) : undefined,
-                shouldDisplayTooltip
-            }));
-        }
     }
 
     // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
@@ -358,11 +336,6 @@ export class Component extends BeanStub {
         if (this.parentComponent) {
             this.parentComponent = undefined;
         }
-
-        if (this.tooltipFeature) {
-            this.tooltipFeature = this.destroyBean(this.tooltipFeature)
-        }
-
         const eGui = this.eGui as any;
 
         if (eGui && eGui.__agComponent) {
