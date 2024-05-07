@@ -67,7 +67,6 @@ export class Beans {
     @Autowired('frameworkOverrides') public readonly frameworkOverrides: IFrameworkOverrides;
     @Autowired('cellPositionUtils') public readonly cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public readonly rowPositionUtils: RowPositionUtils;
-    @Autowired('selectionService') public readonly selectionService: ISelectionService;
     @Autowired('rowCssClassCalculator') public readonly rowCssClassCalculator: RowCssClassCalculator;
     @Autowired('rowModel') public readonly rowModel: IRowModel;
     @Autowired('ctrlsService') public readonly ctrlsService: CtrlsService;

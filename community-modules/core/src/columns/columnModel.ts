@@ -3,8 +3,6 @@ import { Column, ColumnInstanceId, ColumnPinnedType } from '../entities/column';
 import { AbstractColDef, ColDef, ColGroupDef, IAggFunc, HeaderValueGetterParams, HeaderLocation } from '../entities/colDef';
 import { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
 import { ColumnFactory, depthFirstOriginalTreeSearch } from './columnFactory';
-import { DisplayedGroupCreator } from './displayedGroupCreator';
-import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import { IProvidedColumn } from '../interfaces/iProvidedColumn';
 import { Logger, LoggerFactory } from '../logger';
 import {
@@ -29,11 +27,9 @@ import {
 } from '../events';
 import { BeanStub } from "../context/beanStub";
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
-import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 import { Autowired, Bean, Optional, PostConstruct, PreDestroy, Qualifier } from '../context/context';
 import { IAggFuncService } from '../interfaces/iAggFuncService';
 import { ColumnAnimationService } from '../rendering/columnAnimationService';
-import { AutoGroupColService, GROUP_AUTO_COLUMN_ID } from './autoGroupColService';
 import { RowNode } from '../entities/rowNode';
 import { ValueCache } from '../valueService/valueCache';
 import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromUnorderedArray, removeFromUnorderedArray } from '../utils/array';
@@ -118,11 +114,8 @@ export type Maybe<T> = T | null | undefined;
 export class ColumnModel extends BeanStub {
 
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
-    @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
-    @Autowired('autoGroupColService') private autoGroupColService: AutoGroupColService;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('sortController') private sortController: SortController;
@@ -270,7 +263,6 @@ export class ColumnModel extends BeanStub {
         }
 
         this.addManagedPropertyListeners(['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'], (event) => this.buildAutoGroupColumns(convertSourceType(event.source)));
-        this.addManagedPropertyListener('autoGroupColumnDef', (event) => this.onAutoGroupColumnDefChanged(convertSourceType(event.source)));
         this.addManagedPropertyListeners(['defaultColDef', 'columnTypes', 'suppressFieldDotNotation'], event => this.onSharedColDefChanged(convertSourceType(event.source)));
         this.addManagedPropertyListener('pivotMode', event => this.setPivotMode(this.gos.get('pivotMode'), convertSourceType(event.source)));
         this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => this.onFirstDataRendered());
@@ -286,19 +278,10 @@ export class ColumnModel extends BeanStub {
         this.updateDisplayedColumns(source);
     }
 
-    private onAutoGroupColumnDefChanged(source: ColumnEventType) {
-        if (this.groupAutoColumns) {
-            this.autoGroupColService.updateAutoGroupColumns(this.groupAutoColumns, source);
-        }
-    }
 
     private onSharedColDefChanged(source: ColumnEventType): void {
         if (!this.gridColumns) { return; }
 
-        // if we aren't going to force, update the auto cols in place
-        if (this.groupAutoColumns) {
-            this.autoGroupColService.updateAutoGroupColumns(this.groupAutoColumns, source);
-        }
         this.createColumnsFromColumnDefs(true, source);
     }
 
@@ -607,15 +590,6 @@ export class ColumnModel extends BeanStub {
                 // if already autosized, skip it
                 if (columnsAutosized.indexOf(column) >= 0) {
                     return false;
-                }
-                // get how wide this col should be
-                const preferredWidth = this.autoWidthCalculator.getPreferredWidthForColumn(column, shouldSkipHeader);
-                // preferredWidth = -1 if this col is not on the screen
-                if (preferredWidth > 0) {
-                    const newWidth = this.normaliseColumnWidth(column, preferredWidth);
-                    column.setActualWidth(newWidth, source);
-                    columnsAutosized.push(column);
-                    changesThisTimeAround++;
                 }
                 return true;
             }, source);
@@ -2063,14 +2037,7 @@ export class ColumnModel extends BeanStub {
             states.forEach((state: ColumnState) => {
                 const colId = state.colId || '';
 
-                // auto group columns are re-created so deferring syncing with ColumnState
-                const isAutoGroupColumn = colId.startsWith(GROUP_AUTO_COLUMN_ID);
-                if (isAutoGroupColumn) {
-                    autoGroupColumnStates.push(state);
-                    unmatchedAndAutoStates.push(state);
-                    return;
-                }
-
+               
                 const column = getById(colId);
 
                 if (!column) {
@@ -2201,17 +2168,9 @@ export class ColumnModel extends BeanStub {
             const alreadyProcessed = processedColIds[colId] != null;
             if (alreadyProcessed) { return; }
 
-            const isAutoGroupCol = colId.startsWith(GROUP_AUTO_COLUMN_ID);
-            if (isAutoGroupCol) {
-                // auto group columns, if missing from state list, are added to the start.
-                // it's common to have autoGroup missing, as grouping could be on by default
-                // on a column, but the user could of since removed the grouping via the UI.
-                // if we don't inc the insert index, autoGroups will be inserted in reverse order
-                insertIntoArray(newOrder, col, autoGroupInsertIndex++);
-            } else {
+          
                 // normal columns, if missing from state list, are added at the end
                 newOrder.push(col);
-            }
         });
 
         // this is already done in updateGridColumns, however we changed the order above (to match the order of the state
@@ -3223,25 +3182,6 @@ export class ColumnModel extends BeanStub {
         } else {
             this.lastSecondaryOrder = this.gridColumns;
         }
-
-        // create the new auto columns
-        const areAutoColsChanged = this.createGroupAutoColumnsIfNeeded();
-        // if auto group cols have changed, and we have a sort order, we need to move auto cols to the start
-        if (areAutoColsChanged) {
-            const groupAutoColsMap = convertToMap<Column, true>(this.groupAutoColumns!.map(col => [col, true]));
-
-            // if group cols have changed, remove them from any previous orders and add them to the start.
-            if (this.lastPrimaryOrder) {
-                this.lastPrimaryOrder = this.lastPrimaryOrder.filter(col => !groupAutoColsMap.has(col));
-                this.lastPrimaryOrder = [...this.groupAutoColumns!, ...this.lastPrimaryOrder];
-            }
-
-            if (this.lastSecondaryOrder) {
-                this.lastSecondaryOrder = this.lastSecondaryOrder.filter(col => !groupAutoColsMap.has(col));
-                this.lastSecondaryOrder = [...this.groupAutoColumns!, ...this.lastSecondaryOrder];
-            }
-        }
-
         let sortOrderToRecover: Column[] | undefined;
 
         if (this.secondaryColumns && this.secondaryBalancedTree) {
@@ -3971,14 +3911,9 @@ export class ColumnModel extends BeanStub {
             }
         });
 
-        const groupInstanceIdCreator = new GroupInstanceIdCreator();
-
-        this.displayedTreeLeft = this.displayedGroupCreator.createDisplayedGroups(
-            leftVisibleColumns, groupInstanceIdCreator, 'left', this.displayedTreeLeft);
-        this.displayedTreeRight = this.displayedGroupCreator.createDisplayedGroups(
-            rightVisibleColumns, groupInstanceIdCreator, 'right', this.displayedTreeRight);
-        this.displayedTreeCentre = this.displayedGroupCreator.createDisplayedGroups(
-            centerVisibleColumns, groupInstanceIdCreator, null, this.displayedTreeCentre);
+        this.displayedTreeLeft = leftVisibleColumns;
+        this.displayedTreeRight = rightVisibleColumns;
+        this.displayedTreeCentre = centerVisibleColumns;
 
         this.updateDisplayedMap();
     }
@@ -4015,44 +3950,7 @@ export class ColumnModel extends BeanStub {
         return this.groupAutoColumns;
     }
 
-    /**
-     * Creates new auto group columns if required
-     * @returns whether auto cols have changed
-     */
-    private createGroupAutoColumnsIfNeeded(): boolean {
-        const forceRecreateAutoGroups = this.forceRecreateAutoGroups;
-        this.forceRecreateAutoGroups = false;
-        if (!this.autoGroupsNeedBuilding) { return false; }
 
-        this.autoGroupsNeedBuilding = false;
-
-        const groupFullWidthRow = this.gos.isGroupUseEntireRow(this.pivotMode);
-        // we need to allow suppressing auto-column separately for group and pivot as the normal situation
-        // is CSRM and user provides group column themselves for normal view, but when they go into pivot the
-        // columns are generated by the grid so no opportunity for user to provide group column. so need a way
-        // to suppress auto-col for grouping only, and not pivot.
-        // however if using Viewport RM or SSRM and user is providing the columns, the user may wish full control
-        // of the group column in this instance.
-        const suppressAutoColumn = this.pivotMode ?
-            this.gos.get('pivotSuppressAutoColumn') : this.isGroupSuppressAutoColumn();
-
-        const groupingActive = this.rowGroupColumns.length > 0 || this.gos.get('treeData');
-        const needAutoColumns = groupingActive && !suppressAutoColumn && !groupFullWidthRow;
-
-        if (needAutoColumns) {
-            const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
-            const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
-            // we force recreate so new group cols pick up the new
-            // definitions. otherwise we could ignore the new cols because they appear to be the same.
-            if (autoColsDifferent || forceRecreateAutoGroups) {
-                this.groupAutoColumns = newAutoGroupCols;
-                return true;
-            }
-        } else {
-            this.groupAutoColumns = null;
-        }
-        return false;
-    }
 
     public isGroupSuppressAutoColumn() {
         const groupDisplayType = this.gos.get('groupDisplayType');
@@ -4061,10 +3959,6 @@ export class ColumnModel extends BeanStub {
     
         const treeDataDisplayType = this.gos.get('treeDataDisplayType');
         return treeDataDisplayType === 'custom';
-    }
-
-    private autoColsEqual(colsA: Column[] | null, colsB: Column[] | null): boolean {
-        return areEqual(colsA, colsB, (a, b) => a.getColId() === b.getColId());
     }
 
     private getWidthOfColsInList(columnList: Column[]) {

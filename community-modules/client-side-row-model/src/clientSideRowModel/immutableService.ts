@@ -4,10 +4,10 @@ import {
     BeanStub,
     IImmutableService,
     IRowModel,
-    ISelectionService,
     PostConstruct,
     RowDataTransaction,
-    RowNode, RowRenderer, _
+    RowNode,
+    _
 } from "@ag-grid-community/core";
 import { ClientSideRowModel } from "./clientSideRowModel";
 
@@ -16,8 +16,6 @@ import { ClientSideRowModel } from "./clientSideRowModel";
 export class ImmutableService extends BeanStub implements IImmutableService {
 
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('selectionService') private selectionService: ISelectionService;
 
     private clientSideRowModel: ClientSideRowModel;
 
@@ -118,7 +116,6 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         if (this.isActive()) {
             this.setRowData(rowData);
         } else {
-            this.selectionService.reset('rowDataChanged');
             this.clientSideRowModel.setRowData(rowData);
         }
     }

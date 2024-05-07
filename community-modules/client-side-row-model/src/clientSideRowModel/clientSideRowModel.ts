@@ -48,7 +48,6 @@ export interface RowNodeMap {
 export class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('beans') private beans: Beans;
 
@@ -114,7 +113,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.nodeManager = new ClientSideNodeManager(this.rootNode,
             this.gos,
             this.eventService, this.columnModel,
-            this.selectionService, this.beans);
+            undefined!, this.beans);
     }
 
     private addPropertyListeners() {
@@ -993,17 +992,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 });
             }
 
-            if (this.gos.get('groupSelectsChildren')) {
-                const selectionChanged = this.selectionService.updateGroupsFromChildrenSelections('rowGroupChanged', changedPath);
-
-                if (selectionChanged) {
-                    const event: WithoutGridCommon<SelectionChangedEvent> = {
-                        type: Events.EVENT_SELECTION_CHANGED,
-                        source: 'rowGroupChanged'
-                    };
-                    this.eventService.dispatchEvent(event);
-                }
-            }
 
         } else {
             this.rootNode.childrenAfterGroup = this.rootNode.allLeafChildren;
@@ -1060,9 +1048,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         // no need to invalidate cache, as the cache is stored on the rowNode,
         // so new rowNodes means the cache is wiped anyway.
         
-        // - clears selection, done before we set row data to ensure it isn't readded via `selectionService.syncInOldRowNode`
-        this.selectionService.reset('rowDataChanged');
-
         this.nodeManager.setRowData(rowData);
         
         if (this.hasStarted) {

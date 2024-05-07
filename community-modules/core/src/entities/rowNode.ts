@@ -329,7 +329,6 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.updateDataOnDetailNode();
         this.setId(id);
         this.checkRowSelectable();
-        this.beans.selectionService.syncInRowNode(this, oldNode);
 
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, false);
 
@@ -342,32 +341,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     public setRowSelectable(newVal: boolean, suppressSelectionUpdate?: boolean) {
-        if (this.selectable !== newVal) {
-            this.selectable = newVal;
-            if (this.eventService) {
-                this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_SELECTABLE_CHANGED));
-            }
-
-            if (suppressSelectionUpdate) { return; }
-
-            const isGroupSelectsChildren = this.beans.gos.get('groupSelectsChildren');
-            if (isGroupSelectsChildren) {
-                const selected = this.calculateSelectedFromChildren();
-                this.setSelectedParams({
-                    newValue: selected ?? false,
-                    source: 'selectableChanged',
-                });
-                return;
-            }
-
-            // if row is selected but shouldn't be selectable, then deselect.
-            if (this.isSelected() && !this.selectable) {
-                this.setSelectedParams({
-                    newValue: false,
-                    source: 'selectableChanged',
-                });
-            }
-        }
+       
     }
 
     public setId(id?: string): void {
@@ -1032,32 +1006,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
      * @param source - Source property that will appear in the `selectionChanged` event.
      */
     public setSelected(newValue: boolean, clearSelection: boolean = false, source: SelectionEventSourceType = 'api') {
-        if (typeof source === 'boolean')  {
-            console.warn('AG Grid: since version v30, rowNode.setSelected() property `suppressFinishActions` has been removed, please use `gridApi.setNodesSelected()` for bulk actions, and the event `source` property for ignoring events instead.');
-            return;
-        }
 
-        this.setSelectedParams({
-            newValue,
-            clearSelection,
-            rangeSelect: false,
-            source
-        });
-    }
-
-    // this is for internal use only. To make calling code more readable, this is the same method as setSelected except it takes names parameters
-    public setSelectedParams(params: SetSelectedParams & { event?: Event }): number {
-        if (this.rowPinned) {
-            console.warn('AG Grid: cannot select pinned rows');
-            return 0;
-        }
-
-        if (this.id === undefined) {
-            console.warn('AG Grid: cannot select node until id for node is known');
-            return 0;
-        }
-
-        return this.beans.selectionService.setNodesSelected({ ...params, nodes: [this.footer ? this.sibling : this] });
     }
 
     /**

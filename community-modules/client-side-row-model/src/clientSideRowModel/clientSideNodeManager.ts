@@ -22,7 +22,6 @@ export class ClientSideNodeManager {
     private gos: GridOptionsService;
     private eventService: EventService;
     private columnModel: ColumnModel;
-    private selectionService: ISelectionService;
     private beans: Beans;
 
     private nextId = 0;
@@ -42,7 +41,6 @@ export class ClientSideNodeManager {
         this.eventService = eventService;
         this.columnModel = columnModel;
         this.beans = beans;
-        this.selectionService = selectionService;
 
         this.rootNode.group = true;
         this.rootNode.level = -1;
@@ -120,8 +118,6 @@ export class ClientSideNodeManager {
         this.executeUpdate(rowDataTran, rowNodeTransaction, nodesToUnselect);
         this.executeAdd(rowDataTran, rowNodeTransaction);
 
-        this.updateSelection(nodesToUnselect, 'rowDataChanged');
-
         if (rowNodeOrder) {
             _.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
         }
@@ -139,32 +135,6 @@ export class ClientSideNodeManager {
             firstRowData: rowData?.length ? rowData[0] : null
         };
         this.eventService.dispatchEvent(event);
-    }
-
-    private updateSelection(nodesToUnselect: RowNode[], source: SelectionEventSourceType): void {
-        const selectionChanged = nodesToUnselect.length > 0;
-        if (selectionChanged) {
-            this.selectionService.setNodesSelected({
-                newValue: false,
-                nodes: nodesToUnselect,
-                suppressFinishActions: true,
-                source,
-            });
-        }
-
-        // we do this regardless of nodes to unselect or not, as it's possible
-        // a new node was inserted, so a parent that was previously selected (as all
-        // children were selected) should not be tri-state (as new one unselected against
-        // all other selected children).
-        this.selectionService.updateGroupsFromChildrenSelections(source);
-
-        if (selectionChanged) {
-            const event: WithoutGridCommon<SelectionChangedEvent> = {
-                type: Events.EVENT_SELECTION_CHANGED,
-                source: source
-            };
-            this.eventService.dispatchEvent(event);
-        }
     }
 
     private executeAdd(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction): void {

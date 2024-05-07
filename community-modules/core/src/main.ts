@@ -12,9 +12,6 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 export { ColumnFactory } from "./columns/columnFactory";
 export { ColumnModel, ColumnState, ColumnStateParams, ApplyColumnStateParams, ISizeColumnsToFitParams, IColumnLimit } from "./columns/columnModel";
 export { ColumnKeyCreator } from "./columns/columnKeyCreator";
-export { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
-export { GroupInstanceIdCreator } from "./columns/groupInstanceIdCreator";
-export { GROUP_AUTO_COLUMN_ID } from "./columns/autoGroupColService";
 export {
     SizeColumnsToFitGridColumnLimits,
     SizeColumnsToContentStrategy,
@@ -143,7 +140,6 @@ export { TabbedLayout, TabbedItem } from "./layout/tabbedLayout";
 export { ResizeObserverService } from "./misc/resizeObserverService";
 export { IImmutableService } from "./interfaces/iImmutableService";
 export { AnimationFrameService } from "./misc/animationFrameService";
-export { ExpansionService } from "./misc/expansionService";
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from "./interfaces/iCellEditor";
@@ -171,7 +167,6 @@ export { INoRowsOverlayComp, INoRowsOverlayParams, INoRowsOverlay } from "./rend
 export { SetLeftFeature } from "./rendering/features/setLeftFeature";
 
 // rendering
-export { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 export { CellComp } from "./rendering/cell/cellComp";
 export { CellCtrl, ICellComp } from "./rendering/cell/cellCtrl";
 export { RowCtrl, IRowComp } from "./rendering/row/rowCtrl";
@@ -252,7 +247,6 @@ export { Events } from "./eventKeys";
 export { FocusService } from "./focusService";
 export { GridOptionsService, PropertyChangedEvent } from "./gridOptionsService";
 export { EventService } from "./eventService";
-export { SelectableService } from "./rowNodes/selectableService";
 export { RowNodeSorter, SortedRowNode, SortOption } from "./rowNodes/rowNodeSorter";
 export { CtrlsService } from "./ctrlsService";
 export { GridComp } from "./gridComp/gridComp";
@@ -380,7 +374,6 @@ export {
     ValueParserLiteParams,
     BaseCellDataType
 } from "./entities/dataType";
-export { DataTypeService } from "./columns/dataTypeService";
 export {
     GridOptions,
     IsApplyServerSideTransaction,

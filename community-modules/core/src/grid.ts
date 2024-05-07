@@ -1,5 +1,4 @@
 import { GridOptions } from "./entities/gridOptions";
-import { SelectionService } from "./selectionService";
 import { ColumnModel } from "./columns/columnModel";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { GridHeaderComp } from "./headerRendering/gridHeaderComp";
@@ -7,9 +6,7 @@ import { ValueService } from "./valueService/valueService";
 import { EventService } from "./eventService";
 import { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 import { ColumnFactory } from "./columns/columnFactory";
-import { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
 import { Logger, LoggerFactory } from "./logger";
-import { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 import { ComponentMeta, Context, ContextParams } from "./context/context";
 import { GridComp } from "./gridComp/gridComp";
 import { SortController } from "./sortController";
@@ -22,7 +19,6 @@ import { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
 import { StylingService } from "./styling/stylingService";
 import { ColumnHoverService } from "./rendering/columnHoverService";
 import { ColumnAnimationService } from "./rendering/columnAnimationService";
-import { AutoGroupColService } from "./columns/autoGroupColService";
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { RowModelType } from "./interfaces/iRowModel";
 import { ValueCache } from "./valueService/valueCache";
@@ -36,7 +32,6 @@ import { Environment } from "./environment";
 import { AnimationFrameService } from "./misc/animationFrameService";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowContainerHeightService } from "./rendering/rowContainerHeightService";
-import { SelectableService } from "./rowNodes/selectableService";
 import { ResizeObserverService } from "./misc/resizeObserverService";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 import { Module } from "./interfaces/iModule";
@@ -61,12 +56,10 @@ import { RowNodeEventThrottle } from "./entities/rowNodeEventThrottle";
 import { GridOptionsService } from "./gridOptionsService";
 import { LocaleService } from "./localeService";
 import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
-import { DataTypeService } from "./columns/dataTypeService";
-import { warnOnce, errorOnce } from "./utils/function";
+import { errorOnce } from "./utils/function";
 import { mergeDeep } from "./utils/object";
 import { SyncService } from "./syncService";
 import { OverlayService } from "./rendering/overlays/overlayService";
-import { ExpansionService } from "./misc/expansionService";
 import { ApiEventService } from "./misc/apiEventService";
 import { AriaAnnouncementService } from "./rendering/ariaAnnouncementService";
 
@@ -308,18 +301,17 @@ export class GridCoreCreator {
             Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             RowContainerHeightService, LocaleService,              
-            DisplayedGroupCreator, EventService, GridOptionsService,
-            SelectionService, ColumnModel, HeaderNavigationService,
+            EventService, GridOptionsService,
+            ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ColumnFactory,
             NavigationService, ValueCache, ValueService, LoggerFactory,
-            AutoWidthCalculator,
             FocusService, MouseEventService, Environment, CellNavigationService, StylingService,
             ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
-            SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
+            ChangeDetectionService, AnimationFrameService,
             AgStackComponentsRegistry, ColumnDefFactory, RowCssClassCalculator, 
             RowNodeBlockLoader, RowNodeSorter, CtrlsService, PinnedWidthService, RowNodeEventThrottle,
-            CtrlsFactory, DataTypeService, SyncService, OverlayService,
-            ExpansionService, ApiEventService, AriaAnnouncementService
+            CtrlsFactory, SyncService, OverlayService,
+            ApiEventService, AriaAnnouncementService
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);

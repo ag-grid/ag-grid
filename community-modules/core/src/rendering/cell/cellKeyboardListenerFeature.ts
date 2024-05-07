@@ -166,29 +166,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
     private onSpaceKeyDown(event: KeyboardEvent): void {
         const { gos } = this.beans;
 
-        if (!this.cellCtrl.isEditing() && gos.isRowSelection()) {
-            const currentSelection = this.rowNode.isSelected();
-            const newSelection = !currentSelection;
-            if (newSelection || !gos.get('suppressRowDeselection')) {
-                const groupSelectsFiltered = this.beans.gos.get('groupSelectsFiltered');
-                const updatedCount = this.rowNode.setSelectedParams({
-                    newValue: newSelection,
-                    rangeSelect: event.shiftKey,
-                    groupSelectsFiltered: groupSelectsFiltered,
-                    event,
-                    source: 'spaceKey',
-                });
-                if (currentSelection === undefined && updatedCount === 0) {
-                    this.rowNode.setSelectedParams({
-                        newValue: false,
-                        rangeSelect: event.shiftKey,
-                        groupSelectsFiltered: groupSelectsFiltered,
-                        event,
-                        source: 'spaceKey',
-                    });
-                }
-            }
-        }
+       
 
         // prevent default as space key, by default, moves browser scroll down
         event.preventDefault();

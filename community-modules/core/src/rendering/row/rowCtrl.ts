@@ -923,60 +923,11 @@ export class RowCtrl extends BeanStub {
     }
 
     public onRowClick(mouseEvent: MouseEvent) {
-        const stop = isStopPropagationForAgGrid(mouseEvent) || this.lastMouseDownOnDragger;
-
-        if (stop) { return; }
-
-        const agEvent: RowClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_CLICKED, mouseEvent);
-
-        this.beans.eventService.dispatchEvent(agEvent);
-
-        // ctrlKey for windows, metaKey for Apple
-        const isMultiKey = mouseEvent.ctrlKey || mouseEvent.metaKey;
-        const isShiftKey = mouseEvent.shiftKey;
-
-        // we do not allow selecting the group by clicking, when groupSelectChildren, as the logic to
-        // handle this is broken. to observe, change the logic below and allow groups to be selected.
-        // you will see the group gets selected, then all children get selected, then the grid unselects
-        // the children (as the default behaviour when clicking is to unselect other rows) which results
-        // in the group getting unselected (as all children are unselected). the correct thing would be
-        // to change this, so that children of the selected group are not then subsequently un-selected.
-        const groupSelectsChildren = this.gos.get('groupSelectsChildren');
-
-        if (
-            // we do not allow selecting groups by clicking (as the click here expands the group), or if it's a detail row,
-            // so return if it's a group row
-            (groupSelectsChildren && this.rowNode.group) ||
-            this.isRowSelectionBlocked() ||
-            // if click selection suppressed, do nothing
-            this.gos.get('suppressRowClickSelection')
-        ) {
-            return;
-        }
-
-        const multiSelectOnClick = this.gos.get('rowMultiSelectWithClick');
-        const rowDeselectionWithCtrl = !this.gos.get('suppressRowDeselection');
-        const source = 'rowClicked';
-
-        if (this.rowNode.isSelected()) {
-            if (multiSelectOnClick) {
-                this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent, source });
-            } else if (isMultiKey) {
-                if (rowDeselectionWithCtrl) {
-                    this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent, source });
-                }
-            } else {
-                // selected with no multi key, must make sure anything else is unselected
-                this.rowNode.setSelectedParams({ newValue: true, clearSelection: !isShiftKey, rangeSelect: isShiftKey, event: mouseEvent, source });
-            }
-        } else {
-            const clearSelection = multiSelectOnClick ? false : !isMultiKey;
-            this.rowNode.setSelectedParams({ newValue: true, clearSelection: clearSelection, rangeSelect: isShiftKey, event: mouseEvent, source });
-        }
+       
     }
 
     public isRowSelectionBlocked(): boolean {
-        return !this.rowNode.selectable || !!this.rowNode.rowPinned || !this.gos.isRowSelection();
+        return true;
     }
 
     public setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {

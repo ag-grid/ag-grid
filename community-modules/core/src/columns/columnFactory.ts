@@ -9,15 +9,12 @@ import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 import { BeanStub } from "../context/beanStub";
 import { iterateObject, mergeDeep } from '../utils/object';
 import { attrToNumber, attrToBoolean } from '../utils/generic';
-import { DataTypeService } from './dataTypeService';
 import { warnOnce } from '../utils/function';
 import { ColumnEventType } from '../events';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')
 export class ColumnFactory extends BeanStub {
-
-    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
 
     private logger: Logger;
 
@@ -305,8 +302,6 @@ export class ColumnFactory extends BeanStub {
             this.applyColumnState(column, colDefMerged, source);
         }
 
-        this.dataTypeService.addColumnListeners(column);
-
         return column;
     }
 
@@ -415,12 +410,6 @@ export class ColumnFactory extends BeanStub {
         const defaultColDef = this.gos.get('defaultColDef');
         mergeDeep(res, defaultColDef, false, true);
 
-        const columnType = this.dataTypeService.updateColDefAndGetColumnType(res, colDef, colId);
-
-        if (columnType) {
-            this.assignColumnTypes(columnType, res);
-        }
-
         // merge properties from column definitions
         mergeDeep(res, colDef, false, true);
 
@@ -431,43 +420,7 @@ export class ColumnFactory extends BeanStub {
             mergeDeep(res, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort } as ColDef, false, true);
         }
 
-        this.dataTypeService.validateColDef(res);
-
         return res;
-    }
-
-    private assignColumnTypes(typeKeys: string[], colDefMerged: ColDef) {
-        if (!typeKeys.length) {
-            return;
-        }
-
-        // merge user defined with default column types
-        const allColumnTypes = Object.assign({}, DefaultColumnTypes);
-        const userTypes = this.gos.get('columnTypes') || {};
-
-        iterateObject(userTypes, (key, value) => {
-            if (key in allColumnTypes) {
-                console.warn(`AG Grid: the column type '${key}' is a default column type and cannot be overridden.`);
-            } else {
-                const colType = value as any;
-                if (colType.type) {
-                    warnOnce(`Column type definitions 'columnTypes' with a 'type' attribute are not supported ` +
-                        `because a column type cannot refer to another column type. Only column definitions ` +
-                        `'columnDefs' can use the 'type' attribute to refer to a column type.`);
-                }
-
-                allColumnTypes[key] = value;
-            }
-        });
-
-        typeKeys.forEach((t) => {
-            const typeColDef = allColumnTypes[t.trim()];
-            if (typeColDef) {
-                mergeDeep(colDefMerged, typeColDef, false, true);
-            } else {
-                console.warn("AG Grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
-            }
-        });
     }
 
     // if object has children, we assume it's a group
