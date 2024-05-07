@@ -114,7 +114,6 @@ export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 // gridPanel
 export { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from "./gridBodyComp/gridBodyCtrl";
-export { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
 
 // rowContainer
 export { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";

@@ -11,7 +11,6 @@ import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { isInvisibleScrollbar } from "../utils/browser";
 import { getInnerWidth, isElementChildOfClass, isVerticalScrollShowing } from "../utils/dom";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
-import { ScrollVisibleService } from "./scrollVisibleService";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -51,7 +50,6 @@ export class GridBodyCtrl extends BeanStub {
     @Autowired('rowContainerHeightService') private rowContainerHeightService: RowContainerHeightService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('rowModel') public rowModel: IRowModel;
 
@@ -116,7 +114,6 @@ export class GridBodyCtrl extends BeanStub {
 
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
     }
 
@@ -156,19 +153,6 @@ export class GridBodyCtrl extends BeanStub {
 
     public setCellTextSelection(selectable: boolean = false): void {
         this.comp.setCellSelectableCss(CSS_CLASS_CELL_SELECTABLE, selectable);
-    }
-
-    private onScrollVisibilityChanged(): void {
-        const visible = this.scrollVisibleService.isVerticalScrollShowing();
-        this.setVerticalScrollPaddingVisible(visible);
-        this.setStickyWidth(visible);
-        this.setStickyBottomOffsetBottom();
-
-        const scrollbarWidth = visible ? (this.gos.getScrollbarWidth() || 0) : 0;
-        const pad = isInvisibleScrollbar() ? 16 : 0;
-        const width = `calc(100% + ${scrollbarWidth + pad}px)`;
-
-        this.animationFrameService.requestAnimationFrame(() => this.comp.setBodyViewportWidth(width));
     }
 
     private onGridColumnsChanged(): void {
@@ -296,7 +280,6 @@ export class GridBodyCtrl extends BeanStub {
         this.comp.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
         this.comp.setBottomDisplay(floatingBottomHeight ? 'inherit' : 'none');
         this.setStickyTopOffsetTop();
-        this.setStickyBottomOffsetBottom();
     }
 
     public setStickyTopHeight(height: number = 0): void {
@@ -343,13 +326,6 @@ export class GridBodyCtrl extends BeanStub {
         this.comp.setStickyTopTop(`${height}px`);
     }
 
-    private setStickyBottomOffsetBottom(): void {
-        const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
-        const scrollbarWidth = hScrollShowing ? (this.gos.getScrollbarWidth() || 0) : 0;
-        const height = scrollbarWidth;
-
-        this.comp.setStickyBottomBottom(`${height}px`);
-    }
 
     // method will call itself if no available width. this covers if the grid
     // isn't visible, but is just about to be visible.

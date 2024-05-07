@@ -12,10 +12,8 @@ import { GridComp } from "./gridComp/gridComp";
 import { CellNavigationService } from "./cellNavigationService";
 import { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
-import { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
 import { StylingService } from "./styling/stylingService";
 import { ColumnHoverService } from "./rendering/columnHoverService";
-import { ColumnAnimationService } from "./rendering/columnAnimationService";
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { RowModelType } from "./interfaces/iRowModel";
 import { ValueCache } from "./valueService/valueCache";
@@ -39,7 +37,6 @@ import { AgStackComponentsRegistry } from "./components/agStackComponentsRegistr
 import { HeaderPositionUtils } from "./headerRendering/common/headerPosition";
 import { HeaderNavigationService } from "./headerRendering/common/headerNavigationService";
 import { missing } from "./utils/generic";
-import { ColumnDefFactory } from "./columns/columnDefFactory";
 import { RowCssClassCalculator } from "./rendering/row/rowCssClassCalculator";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { RowNodeSorter } from "./rowNodes/rowNodeSorter";
@@ -301,9 +298,9 @@ export class GridCoreCreator {
             PaginationProxy, RowRenderer, ColumnFactory,
              ValueCache, ValueService, LoggerFactory,
               Environment, CellNavigationService, StylingService,
-            ScrollVisibleService, ColumnHoverService, ColumnAnimationService,
+             ColumnHoverService,
             ChangeDetectionService, AnimationFrameService,
-            AgStackComponentsRegistry, ColumnDefFactory, RowCssClassCalculator, 
+            AgStackComponentsRegistry, RowCssClassCalculator, 
             RowNodeBlockLoader, RowNodeSorter, CtrlsService, RowNodeEventThrottle,
             CtrlsFactory, SyncService, OverlayService,
             ApiEventService, AriaAnnouncementService

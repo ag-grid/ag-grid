@@ -8,13 +8,11 @@ import { isVisible } from "../utils/dom";
 import { waitUntil } from "../utils/function";
 import { Component } from "../widgets/component";
 import { RefSelector } from "../widgets/componentAnnotations";
-import { ScrollVisibleService } from "./scrollVisibleService";
 
 export abstract class AbstractFakeScrollComp extends Component {
 
     @RefSelector('eViewport') protected readonly eViewport: HTMLElement;
     @RefSelector('eContainer') protected readonly eContainer: HTMLElement;
-    @Autowired('scrollVisibleService') protected readonly scrollVisibleService: ScrollVisibleService;
     @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
 

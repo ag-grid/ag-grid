@@ -72,7 +72,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     }
 
     private setFakeHScrollSpacerWidths(): void {
-        const vScrollShowing = this.scrollVisibleService.isVerticalScrollShowing();
+        const vScrollShowing = true;
 
         // we pad the right based on a) if cols are pinned to the right and
         // b) if v scroll is showing on the right (normal position of scroll)
@@ -100,7 +100,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     }
 
     protected setScrollVisible(): void {
-        const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
+        const hScrollShowing = true;
         const invisibleScrollbar = this.invisibleScrollbar;
         const isSuppressHorizontalScroll = this.gos.get('suppressHorizontalScroll');
         const scrollbarWidth = hScrollShowing ? (this.gos.getScrollbarWidth() || 0) : 0;

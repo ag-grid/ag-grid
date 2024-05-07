@@ -26,7 +26,6 @@ import { SyncService } from "../syncService";
 import { ValueCache } from "../valueService/valueCache";
 import { ValueService } from "../valueService/valueService";
 import { AriaAnnouncementService } from "./ariaAnnouncementService";
-import { ColumnAnimationService } from "./columnAnimationService";
 import { ColumnHoverService } from "./columnHoverService";
 import { RowCssClassCalculator } from "./row/rowCssClassCalculator";
 import { RowContainerHeightService } from "./rowContainerHeightService";
@@ -50,7 +49,6 @@ export class Beans {
     @Autowired('eventService') public readonly eventService: EventService;
     @Autowired('columnModel') public readonly columnModel: ColumnModel;
     @Autowired('headerNavigationService') public readonly headerNavigationService: HeaderNavigationService;
-    @Autowired('columnAnimationService') public readonly columnAnimationService: ColumnAnimationService;
     @Autowired('stylingService') public readonly stylingService: StylingService;
     @Autowired('columnHoverService') public readonly columnHoverService: ColumnHoverService;
     @Autowired('userComponentFactory') public readonly userComponentFactory: UserComponentFactory;

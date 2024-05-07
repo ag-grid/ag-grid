@@ -223,8 +223,6 @@ export class ColumnFactory extends BeanStub {
         for (let i = 0; i < result.length; i++) {
             const def = defs[i];
             if (this.isColumnGroup(def)) {
-                result[i] = this.createColumnGroup(primaryColumns, def as ColGroupDef, level, existingColsCopy,
-                    columnKeyCreator, existingGroups, source);
             } else {
                 result[i] = this.createColumn(primaryColumns, def as ColDef, existingColsCopy, columnKeyCreator, source);
             }
@@ -232,38 +230,6 @@ export class ColumnFactory extends BeanStub {
         return result;
     }
 
-    private createColumnGroup(
-        primaryColumns: boolean,
-        colGroupDef: ColGroupDef,
-        level: number,
-        existingColumns: Column[],
-        columnKeyCreator: ColumnKeyCreator,
-        existingGroups: ProvidedColumnGroup[],
-        source: ColumnEventType
-    ): ProvidedColumnGroup {
-        const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
-        const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId || null, null);
-        const providedGroup = new ProvidedColumnGroup(colGroupDefMerged, groupId, false, level);
-        this.createBean(providedGroup);
-        const existingGroupAndIndex = this.findExistingGroup(colGroupDef, existingGroups);
-        // make sure we remove, so if user provided duplicate id, then we don't have more than
-        // one column instance for colDef with common id
-        if (existingGroupAndIndex) {
-            existingGroups.splice(existingGroupAndIndex.idx, 1);
-        }
-
-        let existingGroup = existingGroupAndIndex?.group;
-        if (existingGroup) {
-            providedGroup.setExpanded(existingGroup.isExpanded());
-        }
-
-        const children = this.recursivelyCreateColumns(colGroupDefMerged.children,
-            level + 1, primaryColumns, existingColumns, columnKeyCreator, existingGroups, source);
-
-        providedGroup.setChildren(children);
-
-        return providedGroup;
-    }
 
     private createMergedColGroupDef(colGroupDef: ColGroupDef | null): ColGroupDef {
         const colGroupDefMerged: ColGroupDef = {} as ColGroupDef;

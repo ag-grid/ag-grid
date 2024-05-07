@@ -2,12 +2,10 @@ import { BeanStub } from "../context/beanStub";
 import { Autowired, PostConstruct } from "../context/context";
 import { ColumnModel } from "../columns/columnModel";
 import { Events } from "../eventKeys";
-import { ScrollVisibleService } from "./scrollVisibleService";
 
 export class CenterWidthFeature extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
     constructor(
         private readonly callback: (width: number) => void,
@@ -52,7 +50,7 @@ export class CenterWidthFeature extends BeanStub {
 
             if (this.addSpacer) {
                 const relevantWidth = this.gos.get('enableRtl') ? leftWidth : rightWidth;
-                if (relevantWidth === 0 && this.scrollVisibleService.isVerticalScrollShowing()) {
+                if (relevantWidth === 0) {
                     totalWidth += this.gos.getScrollbarWidth();
                 }
             }

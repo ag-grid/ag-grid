@@ -10,7 +10,6 @@ import { Beans } from "../../../rendering/beans";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 import { ColumnSortState } from "../../../utils/aria";
 import { getElementSize } from "../../../utils/dom";
-import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { CssClassApplier } from "../cssClassApplier";
@@ -93,25 +92,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         const isRtl = gos.get('enableRtl');
         const isLeft = hDirection === HorizontalDirection.Left !== isRtl;
 
-        const xPosition = ColumnMoveHelper.normaliseX(
-            isLeft ? (left - 20) : (left + width + 20),
-            pinned,
-            true,
-            gos,
-            ctrlsService
-        );
-
-        ColumnMoveHelper.attemptMoveColumns({
-            allMovingColumns: [column],
-            isFromHeader: true,
-            hDirection,
-            xPosition,
-            pinned,
-            fromEnter: false,
-            fakeEvent: false,
-            gos,
-            columnModel: this.beans.columnModel
-        });
+       
 
         ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
     }

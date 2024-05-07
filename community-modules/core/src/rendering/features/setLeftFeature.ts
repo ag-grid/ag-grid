@@ -60,7 +60,7 @@ export class SetLeftFeature extends BeanStub {
     private setLeftFirstTime(): void {
         const suppressMoveAnimation = this.beans.gos.get('suppressColumnMoveAnimation');
         const oldLeftExists = exists(this.columnOrGroup.getOldLeft());
-        const animateColumnMove = this.beans.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
+        const animateColumnMove = false;
         if (animateColumnMove) {
             this.animateInLeft();
         } else {
@@ -86,12 +86,7 @@ export class SetLeftFeature extends BeanStub {
         // VM turn, but only one (the correct one) should get applied.
         this.actualLeft = actualLeft;
 
-        this.beans.columnAnimationService.executeNextVMTurn(() => {
-            // test this left value is the latest one to be applied, and if not, do nothing
-            if (this.actualLeft === actualLeft) {
-                this.setLeft(actualLeft);
-            }
-        });
+
     }
 
     private onLeftChanged(): void {

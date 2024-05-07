@@ -3,7 +3,6 @@ import { BeanStub } from "../context/beanStub";
 import { Autowired, PostConstruct } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
 import { BodyHeightChangedEvent, Events } from "../events";
-import { ScrollVisibleService, SetScrollsVisibleParams } from "../gridBodyComp/scrollVisibleService";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { getInnerHeight } from "../utils/dom";
 import { GridBodyCtrl } from "./gridBodyCtrl";
@@ -16,7 +15,6 @@ export class ViewportSizeFeature extends BeanStub {
 
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
     private centerContainerCtrl: RowContainerCtrl;
     private gridBodyCtrl: GridBodyCtrl;
@@ -111,22 +109,8 @@ export class ViewportSizeFeature extends BeanStub {
         // the cols are removed, the remaining cols are still in the original location
         // at the start of the animation, so pre animation the H scrollbar is still needed,
         // but post animation it is not.
-        this.updateScrollVisibleServiceImpl();
-        setTimeout(this.updateScrollVisibleServiceImpl.bind(this), 500);
     }
 
-    private updateScrollVisibleServiceImpl(): void {
-        const params: SetScrollsVisibleParams = {
-            horizontalScrollShowing: this.isHorizontalScrollShowing(),
-            verticalScrollShowing: this.gridBodyCtrl.isVerticalScrollShowing()
-        };
-
-        this.scrollVisibleService.setScrollsVisible(params);
-    }
-
-    private isHorizontalScrollShowing(): boolean {
-        return this.centerContainerCtrl.isHorizontalScrollShowing();
-    }
 
     // this gets called whenever a change in the viewport, so we can inform column controller it has to work
     // out the virtual columns again. gets called from following locations:

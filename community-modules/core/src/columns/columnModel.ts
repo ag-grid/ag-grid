@@ -29,14 +29,12 @@ import { BeanStub } from "../context/beanStub";
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import { Autowired, Bean, Optional, PostConstruct, PreDestroy, Qualifier } from '../context/context';
 import { IAggFuncService } from '../interfaces/iAggFuncService';
-import { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { RowNode } from '../entities/rowNode';
 import { ValueCache } from '../valueService/valueCache';
 import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromUnorderedArray, removeFromUnorderedArray } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { missingOrEmpty, exists, missing, attrToBoolean, attrToNumber } from '../utils/generic';
 import { camelCaseToHumanText } from '../utils/string';
-import { ColumnDefFactory } from "./columnDefFactory";
 import { convertToMap } from '../utils/map';
 import { warnOnce } from '../utils/function';
 import { CtrlsService } from '../ctrlsService';
@@ -114,10 +112,7 @@ export class ColumnModel extends BeanStub {
 
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
-    @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('columnDefFactory') private columnDefFactory: ColumnDefFactory;
 
     @Optional('aggFuncService') private aggFuncService?: IAggFuncService;
 
@@ -329,7 +324,6 @@ export class ColumnModel extends BeanStub {
 
         // always invalidate cache on changing columns, as the column id's for the new columns
         // could overlap with the old id's, so the cache would return old values for new columns.
-        this.valueCache.expire();
 
         // NOTE ==================
         // we should be destroying the existing columns and groups if they exist, for example, the original column
@@ -1424,64 +1418,6 @@ export class ColumnModel extends BeanStub {
         this.dispatchColumnChangedEvent(Events.EVENT_COLUMN_VALUE_CHANGED, [column], source);
     }
 
-    public moveRowGroupColumn(fromIndex: number, toIndex: number, source: ColumnEventType): void {
-        if (this.isRowGroupEmpty()) { return; }
-
-        const column = this.rowGroupColumns[fromIndex];
-
-        const impactedColumns = this.rowGroupColumns.slice(fromIndex, toIndex);
-        this.rowGroupColumns.splice(fromIndex, 1);
-        this.rowGroupColumns.splice(toIndex, 0, column);
-
-        const event: WithoutGridCommon<ColumnRowGroupChangedEvent> = {
-            type: Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
-            columns: impactedColumns,
-            column: impactedColumns.length === 1 ? impactedColumns[0] : null,
-            source: source
-        };
-
-        this.eventService.dispatchEvent(event);
-    }
-
-    public moveColumns(columnsToMoveKeys: ColKey[], toIndex: number, source: ColumnEventType, finished: boolean = true): void {
-        if (!this.gridColumns) { return; }
-
-        this.columnAnimationService.start();
-
-        if (toIndex > this.gridColumns.length - columnsToMoveKeys.length) {
-            console.warn('AG Grid: tried to insert columns in invalid location, toIndex = ' + toIndex);
-            console.warn('AG Grid: remember that you should not count the moving columns when calculating the new index');
-            return;
-        }
-
-        // we want to pull all the columns out first and put them into an ordered list
-        const movedColumns = this.getGridColumns(columnsToMoveKeys);
-        const failedRules = !this.doesMovePassRules(movedColumns, toIndex);
-
-        if (failedRules) { return; }
-
-        moveInArray(this.gridColumns, movedColumns, toIndex);
-        this.updateDisplayedColumns(source);
-
-        this.dispatchColumnMovedEvent({ movedColumns, source, toIndex, finished });
-        this.columnAnimationService.finish();
-    }
-
-    private doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean {
-        // make a copy of what the grid columns would look like after the move
-        const proposedColumnOrder = this.getProposedColumnOrder(columnsToMove, toIndex);
-        return this.doesOrderPassRules(proposedColumnOrder);
-    }
-
-    public doesOrderPassRules(gridOrder: Column[]) {
-        if (!this.doesMovePassMarryChildren(gridOrder)) {
-            return false;
-        }
-        if (!this.doesMovePassLockedPositions(gridOrder)) {
-            return false;
-        }
-        return true;
-    }
 
     public getProposedColumnOrder(columnsToMove: Column[], toIndex: number): Column[] {
         const proposedColumnOrder = this.gridColumns.slice();
@@ -1504,88 +1440,6 @@ export class ColumnModel extends BeanStub {
         });
     }
 
-    public doesMovePassLockedPositions(proposedColumnOrder: Column[]): boolean {
-         // Placement is a number indicating 'left' 'center' or 'right' as 0 1 2
-        let lastPlacement = 0;
-        let rulePassed = true;
-        const lockPositionToPlacement = (position: ColDef['lockPosition']) => {
-            if (!position) { // false or undefined
-                return 1;
-            }
-            if (position === true) {
-                return 0;
-            }
-            return position === 'left' ? 0 : 2; // Otherwise 'right'
-        };
-
-        proposedColumnOrder.forEach(col => {
-            const placement = lockPositionToPlacement(col.getColDef().lockPosition);
-            if (placement < lastPlacement) { // If placement goes down, we're not in the correct order
-                rulePassed = false;
-            }
-            lastPlacement = placement;
-        });
-
-        return rulePassed;
-    }
-
-    private doesMovePassMarryChildren(allColumnsCopy: Column[]): boolean {
-        let rulePassed = true;
-
-        depthFirstOriginalTreeSearch(null, this.gridBalancedTree, child => {
-            if (!(child instanceof ProvidedColumnGroup)) { return; }
-
-            const columnGroup = child;
-            const colGroupDef = columnGroup.getColGroupDef();
-            const marryChildren = colGroupDef && colGroupDef.marryChildren;
-
-            if (!marryChildren) { return; }
-
-            const newIndexes: number[] = [];
-            columnGroup.getLeafColumns().forEach(col => {
-                const newColIndex = allColumnsCopy.indexOf(col);
-                newIndexes.push(newColIndex);
-            });
-
-            const maxIndex = Math.max.apply(Math, newIndexes);
-            const minIndex = Math.min.apply(Math, newIndexes);
-
-            // spread is how far the first column in this group is away from the last column
-            const spread = maxIndex - minIndex;
-            const maxSpread = columnGroup.getLeafColumns().length - 1;
-
-            // if the columns
-            if (spread > maxSpread) {
-                rulePassed = false;
-            }
-
-            // console.log(`maxIndex = ${maxIndex}, minIndex = ${minIndex}, spread = ${spread}, maxSpread = ${maxSpread}, fail = ${spread > (count-1)}`)
-            // console.log(allColumnsCopy.map( col => col.getColDef().field).join(','));
-        });
-
-        return rulePassed;
-    }
-
-    public moveColumnByIndex(fromIndex: number, toIndex: number, source: ColumnEventType): void {
-        if (!this.gridColumns) { return; }
-
-        const column = this.gridColumns[fromIndex];
-        this.moveColumns([column], toIndex, source);
-    }
-
-    public getColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
-        if (!this.primaryColumns) { return; }
-
-        const cols = this.primaryColumns.slice();
-
-        if (this.gridColsArePrimary) {
-            cols.sort((a: Column, b: Column) => this.gridColumns.indexOf(a) - this.gridColumns.indexOf(b));
-        } else if (this.lastPrimaryOrder) {
-            cols.sort((a: Column, b: Column) => this.lastPrimaryOrder.indexOf(a) - this.lastPrimaryOrder.indexOf(b));
-        }
-
-        return this.columnDefFactory.buildColumnDefs(cols, this.rowGroupColumns, this.pivotColumns);
-    }
 
     // used by:
     // + angularGrid -> for setting body width
@@ -1708,43 +1562,6 @@ export class ColumnModel extends BeanStub {
         }, source);
     }
 
-    public setColumnsPinned(keys: Maybe<ColKey>[], pinned: ColumnPinnedType, source: ColumnEventType): void {
-        if (!this.gridColumns) { return; }
-
-        if (this.gos.isDomLayout('print')) {
-            console.warn(`AG Grid: Changing the column pinning status is not allowed with domLayout='print'`);
-            return;
-        }
-        this.columnAnimationService.start();
-
-        let actualPinned: ColumnPinnedType;
-        if (pinned === true || pinned === 'left') {
-            actualPinned = 'left';
-        } else if (pinned === 'right') {
-            actualPinned = 'right';
-        } else {
-            actualPinned = null;
-        }
-
-        this.actionOnGridColumns(keys, (col: Column): boolean => {
-            if (col.getPinned() !== actualPinned) {
-                col.setPinned(actualPinned);
-                return true;
-            }
-            return false;
-        }, source, () => {
-            const event: WithoutGridCommon<ColumnPinnedEvent> = {
-                type: Events.EVENT_COLUMN_PINNED,
-                pinned: actualPinned,
-                column: null,
-                columns: null,
-                source: source
-            };
-            return event;
-        });
-
-        this.columnAnimationService.finish();
-    }
 
     // does an action on a set of columns. provides common functionality for looking up the
     // columns based on key, getting a list of effected columns, and then updated the event
@@ -2123,7 +1940,6 @@ export class ColumnModel extends BeanStub {
             return { unmatchedAndAutoStates, unmatchedCount };
         };
 
-        this.columnAnimationService.start();
 
         let {
             unmatchedAndAutoStates,
@@ -2139,7 +1955,6 @@ export class ColumnModel extends BeanStub {
                 (id) => this.getSecondaryColumn(id)
             ).unmatchedCount;
         }
-        this.columnAnimationService.finish();
 
         return unmatchedCount === 0; // Successful if no states unaccounted for
     }
@@ -2176,11 +1991,6 @@ export class ColumnModel extends BeanStub {
         // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
         // is less sexy for the code here, but it keeps consistency.
         newOrder = this.placeLockedColumns(newOrder);
-
-        if (!this.doesMovePassMarryChildren(newOrder)) {
-            console.warn('AG Grid: Applying column order broke a group where columns should be married together. Applying new order has been discarded.');
-            return;
-        }
 
         this.gridColumns = newOrder;
     }
@@ -2915,24 +2725,6 @@ export class ColumnModel extends BeanStub {
         );
     }
 
-    public resetColumnGroupState(source: ColumnEventType): void {
-        if (!this.primaryColumnTree) { return; }
-
-        const stateItems: { groupId: string, open: boolean | undefined; }[] = [];
-
-        depthFirstOriginalTreeSearch(null, this.primaryColumnTree, child => {
-            if (child instanceof ProvidedColumnGroup) {
-                const colGroupDef = child.getColGroupDef();
-                const groupState = {
-                    groupId: child.getGroupId(),
-                    open: !colGroupDef ? undefined : colGroupDef.openByDefault
-                };
-                stateItems.push(groupState);
-            }
-        });
-
-        this.setColumnGroupState(stateItems, source);
-    }
 
     public getColumnGroupState(): { groupId: string, open: boolean; }[] {
         const columnGroupState: { groupId: string, open: boolean; }[] = [];
@@ -2947,53 +2739,6 @@ export class ColumnModel extends BeanStub {
         });
 
         return columnGroupState;
-    }
-
-    public setColumnGroupState(stateItems: { groupId: string, open: boolean | undefined; }[], source: ColumnEventType): void {
-        if (!this.gridBalancedTree) { return; }
-
-        this.columnAnimationService.start();
-
-        const impactedGroups: ProvidedColumnGroup[] = [];
-
-        stateItems.forEach(stateItem => {
-            const groupKey = stateItem.groupId;
-            const newValue = stateItem.open;
-            const providedColumnGroup: ProvidedColumnGroup | null = this.getProvidedColumnGroup(groupKey);
-
-            if (!providedColumnGroup) { return; }
-            if (providedColumnGroup.isExpanded() === newValue) { return; }
-
-            this.logger.log('columnGroupOpened(' + providedColumnGroup.getGroupId() + ',' + newValue + ')');
-            providedColumnGroup.setExpanded(newValue);
-            impactedGroups.push(providedColumnGroup);
-        });
-
-        this.updateGroupsAndDisplayedColumns(source);
-        this.setFirstRightAndLastLeftPinned(source);
-
-        if (impactedGroups.length) {
-            const event: WithoutGridCommon<ColumnGroupOpenedEvent> = {
-                type: Events.EVENT_COLUMN_GROUP_OPENED,
-                columnGroup: ProvidedColumnGroup.length === 1 ? impactedGroups[0] : undefined,
-                columnGroups: impactedGroups,
-            };
-            this.eventService.dispatchEvent(event);
-        }
-
-        this.columnAnimationService.finish();
-    }
-
-    // called by headerRenderer - when a header is opened or closed
-    public setColumnGroupOpened(key: ProvidedColumnGroup | string | null, newValue: boolean, source: ColumnEventType): void {
-        let keyAsString: string;
-
-        if (key instanceof ProvidedColumnGroup) {
-            keyAsString = key.getId();
-        } else {
-            keyAsString = key || '';
-        }
-        this.setColumnGroupState([{ groupId: keyAsString, open: newValue }], source);
     }
 
     public getProvidedColumnGroup(key: string): ProvidedColumnGroup | null {

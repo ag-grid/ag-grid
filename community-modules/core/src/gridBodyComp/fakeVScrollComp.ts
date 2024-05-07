@@ -28,7 +28,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
     }
 
     protected setScrollVisible(): void {
-        const vScrollShowing = this.scrollVisibleService.isVerticalScrollShowing();
+        const vScrollShowing = true;
         const invisibleScrollbar = this.invisibleScrollbar;
 
         const scrollbarWidth = vScrollShowing ? (this.gos.getScrollbarWidth() || 0) : 0;
