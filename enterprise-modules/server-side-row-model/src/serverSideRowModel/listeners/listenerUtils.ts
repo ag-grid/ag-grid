@@ -19,11 +19,10 @@ export class ListenerUtils {
     }
 
     public isSortingWithSecondaryColumn(changedColumnsInSort: string[]): boolean {
-        if (!this.pivotResultColsService.getPivotResultCols()) {
-            return false;
-        }
+        const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
+        if (!pivotResultCols) { return false; }
 
-        const secondaryColIds = this.pivotResultColsService.getPivotResultCols()!.map(col => col.getColId());
+        const secondaryColIds = pivotResultCols.list.map(col => col.getColId());
 
         for (let i = 0; i < changedColumnsInSort.length; i++) {
             if (secondaryColIds.indexOf(changedColumnsInSort[i]) > -1) {

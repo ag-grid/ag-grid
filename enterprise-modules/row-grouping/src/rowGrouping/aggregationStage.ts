@@ -141,7 +141,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     private aggregateRowNodeUsingValuesAndPivot(rowNode: RowNode): any {
         const result: any = {};
 
-        const secondaryColumns = this.pivotResultColsService.getPivotResultCols() ?? [];
+        const secondaryColumns = this.pivotResultColsService.getPivotResultCols()?.list ?? [];
         let canSkipTotalColumns = true;
         for (let i = 0; i < secondaryColumns.length; i++) {
             const secondaryCol = secondaryColumns[i];

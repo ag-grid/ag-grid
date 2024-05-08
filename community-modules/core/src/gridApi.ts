@@ -1968,7 +1968,10 @@ export class GridApi<TData = any> {
     public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[] | null): void { this.pivotResultColsService.setPivotResultCols(colDefs, 'api'); }
 
     /** Returns the grid's pivot result columns. */
-    public getPivotResultColumns(): Column[] | null { return this.pivotResultColsService.getPivotResultCols(); }
+    public getPivotResultColumns(): Column[] | null { 
+        const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
+        return pivotResultCols ? pivotResultCols.list : null;
+    }
 
     /** Get the current state of the grid. Can be used in conjunction with the `initialState` grid option to save and restore grid state. */
     public getState(): GridState {

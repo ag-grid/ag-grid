@@ -30,7 +30,7 @@ export class ColumnUtilsFeature {
         return columnList.reduce((width, col) => width + col.getActualWidth(), 0);
     }
 
-    public destroyColumns(context: Context, oldTree: IProvidedColumn[] | null, newTree?: IProvidedColumn[] | null): void {
+    public destroyColumns(context: Context, oldTree: IProvidedColumn[] | null | undefined, newTree?: IProvidedColumn[] | null): void {
         const oldObjectsById: {[id: ColumnInstanceId]: IProvidedColumn | null} = {};
 
         if (!oldTree) { return; }

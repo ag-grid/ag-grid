@@ -314,7 +314,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private updatePivotKeysForSSRM() {
-        const secondaryColumns = this.pivotResultColsService.getPivotResultCols();
+        const secondaryColumns = this.pivotResultColsService.getPivotResultCols()?.list;
 
         if (!secondaryColumns) { return; }
 
