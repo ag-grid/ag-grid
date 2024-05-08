@@ -233,9 +233,9 @@ export class ColumnModel extends BeanStub {
         // group adds a listener to the columns, it should be also removing the listeners
         this.autoGroupsNeedBuilding = true;
 
-        const oldPrimaryColumns = this.providedCols && this.providedCols.list;
-        const oldPrimaryTree = this.providedCols && this.providedCols.tree;
-        const newTreeResult = this.columnFactory.createColumnTree(this.columnDefs, true, oldPrimaryTree, source);
+        const oldProvidedCols = this.providedCols && this.providedCols.list;
+        const oldProvidedTree = this.providedCols && this.providedCols.tree;
+        const newTreeResult = this.columnFactory.createColumnTree(this.columnDefs, true, oldProvidedTree, source);
 
         this.columnUtilsFeature.destroyColumns(this.getContext(), this.providedCols?.tree, newTreeResult.columnTree);
 
@@ -248,14 +248,14 @@ export class ColumnModel extends BeanStub {
 
         this.providedCols = { tree, treeDepth, list, map };
 
-        this.functionColumnsService.extractColumns(source, oldPrimaryColumns);
+        this.functionColumnsService.extractColumns(source, oldProvidedCols);
 
         this.ready = true;
 
         // if we are showing pivot result cols, then no need to update grid columns
         // unless the auto column needs rebuilt, as it's the pivot service responsibility to change these
-        // if we are no longer pivoting (ie and need to revert back to primary, otherwise
-        // we shouldn't be touching the primary).
+        // if we are no longer pivoting (ie and need to revert back to provided, otherwise
+        // we shouldn't be touching the provided).
         const liveColsNotProcessed = this.providedCols == null;
         const processLiveCols = !this.pivotResultColsAreLive || liveColsNotProcessed || this.autoGroupsNeedBuilding;
 
@@ -424,7 +424,7 @@ export class ColumnModel extends BeanStub {
     // used by:
     // + clientSideRowController -> sorting, building quick filter text
     // + headerRenderer -> sorting (clearing icon)
-    public getAllPrimaryColumns(): Column[] | null {
+    public getAllProvidedCols(): Column[] | null {
         return this.providedCols?.list ? this.providedCols.list : null;
     }
 
@@ -779,7 +779,7 @@ export class ColumnModel extends BeanStub {
             });
 
         } else {
-            // otherwise continue as normal. this can be working on the primary
+            // otherwise continue as normal. this can be working on the provided
             // or pivot result cols, whatever the liveColumns are set to
             res = this.liveCols.list.filter(column => {
                 // keep col if a) it's auto-group or b) it's visible
@@ -967,7 +967,7 @@ export class ColumnModel extends BeanStub {
         const lastOrderMapped = convertToMap<Column, number>(colsOrder.map((col, index) => [col, index]));
 
         // only do the sort if at least one column is accounted for. columns will be not accounted for
-        // if changing from pivot result cols to primary columns
+        // if changing from pivot result cols to provided columns
         let noColsFound = true;
         this.liveCols.list.forEach(col => {
             if (lastOrderMapped.has(col)) {

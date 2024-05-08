@@ -12,7 +12,7 @@ export class ColumnGetStateService {
     @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
 
     public getColumnState(): ColumnState[] {
-        const primaryCols = this.columnModel.getAllPrimaryColumns();
+        const primaryCols = this.columnModel.getAllProvidedCols();
 
         if (missing(primaryCols) || !this.columnModel.isAlive()) { return []; }
 

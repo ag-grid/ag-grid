@@ -398,7 +398,7 @@ export class ColumnApplyStateService extends BeanStub {
 
 
     public resetColumnState(source: ColumnEventType): void {
-        const primaryCols = this.columnModel.getAllPrimaryColumns();
+        const primaryCols = this.columnModel.getAllProvidedCols();
         if (missingOrEmpty(primaryCols)) { return; }
 
         // NOTE = there is one bug here that no customer has noticed - if a column has colDef.lockPosition,

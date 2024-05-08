@@ -129,7 +129,7 @@ export class PresentedColsService extends BeanStub {
     }
 
     private setLeftValuesOfColumns(source: ColumnEventType): void {
-        const primaryCols = this.columnModel.getAllPrimaryColumns();
+        const primaryCols = this.columnModel.getAllProvidedCols();
         if (!primaryCols) { return; }
 
         // go through each list of displayed columns

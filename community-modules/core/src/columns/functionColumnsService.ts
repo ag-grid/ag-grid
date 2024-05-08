@@ -232,7 +232,7 @@ export class FunctionColumnsService extends BeanStub {
             changes.delete(col);
         });
 
-        const primaryCols = this.columnModel.getAllPrimaryColumns();
+        const primaryCols = this.columnModel.getAllProvidedCols();
         (primaryCols || []).forEach(column => {
             const added = masterList.indexOf(column) >= 0;
             columnCallback(added, column);
@@ -371,7 +371,7 @@ export class FunctionColumnsService extends BeanStub {
         const colsWithIndex: Column[] = [];
         const colsWithValue: Column[] = [];
 
-        const primaryCols = this.columnModel.getAllPrimaryColumns() || [];
+        const primaryCols = this.columnModel.getAllProvidedCols() || [];
 
         // go though all cols.
         // if value, change
@@ -493,7 +493,7 @@ export class FunctionColumnsService extends BeanStub {
             enableProp: 'rowGroup' | 'pivot', initialEnableProp: 'initialRowGroup' | 'initialPivot',
             indexProp: 'rowGroupIndex' | 'pivotIndex', initialIndexProp: 'initialRowGroupIndex' | 'initialPivotIndex'
         ) => {
-            const primaryCols = this.columnModel.getAllPrimaryColumns();
+            const primaryCols = this.columnModel.getAllProvidedCols();
             if (!colList.length || !primaryCols) { return []; }
             const updatedColIdArray = Object.keys(updatedColumnState);
             const updatedColIds = new Set(updatedColIdArray);

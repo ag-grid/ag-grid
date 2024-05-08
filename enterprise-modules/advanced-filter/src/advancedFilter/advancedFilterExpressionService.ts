@@ -152,7 +152,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
         if (this.columnAutocompleteEntries) {
             return this.columnAutocompleteEntries;
         }
-        const columns = this.columnModel.getAllPrimaryColumns() ?? [];
+        const columns = this.columnModel.getAllProvidedCols() ?? [];
         const entries: AutocompleteEntry[] = [];
         const includeHiddenColumns = this.gos.get('includeHiddenColumnsInAdvancedFilter');
         columns.forEach(column => {
