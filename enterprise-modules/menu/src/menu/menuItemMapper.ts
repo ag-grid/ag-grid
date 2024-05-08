@@ -149,7 +149,7 @@ export class MenuItemMapper extends BeanStub {
                 }
                 // Handle multiple auto group columns
                 if (typeof showRowGroup === 'string') {
-                    const underlyingColumn = this.columnModel.getPrimaryColumn(showRowGroup);
+                    const underlyingColumn = this.columnModel.getProvidedColumn(showRowGroup);
                     const ungroupByName = (underlyingColumn != null) ? _.escapeString(this.columnNameService.getDisplayNameForColumn(underlyingColumn, 'header')) : showRowGroup;
                     return {
                         name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName,

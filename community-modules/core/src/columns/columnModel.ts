@@ -107,35 +107,35 @@ export class ColumnModel extends BeanStub {
 
     private columnUtilsFeature: ColumnUtilsFeature;
 
-    // these are the columns provided by the client. this doesn't change, even if the
-    // order or state of the columns and groups change. it will only change if the client
-    // provides a new set of column definitions. otherwise this tree is used to build up
-    // the groups for displaying.
-    private primaryColumnTree: IProvidedColumn[];
-    // header row count, based on user provided columns
-    private primaryHeaderRowCount = 0;
+    // these are the columns generated from grid prop columnDefs. 
+    // this doesn't change (including order) unless columnDefs prop changses.
+    private providedColTree: IProvidedColumn[];
+    private providedColTreeDepth = 0;
     // all columns provided by the user. basically it's the leaf level nodes of the
     // tree above (originalBalancedTree)
-    private primaryColumns: Column[] | undefined; // every column available
-    private primaryColumnsMap: { [id: string]: Column };
+    private providedCols: Column[] | undefined; // every column available
+    private providedColsMap: { [id: string]: Column };
 
     // the columns the quick filter should use. this will be all primary columns
     // plus the autoGroupColumns if any exist
-    private columnsForQuickFilter: Column[];
+    private colsForQuickFilter: Column[];
 
-    // these are all columns that are available to the grid for rendering after pivot
-    private gridBalancedTree: IProvidedColumn[];
-    private gridColumns: Column[];
-    private gridColumnsMap: { [id: string]: Column };
-
-    private groupAutoColsBalancedTree: IProvidedColumn[] | null;
+    // contains ( [cols or pivotResultCols] + autoGroupCols ), also contains col order
+    private liveColTree: IProvidedColumn[];
+    private liveColTreeDept = 0;
+    private liveCols: Column[];
+    private liveColsMap: { [id: string]: Column };
 
     // header row count, either above, or based on pivoting if we are pivoting
-    private gridHeaderRowCount = 0;
-
-    private lastPrimaryOrder: Column[];
+    private lastProvidedOrder: Column[];
     private lastPivotResultColOrder: Column[];
-    private gridColsArePrimary: boolean;
+    private liveColsAreProvided: boolean;
+
+    public autoGroupsNeedBuilding = false;
+    private forceRecreateAutoGroups = false;
+
+    private groupAutoColsTree: IProvidedColumn[] | null;
+    private groupAutoCols: Column[] | null;
 
     // primary columns -> what the user provides
     // pivot result columns -> columns generated as a result of a pivot
@@ -149,13 +149,8 @@ export class ColumnModel extends BeanStub {
     private autoHeightActive: boolean;
     private autoHeightActiveAtLeastOnce = false;
 
-    private groupAutoColumns: Column[] | null;
-
     private ready = false;
     private changeEventsDispatching = false;
-
-    public autoGroupsNeedBuilding = false;
-    private forceRecreateAutoGroups = false;
 
     private pivotMode = false;
 
@@ -195,40 +190,40 @@ export class ColumnModel extends BeanStub {
 
         this.autoGroupsNeedBuilding = true;
         this.forceRecreateAutoGroups = true;
-        this.updateGridColumns();
-        this.updateDisplayedColumns(source);
+        this.updateLiveCols();
+        this.updatePresentedCols(source);
     }
 
     private onAutoGroupColumnDefChanged(source: ColumnEventType) {
-        if (this.groupAutoColumns) {
-            this.autoGroupColService.updateAutoGroupColumns(this.groupAutoColumns, source);
+        if (this.groupAutoCols) {
+            this.autoGroupColService.updateAutoGroupColumns(this.groupAutoCols, source);
         }
     }
 
     // called when dataTypes change
     public recreateColumnDefs(source: ColumnEventType): void {
-        if (!this.gridColumns) { return; }
+        if (!this.liveCols) { return; }
 
         // if we aren't going to force, update the auto cols in place
-        if (this.groupAutoColumns) {
-            this.autoGroupColService.updateAutoGroupColumns(this.groupAutoColumns, source);
+        if (this.groupAutoCols) {
+            this.autoGroupColService.updateAutoGroupColumns(this.groupAutoCols, source);
         }
-        this.createColumnsFromColumnDefs(true, source);
+        this.createProvidedCols(true, source);
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType) {
         const colsPreviouslyExisted = !!this.columnDefs;
         this.columnDefs = columnDefs;
-        this.createColumnsFromColumnDefs(colsPreviouslyExisted, source);
+        this.createProvidedCols(colsPreviouslyExisted, source);
     }
 
     @PreDestroy
     private destroyColumns(): void {
-        this.columnUtilsFeature.destroyColumns(this.primaryColumnTree);
-        this.columnUtilsFeature.destroyColumns(this.groupAutoColsBalancedTree);
+        this.columnUtilsFeature.destroyColumns(this.providedColTree);
+        this.columnUtilsFeature.destroyColumns(this.groupAutoColsTree);
     }
 
-    private createColumnsFromColumnDefs(colsPreviouslyExisted: boolean, source: ColumnEventType): void {
+    private createProvidedCols(colsPreviouslyExisted: boolean, source: ColumnEventType): void {
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
         const dispatchEventsFunc = colsPreviouslyExisted ? this.columnApplyStateService.compareColumnStatesAndDispatchEvents(source) : undefined;
 
@@ -241,17 +236,17 @@ export class ColumnModel extends BeanStub {
         // group adds a listener to the columns, it should be also removing the listeners
         this.autoGroupsNeedBuilding = true;
 
-        const oldPrimaryColumns = this.primaryColumns;
-        const oldPrimaryTree = this.primaryColumnTree;
+        const oldPrimaryColumns = this.providedCols;
+        const oldPrimaryTree = this.providedColTree;
         const balancedTreeResult = this.columnFactory.createColumnTree(this.columnDefs, true, oldPrimaryTree, source);
 
-        this.columnUtilsFeature.destroyColumns(this.primaryColumnTree, balancedTreeResult.columnTree);
-        this.primaryColumnTree = balancedTreeResult.columnTree;
-        this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;
+        this.columnUtilsFeature.destroyColumns(this.providedColTree, balancedTreeResult.columnTree);
+        this.providedColTree = balancedTreeResult.columnTree;
+        this.providedColTreeDepth = balancedTreeResult.treeDept + 1;
 
-        this.primaryColumns = this.columnUtilsFeature.getColumnsFromTree(this.primaryColumnTree);
-        this.primaryColumnsMap = {};
-        this.primaryColumns.forEach(col => this.primaryColumnsMap[col.getId()] = col);
+        this.providedCols = this.columnUtilsFeature.getColumnsFromTree(this.providedColTree);
+        this.providedColsMap = {};
+        this.providedCols.forEach(col => this.providedColsMap[col.getId()] = col);
 
         this.functionColumnsService.extractColumns(source, oldPrimaryColumns);
 
@@ -261,15 +256,15 @@ export class ColumnModel extends BeanStub {
         // unless the auto column needs rebuilt, as it's the pivot service responsibility to change these
         // if we are no longer pivoting (ie and need to revert back to primary, otherwise
         // we shouldn't be touching the primary).
-        const gridColsNotProcessed = this.gridColsArePrimary === undefined;
-        const processGridCols = this.gridColsArePrimary || gridColsNotProcessed || this.autoGroupsNeedBuilding;
+        const liveColsNotProcessed = this.liveColsAreProvided === undefined;
+        const processLiveCols = this.liveColsAreProvided || liveColsNotProcessed || this.autoGroupsNeedBuilding;
 
-        if (processGridCols) {
-            this.updateGridColumns();
-            if (colsPreviouslyExisted && this.gridColsArePrimary && !this.gos.get('maintainColumnOrder')) {
-                this.orderGridColumnsLikePrimary();
+        if (processLiveCols) {
+            this.updateLiveCols();
+            if (colsPreviouslyExisted && this.liveColsAreProvided && !this.gos.get('maintainColumnOrder')) {
+                this.orderLiveColsLikeProvidedCols();
             }
-            this.updateDisplayedColumns(source);
+            this.updatePresentedCols(source);
             this.columnViewportService.checkViewportColumns();
         }
 
@@ -295,16 +290,14 @@ export class ColumnModel extends BeanStub {
         return this.changeEventsDispatching;
     }
 
-    private orderGridColumnsLikePrimary(): void {
-        const primaryColumns = this.primaryColumns;
+    private orderLiveColsLikeProvidedCols(): void {
+        if (!this.providedCols) { return; }
 
-        if (!primaryColumns) { return; }
+        const liveColsOrdered = this.providedCols.filter(col => this.liveCols.indexOf(col) >= 0);
+        const otherCols = this.liveCols.filter(col => liveColsOrdered.indexOf(col) < 0);
 
-        const primaryColsOrdered = primaryColumns.filter(col => this.gridColumns.indexOf(col) >= 0);
-        const otherCols = this.gridColumns.filter(col => primaryColsOrdered.indexOf(col) < 0);
-
-        this.gridColumns = [...otherCols, ...primaryColsOrdered];
-        this.gridColumns = this.columnMoveService.placeLockedColumns(this.gridColumns);
+        this.liveCols = [...otherCols, ...liveColsOrdered];
+        this.liveCols = this.columnMoveService.placeLockedColumns(this.liveCols);
     }
 
     public isPivotMode(): boolean {
@@ -325,14 +318,14 @@ export class ColumnModel extends BeanStub {
 
         this.pivotMode = pivotMode;
 
-        if (!this.gridColumns) { return; }
+        if (!this.liveCols) { return; }
 
         // we need to update grid columns to cover the scenario where user has groupDisplayType = 'custom', as
         // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
-        // so need to updateGridColumn() to check it autoGroupCol needs to be added / removed
+        // so need to updateLiveColumn() to check it autoGroupCol needs to be added / removed
         this.autoGroupsNeedBuilding = true;
-        this.updateGridColumns();
-        this.updateDisplayedColumns(source);
+        this.updateLiveCols();
+        this.updatePresentedCols(source);
 
         this.eventDispatcher.pivotModeChanged();
     }
@@ -340,24 +333,24 @@ export class ColumnModel extends BeanStub {
     public setFirstRightAndLastLeftPinned(source: ColumnEventType): void {
         const {lastLeft, firstRight} = this.displayedColumnsService.getFirstRightAndLastLeftPinned();
 
-        this.gridColumns.forEach((column: Column) => {
+        this.liveCols.forEach((column: Column) => {
             column.setLastLeftPinned(column === lastLeft, source);
             column.setFirstRightPinned(column === firstRight, source);
         });
     }
 
-    public getGridBalancedTree(): IProvidedColumn[] {
-        return this.gridBalancedTree;
+    public getLiveColTree(): IProvidedColumn[] {
+        return this.liveColTree;
     }
 
     // + columnSelectPanel
-    public getPrimaryColumnTree(): IProvidedColumn[] {
-        return this.primaryColumnTree;
+    public getProvidedColTree(): IProvidedColumn[] {
+        return this.providedColTree;
     }
 
     // + gridPanel -> for resizing the body and setting top margin
     public getHeaderRowCount(): number {
-        return this.gridHeaderRowCount;
+        return this.liveColTreeDept;
     }
 
     public isColSpanActive(): boolean {
@@ -374,16 +367,15 @@ export class ColumnModel extends BeanStub {
         return this.autoGroupsNeedBuilding;
     }
     
-    public getPrimaryOrGridColumn(key: ColKey): Column | null {
-        const column = this.getPrimaryColumn(key);
-
-        return column || this.getGridColumn(key);
+    public getProvidedOrLiveColumn(key: ColKey): Column | null {
+        const res = this.getProvidedColumn(key) || this.getLiveColumn(key);
+        return res;
     }
 
     public setColumnAggFunc(key: Maybe<ColKey>, aggFunc: string | IAggFunc | null | undefined, source: ColumnEventType): void {
         if (!key) { return; }
 
-        const column = this.getPrimaryColumn(key);
+        const column = this.getProvidedColumn(key);
         if (!column) { return; }
 
         column.setAggFunc(aggFunc);
@@ -391,30 +383,30 @@ export class ColumnModel extends BeanStub {
         this.eventDispatcher.columnChanged(Events.EVENT_COLUMN_VALUE_CHANGED, [column], source);
     }
 
-    // returns the provided cols sorted in same order as they appear in grid columns. eg if grid columns
+    // returns the provided cols sorted in same order as they appear in grid columns. eg if live columns
     // contains [a,b,c,d,e] and col passed is [e,a] then the passed cols are sorted into [a,e]
-    public sortColumnsLikeGridColumns(cols: Column[]): void {
+    public sortColumnsLikeLiveColumns(cols: Column[]): void {
         if (!cols || cols.length <= 1) { return; }
 
-        const notAllColsInGridColumns = cols.filter(c => this.gridColumns.indexOf(c) < 0).length > 0;
-        if (notAllColsInGridColumns) { return; }
+        const notAllColsInLiveColumns = cols.filter(c => this.liveCols.indexOf(c) < 0).length > 0;
+        if (notAllColsInLiveColumns) { return; }
 
         cols.sort((a: Column, b: Column) => {
-            const indexA = this.gridColumns.indexOf(a);
-            const indexB = this.gridColumns.indexOf(b);
+            const indexA = this.liveCols.indexOf(a);
+            const indexB = this.liveCols.indexOf(b);
             return indexA - indexB;
         });
     }
 
     public getColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
-        if (!this.primaryColumns) { return; }
+        if (!this.providedCols) { return; }
 
-        const cols = this.primaryColumns.slice();
+        const cols = this.providedCols.slice();
 
-        if (this.gridColsArePrimary) {
-            cols.sort((a: Column, b: Column) => this.gridColumns.indexOf(a) - this.gridColumns.indexOf(b));
-        } else if (this.lastPrimaryOrder) {
-            cols.sort((a: Column, b: Column) => this.lastPrimaryOrder.indexOf(a) - this.lastPrimaryOrder.indexOf(b));
+        if (this.liveColsAreProvided) {
+            cols.sort((a: Column, b: Column) => this.liveCols.indexOf(a) - this.liveCols.indexOf(b));
+        } else if (this.lastProvidedOrder) {
+            cols.sort((a: Column, b: Column) => this.lastProvidedOrder.indexOf(a) - this.lastProvidedOrder.indexOf(b));
         }
 
         const rowGroupColumns = this.functionColumnsService.getRowGroupColumns();
@@ -433,16 +425,16 @@ export class ColumnModel extends BeanStub {
     // + clientSideRowController -> sorting, building quick filter text
     // + headerRenderer -> sorting (clearing icon)
     public getAllPrimaryColumns(): Column[] | null {
-        return this.primaryColumns ? this.primaryColumns : null;
+        return this.providedCols ? this.providedCols : null;
     }
 
     public getAllColumnsForQuickFilter(): Column[] {
-        return this.columnsForQuickFilter;
+        return this.colsForQuickFilter;
     }
 
     // + moveColumnController
-    public getAllGridColumns(): Column[] {
-        return this.gridColumns ?? [];
+    public getLiveCols(): Column[] {
+        return this.liveCols ?? [];
     }
 
     public setColumnsVisible(keys: (string | Column)[], visible = false, source: ColumnEventType): void {
@@ -457,7 +449,7 @@ export class ColumnModel extends BeanStub {
     }
 
     public setColumnsPinned(keys: Maybe<ColKey>[], pinned: ColumnPinnedType, source: ColumnEventType): void {
-        if (!this.gridColumns) { return; }
+        if (!this.liveCols) { return; }
 
         if (this.gos.isDomLayout('print')) {
             console.warn(`AG Grid: Changing the column pinning status is not allowed with domLayout='print'`);
@@ -513,7 +505,7 @@ export class ColumnModel extends BeanStub {
 
         keys.forEach(key => {
             if (!key) { return; }
-            const column = this.getGridColumn(key);
+            const column = this.getLiveColumn(key);
             if (!column) { return; }
 
             // need to check for false with type (ie !== instead of !=)
@@ -526,7 +518,7 @@ export class ColumnModel extends BeanStub {
 
         if (!updatedColumns.length) { return; }
 
-        this.updateDisplayedColumns(source);
+        this.updatePresentedCols(source);
 
         if (createEvent==null) { return; }
 
@@ -538,10 +530,10 @@ export class ColumnModel extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public getPrimaryAndPivotResultAndAutoColumns(): Column[] {
+    public getProvidedAndPivotResultAndAutoColumns(): Column[] {
         return ([] as Column[]).concat(...[
-            this.primaryColumns || [],
-            this.groupAutoColumns || [],
+            this.providedCols || [],
+            this.groupAutoCols || [],
             this.pivotResultColsService.getPivotResultCols() || [],
         ]);
     }
@@ -550,7 +542,7 @@ export class ColumnModel extends BeanStub {
     // but is uses so many methods and variables of ColumnModel, it's
     // difficult to extract out
     public applyColumnState(params: ApplyColumnStateParams, source: ColumnEventType): boolean {
-        if (missingOrEmpty(this.primaryColumns)) { return false; }
+        if (missingOrEmpty(this.providedCols)) { return false; }
 
         if (params && params.state && !params.state.forEach) {
             console.warn('AG Grid: applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.');
@@ -610,10 +602,10 @@ export class ColumnModel extends BeanStub {
             this.functionColumnsService.sortRowGroupColumns(comparatorByIndex.bind(this, rowGroupIndexes, previousRowGroupCols));
             this.functionColumnsService.sortPivotColumns(comparatorByIndex.bind(this, pivotIndexes, previousPivotCols));
 
-            this.updateGridColumns();
+            this.updateLiveCols();
 
             // sync newly created auto group columns with ColumnState
-            const autoGroupColsCopy = this.groupAutoColumns ? this.groupAutoColumns.slice() : [];
+            const autoGroupColsCopy = this.groupAutoCols ? this.groupAutoCols.slice() : [];
             autoGroupColumnStates.forEach(stateItem => {
                 const autoCol = this.getAutoColumn(stateItem.colId!);
                 removeFromArray(autoGroupColsCopy, autoCol);
@@ -622,8 +614,8 @@ export class ColumnModel extends BeanStub {
             // autogroup cols with nothing else, apply the default
             autoGroupColsCopy.forEach(applyDefaultsFunc);
 
-            this.gridColumns = this.columnApplyStateService.applyOrderAfterApplyState(params, this.gridColumns, this.gridColumnsMap);
-            this.updateDisplayedColumns(source);
+            this.liveCols = this.columnApplyStateService.applyOrderAfterApplyState(params, this.liveCols, this.liveColsMap);
+            this.updatePresentedCols(source);
             this.eventDispatcher.everythingChanged(source);
 
             dispatchEventsFunc(); // Will trigger pivot result col changes if pivoting modified
@@ -635,7 +627,7 @@ export class ColumnModel extends BeanStub {
         let {
             unmatchedAndAutoStates,
             unmatchedCount,
-        } = applyStates(params.state || [], this.primaryColumns || [], (id) => this.getPrimaryColumn(id));
+        } = applyStates(params.state || [], this.providedCols || [], (id) => this.getProvidedColumn(id));
 
         // If there are still states left over, see if we can apply them to newly generated
         // pivot result cols or auto cols. Also if defaults exist, ensure they are applied to pivot resul cols
@@ -651,8 +643,8 @@ export class ColumnModel extends BeanStub {
         return unmatchedCount === 0; // Successful if no states unaccounted for
     }
 
-    public getGridColumns(keys: ColKey[]): Column[] {
-        return this.getColumns(keys, this.getGridColumn.bind(this));
+    public getLiveColumns(keys: ColKey[]): Column[] {
+        return this.getColumns(keys, this.getLiveColumn.bind(this));
     }
 
     private getColumns(keys: ColKey[], columnLookupCallback: (key: ColKey) => Column): Column[] {
@@ -674,7 +666,7 @@ export class ColumnModel extends BeanStub {
     public getColumnWithValidation(key: Maybe<ColKey>): Column | null {
         if (key == null) { return null; }
 
-        const column = this.getGridColumn(key);
+        const column = this.getLiveColumn(key);
 
         if (!column) {
             console.warn('AG Grid: could not find column ' + key);
@@ -683,18 +675,18 @@ export class ColumnModel extends BeanStub {
         return column;
     }
 
-    public getPrimaryColumn(key: ColKey): Column | null {
-        if (!this.primaryColumns) { return null; }
+    public getProvidedColumn(key: ColKey): Column | null {
+        if (!this.providedCols) { return null; }
 
-        return this.getColumn(key, this.primaryColumns, this.primaryColumnsMap);
+        return this.getColumn(key, this.providedCols, this.providedColsMap);
     }
 
-    public getGridColumn(key: ColKey): Column | null {
-        return this.getColumn(key, this.gridColumns, this.gridColumnsMap);
+    public getLiveColumn(key: ColKey): Column | null {
+        return this.getColumn(key, this.liveCols, this.liveColsMap);
     }
 
-    public lookupGridColumn(key: string) {
-        return this.gridColumnsMap[key];
+    public lookupLiveColumn(key: string) {
+        return this.liveColsMap[key];
     }
 
     public getColumn(key: ColKey, columnList: Column[], columnMap: { [id: string]: Column }): Column | null {
@@ -717,12 +709,12 @@ export class ColumnModel extends BeanStub {
 
     private getAutoColumn(key: ColKey): Column | null {
         if (
-            !this.groupAutoColumns ||
-            !exists(this.groupAutoColumns) ||
-            missing(this.groupAutoColumns)
+            !this.groupAutoCols ||
+            !exists(this.groupAutoCols) ||
+            missing(this.groupAutoCols)
         ) { return null; }
 
-        return this.groupAutoColumns.find(groupCol => this.columnsMatch(groupCol, key)) || null;
+        return this.groupAutoCols.find(groupCol => this.columnsMatch(groupCol, key)) || null;
     }
 
     private columnsMatch(column: Column, key: ColKey): boolean {
@@ -759,7 +751,7 @@ export class ColumnModel extends BeanStub {
         // otherwise, search for the column group by id
         let res: ProvidedColumnGroup | null = null;
 
-        depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
+        depthFirstOriginalTreeSearch(null, this.liveColTree, node => {
             if (node instanceof ProvidedColumnGroup) {
                 if (node.getId() === key) {
                     res = node;
@@ -770,7 +762,7 @@ export class ColumnModel extends BeanStub {
         return res;
     }
 
-    private calculateColumnsForDisplay(): Column[] {
+    private calculatePresentedCols(): Column[] {
         let columnsForDisplay: Column[];
 
         const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
@@ -778,18 +770,18 @@ export class ColumnModel extends BeanStub {
             // pivot mode is on, but we are not pivoting, so we only
             // show columns we are aggregating on
             const valueColumns = this.functionColumnsService.getValueColumns();
-            columnsForDisplay = this.gridColumns.filter(column => {
-                const isAutoGroupCol = this.groupAutoColumns && includes(this.groupAutoColumns, column);
+            columnsForDisplay = this.liveCols.filter(column => {
+                const isAutoGroupCol = this.groupAutoCols && includes(this.groupAutoCols, column);
                 const isValueCol = valueColumns && includes(valueColumns, column);
                 return isAutoGroupCol || isValueCol;
             });
 
         } else {
             // otherwise continue as normal. this can be working on the primary
-            // or pivot result cols, whatever the gridColumns are set to
-            columnsForDisplay = this.gridColumns.filter(column => {
+            // or pivot result cols, whatever the liveColumns are set to
+            columnsForDisplay = this.liveCols.filter(column => {
                 // keep col if a) it's auto-group or b) it's visible
-                const isAutoGroupCol = this.groupAutoColumns && includes(this.groupAutoColumns, column);
+                const isAutoGroupCol = this.groupAutoCols && includes(this.groupAutoCols, column);
                 return isAutoGroupCol || column.isVisible();
             });
         }
@@ -809,52 +801,52 @@ export class ColumnModel extends BeanStub {
         return result;
     }
 
-    public moveInGridColumns(movedColumns: Column[], toIndex: number, source: ColumnEventType): void {
-        moveInArray(this.gridColumns, movedColumns, toIndex);
-        this.updateDisplayedColumns(source);
+    public moveInLiveColumns(movedColumns: Column[], toIndex: number, source: ColumnEventType): void {
+        moveInArray(this.liveCols, movedColumns, toIndex);
+        this.updatePresentedCols(source);
     }
 
-    public updateDisplayedColumns(source: ColumnEventType): void {
-        const columnsForDisplay = this.calculateColumnsForDisplay();
+    public updatePresentedCols(source: ColumnEventType): void {
+        const colsForPresention = this.calculatePresentedCols();
 
-        this.displayedColumnsService.buildDisplayedTrees(columnsForDisplay);
+        this.displayedColumnsService.buildDisplayedTrees(colsForPresention);
 
         // also called when group opened/closed
-        this.updateGroupsAndDisplayedColumns(source);
+        this.updateGroupsAndPresentedCols(source);
 
         // also called when group opened/closed
         this.setFirstRightAndLastLeftPinned(source);
     }
 
     // niall note - this method should be deleted, it's patchwork for refactoring
-    public isGridColsMising(): boolean {
-        return (!this.gridColumns);
+    public isLiveColsMising(): boolean {
+        return (!this.liveCols);
     }
 
     // called from: applyColumnState, setColumnDefs, setPivotResultCols
-    public updateGridColumns(): void {
-        const prevGridCols = this.gridBalancedTree;
-        if (this.gridColsArePrimary) {
-            this.lastPrimaryOrder = this.gridColumns;
+    public updateLiveCols(): void {
+        const prevLiveCols = this.liveColTree;
+        if (this.liveColsAreProvided) {
+            this.lastProvidedOrder = this.liveCols;
         } else {
-            this.lastPivotResultColOrder = this.gridColumns;
+            this.lastPivotResultColOrder = this.liveCols;
         }
 
         // create the new auto columns
         const areAutoColsChanged = this.createGroupAutoColumnsIfNeeded();
         // if auto group cols have changed, and we have a sort order, we need to move auto cols to the start
         if (areAutoColsChanged) {
-            const groupAutoColsMap = convertToMap<Column, true>(this.groupAutoColumns!.map(col => [col, true]));
+            const groupAutoColsMap = convertToMap<Column, true>(this.groupAutoCols!.map(col => [col, true]));
 
             // if group cols have changed, remove them from any previous orders and add them to the start.
-            if (this.lastPrimaryOrder) {
-                this.lastPrimaryOrder = this.lastPrimaryOrder.filter(col => !groupAutoColsMap.has(col));
-                this.lastPrimaryOrder = [...this.groupAutoColumns!, ...this.lastPrimaryOrder];
+            if (this.lastProvidedOrder) {
+                this.lastProvidedOrder = this.lastProvidedOrder.filter(col => !groupAutoColsMap.has(col));
+                this.lastProvidedOrder = [...this.groupAutoCols!, ...this.lastProvidedOrder];
             }
 
             if (this.lastPivotResultColOrder) {
                 this.lastPivotResultColOrder = this.lastPivotResultColOrder.filter(col => !groupAutoColsMap.has(col));
-                this.lastPivotResultColOrder = [...this.groupAutoColumns!, ...this.lastPivotResultColOrder];
+                this.lastPivotResultColOrder = [...this.groupAutoCols!, ...this.lastPivotResultColOrder];
             }
         }
 
@@ -866,12 +858,12 @@ export class ColumnModel extends BeanStub {
 
         if (pivotResultCols && pivotResultColsTree) {
             const hasSameColumns = pivotResultCols.some((col) => {
-                return this.gridColumnsMap[col.getColId()] !== undefined;
+                return this.liveColsMap[col.getColId()] !== undefined;
             });
-            this.gridBalancedTree = pivotResultColsTree.slice();
-            this.gridHeaderRowCount = pivotResultHeaderRowCount;
-            this.gridColumns = pivotResultCols.slice();
-            this.gridColsArePrimary = false;
+            this.liveColTree = pivotResultColsTree.slice();
+            this.liveColTreeDept = pivotResultHeaderRowCount;
+            this.liveCols = pivotResultCols.slice();
+            this.liveColsAreProvided = false;
 
             // If the current columns are the same or a subset of the previous
             // we keep the previous order, otherwise we go back to the order the pivot
@@ -879,22 +871,22 @@ export class ColumnModel extends BeanStub {
             if (hasSameColumns) {
                 sortOrderToRecover = this.lastPivotResultColOrder;
             }
-        } else if (this.primaryColumns) {
-            this.gridBalancedTree = this.primaryColumnTree.slice();
-            this.gridHeaderRowCount = this.primaryHeaderRowCount;
-            this.gridColumns = this.primaryColumns.slice();
-            this.gridColsArePrimary = true;
+        } else if (this.providedCols) {
+            this.liveColTree = this.providedColTree.slice();
+            this.liveColTreeDept = this.providedColTreeDepth;
+            this.liveCols = this.providedCols.slice();
+            this.liveColsAreProvided = true;
 
-            // updateGridColumns gets called after user adds a row group. we want to maintain the order of the columns
+            // updateLiveCols gets called after user adds a row group. we want to maintain the order of the columns
             // when this happens (eg if user moved a column) rather than revert back to the original column order.
             // likewise if changing in/out of pivot mode, we want to maintain the order of the cols
-            sortOrderToRecover = this.lastPrimaryOrder;
+            sortOrderToRecover = this.lastProvidedOrder;
         }
 
-        this.addAutoGroupToGridColumns();
-        this.orderGridColsLike(sortOrderToRecover);
+        this.addAutoGroupToLiveColumns();
+        this.orderLiveColsLike(sortOrderToRecover);
 
-        this.gridColumns = this.columnMoveService.placeLockedColumns(this.gridColumns);
+        this.liveCols = this.columnMoveService.placeLockedColumns(this.liveCols);
         this.calculateColumnsForGroupDisplay();
         this.refreshQuickFilterColumns();
 
@@ -905,14 +897,14 @@ export class ColumnModel extends BeanStub {
         this.displayedColumnsService.clear();
         this.columnViewportService.clear();
 
-        this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
+        this.colSpanActive = this.checkColSpanActiveInCols(this.liveCols);
 
-        this.gridColumnsMap = {};
-        this.gridColumns.forEach(col => this.gridColumnsMap[col.getId()] = col);
+        this.liveColsMap = {};
+        this.liveCols.forEach(col => this.liveColsMap[col.getId()] = col);
 
         this.setAutoHeightActive();
 
-        if (!areEqual(prevGridCols, this.gridBalancedTree)) {
+        if (!areEqual(prevLiveCols, this.liveColTree)) {
             this.eventDispatcher.gridColumns();
         }
     }
@@ -938,7 +930,7 @@ export class ColumnModel extends BeanStub {
             }
         };
 
-        this.gridColumns.forEach(checkFunc);
+        this.liveCols.forEach(checkFunc);
     }
 
     public getGroupDisplayColumns(): Column[] {
@@ -950,7 +942,7 @@ export class ColumnModel extends BeanStub {
     }
 
     private setAutoHeightActive(): void {
-        this.autoHeightActive = this.gridColumns.filter(col => col.isAutoHeight()).length > 0;
+        this.autoHeightActive = this.liveCols.filter(col => col.isAutoHeight()).length > 0;
 
         if (this.autoHeightActive) {
             this.autoHeightActiveAtLeastOnce = true;
@@ -962,7 +954,7 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    private orderGridColsLike(colsOrder: Column[] | undefined): void {
+    private orderLiveColsLike(colsOrder: Column[] | undefined): void {
         if (missing(colsOrder)) { return; }
 
         const lastOrderMapped = convertToMap<Column, number>(colsOrder.map((col, index) => [col, index]));
@@ -970,7 +962,7 @@ export class ColumnModel extends BeanStub {
         // only do the sort if at least one column is accounted for. columns will be not accounted for
         // if changing from pivot result cols to primary columns
         let noColsFound = true;
-        this.gridColumns.forEach(col => {
+        this.liveCols.forEach(col => {
             if (lastOrderMapped.has(col)) {
                 noColsFound = false;
             }
@@ -980,20 +972,20 @@ export class ColumnModel extends BeanStub {
 
         // order cols in the same order as before. we need to make sure that all
         // cols still exists, so filter out any that no longer exist.
-        const gridColsMap = convertToMap<Column, boolean>(this.gridColumns.map(col => [col, true]));
-        const oldColsOrdered = colsOrder.filter(col => gridColsMap.has(col));
+        const liveColsMap = convertToMap<Column, boolean>(this.liveCols.map(col => [col, true]));
+        const oldColsOrdered = colsOrder.filter(col => liveColsMap.has(col));
         const oldColsMap = convertToMap<Column, boolean>(oldColsOrdered.map(col => [col, true]));
-        const newColsOrdered = this.gridColumns.filter(col => !oldColsMap.has(col));
+        const newColsOrdered = this.liveCols.filter(col => !oldColsMap.has(col));
 
         // add in the new columns, at the end (if no group), or at the end of the group (if a group)
-        const newGridColumns = oldColsOrdered.slice();
+        const newLiveColumns = oldColsOrdered.slice();
 
         newColsOrdered.forEach(newCol => {
             let parent = newCol.getOriginalParent();
 
             // if no parent, means we are not grouping, so just add the column to the end
             if (!parent) {
-                newGridColumns.push(newCol);
+                newLiveColumns.push(newCol);
                 return;
             }
 
@@ -1003,9 +995,9 @@ export class ColumnModel extends BeanStub {
             while (!siblings.length && parent) {
                 const leafCols = parent.getLeafColumns();
                 leafCols.forEach(leafCol => {
-                    const presentInNewGriColumns = newGridColumns.indexOf(leafCol) >= 0;
-                    const noYetInSiblings = siblings.indexOf(leafCol) < 0;
-                    if (presentInNewGriColumns && noYetInSiblings) {
+                    const presentInNewLiveColumns = newLiveColumns.indexOf(leafCol) >= 0;
+                    const notYetInSiblings = siblings.indexOf(leafCol) < 0;
+                    if (presentInNewLiveColumns && notYetInSiblings) {
                         siblings.push(leafCol);
                     }
                 });
@@ -1014,22 +1006,22 @@ export class ColumnModel extends BeanStub {
 
             // if no siblings exist at any level, this means the col is in a group (or parent groups) on it's own
             if (!siblings.length) {
-                newGridColumns.push(newCol);
+                newLiveColumns.push(newCol);
                 return;
             }
 
             // find index of last column in the group
-            const indexes = siblings.map(col => newGridColumns.indexOf(col));
+            const indexes = siblings.map(col => newLiveColumns.indexOf(col));
             const lastIndex = Math.max(...indexes);
 
-            insertIntoArray(newGridColumns, newCol, lastIndex + 1);
+            insertIntoArray(newLiveColumns, newCol, lastIndex + 1);
         });
 
-        this.gridColumns = newGridColumns;
+        this.liveCols = newLiveColumns;
     }
 
-    public isPrimaryColumnGroupsPresent(): boolean {
-        return this.primaryHeaderRowCount > 1;
+    public isProvidedColGroupsPresent(): boolean {
+        return this.providedColTreeDepth > 1;
     }
 
     // if we are using autoGroupCols, then they should be included for quick filter. this covers the
@@ -1039,35 +1031,35 @@ export class ColumnModel extends BeanStub {
     //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
     public refreshQuickFilterColumns(): void {
         let columnsForQuickFilter = (
-            this.isPivotMode() && !this.gos.get('applyQuickFilterBeforePivotOrAgg') ? this.pivotResultColsService.getPivotResultCols() : this.primaryColumns
+            this.isPivotMode() && !this.gos.get('applyQuickFilterBeforePivotOrAgg') ? this.pivotResultColsService.getPivotResultCols() : this.providedCols
         ) ?? [];
-        if (this.groupAutoColumns) {
-            columnsForQuickFilter = columnsForQuickFilter.concat(this.groupAutoColumns);
+        if (this.groupAutoCols) {
+            columnsForQuickFilter = columnsForQuickFilter.concat(this.groupAutoCols);
         }
-        this.columnsForQuickFilter = this.gos.get('includeHiddenColumnsInQuickFilter')
+        this.colsForQuickFilter = this.gos.get('includeHiddenColumnsInQuickFilter')
             ? columnsForQuickFilter
             : columnsForQuickFilter.filter(col => col.isVisible() || col.isRowGroupActive());
     }
 
-    private addAutoGroupToGridColumns(): void {
+    private addAutoGroupToLiveColumns(): void {
 
-        if (missing(this.groupAutoColumns)) {
-            this.columnUtilsFeature.destroyColumns(this.groupAutoColsBalancedTree);
-            this.groupAutoColsBalancedTree = null;
+        if (missing(this.groupAutoCols)) {
+            this.columnUtilsFeature.destroyColumns(this.groupAutoColsTree);
+            this.groupAutoColsTree = null;
             return;
         }
 
-        this.gridColumns = this.groupAutoColumns ? this.groupAutoColumns.concat(this.gridColumns) : this.gridColumns;
+        this.liveCols = this.groupAutoCols ? this.groupAutoCols.concat(this.liveCols) : this.liveCols;
 
-        const newAutoColsTree = this.columnFactory.createForAutoGroups(this.groupAutoColumns, this.gridBalancedTree);
+        const newAutoColsTree = this.columnFactory.createForAutoGroups(this.groupAutoCols, this.liveColTree);
 
-        this.columnUtilsFeature.destroyColumns(this.groupAutoColsBalancedTree, newAutoColsTree);
-        this.groupAutoColsBalancedTree = newAutoColsTree;
+        this.columnUtilsFeature.destroyColumns(this.groupAutoColsTree, newAutoColsTree);
+        this.groupAutoColsTree = newAutoColsTree;
 
-        this.gridBalancedTree = newAutoColsTree.concat(this.gridBalancedTree);
+        this.liveColTree = newAutoColsTree.concat(this.liveColTree);
     }
 
-    public updateGroupsAndDisplayedColumns(source: ColumnEventType) {
+    public updateGroupsAndPresentedCols(source: ColumnEventType) {
 
         this.displayedColumnsService.updateOpenClosedVisibilityInColumnGroups();
         this.displayedColumnsService.deriveDisplayedColumns(source);
@@ -1088,7 +1080,7 @@ export class ColumnModel extends BeanStub {
     }
 
     public getGroupAutoColumns(): Column[] | null {
-        return this.groupAutoColumns;
+        return this.groupAutoCols;
     }
 
     /**
@@ -1119,15 +1111,15 @@ export class ColumnModel extends BeanStub {
 
         if (needAutoColumns) {
             const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(rowGroupCols);
-            const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
+            const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoCols);
             // we force recreate so new group cols pick up the new
             // definitions. otherwise we could ignore the new cols because they appear to be the same.
             if (autoColsDifferent || forceRecreateAutoGroups) {
-                this.groupAutoColumns = newAutoGroupCols;
+                this.groupAutoCols = newAutoGroupCols;
                 return true;
             }
         } else {
-            this.groupAutoColumns = null;
+            this.groupAutoCols = null;
         }
         return false;
     }

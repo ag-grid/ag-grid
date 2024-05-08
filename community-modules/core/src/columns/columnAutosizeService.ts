@@ -91,7 +91,7 @@ export class ColumnAutosizeService extends BeanStub {
     
     private autoSizeColumnGroupsByColumns(keys: ColKey[], source: ColumnEventType, stopAtGroup?: ColumnGroup): Column[] {
         const columnGroups: Set<ColumnGroup> = new Set();
-        const columns = this.columnModel.getGridColumns(keys);
+        const columns = this.columnModel.getLiveColumns(keys);
 
         columns.forEach(col => {
             let parent: ColumnGroup = col.getParent();

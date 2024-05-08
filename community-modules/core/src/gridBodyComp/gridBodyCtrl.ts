@@ -196,7 +196,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private onGridColumnsChanged(): void {
-        const columns = this.columnModel.getAllGridColumns();
+        const columns = this.columnModel.getLiveCols();
         this.comp.setColumnCount(columns.length);
     }
 

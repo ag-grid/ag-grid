@@ -41,7 +41,7 @@ export class ToolPanelColDefService extends BeanStub {
             } else {
                 const colDef = abstractColDef as ColDef;
                 const key = colDef.colId ? colDef.colId : colDef.field;
-                const column = this.columnModel.getPrimaryColumn(key!) as IProvidedColumn;
+                const column = this.columnModel.getProvidedColumn(key!) as IProvidedColumn;
 
                 if (!column) {
                     invalidColIds.push(colDef);
@@ -115,7 +115,7 @@ export class ToolPanelColDefService extends BeanStub {
         };
 
         // obtain a sorted list of all grid columns
-        const allGridColumns = this.columnModel.getAllGridColumns();
+        const allGridColumns = this.columnModel.getLiveCols();
 
         // only primary columns and non row group columns should appear in the tool panel
         const allPrimaryGridColumns = allGridColumns.filter(column => {

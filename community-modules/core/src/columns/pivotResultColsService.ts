@@ -16,15 +16,16 @@ export class PivotResultColsService extends BeanStub {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnFactory') private readonly columnFactory: ColumnFactory;
 
-        // if pivoting, these are the generated columns as a result of the pivot
-    private pivotResultBalancedTree: IProvidedColumn[] | null;
+    private columnUtilsFeature: ColumnUtilsFeature;
+
+    // if pivoting, these are the generated columns as a result of the pivot
+    private pivotResultColTree: IProvidedColumn[] | null;
+    private pivotResultColTreeDept = 0;
     private pivotResultCols: Column[] | null;
     private pivotResultColsMap: { [id: string]: Column };
-    private pivotResultHeaderRowCount = 0;
+
     // Saved when pivot is disabled, available to re-use when pivot is restored
     private previousPivotResultCols: IProvidedColumn[] | null;
-
-    private columnUtilsFeature: ColumnUtilsFeature;
 
     @PostConstruct
     public init(): void {
@@ -33,7 +34,7 @@ export class PivotResultColsService extends BeanStub {
 
     @PreDestroy
     private destroyColumns(): void {
-        this.columnUtilsFeature.destroyColumns(this.pivotResultBalancedTree);
+        this.columnUtilsFeature.destroyColumns(this.pivotResultColTree);
     }
 
     public isPivotResultColsPresent(): boolean {
@@ -43,7 +44,7 @@ export class PivotResultColsService extends BeanStub {
     public lookupPivotResultCol(pivotKeys: string[], valueColKey: ColKey): Column | null {
         if (this.pivotResultCols == null) { return null; }
 
-        const valueColumnToFind = this.columnModel.getPrimaryColumn(valueColKey);
+        const valueColumnToFind = this.columnModel.getProvidedColumn(valueColKey);
 
         let foundColumn: Column | null = null;
 
@@ -72,15 +73,15 @@ export class PivotResultColsService extends BeanStub {
     }
 
     public getPivotResultBalancedTree(): IProvidedColumn[] | null {
-        return this.pivotResultBalancedTree ? this.pivotResultBalancedTree : null;
+        return this.pivotResultColTree ? this.pivotResultColTree : null;
     }
 
     public getPivotResultHeaderRowCount(): number {
-        return this.pivotResultHeaderRowCount;
+        return this.pivotResultColTreeDept;
     }
     
     public setPivotResultCols(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void {
-        if (this.columnModel.isGridColsMising()) { return; }
+        if (this.columnModel.isLiveColsMising()) { return; }
 
         // if not cols passed, and we had no cols anyway, then do nothing
         if (colDefs==null && this.pivotResultCols==null) { return; }
@@ -90,27 +91,27 @@ export class PivotResultColsService extends BeanStub {
             const balancedTreeResult = this.columnFactory.createColumnTree(
                 colDefs,
                 false,
-                this.pivotResultBalancedTree || this.previousPivotResultCols || undefined,
+                this.pivotResultColTree || this.previousPivotResultCols || undefined,
                 source
             );
-            this.columnUtilsFeature.destroyColumns(this.pivotResultBalancedTree, balancedTreeResult.columnTree);
-            this.pivotResultBalancedTree = balancedTreeResult.columnTree;
-            this.pivotResultHeaderRowCount = balancedTreeResult.treeDept + 1;
-            this.pivotResultCols = this.columnUtilsFeature.getColumnsFromTree(this.pivotResultBalancedTree);
+            this.columnUtilsFeature.destroyColumns(this.pivotResultColTree, balancedTreeResult.columnTree);
+            this.pivotResultColTree = balancedTreeResult.columnTree;
+            this.pivotResultColTreeDept = balancedTreeResult.treeDept + 1;
+            this.pivotResultCols = this.columnUtilsFeature.getColumnsFromTree(this.pivotResultColTree);
 
             this.pivotResultColsMap = {};
             this.pivotResultCols.forEach(col => this.pivotResultColsMap[col.getId()] = col);
             this.previousPivotResultCols = null;
         } else {
-            this.previousPivotResultCols = this.pivotResultBalancedTree;
-            this.pivotResultBalancedTree = null;
-            this.pivotResultHeaderRowCount = -1;
+            this.previousPivotResultCols = this.pivotResultColTree;
+            this.pivotResultColTree = null;
+            this.pivotResultColTreeDept = -1;
             this.pivotResultCols = null;
             this.pivotResultColsMap = {};
         }
 
-        this.columnModel.updateGridColumns();
-        this.columnModel.updateDisplayedColumns(source);
+        this.columnModel.updateLiveCols();
+        this.columnModel.updatePresentedCols(source);
     }
 
     private processPivotResultColDef(colDefs: (ColDef | ColGroupDef)[] | null) {

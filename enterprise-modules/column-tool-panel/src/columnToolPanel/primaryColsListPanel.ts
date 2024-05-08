@@ -239,8 +239,8 @@ export class PrimaryColsListPanel extends Component {
 
     private buildTreeFromProvidedColumnDefs(): void {
         // add column / group comps to tool panel
-        this.buildListModel(this.columnModel.getPrimaryColumnTree());
-        this.groupsExist = this.columnModel.isPrimaryColumnGroupsPresent();
+        this.buildListModel(this.columnModel.getProvidedColTree());
+        this.groupsExist = this.columnModel.isProvidedColGroupsPresent();
     }
 
     private buildListModel(columnTree: IProvidedColumn[]): void {

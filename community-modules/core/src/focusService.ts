@@ -121,7 +121,7 @@ export class FocusService extends BeanStub {
         if (!this.focusedCellPosition) { return; }
 
         const col = this.focusedCellPosition.column;
-        const colFromColumnModel = this.columnModel.getGridColumn(col.getId());
+        const colFromColumnModel = this.columnModel.getLiveColumn(col.getId());
 
         if (col !== colFromColumnModel) {
             this.clearFocusedCell();
@@ -257,7 +257,7 @@ export class FocusService extends BeanStub {
             preventScrollOnBrowserFocus = false
         } = params;
 
-        const gridColumn = this.columnModel.getGridColumn(column!);
+        const gridColumn = this.columnModel.getLiveColumn(column!);
 
         // if column doesn't exist, then blank the focused cell and return. this can happen when user sets new columns,
         // and the focused cell is in a column that no longer exists. after columns change, the grid refreshes and tries

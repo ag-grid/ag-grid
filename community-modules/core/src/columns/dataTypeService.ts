@@ -459,7 +459,7 @@ export class DataTypeService extends BeanStub {
         const newRowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
         const newPivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
         Object.entries(this.columnStateUpdatesPendingInference).forEach(([colId, columnStateUpdates]) => {
-            const column = this.columnModel.getGridColumn(colId);
+            const column = this.columnModel.getLiveColumn(colId);
             if (!column) { return; }
             const oldColDef = column.getColDef();
             if (!this.columnModel.resetColumnDefIntoColumn(column, 'cellDataTypeInferred')) { return; }
@@ -703,7 +703,7 @@ export class DataTypeService extends BeanStub {
                     useFormatter: true,
                 };
                 colDef.comparator = (a: any, b: any) => {
-                    const column = this.columnModel.getPrimaryColumn(colId);
+                    const column = this.columnModel.getProvidedColumn(colId);
                     const colDef = column?.getColDef();
                     if (!column || !colDef) {
                         return 0;

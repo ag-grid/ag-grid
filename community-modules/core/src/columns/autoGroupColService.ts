@@ -69,7 +69,7 @@ export class AutoGroupColService extends BeanStub {
     private updateOneAutoGroupColumn(colToUpdate: Column, index: number, source: ColumnEventType) {
         const oldColDef = colToUpdate.getColDef();
         const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
-        const underlyingColumn = underlyingColId!=null ? this.columnModel.getPrimaryColumn(underlyingColId) : undefined;
+        const underlyingColumn = underlyingColId!=null ? this.columnModel.getProvidedColumn(underlyingColId) : undefined;
         const colDef = this.createAutoGroupColDef(colToUpdate.getId(), underlyingColumn??undefined, index);
 
         colToUpdate.setColDef(colDef, null, source);

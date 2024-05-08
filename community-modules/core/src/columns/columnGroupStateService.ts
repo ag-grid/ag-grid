@@ -22,7 +22,7 @@ export class ColumnGroupStateService {
 
     public getColumnGroupState(): { groupId: string, open: boolean; }[] {
         const columnGroupState: { groupId: string, open: boolean; }[] = [];
-        const gridBalancedTree = this.columnModel.getGridBalancedTree();
+        const gridBalancedTree = this.columnModel.getLiveColTree();
 
         depthFirstOriginalTreeSearch(null, gridBalancedTree, node => {
             if (node instanceof ProvidedColumnGroup) {
@@ -37,7 +37,7 @@ export class ColumnGroupStateService {
     }
 
     public resetColumnGroupState(source: ColumnEventType): void {
-        const primaryColumnTree = this.columnModel.getPrimaryColumnTree();
+        const primaryColumnTree = this.columnModel.getProvidedColTree();
         if (!primaryColumnTree) { return; }
 
         const stateItems: { groupId: string, open: boolean | undefined; }[] = [];
@@ -57,7 +57,7 @@ export class ColumnGroupStateService {
     }
 
     public setColumnGroupState(stateItems: { groupId: string, open: boolean | undefined; }[], source: ColumnEventType): void {
-        const gridBalancedTree = this.columnModel.getGridBalancedTree();
+        const gridBalancedTree = this.columnModel.getLiveColTree();
         if (!gridBalancedTree) { return; }
 
         this.columnAnimationService.start();
@@ -77,7 +77,7 @@ export class ColumnGroupStateService {
             impactedGroups.push(providedColumnGroup);
         });
 
-        this.columnModel.updateGroupsAndDisplayedColumns(source);
+        this.columnModel.updateGroupsAndPresentedCols(source);
         this.columnModel.setFirstRightAndLastLeftPinned(source);
 
         if (impactedGroups.length) {

@@ -142,7 +142,7 @@ export class ChartDatasource extends BeanStub {
             // first get data for dimensions columns
             dimensionCols.forEach(col => {
                 const colId = col.colId;
-                const column = this.columnModel.getGridColumn(colId);
+                const column = this.columnModel.getLiveColumn(colId);
 
                 if (column) {
                     const valueObject = this.valueService.getValue(column, rowNode);

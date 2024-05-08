@@ -232,7 +232,7 @@ export class ColumnApplyStateService extends BeanStub {
             }
         });
 
-        // this is already done in updateGridColumns, however we changed the order above (to match the order of the state
+        // this is already done in updateLiveCols, however we changed the order above (to match the order of the state
         // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
         // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
         // is less sexy for the code here, but it keeps consistency.
@@ -265,7 +265,7 @@ export class ColumnApplyStateService extends BeanStub {
         });
 
         return () => {
-            const colsForState = this.columnModel.getPrimaryAndPivotResultAndAutoColumns();
+            const colsForState = this.columnModel.getProvidedAndPivotResultAndAutoColumns();
 
             // dispatches generic ColumnEvents where all columns are returned rather than what has changed
             const dispatchWhenListsDifferent = (eventType: string, colsBefore: Column[], colsAfter: Column[], idMapper: (column: Column) => string) => {
@@ -384,7 +384,7 @@ export class ColumnApplyStateService extends BeanStub {
         afterFiltered!.forEach((csAfter: ColumnState, index: number) => {
             const csBefore = beforeFiltered && beforeFiltered[index];
             if (csBefore && csBefore.colId !== csAfter.colId) {
-                const gridCol = this.columnModel.getGridColumn(csBefore.colId!);
+                const gridCol = this.columnModel.getLiveColumn(csBefore.colId!);
                 if (gridCol) {
                     movedColumns.push(gridCol);
                 }
@@ -406,7 +406,7 @@ export class ColumnApplyStateService extends BeanStub {
         // As a work around, developers should just put lockPosition columns first in their colDef list.
 
         // we can't use 'allColumns' as the order might of messed up, so get the primary ordered list
-        const primaryColumnTree = this.columnModel.getPrimaryColumnTree();
+        const primaryColumnTree = this.columnModel.getProvidedColTree();
         const primaryColumns = this.columnUtilsFeature.getColumnsFromTree(primaryColumnTree);
         const columnStates: ColumnState[] = [];
 

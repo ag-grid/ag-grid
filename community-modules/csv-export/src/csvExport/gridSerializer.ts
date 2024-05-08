@@ -298,7 +298,7 @@ export class GridSerializer extends BeanStub {
         const isPivotMode = this.columnModel.isPivotMode();
 
         if (columnKeys && columnKeys.length) {
-            return this.columnModel.getGridColumns(columnKeys);
+            return this.columnModel.getLiveColumns(columnKeys);
         }
 
         const isTreeData = this.gos.get('treeData');
@@ -306,7 +306,7 @@ export class GridSerializer extends BeanStub {
         let columnsToExport: Column[] = [];
 
         if (allColumns && !isPivotMode) {
-            columnsToExport =  this.columnModel.getAllGridColumns();
+            columnsToExport =  this.columnModel.getLiveCols();
         } else {
             columnsToExport = this.displayedColumnsService.getAllDisplayedColumns();
         }

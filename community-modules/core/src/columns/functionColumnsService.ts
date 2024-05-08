@@ -44,7 +44,7 @@ export class FunctionColumnsService extends BeanStub {
             return this.rowGroupColumns.slice(0);
         }
 
-        const column = this.columnModel.getPrimaryColumn(sourceColumnId);
+        const column = this.columnModel.getProvidedColumn(sourceColumnId);
         return column ? [column] : null;
     }
 
@@ -196,7 +196,7 @@ export class FunctionColumnsService extends BeanStub {
         columnCallback: (added: boolean, column: Column) => void,
         source: ColumnEventType,
     ): void {
-        const gridColumns = this.columnModel.getAllGridColumns();
+        const gridColumns = this.columnModel.getLiveCols();
         if (missingOrEmpty(gridColumns)) { return; }
 
         const changes: Map<Column, number> = new Map();
@@ -207,7 +207,7 @@ export class FunctionColumnsService extends BeanStub {
 
         if (exists(colKeys)) {
             colKeys.forEach(key => {
-                const column = this.columnModel.getPrimaryColumn(key);
+                const column = this.columnModel.getProvidedColumn(key);
                 if (column) {
                     masterList.push(column);
                 }
@@ -239,10 +239,10 @@ export class FunctionColumnsService extends BeanStub {
         });
 
         if (this.columnModel.isAutoGroupsNeedBuilding()) {
-            this.columnModel.updateGridColumns();
+            this.columnModel.updateLiveCols();
         }
 
-        this.columnModel.updateDisplayedColumns(source);
+        this.columnModel.updatePresentedCols(source);
 
         this.eventDispatcher.columnChanged(eventName, [...changes.keys()], source);
     }
@@ -262,7 +262,7 @@ export class FunctionColumnsService extends BeanStub {
 
         keys.forEach(key => {
             if (!key) { return; }
-            const columnToAdd = this.columnModel.getPrimaryColumn(key);
+            const columnToAdd = this.columnModel.getProvidedColumn(key);
             if (!columnToAdd) { return; }
 
             if (actionIsAdd) {
@@ -280,10 +280,10 @@ export class FunctionColumnsService extends BeanStub {
         if (!atLeastOne) { return; }
 
         if (this.columnModel.isAutoGroupsNeedBuilding()) {
-            this.columnModel.updateGridColumns();
+            this.columnModel.updateLiveCols();
         }
 
-        this.columnModel.updateDisplayedColumns(source);
+        this.columnModel.updatePresentedCols(source);
 
         this.eventDispatcher.genericColumnEvent(eventType, masterList, source);
     }

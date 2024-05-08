@@ -85,7 +85,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
 
     public getOperandDisplayValue(model: ColumnAdvancedFilterModel, skipFormatting?: boolean): string {
         const { colId, filter } = model as any;
-        const column = this.columnModel.getPrimaryColumn(colId);
+        const column = this.columnModel.getProvidedColumn(colId);
         let operand = '';
         if (filter != null) {
             let operand1: string | null | undefined;
@@ -222,7 +222,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
         let params = this.expressionEvaluatorParams[colId];
         if (params) { return params; }
 
-        const column = this.columnModel.getPrimaryColumn(colId);
+        const column = this.columnModel.getProvidedColumn(colId);
         if (!column) { return { valueConverter: (v: any) => v }; }
 
         const baseCellDataType = this.dataTypeService.getBaseDataType(column);
@@ -268,7 +268,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
     }
 
     public getColumnDetails(colId: string): { column?: Column, baseCellDataType: BaseCellDataType } {
-        const column = this.columnModel.getPrimaryColumn(colId) ?? undefined;
+        const column = this.columnModel.getProvidedColumn(colId) ?? undefined;
         const baseCellDataType = (column ? this.dataTypeService.getBaseDataType(column) : undefined) ?? 'text';
         return { column, baseCellDataType };
     }

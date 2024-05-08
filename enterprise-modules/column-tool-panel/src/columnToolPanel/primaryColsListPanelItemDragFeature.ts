@@ -87,7 +87,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     }
 
     private getMoveDiff(currentDragValue: Column | ProvidedColumnGroup | null, end: number): number {
-        const allColumns = this.columnModel.getAllGridColumns();
+        const allColumns = this.columnModel.getLiveCols();
         const currentColumns = this.getCurrentColumns(currentDragValue);
         const currentColumn = currentColumns[0];
         const span = currentColumns.length;
@@ -132,7 +132,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
             return null;
         }
 
-        const targetColumnIndex = this.columnModel.getAllGridColumns().indexOf(targetColumn);
+        const targetColumnIndex = this.columnModel.getLiveCols().indexOf(targetColumn);
         const adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
         const diff = this.getMoveDiff(currentDragValue, adjustedTarget);
 

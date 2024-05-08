@@ -17,7 +17,7 @@ export class ColumnMoveService {
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
 
     public moveColumnByIndex(fromIndex: number, toIndex: number, source: ColumnEventType): void {
-        const gridColumns = this.columnModel.getAllGridColumns();
+        const gridColumns = this.columnModel.getLiveCols();
         if (!gridColumns) { return; }
 
         const column = gridColumns[fromIndex];
@@ -25,7 +25,7 @@ export class ColumnMoveService {
     }
 
     public moveColumns(columnsToMoveKeys: ColKey[], toIndex: number, source: ColumnEventType, finished: boolean = true): void {
-        const gridColumns = this.columnModel.getAllGridColumns();
+        const gridColumns = this.columnModel.getLiveCols();
         if (!gridColumns) { return; }
 
         this.columnAnimationService.start();
@@ -37,12 +37,12 @@ export class ColumnMoveService {
         }
 
         // we want to pull all the columns out first and put them into an ordered list
-        const movedColumns = this.columnModel.getGridColumns(columnsToMoveKeys);
+        const movedColumns = this.columnModel.getLiveColumns(columnsToMoveKeys);
         const failedRules = !this.doesMovePassRules(movedColumns, toIndex);
 
         if (failedRules) { return; }
 
-        this.columnModel.moveInGridColumns(movedColumns, toIndex, source);
+        this.columnModel.moveInLiveColumns(movedColumns, toIndex, source);
 
         this.eventDispatcher.columnMoved({ movedColumns, source, toIndex, finished });
         this.columnAnimationService.finish();
@@ -65,7 +65,7 @@ export class ColumnMoveService {
     }
 
     public getProposedColumnOrder(columnsToMove: Column[], toIndex: number): Column[] {
-        const gridColumns = this.columnModel.getAllGridColumns();
+        const gridColumns = this.columnModel.getLiveCols();
         const proposedColumnOrder = gridColumns.slice();
         moveInArray(proposedColumnOrder, columnsToMove, toIndex);
         return proposedColumnOrder;
@@ -98,7 +98,7 @@ export class ColumnMoveService {
 
     public doesMovePassMarryChildren(allColumnsCopy: Column[]): boolean {
         let rulePassed = true;
-        const gridBalancedTree = this.columnModel.getGridBalancedTree();
+        const gridBalancedTree = this.columnModel.getLiveColTree();
 
         depthFirstOriginalTreeSearch(null, gridBalancedTree, child => {
             if (!(child instanceof ProvidedColumnGroup)) { return; }

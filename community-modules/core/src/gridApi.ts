@@ -858,7 +858,7 @@ export class GridApi<TData = any> {
 
     /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */
     public destroyFilter(key: string | Column) {
-        const column = this.columnModel.getPrimaryColumn(key);
+        const column = this.columnModel.getProvidedColumn(key);
         if (column) {
             return this.filterManager.destroyFilter(column, 'api');
         }
@@ -872,7 +872,7 @@ export class GridApi<TData = any> {
     }
 
     public getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null {
-        const column = this.columnModel.getPrimaryColumn(key);
+        const column = this.columnModel.getProvidedColumn(key);
         if (column) {
             return column.getColDef();
         }
@@ -1106,7 +1106,7 @@ export class GridApi<TData = any> {
     public getCellValue<TValue = any>(params: GetCellValueParams<TValue>) {
         const { colKey, rowNode, useFormatter } = params;
 
-        let column = this.columnModel.getPrimaryColumn(colKey) ?? this.columnModel.getGridColumn(colKey);
+        let column = this.columnModel.getProvidedColumn(colKey) ?? this.columnModel.getLiveColumn(colKey);
         if (missing(column)) {
             return null;
         }
@@ -1340,7 +1340,7 @@ export class GridApi<TData = any> {
     public showColumnMenuAfterButtonClick(colKey: string | Column, buttonElement: HTMLElement): void {
         warnOnce(`'showColumnMenuAfterButtonClick' is deprecated. Use 'IHeaderParams.showColumnMenu' within a header component, or 'api.showColumnMenu' elsewhere.`);
         // use grid column so works with pivot mode
-        const column = this.columnModel.getGridColumn(colKey)!;
+        const column = this.columnModel.getLiveColumn(colKey)!;
         this.menuService.showColumnMenu({
             column,
             buttonElement,
@@ -1352,9 +1352,9 @@ export class GridApi<TData = any> {
     public showColumnMenuAfterMouseClick(colKey: string | Column, mouseEvent: MouseEvent | Touch): void {
         warnOnce(`'showColumnMenuAfterMouseClick' is deprecated. Use 'IHeaderParams.showColumnMenuAfterMouseClick' within a header component, or 'api.showColumnMenu' elsewhere.`);
         // use grid column so works with pivot mode
-        let column = this.columnModel.getGridColumn(colKey);
+        let column = this.columnModel.getLiveColumn(colKey);
         if (!column) {
-            column = this.columnModel.getPrimaryColumn(colKey);
+            column = this.columnModel.getProvidedColumn(colKey);
         }
         if (!column) {
             console.error(`AG Grid: column '${colKey}' not found`);
@@ -1397,7 +1397,7 @@ export class GridApi<TData = any> {
 
     /** Show the filter for the provided column. */
     public showColumnFilter(colKey: string | Column): void {
-        const column = this.columnModel.getGridColumn(colKey);
+        const column = this.columnModel.getLiveColumn(colKey);
         if (!column) {
             console.error(`AG Grid: column '${colKey}' not found`);
             return;
@@ -1411,7 +1411,7 @@ export class GridApi<TData = any> {
 
     /** Show the column menu for the provided column. */
     public showColumnMenu(colKey: string | Column): void {
-        const column = this.columnModel.getGridColumn(colKey);
+        const column = this.columnModel.getLiveColumn(colKey);
         if (!column) {
             console.error(`AG Grid: column '${colKey}' not found`);
             return;
@@ -1468,7 +1468,7 @@ export class GridApi<TData = any> {
 
     /** Start editing the provided cell. If another cell is editing, the editing will be stopped in that other cell. */
     public startEditingCell(params: StartEditingCellParams): void {
-        const column = this.columnModel.getGridColumn(params.colKey);
+        const column = this.columnModel.getLiveColumn(params.colKey);
         if (!column) {
             console.warn(`AG Grid: no column found for ${params.colKey}`);
             return;
@@ -1788,7 +1788,7 @@ export class GridApi<TData = any> {
     public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string { return this.columnNameService.getDisplayNameForColumnGroup(columnGroup, location) || ''; }
 
     /** Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object). */
-    public getColumn<TValue = any>(key: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null { return this.columnModel.getPrimaryColumn(key); }
+    public getColumn<TValue = any>(key: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null { return this.columnModel.getProvidedColumn(key); }
     /** Returns all the columns, regardless of visible or not. */
     public getColumns(): Column[] | null { return this.columnModel.getAllPrimaryColumns(); }
     /** Applies the state of the columns from a previous state. Returns `false` if one or more columns could not be found. */
@@ -1836,7 +1836,7 @@ export class GridApi<TData = any> {
      *
      *  b) it's after the 'pivot' step, so if pivoting, has the value columns for the pivot.
      */
-    public getAllGridColumns(): Column[] { return this.columnModel.getAllGridColumns(); }
+    public getAllGridColumns(): Column[] { return this.columnModel.getLiveCols(); }
     /** Same as `getAllDisplayedColumns` but just for the pinned left portion of the grid. */
     public getDisplayedLeftColumns(): Column[] { return this.displayedColumnsService.getDisplayedLeftColumns(); }
     /** Same as `getAllDisplayedColumns` but just for the center portion of the grid. */

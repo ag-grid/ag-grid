@@ -16,7 +16,7 @@ export class ColumnGetStateService {
 
         if (missing(primaryCols) || !this.columnModel.isAlive()) { return []; }
 
-        const colsForState = this.columnModel.getPrimaryAndPivotResultAndAutoColumns();
+        const colsForState = this.columnModel.getProvidedAndPivotResultAndAutoColumns();
         const res: ColumnState[] = colsForState.map(this.createStateItemFromColumn.bind(this));
 
         this.orderColumnStateList(res);
@@ -56,7 +56,7 @@ export class ColumnGetStateService {
     }
 
     private orderColumnStateList(columnStateList: any[]): void {
-        const gridColumns = this.columnModel.getAllGridColumns();
+        const gridColumns = this.columnModel.getLiveCols();
         // for fast looking, store the index of each column
         const colIdToGridIndexMap = convertToMap<string, number>(gridColumns.map((col, index) => [col.getColId(), index]));
 

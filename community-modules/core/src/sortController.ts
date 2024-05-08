@@ -73,7 +73,7 @@ export class SortController extends BeanStub {
         const allSortedCols = this.getColumnsWithSortingOrdered();
 
         // reset sort index on everything
-        this.columnModel.getPrimaryAndPivotResultAndAutoColumns().forEach(col => col.setSortIndex(null));
+        this.columnModel.getProvidedAndPivotResultAndAutoColumns().forEach(col => col.setSortIndex(null));
         const allSortedColsWithoutChangesOrGroups = allSortedCols.filter(col => {
             if (isCoupled && col.getColDef().showRowGroup) {
                 return false;
@@ -94,7 +94,7 @@ export class SortController extends BeanStub {
 
     public isSortActive(): boolean {
         // pull out all the columns that have sorting set
-        const allCols = this.columnModel.getPrimaryAndPivotResultAndAutoColumns();
+        const allCols = this.columnModel.getProvidedAndPivotResultAndAutoColumns();
         const sortedCols = allCols.filter(column => !!column.getSort());
         return sortedCols && sortedCols.length > 0;
     }
@@ -111,7 +111,7 @@ export class SortController extends BeanStub {
 
     private clearSortBarTheseColumns(columnsToSkip: Column[], source: ColumnEventType): Column[] {
         const clearedColumns: Column[] = [];
-        this.columnModel.getPrimaryAndPivotResultAndAutoColumns().forEach((columnToClear: Column) => {
+        this.columnModel.getProvidedAndPivotResultAndAutoColumns().forEach((columnToClear: Column) => {
             // Do not clear if either holding shift, or if column in question was clicked
             if (!columnsToSkip.includes(columnToClear)) {
                 // add to list of cleared cols when sort direction is set
@@ -167,7 +167,7 @@ export class SortController extends BeanStub {
      */
     private getIndexedSortMap(): Map<Column, number> {
         // pull out all the columns that have sorting set
-        let allSortedCols = this.columnModel.getPrimaryAndPivotResultAndAutoColumns()
+        let allSortedCols = this.columnModel.getProvidedAndPivotResultAndAutoColumns()
             .filter(col => !!col.getSort());
 
         if (this.columnModel.isPivotMode()) {

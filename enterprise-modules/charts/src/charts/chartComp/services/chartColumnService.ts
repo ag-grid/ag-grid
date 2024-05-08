@@ -33,7 +33,7 @@ export class ChartColumnService extends BeanStub {
     }
 
     public getColumn(colId: string): Column | null {
-        return this.columnModel.getPrimaryColumn(colId);
+        return this.columnModel.getProvidedColumn(colId);
     }
 
     public getAllDisplayedColumns(): Column[] {
@@ -61,7 +61,7 @@ export class ChartColumnService extends BeanStub {
     }
 
     public getChartColumns(): { dimensionCols: Set<Column>; valueCols: Set<Column>; } {
-        const gridCols = this.columnModel.getAllGridColumns();
+        const gridCols = this.columnModel.getLiveCols();
 
         const dimensionCols = new Set<Column>();
         const valueCols = new Set<Column>();

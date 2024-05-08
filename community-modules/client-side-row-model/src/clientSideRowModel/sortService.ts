@@ -33,7 +33,7 @@ export class SortService extends BeanStub {
         sortContainsGroupColumns: boolean,
     ): void {
         const groupMaintainOrder = this.gos.get('groupMaintainOrder');
-        const groupColumnsPresent = this.columnModel.getAllGridColumns().some(c => c.isRowGroupActive());
+        const groupColumnsPresent = this.columnModel.getLiveCols().some(c => c.isRowGroupActive());
 
         let allDirtyNodes: { [key: string]: true } = {};
         if (useDeltaSort && rowNodeTransactions) {
@@ -247,7 +247,7 @@ export class SortService extends BeanStub {
                 }
 
                 const displayingGroupKey = showRowGroup;
-                const rowGroupColumn = this.columnModel.getPrimaryColumn(displayingGroupKey);
+                const rowGroupColumn = this.columnModel.getProvidedColumn(displayingGroupKey);
                 const thisRowNodeMatches = rowGroupColumn === childRowNode.rowGroupColumn;
 
                 if (thisRowNodeMatches) { return; }

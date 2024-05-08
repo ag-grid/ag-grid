@@ -318,7 +318,7 @@ export class RowRenderer extends BeanStub {
     private refreshListenersToColumnsForCellComps(): void {
         this.removeGridColumnListeners();
 
-        const cols = this.columnModel.getAllGridColumns();
+        const cols = this.columnModel.getLiveCols();
 
         cols.forEach(col => {
             const forEachCellWithThisCol = (callback: (cellCtrl: CellCtrl) => void) => {
@@ -852,7 +852,7 @@ export class RowRenderer extends BeanStub {
         if (exists(columns)) {
             colIdsMap = {};
             columns.forEach((colKey: string | Column) => {
-                const column: Column | null = this.columnModel.getGridColumn(colKey);
+                const column: Column | null = this.columnModel.getLiveColumn(colKey);
                 if (exists(column)) {
                     colIdsMap[column.getId()] = true;
                 }

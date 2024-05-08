@@ -66,7 +66,7 @@ export class ColumnMoveHelper {
         // could themselves be part of 'married children' groups, which means we need to maintain the order within
         // the moving list.
         const allMovingColumnsOrdered = allMovingColumns.slice();
-        columnModel.sortColumnsLikeGridColumns(allMovingColumnsOrdered);
+        columnModel.sortColumnsLikeLiveColumns(allMovingColumnsOrdered);
 
         const validMoves = this.calculateValidMoves({
             movingCols: allMovingColumnsOrdered,
@@ -159,7 +159,7 @@ export class ColumnMoveHelper {
     // returns the index of the first column in the list ONLY if the cols are all beside
     // each other. if the cols are not beside each other, then returns null
     private static calculateOldIndex(movingCols: Column[], columnModel: ColumnModel): number | null {
-        const gridCols: Column[] = columnModel.getAllGridColumns();
+        const gridCols: Column[] = columnModel.getLiveCols();
         const indexes = sortNumerically(movingCols.map(col => gridCols.indexOf(col)));
         const firstIndex = indexes[0];
         const lastIndex = last(indexes);
@@ -223,7 +223,7 @@ export class ColumnMoveHelper {
         const allDisplayedCols = this.getDisplayedColumns(displayedColumnsService, pinned);
         // but this list is the list of all cols, when we move a col it's the index within this list that gets used,
         // so the result we return has to be and index location for this list
-        const allGridCols = columnModel.getAllGridColumns();
+        const allGridCols = columnModel.getLiveCols();
 
         const movingDisplayedCols = allDisplayedCols.filter(col => includes(movingCols, col));
         const otherDisplayedCols = allDisplayedCols.filter(col => !includes(movingCols, col));

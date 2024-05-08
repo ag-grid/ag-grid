@@ -78,7 +78,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
         this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 
         const isFilterGroupPresent = (col: Column) => col.getOriginalParent() && col.isFilterAllowed();
-        const filterGroupsPresent = this.columnModel.getAllGridColumns().some(isFilterGroupPresent);
+        const filterGroupsPresent = this.columnModel.getLiveCols().some(isFilterGroupPresent);
 
         _.setDisplayed(this.eFilterTextField.getGui(), showFilterSearch);
         _.setDisplayed(this.eExpand, showExpand && filterGroupsPresent);
