@@ -219,8 +219,8 @@ export class ColumnModel extends BeanStub {
 
     @PreDestroy
     private destroyColumns(): void {
-        this.columnUtilsFeature.destroyColumns(this.providedColTree);
-        this.columnUtilsFeature.destroyColumns(this.groupAutoColsTree);
+        this.columnUtilsFeature.destroyColumns(this.getContext(), this.providedColTree);
+        this.columnUtilsFeature.destroyColumns(this.getContext(), this.groupAutoColsTree);
     }
 
     private createProvidedCols(colsPreviouslyExisted: boolean, source: ColumnEventType): void {
@@ -240,7 +240,7 @@ export class ColumnModel extends BeanStub {
         const oldPrimaryTree = this.providedColTree;
         const balancedTreeResult = this.columnFactory.createColumnTree(this.columnDefs, true, oldPrimaryTree, source);
 
-        this.columnUtilsFeature.destroyColumns(this.providedColTree, balancedTreeResult.columnTree);
+        this.columnUtilsFeature.destroyColumns(this.getContext(), this.providedColTree, balancedTreeResult.columnTree);
         this.providedColTree = balancedTreeResult.columnTree;
         this.providedColTreeDepth = balancedTreeResult.treeDept + 1;
 
@@ -1044,7 +1044,7 @@ export class ColumnModel extends BeanStub {
     private addAutoGroupToLiveColumns(): void {
 
         if (missing(this.groupAutoCols)) {
-            this.columnUtilsFeature.destroyColumns(this.groupAutoColsTree);
+            this.columnUtilsFeature.destroyColumns(this.getContext(), this.groupAutoColsTree);
             this.groupAutoColsTree = null;
             return;
         }
@@ -1053,7 +1053,7 @@ export class ColumnModel extends BeanStub {
 
         const newAutoColsTree = this.columnFactory.createForAutoGroups(this.groupAutoCols, this.liveColTree);
 
-        this.columnUtilsFeature.destroyColumns(this.groupAutoColsTree, newAutoColsTree);
+        this.columnUtilsFeature.destroyColumns(this.getContext(), this.groupAutoColsTree, newAutoColsTree);
         this.groupAutoColsTree = newAutoColsTree;
 
         this.liveColTree = newAutoColsTree.concat(this.liveColTree);

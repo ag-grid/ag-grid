@@ -13,11 +13,6 @@ import { ColumnModel } from "./columnModel";
 import { ColumnUtilsFeature } from "./columnUtilsFeature";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
-interface ColStuff {
-    tree: IHeaderColumn;
-    cols: Column[]
-}
-
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('displayedColumnsService')
 export class DisplayedColumnsService extends BeanStub {

@@ -34,7 +34,7 @@ export class PivotResultColsService extends BeanStub {
 
     @PreDestroy
     private destroyColumns(): void {
-        this.columnUtilsFeature.destroyColumns(this.pivotResultColTree);
+        this.columnUtilsFeature.destroyColumns(this.getContext(), this.pivotResultColTree);
     }
 
     public isPivotResultColsPresent(): boolean {
@@ -94,7 +94,7 @@ export class PivotResultColsService extends BeanStub {
                 this.pivotResultColTree || this.previousPivotResultCols || undefined,
                 source
             );
-            this.columnUtilsFeature.destroyColumns(this.pivotResultColTree, balancedTreeResult.columnTree);
+            this.columnUtilsFeature.destroyColumns(this.getContext(), this.pivotResultColTree, balancedTreeResult.columnTree);
             this.pivotResultColTree = balancedTreeResult.columnTree;
             this.pivotResultColTreeDept = balancedTreeResult.treeDept + 1;
             this.pivotResultCols = this.columnUtilsFeature.getColumnsFromTree(this.pivotResultColTree);

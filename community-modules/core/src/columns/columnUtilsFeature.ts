@@ -1,10 +1,10 @@
-import { BeanStub } from "../context/beanStub";
+import { Context } from "../context/context";
 import { Column, ColumnInstanceId } from "../entities/column";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { depthFirstOriginalTreeSearch } from "./columnFactory";
 
-export class ColumnUtilsFeature extends BeanStub {
+export class ColumnUtilsFeature {
 
     // Possible candidate for reuse (alot of recursive traversal duplication)
     public getColumnsFromTree(rootColumns: IProvidedColumn[]): Column[] {
@@ -30,7 +30,7 @@ export class ColumnUtilsFeature extends BeanStub {
         return columnList.reduce((width, col) => width + col.getActualWidth(), 0);
     }
 
-    public destroyColumns(oldTree: IProvidedColumn[] | null, newTree?: IProvidedColumn[] | null): void {
+    public destroyColumns(context: Context, oldTree: IProvidedColumn[] | null, newTree?: IProvidedColumn[] | null): void {
         const oldObjectsById: {[id: ColumnInstanceId]: IProvidedColumn | null} = {};
 
         if (!oldTree) { return; }
@@ -49,6 +49,6 @@ export class ColumnUtilsFeature extends BeanStub {
 
         // what's left can be destroyed
         const colsToDestroy = Object.values(oldObjectsById).filter(item => item != null);
-        this.destroyBeans(colsToDestroy);
+        context.destroyBeans(colsToDestroy);
     }
 }
