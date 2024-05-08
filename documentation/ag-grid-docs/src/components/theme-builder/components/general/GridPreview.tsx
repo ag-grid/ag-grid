@@ -18,7 +18,7 @@ import { memo, useRef, useState } from 'react';
 import root from 'react-shadow';
 
 import type { GridState } from '../../../../../../../packages/ag-grid-community/dist/types/core/main';
-import { useSetPreviewGridApi, useSetPreviewGridContainer } from '../../model/rendered-theme';
+import { useSetPreviewGridContainer } from '../../model/rendered-theme';
 import { ColorEditor } from '../editors/ColorValueEditor';
 import { PreloadFontSelection } from '../editors/FontFamilyValueEditor';
 import { useGridOptions } from '../grid-config/grid-config-atom';
@@ -47,7 +47,6 @@ const GridPreview = () => {
     const { config, gridOptions, updateCount } = useGridOptions();
 
     const setPreviewGridContainer = useSetPreviewGridContainer();
-    const setPreviewGridApi = useSetPreviewGridApi();
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
 
     const [backgroundValue, setBackground] = useApplicationConfigAtom('previewPaneBackgroundColor');
@@ -69,13 +68,11 @@ const GridPreview = () => {
                             setContainer(el);
                             setPreviewGridContainer(el);
                         }}
-                        className="ag-theme-custom"
                         style={{ height: '100%' }}
                     >
                         {container && (
                             <AgGridReact
                                 onGridReady={({ api }) => {
-                                    setPreviewGridApi(api);
                                     if (config.showIntegratedChartPopup) {
                                         api.createRangeChart({
                                             cellRange: {
