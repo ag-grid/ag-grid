@@ -42,6 +42,7 @@ import { ColumnSizeService } from './columnSizeService';
 import { FunctionColumnsService } from './functionColumnsService';
 import { ColumnViewportService } from './columnViewportService';
 import { PivotResultColsService } from './pivotResultColsService';
+import { QuickFilterService } from '../filter/quickFilterService';
 
 export interface ColumnStateParams {
     /** True if the column is hidden */
@@ -114,6 +115,7 @@ export class ColumnModel extends BeanStub {
     @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
     @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
     @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
+    @Autowired('quickFilterService') private quickFilterService: QuickFilterService;
 
     private columnUtilsFeature: ColumnUtilsFeature;
 
@@ -128,10 +130,6 @@ export class ColumnModel extends BeanStub {
 
     // true when pivotResultCols are in liveCols
     private pivotResultColsAreLive: boolean;
-
-    // the columns the quick filter should use. this will be all primary columns
-    // plus the autoGroupColumns if any exist
-    private colsForQuickFilter: Column[];
 
     // header row count, either above, or based on pivoting if we are pivoting
     private lastProvidedOrder: Column[];
@@ -433,10 +431,6 @@ export class ColumnModel extends BeanStub {
     // + headerRenderer -> sorting (clearing icon)
     public getAllPrimaryColumns(): Column[] | null {
         return this.providedCols?.list ? this.providedCols.list : null;
-    }
-
-    public getAllColumnsForQuickFilter(): Column[] {
-        return this.colsForQuickFilter;
     }
 
     // + moveColumnController
@@ -907,7 +901,7 @@ export class ColumnModel extends BeanStub {
 
         this.liveCols.list = this.columnMoveService.placeLockedColumns(this.liveCols.list);
         this.calculateColumnsForGroupDisplay();
-        this.refreshQuickFilterColumns();
+        this.quickFilterService.refreshQuickFilterColumns();
 
         // make sure any part of the gui that tries to draw, eg the header,
         // will get empty lists of columns rather than stale columns.
@@ -1041,23 +1035,6 @@ export class ColumnModel extends BeanStub {
     // used by Column Tool Panel
     public isProvidedColGroupsPresent(): boolean {
         return this.providedCols?.treeDepth > 0;
-    }
-
-    // if we are using autoGroupCols, then they should be included for quick filter. this covers the
-    // following scenarios:
-    // a) user provides 'field' into autoGroupCol of normal grid, so now because a valid col to filter leafs on
-    // b) using tree data and user depends on autoGroupCol for first col, and we also want to filter on this
-    //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
-    public refreshQuickFilterColumns(): void {
-        let columnsForQuickFilter = (
-            this.isPivotMode() && !this.gos.get('applyQuickFilterBeforePivotOrAgg') ? this.pivotResultColsService.getPivotResultCols()?.list : this.providedCols?.list
-        ) ?? [];
-        if (this.groupAutoCols) {
-            columnsForQuickFilter = columnsForQuickFilter.concat(this.groupAutoCols);
-        }
-        this.colsForQuickFilter = this.gos.get('includeHiddenColumnsInQuickFilter')
-            ? columnsForQuickFilter
-            : columnsForQuickFilter.filter(col => col.isVisible() || col.isRowGroupActive());
     }
 
     private addAutoGroupToLiveColumns(): void {
