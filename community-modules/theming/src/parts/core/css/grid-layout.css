@@ -105,6 +105,7 @@
 .ag-cell-wrapper {
     display: flex;
     align-items: center;
+    padding-left: calc(var(--ag-indentation-level, 0) * var(--ag-row-group-indent-size));
 
     &.ag-row-group {
         align-items: flex-start;
