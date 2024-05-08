@@ -1,8 +1,8 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct, Qualifier } from "../context/context";
+import { Autowired, Bean, PostConstruct } from "../context/context";
+import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
 import { getMaxDivHeight } from "../utils/browser";
-import { CtrlsService } from "../ctrlsService";
 
 /**
  * This class solves the 'max height' problem, where the user might want to show more data than

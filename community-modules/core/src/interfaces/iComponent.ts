@@ -1,4 +1,4 @@
-import { AgPromise } from '../utils';
+import { AgPromise } from '../utils/promise';
 
 /** This is for User Components only, do not implement this for internal components. */
 export interface IComponent<T> {

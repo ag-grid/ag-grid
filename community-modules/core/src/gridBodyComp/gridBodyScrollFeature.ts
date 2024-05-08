@@ -1,15 +1,11 @@
-import { ColumnModel } from "../columns/columnModel";
 import { BeanStub } from "../context/beanStub";
 import { Autowired, PostConstruct } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
 import { BodyScrollEndEvent, BodyScrollEvent } from "../events";
 import { WithoutGridCommon } from "../interfaces/iCommon";
-import { IRowModel } from "../interfaces/iRowModel";
 import { VerticalScrollPosition } from "../interfaces/iRowNode";
 import { AnimationFrameService } from "../misc/animationFrameService";
-import { PaginationProxy } from "../pagination/paginationProxy";
-import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { isIOSUserAgent } from "../utils/browser";
 import { getInnerHeight, getScrollLeft, isRtlNegativeScroll, setScrollLeft } from "../utils/dom";
@@ -30,11 +26,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('rowContainerHeightService') private heightScaler: RowContainerHeightService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private enableRtl: boolean;
 

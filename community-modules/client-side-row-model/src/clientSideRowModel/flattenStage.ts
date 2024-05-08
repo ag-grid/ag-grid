@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
@@ -9,6 +8,8 @@ import {
     Beans,
     WithoutGridCommon,
     GetGroupIncludeFooterParams,
+    exists,
+    missingOrEmpty,
 } from "@ag-grid-community/core";
 
 interface FlattenDetails {
@@ -80,7 +81,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         skipLeafNodes: boolean,
         uiLevel: number
     ) {
-        if (_.missingOrEmpty(rowsToFlatten)) {
+        if (missingOrEmpty(rowsToFlatten)) {
             return;
         }
 
@@ -172,7 +173,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
     }
 
     private createDetailNode(masterNode: RowNode): RowNode {
-        if (_.exists(masterNode.detailNode)) { return masterNode.detailNode; }
+        if (exists(masterNode.detailNode)) { return masterNode.detailNode; }
 
         const detailNode = new RowNode(this.beans);
 
@@ -180,7 +181,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         detailNode.selectable = false;
         detailNode.parent = masterNode;
 
-        if (_.exists(masterNode.id)) {
+        if (exists(masterNode.id)) {
             detailNode.id = 'detail_' + masterNode.id;
         }
 

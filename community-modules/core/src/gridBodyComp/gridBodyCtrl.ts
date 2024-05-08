@@ -3,10 +3,7 @@ import { BeanStub } from "../context/beanStub";
 import { Autowired } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
-import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { IRowModel } from "../interfaces/iRowModel";
-import { AnimationFrameService } from "../misc/animationFrameService";
-import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
 import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { isElementChildOfClass, isVerticalScrollShowing } from "../utils/dom";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
@@ -45,11 +42,8 @@ export interface IGridBodyComp extends LayoutView {
 
 export class GridBodyCtrl extends BeanStub {
 
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('rowContainerHeightService') private rowContainerHeightService: RowContainerHeightService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('rowModel') public rowModel: IRowModel;
 
     private comp: IGridBodyComp;
@@ -95,7 +89,6 @@ export class GridBodyCtrl extends BeanStub {
         this.createManagedBean(new LayoutFeature(this.comp));
         this.bodyScrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
 
-        this.setupRowAnimationCssClass();
 
         this.addEventListeners();
         this.addFocusListeners([eTop, eBodyViewport, eBottom, eStickyTop, eStickyBottom]);
@@ -169,9 +162,13 @@ export class GridBodyCtrl extends BeanStub {
             }
         });
     }
+    public getHeaderRowCount(): number {
+        const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
+        return centerHeaderContainer ? centerHeaderContainer.getRowCount() : 0;
+    }
 
     public updateRowCount(): void {
-        const headerCount = this.headerNavigationService.getHeaderRowCount();
+        const headerCount = this.getHeaderRowCount();
 
         const rowCount = this.rowModel.isLastRowIndexKnown() ? this.rowModel.getRowCount() : -1;
         const total = rowCount === -1 ? -1 : (headerCount + rowCount);
@@ -196,20 +193,6 @@ export class GridBodyCtrl extends BeanStub {
         return show || (allowVerticalScroll && isVerticalScrollShowing(this.eBodyViewport));
     }
 
-    private setupRowAnimationCssClass(): void {
-        const listener = () => {
-            // we don't want to use row animation if scaling, as rows jump strangely as you scroll,
-            // when scaling and doing row animation.
-            const animateRows = this.gos.isAnimateRows() && !this.rowContainerHeightService.isStretching();
-            const animateRowsCssClass = animateRows ? RowAnimationCssClasses.ANIMATION_ON : RowAnimationCssClasses.ANIMATION_OFF;
-            this.comp.setRowAnimationCssOnBodyViewport(animateRowsCssClass, animateRows);
-        };
-
-        listener();
-
-        this.addManagedListener(this.eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, listener);
-        this.addManagedPropertyListener('animateRows', listener);
-    }
 
     public getGridBodyElement(): HTMLElement {
         return this.eGridBody;

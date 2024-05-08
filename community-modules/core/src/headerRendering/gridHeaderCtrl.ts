@@ -1,11 +1,8 @@
 import { ColumnModel } from "../columns/columnModel";
-import { KeyCode } from "../constants/keyCode";
 import { BeanStub } from "../context/beanStub";
 import { Autowired } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
-import { exists } from "../utils/generic";
-import { HeaderNavigationDirection, HeaderNavigationService } from "./common/headerNavigationService";
 
 export interface IGridHeaderComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -14,7 +11,6 @@ export interface IGridHeaderComp {
 
 export class GridHeaderCtrl extends BeanStub {
 
-    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
@@ -27,10 +23,8 @@ export class GridHeaderCtrl extends BeanStub {
         this.eGui = eGui;
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
 
-        this.onPivotModeChanged();
         this.setupHeaderHeight();
 
         const listener = this.onHeaderContextMenu.bind(this)
@@ -91,13 +85,6 @@ export class GridHeaderCtrl extends BeanStub {
         });
     }
 
-    private onPivotModeChanged(): void {
-        const pivotMode = this.columnModel.isPivotMode();
-
-        this.comp.addOrRemoveCssClass('ag-pivot-on', pivotMode);
-        this.comp.addOrRemoveCssClass('ag-pivot-off', !pivotMode);
-    }
-
     private onDisplayedColumnsChanged(): void {
         const columns = this.columnModel.getAllDisplayedColumns();
         const shouldAllowOverflow = columns.some(col => col.isSpanHeaderHeight());
@@ -109,32 +96,6 @@ export class GridHeaderCtrl extends BeanStub {
 
      }
 
-    protected handleKeyDown(e: KeyboardEvent): void {
-        let direction: HeaderNavigationDirection | null = null;
-
-        switch (e.key) {
-            case KeyCode.LEFT:
-                direction = HeaderNavigationDirection.LEFT;
-            case KeyCode.RIGHT:
-                if (!exists(direction)) {
-                    direction = HeaderNavigationDirection.RIGHT;
-                }
-                this.headerNavigationService.navigateHorizontally(direction, false, e);
-                break;
-            case KeyCode.UP:
-                direction = HeaderNavigationDirection.UP;
-            case KeyCode.DOWN:
-                if (!exists(direction)) {
-                    direction = HeaderNavigationDirection.DOWN;
-                }
-                if (this.headerNavigationService.navigateVertically(direction, null, e)) {
-                    e.preventDefault();
-                }
-                break;
-            default:
-                return;
-        }
-    }
 
     protected onFocusOut(e: FocusEvent): void {
         const { relatedTarget } = e;

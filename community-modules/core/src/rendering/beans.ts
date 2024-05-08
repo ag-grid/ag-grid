@@ -11,7 +11,6 @@ import { RowPositionUtils } from "../entities/rowPositionUtils";
 import { Environment } from "../environment";
 import { EventService } from "../eventService";
 import { GridOptionsService } from "../gridOptionsService";
-import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { IRangeService, ISelectionHandleFactory } from "../interfaces/IRangeService";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
@@ -47,7 +46,6 @@ export class Beans {
     @Autowired('valueService') public readonly valueService: ValueService;
     @Autowired('eventService') public readonly eventService: EventService;
     @Autowired('columnModel') public readonly columnModel: ColumnModel;
-    @Autowired('headerNavigationService') public readonly headerNavigationService: HeaderNavigationService;
     @Autowired('stylingService') public readonly stylingService: StylingService;
     @Autowired('columnHoverService') public readonly columnHoverService: ColumnHoverService;
     @Autowired('userComponentFactory') public readonly userComponentFactory: UserComponentFactory;

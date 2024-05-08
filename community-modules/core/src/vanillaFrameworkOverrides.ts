@@ -1,6 +1,6 @@
 import { FrameworkOverridesIncomingSource, IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { includes } from "./utils/array";
-import { AgPromise } from "./utils";
+import { AgPromise } from "./utils/promise";
 
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
 

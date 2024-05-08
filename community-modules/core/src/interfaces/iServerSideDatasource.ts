@@ -2,11 +2,11 @@
 // so the data is read to be be converted to JSON and thrown
 // over the wire
 import { ColumnVO } from "./iColumnVO";
-import { LoadSuccessParams } from "../rowNodeCache/rowNodeBlock";
 import { AgGridCommon } from "./iCommon";
 import { IRowNode } from "./iRowNode";
 import { FilterModel } from "./iFilter";
 import { AdvancedFilterModel } from "./advancedFilterModel";
+import { LoadSuccessParams } from "./iServerSideRowModel";
 
 export interface IServerSideGetRowsRequest {
     /** First row requested or undefined for all rows. */

@@ -91,7 +91,6 @@ import {
     FillStartEvent,
     FillEndEvent,
 } from "../events";
-import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import {
     CsvExportParams,
     ProcessCellForExportParams,
@@ -1683,14 +1682,14 @@ export interface GridOptions<TData = any> {
     /**
      * Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.
      */
-    navigateToNextHeader?: (params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null);
+    navigateToNextHeader?: (params: NavigateToNextHeaderParams<TData>) => (any | null);
     /**
      * Allows overriding the default behaviour for when user hits `Tab` key when a header is focused.
      * Return the next header position to navigate to, `true` to stay on the current header,
      * or `false` to let the browser handle the tab behaviour.
      * As of v31.3, returning `null` is deprecated.
      */
-    tabToNextHeader?: (params: TabToNextHeaderParams<TData>) => (HeaderPosition | boolean | null);
+    tabToNextHeader?: (params: TabToNextHeaderParams<TData>) => (any | boolean | null);
     /**
      * Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.
      */

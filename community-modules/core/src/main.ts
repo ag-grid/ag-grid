@@ -93,7 +93,7 @@ export { RowHighlightPosition, RowPinnedType, IRowNode } from "./interfaces/iRow
 // filter
 export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType, FilterModel, BaseFilter, BaseFilterParams } from "./interfaces/iFilter";
 
-export {
+export type {
     AdvancedFilterModel,
     JoinAdvancedFilterModel,
     ColumnAdvancedFilterModel,
@@ -175,8 +175,6 @@ export { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 export { RowDataTransaction } from "./interfaces/rowDataTransaction";
 export { ServerSideTransaction, ServerSideTransactionResult, ServerSideTransactionResultStatus } from "./interfaces/serverSideTransaction";
 export { ChangedPath } from "./utils/changedPath";
-export { RowNodeBlock, LoadCompleteEvent, LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
-export { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 export { PaginationProxy } from "./pagination/paginationProxy";
 export { IClientSideRowModel, ClientSideRowModelSteps, ClientSideRowModelStep, RefreshModelParams } from "./interfaces/iClientSideRowModel";
 export { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
@@ -195,11 +193,8 @@ export { StylingService } from "./styling/stylingService";
 export { UpdateLayoutClassesParams, LayoutCssClasses } from "./styling/layoutFeature";
 
 // widgets
-export { AgAbstractField, FieldElement, AgFieldParams } from "./widgets/agAbstractField";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { TabGuardComp } from "./widgets/tabGuardComp";
-
-export { AgAbstractLabel, AgLabelParams } from "./widgets/agAbstractLabel";
 
 // range
 export {
@@ -245,8 +240,12 @@ export { CtrlsService } from "./ctrlsService";
 export { GridComp } from "./gridComp/gridComp";
 export { GridCtrl, IGridComp } from "./gridComp/gridCtrl";
 export { LocaleService } from './localeService';
-export * from "./utils/index"; // please leave this as is - we want it to be explicit for build reasons
 export { ColumnSortState } from "./utils/aria";
+export {exists, missing, missingOrEmpty } from "./utils/generic";
+export {warnOnce, debounce } from "./utils/function";
+export {iterateObject, cloneObject } from "./utils/object";
+export {sortRowNodesByOrder } from "./utils/rowNode";
+export {last, removeFromArray, insertIntoArray } from "./utils/array";
 export { ValueService } from "./valueService/valueService";
 
 //state
@@ -287,8 +286,6 @@ export { IMenuFactory } from "./interfaces/iMenuFactory";
 export { IColumnChooserFactory, ShowColumnChooserParams } from "./interfaces/iColumnChooserFactory";
 export { CellPosition, CellPositionUtils } from "./entities/cellPositionUtils";
 export { RowPosition, RowPositionUtils } from "./entities/rowPositionUtils";
-export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/common/headerPosition";
-export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/common/headerNavigationService";
 export {
     IAggFunc,
     IAggFuncParams,

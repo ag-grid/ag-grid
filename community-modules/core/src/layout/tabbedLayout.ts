@@ -1,12 +1,12 @@
-import { AgPromise } from '../utils';
-import { RefSelector } from '../widgets/componentAnnotations';
-import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
-import { clearElement } from '../utils/dom';
-import { setAriaLabel, setAriaRole } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
-import { PostConstruct, Autowired } from '../context/context';
-import { TabGuardComp } from '../widgets/tabGuardComp';
+import { PostConstruct } from '../context/context';
+import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
+import { setAriaLabel, setAriaRole } from '../utils/aria';
+import { clearElement } from '../utils/dom';
 import { createIconNoSpan } from '../utils/icon';
+import { AgPromise } from '../utils/promise';
+import { RefSelector } from '../widgets/componentAnnotations';
+import { TabGuardComp } from '../widgets/tabGuardComp';
 
 export class TabbedLayout extends TabGuardComp {
 

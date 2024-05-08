@@ -6,20 +6,8 @@ export class Events {
     /** User has set in new columns. */
     public static EVENT_NEW_COLUMNS_LOADED: 'newColumnsLoaded' = 'newColumnsLoaded';
 
-    /** The pivot mode flag was changed */
-    public static EVENT_COLUMN_PIVOT_MODE_CHANGED: 'columnPivotModeChanged' = 'columnPivotModeChanged';
-
-    /** Exceeded the pivot limit when generating columns */
-    public static EVENT_PIVOT_MAX_COLUMNS_EXCEEDED: 'pivotMaxColumnsExceeded' = 'pivotMaxColumnsExceeded';
-
-    /** A row group column was added, removed or order changed. */
-    public static EVENT_COLUMN_ROW_GROUP_CHANGED: 'columnRowGroupChanged' = 'columnRowGroupChanged';
-
     /** expandAll / collapseAll was called from the api. */
     public static EVENT_EXPAND_COLLAPSE_ALL: 'expandOrCollapseAll' = 'expandOrCollapseAll';
-
-    /** A pivot column was added, removed or order changed. */
-    public static EVENT_COLUMN_PIVOT_CHANGED: 'columnPivotChanged' = 'columnPivotChanged';
 
     /** The list of grid columns has changed. */
     public static EVENT_GRID_COLUMNS_CHANGED: 'gridColumnsChanged' = 'gridColumnsChanged';

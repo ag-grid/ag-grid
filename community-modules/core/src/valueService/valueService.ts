@@ -14,19 +14,11 @@ export class ValueService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
 
-    private cellExpressions: boolean;
-    // Store locally for performance reasons and keep updated via property listener
-    private isTreeData: boolean;
 
     private initialised = false;
 
-    private isSsrm = false;
-
     @PostConstruct
     public init(): void {
-        this.isSsrm = this.gos.isRowModelType('serverSide');
-        this.cellExpressions = this.gos.get('enableCellExpressions');
-        this.isTreeData = this.gos.get('treeData');
         this.initialised = true;
 
         // We listen to our own event and use it to call the columnSpecific callback,
@@ -36,7 +28,6 @@ export class ValueService extends BeanStub {
         this.eventService.addEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async);
         this.addDestroyFunc(() => this.eventService.removeEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async));
 
-        this.addManagedPropertyListener('treeData', (propChange) => this.isTreeData = propChange.currentValue);
     }
 
     public getValue(column: Column,
@@ -57,52 +48,15 @@ export class ValueService extends BeanStub {
         // pull these out to make code below easier to read
         const colDef = column.getColDef();
         const field = colDef.field;
-        const colId = column.getColId();
         const data = rowNode.data;
 
         let result: any;
 
-        // if there is a value getter, this gets precedence over a field
-        const groupDataExists = rowNode.groupData && rowNode.groupData[colId] !== undefined;
-        const aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
 
-        // SSRM agg data comes from the data attribute, so ignore that instead
-        const ignoreSsrmAggData = this.isSsrm && ignoreAggData && !!column.getColDef().aggFunc;
-        const ssrmFooterGroupCol = this.isSsrm && rowNode.footer && rowNode.field && (column.getColDef().showRowGroup === true || column.getColDef().showRowGroup === rowNode.field);
-
-        if (forFilter && colDef.filterValueGetter) {
-            result = this.executeFilterValueGetter(colDef.filterValueGetter, data, column, rowNode);
-        } else if (this.isTreeData && aggDataExists) {
-            result = rowNode.aggData[colId];
-        } else if (this.isTreeData && colDef.valueGetter) {
+        if (colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
-        } else if (this.isTreeData && (field && data)) {
+        }  else if (field && data) {
             result = getValueUsingField(data, field, column.isFieldContainsDots());
-        } else if (groupDataExists) {
-            result = rowNode.groupData![colId];
-        } else if (aggDataExists) {
-            result = rowNode.aggData[colId];
-        } else if (colDef.valueGetter) {
-            result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
-        } else if (ssrmFooterGroupCol) {
-            // this is for group footers in SSRM, as the SSRM row won't have groupData, need to extract
-            // the group value from the data using the row field
-            result = getValueUsingField(data, rowNode.field!, column.isFieldContainsDots());
-        } else if (field && data && !ignoreSsrmAggData) {
-            result = getValueUsingField(data, field, column.isFieldContainsDots());
-        }
-
-        // the result could be an expression itself, if we are allowing cell values to be expressions
-        if (this.cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
-            const cellValueGetter = result.substring(1);
-            result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
-        }
-
-        if (result == null) {
-            const openedGroup = this.getOpenedGroup(rowNode, column);
-            if (openedGroup != null) {
-                return openedGroup;
-            }
         }
 
         return result;
@@ -169,27 +123,6 @@ export class ValueService extends BeanStub {
         }
 
         return result;
-    }
-
-    private getOpenedGroup(rowNode: IRowNode, column: Column): any {
-
-        if (!this.gos.get('showOpenedGroup')) { return; }
-
-        const colDef = column.getColDef();
-        if (!colDef.showRowGroup) { return; }
-
-        const showRowGroup = column.getColDef().showRowGroup;
-
-        let pointer = rowNode.parent;
-
-        while (pointer != null) {
-            if (pointer.rowGroupColumn && (showRowGroup === true || showRowGroup === pointer.rowGroupColumn.getColId())) {
-                return pointer.key;
-            }
-            pointer = pointer.parent;
-        }
-
-        return undefined;
     }
 
     /**
@@ -328,24 +261,8 @@ export class ValueService extends BeanStub {
         return !valuesAreSame;
     }
 
-    private executeFilterValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: IRowNode): any {
-        const params: ValueGetterParams = this.gos.addGridCommonParams({
-            data: data,
-            node: rowNode,
-            column: column,
-            colDef: column.getColDef(),
-            getValue: this.getValueCallback.bind(this, rowNode)
-        });
-
-        if (typeof valueGetter === 'function') {
-            return valueGetter(params);
-        }
-        return undefined;
-    }
 
     private executeValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: IRowNode): any {
-
-        const colId = column.getColId();
 
         const params: ValueGetterParams = this.gos.addGridCommonParams({
             data: data,

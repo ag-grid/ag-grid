@@ -21,15 +21,12 @@ import { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 import { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
 import { GridComp } from "./gridComp/gridComp";
 import { GridOptionsService } from "./gridOptionsService";
-import { HeaderNavigationService } from "./headerRendering/common/headerNavigationService";
-import { HeaderPositionUtils } from "./headerRendering/common/headerPosition";
 import { GridHeaderComp } from "./headerRendering/gridHeaderComp";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { Module } from "./interfaces/iModule";
 import { RowModelType } from "./interfaces/iRowModel";
 import { LocaleService } from "./localeService";
 import { AnimationFrameService } from "./misc/animationFrameService";
-import { ApiEventService } from "./misc/apiEventService";
 import { ResizeObserverService } from "./misc/resizeObserverService";
 import { ModuleNames } from "./modules/moduleNames";
 import { ModuleRegistry } from "./modules/moduleRegistry";
@@ -42,14 +39,12 @@ import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComp
 import { RowCssClassCalculator } from "./rendering/row/rowCssClassCalculator";
 import { RowContainerHeightService } from "./rendering/rowContainerHeightService";
 import { RowRenderer } from "./rendering/rowRenderer";
-import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { RowNodeSorter } from "./rowNodes/rowNodeSorter";
 import { StylingService } from "./styling/stylingService";
 import { SyncService } from "./syncService";
 import { errorOnce } from "./utils/function";
 import { missing } from "./utils/generic";
 import { mergeDeep } from "./utils/object";
-import { ChangeDetectionService } from "./valueService/changeDetectionService";
 import { ValueService } from "./valueService/valueService";
 import { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 
@@ -287,20 +282,20 @@ export class GridCoreCreator {
 
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
         const beans = [
-            Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils, UserComponentRegistry, AgComponentUtils,
+            Beans, RowPositionUtils, CellPositionUtils, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             RowContainerHeightService, LocaleService,              
             EventService, GridOptionsService,
-            ColumnModel, HeaderNavigationService,
+            ColumnModel,
             PaginationProxy, RowRenderer, ColumnFactory,
             ValueService,
               Environment, CellNavigationService, StylingService,
              ColumnHoverService,
-            ChangeDetectionService, AnimationFrameService,
+             AnimationFrameService,
             AgStackComponentsRegistry, RowCssClassCalculator, 
-            RowNodeBlockLoader, RowNodeSorter, CtrlsService, RowNodeEventThrottle,
+            RowNodeSorter, CtrlsService, RowNodeEventThrottle,
             CtrlsFactory, SyncService, OverlayService,
-            ApiEventService, AriaAnnouncementService
+             AriaAnnouncementService
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);

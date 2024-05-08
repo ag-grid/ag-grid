@@ -1,4 +1,3 @@
-import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { ChartMenuOptions } from "./iChartOptions";
 import { AgGridCommon } from "./iCommon";
 import { ServerSideTransaction } from "./serverSideTransaction";
@@ -69,9 +68,9 @@ export interface NavigateToNextHeaderParams<TData = any, TContext = any> extends
      *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */
     key: string;
     /** The header that currently has focus */
-    previousHeaderPosition: HeaderPosition | null;
+    previousHeaderPosition:any| null;
     /** The header the grid would normally pick as the next header for this navigation */
-    nextHeaderPosition: HeaderPosition | null;
+    nextHeaderPosition:any| null;
     /** The number of header rows present in the grid */
     headerRowCount: number;
     event: KeyboardEvent;
@@ -81,9 +80,9 @@ export interface TabToNextHeaderParams<TData = any, TContext = any> extends AgGr
     /** True if the Shift key is also down */
     backwards: boolean;
     /** The header that currently has focus */
-    previousHeaderPosition: HeaderPosition | null;
+    previousHeaderPosition:any| null;
     /** The header the grid would normally pick as the next header for this navigation */
-    nextHeaderPosition: HeaderPosition | null;
+    nextHeaderPosition:any| null;
     /** The number of header rows present in the grid */
     headerRowCount: number;
 }

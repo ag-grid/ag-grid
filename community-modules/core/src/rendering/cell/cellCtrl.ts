@@ -42,10 +42,6 @@ export interface ICellComp {
     setUserStyles(styles: CellStyle): void;
     getFocusableElement(): HTMLElement;
 
-    setIncludeSelection(include: boolean): void;
-    setIncludeRowDrag(include: boolean): void;
-    setIncludeDndSource(include: boolean): void;
-
     getCellEditor(): ICellEditor | null;
     getCellRenderer(): ICellRenderer | null;
     getParentOfValue(): HTMLElement | null;
@@ -144,13 +140,6 @@ export class CellCtrl extends BeanStub {
         this.addDomData();
 
         this.applyStaticCssClasses();
-        this.setWrapText();
-
-        this.onFirstRightPinnedChanged();
-        this.onLastLeftPinnedChanged();
-        this.onColumnHover();
-        this.setupControlComps();
-
         this.refreshFirstAndLastStyles();
         this.refreshAriaColIndex();
 
@@ -196,16 +185,6 @@ export class CellCtrl extends BeanStub {
         this.cellRangeFeature?.refreshHandle();
     }
 
-    private setupControlComps(): void {
-        const colDef = this.column.getColDef();
-        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
-        this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
-        this.includeDndSource = this.isIncludeControl(colDef.dndSource);
-
-        this.cellComp.setIncludeSelection(this.includeSelection);
-        this.cellComp.setIncludeDndSource(this.includeDndSource);
-        this.cellComp.setIncludeRowDrag(this.includeRowDrag);
-    }
 
     public isForceWrapper(): boolean {
         // text selection requires the value to be wrapped in another element
@@ -470,18 +449,6 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    public onFirstRightPinnedChanged(): void {
-        if (!this.cellComp) { return; }
-        const firstRightPinned = this.column.isFirstRightPinned();
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_FIRST_RIGHT_PINNED, firstRightPinned);
-    }
-
-    public onLastLeftPinnedChanged(): void {
-        if (!this.cellComp) { return; }
-        const lastLeftPinned = this.column.isLastLeftPinned();
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_LAST_LEFT_PINNED, lastLeftPinned);
-    }
-
     private createCellPosition(): void {
         this.cellPosition = {
             rowIndex: this.rowNode.rowIndex!,
@@ -503,27 +470,11 @@ export class CellCtrl extends BeanStub {
         this.cellComp.addOrRemoveCssClass(CSS_NORMAL_HEIGHT, !autoHeight);
     }
 
-    public onColumnHover(): void {
-        if (!this.cellComp) { return; }
-        if (!this.beans.gos.get('columnHoverHighlight')) { return; }
-
-        const isHovered = this.beans.columnHoverService.isHovered(this.column);
-        this.cellComp.addOrRemoveCssClass(CSS_COLUMN_HOVER, isHovered);
-    }
-
     public onColDefChanged(): void {
         if (!this.cellComp) { return; }
 
-        this.setWrapText();
-
             this.refreshOrDestroyCell({ forceRefresh: true, suppressFlash: true });
        
-    }
-
-    private setWrapText(): void {
-        const value = this.column.getColDef().wrapText == true;
-
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, value);
     }
 
     public getCellRenderer(): ICellRenderer | null {

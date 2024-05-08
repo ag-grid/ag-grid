@@ -120,7 +120,6 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.onBodyScroll.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redraw.bind(this));
 
-        this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], () => this.onDomLayoutChanged());
         this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction', 'rowBuffer'], () => this.redraw());
         this.addManagedPropertyListeners([
             'suppressCellFocus', 'getBusinessKeyForNode',
@@ -160,16 +159,11 @@ export class RowRenderer extends BeanStub {
     // registering and de-registering for events is a performance bottleneck. so we register here once and inform
     // all active cells.
     private registerCellEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, () => {
-            this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onColumnHover());
-        });
 
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => {
             this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onDisplayedColumnsChanged());
         });
 
-
-        this.setupRangeSelectionListeners();
 
         // add listeners to the grid columns
         this.refreshListenersToColumnsForCellComps();
@@ -177,43 +171,6 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.refreshListenersToColumnsForCellComps.bind(this));
 
         this.addDestroyFunc(this.removeGridColumnListeners.bind(this));
-    }
-
-    private setupRangeSelectionListeners = () => {
-        const onRangeSelectionChanged = () => {
-            this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onRangeSelectionChanged());
-        };
-
-        const onColumnMovedPinnedVisible = () => {
-            this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
-        };
-
-        const addRangeSelectionListeners = () => {
-            this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
-            this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
-            this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
-            this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
-        };
-
-        const removeRangeSelectionListeners = () => {
-            this.eventService.removeEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
-            this.eventService.removeEventListener(Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
-            this.eventService.removeEventListener(Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
-            this.eventService.removeEventListener(Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
-        };
-        this.addDestroyFunc(() => removeRangeSelectionListeners());
-        this.addManagedPropertyListener('enableRangeSelection', (params) => {
-            const isEnabled = params.currentValue;
-            if (isEnabled) {
-                addRangeSelectionListeners();
-            } else {
-                removeRangeSelectionListeners();
-            }
-        });
-        const rangeSelectionEnabled = this.gos.get('enableRangeSelection');
-        if (rangeSelectionEnabled) {
-            addRangeSelectionListeners();
-        }
     }
 
     // executes all functions in destroyFuncsForColumnListeners and then clears the list
@@ -246,33 +203,20 @@ export class RowRenderer extends BeanStub {
             const widthChangedListener = () => {
                 forEachCellWithThisCol(cellCtrl => cellCtrl.onWidthChanged());
             };
-            const firstRightPinnedChangedListener = () => {
-                forEachCellWithThisCol(cellCtrl => cellCtrl.onFirstRightPinnedChanged());
-            };
-            const lastLeftPinnedChangedListener = () => {
-                forEachCellWithThisCol(cellCtrl => cellCtrl.onLastLeftPinnedChanged());
-            };
             const colDefChangedListener = () => {
                 forEachCellWithThisCol(cellCtrl => cellCtrl.onColDefChanged());
             };
 
             col.addEventListener('leftChanged', leftChangedListener);
             col.addEventListener('widthChanged', widthChangedListener);
-            col.addEventListener('firstRightPinnedChanged', firstRightPinnedChangedListener);
-            col.addEventListener('lastLeftPinnedChanged', lastLeftPinnedChangedListener);
             col.addEventListener('colDefChanged', colDefChangedListener);
 
             this.destroyFuncsForColumnListeners.push(() => {
                 col.removeEventListener('leftChanged', leftChangedListener);
                 col.removeEventListener('widthChanged', widthChangedListener);
-                col.removeEventListener('firstRightPinnedChanged', firstRightPinnedChangedListener);
-                col.removeEventListener('lastLeftPinnedChanged', lastLeftPinnedChangedListener);
                 col.removeEventListener('colDefChanged', colDefChangedListener);
             });
         });
-    }
-
-    private onDomLayoutChanged(): void {
     }
 
     // for row models that have datasources, when we update the datasource, we need to force the rowRenderer
@@ -1061,21 +1005,6 @@ export class RowRenderer extends BeanStub {
         const {rowIndex} = rowPosition;
         rowCtrl = this.rowCtrlsByRowIndex[rowIndex];
         return rowCtrl;
-    }
-
-    // returns true if any row between startIndex and endIndex is rendered. used by
-    // SSRM or IRM, as they don't want to purge visible blocks from cache.
-    public isRangeInRenderedViewport(startIndex: number, endIndex: number): boolean {
-
-        // parent closed means the parent node is not expanded, thus these blocks are not visible
-        const parentClosed = startIndex == null || endIndex == null;
-        if (parentClosed) { return false; }
-
-        const blockAfterViewport = startIndex > this.lastRenderedRow;
-        const blockBeforeViewport = endIndex < this.firstRenderedRow;
-        const blockInsideViewport = !blockBeforeViewport && !blockAfterViewport;
-
-        return blockInsideViewport;
     }
 }
 

@@ -83,10 +83,6 @@ export class CellComp extends Component {
             setUserStyles: (styles: CellStyle) => addStylesToElement(eGui, styles),
             getFocusableElement: () => this.getFocusableElement(),
             
-            setIncludeSelection: include => {},
-            setIncludeRowDrag: include => {},
-            setIncludeDndSource: include => {},
-
             setRenderDetails: (compDetails, valueToDisplay, force) =>
                 this.setRenderDetails(compDetails, valueToDisplay, force),
             setEditDetails: (compDetails, popup, position) =>

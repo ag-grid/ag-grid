@@ -13,7 +13,7 @@ import { IToolPanelParams } from "../../interfaces/iToolPanel";
 import { IMenuItemParams, MenuItemDef } from "../../interfaces/menuItem";
 import { ILoadingOverlayParams } from "../../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayParams } from "../../rendering/overlays/noRowsOverlayComponent";
-import { AgPromise } from "../../utils";
+import { AgPromise } from "../../utils/promise";
 import { mergeDeep } from '../../utils/object';
 import { AgComponentUtils } from "./agComponentUtils";
 import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";

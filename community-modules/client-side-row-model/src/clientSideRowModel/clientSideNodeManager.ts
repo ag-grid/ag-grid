@@ -1,16 +1,17 @@
 import {
-    Beans, ColumnModel, Events,
+    Beans, ColumnModel,
     EventService,
+    Events,
+    GridOptionsService,
+    ISelectionService,
     RowDataTransaction,
+    RowDataUpdateStartedEvent,
     RowNode,
     RowNodeTransaction,
-    SelectionChangedEvent,
-    _,
     WithoutGridCommon,
-    GridOptionsService,
-    SelectionEventSourceType,
-    ISelectionService,
-    RowDataUpdateStartedEvent
+    cloneObject,
+    missingOrEmpty,
+    sortRowNodesByOrder
 } from "@ag-grid-community/core";
 
 export class ClientSideNodeManager {
@@ -53,7 +54,7 @@ export class ClientSideNodeManager {
     }
 
     public getCopyOfNodesMap(): { [id: string]: RowNode } {
-        return _.cloneObject(this.allNodesMap);
+        return cloneObject(this.allNodesMap);
     }
 
     public getRowNode(id: string): RowNode | undefined {
@@ -119,7 +120,7 @@ export class ClientSideNodeManager {
         this.executeAdd(rowDataTran, rowNodeTransaction);
 
         if (rowNodeOrder) {
-            _.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
+            sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
         }
 
         return rowNodeTransaction;
@@ -139,7 +140,7 @@ export class ClientSideNodeManager {
 
     private executeAdd(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction): void {
         const { add, addIndex } = rowDataTran;
-        if (_.missingOrEmpty(add)) { return; }
+        if (missingOrEmpty(add)) { return; }
 
         // create new row nodes for each data item
         const newNodes: RowNode[] = add!.map(item => this.createNode(item, this.rootNode, ClientSideNodeManager.TOP_LEVEL));
@@ -174,7 +175,7 @@ export class ClientSideNodeManager {
     private executeRemove(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
         const { remove } = rowDataTran;
 
-        if (_.missingOrEmpty(remove)) { return; }
+        if (missingOrEmpty(remove)) { return; }
 
         const rowIdsRemoved: { [key: string]: boolean } = {};
 
@@ -192,10 +193,10 @@ export class ClientSideNodeManager {
             // so row renderer knows to fade row out (and not reposition it)
             rowNode.clearRowTopAndRowIndex();
 
-            // NOTE: were we could remove from allLeaveChildren, however _.removeFromArray() is expensive, especially
+            // NOTE: were we could remove from allLeaveChildren, however removeFromArray() is expensive, especially
             // if called multiple times (eg deleting lots of rows) and if allLeafChildren is a large list
             rowIdsRemoved[rowNode.id!] = true;
-            // _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
+            // removeFromArray(this.rootNode.allLeafChildren, rowNode);
             delete this.allNodesMap[rowNode.id!];
 
             rowNodeTransaction.remove.push(rowNode);
@@ -209,7 +210,7 @@ export class ClientSideNodeManager {
 
     private executeUpdate(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
         const { update } = rowDataTran;
-        if (_.missingOrEmpty(update)) { return; }
+        if (missingOrEmpty(update)) { return; }
 
         update!.forEach(item => {
             const rowNode = this.lookupRowNode(item);

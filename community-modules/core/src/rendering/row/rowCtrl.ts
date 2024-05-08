@@ -1,11 +1,10 @@
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { BeanStub } from "../../context/beanStub";
-import { CellPosition } from "../../entities/cellPositionUtils";
 import { Column, ColumnInstanceId, ColumnPinnedType } from "../../entities/column";
 import { RowClassParams, RowStyle } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
 import { RowPosition } from "../../entities/rowPositionUtils";
-import { AgEventListener, CellFocusedEvent, Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent, RowValueChangedEvent, VirtualRowRemovedEvent } from "../../events";
+import { AgEventListener, Events, RowDoubleClickedEvent, RowEvent, VirtualRowRemovedEvent } from "../../events";
 import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
 import { GridOptionsService } from "../../gridOptionsService";
 import { BrandedType } from "../../interfaces/brandedType";
@@ -13,8 +12,8 @@ import { ProcessRowParams } from "../../interfaces/iCallbackParams";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { DataChangedEvent, IRowNode, RowHighlightPosition } from "../../interfaces/iRowNode";
-import { setAriaExpanded, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
-import { isElementChildOfClass, isVisible } from "../../utils/dom";
+import { setAriaExpanded, setAriaRowIndex } from "../../utils/aria";
+import { isVisible } from "../../utils/dom";
 import { isStopPropagationForAgGrid } from "../../utils/event";
 import { executeNextVMTurn } from "../../utils/function";
 import { exists, makeNull } from "../../utils/generic";
@@ -77,7 +76,6 @@ export class RowCtrl extends BeanStub {
     private leftGui: RowGui | undefined;
     private centerGui: RowGui | undefined;
     private rightGui: RowGui | undefined;
-    private fullWidthGui: RowGui | undefined;
 
     private allRowGuis: RowGui[] = [];
 
@@ -123,7 +121,6 @@ export class RowCtrl extends BeanStub {
     private rowId: string | null = null;
     private tabIndex: number | undefined;
     private businessKeySanitised: string | null = null;
-    private businessKeyForNodeFunc: ((node: IRowNode<any>) => string) | undefined;
 
     constructor(
         rowNode: RowNode,
@@ -180,7 +177,6 @@ export class RowCtrl extends BeanStub {
         } else if (containerType === RowContainerType.RIGHT) {
             this.rightGui = gui;
         } else if (containerType === RowContainerType.FULL_WIDTH) {
-            this.fullWidthGui = gui;
         } else {
             this.centerGui = gui;
         }
@@ -208,7 +204,6 @@ export class RowCtrl extends BeanStub {
                 this.rightGui = undefined;
                 break;
             case RowContainerType.FULL_WIDTH:
-                this.fullWidthGui = undefined;
                 break;
             case RowContainerType.CENTER:
                 this.centerGui = undefined;
@@ -543,8 +538,6 @@ export class RowCtrl extends BeanStub {
     private addListeners(): void {
         this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.updateExpandedCss.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_HAS_CHILDREN_CHANGED, this.updateExpandedCss.bind(this));
         
         if (this.rowNode.detail) {
             // if the master row node has updated data, we also want to try to refresh the detail row
@@ -554,7 +547,6 @@ export class RowCtrl extends BeanStub {
         this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.postProcessCss.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_HIGHLIGHT_CHANGED, this.onRowNodeHighlightChanged.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.postProcessRowDragging.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_UI_LEVEL_CHANGED, this.onUiLevelChanged.bind(this));
 
         const eventService = this.beans.eventService;
@@ -562,7 +554,6 @@ export class RowCtrl extends BeanStub {
         this.addManagedListener(eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
-        this.addManagedListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_MODEL_UPDATED, this.refreshFirstAndLastRowStyles.bind(this));
 
         this.addManagedListener(eventService, Events.EVENT_COLUMN_MOVED, this.updateColumnLists.bind(this));
@@ -611,7 +602,6 @@ export class RowCtrl extends BeanStub {
         this.setStylesFromGridOptions(true);
         this.postProcessClassesFromGridOptions();
         this.postProcessRowClassRules();
-        this.postProcessRowDragging();
     }
 
     private onRowNodeHighlightChanged(): void {
@@ -625,23 +615,6 @@ export class RowCtrl extends BeanStub {
         });
     }
 
-    private postProcessRowDragging(): void {
-        const dragging = this.rowNode.dragging;
-        this.allRowGuis.forEach(gui => gui.rowComp.addOrRemoveCssClass('ag-row-dragging', dragging));
-    }
-
-    private updateExpandedCss(): void {
-
-        const expandable = this.rowNode.isExpandable();
-        const expanded = this.rowNode.expanded == true;
-
-        this.allRowGuis.forEach(gui => {
-            gui.rowComp.addOrRemoveCssClass('ag-row-group', expandable);
-            gui.rowComp.addOrRemoveCssClass('ag-row-group-expanded', expandable && expanded);
-            gui.rowComp.addOrRemoveCssClass('ag-row-group-contracted', expandable && !expanded);
-            setAriaExpanded(gui.element, expandable && expanded);
-        });
-    }
 
     private onDisplayedColumnsChanged(): void {
         // we skip animations for onDisplayedColumnChanged, as otherwise the client could remove columns and
@@ -989,20 +962,6 @@ export class RowCtrl extends BeanStub {
         this.rightCellCtrls = destroyCellCtrls(this.rightCellCtrls);
     }
 
-
-
-    private onPaginationChanged(): void {
-        const currentPage = this.beans.paginationProxy.getCurrentPage();
-        // it is possible this row is in the new page, but the page number has changed, which means
-        // it needs to reposition itself relative to the new page
-        if (this.paginationPage !== currentPage) {
-            this.paginationPage = currentPage;
-            this.onTopChanged();
-        }
-
-        this.refreshFirstAndLastRowStyles();
-    }
-
     private onTopChanged(): void {
         this.setRowTop(this.rowNode.rowTop!);
     }
@@ -1111,10 +1070,14 @@ export class RowCtrl extends BeanStub {
     public getRowIndex() {
         return this.rowNode.getRowIndexString();
     }
+        public getHeaderRowCount(): number {
+        const centerHeaderContainer = this.beans.ctrlsService.getHeaderRowContainerCtrl();
+        return centerHeaderContainer ? centerHeaderContainer.getRowCount() : 0;
+    }
 
     private updateRowIndexes(gui?: RowGui): void {
         const rowIndexStr = this.rowNode.getRowIndexString();
-        const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
+        const headerRowCount = this.getHeaderRowCount();
         const rowIsEven = this.rowNode.rowIndex! % 2 === 0;
         const ariaRowIndex = headerRowCount + this.rowNode.rowIndex! + 1;
 

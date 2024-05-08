@@ -61,9 +61,7 @@ export class ViewportSizeFeature extends BeanStub {
 
             if (newWidth !== this.centerWidth) {
                 this.centerWidth = newWidth;
-                this.columnModel.refreshFlexedColumns(
-                    { viewportWidth: this.centerWidth, updateBodyWidths: true, fireResizedEvent: true }
-                );
+                
             }
         } else {
             this.bodyHeight = 0;

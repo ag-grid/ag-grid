@@ -26,7 +26,13 @@ import {
     RowNode,
     RowNodeTransaction,
     WithoutGridCommon,
-    _
+    debounce,
+    exists,
+    insertIntoArray,
+    last,
+    missing,
+    missingOrEmpty,
+    removeFromArray
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -43,6 +49,9 @@ export interface RowNodeMap {
 
 @Bean('rowModel')
 export class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
+    expandOrCollapseAll(expand: boolean): void {
+        throw new Error("Method not implemented.");
+    }
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('beans') private beans: Beans;
@@ -58,7 +67,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     @Optional('pivotStage') private pivotStage?: IRowNodeStage;
     @Optional('filterAggregatesStage') private filterAggregatesStage?: IRowNodeStage;
 
-    private onRowHeightChanged_debounced = _.debounce(this.onRowHeightChanged.bind(this), 100);
+    private onRowHeightChanged_debounced = debounce(this.onRowHeightChanged.bind(this), 100);
 
     // top most node of the tree. the children are the user provided data.
     private rootNode: RowNode;
@@ -92,12 +101,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refreshEverythingAfterColsChangedFunc);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, { step: ClientSideRowModelSteps.PIVOT }));
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
         this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onGridStylesChanges.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_GRID_READY, () => this.onGridReady());
 
@@ -358,11 +364,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
 
         rowNodes.forEach(rowNode => {
-            _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
+            removeFromArray(this.rootNode.allLeafChildren, rowNode);
         });
 
         rowNodes.forEach((rowNode, idx) => {
-            _.insertIntoArray(this.rootNode.allLeafChildren, rowNode, Math.max(indexAtPixelNow + increment, 0) + idx);
+            insertIntoArray(this.rootNode.allLeafChildren, rowNode, Math.max(indexAtPixelNow + increment, 0) + idx);
         });
 
         this.refreshModel({
@@ -458,7 +464,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public getRowBounds(index: number): RowBounds | null {
-        if (_.missing(this.rowsToDisplay)) {
+        if (missing(this.rowsToDisplay)) {
             return null;
         }
 
@@ -515,7 +521,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         // the impacted parent rows are recalculated, parents who's children have
         // not changed are not impacted.
 
-        const noTransactions = _.missingOrEmpty(rowNodeTransactions);
+        const noTransactions = missingOrEmpty(rowNodeTransactions);
 
         const changedPath = new ChangedPath(false, this.rootNode);
 
@@ -552,11 +558,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             sort: ClientSideRowModelSteps.SORT,
             pivot: ClientSideRowModelSteps.PIVOT
         };
-        if (_.exists(step)) {
+        if (exists(step)) {
             paramsStep = stepsMapped[step];
         }
 
-        if (_.missing(paramsStep)) {
+        if (missing(paramsStep)) {
             console.error(`AG Grid: invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}`);
             return undefined;
         }
@@ -635,12 +641,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public isEmpty(): boolean {
-        const rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
-        return _.missing(this.rootNode) || rowsMissing || !this.columnModel.isReady();
+        const rowsMissing = missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
+        return missing(this.rootNode) || rowsMissing || !this.columnModel.isReady();
     }
 
     public isRowsToRender(): boolean {
-        return _.exists(this.rowsToDisplay) && this.rowsToDisplay.length > 0;
+        return exists(this.rowsToDisplay) && this.rowsToDisplay.length > 0;
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
@@ -726,7 +732,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             // if pixel is less than or equal zero, it's always the first row
             return 0;
         }
-        const lastNode = _.last(this.rowsToDisplay);
+        const lastNode = last(this.rowsToDisplay);
         if (lastNode.rowTop! <= pixelToMatch) {
             return this.rowsToDisplay.length - 1;
         }
@@ -906,56 +912,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
     }
 
-    // + gridApi.expandAll()
-    // + gridApi.collapseAll()
-    public expandOrCollapseAll(expand: boolean): void {
-        const usingTreeData = this.gos.get('treeData');
-        const usingPivotMode = this.columnModel.isPivotActive();
-
-        const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {
-            if (!rowNodes) { return; }
-            rowNodes.forEach(rowNode => {
-                const actionRow = () => {
-                    rowNode.expanded = expand;
-                    recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
-                };
-
-                if (usingTreeData) {
-                    const hasChildren = _.exists(rowNode.childrenAfterGroup);
-                    if (hasChildren) {
-                        actionRow();
-                    }
-                    return;
-                }
-
-                if (usingPivotMode) {
-                    const notLeafGroup = !rowNode.leafGroup;
-                    if (notLeafGroup) {
-                        actionRow();
-                    }
-                    return;
-                }
-
-                const isRowGroup = rowNode.group;
-                if (isRowGroup) {
-                    actionRow();
-                }
-            });
-        }
-
-        if (this.rootNode) {
-            recursiveExpandOrCollapse(this.rootNode.childrenAfterGroup);
-        }
-
-        this.refreshModel({ step: ClientSideRowModelSteps.MAP });
-
-        const eventSource = expand ? 'expandAll' : 'collapseAll';
-        const event: WithoutGridCommon<ExpandCollapseAllEvent> = {
-            type: Events.EVENT_EXPAND_COLLAPSE_ALL,
-            source: eventSource
-        };
-        this.eventService.dispatchEvent(event);
-    }
 
     private doSort(rowNodeTransactions: RowNodeTransaction[] | undefined, changedPath: ChangedPath) {
         this.sortStage.execute({
@@ -971,31 +927,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         changedPath: ChangedPath,
         afterColumnsChanged: boolean
     ) {
-        if (this.groupStage) {
 
-            if (rowNodeTransactions) {
-                this.groupStage.execute({
-                    rowNode: this.rootNode,
-                    rowNodeTransactions: rowNodeTransactions,
-                    rowNodeOrder: rowNodeOrder,
-                    changedPath: changedPath
-                });
-            } else {
-                this.groupStage.execute({
-                    rowNode: this.rootNode,
-                    changedPath: changedPath,
-                    afterColumnsChanged: afterColumnsChanged
-                });
-            }
-
-
-        } else {
             this.rootNode.childrenAfterGroup = this.rootNode.allLeafChildren;
             if (this.rootNode.sibling) {
                 this.rootNode.sibling.childrenAfterGroup = this.rootNode.childrenAfterGroup;
             }
             this.rootNode.updateHasChildren();
-        }
 
         if (this.nodeManager.isRowCountReady()) {
             // only if row data has been set

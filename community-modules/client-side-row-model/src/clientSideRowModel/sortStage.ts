@@ -1,11 +1,11 @@
 import {
-    _,
     Autowired,
     Bean,
     StageExecuteParams,
     BeanStub,
     SortOption,
     IRowNodeStage,
+    exists,
 } from "@ag-grid-community/core";
 
 import { SortService } from "./sortService";
@@ -18,9 +18,9 @@ export class SortStage extends BeanStub implements IRowNodeStage {
     public execute(params: StageExecuteParams): void {
         const sortOptions: SortOption[] = [];
 
-        const sortActive = _.exists(sortOptions) && sortOptions.length > 0;
+        const sortActive = exists(sortOptions) && sortOptions.length > 0;
         const deltaSort = sortActive
-            && _.exists(params.rowNodeTransactions)
+            && exists(params.rowNodeTransactions)
             // in time we can remove this check, so that delta sort is always
             // on if transactions are present. it's off for now so that we can
             // selectively turn it on and test it with some select users before

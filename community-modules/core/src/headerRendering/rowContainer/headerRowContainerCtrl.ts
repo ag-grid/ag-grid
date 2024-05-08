@@ -6,7 +6,7 @@ import { Column, ColumnPinnedType } from "../../entities/column";
 import { IHeaderColumn } from "../../interfaces/iHeaderColumn";
 import { Events } from "../../eventKeys";
 import { CenterWidthFeature } from "../../gridBodyComp/centerWidthFeature";
-import { NumberSequence } from "../../utils";
+import { NumberSequence } from "../../utils/numberSequence";
 import { HeaderRowType } from "../row/headerRowComp";
 import { HeaderRowCtrl } from "../row/headerRowCtrl";
 import { ColumnGroup } from "../../entities/columnGroup";

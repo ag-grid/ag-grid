@@ -1,5 +1,5 @@
 import { BeanStub } from "../context/beanStub";
-import { Bean, Qualifier } from "../context/context";
+import { Bean } from "../context/context";
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { Column } from "../entities/column";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";

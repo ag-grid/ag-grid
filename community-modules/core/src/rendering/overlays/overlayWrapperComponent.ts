@@ -1,7 +1,7 @@
 import { Autowired, PostConstruct } from '../../context/context';
 import { Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
-import { AgPromise } from '../../utils';
+import { AgPromise } from '../../utils/promise';
 import { clearElement } from '../../utils/dom';
 import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams } from "../../styling/layoutFeature";
 

@@ -1,6 +1,6 @@
 import { ColDef, ValueGetterFunc } from '../entities/colDef';
 import { Column } from '../entities/column';
-import { AgPromise } from '../utils';
+import { AgPromise } from '../utils/promise';
 import { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 import { IComponent } from './iComponent';
 import { AgGridCommon } from './iCommon';

@@ -6,7 +6,7 @@ import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
 import { AgEvent } from "../events";
 import { CssClassManager } from "../rendering/cssClassManager";
-import { NumberSequence } from "../utils";
+import { NumberSequence } from "../utils/numberSequence";
 import {
     copyNodeList,
     isNodeOrElement,
