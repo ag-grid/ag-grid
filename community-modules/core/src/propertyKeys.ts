@@ -50,7 +50,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     advancedFilterModel: true,
     customChartThemes: true,
     chartThemeOverrides: true,
-    suppressChartToolPanelsButton: true,
     chartToolPanelsDef: true,
     loadingCellRendererSelector: true,
     localeText: true,

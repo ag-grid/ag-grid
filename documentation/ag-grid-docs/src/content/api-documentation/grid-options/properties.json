@@ -567,12 +567,6 @@
                 "url": "./integrated-charts-user-created/#enabling-user-created-charts"
             }
         },
-        "suppressChartToolPanelsButton": {
-            "more": {
-                "name": "Suppress Chart Tool Panels Button",
-                "url": "./integrated-charts-chart-tool-panels/"
-            }
-        },
         "getChartToolbarItems": {
         },
         "createChartContainer": {

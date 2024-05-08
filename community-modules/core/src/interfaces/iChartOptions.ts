@@ -69,7 +69,6 @@ export type CrossFilterChartType =
 
 export type ChartToolPanelMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat';
 export type ChartToolbarMenuItemOptions = 'chartLink' | 'chartUnlink' | 'chartDownload' | 'chartMenu';
-export type ChartMenuOptions = ChartToolPanelMenuOptions | ChartToolbarMenuItemOptions;
 
 export interface SeriesChartType {
     colId: string;

@@ -13,9 +13,9 @@ import TitlePanel from "./titlePanel";
 import { FormatPanelOptions } from "../formatPanel";
 import { ChartController } from "../../../chartController";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
-import { ChartMenuService } from "../../../services/chartMenuService";
 import { canSwitchDirection } from "../../../utils/seriesTypeMapper";
 import { ChartOptionsProxy } from "../../../services/chartOptionsService";
+import { ChartService } from "../../../../chartService";
 
 export class ChartPanel extends Component {
 
@@ -25,7 +25,7 @@ export class ChartPanel extends Component {
         </div>`;
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuService') private chartMenuService: ChartMenuService;
+    @Autowired('chartService') private chartService: ChartService;
 
     private readonly chartMenuParamsFactory: ChartMenuParamsFactory;
     private readonly chartController: ChartController;
@@ -59,7 +59,7 @@ export class ChartPanel extends Component {
             expanded: this.isExpandedOnInit,
             suppressEnabledCheckbox: true,
             items: [
-                this.createManagedBean(new TitlePanel(this.chartMenuParamsFactory, this.chartController)),
+                this.createManagedBean(new TitlePanel(this.chartMenuParamsFactory)),
                 this.createManagedBean(new PaddingPanel(this.chartMenuParamsFactory, this.chartController)),
                 this.createManagedBean(new BackgroundPanel(this.chartMenuParamsFactory)),
                 ...this.createDirectionSelect()
@@ -74,8 +74,7 @@ export class ChartPanel extends Component {
     }
 
     private createDirectionSelect(): AgSelect[] {
-        const enabled = !this.chartMenuService.isLegacyFormat();
-        if (!enabled) { return []; }
+        if (!this.chartService.isEnterprise()) { return []; }
         const options = ['horizontal', 'vertical'].map((value: 'horizontal' | 'vertical') => ({
             value,
             text: this.chartTranslationService.translate(value)

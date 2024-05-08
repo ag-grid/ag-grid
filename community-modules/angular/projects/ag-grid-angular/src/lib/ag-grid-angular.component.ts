@@ -652,9 +652,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
-    /** Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons. Only applies when using AG Charts Community.
-         * @default false
-         * @initial
+    /** @deprecated As of v32, has no effect. The Chart Tool Panels button has been replaced with the new Chart Menu
          */
     @Input() public suppressChartToolPanelsButton: boolean | undefined = undefined;
     /** Allows customisation of the Chart Tool Panels, such as changing the tool panels visibility and order, as well as choosing which charts should be displayed in the chart panel.

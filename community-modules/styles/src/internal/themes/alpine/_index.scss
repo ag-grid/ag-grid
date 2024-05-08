@@ -207,8 +207,7 @@
     .ag-column-select-header-icon,
     .ag-floating-filter-button-button,
     .ag-filter-toolpanel-expand,
-    .ag-chart-menu-icon,
-    .ag-chart-menu-close {
+    .ag-chart-menu-icon {
         &:hover {
             color: var(--ag-alpine-active-color);
         }
@@ -224,20 +223,6 @@
 
     .ag-filter-active .ag-icon-filter {
         color: var(--ag-alpine-active-color);
-    }
-
-    .ag-chart-menu-close {
-        background: var(--ag-background-color);
-    }
-
-    .ag-chart-menu-close:hover .ag-icon {
-        border-color: var(--ag-alpine-active-color);
-    }
-
-    .ag-chart-menu-close .ag-icon {
-        background: var(--ag-header-background-color);
-        border: 1px solid var(--ag-border-color);
-        border-right: none;
     }
 
     .ag-chart-settings-card-item.ag-not-selected:hover {
