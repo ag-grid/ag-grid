@@ -1982,8 +1982,8 @@ export class GridApi<TData = any> {
     }
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-    public __internalUpdateGridOptions(options: GridOptions): void {
-        this.gos.updateGridOptions({ options, source: 'gridOptionsUpdated' });
+    public __internalUpdateGridOptions(options: GridOptions, force?: boolean): void {
+        this.gos.updateGridOptions({ options, force, source: 'gridOptionsUpdated' });
     }
 
     private deprecatedUpdateGridOption<K extends keyof GridOptions & ManagedGridOptionKey>(key: K, value: GridOptions<TData>[K]) {

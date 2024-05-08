@@ -237,7 +237,7 @@ export class GridOptionsService {
     }
 
     private static changeSetId = 0;
-    public updateGridOptions({ options, source = 'api' }: { options: Partial<GridOptions>, source?: PropertyChangedSource }): void {
+    public updateGridOptions({ options, force, source = 'api' }: { options: Partial<GridOptions>, force?: boolean, source?: PropertyChangedSource }): void {
         const changeSet: PropertyChangeSet = { id: GridOptionsService.changeSetId++, properties: [] };
         // all events are fired after grid options has finished updating.
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
@@ -246,7 +246,7 @@ export class GridOptionsService {
                 warnOnce(`${key} is an initial property and cannot be updated.`)
             }
             const coercedValue = GridOptionsService.getCoercedValue(key as keyof GridOptions, value);
-            const shouldForce = (typeof coercedValue) === 'object' && source === 'api'; // force objects as they could have been mutated.
+            const shouldForce = force || ((typeof coercedValue) === 'object' && source === 'api'); // force objects as they could have been mutated.
 
             const previousValue = this.gridOptions[key as keyof GridOptions];
             if (shouldForce || previousValue !== coercedValue) {
