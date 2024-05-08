@@ -61,6 +61,8 @@ export function getNextColInstanceId(): ColumnInstanceId {
 // can only appear in OriginalColumn tree).
 export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedColumn, IEventEmitter {
 
+    public static DEFAULT_MIN_WIDTH = 20;
+
     // + renderedHeaderCell - for making header cell transparent when moving
     public static EVENT_MOVING_CHANGED: ColumnEventName = 'movingChanged';
     // + renderedCell - changing left position
@@ -278,7 +280,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     private initMinAndMaxWidths(): void {
         const colDef = this.colDef;
 
-        this.minWidth = colDef.minWidth ?? this.environment.getMinColWidth();
+        this.minWidth = colDef.minWidth ?? Column.DEFAULT_MIN_WIDTH;
         this.maxWidth = colDef.maxWidth ?? Number.MAX_SAFE_INTEGER;
     }
 
@@ -294,7 +296,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     private calculateColInitialWidth(colDef: ColDef): number {
-        const minColWidth = colDef.minWidth ?? this.environment.getMinColWidth();
+        const minColWidth = colDef.minWidth ?? Column.DEFAULT_MIN_WIDTH;
         const maxColWidth = colDef.maxWidth ?? Number.MAX_SAFE_INTEGER;
     
         let width: number;

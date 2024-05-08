@@ -30,6 +30,7 @@ import {
     SelectionChangedEvent,
     ISelectionService,
     GridOptions,
+    CssVariablesChanged,
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -1262,10 +1263,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return atLeastOne;
     }
 
-    private onGridStylesChanges() {
-        if (this.columnModel.isAutoRowHeightActive()) { return; }
+    private onGridStylesChanges(e: CssVariablesChanged) {
+        if (e.rowHeightChanged) {
+            if (this.columnModel.isAutoRowHeightActive()) { return; }
 
-        this.resetRowHeights();
+            this.resetRowHeights();
+        }
     }
 
     private onGridReady(): void {

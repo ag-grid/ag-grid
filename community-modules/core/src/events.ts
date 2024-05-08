@@ -743,7 +743,13 @@ export interface RowContainerHeightChanged<TData = any, TContext = any> extends 
 
 export interface DisplayedRowsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { afterScroll: boolean } // not documented
 
-export interface CssVariablesChanged<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
+export interface CssVariablesChanged<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    themeChanged?: boolean;
+    headerHeightChanged?: boolean;
+    rowHeightChanged?: boolean;
+    listItemHeightChanged?: boolean;
+    chartMenuPanelWidthChanged?: boolean;
+} // not documented
 
 
 /**-----------------*/

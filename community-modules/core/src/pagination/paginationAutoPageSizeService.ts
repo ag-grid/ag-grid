@@ -50,7 +50,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
 
         if (bodyHeight > 0) {
             const update = () => {
-                const rowHeight = this.gos.getRowHeightAsNumber();
+                const rowHeight = Math.max(this.gos.getRowHeightAsNumber(), 1); // prevent divide by zero error if row height is 0
                 const newPageSize = Math.floor(bodyHeight / rowHeight);
                 this.paginationProxy.setPageSize(newPageSize, 'autoCalculated');
             }
