@@ -99,7 +99,7 @@ export class ComponentUtil {
         return mergedOptions;
     }
 
-    public static processOnChange(changes: any, api: GridApi): void {
+    public static processOnChange(changes: any, api: GridApi, isVue?: boolean): void {
         if (!changes) {
             return;
         }
@@ -118,7 +118,7 @@ export class ComponentUtil {
             return;
         }
 
-        api.__internalUpdateGridOptions(gridChanges);
+        api.__internalUpdateGridOptions(gridChanges, true);
 
         // copy gridChanges into an event for dispatch
         const event: WithoutGridCommon<ComponentStateChangedEvent> = {
