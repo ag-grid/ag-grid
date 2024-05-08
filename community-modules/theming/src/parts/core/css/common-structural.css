@@ -31,10 +31,6 @@ ag-grid-aurelia {
     visibility: hidden !important;
 }
 
-.ag-no-transition {
-    transition: none !important;
-}
-
 .ag-unselectable {
     user-select: none;
 }

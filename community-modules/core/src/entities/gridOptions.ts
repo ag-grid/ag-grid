@@ -99,7 +99,7 @@ import {
     ProcessHeaderForExportParams,
 } from "../interfaces/exportParams";
 import { AgChartTheme, AgChartThemeOverrides } from "../interfaces/iAgChartOptions";
-import { ChartMenuOptions, ChartToolPanelsDef } from "../interfaces/iChartOptions";
+import { ChartToolbarMenuItemOptions, ChartToolPanelsDef } from "../interfaces/iChartOptions";
 import { AgGridCommon } from "../interfaces/iCommon";
 import { IDatasource } from "../interfaces/iDatasource";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
@@ -594,12 +594,6 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     chartThemeOverrides?: AgChartThemeOverrides;
-    /**
-     * Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons. Only applies when using AG Charts Community.
-     * @default false
-     * @initial
-     */
-    suppressChartToolPanelsButton?: boolean;
     /**
      * Allows customisation of the Chart Tool Panels, such as changing the tool panels visibility and order, as well as choosing which charts should be displayed in the chart panel.
      * @initial
@@ -2316,7 +2310,7 @@ export interface GetContextMenuItems<TData = any, TContext = any> {
     (params: GetContextMenuItemsParams<TData, TContext>): (string | MenuItemDef<TData, TContext>)[];
 }
 export interface GetChartToolbarItems {
-    (params: GetChartToolbarItemsParams): ChartMenuOptions[];
+    (params: GetChartToolbarItemsParams): ChartToolbarMenuItemOptions[];
 }
 
 export interface GetMainMenuItems<TData = any, TContext = any> {

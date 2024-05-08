@@ -13,8 +13,7 @@
 .ag-floating-filter-button-button,
 .ag-filter-toolpanel-expand,
 .ag-panel-title-bar-button-icon,
-.ag-chart-menu-icon,
-.ag-chart-menu-close {
+.ag-chart-menu-icon {
     &:hover {
         border-radius: 1px;
         background-color: var(--ag-icon-button-hover-color);

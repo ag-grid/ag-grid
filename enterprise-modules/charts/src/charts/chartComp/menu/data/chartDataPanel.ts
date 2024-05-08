@@ -16,7 +16,7 @@ import { SeriesDataPanel } from "./seriesDataPanel";
 import { SeriesChartTypePanel } from "./seriesChartTypePanel";
 import { SwitchCategorySeriesDataPanel } from './switchCategorySeriesDataPanel';
 import { getMaxNumCategories, getMaxNumSeries, supportsInvertedCategorySeries } from '../../utils/seriesTypeMapper';
-import { ChartMenuService } from '../../services/chartMenuService';
+import { ChartService } from "../../../chartService";
 
 const DefaultDataPanelDef: ChartDataPanelType = {
     groups: [
@@ -30,7 +30,7 @@ export class ChartDataPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper ag-scrollable-container"></div>`;
     
     @Autowired('chartTranslationService') protected readonly chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuService') private chartMenuService: ChartMenuService;
+    @Autowired('chartService') private chartService: ChartService;
 
     private autoScrollService: AutoScrollService;
     private chartType?: ChartType;
@@ -90,7 +90,7 @@ export class ChartDataPanel extends Component {
 
         // Ensure the category/series toggle UI control is up-to-date
         this.switchCategorySeriesPanel?.setDisplayed(
-            supportsInvertedCategorySeries(this.chartType) && !this.chartMenuService.isLegacyFormat() && !this.chartController.isGrouping()
+            supportsInvertedCategorySeries(this.chartType) && this.chartService.isEnterprise() && !this.chartController.isGrouping()
         );
         if (hasChangedSwitchCategorySeries) {
             this.switchCategorySeriesPanel?.refresh();

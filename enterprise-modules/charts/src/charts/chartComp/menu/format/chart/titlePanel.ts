@@ -10,7 +10,6 @@ import { ChartTranslationService } from "../../../services/chartTranslationServi
 import { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 import { ChartMenuService } from "../../../services/chartMenuService";
-import { ChartController } from "../../../chartController";
 
 export default class TitlePanel extends Component {
 
@@ -26,7 +25,6 @@ export default class TitlePanel extends Component {
 
     constructor(
         private readonly chartMenuUtils: ChartMenuParamsFactory,
-        private readonly chartController: ChartController
     ) {
         super(TitlePanel.TEMPLATE);
         this.chartOptions = chartMenuUtils.getChartOptions();
@@ -53,7 +51,7 @@ export default class TitlePanel extends Component {
             chartMenuUtils: this.chartMenuUtils,
             keyMapper: key => `title.${key}`,
             onEnableChange: (enabled) => {
-                if (this.chartMenuService.doesChartToolbarExist(this.chartController)) {
+                if (this.chartMenuService.doesChartToolbarExist()) {
                     // extra padding is only included when the toolbar is present
                     const topPadding: number = this.chartOptions.getValue('padding.top');
                     this.chartOptions.setValue('padding.top', enabled ? topPadding - 20 : topPadding + 20);

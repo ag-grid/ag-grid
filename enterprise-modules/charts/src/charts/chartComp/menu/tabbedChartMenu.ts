@@ -1,7 +1,7 @@
 import {
     AgPromise,
     Autowired,
-    ChartMenuOptions,
+    ChartToolPanelMenuOptions,
     Component,
     PostConstruct,
     TabbedItem,
@@ -12,7 +12,6 @@ import { FormatPanel } from "./format/formatPanel";
 import { ChartSettingsPanel } from "./settings/chartSettingsPanel";
 import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
 import { ChartMenuContext } from "./chartMenuContext";
-import { ChartMenuService } from "../services/chartMenuService";
 
 export class TabbedChartMenu extends Component {
     public static EVENT_CLOSED = 'closed';
@@ -24,10 +23,9 @@ export class TabbedChartMenu extends Component {
     private eventSource?: HTMLElement;
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuService') private chartMenuService: ChartMenuService;
 
     constructor(
-        private readonly panels: ChartMenuOptions[],
+        private readonly panels: ChartToolPanelMenuOptions[],
         private readonly chartMenuContext: ChartMenuContext
     ) {
         super();
@@ -50,7 +48,7 @@ export class TabbedChartMenu extends Component {
             keepScrollPosition: true,
             suppressFocusBodyOnOpen: true,
             suppressTrapFocus: true,
-            enableCloseButton: !this.chartMenuService.isLegacyFormat(),
+            enableCloseButton: true,
             closeButtonAriaLabel: this.chartTranslationService.translate('ariaChartMenuClose'),
             onCloseClicked: () => {
                 this.eventSource?.focus({ preventScroll: true });
@@ -61,7 +59,7 @@ export class TabbedChartMenu extends Component {
     }
 
     private createTab(
-        name: ChartMenuOptions,
+        name: ChartToolPanelMenuOptions,
         title: ChartTranslationKey,
         panelComp: Component,
     ): TabbedItem {

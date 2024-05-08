@@ -1,5 +1,5 @@
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
-import { ChartMenuOptions } from "./iChartOptions";
+import { ChartToolbarMenuItemOptions } from "./iChartOptions";
 import { AgGridCommon } from "./iCommon";
 import { ServerSideTransaction } from "./serverSideTransaction";
 import { CellPosition } from "../entities/cellPositionUtils";
@@ -61,7 +61,7 @@ export interface ProcessDataFromClipboardParams<TData = any, TContext = any> ext
 }
 
 export interface GetChartToolbarItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    defaultItems?: ChartMenuOptions[];
+    defaultItems?: ChartToolbarMenuItemOptions[];
 }
 
 export interface NavigateToNextHeaderParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
