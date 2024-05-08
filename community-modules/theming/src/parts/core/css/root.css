@@ -19,3 +19,7 @@
     border: var(--ag-wrapper-border);
     border-radius: var(--ag-wrapper-border-radius);
 }
+
+.ag-root-wrapper, .ag-popup {
+    --ag-indentation-level: 0;
+}

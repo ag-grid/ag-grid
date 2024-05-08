@@ -10,19 +10,18 @@
         border: var(--ag-borders) var(--ag-border-color);
     }
 
-    // support 100 levels here because row group indentation is used for tree data which can be quite deep
-    @for $i from 1 to 100 {
-        .ag-row > .ag-cell-wrapper.ag-row-group-indent-#{$i} {
-            @include ag.unthemed-rtl(( padding-left: calc(var(--ag-cell-horizontal-padding) + var(--ag-row-group-indent-size) * #{$i}) ));
-        }
-        
-        .ag-row-group-indent-#{$i} {
-            @include ag.unthemed-rtl(( padding-left: calc(#{$i} * var(--ag-row-group-indent-size)) ));
-        }
-
-        .ag-row-level-#{$i} .ag-pivot-leaf-group {
-            @include ag.unthemed-rtl(( margin-left: var(--ag-row-group-indent-size) ));
-        }
+    .ag-row > .ag-cell-wrapper.ag-row-group {
+        padding-left: calc(
+            var(--ag-cell-horizontal-padding) + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
+        );
+    }
+    
+    .ag-cell-wrapper.ag-row-group, .ag-cell-wrapper.ag-row-group-leaf-indent {
+        padding-left: calc(var(--ag-indentation-level) * var(--ag-row-group-indent-size));
+    }
+    
+    .ag-pivot-leaf-group {
+        margin-left: var(--ag-row-group-indent-size);
     }
 
     .ag-row-group-leaf-indent {

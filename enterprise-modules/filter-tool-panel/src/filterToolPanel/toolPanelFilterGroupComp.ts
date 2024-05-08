@@ -67,11 +67,13 @@ export class ToolPanelFilterGroupComp extends Component {
         this.filterGroupComp.setAlignItems('stretch');
 
         this.filterGroupComp.addCssClass(`ag-filter-toolpanel-group-level-${this.depth}`);
+        this.filterGroupComp.getGui().style.setProperty('--ag-indentation-level', String(this.depth));
         this.filterGroupComp.addCssClassToTitleBar(`ag-filter-toolpanel-group-level-${this.depth}-header`);
 
         this.childFilterComps.forEach(filterComp => {
             this.filterGroupComp.addItem(filterComp as Component);
             filterComp.addCssClassToTitleBar(`ag-filter-toolpanel-group-level-${this.depth + 1}-header`);
+            filterComp.getGui().style.setProperty('--ag-indentation-level', String(this.depth + 1));
         });
 
         this.refreshFilterClass();

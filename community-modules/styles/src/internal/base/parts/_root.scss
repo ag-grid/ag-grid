@@ -3,6 +3,10 @@
         background-color: var(--ag-background-color);
     }
 
+    .ag-root-wrapper, .ag-popup {
+        --ag-indentation-level: 0;
+    }
+
     [class*="ag-theme-"] {
         -webkit-font-smoothing: antialiased;
         font-family: var(--ag-font-family);

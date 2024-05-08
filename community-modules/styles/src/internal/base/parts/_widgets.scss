@@ -544,11 +544,8 @@
         }
     }
 
-    // Column select
-    @for $i from 1 to 10 {
-        .ag-column-select-indent-#{$i} {
-            @include ag.unthemed-rtl(( padding-left: calc(#{$i} * var(--ag-column-select-indent-size)) ));
-        }
+    .ag-column-select-column {
+        @include ag.unthemed-rtl(( padding-left: calc(var(--ag-indentation-level) * var(--ag-column-select-indent-size)) ));
     }
 
     .ag-column-select-header-icon {
