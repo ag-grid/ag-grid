@@ -23,19 +23,27 @@ export class Environment extends BeanStub {
     }
 
     public getDefaultChartMenuPanelWidth(): number {
-        return this.readCSSVariablePixelValue('--ag-chart-menu-panel-width', 'chartMenuPanelWidthChanged', 260);
+        // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
+        return this.readCSSVariablePixelValue('--ag-chart-menu-panel-width', 'chartMenuPanelWidthChanged', 100);
+        // return this.readCSSVariablePixelValue('--ag-chart-menu-panel-width', 'chartMenuPanelWidthChanged', 260);
     }
 
     public getDefaultHeaderHeight(): number {
-        return this.readCSSVariablePixelValue('--ag-header-height', 'headerHeightChanged', 48);
+        // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
+        return this.readCSSVariablePixelValue('--ag-header-height', 'headerHeightChanged', 30);
+        // return this.readCSSVariablePixelValue('--ag-header-height', 'headerHeightChanged', 48);
     }
 
     public getDefaultRowHeight(): number {
-        return this.readCSSVariablePixelValue('--ag-row-height', 'rowHeightChanged', 42);
+        // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
+        return this.readCSSVariablePixelValue('--ag-row-height', 'rowHeightChanged', 20);
+        // return this.readCSSVariablePixelValue('--ag-row-height', 'rowHeightChanged', 42);
     }
 
     public getDefaultListItemHeight() {
-        return this.readCSSVariablePixelValue('--ag-list-item-height', 'listItemHeightChanged', 24);
+        // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
+        return this.readCSSVariablePixelValue('--ag-list-item-height', 'listItemHeightChanged', 10);
+        // return this.readCSSVariablePixelValue('--ag-list-item-height', 'listItemHeightChanged', 24);
     }
 
     public getThemeClasses(): readonly string[] {
