@@ -87,20 +87,20 @@ export class ColumnFactory extends BeanStub {
         return {existingCols, existingGroups, existingColKeys};
     }
 
-    public createForAutoGroups(autoGroupCols: Column[], gridBalancedTree: IProvidedColumn[]): IProvidedColumn[] {
-        return autoGroupCols.map((col) => this.createAutoGroupTreeItem(gridBalancedTree, col));
+    public createForAutoGroups(autoGroupCols: Column[], liveTree: IProvidedColumn[]): IProvidedColumn[] {
+        return autoGroupCols.map((col) => this.createAutoGroupTreeItem(liveTree, col));
     }
 
-    private createAutoGroupTreeItem(balancedColumnTree: IProvidedColumn[], column: Column): IProvidedColumn {
-        const dept = this.findDepth(balancedColumnTree);
+    private createAutoGroupTreeItem(colTree: IProvidedColumn[], col: Column): IProvidedColumn {
+        const dept = this.findDepth(colTree);
 
         // at the end, this will be the top of the tree item.
-        let nextChild: IProvidedColumn = column;
+        let nextChild: IProvidedColumn = col;
 
         for (let i = dept - 1; i >= 0; i--) {
             const autoGroup = new ProvidedColumnGroup(
                 null,
-                `FAKE_PATH_${column.getId()}}_${i}`,
+                `FAKE_PATH_${col.getId()}}_${i}`,
                 true,
                 i
             );
@@ -111,7 +111,7 @@ export class ColumnFactory extends BeanStub {
         }
 
         if (dept === 0) {
-            column.setOriginalParent(null);
+            col.setOriginalParent(null);
         }
 
         // at this point, the nextChild is the top most item in the tree
