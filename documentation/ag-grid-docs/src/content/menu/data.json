@@ -442,12 +442,22 @@
                         "title": "Columns",
                         "items": [
                             {
-                                "title": "Column Definitions",
-                                "path": "column-definitions"
-                            },
-                            {
-                                "title": "Updating Definitions",
-                                "path": "column-updating-definitions"
+                                "title": "Configuration",
+                                "path": "configuration",
+                                "items": [
+                                    {
+                                        "title": "Column Definitions",
+                                        "path": "column-definitions"
+                                    },
+                                    {
+                                        "title": "Updating Definitions",
+                                        "path": "column-updating-definitions"
+                                    },
+                                    {
+                                        "title": "Column State",
+                                        "path": "column-state"
+                                    }
+                                ]
                             },
                             {
                                 "title": "Column Headers",
@@ -472,19 +482,6 @@
                             {
                                 "title": "Column Spanning",
                                 "path": "column-spanning"
-                            },
-                            {
-                                "title": "Advanced",
-                                "items": [
-                                    {
-                                        "title": "Column State",
-                                        "path": "column-state"
-                                    },
-                                    {
-                                        "title": "Aligned Grids",
-                                        "path": "aligned-grids"
-                                    }
-                                ]
                             }
                         ]
                     },
@@ -1445,6 +1442,10 @@
                                 "title": "Vue2 Tutorial",
                                 "path": "vue2",
                                 "frameworks": ["vue"]
+                            },
+                            {
+                                "title": "Aligned Grids",
+                                "path": "aligned-grids"
                             }
                         ]
                     }
