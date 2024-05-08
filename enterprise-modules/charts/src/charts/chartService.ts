@@ -260,10 +260,10 @@ export class ChartService extends BeanStub implements IChartService {
             // if the chart container was placed outside an element that
             // has the grid's theme, we manually add the current theme to
             // make sure all styles for the chartMenu are rendered correctly
-            const theme = this.environment.getTheme();
+            const themeEl = this.environment.getThemeAncestorElement();
 
-            if (theme.el && !theme.el.contains(chartContainer)) {
-                chartContainer.classList.add(theme.theme!);
+            if (themeEl && !themeEl.contains(chartContainer)) {
+                this.environment.applyThemeClasses(chartContainer);
             }
         } else if (createChartContainerFunc) {
             // otherwise, user created chart via grid UI, check if developer provides containers (e.g. if the application

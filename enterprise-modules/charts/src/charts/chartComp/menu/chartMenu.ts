@@ -160,7 +160,7 @@ export class ChartMenu extends Component {
     }
 
     private createMenuPanel(defaultTab: number): AgPromise<AgPanel> {
-        const width = this.environment.chartMenuPanelWidth();
+        const width = this.environment.getDefaultChartMenuPanelWidth();
 
         const menuPanel = this.menuPanel = this.createBean(new AgPanel({
             minWidth: width,

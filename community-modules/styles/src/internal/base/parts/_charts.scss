@@ -50,7 +50,7 @@
     .ag-chart-docked-container {
         position: relative;
         width: 0;
-        min-width: 0;
+        min-width: var(--ag-chart-menu-panel-width);
         transition: min-width 0.4s;
     }
 

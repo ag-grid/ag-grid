@@ -491,11 +491,7 @@ export class DragAndDropService extends BeanStub {
         this.eGhost = loadTemplate(DragAndDropService.GHOST_TEMPLATE);
         this.mouseEventService.stampTopLevelGridCompWithGridInstance(this.eGhost);
 
-        const { theme } = this.environment.getTheme();
-
-        if (theme) {
-            this.eGhost.classList.add(theme);
-        }
+        this.environment.applyThemeClasses(this.eGhost);
 
         this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon') as HTMLElement;
         this.setGhostIcon(null);

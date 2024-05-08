@@ -9,6 +9,7 @@ import { TabGuardComp } from './tabGuardComp';
 import { Events } from '../eventKeys';
 import { stopPropagationForAgGrid } from '../utils/event';
 import { AnimationFrameService } from '../misc/animationFrameService';
+import { CssVariablesChanged } from '../events';
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -70,9 +71,11 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onGridStylesChanged.bind(this));
     }
 
-    private onGridStylesChanged(): void {
-        this.rowHeight = this.getItemHeight();
-        this.refresh();
+    private onGridStylesChanged(e: CssVariablesChanged): void {
+        if (e.listItemHeightChanged) {
+            this.rowHeight = this.getItemHeight();
+            this.refresh();
+        }
     }
 
     private setAriaProperties(): void {
@@ -228,7 +231,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         if (!this.isHeightFromTheme) {
             return this.rowHeight;
         }
-        return this.environment.getListItemHeight();
+        return this.environment.getDefaultListItemHeight();
     }
 
     /**

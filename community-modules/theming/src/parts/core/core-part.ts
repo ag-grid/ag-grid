@@ -119,6 +119,7 @@ const coreDefaults = {
     menuSeparatorColor: ref('borderColor'),
     setFilterIndentSize: ref('iconSize'),
     chartMenuButtonBorder: true,
+    chartMenuPanelWidth: '260px',
     iconButtonHoverColor: transparentForeground(0.1),
     dialogShadow: ref('popupShadow'),
     dialogBorder: foregroundBorder(0.2),

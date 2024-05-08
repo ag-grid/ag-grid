@@ -449,10 +449,6 @@
         @include ag.theme-rtl((border-right: none));
     }
 
-    .ag-chart-docked-container {
-        min-width: 260px;
-    }
-
     .ag-menu-option-icon, .ag-compact-menu-option-icon {
         @include ag.theme-rtl((padding-left: calc(var(--ag-grid-size) * 1.5)));
         width: var(--ag-icon-size);
