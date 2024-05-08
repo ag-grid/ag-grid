@@ -179,7 +179,7 @@ export class PropertyKeys {
         'aggregateOnlyChangedColumns', 'suppressAnimationFrame', 'suppressExcelExport', 'suppressCsvExport', 'includeHiddenColumnsInAdvancedFilter',
         'suppressMultiRangeSelection', 'enterNavigatesVerticallyAfterEdit', 'enterNavigatesVertically',
         'suppressPropertyNamesCheck', 'rowMultiSelectWithClick', 'suppressRowHoverHighlight', 'suppressRowTransform', 'suppressClipboardPaste',
-        'suppressLastEmptyLineOnPaste', 'enableCharts', 'suppressChartToolPanelsButton', 'suppressMaintainUnsortedOrder',
+        'suppressLastEmptyLineOnPaste', 'enableCharts', 'suppressMaintainUnsortedOrder',
         'enableCellTextSelection', 'suppressBrowserResizeObserver', 'suppressMaxRenderedRowRestriction',  'excludeChildrenWhenTreeDataFiltering',
         'tooltipMouseTrack', 'tooltipInteraction', 'keepDetailRows', 'paginateChildRows', 'preventDefaultOnContextMenu', 'undoRedoCellEditing',
         'allowDragFromColumnsToolPanel', 'pivotSuppressAutoColumn', 'suppressExpandablePivotGroups', 'debounceVerticalScrollbar', 'detailRowAutoHeight',

@@ -595,10 +595,6 @@ export interface GridOptions<TData = any> {
      */
     chartThemeOverrides?: AgChartThemeOverrides;
     /**
-     * @deprecated As of v32, has no effect. The Chart Tool Panels button has been replaced with the new Chart Menu
-     */
-    suppressChartToolPanelsButton?: boolean;
-    /**
      * Allows customisation of the Chart Tool Panels, such as changing the tool panels visibility and order, as well as choosing which charts should be displayed in the chart panel.
      * @initial
      */
