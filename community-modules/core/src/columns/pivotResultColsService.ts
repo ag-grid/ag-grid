@@ -20,7 +20,7 @@ export class PivotResultColsService extends BeanStub {
 
     // if pivoting, these are the generated columns as a result of the pivot
     private pivotResultColTree: IProvidedColumn[] | null;
-    private pivotResultColTreeDept = 0;
+    private pivotResultColTreeDept = -1;
     private pivotResultCols: Column[] | null;
     private pivotResultColsMap: { [id: string]: Column };
 
@@ -76,7 +76,7 @@ export class PivotResultColsService extends BeanStub {
         return this.pivotResultColTree ? this.pivotResultColTree : null;
     }
 
-    public getPivotResultHeaderRowCount(): number {
+    public getPivotResultTreeDept(): number {
         return this.pivotResultColTreeDept;
     }
     
@@ -96,7 +96,7 @@ export class PivotResultColsService extends BeanStub {
             );
             this.columnUtilsFeature.destroyColumns(this.getContext(), this.pivotResultColTree, balancedTreeResult.columnTree);
             this.pivotResultColTree = balancedTreeResult.columnTree;
-            this.pivotResultColTreeDept = balancedTreeResult.treeDept + 1;
+            this.pivotResultColTreeDept = balancedTreeResult.treeDept;
             this.pivotResultCols = this.columnUtilsFeature.getColumnsFromTree(this.pivotResultColTree);
 
             this.pivotResultColsMap = {};

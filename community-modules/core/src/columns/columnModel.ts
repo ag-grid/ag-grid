@@ -110,7 +110,7 @@ export class ColumnModel extends BeanStub {
     // these are the columns generated from grid prop columnDefs. 
     // this doesn't change (including order) unless columnDefs prop changses.
     private providedColTree: IProvidedColumn[];
-    private providedColTreeDepth = 0;
+    private providedColTreeDepth = -1;
     // all columns provided by the user. basically it's the leaf level nodes of the
     // tree above (originalBalancedTree)
     private providedCols: Column[] | undefined; // every column available
@@ -122,7 +122,7 @@ export class ColumnModel extends BeanStub {
 
     // contains ( [cols or pivotResultCols] + autoGroupCols ), also contains col order
     private liveColTree: IProvidedColumn[];
-    private liveColTreeDept = 0;
+    private liveColTreeDept = -1;
     private liveCols: Column[];
     private liveColsMap: { [id: string]: Column };
 
@@ -242,7 +242,7 @@ export class ColumnModel extends BeanStub {
 
         this.columnUtilsFeature.destroyColumns(this.getContext(), this.providedColTree, balancedTreeResult.columnTree);
         this.providedColTree = balancedTreeResult.columnTree;
-        this.providedColTreeDepth = balancedTreeResult.treeDept + 1;
+        this.providedColTreeDepth = balancedTreeResult.treeDept;
 
         this.providedCols = this.columnUtilsFeature.getColumnsFromTree(this.providedColTree);
         this.providedColsMap = {};
@@ -350,7 +350,7 @@ export class ColumnModel extends BeanStub {
 
     // + gridPanel -> for resizing the body and setting top margin
     public getHeaderRowCount(): number {
-        return this.liveColTreeDept;
+        return this.liveColTreeDept + 1;
     }
 
     public isColSpanActive(): boolean {
@@ -854,14 +854,14 @@ export class ColumnModel extends BeanStub {
 
         const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
         const pivotResultColsTree = this.pivotResultColsService.getPivotResultBalancedTree();
-        const pivotResultHeaderRowCount = this.pivotResultColsService.getPivotResultHeaderRowCount();
+        const pivotResultTreeDept = this.pivotResultColsService.getPivotResultTreeDept();
 
         if (pivotResultCols && pivotResultColsTree) {
             const hasSameColumns = pivotResultCols.some((col) => {
                 return this.liveColsMap[col.getColId()] !== undefined;
             });
             this.liveColTree = pivotResultColsTree.slice();
-            this.liveColTreeDept = pivotResultHeaderRowCount;
+            this.liveColTreeDept = pivotResultTreeDept;
             this.liveCols = pivotResultCols.slice();
             this.liveColsAreProvided = false;
 
@@ -1020,8 +1020,9 @@ export class ColumnModel extends BeanStub {
         this.liveCols = newLiveColumns;
     }
 
+    // used by Column Tool Panel
     public isProvidedColGroupsPresent(): boolean {
-        return this.providedColTreeDepth > 1;
+        return this.providedColTreeDepth > 0;
     }
 
     // if we are using autoGroupCols, then they should be included for quick filter. this covers the
