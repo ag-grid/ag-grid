@@ -86,10 +86,9 @@ export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> |
 export type Maybe<T> = T | null | undefined;
 
 export interface ColumnCollections {
-    // columns in a tree map, leave levels are columns, everything above is group column
+    // columns in a tree, leaf levels are columns, everything above is group column
     tree: IProvidedColumn[];
-    // depth of the tree above
-    treeDepth: number;
+    treeDepth: number; // depth of the tree above
     // leaf level cols of the tree
     list: Column[];
     // cols by id, for quick lookup
@@ -127,6 +126,9 @@ export class ColumnModel extends BeanStub {
     // [providedCols OR pivotResultCols] PLUS autoGroupCols
     private liveCols: ColumnCollections;
 
+    // true when pivotResultCols are in liveCols
+    private pivotResultColsAreLive: boolean;
+
     // the columns the quick filter should use. this will be all primary columns
     // plus the autoGroupColumns if any exist
     private colsForQuickFilter: Column[];
@@ -134,7 +136,6 @@ export class ColumnModel extends BeanStub {
     // header row count, either above, or based on pivoting if we are pivoting
     private lastProvidedOrder: Column[];
     private lastPivotResultColOrder: Column[];
-    private liveColsAreProvided: boolean;
 
     public autoGroupsNeedBuilding = false;
     private forceRecreateAutoGroups = false;
@@ -241,12 +242,12 @@ export class ColumnModel extends BeanStub {
 
         const oldPrimaryColumns = this.providedCols && this.providedCols.list;
         const oldPrimaryTree = this.providedCols && this.providedCols.tree;
-        const balancedTreeResult = this.columnFactory.createColumnTree(this.columnDefs, true, oldPrimaryTree, source);
+        const newTreeResult = this.columnFactory.createColumnTree(this.columnDefs, true, oldPrimaryTree, source);
 
-        this.columnUtilsFeature.destroyColumns(this.getContext(), this.providedCols?.tree, balancedTreeResult.columnTree);
+        this.columnUtilsFeature.destroyColumns(this.getContext(), this.providedCols?.tree, newTreeResult.columnTree);
 
-        const tree = balancedTreeResult.columnTree;
-        const treeDepth = balancedTreeResult.treeDept;
+        const tree = newTreeResult.columnTree;
+        const treeDepth = newTreeResult.treeDept;
         const list = this.columnUtilsFeature.getColumnsFromTree(tree);
         const map: { [id: string]: Column } = {};
 
@@ -262,12 +263,12 @@ export class ColumnModel extends BeanStub {
         // unless the auto column needs rebuilt, as it's the pivot service responsibility to change these
         // if we are no longer pivoting (ie and need to revert back to primary, otherwise
         // we shouldn't be touching the primary).
-        const liveColsNotProcessed = this.liveColsAreProvided === undefined;
-        const processLiveCols = this.liveColsAreProvided || liveColsNotProcessed || this.autoGroupsNeedBuilding;
+        const liveColsNotProcessed = this.providedCols == null;
+        const processLiveCols = !this.pivotResultColsAreLive || liveColsNotProcessed || this.autoGroupsNeedBuilding;
 
         if (processLiveCols) {
             this.updateLiveCols();
-            if (colsPreviouslyExisted && this.liveColsAreProvided && !this.gos.get('maintainColumnOrder')) {
+            if (colsPreviouslyExisted && !this.pivotResultColsAreLive && !this.gos.get('maintainColumnOrder')) {
                 this.orderLiveColsLikeProvidedCols();
             }
             this.updatePresentedCols(source);
@@ -409,10 +410,10 @@ export class ColumnModel extends BeanStub {
 
         const cols = this.providedCols.list.slice();
 
-        if (this.liveColsAreProvided) {
-            cols.sort((a: Column, b: Column) => this.liveCols.list.indexOf(a) - this.liveCols.list.indexOf(b));
-        } else if (this.lastProvidedOrder) {
+        if (this.pivotResultColsAreLive) {
             cols.sort((a: Column, b: Column) => this.lastProvidedOrder.indexOf(a) - this.lastProvidedOrder.indexOf(b));
+        } else if (this.lastProvidedOrder) {
+            cols.sort((a: Column, b: Column) => this.liveCols.list.indexOf(a) - this.liveCols.list.indexOf(b));
         }
 
         const rowGroupColumns = this.functionColumnsService.getRowGroupColumns();
@@ -840,10 +841,10 @@ export class ColumnModel extends BeanStub {
         if (!this.providedCols) { return; }
 
         const prevLiveCols = this.liveCols?.tree;
-        if (this.liveColsAreProvided) {
-            this.lastProvidedOrder = this.liveCols?.list;
-        } else {
+        if (this.pivotResultColsAreLive) {
             this.lastPivotResultColOrder = this.liveCols?.list;
+        } else {
+            this.lastProvidedOrder = this.liveCols?.list;
         }
 
         // create the new auto columns
@@ -868,7 +869,7 @@ export class ColumnModel extends BeanStub {
 
         const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
 
-        this.liveColsAreProvided = pivotResultCols==null;
+        this.pivotResultColsAreLive = pivotResultCols!=null;
 
         if (pivotResultCols) {
             const hasSameColumns = pivotResultCols.list.some((col) => {

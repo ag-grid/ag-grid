@@ -93,13 +93,9 @@ export class PivotResultColsService extends BeanStub {
             const tree = balancedTreeResult.columnTree;
             const treeDepth = balancedTreeResult.treeDept;
             const list = this.columnUtilsFeature.getColumnsFromTree(tree);
+            const map = {};
 
-            this.pivotResultCols = {
-                tree: tree,
-                treeDepth: treeDepth,
-                list: list,
-                map: {}
-            };
+            this.pivotResultCols = { tree, treeDepth, list, map };
             this.pivotResultCols.list.forEach(col => this.pivotResultCols!.map[col.getId()] = col);
             this.previousPivotResultCols = null;
         } else {
