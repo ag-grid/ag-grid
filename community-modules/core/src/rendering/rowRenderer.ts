@@ -879,6 +879,7 @@ export class RowRenderer extends BeanStub {
     private removeAllRowComps(): void {
         const rowIndexesToRemove = Object.keys(this.rowCtrlsByRowIndex);
         this.removeRowCtrls(rowIndexesToRemove);
+        this.stickyRowFeature.destroyStickyCtrls();
     }
 
     private getRowsToRecycle(): RowCtrlByRowNodeIdMap {
