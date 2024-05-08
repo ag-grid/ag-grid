@@ -688,29 +688,31 @@ export class ColumnModel extends BeanStub {
     public getProvidedColumn(key: ColKey): Column | null {
         if (!this.providedCols?.list) { return null; }
 
-        return this.getColumn(key, this.providedCols?.list, this.providedCols?.map);
+        return this.getColumn(key, this.providedCols);
     }
 
     public getLiveColumn(key: ColKey): Column | null {
-        return this.getColumn(key, this.liveCols?.list, this.liveCols?.map);
+        return this.getColumn(key, this.liveCols);
     }
 
     public lookupLiveColumn(key: string) {
         return this.liveCols?.map[key];
     }
 
-    public getColumn(key: ColKey, columnList: Column[], columnMap: { [id: string]: Column }): Column | null {
-        if (!key || !columnMap) { return null; }
+    public getColumn(key: ColKey, cols: ColumnCollections): Column | null {
+        if (cols==null) { return null; }
+
+        const {map, list} = cols;
 
         // most of the time this method gets called the key is a string, so we put this shortcut in
         // for performance reasons, to see if we can match for ID (it doesn't do auto columns, that's done below)
-        if (typeof key == 'string' && columnMap[key]) {
-            return columnMap[key];
+        if (typeof key == 'string' && map[key]) {
+            return map[key];
         }
 
-        for (let i = 0; i < columnList.length; i++) {
-            if (this.columnsMatch(columnList[i], key)) {
-                return columnList[i];
+        for (let i = 0; i < list.length; i++) {
+            if (this.columnsMatch(list[i], key)) {
+                return list[i];
             }
         }
 

@@ -71,22 +71,9 @@ export class PivotResultColsService extends BeanStub {
 
     public getPivotResultCol(key: ColKey): Column | null {
         if (!this.pivotResultCols) { return null; }
-        return this.columnModel.getColumn(key, this.pivotResultCols.list, this.pivotResultCols.map);
+        return this.columnModel.getColumn(key, this.pivotResultCols);
     }
 
-/*
-    public getPivotResultCols(): Column[] | null {
-        return this.pivotResultCols_old ? this.pivotResultCols_old : null;
-    }
-
-    public getPivotResultBalancedTree(): IProvidedColumn[] | null {
-        return this.pivotResultColTree ? this.pivotResultColTree : null;
-    }
-
-    public getPivotResultTreeDept(): number {
-        return this.pivotResultColTreeDept;
-    }*/
-    
     public setPivotResultCols(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void {
         if (this.columnModel.isLiveColsMising()) { return; }
 
