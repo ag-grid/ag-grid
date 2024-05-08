@@ -58,7 +58,7 @@ export class QuickFilterService extends BeanStub {
     // a) user provides 'field' into autoGroupCol of normal grid, so now because a valid col to filter leafs on
     // b) using tree data and user depends on autoGroupCol for first col, and we also want to filter on this
     //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
-    public refreshQuickFilterColumns(): void {
+    public refreshQuickFilterCols(): void {
         const pivotMode = this.columnModel.isPivotMode();
         const groupAutoCols = this.columnModel.getGroupAutoColumns();
         const providedCols = this.columnModel.getAllProvidedCols();
@@ -145,7 +145,7 @@ export class QuickFilterService extends BeanStub {
     }
 
     private onQuickFilterColumnConfigChanged(): void {
-        this.refreshQuickFilterColumns();
+        this.refreshQuickFilterCols();
         this.resetQuickFilterCache();
         if (this.isQuickFilterPresent()) {
             this.dispatchEvent({ type: QuickFilterService.EVENT_QUICK_FILTER_CHANGED });
