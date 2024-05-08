@@ -22,18 +22,8 @@ export const getAgGridProperties = (): [Properties, Properties, Properties] => {
     const eventNameAsProps = ComponentUtil.PUBLIC_EVENTS.map((eventName: string) => kebabNameToAttrEventName(kebabProperty(eventName)));
     eventNameAsProps.forEach((eventName: string) => props[eventName] = undefined)
 
-    const computed: Properties = {
-        props() {
-            const options: { [key: string]: any } = {};
-            ComponentUtil.ALL_PROPERTIES.forEach((propertyName: string) => {
-                if (this[propertyName] === ComponentUtil.VUE_OMITTED_PROPERTY) { return; }
-                if (propertyName in this || propertyName in this.gridOptions) {
-                    options[propertyName] = this[propertyName] ?? this.gridOptions[propertyName];
-                }
-            });
-            return options;
-        },
-    };
+    const computed: Properties = {};
+
     const watch: Properties = {
         modelValue: {
             handler(currentValue: any, previousValue: any) {
@@ -55,25 +45,29 @@ export const getAgGridProperties = (): [Properties, Properties, Properties] => {
             },
             deep: true
         },
-        props: {
-            handler(currentValue: any, previousValue: any) {
-                if (!this.gridCreated || !this.api) { return; }
-                const changes: any = {};
-                Object.entries(currentValue).forEach(([key, value]) => {
-                    if (previousValue[key] === value) return;
-                    changes[key] = value;
-                });
-                ComponentUtil.processOnChange(changes, this.api);
-            },
-            deep: true,
-        },
     };
+    let timeout: number | null = null;
+    let changes: { [key: string]: any } = {};
     ComponentUtil.ALL_PROPERTIES
         .filter((propertyName: string) => propertyName != 'gridOptions') // dealt with in AgGridVue itself
         .forEach((propertyName: string) => {
             props[propertyName] = {
                 default: ComponentUtil.VUE_OMITTED_PROPERTY,
             };
+
+            watch[propertyName] = {
+                handler(currentValue: any, previousValue: any) {
+                    changes[propertyName] = currentValue === ComponentUtil.VUE_OMITTED_PROPERTY ? undefined : currentValue;
+                    if (timeout == null) {
+                        timeout = setTimeout(() => {
+                            ComponentUtil.processOnChange(changes, this.api);
+                            timeout = null;
+                            changes = {};
+                        }, 0);
+                    }
+                },
+                deep: true,
+            }
         });
 
     return [props, computed, watch];
