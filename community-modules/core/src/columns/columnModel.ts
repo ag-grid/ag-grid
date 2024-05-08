@@ -141,11 +141,6 @@ export class ColumnModel extends BeanStub {
     private groupAutoColsTree: IProvidedColumn[] | null;
     private groupAutoCols: Column[] | null;
 
-    // primary columns -> what the user provides
-    // pivot result columns -> columns generated as a result of a pivot
-    // displayed columns -> columns that are 1) visible and 2) parent groups are opened. thus can be rendered
-    // viewport columns -> centre columns only, what columns are to be rendered due to column virtualisation
-
     // true if we are doing column spanning
     private colSpanActive: boolean;
 
