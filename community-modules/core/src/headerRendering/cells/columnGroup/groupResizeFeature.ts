@@ -1,5 +1,4 @@
 import { ColumnEventType } from "../../../events";
-import { ColumnModel } from "../../../columns/columnModel";
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
 import { Column, ColumnPinnedType } from "../../../entities/column";
@@ -10,7 +9,7 @@ import { IHeaderGroupCellComp } from "./headerGroupCellCtrl";
 import { IHeaderResizeFeature } from "../abstractCell/abstractHeaderCellCtrl";
 import { ColumnAutosizeService } from "community-modules/core/src/columns/columnAutosizeService";
 import { ColumnSizeService, ColumnResizeSet } from "../../../columns/columnSizeService";
-import { DisplayedColumnsService } from "@ag-grid-community/core";
+import { PresentedColsService } from "../../../columns/presentedColsService";
 
 interface ColumnSizeAndRatios {
     columnsToResize: Column[];
@@ -37,8 +36,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
 
     @Autowired('horizontalResizeService') private readonly horizontalResizeService: HorizontalResizeService;
     @Autowired('autoWidthCalculator') private readonly autoWidthCalculator: AutoWidthCalculator;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
+    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
     @Autowired('columnSizeService') private readonly columnSizeService: ColumnSizeService;
     @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
 
@@ -124,7 +122,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         let groupAfter: ColumnGroup | null = null;
 
         if (shiftKey) {
-            groupAfter = this.displayedColumnsService.getDisplayedGroupAtDirection(this.columnGroup, 'After');
+            groupAfter = this.presentedColsService.getDisplayedGroupAtDirection(this.columnGroup, 'After');
         }
 
         if (groupAfter) {

@@ -7,12 +7,12 @@ import { IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { exists } from "../utils/generic";
 import { ColumnEventDispatcher } from "./columnEventDispatcher";
 import { ColumnModel } from "./columnModel";
-import { DisplayedColumnsService } from "./displayedColumnsService";
+import { PresentedColsService } from "./presentedColsService";
 
 @Bean('columnViewportService')
 export class ColumnViewportService extends BeanStub {
 
-    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
+    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
 
@@ -44,7 +44,7 @@ export class ColumnViewportService extends BeanStub {
     }
 
     public setScrollPosition(scrollWidth: number, scrollPosition: number, afterScroll: boolean = false): void {
-        const bodyWidthDirty = this.displayedColumnsService.isBodyWidthDirty();
+        const bodyWidthDirty = this.presentedColsService.isBodyWidthDirty();
 
         const noChange = scrollWidth === this.scrollWidth && scrollPosition === this.scrollPosition && !bodyWidthDirty;
         if (noChange) { return; }
@@ -54,10 +54,10 @@ export class ColumnViewportService extends BeanStub {
         // we need to call setVirtualViewportLeftAndRight() at least once after the body width changes,
         // as the viewport can stay the same, but in RTL, if body width changes, we need to work out the
         // virtual columns again
-        this.displayedColumnsService.setBodyWidthDirty();
+        this.presentedColsService.setBodyWidthDirty();
 
         if (this.gos.get('enableRtl')) {
-            const bodyWidth = this.displayedColumnsService.getBodyContainerWidth();
+            const bodyWidth = this.presentedColsService.getBodyContainerWidth();
             this.viewportLeft = bodyWidth - this.scrollPosition - this.scrollWidth;
             this.viewportRight = bodyWidth - this.scrollPosition;
         } else {
@@ -89,7 +89,7 @@ export class ColumnViewportService extends BeanStub {
     }
 
     private extractViewportColumns(): void {
-        const displayedColumnsCenter = this.displayedColumnsService.getDisplayedCenterColumns();
+        const displayedColumnsCenter = this.presentedColsService.getDisplayedCenterColumns();
         if (this.isColumnVirtualisationSuppressed()) {
             // no virtualisation, so don't filter
             this.colsWithinViewport = displayedColumnsCenter;
@@ -143,8 +143,8 @@ export class ColumnViewportService extends BeanStub {
 
     // used by Grid API only
     public getViewportColumns(): Column[] {
-        const leftCols = this.displayedColumnsService.getDisplayedLeftColumns();
-        const rightCols = this.displayedColumnsService.getDisplayedRightColumns();
+        const leftCols = this.presentedColsService.getDisplayedLeftColumns();
+        const rightCols = this.presentedColsService.getDisplayedRightColumns();
         const res = this.colsWithinViewport.concat(leftCols).concat(rightCols);
         return res;
     }
@@ -166,9 +166,9 @@ export class ColumnViewportService extends BeanStub {
 
         // if doing column virtualisation, then we filter based on the viewport.
         const inViewportCallback = this.isColumnVirtualisationSuppressed() ? null : this.isColumnInRowViewport.bind(this);
-        const displayedColumnsCenter = this.displayedColumnsService.getDisplayedColumnsCenter();
+        const displayedColumnsCenter = this.presentedColsService.getDisplayedColumnsCenter();
 
-        return this.displayedColumnsService.getDisplayedColumnsForRow(
+        return this.presentedColsService.getDisplayedColumnsForRow(
             rowNode,
             displayedColumnsCenter,
             inViewportCallback,
@@ -181,7 +181,7 @@ export class ColumnViewportService extends BeanStub {
     // + setColumnWidth(), setViewportPosition(), setColumnDefs(), sizeColumnsToFit()
     public checkViewportColumns(afterScroll: boolean = false): void {
         // check displayCenterColumnTree exists first, as it won't exist when grid is initialising
-        if (this.displayedColumnsService.getDisplayedColumnsCenter() == null) { return; }
+        if (this.presentedColsService.getDisplayedColumnsCenter() == null) { return; }
 
         const viewportColumnsChanged = this.extractViewport();
 
@@ -201,8 +201,8 @@ export class ColumnViewportService extends BeanStub {
         // for easy lookup when building the groups.
         const renderedColIds: { [key: string]: boolean; } = {};
 
-        const renderedColsLeft = this.displayedColumnsService.getDisplayedLeftColumns();
-        const renderedColsRight = this.displayedColumnsService.getDisplayedRightColumns();
+        const renderedColsLeft = this.presentedColsService.getDisplayedLeftColumns();
+        const renderedColsRight = this.presentedColsService.getDisplayedRightColumns();
         const allRenderedCols = this.headerColsWithinViewport
             .concat(renderedColsLeft)
             .concat(renderedColsRight);
@@ -245,9 +245,9 @@ export class ColumnViewportService extends BeanStub {
             return returnValue;
         };
 
-        testGroup(this.displayedColumnsService.getDisplayedTreeLeft(), this.rowsOfHeadersToRenderLeft, 0);
-        testGroup(this.displayedColumnsService.getDisplayedTreeRight(), this.rowsOfHeadersToRenderRight, 0);
-        testGroup(this.displayedColumnsService.getDisplayedTreeCentre(), this.rowsOfHeadersToRenderCenter, 0);
+        testGroup(this.presentedColsService.getDisplayedTreeLeft(), this.rowsOfHeadersToRenderLeft, 0);
+        testGroup(this.presentedColsService.getDisplayedTreeRight(), this.rowsOfHeadersToRenderRight, 0);
+        testGroup(this.presentedColsService.getDisplayedTreeCentre(), this.rowsOfHeadersToRenderCenter, 0);
     }
 
     public extractViewport(): boolean {

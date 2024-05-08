@@ -8,7 +8,7 @@ import { IAbstractHeaderCellComp } from "./abstractCell/abstractHeaderCellCtrl";
 import { ICellComp } from "../../rendering/cell/cellCtrl";
 import { ColumnModel } from "../../columns/columnModel";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
-import { DisplayedColumnsService } from "../../columns/displayedColumnsService";
+import { PresentedColsService } from "../../columns/presentedColsService";
 
 const CSS_FIRST_COLUMN = 'ag-column-first';
 const CSS_LAST_COLUMN = 'ag-column-last';
@@ -49,9 +49,9 @@ export class CssClassApplier {
         );
     }
 
-    public static refreshFirstAndLastStyles(comp: IAbstractHeaderCellComp | ICellComp, column: Column | ColumnGroup, displayedColumnsService: DisplayedColumnsService) {
-        comp.addOrRemoveCssClass(CSS_FIRST_COLUMN, displayedColumnsService.isColumnAtEdge(column, 'first'));
-        comp.addOrRemoveCssClass(CSS_LAST_COLUMN, displayedColumnsService.isColumnAtEdge(column, 'last'));
+    public static refreshFirstAndLastStyles(comp: IAbstractHeaderCellComp | ICellComp, column: Column | ColumnGroup, presentedColsService: PresentedColsService) {
+        comp.addOrRemoveCssClass(CSS_FIRST_COLUMN, presentedColsService.isColumnAtEdge(column, 'first'));
+        comp.addOrRemoveCssClass(CSS_LAST_COLUMN, presentedColsService.isColumnAtEdge(column, 'last'));
     }
 
     private static getClassParams<T extends HeaderClassParams | ToolPanelClassParams>(abstractColDef: AbstractColDef,

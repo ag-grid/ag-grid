@@ -17,7 +17,6 @@ import { UndoRedoService } from "../../undoRedo/undoRedoService";
 import { missingOrEmpty } from "../../utils/generic";
 import { last } from "../../utils/array";
 import { normaliseQwertyAzerty } from "../../utils/keyboard";
-import { ColumnModel } from "../../columns/columnModel";
 import { PaginationProxy } from "../../pagination/paginationProxy";
 import { PinnedRowModel } from "../../pinnedRowModel/pinnedRowModel";
 import { IRangeService } from "../../interfaces/IRangeService";
@@ -25,7 +24,7 @@ import { IClipboardService } from "../../interfaces/iClipboardService";
 import { CellCtrl } from "../../rendering/cell/cellCtrl";
 import { RowPinnedType } from "../../interfaces/iRowNode";
 import { MenuService, EventShowContextMenuParams } from "../../misc/menuService";
-import { DisplayedColumnsService } from "../../columns/displayedColumnsService";
+import { PresentedColsService } from "../../columns/presentedColsService";
 
 export class RowContainerEventsFeature extends BeanStub {
 
@@ -36,8 +35,7 @@ export class RowContainerEventsFeature extends BeanStub {
     @Autowired('navigationService') private navigationService: NavigationService;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('undoRedoService') private undoRedoService: UndoRedoService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
+    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
 
@@ -277,7 +275,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 rowEnd = pinnedRowModel.getPinnedBottomRowData().length - 1;
             }
 
-            const allDisplayedColumns = this.displayedColumnsService.getAllDisplayedColumns();
+            const allDisplayedColumns = this.presentedColsService.getAllDisplayedColumns();
             if (missingOrEmpty(allDisplayedColumns)) { return; }
 
             rangeService.setCellRange({

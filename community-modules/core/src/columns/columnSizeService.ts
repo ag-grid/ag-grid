@@ -8,7 +8,7 @@ import { ColumnEventDispatcher } from "./columnEventDispatcher";
 import { ColKey, ColumnModel } from "./columnModel";
 import { ColumnUtilsFeature } from "./columnUtilsFeature";
 import { ColumnViewportService } from "./columnViewportService";
-import { DisplayedColumnsService } from "./displayedColumnsService";
+import { PresentedColsService } from "./presentedColsService";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -41,7 +41,7 @@ export class ColumnSizeService extends BeanStub {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnViewportService') private readonly columnViewportService: ColumnViewportService;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
-    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
+    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
    
     private columnUtilsFeature: ColumnUtilsFeature;
 
@@ -82,7 +82,7 @@ export class ColumnSizeService extends BeanStub {
             }
 
             if (shiftKey) {
-                const otherCol = this.displayedColumnsService.getDisplayedColAfter(col);
+                const otherCol = this.presentedColsService.getDisplayedColAfter(col);
                 if (!otherCol) { return; }
 
                 const widthDiff = col.getActualWidth() - columnWidth.newWidth;
@@ -230,8 +230,8 @@ export class ColumnSizeService extends BeanStub {
 
         if (atLeastOneColChanged) {
             flexedCols = this.refreshFlexedColumns({ resizingCols: allResizedCols, skipSetLeft: true });
-            this.displayedColumnsService.setLeftValues(source);
-            this.displayedColumnsService.updateBodyWidths();
+            this.presentedColsService.setLeftValues(source);
+            this.presentedColsService.updateBodyWidths();
             this.columnViewportService.checkViewportColumns();
         }
 
@@ -289,7 +289,7 @@ export class ColumnSizeService extends BeanStub {
         // A "flexing column" is one that has a 'flex' value set and is not currently being constrained by its
         // minWidth or maxWidth rules.
 
-        let displayedCenterCols = this.displayedColumnsService.getDisplayedCenterColumns();
+        let displayedCenterCols = this.presentedColsService.getDisplayedCenterColumns();
 
         let flexAfterDisplayIndex = -1;
         if (params.resizingCols) {
@@ -384,11 +384,11 @@ export class ColumnSizeService extends BeanStub {
         });
 
         if (!params.skipSetLeft) {
-            this.displayedColumnsService.setLeftValues(source);
+            this.presentedColsService.setLeftValues(source);
         }
 
         if (params.updateBodyWidths) {
-            this.displayedColumnsService.updateBodyWidths();
+            this.presentedColsService.updateBodyWidths();
         }
 
         if (params.fireResizedEvent) {
@@ -418,7 +418,7 @@ export class ColumnSizeService extends BeanStub {
         }
 
         // avoid divide by zero
-        const allDisplayedColumns = this.displayedColumnsService.getAllDisplayedColumns();
+        const allDisplayedColumns = this.presentedColsService.getAllDisplayedColumns();
 
         const doColumnsAlreadyFit = gridWidth === this.columnUtilsFeature.getWidthOfColsInList(allDisplayedColumns);
         if (gridWidth <= 0 || !allDisplayedColumns.length || doColumnsAlreadyFit) { return; }
@@ -520,8 +520,8 @@ export class ColumnSizeService extends BeanStub {
             col.fireColumnWidthChangedEvent(source);
         });
 
-        this.displayedColumnsService.setLeftValues(source);
-        this.displayedColumnsService.updateBodyWidths();
+        this.presentedColsService.setLeftValues(source);
+        this.presentedColsService.updateBodyWidths();
 
         if (silent) { return; }
 

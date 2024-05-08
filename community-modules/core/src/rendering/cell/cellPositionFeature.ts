@@ -114,7 +114,7 @@ export class CellPositionFeature extends BeanStub {
             const pinned = this.column.getPinned();
             for (let i = 0; pointer && i < colSpan; i++) {
                 colsSpanning.push(pointer);
-                pointer = this.beans.displayedColumnsService.getDisplayedColAfter(pointer);
+                pointer = this.beans.presentedColsService.getDisplayedColAfter(pointer);
                 if (!pointer || missing(pointer)) {
                     break;
                 }
@@ -151,10 +151,10 @@ export class CellPositionFeature extends BeanStub {
             return leftPosition;
         }
 
-        const leftWidth = this.beans.displayedColumnsService.getDisplayedColumnsLeftWidth();
+        const leftWidth = this.beans.presentedColsService.getDisplayedColumnsLeftWidth();
 
         if (this.column.getPinned() === 'right') {
-            const bodyWidth = this.beans.displayedColumnsService.getBodyContainerWidth();
+            const bodyWidth = this.beans.presentedColsService.getBodyContainerWidth();
             return leftWidth + bodyWidth + (leftPosition || 0);
         }
 

@@ -3,7 +3,7 @@ import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
 import { CellFocusedParams, CellFocusedEvent, Events, CellFocusClearedEvent, CommonCellFocusParams } from "./events";
 import { ColumnModel } from "./columns/columnModel";
-import { DisplayedColumnsService } from "./columns/displayedColumnsService";
+import { PresentedColsService } from "./columns/presentedColsService";
 import { CellPosition, CellPositionUtils } from "./entities/cellPositionUtils";
 import { RowNode } from "./entities/rowNode";
 import { HeaderPosition, HeaderPositionUtils } from "./headerRendering/common/headerPosition";
@@ -35,7 +35,7 @@ export class FocusService extends BeanStub {
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
+    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
     @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
     @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
@@ -461,11 +461,11 @@ export class FocusService extends BeanStub {
     }
 
     public focusFirstHeader(): boolean {
-        let firstColumn: Column | ColumnGroup = this.displayedColumnsService.getAllDisplayedColumns()[0];
+        let firstColumn: Column | ColumnGroup = this.presentedColsService.getAllDisplayedColumns()[0];
         if (!firstColumn) { return false; }
 
         if (firstColumn.getParent()) {
-            firstColumn = this.displayedColumnsService.getColumnGroupAtLevel(firstColumn, 0)!;
+            firstColumn = this.presentedColsService.getColumnGroupAtLevel(firstColumn, 0)!;
         }
 
         const headerPosition = this.headerPositionUtils.getHeaderIndexToFocus(firstColumn, 0);
@@ -478,7 +478,7 @@ export class FocusService extends BeanStub {
 
     public focusLastHeader(event?: KeyboardEvent): boolean {
         const headerRowIndex = this.headerNavigationService.getHeaderRowCount() - 1;
-        const column = last(this.displayedColumnsService.getAllDisplayedColumns());
+        const column = last(this.presentedColsService.getAllDisplayedColumns());
 
         return this.focusHeaderPosition({
             headerPosition: { headerRowIndex, column },
@@ -672,7 +672,7 @@ export class FocusService extends BeanStub {
     }
 
     public focusNextFromAdvancedFilter(backwards?: boolean, forceFirstColumn?: boolean): boolean {
-        const column = (forceFirstColumn ? undefined : this.advancedFilterFocusColumn) ?? this.displayedColumnsService.getAllDisplayedColumns()?.[0];
+        const column = (forceFirstColumn ? undefined : this.advancedFilterFocusColumn) ?? this.presentedColsService.getAllDisplayedColumns()?.[0];
         if (backwards) {
             return this.focusHeaderPosition({
                 headerPosition: {

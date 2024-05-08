@@ -856,11 +856,11 @@ export class CellCtrl extends BeanStub {
 
     private refreshFirstAndLastStyles(): void {
         const { cellComp, column, beans } = this;
-        CssClassApplier.refreshFirstAndLastStyles(cellComp, column, beans.displayedColumnsService);
+        CssClassApplier.refreshFirstAndLastStyles(cellComp, column, beans.presentedColsService);
     }
 
     private refreshAriaColIndex(): void {
-        const colIdx = this.beans.displayedColumnsService.getAriaColumnIndex(this.column);
+        const colIdx = this.beans.presentedColsService.getAriaColumnIndex(this.column);
         setAriaColIndex(this.getGui(), colIdx); // for react, we don't use JSX, as it slowed down column moving
     }
 

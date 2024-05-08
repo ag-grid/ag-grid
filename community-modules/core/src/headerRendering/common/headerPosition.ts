@@ -1,12 +1,11 @@
 import { Autowired, Bean } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
-import { ColumnModel } from "../../columns/columnModel";
 import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { CtrlsService } from "../../ctrlsService";
 import { HeaderRowType } from "../row/headerRowComp";
 import { last } from "../../utils/array";
-import { DisplayedColumnsService } from "../../columns/displayedColumnsService";
+import { PresentedColsService } from "../../columns/presentedColsService";
 
 export interface HeaderPosition {
 /** A number from 0 to n, where n is the last header row the grid is rendering */
@@ -22,8 +21,7 @@ export interface HeaderFuturePosition extends HeaderPosition {
 @Bean('headerPositionUtils')
 export class HeaderPositionUtils extends BeanStub {
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
+    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     public findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition | undefined {
@@ -31,10 +29,10 @@ export class HeaderPositionUtils extends BeanStub {
         let getColMethod: 'getDisplayedColBefore' | 'getDisplayedColAfter';
 
         if (focusedHeader.column instanceof ColumnGroup) {
-            nextColumn = this.displayedColumnsService.getDisplayedGroupAtDirection(focusedHeader.column, direction)!
+            nextColumn = this.presentedColsService.getDisplayedGroupAtDirection(focusedHeader.column, direction)!
         } else {
             getColMethod = `getDisplayedCol${direction}` as any;
-            nextColumn = this.displayedColumnsService[getColMethod](focusedHeader.column)!;
+            nextColumn = this.presentedColsService[getColMethod](focusedHeader.column)!;
         }
 
         if (!nextColumn) { return; }
@@ -156,7 +154,7 @@ export class HeaderPositionUtils extends BeanStub {
     }
 
     public findColAtEdgeForHeaderRow(level: number, position: 'start' | 'end'): HeaderPosition | undefined {
-        const displayedColumns = this.displayedColumnsService.getAllDisplayedColumns();
+        const displayedColumns = this.presentedColsService.getAllDisplayedColumns();
         const column = displayedColumns[position === 'start' ? 0 : displayedColumns.length - 1];
 
         if (!column) { return; }
@@ -165,7 +163,7 @@ export class HeaderPositionUtils extends BeanStub {
         const type = childContainer.getRowType(level);
 
         if (type == HeaderRowType.COLUMN_GROUP) {
-            const columnGroup = this.displayedColumnsService.getColumnGroupAtLevel(column, level);
+            const columnGroup = this.presentedColsService.getColumnGroupAtLevel(column, level);
             return {
                 headerRowIndex: level,
                 column: columnGroup!

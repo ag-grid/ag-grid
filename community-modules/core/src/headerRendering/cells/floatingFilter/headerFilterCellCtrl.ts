@@ -142,13 +142,13 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private findNextColumnWithFloatingFilter(backwards: boolean): Column | null {
-        const displayedColumnsService = this.beans.displayedColumnsService;
+        const presentedColsService = this.beans.presentedColsService;
         let nextCol: Column | null = this.column;
 
         do {
             nextCol = backwards
-                ? displayedColumnsService.getDisplayedColBefore(nextCol)
-                : displayedColumnsService.getDisplayedColAfter(nextCol);
+                ? presentedColsService.getDisplayedColBefore(nextCol)
+                : presentedColsService.getDisplayedColAfter(nextCol);
 
             if (!nextCol) { break; }
 

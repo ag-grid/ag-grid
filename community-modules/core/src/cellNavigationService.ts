@@ -1,6 +1,5 @@
 import { Autowired, Bean } from "./context/context";
 import { BeanStub } from "./context/beanStub";
-import { ColumnModel } from "./columns/columnModel";
 import { IRowModel } from "./interfaces/iRowModel";
 import { CellPosition } from "./entities/cellPositionUtils";
 import { RowNode } from "./entities/rowNode";
@@ -13,13 +12,12 @@ import { KeyCode } from './constants/keyCode';
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { RowCtrl } from "./rendering/row/rowCtrl";
-import { DisplayedColumnsService } from "./main";
+import { PresentedColsService } from "./columns/presentedColsService";
 
 @Bean('cellNavigationService')
 export class CellNavigationService extends BeanStub {
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
+    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
@@ -46,7 +44,7 @@ export class CellNavigationService extends BeanStub {
             rowIndex = upKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
             column = focusedCell.column;
         } else {
-            const allColumns: Column[] = this.displayedColumnsService.getAllDisplayedColumns();
+            const allColumns: Column[] = this.presentedColsService.getAllDisplayedColumns();
             const isRtl = this.gos.get('enableRtl');
             rowIndex = focusedCell.rowIndex;
             column = leftKey !== isRtl ? allColumns[0] : last(allColumns);
@@ -132,7 +130,7 @@ export class CellNavigationService extends BeanStub {
     private getCellToLeft(lastCell: CellPosition | null): CellPosition | null {
         if (!lastCell) { return null; }
 
-        const colToLeft = this.displayedColumnsService.getDisplayedColBefore(lastCell.column);
+        const colToLeft = this.presentedColsService.getDisplayedColBefore(lastCell.column);
         if (!colToLeft) { return null; }
 
         return {
@@ -145,7 +143,7 @@ export class CellNavigationService extends BeanStub {
     private getCellToRight(lastCell: CellPosition | null): CellPosition | null {
         if (!lastCell) { return null; }
 
-        const colToRight = this.displayedColumnsService.getDisplayedColAfter(lastCell.column);
+        const colToRight = this.presentedColsService.getDisplayedColAfter(lastCell.column);
         // if already on right, do nothing
         if (!colToRight) { return null; }
 
@@ -330,13 +328,13 @@ export class CellNavigationService extends BeanStub {
     }
 
     public getNextTabbedCellForwards(gridCell: CellPosition): CellPosition | null {
-        const displayedColumns = this.displayedColumnsService.getAllDisplayedColumns();
+        const displayedColumns = this.presentedColsService.getAllDisplayedColumns();
 
         let newRowIndex: number | null = gridCell.rowIndex;
         let newFloating: string | null | undefined = gridCell.rowPinned;
 
         // move along to the next cell
-        let newColumn = this.displayedColumnsService.getDisplayedColAfter(gridCell.column);
+        let newColumn = this.presentedColsService.getDisplayedColAfter(gridCell.column);
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {
@@ -360,13 +358,13 @@ export class CellNavigationService extends BeanStub {
 
     public getNextTabbedCellBackwards(gridCell: CellPosition): CellPosition | null {
 
-        const displayedColumns = this.displayedColumnsService.getAllDisplayedColumns();
+        const displayedColumns = this.presentedColsService.getAllDisplayedColumns();
 
         let newRowIndex: number | null = gridCell.rowIndex;
         let newFloating: string | null | undefined = gridCell.rowPinned;
 
         // move along to the next cell
-        let newColumn = this.displayedColumnsService.getDisplayedColBefore(gridCell.column);
+        let newColumn = this.presentedColsService.getDisplayedColBefore(gridCell.column);
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {

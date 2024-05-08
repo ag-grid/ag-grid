@@ -20,7 +20,7 @@ import {
     ShouldRowBeSkippedParams,
     RowNodeSorter,
     SortController,
-    DisplayedColumnsService,
+    PresentedColsService,
     ColumnNameService
 } from "@ag-grid-community/core";
 import { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "./interfaces";
@@ -32,7 +32,7 @@ export enum RowType { HEADER_GROUPING, HEADER, BODY }
 @Bean("gridSerializer")
 export class GridSerializer extends BeanStub {
 
-    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
+    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('rowModel') private rowModel: IRowModel;
@@ -140,7 +140,7 @@ export class GridSerializer extends BeanStub {
         return (gridSerializingSession) => {
             if (!params.skipColumnGroupHeaders) {
                 const groupInstanceIdCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
-                const displayedGroups: IHeaderColumn[] = this.displayedColumnsService.createDisplayedGroups(
+                const displayedGroups: IHeaderColumn[] = this.presentedColsService.createDisplayedGroups(
                     columnsToExport,
                     groupInstanceIdCreator,
                     null
@@ -308,7 +308,7 @@ export class GridSerializer extends BeanStub {
         if (allColumns && !isPivotMode) {
             columnsToExport =  this.columnModel.getLiveCols();
         } else {
-            columnsToExport = this.displayedColumnsService.getAllDisplayedColumns();
+            columnsToExport = this.presentedColsService.getAllDisplayedColumns();
         }
 
         if (skipRowGroups && !isTreeData) {

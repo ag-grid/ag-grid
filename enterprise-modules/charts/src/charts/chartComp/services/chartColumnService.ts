@@ -5,7 +5,7 @@ import {
     Column,
     ColumnModel,
     ColumnNameService,
-    DisplayedColumnsService,
+    PresentedColsService,
     Events,
     FunctionColumnsService,
     PostConstruct,
@@ -18,7 +18,7 @@ import {
 export class ChartColumnService extends BeanStub {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
+    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
     @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
@@ -37,7 +37,7 @@ export class ChartColumnService extends BeanStub {
     }
 
     public getAllDisplayedColumns(): Column[] {
-        return this.displayedColumnsService.getAllDisplayedColumns();
+        return this.presentedColsService.getAllDisplayedColumns();
     }
 
     public getColDisplayName(col: Column): string | null {

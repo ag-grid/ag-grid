@@ -597,7 +597,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         const autoHeights = this.__autoHeights!;
         if (autoHeights == null) { return; }
 
-        const displayedAutoHeightCols = this.beans.displayedColumnsService.getAllDisplayedAutoHeightCols();
+        const displayedAutoHeightCols = this.beans.presentedColsService.getAllDisplayedAutoHeightCols();
         displayedAutoHeightCols.forEach(col => {
             let cellHeight = autoHeights[col.getId()];
 
@@ -608,10 +608,10 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
                     let activeColsForRow: Column[] = [];
                     switch (col.getPinned()) {
                         case 'left':
-                            activeColsForRow = this.beans.displayedColumnsService.getDisplayedLeftColumnsForRow(this);
+                            activeColsForRow = this.beans.presentedColsService.getDisplayedLeftColumnsForRow(this);
                             break;
                         case 'right':
-                            activeColsForRow = this.beans.displayedColumnsService.getDisplayedRightColumnsForRow(this);
+                            activeColsForRow = this.beans.presentedColsService.getDisplayedRightColumnsForRow(this);
                             break;
                         case null:
                             activeColsForRow = this.beans.columnViewportService.getColsWithinViewport(this);

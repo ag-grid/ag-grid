@@ -110,10 +110,10 @@ export class SetLeftFeature extends BeanStub {
             return leftPosition;
         }
 
-        const leftWidth = this.beans.displayedColumnsService.getDisplayedColumnsLeftWidth();
+        const leftWidth = this.beans.presentedColsService.getDisplayedColumnsLeftWidth();
 
         if (colOrGroup.getPinned() === 'right') {
-            const bodyWidth = this.beans.displayedColumnsService.getBodyContainerWidth();
+            const bodyWidth = this.beans.presentedColsService.getBodyContainerWidth();
             return leftWidth + bodyWidth + leftPosition;
         }
 

@@ -11,12 +11,12 @@ import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
 import { ColumnMoveHelper } from "../columnMoveHelper";
 import { HorizontalDirection } from "../../constants/direction";
 import { ColumnMoveService } from "../../columns/columnMoveService";
-import { DisplayedColumnsService } from "../../columns/displayedColumnsService";
+import { PresentedColsService } from "../../columns/presentedColsService";
 
 export class MoveColumnFeature implements DropListener {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
+    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
     @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridOptionsService') private gos: GridOptionsService;
@@ -183,7 +183,7 @@ export class MoveColumnFeature implements DropListener {
             gos: this.gos,
             columnModel: this.columnModel,
             columnMoveService: this.columnMoveService,
-            displayedColumnsService: this.displayedColumnsService
+            presentedColsService: this.presentedColsService
         });
 
         if (lastMovedInfo) {

@@ -14,8 +14,8 @@ import { ColumnUtilsFeature } from "./columnUtilsFeature";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
-@Bean('displayedColumnsService')
-export class DisplayedColumnsService extends BeanStub {
+@Bean('presentedColsService')
+export class PresentedColsService extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
 

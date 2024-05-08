@@ -10,13 +10,13 @@ import { AutoWidthCalculator } from "../rendering/autoWidthCalculator";
 import { exists } from "../utils/generic";
 import { ColumnEventDispatcher } from "./columnEventDispatcher";
 import { ColKey, ColumnModel, Maybe } from "./columnModel";
-import { DisplayedColumnsService } from "./displayedColumnsService";
+import { PresentedColsService } from "./presentedColsService";
 
 @Bean('columnAutosizeService')
 export class ColumnAutosizeService extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
+    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
     @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
@@ -126,7 +126,7 @@ export class ColumnAutosizeService extends BeanStub {
             return;
         }
 
-        const allDisplayedColumns = this.displayedColumnsService.getAllDisplayedColumns();
+        const allDisplayedColumns = this.presentedColsService.getAllDisplayedColumns();
         this.autoSizeColumns({ columns: allDisplayedColumns, skipHeader, source });
     }
 

@@ -16,7 +16,7 @@ import { Column } from "../entities/column";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IRowNode, VerticalScrollPosition } from "../interfaces/iRowNode";
 import { getInnerHeight, getScrollLeft, isRtlNegativeScroll, setScrollLeft } from "../utils/dom";
-import { DisplayedColumnsService } from "../columns/displayedColumnsService";
+import { PresentedColsService } from "../columns/presentedColsService";
 
 enum ScrollDirection {
     Vertical,
@@ -37,7 +37,7 @@ export class GridBodyScrollFeature extends BeanStub {
     @Autowired('rowContainerHeightService') private heightScaler: RowContainerHeightService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
+    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
 
     private enableRtl: boolean;
 
@@ -543,7 +543,7 @@ export class GridBodyScrollFeature extends BeanStub {
         if (column.isPinned()) { return; }
 
         // defensive
-        if (!this.displayedColumnsService.isColumnDisplayed(column)) { return; }
+        if (!this.presentedColsService.isColumnDisplayed(column)) { return; }
 
         const newHorizontalScroll: number | null = this.getPositionedHorizontalScroll(column, position);
 
@@ -622,7 +622,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private getColumnBounds(column: Column): { colLeft: number, colMiddle: number, colRight: number } {
         const isRtl = this.enableRtl;
-        const bodyWidth = this.displayedColumnsService.getBodyContainerWidth();
+        const bodyWidth = this.presentedColsService.getBodyContainerWidth();
         const colWidth = column.getActualWidth();
         const colLeft = column.getLeft()!;
         const multiplier = isRtl ? -1 : 1;

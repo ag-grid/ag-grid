@@ -8,7 +8,7 @@ import {
     FocusService,
     _,
     KeyCode,
-    DisplayedColumnsService
+    PresentedColsService
 } from "@ag-grid-community/core";
 
 import { SideBarButtonComp } from "./sideBarButtonComp";
@@ -24,7 +24,7 @@ export class SideBarButtonsComp extends Component {
     private buttonComps: SideBarButtonComp[] = [];
 
     @Autowired('focusService') private focusService: FocusService;
-    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
+    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
 
     constructor() {
         super(SideBarButtonsComp.TEMPLATE);
@@ -38,7 +38,7 @@ export class SideBarButtonsComp extends Component {
     private handleKeyDown(e: KeyboardEvent): void {
         if (e.key !== KeyCode.TAB || !e.shiftKey) { return; }
 
-        const lastColumn = _.last(this.displayedColumnsService.getAllDisplayedColumns());
+        const lastColumn = _.last(this.presentedColsService.getAllDisplayedColumns());
 
         if (this.focusService.focusGridView(lastColumn, true)) {
             e.preventDefault();

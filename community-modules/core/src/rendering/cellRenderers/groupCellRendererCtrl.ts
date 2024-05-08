@@ -1,5 +1,5 @@
 import { ColumnModel } from "../../columns/columnModel";
-import { DisplayedColumnsService } from "../../columns/displayedColumnsService";
+import { PresentedColsService } from "../../columns/presentedColsService";
 import { FunctionColumnsService } from "../../columns/functionColumnsService";
 import { UserCompDetails, UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { KeyCode } from "../../constants/keyCode";
@@ -97,7 +97,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
+    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired("ctrlsService") private ctrlsService: CtrlsService;
     @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
@@ -267,13 +267,13 @@ export class GroupCellRendererCtrl extends BeanStub {
         const bodyCell = !pinnedLeftCell && !pinnedRightCell;
 
         if (this.gos.get('enableRtl')) {
-            if (this.displayedColumnsService.isPinningLeft()) {
+            if (this.presentedColsService.isPinningLeft()) {
                 return !pinnedRightCell;
             }
             return !bodyCell;
         }
 
-        if (this.displayedColumnsService.isPinningLeft()) {
+        if (this.presentedColsService.isPinningLeft()) {
             return !pinnedLeftCell;
         }
 

@@ -44,7 +44,7 @@ import { ColumnAnimationService } from "../rendering/columnAnimationService";
 import { Column } from "../entities/column";
 import { ColumnGetStateService } from "../columns/columnGetStateService";
 import { ColumnGroupStateService } from "../columns/columnGroupStateService";
-import { DisplayedColumnsService } from "../columns/displayedColumnsService";
+import { PresentedColsService } from "../columns/presentedColsService";
 import { PivotResultColsService } from "../columns/pivotResultColsService";
 
 @Bean('stateService')
@@ -54,7 +54,7 @@ export class StateService extends BeanStub {
     @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('displayedColumnsService') private displayedColumnsService: DisplayedColumnsService;
+    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
     @Autowired('columnGroupStateService') private readonly columnGroupStateService: ColumnGroupStateService;
     @Autowired('columnGetStateService') private readonly columnGetStateService: ColumnGetStateService;
     @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
@@ -514,7 +514,7 @@ export class StateService extends BeanStub {
             let startColumn = this.columnModel.getLiveColumn(cellRange.startColId);
             if (!startColumn) {
                 // find the first remaining column
-                const allColumns = this.displayedColumnsService.getAllDisplayedColumns();
+                const allColumns = this.presentedColsService.getAllDisplayedColumns();
                 const columnSet = new Set(columns);
                 startColumn = allColumns.find(column => columnSet.has(column))!;
             }
