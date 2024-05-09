@@ -13,12 +13,12 @@ import { ChartController } from "../../chartController";
 import { ColState } from "../../model/chartDataModel";
 import { ChartOptionsService } from "../../services/chartOptionsService";
 import { DragDataPanel } from "./dragDataPanel";
-import { ChartMenuService } from "../../services/chartMenuService";
+import { ChartService } from "../../../chartService";
 
 export class SeriesDataPanel extends DragDataPanel {
     private static TEMPLATE = /* html */`<div id="seriesGroup"></div>`;
 
-    @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
+    @Autowired('chartService') private readonly chartService: ChartService;
 
     constructor(
         chartController: ChartController,
@@ -57,16 +57,20 @@ export class SeriesDataPanel extends DragDataPanel {
             }));
             this.groupComp.addItem(pairedModeToggle);
         }
-        if (this.chartMenuService.isLegacyFormat()) {
-            this.createLegacySeriesGroup(this.valueCols);
-        } else {
+        if (this.chartService.isEnterprise()) {
             this.createSeriesGroup(this.valueCols);
+        } else {
+            this.createLegacySeriesGroup(this.valueCols);
         }
         this.getGui().appendChild(this.groupComp.getGui());
     }
 
     public refresh(valueCols: ColState[]): void {
-        if (this.chartMenuService.isLegacyFormat()) {
+        if (this.chartService.isEnterprise()) {
+            this.valuePillSelect?.setValueFormatter(this.generateGetSeriesLabel(valueCols));
+            this.valuePillSelect?.setValues(valueCols, valueCols.filter(col => col.selected));
+            this.refreshValueSelect(valueCols);
+        } else {
             const canRefresh = this.refreshColumnComps(valueCols);
             if (canRefresh) {
                 if (this.chartController.isActiveXYChart()) {
@@ -76,13 +80,8 @@ export class SeriesDataPanel extends DragDataPanel {
                         this.columnComps.get(col.colId)!.setLabel(getSeriesLabel(col));
                     });
                 }
-            } else {
                 this.recreate(valueCols);
             }
-        } else {
-            this.valuePillSelect?.setValueFormatter(this.generateGetSeriesLabel(valueCols));
-            this.valuePillSelect?.setValues(valueCols, valueCols.filter(col => col.selected));
-            this.refreshValueSelect(valueCols);
         }
     }
 

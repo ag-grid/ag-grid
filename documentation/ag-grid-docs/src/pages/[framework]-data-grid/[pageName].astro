@@ -13,7 +13,6 @@ import { getFilteredMenuSections } from '@components/pages-navigation/utils/getF
 import { getHeadings } from '@utils/markdoc/getHeadings';
 import { isApiMenuPath } from '@utils/apiMenuPath';
 import styles from '@pages-styles/docs.module.scss';
-import { getIsDev } from '@utils/env';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
@@ -37,52 +36,23 @@ const apiMenuSections: MenuSection[] = getFilteredMenuSections({
 });
 
 const appendSeoToDescription = `Download AG Grid today: The best ${getFrameworkDisplayText(currentFramework)} Data Table in the world.`;
-const description = page.data.description || `${getFirstParagraphText(page.body, currentFramework)} ${appendSeoToDescription}`;
+const description =
+    page.data.description || `${getFirstParagraphText(page.body, currentFramework)} ${appendSeoToDescription}`;
 const isApiPage = isApiMenuPath({
     pageName,
     menuData: menu,
 });
 const menuSections = isApiPage ? apiMenuSections : frameworkMenuSections;
 
-async function renderPage() {
-    try {
-        const { Content } = await page.render();
-
-        const headings = await getHeadings({
-            title,
-            markdocContent: page.body,
-            framework: currentFramework,
-            getTabItemSlug: (id) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`,
-        });
-
-        return {
-            Content,
-            headings,
-        };
-    } catch (error) {
-        return {
-            error,
-        };
-    }
-}
-
-const { error, Content, headings = [] } = await renderPage();
-if (error?.message.includes('Custom Markdoc tags not loaded')) {
-    console.warn(error.message);
-    const currentPath = `/debug/markdoc-custom-tags?redirect=${Astro.url.pathname}`;
-    console.warn(`Redirecting to '${currentPath}', to load Markdoc tags`);
-    return Astro.redirect(currentPath);
-}
+const { Content } = await page.render();
+const headings = await getHeadings({
+    title,
+    pageName,
+    markdocContent: page.body,
+    framework: currentFramework,
+    getTabItemSlug: (id) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`,
+});
 ---
-
-{
-    getIsDev() && (
-        <script>
-            // Remove infinite redirects check since if this page renders, there is no longer a need for the redirect
-            window.sessionStorage.removeItem('markdocCustomTags:redirect');
-        </script>
-    )
-}
 
 <Layout
     title={`${getFrameworkDisplayText(currentFramework)} Grid: ${title} | AG Grid`}

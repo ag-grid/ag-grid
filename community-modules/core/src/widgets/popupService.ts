@@ -1,6 +1,6 @@
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Column } from "../entities/column";
-import { Events } from '../events';
+import { CssVariablesChanged, Events } from '../events';
 import { BeanStub } from "../context/beanStub";
 import { getAbsoluteHeight, getAbsoluteWidth, getElementRectWithOffset } from '../utils/dom';
 import { last } from '../utils/array';
@@ -464,11 +464,7 @@ export class PopupService extends BeanStub {
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing
         const eWrapper = document.createElement('div');
-        const { allThemes } = this.environment.getTheme();
-
-        if (allThemes.length) {
-            eWrapper.classList.add(...allThemes);
-        }
+        this.environment.applyThemeClasses(eWrapper);
 
         eWrapper.classList.add('ag-popup');
         element.classList.add(
@@ -494,20 +490,12 @@ export class PopupService extends BeanStub {
         return eWrapper;
     }
 
-    private handleThemeChange() {
-        const { allThemes } = this.environment.getTheme();
-
-        for (const popup of this.popupList) {
-            for (const className of Array.from(popup.wrapper.classList)) {
-                if (className.startsWith("ag-theme-")) {
-                    popup.wrapper.classList.remove(className)
-                }
-            }
-            if (allThemes.length) {
-                popup.wrapper.classList.add(...allThemes);
+    private handleThemeChange(e: CssVariablesChanged) {
+        if (e.themeChanged) {
+            for (const popup of this.popupList) {
+                this.environment.applyThemeClasses(popup.wrapper);
             }
         }
-
     }
 
     private addEventListenersToPopup(params: AddPopupParams & { wrapperEl: HTMLElement }): (popupParams?: PopupEventParams) => void {

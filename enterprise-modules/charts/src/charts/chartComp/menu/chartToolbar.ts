@@ -1,22 +1,20 @@
 import {
     Autowired,
-    ChartMenuOptions,
+    ChartToolbarMenuItemOptions,
     Component,
     RefSelector,
     _
 } from "@ag-grid-community/core";
-import { ChartMenuService } from "../services/chartMenuService";
 import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
 
 interface ChartToolbarButton {
-    buttonName: ChartMenuOptions;
+    buttonName: ChartToolbarMenuItemOptions;
     iconName: string;
     callback: (eventSource: HTMLElement) => void;
 }
 
 export class ChartToolbar extends Component {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
     @RefSelector("eMenu") private eMenu: HTMLButtonElement;
 
     private buttonListenersDestroyFuncs: ((() => null) | undefined)[] = [];
@@ -65,14 +63,6 @@ export class ChartToolbar extends Component {
         )!;
         buttonEl.classList.add('ag-chart-menu-icon');
 
-        if (!this.chartMenuService.isLegacyFormat()) {
-            buttonEl = this.wrapButton(buttonEl);
-        }
-
-        return buttonEl;
-    }
-
-    private wrapButton(buttonEl: Element): HTMLElement {
         const wrapperEl = this.gos.getDocument().createElement('button');
         wrapperEl.appendChild(buttonEl);
         wrapperEl.classList.add('ag-chart-menu-toolbar-button');

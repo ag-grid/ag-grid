@@ -10,7 +10,6 @@ import {
 } from '../../css-helpers';
 import { definePart } from '../../theme-utils';
 import { coreCSS } from './GENERATED-core';
-import indent from './indent';
 
 const coreDefaults = {
     backgroundColor: '#FFF',
@@ -119,6 +118,7 @@ const coreDefaults = {
     menuSeparatorColor: ref('borderColor'),
     setFilterIndentSize: ref('iconSize'),
     chartMenuButtonBorder: true,
+    chartMenuPanelWidth: '260px',
     iconButtonHoverColor: transparentForeground(0.1),
     dialogShadow: ref('popupShadow'),
     dialogBorder: foregroundBorder(0.2),
@@ -150,7 +150,7 @@ export const corePart = definePart({
     partId: 'core',
     variantId: 'part',
     additionalParams: coreDefaults,
-    css: [coreCSS, indent],
+    css: [coreCSS],
 });
 
 export type CoreParam = keyof typeof coreDefaults;

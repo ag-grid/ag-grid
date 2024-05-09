@@ -46,14 +46,11 @@
 
 .ag-chart-docked-container {
     position: relative;
-    width: 0;
-    min-width: 0;
-    transition: min-width 0.4s;
+    min-width: var(--ag-chart-menu-panel-width);
 }
 
 .ag-chart-menu-hidden ~ .ag-chart-docked-container {
-    max-width: 0;
-    overflow: hidden;
+    display: none;
 }
 
 .ag-chart-tabbed-menu {
@@ -263,7 +260,6 @@
 }
 
 .ag-chart {
-    .ag-chart-tool-panel-button-enable,
     .ag-chart-menu-wrapper {
         .ag-chart-menu {
             display: flex;
@@ -275,56 +271,6 @@
             justify-content: right;
         }
     }
-}
-
-.ag-chart-menu-close {
-    display: none;
-}
-
-.ag-chart-tool-panel-button-enable {
-    .ag-chart-menu-close {
-        position: absolute;
-        top: 50%;
-        transition: transform 0.33s ease-in-out;
-        padding: 14px 5px 14px 2px;
-        display: block;
-        cursor: pointer;
-        right: 0px;
-        background-color: var(--ag-background-color);
-        border-top: var(--ag-chart-menu-button-border);
-        border-left: var(--ag-chart-menu-button-border);
-        border-bottom: var(--ag-chart-menu-button-border);
-
-        &:before {
-            content: '';
-            position: absolute;
-            top: -40px;
-            bottom: -40px;
-            right: 0px;
-            left: -10px;
-        }
-
-        &:hover {
-            background-image: linear-gradient(var(--ag-icon-button-hover-color), var(--ag-icon-button-hover-color));
-        }
-    }
-
-    /* Hide burger menu */
-    .ag-icon-menu {
-        display: none;
-    }
-}
-
-/* TODO these are split out like this because RTLCSS doesnt' work with nesting,
-when that's fixed, nest them in the above block */
-.ag-chart-tool-panel-button-enable .ag-chart-menu-close {
-    transform: translate(3px, -50%);
-}
-.ag-chart-tool-panel-button-enable .ag-chart-menu-close:hover {
-    transform: translate(0, -50%);
-}
-.ag-chart-menu-visible .ag-chart-tool-panel-button-enable .ag-chart-menu-close:hover {
-    transform: translate(5px, -50%);
 }
 
 .ag-charts-font-size-color {

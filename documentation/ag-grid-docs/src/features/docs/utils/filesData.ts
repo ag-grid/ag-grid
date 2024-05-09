@@ -1,4 +1,4 @@
-import type { ImportType, InternalFramework } from '@ag-grid-types';
+import type { InternalFramework } from '@ag-grid-types';
 import {
     type DocsPage,
     type InternalFrameworkExample,
@@ -29,9 +29,15 @@ function ignoreUnderscoreFiles(page: DocsPage) {
     return pageName && !pageName.startsWith('_');
 }
 
-export const getExamplesPath = ({ pageName }: { pageName: string }) => {
+export const getPagePath = ({ pageName }: { pageName: string }) => {
     const contentRoot = getContentRootFileUrl();
-    const sourceExamplesPath = path.join(contentRoot.pathname, 'docs', pageName, '_examples');
+    const sourceExamplesPath = path.join(contentRoot.pathname, 'docs', pageName);
+
+    return sourceExamplesPath;
+};
+
+export const getExamplesPath = ({ pageName }: { pageName: string }) => {
+    const sourceExamplesPath = path.join(getPagePath({ pageName }), '_examples');
 
     return sourceExamplesPath;
 };
@@ -58,7 +64,6 @@ export const getInternalFrameworkExamples = async ({
         const examples = await getFolders(docsExamplesPath);
 
         const exampleDirs = examples.flatMap(async (exampleName) => {
-
             //const exampleDir = existsSync(path.join(docsExamplesPath, exampleName, 'exampleConfig.json'));
             const exampleDir = await readdir(path.join(docsExamplesPath, exampleName));
             const hasExampleConfig = exampleDir.includes('exampleConfig.json');
@@ -70,15 +75,17 @@ export const getInternalFrameworkExamples = async ({
                     'utf-8'
                 );
                 const exampleConfigJson = JSON.parse(exampleConfig);
-                supportedFrameworks = exampleConfigJson.supportedFrameworks ? new Set(exampleConfigJson.supportedFrameworks) : undefined;
+                supportedFrameworks = exampleConfigJson.supportedFrameworks
+                    ? new Set(exampleConfigJson.supportedFrameworks)
+                    : undefined;
             }
 
-            return (INTERNAL_FRAMEWORKS).map((internalFramework) => {
+            return INTERNAL_FRAMEWORKS.map((internalFramework) => {
                 return {
                     internalFramework,
                     pageName,
                     exampleName,
-                    supportedFrameworks
+                    supportedFrameworks,
                 };
             });
         });

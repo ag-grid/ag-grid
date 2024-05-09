@@ -211,7 +211,7 @@
         "date": "March 21st 2023",
         "highlights": [
             {
-                "text": "Header Checkbox and Croup Selection when Using Server-Side Row Model",
+                "text": "Header Checkbox and Group Selection when Using Server-Side Row Model",
                 "path": "./server-side-model-selection/#header-checkbox-selection"
             },
             {

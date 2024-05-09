@@ -8,7 +8,6 @@ import { getFrameworkDisplayText } from '@utils/framework';
 import { getNewFrameworkPath } from '@utils/framework';
 import { getMenuItemFromPageName } from '@utils/getMenuItemFromPageName';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
-import classnames from 'classnames';
 import { useMemo } from 'react';
 
 import styles from './FrameworkSelectorInsideDocs.module.scss';
@@ -58,8 +57,6 @@ export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems 
 
         window.location.href = newUrl;
     };
-
-    const currentFrameworkLogo = currentFramework ? fwLogos[currentFramework] : null;
 
     return (
         currentFramework && (

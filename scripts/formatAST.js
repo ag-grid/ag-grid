@@ -69,7 +69,7 @@ function getJsDoc(ts) {
  * Convert AST node to string representation used to record type in a JSON file
  * @param {*} node 
  * @param {*} paramNameOnly - At the top level we only want the parameter name to be returned. But there are some interfaces
- * that are recursively defined, i.e HardCodedSize and so we need to return the param and type for the inner case.
+ * that are recursively defined and so we need to return the param and type for the inner case.
  *
  * ******* Written for Typescript Version 3.6.5 ********
  */

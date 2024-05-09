@@ -652,11 +652,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
-    /** Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons. Only applies when using AG Charts Community.
-         * @default false
-         * @initial
-         */
-    @Input() public suppressChartToolPanelsButton: boolean | undefined = undefined;
     /** Allows customisation of the Chart Tool Panels, such as changing the tool panels visibility and order, as well as choosing which charts should be displayed in the chart panel.
          * @initial
          */
@@ -1926,7 +1921,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressClipboardPaste: boolean | null | '';
     static ngAcceptInputType_suppressLastEmptyLineOnPaste: boolean | null | '';
     static ngAcceptInputType_enableCharts: boolean | null | '';
-    static ngAcceptInputType_suppressChartToolPanelsButton: boolean | null | '';
     static ngAcceptInputType_suppressMaintainUnsortedOrder: boolean | null | '';
     static ngAcceptInputType_enableCellTextSelection: boolean | null | '';
     static ngAcceptInputType_suppressBrowserResizeObserver: boolean | null | '';

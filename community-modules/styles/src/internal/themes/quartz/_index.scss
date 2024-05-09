@@ -384,8 +384,7 @@
     .ag-floating-filter-button-button,
     .ag-filter-toolpanel-expand,
     .ag-panel-title-bar-button-icon,
-    .ag-chart-menu-icon,
-    .ag-chart-menu-close {
+    .ag-chart-menu-icon {
         --ag-quartz-icon-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
         
         &:hover {
@@ -420,12 +419,6 @@
         }
     }
 
-    .ag-chart-menu-close {
-        // use an opaque hover effect because we don't know what colour we're,
-        // overlaying on top of, the user might have set a custom
-        --ag-quartz-icon-hover-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 10%);
-    }
-
     .ag-chart-menu {
         --ag-icon-size: 20px;
         background-color: color-mix(in srgb, transparent, var(--ag-background-color) 30%);
@@ -438,19 +431,6 @@
 
     .ag-drag-handle {
         color: var(--ag-icon-font-color);
-    }
-
-    .ag-chart-menu-close {
-        background: var(--ag-background-color);
-    }
-
-    .ag-chart-menu-close .ag-icon {
-        border: 1px solid var(--ag-border-color);
-        @include ag.theme-rtl((border-right: none));
-    }
-
-    .ag-chart-docked-container {
-        min-width: 260px;
     }
 
     .ag-menu-option-icon, .ag-compact-menu-option-icon {

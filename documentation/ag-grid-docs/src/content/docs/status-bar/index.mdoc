@@ -84,10 +84,10 @@ Applications that are using [Server-side Data](./row-models/) or which require b
 
 {% gridExampleRunner title="Custom Panels" name="custom-component" /%}
 
-{% includeMarkdoc file="status-bar/_component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="status-bar/_component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="status-bar/_component-interface-react.mdoc" /%}
-{% includeMarkdoc file="status-bar/_component-interface-vue.mdoc" /%}
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-react.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="IStatusPanelParams" /%}
@@ -105,17 +105,17 @@ If you do not enable the grid option `reactiveCustomComponents`, it is still pos
 
 Custom Panels are configured alongside Provided Panels.
 
-{% includeMarkdoc file="status-bar/_configure-javascript.mdoc" /%}
-{% includeMarkdoc file="status-bar/_configure-angular.mdoc" /%}
-{% includeMarkdoc file="status-bar/_configure-react.mdoc" /%}
-{% includeMarkdoc file="status-bar/_configure-vue.mdoc" /%}
+{% partial file="./_configure-javascript.mdoc" /%}
+{% partial file="./_configure-angular.mdoc" /%}
+{% partial file="./_configure-react.mdoc" /%}
+{% partial file="./_configure-vue.mdoc" /%}
 
 Custom Panels can listen to grid events to react to grid changes. An easy way to listen to grid events from inside a Status Panel is using the API provided via `props`.
 
-{% includeMarkdoc file="status-bar/_init-javascript.mdoc" /%}
-{% includeMarkdoc file="status-bar/_init-angular.mdoc" /%}
-{% includeMarkdoc file="status-bar/_init-react.mdoc" /%}
-{% includeMarkdoc file="status-bar/_init-vue.mdoc" /%}
+{% partial file="./_init-javascript.mdoc" /%}
+{% partial file="./_init-angular.mdoc" /%}
+{% partial file="./_init-react.mdoc" /%}
+{% partial file="./_init-vue.mdoc" /%}
 
 ## Accessing Instances
 

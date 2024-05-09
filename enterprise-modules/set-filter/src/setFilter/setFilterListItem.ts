@@ -135,6 +135,7 @@ export class SetFilterListItem<V> extends Component {
         if (this.isTree) {
             if (this.depth > 0) {
                 this.addCssClass('ag-set-filter-indent-' + this.depth);
+                this.getGui().style.setProperty('--ag-indentation-level', String(this.depth));
             }
             if (this.isGroup) {
                 this.setupExpansion();

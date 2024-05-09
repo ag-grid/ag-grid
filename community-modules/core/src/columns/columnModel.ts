@@ -2457,7 +2457,7 @@ export class ColumnModel extends BeanStub {
         }
 
         // if width provided and valid, use it, otherwise stick with the old width
-        const minColWidth = column.getColDef().minWidth ?? this.environment.getMinColWidth();
+        const minColWidth = column.getColDef().minWidth ?? Column.DEFAULT_MIN_WIDTH;
 
         // flex
         const flex = getValue('flex').value1;
@@ -4145,7 +4145,7 @@ export class ColumnModel extends BeanStub {
     }
 
     public getHeaderHeight(): number {
-        return this.gos.get('headerHeight') ?? this.environment.getFromTheme(25, 'headerHeight');
+        return this.gos.get('headerHeight') ?? this.environment.getDefaultHeaderHeight();
     }
     public getFloatingFiltersHeight(): number {
         return this.gos.get('floatingFiltersHeight') ?? this.getHeaderHeight();

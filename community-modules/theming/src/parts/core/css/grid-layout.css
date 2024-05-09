@@ -2,17 +2,6 @@
     text-align: right;
 }
 
-.ag-row > .ag-cell-wrapper.ag-row-group {
-    border: solid 1px blue;
-    padding-left: calc(
-        var(--ag-cell-horizontal-padding) + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
-    );
-}
-
-.ag-cell-wrapper.ag-row-group {
-    padding-left: calc(var(--ag-indentation-level) * var(--ag-row-group-indent-size));
-}
-
 .ag-pivot-leaf-group {
     margin-left: var(--ag-row-group-indent-size);
 }
@@ -105,6 +94,7 @@
 .ag-cell-wrapper {
     display: flex;
     align-items: center;
+    padding-left: calc(var(--ag-indentation-level) * var(--ag-row-group-indent-size));
 
     &.ag-row-group {
         align-items: flex-start;
@@ -117,6 +107,12 @@
         display: flex;
         align-items: center;
     }
+}
+
+.ag-row > .ag-cell-wrapper.ag-row-group {
+    padding-left: calc(
+        var(--ag-cell-horizontal-padding) + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
+    );
 }
 
 .ag-row-drag,

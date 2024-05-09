@@ -13,9 +13,9 @@ import {
     PostConstruct,
     _
 } from "@ag-grid-community/core";
+import { ChartService } from "../../../chartService";
 import { ChartController } from "../../chartController";
 import { ChartDataModel, ColState } from "../../model/chartDataModel";
-import { ChartMenuService } from "../../services/chartMenuService";
 import { DragDataPanel } from "./dragDataPanel";
 
 type AggFuncPreset = 'count' | 'sum' | 'min' | 'max' | 'avg' | 'first' | 'last';
@@ -25,7 +25,7 @@ const DEFAULT_AGG_FUNC: AggFuncPreset = 'sum'
 export class CategoriesDataPanel extends DragDataPanel {
     private static TEMPLATE = /* html */`<div id="categoriesGroup"></div>`;
 
-    @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
+    @Autowired('chartService') private readonly chartService: ChartService;
 
     private aggFuncToggle?: AgToggleButton;
     private aggFuncSelect?: AgSelect;
@@ -52,25 +52,25 @@ export class CategoriesDataPanel extends DragDataPanel {
             cssIdentifier: 'charts-data',
             expanded: this.isOpen
         }));
-        if (this.chartMenuService.isLegacyFormat()) {
-            this.createLegacyCategoriesGroup(this.dimensionCols);
-            this.clearAggFuncControls();
-        } else {
+        if (this.chartService.isEnterprise()) {
             this.createCategoriesGroup(this.dimensionCols);
             this.createAggFuncControls(this.dimensionCols);
+        } else {
+            this.createLegacyCategoriesGroup(this.dimensionCols);
+            this.clearAggFuncControls();
         }
         this.getGui().appendChild(this.groupComp.getGui());
     }
 
     public refresh(dimensionCols: ColState[]): void {
-        if (this.chartMenuService.isLegacyFormat()) {
-            if (!this.refreshColumnComps(dimensionCols)) {
-                this.recreate(dimensionCols);
-            }
-        } else {
+        if (this.chartService.isEnterprise()) {
             this.valuePillSelect?.setValues(dimensionCols, dimensionCols.filter(col => col.selected));
             this.refreshValueSelect(dimensionCols);
             this.refreshAggFuncControls(dimensionCols, this.chartController.getAggFunc());
+        } else {
+            if (!this.refreshColumnComps(dimensionCols)) {
+                this.recreate(dimensionCols);
+            }
         }
     }
 

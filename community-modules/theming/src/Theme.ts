@@ -226,13 +226,16 @@ export class Theme {
     }
 
     private makeVariablesChunk(): ThemeCssChunk {
-        // render variable defaults using :where(:root) to ensure lowest specificity so that
-        // `html { --ag-foreground-color: red; }` will override this
-        let css = '.ag-theme-custom {\n';
-        for (const [name, rendered] of Object.entries(this.getRenderedParams())) {
-            css += `\t${paramToVariableName(name)}: ${rendered};\n`;
+        let variablesCss = '';
+        let inheritanceCss = '';
+        for (const [name, defaultValue] of Object.entries(this.getRenderedParams())) {
+            const variable = paramToVariableName(name);
+            const inheritedVariable = variable.replace('--ag-', '--ag-inherited-');
+            variablesCss += `\t${variable}: var(${inheritedVariable}, ${defaultValue});\n`;
+            inheritanceCss += `\t${inheritedVariable}: var(${variable});\n`;
         }
-        css += '}\n';
+        let css = `.ag-root-wrapper, .ag-measurement-container {\n${variablesCss}}\n`;
+        css += `:has(> .ag-root-wrapper) {\n${inheritanceCss}}\n`;
         return {
             css,
             id: 'variables',

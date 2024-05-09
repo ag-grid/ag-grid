@@ -91,13 +91,6 @@ export class TitleEdit extends Component {
     }
 
     private startEditing(titleBBox: BBox, canvasWidth: number): void {
-        if (this.chartMenuService.isLegacyFormat() && this.chartMenu && this.chartMenu.isVisible()) {
-            // currently, we ignore requests to edit the chart title while the chart menu is showing
-            // because the click to edit the chart will also close the chart menu, making the position
-            // of the title change.
-            return;
-        }
-
         if (this.editing) {
             return;
         }

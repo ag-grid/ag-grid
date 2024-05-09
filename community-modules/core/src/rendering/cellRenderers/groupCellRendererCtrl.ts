@@ -690,6 +690,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         this.indentClass = 'ag-row-group-indent-' + paddingCount;
         this.comp.addOrRemoveCssClass(this.indentClass, true);
+        this.eGui.style.setProperty('--ag-indentation-level', String(paddingCount));
     }
 
     private addFullWidthRowDraggerIfNeeded(): void {

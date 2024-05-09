@@ -1,5 +1,5 @@
 import {
-  ChartMenuOptions,
+  ChartToolbarMenuItemOptions,
   ChartType,
   ColDef,
   createGrid,
@@ -71,7 +71,7 @@ const gridOptions: GridOptions = {
     enableCharts: true,
     suppressAggFuncInHeader: true,
     getRowId: (params: GetRowIdParams) => params.data.trade,
-    getChartToolbarItems: (): ChartMenuOptions[] => [],
+    getChartToolbarItems: (): ChartToolbarMenuItemOptions[] => [],
     onFirstDataRendered,
 }
 

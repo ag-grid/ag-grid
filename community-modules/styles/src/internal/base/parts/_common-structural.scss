@@ -33,10 +33,6 @@
         visibility: hidden !important;
     }
 
-    .ag-no-transition {
-        transition: none !important;
-    }
-
     .ag-drag-handle {
         cursor: grab;
     }
@@ -1773,21 +1769,6 @@
 
     .ag-recent-color {
         cursor: pointer;
-    }
-
-    // Default values for themes that do not use the mixins
-    @for $i from 1 to 10 {
-        .ag-column-select-indent-#{$i} {
-            @include ag.unthemed-rtl(( padding-left: $i * 20px ));
-        }
-
-        .ag-set-filter-indent-#{$i} {
-            @include ag.unthemed-rtl(( padding-left: $i * 20px ));
-        }
-
-        .ag-row-group-indent-#{$i} {
-            @include ag.unthemed-rtl(( padding-left: $i * 20px ));
-        }
     }
 
     .ag-pill-select {

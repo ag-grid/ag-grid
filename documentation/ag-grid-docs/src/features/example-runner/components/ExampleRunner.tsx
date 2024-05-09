@@ -11,6 +11,7 @@ import styles from './ExampleRunner.module.scss';
 
 interface Props {
     id: string;
+    title: string;
     exampleUrl?: string;
     exampleRunnerExampleUrl?: string;
     externalLinks?: ReactElement;
@@ -28,6 +29,7 @@ const DEFAULT_HEIGHT = 500;
 
 export const ExampleRunner: FunctionComponent<Props> = ({
     id,
+    title,
     exampleUrl,
     exampleRunnerExampleUrl,
     externalLinks,
@@ -53,6 +55,7 @@ export const ExampleRunner: FunctionComponent<Props> = ({
                     style={{ height: exampleHeight, width: '100%' }}
                 >
                     <ExampleIFrame
+                        title={title}
                         isHidden={showCode}
                         url={exampleRunnerExampleUrl!}
                         loadingIFrameId={loadingIFrameId}

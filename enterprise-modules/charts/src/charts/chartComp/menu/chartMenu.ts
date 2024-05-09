@@ -4,7 +4,7 @@ import {
     AgPromise,
     Autowired,
     ChartCreated,
-    ChartMenuOptions,
+    ChartToolbarMenuItemOptions,
     ChartToolPanelMenuOptions,
     Component,
     Events,
@@ -20,7 +20,7 @@ import { ChartMenuService } from "../services/chartMenuService";
 import { ChartMenuContext } from "./chartMenuContext";
 
 type ChartToolbarButtons = {
-    [key in ChartMenuOptions]: {
+    [key in ChartToolbarMenuItemOptions]: {
         iconName: string, callback: (eventSource: HTMLElement) => void
     }
 };
@@ -32,9 +32,6 @@ export class ChartMenu extends Component {
     private readonly chartController: ChartController;
 
     private buttons: ChartToolbarButtons = {
-        chartSettings: { iconName: 'menu', callback: () => this.showMenu({ panel: this.defaultPanel }) },
-        chartData: { iconName: 'menu', callback: () => this.showMenu({ panel: "chartData" }) },
-        chartFormat: { iconName: 'menu', callback: () => this.showMenu({ panel: "chartFormat" }) },
         chartLink: { iconName: 'linked', callback: () => this.chartMenuService.toggleLinked(this.chartMenuContext) },
         chartUnlink: { iconName: 'unlinked', callback: () => this.chartMenuService.toggleLinked(this.chartMenuContext) },
         chartDownload: { iconName: 'save', callback: () => this.chartMenuService.downloadChart(this.chartMenuContext) },
@@ -44,16 +41,13 @@ export class ChartMenu extends Component {
     private panels: ChartToolPanelMenuOptions[] = [];
     private defaultPanel: ChartToolPanelMenuOptions;
 
-    private static TEMPLATE = /* html */ `<div></div>`;
+    private static TEMPLATE = /* html */ `<div class="ag-chart-menu-wrapper"></div>`;
 
-    private eHideButton: HTMLButtonElement;
-    private eHideButtonIcon: HTMLSpanElement;
     private chartToolbar: ChartToolbar;
     private tabbedMenu: TabbedChartMenu;
     private menuPanel?: AgPanel;
     private menuVisible = false;
-    private chartToolbarOptions: ChartMenuOptions[];
-    private legacyFormat: boolean;
+    private chartToolbarOptions: ChartToolbarMenuItemOptions[];
 
     constructor(
         private readonly eChartContainer: HTMLElement,
@@ -66,13 +60,8 @@ export class ChartMenu extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.legacyFormat = this.chartMenuService.isLegacyFormat();
-
         this.chartToolbar = this.createManagedBean(new ChartToolbar());
         this.getGui().appendChild(this.chartToolbar.getGui());
-        if (this.legacyFormat) {
-            this.createLegacyToggleButton();
-        }
         
         this.refreshToolbarAndPanels();
 
@@ -80,23 +69,13 @@ export class ChartMenu extends Component {
             if (e.chartId === this.chartController.getChartId()) {
                 const showDefaultToolPanel = Boolean(this.gos.get('chartToolPanelsDef')?.defaultToolPanel);
                 if (showDefaultToolPanel) {
-                    this.showMenu({ panel: this.defaultPanel, animate: false, suppressFocus: true });
+                    this.showMenu({ panel: this.defaultPanel, suppressFocus: true });
                 }
             }
         });
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_LINKED_CHANGED, this.refreshToolbarAndPanels.bind(this));
 
         this.refreshMenuClasses();
-
-        if (this.legacyFormat && !this.gos.get('suppressChartToolPanelsButton') && this.panels.length > 0) {
-            this.getGui().classList.add('ag-chart-tool-panel-button-enable');
-            if (this.eHideButton) {
-                this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
-            }
-        }
-        if (!this.legacyFormat) {
-            this.getGui().classList.add('ag-chart-menu-wrapper');
-        }
 
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.refreshToolbarAndPanels.bind(this));
     }
@@ -106,29 +85,11 @@ export class ChartMenu extends Component {
     }
 
     public getExtraPaddingDirections(): ExtraPaddingDirection[]  {
-        const topItems: ChartMenuOptions[] = ['chartMenu', 'chartLink', 'chartUnlink', 'chartDownload'];
-        const rightItems: ChartMenuOptions[] = ['chartSettings', 'chartData', 'chartFormat'];
-
-        const result: ExtraPaddingDirection[] = [];
-        if (topItems.some(v => this.chartToolbarOptions.includes(v))) {
-            result.push('top');
-        }
-
-        if (rightItems.some(v => this.chartToolbarOptions.includes(v))) {
-            result.push(this.gos.get('enableRtl') ? 'left' : 'right');
-        }
-
-        return result;
-    }
-
-    private createLegacyToggleButton(): void {
-        const eDocument = this.gos.getDocument();
-        this.eHideButton = eDocument.createElement('button');
-        this.eHideButton.classList.add('ag-button', 'ag-chart-menu-close');
-        this.eHideButtonIcon = eDocument.createElement('span');
-        this.eHideButtonIcon.classList.add('ag-icon', 'ag-icon-contracted');
-        this.eHideButton.appendChild(this.eHideButtonIcon);
-        this.getGui().appendChild(this.eHideButton);
+        return ([
+            'chartMenu', 'chartLink', 'chartUnlink', 'chartDownload'
+        ] as const).some(v => this.chartToolbarOptions.includes(v))
+            ? ['top']
+            : [];
     }
 
     private refreshToolbarAndPanels(): void {
@@ -139,12 +100,11 @@ export class ChartMenu extends Component {
     private initToolbarOptionsAndPanels(): void {
         const {
             panels,
-            defaultPanel,
-            chartToolbarOptions
-        } = this.chartMenuService.getToolbarOptionsAndPanels(this.chartController);
+            defaultPanel
+        } = this.chartMenuService.getChartToolPanels(this.chartController);
         this.panels = panels;
         this.defaultPanel = defaultPanel;
-        this.chartToolbarOptions = chartToolbarOptions;
+        this.chartToolbarOptions = this.chartMenuService.getChartToolbarOptions();
     }
 
     private updateToolbar(): void {
@@ -160,7 +120,7 @@ export class ChartMenu extends Component {
     }
 
     private createMenuPanel(defaultTab: number): AgPromise<AgPanel> {
-        const width = this.environment.chartMenuPanelWidth();
+        const width = this.environment.getDefaultChartMenuPanelWidth();
 
         const menuPanel = this.menuPanel = this.createBean(new AgPanel({
             minWidth: width,
@@ -180,7 +140,7 @@ export class ChartMenu extends Component {
         ));
 
         this.addManagedListener(this.tabbedMenu, TabbedChartMenu.EVENT_CLOSED, () => {
-            this.hideMenu(false);
+            this.hideMenu();
         });
 
         this.addManagedListener(
@@ -194,21 +154,6 @@ export class ChartMenu extends Component {
                 menuPanel.setBodyComponent(this.tabbedMenu);
                 this.tabbedMenu.showTab(defaultTab);
                 res(menuPanel);
-                if (this.legacyFormat) {
-                    this.addManagedListener(
-                        this.eChartContainer,
-                        'click',
-                        (event: MouseEvent) => {
-                            if (this.getGui().contains(event.target as HTMLElement)) {
-                                return;
-                            }
-
-                            if (this.menuVisible) {
-                                this.hideMenu();
-                            }
-                        }
-                    );
-                }
             }, 100);
         });
     }
@@ -217,31 +162,19 @@ export class ChartMenu extends Component {
         if (!this.menuPanel) { return; }
 
         this.menuVisible = true;
-        this.showParent(this.menuPanel.getWidth()!);
         this.refreshMenuClasses();
         this.tabbedMenu.showMenu(eventSource, suppressFocus);
     }
 
-    private toggleMenu() {
-        this.menuVisible ? this.hideMenu(this.legacyFormat) : this.showMenu({ animate: this.legacyFormat });
-    }
-
-    public showMenu(params: {
+    public showMenu(params?: {
         /**
          * Menu panel to show. If empty, shows the existing menu, or creates the default menu if menu panel has not been created
          */
         panel?: ChartToolPanelMenuOptions,
-        /**
-         * Whether to animate the menu opening
-         */
-        animate?: boolean,
         eventSource?: HTMLElement,
         suppressFocus?: boolean
     }): void {
-        const { panel, animate = true, eventSource, suppressFocus } = params;
-        if (!animate) {
-            this.eMenuPanelContainer.classList.add('ag-no-transition');
-        }
+        const { panel, eventSource, suppressFocus } = params ?? {};
 
         if (this.menuPanel && !panel) {
             this.showContainer(eventSource, suppressFocus);
@@ -260,54 +193,22 @@ export class ChartMenu extends Component {
                 this.createMenuPanel(tab).then(() => this.showContainer(eventSource, suppressFocus));
             }
         }
-
-
-        if (!animate) {
-            // Wait for menu to render
-            setTimeout(() => {
-                if (!this.isAlive()) { return; }
-                this.eMenuPanelContainer.classList.remove('ag-no-transition');
-            }, 500);
-        }
     }
 
-    public hideMenu(animate: boolean = true): void {
-        if (!animate) {
-            this.eMenuPanelContainer.classList.add('ag-no-transition');
-        }
-        this.hideParent();
-
-        window.setTimeout(() => {
-            this.menuVisible = false;
-            this.refreshMenuClasses();
-            if (!animate) {
-                this.eMenuPanelContainer.classList.remove('ag-no-transition');
-            }
-        }, 500);
+    public hideMenu(): void {
+        this.menuVisible = false;
+        this.refreshMenuClasses();
     }
 
     private refreshMenuClasses() {
         this.eChartContainer.classList.toggle('ag-chart-menu-visible', this.menuVisible);
         this.eChartContainer.classList.toggle('ag-chart-menu-hidden', !this.menuVisible);
-
-        if (this.legacyFormat && !this.gos.get('suppressChartToolPanelsButton')) {
-            this.eHideButtonIcon.classList.toggle('ag-icon-contracted', this.menuVisible);
-            this.eHideButtonIcon.classList.toggle('ag-icon-expanded', !this.menuVisible);
-        }
-    }
-
-    private showParent(width: number): void {
-        this.eMenuPanelContainer.style.minWidth = `${width}px`;
-    }
-
-    private hideParent(): void {
-        this.eMenuPanelContainer.style.minWidth = '0';
     }
 
     private showMenuList(eventSource: HTMLElement): void {
         this.chartMenuListFactory.showMenuList({
             eventSource,
-            showMenu: () => this.showMenu({ animate: false, eventSource }),
+            showMenu: () => this.showMenu({ eventSource }),
             chartMenuContext: this.chartMenuContext
         });
     }
