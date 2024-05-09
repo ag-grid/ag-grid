@@ -21,10 +21,6 @@ export const AgGridVue = defineComponent({
             type: Object as PropType<GridOptions>,
             default: () => ({} as GridOptions),
         },
-        autoParamsRefresh: {
-            type: Boolean,
-            default: () => false,
-        },
         componentDependencies: {
             type: Array as PropType<String[]>,
             default: () => [],
