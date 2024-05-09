@@ -104,8 +104,8 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
             return {
                 ...deepMerge({}, primaryOpts),
                 radiusKey: angleKey + '-filtered-out',
-                fills: changeOpacity(seriesOptions.fills ?? palette!.fills, 0.3),
-                strokes: changeOpacity(seriesOptions.strokes ?? palette!.strokes, 0.3),
+                fills: changeOpacity(seriesOptions.fills ?? palette?.fills ?? [], 0.3),
+                strokes: changeOpacity(seriesOptions.strokes ?? palette?.strokes ?? [], 0.3),
                 showInLegend: false,
             };
         }
