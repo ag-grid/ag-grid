@@ -96,8 +96,8 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
         };
 
         const updatePrimarySeries = <T extends AgScatterSeriesOptions | AgBubbleSeriesOptions>(series: T, idx: number): T => {
-            const fill = palette?.fills[idx];
-            const stroke = palette?.strokes[idx];
+            const fill = palette?.fills?.[idx];
+            const stroke = palette?.strokes?.[idx];
             
             let markerDomain: [number, number] | undefined = undefined;
             if (series.type === 'bubble') {

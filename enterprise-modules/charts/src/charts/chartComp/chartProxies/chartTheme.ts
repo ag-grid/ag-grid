@@ -81,10 +81,11 @@ export function createAgChartTheme(
 }
 
 function isIdenticalPalette(paletteA: AgChartThemePalette, paletteB: AgChartThemePalette) {
-    const arrayCompare = (arrA: any[], arrB: any[]) => {
-        if (arrA.length !== arrB.length) return false;
+    const arrayCompare = (arrA?: any[], arrB?: any[]) => {
+        if (arrA === arrB) return true;
+        if (arrA?.length !== arrB?.length) return false;
 
-        return arrA.every((v: any, i) => v === arrB[i]);
+        return arrA?.every((v: any, i) => v === arrB?.[i]) ?? false;
     };
 
     return arrayCompare(paletteA.fills, paletteB.fills) &&
