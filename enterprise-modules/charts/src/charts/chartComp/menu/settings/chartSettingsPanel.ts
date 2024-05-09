@@ -100,7 +100,7 @@ export class ChartSettingsPanel extends Component {
 
         this.palettes.forEach((palette, index) => {
             const isActivePalette = this.activePaletteIndex === index;
-            const { fills, strokes } = palette;
+            const { fills = [], strokes = [] } = palette;
             const themeName = themes[index];
             const isCustomTheme = !isStockTheme(themeName);
             const miniChartsContainer = this.createBean(

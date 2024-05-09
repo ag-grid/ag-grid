@@ -59,8 +59,8 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
             return {
                 ...seriesOptions,
                 highlightStyle: { item: { fill: undefined } },
-                fill: palette?.fills[index],
-                stroke: palette?.strokes[index],
+                fill: palette?.fills?.[index],
+                stroke: palette?.strokes?.[index],
                 listeners: {
                     nodeClick: this.crossFilterCallback
                 }
