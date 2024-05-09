@@ -78,7 +78,7 @@ export class StatusBar extends Component {
                     if (hasRefreshed) {
                         existingStatusPanelsToReuse.set(key, existingStatusPanel);
                         delete this.compDestroyFunctions[key];
-                        _.removeFromParent(existingStatusPanel.getGui());
+                        _removeFromParent(existingStatusPanel.getGui());
                     }
                 }
             });

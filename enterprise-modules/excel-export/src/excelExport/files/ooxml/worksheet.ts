@@ -198,7 +198,7 @@ const replaceHeaderFooterTokens = (value: string): string => {
         '&[Picture]': '&G'
     };
 
-    _.iterateObject<string>(map, (key, val) => {
+    _iterateObject<string>(map, (key, val) => {
         value = value.replace(key, val);
     });
 
@@ -253,7 +253,7 @@ const processHeaderFooterContent = (content: ExcelHeaderFooterContent[], locatio
             ExcelXlsxFactory.addHeaderFooterImageToMap(image, imagePosition);
         }
 
-        return `${output}${_.escapeString(replaceHeaderFooterTokens(curr.value))}`;
+        return `${output}${_escapeString(replaceHeaderFooterTokens(curr.value))}`;
     }, '');
 
 const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElement[] => {
@@ -430,7 +430,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
         const { worksheetDataTables } = ExcelXlsxFactory;
         const worksheetExcelTables = worksheetDataTables.get(currentSheet);
 
-        const createWorksheetChildren = _.compose<ComposedWorksheetParams>(
+        const createWorksheetChildren = _compose<ComposedWorksheetParams>(
             addSheetPr(),
             addSheetFormatPr(rows),
             addColumns(columns),

@@ -42,8 +42,8 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
         const { wrapperClassName, ariaLabel } = this.params;
 
         this.eWrapper.classList.add(wrapperClassName);
-        _.setAriaLabelledBy(this.eWrapper, '');
-        _.setAriaLabel(this.eWrapper, ariaLabel);
+        _setAriaLabelledBy(this.eWrapper, '');
+        _setAriaLabel(this.eWrapper, ariaLabel);
     }
 
     protected createPickerComponent(): VirtualList {
@@ -61,7 +61,7 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
     }
 
     protected onEnterKeyDown(event: KeyboardEvent): void {
-        _.stopPropagationForAgGrid(event);
+        _stopPropagationForAgGrid(event);
         if (this.isPickerDisplayed) {
             super.onEnterKeyDown(event);
         } else {

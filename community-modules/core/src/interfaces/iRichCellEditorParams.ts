@@ -37,7 +37,7 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
      */
     highlightMatch?: boolean;
     /**
-     * The value in `ms` for the search algorithm debounce delay (only relevant when `allowTyping=false`).
+     * The value in `ms` for the search algorithm _debounce delay (only relevant when `allowTyping=false`).
      * @default 300
      */
     searchDebounceDelay?: number;

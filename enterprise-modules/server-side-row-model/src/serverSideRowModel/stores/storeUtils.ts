@@ -67,7 +67,7 @@ export class StoreUtils extends BeanStub {
     }
 
     public getChildStore(keys: string[], currentCache: IServerSideStore, findNodeFunc: (key: string) => RowNode | null): IServerSideStore | null {
-        if (_.missingOrEmpty(keys)) { return currentCache; }
+        if (_missingOrEmpty(keys)) { return currentCache; }
 
         const nextKey = keys[0];
         const nextNode = findNodeFunc(nextKey);
@@ -121,14 +121,14 @@ export class StoreUtils extends BeanStub {
 
     private assertRowModelIsServerSide(key: keyof GridOptions) {
         if (!this.gos.isRowModelType('serverSide')) {
-            _.warnOnce(`The '${key}' property can only be used with the Server Side Row Model.`);
+            _warnOnce(`The '${key}' property can only be used with the Server Side Row Model.`);
             return false;
         }
         return true;
     }
     private assertNotTreeData(key: keyof GridOptions) {
         if (this.gos.get('treeData')) {
-            _.warnOnce(`The '${key}' property cannot be used while using tree data.`);
+            _warnOnce(`The '${key}' property cannot be used while using tree data.`);
             return false;
         }
         return true;

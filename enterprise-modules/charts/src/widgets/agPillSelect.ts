@@ -50,7 +50,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
         const { selectedValueList, valueFormatter, valueList } = this.config;
         this.selectedValues = selectedValueList ?? [];
         this.valueList = valueList ?? [];
-        this.valueFormatter = valueFormatter ?? (value => _.escapeString(value as any)!);
+        this.valueFormatter = valueFormatter ?? (value => _escapeString(value as any)!);
     }
 
     @PostConstruct
@@ -162,7 +162,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
         }
         const options = this.createSelectOptions();
         if (!options.length) {
-            _.removeFromParent(this.eSelect.getGui());
+            _removeFromParent(this.eSelect.getGui());
             this.eSelect = this.destroyBean(this.eSelect);
             return false;
         }

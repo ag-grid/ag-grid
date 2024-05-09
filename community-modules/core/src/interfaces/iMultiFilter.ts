@@ -1,5 +1,5 @@
 import { IProvidedFilter } from "../filter/provided/providedFilter";
-import { AgPromise } from "../utils";
+import { AgPromise } from "../utils/promise";
 import { IFilter, IFilterComp, IFilterDef, IFilterParams, IFilterType, IFloatingFilterType, ProvidedFilterModel } from "./iFilter";
 
 /** Interface contract for the public aspects of the ProvidedFilter implementation(s). */

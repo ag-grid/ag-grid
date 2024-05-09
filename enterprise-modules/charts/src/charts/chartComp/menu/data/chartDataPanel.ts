@@ -148,7 +148,7 @@ export class ChartDataPanel extends Component {
                 }
                 return null;
             } else {
-                _.warnOnce(`Invalid charts data panel group name supplied: '${type}'`);
+                _warnOnce(`Invalid charts data panel group name supplied: '${type}'`);
                 return null;
             }
         }).filter((value): value is NonNullable<typeof value> => value != null);

@@ -1,6 +1,6 @@
 import { Autowired, PostConstruct } from "../context/context";
 import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
-import { getScrollLeft, isVisible, setFixedHeight, setFixedWidth, setScrollLeft } from "../utils/dom";
+import { _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from "../utils/dom";
 import { ColumnModel } from "../columns/columnModel";
 import { Events } from "../eventKeys";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
@@ -81,12 +81,12 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         // b) if v scroll is showing on the right (normal position of scroll)
         let rightSpacing = this.columnModel.getDisplayedColumnsRightWidth();
         const scrollOnRight = !this.enableRtl && vScrollShowing;
-        const scrollbarWidth = this.gos.getScrollbarWidth();
+        const scrollbarWidth = this.gos._getScrollbarWidth();
 
         if (scrollOnRight) {
             rightSpacing += scrollbarWidth;
         }
-        setFixedWidth(this.eRightSpacer, rightSpacing);
+        _setFixedWidth(this.eRightSpacer, rightSpacing);
         this.eRightSpacer.classList.toggle('ag-scroller-corner', rightSpacing <= scrollbarWidth);
 
         // we pad the left based on a) if cols are pinned to the left and
@@ -98,7 +98,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
             leftSpacing += scrollbarWidth;
         }
 
-        setFixedWidth(this.eLeftSpacer, leftSpacing);
+        _setFixedWidth(this.eLeftSpacer, leftSpacing);
         this.eLeftSpacer.classList.toggle('ag-scroller-corner', leftSpacing <= scrollbarWidth);
     }
 
@@ -106,23 +106,23 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
         const invisibleScrollbar = this.invisibleScrollbar;
         const isSuppressHorizontalScroll = this.gos.get('suppressHorizontalScroll');
-        const scrollbarWidth = hScrollShowing ? (this.gos.getScrollbarWidth() || 0) : 0;
+        const scrollbarWidth = hScrollShowing ? (this.gos._getScrollbarWidth() || 0) : 0;
         const adjustedScrollbarWidth = (scrollbarWidth === 0 && invisibleScrollbar) ? 16 : scrollbarWidth;
         const scrollContainerSize = !isSuppressHorizontalScroll ? adjustedScrollbarWidth : 0;
 
         this.addOrRemoveCssClass('ag-scrollbar-invisible', invisibleScrollbar);
-        setFixedHeight(this.getGui(), scrollContainerSize);
-        setFixedHeight(this.eViewport, scrollContainerSize);
-        setFixedHeight(this.eContainer, scrollContainerSize);
+        _setFixedHeight(this.getGui(), scrollContainerSize);
+        _setFixedHeight(this.eViewport, scrollContainerSize);
+        _setFixedHeight(this.eContainer, scrollContainerSize);
         this.setDisplayed(hScrollShowing, { skipAriaHidden: true });
     }
 
     public getScrollPosition(): number {
-        return getScrollLeft(this.getViewport(), this.enableRtl);
+        return _getScrollLeft(this.getViewport(), this.enableRtl);
     }
 
     public setScrollPosition(value: number): void {
-        if (!isVisible(this.getViewport())) { this.attemptSettingScrollPosition(value); }
-        setScrollLeft(this.getViewport(), value, this.enableRtl);
+        if (!_isVisible(this.getViewport())) { this.attemptSettingScrollPosition(value); }
+        _setScrollLeft(this.getViewport(), value, this.enableRtl);
     }
 }

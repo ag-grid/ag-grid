@@ -64,7 +64,7 @@ export class ColumnMenuFactory extends BeanStub {
 
         // GUI looks weird when two separators are side by side. this can happen accidentally
         // if we remove items from the menu then two separators can edit up adjacent.
-        _.removeRepeatsFromArray(result, ColumnMenuFactory.MENU_ITEM_SEPARATOR);
+        _removeRepeatsFromArray(result, ColumnMenuFactory.MENU_ITEM_SEPARATOR);
 
         return result;
     }

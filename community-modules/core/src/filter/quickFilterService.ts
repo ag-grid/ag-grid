@@ -6,7 +6,7 @@ import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { Events } from "../eventKeys";
 import { IRowModel } from "../interfaces/iRowModel";
-import { exists } from "../utils/generic";
+import { _exists } from "../utils/generic";
 import { ValueService } from "../valueService/valueService";
 
 @Bean('quickFilterService')
@@ -78,7 +78,7 @@ export class QuickFilterService extends BeanStub {
     }
 
     private parseQuickFilter(newFilter?: string): string | null {
-        if (!exists(newFilter)) {
+        if (!_exists(newFilter)) {
             return null;
         }
 
@@ -131,7 +131,7 @@ export class QuickFilterService extends BeanStub {
         return columns.some(column => {
             const part = this.getQuickFilterTextForColumn(column, node);
 
-            return exists(part) && part.indexOf(filterPart) >= 0;
+            return _exists(part) && part.indexOf(filterPart) >= 0;
         });
     }
 
@@ -175,7 +175,7 @@ export class QuickFilterService extends BeanStub {
             value = colDef.getQuickFilterText(params);
         }
 
-        return exists(value) ? value.toString().toUpperCase() : null;
+        return _exists(value) ? value.toString().toUpperCase() : null;
     }
 
     private getQuickFilterAggregateText(node: RowNode): string {
@@ -185,7 +185,7 @@ export class QuickFilterService extends BeanStub {
         columns.forEach(column => {
             const part = this.getQuickFilterTextForColumn(column, node);
 
-            if (exists(part)) {
+            if (_exists(part)) {
                 stringParts.push(part);
             }
         });

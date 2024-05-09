@@ -4,9 +4,9 @@ import { BeanStub } from "../../context/beanStub";
 import { Beans } from "../beans";
 import { PostConstruct } from "../../context/context";
 import { ColumnGroup } from "../../entities/columnGroup";
-import { setAriaColSpan } from "../../utils/aria";
-import { last } from "../../utils/array";
-import { exists } from "../../utils/generic";
+import { _setAriaColSpan } from "../../utils/aria";
+import { _last } from "../../utils/array";
+import { _exists } from "../../utils/generic";
 import { Events } from "../../eventKeys";
 
 export class SetLeftFeature extends BeanStub {
@@ -39,7 +39,7 @@ export class SetLeftFeature extends BeanStub {
 
     public getColumnOrGroup(): IHeaderColumn {
         if (this.beans.gos.get('enableRtl') && this.colsSpanning) {
-            return last(this.colsSpanning);
+            return _last(this.colsSpanning);
         }
         return this.columnOrGroup;
     }
@@ -59,7 +59,7 @@ export class SetLeftFeature extends BeanStub {
 
     private setLeftFirstTime(): void {
         const suppressMoveAnimation = this.beans.gos.get('suppressColumnMoveAnimation');
-        const oldLeftExists = exists(this.columnOrGroup.getOldLeft());
+        const oldLeftExists = _exists(this.columnOrGroup.getOldLeft());
         const animateColumnMove = this.beans.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
         if (animateColumnMove) {
             this.animateInLeft();
@@ -86,7 +86,7 @@ export class SetLeftFeature extends BeanStub {
         // VM turn, but only one (the correct one) should get applied.
         this.actualLeft = actualLeft;
 
-        this.beans.columnAnimationService.executeNextVMTurn(() => {
+        this.beans.columnAnimationService._executeNextVMTurn(() => {
             // test this left value is the latest one to be applied, and if not, do nothing
             if (this.actualLeft === actualLeft) {
                 this.setLeft(actualLeft);
@@ -125,7 +125,7 @@ export class SetLeftFeature extends BeanStub {
         // if the value is null, then that means the column is no longer
         // displayed. there is logic in the rendering to fade these columns
         // out, so we don't try and change their left positions.
-        if (exists(value)) {
+        if (_exists(value)) {
             this.eCell.style.left = `${value}px`;
         }
 
@@ -140,7 +140,7 @@ export class SetLeftFeature extends BeanStub {
             if (!children.length) { return; }
 
             if (children.length > 1) {
-                setAriaColSpan(this.ariaEl, children.length);
+                _setAriaColSpan(this.ariaEl, children.length);
             }
 
             indexColumn = children[0];

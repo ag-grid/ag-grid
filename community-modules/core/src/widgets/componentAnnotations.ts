@@ -1,4 +1,4 @@
-import { getFunctionName } from '../utils/function';
+import { _getFunctionName } from '../utils/function';
 
 export function QuerySelector(selector?: string): Function {
     return querySelectorFunc.bind(this, selector, undefined);
@@ -45,7 +45,7 @@ function querySelectorFunc(selector: string, refSelector: string, classPrototype
 
 function addToObjectProps(target: Object, key: string, value: any): void {
     // it's an attribute on the class
-    const props = getOrCreateProps(target, getFunctionName(target.constructor));
+    const props = getOrCreateProps(target, _getFunctionName(target.constructor));
 
     if (!props[key]) {
         props[key] = [];

@@ -106,7 +106,7 @@ export class RangeService extends BeanStub implements IRangeService {
                 col => col.isVisible() && allColumns.indexOf(col) !== -1
             );
 
-            const colsInRangeChanged = !_.areEqual(beforeCols, cellRange.columns);
+            const colsInRangeChanged = !_areEqual(beforeCols, cellRange.columns);
 
             if (colsInRangeChanged) {
                 // notify users and other parts of grid (i.e. status panel) that range has changed
@@ -122,7 +122,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public refreshLastRangeStart(): void {
-        const lastRange = _.last(this.cellRanges);
+        const lastRange = _last(this.cellRanges);
 
         if (!lastRange) { return; }
 
@@ -139,7 +139,7 @@ export class RangeService extends BeanStub implements IRangeService {
         const allColumns = this.columnModel.getAllDisplayedColumns();
         const allPositions = rangeColumns.map(c => allColumns.indexOf(c)).sort((a, b) => a - b);
 
-        return _.last(allPositions) - allPositions[0] + 1 === rangeColumns.length;
+        return _last(allPositions) - allPositions[0] + 1 === rangeColumns.length;
     }
 
     public getRangeStartRow(cellRange: PartialCellRange): RowPosition {
@@ -185,7 +185,7 @@ export class RangeService extends BeanStub implements IRangeService {
         const suppressMultiRangeSelections = this.gos.get('suppressMultiRangeSelection');
 
         // if not appending, then clear previous range selections
-        if (suppressMultiRangeSelections || !appendRange || _.missing(this.cellRanges)) {
+        if (suppressMultiRangeSelections || !appendRange || _missing(this.cellRanges)) {
             this.removeAllCellRanges(true);
         }
 
@@ -211,7 +211,7 @@ export class RangeService extends BeanStub implements IRangeService {
     public extendLatestRangeToCell(cellPosition: CellPosition): void {
         if (this.isEmpty() || !this.newestRangeStartCell) { return; }
 
-        const cellRange = _.last(this.cellRanges);
+        const cellRange = _last(this.cellRanges);
 
         this.updateRangeEnd(cellRange, cellPosition);
     }
@@ -254,7 +254,7 @@ export class RangeService extends BeanStub implements IRangeService {
             return;
         }
 
-        const shouldMoveRightCol = startColumn === _.last(columns) && startColumn === right;
+        const shouldMoveRightCol = startColumn === _last(columns) && startColumn === right;
 
         if (shouldMoveRightCol) {
             moveColInCellRange(right, false);
@@ -271,7 +271,7 @@ export class RangeService extends BeanStub implements IRangeService {
 
         return {
             left: allColumns[allIndices[0]],
-            right: allColumns[_.last(allIndices)!]
+            right: allColumns[_last(allIndices)!]
         };
     }
 
@@ -282,10 +282,10 @@ export class RangeService extends BeanStub implements IRangeService {
         const key = event.key;
         const ctrlKey = event.ctrlKey || event.metaKey;
 
-        const lastRange = _.last(this.cellRanges)!;
+        const lastRange = _last(this.cellRanges)!;
         const startCell = this.newestRangeStartCell;
         const firstCol = lastRange.columns[0];
-        const lastCol = _.last(lastRange.columns)!;
+        const lastCol = _last(lastRange.columns)!;
 
         // find the cell that is at the furthest away corner from the starting cell
         const endCellIndex = lastRange.endRow!.rowIndex;
@@ -320,7 +320,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public setCellRanges(cellRanges: CellRange[]): void {
-        if (_.shallowCompare(this.cellRanges, cellRanges)) { return; }
+        if (_shallowCompare(this.cellRanges, cellRanges)) { return; }
 
         this.removeAllCellRanges(true);
 
@@ -427,7 +427,7 @@ export class RangeService extends BeanStub implements IRangeService {
             startRow,
             endRow,
             columns,
-            startColumn: startsOnTheRight ? _.last(columns) : columns[0]
+            startColumn: startsOnTheRight ? _last(columns) : columns[0]
         };
     }
 
@@ -552,7 +552,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean {
-        const columnInRange = range.columns !== null && _.includes(range.columns, cell.column);
+        const columnInRange = range.columns !== null && _includes(range.columns, cell.column);
         const rowInRange = this.isRowInRange(cell.rowIndex, cell.rowPinned, range);
 
         return columnInRange && rowInRange;
@@ -563,7 +563,7 @@ export class RangeService extends BeanStub implements IRangeService {
         const lastRow = this.rowPositionUtils.before(startRow!, endRow!) ? endRow : startRow;
         const isLastRow = cell.rowIndex === lastRow!.rowIndex && cell.rowPinned === lastRow!.rowPinned;
         const rangeFirstIndexColumn = cellRange.columns[0];
-        const rangeLastIndexColumn = _.last(cellRange.columns);
+        const rangeLastIndexColumn = _last(cellRange.columns);
         const lastRangeColumn = cellRange.startColumn === rangeFirstIndexColumn ? rangeLastIndexColumn : rangeFirstIndexColumn;
         const isLastColumn = cell.column === lastRangeColumn;
 
@@ -576,8 +576,8 @@ export class RangeService extends BeanStub implements IRangeService {
         const { startRow, endRow } = cellRange;
         const lastRow = this.rowPositionUtils.before(startRow!, endRow!) ? endRow : startRow;
 
-        const isRightColumn = allColumns.indexOf(cell.column) === _.last(allPositions);
-        const isLastRow = cell.rowIndex === lastRow!.rowIndex && _.makeNull(cell.rowPinned) === _.makeNull(lastRow!.rowPinned);
+        const isRightColumn = allColumns.indexOf(cell.column) === _last(allPositions);
+        const isLastRow = cell.rowIndex === lastRow!.rowIndex && _makeNull(cell.rowPinned) === _makeNull(lastRow!.rowPinned);
 
         return isRightColumn && isLastRow;
     }
@@ -623,9 +623,9 @@ export class RangeService extends BeanStub implements IRangeService {
         const isMultiKey = ctrlKey || metaKey;
         const allowMulti = !this.gos.get('suppressMultiRangeSelection');
         const isMultiSelect = allowMulti ? isMultiKey : false;
-        const extendRange = shiftKey && _.existsAndNotEmpty(this.cellRanges);
+        const extendRange = shiftKey && _existsAndNotEmpty(this.cellRanges);
 
-        if (!isMultiSelect && (!extendRange || _.exists(_.last(this.cellRanges)!.type))) {
+        if (!isMultiSelect && (!extendRange || _exists(_last(this.cellRanges)!.type))) {
             this.removeAllCellRanges(true);
         }
 
@@ -652,7 +652,7 @@ export class RangeService extends BeanStub implements IRangeService {
         // rather than creating another range. otherwise we end up with two distinct ranges
         // from a drag operation (one from click, and one from drag).
         if (this.cellRanges.length > 0) {
-            this.draggingRange = _.last(this.cellRanges);
+            this.draggingRange = _last(this.cellRanges);
         } else {
             const mouseRowPosition: RowPosition = {
                 rowIndex: this.lastCellHovered.rowIndex,
@@ -681,7 +681,7 @@ export class RangeService extends BeanStub implements IRangeService {
         if (this.gos.get('suppressMultiRangeSelection')) { return; }
         if (this.isEmpty()) { return; }
         const rowPosUtils = this.rowPositionUtils;
-        const lastRange = _.last(this.cellRanges);
+        const lastRange = _last(this.cellRanges);
         
         const intersectionStartRow = this.getRangeStartRow(lastRange);
         const intersectionEndRow = this.getRangeEndRow(lastRange);
@@ -718,7 +718,7 @@ export class RangeService extends BeanStub implements IRangeService {
             if (intersectCols.length > 0) {
                 const middle: CellRange = {
                     columns: intersectCols,
-                    startColumn: _.includes(intersectCols, lastRange.startColumn) ? lastRange.startColumn : intersectCols[0],
+                    startColumn: _includes(intersectCols, lastRange.startColumn) ? lastRange.startColumn : intersectCols[0],
                     startRow: this.rowMax([{ ...intersectionStartRow }, { ...startRow }]),
                     endRow: this.rowMin([{ ...intersectionEndRow }, { ...endRow }]),
                 };
@@ -769,7 +769,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
     
     private updateValuesOnMove(eventTarget: EventTarget | null) {
-        const cellCtrl = _.getCtrlForEventTarget<CellCtrl>(this.gos, eventTarget, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        const cellCtrl = _getCtrlForEventTarget<CellCtrl>(this.gos, eventTarget, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
         const cell = cellCtrl?.getCellPosition();
 
         this.cellHasChanged = false;

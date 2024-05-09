@@ -151,7 +151,7 @@ export class SortController extends BeanStub {
             result = sortingOrder[currentIndex + 1];
         }
 
-        // verify the sort type exists, as the user could provide the sortingOrder, need to make sure it's valid
+        // verify the sort type _exists, as the user could provide the sortingOrder, need to make sure it's valid
         if (SortController.DEFAULT_SORTING_ORDER.indexOf(result) < 0) {
             console.warn('AG Grid: invalid sort type ' + result);
             return null;
@@ -181,7 +181,7 @@ export class SortController extends BeanStub {
         const sortedRowGroupCols = this.columnModel.getRowGroupColumns()
             .filter(col => !!col.getSort());
 
-        // when both cols are missing sortIndex, we use the position of the col in all cols list.
+        // when both cols are _missing sortIndex, we use the position of the col in all cols list.
         // this means if colDefs only have sort, but no sortIndex, we deterministically pick which
         // cols is sorted by first.
         const allColsIndexes: { [id: string]: number } = {};
@@ -194,14 +194,14 @@ export class SortController extends BeanStub {
             if (iA != null && iB != null) {
                 return iA - iB; // both present, normal comparison
             } else if (iA == null && iB == null) {
-                // both missing, compare using column positions
+                // both _missing, compare using column positions
                 const posA = allColsIndexes[a.getId()];
                 const posB = allColsIndexes[b.getId()];
                 return posA > posB ? 1 : -1;
             } else if (iB == null) {
-                return -1; // iB missing
+                return -1; // iB _missing
             } else {
-                return 1; // iA missing
+                return 1; // iA _missing
             }
         });
 

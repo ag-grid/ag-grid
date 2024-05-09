@@ -79,7 +79,7 @@ export class ChartMenuItemMapper extends BeanStub {
             if (chartConfigGroup === null) return;
 
             if (chartConfigGroup == undefined) {
-                _.warnOnce(`invalid chartGroupsDef config '${group}'`);
+                _warnOnce(`invalid chartGroupsDef config '${group}'`);
                 return undefined;
             }
 
@@ -89,7 +89,7 @@ export class ChartMenuItemMapper extends BeanStub {
                     const subMenus = chartTypes.map(chartType => {
                         const itemKey = (chartConfigGroup as any)[chartType];
                         if (itemKey == undefined) {                            
-                            _.warnOnce(`invalid chartGroupsDef config '${group}.${chartType}'`);
+                            _warnOnce(`invalid chartGroupsDef config '${group}.${chartType}'`);
                             return undefined;
                         }
                         return menuItemLookup[itemKey];
@@ -237,7 +237,7 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName>{
                     ]
                 }
             ],
-            icon: _.createIconNoSpan('chart', this.gos, undefined),
+            icon: _createIconNoSpan('chart', this.gos, undefined),
         }
     }
 
@@ -435,7 +435,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     _key: 'rangeCombinationChart'
                 }
             ],
-            icon: _.createIconNoSpan('chart', this.gos, undefined),
+            icon: _createIconNoSpan('chart', this.gos, undefined),
         }
     }
 

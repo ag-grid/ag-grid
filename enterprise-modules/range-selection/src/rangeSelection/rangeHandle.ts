@@ -26,7 +26,7 @@ export class RangeHandle extends AbstractSelectionHandle {
         if (!lastCellHovered) { return; }
 
         const cellRanges = this.rangeService.getCellRanges();
-        const lastRange = _.last(cellRanges);
+        const lastRange = _last(cellRanges);
 
         if (!this.rangeFixed) {
             this.fixRangeStartEnd(lastRange);
@@ -60,7 +60,7 @@ export class RangeHandle extends AbstractSelectionHandle {
     }
 
     protected onDragEnd(e: MouseEvent) {
-        const cellRange = _.last(this.rangeService.getCellRanges())!;
+        const cellRange = _last(this.rangeService.getCellRanges())!;
 
         this.fixRangeStartEnd(cellRange);
         this.rangeFixed = false;

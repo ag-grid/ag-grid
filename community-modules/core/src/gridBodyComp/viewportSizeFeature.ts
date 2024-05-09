@@ -6,7 +6,7 @@ import { GridBodyCtrl } from "./gridBodyCtrl";
 import { BodyHeightChangedEvent, Events } from "../events";
 import { CtrlsService } from "../ctrlsService";
 import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
-import { getInnerHeight, getInnerWidth } from "../utils/dom";
+import { _getInnerHeight, _getInnerWidth } from "../utils/dom";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { PinnedWidthService } from "./pinnedWidthService";
 import { Column } from "../entities/column";
@@ -79,7 +79,7 @@ export class ViewportSizeFeature extends BeanStub {
 
     private keepPinnedColumnsNarrowerThanViewport(): void {
         const eBodyViewport = this.gridBodyCtrl.getBodyViewportElement();
-        const bodyWidth = getInnerWidth(eBodyViewport);
+        const bodyWidth = _getInnerWidth(eBodyViewport);
 
         if (bodyWidth <= 50) { return; }
 
@@ -150,13 +150,13 @@ export class ViewportSizeFeature extends BeanStub {
         this.gridBodyCtrl.getScrollFeature().checkScrollLeft();
     }
 
-    public getBodyHeight(): number {
+    public _getBodyHeight(): number {
         return this.bodyHeight;
     }
 
     private checkBodyHeight(): void {
         const eBodyViewport = this.gridBodyCtrl.getBodyViewportElement();
-        const bodyHeight = getInnerHeight(eBodyViewport);
+        const bodyHeight = _getInnerHeight(eBodyViewport);
 
         if (this.bodyHeight !== bodyHeight) {
             this.bodyHeight = bodyHeight;
@@ -180,15 +180,15 @@ export class ViewportSizeFeature extends BeanStub {
 
     private updateScrollVisibleServiceImpl(): void {
         const params: SetScrollsVisibleParams = {
-            horizontalScrollShowing: this.isHorizontalScrollShowing(),
+            horizontalScrollShowing: this._isHorizontalScrollShowing(),
             verticalScrollShowing: this.gridBodyCtrl.isVerticalScrollShowing()
         };
 
         this.scrollVisibleService.setScrollsVisible(params);
     }
 
-    private isHorizontalScrollShowing(): boolean {
-        return this.centerContainerCtrl.isHorizontalScrollShowing();
+    private _isHorizontalScrollShowing(): boolean {
+        return this.centerContainerCtrl._isHorizontalScrollShowing();
     }
 
     // this gets called whenever a change in the viewport, so we can inform column controller it has to work

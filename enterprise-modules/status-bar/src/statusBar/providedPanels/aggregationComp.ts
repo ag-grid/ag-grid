@@ -90,12 +90,12 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
     private setAggregationComponentValue(aggFuncName: AggregationStatusPanelAggFunc, value: number | null, visible: boolean) {
         const statusBarValueComponent = this.getAllowedAggregationValueComponent(aggFuncName);
-        if (_.exists(statusBarValueComponent) && statusBarValueComponent) {
+        if (_exists(statusBarValueComponent) && statusBarValueComponent) {
             const localeTextFunc = this.localeService.getLocaleTextFunc();
             const thousandSeparator = localeTextFunc('thousandSeparator', ',');
             const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 
-            statusBarValueComponent.setValue(_.formatNumberTwoDecimalPlacesAndCommas(value!, thousandSeparator, decimalSeparator));
+            statusBarValueComponent.setValue(_formatNumberTwoDecimalPlacesAndCommas(value!, thousandSeparator, decimalSeparator));
             statusBarValueComponent.setDisplayed(visible);
         } else {
             // might have previously been visible, so hide now
@@ -133,7 +133,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
         const cellsSoFar: any = {};
 
-        if (cellRanges && !_.missingOrEmpty(cellRanges) && this.rangeService) {
+        if (cellRanges && !_missingOrEmpty(cellRanges) && this.rangeService) {
 
             for (let i = 0; i < cellRanges.length; i++) {
                 const cellRange = cellRanges[i];
@@ -143,7 +143,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
                 while (true) {
 
-                    const finishedAllRows = _.missing(currentRow) || !currentRow || this.rowPositionUtils.before(lastRow, currentRow);
+                    const finishedAllRows = _missing(currentRow) || !currentRow || this.rowPositionUtils.before(lastRow, currentRow);
                     if (finishedAllRows || !currentRow || !cellRange.columns) {
                         break;
                     }
@@ -165,14 +165,14 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         cellsSoFar[cellId] = true;
 
                         const rowNode = this.rowPositionUtils.getRowNode(currentRow);
-                        if (_.missing(rowNode)) {
+                        if (_missing(rowNode)) {
                             return;
                         }
 
                         let value = this.valueService.getValue(col, rowNode);
 
                         // if empty cell, skip it, doesn't impact count or anything
-                        if (_.missing(value) || value === '') {
+                        if (_missing(value) || value === '') {
                             return;
                         }
 

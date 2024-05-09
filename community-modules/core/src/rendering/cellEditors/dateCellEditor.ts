@@ -1,8 +1,8 @@
 import { ICellEditorParams } from "../../interfaces/iCellEditor";
-import { serialiseDate } from "../../utils/date";
+import { _serialiseDate } from "../../utils/date";
 import { AgInputDateField } from "../../widgets/agInputDateField";
 import { CellEditorInput, SimpleCellEditor } from "./simpleCellEditor";
-import { exists } from "../../utils/generic";
+import { _exists } from "../../utils/generic";
 
 export interface IDateCellEditorParams<TData = any, TContext = any> extends ICellEditorParams<TData, Date, TContext> {
     /** Min allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */
@@ -42,7 +42,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
 
     getValue(): Date | null | undefined {
         const value = this.eInput.getDate();
-        if (!exists(value) && !exists(this.params.value)) {
+        if (!_exists(value) && !_exists(this.params.value)) {
             return this.params.value;
         }
         return value ?? null;
@@ -53,7 +53,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         if (!(value instanceof Date)) {
             return undefined
         }
-        return serialiseDate(value, false);
+        return _serialiseDate(value, false);
     }
 }
 

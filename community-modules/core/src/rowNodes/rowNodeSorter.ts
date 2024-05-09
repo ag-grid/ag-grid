@@ -2,9 +2,9 @@ import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { ValueService } from "../valueService/valueService";
-import { _ } from "../utils";
 import { ColumnModel } from "../columns/columnModel";
 import { BeanStub } from "../context/beanStub";
+import { _defaultComparator } from "../utils/generic";
 
 export interface SortOption {
     sort: 'asc' | 'desc';
@@ -65,7 +65,7 @@ export class RowNodeSorter extends BeanStub {
                 comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isDescending);
             } else {
                 //otherwise do our own comparison
-                comparatorResult = _.defaultComparator(valueA, valueB, this.isAccentedSort);
+                comparatorResult = _defaultComparator(valueA, valueB, this.isAccentedSort);
             }
 
             // user provided comparators can return 'NaN' if they don't correctly handle 'undefined' values, this

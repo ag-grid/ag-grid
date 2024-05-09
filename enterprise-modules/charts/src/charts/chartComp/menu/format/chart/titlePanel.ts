@@ -89,7 +89,7 @@ export default class TitlePanel extends Component {
 
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
-            _.removeFromParent(panel.getGui());
+            _removeFromParent(panel.getGui());
             this.destroyBean(panel);
         });
     }

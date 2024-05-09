@@ -1,7 +1,7 @@
 import { ColumnPinnedType } from '../../entities/column';
 import { PostConstruct, PreDestroy } from '../../context/context';
-import { ensureDomOrder } from '../../utils/dom';
-import { getAllValuesInObject } from '../../utils/object';
+import { _ensureDomOrder } from '../../utils/dom';
+import { _getAllValuesInObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { HeaderRowComp } from '../row/headerRowComp';
@@ -98,7 +98,7 @@ export class HeaderRowContainerComp extends Component {
                 this.eRowContainer.appendChild(eGui);
             }
             if (prevGui) {
-                ensureDomOrder(this.eRowContainer, eGui, prevGui);
+                _ensureDomOrder(this.eRowContainer, eGui, prevGui);
             }
 
             prevGui = eGui;
@@ -116,6 +116,6 @@ export class HeaderRowContainerComp extends Component {
             appendEnsuringDomOrder(rowComp);
         });
 
-        getAllValuesInObject(oldRowComps).forEach(c => this.destroyRowComp(c));
+        _getAllValuesInObject(oldRowComps).forEach(c => this.destroyRowComp(c));
     }
 }

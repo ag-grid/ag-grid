@@ -90,7 +90,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     }
 
     private createDetailGrid(): void {
-        if (_.missing(this.params.detailGridOptions)) {
+        if (_missing(this.params.detailGridOptions)) {
             console.warn('AG Grid: could not find detail grid options for master detail, ' +
                 'please set gridOptions.detailCellRendererParams.detailGridOptions');
             return;

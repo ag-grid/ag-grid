@@ -43,7 +43,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         // and there is no cleanup to be done (as value columns don't change between transactions or change
         // detections). if no value columns and no changed path, means we have to go through all nodes in
         // case we need to clean up agg data from before.
-        const noValueColumns = _.missingOrEmpty(this.columnModel.getValueColumns());
+        const noValueColumns = _missingOrEmpty(this.columnModel.getValueColumns());
         const noUserAgg = !this.gos.getCallback('getGroupRowAgg');
         const changedPathActive = params.changedPath && params.changedPath.isActive();
         if (noValueColumns && noUserAgg && changedPathActive) { return; }

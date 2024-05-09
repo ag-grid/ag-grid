@@ -145,7 +145,7 @@ export class FillHandle extends AbstractSelectionHandle {
         if (!direction) { return 'xy'; }
 
         if (direction !== 'x' && direction !== 'y' && direction !== 'xy') {
-            _.warnOnce(`valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.`);
+            _warnOnce(`valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.`);
             return 'xy';
         }
 
@@ -227,7 +227,7 @@ export class FillHandle extends AbstractSelectionHandle {
                     withinInitialRange = true;
                     resetValues();
                     columns.forEach(col => fillValues(
-                        values, col, rowNode, () => col !== (this.isLeft ? initialRange.columns[0] : _.last(initialRange.columns))));
+                        values, col, rowNode, () => col !== (this.isLeft ? initialRange.columns[0] : _last(initialRange.columns))));
                 }
 
                 finished = this.rowPositionUtils.sameRow(currentRow, this.isUp ? finalRangeStartRow : finalRangeEndRow);
@@ -273,7 +273,7 @@ export class FillHandle extends AbstractSelectionHandle {
                                 col,
                                 rowNode,
                                 // if no sourceCol, then currentValue is a number
-                                sourceCol ? currentValue : _.toStringOrNull(currentValue),
+                                sourceCol ? currentValue : _toStringOrNull(currentValue),
                                 cellValue
                             );
                         }
@@ -369,13 +369,13 @@ export class FillHandle extends AbstractSelectionHandle {
         if (event.altKey || !allNumbers) {
             if (allNumbers && initialValues.length === 1) {
                 const multiplier = (this.isUp || this.isLeft) ? -1 : 1;
-                return { value: parseFloat(_.last(values).value) + 1 * multiplier, fromUserFunction: false };
+                return { value: parseFloat(_last(values).value) + 1 * multiplier, fromUserFunction: false };
             }
             const { value, column: sourceCol, rowNode: sourceRowNode } = values[idx % values.length];
             return { value, fromUserFunction: false, sourceCol, sourceRowNode };
         }
 
-        return { value: _.last(findLineByLeastSquares(values.map(({ value }) => Number(value)))), fromUserFunction: false };
+        return { value: _last(findLineByLeastSquares(values.map(({ value }) => Number(value)))), fromUserFunction: false };
 
     }
 
@@ -564,7 +564,7 @@ export class FillHandle extends AbstractSelectionHandle {
                         this.isLeft = true;
                         cellComp.addOrRemoveCssClass('ag-selection-fill-left', column === colsToMark[0]);
                     } else {
-                        cellComp.addOrRemoveCssClass('ag-selection-fill-right', column === _.last(colsToMark));
+                        cellComp.addOrRemoveCssClass('ag-selection-fill-right', column === _last(colsToMark));
                     }
                 }
 

@@ -425,7 +425,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
         this.mainMenuList.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {
-            title: _.createIconNoSpan('menu', this.gos, this.column)!,
+            title: _createIconNoSpan('menu', this.gos, this.column)!,
             titleLabel: TabbedColumnMenu.TAB_GENERAL.replace('MenuTab', ''),
             bodyPromise: AgPromise.resolve(this.mainMenuList.getGui()),
             name: TabbedColumnMenu.TAB_GENERAL
@@ -449,7 +449,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
         const afterDetachedCallback = () => comp.afterGuiDetached();
 
         this.tabItemFilter = {
-            title: _.createIconNoSpan('filter', this.gos, this.column)!,
+            title: _createIconNoSpan('filter', this.gos, this.column)!,
             titleLabel: TabbedColumnMenu.TAB_FILTER.replace('MenuTab', ''),
             bodyPromise: AgPromise.resolve(comp?.getGui()) as AgPromise<HTMLElement>,
             afterAttachedCallback,
@@ -471,7 +471,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
         eWrapperDiv.appendChild(columnSelectPanelGui);
 
         this.tabItemColumns = {
-            title: _.createIconNoSpan('columns', this.gos, this.column)!, //createColumnsIcon(),
+            title: _createIconNoSpan('columns', this.gos, this.column)!, //createColumnsIcon(),
             titleLabel: TabbedColumnMenu.TAB_COLUMNS.replace('MenuTab', ''),
             bodyPromise: AgPromise.resolve(eWrapperDiv),
             name: TabbedColumnMenu.TAB_COLUMNS

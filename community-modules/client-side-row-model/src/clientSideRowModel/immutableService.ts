@@ -7,7 +7,7 @@ import {
     ISelectionService,
     PostConstruct,
     RowDataTransaction,
-    RowNode, RowRenderer, _
+    RowNode, RowRenderer, _iterateObject, _exists, _missing
 } from "@ag-grid-community/core";
 import { ClientSideRowModel } from "./clientSideRowModel";
 
@@ -50,7 +50,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
 
     // converts the setRowData() command to a transaction
     private createTransactionForRowData(rowData: any[]): ([RowDataTransaction, { [id: string]: number } | undefined]) | undefined {
-        if (_.missing(this.clientSideRowModel)) {
+        if (_missing(this.clientSideRowModel)) {
             console.error('AG Grid: ImmutableService only works with ClientSideRowModel');
             return;
         }
@@ -73,7 +73,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         const suppressSortOrder = this.gos.get('suppressMaintainUnsortedOrder');
         const orderMap: { [id: string]: number } | undefined = suppressSortOrder ? undefined : {};
 
-        if (_.exists(rowData)) {
+        if (_exists(rowData)) {
             // split all the new data in the following:
             // if new, push to 'add'
             // if update, push to 'update'
@@ -102,7 +102,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         }
 
         // at this point, all rows that are left, should be removed
-        _.iterateObject(existingNodesMap, (id: string, rowNode: RowNode) => {
+        _iterateObject(existingNodesMap, (id: string, rowNode: RowNode) => {
             if (rowNode) {
                 transaction.remove!.push(rowNode.data);
             }

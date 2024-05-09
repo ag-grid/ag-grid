@@ -236,7 +236,7 @@ export interface TooltipRendererResult {
     opacity?: number;
 }
 export interface TooltipRendererParams {
-    /** The grid context, includes row data, giving access to data from other columns in the same row. */
+    /** The grid context, _includes row data, giving access to data from other columns in the same row. */
     context?: any;
     /** The raw datum associated with the point. */
     datum: any;

@@ -1,7 +1,7 @@
 import { AgEvent, AgEventListener } from "../events";
 import { EventService } from "../eventService";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
-import { areEventsNear } from "../utils/mouse";
+import { _areEventsNear } from "../utils/mouse";
 
 export interface TapEvent extends AgEvent {
     touchStart: Touch;
@@ -114,7 +114,7 @@ export class TouchListener implements IEventEmitter {
             return;
         }
 
-        const eventIsFarAway = !areEventsNear(touch, this.touchStart, 4);
+        const eventIsFarAway = !_areEventsNear(touch, this.touchStart, 4);
         if (eventIsFarAway) {
             this.moved = true;
         }

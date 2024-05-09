@@ -1,7 +1,7 @@
 import { PostConstruct, Autowired } from '../context/context';
 import { FocusService } from '../focusService';
 import { KeyCode } from '../constants/keyCode';
-import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from '../utils/event';
+import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../utils/event';
 import { BeanStub } from '../context/beanStub';
 
 export interface ManagedFocusCallbacks {
@@ -56,10 +56,10 @@ export class ManagedFocusFeature extends BeanStub {
 
     private addKeyDownListeners(eGui: HTMLElement): void {
         this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
-            if (e.defaultPrevented || isStopPropagationForAgGrid(e)) { return; }
+            if (e.defaultPrevented || _isStopPropagationForAgGrid(e)) { return; }
 
             if (this.callbacks.shouldStopEventPropagation!(e)) {
-                stopPropagationForAgGrid(e);
+                _stopPropagationForAgGrid(e);
                 return;
             }
 

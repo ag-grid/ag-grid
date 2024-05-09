@@ -75,12 +75,12 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
         }
 
         if (this.componentInstance.getReactContainerStyle && this.componentInstance.getReactContainerStyle()) {
-            _.warnOnce('Since v31.1 "getReactContainerStyle" is deprecated. Apply styling directly to ".ag-react-container" if needed.');
+            _warnOnce('Since v31.1 "getReactContainerStyle" is deprecated. Apply styling directly to ".ag-react-container" if needed.');
             Object.assign(this.eParentElement.style, this.componentInstance.getReactContainerStyle());
         }
 
         if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {
-            _.warnOnce('Since v31.1 "getReactContainerClasses" is deprecated. Apply styling directly to ".ag-react-container" if needed.');
+            _warnOnce('Since v31.1 "getReactContainerClasses" is deprecated. Apply styling directly to ".ag-react-container" if needed.');
             const parentContainerClasses: string[] = this.componentInstance.getReactContainerClasses();
             parentContainerClasses.forEach(className => this.eParentElement.classList.add(className));
         }

@@ -93,7 +93,7 @@ function isIdenticalPalette(paletteA: AgChartThemePalette, paletteB: AgChartThem
 }
 
 export function isStockTheme(themeName: string): boolean {
-    return _.includes(Object.keys(_Theme.themes), themeName);
+    return _includes(Object.keys(_Theme.themes), themeName);
 }
 
 function createCrossFilterThemeOverrides(
@@ -172,7 +172,7 @@ function getSelectedTheme(chartProxyParams: ChartProxyParams): string {
     let chartThemeName = chartProxyParams.getChartThemeName();
     const availableThemes = chartProxyParams.getChartThemes();
 
-    if (!_.includes(availableThemes, chartThemeName)) {
+    if (!_includes(availableThemes, chartThemeName)) {
         chartThemeName = availableThemes[0];
     }
 

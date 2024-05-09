@@ -4,7 +4,7 @@ import { IRowModel } from "../interfaces/iRowModel";
 import { RowNode } from "./rowNode";
 import { RowPinnedType } from "../interfaces/iRowNode";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { exists } from "../utils/generic";
+import { _exists } from "../utils/generic";
 import { PaginationProxy } from "../pagination/paginationProxy";
 
 export interface RowPosition {
@@ -72,9 +72,9 @@ export class RowPositionUtils extends BeanStub {
     }
 
     public sameRow(rowA: RowPosition | undefined, rowB: RowPosition | undefined): boolean {
-        // if both missing
+        // if both _missing
         if (!rowA && !rowB) { return true; }
-        // if only one missing
+        // if only one _missing
         if ((rowA && !rowB) || (!rowA && rowB)) { return false; }
         // otherwise compare (use == to compare rowPinned because it can be null or undefined)
         return rowA!.rowIndex === rowB!.rowIndex && rowA!.rowPinned == rowB!.rowPinned;
@@ -93,7 +93,7 @@ export class RowPositionUtils extends BeanStub {
                 break;
             default:
                 // if we are not floating, but the other one is floating...
-                if (exists(rowB.rowPinned)) {
+                if (_exists(rowB.rowPinned)) {
                     return rowB.rowPinned !== 'top';
                 }
                 break;

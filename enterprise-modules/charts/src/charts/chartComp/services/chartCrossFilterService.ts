@@ -56,7 +56,7 @@ export class ChartCrossFilterService extends BeanStub {
 
         if (event.event.metaKey || event.event.ctrlKey) {
             const existingGridValues = this.getCurrentGridValuesForCategory(colId);
-            const valueAlreadyExists = _.includes(existingGridValues, selectedValue);
+            const valueAlreadyExists = _includes(existingGridValues, selectedValue);
 
             let updatedValues;
             if (valueAlreadyExists) {
@@ -111,7 +111,7 @@ export class ChartCrossFilterService extends BeanStub {
             return filterType;
         }
 
-        return _.includes(['agSetColumnFilter', 'agMultiColumnFilter'], filterType);
+        return _includes(['agSetColumnFilter', 'agMultiColumnFilter'], filterType);
     }
 
     private getColumnFilterType(colId: any) {

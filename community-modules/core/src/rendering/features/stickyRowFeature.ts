@@ -6,7 +6,7 @@ import { Autowired, PostConstruct } from "../../context/context";
 import { IRowModel } from "../../interfaces/iRowModel";
 import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
 import { CtrlsService } from "../../ctrlsService";
-import { last } from "../../utils/array";
+import { _last } from "../../utils/array";
 
 export class StickyRowFeature extends BeanStub {
 
@@ -116,7 +116,7 @@ export class StickyRowFeature extends BeanStub {
                         // Tree Data will have `childrenAfterSort` without any nodes, but
                         // the current node will still be marked as expansible.
                         if (lastAncestor.childrenAfterSort.length === 0) { break; }
-                        lastAncestor = last(lastAncestor.childrenAfterSort);
+                        lastAncestor = _last(lastAncestor.childrenAfterSort);
                     }
                 }
                 return lastAncestor.rowTop! + lastAncestor.rowHeight!

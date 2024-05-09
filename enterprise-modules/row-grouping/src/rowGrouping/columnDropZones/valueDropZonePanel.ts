@@ -22,7 +22,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
         const title = localeTextFunc('values', 'Values');
 
         super.init({
-            icon: _.createIconNoSpan('valuePanel', this.gos, null)!,
+            icon: _createIconNoSpan('valuePanel', this.gos, null)!,
             emptyMessage: emptyMessage,
             title: title
         });

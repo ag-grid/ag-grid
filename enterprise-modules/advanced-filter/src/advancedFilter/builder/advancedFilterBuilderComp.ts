@@ -447,7 +447,7 @@ export class AdvancedFilterBuilderComp extends Component {
         } else {
             this.validationMessage = this.advancedFilterExpressionService.translate('advancedFilterBuilderValidationIncomplete');
         }
-        _.setDisabled(this.eApplyFilterButton, disableApply);
+        _setDisabled(this.eApplyFilterButton, disableApply);
         this.validationTooltipFeature.refreshToolTip();
     }
 
@@ -481,7 +481,7 @@ export class AdvancedFilterBuilderComp extends Component {
                 clearOperand(filterModel);
                 return;
             }
-            if (operator.numOperands > 0 && !_.exists((filterModel as any).filter)) {
+            if (operator.numOperands > 0 && !_exists((filterModel as any).filter)) {
                 item.valid = false;
                 return;
             }

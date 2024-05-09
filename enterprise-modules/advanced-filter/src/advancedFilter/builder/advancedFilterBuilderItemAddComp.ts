@@ -34,7 +34,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        _.setAriaLevel(this.focusWrapper, 2);
+        _setAriaLevel(this.focusWrapper, 2);
 
         const addButtonParams = getAdvancedFilterBuilderAddButtonParams(
             key => this.advancedFilterExpressionService.translate(key),
@@ -62,7 +62,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
             eAddButton
         ));
 
-        _.setAriaLabel(
+        _setAriaLabel(
             this.focusWrapper,
             this.advancedFilterExpressionService.translate('ariaAdvancedFilterBuilderItem', [
                 this.advancedFilterExpressionService.translate('advancedFilterBuilderAddButtonTooltip'),

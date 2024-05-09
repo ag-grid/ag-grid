@@ -35,7 +35,7 @@ export class ChartToolbar extends Component {
         this.buttonListenersDestroyFuncs = [];
 
         const menuEl = this.eMenu;
-        _.clearElement(menuEl);
+        _clearElement(menuEl);
 
         buttons.forEach(buttonConfig => {
             const { buttonName, iconName, callback } = buttonConfig;
@@ -55,7 +55,7 @@ export class ChartToolbar extends Component {
     }
 
     private createButton(iconName: string): Element {
-        let buttonEl = _.createIconNoSpan(
+        let buttonEl = _createIconNoSpan(
             iconName,
             this.gos,
             undefined,

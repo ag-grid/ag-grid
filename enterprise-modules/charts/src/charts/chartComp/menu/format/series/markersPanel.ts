@@ -40,7 +40,7 @@ export class MarkersPanel extends Component {
     private init() {
         // scatter charts should always show markers
         const chartType = this.chartOptionsService.getChartType();
-        const shouldHideEnabledCheckbox = _.includes(['scatter', 'bubble'], chartType);
+        const shouldHideEnabledCheckbox = _includes(['scatter', 'bubble'], chartType);
         const seriesMarkersGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
             'marker.enabled',
             {

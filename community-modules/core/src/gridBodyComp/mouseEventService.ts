@@ -1,11 +1,11 @@
 import { Bean } from "../context/context";
 import { Autowired } from "../context/context";
 import { CellPosition } from "../entities/cellPositionUtils";
-import { NumberSequence } from '../utils';
+import { NumberSequence } from '../utils/numberSequence';
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 import { BeanStub } from "../context/beanStub";
-import { getCtrlForEventTarget } from "../utils/event";
-import { exists } from "../utils/generic";
+import { _getCtrlForEventTarget } from "../utils/event";
+import { _exists } from "../utils/generic";
 import { CtrlsService } from "../ctrlsService";
 import { CellCtrl } from "../rendering/cell/cellCtrl";
 
@@ -27,7 +27,7 @@ export class MouseEventService extends BeanStub {
     }
 
     public getRenderedCellForEvent(event: Event): CellCtrl | null {
-        return getCtrlForEventTarget<CellCtrl>(this.gos, event.target, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        return _getCtrlForEventTarget<CellCtrl>(this.gos, event.target, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
     }
 
     // walks the path of the event, and returns true if this grid is the first one that it finds. if doing
@@ -42,7 +42,7 @@ export class MouseEventService extends BeanStub {
         let pointer: HTMLElement | null = element;
         while (pointer) {
             const instanceId = (pointer as any)[MouseEventService.GRID_DOM_KEY];
-            if (exists(instanceId)) {
+            if (_exists(instanceId)) {
                 const eventFromThisGrid = instanceId === this.gridInstanceId;
                 return eventFromThisGrid;
             }

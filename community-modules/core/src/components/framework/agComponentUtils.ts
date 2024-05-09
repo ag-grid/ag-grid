@@ -3,7 +3,7 @@ import { IComponent } from "../../interfaces/iComponent";
 import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
 import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
 import { BeanStub } from "../../context/beanStub";
-import { loadTemplate } from "../../utils/dom";
+import { _loadTemplate } from "../../utils/dom";
 
 @Bean("agComponentUtils")
 export class AgComponentUtils extends BeanStub {
@@ -36,11 +36,11 @@ export class AgComponentUtils extends BeanStub {
                 const callbackResult: string | HTMLElement = callback(params);
                 const type = typeof callbackResult;
                 if (type === 'string' || type === 'number' || type === 'boolean') {
-                    this.eGui = loadTemplate('<span>' + callbackResult + '</span>');
+                    this.eGui = _loadTemplate('<span>' + callbackResult + '</span>');
                     return;
                 }
                 if (callbackResult==null) {
-                    this.eGui = loadTemplate('<span></span>');
+                    this.eGui = _loadTemplate('<span></span>');
                     return;
                 }
                 this.eGui =  callbackResult as HTMLElement;

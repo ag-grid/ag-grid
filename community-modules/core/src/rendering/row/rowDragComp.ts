@@ -6,8 +6,8 @@ import { Events } from "../../eventKeys";
 import { Beans } from "../beans";
 import { BeanStub } from "../../context/beanStub";
 import { Column } from "../../entities/column";
-import { createIconNoSpan } from "../../utils/icon";
-import { isFunction, warnOnce } from "../../utils/function";
+import { _createIconNoSpan } from "../../utils/icon";
+import { _isFunction, _warnOnce } from "../../utils/function";
 
 export interface IRowDragItem extends DragItem {
     /** The default text that would be applied to this Drag Element */
@@ -37,7 +37,7 @@ export class RowDragComp extends Component {
     private postConstruct(): void {
         if (!this.customGui) {
             this.setTemplate(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`);
-            this.getGui().appendChild(createIconNoSpan('rowDrag', this.gos, null)!);
+            this.getGui().appendChild(_createIconNoSpan('rowDrag', this.gos, null)!);
             this.addDragSource();
         } else {
             this.setDragElement(this.customGui, this.dragStartPixels);
@@ -74,7 +74,7 @@ export class RowDragComp extends Component {
         const treeData = this.gos.get('treeData');
 
         if (treeData && managed) {
-            warnOnce('If using row drag with tree data, you cannot have rowDragManaged=true');
+            _warnOnce('If using row drag with tree data, you cannot have rowDragManaged=true');
         }
     }
 
@@ -156,12 +156,12 @@ class VisibilityStrategy extends BeanStub {
 
             if (this.column) {
                 shown = this.column.isRowDrag(this.rowNode) || this.parent.isCustomGui();
-                isShownSometimes = isFunction(this.column.getColDef().rowDrag);
+                isShownSometimes = _isFunction(this.column.getColDef().rowDrag);
             }
 
             // if shown sometimes, them some rows can have drag handle while other don't,
-            // so we use setVisible to keep the handles horizontally aligned (as setVisible
-            // keeps the empty space, whereas setDisplayed looses the space)
+            // so we use _setVisible to keep the handles horizontally aligned (as _setVisible
+            // keeps the empty space, whereas _setDisplayed looses the space)
             if (isShownSometimes) {
                 this.parent.setDisplayed(true, displayedOptions);
                 this.parent.setVisible(shown, displayedOptions);

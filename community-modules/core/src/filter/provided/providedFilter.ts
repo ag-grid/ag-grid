@@ -2,13 +2,13 @@ import { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../.
 import { Autowired, PostConstruct } from '../../context/context';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import { clearElement, loadTemplate, removeFromParent, setDisabled } from '../../utils/dom';
-import { debounce } from '../../utils/function';
+import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
+import { _debounce } from '../../utils/function';
 import { AgPromise } from '../../utils/promise';
 import { PopupEventParams } from '../../widgets/popupService';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
-import { convertToSet } from '../../utils/set';
+import { _convertToSet } from '../../utils/set';
 import { Component } from '../../widgets/component';
 import { IRowNode } from '../../interfaces/iRowNode';
 import { RefSelector } from '../../widgets/componentAnnotations';
@@ -45,7 +45,7 @@ export interface IProvidedFilterParams {
      */
     closeOnApply?: boolean;
     /**
-     * Overrides the default debounce time in milliseconds for the filter. Defaults are:
+     * Overrides the default _debounce time in milliseconds for the filter. Defaults are:
      * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).
      * - `DateFilter` and `SetFilter`: 0ms
      */
@@ -88,15 +88,15 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     private applyActive = false;
     private hidePopup: ((params: PopupEventParams) => void) | null | undefined = null;
-    // a debounce of the onBtApply method
+    // a _debounce of the onBtApply method
     private onBtApplyDebounce: () => void;
     private debouncePending = false;
 
     // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
     // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
     // this is what we want, as the UI should only become the 'active' filter once it's applied. when apply is
-    // inactive, this model will be in sync (following the debounce ms). if the UI is not a valid filter
-    // (eg the value is missing so nothing to filter on, or for set filter all checkboxes are checked so filter
+    // inactive, this model will be in sync (following the _debounce ms). if the UI is not a valid filter
+    // (eg the value is _missing so nothing to filter on, or for set filter all checkboxes are checked so filter
     // not active) then this appliedModel will be null/undefined.
     private appliedModel: M | null = null;
 
@@ -224,7 +224,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             }
         } else {
             // Always empty the buttons panel before adding new buttons
-            clearElement(this.eButtonsPanel);
+            _clearElement(this.eButtonsPanel);
             this.buttonListeners.forEach(destroyFunc => destroyFunc?.());
             this.buttonListeners = [];
 
@@ -233,7 +233,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         if (!hasButtons) {
             // The case when we need to hide the buttons panel because there are no buttons
             if (this.eButtonsPanel) {
-                removeFromParent(this.eButtonsPanel);
+                _removeFromParent(this.eButtonsPanel);
             }
 
             return;
@@ -272,7 +272,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             }
 
             const buttonType = type === 'apply' ? 'submit' : 'button';
-            const button = loadTemplate(
+            const button = _loadTemplate(
                 /* html */
                 `<button
                     type="${buttonType}"
@@ -286,20 +286,20 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             fragment.append(button);
         };
 
-        convertToSet(buttons).forEach(type => addButton(type));
+        _convertToSet(buttons).forEach(type => addButton(type));
 
         this.eButtonsPanel.append(fragment);
         this.getGui().appendChild(this.eButtonsPanel);
     }
 
-    // subclasses can override this to provide alternative debounce defaults
+    // subclasses can override this to provide alternative _debounce defaults
     protected getDefaultDebounceMs(): number {
         return 0;
     }
 
     private setupOnBtApplyDebounce(): void {
         const debounceMs = ProvidedFilter.getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
-        const debounceFunc = debounce(this.checkApplyDebounce.bind(this), debounceMs);
+        const debounceFunc = _debounce(this.checkApplyDebounce.bind(this), debounceMs);
         this.onBtApplyDebounce = () => {
             this.debouncePending = true;
             debounceFunc();
@@ -308,7 +308,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     private checkApplyDebounce(): void {
         if (this.debouncePending) {
-            // May already have been applied, so don't apply again (e.g. closing filter before debounce timeout)
+            // May already have been applied, so don't apply again (e.g. closing filter before _debounce timeout)
             this.debouncePending = false;
             this.onBtApply();
         }
@@ -429,7 +429,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     /**
      * By default, if the change came from a floating filter it will be applied immediately, otherwise if there is no
-     * apply button it will be applied after a debounce, otherwise it will not be applied at all. This behaviour can
+     * apply button it will be applied after a _debounce, otherwise it will not be applied at all. This behaviour can
      * be adjusted by using the apply parameter.
      */
     protected onUiChanged(fromFloatingFilter = false, apply?: 'immediately' | 'debounce' | 'prevent'): void {
@@ -440,7 +440,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             const isValid = this.isModelValid(this.getModelFromUi()!);
             const applyFilterButton = this.getRefElement('applyFilterButton');
             if (applyFilterButton) {
-                setDisabled(applyFilterButton, !isValid);
+                _setDisabled(applyFilterButton, !isValid);
             }
         }
 

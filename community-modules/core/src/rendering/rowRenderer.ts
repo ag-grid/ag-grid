@@ -24,17 +24,17 @@ import { ICellEditor } from "../interfaces/iCellEditor";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowPosition } from "../entities/rowPositionUtils";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { exists } from "../utils/generic";
-import { getAllValuesInObject, iterateObject } from "../utils/object";
-import { createArrayOfNumbers } from "../utils/number";
-import { executeInAWhile } from "../utils/function";
+import { _exists } from "../utils/generic";
+import { _getAllValuesInObject, _iterateObject } from "../utils/object";
+import { _createArrayOfNumbers } from "../utils/number";
+import { _executeInAWhile } from "../utils/function";
 import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
-import { removeFromArray } from "../utils/array";
+import { _removeFromArray } from "../utils/array";
 import { StickyRowFeature } from "./features/stickyRowFeature";
 import { AnimationFrameService } from "../misc/animationFrameService";
-import { browserSupportsPreventScroll } from "../utils/browser";
+import { _browserSupportsPreventScroll } from "../utils/browser";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IRowNode } from "../interfaces/iRowNode";
 
@@ -204,8 +204,8 @@ export class RowRenderer extends BeanStub {
     }
 
     private updateAllRowCtrls(): void {
-        const liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
-        const zombieList = getAllValuesInObject(this.zombieRowCtrls);
+        const liveList = _getAllValuesInObject(this.rowCtrlsByRowIndex);
+        const zombieList = _getAllValuesInObject(this.zombieRowCtrls);
         const cachedList = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
 
         if (zombieList.length > 0 || cachedList.length > 0) {
@@ -816,7 +816,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private isRowInMap(rowNode: RowNode, rowIdsMap: {top: RowNodeMap, bottom: RowNodeMap, normal: RowNodeMap}): boolean {
-        // skip this row if it is missing from the provided list
+        // skip this row if it is _missing from the provided list
         const id = rowNode.id!;
         const floating = rowNode.rowPinned;
 
@@ -847,11 +847,11 @@ export class RowRenderer extends BeanStub {
     // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
     private getCellCtrls(rowNodes?: IRowNode[] | null, columns?: (string | Column)[]): CellCtrl[] {
         let colIdsMap: any;
-        if (exists(columns)) {
+        if (_exists(columns)) {
             colIdsMap = {};
             columns.forEach((colKey: string | Column) => {
                 const column: Column | null = this.columnModel.getGridColumn(colKey);
-                if (exists(column)) {
+                if (_exists(column)) {
                     colIdsMap[column.getId()] = true;
                 }
             });
@@ -885,7 +885,7 @@ export class RowRenderer extends BeanStub {
     private getRowsToRecycle(): RowCtrlByRowNodeIdMap {
         // remove all stub nodes, they can't be reused, as no rowNode id
         const stubNodeIndexes: string[] = [];
-        iterateObject(this.rowCtrlsByRowIndex, (index: string, rowCtrl: RowCtrl) => {
+        _iterateObject(this.rowCtrlsByRowIndex, (index: string, rowCtrl: RowCtrl) => {
             const stubNode = rowCtrl.getRowNode().id == null;
             if (stubNode) {
                 stubNodeIndexes.push(index);
@@ -895,7 +895,7 @@ export class RowRenderer extends BeanStub {
 
         // then clear out rowCompsByIndex, but before that take a copy, but index by id, not rowIndex
         const ctrlsByIdMap: RowCtrlByRowNodeIdMap = {};
-        iterateObject(this.rowCtrlsByRowIndex, (index: string, rowCtrl: RowCtrl) => {
+        _iterateObject(this.rowCtrlsByRowIndex, (index: string, rowCtrl: RowCtrl) => {
             const rowNode = rowCtrl.getRowNode();
             ctrlsByIdMap[rowNode.id!] = rowCtrl;
         });
@@ -934,7 +934,7 @@ export class RowRenderer extends BeanStub {
 
         // only try to refocus cells shifting in and out of sticky container
         // if the browser supports focus ({ preventScroll })
-        if (this.stickyRowFeature && browserSupportsPreventScroll()) {
+        if (this.stickyRowFeature && _browserSupportsPreventScroll()) {
             cellFocused = this.getCellToRestoreFocusToAfterRefresh() || undefined;
         }
 
@@ -981,7 +981,7 @@ export class RowRenderer extends BeanStub {
 
     private calculateIndexesToDraw(rowsToRecycle?: { [key: string]: RowCtrl; } | null): number[] {
         // all in all indexes in the viewport
-        let indexesToDraw = createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
+        let indexesToDraw = _createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
 
         const checkRowToDraw = (indexStr: string, rowComp: RowCtrl) => {
             const index = rowComp.getRowNode().rowIndex;
@@ -994,10 +994,10 @@ export class RowRenderer extends BeanStub {
         };
 
         // if we are redrawing due to scrolling change, then old rows are in this.rowCompsByIndex
-        iterateObject(this.rowCtrlsByRowIndex, checkRowToDraw);
+        _iterateObject(this.rowCtrlsByRowIndex, checkRowToDraw);
 
         // if we are redrawing due to model update, then old rows are in rowsToRecycle
-        iterateObject(rowsToRecycle, checkRowToDraw);
+        _iterateObject(rowsToRecycle, checkRowToDraw);
 
         indexesToDraw.sort((a: number, b: number) => a - b);
 
@@ -1038,7 +1038,7 @@ export class RowRenderer extends BeanStub {
 
         indexesToDraw.forEach(rowIndex => {
             const rowCtrl = this.createOrUpdateRowCtrl(rowIndex, rowsToRecycle, animate, afterScroll);
-            if (exists(rowCtrl)) {
+            if (_exists(rowCtrl)) {
                 rowCtrls.push(rowCtrl);
             }
         });
@@ -1103,7 +1103,7 @@ export class RowRenderer extends BeanStub {
             // include just full width
             if (!rowCtrl.isFullWidth()) { return false; }
 
-            // if Row Nodes provided, we exclude where Row Node is missing
+            // if Row Nodes provided, we exclude where Row Node is _missing
             const rowNode = rowCtrl.getRowNode();
             if (rowNodesMap != null && !this.isRowInMap(rowNode, rowNodesMap)) { return false; }
 
@@ -1123,7 +1123,7 @@ export class RowRenderer extends BeanStub {
         // if no row comp, see if we can get it from the previous rowComps
         if (!rowCtrl) {
             rowNode = this.paginationProxy.getRow(rowIndex);
-            if (exists(rowNode) && exists(rowsToRecycle) && rowsToRecycle[rowNode.id!] && rowNode.alreadyRendered) {
+            if (_exists(rowNode) && _exists(rowsToRecycle) && rowsToRecycle[rowNode.id!] && rowNode.alreadyRendered) {
                 rowCtrl = rowsToRecycle[rowNode.id!];
                 rowsToRecycle[rowNode.id!] = null;
             }
@@ -1137,7 +1137,7 @@ export class RowRenderer extends BeanStub {
                 rowNode = this.paginationProxy.getRow(rowIndex);
             }
 
-            if (exists(rowNode)) {
+            if (_exists(rowNode)) {
                 rowCtrl = this.createRowCon(rowNode, animate, afterScroll);
             } else {
                 // this should never happen - if somehow we are trying to create
@@ -1159,7 +1159,7 @@ export class RowRenderer extends BeanStub {
 
     private destroyRowCtrls(rowCtrlsMap: RowCtrlIdMap | null | undefined, animate: boolean): void {
         const executeInAWhileFuncs: (() => void)[] = [];
-        iterateObject(rowCtrlsMap, (nodeId: string, rowCtrl: RowCtrl) => {
+        _iterateObject(rowCtrlsMap, (nodeId: string, rowCtrl: RowCtrl) => {
             // if row was used, then it's null
             if (!rowCtrl) { return; }
 
@@ -1186,7 +1186,7 @@ export class RowRenderer extends BeanStub {
                 this.updateAllRowCtrls();
                 this.dispatchDisplayedRowsChanged();
             });
-            executeInAWhile(executeInAWhileFuncs);
+            _executeInAWhile(executeInAWhileFuncs);
         }
     }
 
@@ -1503,13 +1503,13 @@ class RowCtrlCache {
         const rowNodeId = rowNode.id!;
         const ctrl = this.entriesMap[rowNodeId];
         delete this.entriesMap[rowNodeId];
-        removeFromArray(this.entriesList, ctrl);
+        _removeFromArray(this.entriesList, ctrl);
     }
 
     public removeFromCache(rowCtrl: RowCtrl): void {
         const rowNodeId = rowCtrl.getRowNode().id!;
         delete this.entriesMap[rowNodeId];
-        removeFromArray(this.entriesList, rowCtrl);
+        _removeFromArray(this.entriesList, rowCtrl);
     }
 
     public getEntries(): RowCtrl[] {

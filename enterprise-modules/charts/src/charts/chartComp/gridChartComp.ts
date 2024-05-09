@@ -314,8 +314,8 @@ export class GridChartComp extends Component {
 
     private getBestDialogSize(): { width: number, height: number; } {
         const popupParent = this.popupService.getPopupParent();
-        const maxWidth = _.getAbsoluteWidth(popupParent) * 0.75;
-        const maxHeight = _.getAbsoluteHeight(popupParent) * 0.75;
+        const maxWidth = _getAbsoluteWidth(popupParent) * 0.75;
+        const maxHeight = _getAbsoluteHeight(popupParent) * 0.75;
         const ratio = 0.553;
 
         const chart = this.chartProxy.getChart();
@@ -460,8 +460,8 @@ export class GridChartComp extends Component {
 
         if (this.eChart) {
             const isEmpty = pivotModeDisabled || isEmptyChart;
-            _.setDisplayed(this.eChart, !isEmpty);
-            _.setDisplayed(this.eEmpty, isEmpty);
+            _setDisplayed(this.eChart, !isEmpty);
+            _setDisplayed(this.eEmpty, isEmpty);
         }
 
         if (pivotModeDisabled) {
@@ -519,7 +519,7 @@ export class GridChartComp extends Component {
         }
 
         const { chartThemeName } = this.params;
-        return _.includes(availableChartThemes, chartThemeName) ? chartThemeName! : availableChartThemes[0];
+        return _includes(availableChartThemes, chartThemeName) ? chartThemeName! : availableChartThemes[0];
     }
 
     private getAllKeysInObjects(objects: any[]): string[] {
@@ -537,7 +537,7 @@ export class GridChartComp extends Component {
         const customChartThemes = this.gos.get('customChartThemes');
         if (customChartThemes) {
             this.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
-                if (!_.includes(suppliedThemes, customThemeName)) {
+                if (!_includes(suppliedThemes, customThemeName)) {
                     console.warn("AG Grid: a custom chart theme with the name '" + customThemeName + "' has been " +
                         "supplied but not added to the 'chartThemes' list");
                 }
@@ -604,9 +604,9 @@ export class GridChartComp extends Component {
         // if the user is providing containers for the charts, we need to clean up, otherwise the old chart
         // data will still be visible although the chart is no longer bound to the grid
         const eGui = this.getGui();
-        _.clearElement(eGui);
+        _clearElement(eGui);
         // remove from parent, so if user provided container, we detach from the provided dom element
-        _.removeFromParent(eGui);
+        _removeFromParent(eGui);
 
         this.raiseChartDestroyedEvent();
     }

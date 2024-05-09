@@ -1,7 +1,7 @@
-import { camelCaseToHumanText, camelCaseToHyphenated } from './string'
+import { _camelCaseToHumanText, _camelCaseToHyphenated } from './string'
 
 
-describe('camelCaseToHumanText', () => {
+describe('_camelCaseToHumanText', () => {
     it.each([
         ['thisIsMe', 'This Is Me'],
         ['FTssRRsDSEd', 'F Tss R Rs DS Ed'],
@@ -14,7 +14,7 @@ describe('camelCaseToHumanText', () => {
 
 
     ])('Value: %s', (field, expected) => {
-        expect(camelCaseToHumanText(field)).toBe(expected);
+        expect(_camelCaseToHumanText(field)).toBe(expected);
     });
 });
 

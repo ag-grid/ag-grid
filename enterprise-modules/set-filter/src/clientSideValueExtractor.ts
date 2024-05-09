@@ -53,7 +53,7 @@ export class ClientSideValuesExtractor<V> {
             if (!formattedKeys.has(formattedKey)) {
                 formattedKeys.add(formattedKey);
                 let keyToAdd = unformattedKey;
-                let valueToAdd = _.makeNull(value);
+                let valueToAdd = _makeNull(value);
                 // when case insensitive, we pick the first value to use. if this is later filtered out,
                 // we still want to use the original value and not one with a different case
                 const existingUnformattedKey = existingFormattedKeys?.get(formattedKey);
@@ -100,7 +100,7 @@ export class ClientSideValuesExtractor<V> {
         const key = this.createKey(value, node);
         if (key != null && Array.isArray(key)) {
             key.forEach(part => {
-                const processedPart = _.toStringOrNull(_.makeNull(part));
+                const processedPart = _toStringOrNull(_makeNull(part));
                 addValue(processedPart, processedPart as any);
             });
             if (key.length === 0) {
@@ -121,7 +121,7 @@ export class ClientSideValuesExtractor<V> {
             dataPath.push(this.getValue(node) as any);
         }
         if (dataPath) {
-            dataPath = dataPath.map(treeKey => _.toStringOrNull(_.makeNull(treeKey))) as any;
+            dataPath = dataPath.map(treeKey => _toStringOrNull(_makeNull(treeKey))) as any;
         }
         if (!treeData && this.groupAllowUnbalanced && dataPath?.some(treeKey => treeKey == null)) {
             dataPath = dataPath.filter(treeKey => treeKey != null);

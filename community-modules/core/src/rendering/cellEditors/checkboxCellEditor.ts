@@ -2,7 +2,7 @@ import { PopupComponent } from "../../widgets/popupComponent";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { AgCheckbox } from "../../widgets/agCheckbox";
-import { getAriaCheckboxStateName } from "../../utils/aria";
+import { _getAriaCheckboxStateName } from "../../utils/aria";
 import { Events } from "../../eventKeys";
 
 export class CheckboxCellEditor extends PopupComponent implements ICellEditorComp {
@@ -55,7 +55,7 @@ export class CheckboxCellEditor extends PopupComponent implements ICellEditorCom
 
     private setAriaLabel(isSelected?: boolean): void {
         const translate = this.localeService.getLocaleTextFunc();
-        const stateName = getAriaCheckboxStateName(translate, isSelected);
+        const stateName = _getAriaCheckboxStateName(translate, isSelected);
         const ariaLabel = translate('ariaToggleCellValue', 'Press SPACE to toggle cell value');
         this.eCheckbox.setInputAriaLabel(`${ariaLabel} (${stateName})`);
     }

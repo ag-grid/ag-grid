@@ -3,7 +3,7 @@ import { BeanStub } from "../context/beanStub";
 import { Events, ModelUpdatedEvent, PaginationChangedEvent } from "../events";
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { missing, exists } from "../utils/generic";
+import { _missing, _exists } from "../utils/generic";
 import { RowPosition } from "../entities/rowPositionUtils";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
@@ -15,7 +15,7 @@ export class PaginationProxy extends BeanStub {
     private active: boolean;
     private paginateChildRows: boolean;
 
-    // We should track all the different sources of page size, as we can fall back to the next one if one is missing.
+    // We should track all the different sources of page size, as we can fall back to the next one if one is _missing.
     // or if user preferences change (Example: disabling auto page size option should mean we get page size from
     // page size selector value - if a value was previously selected .. otherwise fall back to initial state value).
     // IMPORTANT: We should always use this.pageSize getter to get the page size instead of accessing
@@ -130,7 +130,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     public getCurrentPageHeight(): number {
-        if (missing(this.topRowBounds) || missing(this.bottomRowBounds)) {
+        if (_missing(this.topRowBounds) || _missing(this.bottomRowBounds)) {
             return 0;
         }
         return Math.max(this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop, 0);
@@ -252,10 +252,10 @@ export class PaginationProxy extends BeanStub {
     }
 
     private get pageSize(): number {
-        if (exists(this.pageSizeAutoCalculated)) { return this.pageSizeAutoCalculated; }
-        if (exists(this.pageSizeFromPageSizeSelector)) { return this.pageSizeFromPageSizeSelector; }
-        if (exists(this.pageSizeFromInitialState)) { return this.pageSizeFromInitialState; }
-        if (exists(this.pageSizeFromGridOptions)) { return this.pageSizeFromGridOptions; }
+        if (_exists(this.pageSizeAutoCalculated)) { return this.pageSizeAutoCalculated; }
+        if (_exists(this.pageSizeFromPageSizeSelector)) { return this.pageSizeFromPageSizeSelector; }
+        if (_exists(this.pageSizeFromInitialState)) { return this.pageSizeFromInitialState; }
+        if (_exists(this.pageSizeFromGridOptions)) { return this.pageSizeFromGridOptions; }
         return this.defaultPageSize;
     }
 
@@ -335,7 +335,7 @@ export class PaginationProxy extends BeanStub {
             this.bottomRowBounds.rowIndex = this.bottomDisplayedRowIndex;
         }
 
-        this.setPixelOffset(exists(this.topRowBounds) ? this.topRowBounds.rowTop : 0);
+        this.setPixelOffset(_exists(this.topRowBounds) ? this.topRowBounds.rowTop : 0);
     }
 
     private setPixelOffset(value: number): void {

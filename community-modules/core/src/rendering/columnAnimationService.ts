@@ -51,7 +51,7 @@ export class ColumnAnimationService extends BeanStub {
         this.flush(() => { this.active = false });
     }
 
-    public executeNextVMTurn(func: Function): void {
+    public _executeNextVMTurn(func: Function): void {
         if (this.active) {
             this.executeNextFuncs.push(func);
         } else {

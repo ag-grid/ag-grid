@@ -38,7 +38,7 @@ export class SideBarButtonsComp extends Component {
     private handleKeyDown(e: KeyboardEvent): void {
         if (e.key !== KeyCode.TAB || !e.shiftKey) { return; }
 
-        const lastColumn = _.last(this.columnModel.getAllDisplayedColumns());
+        const lastColumn = _last(this.columnModel.getAllDisplayedColumns());
 
         if (this.focusService.focusGridView(lastColumn, true)) {
             e.preventDefault();
@@ -69,7 +69,7 @@ export class SideBarButtonsComp extends Component {
     @PreDestroy
     public clearButtons(): void {
         this.buttonComps = this.destroyBeans(this.buttonComps);
-        _.clearElement(this.getGui());
+        _clearElement(this.getGui());
     }
 
 }

@@ -25,7 +25,7 @@ export interface ToolPanelDef {
     id: string;
     /** The key used for localisation for displaying the label. The label is displayed in the tab button. */
     labelKey: string;
-    /** The default label if `labelKey` is missing or does not map to valid text through localisation. */
+    /** The default label if `labelKey` is _missing or does not map to valid text through localisation. */
     labelDefault: string;
     /**
      * The min width of the tool panel.

@@ -91,7 +91,7 @@ export class OverlayService extends BeanStub {
 
     private onNewColumnsLoaded(): void {
         // hide overlay if columns and rows exist, this can happen if columns are loaded after data.
-        // this problem exists before of the race condition between the services (column controller in this case)
+        // this problem _exists before of the race condition between the services (column controller in this case)
         // and the view (grid panel). if the model beans were all initialised first, and then the view beans second,
         // this race condition would not happen.
         if (this.columnModel.isReady() && !this.paginationProxy.isEmpty() && !this.manuallyDisplayed) {

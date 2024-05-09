@@ -11,7 +11,7 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
 
         // this component is only really useful with client side row model
         if (this.rowModel.getType() !== 'clientSide') {
-            _.warnOnce('agTotalRowCountComponent should only be used with the client side row model.');
+            _warnOnce('agTotalRowCountComponent should only be used with the client side row model.');
             return;
         }
 
@@ -28,7 +28,7 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
-        this.setValue(_.formatNumberCommas(this.getRowCountValue(), thousandSeparator, decimalSeparator));
+        this.setValue(_formatNumberCommas(this.getRowCountValue(), thousandSeparator, decimalSeparator));
     }
 
     private getRowCountValue(): number {

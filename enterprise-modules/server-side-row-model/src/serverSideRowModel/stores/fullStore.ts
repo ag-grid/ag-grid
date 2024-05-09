@@ -188,7 +188,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         );
 
         if (index != null) {
-            _.insertIntoArray(this.allRowNodes, rowNode, index);
+            _insertIntoArray(this.allRowNodes, rowNode, index);
         } else {
             this.allRowNodes.push(rowNode);
         }
@@ -238,13 +238,13 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.allNodesMap = {};
 
         if (!params.rowData) {
-            _.warnOnce('"params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.');
+            _warnOnce('"params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.');
         }
 
         this.createOrRecycleNodes(nodesToRecycle, params.rowData);
 
         if (nodesToRecycle) {
-            this.blockUtils.destroyRowNodes(_.getAllValuesInObject(nodesToRecycle));
+            this.blockUtils.destroyRowNodes(_getAllValuesInObject(nodesToRecycle));
         }
 
         if (this.level === 0) {
@@ -600,7 +600,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     private executeAdd(rowDataTran: ServerSideTransaction, rowNodeTransaction: ServerSideTransactionResult): void {
         const { add, addIndex } = rowDataTran;
-        if (_.missingOrEmpty(add)) { return; }
+        if (_missingOrEmpty(add)) { return; }
 
         const useIndex = typeof addIndex === 'number' && addIndex >= 0;
         if (useIndex) {
@@ -638,10 +638,10 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             // so row renderer knows to fade row out (and not reposition it)
             rowNode.clearRowTopAndRowIndex();
 
-            // NOTE: were we could remove from allLeaveChildren, however _.removeFromArray() is expensive, especially
+            // NOTE: were we could remove from allLeaveChildren, however _removeFromArray() is expensive, especially
             // if called multiple times (eg deleting lots of rows) and if allLeafChildren is a large list
             rowIdsRemoved[rowNode.id!] = true;
-            // _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
+            // _removeFromArray(this.rootNode.allLeafChildren, rowNode);
             delete this.allNodesMap[rowNode.id!];
 
             rowNodeTransaction.remove!.push(rowNode);
@@ -762,7 +762,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         let inActiveRange = false;
 
         // if only one node passed, we start the selection at the top
-        if (_.missing(firstInRange)) {
+        if (_missing(firstInRange)) {
             inActiveRange = true;
         }
 

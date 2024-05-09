@@ -24,9 +24,9 @@ import { SkeletonCellRenderer } from "../../rendering/cellRenderers/skeletonCell
 import { LoadingOverlayComponent } from "../../rendering/overlays/loadingOverlayComponent";
 import { NoRowsOverlayComponent } from "../../rendering/overlays/noRowsOverlayComponent";
 import { TooltipComponent } from "../../rendering/tooltipComponent";
-import { doOnce } from "../../utils/function";
-import { iterateObject } from '../../utils/object';
-import { fuzzySuggestions } from '../../utils/fuzzyMatch';
+import { _doOnce } from "../../utils/function";
+import { _iterateObject } from '../../utils/object';
+import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
 import { NumberCellEditor } from "../../rendering/cellEditors/numberCellEditor";
 import { DateCellEditor } from "../../rendering/cellEditors/dateCellEditor";
 import { DateStringCellEditor } from "../../rendering/cellEditors/dateStringCellEditor";
@@ -107,7 +107,7 @@ export class UserComponentRegistry extends BeanStub {
     private init(): void {
         const comps = this.gos.get('components');
         if (comps != null) {
-            iterateObject(comps, (key, component) => this.registerJsComponent(key, component));
+            _iterateObject(comps, (key, component) => this.registerJsComponent(key, component));
         }
     }
 
@@ -152,7 +152,7 @@ export class UserComponentRegistry extends BeanStub {
         if (moduleForComponent) {
             ModuleRegistry.__assertRegistered(moduleForComponent, `AG Grid '${propertyName}' component: ${name}`, this.context.getGridId());
         } else {
-            doOnce(() => { this.warnAboutMissingComponent(propertyName, name) }, "MissingComp" + name);
+            _doOnce(() => { this.warnAboutMissingComponent(propertyName, name) }, "MissingComp" + name);
         }
 
         return null;
@@ -163,7 +163,7 @@ export class UserComponentRegistry extends BeanStub {
             // Don't include the old names / internals in potential suggestions
             ...Object.keys(this.agGridDefaults).filter(k => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)),
             ...Object.keys(this.jsComps)];
-        const suggestions = fuzzySuggestions(componentName, validComponents, true, 0.8).values;
+        const suggestions = _fuzzySuggestions(componentName, validComponents, true, 0.8).values;
 
         console.warn(`AG Grid: Could not find '${componentName}' component. It was configured as "${propertyName}: '${componentName}'" but it wasn't found in the list of registered components.`);
         if (suggestions.length > 0) {

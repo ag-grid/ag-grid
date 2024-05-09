@@ -1,6 +1,6 @@
 import { IFloatingFilterParams } from '../floatingFilter';
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { debounce } from '../../../utils/function';
+import { _debounce } from '../../../utils/function';
 import { ProvidedFilter } from '../../provided/providedFilter';
 import { PostConstruct } from '../../../context/context';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
@@ -10,7 +10,7 @@ import { KeyCode } from '../../../constants/keyCode';
 import { TextFilterParams, TextFilter, TextFilterModel } from '../../provided/text/textFilter';
 import { NumberFilter, NumberFilterModel } from '../../provided/number/numberFilter';
 import { BeanStub } from '../../../context/beanStub';
-import { clearElement } from '../../../utils/dom';
+import { _clearElement } from '../../../utils/dom';
 
 export interface FloatingFilterInputService {
     setupGui(parentElement: HTMLElement): void;
@@ -144,7 +144,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         
         if (!this.isReadOnly()) {
             const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
-            const toDebounce: (e: KeyboardEvent) => void = debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
+            const toDebounce: (e: KeyboardEvent) => void = _debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
 
             this.floatingFilterInputService.setValueChangedListener(toDebounce);
         }
@@ -161,7 +161,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
 
     protected recreateFloatingFilterInputService(params: ITextInputFloatingFilterParams): void {
         const value = this.floatingFilterInputService.getValue();
-        clearElement(this.eFloatingFilterInputContainer);
+        _clearElement(this.eFloatingFilterInputContainer);
         this.destroyBean(this.floatingFilterInputService);
         this.setupFloatingFilterInputService(params);
         this.floatingFilterInputService.setValue(value, true);

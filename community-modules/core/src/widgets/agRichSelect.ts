@@ -6,15 +6,15 @@ import { FieldPickerValueSelectedEvent } from "../events";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
-import { AgPromise } from "../utils";
-import { setAriaActiveDescendant, setAriaControls, setAriaLabel } from "../utils/aria";
-import { bindCellRendererToHtmlElement, clearElement, isVisible } from "../utils/dom";
-import { stopPropagationForAgGrid } from "../utils/event";
-import { debounce } from "../utils/function";
-import { fuzzySuggestions } from "../utils/fuzzyMatch";
-import { exists } from "../utils/generic";
-import { isEventFromPrintableCharacter } from "../utils/keyboard";
-import { escapeString } from "../utils/string";
+import { AgPromise } from "../utils/promise";
+import { _setAriaActiveDescendant, _setAriaControls, _setAriaLabel } from "../utils/aria";
+import { _bindCellRendererToHtmlElement, _clearElement, _isVisible } from "../utils/dom";
+import { _stopPropagationForAgGrid } from "../utils/event";
+import { _debounce } from "../utils/function";
+import { _fuzzySuggestions } from "../utils/fuzzyMatch";
+import { _exists } from "../utils/generic";
+import { _isEventFromPrintableCharacter } from "../utils/keyboard";
+import { _escapeString } from "../utils/string";
 import { AgInputTextField } from "./agInputTextField";
 import { AgPickerField, AgPickerFieldParams } from "./agPickerField";
 import { RichSelectRow } from "./agRichSelectRow";
@@ -121,7 +121,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         this.eWrapper.tabIndex = this.gos.get('tabIndex');
 
         const { searchDebounceDelay = 300 } = this.config;
-        this.clearSearchString = debounce(this.clearSearchString, searchDebounceDelay);
+        this.clearSearchString = _debounce(this.clearSearchString, searchDebounceDelay);
 
         this.renderSelectedValue();
 
@@ -172,8 +172,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         const translate = this.localeService.getLocaleTextFunc();
         const ariaLabel = translate(this.config.pickerAriaLabelKey, this.config.pickerAriaLabelValue);
 
-        setAriaLabel(eListAriaEl, ariaLabel);
-        setAriaControls(this.eWrapper, eListAriaEl);
+        _setAriaLabel(eListAriaEl, ariaLabel);
+        _setAriaControls(this.eWrapper, eListAriaEl);
     }
 
     private renderSelectedValue(): void {
@@ -202,22 +202,22 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         }
 
         if (userCompDetailsPromise) {
-            clearElement(eDisplayField);
-            bindCellRendererToHtmlElement(userCompDetailsPromise, eDisplayField);
+            _clearElement(eDisplayField);
+            _bindCellRendererToHtmlElement(userCompDetailsPromise, eDisplayField);
             userCompDetailsPromise.then(renderer => {
                 this.addDestroyFunc(() => this.getContext().destroyBean(renderer));
             });
         } else {
-            if (exists(this.value)) {
+            if (_exists(this.value)) {
                 eDisplayField.innerText = valueFormatted;
                 eDisplayField.classList.remove('ag-display-as-placeholder');
             } else {
                 const { placeholder } = config;
-                if (exists(placeholder)) {
-                    eDisplayField.innerHTML = `${escapeString(placeholder)}`
+                if (_exists(placeholder)) {
+                    eDisplayField.innerHTML = `${_escapeString(placeholder)}`
                     eDisplayField.classList.add('ag-display-as-placeholder');
                 } else {
-                    clearElement(eDisplayField);
+                    _clearElement(eDisplayField);
                 }
             }
 
@@ -373,7 +373,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         if (key === KeyCode.BACKSPACE) {
             this.searchString = this.searchString.slice(0, -1);
             key = '';
-        } else if (!isEventFromPrintableCharacter(searchKey)) {
+        } else if (!_isEventFromPrintableCharacter(searchKey)) {
             return;
         }
 
@@ -416,7 +416,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         const { searchType = 'fuzzy', filterList } = this.config;
 
         if (searchType === 'fuzzy') {
-            const fuzzySearchResult = fuzzySuggestions(this.searchString, valueList, true);
+            const fuzzySearchResult = _fuzzySuggestions(this.searchString, valueList, true);
             suggestions = fuzzySearchResult.values;
 
             const indices = fuzzySearchResult.indices;
@@ -479,7 +479,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                 this.getAriaElement().removeAttribute('data-active-option');
                 const eListAriaEl = this.listComponent?.getAriaElement();
                 if (eListAriaEl) {
-                    setAriaActiveDescendant(eListAriaEl, null);
+                    _setAriaActiveDescendant(eListAriaEl, null);
                 }
             }
         }
@@ -673,9 +673,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                 break;
             case KeyCode.ESCAPE:
                 if (this.isPickerDisplayed) {
-                    if (isVisible(this.listComponent!.getGui())) {
+                    if (_isVisible(this.listComponent!.getGui())) {
                         event.preventDefault();
-                        stopPropagationForAgGrid(event);
+                        _stopPropagationForAgGrid(event);
                     }
                     this.hidePicker();
                 }

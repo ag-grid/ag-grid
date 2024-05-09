@@ -22,7 +22,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
         const title = localeTextFunc('pivots', 'Column Labels');
 
         super.init({
-            icon: _.createIconNoSpan('pivotPanel', this.gos, null)!,
+            icon: _createIconNoSpan('pivotPanel', this.gos, null)!,
             emptyMessage: emptyMessage,
             title: title
         });

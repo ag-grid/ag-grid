@@ -16,19 +16,19 @@ export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
                 case KeyCode.TAB:
                     if (!event.defaultPrevented) {
                         // tab guard handled the navigation. stop from reaching virtual list
-                        _.stopPropagationForAgGrid(event);
+                        _stopPropagationForAgGrid(event);
                     }
                     break;
                 case KeyCode.UP:
                 case KeyCode.DOWN:
                     // if this hasn't been handled by an editor, prevent virtual list navigation
-                    _.stopPropagationForAgGrid(event);
+                    _stopPropagationForAgGrid(event);
                     break;
                 case KeyCode.ESCAPE:
-                    if (_.isStopPropagationForAgGrid(event)) { return; }
+                    if (_isStopPropagationForAgGrid(event)) { return; }
                     if (this.eGui.contains(this.gos.getActiveDomElement())) {
                         event.preventDefault();
-                        _.stopPropagationForAgGrid(event);
+                        _stopPropagationForAgGrid(event);
                         this.focusWrapper.focus();
                     }
                     break;
@@ -37,10 +37,10 @@ export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
         this.addManagedListener(this.focusWrapper, 'keydown', (event: KeyboardEvent) => {
             switch (event.key) {
                 case KeyCode.ENTER:
-                    if (_.isStopPropagationForAgGrid(event)) { return; }
+                    if (_isStopPropagationForAgGrid(event)) { return; }
                     if (this.gos.getActiveDomElement() === this.focusWrapper) {
                         event.preventDefault();
-                        _.stopPropagationForAgGrid(event);
+                        _stopPropagationForAgGrid(event);
                         this.eFocusableComp.getFocusableElement().focus();
                     }
                     break;

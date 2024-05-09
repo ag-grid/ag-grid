@@ -76,7 +76,7 @@ export class ToolPanelColumnGroupComp extends Component {
     public init(): void {
         this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE);
 
-        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gos)!;
+        this.eDragHandle = _createIconNoSpan('columnDrag', this.gos)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-group-drag-handle');
 
         const checkboxGui = this.cbSelect.getGui();
@@ -186,7 +186,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private setupDragging(): void {
         if (!this.allowDragging) {
-            _.setDisplayed(this.eDragHandle, false);
+            _setDisplayed(this.eDragHandle, false);
             return;
         }
 
@@ -257,8 +257,8 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private setupExpandContract(): void {
-        this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.gos, null));
-        this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gos, null));
+        this.eGroupClosedIcon.appendChild(_createIcon('columnSelectClosed', this.gos, null));
+        this.eGroupOpenedIcon.appendChild(_createIcon('columnSelectOpen', this.gos, null));
 
         this.addManagedListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         this.addManagedListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
@@ -313,9 +313,9 @@ export class ToolPanelColumnGroupComp extends Component {
             (checkboxValue ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden'));
         const visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');
 
-        _.setAriaLabel(this.focusWrapper, `${this.displayName} ${columnLabel}`);
+        _setAriaLabel(this.focusWrapper, `${this.displayName} ${columnLabel}`);
         this.cbSelect.setInputAriaLabel(`${visibilityLabel} (${state})`);
-        _.setAriaDescribedBy(this.focusWrapper, this.cbSelect.getInputElement().id);
+        _setAriaDescribedBy(this.focusWrapper, this.cbSelect.getInputElement().id);
     }
 
     public onColumnStateChanged(): void {
@@ -396,12 +396,12 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private setOpenClosedIcons(): void {
         const folderOpen = this.modelItem.isExpanded();
-        _.setDisplayed(this.eGroupClosedIcon, !folderOpen);
-        _.setDisplayed(this.eGroupOpenedIcon, folderOpen);
+        _setDisplayed(this.eGroupClosedIcon, !folderOpen);
+        _setDisplayed(this.eGroupOpenedIcon, folderOpen);
     }
 
     private refreshAriaExpanded(): void {
-        _.setAriaExpanded(this.focusWrapper, this.modelItem.isExpanded());
+        _setAriaExpanded(this.focusWrapper, this.modelItem.isExpanded());
     }
 
     public getDisplayName(): string | null {

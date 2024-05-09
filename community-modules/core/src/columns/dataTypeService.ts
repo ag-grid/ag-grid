@@ -20,16 +20,16 @@ import { IRowModel } from '../interfaces/iRowModel';
 import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { Events } from '../eventKeys';
 import { ColumnModel, ColumnState, ColumnStateParams, convertSourceType } from './columnModel';
-import { getValueUsingField } from '../utils/object';
+import { _getValueUsingField } from '../utils/object';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { ModuleNames } from '../modules/moduleNames';
 import { ValueService } from '../valueService/valueService';
 import { Column } from '../entities/column';
-import { warnOnce } from '../utils/function';
+import { _warnOnce } from '../utils/function';
 import { KeyCode } from '../constants/keyCode';
-import { exists, toStringOrNull } from '../utils/generic';
+import { _exists, _toStringOrNull } from '../utils/generic';
 import { IRowNode } from '../interfaces/iRowNode';
-import { parseDateTimeFromString, serialiseDate } from '../utils/date';
+import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
 import { AgEventListener, AgGridEvent, DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 
@@ -185,7 +185,7 @@ export class DataTypeService extends BeanStub {
             );
         } else {
             if (alreadyProcessedDataTypes.includes(extendsCellDataType)) {
-                warnOnce('Data type definition hierarchies (via the "extendsDataType" property) cannot contain circular references.');
+                _warnOnce('Data type definition hierarchies (via the "extendsDataType" property) cannot contain circular references.');
                 return undefined;
             }
             const extendedDataTypeDefinition = dataTypeDefinitions[extendsCellDataType];
@@ -219,11 +219,11 @@ export class DataTypeService extends BeanStub {
         parentCellDataType: string
     ): boolean {
         if (!parentDataTypeDefinition) {
-            warnOnce(`The data type definition ${parentCellDataType} does not exist.`);
+            _warnOnce(`The data type definition ${parentCellDataType} does not exist.`);
             return false;
         }
         if (parentDataTypeDefinition.baseDataType !== dataTypeDefinition.baseDataType) {
-            warnOnce('The "baseDataType" property of a data type definition must match that of its parent.');
+            _warnOnce('The "baseDataType" property of a data type definition must match that of its parent.');
             return false;
         }
         return true;
@@ -310,7 +310,7 @@ export class DataTypeService extends BeanStub {
         }
         const dataTypeDefinition = this.dataTypeDefinitions[cellDataType as string];
         if (!dataTypeDefinition) {
-            warnOnce(`Missing data type definition - "${cellDataType}"`);
+            _warnOnce(`Missing data type definition - "${cellDataType}"`);
             return undefined;
         }
         colDef.cellDataType = cellDataType;
@@ -403,7 +403,7 @@ export class DataTypeService extends BeanStub {
         const initialData = this.getInitialData();
         if (initialData) {
             const fieldContainsDots = field.indexOf('.') >= 0 && !this.gos.get('suppressFieldDotNotation');
-            value = getValueUsingField(initialData, field, fieldContainsDots);
+            value = _getValueUsingField(initialData, field, fieldContainsDots);
         } else {
             this.initWaitForRowData(colId);
         }
@@ -574,10 +574,10 @@ export class DataTypeService extends BeanStub {
     public validateColDef(colDef: ColDef): void {
         if (colDef.cellDataType === 'object') {
             if (colDef.valueFormatter === this.dataTypeDefinitions.object.groupSafeValueFormatter && !this.hasObjectValueFormatter) {
-                warnOnce('Cell data type is "object" but no value formatter has been provided. Please either provide an object data type definition with a value formatter, or set "colDef.valueFormatter"');
+                _warnOnce('Cell data type is "object" but no value formatter has been provided. Please either provide an object data type definition with a value formatter, or set "colDef.valueFormatter"');
             }
             if (colDef.editable && colDef.valueParser === this.dataTypeDefinitions.object.valueParser && !this.hasObjectValueParser) {
-                warnOnce('Cell data type is "object" but no value parser has been provided. Please either provide an object data type definition with a value parser, or set "colDef.valueParser"');
+                _warnOnce('Cell data type is "object" but no value parser has been provided. Please either provide an object data type definition with a value parser, or set "colDef.valueParser"');
             }
         }
     }
@@ -624,7 +624,7 @@ export class DataTypeService extends BeanStub {
                 if (usingSetFilter) {
                     mergeFilterParams({
                         valueFormatter: (params: ValueFormatterParams) => {
-                            if (!exists(params.value)) {
+                            if (!_exists(params.value)) {
                                 return translate('blanks', '(Blanks)');
                             }
                             return translate(String(params.value), params.value ? 'True' : 'False');
@@ -660,7 +660,7 @@ export class DataTypeService extends BeanStub {
                     mergeFilterParams({
                         valueFormatter: (params: ValueFormatterParams) => {
                             const valueFormatted = formatValue(params);
-                            return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
+                            return _exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         },
                         treeList: true,
                         treeListFormatter: (pathKey: string | null, level: number) => {
@@ -682,7 +682,7 @@ export class DataTypeService extends BeanStub {
                     mergeFilterParams({
                         valueFormatter: (params: ValueFormatterParams) => {
                             const valueFormatted = formatValue(params);
-                            return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
+                            return _exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         },
                         treeList: true,
                         treeListPathGetter: (value: string | null) => {
@@ -729,7 +729,7 @@ export class DataTypeService extends BeanStub {
                     mergeFilterParams({
                         valueFormatter: (params: ValueFormatterParams) => {
                             const valueFormatted = formatValue(params);
-                            return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
+                            return _exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         }
                     });
                 } else {
@@ -765,7 +765,7 @@ export class DataTypeService extends BeanStub {
             },
             text: {
                 baseDataType: 'text',
-                valueParser: (params: ValueParserLiteParams<any, string>) => params.newValue === '' ? null : toStringOrNull(params.newValue),
+                valueParser: (params: ValueParserLiteParams<any, string>) => params.newValue === '' ? null : _toStringOrNull(params.newValue),
                 dataTypeMatcher: (value: any) => typeof value === 'string',
             },
             boolean: {
@@ -784,20 +784,20 @@ export class DataTypeService extends BeanStub {
             },
             date: {
                 baseDataType: 'date',
-                valueParser: (params: ValueParserLiteParams<any, Date>) => parseDateTimeFromString(params.newValue == null ? null : String(params.newValue)),
+                valueParser: (params: ValueParserLiteParams<any, Date>) => _parseDateTimeFromString(params.newValue == null ? null : String(params.newValue)),
                 valueFormatter: (params: ValueFormatterLiteParams<any, Date>) => {
                     if (params.value == null) { return ''; }
                     if (!(params.value instanceof Date) || isNaN(params.value.getTime())) {
                         return translate('invalidDate', 'Invalid Date');
                     }
-                    return serialiseDate(params.value, false) ?? '';
+                    return _serialiseDate(params.value, false) ?? '';
                 },
                 dataTypeMatcher: (value: any) => value instanceof Date,
             },
             dateString: {
                 baseDataType: 'dateString',
-                dateParser: (value: string | undefined) => parseDateTimeFromString(value) ?? undefined,
-                dateFormatter: (value: Date | undefined) => serialiseDate(value ?? null, false) ?? undefined,
+                dateParser: (value: string | undefined) => _parseDateTimeFromString(value) ?? undefined,
+                dateFormatter: (value: Date | undefined) => _serialiseDate(value ?? null, false) ?? undefined,
                 valueParser: (params: ValueParserLiteParams<any, string>) => defaultDateFormatMatcher(String(params.newValue)) ? params.newValue : null,
                 valueFormatter: (params: ValueFormatterLiteParams<any, string>) => defaultDateFormatMatcher(String(params.value)) ? params.value! : '',
                 dataTypeMatcher: (value: any) => typeof value === 'string' && defaultDateFormatMatcher(value),
@@ -805,7 +805,7 @@ export class DataTypeService extends BeanStub {
             object: {
                 baseDataType: 'object',
                 valueParser: () => null,
-                valueFormatter: (params: ValueFormatterLiteParams<any, any>) => toStringOrNull(params.value) ?? '',
+                valueFormatter: (params: ValueFormatterLiteParams<any, any>) => _toStringOrNull(params.value) ?? '',
             }
         }
     }

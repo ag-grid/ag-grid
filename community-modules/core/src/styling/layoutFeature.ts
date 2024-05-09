@@ -1,7 +1,7 @@
 import { PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { DomLayoutType } from "../entities/gridOptions";
-import { warnOnce } from "../utils/function";
+import { _warnOnce } from "../utils/function";
 
 export interface LayoutView {
     updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams): void;
@@ -51,7 +51,7 @@ export class LayoutFeature extends BeanStub {
         const validLayouts: DomLayoutType[] = ['normal', 'print', 'autoHeight'];
 
         if (validLayouts.indexOf(domLayout) === -1) {
-            warnOnce(`${domLayout} is not valid for DOM Layout, valid values are 'normal', 'autoHeight', 'print'.`);
+            _warnOnce(`${domLayout} is not valid for DOM Layout, valid values are 'normal', 'autoHeight', 'print'.`);
             return 'normal';
         }
 

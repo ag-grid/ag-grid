@@ -82,7 +82,7 @@ describe('formatValue', () => {
         expect(formattedValue).toBe(refDataValue);
     });
 
-    it('returns empty string if refData exists but key cannot be found', () => {
+    it('returns empty string if refData _exists but key cannot be found', () => {
         colDef.refData = {};
         const formattedValue = valueService.formatValue(column, null, 'foo');
 

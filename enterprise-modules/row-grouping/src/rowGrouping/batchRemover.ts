@@ -1,7 +1,7 @@
 import { RowNode } from "@ag-grid-community/core";
 
-// doing _.removeFromArray() multiple times on a large list can be a bottleneck.
-// when doing large deletes (eg removing 1,000 rows) then we would be calling _.removeFromArray()
+// doing _removeFromArray() multiple times on a large list can be a bottleneck.
+// when doing large deletes (eg removing 1,000 rows) then we would be calling _removeFromArray()
 // a thousands of times, in particular RootNode.allGroupChildren could be a large list, and
 // 1,000 removes is time consuming as each one requires traversing the full list.
 // to get around this, we do all the removes in a batch. this class manages the batch.

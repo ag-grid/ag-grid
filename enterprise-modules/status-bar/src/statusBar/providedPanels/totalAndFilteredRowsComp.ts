@@ -17,7 +17,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
     protected postConstruct(): void {
         // this component is only really useful with client side row model
         if (this.rowModel.getType() !== 'clientSide') {
-            _.warnOnce(`agTotalAndFilteredRowCountComponent should only be used with the client side row model.`);
+            _warnOnce(`agTotalAndFilteredRowCountComponent should only be used with the client side row model.`);
             return;
         }
 
@@ -37,8 +37,8 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 
-        const rowCount = _.formatNumberCommas(this.getFilteredRowCountValue(), thousandSeparator, decimalSeparator);
-        const totalRowCount = _.formatNumberCommas(this.getTotalRowCount(), thousandSeparator, decimalSeparator);
+        const rowCount = _formatNumberCommas(this.getFilteredRowCountValue(), thousandSeparator, decimalSeparator);
+        const totalRowCount = _formatNumberCommas(this.getTotalRowCount(), thousandSeparator, decimalSeparator);
 
         if (rowCount === totalRowCount) {
             this.setValue(rowCount);

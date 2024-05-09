@@ -147,11 +147,11 @@ export class SetValueModel<V> implements IEventEmitter {
         if (treeDataOrGrouping && !keyComparator) {
             this.entryComparator = this.createTreeDataOrGroupingComparator() as any;
         } else if (treeList && !treeListPathGetter && !keyComparator) {
-            this.entryComparator = ([_aKey, aValue]: [string | null, V | null], [_bKey, bValue]: [string | null, V | null]) => _.defaultComparator(aValue, bValue);
+            this.entryComparator = ([_aKey, aValue]: [string | null, V | null], [_bKey, bValue]: [string | null, V | null]) => _defaultComparator(aValue, bValue);
         } else {
             this.entryComparator = ([_aKey, aValue]: [string | null, V | null], [_bKey, bValue]: [string | null, V | null]) => keyComparator(aValue, bValue);
         }
-        this.keyComparator = keyComparator as any ?? _.defaultComparator;
+        this.keyComparator = keyComparator as any ?? _defaultComparator;
         this.caseSensitive = !!caseSensitive
         const getDataPath = gos.get('getDataPath');
         const groupAllowUnbalanced = gos.get('groupAllowUnbalanced');
@@ -348,9 +348,9 @@ export class SetValueModel<V> implements IEventEmitter {
             if (firstValue && typeof firstValue !== 'object' && typeof firstValue !== 'function') {
                 const firstKey = this.createKey(firstValue);
                 if  (firstKey == null) {
-                    _.warnOnce('Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects or set convertValuesToStrings=true in the filterParams. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types');
+                    _warnOnce('Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects or set convertValuesToStrings=true in the filterParams. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types');
                 } else {
-                    _.warnOnce('Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects or enable convertValuesToStrings?');
+                    _warnOnce('Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects or enable convertValuesToStrings?');
                 }
             }
         }
@@ -408,7 +408,7 @@ export class SetValueModel<V> implements IEventEmitter {
         existingValues?: Map<string | null, V | null>
     } | null {
         if (!this.clientSideValuesExtractor) {
-            _.doOnce(() => {
+            _doOnce(() => {
                 console.error('AG Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
             }, 'setFilterValueNotCSRM');
             return null;
@@ -439,7 +439,7 @@ export class SetValueModel<V> implements IEventEmitter {
 
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */
     public setMiniFilter(value?: string | null): boolean {
-        value = _.makeNull(value);
+        value = _makeNull(value);
 
         if (this.miniFilterText === value) {
             //do nothing if filter has not changed
@@ -548,7 +548,7 @@ export class SetValueModel<V> implements IEventEmitter {
         // and when the users types a value in the mini filter.
         return (
             this.isInWindowsExcelMode()
-            && _.exists(this.miniFilterText)
+            && _exists(this.miniFilterText)
             && this.miniFilterText.length > 0
         );
     }
@@ -647,7 +647,7 @@ export class SetValueModel<V> implements IEventEmitter {
                 });
 
                 model.forEach(unformattedKey => {
-                    const formattedKey = this.caseFormat(_.makeNull(unformattedKey));
+                    const formattedKey = this.caseFormat(_makeNull(unformattedKey));
                     const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
                     if (existingUnformattedKey !== undefined) {
                         this.selectKey(existingUnformattedKey);
@@ -661,7 +661,7 @@ export class SetValueModel<V> implements IEventEmitter {
         const uniqueValues: Map<string | null, V | null> = new Map();
         const formattedKeys: Set<string | null> = new Set();
         (values ?? []).forEach(value => {
-            const valueToUse = _.makeNull(value);
+            const valueToUse = _makeNull(value);
             const unformattedKey = this.convertAndGetKey(valueToUse);
             const formattedKey = this.caseFormat(unformattedKey);
             if (!formattedKeys.has(formattedKey)) {
@@ -700,7 +700,7 @@ export class SetValueModel<V> implements IEventEmitter {
                 if (i >= bValue.length) {
                     return 1;
                 }
-                const diff = _.defaultComparator(aValue[i], bValue[i]);
+                const diff = _defaultComparator(aValue[i], bValue[i]);
                 if (diff !== 0) {
                     return diff;
                 }

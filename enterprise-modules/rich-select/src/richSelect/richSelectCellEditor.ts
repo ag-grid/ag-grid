@@ -28,7 +28,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
 
         const  { cellStartedEdit, cellHeight, values } = params;
 
-        if (_.missing(values)) {
+        if (_missing(values)) {
             console.warn('AG Grid: agRichSelectCellEditor requires cellEditorParams.values to be set');
         }
 
@@ -53,7 +53,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
 
         this.focusAfterAttached = cellStartedEdit;
 
-        if (_.exists(cellHeight)) {
+        if (_exists(cellHeight)) {
             this.richSelect.setRowHeight(cellHeight);
         }
     }

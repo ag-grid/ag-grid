@@ -12,22 +12,22 @@ import { RowRenderer } from "./rendering/rowRenderer";
 import { HeaderNavigationService } from "./headerRendering/common/headerNavigationService";
 import { ColumnGroup } from "./entities/columnGroup";
 import { ManagedFocusFeature } from "./widgets/managedFocusFeature";
-import { getTabIndex } from './utils/browser';
-import { makeNull } from './utils/generic';
+import { _getTabIndex } from './utils/browser';
+import { _makeNull } from './utils/generic';
 import { GridCtrl } from "./gridComp/gridCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowCtrl } from "./rendering/row/rowCtrl";
 import { CtrlsService } from "./ctrlsService";
 import { HeaderCellCtrl } from "./headerRendering/cells/column/headerCellCtrl";
 import { AbstractHeaderCellCtrl } from "./headerRendering/cells/abstractCell/abstractHeaderCellCtrl";
-import { last } from "./utils/array";
+import { _last } from "./utils/array";
 import { NavigateToNextHeaderParams, TabToNextHeaderParams } from "./interfaces/iCallbackParams";
 import { WithoutGridCommon } from "./interfaces/iCommon";
-import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR, isVisible } from "./utils/dom";
+import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR, _isVisible } from "./utils/dom";
 import { TabGuardClassNames } from "./widgets/tabGuardCtrl";
 import { FilterManager } from "./filter/filterManager";
 import { IAdvancedFilterService } from "./interfaces/iAdvancedFilterService";
-import { warnOnce } from "./utils/function";
+import { _warnOnce } from "./utils/function";
 
 @Bean('focusService')
 export class FocusService extends BeanStub {
@@ -114,7 +114,7 @@ export class FocusService extends BeanStub {
     }
 
     public onColumnEverythingChanged(): void {
-        // if the columns change, check and see if this column still exists. if it does, then
+        // if the columns change, check and see if this column still _exists. if it does, then
         // we can keep the focused cell. if it doesn't, then we need to drop the focused cell.
         if (!this.focusedCellPosition) { return; }
 
@@ -258,7 +258,7 @@ export class FocusService extends BeanStub {
         const gridColumn = this.columnModel.getGridColumn(column!);
 
         // if column doesn't exist, then blank the focused cell and return. this can happen when user sets new columns,
-        // and the focused cell is in a column that no longer exists. after columns change, the grid refreshes and tries
+        // and the focused cell is in a column that no longer _exists. after columns change, the grid refreshes and tries
         // to re-focus the focused cell.
         if (!gridColumn) {
             this.focusedCellPosition = null;
@@ -267,7 +267,7 @@ export class FocusService extends BeanStub {
 
         this.focusedCellPosition = gridColumn ? {
             rowIndex: rowIndex!,
-            rowPinned: makeNull(rowPinned),
+            rowPinned: _makeNull(rowPinned),
             column: gridColumn
         } : null;
 
@@ -418,7 +418,7 @@ export class FocusService extends BeanStub {
         const userResult = userFunc(userFuncParams);
         if (userResult === true || userResult === null) {
             if (userResult === null) {
-                warnOnce('Since v31.3 Returning `null` from tabToNextHeader is deprecated. Return `true` to stay on the current header, or `false` to let the browser handle the tab behaviour.');
+                _warnOnce('Since v31.3 Returning `null` from tabToNextHeader is deprecated. Return `true` to stay on the current header, or `false` to let the browser handle the tab behaviour.');
             }
             return currentPosition;
         }
@@ -476,7 +476,7 @@ export class FocusService extends BeanStub {
 
     public focusLastHeader(event?: KeyboardEvent): boolean {
         const headerRowIndex = this.headerNavigationService.getHeaderRowCount() - 1;
-        const column = last(this.columnModel.getAllDisplayedColumns());
+        const column = _last(this.columnModel.getAllDisplayedColumns());
 
         return this.focusHeaderPosition({
             headerPosition: { headerRowIndex, column },
@@ -499,7 +499,7 @@ export class FocusService extends BeanStub {
     public isRowFocused(rowIndex: number, floating?: string | null): boolean {
         if (this.focusedCellPosition == null) { return false; }
 
-        return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === makeNull(floating);
+        return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === _makeNull(floating);
     }
 
     public findFocusableElements(rootNode: HTMLElement, exclude?: string | null, onlyUnmanaged = false): HTMLElement[] {
@@ -515,7 +515,7 @@ export class FocusService extends BeanStub {
         }
 
         const nodes = Array.prototype.slice.apply(rootNode.querySelectorAll(focusableString)).filter((node: HTMLElement ) => {
-            return isVisible(node);
+            return _isVisible(node);
         }) as HTMLElement[];
         const excludeNodes = Array.prototype.slice.apply(rootNode.querySelectorAll(excludeString)) as HTMLElement[];
 
@@ -529,7 +529,7 @@ export class FocusService extends BeanStub {
 
     public focusInto(rootNode: HTMLElement, up = false, onlyUnmanaged = false): boolean {
         const focusableElements = this.findFocusableElements(rootNode, null, onlyUnmanaged);
-        const toFocus = up ? last(focusableElements) : focusableElements[0];
+        const toFocus = up ? _last(focusableElements) : focusableElements[0];
 
         if (toFocus) {
             toFocus.focus({ preventScroll: true });
@@ -599,11 +599,11 @@ export class FocusService extends BeanStub {
     public findTabbableParent(node: HTMLElement | null, limit: number = 5): HTMLElement | null {
         let counter = 0;
 
-        while (node && getTabIndex(node) === null && ++counter <= limit) {
+        while (node && _getTabIndex(node) === null && ++counter <= limit) {
             node = node.parentElement;
         }
 
-        if (getTabIndex(node) === null) { return null; }
+        if (_getTabIndex(node) === null) { return null; }
 
         return node;
     }
@@ -643,7 +643,7 @@ export class FocusService extends BeanStub {
         this.setFocusedCell({
             rowIndex,
             column,
-            rowPinned: makeNull(rowPinned),
+            rowPinned: _makeNull(rowPinned),
             forceBrowserFocus: true
         });
 

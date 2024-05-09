@@ -83,7 +83,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
 
         this.updateNumberInput();
 
-        if (_.exists(this.getValue())) {
+        if (_exists(this.getValue())) {
             this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
         }
 
@@ -234,7 +234,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     }
 
     public setWidth(width: number): this {
-        _.setFixedWidth(this.getGui(), width);
+        _setFixedWidth(this.getGui(), width);
         return this;
     }
 

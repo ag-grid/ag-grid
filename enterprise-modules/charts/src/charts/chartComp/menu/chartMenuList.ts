@@ -168,7 +168,7 @@ export class ChartMenuListFactory extends BeanStub {
     private createMenuItem(name: string, iconName: string, action: () => void): MenuItemDef {
         return {
             name,
-            icon: _.createIconNoSpan(iconName, this.gos, null),
+            icon: _createIconNoSpan(iconName, this.gos, null),
             action
         }
     }

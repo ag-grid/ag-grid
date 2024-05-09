@@ -3,9 +3,9 @@ import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
 import { BodyScrollEvent } from "../events";
 import { AnimationFrameService } from "../misc/animationFrameService";
-import { isInvisibleScrollbar, isIOSUserAgent, isMacOsUserAgent } from "../utils/browser";
-import { isVisible } from "../utils/dom";
-import { waitUntil } from "../utils/function";
+import { _isInvisibleScrollbar, _isIOSUserAgent, _isMacOsUserAgent } from "../utils/browser";
+import { _isVisible } from "../utils/dom";
+import { _waitUntil } from "../utils/function";
 import { Component } from "../widgets/component";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { ScrollVisibleService } from "./scrollVisibleService";
@@ -32,13 +32,13 @@ export abstract class AbstractFakeScrollComp extends Component {
     protected postConstruct(): void {
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.onScrollVisibilityChanged();
-        this.addOrRemoveCssClass('ag-apple-scrollbar', isMacOsUserAgent() || isIOSUserAgent());
+        this.addOrRemoveCssClass('ag-apple-scrollbar', _isMacOsUserAgent() || _isIOSUserAgent());
     }
 
     protected initialiseInvisibleScrollbar(): void {
         if (this.invisibleScrollbar !== undefined) { return; }
 
-        this.invisibleScrollbar = isInvisibleScrollbar();
+        this.invisibleScrollbar = _isInvisibleScrollbar();
 
         if (this.invisibleScrollbar) {
             this.hideAndShowInvisibleScrollAsNeeded();
@@ -94,7 +94,7 @@ export abstract class AbstractFakeScrollComp extends Component {
 
     protected  attemptSettingScrollPosition(value: number) {
         const viewport = this.getViewport();
-        waitUntil(() => isVisible(viewport), () => this.setScrollPosition(value), 100);
+        _waitUntil(() => _isVisible(viewport), () => this.setScrollPosition(value), 100);
     }
 
     protected getViewport(): HTMLElement {

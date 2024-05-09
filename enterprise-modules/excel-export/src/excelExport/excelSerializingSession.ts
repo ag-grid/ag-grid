@@ -193,7 +193,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         if (isGroupHideOpenParents || suppressRowOutline || node.level == null) { return; }
 
         const padding = node.footer ? 1 : 0;
-        const currentRow = _.last(this.rows);
+        const currentRow = _last(this.rows);
 
         currentRow.outlineLevel = node.level + padding;
 
@@ -439,7 +439,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         for (const styleId of styleIds) {
             for (const excelStyle of this.excelStyles) {
                 if (excelStyle.id === styleId) {
-                    _.mergeDeep(resultantStyle, this.deepCloneObject(excelStyle));
+                    _mergeDeep(resultantStyle, this.deepCloneObject(excelStyle));
                 }
             }
         }

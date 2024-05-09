@@ -36,16 +36,16 @@ export class AddDropdownComp extends AgRichSelect {
 
         const { wrapperClassName, ariaLabel } = this.params;
 
-        _.setDisplayed(this.eDisplayField, false);
+        _setDisplayed(this.eDisplayField, false);
         if (wrapperClassName) {
             this.eWrapper.classList.add(wrapperClassName);
         }
-        _.setAriaLabelledBy(this.eWrapper, '');
-        _.setAriaLabel(this.eWrapper, ariaLabel);
+        _setAriaLabelledBy(this.eWrapper, '');
+        _setAriaLabel(this.eWrapper, ariaLabel);
     }
 
     protected onEnterKeyDown(event: KeyboardEvent): void {
-        _.stopPropagationForAgGrid(event);
+        _stopPropagationForAgGrid(event);
         if (this.isPickerDisplayed) {
             super.onEnterKeyDown(event);
         } else {

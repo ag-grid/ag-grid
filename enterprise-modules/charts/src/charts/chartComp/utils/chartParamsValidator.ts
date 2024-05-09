@@ -61,7 +61,7 @@ export class ChartParamsValidator {
         if (this.isValidChartType(chartType)) return true;
         if (this.isLegacyChartType(chartType)) {
             const renamedChartType = getCanonicalChartType(chartType)
-            _.warnOnce(`The chart type '${chartType}' has been deprecated. Please use '${renamedChartType}' instead.`);
+            _warnOnce(`The chart type '${chartType}' has been deprecated. Please use '${renamedChartType}' instead.`);
             return renamedChartType;
         };
         return false;

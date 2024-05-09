@@ -2,16 +2,16 @@ import { AgEvent } from "../events";
 import { Autowired, PreConstruct } from "../context/context";
 import { AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
 import { BeanStub } from "../context/beanStub";
-import { NumberSequence } from "../utils";
+import { NumberSequence } from "../utils/numberSequence";
 import {
-    isNodeOrElement,
-    copyNodeList,
-    iterateNamedNodeMap,
-    loadTemplate,
-    setVisible,
-    setDisplayed
+    _isNodeOrElement,
+    _copyNodeList,
+    _iterateNamedNodeMap,
+    _loadTemplate,
+    _setVisible,
+    _setDisplayed
 } from '../utils/dom';
-import { getFunctionName } from '../utils/function';
+import { _getFunctionName } from '../utils/function';
 import { ITooltipParams, TooltipLocation } from "../rendering/tooltipComponent";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { CssClassManager } from "../rendering/cssClassManager";
@@ -119,7 +119,7 @@ export class Component extends BeanStub {
     private createChildComponentsFromTags(parentNode: Element, paramsMap?: { [key: string]: any; }): void {
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
-        const childNodeList: Node[] = copyNodeList(parentNode.childNodes);
+        const childNodeList: Node[] = _copyNodeList(parentNode.childNodes);
 
         childNodeList.forEach(childNode => {
             if (!(childNode instanceof HTMLElement)) {
@@ -174,7 +174,7 @@ export class Component extends BeanStub {
     }
 
     private copyAttributesFromNode(source: Element, dest: Element): void {
-        iterateNamedNodeMap(source.attributes, (name, value) => dest.setAttribute(name, value));
+        _iterateNamedNodeMap(source.attributes, (name, value) => dest.setAttribute(name, value));
     }
 
     private swapComponentForNode(newComponent: Component, parentNode: Element, childNode: Node): void {
@@ -200,7 +200,7 @@ export class Component extends BeanStub {
 
         while (thisPrototype != null) {
             const metaData = thisPrototype.__agComponentMetaData;
-            const currentProtoName = getFunctionName(thisPrototype.constructor);
+            const currentProtoName = _getFunctionName(thisPrototype.constructor);
 
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
                 metaData[currentProtoName].querySelectors.forEach((querySelector: any) => action(querySelector));
@@ -225,7 +225,7 @@ export class Component extends BeanStub {
     }
 
     public setTemplate(template: string | null | undefined, paramsMap?: { [key: string]: any; }): void {
-        const eGui = loadTemplate(template as string);
+        const eGui = _loadTemplate(template as string);
         this.setTemplateFromElement(eGui, paramsMap);
     }
 
@@ -242,7 +242,7 @@ export class Component extends BeanStub {
 
     @PreConstruct
     private createChildComponentsPreConstruct(): void {
-        // ui exists if user sets template in constructor. when this happens, we have to wait for the context
+        // ui _exists if user sets template in constructor. when this happens, we have to wait for the context
         // to be autoWired first before we can create child components.
         if (!!this.getGui()) {
             this.createChildComponentsFromTags(this.getGui());
@@ -319,7 +319,7 @@ export class Component extends BeanStub {
 
         if (!container) { container = this.eGui; }
 
-        if (isNodeOrElement(newChild)) {
+        if (_isNodeOrElement(newChild)) {
             container.appendChild(newChild as HTMLElement);
         } else {
             const childComponent = newChild as Component;
@@ -335,7 +335,7 @@ export class Component extends BeanStub {
         if (visible !== this.visible) {
             this.visible = visible;
             const  { skipAriaHidden } = options;
-            setVisible(this.eGui, visible, { skipAriaHidden });
+            _setVisible(this.eGui, visible, { skipAriaHidden });
         }
     }
 
@@ -343,7 +343,7 @@ export class Component extends BeanStub {
         if (displayed !== this.displayed) {
             this.displayed = displayed;
             const  { skipAriaHidden } = options;
-            setDisplayed(this.eGui, displayed, { skipAriaHidden });
+            _setDisplayed(this.eGui, displayed, { skipAriaHidden });
 
             const event: VisibleChangedEvent = {
                 type: Component.EVENT_DISPLAYED_CHANGED,

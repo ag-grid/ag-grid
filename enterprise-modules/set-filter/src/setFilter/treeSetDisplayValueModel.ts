@@ -139,7 +139,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         if (isDate) {
             return TreeSetDisplayValueModel.DATE_TREE_LIST_PATH_GETTER as any;
         }
-        _.warnOnce('property treeList=true for Set Filter params, but you did not provide a treeListPathGetter or values of type Date.');
+        _warnOnce('property treeList=true for Set Filter params, but you did not provide a treeListPathGetter or values of type Date.');
         return value => [String(value)];
     }
 

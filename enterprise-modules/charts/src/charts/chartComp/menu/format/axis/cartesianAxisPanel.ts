@@ -108,7 +108,7 @@ export class CartesianAxisPanel extends Component {
         if (!axisPositionSelectParams) this.removeTemplateComponent(this.axisPositionSelect);
         const updateTimeFormatVisibility = () => {
             const isTimeAxis = this.chartAxisOptionsProxy.getValue('type') === 'time';
-            _.setDisplayed(this.axisTimeFormatSelect.getGui(), isTimeAxis)
+            _setDisplayed(this.axisTimeFormatSelect.getGui(), isTimeAxis)
         };
         if (!axisTimeFormatSelectParams) {
             this.removeTemplateComponent(this.axisTimeFormatSelect);
@@ -432,13 +432,13 @@ export class CartesianAxisPanel extends Component {
     }
 
     private removeTemplateComponent(component: Component): void {
-        _.removeFromParent(component.getGui());
+        _removeFromParent(component.getGui());
         this.destroyBean(component);
     }
 
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
-            _.removeFromParent(panel.getGui());
+            _removeFromParent(panel.getGui());
             this.destroyBean(panel);
         });
     }

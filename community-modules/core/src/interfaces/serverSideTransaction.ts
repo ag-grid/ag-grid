@@ -7,7 +7,7 @@ export interface ServerSideTransaction {
      * Passing in blank to empty applies the transaction to the top level.
      */
     route?: string[];
-    /** Index position to add at. If missing, rows will be added to the end. */
+    /** Index position to add at. If _missing, rows will be added to the end. */
     addIndex?: number;
     /** Rows to add */
     add?: any[];

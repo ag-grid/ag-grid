@@ -2,11 +2,11 @@ import { ICellRenderer, ICellRendererParams } from "./iCellRenderer";
 import { Component } from "../../widgets/component";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { AgCheckbox } from "../../widgets/agCheckbox";
-import { stopPropagationForAgGrid } from "../../utils/event";
+import { _stopPropagationForAgGrid } from "../../utils/event";
 import { CellEditingStartedEvent, CellEditingStoppedEvent, Events } from "../../events";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { KeyCode } from "../../constants/keyCode";
-import { getAriaCheckboxStateName, setAriaLive } from "../../utils/aria";
+import { _getAriaCheckboxStateName, _setAriaLive } from "../../utils/aria";
 import { GROUP_AUTO_COLUMN_ID } from "../../columns/autoGroupColService";
 
 export interface ICheckboxCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, boolean, TContext> {
@@ -32,10 +32,10 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         this.updateCheckbox(params);
         const inputEl = this.eCheckbox.getInputElement();
         inputEl.setAttribute('tabindex', '-1');
-        setAriaLive(inputEl, 'polite');
+        _setAriaLive(inputEl, 'polite');
 
         this.addManagedListener(inputEl, 'click', (event: Event) => {
-            stopPropagationForAgGrid(event);
+            _stopPropagationForAgGrid(event);
 
             if (this.eCheckbox.isDisabled()) {
                 return;
@@ -47,7 +47,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         });
 
         this.addManagedListener(inputEl, 'dblclick', (event: Event) => {
-            stopPropagationForAgGrid(event);
+            _stopPropagationForAgGrid(event);
         });
 
         this.addManagedListener(this.params.eGridCell, 'keydown', (event: KeyboardEvent) => {
@@ -93,7 +93,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         this.eCheckbox.setDisabled(disabled);
 
         const translate = this.localeService.getLocaleTextFunc();
-        const stateName = getAriaCheckboxStateName(translate, isSelected);
+        const stateName = _getAriaCheckboxStateName(translate, isSelected);
         const ariaLabel = disabled
             ? stateName
             : `${translate('ariaToggleCellValue', 'Press SPACE to toggle cell value')} (${stateName})`;

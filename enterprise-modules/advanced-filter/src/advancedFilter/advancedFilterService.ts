@@ -83,7 +83,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
             if (model.filterType === 'join') {
                 const operator = this.advancedFilterExpressionService.parseJoinOperator(model);
                 const expression = model.conditions.map(condition => parseModel(condition))
-                    .filter(condition => _.exists(condition))
+                    .filter(condition => _exists(condition))
                     .join(` ${operator} `);
                 return isFirstParent || model.conditions.length <= 1 ? expression : `(${expression})`;
             } else {
@@ -146,7 +146,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         const rowModelType = this.rowModel.getType();
         const isValidRowModel = rowModelType === 'clientSide' || rowModelType === 'serverSide';
         if (enabled && !rowModelType) {
-            _.warnOnce('Advanced Filter is only supported with the Client-Side Row Model or Server-Side Row Model.');
+            _warnOnce('Advanced Filter is only supported with the Client-Side Row Model or Server-Side Row Model.');
         }
         this.enabled = enabled && isValidRowModel;
         if (!silent && this.enabled !== previousValue) {

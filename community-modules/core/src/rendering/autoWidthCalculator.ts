@@ -128,7 +128,7 @@ export class AutoWidthCalculator extends BeanStub {
         }
 
         // find parent using classes (headers have ag-header-cell, rows have ag-row), and copy classes from it.
-        // if we didn't do this, things like ag-row-level-2 would be missing if present, which sets indents
+        // if we didn't do this, things like ag-row-level-2 would be _missing if present, which sets indents
         // onto group items.
         let pointer = eCell.parentElement;
         while (pointer) {

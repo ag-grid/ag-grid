@@ -85,7 +85,7 @@ export class ConditionPillWrapperComp extends Component {
         });
         this.getGui().appendChild(this.eColumnPill.getGui());
 
-        if (_.exists(this.getColumnKey())) {
+        if (_exists(this.getColumnKey())) {
             this.createOperatorPill();
             if (this.hasOperand()) {
                 this.createOperandPill();
@@ -168,7 +168,7 @@ export class ConditionPillWrapperComp extends Component {
 
             this.setOperatorKey(undefined as any);
             if (this.eOperatorPill) {
-                _.removeFromParent(this.eOperatorPill.getGui());
+                _removeFromParent(this.eOperatorPill.getGui());
                 this.destroyBean(this.eOperatorPill);
                 this.createOperatorPill();
             }
@@ -218,11 +218,11 @@ export class ConditionPillWrapperComp extends Component {
 
     private validate(): void {
         let validationMessage = null;
-        if (!_.exists(this.getColumnKey())) {
+        if (!_exists(this.getColumnKey())) {
             validationMessage = this.advancedFilterExpressionService.translate('advancedFilterBuilderValidationSelectColumn');
-        } else if (!_.exists(this.getOperatorKey())) {
+        } else if (!_exists(this.getOperatorKey())) {
             validationMessage = this.advancedFilterExpressionService.translate('advancedFilterBuilderValidationSelectOption');
-        } else if (this.numOperands > 0 && !_.exists(this.getOperandDisplayValue())) {
+        } else if (this.numOperands > 0 && !_exists(this.getOperandDisplayValue())) {
             validationMessage = this.advancedFilterExpressionService.translate('advancedFilterBuilderValidationEnterValue');
         }
 

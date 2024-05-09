@@ -65,7 +65,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     @Optional('pivotColDefService') private pivotColDefService?: IPivotColDefService;
 
-    private onRowHeightChanged_debounced = _.debounce(this.onRowHeightChanged.bind(this), 100);
+    private onRowHeightChanged_debounced = _debounce(this.onRowHeightChanged.bind(this), 100);
 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
@@ -132,10 +132,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private verifyProps(): void {
         if (this.gos.exists('initialGroupOrderComparator')) {
-            _.warnOnce(`initialGroupOrderComparator cannot be used with Server Side Row Model.`);
+            _warnOnce(`initialGroupOrderComparator cannot be used with Server Side Row Model.`);
         }
         if (this.gos.isRowSelection() && !this.gos.exists('getRowId')) {
-            _.warnOnce(`getRowId callback must be provided for Server Side Row Model selection to work correctly.`);
+            _warnOnce(`getRowId callback must be provided for Server Side Row Model selection to work correctly.`);
         }
     }
 
@@ -204,7 +204,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             return allColsUnchanged && !missingCols;
         }
 
-        const sortModelDifferent = !_.jsonEquals(this.storeParams.sortModel, this.sortController.getSortModel());
+        const sortModelDifferent = !_jsonEquals(this.storeParams.sortModel, this.sortController.getSortModel());
         const rowGroupDifferent = !areColsSame({
             oldCols: this.storeParams.rowGroupCols,
             newCols: rowGroupColumnVos,
@@ -583,7 +583,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode | null): RowNode[] {
-        if (!_.exists(firstInRange)) {
+        if (!_exists(firstInRange)) {
             return [];   
         }
 

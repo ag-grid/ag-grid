@@ -13,12 +13,12 @@ import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCt
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { ModuleNames } from "../../modules/moduleNames";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
-import { setAriaExpanded, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
-import { isElementChildOfClass, isVisible } from "../../utils/dom";
-import { isStopPropagationForAgGrid } from "../../utils/event";
-import { warnOnce, executeNextVMTurn } from "../../utils/function";
-import { exists, makeNull } from "../../utils/generic";
-import { escapeString } from "../../utils/string";
+import { _setAriaExpanded, _setAriaRowIndex, _setAriaSelected } from "../../utils/aria";
+import { _isElementChildOfClass, _isVisible } from "../../utils/dom";
+import { _isStopPropagationForAgGrid } from "../../utils/event";
+import { _warnOnce, _executeNextVMTurn } from "../../utils/function";
+import { _exists, _makeNull } from "../../utils/generic";
+import { _escapeString } from "../../utils/string";
 import { Beans } from "../beans";
 import { CellCtrl } from "../cell/cellCtrl";
 import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRenderer";
@@ -152,7 +152,7 @@ export class RowCtrl extends BeanStub {
         this.suppressRowTransform = this.gos.get('suppressRowTransform');
 
         this.instanceId = rowNode.id + '-' + instanceIdSequence++ as RowCtrlInstanceId;
-        this.rowId = escapeString(rowNode.id);
+        this.rowId = _escapeString(rowNode.id);
 
         this.initRowBusinessKey();
 
@@ -179,7 +179,7 @@ export class RowCtrl extends BeanStub {
     private updateRowBusinessKey(): void {
         if (typeof this.businessKeyForNodeFunc !== 'function') { return; }
         const businessKey = this.businessKeyForNodeFunc(this.rowNode);
-        this.businessKeySanitised = escapeString(businessKey!);
+        this.businessKeySanitised = _escapeString(businessKey!);
     }
 
     public getRowId() {
@@ -188,7 +188,7 @@ export class RowCtrl extends BeanStub {
     public getRowStyles() {
         return this.rowStyles;
     }
-    public getTabIndex() {
+    public _getTabIndex() {
         return this.tabIndex;
     }
 
@@ -282,7 +282,7 @@ export class RowCtrl extends BeanStub {
         this.executeSlideAndFadeAnimations(gui);
 
         if (this.rowNode.group) {
-            setAriaExpanded(gui.element, this.rowNode.expanded == true);
+            _setAriaExpanded(gui.element, this.rowNode.expanded == true);
         }
 
         this.setRowCompRowId(comp);
@@ -339,7 +339,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private setRowCompRowId(comp: IRowComp) {
-        this.rowId = escapeString(this.rowNode.id);
+        this.rowId = _escapeString(this.rowNode.id);
         if (this.rowId == null) { return; }
 
         comp.setRowId(this.rowId);
@@ -350,7 +350,7 @@ export class RowCtrl extends BeanStub {
 
         const shouldSlide = this.slideInAnimation[containerType];
         if (shouldSlide) {
-            executeNextVMTurn(() => {
+            _executeNextVMTurn(() => {
                 this.onTopChanged();
             });
             this.slideInAnimation[containerType] = false;
@@ -358,7 +358,7 @@ export class RowCtrl extends BeanStub {
 
         const shouldFade = this.fadeInAnimation[containerType];
         if (shouldFade) {
-            executeNextVMTurn(() => {
+            _executeNextVMTurn(() => {
                 gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', false);
             });
             this.fadeInAnimation[containerType] = false;
@@ -367,7 +367,7 @@ export class RowCtrl extends BeanStub {
 
     private addRowDraggerToRow(gui: RowGui) {
         if (this.gos.get('enableRangeSelection')) {
-            warnOnce('Setting `rowDragEntireRow: true` in the gridOptions doesn\'t work with `enableRangeSelection: true`');
+            _warnOnce('Setting `rowDragEntireRow: true` in the gridOptions doesn\'t work with `enableRangeSelection: true`');
             return;
         }
         const translate = this.beans.localeService.getLocaleTextFunc();
@@ -615,7 +615,7 @@ export class RowCtrl extends BeanStub {
     private setAnimateFlags(animateIn: boolean): void {
         if (this.isSticky() || !animateIn) { return; }
 
-        const oldRowTopExists = exists(this.rowNode.oldRowTop);
+        const oldRowTopExists = _exists(this.rowNode.oldRowTop);
         const pinningLeft = this.beans.columnModel.isPinningLeft();
         const pinningRight = this.beans.columnModel.isPinningRight();
 
@@ -810,7 +810,7 @@ export class RowCtrl extends BeanStub {
             gui.rowComp.addOrRemoveCssClass('ag-row-group', expandable);
             gui.rowComp.addOrRemoveCssClass('ag-row-group-expanded', expandable && expanded);
             gui.rowComp.addOrRemoveCssClass('ag-row-group-contracted', expandable && !expanded);
-            setAriaExpanded(gui.element, expandable && expanded);
+            _setAriaExpanded(gui.element, expandable && expanded);
         });
     }
 
@@ -830,7 +830,7 @@ export class RowCtrl extends BeanStub {
 
     public getRowPosition(): RowPosition {
         return {
-            rowPinned: makeNull(this.rowNode.rowPinned),
+            rowPinned: _makeNull(this.rowNode.rowPinned),
             rowIndex: this.rowNode.rowIndex as number
         };
     }
@@ -855,7 +855,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public onTabKeyDown(keyboardEvent: KeyboardEvent) {
-        if (keyboardEvent.defaultPrevented || isStopPropagationForAgGrid(keyboardEvent)) { return; }
+        if (keyboardEvent.defaultPrevented || _isStopPropagationForAgGrid(keyboardEvent)) { return; }
         const currentFullWidthComp = this.allRowGuis.find(c => c.element.contains(keyboardEvent.target as HTMLElement));
         const currentFullWidthContainer = currentFullWidthComp ? currentFullWidthComp.element : null;
         const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
@@ -878,7 +878,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public getRowYPosition(): number {
-        const displayedEl = this.allRowGuis.find(el => isVisible(el.element))?.element;
+        const displayedEl = this.allRowGuis.find(el => _isVisible(el.element))?.element;
 
         if (displayedEl) { return displayedEl.getBoundingClientRect().top }
 
@@ -956,7 +956,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private onRowDblClick(mouseEvent: MouseEvent): void {
-        if (isStopPropagationForAgGrid(mouseEvent)) { return; }
+        if (_isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         const agEvent: RowDoubleClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_DOUBLE_CLICKED, mouseEvent);
 
@@ -964,7 +964,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private onRowMouseDown(mouseEvent: MouseEvent) {
-        this.lastMouseDownOnDragger = isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-row-drag', 3);
+        this.lastMouseDownOnDragger = _isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-row-drag', 3);
 
         if (!this.isFullWidth()) { return; }
 
@@ -985,7 +985,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public onRowClick(mouseEvent: MouseEvent) {
-        const stop = isStopPropagationForAgGrid(mouseEvent) || this.lastMouseDownOnDragger;
+        const stop = _isStopPropagationForAgGrid(mouseEvent) || this.lastMouseDownOnDragger;
 
         if (stop) { return; }
 
@@ -1337,7 +1337,7 @@ export class RowCtrl extends BeanStub {
         const selected = !!this.rowNode.isSelected();
         this.forEachGui(gui, gui => {
             gui.rowComp.addOrRemoveCssClass('ag-row-selected', selected);
-            setAriaSelected(gui.element, selected);
+            _setAriaSelected(gui.element, selected);
 
             const hasFocus = gui.element.contains(this.beans.gos.getActiveDomElement());
             if (hasFocus && (gui === this.centerGui || gui === this.fullWidthGui)) {
@@ -1362,7 +1362,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public addHoverFunctionality(eRow: HTMLElement): void {
-        // because we use animation frames to do this, it's possible the row no longer exists
+        // because we use animation frames to do this, it's possible the row no longer _exists
         // by the time we get to add it
         if (!this.active) { return; }
 
@@ -1423,8 +1423,8 @@ export class RowCtrl extends BeanStub {
     }
 
     private onRowHeightChanged(gui?: RowGui): void {
-        // check for exists first - if the user is resetting the row height, then
-        // it will be null (or undefined) momentarily until the next time the flatten
+        // check for _exists first - if the user is resetting the row height, then
+        // it will be null (or undefined) momentarily until the next time the _flatten
         // stage is called where the row will then update again with a new height
         if (this.rowNode.rowHeight == null) { return; }
 
@@ -1570,7 +1570,7 @@ export class RowCtrl extends BeanStub {
 
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
-        if (exists(pixels)) {
+        if (_exists(pixels)) {
             const afterPaginationPixels = this.applyPaginationOffset(pixels);
             const skipScaling = this.rowNode.isRowPinned() || this.rowNode.sticky;
             const afterScalingPixels = skipScaling ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
@@ -1672,7 +1672,7 @@ export class RowCtrl extends BeanStub {
             c.rowComp.setRowIndex(rowIndexStr);
             c.rowComp.addOrRemoveCssClass('ag-row-even', rowIsEven);
             c.rowComp.addOrRemoveCssClass('ag-row-odd', !rowIsEven);
-            setAriaRowIndex(c.element, ariaRowIndex);
+            _setAriaRowIndex(c.element, ariaRowIndex);
         });
     }
 }

@@ -77,26 +77,26 @@ export class AdvancedFilterHeaderComp extends Component {
             eGui.style.minHeight = height;
 
             this.setAriaRowIndex();
-            _.setAriaRole(eAdvancedFilterGui, 'gridcell');
-            _.setAriaColIndex(eAdvancedFilterGui, 1);
+            _setAriaRole(eAdvancedFilterGui, 'gridcell');
+            _setAriaColIndex(eAdvancedFilterGui, 1);
             this.setAriaColumnCount(eAdvancedFilterGui);
 
             eGui.appendChild(eAdvancedFilterGui);
         } else {
-            _.clearElement(eGui);
+            _clearElement(eGui);
             this.destroyBean(this.eAdvancedFilter);
             this.height = 0;
         }
-        _.setDisplayed(eGui, enabled);
+        _setDisplayed(eGui, enabled);
         this.enabled = enabled;
     }
     
     private setAriaColumnCount(eAdvancedFilterGui: HTMLElement): void {
-        _.setAriaColSpan(eAdvancedFilterGui, this.columnModel.getAllGridColumns().length);
+        _setAriaColSpan(eAdvancedFilterGui, this.columnModel.getAllGridColumns().length);
     }
 
     private setAriaRowIndex(): void {
-        _.setAriaRowIndex(this.getGui(), this.headerNavigationService.getHeaderRowCount());
+        _setAriaRowIndex(this.getGui(), this.headerNavigationService.getHeaderRowCount());
     }
 
     private onGridColumnsChanged(): void {

@@ -55,7 +55,7 @@ export class SideBarButtonComp extends Component {
     }
 
     private setIcon(): void {
-        this.eIconWrapper.insertAdjacentElement('afterbegin', _.createIconNoSpan(this.toolPanelDef.iconKey, this.gos)!);
+        this.eIconWrapper.insertAdjacentElement('afterbegin', _createIconNoSpan(this.toolPanelDef.iconKey, this.gos)!);
     }
 
     private onButtonPressed(): void {
@@ -64,7 +64,7 @@ export class SideBarButtonComp extends Component {
 
     public setSelected(selected: boolean): void {
         this.addOrRemoveCssClass('ag-selected', selected);
-        _.setAriaExpanded(this.eToggleButton, selected);
+        _setAriaExpanded(this.eToggleButton, selected);
     }
 
     public getButtonElement(): Element {

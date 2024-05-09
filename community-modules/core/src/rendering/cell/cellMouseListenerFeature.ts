@@ -1,8 +1,8 @@
 import { Column } from "../../entities/column";
 import { CellClickedEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent, Events } from "../../events";
-import { isBrowserSafari, isIOSUserAgent } from "../../utils/browser";
-import { isElementChildOfClass, isFocusableFormField } from "../../utils/dom";
-import { isEventSupported, isStopPropagationForAgGrid } from "../../utils/event";
+import { _isBrowserSafari, _isIOSUserAgent } from "../../utils/browser";
+import { _isElementChildOfClass, _isFocusableFormField } from "../../utils/dom";
+import { _isEventSupported, _isStopPropagationForAgGrid } from "../../utils/event";
 import { Beans } from "../beans";
 import { CellCtrl } from "./cellCtrl";
 
@@ -22,7 +22,7 @@ export class CellMouseListenerFeature extends Beans {
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        if (isStopPropagationForAgGrid(mouseEvent)) { return; }
+        if (_isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         switch (eventName) {
             case 'click':
@@ -89,7 +89,7 @@ export class CellMouseListenerFeature extends Beans {
 
     // returns true if on iPad and this is second 'click' event in 200ms
     private isDoubleClickOnIPad(): boolean {
-        if (!isIOSUserAgent() || isEventSupported('dblclick')) { return false; }
+        if (!_isIOSUserAgent() || _isEventSupported('dblclick')) { return false; }
 
         const nowMillis = new Date().getTime();
         const res = nowMillis - this.lastIPadMouseClickEvent < 200;
@@ -138,12 +138,12 @@ export class CellMouseListenerFeature extends Beans {
             // We only need to pass true to focusCell when the browser is Safari and we are trying
             // to focus the cell itself. This should never be true if the mousedown was triggered
             // due to a click on a cell editor for example.
-            const forceBrowserFocus = (isBrowserSafari()) && !cellCtrl.isEditing() && !isFocusableFormField(target);
+            const forceBrowserFocus = (_isBrowserSafari()) && !cellCtrl.isEditing() && !_isFocusableFormField(target);
 
             cellCtrl.focusCell(forceBrowserFocus);
         }
 
-        // if shift clicking, and a range exists, we keep the focus on the cell that started the
+        // if shift clicking, and a range _exists, we keep the focus on the cell that started the
         // range as the user then changes the range selection.
         if (shiftKey && ranges && !focusService.isCellFocused(cellCtrl.getCellPosition())) {
             // this stops the cell from getting focused
@@ -205,7 +205,7 @@ export class CellMouseListenerFeature extends Beans {
     }
 
     private containsWidget(target: HTMLElement): boolean {
-        return isElementChildOfClass(target, 'ag-selection-checkbox', 3);
+        return _isElementChildOfClass(target, 'ag-selection-checkbox', 3);
     }
 
     private onMouseOut(mouseEvent: MouseEvent): void {

@@ -1,6 +1,6 @@
-import { exists } from "../../utils/generic";
+import { _exists } from "../../utils/generic";
 import { RowNode } from "../../entities/rowNode";
-import { pushAll } from "../../utils/array";
+import { _pushAll } from "../../utils/array";
 import { GridOptionsService } from "../../gridOptionsService";
 import { Autowired, Bean } from "../../context/context";
 import { StylingService } from "../../styling/stylingService";
@@ -34,7 +34,7 @@ export class RowCssClassCalculator {
 
         const classes: string[] = [];
 
-        if (exists(params.extraCssClass)) {
+        if (_exists(params.extraCssClass)) {
             classes.push(params.extraCssClass);
         }
 
@@ -78,8 +78,8 @@ export class RowCssClassCalculator {
             classes.push('ag-row-dragging');
         }
 
-        pushAll(classes, this.processClassesFromGridOptions(params.rowNode));
-        pushAll(classes, this.preProcessRowClassRules(params.rowNode));
+        _pushAll(classes, this.processClassesFromGridOptions(params.rowNode));
+        _pushAll(classes, this.preProcessRowClassRules(params.rowNode));
 
         // we use absolute position unless we are doing print layout
         classes.push(params.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute');
@@ -177,7 +177,7 @@ export class RowCssClassCalculator {
             return rowNode.level;
         }
 
-        // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
+        // if a leaf, and a parent _exists, put a level of the parent, else put level of 0 for top level item
         return rowNode.parent ? (rowNode.parent.level + 1) : 0;
     }
 

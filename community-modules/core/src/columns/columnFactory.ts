@@ -7,10 +7,10 @@ import { Column } from "../entities/column";
 import { Autowired, Bean, Qualifier } from "../context/context";
 import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 import { BeanStub } from "../context/beanStub";
-import { iterateObject, mergeDeep } from '../utils/object';
-import { attrToNumber, attrToBoolean } from '../utils/generic';
+import { _iterateObject, _mergeDeep } from '../utils/object';
+import { _attrToNumber, _attrToBoolean } from '../utils/generic';
 import { DataTypeService } from './dataTypeService';
-import { warnOnce } from '../utils/function';
+import { _warnOnce } from '../utils/function';
 import { ColumnEventType } from '../events';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
@@ -283,7 +283,7 @@ export class ColumnFactory extends BeanStub {
         columnKeyCreator: ColumnKeyCreator,
         source: ColumnEventType
     ): Column {
-        // see if column already exists
+        // see if column already _exists
         const existingColAndIndex = this.findExistingColumn(colDef, existingColsCopy);
 
         // make sure we remove, so if user provided duplicate id, then we don't have more than
@@ -312,7 +312,7 @@ export class ColumnFactory extends BeanStub {
 
     public applyColumnState(column: Column, colDef: ColDef, source: ColumnEventType): void {
         // flex
-        const flex = attrToNumber(colDef.flex);
+        const flex = _attrToNumber(colDef.flex);
         if (flex !== undefined) {
             column.setFlex(flex);
         }
@@ -321,7 +321,7 @@ export class ColumnFactory extends BeanStub {
         const noFlexThisCol = column.getFlex() <= 0;
         if (noFlexThisCol) {
             // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
-            const width = attrToNumber(colDef.width);
+            const width = _attrToNumber(colDef.width);
             if (width != null) {
                 column.setActualWidth(width, source);
             } else {
@@ -342,13 +342,13 @@ export class ColumnFactory extends BeanStub {
         }
 
         // sorted at - anything but undefined, thus null will clear the sortIndex
-        const sortIndex = attrToNumber(colDef.sortIndex);
+        const sortIndex = _attrToNumber(colDef.sortIndex);
         if (sortIndex !== undefined) {
             column.setSortIndex(sortIndex);
         }
 
         // hide - anything but undefined, thus null will clear the hide
-        const hide = attrToBoolean(colDef.hide);
+        const hide = _attrToBoolean(colDef.hide);
         if (hide !== undefined) {
             column.setVisible(!hide, source);
         }
@@ -413,7 +413,7 @@ export class ColumnFactory extends BeanStub {
 
         // merge properties from default column definitions
         const defaultColDef = this.gos.get('defaultColDef');
-        mergeDeep(res, defaultColDef, false, true);
+        _mergeDeep(res, defaultColDef, false, true);
 
         const columnType = this.dataTypeService.updateColDefAndGetColumnType(res, colDef, colId);
 
@@ -422,13 +422,13 @@ export class ColumnFactory extends BeanStub {
         }
 
         // merge properties from column definitions
-        mergeDeep(res, colDef, false, true);
+        _mergeDeep(res, colDef, false, true);
 
         const autoGroupColDef = this.gos.get('autoGroupColumnDef');
         const isSortingCoupled = this.gos.isColumnsSortingCoupledToGroup();
         if (colDef.rowGroup && autoGroupColDef && isSortingCoupled) {
             // override the sort for row group columns where the autoGroupColDef defines these values.
-            mergeDeep(res, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort } as ColDef, false, true);
+            _mergeDeep(res, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort } as ColDef, false, true);
         }
 
         this.dataTypeService.validateColDef(res);
@@ -445,13 +445,13 @@ export class ColumnFactory extends BeanStub {
         const allColumnTypes = Object.assign({}, DefaultColumnTypes);
         const userTypes = this.gos.get('columnTypes') || {};
 
-        iterateObject(userTypes, (key, value) => {
+        _iterateObject(userTypes, (key, value) => {
             if (key in allColumnTypes) {
                 console.warn(`AG Grid: the column type '${key}' is a default column type and cannot be overridden.`);
             } else {
                 const colType = value as any;
                 if (colType.type) {
-                    warnOnce(`Column type definitions 'columnTypes' with a 'type' attribute are not supported ` +
+                    _warnOnce(`Column type definitions 'columnTypes' with a 'type' attribute are not supported ` +
                         `because a column type cannot refer to another column type. Only column definitions ` +
                         `'columnDefs' can use the 'type' attribute to refer to a column type.`);
                 }
@@ -463,7 +463,7 @@ export class ColumnFactory extends BeanStub {
         typeKeys.forEach((t) => {
             const typeColDef = allColumnTypes[t.trim()];
             if (typeColDef) {
-                mergeDeep(colDefMerged, typeColDef, false, true);
+                _mergeDeep(colDefMerged, typeColDef, false, true);
             } else {
                 console.warn("AG Grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
             }

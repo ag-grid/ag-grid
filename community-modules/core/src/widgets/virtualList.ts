@@ -1,13 +1,13 @@
 import { Component } from './component';
 import { Autowired, PostConstruct } from '../context/context';
 import { RefSelector } from './componentAnnotations';
-import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaRole, setAriaLabel } from '../utils/aria';
+import { _getAriaPosInSet, _setAriaSetSize, _setAriaPosInSet, _setAriaRole, _setAriaLabel } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
 import { ResizeObserverService } from "../misc/resizeObserverService";
-import { waitUntil } from '../utils/function';
+import { _waitUntil } from '../utils/function';
 import { TabGuardComp } from './tabGuardComp';
 import { Events } from '../eventKeys';
-import { stopPropagationForAgGrid } from '../utils/event';
+import { _stopPropagationForAgGrid } from '../utils/event';
 import { AnimationFrameService } from '../misc/animationFrameService';
 import { CssVariablesChanged } from '../events';
 
@@ -83,8 +83,8 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         const listName = translate('ariaDefaultListName', this.listName || 'List');
         const ariaEl = this.eContainer;
 
-        setAriaRole(ariaEl, this.ariaRole);
-        setAriaLabel(ariaEl, listName);
+        _setAriaRole(ariaEl, this.ariaRole);
+        _setAriaLabel(ariaEl, listName);
     }
 
     private addResizeObserver(): void {
@@ -102,7 +102,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         const target = e.target as HTMLElement;
 
         if (target.classList.contains('ag-virtual-list-item')) {
-            this.lastFocusedRowIndex = getAriaPosInSet(target) - 1;
+            this.lastFocusedRowIndex = _getAriaPosInSet(target) - 1;
         }
     }
 
@@ -136,7 +136,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         if (this.navigate(e.shiftKey)) {
             e.preventDefault();
         } else {
-            stopPropagationForAgGrid(e);
+            _stopPropagationForAgGrid(e);
             this.forceFocusOutOfContainer(e.shiftKey);
         }
     }
@@ -302,7 +302,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         this.eContainer.style.height = `${rowCount * this.rowHeight}px`;
 
         // ensure height is applied before attempting to redraw rows
-        waitUntil(() => this.eContainer.clientHeight >= rowCount * this.rowHeight,
+        _waitUntil(() => this.eContainer.clientHeight >= rowCount * this.rowHeight,
             () => {
                 if (!this.isAlive()) { return; }
 
@@ -354,7 +354,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         for (let rowIndex = start; rowIndex <= finish; rowIndex++) {
             if (this.renderedRows.has(rowIndex)) { continue; }
 
-            // check this row actually exists (in case overflow buffer window exceeds real data)
+            // check this row actually _exists (in case overflow buffer window exceeds real data)
             if (rowIndex < this.model.getRowCount()) {
                 this.insertRow(rowIndex);
             }
@@ -366,9 +366,9 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         const eDiv = document.createElement('div');
 
         eDiv.classList.add('ag-virtual-list-item', `ag-${this.cssIdentifier}-virtual-list-item`);
-        setAriaRole(eDiv, this.ariaRole === 'tree' ? 'treeitem' : 'option');
-        setAriaSetSize(eDiv, this.model.getRowCount());
-        setAriaPosInSet(eDiv, rowIndex + 1);
+        _setAriaRole(eDiv, this.ariaRole === 'tree' ? 'treeitem' : 'option');
+        _setAriaSetSize(eDiv, this.model.getRowCount());
+        _setAriaPosInSet(eDiv, rowIndex + 1);
         eDiv.setAttribute('tabindex', '-1');
 
         eDiv.style.height = `${this.rowHeight}px`;

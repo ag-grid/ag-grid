@@ -55,7 +55,7 @@ export class InfiniteBlock extends RowNodeBlock {
     }
 
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void {
-        if (_.exists(data)) {
+        if (_exists(data)) {
             // this means if the user is not providing id's we just use the
             // index for the row. this will allow selection to work (that is based
             // on index) as long user is not inserting or deleting rows,
@@ -68,7 +68,7 @@ export class InfiniteBlock extends RowNodeBlock {
 
     protected loadFromDatasource(): void {
         const params = this.createLoadParams();
-        if (_.missing(this.params.datasource.getRows)) {
+        if (_missing(this.params.datasource.getRows)) {
             console.warn(`AG Grid: datasource is missing getRows method`);
             return;
         }

@@ -17,8 +17,8 @@ import { IDateParams } from "../../interfaces/dateComponent";
 import { ILoadingOverlayParams } from "../../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayParams } from "../../rendering/overlays/noRowsOverlayComponent";
 import { ITooltipParams } from "../../rendering/tooltipComponent";
-import { AgPromise } from "../../utils";
-import { mergeDeep } from '../../utils/object';
+import { AgPromise } from "../../utils/promise";
+import { _mergeDeep } from '../../utils/object';
 import { AgComponentUtils } from "./agComponentUtils";
 import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
 import {
@@ -241,7 +241,7 @@ export class UserComponentFactory extends BeanStub {
         let popupPositionFromSelector: 'over' | 'under' | undefined;
 
         // there are two types of js comps, class based and func based. we can only check for
-        // class based, by checking if getGui() exists. no way to differentiate js func based vs eg react func based
+        // class based, by checking if getGui() _exists. no way to differentiate js func based vs eg react func based
         // const isJsClassComp = (comp: any) => this.agComponentUtils.doesImplementIComponent(comp);
         // const fwActive = this.frameworkComponentWrapper != null;
 
@@ -321,7 +321,7 @@ export class UserComponentFactory extends BeanStub {
     ): any {
         const params: AgGridCommon<any, any> = this.gos.getGridCommonParams();
 
-        mergeDeep(params, paramsFromGrid);
+        _mergeDeep(params, paramsFromGrid);
 
         // pull user params from either the old prop name and new prop name
         // eg either cellRendererParams and cellCompParams
@@ -330,12 +330,12 @@ export class UserComponentFactory extends BeanStub {
 
         if (typeof userParams === 'function') {
             const userParamsFromFunc = userParams(paramsFromGrid);
-            mergeDeep(params, userParamsFromFunc);
+            _mergeDeep(params, userParamsFromFunc);
         } else if (typeof userParams === 'object') {
-            mergeDeep(params, userParams);
+            _mergeDeep(params, userParams);
         }
 
-        mergeDeep(params, paramsFromSelector);
+        _mergeDeep(params, paramsFromSelector);
 
         return params;
     }

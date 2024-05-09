@@ -13,7 +13,7 @@ function prepareString(str: string): string {
             currentString = currentString.replace(/\$/g, '"$"');
          }
 
-         split[i] = _.escapeString(currentString) as string;
+         split[i] = _escapeString(currentString) as string;
     }
 
     return split.join('');

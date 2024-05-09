@@ -258,7 +258,7 @@ export class SideBarComp extends Component implements ISideBar {
                 !ModuleRegistry.__assertRegistered(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.context.getGridId());
             if (moduleMissing) { return false; }
             if (this.filterManager.isAdvancedFilterEnabled()) {
-                _.warnOnce('Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.');                
+                _warnOnce('Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.');                
                 return false;
             }
         }
@@ -288,7 +288,7 @@ export class SideBarComp extends Component implements ISideBar {
 
         this.toolPanelWrappers.push(wrapper);
 
-        _.setAriaControls(button.getButtonElement(), wrapperGui);
+        _setAriaControls(button.getButtonElement(), wrapperGui);
     }
 
     public refresh(): void {
@@ -388,7 +388,7 @@ export class SideBarComp extends Component implements ISideBar {
                 const hasRefreshed = toolPanelWrapper.getToolPanelInstance().refresh(params);
                 if (hasRefreshed !== true) { return; }
                 this.toolPanelWrappers = this.toolPanelWrappers.filter(toolPanel => toolPanel !== toolPanelWrapper);
-                _.removeFromParent(toolPanelWrapper.getGui());
+                _removeFromParent(toolPanelWrapper.getGui());
                 existingToolPanelWrappers[id] = toolPanelWrapper;
             });
         }
@@ -401,7 +401,7 @@ export class SideBarComp extends Component implements ISideBar {
 
     private destroyToolPanelWrappers(): void {
         this.toolPanelWrappers.forEach(wrapper => {
-            _.removeFromParent(wrapper.getGui());
+            _removeFromParent(wrapper.getGui());
             this.destroyBean(wrapper);
         });
         this.toolPanelWrappers.length = 0;

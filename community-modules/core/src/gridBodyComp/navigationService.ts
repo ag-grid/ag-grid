@@ -7,14 +7,14 @@ import { FocusService } from "../focusService";
 import { IRangeService } from "../interfaces/IRangeService";
 import { ColumnModel } from "../columns/columnModel";
 import { BeanStub } from "../context/beanStub";
-import { exists, missing } from "../utils/generic";
-import { last } from "../utils/array";
+import { _exists, _missing } from "../utils/generic";
+import { _last } from "../utils/array";
 import { KeyCode } from '../constants/keyCode';
 import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "./gridBodyCtrl";
 import { CellCtrl } from "../rendering/cell/cellCtrl";
 import { RowCtrl } from "../rendering/row/rowCtrl";
-import { warnOnce, throttle } from "../utils/function";
+import { _warnOnce, _throttle } from "../utils/function";
 import { RowPosition, RowPositionUtils } from "../entities/rowPositionUtils";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
@@ -60,8 +60,8 @@ export class NavigationService extends BeanStub {
 
     constructor() {
         super();
-        this.onPageDown = throttle(this.onPageDown, 100);
-        this.onPageUp = throttle(this.onPageUp, 100);
+        this.onPageDown = _throttle(this.onPageDown, 100);
+        this.onPageUp = _throttle(this.onPageUp, 100);
     }
 
     @PostConstruct
@@ -142,11 +142,11 @@ export class NavigationService extends BeanStub {
     private navigateTo(navigateParams: NavigateParams): void {
         const { scrollIndex, scrollType, scrollColumn, focusIndex, focusColumn } = navigateParams;
 
-        if (exists(scrollColumn) && !scrollColumn.isPinned()) {
+        if (_exists(scrollColumn) && !scrollColumn.isPinned()) {
             this.gridBodyCon.getScrollFeature().ensureColumnVisible(scrollColumn);
         }
 
-        if (exists(scrollIndex)) {
+        if (_exists(scrollIndex)) {
             this.gridBodyCon.getScrollFeature().ensureIndexVisible(scrollIndex, scrollType);
         }
 
@@ -302,10 +302,10 @@ export class NavigationService extends BeanStub {
     private getViewportHeight(): number {
         const {gridBodyCtrl, center } = this.ctrlsService.getParams();
         const scrollPosition = gridBodyCtrl.getScrollFeature().getVScrollPosition();
-        const scrollbarWidth = this.gos.getScrollbarWidth();
+        const scrollbarWidth = this.gos._getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
-        if (center.isHorizontalScrollShowing()) {
+        if (center._isHorizontalScrollShowing()) {
             pixelsInOnePage -= scrollbarWidth;
         }
 
@@ -341,7 +341,7 @@ export class NavigationService extends BeanStub {
     private onHomeOrEndKey(key: string): void {
         const homeKey = key === KeyCode.PAGE_HOME;
         const allColumns: Column[] = this.columnModel.getAllDisplayedColumns();
-        const columnToSelect = homeKey ? allColumns[0] : last(allColumns);
+        const columnToSelect = homeKey ? allColumns[0] : _last(allColumns);
         const scrollIndex = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
 
         this.navigateTo({
@@ -520,7 +520,7 @@ export class NavigationService extends BeanStub {
         if (previousCell instanceof RowCtrl) {
             cellPos = {
                 ...previousCell.getRowPosition(),
-                column: backwards ? displayedColumns[0] : last(displayedColumns)
+                column: backwards ? displayedColumns[0] : _last(displayedColumns)
             };
         } else {
             cellPos = previousCell.getCellPosition();
@@ -537,7 +537,7 @@ export class NavigationService extends BeanStub {
             return this.tryToFocusFullWidthRow(nextCell.getRowPosition(), backwards);
         }
 
-        return exists(nextCell);
+        return _exists(nextCell);
     }
 
     /**
@@ -558,7 +558,7 @@ export class NavigationService extends BeanStub {
             // allow user to override what cell to go to next
             const userFunc = this.gos.getCallback('tabToNextCell');
 
-            if (exists(userFunc)) {
+            if (_exists(userFunc)) {
                 const params: WithoutGridCommon<TabToNextCellParams> = {
                     backwards: backwards,
                     editing: startEditing,
@@ -568,14 +568,14 @@ export class NavigationService extends BeanStub {
                 const userResult = userFunc(params);
                 if (userResult === true || userResult === null) {
                     if (userResult === null) {
-                        warnOnce('Returning `null` from tabToNextCell is deprecated. Return `true` to stay on the current cell, or `false` to let the browser handle the tab behaviour.');
+                        _warnOnce('Returning `null` from tabToNextCell is deprecated. Return `true` to stay on the current cell, or `false` to let the browser handle the tab behaviour.');
                     }
                     nextPosition = previousPosition;
                 } else if (userResult === false) {
                     return false;
                 } else {
                     if ((userResult as any).floating) {
-                        warnOnce(`tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`);
+                        _warnOnce(`tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`);
                         userResult.rowPinned = (userResult as any).floating;
                     }
                     nextPosition = {
@@ -693,7 +693,7 @@ export class NavigationService extends BeanStub {
             nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
 
             // eg if going down, and nextCell=undefined, means we are gone past the last row
-            hitEdgeOfGrid = missing(nextCell);
+            hitEdgeOfGrid = _missing(nextCell);
         }
 
         if (hitEdgeOfGrid && event && event.key === KeyCode.UP) {
@@ -708,7 +708,7 @@ export class NavigationService extends BeanStub {
         // we allow this, however if processing 'enter after edit' we don't allow override
         if (allowUserOverride) {
             const userFunc = this.gos.getCallback('navigateToNextCell');
-            if (exists(userFunc)) {
+            if (_exists(userFunc)) {
                 const params: WithoutGridCommon<NavigateToNextCellParams> = {
                     key: key,
                     previousCellPosition: currentCell,
@@ -716,9 +716,9 @@ export class NavigationService extends BeanStub {
                     event: event
                 };
                 const userCell = userFunc(params);
-                if (exists(userCell)) {
+                if (_exists(userCell)) {
                     if ((userCell as any).floating) {
-                        warnOnce(`tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`);
+                        _warnOnce(`tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`);
                         userCell.rowPinned = (userCell as any).floating;
                     }
                     nextCell = {
@@ -787,7 +787,7 @@ export class NavigationService extends BeanStub {
         const cellPosition: CellPosition = {
             rowIndex: position.rowIndex,
             rowPinned: position.rowPinned,
-            column: (position as CellPosition).column || (backwards ? last(displayedColumns) : displayedColumns[0])
+            column: (position as CellPosition).column || (backwards ? _last(displayedColumns) : displayedColumns[0])
         };
 
         this.focusPosition(cellPosition);
@@ -838,7 +838,7 @@ export class NavigationService extends BeanStub {
 
         return {
             rowIndex: cell.rowIndex,
-            column: last(colSpanningList),
+            column: _last(colSpanningList),
             rowPinned: cell.rowPinned
         };
     }
@@ -851,7 +851,7 @@ export class NavigationService extends BeanStub {
         const skipScrollToRow = isGroupStickyEnabled && rowNode?.sticky;
 
         // this scrolls the row into view
-        if (!skipScrollToRow && missing(gridCell.rowPinned)) {
+        if (!skipScrollToRow && _missing(gridCell.rowPinned)) {
             this.gridBodyCon.getScrollFeature().ensureIndexVisible(gridCell.rowIndex);
         }
 

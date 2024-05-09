@@ -4,8 +4,8 @@ import { ColDef } from "../entities/colDef";
 import { ColumnModel } from "./columnModel";
 import { ColumnFactory } from "./columnFactory";
 import { BeanStub } from "../context/beanStub";
-import { mergeDeep } from "../utils/object";
-import { missing } from "../utils/generic";
+import { _mergeDeep } from "../utils/object";
+import { _missing } from "../utils/generic";
 import { ColumnEventType } from "../events";
 
 export const GROUP_AUTO_COLUMN_ID: 'ag-Grid-AutoColumn' = 'ag-Grid-AutoColumn';
@@ -43,7 +43,7 @@ export class AutoGroupColService extends BeanStub {
         autoGroupColumns.forEach((column: Column, index: number) => this.updateOneAutoGroupColumn(column, index, source));
     }
 
-    // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
+    // rowGroupCol and index are _missing if groupDisplayType != "multipleColumns"
     private createOneAutoGroupColumn(rowGroupCol?: Column, index?: number): Column {
         // if doing multi, set the field
         let colId: string;
@@ -79,7 +79,7 @@ export class AutoGroupColService extends BeanStub {
         let res: ColDef = this.createBaseColDef(underlyingColumn);
 
         const autoGroupColumnDef = this.gos.get('autoGroupColumnDef');
-        mergeDeep(res, autoGroupColumnDef);
+        _mergeDeep(res, autoGroupColumnDef);
 
         res = this.columnFactory.addColumnDefaultAndTypes(res, colId);
 
@@ -88,9 +88,9 @@ export class AutoGroupColService extends BeanStub {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
             const noFieldOrValueGetter =
-                missing(res.field) &&
-                missing(res.valueGetter) &&
-                missing(res.filterValueGetter) &&
+                _missing(res.field) &&
+                _missing(res.valueGetter) &&
+                _missing(res.filterValueGetter) &&
                 res.filter !== 'agGroupColumnFilter';
             if (noFieldOrValueGetter) {
                 res.filter = false;

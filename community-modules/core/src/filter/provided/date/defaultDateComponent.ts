@@ -2,10 +2,10 @@ import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { Component } from '../../../widgets/component';
 import { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { serialiseDate, parseDateTimeFromString, dateToFormattedString } from '../../../utils/date';
-import { getSafariVersion, isBrowserChrome, isBrowserFirefox, isBrowserSafari } from '../../../utils/browser';
+import { _serialiseDate, _parseDateTimeFromString, _dateToFormattedString } from '../../../utils/date';
+import { _getSafariVersion, _isBrowserChrome, _isBrowserFirefox, _isBrowserSafari } from '../../../utils/browser';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
-import { warnOnce } from '../../../utils/function';
+import { _warnOnce } from '../../../utils/function';
 
 export class DefaultDateComponent extends Component implements IDateComp {
     @RefSelector('eDateInput') private readonly eDateInput: AgInputTextField;
@@ -53,7 +53,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         const inputElement = this.eDateInput.getInputElement();
 
         const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
-        this.usingSafariDatePicker = shouldUseBrowserDatePicker && isBrowserSafari();
+        this.usingSafariDatePicker = shouldUseBrowserDatePicker && _isBrowserSafari();
 
         inputElement.type = shouldUseBrowserDatePicker ? 'date' : 'text';
 
@@ -65,25 +65,25 @@ export class DefaultDateComponent extends Component implements IDateComp {
         } = params.filterParams || {};
 
         if (minValidDate && minValidYear) {
-            warnOnce('DateFilter should not have both minValidDate and minValidYear parameters set at the same time! minValidYear will be ignored.');
+            _warnOnce('DateFilter should not have both minValidDate and minValidYear parameters set at the same time! minValidYear will be ignored.');
         }
 
         if (maxValidDate && maxValidYear) {
-            warnOnce('DateFilter should not have both maxValidDate and maxValidYear parameters set at the same time! maxValidYear will be ignored.');
+            _warnOnce('DateFilter should not have both maxValidDate and maxValidYear parameters set at the same time! maxValidYear will be ignored.');
         }
 
         if (minValidDate && maxValidDate) {
             const [parsedMinValidDate, parsedMaxValidDate] = [minValidDate, maxValidDate]
-                .map(v => v instanceof Date ? v : parseDateTimeFromString(v));
+                .map(v => v instanceof Date ? v : _parseDateTimeFromString(v));
 
             if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()) {
-                warnOnce('DateFilter parameter minValidDate should always be lower than or equal to parameter maxValidDate.');
+                _warnOnce('DateFilter parameter minValidDate should always be lower than or equal to parameter maxValidDate.');
             }
         }
 
         if (minValidDate) {
             if (minValidDate instanceof Date) {
-                inputElement.min = dateToFormattedString(minValidDate);
+                inputElement.min = _dateToFormattedString(minValidDate);
             } else {
                 inputElement.min = minValidDate;
             }
@@ -95,7 +95,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
         if (maxValidDate) {
             if (maxValidDate instanceof Date) {
-                inputElement.max = dateToFormattedString(maxValidDate);
+                inputElement.max = _dateToFormattedString(maxValidDate);
             } else {
                 inputElement.max = maxValidDate;
             }
@@ -116,11 +116,11 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public getDate(): Date | null {
-        return parseDateTimeFromString(this.eDateInput.getValue());
+        return _parseDateTimeFromString(this.eDateInput.getValue());
     }
 
     public setDate(date: Date): void {
-        this.eDateInput.setValue(serialiseDate(date, false));
+        this.eDateInput.setValue(_serialiseDate(date, false));
     }
 
     public setInputPlaceholder(placeholder: string): void {
@@ -146,6 +146,6 @@ export class DefaultDateComponent extends Component implements IDateComp {
             return params.filterParams.browserDatePicker;
         }
 
-        return isBrowserChrome() || isBrowserFirefox() || (isBrowserSafari() && getSafariVersion() >= 14.1);
+        return _isBrowserChrome() || _isBrowserFirefox() || (_isBrowserSafari() && _getSafariVersion() >= 14.1);
     }
 }

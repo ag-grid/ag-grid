@@ -466,7 +466,7 @@ export class ChartController extends BeanStub {
     }
 
     public isActiveXYChart(): boolean {
-        return _.includes(['scatter', 'bubble'], this.getChartType());
+        return _includes(['scatter', 'bubble'], this.getChartType());
     }
 
     public isChartLinked(): boolean {

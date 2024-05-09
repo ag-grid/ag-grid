@@ -1,5 +1,5 @@
-import { escapeString } from "../utils/string";
-import { exists } from "../utils/generic";
+import { _escapeString } from "../utils/string";
+import { _exists } from "../utils/generic";
 import { Component } from "./component";
 
 export class AgAutocompleteRow extends Component {
@@ -27,15 +27,15 @@ export class AgAutocompleteRow extends Component {
 
     public setSearchString(searchString: string): void {
         let keepHighlighting = false;
-        if (exists(searchString)) {
+        if (_exists(searchString)) {
             const index = this.value?.toLocaleLowerCase().indexOf(searchString.toLocaleLowerCase());
             if (index >= 0) {
                 keepHighlighting = true;
                 this.hasHighlighting = true;
                 const highlightEndIndex = index + searchString.length;
-                const startPart = escapeString(this.value.slice(0, index));
-                const highlightedPart = escapeString(this.value.slice(index, highlightEndIndex));
-                const endPart = escapeString(this.value.slice(highlightEndIndex));
+                const startPart = _escapeString(this.value.slice(0, index));
+                const highlightedPart = _escapeString(this.value.slice(index, highlightEndIndex));
+                const endPart = _escapeString(this.value.slice(highlightEndIndex));
                 this.getGui().lastElementChild!.innerHTML = `${startPart}<b>${highlightedPart}</b>${endPart}`;
             }
         }
@@ -46,7 +46,7 @@ export class AgAutocompleteRow extends Component {
     }
 
     private render() {
-        // putting in blank if missing, so at least the user can click on it
-        this.getGui().lastElementChild!.innerHTML = escapeString(this.value) ?? '&nbsp;';
+        // putting in blank if _missing, so at least the user can click on it
+        this.getGui().lastElementChild!.innerHTML = _escapeString(this.value) ?? '&nbsp;';
     }
 }

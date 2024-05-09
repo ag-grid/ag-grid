@@ -6,10 +6,10 @@ import { PositionableFeature } from "../rendering/features/positionableFeature";
 import { FocusService } from "../focusService";
 import { ManagedFocusFeature } from "./managedFocusFeature";
 import { KeyCode } from "../constants/keyCode";
-import { createIconNoSpan } from "../utils/icon";
-import { setAriaHidden, setAriaLabel, setAriaPosInSet, setAriaRole, setAriaSetSize } from "../utils/aria";
-import { areEqual, existsAndNotEmpty, includes, insertArrayIntoArray } from "../utils/array";
-import { clearElement } from "../utils/dom";
+import { _createIconNoSpan } from "../utils/icon";
+import { _setAriaHidden, _setAriaLabel, _setAriaPosInSet, _setAriaRole, _setAriaSetSize } from "../utils/aria";
+import { _areEqual, _existsAndNotEmpty, _includes, _insertArrayIntoArray } from "../utils/array";
+import { _clearElement } from "../utils/dom";
 
 export interface PillDropZonePanelParams {
     emptyMessage?: string;
@@ -63,7 +63,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.addElementClasses(this.getGui());
         this.ePillDropList = document.createElement('div');
         this.addElementClasses(this.ePillDropList, 'list');
-        setAriaRole(this.ePillDropList, 'listbox');
+        _setAriaRole(this.ePillDropList, 'listbox');
     }
 
     public isHorizontal(): boolean {
@@ -89,8 +89,8 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.guiDestroyFunctions.forEach(func => func());
         this.guiDestroyFunctions.length = 0;
         this.childPillComponents.length = 0;
-        clearElement(this.getGui());
-        clearElement(this.ePillDropList);
+        _clearElement(this.getGui());
+        _clearElement(this.ePillDropList);
     }
 
     public init(params?: PillDropZonePanelParams): void {
@@ -109,7 +109,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.createManagedBean(this.positionableFeature);
 
         this.refreshGui();
-        setAriaLabel(this.ePillDropList, this.getAriaLabel());
+        _setAriaLabel(this.ePillDropList, this.getAriaLabel());
     }
 
     private handleKeyDown(e: KeyboardEvent) {
@@ -281,7 +281,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     }
 
     protected isPotentialDndItems(): boolean {
-        return existsAndNotEmpty(this.potentialDndItems);
+        return _existsAndNotEmpty(this.potentialDndItems);
     }
 
     protected handleDragLeaveEnd(draggingEvent: DraggingEvent): void {}
@@ -322,7 +322,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     }
 
     private removeItems(itemsToRemove: TItem[]): void {
-        const newItemList = this.getExistingItems().filter(item => !includes(itemsToRemove, item));
+        const newItemList = this.getExistingItems().filter(item => !_includes(itemsToRemove, item));
         this.updateItems(newItemList);
     }
 
@@ -330,7 +330,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         if (!itemsToAdd) { return; }
         const newItemList = this.getExistingItems().slice();
         const itemsToAddNoDuplicates = itemsToAdd.filter(item => newItemList.indexOf(item) < 0);
-        insertArrayIntoArray(newItemList, itemsToAddNoDuplicates, this.insertIndex);
+        _insertArrayIntoArray(newItemList, itemsToAddNoDuplicates, this.insertIndex);
         this.updateItems(newItemList);
     }
 
@@ -342,9 +342,9 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
     private rearrangeItems(itemsToAdd: TItem[]): boolean {
         const newItemList = this.getNonGhostItems().slice();
-        insertArrayIntoArray(newItemList, itemsToAdd, this.insertIndex);
+        _insertArrayIntoArray(newItemList, itemsToAdd, this.insertIndex);
 
-        if (areEqual(newItemList, this.getExistingItems())) {
+        if (_areEqual(newItemList, this.getExistingItems())) {
             return false;
         }
 
@@ -428,7 +428,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const existingItems = this.getExistingItems();
 
         if (this.isPotentialDndItems()) {
-            return existingItems.filter(item => !includes(this.potentialDndItems, item));
+            return existingItems.filter(item => !_includes(this.potentialDndItems, item));
         }
         return existingItems;
     }
@@ -466,8 +466,8 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     private addAriaLabelsToComponents(): void {
         this.childPillComponents.forEach((comp, idx) => {
             const eGui = comp.getGui();
-            setAriaPosInSet(eGui, idx + 1);
-            setAriaSetSize(eGui, this.childPillComponents.length);
+            _setAriaPosInSet(eGui, idx + 1);
+            _setAriaSetSize(eGui, this.childPillComponents.length);
         });
     }
 
@@ -491,7 +491,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             return;
         }
         const eTitleBar = document.createElement('div');
-        setAriaHidden(eTitleBar, true);
+        _setAriaHidden(eTitleBar, true);
         this.addElementClasses(eTitleBar, 'title-bar');
         this.addElementClasses(eGroupIcon, 'icon');
         this.addOrRemoveCssClass('ag-column-drop-empty', this.isExistingItemsEmpty());
@@ -530,7 +530,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         if (this.horizontal) {
             // for RTL it's a left arrow, otherwise it's a right arrow
             const enableRtl = this.gos.get('enableRtl');
-            const icon = createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.gos)!;
+            const icon = _createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.gos)!;
             this.addElementClasses(icon, 'cell-separator');
             eParent.appendChild(icon);
         }

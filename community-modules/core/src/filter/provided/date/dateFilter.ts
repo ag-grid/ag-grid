@@ -3,7 +3,7 @@ import { UserComponentFactory } from '../../../components/framework/userComponen
 import { DateCompWrapper } from './dateCompWrapper';
 import { ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
 import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
-import { serialiseDate, parseDateTimeFromString, dateToFormattedString } from '../../../utils/date';
+import { _serialiseDate, _parseDateTimeFromString, _dateToFormattedString } from '../../../utils/date';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
 import { LocaleService } from '../../../localeService';
@@ -96,18 +96,18 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter {
         const { numberOfInputs } = options || {};
         const isRange = type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
 
-        const dateFrom = parseDateTimeFromString(condition.dateFrom);
-        const dateTo = parseDateTimeFromString(condition.dateTo);
+        const dateFrom = _parseDateTimeFromString(condition.dateFrom);
+        const dateTo = _parseDateTimeFromString(condition.dateTo);
 
         const format = this.dateFilterParams.inRangeFloatingFilterDateFormat;
         if (isRange) {
-            const formattedFrom = dateFrom !== null ? dateToFormattedString(dateFrom, format) : 'null';
-            const formattedTo = dateTo !== null ? dateToFormattedString(dateTo, format) : 'null';
+            const formattedFrom = dateFrom !== null ? _dateToFormattedString(dateFrom, format) : 'null';
+            const formattedTo = dateTo !== null ? _dateToFormattedString(dateTo, format) : 'null';
             return `${formattedFrom}-${formattedTo}`;
         }
 
         if (dateFrom != null) {
-            return dateToFormattedString(dateFrom, format);
+            return _dateToFormattedString(dateFrom, format);
         }
 
         // cater for when the type doesn't need a value
@@ -167,8 +167,8 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         //       the model. When we recreate the date again here, it's without a timezone.
         const { dateFrom, dateTo, type } = filterModel || {};
         return [
-            dateFrom && parseDateTimeFromString(dateFrom) || null,
-            dateTo && parseDateTimeFromString(dateTo) || null,
+            dateFrom && _parseDateTimeFromString(dateFrom) || null,
+            dateTo && _parseDateTimeFromString(dateTo) || null,
         ].slice(0, this.getNumberOfInputs(type));
     }
 
@@ -211,13 +211,13 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         }
 
         if (params.minValidDate) {
-            this.minValidDate = params.minValidDate instanceof Date ? params.minValidDate : parseDateTimeFromString(params.minValidDate);
+            this.minValidDate = params.minValidDate instanceof Date ? params.minValidDate : _parseDateTimeFromString(params.minValidDate);
         } else {
             this.minValidDate = null;
         }
 
         if (params.maxValidDate) {
-            this.maxValidDate = params.maxValidDate instanceof Date ? params.maxValidDate : parseDateTimeFromString(params.maxValidDate);
+            this.maxValidDate = params.maxValidDate instanceof Date ? params.maxValidDate : _parseDateTimeFromString(params.maxValidDate);
         } else {
             this.maxValidDate = null;
         }
@@ -352,10 +352,10 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
 
         const values = this.getValues(position);
         if (values.length > 0) {
-            model.dateFrom = serialiseDate(values[0]);
+            model.dateFrom = _serialiseDate(values[0]);
         }
         if (values.length > 1) {
-            model.dateTo = serialiseDate(values[1]);
+            model.dateTo = _serialiseDate(values[1]);
         }
 
         return {

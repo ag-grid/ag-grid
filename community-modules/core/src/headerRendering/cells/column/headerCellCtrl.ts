@@ -4,7 +4,7 @@ import { DragAndDropService, DragItem, DragSourceType } from "../../../dragAndDr
 import { Column } from "../../../entities/column";
 import { Events } from "../../../eventKeys";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
-import { ColumnSortState, getAriaSortState } from "../../../utils/aria";
+import { ColumnSortState, _getAriaSortState } from "../../../utils/aria";
 import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
 import { ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
@@ -14,7 +14,7 @@ import { HoverFeature } from "../hoverFeature";
 import { HeaderComp, IHeader, IHeaderParams } from "./headerComp";
 import { ResizeFeature } from "./resizeFeature";
 import { SelectAllFeature } from "./selectAllFeature";
-import { getElementSize } from "../../../utils/dom";
+import { _getElementSize } from "../../../utils/dom";
 import { SortDirection } from "../../../entities/colDef";
 import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HorizontalDirection } from "../../../constants/direction";
@@ -24,7 +24,7 @@ import { Beans } from "../../../rendering/beans";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
-    setAriaSort(sort?: ColumnSortState): void;
+    _setAriaSort(sort?: ColumnSortState): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeader | undefined;
 }
@@ -402,7 +402,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
         const compInstance = this.comp.getUserCompInstance();
 
-        // only try refresh if old comp exists adn it is the correct type
+        // only try refresh if old comp _exists adn it is the correct type
         const attemptRefresh = compInstance != null && this.userCompDetails.componentClass == newCompDetails.componentClass;
 
         const headerCompRefreshed = attemptRefresh ? this.attemptHeaderCompRefresh(newCompDetails.params) : false;
@@ -577,7 +577,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         const measureHeight = (timesCalled: number) => {
             if (!this.isAlive()) { return; }
 
-            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = getElementSize(this.getGui());
+            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = _getElementSize(this.getGui());
             const extraHeight = paddingTop + paddingBottom + borderBottomWidth + borderTopWidth;
 
             const wrapperHeight = wrapperElement.offsetHeight;
@@ -653,10 +653,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         if (this.sortable) {
             const translate = this.localeService.getLocaleTextFunc();
             const sort = this.beans.sortController.getDisplaySortForColumn(this.column) || null;
-            this.comp.setAriaSort(getAriaSortState(sort));
+            this.comp._setAriaSort(_getAriaSortState(sort));
             this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort'));
         } else {
-            this.comp.setAriaSort();
+            this.comp._setAriaSort();
             this.setAriaDescriptionProperty('sort', null);
         }
     }

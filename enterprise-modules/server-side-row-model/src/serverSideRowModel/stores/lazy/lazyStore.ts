@@ -638,7 +638,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         let inActiveRange = false;
 
         // if only one node passed, we start the selection at the top
-        if (_.missing(firstInRange)) {
+        if (_missing(firstInRange)) {
             inActiveRange = true;
         }
 

@@ -10,7 +10,7 @@ import { RowNode } from '../entities/rowNode';
  * 
  * @returns a boolean representing whether nodes were reordered
  */
-export function sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: string]: number; }): boolean {
+export function _sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: string]: number; }): boolean {
     if (!rowNodes) { return false; }
 
     const comparator = (nodeA: RowNode, nodeB: RowNode) => {

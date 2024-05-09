@@ -56,8 +56,8 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
     
     private isAggFuncPossible(column: Column, func: string): boolean {
         const allKeys = this.getFuncNames(column);
-        const allowed = _.includes(allKeys, func);
-        const funcExists = _.exists(this.aggFuncsMap[func]);
+        const allowed = _includes(allKeys, func);
+        const funcExists = _exists(this.aggFuncsMap[func]);
         return allowed && funcExists;
     }
 
@@ -68,7 +68,7 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
     public getDefaultAggFunc(column: Column): string | null {
         const defaultAgg = column.getColDef().defaultAggFunc;
 
-        if (_.exists(defaultAgg) && this.isAggFuncPossible(column, defaultAgg)) {
+        if (_exists(defaultAgg) && this.isAggFuncPossible(column, defaultAgg)) {
             return defaultAgg;
         }
 
@@ -77,12 +77,12 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
         }
 
         const allKeys = this.getFuncNames(column);
-        return _.existsAndNotEmpty(allKeys) ? allKeys[0] : null;
+        return _existsAndNotEmpty(allKeys) ? allKeys[0] : null;
     }
 
     public addAggFuncs(aggFuncs?: { [key: string]: IAggFunc; }): void {
         this.init();
-        _.iterateObject(aggFuncs, (key: string, aggFunc: IAggFunc) => {
+        _iterateObject(aggFuncs, (key: string, aggFunc: IAggFunc) => {
             this.aggFuncsMap[key] = aggFunc;
         });
     }
@@ -134,7 +134,7 @@ function aggFirst(params: IAggFuncParams): any {
 }
 
 function aggLast(params: IAggFuncParams): any {
-    return params.values.length > 0 ? _.last(params.values) : null;
+    return params.values.length > 0 ? _last(params.values) : null;
 }
 
 function aggMin(params: IAggFuncParams): number | bigint | null {

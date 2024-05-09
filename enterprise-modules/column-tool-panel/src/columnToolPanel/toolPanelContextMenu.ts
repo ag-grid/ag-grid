@@ -195,7 +195,7 @@ export class ToolPanelContextMenu extends Component {
             if (isInactive) {
                 ret.push({
                     name: val.activateLabel(this.displayName!),
-                    icon: _.createIconNoSpan(val.addIcon, this.gos, null),
+                    icon: _createIconNoSpan(val.addIcon, this.gos, null),
                     action: () => val.activateFunction()
                 });
             }
@@ -203,7 +203,7 @@ export class ToolPanelContextMenu extends Component {
             if (isActive) {
                 ret.push({
                     name: val.deactivateLabel(this.displayName!),
-                    icon: _.createIconNoSpan(val.removeIcon, this.gos, null),
+                    icon: _createIconNoSpan(val.removeIcon, this.gos, null),
                     action: () => val.deActivateFunction()
                 });
             }

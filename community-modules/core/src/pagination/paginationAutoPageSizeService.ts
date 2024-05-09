@@ -3,7 +3,7 @@ import { Events } from "../events";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
 import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
-import { debounce } from "../utils/function";
+import { _debounce } from "../utils/function";
 import { PaginationProxy } from "./paginationProxy";
 
 @Bean('paginationAutoPageSizeService')
@@ -14,8 +14,8 @@ export class PaginationAutoPageSizeService extends BeanStub {
 
     private centerRowsCtrl: RowContainerCtrl;
 
-    // Once the body is rendered, we debounce changes to the page size,
-    // but we do not want to debounce the first time the body is rendered.
+    // Once the body is rendered, we _debounce changes to the page size,
+    // but we do not want to _debounce the first time the body is rendered.
     private isBodyRendered: boolean;
 
     @PostConstruct
@@ -46,7 +46,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
     private checkPageSize(): void {
         if (this.notActive()) { return; }
 
-        const bodyHeight = this.centerRowsCtrl.getViewportSizeFeature()!.getBodyHeight();
+        const bodyHeight = this.centerRowsCtrl.getViewportSizeFeature()!._getBodyHeight();
 
         if (bodyHeight > 0) {
             const update = () => {
@@ -59,7 +59,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
                 update();
                 this.isBodyRendered = true;
             } else {
-                debounce(() => update(), 50)();
+                _debounce(() => update(), 50)();
             }
         } else {
             this.isBodyRendered = false;

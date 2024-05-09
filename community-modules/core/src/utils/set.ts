@@ -1,4 +1,4 @@
-export function convertToSet<T>(list: T[]): Set<T> {
+export function _convertToSet<T>(list: T[]): Set<T> {
     const set = new Set<T>();
 
     list.forEach(x => set.add(x));

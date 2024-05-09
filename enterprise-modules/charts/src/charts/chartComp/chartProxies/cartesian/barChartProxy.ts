@@ -92,7 +92,7 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
 
     private isNormalised() {
         const normalisedCharts = ['normalizedColumn', 'normalizedBar'];
-        return !this.crossFiltering && _.includes(normalisedCharts, this.chartType);
+        return !this.crossFiltering && _includes(normalisedCharts, this.chartType);
     }
 
     protected override isHorizontal(): boolean {

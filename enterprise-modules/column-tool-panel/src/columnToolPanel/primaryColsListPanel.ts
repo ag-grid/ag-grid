@@ -118,7 +118,7 @@ export class PrimaryColsListPanel extends Component {
 
         this.virtualList.setComponentCreator(
             (item: ColumnModelItem, listItemElement: HTMLElement) => {
-                _.setAriaLevel(listItemElement, (item.getDept() + 1));
+                _setAriaLevel(listItemElement, (item.getDept() + 1));
                 return this.createComponentFromItem(item, listItemElement);
             }
         );
@@ -328,7 +328,7 @@ export class PrimaryColsListPanel extends Component {
         const localeColumns = translate('columns', 'Columns');
         const items = this.displayedColsList.length;
 
-        _.setAriaLabel(this.virtualList.getAriaElement(), `${columnListName} ${items} ${localeColumns}`);
+        _setAriaLabel(this.virtualList.getAriaElement(), `${columnListName} ${items} ${localeColumns}`);
     }
 
     private focusRowIfAlive(rowIndex: number): void {
@@ -380,7 +380,7 @@ export class PrimaryColsListPanel extends Component {
             }
         });
 
-        const unrecognisedGroupIds = groupIds.filter(groupId => !_.includes(expandedGroupIds, groupId));
+        const unrecognisedGroupIds = groupIds.filter(groupId => !_includes(expandedGroupIds, groupId));
         if (unrecognisedGroupIds.length > 0) {
             console.warn('AG Grid: unable to find group(s) for supplied groupIds:', unrecognisedGroupIds);
         }
@@ -452,7 +452,7 @@ export class PrimaryColsListPanel extends Component {
     }
 
     public setFilterText(filterText: string) {
-        this.filterText = _.exists(filterText) ? filterText.toLowerCase() : null;
+        this.filterText = _exists(filterText) ? filterText.toLowerCase() : null;
         this.markFilteredColumns();
         this.flattenAndFilterModel();
     }
@@ -460,7 +460,7 @@ export class PrimaryColsListPanel extends Component {
     private markFilteredColumns(): void {
 
         const passesFilter = (item: ColumnModelItem) => {
-            if (!_.exists(this.filterText)) { return true; }
+            if (!_exists(this.filterText)) { return true; }
 
             const displayName = item.getDisplayName();
 

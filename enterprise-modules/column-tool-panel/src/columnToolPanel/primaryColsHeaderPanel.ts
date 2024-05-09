@@ -100,15 +100,15 @@ export class PrimaryColsHeaderPanel extends Component {
 
     private createExpandIcons() {
         this.eExpand.appendChild((
-            this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gos)!
+            this.eExpandChecked = _createIconNoSpan('columnSelectOpen', this.gos)!
         ));
 
         this.eExpand.appendChild((
-            this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gos)!
+            this.eExpandUnchecked = _createIconNoSpan('columnSelectClosed', this.gos)!
         ));
 
         this.eExpand.appendChild((
-            this.eExpandIndeterminate = _.createIconNoSpan('columnSelectIndeterminate', this.gos)!
+            this.eExpandIndeterminate = _createIconNoSpan('columnSelectIndeterminate', this.gos)!
         ));
 
         this.setExpandState(ExpandState.EXPANDED);
@@ -124,14 +124,14 @@ export class PrimaryColsHeaderPanel extends Component {
 
         this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 
-        _.setDisplayed(this.eFilterTextField.getGui(), showFilter);
-        _.setDisplayed(this.eSelect.getGui(), showSelect);
-        _.setDisplayed(this.eExpand, showExpand && groupsPresent);
+        _setDisplayed(this.eFilterTextField.getGui(), showFilter);
+        _setDisplayed(this.eSelect.getGui(), showSelect);
+        _setDisplayed(this.eExpand, showExpand && groupsPresent);
     }
 
     private onFilterTextChanged(): void {
         if (!this.onFilterTextChangedDebounced) {
-            this.onFilterTextChangedDebounced = _.debounce(() => {
+            this.onFilterTextChangedDebounced = _debounce(() => {
                 const filterText = this.eFilterTextField.getValue();
                 this.dispatchEvent({ type: "filterChanged", filterText: filterText });
             }, PrimaryColsHeaderPanel.DEBOUNCE_DELAY);
@@ -159,9 +159,9 @@ export class PrimaryColsHeaderPanel extends Component {
     public setExpandState(state: ExpandState): void {
         this.expandState = state;
 
-        _.setDisplayed(this.eExpandChecked, this.expandState === ExpandState.EXPANDED);
-        _.setDisplayed(this.eExpandUnchecked, this.expandState === ExpandState.COLLAPSED);
-        _.setDisplayed(this.eExpandIndeterminate, this.expandState === ExpandState.INDETERMINATE);
+        _setDisplayed(this.eExpandChecked, this.expandState === ExpandState.EXPANDED);
+        _setDisplayed(this.eExpandUnchecked, this.expandState === ExpandState.COLLAPSED);
+        _setDisplayed(this.eExpandIndeterminate, this.expandState === ExpandState.INDETERMINATE);
     }
 
     public setSelectionState(state?: boolean): void {

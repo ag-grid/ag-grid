@@ -2,7 +2,7 @@ import { AgInputTextArea } from "../../widgets/agInputTextArea";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { PopupComponent } from "../../widgets/popupComponent";
 import { RefSelector } from "../../widgets/componentAnnotations";
-import { exists } from "../../utils/generic";
+import { _exists } from "../../utils/generic";
 import { KeyCode } from '../../constants/keyCode';
 
 export interface ILargeTextEditorParams extends ICellEditorParams {
@@ -46,7 +46,7 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
             .setCols(params.cols || 60)
             .setRows(params.rows || 10);
 
-        if (exists(params.value, true)) {
+        if (_exists(params.value, true)) {
             this.eTextArea.setValue(params.value.toString(), true);
         }
 
@@ -78,7 +78,7 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
 
     public getValue(): any {
         const value = this.eTextArea.getValue();
-        if (!exists(value) && !exists(this.params.value)) {
+        if (!_exists(value) && !_exists(this.params.value)) {
             return this.params.value;
         }
         return this.params.parseValue(value!);

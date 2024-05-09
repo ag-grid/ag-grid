@@ -10,9 +10,9 @@ import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilt
 import { FilterChangedEvent } from '../../../events';
 import { ProvidedFilter } from '../providedFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { setDisplayed } from '../../../utils/dom';
-import { parseDateTimeFromString, serialiseDate } from '../../../utils/date';
-import { debounce } from '../../../utils/function';
+import { _setDisplayed } from '../../../utils/dom';
+import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
+import { _debounce } from '../../../utils/function';
 import { WithoutGridCommon } from '../../../interfaces/iCommon';
 
 export class DateFloatingFilter extends SimpleFloatingFilter {
@@ -73,7 +73,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         if (allowEditing) {
             if (model) {
                 const dateModel = model as DateFilterModel;
-                this.dateComp.setDate(parseDateTimeFromString(dateModel.dateFrom));
+                this.dateComp.setDate(_parseDateTimeFromString(dateModel.dateFrom));
             } else {
                 this.dateComp.setDate(null);
             }
@@ -86,8 +86,8 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     protected setEditable(editable: boolean): void {
-        setDisplayed(this.eDateWrapper, editable);
-        setDisplayed(this.eReadOnlyText.getGui(), !editable);
+        _setDisplayed(this.eDateWrapper, editable);
+        _setDisplayed(this.eReadOnlyText.getGui(), !editable);
     }
 
     public onParentModelChanged(model: ISimpleFilterModel, event: FilterChangedEvent): void {
@@ -103,11 +103,11 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     private onDateChanged(): void {
         const filterValueDate = this.dateComp.getDate();
-        const filterValueText = serialiseDate(filterValueDate);
+        const filterValueText = _serialiseDate(filterValueDate);
 
         this.params.parentFilterInstance(filterInstance => {
             if (filterInstance) {
-                const date = parseDateTimeFromString(filterValueText);
+                const date = _parseDateTimeFromString(filterValueText);
                 filterInstance.onFloatingFilterChanged(this.getLastType() || null, date);
             }
         });
@@ -116,7 +116,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     private getDateComponentParams(): WithoutGridCommon<IDateParams> {
         const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
         return {
-            onDateChanged: debounce(this.onDateChanged.bind(this), debounceMs),
+            onDateChanged: _debounce(this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams
         };
     }

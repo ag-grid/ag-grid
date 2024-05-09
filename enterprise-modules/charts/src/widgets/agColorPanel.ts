@@ -336,7 +336,7 @@ export class AgColorPanel extends Component {
     private onRecentColorClick(e: MouseEvent | KeyboardEvent) {
         const target = e.target as HTMLElement;
 
-        if (!_.exists(target.id)) {
+        if (!_exists(target.id)) {
             return;
         }
 

@@ -348,7 +348,6 @@ export { GridCtrl, IGridComp } from "./gridComp/gridCtrl";
 export { Logger, LoggerFactory } from "./logger";
 export { SortController, SortModelItem } from "./sortController";
 export { LocaleService } from './localeService';
-export * from "./utils/index"; // please leave this as is - we want it to be explicit for build reasons
 export { ColumnSortState } from "./utils/aria";
 export { ValueService } from "./valueService/valueService";
 export { ValueCache } from "./valueService/valueCache";
@@ -558,6 +557,12 @@ export { TooltipFeature } from "./widgets/tooltipFeature";
 export { TooltipStateManager } from "./widgets/tooltipStateManager";
 export { IAggregationStage } from "./interfaces/iAggregationStage";
 export { MenuItemLeafDef, MenuItemDef, IMenuConfigParams, IMenuItemParams, IMenuItem, IMenuItemComp, BaseMenuItem, BaseMenuItemParams } from "./interfaces/menuItem";
+
+export { _warnOnce, _errorOnce, _debounce } from './utils/function';
+export { _exists, _missing, _missingOrEmpty } from './utils/generic';
+export { _iterateObject, _cloneObject } from './utils/object';
+export { _removeFromArray, _last, _insertIntoArray } from './utils/array';
+export { _sortRowNodesByOrder } from './utils/rowNode';
 
 // charts
 export * from "./interfaces/iChartOptions";

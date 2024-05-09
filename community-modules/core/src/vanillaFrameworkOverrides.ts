@@ -1,6 +1,6 @@
 import { FrameworkOverridesIncomingSource, IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
-import { includes } from "./utils/array";
-import { AgPromise } from "./utils";
+import { _includes } from "./utils/array";
+import { AgPromise } from "./utils/promise";
 
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
 
@@ -24,7 +24,7 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
         listener: EventListenerOrEventListenerObject,
         useCapture?: boolean
     ): void {
-        const isPassive = includes(PASSIVE_EVENTS, type);
+        const isPassive = _includes(PASSIVE_EVENTS, type);
         element.addEventListener(type, listener, { capture: !!useCapture, passive: isPassive });
     }
 

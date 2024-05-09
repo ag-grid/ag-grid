@@ -58,7 +58,7 @@ export class ChartMenuService extends BeanStub {
         return toolbarItemsFunc
             ? toolbarItemsFunc(params).filter(option => {
                 if (!CHART_TOOLBAR_ALLOW_LIST.includes(option)) {
-                    _.warnOnce(`'${option}' is not a valid Chart Toolbar Option`);
+                    _warnOnce(`'${option}' is not a valid Chart Toolbar Option`);
                     return false;
                 }
                 return true;
@@ -76,7 +76,7 @@ export class ChartMenuService extends BeanStub {
             ?.map(panel => {
                 const menuOption = CHART_TOOL_PANEL_MENU_OPTIONS[panel]
                 if (!menuOption) {
-                    _.warnOnce(`Invalid panel in chartToolPanelsDef.panels: '${panel}'`);
+                    _warnOnce(`Invalid panel in chartToolPanelsDef.panels: '${panel}'`);
                 }
                 return menuOption;
             })

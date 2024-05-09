@@ -5,10 +5,10 @@ import { Component } from '../widgets/component';
 import { Events } from '../events';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { RowNode } from '../entities/rowNode';
-import { stopPropagationForAgGrid } from '../utils/event';
+import { _stopPropagationForAgGrid } from '../utils/event';
 import { CheckboxSelectionCallback } from '../entities/colDef';
 import { GroupCheckboxSelectionCallback } from './cellRenderers/groupCellRendererCtrl';
-import { getAriaCheckboxStateName } from '../utils/aria';
+import { _getAriaCheckboxStateName } from '../utils/aria';
 
 export class CheckboxSelectionComponent extends Component {
 
@@ -52,7 +52,7 @@ export class CheckboxSelectionComponent extends Component {
     private onSelectionChanged(): void {
         const translate = this.localeService.getLocaleTextFunc();
         const state = this.rowNode.isSelected();
-        const stateName = getAriaCheckboxStateName(translate, state);
+        const stateName = _getAriaCheckboxStateName(translate, state);
         const [ariaKey, ariaLabel] = this.rowNode.selectable ? ['ariaRowToggleSelection', 'Press Space to toggle row selection'] : ['ariaRowSelectionDisabled', 'Row Selection is disabled for this row'];
         const translatedLabel = translate(ariaKey, ariaLabel);
 
@@ -81,13 +81,13 @@ export class CheckboxSelectionComponent extends Component {
 
         // we don't want double click on this icon to open a group
         this.addManagedListener(this.eCheckbox.getInputElement(), 'dblclick', (event) => {
-            stopPropagationForAgGrid(event);
+            _stopPropagationForAgGrid(event);
         });
 
         this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (event) => {
             // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
             // would possibly get selected twice
-            stopPropagationForAgGrid(event);
+            _stopPropagationForAgGrid(event);
 
             const groupSelectsFiltered = this.gos.get('groupSelectsFiltered');
             const isSelected = this.eCheckbox.getValue();
@@ -138,20 +138,20 @@ export class CheckboxSelectionComponent extends Component {
         // checkboxSelection callback is deemed a legacy solution however we will still consider it's result.
         // If selectable, then also check the colDef callback. if not selectable, this it short circuits - no need
         // to call the colDef callback.
-        const isVisible = this.getIsVisible();
+        const _isVisible = this.getIsVisible();
         if (selectable) {
-            if (typeof isVisible === 'function') {
+            if (typeof _isVisible === 'function') {
                 const extraParams = this.overrides?.callbackParams;
 
                 if (!this.column) {
                     // full width row
-                    selectable = isVisible({ ...extraParams, node: this.rowNode, data: this.rowNode.data });
+                    selectable = _isVisible({ ...extraParams, node: this.rowNode, data: this.rowNode.data });
                 } else {
                     const params = this.column.createColumnFunctionCallbackParams(this.rowNode);
-                    selectable = isVisible({ ...extraParams, ...params });
+                    selectable = _isVisible({ ...extraParams, ...params });
                 }
             } else {
-                selectable = isVisible ?? false;
+                selectable = _isVisible ?? false;
             }
         }
 
@@ -176,7 +176,7 @@ export class CheckboxSelectionComponent extends Component {
             return this.overrides.isVisible;
         }
 
-        // column will be missing if groupDisplayType = 'groupRows'
+        // column will be _missing if groupDisplayType = 'groupRows'
         return this.column?.getColDef()?.checkboxSelection;
     }
 }

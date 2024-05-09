@@ -216,13 +216,13 @@ export class ChartDatasource extends BeanStub {
 
         let groupChartData: any[] | undefined;
         if (grouping) {
-            const groupIndexesToRemove = _.values(groupsToRemove);
+            const groupIndexesToRemove = _values(groupsToRemove);
             const allData = extractedRowData;
             extractedRowData = [];
             groupChartData = [];
             for (let i = 0; i < allData.length; i++) {
                 (
-                    _.includes(groupIndexesToRemove, i) ? groupChartData : extractedRowData
+                    _includes(groupIndexesToRemove, i) ? groupChartData : extractedRowData
                 ).push(allData[i]);
             }
         }
@@ -235,7 +235,7 @@ export class ChartDatasource extends BeanStub {
 
         if (!params.aggFunc || dimensionCols.length === 0) { return dataFromGrid; }
 
-        const lastCol = _.last(dimensionCols);
+        const lastCol = _last(dimensionCols);
         const lastColId = lastCol && lastCol.colId;
         const map: any = {};
         const dataAggregated: any[] = [];

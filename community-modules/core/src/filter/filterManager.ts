@@ -1,4 +1,4 @@
-import { AgPromise, _ } from '../utils';
+import { AgPromise } from '../utils/promise';
 import { ValueService } from '../valueService/valueService';
 import { ColumnModel } from '../columns/columnModel';
 import { RowNode } from '../entities/rowNode';
@@ -12,9 +12,9 @@ import { UserCompDetails, UserComponentFactory } from '../components/framework/u
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { BeanStub } from '../context/beanStub';
-import { convertToSet } from '../utils/set';
-import { exists } from '../utils/generic';
-import { mergeDeep, cloneObject } from '../utils/object';
+import { _convertToSet } from '../utils/set';
+import { _exists, _jsonEquals } from '../utils/generic';
+import { _mergeDeep, _cloneObject } from '../utils/object';
 import { RowRenderer } from '../rendering/rowRenderer';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { FilterComponent } from '../components/framework/componentTypes';
@@ -22,7 +22,7 @@ import { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating
 import { unwrapUserComp } from '../gridApi';
 import { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
-import { warnOnce } from '../utils/function';
+import { _warnOnce } from '../utils/function';
 import { DataTypeService } from '../columns/dataTypeService';
 import { QuickFilterService } from './quickFilterService';
 
@@ -129,7 +129,7 @@ export class FilterManager extends BeanStub {
 
         if (model) {
             // mark the filters as we set them, so any active filters left over we stop
-            const modelKeys = convertToSet(Object.keys(model));
+            const modelKeys = _convertToSet(Object.keys(model));
 
             this.allColumnFilters.forEach((filterWrapper, colId) => {
                 const newModel = model[colId];
@@ -173,7 +173,7 @@ export class FilterManager extends BeanStub {
                 const before = previousModel ? previousModel[colId] : null;
                 const after = currentModel ? currentModel[colId] : null;
 
-                if (!_.jsonEquals(before, after)) {
+                if (!_jsonEquals(before, after)) {
                     columns.push(filterWrapper.column);
                 }
             });
@@ -188,7 +188,7 @@ export class FilterManager extends BeanStub {
         return new AgPromise<void>(resolve => {
             filterPromise.then(filter => {
                 if (typeof filter!.setModel !== 'function') {
-                    console.warn('AG Grid: filter missing setModel method, which is needed for setFilterModel');
+                    console.warn('AG Grid: filter _missing setModel method, which is needed for setFilterModel');
                     resolve();
                 }
 
@@ -203,7 +203,7 @@ export class FilterManager extends BeanStub {
         this.allColumnFilters.forEach((filterWrapper, key) => {
             const model = this.getModelFromFilterWrapper(filterWrapper);
 
-            if (exists(model)) {
+            if (_exists(model)) {
                 result[key] = model;
             }
         });
@@ -217,12 +217,12 @@ export class FilterManager extends BeanStub {
         const filter = filterPromise!.resolveNow(null, promiseFilter => promiseFilter);
 
         if (filter == null) {
-            // filter still being created. returned initial state if it exists and hasn't been applied yet
+            // filter still being created. returned initial state if it _exists and hasn't been applied yet
             return this.initialFilterModel[filterWrapper.column.getColId()] ?? null;
         }
 
         if (typeof filter.getModel !== 'function') {
-            console.warn('AG Grid: filter API missing getModel method, which is needed for getFilterModel');
+            console.warn('AG Grid: filter API _missing getModel method, which is needed for getFilterModel');
             return null;
         }
 
@@ -288,7 +288,7 @@ export class FilterManager extends BeanStub {
         const isFilterActive = (filter: IFilter | null) => {
             if (!filter) { return false; } // this never happens, including to avoid compile error
             if (!filter.isFilterActive) {
-                console.warn('AG Grid: Filter is missing isFilterActive() method');
+                console.warn('AG Grid: Filter is _missing isFilterActive() method');
                 return false;
             }
             return filter.isFilterActive();
@@ -353,7 +353,7 @@ export class FilterManager extends BeanStub {
 
             if (typeof filter.doesFilterPass !== 'function') {
                 // because users can do custom filters, give nice error message
-                throw new Error('Filter is missing method doesFilterPass');
+                throw new Error('Filter is _missing method doesFilterPass');
             }
 
             if (!filter.doesFilterPass({ node, data: targetedData })) {
@@ -424,7 +424,7 @@ export class FilterManager extends BeanStub {
         };
 
         if (additionalEventAttributes) {
-            mergeDeep(filterChangedEvent, additionalEventAttributes);
+            _mergeDeep(filterChangedEvent, additionalEventAttributes);
         }
 
         // because internal events are not async in ag-grid, when the dispatchEvent
@@ -642,7 +642,7 @@ export class FilterManager extends BeanStub {
     public createFilterParams(column: Column, colDef: ColDef): IFilterParams {
         const params: IFilterParams = this.gos.addGridCommonParams({
             column,
-            colDef: cloneObject(colDef),
+            colDef: _cloneObject(colDef),
             rowModel: this.rowModel,
             filterChangedCallback: () => { },
             filterModifiedCallback: () => { },
@@ -720,7 +720,7 @@ export class FilterManager extends BeanStub {
         const filterWrapper = this.allColumnFilters.get(column.getColId());
         return filterWrapper?.filterPromise?.resolveNow(
             true,
-            // defer to filter component isFilterAllowed if it exists
+            // defer to filter component isFilterAllowed if it _exists
             filter => (typeof (filter as any)?.isFilterAllowed === 'function')
                 ? (filter as any)?.isFilterAllowed()
                 : true
@@ -981,7 +981,7 @@ export class FilterManager extends BeanStub {
     }
 
     private warnAdvancedFilters(): void {
-        warnOnce('Column Filter API methods have been disabled as Advanced Filters are enabled.');
+        _warnOnce('Column Filter API methods have been disabled as Advanced Filters are enabled.');
     }
 
     public setupAdvancedFilterHeaderComp(eCompToInsertBefore: HTMLElement): void {
