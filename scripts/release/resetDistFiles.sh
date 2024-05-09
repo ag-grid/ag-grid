@@ -8,6 +8,7 @@ git reset community-modules/csv-export/dist
 git reset community-modules/infinite-row-model/dist
 git reset community-modules/react/dist
 git reset community-modules/styles/*.css
+git reset community-modules/styles/_css-content.scss
 git reset community-modules/vue/dist
 git reset community-modules/vue3/dist
 git reset enterprise-modules/advanced-filter/dist

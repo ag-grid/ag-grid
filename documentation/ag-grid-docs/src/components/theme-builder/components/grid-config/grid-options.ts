@@ -18,7 +18,13 @@ export const productionConfigFields = [
     'pagination',
 ] as const;
 
-const debugConfigFields = ['filtersToolPanel', 'legacyColumnMenu', 'loadingOverlay', 'printLayout'] as const;
+const debugConfigFields = [
+    'filtersToolPanel',
+    'legacyColumnMenu',
+    'loadingOverlay',
+    'printLayout',
+    'columnGroupsDeep',
+] as const;
 
 export const allConfigFields = [...productionConfigFields, ...debugConfigFields] as const;
 
@@ -61,7 +67,11 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         columnHoverHighlight: config.columnHover,
         enableRangeSelection: true,
         rowData: defaultRowData(),
-        columnDefs: config.columnGroups ? buildGroupColumnDefs(columnDefs) : columnDefs,
+        columnDefs: config.columnGroups
+            ? buildGroupColumnDefs(columnDefs)
+            : config.columnGroupsDeep
+              ? buildDeepGroupColumnDefs(columnDefs)
+              : columnDefs,
         enableRtl: config.rightToLeft,
         domLayout: config.printLayout ? 'print' : undefined,
         columnMenu: config.legacyColumnMenu ? 'legacy' : 'new',
@@ -185,5 +195,26 @@ const buildGroupColumnDefs = (columns: ColDef[]): ColGroupDef[] => [
     {
         headerName: 'Winnings',
         children: columns.filter((c) => !['country', 'sport', 'name'].includes(c.field!)),
+    },
+];
+
+const buildDeepGroupColumnDefs = (columns: ColDef[]): (ColDef | ColGroupDef)[] => [
+    {
+        headerName: 'Athlete',
+        children: columns.filter((c) => ['country', 'sport', 'name'].includes(c.field!)),
+    },
+    columns.find(c => c.field === 'winningsTotal')!,
+    {
+        headerName: 'Yearly winnings',
+        children: [
+            {
+                headerName: 'Even years',
+                children: columns.filter((c) => ['winnings2022'].includes(c.field!)),
+            },
+            {
+                headerName: 'Odd years',
+                children: columns.filter((c) => ['winnings2023'].includes(c.field!)),
+            },
+        ],
     },
 ];

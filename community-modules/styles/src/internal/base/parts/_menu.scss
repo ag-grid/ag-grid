@@ -154,13 +154,7 @@
     }
 
     .ag-set-filter-item {
-        padding: 0px var(--ag-widget-container-horizontal-padding);
-    }
-
-    @for $i from 1 to 10 {
-        .ag-set-filter-indent-#{$i} {
-            @include ag.unthemed-rtl(( padding-left: calc(var(--ag-widget-container-horizontal-padding) + #{$i} * var(--ag-set-filter-indent-size)) ));
-        }
+        @include ag.unthemed-rtl(( padding-left: calc(var(--ag-widget-container-horizontal-padding) + var(--ag-indentation-level) * var(--ag-set-filter-indent-size)) ));
     }
 
     .ag-set-filter-add-group-indent {

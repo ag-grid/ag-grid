@@ -8,7 +8,8 @@ import {
     AgChartTheme,
     AgChartThemeOverrides,
     AgChartThemePalette,
-    AgCrosshairOptions
+    AgCrosshairOptions,
+    AgCommonThemeableChartOptions
 } from "ag-charts-community";
 
 import { CrossFilteringContext } from "../../chartService";
@@ -206,25 +207,26 @@ export abstract class ChartProxy<TOptions extends AgChartOptions = AgChartOption
                 enabled: false
             }
         };
-        return {
-            common: {
-                navigator: {
-                    enabled: false
-                },
-                zoom: {
-                    enabled: true,
-                },
-                animation: {
-                    enabled: true,
-                    duration: 500
-                },
-                axes: {
-                    number: { crosshair },
-                    category: { crosshair },
-                    log: { crosshair },
-                    time: { crosshair }
-                }
+        const common: AgCommonThemeableChartOptions = this.isEnterpriseCharts ? {
+            zoom: {
+                enabled: true,
             },
+            animation: {
+                enabled: true,
+                duration: 500
+            },
+            axes: {
+                number: { crosshair },
+                category: { crosshair },
+                log: { crosshair },
+                time: { crosshair }
+            }
+        } : {}
+        common.navigator = {
+            enabled: false
+        };
+        return {
+            common,
             ...seriesChartOptions
         };
     }

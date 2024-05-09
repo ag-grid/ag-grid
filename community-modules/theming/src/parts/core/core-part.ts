@@ -10,7 +10,6 @@ import {
 } from '../../css-helpers';
 import { definePart } from '../../theme-utils';
 import { coreCSS } from './GENERATED-core';
-import indent from './indent';
 
 const coreDefaults = {
     backgroundColor: '#FFF',
@@ -151,7 +150,7 @@ export const corePart = definePart({
     partId: 'core',
     variantId: 'part',
     additionalParams: coreDefaults,
-    css: [coreCSS, indent],
+    css: [coreCSS],
 });
 
 export type CoreParam = keyof typeof coreDefaults;

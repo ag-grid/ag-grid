@@ -78,6 +78,7 @@ export class ToolPanelColumnComp extends Component {
             this.addCssClass('ag-column-select-add-group-indent');
         }
         this.addCssClass(`ag-column-select-indent-${indent}`);
+        this.getGui().style.setProperty('--ag-indentation-level', String(indent));
 
         this.setupDragging();
 
