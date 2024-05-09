@@ -1,30 +1,29 @@
 import {
-    Autowired,
     Bean,
     ChangedPath,
     FilterManager,
     RowNode,
-    BeanStub
+    BeanStub,
+    Optional
 } from "@ag-grid-community/core";
 
 @Bean("filterService")
 export class FilterService extends BeanStub {
 
-    @Autowired('filterManager') private filterManager: FilterManager;
+    @Optional('filterManager') private filterManager?: FilterManager;
 
     public filter(changedPath: ChangedPath): void {
-        const filterActive: boolean = this.filterManager.isChildFilterPresent();
-        this.filterNodes(filterActive, changedPath);
+        this.filterNodes(changedPath);
     }
-
-    private filterNodes(filterActive: boolean, changedPath: ChangedPath): void {
-
+    
+    private filterNodes(changedPath: ChangedPath): void {
+        
         const filterCallback = (rowNode: RowNode, includeChildNodes: boolean) => {
             // recursively get all children that are groups to also filter
             if (rowNode.hasChildren()) {
 
                 // result of filter for this node. when filtering tree data, includeChildNodes = true when parent passes
-                if (filterActive && !includeChildNodes) {
+                if (this.filterManager?.isChildFilterPresent() && !includeChildNodes) {
                     rowNode.childrenAfterFilter = rowNode.childrenAfterGroup!.filter(childNode => {
                         // a group is included in the result if it has any children of it's own.
                         // by this stage, the child groups are already filtered
@@ -33,7 +32,7 @@ export class FilterService extends BeanStub {
                         // both leaf level nodes and tree data nodes have data. these get added if
                         // the data passes the filter
                         const passBecauseDataPasses = childNode.data
-                            && this.filterManager.doesRowPassFilter({rowNode: childNode});
+                            && this.filterManager!.doesRowPassFilter({rowNode: childNode});
 
                         // note - tree data nodes pass either if a) they pass themselves or b) any children of that node pass
 
@@ -59,7 +58,7 @@ export class FilterService extends BeanStub {
                 // tree data filter traverses the hierarchy depth first and includes child nodes if parent passes
                 // filter, and parent nodes will be include if any children exist.
 
-                if (rowNode.childrenAfterGroup) {
+                if (this.filterManager && rowNode.childrenAfterGroup) {
                     for (let i = 0; i < rowNode.childrenAfterGroup.length; i++) {
                         const childNode = rowNode.childrenAfterGroup[i];
 

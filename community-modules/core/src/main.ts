@@ -8,6 +8,12 @@ globalObj.HTMLInputElement = typeof HTMLInputElement === 'undefined' ? {} : HTML
 globalObj.Node = typeof Node === 'undefined' ? {} : Node;
 globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
+// features
+export { useQuickFilter } from "./filter/quickFilterService";
+export { useFilterManager } from "./filter/filterManager";
+export { useFilters } from "./filter/filtersFeature";
+
+
 // columns
 export { ColumnFactory } from "./columns/columnFactory";
 export { ColumnModel, ColumnState, ColumnStateParams, ApplyColumnStateParams, ISizeColumnsToFitParams, IColumnLimit } from "./columns/columnModel";
@@ -536,6 +542,8 @@ export {
 export {
     WithoutGridCommon
 } from "./interfaces/iCommon";
+
+
 
 export { ManagedGridOptionKey, ManagedGridOptions, PropertyKeys } from "./propertyKeys";
 export { IPivotColDefService } from "./interfaces/iPivotColDefService";

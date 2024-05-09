@@ -1,6 +1,6 @@
 import { ColumnModel } from "../../columns/columnModel";
 import { BeanStub } from "../../context/beanStub";
-import { Autowired } from "../../context/context";
+import { Autowired, Optional } from "../../context/context";
 import { CtrlsService } from "../../ctrlsService";
 import { Column, ColumnPinnedType } from "../../entities/column";
 import { IHeaderColumn } from "../../interfaces/iHeaderColumn";
@@ -34,7 +34,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('focusService') public focusService: FocusService;
-    @Autowired('filterManager') public filterManager: FilterManager;
+    @Optional('filterManager') public filterManager?: FilterManager;
 
     private pinned: ColumnPinnedType;
     private comp: IHeaderRowContainerComp;
@@ -110,7 +110,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
         };
 
         const refreshFilters = () => {
-            this.includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.hidden;
+            this.includeFloatingFilter = (this.filterManager?.hasFloatingFilters() ?? false) && !this.hidden;
 
             const destroyPreviousComp = () => {
                 this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
@@ -172,7 +172,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     }
 
     private onDisplayedColumnsChanged(): void {
-        const includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.hidden;
+        const includeFloatingFilter = (this.filterManager?.hasFloatingFilters() ?? false) && !this.hidden;
         if (this.includeFloatingFilter !== includeFloatingFilter) {
             this.refresh(true);
         }

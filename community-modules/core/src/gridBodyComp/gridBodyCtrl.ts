@@ -1,5 +1,5 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired } from "../context/context";
+import { Autowired, Optional } from "../context/context";
 import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { Events } from "../eventKeys";
 import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
@@ -69,7 +69,8 @@ export class GridBodyCtrl extends BeanStub {
     @Autowired('popupService') public popupService: PopupService;
     @Autowired('mouseEventService') public mouseEventService: MouseEventService;
     @Autowired('rowModel') public rowModel: IRowModel;
-    @Autowired('filterManager') private filterManager: FilterManager;
+
+    @Optional('filterManager') private filterManager?: FilterManager;
 
     private comp: IGridBodyComp;
     private eGridBody: HTMLElement;
@@ -126,7 +127,7 @@ export class GridBodyCtrl extends BeanStub {
         this.disableBrowserDragging();
         this.addStopEditingWhenGridLosesFocus();
 
-        this.filterManager.setupAdvancedFilterHeaderComp(eTop);
+        this.filterManager?.setupAdvancedFilterHeaderComp(eTop);
 
         this.ctrlsService.register('gridBodyCtrl',this);
     }
@@ -246,7 +247,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public updateRowCount(): void {
-        const headerCount = this.headerNavigationService.getHeaderRowCount() + this.filterManager.getHeaderRowCount();
+        const headerCount = this.headerNavigationService.getHeaderRowCount() + (this.filterManager?.getHeaderRowCount() ?? 0);
 
         const rowCount = this.rowModel.isLastRowIndexKnown() ? this.rowModel.getRowCount() : -1;
         const total = rowCount === -1 ? -1 : (headerCount + rowCount);
@@ -444,7 +445,7 @@ export class GridBodyCtrl extends BeanStub {
 
     private setStickyTopOffsetTop(): void {
         const headerCtrl = this.ctrlsService.get('gridHeaderCtrl');
-        const headerHeight = headerCtrl.getHeaderHeight() + this.filterManager.getHeaderHeight();
+        const headerHeight = headerCtrl.getHeaderHeight() + (this.filterManager?.getHeaderHeight() ?? 0);
         const pinnedTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
 
         let height = 0;

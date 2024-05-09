@@ -143,7 +143,6 @@ export class GridApi<TData = any> {
     
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('navigationService') private readonly navigationService: NavigationService;
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('selectionService') private readonly selectionService: ISelectionService;
     @Autowired('gridOptionsService') private readonly gos: GridOptionsService;
@@ -169,6 +168,7 @@ export class GridApi<TData = any> {
     @Autowired('undoRedoService') private readonly undoRedoService: UndoRedoService;
     @Autowired('rowNodeBlockLoader') private readonly rowNodeBlockLoader: RowNodeBlockLoader;
     
+    @Optional('filterManager') private readonly filterManager?: FilterManager;
     @Optional('csvCreator') private readonly csvCreator?: ICsvCreator;
     @Optional('excelCreator') private readonly excelCreator?: IExcelCreator;
     @Optional('rangeService') private readonly rangeService?: IRangeService;
@@ -402,17 +402,17 @@ export class GridApi<TData = any> {
 
     /** Returns `true` if any filter is set. This includes quick filter, column filter, external filter or advanced filter. */
     public isAnyFilterPresent(): boolean {
-        return this.filterManager.isAnyFilterPresent();
+        return this.filterManager?.isAnyFilterPresent() ?? false;
     }
 
     /** Returns `true` if any column filter is set, otherwise `false`. */
     public isColumnFilterPresent(): boolean {
-        return this.filterManager.isColumnFilterPresent() || this.filterManager.isAggregateFilterPresent();
+        return (this.filterManager?.isColumnFilterPresent() || this.filterManager?.isAggregateFilterPresent()) ?? false;
     }
 
     /** Returns `true` if the Quick Filter is set, otherwise `false`. */
     public isQuickFilterPresent(): boolean {
-        return this.filterManager.isQuickFilterPresent();
+        return this.filterManager?.isQuickFilterPresent() ?? false;
     }
 
     /**
@@ -530,20 +530,20 @@ export class GridApi<TData = any> {
     /** Get the state of the Advanced Filter. Used for saving Advanced Filter state */
     public getAdvancedFilterModel(): AdvancedFilterModel | null {
         if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.getAdvancedFilterModel', this.context.getGridId())) {
-            return this.filterManager.getAdvancedFilterModel();
+            return this.filterManager!.getAdvancedFilterModel();
         }
         return null;
     }
 
     /** Set the state of the Advanced Filter. Used for restoring Advanced Filter state */
     public setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void {
-        this.filterManager.setAdvancedFilterModel(advancedFilterModel);
+        this.filterManager?.setAdvancedFilterModel(advancedFilterModel);
     }
 
     /** Open the Advanced Filter Builder dialog (if enabled). */
     public showAdvancedFilterBuilder(): void {
         if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.setAdvancedFilterModel', this.context.getGridId())) {
-            this.filterManager.showAdvancedFilterBuilder('api');
+            this.filterManager?.showAdvancedFilterBuilder('api');
         }
     }
 
@@ -784,7 +784,7 @@ export class GridApi<TData = any> {
      */
     public getFilterInstance<TFilter extends IFilter>(key: string | Column, callback?: (filter: TFilter | null) => void): TFilter | null | undefined {
         warnOnce(`'getFilterInstance' is deprecated. To get/set individual filter models, use 'getColumnFilterModel' or 'setColumnFilterModel' instead. To get hold of the filter instance, use 'getColumnFilterInstance' which returns the instance asynchronously.`);
-        return this.filterManager.getFilterInstance(key, callback);
+        return this.filterManager?.getFilterInstance(key, callback);
     }
 
     /**
@@ -793,14 +793,14 @@ export class GridApi<TData = any> {
      * `key` can be a column ID or a `Column` object.
      */
     public getColumnFilterInstance<TFilter extends IFilter>(key: string | Column): Promise<TFilter | null | undefined> {
-        return this.filterManager.getColumnFilterInstance(key);
+        return this.filterManager?.getColumnFilterInstance(key) ?? Promise.resolve(null);
     }
 
     /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */
     public destroyFilter(key: string | Column) {
         const column = this.columnModel.getPrimaryColumn(key);
         if (column) {
-            return this.filterManager.destroyFilter(column, 'api');
+            return this.filterManager?.destroyFilter(column, 'api');
         }
     }
 
@@ -829,7 +829,7 @@ export class GridApi<TData = any> {
      * @param source The source of the filter change event. If not specified defaults to `'api'`.
      */
     public onFilterChanged(source: FilterChangedEventSourceType = 'api') {
-        this.filterManager.onFilterChanged({ source });
+        this.filterManager?.onFilterChanged({ source });
     }
 
     /**
@@ -848,12 +848,12 @@ export class GridApi<TData = any> {
      * or provide cell data types for every column.
      */
     public setFilterModel(model: FilterModel | null): void {
-        this.frameworkOverrides.wrapIncoming(() => this.filterManager.setFilterModel(model));
+        this.frameworkOverrides.wrapIncoming(() => this.filterManager?.setFilterModel(model));
     }
 
     /** Gets the current state of all the column filters. Used for saving filter state. */
     public getFilterModel(): FilterModel {
-        return this.filterManager.getFilterModel();
+        return this.filterManager?.getFilterModel() ?? {};
     }
 
     /**
@@ -861,7 +861,7 @@ export class GridApi<TData = any> {
      * Will return `null` if no active filter.
      */
     public getColumnFilterModel<TModel>(column: string | Column): TModel | null {
-        return this.filterManager.getColumnFilterModel(column);
+        return this.filterManager?.getColumnFilterModel(column);
     }
 
     /**
@@ -870,7 +870,7 @@ export class GridApi<TData = any> {
      * Must wait on the response before calling `api.onFilterChanged()`.
      */
     public setColumnFilterModel<TModel>(column: string | Column, model: TModel | null): Promise<void> {
-        return this.filterManager.setColumnFilterModel(column, model);
+        return this.filterManager?.setColumnFilterModel(column, model) ?? Promise.resolve();
     }
 
     /** Returns the focused cell (or the last focused cell if the grid lost focus). */
@@ -1133,7 +1133,7 @@ export class GridApi<TData = any> {
 
     /** Reset the Quick Filter cache text on every rowNode. */
     public resetQuickFilter(): void {
-        this.filterManager.resetQuickFilterCache();
+        this.filterManager?.resetQuickFilterCache();
     }
 
     /** Returns the list of selected cell ranges. */

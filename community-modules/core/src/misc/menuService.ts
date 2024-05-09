@@ -71,9 +71,9 @@ export class MenuService extends BeanStub {
     @Autowired('filterMenuFactory') private readonly filterMenuFactory: IMenuFactory;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-
+    
+    @Optional('filterManager') private filterManager?: FilterManager;
     @Optional('columnChooserFactory') private columnChooserFactory?: IColumnChooserFactory;
     @Optional('contextMenuFactory') private readonly contextMenuFactory?: IContextMenuFactory;
     @Optional('enterpriseMenuFactory') private readonly enterpriseMenuFactory? : IMenuFactory;
@@ -165,7 +165,7 @@ export class MenuService extends BeanStub {
     }
 
     public isFilterMenuInHeaderEnabled(column: Column): boolean {
-        return !column.getColDef().suppressHeaderFilterButton && this.filterManager.isFilterAllowed(column);
+        return !column.getColDef().suppressHeaderFilterButton && (this.filterManager?.isFilterAllowed(column) ?? false);
     }
 
     public isHeaderContextMenuEnabled(column?: Column): boolean {
@@ -193,7 +193,7 @@ export class MenuService extends BeanStub {
     }
 
     public isFilterMenuItemEnabled(column: Column): boolean {
-        return this.filterManager.isFilterAllowed(column) && !this.isLegacyMenuEnabled() &&
+        return (this.filterManager?.isFilterAllowed(column) ?? false) && !this.isLegacyMenuEnabled() &&
             !this.isFilterMenuInHeaderEnabled(column) && !this.isFloatingFilterButtonDisplayed(column);
     }
 

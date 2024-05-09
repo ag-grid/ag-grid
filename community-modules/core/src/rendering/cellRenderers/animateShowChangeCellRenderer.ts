@@ -1,4 +1,4 @@
-import { Autowired } from "../../context/context";
+import { Autowired, Optional } from "../../context/context";
 import { ICellRenderer } from "./iCellRenderer";
 import { Component } from "../../widgets/component";
 import { FilterManager } from "../../filter/filterManager";
@@ -17,7 +17,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
 
     private refreshCount = 0;
 
-    @Autowired('filterManager') private filterManager: FilterManager;
+    @Optional('filterManager') private filterManager?: FilterManager;
 
     constructor() {
         super();
@@ -99,7 +99,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
 
         // we don't show the delta if we are in the middle of a filter. see comment on FilterManager
         // with regards processingFilterChange
-        if (this.filterManager.isSuppressFlashingCellsBecauseFiltering()) {
+        if (this.filterManager?.isSuppressFlashingCellsBecauseFiltering()) {
             return false;
         }
 

@@ -45,7 +45,6 @@ import { Column } from "../entities/column";
 
 @Bean('stateService')
 export class StateService extends BeanStub {
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
@@ -55,6 +54,7 @@ export class StateService extends BeanStub {
     @Autowired('expansionService') private readonly expansionService: IExpansionService;
     @Autowired('columnAnimationService') private readonly columnAnimationService: ColumnAnimationService;
     
+    @Optional('filterManager') private readonly filterManager?: FilterManager;
     @Optional('sideBarService') private readonly sideBarService?: ISideBarService;
     @Optional('rangeService') private readonly rangeService?: IRangeService;
     
@@ -458,21 +458,21 @@ export class StateService extends BeanStub {
     }
 
     private getFilterState(): FilterState | undefined {
-        let filterModel: FilterModel | undefined = this.filterManager.getFilterModel();
+        let filterModel: FilterModel | undefined = this.filterManager?.getFilterModel();
         if (filterModel && Object.keys(filterModel).length === 0) {
             filterModel = undefined;
         }
-        const advancedFilterModel = this.filterManager.getAdvancedFilterModel() ?? undefined;
+        const advancedFilterModel = this.filterManager?.getAdvancedFilterModel() ?? undefined;
         return filterModel || advancedFilterModel ? { filterModel, advancedFilterModel } : undefined;
     }
 
     private setFilterState(filterState?: FilterState, gridOptionAdvancedFilterModel?: AdvancedFilterModel | null): void {
         const { filterModel, advancedFilterModel } = filterState ?? { advancedFilterModel: gridOptionAdvancedFilterModel };
         if (filterModel) {
-            this.filterManager.setFilterModel(filterModel, 'columnFilter');
+            this.filterManager?.setFilterModel(filterModel, 'columnFilter');
         }
         if (advancedFilterModel) {
-            this.filterManager.setAdvancedFilterModel(advancedFilterModel);
+            this.filterManager?.setAdvancedFilterModel(advancedFilterModel);
         }
     }
 

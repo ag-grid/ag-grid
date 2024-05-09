@@ -1,4 +1,4 @@
-import { Autowired, PostConstruct } from "../context/context";
+import { Autowired, Optional, PostConstruct } from "../context/context";
 import { Column } from "../entities/column";
 import { Events } from "../eventKeys";
 import { FilterDestroyedEvent, FilterOpenedEvent } from "../events";
@@ -13,9 +13,9 @@ import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
 
 export class FilterWrapperComp extends Component {
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
-
+    
+    @Optional('filterManager') private readonly filterManager?: FilterManager;
     private filterWrapper: FilterWrapper | null = null;
 
     constructor(private readonly column: Column, private readonly source: FilterRequestSource) {
@@ -55,7 +55,7 @@ export class FilterWrapperComp extends Component {
 
     private createFilter(init?: boolean): void {
         const { column, source } = this;
-        this.filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, source);
+        this.filterWrapper = this.filterManager?.getOrCreateFilterWrapper(column, source) ?? null;
         if (!this.filterWrapper?.filterPromise) { return; }
         this.filterWrapper.filterPromise.then(filter => {
             let guiFromFilter = filter!.getGui();

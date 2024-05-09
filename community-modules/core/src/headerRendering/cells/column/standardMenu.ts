@@ -1,7 +1,6 @@
 import { Autowired, Bean } from '../../../context/context';
 import { BeanStub } from "../../../context/beanStub";
 import { IMenuFactory } from '../../../interfaces/iMenuFactory';
-import { FilterManager } from '../../../filter/filterManager';
 import { Column } from '../../../entities/column';
 import { PopupService } from '../../../widgets/popupService';
 import { FocusService } from '../../../focusService';
@@ -19,7 +18,6 @@ import { FilterWrapperComp } from '../../../filter/filterWrapperComp';
 @Bean('filterMenuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
-    @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;

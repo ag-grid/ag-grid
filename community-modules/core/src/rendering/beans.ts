@@ -70,7 +70,6 @@ export class Beans {
     @Autowired('dragService') public readonly dragService: DragService;
     @Autowired('dragAndDropService') public readonly dragAndDropService: DragAndDropService;
     @Autowired('sortController') public readonly sortController: SortController;
-    @Autowired('filterManager') public readonly filterManager: FilterManager;
     @Autowired('rowContainerHeightService') public readonly rowContainerHeightService: RowContainerHeightService;
     @Autowired('frameworkOverrides') public readonly frameworkOverrides: IFrameworkOverrides;
     @Autowired('cellPositionUtils') public readonly cellPositionUtils: CellPositionUtils;
@@ -87,6 +86,7 @@ export class Beans {
     @Autowired('syncService') public readonly syncService: SyncService;
     @Autowired('ariaAnnouncementService') public readonly ariaAnnouncementService: AriaAnnouncementService;
     
+    @Optional('filterManager') public readonly filterManager?: FilterManager;
     @Optional('rangeService') public readonly rangeService?: IRangeService;
     @Optional('selectionHandleFactory') public readonly selectionHandleFactory?: ISelectionHandleFactory;
 

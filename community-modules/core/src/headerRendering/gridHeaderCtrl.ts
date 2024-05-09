@@ -1,7 +1,7 @@
 import { ColumnModel } from "../columns/columnModel";
 import { KeyCode } from "../constants/keyCode";
 import { BeanStub } from "../context/beanStub";
-import { Autowired } from "../context/context";
+import { Autowired, Optional } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
 import { FilterManager } from "../filter/filterManager";
@@ -24,9 +24,9 @@ export class GridHeaderCtrl extends BeanStub {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('menuService') private menuService: MenuService;
-
+    
+    @Optional('filterManager') private filterManager?: FilterManager;
     private comp: IGridHeaderComp;
     private eGui: HTMLElement;
     private headerHeight: number;
@@ -85,7 +85,7 @@ export class GridHeaderCtrl extends BeanStub {
         let headerRowCount = columnModel.getHeaderRowCount();
         let totalHeaderHeight: number;
 
-        const hasFloatingFilters = this.filterManager.hasFloatingFilters();
+        const hasFloatingFilters = this.filterManager?.hasFloatingFilters();
 
         if (hasFloatingFilters) {
             headerRowCount++;

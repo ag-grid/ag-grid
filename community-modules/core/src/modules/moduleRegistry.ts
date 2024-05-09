@@ -5,6 +5,9 @@ import { values } from "../utils/generic";
 
 export class ModuleRegistry {
 
+    private static features: any[] = [];
+
+
     // having in a map a) removes duplicates and b) allows fast lookup
     private static globalModulesMap: { [name: string]: Module; } = {};
     private static gridModulesMap: { [gridId: string]: { [name: string]: Module; } } = {}
@@ -12,6 +15,15 @@ export class ModuleRegistry {
     private static currentModuleVersion: string;
     private static isBundled: boolean | undefined;
     private static areGridScopedModules = false;
+
+
+    public static registerFeature(feature: any) {
+        this.features.push(feature);
+    }
+
+    public static getFeatures(): any[] {
+        return this.features;
+    }
 
     /**
      * Globally register the given module for all grids.

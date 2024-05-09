@@ -237,7 +237,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private setupUserComp(): void {
         if (!this.active) { return; }
 
-        const compDetails = this.beans.filterManager.getFloatingFilterCompDetails(
+        const compDetails = this.beans.filterManager?.getFloatingFilterCompDetails(
             this.column,
             () => this.showParentFilter()
         );
@@ -274,7 +274,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
             compPromise.then(comp => {
                 if (comp) {
-                    const parentModel = filterManager.getCurrentFloatingFilterParentModel(this.column);
+                    const parentModel = filterManager?.getCurrentFloatingFilterParentModel(this.column);
                     comp.onParentModelChanged(parentModel, event ? this.gos.addGridCommonParams<FilterChangedEvent>({
                         columns: event.columns ?? [],
                         type: Events.EVENT_FILTER_CHANGED,
@@ -286,7 +286,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
         this.destroySyncListener = this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, syncWithFilter);
 
-        if (filterManager.isFilterActive(this.column)) {
+        if (filterManager?.isFilterActive(this.column)) {
             syncWithFilter(null);
         }
     }
@@ -310,7 +310,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     private updateFilterButton(): void {
         if (!this.suppressFilterButton && this.comp) {
-            const isFilterAllowed = this.beans.filterManager.isFilterAllowed(this.column);
+            const isFilterAllowed = this.beans.filterManager?.isFilterAllowed(this.column) ?? false;
             this.comp.setButtonWrapperDisplayed(isFilterAllowed);
             if (this.highlightFilterButtonWhenActive && isFilterAllowed) {
                 this.eButtonShowMainFilter.classList.toggle('ag-filter-active', this.column.isFilterActive());
@@ -328,7 +328,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         }
 
         const newCompDetails = this.active
-            ? this.beans.filterManager.getFloatingFilterCompDetails(
+            ? this.beans.filterManager?.getFloatingFilterCompDetails(
                 this.column,
                 () => this.showParentFilter()
             )
@@ -339,7 +339,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             this.updateCompDetails(newCompDetails, becomeActive);
         } else {
             compPromise.then(compInstance => {
-                if (!compInstance || this.beans.filterManager.areFilterCompsDifferent(this.userCompDetails ?? null, newCompDetails)) {
+                if (!compInstance || this.beans.filterManager?.areFilterCompsDifferent(this.userCompDetails ?? null, newCompDetails)) {
                     this.updateCompDetails(newCompDetails, becomeActive);
                 } else {
                     this.updateFloatingFilterParams(newCompDetails);

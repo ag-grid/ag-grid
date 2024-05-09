@@ -164,7 +164,7 @@ export class HeaderRowCtrl extends BeanStub {
 
         let numberOfFloating = 0;
 
-        if (filterManager.hasFloatingFilters()) {
+        if (filterManager?.hasFloatingFilters()) {
             headerRowCount++;
             numberOfFloating = 1;
         }

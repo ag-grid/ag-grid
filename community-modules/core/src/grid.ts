@@ -3,7 +3,6 @@ import { SelectionService } from "./selectionService";
 import { ColumnModel } from "./columns/columnModel";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { GridHeaderComp } from "./headerRendering/gridHeaderComp";
-import { FilterManager } from "./filter/filterManager";
 import { ValueService } from "./valueService/valueService";
 import { EventService } from "./eventService";
 import { GridBodyComp } from "./gridBodyComp/gridBodyComp";
@@ -89,7 +88,6 @@ import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
 import { DataTypeService } from "./columns/dataTypeService";
 import { AgInputDateField } from "./widgets/agInputDateField";
 import { AgAutocomplete } from "./widgets/agAutocomplete";
-import { QuickFilterService } from "./filter/quickFilterService";
 import { warnOnce, errorOnce } from "./utils/function";
 import { mergeDeep } from "./utils/object";
 import { SyncService } from "./syncService";
@@ -418,7 +416,7 @@ export class GridCoreCreator {
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             RowContainerHeightService, HorizontalResizeService, LocaleService, ValidationService,
             PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsService,
-            PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
+            PopupService, SelectionService, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory,
             AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,
             AutoWidthCalculator, StandardMenuFactory, DragAndDropService,
@@ -427,8 +425,8 @@ export class GridCoreCreator {
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory, RowCssClassCalculator, 
             RowNodeBlockLoader, RowNodeSorter, CtrlsService, PinnedWidthService, RowNodeEventThrottle,
-            CtrlsFactory, DataTypeService, QuickFilterService, SyncService, OverlayService, StateService,
-            ExpansionService, ApiEventService, AriaAnnouncementService, MenuService
+            CtrlsFactory, DataTypeService, SyncService, OverlayService, StateService,
+            ExpansionService, ApiEventService, AriaAnnouncementService, MenuService, ...ModuleRegistry.getFeatures()
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);

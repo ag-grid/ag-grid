@@ -55,11 +55,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('sortController') private sortController: SortController;
-    @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('selectionService') private selectionService: ISelectionService;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-
+    
+    @Optional('filterManager') private filterManager?: FilterManager;
     @Optional('rangeService') private rangeService?: IRangeService;
 
     private clientSideRowModel: IClientSideRowModel;
@@ -114,7 +114,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if (rowGroupCols.length) {
             return true;
         }
-        const isFilterPresent = this.filterManager.isAnyFilterPresent();
+        const isFilterPresent = this.filterManager?.isAnyFilterPresent();
         if (isFilterPresent) {
             return true;
         }

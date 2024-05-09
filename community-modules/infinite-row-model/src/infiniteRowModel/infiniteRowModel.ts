@@ -18,18 +18,19 @@ import {
     SortController,
     IInfiniteRowModel,
     WithoutGridCommon,
-    RowModelType
+    RowModelType,
+    Optional
 } from "@ag-grid-community/core";
 import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('sortController') private readonly sortController: SortController;
     @Autowired('selectionService') private readonly selectionService: ISelectionService;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('rowNodeBlockLoader') private readonly rowNodeBlockLoader: RowNodeBlockLoader;
+    @Optional('filterManager') private readonly filterManager?: FilterManager;
 
     private infiniteCache: InfiniteCache | null | undefined;
     private datasource: IDatasource | null | undefined;
@@ -192,7 +193,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
             datasource: this.datasource,
 
             // sort and filter model
-            filterModel: this.filterManager.getFilterModel(),
+            filterModel: this.filterManager?.getFilterModel() ?? {},
             sortModel: this.sortController.getSortModel(),
 
             rowNodeBlockLoader: this.rowNodeBlockLoader,
