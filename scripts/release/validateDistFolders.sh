@@ -2,7 +2,7 @@
 
 # dumb repetitive and basic - can rework post release
 
-excluded=("react" "vue3" "angular" "ag-grid-react" "ag-grid-vue3" "ag-grid-angular" "styles")
+excluded=("react" "vue3" "angular" "ag-grid-react" "ag-grid-vue3" "ag-grid-angular" "styles" "theming")
 
 for directory in `ls community-modules`;
 do
