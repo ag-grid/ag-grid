@@ -63,7 +63,6 @@ const BorderItem = (props: BorderProps) => {
         const params = theme.getRenderedParams();
         if (param.property in params) {
             editorValue = params[param.property];
-            console.log(param.property, editorValue);
         } else {
             throw new Error(`Param "${param.property}" does not exist.`);
         }
