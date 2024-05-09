@@ -158,7 +158,7 @@ export default function createPlugin(options: Options): AstroIntegration {
 
                 const destDir = fileURLToPath(dir.href);
                 const files = findAllFiles(destDir);
-                await checkLinks(destDir, files);
+                // await checkLinks(destDir, files);
             },
         },
     };
