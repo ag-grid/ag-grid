@@ -33,10 +33,14 @@ git reset enterprise-modules/status-bar/dist
 git reset enterprise-modules/viewport-row-model/dist
 git reset packages/ag-grid-angular/dist
 git reset packages/ag-grid-charts-enterprise/dist
+git reset packages/ag-grid-charts-enterprise/styles
 git reset packages/ag-grid-community/dist
+git reset packages/ag-grid-community/styles
 git reset packages/ag-grid-enterprise/dist
+git reset packages/ag-grid-enterprise/styles
 git reset packages/ag-grid-react/dist
 git reset packages/ag-grid-vue/dist
 git reset packages/ag-grid-vue3/dist
 git reset plugins/ag-grid-generate-code-reference-files/dist
 git reset plugins/ag-grid-task-autogen/dist
+git reset plugins/ag-grid-generate-code-reference-files/src/executors/generate/_copiedFromCore

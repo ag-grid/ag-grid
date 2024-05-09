@@ -3,6 +3,12 @@ import { FILES_BASE_PATH, NPM_CDN, PUBLISHED_URLS, SITE_BASE_URL, agGridVersion 
 import { isBuildServerBuild, isPreProductionBuild, isUsingPublishedPackages } from '@utils/pages';
 import { pathJoin } from '@utils/pathJoin';
 
+import agChartsCommunity from '../../../../../../../node_modules/ag-charts-community/package.json';
+import agChartsEnterprise from '../../../../../../../node_modules/ag-charts-enterprise/package.json';
+import agChartsReact from '../../../../../../../node_modules/ag-charts-react/package.json';
+import agChartsVue3 from '../../../../../../../node_modules/ag-charts-vue3/package.json';
+import agChartsAngular from '../../../../../../../node_modules/ag-charts-angular/package.json';
+
 interface Props {
     boilerplatePath: string;
     appLocation: string;
@@ -74,23 +80,21 @@ const localBuildAndArchiveConfiguration: Configuration = {
 const publishedConfiguration: Configuration = {
     gridMap: PUBLISHED_URLS,
     gridCommunityPaths: {
-        'ag-charts-react': `${NPM_CDN}/ag-charts-react/`,
-        'ag-charts-angular': `${NPM_CDN}/ag-charts-angular/`,
-        'ag-charts-vue': `${NPM_CDN}/ag-charts-vue/`,
-        'ag-charts-vue3': `${NPM_CDN}/ag-charts-vue3/`,
-        'ag-charts-community': `${NPM_CDN}/ag-charts-community/`,
+        'ag-charts-react': `${NPM_CDN}/ag-charts-react@${agChartsReact.version}/`,
+        'ag-charts-angular': `${NPM_CDN}/ag-charts-angular@${agChartsAngular.version}/`,
+        'ag-charts-vue3': `${NPM_CDN}/ag-charts-vue3@${agChartsVue3.version}/`,
+        'ag-charts-community': `${NPM_CDN}/ag-charts-community@${agChartsCommunity.version}/`,
         '@ag-grid-community/client-side-row-model': `https://cdn.jsdelivr.net/npm/@ag-grid-community/client-side-row-model@${agGridVersion}/dist/package/main.cjs.js`,
         '@ag-grid-community/core': `https://cdn.jsdelivr.net/npm/@ag-grid-community/core@${agGridVersion}/dist/package/main.cjs.js`,
         '@ag-grid-community/csv-export': `https://cdn.jsdelivr.net/npm/@ag-grid-community/csv-export@${agGridVersion}/dist/csv-export.cjs.min.js`,
         '@ag-grid-community/infinite-row-model': `https://cdn.jsdelivr.net/npm/@ag-grid-community/infinite-row-model@${agGridVersion}/dist/package/main.cjs.js`,
     },
     gridEnterprisePaths: {
-        'ag-charts-react': `${NPM_CDN}/ag-charts-react/`,
-        'ag-charts-angular': `${NPM_CDN}/ag-charts-angular/`,
-        'ag-charts-vue': `${NPM_CDN}/ag-charts-vue/`,
-        'ag-charts-vue3': `${NPM_CDN}/ag-charts-vue3/`,
-        'ag-charts-community': `${NPM_CDN}/ag-charts-community/dist/package/main.cjs.js`,
-        'ag-charts-enterprise': `${NPM_CDN}/ag-charts-enterprise/dist/package/main.cjs.js`,
+        'ag-charts-react': `${NPM_CDN}/ag-charts-react@${agChartsReact.version}/`,
+        'ag-charts-angular': `${NPM_CDN}/ag-charts-angular@${agChartsAngular.version}/`,
+        'ag-charts-vue3': `${NPM_CDN}/ag-charts-vue3@${agChartsVue3.version}/`,
+        'ag-charts-community': `${NPM_CDN}/ag-charts-community@${agChartsCommunity.version}/dist/package/main.cjs.js`,
+        'ag-charts-enterprise': `${NPM_CDN}/ag-charts-enterprise@${agChartsEnterprise.version}/dist/package/main.cjs.js`,
         '@ag-grid-community/client-side-row-model': `https://cdn.jsdelivr.net/npm/@ag-grid-community/client-side-row-model@${agGridVersion}/dist/package/main.cjs.js`,
         '@ag-grid-community/core': `https://cdn.jsdelivr.net/npm/@ag-grid-community/core@${agGridVersion}/dist/package/main.cjs.js`,
         '@ag-grid-community/csv-export': `https://cdn.jsdelivr.net/npm/@ag-grid-community/csv-export@${agGridVersion}/dist/package/main.cjs.js`,
@@ -162,13 +166,13 @@ function getRelevantConfig(configuration: Configuration, framework: InternalFram
  * code to load SystemJS and the relevant modules depending on the framework.
  */
 export const SystemJs = ({
-    boilerplatePath,
-    appLocation,
-    startFile,
-    internalFramework,
-    isEnterprise,
-    isDev,
-}: Props) => {
+                             boilerplatePath,
+                             appLocation,
+                             startFile,
+                             internalFramework,
+                             isEnterprise,
+                             isDev,
+                         }: Props) => {
     const systemJsPath = pathJoin(boilerplatePath, `systemjs.config${isDev ? '.dev' : ''}.js`);
     let configuration = isUsingPublishedPackages()
         ? publishedConfiguration
