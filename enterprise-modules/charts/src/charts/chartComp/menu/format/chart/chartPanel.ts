@@ -9,7 +9,6 @@ import {
 import { PaddingPanel } from "./paddingPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { BackgroundPanel } from "./backgroundPanel";
-import TitlePanel from "./titlePanel";
 import { FormatPanelOptions } from "../formatPanel";
 import { ChartController } from "../../../chartController";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
@@ -18,8 +17,7 @@ import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { ChartService } from "../../../../chartService";
 
 export class ChartPanel extends Component {
-
-    public static TEMPLATE = /* html */
+    private static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="chartGroup"></ag-group-component>
         </div>`;
@@ -55,11 +53,10 @@ export class ChartPanel extends Component {
         const chartGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-top-level',
             direction: 'vertical',
-            title: this.chartTranslationService.translate('chart'),
+            title: this.chartTranslationService.translate('chartStyle'),
             expanded: this.isExpandedOnInit,
             suppressEnabledCheckbox: true,
             items: [
-                this.createManagedBean(new TitlePanel(this.chartMenuParamsFactory)),
                 this.createManagedBean(new PaddingPanel(this.chartMenuParamsFactory, this.chartController)),
                 this.createManagedBean(new BackgroundPanel(this.chartMenuParamsFactory)),
                 ...this.createDirectionSelect()

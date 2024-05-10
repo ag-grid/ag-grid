@@ -346,8 +346,8 @@ export class CartesianAxisPanel extends Component {
         const rotationComp = this.createRotationWidget('labelRotation', chartAxisThemeOverrides);
         const autoRotateCb = this.initLabelRotation(rotationComp, chartAxisThemeOverrides);
 
-        labelPanelComp.addCompToPanel(autoRotateCb);
-        labelPanelComp.addCompToPanel(rotationComp);
+        labelPanelComp.addItem(autoRotateCb);
+        labelPanelComp.addItem(rotationComp);
     }
 
     private initLabelRotation(rotationComp: AgAngleSelect, chartAxisThemeOverrides: ChartMenuParamsFactory) {
@@ -424,7 +424,7 @@ export class CartesianAxisPanel extends Component {
             30
         )));
 
-        labelPanelComp.addCompToPanel(labelPaddingSlider);
+        labelPanelComp.addItem(labelPaddingSlider);
     }
 
     private translate(key: ChartTranslationKey) {

@@ -101,7 +101,7 @@ export class PolarAxisPanel extends Component {
 
         const labelPanelComp = this.createManagedBean(new FontPanel(params));
         const labelOrientationComp = this.createOrientationWidget();
-        labelPanelComp.addItemToPanel(labelOrientationComp);
+        labelPanelComp.addItem(labelOrientationComp);
 
         this.axisGroup.addItem(labelPanelComp);
     }
