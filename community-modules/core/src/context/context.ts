@@ -290,7 +290,7 @@ export class Context {
         beans.forEach(bean => {
             this.callLifeCycleMethodsOnBean(bean, 'preDestroyMethods', 'destroy');
 
-            // call destroy() explicitly if it _exists
+            // call destroy() explicitly if it exists
             const beanAny = bean as any;
 
             if (typeof beanAny.destroy === 'function') {

@@ -816,7 +816,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private isRowInMap(rowNode: RowNode, rowIdsMap: {top: RowNodeMap, bottom: RowNodeMap, normal: RowNodeMap}): boolean {
-        // skip this row if it is _missing from the provided list
+        // skip this row if it is missing from the provided list
         const id = rowNode.id!;
         const floating = rowNode.rowPinned;
 
@@ -1103,7 +1103,7 @@ export class RowRenderer extends BeanStub {
             // include just full width
             if (!rowCtrl.isFullWidth()) { return false; }
 
-            // if Row Nodes provided, we exclude where Row Node is _missing
+            // if Row Nodes provided, we exclude where Row Node is missing
             const rowNode = rowCtrl.getRowNode();
             if (rowNodesMap != null && !this.isRowInMap(rowNode, rowNodesMap)) { return false; }
 

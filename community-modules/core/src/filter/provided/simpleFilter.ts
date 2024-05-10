@@ -329,10 +329,10 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     protected areModelsEqual(a: M | ICombinedSimpleModel<M>, b: M | ICombinedSimpleModel<M>): boolean {
-        // both are _missing
+        // both are missing
         if (!a && !b) { return true; }
 
-        // one is _missing, other present
+        // one is missing, other present
         if ((!a && b) || (a && !b)) { return false; }
 
         // one is combined, the other is not
@@ -1073,7 +1073,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         }
 
         const { predicate } = customFilterOption;
-        // only execute the custom filter if a value _exists or a value isn't required, i.e. input is hidden
+        // only execute the custom filter if a value exists or a value isn't required, i.e. input is hidden
         if (predicate != null && !values.some(v => v == null)) {
             return predicate(values, cellValue);
         }

@@ -91,7 +91,7 @@ export class AgAutocompleteList extends PopupComponent {
             const index = lowerCaseString.indexOf(lowerCaseSearchString);
             const startsWithSearchString = index === 0;
             const isMatch = index >= 0;
-            // top match is shortest value that starts with the search string, otherwise shortest value that _includes the search string
+            // top match is shortest value that starts with the search string, otherwise shortest value that includes the search string
             if (isMatch && (
                 !topMatch ||
                 (!topMatchStartsWithSearchString && startsWithSearchString) ||

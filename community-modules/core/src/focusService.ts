@@ -114,7 +114,7 @@ export class FocusService extends BeanStub {
     }
 
     public onColumnEverythingChanged(): void {
-        // if the columns change, check and see if this column still _exists. if it does, then
+        // if the columns change, check and see if this column still exists. if it does, then
         // we can keep the focused cell. if it doesn't, then we need to drop the focused cell.
         if (!this.focusedCellPosition) { return; }
 
@@ -258,7 +258,7 @@ export class FocusService extends BeanStub {
         const gridColumn = this.columnModel.getGridColumn(column!);
 
         // if column doesn't exist, then blank the focused cell and return. this can happen when user sets new columns,
-        // and the focused cell is in a column that no longer _exists. after columns change, the grid refreshes and tries
+        // and the focused cell is in a column that no longer exists. after columns change, the grid refreshes and tries
         // to re-focus the focused cell.
         if (!gridColumn) {
             this.focusedCellPosition = null;

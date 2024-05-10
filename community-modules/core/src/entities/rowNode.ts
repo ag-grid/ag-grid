@@ -835,7 +835,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
                 if (value === oldValue) { return; }
 
-                // do a quick lookup - despite the event it's possible the column no longer _exists
+                // do a quick lookup - despite the event it's possible the column no longer exists
                 const column = this.beans.columnModel.lookupGridColumn(colId)!;
                 if (!column) { return; }
 

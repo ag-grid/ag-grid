@@ -63,7 +63,7 @@ export interface AbstractColDef<TData = any, TValue = any> {
 export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
     /** A list containing a mix of columns and column groups. */
     children: (ColDef<TData> | ColGroupDef<TData>)[];
-    /** The unique ID to give the column. This is optional. If _missing, a unique ID will be generated. This ID is used to identify the column group in the API. */
+    /** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the API. */
     groupId?: string;
     /**
      * Set to `true` if this group should be opened by default.
@@ -153,8 +153,8 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     // *** Columns *** //
 
-    /** The unique ID to give the column. This is optional. If _missing, the ID will default to the field.
-     *  If both field and colId are _missing, a unique ID will be generated.
+    /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
+     *  If both field and colId are missing, a unique ID will be generated.
      *  This ID is used to identify the column in the API for sorting, filtering etc.
      */
     colId?: string;
@@ -605,7 +605,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     defaultAggFunc?: string;
     /**
      * Aggregation functions allowed on this column e.g. `['sum', 'avg']`.
-     * If _missing, all installed functions are allowed.
+     * If missing, all installed functions are allowed.
      * This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API. */
     allowedAggFuncs?: string[];
 
@@ -720,7 +720,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     suppressSpanHeaderHeight?: boolean;
 }
 
-/** Configuration options for reusable columns types in AG Grid. This _includes all possible options from `ColDef` except the `type` field. */
+/** Configuration options for reusable columns types in AG Grid. This includes all possible options from `ColDef` except the `type` field. */
 export type ColTypeDef<TData = any, TValue = any> = Omit<ColDef<TData, TValue>, 'type'>;
 
 export interface ColumnFunctionCallbackParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {

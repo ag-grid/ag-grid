@@ -72,9 +72,9 @@ export class RowPositionUtils extends BeanStub {
     }
 
     public sameRow(rowA: RowPosition | undefined, rowB: RowPosition | undefined): boolean {
-        // if both _missing
+        // if both missing
         if (!rowA && !rowB) { return true; }
-        // if only one _missing
+        // if only one missing
         if ((rowA && !rowB) || (!rowA && rowB)) { return false; }
         // otherwise compare (use == to compare rowPinned because it can be null or undefined)
         return rowA!.rowIndex === rowB!.rowIndex && rowA!.rowPinned == rowB!.rowPinned;

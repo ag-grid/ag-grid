@@ -354,7 +354,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         for (let rowIndex = start; rowIndex <= finish; rowIndex++) {
             if (this.renderedRows.has(rowIndex)) { continue; }
 
-            // check this row actually _exists (in case overflow buffer window exceeds real data)
+            // check this row actually exists (in case overflow buffer window exceeds real data)
             if (rowIndex < this.model.getRowCount()) {
                 this.insertRow(rowIndex);
             }

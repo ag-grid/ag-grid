@@ -279,7 +279,7 @@ export class TooltipStateManager extends BeanStub {
 
     public hideTooltip(forceHide?: boolean): void {
         if (!forceHide && this.isInteractingWithTooltip) { return; }
-        // check if comp _exists - due to async, although we asked for
+        // check if comp exists - due to async, although we asked for
         // one, the instance may not be back yet
         if (this.tooltipComp) {
             this.destroyTooltipComp();

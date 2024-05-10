@@ -177,7 +177,7 @@ export class RowCssClassCalculator {
             return rowNode.level;
         }
 
-        // if a leaf, and a parent _exists, put a level of the parent, else put level of 0 for top level item
+        // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
         return rowNode.parent ? (rowNode.parent.level + 1) : 0;
     }
 

@@ -402,7 +402,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
         const compInstance = this.comp.getUserCompInstance();
 
-        // only try refresh if old comp _exists adn it is the correct type
+        // only try refresh if old comp exists adn it is the correct type
         const attemptRefresh = compInstance != null && this.userCompDetails.componentClass == newCompDetails.componentClass;
 
         const headerCompRefreshed = attemptRefresh ? this.attemptHeaderCompRefresh(newCompDetails.params) : false;

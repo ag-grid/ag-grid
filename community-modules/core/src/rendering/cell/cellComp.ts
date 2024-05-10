@@ -320,7 +320,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // NOTE on undefined: previous version of the cellRenderer.refresh() interface
         // returned nothing, if the method existed, we assumed it refreshed. so for
-        // backwards compatibility, we assume if method _exists and returns nothing,
+        // backwards compatibility, we assume if method exists and returns nothing,
         // that it was successful.
         return result === true || result === undefined;
     }

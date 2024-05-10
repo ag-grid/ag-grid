@@ -308,7 +308,7 @@ export function _ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eC
             // insert between the eRowBefore and the row after it
             eContainer.insertBefore(eChild, eChildBefore.nextSibling);
         } else {
-            // if nextSibling is _missing, means other row is at end, so just append new row at the end
+            // if nextSibling is missing, means other row is at end, so just append new row at the end
             eContainer.appendChild(eChild);
         }
     } else {
@@ -337,7 +337,7 @@ export function _insertWithDomOrder(
     eChildBefore: HTMLElement | null
 ): void {
     if (eChildBefore) {
-        // if previous element _exists, just slot in after the previous element
+        // if previous element exists, just slot in after the previous element
         eChildBefore.insertAdjacentElement('afterend', eToInsert);
     } else {
         if (eContainer.firstChild) {

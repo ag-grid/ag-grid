@@ -176,7 +176,7 @@ export class CheckboxSelectionComponent extends Component {
             return this.overrides.isVisible;
         }
 
-        // column will be _missing if groupDisplayType = 'groupRows'
+        // column will be missing if groupDisplayType = 'groupRows'
         return this.column?.getColDef()?.checkboxSelection;
     }
 }

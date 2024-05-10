@@ -43,7 +43,7 @@ export class AutoGroupColService extends BeanStub {
         autoGroupColumns.forEach((column: Column, index: number) => this.updateOneAutoGroupColumn(column, index, source));
     }
 
-    // rowGroupCol and index are _missing if groupDisplayType != "multipleColumns"
+    // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
     private createOneAutoGroupColumn(rowGroupCol?: Column, index?: number): Column {
         // if doing multi, set the field
         let colId: string;

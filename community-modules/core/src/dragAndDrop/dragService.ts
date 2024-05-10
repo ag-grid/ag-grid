@@ -38,7 +38,7 @@ export class DragService extends BeanStub {
         const mouseDownListener = dragSourceAndListener.mouseDownListener;
         element.removeEventListener('mousedown', mouseDownListener);
 
-        // remove touch listener only if it _exists
+        // remove touch listener only if it exists
         if (dragSourceAndListener.touchEnabled) {
             const touchStartListener = dragSourceAndListener.touchStartListener;
             element.removeEventListener('touchstart', touchStartListener!, {passive:true} as any);

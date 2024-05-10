@@ -241,7 +241,7 @@ export class UserComponentFactory extends BeanStub {
         let popupPositionFromSelector: 'over' | 'under' | undefined;
 
         // there are two types of js comps, class based and func based. we can only check for
-        // class based, by checking if getGui() _exists. no way to differentiate js func based vs eg react func based
+        // class based, by checking if getGui() exists. no way to differentiate js func based vs eg react func based
         // const isJsClassComp = (comp: any) => this.agComponentUtils.doesImplementIComponent(comp);
         // const fwActive = this.frameworkComponentWrapper != null;
 

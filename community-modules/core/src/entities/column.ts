@@ -441,7 +441,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         return !!this.getColDefValue('resizable');
     }
     
-    /** Get value from ColDef or default if it _exists. */
+    /** Get value from ColDef or default if it exists. */
     private getColDefValue<K extends keyof ColDef>(key: K): ColDef[K] {
         return this.colDef[key] ?? COL_DEF_DEFAULTS[key];
     }

@@ -242,7 +242,7 @@ export class Component extends BeanStub {
 
     @PreConstruct
     private createChildComponentsPreConstruct(): void {
-        // ui _exists if user sets template in constructor. when this happens, we have to wait for the context
+        // ui exists if user sets template in constructor. when this happens, we have to wait for the context
         // to be autoWired first before we can create child components.
         if (!!this.getGui()) {
             this.createChildComponentsFromTags(this.getGui());

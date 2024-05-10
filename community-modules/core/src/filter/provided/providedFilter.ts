@@ -95,7 +95,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
     // this is what we want, as the UI should only become the 'active' filter once it's applied. when apply is
     // inactive, this model will be in sync (following the _debounce ms). if the UI is not a valid filter
-    // (eg the value is _missing so nothing to filter on, or for set filter all checkboxes are checked so filter
+    // (eg the value is missing so nothing to filter on, or for set filter all checkboxes are checked so filter
     // not active) then this appliedModel will be null/undefined.
     private appliedModel: M | null = null;
 

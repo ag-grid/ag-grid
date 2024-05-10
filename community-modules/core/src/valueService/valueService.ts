@@ -422,7 +422,7 @@ export class ValueService extends BeanStub {
             result = keyCreator(keyParams);
         }
 
-        // if already a string, or _missing, just return it
+        // if already a string, or missing, just return it
         if (typeof result === 'string' || result == null) {
             return result;
         }

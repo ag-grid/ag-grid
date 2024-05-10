@@ -29,7 +29,7 @@ export function _toStringOrNull(value: any): string | null {
     return value != null && typeof value.toString === 'function' ? value.toString() : null;
 }
 
-// for parsing html attributes, where we want empty strings and _missing attributes to be undefined
+// for parsing html attributes, where we want empty strings and missing attributes to be undefined
 export function _attrToNumber(value?: number | string | null): number | null | undefined {
     if (value === undefined) {
         // undefined or empty means ignore the value
@@ -50,7 +50,7 @@ export function _attrToNumber(value?: number | string | null): number | null | u
     return isNaN(valueParsed) ? undefined : valueParsed;
 }
 
-// for parsing html attributes, where we want empty strings and _missing attributes to be undefined
+// for parsing html attributes, where we want empty strings and missing attributes to be undefined
 export function _attrToBoolean(value?: boolean | string | null): boolean | undefined {
     if (value === undefined) {
         // undefined or empty means ignore the value
@@ -71,7 +71,7 @@ export function _attrToBoolean(value?: boolean | string | null): boolean | undef
     return (/true/i).test(value);
 }
 
-// for parsing html attributes, where we want empty strings and _missing attributes to be undefined
+// for parsing html attributes, where we want empty strings and missing attributes to be undefined
 export function _attrToString(value?: string): string | undefined {
     if (value == null || value === '') { return; }
 

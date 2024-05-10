@@ -1362,7 +1362,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public addHoverFunctionality(eRow: HTMLElement): void {
-        // because we use animation frames to do this, it's possible the row no longer _exists
+        // because we use animation frames to do this, it's possible the row no longer exists
         // by the time we get to add it
         if (!this.active) { return; }
 
@@ -1423,7 +1423,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private onRowHeightChanged(gui?: RowGui): void {
-        // check for _exists first - if the user is resetting the row height, then
+        // check for exists first - if the user is resetting the row height, then
         // it will be null (or undefined) momentarily until the next time the _flatten
         // stage is called where the row will then update again with a new height
         if (this.rowNode.rowHeight == null) { return; }

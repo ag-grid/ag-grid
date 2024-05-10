@@ -15,7 +15,7 @@ export class PaginationProxy extends BeanStub {
     private active: boolean;
     private paginateChildRows: boolean;
 
-    // We should track all the different sources of page size, as we can fall back to the next one if one is _missing.
+    // We should track all the different sources of page size, as we can fall back to the next one if one is missing.
     // or if user preferences change (Example: disabling auto page size option should mean we get page size from
     // page size selector value - if a value was previously selected .. otherwise fall back to initial state value).
     // IMPORTANT: We should always use this.pageSize getter to get the page size instead of accessing

@@ -24,7 +24,7 @@ export class DateCompWrapper {
         const promise = compDetails.newAgStackInstance();
 
         promise!.then(dateComp => {
-            // because async, check the filter still _exists after component comes back
+            // because async, check the filter still exists after component comes back
             if (!this.alive) {
                 context.destroyBean(dateComp);
                 return;

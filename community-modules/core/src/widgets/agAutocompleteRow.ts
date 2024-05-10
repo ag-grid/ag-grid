@@ -46,7 +46,7 @@ export class AgAutocompleteRow extends Component {
     }
 
     private render() {
-        // putting in blank if _missing, so at least the user can click on it
+        // putting in blank if missing, so at least the user can click on it
         this.getGui().lastElementChild!.innerHTML = _escapeString(this.value) ?? '&nbsp;';
     }
 }

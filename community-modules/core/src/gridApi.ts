@@ -515,7 +515,7 @@ export class GridApi<TData = any> {
      * A virtual row is a row that is visually rendered on the screen (rows that are not visible because of the scroll position are not rendered).
      * Unlike normal events, you do not need to unregister rendered row listeners.
      * When the rendered row is removed from the grid, all associated rendered row listeners will also be removed.
-     * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer _exists.
+     * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists.
      */
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function) {
         this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback as any);

@@ -34,7 +34,7 @@ export class ColumnDefFactory {
                     continue;
                 }
 
-                // if colDef for this group already _exists, use it
+                // if colDef for this group already exists, use it
                 const existingParentDef = colGroupDefs[pointer.getGroupId()];
                 if (existingParentDef) {
                     existingParentDef.children.push(childDef);

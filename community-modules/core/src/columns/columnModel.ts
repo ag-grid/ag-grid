@@ -91,7 +91,7 @@ export interface ApplyColumnStateParams {
     state?: ColumnState[];
     /** Whether column order should be applied */
     applyOrder?: boolean;
-    /** State to apply to columns where state is _missing for those columns */
+    /** State to apply to columns where state is missing for those columns */
     defaultState?: ColumnStateParams;
 }
 
@@ -461,7 +461,7 @@ export class ColumnModel extends BeanStub {
     // if the list of columns has changed.
     // + setColumnWidth(), setViewportPosition(), setColumnDefs(), sizeColumnsToFit()
     private checkViewportColumns(afterScroll: boolean = false): void {
-        // check displayCenterColumnTree _exists first, as it won't exist when grid is initialising
+        // check displayCenterColumnTree exists first, as it won't exist when grid is initialising
         if (this.displayedColumnsCenter == null) { return; }
 
         const viewportColumnsChanged = this.extractViewport();
@@ -1388,7 +1388,7 @@ export class ColumnModel extends BeanStub {
                     }
                 });
 
-                // because we are not using all of the ratios (cols can be _missing),
+                // because we are not using all of the ratios (cols can be missing),
                 // we scale the ratio. if all columns are included, then subsetRatioTotal=1,
                 // and so the ratioScale will be 1.
                 const ratioScale = 1 / subsetRatioTotal;
@@ -2218,13 +2218,13 @@ export class ColumnModel extends BeanStub {
 
             const isAutoGroupCol = colId.startsWith(GROUP_AUTO_COLUMN_ID);
             if (isAutoGroupCol) {
-                // auto group columns, if _missing from state list, are added to the start.
-                // it's common to have autoGroup _missing, as grouping could be on by default
+                // auto group columns, if missing from state list, are added to the start.
+                // it's common to have autoGroup missing, as grouping could be on by default
                 // on a column, but the user could of since removed the grouping via the UI.
                 // if we don't inc the insert index, autoGroups will be inserted in reverse order
                 _insertIntoArray(newOrder, col, autoGroupInsertIndex++);
             } else {
-                // normal columns, if _missing from state list, are added at the end
+                // normal columns, if missing from state list, are added at the end
                 newOrder.push(col);
             }
         });
@@ -2766,7 +2766,7 @@ export class ColumnModel extends BeanStub {
         return headerName;
     }
 
-    // returns the group with matching colId and instanceId. If instanceId is _missing,
+    // returns the group with matching colId and instanceId. If instanceId is missing,
     // matches only on the colId.
     public getColumnGroup(colId: string | ColumnGroup, partId?: number): ColumnGroup | null {
         if (!colId) { return null; }
@@ -2827,7 +2827,7 @@ export class ColumnModel extends BeanStub {
             }
         );
 
-        // all new columns added will have aggFunc _missing, so set it to what is in the colDef
+        // all new columns added will have aggFunc missing, so set it to what is in the colDef
         this.valueColumns.forEach(col => {
             const colDef = col.getColDef();
             // if aggFunc provided, we always override, as reactive property
@@ -2908,7 +2908,7 @@ export class ColumnModel extends BeanStub {
                     }
                 } else {
                     // otherwise include it if included last time, e.g. if we are extracting row group cols and this col
-                    // is an existing row group col (i.e. it _exists in 'previousCols') then we should include it.
+                    // is an existing row group col (i.e. it exists in 'previousCols') then we should include it.
                     include = previousCols.indexOf(col) >= 0;
                 }
             }
@@ -3342,7 +3342,7 @@ export class ColumnModel extends BeanStub {
         if (noColsFound) { return; }
 
         // order cols in the same order as before. we need to make sure that all
-        // cols still _exists, so filter out any that no longer exist.
+        // cols still exists, so filter out any that no longer exist.
         const gridColsMap = _convertToMap<Column, boolean>(this.gridColumns.map(col => [col, true]));
         const oldColsOrdered = colsOrder.filter(col => gridColsMap.has(col));
         const oldColsMap = _convertToMap<Column, boolean>(oldColsOrdered.map(col => [col, true]));
@@ -4248,7 +4248,7 @@ export class ColumnModel extends BeanStub {
             colList.forEach(column => {
                 const colId = column.getColId();
                 if (updatedColIds.has(colId)) {
-                    // New col already _exists. Add any other new cols that should be before it.
+                    // New col already exists. Add any other new cols that should be before it.
                     processPrecedingNewCols(colId);
                     updatedColumnState[colId][indexProp] = index++;
                 } else {

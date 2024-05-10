@@ -143,7 +143,7 @@ export class CellMouseListenerFeature extends Beans {
             cellCtrl.focusCell(forceBrowserFocus);
         }
 
-        // if shift clicking, and a range _exists, we keep the focus on the cell that started the
+        // if shift clicking, and a range exists, we keep the focus on the cell that started the
         // range as the user then changes the range selection.
         if (shiftKey && ranges && !focusService.isCellFocused(cellCtrl.getCellPosition())) {
             // this stops the cell from getting focused

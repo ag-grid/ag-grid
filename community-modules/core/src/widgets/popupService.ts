@@ -462,7 +462,7 @@ export class PopupService extends BeanStub {
         const ePopupParent = this.getPopupParent();
 
         // add env CSS class to child, in case user provided a popup parent, which means
-        // theme class may be _missing
+        // theme class may be missing
         const eWrapper = document.createElement('div');
         this.environment.applyThemeClasses(eWrapper);
 
