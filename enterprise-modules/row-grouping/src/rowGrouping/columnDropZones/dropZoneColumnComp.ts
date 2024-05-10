@@ -9,14 +9,14 @@ import {
     IAggFuncService,
     VirtualList,
     KeyCode,
-    _,
     SortController,
     SortIndicatorComp,
     PillDragComp,
     ColumnModel,
     DragItem,
     DragSourceType,
-    DragAndDropService
+    DragAndDropService,
+    _loadTemplate
 } from "@ag-grid-community/core";
 import { TDropZone } from "./baseDropZonePanel";
 
@@ -226,7 +226,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
 
         this.getContext().createBean(virtualList);
 
-        const ePopup = _.loadTemplate(/* html*/ `<div class="ag-select-agg-func-popup"></div>`);
+        const ePopup = _loadTemplate(/* html*/ `<div class="ag-select-agg-func-popup"></div>`);
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
         ePopup.appendChild(virtualListGui);

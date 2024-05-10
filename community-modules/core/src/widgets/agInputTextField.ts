@@ -1,6 +1,6 @@
 import { AgAbstractInputField, AgInputFieldParams } from './agAbstractInputField';
-import { exists } from '../utils/generic';
-import { isEventFromPrintableCharacter } from '../utils/keyboard';
+import { _exists } from '../utils/generic';
+import { _isEventFromPrintableCharacter } from '../utils/keyboard';
 
 export interface AgInputTextFieldParams extends AgInputFieldParams {
     allowedCharPattern?: string;
@@ -22,7 +22,7 @@ export class AgInputTextField<TConfig extends AgInputTextFieldParams = AgInputTe
     public setValue(value?: string | null, silent?: boolean): this {
         // update the input before we call super.setValue, so it's updated before the value changed event is fired
         if (this.eInput.value !== value) {
-            this.eInput.value = exists(value) ? value : '';
+            this.eInput.value = _exists(value) ? value : '';
         }
 
         return super.setValue(value, silent);
@@ -37,7 +37,7 @@ export class AgInputTextField<TConfig extends AgInputTextFieldParams = AgInputTe
         const pattern = new RegExp(`[${this.config.allowedCharPattern}]`);
 
         const preventCharacters = (event: KeyboardEvent) => {
-            if (!isEventFromPrintableCharacter(event)) { return; }
+            if (!_isEventFromPrintableCharacter(event)) { return; }
 
             if (event.key && !pattern.test(event.key)) {
                 event.preventDefault();

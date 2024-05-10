@@ -1,9 +1,6 @@
+import { _missingOrEmpty } from '@ag-grid-community/core';
 import {MD5} from './md5';
 
-// move to general utils
-function missingOrEmpty<T>(value?: T[] | string | null): boolean {
-    return value == null || value.length === 0;
-}
 
 const LICENSE_TYPES = {
     '01': 'GRID',
@@ -79,7 +76,7 @@ export class LicenseManager {
 
     public getLicenseDetails(licenseKey: string) {
         const currentLicenseType = LicenseManager.chartsLicenseManager ? 'BOTH' : 'GRID';
-        if (missingOrEmpty(licenseKey)) {
+        if (_missingOrEmpty(licenseKey)) {
             return {
                 licenseKey,
                 valid: false,
@@ -119,7 +116,7 @@ export class LicenseManager {
                         break;
                     }
                     case "3": {
-                        if (missingOrEmpty(type)) {
+                        if (_missingOrEmpty(type)) {
                             valid = false;
                         } else {
                             suppliedLicenseType = type;
@@ -161,7 +158,7 @@ export class LicenseManager {
     }
 
     public isDisplayWatermark(): boolean {
-        return this.isForceWatermark() || (!this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage));
+        return this.isForceWatermark() || (!this.isLocalhost() && !this.isWebsiteUrl() && !_missingOrEmpty(this.watermarkMessage));
     }
 
     public getWatermarkMessage(): string {

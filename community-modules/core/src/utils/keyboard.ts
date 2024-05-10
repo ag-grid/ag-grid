@@ -4,8 +4,8 @@ import { Column } from '../entities/column';
 import { ColumnGroup } from '../entities/columnGroup';
 import { GridOptionsService } from '../gridOptionsService';
 import { IRowNode } from '../interfaces/iRowNode';
-import { isMacOsUserAgent } from './browser';
-import { exists } from './generic';
+import { _isMacOsUserAgent } from './browser';
+import { _exists } from './generic';
 
 const A_KEYCODE = 65;
 const C_KEYCODE = 67;
@@ -14,7 +14,7 @@ const D_KEYCODE = 68;
 const Z_KEYCODE = 90;
 const Y_KEYCODE = 89;
 
-export function isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
+export function _isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
     // no allowed printable chars have alt or ctrl key combinations
     if (event.altKey || event.ctrlKey || event.metaKey) { return false; }
 
@@ -34,7 +34,7 @@ export function isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
  * @param {boolean} editing
  * @returns {boolean}
  */
-export function isUserSuppressingKeyboardEvent(
+export function _isUserSuppressingKeyboardEvent(
     gos: GridOptionsService,
     keyboardEvent: KeyboardEvent,
     rowNode: IRowNode,
@@ -66,7 +66,7 @@ export function isUserSuppressingKeyboardEvent(
     return false;
 }
 
-export function isUserSuppressingHeaderKeyboardEvent(
+export function _isUserSuppressingHeaderKeyboardEvent(
     gos: GridOptionsService,
     keyboardEvent: KeyboardEvent,
     headerRowIndex: number,
@@ -75,7 +75,7 @@ export function isUserSuppressingHeaderKeyboardEvent(
     const colDef = column.getDefinition();
     const colDefFunc = colDef && colDef.suppressHeaderKeyboardEvent;
 
-    if (!exists(colDefFunc)) { return false; }
+    if (!_exists(colDefFunc)) { return false; }
 
     const params: SuppressHeaderKeyboardEventParams = gos.addGridCommonParams({
         colDef: colDef,
@@ -87,7 +87,7 @@ export function isUserSuppressingHeaderKeyboardEvent(
     return !!colDefFunc(params);
 }
 
-export function normaliseQwertyAzerty(keyboardEvent: KeyboardEvent): string {
+export function _normaliseQwertyAzerty(keyboardEvent: KeyboardEvent): string {
     const { keyCode } = keyboardEvent;
     let code: string;
 
@@ -117,10 +117,10 @@ export function normaliseQwertyAzerty(keyboardEvent: KeyboardEvent): string {
     return code;
 }
 
-export function isDeleteKey(key: string, alwaysReturnFalseOnBackspace = false) {
+export function _isDeleteKey(key: string, alwaysReturnFalseOnBackspace = false) {
     if (key === KeyCode.DELETE) { return true; }
     if (!alwaysReturnFalseOnBackspace && key === KeyCode.BACKSPACE) {
-        return isMacOsUserAgent();
+        return _isMacOsUserAgent();
     }
     return false;
 }

@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, ExcelCell, _ } from '@ag-grid-community/core';
+import { ExcelOOXMLTemplate, ExcelCell, _escapeString } from '@ag-grid-community/core';
 import { getStyleId } from './styles/stylesheet';
 
 const convertLegacyType = (type: string): string => {
@@ -37,14 +37,14 @@ const cellFactory: ExcelOOXMLTemplate = {
         if (convertedType === 'str' && type === 'f') {
             children = [{
                 name: 'f',
-                textNode: _.escapeString(value)
+                textNode: _escapeString(value)
             }];
         } else if (convertedType === 'inlineStr') {
             children = [{
                 name: 'is',
                 children: [{
                     name: 't',
-                    textNode: _.escapeString(value)
+                    textNode: _escapeString(value)
                 }]
             }];
         } else {

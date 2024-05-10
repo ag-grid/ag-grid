@@ -2,15 +2,15 @@ import { GridOptions } from '../entities/gridOptions';
 import { GridApi } from '../gridApi';
 import { ComponentStateChangedEvent, Events } from '../events';
 import { PropertyKeys } from '../propertyKeys';
-import { iterateObject } from '../utils/object';
-import { includes } from '../utils/array';
-import { values } from '../utils/generic';
+import { _iterateObject } from '../utils/object';
+import { _includes } from '../utils/array';
+import { _values } from '../utils/generic';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 
 export class ComponentUtil {
 
     // all events
-    public static EVENTS: string[] = values<any>(Events);
+    public static EVENTS: string[] = _values<any>(Events);
 
     public static VUE_OMITTED_PROPERTY = 'AG-VUE-OMITTED-PROPERTY';
 
@@ -56,7 +56,7 @@ export class ComponentUtil {
 
     // events that are available for use by users of AG Grid and so should be documented
     /** EVENTS that should be exposed via code generation for the framework components.  */
-    public static PUBLIC_EVENTS: string[] = ComponentUtil.EVENTS.filter(e => !includes(ComponentUtil.EXCLUDED_INTERNAL_EVENTS, e));
+    public static PUBLIC_EVENTS: string[] = ComponentUtil.EVENTS.filter(e => !_includes(ComponentUtil.EXCLUDED_INTERNAL_EVENTS, e));
 
     public static getCallbackForEvent(eventName: string): string {
         if (!eventName || eventName.length < 2) {
@@ -125,7 +125,7 @@ export class ComponentUtil {
             type: Events.EVENT_COMPONENT_STATE_CHANGED
         };
 
-        iterateObject(gridChanges, (key: string, value: any) => {
+        _iterateObject(gridChanges, (key: string, value: any) => {
             (event as any)[key] = value;
         });
 

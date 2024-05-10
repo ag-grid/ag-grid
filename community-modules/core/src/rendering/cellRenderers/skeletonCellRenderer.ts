@@ -1,6 +1,6 @@
 import { Component } from "../../widgets/component";
 import { ILoadingCellRendererComp, ILoadingCellRendererParams } from "./loadingCellRenderer";
-import { setAriaLabel, setAriaLabelledBy } from "../../utils/aria";
+import { _setAriaLabel, _setAriaLabelledBy } from "../../utils/aria";
 
 export class SkeletonCellRenderer extends Component implements ILoadingCellRendererComp {
     private static TEMPLATE =
@@ -14,8 +14,8 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
     public init(params: ILoadingCellRendererParams): void {
         const id = `ag-cell-skeleton-renderer-${this.getCompId()}`;
         this.getGui().setAttribute('id', id);
-        this.addDestroyFunc(() => setAriaLabelledBy(params.eParentOfValue));
-        setAriaLabelledBy(params.eParentOfValue, id);
+        this.addDestroyFunc(() => _setAriaLabelledBy(params.eParentOfValue));
+        _setAriaLabelledBy(params.eParentOfValue, id);
 
         params.node.failedLoad ? this.setupFailed() : this.setupLoading();
     }
@@ -25,7 +25,7 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
         this.getGui().innerText = localeTextFunc('loadingError', 'ERR');
 
         const ariaFailed = localeTextFunc('ariaSkeletonCellLoadingFailed', 'Row failed to load')
-        setAriaLabel(this.getGui(), ariaFailed);
+        _setAriaLabel(this.getGui(), ariaFailed);
     }
 
     private setupLoading(): void {
@@ -37,7 +37,7 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
 
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const ariaLoading = localeTextFunc('ariaSkeletonCellLoading', 'Row data is loading')
-        setAriaLabel(this.getGui(), ariaLoading);
+        _setAriaLabel(this.getGui(), ariaLoading);
     }
 
     public refresh(params: ILoadingCellRendererParams): boolean {

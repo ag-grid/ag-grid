@@ -13,7 +13,9 @@ import {
     PostConstruct,
     RefSelector,
     WithoutGridCommon,
-    _
+    _createIconNoSpan,
+    _makeNull,
+    _setDisabled,
 } from '@ag-grid-community/core';
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
@@ -78,7 +80,7 @@ export class AdvancedFilterComp extends Component {
 
     public setInputDisabled(disabled: boolean): void {
         this.eAutocomplete.setInputDisabled(disabled);
-        _.setDisabled(this.eApplyFilterButton, disabled || this.isApplyDisabled);
+        _setDisabled(this.eApplyFilterButton, disabled || this.isApplyDisabled);
     }
 
     public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
@@ -91,11 +93,11 @@ export class AdvancedFilterComp extends Component {
         this.eApplyFilterButton.innerText = this.advancedFilterExpressionService.translate('advancedFilterApply');
         this.activateTabIndex([this.eApplyFilterButton]);
         this.addManagedListener(this.eApplyFilterButton, 'click', () => this.onValueConfirmed(this.eAutocomplete.isValid()));
-        _.setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
+        _setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
     }
 
     private setupBuilderButton(): void {
-        this.eBuilderFilterButtonIcon.appendChild(_.createIconNoSpan('advancedFilterBuilder', this.gos)!);
+        this.eBuilderFilterButtonIcon.appendChild(_createIconNoSpan('advancedFilterBuilder', this.gos)!);
         this.eBuilderFilterButtonLabel.innerText = this.advancedFilterExpressionService.translate('advancedFilterBuilder');
         this.activateTabIndex([this.eBuilderFilterButton]);
         this.addManagedListener(this.eBuilderFilterButton, 'click', () => this.openBuilder());
@@ -103,7 +105,7 @@ export class AdvancedFilterComp extends Component {
     }
 
     private onValueChanged(value: string | null): void {
-        value = _.makeNull(value);
+        value = _makeNull(value);
         this.advancedFilterService.setExpressionDisplayValue(value);
         this.expressionParser = this.advancedFilterService.createExpressionParser(value);
         const updatedExpression = this.expressionParser?.parseExpression();
@@ -114,7 +116,7 @@ export class AdvancedFilterComp extends Component {
 
     private onValueConfirmed(isValid: boolean): void {
         if (!isValid || this.isApplyDisabled) { return; }
-        _.setDisabled(this.eApplyFilterButton, true);
+        _setDisabled(this.eApplyFilterButton, true);
         this.advancedFilterService.applyExpression();
         this.filterManager.onFilterChanged({ source: 'advancedFilter' });
     }
@@ -135,7 +137,7 @@ export class AdvancedFilterComp extends Component {
 
     private onValidChanged(isValid: boolean, validationMessage: string | null): void {
         this.isApplyDisabled = !isValid || this.advancedFilterService.isCurrentExpressionApplied();
-        _.setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
+        _setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
         this.setTooltip({ 
             newTooltipText: validationMessage,
             showDelayOverride: 1000
@@ -164,14 +166,14 @@ export class AdvancedFilterComp extends Component {
     private openBuilder(): void {
         if (this.builderOpen) { return; }
         this.builderOpen = true;
-        _.setDisabled(this.eBuilderFilterButton, true);
+        _setDisabled(this.eBuilderFilterButton, true);
         this.advancedFilterService.getCtrl().toggleFilterBuilder('ui');
     }
 
     private closeBuilder(): void {
         if (!this.builderOpen) { return; }
         this.builderOpen = false;
-        _.setDisabled(this.eBuilderFilterButton, false);
+        _setDisabled(this.eBuilderFilterButton, false);
         this.eBuilderFilterButton.focus();
     }
 }

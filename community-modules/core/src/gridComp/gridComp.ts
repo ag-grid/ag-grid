@@ -4,7 +4,7 @@ import { Autowired, PostConstruct } from "../context/context";
 import { Component } from "../widgets/component";
 import { ISideBar } from "../interfaces/iSideBar";
 import { RefSelector } from "../widgets/componentAnnotations";
-import { isVisible } from "../utils/dom";
+import { _isVisible } from "../utils/dom";
 import { GridCtrl, IGridComp } from "./gridCtrl";
 import { LayoutCssClasses, UpdateLayoutClassesParams } from "../styling/layoutFeature";
 import { TabGuardComp } from "../widgets/tabGuardComp";
@@ -120,7 +120,7 @@ export class GridComp extends TabGuardComp {
             );
         }
 
-        return focusableContainers.filter(el => isVisible(el));
+        return focusableContainers.filter(el => _isVisible(el));
     }
 
 }

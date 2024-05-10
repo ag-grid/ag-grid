@@ -1,7 +1,7 @@
 import { ICellEditorParams } from "../../interfaces/iCellEditor";
 import { AgInputTextField } from "../../widgets/agInputTextField";
 import { CellEditorInput, SimpleCellEditor } from "./simpleCellEditor";
-import { exists } from "../../utils/generic";
+import { _exists } from "../../utils/generic";
 
 export interface ITextCellEditorParams<TData = any, TValue = any, TContext = any> extends ICellEditorParams<TData, TValue, TContext> {
     /** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor.
@@ -34,7 +34,7 @@ class TextCellEditorInput<TValue = any> implements CellEditorInput<TValue, IText
 
     public getValue(): TValue | null | undefined {
         const value = this.eInput.getValue();
-        if (!exists(value) && !exists(this.params.value)) {
+        if (!_exists(value) && !_exists(this.params.value)) {
             return this.params.value;
         }
         return this.params.parseValue(value!);
@@ -51,7 +51,7 @@ class TextCellEditorInput<TValue = any> implements CellEditorInput<TValue, IText
         //   a) when user hits F2
         //   b) when user hits a printable character
         const value = this.eInput.getValue();
-        const len = (exists(value) && value.length) || 0;
+        const len = (_exists(value) && value.length) || 0;
 
         if (len) {
             this.eInput.getInputElement().setSelectionRange(len, len);

@@ -1,6 +1,6 @@
 import { PopupComponent } from '../widgets/popupComponent';
 import { IComponent } from '../interfaces/iComponent';
-import { escapeString } from '../utils/string';
+import { _escapeString } from '../utils/string';
 import { Column } from '../entities/column';
 import { ColumnGroup } from '../entities/columnGroup';
 import { ColGroupDef, ColDef } from '../entities/colDef';
@@ -54,6 +54,6 @@ export class TooltipComponent extends PopupComponent implements ITooltipComp {
     // will need to type params
     public init(params: ITooltipParams): void {
         const { value } = params;
-        this.getGui().textContent = escapeString(value, true) as string;
+        this.getGui().textContent = _escapeString(value, true) as string;
     }
 }

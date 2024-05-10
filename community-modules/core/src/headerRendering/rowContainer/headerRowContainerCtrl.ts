@@ -8,7 +8,7 @@ import { Events } from "../../eventKeys";
 import { CenterWidthFeature } from "../../gridBodyComp/centerWidthFeature";
 import { PinnedWidthService } from "../../gridBodyComp/pinnedWidthService";
 import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
-import { NumberSequence } from "../../utils";
+import { NumberSequence } from "../../utils/numberSequence";
 import { BodyDropTarget } from "../columnDrag/bodyDropTarget";
 import { HeaderRowType } from "../row/headerRowComp";
 import { HeaderRowCtrl } from "../row/headerRowCtrl";

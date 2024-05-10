@@ -6,9 +6,9 @@ import { Column } from "../entities/column";
 import { CellValueChangedEvent, Events } from "../events";
 import { ValueCache } from "./valueCache";
 import { BeanStub } from "../context/beanStub";
-import { getValueUsingField } from "../utils/object";
-import { missing, exists } from "../utils/generic";
-import { warnOnce } from "../utils/function";
+import { _getValueUsingField } from "../utils/object";
+import { _missing, _exists } from "../utils/generic";
+import { _warnOnce } from "../utils/function";
 import { IRowNode } from "../interfaces/iRowNode";
 import { RowNode } from "../entities/rowNode";
 import { DataTypeService } from "../columns/dataTypeService";
@@ -84,7 +84,7 @@ export class ValueService extends BeanStub {
         } else if (this.isTreeData && colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         } else if (this.isTreeData && (field && data)) {
-            result = getValueUsingField(data, field, column.isFieldContainsDots());
+            result = _getValueUsingField(data, field, column.isFieldContainsDots());
         } else if (groupDataExists) {
             result = rowNode.groupData![colId];
         } else if (aggDataExists) {
@@ -94,9 +94,9 @@ export class ValueService extends BeanStub {
         } else if (ssrmFooterGroupCol) {
             // this is for group footers in SSRM, as the SSRM row won't have groupData, need to extract
             // the group value from the data using the row field
-            result = getValueUsingField(data, rowNode.field!, column.isFieldContainsDots());
+            result = _getValueUsingField(data, rowNode.field!, column.isFieldContainsDots());
         } else if (field && data && !ignoreSsrmAggData) {
-            result = getValueUsingField(data, field, column.isFieldContainsDots());
+            result = _getValueUsingField(data, field, column.isFieldContainsDots());
         }
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
@@ -128,7 +128,7 @@ export class ValueService extends BeanStub {
 
         const valueParser = colDef.valueParser;
 
-        if (exists(valueParser)) {
+        if (_exists(valueParser)) {
             if (typeof valueParser === 'function') {
                 return valueParser(params);
             }
@@ -218,13 +218,13 @@ export class ValueService extends BeanStub {
         }
         // this will only happen if user is trying to paste into a group row, which doesn't make sense
         // the user should not be trying to paste into group rows
-        if (missing(rowNode.data)) {
+        if (_missing(rowNode.data)) {
             rowNode.data = {};
         }
 
         const { field, valueSetter } = column.getColDef();
 
-        if (missing(field) && missing(valueSetter)) {
+        if (_missing(field) && _missing(valueSetter)) {
             console.warn(`AG Grid: you need either field or valueSetter set on colDef for editing to work`);
             return false;
         }
@@ -247,7 +247,7 @@ export class ValueService extends BeanStub {
 
         let valueWasDifferent: boolean;
 
-        if (exists(valueSetter)) {
+        if (_exists(valueSetter)) {
             if (typeof valueSetter === 'function') {
                 valueWasDifferent = valueSetter(params)
             } else {
@@ -430,7 +430,7 @@ export class ValueService extends BeanStub {
         result = String(result);
 
         if (result === '[object Object]') {
-            warnOnce('a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se AG Grid docs) or b) to toString() on the object to return a key');
+            _warnOnce('a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se AG Grid docs) or b) to toString() on the object to return a key');
         }
 
         return result;

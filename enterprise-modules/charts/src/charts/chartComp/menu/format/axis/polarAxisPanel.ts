@@ -1,5 +1,4 @@
 import {
-    _,
     AgGroupComponent,
     AgGroupComponentParams,
     AgSelect,

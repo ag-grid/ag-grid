@@ -7,7 +7,7 @@ import {
     DragAndDropService,
     DropTarget,
     PostConstruct,
-    _
+    _clearElement,
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../model/chartDataModel";
@@ -87,7 +87,7 @@ export class SeriesDataPanel extends DragDataPanel {
 
     private recreate(valueCols: ColState[]): void {
         this.isOpen = this.groupComp.isExpanded();
-        _.clearElement(this.getGui());
+        _clearElement(this.getGui());
         this.destroyBean(this.groupComp);
         this.valueCols = valueCols;
         this.init();

@@ -1,6 +1,6 @@
 import { AgInputTextField, AgInputTextFieldParams } from "./agInputTextField";
-import { addOrRemoveAttribute } from '../utils/dom';
-import { exists } from "../utils/generic";
+import { _addOrRemoveAttribute } from '../utils/dom';
+import { _exists } from "../utils/generic";
 
 export interface AgInputNumberFieldParams extends AgInputTextFieldParams {
     precision?: number;
@@ -94,7 +94,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
 
         this.min = min;
 
-        addOrRemoveAttribute(this.eInput, 'min', min);
+        _addOrRemoveAttribute(this.eInput, 'min', min);
 
         return this;
     }
@@ -106,7 +106,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
 
         this.max = max;
 
-        addOrRemoveAttribute(this.eInput, 'max', max);
+        _addOrRemoveAttribute(this.eInput, 'max', max);
 
         return this;
     }
@@ -124,7 +124,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
 
         this.step = step;
 
-        addOrRemoveAttribute(this.eInput, 'step', step);
+        _addOrRemoveAttribute(this.eInput, 'step', step);
 
         return this;
     }
@@ -146,7 +146,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
         setInputValueOnlyFunc: (value: string) => T,
         value?: string | null
     ): T {
-        if (exists(value)) {
+        if (_exists(value)) {
             // need to maintain the scientific notation format whilst typing (e.g. 1e10)
             let setInputValueOnly = this.isScientificNotation(value);
             if (setInputValueOnly && this.eInput.validity.valid) {

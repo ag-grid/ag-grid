@@ -1,6 +1,6 @@
 import { GridOptionsService } from '../gridOptionsService';
 import { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
-import { includes } from './array';
+import { _includes } from './array';
 
 const AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel', 'scroll'];
@@ -15,15 +15,15 @@ const supports: { [key: string]: boolean; } = {};
  * but we still let the event pass back to the body.
  * @param {Event} event
  */
-export function stopPropagationForAgGrid(event: Event): void {
+export function _stopPropagationForAgGrid(event: Event): void {
     (event as any)[AG_GRID_STOP_PROPAGATION] = true;
 }
 
-export function isStopPropagationForAgGrid(event: Event): boolean {
+export function _isStopPropagationForAgGrid(event: Event): boolean {
     return (event as any)[AG_GRID_STOP_PROPAGATION] === true;
 }
 
-export const isEventSupported = (() => {
+export const _isEventSupported = (() => {
     const tags = {
         select: 'input',
         change: 'input',
@@ -48,7 +48,7 @@ export const isEventSupported = (() => {
     return eventChecker;
 })();
 
-export function getCtrlForEventTarget<T>(gos: GridOptionsService, eventTarget: EventTarget | null, type: string): T | null {
+export function _getCtrlForEventTarget<T>(gos: GridOptionsService, eventTarget: EventTarget | null, type: string): T | null {
     let sourceElement = eventTarget as HTMLElement;
 
     while (sourceElement) {
@@ -64,15 +64,15 @@ export function getCtrlForEventTarget<T>(gos: GridOptionsService, eventTarget: E
     return null;
 }
 
-export function isElementInEventPath(element: HTMLElement, event: Event): boolean {
+export function _isElementInEventPath(element: HTMLElement, event: Event): boolean {
     if (!event || !element) {
         return false;
     }
 
-    return getEventPath(event).indexOf(element) >= 0;
+    return _getEventPath(event).indexOf(element) >= 0;
 }
 
-export function createEventPath(event: { target: EventTarget }): EventTarget[] {
+export function _createEventPath(event: { target: EventTarget }): EventTarget[] {
     const res: EventTarget[] = [];
     let pointer: any = event.target;
 
@@ -90,7 +90,7 @@ export function createEventPath(event: { target: EventTarget }): EventTarget[] {
  * @param {Event| { target: EventTarget }} event
  * @returns {EventTarget[]}
  */
-export function getEventPath(event: Event | { target: EventTarget }): EventTarget[] {
+export function _getEventPath(event: Event | { target: EventTarget }): EventTarget[] {
     // This can be called with either a browser event or an AG Grid Event that has a target property.
     const eventNoType = event as any;
 
@@ -103,15 +103,15 @@ export function getEventPath(event: Event | { target: EventTarget }): EventTarge
     }
 
     // If this is an AG Grid event build the path ourselves
-    return createEventPath(eventNoType);
+    return _createEventPath(eventNoType);
 }
 
-export function addSafePassiveEventListener(
+export function _addSafePassiveEventListener(
     frameworkOverrides: IFrameworkOverrides,
     eElement: HTMLElement,
     event: string, listener: (event?: any) => void
 ) {
-    const isPassive = includes(PASSIVE_EVENTS, event);
+    const isPassive = _includes(PASSIVE_EVENTS, event);
     const options = isPassive ? {passive: true} : undefined;
 
     // this check is here for certain scenarios where I believe the user must be destroying

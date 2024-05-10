@@ -11,7 +11,9 @@ import {
     PopupService,
     PostConstruct,
     WithoutGridCommon,
-    _
+    _getAbsoluteHeight,
+    _getAbsoluteWidth,
+    _removeFromParent,
 } from "@ag-grid-community/core";
 import { AdvancedFilterHeaderComp } from "./advancedFilterHeaderComp";
 import { AdvancedFilterComp } from "./advancedFilterComp";
@@ -145,8 +147,8 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
     private getBuilderDialogSize(): { width: number, height: number, minWidth: number } {
         const minWidth = this.gos.get('advancedFilterBuilderParams')?.minWidth ?? 500;
         const popupParent = this.popupService.getPopupParent();
-        const maxWidth = Math.round(_.getAbsoluteWidth(popupParent)) - 2; // assume 1 pixel border
-        const maxHeight = Math.round(_.getAbsoluteHeight(popupParent) * 0.75) - 2;
+        const maxWidth = Math.round(_getAbsoluteWidth(popupParent)) - 2; // assume 1 pixel border
+        const maxHeight = Math.round(_getAbsoluteHeight(popupParent) * 0.75) - 2;
 
         const width = Math.min(Math.max(600, minWidth), maxWidth);
         const height = Math.min(600, maxHeight);
@@ -194,7 +196,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
 
     private destroyAdvancedFilterComp(): void {
         if (this.eFilterComp) {
-            _.removeFromParent(this.eFilterComp.getGui());
+            _removeFromParent(this.eFilterComp.getGui());
             this.destroyBean(this.eFilterComp);
         }
     }

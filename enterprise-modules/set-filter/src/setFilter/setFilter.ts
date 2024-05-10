@@ -13,7 +13,6 @@ import {
     AgPromise,
     KeyCode,
     KeyCreatorParams,
-    _,
     ISetFilter,
     SetFilterModel,
     SetFilterModelValue,
@@ -23,7 +22,13 @@ import {
     GetDataPath,
     GROUP_AUTO_COLUMN_ID,
     IRowNode,
-    DataTypeService
+    DataTypeService,
+    _areEqual,
+    _last,
+    _makeNull,
+    _setDisplayed,
+    _toStringOrNull,
+    _warnOnce
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemExpandedChangedEvent, SetFilterListItemParams, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
@@ -245,7 +250,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         // both are missing
         if (a == null && b == null) { return true; }
 
-        return a != null && b != null && _.areEqual(a.values, b.values);
+        return a != null && b != null && _areEqual(a.values, b.values);
     }
 
     private updateSetFilterOnParamsChange = (newParams: SetFilterParams<any, V>) => {
@@ -311,7 +316,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             this.noValueFormatterSupplied = true;
             // ref data is handled by ValueService
             if (!isRefData) {
-                valueFormatter = params => _.toStringOrNull(params.value)!;
+                valueFormatter = params => _toStringOrNull(params.value)!;
             }
         }
         this.valueFormatter = valueFormatter;
@@ -328,14 +333,14 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         if (keyCreator) {
             return (value, node = null) => {
                 const params = this.getKeyCreatorParams(value, node);
-                return _.makeNull(keyCreator!(params));
+                return _makeNull(keyCreator!(params));
             };
         }
         if (convertValuesToStrings) {
             // for backwards compatibility - keeping separate as it will eventually be removed
-            return value => Array.isArray(value) ? value as any : _.makeNull(_.toStringOrNull(value));
+            return value => Array.isArray(value) ? value as any : _makeNull(_toStringOrNull(value));
         } else {
-            return value => _.makeNull(_.toStringOrNull(value));
+            return value => _makeNull(_toStringOrNull(value));
         }
     }
 
@@ -343,13 +348,13 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         let value: V | string | null = this.valueModel!.getValue(key);
         if (this.noValueFormatterSupplied && (this.treeDataTreeList || this.groupingTreeList) && Array.isArray(value)) {
             // essentially get back the cell value
-            value = _.last(value) as string;
+            value = _last(value) as string;
         }
 
         const formattedValue = this.valueService.formatValue(
             this.setFilterParams!.column, null, value, this.valueFormatter, false);
 
-        return (formattedValue == null ? _.toStringOrNull(value) : formattedValue) ?? this.translateForSetFilter('blanks')
+        return (formattedValue == null ? _toStringOrNull(value) : formattedValue) ?? this.translateForSetFilter('blanks')
     }
 
     private applyExcelModeOptions(params: SetFilterParams<any, V>): void {
@@ -377,7 +382,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
         if (params.excelMode && params.defaultToNothingSelected) {
             params.defaultToNothingSelected = false;
-            _.warnOnce('The Set Filter Parameter "defaultToNothingSelected" value was ignored because it does not work when "excelMode" is used.');
+            _warnOnce('The Set Filter Parameter "defaultToNothingSelected" value was ignored because it does not work when "excelMode" is used.');
         }
     }
 
@@ -411,7 +416,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private setIsLoading(isLoading: boolean): void {
-        _.setDisplayed(this.eFilterLoading, isLoading);
+        _setDisplayed(this.eFilterLoading, isLoading);
         if (!isLoading) {
             // hard refresh when async data received
             this.hardRefreshVirtualList = true;
@@ -837,7 +842,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     private checkMakeNullDataPath(dataPath: string[] | null): string[] | null {
         if (dataPath) {
-            dataPath = dataPath.map(treeKey => _.toStringOrNull(_.makeNull(treeKey))) as any;
+            dataPath = dataPath.map(treeKey => _toStringOrNull(_makeNull(treeKey))) as any;
         }
         if (dataPath?.some(treeKey => treeKey == null)) {
             return null;
@@ -967,8 +972,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         const hideResults = this.valueModel.getMiniFilter() != null && this.valueModel.getDisplayedValueCount() < 1;
 
-        _.setDisplayed(this.eNoMatches, hideResults);
-        _.setDisplayed(this.eSetFilterList, !hideResults);
+        _setDisplayed(this.eNoMatches, hideResults);
+        _setDisplayed(this.eSetFilterList, !hideResults);
     }
 
     private resetMiniFilter(): void {

@@ -17,7 +17,7 @@ const HTML_ESCAPES: { [id: string]: string; } = {
  * @param {string} s
  * @returns {string}
  */
-export function utf8_encode(s: string | null): string {
+export function _utf8_encode(s: string | null): string {
     const stringFromCharCode = String.fromCharCode;
 
     function ucs2decode(string: string | null): number[] {
@@ -107,11 +107,11 @@ export function utf8_encode(s: string | null): string {
     return byteString;
 }
 
-export function capitalise(str: string): string {
+export function _capitalise(str: string): string {
     return str[0].toUpperCase() + str.substring(1).toLowerCase();
 }
 
-export function escapeString(toEscape?: string | null, skipEscapingHtmlChars?: boolean): string | null {
+export function _escapeString(toEscape?: string | null, skipEscapingHtmlChars?: boolean): string | null {
     if (toEscape == null) {
         return null;
     }
@@ -134,7 +134,7 @@ export function escapeString(toEscape?: string | null, skipEscapingHtmlChars?: b
  * @param {string} camelCase
  * @return {string}
  */
-export function camelCaseToHumanText(camelCase: string | undefined): string | null {
+export function _camelCaseToHumanText(camelCase: string | undefined): string | null {
     if (!camelCase || camelCase == null) { return null; }
 
     // either split on a lowercase followed by uppercase ie  asHereTo -> as Here To
@@ -155,6 +155,6 @@ export function camelCaseToHumanText(camelCase: string | undefined): string | nu
  * @param {string} camelCase
  * @return {string}
  */
-export function camelCaseToHyphenated(camelCase: string): string {
+export function _camelCaseToHyphenated(camelCase: string): string {
     return camelCase.replace(/[A-Z]/g, s => `-${s.toLocaleLowerCase()}`);
 }

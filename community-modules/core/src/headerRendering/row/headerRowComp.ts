@@ -1,7 +1,7 @@
 import { PostConstruct, PreDestroy } from '../../context/context';
-import { setAriaRowIndex } from '../../utils/aria';
-import { setDomChildOrder } from '../../utils/dom';
-import { getAllValuesInObject, iterateObject } from '../../utils/object';
+import { _setAriaRowIndex } from '../../utils/aria';
+import { _setDomChildOrder } from '../../utils/dom';
+import { _getAllValuesInObject, _iterateObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
 import { AbstractHeaderCellComp } from '../cells/abstractCell/abstractHeaderCellComp';
 import { AbstractHeaderCellCtrl, HeaderCellCtrlInstanceId } from '../cells/abstractCell/abstractHeaderCellCtrl';
@@ -35,7 +35,7 @@ export class HeaderRowComp extends Component {
     //noinspection JSUnusedLocalSymbols
     @PostConstruct
     private init(): void {
-        setAriaRowIndex(this.getGui(), this.ctrl.getAriaRowIndex());
+        _setAriaRowIndex(this.getGui(), this.ctrl.getAriaRowIndex());
 
         const compProxy: IHeaderRowComp = {
             setHeight: height => this.getGui().style.height = height,
@@ -71,13 +71,13 @@ export class HeaderRowComp extends Component {
             this.headerComps[id] = comp;
         });
 
-        iterateObject(oldComps, (id: string, comp: AbstractHeaderCellComp<AbstractHeaderCellCtrl>) => {
+        _iterateObject(oldComps, (id: string, comp: AbstractHeaderCellComp<AbstractHeaderCellCtrl>) => {
             this.getGui().removeChild(comp.getGui());
             this.destroyBean(comp);
         });
 
         if (forceOrder) {
-            const comps = getAllValuesInObject(this.headerComps);
+            const comps = _getAllValuesInObject(this.headerComps);
             // ordering the columns by left position orders them in the order they appear on the screen
             comps.sort((a: AbstractHeaderCellComp<AbstractHeaderCellCtrl>, b: AbstractHeaderCellComp<AbstractHeaderCellCtrl>) => {
                 const leftA = a.getCtrl().getColumnGroupChild().getLeft()!;
@@ -85,7 +85,7 @@ export class HeaderRowComp extends Component {
                 return leftA - leftB;
             });
             const elementsInOrder = comps.map(c => c.getGui());
-            setDomChildOrder(this.getGui(), elementsInOrder);
+            _setDomChildOrder(this.getGui(), elementsInOrder);
         }
     }
 

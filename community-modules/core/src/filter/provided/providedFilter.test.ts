@@ -2,7 +2,7 @@ import { ProvidedFilter, ProvidedFilterParams } from './providedFilter';
 import { ProvidedFilterModel, IDoesFilterPassParams } from '../../interfaces/iFilter';
 import { IRowModel, RowModelType } from '../../interfaces/iRowModel';
 import { mock } from '../../test-utils/mock';
-import { AgPromise } from '../../utils';
+import { AgPromise } from '../../utils/promise';
 import { LocaleService } from '../../localeService';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
 

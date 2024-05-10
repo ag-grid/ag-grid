@@ -1,5 +1,4 @@
 import {
-    _,
     AgGroupComponent,
     AgGroupComponentParams,
     AgSelect,
@@ -12,7 +11,8 @@ import {
     RefSelector,
     AgSelectParams,
     AgToggleButtonParams,
-    ChartMappings
+    ChartMappings,
+    _removeFromParent
 } from "@ag-grid-community/core";
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 import { ShadowPanel } from "./shadowPanel";
@@ -397,7 +397,7 @@ export class SeriesPanel extends Component {
 
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
-            _.removeFromParent(panel.getGui());
+            _removeFromParent(panel.getGui());
             this.destroyBean(panel);
         });
     }

@@ -14,7 +14,14 @@ import {
     RefSelector,
     TabGuardComp,
     TooltipFeature,
-    _
+    _createIconNoSpan,
+    _setAriaExpanded,
+    _setAriaLabel,
+    _setAriaLevel,
+    _setDisplayed,
+    _setVisible,
+    _stopPropagationForAgGrid,
+    _setAriaDisabled, _removeAriaExpanded
 } from "@ag-grid-community/core";
 import { AdvancedFilterExpressionService } from "../advancedFilterExpressionService";
 import { AddDropdownComp } from "./addDropdownComp";
@@ -92,13 +99,13 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             eTreeLine.classList.add('ag-advanced-filter-builder-item-tree-line-root');
             this.eTreeLines.appendChild(eTreeLine);
 
-            _.setDisplayed(this.eDragHandle, false);
-            _.setDisplayed(this.eButtons, false);
-            _.setAriaExpanded(this.focusWrapper, true);
+            _setDisplayed(this.eDragHandle, false);
+            _setDisplayed(this.eButtons, false);
+            _setAriaExpanded(this.focusWrapper, true);
         } else {
             this.setupTreeLines(level);
 
-            this.eDragHandle.appendChild(_.createIconNoSpan('advancedFilterBuilderDrag', this.gos)!);
+            this.eDragHandle.appendChild(_createIconNoSpan('advancedFilterBuilderDrag', this.gos)!);
             this.setupValidation();
             this.setupMoveButtons(showMove);
             this.setupAddButton();
@@ -108,7 +115,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             this.updateAriaExpanded();
         }
 
-        _.setAriaLevel(this.focusWrapper, level + 1);
+        _setAriaLevel(this.focusWrapper, level + 1);
 
         this.initialiseTabGuard({});
 
@@ -143,8 +150,8 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             this.moveDownDisabled = !!disableMoveDown;
             this.eMoveUpButton.classList.toggle('ag-advanced-filter-builder-item-button-disabled', disableMoveUp);
             this.eMoveDownButton.classList.toggle('ag-advanced-filter-builder-item-button-disabled', disableMoveDown);
-            _.setAriaDisabled(this.eMoveUpButton, !!disableMoveUp);
-            _.setAriaDisabled(this.eMoveDownButton, !!disableMoveDown);
+            _setAriaDisabled(this.eMoveUpButton, !!disableMoveUp);
+            _setAriaDisabled(this.eMoveDownButton, !!disableMoveDown);
             this.moveUpTooltipFeature.refreshToolTip();
             this.moveDownTooltipFeature.refreshToolTip();
         }
@@ -185,7 +192,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     }
 
     private setupValidation(): void {
-        this.eValidation.appendChild(_.createIconNoSpan('advancedFilterBuilderInvalid', this.gos)!);
+        this.eValidation.appendChild(_createIconNoSpan('advancedFilterBuilderInvalid', this.gos)!);
         this.validationTooltipFeature = this.createManagedBean(new TooltipFeature({
             getGui: () => this.eValidation,
             getLocation: () => 'advancedFilter',
@@ -220,13 +227,13 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     }
 
     private setupRemoveButton(): void {
-        this.eRemoveButton.appendChild(_.createIconNoSpan('advancedFilterBuilderRemove', this.gos)!);
+        this.eRemoveButton.appendChild(_createIconNoSpan('advancedFilterBuilderRemove', this.gos)!);
         this.addManagedListener(this.eRemoveButton, 'click', () => this.removeItem());
         this.addManagedListener(this.eRemoveButton, 'keydown', (event: KeyboardEvent) => {
             switch (event.key) {
                 case KeyCode.ENTER:
                     event.preventDefault();
-                    _.stopPropagationForAgGrid(event);
+                    _stopPropagationForAgGrid(event);
                     this.removeItem();
                     break;
             }
@@ -237,20 +244,20 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             getLocation: () => 'advancedFilter',
             getTooltipValue: () => this.advancedFilterExpressionService.translate('advancedFilterBuilderRemoveButtonTooltip')
         }));
-        _.setAriaLabel(this.eRemoveButton, this.advancedFilterExpressionService.translate('advancedFilterBuilderRemoveButtonTooltip'));
+        _setAriaLabel(this.eRemoveButton, this.advancedFilterExpressionService.translate('advancedFilterBuilderRemoveButtonTooltip'));
 
         this.activateTabIndex([this.eRemoveButton]);
     }
 
     private setupMoveButtons(showMove?: boolean): void {
         if (showMove) {
-            this.eMoveUpButton.appendChild(_.createIconNoSpan('advancedFilterBuilderMoveUp', this.gos)!);
+            this.eMoveUpButton.appendChild(_createIconNoSpan('advancedFilterBuilderMoveUp', this.gos)!);
             this.addManagedListener(this.eMoveUpButton, 'click', () => this.moveItem(true));
             this.addManagedListener(this.eMoveUpButton, 'keydown', (event: KeyboardEvent) => {
                 switch (event.key) {
                     case KeyCode.ENTER:
                         event.preventDefault();
-                        _.stopPropagationForAgGrid(event);
+                        _stopPropagationForAgGrid(event);
                         this.moveItem(true);
                         break;
                 }
@@ -263,15 +270,15 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
                     ? null
                     : this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveUpButtonTooltip')
             }));
-            _.setAriaLabel(this.eMoveUpButton, this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveUpButtonTooltip'));
+            _setAriaLabel(this.eMoveUpButton, this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveUpButtonTooltip'));
 
-            this.eMoveDownButton.appendChild(_.createIconNoSpan('advancedFilterBuilderMoveDown', this.gos)!);
+            this.eMoveDownButton.appendChild(_createIconNoSpan('advancedFilterBuilderMoveDown', this.gos)!);
             this.addManagedListener(this.eMoveDownButton, 'click', () => this.moveItem(false));
             this.addManagedListener(this.eMoveDownButton, 'keydown', (event: KeyboardEvent) => {
                 switch (event.key) {
                     case KeyCode.ENTER:
                         event.preventDefault();
-                        _.stopPropagationForAgGrid(event);
+                        _stopPropagationForAgGrid(event);
                         this.moveItem(false);
                         break;
                 }
@@ -284,17 +291,17 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
                     ? null
                     : this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveDownButtonTooltip')
             }));
-            _.setAriaLabel(this.eMoveDownButton, this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveDownButtonTooltip'));
+            _setAriaLabel(this.eMoveDownButton, this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveDownButtonTooltip'));
 
             this.activateTabIndex([this.eMoveUpButton, this.eMoveDownButton]);
         } else {
-            _.setDisplayed(this.eMoveUpButton, false);
-            _.setDisplayed(this.eMoveDownButton, false);
+            _setDisplayed(this.eMoveUpButton, false);
+            _setDisplayed(this.eMoveDownButton, false);
         }
     }
 
     private updateValidity(): void {
-        _.setVisible(this.eValidation, !this.item.valid);
+        _setVisible(this.eValidation, !this.item.valid);
         this.validationTooltipFeature.refreshToolTip();
         this.updateAriaLabel();
     }
@@ -402,14 +409,14 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
                 [wrapperLabel, level]
             );
         }
-        _.setAriaLabel(this.focusWrapper, ariaLabel);
+        _setAriaLabel(this.focusWrapper, ariaLabel);
     }
 
     private updateAriaExpanded(): void {
-        _.removeAriaExpanded(this.focusWrapper);
+        _removeAriaExpanded(this.focusWrapper);
         const { filterModel } = this.item;
         if (filterModel?.filterType === 'join' && filterModel.conditions.length) {
-            _.setAriaExpanded(this.focusWrapper, true);
+            _setAriaExpanded(this.focusWrapper, true);
         }
     }
 

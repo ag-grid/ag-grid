@@ -3,7 +3,7 @@ import { BeanStub } from "../context/beanStub";
 import { Autowired, PostConstruct } from "../context/context";
 import { AgEvent } from "../events";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
-import { radioCssClass } from "../utils/dom";
+import { _radioCssClass } from "../utils/dom";
 import { Component } from "../widgets/component";
 import { VirtualList } from "../widgets/virtualList";
 import { DragAndDropService, DraggingEvent, DragSourceType, DropTarget } from "./dragAndDropService";
@@ -105,8 +105,8 @@ export class VirtualListDragFeature<C extends Component, R extends Component, V,
         this.clearHoveredItems();
         this.lastHoveredListItem = hoveredListItem;
 
-        radioCssClass(el, LIST_ITEM_HOVERED);
-        radioCssClass(el, `ag-item-highlight-${hoveredListItem.position}`);
+        _radioCssClass(el, LIST_ITEM_HOVERED);
+        _radioCssClass(el, `ag-item-highlight-${hoveredListItem.position}`);
     }
 
     private getListDragItem(e: DraggingEvent): VirtualListDragItem<R> {

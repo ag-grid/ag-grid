@@ -16,12 +16,12 @@ import { RowNode } from "../entities/rowNode";
 import { RowHighlightPosition } from "../interfaces/iRowNode";
 import { ISelectionService } from "../interfaces/iSelectionService";
 import { MouseEventService } from "./mouseEventService";
-import { last } from '../utils/array';
+import { _last } from '../utils/array';
 import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
 import { BeanStub } from "../context/beanStub";
-import { missingOrEmpty } from "../utils/generic";
-import { warnOnce } from "../utils/function";
+import { _missingOrEmpty } from "../utils/generic";
+import { _warnOnce } from "../utils/function";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { CtrlsService } from "../ctrlsService";
 import { AutoScrollService } from "../autoScrollService";
@@ -216,7 +216,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private getRowIndexNumber(rowNode: RowNode): number {
-        return parseInt(last(rowNode.getRowIndexString().split('-')), 10);
+        return parseInt(_last(rowNode.getRowIndexString().split('-')), 10);
     }
 
     private moveRowAndClearHighlight(draggingEvent: DraggingEvent): void {
@@ -271,7 +271,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     public addRowDropZone(params: RowDropZoneParams & { fromGrid?: boolean }): void {
         if (!params.getContainer()) {
-            warnOnce('addRowDropZone - A container target needs to be provided');
+            _warnOnce('addRowDropZone - A container target needs to be provided');
             return;
         }
 

@@ -1,8 +1,8 @@
 import { Autowired, PostConstruct } from '../../context/context';
 import { Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
-import { AgPromise } from '../../utils';
-import { clearElement } from '../../utils/dom';
+import { AgPromise } from '../../utils/promise';
+import { _clearElement } from '../../utils/dom';
 import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams } from "../../styling/layoutFeature";
 
 import { OverlayService } from './overlayService';
@@ -96,7 +96,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.activeOverlay = this.getContext().destroyBean(this.activeOverlay)!;
         this.updateListenerDestroyFunc?.();
 
-        clearElement(this.eOverlayWrapper);
+        _clearElement(this.eOverlayWrapper);
     }
 
     public hideOverlay(): void {

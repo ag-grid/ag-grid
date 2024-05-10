@@ -6,7 +6,7 @@ import { ColumnGroup } from "../entities/columnGroup";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { ColumnEventType } from "../events";
 import { GridOptionsService } from "../gridOptionsService";
-import { areEqual, includes, last, sortNumerically } from "../utils/array";
+import { _areEqual, _includes, _last, _sortNumerically } from "../utils/array";
 
 export class ColumnMoveHelper {
 
@@ -128,7 +128,7 @@ export class ColumnMoveHelper {
             const displayedOrder = order.filter((col) => displayedCols.includes(col));
             if (targetOrder === null) {
                 targetOrder = displayedOrder;
-            } else if (!areEqual(displayedOrder, targetOrder)) {
+            } else if (!_areEqual(displayedOrder, targetOrder)) {
                 break; // Stop looking for potential moves if the displayed result changes from the target
             }
             const fragCount = this.groupFragCount(order);
@@ -155,9 +155,9 @@ export class ColumnMoveHelper {
     // each other. if the cols are not beside each other, then returns null
     private static calculateOldIndex(movingCols: Column[], columnModel: ColumnModel): number | null {
         const gridCols: Column[] = columnModel.getAllGridColumns();
-        const indexes = sortNumerically(movingCols.map(col => gridCols.indexOf(col)));
+        const indexes = _sortNumerically(movingCols.map(col => gridCols.indexOf(col)));
         const firstIndex = indexes[0];
-        const lastIndex = last(indexes);
+        const lastIndex = _last(indexes);
         const spread = lastIndex - firstIndex;
         const gapsExist = spread !== indexes.length - 1;
 
@@ -219,9 +219,9 @@ export class ColumnMoveHelper {
         // so the result we return has to be and index location for this list
         const allGridCols = columnModel.getAllGridColumns();
 
-        const movingDisplayedCols = allDisplayedCols.filter(col => includes(movingCols, col));
-        const otherDisplayedCols = allDisplayedCols.filter(col => !includes(movingCols, col));
-        const otherGridCols = allGridCols.filter(col => !includes(movingCols, col));
+        const movingDisplayedCols = allDisplayedCols.filter(col => _includes(movingCols, col));
+        const otherDisplayedCols = allDisplayedCols.filter(col => !_includes(movingCols, col));
+        const otherGridCols = allGridCols.filter(col => !_includes(movingCols, col));
 
         // work out how many DISPLAYED columns fit before the 'x' position. this gives us the displayIndex.
         // for example, if cols are a,b,c,d and we find a,b fit before 'x', then we want to place the moving

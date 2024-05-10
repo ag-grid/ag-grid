@@ -1,8 +1,8 @@
 import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { setAriaAtomic, setAriaLive, setAriaRelevant } from "../utils/aria";
-import { clearElement } from "../utils/dom";
-import { debounce } from "../utils/function";
+import { _setAriaAtomic, _setAriaLive, _setAriaRelevant } from "../utils/aria";
+import { _clearElement } from "../utils/dom";
+import { _debounce } from "../utils/function";
 
 @Bean('ariaAnnouncementService')
 export class AriaAnnouncementService extends BeanStub {
@@ -14,7 +14,7 @@ export class AriaAnnouncementService extends BeanStub {
     constructor() {
         super();
 
-        this.announceValue = debounce(this.announceValue.bind(this), 200);
+        this.announceValue = _debounce(this.announceValue.bind(this), 200);
     }
 
     @PostConstruct
@@ -23,9 +23,9 @@ export class AriaAnnouncementService extends BeanStub {
         const div = this.descriptionContainer = eDocument.createElement('div');
         div.classList.add('ag-aria-description-container');
 
-        setAriaLive(div, 'polite');
-        setAriaRelevant(div, 'additions text');
-        setAriaAtomic(div, true);
+        _setAriaLive(div, 'polite');
+        _setAriaRelevant(div, 'additions text');
+        _setAriaAtomic(div, true);
 
         this.eGridDiv.appendChild(div);
     }
@@ -48,7 +48,7 @@ export class AriaAnnouncementService extends BeanStub {
         const { descriptionContainer } = this;
 
         if (descriptionContainer) {
-            clearElement(descriptionContainer);
+            _clearElement(descriptionContainer);
             if (descriptionContainer.parentElement) {
                 descriptionContainer.parentElement.removeChild(descriptionContainer);
             }

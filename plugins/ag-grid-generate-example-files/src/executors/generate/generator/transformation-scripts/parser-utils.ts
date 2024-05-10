@@ -565,7 +565,7 @@ export function addBindingImports(
 }
 
 /** Add imports such as "import { colors } from './colors.js';"
- * Does not include the imports for _framework component
+ * Does not include the imports for framework component
  */
 export function addRelativeImports(bindings: ParsedBindings, imports: string[], extension: string) {
     const filterOtherFiles = (b) => b.module.includes('./') && !b.module.includes('_');

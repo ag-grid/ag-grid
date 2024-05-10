@@ -3,14 +3,14 @@ import { Autowired, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
-import { AgPromise } from "../utils";
-import { bindCellRendererToHtmlElement, getInnerWidth } from "../utils/dom";
+import { AgPromise } from "../utils/promise";
+import { _bindCellRendererToHtmlElement, _getInnerWidth } from "../utils/dom";
 import { RichSelectParams } from "./agRichSelect";
 import { FieldPickerValueSelectedEvent } from "../events";
 import { Component } from "./component";
-import { escapeString } from "../utils/string";
-import { exists } from "../utils/generic";
-import { setAriaActiveDescendant, setAriaSelected } from "../utils/aria";
+import { _escapeString } from "../utils/string";
+import { _exists } from "../utils/generic";
+import { _setAriaActiveDescendant, _setAriaSelected } from "../utils/aria";
 import { VirtualList } from "./virtualList";
 
 export class RichSelectRow<TValue> extends Component {
@@ -46,17 +46,17 @@ export class RichSelectRow<TValue> extends Component {
     public highlightString(matchString: string): void {
         const { parsedValue } = this;
 
-        if (this.params.cellRenderer || !exists(parsedValue)) { return; }
+        if (this.params.cellRenderer || !_exists(parsedValue)) { return; }
 
-        let hasMatch = exists(matchString);
+        let hasMatch = _exists(matchString);
 
         if (hasMatch) {
             const index = parsedValue?.toLocaleLowerCase().indexOf(matchString.toLocaleLowerCase());
             if (index >= 0) {
                 const highlightEndIndex = index + matchString.length;
-                const startPart = escapeString(parsedValue.slice(0, index), true);
-                const highlightedPart = escapeString(parsedValue.slice(index, highlightEndIndex), true);
-                const endPart = escapeString(parsedValue.slice(highlightEndIndex));
+                const startPart = _escapeString(parsedValue.slice(0, index), true);
+                const highlightedPart = _escapeString(parsedValue.slice(index, highlightEndIndex), true);
+                const endPart = _escapeString(parsedValue.slice(highlightEndIndex));
                 this.renderValueWithoutRenderer(`${startPart}<span class="ag-rich-select-row-text-highlight">${highlightedPart}</span>${endPart}`);
             } else {
                 hasMatch = false;
@@ -76,11 +76,11 @@ export class RichSelectRow<TValue> extends Component {
 
         if (highlighted) {
             const parentAriaEl = (this.getParentComponent() as VirtualList).getAriaElement();
-            setAriaActiveDescendant(parentAriaEl, parentId);
+            _setAriaActiveDescendant(parentAriaEl, parentId);
             this.wrapperEl.setAttribute('data-active-option', parentId);
         }
 
-        setAriaSelected(eGui.parentElement!, highlighted);
+        _setAriaSelected(eGui.parentElement!, highlighted);
         this.addOrRemoveCssClass('ag-rich-select-row-selected', highlighted);
     }
 
@@ -91,8 +91,8 @@ export class RichSelectRow<TValue> extends Component {
         const span = eDocument.createElement('span');
         span.style.overflow = 'hidden';
         span.style.textOverflow = 'ellipsis';
-        const parsedValue = escapeString(exists(valueFormatted) ? valueFormatted : value, true);
-        this.parsedValue = exists(parsedValue) ? parsedValue : null;
+        const parsedValue = _escapeString(_exists(valueFormatted) ? valueFormatted : value, true);
+        this.parsedValue = _exists(parsedValue) ? parsedValue : null;
 
         eGui.appendChild(span);
         this.renderValueWithoutRenderer(parsedValue);
@@ -105,7 +105,7 @@ export class RichSelectRow<TValue> extends Component {
     private renderValueWithoutRenderer(value: string | null): void {
         const span = this.getGui().querySelector('span');
         if (!span) { return; }
-        span.innerHTML = exists(value) ? value : '&nbsp;'
+        span.innerHTML = _exists(value) ? value : '&nbsp;'
     }
 
     private populateWithRenderer(value: TValue, valueFormatted: string): boolean {
@@ -130,7 +130,7 @@ export class RichSelectRow<TValue> extends Component {
         }
 
         if (cellRendererPromise) {
-            bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());
+            _bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());
         }
 
         if (cellRendererPromise) {

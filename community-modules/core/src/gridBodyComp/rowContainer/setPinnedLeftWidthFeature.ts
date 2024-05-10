@@ -1,7 +1,7 @@
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, PostConstruct } from "../../context/context";
 import { Events } from "../../eventKeys";
-import { setDisplayed, setFixedWidth } from "../../utils/dom";
+import { _setDisplayed, _setFixedWidth } from "../../utils/dom";
 import { PinnedWidthService } from "../pinnedWidthService";
 
 export class SetPinnedLeftWidthFeature extends BeanStub {
@@ -23,8 +23,8 @@ export class SetPinnedLeftWidthFeature extends BeanStub {
     private onPinnedLeftWidthChanged(): void {
         const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
         const displayed = leftWidth > 0;
-        setDisplayed(this.element, displayed);
-        setFixedWidth(this.element, leftWidth);
+        _setDisplayed(this.element, displayed);
+        _setFixedWidth(this.element, leftWidth);
     }
 
     public getWidth(): number {

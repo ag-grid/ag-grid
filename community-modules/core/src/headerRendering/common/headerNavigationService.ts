@@ -5,7 +5,7 @@ import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { FocusService } from "../../focusService";
 import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
-import { last } from "../../utils/array";
+import { _last } from "../../utils/array";
 import { HeaderPosition, HeaderPositionUtils } from "./headerPosition";
 
 export enum HeaderNavigationDirection {
@@ -179,7 +179,7 @@ export class HeaderNavigationService extends BeanStub {
 
         if (column instanceof ColumnGroup) {
             const columns = column.getDisplayedLeafColumns();
-            columnToScrollTo = direction === 'Before' ? last(columns) : columns[0];
+            columnToScrollTo = direction === 'Before' ? _last(columns) : columns[0];
         } else {
             columnToScrollTo = column;
         }

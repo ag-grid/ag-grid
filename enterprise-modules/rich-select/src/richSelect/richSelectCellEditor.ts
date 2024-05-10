@@ -8,7 +8,9 @@ import {
     PopupComponent,
     FieldPickerValueSelectedEvent,
     RichCellEditorParams,
-    _
+    _exists,
+    _missing,
+    _warnOnce,
 } from "@ag-grid-community/core";
 
 export class RichSelectCellEditor<TData = any, TValue = any> extends PopupComponent implements ICellEditor<TValue> {
@@ -28,8 +30,8 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
 
         const  { cellStartedEdit, cellHeight, values } = params;
 
-        if (_.missing(values)) {
-            console.warn('AG Grid: agRichSelectCellEditor requires cellEditorParams.values to be set');
+        if (_missing(values)) {
+            _warnOnce('agRichSelectCellEditor requires cellEditorParams.values to be set');
         }
 
         const { params: richSelectParams, valuesPromise } = this.buildRichSelectParams();
@@ -53,7 +55,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
 
         this.focusAfterAttached = cellStartedEdit;
 
-        if (_.exists(cellHeight)) {
+        if (_exists(cellHeight)) {
             this.richSelect.setRowHeight(cellHeight);
         }
     }

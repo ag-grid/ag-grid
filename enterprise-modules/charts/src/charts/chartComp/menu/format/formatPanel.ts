@@ -1,11 +1,11 @@
 import {
-    _,
     ChartFormatPanel,
     ChartFormatPanelGroup,
     ChartPanelGroupDef,
     Component,
     PostConstruct,
-    ChartType
+    ChartType,
+    _warnOnce
 } from "@ag-grid-community/core";
 import { LegendPanel } from "./legend/legendPanel";
 import { CartesianAxisPanel } from "./axis/cartesianAxisPanel";
@@ -103,9 +103,9 @@ export class FormatPanel extends Component {
                     this.chartPanelFeature.addComponent(new SeriesPanel(opts));
                     break;
                 case 'navigator':
-                    _.warnOnce(`'navigator' is now displayed in the charts advanced settings instead of the format panel, and this setting will be ignored.`);
+                    _warnOnce(`'navigator' is now displayed in the charts advanced settings instead of the format panel, and this setting will be ignored.`);
                 default:
-                    _.warnOnce(`Invalid charts format panel group name supplied: '${groupDef.type}'`);
+                    _warnOnce(`Invalid charts format panel group name supplied: '${groupDef.type}'`);
             }
         });
     }

@@ -95,10 +95,10 @@ import { LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { SortController } from "./sortController";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
-import { warnOnce } from "./utils/function";
-import { exists, missing } from "./utils/generic";
-import { iterateObject, removeAllReferences } from "./utils/object";
-import { escapeString } from "./utils/string";
+import { _warnOnce } from "./utils/function";
+import { _exists, _missing } from "./utils/generic";
+import { _iterateObject, _removeAllReferences } from "./utils/object";
+import { _escapeString } from "./utils/string";
 import { ValueCache } from "./valueService/valueCache";
 import { ValueService } from "./valueService/valueService";
 
@@ -237,9 +237,9 @@ export class GridApi<TData = any> {
     /** Iterates through each `DetailGridInfo` in the grid and calls the supplied callback on each. */
     public forEachDetailGridInfo(callback: (gridInfo: DetailGridInfo, index: number) => void) {
         let index = 0;
-        iterateObject(this.detailGridInfoMap, (id: string, gridInfo: DetailGridInfo) => {
+        _iterateObject(this.detailGridInfoMap, (id: string, gridInfo: DetailGridInfo) => {
             // check for undefined, as old references will still be lying around
-            if (exists(gridInfo)) {
+            if (_exists(gridInfo)) {
                 callback(gridInfo, index);
                 index++;
             }
@@ -330,7 +330,7 @@ export class GridApi<TData = any> {
     }
 
     private logDeprecation(version: string, apiMethod: StartsWithGridApi, replacement: StartsWithGridApi, message?: string) {
-        warnOnce(`Since ${version} api.${apiMethod} is deprecated. Please use ${replacement} instead. ${message ?? ''}`);
+        _warnOnce(`Since ${version} api.${apiMethod} is deprecated. Please use ${replacement} instead. ${message ?? ''}`);
     }
 
     /** Gets the number of top pinned rows. */
@@ -382,9 +382,9 @@ export class GridApi<TData = any> {
 
     /** Flash rows, columns or individual cells. */
     public flashCells(params: FlashCellsParams<TData> = {}): void {
-        const warning = (prop: 'fade' | 'flash') => warnOnce(`Since v31.1 api.flashCells parameter '${prop}Delay' is deprecated. Please use '${prop}Duration' instead.`);
-        if (exists(params.fadeDelay)) { warning('fade') }
-        if (exists(params.flashDelay)) { warning('flash') }
+        const warning = (prop: 'fade' | 'flash') => _warnOnce(`Since v31.1 api.flashCells parameter '${prop}Delay' is deprecated. Please use '${prop}Duration' instead.`);
+        if (_exists(params.fadeDelay)) { warning('fade') }
+        if (_exists(params.flashDelay)) { warning('flash') }
 
         this.frameworkOverrides.wrapIncoming(() => this.rowRenderer.flashCells(params));
     }
@@ -424,7 +424,7 @@ export class GridApi<TData = any> {
      * Please use the appropriate grid API methods instead
      */
     public getModel(): IRowModel {
-        warnOnce('Since v31.1 getModel() is deprecated. Please use the appropriate grid API methods instead.');
+        _warnOnce('Since v31.1 getModel() is deprecated. Please use the appropriate grid API methods instead.');
         return this.rowModel;
     }
 
@@ -442,7 +442,7 @@ export class GridApi<TData = any> {
      * across multiple groups and you want to update the grid view in a single rerender instead of on every group change.
      */
     public onGroupExpandedOrCollapsed() {
-        if (missing(this.clientSideRowModel)) {
+        if (_missing(this.clientSideRowModel)) {
             this.logMissingRowModel('onGroupExpandedOrCollapsed', 'clientSide');
             return;
         }
@@ -454,7 +454,7 @@ export class GridApi<TData = any> {
      * Optionally provide the step you wish the refresh to apply from. Defaults to `everything`.
      */
     public refreshClientSideRowModel(step?: ClientSideRowModelStep): any {
-        if (missing(this.clientSideRowModel)) {
+        if (_missing(this.clientSideRowModel)) {
             this.logMissingRowModel('refreshClientSideRowModel', 'clientSide');
             return;
         }
@@ -614,7 +614,7 @@ export class GridApi<TData = any> {
      * If `groupSelectsChildren=true` the returned object will be hierarchical, and will conform to IServerSideGroupSelectionState.
      */
     public getServerSideSelectionState(): IServerSideSelectionState | IServerSideGroupSelectionState | null {
-        if (missing(this.serverSideRowModel)) {
+        if (_missing(this.serverSideRowModel)) {
             this.logMissingRowModel('getServerSideSelectionState', 'serverSide');
             return null;
         }
@@ -629,7 +629,7 @@ export class GridApi<TData = any> {
      * If `groupSelectsChildren=true` the param will be hierarchical, and should conform to IServerSideGroupSelectionState.
      */
     public setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState) {
-        if (missing(this.serverSideRowModel)) {
+        if (_missing(this.serverSideRowModel)) {
             this.logMissingRowModel('setServerSideSelectionState', 'serverSide');
             return;
         }
@@ -687,7 +687,7 @@ export class GridApi<TData = any> {
      * Designed for use with `'children'` as the group selection type, where groups don't actually appear in the selection normally.
      */
     public getBestCostNodeSelection(): IRowNode<TData>[] | undefined {
-        if (missing(this.clientSideRowModel)) {
+        if (_missing(this.clientSideRowModel)) {
             this.logMissingRowModel('getBestCostNodeSelection', 'clientSide');
             return;
         }
@@ -743,7 +743,7 @@ export class GridApi<TData = any> {
      * but excluding groups the grid created where gaps were missing in the hierarchy.
      */
     public forEachLeafNode(callback: (rowNode: IRowNode<TData>) => void) {
-        if (missing(this.clientSideRowModel)) {
+        if (_missing(this.clientSideRowModel)) {
             this.logMissingRowModel('forEachLeafNode', 'clientSide');
             return;
         }
@@ -762,7 +762,7 @@ export class GridApi<TData = any> {
 
     /** Similar to `forEachNode`, except skips any filtered out data. */
     public forEachNodeAfterFilter(callback: (rowNode: IRowNode<TData>, index: number) => void) {
-        if (missing(this.clientSideRowModel)) {
+        if (_missing(this.clientSideRowModel)) {
             this.logMissingRowModel('forEachNodeAfterFilter', 'clientSide');
             return;
         }
@@ -771,7 +771,7 @@ export class GridApi<TData = any> {
 
     /** Similar to `forEachNodeAfterFilter`, except the callbacks are called in the order the rows are displayed in the grid. */
     public forEachNodeAfterFilterAndSort(callback: (rowNode: IRowNode<TData>, index: number) => void) {
-        if (missing(this.clientSideRowModel)) {
+        if (_missing(this.clientSideRowModel)) {
             this.logMissingRowModel('forEachNodeAfterFilterAndSort', 'clientSide');
             return;
         }
@@ -783,7 +783,7 @@ export class GridApi<TData = any> {
      * To get hold of the filter instance, use `getColumnFilterInstance` which returns the instance asynchronously.
      */
     public getFilterInstance<TFilter extends IFilter>(key: string | Column, callback?: (filter: TFilter | null) => void): TFilter | null | undefined {
-        warnOnce(`'getFilterInstance' is deprecated. To get/set individual filter models, use 'getColumnFilterModel' or 'setColumnFilterModel' instead. To get hold of the filter instance, use 'getColumnFilterInstance' which returns the instance asynchronously.`);
+        _warnOnce(`'getFilterInstance' is deprecated. To get/set individual filter models, use 'getColumnFilterModel' or 'setColumnFilterModel' instead. To get hold of the filter instance, use 'getColumnFilterInstance' which returns the instance asynchronously.`);
         return this.filterManager.getFilterInstance(key, callback);
     }
 
@@ -986,7 +986,7 @@ export class GridApi<TData = any> {
 
     /** Tells the grid to recalculate the row heights. */
     public resetRowHeights() {
-        if (exists(this.clientSideRowModel)) {
+        if (_exists(this.clientSideRowModel)) {
             if (this.columnModel.isAutoRowHeightActive()) {
                 console.warn('AG Grid: calling gridApi.resetRowHeights() makes no sense when using Auto Row Height.');
                 return;
@@ -1047,7 +1047,7 @@ export class GridApi<TData = any> {
         const { colKey, rowNode, useFormatter } = params;
 
         let column = this.columnModel.getPrimaryColumn(colKey) ?? this.columnModel.getGridColumn(colKey);
-        if (missing(column)) {
+        if (_missing(column)) {
             return null;
         }
 
@@ -1056,7 +1056,7 @@ export class GridApi<TData = any> {
         if (useFormatter) {
             const formattedValue = this.valueService.formatValue(column, rowNode, value);
             // Match the logic in the default cell renderer insertValueWithoutCellRenderer if no formatter is used
-            return formattedValue ?? escapeString(value, true);
+            return formattedValue ?? _escapeString(value, true);
         }
 
         return value;
@@ -1123,7 +1123,7 @@ export class GridApi<TData = any> {
         // some users were raising support issues with regards memory leaks. the problem was the customers applications
         // were keeping references to the API. trying to educate them all would be difficult, easier to just remove
         // all references in the API so at least the core grid can be garbage collected.
-        removeAllReferences<GridApi>(this, ['isDestroyed'], preDestroyLink);
+        _removeAllReferences<GridApi>(this, ['isDestroyed'], preDestroyLink);
     }
 
     /** Returns `true` if the grid has been destroyed. */
@@ -1278,7 +1278,7 @@ export class GridApi<TData = any> {
 
     /** @deprecated v31.1 Use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere. */
     public showColumnMenuAfterButtonClick(colKey: string | Column, buttonElement: HTMLElement): void {
-        warnOnce(`'showColumnMenuAfterButtonClick' is deprecated. Use 'IHeaderParams.showColumnMenu' within a header component, or 'api.showColumnMenu' elsewhere.`);
+        _warnOnce(`'showColumnMenuAfterButtonClick' is deprecated. Use 'IHeaderParams.showColumnMenu' within a header component, or 'api.showColumnMenu' elsewhere.`);
         // use grid column so works with pivot mode
         const column = this.columnModel.getGridColumn(colKey)!;
         this.menuService.showColumnMenu({
@@ -1290,7 +1290,7 @@ export class GridApi<TData = any> {
 
     /** @deprecated v31.1 Use `IHeaderParams.showColumnMenuAfterMouseClick` within a header component, or `api.showColumnMenu` elsewhere. */
     public showColumnMenuAfterMouseClick(colKey: string | Column, mouseEvent: MouseEvent | Touch): void {
-        warnOnce(`'showColumnMenuAfterMouseClick' is deprecated. Use 'IHeaderParams.showColumnMenuAfterMouseClick' within a header component, or 'api.showColumnMenu' elsewhere.`);
+        _warnOnce(`'showColumnMenuAfterMouseClick' is deprecated. Use 'IHeaderParams.showColumnMenuAfterMouseClick' within a header component, or 'api.showColumnMenu' elsewhere.`);
         // use grid column so works with pivot mode
         let column = this.columnModel.getGridColumn(colKey);
         if (!column) {

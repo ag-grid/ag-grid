@@ -8,12 +8,12 @@ import { CellRendererSelectorFunc, ColumnFunctionCallbackParams } from "../../en
 import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
 import { IRowNode } from "../../interfaces/iRowNode";
-import { removeAriaExpanded, setAriaExpanded } from "../../utils/aria";
-import { isElementInEventPath, isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../utils/event";
-import { warnOnce } from "../../utils/function";
-import { missing } from "../../utils/generic";
-import { createIconNoSpan } from "../../utils/icon";
-import { cloneObject } from "../../utils/object";
+import { _removeAriaExpanded, _setAriaExpanded } from "../../utils/aria";
+import { _isElementInEventPath, _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from "../../utils/event";
+import { _warnOnce } from "../../utils/function";
+import { _missing } from "../../utils/generic";
+import { _createIconNoSpan } from "../../utils/icon";
+import { _cloneObject } from "../../utils/object";
 import { ExpressionService } from "../../valueService/expressionService";
 import { ValueService } from "../../valueService/valueService";
 import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
@@ -214,13 +214,13 @@ export class GroupCellRendererCtrl extends BeanStub {
         }
 
         if (!this.isExpandable()) {
-            removeAriaExpanded(eGridCell);
+            _removeAriaExpanded(eGridCell);
             return;
         }
 
         const listener = () => {
             // for react, we don't use JSX, as setting attributes via jsx is slower
-            setAriaExpanded(eGridCell, !!node.expanded);
+            _setAriaExpanded(eGridCell, !!node.expanded);
         };
 
         this.expandListener = this.addManagedListener(node, RowNode.EVENT_EXPANDED_CHANGED, listener) || null;
@@ -293,7 +293,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         }
 
         // if we didn't find a displayed group, set it to the row node
-        if (missing(this.displayedGroupNode)) {
+        if (_missing(this.displayedGroupNode)) {
             this.displayedGroupNode = rowNode;
         }
     }
@@ -407,14 +407,14 @@ export class GroupCellRendererCtrl extends BeanStub {
             const legacyGetter = this.params.footerValueGetter;
             if (legacyGetter) {
                 footerValueGetter = legacyGetter;
-                warnOnce('As of v31.3, footerValueGetter is deprecated. Use `totalValueGetter` instead.');
+                _warnOnce('As of v31.3, footerValueGetter is deprecated. Use `totalValueGetter` instead.');
             }
         }
         let footerValue = '';
 
         if (footerValueGetter) {
             // params is same as we were given, except we set the value as the item to display
-            const paramsClone = cloneObject(this.params);
+            const paramsClone = _cloneObject(this.params);
             paramsClone.value = this.params.value;
 
             if (typeof footerValueGetter === 'function') {
@@ -530,8 +530,8 @@ export class GroupCellRendererCtrl extends BeanStub {
 
     private addExpandAndContract(): void {
         const params = this.params;
-        const eExpandedIcon = createIconNoSpan('groupExpanded', this.gos, null);
-        const eContractedIcon = createIconNoSpan('groupContracted', this.gos, null);
+        const eExpandedIcon = _createIconNoSpan('groupExpanded', this.gos, null);
+        const eContractedIcon = _createIconNoSpan('groupContracted', this.gos, null);
 
         if (eExpandedIcon) {
             this.eExpanded.appendChild(eExpandedIcon);
@@ -568,10 +568,10 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private onExpandClicked(mouseEvent: MouseEvent): void {
-        if (isStopPropagationForAgGrid(mouseEvent)) { return; }
+        if (_isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         // so if we expand a node, it does not also get selected.
-        stopPropagationForAgGrid(mouseEvent);
+        _stopPropagationForAgGrid(mouseEvent);
 
         this.onExpandOrContract(mouseEvent);
     }
@@ -752,15 +752,15 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private onCellDblClicked(mouseEvent: MouseEvent): void {
-        if (isStopPropagationForAgGrid(mouseEvent)) { return; }
+        if (_isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         // we want to avoid acting on double click events on the expand / contract icon,
         // as that icons already has expand / collapse functionality on it. otherwise if
         // the icon was double clicked, we would get 'click', 'click', 'dblclick' which
         // is open->close->open, however double click should be open->close only.
         const targetIsExpandIcon
-            = isElementInEventPath(this.eExpanded, mouseEvent)
-            || isElementInEventPath(this.eContracted, mouseEvent);
+            = _isElementInEventPath(this.eExpanded, mouseEvent)
+            || _isElementInEventPath(this.eContracted, mouseEvent);
 
         if (!targetIsExpandIcon) {
             this.onExpandOrContract(mouseEvent);

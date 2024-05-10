@@ -1,12 +1,12 @@
 
 import {
-    _,
     AgGroupComponent,
     Autowired,
     ChartGroupsDef,
     ChartType,
     Component,
-    PostConstruct
+    PostConstruct,
+    _warnOnce
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ChartTranslationService } from "../../services/chartTranslationService";
@@ -225,7 +225,7 @@ export class MiniChartsContainer extends Component {
                 : undefined;
             if (!menuGroup) {
                 // User has specified an invalid chart group in the chartGroupsDef config
-                _.warnOnce(`invalid chartGroupsDef config '${group}'`);
+                _warnOnce(`invalid chartGroupsDef config '${group}'`);
                 return null;
             }
 
@@ -238,7 +238,7 @@ export class MiniChartsContainer extends Component {
 
                 if (!menuItem) {
                      // User has specified an invalid chart type in the chartGroupsDef config
-                    _.warnOnce(`invalid chartGroupsDef config '${group}.${chartType}'`);
+                    _warnOnce(`invalid chartGroupsDef config '${group}.${chartType}'`);
                     return null;
                 }
 

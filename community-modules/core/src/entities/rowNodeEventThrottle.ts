@@ -33,7 +33,7 @@ export class RowNodeEventThrottle extends BeanStub {
     // to re-render 100+ times, which would be a performance lag.
     //
     // we use animationFrameService
-    // rather than _.debounce() so this will get done if anyone flushes the animationFrameService
+    // rather than debounce() so this will get done if anyone flushes the animationFrameService
     // (eg user calls api.ensureRowVisible(), which in turn flushes ).
     public dispatchExpanded(event: RowGroupOpenedEvent, forceSync?: boolean): void {
 

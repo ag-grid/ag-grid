@@ -4,7 +4,7 @@ import { IRowModel } from "../interfaces/iRowModel";
 import { RowNode } from "./rowNode";
 import { RowPinnedType } from "../interfaces/iRowNode";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { exists } from "../utils/generic";
+import { _exists } from "../utils/generic";
 import { PaginationProxy } from "../pagination/paginationProxy";
 
 export interface RowPosition {
@@ -93,7 +93,7 @@ export class RowPositionUtils extends BeanStub {
                 break;
             default:
                 // if we are not floating, but the other one is floating...
-                if (exists(rowB.rowPinned)) {
+                if (_exists(rowB.rowPinned)) {
                     return rowB.rowPinned !== 'top';
                 }
                 break;

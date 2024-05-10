@@ -1,7 +1,7 @@
 import { ICellEditorParams } from "../../interfaces/iCellEditor";
 import { AgInputNumberField } from "../../widgets/agInputNumberField";
 import { CellEditorInput, SimpleCellEditor } from "./simpleCellEditor";
-import { exists } from "../../utils/generic";
+import { _exists } from "../../utils/generic";
 import { KeyCode } from "../../constants/keyCode";
 
 export interface INumberCellEditorParams<TData = any, TContext = any> extends ICellEditorParams<TData, number, TContext> {
@@ -70,7 +70,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
 
     public getValue(): number | null | undefined {
         const value = this.eInput.getValue();
-        if (!exists(value) && !exists(this.params.value)) {
+        if (!_exists(value) && !_exists(this.params.value)) {
             return this.params.value;
         }
         let parsedValue = this.params.parseValue(value!);

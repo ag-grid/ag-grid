@@ -1,5 +1,5 @@
 import { SetValueModel, SetFilterModelValuesType } from './setValueModel';
-import { RowNode, IClientSideRowModel, SetFilterParams, ValueFormatterFunc, _, GridOptionsService, ColumnModel, ValueService } from '@ag-grid-community/core';
+import { RowNode, IClientSideRowModel, SetFilterParams, ValueFormatterFunc, GridOptionsService, ColumnModel, ValueService, _makeNull, _toStringOrNull } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 
 type ValueType = string | number | boolean | Date;
@@ -38,7 +38,7 @@ const VALUE_TEST_CASES: {[key: string]: ValueTestCase<ValueType>} = {
     } as ValueTestCase<string>,
     date: {
         values: [EXAMPLE_DATE_1, EXAMPLE_DATE_1, EXAMPLE_DATE_2, null, undefined],
-        // _.toStringOrNull() is used in the implementation, so the expected strings are environment local/TZ specific :P
+        // _toStringOrNull() is used in the implementation, so the expected strings are environment local/TZ specific :P
         distinctValues: [null, EXAMPLE_DATE_1.toString(), EXAMPLE_DATE_2.toString()],
     } as ValueTestCase<Date>,
 };
@@ -84,8 +84,8 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
         setIsLoading: _ => { },
         translate: key => key === 'blanks' ? '(Blanks)' : '',
         caseFormat,
-        createKey: value => _.makeNull(Array.isArray(value) ? value as any : _.toStringOrNull(value)!),
-        valueFormatter: params => _.toStringOrNull(params.value)!,
+        createKey: value => _makeNull(Array.isArray(value) ? value as any : _toStringOrNull(value)!),
+        valueFormatter: params => _toStringOrNull(params.value)!,
         gos,
         columnModel,
         valueService,

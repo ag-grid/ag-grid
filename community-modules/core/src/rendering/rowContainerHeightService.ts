@@ -1,7 +1,7 @@
 import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, PostConstruct, Qualifier } from "../context/context";
 import { Events } from "../eventKeys";
-import { getMaxDivHeight } from "../utils/browser";
+import { _getMaxDivHeight } from "../utils/browser";
 import { CtrlsService } from "../ctrlsService";
 import { Logger, LoggerFactory } from "../logger";
 
@@ -46,7 +46,7 @@ export class RowContainerHeightService extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
-        this.maxDivHeight = getMaxDivHeight();
+        this.maxDivHeight = _getMaxDivHeight();
         this.logger.log('maxDivHeight = ' + this.maxDivHeight);
     }
 

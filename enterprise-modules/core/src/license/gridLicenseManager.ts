@@ -1,4 +1,4 @@
-import { _, Autowired, Bean, BeanStub, PreConstruct } from '@ag-grid-community/core';
+import {Bean, BeanStub, PreConstruct } from '@ag-grid-community/core';
 import {ILicenseManager, LicenseManager} from "./shared/licenseManager";
 
 @Bean('licenseManager')

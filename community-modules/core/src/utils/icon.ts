@@ -1,6 +1,6 @@
 import { Column } from '../entities/column';
-import { loadTemplate, isNodeOrElement } from './dom';
-import { setAriaRole } from './aria';
+import { _loadTemplate, _isNodeOrElement } from './dom';
+import { _setAriaRole } from './aria';
 import { GridOptionsService } from '../gridOptionsService';
 
 //
@@ -158,8 +158,8 @@ export const iconNameClassMap: { [key: string]: string; } = {
  * @param {Column | null} [column]
  * @returns {Element}
  */
-export function createIcon(iconName: string, gos: GridOptionsService, column: Column | null): Element {
-    const iconContents = createIconNoSpan(iconName, gos, column);
+export function _createIcon(iconName: string, gos: GridOptionsService, column: Column | null): Element {
+    const iconContents = _createIconNoSpan(iconName, gos, column);
 
     if (iconContents) {
         const { className } = iconContents;
@@ -177,7 +177,7 @@ export function createIcon(iconName: string, gos: GridOptionsService, column: Co
     return eResult;
 }
 
-export function createIconNoSpan(iconName: string, gos: GridOptionsService, column?: Column | null, forceCreate?: boolean): Element | undefined {
+export function _createIconNoSpan(iconName: string, gos: GridOptionsService, column?: Column | null, forceCreate?: boolean): Element | undefined {
     let userProvidedIcon: Function | string | null = null;
 
     // check col for icon first
@@ -208,10 +208,10 @@ export function createIconNoSpan(iconName: string, gos: GridOptionsService, colu
         }
 
         if (typeof rendererResult === 'string') {
-            return loadTemplate(rendererResult);
+            return _loadTemplate(rendererResult);
         }
 
-        if (isNodeOrElement(rendererResult)) {
+        if (_isNodeOrElement(rendererResult)) {
             return rendererResult as Element;
         }
 
@@ -231,7 +231,7 @@ export function createIconNoSpan(iconName: string, gos: GridOptionsService, colu
 
         span.setAttribute('class', `ag-icon ag-icon-${cssClass}`);
         span.setAttribute('unselectable', 'on');
-        setAriaRole(span, 'presentation');
+        _setAriaRole(span, 'presentation');
 
         return span;
     }

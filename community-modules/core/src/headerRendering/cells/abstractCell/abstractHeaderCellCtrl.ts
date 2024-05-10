@@ -2,7 +2,7 @@ import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
 import { IHeaderColumn } from "../../../interfaces/iHeaderColumn";
 import { FocusService } from "../../../focusService";
-import { isUserSuppressingHeaderKeyboardEvent } from "../../../utils/keyboard";
+import { _isUserSuppressingHeaderKeyboardEvent } from "../../../utils/keyboard";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { KeyCode } from "../.././../constants/keyCode";
 import { Beans } from "../../../rendering/beans";
@@ -13,14 +13,14 @@ import { HorizontalDirection } from "../../../constants/direction";
 import { DragAndDropService, DragSource } from "../../../dragAndDrop/dragAndDropService";
 import { CssClassApplier } from "../cssClassApplier";
 import { ColumnGroup } from "../../../entities/columnGroup";
-import { setAriaColIndex } from "../../../utils/aria";
+import { _setAriaColIndex } from "../../../utils/aria";
 import { Events } from "../../../eventKeys";
 import { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent } from "../../../events";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { WithoutGridCommon } from "../../../interfaces/iCommon";
 import { MenuService } from "../../../misc/menuService";
 import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
-import { getInnerWidth } from "../../../utils/dom";
+import { _getInnerWidth } from "../../../utils/dom";
 import { BrandedType } from "../../../interfaces/brandedType";
 
 let instanceIdSequence = 0;
@@ -86,7 +86,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
         const { headerRowIndex, column } = this.focusService.getFocusedHeader()!;
 
-        return isUserSuppressingHeaderKeyboardEvent(
+        return _isUserSuppressingHeaderKeyboardEvent(
             this.gos,
             e,
             headerRowIndex,
@@ -123,7 +123,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         const { beans, column } = this;
 
         const colIdx = beans.columnModel.getAriaColumnIndex(column as unknown as Column | ColumnGroup);
-        setAriaColIndex(this.eGui, colIdx); // for react, we don't use JSX, as it slowed down column moving
+        _setAriaColIndex(this.eGui, colIdx); // for react, we don't use JSX, as it slowed down column moving
     }
 
     protected addResizeAndMoveKeyboardListeners(): void {
@@ -187,7 +187,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         if (pinned) {
             const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
             const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
-            const bodyWidth = getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
+            const bodyWidth = _getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
 
             if (leftWidth + rightWidth + diff > bodyWidth) {
                 if (bodyWidth > leftWidth + rightWidth) {

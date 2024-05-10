@@ -5,7 +5,7 @@ import { ColumnGroup } from "../entities/columnGroup";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { exists } from "../utils/generic";
+import { _exists } from "../utils/generic";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('displayedGroupCreator')
@@ -118,7 +118,7 @@ export class DisplayedGroupCreator extends BeanStub {
             columnGroup = null;
         }
 
-        if (exists(columnGroup)) {
+        if (_exists(columnGroup)) {
             // clean out the old column group here, as we will be adding children into it again
             columnGroup.reset();
         } else {

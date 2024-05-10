@@ -9,7 +9,6 @@ import {
     Column,
     EventService,
     ColumnState,
-    _,
     IAggFunc
 } from "@ag-grid-community/core";
 

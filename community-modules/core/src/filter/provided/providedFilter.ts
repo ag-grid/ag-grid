@@ -2,13 +2,12 @@ import { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../.
 import { Autowired, PostConstruct } from '../../context/context';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import { clearElement, loadTemplate, removeFromParent, setDisabled } from '../../utils/dom';
-import { debounce } from '../../utils/function';
+import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
+import { _debounce } from '../../utils/function';
 import { AgPromise } from '../../utils/promise';
 import { PopupEventParams } from '../../widgets/popupService';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
-import { convertToSet } from '../../utils/set';
 import { Component } from '../../widgets/component';
 import { IRowNode } from '../../interfaces/iRowNode';
 import { RefSelector } from '../../widgets/componentAnnotations';
@@ -224,7 +223,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             }
         } else {
             // Always empty the buttons panel before adding new buttons
-            clearElement(this.eButtonsPanel);
+            _clearElement(this.eButtonsPanel);
             this.buttonListeners.forEach(destroyFunc => destroyFunc?.());
             this.buttonListeners = [];
 
@@ -233,7 +232,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         if (!hasButtons) {
             // The case when we need to hide the buttons panel because there are no buttons
             if (this.eButtonsPanel) {
-                removeFromParent(this.eButtonsPanel);
+                _removeFromParent(this.eButtonsPanel);
             }
 
             return;
@@ -272,7 +271,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             }
 
             const buttonType = type === 'apply' ? 'submit' : 'button';
-            const button = loadTemplate(
+            const button = _loadTemplate(
                 /* html */
                 `<button
                     type="${buttonType}"
@@ -286,7 +285,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             fragment.append(button);
         };
 
-        convertToSet(buttons).forEach(type => addButton(type));
+        buttons.forEach(type => addButton(type));
 
         this.eButtonsPanel.append(fragment);
         this.getGui().appendChild(this.eButtonsPanel);
@@ -299,7 +298,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     private setupOnBtApplyDebounce(): void {
         const debounceMs = ProvidedFilter.getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
-        const debounceFunc = debounce(this.checkApplyDebounce.bind(this), debounceMs);
+        const debounceFunc = _debounce(this.checkApplyDebounce.bind(this), debounceMs);
         this.onBtApplyDebounce = () => {
             this.debouncePending = true;
             debounceFunc();
@@ -440,7 +439,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             const isValid = this.isModelValid(this.getModelFromUi()!);
             const applyFilterButton = this.getRefElement('applyFilterButton');
             if (applyFilterButton) {
-                setDisabled(applyFilterButton, !isValid);
+                _setDisabled(applyFilterButton, !isValid);
             }
         }
 

@@ -1,5 +1,4 @@
 import {
-    _,
     AgSlider,
     Autowired,
     Component,

@@ -1,5 +1,4 @@
 import {
-    _,
     AgChartThemeOverrides,
     BeanStub,
     ChartOptionsChanged,

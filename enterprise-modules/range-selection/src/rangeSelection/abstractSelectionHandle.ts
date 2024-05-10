@@ -13,11 +13,13 @@ import {
     PostConstruct,
     ISelectionHandle,
     RowPositionUtils,
-    _,
     SelectionHandleType,
     NavigationService,
     CtrlsService,
-    CellPositionUtils
+    CellPositionUtils,
+    _last,
+    _setDisplayed,
+    _isVisible
 } from "@ag-grid-community/core";
 import { RangeService } from "./rangeService";
 
@@ -164,7 +166,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         const oldCellComp = this.getCellCtrl();
         const eGui = this.getGui();
 
-        const cellRange = _.last(this.rangeService.getCellRanges());
+        const cellRange = _last(this.rangeService.getCellRanges());
 
         const start = cellRange.startRow;
         const end = cellRange.endRow;
@@ -181,7 +183,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
             }
         }
 
-        if (oldCellComp !== cellCtrl || !_.isVisible(eGui)) {
+        if (oldCellComp !== cellCtrl || !_isVisible(eGui)) {
             this.setCellCtrl(cellCtrl);
             const eParentOfValue = cellCtrl.getComp().getParentOfValue();
             if (eParentOfValue) {
@@ -206,7 +208,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
     protected destroy() {
         if (!this.shouldDestroyOnEndDragging && this.isDragging()) {
-            _.setDisplayed(this.getGui(), false);
+            _setDisplayed(this.getGui(), false);
             this.shouldDestroyOnEndDragging = true;
             return;
         }

@@ -3,11 +3,11 @@ import { RefSelector } from "./componentAnnotations";
 import { VirtualList } from "./virtualList";
 import { KeyCode } from "../constants/keyCode";
 import { AgAutocompleteRow } from "./agAutocompleteRow";
-import { fuzzySuggestions } from "../utils/fuzzyMatch";
+import { _fuzzySuggestions } from "../utils/fuzzyMatch";
 import { PopupComponent } from "./popupComponent";
 import { PostConstruct } from "../context/context";
 import { AutocompleteEntry } from "./autocompleteParams";
-import { exists } from "../utils/generic";
+import { _exists } from "../utils/generic";
 
 export class AgAutocompleteList extends PopupComponent {
     private static TEMPLATE = /* html */
@@ -71,7 +71,7 @@ export class AgAutocompleteList extends PopupComponent {
 
     public setSearch(searchString: string): void {
         this.searchString = searchString;
-        if (exists(searchString)) {
+        if (_exists(searchString)) {
             this.runSearch();
         } else {
             // reset
@@ -115,7 +115,7 @@ export class AgAutocompleteList extends PopupComponent {
         let matchingStrings: string[];
         let topSuggestion: string | undefined;
         if (this.params.useFuzzySearch) {
-            matchingStrings = fuzzySuggestions(this.searchString, searchStrings, true).values;
+            matchingStrings = _fuzzySuggestions(this.searchString, searchStrings, true).values;
             topSuggestion = matchingStrings.length ? matchingStrings[0] : undefined;
         } else {
             const containsMatches = this.runContainsSearch(this.searchString, searchStrings);

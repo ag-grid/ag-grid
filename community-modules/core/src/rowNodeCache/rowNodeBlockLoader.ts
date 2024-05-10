@@ -4,7 +4,8 @@ import { BeanStub } from "../context/beanStub";
 import { Logger, LoggerFactory } from "../logger";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
-import { _ } from "../utils";
+import { _removeFromArray } from "../utils/array";
+import { _debounce } from "../utils/function";
 
 @Bean('rowNodeBlockLoader')
 export class RowNodeBlockLoader extends BeanStub {
@@ -27,7 +28,7 @@ export class RowNodeBlockLoader extends BeanStub {
         const blockLoadDebounceMillis = this.gos.get('blockLoadDebounceMillis');
 
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
-            this.checkBlockToLoadDebounce = _.debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
+            this.checkBlockToLoadDebounce = _debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
         }
     }
 
@@ -54,7 +55,7 @@ export class RowNodeBlockLoader extends BeanStub {
     }
 
     public removeBlock(block: RowNodeBlock): void {
-        _.removeFromArray(this.blocks, block);
+        _removeFromArray(this.blocks, block);
     }
 
     protected destroy(): void {

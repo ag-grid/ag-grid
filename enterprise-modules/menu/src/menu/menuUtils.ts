@@ -9,7 +9,8 @@ import {
     HeaderPosition,
     CloseMenuEvent,
     PopupEventParams,
-    _
+    _isVisible,
+    _last,
 } from "@ag-grid-community/core";
 
 export interface MenuRestoreFocusParams {
@@ -109,7 +110,7 @@ export class MenuUtils extends BeanStub {
 
         const isColumnStillVisible = this.columnModel.getAllDisplayedColumns().some(col => col === column);
 
-        if (isColumnStillVisible && eventSource && _.isVisible(eventSource)) {
+        if (isColumnStillVisible && eventSource && _isVisible(eventSource)) {
             const focusableEl = this.focusService.findTabbableParent(eventSource);
             if (focusableEl) {
                 if (column) {
@@ -122,7 +123,7 @@ export class MenuUtils extends BeanStub {
         // the header that is closest to the previous header position
         else if (headerPosition && columnIndex !== -1) {
             const allColumns = this.columnModel.getAllDisplayedColumns();
-            const columnToFocus = allColumns[columnIndex] || _.last(allColumns);
+            const columnToFocus = allColumns[columnIndex] || _last(allColumns);
 
             if (columnToFocus) {
                 this.focusService.focusHeaderPosition({

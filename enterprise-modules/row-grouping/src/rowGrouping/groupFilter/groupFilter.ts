@@ -1,5 +1,4 @@
 import {
-    _,
     AgPromise,
     AgSelect,
     Autowired,
@@ -14,6 +13,10 @@ import {
     RefSelector,
     TabGuardComp,
     FilterWrapperComp,
+    _clearElement,
+    _loadTemplate,
+    _setDisplayed,
+    _warnOnce,
 } from '@ag-grid-community/core';
 
 interface FilterColumnPair {
@@ -65,13 +68,13 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
     private validateParams(): void {
         const { colDef } = this.params;
         if (colDef.field) {
-            _.warnOnce('Group Column Filter does not work with the colDef property "field". This property will be ignored.');
+            _warnOnce('Group Column Filter does not work with the colDef property "field". This property will be ignored.');
         }
         if (colDef.filterValueGetter) {
-            _.warnOnce('Group Column Filter does not work with the colDef property "filterValueGetter". This property will be ignored.');
+            _warnOnce('Group Column Filter does not work with the colDef property "filterValueGetter". This property will be ignored.');
         }
         if (colDef.filterParams) {
-            _.warnOnce('Group Column Filter does not work with the colDef property "filterParams". This property will be ignored.');
+            _warnOnce('Group Column Filter does not work with the colDef property "filterParams". This property will be ignored.');
         }
     }
 
@@ -83,19 +86,19 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
     private getSourceColumns(): Column[] {
         this.groupColumn = this.params.column;
         if (this.gos.get('treeData')) {
-            _.warnOnce('Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.');
+            _warnOnce('Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.');
             return [];
         }
         const sourceColumns = this.columnModel.getSourceColumnsForGroupColumn(this.groupColumn);
         if (!sourceColumns) {
-            _.warnOnce('Group Column Filter only works on group columns. Please use a different filter.');
+            _warnOnce('Group Column Filter only works on group columns. Please use a different filter.');
             return [];
         }
         return sourceColumns;
     }
 
     private updateGroupField(): Column[] | null {
-        _.clearElement(this.eGroupField);
+        _clearElement(this.eGroupField);
         if (this.eGroupFieldSelect) {
             this.destroyBean(this.eGroupFieldSelect);
         }
@@ -103,7 +106,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         const sourceColumns = allSourceColumns.filter(sourceColumn => sourceColumn.isFilterAllowed());
         if (!sourceColumns.length) {
             this.selectedColumn = undefined;
-            _.setDisplayed(this.eGroupField, false);
+            _setDisplayed(this.eGroupField, false);
             return null;
         }
         if (allSourceColumns.length === 1) {
@@ -111,7 +114,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
             // If there's one group column that has a filter, but multiple columns in total,
             // we should still show the select so the user knows which column it's for.
             this.selectedColumn = sourceColumns[0];
-            _.setDisplayed(this.eGroupField, false);
+            _setDisplayed(this.eGroupField, false);
         } else {
             // keep the old selected column if it's still valid
             if (!this.selectedColumn || !sourceColumns.some(column => column.getId() === this.selectedColumn!.getId())) {
@@ -119,8 +122,8 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
             }
             this.createGroupFieldSelectElement(sourceColumns);
             this.eGroupField.appendChild(this.eGroupFieldSelect.getGui());
-            this.eGroupField.appendChild(_.loadTemplate(/* html */ `<div class="ag-filter-separator"></div>`));
-            _.setDisplayed(this.eGroupField, true);
+            this.eGroupField.appendChild(_loadTemplate(/* html */ `<div class="ag-filter-separator"></div>`));
+            _setDisplayed(this.eGroupField, true);
         }
 
         return sourceColumns;
@@ -176,7 +179,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
     }
 
     private addUnderlyingFilterElement(): AgPromise<void> {
-        _.clearElement(this.eUnderlyingFilter);
+        _clearElement(this.eUnderlyingFilter);
         if (!this.selectedColumn) {
             return AgPromise.resolve();
         }
@@ -233,7 +236,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
     }
 
     public afterGuiDetached(): void {
-        _.clearElement(this.eUnderlyingFilter);
+        _clearElement(this.eUnderlyingFilter);
         this.selectedFilter?.afterGuiDetached?.();
     }
 

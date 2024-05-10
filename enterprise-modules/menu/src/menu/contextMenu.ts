@@ -1,5 +1,4 @@
 import {
-    _,
     AgEvent,
     AgMenuItemComponent,
     AgMenuList,
@@ -26,7 +25,10 @@ import {
     WithoutGridCommon,
     Events,
     ContextMenuVisibleChangedEvent,
-    CloseMenuEvent
+    CloseMenuEvent,
+    _exists,
+    _isIOSUserAgent,
+    _missingOrEmpty
 
 } from "@ag-grid-community/core";
 import { MenuItemMapper } from "./menuItemMapper";
@@ -54,7 +56,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
     private getMenuItems(node: RowNode | null, column: Column | null, value: any): (MenuItemDef | string)[] | undefined {
         const defaultMenuOptions: string[] = [];
 
-        if (_.exists(node) && ModuleRegistry.__isRegistered(ModuleNames.ClipboardModule, this.context.getGridId())) {
+        if (_exists(node) && ModuleRegistry.__isRegistered(ModuleNames.ClipboardModule, this.context.getGridId())) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
                 if (!this.gos.get('suppressCutToClipboard')) {
@@ -74,13 +76,13 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             }
         }
 
-        if (_.exists(node)) {
+        if (_exists(node)) {
             // if user clicks a cell
             const csvModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.context.getGridId());
             const excelModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.context.getGridId());
             const suppressExcel = this.gos.get('suppressExcelExport') || excelModuleMissing;
             const suppressCsv = this.gos.get('suppressCsvExport') || csvModuleMissing;
-            const onIPad = _.isIOSUserAgent();
+            const onIPad = _isIOSUserAgent();
             const anyExport: boolean = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {
                 defaultMenuOptions.push('export');
@@ -116,7 +118,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         const menuItems = this.getMenuItems(node, column, value);
         const eGridBodyGui = this.ctrlsService.getGridBodyCtrl().getGui();
 
-        if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return false; }
+        if (menuItems === undefined || _missingOrEmpty(menuItems)) { return false; }
 
         const menu = new ContextMenu(menuItems, column, node, value);
         this.createBean(menu);

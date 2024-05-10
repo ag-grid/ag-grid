@@ -2,7 +2,6 @@ import {
     Column,
     DraggingEvent,
     DropTarget,
-    _,
     PillDropZonePanel,
     PillDropZonePanelParams,
     DragItem,

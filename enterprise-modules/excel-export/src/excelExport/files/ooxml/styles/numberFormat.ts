@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, _ } from '@ag-grid-community/core';
+import { ExcelOOXMLTemplate, _escapeString } from '@ag-grid-community/core';
 import { NumberFormat } from '../../../assets/excelInterfaces';
 
 function prepareString(str: string): string {
@@ -13,7 +13,7 @@ function prepareString(str: string): string {
             currentString = currentString.replace(/\$/g, '"$"');
          }
 
-         split[i] = _.escapeString(currentString) as string;
+         split[i] = _escapeString(currentString) as string;
     }
 
     return split.join('');

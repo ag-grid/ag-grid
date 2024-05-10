@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
@@ -18,7 +17,13 @@ import {
     ISelectionService,
     WithoutGridCommon,
     InitialGroupOrderComparatorParams,
-    KeyCreatorParams
+    KeyCreatorParams,
+    _areEqual,
+    _exists,
+    _existsAndNotEmpty,
+    _removeFromArray,
+    _sortRowNodesByOrder,
+    _warnOnce
 } from "@ag-grid-community/core";
 import { BatchRemover } from "./batchRemover";
 
@@ -157,13 +162,13 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
             // transaction.
-            if (_.existsAndNotEmpty(tran.remove)) {
+            if (_existsAndNotEmpty(tran.remove)) {
                 this.removeNodes(tran.remove as RowNode[], details, batchRemover);
             }
-            if (_.existsAndNotEmpty(tran.update)) {
+            if (_existsAndNotEmpty(tran.update)) {
                 this.moveNodesInWrongPath(tran.update as RowNode[], details, batchRemover);
             }
-            if (_.existsAndNotEmpty(tran.add)) {
+            if (_existsAndNotEmpty(tran.add)) {
                 this.insertNodes(tran.add as RowNode[], details, false);
             }
             // must flush here, and not allow another transaction to be applied,
@@ -187,7 +192,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 return;
             }
 
-            const didSort = _.sortRowNodesByOrder(node.childrenAfterGroup!, details.rowNodeOrder);
+            const didSort = _sortRowNodesByOrder(node.childrenAfterGroup!, details.rowNodeOrder);
             if (didSort) {
                 details.changedPath.addParentNode(node);
             }
@@ -196,10 +201,10 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private orderGroups(details: GroupingDetails): void {
         const comparator = details.initialGroupOrderComparator;
-        if (_.exists(comparator)) { recursiveSort(details.rootNode); }
+        if (_exists(comparator)) { recursiveSort(details.rootNode); }
 
         function recursiveSort(rowNode: RowNode): void {
-            const doSort = _.exists(rowNode.childrenAfterGroup) &&
+            const doSort = _exists(rowNode.childrenAfterGroup) &&
                 // we only want to sort groups, so we do not sort leafs (a leaf group has leafs as children)
                 !rowNode.leafGroup;
 
@@ -241,7 +246,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             const oldPath: string[] = this.getExistingPathForNode(childNode, details).map(infoToKeyMapper);
             const newPath: string[] = this.getGroupInfo(childNode, details).map(infoToKeyMapper);
 
-            const nodeInCorrectPath = _.areEqual(oldPath, newPath);
+            const nodeInCorrectPath = _areEqual(oldPath, newPath);
 
             if (!nodeInCorrectPath) {
                 this.moveNode(childNode, details, batchRemover);
@@ -394,7 +399,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             if (batchRemover) {
                 batchRemover.removeFromChildrenAfterGroup(child.parent, child);
             } else {
-                _.removeFromArray(child.parent.childrenAfterGroup!, child);
+                _removeFromArray(child.parent.childrenAfterGroup!, child);
                 child.parent.updateHasChildren();
             }
         }
@@ -423,7 +428,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private areGroupColsEqual(d1: GroupingDetails, d2: GroupingDetails): boolean {
         if (d1 == null || d2 == null || d1.pivotMode !== d2.pivotMode) { return false; }
 
-        return _.areEqual(d1.groupedCols, d2.groupedCols) && _.areEqual(d1.keyCreators, d2.keyCreators);
+        return _areEqual(d1.groupedCols, d2.groupedCols) && _areEqual(d1.keyCreators, d2.keyCreators);
     }
 
     private checkAllGroupDataAfterColsChanged(details: GroupingDetails): void {
@@ -727,7 +732,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         const keys: string[] | null = details.getDataPath ? details.getDataPath(rowNode.data) : null;
 
         if (keys === null || keys === undefined || keys.length === 0) {
-            _.warnOnce(`getDataPath() should not return an empty path for data ${rowNode.data}`);
+            _warnOnce(`getDataPath() should not return an empty path for data ${rowNode.data}`);
         }
         const groupInfoMapper = (key: string | null) => ({ key, field: null, rowGroupColumn: null }) as GroupInfo;
         return keys ? keys.map(groupInfoMapper) : [];

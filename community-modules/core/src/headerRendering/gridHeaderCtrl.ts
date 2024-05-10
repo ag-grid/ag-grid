@@ -7,8 +7,8 @@ import { Events } from "../eventKeys";
 import { FilterManager } from "../filter/filterManager";
 import { FocusService } from "../focusService";
 import { MenuService } from "../misc/menuService";
-import { isIOSUserAgent } from "../utils/browser";
-import { exists } from "../utils/generic";
+import { _isIOSUserAgent } from "../utils/browser";
+import { _exists } from "../utils/generic";
 import { ManagedFocusFeature } from "../widgets/managedFocusFeature";
 import { LongTapEvent, TouchListener } from "../widgets/touchListener";
 import { HeaderNavigationDirection, HeaderNavigationService } from "./common/headerNavigationService";
@@ -150,7 +150,7 @@ export class GridHeaderCtrl extends BeanStub {
             case KeyCode.LEFT:
                 direction = HeaderNavigationDirection.LEFT;
             case KeyCode.RIGHT:
-                if (!exists(direction)) {
+                if (!_exists(direction)) {
                     direction = HeaderNavigationDirection.RIGHT;
                 }
                 this.headerNavigationService.navigateHorizontally(direction, false, e);
@@ -158,7 +158,7 @@ export class GridHeaderCtrl extends BeanStub {
             case KeyCode.UP:
                 direction = HeaderNavigationDirection.UP;
             case KeyCode.DOWN:
-                if (!exists(direction)) {
+                if (!_exists(direction)) {
                     direction = HeaderNavigationDirection.DOWN;
                 }
                 if (this.headerNavigationService.navigateVertically(direction, null, e)) {
@@ -192,7 +192,7 @@ export class GridHeaderCtrl extends BeanStub {
 
     private mockContextMenuForIPad(listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void): void {
         // we do NOT want this when not in iPad
-        if (!isIOSUserAgent()) { return; }
+        if (!_isIOSUserAgent()) { return; }
 
         const touchListener = new TouchListener(this.eGui);
         const longTapListener = (event: LongTapEvent) => {

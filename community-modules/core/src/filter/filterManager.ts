@@ -1,4 +1,4 @@
-import { AgPromise, _ } from '../utils';
+import { AgPromise } from '../utils/promise';
 import { ValueService } from '../valueService/valueService';
 import { ColumnModel } from '../columns/columnModel';
 import { RowNode } from '../entities/rowNode';
@@ -12,9 +12,8 @@ import { UserCompDetails, UserComponentFactory } from '../components/framework/u
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { BeanStub } from '../context/beanStub';
-import { convertToSet } from '../utils/set';
-import { exists } from '../utils/generic';
-import { mergeDeep, cloneObject } from '../utils/object';
+import { _exists, _jsonEquals } from '../utils/generic';
+import { _mergeDeep, _cloneObject } from '../utils/object';
 import { RowRenderer } from '../rendering/rowRenderer';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { FilterComponent } from '../components/framework/componentTypes';
@@ -22,7 +21,7 @@ import { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating
 import { unwrapUserComp } from '../gridApi';
 import { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
-import { warnOnce } from '../utils/function';
+import { _warnOnce } from '../utils/function';
 import { DataTypeService } from '../columns/dataTypeService';
 import { QuickFilterService } from './quickFilterService';
 
@@ -129,7 +128,7 @@ export class FilterManager extends BeanStub {
 
         if (model) {
             // mark the filters as we set them, so any active filters left over we stop
-            const modelKeys = convertToSet(Object.keys(model));
+            const modelKeys = new Set(Object.keys(model));
 
             this.allColumnFilters.forEach((filterWrapper, colId) => {
                 const newModel = model[colId];
@@ -173,7 +172,7 @@ export class FilterManager extends BeanStub {
                 const before = previousModel ? previousModel[colId] : null;
                 const after = currentModel ? currentModel[colId] : null;
 
-                if (!_.jsonEquals(before, after)) {
+                if (!_jsonEquals(before, after)) {
                     columns.push(filterWrapper.column);
                 }
             });
@@ -203,7 +202,7 @@ export class FilterManager extends BeanStub {
         this.allColumnFilters.forEach((filterWrapper, key) => {
             const model = this.getModelFromFilterWrapper(filterWrapper);
 
-            if (exists(model)) {
+            if (_exists(model)) {
                 result[key] = model;
             }
         });
@@ -424,7 +423,7 @@ export class FilterManager extends BeanStub {
         };
 
         if (additionalEventAttributes) {
-            mergeDeep(filterChangedEvent, additionalEventAttributes);
+            _mergeDeep(filterChangedEvent, additionalEventAttributes);
         }
 
         // because internal events are not async in ag-grid, when the dispatchEvent
@@ -642,7 +641,7 @@ export class FilterManager extends BeanStub {
     public createFilterParams(column: Column, colDef: ColDef): IFilterParams {
         const params: IFilterParams = this.gos.addGridCommonParams({
             column,
-            colDef: cloneObject(colDef),
+            colDef: _cloneObject(colDef),
             rowModel: this.rowModel,
             filterChangedCallback: () => { },
             filterModifiedCallback: () => { },
@@ -981,7 +980,7 @@ export class FilterManager extends BeanStub {
     }
 
     private warnAdvancedFilters(): void {
-        warnOnce('Column Filter API methods have been disabled as Advanced Filters are enabled.');
+        _warnOnce('Column Filter API methods have been disabled as Advanced Filters are enabled.');
     }
 
     public setupAdvancedFilterHeaderComp(eCompToInsertBefore: HTMLElement): void {

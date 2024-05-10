@@ -14,7 +14,8 @@ import {
     StageExecuteParams,
     ValueService,
     WithoutGridCommon,
-    _
+    _missing,
+    _iterateObject,
 } from "@ag-grid-community/core";
 import { PivotColDefService } from "./pivotColDefService";
 
@@ -200,7 +201,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         children.forEach((child: RowNode) => {
             let key: string = this.valueService.getKeyForNode(pivotColumn, child);
 
-            if (_.missing(key)) {
+            if (_missing(key)) {
                 key = '';
             }
 
@@ -228,7 +229,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         } else {
             const result: any = {};
 
-            _.iterateObject(mappedChildren, (key: string, value: RowNode[]) => {
+            _iterateObject(mappedChildren, (key: string, value: RowNode[]) => {
                 result[key] = this.bucketChildren(value, pivotColumns, pivotIndex + 1, uniqueValues[key]);
             });
 

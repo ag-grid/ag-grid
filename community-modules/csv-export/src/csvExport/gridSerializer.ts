@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
@@ -20,7 +19,9 @@ import {
     ISelectionService,
     ShouldRowBeSkippedParams,
     RowNodeSorter,
-    SortController
+    SortController,
+    _compose,
+    _last
 } from "@ag-grid-community/core";
 import { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "./interfaces";
 
@@ -43,7 +44,7 @@ export class GridSerializer extends BeanStub {
         const { allColumns, columnKeys, skipRowGroups } = params;
         const columnsToExport = this.getColumnsToExport(allColumns, skipRowGroups, columnKeys);
 
-        const serializeChain = _.compose<GridSerializingSession<T>>(
+        const serializeChain = _compose<GridSerializingSession<T>>(
             // first pass, put in the header names of the cols
             this.prepareSession(columnsToExport),
             this.prependContent(params),
@@ -351,7 +352,7 @@ export class GridSerializer extends BeanStub {
             }
 
             const collapsibleGroupRanges = columnGroup.getLeafColumns().reduce((collapsibleGroups: number[][], currentColumn, currentIdx, arr) => {
-                let lastGroup = _.last(collapsibleGroups);
+                let lastGroup = _last(collapsibleGroups);
                 const groupShow = currentColumn.getColumnGroupShow() === 'open';
 
                 if (!groupShow) {

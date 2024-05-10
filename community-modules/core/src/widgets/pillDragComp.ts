@@ -3,13 +3,13 @@ import { DragAndDropService, DropTarget, DragSource, DragSourceType, DragItem } 
 import { Component } from "./component";
 import { Autowired, PostConstruct } from "../context/context";
 import { RefSelector } from "./componentAnnotations";
-import { setDisplayed } from "../utils/dom";
+import { _setDisplayed } from "../utils/dom";
 import { Events } from '../eventKeys';
-import { createIconNoSpan } from "../utils/icon";
-import { setAriaLabel } from "../utils/aria";
+import { _createIconNoSpan } from "../utils/icon";
+import { _setAriaLabel } from "../utils/aria";
 import { KeyCode } from "../constants/keyCode";
 import { TouchListener } from "./touchListener";
-import { escapeString } from "../utils/string";
+import { _escapeString } from "../utils/string";
 
 export abstract class PillDragComp<TItem> extends Component {
     public static EVENT_COLUMN_REMOVE = 'columnRemove';
@@ -53,9 +53,9 @@ export abstract class PillDragComp<TItem> extends Component {
         this.addElementClasses(this.eText, 'text');
         this.addElementClasses(this.eButton, 'button');
 
-        this.eDragHandle.appendChild(createIconNoSpan('columnDrag', this.gos)!);
+        this.eDragHandle.appendChild(_createIconNoSpan('columnDrag', this.gos)!);
 
-        this.eButton.appendChild(createIconNoSpan('cancel', this.gos)!);
+        this.eButton.appendChild(_createIconNoSpan('cancel', this.gos)!);
 
         this.setupComponents();
 
@@ -86,7 +86,7 @@ export abstract class PillDragComp<TItem> extends Component {
 
         this.addAdditionalAriaInstructions(ariaInstructions, translate);
 
-        setAriaLabel(this.getGui(), ariaInstructions.join('. '));
+        _setAriaLabel(this.getGui(), ariaInstructions.join('. '));
     }
 
     protected addAdditionalAriaInstructions(ariaInstructions: string[], translate: (key: string, defaultValue: string) => string): void {
@@ -146,7 +146,7 @@ export abstract class PillDragComp<TItem> extends Component {
     }
 
     protected refreshRemove(): void {
-        setDisplayed(this.eButton, this.isRemovable());
+        _setDisplayed(this.eButton, this.isRemovable());
     }
 
     private setupRemove(): void {
@@ -185,7 +185,7 @@ export abstract class PillDragComp<TItem> extends Component {
 
     private setTextValue(): void {
         const displayValue = this.getDisplayValue();
-        const displayValueSanitised: any = escapeString(displayValue);
+        const displayValueSanitised: any = _escapeString(displayValue);
 
         this.eText.innerHTML = displayValueSanitised;
     }

@@ -1,7 +1,6 @@
 import {
     Component,
     FilterChangedEvent,
-    _,
     IFloatingFilterComp,
     IFloatingFilterParams,
     UserComponentFactory,
@@ -13,6 +12,9 @@ import {
     IFilter,
     FilterManager,
     UserCompDetails,
+    _clearElement,
+    _mergeDeep,
+    _setDisplayed,
 } from '@ag-grid-community/core';
 import { MultiFilter } from './multiFilter';
 
@@ -56,7 +58,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                 this.appendChild(gui);
 
                 if (index > 0) {
-                    _.setDisplayed(gui, false);
+                    _setDisplayed(gui, false);
                 }
             });
         });
@@ -88,7 +90,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                 }
             });
         } else {
-            _.clearElement(this.getGui());
+            _clearElement(this.getGui());
             this.destroyBeans(this.floatingFilters);
             this.floatingFilters = [];
             this.compDetailsList = [];
@@ -116,7 +118,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                     });
                 }
             };
-            _.mergeDeep(floatingFilterParams.filterParams, filterDef.filterParams);
+            _mergeDeep(floatingFilterParams.filterParams, filterDef.filterParams);
 
             const compDetails = this.getCompDetails(filterDef, floatingFilterParams);
             if (compDetails) {
@@ -137,7 +139,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
             if (model == null) {
                 this.floatingFilters.forEach((filter, i) => {
                     filter.onParentModelChanged(null, event);
-                    _.setDisplayed(filter.getGui(), i === 0);
+                    _setDisplayed(filter.getGui(), i === 0);
                 });
             } else {
                 const lastActiveFloatingFilterIndex = parent.getLastActiveFilterIndex();
@@ -149,7 +151,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
 
                     const shouldShow = lastActiveFloatingFilterIndex == null ? i === 0 : i === lastActiveFloatingFilterIndex;
 
-                    _.setDisplayed(filter.getGui(), shouldShow);
+                    _setDisplayed(filter.getGui(), shouldShow);
                 });
             }
         });

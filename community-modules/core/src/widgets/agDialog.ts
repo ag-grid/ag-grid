@@ -1,8 +1,8 @@
 import { Autowired } from "../context/context";
 import { PanelOptions, AgPanel } from "./agPanel";
 import { Component } from "./component";
-import { setDisplayed } from "../utils/dom";
-import { createIconNoSpan } from "../utils/icon";
+import { _setDisplayed } from "../utils/dom";
+import { _createIconNoSpan } from "../utils/icon";
 import { PopupService } from "./popupService";
 import { ResizableStructure } from "../rendering/features/positionableFeature";
 
@@ -112,8 +112,8 @@ export class AgDialog extends AgPanel<DialogOptions> {
     }
 
     private refreshMaximizeIcon() {
-        setDisplayed(this.maximizeIcon!, !this.isMaximized);
-        setDisplayed(this.minimizeIcon!, this.isMaximized);
+        _setDisplayed(this.maximizeIcon!, !this.isMaximized);
+        _setDisplayed(this.minimizeIcon!, this.isMaximized);
     }
 
     private clearMaximizebleListeners() {
@@ -181,11 +181,11 @@ export class AgDialog extends AgPanel<DialogOptions> {
 
         const eGui = maximizeButtonComp.getGui();
 
-        this.maximizeIcon = createIconNoSpan('maximize', this.gos)!;
+        this.maximizeIcon = _createIconNoSpan('maximize', this.gos)!;
         eGui.appendChild(this.maximizeIcon);
         this.maximizeIcon.classList.add('ag-panel-title-bar-button-icon');
 
-        this.minimizeIcon = createIconNoSpan('minimize', this.gos)!;
+        this.minimizeIcon = _createIconNoSpan('minimize', this.gos)!;
         eGui.appendChild(this.minimizeIcon);
         this.minimizeIcon.classList.add('ag-panel-title-bar-button-icon');
 

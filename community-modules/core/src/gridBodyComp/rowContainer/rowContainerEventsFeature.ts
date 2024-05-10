@@ -1,22 +1,22 @@
 import { BeanStub } from "../../context/beanStub";
-import { getCtrlForEventTarget, isStopPropagationForAgGrid, isEventSupported } from "../../utils/event";
+import { _getCtrlForEventTarget, _isStopPropagationForAgGrid, _isEventSupported } from "../../utils/event";
 import { Autowired, Optional, PostConstruct } from "../../context/context";
 import { MouseEventService } from "./../mouseEventService";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
 import { ValueService } from "../../valueService/valueService";
 import { Column } from "../../entities/column";
-import { isIOSUserAgent } from "../../utils/browser";
+import { _isIOSUserAgent } from "../../utils/browser";
 import { LongTapEvent, TouchListener } from "../../widgets/touchListener";
 import { CtrlsService } from "../../ctrlsService";
-import { isEventFromPrintableCharacter, isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
+import { _isEventFromPrintableCharacter, _isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
 import { CellKeyDownEvent, Events, FullWidthCellKeyDownEvent } from "../../events";
 import { NavigationService } from "./../navigationService";
 import { FocusService } from "../../focusService";
 import { KeyCode } from "../../constants/keyCode";
 import { UndoRedoService } from "../../undoRedo/undoRedoService";
-import { missingOrEmpty } from "../../utils/generic";
-import { last } from "../../utils/array";
-import { normaliseQwertyAzerty } from "../../utils/keyboard";
+import { _missingOrEmpty } from "../../utils/generic";
+import { _last } from "../../utils/array";
+import { _normaliseQwertyAzerty } from "../../utils/keyboard";
 import { ColumnModel } from "../../columns/columnModel";
 import { PaginationProxy } from "../../pagination/paginationProxy";
 import { PinnedRowModel } from "../../pinnedRowModel/pinnedRowModel";
@@ -63,7 +63,7 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private addMouseListeners(): void {
-        const mouseDownEvent = isEventSupported('touchstart') ? 'touchstart' : 'mousedown';
+        const mouseDownEvent = _isEventSupported('touchstart') ? 'touchstart' : 'mousedown';
         const eventNames = ['dblclick', 'contextmenu', 'mouseover', 'mouseout', 'click', mouseDownEvent];
 
         eventNames.forEach(eventName => {
@@ -75,7 +75,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
         if (
             !this.mouseEventService.isEventFromThisGrid(mouseEvent) ||
-            isStopPropagationForAgGrid(mouseEvent)
+            _isStopPropagationForAgGrid(mouseEvent)
         ) {
             return;
         }
@@ -97,7 +97,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private mockContextMenuForIPad(): void {
         // we do NOT want this when not in iPad, otherwise we will be doing
-        if (!isIOSUserAgent()) { return; }
+        if (!_isIOSUserAgent()) { return; }
 
         const touchListener = new TouchListener(this.element);
         const longTapListener = (event: LongTapEvent) => {
@@ -146,8 +146,8 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private getControlsForEventTarget(target: EventTarget | null): { cellCtrl: CellCtrl | null, rowCtrl: RowCtrl | null } {
         return {
-            cellCtrl: getCtrlForEventTarget<CellCtrl>(this.gos, target, CellCtrl.DOM_DATA_KEY_CELL_CTRL),
-            rowCtrl: getCtrlForEventTarget<RowCtrl>(this.gos, target, RowCtrl.DOM_DATA_KEY_ROW_CTRL)
+            cellCtrl: _getCtrlForEventTarget<CellCtrl>(this.gos, target, CellCtrl.DOM_DATA_KEY_CELL_CTRL),
+            rowCtrl: _getCtrlForEventTarget<RowCtrl>(this.gos, target, RowCtrl.DOM_DATA_KEY_ROW_CTRL)
         }
     }
 
@@ -167,7 +167,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const column = cellCtrl.getColumn();
         const editing = cellCtrl.isEditing();
 
-        const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gos, keyboardEvent, rowNode, column, editing);
+        const gridProcessingAllowed = !_isUserSuppressingKeyboardEvent(this.gos, keyboardEvent, rowNode, column, editing);
 
         if (gridProcessingAllowed) {
             if (eventName === 'keydown') {
@@ -182,7 +182,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 // perform clipboard and undo / redo operations
                 this.doGridOperations(keyboardEvent, cellCtrl.isEditing());
 
-                if (isEventFromPrintableCharacter(keyboardEvent)) {
+                if (_isEventFromPrintableCharacter(keyboardEvent)) {
                     cellCtrl.processCharacter(keyboardEvent);
                 }
             }
@@ -199,7 +199,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const rowNode = rowComp.getRowNode();
         const focusedCell = this.focusService.getFocusedCell();
         const column = (focusedCell && focusedCell.column) as Column;
-        const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gos, keyboardEvent, rowNode, column, false);
+        const gridProcessingAllowed = !_isUserSuppressingKeyboardEvent(this.gos, keyboardEvent, rowNode, column, false);
 
         if (gridProcessingAllowed) {
             const key = keyboardEvent.key;
@@ -243,7 +243,7 @@ export class RowContainerEventsFeature extends BeanStub {
         // was from a child grid (happens in master detail)
         if (!this.mouseEventService.isEventFromThisGrid(keyboardEvent)) { return; }
 
-        const keyCode = normaliseQwertyAzerty(keyboardEvent);
+        const keyCode = _normaliseQwertyAzerty(keyboardEvent);
 
         if (keyCode === KeyCode.A) { return this.onCtrlAndA(keyboardEvent); }
         if (keyCode === KeyCode.C) { return this.onCtrlAndC(keyboardEvent); }
@@ -276,7 +276,7 @@ export class RowContainerEventsFeature extends BeanStub {
             }
 
             const allDisplayedColumns = this.columnModel.getAllDisplayedColumns();
-            if (missingOrEmpty(allDisplayedColumns)) { return; }
+            if (_missingOrEmpty(allDisplayedColumns)) { return; }
 
             rangeService.setCellRange({
                 rowStartIndex: 0,
@@ -284,7 +284,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 rowEndIndex: rowEnd,
                 rowEndPinned: floatingEnd,
                 columnStart: allDisplayedColumns[0],
-                columnEnd: last(allDisplayedColumns)
+                columnEnd: _last(allDisplayedColumns)
             });
         }
         event.preventDefault();

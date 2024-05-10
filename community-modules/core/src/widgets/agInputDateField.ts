@@ -1,7 +1,7 @@
 import { AgInputTextField, AgInputTextFieldParams } from "./agInputTextField";
-import { addOrRemoveAttribute } from "../utils/dom";
-import { parseDateTimeFromString, serialiseDate } from "../utils/date";
-import { isBrowserSafari } from "../utils/browser";
+import { _addOrRemoveAttribute } from "../utils/dom";
+import { _parseDateTimeFromString, _serialiseDate } from "../utils/date";
+import { _isBrowserSafari } from "../utils/browser";
 
 export class AgInputDateField extends AgInputTextField {
     private min?: string;
@@ -19,7 +19,7 @@ export class AgInputDateField extends AgInputTextField {
 
         // ensures that the input element is focussed when a clear button is clicked,
         // unless using safari as there is no clear button and focus does not work properly
-        const usingSafari = isBrowserSafari();
+        const usingSafari = _isBrowserSafari();
         this.addManagedListener(this.eInput, 'mousedown', () => {
             if (this.isDisabled() || usingSafari) { return; }
             this.eInput.focus();
@@ -36,27 +36,27 @@ export class AgInputDateField extends AgInputTextField {
     }
 
     public setMin(minDate: Date | string | undefined): this {
-        const min = minDate instanceof Date ? serialiseDate(minDate ?? null, false) ?? undefined : minDate;
+        const min = minDate instanceof Date ? _serialiseDate(minDate ?? null, false) ?? undefined : minDate;
         if (this.min === min) {
             return this;
         }
 
         this.min = min;
 
-        addOrRemoveAttribute(this.eInput, 'min', min);
+        _addOrRemoveAttribute(this.eInput, 'min', min);
 
         return this;
     }
 
     public setMax(maxDate: Date | string | undefined): this {
-        const max = maxDate instanceof Date ? serialiseDate(maxDate ?? null, false) ?? undefined : maxDate;
+        const max = maxDate instanceof Date ? _serialiseDate(maxDate ?? null, false) ?? undefined : maxDate;
         if (this.max === max) {
             return this;
         }
 
         this.max = max;
 
-        addOrRemoveAttribute(this.eInput, 'max', max);
+        _addOrRemoveAttribute(this.eInput, 'max', max);
 
         return this;
     }
@@ -68,7 +68,7 @@ export class AgInputDateField extends AgInputTextField {
 
         this.step = step;
 
-        addOrRemoveAttribute(this.eInput, 'step', step);
+        _addOrRemoveAttribute(this.eInput, 'step', step);
 
         return this;
     }
@@ -77,10 +77,10 @@ export class AgInputDateField extends AgInputTextField {
         if (!this.eInput.validity.valid) {
             return undefined;
         }
-        return parseDateTimeFromString(this.getValue()) ?? undefined;
+        return _parseDateTimeFromString(this.getValue()) ?? undefined;
     }
 
     public setDate(date: Date | undefined, silent?: boolean): void {
-        this.setValue(serialiseDate(date ?? null, false), silent);
+        this.setValue(_serialiseDate(date ?? null, false), silent);
     }
 }

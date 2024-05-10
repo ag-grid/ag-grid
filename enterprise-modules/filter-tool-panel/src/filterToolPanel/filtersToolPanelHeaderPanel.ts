@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired, Column,
     ColumnModel,
     Component,
@@ -7,7 +6,10 @@ import {
     PostConstruct,
     PreConstruct,
     RefSelector,
-    AgInputTextField
+    AgInputTextField,
+    _createIconNoSpan,
+    _debounce,
+    _setDisplayed
 } from "@ag-grid-community/core";
 import { ToolPanelFiltersCompParams } from "./filtersToolPanel";
 
@@ -64,9 +66,9 @@ export class FiltersToolPanelHeaderPanel extends Component {
     }
 
     private createExpandIcons() {
-        this.eExpand.appendChild(this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gos)!);
-        this.eExpand.appendChild(this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gos)!);
-        this.eExpand.appendChild(this.eExpandIndeterminate = _.createIconNoSpan('columnSelectIndeterminate', this.gos)!);
+        this.eExpand.appendChild(this.eExpandChecked = _createIconNoSpan('columnSelectOpen', this.gos)!);
+        this.eExpand.appendChild(this.eExpandUnchecked = _createIconNoSpan('columnSelectClosed', this.gos)!);
+        this.eExpand.appendChild(this.eExpandIndeterminate = _createIconNoSpan('columnSelectIndeterminate', this.gos)!);
     }
 
     // we only show expand / collapse if we are showing filters
@@ -80,13 +82,13 @@ export class FiltersToolPanelHeaderPanel extends Component {
         const isFilterGroupPresent = (col: Column) => col.getOriginalParent() && col.isFilterAllowed();
         const filterGroupsPresent = this.columnModel.getAllGridColumns().some(isFilterGroupPresent);
 
-        _.setDisplayed(this.eFilterTextField.getGui(), showFilterSearch);
-        _.setDisplayed(this.eExpand, showExpand && filterGroupsPresent);
+        _setDisplayed(this.eFilterTextField.getGui(), showFilterSearch);
+        _setDisplayed(this.eExpand, showExpand && filterGroupsPresent);
     }
 
     private onSearchTextChanged(): void {
         if (!this.onSearchTextChangedDebounced) {
-            this.onSearchTextChangedDebounced = _.debounce(() => {
+            this.onSearchTextChangedDebounced = _debounce(() => {
                 this.dispatchEvent({type: 'searchChanged', searchText: this.eFilterTextField.getValue()});
             }, 300);
         }
@@ -102,8 +104,8 @@ export class FiltersToolPanelHeaderPanel extends Component {
     public setExpandState(state: EXPAND_STATE): void {
         this.currentExpandState = state;
 
-        _.setDisplayed(this.eExpandChecked, this.currentExpandState === EXPAND_STATE.EXPANDED);
-        _.setDisplayed(this.eExpandUnchecked, this.currentExpandState === EXPAND_STATE.COLLAPSED);
-        _.setDisplayed(this.eExpandIndeterminate, this.currentExpandState === EXPAND_STATE.INDETERMINATE);
+        _setDisplayed(this.eExpandChecked, this.currentExpandState === EXPAND_STATE.EXPANDED);
+        _setDisplayed(this.eExpandUnchecked, this.currentExpandState === EXPAND_STATE.COLLAPSED);
+        _setDisplayed(this.eExpandIndeterminate, this.currentExpandState === EXPAND_STATE.INDETERMINATE);
     }
 }

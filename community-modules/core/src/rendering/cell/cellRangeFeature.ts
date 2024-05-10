@@ -3,11 +3,11 @@ import {
     CellCtrl,
     ICellComp
 } from "./cellCtrl";
-import { includes, last } from "../../utils/array";
+import { _includes, _last } from "../../utils/array";
 import { CellRangeType, IRangeService, ISelectionHandle, ISelectionHandleFactory, SelectionHandleType } from "../../interfaces/IRangeService";
 import { Column } from "../../entities/column";
-import { missing } from "../../utils/generic";
-import { setAriaSelected } from "../../utils/aria";
+import { _missing } from "../../utils/generic";
+import { _setAriaSelected } from "../../utils/aria";
 
 const CSS_CELL_RANGE_SELECTED = 'ag-cell-range-selected';
 const CSS_CELL_RANGE_CHART = 'ag-cell-range-chart';
@@ -61,7 +61,7 @@ export class CellRangeFeature {
         this.cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-4`, this.rangeCount >= 4);
         this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART, this.hasChartRange);
 
-        setAriaSelected(this.eGui, this.rangeCount > 0 ? true : undefined);
+        _setAriaSelected(this.eGui, this.rangeCount > 0 ? true : undefined);
         this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SINGLE_CELL, this.isSingleCell());
 
         this.updateRangeBorders();
@@ -95,7 +95,7 @@ export class CellRangeFeature {
 
         const cellRanges = rangeService.getCellRanges();
 
-        return cellRanges.length > 0 && cellRanges.every(range => includes([CellRangeType.DIMENSION, CellRangeType.VALUE], range.type));
+        return cellRanges.length > 0 && cellRanges.every(range => _includes([CellRangeType.DIMENSION, CellRangeType.VALUE], range.type));
     }
 
     public updateRangeBordersIfRangeCount(): void {
@@ -199,7 +199,7 @@ export class CellRangeFeature {
             return false;
         }
 
-        const cellRange = last(cellRanges);
+        const cellRange = _last(cellRanges);
         const cellPosition = this.cellCtrl.getCellPosition();
         const isFillHandleAvailable = gos.get('enableFillHandle') && !this.cellCtrl.isSuppressFillHandle();
         const isRangeHandleAvailable = gos.get('enableRangeHandle');
@@ -224,8 +224,8 @@ export class CellRangeFeature {
 
     private addSelectionHandle() {
         const gos = this.beans.gos;
-        const cellRangeType = last(this.rangeService.getCellRanges()).type;
-        const selectionHandleFill = gos.get('enableFillHandle') && missing(cellRangeType);
+        const cellRangeType = _last(this.rangeService.getCellRanges()).type;
+        const selectionHandleFill = gos.get('enableFillHandle') && _missing(cellRangeType);
         const type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;
 
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {
