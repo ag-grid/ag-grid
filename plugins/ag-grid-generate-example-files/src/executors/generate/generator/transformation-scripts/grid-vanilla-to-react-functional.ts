@@ -52,7 +52,7 @@ function getModuleImports(
         imports.push(...componentFilenames.map(getImport));
     }
 
-    addRelativeImports(bindings, imports, 'js');
+    addRelativeImports(bindings, imports, 'jsx');
 
     if (bindings.moduleRegistration) {
         const moduleImports = bindings.imports.filter((i) => i.imports.find((m) => m.includes('Module')));

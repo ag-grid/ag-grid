@@ -83,8 +83,12 @@ export class FontPanel extends Component {
         });
     }
 
-    public addCompToPanel(comp: Component) {
-        this.fontGroup.addItem(comp);
+    public addItem(comp: Component, prepend?: boolean) {
+        if (prepend) {
+            this.fontGroup.prependItem(comp);
+        } else {
+            this.fontGroup.addItem(comp);
+        }
         this.activeComps.push(comp);
     }
 
@@ -198,11 +202,6 @@ export class FontPanel extends Component {
                 this.setFont({ fontWeight: selectedWeightStyle!.weight, fontStyle: selectedWeightStyle!.style });
             }
         };
-    }
-
-    public addItemToPanel(item: Component) {
-        this.fontGroup.addItem(item);
-        this.activeComps.push(item);
     }
 
     private destroyActiveComps(): void {

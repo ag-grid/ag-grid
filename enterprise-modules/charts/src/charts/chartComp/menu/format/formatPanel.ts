@@ -16,15 +16,17 @@ import { ChartSeriesType, isCartesian, isPolar } from "../../utils/seriesTypeMap
 import { GradientLegendPanel } from './legend/gradientLegendPanel';
 import { ChartPanelFeature } from "../chartPanelFeature";
 import { ChartMenuContext } from "../chartMenuContext";
+import { TitlesPanel } from "./titles/titlesPanel";
 
 export interface FormatPanelOptions extends ChartMenuContext {
     isExpandedOnInit?: boolean,
-    seriesType?: ChartSeriesType,
+    seriesType: ChartSeriesType,
 }
 
 const DefaultFormatPanelDef: ChartFormatPanel = {
     groups: [
         { type: 'chart' },
+        { type: 'titles' },
         { type: 'legend' },
         { type: 'series' },
         { type: 'axis' },
@@ -72,6 +74,9 @@ export class FormatPanel extends Component {
                 case 'chart':
                     this.chartPanelFeature.addComponent(new ChartPanel(opts));
                     break;
+                case 'titles':
+                    this.chartPanelFeature.addComponent(new TitlesPanel(opts));
+                    break;
                 case 'legend':
                     // Some chart types require non-standard legend options, so choose the appropriate panel
                     const panel = ['treemap', 'sunburst', 'heatmap'].includes(chartType)
@@ -111,7 +116,7 @@ export class FormatPanel extends Component {
     }
 
     private isGroupPanelShownInSeries(group: ChartFormatPanelGroup, seriesType: ChartSeriesType): boolean {
-        return ['chart', 'legend', 'series'].includes(group) ||
+        return ['chart', 'titles', 'legend', 'series'].includes(group) ||
             (isCartesian(seriesType) && ['axis', 'horizontalAxis', 'verticalAxis'].includes(group)) ||
             (isPolar(seriesType) && group === 'axis');
     }

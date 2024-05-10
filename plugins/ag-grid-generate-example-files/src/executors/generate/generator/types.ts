@@ -1,4 +1,4 @@
-export type TransformTsFileExt = undefined | '.js' | '.tsx';
+export type TransformTsFileExt = undefined | '.js' | '.tsx' | '.jsx';
 
 export interface ExampleSettings {
     enterprise?: boolean;
