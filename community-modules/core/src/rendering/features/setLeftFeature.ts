@@ -86,7 +86,7 @@ export class SetLeftFeature extends BeanStub {
         // VM turn, but only one (the correct one) should get applied.
         this.actualLeft = actualLeft;
 
-        this.beans.columnAnimationService._executeNextVMTurn(() => {
+        this.beans.columnAnimationService.executeNextVMTurn(() => {
             // test this left value is the latest one to be applied, and if not, do nothing
             if (this.actualLeft === actualLeft) {
                 this.setLeft(actualLeft);

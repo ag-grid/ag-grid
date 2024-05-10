@@ -7,7 +7,7 @@
  * @param {string} msg
  * COMMENTED OUT: As only used for debug locally have commented out so not included in deployed build.
  */
-/* export function _message(msg: string): void {
+/* export function message(msg: string): void {
     const eMessage = document.createElement('div');
     let eBox = document.querySelector('#__ag__message');
 

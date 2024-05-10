@@ -414,7 +414,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         if (!cellEditor.getGui) {
-            console.warn(`AG Grid: cellEditor for column ${this.column.getId()} is _missing getGui() method`);
+            console.warn(`AG Grid: cellEditor for column ${this.column.getId()} is missing getGui() method`);
             this.beans.context.destroyBean(cellEditor);
             return;
         }

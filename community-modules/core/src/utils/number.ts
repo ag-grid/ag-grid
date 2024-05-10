@@ -12,28 +12,6 @@ export function _createArrayOfNumbers(first: number, last: number): number[] {
     return result;
 }
 
-export function _cleanNumber(value: any): number | null {
-    if (typeof value === 'string') {
-        value = parseInt(value, 10);
-    }
-
-    if (typeof value === 'number') {
-        return Math.floor(value);
-    }
-
-    return null;
-}
-
-export function _decToHex(number: number, bytes: number): string {
-    let hex = '';
-
-    for (let i = 0; i < bytes; i++) {
-        hex += String.fromCharCode(number & 0xff);
-        number >>>= 8;
-    }
-
-    return hex;
-}
 
 export function _formatNumberTwoDecimalPlacesAndCommas(value: number, thousandSeparator: string, decimalSeparator: string): string {
     if (typeof value !== 'number') { return ''; }

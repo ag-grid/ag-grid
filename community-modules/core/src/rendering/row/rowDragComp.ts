@@ -160,8 +160,8 @@ class VisibilityStrategy extends BeanStub {
             }
 
             // if shown sometimes, them some rows can have drag handle while other don't,
-            // so we use _setVisible to keep the handles horizontally aligned (as _setVisible
-            // keeps the empty space, whereas _setDisplayed looses the space)
+            // so we use setVisible to keep the handles horizontally aligned (as _setVisible
+            // keeps the empty space, whereas setDisplayed looses the space)
             if (isShownSometimes) {
                 this.parent.setDisplayed(true, displayedOptions);
                 this.parent.setVisible(shown, displayedOptions);

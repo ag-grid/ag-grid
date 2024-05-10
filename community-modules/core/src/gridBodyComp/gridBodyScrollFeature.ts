@@ -392,7 +392,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     public isHorizontalScrollShowing(): boolean {
-        return this.centerRowsCtrl._isHorizontalScrollShowing();
+        return this.centerRowsCtrl.isHorizontalScrollShowing();
     }
 
     // called by the headerRootComp and moveColumnController

@@ -46,7 +46,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
     private checkPageSize(): void {
         if (this.notActive()) { return; }
 
-        const bodyHeight = this.centerRowsCtrl.getViewportSizeFeature()!._getBodyHeight();
+        const bodyHeight = this.centerRowsCtrl.getViewportSizeFeature()!.getBodyHeight();
 
         if (bodyHeight > 0) {
             const update = () => {

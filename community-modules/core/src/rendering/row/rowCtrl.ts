@@ -1424,7 +1424,7 @@ export class RowCtrl extends BeanStub {
 
     private onRowHeightChanged(gui?: RowGui): void {
         // check for exists first - if the user is resetting the row height, then
-        // it will be null (or undefined) momentarily until the next time the _flatten
+        // it will be null (or undefined) momentarily until the next time the flatten
         // stage is called where the row will then update again with a new height
         if (this.rowNode.rowHeight == null) { return; }
 

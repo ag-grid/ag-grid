@@ -40,7 +40,7 @@ export interface ServerSideGroupLevelState {
     suppressInfiniteScroll: boolean;
     /** The route that identifies this level. */
     route: string[];
-    /** How many rows the level has. This _includes 'loading rows'. */
+    /** How many rows the level has. This includes 'loading rows'. */
     rowCount: number;
     /**
      * Infinite Scroll only.

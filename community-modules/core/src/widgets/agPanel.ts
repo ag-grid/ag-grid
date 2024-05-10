@@ -62,7 +62,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
 
         this.positionableFeature = new PositionableFeature(this.getGui(), {
             minWidth, width, minHeight, height, centered, x, y, popup,
-            calculateTopBuffer: () => this.positionableFeature.getHeight()! - this._getBodyHeight()
+            calculateTopBuffer: () => this.positionableFeature.getHeight()! - this.getBodyHeight()
         });
 
         this.createManagedBean(this.positionableFeature);
@@ -186,11 +186,11 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         button.setParentComponent(this);
     }
 
-    public _getBodyHeight(): number {
+    public getBodyHeight(): number {
         return _getInnerHeight(this.eContentWrapper);
     }
 
-    public _getBodyWidth(): number {
+    public getBodyWidth(): number {
         return _getInnerWidth(this.eContentWrapper);
     }
 

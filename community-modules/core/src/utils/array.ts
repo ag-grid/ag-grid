@@ -1,5 +1,3 @@
-import { _toStringOrNull } from './generic';
-
 export function _existsAndNotEmpty<T>(value?: T[]): boolean {
     return value != null && value.length > 0;
 }
@@ -109,10 +107,6 @@ export function _pushAll<T>(target: T[], source: T[]): void {
     if (source == null || target == null) { return; }
 
     source.forEach(value => target.push(value));
-}
-
-export function _toStrings<T>(array: T[]): ((string | null)[]) | null {
-    return array.map(_toStringOrNull);
 }
 
 export function _forEachReverse<T>(list: T[], action: (value: T, index: number) => void): void {

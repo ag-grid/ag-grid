@@ -101,7 +101,7 @@ export class GridOptionsService {
         // Ensure the propertyEventService has framework overrides set so that it can fire events outside of angular
         this.propertyEventService.setFrameworkOverrides(this.frameworkOverrides);
         // sets an initial calculation for the scrollbar width
-        this._getScrollbarWidth();
+        this.getScrollbarWidth();
 
     }
     @PreDestroy
@@ -309,7 +309,7 @@ export class GridOptionsService {
     // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
     // allow the user to provide the scroll width before we work it out.
-    public _getScrollbarWidth() {
+    public getScrollbarWidth() {
         if (this.scrollbarWidth == null) {
             const useGridOptions = typeof this.gridOptions.scrollbarWidth === 'number' && this.gridOptions.scrollbarWidth >= 0;
             const scrollbarWidth = useGridOptions ? this.gridOptions.scrollbarWidth : _getScrollbarWidth();

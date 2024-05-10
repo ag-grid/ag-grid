@@ -1,4 +1,4 @@
-import { _areEqual, forEachReverse } from './array';
+import { _areEqual, _forEachReverse } from './array';
 
 describe('areEqual', () => {
     it.each([
@@ -7,7 +7,7 @@ describe('areEqual', () => {
         [undefined, null],
         [null, null],
     ])
-        ('returns true if both arrays are _missing or empty: a = %s, b = %s', (a, b) => {
+        ('returns true if both arrays are missing or empty: a = %s, b = %s', (a, b) => {
             expect(_areEqual(a, b)).toBe(true);
         });
 
@@ -17,7 +17,7 @@ describe('areEqual', () => {
         [null, []],
         [[], null],
     ])
-        ('returns false if only one array is _missing: a = %s, b = %s', (a, b) => {
+        ('returns false if only one array is missing: a = %s, b = %s', (a, b) => {
             expect(_areEqual(a, b)).toBe(false);
         });
 
@@ -48,13 +48,13 @@ describe('areEqual', () => {
 
 describe('forEachReverse', () => {
     it.each([undefined, null])('returns successfully if list is %s', value => {
-        expect(() => forEachReverse(value!, () => { })).not.toThrow();
+        expect(() => _forEachReverse(value!, () => { })).not.toThrow();
     });
 
     it('executes for each value in reverse order', () => {
         const result: number[] = [];
 
-        forEachReverse([1, 4, 7], value => result.push(value));
+        _forEachReverse([1, 4, 7], value => result.push(value));
 
         expect(result).toStrictEqual([7, 4, 1]);
     });

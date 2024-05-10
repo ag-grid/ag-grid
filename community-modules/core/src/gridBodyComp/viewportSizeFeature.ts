@@ -150,7 +150,7 @@ export class ViewportSizeFeature extends BeanStub {
         this.gridBodyCtrl.getScrollFeature().checkScrollLeft();
     }
 
-    public _getBodyHeight(): number {
+    public getBodyHeight(): number {
         return this.bodyHeight;
     }
 
@@ -180,15 +180,15 @@ export class ViewportSizeFeature extends BeanStub {
 
     private updateScrollVisibleServiceImpl(): void {
         const params: SetScrollsVisibleParams = {
-            horizontalScrollShowing: this._isHorizontalScrollShowing(),
+            horizontalScrollShowing: this.isHorizontalScrollShowing(),
             verticalScrollShowing: this.gridBodyCtrl.isVerticalScrollShowing()
         };
 
         this.scrollVisibleService.setScrollsVisible(params);
     }
 
-    private _isHorizontalScrollShowing(): boolean {
-        return this.centerContainerCtrl._isHorizontalScrollShowing();
+    private isHorizontalScrollShowing(): boolean {
+        return this.centerContainerCtrl.isHorizontalScrollShowing();
     }
 
     // this gets called whenever a change in the viewport, so we can inform column controller it has to work

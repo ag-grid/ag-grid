@@ -400,7 +400,7 @@ export class GridApi<TData = any> {
         this.frameworkOverrides.wrapIncoming(() => this.ctrlsService.getHeaderRowContainerCtrls().forEach(c => c.refresh()));
     }
 
-    /** Returns `true` if any filter is set. This _includes quick filter, column filter, external filter or advanced filter. */
+    /** Returns `true` if any filter is set. This includes quick filter, column filter, external filter or advanced filter. */
     public isAnyFilterPresent(): boolean {
         return this.filterManager.isAnyFilterPresent();
     }
@@ -740,7 +740,7 @@ export class GridApi<TData = any> {
      * Similar to `forEachNode`, except lists all the leaf nodes.
      * This effectively goes through all the data that you provided to the grid before the grid performed any grouping.
      * If using tree data, goes through all the nodes for the data you provided, including nodes that have children,
-     * but excluding groups the grid created where gaps were _missing in the hierarchy.
+     * but excluding groups the grid created where gaps were missing in the hierarchy.
      */
     public forEachLeafNode(callback: (rowNode: IRowNode<TData>) => void) {
         if (_missing(this.clientSideRowModel)) {

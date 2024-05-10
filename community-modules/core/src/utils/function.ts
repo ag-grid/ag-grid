@@ -63,7 +63,7 @@ export function _executeAfter(funcs: Function[], milliseconds = 0): void {
 
 /**
  * @param {Function} func The function to be debounced
- * @param {number} delay The time in ms to _debounce
+ * @param {number} delay The time in ms to debounce
  * @return {Function} The debounced function
  */
 export function _debounce(func: (...args: any[]) => void, delay: number): (...args: any[]) => void {

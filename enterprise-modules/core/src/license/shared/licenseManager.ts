@@ -1,9 +1,6 @@
+import { _missingOrEmpty } from '@ag-grid-community/core';
 import {MD5} from './md5';
 
-// move to general utils
-function _missingOrEmpty<T>(value?: T[] | string | null): boolean {
-    return value == null || value.length === 0;
-}
 
 const LICENSE_TYPES = {
     '01': 'GRID',
@@ -38,7 +35,7 @@ export class LicenseManager {
         const currentLicenseName = `AG Grid ${licenseDetails.currentLicenseType === 'BOTH' ? 'and AG Charts ' : ''}Enterprise`;
         const suppliedLicenseName = licenseDetails.suppliedLicenseType === undefined ? '' : `AG ${licenseDetails.suppliedLicenseType === 'BOTH' ? 'Grid and AG Charts' : licenseDetails.suppliedLicenseType === 'GRID' ? 'Grid' : 'Charts'} Enterprise`;
 
-        if (licenseDetails._missing) {
+        if (licenseDetails.missing) {
             if (!this.isWebsiteUrl() || this.isForceWatermark()) {
                 this.outputMissingLicenseKey(currentLicenseName);
             }
@@ -83,7 +80,7 @@ export class LicenseManager {
             return {
                 licenseKey,
                 valid: false,
-                _missing: true,
+                missing: true,
                 currentLicenseType
             }
         }

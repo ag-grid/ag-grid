@@ -24,6 +24,6 @@ describe('camelCaseToHyphenated', () => {
         ['marginLeft', 'margin-left'],
         ['thisIsARandomTest', 'this-is-a-random-test']
     ])('Value %s', (field, expected) => {
-        expect(camelCaseToHyphenated(field)).toBe(expected);
+        expect(_camelCaseToHyphenated(field)).toBe(expected);
     });
 });

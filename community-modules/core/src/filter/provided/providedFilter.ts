@@ -44,7 +44,7 @@ export interface IProvidedFilterParams {
      */
     closeOnApply?: boolean;
     /**
-     * Overrides the default _debounce time in milliseconds for the filter. Defaults are:
+     * Overrides the default debounce time in milliseconds for the filter. Defaults are:
      * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).
      * - `DateFilter` and `SetFilter`: 0ms
      */
@@ -428,7 +428,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     /**
      * By default, if the change came from a floating filter it will be applied immediately, otherwise if there is no
-     * apply button it will be applied after a _debounce, otherwise it will not be applied at all. This behaviour can
+     * apply button it will be applied after a debounce, otherwise it will not be applied at all. This behaviour can
      * be adjusted by using the apply parameter.
      */
     protected onUiChanged(fromFloatingFilter = false, apply?: 'immediately' | 'debounce' | 'prevent'): void {

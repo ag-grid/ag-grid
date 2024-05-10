@@ -138,20 +138,20 @@ export class CheckboxSelectionComponent extends Component {
         // checkboxSelection callback is deemed a legacy solution however we will still consider it's result.
         // If selectable, then also check the colDef callback. if not selectable, this it short circuits - no need
         // to call the colDef callback.
-        const _isVisible = this.getIsVisible();
+        const isVisible = this.getIsVisible();
         if (selectable) {
-            if (typeof _isVisible === 'function') {
+            if (typeof isVisible === 'function') {
                 const extraParams = this.overrides?.callbackParams;
 
                 if (!this.column) {
                     // full width row
-                    selectable = _isVisible({ ...extraParams, node: this.rowNode, data: this.rowNode.data });
+                    selectable = isVisible({ ...extraParams, node: this.rowNode, data: this.rowNode.data });
                 } else {
                     const params = this.column.createColumnFunctionCallbackParams(this.rowNode);
-                    selectable = _isVisible({ ...extraParams, ...params });
+                    selectable = isVisible({ ...extraParams, ...params });
                 }
             } else {
-                selectable = _isVisible ?? false;
+                selectable = isVisible ?? false;
             }
         }
 

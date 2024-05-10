@@ -81,7 +81,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         // b) if v scroll is showing on the right (normal position of scroll)
         let rightSpacing = this.columnModel.getDisplayedColumnsRightWidth();
         const scrollOnRight = !this.enableRtl && vScrollShowing;
-        const scrollbarWidth = this.gos._getScrollbarWidth();
+        const scrollbarWidth = this.gos.getScrollbarWidth();
 
         if (scrollOnRight) {
             rightSpacing += scrollbarWidth;
@@ -106,7 +106,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
         const invisibleScrollbar = this.invisibleScrollbar;
         const isSuppressHorizontalScroll = this.gos.get('suppressHorizontalScroll');
-        const scrollbarWidth = hScrollShowing ? (this.gos._getScrollbarWidth() || 0) : 0;
+        const scrollbarWidth = hScrollShowing ? (this.gos.getScrollbarWidth() || 0) : 0;
         const adjustedScrollbarWidth = (scrollbarWidth === 0 && invisibleScrollbar) ? 16 : scrollbarWidth;
         const scrollContainerSize = !isSuppressHorizontalScroll ? adjustedScrollbarWidth : 0;
 

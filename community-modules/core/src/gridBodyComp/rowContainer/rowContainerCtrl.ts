@@ -360,7 +360,7 @@ export class RowContainerCtrl extends BeanStub {
         return _getScrollLeft(this.eViewport, this.enableRtl);
     }
 
-    public _isHorizontalScrollShowing(): boolean {
+    public isHorizontalScrollShowing(): boolean {
         const isAlwaysShowHorizontalScroll = this.gos.get('alwaysShowHorizontalScroll');
         return isAlwaysShowHorizontalScroll || _isHorizontalScrollShowing(this.eViewport);
     }

@@ -3,23 +3,23 @@ import { SortDirection } from '../entities/colDef';
 export type ColumnSortState = 'ascending' | 'descending' | 'other' | 'none';
 
 // ARIA HELPER FUNCTIONS
-function toggleAriaAttribute(element: Element, attribute: string, value?: number | boolean | string | null) {
+function _toggleAriaAttribute(element: Element, attribute: string, value?: number | boolean | string | null) {
     if (value == null || (typeof value === 'string' && value == '')) {
-        removeAriaAttribute(element, attribute);
+        _removeAriaAttribute(element, attribute);
     } else {
-        setAriaAttribute(element, attribute, value);
+        _setAriaAttribute(element, attribute, value);
     }
 }
 
-function setAriaAttribute(element: Element, attribute: string, value: number | boolean | string): void {
-    element.setAttribute(ariaAttributeName(attribute), value.toString());
+function _setAriaAttribute(element: Element, attribute: string, value: number | boolean | string): void {
+    element.setAttribute(_ariaAttributeName(attribute), value.toString());
 }
 
-function removeAriaAttribute(element: Element, attribute: string): void {
-    element.removeAttribute(ariaAttributeName(attribute));
+function _removeAriaAttribute(element: Element, attribute: string): void {
+    element.removeAttribute(_ariaAttributeName(attribute));
 }
 
-function ariaAttributeName(attribute: string) {
+function _ariaAttributeName(attribute: string) {
     return `aria-${attribute}`;
 }
 
@@ -62,103 +62,103 @@ export function _getAriaLabel(element: Element): string | null {
 
 // ARIA ATTRIBUTE SETTERS
 export function _setAriaLabel(element: Element, label?: string | null): void {
-    toggleAriaAttribute(element, 'label', label);
+    _toggleAriaAttribute(element, 'label', label);
 }
 
 export function _setAriaLabelledBy(element: Element, labelledBy?: string): void {
-    toggleAriaAttribute(element, 'labelledby', labelledBy);
+    _toggleAriaAttribute(element, 'labelledby', labelledBy);
 }
 
 export function _setAriaDescribedBy(element: Element, describedby?: string): void {
-    toggleAriaAttribute(element, 'describedby', describedby);
+    _toggleAriaAttribute(element, 'describedby', describedby);
 }
 
 export function _setAriaLive(element: Element, live?: 'polite' | 'assertive' | 'off' | null) {
-    toggleAriaAttribute(element, 'live', live);
+    _toggleAriaAttribute(element, 'live', live);
 }
 
 export function _setAriaAtomic(element: Element, atomic: boolean | null) {
-    toggleAriaAttribute(element, 'atomic', atomic);
+    _toggleAriaAttribute(element, 'atomic', atomic);
 }
 
 export function _setAriaRelevant(element: Element, relevant:  'additions' | 'additions text' | 'all' | 'removals' | 'text' | null) {
-    toggleAriaAttribute(element, 'relevant', relevant);
+    _toggleAriaAttribute(element, 'relevant', relevant);
 }
 
 export function _setAriaLevel(element: Element, level: number): void {
-    toggleAriaAttribute(element, 'level', level);
+    _toggleAriaAttribute(element, 'level', level);
 }
 
 export function _setAriaDisabled(element: Element, disabled: boolean): void {
-    toggleAriaAttribute(element, 'disabled', disabled);
+    _toggleAriaAttribute(element, 'disabled', disabled);
 }
 
 export function _setAriaHidden(element: Element, hidden: boolean): void {
-    toggleAriaAttribute(element, 'hidden', hidden);
+    _toggleAriaAttribute(element, 'hidden', hidden);
 }
 
 export function _setAriaActiveDescendant(element: Element, descendantId: string | null): void {
-    toggleAriaAttribute(element, 'activedescendant', descendantId);
+    _toggleAriaAttribute(element, 'activedescendant', descendantId);
 }
 
 export function _setAriaExpanded(element: Element, expanded: boolean): void {
-    setAriaAttribute(element, 'expanded', expanded);
+    _setAriaAttribute(element, 'expanded', expanded);
 }
 
 export function _removeAriaExpanded(element: Element): void {
-    removeAriaAttribute(element, 'expanded');
+    _removeAriaAttribute(element, 'expanded');
 }
 
 export function _setAriaSetSize(element: Element, setsize: number): void {
-    setAriaAttribute(element, 'setsize', setsize);
+    _setAriaAttribute(element, 'setsize', setsize);
 }
 
 export function _setAriaPosInSet(element: Element, position: number): void {
-    setAriaAttribute(element, 'posinset', position);
+    _setAriaAttribute(element, 'posinset', position);
 }
 
 export function _setAriaMultiSelectable(element: Element, multiSelectable: boolean): void {
-    setAriaAttribute(element, 'multiselectable', multiSelectable);
+    _setAriaAttribute(element, 'multiselectable', multiSelectable);
 }
 
 export function _setAriaRowCount(element: Element, rowCount: number): void {
-    setAriaAttribute(element, 'rowcount', rowCount);
+    _setAriaAttribute(element, 'rowcount', rowCount);
 }
 
 export function _setAriaRowIndex(element: Element, rowIndex: number): void {
-    setAriaAttribute(element, 'rowindex', rowIndex);
+    _setAriaAttribute(element, 'rowindex', rowIndex);
 }
 
 export function _setAriaColCount(element: Element, colCount: number): void {
-    setAriaAttribute(element, 'colcount', colCount);
+    _setAriaAttribute(element, 'colcount', colCount);
 }
 
 export function _setAriaColIndex(element: Element, colIndex: number): void {
-    setAriaAttribute(element, 'colindex', colIndex);
+    _setAriaAttribute(element, 'colindex', colIndex);
 }
 
 export function _setAriaColSpan(element: Element, colSpan: number): void {
-    setAriaAttribute(element, 'colspan', colSpan);
+    _setAriaAttribute(element, 'colspan', colSpan);
 }
 
 export function _setAriaSort(element: Element, sort: ColumnSortState): void {
-    setAriaAttribute(element, 'sort', sort);
+    _setAriaAttribute(element, 'sort', sort);
 }
 
 export function _removeAriaSort(element: Element): void {
-    removeAriaAttribute(element, 'sort');
+    _removeAriaAttribute(element, 'sort');
 }
 
 export function _setAriaSelected(element: Element, selected?: boolean): void {
-    toggleAriaAttribute(element, 'selected', selected);
+    _toggleAriaAttribute(element, 'selected', selected);
 }
 
 export function _setAriaChecked(element: Element, checked?: boolean) {
-    setAriaAttribute(element, 'checked', checked === undefined ? 'mixed' : checked);
+    _setAriaAttribute(element, 'checked', checked === undefined ? 'mixed' : checked);
 }
 
 export function _setAriaControls(controllerElement: Element, controlledElement: Element) {
-    toggleAriaAttribute(controllerElement, 'controls', controlledElement.id);
+    _toggleAriaAttribute(controllerElement, 'controls', controlledElement.id);
     _setAriaLabelledBy(controlledElement, controllerElement.id);
 }
 

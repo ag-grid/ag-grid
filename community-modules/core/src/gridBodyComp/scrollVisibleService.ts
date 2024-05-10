@@ -56,7 +56,7 @@ export class ScrollVisibleService extends BeanStub {
         if (!centerRowCtrl || this.columnAnimationService.isActive()) { return; }
 
         const params: SetScrollsVisibleParams = {
-            horizontalScrollShowing: centerRowCtrl._isHorizontalScrollShowing(),
+            horizontalScrollShowing: centerRowCtrl.isHorizontalScrollShowing(),
             verticalScrollShowing: this.isVerticalScrollShowing()
         };
 
