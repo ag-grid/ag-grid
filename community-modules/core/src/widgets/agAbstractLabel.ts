@@ -1,7 +1,7 @@
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
-import { clearElement, setDisabled, setDisplayed, setElementWidth } from "../utils/dom";
-import { setAriaRole } from "../utils/aria";
+import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from "../utils/dom";
+import { _setAriaRole } from "../utils/aria";
 
 export type LabelAlignment = 'left' | 'right' | 'top';
 
@@ -56,7 +56,7 @@ export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelPar
     }
 
     protected refreshLabel() {
-        clearElement(this.eLabel);
+        _clearElement(this.eLabel);
 
         if (typeof this.label === 'string') {
             this.eLabel.innerText = this.label + this.labelSeparator;
@@ -65,11 +65,11 @@ export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelPar
         }
 
         if (this.label === '') {
-            setDisplayed(this.eLabel, false);
-            setAriaRole(this.eLabel, 'presentation');
+            _setDisplayed(this.eLabel, false);
+            _setAriaRole(this.eLabel, 'presentation');
         } else {
-            setDisplayed(this.eLabel, true);
-            setAriaRole(this.eLabel, null);
+            _setDisplayed(this.eLabel, true);
+            _setAriaRole(this.eLabel, null);
         }
     }
 
@@ -131,7 +131,7 @@ export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelPar
             return this;
         }
 
-        setElementWidth(this.eLabel, width);
+        _setElementWidth(this.eLabel, width);
 
         return this;
     }
@@ -141,7 +141,7 @@ export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelPar
 
         const element = this.getGui();
 
-        setDisabled(element, disabled);
+        _setDisabled(element, disabled);
         element.classList.toggle('ag-disabled', disabled);
 
         this.disabled = disabled;

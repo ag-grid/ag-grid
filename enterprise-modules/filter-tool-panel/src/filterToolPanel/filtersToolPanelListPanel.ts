@@ -1,5 +1,4 @@
 import {
-    _,
     AbstractColDef,
     Autowired,
     Column,
@@ -8,7 +7,13 @@ import {
     Events,
     ProvidedColumnGroup,
     IProvidedColumn,
-    FiltersToolPanelState
+    FiltersToolPanelState,
+    _flatten,
+    _clearElement,
+    _exists,
+    _includes,
+    _setAriaLabel,
+    _mergeDeep
 } from "@ag-grid-community/core";
 
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";
@@ -50,7 +55,7 @@ export class FiltersToolPanelListPanel extends Component {
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false
         });
-        _.mergeDeep(defaultParams, params);
+        _mergeDeep(defaultParams, params);
         this.params = defaultParams as ToolPanelFiltersCompParams;
 
         if (!this.params.suppressSyncLayoutWithGrid) {
@@ -136,7 +141,7 @@ export class FiltersToolPanelListPanel extends Component {
         }
 
         // perform search if searchFilterText exists
-        if (_.exists(this.searchFilterText)) {
+        if (_exists(this.searchFilterText)) {
             this.searchFilters(this.searchFilterText);
         }
 
@@ -153,9 +158,9 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     private recursivelyAddComps(tree: IProvidedColumn[], depth: number, expansionState: Map<string, boolean>): (ToolPanelFilterGroupComp | ToolPanelFilterComp)[] {
-        return _.flatten(tree.map(child => {
+        return _flatten(tree.map(child => {
             if (child instanceof ProvidedColumnGroup) {
-                return _.flatten(this.recursivelyAddFilterGroupComps(child, depth, expansionState)!);
+                return _flatten(this.recursivelyAddFilterGroupComps(child, depth, expansionState)!);
             }
 
             const column = child as Column;
@@ -197,7 +202,7 @@ export class FiltersToolPanelListPanel extends Component {
 
         const totalVisibleItems = visibleItems.length;
 
-        _.setAriaLabel(this.getAriaElement(), `${filterListName} ${totalVisibleItems} ${localeFilters}`);
+        _setAriaLabel(this.getAriaElement(), `${filterListName} ${totalVisibleItems} ${localeFilters}`);
 
     }
 
@@ -212,7 +217,7 @@ export class FiltersToolPanelListPanel extends Component {
         if (colGroupDef && colGroupDef.suppressFiltersToolPanel) { return []; }
 
         const newDepth = columnGroup.isPadding() ? depth : depth + 1;
-        const childFilterComps = _.flatten(this.recursivelyAddComps(columnGroup.getChildren(), newDepth, expansionState));
+        const childFilterComps = _flatten(this.recursivelyAddComps(columnGroup.getChildren(), newDepth, expansionState));
 
         if (columnGroup.isPadding()) { return childFilterComps; }
 
@@ -286,7 +291,7 @@ export class FiltersToolPanelListPanel extends Component {
 
         const updateGroupExpandState = (filterGroup: ToolPanelFilterGroupComp) => {
             const groupId = filterGroup.getFilterGroupId();
-            const shouldExpandOrCollapse = !groupIds || _.includes(groupIds, groupId);
+            const shouldExpandOrCollapse = !groupIds || _includes(groupIds, groupId);
             if (shouldExpandOrCollapse) {
                 // don't expand 'column groups', i.e. top level columns wrapped in a group
                 if (expand && filterGroup.isColumnGroup()) {
@@ -340,7 +345,7 @@ export class FiltersToolPanelListPanel extends Component {
             }
 
             const colId = filterComp.getColumn().getColId();
-            const updateFilterExpandState = !colIds || _.includes(colIds, colId);
+            const updateFilterExpandState = !colIds || _includes(colIds, colId);
 
             if (updateFilterExpandState) {
                 expand ? filterComp.expand() : filterComp.collapse();
@@ -402,13 +407,13 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     public performFilterSearch(searchText: string) {
-        this.searchFilterText = _.exists(searchText) ? searchText.toLowerCase() : null;
+        this.searchFilterText = _exists(searchText) ? searchText.toLowerCase() : null;
         this.searchFilters(this.searchFilterText);
     }
 
     private searchFilters(searchFilter: string | null) {
         const passesFilter = (groupName: string) => {
-            return !_.exists(searchFilter) || groupName.toLowerCase().indexOf(searchFilter) !== -1;
+            return !_exists(searchFilter) || groupName.toLowerCase().indexOf(searchFilter) !== -1;
         };
 
         const recursivelySearch = (filterItem: ToolPanelFilterItem, parentPasses: boolean): boolean => {
@@ -510,7 +515,7 @@ export class FiltersToolPanelListPanel extends Component {
 
     private destroyFilters() {
         this.filterGroupComps = this.destroyBeans(this.filterGroupComps);
-        _.clearElement(this.getGui());
+        _clearElement(this.getGui());
     }
 
     protected destroy() {

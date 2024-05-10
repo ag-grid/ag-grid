@@ -2,8 +2,8 @@ import { Autowired, Optional } from "../../context/context";
 import { ICellRenderer } from "./iCellRenderer";
 import { Component } from "../../widgets/component";
 import { FilterManager } from "../../filter/filterManager";
-import { clearElement } from "../../utils/dom";
-import { missing, exists } from "../../utils/generic";
+import { _clearElement } from "../../utils/dom";
+import { _missing, _exists } from "../../utils/generic";
 
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
 
@@ -73,7 +73,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
     public refresh(params: any, isInitialRender: boolean = false): boolean {
         let value = params.value;
 
-        if (missing(value)) {
+        if (_missing(value)) {
             value = '';
         }
 
@@ -93,12 +93,12 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
 
         this.lastValue = value;
 
-        if (exists(params.valueFormatted)) {
+        if (_exists(params.valueFormatted)) {
             this.eCurrent.textContent = params.valueFormatted;
-        } else if (exists(params.value)) {
+        } else if (_exists(params.value)) {
             this.eCurrent.textContent = value;
         } else {
-            clearElement(this.eCurrent);
+            _clearElement(this.eCurrent);
         }
 
         return true;

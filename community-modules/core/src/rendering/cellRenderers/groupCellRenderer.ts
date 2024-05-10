@@ -1,6 +1,6 @@
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
-import { setAriaRole } from "../../utils/aria";
-import { setDisplayed } from "../../utils/dom";
+import { _setAriaRole } from "../../utils/aria";
+import { _setDisplayed } from "../../utils/dom";
 import { Component } from "../../widgets/component";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer } from "./groupCellRendererCtrl";
@@ -36,8 +36,8 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             setInnerRenderer: (compDetails, valueToDisplay) => this.setRenderDetails(compDetails, valueToDisplay),
             setChildCount: count => this.eChildCount.textContent = count,
             addOrRemoveCssClass: (cssClass, value) => this.addOrRemoveCssClass(cssClass, value),
-            setContractedDisplayed: expanded => setDisplayed(this.eContracted, expanded),
-            setExpandedDisplayed: expanded => setDisplayed(this.eExpanded, expanded),
+            setContractedDisplayed: expanded => _setDisplayed(this.eContracted, expanded),
+            setExpandedDisplayed: expanded => _setDisplayed(this.eExpanded, expanded),
             setCheckboxVisible: visible => this.eCheckbox.classList.toggle('ag-invisible', !visible)
         };
 
@@ -47,7 +47,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         ctrl.init(compProxy, eGui, this.eCheckbox, this.eExpanded, this.eContracted, this.constructor, params);
 
         if (fullWidth) {
-            setAriaRole(eGui, ctrl.getCellAriaRole());
+            _setAriaRole(eGui, ctrl.getCellAriaRole());
         }
     }
 

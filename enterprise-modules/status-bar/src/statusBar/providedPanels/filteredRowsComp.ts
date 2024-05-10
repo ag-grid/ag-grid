@@ -3,9 +3,10 @@ import {
     Events,
     PostConstruct,
     IStatusPanelComp,
-    _,
     IRowModel,
-    IClientSideRowModel
+    IClientSideRowModel,
+    _formatNumberCommas,
+    _warnOnce
 } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
@@ -19,7 +20,7 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
 
         // this component is only really useful with client side row model
         if (this.rowModel.getType() !== 'clientSide') {
-            _.warnOnce(`agFilteredRowCountComponent should only be used with the client side row model.`);
+            _warnOnce(`agFilteredRowCountComponent should only be used with the client side row model.`);
             return;
         }
 
@@ -40,7 +41,7 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 
-        this.setValue(_.formatNumberCommas(filteredRowCountValue, thousandSeparator, decimalSeparator));
+        this.setValue(_formatNumberCommas(filteredRowCountValue, thousandSeparator, decimalSeparator));
         this.setDisplayed(totalRowCountValue !== filteredRowCountValue);
     }
 

@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
@@ -19,7 +18,9 @@ import {
     IInfiniteRowModel,
     WithoutGridCommon,
     RowModelType,
-    Optional
+    Optional,
+    _jsonEquals,
+    _warnOnce
 } from "@ag-grid-community/core";
 import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 
@@ -66,7 +67,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     private verifyProps(): void {
         if (this.gos.exists('initialGroupOrderComparator')) {
-            _.warnOnce('initialGroupOrderComparator cannot be used with Infinite Row Model as sorting is done on the server side');
+            _warnOnce('initialGroupOrderComparator cannot be used with Infinite Row Model as sorting is done on the server side');
         }
     }
 
@@ -122,7 +123,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     private isSortModelDifferent(): boolean {
-        return !_.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
+        return !_jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
     }
 
     public getType(): RowModelType {

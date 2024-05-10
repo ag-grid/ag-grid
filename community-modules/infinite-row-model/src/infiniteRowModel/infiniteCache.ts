@@ -12,10 +12,12 @@ import {
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,
-    _,
     FocusService,
     SortModelItem,
-    WithoutGridCommon
+    WithoutGridCommon,
+    _exists,
+    _getAllValuesInObject,
+    _missing
 } from "@ag-grid-community/core";
 import { InfiniteBlock } from "./infiniteBlock";
 
@@ -224,7 +226,7 @@ export class InfiniteCache extends BeanStub {
 
         // if undefined is passed, we do not set this value, if one of {true,false}
         // is passed, we do set the value.
-        if (_.exists(lastRowIndexKnown)) {
+        if (_exists(lastRowIndexKnown)) {
             this.lastRowIndexKnown = lastRowIndexKnown;
         }
 
@@ -248,7 +250,7 @@ export class InfiniteCache extends BeanStub {
     public getBlocksInOrder(): InfiniteBlock[] {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
         const blockComparator = (a: InfiniteBlock, b: InfiniteBlock) => a.getId() - b.getId();
-        const blocks = _.getAllValuesInObject(this.blocks).sort(blockComparator);
+        const blocks = _getAllValuesInObject(this.blocks).sort(blockComparator);
         return blocks;
     }
 
@@ -313,7 +315,7 @@ export class InfiniteCache extends BeanStub {
         const numberSequence: NumberSequence = new NumberSequence();
 
         // if only one node passed, we start the selection at the top
-        if (_.missing(firstInRange)) {
+        if (_missing(firstInRange)) {
             inActiveRange = true;
         }
 

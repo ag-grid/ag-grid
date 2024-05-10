@@ -5,8 +5,8 @@ import { Events } from "../../eventKeys";
 import { PaginationChangedEvent } from "../../events";
 import { PaginationProxy } from "../../pagination/paginationProxy";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
-import { clearElement } from "../../utils/dom";
-import { warnOnce } from "../../utils/function";
+import { _clearElement } from "../../utils/dom";
+import { _warnOnce } from "../../utils/function";
 
 export class PageSizeSelectorComp extends Component {
 
@@ -88,7 +88,7 @@ export class PageSizeSelectorComp extends Component {
     }
 
     private reset(): void {
-        clearElement(this.getGui());
+        _clearElement(this.getGui());
 
         if (!this.selectPageSizeComp) { return; }
 
@@ -122,7 +122,7 @@ export class PageSizeSelectorComp extends Component {
             // not in the list of page size options.
             pageSizeOptions.unshift('');
 
-            warnOnce(
+            _warnOnce(
                 `The paginationPageSize grid option is set to a value that is not in the list of page size options.
                 Please make sure that the paginationPageSize grid option is set to one of the values in the 
                 paginationPageSizeSelector array, or set the paginationPageSizeSelector to false to hide the page size selector.`
@@ -170,7 +170,7 @@ export class PageSizeSelectorComp extends Component {
 
     private validateValues(values: number[]): boolean {
         if (!values.length) {
-            warnOnce(
+            _warnOnce(
                 `The paginationPageSizeSelector grid option is an empty array. This is most likely a mistake.
                 If you want to hide the page size selector, please set the paginationPageSizeSelector to false.`
             );
@@ -184,7 +184,7 @@ export class PageSizeSelectorComp extends Component {
             const isPositive = value > 0;
 
             if (!isNumber) {
-                warnOnce(
+                _warnOnce(
                     `The paginationPageSizeSelector grid option contains a non-numeric value.
                     Please make sure that all values in the paginationPageSizeSelector array are numbers.`
                 );
@@ -192,7 +192,7 @@ export class PageSizeSelectorComp extends Component {
             }
 
             if (!isPositive) {
-                warnOnce(
+                _warnOnce(
                     `The paginationPageSizeSelector grid option contains a negative number or zero.
                     Please make sure that all values in the paginationPageSizeSelector array are positive.`
                 );

@@ -11,7 +11,8 @@ import {
     TooltipFeature,
     VirtualList,
     VirtualListDragItem,
-    _
+    _exists,
+    _setDisabled,
 } from "@ag-grid-community/core";
 import { AdvancedFilterBuilderItemComp } from "./advancedFilterBuilderItemComp";
 import { AdvancedFilterExpressionService } from "../advancedFilterExpressionService";
@@ -447,7 +448,7 @@ export class AdvancedFilterBuilderComp extends Component {
         } else {
             this.validationMessage = this.advancedFilterExpressionService.translate('advancedFilterBuilderValidationIncomplete');
         }
-        _.setDisabled(this.eApplyFilterButton, disableApply);
+        _setDisabled(this.eApplyFilterButton, disableApply);
         this.validationTooltipFeature.refreshToolTip();
     }
 
@@ -481,7 +482,7 @@ export class AdvancedFilterBuilderComp extends Component {
                 clearOperand(filterModel);
                 return;
             }
-            if (operator.numOperands > 0 && !_.exists((filterModel as any).filter)) {
+            if (operator.numOperands > 0 && !_exists((filterModel as any).filter)) {
                 item.valid = false;
                 return;
             }

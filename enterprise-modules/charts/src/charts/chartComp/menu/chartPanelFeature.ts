@@ -3,7 +3,7 @@ import {
     ChartType,
     Component,
     PostConstruct,
-    _
+    _removeFromParent,
 } from "@ag-grid-community/core";
 import { ChartController } from "../chartController";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
@@ -55,7 +55,7 @@ export class ChartPanelFeature extends BeanStub {
 
     private destroyPanels(): void {
         this.panels.forEach(panel => {
-            _.removeFromParent(panel.getGui());
+            _removeFromParent(panel.getGui());
             this.destroyBean(panel);
         });
         this.panels = [];

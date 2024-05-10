@@ -7,11 +7,11 @@ import {
     SimpleFilterModelFormatter,
 } from '../simpleFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { makeNull } from '../../../utils/generic';
-import { _ } from '../../../utils';
+import { _makeNull } from '../../../utils/generic';
+import { _warnOnce } from '../../../utils/function';
 import { BaseColDefParams } from '../../../entities/colDef';
 import { IDoesFilterPassParams, IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
-import { setAriaRole } from '../../../utils/aria';
+import { _setAriaRole } from '../../../utils/aria';
 
 export interface TextFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'text'` */
@@ -188,7 +188,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     private getTextMatcher(): TextMatcher {
         const legacyComparator = (this.textFilterParams as any).textCustomComparator;
         if (legacyComparator) {
-            _.warnOnce('textCustomComparator is deprecated, use textMatcher instead.');
+            _warnOnce('textCustomComparator is deprecated, use textMatcher instead.');
             return ({ filterOption, value, filterText }) => legacyComparator(filterOption, value, filterText);
         }
         return this.textFilterParams.textMatcher || TextFilter.DEFAULT_MATCHER
@@ -238,7 +238,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         const result: Tuple<string> = [];
         this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
             if (index < numberOfInputs) {
-                let value = makeNull(element.getValue());
+                let value = _makeNull(element.getValue());
                 if (applySideEffects && this.textFilterParams.trimInput) {
                     value = TextFilter.trimInput(value) ?? null;
                     element.setValue(value, true); // ensure clean value is visible
@@ -257,7 +257,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     protected createValueElement(): HTMLElement {
         const eCondition = document.createElement('div');
         eCondition.classList.add('ag-filter-body');
-        setAriaRole(eCondition, 'presentation');
+        _setAriaRole(eCondition, 'presentation');
 
         this.createFromToElement(eCondition, this.eValuesFrom, 'from');
         this.createFromToElement(eCondition, this.eValuesTo, 'to');

@@ -2,12 +2,12 @@ import { Component } from "../../widgets/component";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { Autowired, PostConstruct, PreDestroy } from "../../context/context";
 import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowContainerType } from "./rowContainerCtrl";
-import { ensureDomOrder, insertWithDomOrder } from "../../utils/dom";
+import { _ensureDomOrder, _insertWithDomOrder } from "../../utils/dom";
 import { RowComp } from "../../rendering/row/rowComp";
 import { RowCtrl, RowCtrlInstanceId } from "../../rendering/row/rowCtrl";
 import { Beans } from "../../rendering/beans";
-import { getAllValuesInObject } from "../../utils/object";
-import { setAriaRole } from "../../utils/aria";
+import { _getAllValuesInObject } from "../../utils/object";
+import { _setAriaRole } from "../../utils/aria";
 
 function templateFactory(): string {
     const name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
@@ -107,17 +107,17 @@ export class RowContainerComp extends Component {
         };
 
         rowCtrls.forEach(processRow);
-        getAllValuesInObject(oldRows).forEach(oldRowComp => {
+        _getAllValuesInObject(oldRows).forEach(oldRowComp => {
             this.eContainer.removeChild(oldRowComp.getGui());
             oldRowComp.destroy();
         });
 
-        setAriaRole(this.eContainer, "rowgroup");
+        _setAriaRole(this.eContainer, "rowgroup");
     }
 
     public appendRow(element: HTMLElement) {
         if (this.domOrder) {
-            insertWithDomOrder(this.eContainer, element, this.lastPlacedElement);
+            _insertWithDomOrder(this.eContainer, element, this.lastPlacedElement);
         } else {
             this.eContainer.appendChild(element);
         }
@@ -126,7 +126,7 @@ export class RowContainerComp extends Component {
 
     private ensureDomOrder(eRow: HTMLElement): void {
         if (this.domOrder) {
-            ensureDomOrder(this.eContainer, eRow, this.lastPlacedElement);
+            _ensureDomOrder(this.eContainer, eRow, this.lastPlacedElement);
             this.lastPlacedElement = eRow;
         }
     }

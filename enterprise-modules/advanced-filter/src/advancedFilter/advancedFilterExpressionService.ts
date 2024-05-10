@@ -12,7 +12,10 @@ import {
     JoinAdvancedFilterModel,
     PostConstruct,
     ValueService,
-    _,
+    _exists,
+    _parseDateTimeFromString,
+    _serialiseDate,
+    _toStringOrNull,
 } from '@ag-grid-community/core';
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import { ColFilterExpressionParser } from './colFilterExpressionParser';
@@ -70,13 +73,13 @@ export class AdvancedFilterExpressionService extends BeanStub {
     public getOperandModelValue(operand: string, baseCellDataType: BaseCellDataType, column: Column): string | number | null {
         switch (baseCellDataType) {
             case 'number':
-                return _.exists(operand) ? Number(operand) : null;
+                return _exists(operand) ? Number(operand) : null;
             case 'date':
-                return _.serialiseDate(this.valueService.parseValue(column, null, operand, undefined), false);
+                return _serialiseDate(this.valueService.parseValue(column, null, operand, undefined), false);
             case 'dateString':
                 // displayed string format may be different from data string format, so parse before converting to date
                 const parsedDateString = this.valueService.parseValue(column, null, operand, undefined);
-                return _.serialiseDate(this.dataTypeService.getDateParserFunction(column)(parsedDateString) ?? null, false);
+                return _serialiseDate(this.dataTypeService.getDateParserFunction(column)(parsedDateString) ?? null, false);
         }
         return operand;
     }
@@ -89,15 +92,15 @@ export class AdvancedFilterExpressionService extends BeanStub {
             let operand1: string | null | undefined;
             switch (model.filterType) {
                 case 'number':
-                    operand1 = _.toStringOrNull(filter) ?? '';
+                    operand1 = _toStringOrNull(filter) ?? '';
                     break;
                 case 'date':
-                    const dateValue = _.parseDateTimeFromString(filter);
+                    const dateValue = _parseDateTimeFromString(filter);
                     operand1 = column ? this.valueService.formatValue(column, null, dateValue) : null;
                     break;
                 case 'dateString':
                     // need to convert from ISO date string to Date to data string format to formatted string format
-                    const dateStringDateValue = _.parseDateTimeFromString(filter);
+                    const dateStringDateValue = _parseDateTimeFromString(filter);
                     const dateStringStringValue = column
                         ? this.dataTypeService.getDateFormatterFunction(column)(dateStringDateValue ?? undefined)
                         : null;
@@ -105,7 +108,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
                     break;
             }
             if (model.filterType !== 'number') {
-                operand1 = operand1 ?? _.toStringOrNull(filter) ?? '';
+                operand1 = operand1 ?? _toStringOrNull(filter) ?? '';
                 if (!skipFormatting) {
                     operand1 = `"${operand1}"`;
                 }
@@ -243,7 +246,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
                 break;
             case 'text': 
             case undefined: 
-                params = { valueConverter: (v: any) => _.toStringOrNull(v) };
+                params = { valueConverter: (v: any) => _toStringOrNull(v) };
                 break;
             default:
                 params = { valueConverter: (v: any) => v };

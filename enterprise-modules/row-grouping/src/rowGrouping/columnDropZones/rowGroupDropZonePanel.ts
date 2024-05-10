@@ -1,12 +1,12 @@
 import {
-    _,
     Column,
     DragAndDropService,
     DraggingEvent,
     Events,
     ITooltipParams,
     PostConstruct,
-    WithoutGridCommon
+    WithoutGridCommon,
+    _createIconNoSpan
 } from "@ag-grid-community/core";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
 
@@ -22,7 +22,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
         const title = localeTextFunc('groups', 'Row Groups');
 
         super.init({
-            icon: _.createIconNoSpan('rowGroupPanel', this.gos, null)!,
+            icon: _createIconNoSpan('rowGroupPanel', this.gos, null)!,
             emptyMessage: emptyMessage,
             title
         });

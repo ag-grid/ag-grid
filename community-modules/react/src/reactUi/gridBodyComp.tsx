@@ -1,4 +1,4 @@
-import { CssClassManager, GridBodyCtrl, IGridBodyComp, RowContainerName, _ } from '@ag-grid-community/core';
+import { CssClassManager, GridBodyCtrl, IGridBodyComp, RowContainerName, _setAriaColCount, _setAriaRowCount } from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext';
 import GridHeaderComp from './header/gridHeaderComp';
@@ -101,12 +101,12 @@ const GridBodyComp = () => {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
             setColumnCount: count => {
                 if (eRoot.current) {
-                    _.setAriaColCount(eRoot.current, count);
+                    _setAriaColCount(eRoot.current, count);
                 }
             },
             setRowCount: count => {
                 if (eRoot.current) {
-                    _.setAriaRowCount(eRoot.current, count);
+                    _setAriaRowCount(eRoot.current, count);
                 }
             },
             setTopHeight,

@@ -1,11 +1,11 @@
 import {
-    _,
     AutoScrollService,
     Autowired,
     ChartDataPanel as ChartDataPanelType,
     ChartType,
     Component,
-    PostConstruct
+    PostConstruct,
+    _warnOnce
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../model/chartDataModel";
@@ -148,7 +148,7 @@ export class ChartDataPanel extends Component {
                 }
                 return null;
             } else {
-                _.warnOnce(`Invalid charts data panel group name supplied: '${type}'`);
+                _warnOnce(`Invalid charts data panel group name supplied: '${type}'`);
                 return null;
             }
         }).filter((value): value is NonNullable<typeof value> => value != null);

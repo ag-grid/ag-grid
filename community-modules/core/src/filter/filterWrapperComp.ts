@@ -5,10 +5,10 @@ import { FilterDestroyedEvent, FilterOpenedEvent } from "../events";
 import { IFilterComp } from "../interfaces/iFilter";
 import { ColumnModel } from "../columns/columnModel";
 import { AgPromise } from "../utils/promise";
-import { clearElement, loadTemplate } from "../utils/dom";
+import { _clearElement, _loadTemplate } from "../utils/dom";
 import { Component } from "../widgets/component";
 import { FilterManager, FilterRequestSource, FilterWrapper } from "./filterManager";
-import { exists } from "../utils/generic";
+import { _exists } from "../utils/generic";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
 
@@ -60,7 +60,7 @@ export class FilterWrapperComp extends Component {
         this.filterWrapper.filterPromise.then(filter => {
             let guiFromFilter = filter!.getGui();
 
-            if (!exists(guiFromFilter)) {
+            if (!_exists(guiFromFilter)) {
                 console.warn(`AG Grid: getGui method from filter returned ${guiFromFilter}, it should be a DOM element or an HTML template string.`);
             }
 
@@ -69,7 +69,7 @@ export class FilterWrapperComp extends Component {
             // once we move away from supporting Angular 1
             // directly, we can change this.
             if (typeof guiFromFilter === 'string') {
-                guiFromFilter = loadTemplate(guiFromFilter as string);
+                guiFromFilter = _loadTemplate(guiFromFilter as string);
             }
 
             this.appendChild(guiFromFilter);
@@ -92,7 +92,7 @@ export class FilterWrapperComp extends Component {
             this.columnModel.getPrimaryColumn(this.column)
         ) {
             // filter has been destroyed by the API or params changing. If the column still exists, need to recreate UI component
-            clearElement(this.getGui());
+            _clearElement(this.getGui());
             this.createFilter();
         }
     }

@@ -1,7 +1,7 @@
 import { Component } from "./component";
-import { isNodeOrElement, clearElement } from "../utils/dom";
+import { _isNodeOrElement, _clearElement } from "../utils/dom";
 import { TabGuardCtrl, ITabGuard, TabGuardClassNames } from "./tabGuardCtrl";
-import { setAriaRole } from "../utils/aria";
+import { _setAriaRole } from "../utils/aria";
 
 export class TabGuardComp extends Component {
 
@@ -68,7 +68,7 @@ export class TabGuardComp extends Component {
         const cls = side === 'top' ? TabGuardClassNames.TAB_GUARD_TOP : TabGuardClassNames.TAB_GUARD_BOTTOM;
 
         tabGuard.classList.add(TabGuardClassNames.TAB_GUARD, cls);
-        setAriaRole(tabGuard, 'presentation');
+        _setAriaRole(tabGuard, 'presentation');
 
         return tabGuard;
     }
@@ -80,7 +80,7 @@ export class TabGuardComp extends Component {
 
     protected removeAllChildrenExceptTabGuards(): void {
         const tabGuards: [HTMLElement, HTMLElement] = [this.eTopGuard, this.eBottomGuard];
-        clearElement(this.getFocusableElement());
+        _clearElement(this.getFocusableElement());
         this.addTabGuards(...tabGuards);
     }
 
@@ -92,7 +92,7 @@ export class TabGuardComp extends Component {
         newChild: Component | HTMLElement,
         container?: HTMLElement | undefined
     ): void {
-        if (!isNodeOrElement(newChild)) {
+        if (!_isNodeOrElement(newChild)) {
             newChild = (newChild as Component).getGui();
         }
 

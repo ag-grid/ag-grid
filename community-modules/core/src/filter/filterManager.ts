@@ -1,4 +1,4 @@
-import { AgPromise, _ } from '../utils';
+import { AgPromise } from '../utils/promise';
 import { ValueService } from '../valueService/valueService';
 import { ColumnModel } from '../columns/columnModel';
 import { RowNode } from '../entities/rowNode';
@@ -12,9 +12,8 @@ import { UserCompDetails, UserComponentFactory } from '../components/framework/u
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { BeanStub } from '../context/beanStub';
-import { convertToSet } from '../utils/set';
-import { exists } from '../utils/generic';
-import { mergeDeep, cloneObject } from '../utils/object';
+import { _exists, _jsonEquals } from '../utils/generic';
+import { _mergeDeep, _cloneObject } from '../utils/object';
 import { RowRenderer } from '../rendering/rowRenderer';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { FilterComponent } from '../components/framework/componentTypes';
@@ -22,7 +21,7 @@ import { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating
 import { unwrapUserComp } from '../gridApi';
 import { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
-import { warnOnce } from '../utils/function';
+import { _warnOnce } from '../utils/function';
 import { DataTypeService } from '../columns/dataTypeService';
 import type { QuickFilterService } from './quickFilterService';
 
@@ -130,9 +129,9 @@ export function useFilterManager(){
             const allPromises: AgPromise<void>[] = [];
             const previousModel = this.getFilterModel();
 
-            if (model) {
-                // mark the filters as we set them, so any active filters left over we stop
-                const modelKeys = convertToSet(Object.keys(model));
+        if (model) {
+            // mark the filters as we set them, so any active filters left over we stop
+            const modelKeys = new Set(Object.keys(model));
 
                 this.allColumnFilters.forEach((filterWrapper, colId) => {
                     const newModel = model[colId];
@@ -176,10 +175,10 @@ export function useFilterManager(){
                     const before = previousModel ? previousModel[colId] : null;
                     const after = currentModel ? currentModel[colId] : null;
 
-                    if (!_.jsonEquals(before, after)) {
-                        columns.push(filterWrapper.column);
-                    }
-                });
+                if (!_jsonEquals(before, after)) {
+                    columns.push(filterWrapper.column);
+                }
+            });
 
                 if (columns.length > 0) {
                     this.onFilterChanged({ columns, source });
@@ -206,10 +205,10 @@ export function useFilterManager(){
             this.allColumnFilters.forEach((filterWrapper, key) => {
                 const model = this.getModelFromFilterWrapper(filterWrapper);
 
-                if (exists(model)) {
-                    result[key] = model;
-                }
-            });
+            if (_exists(model)) {
+                result[key] = model;
+            }
+        });
 
             return result;
         }
@@ -426,9 +425,9 @@ export function useFilterManager(){
                 columns: columns || [],
             };
 
-            if (additionalEventAttributes) {
-                mergeDeep(filterChangedEvent, additionalEventAttributes);
-            }
+        if (additionalEventAttributes) {
+            _mergeDeep(filterChangedEvent, additionalEventAttributes);
+        }
 
             // because internal events are not async in ag-grid, when the dispatchEvent
             // method comes back, we know all listeners have finished executing.
@@ -642,17 +641,17 @@ export function useFilterManager(){
             };
         }
 
-        public createFilterParams(column: Column, colDef: ColDef): IFilterParams {
-            const params: IFilterParams = this.gos.addGridCommonParams({
-                column,
-                colDef: cloneObject(colDef),
-                rowModel: this.rowModel,
-                filterChangedCallback: () => { },
-                filterModifiedCallback: () => { },
-                valueGetter: this.createValueGetter(column),
-                getValue: this.createGetValue(column),
-                doesRowPassOtherFilter: () => true,
-            });
+    public createFilterParams(column: Column, colDef: ColDef): IFilterParams {
+        const params: IFilterParams = this.gos.addGridCommonParams({
+            column,
+            colDef: _cloneObject(colDef),
+            rowModel: this.rowModel,
+            filterChangedCallback: () => { },
+            filterModifiedCallback: () => { },
+            valueGetter: this.createValueGetter(column),
+            getValue: this.createGetValue(column),
+            doesRowPassOtherFilter: () => true,
+        });
 
             return params;
         }
@@ -983,9 +982,9 @@ export function useFilterManager(){
             return currentValue;
         }
 
-        private warnAdvancedFilters(): void {
-            warnOnce('Column Filter API methods have been disabled as Advanced Filters are enabled.');
-        }
+    private warnAdvancedFilters(): void {
+        _warnOnce('Column Filter API methods have been disabled as Advanced Filters are enabled.');
+    }
 
         public setupAdvancedFilterHeaderComp(eCompToInsertBefore: HTMLElement): void {
             this.advancedFilterService?.getCtrl().setupHeaderComp(eCompToInsertBefore);

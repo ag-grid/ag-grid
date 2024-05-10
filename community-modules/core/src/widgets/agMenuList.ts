@@ -4,13 +4,13 @@ import { AgMenuItemComponent, CloseMenuEvent, MenuItemActivatedEvent } from "./a
 import { TabGuardComp } from "./tabGuardComp";
 import { KeyCode } from "../constants/keyCode";
 import { MenuItemDef } from "../interfaces/menuItem";
-import { loadTemplate } from "../utils/dom";
-import { last } from "../utils/array";
+import { _loadTemplate } from "../utils/dom";
+import { _last } from "../utils/array";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IMenuActionParams } from "../interfaces/iCallbackParams";
 import { BeanStub } from "../context/beanStub";
 import { AgPromise } from "../utils/promise";
-import { stopPropagationForAgGrid } from "../utils/event";
+import { _stopPropagationForAgGrid } from "../utils/event";
 
 export class AgMenuList extends TabGuardComp {
 
@@ -64,7 +64,7 @@ export class AgMenuList extends TabGuardComp {
                 break;
             case KeyCode.ESCAPE:
                 if (this.closeIfIsChild()) {
-                    stopPropagationForAgGrid(e);
+                    _stopPropagationForAgGrid(e);
                 }
                 break;
         }
@@ -173,7 +173,7 @@ export class AgMenuList extends TabGuardComp {
                 <div class="ag-menu-separator-part"></div>
             </div>`;
 
-        return loadTemplate(separatorHtml);
+        return _loadTemplate(separatorHtml);
     }
 
     private handleNavKey(key: string): void {
@@ -223,7 +223,7 @@ export class AgMenuList extends TabGuardComp {
         if (!items.length) { return; }
 
         if (!this.activeMenuItem) {
-            return up ? last(items) : items[0];
+            return up ? _last(items) : items[0];
         }
 
         if (up) {

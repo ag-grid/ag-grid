@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     BeanStub,
     CellRange,
@@ -466,7 +465,7 @@ export class ChartController extends BeanStub {
     }
 
     public isActiveXYChart(): boolean {
-        return _.includes(['scatter', 'bubble'], this.getChartType());
+        return ['scatter', 'bubble'].includes(this.getChartType());
     }
 
     public isChartLinked(): boolean {

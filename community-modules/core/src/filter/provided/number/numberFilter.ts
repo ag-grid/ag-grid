@@ -1,9 +1,9 @@
 import { ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
 import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
-import { makeNull } from '../../../utils/generic';
+import { _makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
-import { setAriaRole } from '../../../utils/aria';
+import { _setAriaRole } from '../../../utils/aria';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
@@ -146,7 +146,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
         const eCondition = document.createElement('div');
         eCondition.classList.add('ag-filter-body');
-        setAriaRole(eCondition, 'presentation');
+        _setAriaRole(eCondition, 'presentation');
 
         this.createFromToElement(eCondition, this.eValuesFrom, 'from', allowedCharPattern);
         this.createFromToElement(eCondition, this.eValuesTo, 'to', allowedCharPattern);
@@ -200,7 +200,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
             return value;
         }
 
-        let filterText = makeNull(value);
+        let filterText = _makeNull(value);
 
         if (filterText != null && filterText.trim() === '') {
             filterText = null;

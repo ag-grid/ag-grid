@@ -27,18 +27,18 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
             return;
         }
         const compProxy: IHeaderGroupCellComp = {
-            setWidth: width => {
+            setWidth: (width: string) => {
                 if (eGui.current) {
                     eGui.current.style.width = width;
                 }
             },
-            addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
-            setUserCompDetails: compDetails => setUserCompDetails(compDetails),
-            setResizableDisplayed: (displayed) => {
+            addOrRemoveCssClass: (name: string, on: boolean) => setCssClasses(prev => prev.setClass(name, on)),
+            setUserCompDetails: (compDetails: UserCompDetails) => setUserCompDetails(compDetails),
+            setResizableDisplayed: (displayed: boolean) => {
                 setResizableCssClasses(prev => prev.setClass('ag-hidden', !displayed))
                 setResizableAriaHidden(!displayed ? "true" : "false");
             },
-            setAriaExpanded: expanded => setAriaExpanded(expanded),
+            setAriaExpanded: (expanded: 'true' | 'false' | undefined) => setAriaExpanded(expanded),
             getUserCompInstance: () => userCompRef.current || undefined,
         };
 

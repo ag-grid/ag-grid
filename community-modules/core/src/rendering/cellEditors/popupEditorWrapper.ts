@@ -1,6 +1,6 @@
 import { PopupComponent } from "../../widgets/popupComponent";
 import { ICellEditorParams } from "../../interfaces/iCellEditor";
-import { isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
+import { _isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
 import { PostConstruct } from "../../context/context";
 
 export class PopupEditorWrapper extends PopupComponent {
@@ -21,7 +21,7 @@ export class PopupEditorWrapper extends PopupComponent {
         const eGui = this.getGui();
         const params = this.params;
         const listener = (event: KeyboardEvent) => {
-            if (!isUserSuppressingKeyboardEvent(this.gos, event, params.node, params.column, true)) {
+            if (!_isUserSuppressingKeyboardEvent(this.gos, event, params.node, params.column, true)) {
                 params.onKeyDown(event);
             }
         };

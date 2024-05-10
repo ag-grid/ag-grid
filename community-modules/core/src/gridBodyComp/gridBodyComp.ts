@@ -3,7 +3,7 @@ import { GridHeaderComp } from '../headerRendering/gridHeaderComp';
 import { IRangeService } from '../interfaces/IRangeService';
 import { ResizeObserverService } from '../misc/resizeObserverService';
 import { LayoutCssClasses } from "../styling/layoutFeature";
-import { setAriaColCount, setAriaMultiSelectable, setAriaRowCount } from '../utils/aria';
+import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRowCount } from '../utils/aria';
 import { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
 import {
@@ -85,8 +85,8 @@ export class GridBodyComp extends Component {
 
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: (cssClass, animate) => this.setRowAnimationCssOnBodyViewport(cssClass, animate),
-            setColumnCount: count => setAriaColCount(this.getGui(), count),
-            setRowCount: count => setAriaRowCount(this.getGui(), count),
+            setColumnCount: count => _setAriaColCount(this.getGui(), count),
+            setRowCount: count => _setAriaRowCount(this.getGui(), count),
             setTopHeight: height => setHeight(height, this.eTop),
             setBottomHeight: height => setHeight(height, this.eBottom),
             setTopDisplay: display => this.eTop.style.display = display,
@@ -140,7 +140,7 @@ export class GridBodyComp extends Component {
         );
 
         if (this.rangeService && this.gos.get('enableRangeSelection') || this.gos.get('rowSelection') === 'multiple') {
-            setAriaMultiSelectable(this.getGui(), true);
+            _setAriaMultiSelectable(this.getGui(), true);
         }
     }
 

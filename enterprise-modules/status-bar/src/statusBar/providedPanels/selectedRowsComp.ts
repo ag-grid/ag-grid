@@ -1,4 +1,4 @@
-import { Autowired, Events, PostConstruct, IStatusPanelComp, _, ISelectionService, IRowModel } from '@ag-grid-community/core';
+import { Autowired, Events, PostConstruct, IStatusPanelComp, ISelectionService, IRowModel, _formatNumberCommas } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
 export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp {
@@ -42,7 +42,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
-        this.setValue(_.formatNumberCommas(selectedRowCount, thousandSeparator, decimalSeparator));
+        this.setValue(_formatNumberCommas(selectedRowCount, thousandSeparator, decimalSeparator));
         this.setDisplayed(selectedRowCount > 0);
     }
 

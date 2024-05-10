@@ -1,5 +1,4 @@
 import {
-    _,
     AgCheckbox,
     AgEvent,
     Autowired,
@@ -16,7 +15,17 @@ import {
     ValueFormatterParams,
     ValueService,
     ICellRendererComp,
-    ISetFilterTreeListTooltipParams
+    ISetFilterTreeListTooltipParams,
+    _createIcon,
+    _setAriaDescribedBy,
+    _setAriaExpanded,
+    _setAriaLabel,
+    _setAriaLevel,
+    _setDisplayed,
+    _toStringOrNull,
+    _warnOnce,
+    _setAriaChecked,
+    _setAriaLabelledBy
 } from '@ag-grid-community/core';
 import { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { ISetFilterLocaleText } from './localeText';
@@ -145,7 +154,7 @@ export class SetFilterListItem<V> extends Component {
                 }
             }
 
-            _.setAriaLevel(this.getAriaElement(), this.depth + 1)
+            _setAriaLevel(this.getAriaElement(), this.depth + 1)
         }
 
         this.refreshAriaChecked();
@@ -163,13 +172,13 @@ export class SetFilterListItem<V> extends Component {
     }
 
     private setupExpansion(): void {
-        this.eGroupClosedIcon.appendChild(_.createIcon('setFilterGroupClosed', this.gos, null));
-        this.eGroupOpenedIcon.appendChild(_.createIcon('setFilterGroupOpen', this.gos, null));
+        this.eGroupClosedIcon.appendChild(_createIcon('setFilterGroupClosed', this.gos, null));
+        this.eGroupOpenedIcon.appendChild(_createIcon('setFilterGroupOpen', this.gos, null));
         this.addManagedListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         this.addManagedListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
 
         if (this.hasIndeterminateExpandState) {
-            this.eGroupIndeterminateIcon.appendChild(_.createIcon('setFilterGroupIndeterminate', this.gos, null));
+            this.eGroupIndeterminateIcon.appendChild(_createIcon('setFilterGroupIndeterminate', this.gos, null));
             this.addManagedListener(this.eGroupIndeterminateIcon, 'click', this.onExpandOrContractClicked.bind(this));
         }
 
@@ -201,10 +210,10 @@ export class SetFilterListItem<V> extends Component {
     }
 
     private setExpandedIcons(): void {
-        _.setDisplayed(this.eGroupClosedIcon, this.hasIndeterminateExpandState ? this.isExpanded === false : !this.isExpanded);
-        _.setDisplayed(this.eGroupOpenedIcon, this.isExpanded === true);
+        _setDisplayed(this.eGroupClosedIcon, this.hasIndeterminateExpandState ? this.isExpanded === false : !this.isExpanded);
+        _setDisplayed(this.eGroupOpenedIcon, this.isExpanded === true);
         if (this.hasIndeterminateExpandState) {
-            _.setDisplayed(this.eGroupIndeterminateIcon, this.isExpanded === undefined);
+            _setDisplayed(this.eGroupIndeterminateIcon, this.isExpanded === undefined);
         }
     }
 
@@ -242,7 +251,7 @@ export class SetFilterListItem<V> extends Component {
             translate('ariaIndeterminate', 'indeterminate') : 
             (checkboxValue ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden'));
         const visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');
-        _.setAriaLabelledBy(this.eCheckbox.getInputElement(), undefined as any);
+        _setAriaLabelledBy(this.eCheckbox.getInputElement(), undefined as any);
         this.eCheckbox.setInputAriaLabel(`${visibilityLabel} (${state})`);
     }
     
@@ -251,18 +260,18 @@ export class SetFilterListItem<V> extends Component {
         const translate = this.localeService.getLocaleTextFunc();
         const itemLabel = translate('ariaFilterValue', 'Filter Value');
         const ariaEl = this.getAriaElement();
-        _.setAriaLabel(ariaEl, `${value} ${itemLabel}`);
-        _.setAriaDescribedBy(ariaEl, this.eCheckbox.getInputElement().id);
+        _setAriaLabel(ariaEl, `${value} ${itemLabel}`);
+        _setAriaDescribedBy(ariaEl, this.eCheckbox.getInputElement().id);
     }
 
     private refreshAriaChecked(): void {
         const ariaEl = this.getAriaElement();
 
-        _.setAriaChecked(ariaEl, this.eCheckbox.getValue());
+        _setAriaChecked(ariaEl, this.eCheckbox.getValue());
     }
 
     private refreshAriaExpanded(): void {
-        _.setAriaExpanded(this.getAriaElement(), !!this.isExpanded);
+        _setAriaExpanded(this.getAriaElement(), !!this.isExpanded);
     }
 
     public refresh(item: SetFilterModelTreeItem | string | null, isSelected: boolean | undefined, isExpanded: boolean | undefined): void {
@@ -303,7 +312,7 @@ export class SetFilterListItem<V> extends Component {
             value = formattedValue as any;
         } else if (this.isTree) {
             // tree values are already formatted via treeListFormatter
-            formattedValue = _.toStringOrNull(value);
+            formattedValue = _toStringOrNull(value);
         } else {
             formattedValue = this.getFormattedValue(column, value);
         }
@@ -317,7 +326,7 @@ export class SetFilterListItem<V> extends Component {
         const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
 
         if (this.params.showTooltips && (!isTooltipWhenTruncated || !this.params.cellRenderer)) {
-            const newTooltipText = formattedValue != null ? formattedValue : _.toStringOrNull(value);
+            const newTooltipText = formattedValue != null ? formattedValue : _toStringOrNull(value);
             let shouldDisplayTooltip: (() => boolean) | undefined;
 
             if (isTooltipWhenTruncated) {
@@ -388,7 +397,7 @@ export class SetFilterListItem<V> extends Component {
     private renderCellWithoutCellRenderer(): void {
         let valueToRender = (this.cellRendererParams.valueFormatted == null ? this.cellRendererParams.value : this.cellRendererParams.valueFormatted) ?? this.translate('blanks');
         if (typeof valueToRender !== 'string') {
-            _.warnOnce(`Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects, or set convertValuesToStrings=true in the filterParams. See ${this.getFrameworkOverrides().getDocLink('filter-set-filter-list/#filter-value-types')}`);
+            _warnOnce(`Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects, or set convertValuesToStrings=true in the filterParams. See ${this.getFrameworkOverrides().getDocLink('filter-set-filter-list/#filter-value-types')}`);
             valueToRender = '';
         }
 

@@ -1,4 +1,8 @@
 import {
+    _areEqual,
+    _createIconNoSpan,
+    _keys,
+    _missing,
     AgCheckbox,
     AgGroupComponent,
     AgRadioButton,
@@ -14,7 +18,6 @@ import {
     DragSourceType,
     Events,
     ListOption,
-    _
 } from "@ag-grid-community/core";
 import { AgPillSelect, AgPillSelectChangeParams } from "../../../../widgets/agPillSelect";
 import { ChartController } from "../../chartController";
@@ -43,7 +46,7 @@ export abstract class DragDataPanel extends Component {
     }
 
     public refreshColumnComps(cols: ColState[]): boolean {
-        if (!_.areEqual(_.keys(this.columnComps), cols.map(({ colId }) => colId))) {
+        if (!_areEqual(_keys(this.columnComps), cols.map(({ colId }) => colId))) {
             return false;
         }
 
@@ -140,7 +143,7 @@ export abstract class DragDataPanel extends Component {
     }
 
     protected checkHoveredItem(draggingEvent: DraggingEvent): { comp: AgCheckbox, position: 'top' | 'bottom' } | null {
-        if (_.missing(draggingEvent.vDirection)) { return null; }
+        if (_missing(draggingEvent.vDirection)) { return null; }
 
         const mouseEvent = draggingEvent.event;
 
@@ -196,7 +199,7 @@ export abstract class DragDataPanel extends Component {
     }
 
     protected addDragHandle(comp: AgCheckbox, col: ColState): void {
-        const eDragHandle = _.createIconNoSpan('columnDrag', this.gos)!;
+        const eDragHandle = _createIconNoSpan('columnDrag', this.gos)!;
 
         eDragHandle.classList.add('ag-drag-handle', 'ag-chart-data-column-drag-handle');
 

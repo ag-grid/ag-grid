@@ -3,7 +3,7 @@ import { GridOptionsService } from "../../gridOptionsService";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { Column } from "../../entities/column";
 import { ProvidedColumnGroup } from "../../entities/providedColumnGroup";
-import { missing } from "../../utils/generic";
+import { _missing } from "../../utils/generic";
 import { IAbstractHeaderCellComp } from "./abstractCell/abstractHeaderCellCtrl";
 import { ICellComp } from "../../rendering/cell/cellCtrl";
 import { ColumnModel } from "../../columns/columnModel";
@@ -20,7 +20,7 @@ export class CssClassApplier {
         column: Column | null,
         columnGroup: ColumnGroup | null
     ): string[] {
-        if (missing(abstractColDef)) { return []; }
+        if (_missing(abstractColDef)) { return []; }
 
         return this.getColumnClassesFromCollDef(
             abstractColDef.headerClass,
@@ -37,7 +37,7 @@ export class CssClassApplier {
         column: Column | null,
         columnGroup: ProvidedColumnGroup | null
     ): string[] {
-        if (missing(abstractColDef)) { return []; }
+        if (_missing(abstractColDef)) { return []; }
 
         return this.getColumnClassesFromCollDef(
             abstractColDef.toolPanelClass,
@@ -74,7 +74,7 @@ export class CssClassApplier {
         column: Column | null,
         columnGroup: ColumnGroup | ProvidedColumnGroup | null
     ): string[] {
-        if (missing(classesOrFunc)) { return []; }
+        if (_missing(classesOrFunc)) { return []; }
 
         let classToUse: string | string[] | undefined;
 

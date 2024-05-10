@@ -7,8 +7,8 @@ import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
 import { RowPosition } from "./entities/rowPositionUtils";
 import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
-import { missing } from "./utils/generic";
-import { last } from "./utils/array";
+import { _missing } from "./utils/generic";
+import { _last } from "./utils/array";
 import { KeyCode } from './constants/keyCode';
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { RowRenderer } from "./rendering/rowRenderer";
@@ -47,7 +47,7 @@ export class CellNavigationService extends BeanStub {
             const allColumns: Column[] = this.columnModel.getAllDisplayedColumns();
             const isRtl = this.gos.get('enableRtl');
             rowIndex = focusedCell.rowIndex;
-            column = leftKey !== isRtl ? allColumns[0] : last(allColumns);
+            column = leftKey !== isRtl ? allColumns[0] : _last(allColumns);
         }
 
         return {
@@ -341,7 +341,7 @@ export class CellNavigationService extends BeanStub {
             newColumn = displayedColumns[0];
 
             const rowBelow = this.getRowBelow(gridCell);
-            if (missing(rowBelow)) { return null; }
+            if (_missing(rowBelow)) { return null; }
 
             // If we are tabbing and there is a paging panel present, tabbing should go
             // to the paging panel instead of loading the next page.
@@ -368,11 +368,11 @@ export class CellNavigationService extends BeanStub {
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {
-            newColumn = last(displayedColumns);
+            newColumn = _last(displayedColumns);
 
             const rowAbove = this.getRowAbove({ rowIndex: gridCell.rowIndex, rowPinned: gridCell.rowPinned });
 
-            if (missing(rowAbove)) { return null; }
+            if (_missing(rowAbove)) { return null; }
 
             // If we are tabbing and there is a paging panel present, tabbing should go
             // to the paging panel instead of loading the next page.

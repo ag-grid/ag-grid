@@ -1,4 +1,4 @@
-export function fuzzyCheckStrings(
+export function _fuzzyCheckStrings(
     inputValues: string[],
     validValues: string[],
     allSuggestions: string[]
@@ -12,7 +12,7 @@ export function fuzzyCheckStrings(
 
     if (invalidInputs.length > 0) {
         invalidInputs.forEach(invalidInput =>
-            fuzzyMatches[invalidInput] = fuzzySuggestions(invalidInput, allSuggestions).values
+            fuzzyMatches[invalidInput] = _fuzzySuggestions(invalidInput, allSuggestions).values
         );
     }
 
@@ -24,7 +24,7 @@ export function fuzzyCheckStrings(
  * @param {String} inputValue The value to be compared against a list of strings
  * @param allSuggestions The list of strings to be compared against
  */
-export function fuzzySuggestions(
+export function _fuzzySuggestions(
     inputValue: string,
     allSuggestions: string[],
     hideIrrelevant?: boolean,

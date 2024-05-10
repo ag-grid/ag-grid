@@ -1,5 +1,6 @@
 import {
-    _,
+    _missing,
+    _warnOnce,
     RowNodeSorter,
     SortedRowNode,
     SortOption,
@@ -191,7 +192,7 @@ export class SortService extends BeanStub {
     }
 
     private updateChildIndexes(rowNode: RowNode) {
-        if (_.missing(rowNode.childrenAfterSort)) {
+        if (_missing(rowNode.childrenAfterSort)) {
             return;
         }
 
@@ -212,7 +213,7 @@ export class SortService extends BeanStub {
         }
 
         if (this.gos.get('treeData')) {
-            _.warnOnce(`The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them.`);
+            _warnOnce(`The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them.`);
             return false;
         }
 
@@ -232,7 +233,7 @@ export class SortService extends BeanStub {
     }
 
     private pullDownGroupDataForHideOpenParents(rowNodes: RowNode[] | null, clearOperation: boolean) {
-        if (!this.gos.get('groupHideOpenParents') || _.missing(rowNodes)) { return; }
+        if (!this.gos.get('groupHideOpenParents') || _missing(rowNodes)) { return; }
 
         rowNodes.forEach(childRowNode => {
             const groupDisplayCols = this.columnModel.getGroupDisplayColumns();

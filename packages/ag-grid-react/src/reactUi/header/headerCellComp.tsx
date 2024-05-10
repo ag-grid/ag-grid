@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
-import { CssClassManager, HeaderCellCtrl, IHeader, IHeaderCellComp, UserCompDetails, _ } from 'ag-grid-community';
+import { CssClassManager, HeaderCellCtrl, IHeader, IHeaderCellComp, UserCompDetails, _setAriaSort, _removeAriaSort, ColumnSortState } from 'ag-grid-community';
 import { isComponentStateless } from '../utils';
 import { showJsComp } from '../jsComp';
 
@@ -29,18 +29,18 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
         }
 
         const compProxy: IHeaderCellComp = {
-            setWidth: width => {
+            setWidth: (width: string) => {
                 if (eGui.current) {
                     eGui.current.style.width = width;
                 }
             },
-            addOrRemoveCssClass: (name, on) => cssClassManager.current!.addOrRemoveCssClass(name, on),
-            setAriaSort: sort => {
+            addOrRemoveCssClass: (name: string, on: boolean) => cssClassManager.current!.addOrRemoveCssClass(name, on),
+            setAriaSort: (sort?: ColumnSortState) => {
                 if (eGui.current) {
-                    sort ? _.setAriaSort(eGui.current, sort) : _.removeAriaSort(eGui.current)
+                    sort ? _setAriaSort(eGui.current, sort) : _removeAriaSort(eGui.current)
                 }
             },
-            setUserCompDetails: compDetails => setUserCompDetails(compDetails),
+            setUserCompDetails: (compDetails: UserCompDetails) => setUserCompDetails(compDetails),
             getUserCompInstance: () => userCompRef.current || undefined
         };
 

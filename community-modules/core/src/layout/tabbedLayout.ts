@@ -1,13 +1,13 @@
-import { AgPromise } from '../utils';
+import { AgPromise } from '../utils/promise';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
-import { clearElement } from '../utils/dom';
-import { setAriaLabel, setAriaRole } from '../utils/aria';
+import { _clearElement } from '../utils/dom';
+import { _setAriaLabel, _setAriaRole } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
 import { PostConstruct, Autowired } from '../context/context';
 import { FocusService } from '../focusService';
 import { TabGuardComp } from '../widgets/tabGuardComp';
-import { createIconNoSpan } from '../utils/icon';
+import { _createIconNoSpan } from '../utils/icon';
 
 export class TabbedLayout extends TabGuardComp {
 
@@ -68,12 +68,12 @@ export class TabbedLayout extends TabGuardComp {
             this.setupCloseButton(addCssClasses);
             this.eTabHeader = this.gos.getDocument().createElement('div');
             addCssClasses(this.eHeader, 'header-wrapper');
-            setAriaRole(this.eHeader, 'presentation');
+            _setAriaRole(this.eHeader, 'presentation');
             this.eHeader.appendChild(this.eTabHeader);
         } else {
             this.eTabHeader = this.eHeader;
         }
-        setAriaRole(this.eTabHeader, 'tablist');
+        _setAriaRole(this.eTabHeader, 'tablist');
         addCssClasses(this.eTabHeader, 'header');
     }
 
@@ -81,18 +81,18 @@ export class TabbedLayout extends TabGuardComp {
         const eDocument = this.gos.getDocument();
         const eCloseButton = eDocument.createElement('button');
         addCssClasses(eCloseButton, 'close-button');
-        const eIcon = createIconNoSpan(
+        const eIcon = _createIconNoSpan(
             'close',
             this.gos,
             undefined,
             true
         )!;
-        setAriaLabel(eCloseButton, this.params.closeButtonAriaLabel);
+        _setAriaLabel(eCloseButton, this.params.closeButtonAriaLabel);
         eCloseButton.appendChild(eIcon);
         this.addManagedListener(eCloseButton, 'click', () => this.params.onCloseClicked?.());
         const eCloseButtonWrapper = eDocument.createElement('div');
         addCssClasses(eCloseButtonWrapper, 'close-button-wrapper');
-        setAriaRole(eCloseButtonWrapper, 'presentation');
+        _setAriaRole(eCloseButtonWrapper, 'presentation');
         eCloseButtonWrapper.appendChild(eCloseButton);
         this.eHeader.appendChild(eCloseButtonWrapper);
         this.eCloseButton = eCloseButton;
@@ -210,13 +210,13 @@ export class TabbedLayout extends TabGuardComp {
     private addItem(item: TabbedItem): void {
         const eHeaderButton = document.createElement('span');
 
-        setAriaRole(eHeaderButton, 'tab');
+        _setAriaRole(eHeaderButton, 'tab');
         eHeaderButton.setAttribute('tabindex', '-1');
         eHeaderButton.appendChild(item.title);
         eHeaderButton.classList.add('ag-tab');
 
         this.eTabHeader.appendChild(eHeaderButton);
-        setAriaLabel(eHeaderButton, item.titleLabel);
+        _setAriaLabel(eHeaderButton, item.titleLabel);
 
         const wrapper: TabbedItemWrapper = {
             tabbedItem: item,
@@ -249,7 +249,7 @@ export class TabbedLayout extends TabGuardComp {
             this.lastScrollListener = this.lastScrollListener();
         }
 
-        clearElement(this.eBody);
+        _clearElement(this.eBody);
 
         tabbedItem.bodyPromise.then((body: HTMLElement) => {
             this.eBody.appendChild(body);

@@ -1,6 +1,6 @@
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { PostConstruct } from "../../../context/context";
-import { setDisplayed } from "../../../utils/dom";
+import { _setDisplayed } from "../../../utils/dom";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
 import { HeaderGroupCellCtrl, IHeaderGroupCellComp } from "./headerGroupCellCtrl";
@@ -32,9 +32,9 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
 
         const compProxy: IHeaderGroupCellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            setResizableDisplayed: (displayed) => setDisplayed(this.eResize, displayed),
+            setResizableDisplayed: (displayed) => _setDisplayed(this.eResize, displayed),
             setWidth: width => eGui.style.width = width,
-            setAriaExpanded: expanded => setAttribute('aria-expanded', expanded),
+            setAriaExpanded: (expanded: 'true' | 'false' | undefined) => setAttribute('aria-expanded', expanded),
             setUserCompDetails: details => this.setUserCompDetails(details),
             getUserCompInstance: () => this.headerGroupComp,
         };

@@ -10,7 +10,7 @@ import { GridSizeChangedEvent } from "../events";
 import { ColumnModel } from "../columns/columnModel";
 import { CtrlsService } from "../ctrlsService";
 import { MouseEventService } from "../gridBodyComp/mouseEventService";
-import { last } from "../utils/array";
+import { _last } from "../utils/array";
 import { DragAndDropService, DragSourceType } from "../dragAndDrop/dragAndDropService";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
@@ -134,10 +134,10 @@ export class GridCtrl extends BeanStub {
 
         if (fromBottom) {
             if (focusableContainers.length > 1) {
-                return this.focusService.focusInto(last(focusableContainers), true);
+                return this.focusService.focusInto(_last(focusableContainers), true);
             }
 
-            const lastColumn = last(allColumns);
+            const lastColumn = _last(allColumns);
             if (this.focusService.focusGridView(lastColumn, true)) { return true; }
         }
 

@@ -4,7 +4,7 @@ import { Autowired, PostConstruct } from "../../../context/context";
 import { CtrlsService } from "../../../ctrlsService";
 import { Column, ColumnPinnedType } from "../../../entities/column";
 import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
-import { getInnerWidth, setDisplayed } from "../../../utils/dom";
+import { _getInnerWidth, _setDisplayed } from "../../../utils/dom";
 import { TouchListener } from "../../../widgets/touchListener";
 import { HorizontalResizeService } from "../../common/horizontalResizeService";
 import { IHeaderResizeFeature } from "../abstractCell/abstractHeaderCellCtrl";
@@ -52,7 +52,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         let canAutosize: boolean;
 
         const addResize = () => {
-            setDisplayed(this.eResize, canResize);
+            _setDisplayed(this.eResize, canResize);
 
             if (!canResize) { return; }
 
@@ -116,7 +116,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         if (this.column.getPinned()) {
             const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
             const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
-            const bodyWidth = getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
+            const bodyWidth = _getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
 
             if (leftWidth + rightWidth + (resizeAmountNormalised - lastResizeAmount) > bodyWidth) {
                 return;

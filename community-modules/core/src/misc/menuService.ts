@@ -9,8 +9,8 @@ import { CtrlsService } from "../ctrlsService";
 import { AnimationFrameService } from "./animationFrameService";
 import { IColumnChooserFactory, ShowColumnChooserParams } from "../interfaces/iColumnChooserFactory";
 import { FilterManager } from "../filter/filterManager";
-import { isIOSUserAgent } from "../utils/browser";
-import { warnOnce } from "../utils/function";
+import { _isIOSUserAgent } from "../utils/browser";
+import { _warnOnce } from "../utils/function";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { RowCtrl } from "../rendering/row/rowCtrl";
 
@@ -183,7 +183,7 @@ export class MenuService extends BeanStub {
         // is false (default) user will need to use longpress to display the menu.
         const menuHides = !this.isSuppressMenuHide();
 
-        const onIpadAndMenuHides = isIOSUserAgent() && menuHides;
+        const onIpadAndMenuHides = _isIOSUserAgent() && menuHides;
 
         return !onIpadAndMenuHides;
     }
@@ -213,7 +213,7 @@ export class MenuService extends BeanStub {
         const colDef = column.getColDef();
         const legacySuppressFilterButton = colDef.floatingFilterComponentParams?.suppressFilterButton;
         if (legacySuppressFilterButton != null) {
-            warnOnce(`As of v31.1, 'colDef.floatingFilterComponentParams.suppressFilterButton' is deprecated. Use 'colDef.suppressFloatingFilterButton' instead.`);
+            _warnOnce(`As of v31.1, 'colDef.floatingFilterComponentParams.suppressFilterButton' is deprecated. Use 'colDef.suppressFloatingFilterButton' instead.`);
         }
         return colDef.suppressFloatingFilterButton == null ? !legacySuppressFilterButton : !colDef.suppressFloatingFilterButton;
     }

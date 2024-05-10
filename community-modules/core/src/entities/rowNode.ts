@@ -6,8 +6,8 @@ import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { IServerSideStore } from "../interfaces/IServerSideStore";
 import { Beans } from "../rendering/beans";
-import { debounce } from "../utils/function";
-import { exists, missing, missingOrEmpty } from "../utils/generic";
+import { _debounce } from "../utils/function";
+import { _exists, _missing, _missingOrEmpty } from "../utils/generic";
 import { Column } from "./column";
 import { CellChangedEvent, DataChangedEvent, IRowNode, RowHighlightPosition, RowNodeEvent, RowNodeEventType, RowPinnedType, SetSelectedParams } from "../interfaces/iRowNode";
 import { CellEditRequestEvent } from "../events";
@@ -323,7 +323,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     public setDataAndId(data: TData, id: string | undefined): void {
-        const oldNode = exists(this.id) ? this.createDaemonNode() : null;
+        const oldNode = _exists(this.id) ? this.createDaemonNode() : null;
         const oldData = this.data;
 
         this.data = data;
@@ -426,7 +426,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     public isPixelInRange(pixel: number): boolean {
-        if (!exists(this.rowTop) || !exists(this.rowHeight)) { return false; }
+        if (!_exists(this.rowTop) || !_exists(this.rowHeight)) { return false; }
         return pixel >= this.rowTop && pixel < (this.rowTop + this.rowHeight);
     }
 
@@ -583,7 +583,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         if (cellHeight != null) {
             if (this.checkAutoHeightsDebounced == null) {
-                this.checkAutoHeightsDebounced = debounce(this.checkAutoHeights.bind(this), 1);
+                this.checkAutoHeightsDebounced = _debounce(this.checkAutoHeights.bind(this), 1);
             }
             this.checkAutoHeightsDebounced();
         }
@@ -811,7 +811,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     public setGroupValue(colKey: string | Column, newValue: any): void {
         const column = this.beans.columnModel.getGridColumn(colKey)!;
 
-        if (missing(this.groupData)) { this.groupData = {}; }
+        if (_missing(this.groupData)) { this.groupData = {}; }
 
         const columnId = column.getColId();
         const oldValue = this.groupData[columnId];
@@ -881,7 +881,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     public isEmptyRowGroupNode(): boolean | undefined {
-        return this.group && missingOrEmpty(this.childrenAfterGroup);
+        return this.group && _missingOrEmpty(this.childrenAfterGroup);
     }
 
     private dispatchCellChangedEvent(column: Column, newValue: TData, oldValue: TData): void {
@@ -1126,7 +1126,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         // all the way up to the column we are interested in, then we show the group cell.
         while (isCandidate && !foundFirstChildPath) {
             const parentRowNode = currentRowNode.parent!;
-            const firstChild = exists(parentRowNode) && currentRowNode.firstChild;
+            const firstChild = _exists(parentRowNode) && currentRowNode.firstChild;
 
             if (firstChild) {
                 if (parentRowNode.rowGroupColumn === rowGroupColumn) {

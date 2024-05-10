@@ -7,12 +7,12 @@ import { CtrlsService } from "../ctrlsService";
 import { ColumnModel, ISizeColumnsToFitParams } from "../columns/columnModel";
 import { ScrollVisibleService } from "./scrollVisibleService";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
-import { getInnerWidth, isElementChildOfClass, isVerticalScrollShowing } from "../utils/dom";
+import { _getInnerWidth, _isElementChildOfClass, _isVerticalScrollShowing } from "../utils/dom";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { RowDragFeature } from "./rowDragFeature";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { getTabIndex, isInvisibleScrollbar, isIOSUserAgent } from "../utils/browser";
+import { _getTabIndex, _isInvisibleScrollbar, _isIOSUserAgent } from "../utils/browser";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { PopupService } from "../widgets/popupService";
 import { MouseEventService } from "./mouseEventService";
@@ -148,7 +148,7 @@ export class GridBodyCtrl extends BeanStub {
             this.addManagedListener(element, 'focusin', (e: FocusEvent) => {
                 const { target } = e;
                 // element being focused is nested?
-                const isFocusedElementNested = isElementChildOfClass(target as HTMLElement, 'ag-root', element);
+                const isFocusedElementNested = _isElementChildOfClass(target as HTMLElement, 'ag-root', element);
 
                 element.classList.toggle('ag-has-focus', !isFocusedElementNested);
             });
@@ -156,8 +156,8 @@ export class GridBodyCtrl extends BeanStub {
             this.addManagedListener(element, 'focusout', (e: FocusEvent) => {
                 const { target, relatedTarget } = e;
                 const gridContainRelatedTarget = element.contains(relatedTarget as HTMLElement);
-                const isNestedRelatedTarget = isElementChildOfClass(relatedTarget as HTMLElement, 'ag-root', element);
-                const isNestedTarget = isElementChildOfClass(target as HTMLElement, 'ag-root', element);
+                const isNestedRelatedTarget = _isElementChildOfClass(relatedTarget as HTMLElement, 'ag-root', element);
+                const isNestedTarget = _isElementChildOfClass(target as HTMLElement, 'ag-root', element);
 
                 // element losing focus belongs to a nested grid,
                 // it should not be handled here.
@@ -188,7 +188,7 @@ export class GridBodyCtrl extends BeanStub {
         this.setStickyBottomOffsetBottom();
 
         const scrollbarWidth = visible ? (this.gos.getScrollbarWidth() || 0) : 0;
-        const pad = isInvisibleScrollbar() ? 16 : 0;
+        const pad = _isInvisibleScrollbar() ? 16 : 0;
         const width = `calc(100% + ${scrollbarWidth + pad}px)`;
 
         this.animationFrameService.requestAnimationFrame(() => this.comp.setBodyViewportWidth(width));
@@ -217,7 +217,7 @@ export class GridBodyCtrl extends BeanStub {
             // this is the element the focus is moving to
             const elementWithFocus = event.relatedTarget as HTMLElement;
 
-            if (getTabIndex(elementWithFocus) === null) {
+            if (_getTabIndex(elementWithFocus) === null) {
                 this.rowRenderer.stopEditing();
                 return;
             }
@@ -269,7 +269,7 @@ export class GridBodyCtrl extends BeanStub {
         const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
         const allowVerticalScroll = this.gos.isDomLayout('normal');
         this.comp.setAlwaysVerticalScrollClass(cssClass, show);
-        return show || (allowVerticalScroll && isVerticalScrollShowing(this.eBodyViewport));
+        return show || (allowVerticalScroll && _isVerticalScrollShowing(this.eBodyViewport));
     }
 
     private setupRowAnimationCssClass(): void {
@@ -344,7 +344,7 @@ export class GridBodyCtrl extends BeanStub {
 
     private mockContextMenuForIPad(listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void): void {
         // we do NOT want this when not in iPad
-        if (!isIOSUserAgent()) { return; }
+        if (!_isIOSUserAgent()) { return; }
 
         const touchListener = new TouchListener(this.eBodyViewport);
         const longTapListener = (event: LongTapEvent) => {
@@ -476,7 +476,7 @@ export class GridBodyCtrl extends BeanStub {
         const scrollWidthToRemove = removeScrollWidth ? this.gos.getScrollbarWidth() : 0;
         // bodyViewportWidth should be calculated from eGridBody, not eBodyViewport
         // because we change the width of the bodyViewport to hide the real browser scrollbar
-        const bodyViewportWidth = getInnerWidth(this.eGridBody);
+        const bodyViewportWidth = _getInnerWidth(this.eGridBody);
         const availableWidth = bodyViewportWidth - scrollWidthToRemove;
 
         if (availableWidth > 0) {

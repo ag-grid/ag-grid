@@ -1,5 +1,4 @@
 import {
-    _,
     AgGroupComponentParams,
     AgSlider,
     AgSliderParams,
@@ -7,7 +6,8 @@ import {
     Component,
     PostConstruct,
     RefSelector,
-    AgSelectParams
+    AgSelectParams,
+    _includes
 } from "@ag-grid-community/core";
 import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
@@ -40,7 +40,7 @@ export class MarkersPanel extends Component {
     private init() {
         // scatter charts should always show markers
         const chartType = this.chartOptionsService.getChartType();
-        const shouldHideEnabledCheckbox = _.includes(['scatter', 'bubble'], chartType);
+        const shouldHideEnabledCheckbox = _includes(['scatter', 'bubble'], chartType);
         const seriesMarkersGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
             'marker.enabled',
             {

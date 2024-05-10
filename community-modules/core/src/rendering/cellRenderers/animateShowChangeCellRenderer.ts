@@ -2,8 +2,8 @@ import { Autowired, Optional } from "../../context/context";
 import { ICellRenderer } from "./iCellRenderer";
 import { Component } from "../../widgets/component";
 import { FilterManager } from "../../filter/filterManager";
-import { exists } from "../../utils/generic";
-import { clearElement } from "../../utils/dom";
+import { _exists } from "../../utils/generic";
+import { _clearElement } from "../../utils/dom";
 
 const ARROW_UP = '\u2191';
 const ARROW_DOWN = '\u2193';
@@ -47,7 +47,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         const absDelta = Math.abs(delta);
         const valueFormatted = params.formatValue(absDelta);
 
-        const valueToUse = exists(valueFormatted) ? valueFormatted : absDelta;
+        const valueToUse = _exists(valueFormatted) ? valueFormatted : absDelta;
 
         const deltaUp = (delta >= 0);
 
@@ -79,7 +79,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
 
     private hideDeltaValue(): void {
         this.eValue.classList.remove('ag-value-change-value-highlight');
-        clearElement(this.eDelta);
+        _clearElement(this.eDelta);
     }
 
     public refresh(params: any, isInitialRender: boolean = false): boolean {
@@ -89,12 +89,12 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
             return false;
         }
 
-        if (exists(params.valueFormatted)) {
+        if (_exists(params.valueFormatted)) {
             this.eValue.textContent = params.valueFormatted;
-        } else if (exists(params.value)) {
+        } else if (_exists(params.value)) {
             this.eValue.textContent = value;
         } else {
-            clearElement(this.eValue);
+            _clearElement(this.eValue);
         }
 
         // we don't show the delta if we are in the middle of a filter. see comment on FilterManager

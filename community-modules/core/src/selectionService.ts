@@ -7,11 +7,11 @@ import { IRowModel } from "./interfaces/iRowModel";
 import { PostConstruct } from "./context/context";
 import { ChangedPath } from "./utils/changedPath";
 import { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
-import { exists, missing } from "./utils/generic";
+import { _exists, _missing } from "./utils/generic";
 import { WithoutGridCommon } from "./interfaces/iCommon";
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { ISelectionService, ISetNodesSelectedParams } from "./interfaces/iSelectionService";
-import { last } from "./utils/array";
+import { _last } from "./utils/array";
 import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from "./interfaces/selectionState";
 
 @Bean('selectionService')
@@ -185,7 +185,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
     private selectChildren(node: RowNode, newValue: boolean, groupSelectsFiltered: boolean, source: SelectionEventSourceType): number {
         const children = groupSelectsFiltered ? node.childrenAfterAggFilter : node.childrenAfterGroup;
 
-        if (missing(children)) { return 0; }
+        if (_missing(children)) { return 0; }
 
         return this.setNodesSelected({
             newValue: newValue,
@@ -202,7 +202,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
 
         if (selectedKeys.length == 0) { return null; }
 
-        const node = this.selectedNodes.get(last(selectedKeys));
+        const node = this.selectedNodes.get(_last(selectedKeys));
 
         if (node) {
             return node;
@@ -341,7 +341,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
     // used by the grid for rendering, it's a copy of what the node used
     // to be like before the id was changed.
     private syncInOldRowNode(rowNode: RowNode, oldNode: RowNode | null): void {
-        const oldNodeHasDifferentId = exists(oldNode) && (rowNode.id !== oldNode.id);
+        const oldNodeHasDifferentId = _exists(oldNode) && (rowNode.id !== oldNode.id);
         if (oldNodeHasDifferentId && oldNode) {
             const id = oldNode.id!;
             const oldNodeSelected = this.selectedNodes.get(id) == rowNode;

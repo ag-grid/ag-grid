@@ -1,5 +1,4 @@
 import {
-    _,
     AgCheckbox,
     AgGroupComponent,
     AgGroupComponentParams,
@@ -12,7 +11,9 @@ import {
     Events,
     PostConstruct,
     RefSelector,
-    ListOption
+    ListOption,
+    _removeFromParent,
+    _setDisplayed
 } from "@ag-grid-community/core";
 import type { AgCartesianAxisOptions } from 'ag-charts-community';
 import { ChartController } from "../../../chartController";
@@ -108,7 +109,7 @@ export class CartesianAxisPanel extends Component {
         if (!axisPositionSelectParams) this.removeTemplateComponent(this.axisPositionSelect);
         const updateTimeFormatVisibility = () => {
             const isTimeAxis = this.chartAxisOptionsProxy.getValue('type') === 'time';
-            _.setDisplayed(this.axisTimeFormatSelect.getGui(), isTimeAxis)
+            _setDisplayed(this.axisTimeFormatSelect.getGui(), isTimeAxis)
         };
         if (!axisTimeFormatSelectParams) {
             this.removeTemplateComponent(this.axisTimeFormatSelect);
@@ -346,8 +347,8 @@ export class CartesianAxisPanel extends Component {
         const rotationComp = this.createRotationWidget('labelRotation', chartAxisThemeOverrides);
         const autoRotateCb = this.initLabelRotation(rotationComp, chartAxisThemeOverrides);
 
-        labelPanelComp.addCompToPanel(autoRotateCb);
-        labelPanelComp.addCompToPanel(rotationComp);
+        labelPanelComp.addItem(autoRotateCb);
+        labelPanelComp.addItem(rotationComp);
     }
 
     private initLabelRotation(rotationComp: AgAngleSelect, chartAxisThemeOverrides: ChartMenuParamsFactory) {
@@ -424,7 +425,7 @@ export class CartesianAxisPanel extends Component {
             30
         )));
 
-        labelPanelComp.addCompToPanel(labelPaddingSlider);
+        labelPanelComp.addItem(labelPaddingSlider);
     }
 
     private translate(key: ChartTranslationKey) {
@@ -432,13 +433,13 @@ export class CartesianAxisPanel extends Component {
     }
 
     private removeTemplateComponent(component: Component): void {
-        _.removeFromParent(component.getGui());
+        _removeFromParent(component.getGui());
         this.destroyBean(component);
     }
 
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
-            _.removeFromParent(panel.getGui());
+            _removeFromParent(panel.getGui());
             this.destroyBean(panel);
         });
     }

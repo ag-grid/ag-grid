@@ -1,5 +1,9 @@
 import {
-    _,
+    _exists,
+    _debounce,
+    _missing,
+    _last,
+    _removeFromArray,
     Autowired,
     Bean,
     BeanStub,
@@ -31,6 +35,8 @@ import {
     ISelectionService,
     GridOptions,
     CssVariablesChanged,
+    _insertIntoArray,
+    _missingOrEmpty,
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -64,7 +70,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     @Optional('pivotStage') private pivotStage?: IRowNodeStage;
     @Optional('filterAggregatesStage') private filterAggregatesStage?: IRowNodeStage;
 
-    private onRowHeightChanged_debounced = _.debounce(this.onRowHeightChanged.bind(this), 100);
+    private onRowHeightChanged_debounced = _debounce(this.onRowHeightChanged.bind(this), 100);
 
     // top most node of the tree. the children are the user provided data.
     private rootNode: RowNode;
@@ -364,11 +370,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
 
         rowNodes.forEach(rowNode => {
-            _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
+            _removeFromArray(this.rootNode.allLeafChildren, rowNode);
         });
 
         rowNodes.forEach((rowNode, idx) => {
-            _.insertIntoArray(this.rootNode.allLeafChildren, rowNode, Math.max(indexAtPixelNow + increment, 0) + idx);
+            _insertIntoArray(this.rootNode.allLeafChildren, rowNode, Math.max(indexAtPixelNow + increment, 0) + idx);
         });
 
         this.refreshModel({
@@ -464,7 +470,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public getRowBounds(index: number): RowBounds | null {
-        if (_.missing(this.rowsToDisplay)) {
+        if (_missing(this.rowsToDisplay)) {
             return null;
         }
 
@@ -521,7 +527,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         // the impacted parent rows are recalculated, parents who's children have
         // not changed are not impacted.
 
-        const noTransactions = _.missingOrEmpty(rowNodeTransactions);
+        const noTransactions = _missingOrEmpty(rowNodeTransactions);
 
         const changedPath = new ChangedPath(false, this.rootNode);
 
@@ -558,11 +564,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             sort: ClientSideRowModelSteps.SORT,
             pivot: ClientSideRowModelSteps.PIVOT
         };
-        if (_.exists(step)) {
+        if (_exists(step)) {
             paramsStep = stepsMapped[step];
         }
 
-        if (_.missing(paramsStep)) {
+        if (_missing(paramsStep)) {
             console.error(`AG Grid: invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}`);
             return undefined;
         }
@@ -641,12 +647,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public isEmpty(): boolean {
-        const rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
-        return _.missing(this.rootNode) || rowsMissing || !this.columnModel.isReady();
+        const rowsMissing = _missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
+        return _missing(this.rootNode) || rowsMissing || !this.columnModel.isReady();
     }
 
     public isRowsToRender(): boolean {
-        return _.exists(this.rowsToDisplay) && this.rowsToDisplay.length > 0;
+        return _exists(this.rowsToDisplay) && this.rowsToDisplay.length > 0;
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
@@ -732,7 +738,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             // if pixel is less than or equal zero, it's always the first row
             return 0;
         }
-        const lastNode = _.last(this.rowsToDisplay);
+        const lastNode = _last(this.rowsToDisplay);
         if (lastNode.rowTop! <= pixelToMatch) {
             return this.rowsToDisplay.length - 1;
         }
@@ -927,7 +933,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 };
 
                 if (usingTreeData) {
-                    const hasChildren = _.exists(rowNode.childrenAfterGroup);
+                    const hasChildren = _exists(rowNode.childrenAfterGroup);
                     if (hasChildren) {
                         actionRow();
                     }

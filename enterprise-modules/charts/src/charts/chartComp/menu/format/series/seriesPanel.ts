@@ -1,5 +1,4 @@
 import {
-    _,
     AgGroupComponent,
     AgGroupComponentParams,
     AgSelect,
@@ -12,7 +11,8 @@ import {
     RefSelector,
     AgSelectParams,
     AgToggleButtonParams,
-    ChartMappings
+    ChartMappings,
+    _removeFromParent
 } from "@ag-grid-community/core";
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 import { ShadowPanel } from "./shadowPanel";
@@ -251,7 +251,7 @@ export class SeriesPanel extends Component {
 
         if (isPieChart) {
             const calloutPanelComp = this.createBean(new CalloutPanel(this.chartMenuUtils));
-            labelPanelComp.addCompToPanel(calloutPanelComp);
+            labelPanelComp.addItem(calloutPanelComp);
             this.activePanels.push(calloutPanelComp);
         }
 
@@ -261,7 +261,7 @@ export class SeriesPanel extends Component {
             const sectorParams = this.chartMenuUtils.getDefaultFontPanelParams('sectorLabel', 'sectorLabels');
             const sectorPanelComp = this.createBean(new FontPanel(sectorParams));
             const positionRatioComp = this.getSectorLabelPositionRatio();
-            sectorPanelComp.addCompToPanel(positionRatioComp);
+            sectorPanelComp.addItem(positionRatioComp);
 
             this.addWidget(sectorPanelComp);
         }
@@ -283,7 +283,7 @@ export class SeriesPanel extends Component {
                 }
             )));
 
-            labelPanelComp.addCompToPanel(placementSelect);
+            labelPanelComp.addItem(placementSelect);
             this.activePanels.push(placementSelect);
 
             // Add padding slider
@@ -293,7 +293,7 @@ export class SeriesPanel extends Component {
                 200
             )));
 
-            labelPanelComp.addCompToPanel(paddingSlider);
+            labelPanelComp.addItem(paddingSlider);
             this.activePanels.push(paddingSlider);
         }
     }
@@ -397,7 +397,7 @@ export class SeriesPanel extends Component {
 
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
-            _.removeFromParent(panel.getGui());
+            _removeFromParent(panel.getGui());
             this.destroyBean(panel);
         });
     }

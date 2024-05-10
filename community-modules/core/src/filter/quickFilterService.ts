@@ -8,7 +8,7 @@ import { Events } from "../eventKeys";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { IRowModel } from "../interfaces/iRowModel";
 import { ModuleRegistry } from "../modules/moduleRegistry";
-import { exists } from "../utils/generic";
+import { _exists } from "../utils/generic";
 import { ValueService } from "../valueService/valueService";
 import { onlyUsedInFilters } from "../utils/filtersOnly";
 
@@ -103,10 +103,10 @@ export function useQuickFilter() {
             }
         }
 
-        private parseQuickFilter(newFilter?: string): string | null {
-            if (!exists(newFilter)) {
-                return null;
-            }
+    private parseQuickFilter(newFilter?: string): string | null {
+        if (!_exists(newFilter)) {
+            return null;
+        }
 
             if (!this.gos.isRowModelType('clientSide')) {
                 console.warn('AG Grid - Quick filtering only works with the Client-Side Row Model');
@@ -159,9 +159,9 @@ export function useQuickFilter() {
             return columns.some((column) => {
                 const part = this.getQuickFilterTextForColumn(column, node);
 
-                return exists(part) && part.indexOf(filterPart) >= 0;
-            });
-        }
+            return _exists(part) && part.indexOf(filterPart) >= 0;
+        });
+    }
 
         private doesRowPassQuickFilterCache(node: RowNode, filterPart: string): boolean {
             this.checkGenerateQuickFilterAggregateText(node);
@@ -203,8 +203,8 @@ export function useQuickFilter() {
                 value = colDef.getQuickFilterText(params);
             }
 
-            return exists(value) ? value.toString().toUpperCase() : null;
-        }
+        return _exists(value) ? value.toString().toUpperCase() : null;
+    }
 
         private getQuickFilterAggregateText(node: RowNode): string {
             const stringParts: string[] = [];
@@ -213,10 +213,10 @@ export function useQuickFilter() {
             columns.forEach((column) => {
                 const part = this.getQuickFilterTextForColumn(column, node);
 
-                if (exists(part)) {
-                    stringParts.push(part);
-                }
-            });
+            if (exists(part)) {
+                stringParts.push(part);
+            }
+        });
 
             return stringParts.join(QuickFilterService.QUICK_FILTER_SEPARATOR);
         }

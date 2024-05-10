@@ -11,7 +11,7 @@ import {
     DropTarget,
     IAggFunc,
     PostConstruct,
-    _
+    _clearElement,
 } from "@ag-grid-community/core";
 import { ChartService } from "../../../chartService";
 import { ChartController } from "../../chartController";
@@ -76,7 +76,7 @@ export class CategoriesDataPanel extends DragDataPanel {
 
     private recreate(dimensionCols: ColState[]): void {
         this.isOpen = this.groupComp.isExpanded();
-        _.clearElement(this.getGui());
+        _clearElement(this.getGui());
         this.destroyBean(this.groupComp);
         this.dimensionCols = dimensionCols;
         this.init();

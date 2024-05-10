@@ -5,7 +5,7 @@ import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
 import { KeyCode } from "../../constants/keyCode";
 import { RowCtrl } from "../row/rowCtrl";
-import { isDeleteKey } from "../../utils/keyboard";
+import { _isDeleteKey } from "../../utils/keyboard";
 import { Events } from "../../eventKeys";
 
 export class CellKeyboardListenerFeature extends BeanStub {
@@ -93,7 +93,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
         eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
 
-        if (isDeleteKey(key, gos.get('enableCellEditingOnBackspace'))) {
+        if (_isDeleteKey(key, gos.get('enableCellEditingOnBackspace'))) {
             if (rangeService && gos.get('enableRangeSelection')) {
                 rangeService.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
             } else if (cellCtrl.isCellEditable()) {

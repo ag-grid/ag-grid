@@ -9,9 +9,9 @@ import { GridApi } from "./gridApi";
 import { AgGridCommon, WithoutGridCommon } from "./interfaces/iCommon";
 import { RowModelType } from "./interfaces/iRowModel";
 import { AnyGridOptions, INITIAL_GRID_OPTION_KEYS, PropertyKeys } from "./propertyKeys";
-import { warnOnce } from "./utils/function";
-import { exists, missing } from "./utils/generic";
-import { getScrollbarWidth } from './utils/browser';
+import { _warnOnce } from "./utils/function";
+import { _exists, _missing } from "./utils/generic";
+import { _getScrollbarWidth } from './utils/browser';
 import { IRowNode } from "./interfaces/iRowNode";
 import { GRID_OPTION_DEFAULTS } from "./validation/rules/gridOptionsValidations";
 import { ValidationService } from "./validation/validationService";
@@ -130,7 +130,7 @@ export class GridOptionsService {
      * @param property GridOption property
      */
     public exists(property: keyof GridOptions): boolean {
-        return exists(this.gridOptions[property]);
+        return _exists(this.gridOptions[property]);
     }
 
     /**
@@ -237,7 +237,7 @@ export class GridOptionsService {
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
         Object.entries(options).forEach(([key, value]) => {
             if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
-                warnOnce(`${key} is an initial property and cannot be updated.`)
+                _warnOnce(`${key} is an initial property and cannot be updated.`)
             }
             const coercedValue = GridOptionsService.getCoercedValue(key as keyof GridOptions, value);
             const shouldForce = force || ((typeof coercedValue) === 'object' && source === 'api'); // force objects as they could have been mutated.
@@ -312,7 +312,7 @@ export class GridOptionsService {
     public getScrollbarWidth() {
         if (this.scrollbarWidth == null) {
             const useGridOptions = typeof this.gridOptions.scrollbarWidth === 'number' && this.gridOptions.scrollbarWidth >= 0;
-            const scrollbarWidth = useGridOptions ? this.gridOptions.scrollbarWidth : getScrollbarWidth();
+            const scrollbarWidth = useGridOptions ? this.gridOptions.scrollbarWidth : _getScrollbarWidth();
 
             if (scrollbarWidth != null) {
                 this.scrollbarWidth = scrollbarWidth;
@@ -328,7 +328,7 @@ export class GridOptionsService {
 
     public isRowModelType(rowModelType: RowModelType): boolean {
         return this.gridOptions.rowModelType === rowModelType ||
-            (rowModelType === 'clientSide' && missing(this.gridOptions.rowModelType));
+            (rowModelType === 'clientSide' && _missing(this.gridOptions.rowModelType));
     }
 
     public isDomLayout(domLayout: DomLayoutType) {
@@ -371,7 +371,7 @@ export class GridOptionsService {
 
             if (this.isNumeric(height)) {
                 if (height === 0) {
-                    warnOnce('The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.');
+                    _warnOnce('The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.');
                 }
                 return { height: Math.max(1, height), estimated: false };
             }
@@ -403,7 +403,7 @@ export class GridOptionsService {
 
     // we don't allow dynamic row height for virtual paging
     public getRowHeightAsNumber(): number {
-        if (!this.gridOptions.rowHeight || missing(this.gridOptions.rowHeight)) {
+        if (!this.gridOptions.rowHeight || _missing(this.gridOptions.rowHeight)) {
             return this.environment.getDefaultRowHeight();
         }
 
@@ -436,7 +436,7 @@ export class GridOptionsService {
         const domDataKey = this.getDomDataKey();
         let domData = (element as any)[domDataKey];
 
-        if (missing(domData)) {
+        if (_missing(domData)) {
             domData = {};
             (element as any)[domDataKey] = domData;
         }
@@ -447,13 +447,13 @@ export class GridOptionsService {
         // if user is providing document, we use the users one,
         // otherwise we use the document on the global namespace.
         let result: Document | null = null;
-        if (this.gridOptions.getDocument && exists(this.gridOptions.getDocument)) {
+        if (this.gridOptions.getDocument && _exists(this.gridOptions.getDocument)) {
             result = this.gridOptions.getDocument();
         } else if (this.eGridDiv) {
             result = this.eGridDiv.ownerDocument;
         }
 
-        if (result && exists(result)) {
+        if (result && _exists(result)) {
             return result;
         }
 
@@ -474,7 +474,7 @@ export class GridOptionsService {
     }
 
     public getAsyncTransactionWaitMillis(): number | undefined {
-        return exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : 50;
+        return _exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : 50;
     }
 
     public isAnimateRows() {

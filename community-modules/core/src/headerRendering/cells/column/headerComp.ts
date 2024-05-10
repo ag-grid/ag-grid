@@ -3,10 +3,10 @@ import { Column } from "../../../entities/column";
 import { IComponent } from "../../../interfaces/iComponent";
 import { AgGridCommon } from "../../../interfaces/iCommon";
 import { SortController } from "../../../sortController";
-import { removeFromParent, setDisplayed } from "../../../utils/dom";
-import { exists } from "../../../utils/generic";
-import { createIconNoSpan } from "../../../utils/icon";
-import { escapeString } from "../../../utils/string";
+import { _removeFromParent, _setDisplayed } from "../../../utils/dom";
+import { _exists } from "../../../utils/generic";
+import { _createIconNoSpan } from "../../../utils/icon";
+import { _escapeString } from "../../../utils/string";
 import { Component } from "../../../widgets/component";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { LongTapEvent, TapEvent, TouchListener } from "../../../widgets/touchListener";
@@ -195,7 +195,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     private setDisplayName(params: IHeaderParams): void {
         if (this.currentDisplayName != params.displayName) {
             this.currentDisplayName = params.displayName;
-            const displayNameSanitised = escapeString(this.currentDisplayName, true);
+            const displayNameSanitised = _escapeString(this.currentDisplayName, true);
             if (this.eText) {
                 this.eText.textContent = displayNameSanitised!;
             }
@@ -205,7 +205,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
         if (eParent == null) { return; }
 
-        const eIcon = createIconNoSpan(iconName, this.gos, column);
+        const eIcon = _createIconNoSpan(iconName, this.gos, column);
         if (eIcon) {
             eParent.appendChild(eIcon);
         }
@@ -218,7 +218,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         const touchListener = new TouchListener(this.getGui(), true);
         const suppressMenuHide = this.shouldSuppressMenuHide();
-        const tapMenuButton = suppressMenuHide && exists(this.eMenu);
+        const tapMenuButton = suppressMenuHide && _exists(this.eMenu);
         const menuTouchListener = tapMenuButton ? new TouchListener(this.eMenu!, true) : touchListener;
 
         if (this.params.enableMenu) {
@@ -271,7 +271,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         this.currentShowMenu = this.workOutShowMenu();
         if (!this.currentShowMenu) {
-            removeFromParent(this.eMenu);
+            _removeFromParent(this.eMenu);
             this.eMenu = undefined;
             return;
         }
@@ -395,7 +395,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private configureFilter(enabled: boolean, element: HTMLElement, filterChangedCallback: () => void): boolean {
         if (!enabled) {
-            removeFromParent(element);
+            _removeFromParent(element);
             return false;
         }
 
@@ -409,7 +409,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private onFilterChangedIcon(): void {
         const filterPresent = this.params.column.isFilterActive();
-        setDisplayed(this.eFilter, filterPresent, { skipAriaHidden: true });
+        _setDisplayed(this.eFilter, filterPresent, { skipAriaHidden: true });
     }
 
     private onFilterChangedButton(): void {

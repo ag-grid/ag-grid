@@ -1,6 +1,6 @@
-import { exists } from './generic';
+import { _exists } from './generic';
 
-export function iterateObject<T>(object: { [p: string]: T; } | T[] | null | undefined, callback: (key: string, value: T) => void) {
+export function _iterateObject<T>(object: { [p: string]: T; } | T[] | null | undefined, callback: (key: string, value: T) => void) {
     if (object == null) { return; }
 
     if (Array.isArray(object)) {
@@ -15,7 +15,7 @@ export function iterateObject<T>(object: { [p: string]: T; } | T[] | null | unde
     }
 }
 
-export function cloneObject<T extends {}>(object: T): T {
+export function _cloneObject<T extends {}>(object: T): T {
     const copy = {} as T;
     const keys = Object.keys(object);
 
@@ -32,7 +32,7 @@ export function cloneObject<T extends {}>(object: T): T {
 // this is used for eg creating copies of Column Definitions, where we want to
 // deep copy all objects, but do not want to deep copy functions (eg when user provides
 // a function or class for colDef.cellRenderer)
-export function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | undefined {
+export function _deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | undefined {
     if (!object) { return; }
 
     const obj = object as any;
@@ -48,10 +48,10 @@ export function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | un
         // NOT include the following:
         // 1) arrays
         // 2) functions or classes (eg api instance)
-        const sourceIsSimpleObject = isNonNullObject(value) && value.constructor === Object;
+        const sourceIsSimpleObject = _isNonNullObject(value) && value.constructor === Object;
 
         if (sourceIsSimpleObject) {
-            res[key] = deepCloneDefinition(value);
+            res[key] = _deepCloneDefinition(value);
         } else {
             res[key] = value;
         }
@@ -60,7 +60,7 @@ export function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | un
     return res;
 }
 
-export function getAllValuesInObject<T extends Object, K extends keyof T, O extends T[K]>(obj: T): O[] {
+export function _getAllValuesInObject<T extends Object, K extends keyof T, O extends T[K]>(obj: T): O[] {
     if (!obj) { return []; }
     const anyObject = Object as any;
     if (typeof anyObject.values === 'function') {
@@ -77,10 +77,10 @@ export function getAllValuesInObject<T extends Object, K extends keyof T, O exte
     return ret;
 }
 
-export function mergeDeep(dest: any, source: any, copyUndefined = true, makeCopyOfSimpleObjects = false): void {
-    if (!exists(source)) { return; }
+export function _mergeDeep(dest: any, source: any, copyUndefined = true, makeCopyOfSimpleObjects = false): void {
+    if (!_exists(source)) { return; }
 
-    iterateObject(source, (key: string, sourceValue: any) => {
+    _iterateObject(source, (key: string, sourceValue: any) => {
         let destValue: any = dest[key];
 
         if (destValue === sourceValue) { return; }
@@ -105,15 +105,15 @@ export function mergeDeep(dest: any, source: any, copyUndefined = true, makeCopy
             }
         }
 
-        if (isNonNullObject(sourceValue) && isNonNullObject(destValue) && !Array.isArray(destValue)) {
-            mergeDeep(destValue, sourceValue, copyUndefined, makeCopyOfSimpleObjects);
+        if (_isNonNullObject(sourceValue) && _isNonNullObject(destValue) && !Array.isArray(destValue)) {
+            _mergeDeep(destValue, sourceValue, copyUndefined, makeCopyOfSimpleObjects);
         } else if (copyUndefined || sourceValue !== undefined) {
             dest[key] = sourceValue;
         }
     });
 }
 
-export function getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any {
+export function _getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any {
     if (!field || !data) { return; }
 
     // if no '.', then it's not a deep value
@@ -137,7 +137,7 @@ export function getValueUsingField(data: any, field: string, fieldContainsDots: 
 
 // used by GridAPI to remove all references, so keeping grid in memory resulting in a
 // memory leak if user is not disposing of the GridAPI references
-export function removeAllReferences<T>(obj: any, preserveKeys: (keyof T)[] = [], preDestroyLink: string): void {
+export function _removeAllReferences<T>(obj: any, preserveKeys: (keyof T)[] = [], preDestroyLink: string): void {
     Object.keys(obj).forEach(key => {
         const value = obj[key];
         // we want to replace all the @autowired services, which are objects. any simple types (boolean, string etc)
@@ -168,6 +168,6 @@ export function removeAllReferences<T>(obj: any, preserveKeys: (keyof T)[] = [],
     Object.defineProperties(obj, properties);
 }
 
-export function isNonNullObject(value: any): boolean {
+export function _isNonNullObject(value: any): boolean {
     return typeof value === 'object' && value !== null;
 }

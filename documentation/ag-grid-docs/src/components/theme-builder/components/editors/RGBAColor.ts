@@ -79,6 +79,7 @@ export class RGBAColor {
     static reinterpretCss(value: string): RGBAColor | null {
         if (!reinterpretationElement) {
             reinterpretationElement = document.createElement('span');
+            reinterpretationElement.className = 'ag-measurement-container';
             document.body.appendChild(reinterpretationElement);
         }
         reinterpretationElement.style.backgroundColor = '';

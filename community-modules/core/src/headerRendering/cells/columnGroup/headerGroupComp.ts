@@ -4,12 +4,12 @@ import { ColumnGroup } from "../../../entities/columnGroup";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { IComponent } from "../../../interfaces/iComponent";
 import { AgGridCommon } from "../../../interfaces/iCommon";
-import { setDisplayed } from "../../../utils/dom";
-import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../../utils/event";
-import { warnOnce } from "../../../utils/function";
-import { exists } from "../../../utils/generic";
-import { createIconNoSpan } from "../../../utils/icon";
-import { escapeString } from "../../../utils/string";
+import { _setDisplayed } from "../../../utils/dom";
+import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from "../../../utils/event";
+import { _warnOnce } from "../../../utils/function";
+import { _exists } from "../../../utils/generic";
+import { _createIconNoSpan } from "../../../utils/icon";
+import { _escapeString } from "../../../utils/string";
 import { Component } from "../../../widgets/component";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { TouchListener } from "../../../widgets/touchListener";
@@ -76,7 +76,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         const paramsAny = this.params as any;
 
         if (paramsAny.template) {
-            warnOnce(`A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)`);
+            _warnOnce(`A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)`);
         }
     }
 
@@ -85,7 +85,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         this.addInIcon("columnGroupClosed", "agClosed");
 
         const expandAction = (event: MouseEvent) => {
-            if (isStopPropagationForAgGrid(event)) {
+            if (_isStopPropagationForAgGrid(event)) {
                 return;
             }
 
@@ -97,7 +97,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         this.addTouchAndClickListeners(this.eOpenIcon, expandAction);
 
         const stopPropagationAction = (event: MouseEvent) => {
-            stopPropagationForAgGrid(event);
+            _stopPropagationForAgGrid(event);
         };
 
         // adding stopPropagation to the double click for the icons prevents double click action happening
@@ -129,16 +129,16 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         const columnGroup = this.params.columnGroup;
         if (columnGroup.isExpandable()) {
             const expanded = this.params.columnGroup.isExpanded();
-            setDisplayed(this.eOpenIcon, expanded);
-            setDisplayed(this.eCloseIcon, !expanded);
+            _setDisplayed(this.eOpenIcon, expanded);
+            _setDisplayed(this.eCloseIcon, !expanded);
         } else {
-            setDisplayed(this.eOpenIcon, false);
-            setDisplayed(this.eCloseIcon, false);
+            _setDisplayed(this.eOpenIcon, false);
+            _setDisplayed(this.eCloseIcon, false);
         }
     }
 
     private addInIcon(iconName: string, refName: string): void {
-        const eIcon = createIconNoSpan(iconName, this.gos, null);
+        const eIcon = _createIconNoSpan(iconName, this.gos, null);
         if (eIcon) {
             this.getRefElement(refName).appendChild(eIcon);
         }
@@ -146,8 +146,8 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
     private addGroupExpandIcon() {
         if (!this.params.columnGroup.isExpandable()) {
-            setDisplayed(this.eOpenIcon, false);
-            setDisplayed(this.eCloseIcon, false);
+            _setDisplayed(this.eOpenIcon, false);
+            _setDisplayed(this.eCloseIcon, false);
             return;
         }
     }
@@ -156,8 +156,8 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         // no renderer, default text render
         const { displayName, columnGroup } = this.params;
 
-        if (exists(displayName)) {
-            const displayNameSanitised = escapeString(displayName, true);
+        if (_exists(displayName)) {
+            const displayNameSanitised = _escapeString(displayName, true);
             this.getRefElement('agLabel').textContent = displayNameSanitised!;
         }
 

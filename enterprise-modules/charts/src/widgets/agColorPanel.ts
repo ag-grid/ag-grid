@@ -1,4 +1,4 @@
-import { Component, PostConstruct, RefSelector, ManagedFocusFeature, _ } from "@ag-grid-community/core";
+import { Component, PostConstruct, RefSelector, _exists } from "@ag-grid-community/core";
 import { AgColorPicker } from "./agColorPicker";
 import { _Util } from 'ag-charts-community';
 import { KeyCode } from "@ag-grid-community/core";
@@ -336,7 +336,7 @@ export class AgColorPanel extends Component {
     private onRecentColorClick(e: MouseEvent | KeyboardEvent) {
         const target = e.target as HTMLElement;
 
-        if (!_.exists(target.id)) {
+        if (!_exists(target.id)) {
             return;
         }
 

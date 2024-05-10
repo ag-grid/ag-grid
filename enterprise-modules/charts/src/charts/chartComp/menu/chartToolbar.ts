@@ -3,7 +3,8 @@ import {
     ChartToolbarMenuItemOptions,
     Component,
     RefSelector,
-    _
+    _clearElement,
+    _createIconNoSpan,
 } from "@ag-grid-community/core";
 import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
 
@@ -35,7 +36,7 @@ export class ChartToolbar extends Component {
         this.buttonListenersDestroyFuncs = [];
 
         const menuEl = this.eMenu;
-        _.clearElement(menuEl);
+        _clearElement(menuEl);
 
         buttons.forEach(buttonConfig => {
             const { buttonName, iconName, callback } = buttonConfig;
@@ -55,7 +56,7 @@ export class ChartToolbar extends Component {
     }
 
     private createButton(iconName: string): Element {
-        let buttonEl = _.createIconNoSpan(
+        let buttonEl = _createIconNoSpan(
             iconName,
             this.gos,
             undefined,

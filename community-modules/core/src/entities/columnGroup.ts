@@ -6,7 +6,7 @@ import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { EventService } from "../eventService";
 import { Autowired } from "../context/context";
 import { AgEvent, AgEventListener } from "../events";
-import { last } from "../utils/array";
+import { _last } from "../utils/array";
 import { GridOptionsService } from "../gridOptionsService";
 
 export type ColumnGroupShowType = 'open' | 'closed';
@@ -89,7 +89,7 @@ export class ColumnGroup implements IHeaderColumn {
         // set our left based on first displayed column
         if (this.displayedChildren!.length > 0) {
             if (this.gos.get('enableRtl')) {
-                const lastChild = last(this.displayedChildren!);
+                const lastChild = _last(this.displayedChildren!);
                 const lastChildLeft = lastChild.getLeft();
                 this.setLeft(lastChildLeft);
             } else {

@@ -10,7 +10,7 @@ import { HeaderFilterCellCtrl } from "../cells/floatingFilter/headerFilterCellCt
 import { HeaderCellCtrl } from "../cells/column/headerCellCtrl";
 import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
-import { values } from "../../utils/generic";
+import { _values } from "../../utils/generic";
 import { Beans } from "../../rendering/beans";
 import { BrandedType } from "../../interfaces/brandedType";
 
@@ -112,7 +112,7 @@ export class HeaderRowCtrl extends BeanStub {
     public getHeaderCellCtrl(column: Column): HeaderCellCtrl | undefined;
     public getHeaderCellCtrl(column: any): any {
         if (!this.headerCellCtrls) { return; }
-        return values(this.headerCellCtrls).find(cellCtrl => cellCtrl.getColumnGroupChild() === column);
+        return  _values(this.headerCellCtrls).find(cellCtrl => cellCtrl.getColumnGroupChild() === column);
     }
 
     private onDisplayedColumnsChanged(): void {

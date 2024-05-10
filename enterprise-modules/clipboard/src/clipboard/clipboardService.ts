@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
@@ -40,7 +39,11 @@ import {
     Optional,
     CtrlsService,
     WithoutGridCommon,
-    ProcessRowGroupForExportParams
+    ProcessRowGroupForExportParams,
+    _warnOnce,
+    _exists,
+    _last,
+    _removeFromArray
 } from "@ag-grid-community/core";
 
 interface RowCallback {
@@ -118,10 +121,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             navigator.clipboard.readText()
                 .then(this.processClipboardData.bind(this))
                 .catch((e) => {
-                    _.doOnce(() => {
-                        console.warn(e);
-                        console.warn(apiError('readText'));
-                    }, 'clipboardApiError');
+                    _warnOnce(`${e}\n${apiError('readText')}`);
                     this.navigatorApiFailed = true;
                     this.pasteFromClipboardLegacy();
                 });
@@ -175,7 +175,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     private getClipboardDelimiter() {
         const delimiter = this.gos.get('clipboardDelimiter');
-        return _.exists(delimiter) ? delimiter : '\t';
+        return _exists(delimiter) ? delimiter : '\t';
     }
 
     private processClipboardData(data: string): void {
@@ -527,13 +527,13 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     private removeLastLineIfBlank(parsedData: string[][]): void {
         // remove last row if empty, excel puts empty last row in
-        const lastLine = _.last(parsedData);
+        const lastLine = _last(parsedData);
         const lastLineIsBlank = lastLine && lastLine.length === 1 && lastLine[0] === '';
 
         if (lastLineIsBlank) {
             // do not remove the last empty line when that is the only line pasted
             if (parsedData.length === 1) { return; }
-            _.removeFromArray(parsedData, lastLine);
+            _removeFromArray(parsedData, lastLine);
         }
     }
 
@@ -1031,10 +1031,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         const allowNavigator = !this.gos.get('suppressClipboardApi');
         if (allowNavigator && navigator.clipboard) {
             navigator.clipboard.writeText(data).catch((e) => {
-                _.doOnce(() => {
-                    console.warn(e);
-                    console.warn(apiError('writeText'));
-                }, 'clipboardApiError');
+                _warnOnce(`${e}\n${apiError('writeText')}`);
                 this.copyDataToClipboardLegacy(data);
             });
             return;

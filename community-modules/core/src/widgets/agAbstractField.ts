@@ -1,7 +1,7 @@
 import { AgAbstractLabel, AgLabelParams } from './agAbstractLabel';
-import { setFixedWidth } from '../utils/dom';
+import { _setFixedWidth } from '../utils/dom';
 import { Events } from '../eventKeys';
-import { getAriaLabel, setAriaLabel, setAriaLabelledBy } from '../utils/aria';
+import { _getAriaLabel, _setAriaLabel, _setAriaLabelledBy } from '../utils/aria';
 
 export interface AgFieldParams extends AgLabelParams {
     value?: any;
@@ -44,15 +44,15 @@ export abstract class AgAbstractField<TValue, TConfig extends AgFieldParams = Ag
         const ariaEl = this.getAriaElement();
         const labelId = this.getLabelId();
 
-        if (getAriaLabel(ariaEl) !== null) {
-            setAriaLabelledBy(ariaEl, '');
+        if (_getAriaLabel(ariaEl) !== null) {
+            _setAriaLabelledBy(ariaEl, '');
         } else {
-            setAriaLabelledBy(ariaEl, labelId ?? '');
+            _setAriaLabelledBy(ariaEl, labelId ?? '');
         }
     }
 
     public setAriaLabel(label?: string | null): this {
-        setAriaLabel(this.getAriaElement(), label);
+        _setAriaLabel(this.getAriaElement(), label);
         this.refreshAriaLabelledBy();
 
         return this;
@@ -69,7 +69,7 @@ export abstract class AgAbstractField<TValue, TConfig extends AgFieldParams = Ag
     }
 
     public setWidth(width: number): this {
-        setFixedWidth(this.getGui(), width);
+        _setFixedWidth(this.getGui(), width);
 
         return this;
     }

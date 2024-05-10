@@ -5,14 +5,14 @@ import { Column } from '../../../entities/column';
 import { Events, ColumnEvent, FilterChangedEvent } from '../../../events';
 import { IFloatingFilter } from '../../../filter/floating/floatingFilter';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
-import { AgPromise } from '../../../utils';
-import { isElementChildOfClass } from '../../../utils/dom';
-import { createIconNoSpan } from '../../../utils/icon';
+import { AgPromise } from '../../../utils/promise';
+import { _isElementChildOfClass } from '../../../utils/dom';
+import { _createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { HoverFeature } from '../hoverFeature';
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
-import { setAriaLabel } from "../../../utils/aria";
-import { warnOnce } from "../../../utils/function";
+import { _setAriaLabel } from "../../../utils/aria";
+import { _warnOnce } from "../../../utils/function";
 import { Beans } from "../../../rendering/beans";
 
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
@@ -86,7 +86,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         
         if (!this.active || this.iconCreated) { return; }
 
-        const eMenuIcon = createIconNoSpan('filter', this.gos, this.column);
+        const eMenuIcon = _createIconNoSpan('filter', this.gos, this.column);
 
         if (eMenuIcon) {
             this.iconCreated = true;
@@ -108,7 +108,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     private setupAria(): void {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
-        setAriaLabel(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
+        _setAriaLabel(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
     }
 
     private onTabKeyDown(e: KeyboardEvent) {
@@ -194,7 +194,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         if (isRelatedWithin) { return; }
 
         const notFromHeaderWrapper = !!e.relatedTarget && !(e.relatedTarget as HTMLElement).classList.contains('ag-floating-filter');
-        const fromWithinHeader = !!e.relatedTarget && isElementChildOfClass(e.relatedTarget as HTMLElement, 'ag-floating-filter');
+        const fromWithinHeader = !!e.relatedTarget && _isElementChildOfClass(e.relatedTarget as HTMLElement, 'ag-floating-filter');
 
         if (notFromHeaderWrapper && fromWithinHeader && e.target === this.eGui) {
             const lastFocusEvent = this.lastFocusEvent;
@@ -377,7 +377,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             if (!hasRefreshed && floatingFilter?.onParamsUpdated && typeof floatingFilter.onParamsUpdated === 'function') {
                 const result = floatingFilter.onParamsUpdated(params);
                 if (result !== null) {
-                    warnOnce(`Custom floating filter method 'onParamsUpdated' is deprecated. Use 'refresh' instead.`);
+                    _warnOnce(`Custom floating filter method 'onParamsUpdated' is deprecated. Use 'refresh' instead.`);
                 }
             }
         })

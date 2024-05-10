@@ -1,7 +1,7 @@
 import { Component } from "../../widgets/component";
 import { ICellRendererParams } from "./iCellRenderer";
 import { RefSelector } from "../../widgets/componentAnnotations";
-import { createIconNoSpan } from "../../utils/icon";
+import { _createIconNoSpan } from "../../utils/icon";
 import { IComponent } from "../../interfaces/iComponent";
 
 export interface ILoadingCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, TContext> { }
@@ -33,7 +33,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
     }
 
     private setupLoading(): void {
-        const eLoadingIcon = createIconNoSpan('groupLoading', this.gos, null);
+        const eLoadingIcon = _createIconNoSpan('groupLoading', this.gos, null);
         if (eLoadingIcon) {
             this.eLoadingIcon.appendChild(eLoadingIcon);
         }

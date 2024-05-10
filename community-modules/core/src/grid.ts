@@ -69,7 +69,7 @@ import { UndoRedoService } from "./undoRedo/undoRedoService";
 import { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
 import { HeaderPositionUtils } from "./headerRendering/common/headerPosition";
 import { HeaderNavigationService } from "./headerRendering/common/headerNavigationService";
-import { missing } from "./utils/generic";
+import { _missing } from "./utils/generic";
 import { ColumnDefFactory } from "./columns/columnDefFactory";
 import { RowCssClassCalculator } from "./rendering/row/rowCssClassCalculator";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
@@ -88,8 +88,8 @@ import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
 import { DataTypeService } from "./columns/dataTypeService";
 import { AgInputDateField } from "./widgets/agInputDateField";
 import { AgAutocomplete } from "./widgets/agAutocomplete";
-import { warnOnce, errorOnce } from "./utils/function";
-import { mergeDeep } from "./utils/object";
+import { _warnOnce, _errorOnce } from "./utils/function";
+import { _mergeDeep } from "./utils/object";
 import { SyncService } from "./syncService";
 import { OverlayService } from "./rendering/overlays/overlayService";
 import { StateService } from "./misc/stateService";
@@ -146,7 +146,7 @@ export function provideGlobalGridOptions(gridOptions: GridOptions): void {
 export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOptions<TData>, params?: Params): GridApi<TData>{
 
     if (!gridOptions) {
-        errorOnce('No gridOptions provided to createGrid');
+        _errorOnce('No gridOptions provided to createGrid');
         return {} as GridApi;
     }   
     const api = new GridCoreCreator().create(eGridDiv, gridOptions, context => {
@@ -161,7 +161,7 @@ export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOption
         const apiUrl = 'https://ag-grid.com/javascript-data-grid/grid-interface/#grid-api';
         Object.defineProperty(gridOptions, 'api', {
             get: () => {
-                errorOnce(`gridOptions.api is no longer supported. See ${apiUrl}.`);
+                _errorOnce(`gridOptions.api is no longer supported. See ${apiUrl}.`);
                 return undefined;
             },
             configurable: true,
@@ -179,10 +179,10 @@ export class Grid {
     private readonly gridOptions: any; // Not typed to enable setting api for backwards compatibility
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
-      warnOnce('Since v31 new Grid(...) is deprecated. Use createGrid instead: `const gridApi = createGrid(...)`. The grid api is returned from createGrid and will not be available on gridOptions.');
+      _warnOnce('Since v31 new Grid(...) is deprecated. Use createGrid instead: `const gridApi = createGrid(...)`. The grid api is returned from createGrid and will not be available on gridOptions.');
 
         if (!gridOptions) {
-            errorOnce('No gridOptions provided to the grid');
+            _errorOnce('No gridOptions provided to the grid');
             return;
         }
 
@@ -228,7 +228,7 @@ export class GridCoreCreator {
         let mergedGridOps: GridOptions = {};
         if (GlobalGridOptions.gridOptions) {
             // Merge deep to avoid leaking changes to the global options
-            mergeDeep(mergedGridOps, GlobalGridOptions.gridOptions, true, true);
+            _mergeDeep(mergedGridOps, GlobalGridOptions.gridOptions, true, true);
             // Shallow copy to ensure context reference is maintained
             mergedGridOps = {...mergedGridOps, ...providedOptions};
         }else{
@@ -246,7 +246,7 @@ export class GridCoreCreator {
 
         if (!beanClasses) { 
             // Detailed error message will have been printed by createBeansList
-            errorOnce('Failed to create grid.');
+            _errorOnce('Failed to create grid.');
             // Break typing so that the normal return type does not have to handle undefined.
             return undefined as any; 
         } 
@@ -335,7 +335,7 @@ export class GridCoreCreator {
 
     private createProvidedBeans(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams): any {
         let frameworkOverrides = params ? params.frameworkOverrides : null;
-        if (missing(frameworkOverrides)) {
+        if (_missing(frameworkOverrides)) {
             frameworkOverrides = new VanillaFrameworkOverrides();
         }
 
@@ -401,7 +401,7 @@ export class GridCoreCreator {
         };
 
         if (!rowModelModuleNames[rowModelType]) {
-            errorOnce('Could not find row model for rowModelType = ' + rowModelType);
+            _errorOnce('Could not find row model for rowModelType = ' + rowModelType);
             return;
         }
 

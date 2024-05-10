@@ -4,7 +4,7 @@ import { DragAndDropService, DragItem, DragSourceType } from "../../../dragAndDr
 import { Column } from "../../../entities/column";
 import { Events } from "../../../eventKeys";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
-import { ColumnSortState, getAriaSortState } from "../../../utils/aria";
+import { ColumnSortState, _getAriaSortState } from "../../../utils/aria";
 import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
 import { ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
@@ -14,7 +14,7 @@ import { HoverFeature } from "../hoverFeature";
 import { HeaderComp, IHeader, IHeaderParams } from "./headerComp";
 import { ResizeFeature } from "./resizeFeature";
 import { SelectAllFeature } from "./selectAllFeature";
-import { getElementSize } from "../../../utils/dom";
+import { _getElementSize } from "../../../utils/dom";
 import { SortDirection } from "../../../entities/colDef";
 import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HorizontalDirection } from "../../../constants/direction";
@@ -577,7 +577,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         const measureHeight = (timesCalled: number) => {
             if (!this.isAlive()) { return; }
 
-            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = getElementSize(this.getGui());
+            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = _getElementSize(this.getGui());
             const extraHeight = paddingTop + paddingBottom + borderBottomWidth + borderTopWidth;
 
             const wrapperHeight = wrapperElement.offsetHeight;
@@ -653,7 +653,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         if (this.sortable) {
             const translate = this.localeService.getLocaleTextFunc();
             const sort = this.beans.sortController.getDisplaySortForColumn(this.column) || null;
-            this.comp.setAriaSort(getAriaSortState(sort));
+            this.comp.setAriaSort(_getAriaSortState(sort));
             this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort'));
         } else {
             this.comp.setAriaSort();

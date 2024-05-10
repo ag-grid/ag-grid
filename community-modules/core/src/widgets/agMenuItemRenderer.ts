@@ -1,7 +1,7 @@
 import { Component } from './component';
-import { createIconNoSpan } from '../utils/icon';
-import { isNodeOrElement, loadTemplate } from '../utils/dom';
-import { setAriaExpanded } from '../utils/aria';
+import { _createIconNoSpan } from '../utils/icon';
+import { _isNodeOrElement, _loadTemplate } from '../utils/dom';
+import { _setAriaExpanded } from '../utils/aria';
 import { IMenuItemComp, IMenuItemParams } from '../interfaces/menuItem';
 
 interface AgMenuItemRendererParams {
@@ -35,14 +35,14 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
 
     private addIcon(): void {
         if (this.params.isCompact) { return; }
-        const icon = loadTemplate(/* html */
+        const icon = _loadTemplate(/* html */
             `<span ref="eIcon" class="${this.getClassName('part')} ${this.getClassName('icon')}" role="presentation"></span>`
         );
 
         if (this.params.checked) {
-            icon.appendChild(createIconNoSpan('check', this.gos)!);
+            icon.appendChild(_createIconNoSpan('check', this.gos)!);
         } else if (this.params.icon) {
-            if (isNodeOrElement(this.params.icon)) {
+            if (_isNodeOrElement(this.params.icon)) {
                 icon.appendChild(this.params.icon as HTMLElement);
             } else if (typeof this.params.icon === 'string') {
                 icon.innerHTML = this.params.icon;
@@ -55,7 +55,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
     }
 
     private addName(): void {
-        const name = loadTemplate(/* html */
+        const name = _loadTemplate(/* html */
             `<span ref="eName" class="${this.getClassName('part')} ${this.getClassName('text')}">${this.params.name || ''}</span>`
         );
 
@@ -64,7 +64,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
 
     private addShortcut(): void {
         if (this.params.isCompact) { return; }
-        const shortcut = loadTemplate(/* html */
+        const shortcut = _loadTemplate(/* html */
             `<span ref="eShortcut" class="${this.getClassName('part')} ${this.getClassName('shortcut')}">${this.params.shortcut || ''}</span>`
         );
 
@@ -72,7 +72,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
     }
 
     private addSubMenu(): void {
-        const pointer = loadTemplate(/* html */
+        const pointer = _loadTemplate(/* html */
             `<span ref="ePopupPointer" class="${this.getClassName('part')} ${this.getClassName('popup-pointer')}"></span>`
         );
 
@@ -80,9 +80,9 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
 
         if (this.params.subMenu) {
             const iconName = this.gos.get('enableRtl') ? 'smallLeft' : 'smallRight';
-            setAriaExpanded(eGui, false);
+            _setAriaExpanded(eGui, false);
 
-            pointer.appendChild(createIconNoSpan(iconName, this.gos)!);
+            pointer.appendChild(_createIconNoSpan(iconName, this.gos)!);
         }
 
         eGui.appendChild(pointer);

@@ -5,7 +5,7 @@ import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { CtrlsService } from "../../ctrlsService";
 import { HeaderRowType } from "../row/headerRowComp";
-import { last } from "../../utils/array";
+import { _last } from "../../utils/array";
 
 export interface HeaderPosition {
 /** A number from 0 to n, where n is the last header row the grid is rendering */
@@ -116,7 +116,7 @@ export class HeaderPositionUtils extends BeanStub {
 
         if (currentRowType === HeaderRowType.COLUMN_GROUP) {
             const leafColumns = (column as ColumnGroup).getDisplayedLeafColumns();
-            const leafColumn = direction === 'After' ? leafColumns[0] : last(leafColumns);
+            const leafColumn = direction === 'After' ? leafColumns[0] : _last(leafColumns);
             const columnsInTheWay: ColumnGroup[] = [];
 
             let currentColumn: Column | ColumnGroup = leafColumn;
@@ -136,7 +136,7 @@ export class HeaderPositionUtils extends BeanStub {
                     nextRow++;
                 }
             } else {
-                nextFocusColumn = last(columnsInTheWay);
+                nextFocusColumn = _last(columnsInTheWay);
                 if (!nextFocusColumn) {
                     nextFocusColumn = leafColumn;
                 }

@@ -4,7 +4,7 @@ import { AgEvent, AgEventListener } from "../events";
 import { Autowired, Context, PreDestroy } from "./context";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { Component } from "../widgets/component";
-import { addSafePassiveEventListener } from "../utils/event";
+import { _addSafePassiveEventListener } from "../utils/event";
 import { GridOptionsService, PropertyChangedEvent, PropertyChangedListener, PropertyValueChangedEvent, PropertyValueChangedListener } from "../gridOptionsService";
 import { GridOptions } from "../entities/gridOptions";
 import { LocaleService } from "../localeService";
@@ -104,7 +104,7 @@ export class BeanStub implements IEventEmitter {
         }
 
         if (object instanceof HTMLElement) {
-            addSafePassiveEventListener(this.getFrameworkOverrides(), object, event, listener);
+            _addSafePassiveEventListener(this.getFrameworkOverrides(), object, event, listener);
         } else {
             object.addEventListener(event, listener);
         }

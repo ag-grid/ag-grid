@@ -2,7 +2,7 @@ import { Component } from "../widgets/component";
 import { PostConstruct } from "../context/context";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
-import { createIconNoSpan } from "../utils/icon";
+import { _createIconNoSpan } from "../utils/icon";
 import { DndSourceOnRowDragParams } from "../entities/colDef";
 
 export class DndSourceComp extends Component {
@@ -21,7 +21,7 @@ export class DndSourceComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         const eGui = this.getGui();
-        eGui.appendChild(createIconNoSpan('rowDrag', this.gos, null)!);
+        eGui.appendChild(_createIconNoSpan('rowDrag', this.gos, null)!);
         // we need to stop the event propagation here to avoid starting a range selection while dragging
         this.addGuiEventListener('mousedown', (e: MouseEvent) => {
             e.stopPropagation();

@@ -1,10 +1,10 @@
 import { ICellEditorParams } from "../../interfaces/iCellEditor";
 import { DataTypeService } from "../../columns/dataTypeService";
 import { Autowired } from "../../context/context";
-import { serialiseDate } from "../../utils/date";
+import { _serialiseDate } from "../../utils/date";
 import { AgInputDateField } from "../../widgets/agInputDateField";
 import { CellEditorInput, SimpleCellEditor } from "./simpleCellEditor";
-import { exists } from "../../utils/generic";
+import { _exists } from "../../utils/generic";
 
 export interface IDateStringCellEditorParams<TData = any, TContext = any> extends ICellEditorParams<TData, string, TContext> {
     /** Min allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */
@@ -46,14 +46,14 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
 
     public getValue(): string | null | undefined {
         const value = this.formatDate(this.eInput.getDate());
-        if (!exists(value) && !exists(this.params.value)) {
+        if (!_exists(value) && !_exists(this.params.value)) {
             return this.params.value;
         }
         return this.params.parseValue(value ?? '');
     }
 
     public getStartValue(): string | null | undefined {
-        return serialiseDate(this.parseDate(this.params.value ?? undefined) ?? null, false);
+        return _serialiseDate(this.parseDate(this.params.value ?? undefined) ?? null, false);
     }
 
     private parseDate(value: string | undefined): Date | undefined {

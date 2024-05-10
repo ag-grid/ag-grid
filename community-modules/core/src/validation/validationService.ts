@@ -1,7 +1,7 @@
 import { GridOptions } from "../entities/gridOptions";
-import { fuzzyCheckStrings } from "../utils/fuzzyMatch";
-import { iterateObject } from "../utils/object";
-import { warnOnce } from "../utils/function";
+import { _fuzzyCheckStrings } from "../utils/fuzzyMatch";
+import { _iterateObject } from "../utils/object";
+import { _warnOnce } from "../utils/function";
 import { DependencyValidator, OptionsValidation, OptionsValidator } from "./validationTypes";
 import { GRID_OPTIONS_VALIDATORS, GRID_OPTION_DEFAULTS } from "./rules/gridOptionsValidations";
 import { COL_DEF_VALIDATORS } from "./rules/colDefValidations";
@@ -125,7 +125,7 @@ export class ValidationService extends BeanStub {
         });
         if (warnings.size > 0) {
             warnings.forEach(warning => {
-                warnOnce(warning);
+                _warnOnce(warning);
             });
         }
     };
@@ -163,19 +163,19 @@ export class ValidationService extends BeanStub {
         // Vue adds these properties to all objects, so we ignore them when checking for invalid properties
         const VUE_FRAMEWORK_PROPS = ['__ob__', '__v_skip', '__metadata__'];
 
-        const invalidProperties: { [p: string]: string[]; } = fuzzyCheckStrings(
+        const invalidProperties: { [p: string]: string[]; } = _fuzzyCheckStrings(
             Object.getOwnPropertyNames(object),
             [...VUE_FRAMEWORK_PROPS, ...exceptions, ...validProperties],
             validProperties
         );
 
-        iterateObject(invalidProperties, (key, value) => {
-            warnOnce(`invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(', ')}`);
+        _iterateObject(invalidProperties, (key, value) => {
+            _warnOnce(`invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(', ')}`);
         });
 
         if (Object.keys(invalidProperties).length > 0 && docsUrl) {
             const url = this.getFrameworkOverrides().getDocLink(docsUrl);
-            warnOnce(`to see all the valid ${containerName} properties please check: ${url}`);
+            _warnOnce(`to see all the valid ${containerName} properties please check: ${url}`);
         }
     }
 }

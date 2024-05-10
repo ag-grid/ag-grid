@@ -4,11 +4,11 @@ import { IMenuFactory } from '../../../interfaces/iMenuFactory';
 import { Column } from '../../../entities/column';
 import { PopupService } from '../../../widgets/popupService';
 import { FocusService } from '../../../focusService';
-import { isVisible } from '../../../utils/dom';
+import { _isVisible } from '../../../utils/dom';
 import { KeyCode } from '../../../constants/keyCode';
 import { ContainerType } from '../../../interfaces/iAfterGuiAttachedParams';
 import { CtrlsService } from '../../../ctrlsService';
-import { setAriaRole } from '../../../utils/aria';
+import { _setAriaRole } from '../../../utils/aria';
 import { MenuService } from '../../../misc/menuService';
 import { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { ColumnMenuVisibleChangedEvent } from '../../../events';
@@ -86,7 +86,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         const eMenu = document.createElement('div');
 
-        setAriaRole(eMenu, 'presentation');
+        _setAriaRole(eMenu, 'presentation');
         eMenu.classList.add('ag-menu');
         if (!isLegacyMenuEnabled) {
             eMenu.classList.add('ag-filter-menu');
@@ -109,7 +109,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
                 this.tabListener = this.tabListener()!;
             }
 
-            if (isKeyboardEvent && eventSource && isVisible(eventSource)) {
+            if (isKeyboardEvent && eventSource && _isVisible(eventSource)) {
                 const focusableEl = this.focusService.findTabbableParent(eventSource);
 
                 if (focusableEl) { focusableEl.focus(); }

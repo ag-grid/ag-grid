@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     BeanStub,
     CellRangeType,
@@ -12,6 +11,7 @@ import {
     PartialCellRange,
     CellRange,
     SeriesGroupType,
+    _includes,
 } from "@ag-grid-community/core";
 import { ChartDatasource, ChartDatasourceParams } from "../datasource/chartDatasource";
 import { ChartTranslationService } from '../services/chartTranslationService';
@@ -187,7 +187,7 @@ export class ChartDataModel extends BeanStub {
             valueCols: this.getSelectedValueCols(),
             startRow,
             endRow,
-            isScatter: _.includes(['scatter', 'bubble'], this.chartType)
+            isScatter: _includes(['scatter', 'bubble'], this.chartType)
         };
 
         const { chartData, columnNames, groupChartData } = this.datasource.getData(params);
@@ -248,7 +248,7 @@ export class ChartDataModel extends BeanStub {
 
     private getAllColumnsFromRanges(): Set<Column> {
         if (this.pivotChart) {
-            return _.convertToSet(this.chartColumnService.getAllDisplayedColumns());
+            return new Set(this.chartColumnService.getAllDisplayedColumns());
         }
 
         const columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
@@ -261,7 +261,7 @@ export class ChartDataModel extends BeanStub {
             columns.push(...this.valueCellRange.columns);
         }
 
-        return _.convertToSet(columns);
+        return new Set(columns);
     }
 
     private getRowIndexes(): { startRow: number; endRow: number; } {
@@ -336,7 +336,7 @@ export class ChartDataModel extends BeanStub {
 
         valueCols.forEach(column => {
             // first time the value cell range is set, preserve the column order from the supplied range
-            if (isInitialising && _.includes(this.referenceCellRange.columns, column)) {
+            if (isInitialising && _includes(this.referenceCellRange.columns, column)) {
                 column = valueColumnsFromReferenceRange.shift()!;
             }
 
