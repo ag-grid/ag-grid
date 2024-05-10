@@ -14,8 +14,8 @@ export class PaginationAutoPageSizeService extends BeanStub {
 
     private centerRowsCtrl: RowContainerCtrl;
 
-    // Once the body is rendered, we _debounce changes to the page size,
-    // but we do not want to _debounce the first time the body is rendered.
+    // Once the body is rendered, we debounce changes to the page size,
+    // but we do not want to debounce the first time the body is rendered.
     private isBodyRendered: boolean;
 
     @PostConstruct

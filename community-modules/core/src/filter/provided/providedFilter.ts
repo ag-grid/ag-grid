@@ -87,14 +87,14 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     private applyActive = false;
     private hidePopup: ((params: PopupEventParams) => void) | null | undefined = null;
-    // a _debounce of the onBtApply method
+    // a debounce of the onBtApply method
     private onBtApplyDebounce: () => void;
     private debouncePending = false;
 
     // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
     // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
     // this is what we want, as the UI should only become the 'active' filter once it's applied. when apply is
-    // inactive, this model will be in sync (following the _debounce ms). if the UI is not a valid filter
+    // inactive, this model will be in sync (following the debounce ms). if the UI is not a valid filter
     // (eg the value is missing so nothing to filter on, or for set filter all checkboxes are checked so filter
     // not active) then this appliedModel will be null/undefined.
     private appliedModel: M | null = null;
@@ -291,7 +291,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         this.getGui().appendChild(this.eButtonsPanel);
     }
 
-    // subclasses can override this to provide alternative _debounce defaults
+    // subclasses can override this to provide alternative debounce defaults
     protected getDefaultDebounceMs(): number {
         return 0;
     }
@@ -307,7 +307,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     private checkApplyDebounce(): void {
         if (this.debouncePending) {
-            // May already have been applied, so don't apply again (e.g. closing filter before _debounce timeout)
+            // May already have been applied, so don't apply again (e.g. closing filter before debounce timeout)
             this.debouncePending = false;
             this.onBtApply();
         }

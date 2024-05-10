@@ -66,7 +66,7 @@ export class StateService extends BeanStub {
     // If user is doing a manual expand all node by node, we don't want to process one at a time.
     // EVENT_ROW_GROUP_OPENED is already async, so no impact of making the state async here.
     private onRowGroupOpenedDebounced = _debounce(() => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()), 0);
-    // similar to row expansion, want to _debounce. However, selection is synchronous, so need to mark as stale in case `getState` is called.
+    // similar to row expansion, want to debounce. However, selection is synchronous, so need to mark as stale in case `getState` is called.
     private onRowSelectedDebounced = _debounce(() => {
         this.staleStateKeys.delete('rowSelection');
         this.updateCachedState('rowSelection', this.getRowSelectionState());

@@ -69,7 +69,7 @@ export function _executeAfter(funcs: Function[], milliseconds = 0): void {
 export function _debounce(func: (...args: any[]) => void, delay: number): (...args: any[]) => void {
     let timeout: any;
 
-    // Calling _debounce returns a new anonymous function
+    // Calling debounce returns a new anonymous function
     return function (...args: any[]) {
         const context = this;
         window.clearTimeout(timeout);
