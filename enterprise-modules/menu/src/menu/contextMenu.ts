@@ -1,5 +1,4 @@
 import {
-    _,
     AgEvent,
     AgMenuItemComponent,
     AgMenuList,
@@ -26,7 +25,10 @@ import {
     WithoutGridCommon,
     Events,
     ContextMenuVisibleChangedEvent,
-    CloseMenuEvent
+    CloseMenuEvent,
+    _exists,
+    _isIOSUserAgent,
+    _missingOrEmpty
 
 } from "@ag-grid-community/core";
 import { MenuItemMapper } from "./menuItemMapper";

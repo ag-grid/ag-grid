@@ -12,7 +12,6 @@ import { UserCompDetails, UserComponentFactory } from '../components/framework/u
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { BeanStub } from '../context/beanStub';
-import { _convertToSet } from '../utils/set';
 import { _exists, _jsonEquals } from '../utils/generic';
 import { _mergeDeep, _cloneObject } from '../utils/object';
 import { RowRenderer } from '../rendering/rowRenderer';
@@ -129,7 +128,7 @@ export class FilterManager extends BeanStub {
 
         if (model) {
             // mark the filters as we set them, so any active filters left over we stop
-            const modelKeys = _convertToSet(Object.keys(model));
+            const modelKeys = new Set(Object.keys(model));
 
             this.allColumnFilters.forEach((filterWrapper, colId) => {
                 const newModel = model[colId];

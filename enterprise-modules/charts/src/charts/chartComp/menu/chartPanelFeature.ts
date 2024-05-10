@@ -3,7 +3,7 @@ import {
     ChartType,
     Component,
     PostConstruct,
-    _
+    _removeFromParent,
 } from "@ag-grid-community/core";
 import { ChartController } from "../chartController";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";

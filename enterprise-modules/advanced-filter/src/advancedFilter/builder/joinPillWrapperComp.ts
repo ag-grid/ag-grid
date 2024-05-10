@@ -1,4 +1,4 @@
-import { Autowired, Component, JoinAdvancedFilterModel, _ } from "@ag-grid-community/core";
+import { Autowired, Component, JoinAdvancedFilterModel } from "@ag-grid-community/core";
 import { AdvancedFilterExpressionService } from "../advancedFilterExpressionService";
 import { AdvancedFilterBuilderItem, CreatePillParams } from "./iAdvancedFilterBuilder";
 import { InputPillComp } from "./inputPillComp";

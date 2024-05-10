@@ -10,9 +10,12 @@ import {
     FillEndEvent,
     FillStartEvent,
     SelectionHandleType,
-    _, CellCtrl,
+    CellCtrl,
     FillOperationParams,
     WithoutGridCommon,
+    _last,
+    _toStringOrNull,
+    _warnOnce,
 } from '@ag-grid-community/core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 import { findLineByLeastSquares } from './utils';

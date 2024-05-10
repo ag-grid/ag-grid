@@ -1,12 +1,14 @@
 import {
-    _,
     AgGroupComponent,
     AgGroupComponentParams,
     AgSelectParams,
     Autowired,
     Component,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    _capitalise,
+    _includes,
+    _removeFromParent
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../services/chartTranslationService";
 import { ChartMenuParamsFactory } from "../chartMenuParamsFactory";

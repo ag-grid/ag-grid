@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
@@ -15,7 +14,9 @@ import {
     Beans,
     WithoutGridCommon,
     FocusService,
-    RowModelType
+    RowModelType,
+    _missing,
+    _iterateObject
 } from "@ag-grid-community/core";
 
 @Bean('rowModel')

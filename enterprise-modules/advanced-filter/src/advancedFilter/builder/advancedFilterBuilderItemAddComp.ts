@@ -7,7 +7,8 @@ import {
     PostConstruct,
     RefSelector,
     TooltipFeature,
-    _
+    _setAriaLabel,
+    _setAriaLevel,
 } from "@ag-grid-community/core";
 import { AdvancedFilterExpressionService } from "../advancedFilterExpressionService";
 import { AddDropdownComp } from "./addDropdownComp";

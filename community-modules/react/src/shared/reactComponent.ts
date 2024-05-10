@@ -1,5 +1,5 @@
 import { createElement, ReactPortal } from 'react';
-import { AgPromise, ComponentType, IComponent, WrappableInterface, _ } from '@ag-grid-community/core';
+import { _warnOnce, AgPromise, ComponentType, IComponent, WrappableInterface} from '@ag-grid-community/core';
 import { PortalManager } from './portalManager';
 import generateNewKey from './keyGenerator';
 import { createPortal } from 'react-dom';

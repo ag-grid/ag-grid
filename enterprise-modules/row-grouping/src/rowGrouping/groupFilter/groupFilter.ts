@@ -1,5 +1,4 @@
 import {
-    _,
     AgPromise,
     AgSelect,
     Autowired,
@@ -14,6 +13,10 @@ import {
     RefSelector,
     TabGuardComp,
     FilterWrapperComp,
+    _clearElement,
+    _loadTemplate,
+    _setDisplayed,
+    _warnOnce,
 } from '@ag-grid-community/core';
 
 interface FilterColumnPair {

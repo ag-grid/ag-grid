@@ -1,5 +1,4 @@
 import {
-    _,
     AgGroupComponent,
     Autowired,
     Column,
@@ -14,7 +13,9 @@ import {
     PreConstruct,
     RefSelector,
     AgGroupComponentParams,
-    WithoutGridCommon
+    WithoutGridCommon,
+    _createIconNoSpan,
+    _clearElement
 } from "@ag-grid-community/core";
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";
 

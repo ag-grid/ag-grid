@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
@@ -18,7 +17,13 @@ import {
     ISelectionService,
     WithoutGridCommon,
     InitialGroupOrderComparatorParams,
-    KeyCreatorParams
+    KeyCreatorParams,
+    _areEqual,
+    _exists,
+    _existsAndNotEmpty,
+    _removeFromArray,
+    _sortRowNodesByOrder,
+    _warnOnce
 } from "@ag-grid-community/core";
 import { BatchRemover } from "./batchRemover";
 

@@ -1,5 +1,4 @@
 import {
-    _,
     Component,
     Events,
     ISideBar,
@@ -18,7 +17,10 @@ import {
     WithoutGridCommon,
     FilterManager,
     SideBarState,
-    IToolPanelParams
+    IToolPanelParams,
+    _removeFromParent,
+    _warnOnce,
+    _setAriaControls
 } from "@ag-grid-community/core";
 import { SideBarButtonClickedEvent, SideBarButtonsComp } from "./sideBarButtonsComp";
 import { SideBarDefParser } from "./sideBarDefParser";

@@ -1,5 +1,4 @@
 import {
-    _,
     AgInputTextField,
     AgPromise,
     Autowired,
@@ -13,6 +12,7 @@ import {
     RefSelector,
     UserCompDetails,
     ColumnEvent,
+    _clearElement,
 } from '@ag-grid-community/core';
 import { GroupFilter } from './groupFilter';
 

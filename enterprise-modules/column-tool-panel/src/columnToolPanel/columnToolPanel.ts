@@ -1,5 +1,4 @@
 import {
-    _,
     ColDef,
     ColGroupDef,
     Component,
@@ -10,7 +9,9 @@ import {
     ModuleRegistry,
     ColumnToolPanelState,
     IToolPanelParams,
-    IToolPanelColumnCompParams
+    IToolPanelColumnCompParams,
+    _last,
+    _clearElement
 } from "@ag-grid-community/core";
 import { PivotModePanel } from "./pivotModePanel";
 import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from "@ag-grid-enterprise/row-grouping";

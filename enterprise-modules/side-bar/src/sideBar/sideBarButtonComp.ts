@@ -3,7 +3,8 @@ import {
     PostConstruct,
     RefSelector,
     ToolPanelDef,
-    _,
+    _createIconNoSpan,
+    _setAriaExpanded,
 } from "@ag-grid-community/core";
 
 export class SideBarButtonComp extends Component {

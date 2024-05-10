@@ -3,19 +3,22 @@ import {
     CellNavigationService,
     Component,
     Events,
-    GridApi,
     RowPosition,
     IStatusPanelComp,
     PostConstruct,
     RefSelector,
     IRangeService,
     ValueService,
-    _, CellPositionUtils,
+    CellPositionUtils,
     RowPositionUtils,
     Optional,
     AggregationStatusPanelAggFunc,
     AggregationStatusPanelParams,
-    IRowModel
+    IRowModel,
+    _exists,
+    _missing,
+    _missingOrEmpty,
+    _formatNumberTwoDecimalPlacesAndCommas
 } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 

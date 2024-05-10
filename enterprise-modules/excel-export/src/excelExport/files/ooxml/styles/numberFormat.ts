@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, _ } from '@ag-grid-community/core';
+import { ExcelOOXMLTemplate, _escapeString } from '@ag-grid-community/core';
 import { NumberFormat } from '../../../assets/excelInterfaces';
 
 function prepareString(str: string): string {

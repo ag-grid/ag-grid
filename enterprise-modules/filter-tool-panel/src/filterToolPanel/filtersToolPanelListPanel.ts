@@ -1,5 +1,4 @@
 import {
-    _,
     AbstractColDef,
     Autowired,
     Column,
@@ -8,7 +7,13 @@ import {
     Events,
     ProvidedColumnGroup,
     IProvidedColumn,
-    FiltersToolPanelState
+    FiltersToolPanelState,
+    _flatten,
+    _clearElement,
+    _exists,
+    _includes,
+    _setAriaLabel,
+    _mergeDeep
 } from "@ag-grid-community/core";
 
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";

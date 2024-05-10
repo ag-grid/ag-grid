@@ -34,7 +34,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setResizableDisplayed: (displayed) => _setDisplayed(this.eResize, displayed),
             setWidth: width => eGui.style.width = width,
-            _setAriaExpanded: expanded => setAttribute('aria-expanded', expanded),
+            setAriaExpanded: (expanded: 'true' | 'false' | undefined) => setAttribute('aria-expanded', expanded),
             setUserCompDetails: details => this.setUserCompDetails(details),
             getUserCompInstance: () => this.headerGroupComp,
         };

@@ -338,7 +338,7 @@ export class CellCtrl extends BeanStub {
     public getColumnIdSanitised(): string {
         return this.colIdSanitised;
     }
-    public _getTabIndex(): number | undefined {
+    public getTabIndex(): number | undefined {
         return this.tabIndex;
     }
     public isCellRenderer(): boolean {

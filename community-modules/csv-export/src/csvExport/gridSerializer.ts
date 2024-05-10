@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
@@ -20,7 +19,9 @@ import {
     ISelectionService,
     ShouldRowBeSkippedParams,
     RowNodeSorter,
-    SortController
+    SortController,
+    _compose,
+    _last
 } from "@ag-grid-community/core";
 import { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "./interfaces";
 

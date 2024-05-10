@@ -3,7 +3,8 @@ import {
     ChartToolbarMenuItemOptions,
     Component,
     RefSelector,
-    _
+    _clearElement,
+    _createIconNoSpan,
 } from "@ag-grid-community/core";
 import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
 

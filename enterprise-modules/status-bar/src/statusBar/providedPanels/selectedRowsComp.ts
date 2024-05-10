@@ -1,4 +1,4 @@
-import { Autowired, Events, PostConstruct, IStatusPanelComp, _, ISelectionService, IRowModel } from '@ag-grid-community/core';
+import { Autowired, Events, PostConstruct, IStatusPanelComp, ISelectionService, IRowModel, _formatNumberCommas } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
 export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp {

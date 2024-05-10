@@ -7,7 +7,8 @@ import {
     Component,
     PostConstruct,
     SeriesChartType,
-    _
+    _areEqual,
+    _clearElement,
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../model/chartDataModel";

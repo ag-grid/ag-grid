@@ -1,5 +1,4 @@
 import {
-    _,
     IClientSideRowModel,
     SetFilterParams,
     AgPromise,
@@ -16,7 +15,12 @@ import {
     GridOptionsService,
     ColumnModel,
     ValueService,
-    AgEventListener
+    AgEventListener,
+    _doOnce,
+    _exists,
+    _makeNull,
+    _warnOnce,
+    _defaultComparator
 } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';

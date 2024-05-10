@@ -6,7 +6,8 @@ import {
     ColumnAdvancedFilterModel,
     Component,
     ValueService,
-    _
+    _exists,
+    _removeFromParent,
 } from "@ag-grid-community/core";
 import { AdvancedFilterExpressionService } from "../advancedFilterExpressionService";
 import { AdvancedFilterBuilderEvents, AdvancedFilterBuilderItem, CreatePillParams } from "./iAdvancedFilterBuilder";

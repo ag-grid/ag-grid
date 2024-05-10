@@ -369,7 +369,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Input() public tooltipShowDelay: number | undefined = undefined;
     /** The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
-         *     **Note:** This property does not work if `enableBrowserTooltips` is `true` and `tooltipHideTriggers` includes `timeout`.
+         *     **Note:** This property does not work if `enableBrowserTooltips` is `true` and `tooltipHideTriggers` _includes `timeout`.
          * @default 10000
          */
     @Input() public tooltipHideDelay: number | undefined = undefined;
@@ -747,13 +747,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @default false
          */
     @Input() public suppressFocusAfterRefresh: boolean | undefined = undefined;
-    /** Disables the asynchronous nature of the events introduced in v10, and makes them synchronous. This property only exists for the purpose of supporting legacy code which has a dependency on synchronous events from earlier versions (v9 or earlier) of AG Grid.     **It is strongly recommended that you do not change this property unless you have legacy issues.**
+    /** Disables the asynchronous nature of the events introduced in v10, and makes them synchronous. This property only _exists for the purpose of supporting legacy code which has a dependency on synchronous events from earlier versions (v9 or earlier) of AG Grid.     **It is strongly recommended that you do not change this property unless you have legacy issues.**
          * @deprecated v31 Events should be handled asynchronously.
          * @default false
          * @initial
          */
     @Input() public suppressAsyncEvents: boolean | undefined = undefined;
-    /** The grid will check for `ResizeObserver` and use it if it exists in the browser, otherwise it will use the grid's alternative implementation. Some users reported issues with Chrome's `ResizeObserver`. Use this property to always use the grid's alternative implementation should such problems exist.
+    /** The grid will check for `ResizeObserver` and use it if it _exists in the browser, otherwise it will use the grid's alternative implementation. Some users reported issues with Chrome's `ResizeObserver`. Use this property to always use the grid's alternative implementation should such problems exist.
          * @default false
          * @initial
          */
@@ -1239,7 +1239,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @default false
          */
     @Input() public alwaysShowVerticalScroll: boolean | undefined = undefined;
-    /** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on slow machines.
+    /** Set to `true` to _debounce the vertical scrollbar. Can provide smoother scrolling on slow machines.
          * @default false
          * @initial
          */

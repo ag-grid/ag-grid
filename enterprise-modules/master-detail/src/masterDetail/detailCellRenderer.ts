@@ -1,4 +1,4 @@
-import { Component, GridOptions, ICellRenderer, RefSelector, _, GridApi, IDetailCellRenderer, IDetailCellRendererParams, ModuleRegistry, createGrid, GridParams } from "@ag-grid-community/core";
+import { Component, GridOptions, ICellRenderer, RefSelector, GridApi, IDetailCellRenderer, IDetailCellRendererParams, ModuleRegistry, createGrid, GridParams, _cloneObject, _missing } from "@ag-grid-community/core";
 import { DetailCellRendererCtrl } from "./detailCellRendererCtrl";
 
 export class DetailCellRenderer extends Component implements ICellRenderer {

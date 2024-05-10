@@ -1,5 +1,4 @@
 import {
-    _,
     AgEvent,
     Autowired,
     Bean,
@@ -8,7 +7,6 @@ import {
     ColumnModel,
     ColumnMenuTab,
     FilterManager,
-    FilterWrapper,
     IMenuFactory,
     ModuleNames,
     ModuleRegistry,
@@ -32,7 +30,8 @@ import {
     ColumnMenuVisibleChangedEvent,
     Events,
     WithoutGridCommon,
-    FilterWrapperComp
+    FilterWrapperComp,
+    _createIconNoSpan
 } from '@ag-grid-community/core';
 import { ColumnChooserFactory } from './columnChooserFactory';
 import { ColumnMenuFactory } from './columnMenuFactory';

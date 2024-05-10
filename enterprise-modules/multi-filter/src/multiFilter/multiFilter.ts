@@ -23,8 +23,10 @@ import {
     MenuItemActivatedEvent,
     PostConstruct,
     IMultiFilter,
-    _,
-    KeyCode
+    KeyCode,
+    _loadTemplate,
+    _removeFromArray,
+    _forEachReverse
 } from '@ag-grid-community/core';
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {

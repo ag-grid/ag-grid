@@ -188,7 +188,7 @@ export class RowCtrl extends BeanStub {
     public getRowStyles() {
         return this.rowStyles;
     }
-    public _getTabIndex() {
+    public getTabIndex() {
         return this.tabIndex;
     }
 

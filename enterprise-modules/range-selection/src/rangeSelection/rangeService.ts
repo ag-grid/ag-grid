@@ -23,12 +23,20 @@ import {
     WithoutGridCommon,
     DragService,
     CellCtrl,
-    _,
     ClearCellRangeParams,
     RangeDeleteStartEvent,
     RangeDeleteEndEvent,
     PartialCellRange,
-    ValueService
+    ValueService,
+    _exists,
+    _includes,
+    _last,
+    _missing,
+    _shallowCompare,
+    _makeNull,
+    _areEqual,
+    _existsAndNotEmpty,
+    _getCtrlForEventTarget
 } from "@ag-grid-community/core";
 
 @Bean('rangeService')

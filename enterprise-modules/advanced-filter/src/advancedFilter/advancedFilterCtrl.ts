@@ -11,7 +11,9 @@ import {
     PopupService,
     PostConstruct,
     WithoutGridCommon,
-    _
+    _getAbsoluteHeight,
+    _getAbsoluteWidth,
+    _removeFromParent,
 } from "@ag-grid-community/core";
 import { AdvancedFilterHeaderComp } from "./advancedFilterHeaderComp";
 import { AdvancedFilterComp } from "./advancedFilterComp";

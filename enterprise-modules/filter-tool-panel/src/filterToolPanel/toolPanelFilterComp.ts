@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Column,
     ColumnModel,
@@ -11,7 +10,12 @@ import {
     KeyCode,
     PostConstruct,
     RefSelector,
-    FilterWrapperComp
+    FilterWrapperComp,
+    _clearElement,
+    _createIconNoSpan,
+    _setAriaExpanded,
+    _setDisplayed,
+    _loadTemplate
 } from "@ag-grid-community/core";
 
 export class ToolPanelFilterComp extends Component {

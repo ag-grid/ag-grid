@@ -35,7 +35,7 @@ import { Beans } from "../../../rendering/beans";
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     setResizableDisplayed(displayed: boolean): void;
     setWidth(width: string): void;
-    _setAriaExpanded(expanded: 'true' | 'false' | undefined): void;
+    setAriaExpanded(expanded: 'true' | 'false' | undefined): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeaderGroupComp | undefined;
 }
@@ -264,9 +264,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         const expanded = column.isExpanded();
 
         if (this.expandable) {
-            this.comp._setAriaExpanded(expanded ? 'true' : 'false');
+            this.comp.setAriaExpanded(expanded ? 'true' : 'false');
         } else {
-            this.comp._setAriaExpanded(undefined);
+            this.comp.setAriaExpanded(undefined);
         }
     }
 

@@ -1,4 +1,4 @@
-import { AgRichSelect, AutocompleteEntry, RichSelectParams, VirtualList, _ } from "@ag-grid-community/core";
+import { AgRichSelect, AutocompleteEntry, RichSelectParams, VirtualList, _setAriaLabel, _setAriaLabelledBy, _stopPropagationForAgGrid } from "@ag-grid-community/core";
 
 export interface SelectPillParams extends RichSelectParams<AutocompleteEntry> {
     getEditorParams: () => { values?: any[] },

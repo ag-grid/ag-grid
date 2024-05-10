@@ -10,7 +10,9 @@ import {
     ExcelHeaderFooterContent,
     ExcelHeaderFooterConfig,
     ExcelFont,
-    _,
+    _iterateObject,
+    _escapeString,
+    _compose,
 } from '@ag-grid-community/core';
 import { ExcelDataTable, ExcelHeaderFooterPosition } from '../../assets/excelInterfaces';
 

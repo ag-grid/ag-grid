@@ -240,7 +240,6 @@ export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 export { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 export { RowDataTransaction } from "./interfaces/rowDataTransaction";
 export { ServerSideTransaction, ServerSideTransactionResult, ServerSideTransactionResultStatus } from "./interfaces/serverSideTransaction";
-export { ChangedPath } from "./utils/changedPath";
 export { RowNodeBlock, LoadCompleteEvent, LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
 export { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 export { PaginationProxy } from "./pagination/paginationProxy";
@@ -348,7 +347,6 @@ export { GridCtrl, IGridComp } from "./gridComp/gridCtrl";
 export { Logger, LoggerFactory } from "./logger";
 export { SortController, SortModelItem } from "./sortController";
 export { LocaleService } from './localeService';
-export { ColumnSortState } from "./utils/aria";
 export { ValueService } from "./valueService/valueService";
 export { ValueCache } from "./valueService/valueCache";
 export { ExpressionService } from "./valueService/expressionService";
@@ -558,11 +556,24 @@ export { TooltipStateManager } from "./widgets/tooltipStateManager";
 export { IAggregationStage } from "./interfaces/iAggregationStage";
 export { MenuItemLeafDef, MenuItemDef, IMenuConfigParams, IMenuItemParams, IMenuItem, IMenuItemComp, BaseMenuItem, BaseMenuItemParams } from "./interfaces/menuItem";
 
-export { _warnOnce, _errorOnce, _debounce } from './utils/function';
-export { _exists, _missing, _missingOrEmpty } from './utils/generic';
-export { _iterateObject, _cloneObject } from './utils/object';
-export { _removeFromArray, _last, _insertIntoArray } from './utils/array';
+// utils
+export { ColumnSortState, _setAriaLevel, _setAriaLabel, _setAriaDescribedBy, _setAriaExpanded, _setAriaLabelledBy, _setAriaChecked, _setAriaControls, _setAriaRole, _setAriaColIndex, _setAriaColSpan, _setAriaRowIndex, _setAriaDisabled, _removeAriaExpanded, _removeAriaSort, _setAriaSort, _setAriaColCount, _setAriaRowCount } from './utils/aria';
+export { _removeFromArray, _last, _insertIntoArray, _includes, _shallowCompare, _flatten, _forEachReverse, _areEqual, _existsAndNotEmpty, _removeRepeatsFromArray  } from './utils/array';
+export { _isIOSUserAgent } from './utils/browser';
+export { ChangedPath } from "./utils/changedPath";
+export { _serialiseDate, _parseDateTimeFromString } from './utils/date';
+export { _getAbsoluteHeight, _getAbsoluteWidth, _setDisplayed, _clearElement, _removeFromParent, _radioCssClass, _loadTemplate, _isVisible, _setFixedWidth, _setDisabled, _setVisible} from './utils/dom';
+export { _getCtrlForEventTarget, _stopPropagationForAgGrid, _isStopPropagationForAgGrid } from './utils/event';
+export { _warnOnce, _errorOnce, _debounce, _compose, _doOnce } from './utils/function';
+export { _createIcon, _createIconNoSpan} from './utils/icon';
+export { _exists, _missing, _missingOrEmpty, _jsonEquals, _toStringOrNull, _values, _makeNull, _defaultComparator } from './utils/generic';
+export { NumberSequence } from './utils/numberSequence';
+export { _keys } from './utils/map';
+export { _formatNumberTwoDecimalPlacesAndCommas, _formatNumberCommas } from './utils/number';
+export { _iterateObject, _cloneObject, _getAllValuesInObject, _mergeDeep} from './utils/object';
 export { _sortRowNodesByOrder } from './utils/rowNode';
+export { _capitalise, _escapeString, _utf8_encode } from './utils/string';
+export { AgPromise } from './utils/promise';
 
 // charts
 export * from "./interfaces/iChartOptions";

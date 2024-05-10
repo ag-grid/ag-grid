@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     BeanStub,
     CellRangeType,
@@ -12,6 +11,7 @@ import {
     PartialCellRange,
     CellRange,
     SeriesGroupType,
+    _includes,
 } from "@ag-grid-community/core";
 import { ChartDatasource, ChartDatasourceParams } from "../datasource/chartDatasource";
 import { ChartTranslationService } from '../services/chartTranslationService';
@@ -248,7 +248,7 @@ export class ChartDataModel extends BeanStub {
 
     private getAllColumnsFromRanges(): Set<Column> {
         if (this.pivotChart) {
-            return _convertToSet(this.chartColumnService.getAllDisplayedColumns());
+            return new Set(this.chartColumnService.getAllDisplayedColumns());
         }
 
         const columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
@@ -261,7 +261,7 @@ export class ChartDataModel extends BeanStub {
             columns.push(...this.valueCellRange.columns);
         }
 
-        return _convertToSet(columns);
+        return new Set(columns);
     }
 
     private getRowIndexes(): { startRow: number; endRow: number; } {

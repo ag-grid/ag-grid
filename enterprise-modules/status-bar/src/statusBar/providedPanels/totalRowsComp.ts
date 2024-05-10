@@ -1,4 +1,4 @@
-import { Autowired, Events, IClientSideRowModel, IRowModel, IStatusPanelComp, PostConstruct, _ } from '@ag-grid-community/core';
+import { Autowired, Events, IClientSideRowModel, IRowModel, IStatusPanelComp, PostConstruct, _formatNumberCommas, _warnOnce } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
 export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {

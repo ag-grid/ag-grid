@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired, Column,
     ColumnModel,
     Component,
@@ -7,7 +6,10 @@ import {
     PostConstruct,
     PreConstruct,
     RefSelector,
-    AgInputTextField
+    AgInputTextField,
+    _createIconNoSpan,
+    _debounce,
+    _setDisplayed
 } from "@ag-grid-community/core";
 import { ToolPanelFiltersCompParams } from "./filtersToolPanel";
 

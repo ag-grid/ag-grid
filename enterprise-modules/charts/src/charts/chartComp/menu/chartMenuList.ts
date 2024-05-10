@@ -11,7 +11,7 @@ import {
     PopupService,
     PostConstruct,
     RefSelector,
-    _
+    _createIconNoSpan,
 } from '@ag-grid-community/core';
 import { ChartController } from '../chartController';
 import { ChartMenuService } from '../services/chartMenuService';

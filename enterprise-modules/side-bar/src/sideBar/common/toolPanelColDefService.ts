@@ -1,5 +1,4 @@
 import {
-    _,
     AbstractColDef,
     Autowired,
     Bean,
@@ -9,7 +8,9 @@ import {
     Column,
     ColumnModel,
     ProvidedColumnGroup,
-    IProvidedColumn
+    IProvidedColumn,
+    _includes,
+    _last
 } from "@ag-grid-community/core";
 
 @Bean('toolPanelColDefService')

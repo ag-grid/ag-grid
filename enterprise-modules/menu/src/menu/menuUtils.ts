@@ -9,7 +9,8 @@ import {
     HeaderPosition,
     CloseMenuEvent,
     PopupEventParams,
-    _
+    _isVisible,
+    _last,
 } from "@ag-grid-community/core";
 
 export interface MenuRestoreFocusParams {

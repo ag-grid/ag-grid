@@ -9,14 +9,14 @@ import {
     IAggFuncService,
     VirtualList,
     KeyCode,
-    _,
     SortController,
     SortIndicatorComp,
     PillDragComp,
     ColumnModel,
     DragItem,
     DragSourceType,
-    DragAndDropService
+    DragAndDropService,
+    _loadTemplate
 } from "@ag-grid-community/core";
 import { TDropZone } from "./baseDropZonePanel";
 

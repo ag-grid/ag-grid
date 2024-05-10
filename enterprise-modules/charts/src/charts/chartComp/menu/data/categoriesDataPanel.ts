@@ -11,7 +11,7 @@ import {
     DropTarget,
     IAggFunc,
     PostConstruct,
-    _
+    _clearElement,
 } from "@ag-grid-community/core";
 import { ChartService } from "../../../chartService";
 import { ChartController } from "../../chartController";

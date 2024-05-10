@@ -1,4 +1,4 @@
-import { Bean, BeanStub, ChartGroupsDef, ChartType, GridOptionsService, IChartService, LocaleService, MenuItemDef, ModuleNames, ModuleRegistry, Optional, _ } from '@ag-grid-community/core';
+import { Bean, BeanStub, ChartGroupsDef, ChartType, GridOptionsService, IChartService, LocaleService, MenuItemDef, ModuleNames, ModuleRegistry, Optional, _createIconNoSpan, _warnOnce } from '@ag-grid-community/core';
 
 @Bean('chartMenuItemMapper')
 export class ChartMenuItemMapper extends BeanStub {

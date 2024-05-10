@@ -391,7 +391,7 @@ export class GridBodyScrollFeature extends BeanStub {
         return this.centerRowsCtrl.getHScrollPosition();
     }
 
-    public _isHorizontalScrollShowing(): boolean {
+    public isHorizontalScrollShowing(): boolean {
         return this.centerRowsCtrl._isHorizontalScrollShowing();
     }
 

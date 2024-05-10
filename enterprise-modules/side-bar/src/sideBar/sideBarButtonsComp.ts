@@ -6,9 +6,10 @@ import {
     ToolPanelDef,
     PreDestroy,
     FocusService,
-    _,
     KeyCode,
-    ColumnModel
+    ColumnModel,
+    _last,
+    _clearElement
 } from "@ag-grid-community/core";
 
 import { SideBarButtonComp } from "./sideBarButtonComp";

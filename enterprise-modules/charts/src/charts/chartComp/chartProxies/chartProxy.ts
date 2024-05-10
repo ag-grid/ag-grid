@@ -1,4 +1,4 @@
-import { _, AgChartTheme as GridAgChartTheme, ChartType, SeriesChartType, SeriesGroupType } from "@ag-grid-community/core";
+import { AgChartTheme as GridAgChartTheme, ChartType, SeriesChartType, SeriesGroupType } from "@ag-grid-community/core";
 import {
     _Theme,
     _ModuleSupport,

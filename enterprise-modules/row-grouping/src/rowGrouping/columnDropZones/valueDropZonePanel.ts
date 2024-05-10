@@ -1,12 +1,12 @@
 import {
-    _,
     Column,
     DragAndDropService,
     DraggingEvent,
     Events,
     ITooltipParams,
     PostConstruct,
-    WithoutGridCommon
+    WithoutGridCommon,
+    _createIconNoSpan
 } from "@ag-grid-community/core";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
 

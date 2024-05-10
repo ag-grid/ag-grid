@@ -10,7 +10,7 @@ import {
     IStatusPanelParams,
     WithoutGridCommon,
     StatusPanelDef,
-    _
+    _removeFromParent,
 } from '@ag-grid-community/core';
 import { StatusBarService } from "./statusBarService";
 

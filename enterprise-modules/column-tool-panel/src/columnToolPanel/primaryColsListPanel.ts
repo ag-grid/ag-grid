@@ -1,5 +1,4 @@
 import {
-    _,
     AbstractColDef,
     Autowired,
     ColGroupDef,
@@ -13,7 +12,11 @@ import {
     VirtualList,
     VirtualListModel,
     PreDestroy,
-    ColumnToolPanelState
+    ColumnToolPanelState,
+    _setAriaLevel,
+    _setAriaLabel,
+    _exists,
+    _includes
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanelItemDragFeature } from './primaryColsListPanelItemDragFeature';
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";

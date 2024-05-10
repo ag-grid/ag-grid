@@ -8,7 +8,6 @@ import { AgPromise } from '../../utils/promise';
 import { PopupEventParams } from '../../widgets/popupService';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
-import { _convertToSet } from '../../utils/set';
 import { Component } from '../../widgets/component';
 import { IRowNode } from '../../interfaces/iRowNode';
 import { RefSelector } from '../../widgets/componentAnnotations';
@@ -286,7 +285,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             fragment.append(button);
         };
 
-        _convertToSet(buttons).forEach(type => addButton(type));
+        buttons.forEach(type => addButton(type));
 
         this.eButtonsPanel.append(fragment);
         this.getGui().appendChild(this.eButtonsPanel);

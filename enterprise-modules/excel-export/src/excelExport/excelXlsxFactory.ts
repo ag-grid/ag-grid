@@ -8,7 +8,7 @@ import {
     ExcelTableConfig,
     RowHeightCallbackParams,
     ExcelHeaderFooterImage,
-    _
+    _escapeString,
 } from '@ag-grid-community/core';
 
 import coreFactory from './files/ooxml/core';

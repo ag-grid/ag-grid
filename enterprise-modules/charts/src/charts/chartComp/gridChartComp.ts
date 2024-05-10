@@ -1,5 +1,4 @@
 import {
-    _,
     AgDialog,
     Autowired,
     ChartCreated,
@@ -18,6 +17,12 @@ import {
     WithoutGridCommon,
     FocusService,
     PartialCellRange,
+    _getAbsoluteWidth,
+    _getAbsoluteHeight,
+    _setDisplayed,
+    _includes,
+    _clearElement,
+    _removeFromParent,
 } from "@ag-grid-community/core";
 import { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-community";
 import { ChartMenu } from "./menu/chartMenu";

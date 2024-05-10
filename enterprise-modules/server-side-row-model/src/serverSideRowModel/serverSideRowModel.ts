@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
@@ -32,7 +31,11 @@ import {
     FilterModel,
     AdvancedFilterModel,
     ModuleRegistry,
-    ModuleNames
+    ModuleNames,
+    _warnOnce,
+    _debounce,
+    _exists,
+    _jsonEquals
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";

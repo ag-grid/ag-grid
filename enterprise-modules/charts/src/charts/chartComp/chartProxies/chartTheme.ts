@@ -1,4 +1,3 @@
-import { _ } from '@ag-grid-community/core';
 import {
     _Theme,
     AgChartLegendClickEvent,
@@ -11,6 +10,7 @@ import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
 import { ChartSeriesType, getSeriesType } from '../utils/seriesTypeMapper';
 import { ChartProxy, ChartProxyParams } from './chartProxy';
 import { get } from '../utils/object';
+import { _includes } from '@ag-grid-community/core';
 
 export function createAgChartTheme(
     chartProxyParams: ChartProxyParams,

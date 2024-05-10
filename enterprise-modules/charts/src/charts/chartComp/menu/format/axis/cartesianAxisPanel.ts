@@ -1,5 +1,4 @@
 import {
-    _,
     AgCheckbox,
     AgGroupComponent,
     AgGroupComponentParams,
@@ -12,7 +11,9 @@ import {
     Events,
     PostConstruct,
     RefSelector,
-    ListOption
+    ListOption,
+    _removeFromParent,
+    _setDisplayed
 } from "@ag-grid-community/core";
 import type { AgCartesianAxisOptions } from 'ag-charts-community';
 import { ChartController } from "../../../chartController";

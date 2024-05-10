@@ -1,4 +1,4 @@
-import { AbstractHeaderCellCtrl, HeaderGroupCellCtrl, HeaderCellCtrl, HeaderFilterCellCtrl, HeaderRowCtrl, HeaderRowType, IHeaderRowComp, _ } from '@ag-grid-community/core';
+import { AbstractHeaderCellCtrl, HeaderGroupCellCtrl, HeaderCellCtrl, HeaderFilterCellCtrl, HeaderRowCtrl, HeaderRowType, IHeaderRowComp } from '@ag-grid-community/core';
 import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 import HeaderCellComp from './headerCellComp';
 import HeaderGroupCellComp from './headerGroupCellComp';
@@ -29,9 +29,9 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
         }
 
         const compProxy: IHeaderRowComp = {
-            setHeight: height => setHeight(height),
-            setTop: top => setTop(top),
-            setHeaderCtrls: (ctrls, forceOrder, afterScroll) =>{
+            setHeight: (height: string) => setHeight(height),
+            setTop: (top: string) => setTop(top),
+            setHeaderCtrls: (ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean, afterScroll: boolean) =>{
                 prevCellCtrlsRef.current = cellCtrlsRef.current;
                 cellCtrlsRef.current = ctrls;
 
@@ -40,7 +40,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
                     agFlushSync(afterScroll, () => setCellCtrls(next));
                 }
             },
-            setWidth: width => {
+            setWidth: (width: string) => {
                 if (eGui.current) {
                     eGui.current.style.width = width;
                 }

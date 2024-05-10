@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     BeanStub,
     StoreUpdatedEvent,
@@ -9,7 +8,9 @@ import {
     RowNode,
     Bean,
     Beans,
-    WithoutGridCommon
+    WithoutGridCommon,
+    _exists,
+    _missing
 } from "@ag-grid-community/core";
 import { ServerSideRowModel } from "../serverSideRowModel";
 import { StoreFactory } from "../stores/storeFactory";

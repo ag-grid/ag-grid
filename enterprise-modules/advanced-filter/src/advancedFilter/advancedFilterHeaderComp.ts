@@ -7,7 +7,9 @@ import {
     HeaderNavigationService,
     KeyCode,
     PostConstruct,
-    _
+    _clearElement,
+    _setDisplayed,
+    _setAriaRole, _setAriaColIndex, _setAriaColSpan, _setAriaRowIndex 
 } from "@ag-grid-community/core";
 import { AdvancedFilterComp } from "./advancedFilterComp";
 

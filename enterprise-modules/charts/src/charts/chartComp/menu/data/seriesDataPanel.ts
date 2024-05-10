@@ -7,7 +7,7 @@ import {
     DragAndDropService,
     DropTarget,
     PostConstruct,
-    _
+    _clearElement,
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../model/chartDataModel";

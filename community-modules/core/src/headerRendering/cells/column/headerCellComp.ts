@@ -48,7 +48,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         const compProxy: IHeaderCellComp = {
             setWidth: width => eGui.style.width = width,
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            _setAriaSort: sort => sort ? _setAriaSort(eGui, sort) : _removeAriaSort(eGui),
+            setAriaSort: sort => sort ? _setAriaSort(eGui, sort) : _removeAriaSort(eGui),
             setUserCompDetails: compDetails => this.setUserCompDetails(compDetails),
             getUserCompInstance: () => this.headerComp
         };

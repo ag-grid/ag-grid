@@ -15,7 +15,8 @@ import {
     ExcelTableConfig,
     RowHeightCallbackParams,
     RowNode,
-    _,
+    _last,
+    _mergeDeep,
 } from '@ag-grid-community/core';
 
 import {

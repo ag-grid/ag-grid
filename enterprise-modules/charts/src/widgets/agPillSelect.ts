@@ -1,4 +1,6 @@
 import {
+    _escapeString,
+    _removeFromParent,
     AgSelect,
     Component,
     DragAndDropService,
@@ -10,7 +12,6 @@ import {
     PillDragComp,
     PillDropZonePanel,
     PostConstruct,
-    _
 } from "@ag-grid-community/core";
 
 export interface AgPillSelectParams<TValue = string | null> {

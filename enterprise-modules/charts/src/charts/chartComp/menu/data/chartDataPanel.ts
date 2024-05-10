@@ -1,11 +1,11 @@
 import {
-    _,
     AutoScrollService,
     Autowired,
     ChartDataPanel as ChartDataPanelType,
     ChartType,
     Component,
-    PostConstruct
+    PostConstruct,
+    _warnOnce
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../model/chartDataModel";

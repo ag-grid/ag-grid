@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
@@ -18,7 +17,9 @@ import {
     SortController,
     IInfiniteRowModel,
     WithoutGridCommon,
-    RowModelType
+    RowModelType,
+    _jsonEquals,
+    _warnOnce
 } from "@ag-grid-community/core";
 import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 

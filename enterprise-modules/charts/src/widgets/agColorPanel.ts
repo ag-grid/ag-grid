@@ -1,4 +1,4 @@
-import { Component, PostConstruct, RefSelector, ManagedFocusFeature, _ } from "@ag-grid-community/core";
+import { Component, PostConstruct, RefSelector, _exists } from "@ag-grid-community/core";
 import { AgColorPicker } from "./agColorPicker";
 import { _Util } from 'ag-charts-community';
 import { KeyCode } from "@ag-grid-community/core";

@@ -1,9 +1,9 @@
 import {
-    _,
     AgSlider,
     Autowired,
     Component,
-    PostConstruct
+    PostConstruct,
+    _removeFromParent
 } from "@ag-grid-community/core";
 import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";

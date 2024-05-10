@@ -3,9 +3,10 @@ import {
     Events,
     PostConstruct,
     IStatusPanelComp,
-    _,
     IRowModel,
-    IClientSideRowModel
+    IClientSideRowModel,
+    _formatNumberCommas,
+    _warnOnce
 } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 

@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
@@ -40,7 +39,11 @@ import {
     Optional,
     CtrlsService,
     WithoutGridCommon,
-    ProcessRowGroupForExportParams
+    ProcessRowGroupForExportParams,
+    _warnOnce,
+    _exists,
+    _last,
+    _removeFromArray
 } from "@ag-grid-community/core";
 
 interface RowCallback {
@@ -118,10 +121,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             navigator.clipboard.readText()
                 .then(this.processClipboardData.bind(this))
                 .catch((e) => {
-                    _doOnce(() => {
-                        console.warn(e);
-                        console.warn(apiError('readText'));
-                    }, 'clipboardApiError');
+                    _warnOnce(`${e}\n${apiError('readText')}`);
                     this.navigatorApiFailed = true;
                     this.pasteFromClipboardLegacy();
                 });
@@ -1031,10 +1031,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         const allowNavigator = !this.gos.get('suppressClipboardApi');
         if (allowNavigator && navigator.clipboard) {
             navigator.clipboard.writeText(data).catch((e) => {
-                _doOnce(() => {
-                    console.warn(e);
-                    console.warn(apiError('writeText'));
-                }, 'clipboardApiError');
+                _warnOnce(`${e}\n${apiError('writeText')}`);
                 this.copyDataToClipboardLegacy(data);
             });
             return;

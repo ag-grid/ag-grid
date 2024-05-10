@@ -1,4 +1,5 @@
 import {
+    _warnOnce,
     Autowired,
     Bean,
     BeanStub,
@@ -7,7 +8,6 @@ import {
     ChartToolPanelName,
     GetChartToolbarItemsParams,
     WithoutGridCommon,
-    _
 } from "@ag-grid-community/core";
 import { ChartService } from "../../chartService";
 import { ChartMenuContext } from "../menu/chartMenuContext";

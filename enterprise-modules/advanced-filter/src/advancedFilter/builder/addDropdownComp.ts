@@ -1,4 +1,4 @@
-import { AgRichSelect, AutocompleteEntry, RichSelectParams, _ } from "@ag-grid-community/core";
+import { AgRichSelect, AutocompleteEntry, RichSelectParams, _setAriaLabel, _setAriaLabelledBy, _setDisplayed, _stopPropagationForAgGrid } from "@ag-grid-community/core";
 
 export interface AddDropdownCompParams extends RichSelectParams<AutocompleteEntry> {
     wrapperClassName?: string;

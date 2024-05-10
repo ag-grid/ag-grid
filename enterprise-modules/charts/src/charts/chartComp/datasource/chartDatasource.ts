@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     BeanStub,
     Column,
@@ -17,6 +16,9 @@ import {
     SortController,
     ValueService,
     PartialCellRange,
+    _values,
+    _includes,
+    _last,
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "../model/chartDataModel";
 

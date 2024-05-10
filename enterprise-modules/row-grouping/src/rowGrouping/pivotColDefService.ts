@@ -6,10 +6,10 @@ import {
     ColGroupDef,
     Column,
     ColumnModel,
-    GridOptionsService,
     IPivotColDefService,
     PostConstruct,
-    _
+    _cloneObject,
+    _iterateObject,
 } from "@ag-grid-community/core";
 
 export interface PivotColDefServiceResult {

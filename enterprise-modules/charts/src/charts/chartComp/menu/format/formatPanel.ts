@@ -1,11 +1,11 @@
 import {
-    _,
     ChartFormatPanel,
     ChartFormatPanelGroup,
     ChartPanelGroupDef,
     Component,
     PostConstruct,
-    ChartType
+    ChartType,
+    _warnOnce
 } from "@ag-grid-community/core";
 import { LegendPanel } from "./legend/legendPanel";
 import { CartesianAxisPanel } from "./axis/cartesianAxisPanel";

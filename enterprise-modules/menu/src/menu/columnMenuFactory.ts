@@ -9,7 +9,7 @@ import {
     IRowModel,
     MenuItemDef,
     MenuService,
-    _
+    _removeRepeatsFromArray
 } from "@ag-grid-community/core";
 import { MenuItemMapper } from "./menuItemMapper";
 

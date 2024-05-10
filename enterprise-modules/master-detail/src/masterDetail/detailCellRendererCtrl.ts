@@ -11,7 +11,7 @@ import {
     RowPositionUtils,
     FullWidthRowFocusedEvent,
     FocusService,
-    _
+    _missing,
 } from "@ag-grid-community/core";
 
 export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {

@@ -9,8 +9,8 @@ import {
     MenuItemDef,
     PopupService,
     PostConstruct,
-    ProvidedColumnGroup, 
-    _
+    ProvidedColumnGroup,
+    _createIconNoSpan, 
 } from "@ag-grid-community/core";
 
 type MenuItemName = 'rowGroup' | 'value' | 'pivot';

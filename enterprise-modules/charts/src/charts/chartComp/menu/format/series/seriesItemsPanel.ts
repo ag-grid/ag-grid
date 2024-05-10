@@ -1,5 +1,4 @@
 import {
-    _,
     AgGroupComponentParams,
     AgSlider,
     AgGroupComponent,
@@ -8,7 +7,8 @@ import {
     ListOption,
     PostConstruct,
     RefSelector,
-    AgSelectParams
+    AgSelectParams,
+    _removeFromParent
 } from "@ag-grid-community/core";
 import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { FontPanel } from "../fontPanel";

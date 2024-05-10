@@ -1,5 +1,4 @@
 import {
-    _,
     AgCheckbox,
     Autowired,
     Column,
@@ -17,7 +16,12 @@ import {
     PostConstruct,
     RefSelector,
     WithoutGridCommon,
-    DragItem
+    DragItem,
+    _createIconNoSpan,
+    _escapeString,
+    _setAriaDescribedBy,
+    _setAriaLabel,
+    _setDisplayed
 } from "@ag-grid-community/core";
 import { ColumnModelItem } from "./columnModelItem";
 import { ModelItemUtils } from "./modelItemUtils";

@@ -4,7 +4,7 @@ import {
     Component,
     Events,
     PostConstruct,
-    _
+    _setAriaRole,
 } from "@ag-grid-community/core";
 import { RowGroupDropZonePanel } from "./rowGroupDropZonePanel";
 import { PivotDropZonePanel } from "./pivotDropZonePanel";

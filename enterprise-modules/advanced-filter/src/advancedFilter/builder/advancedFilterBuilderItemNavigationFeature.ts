@@ -1,4 +1,4 @@
-import { BeanStub, Component, KeyCode, PostConstruct, _ } from "@ag-grid-community/core";
+import { BeanStub, Component, KeyCode, PostConstruct, _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from "@ag-grid-community/core";
 
 export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
     constructor(

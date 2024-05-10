@@ -1,5 +1,4 @@
 import {
-    _,
     AgGroupComponentParams,
     Autowired,
     Component,

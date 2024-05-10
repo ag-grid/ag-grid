@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
@@ -15,6 +14,9 @@ import {
     RowPositionUtils,
     MenuService,
     SortController,
+    _createIconNoSpan,
+    _escapeString,
+    _exists,
 } from '@ag-grid-community/core';
 import { ChartMenuItemMapper } from './chartMenuItemMapper';
 

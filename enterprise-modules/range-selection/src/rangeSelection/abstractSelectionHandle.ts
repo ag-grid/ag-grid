@@ -13,11 +13,13 @@ import {
     PostConstruct,
     ISelectionHandle,
     RowPositionUtils,
-    _,
     SelectionHandleType,
     NavigationService,
     CtrlsService,
-    CellPositionUtils
+    CellPositionUtils,
+    _last,
+    _setDisplayed,
+    _isVisible
 } from "@ag-grid-community/core";
 import { RangeService } from "./rangeService";
 

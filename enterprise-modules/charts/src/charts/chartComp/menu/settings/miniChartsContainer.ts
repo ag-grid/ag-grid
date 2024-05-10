@@ -1,12 +1,12 @@
 
 import {
-    _,
     AgGroupComponent,
     Autowired,
     ChartGroupsDef,
     ChartType,
     Component,
-    PostConstruct
+    PostConstruct,
+    _warnOnce
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ChartTranslationService } from "../../services/chartTranslationService";

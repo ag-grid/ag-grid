@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
@@ -7,7 +6,8 @@ import {
     ColumnModel,
     GridApi,
     RowNode,
-    ValueService
+    ValueService,
+    _includes
 } from "@ag-grid-community/core";
 
 @Bean("chartCrossFilterService")

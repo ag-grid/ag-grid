@@ -1,5 +1,4 @@
 import {
-    _,
     IGetRowsParams,
     NumberSequence,
     PostConstruct,
@@ -8,7 +7,9 @@ import {
     RowNodeBlock,
     LoadSuccessParams,
     Beans,
-    Autowired
+    Autowired,
+    _missing,
+    _exists
 } from "@ag-grid-community/core";
 import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 

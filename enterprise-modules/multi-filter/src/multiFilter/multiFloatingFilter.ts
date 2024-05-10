@@ -1,7 +1,6 @@
 import {
     Component,
     FilterChangedEvent,
-    _,
     IFloatingFilterComp,
     IFloatingFilterParams,
     UserComponentFactory,
@@ -13,6 +12,9 @@ import {
     IFilter,
     FilterManager,
     UserCompDetails,
+    _clearElement,
+    _mergeDeep,
+    _setDisplayed,
 } from '@ag-grid-community/core';
 import { MultiFilter } from './multiFilter';
 
