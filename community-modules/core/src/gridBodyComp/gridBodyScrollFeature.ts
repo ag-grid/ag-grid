@@ -119,14 +119,17 @@ export class GridBodyScrollFeature extends BeanStub {
         const {
             topCenter,
             stickyTopCenter,
+            stickyBottomCenter,
             centerHeader,
             bottomCenter,
-            fakeHScrollComp } = this.ctrlsService.getParams();
+            fakeHScrollComp,
+        } = this.ctrlsService.getParams();
 
         centerHeader.setHorizontalScroll(-offset);
         bottomCenter.setContainerTranslateX(offset);
         topCenter.setContainerTranslateX(offset);
         stickyTopCenter.setContainerTranslateX(offset);
+        stickyBottomCenter.setContainerTranslateX(offset);
 
         const centerViewport = this.centerRowsCtrl.getViewportElement();
         const isCenterViewportLastHorizontal = this.lastScrollSource[ScrollDirection.Horizontal] === ScrollSource.Container;
