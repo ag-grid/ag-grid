@@ -213,7 +213,7 @@ export function useQuickFilter() {
             columns.forEach((column) => {
                 const part = this.getQuickFilterTextForColumn(column, node);
 
-            if (exists(part)) {
+            if (_exists(part)) {
                 stringParts.push(part);
             }
         });
