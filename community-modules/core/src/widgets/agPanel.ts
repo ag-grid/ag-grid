@@ -1,8 +1,8 @@
 import { RefSelector } from "./componentAnnotations";
 import { PostConstruct } from "../context/context";
 import { Component } from "./component";
-import { getInnerHeight, getInnerWidth, isVisible, setDisplayed } from "../utils/dom";
-import { createIconNoSpan } from "../utils/icon";
+import { _getInnerHeight, _getInnerWidth, _isVisible, _setDisplayed } from "../utils/dom";
+import { _createIconNoSpan } from "../utils/icon";
 import { PositionableFeature, PositionableOptions, ResizableStructure } from "../rendering/features/positionableFeature";
 
 export interface PanelOptions extends PositionableOptions {
@@ -75,7 +75,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             if (title) { this.setTitle(title); }
             this.setClosable(closable != null ? closable : this.closable);
         } else {
-            setDisplayed(this.eTitleBar, false);
+            _setDisplayed(this.eTitleBar, false);
         }
 
         this.addManagedListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
@@ -141,7 +141,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             this.getContext().createBean(closeButtonComp);
 
             const eGui = closeButtonComp.getGui();
-            const child = createIconNoSpan('close', this.gos)!;
+            const child = _createIconNoSpan('close', this.gos)!;
             child.classList.add('ag-panel-title-bar-button-icon');
             eGui.appendChild(child);
 
@@ -187,11 +187,11 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
     }
 
     public getBodyHeight(): number {
-        return getInnerHeight(this.eContentWrapper);
+        return _getInnerHeight(this.eContentWrapper);
     }
 
     public getBodyWidth(): number {
-        return getInnerWidth(this.eContentWrapper);
+        return _getInnerWidth(this.eContentWrapper);
     }
 
     public setTitle(title: string) {
@@ -210,7 +210,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
 
         const eGui = this.getGui();
 
-        if (eGui && isVisible(eGui)) {
+        if (eGui && _isVisible(eGui)) {
             this.close();
         }
 

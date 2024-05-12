@@ -5,7 +5,7 @@ import { DragAndDropService, DraggingEvent, DragSourceType } from "../../dragAnd
 import { DropListener } from "./bodyDropTarget";
 import { GridOptionsService } from "../../gridOptionsService";
 import { ColumnEventType } from "../../events";
-import { missing, exists } from "../../utils/generic";
+import { _missing, _exists } from "../../utils/generic";
 import { CtrlsService } from "../../ctrlsService";
 import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
 import { ColumnMoveHelper } from "../columnMoveHelper";
@@ -38,7 +38,7 @@ export class MoveColumnFeature implements DropListener {
 
     constructor(pinned: ColumnPinnedType) {
         this.pinned = pinned;
-        this.isCenterContainer = !exists(pinned);
+        this.isCenterContainer = !_exists(pinned);
     }
 
     @PostConstruct
@@ -135,7 +135,7 @@ export class MoveColumnFeature implements DropListener {
         this.lastDraggingEvent = draggingEvent;
 
         // if moving up or down (ie not left or right) then do nothing
-        if (missing(draggingEvent.hDirection)) {
+        if (_missing(draggingEvent.hDirection)) {
             return;
         }
 

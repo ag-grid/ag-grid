@@ -1,8 +1,8 @@
 import { CellCtrl } from "./cellCtrl";
 import { Column } from "../../entities/column";
-import { areEqual, last } from "../../utils/array";
+import { _areEqual, _last } from "../../utils/array";
 import { Events } from "../../eventKeys";
-import { missing } from "../../utils/generic";
+import { _missing } from "../../utils/generic";
 import { BeanStub } from "../../context/beanStub";
 import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
@@ -66,7 +66,7 @@ export class CellPositionFeature extends BeanStub {
     private onDisplayColumnsChanged(): void {
         const colsSpanning: Column[] = this.getColSpanningList();
 
-        if (!areEqual(this.colsSpanning, colsSpanning)) {
+        if (!_areEqual(this.colsSpanning, colsSpanning)) {
             this.colsSpanning = colsSpanning;
             this.onWidthChanged();
             this.onLeftChanged(); // left changes when doing RTL
@@ -115,7 +115,7 @@ export class CellPositionFeature extends BeanStub {
             for (let i = 0; pointer && i < colSpan; i++) {
                 colsSpanning.push(pointer);
                 pointer = this.beans.columnModel.getDisplayedColAfter(pointer);
-                if (!pointer || missing(pointer)) {
+                if (!pointer || _missing(pointer)) {
                     break;
                 }
                 // we do not allow col spanning to span outside of pinned areas
@@ -138,7 +138,7 @@ export class CellPositionFeature extends BeanStub {
         let mostLeftCol: Column;
 
         if (this.beans.gos.get('enableRtl') && this.colsSpanning) {
-            mostLeftCol = last(this.colsSpanning);
+            mostLeftCol = _last(this.colsSpanning);
         } else {
             mostLeftCol = this.column;
         }

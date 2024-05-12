@@ -6,7 +6,7 @@ import { GridBodyCtrl } from "./gridBodyCtrl";
 import { BodyHeightChangedEvent, Events } from "../events";
 import { CtrlsService } from "../ctrlsService";
 import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
-import { getInnerHeight, getInnerWidth } from "../utils/dom";
+import { _getInnerHeight, _getInnerWidth } from "../utils/dom";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { PinnedWidthService } from "./pinnedWidthService";
 import { Column } from "../entities/column";
@@ -79,7 +79,7 @@ export class ViewportSizeFeature extends BeanStub {
 
     private keepPinnedColumnsNarrowerThanViewport(): void {
         const eBodyViewport = this.gridBodyCtrl.getBodyViewportElement();
-        const bodyWidth = getInnerWidth(eBodyViewport);
+        const bodyWidth = _getInnerWidth(eBodyViewport);
 
         if (bodyWidth <= 50) { return; }
 
@@ -156,7 +156,7 @@ export class ViewportSizeFeature extends BeanStub {
 
     private checkBodyHeight(): void {
         const eBodyViewport = this.gridBodyCtrl.getBodyViewportElement();
-        const bodyHeight = getInnerHeight(eBodyViewport);
+        const bodyHeight = _getInnerHeight(eBodyViewport);
 
         if (this.bodyHeight !== bodyHeight) {
             this.bodyHeight = bodyHeight;

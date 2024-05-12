@@ -1,5 +1,6 @@
 import {
-    _,
+    _exists,
+    _missingOrEmpty,
     Autowired,
     Bean,
     BeanStub,
@@ -80,7 +81,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         skipLeafNodes: boolean,
         uiLevel: number
     ) {
-        if (_.missingOrEmpty(rowsToFlatten)) {
+        if (_missingOrEmpty(rowsToFlatten)) {
             return;
         }
 
@@ -172,7 +173,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
     }
 
     private createDetailNode(masterNode: RowNode): RowNode {
-        if (_.exists(masterNode.detailNode)) { return masterNode.detailNode; }
+        if (_exists(masterNode.detailNode)) { return masterNode.detailNode; }
 
         const detailNode = new RowNode(this.beans);
 
@@ -180,7 +181,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         detailNode.selectable = false;
         detailNode.parent = masterNode;
 
-        if (_.exists(masterNode.id)) {
+        if (_exists(masterNode.id)) {
             detailNode.id = 'detail_' + masterNode.id;
         }
 

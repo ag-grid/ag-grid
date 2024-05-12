@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     IServerSideStore,
@@ -8,7 +7,8 @@ import {
     GetServerSideGroupLevelParamsParams,
     ColumnModel,
     WithoutGridCommon,
-    GridOptionsService
+    GridOptionsService,
+    _warnOnce
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 import { FullStore } from "./fullStore";
@@ -64,14 +64,14 @@ export class StoreFactory {
         if (ssrmParams.dynamicRowHeight) {
             const message = 'Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
                 'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.';
-            _.warnOnce(message);
+            _warnOnce(message);
             return undefined;
         }
 
         if (this.columnModel.isAutoRowHeightActive()) {
             const message = 'Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
                 'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.';
-            _.warnOnce(message);
+            _warnOnce(message);
             return undefined;
         }
 

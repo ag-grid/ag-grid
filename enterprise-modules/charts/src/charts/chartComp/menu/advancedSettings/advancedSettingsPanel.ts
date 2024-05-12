@@ -2,7 +2,6 @@ import {
     ChartType,
     Component,
     PostConstruct,
-    _
 } from "@ag-grid-community/core";
 import { ChartSeriesType, isCartesian } from "../../utils/seriesTypeMapper";
 import { ChartMenuContext } from "../chartMenuContext";

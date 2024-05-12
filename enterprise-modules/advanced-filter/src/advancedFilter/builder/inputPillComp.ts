@@ -10,7 +10,11 @@ import {
     PostConstruct,
     RefSelector,
     WithoutGridCommon,
-    _
+    _exists,
+    _setAriaDescribedBy,
+    _setAriaLabel,
+    _setDisplayed,
+    _stopPropagationForAgGrid,
 } from "@ag-grid-community/core";
 import { AdvancedFilterExpressionService } from "../advancedFilterExpressionService";
 
@@ -41,8 +45,8 @@ export class InputPillComp extends Component {
         this.activateTabIndex([this.ePill]);
 
         this.eLabel.id = `${this.getCompId()}`;
-        _.setAriaDescribedBy(this.ePill, this.eLabel.id);
-        _.setAriaLabel(this.ePill, ariaLabel);
+        _setAriaDescribedBy(this.ePill, this.eLabel.id);
+        _setAriaLabel(this.ePill, ariaLabel);
 
         this.renderValue();
 
@@ -54,7 +58,7 @@ export class InputPillComp extends Component {
             switch (event.key) {
                 case KeyCode.ENTER:
                     event.preventDefault();
-                    _.stopPropagationForAgGrid(event);
+                    _stopPropagationForAgGrid(event);
                     this.showEditor();
                     break;
             }
@@ -68,7 +72,7 @@ export class InputPillComp extends Component {
 
     private showEditor(): void {
         if (this.eEditor) { return; }
-        _.setDisplayed(this.ePill, false);
+        _setDisplayed(this.ePill, false);
         this.eEditor = this.createEditorComp(this.params.type);
         this.eEditor.setValue(this.value);
         const eEditorGui = this.eEditor.getGui();
@@ -76,12 +80,12 @@ export class InputPillComp extends Component {
             switch (event.key) {
                 case KeyCode.ENTER:
                     event.preventDefault();
-                    _.stopPropagationForAgGrid(event);
+                    _stopPropagationForAgGrid(event);
                     this.updateValue(true);
                     break;
                 case KeyCode.ESCAPE:
                     event.preventDefault();
-                    _.stopPropagationForAgGrid(event);
+                    _stopPropagationForAgGrid(event);
                     this.hideEditor(true);
                     break;
             }
@@ -115,7 +119,7 @@ export class InputPillComp extends Component {
         this.eEditor = undefined;
         this.getGui().removeChild(eEditor.getGui());
         this.destroyBean(eEditor);
-        _.setDisplayed(this.ePill, true);
+        _setDisplayed(this.ePill, true);
         if (keepFocus) {
             this.ePill.focus();
         }
@@ -128,7 +132,7 @@ export class InputPillComp extends Component {
             'ag-advanced-filter-builder-value-number',
             'ag-advanced-filter-builder-value-text'
         );
-        if (!_.exists(this.value)) {
+        if (!_exists(this.value)) {
             value = this.advancedFilterExpressionService.translate('advancedFilterBuilderEnterValue');
             this.eLabel.classList.add('ag-advanced-filter-builder-value-empty');
         } else if (this.params.type === 'number') {

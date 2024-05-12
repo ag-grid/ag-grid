@@ -36,10 +36,10 @@ import { PaginationProxy } from "../pagination/paginationProxy";
 import { SortModelItem } from "../sortController";
 import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from "../interfaces/selectionState";
 import { IExpansionService } from "../interfaces/iExpansionService";
-import { jsonEquals } from "../utils/generic";
+import { _jsonEquals } from "../utils/generic";
 import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
 import { WithoutGridCommon } from "../interfaces/iCommon";
-import { debounce } from "../utils/function";
+import { _debounce } from "../utils/function";
 import { ColumnAnimationService } from "../rendering/columnAnimationService";
 import { Column } from "../entities/column";
 
@@ -62,12 +62,12 @@ export class StateService extends BeanStub {
     private cachedState: GridState;
     private suppressEvents = true;
     private queuedUpdateSources: Set<(keyof GridState | 'gridInitializing')> = new Set();
-    private dispatchStateUpdateEventDebounced = debounce(() => this.dispatchQueuedStateUpdateEvents(), 0);
+    private dispatchStateUpdateEventDebounced = _debounce(() => this.dispatchQueuedStateUpdateEvents(), 0);
     // If user is doing a manual expand all node by node, we don't want to process one at a time.
     // EVENT_ROW_GROUP_OPENED is already async, so no impact of making the state async here.
-    private onRowGroupOpenedDebounced = debounce(() => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()), 0);
+    private onRowGroupOpenedDebounced = _debounce(() => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()), 0);
     // similar to row expansion, want to debounce. However, selection is synchronous, so need to mark as stale in case `getState` is called.
-    private onRowSelectedDebounced = debounce(() => {
+    private onRowSelectedDebounced = _debounce(() => {
         this.staleStateKeys.delete('rowSelection');
         this.updateCachedState('rowSelection', this.getRowSelectionState());
     }, 0);
@@ -622,7 +622,7 @@ export class StateService extends BeanStub {
         const newColumnState = this.getColumnState();
         let hasChanged = false;
         Object.entries(newColumnState).forEach(([key, value]: [keyof GridState, any]) => {
-            if (!jsonEquals(value, this.cachedState[key])) {
+            if (!_jsonEquals(value, this.cachedState[key])) {
                 hasChanged = true;
             }
         });
@@ -638,7 +638,7 @@ export class StateService extends BeanStub {
     private updateCachedState<K extends keyof GridState>(key: K, value: GridState[K]): void {
         const existingValue = this.cachedState[key];
         this.setCachedStateValue(key, value);
-        if (!jsonEquals(value, existingValue)) {
+        if (!_jsonEquals(value, existingValue)) {
             this.dispatchStateUpdateEvent([key]);
         }
     }

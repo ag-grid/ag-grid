@@ -7,7 +7,7 @@ import {
     GridCoreCreator,
     GridOptions,
     GridParams, IDetailCellRenderer, IDetailCellRendererCtrl,
-    IDetailCellRendererParams, ModuleRegistry, VanillaFrameworkOverrides, WrappableInterface, _
+    IDetailCellRendererParams, ModuleRegistry, VanillaFrameworkOverrides, WrappableInterface, _warnOnce
 } from '@ag-grid-community/core';
 import React, {
     forwardRef,
@@ -253,7 +253,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
     }
 
     if (props.template) {
-        _.warnOnce('detailCellRendererParams.template is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://ag-grid.com/react-data-grid/master-detail-custom-detail/');
+        _warnOnce('detailCellRendererParams.template is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://ag-grid.com/react-data-grid/master-detail-custom-detail/');
     }
 
     const setRef = useCallback((e: HTMLDivElement) => {

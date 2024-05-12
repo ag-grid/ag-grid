@@ -1,5 +1,4 @@
 import {
-    _,
     AgPanel,
     AgPromise,
     Autowired,

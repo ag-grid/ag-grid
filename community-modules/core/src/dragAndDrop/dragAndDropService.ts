@@ -5,12 +5,12 @@ import { GridApi } from "../gridApi";
 import { DragService, DragListenerParams } from "./dragService";
 import { MouseEventService } from "../gridBodyComp/mouseEventService";
 import { RowDropZoneParams } from "../gridBodyComp/rowDragFeature";
-import { escapeString } from "../utils/string";
-import { createIcon } from "../utils/icon";
-import { flatten, removeFromArray } from "../utils/array";
-import { getBodyHeight, getBodyWidth } from "../utils/browser";
-import { loadTemplate, clearElement, getElementRectWithOffset } from "../utils/dom";
-import { isFunction } from "../utils/function";
+import { _escapeString } from "../utils/string";
+import { _createIcon } from "../utils/icon";
+import { _flatten, _removeFromArray } from "../utils/array";
+import { _getBodyHeight, _getBodyWidth } from "../utils/browser";
+import { _loadTemplate, _clearElement, _getElementRectWithOffset } from "../utils/dom";
+import { _isFunction } from "../utils/function";
 import { IRowNode } from "../interfaces/iRowNode";
 import { IAggFunc } from "../entities/colDef";
 import { HorizontalDirection, VerticalDirection } from "../constants/direction";
@@ -186,15 +186,15 @@ export class DragAndDropService extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.ePinnedIcon = createIcon('columnMovePin', this.gos, null);
-        this.eHideIcon = createIcon('columnMoveHide', this.gos, null);
-        this.eMoveIcon = createIcon('columnMoveMove', this.gos, null);
-        this.eLeftIcon = createIcon('columnMoveLeft', this.gos, null);
-        this.eRightIcon = createIcon('columnMoveRight', this.gos, null);
-        this.eGroupIcon = createIcon('columnMoveGroup', this.gos, null);
-        this.eAggregateIcon = createIcon('columnMoveValue', this.gos, null);
-        this.ePivotIcon = createIcon('columnMovePivot', this.gos, null);
-        this.eDropNotAllowedIcon = createIcon('dropNotAllowed', this.gos, null);
+        this.ePinnedIcon = _createIcon('columnMovePin', this.gos, null);
+        this.eHideIcon = _createIcon('columnMoveHide', this.gos, null);
+        this.eMoveIcon = _createIcon('columnMoveMove', this.gos, null);
+        this.eLeftIcon = _createIcon('columnMoveLeft', this.gos, null);
+        this.eRightIcon = _createIcon('columnMoveRight', this.gos, null);
+        this.eGroupIcon = _createIcon('columnMoveGroup', this.gos, null);
+        this.eAggregateIcon = _createIcon('columnMoveValue', this.gos, null);
+        this.ePivotIcon = _createIcon('columnMovePivot', this.gos, null);
+        this.eDropNotAllowedIcon = _createIcon('dropNotAllowed', this.gos, null);
     }
 
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
@@ -217,7 +217,7 @@ export class DragAndDropService extends BeanStub {
 
         if (sourceAndParams) {
             this.dragService.removeDragSource(sourceAndParams.params);
-            removeFromArray(this.dragSourceAndParamsList, sourceAndParams);
+            _removeFromArray(this.dragSourceAndParamsList, sourceAndParams);
         }
     }
 
@@ -348,7 +348,7 @@ export class DragAndDropService extends BeanStub {
         // loop over the sorted elementStack to find which dropTarget comes first
         for (const el of elementStack) {
             for (const dropTarget of validDropTargets) {
-                const containers = flatten(this.getAllContainersFromDropTarget(dropTarget));
+                const containers = _flatten(this.getAllContainersFromDropTarget(dropTarget));
                 if (containers.indexOf(el) !== -1) { return dropTarget; }
             }
         }
@@ -443,10 +443,10 @@ export class DragAndDropService extends BeanStub {
         const ghostRect = ghost.getBoundingClientRect();
         const ghostHeight = ghostRect.height;
 
-        const browserWidth = getBodyWidth() - 2; // 2px for 1px borderLeft and 1px borderRight
-        const browserHeight = getBodyHeight() - 2; // 2px for 1px borderTop and 1px borderBottom
+        const browserWidth = _getBodyWidth() - 2; // 2px for 1px borderLeft and 1px borderRight
+        const browserHeight = _getBodyHeight() - 2; // 2px for 1px borderTop and 1px borderBottom
 
-        const offsetParentSize = getElementRectWithOffset(ghost.offsetParent as HTMLElement);
+        const offsetParentSize = _getElementRectWithOffset(ghost.offsetParent as HTMLElement);
 
         const { clientY, clientX } = event;
 
@@ -488,7 +488,7 @@ export class DragAndDropService extends BeanStub {
     }
 
     private createGhost(): void {
-        this.eGhost = loadTemplate(DragAndDropService.GHOST_TEMPLATE);
+        this.eGhost = _loadTemplate(DragAndDropService.GHOST_TEMPLATE);
         this.mouseEventService.stampTopLevelGridCompWithGridInstance(this.eGhost);
 
         this.environment.applyThemeClasses(this.eGhost);
@@ -499,11 +499,11 @@ export class DragAndDropService extends BeanStub {
         const eText = this.eGhost.querySelector('.ag-dnd-ghost-label') as HTMLElement;
         let dragItemName = this.dragSource.dragItemName;
 
-        if (isFunction(dragItemName)) {
+        if (_isFunction(dragItemName)) {
             dragItemName = (dragItemName as () => string)();
         }
 
-        eText.innerHTML = escapeString(dragItemName as string) || '';
+        eText.innerHTML = _escapeString(dragItemName as string) || '';
 
         this.eGhost.style.height = '25px';
         this.eGhost.style.top = '20px';
@@ -544,7 +544,7 @@ export class DragAndDropService extends BeanStub {
     }
 
     public setGhostIcon(iconName: string | null, shake = false): void {
-        clearElement(this.eGhostIcon);
+        _clearElement(this.eGhostIcon);
 
         let eIcon: Element | null = null;
 

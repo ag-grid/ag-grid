@@ -37,14 +37,14 @@ import { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { AutoGroupColService, GROUP_AUTO_COLUMN_ID } from './autoGroupColService';
 import { RowNode } from '../entities/rowNode';
 import { ValueCache } from '../valueService/valueCache';
-import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromUnorderedArray, removeFromUnorderedArray } from '../utils/array';
+import { _areEqual, _last, _removeFromArray, _moveInArray, _includes, _insertIntoArray, _removeAllFromUnorderedArray, _removeFromUnorderedArray } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { SortController } from "../sortController";
-import { missingOrEmpty, exists, missing, attrToBoolean, attrToNumber } from '../utils/generic';
-import { camelCaseToHumanText } from '../utils/string';
+import { _missingOrEmpty, _exists, _missing, _attrToBoolean, _attrToNumber } from '../utils/generic';
+import { _camelCaseToHumanText } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
-import { convertToMap } from '../utils/map';
-import { warnOnce } from '../utils/function';
+import { _convertToMap } from '../utils/map';
+import { _warnOnce } from '../utils/function';
 import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import { WithoutGridCommon } from '../interfaces/iCommon';
@@ -498,7 +498,7 @@ export class ColumnModel extends BeanStub {
 
     private isPivotSettingAllowed(pivot: boolean): boolean {
         if (pivot && this.gos.get('treeData')) {
-            warnOnce("Pivot mode not available with treeData.");
+            _warnOnce("Pivot mode not available with treeData.");
             return false;
         }
 
@@ -527,7 +527,7 @@ export class ColumnModel extends BeanStub {
     }
 
     public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: ColKey): Column | null {
-        if (missing(this.secondaryColumns)) { return null; }
+        if (_missing(this.secondaryColumns)) { return null; }
 
         const valueColumnToFind = this.getPrimaryColumn(valueColKey);
 
@@ -537,7 +537,7 @@ export class ColumnModel extends BeanStub {
             const thisPivotKeys = column.getColDef().pivotKeys;
             const pivotValueColumn = column.getColDef().pivotValueColumn;
 
-            const pivotKeyMatches = areEqual(thisPivotKeys, pivotKeys);
+            const pivotKeyMatches = _areEqual(thisPivotKeys, pivotKeys);
             const pivotValueMatches = pivotValueColumn === valueColumnToFind;
 
             if (pivotKeyMatches && pivotValueMatches) {
@@ -558,9 +558,9 @@ export class ColumnModel extends BeanStub {
 
         if (this.gos.get('enableRtl')) {
             lastLeft = this.displayedColumnsLeft ? this.displayedColumnsLeft[0] : null;
-            firstRight = this.displayedColumnsRight ? last(this.displayedColumnsRight) : null;
+            firstRight = this.displayedColumnsRight ? _last(this.displayedColumnsRight) : null;
         } else {
-            lastLeft = this.displayedColumnsLeft ? last(this.displayedColumnsLeft) : null;
+            lastLeft = this.displayedColumnsLeft ? _last(this.displayedColumnsLeft) : null;
             firstRight = this.displayedColumnsRight ? this.displayedColumnsRight[0] : null;
         }
 
@@ -921,7 +921,7 @@ export class ColumnModel extends BeanStub {
         const emptySpaceBeforeColumn = (col: Column) => {
             const left = col.getLeft();
 
-            return exists(left) && left > this.viewportLeft;
+            return _exists(left) && left > this.viewportLeft;
         };
 
         // if doing column virtualisation, then we filter based on the viewport.
@@ -946,12 +946,12 @@ export class ColumnModel extends BeanStub {
             const leafColumns = col.getDisplayedLeafColumns();
             if (!leafColumns.length) { return false; }
 
-            columnToCompare = isFirst ? leafColumns[0] : last(leafColumns);
+            columnToCompare = isFirst ? leafColumns[0] : _last(leafColumns);
         } else {
             columnToCompare = col;
         }
 
-        return (isFirst ? allColumns[0] : last(allColumns)) === columnToCompare;
+        return (isFirst ? allColumns[0] : _last(allColumns)) === columnToCompare;
     }
 
     public getAriaColumnIndex(col: Column | ColumnGroup): number {
@@ -1014,7 +1014,7 @@ export class ColumnModel extends BeanStub {
         source: ColumnEventType
     ) {
 
-        if (!keys || missingOrEmpty(keys)) { return; }
+        if (!keys || _missingOrEmpty(keys)) { return; }
 
         let atLeastOne = false;
 
@@ -1028,7 +1028,7 @@ export class ColumnModel extends BeanStub {
                 masterList.push(columnToAdd);
             } else {
                 if (masterList.indexOf(columnToAdd) < 0) { return; }
-                removeFromArray(masterList, columnToAdd);
+                _removeFromArray(masterList, columnToAdd);
             }
 
             columnCallback(columnToAdd);
@@ -1132,7 +1132,7 @@ export class ColumnModel extends BeanStub {
 
         masterList.length = 0;
 
-        if (exists(colKeys)) {
+        if (_exists(colKeys)) {
             colKeys.forEach(key => {
                 const column = this.getPrimaryColumn(key);
                 if (column) {
@@ -1213,12 +1213,12 @@ export class ColumnModel extends BeanStub {
     private normaliseColumnWidth(column: Column, newWidth: number): number {
         const minWidth = column.getMinWidth();
 
-        if (exists(minWidth) && newWidth < minWidth) {
+        if (_exists(minWidth) && newWidth < minWidth) {
             newWidth = minWidth;
         }
 
         const maxWidth = column.getMaxWidth();
-        if (exists(maxWidth) && column.isGreaterThanMax(newWidth)) {
+        if (_exists(maxWidth) && column.isGreaterThanMax(newWidth)) {
             newWidth = maxWidth;
         }
 
@@ -1299,7 +1299,7 @@ export class ColumnModel extends BeanStub {
             minWidthAccumulated += minWidth || 0;
 
             const maxWidth = col.getMaxWidth();
-            if (exists(maxWidth) && maxWidth > 0) {
+            if (_exists(maxWidth) && maxWidth > 0) {
                 maxWidthAccumulated += maxWidth;
             } else {
                 // if at least one columns has no max width, it means the group of columns
@@ -1407,11 +1407,11 @@ export class ColumnModel extends BeanStub {
                     const minWidth = col.getMinWidth();
                     const maxWidth = col.getMaxWidth();
 
-                    if (exists(minWidth) && colNewWidth < minWidth) {
+                    if (_exists(minWidth) && colNewWidth < minWidth) {
                         colNewWidth = minWidth;
                         finishedCols[col.getId()] = true;
                         finishedColsGrew = true;
-                    } else if (exists(maxWidth) && maxWidth > 0 && colNewWidth > maxWidth) {
+                    } else if (_exists(maxWidth) && maxWidth > 0 && colNewWidth > maxWidth) {
                         colNewWidth = maxWidth;
                         finishedCols[col.getId()] = true;
                         finishedColsGrew = true;
@@ -1503,7 +1503,7 @@ export class ColumnModel extends BeanStub {
 
         if (failedRules) { return; }
 
-        moveInArray(this.gridColumns, movedColumns, toIndex);
+        _moveInArray(this.gridColumns, movedColumns, toIndex);
         this.updateDisplayedColumns(source);
 
         this.dispatchColumnMovedEvent({ movedColumns, source, toIndex, finished });
@@ -1528,7 +1528,7 @@ export class ColumnModel extends BeanStub {
 
     public getProposedColumnOrder(columnsToMove: Column[], toIndex: number): Column[] {
         const proposedColumnOrder = this.gridColumns.slice();
-        moveInArray(proposedColumnOrder, columnsToMove, toIndex);
+        _moveInArray(proposedColumnOrder, columnsToMove, toIndex);
         return proposedColumnOrder;
     }
 
@@ -1737,7 +1737,7 @@ export class ColumnModel extends BeanStub {
     }
 
     public isRowGroupEmpty(): boolean {
-        return missingOrEmpty(this.rowGroupColumns);
+        return _missingOrEmpty(this.rowGroupColumns);
     }
 
     public setColumnsVisible(keys: (string | Column)[], visible = false, source: ColumnEventType): void {
@@ -1802,7 +1802,7 @@ export class ColumnModel extends BeanStub {
         source: ColumnEventType,
         createEvent?: () => WithoutGridCommon<ColumnEvent>): void {
 
-        if (missingOrEmpty(keys)) { return; }
+        if (_missingOrEmpty(keys)) { return; }
 
         const updatedColumns: Column[] = [];
 
@@ -1823,7 +1823,7 @@ export class ColumnModel extends BeanStub {
 
         this.updateDisplayedColumns(source);
 
-        if (exists(createEvent) && createEvent) {
+        if (_exists(createEvent) && createEvent) {
             const event = createEvent();
 
             event.columns = updatedColumns;
@@ -1861,7 +1861,7 @@ export class ColumnModel extends BeanStub {
         // pick the last displayed column in this group
         const requiredLevel = columnGroup.getProvidedColumnGroup().getLevel() + columnGroup.getPaddingLevel();
         const colGroupLeafColumns = columnGroup.getDisplayedLeafColumns();
-        const col: Column | null = direction === 'After' ? last(colGroupLeafColumns) : colGroupLeafColumns[0];
+        const col: Column | null = direction === 'After' ? _last(colGroupLeafColumns) : colGroupLeafColumns[0];
         const getDisplayColMethod: 'getDisplayedColAfter' | 'getDisplayedColBefore' = `getDisplayedCol${direction}` as any;
 
         while (true) {
@@ -1939,7 +1939,7 @@ export class ColumnModel extends BeanStub {
     }
 
     public getColumnState(): ColumnState[] {
-        if (missing(this.primaryColumns) || !this.isAlive()) { return []; }
+        if (_missing(this.primaryColumns) || !this.isAlive()) { return []; }
 
         const colsForState = this.getPrimaryAndSecondaryAndAutoColumns();
         const res: ColumnState[] = colsForState.map(this.createStateItemFromColumn.bind(this));
@@ -1951,7 +1951,7 @@ export class ColumnModel extends BeanStub {
 
     private orderColumnStateList(columnStateList: any[]): void {
         // for fast looking, store the index of each column
-        const colIdToGridIndexMap = convertToMap<string, number>(this.gridColumns.map((col, index) => [col.getColId(), index]));
+        const colIdToGridIndexMap = _convertToMap<string, number>(this.gridColumns.map((col, index) => [col.getColId(), index]));
 
         columnStateList.sort((itemA: any, itemB: any) => {
             const posA = colIdToGridIndexMap.has(itemA.colId) ? colIdToGridIndexMap.get(itemA.colId) : -1;
@@ -1961,7 +1961,7 @@ export class ColumnModel extends BeanStub {
     }
 
     public resetColumnState(source: ColumnEventType): void {
-        if (missingOrEmpty(this.primaryColumns)) { return; }
+        if (_missingOrEmpty(this.primaryColumns)) { return; }
 
         // NOTE = there is one bug here that no customer has noticed - if a column has colDef.lockPosition,
         // this is ignored  below when ordering the cols. to work, we should always put lockPosition cols first.
@@ -1989,11 +1989,11 @@ export class ColumnModel extends BeanStub {
         colsToProcess.forEach(column => {
             const stateItem = this.getColumnStateFromColDef(column);
 
-            if (missing(stateItem.rowGroupIndex) && stateItem.rowGroup) {
+            if (_missing(stateItem.rowGroupIndex) && stateItem.rowGroup) {
                 stateItem.rowGroupIndex = letRowGroupIndex++;
             }
 
-            if (missing(stateItem.pivotIndex) && stateItem.pivot) {
+            if (_missing(stateItem.pivotIndex) && stateItem.pivot) {
                 stateItem.pivotIndex = letPivotIndex++;
             }
 
@@ -2050,7 +2050,7 @@ export class ColumnModel extends BeanStub {
     }
 
     public applyColumnState(params: ApplyColumnStateParams, source: ColumnEventType): boolean {
-        if (missingOrEmpty(this.primaryColumns)) { return false; }
+        if (_missingOrEmpty(this.primaryColumns)) { return false; }
 
         if (params && params.state && !params.state.forEach) {
             console.warn('AG Grid: applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.');
@@ -2094,7 +2094,7 @@ export class ColumnModel extends BeanStub {
                 } else {
                     this.syncColumnWithStateItem(column, state, params.defaultState, rowGroupIndexes,
                         pivotIndexes, false, source);
-                    removeFromArray(columnsWithNoState, column);
+                    _removeFromArray(columnsWithNoState, column);
                 }
             });
 
@@ -2159,7 +2159,7 @@ export class ColumnModel extends BeanStub {
             const autoGroupColsCopy = this.groupAutoColumns ? this.groupAutoColumns.slice() : [];
             autoGroupColumnStates.forEach(stateItem => {
                 const autoCol = this.getAutoColumn(stateItem.colId!);
-                removeFromArray(autoGroupColsCopy, autoCol);
+                _removeFromArray(autoGroupColsCopy, autoCol);
                 this.syncColumnWithStateItem(autoCol, stateItem, params.defaultState, null, null, true, source);
             });
             // autogroup cols with nothing else, apply the default
@@ -2182,7 +2182,7 @@ export class ColumnModel extends BeanStub {
 
         // If there are still states left over, see if we can apply them to newly generated
         // secondary or auto columns. Also if defaults exist, ensure they are applied to secondary cols
-        if (unmatchedAndAutoStates.length > 0 || exists(params.defaultState)) {
+        if (unmatchedAndAutoStates.length > 0 || _exists(params.defaultState)) {
             unmatchedCount = applyStates(
                 unmatchedAndAutoStates,
                 this.secondaryColumns || [],
@@ -2222,7 +2222,7 @@ export class ColumnModel extends BeanStub {
                 // it's common to have autoGroup missing, as grouping could be on by default
                 // on a column, but the user could of since removed the grouping via the UI.
                 // if we don't inc the insert index, autoGroups will be inserted in reverse order
-                insertIntoArray(newOrder, col, autoGroupInsertIndex++);
+                _insertIntoArray(newOrder, col, autoGroupInsertIndex++);
             } else {
                 // normal columns, if missing from state list, are added at the end
                 newOrder.push(col);
@@ -2265,7 +2265,7 @@ export class ColumnModel extends BeanStub {
             const dispatchWhenListsDifferent = (eventType: string, colsBefore: Column[], colsAfter: Column[], idMapper: (column: Column) => string) => {
                 const beforeList = colsBefore.map(idMapper);
                 const afterList = colsAfter.map(idMapper);
-                const unchanged = areEqual(beforeList, afterList);
+                const unchanged = _areEqual(beforeList, afterList);
 
                 if (unchanged) { return; }
 
@@ -2426,7 +2426,7 @@ export class ColumnModel extends BeanStub {
                     obj.value1 = stateItem[key1];
                     calculated = true;
                 }
-                if (exists(key2) && stateItem[key2] !== undefined) {
+                if (_exists(key2) && stateItem[key2] !== undefined) {
                     obj.value2 = stateItem[key2];
                     calculated = true;
                 }
@@ -2436,7 +2436,7 @@ export class ColumnModel extends BeanStub {
                 if (defaultState[key1] !== undefined) {
                     obj.value1 = defaultState[key1];
                 }
-                if (exists(key2) && defaultState[key2] !== undefined) {
+                if (_exists(key2) && defaultState[key2] !== undefined) {
                     obj.value2 = defaultState[key2];
                 }
             }
@@ -2505,7 +2505,7 @@ export class ColumnModel extends BeanStub {
                     this.valueColumns.push(column);
                 }
             } else {
-                if (exists(aggFunc)) {
+                if (_exists(aggFunc)) {
                     console.warn('AG Grid: stateItem.aggFunc must be a string. if using your own aggregation ' +
                         'functions, register the functions first before using them in get/set state. This is because it is ' +
                         'intended for the column state to be stored and retrieved as simple JSON.');
@@ -2516,7 +2516,7 @@ export class ColumnModel extends BeanStub {
 
                 if (column.isValueActive()) {
                     column.setValueActive(false, source);
-                    removeFromArray(this.valueColumns, column);
+                    _removeFromArray(this.valueColumns, column);
                 }
             }
         }
@@ -2534,7 +2534,7 @@ export class ColumnModel extends BeanStub {
             } else {
                 if (column.isRowGroupActive()) {
                     column.setRowGroupActive(false, source);
-                    removeFromArray(this.rowGroupColumns, column);
+                    _removeFromArray(this.rowGroupColumns, column);
                 }
             }
         }
@@ -2552,7 +2552,7 @@ export class ColumnModel extends BeanStub {
             } else {
                 if (column.isPivotActive()) {
                     column.setPivotActive(false, source);
-                    removeFromArray(this.pivotColumns, column);
+                    _removeFromArray(this.pivotColumns, column);
                 }
             }
         }
@@ -2644,8 +2644,8 @@ export class ColumnModel extends BeanStub {
     private getAutoColumn(key: ColKey): Column | null {
         if (
             !this.groupAutoColumns ||
-            !exists(this.groupAutoColumns) ||
-            missing(this.groupAutoColumns)
+            !_exists(this.groupAutoColumns) ||
+            _missing(this.groupAutoColumns)
         ) { return null; }
 
         return this.groupAutoColumns.find(groupCol => this.columnsMatch(groupCol, key)) || null;
@@ -2720,7 +2720,7 @@ export class ColumnModel extends BeanStub {
         } else if (colDef.headerName != null) {
             return colDef.headerName;
         } else if ((colDef as ColDef).field) {
-            return camelCaseToHumanText((colDef as ColDef).field);
+            return _camelCaseToHumanText((colDef as ColDef).field);
         }
 
         return '';
@@ -2731,7 +2731,7 @@ export class ColumnModel extends BeanStub {
 
         // only columns with aggregation active can have aggregations
         const pivotValueColumn = column.getColDef().pivotValueColumn;
-        const pivotActiveOnThisColumn = exists(pivotValueColumn);
+        const pivotActiveOnThisColumn = _exists(pivotValueColumn);
         let aggFunc: string | IAggFunc | null | undefined = null;
         let aggFuncFound: boolean;
 
@@ -2872,10 +2872,10 @@ export class ColumnModel extends BeanStub {
             const colIsNew = oldPrimaryColumns.indexOf(col) < 0;
             const colDef = col.getColDef();
 
-            const value = attrToBoolean(getValueFunc(colDef));
-            const initialValue = attrToBoolean(getInitialValueFunc(colDef));
-            const index = attrToNumber(getIndexFunc(colDef));
-            const initialIndex = attrToNumber(getInitialIndexFunc(colDef));
+            const value = _attrToBoolean(getValueFunc(colDef));
+            const initialValue = _attrToBoolean(getInitialValueFunc(colDef));
+            const index = _attrToNumber(getIndexFunc(colDef));
+            const initialIndex = _attrToNumber(getInitialIndexFunc(colDef));
 
             let include: boolean;
 
@@ -2885,7 +2885,7 @@ export class ColumnModel extends BeanStub {
             const initialIndexPresent = initialIndex !== undefined;
 
             if (valuePresent) {
-                include = value!; // boolean value is guaranteed as attrToBoolean() is used above
+                include = value!; // boolean value is guaranteed as _attrToBoolean() is used above
             } else if (indexPresent) {
                 if (index === null) {
                     // if col is new we don't want to use the default / initial if index is set to null. Similarly,
@@ -3087,12 +3087,12 @@ export class ColumnModel extends BeanStub {
     private calculateColumnsForDisplay(): Column[] {
         let columnsForDisplay: Column[];
 
-        if (this.pivotMode && missing(this.secondaryColumns)) {
+        if (this.pivotMode && _missing(this.secondaryColumns)) {
             // pivot mode is on, but we are not pivoting, so we only
             // show columns we are aggregating on
             columnsForDisplay = this.gridColumns.filter(column => {
-                const isAutoGroupCol = this.groupAutoColumns && includes(this.groupAutoColumns, column);
-                const isValueCol = this.valueColumns && includes(this.valueColumns, column);
+                const isAutoGroupCol = this.groupAutoColumns && _includes(this.groupAutoColumns, column);
+                const isValueCol = this.valueColumns && _includes(this.valueColumns, column);
                 return isAutoGroupCol || isValueCol;
             });
 
@@ -3101,7 +3101,7 @@ export class ColumnModel extends BeanStub {
             // or secondary columns, whatever the gridColumns are set to
             columnsForDisplay = this.gridColumns.filter(column => {
                 // keep col if a) it's auto-group or b) it's visible
-                const isAutoGroupCol = this.groupAutoColumns && includes(this.groupAutoColumns, column);
+                const isAutoGroupCol = this.groupAutoColumns && _includes(this.groupAutoColumns, column);
                 return isAutoGroupCol || column.isVisible();
             });
         }
@@ -3113,7 +3113,7 @@ export class ColumnModel extends BeanStub {
         let result = false;
 
         columns.forEach(col => {
-            if (exists(col.getColDef().colSpan)) {
+            if (_exists(col.getColDef().colSpan)) {
                 result = true;
             }
         });
@@ -3128,7 +3128,7 @@ export class ColumnModel extends BeanStub {
         const checkFunc = (col: Column) => {
             const colDef = col.getColDef();
             const underlyingColumn = colDef.showRowGroup;
-            if (colDef && exists(underlyingColumn)) {
+            if (colDef && _exists(underlyingColumn)) {
                 this.groupDisplayColumns.push(col);
 
                 if (typeof underlyingColumn === 'string') {
@@ -3165,7 +3165,7 @@ export class ColumnModel extends BeanStub {
     }
 
     public isSecondaryColumnsPresent(): boolean {
-        return exists(this.secondaryColumns);
+        return _exists(this.secondaryColumns);
     }
 
     public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void {
@@ -3174,7 +3174,7 @@ export class ColumnModel extends BeanStub {
         const newColsPresent = colDefs;
 
         // if not cols passed, and we had no cols anyway, then do nothing
-        if (!newColsPresent && missing(this.secondaryColumns)) { return; }
+        if (!newColsPresent && _missing(this.secondaryColumns)) { return; }
 
         if (newColsPresent) {
             this.processSecondaryColumnDefinitions(colDefs);
@@ -3212,7 +3212,7 @@ export class ColumnModel extends BeanStub {
 
         const searchForColDefs = (colDefs2: (ColDef | ColGroupDef)[]): void => {
             colDefs2.forEach((abstractColDef: AbstractColDef) => {
-                const isGroup = exists((abstractColDef as any).children);
+                const isGroup = _exists((abstractColDef as any).children);
                 if (isGroup) {
                     const colGroupDef = abstractColDef as ColGroupDef;
                     if (groupCallback) {
@@ -3246,7 +3246,7 @@ export class ColumnModel extends BeanStub {
         const areAutoColsChanged = this.createGroupAutoColumnsIfNeeded();
         // if auto group cols have changed, and we have a sort order, we need to move auto cols to the start
         if (areAutoColsChanged) {
-            const groupAutoColsMap = convertToMap<Column, true>(this.groupAutoColumns!.map(col => [col, true]));
+            const groupAutoColsMap = _convertToMap<Column, true>(this.groupAutoColumns!.map(col => [col, true]));
 
             // if group cols have changed, remove them from any previous orders and add them to the start.
             if (this.lastPrimaryOrder) {
@@ -3304,7 +3304,7 @@ export class ColumnModel extends BeanStub {
 
         this.setAutoHeightActive();
 
-        if (!areEqual(prevGridCols, this.gridBalancedTree)) {
+        if (!_areEqual(prevGridCols, this.gridBalancedTree)) {
             const event: WithoutGridCommon<GridColumnsChangedEvent> = {
                 type: Events.EVENT_GRID_COLUMNS_CHANGED
             };
@@ -3320,15 +3320,15 @@ export class ColumnModel extends BeanStub {
 
             const supportedRowModel = this.gos.isRowModelType('clientSide') || this.gos.isRowModelType('serverSide');
             if (!supportedRowModel) {
-                warnOnce('autoHeight columns only work with Client Side Row Model and Server Side Row Model.');
+                _warnOnce('autoHeight columns only work with Client Side Row Model and Server Side Row Model.');
             }
         }
     }
 
     private orderGridColsLike(colsOrder: Column[] | undefined): void {
-        if (missing(colsOrder)) { return; }
+        if (_missing(colsOrder)) { return; }
 
-        const lastOrderMapped = convertToMap<Column, number>(colsOrder.map((col, index) => [col, index]));
+        const lastOrderMapped = _convertToMap<Column, number>(colsOrder.map((col, index) => [col, index]));
 
         // only do the sort if at least one column is accounted for. columns will be not accounted for
         // if changing from secondary to primary columns
@@ -3343,9 +3343,9 @@ export class ColumnModel extends BeanStub {
 
         // order cols in the same order as before. we need to make sure that all
         // cols still exists, so filter out any that no longer exist.
-        const gridColsMap = convertToMap<Column, boolean>(this.gridColumns.map(col => [col, true]));
+        const gridColsMap = _convertToMap<Column, boolean>(this.gridColumns.map(col => [col, true]));
         const oldColsOrdered = colsOrder.filter(col => gridColsMap.has(col));
-        const oldColsMap = convertToMap<Column, boolean>(oldColsOrdered.map(col => [col, true]));
+        const oldColsMap = _convertToMap<Column, boolean>(oldColsOrdered.map(col => [col, true]));
         const newColsOrdered = this.gridColumns.filter(col => !oldColsMap.has(col));
 
         // add in the new columns, at the end (if no group), or at the end of the group (if a group)
@@ -3385,7 +3385,7 @@ export class ColumnModel extends BeanStub {
             const indexes = siblings.map(col => newGridColumns.indexOf(col));
             const lastIndex = Math.max(...indexes);
 
-            insertIntoArray(newGridColumns, newCol, lastIndex + 1);
+            _insertIntoArray(newGridColumns, newCol, lastIndex + 1);
         });
 
         this.gridColumns = newGridColumns;
@@ -3431,7 +3431,7 @@ export class ColumnModel extends BeanStub {
 
     private addAutoGroupToGridColumns(): void {
 
-        if (missing(this.groupAutoColumns)) {
+        if (_missing(this.groupAutoColumns)) {
             this.destroyOldColumns(this.groupAutoColsBalancedTree);
             this.groupAutoColsBalancedTree = null;
             return;
@@ -3567,7 +3567,7 @@ export class ColumnModel extends BeanStub {
                     left += column.getActualWidth();
                 });
             }
-            removeAllFromUnorderedArray(allColumns, columns);
+            _removeAllFromUnorderedArray(allColumns, columns);
         });
 
         // items left in allColumns are columns not displayed, so remove the left position. this is
@@ -3644,7 +3644,7 @@ export class ColumnModel extends BeanStub {
                 break;
         }
 
-        if (missing(result)) {
+        if (_missing(result)) {
             result = [];
         }
 
@@ -3796,9 +3796,9 @@ export class ColumnModel extends BeanStub {
                 const minWidth = col.getMinWidth();
                 const maxWidth = col.getMaxWidth();
 
-                if (exists(minWidth) && widthByFlexRule < minWidth) {
+                if (_exists(minWidth) && widthByFlexRule < minWidth) {
                     constrainedWidth = minWidth;
-                } else if (exists(maxWidth) && widthByFlexRule > maxWidth) {
+                } else if (_exists(maxWidth) && widthByFlexRule > maxWidth) {
                     constrainedWidth = maxWidth;
                 }
 
@@ -3806,7 +3806,7 @@ export class ColumnModel extends BeanStub {
                     // This column is not in fact flexing as it is being constrained to a specific size
                     // so remove it from the list of flexing columns and start again
                     col.setActualWidth(constrainedWidth, source);
-                    removeFromUnorderedArray(flexingColumns, col);
+                    _removeFromUnorderedArray(flexingColumns, col);
                     totalFlex -= col.getFlex();
                     changedColumns.push(col);
                     knownColumnsWidth += col.getActualWidth();
@@ -3881,7 +3881,7 @@ export class ColumnModel extends BeanStub {
         let finishedResizing = false;
 
         const moveToNotSpread = (column: Column) => {
-            removeFromArray(colsToSpread, column);
+            _removeFromArray(colsToSpread, column);
             colsToNotSpread.push(column);
         };
 
@@ -3939,11 +3939,11 @@ export class ColumnModel extends BeanStub {
                     const maxWidth = typeof maxOverride === 'number' && maxOverride < colMaxWidth ? maxOverride : column.getMaxWidth();
                     let newWidth = Math.round(column.getActualWidth() * scale);
 
-                    if (exists(minWidth) && newWidth < minWidth) {
+                    if (_exists(minWidth) && newWidth < minWidth) {
                         newWidth = minWidth;
                         moveToNotSpread(column);
                         finishedResizing = false;
-                    } else if (exists(maxWidth) && newWidth > maxWidth) {
+                    } else if (_exists(maxWidth) && newWidth > maxWidth) {
                         newWidth = maxWidth;
                         moveToNotSpread(column);
                         finishedResizing = false;
@@ -4082,7 +4082,7 @@ export class ColumnModel extends BeanStub {
     }
 
     private autoColsEqual(colsA: Column[] | null, colsB: Column[] | null): boolean {
-        return areEqual(colsA, colsB, (a, b) => a.getColId() === b.getColId());
+        return _areEqual(colsA, colsB, (a, b) => a.getColId() === b.getColId());
     }
 
     private getWidthOfColsInList(columnList: Column[]) {
@@ -4104,7 +4104,7 @@ export class ColumnModel extends BeanStub {
         for (let i = 0; i < queryOrder.length; i++) {
             const container = this[queryOrder[i]]();
             if (container.length) {
-                return isRtl ? last(container) : container[0];
+                return isRtl ? _last(container) : container[0];
             }
         }
 

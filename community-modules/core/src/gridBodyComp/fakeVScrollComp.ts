@@ -1,6 +1,6 @@
 import { PostConstruct } from "../context/context";
 import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
-import { isVisible, setFixedWidth } from "../utils/dom";
+import { _isVisible, _setFixedWidth } from "../utils/dom";
 import { SetHeightFeature } from "./rowContainer/setHeightFeature";
 import { Events } from "../eventKeys";
 
@@ -35,9 +35,9 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         const adjustedScrollbarWidth = (scrollbarWidth === 0 && invisibleScrollbar) ? 16 : scrollbarWidth;
 
         this.addOrRemoveCssClass('ag-scrollbar-invisible', invisibleScrollbar);
-        setFixedWidth(this.getGui(), adjustedScrollbarWidth);
-        setFixedWidth(this.eViewport, adjustedScrollbarWidth);
-        setFixedWidth(this.eContainer, adjustedScrollbarWidth);
+        _setFixedWidth(this.getGui(), adjustedScrollbarWidth);
+        _setFixedWidth(this.eViewport, adjustedScrollbarWidth);
+        _setFixedWidth(this.eContainer, adjustedScrollbarWidth);
         this.setDisplayed(vScrollShowing, { skipAriaHidden: true });
     }
 
@@ -59,7 +59,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
     }
 
     public setScrollPosition(value: number, force?: boolean): void {
-        if (!force && !isVisible(this.getViewport())) { this.attemptSettingScrollPosition(value); }
+        if (!force && !_isVisible(this.getViewport())) { this.attemptSettingScrollPosition(value); }
         this.getViewport().scrollTop = value;
     }
 }

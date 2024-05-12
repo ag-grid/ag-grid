@@ -1,17 +1,18 @@
 import {
-    _,
     RowBounds,
     Autowired,
     Bean,
     BeanStub,
     Column,
     ColumnModel,
-    PostConstruct,
     RowNode,
     ValueService,
     NumberSequence,
     Beans,
-    IRowNode
+    IRowNode,
+    _exists,
+    _missing,
+    _doOnce
 } from "@ag-grid-community/core";
 import { NodeManager } from "../nodeManager";
 import { ServerSideExpansionService } from "../services/serverSideExpansionService";
@@ -100,7 +101,7 @@ export class BlockUtils extends BeanStub {
     private setRowGroupInfo(rowNode: RowNode): void {
         rowNode.key = this.valueService.getValue(rowNode.rowGroupColumn!, rowNode);
         if (rowNode.key === null || rowNode.key === undefined) {
-            _.doOnce(() => {
+            _doOnce(() => {
                 console.warn(`AG Grid: null and undefined values are not allowed for server side row model keys`);
                 if (rowNode.rowGroupColumn) {
                     console.warn(`column = ${rowNode.rowGroupColumn.getId()}`);
@@ -165,7 +166,7 @@ export class BlockUtils extends BeanStub {
         rowNode.stub = false;
         const treeData = this.gos.get('treeData');
 
-        if (_.exists(data)) {
+        if (_exists(data)) {
             rowNode.setDataAndId(data, defaultId);
 
             if (treeData) {
@@ -188,7 +189,7 @@ export class BlockUtils extends BeanStub {
 
         // this needs to be done AFTER setGroupDataIntoRowNode(), as the height can depend on the group data
         // getting set, if it's a group node and colDef.autoHeight=true
-        if (_.exists(data)) {
+        if (_exists(data)) {
             rowNode.setRowHeight(this.gos.getRowHeightForNode(rowNode, false, cachedRowHeight).height);
             rowNode.sibling?.setRowHeight(this.gos.getRowHeightForNode(rowNode.sibling, false, cachedRowHeight).height);
         }
@@ -222,7 +223,7 @@ export class BlockUtils extends BeanStub {
     public clearDisplayIndex(rowNode: RowNode): void {
         rowNode.clearRowTopAndRowIndex();
 
-        const hasChildStore = rowNode.hasChildren() && _.exists(rowNode.childStore);
+        const hasChildStore = rowNode.hasChildren() && _exists(rowNode.childStore);
         if (hasChildStore) {
             const childStore = rowNode.childStore;
             childStore!.clearDisplayIndexes();
@@ -257,7 +258,7 @@ export class BlockUtils extends BeanStub {
         }
 
         // set children for SSRM child rows
-        const hasChildStore = rowNode.hasChildren() && _.exists(rowNode.childStore);
+        const hasChildStore = rowNode.hasChildren() && _exists(rowNode.childStore);
         if (hasChildStore) {
             const childStore = rowNode.childStore;
             if (rowNode.expanded) {
@@ -275,7 +276,7 @@ export class BlockUtils extends BeanStub {
         let bottomPointer = 0;
         let topPointer = rowNodes.length - 1;
 
-        if (_.missing(topPointer) || _.missing(bottomPointer)) {
+        if (_missing(topPointer) || _missing(bottomPointer)) {
             console.warn(`AG Grid: error: topPointer = ${topPointer}, bottomPointer = ${bottomPointer}`);
             return undefined;
         }
@@ -325,12 +326,12 @@ export class BlockUtils extends BeanStub {
             return extractRowBounds(rowNode);
         }
 
-        if (rowNode.hasChildren() && rowNode.expanded && _.exists(rowNode.childStore)) {
+        if (rowNode.hasChildren() && rowNode.expanded && _exists(rowNode.childStore)) {
             const childStore = rowNode.childStore;
             if (childStore.isDisplayIndexInStore(index)) {
                 return childStore.getRowBounds(index)!;
             }
-        } else if (rowNode.master && rowNode.expanded && _.exists(rowNode.detailNode)) {
+        } else if (rowNode.master && rowNode.expanded && _exists(rowNode.detailNode)) {
             if (rowNode.detailNode.rowIndex === index) {
                 return extractRowBounds(rowNode.detailNode);
             }
@@ -352,7 +353,7 @@ export class BlockUtils extends BeanStub {
         }
 
         // then check if it's a group row with a child cache with pixel in range
-        if (rowNode.hasChildren() && rowNode.expanded && _.exists(rowNode.childStore)) {
+        if (rowNode.hasChildren() && rowNode.expanded && _exists(rowNode.childStore)) {
             const childStore = rowNode.childStore;
             if (childStore.isPixelInRange(pixel)) {
                 return childStore.getRowIndexAtPixel(pixel);

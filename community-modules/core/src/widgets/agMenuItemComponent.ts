@@ -5,8 +5,8 @@ import { PopupService } from './popupService';
 import { KeyCode } from '../constants/keyCode';
 import { Autowired } from '../context/context';
 import { AgEvent } from '../events';
-import { loadTemplate } from '../utils/dom';
-import { setAriaDisabled, setAriaExpanded, setAriaLevel, setAriaRole } from '../utils/aria';
+import { _loadTemplate } from '../utils/dom';
+import { _setAriaDisabled, _setAriaExpanded, _setAriaLevel, _setAriaRole } from '../utils/aria';
 import { BeanStub } from '../context/beanStub';
 import { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { AgPromise } from '../utils/promise';
@@ -127,7 +127,7 @@ export class AgMenuItemComponent extends BeanStub {
 
         this.subMenuIsOpening = true;
 
-        const ePopup = loadTemplate(/* html */ `<div class="ag-menu" role="presentation"></div>`);
+        const ePopup = _loadTemplate(/* html */ `<div class="ag-menu" role="presentation"></div>`);
         this.eSubMenuGui = ePopup;
         let destroySubMenu: () => void;
         let afterGuiAttached = () => {
@@ -208,7 +208,7 @@ export class AgMenuItemComponent extends BeanStub {
 
     private setAriaExpanded(expanded: boolean): void {
         if (!this.suppressAria) {
-            setAriaExpanded(this.eGui!, expanded);
+            _setAriaExpanded(this.eGui!, expanded);
         }
     }
 
@@ -390,10 +390,10 @@ export class AgMenuItemComponent extends BeanStub {
         }
         this.suppressAria = !!params?.suppressAria;
         if (!this.suppressAria) {
-            setAriaRole(eGui, 'treeitem');
-            setAriaLevel(eGui, this.level + 1);
+            _setAriaRole(eGui, 'treeitem');
+            _setAriaLevel(eGui, this.level + 1);
             if (this.params.disabled) {
-                setAriaDisabled(eGui, true);
+                _setAriaDisabled(eGui, true);
             }
         }
         if (!params?.suppressTabIndex) {

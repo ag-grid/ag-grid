@@ -3,8 +3,8 @@ import { RowPinnedType } from "../interfaces/iRowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events, PinnedRowDataChangedEvent } from "../events";
 import { BeanStub } from "../context/beanStub";
-import { missingOrEmpty } from "../utils/generic";
-import { last } from "../utils/array";
+import { _missingOrEmpty } from "../utils/generic";
+import { _last } from "../utils/array";
 import { Beans } from "../rendering/beans";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
@@ -26,7 +26,7 @@ export class PinnedRowModel extends BeanStub {
 
     public isEmpty(floating: RowPinnedType): boolean {
         const rows = floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
-        return missingOrEmpty(rows);
+        return _missingOrEmpty(rows);
     }
 
     public isRowsToRender(floating: RowPinnedType): boolean {
@@ -35,7 +35,7 @@ export class PinnedRowModel extends BeanStub {
 
     public getRowAtPixel(pixel: number, floating: RowPinnedType): number {
         const rows = floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
-        if (missingOrEmpty(rows)) {
+        if (_missingOrEmpty(rows)) {
             return 0; // this should never happen, just in case, 0 is graceful failure
         }
         for (let i = 0; i < rows.length; i++) {
@@ -119,14 +119,14 @@ export class PinnedRowModel extends BeanStub {
     }
 
     public forEachPinnedTopRow(callback: (rowNode: RowNode, index: number) => void): void {
-        if (missingOrEmpty(this.pinnedTopRows)) {
+        if (_missingOrEmpty(this.pinnedTopRows)) {
             return;
         }
         this.pinnedTopRows.forEach(callback);
     }
 
     public forEachPinnedBottomRow(callback: (rowNode: RowNode, index: number) => void): void {
-        if (missingOrEmpty(this.pinnedBottomRows)) {
+        if (_missingOrEmpty(this.pinnedBottomRows)) {
             return;
         }
         this.pinnedBottomRows.forEach(callback);
@@ -139,7 +139,7 @@ export class PinnedRowModel extends BeanStub {
     private getTotalHeight(rowNodes: RowNode[]): number {
         if (!rowNodes || rowNodes.length === 0) { return 0; }
 
-        const lastNode = last(rowNodes);
+        const lastNode = _last(rowNodes);
         return lastNode.rowTop! + lastNode.rowHeight!;
     }
 }

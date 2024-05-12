@@ -27,6 +27,8 @@ export const getTransformTsFileExt = (internalFramework: InternalFramework): Tra
     let transformTsFileExt: TransformTsFileExt;
     if (internalFramework === 'reactFunctionalTs') {
         transformTsFileExt = '.tsx';
+    } else if (internalFramework === 'reactFunctional') {
+        transformTsFileExt = '.jsx';
     } else if (!TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework)) {
         transformTsFileExt = '.js';
     }

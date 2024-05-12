@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
@@ -15,7 +14,9 @@ import {
     Beans,
     WithoutGridCommon,
     FocusService,
-    RowModelType
+    RowModelType,
+    _missing,
+    _iterateObject
 } from "@ag-grid-community/core";
 
 @Bean('rowModel')
@@ -234,7 +235,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
-        const firstIndex = _.missing(firstInRange) ? 0 : firstInRange.rowIndex!;
+        const firstIndex = _missing(firstInRange) ? 0 : firstInRange.rowIndex!;
         const lastIndex = lastInRange.rowIndex!;
 
         const firstNodeOutOfRange = firstIndex < this.firstRow || firstIndex > this.lastRow;
@@ -266,7 +267,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     private setRowData(rowData: {[key: number]: any}): void {
-        _.iterateObject(rowData, (indexStr: string, dataItem: any) => {
+        _iterateObject(rowData, (indexStr: string, dataItem: any) => {
             const index = parseInt(indexStr, 10);
             // we should never keep rows that we didn't specifically ask for, this
             // guarantees the contract we have with the server.
@@ -276,7 +277,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
                 // the abnormal case is we requested a row even though the grid didn't need it
                 // as a result of the paging and buffer (ie the row is off screen), in which
                 // case we need to create a new node now
-                if (_.missing(rowNode)) {
+                if (_missing(rowNode)) {
                     rowNode = this.createBlankRowNode(index);
                     this.rowNodesByIndex[index] = rowNode;
                 }

@@ -10,8 +10,8 @@ import { IRowNode } from "../interfaces/iRowNode";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { FrameworkEventListenerService } from "../misc/frameworkEventListenerService";
 import { ColumnHoverService } from "../rendering/columnHoverService";
-import { attrToNumber, exists, missing } from "../utils/generic";
-import { mergeDeep } from "../utils/object";
+import { _attrToNumber, _exists, _missing } from "../utils/generic";
+import { _mergeDeep } from "../utils/object";
 import {
     AbstractColDef,
     BaseColDefParams,
@@ -20,7 +20,7 @@ import {
 } from "./colDef";
 import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
-import { warnOnce } from "../utils/function";
+import { _warnOnce } from "../utils/function";
 import { BrandedType } from "../interfaces/brandedType";
 import { Environment } from "../environment";
 
@@ -273,8 +273,8 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
 
     private initDotNotation(): void {
         const suppressDotNotation = this.gos.get('suppressFieldDotNotation');
-        this.fieldContainsDots = exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
-        this.tooltipFieldContainsDots = exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
+        this.fieldContainsDots = _exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
+        this.tooltipFieldContainsDots = _exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
     }
 
     private initMinAndMaxWidths(): void {
@@ -285,9 +285,9 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     private initTooltip(): void {
-        this.tooltipEnabled = exists(this.colDef.tooltipField) ||
-            exists(this.colDef.tooltipValueGetter) ||
-            exists(this.colDef.tooltipComponent);
+        this.tooltipEnabled = _exists(this.colDef.tooltipField) ||
+            _exists(this.colDef.tooltipValueGetter) ||
+            _exists(this.colDef.tooltipComponent);
     }
 
     public resetActualWidth(source: ColumnEventType): void {
@@ -300,8 +300,8 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         const maxColWidth = colDef.maxWidth ?? Number.MAX_SAFE_INTEGER;
     
         let width: number;
-        const colDefWidth = attrToNumber(colDef.width);
-        const colDefInitialWidth = attrToNumber(colDef.initialWidth);
+        const colDefWidth = _attrToNumber(colDef.width);
+        const colDefInitialWidth = _attrToNumber(colDef.initialWidth);
     
         if (colDefWidth != null) {
             width = colDefWidth;
@@ -319,7 +319,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     public isRowGroupDisplayed(colId: string): boolean {
-        if (missing(this.colDef) || missing(this.colDef.showRowGroup)) {
+        if (_missing(this.colDef) || _missing(this.colDef.showRowGroup)) {
             return false;
         }
 
@@ -517,11 +517,11 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     public isSortNone(): boolean {
-        return missing(this.sort);
+        return _missing(this.sort);
     }
 
     public isSorting(): boolean {
-        return exists(this.sort);
+        return _exists(this.sort);
     }
 
     public getSortIndex(): number | null | undefined {
@@ -576,7 +576,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         }
         const filterChangedEvent = this.createColumnEvent('filterChanged', source);
         if (additionalEventAttributes) {
-            mergeDeep(filterChangedEvent, additionalEventAttributes);
+            _mergeDeep(filterChangedEvent, additionalEventAttributes);
         }
         this.eventService.dispatchEvent(filterChangedEvent);
     }
@@ -737,7 +737,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     public getColSpan(rowNode: IRowNode): number {
-        if (missing(this.colDef.colSpan)) { return 1; }
+        if (_missing(this.colDef.colSpan)) { return 1; }
         const params: ColSpanParams = this.createBaseColDefParams(rowNode);
         const colSpan = this.colDef.colSpan(params);
         // colSpan must be number equal to or greater than 1
@@ -746,7 +746,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     public getRowSpan(rowNode: IRowNode): number {
-        if (missing(this.colDef.rowSpan)) { return 1; }
+        if (_missing(this.colDef.rowSpan)) { return 1; }
         const params: RowSpanParams = this.createBaseColDefParams(rowNode);
         const rowSpan = this.colDef.rowSpan(params);
         // rowSpan must be number equal to or greater than 1
@@ -806,7 +806,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     public setMinimum(source: ColumnEventType): void {
-        if (exists(this.minWidth)) {
+        if (_exists(this.minWidth)) {
             this.setActualWidth(this.minWidth, source);
         }
     }
@@ -873,7 +873,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
      * @deprecated v31.1 Use `getColDef().menuTabs ?? defaultValues` instead.
      */
     public getMenuTabs(defaultValues: ColumnMenuTab[]): ColumnMenuTab[] {
-        warnOnce(`As of v31.1, 'getMenuTabs' is deprecated. Use 'getColDef().menuTabs ?? defaultValues' instead.`);
+        _warnOnce(`As of v31.1, 'getMenuTabs' is deprecated. Use 'getColDef().menuTabs ?? defaultValues' instead.`);
         let menuTabs = this.getColDef().menuTabs;
 
         if (menuTabs == null) {

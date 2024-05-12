@@ -1,12 +1,14 @@
 import {
-    _,
     AgGroupComponent,
     AgGroupComponentParams,
     AgSelectParams,
     Autowired,
     Component,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    _capitalise,
+    _includes,
+    _removeFromParent
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../services/chartTranslationService";
 import { ChartMenuParamsFactory } from "../chartMenuParamsFactory";
@@ -81,8 +83,12 @@ export class FontPanel extends Component {
         });
     }
 
-    public addCompToPanel(comp: Component) {
-        this.fontGroup.addItem(comp);
+    public addItem(comp: Component, prepend?: boolean) {
+        if (prepend) {
+            this.fontGroup.prependItem(comp);
+        } else {
+            this.fontGroup.addItem(comp);
+        }
         this.activeComps.push(comp);
     }
 
@@ -126,7 +132,7 @@ export class FontPanel extends Component {
                 initialValue = families[valueIndex];
             } else {
                 // add user provided value to list
-                const capitalisedFontValue = _.capitalise(family);
+                const capitalisedFontValue = _capitalise(family);
 
                 families.push(capitalisedFontValue);
 
@@ -148,7 +154,7 @@ export class FontPanel extends Component {
         const sizes = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36];
         const size = this.getInitialFontValue('fontSize');
 
-        if (!_.includes(sizes, size)) {
+        if (!_includes(sizes, size)) {
             sizes.push(size!);
         }
 
@@ -198,14 +204,9 @@ export class FontPanel extends Component {
         };
     }
 
-    public addItemToPanel(item: Component) {
-        this.fontGroup.addItem(item);
-        this.activeComps.push(item);
-    }
-
     private destroyActiveComps(): void {
         this.activeComps.forEach(comp => {
-            _.removeFromParent(comp.getGui());
+            _removeFromParent(comp.getGui());
             this.destroyBean(comp);
         });
     }

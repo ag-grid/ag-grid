@@ -7,7 +7,8 @@ import {
     Component,
     PostConstruct,
     SeriesChartType,
-    _
+    _areEqual,
+    _clearElement,
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../model/chartDataModel";
@@ -37,7 +38,7 @@ export class SeriesChartTypePanel extends Component {
     }
 
     public refresh(columns: ColState[]): void {
-        if (!_.areEqual(this.getValidColIds(columns), this.selectedColIds)) {
+        if (!_areEqual(this.getValidColIds(columns), this.selectedColIds)) {
             this.recreate(columns);
         } else {
             this.refreshComps();
@@ -46,7 +47,7 @@ export class SeriesChartTypePanel extends Component {
 
     private recreate(columns: ColState[]): void {
         this.isOpen = this.seriesChartTypeGroupComp.isExpanded();
-        _.clearElement(this.getGui());
+        _clearElement(this.getGui());
         this.destroyBean(this.seriesChartTypeGroupComp);
         this.columns = columns;
         this.selectedColIds = [];

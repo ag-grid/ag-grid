@@ -1,4 +1,4 @@
-import { CellCtrl, Component, ICellComp, ICellEditor, ICellRendererComp, UserCompDetails, _, ICellEditorComp, CssClassManager, CellStyle } from 'ag-grid-community';
+import { CellCtrl, Component, ICellComp, ICellEditor, ICellRendererComp, UserCompDetails, _removeFromParent, ICellEditorComp, CssClassManager, CellStyle } from 'ag-grid-community';
 import React, { MutableRefObject, useCallback, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
 import { isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
@@ -324,7 +324,7 @@ const CellComp = (props: {
                 eCellWrapper.current?.insertAdjacentElement('afterbegin', eGui);
                 cellWrapperDestroyFuncs.current.push(() => {
                     context.destroyBean(comp);
-                    _.removeFromParent(eGui);
+                    _removeFromParent(eGui);
                 });
             }
             return comp;

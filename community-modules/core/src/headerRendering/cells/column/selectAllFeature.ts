@@ -5,7 +5,7 @@ import { Column } from "../../../entities/column";
 import { Events, SelectionEventSourceType } from "../../../events";
 import { IRowModel } from "../../../interfaces/iRowModel";
 import { ISelectionService } from "../../../interfaces/iSelectionService";
-import { setAriaHidden, setAriaRole } from "../../../utils/aria";
+import { _setAriaHidden, _setAriaRole } from "../../../utils/aria";
 import { AgCheckbox } from "../../../widgets/agCheckbox";
 import { HeaderCellCtrl } from "./headerCellCtrl";
 
@@ -43,7 +43,7 @@ export class SelectAllFeature extends BeanStub {
         this.headerCellCtrl = ctrl;
         this.cbSelectAll = this.createManagedBean(new AgCheckbox());
         this.cbSelectAll.addCssClass('ag-header-select-all');
-        setAriaRole(this.cbSelectAll.getGui(), 'presentation');
+        _setAriaRole(this.cbSelectAll.getGui(), 'presentation');
         this.showOrHideSelectAll();
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
@@ -52,7 +52,7 @@ export class SelectAllFeature extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onSelectionChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
         this.addManagedListener(this.cbSelectAll, Events.EVENT_FIELD_VALUE_CHANGED, this.onCbSelectAll.bind(this));
-        setAriaHidden(this.cbSelectAll.getGui(), true);
+        _setAriaHidden(this.cbSelectAll.getGui(), true);
         this.cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
         this.refreshSelectAllLabel();
     }

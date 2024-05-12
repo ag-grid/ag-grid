@@ -1,13 +1,13 @@
 import { Bean, PreDestroy, Autowired } from "../context/context";
 import { DragStartedEvent, DragStoppedEvent, Events } from "../events";
 import { BeanStub } from "../context/beanStub";
-import { exists } from "../utils/generic";
-import { removeFromArray } from "../utils/array";
-import { areEventsNear } from "../utils/mouse";
+import { _exists } from "../utils/generic";
+import { _removeFromArray } from "../utils/array";
+import { _areEventsNear } from "../utils/mouse";
 import { MouseEventService } from "../gridBodyComp/mouseEventService";
-import { isBrowserSafari } from "../utils/browser";
+import { _isBrowserSafari } from "../utils/browser";
 import { WithoutGridCommon } from "../interfaces/iCommon";
-import { isFocusableFormField } from "../utils/dom";
+import { _isFocusableFormField } from "../utils/dom";
 
 /** Adds drag listening onto an element. In AG Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
@@ -51,7 +51,7 @@ export class DragService extends BeanStub {
         if (!dragSourceAndListener) { return; }
 
         this.removeListener(dragSourceAndListener);
-        removeFromArray(this.dragSources, dragSourceAndListener);
+        _removeFromArray(this.dragSources, dragSourceAndListener);
     }
 
     public isDragging(): boolean {
@@ -70,7 +70,7 @@ export class DragService extends BeanStub {
 
         if (includeTouch && !suppressTouch) {
             touchListener = (touchEvent: TouchEvent) => {
-                if (isFocusableFormField(touchEvent.target as HTMLElement)) { return; }
+                if (_isFocusableFormField(touchEvent.target as HTMLElement)) { return; }
                 if (touchEvent.cancelable) {
                     touchEvent.preventDefault();
                     if (stopPropagationForTouch) {
@@ -201,8 +201,8 @@ export class DragService extends BeanStub {
     private isEventNearStartEvent(currentEvent: MouseEvent | Touch, startEvent: MouseEvent | Touch): boolean {
         // by default, we wait 4 pixels before starting the drag
         const { dragStartPixels } = this.currentDragParams!;
-        const requiredPixelDiff = exists(dragStartPixels) ? dragStartPixels : 4;
-        return areEventsNear(currentEvent, startEvent, requiredPixelDiff);
+        const requiredPixelDiff = _exists(dragStartPixels) ? dragStartPixels : 4;
+        return _areEventsNear(currentEvent, startEvent, requiredPixelDiff);
     }
 
     private getFirstActiveTouch(touchList: TouchList): Touch | null {
@@ -251,7 +251,7 @@ export class DragService extends BeanStub {
     // only gets called after a mouse down - as this is only added after mouseDown
     // and is removed when mouseUp happens
     private onMouseMove(mouseEvent: MouseEvent, el: Element): void {
-        if (isBrowserSafari()) {
+        if (_isBrowserSafari()) {
             const eDocument = this.gos.getDocument();
             eDocument.getSelection()?.removeAllRanges();
         }

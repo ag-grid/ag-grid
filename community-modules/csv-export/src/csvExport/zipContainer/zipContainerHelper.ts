@@ -1,10 +1,8 @@
-import { _ } from "@ag-grid-community/core"
 import { convertDate, convertDecToHex, convertTime } from "./convert";
 import { ZipFile } from "./zipContainer";
 import { getCrcFromCrc32Table } from "./crcTable";
 import { deflateLocalFile } from "./compress";
-
-const { utf8_encode } = _;
+import { _utf8_encode } from "@ag-grid-community/core";
 
 interface ZipFileHeader {
     localFileHeader: Uint8Array;
@@ -94,7 +92,7 @@ const getHeaders = (
     const crcFlag = getCrcFromCrc32Table(rawContent);
     const zipSize = deflatedSize !== undefined ? deflatedSize : rawSize;
 
-    const utfPath = utf8_encode(path);
+    const utfPath = _utf8_encode(path);
     const isUTF8 = utfPath !== path;
 
     let extraFields = '';

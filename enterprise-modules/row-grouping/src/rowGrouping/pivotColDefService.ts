@@ -6,10 +6,10 @@ import {
     ColGroupDef,
     Column,
     ColumnModel,
-    GridOptionsService,
     IPivotColDefService,
     PostConstruct,
-    _
+    _cloneObject,
+    _iterateObject,
 } from "@ag-grid-community/core";
 
 export interface PivotColDefServiceResult {
@@ -67,7 +67,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         // we clone, so the colDefs in pivotColumnsGroupDefs and pivotColumnDefs are not shared. this is so that
         // any changes the user makes (via processSecondaryColumnDefinitions) don't impact the internal aggregations,
         // as these use the col defs also
-        const pivotColumnDefsClone: ColDef[] = pivotColumnDefs.map(colDef => _.cloneObject(colDef));
+        const pivotColumnDefsClone: ColDef[] = pivotColumnDefs.map(colDef => _cloneObject(colDef));
 
         return {
             pivotColumnGroupDefs: pivotColumnGroupDefs,
@@ -103,7 +103,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         if (measureColumns.length === 1 && this.gos.get('removePivotHeaderRowWhenSingleValueColumn') && index === maxDepth - 1) {
             const leafCols: ColDef[] = [];
 
-            _.iterateObject(uniqueValue, (key) => {
+            _iterateObject(uniqueValue, (key) => {
                 const newPivotKeys = [...pivotKeys, key];
                 const colDef = this.createColDef(measureColumns[0], key, newPivotKeys);
                 colDef.columnGroupShow = 'open';
@@ -114,7 +114,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         }
         // Recursive case
         const groups: ColGroupDef[] = [];
-        _.iterateObject(uniqueValue, (key, value) => {
+        _iterateObject(uniqueValue, (key, value) => {
             // expand group by default based on depth of group. (pivotDefaultExpanded provides desired level of depth for expanding group by default)
             const openByDefault = this.pivotDefaultExpanded === -1 || (index < this.pivotDefaultExpanded);
 

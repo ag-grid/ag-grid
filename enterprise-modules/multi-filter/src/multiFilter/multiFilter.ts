@@ -23,8 +23,10 @@ import {
     MenuItemActivatedEvent,
     PostConstruct,
     IMultiFilter,
-    _,
-    KeyCode
+    KeyCode,
+    _loadTemplate,
+    _removeFromArray,
+    _forEachReverse
 } from '@ag-grid-community/core';
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
@@ -127,7 +129,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         })).then((filterGuis) => {
             filterGuis!.forEach((filterGui, index) => {
                 if (index > 0) {
-                    this.appendChild(_.loadTemplate(/* html */`<div class="ag-filter-separator"></div>`));
+                    this.appendChild(_loadTemplate(/* html */`<div class="ag-filter-separator"></div>`));
                 }
                 this.appendChild(filterGui!);
             });
@@ -353,7 +355,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             const { filterDefs } = this;
             let hasFocused = false;
             if (filterDefs) {
-                _.forEachReverse(filterDefs!, (filterDef, index) => {
+                _forEachReverse(filterDefs!, (filterDef, index) => {
                     const isFirst = index === 0;
                     const suppressFocus = !isFirst || filterDef.display !== 'inline';
                     const afterGuiAttachedParams = { ...params ?? {}, suppressFocus };
@@ -415,7 +417,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     private executeFunctionIfExists<T extends IFilterComp>(name: keyof T, ...params: any[]): void {
         // The first filter is always the "dominant" one. By iterating in reverse order we ensure the first filter
         // always gets the last say
-        _.forEachReverse(this.filters!, filter => {
+        _forEachReverse(this.filters!, filter => {
             this.executeFunctionIfExistsOnFilter(filter as T, name, params);
         });
     }
@@ -465,7 +467,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     private updateActiveList(index: number): void {
         const changedFilter = this.filters![index];
 
-        _.removeFromArray(this.activeFilterIndices, index);
+        _removeFromArray(this.activeFilterIndices, index);
 
         if (changedFilter.isFilterActive()) {
             this.activeFilterIndices.push(index);

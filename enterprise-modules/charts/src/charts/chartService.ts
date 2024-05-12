@@ -24,7 +24,6 @@ import {
     SeriesChartType,
     SeriesGroupType,
     UpdateChartParams,
-    _
 } from "@ag-grid-community/core";
 import { AgChartThemeOverrides, AgChartThemePalette, VERSION as CHARTS_VERSION, _ModuleSupport} from "ag-charts-community";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";

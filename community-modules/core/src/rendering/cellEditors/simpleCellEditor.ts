@@ -2,7 +2,7 @@ import { PopupComponent } from "../../widgets/popupComponent";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { AgInputTextField } from "../../widgets/agInputTextField";
 import { RefSelector } from "../../widgets/componentAnnotations";
-import { isBrowserSafari } from "../../utils/browser";
+import { _isBrowserSafari } from "../../utils/browser";
 import { KeyCode } from '../../constants/keyCode';
 
 export interface CellEditorInput<TValue, P extends ICellEditorParams, I extends AgInputTextField> {
@@ -79,7 +79,7 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
         // Added for AG-3238. We can't remove this explicit focus() because Chrome requires an input
         // to be focused before setSelectionRange will work. But it triggers a bug in Safari where
         // explicitly focusing then blurring an empty field will cause the parent container to scroll.
-        if (!isBrowserSafari()) {
+        if (!_isBrowserSafari()) {
             eInput.getFocusableElement().focus();
         }
 

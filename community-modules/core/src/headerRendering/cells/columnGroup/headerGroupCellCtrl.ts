@@ -15,7 +15,7 @@ import {
 import { ColumnGroup } from "../../../entities/columnGroup";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
-import { last, removeFromArray } from "../../../utils/array";
+import { _last, _removeFromArray } from "../../../utils/array";
 import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
 import { ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
@@ -134,7 +134,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         });
 
         const displayedLeafColumns = column.getDisplayedLeafColumns();
-        const targetColumn = isLeft ? displayedLeafColumns[0] : last(displayedLeafColumns);
+        const targetColumn = isLeft ? displayedLeafColumns[0] : _last(displayedLeafColumns);
 
         this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(targetColumn, 'auto');
 
@@ -403,7 +403,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         this.beans.columnModel.getAllDisplayedColumns().forEach(column => {
             if (allColumnsOriginalOrder.indexOf(column) >= 0) {
                 allColumnsCurrentOrder.push(column);
-                removeFromArray(allColumnsOriginalOrder, column);
+                _removeFromArray(allColumnsOriginalOrder, column);
             }
         });
 

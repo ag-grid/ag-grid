@@ -1,12 +1,12 @@
 import {
-    _,
     Column,
     DragAndDropService,
     DraggingEvent,
     Events,
     ITooltipParams,
     PostConstruct,
-    WithoutGridCommon
+    WithoutGridCommon,
+    _createIconNoSpan
 } from "@ag-grid-community/core";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
 
@@ -22,7 +22,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
         const title = localeTextFunc('pivots', 'Column Labels');
 
         super.init({
-            icon: _.createIconNoSpan('pivotPanel', this.gos, null)!,
+            icon: _createIconNoSpan('pivotPanel', this.gos, null)!,
             emptyMessage: emptyMessage,
             title: title
         });

@@ -3,7 +3,7 @@ import { Events } from "../events";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
 import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
-import { debounce } from "../utils/function";
+import { _debounce } from "../utils/function";
 import { PaginationProxy } from "./paginationProxy";
 
 @Bean('paginationAutoPageSizeService')
@@ -59,7 +59,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
                 update();
                 this.isBodyRendered = true;
             } else {
-                debounce(() => update(), 50)();
+                _debounce(() => update(), 50)();
             }
         } else {
             this.isBodyRendered = false;

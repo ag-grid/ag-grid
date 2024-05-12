@@ -14,10 +14,10 @@ import {
     FlashCellsEvent
 } from "../../events";
 import { CellRangeFeature } from "./cellRangeFeature";
-import { exists, makeNull } from "../../utils/generic";
+import { _exists, _makeNull } from "../../utils/generic";
 import { BeanStub } from "../../context/beanStub";
 import { CellPositionFeature } from "./cellPositionFeature";
-import { escapeString } from "../../utils/string";
+import { _escapeString } from "../../utils/string";
 import { CellCustomStyleFeature } from "./cellCustomStyleFeature";
 import { TooltipFeature, ITooltipFeatureCtrl } from "../../widgets/tooltipFeature";
 import { RowPosition } from "../../entities/rowPositionUtils";
@@ -30,11 +30,11 @@ import { KeyCode } from "../../constants/keyCode";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
 import { DndSourceComp } from "../dndSourceComp";
-import { warnOnce } from "../../utils/function";
+import { _warnOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
-import { getValueUsingField } from "../../utils/object";
-import { getElementSize } from "../../utils/dom";
-import { setAriaColIndex } from "../../utils/aria";
+import { _getValueUsingField } from "../../utils/object";
+import { _getElementSize } from "../../utils/dom";
+import { _setAriaColIndex } from "../../utils/aria";
 import { CssClassApplier } from "../../headerRendering/cells/cssClassApplier";
 import { FlashCellsParams } from "../rowRenderer";
 import { BrandedType } from "../../interfaces/brandedType";
@@ -124,7 +124,7 @@ export class CellCtrl extends BeanStub {
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = column.getId() + '-' + instanceIdSequence++ as CellCtrlInstanceId;
 
-        this.colIdSanitised = escapeString(this.column.getId())!;
+        this.colIdSanitised = _escapeString(this.column.getId())!;
         if (!beans.gos.get('suppressCellFocus')) {
             this.tabIndex = -1;
         }
@@ -170,8 +170,8 @@ export class CellCtrl extends BeanStub {
             const colDef = this.column.getColDef();
             const data = this.rowNode.data;
 
-            if (colDef.tooltipField && exists(data)) {
-                return getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
+            if (colDef.tooltipField && _exists(data)) {
+                return _getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
             }
 
             const valueGetter = colDef.tooltipValueGetter;
@@ -289,7 +289,7 @@ export class CellCtrl extends BeanStub {
             // the rows life.
             if (!this.isAlive()) { return; }
 
-            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = getElementSize(eParentCell);
+            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = _getElementSize(eParentCell);
             const extraHeight = paddingTop + paddingBottom + borderBottomWidth + borderTopWidth;
 
             const wrapperHeight = eCellWrapper!.offsetHeight;
@@ -722,7 +722,7 @@ export class CellCtrl extends BeanStub {
             flashDuration = gos.get('cellFlashDuration');
         }
 
-        if (!exists(fadeDuration)) {
+        if (!_exists(fadeDuration)) {
             fadeDuration = gos.get('cellFadeDuration');
         }
 
@@ -861,7 +861,7 @@ export class CellCtrl extends BeanStub {
 
     private refreshAriaColIndex(): void {
         const colIdx = this.beans.columnModel.getAriaColumnIndex(this.column);
-        setAriaColIndex(this.getGui(), colIdx); // for react, we don't use JSX, as it slowed down column moving
+        _setAriaColIndex(this.getGui(), colIdx); // for react, we don't use JSX, as it slowed down column moving
     }
 
     public isSuppressNavigable(): boolean {
@@ -1011,7 +1011,7 @@ export class CellCtrl extends BeanStub {
     private createCellPosition(): void {
         this.cellPosition = {
             rowIndex: this.rowNode.rowIndex!,
-            rowPinned: makeNull(this.rowNode.rowPinned),
+            rowPinned: _makeNull(this.rowNode.rowPinned),
             column: this.column
         };
     }
@@ -1147,12 +1147,12 @@ export class CellCtrl extends BeanStub {
         if (rowDragManaged) {
             // row dragging only available in default row model
             if (!clientSideRowModelActive) {
-                warnOnce('managed row dragging is only allowed in the Client Side Row Model');
+                _warnOnce('managed row dragging is only allowed in the Client Side Row Model');
                 return;
             }
 
             if (pagination) {
-                warnOnce('managed row dragging is not possible when doing pagination');
+                _warnOnce('managed row dragging is not possible when doing pagination');
                 return;
             }
         }

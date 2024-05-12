@@ -1,4 +1,4 @@
-import { Component, GridOptions, ICellRenderer, RefSelector, _, GridApi, IDetailCellRenderer, IDetailCellRendererParams, ModuleRegistry, createGrid, GridParams } from "@ag-grid-community/core";
+import { Component, GridOptions, ICellRenderer, RefSelector, GridApi, IDetailCellRenderer, IDetailCellRendererParams, ModuleRegistry, createGrid, GridParams, _cloneObject, _missing } from "@ag-grid-community/core";
 import { DetailCellRendererCtrl } from "./detailCellRendererCtrl";
 
 export class DetailCellRenderer extends Component implements ICellRenderer {
@@ -55,7 +55,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             this.setTemplate(DetailCellRenderer.TEMPLATE);
         };
 
-        if (_.missing(this.params.template)) {
+        if (_missing(this.params.template)) {
             // use default template
             setDefaultTemplate();
         } else {
@@ -86,7 +86,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         // of doing react, and Master / Details is all native React, then we
         // can remove this code.
         const agGridReact = this.context.getBean('agGridReact');
-        const agGridReactCloned = agGridReact ? _.cloneObject(agGridReact) : undefined;
+        const agGridReactCloned = agGridReact ? _cloneObject(agGridReact) : undefined;
 
         // when we create detail grid, the detail grid needs frameworkComponentWrapper so that
         // it created child components correctly, ie  Angular detail grid can have Angular cell renderer.

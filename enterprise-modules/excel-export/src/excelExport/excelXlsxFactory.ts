@@ -8,7 +8,7 @@ import {
     ExcelTableConfig,
     RowHeightCallbackParams,
     ExcelHeaderFooterImage,
-    _
+    _escapeString,
 } from '@ag-grid-community/core';
 
 import coreFactory from './files/ooxml/core';
@@ -256,7 +256,7 @@ export class ExcelXlsxFactory {
     }
 
     private static addSheetName(worksheet: ExcelWorksheet): void {
-        const name = _.escapeString(worksheet.name) || '';
+        const name = _escapeString(worksheet.name) || '';
         let append = '';
 
         while (this.sheetNames.indexOf(`${name}${append}`) !== -1) {

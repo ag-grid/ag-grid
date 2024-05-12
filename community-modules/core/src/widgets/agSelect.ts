@@ -2,7 +2,7 @@ import { AgPickerField, AgPickerFieldParams } from "./agPickerField";
 import { ListOption, AgList } from "./agList";
 import { Events } from "../eventKeys";
 import { KeyCode } from "../constants/keyCode";
-import { setAriaControls } from "../utils/aria";
+import { _setAriaControls } from "../utils/aria";
 
 export interface AgSelectParams<TValue = string> extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
     options?: ListOption<TValue>[];
@@ -62,7 +62,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
         const listId = `ag-select-list-${this.listComponent.getCompId()}`;
 
         eListAriaEl.setAttribute('id', listId);
-        setAriaControls(this.getAriaElement(), eListAriaEl);
+        _setAriaControls(this.getAriaElement(), eListAriaEl);
 
         this.listComponent.addManagedListener(
             this.listComponent,

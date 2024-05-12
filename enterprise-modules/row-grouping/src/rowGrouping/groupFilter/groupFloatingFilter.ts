@@ -1,5 +1,4 @@
 import {
-    _,
     AgInputTextField,
     AgPromise,
     Autowired,
@@ -13,6 +12,7 @@ import {
     RefSelector,
     UserCompDetails,
     ColumnEvent,
+    _clearElement,
 } from '@ag-grid-community/core';
 import { GroupFilter } from './groupFilter';
 
@@ -93,7 +93,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     private setupUnderlyingFloatingFilterElement(): AgPromise<void> {
         this.showingUnderlyingFloatingFilter = false;
         this.underlyingFloatingFilter = undefined;
-        _.clearElement(this.eFloatingFilter);
+        _clearElement(this.eFloatingFilter);
         const column = this.parentFilterInstance.getSelectedColumn();
         // we can only show the underlying filter if there is one instance (e.g. the underlying column is not visible)
         if (column && !column.isVisible()) {

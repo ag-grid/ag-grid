@@ -3,10 +3,10 @@ import { BeanStub } from "../context/beanStub";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { PopupService } from "./popupService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
-import { exists } from "../utils/generic";
-import { isIOSUserAgent } from "../utils/browser";
+import { _exists } from "../utils/generic";
+import { _isIOSUserAgent } from "../utils/browser";
 import { WithoutGridCommon } from "../interfaces/iCommon";
-import { warnOnce } from "../utils/function";
+import { _warnOnce } from "../utils/function";
 import { Events } from "../eventKeys";
 import { TooltipHideEvent, TooltipShowEvent } from "../events";
 
@@ -101,7 +101,7 @@ export class TooltipStateManager extends BeanStub {
     private getGridOptionsTooltipDelay(delayOption: 'tooltipShowDelay' | 'tooltipHideDelay'): number {
         const delay = this.gos.get(delayOption);
         if (delay < 0) {
-            warnOnce(`${delayOption} should not be lower than 0`);
+            _warnOnce(`${delayOption} should not be lower than 0`);
         }
         return Math.max(200, delay);
     }
@@ -140,7 +140,7 @@ export class TooltipStateManager extends BeanStub {
             this.startHideTimeout();
         }
 
-        if (isIOSUserAgent()) { return; }
+        if (_isIOSUserAgent()) { return; }
 
         if (TooltipStateManager.isLocked) {
             this.showTooltipTimeoutId = window.setTimeout(() => {
@@ -259,7 +259,7 @@ export class TooltipStateManager extends BeanStub {
             ...this.parentComp.getTooltipParams(),
         };
 
-        if (!exists(params.value) || (this.shouldDisplayTooltip && !this.shouldDisplayTooltip())) {
+        if (!_exists(params.value) || (this.shouldDisplayTooltip && !this.shouldDisplayTooltip())) {
             this.setToDoNothing();
             return;
         }

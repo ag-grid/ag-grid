@@ -1,4 +1,4 @@
-import { NumberSequence } from "../utils";
+import { NumberSequence } from "../utils/numberSequence";
 import { RowBounds } from "./iRowModel";
 import { IRowNode } from "./iRowNode";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./serverSideTransaction";

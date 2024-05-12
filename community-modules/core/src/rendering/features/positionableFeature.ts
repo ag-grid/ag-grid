@@ -1,7 +1,7 @@
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
 import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
-import { getAbsoluteHeight, getAbsoluteWidth, isVisible, setFixedHeight, setFixedWidth } from "../../utils/dom";
+import { _getAbsoluteHeight, _getAbsoluteWidth, _isVisible, _setFixedHeight, _setFixedWidth } from "../../utils/dom";
 import { PopupService } from "../../widgets/popupService";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
 
@@ -128,7 +128,7 @@ export class PositionableFeature extends BeanStub {
 
         // here we don't use the main offset parent but the element's offsetParent
         // in order to calculated the minWidth and minHeight correctly
-        const isElementVisible = isVisible(this.element);
+        const isElementVisible = _isVisible(this.element);
         if (isElementVisible) {
             const boundaryEl = this.findBoundaryElement();
             const offsetParentComputedStyles = window.getComputedStyle(boundaryEl);
@@ -299,8 +299,8 @@ export class PositionableFeature extends BeanStub {
         let isPercent = false;
 
         if (typeof height === 'string' && height.indexOf('%') !== -1) {
-            setFixedHeight(eGui, height);
-            height = getAbsoluteHeight(eGui);
+            _setFixedHeight(eGui, height);
+            height = _getAbsoluteHeight(eGui);
             isPercent = true;
         } else {
             height = Math.max(this.minHeight!, height as number);
@@ -317,7 +317,7 @@ export class PositionableFeature extends BeanStub {
 
         if (!isPercent) {
             if (popup) {
-                setFixedHeight(eGui, height);
+                _setFixedHeight(eGui, height);
             } else {
                 eGui.style.height = `${height}px`;
                 eGui.style.flex = '0 0 auto';
@@ -371,8 +371,8 @@ export class PositionableFeature extends BeanStub {
         let isPercent = false;
 
         if (typeof width === 'string' && width.indexOf('%') !== -1) {
-            setFixedWidth(eGui, width);
-            width = getAbsoluteWidth(eGui);
+            _setFixedWidth(eGui, width);
+            width = _getAbsoluteWidth(eGui);
             isPercent = true;
         } else if (this.positioned) {
             width = Math.max(this.minWidth, width as number);
@@ -388,7 +388,7 @@ export class PositionableFeature extends BeanStub {
 
         if (!isPercent) {
             if (this.config.popup) {
-                setFixedWidth(eGui, width);
+                _setFixedWidth(eGui, width);
             } else {
                 eGui.style.width = `${width}px`;
                 eGui.style.flex = ' unset';

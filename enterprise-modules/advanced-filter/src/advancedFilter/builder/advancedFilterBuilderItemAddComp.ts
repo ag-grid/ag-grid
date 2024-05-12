@@ -7,7 +7,8 @@ import {
     PostConstruct,
     RefSelector,
     TooltipFeature,
-    _
+    _setAriaLabel,
+    _setAriaLevel,
 } from "@ag-grid-community/core";
 import { AdvancedFilterExpressionService } from "../advancedFilterExpressionService";
 import { AddDropdownComp } from "./addDropdownComp";
@@ -34,7 +35,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        _.setAriaLevel(this.focusWrapper, 2);
+        _setAriaLevel(this.focusWrapper, 2);
 
         const addButtonParams = getAdvancedFilterBuilderAddButtonParams(
             key => this.advancedFilterExpressionService.translate(key),
@@ -62,7 +63,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
             eAddButton
         ));
 
-        _.setAriaLabel(
+        _setAriaLabel(
             this.focusWrapper,
             this.advancedFilterExpressionService.translate('ariaAdvancedFilterBuilderItem', [
                 this.advancedFilterExpressionService.translate('advancedFilterBuilderAddButtonTooltip'),

@@ -1,4 +1,4 @@
-import { AgPromise } from "../utils";
+import { AgPromise } from "../utils/promise";
 
 export type FrameworkOverridesIncomingSource = 'resize-observer' | 'ensureVisible';
 

@@ -2,10 +2,10 @@ import { Component } from './component';
 import { RefSelector } from './componentAnnotations';
 import { PostConstruct } from '../context/context';
 import { AgCheckbox } from './agCheckbox';
-import { createIcon } from '../utils/icon';
-import { setDisplayed } from '../utils/dom';
+import { _createIcon } from '../utils/icon';
+import { _setDisplayed } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';
-import { setAriaExpanded } from '../utils/aria';
+import { _setAriaExpanded } from '../utils/aria';
 import { AgToggleButton } from './agToggleButton';
 import { AgEvent } from '../events';
 
@@ -123,7 +123,7 @@ export class AgGroupComponent extends Component {
         this.hideOpenCloseIcons(suppressOpenCloseIcons ?? false);
 
         this.refreshChildDisplay();
-        setDisplayed(this.eContainer, this.expanded);
+        _setDisplayed(this.eContainer, this.expanded);
 
         this.cbGroupEnabled.onValueChange((newSelection: boolean) => {
             this.setEnabled(newSelection, true, this.suppressToggleExpandOnEnableChange);
@@ -136,7 +136,7 @@ export class AgGroupComponent extends Component {
     }
 
     private refreshChildDisplay(): void {
-        setDisplayed(this.eToolbar, this.expanded && !this.suppressEnabledCheckbox);
+        _setDisplayed(this.eToolbar, this.expanded && !this.suppressEnabledCheckbox);
         this.eTitleBar?.refreshOnExpand(this.expanded);
     }
 
@@ -173,7 +173,7 @@ export class AgGroupComponent extends Component {
         this.expanded = expanded;
         this.refreshChildDisplay();
 
-        setDisplayed(this.eContainer, expanded);
+        _setDisplayed(this.eContainer, expanded);
 
         if (!silent) {
             this.dispatchEvent({ type: expanded ? AgGroupComponent.EVENT_EXPANDED : AgGroupComponent.EVENT_COLLAPSED });
@@ -211,7 +211,7 @@ export class AgGroupComponent extends Component {
 
     public hideItem(hide: boolean, index: number) {
         const itemToHide = this.items[index] as HTMLElement;
-        setDisplayed(itemToHide, !hide);
+        _setDisplayed(itemToHide, !hide);
     }
 
     public getItemIndex(item: GroupItem): number | -1 {
@@ -367,8 +367,8 @@ class DefaultTitleBar extends Component {
     }
 
     private setupExpandContract(): void {
-        this.eGroupClosedIcon.appendChild(createIcon('columnSelectClosed', this.gos, null));
-        this.eGroupOpenedIcon.appendChild(createIcon('columnSelectOpen', this.gos, null));
+        this.eGroupClosedIcon.appendChild(_createIcon('columnSelectClosed', this.gos, null));
+        this.eGroupOpenedIcon.appendChild(_createIcon('columnSelectOpen', this.gos, null));
         this.addManagedListener(this.getGui(), 'click', () => this.dispatchExpandChanged());
         this.addManagedListener(this.getGui(), 'keydown', (e: KeyboardEvent) => {
             switch (e.key) {
@@ -393,15 +393,15 @@ class DefaultTitleBar extends Component {
 
     private refreshAriaStatus(expanded: boolean): void {
         if (!this.suppressOpenCloseIcons) {
-            setAriaExpanded(this.getGui(), expanded);
+            _setAriaExpanded(this.getGui(), expanded);
         }
     }
 
     private refreshOpenCloseIcons(expanded: boolean): void {
         const showIcon = !this.suppressOpenCloseIcons;
 
-        setDisplayed(this.eGroupOpenedIcon, showIcon && expanded);
-        setDisplayed(this.eGroupClosedIcon, showIcon && !expanded);
+        _setDisplayed(this.eGroupOpenedIcon, showIcon && expanded);
+        _setDisplayed(this.eGroupClosedIcon, showIcon && !expanded);
     }
 
     public isSuppressCollapse(): boolean {
@@ -422,7 +422,7 @@ class DefaultTitleBar extends Component {
         title = hasTitle ? title : undefined;
 
         this.eTitle.textContent = title ?? '';
-        setDisplayed(eGui, hasTitle);
+        _setDisplayed(eGui, hasTitle);
 
         if (title !== this.title) {
             this.title = title;

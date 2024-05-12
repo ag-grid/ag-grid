@@ -4,11 +4,11 @@ import { Events } from "../../eventKeys";
 import { RowContainerEventsFeature } from "./rowContainerEventsFeature";
 import { DragService } from "../../dragAndDrop/dragService";
 import { CtrlsService } from "../../ctrlsService";
-import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isInDOM, setScrollLeft } from "../../utils/dom";
+import { _getInnerWidth, _getScrollLeft, _isHorizontalScrollShowing, _isInDOM, _setScrollLeft } from "../../utils/dom";
 import { ColumnModel } from "../../columns/columnModel";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
 import { ViewportSizeFeature } from "../viewportSizeFeature";
-import { convertToMap } from "../../utils/map";
+import { _convertToMap } from "../../utils/map";
 import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
 import { SetPinnedRightWidthFeature } from "./setPinnedRightWidthFeature";
 import { SetHeightFeature } from "./setHeightFeature";
@@ -84,7 +84,7 @@ export function getRowContainerTypeForName(name: RowContainerName): RowContainer
     }
 }
 
-const ContainerCssClasses: Map<RowContainerName, string> = convertToMap([
+const ContainerCssClasses: Map<RowContainerName, string> = _convertToMap([
     [RowContainerName.CENTER, 'ag-center-cols-container'],
     [RowContainerName.LEFT, 'ag-pinned-left-cols-container'],
     [RowContainerName.RIGHT, 'ag-pinned-right-cols-container'],
@@ -111,7 +111,7 @@ const ContainerCssClasses: Map<RowContainerName, string> = convertToMap([
     [RowContainerName.BOTTOM_FULL_WIDTH, 'ag-floating-bottom-full-width-container'],
 ]);
 
-const ViewportCssClasses: Map<RowContainerName, string> = convertToMap([
+const ViewportCssClasses: Map<RowContainerName, string> = _convertToMap([
     [RowContainerName.CENTER, 'ag-center-cols-viewport'],
     [RowContainerName.TOP_CENTER, 'ag-floating-top-viewport'],
     [RowContainerName.STICKY_TOP_CENTER, 'ag-sticky-top-viewport'],
@@ -339,12 +339,12 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     public getCenterWidth(): number {
-        return getInnerWidth(this.eViewport);
+        return _getInnerWidth(this.eViewport);
     }
 
     public getCenterViewportScrollLeft(): number {
         // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
-        return getScrollLeft(this.eViewport, this.enableRtl);
+        return _getScrollLeft(this.eViewport, this.enableRtl);
     }
 
     public registerViewportResizeListener(listener: (() => void)) {
@@ -353,16 +353,16 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     public isViewportInTheDOMTree(): boolean {
-        return isInDOM(this.eViewport);
+        return _isInDOM(this.eViewport);
     }
 
     public getViewportScrollLeft(): number {
-        return getScrollLeft(this.eViewport, this.enableRtl);
+        return _getScrollLeft(this.eViewport, this.enableRtl);
     }
 
     public isHorizontalScrollShowing(): boolean {
         const isAlwaysShowHorizontalScroll = this.gos.get('alwaysShowHorizontalScroll');
-        return isAlwaysShowHorizontalScroll || isHorizontalScrollShowing(this.eViewport);
+        return isAlwaysShowHorizontalScroll || _isHorizontalScrollShowing(this.eViewport);
     }
 
     public getViewportElement(): HTMLElement {
@@ -383,7 +383,7 @@ export class RowContainerCtrl extends BeanStub {
 
     public setCenterViewportScrollLeft(value: number): void {
         // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
-        setScrollLeft(this.eViewport, value, this.enableRtl);
+        _setScrollLeft(this.eViewport, value, this.enableRtl);
     }
 
     private isContainerVisible(): boolean {

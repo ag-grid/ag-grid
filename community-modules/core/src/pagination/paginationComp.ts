@@ -3,9 +3,9 @@ import { Autowired, PostConstruct } from "../context/context";
 import { RefSelector } from "../widgets/componentAnnotations";
 import {Events, PaginationChangedEvent} from "../events";
 import { PaginationProxy } from "./paginationProxy";
-import { createIconNoSpan } from "../utils/icon";
-import { formatNumberCommas } from "../utils/number";
-import { setAriaDisabled } from "../utils/aria";
+import { _createIconNoSpan } from "../utils/icon";
+import { _formatNumberCommas } from "../utils/number";
+import { _setAriaDisabled } from "../utils/aria";
 import { KeyCode } from '../constants/keyCode';
 import { RowNodeBlockLoader } from "../rowNodeCache/rowNodeBlockLoader";
 import { PaginationNumberFormatterParams } from "../interfaces/iCallbackParams";
@@ -47,10 +47,10 @@ export class PaginationComp extends Component {
         const { btFirst, btPrevious, btNext, btLast, pageSizeComp } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast])
 
-        btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.gos)!);
-        btPrevious.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'next' : 'previous', this.gos)!);
-        btNext.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'previous' : 'next', this.gos)!);
-        btLast.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'first' : 'last', this.gos)!);
+        btFirst.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'last' : 'first', this.gos)!);
+        btPrevious.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'next' : 'previous', this.gos)!);
+        btNext.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'previous' : 'next', this.gos)!);
+        btLast.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'first' : 'last', this.gos)!);
 
         this.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
         this.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
@@ -138,7 +138,7 @@ export class PaginationComp extends Component {
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 
-        return formatNumberCommas(value, thousandSeparator, decimalSeparator);
+        return _formatNumberCommas(value, thousandSeparator, decimalSeparator);
     }
 
     private getTemplate(): string {
@@ -215,7 +215,7 @@ export class PaginationComp extends Component {
     }
 
     private toggleButtonDisabled(button: HTMLElement, disabled: boolean) {
-        setAriaDisabled(button, disabled);
+        _setAriaDisabled(button, disabled);
         button.classList.toggle('ag-disabled', disabled);
     }
 

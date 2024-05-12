@@ -1,7 +1,7 @@
 import { RefSelector } from './componentAnnotations';
 import { AgAbstractField, AgFieldParams, FieldElement } from './agAbstractField';
-import { setDisabled, setElementWidth, addOrRemoveAttribute } from '../utils/dom';
-import { setAriaLabel } from '../utils/aria';
+import { _setDisabled, _setElementWidth, _addOrRemoveAttribute } from '../utils/dom';
+import { _setAriaLabel } from '../utils/aria';
 
 export interface AgInputFieldParams extends AgFieldParams {
     inputName?: string;
@@ -62,7 +62,7 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
     }
 
     public setInputWidth(width: number | 'flex'): this {
-        setElementWidth(this.eWrapper, width);
+        _setElementWidth(this.eWrapper, width);
 
         return this;
     }
@@ -85,20 +85,20 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
     }
 
     public setInputPlaceholder(placeholder?: string | null): this {
-        addOrRemoveAttribute(this.eInput, 'placeholder', placeholder);
+        _addOrRemoveAttribute(this.eInput, 'placeholder', placeholder);
 
         return this;
     }
 
     public setInputAriaLabel(label?: string | null): this {
-        setAriaLabel(this.eInput, label);
+        _setAriaLabel(this.eInput, label);
         this.refreshAriaLabelledBy();
 
         return this;
     }
 
     public setDisabled(disabled: boolean): this {
-        setDisabled(this.eInput, disabled);
+        _setDisabled(this.eInput, disabled);
 
         return super.setDisabled(disabled);
     }
@@ -107,13 +107,13 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
         if (value === true) {
             // Remove the autocomplete attribute if the value is explicitly set to true
             // to allow the default browser autocomplete/autofill behaviour.
-            addOrRemoveAttribute(this.eInput, 'autocomplete', null);
+            _addOrRemoveAttribute(this.eInput, 'autocomplete', null);
         } else {
             // When a string is provided, use it as the value of the autocomplete attribute.
             // This enables users to specify how they want to the browser to handle the autocomplete on the input, as per spec:
             // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete#values
             const autoCompleteValue = typeof value === 'string' ? value : 'off'
-            addOrRemoveAttribute(this.eInput, 'autocomplete', autoCompleteValue);
+            _addOrRemoveAttribute(this.eInput, 'autocomplete', autoCompleteValue);
         }
         return this;
     }

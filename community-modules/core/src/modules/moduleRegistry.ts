@@ -1,7 +1,7 @@
 import { Module, ModuleValidationInvalidResult } from "../interfaces/iModule";
 import { ModuleNames } from "./moduleNames";
-import { doOnce } from "../utils/function";
-import { values } from "../utils/generic";
+import { _doOnce } from "../utils/function";
+import { _values } from "../utils/generic";
 
 export class ModuleRegistry {
 
@@ -91,7 +91,7 @@ export class ModuleRegistry {
             ModuleRegistry.moduleBased = moduleBased;
         } else {
             if (ModuleRegistry.moduleBased !== moduleBased) {
-                doOnce(() => {
+                _doOnce(() => {
                     console.warn(`AG Grid: You are mixing modules (i.e. @ag-grid-community/core) and packages (ag-grid-community) - you can only use one or the other of these mechanisms.`);
                     console.warn('Please see https://www.ag-grid.com/javascript-grid/modules/ for more information.');
 
@@ -145,7 +145,7 @@ For more info see: https://www.ag-grid.com/javascript-grid/modules/`;
     import 'ag-grid-enterprise';`;
         }
 
-        doOnce(() => {
+        _doOnce(() => {
             console.warn(warningMessage);
         }, warningKey);
 
@@ -159,12 +159,12 @@ For more info see: https://www.ag-grid.com/javascript-grid/modules/`;
 
     /** AG GRID INTERNAL - Get all registered modules globally / individually for this grid. */
     public static __getRegisteredModules(gridId: string): Module[] {
-        return [...values(ModuleRegistry.globalModulesMap), ...values(ModuleRegistry.gridModulesMap[gridId] || {})];
+        return [..._values(ModuleRegistry.globalModulesMap), ..._values(ModuleRegistry.gridModulesMap[gridId] || {})];
     }
 
     /** AG GRID INTERNAL - Get the list of modules registered individually for this grid. */
     public static __getGridRegisteredModules(gridId: string): Module[] {
-        return values(ModuleRegistry.gridModulesMap[gridId] ?? {}) || [];
+        return  _values(ModuleRegistry.gridModulesMap[gridId] ?? {}) || [];
     }
 
     /** INTERNAL */

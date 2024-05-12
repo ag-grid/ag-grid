@@ -1,14 +1,10 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
-    ColumnModel,
-    GROUP_AUTO_COLUMN_ID,
     Events,
     PostConstruct,
     SortController,
-    Column,
     SortModelItem,
     StoreRefreshAfterParams
 } from "@ag-grid-community/core";

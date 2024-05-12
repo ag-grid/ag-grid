@@ -1,4 +1,4 @@
-import { sum } from './number';
+import { _sum } from './number';
 
 describe('sum', () => {
     it.each([
@@ -7,10 +7,10 @@ describe('sum', () => {
         [[-123, 456, -789], -456],
         [[1.1, 2.2, 3.3, 4.4, 5.5], 16.5]
     ])('returns sum of values: %s', (values, total) => {
-        expect(sum(values)).toBe(total);
+        expect(_sum(values)).toBe(total);
     });
 
     it('returns null if values is null', () => {
-        expect(sum(null)).toBeNull();
+        expect(_sum(null)).toBeNull();
     });
 });

@@ -1,4 +1,4 @@
-import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer, UserCompDetails, _ } from "ag-grid-community";
+import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer, UserCompDetails, _escapeString } from "ag-grid-community";
 import React, { useContext, useImperativeHandle, forwardRef, useMemo, useRef, useState, useLayoutEffect, useCallback } from 'react';
 import { BeansContext } from "../beansContext";
 import { showJsComp } from "../jsComp";
@@ -66,7 +66,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
     const useFwRenderer = innerCompDetails && innerCompDetails.componentFromFramework;
     const FwRenderer = useFwRenderer ? innerCompDetails!.componentClass : undefined;
     const useValue = innerCompDetails == null && value != null;
-    const escapedValue = _.escapeString(value, true);
+    const escapedValue = _escapeString(value, true);
 
     // if there is no ColDef, it means this is a Full Width Group, then we need to add `role="gridcell"`.
     return (

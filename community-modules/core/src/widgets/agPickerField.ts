@@ -1,9 +1,9 @@
 import { AgAbstractField, AgFieldParams } from "./agAbstractField";
 import { Component } from "./component";
 import { RefSelector } from "./componentAnnotations";
-import { setAriaExpanded, setAriaRole } from "../utils/aria";
-import { createIconNoSpan } from "../utils/icon";
-import { setElementWidth, getAbsoluteWidth, getInnerHeight, formatSize } from "../utils/dom";
+import { _setAriaExpanded, _setAriaRole } from "../utils/aria";
+import { _createIconNoSpan } from "../utils/icon";
+import { _setElementWidth, _getAbsoluteWidth, _getInnerHeight, _formatSize } from "../utils/dom";
 import { KeyCode } from '../constants/keyCode';
 import { AddPopupParams, PopupService } from "./popupService";
 import { Autowired } from "../context/context";
@@ -114,7 +114,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
         const { pickerIcon, inputWidth } = this.config;
 
         if (pickerIcon) {
-            const icon = createIconNoSpan(pickerIcon, this.gos);
+            const icon = _createIconNoSpan(pickerIcon, this.gos);
             if (icon) {
                 this.eIcon.appendChild(icon);
             }
@@ -130,10 +130,10 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
         
         ariaEl.setAttribute('tabindex', (this.gos.get('tabIndex')).toString());
 
-        setAriaExpanded(ariaEl, false);
+        _setAriaExpanded(ariaEl, false);
 
         if (this.ariaRole) {
-            setAriaRole(ariaEl, this.ariaRole);
+            _setAriaRole(ariaEl, this.ariaRole);
         }
     }
 
@@ -242,15 +242,15 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
             if (minPickerWidth) {
                 ePicker.style.minWidth = minPickerWidth;
             }
-            ePicker.style.width = formatSize(getAbsoluteWidth(this.eWrapper));
+            ePicker.style.width = _formatSize(_getAbsoluteWidth(this.eWrapper));
             if (maxPickerWidth) {
                 ePicker.style.maxWidth = maxPickerWidth;
             }
         } else {
-            setElementWidth(ePicker, maxPickerWidth ?? getAbsoluteWidth(this.eWrapper));
+            _setElementWidth(ePicker, maxPickerWidth ?? _getAbsoluteWidth(this.eWrapper));
         }
 
-        const maxHeight = maxPickerHeight ?? `${getInnerHeight(this.popupService.getPopupParent())}px`;
+        const maxHeight = maxPickerHeight ?? `${_getInnerHeight(this.popupService.getPopupParent())}px`;
 
         ePicker.style.setProperty('max-height', maxHeight);
         ePicker.style.position = 'absolute';
@@ -302,7 +302,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
 
         const ariaEl = this.getAriaElement();
 
-        setAriaExpanded(ariaEl, expanded);
+        _setAriaExpanded(ariaEl, expanded);
 
         this.eWrapper.classList.toggle('ag-picker-expanded', expanded);
         this.eWrapper.classList.toggle('ag-picker-collapsed', !expanded);
@@ -331,7 +331,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     }
 
     public setInputWidth(width: number | 'flex'): this {
-        setElementWidth(this.eWrapper, width);
+        _setElementWidth(this.eWrapper, width);
         return this;
     }
 

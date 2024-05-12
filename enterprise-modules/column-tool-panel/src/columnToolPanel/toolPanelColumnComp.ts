@@ -1,5 +1,4 @@
 import {
-    _,
     AgCheckbox,
     Autowired,
     Column,
@@ -17,7 +16,12 @@ import {
     PostConstruct,
     RefSelector,
     WithoutGridCommon,
-    DragItem
+    DragItem,
+    _createIconNoSpan,
+    _escapeString,
+    _setAriaDescribedBy,
+    _setAriaLabel,
+    _setDisplayed
 } from "@ag-grid-community/core";
 import { ColumnModelItem } from "./columnModelItem";
 import { ModelItemUtils } from "./modelItemUtils";
@@ -60,7 +64,7 @@ export class ToolPanelColumnComp extends Component {
     public init(): void {
 
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
-        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gos)!;
+        this.eDragHandle = _createIconNoSpan('columnDrag', this.gos)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-drag-handle');
 
         const checkboxGui = this.cbSelect.getGui();
@@ -69,7 +73,7 @@ export class ToolPanelColumnComp extends Component {
         checkboxGui.insertAdjacentElement('afterend', this.eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
 
-        const displayNameSanitised: any = _.escapeString(this.displayName);
+        const displayNameSanitised: any = _escapeString(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
 
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
@@ -188,14 +192,14 @@ export class ToolPanelColumnComp extends Component {
         const state = this.cbSelect.getValue() ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden');
         const visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');
 
-        _.setAriaLabel(this.focusWrapper, `${this.displayName} ${columnLabel}`);
+        _setAriaLabel(this.focusWrapper, `${this.displayName} ${columnLabel}`);
         this.cbSelect.setInputAriaLabel(`${visibilityLabel} (${state})`);
-        _.setAriaDescribedBy(this.focusWrapper, this.cbSelect.getInputElement().id);
+        _setAriaDescribedBy(this.focusWrapper, this.cbSelect.getInputElement().id);
     }
 
     private setupDragging(): void {
         if (!this.allowDragging) {
-            _.setDisplayed(this.eDragHandle, false);
+            _setDisplayed(this.eDragHandle, false);
             return;
         }
 

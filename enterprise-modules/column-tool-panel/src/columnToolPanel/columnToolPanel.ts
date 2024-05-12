@@ -1,5 +1,4 @@
 import {
-    _,
     ColDef,
     ColGroupDef,
     Component,
@@ -10,7 +9,9 @@ import {
     ModuleRegistry,
     ColumnToolPanelState,
     IToolPanelParams,
-    IToolPanelColumnCompParams
+    IToolPanelColumnCompParams,
+    _last,
+    _clearElement
 } from "@ag-grid-community/core";
 import { PivotModePanel } from "./pivotModePanel";
 import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from "@ag-grid-enterprise/row-grouping";
@@ -185,7 +186,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         columnDrops.forEach(columnDrop => columnDrop.classList.remove('ag-last-column-drop'));
 
         const columnDropEls = eGui.querySelectorAll('.ag-column-drop:not(.ag-hidden)');
-        const lastVisible = _.last(columnDropEls) as HTMLElement;
+        const lastVisible = _last(columnDropEls) as HTMLElement;
 
         if (lastVisible) {
             lastVisible.classList.add('ag-last-column-drop');
@@ -228,7 +229,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     public destroyChildren(): void {
         this.childDestroyFuncs.forEach(func => func());
         this.childDestroyFuncs.length = 0;
-        _.clearElement(this.getGui());
+        _clearElement(this.getGui());
     }
 
     public refresh(params: ToolPanelColumnCompParams): boolean {

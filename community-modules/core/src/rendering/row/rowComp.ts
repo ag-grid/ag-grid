@@ -1,11 +1,11 @@
 import { Component } from "../../widgets/component";
 import { ICellRendererComp, ICellRendererParams } from "../cellRenderers/iCellRenderer";
 import { Beans } from "../beans";
-import { addStylesToElement, setDomChildOrder } from "../../utils/dom";
+import { _addStylesToElement, _setDomChildOrder } from "../../utils/dom";
 import { IRowComp, RowCtrl } from "./rowCtrl";
 import { CellComp } from "../cell/cellComp";
-import { getAllValuesInObject } from "../../utils/object";
-import { setAriaRole } from "../../utils/aria";
+import { _getAllValuesInObject } from "../../utils/object";
+import { _setAriaRole } from "../../utils/aria";
 import { CellCtrl, CellCtrlInstanceId } from "../cell/cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
@@ -36,7 +36,7 @@ export class RowComp extends Component {
         const eGui = this.getGui();
         const style = eGui.style;
         this.domOrder = this.rowCtrl.getDomOrder();
-        setAriaRole(eGui, 'row');
+        _setAriaRole(eGui, 'row');
         const tabIndex = this.rowCtrl.getTabIndex();
         if (tabIndex != null) {
             eGui.setAttribute('tabindex', tabIndex.toString());
@@ -48,7 +48,7 @@ export class RowComp extends Component {
             showFullWidth: compDetails => this.showFullWidth(compDetails),
             getFullWidthCellRenderer: () => this.getFullWidthCellRenderer(),
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
-            setUserStyles: (styles: RowStyle | undefined) => addStylesToElement(eGui, styles),
+            setUserStyles: (styles: RowStyle | undefined) => _addStylesToElement(eGui, styles),
             setTop: top => style.top = top,
             setTransform: transform => style.transform = transform,
             setRowIndex: rowIndex => eGui.setAttribute('row-index', rowIndex),
@@ -102,7 +102,7 @@ export class RowComp extends Component {
             }
         });
 
-        const cellCompsToRemove = getAllValuesInObject(cellsToRemove)
+        const cellCompsToRemove = _getAllValuesInObject(cellsToRemove)
             .filter(cellComp => cellComp != null);
 
         this.destroyCells(cellCompsToRemove as CellComp[]);
@@ -120,7 +120,7 @@ export class RowComp extends Component {
             }
         });
 
-        setDomChildOrder(this.getGui(), elementsInOrder);
+        _setDomChildOrder(this.getGui(), elementsInOrder);
     }
 
     private newCellComp(cellCtrl: CellCtrl): void {
@@ -136,7 +136,7 @@ export class RowComp extends Component {
     }
 
     private destroyAllCells(): void {
-        const cellsToDestroy = getAllValuesInObject(this.cellComps).filter(cp => cp != null);
+        const cellsToDestroy = _getAllValuesInObject(this.cellComps).filter(cp => cp != null);
         this.destroyCells(cellsToDestroy as CellComp[]);
     }
 

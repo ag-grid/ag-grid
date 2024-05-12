@@ -2,21 +2,21 @@ import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Column } from "../entities/column";
 import { CssVariablesChanged, Events } from '../events';
 import { BeanStub } from "../context/beanStub";
-import { getAbsoluteHeight, getAbsoluteWidth, getElementRectWithOffset } from '../utils/dom';
-import { last } from '../utils/array';
-import { isElementInEventPath, isStopPropagationForAgGrid } from '../utils/event';
+import { _getAbsoluteHeight, _getAbsoluteWidth, _getElementRectWithOffset } from '../utils/dom';
+import { _last } from '../utils/array';
+import { _isElementInEventPath, _isStopPropagationForAgGrid } from '../utils/event';
 import { KeyCode } from '../constants/keyCode';
 import { FocusService } from "../focusService";
 import { GridCtrl } from "../gridComp/gridCtrl";
 import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
-import { AgPromise } from "../utils";
+import { AgPromise } from "../utils/promise";
 import { CtrlsService } from "../ctrlsService";
-import { setAriaLabel, setAriaRole } from "../utils/aria";
+import { _setAriaLabel, _setAriaRole } from "../utils/aria";
 import { PostProcessPopupParams } from "../interfaces/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { IRowNode } from "../interfaces/iRowNode";
-import { exists } from "../utils/generic";
+import { _exists } from "../utils/generic";
 
 export interface PopupPositionParams {
     ePopup: HTMLElement;
@@ -379,7 +379,7 @@ export class PopupService extends BeanStub {
             popupParent = popupParent.offsetParent as HTMLElement;
         }
 
-        return getElementRectWithOffset(popupParent);
+        return _getElementRectWithOffset(popupParent);
     }
 
     private keepXYWithinBounds(
@@ -401,7 +401,7 @@ export class PopupService extends BeanStub {
         const isBody = popupParent === eDocument.body;
 
         const offsetSize = ePopup[offsetProperty];
-        const getSize = isVertical ? getAbsoluteHeight : getAbsoluteWidth;
+        const getSize = isVertical ? _getAbsoluteHeight : _getAbsoluteWidth;
 
         let sizeOfParent = isBody ? (getSize(docElement) + docElement[scrollPositionProperty]) : popupParent[sizeProperty];
 
@@ -450,10 +450,10 @@ export class PopupService extends BeanStub {
         const ePopupParent = this.getPopupParent();
         const ePopupParentRect = ePopupParent.getBoundingClientRect();
 
-        if (!exists(element.style.top)) {
+        if (!_exists(element.style.top)) {
             element.style.top = `${ePopupParentRect.top * -1}px`;
         }
-        if (!exists(element.style.left)) {
+        if (!_exists(element.style.left)) {
             element.style.left = `${ePopupParentRect.left * -1}px`;
         }
     }
@@ -473,10 +473,10 @@ export class PopupService extends BeanStub {
         );
 
         if (!element.hasAttribute('role')) {
-            setAriaRole(element, 'dialog');
+            _setAriaRole(element, 'dialog');
         }
 
-        setAriaLabel(element, ariaLabel);
+        _setAriaLabel(element, ariaLabel);
 
         eWrapper.appendChild(element);
         ePopupParent.appendChild(eWrapper);
@@ -513,7 +513,7 @@ export class PopupService extends BeanStub {
 
             const key = event.key;
 
-            if (key === KeyCode.ESCAPE && !isStopPropagationForAgGrid(event)) {
+            if (key === KeyCode.ESCAPE && !_isStopPropagationForAgGrid(event)) {
                 removeListeners({ keyboardEvent: event });
             }
         };
@@ -706,7 +706,7 @@ export class PopupService extends BeanStub {
         for (let i = indexOfThisChild; i < this.popupList.length; i++) {
             const popup = this.popupList[i];
 
-            if (isElementInEventPath(popup.element, event)) { return true; }
+            if (_isElementInEventPath(popup.element, event)) { return true; }
         }
 
         // if the user did not write their own Custom Element to be rendered as popup
@@ -777,13 +777,13 @@ export class PopupService extends BeanStub {
 
             if (isPopupAlwaysOnTop) {
                 if (pos !== popupLen - 1) {
-                    last(alwaysOnTopList).insertAdjacentElement('afterend', eWrapper);
+                    _last(alwaysOnTopList).insertAdjacentElement('afterend', eWrapper);
                 }
             } else if (pos !== popupLen - onTopLength - 1) {
                 alwaysOnTopList[0].insertAdjacentElement('beforebegin', eWrapper);
             }
         } else if (pos !== popupLen - 1) {
-            last(popupList).insertAdjacentElement('afterend', eWrapper);
+            _last(popupList).insertAdjacentElement('afterend', eWrapper);
         }
 
         while (innerElsScrollMap.length) {

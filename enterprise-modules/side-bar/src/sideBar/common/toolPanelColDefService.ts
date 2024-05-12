@@ -1,5 +1,4 @@
 import {
-    _,
     AbstractColDef,
     Autowired,
     Bean,
@@ -9,7 +8,9 @@ import {
     Column,
     ColumnModel,
     ProvidedColumnGroup,
-    IProvidedColumn
+    IProvidedColumn,
+    _includes,
+    _last
 } from "@ag-grid-community/core";
 
 @Bean('toolPanelColDefService')
@@ -169,8 +170,8 @@ export class ToolPanelColDefService extends BeanStub {
     private addChildrenToGroup(tree: AbstractColDef, groupId: string, colDef: AbstractColDef): boolean {
         const subGroupIsSplit = (currentSubGroup: ColGroupDef, currentSubGroupToAdd: ColGroupDef) => {
             const existingChildIds = currentSubGroup.children.map(this.getId);
-            const childGroupAlreadyExists = _.includes(existingChildIds, this.getId(currentSubGroupToAdd));
-            const lastChild = _.last(currentSubGroup.children);
+            const childGroupAlreadyExists = _includes(existingChildIds, this.getId(currentSubGroupToAdd));
+            const lastChild = _last(currentSubGroup.children);
             const lastChildIsDifferent = lastChild && this.getId(lastChild) !== this.getId(currentSubGroupToAdd);
             return childGroupAlreadyExists && lastChildIsDifferent;
         };
@@ -188,7 +189,7 @@ export class ToolPanelColDefService extends BeanStub {
         if (currentGroup.groupId === groupId) {
             // add children that don't already exist to group
             const existingChildIds = currentGroup.children.map(this.getId);
-            const colDefAlreadyPresent = _.includes(existingChildIds, this.getId(groupToAdd));
+            const colDefAlreadyPresent = _includes(existingChildIds, this.getId(groupToAdd));
             if (!colDefAlreadyPresent) {
                 currentGroup.children.push(groupToAdd);
                 return true;

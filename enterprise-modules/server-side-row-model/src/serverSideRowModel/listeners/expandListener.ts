@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     BeanStub,
     StoreUpdatedEvent,
@@ -9,7 +8,9 @@ import {
     RowNode,
     Bean,
     Beans,
-    WithoutGridCommon
+    WithoutGridCommon,
+    _exists,
+    _missing
 } from "@ag-grid-community/core";
 import { ServerSideRowModel } from "../serverSideRowModel";
 import { StoreFactory } from "../stores/storeFactory";
@@ -35,11 +36,11 @@ export class ExpandListener extends BeanStub {
         if (rowNode.expanded) {
             if (rowNode.master) {
                 this.createDetailNode(rowNode);
-            } else if (_.missing(rowNode.childStore)) {
+            } else if (_missing(rowNode.childStore)) {
                 const storeParams = this.serverSideRowModel.getParams();
                 rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
             }
-        } else if (this.gos.get('purgeClosedRowNodes') && _.exists(rowNode.childStore)) {
+        } else if (this.gos.get('purgeClosedRowNodes') && _exists(rowNode.childStore)) {
             rowNode.childStore = this.destroyBean(rowNode.childStore)!;
         }
 
@@ -48,7 +49,7 @@ export class ExpandListener extends BeanStub {
     }
 
     private createDetailNode(masterNode: RowNode): RowNode {
-        if (_.exists(masterNode.detailNode)) { return masterNode.detailNode; }
+        if (_exists(masterNode.detailNode)) { return masterNode.detailNode; }
 
         const detailNode = new RowNode(this.beans);
 
@@ -56,7 +57,7 @@ export class ExpandListener extends BeanStub {
         detailNode.selectable = false;
         detailNode.parent = masterNode;
 
-        if (_.exists(masterNode.id)) {
+        if (_exists(masterNode.id)) {
             detailNode.id = 'detail_' + masterNode.id;
         }
 

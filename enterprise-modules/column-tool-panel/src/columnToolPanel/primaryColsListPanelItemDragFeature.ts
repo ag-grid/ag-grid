@@ -10,7 +10,6 @@ import {
     PostConstruct,
     VirtualList,
     VirtualListDragFeature,
-    _,
     VirtualListDragItem
 } from "@ag-grid-community/core";
 

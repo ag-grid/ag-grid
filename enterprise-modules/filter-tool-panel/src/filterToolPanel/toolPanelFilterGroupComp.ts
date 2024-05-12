@@ -1,5 +1,4 @@
 import {
-    _,
     AgGroupComponent,
     Autowired,
     Column,
@@ -14,7 +13,9 @@ import {
     PreConstruct,
     RefSelector,
     AgGroupComponentParams,
-    WithoutGridCommon
+    WithoutGridCommon,
+    _createIconNoSpan,
+    _clearElement
 } from "@ag-grid-community/core";
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";
 
@@ -162,7 +163,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private addInIcon(iconName: string): void {
-        const eIcon = _.createIconNoSpan(iconName, this.gos)!;
+        const eIcon = _createIconNoSpan(iconName, this.gos)!;
         if (eIcon) {
             eIcon.classList.add('ag-filter-toolpanel-group-instance-header-icon')
         }
@@ -251,7 +252,7 @@ export class ToolPanelFilterGroupComp extends Component {
 
     private destroyFilters() {
         this.childFilterComps = this.destroyBeans(this.childFilterComps);
-        _.clearElement(this.getGui());
+        _clearElement(this.getGui());
     }
 
     protected destroy() {

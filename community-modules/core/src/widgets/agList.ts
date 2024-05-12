@@ -1,9 +1,9 @@
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
 import { KeyCode } from '../constants/keyCode';
-import { setAriaPosInSet, setAriaRole, setAriaSelected, setAriaSetSize } from '../utils/aria';
+import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
 import { Events } from "../eventKeys";
-import { isVisible, removeFromParent } from "../utils/dom";
+import { _isVisible, _removeFromParent } from "../utils/dom";
 import { TooltipFeature } from "./tooltipFeature";
 
 export interface ListOption<TValue = string> {
@@ -124,7 +124,7 @@ export class AgList<TValue = string> extends Component {
         this.options = [];
         this.reset(true);
         this.itemEls.forEach(itemEl => {
-            removeFromParent(itemEl);
+            _removeFromParent(itemEl);
         });
         this.itemEls = [];
     }
@@ -132,8 +132,8 @@ export class AgList<TValue = string> extends Component {
     private updateIndices(): void {
         const options = this.getGui().querySelectorAll('.ag-list-item');
         options.forEach((option: HTMLElement, idx) => {
-            setAriaPosInSet(option, idx + 1);
-            setAriaSetSize(option, options.length);
+            _setAriaPosInSet(option, idx + 1);
+            _setAriaSetSize(option, options.length);
         });
     }
 
@@ -141,7 +141,7 @@ export class AgList<TValue = string> extends Component {
         const eDocument = this.gos.getDocument();
         const itemEl = eDocument.createElement('div');
 
-        setAriaRole(itemEl, 'option');
+        _setAriaRole(itemEl, 'option');
         itemEl.classList.add('ag-list-item', `ag-${this.cssIdentifier}-list-item`);
         const span = eDocument.createElement('span');
         itemEl.appendChild(span);
@@ -225,13 +225,13 @@ export class AgList<TValue = string> extends Component {
     }
 
     private highlightItem(el: HTMLElement): void {
-        if (!isVisible(el)) { return; }
+        if (!_isVisible(el)) { return; }
 
         this.clearHighlighted();
         this.highlightedEl = el;
 
         this.highlightedEl.classList.add(AgList.ACTIVE_CLASS);
-        setAriaSelected(this.highlightedEl, true);
+        _setAriaSelected(this.highlightedEl, true);
 
         const eGui = this.getGui();
 
@@ -248,10 +248,10 @@ export class AgList<TValue = string> extends Component {
     }
 
     private clearHighlighted(): void {
-        if (!this.highlightedEl || !isVisible(this.highlightedEl)) { return; }
+        if (!this.highlightedEl || !_isVisible(this.highlightedEl)) { return; }
 
         this.highlightedEl.classList.remove(AgList.ACTIVE_CLASS);
-        setAriaSelected(this.highlightedEl, false);
+        _setAriaSelected(this.highlightedEl, false);
 
         this.highlightedEl = null;
     }
