@@ -141,6 +141,16 @@ export default defineConfig({
                 },
             },
         },
+        optimizeDeps: {
+            // Prevent vite from importing in content/docs folder
+            exclude: [
+                'vue',
+                '@angular/common/http',
+                '@angular/forms',
+                '@angular/common',
+                '@angular/platform-browser'
+            ]
+        },
     },
     integrations: [
         react(),
