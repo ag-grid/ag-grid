@@ -44,7 +44,7 @@ import type {
     SectionProps,
 } from './types';
 
-interface InterfaceDocumentationProps {
+export interface InterfaceDocumentationProps {
     interfaceName: string;
     framework: Framework;
     overrides: Overrides;
@@ -57,8 +57,7 @@ interface InterfaceDocumentationProps {
     htmlLookup: Record<string, any>;
 }
 
-interface ApiDocumentationProps {
-    pageName: string;
+export interface ApiDocumentationProps {
     framework: Framework;
     sources: string[];
     section: string;
