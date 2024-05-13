@@ -30,7 +30,6 @@ import { WhiskersPanel } from "./whiskersPanel";
 import { SeriesItemsPanel } from "./seriesItemsPanel";
 import { TileSpacingPanel } from "./tileSpacingPanel";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
-import { ChartOptionsProxy, ChartOptionsService } from '../../../services/chartOptionsService';
 
 export class SeriesPanel extends Component {
 
@@ -44,12 +43,7 @@ export class SeriesPanel extends Component {
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    private readonly chartController: ChartController;
-    private readonly chartOptionsService: ChartOptionsService;
-    private readonly isExpandedOnInit: boolean;
-    
     private chartMenuUtils: ChartMenuParamsFactory;
-    private chartOptions: ChartOptionsProxy;
 
     private activePanels: Component[] = [];
     private seriesType: ChartSeriesType;
@@ -97,46 +91,39 @@ export class SeriesPanel extends Component {
         waterfall: ['tooltips', 'connectorLine', 'seriesItems'],
     }
 
-    constructor({
-        chartController,
-        chartOptionsService,
-        seriesType,
-        isExpandedOnInit = false
-    }: FormatPanelOptions) {
-
+    constructor(private readonly options: FormatPanelOptions) {
         super();
-
-        this.chartController = chartController;
-        this.chartOptionsService = chartOptionsService;
-        this.seriesType = seriesType || this.chartController.getChartSeriesType();
-        this.isExpandedOnInit = isExpandedOnInit;
+        this.seriesType = options.seriesType;
     }
 
     @PostConstruct
     private init() {
+        const { isExpandedOnInit: expanded, chartOptionsService, chartController, registerGroupComponent } = this.options;
         const seriesGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-top-level',
             direction: 'vertical',
             title: this.translate("series"),
-            expanded: this.isExpandedOnInit,
+            expanded,
             suppressEnabledCheckbox: true
         };
         this.setTemplate(SeriesPanel.TEMPLATE, {seriesGroup: seriesGroupParams});
 
+        registerGroupComponent(this.seriesGroup);
+
         this.chartMenuUtils = this.createManagedBean(new ChartMenuParamsFactory(
-            this.chartOptionsService.getSeriesOptionsProxy(() => this.seriesType)
+            chartOptionsService.getSeriesOptionsProxy(() => this.seriesType)
         ));
-        this.chartOptions = this.chartMenuUtils.getChartOptions();
-        
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED, this.refreshWidgets.bind(this));
+
+        this.addManagedListener(chartController, ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED, this.refreshWidgets.bind(this));
 
         this.refreshWidgets();
     }
 
     private refreshWidgets(): void {
+        const { chartController } = this.options;
         this.destroyActivePanels();
 
-        const chart = this.chartController.getChartProxy().getChart();
+        const chart = chartController.getChartProxy().getChart();
         chart.waitForUpdate().then(() => {
             const componentWasRemoved = !this.isAlive();
             if (componentWasRemoved) {
@@ -144,7 +131,7 @@ export class SeriesPanel extends Component {
                 // If this is the case we want to bail out to avoid operating on stale UI components.
                 return;
             }
-            if (this.chartController.isComboChart()) {
+            if (chartController.isComboChart()) {
                 this.updateSeriesType();
                 this.initSeriesSelect();
             }
@@ -314,14 +301,15 @@ export class SeriesPanel extends Component {
     }
 
     private initMarkers() {
-        const markersPanelComp = this.createBean(new MarkersPanel(this.chartOptionsService, this.chartMenuUtils));
+        const markersPanelComp = this.createBean(new MarkersPanel(this.options.chartOptionsService, this.chartMenuUtils));
         this.addWidget(markersPanelComp);
     }
 
     private initBins() {
         const params = this.chartMenuUtils.getDefaultSliderParams('binCount', 'histogramBinCount', 20);
+        const chartOptions = this.chartMenuUtils.getChartOptions();
         // this needs fixing
-        const value = (this.chartOptions.getValue<any>("bins") ?? this.chartOptions.getValue<any>("calculatedBins", true)).length;
+        const value = (chartOptions.getValue<any>("bins") ?? chartOptions.getValue<any>("calculatedBins", true)).length;
         params.value = `${value}`;
         params.maxValue = Math.max(value, 20);
         const seriesBinCountSlider = this.createBean(new AgSlider(params));
@@ -355,14 +343,15 @@ export class SeriesPanel extends Component {
     }
 
     private initGroupType(): void {
+        const { chartController } = this.options;
         const groupTypeSelect = this.createBean(new AgSelect({
             label: this.chartTranslationService.translate('seriesGroupType'),
             options: ChartMappings.SERIES_GROUP_TYPES.map(value => ({
                 value,
                 text: this.chartTranslationService.translate(`${value}SeriesGroupType`)
             })),
-            value: this.chartController.getSeriesGroupType(),
-            onValueChange: value => this.chartController.setSeriesGroupType(value)
+            value: chartController.getSeriesGroupType(),
+            onValueChange: value => chartController.setSeriesGroupType(value)
         }));
         this.addWidget(groupTypeSelect);
     }
@@ -388,7 +377,7 @@ export class SeriesPanel extends Component {
     }
 
     private getActiveSeriesTypes(): ChartSeriesType[] {
-        return this.chartController.getActiveSeriesChartTypes().map(s => getSeriesType(s.chartType));
+        return this.options.chartController.getActiveSeriesChartTypes().map(s => getSeriesType(s.chartType));
     }
 
     private translate(key: ChartTranslationKey) {

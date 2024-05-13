@@ -1,4 +1,4 @@
-import { AgGroupComponentParams, Autowired, Component, PostConstruct } from "@ag-grid-community/core";
+import { AgGroupComponent, AgGroupComponentParams, Autowired, Component, PostConstruct, RefSelector } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { isCartesian, isPolar } from "../../../utils/seriesTypeMapper";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
@@ -13,6 +13,7 @@ export class TitlesPanel extends Component {
         </div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    @RefSelector('titleGroup') private readonly titleGroup: AgGroupComponent;
 
     constructor(private readonly options: FormatPanelOptions) {
         super();
@@ -20,7 +21,14 @@ export class TitlesPanel extends Component {
 
     @PostConstruct
     private init() {
-        const { chartMenuParamsFactory, chartAxisMenuParamsFactory, chartOptionsService, seriesType, isExpandedOnInit: expanded = false } = this.options;
+        const {
+            chartMenuParamsFactory,
+            chartAxisMenuParamsFactory,
+            chartOptionsService,
+            seriesType,
+            isExpandedOnInit: expanded = false,
+            registerGroupComponent
+        } = this.options;
         const axisTitlePanels: TitlePanel[] = [];
         if (isCartesian(seriesType)) {
             const createAxisParamsFactory = (axisType: 'xAxis' | 'yAxis') => this.createManagedBean(
@@ -44,5 +52,6 @@ export class TitlesPanel extends Component {
             ]
         }
         this.setTemplate(TitlesPanel.TEMPLATE, { titleGroup: titleGroupParams });
+        registerGroupComponent(this.titleGroup);
     }
 }

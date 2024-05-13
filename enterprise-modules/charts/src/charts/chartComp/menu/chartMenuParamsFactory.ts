@@ -140,22 +140,6 @@ export class ChartMenuParamsFactory extends BeanStub {
         return params;
     }
 
-
-    public getDefaultLegendParams(expression: string): AgSelectParams {
-        return this.addValueParams(
-            expression,
-            {
-                label: this.chartTranslationService.translate('position'),
-                labelWidth: "flex",
-                inputWidth: 'flex',
-                options: ['top', 'right', 'bottom', 'left'].map((position: ChartTranslationKey) => ({
-                    value: position,
-                    text: this.chartTranslationService.translate(position)
-                })),
-            }
-        );
-    }
-
     public getDefaultFontPanelParams(
         expression: string,
         labelKey: ChartTranslationKey
@@ -166,7 +150,7 @@ export class ChartMenuParamsFactory extends BeanStub {
             {
                 name: this.chartTranslationService.translate(labelKey),
                 suppressEnabledCheckbox: false,
-                chartMenuUtils: this,
+                chartMenuParamsFactory: this,
                 keyMapper
             } as any
         );

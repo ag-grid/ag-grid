@@ -242,6 +242,9 @@ export class ChartTranslationService extends BeanStub {
         groupedSeriesGroupType: 'Grouped',
         stackedSeriesGroupType: 'Stacked',
         normalizedSeriesGroupType: '100% Stacked',
+
+        // shared with core
+        enabled: 'Enabled',
     };
 
     public translate(toTranslate: ChartTranslationKey): string {

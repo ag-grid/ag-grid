@@ -38,7 +38,8 @@ export class ShadowPanel extends Component {
                 direction: 'vertical',
                 suppressOpenCloseIcons: true,
                 title: this.chartTranslationService.translate("shadow"),
-                suppressEnabledCheckbox: false,
+                suppressEnabledCheckbox: true,
+                useToggle: true
             }
         );
         const shadowColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(`${propertyNamespace}.color`);
