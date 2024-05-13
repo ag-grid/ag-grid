@@ -19,6 +19,6 @@ module.exports = {
         'ts',
         'tsx',
     ],
-    testEnvironment: 'jsdom',
+    testEnvironment: './jest.jsdom-env.cjs',
     preset: 'ts-jest',
 }
