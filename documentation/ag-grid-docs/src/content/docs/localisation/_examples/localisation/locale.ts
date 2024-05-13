@@ -452,6 +452,7 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     groupedSeriesGroupType: 'Grouped',
     stackedSeriesGroupType: 'Stacked',
     normalizedSeriesGroupType: '100% Stacked',
+    legendEnabled: 'Enabled',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Level ${variable}. Press ENTER to edit.',

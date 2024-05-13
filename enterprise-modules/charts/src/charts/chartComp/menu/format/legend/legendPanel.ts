@@ -56,7 +56,7 @@ export class LegendPanel extends Component {
                 cssIdentifier: 'charts-format-sub-level',
                 direction: 'vertical',
                 suppressOpenCloseIcons: true,
-                title: this.chartTranslationService.translate('enabled'),
+                title: this.chartTranslationService.translate('legendEnabled'),
                 suppressEnabledCheckbox: true,
                 useToggle: true,
                 items: [
