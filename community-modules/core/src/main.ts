@@ -9,10 +9,16 @@ globalObj.Node = typeof Node === 'undefined' ? {} : Node;
 globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
 // features
-export { useQuickFilter } from "./filter/quickFilterService";
 export { useFilterManager } from "./filter/filterManager";
+export { useDateFilter } from "./filter/provided/date/dateFilter";
+export { useNumberFilter } from "./filter/provided/number/numberFilter";
+export { useNumberFloatingFilter } from "./filter/provided/number/numberFloatingFilter";
+export { useTextFilter } from "./filter/provided/text/textFilter";
+export { useQuickFilter } from "./filter/quickFilterService";
 export { useFilters } from "./filter/filtersFeature";
 export { useValidations } from "./validation/validationService";
+export { useCoreModule , useCoreModuleDefaults} from "./gridCoreModule";
+
 
 
 // columns
@@ -104,7 +110,7 @@ export {
 export { RowDropZoneParams, RowDropZoneEvents } from "./gridBodyComp/rowDragFeature";
 export { DragService, DragListenerParams } from "./dragAndDrop/dragService";
 export { IRowDragItem } from "./rendering/row/rowDragComp";
-export { VirtualListDragFeature, VirtualListDragItem, VirtualListDragParams } from "./dragAndDrop/virtualListDragFeature";
+//export { VirtualListDragFeature, VirtualListDragItem, VirtualListDragParams } from "./dragAndDrop/virtualListDragFeature";
 
 // entities
 export { Column, ColumnPinnedType } from "./entities/column";
@@ -298,7 +304,6 @@ export { VirtualList, VirtualListModel } from "./widgets/virtualList";
 
 export { AgAbstractLabel, AgLabelParams } from "./widgets/agAbstractLabel";
 export { AgPickerField, AgPickerFieldParams } from "./widgets/agPickerField";
-export { AgAutocomplete, AutocompleteOptionSelectedEvent, AutocompleteValidChangedEvent, AutocompleteValueChangedEvent, AutocompleteValueConfirmedEvent } from "./widgets/agAutocomplete";
 export { AutocompleteEntry, AutocompleteListParams } from "./widgets/autocompleteParams";
 export { PillDragComp } from "./widgets/pillDragComp";
 export { PillDropZonePanel, PillDropZonePanelParams } from "./widgets/pillDropZonePanel";
@@ -341,7 +346,7 @@ export { AlignedGridsService } from "./alignedGridsService";
 export { KeyCode } from "./constants/keyCode";
 export { VerticalDirection, HorizontalDirection } from "./constants/direction";
 export { Grid, GridParams, Params, GridCoreCreator, createGrid, provideGlobalGridOptions } from "./grid";
-export { GridApi, DetailGridInfo, StartEditingCellParams, GetCellValueParams } from "./gridApi";
+export { GridApi, getColumnDefs, DetailGridInfo, StartEditingCellParams, GetCellValueParams } from "./gridApi";
 export { Events } from "./eventKeys";
 export { FocusService } from "./focusService";
 export { GridOptionsService, PropertyChangedEvent } from "./gridOptionsService";
@@ -574,6 +579,7 @@ export { _serialiseDate, _parseDateTimeFromString } from './utils/date';
 export { _getAbsoluteHeight, _getAbsoluteWidth, _setDisplayed, _clearElement, _removeFromParent, _radioCssClass, _loadTemplate, _isVisible, _setFixedWidth, _setDisabled, _setVisible} from './utils/dom';
 export { _getCtrlForEventTarget, _stopPropagationForAgGrid, _isStopPropagationForAgGrid } from './utils/event';
 export { _warnOnce, _errorOnce, _debounce, _compose, _doOnce } from './utils/function';
+export { _fuzzySuggestions} from './utils/fuzzyMatch';
 export { _createIcon, _createIconNoSpan} from './utils/icon';
 export { _exists, _missing, _missingOrEmpty, _jsonEquals, _toStringOrNull, _values, _makeNull, _defaultComparator } from './utils/generic';
 export { NumberSequence } from './utils/numberSequence';
