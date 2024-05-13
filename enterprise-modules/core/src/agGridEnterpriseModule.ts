@@ -4,12 +4,14 @@ import { WatermarkComp } from "./license/watermark";
 
 export { WatermarkComp } from "./license/watermark";
 import { VERSION } from "./version";
+import { AgAutocomplete } from "./widgets/agAutocomplete";
 
 export const EnterpriseCoreModule: Module = {
     version: VERSION,
     moduleName: ModuleNames.EnterpriseCoreModule,
     beans: [LicenseManager],
     agStackComponents: [
-        { componentName: 'AgWatermark', componentClass: WatermarkComp }
+        { componentName: 'AgWatermark', componentClass: WatermarkComp },
+        { componentName: 'AgAutocomplete', componentClass: AgAutocomplete }
     ]
 };

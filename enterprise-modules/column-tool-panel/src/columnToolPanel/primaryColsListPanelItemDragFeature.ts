@@ -9,10 +9,11 @@ import {
     ProvidedColumnGroup,
     PostConstruct,
     VirtualList,
+} from "@ag-grid-community/core";
+import {
     VirtualListDragFeature,
     VirtualListDragItem
-} from "@ag-grid-community/core";
-
+} from "@ag-grid-enterprise/core";
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
 import { ToolPanelColumnComp } from "./toolPanelColumnComp";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";

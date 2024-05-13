@@ -4,9 +4,11 @@ import {
     DragSourceType,
     PostConstruct,
     VirtualList,
+} from "@ag-grid-community/core";
+import {
     VirtualListDragFeature,
     VirtualListDragItem
-} from "@ag-grid-community/core";
+} from "@ag-grid-enterprise/core";
 import { AdvancedFilterBuilderComp } from "./advancedFilterBuilderComp";
 import { AdvancedFilterBuilderItemComp } from "./advancedFilterBuilderItemComp";
 import { AdvancedFilterBuilderItem } from "./iAdvancedFilterBuilder";

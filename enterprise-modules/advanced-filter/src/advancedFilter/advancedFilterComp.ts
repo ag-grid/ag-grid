@@ -1,11 +1,6 @@
 import {
-    AgAutocomplete,
     AutocompleteEntry,
     AutocompleteListParams,
-    AutocompleteOptionSelectedEvent,
-    AutocompleteValidChangedEvent,
-    AutocompleteValueChangedEvent,
-    AutocompleteValueConfirmedEvent,
     Autowired,
     Component,
     FilterManager,
@@ -22,6 +17,7 @@ import { AdvancedFilterExpressionService } from './advancedFilterExpressionServi
 import { AdvancedFilterService } from './advancedFilterService';
 import { FilterExpressionParser } from './filterExpressionParser';
 import { AutocompleteUpdate } from './filterExpressionUtils';
+import { AgAutocomplete, AutocompleteValueChangedEvent, AutocompleteValueConfirmedEvent, AutocompleteOptionSelectedEvent, AutocompleteValidChangedEvent } from '@ag-grid-enterprise/core';
 
 export class AdvancedFilterComp extends Component {
     @RefSelector('eAutocomplete') private eAutocomplete: AgAutocomplete;

@@ -10,7 +10,6 @@ import {
     RefSelector,
     TooltipFeature,
     VirtualList,
-    VirtualListDragItem,
     _exists,
     _setDisabled,
 } from "@ag-grid-community/core";
@@ -26,6 +25,7 @@ import {
     AdvancedFilterBuilderMoveEvent,
     AdvancedFilterBuilderRemoveEvent
 } from "./iAdvancedFilterBuilder";
+import { VirtualListDragItem } from "@ag-grid-enterprise/core";
 
 export class AdvancedFilterBuilderComp extends Component {
     @RefSelector('eList') private eList: HTMLElement;

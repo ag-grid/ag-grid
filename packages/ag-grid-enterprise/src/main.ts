@@ -229,7 +229,6 @@ export {ValueService} from "@ag-grid-community/core";
 export {VanillaFrameworkOverrides} from "@ag-grid-community/core";
 export {VerticalDirection} from "@ag-grid-community/core";
 export {VirtualList} from "@ag-grid-community/core";
-export {VirtualListDragFeature} from "@ag-grid-community/core";
 export {_areEqual} from "@ag-grid-community/core";
 export {_capitalise} from "@ag-grid-community/core";
 export {_clearElement} from "@ag-grid-community/core";
@@ -301,11 +300,19 @@ export {_utf8_encode} from "@ag-grid-community/core";
 export {_values} from "@ag-grid-community/core";
 export {_warnOnce} from "@ag-grid-community/core";
 export {createGrid} from "@ag-grid-community/core";
+export {getColumnDefs} from "@ag-grid-community/core";
 export {getRowContainerTypeForName} from "@ag-grid-community/core";
 export {provideGlobalGridOptions} from "@ag-grid-community/core";
+export {useCoreModule} from "@ag-grid-community/core";
+export {useCoreModuleDefaults} from "@ag-grid-community/core";
+export {useDateFilter} from "@ag-grid-community/core";
 export {useFilterManager} from "@ag-grid-community/core";
 export {useFilters} from "@ag-grid-community/core";
+export {useNumberFilter} from "@ag-grid-community/core";
+export {useNumberFloatingFilter} from "@ag-grid-community/core";
 export {useQuickFilter} from "@ag-grid-community/core";
+export {useTextFilter} from "@ag-grid-community/core";
+export {useValidations} from "@ag-grid-community/core";
 /** AUTO_GENERATED_END **/
 
 export * from "@ag-grid-enterprise/core";

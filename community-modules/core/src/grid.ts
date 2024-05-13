@@ -86,7 +86,7 @@ import { LocaleService } from "./localeService";
 import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
 import { DataTypeService } from "./columns/dataTypeService";
 import { AgInputDateField } from "./widgets/agInputDateField";
-import { AgAutocomplete } from "./widgets/agAutocomplete";
+//import { AgAutocomplete } from "./widgets/agAutocomplete";
 import { _warnOnce, _errorOnce } from "./utils/function";
 import { _mergeDeep } from "./utils/object";
 import { SyncService } from "./syncService";
@@ -374,7 +374,7 @@ export class GridCoreCreator {
             { componentName: 'AgRowContainer', componentClass: RowContainerComp },
             { componentName: 'AgFakeHorizontalScroll', componentClass: FakeHScrollComp },
             { componentName: 'AgFakeVerticalScroll', componentClass: FakeVScrollComp },
-            { componentName: 'AgAutocomplete', componentClass: AgAutocomplete },
+           // { componentName: 'AgAutocomplete', componentClass: AgAutocomplete },
         ];
 
         const moduleAgStackComps = this.extractModuleEntity(registeredModules,
