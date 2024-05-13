@@ -47,7 +47,8 @@ export class MarkersPanel extends Component {
                 cssIdentifier: 'charts-format-sub-level',
                 direction: 'vertical',
                 title: this.chartTranslationService.translate("markers"),
-                suppressEnabledCheckbox: shouldHideEnabledCheckbox,
+                suppressEnabledCheckbox: true,
+                useToggle: !shouldHideEnabledCheckbox,
                 suppressOpenCloseIcons: true
             }
         );

@@ -118,10 +118,19 @@ components: {
 {% if isFramework("vue") %}
 {% note %}
 All of the above works if you're going to register components by Name (see below). If you wish to register components
-by direct reference then you will need to wrap your component with `Vue.extend(...your component...)` (for Vue 2), or `defineComponent(...your component...)`
-(for Vue 3).
+by direct reference then you will need to wrap your component with `defineComponent(...your component...)`.
 
 We highly recommend registration by name for the flexibility it provides - all of our examples use registration by name.
 
+{% /note %}
+{% /if %}
+
+{% if isFramework("vue") %}
+{% note %}
+Although the Composition API is supported we strongly encourage the use of the Options API for components that require
+callbacks (such as Cell Editors).
+
+Full support for Composition API will be added soon but for now we do recommend the use of the Options API when writing
+Custom Components.
 {% /note %}
 {% /if %}

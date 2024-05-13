@@ -116,8 +116,7 @@ This approach is supported but not recommend and will be removed in a future rel
 {% /if %}
 
 {% if isFramework("vue") %}
-When registering components within the Grid by direct reference the target components _must_ be wrapped in `Vue.extend(...)` (for Vue 2), or
-`defineComponent(...)` (for Vue 3):
+When registering components within the Grid by direct reference the target components _must_ be wrapped in `defineComponent(...)`:
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -132,8 +131,7 @@ When registering components within the Grid by direct reference the target compo
 import Vue from "vue";
 import {AgGridVue} from "ag-grid-vue3";
 
-// component wrapped in Vue.extend for direct reference
-const CubeComponent = Vue.extend({
+const CubeComponent = defineComponent({
   template: '<span>{{ valueCubed() }}</span>',
   methods: {
       valueCubed() {

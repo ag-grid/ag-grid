@@ -24,6 +24,7 @@ export interface AgGroupComponentParams {
     alignItems?: Align;
     direction?: Direction;
     onEnableChange?: (enabled: boolean) => void;
+    onExpandedChange?: (expanded: boolean) => void;
     expanded?: boolean;
     useToggle?: boolean;
 }
@@ -117,7 +118,7 @@ export class AgGroupComponent extends Component {
 
         this.setAlignItems(this.alignItems);
 
-        const { onEnableChange, suppressOpenCloseIcons } = this.params;
+        const { onEnableChange, onExpandedChange, suppressOpenCloseIcons } = this.params;
 
         this.hideEnabledCheckbox(this.suppressEnabledCheckbox);
         this.hideOpenCloseIcons(suppressOpenCloseIcons ?? false);
@@ -132,6 +133,10 @@ export class AgGroupComponent extends Component {
 
         if (onEnableChange != null) {
             this.onEnableChange(onEnableChange);
+        }
+
+        if (onExpandedChange != null) {
+            this.onExpandedChange(onExpandedChange);
         }
     }
 
@@ -157,8 +162,7 @@ export class AgGroupComponent extends Component {
         return this;
     }
 
-    public toggleGroupExpand(expanded?: boolean): this {
-        let silent = false;
+    public toggleGroupExpand(expanded?: boolean, silent?: boolean): this {
         if (this.eTitleBar?.isSuppressCollapse() && !this.useToggle) {
             expanded = true;
             silent = true;
@@ -263,6 +267,13 @@ export class AgGroupComponent extends Component {
 
     public onEnableChange(callbackFn: (enabled: boolean) => void): this {
         this.addManagedListener(this, AgGroupComponent.EVENT_ENABLE_CHANGE, (event: EnableChangeEvent) => callbackFn(event.enabled));
+
+        return this;
+    }
+
+    public onExpandedChange(callbackFn: (expanded: boolean) => void): this {
+        this.addManagedListener(this, AgGroupComponent.EVENT_EXPANDED, () => callbackFn(true));
+        this.addManagedListener(this, AgGroupComponent.EVENT_COLLAPSED, () => callbackFn(false));
 
         return this;
     }

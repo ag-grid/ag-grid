@@ -48,7 +48,7 @@ export class TitlePanel extends Component {
             name: this.chartTranslationService.translate(this.name),
             enabled: hasTitle,
             suppressEnabledCheckbox: false,
-            chartMenuUtils: this.chartMenuUtils,
+            chartMenuParamsFactory: this.chartMenuUtils,
             keyMapper: key => `${this.key}.${key}`,
             onEnableChange: (enabled) => this.onEnableChange(enabled)
         };
