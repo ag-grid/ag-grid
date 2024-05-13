@@ -1,4 +1,4 @@
-import { Module, ModuleNames } from "@ag-grid-community/core";
+import { AgRichSelect, Module, ModuleNames } from "@ag-grid-community/core";
 import { EnterpriseCoreModule } from "@ag-grid-enterprise/core";
 import { AdvancedFilterComp } from "./advancedFilter/advancedFilterComp";
 import { AdvancedFilterExpressionService } from "./advancedFilter/advancedFilterExpressionService";
@@ -10,7 +10,8 @@ export const AdvancedFilterModule: Module = {
     moduleName: ModuleNames.AdvancedFilterModule,
     beans: [AdvancedFilterService, AdvancedFilterExpressionService],
     agStackComponents: [
-        { componentName: 'agAdvancedFilter', componentClass: AdvancedFilterComp }
+        { componentName: 'agAdvancedFilter', componentClass: AdvancedFilterComp },
+        { componentName: 'AgRichSelect', componentClass: AgRichSelect },
     ],
     dependantModules: [
         EnterpriseCoreModule

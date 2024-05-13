@@ -12,6 +12,7 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 export { useQuickFilter } from "./filter/quickFilterService";
 export { useFilterManager } from "./filter/filterManager";
 export { useFilters } from "./filter/filtersFeature";
+export { useValidations } from "./validation/validationService";
 
 
 // columns
@@ -120,12 +121,12 @@ export { IMultiFilter, IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, 
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 
 export { ProvidedFilter, IProvidedFilter, IProvidedFilterParams, ProvidedFilterParams } from "./filter/provided/providedFilter";
-export { ISimpleFilter, SimpleFilter, ISimpleFilterParams, SimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel, JoinOperator, IFilterPlaceholderFunctionParams, FilterPlaceholderFunction } from "./filter/provided/simpleFilter";
-export { ScalarFilter, IScalarFilterParams, ScalarFilterParams } from "./filter/provided/scalarFilter";
+export { ISimpleFilter, ISimpleFilterParams, SimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel, JoinOperator, IFilterPlaceholderFunctionParams, FilterPlaceholderFunction } from "./filter/provided/simpleFilter";
+export { IScalarFilterParams, ScalarFilterParams } from "./filter/provided/scalarFilter";
 
-export { NumberFilter, INumberFilterParams, NumberFilterParams, NumberFilterModel } from "./filter/provided/number/numberFilter";
-export { TextFilter, ITextFilterParams, TextFilterParams, TextFilterModel, TextFormatter, TextMatcherParams, TextMatcher } from "./filter/provided/text/textFilter";
-export { DateFilter, IDateFilterParams, DateFilterParams, DateFilterModel } from "./filter/provided/date/dateFilter";
+export { INumberFilterParams, NumberFilterParams, NumberFilterModel } from "./filter/provided/number/numberFilter";
+export { TEXT_FILTER_DEFAULT_FORMATTER, ITextFilterParams, TextFilterParams, TextFilterModel, TextFormatter, TextMatcherParams, TextMatcher } from "./filter/provided/text/textFilter";
+export { IDateFilterParams, DateFilterParams, DateFilterModel } from "./filter/provided/date/dateFilter";
 
 export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange, IFloatingFilterParent, IFloatingFilterParentCallback, BaseFloatingFilter } from "./filter/floating/floatingFilter";
 export { TextFloatingFilter, ITextFloatingFilterParams } from './filter/provided/text/textFloatingFilter';

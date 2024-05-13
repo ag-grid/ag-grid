@@ -40,34 +40,34 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     protected evaluateNullValue(filterType?: ISimpleFilterModelType | null) {
         switch (filterType) {
-            case ScalarFilter.EQUALS:
-            case ScalarFilter.NOT_EQUAL:
+            case 'equals':
+            case 'notEqual':
                 if (this.scalarFilterParams.includeBlanksInEquals) {
                     return true;
                 }
                 break;
 
-            case ScalarFilter.GREATER_THAN:
-            case ScalarFilter.GREATER_THAN_OR_EQUAL:
+            case 'greaterThan':
+            case 'greaterThanOrEqual':
                 if (this.scalarFilterParams.includeBlanksInGreaterThan) {
                     return true;
                 }
                 break;
 
-            case ScalarFilter.LESS_THAN:
-            case ScalarFilter.LESS_THAN_OR_EQUAL:
+            case 'lessThan':
+            case 'lessThanOrEqual':
                 if (this.scalarFilterParams.includeBlanksInLessThan) {
                     return true;
                 }
                 break;
-            case ScalarFilter.IN_RANGE:
+            case 'inRange':
                 if (this.scalarFilterParams.includeBlanksInRange) {
                     return true;
                 }
                 break;
-            case ScalarFilter.BLANK:
+            case 'blank':
                 return true;
-            case ScalarFilter.NOT_BLANK:
+            case 'notBlank':
                 return false;
         }
 
@@ -79,25 +79,25 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
         const compareResult = values[0] != null ? comparator(values[0]!, cellValue) : 0;
 
         switch (filterModel.type) {
-            case ScalarFilter.EQUALS:
+            case 'equals':
                 return compareResult === 0;
 
-            case ScalarFilter.NOT_EQUAL:
+            case 'notEqual':
                 return compareResult !== 0;
 
-            case ScalarFilter.GREATER_THAN:
+            case 'greaterThan':
                 return compareResult > 0;
 
-            case ScalarFilter.GREATER_THAN_OR_EQUAL:
+            case 'greaterThanOrEqual':
                 return compareResult >= 0;
 
-            case ScalarFilter.LESS_THAN:
+            case 'lessThan':
                 return compareResult < 0;
 
-            case ScalarFilter.LESS_THAN_OR_EQUAL:
+            case 'lessThanOrEqual':
                 return compareResult <= 0;
 
-            case ScalarFilter.IN_RANGE: {
+            case 'inRange': {
                 const compareToResult = comparator(values[1]!, cellValue);
 
                 return this.scalarFilterParams.inRangeInclusive ?
@@ -105,10 +105,10 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
                     compareResult > 0 && compareToResult < 0;
             }
 
-            case ScalarFilter.BLANK:
+            case 'blank':
                 return this.isBlank(cellValue);
 
-            case ScalarFilter.NOT_BLANK:
+            case 'notBlank':
                 return !this.isBlank(cellValue);
 
             default:

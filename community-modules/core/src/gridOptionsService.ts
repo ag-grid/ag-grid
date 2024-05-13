@@ -1,5 +1,5 @@
 import { ComponentUtil } from "./components/componentUtil";
-import { Autowired, Bean, PostConstruct, PreDestroy } from "./context/context";
+import { Autowired, Bean, Optional, PostConstruct, PreDestroy } from "./context/context";
 import { DomLayoutType, GridOptions } from "./entities/gridOptions";
 import { GetGroupAggFilteringParams, GetGroupIncludeFooterParams, RowHeightParams } from "./interfaces/iCallbackParams";
 import { Environment } from "./environment";
@@ -75,7 +75,7 @@ export class GridOptionsService {
     @Autowired('environment') private readonly environment: Environment;
     @Autowired('frameworkOverrides') frameworkOverrides: IFrameworkOverrides;
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
-    @Autowired('validationService') private validationService: ValidationService;
+    @Optional('validationService') private validationService?: ValidationService;
 
     private destroyed = false;
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
@@ -256,7 +256,7 @@ export class GridOptionsService {
             }
         });
 
-        this.validationService.processGridOptions(this.gridOptions);
+        this.validationService?.processGridOptions(this.gridOptions);
 
         // changeSet should just include the properties that have changed.
         changeSet.properties = events.map(event => event.type);

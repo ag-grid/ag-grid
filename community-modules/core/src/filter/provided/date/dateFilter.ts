@@ -9,6 +9,7 @@ import { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
 import { LocaleService } from '../../../localeService';
 import { OptionsFactory } from '../optionsFactory';
 import { FILTER_LOCALE_TEXT } from '../../filterLocaleText';
+import { UserComponentRegistry } from '@ag-grid-community/core';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
@@ -49,7 +50,7 @@ export interface IDateFilterParams extends IScalarFilterParams {
      */
     browserDatePicker?: boolean;
     /**
-     * This is the minimum year that may be entered in a date field for the value to be considered valid. 
+     * This is the minimum year that may be entered in a date field for the value to be considered valid.
      * @default 1000
      * */
     minValidYear?: number;
@@ -72,7 +73,7 @@ export interface IDateFilterParams extends IScalarFilterParams {
      *
      * @default YYYY-MM-DD
      */
-     inRangeFloatingFilterDateFormat?: string;
+    inRangeFloatingFilterDateFormat?: string;
 }
 
 export interface IDateComparatorFunc {
@@ -94,7 +95,7 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter {
     protected conditionToString(condition: DateFilterModel, options?: IFilterOptionDef): string {
         const { type } = condition;
         const { numberOfInputs } = options || {};
-        const isRange = type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
+        const isRange = type == 'inRange' || numberOfInputs === 2;
 
         const dateFrom = _parseDateTimeFromString(condition.dateFrom);
         const dateTo = _parseDateTimeFromString(condition.dateTo);
@@ -114,299 +115,329 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter {
         return `${type}`;
     }
 
-    public updateParams(params: { dateFilterParams: DateFilterParams, optionsFactory: OptionsFactory }): void {
+    public updateParams(params: { dateFilterParams: DateFilterParams; optionsFactory: OptionsFactory }): void {
         super.updateParams(params);
         this.dateFilterParams = params.dateFilterParams;
     }
 }
 
-export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrapper> {
-    public static DEFAULT_FILTER_OPTIONS = [
-        ScalarFilter.EQUALS,
-        ScalarFilter.NOT_EQUAL,
-        ScalarFilter.LESS_THAN,
-        ScalarFilter.GREATER_THAN,
-        ScalarFilter.IN_RANGE,
-        ScalarFilter.BLANK,
-        ScalarFilter.NOT_BLANK,
-    ];
+export const  DATE_DEFAULT_FILTER_OPTIONS = [
+    'equals',
+    'notEqual',
+    'lessThan',
+    'greaterThanDate',
+    'inRange',
+    'blank',
+    'notBlank',
+];
 
-    private readonly eConditionPanelsFrom: HTMLElement[] = [];
-    private readonly eConditionPanelsTo: HTMLElement[] = [];
+export interface DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrapper> {}
+export function useDateFilter() {
+    class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrapper> {
 
-    private readonly dateConditionFromComps: DateCompWrapper[] = [];
-    private readonly dateConditionToComps: DateCompWrapper[] = [];
 
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
+        private readonly eConditionPanelsFrom: HTMLElement[] = [];
+        private readonly eConditionPanelsTo: HTMLElement[] = [];
 
-    private dateFilterParams: DateFilterParams;
-    private minValidYear: number = DEFAULT_MIN_YEAR;
-    private maxValidYear: number = DEFAULT_MAX_YEAR;
-    private minValidDate: Date | null = null;
-    private maxValidDate: Date | null = null;
-    private filterModelFormatter: DateFilterModelFormatter;
+        private readonly dateConditionFromComps: DateCompWrapper[] = [];
+        private readonly dateConditionToComps: DateCompWrapper[] = [];
 
-    constructor() {
-        super('dateFilter');
-    }
+        @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
-    public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
-        super.afterGuiAttached(params);
+        private dateFilterParams: DateFilterParams;
+        private minValidYear: number = DEFAULT_MIN_YEAR;
+        private maxValidYear: number = DEFAULT_MAX_YEAR;
+        private minValidDate: Date | null = null;
+        private maxValidDate: Date | null = null;
+        private filterModelFormatter: DateFilterModelFormatter;
 
-        this.dateConditionFromComps[0].afterGuiAttached(params);
-    }
+        constructor() {
+            super('dateFilter');
+        }
 
-    protected mapValuesFromModel(filterModel: DateFilterModel | null): Tuple<Date> {
-        // unlike the other filters, we do two things here:
-        // 1) allow for different attribute names (same as done for other filters) (eg the 'from' and 'to'
-        //    are in different locations in Date and Number filter models)
-        // 2) convert the type (because Date filter uses Dates, however model is 'string')
-        //
-        // NOTE: The conversion of string to date also removes the timezone - i.e. when user picks
-        //       a date from the UI, it will have timezone info in it. This is lost when creating
-        //       the model. When we recreate the date again here, it's without a timezone.
-        const { dateFrom, dateTo, type } = filterModel || {};
-        return [
-            dateFrom && _parseDateTimeFromString(dateFrom) || null,
-            dateTo && _parseDateTimeFromString(dateTo) || null,
-        ].slice(0, this.getNumberOfInputs(type));
-    }
+        public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+            super.afterGuiAttached(params);
 
-    protected comparator(): Comparator<Date> {
-        return this.dateFilterParams.comparator ? this.dateFilterParams.comparator : this.defaultComparator.bind(this);
-    }
+            this.dateConditionFromComps[0].afterGuiAttached(params);
+        }
 
-    private defaultComparator(filterDate: Date, cellValue: any): number {
-        // The default comparator assumes that the cellValue is a date
-        const cellAsDate = cellValue as Date;
+        protected mapValuesFromModel(filterModel: DateFilterModel | null): Tuple<Date> {
+            // unlike the other filters, we do two things here:
+            // 1) allow for different attribute names (same as done for other filters) (eg the 'from' and 'to'
+            //    are in different locations in Date and Number filter models)
+            // 2) convert the type (because Date filter uses Dates, however model is 'string')
+            //
+            // NOTE: The conversion of string to date also removes the timezone - i.e. when user picks
+            //       a date from the UI, it will have timezone info in it. This is lost when creating
+            //       the model. When we recreate the date again here, it's without a timezone.
+            const { dateFrom, dateTo, type } = filterModel || {};
+            return [
+                (dateFrom && _parseDateTimeFromString(dateFrom)) || null,
+                (dateTo && _parseDateTimeFromString(dateTo)) || null,
+            ].slice(0, this.getNumberOfInputs(type));
+        }
 
-        if (cellValue == null || cellAsDate < filterDate) { return -1; }
-        if (cellAsDate > filterDate) { return 1; }
+        protected comparator(): Comparator<Date> {
+            return this.dateFilterParams.comparator
+                ? this.dateFilterParams.comparator
+                : this.defaultComparator.bind(this);
+        }
 
-        return 0;
-    }
+        private defaultComparator(filterDate: Date, cellValue: any): number {
+            // The default comparator assumes that the cellValue is a date
+            const cellAsDate = cellValue as Date;
 
-    protected setParams(params: DateFilterParams): void {
-        this.dateFilterParams = params;
+            if (cellValue == null || cellAsDate < filterDate) {
+                return -1;
+            }
+            if (cellAsDate > filterDate) {
+                return 1;
+            }
 
-        super.setParams(params);
+            return 0;
+        }
 
-        const yearParser = (param: keyof DateFilterParams, fallback: number) => {
-            if (params[param] != null) {
-                if (!isNaN(params[param])) {
-                    return params[param] == null ? fallback : Number(params[param]);
-                } else {
-                    console.warn(`AG Grid: DateFilter ${param} is not a number`);
+        protected setParams(params: DateFilterParams): void {
+            this.dateFilterParams = params;
+
+            super.setParams(params);
+
+            const yearParser = (param: keyof DateFilterParams, fallback: number) => {
+                if (params[param] != null) {
+                    if (!isNaN(params[param])) {
+                        return params[param] == null ? fallback : Number(params[param]);
+                    } else {
+                        console.warn(`AG Grid: DateFilter ${param} is not a number`);
+                    }
+                }
+
+                return fallback;
+            };
+
+            this.minValidYear = yearParser('minValidYear', DEFAULT_MIN_YEAR);
+            this.maxValidYear = yearParser('maxValidYear', DEFAULT_MAX_YEAR);
+
+            if (this.minValidYear > this.maxValidYear) {
+                console.warn(`AG Grid: DateFilter minValidYear should be <= maxValidYear`);
+            }
+
+            if (params.minValidDate) {
+                this.minValidDate =
+                    params.minValidDate instanceof Date
+                        ? params.minValidDate
+                        : _parseDateTimeFromString(params.minValidDate);
+            } else {
+                this.minValidDate = null;
+            }
+
+            if (params.maxValidDate) {
+                this.maxValidDate =
+                    params.maxValidDate instanceof Date
+                        ? params.maxValidDate
+                        : _parseDateTimeFromString(params.maxValidDate);
+            } else {
+                this.maxValidDate = null;
+            }
+
+            if (this.minValidDate && this.maxValidDate && this.minValidDate > this.maxValidDate) {
+                console.warn(`AG Grid: DateFilter minValidDate should be <= maxValidDate`);
+            }
+
+            this.filterModelFormatter = new DateFilterModelFormatter(
+                this.dateFilterParams,
+                this.localeService,
+                this.optionsFactory
+            );
+        }
+
+        createDateCompWrapper(element: HTMLElement): DateCompWrapper {
+            const dateCompWrapper = new DateCompWrapper(
+                this.getContext(),
+                this.userComponentFactory,
+                {
+                    onDateChanged: () => this.onUiChanged(),
+                    filterParams: this.dateFilterParams,
+                },
+                element
+            );
+            this.addDestroyFunc(() => dateCompWrapper.destroy());
+            return dateCompWrapper;
+        }
+
+        protected setElementValue(element: DateCompWrapper, value: Date | null): void {
+            element.setDate(value);
+        }
+
+        protected setElementDisplayed(element: DateCompWrapper, displayed: boolean): void {
+            element.setDisplayed(displayed);
+        }
+
+        protected setElementDisabled(element: DateCompWrapper, disabled: boolean): void {
+            element.setDisabled(disabled);
+        }
+
+        protected getDefaultFilterOptions(): string[] {
+            return DATE_DEFAULT_FILTER_OPTIONS;
+        }
+
+        protected createValueElement(): HTMLElement {
+            const eDocument = this.gos.getDocument();
+            const eCondition = eDocument.createElement('div');
+            eCondition.classList.add('ag-filter-body');
+
+            this.createFromToElement(eCondition, this.eConditionPanelsFrom, this.dateConditionFromComps, 'from');
+            this.createFromToElement(eCondition, this.eConditionPanelsTo, this.dateConditionToComps, 'to');
+
+            return eCondition;
+        }
+
+        private createFromToElement(
+            eCondition: HTMLElement,
+            eConditionPanels: HTMLElement[],
+            dateConditionComps: DateCompWrapper[],
+            fromTo: string
+        ): void {
+            const eDocument = this.gos.getDocument();
+            const eConditionPanel = eDocument.createElement('div');
+            eConditionPanel.classList.add(`ag-filter-${fromTo}`);
+            eConditionPanel.classList.add(`ag-filter-date-${fromTo}`);
+            eConditionPanels.push(eConditionPanel);
+            eCondition.appendChild(eConditionPanel);
+            dateConditionComps.push(this.createDateCompWrapper(eConditionPanel));
+        }
+
+        protected removeValueElements(startPosition: number, deleteCount?: number): void {
+            this.removeDateComps(this.dateConditionFromComps, startPosition, deleteCount);
+            this.removeDateComps(this.dateConditionToComps, startPosition, deleteCount);
+            this.removeItems(this.eConditionPanelsFrom, startPosition, deleteCount);
+            this.removeItems(this.eConditionPanelsTo, startPosition, deleteCount);
+        }
+
+        protected removeDateComps(components: DateCompWrapper[], startPosition: number, deleteCount?: number): void {
+            const removedComponents = this.removeItems(components, startPosition, deleteCount);
+            removedComponents.forEach((comp) => comp.destroy());
+        }
+
+        private isValidDateValue(value: Date | null): boolean {
+            if (value === null) {
+                return false;
+            }
+
+            if (this.minValidDate) {
+                if (value < this.minValidDate) {
+                    return false;
+                }
+            } else {
+                if (value.getUTCFullYear() < this.minValidYear) {
+                    return false;
                 }
             }
 
-            return fallback;
-        };
+            if (this.maxValidDate) {
+                if (value > this.maxValidDate) {
+                    return false;
+                }
+            } else {
+                if (value.getUTCFullYear() > this.maxValidYear) {
+                    return false;
+                }
+            }
 
-        this.minValidYear = yearParser('minValidYear', DEFAULT_MIN_YEAR);
-        this.maxValidYear = yearParser('maxValidYear', DEFAULT_MAX_YEAR);
-
-        if (this.minValidYear > this.maxValidYear) {
-            console.warn(`AG Grid: DateFilter minValidYear should be <= maxValidYear`);
+            return true;
         }
 
-        if (params.minValidDate) {
-            this.minValidDate = params.minValidDate instanceof Date ? params.minValidDate : _parseDateTimeFromString(params.minValidDate);
-        } else {
-            this.minValidDate = null;
-        }
-
-        if (params.maxValidDate) {
-            this.maxValidDate = params.maxValidDate instanceof Date ? params.maxValidDate : _parseDateTimeFromString(params.maxValidDate);
-        } else {
-            this.maxValidDate = null;
-        }
-
-        if (this.minValidDate && this.maxValidDate && this.minValidDate > this.maxValidDate) {
-            console.warn(`AG Grid: DateFilter minValidDate should be <= maxValidDate`);
-        }
-
-        this.filterModelFormatter = new DateFilterModelFormatter(this.dateFilterParams, this.localeService, this.optionsFactory);
-    }
-
-    createDateCompWrapper(element: HTMLElement): DateCompWrapper {
-        const dateCompWrapper = new DateCompWrapper(
-            this.getContext(),
-            this.userComponentFactory,
-            {
-                onDateChanged: () => this.onUiChanged(),
-                filterParams: this.dateFilterParams
-            },
-            element
-        );
-        this.addDestroyFunc(() => dateCompWrapper.destroy());
-        return dateCompWrapper;
-    }
-
-    protected setElementValue(element: DateCompWrapper, value: Date | null): void {
-        element.setDate(value);
-    }
-
-    protected setElementDisplayed(element: DateCompWrapper, displayed: boolean): void {
-        element.setDisplayed(displayed);
-    }
-
-    protected setElementDisabled(element: DateCompWrapper, disabled: boolean): void {
-        element.setDisabled(disabled);
-    }
-
-    protected getDefaultFilterOptions(): string[] {
-        return DateFilter.DEFAULT_FILTER_OPTIONS;
-    }
-
-    protected createValueElement(): HTMLElement {
-        const eDocument = this.gos.getDocument();
-        const eCondition = eDocument.createElement('div');
-        eCondition.classList.add('ag-filter-body');
-
-        this.createFromToElement(eCondition, this.eConditionPanelsFrom, this.dateConditionFromComps, 'from');
-        this.createFromToElement(eCondition, this.eConditionPanelsTo, this.dateConditionToComps, 'to');
-
-        return eCondition;
-    }
-
-    private createFromToElement(eCondition: HTMLElement, eConditionPanels: HTMLElement[], dateConditionComps: DateCompWrapper[], fromTo: string): void {
-        const eDocument = this.gos.getDocument();
-        const eConditionPanel = eDocument.createElement('div');
-        eConditionPanel.classList.add(`ag-filter-${fromTo}`);
-        eConditionPanel.classList.add(`ag-filter-date-${fromTo}`);
-        eConditionPanels.push(eConditionPanel);
-        eCondition.appendChild(eConditionPanel);
-        dateConditionComps.push(this.createDateCompWrapper(eConditionPanel));
-    }
-
-    protected removeValueElements(startPosition: number, deleteCount?: number): void {
-        this.removeDateComps(this.dateConditionFromComps, startPosition, deleteCount);
-        this.removeDateComps(this.dateConditionToComps, startPosition, deleteCount);
-        this.removeItems(this.eConditionPanelsFrom, startPosition, deleteCount);
-        this.removeItems(this.eConditionPanelsTo, startPosition, deleteCount);
-    }
-
-    protected removeDateComps(components: DateCompWrapper[], startPosition: number, deleteCount?: number): void {
-        const removedComponents = this.removeItems(components, startPosition, deleteCount);
-        removedComponents.forEach(comp => comp.destroy());
-    }
-    
-    private isValidDateValue(value: Date | null): boolean {
-        if (value === null) {
-            return false;
-        }
-
-        if (this.minValidDate) {
-            if (value < this.minValidDate) {
+        protected isConditionUiComplete(position: number): boolean {
+            if (!super.isConditionUiComplete(position)) {
                 return false;
             }
-        } else {
-            if (value.getUTCFullYear() < this.minValidYear) {
-                return false;
+
+            let valid = true;
+            this.forEachInput((element, index, elPosition, numberOfInputs) => {
+                if (elPosition !== position || !valid || index >= numberOfInputs) {
+                    return;
+                }
+                valid = valid && this.isValidDateValue(element.getDate());
+            });
+
+            return valid;
+        }
+
+        protected areSimpleModelsEqual(aSimple: DateFilterModel, bSimple: DateFilterModel): boolean {
+            return (
+                aSimple.dateFrom === bSimple.dateFrom &&
+                aSimple.dateTo === bSimple.dateTo &&
+                aSimple.type === bSimple.type
+            );
+        }
+
+        protected getFilterType(): 'date' {
+            return 'date';
+        }
+
+        protected createCondition(position: number): DateFilterModel {
+            const type = this.getConditionType(position);
+            const model: Partial<DateFilterModel> = {};
+
+            const values = this.getValues(position);
+            if (values.length > 0) {
+                model.dateFrom = _serialiseDate(values[0]);
             }
-        }
-
-        if (this.maxValidDate) {
-            if (value > this.maxValidDate) {
-                return false;
+            if (values.length > 1) {
+                model.dateTo = _serialiseDate(values[1]);
             }
-        } else {
-            if (value.getUTCFullYear() > this.maxValidYear) {
-                return false;
+
+            return {
+                dateFrom: null,
+                dateTo: null,
+                filterType: this.getFilterType(),
+                type,
+                ...model,
+            };
+        }
+
+        protected resetPlaceholder(): void {
+            const globalTranslate = this.localeService.getLocaleTextFunc();
+            const placeholder = this.translate('dateFormatOoo');
+            const ariaLabel = globalTranslate('ariaFilterValue', 'Filter Value');
+
+            this.forEachInput((element) => {
+                element.setInputPlaceholder(placeholder);
+                element.setInputAriaLabel(ariaLabel);
+            });
+        }
+
+        protected getInputs(position: number): Tuple<DateCompWrapper> {
+            if (position >= this.dateConditionFromComps.length) {
+                return [null, null];
             }
+            return [this.dateConditionFromComps[position], this.dateConditionToComps[position]];
         }
 
-        return true;
-    };
+        protected getValues(position: number): Tuple<Date> {
+            const result: Tuple<Date> = [];
+            this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
+                if (index < numberOfInputs) {
+                    result.push(element.getDate());
+                }
+            });
 
-    protected isConditionUiComplete(position: number): boolean {
-        if (!super.isConditionUiComplete(position)) {
-            return false;
+            return result;
         }
 
-        let valid = true;
-        this.forEachInput((element, index, elPosition, numberOfInputs) => {
-            if (elPosition !== position || !valid || index >= numberOfInputs) {
-                return;
+        protected translate(key: keyof typeof FILTER_LOCALE_TEXT): string {
+            if (key === 'lessThan') {
+                return super.translate('before');
             }
-            valid = valid && this.isValidDateValue(element.getDate());
-        });
-
-        return valid;
-    }
-
-    protected areSimpleModelsEqual(aSimple: DateFilterModel, bSimple: DateFilterModel): boolean {
-        return aSimple.dateFrom === bSimple.dateFrom
-            && aSimple.dateTo === bSimple.dateTo
-            && aSimple.type === bSimple.type;
-        }
-
-    protected getFilterType(): 'date' {
-        return 'date';
-    }
-
-    protected createCondition(position: number): DateFilterModel {
-        const type = this.getConditionType(position);
-        const model: Partial<DateFilterModel> = {};
-
-        const values = this.getValues(position);
-        if (values.length > 0) {
-            model.dateFrom = _serialiseDate(values[0]);
-        }
-        if (values.length > 1) {
-            model.dateTo = _serialiseDate(values[1]);
-        }
-
-        return {
-            dateFrom: null,
-            dateTo: null,
-            filterType: this.getFilterType(),
-            type,
-            ...model,
-        };
-    }
-
-    protected resetPlaceholder(): void {
-        const globalTranslate = this.localeService.getLocaleTextFunc();
-        const placeholder = this.translate('dateFormatOoo');
-        const ariaLabel = globalTranslate('ariaFilterValue', 'Filter Value');
-
-        this.forEachInput((element) => {
-            element.setInputPlaceholder(placeholder);
-            element.setInputAriaLabel(ariaLabel);
-        });
-    }
-
-    protected getInputs(position: number): Tuple<DateCompWrapper> {
-        if (position >= this.dateConditionFromComps.length) {
-            return [null, null];
-        }
-        return [this.dateConditionFromComps[position], this.dateConditionToComps[position]];
-    }
-
-    protected getValues(position: number): Tuple<Date> {
-        const result: Tuple<Date> = [];
-        this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
-            if (index < numberOfInputs) {
-                result.push(element.getDate());
+            if (key === 'greaterThan') {
+                return super.translate('after');
             }
-        });
-
-        return result;
-    }
-
-    protected translate(key: keyof typeof FILTER_LOCALE_TEXT): string {
-        if (key === ScalarFilter.LESS_THAN) {
-            return super.translate('before');
+            return super.translate(key);
         }
-        if (key === ScalarFilter.GREATER_THAN) {
-            return super.translate('after');
+
+        public getModelAsString(model: ISimpleFilterModel): string {
+            return this.filterModelFormatter.getModelAsString(model) ?? '';
         }
-        return super.translate(key);
     }
 
-    public getModelAsString(model: ISimpleFilterModel): string {
-        return this.filterModelFormatter.getModelAsString(model) ?? '';
-    }
+    UserComponentRegistry.registerDefaultComponent('agDateColumnFilter', DateFilter);
 }

@@ -1,14 +1,17 @@
-import { onlyUsedInFilters } from "../utils/filtersOnly";
 import { useFilterManager } from "./filterManager";
+import { useDateFilter } from "./provided/date/dateFilter";
+import { useNumberFilter } from "./provided/number/numberFilter";
+import { useNumberFloatingFilter } from "./provided/number/numberFloatingFilter";
+import { useTextFilter } from "./provided/text/textFilter";
 import { useQuickFilter } from "./quickFilterService";
 
 
 
 export function useFilters(){
-    // let onlyUsedInFilters;
-    // await import("../utils/generic").then(m => onlyUsedInFilters = m.onlyUsedInFilters);
-
+    useTextFilter();
+    useNumberFloatingFilter();
+    useNumberFilter();
     useFilterManager();
     useQuickFilter();
-    onlyUsedInFilters();
+    useDateFilter();
 }

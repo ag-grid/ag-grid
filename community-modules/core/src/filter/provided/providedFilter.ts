@@ -73,6 +73,22 @@ export interface IProvidedFilter extends IFilter {
     getModelFromUi(): any;
 }
 
+export function getDebounceMs(params: ProvidedFilterParams, debounceDefault: number): number {
+    if (isUseApplyButton(params)) {
+        if (params.debounceMs != null) {
+            console.warn('AG Grid: debounceMs is ignored when apply button is present');
+        }
+
+        return 0;
+    }
+
+    return params.debounceMs != null ? params.debounceMs : debounceDefault;
+}
+
+export function isUseApplyButton(params: ProvidedFilterParams): boolean {
+    return !!params.buttons && params.buttons.indexOf('apply') >= 0;
+}
+
 /**
  * Contains common logic to all provided filters (apply button, clear button, etc).
  * All the filters that come with AG Grid extend this class. User filters do not
@@ -196,14 +212,14 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     protected setParams(params: ProvidedFilterParams): void {
         this.providedFilterParams = params;
-        this.applyActive = ProvidedFilter.isUseApplyButton(params);
+        this.applyActive = isUseApplyButton(params);
 
         this.resetButtonsPanel();
     }
 
     protected updateParams(params: ProvidedFilterParams): void {
         this.providedFilterParams = params;
-        this.applyActive = ProvidedFilter.isUseApplyButton(params);
+        this.applyActive = isUseApplyButton(params);
 
         this.resetUiToActiveModel(this.getModel(), () => {
             this.updateUiVisibility();
@@ -297,7 +313,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     private setupOnBtApplyDebounce(): void {
-        const debounceMs = ProvidedFilter.getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
+        const debounceMs = getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
         const debounceFunc = _debounce(this.checkApplyDebounce.bind(this), debounceMs);
         this.onBtApplyDebounce = () => {
             this.debouncePending = true;
@@ -486,24 +502,6 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         if (this.positionableFeature) {
             this.positionableFeature.constrainSizeToAvailableHeight(false);
         }
-    }
-
-    // static, as used by floating filter also
-    public static getDebounceMs(params: ProvidedFilterParams, debounceDefault: number): number {
-        if (ProvidedFilter.isUseApplyButton(params)) {
-            if (params.debounceMs != null) {
-                console.warn('AG Grid: debounceMs is ignored when apply button is present');
-            }
-
-            return 0;
-        }
-
-        return params.debounceMs != null ? params.debounceMs : debounceDefault;
-    }
-
-    // static, as used by floating filter also
-    public static isUseApplyButton(params: ProvidedFilterParams): boolean {
-        return !!params.buttons && params.buttons.indexOf('apply') >= 0;
     }
 
     public refresh(newParams: ProvidedFilterParams): boolean {

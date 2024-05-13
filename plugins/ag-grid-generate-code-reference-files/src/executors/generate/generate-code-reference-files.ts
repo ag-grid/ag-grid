@@ -229,7 +229,7 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
 
             if (!extInt) {
                 //Check for type params
-                throw new Error('Missing interface: ' + JSON.stringify(a));
+                console.error('Missing interface: ' + extended + ': ' + JSON.stringify(a));
             }
 
             if (isDocStyle) {

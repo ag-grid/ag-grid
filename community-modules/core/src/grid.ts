@@ -58,7 +58,7 @@ import { AgSlider } from "./widgets/agSlider";
 import { AgInputNumberField } from "./widgets/agInputNumberField";
 import { AgInputRange } from "./widgets/agInputRange";
 import { AgSelect } from "./widgets/agSelect";
-import { AgRichSelect } from "./widgets/agRichSelect";
+// import { AgRichSelect } from "./widgets/agRichSelect";
 import { AgToggleButton } from "./widgets/agToggleButton";
 import { RowPositionUtils } from "./entities/rowPositionUtils";
 import { CellPositionUtils } from "./entities/cellPositionUtils";
@@ -94,7 +94,6 @@ import { SyncService } from "./syncService";
 import { OverlayService } from "./rendering/overlays/overlayService";
 import { StateService } from "./misc/stateService";
 import { ExpansionService } from "./misc/expansionService";
-import { ValidationService } from "./validation/validationService";
 import { ApiEventService } from "./misc/apiEventService";
 import { PageSizeSelectorComp } from "./pagination/pageSizeSelector/pageSizeSelectorComp";
 import { AriaAnnouncementService } from "./rendering/ariaAnnouncementService";
@@ -329,7 +328,7 @@ export class GridCoreCreator {
                 (module) => module.userComponents ? module.userComponents : []);
 
         moduleUserComps.forEach(compMeta => {
-            beans.userComponentRegistry.registerDefaultComponent(compMeta.componentName, compMeta.componentClass);
+            UserComponentRegistry.registerDefaultComponent(compMeta.componentName, compMeta.componentClass);
         });
     }
 
@@ -356,14 +355,14 @@ export class GridCoreCreator {
     private createAgStackComponentsList(registeredModules: Module[]): any[] {
         let components: ComponentMeta[] = [
             { componentName: 'AgCheckbox', componentClass: AgCheckbox },
-            { componentName: 'AgRadioButton', componentClass: AgRadioButton },
+            //{ componentName: 'AgRadioButton', componentClass: AgRadioButton },
             { componentName: 'AgToggleButton', componentClass: AgToggleButton },
             { componentName: 'AgInputTextField', componentClass: AgInputTextField },
             { componentName: 'AgInputTextArea', componentClass: AgInputTextArea },
             { componentName: 'AgInputNumberField', componentClass: AgInputNumberField },
             { componentName: 'AgInputDateField', componentClass: AgInputDateField },
             { componentName: 'AgInputRange', componentClass: AgInputRange },
-            { componentName: 'AgRichSelect', componentClass: AgRichSelect },
+           // { componentName: 'AgRichSelect', componentClass: AgRichSelect },
             { componentName: 'AgSelect', componentClass: AgSelect },
             { componentName: 'AgSlider', componentClass: AgSlider },
             { componentName: 'AgGridBody', componentClass: GridBodyComp },
@@ -414,7 +413,7 @@ export class GridCoreCreator {
             Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
-            RowContainerHeightService, HorizontalResizeService, LocaleService, ValidationService,
+            RowContainerHeightService, HorizontalResizeService, LocaleService,
             PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsService,
             PopupService, SelectionService, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory,

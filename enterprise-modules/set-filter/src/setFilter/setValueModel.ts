@@ -1,11 +1,11 @@
 import {
     IClientSideRowModel,
     SetFilterParams,
+    TEXT_FILTER_DEFAULT_FORMATTER,
     AgPromise,
     SetFilterValues,
     SetFilterValuesFunc,
     SetFilterValuesFuncParams,
-    TextFilter,
     TextFormatter,
     IEventEmitter,
     EventService,
@@ -138,7 +138,7 @@ export class SetValueModel<V> implements IEventEmitter {
         this.caseFormat = params.caseFormat;
         this.createKey = params.createKey;
         this.usingComplexObjects = !!params.usingComplexObjects;
-        this.formatter = textFormatter || TextFilter.DEFAULT_FORMATTER;
+        this.formatter = textFormatter || TEXT_FILTER_DEFAULT_FORMATTER;
         this.doesRowPassOtherFilters = doesRowPassOtherFilter;
         this.suppressSorting = suppressSorting || false;
         this.convertValuesToStrings = !!convertValuesToStrings;
@@ -221,7 +221,7 @@ export class SetValueModel<V> implements IEventEmitter {
             const currentSuppressSorting = this.suppressSorting;
 
             this.filterParams = filterParams;
-            this.formatter = textFormatter || TextFilter.DEFAULT_FORMATTER;
+            this.formatter = textFormatter || TEXT_FILTER_DEFAULT_FORMATTER;
 
             this.suppressSorting = suppressSorting || false;
             this.providedValues = values ?? null;

@@ -10,9 +10,6 @@ import { IRowModel } from "../interfaces/iRowModel";
 import { ModuleRegistry } from "../modules/moduleRegistry";
 import { _exists } from "../utils/generic";
 import { ValueService } from "../valueService/valueService";
-import { onlyUsedInFilters } from "../utils/filtersOnly";
-
-
 
 export interface QuickFilterService extends IEventEmitter {
     resetQuickFilterCache: () => void;
@@ -39,7 +36,6 @@ export function useQuickFilter() {
 
         @PostConstruct
         private postConstruct(): void {
-            onlyUsedInFilters();
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () =>
                 this.resetQuickFilterCache()
             );

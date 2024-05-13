@@ -7,6 +7,7 @@ import { _getSafariVersion, _isBrowserChrome, _isBrowserFirefox, _isBrowserSafar
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _warnOnce } from '../../../utils/function';
 
+
 export class DefaultDateComponent extends Component implements IDateComp {
     @RefSelector('eDateInput') private readonly eDateInput: AgInputTextField;
 

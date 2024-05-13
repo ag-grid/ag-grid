@@ -1,7 +1,7 @@
 import { Component } from '../../../widgets/component';
 import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
 import { ProvidedFilterModel } from '../../../interfaces/iFilter';
-import { ICombinedSimpleModel, ISimpleFilter, ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter } from '../../provided/simpleFilter';
+import { ICombinedSimpleModel, ISimpleFilter, ISimpleFilterModel, ISimpleFilterModelType, SimpleFilter, SimpleFilterModelFormatter } from '../../provided/simpleFilter';
 import { OptionsFactory } from '../../provided/optionsFactory';
 import { ScalarFilterParams } from '../../provided/scalarFilter';
 import { FilterChangedEvent } from '../../../events';
@@ -133,8 +133,8 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     private isTypeEditable(type?: string | null): boolean {
-        const uneditableTypes: string[] = [
-            SimpleFilter.IN_RANGE, SimpleFilter.EMPTY, SimpleFilter.BLANK, SimpleFilter.NOT_BLANK,
+        const uneditableTypes = [
+            'inRange', 'empty','blank','notBlank'
         ];
         return !!type &&
             !this.isReadOnly() &&

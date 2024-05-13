@@ -1,10 +1,18 @@
-import { ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
+import {
+    ISimpleFilter,
+    ISimpleFilterModel,
+    ISimpleFilterModelType,
+    SimpleFilter,
+    SimpleFilterModelFormatter,
+    Tuple,
+} from '../simpleFilter';
 import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
 import { _makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
+import { IFilter, IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
 import { _setAriaRole } from '../../../utils/aria';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
+import { UserComponentRegistry } from '../../../components/framework/userComponentRegistry';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'number'` */
@@ -50,7 +58,7 @@ export interface INumberFilterParams extends IScalarFilterParams {
 export class NumberFilterModelFormatter extends SimpleFilterModelFormatter<number> {
     protected conditionToString(condition: NumberFilterModel, options?: IFilterOptionDef): string {
         const { numberOfInputs } = options || {};
-        const isRange = condition.type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
+        const isRange = condition.type == 'inRange' || numberOfInputs === 2;
 
         if (isRange) {
             return `${this.formatValue(condition.filter)}-${this.formatValue(condition.filterTo)}`;
@@ -71,185 +79,210 @@ export function getAllowedCharPattern(filterParams?: NumberFilterParams): string
     return allowedCharPattern ?? null;
 }
 
-export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
-    public static DEFAULT_FILTER_OPTIONS = [
-        ScalarFilter.EQUALS,
-        ScalarFilter.NOT_EQUAL,
-        ScalarFilter.GREATER_THAN,
-        ScalarFilter.GREATER_THAN_OR_EQUAL,
-        ScalarFilter.LESS_THAN,
-        ScalarFilter.LESS_THAN_OR_EQUAL,
-        ScalarFilter.IN_RANGE,
-        ScalarFilter.BLANK,
-        ScalarFilter.NOT_BLANK,
-    ];
+export const NUMBER_DEFAULT_FILTER_OPTIONS: ISimpleFilterModelType[] = [
+    'equals',
+    'notEqual',
+    'greaterThan',
+    'greaterThanOrEqual',
+    'lessThan',
+    'lessThanOrEqual',
+    'inRange',
+    'blank',
+    'notBlank',
+];
 
-    private readonly eValuesFrom: (AgInputTextField | AgInputNumberField)[] = [];
-    private readonly eValuesTo: (AgInputTextField | AgInputNumberField)[] = [];
+export interface NumberFilter extends ScalarFilter<NumberFilterModel, number> {    
+}
 
-    private numberFilterParams: NumberFilterParams;
-    private filterModelFormatter: SimpleFilterModelFormatter;
+export function useNumberFilter() {
+    class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
-    constructor() {
-        super('numberFilter');
-    }
+        private readonly eValuesFrom: (AgInputTextField | AgInputNumberField)[] = [];
+        private readonly eValuesTo: (AgInputTextField | AgInputNumberField)[] = [];
 
-    refresh(params: NumberFilterParams): boolean {
-        if (this.numberFilterParams.allowedCharPattern !== params.allowedCharPattern) {
-            return false;
+        private numberFilterParams: NumberFilterParams;
+        private filterModelFormatter: SimpleFilterModelFormatter;
+
+        constructor() {
+            super('numberFilter');
         }
 
-        return super.refresh(params);
-    }
-
-    protected mapValuesFromModel(filterModel: NumberFilterModel | null): Tuple<number> {
-        const { filter, filterTo, type } = filterModel || {};
-        return [
-            this.processValue(filter),
-            this.processValue(filterTo),
-        ].slice(0, this.getNumberOfInputs(type));
-    }
-
-    protected getDefaultDebounceMs(): number {
-        return 500;
-    }
-
-    protected comparator(): Comparator<number> {
-        return (left: number, right: number): number => {
-            if (left === right) { return 0; }
-
-            return left < right ? 1 : -1;
-        };
-    }
-
-    protected setParams(params: NumberFilterParams): void {
-        this.numberFilterParams = params;
-
-        super.setParams(params);
-        this.filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory, this.numberFilterParams.numberFormatter);
-    }
-
-    protected getDefaultFilterOptions(): string[] {
-        return NumberFilter.DEFAULT_FILTER_OPTIONS;
-    }
-
-    protected setElementValue(element: AgInputTextField | AgInputNumberField, value: number | null, fromFloatingFilter?: boolean): void {
-        // values from floating filter are directly from the input, not from the model
-        const valueToSet = !fromFloatingFilter && this.numberFilterParams.numberFormatter
-            ? this.numberFilterParams.numberFormatter(value ?? null)
-            : value;
-        super.setElementValue(element, valueToSet as any);
-    }
-
-    protected createValueElement(): HTMLElement {
-        const allowedCharPattern = getAllowedCharPattern(this.numberFilterParams);
-
-        const eCondition = document.createElement('div');
-        eCondition.classList.add('ag-filter-body');
-        _setAriaRole(eCondition, 'presentation');
-
-        this.createFromToElement(eCondition, this.eValuesFrom, 'from', allowedCharPattern);
-        this.createFromToElement(eCondition, this.eValuesTo, 'to', allowedCharPattern);
-
-        return eCondition;
-    }
-
-    private createFromToElement(eCondition: HTMLElement, eValues: (AgInputTextField | AgInputNumberField)[], fromTo: string, allowedCharPattern: string | null): void {
-        const eValue = this.createManagedBean(allowedCharPattern ? new AgInputTextField({ allowedCharPattern }) : new AgInputNumberField());
-        eValue.addCssClass(`ag-filter-${fromTo}`);
-        eValue.addCssClass('ag-filter-filter');
-        eValues.push(eValue);
-        eCondition.appendChild(eValue.getGui());
-    }
-
-    protected removeValueElements(startPosition: number, deleteCount?: number): void {
-        this.removeComponents(this.eValuesFrom, startPosition, deleteCount);
-        this.removeComponents(this.eValuesTo, startPosition, deleteCount);
-    }
-
-    protected getValues(position: number): Tuple<number> {
-        const result: Tuple<number> = [];
-        this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
-            if (index < numberOfInputs) {
-                result.push(this.processValue(this.stringToFloat(element.getValue())));
+        refresh(params: NumberFilterParams): boolean {
+            if (this.numberFilterParams.allowedCharPattern !== params.allowedCharPattern) {
+                return false;
             }
-        });
 
-        return result;
-    }
-
-    protected areSimpleModelsEqual(aSimple: NumberFilterModel, bSimple: NumberFilterModel): boolean {
-        return aSimple.filter === bSimple.filter
-            && aSimple.filterTo === bSimple.filterTo
-            && aSimple.type === bSimple.type;
-    }
-
-    protected getFilterType(): 'number' {
-        return 'number';
-    }
-
-    private processValue(value?: number | null): number | null {
-        if (value == null) {
-            return null;
-        }
-        return isNaN(value) ? null : value;
-    }
-
-    private stringToFloat(value?: string | number | null): number | null {
-        if (typeof value === 'number') {
-            return value;
+            return super.refresh(params);
         }
 
-        let filterText = _makeNull(value);
-
-        if (filterText != null && filterText.trim() === '') {
-            filterText = null;
+        protected mapValuesFromModel(filterModel: NumberFilterModel | null): Tuple<number> {
+            const { filter, filterTo, type } = filterModel || {};
+            return [this.processValue(filter), this.processValue(filterTo)].slice(0, this.getNumberOfInputs(type));
         }
 
-        if (this.numberFilterParams.numberParser) {
-            return this.numberFilterParams.numberParser(filterText);
+        protected getDefaultDebounceMs(): number {
+            return 500;
         }
 
-        return filterText == null || filterText.trim() === '-' ? null : parseFloat(filterText);
-    }
+        protected comparator(): Comparator<number> {
+            return (left: number, right: number): number => {
+                if (left === right) {
+                    return 0;
+                }
 
-    protected createCondition(position: number): NumberFilterModel {
-        const type = this.getConditionType(position);
-        const model: NumberFilterModel = {
-            filterType: this.getFilterType(),
-            type
-        };
-
-        const values = this.getValues(position);
-        if (values.length > 0) {
-            model.filter = values[0];
-        }
-        if (values.length > 1) {
-            model.filterTo = values[1];
+                return left < right ? 1 : -1;
+            };
         }
 
-        return model;
-    }
+        protected setParams(params: NumberFilterParams): void {
+            this.numberFilterParams = params;
 
-    protected getInputs(position: number): Tuple<AgInputTextField | AgInputNumberField> {
-        if (position >= this.eValuesFrom.length) {
-            return [null, null];
+            super.setParams(params);
+            this.filterModelFormatter = new NumberFilterModelFormatter(
+                this.localeService,
+                this.optionsFactory,
+                this.numberFilterParams.numberFormatter
+            );
         }
-        return [this.eValuesFrom[position], this.eValuesTo[position]];
-    }
 
-    public getModelAsString(model: ISimpleFilterModel): string {
-        return this.filterModelFormatter.getModelAsString(model) ?? '';
-    }
+        protected getDefaultFilterOptions(): string[] {
+            return NUMBER_DEFAULT_FILTER_OPTIONS;
+        }
 
-    protected hasInvalidInputs(): boolean {
-        let invalidInputs = false;
-        this.forEachInput(element => {
-            if (!element.getInputElement().validity.valid) {
-                invalidInputs = true;
-                return;
+        protected setElementValue(
+            element: AgInputTextField | AgInputNumberField,
+            value: number | null,
+            fromFloatingFilter?: boolean
+        ): void {
+            // values from floating filter are directly from the input, not from the model
+            const valueToSet =
+                !fromFloatingFilter && this.numberFilterParams.numberFormatter
+                    ? this.numberFilterParams.numberFormatter(value ?? null)
+                    : value;
+            super.setElementValue(element, valueToSet as any);
+        }
+
+        protected createValueElement(): HTMLElement {
+            const allowedCharPattern = getAllowedCharPattern(this.numberFilterParams);
+
+            const eCondition = document.createElement('div');
+            eCondition.classList.add('ag-filter-body');
+            _setAriaRole(eCondition, 'presentation');
+
+            this.createFromToElement(eCondition, this.eValuesFrom, 'from', allowedCharPattern);
+            this.createFromToElement(eCondition, this.eValuesTo, 'to', allowedCharPattern);
+
+            return eCondition;
+        }
+
+        private createFromToElement(
+            eCondition: HTMLElement,
+            eValues: (AgInputTextField | AgInputNumberField)[],
+            fromTo: string,
+            allowedCharPattern: string | null
+        ): void {
+            const eValue = this.createManagedBean(
+                allowedCharPattern ? new AgInputTextField({ allowedCharPattern }) : new AgInputNumberField()
+            );
+            eValue.addCssClass(`ag-filter-${fromTo}`);
+            eValue.addCssClass('ag-filter-filter');
+            eValues.push(eValue);
+            eCondition.appendChild(eValue.getGui());
+        }
+
+        protected removeValueElements(startPosition: number, deleteCount?: number): void {
+            this.removeComponents(this.eValuesFrom, startPosition, deleteCount);
+            this.removeComponents(this.eValuesTo, startPosition, deleteCount);
+        }
+
+        protected getValues(position: number): Tuple<number> {
+            const result: Tuple<number> = [];
+            this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
+                if (index < numberOfInputs) {
+                    result.push(this.processValue(this.stringToFloat(element.getValue())));
+                }
+            });
+
+            return result;
+        }
+
+        protected areSimpleModelsEqual(aSimple: NumberFilterModel, bSimple: NumberFilterModel): boolean {
+            return (
+                aSimple.filter === bSimple.filter &&
+                aSimple.filterTo === bSimple.filterTo &&
+                aSimple.type === bSimple.type
+            );
+        }
+
+        protected getFilterType(): 'number' {
+            return 'number';
+        }
+
+        private processValue(value?: number | null): number | null {
+            if (value == null) {
+                return null;
             }
-        });
-        return invalidInputs;
+            return isNaN(value) ? null : value;
+        }
+
+        private stringToFloat(value?: string | number | null): number | null {
+            if (typeof value === 'number') {
+                return value;
+            }
+
+            let filterText = _makeNull(value);
+
+            if (filterText != null && filterText.trim() === '') {
+                filterText = null;
+            }
+
+            if (this.numberFilterParams.numberParser) {
+                return this.numberFilterParams.numberParser(filterText);
+            }
+
+            return filterText == null || filterText.trim() === '-' ? null : parseFloat(filterText);
+        }
+
+        protected createCondition(position: number): NumberFilterModel {
+            const type = this.getConditionType(position);
+            const model: NumberFilterModel = {
+                filterType: this.getFilterType(),
+                type,
+            };
+
+            const values = this.getValues(position);
+            if (values.length > 0) {
+                model.filter = values[0];
+            }
+            if (values.length > 1) {
+                model.filterTo = values[1];
+            }
+
+            return model;
+        }
+
+        protected getInputs(position: number): Tuple<AgInputTextField | AgInputNumberField> {
+            if (position >= this.eValuesFrom.length) {
+                return [null, null];
+            }
+            return [this.eValuesFrom[position], this.eValuesTo[position]];
+        }
+
+        public getModelAsString(model: ISimpleFilterModel): string {
+            return this.filterModelFormatter.getModelAsString(model) ?? '';
+        }
+
+        protected hasInvalidInputs(): boolean {
+            let invalidInputs = false;
+            this.forEachInput((element) => {
+                if (!element.getInputElement().validity.valid) {
+                    invalidInputs = true;
+                    return;
+                }
+            });
+            return invalidInputs;
+        }
     }
+
+    UserComponentRegistry.registerDefaultComponent('agNumberColumnFilter', NumberFilter);
 }

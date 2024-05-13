@@ -159,7 +159,7 @@ export abstract class SimpleFilterModelFormatter<TValue = any> {
             const customOptions = conditions.map(condition => this.getModelAsString(condition));
             const joinOperatorTranslateKey = combinedModel.operator === 'AND' ? 'andCondition' : 'orCondition';
             return customOptions.join(` ${translate(joinOperatorTranslateKey, FILTER_LOCALE_TEXT[joinOperatorTranslateKey])} `);
-        } else if (model.type === SimpleFilter.BLANK || model.type === SimpleFilter.NOT_BLANK) {
+        } else if (model.type === 'blank' || model.type === 'notBlank') {
             return translate(model.type, model.type);
         } else {
             const condition = model as ISimpleFilterModel;
@@ -196,21 +196,6 @@ export abstract class SimpleFilterModelFormatter<TValue = any> {
  * @param E type of UI element used for collecting user-input
  */
 export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputTextField> extends ProvidedFilter<M | ICombinedSimpleModel<M>, V> implements ISimpleFilter {
-
-    public static EMPTY: ISimpleFilterModelType = 'empty';
-    public static BLANK: ISimpleFilterModelType = 'blank';
-    public static NOT_BLANK: ISimpleFilterModelType = 'notBlank';
-    public static EQUALS: ISimpleFilterModelType = 'equals';
-    public static NOT_EQUAL: ISimpleFilterModelType = 'notEqual';
-    public static LESS_THAN: ISimpleFilterModelType = 'lessThan';
-    public static LESS_THAN_OR_EQUAL: ISimpleFilterModelType = 'lessThanOrEqual';
-    public static GREATER_THAN: ISimpleFilterModelType = 'greaterThan';
-    public static GREATER_THAN_OR_EQUAL: ISimpleFilterModelType = 'greaterThanOrEqual';
-    public static IN_RANGE: ISimpleFilterModelType = 'inRange';
-    public static CONTAINS: ISimpleFilterModelType = 'contains';
-    public static NOT_CONTAINS: ISimpleFilterModelType = 'notContains';
-    public static STARTS_WITH: ISimpleFilterModelType = 'startsWith';
-    public static ENDS_WITH: ISimpleFilterModelType = 'endsWith';
 
     protected readonly eTypes: AgSelect[] = [];
     protected readonly eJoinOperatorPanels: HTMLElement[] = [];
@@ -264,13 +249,13 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             return numberOfInputs != null ? numberOfInputs : 1;
         }
 
-        const zeroInputTypes = [
-            SimpleFilter.EMPTY, SimpleFilter.NOT_BLANK, SimpleFilter.BLANK,
+        const zeroInputTypes: ISimpleFilterModelType[] = [
+            'empty', 'notBlank', 'blankTest' as any,
         ];
 
         if (type && zeroInputTypes.indexOf(type) >= 0) {
             return 0;
-        } else if (type === SimpleFilter.IN_RANGE) {
+        } else if (type === 'inRange') {
             return 2;
         }
 
@@ -915,7 +900,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
         const type = this.getConditionType(position);
 
-        if (type === SimpleFilter.EMPTY) { return false; }
+        if (type === 'empty') { return false; }
 
         if (this.getValues(position).some(v => v == null)) {
             return false;

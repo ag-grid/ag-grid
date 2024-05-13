@@ -1,12 +1,7 @@
 import { BeanStub } from "../../context/beanStub";
 import { Bean, PostConstruct } from "../../context/context";
 import { ReadOnlyFloatingFilter } from "../../filter/floating/provided/readOnlyFloatingFilter";
-import { DateFilter } from "../../filter/provided/date/dateFilter";
-import { DateFloatingFilter } from "../../filter/provided/date/dateFloatingFilter";
 import { DefaultDateComponent } from "../../filter/provided/date/defaultDateComponent";
-import { NumberFilter } from "../../filter/provided/number/numberFilter";
-import { NumberFloatingFilter } from "../../filter/provided/number/numberFloatingFilter";
-import { TextFilter } from "../../filter/provided/text/textFilter";
 import { TextFloatingFilter } from "../../filter/provided/text/textFloatingFilter";
 import { HeaderComp } from "../../headerRendering/cells/column/headerComp";
 import { SortIndicatorComp } from "../../headerRendering/cells/column/sortIndicatorComp";
@@ -37,7 +32,7 @@ import { AgMenuItemRenderer } from "../../widgets/agMenuItemRenderer";
 @Bean('userComponentRegistry')
 export class UserComponentRegistry extends BeanStub {
 
-    private agGridDefaults: { [key: string]: any } = {
+    private static agGridDefaults: { [key: string]: any } = {
         //date
         agDateInput: DefaultDateComponent,
 
@@ -48,8 +43,6 @@ export class UserComponentRegistry extends BeanStub {
 
         //floating filters
         agTextColumnFloatingFilter: TextFloatingFilter,
-        agNumberColumnFloatingFilter: NumberFloatingFilter,
-        agDateColumnFloatingFilter: DateFloatingFilter,
         agReadOnlyFloatingFilter: ReadOnlyFloatingFilter,
 
         // renderers
@@ -72,10 +65,6 @@ export class UserComponentRegistry extends BeanStub {
         agCheckboxCellEditor: CheckboxCellEditor,
 
         //filter
-        agTextColumnFilter: TextFilter,
-        agNumberColumnFilter: NumberFilter,
-        agDateColumnFilter: DateFilter,
-
         //overlays
         agLoadingOverlay: LoadingOverlayComponent,
         agNoRowsOverlay: NoRowsOverlayComponent,
@@ -111,7 +100,7 @@ export class UserComponentRegistry extends BeanStub {
         }
     }
 
-    public registerDefaultComponent(name: string, component: any) {
+    public static registerDefaultComponent(name: string, component: any) {
 
         if (this.agGridDefaults[name]) {
             console.error(`Trying to overwrite a default component. You should call registerComponent`);
@@ -143,7 +132,7 @@ export class UserComponentRegistry extends BeanStub {
             return createResult(jsComponent, isFwkComp);
         }
 
-        const defaultComponent = this.agGridDefaults[name];
+        const defaultComponent = UserComponentRegistry.agGridDefaults[name];
         if (defaultComponent) {
             return createResult(defaultComponent, false);
         }
@@ -161,7 +150,7 @@ export class UserComponentRegistry extends BeanStub {
     private warnAboutMissingComponent(propertyName: string, componentName: string) {
         const validComponents = [
             // Don't include the old names / internals in potential suggestions
-            ...Object.keys(this.agGridDefaults).filter(k => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)),
+            ...Object.keys(UserComponentRegistry.agGridDefaults).filter(k => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)),
             ...Object.keys(this.jsComps)];
         const suggestions = _fuzzySuggestions(componentName, validComponents, true, 0.8).values;
 
