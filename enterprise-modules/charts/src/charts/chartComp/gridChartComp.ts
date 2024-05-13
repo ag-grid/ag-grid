@@ -205,11 +205,6 @@ export class GridChartComp extends Component {
             return;
         }
 
-        const canvas = this.eChart.querySelector('canvas');
-        if (canvas) {
-            canvas.classList.add('ag-charts-canvas');
-        }
-
         this.chartController.setChartProxy(this.chartProxy);
         this.createMenuContext();
         this.titleEdit && this.titleEdit.refreshTitle(this.chartMenuContext);

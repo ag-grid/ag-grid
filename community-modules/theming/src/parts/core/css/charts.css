@@ -32,10 +32,6 @@
     overflow: hidden;
 }
 
-.ag-charts-canvas {
-    display: block;
-}
-
 .ag-chart-menu {
     position: absolute;
     top: 16px;
