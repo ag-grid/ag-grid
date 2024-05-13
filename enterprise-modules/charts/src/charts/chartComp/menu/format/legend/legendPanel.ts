@@ -3,7 +3,12 @@ import {
     Autowired,
     Component,
     PostConstruct,
-    AgSliderParams
+    AgGroupComponent,
+    AgSelect,
+    AgSlider,
+    AgCheckbox,
+    AgSelectParams,
+    RefSelector
 } from "@ag-grid-community/core";
 import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
@@ -11,68 +16,104 @@ import { FormatPanelOptions } from "../formatPanel";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 
 export class LegendPanel extends Component {
-
-    public static TEMPLATE = /* html */
+    private static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="legendGroup">
-                <ag-select ref="legendPositionSelect"></ag-select>
-                <ag-slider ref="legendPaddingSlider"></ag-slider>
-                <ag-slider ref="markerSizeSlider"></ag-slider>
-                <ag-slider ref="markerStrokeSlider"></ag-slider>
-                <ag-slider ref="markerPaddingSlider"></ag-slider>
-                <ag-slider ref="itemPaddingXSlider"></ag-slider>
-                <ag-slider ref="itemPaddingYSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    @RefSelector('legendGroup') private readonly legendGroup: AgGroupComponent;
 
-    private readonly chartMenuUtils: ChartMenuParamsFactory;
-    private readonly isExpandedOnInit: boolean;
+    private readonly key: string;
+    private readonly isGradient: boolean;
 
-    constructor({ chartMenuParamsFactory: chartMenuUtils, isExpandedOnInit = false }: FormatPanelOptions) {
+    constructor(private readonly options: FormatPanelOptions) {
         super();
 
-        this.chartMenuUtils = chartMenuUtils;
-        this.isExpandedOnInit = isExpandedOnInit;
+        this.isGradient = ['treemap', 'sunburst', 'heatmap'].includes(options.seriesType);
+        this.key = this.isGradient ? 'gradientLegend' : 'legend';
     }
 
     @PostConstruct
     private init() {
-        const legendGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
-            'legend.enabled',
+        const { chartMenuParamsFactory, isExpandedOnInit: expanded, registerGroupComponent } = this.options;
+        const positionSelect = this.createManagedBean(new AgSelect(chartMenuParamsFactory.addValueParams<AgSelectParams>(
+            `${this.key}.position`,
             {
-                cssIdentifier: 'charts-format-top-level',
-                direction: 'vertical',
-                title: this.chartTranslationService.translate("legend"),
-                suppressEnabledCheckbox: false,
-                suppressToggleExpandOnEnableChange: true,
-                expanded: this.isExpandedOnInit,
-                items: [this.createLabelPanel()]
+                label: this.chartTranslationService.translate('position'),
+                labelWidth: 'flex',
+                inputWidth: 'flex',
+                options: ['top', 'right', 'bottom', 'left'].map((position: ChartTranslationKey) => ({
+                    value: position,
+                    text: this.chartTranslationService.translate(position)
+                })),
             }
-        );
+        )));
+        const enabledGroup = this.createManagedBean(new AgGroupComponent(chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(
+            `${this.key}.enabled`,
+            {
+                cssIdentifier: 'charts-format-sub-level',
+                direction: 'vertical',
+                suppressOpenCloseIcons: true,
+                title: this.chartTranslationService.translate('legendEnabled'),
+                suppressEnabledCheckbox: true,
+                useToggle: true,
+                items: [
+                    this.createLabelPanel(chartMenuParamsFactory),
+                    positionSelect,
+                    ...this.getItems(chartMenuParamsFactory)
+                ]
+            }
+        )));
+        const legendGroupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts-format-top-level',
+            direction: 'vertical',
+            title: this.chartTranslationService.translate('legend'),
+            suppressEnabledCheckbox: true,
+            expanded,
+            items: [enabledGroup]
+        };
         this.setTemplate(LegendPanel.TEMPLATE, {
-            legendGroup: legendGroupParams,
-            legendPositionSelect: this.chartMenuUtils.getDefaultLegendParams('legend.position'),
-            legendPaddingSlider: this.getSliderParams('spacing', 'spacing', 200),
-            markerSizeSlider: this.getSliderParams("item.marker.size", "markerSize", 40),
-            markerStrokeSlider: this.getSliderParams("item.marker.strokeWidth", "markerStroke", 10),
-            markerPaddingSlider: this.getSliderParams("item.marker.padding", "itemSpacing", 20),
-            itemPaddingXSlider: this.getSliderParams("item.paddingX", "layoutHorizontalSpacing", 50),
-            itemPaddingYSlider: this.getSliderParams("item.paddingY", "layoutVerticalSpacing", 50),
+            legendGroup: legendGroupParams
         });
+        registerGroupComponent(this.legendGroup);
     }
 
-    private getSliderParams(expression: string, labelKey: ChartTranslationKey, defaultMaxValue: number): AgSliderParams {
-        return this.chartMenuUtils.getDefaultSliderParams(`legend.${expression}`, labelKey, defaultMaxValue);
+    private getItems(chartMenuParamsFactory: ChartMenuParamsFactory): Component[] {
+        const createSlider = (expression: string, labelKey: ChartTranslationKey, defaultMaxValue: number) =>
+            this.createManagedBean(new AgSlider(chartMenuParamsFactory.getDefaultSliderParams(`${this.key}.${expression}`, labelKey, defaultMaxValue)));
+        if (this.isGradient) {
+            return [
+                this.createManagedBean(new AgCheckbox(chartMenuParamsFactory.addValueParams(
+                    'gradientLegend.reverseOrder',
+                    {
+                        label: this.chartTranslationService.translate('reverseDirection'),
+                        labelWidth: 'flex',
+                    }
+                ))),
+                createSlider('gradient.thickness', 'thickness', 40),
+                createSlider('gradient.preferredLength', 'preferredLength', 300),
+                createSlider('spacing', 'spacing', 200)
+            ];
+        }
+        return [
+            createSlider('spacing', 'spacing', 200),
+            createSlider('item.marker.size', 'markerSize', 40),
+            createSlider('item.marker.strokeWidth', 'markerStroke', 10),
+            createSlider('item.marker.padding', 'itemSpacing', 20),
+            createSlider('item.paddingX', 'layoutHorizontalSpacing', 50),
+            createSlider('item.paddingY', 'layoutVerticalSpacing', 50)
+        ];
     }
 
-    private createLabelPanel(): FontPanel {
+    private createLabelPanel(chartMenuParamsFactory: ChartMenuParamsFactory): FontPanel {
+        const rootKey = this.isGradient ? 'gradientLegend.scale.label' : 'legend.item.label';
         const params: FontPanelParams = {
             enabled: true,
             suppressEnabledCheckbox: true,
-            chartMenuUtils: this.chartMenuUtils,
-            keyMapper: key => `legend.item.label.${key}`
+            chartMenuParamsFactory,
+            keyMapper: key => `${rootKey}.${key}`
         };
 
         return this.createManagedBean(new FontPanel(params));

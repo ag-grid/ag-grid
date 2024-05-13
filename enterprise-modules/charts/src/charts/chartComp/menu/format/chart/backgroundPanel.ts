@@ -30,7 +30,8 @@ export class BackgroundPanel extends Component {
                 direction: 'vertical',
                 suppressOpenCloseIcons: true,
                 title: this.chartTranslationService.translate('background'),
-                suppressEnabledCheckbox: false
+                suppressEnabledCheckbox: true,
+                useToggle: true
             }
         );
         const colorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams('background.fill');

@@ -1,10 +1,9 @@
 import {
+    AgGroupComponent,
     ChartFormatPanel,
     ChartFormatPanelGroup,
-    ChartPanelGroupDef,
     Component,
     PostConstruct,
-    ChartType,
     _warnOnce
 } from "@ag-grid-community/core";
 import { LegendPanel } from "./legend/legendPanel";
@@ -13,14 +12,15 @@ import { PolarAxisPanel } from "./axis/polarAxisPanel";
 import { ChartPanel } from "./chart/chartPanel";
 import { SeriesPanel } from "./series/seriesPanel";
 import { ChartSeriesType, isCartesian, isPolar } from "../../utils/seriesTypeMapper";
-import { GradientLegendPanel } from './legend/gradientLegendPanel';
 import { ChartPanelFeature } from "../chartPanelFeature";
 import { ChartMenuContext } from "../chartMenuContext";
 import { TitlesPanel } from "./titles/titlesPanel";
+import { GroupExpansionFeature } from "./groupExpansionFeature";
 
 export interface FormatPanelOptions extends ChartMenuContext {
-    isExpandedOnInit?: boolean,
-    seriesType: ChartSeriesType,
+    isExpandedOnInit: boolean;
+    seriesType: ChartSeriesType;
+    registerGroupComponent: (groupComponent: AgGroupComponent) => void;
 }
 
 const DefaultFormatPanelDef: ChartFormatPanel = {
@@ -37,6 +37,7 @@ export class FormatPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-format-wrapper"></div>`;
 
     private chartPanelFeature: ChartPanelFeature;
+    private groupExpansionFeature: GroupExpansionFeature;
 
     constructor(
         private readonly chartMenuContext: ChartMenuContext
@@ -46,28 +47,38 @@ export class FormatPanel extends Component {
 
     @PostConstruct
     private init() {
+        this.groupExpansionFeature = this.createManagedBean(new GroupExpansionFeature(this.getGui()));
         this.chartPanelFeature = this.createManagedBean(new ChartPanelFeature(
             this.chartMenuContext.chartController,
             this.getGui(),
             'ag-chart-format-section',
-            (chartType, seriesType) => this.createPanels(chartType, seriesType)
+            (_chartType, seriesType) => this.createPanels(seriesType)
         ));
         this.chartPanelFeature.refreshPanels();
     }
 
-    private createPanels(chartType: ChartType, seriesType: ChartSeriesType) {
-        this.getFormatPanelDef().groups?.forEach((groupDef: ChartPanelGroupDef<ChartFormatPanelGroup>) => {
-            const group = groupDef.type;
-
+    private createPanels(seriesType: ChartSeriesType) {
+        let panelExpandedOnInit = false;
+        this.getFormatPanelDef().groups?.forEach(({ type: group, isOpen: isExpandedOnInit = false }) => {
             // ensure the group should be displayed for the current series type
             if (!this.isGroupPanelShownInSeries(group, seriesType)) {
                 return;
             }
 
+            if (isExpandedOnInit) {
+                if (panelExpandedOnInit) {
+                    _warnOnce(`As of v32, only one charts customize panel group can be expanded at a time. '${group}' will not be expanded.`)
+                }
+                panelExpandedOnInit = true;
+            }
+
+            const registerGroupComponent = (groupComponent: AgGroupComponent) => this.groupExpansionFeature.addGroupComponent(groupComponent);
+
             const opts: FormatPanelOptions = {
                 ...this.chartMenuContext,
-                isExpandedOnInit: groupDef.isOpen,
-                seriesType
+                isExpandedOnInit,
+                seriesType,
+                registerGroupComponent
             };
 
             switch (group) {
@@ -78,11 +89,7 @@ export class FormatPanel extends Component {
                     this.chartPanelFeature.addComponent(new TitlesPanel(opts));
                     break;
                 case 'legend':
-                    // Some chart types require non-standard legend options, so choose the appropriate panel
-                    const panel = ['treemap', 'sunburst', 'heatmap'].includes(chartType)
-                        ? new GradientLegendPanel(opts)
-                        : new LegendPanel(opts);
-                    this.chartPanelFeature.addComponent(panel);
+                    this.chartPanelFeature.addComponent(new LegendPanel(opts));
                     break;
                 case 'axis':
                     // Polar charts have different axis options from cartesian charts, so choose the appropriate panels
@@ -105,7 +112,7 @@ export class FormatPanel extends Component {
                 case 'navigator':
                     _warnOnce(`'navigator' is now displayed in the charts advanced settings instead of the format panel, and this setting will be ignored.`);
                 default:
-                    _warnOnce(`Invalid charts format panel group name supplied: '${groupDef.type}'`);
+                    _warnOnce(`Invalid charts format panel group name supplied: '${group}'`);
             }
         });
     }

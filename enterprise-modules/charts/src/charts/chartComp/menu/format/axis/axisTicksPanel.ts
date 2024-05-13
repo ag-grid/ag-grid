@@ -33,7 +33,8 @@ export class AxisTicksPanel extends Component {
                 direction: 'vertical',
                 suppressOpenCloseIcons: true,
                 title: this.chartTranslationService.translate("ticks"),
-                suppressEnabledCheckbox: false
+                suppressEnabledCheckbox: true,
+                useToggle: true
             }
         );
         const axisTicksColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams("tick.color");

@@ -27,8 +27,8 @@ export interface FontPanelParams {
     enabled: boolean;
     suppressEnabledCheckbox?: boolean;
     onEnableChange?: (enabled: boolean) => void;
-    chartMenuUtils: ChartMenuParamsFactory,
-    keyMapper: (key: string) => string
+    chartMenuParamsFactory: ChartMenuParamsFactory;
+    keyMapper: (key: string) => string;
 }
 
 export class FontPanel extends Component {
@@ -56,7 +56,7 @@ export class FontPanel extends Component {
     constructor(params: FontPanelParams) {
         super();
         this.params = params;
-        this.chartOptions = params.chartMenuUtils.getChartOptions();
+        this.chartOptions = params.chartMenuParamsFactory.getChartOptions();
     }
 
     @PostConstruct
@@ -67,19 +67,20 @@ export class FontPanel extends Component {
             suppressOpenCloseIcons: true,
             title: this.params.name || this.chartTranslationService.translate('font'),
             enabled: this.params.enabled,
-            suppressEnabledCheckbox: !!this.params.suppressEnabledCheckbox,
+            suppressEnabledCheckbox: true,
             onEnableChange: enabled => {
                 if (this.params.onEnableChange) {
                     this.params.onEnableChange(enabled);
                 }
-            }
+            },
+            useToggle: !this.params.suppressEnabledCheckbox
         };
         this.setTemplate(FontPanel.TEMPLATE, {
             fontGroup: fontGroupParams,
             familySelect: this.getFamilySelectParams(),
             weightStyleSelect: this.getWeightStyleSelectParams(),
             sizeSelect: this.getSizeSelectParams(),
-            colorPicker: this.params.chartMenuUtils.getDefaultColorPickerParams(this.params.keyMapper('color'))
+            colorPicker: this.params.chartMenuParamsFactory.getDefaultColorPickerParams(this.params.keyMapper('color'))
         });
     }
 

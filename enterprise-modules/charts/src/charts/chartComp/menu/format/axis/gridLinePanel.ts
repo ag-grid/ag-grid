@@ -30,7 +30,8 @@ export class GridLinePanel extends Component {
             direction: 'vertical',
             suppressOpenCloseIcons: true,
             title: this.chartTranslationService.translate('gridLines'),
-            suppressEnabledCheckbox: false,
+            suppressEnabledCheckbox: true,
+            useToggle: true
         });
         const gridLineColorPickerParams = this.getGridLineColorPickerParams('color');
         const gridLineWidthSliderParams = this.getGridLineWidthSliderParams('thickness');
