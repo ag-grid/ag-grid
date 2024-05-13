@@ -36,7 +36,18 @@ function getRowData() {
   return [{ col1: 'A' }, { col1: 'A' }, { col1: 'B' }, { col1: 'C' }]
 }
 
-function setNewData() {
+function updateOne() {
+  var newData = [
+    { col1: 'A' },
+    { col1: 'A' },
+    { col1: 'C' },
+    { col1: 'D' },
+    { col1: 'E' },
+  ]
+  gridApi!.setGridOption('rowData', newData)
+}
+
+function updateTwo() {
   var newData = [
     { col1: 'A' },
     { col1: 'A' },
@@ -44,6 +55,8 @@ function setNewData() {
     { col1: 'C' },
     { col1: 'D' },
     { col1: 'E' },
+    { col1: 'B' },
+    { col1: 'B' },
   ]
   gridApi!.setGridOption('rowData', newData)
 }
