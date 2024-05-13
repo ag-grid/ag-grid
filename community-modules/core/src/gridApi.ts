@@ -1,4 +1,5 @@
 import { AlignedGridsService } from "./alignedGridsService";
+import { ColumnDefFactory } from "./columns/columnDefFactory";
 import { ApplyColumnStateParams, ColumnModel, ColumnState, ISizeColumnsToFitParams } from "./columns/columnModel";
 import { Autowired, Bean, Context, Optional, PostConstruct } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
@@ -276,7 +277,9 @@ export class GridApi<TData = any> {
         }
     }
 
-    /** Downloads an Excel export of the grid's data. */
+    /** Downloads an Excel export of the grid's data.
+     * @requires Excel Export Module
+     */
     public exportDataAsExcel(params?: ExcelExportParams): void {
         if (this.assertNotExcelMultiSheet('exportDataAsExcel', params)) {
             this.excelCreator!.exportDataAsExcel(params);
@@ -822,7 +825,7 @@ export class GridApi<TData = any> {
     /**
      * Returns the current column definitions.
     */
-    public getColumnDefs(): (ColDef<TData> | ColGroupDef<TData>)[] | undefined { return this.columnModel.getColumnDefs(); }
+    // public getColumnDefs(): (ColDef<TData> | ColGroupDef<TData>)[] | undefined { return this.columnModel.getColumnDefs(); }
 
     /**
      * Informs the grid that a filter has changed. This is typically called after a filter change through one of the filter APIs.
@@ -1947,3 +1950,13 @@ export class GridApi<TData = any> {
 
 /** Utility type to support adding params to a grid api method. */
 type StartsWithGridApi = `${keyof GridApi}${string}`;
+
+export function getColumnDefs<TData = any>(api: GridApi): (ColDef<TData> | ColGroupDef<TData>)[] | undefined { 
+    const colModel =  (api as any).columnModel as ColumnModel;
+    const cols = colModel.getColumnDefsSorted();
+    if (!cols) { return; }
+
+    const factory = new ColumnDefFactory();
+
+    return factory.buildColumnDefs(cols, colModel.getRowGroupColumns(), colModel.getPivotColumns());
+}

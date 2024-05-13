@@ -1,14 +1,12 @@
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { Column } from "../entities/column";
-import { Bean } from "../context/context";
-import { _deepCloneDefinition } from "../utils/object";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
+import { _deepCloneDefinition } from "../utils/object";
 
-@Bean('columnDefFactory')
 export class ColumnDefFactory {
 
     public buildColumnDefs(cols: Column[], rowGroupColumns: Column[], pivotColumns: Column[]): (ColDef | ColGroupDef)[] {
-
+        console.log("ColumnDefFactory.buildColumnDefs");
         const res: (ColDef | ColGroupDef)[] = [];
 
         const colGroupDefs: {[id: string]: ColGroupDef} = {};

@@ -42,7 +42,6 @@ import { AnimationFrameService } from "../misc/animationFrameService";
 import { SortController } from "../sortController";
 import { _missingOrEmpty, _exists, _missing, _attrToBoolean, _attrToNumber } from '../utils/generic';
 import { _camelCaseToHumanText } from '../utils/string';
-import { ColumnDefFactory } from "./columnDefFactory";
 import { _convertToMap } from '../utils/map';
 import { _warnOnce } from '../utils/function';
 import { CtrlsService } from '../ctrlsService';
@@ -129,7 +128,6 @@ export class ColumnModel extends BeanStub {
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('sortController') private sortController: SortController;
-    @Autowired('columnDefFactory') private columnDefFactory: ColumnDefFactory;
 
     @Optional('aggFuncService') private aggFuncService?: IAggFuncService;
 
@@ -1616,7 +1614,7 @@ export class ColumnModel extends BeanStub {
         this.moveColumns([column], toIndex, source);
     }
 
-    public getColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
+    public getColumnDefsSorted(): Column[] | undefined {
         if (!this.primaryColumns) { return; }
 
         const cols = this.primaryColumns.slice();
@@ -1626,9 +1624,9 @@ export class ColumnModel extends BeanStub {
         } else if (this.lastPrimaryOrder) {
             cols.sort((a: Column, b: Column) => this.lastPrimaryOrder.indexOf(a) - this.lastPrimaryOrder.indexOf(b));
         }
-
-        return this.columnDefFactory.buildColumnDefs(cols, this.rowGroupColumns, this.pivotColumns);
+        return cols;
     }
+
 
     // used by:
     // + angularGrid -> for setting body width

@@ -70,7 +70,6 @@ import { AgStackComponentsRegistry } from "./components/agStackComponentsRegistr
 import { HeaderPositionUtils } from "./headerRendering/common/headerPosition";
 import { HeaderNavigationService } from "./headerRendering/common/headerNavigationService";
 import { _missing } from "./utils/generic";
-import { ColumnDefFactory } from "./columns/columnDefFactory";
 import { RowCssClassCalculator } from "./rendering/row/rowCssClassCalculator";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { RowNodeSorter } from "./rowNodes/rowNodeSorter";
@@ -422,7 +421,7 @@ export class GridCoreCreator {
             FocusService, MouseEventService, Environment, CellNavigationService, StylingService,
             ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
-            UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory, RowCssClassCalculator, 
+            UndoRedoService, AgStackComponentsRegistry, RowCssClassCalculator, 
             RowNodeBlockLoader, RowNodeSorter, CtrlsService, PinnedWidthService, RowNodeEventThrottle,
             CtrlsFactory, DataTypeService, SyncService, OverlayService, StateService,
             ExpansionService, ApiEventService, AriaAnnouncementService, MenuService, ...ModuleRegistry.getFeatures()
