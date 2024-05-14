@@ -205,9 +205,10 @@ export class ColumnModel extends BeanStub {
         this.ready = true;
 
         this.updateLiveCols();
-        if (colsPreviouslyExisted && !this.showingPivotResult && !this.gos.get('maintainColumnOrder')) {
-            this.orderLiveColsLikeProvidedCols();
-        }
+
+        const maintainColOrder = colsPreviouslyExisted && !this.showingPivotResult && !this.gos.get('maintainColumnOrder');
+        maintainColOrder && this.orderLiveColsLikeProvidedCols();
+
         this.updatePresentedCols(source);
         this.columnViewportService.checkViewportColumns();
 
@@ -218,9 +219,7 @@ export class ColumnModel extends BeanStub {
         // Row Models react to all of these events as well as new columns loaded,
         // this flag instructs row model to ignore these events to reduce refreshes.
         this.changeEventsDispatching = true;
-        if (dispatchEventsFunc) {
-            dispatchEventsFunc();
-        }
+        dispatchEventsFunc && dispatchEventsFunc();
         this.changeEventsDispatching = false;
 
         this.eventDispatcher.newColumnsLoaded(source);
@@ -242,8 +241,8 @@ export class ColumnModel extends BeanStub {
         this.saveLiveColOrder();
 
         this.selectLiveCols();
-
         this.createAutoCols();
+
         this.addAutoColsToLiveCols();
 
         this.restoreLiveColOrder();
@@ -342,7 +341,8 @@ export class ColumnModel extends BeanStub {
         this.columnUtilsFeature.destroyColumns(this.getContext(), this.autoCols?.tree);
     }
 
-    public shouldRowModelIgnoreRefresh(): boolean {
+    // called by clientSideRowModel.refreshModel
+    public isChangeEventsDispatching(): boolean {
         return this.changeEventsDispatching;
     }
 

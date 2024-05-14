@@ -579,7 +579,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void {
-        if (!this.hasStarted || this.isRefreshingModel || this.columnModel.shouldRowModelIgnoreRefresh()) { return; }
+        if (!this.hasStarted || this.isRefreshingModel || this.columnModel.isChangeEventsDispatching()) { return; }
 
         let params = typeof paramsOrStep === 'object' && "step" in paramsOrStep ? paramsOrStep : this.buildRefreshModelParams(paramsOrStep);
 
