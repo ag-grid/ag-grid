@@ -60,7 +60,7 @@ export class StickyRowFeature extends BeanStub {
             return row.sibling!.rowTop! + row.sibling!.rowHeight! - 1;
         }
 
-        if (row.group) {
+        if (row.hasChildren()) {
             return row.rowTop! - 1;
         }
 
@@ -182,19 +182,23 @@ export class StickyRowFeature extends BeanStub {
         const suppressFootersSticky = this.areFooterRowsStickySuppressed();
         const suppressGroupsSticky = this.gos.get('suppressGroupRowsSticky');
         const isRowSticky = (row: RowNode) => {
+            if (!row.displayed) {
+                return false;
+            }
+
             if (row.footer) {
                 if (suppressFootersSticky === true) { return false; }
                 if (suppressFootersSticky === 'grand' && row.level === -1) { return false };
                 if (suppressFootersSticky === 'group' && row.level > -1) { return false };
 
                 const alreadySticking = newStickyRows.has(row);
-                return !alreadySticking && row.displayed;
+                return !alreadySticking;
             }
 
             if (row.isExpandable()) {
                 if (suppressGroupsSticky === true) { return false };
                 const alreadySticking = newStickyRows.has(row);
-                return !alreadySticking && row.displayed && row.expanded;
+                return !alreadySticking && row.expanded;
             }
 
             return false;
