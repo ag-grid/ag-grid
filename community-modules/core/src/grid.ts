@@ -5,7 +5,6 @@ import { RowRenderer } from "./rendering/rowRenderer";
 import { GridHeaderComp } from "./headerRendering/gridHeaderComp";
 import { ValueService } from "./valueService/valueService";
 import { EventService } from "./eventService";
-import { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 import { GridApi } from "./gridApi";
 import { ColumnFactory } from "./columns/columnFactory";
 import { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
@@ -15,7 +14,7 @@ import { Logger, LoggerFactory } from "./logger";
 import { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 import { HorizontalResizeService } from "./headerRendering/common/horizontalResizeService";
 import { ComponentMeta, Context, ContextParams } from "./context/context";
-import { GridComp } from "./gridComp/gridComp";
+import { getGridComp } from "./gridComp/gridComp";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { DragService } from "./dragAndDrop/dragService";
 import { SortController } from "./sortController";
@@ -77,7 +76,6 @@ import { CtrlsService } from "./ctrlsService";
 import { CtrlsFactory } from "./ctrlsFactory";
 import { FakeHScrollComp } from "./gridBodyComp/fakeHScrollComp";
 import { PinnedWidthService } from "./gridBodyComp/pinnedWidthService";
-import { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
 import { RowNodeEventThrottle } from "./entities/rowNodeEventThrottle";
 import { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu";
 import { SortIndicatorComp } from "./headerRendering/cells/column/sortIndicatorComp";
@@ -97,6 +95,9 @@ import { ApiEventService } from "./misc/apiEventService";
 import { PageSizeSelectorComp } from "./pagination/pageSizeSelector/pageSizeSelectorComp";
 import { AriaAnnouncementService } from "./rendering/ariaAnnouncementService";
 import { MenuService } from "./misc/menuService";
+import { useGridBodyComp } from "./gridBodyComp/gridBodyComp";
+import { useRowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
+import { get } from "http";
 
 export interface GridParams {
     // INTERNAL - used by Web Components
@@ -112,6 +113,8 @@ export interface GridParams {
      * Modules to be registered directly with this grid instance.
      */
     modules?: Module[];
+
+    components?: ComponentMeta[];
 }
 
 export interface Params {
@@ -134,6 +137,14 @@ export function provideGlobalGridOptions(gridOptions: GridOptions): void {
     GlobalGridOptions.gridOptions = gridOptions;
 }
 
+
+export function getJsComponents() {
+    const comps: ComponentMeta[] = [];
+    useGridBodyComp(comps);
+    useRowContainerComp(comps);
+    return comps;
+}
+
 /**
  * Creates a grid inside the provided HTML element.
  * @param eGridDiv Parent element to contain the grid.
@@ -143,12 +154,15 @@ export function provideGlobalGridOptions(gridOptions: GridOptions): void {
  */
 export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOptions<TData>, params?: Params): GridApi<TData>{
 
+    let gridParams = (params ?? {}) as GridParams;
+    gridParams.components = getJsComponents();
+
     if (!gridOptions) {
         _errorOnce('No gridOptions provided to createGrid');
         return {} as GridApi;
     }   
     const api = new GridCoreCreator().create(eGridDiv, gridOptions, context => {
-        const gridComp = new GridComp(eGridDiv);
+        const gridComp = getGridComp(eGridDiv);
         context.createBean(gridComp);
     }, undefined, params);
 
@@ -168,58 +182,15 @@ export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOption
     
     return api;
 }
-/**
- * @deprecated v31 use createGrid() instead
- */
-export class Grid {
-    protected logger: Logger;
-
-    private readonly gridOptions: any; // Not typed to enable setting api for backwards compatibility
-
-    constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
-      _warnOnce('Since v31 new Grid(...) is deprecated. Use createGrid instead: `const gridApi = createGrid(...)`. The grid api is returned from createGrid and will not be available on gridOptions.');
-
-        if (!gridOptions) {
-            _errorOnce('No gridOptions provided to the grid');
-            return;
-        }
-
-        this.gridOptions = gridOptions as any;
-
-        const api = new GridCoreCreator().create(
-            eGridDiv,
-            gridOptions,
-            (context) => {
-                const gridComp = new GridComp(eGridDiv);
-                const bean = context.createBean(gridComp);
-                bean.addDestroyFunc(() => {
-                    this.destroy()
-                });
-            },
-            undefined,
-            params
-        );
-        
-        // Maintain existing behaviour by mutating gridOptions with the apis for deprecated new Grid()
-        this.gridOptions.api = api;
-    }
-
-    public destroy(): void {
-        if (this.gridOptions) {
-            this.gridOptions.api?.destroy();
-            // need to remove these, as we don't own the lifecycle of the gridOptions, we need to
-            // remove the references in case the user keeps the grid options, we want the rest
-            // of the grid to be picked up by the garbage collector
-            delete this.gridOptions.api;
-        }
-    }
-}
 
 let nextGridId = 1;
 
 // creates services of grid only, no UI, so frameworks can use this if providing
 // their own UI
 export class GridCoreCreator {
+
+    constructor(private providedComps: ComponentMeta[] = []) {
+    }
 
     public create(eGridDiv: HTMLElement, providedOptions: GridOptions, createUi: (context: Context) => void, acceptChanges?: (context: Context) => void, params?: GridParams): GridApi {
 
@@ -261,7 +232,7 @@ export class GridCoreCreator {
         const beans = context.getBean('beans') as Beans;
 
         this.registerModuleUserComponents(beans, registeredModules);
-        this.registerStackComponents(beans, registeredModules);
+        this.registerStackComponents(beans, registeredModules, this.providedComps);
         this.registerControllers(beans, registeredModules);
 
         createUi(context);
@@ -282,8 +253,8 @@ export class GridCoreCreator {
         });
     }
 
-    private registerStackComponents(beans: Beans, registeredModules: Module[]): void {
-        const agStackComponents = this.createAgStackComponentsList(registeredModules);
+    private registerStackComponents(beans: Beans, registeredModules: Module[], providedComps: ComponentMeta[]): void {
+        const agStackComponents = this.createAgStackComponentsList(registeredModules, providedComps);
         beans.agStackComponentsRegistry.setupComponents(agStackComponents);
     }
 
@@ -351,8 +322,9 @@ export class GridCoreCreator {
         return seed;
     }
 
-    private createAgStackComponentsList(registeredModules: Module[]): any[] {
+    private createAgStackComponentsList(registeredModules: Module[], providedComps: ComponentMeta[]): any[] {
         let components: ComponentMeta[] = [
+            ...providedComps,
             { componentName: 'AgCheckbox', componentClass: AgCheckbox },
             //{ componentName: 'AgRadioButton', componentClass: AgRadioButton },
             { componentName: 'AgToggleButton', componentClass: AgToggleButton },
@@ -364,14 +336,13 @@ export class GridCoreCreator {
            // { componentName: 'AgRichSelect', componentClass: AgRichSelect },
             { componentName: 'AgSelect', componentClass: AgSelect },
             { componentName: 'AgSlider', componentClass: AgSlider },
-            { componentName: 'AgGridBody', componentClass: GridBodyComp },
             { componentName: 'AgHeaderRoot', componentClass: GridHeaderComp },
             { componentName: 'AgSortIndicator', componentClass: SortIndicatorComp },
             { componentName: 'AgPagination', componentClass: PaginationComp },
             { componentName: 'AgPageSizeSelector', componentClass: PageSizeSelectorComp },
             { componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent },
             { componentName: 'AgGroupComponent', componentClass: AgGroupComponent },
-            { componentName: 'AgRowContainer', componentClass: RowContainerComp },
+            
             { componentName: 'AgFakeHorizontalScroll', componentClass: FakeHScrollComp },
             { componentName: 'AgFakeVerticalScroll', componentClass: FakeVScrollComp },
            // { componentName: 'AgAutocomplete', componentClass: AgAutocomplete },

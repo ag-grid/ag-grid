@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/react",
-  "version": "31.3.1",
+  "version": "31.3.2",
   "description": "AG Grid React Component",
   "main": "./dist/package/index.cjs.js",
   "types": "./dist/types/src/index.d.ts",
@@ -59,7 +59,7 @@
     "prop-types": "^15.8.1"
   },
   "peerDependencies": {
-    "@ag-grid-community/core": "31.3.1",
+    "@ag-grid-community/core": ">=31",
     "react": "^16.3.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.3.0 || ^17.0.0 || ^18.0.0"
   },

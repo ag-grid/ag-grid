@@ -159,14 +159,12 @@ export { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterBuilde
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 
 // gridPanel
-export { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from "./gridBodyComp/gridBodyCtrl";
 export { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
 export { MouseEventService } from "./gridBodyComp/mouseEventService";
 export { NavigationService } from "./gridBodyComp/navigationService";
 
 // rowContainer
-export { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
 export { RowContainerName, IRowContainerComp, RowContainerCtrl, RowContainerType, getRowContainerTypeForName } from "./gridBodyComp/rowContainer/rowContainerCtrl";
 
 // headerRendering
@@ -240,7 +238,6 @@ export { PositionableFeature, ResizableStructure, ResizableSides, PositionableOp
 // rendering
 export { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 export { CheckboxSelectionComponent } from "./rendering/checkboxSelectionComponent";
-export { CellComp } from "./rendering/cell/cellComp";
 export { CellCtrl, ICellComp } from "./rendering/cell/cellCtrl";
 export { RowCtrl, IRowComp } from "./rendering/row/rowCtrl";
 export { RowRenderer, FlashCellsParams, GetCellRendererInstancesParams, RefreshCellsParams, RedrawRowsParams, GetCellEditorInstancesParams } from "./rendering/rowRenderer";
@@ -345,7 +342,7 @@ export { CellNavigationService } from "./cellNavigationService";
 export { AlignedGridsService } from "./alignedGridsService";
 export { KeyCode } from "./constants/keyCode";
 export { VerticalDirection, HorizontalDirection } from "./constants/direction";
-export { Grid, GridParams, Params, GridCoreCreator, createGrid, provideGlobalGridOptions } from "./grid";
+export { GridParams, Params, GridCoreCreator, createGrid, provideGlobalGridOptions } from "./grid";
 export { GridApi, getColumnDefs, DetailGridInfo, StartEditingCellParams, GetCellValueParams } from "./gridApi";
 export { Events } from "./eventKeys";
 export { FocusService } from "./focusService";
@@ -354,7 +351,6 @@ export { EventService } from "./eventService";
 export { SelectableService } from "./rowNodes/selectableService";
 export { RowNodeSorter, SortedRowNode, SortOption } from "./rowNodes/rowNodeSorter";
 export { CtrlsService } from "./ctrlsService";
-export { GridComp } from "./gridComp/gridComp";
 export { GridCtrl, IGridComp } from "./gridComp/gridCtrl";
 export { Logger, LoggerFactory } from "./logger";
 export { SortController, SortModelItem } from "./sortController";

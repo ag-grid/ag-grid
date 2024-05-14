@@ -42,12 +42,14 @@ export class ModuleRegistry {
      * Globally register the given modules for all grids.
      * @param modules - modules to register
      */
-    public static registerModules(modules: Module[]): void {
+    public static registerModules(modules: (Module | (() => Module))[]): void {        
         ModuleRegistry.__registerModules(modules, true, undefined);
     }
 
     /** AG GRID INTERNAL - Module registration helper. */
-    public static __register(module: Module, moduleBased: boolean, gridId: string | undefined): void {
+    public static __register(moduleOrFunc: (Module | (() => Module)), moduleBased: boolean, gridId: string | undefined): void {
+        const module = typeof moduleOrFunc === 'function' ? moduleOrFunc() : moduleOrFunc;
+
         ModuleRegistry.runVersionChecks(module);
 
         if (gridId !== undefined) {
@@ -68,7 +70,7 @@ export class ModuleRegistry {
         delete ModuleRegistry.gridModulesMap[gridId];
     }
     /** AG GRID INTERNAL - Module registration helper. */
-    public static __registerModules(modules: Module[], moduleBased: boolean, gridId: string | undefined): void {
+    public static __registerModules(modules: (Module | (() => Module))[], moduleBased: boolean, gridId: string | undefined): void {
         ModuleRegistry.setModuleBased(moduleBased);
 
         if (!modules) {
