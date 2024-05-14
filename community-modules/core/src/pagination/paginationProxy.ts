@@ -279,7 +279,7 @@ export class PaginationProxy extends BeanStub {
         this.eventService.dispatchEvent(paginationChangedEvent);
     }
 
-    public setPageSize(size: number, source: 'autoCalculated' | 'pageSizeSelector' | 'initialState' | 'gridOptions'): void {
+    public setPageSize(size: number | undefined, source: 'autoCalculated' | 'pageSizeSelector' | 'initialState' | 'gridOptions'): void {
         const currentSize = this.pageSize;
         switch (source) {
             case 'autoCalculated':
@@ -431,7 +431,9 @@ export class PaginationProxy extends BeanStub {
     }
 
     private calculatedPagesNotActive(): void {
-        this.setPageSize(this.masterRowCount, 'autoCalculated');
+        // when pagination is not active we don't use any page size variables,
+        // however need to unset this so if enabled we recalculate.
+        this.setPageSize(undefined, 'autoCalculated');
         this.totalPages = 1;
         this.currentPage = 0;
         this.topDisplayedRowIndex = 0;
