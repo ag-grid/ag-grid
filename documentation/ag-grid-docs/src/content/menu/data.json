@@ -169,6 +169,11 @@
                                 "path": "testing"
                             },
                             {
+                                "title": "Testing Async",
+                                "path": "testing-async",
+                                "frameworks": ["angular"]
+                            },
+                            {
                                 "title": "Compatibility",
                                 "path": "compatibility"
                             },
@@ -1432,11 +1437,6 @@
                                 "title": "Best Practices",
                                 "path": "framework-data-flow",
                                 "frameworks": ["vue"]
-                            },
-                            {
-                                "title": "Testing Async",
-                                "path": "testing-async",
-                                "frameworks": ["angular"]
                             },
                             {
                                 "title": "Vue2 Tutorial",
