@@ -24,6 +24,7 @@
     "./styles/ag-theme-quartz.min.css": "./styles/ag-theme-quartz.min.css",
     "./styles": "./styles/_index.scss"
   },
+  "sideEffects": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"

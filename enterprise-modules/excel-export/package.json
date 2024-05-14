@@ -11,6 +11,7 @@
     "types": "./dist/types/src/main.d.ts",
     "default": "./dist/package/main.cjs.js"
   },
+  "sideEffects": false,
   "dependencies": {
     "@ag-grid-community/core": "31.3.1",
     "@ag-grid-community/csv-export": "31.3.1",
