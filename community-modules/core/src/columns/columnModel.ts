@@ -142,7 +142,6 @@ export class ColumnModel extends BeanStub {
     private lastOrder: Column[] | null;
     private lastPivotOrder: Column[] | null;
 
-    public autoColsDirty = false;
     private forceRecreateAutoCols = false;
 
     // true if we are doing column spanning
@@ -188,11 +187,6 @@ export class ColumnModel extends BeanStub {
         // could overlap with the old id's, so the cache would return old values for new columns.
         this.valueCache.expire();
 
-        // NOTE ==================
-        // we should be destroying the existing columns and groups if they exist, for example, the original column
-        // group adds a listener to the columns, it should be also removing the listeners
-        this.autoColsDirty = true;
-
         const oldProvidedCols = this.providedCols && this.providedCols.list;
         const oldProvidedTree = this.providedCols && this.providedCols.tree;
         const newTreeResult = this.columnFactory.createColumnTree(this.columnDefs, true, oldProvidedTree, source);
@@ -212,21 +206,12 @@ export class ColumnModel extends BeanStub {
 
         this.ready = true;
 
-        // if we are showing pivot result cols, then no need to update grid columns
-        // unless the auto column needs rebuilt, as it's the pivot service responsibility to change these
-        // if we are no longer pivoting (ie and need to revert back to provided, otherwise
-        // we shouldn't be touching the provided).
-        const liveColsNotProcessed = this.providedCols == null;
-        const processLiveCols = !this.showingPivotResult || liveColsNotProcessed || this.autoColsDirty;
-
-        if (processLiveCols) {
-            this.updateLiveCols();
-            if (colsPreviouslyExisted && !this.showingPivotResult && !this.gos.get('maintainColumnOrder')) {
-                this.orderLiveColsLikeProvidedCols();
-            }
-            this.updatePresentedCols(source);
-            this.columnViewportService.checkViewportColumns();
+        this.updateLiveCols();
+        if (colsPreviouslyExisted && !this.showingPivotResult && !this.gos.get('maintainColumnOrder')) {
+            this.orderLiveColsLikeProvidedCols();
         }
+        this.updatePresentedCols(source);
+        this.columnViewportService.checkViewportColumns();
 
         // this event is not used by AG Grid, but left here for backwards compatibility,
         // in case applications use it
@@ -326,7 +311,6 @@ export class ColumnModel extends BeanStub {
         // Possible for update to be called before columns are present in which case there is nothing to do here.
         if (!this.columnDefs) { return; }
 
-        this.autoColsDirty = true;
         this.forceRecreateAutoCols = true;
         this.updateLiveCols();
         this.updatePresentedCols(source);
@@ -398,7 +382,6 @@ export class ColumnModel extends BeanStub {
         // we need to update grid columns to cover the scenario where user has groupDisplayType = 'custom', as
         // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
         // so need to updateLiveColumn() to check it autoGroupCol needs to be added / removed
-        this.autoColsDirty = true;
         this.updateLiveCols();
         this.updatePresentedCols(source);
 
@@ -430,16 +413,6 @@ export class ColumnModel extends BeanStub {
 
     public isColSpanActive(): boolean {
         return this.colSpanActive;
-    }
-
-    // niall note - temp method, should not be exposing this variable in final version
-    public setAutoGroupsNeedBuilding(): void {
-        this.autoColsDirty = true;
-    }
-
-    // niall note - temp method, should not be exposing this variable in final version
-    public isAutoGroupsNeedBuilding(): boolean {
-        return this.autoColsDirty;
     }
     
     public getProvidedOrLiveColumn(key: ColKey): Column | null {
@@ -626,7 +599,6 @@ export class ColumnModel extends BeanStub {
 
         const applyStates = (states: ColumnState[], existingColumns: Column[], getById: (id: string) => Column | null) => {
             const dispatchEventsFunc = this.columnApplyStateService.compareColumnStatesAndDispatchEvents(source);
-            this.autoColsDirty = true;
 
             // at the end below, this list will have all columns we got no state for
             const columnsWithNoState = existingColumns.slice();
@@ -1040,9 +1012,6 @@ export class ColumnModel extends BeanStub {
     private createAutoCols(): void {
         const forceRecreateAutoGroups = this.forceRecreateAutoCols;
         this.forceRecreateAutoCols = false;
-        if (!this.autoColsDirty) { return; }
-
-        this.autoColsDirty = false;
 
         const groupFullWidthRow = this.gos.isGroupUseEntireRow(this.pivotMode);
         // we need to allow suppressing auto-column separately for group and pivot as the normal situation

@@ -78,9 +78,9 @@ export class FunctionColumnsService extends BeanStub {
     }
 
     public setRowGroupColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        this.columnModel.setAutoGroupsNeedBuilding();
         this.setPrimaryColumnList(colKeys, this.rowGroupColumns,
             Events.EVENT_COLUMN_ROW_GROUP_CHANGED, true,
+            true,
             this.setRowGroupActive.bind(this),
             source);
     }
@@ -99,8 +99,7 @@ export class FunctionColumnsService extends BeanStub {
     }
 
     public addRowGroupColumns(keys: Maybe<ColKey>[], source: ColumnEventType): void {
-        this.columnModel.setAutoGroupsNeedBuilding();
-        this.updatePrimaryColumnList(keys, this.rowGroupColumns, true,
+        this.updatePrimaryColumnList(keys, this.rowGroupColumns, true, true,
             this.setRowGroupActive.bind(this, true),
             Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
             source
@@ -108,21 +107,20 @@ export class FunctionColumnsService extends BeanStub {
     }
 
     public removeRowGroupColumns(keys: Maybe<ColKey>[] | null, source: ColumnEventType): void {
-        this.columnModel.setAutoGroupsNeedBuilding();
-        this.updatePrimaryColumnList(keys, this.rowGroupColumns, false,
+        this.updatePrimaryColumnList(keys, this.rowGroupColumns, false, true,
             this.setRowGroupActive.bind(this, false),
             Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
             source);
     }
 
     public addPivotColumns(keys: ColKey[], source: ColumnEventType): void {
-        this.updatePrimaryColumnList(keys, this.pivotColumns, true,
+        this.updatePrimaryColumnList(keys, this.pivotColumns, true, false,
             column => column.setPivotActive(true, source),
             Events.EVENT_COLUMN_PIVOT_CHANGED, source);
     }
 
     public setPivotColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        this.setPrimaryColumnList(colKeys, this.pivotColumns, Events.EVENT_COLUMN_PIVOT_CHANGED, true,
+        this.setPrimaryColumnList(colKeys, this.pivotColumns, Events.EVENT_COLUMN_PIVOT_CHANGED, true, false,
             (added: boolean, column: Column) => {
                 column.setPivotActive(added, source);
             }, source
@@ -134,6 +132,7 @@ export class FunctionColumnsService extends BeanStub {
             keys,
             this.pivotColumns,
             false,
+            false,
             column => column.setPivotActive(false, source),
             Events.EVENT_COLUMN_PIVOT_CHANGED,
             source
@@ -143,6 +142,7 @@ export class FunctionColumnsService extends BeanStub {
     public setValueColumns(colKeys: ColKey[], source: ColumnEventType): void {
         this.setPrimaryColumnList(colKeys, this.valueColumns,
             Events.EVENT_COLUMN_VALUE_CHANGED,
+            false,
             false,
             this.setValueActive.bind(this),
             source
@@ -161,7 +161,7 @@ export class FunctionColumnsService extends BeanStub {
     }
 
     public addValueColumns(keys: ColKey[], source: ColumnEventType): void {
-        this.updatePrimaryColumnList(keys, this.valueColumns, true,
+        this.updatePrimaryColumnList(keys, this.valueColumns, true, false,
             this.setValueActive.bind(this, true),
             Events.EVENT_COLUMN_VALUE_CHANGED,
             source
@@ -169,7 +169,7 @@ export class FunctionColumnsService extends BeanStub {
     }
 
     public removeValueColumns(keys: ColKey[], source: ColumnEventType): void {
-        this.updatePrimaryColumnList(keys, this.valueColumns, false,
+        this.updatePrimaryColumnList(keys, this.valueColumns, false, false,
             this.setValueActive.bind(this, false),
             Events.EVENT_COLUMN_VALUE_CHANGED,
             source
@@ -193,6 +193,7 @@ export class FunctionColumnsService extends BeanStub {
         masterList: Column[],
         eventName: string,
         detectOrderChange: boolean,
+        autoGroupsNeedBuilding: boolean,
         columnCallback: (added: boolean, column: Column) => void,
         source: ColumnEventType,
     ): void {
@@ -238,9 +239,7 @@ export class FunctionColumnsService extends BeanStub {
             columnCallback(added, column);
         });
 
-        if (this.columnModel.isAutoGroupsNeedBuilding()) {
-            this.columnModel.updateLiveCols();
-        }
+        autoGroupsNeedBuilding && this.columnModel.updateLiveCols();
 
         this.columnModel.updatePresentedCols(source);
 
@@ -251,6 +250,7 @@ export class FunctionColumnsService extends BeanStub {
         keys: Maybe<ColKey>[] | null,
         masterList: Column[],
         actionIsAdd: boolean,
+        autoGroupsNeedBuilding: boolean,
         columnCallback: (column: Column) => void,
         eventType: string,
         source: ColumnEventType
@@ -279,9 +279,7 @@ export class FunctionColumnsService extends BeanStub {
 
         if (!atLeastOne) { return; }
 
-        if (this.columnModel.isAutoGroupsNeedBuilding()) {
-            this.columnModel.updateLiveCols();
-        }
+        autoGroupsNeedBuilding && this.columnModel.updateLiveCols();
 
         this.columnModel.updatePresentedCols(source);
 
