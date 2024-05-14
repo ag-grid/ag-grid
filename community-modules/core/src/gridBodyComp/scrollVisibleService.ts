@@ -23,7 +23,6 @@ export class ScrollVisibleService extends BeanStub {
     private postConstruct(): void {
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
-
     }
 
     public onDisplayedColumnsChanged(): void {
