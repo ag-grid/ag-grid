@@ -520,20 +520,62 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
         const path: GroupInfo[] = this.getGroupInfo(childNode, details);
 
-        const parentGroup = this.findParentForNode(childNode, path, details, batchRemover);
-        if (!parentGroup.group) {
-            console.warn(`AG Grid: duplicate group keys for row data, keys should be unique`,
-                [parentGroup.data, childNode.data]);
-        }
-
         if (details.usingTreeData) {
-            this.swapGroupWithUserNode(parentGroup, childNode, isMove);
+            const parentGroup = this.findParentForTreeNode(childNode, path, details, batchRemover);
+            
+            const key = this.getChildrenMappedKey(path[path.length - 1].key, path[path.length - 1].rowGroupColumn);
+            const nextNode = parentGroup.childrenMapped ? parentGroup.childrenMapped[key] : undefined;
+            
+
+            if (nextNode === undefined) {
+                childNode.key = key;
+                childNode.allLeafChildren = [];
+                childNode.childrenAfterGroup = [];
+                childNode.childrenMapped = {};
+                this.setGroupData(childNode, path[path.length - 1], details);
+
+                this.addToParent(childNode, parentGroup);
+            } else {
+                if (!parentGroup.group) {
+                    console.warn(`AG Grid: duplicate group keys for row data, keys should be unique`,
+                        [parentGroup.data, childNode.data], parentGroup.key, childNode.key);
+                }
+                this.swapGroupWithUserNode(nextNode, childNode, isMove);
+            }
         } else {
+            const parentGroup = this.findParentForNode(childNode, path, details, batchRemover);
+            if (!parentGroup.group) {
+                console.warn(`AG Grid: duplicate group keys for row data, keys should be unique`,
+                    [parentGroup.data, childNode.data]);
+            }
             childNode.parent = parentGroup;
             childNode.level = path.length;
             parentGroup.childrenAfterGroup!.push(childNode);
             parentGroup.updateHasChildren();
         }
+    }
+
+    private findParentForTreeNode(childNode: RowNode, path: GroupInfo[], details: GroupingDetails, batchRemover?: BatchRemover): RowNode {
+        let nextNode: RowNode = details.rootNode;
+        
+        path.forEach((groupInfo, level) => {
+            if (level === path.length - 1) {
+                return undefined;
+            }
+
+            nextNode = this.getOrCreateNextNode(nextNode, groupInfo, level, details);
+            // node gets added to all group nodes.
+            // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
+
+            if (!batchRemover?.isRemoveFromAllLeafChildren(nextNode, childNode)) {
+                nextNode.allLeafChildren.push(childNode);
+            } else {
+                // if this node is about to be removed, prevent that
+                batchRemover?.preventRemoveFromAllLeafChildren(nextNode, childNode);
+            }
+        });
+
+        return nextNode;
     }
 
     private findParentForNode(childNode: RowNode, path: GroupInfo[], details: GroupingDetails, batchRemover?: BatchRemover): RowNode {
