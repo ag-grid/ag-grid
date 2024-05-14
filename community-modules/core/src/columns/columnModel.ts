@@ -3469,7 +3469,6 @@ export class ColumnModel extends BeanStub {
     }
 
     private updateGroupsAndDisplayedColumns(source: ColumnEventType) {
-
         this.updateOpenClosedVisibilityInColumnGroups();
         this.deriveDisplayedColumns(source);
         this.refreshFlexedColumns();
