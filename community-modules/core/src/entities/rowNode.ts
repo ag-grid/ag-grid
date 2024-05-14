@@ -1085,6 +1085,14 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
     /** Add an event listener. */
     public addEventListener(eventType: RowNodeEventType, userListener: Function): void {
+        if (this.footer) {
+            // if footer, it's attached to the sibling, not this row node, this is so
+            // grand total footer can listen to parent event, as rows normally share
+            // event service - but only where the non-footer is rendered first.
+            this.sibling.addEventListener(eventType, userListener);
+            return;
+        }
+
         if (!this.eventService) {
             this.eventService = new EventService();
         }
@@ -1099,6 +1107,14 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
     /** Remove event listener. */
     public removeEventListener(eventType: RowNodeEventType, userListener: Function): void {
+        if (this.footer) {
+            // if footer, it's attached to the sibling, not this row node, this is so
+            // grand total footer can listen to parent event, as rows normally share
+            // event service - but only where the non-footer is rendered first.
+            this.sibling.removeEventListener(eventType, userListener);
+            return;
+        }
+
         if (!this.eventService) { return; }
 
         const listener = this.frameworkEventListenerService?.unwrap(userListener as AgEventListener) ?? userListener;
