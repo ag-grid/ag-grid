@@ -530,50 +530,6 @@ export class ColumnModel extends BeanStub {
         this.columnAnimationService.finish();
     }
 
-    // does an action on a set of columns. provides common functionality for looking up the
-    // columns based on key, getting a list of effected columns, and then updated the event
-    // with either one column (if it was just one col) or a list of columns
-    // used by: autoResize, setVisible, setPinned
-    public actionOnGridColumns(// the column keys this action will be on
-        keys: Maybe<ColKey>[],
-        // the action to do - if this returns false, the column was skipped
-        // and won't be included in the event
-        action: (column: Column) => boolean,
-        // should return back a column event of the right type
-        source: ColumnEventType,
-        createEvent?: () => WithoutGridCommon<ColumnEvent>): void {
-
-        if (missingOrEmpty(keys)) { return; }
-
-        const updatedColumns: Column[] = [];
-
-        keys.forEach(key => {
-            if (!key) { return; }
-            const column = this.getLiveColumn(key);
-            if (!column) { return; }
-
-            // need to check for false with type (ie !== instead of !=)
-            // as not returning anything (undefined) would also be false
-            const resultOfAction = action(column);
-            if (resultOfAction !== false) {
-                updatedColumns.push(column);
-            }
-        });
-
-        if (!updatedColumns.length) { return; }
-
-        this.updatePresentedCols(source);
-
-        if (createEvent==null) { return; }
-
-        const event = createEvent();
-
-        event.columns = updatedColumns;
-        event.column = updatedColumns.length === 1 ? updatedColumns[0] : null;
-
-        this.eventService.dispatchEvent(event);
-    }
-
     public getProvidedAndPivotResultAndAutoColumns(): Column[] {
         const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
         const pivotResultColsList = pivotResultCols?.list;
