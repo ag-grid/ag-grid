@@ -491,11 +491,13 @@ export class ColumnModel extends BeanStub {
 
     public setColumnsPinned(keys: Maybe<ColKey>[], pinned: ColumnPinnedType, source: ColumnEventType): void {
         if (!this.liveCols) { return; }
+        if (missingOrEmpty(keys)) { return; }
 
         if (this.gos.isDomLayout('print')) {
             console.warn(`AG Grid: Changing the column pinning status is not allowed with domLayout='print'`);
             return;
         }
+
         this.columnAnimationService.start();
 
         let actualPinned: ColumnPinnedType;
@@ -507,22 +509,23 @@ export class ColumnModel extends BeanStub {
             actualPinned = null;
         }
 
-        this.actionOnGridColumns(keys, (col: Column): boolean => {
-            if (col.getPinned() !== actualPinned) {
-                col.setPinned(actualPinned);
-                return true;
+        const updatedCols: Column[] = [];
+
+        keys.forEach(key => {
+            if (!key) { return; }
+            const column = this.getLiveColumn(key);
+            if (!column) { return; }
+
+            if (column.getPinned() !== actualPinned) {
+                column.setPinned(actualPinned);
+                updatedCols.push(column);
             }
-            return false;
-        }, source, () => {
-            const event: WithoutGridCommon<ColumnPinnedEvent> = {
-                type: Events.EVENT_COLUMN_PINNED,
-                pinned: actualPinned,
-                column: null,
-                columns: null,
-                source: source
-            };
-            return event;
         });
+
+        if (updatedCols.length) {
+            this.updatePresentedCols(source);
+            this.eventDispatcher.columnPinned(updatedCols, source);
+        }
 
         this.columnAnimationService.finish();
     }
@@ -986,10 +989,10 @@ export class ColumnModel extends BeanStub {
 
         this.presentedColsService.updateOpenClosedVisibilityInColumnGroups();
         this.presentedColsService.deriveDisplayedColumns(source);
+
         this.columnSizeService.refreshFlexedColumns();
         this.columnViewportService.extractViewport();
         this.presentedColsService.updateBodyWidths();
-        // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
 
         this.eventDispatcher.displayedColumns();
     }

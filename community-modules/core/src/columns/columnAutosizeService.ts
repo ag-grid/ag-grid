@@ -34,7 +34,7 @@ export class ColumnAutosizeService extends BeanStub {
             return;
         }
 
-        const { columns, skipHeader, skipHeaderGroups, stopAtGroup, source = 'api' } = params;
+        const { columns: colKeys, skipHeader, skipHeaderGroups, stopAtGroup, source = 'api' } = params;
         // because of column virtualisation, we can only do this function on columns that are
         // actually rendered, as non-rendered columns (outside the viewport and not rendered
         // due to column virtualisation) are not present. this can result in all rendered columns
@@ -58,13 +58,20 @@ export class ColumnAutosizeService extends BeanStub {
 
         while (changesThisTimeAround !== 0) {
             changesThisTimeAround = 0;
-            this.columnModel.actionOnGridColumns(columns, (column: Column): boolean => {
+
+            const updatedColumns: Column[] = [];
+    
+            colKeys.forEach(key => {
+                if (!key) { return; }
+                const column = this.columnModel.getLiveColumn(key);
+                if (!column) { return; }
+    
                 // if already autosized, skip it
-                if (columnsAutosized.indexOf(column) >= 0) {
-                    return false;
-                }
+                if (columnsAutosized.indexOf(column) >= 0) { return; }
+
                 // get how wide this col should be
                 const preferredWidth = this.autoWidthCalculator.getPreferredWidthForColumn(column, shouldSkipHeader);
+
                 // preferredWidth = -1 if this col is not on the screen
                 if (preferredWidth > 0) {
                     const newWidth = this.normaliseColumnWidth(column, preferredWidth);
@@ -72,12 +79,17 @@ export class ColumnAutosizeService extends BeanStub {
                     columnsAutosized.push(column);
                     changesThisTimeAround++;
                 }
-                return true;
-            }, source);
+
+                updatedColumns.push(column);
+            });
+    
+            if (!updatedColumns.length) { return; }
+    
+            this.columnModel.updatePresentedCols(source);
         }
 
         if (!shouldSkipHeaderGroups) {
-            this.autoSizeColumnGroupsByColumns(columns, source, stopAtGroup);
+            this.autoSizeColumnGroupsByColumns(colKeys, source, stopAtGroup);
         }
 
         this.eventDispatcher.columnResized(columnsAutosized, true, 'autosizeColumns');
