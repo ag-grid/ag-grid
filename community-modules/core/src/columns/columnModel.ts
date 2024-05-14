@@ -142,8 +142,6 @@ export class ColumnModel extends BeanStub {
     private lastOrder: Column[] | null;
     private lastPivotOrder: Column[] | null;
 
-    private forceRecreateAutoCols = false;
-
     // true if we are doing column spanning
     private colSpanActive: boolean;
 
@@ -311,7 +309,6 @@ export class ColumnModel extends BeanStub {
         // Possible for update to be called before columns are present in which case there is nothing to do here.
         if (!this.columnDefs) { return; }
 
-        this.forceRecreateAutoCols = true;
         this.updateLiveCols();
         this.updatePresentedCols(source);
     }
@@ -1010,9 +1007,6 @@ export class ColumnModel extends BeanStub {
     }
 
     private createAutoCols(): void {
-        const forceRecreateAutoGroups = this.forceRecreateAutoCols;
-        this.forceRecreateAutoCols = false;
-
         const groupFullWidthRow = this.gos.isGroupUseEntireRow(this.pivotMode);
         // we need to allow suppressing auto-column separately for group and pivot as the normal situation
         // is CSRM and user provides group column themselves for normal view, but when they go into pivot the
@@ -1045,8 +1039,7 @@ export class ColumnModel extends BeanStub {
         const list = this.autoGroupColService.createAutoGroupColumns(rowGroupCols);
         const noChangeInAutoCols = this.autoColsEqual(list, this.autoCols?.list || null);
 
-        const leaveColsAlone = noChangeInAutoCols && !forceRecreateAutoGroups;
-        if (leaveColsAlone) { return; }
+        if (noChangeInAutoCols) { return; }
 
         destroyPrevious();
         const tree = this.columnFactory.createForAutoGroups(list, this.liveCols?.tree);
