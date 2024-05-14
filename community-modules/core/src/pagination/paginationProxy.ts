@@ -239,7 +239,6 @@ export class PaginationProxy extends BeanStub {
     }
 
     public getPageSize(): number {
-        // console.log('ps', this.pageSize)
         return this.pageSize;
     }
 
@@ -253,16 +252,6 @@ export class PaginationProxy extends BeanStub {
     }
 
     private get pageSize(): number {
-
-        // console.log({
-        //     pageSizeAutoCalculated: this.pageSizeAutoCalculated,
-        //     pageSizeFromPageSizeSelector: this.pageSizeFromPageSizeSelector,
-        //     pageSizeFromInitialState: this.pageSizeFromInitialState,
-        //     pageSizeFromGridOptions: this.pageSizeFromGridOptions,
-        //     defaultPageSize: this.defaultPageSize
-        
-        // })
-        //issue
         if (_exists(this.pageSizeAutoCalculated)) { return this.pageSizeAutoCalculated; }
         if (_exists(this.pageSizeFromPageSizeSelector)) { return this.pageSizeFromPageSizeSelector; }
         if (_exists(this.pageSizeFromInitialState)) { return this.pageSizeFromInitialState; }
