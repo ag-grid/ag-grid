@@ -239,6 +239,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     public getPageSize(): number {
+        // console.log('ps', this.pageSize)
         return this.pageSize;
     }
 
@@ -252,6 +253,16 @@ export class PaginationProxy extends BeanStub {
     }
 
     private get pageSize(): number {
+
+        // console.log({
+        //     pageSizeAutoCalculated: this.pageSizeAutoCalculated,
+        //     pageSizeFromPageSizeSelector: this.pageSizeFromPageSizeSelector,
+        //     pageSizeFromInitialState: this.pageSizeFromInitialState,
+        //     pageSizeFromGridOptions: this.pageSizeFromGridOptions,
+        //     defaultPageSize: this.defaultPageSize
+        
+        // })
+        //issue
         if (_exists(this.pageSizeAutoCalculated)) { return this.pageSizeAutoCalculated; }
         if (_exists(this.pageSizeFromPageSizeSelector)) { return this.pageSizeFromPageSizeSelector; }
         if (_exists(this.pageSizeFromInitialState)) { return this.pageSizeFromInitialState; }
@@ -279,7 +290,7 @@ export class PaginationProxy extends BeanStub {
         this.eventService.dispatchEvent(paginationChangedEvent);
     }
 
-    public setPageSize(size: number, source: 'autoCalculated' | 'pageSizeSelector' | 'initialState' | 'gridOptions'): void {
+    public setPageSize(size: number | undefined, source: 'autoCalculated' | 'pageSizeSelector' | 'initialState' | 'gridOptions'): void {
         const currentSize = this.pageSize;
         switch (source) {
             case 'autoCalculated':
@@ -431,7 +442,9 @@ export class PaginationProxy extends BeanStub {
     }
 
     private calculatedPagesNotActive(): void {
-        this.setPageSize(this.masterRowCount, 'autoCalculated');
+        // when pagination is not active we don't use any page size variables,
+        // however need to unset this so if enabled we recalculate.
+        this.setPageSize(undefined, 'autoCalculated');
         this.totalPages = 1;
         this.currentPage = 0;
         this.topDisplayedRowIndex = 0;
