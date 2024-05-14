@@ -49,6 +49,8 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     'reference/interfaces.AUTO.json': 'dist/documentation/reference/interfaces.AUTO.json',
     'reference/row-node.AUTO.json': 'dist/documentation/reference/row-node.AUTO.json',
 
+    'reference/resolved-interfaces.json': 'dist/documentation/reference/resolved-interfaces.AUTO.json',
+
     // Community modules
     '@ag-grid-community/core/dist/**': 'community-modules/core/dist/**/*.{cjs,js,map}',
     '@ag-grid-community/client-side-row-model/dist/**':

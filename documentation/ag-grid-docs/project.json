@@ -121,6 +121,18 @@
         "output": "dist/documentation/reference"
       }
     },
+    "docs-resolved-interfaces": {
+      "executor": "ag-grid-generate-code-reference-files:generate",
+      "dependsOn": ["ag-grid-generate-code-reference-files:build"],
+      "inputs": ["{projectRoot}/src/options/**/*.ts", { "dependentTasksOutputFiles": "**/*", "transitive": false }],
+      "outputs": ["{options.output}"],
+      "cache": true,
+      "options": {
+        "mode": "docs-interfaces",
+        "inputs": ["community-modules/core/src"],
+        "output": "dist/documentation/reference/resolved-interfaces.AUTO.json"
+      }
+    },
     "validate-examples": {
       "executor": "nx:run-commands",
       "dependsOn": ["^build:types"],

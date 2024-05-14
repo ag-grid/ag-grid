@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { TypeMapper } from '../../doc-interfaces/types-utils';
 import ts from 'typescript';
 
 import { inputGlob, writeJSONFile } from '../../executors-utils';
@@ -9,13 +10,14 @@ import { getColumnOptions } from './generate-code-reference-files';
 import { getColumn } from './generate-code-reference-files';
 import { buildInterfaceProps } from './generate-code-reference-files';
 
-type ExecutorOptions = { output: string};
+type OptionsMode = 'debug-interfaces' | 'docs-interfaces' | 'c';
+type ExecutorOptions = { mode: OptionsMode; inputs: string[]; output: string };
 
 export default async function (options: ExecutorOptions) {
     try {
         console.log('-'.repeat(80));
         console.log('Generate docs reference files...');
-        console.log('Using Typescript version: ', ts.version);
+        console.log('Using Typescript version:', ts.version);
 
         await generateFile(options);
 
@@ -30,6 +32,23 @@ export default async function (options: ExecutorOptions) {
 }
 
 async function generateFile(options: ExecutorOptions) {
+    const typeMapper = new TypeMapper(options.inputs);
+
+    switch (options.mode) {
+        // Patched docs-interface for front end to consume
+        case 'docs-interfaces':
+            const resolvedEntries = typeMapper.resolvedEntries();
+            // const patchedDocInterfaces = patchDocInterfaces(resolvedEntries);
+            const docInterfacesObject = Object.fromEntries(resolvedEntries.entries());
+
+            return await writeJSONFile(options.output, docInterfacesObject);
+
+        default:
+            throw new Error(`Unsupported mode "${options.mode}"`);
+    }
+}
+
+async function legacyGenerateFile(options: ExecutorOptions) {
     const workspaceRoot = process.cwd();
     const gridOpsFile = workspaceRoot + "/community-modules/core/src/entities/gridOptions.ts";
     const colDefFile = workspaceRoot + "/community-modules/core/src/entities/colDef.ts";
