@@ -293,18 +293,8 @@ export class StickyRowFeature extends BeanStub {
     }
 
     public destroyStickyCtrls(): void {
-        const ctrlsToDestroy = [...this.stickyTopRowCtrls, ...this.stickyBottomRowCtrls];
-        const removedCtrlsMap: RowCtrlByRowNodeIdMap = {};
-        ctrlsToDestroy.forEach(ctrl => {
-            ctrl.getRowNode().sticky = false;
-            removedCtrlsMap[ctrl.getRowNode().id!] = ctrl;
-        });
-        this.stickyBottomRowCtrls = [];
-        this.bottomContainerHeight = 0;
-        this.stickyTopRowCtrls = [];
-        this.topContainerHeight = 0;
-        // clean up removed ctrls
-        this.destroyRowCtrls(removedCtrlsMap, false);
+        this.refreshNodesAndContainerHeight('top', new Set(), 0);
+        this.refreshNodesAndContainerHeight('bottom', new Set(), 0);
     }
 
     public refreshStickyNode(stickRowNode:  RowNode): void {
