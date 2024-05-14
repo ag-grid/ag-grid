@@ -25,9 +25,6 @@ if (overrideSrc) {
         overrides = overridesEntry.data;
     }
 }
-
-// TODO: Remove?
-const htmlLookup = getJsonFile('reference/doc-interfaces.HTML.json');
 ---
 
 <InterfaceDocumentationWithQuery
@@ -39,5 +36,4 @@ const htmlLookup = getJsonFile('reference/doc-interfaces.HTML.json');
     exclude={exclude}
     wrapNamesAt={wrapNamesAt}
     config={config}
-    htmlLookup={htmlLookup}
 />
