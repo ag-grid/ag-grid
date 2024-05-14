@@ -5,7 +5,7 @@ export default {
   data: function () {
       return {
           arr: [],
-          src: 'https://www.ag-grid.com/example-assets/icons/pound-coin-color-icon.png',
+          src: 'https://www.ag-grid.com/example-assets/icons/pound-coin-color-icon.svg',
           priceMultiplier: 1,
       };
   },
