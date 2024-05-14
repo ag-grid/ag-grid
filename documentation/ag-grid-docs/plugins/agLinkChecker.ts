@@ -85,7 +85,11 @@ const checkLinks = async (dir: string, files: string[]) => {
                 if (href.includes('?')) {
                     // ignore links with queries.
                     return;
+                } else if (href.includes('#reference-')) {
+                    // ignore API references, as it is rendered client side
+                    return;
                 }
+
                 if (href.startsWith('#')) {
                     const thisFileUrl = filePathToUrl(filePath);
                     const thisHash = href;
