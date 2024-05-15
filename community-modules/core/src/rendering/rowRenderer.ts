@@ -37,7 +37,7 @@ import { AnimationFrameService } from "../misc/animationFrameService";
 import { browserSupportsPreventScroll } from "../utils/browser";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IRowNode } from "../interfaces/iRowNode";
-import { PresentedColsService } from "../columns/presentedColsService";
+import { VisibleColsService } from "../columns/visibleColsService";
 
 type RowCtrlIdMap = Record<RowCtrlInstanceId, RowCtrl>;
 type RowCtrlByRowIndex = Record<number, RowCtrl>;
@@ -88,7 +88,7 @@ export class RowRenderer extends BeanStub {
     @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
     @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
     @Autowired("columnModel") private columnModel: ColumnModel;
-    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
     @Autowired("rowModel") private rowModel: IRowModel;
     @Autowired("focusService") private focusService: FocusService;
@@ -1066,8 +1066,8 @@ export class RowRenderer extends BeanStub {
     }
 
     private onDisplayedColumnsChanged(): void {
-        const pinningLeft = this.presentedColsService.isPinningLeft();
-        const pinningRight = this.presentedColsService.isPinningRight();
+        const pinningLeft = this.visibleColsService.isPinningLeft();
+        const pinningRight = this.visibleColsService.isPinningRight();
         const atLeastOneChanged = this.pinningLeft !== pinningLeft || pinningRight !== this.pinningRight;
 
         if (atLeastOneChanged) {

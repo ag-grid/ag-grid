@@ -5,7 +5,7 @@ import { ColumnGroup } from "../../entities/columnGroup";
 import { CtrlsService } from "../../ctrlsService";
 import { HeaderRowType } from "../row/headerRowComp";
 import { last } from "../../utils/array";
-import { PresentedColsService } from "../../columns/presentedColsService";
+import { VisibleColsService } from "../../columns/visibleColsService";
 
 export interface HeaderPosition {
 /** A number from 0 to n, where n is the last header row the grid is rendering */
@@ -21,18 +21,18 @@ export interface HeaderFuturePosition extends HeaderPosition {
 @Bean('headerPositionUtils')
 export class HeaderPositionUtils extends BeanStub {
 
-    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     public findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition | undefined {
         let nextColumn: Column | ColumnGroup;
-        let getColMethod: 'getDisplayedColBefore' | 'getDisplayedColAfter';
+        let getColMethod: 'getColBefore' | 'getColAfter';
 
         if (focusedHeader.column instanceof ColumnGroup) {
-            nextColumn = this.presentedColsService.getDisplayedGroupAtDirection(focusedHeader.column, direction)!
+            nextColumn = this.visibleColsService.getGroupAtDirection(focusedHeader.column, direction)!
         } else {
-            getColMethod = `getDisplayedCol${direction}` as any;
-            nextColumn = this.presentedColsService[getColMethod](focusedHeader.column)!;
+            getColMethod = `getCol${direction}` as any;
+            nextColumn = this.visibleColsService[getColMethod](focusedHeader.column)!;
         }
 
         if (!nextColumn) { return; }
@@ -154,7 +154,7 @@ export class HeaderPositionUtils extends BeanStub {
     }
 
     public findColAtEdgeForHeaderRow(level: number, position: 'start' | 'end'): HeaderPosition | undefined {
-        const displayedColumns = this.presentedColsService.getAllDisplayedColumns();
+        const displayedColumns = this.visibleColsService.getAllCols();
         const column = displayedColumns[position === 'start' ? 0 : displayedColumns.length - 1];
 
         if (!column) { return; }
@@ -163,7 +163,7 @@ export class HeaderPositionUtils extends BeanStub {
         const type = childContainer.getRowType(level);
 
         if (type == HeaderRowType.COLUMN_GROUP) {
-            const columnGroup = this.presentedColsService.getColumnGroupAtLevel(column, level);
+            const columnGroup = this.visibleColsService.getColGroupAtLevel(column, level);
             return {
                 headerRowIndex: level,
                 column: columnGroup!

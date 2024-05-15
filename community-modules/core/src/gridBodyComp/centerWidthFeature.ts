@@ -2,11 +2,11 @@ import { BeanStub } from "../context/beanStub";
 import { Autowired, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
 import { ScrollVisibleService } from "./scrollVisibleService";
-import { PresentedColsService } from "../columns/presentedColsService";
+import { VisibleColsService } from "../columns/visibleColsService";
 
 export class CenterWidthFeature extends BeanStub {
 
-    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
     constructor(
@@ -38,9 +38,9 @@ export class CenterWidthFeature extends BeanStub {
 
         const printLayout = this.gos.isDomLayout('print');
 
-        const centerWidth = this.presentedColsService.getBodyContainerWidth();
-        const leftWidth = this.presentedColsService.getDisplayedColumnsLeftWidth();
-        const rightWidth = this.presentedColsService.getDisplayedColumnsRightWidth();
+        const centerWidth = this.visibleColsService.getBodyContainerWidth();
+        const leftWidth = this.visibleColsService.getColsLeftWidth();
+        const rightWidth = this.visibleColsService.getDisplayedColumnsRightWidth();
 
         let totalWidth: number;
 

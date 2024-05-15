@@ -10,13 +10,13 @@ import { AutoWidthCalculator } from "../rendering/autoWidthCalculator";
 import { exists } from "../utils/generic";
 import { ColumnEventDispatcher } from "./columnEventDispatcher";
 import { ColKey, ColumnModel, Maybe } from "./columnModel";
-import { PresentedColsService } from "./presentedColsService";
+import { VisibleColsService } from "./visibleColsService";
 
 @Bean('columnAutosizeService')
 export class ColumnAutosizeService extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
+    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
     @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
@@ -85,7 +85,7 @@ export class ColumnAutosizeService extends BeanStub {
     
             if (!updatedColumns.length) { return; }
     
-            this.columnModel.updatePresentedCols(source);
+            this.columnModel.updateVisibleCols(source);
         }
 
         if (!shouldSkipHeaderGroups) {
@@ -138,7 +138,7 @@ export class ColumnAutosizeService extends BeanStub {
             return;
         }
 
-        const allDisplayedColumns = this.presentedColsService.getAllDisplayedColumns();
+        const allDisplayedColumns = this.visibleColsService.getAllCols();
         this.autoSizeColumns({ columns: allDisplayedColumns, skipHeader, source });
     }
 

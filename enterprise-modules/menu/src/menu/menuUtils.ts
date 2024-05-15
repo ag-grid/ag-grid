@@ -9,7 +9,7 @@ import {
     CloseMenuEvent,
     PopupEventParams,
     _,
-    PresentedColsService
+    VisibleColsService
 } from "@ag-grid-community/core";
 
 export interface MenuRestoreFocusParams {
@@ -23,7 +23,7 @@ export interface MenuRestoreFocusParams {
 export class MenuUtils extends BeanStub {
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
-    @Autowired('presentedColsService') private readonly presentedColsService: PresentedColsService;
+    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
 
     public restoreFocusOnClose(
         restoreFocusParams: MenuRestoreFocusParams,
@@ -107,7 +107,7 @@ export class MenuUtils extends BeanStub {
     private focusHeaderCell(restoreFocusParams: MenuRestoreFocusParams): void {
         const { column, columnIndex, headerPosition, eventSource } = restoreFocusParams;
 
-        const isColumnStillVisible = this.presentedColsService.getAllDisplayedColumns().some(col => col === column);
+        const isColumnStillVisible = this.visibleColsService.getAllCols().some(col => col === column);
 
         if (isColumnStillVisible && eventSource && _.isVisible(eventSource)) {
             const focusableEl = this.focusService.findTabbableParent(eventSource);
@@ -121,7 +121,7 @@ export class MenuUtils extends BeanStub {
         // if the focusEl is no longer in the DOM, we try to focus
         // the header that is closest to the previous header position
         else if (headerPosition && columnIndex !== -1) {
-            const allColumns = this.presentedColsService.getAllDisplayedColumns();
+            const allColumns = this.visibleColsService.getAllCols();
             const columnToFocus = allColumns[columnIndex] || _.last(allColumns);
 
             if (columnToFocus) {

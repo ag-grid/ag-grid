@@ -1,6 +1,6 @@
 import { ColumnModel } from "../columns/columnModel";
 import { ColumnMoveService } from "../columns/columnMoveService";
-import { PresentedColsService } from "../columns/presentedColsService";
+import { VisibleColsService } from "../columns/visibleColsService";
 import { HorizontalDirection } from "../constants/direction";
 import { CtrlsService } from "../ctrlsService";
 import { Column, ColumnPinnedType } from "../entities/column";
@@ -23,7 +23,7 @@ export class ColumnMoveHelper {
         gos: GridOptionsService,
         columnModel: ColumnModel,
         columnMoveService: ColumnMoveService,
-        presentedColsService: PresentedColsService
+        presentedColsService: VisibleColsService
     }): { columns: Column[], toIndex: number } | null | undefined {
         const { isFromHeader, hDirection, xPosition, fromEnter, fakeEvent, pinned, gos, columnModel, columnMoveService, presentedColsService } = params; 
 
@@ -117,7 +117,7 @@ export class ColumnMoveHelper {
         // Remember what that move would look like in terms of displayed cols
         // keep going with further moves until we find a different result in displayed output
         // In this way potentialMoves contains all potential moves over 'hidden' columns
-        const displayedCols = presentedColsService.getAllDisplayedColumns();
+        const displayedCols = presentedColsService.getAllCols();
 
         let potentialMoves: { move: number, fragCount: number }[] = [];
         let targetOrder: Column[] | null = null;
@@ -195,14 +195,14 @@ export class ColumnMoveHelper {
         return count;
     }
 
-    private static getDisplayedColumns(presentedColsService: PresentedColsService, type: ColumnPinnedType): Column[] {
+    private static getDisplayedColumns(presentedColsService: VisibleColsService, type: ColumnPinnedType): Column[] {
         switch (type) {
             case 'left':
-                return presentedColsService.getDisplayedLeftColumns();
+                return presentedColsService.getLeftCols();
             case 'right':
-                return presentedColsService.getDisplayedRightColumns();
+                return presentedColsService.getRightCols();
             default:
-                return presentedColsService.getDisplayedCenterColumns();
+                return presentedColsService.getCenterCols();
         }
     }
 
@@ -213,7 +213,7 @@ export class ColumnMoveHelper {
         pinned: ColumnPinnedType,
         gos: GridOptionsService,
         columnModel: ColumnModel,
-        presentedColsService: PresentedColsService
+        presentedColsService: VisibleColsService
     }): number[] {
         const { movingCols, draggingRight, xPosition, pinned, gos, columnModel, presentedColsService } = params;
         const isMoveBlocked = gos.get('suppressMovableColumns') || movingCols.some(col => col.getColDef().suppressMovable);

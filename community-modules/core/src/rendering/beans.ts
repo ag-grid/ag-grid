@@ -41,7 +41,7 @@ import { SyncService } from "../syncService";
 import { AriaAnnouncementService } from "./ariaAnnouncementService";
 import { ColumnMoveService } from "../columns/columnMoveService";
 import { ColumnSizeService } from "../columns/columnSizeService";
-import { PresentedColsService } from "../columns/presentedColsService";
+import { VisibleColsService } from "../columns/visibleColsService";
 import { ColumnNameService } from "../columns/columnNameService";
 import { ColumnViewportService } from "../columns/columnViewportService";
 
@@ -64,7 +64,7 @@ export class Beans {
     @Autowired('columnModel') public readonly columnModel: ColumnModel;
     @Autowired('columnViewportService') public readonly columnViewportService: ColumnViewportService;
     @Autowired('columnNameService') public readonly columnNameService: ColumnNameService;
-    @Autowired('presentedColsService') public readonly presentedColsService: PresentedColsService;
+    @Autowired('visibleColsService') public readonly visibleColsService: VisibleColsService;
     @Autowired('columnMoveService') public readonly columnMoveService: ColumnMoveService;
     @Autowired('columnSizeService') public readonly columnSizeService: ColumnSizeService;
     @Autowired('headerNavigationService') public readonly headerNavigationService: HeaderNavigationService;

@@ -15,8 +15,8 @@ import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ColumnSizeService } from "./columnSizeService";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
-@Bean('presentedColsService')
-export class PresentedColsService extends BeanStub {
+@Bean('visibleColsService')
+export class VisibleColsService extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
@@ -24,21 +24,21 @@ export class PresentedColsService extends BeanStub {
     private columnUtilsFeature: ColumnUtilsFeature;
 
     // tree of columns to be displayed for each section
-    private presentedTreeLeft: IHeaderColumn[];
-    private presentedTreeRight: IHeaderColumn[];
-    private presentedTreeCentre: IHeaderColumn[];
+    private treeLeft: IHeaderColumn[];
+    private treeRight: IHeaderColumn[];
+    private treeCenter: IHeaderColumn[];
 
     // leave level columns of the displayed trees
-    private presentedColumnsLeft: Column[] = [];
-    private presentedColumnsRight: Column[] = [];
-    private presentedColumnsCenter: Column[] = [];
+    private columnsLeft: Column[] = [];
+    private columnsRight: Column[] = [];
+    private columnsCenter: Column[] = [];
     // all three lists above combined
-    private presentedColumns: Column[] = [];
+    private columns: Column[] = [];
 
-    private presentedAutoHeightCols: Column[];
+    private autoHeightCols: Column[];
 
     // for fast lookup, to see if a column or group is still displayed
-    private presentedColumnsAndGroupsMap: { [id: HeaderColumnId]: IHeaderColumn } = {};
+    private columnsAndGroupsMap: { [id: HeaderColumnId]: IHeaderColumn } = {};
 
     private bodyWidth = 0;
     private leftWidth = 0;
@@ -55,14 +55,14 @@ export class PresentedColsService extends BeanStub {
     }
 
     public clear(): void {
-        this.presentedColumnsLeft = [];
-        this.presentedColumnsRight = [];
-        this.presentedColumnsCenter = [];
-        this.presentedColumns = [];
+        this.columnsLeft = [];
+        this.columnsRight = [];
+        this.columnsCenter = [];
+        this.columns = [];
         this.ariaOrderColumns = [];
     }
 
-    private joinColumnsAriaOrder(): void {
+    private joinColsAriaOrder(): void {
         const allColumns = this.columnModel.getLiveCols();
         const pinnedLeft: Column[] = [];
         const center: Column[] = [];
@@ -82,7 +82,7 @@ export class PresentedColsService extends BeanStub {
         this.ariaOrderColumns = pinnedLeft.concat(center).concat(pinnedRight);
     }
 
-    public getAriaColumnIndex(colOrGroup: Column | ColumnGroup): number {
+    public getAriaColIndex(colOrGroup: Column | ColumnGroup): number {
         let col: Column;
 
         if (colOrGroup instanceof ColumnGroup) {
@@ -94,22 +94,22 @@ export class PresentedColsService extends BeanStub {
         return this.ariaOrderColumns.indexOf(col) + 1;
     }
 
-    public getAllDisplayedAutoHeightCols(): Column[] {
-        return this.presentedAutoHeightCols;
+    public getAllAutoHeightCols(): Column[] {
+        return this.autoHeightCols;
     }
 
     // sets the left pixel position of each column
     public setLeftValues(source: ColumnEventType): void {
-        this.setLeftValuesOfColumns(source);
+        this.setLeftValuesOfCols(source);
         this.setLeftValuesOfGroups();
     }
 
     private setLeftValuesOfGroups(): void {
         // a groups left value is the lest left value of it's children
         [
-            this.presentedTreeLeft,
-            this.presentedTreeRight,
-            this.presentedTreeCentre
+            this.treeLeft,
+            this.treeRight,
+            this.treeCenter
         ].forEach(columns => {
             columns.forEach(column => {
                 if (column instanceof ColumnGroup) {
@@ -120,7 +120,7 @@ export class PresentedColsService extends BeanStub {
         });
     }
 
-    private setLeftValuesOfColumns(source: ColumnEventType): void {
+    private setLeftValuesOfCols(source: ColumnEventType): void {
         const primaryCols = this.columnModel.getAllProvidedCols();
         if (!primaryCols) { return; }
 
@@ -131,9 +131,9 @@ export class PresentedColsService extends BeanStub {
         const doingRtl = this.gos.get('enableRtl');
 
         [
-            this.presentedColumnsLeft,
-            this.presentedColumnsRight,
-            this.presentedColumnsCenter
+            this.columnsLeft,
+            this.columnsRight,
+            this.columnsCenter
         ].forEach(columns => {
             if (doingRtl) {
                 // when doing RTL, we start at the top most pixel (ie RHS) and work backwards
@@ -161,19 +161,19 @@ export class PresentedColsService extends BeanStub {
         });
     }
 
-    private joinDisplayedColumns(): void {
+    private joinCols(): void {
         if (this.gos.get('enableRtl')) {
-            this.presentedColumns = this.presentedColumnsRight
-                .concat(this.presentedColumnsCenter)
-                .concat(this.presentedColumnsLeft);
+            this.columns = this.columnsRight
+                .concat(this.columnsCenter)
+                .concat(this.columnsLeft);
         } else {
-            this.presentedColumns = this.presentedColumnsLeft
-                .concat(this.presentedColumnsCenter)
-                .concat(this.presentedColumnsRight);
+            this.columns = this.columnsLeft
+                .concat(this.columnsCenter)
+                .concat(this.columnsRight);
         }
     }
 
-    private updatePresentedCols(tree: IHeaderColumn[], columns: Column[]): void {
+    private updateCols(tree: IHeaderColumn[], columns: Column[]): void {
         columns.length = 0;
         depthFirstAllColumnTreeSearch(tree, true, (child: IHeaderColumn) => {
             if (child instanceof Column) {
@@ -182,64 +182,64 @@ export class PresentedColsService extends BeanStub {
         });
     }
 
-    public getDisplayedColumnsCenter(): Column[] {
-        return this.presentedColumnsCenter;
+    public getColsCenter(): Column[] {
+        return this.columnsCenter;
     }
 
-    public getAllDisplayedTrees(): IHeaderColumn[] | null {
-        if (this.presentedTreeLeft && this.presentedTreeRight && this.presentedTreeCentre) {
-            return this.presentedTreeLeft
-                .concat(this.presentedTreeCentre)
-                .concat(this.presentedTreeRight);
+    public getAllTrees(): IHeaderColumn[] | null {
+        if (this.treeLeft && this.treeRight && this.treeCenter) {
+            return this.treeLeft
+                .concat(this.treeCenter)
+                .concat(this.treeRight);
         }
 
         return null;
     }
     
     // + headerRenderer -> setting pinned body width
-    public getDisplayedTreeLeft(): IHeaderColumn[] {
-        return this.presentedTreeLeft;
+    public getTreeLeft(): IHeaderColumn[] {
+        return this.treeLeft;
     }
 
     // + headerRenderer -> setting pinned body width
-    public getDisplayedTreeRight(): IHeaderColumn[] {
-        return this.presentedTreeRight;
+    public getTreeRight(): IHeaderColumn[] {
+        return this.treeRight;
     }
 
     // + headerRenderer -> setting pinned body width
-    public getDisplayedTreeCentre(): IHeaderColumn[] {
-        return this.presentedTreeCentre;
+    public getTreeCenter(): IHeaderColumn[] {
+        return this.treeCenter;
     }
 
     // + csvCreator
-    public getAllDisplayedColumns(): Column[] {
-        return this.presentedColumns;
+    public getAllCols(): Column[] {
+        return this.columns;
     }
     
     // gridPanel -> ensureColumnVisible
-    public isColumnDisplayed(column: Column): boolean {
-        return this.getAllDisplayedColumns().indexOf(column) >= 0;
+    public isColDisplayed(column: Column): boolean {
+        return this.getAllCols().indexOf(column) >= 0;
     }
     
-    public getDisplayedLeftColumnsForRow(rowNode: RowNode): Column[] {
+    public getLeftColsForRow(rowNode: RowNode): Column[] {
         const colSpanActive = this.columnModel.isColSpanActive();
         if (!colSpanActive) {
-            return this.presentedColumnsLeft;
+            return this.columnsLeft;
         }
 
-        return this.getDisplayedColumnsForRow(rowNode, this.presentedColumnsLeft);
+        return this.getColsForRow(rowNode, this.columnsLeft);
     }
 
-    public getDisplayedRightColumnsForRow(rowNode: RowNode): Column[] {
+    public getRightColsForRow(rowNode: RowNode): Column[] {
         const colSpanActive = this.columnModel.isColSpanActive();
         if (!colSpanActive) {
-            return this.presentedColumnsRight;
+            return this.columnsRight;
         }
 
-        return this.getDisplayedColumnsForRow(rowNode, this.presentedColumnsRight);
+        return this.getColsForRow(rowNode, this.columnsRight);
     }
     
-    public getDisplayedColumnsForRow(
+    public getColsForRow(
         rowNode: RowNode, displayedColumns: Column[],
         filterCallback?: (column: Column) => boolean,
         emptySpaceBeforeColumn?: (column: Column) => boolean
@@ -298,9 +298,9 @@ export class PresentedColsService extends BeanStub {
 
     // after setColumnWidth or updateGroupsAndPresentedCols
     public updateBodyWidths(): void {
-        const newBodyWidth = this.columnUtilsFeature.getWidthOfColsInList(this.presentedColumnsCenter);
-        const newLeftWidth = this.columnUtilsFeature.getWidthOfColsInList(this.presentedColumnsLeft);
-        const newRightWidth = this.columnUtilsFeature.getWidthOfColsInList(this.presentedColumnsRight);
+        const newBodyWidth = this.columnUtilsFeature.getWidthOfColsInList(this.columnsCenter);
+        const newLeftWidth = this.columnUtilsFeature.getWidthOfColsInList(this.columnsLeft);
+        const newRightWidth = this.columnUtilsFeature.getWidthOfColsInList(this.columnsRight);
 
         // this is used by virtual col calculation, for RTL only, as a change to body width can impact displayed
         // columns, due to RTL inverting the y coordinates
@@ -349,21 +349,21 @@ export class PresentedColsService extends BeanStub {
     }
 
     // + rowController -> while inserting rows
-    public getDisplayedCenterColumns(): Column[] {
-        return this.presentedColumnsCenter;
+    public getCenterCols(): Column[] {
+        return this.columnsCenter;
     }
 
     // + rowController -> while inserting rows
-    public getDisplayedLeftColumns(): Column[] {
-        return this.presentedColumnsLeft;
+    public getLeftCols(): Column[] {
+        return this.columnsLeft;
     }
 
-    public getDisplayedRightColumns(): Column[] {
-        return this.presentedColumnsRight;
+    public getRightCols(): Column[] {
+        return this.columnsRight;
     }
     
-    public getDisplayedColBefore(col: Column): Column | null {
-        const allDisplayedColumns = this.getAllDisplayedColumns();
+    public getColBefore(col: Column): Column | null {
+        const allDisplayedColumns = this.getAllCols();
         const oldIndex = allDisplayedColumns.indexOf(col);
 
         if (oldIndex > 0) {
@@ -373,12 +373,12 @@ export class PresentedColsService extends BeanStub {
         return null;
     }
 
-    public getDisplayedGroupAtDirection(columnGroup: ColumnGroup, direction: 'After' | 'Before'): ColumnGroup | null {
+    public getGroupAtDirection(columnGroup: ColumnGroup, direction: 'After' | 'Before'): ColumnGroup | null {
         // pick the last displayed column in this group
         const requiredLevel = columnGroup.getProvidedColumnGroup().getLevel() + columnGroup.getPaddingLevel();
         const colGroupLeafColumns = columnGroup.getDisplayedLeafColumns();
         const col: Column | null = direction === 'After' ? last(colGroupLeafColumns) : colGroupLeafColumns[0];
-        const getDisplayColMethod: 'getDisplayedColAfter' | 'getDisplayedColBefore' = `getDisplayedCol${direction}` as any;
+        const getDisplayColMethod: 'getColAfter' | 'getColBefore' = `getCol${direction}` as any;
 
         while (true) {
             // keep moving to the next col, until we get to another group
@@ -386,7 +386,7 @@ export class PresentedColsService extends BeanStub {
 
             if (!column) { return null; }
 
-            const groupPointer = this.getColumnGroupAtLevel(column, requiredLevel);
+            const groupPointer = this.getColGroupAtLevel(column, requiredLevel);
 
             if (groupPointer !== columnGroup) {
                 return groupPointer;
@@ -394,7 +394,7 @@ export class PresentedColsService extends BeanStub {
         }
     }
 
-    public getColumnGroupAtLevel(column: Column, level: number): ColumnGroup | null {
+    public getColGroupAtLevel(column: Column, level: number): ColumnGroup | null {
         // get group at same level as the one we are looking for
         let groupPointer: ColumnGroup = column.getParent();
         let originalGroupLevel: number;
@@ -413,14 +413,14 @@ export class PresentedColsService extends BeanStub {
     }
 
     public isPinningLeft(): boolean {
-        return this.presentedColumnsLeft.length > 0;
+        return this.columnsLeft.length > 0;
     }
 
     public isPinningRight(): boolean {
-        return this.presentedColumnsRight.length > 0;
+        return this.columnsRight.length > 0;
     }
 
-    public buildDisplayedTrees(visibleColumns: Column[]) {
+    public buildTrees(visibleColumns: Column[]) {
         const leftVisibleColumns: Column[] = [];
         const rightVisibleColumns: Column[] = [];
         const centerVisibleColumns: Column[] = [];
@@ -441,51 +441,51 @@ export class PresentedColsService extends BeanStub {
 
         const groupInstanceIdCreator = new GroupInstanceIdCreator();
 
-        this.presentedTreeLeft = this.createDisplayedGroups(
-            leftVisibleColumns, groupInstanceIdCreator, 'left', this.presentedTreeLeft);
-        this.presentedTreeRight = this.createDisplayedGroups(
-            rightVisibleColumns, groupInstanceIdCreator, 'right', this.presentedTreeRight);
-        this.presentedTreeCentre = this.createDisplayedGroups(
-            centerVisibleColumns, groupInstanceIdCreator, null, this.presentedTreeCentre);
+        this.treeLeft = this.createGroups(
+            leftVisibleColumns, groupInstanceIdCreator, 'left', this.treeLeft);
+        this.treeRight = this.createGroups(
+            rightVisibleColumns, groupInstanceIdCreator, 'right', this.treeRight);
+        this.treeCenter = this.createGroups(
+            centerVisibleColumns, groupInstanceIdCreator, null, this.treeCenter);
 
-        this.updateDisplayedMap();
+        this.updateMap();
     }
 
-    private updateDisplayedMap(): void {
-        this.presentedColumnsAndGroupsMap = {};
+    private updateMap(): void {
+        this.columnsAndGroupsMap = {};
 
         const func = (child: IHeaderColumn) => {
-            this.presentedColumnsAndGroupsMap[child.getUniqueId()] = child;
+            this.columnsAndGroupsMap[child.getUniqueId()] = child;
         };
 
-        depthFirstAllColumnTreeSearch(this.presentedTreeCentre, false, func);
-        depthFirstAllColumnTreeSearch(this.presentedTreeLeft, false, func);
-        depthFirstAllColumnTreeSearch(this.presentedTreeRight, false, func);
+        depthFirstAllColumnTreeSearch(this.treeCenter, false, func);
+        depthFirstAllColumnTreeSearch(this.treeLeft, false, func);
+        depthFirstAllColumnTreeSearch(this.treeRight, false, func);
     }
 
     public isDisplayed(item: IHeaderColumn): boolean {
-        const fromMap = this.presentedColumnsAndGroupsMap[item.getUniqueId()];
+        const fromMap = this.columnsAndGroupsMap[item.getUniqueId()];
         // check for reference, in case new column / group with same id is now present
         return fromMap === item;
     }
 
-    public updateDisplayedCols(source: ColumnEventType): void {
+    public updateVisibleCols(source: ColumnEventType): void {
         this.updateOpenClosedVisibilityInColumnGroups();
 
-        this.updatePresentedCols(this.presentedTreeLeft, this.presentedColumnsLeft);
-        this.updatePresentedCols(this.presentedTreeCentre, this.presentedColumnsCenter);
-        this.updatePresentedCols(this.presentedTreeRight, this.presentedColumnsRight);
+        this.updateCols(this.treeLeft, this.columnsLeft);
+        this.updateCols(this.treeCenter, this.columnsCenter);
+        this.updateCols(this.treeRight, this.columnsRight);
 
-        this.joinColumnsAriaOrder();
-        this.joinDisplayedColumns();
+        this.joinColsAriaOrder();
+        this.joinCols();
         this.setLeftValues(source);
-        this.presentedAutoHeightCols = this.presentedColumns.filter(col => col.isAutoHeight());
+        this.autoHeightCols = this.columns.filter(col => col.isAutoHeight());
         this.columnSizeService.refreshFlexedColumns();
         this.updateBodyWidths();
     }
 
     private updateOpenClosedVisibilityInColumnGroups(): void {
-        const allColumnGroups = this.getAllDisplayedTrees();
+        const allColumnGroups = this.getAllTrees();
 
         depthFirstAllColumnTreeSearch(allColumnGroups, false, child => {
             if (child instanceof ColumnGroup) {
@@ -494,12 +494,12 @@ export class PresentedColsService extends BeanStub {
         });
     }
 
-    public getFirstDisplayedColumn(): Column | null {
+    public getFirstColumn(): Column | null {
         const isRtl = this.gos.get('enableRtl');
-        const queryOrder: ('getDisplayedLeftColumns' | 'getDisplayedCenterColumns' | 'getDisplayedRightColumns')[] = [
-            'getDisplayedLeftColumns',
-            'getDisplayedCenterColumns',
-            'getDisplayedRightColumns'
+        const queryOrder: ('getLeftCols' | 'getCenterCols' | 'getRightCols')[] = [
+            'getLeftCols',
+            'getCenterCols',
+            'getRightCols'
         ];
 
         if (isRtl) {
@@ -524,7 +524,7 @@ export class PresentedColsService extends BeanStub {
         if (!colId) { return null; }
         if (colId instanceof ColumnGroup) { return colId; }
 
-        const allColumnGroups = this.getAllDisplayedTrees();
+        const allColumnGroups = this.getAllTrees();
         const checkPartId = typeof partId === 'number';
         let result: ColumnGroup | null = null;
 
@@ -550,8 +550,8 @@ export class PresentedColsService extends BeanStub {
 
     // used by:
     // + rowRenderer -> for navigation
-    public getDisplayedColAfter(col: Column): Column | null {
-        const allDisplayedColumns = this.getAllDisplayedColumns();
+    public getColAfter(col: Column): Column | null {
+        const allDisplayedColumns = this.getAllCols();
         const oldIndex = allDisplayedColumns.indexOf(col);
 
         if (oldIndex < (allDisplayedColumns.length - 1)) {
@@ -572,17 +572,17 @@ export class PresentedColsService extends BeanStub {
     // used by:
     // + angularGrid -> setting pinned body width
     // note: this should be cached
-    public getDisplayedColumnsLeftWidth() {
-        return this.columnUtilsFeature.getWidthOfColsInList(this.presentedColumnsLeft);
+    public getColsLeftWidth() {
+        return this.columnUtilsFeature.getWidthOfColsInList(this.columnsLeft);
     }
 
     // note: this should be cached
     public getDisplayedColumnsRightWidth() {
-        return this.columnUtilsFeature.getWidthOfColsInList(this.presentedColumnsRight);
+        return this.columnUtilsFeature.getWidthOfColsInList(this.columnsRight);
     }
 
-    public isColumnAtEdge(col: Column | ColumnGroup, edge: 'first' | 'last'): boolean {
-        const allColumns = this.getAllDisplayedColumns();
+    public isColAtEdge(col: Column | ColumnGroup, edge: 'first' | 'last'): boolean {
+        const allColumns = this.getAllCols();
         if (!allColumns.length) { return false; }
 
         const isFirst = edge === 'first';
@@ -605,17 +605,17 @@ export class PresentedColsService extends BeanStub {
         let firstRight: Column | null;
 
         if (this.gos.get('enableRtl')) {
-            lastLeft = this.presentedColumnsLeft ? this.presentedColumnsLeft[0] : null;
-            firstRight = this.presentedColumnsRight ? last(this.presentedColumnsRight) : null;
+            lastLeft = this.columnsLeft ? this.columnsLeft[0] : null;
+            firstRight = this.columnsRight ? last(this.columnsRight) : null;
         } else {
-            lastLeft = this.presentedColumnsLeft ? last(this.presentedColumnsLeft) : null;
-            firstRight = this.presentedColumnsRight ? this.presentedColumnsRight[0] : null;
+            lastLeft = this.columnsLeft ? last(this.columnsLeft) : null;
+            firstRight = this.columnsRight ? this.columnsRight[0] : null;
         }
 
         return { firstRight, lastLeft };
     }
 
-    public createDisplayedGroups(
+    public createGroups(
         // all displayed columns sorted - this is the columns the grid should show
         sortedVisibleColumns: Column[],
         // creates unique id's for the group
@@ -667,7 +667,7 @@ export class PresentedColsService extends BeanStub {
 
                 // the parent differs from the previous node, so we create a group from the previous node
                 // and add all to the result array, except the current node.
-                const newGroup = this.createColumnGroup(
+                const newGroup = this.createColGroup(
                     previousNodeParent,
                     groupInstanceIdCreator,
                     oldColumnsMapped,
@@ -698,11 +698,11 @@ export class PresentedColsService extends BeanStub {
                 createGroupToIndex(currentlyIterating.length);
             }
         }
-        this.setupParentsIntoColumns(topLevelResultCols, null);
+        this.setupParentsIntoCols(topLevelResultCols, null);
         return topLevelResultCols;
     }
 
-    private createColumnGroup(
+    private createColGroup(
             providedGroup: ProvidedColumnGroup,
             groupInstanceIdCreator: GroupInstanceIdCreator,
             oldColumnsMapped: {[key: string]: ColumnGroup},
@@ -754,12 +754,12 @@ export class PresentedColsService extends BeanStub {
         return result;
     }
 
-    private setupParentsIntoColumns(columnsOrGroups: IHeaderColumn[] | null, parent: ColumnGroup | null): void {
+    private setupParentsIntoCols(columnsOrGroups: IHeaderColumn[] | null, parent: ColumnGroup | null): void {
         columnsOrGroups!.forEach(columnsOrGroup => {
             columnsOrGroup.setParent(parent);
             if (columnsOrGroup instanceof ColumnGroup) {
                 const columnGroup = columnsOrGroup;
-                this.setupParentsIntoColumns(columnGroup.getChildren(), columnGroup);
+                this.setupParentsIntoCols(columnGroup.getChildren(), columnGroup);
             }
         });
     }

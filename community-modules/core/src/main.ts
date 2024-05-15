@@ -19,7 +19,7 @@ export { ColumnNameService } from "./columns/columnNameService";
 export { PivotResultColsService } from "./columns/pivotResultColsService";
 export { ColumnSizeService, IColumnLimit, ISizeColumnsToFitParams } from "./columns/columnSizeService";
 export { ColumnKeyCreator } from "./columns/columnKeyCreator";
-export { PresentedColsService } from "./columns/presentedColsService";
+export { VisibleColsService } from "./columns/visibleColsService";
 export { GroupInstanceIdCreator } from "./columns/groupInstanceIdCreator";
 export { GROUP_AUTO_COLUMN_ID } from "./columns/autoGroupColService";
 export {

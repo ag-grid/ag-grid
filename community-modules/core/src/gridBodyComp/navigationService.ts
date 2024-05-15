@@ -25,7 +25,7 @@ import { WithoutGridCommon } from "../interfaces/iCommon";
 import { Events } from "../eventKeys";
 import { FullWidthRowFocusedEvent } from "../events";
 import { IRowModel } from "../interfaces/iRowModel";
-import { PresentedColsService } from "../columns/presentedColsService";
+import { VisibleColsService } from "../columns/visibleColsService";
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */
@@ -47,7 +47,7 @@ export class NavigationService extends BeanStub {
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
     @Autowired('rowRenderer') public rowRenderer: RowRenderer;
@@ -342,7 +342,7 @@ export class NavigationService extends BeanStub {
     // same cell into view (which means either scroll all the way up, or all the way down).
     private onHomeOrEndKey(key: string): void {
         const homeKey = key === KeyCode.PAGE_HOME;
-        const allColumns: Column[] = this.presentedColsService.getAllDisplayedColumns();
+        const allColumns: Column[] = this.visibleColsService.getAllCols();
         const columnToSelect = homeKey ? allColumns[0] : last(allColumns);
         const scrollIndex = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
 
@@ -516,7 +516,7 @@ export class NavigationService extends BeanStub {
 
     // returns null if no navigation should be performed
     private moveToNextCellNotEditing(previousCell: CellCtrl | RowCtrl, backwards: boolean): boolean | null {
-        const displayedColumns = this.presentedColsService.getAllDisplayedColumns();
+        const displayedColumns = this.visibleColsService.getAllCols();
         let cellPos: CellPosition;
 
         if (previousCell instanceof RowCtrl) {
@@ -780,7 +780,7 @@ export class NavigationService extends BeanStub {
     }
 
     private tryToFocusFullWidthRow(position: CellPosition | RowPosition, backwards: boolean = false): boolean {
-        const displayedColumns = this.presentedColsService.getAllDisplayedColumns();
+        const displayedColumns = this.visibleColsService.getAllCols();
         const rowComp = this.rowRenderer.getRowByPosition(position);
         if (!rowComp || !rowComp.isFullWidth()) { return false; }
 

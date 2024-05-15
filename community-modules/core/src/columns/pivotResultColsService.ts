@@ -104,7 +104,7 @@ export class PivotResultColsService extends BeanStub {
         }
 
         this.columnModel.updateLiveCols();
-        this.columnModel.updatePresentedCols(source);
+        this.columnModel.updateVisibleCols(source);
     }
 
     private processPivotResultColDef(colDefs: (ColDef | ColGroupDef)[] | null) {

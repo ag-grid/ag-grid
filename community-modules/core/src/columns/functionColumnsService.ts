@@ -241,7 +241,7 @@ export class FunctionColumnsService extends BeanStub {
 
         autoGroupsNeedBuilding && this.columnModel.updateLiveCols();
 
-        this.columnModel.updatePresentedCols(source);
+        this.columnModel.updateVisibleCols(source);
 
         this.eventDispatcher.columnChanged(eventName, [...changes.keys()], source);
     }
@@ -281,7 +281,7 @@ export class FunctionColumnsService extends BeanStub {
 
         autoGroupsNeedBuilding && this.columnModel.updateLiveCols();
 
-        this.columnModel.updatePresentedCols(source);
+        this.columnModel.updateVisibleCols(source);
 
         this.eventDispatcher.genericColumnEvent(eventType, masterList, source);
     }

@@ -132,7 +132,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             gos: gos,
             columnModel: beans.columnModel,
             columnMoveService: beans.columnMoveService,
-            presentedColsService: beans.presentedColsService
+            presentedColsService: beans.visibleColsService
         });
 
         const displayedLeafColumns = column.getDisplayedLeafColumns();
@@ -402,7 +402,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         allColumnsOriginalOrder.forEach(column => visibleState[column.getId()] = column.isVisible());
 
         const allColumnsCurrentOrder: Column[] = [];
-        this.beans.presentedColsService.getAllDisplayedColumns().forEach(column => {
+        this.beans.visibleColsService.getAllCols().forEach(column => {
             if (allColumnsOriginalOrder.indexOf(column) >= 0) {
                 allColumnsCurrentOrder.push(column);
                 removeFromArray(allColumnsOriginalOrder, column);

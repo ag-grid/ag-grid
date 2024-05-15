@@ -9,7 +9,7 @@ import { EventService } from "./eventService";
 import { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 import { GridApi } from "./gridApi";
 import { ColumnFactory } from "./columns/columnFactory";
-import { PresentedColsService } from "./columns/presentedColsService";
+import { VisibleColsService } from "./columns/visibleColsService";
 import { ExpressionService } from "./valueService/expressionService";
 import { PopupService } from "./widgets/popupService";
 import { Logger, LoggerFactory } from "./logger";
@@ -428,7 +428,7 @@ export class GridCoreCreator {
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             RowContainerHeightService, HorizontalResizeService, LocaleService, ValidationService,
-            PinnedRowModel, DragService, PresentedColsService, EventService, GridOptionsService,
+            PinnedRowModel, DragService, VisibleColsService, EventService, GridOptionsService,
             PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory,
             AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,

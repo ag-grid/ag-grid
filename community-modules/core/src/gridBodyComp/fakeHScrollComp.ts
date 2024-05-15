@@ -5,7 +5,7 @@ import { Events } from "../eventKeys";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { CenterWidthFeature } from "./centerWidthFeature";
-import { PresentedColsService } from "../columns/presentedColsService";
+import { VisibleColsService } from "../columns/visibleColsService";
 
 export class FakeHScrollComp extends AbstractFakeScrollComp {
 
@@ -21,7 +21,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     @RefSelector('eLeftSpacer') private eLeftSpacer: HTMLElement;
     @RefSelector('eRightSpacer') private eRightSpacer: HTMLElement;
 
-    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
 
     private enableRtl: boolean;
@@ -79,7 +79,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
         // we pad the right based on a) if cols are pinned to the right and
         // b) if v scroll is showing on the right (normal position of scroll)
-        let rightSpacing = this.presentedColsService.getDisplayedColumnsRightWidth();
+        let rightSpacing = this.visibleColsService.getDisplayedColumnsRightWidth();
         const scrollOnRight = !this.enableRtl && vScrollShowing;
         const scrollbarWidth = this.gos.getScrollbarWidth();
 
@@ -91,7 +91,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
         // we pad the left based on a) if cols are pinned to the left and
         // b) if v scroll is showing on the left (happens in LTR layout only)
-        let leftSpacing = this.presentedColsService.getDisplayedColumnsLeftWidth();
+        let leftSpacing = this.visibleColsService.getColsLeftWidth();
         const scrollOnLeft = this.enableRtl && vScrollShowing;
 
         if (scrollOnLeft) {

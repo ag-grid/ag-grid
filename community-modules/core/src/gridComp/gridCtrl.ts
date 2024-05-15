@@ -12,7 +12,7 @@ import { MouseEventService } from "../gridBodyComp/mouseEventService";
 import { last } from "../utils/array";
 import { DragAndDropService, DragSourceType } from "../dragAndDrop/dragAndDropService";
 import { WithoutGridCommon } from "../interfaces/iCommon";
-import { PresentedColsService } from "../columns/presentedColsService";
+import { VisibleColsService } from "../columns/visibleColsService";
 
 export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
@@ -27,7 +27,7 @@ export class GridCtrl extends BeanStub {
 
     @Autowired('focusService') protected readonly focusService: FocusService;
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
-    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
     @Autowired('mouseEventService') private readonly mouseEventService: MouseEventService;
     @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
@@ -130,7 +130,7 @@ export class GridCtrl extends BeanStub {
 
     public focusInnerElement(fromBottom?: boolean): boolean {
         const focusableContainers = this.view.getFocusableContainers();
-        const allColumns = this.presentedColsService.getAllDisplayedColumns();
+        const allColumns = this.visibleColsService.getAllCols();
 
         if (fromBottom) {
             if (focusableContainers.length > 1) {

@@ -12,7 +12,7 @@ import { PinnedWidthService } from "./pinnedWidthService";
 import { Column } from "../entities/column";
 import { ProcessUnpinnedColumnsParams } from "../interfaces/iCallbackParams";
 import { ColumnSizeService } from "../columns/columnSizeService";
-import { PresentedColsService } from "../columns/presentedColsService";
+import { VisibleColsService } from "../columns/visibleColsService";
 import { ColumnViewportService } from "../columns/columnViewportService";
 
 // listens to changes in the center viewport size, for column and row virtualisation,
@@ -23,7 +23,7 @@ export class ViewportSizeFeature extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('columnViewportService') public columnViewportService: ColumnViewportService;
@@ -113,8 +113,8 @@ export class ViewportSizeFeature extends BeanStub {
 
         if (totalPinnedWidth < viewportWidth) { return []; }
 
-        const pinnedLeftColumns: Column[] = [...this.presentedColsService.getDisplayedLeftColumns()];
-        const pinnedRightColumns: Column[] = [...this.presentedColsService.getDisplayedRightColumns()];
+        const pinnedLeftColumns: Column[] = [...this.visibleColsService.getLeftCols()];
+        const pinnedRightColumns: Column[] = [...this.visibleColsService.getRightCols()];
 
         let indexRight = 0;
         let indexLeft = 0;

@@ -4,7 +4,7 @@ import { AbstractColDef, ColDef, ColGroupDef, IAggFunc, HeaderValueGetterParams,
 import { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
 import { ExpressionService } from '../valueService/expressionService';
 import { ColumnFactory, depthFirstOriginalTreeSearch } from './columnFactory';
-import { PresentedColsService } from './presentedColsService';
+import { VisibleColsService } from './visibleColsService';
 import { IProvidedColumn } from '../interfaces/iProvidedColumn';
 import {
     ColumnEvent,
@@ -101,7 +101,7 @@ export class ColumnModel extends BeanStub {
 
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
     @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
-    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('columnViewportService') private columnViewportService: ColumnViewportService;
     @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
@@ -209,7 +209,7 @@ export class ColumnModel extends BeanStub {
         const maintainColOrder = colsPreviouslyExisted && !this.showingPivotResult && !this.gos.get('maintainColumnOrder');
         maintainColOrder && this.orderLiveColsLikeProvidedCols();
 
-        this.updatePresentedCols(source);
+        this.updateVisibleCols(source);
         this.columnViewportService.checkViewportColumns();
 
         // this event is not used by AG Grid, but left here for backwards compatibility,
@@ -258,7 +258,7 @@ export class ColumnModel extends BeanStub {
         // will get empty lists of columns rather than stale columns.
         // for example, the header will received gridColumnsChanged event, so will try and draw,
         // but it will draw successfully when it acts on the virtualColumnsChanged event
-        this.presentedColsService.clear();
+        this.visibleColsService.clear();
         this.columnViewportService.clear();
 
         const dispatchChangedEvent = !areEqual(prevLiveColTree, this.liveCols.tree);
@@ -287,10 +287,10 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    public updatePresentedCols(source: ColumnEventType): void {
+    public updateVisibleCols(source: ColumnEventType): void {
         const visibleCols = this.getVisibleColumns();
 
-        this.presentedColsService.buildDisplayedTrees(visibleCols);
+        this.visibleColsService.buildTrees(visibleCols);
 
         // also called when group opened/closed
         this.updateGroupsAndPresentedCols(source);
@@ -309,7 +309,7 @@ export class ColumnModel extends BeanStub {
         if (!this.columnDefs) { return; }
 
         this.updateLiveCols();
-        this.updatePresentedCols(source);
+        this.updateVisibleCols(source);
     }
 
     private onAutoGroupColumnDefChanged(source: ColumnEventType) {
@@ -380,13 +380,13 @@ export class ColumnModel extends BeanStub {
         // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
         // so need to updateLiveColumn() to check it autoGroupCol needs to be added / removed
         this.updateLiveCols();
-        this.updatePresentedCols(source);
+        this.updateVisibleCols(source);
 
         this.eventDispatcher.pivotModeChanged();
     }
 
     public setFirstRightAndLastLeftPinned(source: ColumnEventType): void {
-        const {lastLeft, firstRight} = this.presentedColsService.getFirstRightAndLastLeftPinned();
+        const {lastLeft, firstRight} = this.visibleColsService.getFirstRightAndLastLeftPinned();
 
         this.liveCols.list.forEach((column: Column) => {
             column.setLastLeftPinned(column === lastLeft, source);
@@ -523,7 +523,7 @@ export class ColumnModel extends BeanStub {
         });
 
         if (updatedCols.length) {
-            this.updatePresentedCols(source);
+            this.updateVisibleCols(source);
             this.eventDispatcher.columnPinned(updatedCols, source);
         }
 
@@ -616,7 +616,7 @@ export class ColumnModel extends BeanStub {
             autoGroupColsCopy.forEach(applyDefaultsFunc);
 
             this.liveCols.list = this.columnApplyStateService.applyOrderAfterApplyState(params, this.liveCols.list, this.liveCols.map);
-            this.updatePresentedCols(source);
+            this.updateVisibleCols(source);
             this.eventDispatcher.everythingChanged(source);
 
             dispatchEventsFunc(); // Will trigger pivot result col changes if pivoting modified
@@ -791,7 +791,7 @@ export class ColumnModel extends BeanStub {
 
     public moveInLiveColumns(movedColumns: Column[], toIndex: number, source: ColumnEventType): void {
         moveInArray(this.liveCols?.list, movedColumns, toIndex);
-        this.updatePresentedCols(source);
+        this.updateVisibleCols(source);
     }
 
     // niall note - this method should be deleted, it's patchwork for refactoring
@@ -937,7 +937,7 @@ export class ColumnModel extends BeanStub {
 
     public updateGroupsAndPresentedCols(source: ColumnEventType) {
 
-        this.presentedColsService.updateDisplayedCols(source);
+        this.visibleColsService.updateVisibleCols(source);
 
         this.columnViewportService.checkViewportColumns(false);
 
@@ -1047,7 +1047,7 @@ export class ColumnModel extends BeanStub {
             this.getPivotHeaderHeight() :
             this.getHeaderHeight()) as number;
 
-        const allDisplayedCols = this.presentedColsService.getAllDisplayedColumns();
+        const allDisplayedCols = this.visibleColsService.getAllCols();
 
         const displayedHeights = allDisplayedCols
             .filter((col) => col.isAutoHeaderHeight())

@@ -9,7 +9,7 @@ import { IHeaderGroupCellComp } from "./headerGroupCellCtrl";
 import { IHeaderResizeFeature } from "../abstractCell/abstractHeaderCellCtrl";
 import { ColumnAutosizeService } from "community-modules/core/src/columns/columnAutosizeService";
 import { ColumnSizeService, ColumnResizeSet } from "../../../columns/columnSizeService";
-import { PresentedColsService } from "../../../columns/presentedColsService";
+import { VisibleColsService } from "../../../columns/visibleColsService";
 
 interface ColumnSizeAndRatios {
     columnsToResize: Column[];
@@ -36,7 +36,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
 
     @Autowired('horizontalResizeService') private readonly horizontalResizeService: HorizontalResizeService;
     @Autowired('autoWidthCalculator') private readonly autoWidthCalculator: AutoWidthCalculator;
-    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
+    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
     @Autowired('columnSizeService') private readonly columnSizeService: ColumnSizeService;
     @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
 
@@ -122,7 +122,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         let groupAfter: ColumnGroup | null = null;
 
         if (shiftKey) {
-            groupAfter = this.presentedColsService.getDisplayedGroupAtDirection(this.columnGroup, 'After');
+            groupAfter = this.visibleColsService.getGroupAtDirection(this.columnGroup, 'After');
         }
 
         if (groupAfter) {

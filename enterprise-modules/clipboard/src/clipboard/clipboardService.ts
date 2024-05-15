@@ -42,7 +42,7 @@ import {
     WithoutGridCommon,
     ProcessRowGroupForExportParams,
     FunctionColumnsService,
-    PresentedColsService
+    VisibleColsService
 } from "@ag-grid-community/core";
 
 interface RowCallback {
@@ -80,7 +80,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('presentedColsService') private presentedColsService: PresentedColsService;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
@@ -414,7 +414,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         while (currentColumn != null) {
             columns.push(currentColumn);
-            currentColumn = this.presentedColsService.getDisplayedColAfter(currentColumn);
+            currentColumn = this.visibleColsService.getColAfter(currentColumn);
         }
 
         return columns;
@@ -710,7 +710,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     private clearSelectedRows(): void {
         const selected = this.selectionService.getSelectedNodes();
-        const columns = this.presentedColsService.getAllDisplayedColumns();
+        const columns = this.visibleColsService.getAllCols();
 
         for (const row of selected) {
             for (const col of columns) {
@@ -796,7 +796,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             Object.assign(allCellsToFlash, cellsToFlash);
         });
 
-        const allColumns = this.presentedColsService.getAllDisplayedColumns();
+        const allColumns = this.visibleColsService.getAllCols();
         const exportedColumns = Array.from(columnsSet);
 
         exportedColumns.sort((a, b) => {
@@ -858,7 +858,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private getCellsToFlashFromRowNodes(rowNodes: RowNode[]): CellsToFlashType {
-        const allDisplayedColumns = this.presentedColsService.getAllDisplayedColumns();
+        const allDisplayedColumns = this.visibleColsService.getAllCols();
         const cellsToFlash: CellsToFlashType = {};
         for (let i = 0; i < rowNodes.length; i++) {
             const { rowIndex, rowPinned } = rowNodes[i];
