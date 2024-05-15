@@ -1,5 +1,5 @@
 import { AlignedGridsService } from "./alignedGridsService";
-import { ApplyColumnStateParams, ColumnModel, ColumnState } from "./columns/columnModel";
+import { ColumnModel } from "./columns/columnModel";
 import { VisibleColsService } from "./columns/visibleColsService";
 import { Autowired, Bean, Context, Optional, PostConstruct } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
@@ -141,7 +141,7 @@ import { MenuService, IContextMenuParams } from "./misc/menuService";
 import { escapeString } from "./utils/string";
 import { ColumnAutosizeService } from "./columns/columnAutosizeService";
 import { ColumnGetStateService } from "./columns/columnGetStateService";
-import { ColumnApplyStateService } from "./columns/columnApplyStateService";
+import { ApplyColumnStateParams, ColumnApplyStateService, ColumnState } from "./columns/columnApplyStateService";
 import { ColumnGroupStateService } from "./columns/columnGroupStateService";
 import { ColumnMoveService } from "./columns/columnMoveService";
 import { FunctionColumnsService } from "./columns/functionColumnsService";

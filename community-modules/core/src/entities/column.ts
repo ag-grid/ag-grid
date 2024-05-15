@@ -1,4 +1,3 @@
-import { ColumnState } from "../columns/columnModel";
 import { Autowired, PostConstruct } from "../context/context";
 import { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from "../events";
 import { EventService } from "../eventService";
@@ -23,6 +22,7 @@ import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { warnOnce } from "../utils/function";
 import { BrandedType } from "../utils";
 import { Environment } from "../environment";
+import { ColumnState } from "../columns/columnApplyStateService";
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 export type ColumnEventName =

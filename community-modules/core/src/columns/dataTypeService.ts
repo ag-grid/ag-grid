@@ -19,7 +19,7 @@ import {
 import { IRowModel } from '../interfaces/iRowModel';
 import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { Events } from '../eventKeys';
-import { ColumnModel, ColumnState, ColumnStateParams, convertSourceType } from './columnModel';
+import { ColumnModel, convertSourceType } from './columnModel';
 import { getValueUsingField } from '../utils/object';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { ModuleNames } from '../modules/moduleNames';
@@ -32,7 +32,7 @@ import { IRowNode } from '../interfaces/iRowNode';
 import { parseDateTimeFromString, serialiseDate } from '../utils/date';
 import { AgEventListener, AgGridEvent, DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
 import { WithoutGridCommon } from '../interfaces/iCommon';
-import { ColumnApplyStateService } from './columnApplyStateService';
+import { ColumnApplyStateService, ColumnState, ColumnStateParams } from './columnApplyStateService';
 import { FunctionColumnsService } from './functionColumnsService';
 
 interface GroupSafeValueFormatter {

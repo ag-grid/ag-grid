@@ -2,7 +2,8 @@ import { Autowired, Bean } from "../context/context";
 import { Column } from "../entities/column";
 import { missing } from "../utils/generic";
 import { convertToMap } from "../utils/map";
-import { ColumnModel, ColumnState } from "./columnModel";
+import { ColumnState } from "./columnApplyStateService";
+import { ColumnModel } from "./columnModel";
 import { FunctionColumnsService } from "./functionColumnsService";
 
 @Bean('columnGetStateService')

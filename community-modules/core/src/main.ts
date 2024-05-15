@@ -10,10 +10,10 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
 // columns
 export { ColumnFactory } from "./columns/columnFactory";
-export { ColumnModel, ColumnState, ColumnStateParams, ApplyColumnStateParams } from "./columns/columnModel";
+export { ColumnModel } from "./columns/columnModel";
 export { ColumnAutosizeService } from "./columns/columnAutosizeService";
 export { FunctionColumnsService } from "./columns/functionColumnsService";
-export { ColumnApplyStateService } from "./columns/columnApplyStateService";
+export { ColumnApplyStateService, ColumnState, ColumnStateParams, ApplyColumnStateParams } from "./columns/columnApplyStateService";
 export { ColumnMoveService } from "./columns/columnMoveService";
 export { ColumnNameService } from "./columns/columnNameService";
 export { PivotResultColsService } from "./columns/pivotResultColsService";

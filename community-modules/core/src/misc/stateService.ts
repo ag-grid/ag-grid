@@ -1,4 +1,4 @@
-import { ColumnModel, ColumnState, ColumnStateParams } from "../columns/columnModel";
+import { ColumnModel } from "../columns/columnModel";
 import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
@@ -46,7 +46,7 @@ import { ColumnGetStateService } from "../columns/columnGetStateService";
 import { ColumnGroupStateService } from "../columns/columnGroupStateService";
 import { VisibleColsService } from "../columns/visibleColsService";
 import { PivotResultColsService } from "../columns/pivotResultColsService";
-import { ColumnApplyStateService } from "../columns/columnApplyStateService";
+import { ColumnApplyStateService, ColumnState, ColumnStateParams } from "../columns/columnApplyStateService";
 
 @Bean('stateService')
 export class StateService extends BeanStub {

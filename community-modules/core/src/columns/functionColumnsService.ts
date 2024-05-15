@@ -6,9 +6,9 @@ import { ColumnEventType, Events } from "../events";
 import { IAggFuncService } from "../interfaces/iAggFuncService";
 import { removeFromArray } from "../utils/array";
 import { attrToBoolean, attrToNumber, exists, missingOrEmpty } from "../utils/generic";
-import { ModifyColumnsNoEventsCallbacks } from "./columnApplyStateService";
+import { ColumnState, ModifyColumnsNoEventsCallbacks } from "./columnApplyStateService";
 import { ColumnEventDispatcher } from "./columnEventDispatcher";
-import { ColKey, ColumnModel, ColumnState, Maybe } from "./columnModel";
+import { ColKey, ColumnModel, Maybe } from "./columnModel";
 import { VisibleColsService } from "./visibleColsService";
 
 @Bean('functionColumnsService')
