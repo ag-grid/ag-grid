@@ -76,6 +76,12 @@
         }
       }
     },
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "community-modules/core"
+      }
+    },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": [
