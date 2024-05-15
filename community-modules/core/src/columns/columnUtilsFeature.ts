@@ -2,6 +2,7 @@ import { Context } from "../context/context";
 import { Column, ColumnInstanceId } from "../entities/column";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { IProvidedColumn } from "../interfaces/iProvidedColumn";
+import { GROUP_AUTO_COLUMN_ID } from "./autoGroupColService";
 import { depthFirstOriginalTreeSearch } from "./columnFactory";
 
 export class ColumnUtilsFeature {
@@ -51,4 +52,9 @@ export class ColumnUtilsFeature {
         const colsToDestroy = Object.values(oldObjectsById).filter(item => item != null);
         context.destroyBeans(colsToDestroy);
     }
+}
+
+export function isColumnGroupAutoCol(col: Column): boolean {
+    const colId = col.getId();
+    return colId.startsWith(GROUP_AUTO_COLUMN_ID);
 }

@@ -36,7 +36,7 @@ import { ColumnApplyStateService, ModifyColumnsNoEventsCallbacks } from './colum
 import { ColumnEventDispatcher } from './columnEventDispatcher';
 import { ColumnMoveService } from './columnMoveService';
 import { ColumnAutosizeService } from './columnAutosizeService';
-import { ColumnUtilsFeature } from './columnUtilsFeature';
+import { ColumnUtilsFeature, isColumnGroupAutoCol } from './columnUtilsFeature';
 import { ColumnGroupStateService } from './columnGroupStateService';
 import { ColumnSizeService } from './columnSizeService';
 import { FunctionColumnsService } from './functionColumnsService';
@@ -207,9 +207,11 @@ export class ColumnModel extends BeanStub {
         this.updateLiveCols();
 
         const maintainColOrder = colsPreviouslyExisted && !this.showingPivotResult && !this.gos.get('maintainColumnOrder');
-        maintainColOrder && this.orderLiveColsLikeProvidedCols();
+        if (maintainColOrder) {
+            this.orderColsLikeProvided();
+        }
 
-        this.updateVisibleCols(source);
+        this.visibleColsService.refresh({source});
         this.columnViewportService.checkViewportColumns();
 
         // this event is not used by AG Grid, but left here for backwards compatibility,
@@ -218,9 +220,11 @@ export class ColumnModel extends BeanStub {
 
         // Row Models react to all of these events as well as new columns loaded,
         // this flag instructs row model to ignore these events to reduce refreshes.
-        this.changeEventsDispatching = true;
-        dispatchEventsFunc && dispatchEventsFunc();
-        this.changeEventsDispatching = false;
+        if (dispatchEventsFunc) {
+            this.changeEventsDispatching = true;
+            dispatchEventsFunc();
+            this.changeEventsDispatching = false;    
+        }
 
         this.eventDispatcher.newColumnsLoaded(source);
         if (source === 'gridInitializing') {
@@ -262,7 +266,9 @@ export class ColumnModel extends BeanStub {
         this.columnViewportService.clear();
 
         const dispatchChangedEvent = !areEqual(prevLiveColTree, this.liveCols.tree);
-        dispatchChangedEvent && this.eventDispatcher.gridColumns();
+        if (dispatchChangedEvent) {
+            this.eventDispatcher.gridColumns();
+        }
     }
 
     private selectLiveCols(): void {
@@ -287,16 +293,30 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    public updateVisibleCols(source: ColumnEventType): void {
-        const visibleCols = this.getVisibleColumns();
+    public getVisibleFromLive(): Column[] {
 
-        this.visibleColsService.buildTrees(visibleCols);
+        // pivot mode is on, but we are not pivoting, so we only
+        // show columns we are aggregating on
 
-        // also called when group opened/closed
-        this.updateGroupsAndPresentedCols(source);
+        const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.isShowingPivotResult();
+        const valueColumns = this.functionColumnsService.getValueColumns();
 
-        // also called when group opened/closed
-        this.setFirstRightAndLastLeftPinned(source);
+        const res = this.liveCols.list.filter( col => {
+            const isAutoGroupCol = isColumnGroupAutoCol(col);
+            if (showAutoGroupAndValuesOnly) {
+                const isValueCol = valueColumns && includes(valueColumns, col);
+                return isAutoGroupCol || isValueCol;
+            } else {
+                // keep col if a) it's auto-group or b) it's visible
+                return isAutoGroupCol || col.isVisible();
+            }
+        });
+
+        return res;
+    }
+
+    public isShowingPivotResult(): boolean {
+        return this.showingPivotResult;
     }
 
     public pushResizeOperation(func: ()=> void): void {
@@ -309,7 +329,7 @@ export class ColumnModel extends BeanStub {
         if (!this.columnDefs) { return; }
 
         this.updateLiveCols();
-        this.updateVisibleCols(source);
+        this.visibleColsService.refresh({source});
     }
 
     private onAutoGroupColumnDefChanged(source: ColumnEventType) {
@@ -346,7 +366,7 @@ export class ColumnModel extends BeanStub {
         return this.changeEventsDispatching;
     }
 
-    private orderLiveColsLikeProvidedCols(): void {
+    private orderColsLikeProvided(): void {
         if (!this.providedCols || !this.liveCols) { return; }
 
         const liveColsOrdered = this.providedCols.list.filter(col => this.liveCols.list.indexOf(col) >= 0);
@@ -380,18 +400,9 @@ export class ColumnModel extends BeanStub {
         // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
         // so need to updateLiveColumn() to check it autoGroupCol needs to be added / removed
         this.updateLiveCols();
-        this.updateVisibleCols(source);
+        this.visibleColsService.refresh({source});
 
         this.eventDispatcher.pivotModeChanged();
-    }
-
-    public setFirstRightAndLastLeftPinned(source: ColumnEventType): void {
-        const {lastLeft, firstRight} = this.visibleColsService.getFirstRightAndLastLeftPinned();
-
-        this.liveCols.list.forEach((column: Column) => {
-            column.setLastLeftPinned(column === lastLeft, source);
-            column.setFirstRightPinned(column === firstRight, source);
-        });
     }
 
     public getLiveColTree(): IProvidedColumn[] {
@@ -523,7 +534,7 @@ export class ColumnModel extends BeanStub {
         });
 
         if (updatedCols.length) {
-            this.updateVisibleCols(source);
+            this.visibleColsService.refresh({source});
             this.eventDispatcher.columnPinned(updatedCols, source);
         }
 
@@ -616,7 +627,7 @@ export class ColumnModel extends BeanStub {
             autoGroupColsCopy.forEach(applyDefaultsFunc);
 
             this.liveCols.list = this.columnApplyStateService.applyOrderAfterApplyState(params, this.liveCols.list, this.liveCols.map);
-            this.updateVisibleCols(source);
+            this.visibleColsService.refresh({source});
             this.eventDispatcher.everythingChanged(source);
 
             dispatchEventsFunc(); // Will trigger pivot result col changes if pivoting modified
@@ -762,27 +773,6 @@ export class ColumnModel extends BeanStub {
         return res;
     }
 
-    private getVisibleColumns(): Column[] {
-
-        // pivot mode is on, but we are not pivoting, so we only
-        // show columns we are aggregating on
-        const showAutoGroupAndValuesOnly = this.pivotMode && !this.showingPivotResult;
-        const valueColumns = this.functionColumnsService.getValueColumns();
-
-        const res = this.liveCols.list.filter( col => {
-            const isAutoGroupCol = isColumnGroupAutoCol(col);
-            if (showAutoGroupAndValuesOnly) {
-                const isValueCol = valueColumns && includes(valueColumns, col);
-                return isAutoGroupCol || isValueCol;
-            } else {
-                // keep col if a) it's auto-group or b) it's visible
-                return isAutoGroupCol || col.isVisible();
-            }
-        });
-
-        return res;
-    }
-
     private setColSpanActive(): void {
         this.colSpanActive = this.liveCols.list.some(
             col => col.getColDef().colSpan!=null
@@ -791,7 +781,7 @@ export class ColumnModel extends BeanStub {
 
     public moveInLiveColumns(movedColumns: Column[], toIndex: number, source: ColumnEventType): void {
         moveInArray(this.liveCols?.list, movedColumns, toIndex);
-        this.updateVisibleCols(source);
+        this.visibleColsService.refresh({source});
     }
 
     // niall note - this method should be deleted, it's patchwork for refactoring
@@ -933,15 +923,6 @@ export class ColumnModel extends BeanStub {
         this.liveCols.list = this.autoCols.list.concat(this.liveCols.list);
         this.liveCols.tree = this.autoCols.tree.concat(this.liveCols.tree);
         updateColsMap(this.liveCols);
-    }
-
-    public updateGroupsAndPresentedCols(source: ColumnEventType) {
-
-        this.visibleColsService.updateVisibleCols(source);
-
-        this.columnViewportService.checkViewportColumns(false);
-
-        this.eventDispatcher.displayedColumns();
     }
 
     public isAutoRowHeightActive(): boolean {
@@ -1203,11 +1184,6 @@ const comparatorByIndex = (indexes: { [key: string]: number; }, oldList: Column[
     // but without index or that b is old and a is new
     return 1;
 };
-
-function isColumnGroupAutoCol(col: Column): boolean {
-    const colId = col.getId();
-    return colId.startsWith(GROUP_AUTO_COLUMN_ID);
-}
 
 function updateColsMap(cols: ColumnCollections): void {
     cols.map = {};

@@ -6,13 +6,15 @@ import { ColumnAnimationService } from "../rendering/columnAnimationService";
 import { ColumnEventDispatcher } from "./columnEventDispatcher";
 import { depthFirstOriginalTreeSearch } from "./columnFactory";
 import { ColumnModel } from "./columnModel";
+import { VisibleColsService } from "./visibleColsService";
 
 @Bean('columnGroupStateService')
 export class ColumnGroupStateService {
 
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
 
     private logger: Logger;
 
@@ -77,8 +79,7 @@ export class ColumnGroupStateService {
             impactedGroups.push(providedColumnGroup);
         });
 
-        this.columnModel.updateGroupsAndPresentedCols(source);
-        this.columnModel.setFirstRightAndLastLeftPinned(source);
+        this.visibleColsService.refresh({source, skipTreeBuild: true});
 
         if (impactedGroups.length) {
             this.eventDispatcher.groupOpened(impactedGroups);

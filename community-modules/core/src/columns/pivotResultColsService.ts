@@ -9,12 +9,14 @@ import { exists, missing, missingOrEmpty } from "../utils/generic";
 import { ColumnFactory } from "./columnFactory";
 import { ColKey, ColumnCollections, ColumnModel } from "./columnModel";
 import { ColumnUtilsFeature } from "./columnUtilsFeature";
+import { VisibleColsService } from "./visibleColsService";
 
 @Bean('pivotResultColsService')
 export class PivotResultColsService extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnFactory') private readonly columnFactory: ColumnFactory;
+    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
 
     private columnUtilsFeature: ColumnUtilsFeature;
 
@@ -104,7 +106,7 @@ export class PivotResultColsService extends BeanStub {
         }
 
         this.columnModel.updateLiveCols();
-        this.columnModel.updateVisibleCols(source);
+        this.visibleColsService.refresh({source});
     }
 
     private processPivotResultColDef(colDefs: (ColDef | ColGroupDef)[] | null) {

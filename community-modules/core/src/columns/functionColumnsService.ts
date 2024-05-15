@@ -9,6 +9,7 @@ import { attrToBoolean, attrToNumber, exists, missingOrEmpty } from "../utils/ge
 import { ModifyColumnsNoEventsCallbacks } from "./columnApplyStateService";
 import { ColumnEventDispatcher } from "./columnEventDispatcher";
 import { ColKey, ColumnModel, ColumnState, Maybe } from "./columnModel";
+import { VisibleColsService } from "./visibleColsService";
 
 @Bean('functionColumnsService')
 export class FunctionColumnsService extends BeanStub {
@@ -16,6 +17,7 @@ export class FunctionColumnsService extends BeanStub {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
     @Optional('aggFuncService') private aggFuncService?: IAggFuncService;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
 
     private rowGroupColumns: Column[] = [];
     private valueColumns: Column[] = [];
@@ -241,7 +243,7 @@ export class FunctionColumnsService extends BeanStub {
 
         autoGroupsNeedBuilding && this.columnModel.updateLiveCols();
 
-        this.columnModel.updateVisibleCols(source);
+        this.visibleColsService.refresh({source});
 
         this.eventDispatcher.columnChanged(eventName, [...changes.keys()], source);
     }
@@ -281,7 +283,7 @@ export class FunctionColumnsService extends BeanStub {
 
         autoGroupsNeedBuilding && this.columnModel.updateLiveCols();
 
-        this.columnModel.updateVisibleCols(source);
+        this.visibleColsService.refresh({source});
 
         this.eventDispatcher.genericColumnEvent(eventType, masterList, source);
     }

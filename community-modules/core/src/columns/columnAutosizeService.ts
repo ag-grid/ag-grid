@@ -85,7 +85,7 @@ export class ColumnAutosizeService extends BeanStub {
     
             if (!updatedColumns.length) { return; }
     
-            this.columnModel.updateVisibleCols(source);
+            this.visibleColsService.refresh({source});
         }
 
         if (!shouldSkipHeaderGroups) {

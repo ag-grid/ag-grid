@@ -18,7 +18,7 @@ b) to remove plumbing code from ColumnModel, to help make ColumnModel more maint
 @Bean('columnEventDispatcher')
 export class ColumnEventDispatcher extends BeanStub {
  
-    public displayedColumns(): void {
+    public visibleCols(): void {
         const event: WithoutGridCommon<DisplayedColumnsChangedEvent> = {
             type: Events.EVENT_DISPLAYED_COLUMNS_CHANGED
         };
