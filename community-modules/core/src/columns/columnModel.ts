@@ -1,48 +1,35 @@
-import { ColumnGroup } from '../entities/columnGroup';
-import { Column, ColumnInstanceId, ColumnPinnedType } from '../entities/column';
-import { AbstractColDef, ColDef, ColGroupDef, IAggFunc, HeaderValueGetterParams, HeaderLocation } from '../entities/colDef';
-import { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
-import { ExpressionService } from '../valueService/expressionService';
-import { ColumnFactory, depthFirstOriginalTreeSearch } from './columnFactory';
-import { VisibleColsService } from './visibleColsService';
-import { IProvidedColumn } from '../interfaces/iProvidedColumn';
-import {
-    ColumnEvent,
-    ColumnEventType,
-    ColumnPinnedEvent,
-    DisplayedColumnsWidthChangedEvent,
-    Events,
-    ColumnContainerWidthChanged
-} from '../events';
 import { BeanStub } from "../context/beanStub";
-import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
-import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
-import { Autowired, Bean, Optional, PostConstruct, PreDestroy, Qualifier } from '../context/context';
-import { IAggFuncService } from '../interfaces/iAggFuncService';
-import { ColumnAnimationService } from '../rendering/columnAnimationService';
-import { AutoGroupColService, GROUP_AUTO_COLUMN_ID } from './autoGroupColService';
-import { RowNode } from '../entities/rowNode';
-import { ValueCache } from '../valueService/valueCache';
-import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromUnorderedArray, removeFromUnorderedArray } from '../utils/array';
-import { missingOrEmpty, exists, missing, attrToBoolean, attrToNumber } from '../utils/generic';
-import { camelCaseToHumanText } from '../utils/string';
-import { ColumnDefFactory } from "./columnDefFactory";
-import { convertToMap } from '../utils/map';
-import { warnOnce } from '../utils/function';
+import { Autowired, Bean, PostConstruct, PreDestroy } from '../context/context';
 import { CtrlsService } from '../ctrlsService';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { PropertyChangedSource } from '../gridOptionsService';
-import { ColumnApplyStateService, ColumnState, ModifyColumnsNoEventsCallbacks } from './columnApplyStateService';
-import { ColumnEventDispatcher } from './columnEventDispatcher';
-import { ColumnMoveService } from './columnMoveService';
-import { ColumnAutosizeService } from './columnAutosizeService';
-import { ColumnUtilsFeature, isColumnGroupAutoCol } from './columnUtilsFeature';
-import { ColumnGroupStateService } from './columnGroupStateService';
-import { ColumnSizeService } from './columnSizeService';
-import { FunctionColumnsService } from './functionColumnsService';
-import { ColumnViewportService } from './columnViewportService';
-import { PivotResultColsService } from './pivotResultColsService';
+import { ColDef, ColGroupDef, IAggFunc } from '../entities/colDef';
+import { Column, ColumnPinnedType } from '../entities/column';
+import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import {
+    ColumnEventType, Events
+} from '../events';
 import { QuickFilterService } from '../filter/quickFilterService';
+import { PropertyChangedSource } from '../gridOptionsService';
+import { IProvidedColumn } from '../interfaces/iProvidedColumn';
+import { ColumnAnimationService } from '../rendering/columnAnimationService';
+import { areEqual, includes, insertIntoArray, moveInArray } from '../utils/array';
+import { warnOnce } from '../utils/function';
+import { exists, missingOrEmpty } from '../utils/generic';
+import { convertToMap } from '../utils/map';
+import { ValueCache } from '../valueService/valueCache';
+import { AutoGroupColService, GROUP_AUTO_COLUMN_ID } from './autoGroupColService';
+import { ColumnApplyStateService, ColumnState } from './columnApplyStateService';
+import { ColumnAutosizeService } from './columnAutosizeService';
+import { ColumnDefFactory } from "./columnDefFactory";
+import { ColumnEventDispatcher } from './columnEventDispatcher';
+import { ColumnFactory, depthFirstOriginalTreeSearch } from './columnFactory';
+import { ColumnGroupStateService } from './columnGroupStateService';
+import { ColumnMoveService } from './columnMoveService';
+import { ColumnSizeService } from './columnSizeService';
+import { ColumnUtilsFeature, isColumnGroupAutoCol } from './columnUtilsFeature';
+import { ColumnViewportService } from './columnViewportService';
+import { FunctionColumnsService } from './functionColumnsService';
+import { PivotResultColsService } from './pivotResultColsService';
+import { VisibleColsService } from './visibleColsService';
 
 export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
 export type Maybe<T> = T | null | undefined;
