@@ -50,7 +50,7 @@ function onFilterTextBoxChanged() {
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
     // lookup the container we want the Grid to use
-    var gridDiv = document.querySelector('#myGrid');
+    const gridDiv = document.querySelector('#myGrid');
 
     // create the grid passing in the div to use together with the columns & data we want to use
     gridApi = agGrid.createGrid(gridDiv, gridOptions);

@@ -33,7 +33,7 @@ const checkLinks = async (dir: string, files: string[]) => {
             continue;
         }
 
-        let anchorTags: string[] = [];
+        const anchorTags: string[] = [];
 
         // uses a stream as ingesting the entire file was causing memory crashes.
         const fileStream = fs.createReadStream(join(dir, filePath));
@@ -42,7 +42,7 @@ const checkLinks = async (dir: string, files: string[]) => {
                 let prev;
                 let active = false;
                 let str = '';
-                var chunk;
+                let chunk;
                 while (null !== (chunk = fileStream.read(16384))) {
                     const strChunk = chunk.toString();
                     for (let i = 0; i < strChunk.length; i++) {
@@ -146,6 +146,7 @@ const checkLinks = async (dir: string, files: string[]) => {
             ${errors.join('\n')}
         `);
     } else {
+        // eslint-disable-next-line no-console
         console.log('Link checker completed with no issues.');
     }
 };

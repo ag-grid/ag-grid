@@ -87,7 +87,7 @@ export function AutomatedRowGrouping({
     });
 
     useEffect(() => {
-        let params = {
+        const params = {
             gridClassname,
             darkMode,
             getOverlay: () => {

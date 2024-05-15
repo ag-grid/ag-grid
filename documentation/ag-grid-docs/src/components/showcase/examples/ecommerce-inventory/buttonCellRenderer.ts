@@ -29,7 +29,7 @@ ButtonCellRenderer.prototype.getGui = function () {
 // Custom method: onRemoveClick()
 ButtonCellRenderer.prototype.onRemoveClick = function () {
     // Access row data via this.params.node.data
-    var rowData = this.params.node.data;
+    const rowData = this.params.node.data;
 
     // Delete row data
     this.params.api.applyTransaction({ remove: [rowData] });
@@ -43,7 +43,7 @@ ButtonCellRenderer.prototype.onRemoveClick = function () {
 // Custom method: onStopSellingClick()
 ButtonCellRenderer.prototype.onStopSellingClick = function () {
     // Access row data via this.params.node.data
-    var rowData = this.params.node.data;
+    const rowData = this.params.node.data;
 
     // Modify the status property to 'paused'
     rowData.status = 'Paused';
