@@ -3,7 +3,7 @@
   "version": "31.3.2",
   "license": "MIT",
   "peerDependencies": {
-    "ag-grid-community": "~31.3.2",
+    "ag-grid-community": "31.3.2",
     "@angular/common": ">= 14.0.0",
     "@angular/core": ">= 14.0.0"
   },

@@ -12,9 +12,9 @@
     "default": "./dist/package/main.cjs.js"
   },
   "dependencies": {
-    "@ag-grid-community/core": "~31.3.2",
-    "@ag-grid-community/csv-export": "~31.3.2",
-    "@ag-grid-enterprise/core": "~31.3.2"
+    "@ag-grid-community/core": "31.3.2",
+    "@ag-grid-community/csv-export": "31.3.2",
+    "@ag-grid-enterprise/core": "31.3.2"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
