@@ -239,7 +239,6 @@ export class DragAndDropService extends BeanStub {
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
         this.dragItem = this.dragSource.getDragItem();
-        this.lastDropTarget = undefined;
 
         if (this.dragSource.onDragStarted) {
             this.dragSource.onDragStarted();
@@ -261,7 +260,7 @@ export class DragAndDropService extends BeanStub {
             this.lastDropTarget.onDragStop(draggingEvent);
         }
 
-        this.lastDropTarget = null;
+        this.lastDropTarget = undefined;
         this.dragItem = null;
         this.removeGhost();
     }
