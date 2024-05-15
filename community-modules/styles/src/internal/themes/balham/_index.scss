@@ -138,4 +138,8 @@
     .ag-filter-active .ag-icon-filter {
         color: var(--ag-balham-active-color);
     }
+
+    .ag-color-input input[class^=ag-][type=text].ag-input-field-input {
+        min-height: calc(var(--ag-icon-size) + 4px);
+    }
 }

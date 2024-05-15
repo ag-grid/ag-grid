@@ -1729,21 +1729,17 @@
         cursor: pointer;
     }
 
-    .ag-spectrum-hue {
+    .ag-spectrum-hue, .ag-spectrum-alpha {
         cursor: default;
+    }
+
+    .ag-spectrum-hue-background {
         background: linear-gradient(to left,
             #ff0000 3%, #ffff00 17%,
             #00ff00 33%, #00ffff 50%,
             #0000ff 67%, #ff00ff 83%,
             #ff0000 100%
         );
-    }
-
-    .ag-spectrum-alpha {
-        cursor: default;
-    }
-
-    .ag-spectrum-hue-background {
         width: 100%;
         height: 100%;
     }

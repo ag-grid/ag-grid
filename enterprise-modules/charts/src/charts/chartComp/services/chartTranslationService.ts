@@ -243,6 +243,7 @@ export class ChartTranslationService extends BeanStub {
         stackedSeriesGroupType: 'Stacked',
         normalizedSeriesGroupType: '100% Stacked',
         legendEnabled: 'Enabled',
+        invalidColor: 'Color value is invalid',
     };
 
     public translate(toTranslate: ChartTranslationKey): string {

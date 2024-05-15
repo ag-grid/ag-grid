@@ -453,6 +453,7 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     stackedSeriesGroupType: 'Stacked',
     normalizedSeriesGroupType: '100% Stacked',
     legendEnabled: 'Enabled',
+    invalidColor: 'Color value is invalid',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Level ${variable}. Press ENTER to edit.',
