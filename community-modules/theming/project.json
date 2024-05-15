@@ -95,10 +95,10 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ]
+      "command": "eslint",
+      "options": {
+        "cwd": "community-modules/theming"
+      }
     },
     "test": {
       "executor": "@nx/jest:jest",
