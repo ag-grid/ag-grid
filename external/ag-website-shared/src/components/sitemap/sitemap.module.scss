@@ -1,0 +1,33 @@
+@use 'design-system' as *;
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-16;
+    padding: $spacing-size-24 0px;
+}
+
+.categoryContainer {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-6;
+}
+
+.categoryTitle {
+    justify-content: center;
+    align-items: center;
+    margin: 0px;
+}
+
+.linkContainer {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: $spacing-size-2;
+    column-gap: var(--layout-gap);
+}
+
+.link {
+    width: var(--layout-width-1-4);
+    font-size: var(--text-fs-base);
+    font-weight: var(--text-regular);
+}

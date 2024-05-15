@@ -1,0 +1,15 @@
+---
+import { Sitemap } from '@ag-website-shared/components/sitemap/Sitemap';
+import parseSitemap from '@ag-website-shared/components/sitemap/utils/sitemaputils';
+import Layout from '../layouts/Layout.astro';
+
+const response = await fetch('https://www.ag-grid.com/sitemap-0.xml');
+const xmlSitemap = await response.text();
+const parsedSitemap = parseSitemap(xmlSitemap);
+---
+
+<Layout title={'AG Grid Sitemap'} showDocsNav={false} showSearchBar={true}>
+    <div class:list={['contentViewport layout-grid']}>
+        <Sitemap client:load sitemap={parsedSitemap} />
+    </div>
+</Layout>
