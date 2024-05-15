@@ -20,7 +20,7 @@ function updateBetweenStrings(
 
 const exportsToAdd = [];
 Object.keys(coreExports).forEach(function (exportName) {
-    if (!chartInterfaceExclusions.some(exclusion => exclusion === exportName)) {
+    if (!chartInterfaceExclusions.some(exclusion => exclusion === exportName) && !exportName.startsWith('_')) {
         exportsToAdd.push(`export {${exportName}} from "@ag-grid-community/core";`);
     }
 });
