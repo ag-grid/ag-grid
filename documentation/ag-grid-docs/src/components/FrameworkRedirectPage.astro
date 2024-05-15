@@ -1,6 +1,5 @@
 ---
 import { urlWithPrefix } from '@utils/urlWithPrefix';
-import { DEFAULT_FRAMEWORK } from '@constants';
 import type { Framework } from '@ag-grid-types';
 
 interface Props {
@@ -8,23 +7,9 @@ interface Props {
     redirectPageName: string;
 }
 
-const { redirectPageName } = Astro.props as Props;
-const redirectUrl = `./${redirectPageName}`;
-
 const frameworkOverride = Astro.props.framework;
-const defaultFramework = DEFAULT_FRAMEWORK;
+const redirectUrl = `./${Astro.props.redirectPageName}`;
 ---
-
-<!-- Redirect for crawlers -->
-<noscript>
-    <meta
-        http-equiv="refresh"
-        content={`0;url=${urlWithPrefix({
-            framework: frameworkOverride ?? defaultFramework,
-            url: redirectUrl,
-        })}`}
-    />
-</noscript>
 
 <!-- 
     Redirect page to framework page based on stored internal framework
