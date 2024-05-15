@@ -260,7 +260,7 @@ export class DragAndDropService extends BeanStub {
             this.lastDropTarget.onDragStop(draggingEvent);
         }
 
-        this.lastDropTarget = null;
+        this.lastDropTarget = undefined;
         this.dragItem = null;
         this.removeGhost();
     }

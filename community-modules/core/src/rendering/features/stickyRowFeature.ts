@@ -60,7 +60,7 @@ export class StickyRowFeature extends BeanStub {
             return row.sibling!.rowTop! + row.sibling!.rowHeight! - 1;
         }
 
-        if (row.group) {
+        if (row.hasChildren()) {
             return row.rowTop! - 1;
         }
 
@@ -182,19 +182,23 @@ export class StickyRowFeature extends BeanStub {
         const suppressFootersSticky = this.areFooterRowsStickySuppressed();
         const suppressGroupsSticky = this.gos.get('suppressGroupRowsSticky');
         const isRowSticky = (row: RowNode) => {
+            if (!row.displayed) {
+                return false;
+            }
+
             if (row.footer) {
                 if (suppressFootersSticky === true) { return false; }
                 if (suppressFootersSticky === 'grand' && row.level === -1) { return false };
                 if (suppressFootersSticky === 'group' && row.level > -1) { return false };
 
                 const alreadySticking = newStickyRows.has(row);
-                return !alreadySticking && row.displayed;
+                return !alreadySticking;
             }
 
             if (row.isExpandable()) {
                 if (suppressGroupsSticky === true) { return false };
                 const alreadySticking = newStickyRows.has(row);
-                return !alreadySticking && row.displayed && row.expanded;
+                return !alreadySticking && row.expanded;
             }
 
             return false;
@@ -293,18 +297,8 @@ export class StickyRowFeature extends BeanStub {
     }
 
     public destroyStickyCtrls(): void {
-        const ctrlsToDestroy = [...this.stickyTopRowCtrls, ...this.stickyBottomRowCtrls];
-        const removedCtrlsMap: RowCtrlByRowNodeIdMap = {};
-        ctrlsToDestroy.forEach(ctrl => {
-            ctrl.getRowNode().sticky = false;
-            removedCtrlsMap[ctrl.getRowNode().id!] = ctrl;
-        });
-        this.stickyBottomRowCtrls = [];
-        this.bottomContainerHeight = 0;
-        this.stickyTopRowCtrls = [];
-        this.topContainerHeight = 0;
-        // clean up removed ctrls
-        this.destroyRowCtrls(removedCtrlsMap, false);
+        this.refreshNodesAndContainerHeight('top', new Set(), 0);
+        this.refreshNodesAndContainerHeight('bottom', new Set(), 0);
     }
 
     public refreshStickyNode(stickRowNode:  RowNode): void {

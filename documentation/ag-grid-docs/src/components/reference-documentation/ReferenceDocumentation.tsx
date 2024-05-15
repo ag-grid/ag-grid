@@ -44,7 +44,7 @@ import type {
     SectionProps,
 } from './types';
 
-interface InterfaceDocumentationProps {
+export interface InterfaceDocumentationProps {
     interfaceName: string;
     framework: Framework;
     overrides: Overrides;
@@ -54,11 +54,9 @@ interface InterfaceDocumentationProps {
     config: any;
     interfaceLookup: Record<string, any>;
     codeLookup: Record<string, any>;
-    htmlLookup: Record<string, any>;
 }
 
-interface ApiDocumentationProps {
-    pageName: string;
+export interface ApiDocumentationProps {
     framework: Framework;
     sources: string[];
     section: string;
@@ -83,7 +81,6 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
     config = {},
     interfaceLookup,
     codeLookup,
-    htmlLookup,
 }): any => {
     let codeSrcProvided = [interfaceName];
 
@@ -104,7 +101,6 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
     const lookups = {
         codeLookup: codeLookup[interfaceName],
         interfaces: interfaceLookup,
-        htmlLookup: htmlLookup[interfaceName],
     };
     let hideHeader = true;
     if (config.hideHeader !== undefined) {
@@ -620,10 +616,6 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
             type = inferType(definition.default);
         }
     }
-    if (config.lookups.htmlLookup) {
-        // Force open if we have custom html content to display for the property
-        showAdditionalDetails = showAdditionalDetails || !!config.lookups.htmlLookup[name];
-    }
 
     let propertyType = getPropertyType(type, config);
     const typeUrl = isObject
@@ -913,15 +905,6 @@ const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, con
     lines.push(...writeAllInterfaces(interfacesToWrite, framework));
 
     const escapedLines = escapeGenericCode(lines);
-    let customHTML = undefined;
-    if (config.lookups.htmlLookup && config.lookups.htmlLookup[name]) {
-        customHTML = <p dangerouslySetInnerHTML={{ __html: config.lookups.htmlLookup[name] }}></p>;
-    }
 
-    return (
-        <>
-            <Code code={escapedLines} keepMarkup={true} />
-            {customHTML ?? customHTML}
-        </>
-    );
+    return <Code code={escapedLines} keepMarkup={true} />;
 };

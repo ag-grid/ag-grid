@@ -36,8 +36,9 @@ const apiMenuSections: MenuSection[] = getFilteredMenuSections({
 });
 
 const appendSeoToDescription = `Download AG Grid today: The best ${getFrameworkDisplayText(currentFramework)} Data Table in the world.`;
-const description =
-    page.data.description || `${getFirstParagraphText(page.body, currentFramework)} ${appendSeoToDescription}`;
+const description = page.data.description
+    ? page.data.description.replace("$framework", getFrameworkDisplayText(currentFramework))
+    : `${getFirstParagraphText(page.body, currentFramework)} ${appendSeoToDescription}`;
 const isApiPage = isApiMenuPath({
     pageName,
     menuData: menu,

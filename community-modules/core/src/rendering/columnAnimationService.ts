@@ -98,8 +98,11 @@ export class ColumnAnimationService extends BeanStub {
         this.getFrameworkOverrides().wrapIncoming(() => {
             window.setTimeout(() => runFuncs(this.executeNextFuncs), 0);
             window.setTimeout(() => {
-                runFuncs(this.executeLaterFuncs);
+                // run the callback before executeLaterFuncs
+                // because some functions being executed later
+                // check if this service is `active`.
                 callback();
+                runFuncs(this.executeLaterFuncs);
             }, 200);
         });
     }

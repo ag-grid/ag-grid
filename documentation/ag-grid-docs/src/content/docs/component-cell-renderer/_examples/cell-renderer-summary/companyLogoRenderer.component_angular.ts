@@ -10,7 +10,7 @@ import { Component } from '@angular/core';
     @if (value) {
       <img
         [alt]="value"
-        [src]="'https://www.ag-grid.com/example-assets/software-company-logos/' + value.toLowerCase() + '.png'"
+        [src]="'https://www.ag-grid.com/example-assets/software-company-logos/' + value.toLowerCase() + '.svg'"
         [height]="30"
         :class="logo"
       />
