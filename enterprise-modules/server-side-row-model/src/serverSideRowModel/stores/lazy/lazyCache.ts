@@ -418,6 +418,8 @@ export class LazyCache extends BeanStub {
                     node: deletedNode,
                     index: atStoreIndex
                 });
+                this.nodesToRefresh.delete(deletedNode);
+                deletedNode.__needsRefreshWhenVisible = false;
                 return deletedNode;
             }
 
@@ -434,6 +436,7 @@ export class LazyCache extends BeanStub {
                     index: atStoreIndex
                 });
                 this.nodesToRefresh.delete(node);
+                node.__needsRefreshWhenVisible = false;
 
                 if (this.getBlockStartIndex(index) === this.getBlockStartIndex(atStoreIndex)) {
                     // if the block hasn't changed and we have a nodes map, we don't need to refresh the original block, as this block
