@@ -44,6 +44,9 @@ export class ColumnNameService extends BeanStub {
     }
 
     public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string | null {
+        if (columnGroup.getProvidedColumnGroup==null) {
+            console.log('bug');
+        }
         return this.getDisplayNameForProvidedColumnGroup(columnGroup, columnGroup.getProvidedColumnGroup(), location);
     }
 

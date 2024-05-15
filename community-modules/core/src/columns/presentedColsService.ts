@@ -12,12 +12,14 @@ import { RowNode } from "../entities/rowNode";
 import { ColumnModel } from "./columnModel";
 import { ColumnUtilsFeature } from "./columnUtilsFeature";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { ColumnSizeService } from "./columnSizeService";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('presentedColsService')
 export class PresentedColsService extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
 
     private columnUtilsFeature: ColumnUtilsFeature;
 
@@ -58,16 +60,6 @@ export class PresentedColsService extends BeanStub {
         this.presentedColumnsCenter = [];
         this.presentedColumns = [];
         this.ariaOrderColumns = [];
-    }
-
-    public deriveDisplayedColumns(source: ColumnEventType): void {
-        this.derivedDisplayedColumnsFromDisplayedTree(this.presentedTreeLeft, this.presentedColumnsLeft);
-        this.derivedDisplayedColumnsFromDisplayedTree(this.presentedTreeCentre, this.presentedColumnsCenter);
-        this.derivedDisplayedColumnsFromDisplayedTree(this.presentedTreeRight, this.presentedColumnsRight);
-        this.joinColumnsAriaOrder();
-        this.joinDisplayedColumns();
-        this.setLeftValues(source);
-        this.presentedAutoHeightCols = this.presentedColumns.filter(col => col.isAutoHeight());
     }
 
     private joinColumnsAriaOrder(): void {
@@ -181,7 +173,7 @@ export class PresentedColsService extends BeanStub {
         }
     }
 
-    private derivedDisplayedColumnsFromDisplayedTree(tree: IHeaderColumn[], columns: Column[]): void {
+    private updatePresentedCols(tree: IHeaderColumn[], columns: Column[]): void {
         columns.length = 0;
         depthFirstAllColumnTreeSearch(tree, true, (child: IHeaderColumn) => {
             if (child instanceof Column) {
@@ -477,7 +469,22 @@ export class PresentedColsService extends BeanStub {
         return fromMap === item;
     }
 
-    public updateOpenClosedVisibilityInColumnGroups(): void {
+    public updateDisplayedCols(source: ColumnEventType): void {
+        this.updateOpenClosedVisibilityInColumnGroups();
+
+        this.updatePresentedCols(this.presentedTreeLeft, this.presentedColumnsLeft);
+        this.updatePresentedCols(this.presentedTreeCentre, this.presentedColumnsCenter);
+        this.updatePresentedCols(this.presentedTreeRight, this.presentedColumnsRight);
+
+        this.joinColumnsAriaOrder();
+        this.joinDisplayedColumns();
+        this.setLeftValues(source);
+        this.presentedAutoHeightCols = this.presentedColumns.filter(col => col.isAutoHeight());
+        this.columnSizeService.refreshFlexedColumns();
+        this.updateBodyWidths();
+    }
+
+    private updateOpenClosedVisibilityInColumnGroups(): void {
         const allColumnGroups = this.getAllDisplayedTrees();
 
         depthFirstAllColumnTreeSearch(allColumnGroups, false, child => {

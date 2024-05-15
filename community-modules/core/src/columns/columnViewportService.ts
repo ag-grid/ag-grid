@@ -180,11 +180,7 @@ export class ColumnViewportService extends BeanStub {
     // if the list of columns has changed.
     // + setColumnWidth(), setViewportPosition(), setColumnDefs(), sizeColumnsToFit()
     public checkViewportColumns(afterScroll: boolean = false): void {
-        // check displayCenterColumnTree exists first, as it won't exist when grid is initialising
-        if (this.presentedColsService.getDisplayedColumnsCenter() == null) { return; }
-
         const viewportColumnsChanged = this.extractViewport();
-
         if (viewportColumnsChanged) {
             this.eventDispatcher.virtualColumnsChanged(afterScroll);
         }
@@ -250,7 +246,7 @@ export class ColumnViewportService extends BeanStub {
         testGroup(this.presentedColsService.getDisplayedTreeCentre(), this.rowsOfHeadersToRenderCenter, 0);
     }
 
-    public extractViewport(): boolean {
+    private extractViewport(): boolean {
         const hashColumn = (c: Column) => `${c.getId()}-${c.getPinned() || 'normal'}`;
 
         this.extractViewportColumns();

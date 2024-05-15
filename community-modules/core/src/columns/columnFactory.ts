@@ -87,35 +87,36 @@ export class ColumnFactory extends BeanStub {
         return {existingCols, existingGroups, existingColKeys};
     }
 
-    public createForAutoGroups(autoGroupCols: Column[], liveTree: IProvidedColumn[]): IProvidedColumn[] {
-        return autoGroupCols.map((col) => this.createAutoGroupTreeItem(liveTree, col));
-    }
+    public createForAutoGroups(autoGroupCols: Column[], liveTree: IProvidedColumn[]): [IProvidedColumn[],number] {
+        const tree: IProvidedColumn[] = [];
+        const dept = this.findDepth(liveTree);
 
-    private createAutoGroupTreeItem(colTree: IProvidedColumn[], col: Column): IProvidedColumn {
-        const dept = this.findDepth(colTree);
+        autoGroupCols.forEach( col => {
+            // at the end, this will be the top of the tree item.
+            let nextChild: IProvidedColumn = col;
 
-        // at the end, this will be the top of the tree item.
-        let nextChild: IProvidedColumn = col;
+            for (let i = dept - 1; i >= 0; i--) {
+                const autoGroup = new ProvidedColumnGroup(
+                    null,
+                    `FAKE_PATH_${col.getId()}}_${i}`,
+                    true,
+                    i
+                );
+                this.createBean(autoGroup);
+                autoGroup.setChildren([nextChild]);
+                nextChild.setOriginalParent(autoGroup);
+                nextChild = autoGroup;
+            }
 
-        for (let i = dept - 1; i >= 0; i--) {
-            const autoGroup = new ProvidedColumnGroup(
-                null,
-                `FAKE_PATH_${col.getId()}}_${i}`,
-                true,
-                i
-            );
-            this.createBean(autoGroup);
-            autoGroup.setChildren([nextChild]);
-            nextChild.setOriginalParent(autoGroup);
-            nextChild = autoGroup;
-        }
+            if (dept === 0) {
+                col.setOriginalParent(null);
+            }
 
-        if (dept === 0) {
-            col.setOriginalParent(null);
-        }
+            // at this point, the nextChild is the top most item in the tree
+            tree.push(nextChild);
+        });
 
-        // at this point, the nextChild is the top most item in the tree
-        return nextChild;
+        return [tree,dept];
     }
 
     private findDepth(balancedColumnTree: IProvidedColumn[]): number {

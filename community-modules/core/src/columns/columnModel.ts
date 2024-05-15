@@ -238,14 +238,14 @@ export class ColumnModel extends BeanStub {
 
         const prevLiveColTree = this.liveCols?.tree;
 
-        this.saveLiveColOrder();
+        this.saveColOrder();
 
         this.selectLiveCols();
-        this.createAutoCols();
 
+        this.createAutoCols();
         this.addAutoColsToLiveCols();
 
-        this.restoreLiveColOrder();
+        this.restoreColOrder();
 
         this.placeLockedCols();
         this.calculateColsForGroupDisplay();
@@ -288,9 +288,9 @@ export class ColumnModel extends BeanStub {
     }
 
     public updatePresentedCols(source: ColumnEventType): void {
-        const colsForPresention = this.calculatePresentedCols();
+        const visibleCols = this.getVisibleColumns();
 
-        this.presentedColsService.buildDisplayedTrees(colsForPresention);
+        this.presentedColsService.buildDisplayedTrees(visibleCols);
 
         // also called when group opened/closed
         this.updateGroupsAndPresentedCols(source);
@@ -762,29 +762,23 @@ export class ColumnModel extends BeanStub {
         return res;
     }
 
-    private calculatePresentedCols(): Column[] {
-        let res: Column[];
+    private getVisibleColumns(): Column[] {
 
-        const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
-        if (this.pivotMode && pivotResultCols==null) {
-            // pivot mode is on, but we are not pivoting, so we only
-            // show columns we are aggregating on
-            const valueColumns = this.functionColumnsService.getValueColumns();
-            res = this.liveCols.list.filter(column => {
-                const isAutoGroupCol = isColumnGroupAutoCol(column);
-                const isValueCol = valueColumns && includes(valueColumns, column);
+        // pivot mode is on, but we are not pivoting, so we only
+        // show columns we are aggregating on
+        const showAutoGroupAndValuesOnly = this.pivotMode && !this.showingPivotResult;
+        const valueColumns = this.functionColumnsService.getValueColumns();
+
+        const res = this.liveCols.list.filter( col => {
+            const isAutoGroupCol = isColumnGroupAutoCol(col);
+            if (showAutoGroupAndValuesOnly) {
+                const isValueCol = valueColumns && includes(valueColumns, col);
                 return isAutoGroupCol || isValueCol;
-            });
-
-        } else {
-            // otherwise continue as normal. this can be working on the provided
-            // or pivot result cols, whatever the liveColumns are set to
-            res = this.liveCols.list.filter(column => {
+            } else {
                 // keep col if a) it's auto-group or b) it's visible
-                const isAutoGroupCol = isColumnGroupAutoCol(column);
-                return isAutoGroupCol || column.isVisible();
-            });
-        }
+                return isAutoGroupCol || col.isVisible();
+            }
+        });
 
         return res;
     }
@@ -809,7 +803,7 @@ export class ColumnModel extends BeanStub {
         this.liveCols.list = this.columnMoveService.placeLockedColumns(this.liveCols.list);        
     }
 
-    private saveLiveColOrder(): void {
+    private saveColOrder(): void {
         if (this.showingPivotResult) {
             this.lastPivotOrder = this.liveCols?.list;
         } else {
@@ -862,7 +856,7 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    private restoreLiveColOrder(): void {
+    private restoreColOrder(): void {
         const colsOrder = this.showingPivotResult ? this.lastPivotOrder : this.lastOrder;
         if (!colsOrder) { return; }
 
@@ -943,12 +937,9 @@ export class ColumnModel extends BeanStub {
 
     public updateGroupsAndPresentedCols(source: ColumnEventType) {
 
-        this.presentedColsService.updateOpenClosedVisibilityInColumnGroups();
-        this.presentedColsService.deriveDisplayedColumns(source);
+        this.presentedColsService.updateDisplayedCols(source);
 
-        this.columnSizeService.refreshFlexedColumns();
-        this.columnViewportService.extractViewport();
-        this.presentedColsService.updateBodyWidths();
+        this.columnViewportService.checkViewportColumns(false);
 
         this.eventDispatcher.displayedColumns();
     }
@@ -996,15 +987,20 @@ export class ColumnModel extends BeanStub {
         }
 
         const list = this.autoGroupColService.createAutoGroupColumns(rowGroupCols);
-        const noChangeInAutoCols = this.autoColsEqual(list, this.autoCols?.list || null);
+        const autoColsSame = this.autoColsEqual(list, this.autoCols?.list || null);
 
-        if (noChangeInAutoCols) { return; }
+        // the new tree dept will equal the current tree dept of live cols
+        const newTreeDepth = this.liveCols.treeDepth;
+        const oldTreeDepth = this.autoCols ? this.autoCols.treeDepth : -1;
+        const treeDeptSame = oldTreeDepth == newTreeDepth;
+
+        if (autoColsSame && treeDeptSame) { return; }
 
         destroyPrevious();
-        const tree = this.columnFactory.createForAutoGroups(list, this.liveCols?.tree);
+        const [tree, treeDepth] = this.columnFactory.createForAutoGroups(list, this.liveCols?.tree);
         this.autoCols = {
-            list, tree,
-            map: {}, treeDepth: -1
+            list, tree, treeDepth,
+            map: {}, 
         };
 
         const putAutocolsFirstInList = (cols: Column[] | null): (Column[] | null) => {
