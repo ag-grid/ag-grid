@@ -16,5 +16,5 @@ export declare class ComponentUtil {
     private static getGridOptionKeys;
     /** Combines component props / attributes with the provided gridOptions returning a new combined gridOptions object */
     static combineAttributesAndGridOptions(gridOptions: GridOptions | undefined, component: any): GridOptions;
-    static processOnChange(changes: any, api: GridApi): void;
+    static processOnChange(changes: any, api: GridApi, isVue?: boolean): void;
 }

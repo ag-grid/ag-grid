@@ -4530,7 +4530,7 @@ ServerSideSelectionService = __decorateClass([
 ], ServerSideSelectionService);
 
 // enterprise-modules/server-side-row-model/src/version.ts
-var VERSION = "31.3.1";
+var VERSION = "31.3.2";
 
 // enterprise-modules/server-side-row-model/src/serverSideRowModel/services/serverSideExpansionService.ts
 var import_core18 = require("@ag-grid-community/core");

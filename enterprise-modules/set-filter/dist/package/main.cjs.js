@@ -2593,7 +2593,7 @@ __decorateClass([
 ], SetFloatingFilterComp.prototype, "columnModel", 2);
 
 // enterprise-modules/set-filter/src/version.ts
-var VERSION = "31.3.1";
+var VERSION = "31.3.2";
 
 // enterprise-modules/set-filter/src/setFilterModule.ts
 var SetFilterModule = {

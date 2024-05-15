@@ -33,6 +33,7 @@ export declare class StickyRowFeature extends BeanStub {
     private canRowsBeSticky;
     private getStickyAncestors;
     checkStickyRows(): boolean;
+    destroyStickyCtrls(): void;
     refreshStickyNode(stickRowNode: RowNode): void;
     /**
      * Destroy old ctrls and create new ctrls where necessary.

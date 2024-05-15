@@ -60,7 +60,7 @@ export declare class PaginationProxy extends BeanStub {
     setPage(page: number): void;
     private get pageSize();
     unsetAutoCalculatedPageSize(): void;
-    setPageSize(size: number, source: 'autoCalculated' | 'pageSizeSelector' | 'initialState' | 'gridOptions'): void;
+    setPageSize(size: number | undefined, source: 'autoCalculated' | 'pageSizeSelector' | 'initialState' | 'gridOptions'): void;
     private calculatePages;
     private setPixelOffset;
     private setZeroRows;

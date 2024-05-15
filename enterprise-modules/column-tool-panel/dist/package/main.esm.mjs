@@ -2096,7 +2096,7 @@ ModelItemUtils = __decorateClass([
 ], ModelItemUtils);
 
 // enterprise-modules/column-tool-panel/src/version.ts
-var VERSION = "31.3.1";
+var VERSION = "31.3.2";
 
 // enterprise-modules/column-tool-panel/src/columnsToolPanelModule.ts
 var ColumnsToolPanelModule = {

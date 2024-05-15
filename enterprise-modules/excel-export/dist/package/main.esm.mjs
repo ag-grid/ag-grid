@@ -3870,7 +3870,7 @@ import { CsvCreator, GridSerializer as GridSerializer2 } from "@ag-grid-communit
 import { CsvExportModule } from "@ag-grid-community/csv-export";
 
 // enterprise-modules/excel-export/src/version.ts
-var VERSION = "31.3.1";
+var VERSION = "31.3.2";
 
 // enterprise-modules/excel-export/src/excelExportModule.ts
 var ExcelExportModule = {

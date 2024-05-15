@@ -7491,7 +7491,7 @@ var _ComponentUtil = class _ComponentUtil {
     });
     return mergedOptions;
   }
-  static processOnChange(changes, api) {
+  static processOnChange(changes, api, isVue) {
     if (!changes) {
       return;
     }
@@ -7504,7 +7504,7 @@ var _ComponentUtil = class _ComponentUtil {
     if (!hasChanges) {
       return;
     }
-    api.__internalUpdateGridOptions(gridChanges);
+    api.__internalUpdateGridOptions(gridChanges, true);
     const event = {
       type: Events.EVENT_COMPONENT_STATE_CHANGED
     };
@@ -16056,10 +16056,10 @@ var _RowNode = class _RowNode {
     this.selected = newValue;
     if (this.eventService) {
       this.dispatchLocalEvent(this.createLocalRowEvent(_RowNode.EVENT_ROW_SELECTED));
-      const sibling = this.sibling;
-      if (sibling && sibling.footer) {
-        sibling.dispatchLocalEvent(sibling.createLocalRowEvent(_RowNode.EVENT_ROW_SELECTED));
-      }
+    }
+    const sibling = this.sibling;
+    if (sibling && sibling.footer && sibling.eventService) {
+      sibling.dispatchLocalEvent(sibling.createLocalRowEvent(_RowNode.EVENT_ROW_SELECTED));
     }
     const event = __spreadProps(__spreadValues({}, this.createGlobalRowEvent(Events.EVENT_ROW_SELECTED)), {
       event: e || null,
@@ -16450,6 +16450,7 @@ var DragAndDropService = class extends BeanStub {
     this.dragSource = dragSource;
     this.eventLastTime = mouseEvent;
     this.dragItem = this.dragSource.getDragItem();
+    this.lastDropTarget = void 0;
     if (this.dragSource.onDragStarted) {
       this.dragSource.onDragStarted();
     }
@@ -18647,18 +18648,20 @@ var RowDragFeature = class extends BeanStub {
     if (!this.isFromThisGrid(draggingEvent)) {
       return draggingEvent.dragItem.rowNodes || [];
     }
-    const isRowDragMultiRow = this.gos.get("rowDragMultiRow");
-    const selectedNodes = [...this.selectionService.getSelectedNodes()].sort(
-      (a, b) => {
-        if (a.rowIndex == null || b.rowIndex == null) {
-          return 0;
-        }
-        return this.getRowIndexNumber(a) - this.getRowIndexNumber(b);
-      }
-    );
     const currentNode = draggingEvent.dragItem.rowNode;
-    if (isRowDragMultiRow && selectedNodes.indexOf(currentNode) !== -1) {
-      return selectedNodes;
+    const isRowDragMultiRow = this.gos.get("rowDragMultiRow");
+    if (isRowDragMultiRow) {
+      const selectedNodes = [...this.selectionService.getSelectedNodes()].sort(
+        (a, b) => {
+          if (a.rowIndex == null || b.rowIndex == null) {
+            return 0;
+          }
+          return this.getRowIndexNumber(a) - this.getRowIndexNumber(b);
+        }
+      );
+      if (selectedNodes.indexOf(currentNode) !== -1) {
+        return selectedNodes;
+      }
     }
     return [currentNode];
   }
@@ -20900,8 +20903,8 @@ var GridApi = class {
     this.gos.updateGridOptions({ options });
   }
   /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-  __internalUpdateGridOptions(options) {
-    this.gos.updateGridOptions({ options, source: "gridOptionsUpdated" });
+  __internalUpdateGridOptions(options, force) {
+    this.gos.updateGridOptions({ options, force, source: "gridOptionsUpdated" });
   }
   deprecatedUpdateGridOption(key, value) {
     warnOnce(`set${key.charAt(0).toUpperCase()}${key.slice(1, key.length)} is deprecated. Please use 'api.setGridOption('${key}', newValue)' or 'api.updateGridOptions({ ${key}: newValue })' instead.`);
@@ -22880,6 +22883,7 @@ var GridBodyScrollFeature = class extends BeanStub {
     const {
       topCenter,
       stickyTopCenter,
+      stickyBottomCenter,
       centerHeader,
       bottomCenter,
       fakeHScrollComp
@@ -22888,6 +22892,7 @@ var GridBodyScrollFeature = class extends BeanStub {
     bottomCenter.setContainerTranslateX(offset);
     topCenter.setContainerTranslateX(offset);
     stickyTopCenter.setContainerTranslateX(offset);
+    stickyBottomCenter.setContainerTranslateX(offset);
     const centerViewport = this.centerRowsCtrl.getViewportElement();
     const isCenterViewportLastHorizontal = this.lastScrollSource[1 /* Horizontal */] === 0 /* Container */;
     scrollLeft = Math.abs(scrollLeft);
@@ -34566,7 +34571,7 @@ var StickyRowFeature = class extends BeanStub {
     if (row.footer) {
       return row.sibling.rowTop + row.sibling.rowHeight - 1;
     }
-    if (row.group) {
+    if (row.hasChildren()) {
       return row.rowTop - 1;
     }
     return 0;
@@ -34661,6 +34666,9 @@ var StickyRowFeature = class extends BeanStub {
     const suppressFootersSticky = this.areFooterRowsStickySuppressed();
     const suppressGroupsSticky = this.gos.get("suppressGroupRowsSticky");
     const isRowSticky = (row) => {
+      if (!row.displayed) {
+        return false;
+      }
       if (row.footer) {
         if (suppressFootersSticky === true) {
           return false;
@@ -34674,7 +34682,7 @@ var StickyRowFeature = class extends BeanStub {
         }
         ;
         const alreadySticking = newStickyRows.has(row);
-        return !alreadySticking && row.displayed;
+        return !alreadySticking;
       }
       if (row.isExpandable()) {
         if (suppressGroupsSticky === true) {
@@ -34682,7 +34690,7 @@ var StickyRowFeature = class extends BeanStub {
         }
         ;
         const alreadySticking = newStickyRows.has(row);
-        return !alreadySticking && row.displayed && row.expanded;
+        return !alreadySticking && row.expanded;
       }
       return false;
     };
@@ -34758,6 +34766,10 @@ var StickyRowFeature = class extends BeanStub {
     const hasTopUpdated = this.updateStickyRows("top");
     const hasBottomUpdated = this.updateStickyRows("bottom");
     return hasTopUpdated || hasBottomUpdated;
+  }
+  destroyStickyCtrls() {
+    this.refreshNodesAndContainerHeight("top", /* @__PURE__ */ new Set(), 0);
+    this.refreshNodesAndContainerHeight("bottom", /* @__PURE__ */ new Set(), 0);
   }
   refreshStickyNode(stickRowNode) {
     const allStickyNodes = /* @__PURE__ */ new Set();
@@ -35483,6 +35495,9 @@ var RowRenderer = class extends BeanStub {
   removeAllRowComps() {
     const rowIndexesToRemove = Object.keys(this.rowCtrlsByRowIndex);
     this.removeRowCtrls(rowIndexesToRemove);
+    if (this.stickyRowFeature) {
+      this.stickyRowFeature.destroyStickyCtrls();
+    }
   }
   getRowsToRecycle() {
     const stubNodeIndexes = [];
@@ -36502,15 +36517,16 @@ var PaginationProxy = class extends BeanStub {
       return;
     }
     this.currentPage = page;
-    const event = {
-      type: Events.EVENT_MODEL_UPDATED,
+    this.calculatePages();
+    const paginationChangedEvent = {
+      type: Events.EVENT_PAGINATION_CHANGED,
       animate: false,
-      keepRenderedRows: false,
       newData: false,
       newPage: true,
-      newPageSize: false
+      newPageSize: false,
+      keepRenderedRows: false
     };
-    this.onModelUpdated(event);
+    this.eventService.dispatchEvent(paginationChangedEvent);
   }
   getPixelOffset() {
     return this.pixelOffset;
@@ -36649,14 +36665,16 @@ var PaginationProxy = class extends BeanStub {
     if (this.pageSize === oldPageSize) {
       return;
     }
-    this.onModelUpdated({
-      type: Events.EVENT_MODEL_UPDATED,
+    this.calculatePages();
+    const paginationChangedEvent = {
+      type: Events.EVENT_PAGINATION_CHANGED,
       animate: false,
-      keepRenderedRows: false,
       newData: false,
       newPage: false,
-      newPageSize: true
-    });
+      newPageSize: true,
+      keepRenderedRows: false
+    };
+    this.eventService.dispatchEvent(paginationChangedEvent);
   }
   setPageSize(size, source) {
     const currentSize = this.pageSize;
@@ -36683,15 +36701,16 @@ var PaginationProxy = class extends BeanStub {
         break;
     }
     if (currentSize !== this.pageSize) {
-      const event = {
-        type: Events.EVENT_MODEL_UPDATED,
+      this.calculatePages();
+      const paginationChangedEvent = {
+        type: Events.EVENT_PAGINATION_CHANGED,
         animate: false,
-        keepRenderedRows: false,
         newData: false,
         newPage: false,
-        newPageSize: true
+        newPageSize: true,
+        keepRenderedRows: true
       };
-      this.onModelUpdated(event);
+      this.eventService.dispatchEvent(paginationChangedEvent);
     }
   }
   calculatePages() {
@@ -36777,7 +36796,7 @@ var PaginationProxy = class extends BeanStub {
     }
   }
   calculatedPagesNotActive() {
-    this.setPageSize(this.masterRowCount, "autoCalculated");
+    this.setPageSize(void 0, "autoCalculated");
     this.totalPages = 1;
     this.currentPage = 0;
     this.topDisplayedRowIndex = 0;
@@ -43847,8 +43866,8 @@ var ColumnAnimationService = class extends BeanStub {
     this.getFrameworkOverrides().wrapIncoming(() => {
       window.setTimeout(() => runFuncs(this.executeNextFuncs), 0);
       window.setTimeout(() => {
-        runFuncs(this.executeLaterFuncs);
         callback();
+        runFuncs(this.executeLaterFuncs);
       }, 200);
     });
   }
@@ -46783,7 +46802,7 @@ var GridOptionsService = class {
     });
     return newGo;
   }
-  updateGridOptions({ options, source = "api" }) {
+  updateGridOptions({ options, force, source = "api" }) {
     const changeSet = { id: GridOptionsService.changeSetId++, properties: [] };
     const events = [];
     Object.entries(options).forEach(([key, value]) => {
@@ -46791,7 +46810,7 @@ var GridOptionsService = class {
         warnOnce(`${key} is an initial property and cannot be updated.`);
       }
       const coercedValue = GridOptionsService.getCoercedValue(key, value);
-      const shouldForce = typeof coercedValue === "object" && source === "api";
+      const shouldForce = force || typeof coercedValue === "object" && source === "api";
       const previousValue = this.gridOptions[key];
       if (shouldForce || previousValue !== coercedValue) {
         this.gridOptions[key] = coercedValue;

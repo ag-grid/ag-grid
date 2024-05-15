@@ -867,7 +867,7 @@ export declare class GridApi<TData = any> {
      */
     updateGridOptions<TDataUpdate extends TData>(options: ManagedGridOptions<TDataUpdate>): void;
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-    __internalUpdateGridOptions(options: GridOptions): void;
+    __internalUpdateGridOptions(options: GridOptions, force?: boolean): void;
     private deprecatedUpdateGridOption;
     /**
      * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.

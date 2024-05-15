@@ -27,7 +27,7 @@ echo "########### Creating and switching to new branch $NEW_BRANCH ###########"
 echo "########################################################################"
 echo "#################### Updating LicenseManager ###########################"
 if [ -f $GEN_KEY_DEFAULT_LOCATION ]; then
-    node scripts/release/updateLicenseManager.js `node $GEN_KEY_DEFAULT_LOCATION release`
+    node scripts/release/updateLicenseManager.js `node ~/Documents/aggrid/aggrid/genkey/genKey.js release`
 else
     echo "$GEN_KEY_DEFAULT_LOCATION does not exist. Please update the License Key manually"
 fi

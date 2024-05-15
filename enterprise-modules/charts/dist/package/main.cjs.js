@@ -11106,7 +11106,7 @@ __decorateClass([
 var GridChartComp = _GridChartComp;
 
 // enterprise-modules/charts/src/version.ts
-var VERSION = "31.3.1";
+var VERSION = "31.3.2";
 
 // enterprise-modules/charts/src/charts/chartModelMigration.ts
 var DEBUG = false;

@@ -97,8 +97,9 @@ export declare class GridOptionsService {
     private static getCoercedValue;
     static getCoercedGridOptions(gridOptions: GridOptions): GridOptions;
     private static changeSetId;
-    updateGridOptions({ options, source }: {
+    updateGridOptions({ options, force, source }: {
         options: Partial<GridOptions>;
+        force?: boolean;
         source?: PropertyChangedSource;
     }): void;
     addEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void;

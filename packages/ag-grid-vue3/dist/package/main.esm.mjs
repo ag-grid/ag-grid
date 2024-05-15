@@ -785,21 +785,7 @@ var getAgGridProperties = () => {
   const props2 = {};
   const eventNameAsProps = ComponentUtil.PUBLIC_EVENTS.map((eventName) => kebabNameToAttrEventName(kebabProperty(eventName)));
   eventNameAsProps.forEach((eventName) => props2[eventName] = void 0);
-  const computed2 = {
-    props() {
-      const options = {};
-      ComponentUtil.ALL_PROPERTIES.forEach((propertyName) => {
-        var _a;
-        if (this[propertyName] === ComponentUtil.VUE_OMITTED_PROPERTY) {
-          return;
-        }
-        if (propertyName in this || propertyName in this.gridOptions) {
-          options[propertyName] = (_a = this[propertyName]) != null ? _a : this.gridOptions[propertyName];
-        }
-      });
-      return options;
-    }
-  };
+  const computed2 = {};
   const watch2 = {
     modelValue: {
       handler(currentValue, previousValue) {
@@ -816,29 +802,29 @@ var getAgGridProperties = () => {
             }
           }
         }
-        ComponentUtil.processOnChange({ rowData: currentValue }, this.api);
-      },
-      deep: true
-    },
-    props: {
-      handler(currentValue, previousValue) {
-        if (!this.gridCreated || !this.api) {
-          return;
-        }
-        const changes = {};
-        Object.entries(currentValue).forEach(([key, value]) => {
-          if (previousValue[key] === value)
-            return;
-          changes[key] = value;
-        });
-        ComponentUtil.processOnChange(changes, this.api);
+        ComponentUtil.processOnChange({ rowData: currentValue }, this.api, true);
       },
       deep: true
     }
   };
+  let timeout = null;
+  let changes = {};
   ComponentUtil.ALL_PROPERTIES.filter((propertyName) => propertyName != "gridOptions").forEach((propertyName) => {
     props2[propertyName] = {
       default: ComponentUtil.VUE_OMITTED_PROPERTY
+    };
+    watch2[propertyName] = {
+      handler(currentValue, previousValue) {
+        changes[propertyName] = currentValue === ComponentUtil.VUE_OMITTED_PROPERTY ? void 0 : currentValue;
+        if (timeout == null) {
+          timeout = setTimeout(() => {
+            ComponentUtil.processOnChange(changes, this.api, true);
+            timeout = null;
+            changes = {};
+          }, 0);
+        }
+      },
+      deep: true
     };
   });
   return [props2, computed2, watch2];
@@ -1130,7 +1116,7 @@ var AgGridVue = defineComponent2({
     },
     checkForBindingConflicts() {
       const thisAsAny = this;
-      if ((thisAsAny.rowData || this.gridOptions.rowData) && thisAsAny.modelValue) {
+      if ((thisAsAny.rowData && thisAsAny.rowData !== "AG-VUE-OMITTED-PROPERTY" || this.gridOptions.rowData) && thisAsAny.modelValue) {
         console.warn("AG Grid: Using both rowData and v-model. rowData will be ignored.");
       }
     },
