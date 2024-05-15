@@ -55,7 +55,7 @@ describe('Autoheight Grid', () => {
             ]
         })
 
-        ensureGridApiHasBeenSet().then(() => setTimeout(() => done(), 20), () => throw new Error("Grid API not set within expected time limits"));
+        ensureGridApiHasBeenSet().then(() => setTimeout(() => done(), 20), () => { throw new Error("Grid API not set within expected time limits") });
     });
     afterEach(() => {
         window.gridComponentInstance = null;
