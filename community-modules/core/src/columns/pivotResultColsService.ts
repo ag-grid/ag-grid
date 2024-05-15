@@ -77,9 +77,9 @@ export class PivotResultColsService extends BeanStub {
     }
 
     public setPivotResultCols(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void {
-        if (this.columnModel.isLiveColsMising()) { return; }
+        if (!this.columnModel.isReady()) { return; }
 
-        // if not cols passed, and we had no cols anyway, then do nothing
+        // if no cols passed, and we had no cols anyway, then do nothing
         if (colDefs==null && this.pivotResultCols==null) { return; }
 
         if (colDefs) {

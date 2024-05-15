@@ -161,7 +161,7 @@ export class ColumnModel extends BeanStub {
 
         this.providedCols = { tree, treeDepth, list, map };
 
-        this.functionColumnsService.extractColumns(source, oldProvidedCols);
+        this.functionColumnsService.extractCols(source, oldProvidedCols);
 
         this.ready = true;
 
@@ -237,7 +237,13 @@ export class ColumnModel extends BeanStub {
         this.showingPivotResult = pivotResultCols!=null;
 
         if (pivotResultCols) {
-            this.liveCols = copyCols(pivotResultCols);
+            const {map, list, tree, treeDepth} = pivotResultCols;
+            this.liveCols = {
+                list: list.slice(),
+                map: {...map},
+                tree: tree.slice(),
+                treeDepth: treeDepth
+            };
 
             // If the current columns are the same or a subset of the previous
             // we keep the previous order, otherwise we go back to the order the pivot
@@ -250,7 +256,13 @@ export class ColumnModel extends BeanStub {
             }
 
         } else {
-            this.liveCols = copyCols(this.providedCols);
+            const {map, list, tree, treeDepth} = this.providedCols;
+            this.liveCols = {
+                list: list.slice(),
+                map: {...map},
+                tree: tree.slice(),
+                treeDepth: treeDepth
+            };
         }
     }
 
@@ -688,11 +700,6 @@ export class ColumnModel extends BeanStub {
         this.visibleColsService.refresh({source});
     }
 
-    // niall note - this method should be deleted, it's patchwork for refactoring
-    public isLiveColsMising(): boolean {
-        return (!this.liveCols);
-    }
-
     private placeLockedCols(): void {
         this.liveCols.list = this.columnMoveService.placeLockedColumns(this.liveCols.list);        
     }
@@ -1047,13 +1054,4 @@ export function convertSourceType(source: PropertyChangedSource): ColumnEventTyp
 function updateColsMap(cols: ColumnCollections): void {
     cols.map = {};
     cols.list.forEach(col => cols.map[col.getId()] = col);
-}
-
-function copyCols(from: ColumnCollections): ColumnCollections {
-    return {
-        list: from.list.slice(),
-        map: {...from.map},
-        tree: from.tree.slice(),
-        treeDepth: from.treeDepth
-    };
 }

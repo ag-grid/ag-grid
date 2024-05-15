@@ -528,8 +528,6 @@ export class VisibleColsService extends BeanStub {
         return null;
     }
 
-    // niall note - why is this looking at displayed columns only???
-    //
     // returns the group with matching colId and instanceId. If instanceId is missing,
     // matches only on the colId.
     public getColumnGroup(colId: string | ColumnGroup, partId?: number): ColumnGroup | null {
