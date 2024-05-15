@@ -12,7 +12,7 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 export { ColumnFactory } from "./columns/columnFactory";
 export { ColumnModel } from "./columns/columnModel";
 export { ColumnAutosizeService } from "./columns/columnAutosizeService";
-export { FunctionColumnsService } from "./columns/functionColumnsService";
+export { FuncColsService } from "./columns/funcColsService";
 export { ColumnApplyStateService, ColumnState, ColumnStateParams, ApplyColumnStateParams } from "./columns/columnApplyStateService";
 export { ColumnMoveService } from "./columns/columnMoveService";
 export { ColumnNameService } from "./columns/columnNameService";
@@ -21,7 +21,7 @@ export { ColumnSizeService, IColumnLimit, ISizeColumnsToFitParams } from "./colu
 export { ColumnKeyCreator } from "./columns/columnKeyCreator";
 export { VisibleColsService } from "./columns/visibleColsService";
 export { GroupInstanceIdCreator } from "./columns/groupInstanceIdCreator";
-export { GROUP_AUTO_COLUMN_ID } from "./columns/autoGroupColService";
+export { GROUP_AUTO_COLUMN_ID } from "./columns/autoColService";
 export {
     SizeColumnsToFitGridColumnLimits,
     SizeColumnsToContentStrategy,

@@ -20,12 +20,11 @@ import {
     Column,
     ColumnModel,
     IsApplyServerSideTransactionParams,
-    SelectionChangedEvent,
     IRowNode,
     StoreRefreshedEvent,
     ISelectionService,
     LoadSuccessParams,
-    FunctionColumnsService
+    FuncColsService
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../../serverSideRowModel";
 import { StoreUtils } from "../storeUtils";
@@ -38,7 +37,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('selectionService') private selectionService: ISelectionService;
-    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
 
     // display indexes
     private displayIndexStart: number | undefined;
@@ -91,7 +90,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         if (!usingTreeData && this.group) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field!;
-            this.rowGroupColumn = this.functionColumnsService.getRowGroupColumns()[this.level];
+            this.rowGroupColumn = this.funcColsService.getRowGroupColumns()[this.level];
         }
     }
 

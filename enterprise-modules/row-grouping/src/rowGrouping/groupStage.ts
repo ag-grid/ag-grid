@@ -19,7 +19,7 @@ import {
     WithoutGridCommon,
     InitialGroupOrderComparatorParams,
     KeyCreatorParams,
-    FunctionColumnsService
+    FuncColsService
 } from "@ag-grid-community/core";
 import { BatchRemover } from "./batchRemover";
 
@@ -54,7 +54,7 @@ interface GroupingDetails {
 export class GroupStage extends BeanStub implements IRowNodeStage {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('selectableService') private selectableService: SelectableService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('beans') private beans: Beans;
@@ -122,7 +122,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
         const usingTreeData = this.gos.get('treeData');
 
-        const groupedCols = usingTreeData ? null : this.functionColumnsService.getRowGroupColumns();
+        const groupedCols = usingTreeData ? null : this.funcColsService.getRowGroupColumns();
 
         const details: GroupingDetails = {
             expandByDefault: this.gos.get('groupDefaultExpanded'),

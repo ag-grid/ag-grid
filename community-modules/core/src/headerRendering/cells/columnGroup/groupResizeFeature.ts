@@ -82,8 +82,8 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
                 });
 
                 if (keys.length > 0) {
-                    this.columnAutosizeService.autoSizeColumns({
-                        columns: keys,
+                    this.columnAutosizeService.autoSizeCols({
+                        colKeys: keys,
                         skipHeader: skipHeaderOnAutoSize,
                         stopAtGroup: this.columnGroup,
                         source: 'uiColumnResized'

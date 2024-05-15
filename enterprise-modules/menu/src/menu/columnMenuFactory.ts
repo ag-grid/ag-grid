@@ -6,7 +6,7 @@ import {
     Column,
     ColumnModel,
     FilterManager,
-    FunctionColumnsService,
+    FuncColsService,
     IRowModel,
     MenuItemDef,
     MenuService,
@@ -19,7 +19,7 @@ export class ColumnMenuFactory extends BeanStub {
 
     @Autowired('menuItemMapper') private readonly menuItemMapper: MenuItemMapper;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('rowModel') private readonly rowModel: IRowModel;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('menuService') private readonly menuService: MenuService;
@@ -87,7 +87,7 @@ export class ColumnMenuFactory extends BeanStub {
 
         const allowPinning = !column.getColDef().lockPinned;
 
-        const rowGroupCount = this.functionColumnsService.getRowGroupColumns().length;
+        const rowGroupCount = this.funcColsService.getRowGroupColumns().length;
         const doingGrouping = rowGroupCount > 0;
 
         const allowValue = column.isAllowValue();

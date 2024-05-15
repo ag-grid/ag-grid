@@ -11,8 +11,8 @@ import { ColumnEventDispatcher } from "./columnEventDispatcher";
 import { ColKey, ColumnModel, Maybe } from "./columnModel";
 import { VisibleColsService } from "./visibleColsService";
 
-@Bean('functionColumnsService')
-export class FunctionColumnsService extends BeanStub {
+@Bean('funcColsService')
+export class FuncColsService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
@@ -239,7 +239,7 @@ export class FunctionColumnsService extends BeanStub {
 
         autoGroupsNeedBuilding && this.columnModel.updateLiveCols();
 
-        this.visibleColsService.refresh({source});
+        this.visibleColsService.refresh(source);
 
         this.eventDispatcher.columnChanged(eventName, [...changes.keys()], source);
     }
@@ -281,7 +281,7 @@ export class FunctionColumnsService extends BeanStub {
             this.columnModel.updateLiveCols();
         }
 
-        this.visibleColsService.refresh({source});
+        this.visibleColsService.refresh(source);
 
         this.eventDispatcher.genericColumnEvent(eventType, masterList, source);
     }

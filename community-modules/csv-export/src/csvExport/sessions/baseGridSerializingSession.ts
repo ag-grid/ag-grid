@@ -2,7 +2,7 @@ import {
     Column,
     ColumnModel,
     ColumnNameService,
-    FunctionColumnsService,
+    FuncColsService,
     GridOptionsService,
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
@@ -17,7 +17,7 @@ import { GridSerializingParams, GridSerializingSession, RowAccumulator, RowSpann
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
-    public functionColumnsService: FunctionColumnsService;
+    public funcColsService: FuncColsService;
     public valueService: ValueService;
     public gos: GridOptionsService;
     public processCellCallback?: (params: ProcessCellForExportParams) => string;
@@ -30,7 +30,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     constructor(config: GridSerializingParams) {
         const {
             columnModel,
-            functionColumnsService,
+            funcColsService,
             columnNameService,
             valueService,
             gos,
@@ -41,7 +41,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         } = config;
 
         this.columnModel = columnModel;
-        this.functionColumnsService = functionColumnsService;
+        this.funcColsService = funcColsService;
         this.columnNameService = columnNameService;
         this.valueService = valueService;
         this.gos = gos;
@@ -110,7 +110,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 const colDef = column.getColDef();
                 const isFullWidth = colDef == null || colDef.showRowGroup === true;
 
-                return isFullWidth || colDef.showRowGroup === this.functionColumnsService.getRowGroupColumns()[0].getId();
+                return isFullWidth || colDef.showRowGroup === this.funcColsService.getRowGroupColumns()[0].getId();
             }
         }
 

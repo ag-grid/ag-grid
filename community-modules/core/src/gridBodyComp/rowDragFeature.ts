@@ -6,7 +6,7 @@ import {
 } from "../dragAndDrop/dragAndDropService";
 import { Autowired, Optional, PostConstruct } from "../context/context";
 import { ColumnModel } from "../columns/columnModel";
-import { FunctionColumnsService } from "../columns/functionColumnsService";
+import { FuncColsService } from "../columns/funcColsService";
 import { FocusService } from "../focusService";
 import { IRangeService } from "../interfaces/IRangeService";
 import { RowDragEndEvent, RowDragEnterEvent, RowDragEvent, RowDragLeaveEvent, RowDragMoveEvent } from "../events";
@@ -60,7 +60,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     @Autowired('selectionService') private selectionService: ISelectionService;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
 
     @Optional('rangeService') private rangeService?: IRangeService;
 
@@ -112,7 +112,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public shouldPreventRowMove(): boolean {
-        const rowGroupCols = this.functionColumnsService.getRowGroupColumns();
+        const rowGroupCols = this.funcColsService.getRowGroupColumns();
         if (rowGroupCols.length) {
             return true;
         }

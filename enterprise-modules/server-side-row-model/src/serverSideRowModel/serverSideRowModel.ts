@@ -33,9 +33,9 @@ import {
     AdvancedFilterModel,
     ModuleRegistry,
     ModuleNames,
-    FunctionColumnsService,
     ColumnNameService,
-    PivotResultColsService
+    PivotResultColsService,
+    FuncColsService
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
@@ -61,7 +61,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
-    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -188,9 +188,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         // check if anything pertaining to fetching data has changed, and if it has, reset, but if
         // it has not, don't reset
-        const rowGroupColumnVos = this.columnsToValueObjects(this.functionColumnsService.getRowGroupColumns());
-        const valueColumnVos = this.columnsToValueObjects(this.functionColumnsService.getValueColumns());
-        const pivotColumnVos = this.columnsToValueObjects(this.functionColumnsService.getPivotColumns());
+        const rowGroupColumnVos = this.columnsToValueObjects(this.funcColsService.getRowGroupColumns());
+        const valueColumnVos = this.columnsToValueObjects(this.funcColsService.getValueColumns());
+        const pivotColumnVos = this.columnsToValueObjects(this.funcColsService.getPivotColumns());
 
         // compares two sets of columns, ensuring no columns have been added or removed (unless specified via allowRemovedColumns)
         // if the columns are found, also ensures the field and aggFunc properties have not been changed.
@@ -348,9 +348,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private createStoreParams(): SSRMParams {
 
-        const rowGroupColumnVos = this.columnsToValueObjects(this.functionColumnsService.getRowGroupColumns());
-        const valueColumnVos = this.columnsToValueObjects(this.functionColumnsService.getValueColumns());
-        const pivotColumnVos = this.columnsToValueObjects(this.functionColumnsService.getPivotColumns());
+        const rowGroupColumnVos = this.columnsToValueObjects(this.funcColsService.getRowGroupColumns());
+        const valueColumnVos = this.columnsToValueObjects(this.funcColsService.getValueColumns());
+        const pivotColumnVos = this.columnsToValueObjects(this.funcColsService.getPivotColumns());
 
         const dynamicRowHeight = this.gos.isGetRowHeightFunction();
 

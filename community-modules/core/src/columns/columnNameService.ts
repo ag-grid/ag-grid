@@ -8,13 +8,13 @@ import { exists } from "../utils/generic";
 import { camelCaseToHumanText } from "../utils/string";
 import { ExpressionService } from "../valueService/expressionService";
 import { ColumnModel } from "./columnModel";
-import { FunctionColumnsService } from "./functionColumnsService";
+import { FuncColsService } from "./funcColsService";
 
 @Bean('columnNameService')
 export class ColumnNameService extends BeanStub {
 
     @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
     public getDisplayNameForColumn(column: Column | null, location: HeaderLocation, includeAggFunc = false): string | null {
@@ -98,7 +98,7 @@ export class ColumnNameService extends BeanStub {
 
         // otherwise we have a measure that is active, and we are doing aggregation on it
         if (pivotActiveOnThisColumn) {
-            const valueColumns = this.functionColumnsService.getValueColumns();
+            const valueColumns = this.funcColsService.getValueColumns();
             const isCollapsedHeaderEnabled = this.gos.get('removePivotHeaderRowWhenSingleValueColumn') && valueColumns.length === 1;
             const isTotalColumn = column.getColDef().pivotTotalColumnIds !== undefined;
             if (isCollapsedHeaderEnabled && !isTotalColumn) {
@@ -108,7 +108,7 @@ export class ColumnNameService extends BeanStub {
             aggFuncFound = true;
         } else {
             const measureActive = column.isValueActive();
-            const aggregationPresent = this.columnModel.isPivotMode() || !this.functionColumnsService.isRowGroupEmpty();
+            const aggregationPresent = this.columnModel.isPivotMode() || !this.funcColsService.isRowGroupEmpty();
 
             if (measureActive && aggregationPresent) {
                 aggFunc = column.getAggFunc();

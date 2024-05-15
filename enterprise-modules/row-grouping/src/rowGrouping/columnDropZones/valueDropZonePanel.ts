@@ -55,10 +55,10 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     }
 
     protected updateItems(columns: Column[]): void {
-        this.functionColumnsService.setValueColumns(columns, "toolPanelUi");
+        this.funcColsService.setValueColumns(columns, "toolPanelUi");
     }
 
     protected getExistingItems(): Column[] {
-        return this.functionColumnsService.getValueColumns();
+        return this.funcColsService.getValueColumns();
     }
 }

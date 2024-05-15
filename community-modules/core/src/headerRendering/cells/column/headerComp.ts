@@ -11,8 +11,7 @@ import { Component } from "../../../widgets/component";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { LongTapEvent, TapEvent, TouchListener } from "../../../widgets/touchListener";
 import { SortIndicatorComp } from "./sortIndicatorComp";
-import { ColumnModel } from "../../../columns/columnModel";
-import { FunctionColumnsService } from "../../../columns/functionColumnsService";
+import { FuncColsService } from "../../../columns/funcColsService";
 import { Events } from "../../../eventKeys";
 import { SortDirection } from "../../../entities/colDef";
 import { MenuService } from "../../../misc/menuService";
@@ -114,8 +113,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     @Autowired('sortController') private sortController: SortController;
     @Autowired('menuService') private menuService: MenuService;
-    @Autowired('columnModel')  private readonly columnModel: ColumnModel;
-    @Autowired('functionColumnsService') private readonly functionColumnsService: FunctionColumnsService;
+    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
 
     @RefSelector('eFilter') private eFilter: HTMLElement;
     @RefSelector('eFilterButton') private eFilterButton?: HTMLElement;
@@ -364,7 +362,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             this.addOrRemoveCssClass('ag-header-cell-sorted-none', this.params.column.isSortNone());
 
             if (this.params.column.getColDef().showRowGroup) {
-                const sourceColumns = this.functionColumnsService.getSourceColumnsForGroupColumn(this.params.column);
+                const sourceColumns = this.funcColsService.getSourceColumnsForGroupColumn(this.params.column);
                 // this == is intentional, as it allows null and undefined to match, which are both unsorted states
                 const sortDirectionsMatch = sourceColumns?.every(sourceCol => this.params.column.getSort() == sourceCol.getSort());
                 const isMultiSorting = !sortDirectionsMatch;

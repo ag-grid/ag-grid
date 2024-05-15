@@ -150,7 +150,7 @@ export {FilterManager} from "@ag-grid-community/core";
 export {FilterWrapperComp} from "@ag-grid-community/core";
 export {FloatingFilterMapper} from "@ag-grid-community/core";
 export {FocusService} from "@ag-grid-community/core";
-export {FunctionColumnsService} from "@ag-grid-community/core";
+export {FuncColsService} from "@ag-grid-community/core";
 export {GROUP_AUTO_COLUMN_ID} from "@ag-grid-community/core";
 export {Grid} from "@ag-grid-community/core";
 export {GridApi} from "@ag-grid-community/core";

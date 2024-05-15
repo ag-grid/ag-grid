@@ -41,8 +41,8 @@ import {
     CtrlsService,
     WithoutGridCommon,
     ProcessRowGroupForExportParams,
-    FunctionColumnsService,
-    VisibleColsService
+    VisibleColsService,
+    FuncColsService
 } from "@ag-grid-community/core";
 
 interface RowCallback {
@@ -81,7 +81,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
@@ -963,7 +963,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             let column = node.rowGroupColumn as Column;
 
             if (!column && node.footer && node.level === -1) {
-                column = this.functionColumnsService.getRowGroupColumns()[0];
+                column = this.funcColsService.getRowGroupColumns()[0];
             }
             return processCellForClipboard({
                 value,

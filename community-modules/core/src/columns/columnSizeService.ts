@@ -6,7 +6,7 @@ import { removeFromArray, removeFromUnorderedArray } from "../utils/array";
 import { exists } from "../utils/generic";
 import { ColumnEventDispatcher } from "./columnEventDispatcher";
 import { ColKey, ColumnModel } from "./columnModel";
-import { ColumnUtilsFeature } from "./columnUtilsFeature";
+import { getWidthOfColsInList } from "./columnUtils";
 import { ColumnViewportService } from "./columnViewportService";
 import { VisibleColsService } from "./visibleColsService";
 
@@ -43,14 +43,7 @@ export class ColumnSizeService extends BeanStub {
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
     @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
    
-    private columnUtilsFeature: ColumnUtilsFeature;
-
     private flexViewportWidth: number;
-
-    @PostConstruct
-    private postConstruct(): void {
-        this.columnUtilsFeature = this.createManagedBean(new ColumnUtilsFeature());
-    }
 
     public setColumnWidths(
         columnWidths: {
@@ -420,7 +413,7 @@ export class ColumnSizeService extends BeanStub {
         // avoid divide by zero
         const allDisplayedColumns = this.visibleColsService.getAllCols();
 
-        const doColumnsAlreadyFit = gridWidth === this.columnUtilsFeature.getWidthOfColsInList(allDisplayedColumns);
+        const doColumnsAlreadyFit = gridWidth === getWidthOfColsInList(allDisplayedColumns);
         if (gridWidth <= 0 || !allDisplayedColumns.length || doColumnsAlreadyFit) { return; }
 
         const colsToSpread: Column[] = [];
@@ -468,7 +461,7 @@ export class ColumnSizeService extends BeanStub {
 
         while (!finishedResizing) {
             finishedResizing = true;
-            const availablePixels = gridWidth - this.columnUtilsFeature.getWidthOfColsInList(colsToNotSpread);
+            const availablePixels = gridWidth - getWidthOfColsInList(colsToNotSpread);
             if (availablePixels <= 0) {
                 // no width, set everything to minimum
                 colsToSpread.forEach((column: Column) => {
@@ -480,7 +473,7 @@ export class ColumnSizeService extends BeanStub {
                     column.setMinimum(source);
                 });
             } else {
-                const scale = availablePixels / this.columnUtilsFeature.getWidthOfColsInList(colsToSpread);
+                const scale = availablePixels / getWidthOfColsInList(colsToSpread);
                 // we set the pixels for the last col based on what's left, as otherwise
                 // we could be a pixel or two short or extra because of rounding errors.
                 let pixelsForLastCol = availablePixels;

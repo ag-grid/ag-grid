@@ -3,7 +3,7 @@ import {
     ColumnModel,
     Component,
     Events,
-    FunctionColumnsService,
+    FuncColsService,
     PostConstruct,
     _
 } from "@ag-grid-community/core";
@@ -13,7 +13,7 @@ import { PivotDropZonePanel } from "./pivotDropZonePanel";
 export class GridHeaderDropZones extends Component {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
 
     private rowGroupComp: Component;
     private pivotComp: Component;
@@ -73,7 +73,7 @@ export class GridHeaderDropZones extends Component {
         if (rowGroupPanelShow === 'always') {
             this.rowGroupComp.setDisplayed(true);
         } else if (rowGroupPanelShow === 'onlyWhenGrouping') {
-            const grouping = !this.functionColumnsService.isRowGroupEmpty();
+            const grouping = !this.funcColsService.isRowGroupEmpty();
             this.rowGroupComp.setDisplayed(grouping);
         } else {
             this.rowGroupComp.setDisplayed(false);

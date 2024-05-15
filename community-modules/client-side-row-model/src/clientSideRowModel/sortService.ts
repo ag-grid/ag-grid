@@ -13,7 +13,7 @@ import {
     PostSortRowsParams,
     RowNodeTransaction,
     IRowNode,
-    FunctionColumnsService
+    FuncColsService
 } from "@ag-grid-community/core";
 
 
@@ -21,7 +21,7 @@ import {
 export class SortService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
 
     public sort(
@@ -55,7 +55,7 @@ export class SortService extends BeanStub {
             // are going to inspect the original array position. This is what sortedRowNodes is for.
             let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
             if (skipSortingGroups) {
-                const nextGroup = this.functionColumnsService.getRowGroupColumns()?.[rowNode.level + 1];
+                const nextGroup = this.funcColsService.getRowGroupColumns()?.[rowNode.level + 1];
                 // if the sort is null, then sort was explicitly removed, so remove sort from this group.
                 const wasSortExplicitlyRemoved =  nextGroup?.getSort() === null;
 

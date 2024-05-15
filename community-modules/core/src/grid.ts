@@ -31,7 +31,7 @@ import { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
 import { StylingService } from "./styling/stylingService";
 import { ColumnHoverService } from "./rendering/columnHoverService";
 import { ColumnAnimationService } from "./rendering/columnAnimationService";
-import { AutoGroupColService } from "./columns/autoGroupColService";
+import { AutoColService } from "./columns/autoColService";
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { PaginationAutoPageSizeService } from "./pagination/paginationAutoPageSizeService";
 import { RowModelType } from "./interfaces/iRowModel";
@@ -108,7 +108,7 @@ import { ColumnAutosizeService } from "./columns/columnAutosizeService";
 import { ColumnGetStateService } from "./columns/columnGetStateService";
 import { ColumnGroupStateService } from "./columns/columnGroupStateService";
 import { ColumnSizeService } from "./columns/columnSizeService";
-import { FunctionColumnsService } from "./columns/functionColumnsService";
+import { FuncColsService } from "./columns/funcColsService";
 import { ColumnNameService } from "./columns/columnNameService";
 import { ColumnViewportService } from "./columns/columnViewportService";
 import { PivotResultColsService } from "./columns/pivotResultColsService";
@@ -435,14 +435,14 @@ export class GridCoreCreator {
             AutoWidthCalculator, StandardMenuFactory, DragAndDropService,
             FocusService, MouseEventService, Environment, CellNavigationService, StylingService,
             ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
-            SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
+            SelectableService, AutoColService, ChangeDetectionService, AnimationFrameService,
             UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory, RowCssClassCalculator, 
             RowNodeBlockLoader, RowNodeSorter, CtrlsService, PinnedWidthService, RowNodeEventThrottle,
             CtrlsFactory, DataTypeService, QuickFilterService, SyncService, OverlayService, StateService,
             ExpansionService, ApiEventService, AriaAnnouncementService, MenuService,
             ColumnApplyStateService, ColumnEventDispatcher, ColumnMoveService, ColumnAutosizeService,
             ColumnGetStateService, ColumnGroupStateService, ColumnSizeService,
-            FunctionColumnsService, ColumnNameService, ColumnViewportService, PivotResultColsService
+            FuncColsService, ColumnNameService, ColumnViewportService, PivotResultColsService
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);

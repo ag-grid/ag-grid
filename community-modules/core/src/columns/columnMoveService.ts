@@ -71,7 +71,7 @@ export class ColumnMoveService {
         return proposedColumnOrder;
     }
     
-    public doesMovePassLockedPositions(proposedColumnOrder: Column[]): boolean {
+    private doesMovePassLockedPositions(proposedColumnOrder: Column[]): boolean {
         // Placement is a number indicating 'left' 'center' or 'right' as 0 1 2
        let lastPlacement = 0;
        let rulePassed = true;

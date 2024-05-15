@@ -5,10 +5,10 @@ import { Column } from "../entities/column";
 import { ColumnEventType } from "../events";
 import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { areEqual } from "../utils/array";
-import { exists, missing, missingOrEmpty } from "../utils/generic";
+import { exists } from "../utils/generic";
 import { ColumnFactory } from "./columnFactory";
 import { ColKey, ColumnCollections, ColumnModel } from "./columnModel";
-import { ColumnUtilsFeature } from "./columnUtilsFeature";
+import { destroyColumnTree, getColumnsFromTree } from "./columnUtils";
 import { VisibleColsService } from "./visibleColsService";
 
 @Bean('pivotResultColsService')
@@ -17,8 +17,6 @@ export class PivotResultColsService extends BeanStub {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnFactory') private readonly columnFactory: ColumnFactory;
     @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
-
-    private columnUtilsFeature: ColumnUtilsFeature;
 
     // if pivoting, these are the generated columns as a result of the pivot
     private pivotResultCols: ColumnCollections | null;
@@ -31,14 +29,9 @@ export class PivotResultColsService extends BeanStub {
     // Saved when pivot is disabled, available to re-use when pivot is restored
     private previousPivotResultCols: IProvidedColumn[] | null;
 
-    @PostConstruct
-    public init(): void {
-        this.columnUtilsFeature = this.createManagedBean(new ColumnUtilsFeature());
-    }
-
     @PreDestroy
     private destroyColumns(): void {
-        this.columnUtilsFeature.destroyColumns(this.getContext(), this.pivotResultCols?.tree);
+        destroyColumnTree(this.getContext(), this.pivotResultCols?.tree);
     }
 
     public isPivotResultColsPresent(): boolean {
@@ -90,11 +83,11 @@ export class PivotResultColsService extends BeanStub {
                 this.pivotResultCols?.tree || this.previousPivotResultCols || undefined,
                 source
             );
-            this.columnUtilsFeature.destroyColumns(this.getContext(), this.pivotResultCols?.tree, balancedTreeResult.columnTree);
+            destroyColumnTree(this.getContext(), this.pivotResultCols?.tree, balancedTreeResult.columnTree);
 
             const tree = balancedTreeResult.columnTree;
             const treeDepth = balancedTreeResult.treeDept;
-            const list = this.columnUtilsFeature.getColumnsFromTree(tree);
+            const list = getColumnsFromTree(tree);
             const map = {};
 
             this.pivotResultCols = { tree, treeDepth, list, map };
@@ -106,7 +99,7 @@ export class PivotResultColsService extends BeanStub {
         }
 
         this.columnModel.updateLiveCols();
-        this.visibleColsService.refresh({source});
+        this.visibleColsService.refresh(source);
     }
 
     private processPivotResultColDef(colDefs: (ColDef | ColGroupDef)[] | null) {

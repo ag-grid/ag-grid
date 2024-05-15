@@ -79,7 +79,7 @@ export class ColumnGroupStateService {
             impactedGroups.push(providedColumnGroup);
         });
 
-        this.visibleColsService.refresh({source, skipTreeBuild: true});
+        this.visibleColsService.refresh(source, true);
 
         if (impactedGroups.length) {
             this.eventDispatcher.groupOpened(impactedGroups);

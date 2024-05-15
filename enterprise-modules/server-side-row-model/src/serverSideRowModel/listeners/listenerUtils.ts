@@ -1,13 +1,13 @@
-import { Autowired, Bean, FunctionColumnsService, PivotResultColsService } from "@ag-grid-community/core";
+import { Autowired, Bean, FuncColsService, PivotResultColsService } from "@ag-grid-community/core";
 
 @Bean('ssrmListenerUtils')
 export class ListenerUtils {
 
     @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
-    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
 
     public isSortingWithValueColumn(changedColumnsInSort: string[]): boolean {
-        const valueColIds = this.functionColumnsService.getValueColumns().map(col => col.getColId());
+        const valueColIds = this.funcColsService.getValueColumns().map(col => col.getColId());
 
         for (let i = 0; i < changedColumnsInSort.length; i++) {
             if (valueColIds.indexOf(changedColumnsInSort[i]) > -1) {

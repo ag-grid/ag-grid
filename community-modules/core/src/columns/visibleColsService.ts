@@ -7,15 +7,15 @@ import { Autowired, Bean, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { exists } from "../utils/generic";
 import { ColumnContainerWidthChanged, ColumnEventType, DisplayedColumnsWidthChangedEvent, Events } from "../events";
-import { includes, last, removeAllFromUnorderedArray } from "../utils/array";
+import { last, removeAllFromUnorderedArray } from "../utils/array";
 import { RowNode } from "../entities/rowNode";
 import { ColumnModel } from "./columnModel";
-import { ColumnUtilsFeature, isColumnGroupAutoCol } from "./columnUtilsFeature";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ColumnSizeService } from "./columnSizeService";
-import { FunctionColumnsService } from "./functionColumnsService";
+import { FuncColsService } from "./funcColsService";
 import { ColumnViewportService } from "./columnViewportService";
 import { ColumnEventDispatcher } from "./columnEventDispatcher";
+import { getWidthOfColsInList } from "./columnUtils";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('visibleColsService')
@@ -23,11 +23,9 @@ export class VisibleColsService extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
-    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('columnViewportService') private columnViewportService: ColumnViewportService;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
-
-    private columnUtilsFeature: ColumnUtilsFeature;
 
     // tree of columns to be displayed for each section
     private treeLeft: IHeaderColumn[];
@@ -55,15 +53,8 @@ export class VisibleColsService extends BeanStub {
     // list of all columns (displayed and hidden) in visible order including pinned
     private ariaOrderColumns: Column[];
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.columnUtilsFeature = this.createManagedBean(new ColumnUtilsFeature());
-    }
-
-    public refresh(params: {source: ColumnEventType, skipTreeBuild?: boolean}): void {
+    public refresh(source: ColumnEventType, skipTreeBuild = false): void {
         
-        const {source, skipTreeBuild} = params;
-
         // when we open/close col group, skipTreeBuild=false, as we know liveCols haven't changed
         if (!skipTreeBuild) {
             this.buildTrees(); 
@@ -89,9 +80,9 @@ export class VisibleColsService extends BeanStub {
 
     // after setColumnWidth or updateGroupsAndPresentedCols
     public updateBodyWidths(): void {
-        const newBodyWidth = this.columnUtilsFeature.getWidthOfColsInList(this.columnsCenter);
-        const newLeftWidth = this.columnUtilsFeature.getWidthOfColsInList(this.columnsLeft);
-        const newRightWidth = this.columnUtilsFeature.getWidthOfColsInList(this.columnsRight);
+        const newBodyWidth = getWidthOfColsInList(this.columnsCenter);
+        const newLeftWidth = getWidthOfColsInList(this.columnsLeft);
+        const newRightWidth = getWidthOfColsInList(this.columnsRight);
 
         // this is used by virtual col calculation, for RTL only, as a change to body width can impact displayed
         // columns, due to RTL inverting the y coordinates
@@ -237,7 +228,7 @@ export class VisibleColsService extends BeanStub {
         ].forEach(columns => {
             if (doingRtl) {
                 // when doing RTL, we start at the top most pixel (ie RHS) and work backwards
-                let left = this.columnUtilsFeature.getWidthOfColsInList(columns);
+                let left = getWidthOfColsInList(columns);
                 columns.forEach(column => {
                     left -= column.getActualWidth();
                     column.setLeft(left, source);
@@ -583,12 +574,12 @@ export class VisibleColsService extends BeanStub {
     // + angularGrid -> setting pinned body width
     // note: this should be cached
     public getColsLeftWidth() {
-        return this.columnUtilsFeature.getWidthOfColsInList(this.columnsLeft);
+        return getWidthOfColsInList(this.columnsLeft);
     }
 
     // note: this should be cached
     public getDisplayedColumnsRightWidth() {
-        return this.columnUtilsFeature.getWidthOfColsInList(this.columnsRight);
+        return getWidthOfColsInList(this.columnsRight);
     }
 
     public isColAtEdge(col: Column | ColumnGroup, edge: 'first' | 'last'): boolean {

@@ -13,8 +13,8 @@ import {
     RefSelector,
     TabGuardComp,
     FilterWrapperComp,
-    FunctionColumnsService,
     ColumnNameService,
+    FuncColsService,
 } from '@ag-grid-community/core';
 
 interface FilterColumnPair {
@@ -28,7 +28,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
 
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('functionColumnsService') private readonly functionColumnsService: FunctionColumnsService;
+    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
 
     @RefSelector('eGroupField') private readonly eGroupField: HTMLElement;
     @RefSelector('eUnderlyingFilter') private readonly eUnderlyingFilter: HTMLElement;
@@ -88,7 +88,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
             _.warnOnce('Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.');
             return [];
         }
-        const sourceColumns = this.functionColumnsService.getSourceColumnsForGroupColumn(this.groupColumn);
+        const sourceColumns = this.funcColsService.getSourceColumnsForGroupColumn(this.groupColumn);
         if (!sourceColumns) {
             _.warnOnce('Group Column Filter only works on group columns. Please use a different filter.');
             return [];

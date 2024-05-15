@@ -22,19 +22,19 @@ export class ColumnAutosizeService extends BeanStub {
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
-    public autoSizeColumns(params: {
-        columns: ColKey[];
+    public autoSizeCols(params: {
+        colKeys: ColKey[];
         skipHeader?: boolean;
         skipHeaderGroups?: boolean;
         stopAtGroup?: ColumnGroup;
         source?: ColumnEventType;
     }): void {
         if (this.columnModel.isShouldQueueResizeOperations()) {
-            this.columnModel.pushResizeOperation(() => this.autoSizeColumns(params));
+            this.columnModel.pushResizeOperation(() => this.autoSizeCols(params));
             return;
         }
 
-        const { columns: colKeys, skipHeader, skipHeaderGroups, stopAtGroup, source = 'api' } = params;
+        const { colKeys, skipHeader, skipHeaderGroups, stopAtGroup, source = 'api' } = params;
         // because of column virtualisation, we can only do this function on columns that are
         // actually rendered, as non-rendered columns (outside the viewport and not rendered
         // due to column virtualisation) are not present. this can result in all rendered columns
@@ -85,7 +85,7 @@ export class ColumnAutosizeService extends BeanStub {
     
             if (!updatedColumns.length) { return; }
     
-            this.visibleColsService.refresh({source});
+            this.visibleColsService.refresh(source);
         }
 
         if (!shouldSkipHeaderGroups) {
@@ -97,7 +97,7 @@ export class ColumnAutosizeService extends BeanStub {
 
     public autoSizeColumn(key: Maybe<ColKey>, source: ColumnEventType, skipHeader?: boolean): void {
         if (key) {
-            this.autoSizeColumns({ columns: [key], skipHeader, skipHeaderGroups: true, source });
+            this.autoSizeCols({ colKeys: [key], skipHeader, skipHeaderGroups: true, source });
         }
     }
     
@@ -139,7 +139,7 @@ export class ColumnAutosizeService extends BeanStub {
         }
 
         const allDisplayedColumns = this.visibleColsService.getAllCols();
-        this.autoSizeColumns({ columns: allDisplayedColumns, skipHeader, source });
+        this.autoSizeCols({ colKeys: allDisplayedColumns, skipHeader, source });
     }
 
     // returns the width we can set to this col, taking into consideration min and max widths

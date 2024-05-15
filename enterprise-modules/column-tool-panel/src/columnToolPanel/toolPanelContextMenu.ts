@@ -7,7 +7,7 @@ import {
     ColumnNameService,
     Component,
     FocusService,
-    FunctionColumnsService,
+    FuncColsService,
     MenuItemDef,
     PopupService,
     PostConstruct,
@@ -39,7 +39,7 @@ export class ToolPanelContextMenu extends Component {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('popupService') private readonly popupService: PopupService;
     @Autowired('focusService') private readonly focusService: FocusService;
 
@@ -93,12 +93,12 @@ export class ToolPanelContextMenu extends Component {
             activateLabel: () => `${localeTextFunc('groupBy', 'Group by')} ${this.displayName}`,
             deactivateLabel: () => `${localeTextFunc('ungroupBy', 'Un-Group by')} ${this.displayName}`,
             activateFunction: () => {
-                const groupedColumns = this.functionColumnsService.getRowGroupColumns();
-                this.functionColumnsService.setRowGroupColumns(this.addColumnsToList(groupedColumns), "toolPanelUi");
+                const groupedColumns = this.funcColsService.getRowGroupColumns();
+                this.funcColsService.setRowGroupColumns(this.addColumnsToList(groupedColumns), "toolPanelUi");
             },
             deActivateFunction: () => {
-                const groupedColumns = this.functionColumnsService.getRowGroupColumns();
-                this.functionColumnsService.setRowGroupColumns(this.removeColumnsFromList(groupedColumns), "toolPanelUi");
+                const groupedColumns = this.funcColsService.getRowGroupColumns();
+                this.funcColsService.setRowGroupColumns(this.removeColumnsFromList(groupedColumns), "toolPanelUi");
             },
             addIcon: 'menuAddRowGroup',
             removeIcon: 'menuRemoveRowGroup'
@@ -110,12 +110,12 @@ export class ToolPanelContextMenu extends Component {
             activateLabel: () => localeTextFunc('addToValues', `Add ${this.displayName} to values`, [this.displayName!]),
             deactivateLabel: () => localeTextFunc('removeFromValues', `Remove ${this.displayName} from values`, [this.displayName!]),
             activateFunction: () => {
-                const valueColumns = this.functionColumnsService.getValueColumns();
-                this.functionColumnsService.setValueColumns(this.addColumnsToList(valueColumns), "toolPanelUi");
+                const valueColumns = this.funcColsService.getValueColumns();
+                this.funcColsService.setValueColumns(this.addColumnsToList(valueColumns), "toolPanelUi");
             },
             deActivateFunction: () => {
-                const valueColumns = this.functionColumnsService.getValueColumns();
-                this.functionColumnsService.setValueColumns(this.removeColumnsFromList(valueColumns), "toolPanelUi");
+                const valueColumns = this.funcColsService.getValueColumns();
+                this.funcColsService.setValueColumns(this.removeColumnsFromList(valueColumns), "toolPanelUi");
             },
             addIcon: 'valuePanel',
             removeIcon: 'valuePanel'
@@ -127,12 +127,12 @@ export class ToolPanelContextMenu extends Component {
             activateLabel: () => localeTextFunc('addToLabels', `Add ${this.displayName} to labels`, [this.displayName!]),
             deactivateLabel: () => localeTextFunc('removeFromLabels', `Remove ${this.displayName} from labels`, [this.displayName!]),
             activateFunction: () => {
-                const pivotColumns = this.functionColumnsService.getPivotColumns();
-                this.functionColumnsService.setPivotColumns(this.addColumnsToList(pivotColumns), "toolPanelUi");
+                const pivotColumns = this.funcColsService.getPivotColumns();
+                this.funcColsService.setPivotColumns(this.addColumnsToList(pivotColumns), "toolPanelUi");
             },
             deActivateFunction: () => {
-                const pivotColumns = this.functionColumnsService.getPivotColumns();
-                this.functionColumnsService.setPivotColumns(this.removeColumnsFromList(pivotColumns), "toolPanelUi");
+                const pivotColumns = this.funcColsService.getPivotColumns();
+                this.funcColsService.setPivotColumns(this.removeColumnsFromList(pivotColumns), "toolPanelUi");
             },
             addIcon: 'pivotPanel',
             removeIcon: 'pivotPanel'

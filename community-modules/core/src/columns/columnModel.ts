@@ -16,7 +16,7 @@ import { warnOnce } from '../utils/function';
 import { exists, missingOrEmpty } from '../utils/generic';
 import { convertToMap } from '../utils/map';
 import { ValueCache } from '../valueService/valueCache';
-import { AutoGroupColService, GROUP_AUTO_COLUMN_ID } from './autoGroupColService';
+import { AutoColService, GROUP_AUTO_COLUMN_ID } from './autoColService';
 import { ColumnApplyStateService, ColumnState } from './columnApplyStateService';
 import { ColumnAutosizeService } from './columnAutosizeService';
 import { ColumnDefFactory } from "./columnDefFactory";
@@ -25,9 +25,9 @@ import { ColumnFactory, depthFirstOriginalTreeSearch } from './columnFactory';
 import { ColumnGroupStateService } from './columnGroupStateService';
 import { ColumnMoveService } from './columnMoveService';
 import { ColumnSizeService } from './columnSizeService';
-import { ColumnUtilsFeature, isColumnGroupAutoCol } from './columnUtilsFeature';
+import { destroyColumnTree, getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
 import { ColumnViewportService } from './columnViewportService';
-import { FunctionColumnsService } from './functionColumnsService';
+import { FuncColsService } from './funcColsService';
 import { PivotResultColsService } from './pivotResultColsService';
 import { VisibleColsService } from './visibleColsService';
 
@@ -54,7 +54,7 @@ export class ColumnModel extends BeanStub {
     @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
-    @Autowired('autoGroupColService') private autoGroupColService: AutoGroupColService;
+    @Autowired('autoColService') private autoColService: AutoColService;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('columnDefFactory') private columnDefFactory: ColumnDefFactory;
     @Autowired('columnApplyStateService') private columnApplyStateService: ColumnApplyStateService;
@@ -62,10 +62,8 @@ export class ColumnModel extends BeanStub {
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
     @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
     @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
-    @Autowired('functionColumnsService') private functionColumnsService: FunctionColumnsService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('quickFilterService') private quickFilterService: QuickFilterService;
-
-    private columnUtilsFeature: ColumnUtilsFeature;
 
     // as provided by gridProp columnsDefs
     private columnDefs: (ColDef | ColGroupDef)[];
@@ -74,12 +72,12 @@ export class ColumnModel extends BeanStub {
     // this doesn't change (including order) unless columnDefs prop changses.
     private providedCols: ColumnCollections;
 
+    // group auto columns
+    private autoCols: ColumnCollections | null;
+
     // [providedCols OR pivotResultCols] PLUS autoGroupCols.
     // this liveCols.list maintains column order.
     private liveCols: ColumnCollections;
-
-    // group auto columns
-    private autoCols: ColumnCollections | null;
 
     // if pivotMode is on, however pivot results are NOT shown if no pivot columns are set
     private pivotMode = false;
@@ -109,8 +107,6 @@ export class ColumnModel extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.columnUtilsFeature = this.createManagedBean(new ColumnUtilsFeature());
-
         const pivotMode = this.gos.get('pivotMode');
 
         if (this.isPivotSettingAllowed(pivotMode)) {
@@ -137,18 +133,18 @@ export class ColumnModel extends BeanStub {
         const oldProvidedTree = this.providedCols && this.providedCols.tree;
         const newTreeResult = this.columnFactory.createColumnTree(this.columnDefs, true, oldProvidedTree, source);
 
-        this.columnUtilsFeature.destroyColumns(this.getContext(), this.providedCols?.tree, newTreeResult.columnTree);
+        destroyColumnTree(this.getContext(), this.providedCols?.tree, newTreeResult.columnTree);
 
         const tree = newTreeResult.columnTree;
         const treeDepth = newTreeResult.treeDept;
-        const list = this.columnUtilsFeature.getColumnsFromTree(tree);
+        const list = getColumnsFromTree(tree);
         const map: { [id: string]: Column } = {};
 
         list.forEach(col => map[col.getId()] = col);
 
         this.providedCols = { tree, treeDepth, list, map };
 
-        this.functionColumnsService.extractCols(source, oldProvidedCols);
+        this.funcColsService.extractCols(source, oldProvidedCols);
 
         this.ready = true;
 
@@ -159,7 +155,7 @@ export class ColumnModel extends BeanStub {
             this.orderColsLikeProvided();
         }
 
-        this.visibleColsService.refresh({source});
+        this.visibleColsService.refresh(source);
         this.columnViewportService.checkViewportColumns();
 
         // this event is not used by AG Grid, but left here for backwards compatibility,
@@ -259,7 +255,7 @@ export class ColumnModel extends BeanStub {
         // show columns we are aggregating on
 
         const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.isShowingPivotResult();
-        const valueColumns = this.functionColumnsService.getValueColumns();
+        const valueColumns = this.funcColsService.getValueColumns();
 
         const res = this.liveCols.list.filter( col => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);
@@ -289,12 +285,12 @@ export class ColumnModel extends BeanStub {
         if (!this.columnDefs) { return; }
 
         this.updateLiveCols();
-        this.visibleColsService.refresh({source});
+        this.visibleColsService.refresh(source);
     }
 
     private onAutoGroupColumnDefChanged(source: ColumnEventType) {
         if (this.autoCols) {
-            this.autoGroupColService.updateAutoGroupColumns(this.autoCols.list, source);
+            this.autoColService.updateAutoCols(this.autoCols.list, source);
         }
     }
 
@@ -304,7 +300,7 @@ export class ColumnModel extends BeanStub {
 
         // if we aren't going to force, update the auto cols in place
         if (this.autoCols) {
-            this.autoGroupColService.updateAutoGroupColumns(this.autoCols.list, source);
+            this.autoColService.updateAutoCols(this.autoCols.list, source);
         }
         this.createProvidedCols(true, source);
     }
@@ -317,8 +313,8 @@ export class ColumnModel extends BeanStub {
 
     @PreDestroy
     private destroyColumns(): void {
-        this.columnUtilsFeature.destroyColumns(this.getContext(), this.providedCols?.tree);
-        this.columnUtilsFeature.destroyColumns(this.getContext(), this.autoCols?.tree);
+        destroyColumnTree(this.getContext(), this.providedCols?.tree);
+        destroyColumnTree(this.getContext(), this.autoCols?.tree);
     }
 
     // called by clientSideRowModel.refreshModel
@@ -409,7 +405,7 @@ export class ColumnModel extends BeanStub {
         // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
         // so need to updateLiveColumn() to check it autoGroupCol needs to be added / removed
         this.updateLiveCols();
-        this.visibleColsService.refresh({source});
+        this.visibleColsService.refresh(source);
 
         this.eventDispatcher.pivotModeChanged();
     }
@@ -474,15 +470,15 @@ export class ColumnModel extends BeanStub {
             cols.sort((a: Column, b: Column) => this.liveCols.list.indexOf(a) - this.liveCols.list.indexOf(b));
         }
 
-        const rowGroupColumns = this.functionColumnsService.getRowGroupColumns();
-        const pivotColumns = this.functionColumnsService.getPivotColumns();
+        const rowGroupColumns = this.funcColsService.getRowGroupColumns();
+        const pivotColumns = this.funcColsService.getPivotColumns();
 
         return this.columnDefFactory.buildColumnDefs(cols, rowGroupColumns, pivotColumns);
     }
 
     // + clientSideRowModel
     public isPivotActive(): boolean {
-        const pivotColumns = this.functionColumnsService.getPivotColumns();
+        const pivotColumns = this.funcColsService.getPivotColumns();
         return this.pivotMode && !missingOrEmpty(pivotColumns);
     }
 
@@ -543,7 +539,7 @@ export class ColumnModel extends BeanStub {
         });
 
         if (updatedCols.length) {
-            this.visibleColsService.refresh({source});
+            this.visibleColsService.refresh(source);
             this.eventDispatcher.columnPinned(updatedCols, source);
         }
 
@@ -684,7 +680,7 @@ export class ColumnModel extends BeanStub {
 
     public moveInLiveColumns(movedColumns: Column[], toIndex: number, source: ColumnEventType): void {
         moveInArray(this.liveCols?.list, movedColumns, toIndex);
-        this.visibleColsService.refresh({source});
+        this.visibleColsService.refresh(source);
     }
 
     private placeLockedCols(): void {
@@ -712,7 +708,7 @@ export class ColumnModel extends BeanStub {
                 if (typeof underlyingColumn === 'string') {
                     this.groupDisplayColumnsMap[underlyingColumn] = col;
                 } else if (underlyingColumn === true) {
-                    const rowGroupCols = this.functionColumnsService.getRowGroupColumns();
+                    const rowGroupCols = this.funcColsService.getRowGroupColumns();
                     rowGroupCols.forEach(rowGroupCol => {
                         this.groupDisplayColumnsMap[rowGroupCol.getId()] = col;
                     });
@@ -846,7 +842,7 @@ export class ColumnModel extends BeanStub {
         const suppressAutoColumn = this.pivotMode ?
             this.gos.get('pivotSuppressAutoColumn') : this.isGroupSuppressAutoColumn();
 
-        const rowGroupCols = this.functionColumnsService.getRowGroupColumns();
+        const rowGroupCols = this.funcColsService.getRowGroupColumns();
 
         const groupingActive = rowGroupCols.length > 0 || this.gos.get('treeData');
 
@@ -854,7 +850,7 @@ export class ColumnModel extends BeanStub {
 
         const destroyPrevious = () => {
             if (this.autoCols) {
-                this.columnUtilsFeature.destroyColumns(this.getContext(), this.autoCols.tree);
+                destroyColumnTree(this.getContext(), this.autoCols.tree);
                 this.autoCols = null;
             }
         };
@@ -865,7 +861,7 @@ export class ColumnModel extends BeanStub {
             return;
         }
 
-        const list = this.autoGroupColService.createAutoGroupColumns(rowGroupCols);
+        const list = this.autoColService.createAutoCols(rowGroupCols);
         const autoColsSame = this.autoColsEqual(list, this.autoCols?.list || null);
 
         // the new tree dept will equal the current tree dept of live cols
@@ -983,7 +979,7 @@ export class ColumnModel extends BeanStub {
             return true;
         }
 
-        const rowGroupCols = this.functionColumnsService.getRowGroupColumns();
+        const rowGroupCols = this.funcColsService.getRowGroupColumns();
         const colIndex = rowGroupCols.findIndex(groupCol => groupCol.getColId() === column.getColId());
         return groupLockGroupColumns > colIndex;
     }
@@ -1021,8 +1017,8 @@ export class ColumnModel extends BeanStub {
         // ensure render has finished
         setTimeout(() => {
             if (columns) {
-                this.columnAutosizeService.autoSizeColumns({
-                    columns,
+                this.columnAutosizeService.autoSizeCols({
+                    colKeys: columns,
                     skipHeader,
                     source: 'autosizeColumns'
                 });
