@@ -11,7 +11,7 @@ function getGridOptionProps(node) {
         }
     });
 
-    let gridOpsMembers: string[] = [];
+    const gridOpsMembers: string[] = [];
     ts.forEachChild(gridOptionsNode, (n: any) => {
         gridOpsMembers.push(n?.name?.escapedText)
     });

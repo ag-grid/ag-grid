@@ -3735,7 +3735,7 @@ export class ColumnModel extends BeanStub {
         if (params.resizingCols) {
             const allResizingCols = new Set(params.resizingCols);
             // find the last resizing col, as only cols after this one are affected by the resizing
-            let displayedCols = this.displayedColumnsCenter;
+            const displayedCols = this.displayedColumnsCenter;
             for (let i = displayedCols.length - 1; i >= 0; i--) {
                 if (allResizingCols.has(displayedCols[i])) {
                     flexAfterDisplayIndex = i;
@@ -4199,7 +4199,7 @@ export class ColumnModel extends BeanStub {
         // The exception is for columns that were added via `addGroupColumns`. These should appear at the end.
         // We don't have to worry about full updates, as in this case the arrays are correct, and they won't appear in the updated lists.
 
-        let existingColumnStateUpdates: { [colId: string]: ColumnState } = {};
+        const existingColumnStateUpdates: { [colId: string]: ColumnState } = {};
 
         const orderColumns = (
             updatedColumnState: { [colId: string]: ColumnState }, colList: Column[],

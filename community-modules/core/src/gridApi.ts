@@ -1046,7 +1046,7 @@ export class GridApi<TData = any> {
     public getCellValue<TValue = any>(params: GetCellValueParams<TValue>) {
         const { colKey, rowNode, useFormatter } = params;
 
-        let column = this.columnModel.getPrimaryColumn(colKey) ?? this.columnModel.getGridColumn(colKey);
+        const column = this.columnModel.getPrimaryColumn(colKey) ?? this.columnModel.getGridColumn(colKey);
         if (_missing(column)) {
             return null;
         }

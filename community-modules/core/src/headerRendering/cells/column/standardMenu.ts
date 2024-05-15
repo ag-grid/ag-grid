@@ -55,8 +55,8 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             multiplier = 1;
             alignSide = 'right';
         }
-        let nudgeX = isLegacyMenuEnabled ? undefined : (4 * multiplier);
-        let nudgeY = isLegacyMenuEnabled ? undefined : 4;
+        const nudgeX = isLegacyMenuEnabled ? undefined : (4 * multiplier);
+        const nudgeY = isLegacyMenuEnabled ? undefined : 4;
 
         this.showPopup(column, eMenu => {
             this.popupService.positionPopupByComponent({
