@@ -539,7 +539,7 @@ export class ColumnModel extends BeanStub {
     }
 
     public setColumnsVisible(keys: (string | Column)[], visible = false, source: ColumnEventType): void {
-        this.applyColumnState({
+        this.columnApplyStateService.applyColumnState({
             state: keys.map<ColumnState>(
                 key => ({
                     colId: typeof key === 'string' ? key : key.getColId(),
@@ -598,10 +598,6 @@ export class ColumnModel extends BeanStub {
             this.autoCols?.list || [],
             pivotResultColsList || [],
         ]);
-    }
-
-    public applyColumnState(params: ApplyColumnStateParams, source: ColumnEventType): boolean {
-        return this.columnApplyStateService.applyColumnState(params, source);
     }
 
     public getLiveColumns(keys: ColKey[]): Column[] {

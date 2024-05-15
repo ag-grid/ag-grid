@@ -1792,7 +1792,7 @@ export class GridApi<TData = any> {
     /** Returns all the columns, regardless of visible or not. */
     public getColumns(): Column[] | null { return this.columnModel.getAllProvidedCols(); }
     /** Applies the state of the columns from a previous state. Returns `false` if one or more columns could not be found. */
-    public applyColumnState(params: ApplyColumnStateParams): boolean { return this.columnModel.applyColumnState(params, 'api'); }
+    public applyColumnState(params: ApplyColumnStateParams): boolean { return this.columnApplyStateService.applyColumnState(params, 'api'); }
     /** Gets the state of the columns. Typically used when saving column state. */
     public getColumnState(): ColumnState[] { return this.columnGetStateService.getColumnState(); }
     /** Sets the state back to match the originally provided column definitions. */

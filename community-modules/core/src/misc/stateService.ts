@@ -46,6 +46,7 @@ import { ColumnGetStateService } from "../columns/columnGetStateService";
 import { ColumnGroupStateService } from "../columns/columnGroupStateService";
 import { VisibleColsService } from "../columns/visibleColsService";
 import { PivotResultColsService } from "../columns/pivotResultColsService";
+import { ColumnApplyStateService } from "../columns/columnApplyStateService";
 
 @Bean('stateService')
 export class StateService extends BeanStub {
@@ -62,6 +63,7 @@ export class StateService extends BeanStub {
     @Autowired('selectionService') private readonly selectionService: ISelectionService;
     @Autowired('expansionService') private readonly expansionService: IExpansionService;
     @Autowired('columnAnimationService') private readonly columnAnimationService: ColumnAnimationService;
+    @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
     
     @Optional('sideBarService') private readonly sideBarService?: ISideBarService;
     @Optional('rangeService') private readonly rangeService?: IRangeService;
@@ -390,7 +392,7 @@ export class StateService extends BeanStub {
                 hide: null,
                 flex: null,
             };
-            this.columnModel.applyColumnState({
+            this.columnApplyStateService.applyColumnState({
                 state: columnStates,
                 applyOrder,
                 defaultState
@@ -414,7 +416,7 @@ export class StateService extends BeanStub {
                 }
             }
 
-            this.columnModel.applyColumnState({
+            this.columnApplyStateService.applyColumnState({
                 state: secondaryColumnStates,
                 applyOrder
             }, 'gridInitializing');

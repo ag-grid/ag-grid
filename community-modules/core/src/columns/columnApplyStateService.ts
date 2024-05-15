@@ -513,7 +513,7 @@ export class ColumnApplyStateService extends BeanStub {
             columnStates.push(stateItem);
         });
 
-        this.columnModel.applyColumnState({ state: columnStates, applyOrder: true }, source);
+        this.applyColumnState({ state: columnStates, applyOrder: true }, source);
     }    
 
     public getColumnStateFromColDef(column: Column): ColumnState {

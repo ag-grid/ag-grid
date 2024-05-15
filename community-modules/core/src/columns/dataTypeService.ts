@@ -479,7 +479,7 @@ export class DataTypeService extends BeanStub {
             state.push(...this.functionColumnsService.generateColumnStateForRowGroupAndPivotIndexes(newRowGroupColumnStateWithoutIndex, newPivotColumnStateWithoutIndex));
         }
         if (state.length) {
-            this.columnModel.applyColumnState({ state }, 'cellDataTypeInferred');
+            this.columnApplyStateService.applyColumnState({ state }, 'cellDataTypeInferred');
         }
         this.initialData = null;
     }
