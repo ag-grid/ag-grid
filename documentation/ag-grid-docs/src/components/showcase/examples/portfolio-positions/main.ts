@@ -13,11 +13,34 @@ import { renderPdfLink } from './pdfRenderer';
 let gridApi;
 
 const columnDefs = [
-    { headerName: 'Ticker', field: 'ticker', cellDataType: 'text', pinned: 'left', width: 100 },
+    {
+        headerName: 'Ticker',
+        field: 'ticker',
+        cellDataType: 'text',
+        pinned: 'left',
+        width: 100,
+    },
     { headerName: 'Name', field: 'name', cellDataType: 'text', width: 220 },
-    { headerName: 'CCY', field: 'ccy', cellDataType: 'text', enableRowGroup: true, width: 80 },
-    { headerName: 'Instrument', field: 'instrument', cellDataType: 'text', enableRowGroup: true, width: 150 },
-    { headerName: 'Quantity', field: 'quantity', cellDataType: 'number', width: 120 },
+    {
+        headerName: 'CCY',
+        field: 'ccy',
+        cellDataType: 'text',
+        enableRowGroup: true,
+        width: 80,
+    },
+    {
+        headerName: 'Instrument',
+        field: 'instrument',
+        cellDataType: 'text',
+        enableRowGroup: true,
+        width: 150,
+    },
+    {
+        headerName: 'Quantity',
+        field: 'quantity',
+        cellDataType: 'number',
+        width: 120,
+    },
     {
         headerName: 'Purchase Date',
         field: 'buyDate',
@@ -30,6 +53,7 @@ const columnDefs = [
         cellDataType: 'number',
         valueFormatter: currencyFormatter,
         width: 120,
+        aggFunc: 'avg',
     },
     {
         headerName: 'Total Cost',
@@ -37,6 +61,7 @@ const columnDefs = [
         valueGetter: costCalculator,
         valueFormatter: currencyFormatter,
         width: 150,
+        aggFunc: 'sum',
     },
     {
         headerName: 'Price',
@@ -44,6 +69,7 @@ const columnDefs = [
         field: 'currentPrice',
         valueFormatter: currencyFormatter,
         width: 100,
+        aggFunc: 'avg',
     },
     {
         headerName: 'Total Value',
@@ -51,6 +77,7 @@ const columnDefs = [
         valueGetter: valueCalculator,
         valueFormatter: currencyFormatter,
         width: 150,
+        aggFunc: 'sum',
     },
     {
         headerName: 'P/L',
@@ -66,6 +93,7 @@ const columnDefs = [
         valueFormatter: currencyFormatter,
         width: 150,
         pivot: true,
+        aggFunc: 'sum',
     },
     {
         headerName: 'P/L %',
@@ -79,6 +107,7 @@ const columnDefs = [
                 return { color: 'red' };
             }
         },
+        aggFunc: 'avg',
     },
     {
         headerName: '52w Change %',
@@ -92,6 +121,7 @@ const columnDefs = [
                 return { color: 'red' };
             }
         },
+        aggFunc: 'avg',
     },
     {
         headerName: '52w Sparkline',
@@ -135,12 +165,6 @@ const gridOptions = {
         resizable: true,
     },
     sideBar: true,
-    statusBar: {
-        statusPanels: [
-            { statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left' },
-            { statusPanel: 'agAggregationComponent' },
-        ],
-    },
     rowGroupPanelShow: 'always',
     enableRangeSelection: true,
     enableAdvancedFilter: true,
