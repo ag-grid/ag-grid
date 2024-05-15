@@ -376,6 +376,55 @@ export class ColumnModel extends BeanStub {
         this.liveCols.list = this.columnMoveService.placeLockedColumns(this.liveCols.list);
     }
 
+    public orderColsLike(colIds: string[]): void {
+        if (this.liveCols==null) { return; }
+
+        let newOrder: Column[] = [];
+        const processedColIds: { [id: string]: boolean } = {};
+
+        colIds.forEach(colId => {
+            if (processedColIds[colId]) { return; }
+            const col = this.liveCols.map[colId];
+            if (col) {
+                newOrder.push(col);
+                processedColIds[colId] = true;
+            }
+        });
+
+        // add in all other columns
+        let autoGroupInsertIndex = 0;
+        this.liveCols.list.forEach(col => {
+            const colId = col.getColId();
+            const alreadyProcessed = processedColIds[colId] != null;
+            if (alreadyProcessed) { return; }
+
+            const isAutoGroupCol = colId.startsWith(GROUP_AUTO_COLUMN_ID);
+            if (isAutoGroupCol) {
+                // auto group columns, if missing from state list, are added to the start.
+                // it's common to have autoGroup missing, as grouping could be on by default
+                // on a column, but the user could of since removed the grouping via the UI.
+                // if we don't inc the insert index, autoGroups will be inserted in reverse order
+                insertIntoArray(newOrder, col, autoGroupInsertIndex++);
+            } else {
+                // normal columns, if missing from state list, are added at the end
+                newOrder.push(col);
+            }
+        });
+
+        // this is already done in updateLiveCols, however we changed the order above (to match the order of the state
+        // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
+        // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
+        // is less sexy for the code here, but it keeps consistency.
+        newOrder = this.columnMoveService.placeLockedColumns(newOrder);
+
+        if (!this.columnMoveService.doesMovePassMarryChildren(newOrder)) {
+            console.warn('AG Grid: Applying column order broke a group where columns should be married together. Applying new order has been discarded.');
+            return;
+        }
+
+        this.liveCols.list = newOrder;
+    }
+
     public isPivotMode(): boolean {
         return this.pivotMode;
     }
@@ -551,110 +600,8 @@ export class ColumnModel extends BeanStub {
         ]);
     }
 
-    // niall note - this method should be in columnApplyStateService,
-    // but is uses so many methods and variables of ColumnModel, it's
-    // difficult to extract out
     public applyColumnState(params: ApplyColumnStateParams, source: ColumnEventType): boolean {
-        if (missingOrEmpty(this.providedCols?.list)) { return false; }
-
-        if (params && params.state && !params.state.forEach) {
-            console.warn('AG Grid: applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.');
-            return false;
-        }
-
-        const callbacks = this.functionColumnsService.getModifyColumnsNoEventsCallbacks();
-
-        const applyStates = (states: ColumnState[], existingColumns: Column[], getById: (id: string) => Column | null) => {
-            const dispatchEventsFunc = this.columnApplyStateService.compareColumnStatesAndDispatchEvents(source);
-
-            // at the end below, this list will have all columns we got no state for
-            const columnsWithNoState = existingColumns.slice();
-
-            const rowGroupIndexes: { [key: string]: number; } = {};
-            const pivotIndexes: { [key: string]: number; } = {};
-            const autoGroupColumnStates: ColumnState[] = [];
-            // If pivoting is modified, these are the states we try to reapply after
-            // the pivot result cols are re-generated
-            const unmatchedAndAutoStates: ColumnState[] = [];
-            let unmatchedCount = 0;
-
-            const previousRowGroupCols = this.functionColumnsService.getRowGroupColumns().slice();
-            const previousPivotCols = this.functionColumnsService.getPivotColumns().slice();
-
-            states.forEach((state: ColumnState) => {
-                const colId = state.colId || '';
-
-                // auto group columns are re-created so deferring syncing with ColumnState
-                const isAutoGroupColumn = colId.startsWith(GROUP_AUTO_COLUMN_ID);
-                if (isAutoGroupColumn) {
-                    autoGroupColumnStates.push(state);
-                    unmatchedAndAutoStates.push(state);
-                    return;
-                }
-
-                const column = getById(colId);
-
-                if (!column) {
-                    unmatchedAndAutoStates.push(state);
-                    unmatchedCount += 1;
-                } else {
-                    this.columnApplyStateService.syncColumnWithStateItem(column, state, params.defaultState, rowGroupIndexes,
-                        pivotIndexes, false, source, callbacks);
-                    removeFromArray(columnsWithNoState, column);
-                }
-            });
-
-            // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
-            const applyDefaultsFunc = (col: Column) =>
-                this.columnApplyStateService.syncColumnWithStateItem(col, null, params.defaultState, rowGroupIndexes,
-                    pivotIndexes, false, source, callbacks);
-
-            columnsWithNoState.forEach(applyDefaultsFunc);
-
-            this.functionColumnsService.sortRowGroupColumns(comparatorByIndex.bind(this, rowGroupIndexes, previousRowGroupCols));
-            this.functionColumnsService.sortPivotColumns(comparatorByIndex.bind(this, pivotIndexes, previousPivotCols));
-
-            this.updateLiveCols();
-
-            // sync newly created auto group columns with ColumnState
-            const autoGroupColsCopy = this.autoCols ? this.autoCols.list.slice() : [];
-            autoGroupColumnStates.forEach(stateItem => {
-                const autoCol = this.getAutoColumn(stateItem.colId!);
-                removeFromArray(autoGroupColsCopy, autoCol);
-                this.columnApplyStateService.syncColumnWithStateItem(autoCol, stateItem, params.defaultState, null, null, true, source, callbacks);
-            });
-            // autogroup cols with nothing else, apply the default
-            autoGroupColsCopy.forEach(applyDefaultsFunc);
-
-            this.liveCols.list = this.columnApplyStateService.applyOrderAfterApplyState(params, this.liveCols.list, this.liveCols.map);
-            this.visibleColsService.refresh({source});
-            this.eventDispatcher.everythingChanged(source);
-
-            dispatchEventsFunc(); // Will trigger pivot result col changes if pivoting modified
-            return { unmatchedAndAutoStates, unmatchedCount };
-        };
-
-        this.columnAnimationService.start();
-
-        let {
-            unmatchedAndAutoStates,
-            unmatchedCount,
-        } = applyStates(params.state || [], this.providedCols?.list || [], (id) => this.getProvidedColumn(id));
-
-        // If there are still states left over, see if we can apply them to newly generated
-        // pivot result cols or auto cols. Also if defaults exist, ensure they are applied to pivot resul cols
-        if (unmatchedAndAutoStates.length > 0 || exists(params.defaultState)) {
-            const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
-            const pivotResultColsList = pivotResultCols?.list;
-            unmatchedCount = applyStates(
-                unmatchedAndAutoStates,
-                pivotResultColsList || [],
-                (id) => this.pivotResultColsService.getPivotResultCol(id)
-            ).unmatchedCount;
-        }
-        this.columnAnimationService.finish();
-
-        return unmatchedCount === 0; // Successful if no states unaccounted for
+        return this.columnApplyStateService.applyColumnState(params, source);
     }
 
     public getLiveColumns(keys: ColKey[]): Column[] {
@@ -723,7 +670,7 @@ export class ColumnModel extends BeanStub {
         return this.getAutoColumn(key);
     }
 
-    private getAutoColumn(key: ColKey): Column | null {
+    public getAutoColumn(key: ColKey): Column | null {
         if (this.autoCols==null) return null;
         return this.autoCols.list.find(groupCol => this.columnsMatch(groupCol, key)) || null;
     }
@@ -1139,51 +1086,6 @@ export function convertSourceType(source: PropertyChangedSource): ColumnEventTyp
     // unfortunately they do not match so need to perform conversion
     return source === 'gridOptionsUpdated' ? 'gridOptionsChanged' : source;
 }
-
-// sort the lists according to the indexes that were provided
-const comparatorByIndex = (indexes: { [key: string]: number; }, oldList: Column[], colA: Column, colB: Column) => {
-
-    const indexA = indexes[colA.getId()];
-    const indexB = indexes[colB.getId()];
-
-    const aHasIndex = indexA != null;
-    const bHasIndex = indexB != null;
-
-    if (aHasIndex && bHasIndex) {
-        // both a and b are new cols with index, so sort on index
-        return indexA - indexB;
-    }
-
-    if (aHasIndex) {
-        // a has an index, so it should be before a
-        return -1;
-    }
-
-    if (bHasIndex) {
-        // b has an index, so it should be before a
-        return 1;
-    }
-
-    const oldIndexA = oldList.indexOf(colA);
-    const oldIndexB = oldList.indexOf(colB);
-
-    const aHasOldIndex = oldIndexA >= 0;
-    const bHasOldIndex = oldIndexB >= 0;
-
-    if (aHasOldIndex && bHasOldIndex) {
-        // both a and b are old cols, so sort based on last order
-        return oldIndexA - oldIndexB;
-    }
-
-    if (aHasOldIndex) {
-        // a is old, b is new, so b is first
-        return -1;
-    }
-
-    // this bit does matter, means both are new cols
-    // but without index or that b is old and a is new
-    return 1;
-};
 
 function updateColsMap(cols: ColumnCollections): void {
     cols.map = {};
