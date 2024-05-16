@@ -236,7 +236,7 @@ export const SystemJs = ({
             <script src={systemJsPath} />
             <script
                 dangerouslySetInnerHTML={{
-                    __html: `System.import('${startFile}').catch(function(err) { console.error(err); });`,
+                    __html: `System.import('${startFile}').catch(function(err) { document.body.innerHTML = '<div class="error" style="background:#fdb022;padding:1rem;">' + 'Example Error: ' + err + '</div>'; console.error(err); });`,
                 }}
             />
         </>
