@@ -85,10 +85,10 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ]
+      "command": "eslint",
+      "options": {
+        "cwd": "enterprise-modules/server-side-row-model"
+      }
     },
     "test": {
       "executor": "@nx/jest:jest",

@@ -113,10 +113,10 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ]
+      "command": "eslint",
+      "options": {
+        "cwd": "packages/ag-grid-enterprise"
+      }
     },
     "test": {
       "executor": "@nx/jest:jest",

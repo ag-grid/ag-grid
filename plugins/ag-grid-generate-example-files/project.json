@@ -70,8 +70,10 @@
       ]
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "command": "eslint",
+      "options": {
+        "cwd": "plugins/ag-grid-generate-example-files"
+      }
     },
     "test": {
       "executor": "@nx/jest:jest",
