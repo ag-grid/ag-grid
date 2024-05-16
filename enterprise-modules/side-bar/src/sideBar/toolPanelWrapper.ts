@@ -17,7 +17,7 @@ export class ToolPanelWrapper extends Component {
     private static TEMPLATE = /* html */
         `<div class="ag-tool-panel-wrapper" role="tabpanel"/>`;
 
-    private toolPanelCompInstance: IToolPanelComp;
+    private toolPanelCompInstance: IToolPanelComp | undefined;
     private toolPanelId: string;
     private resizeBar: HorizontalResizeComp;
     private width: number | undefined;
@@ -81,7 +81,7 @@ export class ToolPanelWrapper extends Component {
         }
     }
 
-    public getToolPanelInstance(): IToolPanelComp {
+    public getToolPanelInstance(): IToolPanelComp | undefined {
         return this.toolPanelCompInstance;
     }
 
@@ -94,7 +94,7 @@ export class ToolPanelWrapper extends Component {
     }
 
     public refresh(): void {
-        this.toolPanelCompInstance.refresh(this.params);
+        this.toolPanelCompInstance?.refresh(this.params);
     }
 
 }
