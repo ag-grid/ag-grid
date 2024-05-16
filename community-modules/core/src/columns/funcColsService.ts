@@ -100,10 +100,10 @@ export class FuncColsService extends BeanStub {
         column.setRowGroupActive(active, source);
 
         if (active && !this.gos.get('suppressRowGroupHidesColumns')) {
-            this.columnModel.setColumnsVisible([column], false, source);
+            this.columnModel.setColsVisible([column], false, source);
         }
         if (!active && !this.gos.get('suppressMakeColumnVisibleAfterUnGroup')) {
-            this.columnModel.setColumnsVisible([column], true, source);
+            this.columnModel.setColsVisible([column], true, source);
         }
     }
 

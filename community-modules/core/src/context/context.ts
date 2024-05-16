@@ -535,6 +535,7 @@ export type BeanName =
 | 'selectionController'
 | 'selectionHandleFactory'
 | 'selectionService'
+| 'showRowGroupColsService'
 | 'sideBarService'
 | 'sortController'
 | 'sortService'

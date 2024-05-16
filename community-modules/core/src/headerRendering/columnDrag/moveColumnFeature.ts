@@ -87,14 +87,14 @@ export class MoveColumnFeature implements DropListener {
     public setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType) {
         if (columns) {
             const allowedCols = columns.filter(c => !c.getColDef().lockVisible);
-            this.columnModel.setColumnsVisible(allowedCols, visible, source);
+            this.columnModel.setColsVisible(allowedCols, visible, source);
         }
     }
 
     public setColumnsPinned(columns: Column[] | null | undefined, pinned: ColumnPinnedType, source: ColumnEventType) {
         if (columns) {
             const allowedCols = columns.filter(c => !c.getColDef().lockPinned);
-            this.columnModel.setColumnsPinned(allowedCols, pinned, source);
+            this.columnModel.setColsPinned(allowedCols, pinned, source);
         }
     }
 

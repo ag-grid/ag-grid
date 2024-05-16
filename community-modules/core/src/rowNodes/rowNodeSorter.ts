@@ -5,6 +5,7 @@ import { ValueService } from "../valueService/valueService";
 import { _ } from "../utils";
 import { ColumnModel } from "../columns/columnModel";
 import { BeanStub } from "../context/beanStub";
+import { ShowRowGroupColsService } from "../columns/showRowGroupColsService";
 
 export interface SortOption {
     sort: 'asc' | 'desc';
@@ -23,6 +24,7 @@ export class RowNodeSorter extends BeanStub {
 
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
 
     private isAccentedSort: boolean;
     private primaryColumnsSortGroups: boolean;
@@ -121,7 +123,7 @@ export class RowNodeSorter extends BeanStub {
                 return undefined;
             }
 
-            const displayCol = this.columnModel.getGroupDisplayColumnForGroup(column.getId());
+            const displayCol = this.showRowGroupColsService.getShowRowGroupCol(column.getId());
             if (!displayCol) {
                 return undefined;
             }

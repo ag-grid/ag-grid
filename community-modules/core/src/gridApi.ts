@@ -1780,7 +1780,7 @@ export class GridApi<TData = any> {
     /** Returns the column group with the given name. */
     public getColumnGroup(name: string, instanceId?: number): ColumnGroup | null { return this.visibleColsService.getColumnGroup(name, instanceId); }
     /** Returns the provided column group with the given name. */
-    public getProvidedColumnGroup(name: string): ProvidedColumnGroup | null { return this.columnModel.getProvidedColumnGroup(name); }
+    public getProvidedColumnGroup(name: string): ProvidedColumnGroup | null { return this.columnModel.getProvidedColGroup(name); }
 
     /** Returns the display name for a column. Useful if you are doing your own header rendering and want the grid to work out if `headerValueGetter` is used, or if you are doing your own column management GUI, to know what to show as the column name. */
     public getDisplayNameForColumn(column: Column, location: HeaderLocation): string { return this.columnNameService.getDisplayNameForColumn(column, location) || ''; }
@@ -1817,17 +1817,17 @@ export class GridApi<TData = any> {
     /** @deprecated v31.1 setColumnVisible(key, visible) deprecated, please use setColumnsVisible([key], visible) instead. */
     public setColumnVisible(key: string | Column, visible: boolean): void { 
         this.logDeprecation('v31.1', 'setColumnVisible(key,visible)', 'setColumnsVisible([key],visible)');
-        this.columnModel.setColumnsVisible([key], visible, 'api'); 
+        this.columnModel.setColsVisible([key], visible, 'api'); 
     }
     /** Sets the visibility of columns. Key can be the column ID or `Column` object. */
-    public setColumnsVisible(keys: (string | Column)[], visible: boolean): void { this.columnModel.setColumnsVisible(keys, visible, 'api'); }
+    public setColumnsVisible(keys: (string | Column)[], visible: boolean): void { this.columnModel.setColsVisible(keys, visible, 'api'); }
     /** @deprecated v31.1 setColumnPinned(key, pinned) deprecated, please use setColumnsPinned([key], pinned) instead. */
     public setColumnPinned(key: string | ColDef | Column, pinned: ColumnPinnedType): void { 
         this.logDeprecation('v31.1', 'setColumnPinned(key,pinned)', 'setColumnsPinned([key],pinned)');
-        this.columnModel.setColumnsPinned([key], pinned, 'api'); 
+        this.columnModel.setColsPinned([key], pinned, 'api'); 
     }
     /** Set a column's pinned / unpinned state. Key can be the column ID, field, `ColDef` object or `Column` object. */
-    public setColumnsPinned(keys: (string | ColDef |Column)[], pinned: ColumnPinnedType): void { this.columnModel.setColumnsPinned(keys, pinned, 'api'); }
+    public setColumnsPinned(keys: (string | ColDef |Column)[], pinned: ColumnPinnedType): void { this.columnModel.setColsPinned(keys, pinned, 'api'); }
 
     /**
      * Returns all the grid columns, same as `getColumns()`, except

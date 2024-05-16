@@ -16,6 +16,7 @@ export { FuncColsService } from "./columns/funcColsService";
 export { ColumnApplyStateService, ColumnState, ColumnStateParams, ApplyColumnStateParams } from "./columns/columnApplyStateService";
 export { ColumnMoveService } from "./columns/columnMoveService";
 export { ColumnNameService } from "./columns/columnNameService";
+export { ShowRowGroupColsService } from "./columns/showRowGroupColsService";
 export { PivotResultColsService } from "./columns/pivotResultColsService";
 export { ColumnSizeService, IColumnLimit, ISizeColumnsToFitParams } from "./columns/columnSizeService";
 export { ColumnKeyCreator } from "./columns/columnKeyCreator";

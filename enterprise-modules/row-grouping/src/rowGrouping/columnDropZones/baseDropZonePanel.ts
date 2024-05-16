@@ -79,7 +79,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     public setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType) {
         if (columns) {
             const allowedCols = columns.filter(c => !c.getColDef().lockVisible);
-            this.columnModel.setColumnsVisible(allowedCols, visible, source);
+            this.columnModel.setColsVisible(allowedCols, visible, source);
         }
     }
 

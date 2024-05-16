@@ -13,7 +13,8 @@ import {
     PostSortRowsParams,
     RowNodeTransaction,
     IRowNode,
-    FuncColsService
+    FuncColsService,
+    ShowRowGroupColsService
 } from "@ag-grid-community/core";
 
 
@@ -23,6 +24,7 @@ export class SortService extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
+    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
 
     public sort(
         sortOptions: SortOption[],
@@ -237,7 +239,7 @@ export class SortService extends BeanStub {
         if (!this.gos.get('groupHideOpenParents') || _.missing(rowNodes)) { return; }
 
         rowNodes.forEach(childRowNode => {
-            const groupDisplayCols = this.columnModel.getGroupDisplayColumns();
+            const groupDisplayCols = this.showRowGroupColsService.getShowRowGroupCols();
             groupDisplayCols.forEach(groupDisplayCol => {
 
                 const showRowGroup = groupDisplayCol.getColDef().showRowGroup;

@@ -19,7 +19,8 @@ import {
     WithoutGridCommon,
     InitialGroupOrderComparatorParams,
     KeyCreatorParams,
-    FuncColsService
+    FuncColsService,
+    ShowRowGroupColsService
 } from "@ag-grid-community/core";
 import { BatchRemover } from "./batchRemover";
 
@@ -59,6 +60,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('beans') private beans: Beans;
     @Autowired('selectionService') private selectionService: ISelectionService;
+    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
 
     // when grouping, these items are of note:
     // rowNode.parent: RowNode: set to the parent
@@ -482,7 +484,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
         let noFurtherProcessingNeeded = false;
 
-        const groupDisplayColumns = this.columnModel.getGroupDisplayColumns();
+        const groupDisplayColumns = this.showRowGroupColsService.getShowRowGroupCols();
         const newGroupDisplayColIds = groupDisplayColumns ?
             groupDisplayColumns.map(c => c.getId()).join('-') : '';
 
@@ -654,7 +656,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo, details: GroupingDetails): void {
         groupNode.groupData = {};
-        const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
+        const groupDisplayCols: Column[] = this.showRowGroupColsService.getShowRowGroupCols();
         groupDisplayCols.forEach(col => {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so

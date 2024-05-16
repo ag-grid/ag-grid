@@ -88,19 +88,19 @@ export class MenuItemMapper extends BeanStub {
             case 'pinLeft':
                 return {
                     name: localeTextFunc('pinLeft', 'Pin Left'),
-                    action: () => this.columnModel.setColumnsPinned([column], 'left', "contextMenu"),
+                    action: () => this.columnModel.setColsPinned([column], 'left', "contextMenu"),
                     checked: !!column && column.isPinnedLeft()
                 };
             case 'pinRight':
                 return {
                     name: localeTextFunc('pinRight', 'Pin Right'),
-                    action: () => this.columnModel.setColumnsPinned([column], 'right', "contextMenu"),
+                    action: () => this.columnModel.setColsPinned([column], 'right', "contextMenu"),
                     checked: !!column && column.isPinnedRight()
                 };
             case 'clearPinned':
                 return {
                     name: localeTextFunc('noPin', 'No Pin'),
-                    action: () => this.columnModel.setColumnsPinned([column], null, "contextMenu"),
+                    action: () => this.columnModel.setColsPinned([column], null, "contextMenu"),
                     checked: !!column && !column.isPinned()
                 };
             case 'valueAggSubMenu':

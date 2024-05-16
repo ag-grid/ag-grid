@@ -69,7 +69,7 @@ export class ColumnGroupStateService {
         stateItems.forEach(stateItem => {
             const groupKey = stateItem.groupId;
             const newValue = stateItem.open;
-            const providedColumnGroup: ProvidedColumnGroup | null = this.columnModel.getProvidedColumnGroup(groupKey);
+            const providedColumnGroup: ProvidedColumnGroup | null = this.columnModel.getProvidedColGroup(groupKey);
 
             if (!providedColumnGroup) { return; }
             if (providedColumnGroup.isExpanded() === newValue) { return; }

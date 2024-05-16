@@ -11,7 +11,8 @@ import {
     ValueService,
     NumberSequence,
     Beans,
-    IRowNode
+    IRowNode,
+    ShowRowGroupColsService
 } from "@ag-grid-community/core";
 import { NodeManager } from "../nodeManager";
 import { ServerSideExpansionService } from "../services/serverSideExpansionService";
@@ -23,6 +24,7 @@ export class BlockUtils extends BeanStub {
 
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
     @Autowired('beans') private beans: Beans;
     @Autowired('expansionService') private readonly expansionService: ServerSideExpansionService;
@@ -202,7 +204,7 @@ export class BlockUtils extends BeanStub {
     }
 
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
-        const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
+        const groupDisplayCols: Column[] = this.showRowGroupColsService.getShowRowGroupCols();
 
         const usingTreeData = this.gos.get('treeData');
 

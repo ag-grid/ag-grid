@@ -11,16 +11,18 @@ import {
     RowNode,
     RowPositionUtils,
     ValueService,
-    FuncColsService
+    FuncColsService,
+    ShowRowGroupColsService
 } from "@ag-grid-community/core";
 
 @Bean("chartColumnService")
 export class ChartColumnService extends BeanStub {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('valueService') private readonly valueService: ValueService;
+    @Autowired('valueService') private valueService: ValueService;
     @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
 
     private valueColsWithoutSeriesType: Set<string> = new Set();
@@ -49,7 +51,7 @@ export class ChartColumnService extends BeanStub {
     }
 
     public getGroupDisplayColumns(): Column[] {
-        return this.columnModel.getGroupDisplayColumns();
+        return this.showRowGroupColsService.getShowRowGroupCols();
     }
 
     public isPivotMode(): boolean {

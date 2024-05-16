@@ -103,7 +103,7 @@ export class ViewportSizeFeature extends BeanStub {
             columnsToRemove = processUnpinnedColumns(params);
         }
 
-        this.columnModel.setColumnsPinned(columnsToRemove, null, 'viewportSizeFeature')
+        this.columnModel.setColsPinned(columnsToRemove, null, 'viewportSizeFeature')
     }
 
     private getPinnedColumnsOverflowingViewport(viewportWidth: number): Column[] {

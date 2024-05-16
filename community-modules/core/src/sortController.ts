@@ -2,6 +2,7 @@ import { Autowired, Bean } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
 import { ColumnModel } from "./columns/columnModel";
+import { ShowRowGroupColsService } from "./columns/showRowGroupColsService";
 import { FuncColsService } from "./columns/funcColsService";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
 import { SortOption } from "./rowNodes/rowNodeSorter";
@@ -22,6 +23,7 @@ export class SortController extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('funcColsService') private funcColsService: FuncColsService;
+    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
 
     public progressSort(column: Column, multiSort: boolean, source: ColumnEventType): void {
         const nextDirection = this.getNextSortDirection(column);
@@ -67,7 +69,7 @@ export class SortController extends BeanStub {
 
     private updateSortIndex(lastColToChange: Column) {
         const isCoupled = this.gos.isColumnsSortingCoupledToGroup();
-        const groupParent = this.columnModel.getGroupDisplayColumnForGroup(lastColToChange.getId());
+        const groupParent = this.showRowGroupColsService.getShowRowGroupCol(lastColToChange.getId());
         const lastSortIndexCol = isCoupled ? groupParent || lastColToChange : lastColToChange;
 
         const allSortedCols = this.getColumnsWithSortingOrdered();
@@ -175,7 +177,7 @@ export class SortController extends BeanStub {
             allSortedCols = allSortedCols.filter(col => {
                 const isAggregated = !!col.getAggFunc();
                 const isSecondary = !col.isPrimary();
-                const isGroup = isSortingLinked ? this.columnModel.getGroupDisplayColumnForGroup(col.getId()) : col.getColDef().showRowGroup;
+                const isGroup = isSortingLinked ? this.showRowGroupColsService.getShowRowGroupCol(col.getId()) : col.getColDef().showRowGroup;
                 return isAggregated || isSecondary || isGroup;
             });
         }
@@ -212,7 +214,7 @@ export class SortController extends BeanStub {
             allSortedCols = [
                 ...new Set(
                     // if linked sorting, replace all columns with the display group column for index purposes, and ensure uniqueness
-                    allSortedCols.map(col =>  this.columnModel.getGroupDisplayColumnForGroup(col.getId()) ?? col)
+                    allSortedCols.map(col =>  this.showRowGroupColsService.getShowRowGroupCol(col.getId()) ?? col)
                 )
             ];
         }
@@ -224,7 +226,7 @@ export class SortController extends BeanStub {
         // add the row group cols back
         if (isSortLinked) {
             sortedRowGroupCols.forEach(col => {
-                const groupDisplayCol =  this.columnModel.getGroupDisplayColumnForGroup(col.getId())!;
+                const groupDisplayCol =  this.showRowGroupColsService.getShowRowGroupCol(col.getId())!;
                 indexMap.set(col, indexMap.get(groupDisplayCol)!);
             });
         }
