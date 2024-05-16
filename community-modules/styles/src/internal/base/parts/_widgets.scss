@@ -258,19 +258,21 @@
         border-radius: 5px;
     }
 
-    .ag-color-picker .ag-picker-field-display {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        min-height: var(--ag-list-item-height);
+    .ag-color-picker {
+        .ag-picker-field-wrapper {
+            padding-left: var(--ag-grid-size);
+            padding-right: var(--ag-grid-size);
+        }
+
+        .ag-picker-field-display {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            min-height: var(--ag-list-item-height);
+        }
     }
 
-    .ag-color-picker-color {
-        margin-left: var(--ag-grid-size);
-        margin-right: var(--ag-grid-size);
-    }
-
-    .ag-color-picker-value {
+    .ag-color-picker-color, .ag-color-picker-value {
         @include ag.unthemed-rtl(( margin-right: var(--ag-grid-size) ));
     }
 

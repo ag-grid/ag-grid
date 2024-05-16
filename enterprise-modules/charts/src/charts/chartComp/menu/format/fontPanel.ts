@@ -49,13 +49,11 @@ export class FontPanel extends Component {
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    private readonly params: FontPanelParams;
     private readonly chartOptions: ChartOptionsProxy;
     private activeComps: Component[] = [];
 
-    constructor(params: FontPanelParams) {
+    constructor(private readonly params: FontPanelParams) {
         super();
-        this.params = params;
         this.chartOptions = params.chartMenuParamsFactory.getChartOptions();
     }
 
@@ -143,12 +141,12 @@ export class FontPanel extends Component {
 
         const options = families.sort().map(value => ({ value, text: value }));
 
-        return {
+        return this.params.chartMenuParamsFactory.getDefaultSelectParamsWithoutValueParams(
+            'font',
             options,
-            inputWidth: 'flex',
-            value: `${initialValue}`,
-            onValueChange: newValue => this.setFont({ fontFamily: newValue! })
-        };
+            `${initialValue}`,
+            newValue => this.setFont({ fontFamily: newValue! })
+        );
     }
 
     private getSizeSelectParams(): AgSelectParams {
@@ -161,13 +159,12 @@ export class FontPanel extends Component {
 
         const options = sizes.sort((a, b) => a - b).map(value => ({ value: `${value}`, text: `${value}` }));
 
-        return {
+        return this.params.chartMenuParamsFactory.getDefaultSelectParamsWithoutValueParams(
+            'size',
             options,
-            inputWidth: 'flex',
-            value: `${size}`,
-            onValueChange: newValue => this.setFont({ fontSize: parseInt(newValue!, 10) }),
-            label: this.chartTranslationService.translate('size')
-        };
+            `${size}`,
+            newValue => this.setFont({ fontSize: parseInt(newValue!, 10) })
+        );
     }
 
     private getWeightStyleSelectParams(): AgSelectParams {
@@ -193,16 +190,16 @@ export class FontPanel extends Component {
             text: this.chartTranslationService.translate(ws.name),
         }));
 
-        return {
+        return this.params.chartMenuParamsFactory.getDefaultSelectParamsWithoutValueParams(
+            'weight',
             options,
-            inputWidth: 'flex',
-            value: selectedOption.name,
-            onValueChange: newValue => {
+            selectedOption.name,
+            newValue => {
                 const selectedWeightStyle = weightStyles.find(x => x.name === newValue);
 
                 this.setFont({ fontWeight: selectedWeightStyle!.weight, fontStyle: selectedWeightStyle!.style });
             }
-        };
+        );
     }
 
     private destroyActiveComps(): void {

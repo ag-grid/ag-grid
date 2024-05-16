@@ -158,17 +158,8 @@ export class PolarAxisPanel extends Component {
         options: Array<ListOption>;
         property: string
     }): AgSelect {
-        const { labelKey: label, options, property } = config;
-        return this.createManagedBean(new AgSelect(this.options.chartMenuParamsFactory.addValueParams<AgSelectParams>(
-            property,
-            {
-                label: this.chartTranslationService.translate(label),
-                labelAlignment: 'left',
-                labelWidth: 'flex',
-                inputWidth: 'flex',
-                options,
-            }
-        )));
+        const { labelKey, options, property } = config;
+        return this.createManagedBean(new AgSelect(this.options.chartMenuParamsFactory.getDefaultSelectParams(property, labelKey, options)));
     }
 
     private translate(key: ChartTranslationKey) {
