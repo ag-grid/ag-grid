@@ -2530,23 +2530,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { fromPattern: '^/angular-data-grid/$', to: 'https://www.ag-grid.com/angular-data-grid/getting-started/' },
     { fromPattern: '^/vue-data-grid/$', to: 'https://www.ag-grid.com/vue-data-grid/getting-started/' },
 
-    {
-        from: '/javascript-data-grid/integrated-charts-api-downloading-image/',
-        to: '/javascript-data-grid/integrated-charts-chart-tool-panels/',
-    },
-    {
-        from: '/angular-data-grid/integrated-charts-api-downloading-image/',
-        to: '/angular-data-grid/integrated-charts-chart-tool-panels/',
-    },
-    {
-        from: '/react-data-grid/integrated-charts-api-downloading-image/',
-        to: '/react-data-grid/integrated-charts-chart-tool-panels/',
-    },
-    {
-        from: '/vue-data-grid/integrated-charts-api-downloading-image/',
-        to: '/vue-data-grid/integrated-charts-chart-tool-panels/',
-    },
-
     { fromPattern: '^/javascript-charts.*', to: 'https://charts.ag-grid.com/javascript/quick-start/' },
     { fromPattern: '^/angular-charts.*', to: 'https://charts.ag-grid.com/angular/quick-start/' },
     { fromPattern: '^/react-charts.*', to: 'https://charts.ag-grid.com/react/quick-start/' },
