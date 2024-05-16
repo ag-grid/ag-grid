@@ -826,7 +826,7 @@ export class FilterManager extends BeanStub {
 
     private filterChangedCallbackFactory(filter: IFilterComp<any>, column: Column<any>) {
         return (additionalEventAttributes?: any) => {
-            const source: FilterChangedEventSourceType = additionalEventAttributes?.source ?? 'api';
+            const source: FilterChangedEventSourceType = additionalEventAttributes?.source ?? 'columnFilter';
             const params = {
                 filter,
                 additionalEventAttributes,
