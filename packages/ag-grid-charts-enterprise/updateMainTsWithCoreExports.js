@@ -7,6 +7,10 @@ const chartInterfaceExclusions = ['__FORCE_MODULE_DETECTION',
     'AgChartThemePalette',
     'AgChartTheme'];
 
+function filterInternalUtils(exportName) {    
+    return exportName.startsWith('_');
+}
+
 function updateBetweenStrings(
     fileContents,
     fragmentToBeInserted) {
@@ -20,7 +24,7 @@ function updateBetweenStrings(
 
 const exportsToAdd = [];
 Object.keys(coreExports).forEach(function (exportName) {
-    if (!chartInterfaceExclusions.some(exclusion => exclusion === exportName) && !exportName.startsWith('_')) {
+    if (!chartInterfaceExclusions.some(exclusion => exclusion === exportName) && !filterInternalUtils(exportName)) {
         exportsToAdd.push(`export {${exportName}} from "@ag-grid-community/core";`);
     }
 });
