@@ -3,7 +3,7 @@ import rootESLint from '../../eslint.config.mjs';
 export default [
     ...rootESLint,
     {
-        ignores: ['dist/', '.angular/'],
+        ignores: ['.angular/'],
     },
     {
         rules: {

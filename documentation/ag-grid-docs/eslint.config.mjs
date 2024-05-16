@@ -3,7 +3,7 @@ import rootESLint from '../../eslint.config.mjs';
 export default [
     ...rootESLint,
     {
-        ignores: ['.astro/', 'dist/', '**/_examples/'],
+        ignores: ['.astro/', '**/_examples/'],
     },
     {
         rules: {
