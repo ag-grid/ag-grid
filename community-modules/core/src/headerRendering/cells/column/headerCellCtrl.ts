@@ -600,7 +600,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
                     return;
                 }
             }
-            columnModel.setColumnHeaderHeight(this.column, autoHeight);
+            columnModel.setColHeaderHeight(this.column, autoHeight);
         };
 
         let isMeasuring = false;

@@ -858,7 +858,7 @@ export class GridApi<TData = any> {
 
     /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */
     public destroyFilter(key: string | Column) {
-        const column = this.columnModel.getColFromColDef(key);
+        const column = this.columnModel.getColDefCol(key);
         if (column) {
             return this.filterManager.destroyFilter(column, 'api');
         }
@@ -872,7 +872,7 @@ export class GridApi<TData = any> {
     }
 
     public getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null {
-        const column = this.columnModel.getColFromColDef(key);
+        const column = this.columnModel.getColDefCol(key);
         if (column) {
             return column.getColDef();
         }
@@ -1106,7 +1106,7 @@ export class GridApi<TData = any> {
     public getCellValue<TValue = any>(params: GetCellValueParams<TValue>) {
         const { colKey, rowNode, useFormatter } = params;
 
-        let column = this.columnModel.getColFromColDef(colKey) ?? this.columnModel.getCol(colKey);
+        let column = this.columnModel.getColDefCol(colKey) ?? this.columnModel.getCol(colKey);
         if (missing(column)) {
             return null;
         }
@@ -1354,7 +1354,7 @@ export class GridApi<TData = any> {
         // use grid column so works with pivot mode
         let column = this.columnModel.getCol(colKey);
         if (!column) {
-            column = this.columnModel.getColFromColDef(colKey);
+            column = this.columnModel.getColDefCol(colKey);
         }
         if (!column) {
             console.error(`AG Grid: column '${colKey}' not found`);
@@ -1788,9 +1788,9 @@ export class GridApi<TData = any> {
     public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string { return this.columnNameService.getDisplayNameForColumnGroup(columnGroup, location) || ''; }
 
     /** Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object). */
-    public getColumn<TValue = any>(key: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null { return this.columnModel.getColFromColDef(key); }
+    public getColumn<TValue = any>(key: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null { return this.columnModel.getColDefCol(key); }
     /** Returns all the columns, regardless of visible or not. */
-    public getColumns(): Column[] | null { return this.columnModel.getColsFromColDefs(); }
+    public getColumns(): Column[] | null { return this.columnModel.getColDefCols(); }
     /** Applies the state of the columns from a previous state. Returns `false` if one or more columns could not be found. */
     public applyColumnState(params: ApplyColumnStateParams): boolean { return this.columnApplyStateService.applyColumnState(params, 'api'); }
     /** Gets the state of the columns. Typically used when saving column state. */
@@ -1860,7 +1860,7 @@ export class GridApi<TData = any> {
     /** Move the column to a new position in the row grouping order. */
     public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.funcColsService.moveRowGroupColumn(fromIndex, toIndex, 'api'); }
     /** Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function. */
-    public setColumnAggFunc(key: string | ColDef | Column, aggFunc: string | IAggFunc | null | undefined): void { this.columnModel.setColumnAggFunc(key, aggFunc, 'api'); }
+    public setColumnAggFunc(key: string | ColDef | Column, aggFunc: string | IAggFunc | null | undefined): void { this.funcColsService.setColumnAggFunc(key, aggFunc, 'api'); }
     /** @deprecated v31.1 setColumnWidths(key, newWidth) deprecated, please use setColumnWidths( [{key: newWidth}] ) instead. */
     public setColumnWidth(key: string | ColDef | Column, newWidth: number, finished: boolean = true, source: ColumnEventType = 'api'): void {
         this.logDeprecation('v31.1', 'setColumnWidth(col, width)', 'setColumnWidths([{key: col, newWidth: width}])');

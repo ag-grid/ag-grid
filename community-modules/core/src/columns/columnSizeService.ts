@@ -1,5 +1,6 @@
 import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../context/context";
+import { CtrlsService } from "../ctrlsService";
 import { Column } from "../entities/column";
 import { ColumnEventType } from "../events";
 import { removeFromArray, removeFromUnorderedArray } from "../utils/array";
@@ -42,7 +43,8 @@ export class ColumnSizeService extends BeanStub {
     @Autowired('columnViewportService') private readonly columnViewportService: ColumnViewportService;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
     @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-   
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+
     private flexViewportWidth: number;
 
     public setColumnWidths(
@@ -57,7 +59,7 @@ export class ColumnSizeService extends BeanStub {
         const sets: ColumnResizeSet[] = [];
 
         columnWidths.forEach(columnWidth => {
-            const col = this.columnModel.getColOrColFromDef(columnWidth.key);
+            const col = this.columnModel.getColDefCol(columnWidth.key) || this.columnModel.getCol(columnWidth.key);
 
             if (!col) { return; }
 
@@ -521,4 +523,28 @@ export class ColumnSizeService extends BeanStub {
         this.eventDispatcher.columnResized(colsToDispatchEventFor, true, source);
     }
 
+    public applyAutosizeStrategy(): void {
+        const autoSizeStrategy = this.gos.get('autoSizeStrategy');
+        if (!autoSizeStrategy) { return; }
+
+        const { type } = autoSizeStrategy;
+        // ensure things like aligned grids have linked first
+        setTimeout(() => {
+            if (type === 'fitGridWidth') {
+                const { columnLimits: propColumnLimits, defaultMinWidth, defaultMaxWidth } = autoSizeStrategy;
+                const columnLimits = propColumnLimits?.map(({ colId: key, minWidth, maxWidth }) => ({
+                    key,
+                    minWidth,
+                    maxWidth
+                }));
+                this.ctrlsService.getGridBodyCtrl().sizeColumnsToFit({
+                    defaultMinWidth,
+                    defaultMaxWidth,
+                    columnLimits
+                });
+            } else if (type === 'fitProvidedWidth') {
+                this.sizeColumnsToFit(autoSizeStrategy.width, 'sizeColumnsToFit');
+            }
+        });
+    }
 }

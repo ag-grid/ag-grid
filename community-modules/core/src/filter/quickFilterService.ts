@@ -60,8 +60,8 @@ export class QuickFilterService extends BeanStub {
     //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
     public refreshQuickFilterCols(): void {
         const pivotMode = this.columnModel.isPivotMode();
-        const groupAutoCols = this.columnModel.getGroupAutoColumns();
-        const providedCols = this.columnModel.getColsFromColDefs();
+        const groupAutoCols = this.columnModel.getAutoCols();
+        const providedCols = this.columnModel.getColDefCols();
 
         let columnsForQuickFilter = (
             pivotMode && !this.gos.get('applyQuickFilterBeforePivotOrAgg') ? this.pivotResultColsService.getPivotResultCols()?.list : providedCols

@@ -210,7 +210,7 @@ export class AlignedGridsService extends BeanStub {
         let otherColumn: Column | null = null;
 
         if (masterColumn) {
-            otherColumn = this.columnModel.getColFromColDef(masterColumn.getColId());
+            otherColumn = this.columnModel.getColDefCol(masterColumn.getColId());
         }
         // if event was with respect to a master column, that is not present in this
         // grid, then we ignore the event

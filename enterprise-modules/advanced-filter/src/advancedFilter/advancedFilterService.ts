@@ -49,7 +49,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
 
         this.expressionProxy = {
             getValue: (colId, node) => {
-                const column = this.columnModel.getColFromColDef(colId);
+                const column = this.columnModel.getColDefCol(colId);
                 return column ? this.valueService.getValue(column, node, true) : undefined;
             },
         }

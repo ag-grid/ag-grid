@@ -17,7 +17,8 @@ import {
     DragItem,
     DragSourceType,
     DragAndDropService,
-    ColumnNameService
+    ColumnNameService,
+    FuncColsService
 } from "@ag-grid-community/core";
 import { TDropZone } from "./baseDropZonePanel";
 
@@ -28,6 +29,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
 
     @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
+    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
 
     @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
 
@@ -304,7 +306,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
 
         const itemSelected = () => {
             hidePopup();
-            this.columnModel.setColumnAggFunc(this.column, value, "toolPanelDragAndDrop");
+            this.funcColsService.setColumnAggFunc(this.column, value, "toolPanelDragAndDrop");
         };
 
         const localeTextFunc = this.localeService.getLocaleTextFunc();
@@ -316,7 +318,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     }
 
     private isGroupingAndLocked(): boolean {
-        return this.isGroupingZone() && this.columnModel.isColumnGroupingLocked(this.column);
+        return this.isGroupingZone() && this.columnModel.isColGroupLocked(this.column);
     }
 
     private isAggregationZone() {

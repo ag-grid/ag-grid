@@ -736,7 +736,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
                 return colKey;
             }
             // if in pivot mode, grid columns wont include primary columns
-            return this.beans.columnModel.getCol(colKey) ?? this.beans.columnModel.getColFromColDef(colKey);
+            return this.beans.columnModel.getCol(colKey) ?? this.beans.columnModel.getColDefCol(colKey);
         }
         // When it is done via the editors, no 'cell changed' event gets fired, as it's assumed that
         // the cell knows about the change given it's in charge of the editing.
@@ -836,7 +836,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
                 if (value === oldValue) { return; }
 
                 // do a quick lookup - despite the event it's possible the column no longer exists
-                const column = this.beans.columnModel.lookupCol(colId)!;
+                const column = this.beans.columnModel.getCol(colId)!;
                 if (!column) { return; }
 
                 this.dispatchCellChangedEvent(column, value, oldValue);

@@ -145,7 +145,7 @@ export class ColumnMenuFactory extends BeanStub {
             result.push('rowUnGroup');
         } else if (allowRowGroup && column.isPrimary()) {
             if (column.isRowGroupActive()) {
-                const groupLocked = this.columnModel.isColumnGroupingLocked(column);
+                const groupLocked = this.columnModel.isColGroupLocked(column);
                 if (!groupLocked) {
                     result.push('rowUnGroup');
                 }

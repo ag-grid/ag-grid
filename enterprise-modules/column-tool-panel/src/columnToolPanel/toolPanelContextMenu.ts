@@ -88,7 +88,7 @@ export class ToolPanelContextMenu extends Component {
 
         this.menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap.set('rowGroup', {
-            allowedFunction: (col: Column) => col.isPrimary() && col.isAllowRowGroup() && !this.columnModel.isColumnGroupingLocked(col),
+            allowedFunction: (col: Column) => col.isPrimary() && col.isAllowRowGroup() && !this.columnModel.isColGroupLocked(col),
             activeFunction: (col: Column) => col.isRowGroupActive(),
             activateLabel: () => `${localeTextFunc('groupBy', 'Group by')} ${this.displayName}`,
             deactivateLabel: () => `${localeTextFunc('ungroupBy', 'Un-Group by')} ${this.displayName}`,

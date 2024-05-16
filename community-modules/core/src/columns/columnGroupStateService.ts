@@ -39,7 +39,7 @@ export class ColumnGroupStateService {
     }
 
     public resetColumnGroupState(source: ColumnEventType): void {
-        const primaryColumnTree = this.columnModel.getProvidedColTree();
+        const primaryColumnTree = this.columnModel.getColDefColTree();
         if (!primaryColumnTree) { return; }
 
         const stateItems: { groupId: string, open: boolean | undefined; }[] = [];

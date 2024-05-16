@@ -52,7 +52,6 @@ export class ColumnModel extends BeanStub {
     @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('columnViewportService') private columnViewportService: ColumnViewportService;
     @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('autoColService') private autoColService: AutoColService;
     @Autowired('valueCache') private valueCache: ValueCache;
@@ -66,11 +65,11 @@ export class ColumnModel extends BeanStub {
     @Autowired('quickFilterService') private quickFilterService: QuickFilterService;
 
     // as provided by gridProp columnsDefs
-    private columnDefs: (ColDef | ColGroupDef)[];
+    private colDefs: (ColDef | ColGroupDef)[];
 
     // columns generated from columnDefs
     // this doesn't change (including order) unless columnDefs prop changses.
-    private colsFromColDefs: ColumnCollections;
+    private colDefCols: ColumnCollections;
 
     // group auto columns
     private autoCols: ColumnCollections | null;
@@ -113,7 +112,7 @@ export class ColumnModel extends BeanStub {
             this.pivotMode = pivotMode;
         }
 
-        this.addManagedPropertyListeners(['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'], (event) => this.buildAutoGroupColumns(convertSourceType(event.source)));
+        this.addManagedPropertyListeners(['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'], (event) => this.refreshAll(convertSourceType(event.source)));
         this.addManagedPropertyListener('autoGroupColumnDef', (event) => this.onAutoGroupColumnDefChanged(convertSourceType(event.source)));
         this.addManagedPropertyListeners(['defaultColDef', 'columnTypes', 'suppressFieldDotNotation'], event => this.recreateColumnDefs(convertSourceType(event.source)));
         this.addManagedPropertyListener('pivotMode', event => this.setPivotMode(this.gos.get('pivotMode'), convertSourceType(event.source)));
@@ -129,11 +128,11 @@ export class ColumnModel extends BeanStub {
         // could overlap with the old id's, so the cache would return old values for new columns.
         this.valueCache.expire();
 
-        const oldCols = this.colsFromColDefs && this.colsFromColDefs.list;
-        const oldTree = this.colsFromColDefs && this.colsFromColDefs.tree;
-        const newTree = this.columnFactory.createColumnTree(this.columnDefs, true, oldTree, source);
+        const oldCols = this.colDefCols && this.colDefCols.list;
+        const oldTree = this.colDefCols && this.colDefCols.tree;
+        const newTree = this.columnFactory.createColumnTree(this.colDefs, true, oldTree, source);
 
-        destroyColumnTree(this.getContext(), this.colsFromColDefs?.tree, newTree.columnTree);
+        destroyColumnTree(this.getContext(), this.colDefCols?.tree, newTree.columnTree);
 
         const tree = newTree.columnTree;
         const treeDepth = newTree.treeDept;
@@ -142,17 +141,17 @@ export class ColumnModel extends BeanStub {
 
         list.forEach(col => map[col.getId()] = col);
 
-        this.colsFromColDefs = { tree, treeDepth, list, map };
+        this.colDefCols = { tree, treeDepth, list, map };
 
         this.funcColsService.extractCols(source, oldCols);
 
         this.ready = true;
 
-        this.updateCols();
+        this.refreshCols();
 
         const maintainColOrder = colsPreviouslyExisted && !this.showingPivotResult && !this.gos.get('maintainColumnOrder');
         if (maintainColOrder) {
-            this.orderColsLikeColsFromColDefs();
+            this.orderColsLikeColDefCols();
         }
 
         this.visibleColsService.refresh(source);
@@ -172,7 +171,7 @@ export class ColumnModel extends BeanStub {
 
         this.eventDispatcher.newColumnsLoaded(source);
         if (source === 'gridInitializing') {
-            this.applyAutosizeStrategy();
+            this.columnSizeService.applyAutosizeStrategy();
         }
     }
 
@@ -181,8 +180,8 @@ export class ColumnModel extends BeanStub {
     // setPivotMode, applyColumnState, 
     // functionColsService.setPrimaryColList, functionColsService.updatePrimaryColList, 
     // pivotResultColsService.setPivotResultCols
-    public updateCols(): void {
-        if (!this.colsFromColDefs) { return; }
+    public refreshCols(): void {
+        if (!this.colDefCols) { return; }
 
         const prevColTree = this.cols?.tree;
 
@@ -239,7 +238,7 @@ export class ColumnModel extends BeanStub {
             }
 
         } else {
-            const {map, list, tree, treeDepth} = this.colsFromColDefs;
+            const {map, list, tree, treeDepth} = this.colDefCols;
             this.cols = {
                 list: list.slice(),
                 map: {...map},
@@ -271,227 +270,76 @@ export class ColumnModel extends BeanStub {
         return res;
     }
 
-    public isShowingPivotResult(): boolean {
-        return this.showingPivotResult;
+    private addAutoCols(): void {
+        if (this.autoCols==null) { return; }
+        this.cols.list = this.autoCols.list.concat(this.cols.list);
+        this.cols.tree = this.autoCols.tree.concat(this.cols.tree);
+        updateColsMap(this.cols);
     }
 
-    public pushResizeOperation(func: ()=> void): void {
-        this.resizeOperationQueue.push(func);
-    }
+    private createAutoCols(): void {
+        const groupFullWidthRow = this.gos.isGroupUseEntireRow(this.pivotMode);
+        // we need to allow suppressing auto-column separately for group and pivot as the normal situation
+        // is CSRM and user provides group column themselves for normal view, but when they go into pivot the
+        // columns are generated by the grid so no opportunity for user to provide group column. so need a way
+        // to suppress auto-col for grouping only, and not pivot.
+        // however if using Viewport RM or SSRM and user is providing the columns, the user may wish full control
+        // of the group column in this instance.
+        const suppressAutoColumn = this.pivotMode ?
+            this.gos.get('pivotSuppressAutoColumn') : this.isSuppressAutoCol();
 
-    // on events 'groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'
-    private buildAutoGroupColumns(source: ColumnEventType) {
-        // Possible for update to be called before columns are present in which case there is nothing to do here.
-        if (!this.columnDefs) { return; }
+        const rowGroupCols = this.funcColsService.getRowGroupColumns();
 
-        this.updateCols();
-        this.visibleColsService.refresh(source);
-    }
+        const groupingActive = rowGroupCols.length > 0 || this.gos.get('treeData');
 
-    private onAutoGroupColumnDefChanged(source: ColumnEventType) {
-        if (this.autoCols) {
-            this.autoColService.updateAutoCols(this.autoCols.list, source);
-        }
-    }
+        const noAutoCols = !groupingActive || suppressAutoColumn || groupFullWidthRow;
 
-    // called when dataTypes change
-    public recreateColumnDefs(source: ColumnEventType): void {
-        if (!this.cols) { return; }
-
-        // if we aren't going to force, update the auto cols in place
-        if (this.autoCols) {
-            this.autoColService.updateAutoCols(this.autoCols.list, source);
-        }
-        this.createColsFromColDefs(true, source);
-    }
-
-    public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType) {
-        const colsPreviouslyExisted = !!this.columnDefs;
-        this.columnDefs = columnDefs;
-        this.createColsFromColDefs(colsPreviouslyExisted, source);
-    }
-
-    @PreDestroy
-    private destroyColumns(): void {
-        destroyColumnTree(this.getContext(), this.colsFromColDefs?.tree);
-        destroyColumnTree(this.getContext(), this.autoCols?.tree);
-    }
-
-    // called by clientSideRowModel.refreshModel
-    public isChangeEventsDispatching(): boolean {
-        return this.changeEventsDispatching;
-    }
-
-    private orderColsLikeColsFromColDefs(): void {
-        if (!this.colsFromColDefs || !this.cols) { return; }
-
-        const colsOrdered = this.colsFromColDefs.list.filter(col => this.cols.list.indexOf(col) >= 0);
-        const otherCols = this.cols.list.filter(col => colsOrdered.indexOf(col) < 0);
-
-        this.cols.list = [...otherCols, ...colsOrdered];
-        this.cols.list = this.columnMoveService.placeLockedColumns(this.cols.list);
-    }
-
-    public orderColsLike(colIds: string[]): void {
-        if (this.cols==null) { return; }
-
-        let newOrder: Column[] = [];
-        const processedColIds: { [id: string]: boolean } = {};
-
-        colIds.forEach(colId => {
-            if (processedColIds[colId]) { return; }
-            const col = this.cols.map[colId];
-            if (col) {
-                newOrder.push(col);
-                processedColIds[colId] = true;
+        const destroyPrevious = () => {
+            if (this.autoCols) {
+                destroyColumnTree(this.getContext(), this.autoCols.tree);
+                this.autoCols = null;
             }
-        });
+        };
 
-        // add in all other columns
-        let autoGroupInsertIndex = 0;
-        this.cols.list.forEach(col => {
-            const colId = col.getColId();
-            const alreadyProcessed = processedColIds[colId] != null;
-            if (alreadyProcessed) { return; }
-
-            const isAutoGroupCol = colId.startsWith(GROUP_AUTO_COLUMN_ID);
-            if (isAutoGroupCol) {
-                // auto group columns, if missing from state list, are added to the start.
-                // it's common to have autoGroup missing, as grouping could be on by default
-                // on a column, but the user could of since removed the grouping via the UI.
-                // if we don't inc the insert index, autoGroups will be inserted in reverse order
-                insertIntoArray(newOrder, col, autoGroupInsertIndex++);
-            } else {
-                // normal columns, if missing from state list, are added at the end
-                newOrder.push(col);
-            }
-        });
-
-        // this is already done in updateCols, however we changed the order above (to match the order of the state
-        // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
-        // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
-        // is less sexy for the code here, but it keeps consistency.
-        newOrder = this.columnMoveService.placeLockedColumns(newOrder);
-
-        if (!this.columnMoveService.doesMovePassMarryChildren(newOrder)) {
-            console.warn('AG Grid: Applying column order broke a group where columns should be married together. Applying new order has been discarded.');
+        // function 
+        if (noAutoCols) {
+            destroyPrevious();
             return;
         }
 
-        this.cols.list = newOrder;
-    }
+        const list = this.autoColService.createAutoCols(rowGroupCols);
+        const autoColsSame = areColIdsEqual(list, this.autoCols?.list || null);
 
-    public isPivotMode(): boolean {
-        return this.pivotMode;
-    }
+        // the new tree dept will equal the current tree dept of cols
+        const newTreeDepth = this.cols.treeDepth;
+        const oldTreeDepth = this.autoCols ? this.autoCols.treeDepth : -1;
+        const treeDeptSame = oldTreeDepth == newTreeDepth;
 
-    private isPivotSettingAllowed(pivot: boolean): boolean {
-        if (pivot && this.gos.get('treeData')) {
-            warnOnce("Pivot mode not available with treeData.");
-            return false;
+        if (autoColsSame && treeDeptSame) { return; }
+
+        destroyPrevious();
+        const [tree, treeDepth] = this.columnFactory.createForAutoGroups(list, this.cols?.tree);
+        this.autoCols = {
+            list, tree, treeDepth,
+            map: {}, 
+        };
+
+        const putAutocolsFirstInList = (cols: Column[] | null): (Column[] | null) => {
+            if (!cols) { return null; }
+            // we use colId, and not instance, to remove old autoGroupCols
+            const colsFiltered = cols.filter(col => !isColumnGroupAutoCol(col));
+            return [...list, ...colsFiltered];
         }
 
-        return true;
+        this.lastOrder = putAutocolsFirstInList(this.lastOrder);
+        this.lastPivotOrder = putAutocolsFirstInList(this.lastPivotOrder);
     }
 
-    private setPivotMode(pivotMode: boolean, source: ColumnEventType): void {
-        if (pivotMode === this.pivotMode || !this.isPivotSettingAllowed(this.pivotMode)) { return; }
-
-        this.pivotMode = pivotMode;
-
-        if (!this.cols) { return; }
-
-        // we need to update grid columns to cover the scenario where user has groupDisplayType = 'custom', as
-        // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
-        // so need to updateCols() to check it autoGroupCol needs to be added / removed
-        this.updateCols();
+    // on events 'groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'
+    private refreshAll(source: ColumnEventType) {
+        if (!this.isReady()) { return; }
+        this.refreshCols();
         this.visibleColsService.refresh(source);
-
-        this.eventDispatcher.pivotModeChanged();
-    }
-
-    public getColTree(): IProvidedColumn[] {
-        return this.cols.tree;
-    }
-
-    // + columnSelectPanel
-    public getProvidedColTree(): IProvidedColumn[] {
-        return this.colsFromColDefs.tree;
-    }
-
-    // + gridPanel -> for resizing the body and setting top margin
-    public getHeaderRowCount(): number {
-        return this.cols ? (this.cols.treeDepth + 1) : -1;
-    }
-
-    public isColSpanActive(): boolean {
-        return this.colSpanActive;
-    }
-    
-    public getColOrColFromDef(key: ColKey): Column | null {
-        const res = this.getColFromColDef(key) || this.getCol(key);
-        return res;
-    }
-
-    public setColumnAggFunc(key: Maybe<ColKey>, aggFunc: string | IAggFunc | null | undefined, source: ColumnEventType): void {
-        if (!key) { return; }
-
-        const column = this.getColFromColDef(key);
-        if (!column) { return; }
-
-        column.setAggFunc(aggFunc);
-
-        this.eventDispatcher.columnChanged(Events.EVENT_COLUMN_VALUE_CHANGED, [column], source);
-    }
-
-    // returns the provided cols sorted in same order as they appear in this.cols, eg if this.cols
-    // contains [a,b,c,d,e] and col passed is [e,a] then the passed cols are sorted into [a,e]
-    public sortColsLikeCols(cols: Column[]): void {
-        if (!cols || cols.length <= 1) { return; }
-
-        const notAllColsPresent = cols.filter(c => this.cols.list.indexOf(c) < 0).length > 0;
-        if (notAllColsPresent) { return; }
-
-        cols.sort((a: Column, b: Column) => {
-            const indexA = this.cols.list.indexOf(a);
-            const indexB = this.cols.list.indexOf(b);
-            return indexA - indexB;
-        });
-    }
-
-    public getColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
-        if (!this.colsFromColDefs) { return; }
-
-        const cols = this.colsFromColDefs.list.slice();
-
-        if (this.showingPivotResult) {
-            cols.sort((a: Column, b: Column) => this.lastOrder!.indexOf(a) - this.lastOrder!.indexOf(b));
-        } else if (this.lastOrder) {
-            cols.sort((a: Column, b: Column) => this.cols.list.indexOf(a) - this.cols.list.indexOf(b));
-        }
-
-        const rowGroupColumns = this.funcColsService.getRowGroupColumns();
-        const pivotColumns = this.funcColsService.getPivotColumns();
-
-        return this.columnDefFactory.buildColumnDefs(cols, rowGroupColumns, pivotColumns);
-    }
-
-    // + clientSideRowModel
-    public isPivotActive(): boolean {
-        const pivotColumns = this.funcColsService.getPivotColumns();
-        return this.pivotMode && !missingOrEmpty(pivotColumns);
-    }
-
-    // used by:
-    // + clientSideRowController -> sorting, building quick filter text
-    // + headerRenderer -> sorting (clearing icon)
-    public getColsFromColDefs(): Column[] | null {
-        return this.colsFromColDefs?.list ? this.colsFromColDefs.list : null;
-    }
-
-    // + moveColumnController
-    public getCols(): Column[] {
-        return this.cols?.list ?? [];
     }
 
     public setColumnsVisible(keys: (string | Column)[], visible = false, source: ColumnEventType): void {
@@ -546,78 +394,6 @@ export class ColumnModel extends BeanStub {
         this.columnAnimationService.finish();
     }
 
-    public getProvidedAndPivotResultAndAutoColumns(): Column[] {
-        const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
-        const pivotResultColsList = pivotResultCols?.list;
-        return ([] as Column[]).concat(...[
-            this.colsFromColDefs?.list || [],
-            this.autoCols?.list || [],
-            pivotResultColsList || [],
-        ]);
-    }
-
-    public getColsForKeys(keys: ColKey[]): Column[] {
-        if (!keys) { return []; }
-        const res = keys.map( key => this.getCol(key) ).filter( col => col != null);
-        return res as Column[];
-    }
-
-    // used by growGroupPanel
-    public getColumnWithValidation(key: Maybe<ColKey>): Column | null {
-        if (key == null) { return null; }
-
-        const column = this.getCol(key);
-
-        if (!column) {
-            console.warn('AG Grid: could not find column ' + key);
-        }
-
-        return column;
-    }
-
-    public getColFromColDef(key: ColKey): Column | null {
-        if (!this.colsFromColDefs?.list) { return null; }
-
-        return this.getColFromCollection(key, this.colsFromColDefs);
-    }
-
-    public getCol(key: ColKey): Column | null {
-        return this.getColFromCollection(key, this.cols);
-    }
-
-    public lookupCol(key: string) {
-        return this.cols?.map[key];
-    }
-
-    public getColFromCollection(key: ColKey, cols: ColumnCollections): Column | null {
-        if (cols==null) { return null; }
-
-        const {map, list} = cols;
-
-        // most of the time this method gets called the key is a string, so we put this shortcut in
-        // for performance reasons, to see if we can match for ID (it doesn't do auto columns, that's done below)
-        if (typeof key == 'string' && map[key]) {
-            return map[key];
-        }
-
-        for (let i = 0; i < list.length; i++) {
-            if (columnsMatch(list[i], key)) {
-                return list[i];
-            }
-        }
-
-        return this.getAutoColumn(key);
-    }
-
-    public getAutoColumn(key: ColKey): Column | null {
-        if (this.autoCols==null) return null;
-        return this.autoCols.list.find(groupCol => columnsMatch(groupCol, key)) || null;
-    }
-
-    public isReady(): boolean {
-        return this.ready;
-    }
-
     // called by headerRenderer - when a header is opened or closed
     public setColumnGroupOpened(key: ProvidedColumnGroup | string | null, newValue: boolean, source: ColumnEventType): void {
         let keyAsString: string;
@@ -651,27 +427,28 @@ export class ColumnModel extends BeanStub {
         return res;
     }
 
-    private setColSpanActive(): void {
-        this.colSpanActive = this.cols.list.some(
-            col => col.getColDef().colSpan!=null
-        );
-    }
-
-    public moveInCols(movedColumns: Column[], toIndex: number, source: ColumnEventType): void {
-        moveInArray(this.cols?.list, movedColumns, toIndex);
-        this.visibleColsService.refresh(source);
-    }
-
-    private placeLockedCols(): void {
-        this.cols.list = this.columnMoveService.placeLockedColumns(this.cols.list);        
-    }
-
-    private saveColOrder(): void {
-        if (this.showingPivotResult) {
-            this.lastPivotOrder = this.cols?.list;
-        } else {
-            this.lastOrder = this.cols?.list;
+    public isColGroupLocked(column: Column): boolean {
+        const groupLockGroupColumns = this.gos.get('groupLockGroupColumns');
+        if (!column.isRowGroupActive() || groupLockGroupColumns === 0) {
+            return false;
         }
+
+        if (groupLockGroupColumns === -1) {
+            return true;
+        }
+
+        const rowGroupCols = this.funcColsService.getRowGroupColumns();
+        const colIndex = rowGroupCols.findIndex(groupCol => groupCol.getColId() === column.getColId());
+        return groupLockGroupColumns > colIndex;
+    }
+
+    public isSuppressAutoCol() {
+        const groupDisplayType = this.gos.get('groupDisplayType');
+        const isCustomRowGroups = groupDisplayType === 'custom';
+        if (isCustomRowGroups) { return true; }
+    
+        const treeDataDisplayType = this.gos.get('treeDataDisplayType');
+        return treeDataDisplayType === 'custom';
     }
 
     private calculateColsForGroupDisplay(): void {
@@ -696,14 +473,6 @@ export class ColumnModel extends BeanStub {
         };
 
         this.cols?.list.forEach(checkFunc);
-    }
-
-    public getGroupDisplayColumns(): Column[] {
-        return this.groupDisplayColumns;
-    }
-
-    public getGroupDisplayColumnForGroup(rowGroupColumnId: string): Column | undefined {
-        return this.groupDisplayColumnsMap[rowGroupColumnId];
     }
 
     private setAutoHeightActive(): void {
@@ -786,16 +555,88 @@ export class ColumnModel extends BeanStub {
         this.cols.list = newCols;
     }
 
-    // used by Column Tool Panel
-    public isProvidedColGroupsPresent(): boolean {
-        return this.colsFromColDefs?.treeDepth > 0;
+    public resetColDefIntoCol(column: Column, source: ColumnEventType): boolean {
+        const userColDef = column.getUserProvidedColDef();
+        if (!userColDef) { return false; }
+        const newColDef = this.columnFactory.addColumnDefaultAndTypes(userColDef, column.getColId());
+        column.setColDef(newColDef, userColDef, source);
+        return true;
     }
 
-    private addAutoCols(): void {
-        if (this.autoCols==null) { return; }
-        this.cols.list = this.autoCols.list.concat(this.cols.list);
-        this.cols.tree = this.autoCols.tree.concat(this.cols.tree);
-        updateColsMap(this.cols);
+    public queueResizeOperations(): void {
+        this.shouldQueueResizeOperations = true;
+    }
+
+    public isShouldQueueResizeOperations(): boolean {
+        return this.shouldQueueResizeOperations;
+    }
+
+    public processResizeOperations(): void {
+        this.shouldQueueResizeOperations = false;
+        this.resizeOperationQueue.forEach(resizeOperation => resizeOperation());
+        this.resizeOperationQueue = [];
+    }
+
+    public pushResizeOperation(func: ()=> void): void {
+        this.resizeOperationQueue.push(func);
+    }
+
+    public moveInCols(movedColumns: Column[], toIndex: number, source: ColumnEventType): void {
+        moveInArray(this.cols?.list, movedColumns, toIndex);
+        this.visibleColsService.refresh(source);
+    }
+
+    private placeLockedCols(): void {
+        this.cols.list = this.columnMoveService.placeLockedColumns(this.cols.list);        
+    }
+
+    private saveColOrder(): void {
+        if (this.showingPivotResult) {
+            this.lastPivotOrder = this.cols?.list;
+        } else {
+            this.lastOrder = this.cols?.list;
+        }
+    }
+
+    public getColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
+        if (!this.colDefCols) { return; }
+
+        const cols = this.colDefCols.list.slice();
+
+        if (this.showingPivotResult) {
+            cols.sort((a: Column, b: Column) => this.lastOrder!.indexOf(a) - this.lastOrder!.indexOf(b));
+        } else if (this.lastOrder) {
+            cols.sort((a: Column, b: Column) => this.cols.list.indexOf(a) - this.cols.list.indexOf(b));
+        }
+
+        const rowGroupColumns = this.funcColsService.getRowGroupColumns();
+        const pivotColumns = this.funcColsService.getPivotColumns();
+
+        return this.columnDefFactory.buildColumnDefs(cols, rowGroupColumns, pivotColumns);
+    }
+
+    public isShowingPivotResult(): boolean {
+        return this.showingPivotResult;
+    }
+
+    // called by clientSideRowModel.refreshModel
+    public isChangeEventsDispatching(): boolean {
+        return this.changeEventsDispatching;
+    }
+
+    public isColSpanActive(): boolean {
+        return this.colSpanActive;
+    }
+
+    // used by Column Tool Panel
+    public isProvidedColGroupsPresent(): boolean {
+        return this.colDefCols?.treeDepth > 0;
+    }
+
+    private setColSpanActive(): void {
+        this.colSpanActive = this.cols.list.some(
+            col => col.getColDef().colSpan!=null
+        );
     }
 
     public isAutoRowHeightActive(): boolean {
@@ -805,83 +646,233 @@ export class ColumnModel extends BeanStub {
     public wasAutoRowHeightEverActive(): boolean {
         return this.autoHeightActiveAtLeastOnce;
     }
-
-    public getGroupAutoColumns(): Column[] | null {
-        return this.autoCols?.list || null;
+        
+    // + gridPanel -> for resizing the body and setting top margin
+    public getHeaderRowCount(): number {
+        return this.cols ? (this.cols.treeDepth + 1) : -1;
     }
 
-    private createAutoCols(): void {
-        const groupFullWidthRow = this.gos.isGroupUseEntireRow(this.pivotMode);
-        // we need to allow suppressing auto-column separately for group and pivot as the normal situation
-        // is CSRM and user provides group column themselves for normal view, but when they go into pivot the
-        // columns are generated by the grid so no opportunity for user to provide group column. so need a way
-        // to suppress auto-col for grouping only, and not pivot.
-        // however if using Viewport RM or SSRM and user is providing the columns, the user may wish full control
-        // of the group column in this instance.
-        const suppressAutoColumn = this.pivotMode ?
-            this.gos.get('pivotSuppressAutoColumn') : this.isGroupSuppressAutoColumn();
+    public isReady(): boolean {
+        return this.ready;
+    }
 
-        const rowGroupCols = this.funcColsService.getRowGroupColumns();
+    public isPivotMode(): boolean {
+        return this.pivotMode;
+    }    
 
-        const groupingActive = rowGroupCols.length > 0 || this.gos.get('treeData');
+    private setPivotMode(pivotMode: boolean, source: ColumnEventType): void {
+        if (pivotMode === this.pivotMode || !this.isPivotSettingAllowed(this.pivotMode)) { return; }
 
-        const noAutoCols = !groupingActive || suppressAutoColumn || groupFullWidthRow;
+        this.pivotMode = pivotMode;
 
-        const destroyPrevious = () => {
-            if (this.autoCols) {
-                destroyColumnTree(this.getContext(), this.autoCols.tree);
-                this.autoCols = null;
+        if (!this.cols) { return; }
+
+        // we need to update grid columns to cover the scenario where user has groupDisplayType = 'custom', as
+        // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
+        // so need to updateCols() to check it autoGroupCol needs to be added / removed
+        this.refreshCols();
+        this.visibleColsService.refresh(source);
+
+        this.eventDispatcher.pivotModeChanged();
+    }
+
+    private isPivotSettingAllowed(pivot: boolean): boolean {
+        if (pivot && this.gos.get('treeData')) {
+            warnOnce("Pivot mode not available with treeData.");
+            return false;
+        }
+
+        return true;
+    }
+
+    // + clientSideRowModel
+    public isPivotActive(): boolean {
+        const pivotColumns = this.funcColsService.getPivotColumns();
+        return this.pivotMode && !missingOrEmpty(pivotColumns);
+    }
+
+    // called when dataTypes change
+    public recreateColumnDefs(source: ColumnEventType): void {
+        if (!this.cols) { return; }
+
+        // if we aren't going to force, update the auto cols in place
+        if (this.autoCols) {
+            this.autoColService.updateAutoCols(this.autoCols.list, source);
+        }
+        this.createColsFromColDefs(true, source);
+    }
+
+    public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType) {
+        const colsPreviouslyExisted = !!this.colDefs;
+        this.colDefs = columnDefs;
+        this.createColsFromColDefs(colsPreviouslyExisted, source);
+    }
+
+    @PreDestroy
+    private destroyColumns(): void {
+        destroyColumnTree(this.getContext(), this.colDefCols?.tree);
+        destroyColumnTree(this.getContext(), this.autoCols?.tree);
+    }
+
+    private orderColsLikeColDefCols(): void {
+        if (!this.colDefCols || !this.cols) { return; }
+
+        const colsOrdered = this.colDefCols.list.filter(col => this.cols.list.indexOf(col) >= 0);
+        const otherCols = this.cols.list.filter(col => colsOrdered.indexOf(col) < 0);
+
+        this.cols.list = [...otherCols, ...colsOrdered];
+        this.cols.list = this.columnMoveService.placeLockedColumns(this.cols.list);
+    }
+
+    public sortColsLikeKeys(colIds: string[]): void {
+        if (this.cols==null) { return; }
+
+        let newOrder: Column[] = [];
+        const processedColIds: { [id: string]: boolean } = {};
+
+        colIds.forEach(colId => {
+            if (processedColIds[colId]) { return; }
+            const col = this.cols.map[colId];
+            if (col) {
+                newOrder.push(col);
+                processedColIds[colId] = true;
             }
-        };
+        });
 
-        // function 
-        if (noAutoCols) {
-            destroyPrevious();
+        // add in all other columns
+        let autoGroupInsertIndex = 0;
+        this.cols.list.forEach(col => {
+            const colId = col.getColId();
+            const alreadyProcessed = processedColIds[colId] != null;
+            if (alreadyProcessed) { return; }
+
+            const isAutoGroupCol = colId.startsWith(GROUP_AUTO_COLUMN_ID);
+            if (isAutoGroupCol) {
+                // auto group columns, if missing from state list, are added to the start.
+                // it's common to have autoGroup missing, as grouping could be on by default
+                // on a column, but the user could of since removed the grouping via the UI.
+                // if we don't inc the insert index, autoGroups will be inserted in reverse order
+                insertIntoArray(newOrder, col, autoGroupInsertIndex++);
+            } else {
+                // normal columns, if missing from state list, are added at the end
+                newOrder.push(col);
+            }
+        });
+
+        // this is already done in updateCols, however we changed the order above (to match the order of the state
+        // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
+        // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
+        // is less sexy for the code here, but it keeps consistency.
+        newOrder = this.columnMoveService.placeLockedColumns(newOrder);
+
+        if (!this.columnMoveService.doesMovePassMarryChildren(newOrder)) {
+            console.warn('AG Grid: Applying column order broke a group where columns should be married together. Applying new order has been discarded.');
             return;
         }
 
-        const list = this.autoColService.createAutoCols(rowGroupCols);
-        const autoColsSame = this.autoColsEqual(list, this.autoCols?.list || null);
+        this.cols.list = newOrder;
+    }
 
-        // the new tree dept will equal the current tree dept of cols
-        const newTreeDepth = this.cols.treeDepth;
-        const oldTreeDepth = this.autoCols ? this.autoCols.treeDepth : -1;
-        const treeDeptSame = oldTreeDepth == newTreeDepth;
+    // returns the provided cols sorted in same order as they appear in this.cols, eg if this.cols
+    // contains [a,b,c,d,e] and col passed is [e,a] then the passed cols are sorted into [a,e]
+    public sortColsLikeCols(cols: Column[]): void {
+        if (!cols || cols.length <= 1) { return; }
 
-        if (autoColsSame && treeDeptSame) { return; }
+        const notAllColsPresent = cols.filter(c => this.cols.list.indexOf(c) < 0).length > 0;
+        if (notAllColsPresent) { return; }
 
-        destroyPrevious();
-        const [tree, treeDepth] = this.columnFactory.createForAutoGroups(list, this.cols?.tree);
-        this.autoCols = {
-            list, tree, treeDepth,
-            map: {}, 
-        };
+        cols.sort((a: Column, b: Column) => {
+            const indexA = this.cols.list.indexOf(a);
+            const indexB = this.cols.list.indexOf(b);
+            return indexA - indexB;
+        });
+    }
 
-        const putAutocolsFirstInList = (cols: Column[] | null): (Column[] | null) => {
-            if (!cols) { return null; }
-            // we use colId, and not instance, to remove old autoGroupCols
-            const colsFiltered = cols.filter(col => !isColumnGroupAutoCol(col));
-            return [...list, ...colsFiltered];
+    public getColTree(): IProvidedColumn[] {
+        return this.cols.tree;
+    }
+
+    // + columnSelectPanel
+    public getColDefColTree(): IProvidedColumn[] {
+        return this.colDefCols.tree;
+    }
+
+    // + clientSideRowController -> sorting, building quick filter text
+    // + headerRenderer -> sorting (clearing icon)
+    public getColDefCols(): Column[] | null {
+        return this.colDefCols?.list ? this.colDefCols.list : null;
+    }
+
+    // + moveColumnController
+    public getCols(): Column[] {
+        return this.cols?.list ?? [];
+    }
+
+    // returns colDefCols, pivotResultCols and autoCols
+    public getAllCols(): Column[] {
+        const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
+        const pivotResultColsList = pivotResultCols?.list;
+        return ([] as Column[]).concat(...[
+            this.colDefCols?.list || [],
+            this.autoCols?.list || [],
+            pivotResultColsList || [],
+        ]);
+    }
+
+    public getColsForKeys(keys: ColKey[]): Column[] {
+        if (!keys) { return []; }
+        const res = keys.map( key => this.getCol(key) ).filter( col => col!=null );
+        return res as Column[];
+    }
+
+    public getColDefCol(key: ColKey): Column | null {
+        if (!this.colDefCols?.list) { return null; }
+        return this.getColFromCollection(key, this.colDefCols);
+    }
+
+    public getCol(key: Maybe<ColKey>): Column | null {
+        if (key == null) { return null; }
+        return this.getColFromCollection(key, this.cols);
+    }
+    
+    public getColFromCollection(key: ColKey, cols: ColumnCollections): Column | null {
+        if (cols==null) { return null; }
+
+        const {map, list} = cols;
+
+        // most of the time this method gets called the key is a string, so we put this shortcut in
+        // for performance reasons, to see if we can match for ID (it doesn't do auto columns, that's done below)
+        if (typeof key == 'string' && map[key]) {
+            return map[key];
         }
 
-        this.lastOrder = putAutocolsFirstInList(this.lastOrder);
-        this.lastPivotOrder = putAutocolsFirstInList(this.lastPivotOrder);
+        for (let i = 0; i < list.length; i++) {
+            if (columnsMatch(list[i], key)) {
+                return list[i];
+            }
+        }
+
+        return this.getAutoCol(key);
     }
 
-    public isGroupSuppressAutoColumn() {
-        const groupDisplayType = this.gos.get('groupDisplayType');
-        const isCustomRowGroups = groupDisplayType === 'custom';
-        if (isCustomRowGroups) { return true; }
-    
-        const treeDataDisplayType = this.gos.get('treeDataDisplayType');
-        return treeDataDisplayType === 'custom';
+    public getAutoCol(key: ColKey): Column | null {
+        if (this.autoCols==null) return null;
+        return this.autoCols.list.find(groupCol => columnsMatch(groupCol, key)) || null;
     }
 
-    private autoColsEqual(colsA: Column[] | null, colsB: Column[] | null): boolean {
-        return areEqual(colsA, colsB, (a, b) => a.getColId() === b.getColId());
+    public getAutoCols(): Column[] | null {
+        return this.autoCols?.list || null;
     }
 
-    public setColumnHeaderHeight(col: Column, height: number): void {
+    public getGroupDisplayColumns(): Column[] {
+        return this.groupDisplayColumns;
+    }
+
+    public getGroupDisplayColumnForGroup(rowGroupColumnId: string): Column | undefined {
+        return this.groupDisplayColumnsMap[rowGroupColumnId];
+    }
+
+    public setColHeaderHeight(col: Column, height: number): void {
         const changed = col.setAutoHeaderHeight(height);
 
         if (changed) {
@@ -926,68 +917,6 @@ export class ColumnModel extends BeanStub {
         return this.gos.get('pivotGroupHeaderHeight') ?? this.getGroupHeaderHeight();
     }
 
-    public queueResizeOperations(): void {
-        this.shouldQueueResizeOperations = true;
-    }
-
-    public isShouldQueueResizeOperations(): boolean {
-        return this.shouldQueueResizeOperations;
-    }
-
-    public processResizeOperations(): void {
-        this.shouldQueueResizeOperations = false;
-        this.resizeOperationQueue.forEach(resizeOperation => resizeOperation());
-        this.resizeOperationQueue = [];
-    }
-
-    public resetColumnDefIntoColumn(column: Column, source: ColumnEventType): boolean {
-        const userColDef = column.getUserProvidedColDef();
-        if (!userColDef) { return false; }
-        const newColDef = this.columnFactory.addColumnDefaultAndTypes(userColDef, column.getColId());
-        column.setColDef(newColDef, userColDef, source);
-        return true;
-    }
-
-    public isColumnGroupingLocked(column: Column): boolean {
-        const groupLockGroupColumns = this.gos.get('groupLockGroupColumns');
-        if (!column.isRowGroupActive() || groupLockGroupColumns === 0) {
-            return false;
-        }
-
-        if (groupLockGroupColumns === -1) {
-            return true;
-        }
-
-        const rowGroupCols = this.funcColsService.getRowGroupColumns();
-        const colIndex = rowGroupCols.findIndex(groupCol => groupCol.getColId() === column.getColId());
-        return groupLockGroupColumns > colIndex;
-    }
-
-    private applyAutosizeStrategy(): void {
-        const autoSizeStrategy = this.gos.get('autoSizeStrategy');
-        if (!autoSizeStrategy) { return; }
-
-        const { type } = autoSizeStrategy;
-        // ensure things like aligned grids have linked first
-        setTimeout(() => {
-            if (type === 'fitGridWidth') {
-                const { columnLimits: propColumnLimits, defaultMinWidth, defaultMaxWidth } = autoSizeStrategy;
-                const columnLimits = propColumnLimits?.map(({ colId: key, minWidth, maxWidth }) => ({
-                    key,
-                    minWidth,
-                    maxWidth
-                }));
-                this.ctrlsService.getGridBodyCtrl().sizeColumnsToFit({
-                    defaultMinWidth,
-                    defaultMaxWidth,
-                    columnLimits
-                });
-            } else if (type === 'fitProvidedWidth') {
-                this.columnSizeService.sizeColumnsToFit(autoSizeStrategy.width, 'sizeColumnsToFit');
-            }
-        });
-    }
-
     private onFirstDataRendered(): void {
         const autoSizeStrategy = this.gos.get('autoSizeStrategy');
         if (autoSizeStrategy?.type !== 'fitCellContents') { return; }
@@ -1005,6 +934,12 @@ export class ColumnModel extends BeanStub {
                 this.columnAutosizeService.autoSizeAllColumns('autosizeColumns', skipHeader);
             }
         });
+    }
+
+    private onAutoGroupColumnDefChanged(source: ColumnEventType) {
+        if (this.autoCols) {
+            this.autoColService.updateAutoCols(this.autoCols.list, source);
+        }
     }
 }
 
@@ -1024,4 +959,8 @@ function columnsMatch(column: Column, key: ColKey): boolean {
     const idMatches = column.getColId() == key;
 
     return columnMatches || colDefMatches || idMatches;
+}
+
+function areColIdsEqual(colsA: Column[] | null, colsB: Column[] | null): boolean {
+    return areEqual(colsA, colsB, (a, b) => a.getColId() === b.getColId());
 }

@@ -85,7 +85,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
 
     public getOperandDisplayValue(model: ColumnAdvancedFilterModel, skipFormatting?: boolean): string {
         const { colId, filter } = model as any;
-        const column = this.columnModel.getColFromColDef(colId);
+        const column = this.columnModel.getColDefCol(colId);
         let operand = '';
         if (filter != null) {
             let operand1: string | null | undefined;
@@ -152,7 +152,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
         if (this.columnAutocompleteEntries) {
             return this.columnAutocompleteEntries;
         }
-        const columns = this.columnModel.getColsFromColDefs() ?? [];
+        const columns = this.columnModel.getColDefCols() ?? [];
         const entries: AutocompleteEntry[] = [];
         const includeHiddenColumns = this.gos.get('includeHiddenColumnsInAdvancedFilter');
         columns.forEach(column => {
@@ -222,7 +222,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
         let params = this.expressionEvaluatorParams[colId];
         if (params) { return params; }
 
-        const column = this.columnModel.getColFromColDef(colId);
+        const column = this.columnModel.getColDefCol(colId);
         if (!column) { return { valueConverter: (v: any) => v }; }
 
         const baseCellDataType = this.dataTypeService.getBaseDataType(column);
@@ -268,7 +268,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
     }
 
     public getColumnDetails(colId: string): { column?: Column, baseCellDataType: BaseCellDataType } {
-        const column = this.columnModel.getColFromColDef(colId) ?? undefined;
+        const column = this.columnModel.getColDefCol(colId) ?? undefined;
         const baseCellDataType = (column ? this.dataTypeService.getBaseDataType(column) : undefined) ?? 'text';
         return { column, baseCellDataType };
     }

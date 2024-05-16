@@ -1,6 +1,6 @@
 import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, Optional } from "../context/context";
-import { ColDef } from "../entities/colDef";
+import { ColDef, IAggFunc } from "../entities/colDef";
 import { Column } from "../entities/column";
 import { ColumnEventType, Events } from "../events";
 import { IAggFuncService } from "../interfaces/iAggFuncService";
@@ -44,7 +44,7 @@ export class FuncColsService extends BeanStub {
             return this.rowGroupCols.slice(0);
         }
 
-        const column = this.columnModel.getColFromColDef(sourceColumnId);
+        const column = this.columnModel.getColDefCol(sourceColumnId);
         return column ? [column] : null;
     }
 
@@ -73,6 +73,17 @@ export class FuncColsService extends BeanStub {
 
     public isRowGroupEmpty(): boolean {
         return missingOrEmpty(this.rowGroupCols);
+    }
+
+    public setColumnAggFunc(key: Maybe<ColKey>, aggFunc: string | IAggFunc | null | undefined, source: ColumnEventType): void {
+        if (!key) { return; }
+
+        const column = this.columnModel.getColDefCol(key);
+        if (!column) { return; }
+
+        column.setAggFunc(aggFunc);
+
+        this.eventDispatcher.columnChanged(Events.EVENT_COLUMN_VALUE_CHANGED, [column], source);
     }
 
     public setRowGroupColumns(colKeys: ColKey[], source: ColumnEventType): void {
@@ -206,7 +217,7 @@ export class FuncColsService extends BeanStub {
 
         if (exists(colKeys)) {
             colKeys.forEach(key => {
-                const column = this.columnModel.getColFromColDef(key);
+                const column = this.columnModel.getColDefCol(key);
                 if (column) {
                     masterList.push(column);
                 }
@@ -231,13 +242,13 @@ export class FuncColsService extends BeanStub {
             changes.delete(col);
         });
 
-        const primaryCols = this.columnModel.getColsFromColDefs();
+        const primaryCols = this.columnModel.getColDefCols();
         (primaryCols || []).forEach(column => {
             const added = masterList.indexOf(column) >= 0;
             columnCallback(added, column);
         });
 
-        autoGroupsNeedBuilding && this.columnModel.updateCols();
+        autoGroupsNeedBuilding && this.columnModel.refreshCols();
 
         this.visibleColsService.refresh(source);
 
@@ -260,7 +271,7 @@ export class FuncColsService extends BeanStub {
 
         keys.forEach(key => {
             if (!key) { return; }
-            const columnToAdd = this.columnModel.getColFromColDef(key);
+            const columnToAdd = this.columnModel.getColDefCol(key);
             if (!columnToAdd) { return; }
 
             if (actionIsAdd) {
@@ -278,7 +289,7 @@ export class FuncColsService extends BeanStub {
         if (!atLeastOne) { return; }
 
         if (autoGroupsNeedBuilding) {
-            this.columnModel.updateCols();
+            this.columnModel.refreshCols();
         }
 
         this.visibleColsService.refresh(source);
@@ -369,7 +380,7 @@ export class FuncColsService extends BeanStub {
         const colsWithIndex: Column[] = [];
         const colsWithValue: Column[] = [];
 
-        const primaryCols = this.columnModel.getColsFromColDefs() || [];
+        const primaryCols = this.columnModel.getColDefCols() || [];
 
         // go though all cols.
         // if value, change
@@ -491,7 +502,7 @@ export class FuncColsService extends BeanStub {
             enableProp: 'rowGroup' | 'pivot', initialEnableProp: 'initialRowGroup' | 'initialPivot',
             indexProp: 'rowGroupIndex' | 'pivotIndex', initialIndexProp: 'initialRowGroupIndex' | 'initialPivotIndex'
         ) => {
-            const primaryCols = this.columnModel.getColsFromColDefs();
+            const primaryCols = this.columnModel.getColDefCols();
             if (!colList.length || !primaryCols) { return []; }
             const updatedColIdArray = Object.keys(updatedColumnState);
             const updatedColIds = new Set(updatedColIdArray);

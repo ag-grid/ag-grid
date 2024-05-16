@@ -477,7 +477,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
             }
 
             if (children.length === 0) {
-                const potentialAggCol = this.columnModel.getColFromColDef(key);
+                const potentialAggCol = this.columnModel.getColDefCol(key);
                 if (potentialAggCol) {
                     const headerName = this.columnNameService.getDisplayNameForColumn(potentialAggCol, 'header') ?? key;
                     const colDef = this.createColDef(potentialAggCol, headerName, undefined, false);

@@ -247,7 +247,7 @@ export class SortService extends BeanStub {
                 }
 
                 const displayingGroupKey = showRowGroup;
-                const rowGroupColumn = this.columnModel.getColFromColDef(displayingGroupKey);
+                const rowGroupColumn = this.columnModel.getColDefCol(displayingGroupKey);
                 const thisRowNodeMatches = rowGroupColumn === childRowNode.rowGroupColumn;
 
                 if (thisRowNodeMatches) { return; }

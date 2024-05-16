@@ -462,7 +462,7 @@ export class DataTypeService extends BeanStub {
             const column = this.columnModel.getCol(colId);
             if (!column) { return; }
             const oldColDef = column.getColDef();
-            if (!this.columnModel.resetColumnDefIntoColumn(column, 'cellDataTypeInferred')) { return; }
+            if (!this.columnModel.resetColDefIntoCol(column, 'cellDataTypeInferred')) { return; }
             const newColDef = column.getColDef();
             if (columnTypeOverridesExist && newColDef.type && newColDef.type !== oldColDef.type) {
                 const updatedColumnState = this.getUpdatedColumnState(column, columnStateUpdates);
@@ -703,7 +703,7 @@ export class DataTypeService extends BeanStub {
                     useFormatter: true,
                 };
                 colDef.comparator = (a: any, b: any) => {
-                    const column = this.columnModel.getColFromColDef(colId);
+                    const column = this.columnModel.getColDefCol(colId);
                     const colDef = column?.getColDef();
                     if (!column || !colDef) {
                         return 0;

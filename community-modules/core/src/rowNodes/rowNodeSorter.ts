@@ -97,7 +97,7 @@ export class RowNodeSorter extends BeanStub {
         const groupLeafField = !rowNode.group && column.getColDef().field;
         if (!groupLeafField) { return; }
 
-        const primaryColumn = this.columnModel.getColFromColDef(groupLeafField);
+        const primaryColumn = this.columnModel.getColDefCol(groupLeafField);
         if (!primaryColumn) { return; }
 
         return primaryColumn.getColDef().comparator;

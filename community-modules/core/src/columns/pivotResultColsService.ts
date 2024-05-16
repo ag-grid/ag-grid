@@ -41,7 +41,7 @@ export class PivotResultColsService extends BeanStub {
     public lookupPivotResultCol(pivotKeys: string[], valueColKey: ColKey): Column | null {
         if (this.pivotResultCols == null) { return null; }
 
-        const valueColumnToFind = this.columnModel.getColFromColDef(valueColKey);
+        const valueColumnToFind = this.columnModel.getColDefCol(valueColKey);
 
         let foundColumn: Column | null = null;
 
@@ -98,7 +98,7 @@ export class PivotResultColsService extends BeanStub {
             this.pivotResultCols = null;
         }
 
-        this.columnModel.updateCols();
+        this.columnModel.refreshCols();
         this.visibleColsService.refresh(source);
     }
 

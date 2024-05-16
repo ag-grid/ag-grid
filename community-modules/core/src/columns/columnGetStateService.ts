@@ -13,11 +13,11 @@ export class ColumnGetStateService {
     @Autowired('funcColsService') private funcColsService: FuncColsService;
 
     public getColumnState(): ColumnState[] {
-        const primaryCols = this.columnModel.getColsFromColDefs();
+        const primaryCols = this.columnModel.getColDefCols();
 
         if (missing(primaryCols) || !this.columnModel.isAlive()) { return []; }
 
-        const colsForState = this.columnModel.getProvidedAndPivotResultAndAutoColumns();
+        const colsForState = this.columnModel.getAllCols();
         const res: ColumnState[] = colsForState.map(this.createStateItemFromColumn.bind(this));
 
         this.orderColumnStateList(res);

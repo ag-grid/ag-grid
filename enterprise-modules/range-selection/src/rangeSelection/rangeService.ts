@@ -395,10 +395,10 @@ export class RangeService extends BeanStub implements IRangeService {
         let startsOnTheRight: boolean = false;
 
         if (params.columns) {
-            columns = params.columns.map(c => this.columnModel.getColumnWithValidation(c)!).filter(c => c);
+            columns = params.columns.map(c => this.columnModel.getCol(c)!).filter(c => c);
         } else {
-            const columnStart = this.columnModel.getColumnWithValidation(params.columnStart);
-            const columnEnd = this.columnModel.getColumnWithValidation(params.columnEnd);
+            const columnStart = this.columnModel.getCol(params.columnStart);
+            const columnEnd = this.columnModel.getCol(params.columnEnd);
 
             if (!columnStart || !columnEnd) {
                 return;

@@ -81,7 +81,7 @@ export class ColumnApplyStateService extends BeanStub {
     @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
 
     public applyColumnState(params: ApplyColumnStateParams, source: ColumnEventType): boolean {
-        const providedCols = this.columnModel.getColsFromColDefs() || [];
+        const providedCols = this.columnModel.getColDefCols() || [];
         if (missingOrEmpty(providedCols)) { return false; }
 
         if (params && params.state && !params.state.forEach) {
@@ -141,13 +141,13 @@ export class ColumnApplyStateService extends BeanStub {
             this.funcColsService.sortRowGroupColumns(comparatorByIndex.bind(this, rowGroupIndexes, previousRowGroupCols));
             this.funcColsService.sortPivotColumns(comparatorByIndex.bind(this, pivotIndexes, previousPivotCols));
 
-            this.columnModel.updateCols();
+            this.columnModel.refreshCols();
 
             // sync newly created auto group columns with ColumnState
-            const autoCols = this.columnModel.getGroupAutoColumns() || [];
+            const autoCols = this.columnModel.getAutoCols() || [];
             const autoColsCopy = autoCols.slice();
             autoColStates.forEach(stateItem => {
-                const autoCol = this.columnModel.getAutoColumn(stateItem.colId!);
+                const autoCol = this.columnModel.getAutoCol(stateItem.colId!);
                 removeFromArray(autoColsCopy, autoCol);
                 this.syncColumnWithStateItem(autoCol, stateItem, params.defaultState, null, null, true, source, callbacks);
             });
@@ -167,7 +167,7 @@ export class ColumnApplyStateService extends BeanStub {
         let {
             unmatchedAndAutoStates,
             unmatchedCount,
-        } = applyStates(params.state || [], providedCols, (id) => this.columnModel.getColFromColDef(id));
+        } = applyStates(params.state || [], providedCols, (id) => this.columnModel.getColDefCol(id));
 
         // If there are still states left over, see if we can apply them to newly generated
         // pivot result cols or auto cols. Also if defaults exist, ensure they are applied to pivot resul cols
@@ -186,7 +186,7 @@ export class ColumnApplyStateService extends BeanStub {
     }
 
     public resetColumnState(source: ColumnEventType): void {
-        const primaryCols = this.columnModel.getColsFromColDefs();
+        const primaryCols = this.columnModel.getColDefCols();
         if (missingOrEmpty(primaryCols)) { return; }
 
         // NOTE = there is one bug here that no customer has noticed - if a column has colDef.lockPosition,
@@ -194,7 +194,7 @@ export class ColumnApplyStateService extends BeanStub {
         // As a work around, developers should just put lockPosition columns first in their colDef list.
 
         // we can't use 'allColumns' as the order might of messed up, so get the primary ordered list
-        const primaryColumnTree = this.columnModel.getProvidedColTree();
+        const primaryColumnTree = this.columnModel.getColDefColTree();
         const primaryColumns = getColumnsFromTree(primaryColumnTree);
         const columnStates: ColumnState[] = [];
 
@@ -205,7 +205,7 @@ export class ColumnApplyStateService extends BeanStub {
         let letPivotIndex = 1000;
 
         let colsToProcess: Column[] = [];
-        const groupAutoCols = this.columnModel.getGroupAutoColumns();
+        const groupAutoCols = this.columnModel.getAutoCols();
         if (groupAutoCols) {
             colsToProcess = colsToProcess.concat(groupAutoCols);
         }
@@ -439,7 +439,7 @@ export class ColumnApplyStateService extends BeanStub {
                 colIds.push(item.colId);
             }
         });
-        this.columnModel.orderColsLike(colIds);
+        this.columnModel.sortColsLikeKeys(colIds);
     }
 
     // calculates what events to fire between column state changes. gets used when:
@@ -461,7 +461,7 @@ export class ColumnApplyStateService extends BeanStub {
         });
 
         return () => {
-            const colsForState = this.columnModel.getProvidedAndPivotResultAndAutoColumns();
+            const colsForState = this.columnModel.getAllCols();
 
             // dispatches generic ColumnEvents where all columns are returned rather than what has changed
             const dispatchWhenListsDifferent = (eventType: string, colsBefore: Column[], colsAfter: Column[], idMapper: (column: Column) => string) => {
