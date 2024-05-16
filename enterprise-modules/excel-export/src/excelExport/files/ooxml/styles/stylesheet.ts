@@ -9,12 +9,12 @@ import cellStylesFactory from './cellStyles';
 
 import { Xf } from './xf';
 import { CellStyle } from './cellStyle';
-import { Border, BorderProperty, BorderSet, ExcelThemeFont, Fill, NumberFormat, StylesMap } from '../../../assets/excelInterfaces';
+import { Border, BorderProperty, BorderSet, ExcelThemeFont, Fill, NumberFormat } from '../../../assets/excelInterfaces';
 import { convertLegacyBorder, convertLegacyColor, convertLegacyPattern } from '../../../assets/excelLegacyConvert';
 import { numberFormatMap } from '../../../assets/excelConstants';
 import { getFontFamilyId } from '../../../assets/excelUtils';
 
-let stylesMap: StylesMap;
+let stylesMap: { [key: string ]: number };
 let registeredNumberFmts: NumberFormat[];
 let registeredFonts: ExcelThemeFont[];
 let registeredFills: Fill[];

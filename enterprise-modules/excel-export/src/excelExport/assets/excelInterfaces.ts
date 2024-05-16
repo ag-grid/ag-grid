@@ -41,14 +41,6 @@ export interface BorderSet {
     diagonal?: Border;
 }
 
-export interface StylesMap {
-    [key: string]: number;
-}
-
-export interface ColorMap {
-    [key: string]: string;
-}
-
 export interface ExcelThemeFont extends ExcelFont {
     colorTheme?: string;
     scheme?: string;
