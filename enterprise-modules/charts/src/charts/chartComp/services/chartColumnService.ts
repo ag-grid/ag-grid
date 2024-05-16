@@ -33,7 +33,7 @@ export class ChartColumnService extends BeanStub {
     }
 
     public getColumn(colId: string): Column | null {
-        return this.columnModel.getProvidedColumn(colId);
+        return this.columnModel.getColFromColDef(colId);
     }
 
     public getAllDisplayedColumns(): Column[] {

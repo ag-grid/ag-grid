@@ -703,7 +703,7 @@ export class DataTypeService extends BeanStub {
                     useFormatter: true,
                 };
                 colDef.comparator = (a: any, b: any) => {
-                    const column = this.columnModel.getProvidedColumn(colId);
+                    const column = this.columnModel.getColFromColDef(colId);
                     const colDef = column?.getColDef();
                     if (!column || !colDef) {
                         return 0;

@@ -41,7 +41,7 @@ export class ToolPanelColDefService extends BeanStub {
             } else {
                 const colDef = abstractColDef as ColDef;
                 const key = colDef.colId ? colDef.colId : colDef.field;
-                const column = this.columnModel.getProvidedColumn(key!) as IProvidedColumn;
+                const column = this.columnModel.getColFromColDef(key!) as IProvidedColumn;
 
                 if (!column) {
                     invalidColIds.push(colDef);

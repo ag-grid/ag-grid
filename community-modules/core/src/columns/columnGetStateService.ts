@@ -13,7 +13,7 @@ export class ColumnGetStateService {
     @Autowired('funcColsService') private funcColsService: FuncColsService;
 
     public getColumnState(): ColumnState[] {
-        const primaryCols = this.columnModel.getAllProvidedCols();
+        const primaryCols = this.columnModel.getColsFromColDefs();
 
         if (missing(primaryCols) || !this.columnModel.isAlive()) { return []; }
 

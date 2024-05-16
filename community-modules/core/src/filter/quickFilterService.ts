@@ -61,7 +61,7 @@ export class QuickFilterService extends BeanStub {
     public refreshQuickFilterCols(): void {
         const pivotMode = this.columnModel.isPivotMode();
         const groupAutoCols = this.columnModel.getGroupAutoColumns();
-        const providedCols = this.columnModel.getAllProvidedCols();
+        const providedCols = this.columnModel.getColsFromColDefs();
 
         let columnsForQuickFilter = (
             pivotMode && !this.gos.get('applyQuickFilterBeforePivotOrAgg') ? this.pivotResultColsService.getPivotResultCols()?.list : providedCols

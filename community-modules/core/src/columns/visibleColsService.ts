@@ -212,7 +212,7 @@ export class VisibleColsService extends BeanStub {
     }
 
     private setLeftValuesOfCols(source: ColumnEventType): void {
-        const primaryCols = this.columnModel.getAllProvidedCols();
+        const primaryCols = this.columnModel.getColsFromColDefs();
         if (!primaryCols) { return; }
 
         // go through each list of displayed columns

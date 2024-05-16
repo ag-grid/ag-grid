@@ -140,7 +140,7 @@ export class FilterManager extends BeanStub {
 
             // at this point, processedFields contains data for which we don't have a filter working yet
             modelKeys.forEach(colId => {
-                const column = this.columnModel.getProvidedColumn(colId) || this.columnModel.getCol(colId);
+                const column = this.columnModel.getColFromColDef(colId) || this.columnModel.getCol(colId);
 
                 if (!column) {
                     console.warn('AG Grid: setFilterModel() - no column found for colId: ' + colId);
@@ -675,7 +675,7 @@ export class FilterManager extends BeanStub {
         this.allColumnFilters.forEach((wrapper, colId) => {
             let currentColumn: Column | null;
             if (wrapper.column.isPrimary()) {
-                currentColumn = this.columnModel.getProvidedColumn(colId);
+                currentColumn = this.columnModel.getColFromColDef(colId);
             } else {
                 currentColumn = this.columnModel.getCol(colId);
             }
@@ -962,7 +962,7 @@ export class FilterManager extends BeanStub {
     }
 
     private getFilterInstanceImpl(key: string | Column, callback: (filter: IFilter) => void): IFilter | null | undefined {
-        const column = this.columnModel.getProvidedColumn(key);
+        const column = this.columnModel.getColFromColDef(key);
 
         if (!column) { return undefined; }
 
@@ -1026,7 +1026,7 @@ export class FilterManager extends BeanStub {
             return promise;
         }
 
-        const column = this.columnModel.getProvidedColumn(key);
+        const column = this.columnModel.getColFromColDef(key);
         const filterWrapper = column ? this.getOrCreateFilterWrapper(column, 'NO_UI') : null;
         const convertPromise = <T>(promise: AgPromise<T>): Promise<T> => {
             return new Promise(resolve => {
@@ -1038,7 +1038,7 @@ export class FilterManager extends BeanStub {
     }
 
     private getFilterWrapper(key: string | Column): FilterWrapper | null {
-        const column = this.columnModel.getProvidedColumn(key);
+        const column = this.columnModel.getColFromColDef(key);
         return column ? this.cachedFilter(column) ?? null : null;
     }
 

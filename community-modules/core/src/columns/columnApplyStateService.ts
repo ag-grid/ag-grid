@@ -81,7 +81,7 @@ export class ColumnApplyStateService extends BeanStub {
     @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
 
     public applyColumnState(params: ApplyColumnStateParams, source: ColumnEventType): boolean {
-        const providedCols = this.columnModel.getAllProvidedCols() || [];
+        const providedCols = this.columnModel.getColsFromColDefs() || [];
         if (missingOrEmpty(providedCols)) { return false; }
 
         if (params && params.state && !params.state.forEach) {
@@ -167,7 +167,7 @@ export class ColumnApplyStateService extends BeanStub {
         let {
             unmatchedAndAutoStates,
             unmatchedCount,
-        } = applyStates(params.state || [], providedCols, (id) => this.columnModel.getProvidedColumn(id));
+        } = applyStates(params.state || [], providedCols, (id) => this.columnModel.getColFromColDef(id));
 
         // If there are still states left over, see if we can apply them to newly generated
         // pivot result cols or auto cols. Also if defaults exist, ensure they are applied to pivot resul cols
@@ -186,7 +186,7 @@ export class ColumnApplyStateService extends BeanStub {
     }
 
     public resetColumnState(source: ColumnEventType): void {
-        const primaryCols = this.columnModel.getAllProvidedCols();
+        const primaryCols = this.columnModel.getColsFromColDefs();
         if (missingOrEmpty(primaryCols)) { return; }
 
         // NOTE = there is one bug here that no customer has noticed - if a column has colDef.lockPosition,

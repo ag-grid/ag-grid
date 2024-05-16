@@ -44,7 +44,7 @@ export class FuncColsService extends BeanStub {
             return this.rowGroupCols.slice(0);
         }
 
-        const column = this.columnModel.getProvidedColumn(sourceColumnId);
+        const column = this.columnModel.getColFromColDef(sourceColumnId);
         return column ? [column] : null;
     }
 
@@ -206,7 +206,7 @@ export class FuncColsService extends BeanStub {
 
         if (exists(colKeys)) {
             colKeys.forEach(key => {
-                const column = this.columnModel.getProvidedColumn(key);
+                const column = this.columnModel.getColFromColDef(key);
                 if (column) {
                     masterList.push(column);
                 }
@@ -231,7 +231,7 @@ export class FuncColsService extends BeanStub {
             changes.delete(col);
         });
 
-        const primaryCols = this.columnModel.getAllProvidedCols();
+        const primaryCols = this.columnModel.getColsFromColDefs();
         (primaryCols || []).forEach(column => {
             const added = masterList.indexOf(column) >= 0;
             columnCallback(added, column);
@@ -260,7 +260,7 @@ export class FuncColsService extends BeanStub {
 
         keys.forEach(key => {
             if (!key) { return; }
-            const columnToAdd = this.columnModel.getProvidedColumn(key);
+            const columnToAdd = this.columnModel.getColFromColDef(key);
             if (!columnToAdd) { return; }
 
             if (actionIsAdd) {
@@ -369,7 +369,7 @@ export class FuncColsService extends BeanStub {
         const colsWithIndex: Column[] = [];
         const colsWithValue: Column[] = [];
 
-        const primaryCols = this.columnModel.getAllProvidedCols() || [];
+        const primaryCols = this.columnModel.getColsFromColDefs() || [];
 
         // go though all cols.
         // if value, change
@@ -491,7 +491,7 @@ export class FuncColsService extends BeanStub {
             enableProp: 'rowGroup' | 'pivot', initialEnableProp: 'initialRowGroup' | 'initialPivot',
             indexProp: 'rowGroupIndex' | 'pivotIndex', initialIndexProp: 'initialRowGroupIndex' | 'initialPivotIndex'
         ) => {
-            const primaryCols = this.columnModel.getAllProvidedCols();
+            const primaryCols = this.columnModel.getColsFromColDefs();
             if (!colList.length || !primaryCols) { return []; }
             const updatedColIdArray = Object.keys(updatedColumnState);
             const updatedColIds = new Set(updatedColIdArray);

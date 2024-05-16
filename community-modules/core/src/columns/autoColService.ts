@@ -69,7 +69,7 @@ export class AutoColService extends BeanStub {
     private updateOneAutoCol(colToUpdate: Column, index: number, source: ColumnEventType) {
         const oldColDef = colToUpdate.getColDef();
         const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
-        const underlyingColumn = underlyingColId!=null ? this.columnModel.getProvidedColumn(underlyingColId) : undefined;
+        const underlyingColumn = underlyingColId!=null ? this.columnModel.getColFromColDef(underlyingColId) : undefined;
         const colDef = this.createAutoColDef(colToUpdate.getId(), underlyingColumn??undefined, index);
 
         colToUpdate.setColDef(colDef, null, source);

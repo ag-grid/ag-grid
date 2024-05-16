@@ -89,7 +89,7 @@ export class FilterWrapperComp extends Component {
         if (
             (event.source === 'api' || event.source === 'paramsUpdated') &&
             event.column.getId() === this.column.getId() &&
-            this.columnModel.getProvidedColumn(this.column)
+            this.columnModel.getColFromColDef(this.column)
         ) {
             // filter has been destroyed by the API or params changing. If the column still exists, need to recreate UI component
             clearElement(this.getGui());

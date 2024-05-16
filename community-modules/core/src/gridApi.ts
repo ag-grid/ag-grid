@@ -858,7 +858,7 @@ export class GridApi<TData = any> {
 
     /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */
     public destroyFilter(key: string | Column) {
-        const column = this.columnModel.getProvidedColumn(key);
+        const column = this.columnModel.getColFromColDef(key);
         if (column) {
             return this.filterManager.destroyFilter(column, 'api');
         }
@@ -872,7 +872,7 @@ export class GridApi<TData = any> {
     }
 
     public getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null {
-        const column = this.columnModel.getProvidedColumn(key);
+        const column = this.columnModel.getColFromColDef(key);
         if (column) {
             return column.getColDef();
         }
@@ -1106,7 +1106,7 @@ export class GridApi<TData = any> {
     public getCellValue<TValue = any>(params: GetCellValueParams<TValue>) {
         const { colKey, rowNode, useFormatter } = params;
 
-        let column = this.columnModel.getProvidedColumn(colKey) ?? this.columnModel.getCol(colKey);
+        let column = this.columnModel.getColFromColDef(colKey) ?? this.columnModel.getCol(colKey);
         if (missing(column)) {
             return null;
         }
@@ -1354,7 +1354,7 @@ export class GridApi<TData = any> {
         // use grid column so works with pivot mode
         let column = this.columnModel.getCol(colKey);
         if (!column) {
-            column = this.columnModel.getProvidedColumn(colKey);
+            column = this.columnModel.getColFromColDef(colKey);
         }
         if (!column) {
             console.error(`AG Grid: column '${colKey}' not found`);
@@ -1788,9 +1788,9 @@ export class GridApi<TData = any> {
     public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string { return this.columnNameService.getDisplayNameForColumnGroup(columnGroup, location) || ''; }
 
     /** Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object). */
-    public getColumn<TValue = any>(key: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null { return this.columnModel.getProvidedColumn(key); }
+    public getColumn<TValue = any>(key: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null { return this.columnModel.getColFromColDef(key); }
     /** Returns all the columns, regardless of visible or not. */
-    public getColumns(): Column[] | null { return this.columnModel.getAllProvidedCols(); }
+    public getColumns(): Column[] | null { return this.columnModel.getColsFromColDefs(); }
     /** Applies the state of the columns from a previous state. Returns `false` if one or more columns could not be found. */
     public applyColumnState(params: ApplyColumnStateParams): boolean { return this.columnApplyStateService.applyColumnState(params, 'api'); }
     /** Gets the state of the columns. Typically used when saving column state. */
