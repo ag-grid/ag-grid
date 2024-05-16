@@ -104,7 +104,7 @@ export class StoreUtils extends BeanStub {
 
         if (actionOnThisGroup) { return true; }
 
-        const allCols = this.columnModel.getLiveCols();
+        const allCols = this.columnModel.getCols();
         const affectedGroupCols = allCols
             // find all impacted cols which also a group display column
             .filter(col => col.getColDef().showRowGroup && params.changedColumns.includes(col.getId()))

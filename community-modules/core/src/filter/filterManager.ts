@@ -140,7 +140,7 @@ export class FilterManager extends BeanStub {
 
             // at this point, processedFields contains data for which we don't have a filter working yet
             modelKeys.forEach(colId => {
-                const column = this.columnModel.getProvidedColumn(colId) || this.columnModel.getLiveColumn(colId);
+                const column = this.columnModel.getProvidedColumn(colId) || this.columnModel.getCol(colId);
 
                 if (!column) {
                     console.warn('AG Grid: setFilterModel() - no column found for colId: ' + colId);
@@ -534,7 +534,7 @@ export class FilterManager extends BeanStub {
 
     private createGetValue(filterColumn: Column): IFilterParams['getValue'] {
         return (rowNode, column) => {
-            const columnToUse = column ? this.columnModel.getLiveColumn(column) : filterColumn;
+            const columnToUse = column ? this.columnModel.getCol(column) : filterColumn;
             return columnToUse ? this.valueService.getValue(columnToUse, rowNode, true) : undefined;
         };
     }
@@ -677,7 +677,7 @@ export class FilterManager extends BeanStub {
             if (wrapper.column.isPrimary()) {
                 currentColumn = this.columnModel.getProvidedColumn(colId);
             } else {
-                currentColumn = this.columnModel.getLiveColumn(colId);
+                currentColumn = this.columnModel.getCol(colId);
             }
             // group columns can be recreated with the same colId
             if (currentColumn && currentColumn === wrapper.column) { return; }
@@ -935,7 +935,7 @@ export class FilterManager extends BeanStub {
 
     public hasFloatingFilters(): boolean {
         if (this.isAdvancedFilterEnabled()) { return false; }
-        const gridColumns = this.columnModel.getLiveCols();
+        const gridColumns = this.columnModel.getCols();
         return gridColumns.some(col => col.getColDef().floatingFilter);
     }
 

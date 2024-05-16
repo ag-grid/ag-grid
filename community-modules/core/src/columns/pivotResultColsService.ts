@@ -66,7 +66,7 @@ export class PivotResultColsService extends BeanStub {
 
     public getPivotResultCol(key: ColKey): Column | null {
         if (!this.pivotResultCols) { return null; }
-        return this.columnModel.getColumn(key, this.pivotResultCols);
+        return this.columnModel.getColFromCollection(key, this.pivotResultCols);
     }
 
     public setPivotResultCols(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void {
@@ -98,7 +98,7 @@ export class PivotResultColsService extends BeanStub {
             this.pivotResultCols = null;
         }
 
-        this.columnModel.updateLiveCols();
+        this.columnModel.updateCols();
         this.visibleColsService.refresh(source);
     }
 

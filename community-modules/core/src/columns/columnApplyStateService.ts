@@ -141,7 +141,7 @@ export class ColumnApplyStateService extends BeanStub {
             this.funcColsService.sortRowGroupColumns(comparatorByIndex.bind(this, rowGroupIndexes, previousRowGroupCols));
             this.funcColsService.sortPivotColumns(comparatorByIndex.bind(this, pivotIndexes, previousPivotCols));
 
-            this.columnModel.updateLiveCols();
+            this.columnModel.updateCols();
 
             // sync newly created auto group columns with ColumnState
             const autoCols = this.columnModel.getGroupAutoColumns() || [];
@@ -580,7 +580,7 @@ export class ColumnApplyStateService extends BeanStub {
         afterFiltered!.forEach((csAfter: ColumnState, index: number) => {
             const csBefore = beforeFiltered && beforeFiltered[index];
             if (csBefore && csBefore.colId !== csAfter.colId) {
-                const gridCol = this.columnModel.getLiveColumn(csBefore.colId!);
+                const gridCol = this.columnModel.getCol(csBefore.colId!);
                 if (gridCol) {
                     movedColumns.push(gridCol);
                 }

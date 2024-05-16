@@ -535,7 +535,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     public ensureColumnVisible(key: any, position: 'auto' | 'start' | 'middle' | 'end' = 'auto'): void {
-        const column = this.columnModel.getLiveColumn(key);
+        const column = this.columnModel.getCol(key);
 
         if (!column) { return; }
 

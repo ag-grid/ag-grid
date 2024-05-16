@@ -92,7 +92,7 @@ export class AdvancedFilterHeaderComp extends Component {
     }
     
     private setAriaColumnCount(eAdvancedFilterGui: HTMLElement): void {
-        _.setAriaColSpan(eAdvancedFilterGui, this.columnModel.getLiveCols().length);
+        _.setAriaColSpan(eAdvancedFilterGui, this.columnModel.getCols().length);
     }
 
     private setAriaRowIndex(): void {

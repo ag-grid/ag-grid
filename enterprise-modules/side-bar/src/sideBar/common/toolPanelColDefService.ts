@@ -115,7 +115,7 @@ export class ToolPanelColDefService extends BeanStub {
         };
 
         // obtain a sorted list of all grid columns
-        const allGridColumns = this.columnModel.getLiveCols();
+        const allGridColumns = this.columnModel.getCols();
 
         // only primary columns and non row group columns should appear in the tool panel
         const allPrimaryGridColumns = allGridColumns.filter(column => {

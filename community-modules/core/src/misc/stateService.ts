@@ -507,13 +507,13 @@ export class StateService extends BeanStub {
         rangeSelectionState.cellRanges.forEach(cellRange => {
             const columns: Column[] = [];
             cellRange.colIds.forEach(colId => {
-                const column = this.columnModel.getLiveColumn(colId);
+                const column = this.columnModel.getCol(colId);
                 if (column) {
                     columns.push(column);
                 }
             });
             if (!columns.length) { return; }
-            let startColumn = this.columnModel.getLiveColumn(cellRange.startColId);
+            let startColumn = this.columnModel.getCol(cellRange.startColId);
             if (!startColumn) {
                 // find the first remaining column
                 const allColumns = this.visibleColsService.getAllCols();
@@ -574,7 +574,7 @@ export class StateService extends BeanStub {
         if (!this.isClientSideRowModel) { return; }
         const { colId, rowIndex, rowPinned } = focusedCellState;
         this.focusService.setFocusedCell({
-            column: this.columnModel.getLiveColumn(colId),
+            column: this.columnModel.getCol(colId),
             rowIndex,
             rowPinned,
             forceBrowserFocus: true,

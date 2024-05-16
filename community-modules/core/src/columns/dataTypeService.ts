@@ -459,7 +459,7 @@ export class DataTypeService extends BeanStub {
         const newRowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
         const newPivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
         Object.entries(this.columnStateUpdatesPendingInference).forEach(([colId, columnStateUpdates]) => {
-            const column = this.columnModel.getLiveColumn(colId);
+            const column = this.columnModel.getCol(colId);
             if (!column) { return; }
             const oldColDef = column.getColDef();
             if (!this.columnModel.resetColumnDefIntoColumn(column, 'cellDataTypeInferred')) { return; }

@@ -57,7 +57,7 @@ export class ColumnSizeService extends BeanStub {
         const sets: ColumnResizeSet[] = [];
 
         columnWidths.forEach(columnWidth => {
-            const col = this.columnModel.getProvidedOrLiveColumn(columnWidth.key);
+            const col = this.columnModel.getColOrColFromDef(columnWidth.key);
 
             if (!col) { return; }
 

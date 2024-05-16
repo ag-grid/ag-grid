@@ -57,7 +57,7 @@ export class ColumnGetStateService {
     }
 
     private orderColumnStateList(columnStateList: any[]): void {
-        const gridColumns = this.columnModel.getLiveCols();
+        const gridColumns = this.columnModel.getCols();
         // for fast looking, store the index of each column
         const colIdToGridIndexMap = convertToMap<string, number>(gridColumns.map((col, index) => [col.getColId(), index]));
 

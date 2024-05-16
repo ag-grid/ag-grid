@@ -63,7 +63,7 @@ export class ColumnAutosizeService extends BeanStub {
     
             colKeys.forEach(key => {
                 if (!key) { return; }
-                const column = this.columnModel.getLiveColumn(key);
+                const column = this.columnModel.getCol(key);
                 if (!column) { return; }
     
                 // if already autosized, skip it
@@ -103,7 +103,7 @@ export class ColumnAutosizeService extends BeanStub {
     
     private autoSizeColumnGroupsByColumns(keys: ColKey[], source: ColumnEventType, stopAtGroup?: ColumnGroup): Column[] {
         const columnGroups: Set<ColumnGroup> = new Set();
-        const columns = this.columnModel.getLiveColumns(keys);
+        const columns = this.columnModel.getColsForKeys(keys);
 
         columns.forEach(col => {
             let parent: ColumnGroup = col.getParent();

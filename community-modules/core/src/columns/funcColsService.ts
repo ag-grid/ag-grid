@@ -195,7 +195,7 @@ export class FuncColsService extends BeanStub {
         columnCallback: (added: boolean, column: Column) => void,
         source: ColumnEventType,
     ): void {
-        const gridColumns = this.columnModel.getLiveCols();
+        const gridColumns = this.columnModel.getCols();
         if (missingOrEmpty(gridColumns)) { return; }
 
         const changes: Map<Column, number> = new Map();
@@ -237,7 +237,7 @@ export class FuncColsService extends BeanStub {
             columnCallback(added, column);
         });
 
-        autoGroupsNeedBuilding && this.columnModel.updateLiveCols();
+        autoGroupsNeedBuilding && this.columnModel.updateCols();
 
         this.visibleColsService.refresh(source);
 
@@ -278,7 +278,7 @@ export class FuncColsService extends BeanStub {
         if (!atLeastOne) { return; }
 
         if (autoGroupsNeedBuilding) {
-            this.columnModel.updateLiveCols();
+            this.columnModel.updateCols();
         }
 
         this.visibleColsService.refresh(source);

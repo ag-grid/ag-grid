@@ -129,14 +129,14 @@ export class VisibleColsService extends BeanStub {
             firstRight = this.columnsRight ? this.columnsRight[0] : null;
         }
 
-        this.columnModel.getLiveCols().forEach( col => {
+        this.columnModel.getCols().forEach( col => {
             col.setLastLeftPinned(col === lastLeft, source);
             col.setFirstRightPinned(col === firstRight, source);
         });
     }
 
     private buildTrees() {
-        const cols = this.columnModel.getVisibleFromLive();
+        const cols = this.columnModel.getColsToShow();
 
         const leftCols = cols.filter( col => col.getPinned()=="left" );
         const rightCols = cols.filter( col => col.getPinned()=="right" );
@@ -160,7 +160,7 @@ export class VisibleColsService extends BeanStub {
     }
 
     private joinColsAriaOrder(): void {
-        const allColumns = this.columnModel.getLiveCols();
+        const allColumns = this.columnModel.getCols();
         const pinnedLeft: Column[] = [];
         const center: Column[] = [];
         const pinnedRight: Column[] = [];
