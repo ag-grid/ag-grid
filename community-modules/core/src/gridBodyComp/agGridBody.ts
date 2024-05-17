@@ -15,7 +15,7 @@ import {
     IGridBodyComp,
     RowAnimationCssClasses
 } from "./gridBodyCtrl";
-import { AgRowContainer } from './rowContainer/agRowContainer';
+import { RowContainerComp } from './rowContainer/rowContainerComp';
 import { RowContainerName } from "./rowContainer/rowContainerCtrl";
 
 const GRID_BODY_TEMPLATE = /* html */
@@ -76,7 +76,7 @@ export class AgGridBody extends Component {
     private ctrl: GridBodyCtrl;
 
     constructor() {
-        super(GRID_BODY_TEMPLATE, [AgOverlayWrapper, FakeHScrollComp, FakeVScrollComp, GridHeaderComp, AgRowContainer]);
+        super(GRID_BODY_TEMPLATE, [AgOverlayWrapper, FakeHScrollComp, FakeVScrollComp, GridHeaderComp, RowContainerComp]);
     }
 
     @PostConstruct
