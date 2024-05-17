@@ -387,7 +387,7 @@ export class SideBarComp extends Component implements ISideBar {
                     ...(toolPanelDef.toolPanelParams ?? {}),
                     onStateUpdated: () => this.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED })
                 });
-                const hasRefreshed = toolPanelWrapper.getToolPanelInstance().refresh(params);
+                const hasRefreshed = toolPanelWrapper.getToolPanelInstance()?.refresh(params);
                 if (hasRefreshed !== true) { return; }
                 this.toolPanelWrappers = this.toolPanelWrappers.filter(toolPanel => toolPanel !== toolPanelWrapper);
                 _removeFromParent(toolPanelWrapper.getGui());

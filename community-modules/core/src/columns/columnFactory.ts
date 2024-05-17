@@ -255,7 +255,7 @@ export class ColumnFactory extends BeanStub {
             existingGroups.splice(existingGroupAndIndex.idx, 1);
         }
 
-        let existingGroup = existingGroupAndIndex?.group;
+        const existingGroup = existingGroupAndIndex?.group;
         if (existingGroup) {
             providedGroup.setExpanded(existingGroup.isExpanded());
         }

@@ -52,7 +52,7 @@ export const createMarkdocCodeFence = ({
 
     // Only don't transform if 'false'
     const isTransform = transformValue === undefined || transformValue !== 'false';
-    let meta = isTransform ? getTransformMetaAttributes(attributes) : '';
+    const meta = isTransform ? getTransformMetaAttributes(attributes) : '';
 
     const content = children
         .map((paragraph) => {

@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'plugins-ag-grid-task-autogen',
     preset: '../../jest.preset.js',

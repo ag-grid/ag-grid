@@ -409,7 +409,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
     private getSuggestionsAndFilteredValues(searchValue: string, valueList: string[]): { suggestions: string[], filteredValues: TValue[] } {
         let suggestions: string[] = [];
-        let filteredValues: TValue[] = [];
+        const filteredValues: TValue[] = [];
 
         if (!searchValue.length) { return { suggestions, filteredValues } };
 

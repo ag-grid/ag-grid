@@ -100,7 +100,7 @@ export class EventService implements IEventEmitter {
     }
 
     public dispatchEvent(event: AgEvent): void {
-        let agEvent = event as AgGridEvent<any>;
+        const agEvent = event as AgGridEvent<any>;
         if (this.gos) {
             // Apply common properties to all dispatched events if this event service has had its beans set with gridOptionsService.
             // Note there are multiple instances of EventService that are used local to components which do not set gridOptionsService.

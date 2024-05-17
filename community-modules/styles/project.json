@@ -60,6 +60,12 @@
       },
       "cache": true
     },
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
     "test": {
       "executor": "nx:run-commands",
       "inputs": [],

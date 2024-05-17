@@ -4,6 +4,12 @@
   "sourceRoot": "community-modules/vue3/src",
   "projectType": "library",
   "targets": {
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
     "build": {
       "executor": "nx:noop",
       "dependsOn": ["build:types", "build:package"],

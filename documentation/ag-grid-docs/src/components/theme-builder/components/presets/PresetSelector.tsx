@@ -36,7 +36,7 @@ const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
         if (wrapper) {
             const params = { ...corePart.defaults, ...preset.params };
             for (const [key, value] of Object.entries(params)) {
-                let rendered = paramValueToCss(key, value);
+                const rendered = paramValueToCss(key, value);
                 if (typeof rendered === 'string') {
                     wrapper.style.setProperty(paramToVariableName(key), rendered);
                 }

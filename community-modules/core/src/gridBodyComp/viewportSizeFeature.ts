@@ -112,7 +112,7 @@ export class ViewportSizeFeature extends BeanStub {
 
         let indexRight = 0;
         let indexLeft = 0;
-        let totalWidthRemoved = 0;
+        const totalWidthRemoved = 0;
 
         const columnsToRemove: Column[] = [];
 
