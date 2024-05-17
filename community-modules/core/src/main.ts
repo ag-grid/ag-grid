@@ -156,7 +156,7 @@ export { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
 
 
 // rowContainer
-export { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
+export { AgRowContainer } from "./gridBodyComp/rowContainer/agRowContainer";
 export { RowContainerName, IRowContainerComp, RowContainerCtrl, RowContainerType, getRowContainerTypeForName } from "./gridBodyComp/rowContainer/rowContainerCtrl";
 
 // headerRendering

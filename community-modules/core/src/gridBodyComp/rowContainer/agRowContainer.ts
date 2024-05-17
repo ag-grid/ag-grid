@@ -36,7 +36,7 @@ function templateFactory(): string {
     return res;
 }
 
-export class RowContainerComp extends Component {
+export class AgRowContainer extends Component {
     static readonly selector: AgComponentSelector = 'ag-row-container';
     @Autowired('beans') private beans: Beans;
 
