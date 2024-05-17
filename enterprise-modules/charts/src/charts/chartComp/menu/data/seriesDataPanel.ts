@@ -1,11 +1,6 @@
 import {
-    AgCheckbox,
     AgGroupComponent,
     AgToggleButton,
-    AutoScrollService,
-    Autowired,
-    DragAndDropService,
-    DropTarget,
     PostConstruct,
     _clearElement,
 } from "@ag-grid-community/core";
@@ -13,16 +8,12 @@ import { ChartController } from "../../chartController";
 import { ColState } from "../../model/chartDataModel";
 import { ChartOptionsService } from "../../services/chartOptionsService";
 import { DragDataPanel } from "./dragDataPanel";
-import { ChartService } from "../../../chartService";
 
 export class SeriesDataPanel extends DragDataPanel {
     private static TEMPLATE = /* html */`<div id="seriesGroup"></div>`;
 
-    @Autowired('chartService') private readonly chartService: ChartService;
-
     constructor(
         chartController: ChartController,
-        autoScrollService: AutoScrollService,
         private readonly chartOptionsService: ChartOptionsService,
         private readonly title: string,
         allowMultipleSelect: boolean,
@@ -30,7 +21,7 @@ export class SeriesDataPanel extends DragDataPanel {
         private valueCols: ColState[],
         private isOpen?: boolean
     ) {
-        super(chartController, autoScrollService, allowMultipleSelect, maxSelection, SeriesDataPanel.TEMPLATE);
+        super(chartController, allowMultipleSelect, maxSelection, SeriesDataPanel.TEMPLATE);
     }
 
     @PostConstruct
@@ -57,77 +48,16 @@ export class SeriesDataPanel extends DragDataPanel {
             }));
             this.groupComp.addItem(pairedModeToggle);
         }
-        if (this.chartService.isEnterprise()) {
-            this.createSeriesGroup(this.valueCols);
-        } else {
-            this.createLegacySeriesGroup(this.valueCols);
-        }
+
+        this.createGroup(this.valueCols, this.generateGetSeriesLabel(this.valueCols), 'seriesAdd', 'seriesSelect');
+
         this.getGui().appendChild(this.groupComp.getGui());
     }
 
     public refresh(valueCols: ColState[]): void {
-        if (this.chartService.isEnterprise()) {
-            this.valuePillSelect?.setValueFormatter(this.generateGetSeriesLabel(valueCols));
-            this.valuePillSelect?.setValues(valueCols, valueCols.filter(col => col.selected));
-            this.refreshValueSelect(valueCols);
-        } else {
-            const canRefresh = this.refreshColumnComps(valueCols);
-            if (canRefresh) {
-                if (this.chartController.isActiveXYChart()) {
-                    const getSeriesLabel = this.generateGetSeriesLabel(valueCols);
-        
-                    valueCols.forEach(col => {
-                        this.columnComps.get(col.colId)!.setLabel(getSeriesLabel(col));
-                    });
-                }
-                this.recreate(valueCols);
-            }
-        }
-    }
-
-    private recreate(valueCols: ColState[]): void {
-        this.isOpen = this.groupComp.isExpanded();
-        _clearElement(this.getGui());
-        this.destroyBean(this.groupComp);
-        this.valueCols = valueCols;
-        this.init();
-    }
-
-    private createSeriesGroup(columns: ColState[]): void {
-        this.createGroup(columns, this.generateGetSeriesLabel(columns), 'seriesAdd', 'seriesSelect');
-    }
-
-    private createLegacySeriesGroup(columns: ColState[]): void {
-        const getSeriesLabel = this.generateGetSeriesLabel(columns);
-
-        columns.forEach(col => {
-            const label = getSeriesLabel(col);
-            const comp = this.groupComp.createManagedBean(new AgCheckbox({
-                label,
-                value: col.selected
-            }));
-            comp.addCssClass('ag-data-select-checkbox');
-
-            this.addChangeListener(comp, col);
-            this.groupComp.addItem(comp);
-            this.columnComps.set(col.colId, comp);
-
-            this.addDragHandle(comp, col);
-        });
-
-        const seriesGroupGui = this.groupComp.getGui();
-
-        const dropTarget: DropTarget = {
-            getIconName: () => DragAndDropService.ICON_MOVE,
-            getContainer: () => seriesGroupGui,
-            onDragging: (params) => this.onDragging(params),
-            onDragLeave: () => this.onDragLeave(),
-            isInterestedIn: this.isInterestedIn.bind(this),
-            targetContainsSource: true
-        };
-
-        this.dragAndDropService.addDropTarget(dropTarget);
-        this.addDestroyFunc(() => this.dragAndDropService.removeDropTarget(dropTarget));
+        this.valuePillSelect?.setValueFormatter(this.generateGetSeriesLabel(valueCols));
+        this.valuePillSelect?.setValues(valueCols, valueCols.filter(col => col.selected));
+        this.refreshValueSelect(valueCols);
     }
 
     private generateGetSeriesLabel(valueCols: ColState[]): (col: ColState) => string {

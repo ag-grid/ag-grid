@@ -24,7 +24,7 @@ export interface ChartSettingsPanel {
 
 export type ChartFormatPanelGroup = 'chart' | 'titles' | 'legend' | 'axis' | 'horizontalAxis' | 'verticalAxis' | 'series' | 'navigator';
 
-export type ChartDataPanelGroup = 'categories' | 'series' | 'seriesChartType';
+export type ChartDataPanelGroup = 'categories' | 'series' | 'seriesChartType' | 'chartSpecific';
 
 export interface ChartPanelGroupDef<GroupType> {
     /** The panel group type */
