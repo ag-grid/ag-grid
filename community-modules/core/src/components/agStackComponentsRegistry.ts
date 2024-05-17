@@ -26,12 +26,11 @@ export class AgStackComponentsRegistry {
 
     public getComponentForNode(name: AgComponentElementName, optional: boolean = false): ComponentClass | undefined{
         const compClass = this.componentToNodeName.get(name);
-        if(!compClass && !optional) {
+        if(!compClass && !optional && name.startsWith('AG-')) {
             _warnOnce(`${name} is not registered and is required`);
         }
         return compClass;
     }
-
 }
 
 export type AgComponentElementName =
