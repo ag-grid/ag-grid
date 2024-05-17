@@ -259,12 +259,10 @@ export class Component extends BeanStub {
         this.agStackComponentsRegistry?.ensureRegistered( components ?? this.components);
 
         // context will not be available when user sets template in constructor
-        if (!!this.getContext()) {
+        if (this.getContext()) {
             this.createChildComponentsFromTags(this.getGui(), paramsMap);
         }
     }
-
-
 
     protected wireQuerySelectors(): void {
         if (!this.eGui) {

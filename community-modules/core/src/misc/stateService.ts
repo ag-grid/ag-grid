@@ -399,7 +399,7 @@ export class StateService extends BeanStub {
         if (!this.columnModel.isSecondaryColumnsPresent()) { return; }
 
         if (columnStates) {
-            let secondaryColumnStates: ColumnState[] = [];
+            const secondaryColumnStates: ColumnState[] = [];
             for (const columnState of columnStates) {
                 if (this.columnModel.getSecondaryColumn(columnState.colId)) {
                     secondaryColumnStates.push(columnState);

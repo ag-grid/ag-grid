@@ -73,7 +73,7 @@ export const CodeViewer = ({
 }) => {
     const [activeFile, setActiveFile] = useState(initialSelectedFile);
     const [showFiles, setShowFiles] = useState(true);
-    let localFiles = { ...files };
+    const localFiles = { ...files };
     const exampleFiles = Object.keys(localFiles);
     stripOutDarkModeCode(localFiles);
 

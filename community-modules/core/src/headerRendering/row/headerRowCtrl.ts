@@ -151,7 +151,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private onRowHeightChanged(): void {
-        var { topOffset, rowHeight } = this.getTopAndHeight();
+        const { topOffset, rowHeight } = this.getTopAndHeight();
 
         this.comp.setTop(topOffset + 'px');
         this.comp.setHeight(rowHeight + 'px');

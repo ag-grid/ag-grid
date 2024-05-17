@@ -92,7 +92,7 @@ export const FormattedInput = ({
                         const string = stripFloatingPointErrors(adjusted);
                         handleInput(string);
                     };
-                    let amount = e.shiftKey || e.ctrlKey || e.altKey || e.metaKey ? 10 : 1;
+                    const amount = e.shiftKey || e.ctrlKey || e.altKey || e.metaKey ? 10 : 1;
                     if (e.key === 'ArrowUp') {
                         adjustBy(amount);
                     } else if (e.key === 'ArrowDown') {

@@ -2,7 +2,7 @@
   "name": "ag-grid-docs",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "documentation/ag-grid-docs/src",
+  "sourceRoot": "{projectRoot}/src",
   "targets": {
     "build": {
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
@@ -11,7 +11,7 @@
       "cache": true,
       "command": "astro build",
       "options": {
-        "cwd": "documentation/ag-grid-docs",
+        "cwd": "{projectRoot}",
         "silent": true
       },
       "configurations": {
@@ -23,14 +23,14 @@
     "build-tsc": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc --project documentation/ag-grid-docs/tsconfig.json"
+        "command": "tsc --project {projectRoot}/tsconfig.json"
       }
     },
     "dev": {
       "dependsOn": ["^build", "^docs-resolved-interfaces"],
       "command": "astro dev --port=${PORT} --host",
       "options": {
-        "cwd": "documentation/ag-grid-docs"
+        "cwd": "{projectRoot}"
       },
       "configurations": {
         "watch": {}
@@ -44,12 +44,18 @@
       ],
       "command": "astro preview --port=${PORT}",
       "options": {
-        "cwd": "documentation/ag-grid-docs"
+        "cwd": "{projectRoot}"
       },
       "configurations": {
         "staging": {},
         "archive": {},
         "production": {}
+      }
+    },
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
       }
     },
     "test": {
@@ -58,7 +64,7 @@
       "inputs": [],
       "outputs": [],
       "options": {
-        "cwd": "documentation/ag-grid-docs"
+        "cwd": "{projectRoot}"
       },
       "configurations": {
         "ci": {},
@@ -71,8 +77,8 @@
       "outputs": ["{workspaceRoot}/reports/ag-grid-website.xml"],
       "dependsOn": [],
       "options": {
-        "cwd": "documentation/ag-grid-docs",
-        "config": "documentation/ag-grid-docs/vitest.config.mjs"
+        "cwd": "{projectRoot}",
+        "config": "{projectRoot}/vitest.config.mjs"
       },
       "configurations": {
         "ci": {
@@ -126,7 +132,7 @@
       "dependsOn": ["^build:types"],
       "inputs": [
         "{projectRoot}/tsconfig.examples.json",
-        "{workspaceRoot}/documentation/ag-grid-docs/src/**/_examples/**/*.ts",
+        "{workspaceRoot}/{projectRoot}/src/**/_examples/**/*.ts",
         "tsDeclarations",
         {
           "externalDependencies": ["npm:typescript"]
@@ -169,5 +175,5 @@
     "enterprise-modules/status-bar",
     "packages/ag-grid-community"
   ],
-  "tags": []
+  "tags": ["website"]
 }

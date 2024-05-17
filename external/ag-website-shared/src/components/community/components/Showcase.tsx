@@ -5,7 +5,7 @@ import styles from './Showcase.module.scss';
 
 const GitHubDetails = ({ favouritesOnly, repo }) => {
     if (repo != '' && repo != undefined && favouritesOnly) {
-        const regex = /github\.com\/([^\/]+)\/([^\/]+)/;
+        const regex = /github\.com\/([^/]+)\/([^/]+)/;
         const match = repo?.match(regex);
         return (
             <div className={styles.gitHubDetails}>

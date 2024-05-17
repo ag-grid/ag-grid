@@ -351,7 +351,7 @@ export class UserComponentFactory extends BeanStub {
 
         let defaultFloatingFilterType: string | null = null;
 
-        let { compName, jsComp, fwComp }
+        const { compName, jsComp, fwComp }
             = this.getCompKeys(def, FilterComponent);
 
         if (compName) {

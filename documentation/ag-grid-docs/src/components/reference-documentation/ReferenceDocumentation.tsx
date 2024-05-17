@@ -82,7 +82,7 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
     interfaceLookup,
     codeLookup,
 }): any => {
-    let codeSrcProvided = [interfaceName];
+    const codeSrcProvided = [interfaceName];
 
     if (names && names.length) {
         config = { overrideBottomMargin: '1rem', ...config };
@@ -135,7 +135,7 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
         return <Code code={escapedLines} keepMarkup={true} />;
     }
 
-    let props: any = {};
+    const props: any = {};
     let interfaceOverrides: Overrides = {};
     if (Object.keys(overrides).length) {
         interfaceOverrides = overrides[interfaceName];
@@ -172,7 +172,7 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
         }
     });
 
-    let orderedProps = {};
+    const orderedProps = {};
     const ordered = Object.entries(props).sort(([, v1], [, v2]) => {
         // Put required props at the top as likely to be the most important
         if ((v1 as ChildDocEntry).isRequired == (v2 as ChildDocEntry).isRequired) {
@@ -188,7 +188,7 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
         config.description != null
             ? config.description
             : `Properties available on the \`${interfaceDeclaration}\` interface.`;
-    let properties: DocEntryMap = {
+    const properties: DocEntryMap = {
         [interfaceName]: {
             ...orderedProps,
             meta: {
@@ -343,7 +343,7 @@ const Section: React.FC<SectionProps> = ({
     const objectProperties: DocEntryMap = {};
 
     let leftColumnWidth = 25;
-    let processed = new Set();
+    const processed = new Set();
     Object.entries(properties)
         .sort((a, b) => {
             return config.sortAlphabetically ? (a[0] < b[0] ? -1 : 1) : 0;
@@ -533,7 +533,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
     const idName = `reference-${id}-${name}`;
     let description = '';
     let isObject = false;
-    let gridParams = config.gridOpProp;
+    const gridParams = config.gridOpProp;
 
     useEffect(() => {
         const hashId = location.hash.slice(1); // Remove the '#' symbol
@@ -575,11 +575,11 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
     const isInitial = tags.some((t) => t.name === 'initial') ?? false;
 
     let displayName = name;
-    if (!!definition.isRequired) {
+    if (definition.isRequired) {
         displayName += `&nbsp;<span class="${styles.required}" title="Required">&ast;</span>`;
     }
 
-    if (!!definition.strikeThrough) {
+    if (definition.strikeThrough) {
         displayName = `<span style='text-decoration: line-through'>${displayName}</span>`;
     }
 
@@ -617,7 +617,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         }
     }
 
-    let propertyType = getPropertyType(type, config);
+    const propertyType = getPropertyType(type, config);
     const typeUrl = isObject
         ? `#reference-${id}.${name}`
         : propertyType !== 'Function'
@@ -828,7 +828,7 @@ const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, con
             };
         } else if (type.arguments) {
             args = type.arguments;
-        } else if (!!isCallSig) {
+        } else if (isCallSig) {
             // Required to handle call signature interfaces so we can flatten out the interface to make it clearer
             const callSigInterface = returnTypeInterface as ICallSignature;
             args = callSigInterface.type.arguments;
@@ -867,7 +867,7 @@ const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, con
             ? `function ${functionName}(${functionArguments}):`
             : `${functionName} = (${functionArguments}) =>`;
 
-    let lines = [];
+    const lines = [];
     if (typeof type != 'string' && (type.parameters || type.arguments || isCallSig)) {
         lines.push(
             `${functionPrefix} ${returnTypeIsObject ? returnTypeName : getLinkedType(returnType || 'void', framework)};`

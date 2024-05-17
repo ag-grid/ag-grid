@@ -14,8 +14,8 @@ export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<Wrapp
     }
 
     createWrapper(OriginalConstructor: { new(): any }, compType: any): WrappableInterface {
-        let angularFrameworkOverrides = this.angularFrameworkOverrides;
-        let that = this;
+        const angularFrameworkOverrides = this.angularFrameworkOverrides;
+        const that = this;
         class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> implements WrappableInterface {
             init(params: any): void {
                 angularFrameworkOverrides.runInsideAngular(() => {
@@ -41,7 +41,7 @@ export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<Wrapp
                 (wrapper as any)[name] = callback
             }
         }
-        let wrapper = new DynamicAgNg2Component();
+        const wrapper = new DynamicAgNg2Component();
         return wrapper;
     }
 

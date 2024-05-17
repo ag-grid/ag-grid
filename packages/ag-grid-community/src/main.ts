@@ -224,7 +224,6 @@ export {_isStopPropagationForAgGrid} from "@ag-grid-community/core";
 export {_isVisible} from "@ag-grid-community/core";
 export {_iterateObject} from "@ag-grid-community/core";
 export {_jsonEquals} from "@ag-grid-community/core";
-export {_keys} from "@ag-grid-community/core";
 export {_last} from "@ag-grid-community/core";
 export {_loadTemplate} from "@ag-grid-community/core";
 export {_makeNull} from "@ag-grid-community/core";

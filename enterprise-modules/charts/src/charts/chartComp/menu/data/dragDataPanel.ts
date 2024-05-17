@@ -1,7 +1,6 @@
 import {
     _areEqual,
     _createIconNoSpan,
-    _keys,
     _missing,
     AgCheckbox,
     AgRadioButton,
@@ -46,7 +45,7 @@ export abstract class DragDataPanel extends Component {
     }
 
     public refreshColumnComps(cols: ColState[]): boolean {
-        if (!_areEqual(_keys(this.columnComps), cols.map(({ colId }) => colId))) {
+        if (!_areEqual(Array.from(this.columnComps.keys()), cols.map(({ colId }) => colId))) {
             return false;
         }
 

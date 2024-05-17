@@ -76,6 +76,12 @@
         }
       }
     },
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": [

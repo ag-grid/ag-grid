@@ -405,7 +405,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         const isCombined = (model as any).operator;
 
         if (isCombined) {
-            let combinedModel = model as ICombinedSimpleModel<M>;
+            const combinedModel = model as ICombinedSimpleModel<M>;
             if (!combinedModel.conditions) {
                 combinedModel.conditions = [
                     combinedModel.condition1,

@@ -8,7 +8,6 @@ import { _getInnerWidth, _getScrollLeft, _isHorizontalScrollShowing, _isInDOM, _
 import { ColumnModel } from "../../columns/columnModel";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
 import { ViewportSizeFeature } from "../viewportSizeFeature";
-import { _convertToMap } from "../../utils/map";
 import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
 import { SetPinnedRightWidthFeature } from "./setPinnedRightWidthFeature";
 import { SetHeightFeature } from "./setHeightFeature";
@@ -84,7 +83,7 @@ export function getRowContainerTypeForName(name: RowContainerName): RowContainer
     }
 }
 
-const ContainerCssClasses: Map<RowContainerName, string> = _convertToMap([
+const ContainerCssClasses: Map<RowContainerName, string> = new Map([
     [RowContainerName.CENTER, 'ag-center-cols-container'],
     [RowContainerName.LEFT, 'ag-pinned-left-cols-container'],
     [RowContainerName.RIGHT, 'ag-pinned-right-cols-container'],
@@ -111,7 +110,7 @@ const ContainerCssClasses: Map<RowContainerName, string> = _convertToMap([
     [RowContainerName.BOTTOM_FULL_WIDTH, 'ag-floating-bottom-full-width-container'],
 ]);
 
-const ViewportCssClasses: Map<RowContainerName, string> = _convertToMap([
+const ViewportCssClasses: Map<RowContainerName, string> = new Map([
     [RowContainerName.CENTER, 'ag-center-cols-viewport'],
     [RowContainerName.TOP_CENTER, 'ag-floating-top-viewport'],
     [RowContainerName.STICKY_TOP_CENTER, 'ag-sticky-top-viewport'],

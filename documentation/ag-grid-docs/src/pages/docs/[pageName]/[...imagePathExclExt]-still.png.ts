@@ -5,7 +5,7 @@ import gifFrames from 'gif-frames';
 import type { Stream } from 'stream';
 
 export function getStaticPaths() {
-    let allDocsGifs = getDocsGifs();
+    const allDocsGifs = getDocsGifs();
 
     return getGifStillImageFiles({ allDocsGifs });
 }

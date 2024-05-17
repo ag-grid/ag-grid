@@ -78,7 +78,7 @@ export class SortController extends BeanStub {
             }
             return col !== lastSortIndexCol;
         });
-        const sortedColsWithIndices = !!lastSortIndexCol.getSort() ? [...allSortedColsWithoutChangesOrGroups, lastSortIndexCol] : allSortedColsWithoutChangesOrGroups;
+        const sortedColsWithIndices = lastSortIndexCol.getSort() ? [...allSortedColsWithoutChangesOrGroups, lastSortIndexCol] : allSortedColsWithoutChangesOrGroups;
         sortedColsWithIndices.forEach((col, idx) => {
             col.setSortIndex(idx);
         });
@@ -113,7 +113,7 @@ export class SortController extends BeanStub {
             // Do not clear if either holding shift, or if column in question was clicked
             if (!columnsToSkip.includes(columnToClear)) {
                 // add to list of cleared cols when sort direction is set
-                if (!!columnToClear.getSort()) { clearedColumns.push(columnToClear); }
+                if (columnToClear.getSort()) { clearedColumns.push(columnToClear); }
 
                 // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
                 // if sort order is: ['desc', null , 'asc'], as it will start at null rather than 'desc'.

@@ -398,8 +398,8 @@ export class GridBodyCtrl extends BeanStub {
     private setFloatingHeights(): void {
         const { pinnedRowModel } = this;
 
-        let floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
-        let floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight();
+        const floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
+        const floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight();
         this.comp.setTopHeight(floatingTopHeight);
         this.comp.setBottomHeight(floatingBottomHeight);
         this.comp.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');

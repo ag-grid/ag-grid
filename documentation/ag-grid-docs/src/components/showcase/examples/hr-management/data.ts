@@ -1,5 +1,5 @@
 export function getData() {
-    var rowData = [
+    const rowData = [
         {
             orgHierarchy: ['Renee Baker'],
             jobTitle: 'CTO',
