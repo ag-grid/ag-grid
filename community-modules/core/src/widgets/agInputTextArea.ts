@@ -3,7 +3,7 @@ import { AgAbstractInputField } from "./agAbstractInputField";
 import { AgComponentSelector } from "./component";
 
 export class AgInputTextArea extends AgAbstractInputField<HTMLTextAreaElement, string> {
-    static readonly selector: AgComponentSelector = 'ag-text-area';
+    static readonly selector: AgComponentSelector = 'ag-input-text-area';
     
     constructor(config?: AgInputFieldParams) {
         super(config, 'ag-text-area', null, 'textarea');

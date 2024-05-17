@@ -427,7 +427,6 @@ export type AgComponentSelector =
 'ag-pagination' |
 'ag-page-size-selector'|
 'ag-select' |
-'ag-text-area' |
 'ag-slider' |
 'ag-side-bar' |
 'ag-fake-horizontal-scroll' |
