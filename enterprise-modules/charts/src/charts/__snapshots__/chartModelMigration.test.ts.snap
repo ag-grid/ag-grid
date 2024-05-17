@@ -1391,7 +1391,6 @@ exports[`chartModelMigration upgradeChartModel should upgrade 24.0.0 successfull
         "position": "right",
         "spacing": 20,
       },
-      "minHeight": 0,
       "navigator": {
         "enabled": false,
         "height": 30,
@@ -1622,7 +1621,6 @@ exports[`chartModelMigration upgradeChartModel should upgrade 25.0.0 successfull
         "position": "right",
         "spacing": 20,
       },
-      "minHeight": 0,
       "navigator": {
         "enabled": false,
         "height": 30,
@@ -1883,7 +1881,6 @@ exports[`chartModelMigration upgradeChartModel should upgrade 25.0.0-line succes
         "spacing": 20,
       },
       "listeners": {},
-      "minHeight": 0,
       "navigator": {
         "enabled": false,
         "height": 30,
@@ -2128,7 +2125,6 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0 successfull
         "position": "right",
         "spacing": 20,
       },
-      "minHeight": 0,
       "navigator": {
         "enabled": false,
         "height": 30,
@@ -2348,7 +2344,6 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0-scatter suc
         "position": "right",
         "spacing": 20,
       },
-      "minHeight": 0,
       "navigator": {
         "enabled": false,
         "height": 30,
@@ -2599,7 +2594,6 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.1.0 successfull
         "position": "right",
         "spacing": 20,
       },
-      "minHeight": 0,
       "navigator": {
         "enabled": false,
         "height": 30,
@@ -2957,7 +2951,6 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.2.0 successfull
         "position": "right",
         "spacing": 20,
       },
-      "minHeight": 0,
       "navigator": {
         "enabled": false,
         "height": 30,
@@ -3328,7 +3321,6 @@ exports[`chartModelMigration upgradeChartModel should upgrade 27.0.0 successfull
         "position": "right",
         "spacing": 20,
       },
-      "minHeight": 0,
       "navigator": {
         "enabled": false,
         "height": 30,

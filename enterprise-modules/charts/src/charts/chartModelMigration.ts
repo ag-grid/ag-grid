@@ -291,13 +291,16 @@ function migrateV31(model: ChartModel) {
 }
 
 function migrateV32(model: ChartModel) {
-    model = jsonRename('chartOptions.*.autoSize', 'minHeight', model);
-    model = jsonMutateProperty('chartOptions.*.minHeight', true, model, (parent, targetProp) => {
-        if (parent[targetProp]) {
-            parent[targetProp] = 0;
-        } else {
-            delete parent[targetProp];
+    model = jsonMutateProperty('chartOptions.*.autoSize', true, model, (parent, targetProp) => {
+        if (parent[targetProp] === true) {
+            // autoSize: true was the OOB default, so just use the new OOB default baked-in.
+        } else if (parent[targetProp] === false) {
+            // Fallback to legacy Charts defaults for autoSize: false.
+            parent['minHeight'] = 600;
+            parent['minWidth'] = 300;
         }
+
+        delete parent[targetProp];
     });
 
     return model;
