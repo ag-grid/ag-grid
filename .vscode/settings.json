@@ -1,6 +1,7 @@
 {
     "editor.insertSpaces": true,
     "editor.tabSize": 4,
+    "editor.formatOnSave": true,
     "search.exclude": {
         "**/ag-grid-docs/_dev/**": true,
         "**/ag-grid-docs/.cache/**": true,
