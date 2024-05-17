@@ -5,7 +5,7 @@ import { SetHeightFeature } from "./rowContainer/setHeightFeature";
 import { Events } from "../eventKeys";
 import { AgComponentSelector } from "../widgets/component";
 
-export class AgFakeVerticalScroll extends AbstractFakeScrollComp {
+export class FakeVScrollComp extends AbstractFakeScrollComp {
     static readonly selector: AgComponentSelector = 'ag-fake-vertical-scroll';
     
     private static TEMPLATE = /* html */
@@ -16,7 +16,7 @@ export class AgFakeVerticalScroll extends AbstractFakeScrollComp {
         </div>`;
 
     constructor() {
-        super(AgFakeVerticalScroll.TEMPLATE, 'vertical');
+        super(FakeVScrollComp.TEMPLATE, 'vertical');
     }
 
     @PostConstruct

@@ -10,7 +10,7 @@ import { _escapeString } from "../../../utils/string";
 import { Component } from "../../../widgets/component";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { LongTapEvent, TapEvent, TouchListener } from "../../../widgets/touchListener";
-import { AgSortIndicator } from "./agSortIndicator";
+import { SortIndicatorComp } from "./sortIndicatorComp";
 import { ColumnModel } from "../../../columns/columnModel";
 import { Events } from "../../../eventKeys";
 import { SortDirection } from "../../../entities/colDef";
@@ -117,7 +117,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     @RefSelector('eFilter') private eFilter: HTMLElement;
     @RefSelector('eFilterButton') private eFilterButton?: HTMLElement;
-    @RefSelector('eSortIndicator') private eSortIndicator: AgSortIndicator;
+    @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
     @RefSelector('eMenu') private eMenu?: HTMLElement;
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('eText') private eText: HTMLElement;
@@ -183,7 +183,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.params = params;
 
         this.currentTemplate = this.workOutTemplate();
-        this.setTemplate(this.currentTemplate, [AgSortIndicator]);
+        this.setTemplate(this.currentTemplate, [SortIndicatorComp]);
         this.setupTap();
         this.setMenu();
         this.setupSort();
@@ -311,7 +311,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         // templates, in that case, we need to look for provided sort elements and
         // manually create eSortIndicator.
         if (!this.eSortIndicator) {
-            this.eSortIndicator = this.context.createBean(new AgSortIndicator(true));
+            this.eSortIndicator = this.context.createBean(new SortIndicatorComp(true));
             this.eSortIndicator.attachCustomElements(
                 this.eSortOrder,
                 this.eSortAsc,

@@ -151,8 +151,8 @@ export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from "./gridBodyC
 export { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
 export { MouseEventService } from "./gridBodyComp/mouseEventService";
 export { NavigationService } from "./gridBodyComp/navigationService";
-export { AgFakeHorizontalScroll } from "./gridBodyComp/agFakeHorizontalScroll";
-export { AgFakeVerticalScroll } from "./gridBodyComp/agFakeVerticalScroll";
+export { FakeHScrollComp } from "./gridBodyComp/fakeHScrollComp";
+export { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
 
 
 // rowContainer
@@ -169,7 +169,7 @@ export { GridHeaderCtrl, IGridHeaderComp } from "./headerRendering/gridHeaderCtr
 export { HeaderRowComp, HeaderRowType } from "./headerRendering/row/headerRowComp";
 export { HeaderRowCtrl, IHeaderRowComp } from "./headerRendering/row/headerRowCtrl";
 export { HeaderCellCtrl, IHeaderCellComp } from "./headerRendering/cells/column/headerCellCtrl";
-export { AgSortIndicator } from "./headerRendering/cells/column/agSortIndicator";
+export { SortIndicatorComp } from "./headerRendering/cells/column/sortIndicatorComp";
 export { HeaderFilterCellCtrl, IHeaderFilterCellComp } from "./headerRendering/cells/floatingFilter/headerFilterCellCtrl";
 export { HeaderGroupCellCtrl, IHeaderGroupCellComp } from "./headerRendering/cells/columnGroup/headerGroupCellCtrl";
 export { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "./headerRendering/cells/abstractCell/abstractHeaderCellCtrl";
