@@ -3,7 +3,6 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { type FunctionComponent, type ReactElement } from 'react';
 
 interface Props {
-    isButton?: boolean;
     withIcon?: boolean;
     className?: string;
     emailSubject?: string;
@@ -12,10 +11,10 @@ interface Props {
 }
 
 export const InfoEmailLink: FunctionComponent<Props> = ({
-    isButton,
     withIcon,
     className,
     emailSubject,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     trackingType,
     children,
 }) => {

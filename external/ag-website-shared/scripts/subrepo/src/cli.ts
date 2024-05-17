@@ -1,15 +1,15 @@
 import { type SubrepoCommandParams, runSubRepoCommand } from './lib/runSubRepoCommand';
 import { TERMINAL_COLORS as tc } from './lib/terminal-colors';
 
-const yargs = require('yargs/yargs');
-const { hideBin } = require('yargs/helpers');
+import yargs from 'yargs/yargs';
+import { hideBin } from 'yargs/helpers';
 
 const SUBREPO_FOLDER = 'external/ag-website-shared';
 
 const runCommand = ({ command, subRepoFolder, isVerbose }: SubrepoCommandParams) => {
     try {
         runSubRepoCommand({ command, subRepoFolder, isVerbose });
-    } catch (error) {
+    } catch (error: any) {
         if (error.stdout) {
             const output = error.stdout.toString() || error.message;
             const msg = `ERROR:\n${tc.red}${output}${tc.reset}`;

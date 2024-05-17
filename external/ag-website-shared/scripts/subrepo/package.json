@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/ag-grid/ag-website-shared#readme",
   "devDependencies": {
+    "@types/yargs": "^17.0.32",
     "tsx": "^4.7.2"
   },
   "dependencies": {
