@@ -52,6 +52,12 @@
         "production": {}
       }
     },
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "documentation/ag-grid-docs"
+      }
+    },
     "test": {
       "executor": "nx:noop",
       "dependsOn": ["test:vitest"],

@@ -156,7 +156,7 @@ export const Changelog = () => {
     const switchDisplayedFixVersion = useCallback(
         (fixVersion) => {
             setFixVersion(fixVersion);
-            let url = new URL(window.location);
+            const url = new URL(window.location);
             url.searchParams.set('fixVersion', fixVersion);
             window.history.pushState({}, '', url);
         },

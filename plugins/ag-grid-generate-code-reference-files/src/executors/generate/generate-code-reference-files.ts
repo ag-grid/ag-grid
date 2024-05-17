@@ -49,13 +49,13 @@ function toCamelCase(value) {
 }
 
 function extractTypesFromNode(node, srcFile, includeQuestionMark) {
-    let nodeMembers = {};
+    const nodeMembers = {};
     const kind = ts.SyntaxKind[node.kind];
 
 
-    let name = node && node.name && node.name.escapedText;
+    const name = node && node.name && node.name.escapedText;
     let returnType = node && node.type && node.type.getFullText().trim();
-    let optional = includeQuestionMark ? node && !!node.questionToken : undefined;
+    const optional = includeQuestionMark ? node && !!node.questionToken : undefined;
 
     if (kind == 'PropertySignature') {
 
@@ -102,7 +102,7 @@ function parseFile(sourceFile) {
 
 export function getInterfaces(globs) {
     let interfaces = {};
-    let extensions = {};
+    const extensions = {};
     globs.forEach(file => {
         const parsedFile = parseFile(file);
         interfaces = { ...interfaces, ...extractInterfaces(parsedFile, extensions) };
@@ -140,7 +140,7 @@ function isBuiltinUtilityType(type) {
 
 function mergeAncestorProps(isDocStyle, parent, child, getProps) {
     const props = { ...getProps(child) };
-    let mergedProps = props;
+    const mergedProps = props;
     // If the parent has a generic params lets apply the child's specific types
     if (parent.params && parent.params.length > 0) {
 
@@ -150,11 +150,11 @@ function mergeAncestorProps(isDocStyle, parent, child, getProps) {
                     delete mergedProps[k];
                     // Replace the generic params. Regex to make sure you are not just replacing 
                     // random letters in variable names.
-                    var rep = `(?<!\\w)${t}(?!\\w)`;
-                    var re = new RegExp(rep, "g");
-                    var newKey = k.replace(re, parent.params[i]);
+                    const rep = `(?<!\\w)${t}(?!\\w)`;
+                    const re = new RegExp(rep, "g");
+                    const newKey = k.replace(re, parent.params[i]);
+                    let newValue;
                     if (v) {
-
                         if (isDocStyle) {
                             if (v.type) {
                                 let newArgs = undefined;
@@ -168,7 +168,7 @@ function mergeAncestorProps(isDocStyle, parent, child, getProps) {
                                 newValue = { ...v, type: { ...v.type, returnType: newReturnType, arguments: newArgs } }
                             }
                         } else {
-                            var newValue = v.replace(re, parent.params[i]);
+                            newValue = v.replace(re, parent.params[i]);
                         }
                     }
 
@@ -183,7 +183,7 @@ function mergeAncestorProps(isDocStyle, parent, child, getProps) {
 };
 
 function mergeRespectingChildOverrides(parent, child) {
-    let merged = { ...child };
+    const merged = { ...child };
     // We want the child properties to be list first for better doc reading experience
     // Normal spread merge to get the correct order wipes out child overrides
     // Hence the manual approach to the merge here.
@@ -209,7 +209,7 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
             let extended = a.extends;
 
             let extInt = undefined;
-            let omitFields = [];
+            const omitFields = [];
             if (extended === 'Omit') {
                 // Omit: https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
                 // Special logic to handle the removing of properties via the Omit utility when a type is defined via extension.
@@ -288,8 +288,8 @@ function extractInterfaces(srcFile, extension) {
         } else {
 
             let isCallSignature = false;
-            let members = {};
-            let docs = {};
+            const members = {};
+            const docs = {};
             let callSignatureMembers = {};
 
             if (node.members && node.members.length > 0) {
@@ -325,7 +325,7 @@ function extractInterfaces(srcFile, extension) {
                     type: callSignatureMembers
                 }
             } else {
-                let meta = {};
+                const meta = {};
                 iLookup[name] = { meta, type: members, docs: Object.entries(docs).length > 0 ? docs : undefined }
             }
 
@@ -361,10 +361,10 @@ function getClassProperties(filePath, className) {
 /** Build the interface file in the format that can be used by <interface-documentation> */
 export function buildInterfaceProps(globs) {
 
-    let interfaces = {
+    const interfaces = {
         _config_: {},
     };
-    let extensions = {};
+    const extensions = {};
     globs.forEach(file => {
         const parsedFile = parseFile(file);
 
@@ -406,10 +406,10 @@ function hasPublicModifier(node) {
 }
 
 function extractMethodsAndPropsFromNode(node, srcFile) {
-    let nodeMembers = {};
+    const nodeMembers = {};
     const kind = ts.SyntaxKind[node.kind];
-    let name = node && node.name && node.name.escapedText;
-    let returnType = node && node.type && node.type.getFullText().trim();
+    const name = node && node.name && node.name.escapedText;
+    const returnType = node && node.type && node.type.getFullText().trim();
 
 
     if (!hasPublicModifier(node)) {

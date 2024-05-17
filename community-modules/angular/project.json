@@ -23,6 +23,12 @@
         "script": "build"
       }
     },
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "community-modules/angular"
+      }
+    },
     "pack": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],

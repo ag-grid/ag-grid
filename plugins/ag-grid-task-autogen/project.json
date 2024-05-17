@@ -37,8 +37,10 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "command": "eslint",
+      "options": {
+        "cwd": "plugins/ag-grid-task-autogen"
+      }
     },
     "test": {
       "executor": "@nx/jest:jest",

@@ -37,7 +37,7 @@ export class HeaderPositionUtils extends BeanStub {
 
         if (!nextColumn) { return; }
 
-        let { headerRowIndex } = focusedHeader;
+        const { headerRowIndex } = focusedHeader;
 
         if (this.getHeaderRowType(headerRowIndex) !== HeaderRowType.FLOATING_FILTER) {
             const columnsInPath: (Column | ColumnGroup)[] = [nextColumn];
@@ -112,7 +112,7 @@ export class HeaderPositionUtils extends BeanStub {
         const currentRowType = this.getHeaderRowType(currentIndex);
         let nextFocusColumn: Column | ColumnGroup | null = column;
         let nextRow = currentIndex + 1;
-        let headerRowIndexWithoutSpan = nextRow;
+        const headerRowIndexWithoutSpan = nextRow;
 
         if (currentRowType === HeaderRowType.COLUMN_GROUP) {
             const leafColumns = (column as ColumnGroup).getDisplayedLeafColumns();

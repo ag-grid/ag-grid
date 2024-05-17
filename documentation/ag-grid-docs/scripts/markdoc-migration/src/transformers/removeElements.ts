@@ -4,7 +4,7 @@ import { JSX_TYPE } from '../constants';
 import { replaceNodeWithFixme } from '../utils/replaceNodeWithFixme';
 
 export function removeElements(ast: any) {
-    let warnings: string[] = [];
+    const warnings: string[] = [];
     const addWarning = ({ message, node }: { message: string; node: any }) => {
         warnings.push(`${message} (line ${node.position.start.line}:${node.position.end.line})`);
     };

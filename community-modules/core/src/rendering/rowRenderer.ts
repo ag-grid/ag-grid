@@ -984,7 +984,7 @@ export class RowRenderer extends BeanStub {
 
     private calculateIndexesToDraw(rowsToRecycle?: { [key: string]: RowCtrl; } | null): number[] {
         // all in all indexes in the viewport
-        let indexesToDraw = _createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
+        const indexesToDraw = _createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
 
         const checkRowToDraw = (indexStr: string, rowComp: RowCtrl) => {
             const index = rowComp.getRowNode().rowIndex;
