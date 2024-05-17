@@ -95,7 +95,7 @@ export class ChartSpecificDataPanel extends Component {
         const { chartOptionsService, chartController } = this.chartMenuContext;
         const chartOptionsSeriesProxy = chartOptionsService.getSeriesOptionsProxy(() => getSeriesType(chartController.getChartType()));
         const chartSeriesMenuParamsFactory = this.createManagedBean(new ChartMenuParamsFactory(chartOptionsSeriesProxy));
-        const options = ['horizontal', 'vertical'].map((value: 'horizontal' | 'vertical') => ({
+        const options = (['horizontal', 'vertical'] as const).map(value => ({
             value,
             text: this.chartTranslationService.translate(value)
         }));
