@@ -175,5 +175,5 @@
     "enterprise-modules/status-bar",
     "packages/ag-grid-community"
   ],
-  "tags": []
+  "tags": ["website"]
 }
