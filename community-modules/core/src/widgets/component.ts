@@ -172,22 +172,27 @@ export class Component extends BeanStub {
     ): Component | null {
         const key = element.nodeName;
 
-        // shortcut for common browser elements
-        if(this.browserElements.has(key)){ return null; }
-
-        const ComponentClass = this.agStackComponentsRegistry.getComponentForNode(key as AgComponentElementName);
+        const elementRef = element.getAttribute('ref');
         
+        const ComponentClass = this.browserElements.has(key) ? null : this.agStackComponentsRegistry.getComponentForNode(key as AgComponentElementName);
+        let newComponent: Component | null = null;
         if (ComponentClass) {
             Component.elementGettingCreated = element;
-            const componentParams = paramsMap ? paramsMap[element.getAttribute('ref')!] : undefined;
-            const newComponent = new ComponentClass(componentParams);
+            const componentParams = paramsMap ? paramsMap[elementRef!] : undefined;
+            newComponent = new ComponentClass(componentParams);
             newComponent.setParentComponent(this);
 
             this.createBean(newComponent, null, afterPreCreateCallback);
-
-            return newComponent;
         }
-        return null;
+
+        // Uncomment to replace @RefSelector
+        // if(elementRef){
+        //     const current = (this as any)[elementRef];
+        //     if(!current){
+        //         (this as any)[elementRef] = newComponent ?? element;
+        //     }
+        // }
+        return newComponent;
     }
 
     private copyAttributesFromNode(source: Element, dest: Element): void {

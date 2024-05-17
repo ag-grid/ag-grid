@@ -1,9 +1,5 @@
 import { _getFunctionName } from '../utils/function';
 
-export function QuerySelector(selector?: string): Function {
-    return querySelectorFunc.bind(this, selector, undefined);
-}
-
 export function RefSelector(ref: string): Function {
     return querySelectorFunc.bind(this, `[ref=${ref}]`, ref);
 }

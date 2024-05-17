@@ -243,7 +243,7 @@ export class GridCoreCreator {
         const beans = context.getBean('beans') as Beans;
 
         this.registerModuleUserComponents(beans, registeredModules);
-        this.registerStackComponents(beans, registeredModules);
+        this.registerModuleStackComponents(beans, registeredModules);
         this.registerControllers(beans, registeredModules);
 
         createUi(context);
@@ -264,7 +264,7 @@ export class GridCoreCreator {
         });
     }
 
-    private registerStackComponents(beans: Beans, registeredModules: Module[]): void {
+    private registerModuleStackComponents(beans: Beans, registeredModules: Module[]): void {
         const agStackComponents = registeredModules.flatMap((module) => module.agStackComponents ? module.agStackComponents : []);
         beans.agStackComponentsRegistry.ensureRegistered(agStackComponents);
     }

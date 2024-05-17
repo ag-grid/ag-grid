@@ -43,7 +43,7 @@ export {
     Qualifier,
     PreDestroy
 } from "./context/context";
-export { QuerySelector, RefSelector } from "./widgets/componentAnnotations";
+export { RefSelector } from "./widgets/componentAnnotations";
 
 // excel
 export {
