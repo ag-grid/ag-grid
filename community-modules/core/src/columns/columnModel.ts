@@ -3415,8 +3415,19 @@ export class ColumnModel extends BeanStub {
         const left: Column[] = [];
         const normal: Column[] = [];
         const right: Column[] = [];
+        const isRtl = this.gos.get('enableRtl');
+
         cols.forEach((col) => {
-            const position = col.getColDef().lockPosition;
+            let position = col.getColDef().lockPosition;
+
+            if (isRtl) {
+                if (position === 'left' || position === true) {
+                    position = 'right'
+                } else if (position === 'right') {
+                    position = 'left';
+                }
+            }
+
             if (position === 'right') {
                 right.push(col);
             } else if (position === 'left' || position === true) {
