@@ -58,7 +58,7 @@ const GRID_BODY_TEMPLATE = /* html */
         <ag-overlay-wrapper></ag-overlay-wrapper>
     </div>`;
 
-export class AgGridBody extends Component {
+export class GridBodyComp extends Component {
     static readonly selector: AgComponentSelector = 'ag-grid-body';
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;

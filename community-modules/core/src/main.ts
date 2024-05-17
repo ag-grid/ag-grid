@@ -146,7 +146,7 @@ export { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterBuilde
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 
 // gridPanel
-export { AgGridBody } from "./gridBodyComp/agGridBody";
+export { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from "./gridBodyComp/gridBodyCtrl";
 export { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
 export { MouseEventService } from "./gridBodyComp/mouseEventService";

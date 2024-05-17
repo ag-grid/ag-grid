@@ -1,5 +1,5 @@
 import { Autowired, PostConstruct } from "../context/context";
-import { AgGridBody } from "../gridBodyComp/agGridBody";
+import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { ISideBar } from "../interfaces/iSideBar";
 import { Logger, LoggerFactory } from "../logger";
 import { AgPagination } from "../pagination/agPagination";
@@ -14,7 +14,7 @@ export class GridComp extends TabGuardComp {
 
     @Autowired('loggerFactory') private readonly loggerFactory: LoggerFactory;
 
-    @RefSelector('gridBody') private readonly gridBodyComp: AgGridBody;
+    @RefSelector('gridBody') private readonly gridBodyComp: GridBodyComp;
     @RefSelector('sideBar') private readonly sideBarComp: ISideBar & Component;
     @RefSelector('rootWrapperBody') private readonly eRootWrapperBody: HTMLElement;
 
@@ -51,7 +51,7 @@ export class GridComp extends TabGuardComp {
         this.ctrl = this.createManagedBean(new GridCtrl());
 
         const template = this.createTemplate();
-        this.setTemplate(template, [AgGridBody, AgPagination]);
+        this.setTemplate(template, [GridBodyComp, AgPagination]);
 
         this.ctrl.setComp(compProxy, this.eGridDiv, this.getGui());
 
