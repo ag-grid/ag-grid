@@ -3,5 +3,35 @@
     "tabWidth": 4,
     "printWidth": 120,
     "singleQuote": true,
-    "bracketSameLine": true
+    "importOrder": ["^ag-grid-(.*)$", "^[./]"],
+    "importOrderParserPlugins": ["typescript", "decorators-legacy"],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true,
+    "overrides": [
+        {
+            "files": [
+                "package.json",
+                "package-lock.json",
+                "nx.json",
+                "project.json",
+                ".eslintrc.json",
+                "tsconfig*.json",
+                ".vscode/*.json"
+            ],
+            "options": { "tabWidth": 2 }
+        },
+        {
+            "files": ["*.{jsx,tsx}"],
+            "options": {
+                "importOrderParserPlugins": ["typescript", "decorators-legacy", "jsx"]
+            }
+        },
+        {
+            "files": "*.astro",
+            "options": {
+                "parser": "astro"
+            }
+        }
+    ],
+    "plugins": ["@trivago/prettier-plugin-sort-imports", "prettier-plugin-astro"]
 }
