@@ -1,15 +1,15 @@
-import { ICellRendererParams } from "@ag-grid-community/core";
-import { Component, ElementRef, HostBinding, ViewChild } from "@angular/core";
-import { ICellRendererAngularComp } from "@ag-grid-community/angular";
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
+import { ICellRendererParams } from '@ag-grid-community/core';
+import { Component, ElementRef, HostBinding, ViewChild } from '@angular/core';
 
 @Component({
     standalone: true,
-    template: /* html */
-        `<div class="athlete-info">
-            <span>{{athlete}}</span>
-            <span>{{country}}</span>
+    /* html */
+    template: `<div class="athlete-info">
+            <span>{{ athlete }}</span>
+            <span>{{ country }}</span>
         </div>
-        <span>{{year}}</span>
+        <span>{{ year }}</span>
         <i class="fas fa-arrows-alt-v" #myref></i>`,
 })
 export class CustomCellRenderer implements ICellRendererAngularComp {

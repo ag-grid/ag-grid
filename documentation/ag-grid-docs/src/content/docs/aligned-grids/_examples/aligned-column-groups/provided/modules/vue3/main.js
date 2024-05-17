@@ -1,10 +1,10 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-
 import { ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { createApp } from 'vue';
+
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
@@ -39,10 +39,10 @@ const VueExample = {
                 defaultColDef: {
                     filter: true,
                     flex: 1,
-                    minWidth: 120
+                    minWidth: 120,
                 },
                 autoSizeStrategy: {
-                    type: 'fitGridWidth'
+                    type: 'fitGridWidth',
                 },
             },
             bottomOptions: {
@@ -50,8 +50,8 @@ const VueExample = {
                 defaultColDef: {
                     filter: true,
                     flex: 1,
-                    minWidth: 120
-                }
+                    minWidth: 120,
+                },
             },
             topGridApi: null,
             columnDefs: [
@@ -59,39 +59,41 @@ const VueExample = {
                     headerName: 'Group 1',
                     groupId: 'Group1',
                     children: [
-                        { field: 'athlete', pinned: true, },
-                        { field: 'age', pinned: true, columnGroupShow: 'open', },
-                        { field: 'country', },
-                        { field: 'year', columnGroupShow: 'open', },
-                        { field: 'date', },
-                        { field: 'sport', columnGroupShow: 'open', },
-                    ]
+                        { field: 'athlete', pinned: true },
+                        { field: 'age', pinned: true, columnGroupShow: 'open' },
+                        { field: 'country' },
+                        { field: 'year', columnGroupShow: 'open' },
+                        { field: 'date' },
+                        { field: 'sport', columnGroupShow: 'open' },
+                    ],
                 },
                 {
                     headerName: 'Group 2',
                     groupId: 'Group2',
                     children: [
-                        { field: 'athlete', pinned: true, },
-                        { field: 'age', pinned: true, columnGroupShow: 'open', },
-                        { field: 'country', },
-                        { field: 'year', columnGroupShow: 'open', },
-                        { field: 'date', },
-                        { field: 'sport', columnGroupShow: 'open', },
-                    ]
-                }
+                        { field: 'athlete', pinned: true },
+                        { field: 'age', pinned: true, columnGroupShow: 'open' },
+                        { field: 'country' },
+                        { field: 'year', columnGroupShow: 'open' },
+                        { field: 'date' },
+                        { field: 'sport', columnGroupShow: 'open' },
+                    ],
+                },
             ],
 
             rowData: null,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
     mounted() {
         this.topGridApi = this.$refs.topGrid.api;
 
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then(resp => resp.json())
-            .then(rowData => {
-                this.rowData = rowData
+            .then((resp) => resp.json())
+            .then((rowData) => {
+                this.rowData = rowData;
 
                 // mix up some columns
                 this.topGridApi.moveColumnByIndex(11, 4);

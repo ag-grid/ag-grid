@@ -1,32 +1,32 @@
-import { ColDef, ColGroupDef, createGrid, GridOptions } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, ColGroupDef, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
-    { field: "athlete" },
-    { field: "age" },
-    { field: "country" },
-    { field: "year" },
-    { field: "sport" },
+    { field: 'athlete' },
+    { field: 'age' },
+    { field: 'country' },
+    { field: 'year' },
+    { field: 'sport' },
     {
         headerName: 'Medals',
         children: [
             {
-                colId: "total",
-                columnGroupShow: 'closed', 
-                valueGetter: "data.gold + data.silver + data.bronze"
+                colId: 'total',
+                columnGroupShow: 'closed',
+                valueGetter: 'data.gold + data.silver + data.bronze',
             },
-            { columnGroupShow: 'open', field: "gold" },
-            { columnGroupShow: 'open', field: "silver" },
-            { columnGroupShow: 'open', field: "bronze" }
-        ]
-    }
+            { columnGroupShow: 'open', field: 'gold' },
+            { columnGroupShow: 'open', field: 'silver' },
+            { columnGroupShow: 'open', field: 'bronze' },
+        ],
+    },
 ];
 const defaultColDef: ColDef = {
     filter: true,
-    minWidth: 100
+    minWidth: 100,
 };
 // this is the grid options for the top grid
 const gridOptionsTop: GridOptions = {
@@ -35,7 +35,7 @@ const gridOptionsTop: GridOptions = {
     rowData: null,
     alignedGrids: () => [bottomApi],
     autoSizeStrategy: {
-        type: 'fitGridWidth'
+        type: 'fitGridWidth',
     },
 };
 const gridDivTop = document.querySelector<HTMLElement>('#myGridTop')!;
@@ -72,9 +72,8 @@ function setData(rowData: any[]) {
 }
 
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(data => setData(data));
-
+    .then((response) => response.json())
+    .then((data) => setData(data));
 
 if (typeof window !== 'undefined') {
     // Attach external event handlers to window so they can be called from index.html

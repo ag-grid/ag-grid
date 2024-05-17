@@ -24,5 +24,5 @@ export function getData(): any[] {
             style: 'Dirty',
             clothes: 'Padded',
         },
-    ]
+    ];
 }

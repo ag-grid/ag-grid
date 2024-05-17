@@ -1,15 +1,14 @@
 import {
     GridApi,
-    createGrid,
     GridOptions,
     ICellRendererParams,
     IDatasource,
     IGetRowsParams,
     IRowNode,
+    createGrid,
 } from '@ag-grid-community/core';
-
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
@@ -26,9 +25,9 @@ const gridOptions: GridOptions<IOlympicData> = {
             valueGetter: 'node.id',
             cellRenderer: (params: ICellRendererParams) => {
                 if (params.value !== undefined) {
-                    return params.value
+                    return params.value;
                 } else {
-                    return '<img src="https://www.ag-grid.com/example-assets/loading.gif">'
+                    return '<img src="https://www.ag-grid.com/example-assets/loading.gif">';
                 }
             },
         },
@@ -52,7 +51,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     // debug: true,
     rowSelection: 'multiple',
     isRowSelectable: (rowNode: IRowNode) => {
-        return rowNode.data ? rowNode.data.country === 'United States' : false
+        return rowNode.data ? rowNode.data.country === 'United States' : false;
     },
     // tell grid we want virtual row model type
     rowModelType: 'infinite',
@@ -72,7 +71,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     // pages are never purged. this should be set for large data to stop your browser from getting
     // full of data
     maxBlocksInCache: 2,
-}
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
@@ -80,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
+        .then((response) => response.json())
         .then(function (data) {
             const dataSource: IDatasource = {
                 rowCount: undefined, // behave as infinite scroll
@@ -94,14 +93,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         // if on or after the last page, work out the last row.
                         let lastRow = -1;
                         if (data.length <= params.endRow) {
-                            lastRow = data.length
+                            lastRow = data.length;
                         }
                         // call the success callback
-                        params.successCallback(rowsThisPage, lastRow)
-                    }, 500)
+                        params.successCallback(rowsThisPage, lastRow);
+                    }, 500);
                 },
             };
 
-            gridApi!.setGridOption('datasource', dataSource)
-        })
-})
+            gridApi!.setGridOption('datasource', dataSource);
+        });
+});

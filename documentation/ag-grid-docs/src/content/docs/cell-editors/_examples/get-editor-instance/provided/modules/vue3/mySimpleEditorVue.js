@@ -1,4 +1,4 @@
-import {nextTick} from 'vue';
+import { nextTick } from 'vue';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
@@ -7,7 +7,7 @@ export default {
     template: `<input v-model="value" :ref="'input'" class="my-simple-editor" />`,
     data() {
         return {
-            value: null
+            value: null,
         };
     },
     methods: {
@@ -18,7 +18,7 @@ export default {
         myCustomFunction() {
             return {
                 rowIndex: this.params.rowIndex,
-                colId: this.params.column.getId()
+                colId: this.params.column.getId(),
             };
         },
 
@@ -39,7 +39,7 @@ export default {
             }
 
             return '';
-        }
+        },
     },
     created() {
         this.value = this.getInitialValue();
@@ -48,5 +48,5 @@ export default {
         nextTick(() => {
             this.$refs.input.focus();
         });
-    }
+    },
 };

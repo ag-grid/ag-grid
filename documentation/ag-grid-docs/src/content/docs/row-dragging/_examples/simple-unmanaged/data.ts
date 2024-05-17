@@ -468,5 +468,5 @@ export function getData(): any[] {
             bronze: 0,
             total: 3,
         },
-    ]
+    ];
 }

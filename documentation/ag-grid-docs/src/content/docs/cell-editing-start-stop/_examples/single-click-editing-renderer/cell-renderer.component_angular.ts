@@ -1,14 +1,13 @@
-import { Component } from "@angular/core";
-
-import { ICellRendererAngularComp } from "@ag-grid-community/angular";
-import { ICellRendererParams } from "@ag-grid-community/core"
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
+import { ICellRendererParams } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
 
 @Component({
     standalone: true,
     template: `<span>
         <button style="height: 30px;" (click)="onClick()">✎</button>
-        <span style="padding-left: 4px;">{{this.displayValue}}</span>
-    </span>`
+        <span style="padding-left: 4px;">{{ this.displayValue }}</span>
+    </span>`,
 })
 export class CellRenderer implements ICellRendererAngularComp {
     private params!: ICellRendererParams<IOlympicData, string>;
@@ -21,8 +20,8 @@ export class CellRenderer implements ICellRendererAngularComp {
 
     onClick() {
         this.params.api.startEditingCell({
-          rowIndex: this.params.node.rowIndex!,
-          colKey: this.params.column!.getId(),
+            rowIndex: this.params.node.rowIndex!,
+            colKey: this.params.column!.getId(),
         });
     }
 
@@ -30,4 +29,3 @@ export class CellRenderer implements ICellRendererAngularComp {
         return false;
     }
 }
-

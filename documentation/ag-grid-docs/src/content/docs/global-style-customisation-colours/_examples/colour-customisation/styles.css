@@ -1,4 +1,5 @@
-.ag-theme-quartz, .ag-theme-quartz-dark {
+.ag-theme-quartz,
+.ag-theme-quartz-dark {
     --ag-foreground-color: rgb(126, 46, 132);
     --ag-background-color: rgb(249, 245, 227);
     --ag-header-foreground-color: rgb(204, 245, 172);

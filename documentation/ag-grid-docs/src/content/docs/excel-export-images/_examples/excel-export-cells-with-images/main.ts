@@ -1,15 +1,14 @@
-import { ColDef, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
-import { FlagContext } from './interfaces';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MenuModule } from '@ag-grid-enterprise/menu';
-import { ModuleRegistry } from "@ag-grid-community/core";
+
+import { CountryCellRenderer } from './countryCellRenderer_typescript';
+import { createBase64FlagsFromResponse } from './imageUtils';
+import { FlagContext } from './interfaces';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ExcelExportModule, MenuModule]);
-
-import { CountryCellRenderer } from './countryCellRenderer_typescript'
-
-import { createBase64FlagsFromResponse } from './imageUtils';
 
 const countryCodes: any = {};
 const base64flags: any = {};
@@ -24,8 +23,8 @@ const columnDefs: ColDef[] = [
         cellRenderer: CountryCellRenderer,
         cellRendererParams: {
             base64flags: base64flags,
-            countryCodes: countryCodes
-        }
+            countryCodes: countryCodes,
+        },
     },
     { field: 'athlete' },
     { field: 'age' },
@@ -36,7 +35,7 @@ const columnDefs: ColDef[] = [
     { field: 'silver' },
     { field: 'bronze' },
     { field: 'total' },
-]
+];
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -48,7 +47,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultExcelExportParams: {
         addImageToCell: (rowIndex, col, value) => {
             if (col.getColId() !== 'country') {
-                return
+                return;
             }
 
             const countryCode = countryCodes[value];
@@ -64,26 +63,26 @@ const gridOptions: GridOptions<IOlympicData> = {
                         offsetY: 5.5,
                     },
                 },
-            }
+            };
         },
     },
     context: {
         base64flags: base64flags,
-        countryCodes: countryCodes
+        countryCodes: countryCodes,
     } as FlagContext,
-    onGridReady: params => {
+    onGridReady: (params) => {
         fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
-            .then(data => createBase64FlagsFromResponse(data, countryCodes, base64flags))
-            .then(data => params.api.setGridOption('rowData', data));
+            .then((data) => createBase64FlagsFromResponse(data, countryCodes, base64flags))
+            .then((data) => params.api.setGridOption('rowData', data));
     },
-}
+};
 
 function onBtExport() {
-    gridApi!.exportDataAsExcel()
+    gridApi!.exportDataAsExcel();
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-})
+});

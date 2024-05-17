@@ -7,15 +7,15 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
     template: `
         <div style="display: flex">
             @if (params.enableMenu) {
-                <span #menuButton class="ag-icon ag-icon-menu"
-                    (click)="onMenuClicked($event)"></span>
+                <span #menuButton class="ag-icon ag-icon-menu" (click)="onMenuClicked($event)"></span>
             }
-            <div style="flex-grow: 1;"><span ref="eText">{{params.displayName}}</span></div>
+            <div style="flex-grow: 1;">
+                <span ref="eText">{{ params.displayName }}</span>
+            </div>
         </div>
-    `
+    `,
 })
 export class CustomHeader implements IHeaderAngularComp {
-
     public params!: IHeaderParams;
 
     @ViewChild('menuButton', { read: ElementRef }) public menuButton!: ElementRef;

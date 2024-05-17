@@ -1,10 +1,9 @@
-import { GridApi, createGrid, GridOptions, ISetFilterParams } from '@ag-grid-community/core';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { GridApi, GridOptions, ISetFilterParams, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule, SetFilterModule]);
 
@@ -20,7 +19,7 @@ function replaceAccents(value: string) {
         .replace(new RegExp('œ', 'g'), 'oe')
         .replace(new RegExp('[ùúûü]', 'g'), 'u')
         .replace(new RegExp('[ýÿ]', 'g'), 'y')
-        .replace(new RegExp('\\W', 'g'), '')
+        .replace(new RegExp('\\W', 'g'), '');
 }
 
 const filterParams: ISetFilterParams = {
@@ -38,16 +37,16 @@ const gridOptions: GridOptions<IOlympicData> = {
             filterParams: filterParams,
         },
         // number filters
-        {field: 'gold', filter: 'agNumberColumnFilter'},
-        {field: 'silver', filter: 'agNumberColumnFilter'},
-        {field: 'bronze', filter: 'agNumberColumnFilter'},
+        { field: 'gold', filter: 'agNumberColumnFilter' },
+        { field: 'silver', filter: 'agNumberColumnFilter' },
+        { field: 'bronze', filter: 'agNumberColumnFilter' },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 200,
         floatingFilter: true,
     },
-}
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
@@ -55,6 +54,6 @@ document.addEventListener('DOMContentLoaded', function () {
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
-})
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+});

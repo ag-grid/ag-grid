@@ -19,12 +19,6 @@ export interface GeneratedContents {
     supportedFrameworks?: InternalFramework[];
 }
 
-export type InternalFramework =
-    | 'vanilla'
-    | 'typescript'
-    | 'reactFunctional'
-    | 'reactFunctionalTs'
-    | 'angular'
-    | 'vue3';
+export type InternalFramework = 'vanilla' | 'typescript' | 'reactFunctional' | 'reactFunctionalTs' | 'angular' | 'vue3';
 
 export const TYPESCRIPT_INTERNAL_FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctionalTs', 'angular'];

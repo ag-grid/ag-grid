@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 
-
 const CustomCellRenderer = (props) => {
     const myRef = useRef(null);
 
@@ -18,5 +17,5 @@ const CustomCellRenderer = (props) => {
             <i className="fas fa-arrows-alt-v" ref={myRef}></i>
         </div>
     );
-}
+};
 export default CustomCellRenderer;

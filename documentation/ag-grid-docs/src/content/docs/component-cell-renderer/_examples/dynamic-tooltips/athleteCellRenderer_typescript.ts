@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class AthleteCellRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
@@ -12,7 +12,7 @@ export class AthleteCellRenderer implements ICellRendererComp {
         div.style.textOverflow = 'ellipsis';
         div.textContent = params.value || '';
         this.eGui = div;
-        params.setTooltip(`Dynamic Tooltip for ${params.value}`, () => this.eGui.scrollWidth > this.eGui.clientWidth)
+        params.setTooltip(`Dynamic Tooltip for ${params.value}`, () => this.eGui.scrollWidth > this.eGui.clientWidth);
     }
 
     getGui() {
@@ -23,4 +23,3 @@ export class AthleteCellRenderer implements ICellRendererComp {
         return false;
     }
 }
-

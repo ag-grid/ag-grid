@@ -18,17 +18,18 @@ export default {
         return {
             ascSort: null,
             descSort: null,
-            noSort: null
+            noSort: null,
         };
     },
-    beforeMount() {
-    },
+    beforeMount() {},
     mounted() {
         this.params.column.addEventListener('sortChanged', this.onSortChanged);
         this.onSortChanged();
         this.params.setTooltip(this.params.displayName, () => {
-            if (!this.$refs.label) { return; }
-            return this.$refs.label.scrollWidth > this.$refs.label.clientWidth
+            if (!this.$refs.label) {
+                return;
+            }
+            return this.$refs.label.scrollWidth > this.$refs.label.clientWidth;
         });
     },
     methods: {
@@ -49,6 +50,6 @@ export default {
 
         onSortRequested(order, event) {
             this.params.setSort(order, event.shiftKey);
-        }
-    }
+        },
+    },
 };

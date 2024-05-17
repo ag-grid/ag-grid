@@ -5,7 +5,7 @@ export default {
     `,
     methods: {
         removeSpaces(str) {
-            return str ? str.replace(/\s/g, '') : str
-        }
-    }
+            return str ? str.replace(/\s/g, '') : str;
+        },
+    },
 };

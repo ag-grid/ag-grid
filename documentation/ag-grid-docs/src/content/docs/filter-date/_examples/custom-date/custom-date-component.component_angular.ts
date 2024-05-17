@@ -1,7 +1,6 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-
-import { IDateParams } from '@ag-grid-community/core';
 import { IDateAngularComp } from '@ag-grid-community/angular';
+import { IDateParams } from '@ag-grid-community/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 
 // we'll be using the globally provided flatpickr for our example
 declare var flatpickr: any;
@@ -9,14 +8,15 @@ declare var flatpickr: any;
 @Component({
     standalone: true,
     template: `
-      <div #flatpickrEl class="ag-input-wrapper custom-date-filter" role="presentation">
-      <input type="text" #eInput data-input style="width: 100%;"/>
-      <a class='input-button' title='clear' data-clear>
-        <i class='fa fa-times'></i>
-      </a>
-      </div>
+        <div #flatpickrEl class="ag-input-wrapper custom-date-filter" role="presentation">
+            <input type="text" #eInput data-input style="width: 100%;" />
+            <a class="input-button" title="clear" data-clear>
+                <i class="fa fa-times"></i>
+            </a>
+        </div>
     `,
-    styles: [`
+    styles: [
+        `
             .custom-date-filter a {
                 position: absolute;
                 right: 20px;
@@ -34,12 +34,12 @@ declare var flatpickr: any;
                 pointer-events: none;
                 color: #999;
             }
-        `
-    ]
+        `,
+    ],
 })
 export class CustomDateComponent implements IDateAngularComp {
-    @ViewChild("flatpickrEl", { read: ElementRef }) flatpickrEl!: ElementRef;
-    @ViewChild("eInput", { read: ElementRef }) eInput!: ElementRef;
+    @ViewChild('flatpickrEl', { read: ElementRef }) flatpickrEl!: ElementRef;
+    @ViewChild('eInput', { read: ElementRef }) eInput!: ElementRef;
     private date!: Date;
     private params!: IDateParams;
     private picker: any;
@@ -52,7 +52,7 @@ export class CustomDateComponent implements IDateAngularComp {
         this.picker = flatpickr(this.flatpickrEl.nativeElement, {
             onChange: this.onDateChanged.bind(this),
             dateFormat: 'd/m/Y',
-            wrap: true
+            wrap: true,
         });
 
         this.picker.calendarContainer.classList.add('ag-custom-component-popup');

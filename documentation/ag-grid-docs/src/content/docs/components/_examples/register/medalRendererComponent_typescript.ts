@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class MedalRenderer implements ICellRendererComp {
     eGui!: HTMLSpanElement;
@@ -7,10 +7,10 @@ export class MedalRenderer implements ICellRendererComp {
     total: any;
 
     init(params: ICellRendererParams) {
-        this.total = params.data.total
+        this.total = params.data.total;
 
         this.eGui = document.createElement('span');
-        this.eGui.classList.add('total-value-renderer')
+        this.eGui.classList.add('total-value-renderer');
 
         const label = document.createElement('span');
         label.innerText = params.valueFormatted ? params.valueFormatted : params.value;
@@ -18,7 +18,7 @@ export class MedalRenderer implements ICellRendererComp {
 
         this.eButton = document.createElement('button');
         this.buttonListener = this.buttonClicked.bind(this);
-        this.eButton.addEventListener("click", this.buttonListener);
+        this.eButton.addEventListener('click', this.buttonListener);
         this.eButton.textContent = 'Push For Total';
 
         this.eGui.appendChild(label);
@@ -26,11 +26,11 @@ export class MedalRenderer implements ICellRendererComp {
     }
 
     buttonClicked() {
-        alert(`${this.total} medals won!`)
+        alert(`${this.total} medals won!`);
     }
 
     getGui() {
-        return this.eGui
+        return this.eGui;
     }
 
     refresh(params: ICellRendererParams) {
@@ -38,6 +38,6 @@ export class MedalRenderer implements ICellRendererComp {
     }
 
     destroy() {
-        this.eButton.removeEventListener("click", this.buttonListener);
+        this.eButton.removeEventListener('click', this.buttonListener);
     }
 }

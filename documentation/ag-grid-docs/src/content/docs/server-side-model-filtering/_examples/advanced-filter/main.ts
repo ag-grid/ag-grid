@@ -1,84 +1,86 @@
-import { GridApi, createGrid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core';
+import { GridApi, GridOptions, IServerSideDatasource, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AdvancedFilterModule } from '@ag-grid-enterprise/advanced-filter';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+
 import { FakeServer } from './fakeServer';
+
 ModuleRegistry.registerModules([AdvancedFilterModule, MenuModule, ServerSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
-  columnDefs: [
-    {
-      field: 'athlete',
-      cellDataType: 'text',
-      minWidth: 220,
+    columnDefs: [
+        {
+            field: 'athlete',
+            cellDataType: 'text',
+            minWidth: 220,
+        },
+        {
+            field: 'year',
+            cellDataType: 'number',
+        },
+        {
+            field: 'gold',
+            cellDataType: 'number',
+        },
+        {
+            field: 'silver',
+            cellDataType: 'number',
+        },
+        {
+            field: 'bronze',
+            cellDataType: 'number',
+        },
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        menuTabs: ['filterMenuTab'],
     },
-    {
-      field: 'year',
-      cellDataType: 'number',
-    },
-    {
-      field: 'gold', 
-      cellDataType: 'number',
-    },
-    {
-      field: 'silver',
-      cellDataType: 'number',
-    },
-    {
-      field: 'bronze', 
-      cellDataType: 'number',
-    },
-  ],
-  defaultColDef: {
-    flex: 1,
-    minWidth: 100,
-    filter: true,
-    menuTabs: ['filterMenuTab'],
-  },
-  // use the server-side row model
-  rowModelType: 'serverSide',
+    // use the server-side row model
+    rowModelType: 'serverSide',
 
-  enableAdvancedFilter: true,
-}
+    enableAdvancedFilter: true,
+};
 
 function getServerSideDatasource(server: any): IServerSideDatasource {
-  return {
-    getRows: (params) => {
-      console.log('[Datasource] - rows requested by grid: ', params.request)
+    return {
+        getRows: (params) => {
+            console.log('[Datasource] - rows requested by grid: ', params.request);
 
-      // get data for request from our fake server
-      const response = server.getData(params.request)
+            // get data for request from our fake server
+            const response = server.getData(params.request);
 
-      // simulating real server call with a 500ms delay
-      setTimeout(() => {
-        if (response.success) {
-          // supply rows for requested block to grid
-          params.success({ rowData: response.rows, rowCount: response.lastRow })
-        } else {
-          params.fail()
-        }
-      }, 500)
-    },
-  }
+            // simulating real server call with a 500ms delay
+            setTimeout(() => {
+                if (response.success) {
+                    // supply rows for requested block to grid
+                    params.success({ rowData: response.rows, rowCount: response.lastRow });
+                } else {
+                    params.fail();
+                }
+            }, 500);
+        },
+    };
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(function (data) {
-      // setup the fake server with entire dataset
-      const fakeServer = new FakeServer(data)
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then(function (data) {
+            // setup the fake server with entire dataset
+            const fakeServer = new FakeServer(data);
 
-      // create datasource with a reference to the fake server
-      const datasource = getServerSideDatasource(fakeServer)
+            // create datasource with a reference to the fake server
+            const datasource = getServerSideDatasource(fakeServer);
 
-      // register the datasource with the grid
-      gridApi!.setGridOption('serverSideDatasource', datasource)
-    })
-})
+            // register the datasource with the grid
+            gridApi!.setGridOption('serverSideDatasource', datasource);
+        });
+});

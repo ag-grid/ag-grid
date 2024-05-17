@@ -17,7 +17,7 @@ export default {
             numGold: 0,
             numSilver: 0,
             numBronze: 0,
-            title: undefined
+            title: undefined,
         };
     },
     methods: {
@@ -32,9 +32,9 @@ export default {
                 if (data.silver) this.numSilver += data.silver;
                 if (data.bronze) this.numBronze += data.bronze;
             });
-        }
+        },
     },
     created() {
         this.params.api.addEventListener('modelUpdated', this.renderStats.bind(this));
-    }
+    },
 };

@@ -1,5 +1,6 @@
-import { IFloatingFilterComp, IFloatingFilterParams } from "@ag-grid-community/core";
-import { NumberFilterComponent } from "./numberFilterComponent_typescript";
+import { IFloatingFilterComp, IFloatingFilterParams } from '@ag-grid-community/core';
+
+import { NumberFilterComponent } from './numberFilterComponent_typescript';
 
 export class NumberFloatingFilterComponent implements IFloatingFilterComp {
     eGui!: HTMLDivElement;
@@ -23,10 +24,10 @@ export class NumberFloatingFilterComponent implements IFloatingFilterComp {
             }
 
             this.currentValue = Number(this.eFilterInput.value);
-            params.parentFilterInstance(instance => {
+            params.parentFilterInstance((instance) => {
                 instance.myMethodForTakingValueFromFloatingFilter(this.currentValue);
             });
-        }
+        };
 
         this.eFilterInput.addEventListener('input', onInputBoxChanged);
     }
@@ -46,4 +47,3 @@ export class NumberFloatingFilterComponent implements IFloatingFilterComp {
         return this.eGui;
     }
 }
-

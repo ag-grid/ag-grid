@@ -1,19 +1,21 @@
 'use strict';
 
-import React, { useCallback, useMemo, useState, StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import './styles.css';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
+import React, { StrictMode, useCallback, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
+import { getData } from './data.jsx';
 import MoodEditor from './moodEditor.jsx';
 import NumericCellEditor from './numericCellEditor.jsx';
-import { getData } from './data.jsx';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
+import './styles.css';
+
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ColumnsToolPanelModule, RichSelectModule]);
 
 const cellEditorSelector = (params) => {
@@ -26,20 +28,20 @@ const cellEditorSelector = (params) => {
         return {
             component: 'agRichSelectCellEditor',
             params: {
-                values: ['Male', 'Female']
+                values: ['Male', 'Female'],
             },
-            popup: true
+            popup: true,
         };
     }
     if (params.data.type === 'mood') {
         return {
             component: MoodEditor,
             popup: true,
-            popupPosition: 'under'
+            popupPosition: 'under',
         };
     }
     return undefined;
-}
+};
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -50,35 +52,41 @@ const GridExample = () => {
         {
             field: 'value',
             editable: true,
-            cellEditorSelector: cellEditorSelector
-        }
+            cellEditorSelector: cellEditorSelector,
+        },
     ]);
     const defaultColDef = useMemo(() => {
         return {
             flex: 1,
             cellDataType: false,
-        }
+        };
     }, []);
 
     const onRowEditingStarted = useCallback((event) => {
         console.log('never called - not doing row editing');
-    }, [])
+    }, []);
 
     const onRowEditingStopped = useCallback((event) => {
         console.log('never called - not doing row editing');
-    }, [])
+    }, []);
 
     const onCellEditingStarted = useCallback((event) => {
         console.log('cellEditingStarted');
-    }, [])
+    }, []);
 
     const onCellEditingStopped = useCallback((event) => {
         console.log('cellEditingStopped');
-    }, [])
+    }, []);
 
     return (
         <div style={containerStyle}>
-            <div style={gridStyle} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+            <div
+                style={gridStyle}
+                className={
+                    /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                    'ag-theme-quartz' /** DARK MODE END **/
+                }
+            >
                 <AgGridReact
                     rowData={rowData}
                     columnDefs={columnDefs}
@@ -92,7 +100,11 @@ const GridExample = () => {
             </div>
         </div>
     );
-}
+};
 
 const root = createRoot(document.getElementById('root'));
-root.render(<StrictMode><GridExample /></StrictMode>);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

@@ -1,7 +1,6 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 export default forwardRef((props, ref) => {
-
     const [date, setDate] = useState(null);
     const [picker, setPicker] = useState(null);
     const refFlatPickr = useRef(null);
@@ -25,11 +24,13 @@ export default forwardRef((props, ref) => {
     };
 
     useEffect(() => {
-        setPicker(flatpickr(refFlatPickr.current, {
-            onChange: onDateChanged,
-            dateFormat: 'd/m/Y',
-            wrap: true
-        }));
+        setPicker(
+            flatpickr(refFlatPickr.current, {
+                onChange: onDateChanged,
+                dateFormat: 'd/m/Y',
+                wrap: true,
+            })
+        );
     }, []);
 
     useEffect(() => {
@@ -76,15 +77,15 @@ export default forwardRef((props, ref) => {
             if (refInput.current) {
                 refInput.current.setAttribute('aria-label', label);
             }
-        }
+        },
     }));
 
     // inlining styles to make simpler the component
     return (
         <div className="ag-input-wrapper custom-date-filter" role="presentation" ref={refFlatPickr}>
-            <input type="text" ref={refInput} data-input style={{ width: "100%" }} />
-            <a className='input-button' title='clear' data-clear>
-                <i className='fa fa-times'></i>
+            <input type="text" ref={refInput} data-input style={{ width: '100%' }} />
+            <a className="input-button" title="clear" data-clear>
+                <i className="fa fa-times"></i>
             </a>
         </div>
     );

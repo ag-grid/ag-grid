@@ -2,26 +2,26 @@ html {
     position: fixed;
     height: 100%;
     width: 100%;
-  }
-  
+}
+
 body {
-  height: 100%;
-  width: 100%;
+    height: 100%;
+    width: 100%;
 }
 
 .custom-date-filter a {
-  position: absolute;
-  right: 20px;
-  color: #999;
-  cursor: pointer;
+    position: absolute;
+    right: 20px;
+    color: #999;
+    cursor: pointer;
 }
 .custom-date-filter:after {
-  position: absolute;
-  content: '\f073';
-  display: block;
-  font-weight: 400;
-  font-family: 'Font Awesome 5 Free';
-  right: 5px;
-  pointer-events: none;
-  color: #999;
+    position: absolute;
+    content: '\f073';
+    display: block;
+    font-weight: 400;
+    font-family: 'Font Awesome 5 Free';
+    right: 5px;
+    pointer-events: none;
+    color: #999;
 }

@@ -13,14 +13,13 @@ const DetailCellRenderer = ({ data }) => {
                 <div>
                     <p>
                         <label>
-                            Calls:<br />
-                            <input type="text" value={callCount} onChange={e => setCallCount(e.target.value)} />
+                            Calls:
+                            <br />
+                            <input type="text" value={callCount} onChange={(e) => setCallCount(e.target.value)} />
                         </label>
                     </p>
                     <p>
-                        <label>
-                            Last Updated: {new Date().toLocaleTimeString()}
-                        </label>
+                        <label>Last Updated: {new Date().toLocaleTimeString()}</label>
                     </p>
                 </div>
             </form>

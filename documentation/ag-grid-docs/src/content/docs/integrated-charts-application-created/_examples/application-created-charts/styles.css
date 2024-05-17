@@ -1,4 +1,6 @@
-.number { text-align: right; }
+.number {
+    text-align: right;
+}
 
 .wrapper {
     display: flex;

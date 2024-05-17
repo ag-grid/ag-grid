@@ -2,7 +2,7 @@ export default {
     template: `<span>{{ displayValue }}</span>`,
     data: function () {
         return {
-            displayValue: ''
+            displayValue: '',
         };
     },
     beforeMount() {
@@ -16,8 +16,6 @@ export default {
         },
         updateDisplayValue(params) {
             this.displayValue = new Array(parseInt(params.value, 10)).fill('#').join('');
-        }
-    }
-}
-
-
+        },
+    },
+};

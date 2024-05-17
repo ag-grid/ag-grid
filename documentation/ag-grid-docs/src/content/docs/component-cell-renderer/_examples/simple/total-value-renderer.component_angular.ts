@@ -1,16 +1,16 @@
-import { Component } from "@angular/core";
-
-import { ICellRendererAngularComp } from "@ag-grid-community/angular";
-import { ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
+import { ICellRendererParams } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
 
 @Component({
     standalone: true,
     template: `
-          <span>
-              <span>{{cellValue}}</span>&nbsp;
-              <button (click)="buttonClicked()">Push For Total</button>
-          </span>
-    `
+        <span>
+            <span>{{ cellValue }}</span
+            >&nbsp;
+            <button (click)="buttonClicked()">Push For Total</button>
+        </span>
+    `,
 })
 export class TotalValueRenderer implements ICellRendererAngularComp {
     public cellValue!: string;
@@ -28,7 +28,7 @@ export class TotalValueRenderer implements ICellRendererAngularComp {
     }
 
     buttonClicked() {
-        alert(`${this.cellValue} medals won!`)
+        alert(`${this.cellValue} medals won!`);
     }
 
     getValueToDisplay(params: ICellRendererParams) {

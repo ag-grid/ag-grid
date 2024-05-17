@@ -1,8 +1,8 @@
-import { ColDef, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
-import { CustomHeader } from './customHeader_typescript'
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+
+import { CustomHeader } from './customHeader_typescript';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -25,7 +25,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         headerComponent: CustomHeader,
     },
-}
+};
 
 function onBtUpperNames() {
     const columnDefs: ColDef[] = [
@@ -39,11 +39,11 @@ function onBtUpperNames() {
         { field: 'silver' },
         { field: 'bronze' },
         { field: 'total' },
-    ]
+    ];
     columnDefs.forEach((c) => {
-        c.headerName = c.field!.toUpperCase()
-    })
-    gridApi!.setGridOption('columnDefs', columnDefs)
+        c.headerName = c.field!.toUpperCase();
+    });
+    gridApi!.setGridOption('columnDefs', columnDefs);
 }
 
 function onBtLowerNames() {
@@ -58,11 +58,11 @@ function onBtLowerNames() {
         { field: 'silver' },
         { field: 'bronze' },
         { field: 'total' },
-    ]
+    ];
     columnDefs.forEach((c) => {
-        c.headerName = c.field
-    })
-    gridApi!.setGridOption('columnDefs', columnDefs)
+        c.headerName = c.field;
+    });
+    gridApi!.setGridOption('columnDefs', columnDefs);
 }
 
 function onBtFilterOn() {
@@ -77,11 +77,11 @@ function onBtFilterOn() {
         { field: 'silver' },
         { field: 'bronze' },
         { field: 'total' },
-    ]
+    ];
     columnDefs.forEach((c) => {
-        c.filter = true
-    })
-    gridApi!.setGridOption('columnDefs', columnDefs)
+        c.filter = true;
+    });
+    gridApi!.setGridOption('columnDefs', columnDefs);
 }
 
 function onBtFilterOff() {
@@ -96,11 +96,11 @@ function onBtFilterOff() {
         { field: 'silver' },
         { field: 'bronze' },
         { field: 'total' },
-    ]
+    ];
     columnDefs.forEach((c) => {
-        c.filter = false
-    })
-    gridApi!.setGridOption('columnDefs', columnDefs)
+        c.filter = false;
+    });
+    gridApi!.setGridOption('columnDefs', columnDefs);
 }
 
 function onBtResizeOn() {
@@ -115,11 +115,11 @@ function onBtResizeOn() {
         { field: 'silver' },
         { field: 'bronze' },
         { field: 'total' },
-    ]
+    ];
     columnDefs.forEach((c) => {
-        c.resizable = true
-    })
-    gridApi!.setGridOption('columnDefs', columnDefs)
+        c.resizable = true;
+    });
+    gridApi!.setGridOption('columnDefs', columnDefs);
 }
 
 function onBtResizeOff() {
@@ -134,21 +134,21 @@ function onBtResizeOff() {
         { field: 'silver' },
         { field: 'bronze' },
         { field: 'total' },
-    ]
+    ];
     columnDefs.forEach((c) => {
-        c.resizable = false
-    })
-    gridApi!.setGridOption('columnDefs', columnDefs)
+        c.resizable = false;
+    });
+    gridApi!.setGridOption('columnDefs', columnDefs);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
+        .then((response) => response.json())
         .then(function (data) {
-            gridApi!.setGridOption('rowData', data)
-        })
-})
+            gridApi!.setGridOption('rowData', data);
+        });
+});

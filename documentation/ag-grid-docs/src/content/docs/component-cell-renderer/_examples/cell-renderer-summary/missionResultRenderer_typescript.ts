@@ -1,28 +1,28 @@
-import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core"
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class MissionResultRenderer implements ICellRendererComp {
-  eGui!: HTMLSpanElement
+    eGui!: HTMLSpanElement;
 
-  // Optional: Params for rendering. The same params that are passed to the cellRenderer function.
-  init(params: ICellRendererParams) {
-    let icon: HTMLImageElement = document.createElement("img")
-    icon.src = `https://www.ag-grid.com/example-assets/icons/${
-      params.value ? "tick-in-circle" : "cross-in-circle"
-    }.png`
-    icon.setAttribute("class", "missionIcon")
+    // Optional: Params for rendering. The same params that are passed to the cellRenderer function.
+    init(params: ICellRendererParams) {
+        let icon: HTMLImageElement = document.createElement('img');
+        icon.src = `https://www.ag-grid.com/example-assets/icons/${
+            params.value ? 'tick-in-circle' : 'cross-in-circle'
+        }.png`;
+        icon.setAttribute('class', 'missionIcon');
 
-    this.eGui = document.createElement("span")
-    this.eGui.setAttribute("class", "missionSpan")
-    this.eGui.appendChild(icon)
-  }
+        this.eGui = document.createElement('span');
+        this.eGui.setAttribute('class', 'missionSpan');
+        this.eGui.appendChild(icon);
+    }
 
-  // Required: Return the DOM element of the component, this is what the grid puts into the cell
-  getGui() {
-    return this.eGui
-  }
+    // Required: Return the DOM element of the component, this is what the grid puts into the cell
+    getGui() {
+        return this.eGui;
+    }
 
-  // Required: Get the cell to refresh.
-  refresh(params: ICellRendererParams): boolean {
-    return false
-  }
+    // Required: Get the cell to refresh.
+    refresh(params: ICellRendererParams): boolean {
+        return false;
+    }
 }

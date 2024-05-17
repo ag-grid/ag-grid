@@ -27,22 +27,30 @@ interface Props {
     extraStyles?: string;
 }
 
-const { internalFramework, pageName, exampleName, importType, relativePath, addInitMessageScript, ignoreSystemJs, extraStyles } =
-    Astro.props as Props;
+const {
+    internalFramework,
+    pageName,
+    exampleName,
+    importType,
+    relativePath,
+    addInitMessageScript,
+    ignoreSystemJs,
+    extraStyles,
+} = Astro.props as Props;
 
 const contentParams = {
     framework: internalFramework,
-        pageName,
-        importType,
-        exampleName,
-}
+    pageName,
+    importType,
+    exampleName,
+};
 let generatedContents;
 try {
     generatedContents = await getGeneratedContents({
         type: 'docs',
-        ...contentParams
+        ...contentParams,
     });
-} catch(error) {
+} catch (error) {
     console.error('Error generating content for:', contentParams);
     console.error(error);
 }
@@ -51,18 +59,23 @@ const exampleUrl = getExampleUrl({
     internalFramework,
     pageName,
     exampleName,
-    importType
+    importType,
 });
 ---
+
 {!generatedContents && <p>Error generating content for: {JSON.stringify(contentParams)}</p>}
-{generatedContents && <FrameworkTemplate
-    internalFramework={internalFramework}
-    pageName={pageName}
-    exampleName={exampleName}
-    exampleUrl={exampleUrl}
-    generatedContents={generatedContents!}
-    relativePath={relativePath}
-    addInitMessageScript={addInitMessageScript}
-    ignoreSystemJs={ignoreSystemJs}
-    extraStyles={extraStyles}
-/>}
+{
+    generatedContents && (
+        <FrameworkTemplate
+            internalFramework={internalFramework}
+            pageName={pageName}
+            exampleName={exampleName}
+            exampleUrl={exampleUrl}
+            generatedContents={generatedContents!}
+            relativePath={relativePath}
+            addInitMessageScript={addInitMessageScript}
+            ignoreSystemJs={ignoreSystemJs}
+            extraStyles={extraStyles}
+        />
+    )
+}

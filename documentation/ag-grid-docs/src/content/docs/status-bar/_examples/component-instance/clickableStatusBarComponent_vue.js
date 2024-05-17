@@ -10,18 +10,18 @@ export default {
     `,
     data: function () {
         return {
-            visible: true
+            visible: true,
         };
     },
     methods: {
         onClick() {
-            alert('Selected Row Count: ' + this.params.api.getSelectedRows().length)
+            alert('Selected Row Count: ' + this.params.api.getSelectedRows().length);
         },
         setVisible(visible) {
             this.visible = visible;
         },
         isVisible() {
             return this.visible;
-        }
-    }
+        },
+    },
 };

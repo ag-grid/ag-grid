@@ -8,14 +8,14 @@ export function getData() {
     const midkemiaCities = ['Darkmoor', 'Crydee', 'Elvandar', 'LaMut', 'Ylith'];
 
     const addCity = function (country, type, city) {
-        rowData.push({country: country, type: type, city: city})
+        rowData.push({ country: country, type: type, city: city });
     };
 
-    irelandCities.forEach(addCity.bind(null, 'Ireland', 'Non Fiction'))
-    ukCities.forEach(addCity.bind(null, 'United Kingdom', 'Non Fiction'))
-    usaCities.forEach(addCity.bind(null, 'USA Cities', 'Non Fiction'))
-    middleEarthCities.forEach(addCity.bind(null, 'Middle Earth', 'Fiction'))
-    midkemiaCities.forEach(addCity.bind(null, 'Midkemia', 'Fiction'))
+    irelandCities.forEach(addCity.bind(null, 'Ireland', 'Non Fiction'));
+    ukCities.forEach(addCity.bind(null, 'United Kingdom', 'Non Fiction'));
+    usaCities.forEach(addCity.bind(null, 'USA Cities', 'Non Fiction'));
+    middleEarthCities.forEach(addCity.bind(null, 'Middle Earth', 'Fiction'));
+    midkemiaCities.forEach(addCity.bind(null, 'Midkemia', 'Fiction'));
 
-    return rowData
+    return rowData;
 }

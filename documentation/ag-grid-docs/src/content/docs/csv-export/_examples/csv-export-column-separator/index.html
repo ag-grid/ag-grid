@@ -1,5 +1,6 @@
 <style>
-    label, .row {
+    label,
+    .row {
         box-sizing: border-box;
         display: block;
         padding: 2px;
@@ -16,8 +17,8 @@
     }
 </style>
 
-<div style="display: flex; flex-direction: column; height: 100%;">
-    <div style="display: flex;">
+<div style="display: flex; flex-direction: column; height: 100%">
+    <div style="display: flex">
         <div class="row">
             <label>columnSeparator = </label>
             <select id="columnSeparator">
@@ -28,16 +29,19 @@
         </div>
     </div>
 
-    <div style="margin: 10px 0;">
+    <div style="margin: 10px 0">
         <button onclick="onBtnUpdate()">Show CSV export content text</button>
         <button onclick="onBtnExport()">Download CSV export file</button>
     </div>
 
-    <div style="flex: 1 1 0; position: relative; display: flex; flex-direction: row; gap: 20px;">
-        <div id="gridContainer" style="flex: 1;">
-            <div id="myGrid" style="width:100%;height: 100%;display: block;" class="ag-theme-quartz"></div>
+    <div style="flex: 1 1 0; position: relative; display: flex; flex-direction: row; gap: 20px">
+        <div id="gridContainer" style="flex: 1">
+            <div id="myGrid" style="width: 100%; height: 100%; display: block" class="ag-theme-quartz"></div>
         </div>
-        <textarea id="csvResult" style="flex: 1;" placeholder="Click the Show CSV export content button to view exported CSV here"></textarea>
+        <textarea
+            id="csvResult"
+            style="flex: 1"
+            placeholder="Click the Show CSV export content button to view exported CSV here"
+        ></textarea>
     </div>
 </div>
-

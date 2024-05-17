@@ -14,8 +14,7 @@ export default {
         setMood(params) {
             this.mood = params.value;
             this.imgForMood =
-                'https://www.ag-grid.com/example-assets/smileys/' +
-                (this.mood === 'Happy' ? 'happy.png' : 'sad.png');
+                'https://www.ag-grid.com/example-assets/smileys/' + (this.mood === 'Happy' ? 'happy.png' : 'sad.png');
         },
     },
     created() {

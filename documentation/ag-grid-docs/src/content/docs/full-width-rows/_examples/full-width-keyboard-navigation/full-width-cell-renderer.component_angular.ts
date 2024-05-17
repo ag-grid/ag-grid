@@ -1,22 +1,30 @@
-import { Component } from "@angular/core";
-import { ICellRendererParams } from "@ag-grid-community/core";
-import { ICellRendererAngularComp } from "@ag-grid-community/angular";
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
+import { ICellRendererParams } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
 
 @Component({
     standalone: true,
     template: `
         <div class="full-width-panel">
-            <button><img width="15" height="10" src="https://www.ag-grid.com/example-assets/flags/{{params.data.code}}.png"></button>
-            <input value="{{params.data.name}}"/>
-            <a href="https://www.google.com/search?q={{params.data.language}}" target="_blank">{{params.data.language}}</a>
+            <button>
+                <img
+                    width="15"
+                    height="10"
+                    src="https://www.ag-grid.com/example-assets/flags/{{ params.data.code }}.png"
+                />
+            </button>
+            <input value="{{ params.data.name }}" />
+            <a href="https://www.google.com/search?q={{ params.data.language }}" target="_blank">{{
+                params.data.language
+            }}</a>
         </div>
-    `
+    `,
 })
 export class FullWidthCellRenderer implements ICellRendererAngularComp {
-    params!: ICellRendererParams
+    params!: ICellRendererParams;
 
     agInit(params: ICellRendererParams): void {
-        this.params = params
+        this.params = params;
     }
 
     refresh(params: ICellRendererParams) {

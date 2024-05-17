@@ -10,5 +10,5 @@ export function getData(): any[] {
         { priority: 'P1', assignee: 'Ma Lin', task: 'Task 1' },
         { priority: 'P3', assignee: 'Ma Lin', task: 'Task 6' },
         { priority: 'P3', assignee: 'Ma Lin', task: 'Task 4' },
-    ]
+    ];
 }

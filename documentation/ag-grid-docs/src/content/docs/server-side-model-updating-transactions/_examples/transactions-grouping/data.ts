@@ -124,4 +124,3 @@ export function changePortfolioOnServer(oldPortfolio, newPortfolio) {
         updatedRecords: updatedRecords,
     };
 }
-

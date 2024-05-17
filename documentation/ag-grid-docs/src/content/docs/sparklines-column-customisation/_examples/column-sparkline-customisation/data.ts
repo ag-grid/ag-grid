@@ -44,8 +44,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'ABEV',
-            name:
-                'Ambev S.A. American Depositary Shares (Each representing 1 Common Share)',
+            name: 'Ambev S.A. American Depositary Shares (Each representing 1 Common Share)',
             change: [-0.87, -0.85, 0.84, -0.24, -0.03, 0.44, 0.84],
             volume: '$27,226,664',
         },
@@ -75,8 +74,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'ACH',
-            name:
-                'Aluminum Corporation of China Limited American Depositary Shares',
+            name: 'Aluminum Corporation of China Limited American Depositary Shares',
             change: [0.85, -0.31, -0.73, 0.66, -0.76, 0.9, -0.33],
             volume: '$146,834',
         },
@@ -292,8 +290,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'AMOV',
-            name:
-                'America Movil S.A.B. de C.V. Class A American Depositary Shares',
+            name: 'America Movil S.A.B. de C.V. Class A American Depositary Shares',
             change: [-0.67, 0.54, -0.66, -0.62, 0.86, -0.62, -0.68],
             volume: '$2,242',
         },
@@ -311,8 +308,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'AMX',
-            name:
-                'America Movil S.A.B. de C.V. American Depository Receipt Series L',
+            name: 'America Movil S.A.B. de C.V. American Depository Receipt Series L',
             change: [0.68, 0.88, 0.28, -0.33, -0.01, -0.51, -0.63],
             volume: '$1,825,806',
         },
@@ -408,8 +404,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'ASX',
-            name:
-                'ASE Technology Holding Co. Ltd. American Depositary Shares (each representing Two Common Shares) ',
+            name: 'ASE Technology Holding Co. Ltd. American Depositary Shares (each representing Two Common Shares) ',
             change: [-0.47, -0.62, -0.76, -0.26, 0.14, -0.69, 0.82],
             volume: '$3,302,831',
         },
@@ -499,8 +494,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BABA',
-            name:
-                'Alibaba Group Holding Limited American Depositary Shares each representing eight Ordinary share',
+            name: 'Alibaba Group Holding Limited American Depositary Shares each representing eight Ordinary share',
             change: [-0.99, -0.63, -0.65, 0.9, -0.33, -0.5, 0.6],
             volume: '$16,420,945',
         },
@@ -542,8 +536,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BBDO',
-            name:
-                'Banco Bradesco Sa American Depositary Shares (each representing one Common Share)',
+            name: 'Banco Bradesco Sa American Depositary Shares (each representing one Common Share)',
             change: [0.9, -0.44, -0.14, -0.68, 0.56, 0.02, -0.83],
             volume: '$17,324',
         },
@@ -591,8 +584,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BEKE',
-            name:
-                'KE Holdings Inc American Depositary Shares (each representing three Class A Ordinary Shares)',
+            name: 'KE Holdings Inc American Depositary Shares (each representing three Class A Ordinary Shares)',
             change: [0.9, -0.31, -0.28, 0.84, 0.76, 0.66, -0.06],
             volume: '$8,117,044',
         },
@@ -628,8 +620,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BHP',
-            name:
-                'BHP Group Limited American Depositary Shares (Each representing two Ordinary Shares)',
+            name: 'BHP Group Limited American Depositary Shares (Each representing two Ordinary Shares)',
             change: [-0.05, 0.77, -0.61, -0.63, -0.46, -0.85, 0.78],
             volume: '$3,366,756',
         },
@@ -665,8 +656,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BIP',
-            name:
-                'Brookfield Infrastructure Partners LP Limited Partnership Units',
+            name: 'Brookfield Infrastructure Partners LP Limited Partnership Units',
             change: [-0.88, 0.62, 0.96, 0.55, 0.21, 0.96, -0.49],
             volume: '$121,108',
         },
@@ -762,8 +752,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BSBR',
-            name:
-                'Banco Santander Brasil SA American Depositary Shares each representing one unit',
+            name: 'Banco Santander Brasil SA American Depositary Shares each representing one unit',
             change: [0.04, 0.77, -0.82, -0.01, 0.98, -0.19, -0.13],
             volume: '$1,306,698',
         },
@@ -781,8 +770,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BTI',
-            name:
-                'British American Tobacco  Industries p.l.c. Common Stock ADR',
+            name: 'British American Tobacco  Industries p.l.c. Common Stock ADR',
             change: [0.02, -0.85, 0.35, 0.09, -0.54, 0.01, -0.21],
             volume: '$1,385,777',
         },
@@ -1190,8 +1178,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'CQP',
-            name:
-                'Cheniere Energy Partners LP Cheniere Energy Partners LP Common Units',
+            name: 'Cheniere Energy Partners LP Cheniere Energy Partners LP Common Units',
             change: [0.39, 0.37, -0.64, 0.13, 0.1, -0.6, 0.79],
             volume: '$20,985',
         },
@@ -1263,8 +1250,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'CTSH',
-            name:
-                'Cognizant Technology Solutions Corporation Class A Common Stock',
+            name: 'Cognizant Technology Solutions Corporation Class A Common Stock',
             change: [-0.8, -0.93, -0.96, -0.11, 0.56, -0.23, -0.16],
             volume: '$1,568,542',
         },
@@ -1438,8 +1424,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'DIDI',
-            name:
-                'DiDi Global Inc. American Depositary Shares (each four representing one Class A Ordinary Share)',
+            name: 'DiDi Global Inc. American Depositary Shares (each four representing one Class A Ordinary Share)',
             change: [0.3, 0.16, -0.92, 0.13, -0.08, 0.53, -0.63],
             volume: '$44,804,453',
         },
@@ -1601,8 +1586,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'EBR',
-            name:
-                'Centrais Electricas Brasileiras S A American Depositary Shares (Each representing one Common Share)',
+            name: 'Centrais Electricas Brasileiras S A American Depositary Shares (Each representing one Common Share)',
             change: [0.05, 0.75, -0.64, -0.58, 0.76, -0.31, -0.91],
             volume: '$451,820',
         },
@@ -2028,15 +2012,13 @@ export function getData(): any[] {
         },
         {
             symbol: 'FWONA',
-            name:
-                'Liberty Media Corporation Series A Liberty Formula One Common Stock',
+            name: 'Liberty Media Corporation Series A Liberty Formula One Common Stock',
             change: [0.34, 0.7, -0.93, -0.03, -0.1, -0.32, 0.28],
             volume: '$139,730',
         },
         {
             symbol: 'FWONK',
-            name:
-                'Liberty Media Corporation Series C Liberty Formula One Common Stock',
+            name: 'Liberty Media Corporation Series C Liberty Formula One Common Stock',
             change: [0.03, 0.46, -0.49, -0.15, -0.45, 0.13, -0.14],
             volume: '$499,069',
         },
@@ -2072,8 +2054,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'GFL',
-            name:
-                'GFL Environmental Inc. Subordinate voting shares no par value',
+            name: 'GFL Environmental Inc. Subordinate voting shares no par value',
             change: [0.83, 0.5, -0.66, -0.74, -0.05, -0.69, 0.99],
             volume: '$684,565',
         },
@@ -2433,8 +2414,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'IHG',
-            name:
-                'Intercontinental Hotels Group American Depositary Shares (Each representing one Ordinary Share)',
+            name: 'Intercontinental Hotels Group American Depositary Shares (Each representing one Ordinary Share)',
             change: [-0.56, -0.7, 0.95, 0.44, 0.64, 0.29, -0.3],
             volume: '$98,507',
         },
@@ -2536,8 +2516,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'ITUB',
-            name:
-                'Itau Unibanco Banco Holding SA American Depositary Shares (Each repstg 500 Preferred shares)',
+            name: 'Itau Unibanco Banco Holding SA American Depositary Shares (Each repstg 500 Preferred shares)',
             change: [-0.21, 0.56, -0.24, -0.74, 0.93, 0.51, -0.86],
             volume: '$27,738,938',
         },
@@ -2585,8 +2564,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'JHX',
-            name:
-                'James Hardie Industries plc American Depositary Shares (Ireland)',
+            name: 'James Hardie Industries plc American Depositary Shares (Ireland)',
             change: [0.92, 0.76, 0.42, -0.98, 0.13, 0.13, 0.64],
             volume: '$29,614',
         },
@@ -2784,8 +2762,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'LFC',
-            name:
-                'China Life Insurance Company Limited American Depositary Shares',
+            name: 'China Life Insurance Company Limited American Depositary Shares',
             change: [0.06, 0.51, -0.94, 0.96, 0.47, 0.77, -0.85],
             volume: '$479,562',
         },
@@ -2893,29 +2870,25 @@ export function getData(): any[] {
         },
         {
             symbol: 'LSXMA',
-            name:
-                'Liberty Media Corporation Series A Liberty SiriusXM Common Stock',
+            name: 'Liberty Media Corporation Series A Liberty SiriusXM Common Stock',
             change: [-0.03, 0.9, -0.55, -0.24, -0.28, -0.41, -0.25],
             volume: '$463,628',
         },
         {
             symbol: 'LSXMB',
-            name:
-                'Liberty Media Corporation Series B Liberty SiriusXM Common Stock',
+            name: 'Liberty Media Corporation Series B Liberty SiriusXM Common Stock',
             change: [0.91, 0.01, 0.25, -0.82, -0.44, -0.63, -0.47],
             volume: '$104',
         },
         {
             symbol: 'LSXMK',
-            name:
-                'Liberty Media Corporation Series C Liberty SiriusXM Common Stock',
+            name: 'Liberty Media Corporation Series C Liberty SiriusXM Common Stock',
             change: [0.57, 0.34, 0.6, 0.15, 0.93, -0.31, 0.83],
             volume: '$536,190',
         },
         {
             symbol: 'LU',
-            name:
-                'Lufax Holding Ltd American Depositary Shares two of which representing one Ordinary Share',
+            name: 'Lufax Holding Ltd American Depositary Shares two of which representing one Ordinary Share',
             change: [0.79, -0.84, 0.07, -0.09, 0.47, -0.89, 0.84],
             volume: '$4,100,084',
         },
@@ -2945,8 +2918,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'LYB',
-            name:
-                'LyondellBasell Industries NV Ordinary Shares Class A (Netherlands)',
+            name: 'LyondellBasell Industries NV Ordinary Shares Class A (Netherlands)',
             change: [-0.56, -0.35, -0.94, 0.08, -0.2, -0.65, -0.72],
             volume: '$2,905,806',
         },

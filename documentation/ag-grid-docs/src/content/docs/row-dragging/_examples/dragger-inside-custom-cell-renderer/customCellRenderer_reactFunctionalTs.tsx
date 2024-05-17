@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
 import { CustomCellRendererProps } from '@ag-grid-community/react';
+import React, { useEffect, useRef } from 'react';
 
 const CustomCellRenderer = (props: CustomCellRendererProps) => {
     const myRef = useRef(null);
@@ -18,5 +18,5 @@ const CustomCellRenderer = (props: CustomCellRendererProps) => {
             <i className="fas fa-arrows-alt-v" ref={myRef}></i>
         </div>
     );
-}
+};
 export default CustomCellRenderer;

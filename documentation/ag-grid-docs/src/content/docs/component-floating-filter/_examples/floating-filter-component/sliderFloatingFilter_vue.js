@@ -10,7 +10,7 @@ export default {
     data: function () {
         return {
             maxValue: 0,
-            currentValue: 0
+            currentValue: 0,
         };
     },
     beforeMount() {
@@ -19,7 +19,7 @@ export default {
     methods: {
         valueChanged(event) {
             this.currentValue = event.target.value;
-            let valueToUse = (this.currentValue === "0") ? null : this.currentValue;
+            let valueToUse = this.currentValue === '0' ? null : this.currentValue;
             this.params.parentFilterInstance(function (instance) {
                 instance.onFloatingFilterChanged('greaterThan', valueToUse);
             });
@@ -29,6 +29,6 @@ export default {
             // note that the filter could be anything here, but our purposes we're assuming a greater than filter only,
             // so just read off the value and use that
             this.currentValue = !parentModel ? 0 : parentModel.filter;
-        }
-    }
+        },
+    },
 };

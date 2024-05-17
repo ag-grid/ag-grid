@@ -4,10 +4,12 @@ export default forwardRef((props, ref) => {
     useImperativeHandle(ref, () => {
         return {
             medalUserFunction() {
-                console.log(`user function called for medal column: row = ${props.node.rowIndex}, column = ${props.column.getId()}`);
-            }
-        }
+                console.log(
+                    `user function called for medal column: row = ${props.node.rowIndex}, column = ${props.column.getId()}`
+                );
+            },
+        };
     });
 
     return <span>{new Array(props.value).fill('#').join('')}</span>;
-})
+});

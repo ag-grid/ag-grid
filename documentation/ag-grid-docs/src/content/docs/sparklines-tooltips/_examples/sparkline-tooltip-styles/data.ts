@@ -184,8 +184,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'ABEV',
-            name:
-                'Ambev S.A. American Depositary Shares (Each representing 1 Common Share)',
+            name: 'Ambev S.A. American Depositary Shares (Each representing 1 Common Share)',
             change: [
                 ['2021-06-29T23:00:00.000Z', -0.15],
                 ['2021-06-30T23:00:00.000Z', -0.01],
@@ -315,8 +314,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'ACH',
-            name:
-                'Aluminum Corporation of China Limited American Depositary Shares',
+            name: 'Aluminum Corporation of China Limited American Depositary Shares',
             change: [
                 ['2021-06-29T23:00:00.000Z', -0.7],
                 ['2021-06-30T23:00:00.000Z', -0.63],
@@ -1252,8 +1250,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'AMOV',
-            name:
-                'America Movil S.A.B. de C.V. Class A American Depositary Shares',
+            name: 'America Movil S.A.B. de C.V. Class A American Depositary Shares',
             change: [
                 ['2021-06-29T23:00:00.000Z', -0.08],
                 ['2021-06-30T23:00:00.000Z', 0.6],
@@ -1331,8 +1328,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'AMX',
-            name:
-                'America Movil S.A.B. de C.V. American Depository Receipt Series L',
+            name: 'America Movil S.A.B. de C.V. American Depository Receipt Series L',
             change: [
                 ['2021-06-29T23:00:00.000Z', -0.91],
                 ['2021-06-30T23:00:00.000Z', -0.97],
@@ -1748,8 +1744,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'ASX',
-            name:
-                'ASE Technology Holding Co. Ltd. American Depositary Shares (each representing Two Common Shares) ',
+            name: 'ASE Technology Holding Co. Ltd. American Depositary Shares (each representing Two Common Shares) ',
             change: [
                 ['2021-06-29T23:00:00.000Z', -0.51],
                 ['2021-06-30T23:00:00.000Z', -0.1],
@@ -2139,8 +2134,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BABA',
-            name:
-                'Alibaba Group Holding Limited American Depositary Shares each representing eight Ordinary share',
+            name: 'Alibaba Group Holding Limited American Depositary Shares each representing eight Ordinary share',
             change: [
                 ['2021-06-29T23:00:00.000Z', 0.74],
                 ['2021-06-30T23:00:00.000Z', -0.59],
@@ -2322,8 +2316,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BBDO',
-            name:
-                'Banco Bradesco Sa American Depositary Shares (each representing one Common Share)',
+            name: 'Banco Bradesco Sa American Depositary Shares (each representing one Common Share)',
             change: [
                 ['2021-06-29T23:00:00.000Z', 0.52],
                 ['2021-06-30T23:00:00.000Z', -0.14],
@@ -2531,8 +2524,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BEKE',
-            name:
-                'KE Holdings Inc American Depositary Shares (each representing three Class A Ordinary Shares)',
+            name: 'KE Holdings Inc American Depositary Shares (each representing three Class A Ordinary Shares)',
             change: [
                 ['2021-06-29T23:00:00.000Z', 0.85],
                 ['2021-06-30T23:00:00.000Z', 0.7],
@@ -2688,8 +2680,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BHP',
-            name:
-                'BHP Group Limited American Depositary Shares (Each representing two Ordinary Shares)',
+            name: 'BHP Group Limited American Depositary Shares (Each representing two Ordinary Shares)',
             change: [
                 ['2021-06-29T23:00:00.000Z', 0.23],
                 ['2021-06-30T23:00:00.000Z', -0.82],
@@ -2845,8 +2836,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BIP',
-            name:
-                'Brookfield Infrastructure Partners LP Limited Partnership Units',
+            name: 'Brookfield Infrastructure Partners LP Limited Partnership Units',
             change: [
                 ['2021-06-29T23:00:00.000Z', -0.48],
                 ['2021-06-30T23:00:00.000Z', -0.41],
@@ -3262,8 +3252,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BSBR',
-            name:
-                'Banco Santander Brasil SA American Depositary Shares each representing one unit',
+            name: 'Banco Santander Brasil SA American Depositary Shares each representing one unit',
             change: [
                 ['2021-06-29T23:00:00.000Z', -0.8],
                 ['2021-06-30T23:00:00.000Z', 0.29],
@@ -3341,8 +3330,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BTI',
-            name:
-                'British American Tobacco  Industries p.l.c. Common Stock ADR',
+            name: 'British American Tobacco  Industries p.l.c. Common Stock ADR',
             change: [
                 ['2021-06-29T23:00:00.000Z', 0.75],
                 ['2021-06-30T23:00:00.000Z', 0.96],
@@ -5110,8 +5098,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'CQP',
-            name:
-                'Cheniere Energy Partners LP Cheniere Energy Partners LP Common Units',
+            name: 'Cheniere Energy Partners LP Cheniere Energy Partners LP Common Units',
             change: [
                 ['2021-06-29T23:00:00.000Z', -0.19],
                 ['2021-06-30T23:00:00.000Z', 0.38],
@@ -5423,8 +5410,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'CTSH',
-            name:
-                'Cognizant Technology Solutions Corporation Class A Common Stock',
+            name: 'Cognizant Technology Solutions Corporation Class A Common Stock',
             change: [
                 ['2021-06-29T23:00:00.000Z', 0.41],
                 ['2021-06-30T23:00:00.000Z', 0.86],
@@ -6178,8 +6164,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'DIDI',
-            name:
-                'DiDi Global Inc. American Depositary Shares (each four representing one Class A Ordinary Share)',
+            name: 'DiDi Global Inc. American Depositary Shares (each four representing one Class A Ordinary Share)',
             change: [
                 ['2021-06-29T23:00:00.000Z', 0.49],
                 ['2021-06-30T23:00:00.000Z', -0.86],
@@ -6881,8 +6866,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'EBR',
-            name:
-                'Centrais Electricas Brasileiras S A American Depositary Shares (Each representing one Common Share)',
+            name: 'Centrais Electricas Brasileiras S A American Depositary Shares (Each representing one Common Share)',
             change: [
                 ['2021-06-29T23:00:00.000Z', -0.78],
                 ['2021-06-30T23:00:00.000Z', 0.97],
@@ -8728,8 +8712,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'FWONA',
-            name:
-                'Liberty Media Corporation Series A Liberty Formula One Common Stock',
+            name: 'Liberty Media Corporation Series A Liberty Formula One Common Stock',
             change: [
                 ['2021-06-29T23:00:00.000Z', -0.41],
                 ['2021-06-30T23:00:00.000Z', 0.86],
@@ -8755,8 +8738,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'FWONK',
-            name:
-                'Liberty Media Corporation Series C Liberty Formula One Common Stock',
+            name: 'Liberty Media Corporation Series C Liberty Formula One Common Stock',
             change: [
                 ['2021-06-29T23:00:00.000Z', 0.01],
                 ['2021-06-30T23:00:00.000Z', 0.87],
@@ -8912,8 +8894,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'GFL',
-            name:
-                'GFL Environmental Inc. Subordinate voting shares no par value',
+            name: 'GFL Environmental Inc. Subordinate voting shares no par value',
             change: [
                 ['2021-06-29T23:00:00.000Z', 0.64],
                 ['2021-06-30T23:00:00.000Z', 0.66],
@@ -10473,8 +10454,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'IHG',
-            name:
-                'Intercontinental Hotels Group American Depositary Shares (Each representing one Ordinary Share)',
+            name: 'Intercontinental Hotels Group American Depositary Shares (Each representing one Ordinary Share)',
             change: [
                 ['2021-06-29T23:00:00.000Z', -0.98],
                 ['2021-06-30T23:00:00.000Z', 0.11],
@@ -10916,8 +10896,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'ITUB',
-            name:
-                'Itau Unibanco Banco Holding SA American Depositary Shares (Each repstg 500 Preferred shares)',
+            name: 'Itau Unibanco Banco Holding SA American Depositary Shares (Each repstg 500 Preferred shares)',
             change: [
                 ['2021-06-29T23:00:00.000Z', 0.42],
                 ['2021-06-30T23:00:00.000Z', 0.38],
@@ -11125,8 +11104,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'JHX',
-            name:
-                'James Hardie Industries plc American Depositary Shares (Ireland)',
+            name: 'James Hardie Industries plc American Depositary Shares (Ireland)',
             change: [
                 ['2021-06-29T23:00:00.000Z', 0.98],
                 ['2021-06-30T23:00:00.000Z', 0.65],
@@ -11984,8 +11962,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'LFC',
-            name:
-                'China Life Insurance Company Limited American Depositary Shares',
+            name: 'China Life Insurance Company Limited American Depositary Shares',
             change: [
                 ['2021-06-29T23:00:00.000Z', 0.47],
                 ['2021-06-30T23:00:00.000Z', -0.44],
@@ -12453,8 +12430,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'LSXMA',
-            name:
-                'Liberty Media Corporation Series A Liberty SiriusXM Common Stock',
+            name: 'Liberty Media Corporation Series A Liberty SiriusXM Common Stock',
             change: [
                 ['2021-06-29T23:00:00.000Z', -0.8],
                 ['2021-06-30T23:00:00.000Z', -0.1],
@@ -12480,8 +12456,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'LSXMB',
-            name:
-                'Liberty Media Corporation Series B Liberty SiriusXM Common Stock',
+            name: 'Liberty Media Corporation Series B Liberty SiriusXM Common Stock',
             change: [
                 ['2021-06-29T23:00:00.000Z', -0.77],
                 ['2021-06-30T23:00:00.000Z', 0.52],
@@ -12507,8 +12482,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'LSXMK',
-            name:
-                'Liberty Media Corporation Series C Liberty SiriusXM Common Stock',
+            name: 'Liberty Media Corporation Series C Liberty SiriusXM Common Stock',
             change: [
                 ['2021-06-29T23:00:00.000Z', -0.22],
                 ['2021-06-30T23:00:00.000Z', 0.44],
@@ -12534,8 +12508,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'LU',
-            name:
-                'Lufax Holding Ltd American Depositary Shares two of which representing one Ordinary Share',
+            name: 'Lufax Holding Ltd American Depositary Shares two of which representing one Ordinary Share',
             change: [
                 ['2021-06-29T23:00:00.000Z', -0.39],
                 ['2021-06-30T23:00:00.000Z', 0.2],
@@ -12665,8 +12638,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'LYB',
-            name:
-                'LyondellBasell Industries NV Ordinary Shares Class A (Netherlands)',
+            name: 'LyondellBasell Industries NV Ordinary Shares Class A (Netherlands)',
             change: [
                 ['2021-06-29T23:00:00.000Z', 0.02],
                 ['2021-06-30T23:00:00.000Z', -0.26],

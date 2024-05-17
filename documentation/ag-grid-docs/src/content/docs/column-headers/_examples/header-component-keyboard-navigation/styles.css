@@ -6,18 +6,20 @@
 
 .custom-header input {
     width: 50px;
-    margin: 0!important;
+    margin: 0 !important;
 }
 
 .custom-header button {
-    margin: 0!important;
+    margin: 0 !important;
 }
 
 a {
     color: inherit;
 }
 
-button:focus, a:focus, input:focus {
+button:focus,
+a:focus,
+input:focus {
     border-color: cornflowerblue;
 }
 

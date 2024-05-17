@@ -1,9 +1,17 @@
 export const getData = async (delay = 100): Promise<any[]> =>
-    new Promise(resolve => setTimeout(() => resolve(generateData()), delay));
+    new Promise((resolve) => setTimeout(() => resolve(generateData()), delay));
 
 const generateData = () => {
     const numRows = 500;
-    const names = ['Aden Moreno', 'Alton Watson', 'Caleb Scott', 'Cathy Wilkins', 'Charlie Dodd', 'Jermaine Price', 'Reis Vasquez'];
+    const names = [
+        'Aden Moreno',
+        'Alton Watson',
+        'Caleb Scott',
+        'Cathy Wilkins',
+        'Charlie Dodd',
+        'Jermaine Price',
+        'Reis Vasquez',
+    ];
     const phones = [
         { handset: 'Huawei P40', price: 599 },
         { handset: 'Google Pixel 5', price: 589 },
@@ -28,8 +36,7 @@ const generateData = () => {
     });
 };
 
-const getRandomNumber = (min: number, max: number): number =>
-    Math.floor(Math.random() * (max - min + 1) + min);
+const getRandomNumber = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1) + min);
 
 const randomDate = (start: Date, end: Date): Date =>
     new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));

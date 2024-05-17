@@ -1,4 +1,5 @@
-.ag-theme-quartz, .ag-theme-quartz-dark {
+.ag-theme-quartz,
+.ag-theme-quartz-dark {
     /* disable all borders */
     --ag-borders: none;
     /* then add back a border between rows */

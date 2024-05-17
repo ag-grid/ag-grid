@@ -6,12 +6,12 @@ var models = [
     'BMW M3',
     'Porsche 718 Boxster',
     'Porsche 718 Cayman',
-]
-var colors = ['Red', 'Black', 'Green', 'White', 'Blue']
-var countries = ['UK', 'Spain', 'France', 'Ireland', 'USA']
+];
+var colors = ['Red', 'Black', 'Green', 'White', 'Blue'];
+var countries = ['UK', 'Spain', 'France', 'Ireland', 'USA'];
 
 export function getData(): any[] {
-    var rowData = []
+    var rowData = [];
     for (var i = 0; i < 200; i++) {
         var item = {
             model: models[Math.floor(Math.random() * models.length)],
@@ -19,8 +19,8 @@ export function getData(): any[] {
             country: countries[Math.floor(Math.random() * countries.length)],
             year: 2018 - Math.floor(Math.random() * 20),
             price: 20000 + Math.floor(Math.random() * 100) * 100,
-        }
-        rowData.push(item)
+        };
+        rowData.push(item);
     }
-    return rowData
+    return rowData;
 }

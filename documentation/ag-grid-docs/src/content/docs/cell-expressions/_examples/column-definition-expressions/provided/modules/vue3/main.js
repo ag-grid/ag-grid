@@ -1,10 +1,10 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import "@ag-grid-community/styles/ag-grid.css";
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-
 import { ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { createApp } from 'vue';
+
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
@@ -31,18 +31,18 @@ const VueExample = {
             gridApi: null,
             columnDefs: [
                 {
-                    headerName: "String (editable)",
-                    field: "simple",
+                    headerName: 'String (editable)',
+                    field: 'simple',
                     editable: true,
                 },
                 {
-                    headerName: "Number (editable)",
-                    field: "number",
+                    headerName: 'Number (editable)',
+                    field: 'number',
                     editable: true,
                     valueFormatter: `"£" + Math.floor(value).toString().replace(/(\\d)(?=(\\d{3})+(?!\\d))/g, "$1,")`,
                 },
                 {
-                    headerName: "Name (editable)",
+                    headerName: 'Name (editable)',
                     editable: true,
                     valueGetter: 'data.firstName + " " + data.lastName',
                     valueSetter:
@@ -56,23 +56,24 @@ const VueExample = {
                             return true;
                         } else {  
                             return false;
-                        }`
+                        }`,
                 },
-                { headerName: "A", field: 'a', minWidth: 100 },
-                { headerName: "B", field: 'b', minWidth: 100 },
-                { headerName: "A + B", valueGetter: 'data.a + data.b', maxWidth: 120 }
+                { headerName: 'A', field: 'a', minWidth: 100 },
+                { headerName: 'B', field: 'b', minWidth: 100 },
+                { headerName: 'A + B', valueGetter: 'data.a + data.b', maxWidth: 120 },
             ],
             defaultColDef: {
                 flex: 1,
                 minWidth: 150,
-                sortable: false
+                sortable: false,
             },
             rowData: this.createRowData(),
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
-    mounted() {
-    },
+    mounted() {},
     methods: {
         onCellValueChanged(event) {
             console.log('data after changes is: ', event.data);
@@ -97,18 +98,9 @@ const VueExample = {
                 'Beach',
             ];
             const firstNames = ['Niall', 'John', 'Rob', 'Alberto', 'Bas', 'Dimple', 'Sean'];
-            const lastNames = [
-                'Pink',
-                'Black',
-                'White',
-                'Brown',
-                'Smith',
-                'Smooth',
-                'Anderson',
-            ];
+            const lastNames = ['Pink', 'Black', 'White', 'Brown', 'Smith', 'Smooth', 'Anderson'];
             for (let i = 0; i < 100; i++) {
-                const randomWords =
-                    words[i % words.length] + ' ' + words[(i * 17) % words.length];
+                const randomWords = words[i % words.length] + ' ' + words[(i * 17) % words.length];
                 rowData.push({
                     simple: randomWords,
                     number: Math.floor(((i + 2) * 476321) % 10000),
@@ -119,10 +111,8 @@ const VueExample = {
                 });
             }
             return rowData;
-        }
+        },
     },
 };
 
-createApp(VueExample)
-    .mount("#app")
-
+createApp(VueExample).mount('#app');

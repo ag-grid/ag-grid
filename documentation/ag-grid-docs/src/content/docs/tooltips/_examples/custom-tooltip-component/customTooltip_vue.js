@@ -10,11 +10,11 @@ export default {
             color: null,
             athlete: null,
             country: null,
-            total: null
+            total: null,
         };
     },
     beforeMount() {
         this.value = this.params.value;
         this.color = this.params.color || '#999';
-    }
+    },
 };

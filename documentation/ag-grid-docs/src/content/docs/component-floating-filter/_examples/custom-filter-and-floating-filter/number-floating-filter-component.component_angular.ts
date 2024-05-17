@@ -1,13 +1,13 @@
-import { Component } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-
-import { IFloatingFilterAngularComp } from "@ag-grid-community/angular";
-import { IFloatingFilterParams } from "@ag-grid-community/core";
+import { IFloatingFilterAngularComp } from '@ag-grid-community/angular';
+import { IFloatingFilterParams } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     standalone: true,
     imports: [FormsModule],
-    template: `&gt; <input style="width: 30px" type="number" min="0" [(ngModel)]="currentValue" (input)="onInputBoxChanged()"/>`
+    template: `&gt;
+        <input style="width: 30px" type="number" min="0" [(ngModel)]="currentValue" (input)="onInputBoxChanged()" />`,
 })
 export class NumberFloatingFilterComponent implements IFloatingFilterAngularComp {
     params!: IFloatingFilterParams;

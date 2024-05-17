@@ -1,7 +1,6 @@
-import { GridApi, createGrid, GridOptions, ValueFormatterParams } from "@ag-grid-community/core";
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { GridApi, GridOptions, ValueFormatterParams, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -15,11 +14,11 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'sport' },
         { field: 'age' },
         { field: 'year' },
-        { field: 'date'},
+        { field: 'date' },
         { field: 'gold' },
         { field: 'silver' },
         { field: 'bronze' },
-        { field: 'total' }
+        { field: 'total' },
     ],
     defaultColDef: {
         valueFormatter: (params: ValueFormatterParams) => {
@@ -30,7 +29,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         cellDataType: false,
     },
     suppressColumnVirtualisation: true,
-    suppressRowVirtualisation: true
+    suppressRowVirtualisation: true,
 };
 
 // setup the grid after the page has finished loading
@@ -39,6 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data.slice(0,100)));
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data.slice(0, 100)));
 });

@@ -1,4 +1,4 @@
-import React, {forwardRef, useEffect, useImperativeHandle, useState, useRef} from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 export default forwardRef((props, ref) => {
     const [filterText, setFilterText] = useState(null);
@@ -11,13 +11,16 @@ export default forwardRef((props, ref) => {
 
                 // make sure each word passes separately, ie search for firstname, lastname
                 let passed = true;
-                filterText.toLowerCase().split(' ').forEach(filterWord => {
-                    const value = props.getValue(node);
-        
-                    if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
-                        passed = false;
-                    }
-                });
+                filterText
+                    .toLowerCase()
+                    .split(' ')
+                    .forEach((filterWord) => {
+                        const value = props.getValue(node);
+
+                        if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
+                            passed = false;
+                        }
+                    });
 
                 return passed;
             },
@@ -27,37 +30,56 @@ export default forwardRef((props, ref) => {
             },
 
             getModel() {
-                if (!this.isFilterActive()) { return null; }
+                if (!this.isFilterActive()) {
+                    return null;
+                }
 
-                return {value: filterText};
+                return { value: filterText };
             },
 
             setModel(model) {
                 setFilterText(model == null ? null : model.value);
-            }
-        }
+            },
+        };
     });
 
-    const onChange = event => {
-        setFilterText(event.target.value)
-    }
+    const onChange = (event) => {
+        setFilterText(event.target.value);
+    };
 
     useEffect(() => {
-        props.filterChangedCallback()
+        props.filterChangedCallback();
     }, [filterText]);
 
     return (
-        <div style={{padding: 4, width: 200}}>
-            <div style={{fontWeight: "bold"}}>Custom Athlete Filter</div>
+        <div style={{ padding: 4, width: 200 }}>
+            <div style={{ fontWeight: 'bold' }}>Custom Athlete Filter</div>
             <div>
-                <input style={{margin: "4 0 4 0"}} type="text" value={filterText || ''} onChange={onChange} placeholder="Full name search..."/>
+                <input
+                    style={{ margin: '4 0 4 0' }}
+                    type="text"
+                    value={filterText || ''}
+                    onChange={onChange}
+                    placeholder="Full name search..."
+                />
             </div>
-            <div style={{marginTop: 20}}>This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.</div>
-            <div style={{marginTop: 20}}>Just to emphasise that anything can go in here, here is an image!!</div>
+            <div style={{ marginTop: 20 }}>
+                This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.
+            </div>
+            <div style={{ marginTop: 20 }}>Just to emphasise that anything can go in here, here is an image!!</div>
             <div>
-                <img src="https://www.ag-grid.com/images/ag-Grid2-200.png"
-                    style={{width: 150, textAlign: "center", padding: 10, margin: 10, border: "1px solid lightgrey", backgroundColor: "white"}}/>
+                <img
+                    src="https://www.ag-grid.com/images/ag-Grid2-200.png"
+                    style={{
+                        width: 150,
+                        textAlign: 'center',
+                        padding: 10,
+                        margin: 10,
+                        border: '1px solid lightgrey',
+                        backgroundColor: 'white',
+                    }}
+                />
             </div>
         </div>
-    )
+    );
 });

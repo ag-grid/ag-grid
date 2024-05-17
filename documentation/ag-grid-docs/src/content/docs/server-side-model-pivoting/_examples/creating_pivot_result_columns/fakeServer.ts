@@ -38,21 +38,14 @@ export function FakeServer(allData) {
 
     function orderBySql({ sortModel }) {
         if (sortModel.length === 0) return '';
-        const sorts = sortModel.map(
-            ({ colId, sort }) => `\`${colId}\` ${sort.toUpperCase()}`
-        );
+        const sorts = sortModel.map(({ colId, sort }) => `\`${colId}\` ${sort.toUpperCase()}`);
         return ` ORDER BY ${sorts.join(', ')}`;
     }
 
     function executePivotQuery(request, pivotCol, valueCol) {
         const { groupKeys, rowGroupCols } = request;
-        const groupsToUse = rowGroupCols.slice(
-            groupKeys.length,
-            groupKeys.length + 1
-        );
-        const selectGroupCols = groupsToUse
-            .map((groupCol) => groupCol.id)
-            .join(', ');
+        const groupsToUse = rowGroupCols.slice(groupKeys.length, groupKeys.length + 1);
+        const selectGroupCols = groupsToUse.map((groupCol) => groupCol.id).join(', ');
 
         const SQL = `SELECT ${selectGroupCols}, (${pivotCol.id} + '_${
             valueCol.id
@@ -67,12 +60,7 @@ export function FakeServer(allData) {
 
     function whereSql({ rowGroupCols, groupKeys }) {
         const whereParts = groupKeys
-            ? groupKeys.map(
-                (key, i) =>
-                    `${rowGroupCols[i].id} = ${
-                        typeof key === 'string' ? `'${key}'` : key
-                    }`
-            )
+            ? groupKeys.map((key, i) => `${rowGroupCols[i].id} = ${typeof key === 'string' ? `'${key}'` : key}`)
             : [];
         return whereParts.length > 0 ? ` WHERE ${whereParts.join(' AND ')}` : '';
     }

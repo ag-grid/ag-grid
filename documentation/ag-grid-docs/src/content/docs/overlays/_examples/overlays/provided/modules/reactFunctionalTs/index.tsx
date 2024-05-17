@@ -1,14 +1,15 @@
 'use strict';
 
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
+import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
 import './styles.css';
 
-import { ColDef, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {
@@ -33,44 +34,48 @@ const GridExample = () => {
             flex: 1,
             minWidth: 100,
             filter: true,
-        }
+        };
     }, []);
 
     const onBtShowLoading = useCallback(() => {
         gridRef.current!.api.showLoadingOverlay();
-    }, [])
+    }, []);
 
     const onBtShowNoRows = useCallback(() => {
         gridRef.current!.api.showNoRowsOverlay();
-    }, [])
+    }, []);
 
     const onBtHide = useCallback(() => {
         gridRef.current!.api.hideOverlay();
-    }, [])
-
+    }, []);
 
     return (
         <div style={containerStyle}>
             <div className="example-wrapper">
-                <div style={{ "marginBottom": "5px" }}>
+                <div style={{ marginBottom: '5px' }}>
                     <button onClick={onBtShowLoading}>Show Loading Overlay</button>
                     <button onClick={onBtShowNoRows}>Show No Rows Overlay</button>
                     <button onClick={onBtHide}>Hide Overlay</button>
                 </div>
 
-                <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+                <div
+                    style={gridStyle}
+                    className={
+                        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+                        'ag-theme-quartz' /** DARK MODE END **/
+                    }
+                >
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
-                     />
+                    />
                 </div>
             </div>
         </div>
     );
-
-}
+};
 
 const root = createRoot(document.getElementById('root')!);
 root.render(<GridExample />);

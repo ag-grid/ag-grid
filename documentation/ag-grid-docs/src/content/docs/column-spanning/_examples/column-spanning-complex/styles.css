@@ -1,10 +1,10 @@
-    .header-cell {
-        background-color: #2244CC44;
-        font-size: 25px;
-        font-weight: bold;
-        text-align: center;
-    }
-    .quarters-cell {
-        background-color: #2244CC44;
-        font-weight: bold;
-    }
+.header-cell {
+    background-color: #2244cc44;
+    font-size: 25px;
+    font-weight: bold;
+    text-align: center;
+}
+.quarters-cell {
+    background-color: #2244cc44;
+    font-weight: bold;
+}

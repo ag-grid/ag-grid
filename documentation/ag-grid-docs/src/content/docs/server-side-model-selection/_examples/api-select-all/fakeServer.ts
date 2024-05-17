@@ -5,15 +5,15 @@ export function FakeServer(allData) {
     alasql.options.cache = false;
 
     return {
-        getData: function(request) {
+        getData: function (request) {
             var results = executeQuery(request);
 
             return {
                 success: true,
                 rows: results,
-                lastRow: getLastRowIndex(request)
+                lastRow: getLastRowIndex(request),
             };
-        }
+        },
     };
 
     function executeQuery(request) {
@@ -25,7 +25,14 @@ export function FakeServer(allData) {
     }
 
     function buildSql(request) {
-        return selectSql(request) + ' FROM ?' + whereSql(request) + groupBySql(request) + orderBySql(request) + limitSql(request);
+        return (
+            selectSql(request) +
+            ' FROM ?' +
+            whereSql(request) +
+            groupBySql(request) +
+            orderBySql(request) +
+            limitSql(request)
+        );
     }
 
     function selectSql(request) {
@@ -37,7 +44,7 @@ export function FakeServer(allData) {
             var rowGroupCol = rowGroupCols[groupKeys.length];
             var colsToSelect = [rowGroupCol.id];
 
-            valueCols.forEach(function(valueCol) {
+            valueCols.forEach(function (valueCol) {
                 colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + valueCol.id);
             });
 
@@ -52,9 +59,8 @@ export function FakeServer(allData) {
         var groupKeys = request.groupKeys;
         var whereParts = [];
 
-
         if (groupKeys) {
-            groupKeys.forEach(function(key, i) {
+            groupKeys.forEach(function (key, i) {
                 var value = typeof key === 'string' ? "'" + key + "'" : key;
 
                 whereParts.push(rowGroups[i].id + ' = ' + value);
@@ -64,7 +70,7 @@ export function FakeServer(allData) {
         var filterModel = request.filterModel;
 
         if (filterModel) {
-            Object.keys(filterModel).forEach(function(key) {
+            Object.keys(filterModel).forEach(function (key) {
                 var item = filterModel[key];
 
                 switch (item.filterType) {
@@ -114,9 +120,9 @@ export function FakeServer(allData) {
             case 'endsWith':
                 return key + " LIKE '%" + item.filter + "'";
             case 'blank':
-                return key + " IS NULL or " + key + " = ''";
+                return key + ' IS NULL or ' + key + " = ''";
             case 'notBlank':
-                return key + " IS NOT NULL and " + key + " != ''";
+                return key + ' IS NOT NULL and ' + key + " != ''";
             default:
                 console.log('unknown text filter type: ' + item.type);
         }
@@ -139,9 +145,9 @@ export function FakeServer(allData) {
             case 'inRange':
                 return '(' + key + ' >= ' + item.filter + ' and ' + key + ' <= ' + item.filterTo + ')';
             case 'blank':
-                return key + " IS NULL";
+                return key + ' IS NULL';
             case 'notBlank':
-                return key + " IS NOT NULL";
+                return key + ' IS NOT NULL';
             default:
                 console.log('unknown number filter type: ' + item.type);
         }
@@ -165,7 +171,7 @@ export function FakeServer(allData) {
 
         if (sortModel.length === 0) return '';
 
-        var sorts = sortModel.map(function(s) {
+        var sorts = sortModel.map(function (s) {
             return s.colId + ' ' + s.sort.toUpperCase();
         });
 
@@ -173,7 +179,9 @@ export function FakeServer(allData) {
     }
 
     function limitSql(request) {
-        if (request.endRow == undefined || request.startRow == undefined) { return ''; }
+        if (request.endRow == undefined || request.startRow == undefined) {
+            return '';
+        }
         var blockSize = request.endRow - request.startRow;
 
         return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;

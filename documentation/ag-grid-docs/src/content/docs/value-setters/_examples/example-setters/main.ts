@@ -1,19 +1,18 @@
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
     CellValueChangedEvent,
     ColDef,
     GridApi,
-    createGrid,
     GridOptions,
     ValueGetterParams,
     ValueSetterParams,
+    createGrid,
 } from '@ag-grid-community/core';
-import { getData } from "./data";
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { ModuleRegistry } from '@ag-grid-community/core';
+
+import { getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
-
-
 
 const columnDefs: ColDef[] = [
     {
@@ -105,7 +104,7 @@ const columnDefs: ColDef[] = [
         },
         cellDataType: 'number',
     },
-]
+];
 
 let gridApi: GridApi;
 
@@ -117,14 +116,14 @@ const gridOptions: GridOptions = {
     columnDefs: columnDefs,
     rowData: getData(),
     onCellValueChanged: onCellValueChanged,
-}
+};
 
 function onCellValueChanged(event: CellValueChangedEvent) {
-    console.log('Data after change is', event.data)
+    console.log('Data after change is', event.data);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-})
+});

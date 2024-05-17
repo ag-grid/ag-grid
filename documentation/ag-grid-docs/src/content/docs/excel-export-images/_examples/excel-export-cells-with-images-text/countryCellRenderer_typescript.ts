@@ -1,5 +1,6 @@
-import { ICellRendererParams, ICellRendererComp } from "@ag-grid-community/core";
-import { FlagContext, IOlympicData } from "./interfaces";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
+
+import { FlagContext, IOlympicData } from './interfaces';
 
 export class CountryCellRenderer implements ICellRendererComp {
     eGui!: HTMLDivElement;
@@ -9,7 +10,7 @@ export class CountryCellRenderer implements ICellRendererComp {
         const { country } = data!;
 
         this.eGui = document.createElement('div');
-        const img = document.createElement('img')
+        const img = document.createElement('img');
         const text = document.createTextNode(` ${country}`);
         img.alt = country;
 
@@ -24,7 +25,6 @@ export class CountryCellRenderer implements ICellRendererComp {
     }
 
     refresh() {
-        return false
+        return false;
     }
 }
-

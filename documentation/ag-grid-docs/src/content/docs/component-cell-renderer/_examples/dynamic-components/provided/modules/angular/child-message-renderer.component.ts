@@ -1,16 +1,20 @@
-import { Component } from "@angular/core";
-import { ICellRendererParams } from "@ag-grid-community/core";
-import { ICellRendererAngularComp } from "@ag-grid-community/angular";
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
+import { ICellRendererParams } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
 
 @Component({
     standalone: true,
     selector: 'child-cell',
-    template: `<span><button style="height: 20px" (click)="invokeParentMethod()" class="btn btn-info">Invoke Parent</button></span>`,
+    template: `<span
+        ><button style="height: 20px" (click)="invokeParentMethod()" class="btn btn-info">Invoke Parent</button></span
+    >`,
     styles: [
-        `.btn {
-            line-height: 0.5
-        }`
-    ]
+        `
+            .btn {
+                line-height: 0.5;
+            }
+        `,
+    ],
 })
 export class ChildMessageRenderer implements ICellRendererAngularComp {
     public params!: ICellRendererParams;
@@ -20,7 +24,9 @@ export class ChildMessageRenderer implements ICellRendererAngularComp {
     }
 
     public invokeParentMethod() {
-        this.params.context.componentParent.methodFromParent(`Row: ${this.params.node.rowIndex}, Col: ${this.params.colDef?.headerName}`)
+        this.params.context.componentParent.methodFromParent(
+            `Row: ${this.params.node.rowIndex}, Col: ${this.params.colDef?.headerName}`
+        );
     }
 
     refresh(): boolean {

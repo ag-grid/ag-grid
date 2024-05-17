@@ -9,6 +9,6 @@
     "noFallthroughCasesInSwitch": false,
     "noUnusedParameters": true,
     "noUnusedLocals": true,
-    "allowImportingTsExtensions": false,
-  },
+    "allowImportingTsExtensions": false
+  }
 }

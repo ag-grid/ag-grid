@@ -1,11 +1,12 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { createApp } from 'vue';
+
 import './styles.css';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const DeltaRenderer = {
@@ -29,9 +30,9 @@ const DeltaRenderer = {
         updateDisplay(params) {
             this.displayValue = params.value;
             if (params.value > 15) {
-                this.src = 'https://www.ag-grid.com/example-assets/weather/fire-plus.png'
+                this.src = 'https://www.ag-grid.com/example-assets/weather/fire-plus.png';
             } else {
-                this.src = 'https://www.ag-grid.com/example-assets/weather/fire-minus.png'
+                this.src = 'https://www.ag-grid.com/example-assets/weather/fire-minus.png';
             }
         },
     },
@@ -56,9 +57,7 @@ const IconRenderer = {
         },
         updateDisplay(params) {
             this.src = `https://www.ag-grid.com/example-assets/weather/${params.rendererImage}`;
-            this.arr = new Array(
-                Math.floor(params.value / (params.divisor || 1))
-            );
+            this.arr = new Array(Math.floor(params.value / (params.divisor || 1)));
         },
     },
 };
@@ -111,22 +110,16 @@ const VueExample = {
         onGridReady(params) {
             this.gridApi = params.api;
 
-            const updateData = (data) =>
-                this.gridApi.setGridOption('rowData', data);
+            const updateData = (data) => this.gridApi.setGridOption('rowData', data);
 
-            fetch(
-                'https://www.ag-grid.com/example-assets/weather-se-england.json'
-            )
+            fetch('https://www.ag-grid.com/example-assets/weather-se-england.json')
                 .then((resp) => resp.json())
                 .then((data) => updateData(data));
         },
         randomiseFrost() {
             // iterate over the "days of air frost" and generate random number
             this.gridApi.forEachNode((rowNode) => {
-                rowNode.setDataValue(
-                    'Days of air frost (days)',
-                    Math.floor(Math.random() * 4) + 1
-                );
+                rowNode.setDataValue('Days of air frost (days)', Math.floor(Math.random() * 4) + 1);
             });
         },
         getColumnDefs() {

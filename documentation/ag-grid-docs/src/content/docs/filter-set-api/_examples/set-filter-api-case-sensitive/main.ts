@@ -1,116 +1,113 @@
-import {
-  FirstDataRenderedEvent,
-  GridApi,
-  createGrid,
-  GridOptions,
-  ICellRendererParams,
-  ISetFilter,
-  ISetFilterParams,
-} from '@ag-grid-community/core';
-import { getData } from "./data";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {
+    FirstDataRenderedEvent,
+    GridApi,
+    GridOptions,
+    ICellRendererParams,
+    ISetFilter,
+    ISetFilterParams,
+    createGrid,
+} from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { ModuleRegistry } from "@ag-grid-community/core";
+
+import { getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, FiltersToolPanelModule, MenuModule, SetFilterModule]);
 
-
-
 let gridApi: GridApi;
 
-
 const gridOptions: GridOptions = {
-  columnDefs: [
-    {
-      headerName: 'Case Insensitive (default)',
-      field: 'colour',
-      filter: 'agSetColumnFilter',
-      filterParams: {
-        caseSensitive: false,
+    columnDefs: [
+        {
+            headerName: 'Case Insensitive (default)',
+            field: 'colour',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                caseSensitive: false,
+                cellRenderer: colourCellRenderer,
+            } as ISetFilterParams,
+        },
+        {
+            headerName: 'Case Sensitive',
+            field: 'colour',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                caseSensitive: true,
+                cellRenderer: colourCellRenderer,
+            } as ISetFilterParams,
+        },
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 225,
         cellRenderer: colourCellRenderer,
-      } as ISetFilterParams,
+        floatingFilter: true,
     },
-    {
-      headerName: 'Case Sensitive',
-      field: 'colour',
-      filter: 'agSetColumnFilter',
-      filterParams: {
-        caseSensitive: true,
-        cellRenderer: colourCellRenderer,
-      } as ISetFilterParams,
-    },
-  ],
-  defaultColDef: {
-    flex: 1,
-    minWidth: 225,
-    cellRenderer: colourCellRenderer,
-    floatingFilter: true,
-  },
-  sideBar: 'filters',
-  onFirstDataRendered: onFirstDataRendered,
-  rowData: getData(),
-}
+    sideBar: 'filters',
+    onFirstDataRendered: onFirstDataRendered,
+    rowData: getData(),
+};
 
 var FIXED_STYLES =
-  'vertical-align: middle; border: 1px solid black; margin: 3px; display: inline-block; width: 10px; height: 10px'
+    'vertical-align: middle; border: 1px solid black; margin: 3px; display: inline-block; width: 10px; height: 10px';
 
 var FILTER_TYPES: Record<string, string> = {
-  insensitive: 'colour',
-  sensitive: 'colour_1',
-}
+    insensitive: 'colour',
+    sensitive: 'colour_1',
+};
 
 function colourCellRenderer(params: ICellRendererParams) {
-  if (!params.value || params.value === '(Select All)') {
-    return params.value
-  }
+    if (!params.value || params.value === '(Select All)') {
+        return params.value;
+    }
 
-  return `<div style="background-color: ${params.value.toLowerCase()}; ${FIXED_STYLES}"></div>${params.value
-    }`
+    return `<div style="background-color: ${params.value.toLowerCase()}; ${FIXED_STYLES}"></div>${params.value}`;
 }
 
 function setModel(type: string) {
-  gridApi!.setColumnFilterModel(FILTER_TYPES[type], { values: MANGLED_COLOURS }).then(() => {
-    gridApi!.onFilterChanged();
-  });
+    gridApi!.setColumnFilterModel(FILTER_TYPES[type], { values: MANGLED_COLOURS }).then(() => {
+        gridApi!.onFilterChanged();
+    });
 }
 
 function getModel(type: string) {
-  alert(JSON.stringify(gridApi!.getColumnFilterModel(FILTER_TYPES[type]), null, 2))
+    alert(JSON.stringify(gridApi!.getColumnFilterModel(FILTER_TYPES[type]), null, 2));
 }
 
 function setFilterValues(type: string) {
-  gridApi!.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then(instance => {
-    instance!.setFilterValues(MANGLED_COLOURS)
-    instance!.applyModel()
-    gridApi!.onFilterChanged()
-  });
+    gridApi!.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then((instance) => {
+        instance!.setFilterValues(MANGLED_COLOURS);
+        instance!.applyModel();
+        gridApi!.onFilterChanged();
+    });
 }
 
 function getValues(type: string) {
-  gridApi!.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then(instance => {
-    alert(JSON.stringify(instance!.getFilterValues(), null, 2))
-  });
+    gridApi!.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then((instance) => {
+        alert(JSON.stringify(instance!.getFilterValues(), null, 2));
+    });
 }
 
 function reset(type: string) {
-  gridApi!.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then(instance => {
-    instance!.resetFilterValues();
-    instance!.setModel(null).then(() => {
-      gridApi!.onFilterChanged();
+    gridApi!.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then((instance) => {
+        instance!.resetFilterValues();
+        instance!.setModel(null).then(() => {
+            gridApi!.onFilterChanged();
+        });
     });
-  });
 }
 
-var MANGLED_COLOURS = ['ReD', 'OrAnGe', 'WhItE', 'YeLlOw']
+var MANGLED_COLOURS = ['ReD', 'OrAnGe', 'WhItE', 'YeLlOw'];
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.api.getToolPanelInstance('filters')!.expandFilters()
+    params.api.getToolPanelInstance('filters')!.expandFilters();
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
+});

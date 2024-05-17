@@ -1,10 +1,10 @@
-import { ICellRendererParams, ICellRendererComp } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class ColourCellRenderer implements ICellRendererComp {
     eGui!: HTMLDivElement;
 
     init(params: ICellRendererParams) {
-        const eGui = this.eGui = document.createElement('div');
+        const eGui = (this.eGui = document.createElement('div'));
         eGui.style.overflow = 'hidden';
         eGui.style.textOverflow = 'ellipsis';
 
@@ -17,7 +17,7 @@ export class ColourCellRenderer implements ICellRendererComp {
             colorSpan.style.paddingRight = '5px';
         }
 
-        eGui.appendChild(colorSpan)
+        eGui.appendChild(colorSpan);
         eGui.append(text);
     }
 
@@ -26,7 +26,6 @@ export class ColourCellRenderer implements ICellRendererComp {
     }
 
     refresh() {
-        return false
+        return false;
     }
 }
-

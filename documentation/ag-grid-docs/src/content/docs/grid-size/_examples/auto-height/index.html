@@ -1,29 +1,35 @@
 <div class="test-header" style="padding: 5px; justify-content: space-between">
-    <div style="align-items: start;">
+    <div style="align-items: start">
         <button onclick="updateRowData(0)">0 Rows</button>
         <button onclick="updateRowData(5)">5 Rows</button>
         <button onclick="updateRowData(50)">50 Rows</button>
     </div>
-    <div style="align-items: center;">
+    <div style="align-items: center">
         <label>
-            <input type="checkbox" id="floating-rows" onclick="cbFloatingRows()" style="vertical-align: text-top;" />
+            <input type="checkbox" id="floating-rows" onclick="cbFloatingRows()" style="vertical-align: text-top" />
             <span
-                style="background-color: #2244CC44; width: 15px; height: 15px; border: 1px solid #888; display: inline-block; vertical-align: text-top;"></span>
+                style="
+                    background-color: #2244cc44;
+                    width: 15px;
+                    height: 15px;
+                    border: 1px solid #888;
+                    display: inline-block;
+                    vertical-align: text-top;
+                "
+            ></span>
             Pinned Rows
         </label>
 
         <button onclick="setAutoHeight()">Auto Height</button>
         <button onclick="setFixedHeight()">Fixed Height</button>
     </div>
-    <div style="align-items: end;">
-        Row Count = <span id="currentRowCount"></span>
-    </div>
+    <div style="align-items: end">Row Count = <span id="currentRowCount"></span></div>
 </div>
 
 <div id="myGrid" class="ag-theme-quartz"></div>
 
-<div style="border: 10px solid #eee; padding: 10px; margin-top: 20px;">
-    <p style="text-align: center;">
+<div style="border: 10px solid #eee; padding: 10px; margin-top: 20px">
+    <p style="text-align: center">
         This text is under the grid and should move up and down as the height of the grid changes.
     </p>
 

@@ -203,7 +203,7 @@ const buildDeepGroupColumnDefs = (columns: ColDef[]): (ColDef | ColGroupDef)[] =
         headerName: 'Athlete',
         children: columns.filter((c) => ['country', 'sport', 'name'].includes(c.field!)),
     },
-    columns.find(c => c.field === 'winningsTotal')!,
+    columns.find((c) => c.field === 'winningsTotal')!,
     {
         headerName: 'Yearly winnings',
         children: [

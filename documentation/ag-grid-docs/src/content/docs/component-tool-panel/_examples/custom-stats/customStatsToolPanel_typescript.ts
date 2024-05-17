@@ -1,15 +1,14 @@
-import { IToolPanelComp, IToolPanelParams } from "@ag-grid-community/core";
+import { IToolPanelComp, IToolPanelParams } from '@ag-grid-community/core';
 
 export interface CustomStatsToolPanelParams extends IToolPanelParams {
     title: string;
 }
 
 export class CustomStatsToolPanel implements IToolPanelComp {
-
     eGui!: HTMLDivElement;
     init(params: CustomStatsToolPanelParams) {
         this.eGui = document.createElement('div');
-        this.eGui.style.textAlign = "center";
+        this.eGui.style.textAlign = 'center';
 
         // calculate stats when new rows loaded, i.e. onModelUpdated
         const renderStats = () => {
@@ -22,11 +21,12 @@ export class CustomStatsToolPanel implements IToolPanelComp {
         return this.eGui;
     }
 
-    refresh(): void {
-    }
+    refresh(): void {}
 
     calculateStats(params: CustomStatsToolPanelParams) {
-        let numGold = 0, numSilver = 0, numBronze = 0;
+        let numGold = 0,
+            numSilver = 0,
+            numBronze = 0;
         params.api.forEachNode(function (rowNode) {
             const data = rowNode.data;
             if (data.gold) numGold += data.gold;
@@ -45,4 +45,3 @@ export class CustomStatsToolPanel implements IToolPanelComp {
         </span>`;
     }
 }
-

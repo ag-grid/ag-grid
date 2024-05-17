@@ -1,12 +1,14 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import './styles.css';
-import { getData } from './data.js';
 import { ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { createApp } from 'vue';
+
+import { getData } from './data.js';
+import './styles.css';
+
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const COUNTRY_CODES = {
@@ -17,7 +19,7 @@ const COUNTRY_CODES = {
 
 const numberParser = function numberParser(params) {
     return parseInt(params.newValue);
-}
+};
 
 const countryCellRenderer = function countryCellRenderer(params) {
     if (params.value === undefined || params.value === null) {
@@ -26,16 +28,17 @@ const countryCellRenderer = function countryCellRenderer(params) {
         const flag = `<img border="0" width="15" height="10" src="https://flagcdn.com/h20/${COUNTRY_CODES[params.value]}.png">`;
         return `${flag} ${params.value}`;
     }
-}
+};
 
 const cityCellRenderer = function cityCellRenderer(params) {
     if (params.value === undefined || params.value === null) {
         return '';
     } else {
-        const flag = "<img border=\"0\" width=\"15\" height=\"10\" src=\"https://www.ag-grid.com/example-assets/weather/sun.png\">";
+        const flag =
+            '<img border="0" width="15" height="10" src="https://www.ag-grid.com/example-assets/weather/sun.png">';
         return `${flag} ${params.value}`;
     }
-}
+};
 
 const VueExample = {
     template: `
@@ -55,30 +58,36 @@ const VueExample = {
         </div>
     `,
     components: {
-        'ag-grid-vue': AgGridVue
+        'ag-grid-vue': AgGridVue,
     },
     data: function () {
         return {
-            columnDefs: [{
-                field: "city",
-                type: "dimension",
-                cellRenderer: cityCellRenderer
-            }, {
-                field: "country",
-                type: "dimension",
-                cellRenderer: countryCellRenderer,
-                minWidth: 200
-            }, {
-                field: "state",
-                type: "dimension",
-                rowGroup: true
-            }, {
-                field: "val1",
-                type: "numberValue"
-            }, {
-                field: "val2",
-                type: "numberValue"
-            }],
+            columnDefs: [
+                {
+                    field: 'city',
+                    type: 'dimension',
+                    cellRenderer: cityCellRenderer,
+                },
+                {
+                    field: 'country',
+                    type: 'dimension',
+                    cellRenderer: countryCellRenderer,
+                    minWidth: 200,
+                },
+                {
+                    field: 'state',
+                    type: 'dimension',
+                    rowGroup: true,
+                },
+                {
+                    field: 'val1',
+                    type: 'numberValue',
+                },
+                {
+                    field: 'val2',
+                    type: 'numberValue',
+                },
+            ],
             gridApi: null,
             defaultColDef: {
                 flex: 1,
@@ -89,8 +98,10 @@ const VueExample = {
             rowData: null,
             groupDefaultExpanded: null,
             rowGroupPanelShow: null,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
-        }
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
+        };
     },
     created() {
         this.autoGroupColumnDef = {
@@ -111,16 +122,13 @@ const VueExample = {
         };
         this.rowData = getData();
         this.groupDefaultExpanded = -1;
-        this.rowGroupPanelShow = 'always'
+        this.rowGroupPanelShow = 'always';
     },
     methods: {
         onGridReady(params) {
             this.gridApi = params.api;
-
         },
-    }
-}
+    },
+};
 
-createApp(VueExample)
-    .mount("#app")
-
+createApp(VueExample).mount('#app');

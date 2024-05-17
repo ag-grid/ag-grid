@@ -9,7 +9,7 @@ export default {
     data() {
         return {
             text: '',
-        }
+        };
     },
     methods: {
         isFilterActive() {
@@ -20,15 +20,21 @@ export default {
             const { node } = params;
             const value = this.params.getValue(node).toString().toLowerCase();
 
-            return !this.text || this.text.toLowerCase()
-                .split(" ")
-                .every((filterWord) => {
-                    return value.indexOf(filterWord) >= 0;
-                });
+            return (
+                !this.text ||
+                this.text
+                    .toLowerCase()
+                    .split(' ')
+                    .every((filterWord) => {
+                        return value.indexOf(filterWord) >= 0;
+                    })
+            );
         },
 
         getModel() {
-            if (!this.isFilterActive()) { return null; }
+            if (!this.isFilterActive()) {
+                return null;
+            }
 
             return { value: this.text };
         },
@@ -46,10 +52,10 @@ export default {
         },
     },
     watch: {
-        'text': function (val, oldVal) {
+        text: function (val, oldVal) {
             if (val !== oldVal) {
                 this.params.filterChangedCallback();
             }
-        }
+        },
     },
-}
+};

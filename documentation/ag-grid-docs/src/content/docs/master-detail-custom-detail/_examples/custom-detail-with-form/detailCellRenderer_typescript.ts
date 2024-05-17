@@ -1,33 +1,38 @@
-import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class DetailCellRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
 
     init(params: ICellRendererParams) {
-
         var firstRecord = params.data.callRecords[0];
 
         this.eGui = document.createElement('div');
-        this.eGui.className = "cell-renderer-outer";
+        this.eGui.className = 'cell-renderer-outer';
         this.eGui.innerHTML =
             '<form>' +
             '  <div>' +
             '  <div>' +
             '    <label>' +
             '      Call Id:<br>' +
-            '    <input type="text" value="' + firstRecord.callId + '">' +
+            '    <input type="text" value="' +
+            firstRecord.callId +
+            '">' +
             '    </label>' +
             '  </div>' +
             '  <div>' +
             '    <label>' +
             '      Number:<br>' +
-            '    <input type="text" value="' + firstRecord.number + '">' +
+            '    <input type="text" value="' +
+            firstRecord.number +
+            '">' +
             '    </label>' +
             '  </div>' +
             '  <div>' +
             '    <label>' +
             '      Direction:<br>' +
-            '    <input type="text" value="' + firstRecord.direction + '">' +
+            '    <input type="text" value="' +
+            firstRecord.direction +
+            '">' +
             '    </label>' +
             '  </div>' +
             '</form>' +

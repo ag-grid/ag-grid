@@ -14,5 +14,5 @@ export function getData() {
         { row: 'Row 12', name: 'Sarah McCoy' },
         { row: 'Row 13', name: 'Jane Jack' },
         { row: 'Row 14', name: 'Tina Wills' },
-    ]
+    ];
 }

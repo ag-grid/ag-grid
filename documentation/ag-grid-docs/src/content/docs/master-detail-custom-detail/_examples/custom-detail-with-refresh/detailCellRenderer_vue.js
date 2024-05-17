@@ -22,7 +22,7 @@ export default {
     data: function () {
         return {
             callsCount: 0,
-            now: ''
+            now: '',
         };
     },
     mounted() {
@@ -36,6 +36,6 @@ export default {
             this.now = new Date().toLocaleTimeString();
             // tell the grid not to destroy and recreate
             return true;
-        }
-    }
+        },
+    },
 };

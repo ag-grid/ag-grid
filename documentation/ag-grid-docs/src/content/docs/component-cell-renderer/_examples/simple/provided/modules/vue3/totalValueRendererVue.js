@@ -13,7 +13,7 @@ export default {
         // see ICellRendererParams for more details
         return {
             cellValue,
-            buttonClicked
-        }
-    }
+            buttonClicked,
+        };
+    },
 };

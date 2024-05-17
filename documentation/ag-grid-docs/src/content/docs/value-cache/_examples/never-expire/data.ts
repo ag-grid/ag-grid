@@ -1,5 +1,5 @@
 export function getData(): any[] {
-    var rowData = []
+    var rowData = [];
 
     for (var i = 0; i < 10; i++) {
         rowData.push({
@@ -10,8 +10,8 @@ export function getData(): any[] {
             q3: Math.floor(((i + 20000) * 173456) % 10000),
             q4: Math.floor(((i + 2000000) * 173456) % 10000),
             year: i % 2 == 0 ? '2015' : '2016',
-        })
+        });
     }
 
-    return rowData
+    return rowData;
 }

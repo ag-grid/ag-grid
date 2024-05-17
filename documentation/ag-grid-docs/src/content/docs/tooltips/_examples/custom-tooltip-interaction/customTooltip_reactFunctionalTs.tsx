@@ -2,7 +2,6 @@ import { CustomTooltipProps } from '@ag-grid-community/react';
 import React, { useMemo, useRef } from 'react';
 
 export default (props: CustomTooltipProps & { type: string }) => {
-
     const data = useMemo(() => props.api.getDisplayedRowAtIndex(props.rowIndex!)!.data, []);
     const inputEl = useRef<HTMLInputElement>(null);
 
@@ -17,7 +16,7 @@ export default (props: CustomTooltipProps & { type: string }) => {
                 props.hideTooltipCallback();
             }
         }
-    }
+    };
 
     return (
         <div className="custom-tooltip">
@@ -27,8 +26,19 @@ export default (props: CustomTooltipProps & { type: string }) => {
                 </div>
                 <form className="panel-body" onSubmit={onFormSubmit}>
                     <div className="form-group">
-                        <input type="text" ref={inputEl} className="form-control" id="name" placeholder="Name" autoComplete="off" defaultValue={data.athlete} onFocus={ e => e.target.select() } />
-                        <button type="submit" className="btn btn-primary">Submit</button>
+                        <input
+                            type="text"
+                            ref={inputEl}
+                            className="form-control"
+                            id="name"
+                            placeholder="Name"
+                            autoComplete="off"
+                            defaultValue={data.athlete}
+                            onFocus={(e) => e.target.select()}
+                        />
+                        <button type="submit" className="btn btn-primary">
+                            Submit
+                        </button>
                     </div>
                     <p>Total: {data.total}</p>
                 </form>

@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 
-const totalStyle = {paddingBottom: '15px'};
+const totalStyle = { paddingBottom: '15px' };
 
-export default props => {
+export default (props) => {
     const [numMedals, setNumMedals] = useState(0);
     const [numGold, setNumGold] = useState(0);
     const [numSilver, setNumSilver] = useState(0);
     const [numBronze, setNumBronze] = useState(0);
 
     const updateTotals = () => {
-        let numGold = 0, numSilver = 0, numBronze = 0;
+        let numGold = 0,
+            numSilver = 0,
+            numBronze = 0;
 
         props.api.forEachNode(function (rowNode) {
             const data = rowNode.data;
@@ -38,17 +40,26 @@ export default props => {
     }, []);
 
     return (
-        <div style={{textAlign: "center"}}>
-                <span>
-                    <h2><i className="fa fa-calculator"></i> {props.title}</h2>
-                    <dl style={{fontSize: 'large', padding: '30px 40px 10px 30px'}}>
-                        <dt style={totalStyle}>Total Medals: <b>{numMedals}</b></dt>
-                        <dt style={totalStyle}>Total Gold: <b>{numGold}</b></dt>
-                        <dt style={totalStyle}>Total Silver: <b>{numSilver}</b></dt>
-                        <dt style={totalStyle}>Total Bronze: <b>{numBronze}</b></dt>
-                    </dl>
-                </span>
+        <div style={{ textAlign: 'center' }}>
+            <span>
+                <h2>
+                    <i className="fa fa-calculator"></i> {props.title}
+                </h2>
+                <dl style={{ fontSize: 'large', padding: '30px 40px 10px 30px' }}>
+                    <dt style={totalStyle}>
+                        Total Medals: <b>{numMedals}</b>
+                    </dt>
+                    <dt style={totalStyle}>
+                        Total Gold: <b>{numGold}</b>
+                    </dt>
+                    <dt style={totalStyle}>
+                        Total Silver: <b>{numSilver}</b>
+                    </dt>
+                    <dt style={totalStyle}>
+                        Total Bronze: <b>{numBronze}</b>
+                    </dt>
+                </dl>
+            </span>
         </div>
     );
 };
-

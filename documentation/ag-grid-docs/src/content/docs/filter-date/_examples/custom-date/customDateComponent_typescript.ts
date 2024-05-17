@@ -1,4 +1,5 @@
-import { IDateComp, IDateParams } from "@ag-grid-community/core";
+import { IDateComp, IDateParams } from '@ag-grid-community/core';
+
 // we'll be using the globally provided flatpickr for our example
 declare var flatpickr: any;
 
@@ -28,7 +29,7 @@ export class CustomDateComponent implements IDateComp {
         this.picker = flatpickr(this.eGui, {
             onChange: this.onDateChanged.bind(this),
             dateFormat: 'd/m/Y',
-            wrap: true
+            wrap: true,
         });
 
         this.picker.calendarContainer.classList.add('ag-custom-component-popup');
@@ -58,4 +59,3 @@ export class CustomDateComponent implements IDateComp {
         this.eInput.setAttribute('placeholder', placeholder);
     }
 }
-

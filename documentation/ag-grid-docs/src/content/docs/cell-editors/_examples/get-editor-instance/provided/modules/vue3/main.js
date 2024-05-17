@@ -1,12 +1,13 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import MySimpleEditor from './mySimpleEditorVue.js';
-import "./style.css";
-
 import { ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { createApp } from 'vue';
+
+import MySimpleEditor from './mySimpleEditorVue.js';
+import './style.css';
+
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
@@ -24,48 +25,48 @@ const VueExample = {
     `,
     components: {
         'ag-grid-vue': AgGridVue,
-        mySimpleEditor: MySimpleEditor
+        mySimpleEditor: MySimpleEditor,
     },
     data: function () {
         return {
             columnDefs: [
                 {
-                    field: "first_name",
-                    headerName: "First Name",
+                    field: 'first_name',
+                    headerName: 'First Name',
                     width: 120,
-                    editable: true
+                    editable: true,
                 },
                 {
-                    field: "last_name",
-                    headerName: "Last Name",
+                    field: 'last_name',
+                    headerName: 'Last Name',
                     width: 120,
-                    editable: true
+                    editable: true,
                 },
                 {
-                    field: "gender",
+                    field: 'gender',
                     width: 100,
-                    cellEditor: "mySimpleEditor"
+                    cellEditor: 'mySimpleEditor',
                 },
                 {
-                    field: "age",
+                    field: 'age',
                     width: 80,
-                    cellEditor: "mySimpleEditor"
+                    cellEditor: 'mySimpleEditor',
                 },
                 {
-                    field: "mood",
+                    field: 'mood',
                     width: 90,
-                    cellEditor: "mySimpleEditor"
+                    cellEditor: 'mySimpleEditor',
                 },
                 {
-                    field: "country",
+                    field: 'country',
                     width: 110,
-                    cellEditor: "mySimpleEditor"
+                    cellEditor: 'mySimpleEditor',
                 },
                 {
-                    field: "address",
+                    field: 'address',
                     minWidth: 502,
-                    cellEditor: "mySimpleEditor"
-                }
+                    cellEditor: 'mySimpleEditor',
+                },
             ],
             defaultColDef: {
                 editable: true,
@@ -75,8 +76,10 @@ const VueExample = {
             },
             rowData: this.createRowData(),
             interval: null,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
-        }
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
+        };
     },
     beforeDestroy() {
         clearInterval(this.interval);
@@ -91,7 +94,9 @@ const VueExample = {
                         const result = instance.myCustomFunction();
                         console.log(`found editing cell: row index = ${result.rowIndex}, column = ${result.colId}.`);
                     } else {
-                        console.log('found editing cell, but method myCustomFunction not found, must be the default editor.');
+                        console.log(
+                            'found editing cell, but method myCustomFunction not found, must be the default editor.'
+                        );
                     }
                 } else {
                     console.log('found not editing cell.');
@@ -100,7 +105,7 @@ const VueExample = {
         },
 
         createRowData() {
-            const cloneObject = obj => JSON.parse(JSON.stringify(obj));
+            const cloneObject = (obj) => JSON.parse(JSON.stringify(obj));
             const students = [
                 {
                     first_name: 'Bob',
@@ -108,7 +113,7 @@ const VueExample = {
                     gender: 'Male',
                     address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763',
                     mood: 'Happy',
-                    country: 'Ireland'
+                    country: 'Ireland',
                 },
                 {
                     first_name: 'Mary',
@@ -117,7 +122,7 @@ const VueExample = {
                     age: 11,
                     address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215',
                     mood: 'Sad',
-                    country: 'Ireland'
+                    country: 'Ireland',
                 },
                 {
                     first_name: 'Zahid',
@@ -126,7 +131,7 @@ const VueExample = {
                     age: 12,
                     address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186',
                     mood: 'Happy',
-                    country: 'Ireland'
+                    country: 'Ireland',
                 },
                 {
                     first_name: 'Jerry',
@@ -135,22 +140,21 @@ const VueExample = {
                     age: 12,
                     address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634',
                     mood: 'Happy',
-                    country: 'Ireland'
-                }
+                    country: 'Ireland',
+                },
             ];
-            students.forEach(item => {
+            students.forEach((item) => {
                 students.push(cloneObject(item));
             });
-            students.forEach(item => {
+            students.forEach((item) => {
                 students.push(cloneObject(item));
             });
-            students.forEach(item => {
+            students.forEach((item) => {
                 students.push(cloneObject(item));
             });
             return students;
-        }
-    }
-}
+        },
+    },
+};
 
-createApp(VueExample)
-    .mount("#app")
+createApp(VueExample).mount('#app');

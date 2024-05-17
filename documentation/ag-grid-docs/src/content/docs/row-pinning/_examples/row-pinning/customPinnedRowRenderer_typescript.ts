@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 function setStyle(element: any, propertyObject: any) {
     for (var property in propertyObject) {
@@ -21,7 +21,4 @@ export class CustomPinnedRowRenderer implements ICellRendererComp {
     refresh() {
         return false;
     }
-
 }
-
-

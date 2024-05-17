@@ -17,7 +17,12 @@ const { data: menu } = await getEntry('menu', 'data');
 const allMenuSections = menu.main.sections as MenuSection[];
 ---
 
-<Layout title={'AG Grid Pipeline'} description={'Lists feature requests and bugs in our product backlog. Browse items release date, issue number or summary content'} showDocsNav={true} showSearchBar={true}>
+<Layout
+    title={'AG Grid Pipeline'}
+    description={'Lists feature requests and bugs in our product backlog. Browse items release date, issue number or summary content'}
+    showDocsNav={true}
+    showSearchBar={true}
+>
     <div class:list={['contentViewport layout-grid']}>
         <PagesNavigationFromLocalStorage client:load allMenuSections={allMenuSections} pageName={pageName} />
 

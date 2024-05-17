@@ -1,14 +1,13 @@
-import { Component } from '@angular/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import './styles.css';
-import { ColDef, ColGroupDef, GridOptions } from '@ag-grid-community/core';
 import { AgGridAngular } from '@ag-grid-community/angular';
-
-import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, ColGroupDef, GridOptions } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Component } from '@angular/core';
+
+import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -16,57 +15,62 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
     selector: 'my-app',
     standalone: true,
     imports: [AgGridAngular, HttpClientModule],
-    styles: [`.bold-row {
-        font-weight: bold;
-    } `],
+    styles: [
+        `
+            .bold-row {
+                font-weight: bold;
+            }
+        `,
+    ],
     template: `
         <div style="height: 100%; display: flex; flex-direction: column" class="example-container">
             <ag-grid-angular
-                    style="flex: 1 1 auto;"
-                    #topGrid
-                    [class]="themeClass"
-                    [rowData]="rowData"
-                    [gridOptions]="topOptions"
-                    [alignedGrids]="[bottomGrid]"
-                    [columnDefs]="columnDefs" />
+                style="flex: 1 1 auto;"
+                #topGrid
+                [class]="themeClass"
+                [rowData]="rowData"
+                [gridOptions]="topOptions"
+                [alignedGrids]="[bottomGrid]"
+                [columnDefs]="columnDefs"
+            />
 
             <ag-grid-angular
-                    style="flex: none; height: 60px;"
-                    #bottomGrid
-                    [class]="themeClass"
-                    [rowData]="bottomData"
-                    [gridOptions]="bottomOptions"
-                    [alignedGrids]="[topGrid]"
-                    [columnDefs]="columnDefs" />
+                style="flex: none; height: 60px;"
+                #bottomGrid
+                [class]="themeClass"
+                [rowData]="bottomData"
+                [gridOptions]="bottomOptions"
+                [alignedGrids]="[topGrid]"
+                [columnDefs]="columnDefs"
+            />
         </div>
-    `
+    `,
 })
 export class AppComponent {
-    themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
+    themeClass =
+        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+        'ag-theme-quartz' /** DARK MODE END **/;
     columnDefs!: (ColDef | ColGroupDef)[];
     rowData!: any[];
     topOptions: GridOptions = {
         defaultColDef: {
-
             filter: true,
             flex: 1,
-            minWidth: 100
-        }
-        ,
+            minWidth: 100,
+        },
         suppressHorizontalScroll: true,
         alwaysShowVerticalScroll: true,
         autoSizeStrategy: {
-            type: 'fitCellContents'
+            type: 'fitCellContents',
         },
     };
     bottomOptions: GridOptions = {
         headerHeight: 0,
         rowStyle: { fontWeight: 'bold' },
         defaultColDef: {
-
             filter: true,
             flex: 1,
-            minWidth: 100
+            minWidth: 100,
         },
         alwaysShowVerticalScroll: true,
     };
@@ -81,8 +85,8 @@ export class AppComponent {
             sport: 'Synchronised Riding',
             gold: 55,
             silver: 65,
-            bronze: 12
-        }
+            bronze: 12,
+        },
     ];
 
     constructor(private http: HttpClient) {
@@ -96,19 +100,17 @@ export class AppComponent {
                 headerName: 'Total',
                 colId: 'total',
                 valueGetter: 'data.gold + data.silver + data.bronze',
-                width: 200
+                width: 200,
             },
             { field: 'gold', width: 100 },
             { field: 'silver', width: 100 },
-            { field: 'bronze', width: 100 }
+            { field: 'bronze', width: 100 },
         ];
-
     }
 
     ngOnInit() {
-        this.http.get('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .subscribe(data => {
-                this.rowData = data as any[];
-            });
+        this.http.get('https://www.ag-grid.com/example-assets/olympic-winners.json').subscribe((data) => {
+            this.rowData = data as any[];
+        });
     }
 }

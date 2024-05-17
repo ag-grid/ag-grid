@@ -1,12 +1,20 @@
 'use strict';
 
+import {
+    ColDef,
+    GetRowIdParams,
+    GridReadyEvent,
+    IDatasource,
+    ModuleRegistry,
+    RowClassParams,
+    ValueFormatterParams,
+} from '@ag-grid-community/core';
+import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
-import { ColDef, GetRowIdParams, GridReadyEvent, IDatasource, ModuleRegistry, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core';
-import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
-import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
@@ -24,22 +32,14 @@ let allOfTheData: any[] = [];
 
 const createRowData = (id: number) => {
     const makes = ['Toyota', 'Ford', 'Porsche', 'Chevy', 'Honda', 'Nissan'];
-    const models = [
-        'Cruze',
-        'Celica',
-        'Mondeo',
-        'Boxster',
-        'Genesis',
-        'Accord',
-        'Taurus',
-    ];
+    const models = ['Cruze', 'Celica', 'Mondeo', 'Boxster', 'Genesis', 'Accord', 'Taurus'];
     return {
         id: id,
         make: makes[id % makes.length],
         model: models[id % models.length],
         price: 72000,
     };
-}
+};
 
 const insertItemsAt2 = (count: number) => {
     const newDataItems = [];
@@ -49,8 +49,7 @@ const insertItemsAt2 = (count: number) => {
         newDataItems.push(newItem);
     }
     return newDataItems;
-}
-
+};
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
@@ -103,13 +102,13 @@ const GridExample = () => {
                     params.successCallback(rowsThisPage, lastRow);
                 }, 500);
             },
-        }
+        };
     }, []);
     const defaultColDef = useMemo<ColDef>(() => {
         return {
             flex: 1,
             sortable: false,
-        }
+        };
     }, []);
     const getRowId = useCallback(function (params: GetRowIdParams) {
         return params.data.id.toString();
@@ -121,19 +120,16 @@ const GridExample = () => {
             };
         }
         return {
-            fontWeight: 'normal'
-        }
+            fontWeight: 'normal',
+        };
     }, []);
 
-
     const onGridReady = useCallback((params: GridReadyEvent) => {
-
         sequenceId = 1;
         allOfTheData = [];
         for (let i = 0; i < 1000; i++) {
             allOfTheData.push(createRowData(sequenceId++));
         }
-
     }, []);
 
     const insertItemsAt2AndRefresh = useCallback((count: number) => {
@@ -152,42 +148,45 @@ const GridExample = () => {
         }
         // get grid to refresh the data
         gridRef.current!.api.refreshInfiniteCache();
-    }, [])
+    }, []);
 
-    const removeItem = useCallback((start: number, limit: number) => {
-        allOfTheData.splice(start, limit);
-        gridRef.current!.api.refreshInfiniteCache();
-    }, [allOfTheData])
+    const removeItem = useCallback(
+        (start: number, limit: number) => {
+            allOfTheData.splice(start, limit);
+            gridRef.current!.api.refreshInfiniteCache();
+        },
+        [allOfTheData]
+    );
 
     const refreshCache = useCallback(() => {
         gridRef.current!.api.refreshInfiniteCache();
-    }, [])
+    }, []);
 
     const purgeCache = useCallback(() => {
         gridRef.current!.api.purgeInfiniteCache();
-    }, [])
+    }, []);
 
     const setRowCountTo200 = useCallback(() => {
         gridRef.current!.api.setRowCount(200, false);
-    }, [])
+    }, []);
 
     const rowsAndMaxFound = useCallback(() => {
         console.log('getInfiniteRowCount() => ' + gridRef.current!.api.getInfiniteRowCount());
         console.log('isLastRowIndexKnown() => ' + gridRef.current!.api.isLastRowIndexKnown());
-    }, [])
+    }, []);
 
     // function just gives new prices to the row data, it does not update the grid
     const setPricesHigh = useCallback(() => {
         allOfTheData.forEach(function (dataItem) {
             dataItem.price = Math.round(55500 + 400 * (0.5 + Math.random()));
         });
-    }, [allOfTheData])
+    }, [allOfTheData]);
 
     const setPricesLow = useCallback(() => {
         allOfTheData.forEach(function (dataItem) {
             dataItem.price = Math.round(1000 + 100 * (0.5 + Math.random()));
         });
-    }, [allOfTheData])
+    }, [allOfTheData]);
 
     const jumpTo500 = useCallback(() => {
         // first up, need to make sure the grid is actually showing 500 or more rows
@@ -196,28 +195,32 @@ const GridExample = () => {
         }
         // next, we can jump to the row
         gridRef.current!.api.ensureIndexVisible(500);
-    }, [])
-
+    }, []);
 
     return (
         <div style={containerStyle}>
-            <div style={{ "display": "flex", "flexDirection": "column", "height": "100%" }}>
-                <div style={{ "marginBottom": "10px" }}>
+            <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                <div style={{ marginBottom: '10px' }}>
                     <button onClick={() => insertItemsAt2AndRefresh(5)}>Insert Rows</button>
                     <button onClick={() => removeItem(3, 10)}>Delete Rows</button>
                     <button onClick={setRowCountTo200}>Set Row Count</button>
                     <button onClick={rowsAndMaxFound}>Print Info</button>
                     <button onClick={jumpTo500}>Jump to 500</button>
                 </div>
-                <div style={{ "marginBottom": "10px" }}>
+                <div style={{ marginBottom: '10px' }}>
                     <button onClick={setPricesHigh}>Set Prices High</button>
                     <button onClick={setPricesLow}>Set Prices Low</button>
                     <button onClick={refreshCache}>Refresh Cache</button>
                     <button onClick={purgeCache}>Purge Cache</button>
                 </div>
-                <div style={{ "flexGrow": "1" }}>
-
-                    <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+                <div style={{ flexGrow: '1' }}>
+                    <div
+                        style={gridStyle}
+                        className={
+                            /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+                            'ag-theme-quartz' /** DARK MODE END **/
+                        }
+                    >
                         <AgGridReact
                             ref={gridRef}
                             columnDefs={columnDefs}
@@ -235,11 +238,9 @@ const GridExample = () => {
                     </div>
                 </div>
             </div>
-
         </div>
     );
-
-}
+};
 
 const root = createRoot(document.getElementById('root')!);
 root.render(<GridExample />);

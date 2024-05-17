@@ -57,5 +57,5 @@ export function getData(): any[] {
             dateModified: 'Aug 12 2016 10:50:00 PM',
             size: 101,
         },
-    ]
+    ];
 }

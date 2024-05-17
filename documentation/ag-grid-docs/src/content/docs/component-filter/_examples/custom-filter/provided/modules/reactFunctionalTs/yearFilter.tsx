@@ -1,6 +1,6 @@
-import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import { IAfterGuiAttachedParams, IDoesFilterPassParams } from "@ag-grid-community/core";
+import { IAfterGuiAttachedParams, IDoesFilterPassParams } from '@ag-grid-community/core';
 import { CustomFilterProps, useGridFilter } from '@ag-grid-community/react';
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
 
 export default ({ model, onModelChange }: CustomFilterProps) => {
     const [closeFilter, setCloseFilter] = useState<(() => void) | undefined>();
@@ -26,9 +26,9 @@ export default ({ model, onModelChange }: CustomFilterProps) => {
         setUnappliedModel(model);
     }, [model]);
 
-    const onYearChange = ({ target: { value }}: ChangeEvent<HTMLInputElement>) => {
+    const onYearChange = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
         setUnappliedModel(value === 'All' ? null : value);
-    }
+    };
 
     const onClick = () => {
         onModelChange(unappliedModel);
@@ -41,10 +41,12 @@ export default ({ model, onModelChange }: CustomFilterProps) => {
         <div className="year-filter">
             <div>Select Year Range</div>
             <label>
-                <input type="radio" name="year" value="All" checked={unappliedModel == null} onChange={onYearChange} /> All
+                <input type="radio" name="year" value="All" checked={unappliedModel == null} onChange={onYearChange} />{' '}
+                All
             </label>
             <label>
-                <input type="radio" name="year" value="2010" checked={unappliedModel != null} onChange={onYearChange} /> Since 2010
+                <input type="radio" name="year" value="2010" checked={unappliedModel != null} onChange={onYearChange} />{' '}
+                Since 2010
             </label>
             <button onClick={onClick}>Apply</button>
         </div>

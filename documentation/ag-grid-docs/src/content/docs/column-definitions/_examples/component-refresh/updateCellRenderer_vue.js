@@ -12,10 +12,8 @@ export default {
                 ...node.data,
                 gold: gold + 1,
                 silver: silver + 1,
-                bronze: bronze + 1
+                bronze: bronze + 1,
             });
-        }
-    }
-}
-
-
+        },
+    },
+};
