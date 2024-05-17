@@ -29,7 +29,7 @@ export class ColumnMoveHelper {
         let { allMovingColumns } = params;
         if (isFromHeader) {
             // If the columns we're dragging are the only visible columns of their group, move the hidden ones too
-            let newCols: Column[] = [];
+            const newCols: Column[] = [];
             allMovingColumns.forEach((col) => {
                 let movingGroup: ColumnGroup | null = null;
 
@@ -114,7 +114,7 @@ export class ColumnMoveHelper {
         // In this way potentialMoves contains all potential moves over 'hidden' columns
         const displayedCols = columnModel.getAllDisplayedColumns();
 
-        let potentialMoves: { move: number, fragCount: number }[] = [];
+        const potentialMoves: { move: number, fragCount: number }[] = [];
         let targetOrder: Column[] | null = null;
 
         for (let i = 0; i < validMoves.length; i++) {
@@ -167,7 +167,7 @@ export class ColumnMoveHelper {
     // A measure of how fragmented in terms of groups an order of columns is
     private static groupFragCount(columns: Column[]): number {
         function parents(col: Column): ProvidedColumnGroup[] {
-            let result: ProvidedColumnGroup[] = [];
+            const result: ProvidedColumnGroup[] = [];
             let parent = col.getOriginalParent();
             while (parent != null) {
                 result.push(parent);

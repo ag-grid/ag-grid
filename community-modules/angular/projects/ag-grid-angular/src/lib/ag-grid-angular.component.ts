@@ -1185,7 +1185,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public blockLoadDebounceMillis: number | undefined = undefined;
-    /** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping.
+    /** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping or Tree Data.
          * @default false
          */
     @Input() public purgeClosedRowNodes: boolean | undefined = undefined;

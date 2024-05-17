@@ -5,7 +5,10 @@
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "nx:noop"
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
     },
     "build": {
       "executor": "nx:noop",

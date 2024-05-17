@@ -66,7 +66,7 @@ export function _isMacOsUserAgent(): boolean {
 export function _isIOSUserAgent(): boolean {
     if (isIOS === undefined) {
         isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
-            // eslint-disable-next-line
+             
             (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
     }
 

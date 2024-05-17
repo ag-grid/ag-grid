@@ -568,7 +568,6 @@ export { _warnOnce, _errorOnce, _debounce, _compose, _doOnce } from './utils/fun
 export { _createIcon, _createIconNoSpan} from './utils/icon';
 export { _exists, _missing, _missingOrEmpty, _jsonEquals, _toStringOrNull, _values, _makeNull, _defaultComparator } from './utils/generic';
 export { NumberSequence } from './utils/numberSequence';
-export { _keys } from './utils/map';
 export { _formatNumberTwoDecimalPlacesAndCommas, _formatNumberCommas } from './utils/number';
 export { _iterateObject, _cloneObject, _getAllValuesInObject, _mergeDeep} from './utils/object';
 export { _sortRowNodesByOrder } from './utils/rowNode';

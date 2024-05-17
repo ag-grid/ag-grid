@@ -62,7 +62,7 @@ export function AutomatedIntegratedCharts({ automatedExampleManager, useStaticDa
     });
 
     useEffect(() => {
-        let params = {
+        const params = {
             gridClassname,
             darkMode,
             getOverlay: () => {

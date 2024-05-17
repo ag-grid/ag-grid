@@ -122,6 +122,9 @@ console.log(
 export default defineConfig({
     site: PUBLIC_SITE_URL,
     base: PUBLIC_BASE_URL,
+    devToolbar: {
+        enabled: false,
+    },
     vite: {
         plugins: [mkcert(), svgr(), agHotModuleReload()],
         server: {
@@ -143,13 +146,7 @@ export default defineConfig({
         },
         optimizeDeps: {
             // Prevent vite from importing in content/docs folder
-            exclude: [
-                'vue',
-                '@angular/common/http',
-                '@angular/forms',
-                '@angular/common',
-                '@angular/platform-browser'
-            ]
+            exclude: ['vue', '@angular/common/http', '@angular/forms', '@angular/common', '@angular/platform-browser'],
         },
     },
     integrations: [

@@ -187,7 +187,7 @@ function onBtExport() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector('#myGrid');
+    const gridDiv = document.querySelector('#myGrid');
     gridApi = agGrid.createGrid(gridDiv, gridOptions);
 
     const button = document.getElementById('export-to-excel');

@@ -23,6 +23,12 @@
         "script": "build"
       }
     },
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
     "pack": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],

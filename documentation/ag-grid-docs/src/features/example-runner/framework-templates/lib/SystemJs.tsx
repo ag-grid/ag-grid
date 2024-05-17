@@ -143,7 +143,7 @@ function getRelevantConfig(configuration: Configuration, framework: InternalFram
     };
 
     const buildCopy = (config: Paths) => {
-        let valid = {} as Paths;
+        const valid = {} as Paths;
         Object.entries(config)
             .filter(filterOutChartWrapper)
             .filter(filterByFramework)
@@ -210,8 +210,8 @@ export const SystemJs = ({
     }
     configuration = getRelevantConfig(configuration, internalFramework);
 
-    let systemJsMap = configuration.gridMap;
-    let systemJsPaths = { ...(isEnterprise ? configuration.gridEnterprisePaths : configuration.gridCommunityPaths) };
+    const systemJsMap = configuration.gridMap;
+    const systemJsPaths = { ...(isEnterprise ? configuration.gridEnterprisePaths : configuration.gridCommunityPaths) };
 
     let systemJsVersion = `${NPM_CDN}/systemjs@0.19.47/dist/system.js`;
     if (internalFramework === 'angular') {

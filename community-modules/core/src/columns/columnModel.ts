@@ -43,7 +43,6 @@ import { SortController } from "../sortController";
 import { _missingOrEmpty, _exists, _missing, _attrToBoolean, _attrToNumber } from '../utils/generic';
 import { _camelCaseToHumanText } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
-import { _convertToMap } from '../utils/map';
 import { _warnOnce } from '../utils/function';
 import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -1951,7 +1950,7 @@ export class ColumnModel extends BeanStub {
 
     private orderColumnStateList(columnStateList: any[]): void {
         // for fast looking, store the index of each column
-        const colIdToGridIndexMap = _convertToMap<string, number>(this.gridColumns.map((col, index) => [col.getColId(), index]));
+        const colIdToGridIndexMap = new Map(this.gridColumns.map((col, index) => [col.getColId(), index]));
 
         columnStateList.sort((itemA: any, itemB: any) => {
             const posA = colIdToGridIndexMap.has(itemA.colId) ? colIdToGridIndexMap.get(itemA.colId) : -1;
@@ -3246,7 +3245,7 @@ export class ColumnModel extends BeanStub {
         const areAutoColsChanged = this.createGroupAutoColumnsIfNeeded();
         // if auto group cols have changed, and we have a sort order, we need to move auto cols to the start
         if (areAutoColsChanged) {
-            const groupAutoColsMap = _convertToMap<Column, true>(this.groupAutoColumns!.map(col => [col, true]));
+            const groupAutoColsMap = new Map<Column, true>(this.groupAutoColumns!.map(col => [col, true]));
 
             // if group cols have changed, remove them from any previous orders and add them to the start.
             if (this.lastPrimaryOrder) {
@@ -3328,7 +3327,7 @@ export class ColumnModel extends BeanStub {
     private orderGridColsLike(colsOrder: Column[] | undefined): void {
         if (_missing(colsOrder)) { return; }
 
-        const lastOrderMapped = _convertToMap<Column, number>(colsOrder.map((col, index) => [col, index]));
+        const lastOrderMapped = new Map<Column, number>(colsOrder.map((col, index) => [col, index]));
 
         // only do the sort if at least one column is accounted for. columns will be not accounted for
         // if changing from secondary to primary columns
@@ -3343,9 +3342,9 @@ export class ColumnModel extends BeanStub {
 
         // order cols in the same order as before. we need to make sure that all
         // cols still exists, so filter out any that no longer exist.
-        const gridColsMap = _convertToMap<Column, boolean>(this.gridColumns.map(col => [col, true]));
+        const gridColsMap = new Map<Column, boolean>(this.gridColumns.map(col => [col, true]));
         const oldColsOrdered = colsOrder.filter(col => gridColsMap.has(col));
-        const oldColsMap = _convertToMap<Column, boolean>(oldColsOrdered.map(col => [col, true]));
+        const oldColsMap = new Map<Column, boolean>(oldColsOrdered.map(col => [col, true]));
         const newColsOrdered = this.gridColumns.filter(col => !oldColsMap.has(col));
 
         // add in the new columns, at the end (if no group), or at the end of the group (if a group)
@@ -3735,7 +3734,7 @@ export class ColumnModel extends BeanStub {
         if (params.resizingCols) {
             const allResizingCols = new Set(params.resizingCols);
             // find the last resizing col, as only cols after this one are affected by the resizing
-            let displayedCols = this.displayedColumnsCenter;
+            const displayedCols = this.displayedColumnsCenter;
             for (let i = displayedCols.length - 1; i >= 0; i--) {
                 if (allResizingCols.has(displayedCols[i])) {
                     flexAfterDisplayIndex = i;
@@ -4199,7 +4198,7 @@ export class ColumnModel extends BeanStub {
         // The exception is for columns that were added via `addGroupColumns`. These should appear at the end.
         // We don't have to worry about full updates, as in this case the arrays are correct, and they won't appear in the updated lists.
 
-        let existingColumnStateUpdates: { [colId: string]: ColumnState } = {};
+        const existingColumnStateUpdates: { [colId: string]: ColumnState } = {};
 
         const orderColumns = (
             updatedColumnState: { [colId: string]: ColumnState }, colList: Column[],

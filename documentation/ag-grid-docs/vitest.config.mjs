@@ -1,4 +1,3 @@
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { getViteConfig } from 'astro/config';
 import path from 'node:path';
 

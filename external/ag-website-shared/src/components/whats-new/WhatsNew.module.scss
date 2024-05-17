@@ -61,7 +61,12 @@
         padding-bottom: 0.75rem;
         padding-left: 1.1rem;
         margin-bottom: 16px;
-        color: var(--color-util-gray-400);
+        color: var(--color-util-brand-500);
+        font-weight: var(--text-semibold);
+
+        #{$selector-darkmode} & {
+            color: var(--color-util-brand-700);
+        }
 
         a {
             text-decoration: none;
@@ -102,20 +107,17 @@
 }
 
 .majorText {
-    border: 1px solid var(--color-logo-orange);
+    border: 1px solid var(--color-util-gray-600);
     border-radius: var(--radius-4xl);
-    color: var(--color-logo-orange);
+    color: var(--color-util-gray-600);
     padding: 2px 8px;
 }
 
 .latestTag {
-    border: 1px solid var(--color-text-primary);
-    border-radius: var(--radius-4xl);
     padding: 2px 8px;
-
-    #{$selector-darkmode} & {
-        border: 1px solid var(--color-border-primary);
-    }
+    border-radius: var(--radius-4xl);
+    border: 1px solid var(--color-logo-orange);
+    color: var(--color-logo-orange);
 }
 
 .line {
