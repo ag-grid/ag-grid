@@ -3,9 +3,11 @@ import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
 import { _isVisible, _setFixedWidth } from "../utils/dom";
 import { SetHeightFeature } from "./rowContainer/setHeightFeature";
 import { Events } from "../eventKeys";
+import { AgComponentSelector } from "../widgets/component";
 
 export class AgFakeVerticalScroll extends AbstractFakeScrollComp {
-
+    static readonly selector: AgComponentSelector = 'ag-fake-vertical-scroll';
+    
     private static TEMPLATE = /* html */
         `<div class="ag-body-vertical-scroll" aria-hidden="true">
             <div class="ag-body-vertical-scroll-viewport" ref="eViewport">

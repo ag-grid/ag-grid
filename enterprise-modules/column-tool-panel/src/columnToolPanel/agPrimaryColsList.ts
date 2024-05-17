@@ -16,7 +16,8 @@ import {
     _setAriaLevel,
     _setAriaLabel,
     _exists,
-    _includes
+    _includes,
+    AgComponentSelector
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanelItemDragFeature } from './primaryColsListPanelItemDragFeature';
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
@@ -47,7 +48,8 @@ class UIColumnModel implements VirtualListModel {
 const PRIMARY_COLS_LIST_PANEL_CLASS = 'ag-column-select-list';
 
 export class AgPrimaryColsList extends Component {
-
+    static readonly selector: AgComponentSelector = 'ag-primary-cols-list';
+    
     public static TEMPLATE = /* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`;
 
     @Autowired('columnModel') private columnModel: ColumnModel;

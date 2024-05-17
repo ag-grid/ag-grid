@@ -1,4 +1,5 @@
 import {
+    AgComponentSelector,
     Autowired,
     ColumnModel,
     Component,
@@ -10,7 +11,8 @@ import { RowGroupDropZonePanel } from "./rowGroupDropZonePanel";
 import { PivotDropZonePanel } from "./pivotDropZonePanel";
 
 export class AgGridHeaderDropZones extends Component {
-
+    static readonly selector: AgComponentSelector = 'ag-grid-header-drop-zones';
+    
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     private rowGroupComp: Component;

@@ -4,6 +4,7 @@ import { Events } from "../eventKeys";
 import { KeyCode } from "../constants/keyCode";
 import { _setAriaControls } from "../utils/aria";
 import { AgPickerFieldParams } from "../interfaces/agFieldParams";
+import { AgComponentSelector } from "./component";
 
 export interface AgSelectParams<TValue = string> extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
     options?: ListOption<TValue>[];
@@ -14,6 +15,8 @@ export interface AgSelectParams<TValue = string> extends Omit<AgPickerFieldParam
 }
 
 export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSelectParams<TValue> & AgPickerFieldParams, AgList<TValue>> {
+    static readonly selector: AgComponentSelector = 'ag-select';
+    
     public static EVENT_ITEM_SELECTED = 'selectedItem';
     protected listComponent: AgList<TValue> | undefined;
 

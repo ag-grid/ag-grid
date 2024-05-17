@@ -5,13 +5,14 @@ import {
     ToolPanelColumnCompParams,
     RefSelector,
     ColumnEventType,
-    PositionableFeature
+    PositionableFeature,
+    AgComponentSelector
 } from "@ag-grid-community/core";
 import { AgPrimaryColsList } from "./agPrimaryColsList";
 import { AgPrimaryColsHeader } from "./agPrimaryColsHeader";
 
 export class AgPrimaryCols extends Component {
-
+    static readonly selector: AgComponentSelector = 'ag-primary-cols';
     private static TEMPLATE = /* html */
         `<div class="ag-column-select">
             <ag-primary-cols-header ref="primaryColsHeaderPanel"></ag-primary-cols-header>

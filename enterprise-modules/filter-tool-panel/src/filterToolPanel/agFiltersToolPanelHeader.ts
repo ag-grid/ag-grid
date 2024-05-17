@@ -9,13 +9,15 @@ import {
     AgInputTextField,
     _createIconNoSpan,
     _debounce,
-    _setDisplayed
+    _setDisplayed,
+    AgComponentSelector
 } from "@ag-grid-community/core";
 import { ToolPanelFiltersCompParams } from "./filtersToolPanel";
 
 export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
 
 export class AgFiltersToolPanelHeader extends Component {
+    static readonly selector: AgComponentSelector = 'ag-filters-tool-panel-header';
 
     @Autowired('columnModel') private columnModel: ColumnModel;
 

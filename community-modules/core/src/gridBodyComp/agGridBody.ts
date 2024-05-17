@@ -5,7 +5,7 @@ import { ResizeObserverService } from '../misc/resizeObserverService';
 import { AgOverlayWrapper } from '../rendering/overlays/overlayWrapperComponent';
 import { LayoutCssClasses } from "../styling/layoutFeature";
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRowCount } from '../utils/aria';
-import { Component } from '../widgets/component';
+import { AgComponentSelector, Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { AgFakeHorizontalScroll } from './agFakeHorizontalScroll';
 import { AgFakeVerticalScroll } from './agFakeVerticalScroll';
@@ -59,6 +59,7 @@ const GRID_BODY_TEMPLATE = /* html */
     </div>`;
 
 export class AgGridBody extends Component {
+    static readonly selector: AgComponentSelector = 'ag-grid-body';
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 

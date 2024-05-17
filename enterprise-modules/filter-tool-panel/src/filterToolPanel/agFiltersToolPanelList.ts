@@ -13,7 +13,8 @@ import {
     _exists,
     _includes,
     _setAriaLabel,
-    _mergeDeep
+    _mergeDeep,
+    AgComponentSelector
 } from "@ag-grid-community/core";
 
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";
@@ -23,6 +24,7 @@ import { EXPAND_STATE } from "./agFiltersToolPanelHeader";
 import { ToolPanelColDefService } from "@ag-grid-enterprise/side-bar";
 
 export class AgFiltersToolPanelList extends Component {
+    static readonly selector: AgComponentSelector = 'ag-filters-tool-panel-list';
 
     private static TEMPLATE = /* html */ `<div class="ag-filter-list-panel"></div>`;
 

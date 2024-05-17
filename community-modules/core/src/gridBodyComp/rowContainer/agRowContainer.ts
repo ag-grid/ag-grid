@@ -1,4 +1,4 @@
-import { Component } from "../../widgets/component";
+import { AgComponentSelector, Component } from "../../widgets/component";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { Autowired, PostConstruct, PreDestroy } from "../../context/context";
 import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowContainerType } from "./rowContainerCtrl";
@@ -37,7 +37,7 @@ function templateFactory(): string {
 }
 
 export class AgRowContainer extends Component {
-
+    static readonly selector: AgComponentSelector = 'ag-row-container';
     @Autowired('beans') private beans: Beans;
 
     @RefSelector('eViewport') private eViewport: HTMLElement;

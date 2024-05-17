@@ -1,6 +1,6 @@
 import { AgDialog } from "@ag-grid-enterprise/core";
 import { AgColorPanel } from "./agColorPanel";
-import { AgPickerFieldParams, AgPickerField } from "@ag-grid-community/core";
+import { AgPickerFieldParams, AgPickerField, AgComponentSelector } from "@ag-grid-community/core";
 
 export interface AgColorPickerParams extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
     pickerType?: string;
@@ -9,7 +9,8 @@ export interface AgColorPickerParams extends Omit<AgPickerFieldParams, 'pickerTy
 }
 
 export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & AgPickerFieldParams, AgDialog> {
-
+    static readonly selector: AgComponentSelector = 'ag-color-picker';
+    
     private isDestroyingPicker: boolean;
 
     constructor(config?: AgColorPickerParams) {

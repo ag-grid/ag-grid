@@ -2,12 +2,15 @@ import { AgAbstractInputField } from './agAbstractInputField';
 import { _exists } from '../utils/generic';
 import { _isEventFromPrintableCharacter } from '../utils/keyboard';
 import { AgInputFieldParams } from '../interfaces/agFieldParams';
+import { AgComponentSelector } from './component';
 
 export interface AgInputTextFieldParams extends AgInputFieldParams {
     allowedCharPattern?: string;
 }
 
 export class AgInputTextField<TConfig extends AgInputTextFieldParams = AgInputTextFieldParams> extends AgAbstractInputField<HTMLInputElement, string, TConfig> {
+    static readonly selector: AgComponentSelector = 'ag-input-text-field';
+    
     constructor(config?: TConfig, className = 'ag-text-field', inputType = 'text') {
         super(config, className, inputType);
     }

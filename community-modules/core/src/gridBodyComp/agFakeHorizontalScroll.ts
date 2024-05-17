@@ -6,8 +6,10 @@ import { Events } from "../eventKeys";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { CenterWidthFeature } from "./centerWidthFeature";
+import { AgComponentSelector } from "../widgets/component";
 
 export class AgFakeHorizontalScroll extends AbstractFakeScrollComp {
+    static readonly selector: AgComponentSelector = 'ag-fake-horizontal-scroll';
 
     private static TEMPLATE = /* html */
         `<div class="ag-body-horizontal-scroll" aria-hidden="true">

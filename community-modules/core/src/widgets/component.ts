@@ -1,6 +1,6 @@
 import { AgEvent } from "../events";
 import { Autowired, PreConstruct } from "../context/context";
-import { AgComponentElementName, AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
+import { AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
 import { BeanStub } from "../context/beanStub";
 import { NumberSequence } from "../utils/numberSequence";
 import {
@@ -26,7 +26,7 @@ export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
 
-export type ComponentClass = { new(params?: any): Component; };
+export type ComponentClass = { new(params?: any): Component; selector: AgComponentSelector;};
 
 export class Component extends BeanStub {
 
@@ -174,7 +174,7 @@ export class Component extends BeanStub {
 
         const elementRef = element.getAttribute('ref');
         
-        const ComponentClass = this.browserElements.has(key) ? null : this.agStackComponentsRegistry.getComponentForNode(key as AgComponentElementName);
+        const ComponentClass = this.browserElements.has(key) ? null : this.agStackComponentsRegistry.getComponent(key as Uppercase<AgComponentSelector>);
         let newComponent: Component | null = null;
         if (ComponentClass) {
             Component.elementGettingCreated = element;
@@ -255,13 +255,7 @@ export class Component extends BeanStub {
         this.eGui = element;
         (this.eGui as any).__agComponent = this;
         this.wireQuerySelectors();
-
-        if(!this.agStackComponentsRegistry){
-            if(components?.length ?? 0 > 0){
-                console.warn('agStackComponentsRegistry is not available in the context, but components are provided. This will lead to unexpected behaviour.');
-            }
-        }
-        this.agStackComponentsRegistry?.ensureRegistered( components ?? this.components);
+        this.agStackComponentsRegistry?.ensureRegistered(components ?? this.components);
 
         // context will not be available when user sets template in constructor
         if (this.getContext()) {
@@ -422,3 +416,43 @@ export class Component extends BeanStub {
         return this.queryForHtmlElement(`[ref="${refName}"]`);
     }
 }
+
+export type AgComponentSelector = 
+'ag-checkbox' |
+'ag-grid-body' |
+'ag-grid-header-drop-zones' |
+'ag-watermark' |
+'ag-input-text-field' |
+'ag-sort-indicator' |
+'ag-pagination' |
+'ag-page-size-selector'|
+'ag-select' |
+'ag-text-area' |
+'ag-slider' |
+'ag-side-bar' |
+'ag-fake-horizontal-scroll' |
+'ag-fake-vertical-scroll' |
+'ag-header-root' |
+'ag-side-bar-buttons' |
+'ag-row-container' |
+'ag-watermark' |
+'ag-fill-handle' |
+'ag-range-handle' |
+'ag-color-picker' |
+'ag-input-range' |
+'ag-slider' |
+'ag-horizontal-resize' |
+'ag-angle-select' |
+'ag-group-component' |
+'ag-filters-tool-panel-header' |
+'ag-filters-tool-panel-list' |
+'ag-primary-cols-header' |
+'ag-primary-cols-list' |
+'ag-primary-cols' |
+'ag-status-bar' |
+'ag-name-value' |
+'ag-autocomplete' |
+'ag-advanced-filter' |
+'ag-overlay-wrapper';
+
+

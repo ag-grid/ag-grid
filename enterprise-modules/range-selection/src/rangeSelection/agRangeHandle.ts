@@ -4,11 +4,13 @@ import {
     CellRangeType,
     SelectionHandleType,
     _last,
+    AgComponentSelector,
 } from "@ag-grid-community/core";
 
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 
 export class AgRangeHandle extends AbstractSelectionHandle {
+    static readonly selector: AgComponentSelector = 'ag-range-handle';
 
     static TEMPLATE = /* html */ `<div class="ag-range-handle"></div>`;
 

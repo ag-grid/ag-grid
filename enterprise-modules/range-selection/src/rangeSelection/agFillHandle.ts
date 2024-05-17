@@ -16,6 +16,7 @@ import {
     _last,
     _toStringOrNull,
     _warnOnce,
+    AgComponentSelector,
 } from '@ag-grid-community/core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 import { findLineByLeastSquares } from './utils';
@@ -34,7 +35,8 @@ interface ValueContext {
 type Direction = 'x' | 'y';
 
 export class AgFillHandle extends AbstractSelectionHandle {
-
+    static readonly selector: AgComponentSelector = 'ag-fill-handle';
+    
     @Autowired('valueService') private valueService: ValueService;
 
     static TEMPLATE = /* html */ `<div class="ag-fill-handle"></div>`;

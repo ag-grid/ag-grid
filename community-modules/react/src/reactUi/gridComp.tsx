@@ -101,11 +101,11 @@ const GridComp = ({ context }: GridCompProps) => {
         const beansToDestroy: any[] = [];
         // these components are optional, so we check if they are registered before creating them
         // assuming that they will be registered by the feature module if present
-        const HeaderDropZonesClass = beans.agStackComponentsRegistry.getComponentForNode('AG-GRID-HEADER-DROP-ZONES', true);
-        const SideBarClass = beans.agStackComponentsRegistry.getComponentForNode('AG-SIDE-BAR', true);
-        const StatusBarClass = beans.agStackComponentsRegistry.getComponentForNode('AG-STATUS-BAR', true);
-        const WatermarkClass = beans.agStackComponentsRegistry.getComponentForNode('AG-WATERMARK', true);
-        const PaginationClass = beans.agStackComponentsRegistry.getComponentForNode('AG-PAGINATION', true);
+        const HeaderDropZonesClass = beans.agStackComponentsRegistry.getComponent('AG-GRID-HEADER-DROP-ZONES', true);
+        const SideBarClass = beans.agStackComponentsRegistry.getComponent('AG-SIDE-BAR', true);
+        const StatusBarClass = beans.agStackComponentsRegistry.getComponent('AG-STATUS-BAR', true);
+        const WatermarkClass = beans.agStackComponentsRegistry.getComponent('AG-WATERMARK', true);
+        const PaginationClass = beans.agStackComponentsRegistry.getComponent('AG-PAGINATION', true);
         const additionalEls: HTMLElement[] = [];
         const eRootWrapper = eRootWrapperRef.current;
 

@@ -1,8 +1,10 @@
 import { Events, CheckboxChangedEvent } from "../events";
 import { AgCheckboxParams, LabelAlignment } from "../interfaces/agFieldParams";
 import { AgAbstractInputField } from './agAbstractInputField';
+import { AgComponentSelector } from "./component";
 
 export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> extends AgAbstractInputField<HTMLInputElement, boolean, TConfig> {
+    static readonly selector: AgComponentSelector = 'ag-checkbox';
 
     protected labelAlignment: LabelAlignment = 'right';
 

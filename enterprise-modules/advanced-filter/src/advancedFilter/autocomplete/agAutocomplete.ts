@@ -1,4 +1,4 @@
-import { AgEvent, Component, Autowired, PopupService, RefSelector, AgInputTextField, PostConstruct, _makeNull, KeyCode, PopupPositionParams } from "@ag-grid-community/core";
+import { AgEvent, Component, Autowired, PopupService, RefSelector, AgInputTextField, PostConstruct, _makeNull, KeyCode, PopupPositionParams, AgComponentSelector } from "@ag-grid-community/core";
 import { AgAutocompleteList } from "./agAutocompleteList";
 import { AutocompleteEntry, AutocompleteListParams } from "./autocompleteParams";
 
@@ -23,6 +23,8 @@ export interface AutocompleteValidChangedEvent extends AgEvent {
 }
 
 export class AgAutocomplete extends Component {
+    static readonly selector: AgComponentSelector = 'ag-autocomplete';
+
     public static EVENT_VALUE_CHANGED = 'eventValueChanged';
     public static EVENT_VALUE_CONFIRMED = 'eventValueConfirmed';
     public static EVENT_OPTION_SELECTED = 'eventOptionSelected';

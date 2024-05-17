@@ -10,13 +10,16 @@ import {
     Component,
     _createIconNoSpan,
     _setDisplayed,
-    _debounce
+    _debounce,
+    AgComponentSelector
 } from "@ag-grid-community/core";
 import { ToolPanelColumnCompParams } from "./columnToolPanel";
 
 export enum ExpandState { EXPANDED, COLLAPSED, INDETERMINATE }
 
 export class AgPrimaryColsHeader extends Component {
+    static readonly selector: AgComponentSelector = 'ag-primary-cols-header';
+
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
     @RefSelector('eExpand') private readonly eExpand: Element;

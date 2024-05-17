@@ -1,4 +1,4 @@
-import { Component, AgEvent, AgToggleButton, RefSelector, AgCheckbox, PostConstruct, _setDisplayed, _createIcon, KeyCode, _setAriaExpanded } from "@ag-grid-community/core";
+import { Component, AgEvent, AgToggleButton, RefSelector, AgCheckbox, PostConstruct, _setDisplayed, _createIcon, KeyCode, _setAriaExpanded, AgComponentSelector } from "@ag-grid-community/core";
 
 
 type GroupItem = Component | HTMLElement;
@@ -30,6 +30,8 @@ interface EnableChangeEvent extends AgEvent {
 }
 
 export class AgGroupComponent extends Component {
+    static readonly selector: AgComponentSelector = 'ag-group-component';
+
     public static EVENT_EXPANDED = 'expanded';
     public static EVENT_COLLAPSED = 'collapsed';
     public static EVENT_ENABLE_CHANGE = 'enableChange';

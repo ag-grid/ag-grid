@@ -11,11 +11,12 @@ import {
     WithoutGridCommon,
     StatusPanelDef,
     _removeFromParent,
+    AgComponentSelector,
 } from '@ag-grid-community/core';
 import { StatusBarService } from "./statusBarService";
 
 export class AgStatusBar extends Component {
-
+    static readonly selector: AgComponentSelector = 'ag-status-bar';
     private static TEMPLATE = /* html */
         `<div class="ag-status-bar">
             <div ref="eStatusBarLeft" class="ag-status-bar-left" role="status"></div>

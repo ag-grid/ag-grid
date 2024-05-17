@@ -4,11 +4,12 @@ import { _setDisplayed, _clearElement } from "../../../utils/dom";
 import { Autowired } from "../../../context/context";
 import { Column } from "../../../entities/column";
 import { RefSelector } from "../../../widgets/componentAnnotations";
-import { Component } from "../../../widgets/component";
+import { AgComponentSelector, Component } from "../../../widgets/component";
 import { ColumnModel } from "../../../columns/columnModel";
 import { _createIconNoSpan } from "../../../utils/icon";
 
 export class AgSortIndicator extends Component {
+    static readonly selector: AgComponentSelector = 'ag-sort-indicator';
 
     private static TEMPLATE = /* html */
         `<span class="ag-sort-indicator-container">

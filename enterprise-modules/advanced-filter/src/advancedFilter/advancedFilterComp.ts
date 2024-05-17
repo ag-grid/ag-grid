@@ -1,4 +1,5 @@
 import {
+    AgComponentSelector,
     Autowired,
     Component,
     FilterManager,
@@ -19,6 +20,8 @@ import { AgAutocomplete, AutocompleteOptionSelectedEvent, AutocompleteValidChang
 import { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 
 export class AgAdvancedFilter extends Component {
+    static readonly selector: AgComponentSelector = 'ag-advanced-filter';
+
     @RefSelector('eAutocomplete') private eAutocomplete: AgAutocomplete;
     @RefSelector('eApplyFilterButton') private eApplyFilterButton: HTMLElement;
     @RefSelector('eBuilderFilterButton') private eBuilderFilterButton: HTMLElement;

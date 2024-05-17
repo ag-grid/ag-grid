@@ -20,7 +20,8 @@ import {
     IToolPanelParams,
     _removeFromParent,
     _warnOnce,
-    _setAriaControls
+    _setAriaControls,
+    AgComponentSelector
 } from "@ag-grid-community/core";
 import { SideBarButtonClickedEvent, AgSideBarButtons } from "./agSideBarButtons";
 import { SideBarDefParser } from "./sideBarDefParser";
@@ -28,6 +29,8 @@ import { SideBarService } from "./sideBarService";
 import { ToolPanelWrapper } from "./toolPanelWrapper";
 
 export class AgSideBar extends Component implements ISideBar {
+    static readonly selector: AgComponentSelector = 'ag-side-bar';
+
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sideBarService') private sideBarService: SideBarService;

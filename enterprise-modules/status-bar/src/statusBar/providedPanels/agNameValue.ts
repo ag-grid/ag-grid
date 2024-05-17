@@ -1,7 +1,8 @@
-import { Component, RefSelector } from '@ag-grid-community/core';
+import { AgComponentSelector, Component, RefSelector } from '@ag-grid-community/core';
 
 export class AgNameValue extends Component {
-
+    static readonly selector: AgComponentSelector = 'ag-name-value';
+    
     private static TEMPLATE = /* html */
         `<div class="ag-status-name-value">
             <span ref="eLabel"></span>:&nbsp;

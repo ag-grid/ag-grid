@@ -1,4 +1,4 @@
-import { AgInputNumberField, Autowired, DragService, Events, AgAbstractLabel, DragListenerParams, AgLabelParams, RefSelector, _exists, _setFixedWidth } from "@ag-grid-community/core";
+import { AgInputNumberField, Autowired, DragService, Events, AgAbstractLabel, DragListenerParams, AgLabelParams, RefSelector, _exists, _setFixedWidth, AgComponentSelector } from "@ag-grid-community/core";
 
 export interface AgAngleSelectParams extends AgLabelParams {
     value?: number;
@@ -6,6 +6,7 @@ export interface AgAngleSelectParams extends AgLabelParams {
 };
 
 export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
+    static readonly selector: AgComponentSelector = 'ag-angle-select';
 
     private static TEMPLATE = /* html */
         `<div class="ag-angle-select">

@@ -5,10 +5,12 @@ import {
     PostConstruct,
     ToolPanelSizeChangedEvent,
     WithoutGridCommon,
-    Events
+    Events,
+    AgComponentSelector
 } from "@ag-grid-community/core";
 
 export class AgHorizontalResize extends Component {
+    static readonly selector: AgComponentSelector = 'ag-horizontal-resize';
 
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
 

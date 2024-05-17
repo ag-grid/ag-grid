@@ -1,5 +1,5 @@
 import { Autowired, PostConstruct } from '../../context/context';
-import { Component } from '../../widgets/component';
+import { AgComponentSelector, Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { AgPromise } from '../../utils/promise';
 import { _clearElement } from '../../utils/dom';
@@ -8,6 +8,7 @@ import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams 
 import { OverlayService } from './overlayService';
 
 export class AgOverlayWrapper extends Component implements LayoutView {
+    static readonly selector: AgComponentSelector = 'ag-overlay-wrapper';
 
     // wrapping in outer div, and wrapper, is needed to center the loading icon
     private static TEMPLATE = /* html */`

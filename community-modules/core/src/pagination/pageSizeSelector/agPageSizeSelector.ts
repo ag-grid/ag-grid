@@ -1,4 +1,4 @@
-import { Component } from "../../widgets/component";
+import { AgComponentSelector, Component } from "../../widgets/component";
 import { Autowired, PostConstruct } from "../../context/context";
 import { AgSelect } from "../../widgets/agSelect";
 import { Events } from "../../eventKeys";
@@ -9,6 +9,7 @@ import { _clearElement } from "../../utils/dom";
 import { _warnOnce } from "../../utils/function";
 
 export class AgPageSizeSelector extends Component {
+    static readonly selector: AgComponentSelector = 'ag-page-size-selector';
 
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 

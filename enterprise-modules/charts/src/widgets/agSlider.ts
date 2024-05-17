@@ -1,4 +1,4 @@
-import { AgLabelParams, AgAbstractLabel, RefSelector, AgInputNumberField, LabelAlignment, PostConstruct, Events } from "@ag-grid-community/core";
+import { AgLabelParams, AgAbstractLabel, RefSelector, AgInputNumberField, LabelAlignment, PostConstruct, Events, AgComponentSelector } from "@ag-grid-community/core";
 import { AgInputRange } from "./agInputRange";
 
 export interface AgSliderParams extends AgLabelParams {
@@ -11,6 +11,8 @@ export interface AgSliderParams extends AgLabelParams {
 }
 
 export class AgSlider extends AgAbstractLabel<AgSliderParams> {
+    static readonly selector: AgComponentSelector = 'ag-slider';
+    
     private static TEMPLATE = /* html */
         `<div class="ag-slider">
             <label ref="eLabel"></label>

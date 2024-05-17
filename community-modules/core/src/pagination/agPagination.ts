@@ -7,12 +7,13 @@ import { RowNodeBlockLoader } from "../rowNodeCache/rowNodeBlockLoader";
 import { _setAriaDisabled } from "../utils/aria";
 import { _createIconNoSpan } from "../utils/icon";
 import { _formatNumberCommas } from "../utils/number";
-import { Component } from "../widgets/component";
+import { AgComponentSelector, Component } from "../widgets/component";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { AgPageSizeSelector } from "./pageSizeSelector/agPageSizeSelector";
 import { PaginationProxy } from "./paginationProxy";
 
 export class AgPagination extends Component {
+    static readonly selector: AgComponentSelector = 'ag-pagination';
 
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
