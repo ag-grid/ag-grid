@@ -59,7 +59,7 @@ export class ZoomPanel extends Component {
             this.zoomScrollingStepInput.setDisabled(!value);
         })(zoomScrollingCheckboxParams.onValueChange);
 
-        this.setTemplate(ZoomPanel.TEMPLATE, [] {
+        this.setTemplate(ZoomPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
             zoomGroup: zoomGroupParams,
             zoomScrollingCheckbox: zoomScrollingCheckboxParams,
             zoomScrollingStepInput: zoomScrollingStepSliderParams,

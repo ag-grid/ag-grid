@@ -46,7 +46,7 @@ export class PaddingPanel extends Component {
         const getSliderParams = (property: keyof AgChartPaddingOptions) => 
             this.chartMenuUtils.getDefaultSliderParams('padding.' + property, property, 200);
 
-        this.setTemplate(PaddingPanel.TEMPLATE, [], {
+        this.setTemplate(PaddingPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
             chartPaddingGroup: chartPaddingGroupParams,
             paddingTopSlider: getSliderParams('top'),
             paddingRightSlider: getSliderParams('right'),

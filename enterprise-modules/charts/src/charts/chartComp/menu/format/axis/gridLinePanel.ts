@@ -38,7 +38,7 @@ export class GridLinePanel extends Component {
         const gridLineColorPickerParams = this.getGridLineColorPickerParams('color');
         const gridLineWidthSliderParams = this.getGridLineWidthSliderParams('thickness');
         const gridLineLineDashSliderParams = this.getGridLineDashSliderParams('lineDash');
-        this.setTemplate(GridLinePanel.TEMPLATE, [], {
+        this.setTemplate(GridLinePanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
             gridLineGroup: gridLineGroupParams,
             gridLineColorPicker: gridLineColorPickerParams,
             gridLineWidthSlider: gridLineWidthSliderParams,

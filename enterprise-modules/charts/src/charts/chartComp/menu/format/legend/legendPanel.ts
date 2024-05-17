@@ -73,7 +73,7 @@ export class LegendPanel extends Component {
             expanded,
             items: [enabledGroup]
         };
-        this.setTemplate(LegendPanel.TEMPLATE, [], {
+        this.setTemplate(LegendPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
             legendGroup: legendGroupParams
         });
         registerGroupComponent(this.legendGroup);

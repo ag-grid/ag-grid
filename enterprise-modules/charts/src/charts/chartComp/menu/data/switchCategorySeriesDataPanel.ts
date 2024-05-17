@@ -45,7 +45,7 @@ export class SwitchCategorySeriesDataPanel extends Component {
             items: [this.switchCategorySeriesToggleButton],
         };
 
-        this.setTemplate(SwitchCategorySeriesDataPanel.TEMPLATE, [], {
+        this.setTemplate(SwitchCategorySeriesDataPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
             switchCategorySeriesGroup: switchCategorySeriesGroupParams,
         });
     }

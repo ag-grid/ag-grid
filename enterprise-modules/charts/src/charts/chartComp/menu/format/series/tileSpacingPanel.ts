@@ -37,7 +37,7 @@ export class TileSpacingPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(TileSpacingPanel.TEMPLATE, [], {
+        this.setTemplate(TileSpacingPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
             groupSpacing: { ...groupParams, title: this.chartTranslationService.translate("group") },
             tileSpacing: { ...groupParams, title: this.chartTranslationService.translate("tile") },
             groupPaddingSlider: this.getSliderParams('padding', 'group.padding'),

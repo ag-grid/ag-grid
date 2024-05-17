@@ -47,7 +47,7 @@ export class ChartPanel extends Component {
                 ...this.createDirectionSelect()
             ]
         };
-        this.setTemplate(ChartPanel.TEMPLATE, [], { chartGroup: chartGroupParams });
+        this.setTemplate(ChartPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], { chartGroup: chartGroupParams });
         registerGroupComponent(this.chartGroup);
         this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, () => this.refresh());
     }

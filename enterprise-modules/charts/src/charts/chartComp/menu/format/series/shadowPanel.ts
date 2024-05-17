@@ -43,7 +43,7 @@ export class ShadowPanel extends Component {
             }
         );
         const shadowColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(`${propertyNamespace}.color`);
-        this.setTemplate(ShadowPanel.TEMPLATE, [], {
+        this.setTemplate(ShadowPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
             shadowGroup: shadowGroupParams,
             shadowColorPicker: shadowColorPickerParams,
             shadowBlurSlider: this.getSliderParams("blur", 0, 20),

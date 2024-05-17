@@ -63,7 +63,7 @@ export class MarkersPanel extends Component {
             seriesMarkerSizeSliderParams = this.getSliderParams("marker.size", "size", 60);
         }
         
-        this.setTemplate(MarkersPanel.TEMPLATE, [], {
+        this.setTemplate(MarkersPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
             seriesMarkersGroup: seriesMarkersGroupParams,
             seriesMarkerShapeSelect: this.getMarkerShapeSelectParams(),
             seriesMarkerMinSizeSlider: seriesMarkerMinSizeSliderParams,

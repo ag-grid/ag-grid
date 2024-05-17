@@ -38,7 +38,7 @@ export class AnimationPanel extends Component {
         const animationHeightInputParams = this.chartMenuParamsFactory.getDefaultNumberInputParams("animation.duration", "durationMillis", {
             min: 0,
         });
-        this.setTemplate(AnimationPanel.TEMPLATE, [], {
+        this.setTemplate(AnimationPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
             animationGroup: animationGroupParams,
             animationHeightInput: animationHeightInputParams
         });

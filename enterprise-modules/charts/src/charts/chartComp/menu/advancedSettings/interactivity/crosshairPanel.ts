@@ -44,7 +44,7 @@ export class CrosshairPanel extends Component {
             'crosshair.stroke',
             'color'
         );
-        this.setTemplate(CrosshairPanel.TEMPLATE, [], {
+        this.setTemplate(CrosshairPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
             crosshairGroup: crosshairGroupParams,
             crosshairLabelCheckbox: crosshairLabelCheckboxParams,
             crosshairSnapCheckbox: crosshairSnapCheckboxParams,
