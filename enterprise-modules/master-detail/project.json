@@ -87,7 +87,7 @@
     "lint": {
       "command": "eslint",
       "options": {
-        "cwd": "enterprise-modules/master-detail"
+        "cwd": "{projectRoot}"
       }
     },
     "test": {

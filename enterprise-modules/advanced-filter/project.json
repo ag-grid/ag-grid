@@ -87,7 +87,7 @@
     "lint": {
       "command": "eslint",
       "options": {
-        "cwd": "enterprise-modules/advanced-filter"
+        "cwd": "{projectRoot}"
       }
     },
     "test": {

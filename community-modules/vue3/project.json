@@ -7,7 +7,7 @@
     "lint": {
       "command": "eslint",
       "options": {
-        "cwd": "community-modules/vue3"
+        "cwd": "{projectRoot}"
       }
     },
     "build": {

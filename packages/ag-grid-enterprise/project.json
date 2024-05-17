@@ -115,7 +115,7 @@
     "lint": {
       "command": "eslint",
       "options": {
-        "cwd": "packages/ag-grid-enterprise"
+        "cwd": "{projectRoot}"
       }
     },
     "test": {

@@ -72,7 +72,7 @@
     "lint": {
       "command": "eslint",
       "options": {
-        "cwd": "plugins/ag-grid-generate-example-files"
+        "cwd": "{projectRoot}"
       }
     },
     "test": {

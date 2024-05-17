@@ -26,7 +26,7 @@
     "lint": {
       "command": "eslint",
       "options": {
-        "cwd": "community-modules/angular"
+        "cwd": "{projectRoot}"
       }
     },
     "pack": {

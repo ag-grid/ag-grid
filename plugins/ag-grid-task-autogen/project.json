@@ -39,7 +39,7 @@
     "lint": {
       "command": "eslint",
       "options": {
-        "cwd": "plugins/ag-grid-task-autogen"
+        "cwd": "{projectRoot}"
       }
     },
     "test": {

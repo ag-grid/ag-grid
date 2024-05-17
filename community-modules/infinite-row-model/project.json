@@ -87,7 +87,7 @@
     "lint": {
       "command": "eslint",
       "options": {
-        "cwd": "community-modules/infinite-row-model"
+        "cwd": "{projectRoot}"
       }
     },
     "test": {

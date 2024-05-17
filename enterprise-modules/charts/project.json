@@ -92,7 +92,7 @@
     "lint": {
       "command": "eslint",
       "options": {
-        "cwd": "enterprise-modules/charts"
+        "cwd": "{projectRoot}"
       }
     },
     "test": {

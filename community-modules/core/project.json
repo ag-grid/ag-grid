@@ -79,7 +79,7 @@
     "lint": {
       "command": "eslint",
       "options": {
-        "cwd": "community-modules/core"
+        "cwd": "{projectRoot}"
       }
     },
     "test": {

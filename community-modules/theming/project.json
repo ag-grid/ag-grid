@@ -97,7 +97,7 @@
     "lint": {
       "command": "eslint",
       "options": {
-        "cwd": "community-modules/theming"
+        "cwd": "{projectRoot}"
       }
     },
     "test": {
