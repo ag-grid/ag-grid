@@ -1,7 +1,7 @@
 import {
     Beans, Context,
     GridCtrl,
-    IGridComp, AgStackComponentsRegistry
+    IGridComp
 } from 'ag-grid-community';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext';
@@ -101,11 +101,11 @@ const GridComp = ({ context }: GridCompProps) => {
         const beansToDestroy: any[] = [];
         // these components are optional, so we check if they are registered before creating them
         // assuming that they will be registered by the feature module if present
-        const HeaderDropZonesClass = AgStackComponentsRegistry.getComponentForNode('AG-GRID-HEADER-DROP-ZONES');
-        const SideBarClass = AgStackComponentsRegistry.getComponentForNode('AG-SIDE-BAR');
-        const StatusBarClass = AgStackComponentsRegistry.getComponentForNode('AG-STATUS-BAR');
-        const WatermarkClass = AgStackComponentsRegistry.getComponentForNode('AG-WATERMARK');
-        const PaginationClass = AgStackComponentsRegistry.getComponentForNode('AG-PAGINATION');
+        const HeaderDropZonesClass = beans.agStackComponentsRegistry.getComponentForNode('AG-GRID-HEADER-DROP-ZONES', true);
+        const SideBarClass = beans.agStackComponentsRegistry.getComponentForNode('AG-SIDE-BAR', true);
+        const StatusBarClass = beans.agStackComponentsRegistry.getComponentForNode('AG-STATUS-BAR', true);
+        const WatermarkClass = beans.agStackComponentsRegistry.getComponentForNode('AG-WATERMARK', true);
+        const PaginationClass = beans.agStackComponentsRegistry.getComponentForNode('AG-PAGINATION', true);
         const additionalEls: HTMLElement[] = [];
         const eRootWrapper = eRootWrapperRef.current;
 

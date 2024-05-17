@@ -24,7 +24,7 @@ export class AgStackComponentsRegistry {
         }
     }
 
-    public getComponentForNode(name: string, optional: boolean = false): ComponentClass | undefined{
+    public getComponentForNode(name: AgComponentElementName, optional: boolean = false): ComponentClass | undefined{
         const compClass = this.componentToNodeName.get(name);
         if(!compClass && !optional) {
             _warnOnce(`${name} is not registered and is required`);

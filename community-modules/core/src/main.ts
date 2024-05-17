@@ -25,7 +25,6 @@ export {
 // components
 export { ComponentUtil } from "./components/componentUtil";
 export { ComponentClass } from "./widgets/component";
-export { AgStackComponentsRegistry, AgComponentElementName } from "./components/agStackComponentsRegistry";
 
 export { UserComponentRegistry } from "./components/framework/userComponentRegistry";
 export { UserComponentFactory, UserCompDetails } from "./components/framework/userComponentFactory";

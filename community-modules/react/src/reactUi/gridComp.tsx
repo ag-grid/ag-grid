@@ -1,7 +1,7 @@
 import {
     Beans, Context,
     GridCtrl,
-    IGridComp, AgStackComponentsRegistry
+    IGridComp
 } from '@ag-grid-community/core';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext';

@@ -1,6 +1,6 @@
 import { AgEvent } from "../events";
 import { Autowired, PreConstruct } from "../context/context";
-import { AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
+import { AgComponentElementName, AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
 import { BeanStub } from "../context/beanStub";
 import { NumberSequence } from "../utils/numberSequence";
 import {
@@ -175,7 +175,7 @@ export class Component extends BeanStub {
         // shortcut for common browser elements
         if(this.browserElements.has(key)){ return null; }
 
-        const ComponentClass = this.agStackComponentsRegistry.getComponentForNode(key);
+        const ComponentClass = this.agStackComponentsRegistry.getComponentForNode(key as AgComponentElementName);
         
         if (ComponentClass) {
             Component.elementGettingCreated = element;

@@ -32,7 +32,6 @@ export {AgRadioButton} from "@ag-grid-community/core";
 export {AgRowContainer} from "@ag-grid-community/core";
 export {AgSelect} from "@ag-grid-community/core";
 export {AgSortIndicator} from "@ag-grid-community/core";
-export {AgStackComponentsRegistry} from "@ag-grid-community/core";
 export {AgToggleButton} from "@ag-grid-community/core";
 export {AlignedGridsService} from "@ag-grid-community/core";
 export {AnimateShowChangeCellRenderer} from "@ag-grid-community/core";
