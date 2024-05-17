@@ -10,6 +10,7 @@ import { Footer } from '@ag-website-shared/components/footer/Footer';
 import styles from '@layouts/Layout.module.scss';
 import { getApiPaths } from '@utils/apiMenuPath';
 import { SITE_BASE_URL } from '@constants';
+import GoogleTagManager from '@components/GoogleTagManager.astro';
 
 interface Props {
     title: string;
@@ -77,13 +78,7 @@ const darkModeCSSUrl = `url("${urlWithBaseUrl('/images/moon.svg')}")`;
         <meta name="twitter:image" content={socialImage}>
 
         {isProduction && <Fragment>
-            <script is:inline define:vars={{
-                googleTagManagerId: metadata.googleTagManagerId
-            }}>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer',googleTagManagerId);</script>
+            <GoogleTagManager googleTagManagerId={metadata.googleTagManagerId} />
             <Plausible domain="ag-grid.com" />
 
             <script async type="text/javascript" src="https://secure.inventiveinspired7.com/js/792251.js"></script>
