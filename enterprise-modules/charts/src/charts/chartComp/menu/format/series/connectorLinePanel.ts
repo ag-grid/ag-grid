@@ -36,7 +36,7 @@ export class ConnectorLinePanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(ConnectorLinePanel.TEMPLATE, {
+        this.setTemplate(ConnectorLinePanel.TEMPLATE, [], {
             lineGroup: lineGroupParams,
             lineColorPicker: this.chartMenuUtils.getDefaultColorPickerParams("line.stroke"),
             lineStrokeWidthSlider: this.getSliderParams("strokeWidth", 10, "line.strokeWidth"),

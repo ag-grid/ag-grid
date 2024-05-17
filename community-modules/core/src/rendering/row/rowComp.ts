@@ -31,7 +31,7 @@ export class RowComp extends Component {
         const rowDiv = document.createElement('div');
         rowDiv.setAttribute('comp-id', `${this.getCompId()}`);
         rowDiv.setAttribute('style', this.getInitialStyle(containerType));
-        this.setTemplateFromElement(rowDiv);
+        this.setTemplateFromElement(rowDiv, []);
 
         const eGui = this.getGui();
         const style = eGui.style;

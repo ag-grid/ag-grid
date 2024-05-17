@@ -58,7 +58,7 @@ export class ToolPanelFilterGroupComp extends Component {
             cssIdentifier: 'filter-toolpanel',
             direction: 'vertical'
         };
-        this.setTemplate(ToolPanelFilterGroupComp.TEMPLATE, { filterGroupComp: groupParams }, [AgGroupComponent]);
+        this.setTemplate(ToolPanelFilterGroupComp.TEMPLATE,[AgGroupComponent],  { filterGroupComp: groupParams });
     }
 
     @PostConstruct

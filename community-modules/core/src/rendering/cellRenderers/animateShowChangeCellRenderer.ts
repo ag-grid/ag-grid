@@ -32,7 +32,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         template.appendChild(delta);
         template.appendChild(value);
 
-        this.setTemplateFromElement(template);
+        this.setTemplateFromElement(template, []);
     }
 
     public init(params: any): void {

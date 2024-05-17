@@ -86,7 +86,7 @@ export class CartesianAxisPanel extends Component {
         const axisColorInputParams = this.getAxisColorInputParams(chartAxisThemeOverrides);
         const axisLineWidthSliderParams = this.getAxisLineWidthSliderParams(chartAxisThemeOverrides);
 
-        this.setTemplate(CartesianAxisPanel.TEMPLATE, {
+        this.setTemplate(CartesianAxisPanel.TEMPLATE, [], {
             axisGroup: axisGroupParams,
             axisTypeSelect: axisTypeSelectParams ?? undefined,
             axisPositionSelect: axisPositionSelectParams ?? undefined,

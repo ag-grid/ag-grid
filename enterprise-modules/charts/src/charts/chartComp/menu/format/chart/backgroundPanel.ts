@@ -35,7 +35,7 @@ export class BackgroundPanel extends Component {
             }
         );
         const colorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams('background.fill');
-        this.setTemplate(BackgroundPanel.TEMPLATE, {
+        this.setTemplate(BackgroundPanel.TEMPLATE, [], {
             chartBackgroundGroup: chartBackgroundGroupParams,
             colorPicker: colorPickerParams
         });

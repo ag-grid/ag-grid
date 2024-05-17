@@ -43,7 +43,7 @@ export class PolarAxisPanel extends Component {
         };
         const axisColorInputParams = chartMenuParamsFactory.getDefaultColorPickerParams('line.color');
         const axisLineWidthSliderParams = chartMenuParamsFactory.getDefaultSliderParams('line.width', 'thickness', 10);
-        this.setTemplate(PolarAxisPanel.TEMPLATE, {
+        this.setTemplate(PolarAxisPanel.TEMPLATE, [], {
             axisGroup: axisGroupParams,
             axisColorInput: axisColorInputParams,
             axisLineWidthSlider: axisLineWidthSliderParams

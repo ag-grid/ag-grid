@@ -65,7 +65,7 @@ export class HeaderRowContainerComp extends Component {
         const template = pinnedLeft ? HeaderRowContainerComp.PINNED_LEFT_TEMPLATE :
                          pinnedRight ? HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE : HeaderRowContainerComp.CENTER_TEMPLATE;
 
-        this.setTemplate(template);
+        this.setTemplate(template, []);
 
         // for left and right, we add rows directly to the root element,
         // but for center container we add elements to the child container.

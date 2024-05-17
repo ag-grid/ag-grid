@@ -174,7 +174,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                 </div>
             </form>`;
 
-        this.setTemplate(templateString, paramsMap);
+        this.setTemplate(templateString, this.getAgComponents(), paramsMap);
 
         eGui = this.getGui();
         if (eGui) {

@@ -36,7 +36,7 @@ export class WhiskersPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(WhiskersPanel.TEMPLATE, {
+        this.setTemplate(WhiskersPanel.TEMPLATE, [], {
             whiskersGroup: whiskersGroupParams,
             whiskerColorPicker: this.chartMenuUtils.getDefaultColorPickerParams('whisker.stroke'),
             whiskerThicknessSlider: this.chartMenuUtils.getDefaultSliderParams('whisker.strokeWidth', 'strokeWidth', 10),

@@ -28,7 +28,7 @@ export class LoadingOverlayComponent extends Component implements ILoadingOverla
     public init(params: ILoadingOverlayParams): void {
         const customTemplate = this.gos.get('overlayLoadingTemplate');
 
-        this.setTemplate(customTemplate ?? LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE);
+        this.setTemplate(customTemplate ?? LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE, []);
 
         if (!customTemplate) {
             const localeTextFunc = this.localeService.getLocaleTextFunc();

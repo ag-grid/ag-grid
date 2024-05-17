@@ -63,7 +63,7 @@ export class Component extends BeanStub {
 
         if (template) {
             this.components = components || [];
-            this.setTemplate(template, undefined);
+            this.setTemplate(template, [], undefined);
         }
     }
 
@@ -241,12 +241,12 @@ export class Component extends BeanStub {
         elements.forEach(el => el.setAttribute('tabindex', tabIndex.toString()));
     }
 
-    public setTemplate(template: string | null | undefined, paramsMap?: { [key: string]: any; }, components?: ComponentClass[]): void {
+    public setTemplate(template: string | null | undefined, components: ComponentClass[], paramsMap?: { [key: string]: any; }): void {
         const eGui = _loadTemplate(template as string);
-        this.setTemplateFromElement(eGui, paramsMap, components);
+        this.setTemplateFromElement(eGui, components, paramsMap);
     }
 
-    public setTemplateFromElement(element: HTMLElement, paramsMap?: { [key: string]: any; }, components?: ComponentClass[]): void {
+    public setTemplateFromElement(element: HTMLElement, components: ComponentClass[], paramsMap?: { [key: string]: any; }): void {
         this.eGui = element;
         (this.eGui as any).__agComponent = this;
         this.wireQuerySelectors();

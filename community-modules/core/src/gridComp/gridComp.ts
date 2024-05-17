@@ -51,7 +51,7 @@ export class GridComp extends TabGuardComp {
         this.ctrl = this.createManagedBean(new GridCtrl());
 
         const template = this.createTemplate();
-        this.setTemplate(template,undefined, [AgGridBody, AgPagination]);
+        this.setTemplate(template, [AgGridBody, AgPagination]);
 
         this.ctrl.setComp(compProxy, this.eGridDiv, this.getGui());
 

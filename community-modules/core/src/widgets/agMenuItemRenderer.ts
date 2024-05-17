@@ -12,7 +12,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
     constructor() {
         super();
 
-        this.setTemplate(/* html */`<div></div>`);
+        this.setTemplate(/* html */`<div></div>`, []);
     }
 
     public init(params: IMenuItemParams & AgMenuItemRendererParams): void {

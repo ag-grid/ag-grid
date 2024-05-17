@@ -183,7 +183,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.params = params;
 
         this.currentTemplate = this.workOutTemplate();
-        this.setTemplate(this.currentTemplate, undefined, [AgSortIndicator]);
+        this.setTemplate(this.currentTemplate, [AgSortIndicator]);
         this.setupTap();
         this.setMenu();
         this.setupSort();

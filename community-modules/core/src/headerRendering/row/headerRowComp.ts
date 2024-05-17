@@ -29,7 +29,7 @@ export class HeaderRowComp extends Component {
         super();
 
         this.ctrl = ctrl;
-        this.setTemplate(/* html */`<div class="${this.ctrl.getHeaderRowClass()}" role="row"></div>`);
+        this.setTemplate(/* html */`<div class="${this.ctrl.getHeaderRowClass()}" role="row"></div>`, []);
     }
 
     //noinspection JSUnusedLocalSymbols

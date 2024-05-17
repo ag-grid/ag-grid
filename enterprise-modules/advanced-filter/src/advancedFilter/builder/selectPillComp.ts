@@ -1,10 +1,17 @@
-import { AgInputTextField, RichSelectParams, VirtualList, _setAriaLabel, _setAriaLabelledBy, _stopPropagationForAgGrid } from "@ag-grid-community/core";
-import { AutocompleteEntry } from "../autocomplete/autocompleteParams";
-import { AgRichSelect } from "@ag-grid-enterprise/core";
+import {
+    AgInputTextField,
+    RichSelectParams,
+    VirtualList,
+    _setAriaLabel,
+    _setAriaLabelledBy,
+    _stopPropagationForAgGrid,
+} from '@ag-grid-community/core';
+import { AutocompleteEntry } from '../autocomplete/autocompleteParams';
+import { AgRichSelect } from '@ag-grid-enterprise/core';
 
 export interface SelectPillParams extends RichSelectParams<AutocompleteEntry> {
-    getEditorParams: () => { values?: any[] },
-    wrapperClassName: string,
+    getEditorParams: () => { values?: any[] };
+    wrapperClassName: string;
     ariaLabel: string;
 }
 
@@ -12,7 +19,7 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
     constructor(private readonly params: SelectPillParams) {
         super({
             ...params,
-            template: /* html */`
+            template: /* html */ `
                 <div class="ag-picker-field ag-advanced-filter-builder-pill-wrapper" role="presentation">
                     <div ref="eLabel"></div>
                     <div ref="eWrapper" class="ag-wrapper ag-advanced-filter-builder-pill ag-picker-collapsed">
@@ -21,7 +28,7 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
                         <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
                     </div>
                 </div>`,
-                agComponents: [AgInputTextField]
+            agComponents: [AgInputTextField],
         });
     }
 
@@ -54,9 +61,9 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
             const { values } = this.params.getEditorParams();
             this.values = values!;
             const key = this.value.key;
-            const value = values!.find(value => value.key === key) ?? {
+            const value = values!.find((value) => value.key === key) ?? {
                 key,
-                displayValue: this.value.displayValue
+                displayValue: this.value.displayValue,
             };
             this.value = value;
         }

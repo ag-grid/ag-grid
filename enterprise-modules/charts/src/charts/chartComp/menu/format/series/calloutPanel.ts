@@ -34,7 +34,7 @@ export class CalloutPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true
         };
-        this.setTemplate(CalloutPanel.TEMPLATE, {
+        this.setTemplate(CalloutPanel.TEMPLATE, [], {
             calloutGroup: calloutGroupParams,
             calloutLengthSlider: this.chartMenuUtils.getDefaultSliderParams('calloutLine.length', 'length', 40),
             calloutStrokeWidthSlider: this.chartMenuUtils.getDefaultSliderParams('calloutLine.strokeWidth', 'strokeWidth', 10),

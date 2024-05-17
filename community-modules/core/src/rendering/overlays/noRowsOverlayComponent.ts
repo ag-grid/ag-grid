@@ -27,7 +27,7 @@ export class NoRowsOverlayComponent extends Component implements INoRowsOverlayC
     public init(params: INoRowsOverlayParams): void {
         const customTemplate = this.gos.get('overlayNoRowsTemplate');
 
-        this.setTemplate(customTemplate ?? NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE);
+        this.setTemplate(customTemplate ?? NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE, []);
 
         if (!customTemplate) {
             const localeTextFunc = this.localeService.getLocaleTextFunc();

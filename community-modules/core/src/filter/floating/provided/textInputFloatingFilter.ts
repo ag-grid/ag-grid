@@ -101,7 +101,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
     private postConstruct(): void {
         this.setTemplate(/* html */`
             <div class="ag-floating-filter-input" role="presentation" ref="eFloatingFilterInputContainer"></div>
-        `);
+        `, []);
     }
 
     protected getDefaultDebounceMs(): number {

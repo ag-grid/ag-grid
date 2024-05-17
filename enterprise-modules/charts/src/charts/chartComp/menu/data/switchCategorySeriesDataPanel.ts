@@ -45,7 +45,7 @@ export class SwitchCategorySeriesDataPanel extends Component {
             items: [this.switchCategorySeriesToggleButton],
         };
 
-        this.setTemplate(SwitchCategorySeriesDataPanel.TEMPLATE, {
+        this.setTemplate(SwitchCategorySeriesDataPanel.TEMPLATE, [], {
             switchCategorySeriesGroup: switchCategorySeriesGroupParams,
         });
     }

@@ -35,7 +35,7 @@ export class AgSortIndicator extends Component {
         super();
 
         if (!skipTemplate) {
-            this.setTemplate(AgSortIndicator.TEMPLATE);
+            this.setTemplate(AgSortIndicator.TEMPLATE, []);
         }
     }
 

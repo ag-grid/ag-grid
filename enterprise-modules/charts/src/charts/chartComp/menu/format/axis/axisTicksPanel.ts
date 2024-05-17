@@ -40,7 +40,7 @@ export class AxisTicksPanel extends Component {
         const axisTicksColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams("tick.color");
         const axisTicksWidthSliderParams = this.chartMenuUtils.getDefaultSliderParams("tick.width", "width", 10);
         const axisTicksSizeSliderParams = this.chartMenuUtils.getDefaultSliderParams("tick.size", "length", 30);
-        this.setTemplate(AxisTicksPanel.TEMPLATE, {
+        this.setTemplate(AxisTicksPanel.TEMPLATE, [], {
             axisTicksGroup: axisTicksGroupParams,
             axisTicksColorPicker: axisTicksColorPickerParams,
             axisTicksWidthSlider: axisTicksWidthSliderParams,

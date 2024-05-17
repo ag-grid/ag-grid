@@ -44,7 +44,7 @@ export class SeriesItemsPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(SeriesItemsPanel.TEMPLATE, {
+        this.setTemplate(SeriesItemsPanel.TEMPLATE, [], {
             seriesItemsGroup: seriesItemsGroupParams,
             seriesItemSelect: this.getSeriesItemsParams()
         });

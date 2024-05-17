@@ -36,7 +36,7 @@ export class RowDragComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         if (!this.customGui) {
-            this.setTemplate(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`);
+            this.setTemplate(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`, []);
             this.getGui().appendChild(_createIconNoSpan('rowDrag', this.gos, null)!);
             this.addDragSource();
         } else {
@@ -55,7 +55,7 @@ export class RowDragComp extends Component {
     }
 
     public setDragElement(dragElement: HTMLElement, dragStartPixels?: number) {
-        this.setTemplateFromElement(dragElement);
+        this.setTemplateFromElement(dragElement, []);
         this.addDragSource(dragStartPixels);
     }
 

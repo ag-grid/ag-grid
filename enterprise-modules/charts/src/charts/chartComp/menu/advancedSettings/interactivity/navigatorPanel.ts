@@ -40,7 +40,7 @@ export class NavigatorPanel extends Component {
         navigatorHeightSliderParams.minValue = 10;
         const navigatorMiniChartCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams("navigator.miniChart.enabled", "miniChart");
 
-        this.setTemplate(NavigatorPanel.TEMPLATE, {
+        this.setTemplate(NavigatorPanel.TEMPLATE, [], {
             navigatorGroup: navigatorGroupParams,
             navigatorHeightSlider: navigatorHeightSliderParams,
             navigatorMiniChartCheckbox: navigatorMiniChartCheckboxParams

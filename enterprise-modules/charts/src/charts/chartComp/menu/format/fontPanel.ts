@@ -74,7 +74,7 @@ export class FontPanel extends Component {
             },
             useToggle: !this.params.suppressEnabledCheckbox
         };
-        this.setTemplate(FontPanel.TEMPLATE, {
+        this.setTemplate(FontPanel.TEMPLATE, [], {
             fontGroup: fontGroupParams,
             familySelect: this.getFamilySelectParams(),
             weightStyleSelect: this.getWeightStyleSelectParams(),

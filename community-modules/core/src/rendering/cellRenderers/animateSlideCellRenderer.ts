@@ -24,7 +24,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         slide.setAttribute('class', 'ag-value-slide-current');        
         template.appendChild(slide);
 
-        this.setTemplateFromElement(template);
+        this.setTemplateFromElement(template, []);
 
         this.eCurrent = this.queryForHtmlElement('.ag-value-slide-current');
     }

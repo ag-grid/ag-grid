@@ -42,7 +42,7 @@ export class AgPagination extends Component {
     @PostConstruct
     protected postConstruct(): void {
         const isRtl = this.gos.get('enableRtl');
-        this.setTemplate(this.getTemplate(), {}, [AgPageSizeSelector]);
+        this.setTemplate(this.getTemplate(), [AgPageSizeSelector]);
 
         const { btFirst, btPrevious, btNext, btLast, pageSizeComp } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast])

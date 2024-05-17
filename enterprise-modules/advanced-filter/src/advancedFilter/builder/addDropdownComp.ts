@@ -1,6 +1,13 @@
-import { AgInputTextField, RichSelectParams, _setAriaLabel, _setAriaLabelledBy, _setDisplayed, _stopPropagationForAgGrid } from "@ag-grid-community/core";
-import { AutocompleteEntry } from "../autocomplete/autocompleteParams";
-import { AgRichSelect } from "@ag-grid-enterprise/core";
+import {
+    AgInputTextField,
+    RichSelectParams,
+    _setAriaLabel,
+    _setAriaLabelledBy,
+    _setDisplayed,
+    _stopPropagationForAgGrid,
+} from '@ag-grid-community/core';
+import { AutocompleteEntry } from '../autocomplete/autocompleteParams';
+import { AgRichSelect } from '@ag-grid-enterprise/core';
 
 export interface AddDropdownCompParams extends RichSelectParams<AutocompleteEntry> {
     wrapperClassName?: string;
@@ -11,7 +18,7 @@ export class AddDropdownComp extends AgRichSelect {
     constructor(private readonly params: AddDropdownCompParams) {
         super({
             ...params,
-            template: /* html */`
+            template: /* html */ `
                 <div class="ag-picker-field" role="presentation">
                     <div ref="eLabel"></div>
                     <div ref="eWrapper" class="ag-wrapper ag-picker-collapsed">
@@ -20,7 +27,7 @@ export class AddDropdownComp extends AgRichSelect {
                         <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
                     </div>
                 </div>`,
-                agComponents: [AgInputTextField]
+            agComponents: [AgInputTextField],
         });
     }
 

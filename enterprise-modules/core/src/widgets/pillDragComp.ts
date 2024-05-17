@@ -36,7 +36,7 @@ export abstract class PillDragComp<TItem> extends Component {
 
     @PostConstruct
     public init(): void {
-        this.setTemplate(this.template ?? PillDragComp.TEMPLATE);
+        this.setTemplate(this.template ?? PillDragComp.TEMPLATE, []);
         const eGui = this.getGui();
 
         this.addElementClasses(eGui);
