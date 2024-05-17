@@ -9,7 +9,7 @@ import { NumberFloatingFilter } from "../../filter/provided/number/numberFloatin
 import { TextFilter } from "../../filter/provided/text/textFilter";
 import { TextFloatingFilter } from "../../filter/provided/text/textFloatingFilter";
 import { HeaderComp } from "../../headerRendering/cells/column/headerComp";
-import { SortIndicatorComp } from "../../headerRendering/cells/column/sortIndicatorComp";
+import { AgSortIndicator } from "../../headerRendering/cells/column/agSortIndicator";
 import { HeaderGroupComp } from "../../headerRendering/cells/columnGroup/headerGroupComp";
 import { ModuleNames } from "../../modules/moduleNames";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
@@ -44,7 +44,7 @@ export class UserComponentRegistry extends BeanStub {
         //header
         agColumnHeader: HeaderComp,
         agColumnGroupHeader: HeaderGroupComp,
-        agSortIndicator: SortIndicatorComp,
+        agSortIndicator: AgSortIndicator,
 
         //floating filters
         agTextColumnFloatingFilter: TextFloatingFilter,

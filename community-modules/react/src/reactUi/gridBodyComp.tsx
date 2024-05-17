@@ -1,4 +1,4 @@
-import { FakeHScrollComp, FakeVScrollComp, AgOverlayWrapper, ComponentClass, CssClassManager, GridBodyCtrl, IGridBodyComp, RowContainerName, _setAriaColCount, _setAriaRowCount } from '@ag-grid-community/core';
+import { AgFakeHorizontalScroll, AgFakeVerticalScroll, AgOverlayWrapper, ComponentClass, CssClassManager, GridBodyCtrl, IGridBodyComp, RowContainerName, _setAriaColCount, _setAriaRowCount } from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext';
 import GridHeaderComp from './header/gridHeaderComp';
@@ -87,14 +87,14 @@ const GridBodyComp = () => {
         }
 
         attachToDom(eRoot.current, document.createComment(' AG Fake Horizontal Scroll '));
-        attachToDom(eRoot.current, newComp(FakeHScrollComp).getGui());
+        attachToDom(eRoot.current, newComp(AgFakeHorizontalScroll).getGui());
 
         attachToDom(eRoot.current, document.createComment(' AG Overlay Wrapper '));
         attachToDom(eRoot.current, newComp(AgOverlayWrapper).getGui());
 
         if (eBody.current) {
             attachToDom(eBody.current, document.createComment(' AG Fake Vertical Scroll '));
-            attachToDom(eBody.current, newComp(FakeVScrollComp).getGui());
+            attachToDom(eBody.current, newComp(AgFakeVerticalScroll).getGui());
         }
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,

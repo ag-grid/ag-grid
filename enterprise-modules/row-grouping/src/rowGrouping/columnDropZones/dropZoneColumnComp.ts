@@ -10,7 +10,7 @@ import {
     VirtualList,
     KeyCode,
     SortController,
-    SortIndicatorComp,
+    AgSortIndicator,
     ColumnModel,
     DragItem,
     DragSourceType,
@@ -27,7 +27,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     
     @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
 
-    @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
+    @RefSelector('eSortIndicator') private eSortIndicator: AgSortIndicator;
 
     private displayName: string | null;
     private popupShowing = false;
@@ -48,7 +48,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
                     <ag-sort-indicator ref="eSortIndicator"></ag-sort-indicator>
                     <span ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
                 </span>
-            `, [SortIndicatorComp]);
+            `, [AgSortIndicator]);
     }
 
     public init(): void {

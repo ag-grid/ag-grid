@@ -8,7 +8,7 @@ import { AgComponentSelector, Component } from "../../../widgets/component";
 import { ColumnModel } from "../../../columns/columnModel";
 import { _createIconNoSpan } from "../../../utils/icon";
 
-export class SortIndicatorComp extends Component {
+export class AgSortIndicator extends Component {
     static readonly selector: AgComponentSelector = 'ag-sort-indicator';
 
     private static TEMPLATE = /* html */
@@ -36,7 +36,7 @@ export class SortIndicatorComp extends Component {
         super();
 
         if (!skipTemplate) {
-            this.setTemplate(SortIndicatorComp.TEMPLATE, []);
+            this.setTemplate(AgSortIndicator.TEMPLATE, []);
         }
     }
 

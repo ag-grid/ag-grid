@@ -8,7 +8,7 @@ import { RefSelector } from "../widgets/componentAnnotations";
 import { CenterWidthFeature } from "./centerWidthFeature";
 import { AgComponentSelector } from "../widgets/component";
 
-export class FakeHScrollComp extends AbstractFakeScrollComp {
+export class AgFakeHorizontalScroll extends AbstractFakeScrollComp {
     static readonly selector: AgComponentSelector = 'ag-fake-horizontal-scroll';
 
     private static TEMPLATE = /* html */
@@ -29,7 +29,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     private enableRtl: boolean;
 
     constructor() {
-        super(FakeHScrollComp.TEMPLATE, 'horizontal');
+        super(AgFakeHorizontalScroll.TEMPLATE, 'horizontal');
     }
 
     @PostConstruct
