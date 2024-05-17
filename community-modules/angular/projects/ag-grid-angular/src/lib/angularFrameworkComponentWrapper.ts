@@ -1,5 +1,5 @@
 import {ComponentRef, Injectable, NgZone, ViewContainerRef} from "@angular/core";
-import {BaseComponentWrapper, FrameworkComponentWrapper, GridApi, WrappableInterface} from '@ag-grid-community/core';
+import {BaseComponentWrapper, FrameworkComponentWrapper, GridApi, WrappableInterface, _removeFromParent} from '@ag-grid-community/core';
 import {AgFrameworkComponent} from "./interfaces";
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
 
@@ -64,6 +64,8 @@ abstract class BaseGuiComponent<P, T extends AgFrameworkComponent<P>> {
         this._agAwareComponent = this._componentRef.instance;
         this._frameworkComponentInstance = this._componentRef.instance;
         this._eGui = this._componentRef.location.nativeElement;
+        // Angular appends the component to the DOM, so remove it
+        _removeFromParent(this._eGui);
 
         this._agAwareComponent.agInit(this._params);
     }
