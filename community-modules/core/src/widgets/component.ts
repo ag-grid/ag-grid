@@ -422,6 +422,7 @@ export type AgComponentSelector =
 'ag-grid-body' |
 'ag-grid-header-drop-zones' |
 'ag-watermark' |
+'ag-input-text-area' |
 'ag-input-text-field' |
 'ag-sort-indicator' |
 'ag-pagination' |

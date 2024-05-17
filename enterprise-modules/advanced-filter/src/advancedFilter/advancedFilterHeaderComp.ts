@@ -11,7 +11,7 @@ import {
     _setDisplayed,
     _setAriaRole, _setAriaColIndex, _setAriaColSpan, _setAriaRowIndex 
 } from "@ag-grid-community/core";
-import { AgAdvancedFilter } from "./advancedFilterComp";
+import { AgAdvancedFilter } from "./agAdvancedFilter";
 
 export class AdvancedFilterHeaderComp extends Component {
     @Autowired('columnModel') private columnModel: ColumnModel;

@@ -14,7 +14,7 @@ import {
     _removeFromParent
 } from "@ag-grid-community/core";
 import { AgDialog } from "@ag-grid-enterprise/core";
-import { AgAdvancedFilter } from "./advancedFilterComp";
+import { AgAdvancedFilter } from "./agAdvancedFilter";
 import { AdvancedFilterExpressionService } from "./advancedFilterExpressionService";
 import { AdvancedFilterHeaderComp } from "./advancedFilterHeaderComp";
 import { AdvancedFilterBuilderComp } from "./builder/advancedFilterBuilderComp";

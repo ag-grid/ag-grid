@@ -1,5 +1,5 @@
 import { Module, ModuleNames } from '@ag-grid-community/core';
-import { AgAdvancedFilter } from './advancedFilter/advancedFilterComp';
+import { AgAdvancedFilter } from './advancedFilter/agAdvancedFilter';
 import { AdvancedFilterExpressionService } from './advancedFilter/advancedFilterExpressionService';
 import { AdvancedFilterService } from './advancedFilter/advancedFilterService';
 import { VERSION } from './version';
