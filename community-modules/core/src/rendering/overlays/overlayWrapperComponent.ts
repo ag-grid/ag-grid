@@ -7,7 +7,7 @@ import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams 
 
 import { OverlayService } from './overlayService';
 
-export class OverlayWrapperComponent extends Component implements LayoutView {
+export class AgOverlayWrapper extends Component implements LayoutView {
 
     // wrapping in outer div, and wrapper, is needed to center the loading icon
     private static TEMPLATE = /* html */`
@@ -28,7 +28,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     private updateListenerDestroyFunc?: () => null;
 
     constructor() {
-        super(OverlayWrapperComponent.TEMPLATE);
+        super(AgOverlayWrapper.TEMPLATE);
     }
 
     public updateLayoutClasses(cssClass: string, params: UpdateLayoutClassesParams): void {

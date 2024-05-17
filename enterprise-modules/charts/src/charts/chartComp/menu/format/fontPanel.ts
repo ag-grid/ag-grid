@@ -1,6 +1,4 @@
 import {
-    AgGroupComponent,
-    AgGroupComponentParams,
     AgSelectParams,
     Autowired,
     Component,
@@ -10,9 +8,10 @@ import {
     _includes,
     _removeFromParent
 } from "@ag-grid-community/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
+import { ChartOptionsProxy } from '../../services/chartOptionsService';
 import { ChartTranslationService } from "../../services/chartTranslationService";
 import { ChartMenuParamsFactory } from "../chartMenuParamsFactory";
-import { ChartOptionsProxy } from '../../services/chartOptionsService';
 
 interface Font {
     fontFamily?: string;

@@ -26,13 +26,15 @@ export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
 
+export type ComponentClass = { new(params?: any): Component; };
+
 export class Component extends BeanStub {
 
     public static elementGettingCreated: any;
 
     public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     private eGui: HTMLElement;
-
+    private components: ComponentClass[] = [];
     @Autowired('agStackComponentsRegistry') protected readonly agStackComponentsRegistry: AgStackComponentsRegistry;
 
     // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
@@ -54,19 +56,27 @@ export class Component extends BeanStub {
     private tooltipText: string | null | undefined;
     private tooltipFeature: TooltipFeature | undefined;
 
-    constructor(template?: string) {
+    constructor(template?: string, components?: ComponentClass[]) {
         super();
 
         this.cssClassManager = new CssClassManager(() => this.eGui);
 
         if (template) {
-            this.setTemplate(template);
+            this.components = components || [];
+            this.setTemplate(template, undefined);
         }
     }
 
     @PreConstruct
-    private preConstructOnComponent(): void {
+    private componentPreConstruct(): void {
         this.usingBrowserTooltips = this.gos.get('enableBrowserTooltips');
+        
+        // ui exists if user sets template in constructor. when this happens, we have to wait for the context
+        // to be autoWired first before we can create child components.
+        if (!!this.getGui()) {
+            this.agStackComponentsRegistry.ensureRegistered(this.components);
+            this.createChildComponentsFromTags(this.getGui(),);
+        }
     }
 
     public getCompId(): number {
@@ -117,6 +127,7 @@ export class Component extends BeanStub {
 
     // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
     private createChildComponentsFromTags(parentNode: Element, paramsMap?: { [key: string]: any; }): void {
+
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
         const childNodeList: Node[] = _copyNodeList(parentNode.childNodes);
@@ -152,18 +163,24 @@ export class Component extends BeanStub {
         });
     }
 
+    private browserElements = new Set<string>(['DIV', 'SPAN', 'INPUT', 'TEXTAREA', 'BUTTON']);
+
     private createComponentFromElement(
         element: HTMLElement,
         afterPreCreateCallback?: (comp: Component) => void,
         paramsMap?: { [key: string]: any; }
     ): Component | null {
         const key = element.nodeName;
-        const componentParams = paramsMap ? paramsMap[element.getAttribute('ref')!] : undefined;
-        const ComponentClass = this.agStackComponentsRegistry.getComponentClass(key);
 
+        // shortcut for common browser elements
+        if(this.browserElements.has(key)){ return null; }
+
+        const ComponentClass = this.agStackComponentsRegistry.getComponentForNode(key);
+        
         if (ComponentClass) {
             Component.elementGettingCreated = element;
-            const newComponent = new ComponentClass(componentParams) as Component;
+            const componentParams = paramsMap ? paramsMap[element.getAttribute('ref')!] : undefined;
+            const newComponent = new ComponentClass(componentParams);
             newComponent.setParentComponent(this);
 
             this.createBean(newComponent, null, afterPreCreateCallback);
@@ -224,15 +241,22 @@ export class Component extends BeanStub {
         elements.forEach(el => el.setAttribute('tabindex', tabIndex.toString()));
     }
 
-    public setTemplate(template: string | null | undefined, paramsMap?: { [key: string]: any; }): void {
+    public setTemplate(template: string | null | undefined, paramsMap?: { [key: string]: any; }, components?: ComponentClass[]): void {
         const eGui = _loadTemplate(template as string);
-        this.setTemplateFromElement(eGui, paramsMap);
+        this.setTemplateFromElement(eGui, paramsMap, components);
     }
 
-    public setTemplateFromElement(element: HTMLElement, paramsMap?: { [key: string]: any; }): void {
+    public setTemplateFromElement(element: HTMLElement, paramsMap?: { [key: string]: any; }, components?: ComponentClass[]): void {
         this.eGui = element;
         (this.eGui as any).__agComponent = this;
         this.wireQuerySelectors();
+
+        if(!this.agStackComponentsRegistry){
+            if(components?.length ?? 0 > 0){
+                console.warn('agStackComponentsRegistry is not available in the context, but components are provided. This will lead to unexpected behaviour.');
+            }
+        }
+        this.agStackComponentsRegistry?.ensureRegistered( components ?? this.components);
 
         // context will not be available when user sets template in constructor
         if (!!this.getContext()) {
@@ -240,14 +264,7 @@ export class Component extends BeanStub {
         }
     }
 
-    @PreConstruct
-    private createChildComponentsPreConstruct(): void {
-        // ui exists if user sets template in constructor. when this happens, we have to wait for the context
-        // to be autoWired first before we can create child components.
-        if (!!this.getGui()) {
-            this.createChildComponentsFromTags(this.getGui());
-        }
-    }
+
 
     protected wireQuerySelectors(): void {
         if (!this.eGui) {

@@ -1,9 +1,11 @@
-import { AgGroupComponentParams, AgSliderParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import { AgAxisGridLineOptions } from 'ag-charts-community';
 import { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
+import { AgSliderParams } from "../../../../../widgets/agSlider";
 
 export class GridLinePanel extends Component {
     public static TEMPLATE = /* html */ `<div>

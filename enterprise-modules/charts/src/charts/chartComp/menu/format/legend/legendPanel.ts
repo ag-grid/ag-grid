@@ -1,19 +1,18 @@
 import {
-    AgGroupComponentParams,
     Autowired,
     Component,
     PostConstruct,
-    AgGroupComponent,
-    AgSelect,
-    AgSlider,
+    AgSelect,    
     AgCheckbox,
     AgSelectParams,
     RefSelector
 } from "@ag-grid-community/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { FormatPanelOptions } from "../formatPanel";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import { AgSlider } from "../../../../../widgets/agSlider";
 
 export class LegendPanel extends Component {
     private static TEMPLATE = /* html */

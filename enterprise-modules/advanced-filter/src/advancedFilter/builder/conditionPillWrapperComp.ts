@@ -1,5 +1,4 @@
 import {
-    AutocompleteEntry,
     Autowired,
     BaseCellDataType,
     Column,
@@ -13,6 +12,7 @@ import { AdvancedFilterExpressionService } from "../advancedFilterExpressionServ
 import { AdvancedFilterBuilderEvents, AdvancedFilterBuilderItem, CreatePillParams } from "./iAdvancedFilterBuilder";
 import { InputPillComp } from "./inputPillComp";
 import { SelectPillComp } from "./selectPillComp";
+import { AutocompleteEntry } from "../autocomplete/autocompleteParams";
 
 export class ConditionPillWrapperComp extends Component {
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;

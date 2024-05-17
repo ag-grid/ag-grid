@@ -1,6 +1,5 @@
 import {
     AgCheckbox,
-    AgGroupComponent,
     AgToggleButton,
     AutoScrollService,
     Autowired,
@@ -14,6 +13,7 @@ import { ColState } from "../../model/chartDataModel";
 import { ChartOptionsService } from "../../services/chartOptionsService";
 import { DragDataPanel } from "./dragDataPanel";
 import { ChartService } from "../../../chartService";
+import { AgGroupComponent } from "@ag-grid-enterprise/core";
 
 export class SeriesDataPanel extends DragDataPanel {
     private static TEMPLATE = /* html */`<div id="seriesGroup"></div>`;

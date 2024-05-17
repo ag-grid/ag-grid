@@ -1,6 +1,5 @@
 
 import {
-    AgGroupComponent,
     Autowired,
     ChartGroupsDef,
     ChartType,
@@ -43,8 +42,7 @@ import {
     MiniTreemap,
 } from "./miniCharts/index"; // please leave this as is - we want it to be explicit for build reasons
 import { MiniChart } from './miniCharts/miniChart';
-
-// import {enterprise} from "../../../../main";
+import { AgGroupComponent } from "@ag-grid-enterprise/core";
 
 export type ThemeTemplateParameters = {
     extensions: Map<any, any>;

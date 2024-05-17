@@ -1,5 +1,5 @@
-import { AutocompleteEntry } from "@ag-grid-community/core";
 import { ADVANCED_FILTER_LOCALE_TEXT } from '../advancedFilterLocaleText';
+import { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 import { AddDropdownCompParams } from "./addDropdownComp";
 
 export function getAdvancedFilterBuilderAddButtonParams(translate: (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT) => string, maxPickerWidth?: number): AddDropdownCompParams {

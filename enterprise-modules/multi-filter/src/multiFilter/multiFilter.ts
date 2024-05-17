@@ -15,12 +15,9 @@ import {
     IFilterDef,
     IFilterParams,
     RowNode,
-    AgGroupComponent,
     ContainerType,
     TabGuardComp,
-    AgMenuItemComponent,
     AgMenuItemRenderer,
-    MenuItemActivatedEvent,
     PostConstruct,
     IMultiFilter,
     KeyCode,
@@ -28,6 +25,7 @@ import {
     _removeFromArray,
     _forEachReverse
 } from '@ag-grid-community/core';
+import { AgGroupComponent, AgMenuItemComponent, MenuItemActivatedEvent } from '@ag-grid-enterprise/core';
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
     @Autowired('filterManager') private readonly filterManager: FilterManager;

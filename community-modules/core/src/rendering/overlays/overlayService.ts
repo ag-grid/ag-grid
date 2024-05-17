@@ -2,7 +2,7 @@ import { BeanStub } from "../../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../../context/context";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { UserCompDetails, UserComponentFactory } from "../../components/framework/userComponentFactory";
-import { OverlayWrapperComponent } from "./overlayWrapperComponent";
+import { AgOverlayWrapper } from "./overlayWrapperComponent";
 import { PaginationProxy } from "../../pagination/paginationProxy";
 import { ColumnModel } from "../../columns/columnModel";
 import { Events } from "../../eventKeys";
@@ -16,7 +16,7 @@ export class OverlayService extends BeanStub {
     @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
-    private overlayWrapperComp: OverlayWrapperComponent;
+    private overlayWrapperComp: AgOverlayWrapper;
     private manuallyDisplayed: boolean = false;
 
     @PostConstruct
@@ -25,7 +25,7 @@ export class OverlayService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onNewColumnsLoaded());
     }
 
-    public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {
+    public registerOverlayWrapperComp(overlayWrapperComp: AgOverlayWrapper): void {
         this.overlayWrapperComp = overlayWrapperComp;
 
         if (

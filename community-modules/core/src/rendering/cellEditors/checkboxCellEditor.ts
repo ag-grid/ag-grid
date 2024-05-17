@@ -10,7 +10,7 @@ export class CheckboxCellEditor extends PopupComponent implements ICellEditorCom
         super(/* html */`
             <div class="ag-cell-wrapper ag-cell-edit-wrapper ag-checkbox-edit">
                 <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
-            </div>`
+            </div>`, [AgCheckbox]
         );
     }
 

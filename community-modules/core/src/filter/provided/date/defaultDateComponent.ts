@@ -14,7 +14,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         super(/* html */`
             <div class="ag-filter-filter">
                 <ag-input-text-field class="ag-date-filter" ref="eDateInput"></ag-input-text-field>
-            </div>`
+            </div>`, [AgInputTextField]
         );
     }
 

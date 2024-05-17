@@ -1,8 +1,9 @@
-import { AgPickerField, AgPickerFieldParams } from "./agPickerField";
+import { AgPickerField } from "./agPickerField";
 import { ListOption, AgList } from "./agList";
 import { Events } from "../eventKeys";
 import { KeyCode } from "../constants/keyCode";
 import { _setAriaControls } from "../utils/aria";
+import { AgPickerFieldParams } from "../interfaces/agFieldParams";
 
 export interface AgSelectParams<TValue = string> extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
     options?: ListOption<TValue>[];

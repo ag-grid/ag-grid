@@ -15,7 +15,7 @@ import {
 } from "@ag-grid-community/core";
 import { PivotModePanel } from "./pivotModePanel";
 import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from "@ag-grid-enterprise/row-grouping";
-import { PrimaryColsPanel } from "./primaryColsPanel";
+import { AgPrimaryCols } from "./agPrimaryCols";
 
 export interface ToolPanelColumnCompParams<TData = any, TContext = any> extends IToolPanelParams<TData, TContext, ColumnToolPanelState>, IToolPanelColumnCompParams {
 }
@@ -30,7 +30,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private childDestroyFuncs: (() => void)[] = [];
 
     private pivotModePanel: PivotModePanel;
-    private primaryColsPanel: PrimaryColsPanel;
+    private primaryColsPanel: AgPrimaryCols;
     private rowGroupDropZonePanel: RowGroupDropZonePanel;
     private valuesDropZonePanel: ValuesDropZonePanel;
     private pivotDropZonePanel: PivotDropZonePanel;
@@ -73,7 +73,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         }
 
         // DO NOT CHANGE TO createManagedBean
-        this.primaryColsPanel = this.createBean(new PrimaryColsPanel());
+        this.primaryColsPanel = this.createBean(new AgPrimaryCols());
         this.childDestroyFuncs.push(() => this.destroyBean(this.primaryColsPanel));
 
         this.primaryColsPanel.init(true, this.params, "toolPanelUi");

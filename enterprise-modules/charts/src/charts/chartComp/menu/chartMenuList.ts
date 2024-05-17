@@ -1,6 +1,4 @@
 import {
-    AgMenuItemComponent,
-    AgMenuList,
     Autowired,
     Bean,
     BeanStub,
@@ -17,6 +15,7 @@ import { ChartController } from '../chartController';
 import { ChartMenuService } from '../services/chartMenuService';
 import { ChartTranslationService } from '../services/chartTranslationService';
 import { ChartMenuContext } from './chartMenuContext';
+import { AgMenuList, AgMenuItemComponent } from '@ag-grid-enterprise/core';
 
 @Bean('chartMenuListFactory')
 export class ChartMenuListFactory extends BeanStub {

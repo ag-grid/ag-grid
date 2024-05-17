@@ -1,5 +1,4 @@
 import {
-    AutocompleteEntry,
     Autowired,
     BaseCellDataType,
     Beans,
@@ -40,6 +39,7 @@ import {
 import { InputPillComp } from "./inputPillComp";
 import { JoinPillWrapperComp } from "./joinPillWrapperComp";
 import { SelectPillComp } from "./selectPillComp";
+import { AutocompleteEntry } from "../autocomplete/autocompleteParams";
 
 export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     @RefSelector('eTreeLines') private eTreeLines: HTMLElement;

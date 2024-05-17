@@ -4,9 +4,11 @@ import { AgInputTextField } from "../../widgets/agInputTextField";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { _isBrowserSafari } from "../../utils/browser";
 import { KeyCode } from '../../constants/keyCode';
+import { ComponentClass } from "../../widgets/component";
 
 export interface CellEditorInput<TValue, P extends ICellEditorParams, I extends AgInputTextField> {
     getTemplate(): string;
+    getAgComponents(): ComponentClass[];
     init(eInput: I, params: P): void;
     getValue(): TValue | null | undefined;
     getStartValue(): string | null | undefined;
@@ -23,7 +25,7 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
         super(/* html */`
             <div class="ag-cell-edit-wrapper">
                 ${cellEditorInput.getTemplate()}
-            </div>`
+            </div>`, cellEditorInput.getAgComponents()
         );
     }
 

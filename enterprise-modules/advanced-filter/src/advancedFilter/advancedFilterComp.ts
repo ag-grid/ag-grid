@@ -1,11 +1,4 @@
 import {
-    AgAutocomplete,
-    AutocompleteEntry,
-    AutocompleteListParams,
-    AutocompleteOptionSelectedEvent,
-    AutocompleteValidChangedEvent,
-    AutocompleteValueChangedEvent,
-    AutocompleteValueConfirmedEvent,
     Autowired,
     Component,
     FilterManager,
@@ -22,8 +15,10 @@ import { AdvancedFilterExpressionService } from './advancedFilterExpressionServi
 import { AdvancedFilterService } from './advancedFilterService';
 import { FilterExpressionParser } from './filterExpressionParser';
 import { AutocompleteUpdate } from './filterExpressionUtils';
+import { AgAutocomplete, AutocompleteOptionSelectedEvent, AutocompleteValidChangedEvent, AutocompleteValueChangedEvent, AutocompleteValueConfirmedEvent } from './autocomplete/agAutocomplete';
+import { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 
-export class AdvancedFilterComp extends Component {
+export class AgAdvancedFilter extends Component {
     @RefSelector('eAutocomplete') private eAutocomplete: AgAutocomplete;
     @RefSelector('eApplyFilterButton') private eApplyFilterButton: HTMLElement;
     @RefSelector('eBuilderFilterButton') private eBuilderFilterButton: HTMLElement;
@@ -46,7 +41,7 @@ export class AdvancedFilterComp extends Component {
                     <span ref="eBuilderFilterButtonIcon" aria-hidden="true"></span>
                     <span class="ag-advanced-filter-builder-button-label" ref="eBuilderFilterButtonLabel"></span>
                 </button>
-            </div>`);
+            </div>`, [AgAutocomplete]);
     }
 
     @PostConstruct

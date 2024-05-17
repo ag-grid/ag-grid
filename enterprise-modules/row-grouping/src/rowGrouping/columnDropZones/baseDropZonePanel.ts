@@ -2,8 +2,6 @@ import {
     Column,
     DraggingEvent,
     DropTarget,
-    PillDropZonePanel,
-    PillDropZonePanelParams,
     DragItem,
     Autowired,
     ColumnModel,
@@ -12,6 +10,7 @@ import {
     DragSourceType
 } from "@ag-grid-community/core";
 import { DropZoneColumnComp } from "./dropZoneColumnComp";
+import { PillDropZonePanel, PillDropZonePanelParams } from "@ag-grid-enterprise/core";
 
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 

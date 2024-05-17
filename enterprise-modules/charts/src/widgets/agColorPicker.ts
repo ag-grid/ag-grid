@@ -1,5 +1,6 @@
+import { AgDialog } from "@ag-grid-enterprise/core";
 import { AgColorPanel } from "./agColorPanel";
-import { AgPickerFieldParams, AgPickerField, AgDialog } from "@ag-grid-community/core";
+import { AgPickerFieldParams, AgPickerField } from "@ag-grid-community/core";
 
 export interface AgColorPickerParams extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
     pickerType?: string;

@@ -1,6 +1,5 @@
 import {
     AgCheckbox,
-    AgGroupComponent,
     AgSelect,
     Autowired,
     ChartType,
@@ -13,6 +12,7 @@ import {
 import { ChartController } from "../../chartController";
 import { ColState } from "../../model/chartDataModel";
 import { ChartTranslationKey, ChartTranslationService } from "../../services/chartTranslationService";
+import { AgGroupComponent } from "@ag-grid-enterprise/core";
 
 export class SeriesChartTypePanel extends Component {
     private static TEMPLATE = /* html */`<div id="seriesChartTypeGroup"></div>`;

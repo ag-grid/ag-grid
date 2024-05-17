@@ -4,7 +4,6 @@ import {
     _keys,
     _missing,
     AgCheckbox,
-    AgGroupComponent,
     AgRadioButton,
     AgSelect,
     AgSelectParams,
@@ -23,6 +22,7 @@ import { AgPillSelect, AgPillSelectChangeParams } from "../../../../widgets/agPi
 import { ChartController } from "../../chartController";
 import { ChartDataModel, ColState } from "../../model/chartDataModel";
 import { ChartTranslationKey, ChartTranslationService } from "../../services/chartTranslationService";
+import { AgGroupComponent } from "@ag-grid-enterprise/core";
 
 export abstract class DragDataPanel extends Component {
     @Autowired('dragAndDropService') protected dragAndDropService: DragAndDropService;

@@ -9,10 +9,9 @@ import {
     DragSourceType,
     DropTarget,
     ListOption,
-    PillDragComp,
-    PillDropZonePanel,
     PostConstruct,
 } from "@ag-grid-community/core";
+import { PillDragComp, PillDropZonePanel } from "@ag-grid-enterprise/core";
 
 export interface AgPillSelectParams<TValue = string | null> {
     valueList?: TValue[];

@@ -1,6 +1,7 @@
-import { AgAbstractInputField, AgInputFieldParams } from './agAbstractInputField';
+import { AgAbstractInputField } from './agAbstractInputField';
 import { _exists } from '../utils/generic';
 import { _isEventFromPrintableCharacter } from '../utils/keyboard';
+import { AgInputFieldParams } from '../interfaces/agFieldParams';
 
 export interface AgInputTextFieldParams extends AgInputFieldParams {
     allowedCharPattern?: string;

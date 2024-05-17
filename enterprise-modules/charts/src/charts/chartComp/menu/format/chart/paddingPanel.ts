@@ -1,6 +1,4 @@
 import {
-    AgGroupComponentParams,
-    AgSlider,
     Autowired,
     ChartOptionsChanged,
     Component,
@@ -8,11 +6,13 @@ import {
     PostConstruct,
     RefSelector,
 } from "@ag-grid-community/core";
+import { AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { AgChartPaddingOptions, AgChartThemeOverrides } from "ag-charts-community";
 import { ChartController } from "../../../chartController";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 import { ChartThemeOverridesSeriesType } from "../../../utils/seriesTypeMapper";
+import { AgSlider } from "../../../../../widgets/agSlider";
 
 export class PaddingPanel extends Component {
 

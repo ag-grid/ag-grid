@@ -1,10 +1,10 @@
 import {
-    AgGroupComponentParams,
     AgToggleButton,
     Autowired,
     Component,
     PostConstruct,
 } from '@ag-grid-community/core';
+import { AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationService } from '../../services/chartTranslationService';
 
 export class SwitchCategorySeriesDataPanel extends Component {

@@ -1,6 +1,4 @@
 import {
-    AutocompleteEntry,
-    AutocompleteListParams,
     Autowired,
     BaseCellDataType,
     Bean,
@@ -28,6 +26,7 @@ import {
     ScalarFilterExpressionOperators,
     TextFilterExpressionOperators,
 } from './filterExpressionOperators';
+import { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 
 @Bean('advancedFilterExpressionService')
 export class AdvancedFilterExpressionService extends BeanStub {

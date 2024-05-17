@@ -1,11 +1,7 @@
 import {
     AgCheckbox,
-    AgGroupComponent,
-    AgGroupComponentParams,
     AgSelect,
     AgSelectParams,
-    AgSlider,
-    AgSliderParams,
     Autowired,
     Component,
     Events,
@@ -15,6 +11,7 @@ import {
     _removeFromParent,
     _setDisplayed
 } from "@ag-grid-community/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import type { AgCartesianAxisOptions } from 'ag-charts-community';
 import { ChartController } from "../../../chartController";
 import { AxisTicksPanel } from "./axisTicksPanel";
@@ -26,6 +23,7 @@ import { AgAngleSelect } from "../../../../../widgets/agAngleSelect";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 import { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
+import { AgSlider, AgSliderParams } from "../../../../../widgets/agSlider";
 
 const DEFAULT_TIME_AXIS_FORMAT = '%d %B %Y';
 

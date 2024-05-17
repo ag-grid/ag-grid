@@ -24,7 +24,8 @@ export {
 
 // components
 export { ComponentUtil } from "./components/componentUtil";
-export { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
+export { ComponentClass } from "./widgets/component";
+export { AgStackComponentsRegistry, AgComponentElementName } from "./components/agStackComponentsRegistry";
 
 export { UserComponentRegistry } from "./components/framework/userComponentRegistry";
 export { UserComponentFactory, UserCompDetails } from "./components/framework/userComponentFactory";
@@ -146,14 +147,17 @@ export { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterBuilde
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 
 // gridPanel
-export { GridBodyComp } from "./gridBodyComp/gridBodyComp";
+export { AgGridBody } from "./gridBodyComp/agGridBody";
 export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from "./gridBodyComp/gridBodyCtrl";
 export { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
 export { MouseEventService } from "./gridBodyComp/mouseEventService";
 export { NavigationService } from "./gridBodyComp/navigationService";
+export { AgFakeHorizontalScroll } from "./gridBodyComp/agFakeHorizontalScroll";
+export { AgFakeVerticalScroll } from "./gridBodyComp/agFakeVerticalScroll";
+
 
 // rowContainer
-export { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
+export { AgRowContainer } from "./gridBodyComp/rowContainer/agRowContainer";
 export { RowContainerName, IRowContainerComp, RowContainerCtrl, RowContainerType, getRowContainerTypeForName } from "./gridBodyComp/rowContainer/rowContainerCtrl";
 
 // headerRendering
@@ -161,12 +165,12 @@ export { BodyDropPivotTarget } from "./headerRendering/columnDrag/bodyDropPivotT
 export { BodyDropTarget } from "./headerRendering/columnDrag/bodyDropTarget";
 export { CssClassApplier } from "./headerRendering/cells/cssClassApplier";
 export { HeaderRowContainerComp } from "./headerRendering/rowContainer/headerRowContainerComp";
-export { GridHeaderComp } from "./headerRendering/gridHeaderComp";
+export { AgHeaderRoot } from "./headerRendering/agHeaderRoot";
 export { GridHeaderCtrl, IGridHeaderComp } from "./headerRendering/gridHeaderCtrl";
 export { HeaderRowComp, HeaderRowType } from "./headerRendering/row/headerRowComp";
 export { HeaderRowCtrl, IHeaderRowComp } from "./headerRendering/row/headerRowCtrl";
 export { HeaderCellCtrl, IHeaderCellComp } from "./headerRendering/cells/column/headerCellCtrl";
-export { SortIndicatorComp } from "./headerRendering/cells/column/sortIndicatorComp";
+export { AgSortIndicator } from "./headerRendering/cells/column/agSortIndicator";
 export { HeaderFilterCellCtrl, IHeaderFilterCellComp } from "./headerRendering/cells/floatingFilter/headerFilterCellCtrl";
 export { HeaderGroupCellCtrl, IHeaderGroupCellComp } from "./headerRendering/cells/columnGroup/headerGroupCellCtrl";
 export { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "./headerRendering/cells/abstractCell/abstractHeaderCellCtrl";
@@ -219,6 +223,7 @@ export { IFiltersToolPanel } from "./interfaces/iFiltersToolPanel";
 // overlays
 export { ILoadingOverlayComp, ILoadingOverlayParams, ILoadingOverlay } from "./rendering/overlays/loadingOverlayComponent";
 export { INoRowsOverlayComp, INoRowsOverlayParams, INoRowsOverlay } from "./rendering/overlays/noRowsOverlayComponent";
+export { AgOverlayWrapper } from "./rendering/overlays/overlayWrapperComponent";
 
 // features
 export { SetLeftFeature } from "./rendering/features/setLeftFeature";
@@ -260,25 +265,19 @@ export { StylingService } from "./styling/stylingService";
 export { UpdateLayoutClassesParams, LayoutCssClasses } from "./styling/layoutFeature";
 
 // widgets
-export { AgAbstractField, FieldElement, AgFieldParams } from "./widgets/agAbstractField";
-export { AgCheckbox, AgCheckboxParams } from "./widgets/agCheckbox";
+export { AgFieldParams, AgCheckboxParams, AgLabelParams, LabelAlignment, AgInputFieldParams, AgPickerFieldParams } from './interfaces/agFieldParams';
+export { RichSelectParams } from "./interfaces/iRichCellEditorParams";
+export { AgAbstractField, FieldElement } from "./widgets/agAbstractField";
+export { AgAbstractInputField } from "./widgets/agAbstractInputField";
+export { AgCheckbox } from "./widgets/agCheckbox";
 export { AgRadioButton, AgRadioButtonParams } from "./widgets/agRadioButton";
 export { AgToggleButton, AgToggleButtonParams } from "./widgets/agToggleButton";
 export { AgInputTextField, AgInputTextFieldParams } from "./widgets/agInputTextField";
 export { AgInputTextArea } from "./widgets/agInputTextArea";
 export { AgInputNumberField, AgInputNumberFieldParams } from "./widgets/agInputNumberField";
 export { AgInputDateField } from "./widgets/agInputDateField";
-export { AgInputRange } from "./widgets/agInputRange";
-export { AgRichSelect, RichSelectParams } from "./widgets/agRichSelect";
 export { AgSelect, AgSelectParams } from "./widgets/agSelect";
-export { AgSlider, AgSliderParams } from "./widgets/agSlider";
-export { AgGroupComponent, AgGroupComponentParams } from "./widgets/agGroupComponent";
 export { AgMenuItemRenderer } from "./widgets/agMenuItemRenderer";
-export { AgMenuItemComponent, MenuItemActivatedEvent, CloseMenuEvent } from "./widgets/agMenuItemComponent";
-export { AgMenuList } from "./widgets/agMenuList";
-export { AgMenuPanel } from "./widgets/agMenuPanel";
-export { AgDialog } from "./widgets/agDialog";
-export { AgPanel } from "./widgets/agPanel";
 export { ListOption } from "./widgets/agList";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { ManagedFocusFeature, ManagedFocusCallbacks } from "./widgets/managedFocusFeature";
@@ -289,12 +288,8 @@ export { PopupService, AgPopup, PopupPositionParams, PopupEventParams } from "./
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 export { VirtualList, VirtualListModel } from "./widgets/virtualList";
 
-export { AgAbstractLabel, AgLabelParams } from "./widgets/agAbstractLabel";
-export { AgPickerField, AgPickerFieldParams } from "./widgets/agPickerField";
-export { AgAutocomplete, AutocompleteOptionSelectedEvent, AutocompleteValidChangedEvent, AutocompleteValueChangedEvent, AutocompleteValueConfirmedEvent } from "./widgets/agAutocomplete";
-export { AutocompleteEntry, AutocompleteListParams } from "./widgets/autocompleteParams";
-export { PillDragComp } from "./widgets/pillDragComp";
-export { PillDropZonePanel, PillDropZonePanelParams } from "./widgets/pillDropZonePanel";
+export { AgAbstractLabel } from "./widgets/agAbstractLabel";
+export { AgPickerField } from "./widgets/agPickerField";
 
 // range
 export {
@@ -557,16 +552,18 @@ export { IAggregationStage } from "./interfaces/iAggregationStage";
 export { MenuItemLeafDef, MenuItemDef, IMenuConfigParams, IMenuItemParams, IMenuItem, IMenuItemComp, BaseMenuItem, BaseMenuItemParams } from "./interfaces/menuItem";
 
 // utils
-export { ColumnSortState, _setAriaLevel, _setAriaLabel, _setAriaDescribedBy, _setAriaExpanded, _setAriaLabelledBy, _setAriaChecked, _setAriaControls, _setAriaRole, _setAriaColIndex, _setAriaColSpan, _setAriaRowIndex, _setAriaDisabled, _removeAriaExpanded, _removeAriaSort, _setAriaSort, _setAriaColCount, _setAriaRowCount } from './utils/aria';
-export { _removeFromArray, _last, _insertIntoArray, _includes, _shallowCompare, _flatten, _forEachReverse, _areEqual, _existsAndNotEmpty, _removeRepeatsFromArray  } from './utils/array';
+export { ColumnSortState, _setAriaLevel, _setAriaLabel, _setAriaDescribedBy, _setAriaExpanded, _setAriaLabelledBy, _setAriaChecked, _setAriaControls, _setAriaRole, _setAriaColIndex, _setAriaColSpan, _setAriaRowIndex, _setAriaDisabled, _removeAriaExpanded, _removeAriaSort, _setAriaSort, _setAriaColCount, _setAriaRowCount, _setAriaActiveDescendant, _setAriaSelected, _setAriaPosInSet, _setAriaSetSize, _setAriaHidden  } from './utils/aria';
+export { _removeFromArray, _last, _insertIntoArray, _includes, _shallowCompare, _flatten, _forEachReverse, _areEqual, _existsAndNotEmpty, _removeRepeatsFromArray, _insertArrayIntoArray } from './utils/array';
 export { _isIOSUserAgent } from './utils/browser';
 export { ChangedPath } from "./utils/changedPath";
 export { _serialiseDate, _parseDateTimeFromString } from './utils/date';
-export { _getAbsoluteHeight, _getAbsoluteWidth, _setDisplayed, _clearElement, _removeFromParent, _radioCssClass, _loadTemplate, _isVisible, _setFixedWidth, _setDisabled, _setVisible} from './utils/dom';
+export { _getAbsoluteHeight, _getAbsoluteWidth, _setDisplayed, _clearElement, _removeFromParent, _radioCssClass, _loadTemplate, _isVisible, _setFixedWidth, _setDisabled, _setVisible, _bindCellRendererToHtmlElement, _getInnerHeight, _getInnerWidth, _isNodeOrElement } from './utils/dom';
 export { _getCtrlForEventTarget, _stopPropagationForAgGrid, _isStopPropagationForAgGrid } from './utils/event';
 export { _warnOnce, _errorOnce, _debounce, _compose, _doOnce } from './utils/function';
 export { _createIcon, _createIconNoSpan} from './utils/icon';
+export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export { _exists, _missing, _missingOrEmpty, _jsonEquals, _toStringOrNull, _values, _makeNull, _defaultComparator } from './utils/generic';
+export { _isEventFromPrintableCharacter } from './utils/keyboard';
 export { NumberSequence } from './utils/numberSequence';
 export { _keys } from './utils/map';
 export { _formatNumberTwoDecimalPlacesAndCommas, _formatNumberCommas } from './utils/number';

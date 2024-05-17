@@ -1,7 +1,5 @@
 import {
     AgEvent,
-    AgMenuItemComponent,
-    AgMenuList,
     Autowired,
     Bean,
     BeanStub,
@@ -25,7 +23,6 @@ import {
     WithoutGridCommon,
     Events,
     ContextMenuVisibleChangedEvent,
-    CloseMenuEvent,
     _exists,
     _isIOSUserAgent,
     _missingOrEmpty
@@ -33,6 +30,7 @@ import {
 } from "@ag-grid-community/core";
 import { MenuItemMapper } from "./menuItemMapper";
 import { MenuUtils } from "./menuUtils";
+import { AgMenuItemComponent, CloseMenuEvent, AgMenuList } from "@ag-grid-enterprise/core";
 
 const CSS_MENU = 'ag-menu';
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';

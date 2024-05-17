@@ -1,5 +1,4 @@
 import {
-    AgGroupComponent,
     Autowired,
     Column,
     ColumnModel,
@@ -12,11 +11,11 @@ import {
     ITooltipParams,
     PreConstruct,
     RefSelector,
-    AgGroupComponentParams,
     WithoutGridCommon,
     _createIconNoSpan,
     _clearElement
 } from "@ag-grid-community/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";
 
 export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
@@ -59,7 +58,7 @@ export class ToolPanelFilterGroupComp extends Component {
             cssIdentifier: 'filter-toolpanel',
             direction: 'vertical'
         };
-        this.setTemplate(ToolPanelFilterGroupComp.TEMPLATE, { filterGroupComp: groupParams });
+        this.setTemplate(ToolPanelFilterGroupComp.TEMPLATE, { filterGroupComp: groupParams }, [AgGroupComponent]);
     }
 
     @PostConstruct

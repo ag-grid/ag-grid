@@ -1,7 +1,4 @@
 import {
-    AgGroupComponentParams,
-    AgSlider,
-    AgSliderParams,
     Autowired,
     Component,
     PostConstruct,
@@ -9,9 +6,11 @@ import {
     AgSelectParams,
     _includes
 } from "@ag-grid-community/core";
+import { AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 import { ChartOptionsService } from '../../../services/chartOptionsService';
+import { AgSliderParams, AgSlider} from "../../../../../widgets/agSlider";
 
 export class MarkersPanel extends Component {
 

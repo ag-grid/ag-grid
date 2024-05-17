@@ -1,19 +1,18 @@
 import {
-    AgGroupComponent,
-    AgGroupComponentParams,
     AgSelect,
     AgSelectParams,
-    AgSlider,
     Autowired,
     Component,
     ListOption,
     PostConstruct,
     RefSelector,
 } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import {FontPanel, FontPanelParams} from '../fontPanel';
 import {ChartTranslationKey, ChartTranslationService} from '../../../services/chartTranslationService';
 import {FormatPanelOptions} from '../formatPanel';
 import {getSeriesType, isRadial} from '../../../utils/seriesTypeMapper';
+import { AgSlider } from "../../../../../widgets/agSlider";
 
 export class PolarAxisPanel extends Component {
     public static TEMPLATE = /* html */

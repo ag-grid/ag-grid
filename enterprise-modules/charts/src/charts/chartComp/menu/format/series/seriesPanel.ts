@@ -1,8 +1,5 @@
 import {
-    AgGroupComponent,
-    AgGroupComponentParams,
     AgSelect,
-    AgSlider,
     AgToggleButton,
     Autowired,
     Component,
@@ -14,6 +11,7 @@ import {
     ChartMappings,
     _removeFromParent
 } from "@ag-grid-community/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 import { ShadowPanel } from "./shadowPanel";
 import { FontPanel } from "../fontPanel";
@@ -30,6 +28,7 @@ import { WhiskersPanel } from "./whiskersPanel";
 import { SeriesItemsPanel } from "./seriesItemsPanel";
 import { TileSpacingPanel } from "./tileSpacingPanel";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import { AgSlider } from "../../../../../widgets/agSlider";
 
 export class SeriesPanel extends Component {
 

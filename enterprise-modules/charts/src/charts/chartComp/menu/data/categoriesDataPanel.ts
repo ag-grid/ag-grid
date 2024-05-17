@@ -1,7 +1,6 @@
 import {
     AgCheckbox,
     AgCheckboxParams,
-    AgGroupComponent,
     AgRadioButton,
     AgSelect,
     AgToggleButton,
@@ -17,6 +16,7 @@ import { ChartService } from "../../../chartService";
 import { ChartController } from "../../chartController";
 import { ChartDataModel, ColState } from "../../model/chartDataModel";
 import { DragDataPanel } from "./dragDataPanel";
+import { AgGroupComponent } from "@ag-grid-enterprise/core";
 
 type AggFuncPreset = 'count' | 'sum' | 'min' | 'max' | 'avg' | 'first' | 'last';
 

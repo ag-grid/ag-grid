@@ -1,12 +1,12 @@
 import {
-    AgGroupComponentParams,
-    AgSliderParams,
     Autowired,
     Component,
     PostConstruct,
 } from "@ag-grid-community/core";
+import { AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import { AgSliderParams } from "../../../../../widgets/agSlider";
 
 export class ShadowPanel extends Component {
 

@@ -1,4 +1,6 @@
-import { AgRichSelect, AutocompleteEntry, RichSelectParams, VirtualList, _setAriaLabel, _setAriaLabelledBy, _stopPropagationForAgGrid } from "@ag-grid-community/core";
+import { AgInputTextField, RichSelectParams, VirtualList, _setAriaLabel, _setAriaLabelledBy, _stopPropagationForAgGrid } from "@ag-grid-community/core";
+import { AutocompleteEntry } from "../autocomplete/autocompleteParams";
+import { AgRichSelect } from "@ag-grid-enterprise/core";
 
 export interface SelectPillParams extends RichSelectParams<AutocompleteEntry> {
     getEditorParams: () => { values?: any[] },
@@ -19,6 +21,7 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
                         <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
                     </div>
                 </div>`,
+                agComponents: [AgInputTextField]
         });
     }
 

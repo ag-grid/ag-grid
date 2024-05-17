@@ -1,12 +1,8 @@
 import { RefSelector } from './componentAnnotations';
-import { AgAbstractField, AgFieldParams, FieldElement } from './agAbstractField';
+import { AgAbstractField, FieldElement } from './agAbstractField';
 import { _setDisabled, _setElementWidth, _addOrRemoveAttribute } from '../utils/dom';
 import { _setAriaLabel } from '../utils/aria';
-
-export interface AgInputFieldParams extends AgFieldParams {
-    inputName?: string;
-    inputWidth?: number | 'flex';
-}
+import { AgInputFieldParams } from '../interfaces/agFieldParams';
 
 export abstract class AgAbstractInputField<TElement extends FieldElement, TValue, TConfig extends AgInputFieldParams = AgInputFieldParams>
     extends AgAbstractField<TValue, TConfig> {
@@ -21,7 +17,7 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
                 <div ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
                     <${displayFieldTag} ref="eInput" class="ag-input-field-input"></${displayFieldTag}>
                 </div>
-            </div>`, className);
+            </div>`,[], className);
     }
 
     protected postConstruct() {

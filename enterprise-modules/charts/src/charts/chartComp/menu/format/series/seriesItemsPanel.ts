@@ -1,7 +1,4 @@
 import {
-    AgGroupComponentParams,
-    AgSlider,
-    AgGroupComponent,
     Autowired,
     Component,
     ListOption,
@@ -10,9 +7,11 @@ import {
     AgSelectParams,
     _removeFromParent
 } from "@ag-grid-community/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { FontPanel } from "../fontPanel";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import { AgSlider } from "../../../../../widgets/agSlider";
 
 type SeriesItemType = 'positive' | 'negative';
 

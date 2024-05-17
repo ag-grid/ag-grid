@@ -1,9 +1,7 @@
 import {
-    AgSlider,
     Autowired,
     Component,
     PostConstruct,
-    AgSliderParams,
     AgInputTextFieldParams,
     AgInputTextField
 } from "@ag-grid-community/core";
@@ -11,6 +9,7 @@ import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import { AgSlider, AgSliderParams } from "../../../../../widgets/agSlider";
 
 export class TitlePanel extends Component {
     public static TEMPLATE = /* html */ `<div></div>`;

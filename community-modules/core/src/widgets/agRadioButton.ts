@@ -1,6 +1,7 @@
-import { AgCheckbox, AgCheckboxParams } from './agCheckbox';
+import { AgCheckbox } from './agCheckbox';
 import { Events } from '../eventKeys';
 import { CheckboxChangedEvent } from '../events';
+import { AgCheckboxParams } from '../interfaces/agFieldParams';
 
 export interface AgRadioButtonParams extends AgCheckboxParams {}
 

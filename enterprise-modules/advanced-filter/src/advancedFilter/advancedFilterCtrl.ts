@@ -1,27 +1,25 @@
 import {
     AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterEnabledChangedEvent,
-    AgDialog,
     Autowired,
     BeanStub,
     CtrlsService,
     Events,
-    FocusService,
     IAdvancedFilterCtrl,
     PopupService,
     PostConstruct,
     WithoutGridCommon,
     _getAbsoluteHeight,
     _getAbsoluteWidth,
-    _removeFromParent,
+    _removeFromParent
 } from "@ag-grid-community/core";
-import { AdvancedFilterHeaderComp } from "./advancedFilterHeaderComp";
-import { AdvancedFilterComp } from "./advancedFilterComp";
-import { AdvancedFilterBuilderComp } from "./builder/advancedFilterBuilderComp";
+import { AgDialog } from "@ag-grid-enterprise/core";
+import { AgAdvancedFilter } from "./advancedFilterComp";
 import { AdvancedFilterExpressionService } from "./advancedFilterExpressionService";
+import { AdvancedFilterHeaderComp } from "./advancedFilterHeaderComp";
+import { AdvancedFilterBuilderComp } from "./builder/advancedFilterBuilderComp";
 
 export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl {
-    @Autowired('focusService') private focusService: FocusService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
@@ -29,7 +27,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
     public static readonly EVENT_BUILDER_CLOSED = 'advancedFilterBuilderClosed';
 
     private eHeaderComp: AdvancedFilterHeaderComp | undefined;
-    private eFilterComp: AdvancedFilterComp | undefined;
+    private eFilterComp: AgAdvancedFilter | undefined;
     private hasAdvancedFilterParent: boolean;
     private eBuilderComp: AdvancedFilterBuilderComp | undefined;
     private eBuilderDialog: AgDialog | undefined;
@@ -177,7 +175,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
         this.hasAdvancedFilterParent = !!advancedFilterParent;
         if (advancedFilterParent) {
             // unmanaged as can be recreated
-            const eAdvancedFilterComp = this.createBean(new AdvancedFilterComp());
+            const eAdvancedFilterComp = this.createBean(new AgAdvancedFilter());
             const eAdvancedFilterCompGui = eAdvancedFilterComp.getGui();
             
             this.environment.applyThemeClasses(eAdvancedFilterCompGui);

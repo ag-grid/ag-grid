@@ -1,5 +1,4 @@
 import {
-    AgGroupComponent,
     ChartFormatPanel,
     ChartFormatPanelGroup,
     Component,
@@ -16,6 +15,7 @@ import { ChartPanelFeature } from "../chartPanelFeature";
 import { ChartMenuContext } from "../chartMenuContext";
 import { TitlesPanel } from "./titles/titlesPanel";
 import { GroupExpansionFeature } from "./groupExpansionFeature";
+import { AgGroupComponent } from "@ag-grid-enterprise/core";
 
 export interface FormatPanelOptions extends ChartMenuContext {
     isExpandedOnInit: boolean;

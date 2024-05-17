@@ -8,7 +8,7 @@ import { _areEqual } from '../../utils/array';
 import { _setDisplayed, _setDisabled, _removeFromParent } from '../../utils/dom';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import { AgInputTextField } from '../../widgets/agInputTextField';
-import { Component } from '../../widgets/component';
+import { Component, ComponentClass } from '../../widgets/component';
 import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import { ListOption } from '../../widgets/agList';
@@ -624,6 +624,10 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     protected createBodyTemplate(): string {
         // created dynamically
         return '';
+    }
+    protected getAgComponents(): ComponentClass[] {
+        // created dynamically
+        return [];
     }
 
     protected getCssIdentifier() {

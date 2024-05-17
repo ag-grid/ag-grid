@@ -1,5 +1,4 @@
 import {
-    AgDialog,
     Autowired,
     Bean,
     BeanStub,
@@ -10,6 +9,7 @@ import {
 import { ChartTranslationService } from "../../services/chartTranslationService";
 import { ChartMenuContext } from "../chartMenuContext";
 import { AdvancedSettingsPanel } from "./advancedSettingsPanel";
+import { AgDialog } from "@ag-grid-enterprise/core";
 
 @Bean('advancedSettingsMenuFactory')
 export class AdvancedSettingsMenuFactory extends BeanStub {

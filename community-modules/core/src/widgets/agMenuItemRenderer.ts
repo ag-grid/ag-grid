@@ -1,8 +1,4 @@
-import { Component } from './component';
-import { _createIconNoSpan } from '../utils/icon';
-import { _isNodeOrElement, _loadTemplate } from '../utils/dom';
-import { _setAriaExpanded } from '../utils/aria';
-import { IMenuItemComp, IMenuItemParams } from '../interfaces/menuItem';
+import { Component, IMenuItemComp, IMenuItemParams, _createIconNoSpan, _isNodeOrElement, _loadTemplate, _setAriaExpanded } from "@ag-grid-community/core";
 
 interface AgMenuItemRendererParams {
     cssClassPrefix?: string;

@@ -24,7 +24,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
     private params: ICheckboxCellRendererParams;
 
     constructor() {
-        super(CheckboxCellRenderer.TEMPLATE);
+        super(CheckboxCellRenderer.TEMPLATE, [AgCheckbox]);
     }
 
     public init(params: ICheckboxCellRendererParams): void {

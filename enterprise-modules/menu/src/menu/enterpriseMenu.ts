@@ -20,11 +20,8 @@ import {
     IAfterGuiAttachedParams,
     ContainerType,
     CtrlsService,
-    AgMenuList,
-    AgMenuItemComponent,
     PopupEventParams,
     Component,
-    CloseMenuEvent,
     MenuService,
     AgGridEvent,
     ColumnMenuVisibleChangedEvent,
@@ -36,6 +33,7 @@ import {
 import { ColumnChooserFactory } from './columnChooserFactory';
 import { ColumnMenuFactory } from './columnMenuFactory';
 import { MenuRestoreFocusParams, MenuUtils } from './menuUtils';
+import { AgMenuList, AgMenuItemComponent, CloseMenuEvent } from '@ag-grid-enterprise/core';
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;

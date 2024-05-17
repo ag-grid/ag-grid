@@ -1,6 +1,4 @@
 import {
-    AgGroupComponent,
-    AgGroupComponentParams,
     AgSelect,
     Autowired,
     Component,
@@ -8,6 +6,7 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { PaddingPanel } from "./paddingPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { BackgroundPanel } from "./backgroundPanel";

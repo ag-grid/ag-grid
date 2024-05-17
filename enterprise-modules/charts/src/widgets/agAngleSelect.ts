@@ -35,7 +35,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     private dragListener: DragListenerParams;
 
     constructor(config?: AgAngleSelectParams) {
-        super(config, AgAngleSelect.TEMPLATE);
+        super(config, AgAngleSelect.TEMPLATE, [AgInputNumberField]);
     }
 
     postConstruct() {

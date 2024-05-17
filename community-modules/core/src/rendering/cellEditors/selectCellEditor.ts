@@ -41,7 +41,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         super(/* html */
             `<div class="ag-cell-edit-wrapper">
                 <ag-select class="ag-cell-editor" ref="eSelect"></ag-select>
-            </div>`
+            </div>`, [AgSelect]
         );
     }
 

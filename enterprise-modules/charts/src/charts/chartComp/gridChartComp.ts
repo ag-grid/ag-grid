@@ -1,5 +1,4 @@
 import {
-    AgDialog,
     Autowired,
     ChartCreated,
     ChartDestroyed,
@@ -52,6 +51,7 @@ import { ChartMenuContext } from "./menu/chartMenuContext";
 import { deepMerge } from './utils/object';
 import { ChartMenuService, CHART_TOOL_PANEL_MENU_OPTIONS } from "./services/chartMenuService";
 import { HierarchicalChartProxy } from "./chartProxies/hierarchical/hierarchicalChartProxy";
+import { AgDialog } from "@ag-grid-enterprise/core";
 
 export interface GridChartParams {
     chartId: string;

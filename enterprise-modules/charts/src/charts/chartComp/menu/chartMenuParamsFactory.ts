@@ -1,8 +1,9 @@
-import { AgFieldParams, AgCheckboxParams, AgInputNumberFieldParams, AgSelectParams, AgSliderParams, Autowired, BeanStub, ListOption } from "@ag-grid-community/core";
+import { AgFieldParams, AgCheckboxParams, AgInputNumberFieldParams, AgSelectParams, Autowired, BeanStub, ListOption } from "@ag-grid-community/core";
 import { AgColorPickerParams } from "../../../widgets/agColorPicker";
 import { ChartOptionsProxy } from "../services/chartOptionsService";
 import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
 import { FontPanelParams } from "./format/fontPanel";
+import { AgSliderParams } from "../../../widgets/agSlider";
 
 export class ChartMenuParamsFactory extends BeanStub {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;

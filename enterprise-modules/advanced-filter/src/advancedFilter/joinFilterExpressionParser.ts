@@ -1,4 +1,4 @@
-import { AdvancedFilterModel, AutocompleteEntry, AutocompleteListParams } from "@ag-grid-community/core";
+import { AdvancedFilterModel } from "@ag-grid-community/core";
 import { ADVANCED_FILTER_LOCALE_TEXT } from "./advancedFilterLocaleText";
 import { ColFilterExpressionParser } from "./colFilterExpressionParser";
 import { findMatch } from "./filterExpressionOperators";
@@ -13,6 +13,7 @@ import {
     getSearchString,
     updateExpression
 } from "./filterExpressionUtils";
+import { AutocompleteEntry, AutocompleteListParams } from "./autocomplete/autocompleteParams";
 
 class OperatorParser {
     private operators: string[] = [];

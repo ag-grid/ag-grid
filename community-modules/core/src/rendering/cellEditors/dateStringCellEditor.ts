@@ -29,6 +29,9 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     public getTemplate() {
         return /* html */`<ag-input-date-field class="ag-cell-editor" ref="eInput"></ag-input-date-field>`;
     }
+    public getAgComponents() {
+        return [AgInputDateField];
+    }
 
     public init(eInput: AgInputDateField, params: IDateStringCellEditorParams): void {
         this.eInput = eInput;

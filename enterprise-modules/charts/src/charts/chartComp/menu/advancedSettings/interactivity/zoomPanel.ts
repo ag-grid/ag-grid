@@ -1,11 +1,11 @@
 import {
-    AgGroupComponentParams,
-    AgSlider,
     Autowired,
     Component,
     PostConstruct,
-    RefSelector,
+    RefSelector
 } from '@ag-grid-community/core';
+import { AgGroupComponentParams } from "@ag-grid-enterprise/core";
+import { AgSlider } from "../../../../../widgets/agSlider";
 import { ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 

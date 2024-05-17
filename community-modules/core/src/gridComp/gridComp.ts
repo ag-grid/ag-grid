@@ -1,19 +1,20 @@
-import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
-import { Logger, LoggerFactory } from "../logger";
 import { Autowired, PostConstruct } from "../context/context";
-import { Component } from "../widgets/component";
+import { AgGridBody } from "../gridBodyComp/agGridBody";
 import { ISideBar } from "../interfaces/iSideBar";
-import { RefSelector } from "../widgets/componentAnnotations";
-import { _isVisible } from "../utils/dom";
-import { GridCtrl, IGridComp } from "./gridCtrl";
+import { Logger, LoggerFactory } from "../logger";
+import { AgPagination } from "../pagination/agPagination";
 import { LayoutCssClasses, UpdateLayoutClassesParams } from "../styling/layoutFeature";
+import { _isVisible } from "../utils/dom";
+import { Component } from "../widgets/component";
+import { RefSelector } from "../widgets/componentAnnotations";
 import { TabGuardComp } from "../widgets/tabGuardComp";
+import { GridCtrl, IGridComp } from "./gridCtrl";
 
 export class GridComp extends TabGuardComp {
 
     @Autowired('loggerFactory') private readonly loggerFactory: LoggerFactory;
 
-    @RefSelector('gridBody') private readonly gridBodyComp: GridBodyComp;
+    @RefSelector('gridBody') private readonly gridBodyComp: AgGridBody;
     @RefSelector('sideBar') private readonly sideBarComp: ISideBar & Component;
     @RefSelector('rootWrapperBody') private readonly eRootWrapperBody: HTMLElement;
 
@@ -50,7 +51,7 @@ export class GridComp extends TabGuardComp {
         this.ctrl = this.createManagedBean(new GridCtrl());
 
         const template = this.createTemplate();
-        this.setTemplate(template);
+        this.setTemplate(template,undefined, [AgGridBody, AgPagination]);
 
         this.ctrl.setComp(compProxy, this.eGridDiv, this.getGui());
 

@@ -47,7 +47,7 @@ import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
 import { UserComponentRegistry } from "./userComponentRegistry";
 import { FloatingFilterMapper } from '../../filter/floating/floatingFilterMapper';
 import { AgGridCommon, WithoutGridCommon } from "../../interfaces/iCommon";
-import { RichSelectParams } from "../../widgets/agRichSelect";
+import { RichSelectParams } from "../../interfaces/iRichCellEditorParams";
 import { IMenuItemParams, MenuItemDef } from "../../interfaces/menuItem";
 
 export type DefinitionObject =

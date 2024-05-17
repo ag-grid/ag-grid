@@ -1,17 +1,8 @@
-import { Component } from "./component";
+import { Component, ComponentClass } from "./component";
 import { PostConstruct } from "../context/context";
 import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from "../utils/dom";
 import { _setAriaRole } from "../utils/aria";
-
-export type LabelAlignment = 'left' | 'right' | 'top';
-
-export interface AgLabelParams {
-    label?: HTMLElement | string;
-    labelWidth?: number | 'flex';
-    labelSeparator?: string;
-    labelAlignment?: LabelAlignment;
-    disabled?: boolean;
-}
+import { AgLabelParams, LabelAlignment } from "../interfaces/agFieldParams";
 
 export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelParams> extends Component {
     protected abstract eLabel: HTMLElement;
@@ -22,8 +13,8 @@ export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelPar
     protected disabled: boolean = false;
     private label: HTMLElement | string = '';
 
-    constructor(config?: TConfig, template?: string) {
-        super(template);
+    constructor(config?: TConfig, template?: string, components?: ComponentClass[]) {
+        super(template, components);
 
         this.config = config || {} as any;
     }

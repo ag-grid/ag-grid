@@ -1,5 +1,4 @@
 import {
-    AgPanel,
     AgPromise,
     Autowired,
     ChartCreated,
@@ -17,6 +16,7 @@ import { ChartMenuListFactory } from "./chartMenuList";
 import { ChartToolbar } from "./chartToolbar";
 import { ChartMenuService } from "../services/chartMenuService";
 import { ChartMenuContext } from "./chartMenuContext";
+import { AgPanel } from "@ag-grid-enterprise/core";
 
 type ChartToolbarButtons = {
     [key in ChartToolbarMenuItemOptions]: {

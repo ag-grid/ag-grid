@@ -28,7 +28,8 @@ import {
     _makeNull,
     _setDisplayed,
     _toStringOrNull,
-    _warnOnce
+    _warnOnce,
+    ComponentClass
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemExpandedChangedEvent, SetFilterListItemParams, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
@@ -83,6 +84,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
                 <div ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${this.translateForSetFilter('noMatches')}</div>
                 <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
             </div>`;
+    }
+    protected getAgComponents(): ComponentClass[] {
+        return [AgInputTextField];
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {

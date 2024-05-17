@@ -1,7 +1,6 @@
 import {
     AdvancedFilterEnabledChangedEvent,
     AdvancedFilterModel,
-    AutocompleteEntry,
     Autowired,
     Bean,
     BeanStub,
@@ -22,6 +21,7 @@ import { FilterExpressionParser } from "./filterExpressionParser";
 import { AdvancedFilterCtrl } from "./advancedFilterCtrl";
 import { AdvancedFilterExpressionService } from "./advancedFilterExpressionService";
 import { ExpressionProxy, FilterExpressionFunction, FilterExpressionFunctionParams } from "./filterExpressionUtils";
+import { AutocompleteEntry } from "./autocomplete/autocompleteParams";
 
 @Bean('advancedFilterService')
 export class AdvancedFilterService extends BeanStub implements IAdvancedFilterService {

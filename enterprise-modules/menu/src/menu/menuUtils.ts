@@ -7,11 +7,11 @@ import {
     FocusService,
     HeaderNavigationService,
     HeaderPosition,
-    CloseMenuEvent,
     PopupEventParams,
     _isVisible,
     _last,
 } from "@ag-grid-community/core";
+import { CloseMenuEvent } from "@ag-grid-enterprise/core";
 
 export interface MenuRestoreFocusParams {
     column: Column | undefined;

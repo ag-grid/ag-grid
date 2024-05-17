@@ -1,8 +1,7 @@
 import {
     Beans, Context,
-    FocusService,
     GridCtrl,
-    IGridComp
+    IGridComp, AgStackComponentsRegistry
 } from 'ag-grid-community';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext';
@@ -100,14 +99,14 @@ const GridComp = ({ context }: GridCompProps) => {
 
         const gridCtrl = gridCtrlRef.current;
         const beansToDestroy: any[] = [];
-        const {agStackComponentsRegistry} = beans;
-
-        const HeaderDropZonesClass = agStackComponentsRegistry.getComponentClass('AG-GRID-HEADER-DROP-ZONES');
-        const SideBarClass = agStackComponentsRegistry.getComponentClass('AG-SIDE-BAR');
-        const StatusBarClass = agStackComponentsRegistry.getComponentClass('AG-STATUS-BAR');
-        const WatermarkClass = agStackComponentsRegistry.getComponentClass('AG-WATERMARK');
-        const PaginationClass = agStackComponentsRegistry.getComponentClass('AG-PAGINATION');
-        const additionalEls: HTMLDivElement[] = [];
+        // these components are optional, so we check if they are registered before creating them
+        // assuming that they will be registered by the feature module if present
+        const HeaderDropZonesClass = AgStackComponentsRegistry.getComponentForNode('AG-GRID-HEADER-DROP-ZONES');
+        const SideBarClass = AgStackComponentsRegistry.getComponentForNode('AG-SIDE-BAR');
+        const StatusBarClass = AgStackComponentsRegistry.getComponentForNode('AG-STATUS-BAR');
+        const WatermarkClass = AgStackComponentsRegistry.getComponentForNode('AG-WATERMARK');
+        const PaginationClass = AgStackComponentsRegistry.getComponentForNode('AG-PAGINATION');
+        const additionalEls: HTMLElement[] = [];
         const eRootWrapper = eRootWrapperRef.current;
 
         if (gridCtrl.showDropZones() && HeaderDropZonesClass) {

@@ -8,7 +8,7 @@ import { AgPromise } from '../../utils/promise';
 import { PopupEventParams } from '../../widgets/popupService';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
-import { Component } from '../../widgets/component';
+import { Component, ComponentClass } from '../../widgets/component';
 import { IRowNode } from '../../interfaces/iRowNode';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
@@ -117,6 +117,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     protected abstract updateUiVisibility(): void;
 
     protected abstract createBodyTemplate(): string;
+    protected abstract getAgComponents(): ComponentClass[];
     protected abstract getCssIdentifier(): string;
     protected abstract resetUiToDefaults(silent?: boolean): AgPromise<void>;
 
