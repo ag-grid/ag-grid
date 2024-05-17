@@ -1,5 +1,5 @@
+import { CustomHeaderProps } from '@ag-grid-community/react';
 import React, { useRef } from 'react';
-import { CustomHeaderProps } from "@ag-grid-community/react";
 
 const CustomHeader = (props: CustomHeaderProps) => {
     const { enableMenu, displayName, showColumnMenu } = props;
@@ -9,10 +9,15 @@ const CustomHeader = (props: CustomHeaderProps) => {
 
     return (
         <div style={{ display: 'flex' }}>
-            {enableMenu && <div
-                ref={menuButtonRef}
-                className="ag-icon ag-icon-menu"
-                onClick={() => showColumnMenu(menuButtonRef.current!)}>&nbsp;</div>}
+            {enableMenu && (
+                <div
+                    ref={menuButtonRef}
+                    className="ag-icon ag-icon-menu"
+                    onClick={() => showColumnMenu(menuButtonRef.current!)}
+                >
+                    &nbsp;
+                </div>
+            )}
             <div className="customHeaderLabel">{displayName}</div>
         </div>
     );

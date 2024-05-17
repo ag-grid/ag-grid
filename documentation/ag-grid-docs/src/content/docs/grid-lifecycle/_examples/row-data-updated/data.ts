@@ -4,11 +4,11 @@ export interface TAthlete {
         gold: number;
         silver: number;
         bronze: number;
-    },
+    };
     person: {
         age: number;
         country: string;
-    },
+    };
 }
 
 function getRandomMedals() {
@@ -16,138 +16,138 @@ function getRandomMedals() {
         gold: Math.floor(Math.random() * 10),
         silver: Math.floor(Math.random() * 10),
         bronze: Math.floor(Math.random() * 10),
-    }
+    };
 }
 
 export function getData(): TAthlete[] {
     return [
         {
-            "name": "Michael Phelps",
-            "person": {
-                "age": 23,
-                "country": "United States"
+            name: 'Michael Phelps',
+            person: {
+                age: 23,
+                country: 'United States',
             },
-            "medals": getRandomMedals()
+            medals: getRandomMedals(),
         },
         {
-            "name": "Michael Phelps",
-            "person": {
-                "age": 19,
-                "country": "United States"
+            name: 'Michael Phelps',
+            person: {
+                age: 19,
+                country: 'United States',
             },
-            "medals": getRandomMedals()
+            medals: getRandomMedals(),
         },
         {
-            "name": "Michael Phelps",
-            "person": {
-                "age": 27,
-                "country": "United States"
+            name: 'Michael Phelps',
+            person: {
+                age: 27,
+                country: 'United States',
             },
-            "medals": getRandomMedals()
+            medals: getRandomMedals(),
         },
         {
-            "name": "Natalie Coughlin",
-            "person": {
-                "age": 25,
-                "country": "United States"
+            name: 'Natalie Coughlin',
+            person: {
+                age: 25,
+                country: 'United States',
             },
-            "medals": getRandomMedals()
+            medals: getRandomMedals(),
         },
         {
-            "name": "Aleksey Nemov",
-            "person": {
-                "age": 24,
-                "country": "Russia"
+            name: 'Aleksey Nemov',
+            person: {
+                age: 24,
+                country: 'Russia',
             },
-            "medals": getRandomMedals()
+            medals: getRandomMedals(),
         },
         {
-            "name": "Alicia Coutts",
-            "person": {
-                "age": 24,
-                "country": "Australia"
+            name: 'Alicia Coutts',
+            person: {
+                age: 24,
+                country: 'Australia',
             },
-            "medals": getRandomMedals()
+            medals: getRandomMedals(),
         },
         {
-            "name": "Missy Franklin",
-            "person": {
-                "age": 17,
-                "country": "United States"
+            name: 'Missy Franklin',
+            person: {
+                age: 17,
+                country: 'United States',
             },
-            "medals": getRandomMedals()
+            medals: getRandomMedals(),
         },
         {
-            "name": "Ryan Lochte",
-            "person": {
-                "age": 27,
-                "country": "United States"
+            name: 'Ryan Lochte',
+            person: {
+                age: 27,
+                country: 'United States',
             },
-            "medals": getRandomMedals()
+            medals: getRandomMedals(),
         },
         {
-            "name": "Allison Schmitt",
-            "person": {
-                "age": 22,
-                "country": "United States"
+            name: 'Allison Schmitt',
+            person: {
+                age: 22,
+                country: 'United States',
             },
-            "medals": getRandomMedals()
+            medals: getRandomMedals(),
         },
         {
-            "name": "Natalie Coughlin",
-            "person": {
-                "age": 21,
-                "country": "United States"
+            name: 'Natalie Coughlin',
+            person: {
+                age: 21,
+                country: 'United States',
             },
-            "medals": getRandomMedals()
+            medals: getRandomMedals(),
         },
         {
-            "name": "Ian Thorpe",
-            "person": {
-                "age": 17,
-                "country": "Australia"
+            name: 'Ian Thorpe',
+            person: {
+                age: 17,
+                country: 'Australia',
             },
-            "medals": getRandomMedals()
+            medals: getRandomMedals(),
         },
         {
-            "name": "Dara Torres",
-            "person": {
-                "age": 33,
-                "country": "United States"
+            name: 'Dara Torres',
+            person: {
+                age: 33,
+                country: 'United States',
             },
-            "medals": getRandomMedals()
+            medals: getRandomMedals(),
         },
         {
-            "name": "Cindy Klassen",
-            "person": {
-                "age": 26,
-                "country": "Canada"
+            name: 'Cindy Klassen',
+            person: {
+                age: 26,
+                country: 'Canada',
             },
-            "medals": getRandomMedals()
+            medals: getRandomMedals(),
         },
         {
-            "name": "Nastia Liukin",
-            "person": {
-                "age": 18,
-                "country": "United States"
+            name: 'Nastia Liukin',
+            person: {
+                age: 18,
+                country: 'United States',
             },
-            "medals": getRandomMedals()
+            medals: getRandomMedals(),
         },
         {
-            "name": "Marit Bjørgen",
-            "person": {
-                "age": 29,
-                "country": "Norway"
+            name: 'Marit Bjørgen',
+            person: {
+                age: 29,
+                country: 'Norway',
             },
-            "medals": getRandomMedals()
+            medals: getRandomMedals(),
         },
         {
-            "name": "Sun Yang",
-            "person": {
-                "age": 20,
-                "country": "China"
+            name: 'Sun Yang',
+            person: {
+                age: 20,
+                country: 'China',
             },
-            "medals": getRandomMedals()
+            medals: getRandomMedals(),
         },
-    ]
+    ];
 }

@@ -7,20 +7,20 @@ export default {
     `,
     data: function () {
         return {
-            currentValue: null
+            currentValue: null,
         };
     },
     methods: {
         onInputBoxChanged() {
             if (this.currentValue === '') {
                 // Remove the filter
-                this.params.parentFilterInstance(instance => {
+                this.params.parentFilterInstance((instance) => {
                     instance.onFloatingFilterChanged(null, null);
                 });
                 return;
             }
 
-            this.params.parentFilterInstance(instance => {
+            this.params.parentFilterInstance((instance) => {
                 instance.onFloatingFilterChanged('greaterThan', this.currentValue);
             });
         },
@@ -32,7 +32,6 @@ export default {
             } else {
                 this.currentValue = parentModel.filter;
             }
-        }
-
-    }
+        },
+    },
 };

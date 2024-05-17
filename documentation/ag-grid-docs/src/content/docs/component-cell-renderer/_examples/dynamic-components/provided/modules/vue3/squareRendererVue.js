@@ -6,7 +6,7 @@ export default {
     `,
     data: function () {
         return {
-            value: null
+            value: null,
         };
     },
     mounted() {
@@ -15,6 +15,6 @@ export default {
     methods: {
         valueSquared() {
             return this.params.value * this.params.value;
-        }
-    }
+        },
+    },
 };

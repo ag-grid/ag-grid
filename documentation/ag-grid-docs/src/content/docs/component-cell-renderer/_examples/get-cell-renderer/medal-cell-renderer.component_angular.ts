@@ -1,11 +1,10 @@
-import { Component } from "@angular/core";
-
-import { ICellRendererAngularComp } from "@ag-grid-community/angular";
-import { ICellRendererParams } from "@ag-grid-community/core"
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
+import { ICellRendererParams } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
 
 @Component({
     standalone: true,
-    template: `<span>{{this.displayValue}}</span>`
+    template: `<span>{{ this.displayValue }}</span>`,
 })
 export class MedalCellRenderer implements ICellRendererAngularComp {
     private params!: ICellRendererParams<IOlympicData, number>;
@@ -17,7 +16,9 @@ export class MedalCellRenderer implements ICellRendererAngularComp {
     }
 
     medalUserFunction() {
-        console.log(`user function called for medal column: row = ${this.params.node.rowIndex}, column = ${this.params.column!.getId()}`);
+        console.log(
+            `user function called for medal column: row = ${this.params.node.rowIndex}, column = ${this.params.column!.getId()}`
+        );
     }
     refresh(params: ICellRendererParams) {
         return false;

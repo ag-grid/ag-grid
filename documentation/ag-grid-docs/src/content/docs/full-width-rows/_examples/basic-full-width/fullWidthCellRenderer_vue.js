@@ -6,19 +6,19 @@ export default {
         </div>    `,
     data() {
         return {
-            cssClass: "",
-            message: ""
-        }
+            cssClass: '',
+            message: '',
+        };
     },
     beforeMount() {
-        this.cssClass = this.params.node.rowPinned ? 'example-full-width-pinned-row' :
-            'example-full-width-row';
-        this.message = this.params.node.rowPinned ? `Pinned full width row at index ${this.params.node.rowIndex}` :
-            `Normal full width row at index ${this.params.node.rowIndex}`;
+        this.cssClass = this.params.node.rowPinned ? 'example-full-width-pinned-row' : 'example-full-width-row';
+        this.message = this.params.node.rowPinned
+            ? `Pinned full width row at index ${this.params.node.rowIndex}`
+            : `Normal full width row at index ${this.params.node.rowIndex}`;
     },
     methods: {
         clicked() {
-            alert('button clicked')
-        }
-    }
+            alert('button clicked');
+        },
+    },
 };

@@ -1,13 +1,14 @@
 'use strict';
 
-import React, { useCallback, useMemo, useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColDef, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import React, { useCallback, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
 import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
@@ -48,7 +49,13 @@ const GridExample = () => {
 
     return (
         <div style={containerStyle}>
-            <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+            <div
+                style={gridStyle}
+                className={
+                    /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+                    'ag-theme-quartz' /** DARK MODE END **/
+                }
+            >
                 <AgGridReact
                     rowData={rowData}
                     columnDefs={columnDefs}
@@ -62,4 +69,4 @@ const GridExample = () => {
 };
 
 const root = createRoot(document.getElementById('root')!);
-root.render(<GridExample />);;
+root.render(<GridExample />);

@@ -1,13 +1,12 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { createApp } from 'vue';
+
 import './styles.css';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 let rowIdSequence = 100;
@@ -17,19 +16,20 @@ function createDataItem(color) {
         id: rowIdSequence++,
         color: color,
         value1: Math.floor(Math.random() * 100),
-        value2: Math.floor(Math.random() * 100)
+        value2: Math.floor(Math.random() * 100),
     };
 
     return obj;
 }
 
-const createRowBlock = (blocks) => Array.apply(null, Array(blocks || 1))
-    .map(() => ['Red', 'Green', 'Blue'].map((color) => createDataItem(color)))
-    .reduce((prev, curr) => prev.concat(curr), []);
+const createRowBlock = (blocks) =>
+    Array.apply(null, Array(blocks || 1))
+        .map(() => ['Red', 'Green', 'Blue'].map((color) => createDataItem(color)))
+        .reduce((prev, curr) => prev.concat(curr), []);
 
 const VueExample = {
-    template: /* html */
-        `<div class="example-wrapper">
+    /* html */
+    template: `<div class="example-wrapper">
 
             <div class="inner-col">
                 <div class="toolbar">
@@ -97,7 +97,7 @@ const VueExample = {
         </div>
     `,
     components: {
-        'ag-grid-vue': AgGridVue
+        'ag-grid-vue': AgGridVue,
     },
     data: function () {
         return {
@@ -106,22 +106,19 @@ const VueExample = {
             leftApi: null,
             rightApi: null,
             rowClassRules: {
-                "red-row": 'data.color == "Red"',
-                "green-row": 'data.color == "Green"',
-                "blue-row": 'data.color == "Blue"'
+                'red-row': 'data.color == "Red"',
+                'green-row': 'data.color == "Green"',
+                'blue-row': 'data.color == "Blue"',
             },
             defaultColDef: {
                 flex: 1,
                 minWidth: 100,
                 filter: true,
             },
-            columns: [
-                { field: "id", rowDrag: true },
-                { field: "color" },
-                { field: "value1" },
-                { field: "value2" }
-            ],
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
+            columns: [{ field: 'id', rowDrag: true }, { field: 'color' }, { field: 'value1' }, { field: 'value2' }],
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
     beforeMount() {
@@ -151,7 +148,9 @@ const VueExample = {
 
         addRecordToGrid(side, data) {
             // if data missing or data has no it, do nothing
-            if (!data || data.id == null) { return; }
+            if (!data || data.id == null) {
+                return;
+            }
 
             const api = side === 'left' ? this.leftApi : this.rightApi;
             // do nothing if row is already in the grid, otherwise we would have duplicates
@@ -164,7 +163,7 @@ const VueExample = {
             }
 
             transaction = {
-                add: [data]
+                add: [data],
             };
 
             api.applyTransaction(transaction);
@@ -181,10 +180,12 @@ const VueExample = {
 
         binDrop(data) {
             // if data missing or data has no id, do nothing
-            if (!data || data.id == null) { return; }
+            if (!data || data.id == null) {
+                return;
+            }
 
             var transaction = {
-                remove: [data]
+                remove: [data],
             };
 
             [this.leftApi, this.rightApi].forEach((api) => {
@@ -204,14 +205,14 @@ const VueExample = {
                     this.$refs.eBinIcon.style.transform = 'scale(1.5)';
                 },
                 onDragLeave: () => {
-                    this.$refs.eBin.style = "";
+                    this.$refs.eBin.style = '';
                     this.$refs.eBinIcon.style.transform = 'scale(1)';
                 },
                 onDragStop: (params) => {
                     this.binDrop(params.node.data);
-                    this.$refs.eBin.style = "";
+                    this.$refs.eBin.style = '';
                     this.$refs.eBinIcon.style.transform = 'scale(1)';
-                }
+                },
             };
 
             api.addRowDropZone(dropZone);
@@ -222,8 +223,8 @@ const VueExample = {
             const dropZone = dropApi.getRowDropZoneParams();
 
             api.addRowDropZone(dropZone);
-        }
-    }
+        },
+    },
 };
 
 createApp(VueExample).mount('#app');

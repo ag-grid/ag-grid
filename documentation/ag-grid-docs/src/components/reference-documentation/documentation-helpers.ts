@@ -215,7 +215,7 @@ export function formatJsDocString(docString) {
     const newLineReg = /\n\s+\*(?!\*)/g;
 
     // Turn option list, new line starting with - into bullet points
-     
+
     const optionReg = /\n[\s]*[*]*[\s]*- (.*)/g;
 
     const formatted = docString

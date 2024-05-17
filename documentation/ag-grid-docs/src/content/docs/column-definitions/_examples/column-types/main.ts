@@ -1,7 +1,6 @@
-import { GridApi, createGrid, GridOptions, ValueFormatterParams } from "@ag-grid-community/core";
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { GridApi, GridOptions, ValueFormatterParams, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -14,28 +13,27 @@ interface SalesRecord {
 function currencyFormatter(params: ValueFormatterParams) {
     const value = Math.floor(params.value);
     if (isNaN(value)) {
-        return ''
+        return '';
     }
     return '£' + value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
-
 const gridOptions: GridOptions<SalesRecord> = {
     // define column types
     columnTypes: {
-        currency: { 
+        currency: {
             width: 150,
             valueFormatter: currencyFormatter,
         },
         shaded: {
-            cellClass: 'shaded-class'
-        }
+            cellClass: 'shaded-class',
+        },
     },
     // define grid columns
     columnDefs: [
-        { field: 'productName'},
+        { field: 'productName' },
         // uses properties from currency type
-        { field: 'boughtPrice', type: 'currency'},
+        { field: 'boughtPrice', type: 'currency' },
         // uses properties from currency AND shaded types
         { field: 'soldPrice', type: ['currency', 'shaded'] },
     ],
@@ -43,7 +41,7 @@ const gridOptions: GridOptions<SalesRecord> = {
     rowData: [
         { productName: 'Lamp', boughtPrice: 100, soldPrice: 200 },
         { productName: 'Chair', boughtPrice: 150, soldPrice: 300 },
-        { productName: 'Desk', boughtPrice: 200, soldPrice: 400 }
+        { productName: 'Desk', boughtPrice: 200, soldPrice: 400 },
     ],
 };
 

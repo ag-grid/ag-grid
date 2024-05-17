@@ -1,4 +1,5 @@
-.ag-theme-quartz, .ag-theme-quartz-dark {
+.ag-theme-quartz,
+.ag-theme-quartz-dark {
     --ag-grid-size: 5px;
     --ag-list-item-height: 20px;
 }

@@ -11,5 +11,5 @@ export function getData(): IRow[] {
         { value: 21, type: 'age' },
         { value: 'Male', type: 'gender' },
         { value: 'Sad', type: 'mood' },
-    ]
+    ];
 }

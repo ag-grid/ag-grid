@@ -21,17 +21,17 @@ export default {
             const newCallRecords = oldCallRecords.slice(0); // make a copy
 
             newCallRecords.push({
-                name: ["Bob", "Paul", "David", "John"][Math.floor(Math.random() * 4)],
+                name: ['Bob', 'Paul', 'David', 'John'][Math.floor(Math.random() * 4)],
                 callId: Math.floor(Math.random() * 1000),
                 duration: Math.floor(Math.random() * 100) + 1,
-                switchCode: "SW5",
-                direction: "Out",
-                number: "(02) " + Math.floor(Math.random() * 1000000)
+                switchCode: 'SW5',
+                direction: 'Out',
+                number: '(02) ' + Math.floor(Math.random() * 1000000),
             }); // add one item
 
             let minutes = 0;
             newCallRecords.forEach(function (r) {
-                minutes += r.duration
+                minutes += r.duration;
             });
 
             const newData = {
@@ -39,7 +39,7 @@ export default {
                 account: oldData.account,
                 calls: newCallRecords.length,
                 minutes: minutes,
-                callRecords: newCallRecords
+                callRecords: newCallRecords,
             };
 
             this.params.api.applyTransaction({ update: [newData] });
@@ -60,7 +60,7 @@ export default {
 
             let minutes = 0;
             newCallRecords.forEach(function (r) {
-                minutes += r.duration
+                minutes += r.duration;
             });
 
             const newData = {
@@ -68,10 +68,10 @@ export default {
                 account: oldData.account,
                 calls: newCallRecords.length,
                 minutes: minutes,
-                callRecords: newCallRecords
+                callRecords: newCallRecords,
             };
 
             this.params.api.applyTransaction({ update: [newData] });
-        }
-    }
+        },
+    },
 };

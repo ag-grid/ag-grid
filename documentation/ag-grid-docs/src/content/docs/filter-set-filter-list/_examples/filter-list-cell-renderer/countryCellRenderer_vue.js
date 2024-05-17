@@ -2,8 +2,8 @@ export default {
     template: `<div v-html="value"></div>`,
     data() {
         return {
-            value: ''
-        }
+            value: '',
+        };
     },
     beforeMount() {
         if (!this.params.value) {
@@ -16,5 +16,5 @@ export default {
 
             this.value = `${flagImage} ${this.params.value}`;
         }
-    }
+    },
 };

@@ -1,42 +1,51 @@
-import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
-import { NgClass } from "@angular/common";
-import { ICellEditorAngularComp } from "@ag-grid-community/angular";
+import { ICellEditorAngularComp } from '@ag-grid-community/angular';
+import { NgClass } from '@angular/common';
+import { AfterViewInit, Component, ViewChild, ViewContainerRef } from '@angular/core';
 
 @Component({
     standalone: true,
     imports: [NgClass],
     template: `
         <div #container class="mood" tabindex="0" (keydown)="onKeyDown($event)">
-            <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" (click)="onClick(true)" [ngClass]="{'selected' : happy, 'default' : !happy}">
-            <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" (click)="onClick(false)"
-                 [ngClass]="{'selected' : !happy, 'default' : happy}">
+            <img
+                src="https://www.ag-grid.com/example-assets/smileys/happy.png"
+                (click)="onClick(true)"
+                [ngClass]="{ selected: happy, default: !happy }"
+            />
+            <img
+                src="https://www.ag-grid.com/example-assets/smileys/sad.png"
+                (click)="onClick(false)"
+                [ngClass]="{ selected: !happy, default: happy }"
+            />
         </div>
     `,
-    styles: [`
-        .mood {
-            border-radius: 15px;
-            border: 1px solid grey;
-            background-color: #e6e6e6;
-            padding: 15px;
-            text-align: center;
-            display: inline-block;
-            outline: none
-        }
+    styles: [
+        `
+            .mood {
+                border-radius: 15px;
+                border: 1px solid grey;
+                background-color: #e6e6e6;
+                padding: 15px;
+                text-align: center;
+                display: inline-block;
+                outline: none;
+            }
 
-        .default {
-            padding-left: 10px;
-            padding-right: 10px;
-            border: 1px solid transparent;
-            padding: 4px;
-        }
+            .default {
+                padding-left: 10px;
+                padding-right: 10px;
+                border: 1px solid transparent;
+                padding: 4px;
+            }
 
-        .selected {
-            padding-left: 10px;
-            padding-right: 10px;
-            border: 1px solid lightgreen;
-            padding: 4px;
-        }
-    `]
+            .selected {
+                padding-left: 10px;
+                padding-right: 10px;
+                border: 1px solid lightgreen;
+                padding: 4px;
+            }
+        `,
+    ],
 })
 export class MoodEditor implements ICellEditorAngularComp, AfterViewInit {
     private params: any;
@@ -53,11 +62,11 @@ export class MoodEditor implements ICellEditorAngularComp, AfterViewInit {
 
     agInit(params: any): void {
         this.params = params;
-        this.setHappy(params.value === "Happy");
+        this.setHappy(params.value === 'Happy');
     }
 
     getValue(): any {
-        return this.happy ? "Happy" : "Sad";
+        return this.happy ? 'Happy' : 'Sad';
     }
 
     isPopup(): boolean {
@@ -79,8 +88,11 @@ export class MoodEditor implements ICellEditorAngularComp, AfterViewInit {
 
     onKeyDown(event: any): void {
         const key = event.key;
-        if (key == 'ArrowLeft' ||  // left
-            key == 'ArrowRight') {  // right
+        if (
+            key == 'ArrowLeft' || // left
+            key == 'ArrowRight'
+        ) {
+            // right
             this.toggleMood();
             event.stopPropagation();
         }

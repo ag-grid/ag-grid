@@ -1,44 +1,44 @@
-import { GridApi, createGrid, GridOptions, ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
-import { CellRenderer } from './cellRenderer_typescript';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { GridApi, GridOptions, ICellRendererComp, ICellRendererParams, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+
+import { CellRenderer } from './cellRenderer_typescript';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
-
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-  columnDefs: [
-    { field: 'athlete', minWidth: 180 },
-    { field: 'age' },
-    { field: 'country', minWidth: 160 },
-    { field: 'year' },
-    { field: 'date', minWidth: 160 },
-    { field: 'sport', minWidth: 180 },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
-    { field: 'total' },
-  ],
-  defaultColDef: {
-    flex: 1,
-    minWidth: 100,
-    editable: true,
-    // we use a cell renderer to include a button, so when the button
-    // gets clicked, the editing starts.
-    cellRenderer: CellRenderer,
-  },
-  // set the bottom grid to no click editing
-  suppressClickEdit: true
-}
+    columnDefs: [
+        { field: 'athlete', minWidth: 180 },
+        { field: 'age' },
+        { field: 'country', minWidth: 160 },
+        { field: 'year' },
+        { field: 'date', minWidth: 160 },
+        { field: 'sport', minWidth: 180 },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        editable: true,
+        // we use a cell renderer to include a button, so when the button
+        // gets clicked, the editing starts.
+        cellRenderer: CellRenderer,
+    },
+    // set the bottom grid to no click editing
+    suppressClickEdit: true,
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
-})
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+});

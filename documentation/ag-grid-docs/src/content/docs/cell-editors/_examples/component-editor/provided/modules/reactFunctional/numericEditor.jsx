@@ -1,5 +1,5 @@
-import React, { memo, useCallback, useEffect, useRef } from "react";
-import { useGridCellEditor } from "@ag-grid-community/react";
+import { useGridCellEditor } from '@ag-grid-community/react';
+import React, { memo, useCallback, useEffect, useRef } from 'react';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
@@ -43,8 +43,8 @@ export default memo(({ value, onValueChange, eventKey, stopEditing }) => {
             eInput.select();
         } else {
             // when we started editing, we want the caret at the end, not the start.
-            // this comes into play in two scenarios: 
-            //   a) when user hits F2 
+            // this comes into play in two scenarios:
+            //   a) when user hits F2
             //   b) when user hits a printable character
             const length = eInput.value ? eInput.value.length : 0;
             if (length > 0) {
@@ -95,7 +95,7 @@ export default memo(({ value, onValueChange, eventKey, stopEditing }) => {
     // Gets called once before editing starts, to give editor a chance to
     // cancel the editing before it even starts.
     const isCancelBeforeStart = useCallback(() => {
-        return !!eventKey && eventKey.length === 1 && ('1234567890'.indexOf(eventKey) < 0);
+        return !!eventKey && eventKey.length === 1 && '1234567890'.indexOf(eventKey) < 0;
     }, [eventKey]);
 
     // Gets called once when editing is finished (eg if Enter is pressed).
@@ -112,7 +112,8 @@ export default memo(({ value, onValueChange, eventKey, stopEditing }) => {
     });
 
     return (
-        <input ref={refInput}
+        <input
+            ref={refInput}
             value={value == null ? '' : value}
             onChange={(event) => updateValue(event.target.value)}
             onKeyDown={(event) => onKeyDown(event)}

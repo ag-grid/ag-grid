@@ -1,20 +1,26 @@
-import { Component } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-
-import { IFilterAngularComp } from "@ag-grid-community/angular";
-import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
+import { IFilterAngularComp } from '@ag-grid-community/angular';
+import { IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     standalone: true,
     imports: [FormsModule],
     template: `
-      <div style="padding: 4px">
-      <div style="font-weight: bold;">Greater than:</div>
-      <div>
-        <input style="margin: 4px 0 4px 0;" type="number" min="0" [(ngModel)]="filterText" (input)="onInputBoxChanged($event)" placeholder="Number of medals..."/>
-      </div>
-      </div>
-    `
+        <div style="padding: 4px">
+            <div style="font-weight: bold;">Greater than:</div>
+            <div>
+                <input
+                    style="margin: 4px 0 4px 0;"
+                    type="number"
+                    min="0"
+                    [(ngModel)]="filterText"
+                    (input)="onInputBoxChanged($event)"
+                    placeholder="Number of medals..."
+                />
+            </div>
+        </div>
+    `,
 })
 export class NumberFilterComponent implements IFilterAngularComp {
     filterParams!: IFilterParams;
@@ -25,7 +31,9 @@ export class NumberFilterComponent implements IFilterAngularComp {
     }
 
     doesFilterPass(params: IDoesFilterPassParams) {
-        if (!this.isFilterActive()) { return true; }
+        if (!this.isFilterActive()) {
+            return true;
+        }
 
         var { node } = params;
 
@@ -36,10 +44,12 @@ export class NumberFilterComponent implements IFilterAngularComp {
     }
 
     isFilterActive() {
-        return this.filterText !== null &&
+        return (
+            this.filterText !== null &&
             this.filterText !== undefined &&
             this.filterText !== '' &&
-            this.isNumeric(this.filterText);
+            this.isNumeric(this.filterText)
+        );
     }
 
     isNumeric(n: any) {

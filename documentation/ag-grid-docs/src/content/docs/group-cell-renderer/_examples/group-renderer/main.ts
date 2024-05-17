@@ -1,13 +1,12 @@
-import { ColDef, GridApi, createGrid, GridOptions, IGroupCellRendererParams } from '@ag-grid-community/core';
-import { getData } from "./data";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridApi, GridOptions, IGroupCellRendererParams, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-
+import { getData } from './data';
 import { SimpleCellRenderer } from './simpleCellRenderer_typescript';
 
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const columnDefs: ColDef[] = [
     // this column shows just the country group values, but has no group renderer, so there is no expand / collapse functionality.
@@ -56,7 +55,7 @@ const columnDefs: ColDef[] = [
     { headerName: 'Type', field: 'type', rowGroup: true },
     { headerName: 'Country', field: 'country', rowGroup: true },
     { headerName: 'City', field: 'city' },
-]
+];
 
 let gridApi: GridApi;
 
@@ -73,10 +72,10 @@ const gridOptions: GridOptions = {
     groupDefaultExpanded: 1,
     rowSelection: 'multiple',
     groupSelectsChildren: true,
-}
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-})
+});

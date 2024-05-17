@@ -1,17 +1,23 @@
-import { Component } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-
-import { IFloatingFilterAngularComp } from "@ag-grid-community/angular";
-import { IFloatingFilterParams, ISimpleFilter } from "@ag-grid-community/core";
+import { IFloatingFilterAngularComp } from '@ag-grid-community/angular';
+import { IFloatingFilterParams, ISimpleFilter } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 export interface CustomParams {
-    color: string
+    color: string;
 }
 @Component({
     standalone: true,
     imports: [FormsModule],
-    template: `&gt; <input [style.borderColor]="params.color" style="width: 30px;" type="number" min="0" [(ngModel)]="currentValue"
-                           (input)="onInputBoxChanged($event)"/>`
+    template: `&gt;
+        <input
+            [style.borderColor]="params.color"
+            style="width: 30px;"
+            type="number"
+            min="0"
+            [(ngModel)]="currentValue"
+            (input)="onInputBoxChanged($event)"
+        />`,
 })
 export class NumberFloatingFilterComponent implements IFloatingFilterAngularComp {
     params!: IFloatingFilterParams<ISimpleFilter> & CustomParams;
@@ -22,8 +28,8 @@ export class NumberFloatingFilterComponent implements IFloatingFilterAngularComp
         this.params = params;
 
         this.style = {
-            color: params.color
-        }
+            color: params.color,
+        };
     }
 
     onParentModelChanged(parentModel: any) {

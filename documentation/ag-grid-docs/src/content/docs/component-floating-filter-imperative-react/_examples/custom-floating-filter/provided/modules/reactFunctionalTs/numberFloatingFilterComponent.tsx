@@ -1,8 +1,8 @@
-import React, { forwardRef, Fragment, useImperativeHandle, useRef, useState } from 'react';
-import { IFloatingFilterParams, NumberFilterModel } from "@ag-grid-community/core";
+import { IFloatingFilterParams, NumberFilterModel } from '@ag-grid-community/core';
+import React, { Fragment, forwardRef, useImperativeHandle, useRef, useState } from 'react';
 
 export interface CustomParams extends IFloatingFilterParams {
-    color: string
+    color: string;
 }
 
 export default forwardRef((props: CustomParams, ref) => {
@@ -21,30 +21,28 @@ export default forwardRef((props: CustomParams, ref) => {
                     inputRef.current!.value = parentModel.filter + '';
                     setCurrentValue(parentModel.filter!);
                 }
-            }
-
-        }
+            },
+        };
     });
-
 
     const onInputBoxChanged = (input: any) => {
         if (input.target.value === '') {
             // Remove the filter
-            props.parentFilterInstance(instance => {
+            props.parentFilterInstance((instance) => {
                 instance.onFloatingFilterChanged(null, null);
             });
             return;
         }
 
         setCurrentValue(Number(input.target.value));
-        props.parentFilterInstance(instance => {
+        props.parentFilterInstance((instance) => {
             instance.onFloatingFilterChanged('greaterThan', input.target.value);
         });
-    }
+    };
 
     const style = {
         borderColor: props.color,
-        width: "30px"
+        width: '30px',
     };
 
     return (

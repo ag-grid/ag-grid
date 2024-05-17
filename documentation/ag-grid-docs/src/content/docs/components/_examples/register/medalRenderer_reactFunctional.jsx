@@ -10,4 +10,4 @@ export default (props) => {
             <button onClick={() => alert(`${total} medals won!`)}>Push For Total</button>
         </span>
     );
-}
+};

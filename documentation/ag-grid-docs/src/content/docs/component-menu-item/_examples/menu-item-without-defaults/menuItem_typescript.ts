@@ -44,12 +44,12 @@ export class MenuItem implements IMenuItemComp {
             this.eIcon.classList.toggle('ag-icon-tree-closed', this.filterDisplayed);
             this.eIcon.classList.toggle('ag-icon-tree-open', !this.filterDisplayed);
             this.filterDisplayed = !this.filterDisplayed;
-        }
+        };
         this.eOption.addEventListener('click', this.clickListener);
         this.mouseEnterListener = () => {
             this.setActive(true);
             params.onItemActivated();
-        }
+        };
         this.eOption.addEventListener('mouseenter', this.mouseEnterListener);
         this.mouseLeaveListener = () => this.setActive(false);
         this.eOption.addEventListener('mouseleave', this.mouseLeaveListener);
@@ -64,7 +64,7 @@ export class MenuItem implements IMenuItemComp {
             // stop the menu from handling keyboard navigation inside the filter
             e.stopPropagation();
         };
-        this.eFilterWrapper.addEventListener('keydown', this.filterWrapperKeyDownListener)
+        this.eFilterWrapper.addEventListener('keydown', this.filterWrapperKeyDownListener);
     }
 
     getGui(): HTMLElement {
@@ -86,6 +86,6 @@ export class MenuItem implements IMenuItemComp {
         this.eOption.removeEventListener('mouseenter', this.mouseEnterListener);
         this.eOption.removeEventListener('mouseleave', this.mouseLeaveListener);
         this.eOption.removeEventListener('keydown', this.optionKeyDownListener);
-        this.eFilterWrapper.removeEventListener('keydown', this.filterWrapperKeyDownListener)
+        this.eFilterWrapper.removeEventListener('keydown', this.filterWrapperKeyDownListener);
     }
 }

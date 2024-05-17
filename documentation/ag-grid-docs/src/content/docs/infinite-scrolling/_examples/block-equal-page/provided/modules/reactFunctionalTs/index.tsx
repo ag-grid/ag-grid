@@ -1,17 +1,18 @@
 'use strict';
-import React, { useCallback, useMemo, useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
+
 import { ColDef, GetRowIdParams, GridReadyEvent, IDatasource, ModuleRegistry } from '@ag-grid-community/core';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import './styles.css';
-import { countries } from './countries';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import React, { useCallback, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 
+import { countries } from './countries';
+import './styles.css';
 
 ModuleRegistry.registerModules([InfiniteRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule]);
 
@@ -19,7 +20,7 @@ const filterParams = { values: countries() };
 
 const sortAndFilter = (allOfTheData: any[], sortModel: any, filterModel: any) => {
     return sortData(sortModel, filterData(filterModel, allOfTheData));
-}
+};
 
 const sortData = (sortModel: any, data: any[]) => {
     const sortPresent = sortModel && sortModel.length > 0;
@@ -48,7 +49,7 @@ const sortData = (sortModel: any, data: any[]) => {
         return 0;
     });
     return resultOfSort;
-}
+};
 
 const filterData = (filterModel: any, data: any[]) => {
     const filterPresent = filterModel && Object.keys(filterModel).length > 0;
@@ -92,11 +93,9 @@ const filterData = (filterModel: any, data: any[]) => {
         resultOfFilter.push(item);
     }
     return resultOfFilter;
-}
-
+};
 
 const GridExample = () => {
-
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
 
@@ -149,17 +148,15 @@ const GridExample = () => {
             minWidth: 150,
 
             floatingFilter: true,
-        }
+        };
     }, []);
     const getRowId = useCallback(function (params: GetRowIdParams) {
         return params.data.id;
     }, []);
 
-
     const onGridReady = useCallback((params: GridReadyEvent) => {
-
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then(resp => resp.json())
+            .then((resp) => resp.json())
             .then((data: any[]) => {
                 // give each row an id
                 data.forEach(function (x, index) {
@@ -173,7 +170,11 @@ const GridExample = () => {
                         // To make the demo look real, wait for 500ms before returning
                         setTimeout(function () {
                             // take a slice of the total rows
-                            const dataAfterSortingAndFiltering = sortAndFilter(data, params.sortModel, params.filterModel);
+                            const dataAfterSortingAndFiltering = sortAndFilter(
+                                data,
+                                params.sortModel,
+                                params.filterModel
+                            );
                             const rowsThisPage = dataAfterSortingAndFiltering.slice(params.startRow, params.endRow);
                             // if on or after the last page, work out the last row.
                             let lastRow = -1;
@@ -189,11 +190,15 @@ const GridExample = () => {
             });
     }, []);
 
-
     return (
         <div style={containerStyle}>
-
-            <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+            <div
+                style={gridStyle}
+                className={
+                    /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+                    'ag-theme-quartz' /** DARK MODE END **/
+                }
+            >
                 <AgGridReact
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
@@ -208,11 +213,9 @@ const GridExample = () => {
                     onGridReady={onGridReady}
                 />
             </div>
-
         </div>
     );
-
-}
+};
 
 const root = createRoot(document.getElementById('root')!);
 root.render(<GridExample />);

@@ -1,16 +1,22 @@
 'use strict';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {
+    ColDef,
+    GetRowIdParams,
+    ModuleRegistry,
+    ValueFormatterParams,
+    ValueGetterParams,
+} from '@ag-grid-community/core';
+import { AgGridReact } from '@ag-grid-community/react';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
+
 import './styles.css';
 
-
-import { ColDef, GetRowIdParams, ModuleRegistry, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const MIN_BOOK_COUNT = 10;
@@ -64,7 +70,7 @@ let nextBatchId = 101;
 // gives us an indication to how many rows get recalculated when data changes
 const changeValueGetter = (params: ValueGetterParams) => {
     return params.data.previous - params.data.current;
-}
+};
 
 // build up the test data
 const createRowData = () => {
@@ -89,11 +95,11 @@ const createRowData = () => {
         }
     }
     return data;
-}
+};
 
 const randomBetween = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+};
 
 const createTradeRecord = (product: string, portfolio: string, book: string, batch: number) => {
     const current = Math.floor(Math.random() * 100000) + 100;
@@ -117,23 +123,23 @@ const createTradeRecord = (product: string, portfolio: string, book: string, bat
         batch: batch,
     };
     return trade;
-}
+};
 
 const numberCellFormatter = (params: ValueFormatterParams) => {
     return Math.floor(params.value)
         .toString()
         .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-}
+};
 
 const createBookName = () => {
     nextBookId++;
     return 'GL-' + nextBookId;
-}
+};
 
 const createTradeId = () => {
     nextTradeId++;
     return nextTradeId;
-}
+};
 
 const updateSomeItems = (rowData: any) => {
     const updateCount = randomBetween(1, 6);
@@ -151,7 +157,7 @@ const updateSomeItems = (rowData: any) => {
         });
         rowData[indexToUpdate] = updatedItem;
     }
-}
+};
 
 const addSomeItems = (rowData: any) => {
     const addCount = randomBetween(1, 6);
@@ -164,7 +170,7 @@ const addSomeItems = (rowData: any) => {
         const trade = createTradeRecord(product, portfolio, book, batch);
         rowData.push(trade);
     }
-}
+};
 
 const removeSomeItems = (rowData: any) => {
     const removeCount = randomBetween(1, 6);
@@ -175,7 +181,7 @@ const removeSomeItems = (rowData: any) => {
         const indexToRemove = randomBetween(0, rowData.length);
         rowData.splice(indexToRemove, 1);
     }
-}
+};
 
 // makes a copy of the original and merges in the new values
 const updateImmutableObject = (original: any, newValues: any) => {
@@ -190,10 +196,9 @@ const updateImmutableObject = (original: any, newValues: any) => {
         newObject[key] = newValues[key];
     });
     return newObject;
-}
+};
 
 const GridExample = () => {
-
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
 
@@ -339,25 +344,22 @@ const GridExample = () => {
             enableRowGroup: true,
             enablePivot: true,
             filter: 'agTextColumnFilter',
-          },
-          {
+        },
+        {
             headerName: 'Bid',
             field: 'bidFlag',
             enableRowGroup: true,
             enablePivot: true,
             width: 100,
             filter: 'agTextColumnFilter',
-          },
-          { field: 'comment',
-            editable: true,
-            filter: 'agTextColumnFilter',
-          },
+        },
+        { field: 'comment', editable: true, filter: 'agTextColumnFilter' },
     ]);
     const defaultColDef = useMemo<ColDef>(() => {
         return {
             width: 120,
             filter: 'agNumberColumnFilter',
-        }
+        };
     }, []);
     const autoGroupColumnDef = useMemo(() => {
         return {
@@ -366,7 +368,7 @@ const GridExample = () => {
             cellRendererParams: {
                 checkbox: true,
             },
-        }
+        };
     }, []);
     const getRowId = useCallback(function (params: GetRowIdParams) {
         return params.data.trade;
@@ -378,7 +380,7 @@ const GridExample = () => {
         addSomeItems(rowData);
         updateSomeItems(rowData);
         setGlobalData(rowData);
-    }, [globalRowData])
+    }, [globalRowData]);
 
     // update rowData when our "global store" updates
     useEffect(() => setRowData(globalRowData), [globalRowData]);
@@ -386,13 +388,18 @@ const GridExample = () => {
     return (
         <div style={containerStyle}>
             <div className="example-wrapper">
-                <div style={{ "marginBottom": "5px" }}>
+                <div style={{ marginBottom: '5px' }}>
                     <button onClick={updateData}>Update</button>
                 </div>
 
-                <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+                <div
+                    style={gridStyle}
+                    className={
+                        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+                        'ag-theme-quartz' /** DARK MODE END **/
+                    }
+                >
                     <AgGridReact
-
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
@@ -404,12 +411,9 @@ const GridExample = () => {
                     />
                 </div>
             </div>
-
-
         </div>
     );
-
-}
+};
 
 const root = createRoot(document.getElementById('root')!);
 root.render(<GridExample />);

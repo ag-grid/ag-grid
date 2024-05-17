@@ -10,4 +10,3 @@ export class CustomLoadingCellRenderer {
         return this.eGui;
     }
 }
-

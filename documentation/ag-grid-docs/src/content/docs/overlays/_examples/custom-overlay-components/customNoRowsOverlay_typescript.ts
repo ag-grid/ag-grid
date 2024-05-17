@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class CustomNoRowsOverlay implements ICellRendererComp {
     eGui!: HTMLElement;
@@ -20,4 +20,3 @@ export class CustomNoRowsOverlay implements ICellRendererComp {
         return false;
     }
 }
-

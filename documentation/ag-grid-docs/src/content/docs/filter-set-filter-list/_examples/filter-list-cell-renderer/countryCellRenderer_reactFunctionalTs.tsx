@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
 import { CustomCellRendererProps } from '@ag-grid-community/react';
+import React, { useEffect, useState } from 'react';
 
 export default (props: CustomCellRendererProps & { isFilterRenderer?: boolean }) => {
     const [value, setValue] = useState<string>('');
@@ -15,7 +15,7 @@ export default (props: CustomCellRendererProps & { isFilterRenderer?: boolean })
 
             setValue(`${flagImage} ${props.value}`);
         }
-    }, [])
+    }, []);
 
     return <div dangerouslySetInnerHTML={{ __html: value }}></div>;
-}
+};

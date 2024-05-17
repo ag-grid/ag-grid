@@ -1,11 +1,10 @@
-import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class DetailCellRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
     eParentEl!: HTMLElement;
 
     init(params: ICellRendererParams) {
-
         var firstRecord = params.data.callRecords[0];
 
         this.eParentEl = params.eParentOfValue;
@@ -17,19 +16,25 @@ export class DetailCellRenderer implements ICellRendererComp {
             '  <p>' +
             '    <label>' +
             '      Call Id:<br>' +
-            '    <input type="text" value="' + firstRecord.callId + '">' +
+            '    <input type="text" value="' +
+            firstRecord.callId +
+            '">' +
             '    </label>' +
             '  </p>' +
             '  <p>' +
             '    <label>' +
             '      Number:<br>' +
-            '    <input type="text" value="' + firstRecord.number + '">' +
+            '    <input type="text" value="' +
+            firstRecord.number +
+            '">' +
             '    </label>' +
             '  </p>' +
             '  <p>' +
             '    <label>' +
             '      Direction:<br>' +
-            '    <input type="text" value="' + firstRecord.direction + '">' +
+            '    <input type="text" value="' +
+            firstRecord.direction +
+            '">' +
             '    </label>' +
             '  </p>' +
             '</form>' +
@@ -55,17 +60,18 @@ export class DetailCellRenderer implements ICellRendererComp {
             if (el.checkVisibility) {
                 return el.checkVisibility({
                     checkOpacity: true,
-                    checkVisibilityCSS: true
+                    checkVisibilityCSS: true,
                 });
             }
             return !!el.offsetParent && window.getComputedStyle(el).visibility === 'visible';
         });
-      
+
         // Navigating forward, or unknown previous row
         if (!previousRow || currentRow >= previousRow) {
             // Focus on the first input
             inputs[0].focus();
-        } else { // Navigating backwards
+        } else {
+            // Navigating backwards
             // Focus on the last input
             inputs[inputs.length - 1].focus();
         }
@@ -80,8 +86,10 @@ const findRowForEl = (el: HTMLElement): HTMLElement | null => {
     let rowEl: HTMLElement | null = el;
     while (rowEl) {
         rowEl = rowEl.parentElement;
-        if (rowEl && rowEl.getAttribute('role') === 'row') { return rowEl; }
+        if (rowEl && rowEl.getAttribute('role') === 'row') {
+            return rowEl;
+        }
     }
 
     return null;
-}
+};

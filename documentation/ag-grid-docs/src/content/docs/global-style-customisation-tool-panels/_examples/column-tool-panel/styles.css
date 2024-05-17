@@ -1,6 +1,6 @@
 .ag-theme-quartz,
 .ag-theme-quartz-dark {
-    --ag-column-select-indent-size: 40px
+    --ag-column-select-indent-size: 40px;
 }
 
 .ag-theme-quartz .ag-column-drop-cell,

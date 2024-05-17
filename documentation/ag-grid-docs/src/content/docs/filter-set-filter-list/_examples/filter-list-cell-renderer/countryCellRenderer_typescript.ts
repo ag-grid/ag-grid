@@ -1,4 +1,4 @@
-import { ICellRendererParams, ICellRendererComp } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class CountryCellRenderer implements ICellRendererComp {
     eGui!: HTMLDivElement;
@@ -11,7 +11,6 @@ export class CountryCellRenderer implements ICellRendererComp {
         } else if (params.value === '(Select All)') {
             this.eGui.innerHTML = params.value;
         } else {
-
             const url = `https://flags.fmcdn.net/data/flags/mini/${params.context.COUNTRY_CODES[params.value]}.png`;
             const flagImage = `<img class="flag" border="0" width="15" height="10" src="${url}">`;
 
@@ -24,7 +23,6 @@ export class CountryCellRenderer implements ICellRendererComp {
     }
 
     refresh() {
-        return false
+        return false;
     }
 }
-

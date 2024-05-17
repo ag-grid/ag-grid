@@ -1,20 +1,15 @@
-import {
-    ColDef,
-    GridApi,
-    createGrid,
-    GridOptions,
-} from '@ag-grid-community/core';
-import { getData } from "./data";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RichSelectModule]);
-
-import { SimpleTextEditor } from './simpleTextEditor_typescript';
+import { getData } from './data';
 import { GenderRenderer } from './genderRenderer_typescript';
 import { MoodEditor } from './moodEditor_typescript';
 import { MoodRenderer } from './moodRenderer_typescript';
+import { SimpleTextEditor } from './simpleTextEditor_typescript';
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, RichSelectModule]);
 
 const columnDefs: ColDef[] = [
     { field: 'first_name', headerName: 'Provided Text' },
@@ -44,8 +39,8 @@ const columnDefs: ColDef[] = [
         cellRenderer: MoodRenderer,
         cellEditor: MoodEditor,
         cellEditorPopup: true,
-    }
-]
+    },
+];
 
 let gridApi: GridApi;
 
@@ -56,11 +51,11 @@ const gridOptions: GridOptions = {
         editable: true,
         flex: 1,
         minWidth: 100,
-    }
-}
+    },
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-})
+});

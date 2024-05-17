@@ -1,18 +1,23 @@
-import React, { useCallback, useRef } from 'react';
-import { IAfterGuiAttachedParams, IDoesFilterPassParams } from "@ag-grid-community/core";
+import { IAfterGuiAttachedParams, IDoesFilterPassParams } from '@ag-grid-community/core';
 import { CustomFilterProps, useGridFilter } from '@ag-grid-community/react';
+import React, { useCallback, useRef } from 'react';
 
 export default ({ model, onModelChange, getValue }: CustomFilterProps) => {
     const refInput = useRef<HTMLInputElement>(null);
 
-    const doesFilterPass = useCallback((params: IDoesFilterPassParams) => {
-        const { node } = params;
-        const filterText: string = model;
-        const value: string = getValue(node).toString().toLowerCase();
-        // make sure each word passes separately, ie search for firstname, lastname
-        return filterText.toLowerCase().split(' ')
-            .every(filterWord => value.indexOf(filterWord) >= 0);
-    }, [model]);
+    const doesFilterPass = useCallback(
+        (params: IDoesFilterPassParams) => {
+            const { node } = params;
+            const filterText: string = model;
+            const value: string = getValue(node).toString().toLowerCase();
+            // make sure each word passes separately, ie search for firstname, lastname
+            return filterText
+                .toLowerCase()
+                .split(' ')
+                .every((filterWord) => value.indexOf(filterWord) >= 0);
+        },
+        [model]
+    );
 
     const afterGuiAttached = useCallback((params?: IAfterGuiAttachedParams) => {
         if (!params || !params.suppressFocus) {
@@ -30,18 +35,20 @@ export default ({ model, onModelChange, getValue }: CustomFilterProps) => {
     });
 
     return (
-        <div className='person-filter'>
+        <div className="person-filter">
             <div>Custom Athlete Filter</div>
             <div>
                 <input
                     ref={refInput}
                     type="text"
                     value={model || ''}
-                    onChange={({ target: { value }}) => onModelChange(value === '' ? null : value)}
+                    onChange={({ target: { value } }) => onModelChange(value === '' ? null : value)}
                     placeholder="Full name search..."
                 />
             </div>
-            <div>This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.</div>
+            <div>
+                This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.
+            </div>
         </div>
-    )
+    );
 };

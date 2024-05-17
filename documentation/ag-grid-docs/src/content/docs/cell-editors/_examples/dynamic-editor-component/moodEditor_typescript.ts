@@ -1,4 +1,4 @@
-import { ICellEditorComp, ICellEditorParams } from "@ag-grid-community/core";
+import { ICellEditorComp, ICellEditorParams } from '@ag-grid-community/core';
 
 export class MoodEditor implements ICellEditorComp {
     mood!: string;
@@ -8,8 +8,11 @@ export class MoodEditor implements ICellEditorComp {
 
     onKeyDown(event: any) {
         var key = event.key;
-        if (key === 'ArrowLeft' ||  // left
-            key == 'ArrowRight') {  // right
+        if (
+            key === 'ArrowLeft' || // left
+            key == 'ArrowRight'
+        ) {
+            // right
             this.toggleMood();
             event.stopPropagation();
         }
@@ -21,8 +24,8 @@ export class MoodEditor implements ICellEditorComp {
 
     init(params: ICellEditorParams) {
         this.container = document.createElement('div');
-        this.container.className = 'mood'
-        this.container.tabIndex = '0';                // to allow the div to capture events
+        this.container.className = 'mood';
+        this.container.tabIndex = '0'; // to allow the div to capture events
 
         this.happyImg = document.createElement('img');
         this.happyImg.src = 'https://www.ag-grid.com/example-assets/smileys/happy.png';
@@ -50,8 +53,8 @@ export class MoodEditor implements ICellEditorComp {
 
     selectMood(mood: string) {
         this.mood = mood;
-        this.happyImg.className = (mood === 'Happy') ? 'selected' : 'default';
-        this.sadImg.className = (mood === 'Sad') ? 'selected' : 'default';
+        this.happyImg.className = mood === 'Happy' ? 'selected' : 'default';
+        this.sadImg.className = mood === 'Sad' ? 'selected' : 'default';
     }
 
     // gets called once when grid ready to insert the element
@@ -68,6 +71,5 @@ export class MoodEditor implements ICellEditorComp {
     }
 
     // any cleanup we need to be done here
-    destroy() {
-    }
+    destroy() {}
 }

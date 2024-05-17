@@ -1,8 +1,8 @@
-import { ColDef, ColumnPinnedEvent, ColumnState, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
-import { ControlsCellRenderer } from './controlsCellRenderer_typescript'
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { ColDef, ColumnPinnedEvent, ColumnState, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+
+import { ControlsCellRenderer } from './controlsCellRenderer_typescript';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -31,7 +31,7 @@ const columnDefs: ColDef[] = [
     { field: 'silver' },
     { field: 'bronze' },
     { field: 'total' },
-]
+];
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -42,52 +42,51 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     onColumnPinned: onColumnPinned,
     suppressDragLeaveHidesColumns: true,
-}
+};
 
 function onColumnPinned(event: ColumnPinnedEvent) {
-    const allCols = event.api.getAllGridColumns()
+    const allCols = event.api.getAllGridColumns();
 
-    const allFixedCols = allCols.filter(col => col.getColDef().lockPosition)
-    const allNonFixedCols = allCols.filter(col => !col.getColDef().lockPosition)
+    const allFixedCols = allCols.filter((col) => col.getColDef().lockPosition);
+    const allNonFixedCols = allCols.filter((col) => !col.getColDef().lockPosition);
 
-    const pinnedCount = allNonFixedCols.filter(col => col.getPinned() === 'left')
-        .length
+    const pinnedCount = allNonFixedCols.filter((col) => col.getPinned() === 'left').length;
 
-    const pinFixed = pinnedCount > 0
+    const pinFixed = pinnedCount > 0;
 
-    const columnStates: ColumnState[] = []
-    allFixedCols.forEach(col => {
+    const columnStates: ColumnState[] = [];
+    allFixedCols.forEach((col) => {
         if (pinFixed !== col.isPinned()) {
             columnStates.push({
                 colId: col.getId(),
                 pinned: pinFixed ? 'left' : null,
-            })
+            });
         }
-    })
+    });
 
     if (columnStates.length > 0) {
-        event.api.applyColumnState({ state: columnStates })
+        event.api.applyColumnState({ state: columnStates });
     }
 }
 
 function onPinAthlete() {
     gridApi!.applyColumnState({
         state: [{ colId: 'athlete', pinned: 'left' }],
-    })
+    });
 }
 
 function onUnpinAthlete() {
     gridApi!.applyColumnState({
         state: [{ colId: 'athlete', pinned: null }],
-    })
+    });
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
-})
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+});

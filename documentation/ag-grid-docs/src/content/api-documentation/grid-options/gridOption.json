@@ -1,15 +1,13 @@
 {
-    "_config_": {
-    },
+    "_config_": {},
     "gridOptions": {
         "meta": {
             "displayName": "Grid Options"
         },
-        "gridOptions": {            
-            "description" : "All the above properties can also be specified on a single `gridOptions` object. If an option is set via `gridOptions`, as well as directly on the component, then the component value will take precedence. `gridOptions` is only read during initialisation, if you change it afterwards it will not impact the grid.",
+        "gridOptions": {
+            "description": "All the above properties can also be specified on a single `gridOptions` object. If an option is set via `gridOptions`, as well as directly on the component, then the component value will take precedence. `gridOptions` is only read during initialisation, if you change it afterwards it will not impact the grid.",
             "type": "GridOptions",
             "tags": [{ "name": "initial" }]
-
         }
     }
 }

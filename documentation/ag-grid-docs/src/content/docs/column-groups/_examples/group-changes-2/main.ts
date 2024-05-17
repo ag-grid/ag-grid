@@ -1,82 +1,81 @@
-import { GridApi, createGrid, GridOptions, ColDef, ColGroupDef } from '@ag-grid-community/core';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { ColDef, ColGroupDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 function createNormalColDefs(): (ColDef | ColGroupDef)[] {
-  return [
-    {
-      headerName: 'Athlete Details',
-      headerClass: 'participant-group',
-      children: [
-        { field: 'athlete', colId: 'athlete' },
-        { field: 'country', colId: 'country' },
-      ],
-    },
-    { field: 'age', colId: 'age' },
-    {
-      headerName: 'Sports Results',
-      headerClass: 'medals-group',
-      children: [
-        { field: 'sport', colId: 'sport' },
-        { field: 'gold', colId: 'gold' },
-      ],
-    },
-  ]
+    return [
+        {
+            headerName: 'Athlete Details',
+            headerClass: 'participant-group',
+            children: [
+                { field: 'athlete', colId: 'athlete' },
+                { field: 'country', colId: 'country' },
+            ],
+        },
+        { field: 'age', colId: 'age' },
+        {
+            headerName: 'Sports Results',
+            headerClass: 'medals-group',
+            children: [
+                { field: 'sport', colId: 'sport' },
+                { field: 'gold', colId: 'gold' },
+            ],
+        },
+    ];
 }
 
 function createExtraColDefs(): (ColDef | ColGroupDef)[] {
-  return [
-    {
-      headerName: 'Athlete Details',
-      headerClass: 'participant-group',
-      children: [
-        { field: 'athlete', colId: 'athlete' },
-        { field: 'country', colId: 'country' },
-        { field: 'region1', colId: 'region1' },
-        { field: 'region2', colId: 'region2' },
-      ],
-    },
-    { field: 'age', colId: 'age' },
-    { field: 'distance', colId: 'distance' },
-    {
-      headerName: 'Sports Results',
-      headerClass: 'medals-group',
-      children: [
-        { field: 'sport', colId: 'sport' },
-        { field: 'gold', colId: 'gold' },
-      ],
-    },
-  ]
+    return [
+        {
+            headerName: 'Athlete Details',
+            headerClass: 'participant-group',
+            children: [
+                { field: 'athlete', colId: 'athlete' },
+                { field: 'country', colId: 'country' },
+                { field: 'region1', colId: 'region1' },
+                { field: 'region2', colId: 'region2' },
+            ],
+        },
+        { field: 'age', colId: 'age' },
+        { field: 'distance', colId: 'distance' },
+        {
+            headerName: 'Sports Results',
+            headerClass: 'medals-group',
+            children: [
+                { field: 'sport', colId: 'sport' },
+                { field: 'gold', colId: 'gold' },
+            ],
+        },
+    ];
 }
 
 function onBtNormalCols() {
-  gridApi!.setGridOption('columnDefs', createNormalColDefs())
+    gridApi!.setGridOption('columnDefs', createNormalColDefs());
 }
 
 function onBtExtraCols() {
-  gridApi!.setGridOption('columnDefs', createExtraColDefs())
+    gridApi!.setGridOption('columnDefs', createExtraColDefs());
 }
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-  defaultColDef: {
-    width: 150,
-  },
-  // debug: true,
-  columnDefs: createNormalColDefs(),
-  rowData: null,
-}
+    defaultColDef: {
+        width: 150,
+    },
+    // debug: true,
+    columnDefs: createNormalColDefs(),
+    rowData: null,
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
-})
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+});

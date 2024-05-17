@@ -296,8 +296,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'ABEV',
-            name:
-                'Ambev S.A. American Depositary Shares (Each representing 1 Common Share)',
+            name: 'Ambev S.A. American Depositary Shares (Each representing 1 Common Share)',
             change: [10],
             volume: '$27,226,664',
         },
@@ -405,8 +404,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'ASX',
-            name:
-                'ASE Technology Holding Co. Ltd. American Depositary Shares (each representing Two Common Shares) ',
+            name: 'ASE Technology Holding Co. Ltd. American Depositary Shares (each representing Two Common Shares) ',
             change: [50],
             volume: '$3,302,831',
         },
@@ -496,8 +494,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BABA',
-            name:
-                'Alibaba Group Holding Limited American Depositary Shares each representing eight Ordinary share',
+            name: 'Alibaba Group Holding Limited American Depositary Shares each representing eight Ordinary share',
             change: [70],
             volume: '$16,420,945',
         },
@@ -539,8 +536,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BBDO',
-            name:
-                'Banco Bradesco Sa American Depositary Shares (each representing one Common Share)',
+            name: 'Banco Bradesco Sa American Depositary Shares (each representing one Common Share)',
             change: [50],
             volume: '$17,324',
         },
@@ -588,8 +584,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BEKE',
-            name:
-                'KE Holdings Inc American Depositary Shares (each representing three Class A Ordinary Shares)',
+            name: 'KE Holdings Inc American Depositary Shares (each representing three Class A Ordinary Shares)',
             change: [80],
             volume: '$8,117,044',
         },
@@ -625,8 +620,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BHP',
-            name:
-                'BHP Group Limited American Depositary Shares (Each representing two Ordinary Shares)',
+            name: 'BHP Group Limited American Depositary Shares (Each representing two Ordinary Shares)',
             change: [90],
             volume: '$3,366,756',
         },
@@ -758,8 +752,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'BSBR',
-            name:
-                'Banco Santander Brasil SA American Depositary Shares each representing one unit',
+            name: 'Banco Santander Brasil SA American Depositary Shares each representing one unit',
             change: [80],
             volume: '$1,306,698',
         },
@@ -1185,8 +1178,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'CQP',
-            name:
-                'Cheniere Energy Partners LP Cheniere Energy Partners LP Common Units',
+            name: 'Cheniere Energy Partners LP Cheniere Energy Partners LP Common Units',
             change: [20],
             volume: '$20,985',
         },
@@ -1432,8 +1424,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'DIDI',
-            name:
-                'DiDi Global Inc. American Depositary Shares (each four representing one Class A Ordinary Share)',
+            name: 'DiDi Global Inc. American Depositary Shares (each four representing one Class A Ordinary Share)',
             change: [20],
             volume: '$44,804,453',
         },
@@ -1475,7 +1466,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'DKS',
-            name: 'Dick\'s Sporting Goods Inc Common Stock',
+            name: "Dick's Sporting Goods Inc Common Stock",
             change: [20],
             volume: '$2,587,211',
         },
@@ -1523,7 +1514,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'DPZ',
-            name: 'Domino\'s Pizza Inc Common Stock',
+            name: "Domino's Pizza Inc Common Stock",
             change: [70],
             volume: '$373,007',
         },
@@ -1595,8 +1586,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'EBR',
-            name:
-                'Centrais Electricas Brasileiras S A American Depositary Shares (Each representing one Common Share)',
+            name: 'Centrais Electricas Brasileiras S A American Depositary Shares (Each representing one Common Share)',
             change: [70],
             volume: '$451,820',
         },
@@ -2022,15 +2012,13 @@ export function getData(): any[] {
         },
         {
             symbol: 'FWONA',
-            name:
-                'Liberty Media Corporation Series A Liberty Formula One Common Stock',
+            name: 'Liberty Media Corporation Series A Liberty Formula One Common Stock',
             change: [50],
             volume: '$139,730',
         },
         {
             symbol: 'FWONK',
-            name:
-                'Liberty Media Corporation Series C Liberty Formula One Common Stock',
+            name: 'Liberty Media Corporation Series C Liberty Formula One Common Stock',
             change: [70],
             volume: '$499,069',
         },
@@ -2426,8 +2414,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'IHG',
-            name:
-                'Intercontinental Hotels Group American Depositary Shares (Each representing one Ordinary Share)',
+            name: 'Intercontinental Hotels Group American Depositary Shares (Each representing one Ordinary Share)',
             change: [80],
             volume: '$98,507',
         },
@@ -2529,8 +2516,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'ITUB',
-            name:
-                'Itau Unibanco Banco Holding SA American Depositary Shares (Each repstg 500 Preferred shares)',
+            name: 'Itau Unibanco Banco Holding SA American Depositary Shares (Each repstg 500 Preferred shares)',
             change: [90],
             volume: '$27,738,938',
         },
@@ -2854,7 +2840,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'LOW',
-            name: 'Lowe\'s Companies Inc. Common Stock',
+            name: "Lowe's Companies Inc. Common Stock",
             change: [30],
             volume: '$2,260,871',
         },
@@ -2902,8 +2888,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'LU',
-            name:
-                'Lufax Holding Ltd American Depositary Shares two of which representing one Ordinary Share',
+            name: 'Lufax Holding Ltd American Depositary Shares two of which representing one Ordinary Share',
             change: [20],
             volume: '$4,100,084',
         },
@@ -2933,8 +2918,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'LYB',
-            name:
-                'LyondellBasell Industries NV Ordinary Shares Class A (Netherlands)',
+            name: 'LyondellBasell Industries NV Ordinary Shares Class A (Netherlands)',
             change: [100],
             volume: '$2,905,806',
         },
@@ -2994,7 +2978,7 @@ export function getData(): any[] {
         },
         {
             symbol: 'MCD',
-            name: 'McDonald\'s Corporation Common Stock',
+            name: "McDonald's Corporation Common Stock",
             change: [40],
             volume: '$1,339,267',
         },
@@ -3016,5 +3000,5 @@ export function getData(): any[] {
             change: [30],
             volume: '$508,270',
         },
-    ]
+    ];
 }

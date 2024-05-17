@@ -1,18 +1,20 @@
+import { IFilterAngularComp } from '@ag-grid-community/angular';
+import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/core';
 import { Component, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/core';
-import { IFilterAngularComp } from '@ag-grid-community/angular';
 
 @Component({
     standalone: true,
     imports: [FormsModule],
     template: `
         <div class="container">
-            Partial Match Filter: <input #input (ngModelChange)="onChange($event)" [ngModel]="text" class="form-control">
+            Partial Match Filter:
+            <input #input (ngModelChange)="onChange($event)" [ngModel]="text" class="form-control" />
         </div>
-    `, styles: [
+    `,
+    styles: [
         `
-           .container {
+            .container {
                 border-radius: 5px;
                 width: 200px;
                 height: 50px;
@@ -20,10 +22,10 @@ import { IFilterAngularComp } from '@ag-grid-community/angular';
             }
 
             input {
-                height: 20px
+                height: 20px;
             }
-        `
-    ]
+        `,
+    ],
 })
 export class PartialMatchFilter implements IFilterAngularComp {
     private filterParams!: IFilterParams;
@@ -43,13 +45,16 @@ export class PartialMatchFilter implements IFilterAngularComp {
         const { node } = params;
         const value = this.filterParams.getValue(node).toString().toLowerCase();
 
-        return this.text.toLowerCase()
+        return this.text
+            .toLowerCase()
             .split(' ')
-            .every(filterWord => value.indexOf(filterWord) >= 0);
+            .every((filterWord) => value.indexOf(filterWord) >= 0);
     }
 
     getModel(): any {
-        if (!this.isFilterActive()) { return null; }
+        if (!this.isFilterActive()) {
+            return null;
+        }
 
         return { value: this.text };
     }

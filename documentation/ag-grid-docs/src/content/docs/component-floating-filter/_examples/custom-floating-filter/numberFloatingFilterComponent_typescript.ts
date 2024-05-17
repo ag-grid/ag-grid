@@ -1,7 +1,7 @@
-import { IFloatingFilterComp, IFloatingFilterParams } from "@ag-grid-community/core";
+import { IFloatingFilterComp, IFloatingFilterParams } from '@ag-grid-community/core';
 
 export interface CustomParams {
-    color: string
+    color: string;
 }
 
 export class NumberFloatingFilterComponent implements IFloatingFilterComp {
@@ -19,17 +19,17 @@ export class NumberFloatingFilterComponent implements IFloatingFilterComp {
         const onInputBoxChanged = () => {
             if (this.eFilterInput.value === '') {
                 // Remove the filter
-                params.parentFilterInstance(instance => {
+                params.parentFilterInstance((instance) => {
                     instance.onFloatingFilterChanged(null, null);
                 });
                 return;
             }
 
             this.currentValue = Number(this.eFilterInput.value);
-            params.parentFilterInstance(instance => {
+            params.parentFilterInstance((instance) => {
                 instance.onFloatingFilterChanged('greaterThan', this.currentValue);
             });
-        }
+        };
 
         this.eFilterInput.addEventListener('input', onInputBoxChanged);
     }
@@ -49,4 +49,3 @@ export class NumberFloatingFilterComponent implements IFloatingFilterComp {
         return this.eGui;
     }
 }
-

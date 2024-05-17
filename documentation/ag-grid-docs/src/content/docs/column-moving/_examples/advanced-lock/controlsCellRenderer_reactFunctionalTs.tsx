@@ -4,4 +4,4 @@ export default () => (
     <React.Fragment>
         <button>Action</button>
     </React.Fragment>
-)
+);

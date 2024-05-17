@@ -1,10 +1,10 @@
-import {nextTick} from 'vue';
+import { nextTick } from 'vue';
 
 export default {
     template: `<input v-model="value" :ref="'input'" class="my-simple-editor" />`,
     data() {
         return {
-            value: null
+            value: null,
         };
     },
     methods: {
@@ -29,7 +29,7 @@ export default {
             }
 
             return '';
-        }
+        },
     },
     created() {
         this.value = this.getInitialValue();
@@ -38,5 +38,5 @@ export default {
         nextTick(() => {
             this.$refs.input.focus();
         });
-    }
+    },
 };

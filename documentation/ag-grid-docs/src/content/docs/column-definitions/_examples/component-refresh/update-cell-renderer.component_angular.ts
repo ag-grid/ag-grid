@@ -1,6 +1,6 @@
-import { Component } from "@angular/core";
-import { ICellRendererParams } from "@ag-grid-community/core";
-import { ICellRendererAngularComp } from "@ag-grid-community/angular";
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
+import { ICellRendererParams } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
 
 @Component({
     standalone: true,
@@ -8,7 +8,7 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
         <div>
             <button (click)="onClick()">Update Data</button>
         </div>
-    `
+    `,
 })
 export class UpdateCellRenderer implements ICellRendererAngularComp {
     public params!: ICellRendererParams;
@@ -28,7 +28,7 @@ export class UpdateCellRenderer implements ICellRendererAngularComp {
             ...node.data,
             gold: gold + 1,
             silver: silver + 1,
-            bronze: bronze + 1
+            bronze: bronze + 1,
         });
     }
 }

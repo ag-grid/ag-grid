@@ -1,3 +1,3 @@
 {
-    "supportedFrameworks": ["angular", "vue3", "vue","reactFunctional", "reactFunctionalTs"]
+    "supportedFrameworks": ["angular", "vue3", "vue", "reactFunctional", "reactFunctionalTs"]
 }

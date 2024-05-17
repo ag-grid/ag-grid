@@ -147,5 +147,5 @@ export function getData(): any[] {
             population: 4000000,
             summary: 'Excellent Food',
         },
-    ]
+    ];
 }

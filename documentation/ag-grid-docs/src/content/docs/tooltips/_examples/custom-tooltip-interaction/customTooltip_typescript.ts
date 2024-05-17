@@ -1,4 +1,4 @@
-import { ITooltipComp, ITooltipParams } from '@ag-grid-community/core'
+import { ITooltipComp, ITooltipParams } from '@ag-grid-community/core';
 
 export class CustomTooltip implements ITooltipComp {
     eGui!: HTMLElement;
@@ -12,7 +12,7 @@ export class CustomTooltip implements ITooltipComp {
         this.params = params;
         const type = params.type || 'primary';
         const data = params.api!.getDisplayedRowAtIndex(params.rowIndex!)!.data;
-        const eGui = this.eGui = document.createElement('div');
+        const eGui = (this.eGui = document.createElement('div'));
 
         eGui.classList.add('custom-tooltip');
         eGui.innerHTML = `
@@ -37,7 +37,7 @@ export class CustomTooltip implements ITooltipComp {
         const { params } = this;
         const { node } = params;
 
-        const target = ((e.target as Element).querySelector('input') as HTMLInputElement);
+        const target = (e.target as Element).querySelector('input') as HTMLInputElement;
 
         if (target?.value) {
             node?.setDataValue('athlete', target.value);
@@ -45,7 +45,6 @@ export class CustomTooltip implements ITooltipComp {
                 this.params.hideTooltipCallback();
             }
         }
-
     }
 
     getGui() {
@@ -56,4 +55,3 @@ export class CustomTooltip implements ITooltipComp {
         this.eGui.querySelector('form')?.removeEventListener('submit', this.onFormSubmit);
     }
 }
-

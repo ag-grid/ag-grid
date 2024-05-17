@@ -11,7 +11,7 @@ export default {
     },
     methods: {
         onClick() {
-            alert('Selected Row Count: ' + this.params.api.getSelectedRows().length)
-        }
-    }
+            alert('Selected Row Count: ' + this.params.api.getSelectedRows().length);
+        },
+    },
 };

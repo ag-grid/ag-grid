@@ -1,24 +1,31 @@
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {
+    ColDef,
+    GetRowIdParams,
+    GridApi,
+    GridReadyEvent,
+    ModuleRegistry,
+    RowDragEndEvent,
+} from '@ag-grid-community/core';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GetRowIdParams, GridApi, GridReadyEvent, ModuleRegistry, RowDragEndEvent } from '@ag-grid-community/core';
 
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
-
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const SportRenderer = (props: CustomCellRendererProps) => {
     return (
-        <i className="far fa-trash-alt"
+        <i
+            className="far fa-trash-alt"
             style={{ cursor: 'pointer' }}
-            onClick={() => props.api.applyTransaction({ remove: [props.node.data] })}>
-        </i>
-    )
-}
+            onClick={() => props.api.applyTransaction({ remove: [props.node.data] })}
+        ></i>
+    );
+};
 
 const leftColumns: ColDef[] = [
     {
@@ -37,10 +44,10 @@ const leftColumns: ColDef[] = [
         maxWidth: 50,
         checkboxSelection: true,
         suppressHeaderMenuButton: true,
-        headerCheckboxSelection: true
+        headerCheckboxSelection: true,
     },
-    { field: "athlete" },
-    { field: "sport" }
+    { field: 'athlete' },
+    { field: 'sport' },
 ];
 
 const rightColumns: ColDef[] = [
@@ -55,14 +62,14 @@ const rightColumns: ColDef[] = [
             return params.rowNode!.data.athlete;
         },
     },
-    { field: "athlete" },
-    { field: "sport" },
+    { field: 'athlete' },
+    { field: 'sport' },
     {
         suppressHeaderMenuButton: true,
         maxWidth: 50,
-        cellRenderer: SportRenderer
-    }
-]
+        cellRenderer: SportRenderer,
+    },
+];
 
 const defaultColDef: ColDef = {
     flex: 1,
@@ -82,14 +89,16 @@ const GridExample = () => {
     useEffect(() => {
         if (!rawData.length) {
             fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-                .then(resp => resp.json())
-                .then(data => {
+                .then((resp) => resp.json())
+                .then((data) => {
                     const athletes: any[] = [];
                     let i = 0;
 
                     while (athletes.length < 20 && i < data.length) {
                         var pos = i++;
-                        if (athletes.some(rec => rec.athlete === data[pos].athlete)) { continue; }
+                        if (athletes.some((rec) => rec.athlete === data[pos].athlete)) {
+                            continue;
+                        }
                         athletes.push(data[pos]);
                     }
                     setRawData(athletes);
@@ -120,33 +129,40 @@ const GridExample = () => {
         setRadioChecked(0);
         setCheckBoxSelected(true);
         loadGrids();
-    }
+    };
 
     const onRadioChange = (e: any) => {
         setRadioChecked(parseInt(e.target.value, 10));
-    }
+    };
 
     const onCheckboxChange = (e: any) => {
         const checked = e.target.checked;
         setCheckBoxSelected(checked);
-    }
+    };
 
-    const getRowId = (params: GetRowIdParams) => params.data.athlete
+    const getRowId = (params: GetRowIdParams) => params.data.athlete;
 
-    const onDragStop = useCallback((params: RowDragEndEvent) => {
-        var nodes = params.nodes;
+    const onDragStop = useCallback(
+        (params: RowDragEndEvent) => {
+            var nodes = params.nodes;
 
-        if (radioChecked === 0) {
-            leftApi!.applyTransaction({
-                remove: nodes.map(function (node) { return node.data; })
-            });
-        } else if (radioChecked === 1) {
-            leftApi!.setNodesSelected({ nodes, newValue: false });
-        }
-    }, [leftApi, radioChecked]);
+            if (radioChecked === 0) {
+                leftApi!.applyTransaction({
+                    remove: nodes.map(function (node) {
+                        return node.data;
+                    }),
+                });
+            } else if (radioChecked === 1) {
+                leftApi!.setNodesSelected({ nodes, newValue: false });
+            }
+        },
+        [leftApi, radioChecked]
+    );
 
     useEffect(() => {
-        if (!leftApi || !rightApi) { return; }
+        if (!leftApi || !rightApi) {
+            return;
+        }
         const dropZoneParams = rightApi.getRowDropZoneParams({ onDragStop });
 
         leftApi.removeRowDropZone(dropZoneParams);
@@ -166,7 +182,7 @@ const GridExample = () => {
     const getTopToolBar = () => (
         <div className="example-toolbar panel panel-default">
             <div className="panel-body">
-                <div onChange={onRadioChange} >
+                <div onChange={onRadioChange}>
                     <input type="radio" id="move" name="radio" value="0" checked={radioChecked === 0} />{' '}
                     <label htmlFor="move">Remove Source Rows</label>
                     <input type="radio" id="deselect" name="radio" value="1" checked={radioChecked === 1} />{' '}
@@ -177,7 +193,12 @@ const GridExample = () => {
                 <input type="checkbox" id="toggleCheck" checked={checkBoxSelected} onChange={onCheckboxChange} />
                 <label htmlFor="toggleCheck">Checkbox Select</label>
                 <span className="input-group-button">
-                    <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px' }} onClick={reset}>
+                    <button
+                        type="button"
+                        className="btn btn-default reset"
+                        style={{ marginLeft: '5px' }}
+                        onClick={reset}
+                    >
                         <i className="fas fa-redo" style={{ marginRight: '5px' }}></i>Reset
                     </button>
                 </span>
@@ -193,28 +214,34 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}
                     rowDragManaged={true}
-                    rowSelection={id === 0 ? "multiple" : undefined}
+                    rowSelection={id === 0 ? 'multiple' : undefined}
                     rowDragMultiRow={id === 0}
                     suppressRowClickSelection={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
-
                     rowData={id === 0 ? leftRowData : rightRowData}
                     columnDefs={id === 0 ? leftColumns : rightColumns}
-                    onGridReady={(params) => onGridReady(params, id)} />
+                    onGridReady={(params) => onGridReady(params, id)}
+                />
             </div>
         </div>
-    )
+    );
 
     return (
         <div className="top-container">
             {getTopToolBar()}
-            <div className={'grid-wrapper ' + /** DARK MODE START **/(document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/}>
+            <div
+                className={
+                    'grid-wrapper ' +
+                    /** DARK MODE START **/ (document.documentElement?.dataset.defaultTheme ||
+                        'ag-theme-quartz') /** DARK MODE END **/
+                }
+            >
                 {getGridWrapper(0)}
                 {getGridWrapper(1)}
             </div>
         </div>
     );
-}
+};
 
 const root = createRoot(document.getElementById('root')!);
 root.render(<GridExample />);

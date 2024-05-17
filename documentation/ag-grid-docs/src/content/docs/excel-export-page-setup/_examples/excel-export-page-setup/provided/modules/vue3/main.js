@@ -1,13 +1,13 @@
-
-import { createApp, onBeforeMount, ref } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
-import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import './styles.css';
-import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { createApp, onBeforeMount, ref } from 'vue';
+
+import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
 
@@ -90,29 +90,29 @@ const VueExample = {
     setup(props) {
         const columnDefs = ref([
             {
-                field:"athlete",
-                minWidth:200
+                field: 'athlete',
+                minWidth: 200,
             },
             {
-                field:"country",
-                minWidth:200
+                field: 'country',
+                minWidth: 200,
             },
             {
-                field:"sport",
-                minWidth:150
+                field: 'sport',
+                minWidth: 150,
             },
             {
-                field:"gold"
+                field: 'gold',
             },
             {
-                field:"silver"
+                field: 'silver',
             },
             {
-                field:"bronze"
+                field: 'bronze',
             },
             {
-                field:"total"
-            }
+                field: 'total',
+            },
         ]);
 
         const gridApi = ref();
@@ -123,27 +123,31 @@ const VueExample = {
         });
 
         const popupParent = ref(null);
-        const rowData = ref(null)
+        const rowData = ref(null);
 
         onBeforeMount(() => {
-            popupParent.value = document.body
+            popupParent.value = document.body;
         });
 
         const onGridReady = (params) => {
             gridApi.value = params.api;
 
-            const updateData = (data) => params.api.setGridOption('rowData', data.filter((rec) => rec.country != null));
+            const updateData = (data) =>
+                params.api.setGridOption(
+                    'rowData',
+                    data.filter((rec) => rec.country != null)
+                );
 
             fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
-                .then(resp => resp.json())
-                .then(data => updateData(data));
+                .then((resp) => resp.json())
+                .then((data) => updateData(data));
         };
 
-        const onFormSubmit =  (e) => {
+        const onFormSubmit = (e) => {
             e.preventDefault();
             const { pageSetup, margins } = getSheetConfig();
             gridApi.value.exportDataAsExcel({ pageSetup, margins });
-        }
+        };
 
         return {
             columnDefs,
@@ -153,11 +157,12 @@ const VueExample = {
             rowData,
             onGridReady,
             onFormSubmit,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
-            
-        }
-    }
-}
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
+        };
+    },
+};
 
 window.getNumber = function getNumber(id) {
     var el = document.querySelector(id);
@@ -165,11 +170,11 @@ window.getNumber = function getNumber(id) {
         return 0;
     }
     return parseFloat(el.value);
-}
+};
 
 window.getValue = function getValue(id) {
-    return (document.querySelector(id)).value;
-}
+    return document.querySelector(id).value;
+};
 
 window.getSheetConfig = function getSheetConfig() {
     return {
@@ -186,8 +191,6 @@ window.getSheetConfig = function getSheetConfig() {
             footer: getNumber('#footer'),
         },
     };
-}
+};
 
-createApp(VueExample)
-    .mount("#app")
-
+createApp(VueExample).mount('#app');

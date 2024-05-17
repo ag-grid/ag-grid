@@ -8,7 +8,7 @@ export default {
     data: function () {
         return {
             country: '',
-            total: ''
+            total: '',
         };
     },
     beforeMount() {
@@ -17,7 +17,7 @@ export default {
     },
     methods: {
         buttonClicked() {
-            alert(`${this.total} medals won!`)
-        }
-    }
+            alert(`${this.total} medals won!`);
+        },
+    },
 };

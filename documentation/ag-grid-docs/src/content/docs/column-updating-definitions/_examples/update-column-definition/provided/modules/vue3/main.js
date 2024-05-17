@@ -1,11 +1,12 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { createApp } from 'vue';
+
 import './styles.css';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
@@ -43,15 +44,16 @@ const VueExample = {
             },
             columnDefs: null,
             rowData: null,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
     beforeMount() {
         this.gridOptions = {};
         this.columnDefs = this.getColumnDefs();
     },
-    mounted() {
-    },
+    mounted() {},
     methods: {
         setHeaderNames() {
             const columnDefs = this.getColumnDefs();
@@ -94,7 +96,7 @@ const VueExample = {
                 { field: 'gold' },
                 { field: 'silver' },
                 { field: 'bronze' },
-                { field: 'total' }
+                { field: 'total' },
             ];
         },
         onGridReady(params) {
@@ -110,6 +112,4 @@ const VueExample = {
     },
 };
 
-createApp(VueExample)
-    .mount("#app")
-
+createApp(VueExample).mount('#app');

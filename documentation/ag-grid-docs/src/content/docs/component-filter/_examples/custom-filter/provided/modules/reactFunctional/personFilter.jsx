@@ -1,17 +1,22 @@
-import React, { useCallback, useRef } from 'react';
 import { useGridFilter } from '@ag-grid-community/react';
+import React, { useCallback, useRef } from 'react';
 
 export default ({ model, onModelChange, getValue }) => {
     const refInput = useRef(null);
 
-    const doesFilterPass = useCallback((params) => {
-        const { node } = params;        
-        const filterText = model;
-        const value = getValue(node).toString().toLowerCase();
-        // make sure each word passes separately, ie search for firstname, lastname
-        return filterText.toLowerCase().split(' ')
-            .every(filterWord => value.indexOf(filterWord) >= 0);
-    }, [model]);
+    const doesFilterPass = useCallback(
+        (params) => {
+            const { node } = params;
+            const filterText = model;
+            const value = getValue(node).toString().toLowerCase();
+            // make sure each word passes separately, ie search for firstname, lastname
+            return filterText
+                .toLowerCase()
+                .split(' ')
+                .every((filterWord) => value.indexOf(filterWord) >= 0);
+        },
+        [model]
+    );
 
     const afterGuiAttached = useCallback((params) => {
         if (!params || !params.suppressFocus) {
@@ -29,18 +34,20 @@ export default ({ model, onModelChange, getValue }) => {
     });
 
     return (
-        <div className='person-filter'>
+        <div className="person-filter">
             <div>Custom Athlete Filter</div>
             <div>
                 <input
                     ref={refInput}
                     type="text"
                     value={model || ''}
-                    onChange={({ target: { value }}) => onModelChange(value === '' ? null : value)}
+                    onChange={({ target: { value } }) => onModelChange(value === '' ? null : value)}
                     placeholder="Full name search..."
                 />
             </div>
-            <div>This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.</div>
+            <div>
+                This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.
+            </div>
         </div>
-    )
+    );
 };

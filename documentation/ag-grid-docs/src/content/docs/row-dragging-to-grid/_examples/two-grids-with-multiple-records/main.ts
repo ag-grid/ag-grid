@@ -1,5 +1,15 @@
-import { ModuleRegistry, ColDef, GridOptions, GridReadyEvent, ICellRendererComp, ICellRendererParams, GetRowIdParams, createGrid, GridApi } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {
+    ColDef,
+    GetRowIdParams,
+    GridApi,
+    GridOptions,
+    GridReadyEvent,
+    ICellRendererComp,
+    ICellRendererParams,
+    ModuleRegistry,
+    createGrid,
+} from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -43,10 +53,10 @@ const leftColumnDefs: ColDef[] = [
         maxWidth: 50,
         checkboxSelection: true,
         suppressHeaderMenuButton: true,
-        headerCheckboxSelection: true
+        headerCheckboxSelection: true,
     },
-    { field: "athlete" },
-    { field: "sport" }
+    { field: 'athlete' },
+    { field: 'sport' },
 ];
 
 const rightColumnDefs: ColDef[] = [
@@ -61,13 +71,13 @@ const rightColumnDefs: ColDef[] = [
             return params.rowNode!.data.athlete;
         },
     },
-    { field: "athlete" },
-    { field: "sport" },
+    { field: 'athlete' },
+    { field: 'sport' },
     {
         suppressHeaderMenuButton: true,
         maxWidth: 50,
-        cellRenderer: SportRenderer
-    }
+        cellRenderer: SportRenderer,
+    },
 ];
 let leftApi: GridApi;
 const leftGridOptions: GridOptions = {
@@ -87,7 +97,7 @@ const leftGridOptions: GridOptions = {
     columnDefs: leftColumnDefs,
     onGridReady: (params) => {
         addGridDropZone(params);
-    }
+    },
 };
 let rightApi: GridApi;
 const rightGridOptions: GridOptions = {
@@ -114,12 +124,12 @@ function addGridDropZone(params: GridReadyEvent) {
                 leftApi!.applyTransaction({
                     remove: nodes.map(function (node) {
                         return node.data;
-                    })
+                    }),
                 });
             } else if (deselectCheck) {
                 leftApi!.setNodesSelected({ nodes, newValue: false });
             }
-        }
+        },
     });
 
     params.api.addRowDropZone(dropZoneParams);
@@ -147,23 +157,25 @@ function resetInputs() {
 
 function loadGrids() {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
+        .then((response) => response.json())
         .then(function (data) {
             const athletes: any[] = [];
             let i = 0;
 
             while (athletes.length < 20 && i < data.length) {
                 const pos = i++;
-                if (athletes.some(function (rec) {
-                    return rec.athlete === data[pos].athlete;
-                })) {
+                if (
+                    athletes.some(function (rec) {
+                        return rec.athlete === data[pos].athlete;
+                    })
+                ) {
                     continue;
                 }
                 athletes.push(data[pos]);
             }
 
-           leftApi = loadGrid(leftGridOptions, leftApi, 'Left', athletes);
-           rightApi = loadGrid(rightGridOptions, rightApi, 'Right', []);
+            leftApi = loadGrid(leftGridOptions, leftApi, 'Left', athletes);
+            rightApi = loadGrid(rightGridOptions, rightApi, 'Right', []);
         });
 }
 
@@ -181,4 +193,3 @@ checkboxToggle.addEventListener('change', () => {
 });
 
 loadGrids();
-

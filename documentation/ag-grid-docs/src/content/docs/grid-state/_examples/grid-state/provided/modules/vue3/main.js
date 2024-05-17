@@ -1,17 +1,23 @@
-
-import { createApp, onBeforeMount, ref } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
-import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import './styles.css';
-import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { createApp, onBeforeMount, ref } from 'vue';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, SetFilterModule, RangeSelectionModule]);
+import './styles.css';
+
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ColumnsToolPanelModule,
+    FiltersToolPanelModule,
+    SetFilterModule,
+    RangeSelectionModule,
+]);
 
 const VueExample = {
     template: `
@@ -55,15 +61,15 @@ const VueExample = {
                 headerCheckboxSelection: true,
                 checkboxSelection: true,
             },
-            { field:"age", maxWidth:90 },
-            { field:"country", minWidth:150 },
-            { field:"year", maxWidth:90 },
-            { field:"date", minWidth:150 },
-            { field:"sport", minWidth:150 },
-            { field:"gold" },
-            { field:"silver" },
-            { field:"bronze" },
-            { field:"total" },
+            { field: 'age', maxWidth: 90 },
+            { field: 'country', minWidth: 150 },
+            { field: 'year', maxWidth: 90 },
+            { field: 'date', minWidth: 150 },
+            { field: 'sport', minWidth: 150 },
+            { field: 'gold' },
+            { field: 'silver' },
+            { field: 'bronze' },
+            { field: 'total' },
         ]);
         const gridApi = ref();
         const defaultColDef = ref({
@@ -75,14 +81,14 @@ const VueExample = {
             enableValue: true,
         });
         const rowSelection = ref(null);
-        const rowData = ref(null)
+        const rowData = ref(null);
         const gridVisible = ref(true);
         const initialState = ref(undefined);
 
         onBeforeMount(() => {
-            rowSelection.value = 'multiple'
+            rowSelection.value = 'multiple';
         });
-        
+
         const reloadGrid = () => {
             const state = gridApi.value.getState();
             gridVisible.value = false;
@@ -98,11 +104,11 @@ const VueExample = {
         const onGridReady = (params) => {
             gridApi.value = params.api;
 
-            const updateData = (data) => rowData.value = data;
+            const updateData = (data) => (rowData.value = data);
 
             fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-                .then(resp => resp.json())
-                .then(data => updateData(data));
+                .then((resp) => resp.json())
+                .then((data) => updateData(data));
         };
         const onGridPreDestroyed = (params) => {
             console.log('Grid state on destroy (can be persisted)', params.state);
@@ -110,7 +116,7 @@ const VueExample = {
         const onStateUpdated = (params) => {
             console.log('State updated', params.state);
         };
-        
+
         return {
             columnDefs,
             gridApi,
@@ -124,10 +130,11 @@ const VueExample = {
             onStateUpdated,
             reloadGrid,
             printState,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
-        }
-    }
-}
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
+        };
+    },
+};
 
-createApp(VueExample)
-    .mount("#app")
+createApp(VueExample).mount('#app');

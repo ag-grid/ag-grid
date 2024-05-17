@@ -4,7 +4,7 @@ export default {
             isGroup: null,
             paddingLeft: null,
             rotation: null,
-        }
+        };
     },
     template: `
         <div
@@ -27,7 +27,7 @@ export default {
         },
         onExpandedChanged() {
             this.rotation = this.params.node.expanded ? 'rotate(90deg)' : 'rotate(0deg)';
-        }
+        },
     },
     beforeMount() {
         this.isGroup = this.params.node.group;
@@ -38,5 +38,5 @@ export default {
     },
     beforeDestroy() {
         this.params.node.removeEventListener('expandedChanged', this.onExpandedChanged);
-    }
+    },
 };

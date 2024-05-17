@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { CustomDateProps, useGridDate } from '@ag-grid-community/react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+
 // we'll be using the globally provided flatpickr for our example
 declare var flatpickr: any;
 
@@ -9,11 +10,13 @@ export default ({ date, onDateChange }: CustomDateProps) => {
     const refInput = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        setPicker(flatpickr(refFlatPickr.current, {
-            onChange: (selectedDates: Date[]) => onDateChange(selectedDates[0]),
-            dateFormat: 'd/m/Y',
-            wrap: true
-        }));
+        setPicker(
+            flatpickr(refFlatPickr.current, {
+                onChange: (selectedDates: Date[]) => onDateChange(selectedDates[0]),
+                dateFormat: 'd/m/Y',
+                wrap: true,
+            })
+        );
     }, []);
 
     useEffect(() => {
@@ -47,9 +50,9 @@ export default ({ date, onDateChange }: CustomDateProps) => {
 
     return (
         <div className="ag-input-wrapper custom-date-filter" role="presentation" ref={refFlatPickr}>
-            <input type="text" ref={refInput} data-input style={{ width: "100%" }} />
-            <a className='input-button' title='clear' data-clear>
-                <i className='fa fa-times'></i>
+            <input type="text" ref={refInput} data-input style={{ width: '100%' }} />
+            <a className="input-button" title="clear" data-clear>
+                <i className="fa fa-times"></i>
             </a>
         </div>
     );

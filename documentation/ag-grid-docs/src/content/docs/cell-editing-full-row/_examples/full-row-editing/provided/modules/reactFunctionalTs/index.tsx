@@ -1,16 +1,17 @@
 'use strict';
 
-import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CellValueChangedEvent, ColDef, ModuleRegistry, RowValueChangedEvent } from '@ag-grid-community/core';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
+import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import './styles.css';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
 import NumericCellEditor from './numericCellEditor';
+import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule]);
 
@@ -48,7 +49,7 @@ function getRowData(): any[] {
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
-    const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
+    const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState<any[]>(getRowData());
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         {
@@ -69,49 +70,49 @@ const GridExample = () => {
         },
         { headerName: 'Read Only', field: 'field6', editable: false },
     ]);
-    const defaultColDef = useMemo<ColDef>(() => { return {
-        flex: 1,
-        editable: true,
-        cellDataType: false,
-    }}, []);
+    const defaultColDef = useMemo<ColDef>(() => {
+        return {
+            flex: 1,
+            editable: true,
+            cellDataType: false,
+        };
+    }, []);
 
-    const onCellValueChanged = useCallback((event: CellValueChangedEvent)   =>{
+    const onCellValueChanged = useCallback((event: CellValueChangedEvent) => {
         console.log('onCellValueChanged: ' + event.colDef.field + ' = ' + event.newValue);
-    }, [])
+    }, []);
 
-    const onRowValueChanged = useCallback((event: RowValueChangedEvent)   =>{
+    const onRowValueChanged = useCallback((event: RowValueChangedEvent) => {
         const data = event.data;
-        console.log('onRowValueChanged: (' +
-            data.make +
-            ', ' +
-            data.model +
-            ', ' +
-            data.price +
-            ', ' +
-            data.field5 +
-        ')');
-    }, [])
+        console.log(
+            'onRowValueChanged: (' + data.make + ', ' + data.model + ', ' + data.price + ', ' + data.field5 + ')'
+        );
+    }, []);
 
-   const onBtStopEditing = useCallback(() =>{
+    const onBtStopEditing = useCallback(() => {
         gridRef.current!.api.stopEditing();
-    }, [])
+    }, []);
 
-    const onBtStartEditing = useCallback(() =>{
+    const onBtStartEditing = useCallback(() => {
         gridRef.current!.api.setFocusedCell(1, 'make');
         gridRef.current!.api.startEditingCell({
             rowIndex: 1,
             colKey: 'make',
         });
-    }, [])
+    }, []);
 
-    return  (
+    return (
         <div style={containerStyle}>
             <div className="example-wrapper">
-                <div style={{"marginBottom":"5px"}}>
-                    <button style={{"fontSize":"12px"}} onClick={onBtStartEditing}>Start Editing Line 2</button>
-                    <button style={{"fontSize":"12px"}} onClick={onBtStopEditing}>Stop Editing</button>
+                <div style={{ marginBottom: '5px' }}>
+                    <button style={{ fontSize: '12px' }} onClick={onBtStartEditing}>
+                        Start Editing Line 2
+                    </button>
+                    <button style={{ fontSize: '12px' }} onClick={onBtStopEditing}>
+                        Stop Editing
+                    </button>
                 </div>
-                <div  style={gridStyle} className={"ag-theme-quartz-dark"}>
+                <div style={gridStyle} className={'ag-theme-quartz-dark'}>
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}
@@ -126,7 +127,11 @@ const GridExample = () => {
             </div>
         </div>
     );
-}
+};
 
 const root = createRoot(document.getElementById('root')!);
-root.render(<StrictMode><GridExample /></StrictMode>);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

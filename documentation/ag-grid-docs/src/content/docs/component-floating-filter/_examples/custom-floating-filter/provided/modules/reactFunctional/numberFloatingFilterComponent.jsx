@@ -4,17 +4,21 @@ export default ({ model, onModelChange, color }) => {
     const value = (model && model.filter) || '';
 
     const onInput = ({ target: { value: newValue } }) => {
-        onModelChange(newValue === '' ? null : {
-            ...(model || {
-                type: 'greaterThan'
-            }),
-            filter: Number(newValue)
-        });
-    }
+        onModelChange(
+            newValue === ''
+                ? null
+                : {
+                      ...(model || {
+                          type: 'greaterThan',
+                      }),
+                      filter: Number(newValue),
+                  }
+        );
+    };
 
     const style = {
         borderColor: color,
-        width: "30px"
+        width: '30px',
     };
 
     return (

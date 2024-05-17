@@ -3,11 +3,11 @@ import { FILES_BASE_PATH, NPM_CDN, PUBLISHED_URLS, SITE_BASE_URL, agGridVersion 
 import { isBuildServerBuild, isPreProductionBuild, isUsingPublishedPackages } from '@utils/pages';
 import { pathJoin } from '@utils/pathJoin';
 
+import agChartsAngular from '../../../../../../../node_modules/ag-charts-angular/package.json';
 import agChartsCommunity from '../../../../../../../node_modules/ag-charts-community/package.json';
 import agChartsEnterprise from '../../../../../../../node_modules/ag-charts-enterprise/package.json';
 import agChartsReact from '../../../../../../../node_modules/ag-charts-react/package.json';
 import agChartsVue3 from '../../../../../../../node_modules/ag-charts-vue3/package.json';
-import agChartsAngular from '../../../../../../../node_modules/ag-charts-angular/package.json';
 
 interface Props {
     boilerplatePath: string;
@@ -166,17 +166,15 @@ function getRelevantConfig(configuration: Configuration, framework: InternalFram
  * code to load SystemJS and the relevant modules depending on the framework.
  */
 export const SystemJs = ({
-                             boilerplatePath,
-                             appLocation,
-                             startFile,
-                             internalFramework,
-                             isEnterprise,
-                             isDev,
-                         }: Props) => {
+    boilerplatePath,
+    appLocation,
+    startFile,
+    internalFramework,
+    isEnterprise,
+    isDev,
+}: Props) => {
     const systemJsPath = pathJoin(boilerplatePath, `systemjs.config${isDev ? '.dev' : ''}.js`);
-    let configuration = isUsingPublishedPackages()
-        ? publishedConfiguration
-        : localBuildAndArchiveConfiguration;
+    let configuration = isUsingPublishedPackages() ? publishedConfiguration : localBuildAndArchiveConfiguration;
 
     if (isDev) {
         configuration.gridMap = {

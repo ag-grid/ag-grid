@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, ColGroupDef, createGrid, GridOptions, ModuleRegistry } from '@ag-grid-community/core';
+import { ColGroupDef, GridApi, GridOptions, ModuleRegistry, createGrid } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -8,26 +8,26 @@ const columnDefs: ColGroupDef[] = [
         headerName: 'Group 1',
         groupId: 'Group1',
         children: [
-            { field: 'athlete', pinned: true, },
-            { field: 'age', pinned: true, columnGroupShow: 'open', },
-            { field: 'country', },
-            { field: 'year', columnGroupShow: 'open', },
-            { field: 'date', },
-            { field: 'sport', columnGroupShow: 'open', },
-        ]
+            { field: 'athlete', pinned: true },
+            { field: 'age', pinned: true, columnGroupShow: 'open' },
+            { field: 'country' },
+            { field: 'year', columnGroupShow: 'open' },
+            { field: 'date' },
+            { field: 'sport', columnGroupShow: 'open' },
+        ],
     },
     {
         headerName: 'Group 2',
         groupId: 'Group2',
         children: [
-            { field: 'athlete', pinned: true, },
-            { field: 'age', pinned: true, columnGroupShow: 'open', },
-            { field: 'country', },
-            { field: 'year', columnGroupShow: 'open', },
-            { field: 'date', },
-            { field: 'sport', columnGroupShow: 'open', },
-        ]
-    }
+            { field: 'athlete', pinned: true },
+            { field: 'age', pinned: true, columnGroupShow: 'open' },
+            { field: 'country' },
+            { field: 'year', columnGroupShow: 'open' },
+            { field: 'date' },
+            { field: 'sport', columnGroupShow: 'open' },
+        ],
+    },
 ];
 let topApi: GridApi;
 let bottomApi: GridApi;
@@ -36,13 +36,13 @@ const gridOptionsTop: GridOptions = {
     defaultColDef: {
         filter: true,
         flex: 1,
-        minWidth: 120
+        minWidth: 120,
     },
     columnDefs: columnDefs,
     rowData: null,
     alignedGrids: () => [bottomApi],
     autoSizeStrategy: {
-        type: 'fitGridWidth'
+        type: 'fitGridWidth',
     },
 };
 
@@ -51,7 +51,7 @@ const gridOptionsBottom: GridOptions = {
     defaultColDef: {
         filter: true,
         flex: 1,
-        minWidth: 120
+        minWidth: 120,
     },
     columnDefs: columnDefs,
     rowData: null,
@@ -74,8 +74,7 @@ const gridDivBottom = document.querySelector<HTMLElement>('#myGridBottom')!;
 bottomApi = createGrid(gridDivBottom, gridOptionsBottom);
 
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(data => {
+    .then((response) => response.json())
+    .then((data) => {
         setData(data);
     });
-

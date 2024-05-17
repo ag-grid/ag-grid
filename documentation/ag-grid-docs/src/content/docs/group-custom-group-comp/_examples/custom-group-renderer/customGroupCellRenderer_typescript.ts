@@ -1,4 +1,4 @@
-import { ICellRendererParams, ICellRendererComp, IRowNode, RowEvent } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams, IRowNode, RowEvent } from '@ag-grid-community/core';
 
 export class CustomGroupCellRenderer implements ICellRendererComp {
     eGui: HTMLElement | undefined;
@@ -12,8 +12,11 @@ export class CustomGroupCellRenderer implements ICellRendererComp {
     };
 
     onExpandedChanged = (params: RowEvent) => {
-        this.eGroupStatus!.setAttribute('style', `cursor: pointer;transform: ${params.node.expanded ? 'rotate(90deg)' : 'rotate(0deg)'};display: inline-block`);
-    }
+        this.eGroupStatus!.setAttribute(
+            'style',
+            `cursor: pointer;transform: ${params.node.expanded ? 'rotate(90deg)' : 'rotate(0deg)'};display: inline-block`
+        );
+    };
 
     init(params: ICellRendererParams) {
         this.node = params.node;
@@ -24,8 +27,11 @@ export class CustomGroupCellRenderer implements ICellRendererComp {
 
         if (this.node.group) {
             this.eGroupStatus = document.createElement('div');
-            this.eGroupStatus.setAttribute('style', `cursor: pointer;transform: ${params.node.expanded ? 'rotate(90deg)' : 'rotate(0deg)'};display: inline-block`);
-            this.eGroupStatus.innerHTML = '&rarr;'
+            this.eGroupStatus.setAttribute(
+                'style',
+                `cursor: pointer;transform: ${params.node.expanded ? 'rotate(90deg)' : 'rotate(0deg)'};display: inline-block`
+            );
+            this.eGroupStatus.innerHTML = '&rarr;';
             this.eGroupStatus.setAttribute('class', 'eGroupStatus');
 
             this.eGroupStatus.addEventListener('click', this.onClick);

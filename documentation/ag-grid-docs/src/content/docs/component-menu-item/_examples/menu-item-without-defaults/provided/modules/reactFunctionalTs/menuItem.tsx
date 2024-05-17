@@ -1,6 +1,6 @@
-import React, { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { CustomMenuItemProps } from '@ag-grid-community/react';
 import { Column, IFilterComp } from '@ag-grid-community/core';
+import { CustomMenuItemProps } from '@ag-grid-community/react';
+import React, { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 export interface ButtonCustomMenuItemProps extends CustomMenuItemProps {
     column: Column;
@@ -23,12 +23,12 @@ export default ({ column, api, active, onActiveChange }: ButtonCustomMenuItemPro
         if (active) {
             optionRef.current?.focus();
         }
-    }, [active])
+    }, [active]);
 
     const onOptionKeyDown = useCallback((e: KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            setExpanded(oldExpanded => !oldExpanded);
+            setExpanded((oldExpanded) => !oldExpanded);
         }
     }, []);
 
@@ -42,8 +42,8 @@ export default ({ column, api, active, onActiveChange }: ButtonCustomMenuItemPro
             <div
                 ref={optionRef}
                 tabIndex={-1}
-                className={"ag-menu-option " + (active ? "ag-menu-option-active" : "")}
-                onClick={() => setExpanded(oldExpanded => !oldExpanded)}
+                className={'ag-menu-option ' + (active ? 'ag-menu-option-active' : '')}
+                onClick={() => setExpanded((oldExpanded) => !oldExpanded)}
                 onMouseEnter={() => onActiveChange(true)}
                 onMouseLeave={() => onActiveChange(false)}
                 onKeyDownCapture={onOptionKeyDown}
@@ -53,7 +53,11 @@ export default ({ column, api, active, onActiveChange }: ButtonCustomMenuItemPro
                 </span>
                 <span className="ag-menu-option-part ag-menu-option-text">Filter</span>
                 <span className="ag-menu-option-part ag-menu-option-popup-pointer">
-                    <span className={"ag-icon " + (expanded ? "ag-icon-tree-open" : "ag-icon-tree-closed")} unselectable="on" role="presentation"></span>
+                    <span
+                        className={'ag-icon ' + (expanded ? 'ag-icon-tree-open' : 'ag-icon-tree-closed')}
+                        unselectable="on"
+                        role="presentation"
+                    ></span>
                 </span>
             </div>
             <div

@@ -1,6 +1,7 @@
-.ag-theme-quartz, .ag-theme-quartz-dark {
-    --ag-control-panel-background-color: #CC222244;
-    --ag-side-button-selected-background-color: #CC222244;
+.ag-theme-quartz,
+.ag-theme-quartz-dark {
+    --ag-control-panel-background-color: #cc222244;
+    --ag-side-button-selected-background-color: #cc222244;
 
     --ag-selected-tab-underline-color: deeppink;
     --ag-selected-tab-underline-width: 2px;

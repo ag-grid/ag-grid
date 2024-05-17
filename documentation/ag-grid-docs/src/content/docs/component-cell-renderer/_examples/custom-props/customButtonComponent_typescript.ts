@@ -1,35 +1,35 @@
-import { ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererParams } from '@ag-grid-community/core';
 
 interface CustomButtonParams extends ICellRendererParams {
-  onClick: () => void;
+    onClick: () => void;
 }
 
 export class CustomButtonComponent {
-    eGui!: HTMLDivElement
-    eButton: any
-    eventListener!: () => void
-  
+    eGui!: HTMLDivElement;
+    eButton: any;
+    eventListener!: () => void;
+
     init(params: CustomButtonParams) {
-      this.eGui = document.createElement("div")
-      let eButton = document.createElement("button")
-      eButton.className = "btn-simple"
-      eButton.textContent = "Launch!"
-      this.eventListener = params.onClick;
-      eButton.addEventListener("click", this.eventListener)
-      this.eGui.appendChild(eButton)
+        this.eGui = document.createElement('div');
+        let eButton = document.createElement('button');
+        eButton.className = 'btn-simple';
+        eButton.textContent = 'Launch!';
+        this.eventListener = params.onClick;
+        eButton.addEventListener('click', this.eventListener);
+        this.eGui.appendChild(eButton);
     }
-  
+
     getGui() {
-      return this.eGui
+        return this.eGui;
     }
-  
+
     refresh() {
-      return true
+        return true;
     }
-  
+
     destroy() {
-      if (this.eButton) {
-        this.eButton.removeEventListener("click", this.eventListener)
-      }
+        if (this.eButton) {
+            this.eButton.removeEventListener('click', this.eventListener);
+        }
     }
-  }
+}

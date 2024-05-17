@@ -1,121 +1,113 @@
-import { GridApi, createGrid, GridOptions, ICellRendererParams } from '@ag-grid-community/core';
-import { getData } from "./data";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { GridApi, GridOptions, ICellRendererParams, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+
+import { getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-
-
-const getMedalString = function ({ gold, silver, bronze }: { gold: number, silver: number, bronze: number }) {
-  const goldStr = gold > 0 ? `Gold: ${gold} ` : '';
-  const silverStr = silver > 0 ? `Silver: ${silver} ` : '';
-  const bronzeStr = bronze > 0 ? `Bronze: ${bronze}` : '';
-  return goldStr + silverStr + bronzeStr;
+const getMedalString = function ({ gold, silver, bronze }: { gold: number; silver: number; bronze: number }) {
+    const goldStr = gold > 0 ? `Gold: ${gold} ` : '';
+    const silverStr = silver > 0 ? `Silver: ${silver} ` : '';
+    const bronzeStr = bronze > 0 ? `Bronze: ${bronze}` : '';
+    return goldStr + silverStr + bronzeStr;
 };
 
 const MedalRenderer = function (params: ICellRendererParams) {
-  return getMedalString(params.value)
+    return getMedalString(params.value);
 };
 
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-  columnDefs: [
-    // simple column, easy to understand
-    { field: 'name' },
-    // the grid works with embedded fields
-    { headerName: 'Age', field: 'person.age' },
-    // or use value getter, all works with quick filter
-    { headerName: 'Country', valueGetter: "data.person.country" },
-    // or use the object value, so value passed around is an object
-    {
-      headerName: 'Results',
-      field: 'medals',
-      cellRenderer: MedalRenderer,
-      // this is needed to avoid toString=[object,object] result with objects
-      getQuickFilterText: (params) => {
-        return getMedalString(params.value);
-      },
-      cellDataType: false,
+    columnDefs: [
+        // simple column, easy to understand
+        { field: 'name' },
+        // the grid works with embedded fields
+        { headerName: 'Age', field: 'person.age' },
+        // or use value getter, all works with quick filter
+        { headerName: 'Country', valueGetter: 'data.person.country' },
+        // or use the object value, so value passed around is an object
+        {
+            headerName: 'Results',
+            field: 'medals',
+            cellRenderer: MedalRenderer,
+            // this is needed to avoid toString=[object,object] result with objects
+            getQuickFilterText: (params) => {
+                return getMedalString(params.value);
+            },
+            cellDataType: false,
+        },
+        {
+            headerName: 'Hidden',
+            field: 'hidden',
+            hide: true,
+        },
+    ],
+    defaultColDef: {
+        flex: 1,
+        editable: true,
     },
-    {
-      headerName: 'Hidden',
-      field: 'hidden',
-      hide: true,
-    },
-  ],
-  defaultColDef: {
-    flex: 1,
-    editable: true,
-  },
-  rowData: getData(),
-  cacheQuickFilter: true,
-  quickFilterParser: quickFilterParser,
-  quickFilterMatcher: quickFilterMatcher,
-}
+    rowData: getData(),
+    cacheQuickFilter: true,
+    quickFilterParser: quickFilterParser,
+    quickFilterMatcher: quickFilterMatcher,
+};
 
 var includeHiddenColumns = false;
 
 function onIncludeHiddenColumnsToggled() {
-  includeHiddenColumns = !includeHiddenColumns;
-  gridApi!.setGridOption('includeHiddenColumnsInQuickFilter', includeHiddenColumns);
-  document.querySelector('#includeHiddenColumns')!.textContent = `${includeHiddenColumns ? 'Exclude' : 'Include'} Hidden Columns`;
+    includeHiddenColumns = !includeHiddenColumns;
+    gridApi!.setGridOption('includeHiddenColumnsInQuickFilter', includeHiddenColumns);
+    document.querySelector('#includeHiddenColumns')!.textContent =
+        `${includeHiddenColumns ? 'Exclude' : 'Include'} Hidden Columns`;
 }
 
 function onFilterTextBoxChanged() {
-  gridApi!.setGridOption(
-    'quickFilterText',
-    (document.getElementById('filter-text-box') as HTMLInputElement).value
-  )
+    gridApi!.setGridOption('quickFilterText', (document.getElementById('filter-text-box') as HTMLInputElement).value);
 }
 
 function onPrintQuickFilterTexts() {
-  gridApi!.forEachNode(function (rowNode, index) {
-    console.log(
-      'Row ' +
-      index +
-      ' quick filter text is ' +
-      rowNode.quickFilterAggregateText
-    )
-  })
+    gridApi!.forEachNode(function (rowNode, index) {
+        console.log('Row ' + index + ' quick filter text is ' + rowNode.quickFilterAggregateText);
+    });
 }
 
 function quickFilterParser(quickFilter: string) {
-  let quickFilterParts = [];
-  let lastSpaceIndex = -1;
+    let quickFilterParts = [];
+    let lastSpaceIndex = -1;
 
-  const isQuote = (index: number) => quickFilter[index] === '"';
-  const getQuickFilterPart = (lastSpaceIndex: number, currentIndex: number) => {
-    const startsWithQuote = isQuote(lastSpaceIndex + 1);
-    const endsWithQuote = isQuote(currentIndex - 1);
-    const startIndex = startsWithQuote && endsWithQuote ? lastSpaceIndex + 2 : lastSpaceIndex + 1;
-    const endIndex = startsWithQuote && endsWithQuote ? currentIndex - 1 : currentIndex;
-    return quickFilter.slice(startIndex, endIndex);
-  }
+    const isQuote = (index: number) => quickFilter[index] === '"';
+    const getQuickFilterPart = (lastSpaceIndex: number, currentIndex: number) => {
+        const startsWithQuote = isQuote(lastSpaceIndex + 1);
+        const endsWithQuote = isQuote(currentIndex - 1);
+        const startIndex = startsWithQuote && endsWithQuote ? lastSpaceIndex + 2 : lastSpaceIndex + 1;
+        const endIndex = startsWithQuote && endsWithQuote ? currentIndex - 1 : currentIndex;
+        return quickFilter.slice(startIndex, endIndex);
+    };
 
-  for (let i = 0; i < quickFilter.length; i ++) {
-    const char = quickFilter[i];
-    if (char === ' ') {
-      if (!isQuote(lastSpaceIndex + 1) || isQuote(i - 1)) {
-        quickFilterParts.push(getQuickFilterPart(lastSpaceIndex, i));
-        lastSpaceIndex = i;
-      }
+    for (let i = 0; i < quickFilter.length; i++) {
+        const char = quickFilter[i];
+        if (char === ' ') {
+            if (!isQuote(lastSpaceIndex + 1) || isQuote(i - 1)) {
+                quickFilterParts.push(getQuickFilterPart(lastSpaceIndex, i));
+                lastSpaceIndex = i;
+            }
+        }
     }
-  }
-  if (lastSpaceIndex !== quickFilter.length - 1) {
-    quickFilterParts.push(getQuickFilterPart(lastSpaceIndex, quickFilter.length));
-  }
+    if (lastSpaceIndex !== quickFilter.length - 1) {
+        quickFilterParts.push(getQuickFilterPart(lastSpaceIndex, quickFilter.length));
+    }
 
-  return quickFilterParts;
+    return quickFilterParts;
 }
 
 function quickFilterMatcher(quickFilterParts: string[], rowQuickFilterAggregateText: string) {
-  return quickFilterParts.every(part => rowQuickFilterAggregateText.match(part));
+    return quickFilterParts.every((part) => rowQuickFilterAggregateText.match(part));
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
+});

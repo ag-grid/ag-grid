@@ -1,12 +1,12 @@
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import { CustomStatusPanelProps } from '@ag-grid-community/react';
+import React, { forwardRef, useImperativeHandle, useState } from 'react';
 
 export default forwardRef((props: CustomStatusPanelProps, ref) => {
     const [visible, setVisible] = useState(true);
 
     const onClick = () => {
-        alert('Selected Row Count: ' + props.api.getSelectedRows().length)
-    }
+        alert('Selected Row Count: ' + props.api.getSelectedRows().length);
+    };
 
     useImperativeHandle(ref, () => {
         return {
@@ -15,16 +15,16 @@ export default forwardRef((props: CustomStatusPanelProps, ref) => {
             },
             isVisible: () => {
                 return visible;
-            }
-        }
+            },
+        };
     });
-
 
     if (visible) {
         return (
             <div className="container">
                 <div>
-                    <span className="component">Status Bar Component&nbsp;
+                    <span className="component">
+                        Status Bar Component&nbsp;
                         <input type="button" onClick={() => onClick()} value="Click Me" />
                     </span>
                 </div>
@@ -34,4 +34,3 @@ export default forwardRef((props: CustomStatusPanelProps, ref) => {
 
     return null;
 });
-

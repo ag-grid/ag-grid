@@ -32,7 +32,7 @@ if (entry) {
     }
 }
 
-const framework = getFrameworkFromPath(Astro.url.pathname)
+const framework = getFrameworkFromPath(Astro.url.pathname);
 ---
 
 {data && <MatrixTable framework={framework} data={data} {...props} />}

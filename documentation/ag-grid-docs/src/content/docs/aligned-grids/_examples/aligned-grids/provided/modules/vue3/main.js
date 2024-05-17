@@ -1,12 +1,10 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { createApp } from 'vue';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
@@ -38,7 +36,7 @@ const VueExample = {
         </div>
     `,
     components: {
-        'ag-grid-vue': AgGridVue
+        'ag-grid-vue': AgGridVue,
     },
     data: function () {
         return {
@@ -52,40 +50,44 @@ const VueExample = {
                     headerName: 'Medals',
                     children: [
                         {
-                            columnGroupShow: 'closed', colId: "total",
-                            valueGetter: "data.gold + data.silver + data.bronze", width: 200
+                            columnGroupShow: 'closed',
+                            colId: 'total',
+                            valueGetter: 'data.gold + data.silver + data.bronze',
+                            width: 200,
                         },
-                        { columnGroupShow: 'open', field: "gold", width: 100 },
-                        { columnGroupShow: 'open', field: "silver", width: 100 },
-                        { columnGroupShow: 'open', field: "bronze", width: 100 }
-                    ]
-                }
+                        { columnGroupShow: 'open', field: 'gold', width: 100 },
+                        { columnGroupShow: 'open', field: 'silver', width: 100 },
+                        { columnGroupShow: 'open', field: 'bronze', width: 100 },
+                    ],
+                },
             ],
             rowData: [],
             topOptions: {
                 alignedGrids: () => [this.$refs.bottomGrid],
                 defaultColDef: {
                     filter: true,
-                    minWidth: 100
+                    minWidth: 100,
                 },
                 autoSizeStrategy: {
-                    type: 'fitGridWidth'
+                    type: 'fitGridWidth',
                 },
             },
             bottomOptions: {
                 alignedGrids: () => [this.$refs.topGrid],
                 defaultColDef: {
                     filter: true,
-                    minWidth: 100
-                }
+                    minWidth: 100,
+                },
             },
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
     mounted() {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then(resp => resp.json())
-            .then(rowData => this.rowData = rowData);
+            .then((resp) => resp.json())
+            .then((rowData) => (this.rowData = rowData));
     },
     methods: {
         onCbAthlete(value) {
@@ -105,8 +107,8 @@ const VueExample = {
 
         onGridReady(params) {
             this.topGridApi = params.api;
-        }
-    }
+        },
+    },
 };
 
 createApp(VueExample).mount('#app');

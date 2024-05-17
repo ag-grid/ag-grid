@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useGridDate } from '@ag-grid-community/react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 export default ({ date, onDateChange }) => {
     const [picker, setPicker] = useState(null);
@@ -7,11 +7,13 @@ export default ({ date, onDateChange }) => {
     const refInput = useRef(null);
 
     useEffect(() => {
-        setPicker(flatpickr(refFlatPickr.current, {
-            onChange: (selectedDates) => onDateChange(selectedDates[0]),
-            dateFormat: 'd/m/Y',
-            wrap: true
-        }));
+        setPicker(
+            flatpickr(refFlatPickr.current, {
+                onChange: (selectedDates) => onDateChange(selectedDates[0]),
+                dateFormat: 'd/m/Y',
+                wrap: true,
+            })
+        );
     }, []);
 
     useEffect(() => {
@@ -45,9 +47,9 @@ export default ({ date, onDateChange }) => {
 
     return (
         <div className="ag-input-wrapper custom-date-filter" role="presentation" ref={refFlatPickr}>
-            <input type="text" ref={refInput} data-input style={{ width: "100%" }} />
-            <a className='input-button' title='clear' data-clear>
-                <i className='fa fa-times'></i>
+            <input type="text" ref={refInput} data-input style={{ width: '100%' }} />
+            <a className="input-button" title="clear" data-clear>
+                <i className="fa fa-times"></i>
             </a>
         </div>
     );

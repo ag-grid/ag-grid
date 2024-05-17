@@ -1,11 +1,19 @@
-import { ModuleRegistry, ColDef, GridApi, GetRowIdParams, GridReadyEvent, RowDropZoneParams } from '@ag-grid-community/core';
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import './styles.css';
-import { Component, ViewChild } from '@angular/core';
-
 import { AgGridAngular } from '@ag-grid-community/angular';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {
+    ColDef,
+    GetRowIdParams,
+    GridApi,
+    GridReadyEvent,
+    ModuleRegistry,
+    RowDropZoneParams,
+} from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { Component, ViewChild } from '@angular/core';
+
+import './styles.css';
+
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 @Component({
@@ -14,16 +22,30 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
     selector: 'my-app',
     template: `
         <div class="example-wrapper">
-
             <div class="inner-col">
                 <div class="toolbar">
-                    <button class="factory factory-red" data-color="Red" data-side="left" (click)="onFactoryButtonClick($event)">
+                    <button
+                        class="factory factory-red"
+                        data-color="Red"
+                        data-side="left"
+                        (click)="onFactoryButtonClick($event)"
+                    >
                         <i class="far fa-plus-square"></i>Add Red
                     </button>
-                    <button class="factory factory-green" data-color="Green" data-side="left" (click)="onFactoryButtonClick($event)">
+                    <button
+                        class="factory factory-green"
+                        data-color="Green"
+                        data-side="left"
+                        (click)="onFactoryButtonClick($event)"
+                    >
                         <i class="far fa-plus-square"></i>Add Green
                     </button>
-                    <button class="factory factory-blue" data-color="Blue" data-side="left" (click)="onFactoryButtonClick($event)">
+                    <button
+                        class="factory factory-blue"
+                        data-color="Blue"
+                        data-side="left"
+                        (click)="onFactoryButtonClick($event)"
+                    >
                         <i class="far fa-plus-square"></i>Add Blue
                     </button>
                 </div>
@@ -38,7 +60,8 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
                         [suppressMoveWhenRowDragging]="true"
                         [rowData]="leftRowData"
                         [columnDefs]="columns"
-                        (gridReady)="onGridReady($event, 'Left')" />
+                        (gridReady)="onGridReady($event, 'Left')"
+                    />
                 </div>
             </div>
 
@@ -50,13 +73,28 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
             <div class="inner-col">
                 <div class="toolbar">
-                    <button class="factory factory-red" data-color="Red" data-side="right" (click)="onFactoryButtonClick($event)">
+                    <button
+                        class="factory factory-red"
+                        data-color="Red"
+                        data-side="right"
+                        (click)="onFactoryButtonClick($event)"
+                    >
                         <i class="far fa-plus-square"></i>Add Red
                     </button>
-                    <button class="factory factory-green" data-color="Green" data-side="right" (click)="onFactoryButtonClick($event)">
+                    <button
+                        class="factory factory-green"
+                        data-color="Green"
+                        data-side="right"
+                        (click)="onFactoryButtonClick($event)"
+                    >
                         <i class="far fa-plus-square"></i>Add Green
                     </button>
-                    <button class="factory factory-blue" data-color="Blue" data-side="right" (click)="onFactoryButtonClick($event)">
+                    <button
+                        class="factory factory-blue"
+                        data-color="Blue"
+                        data-side="right"
+                        (click)="onFactoryButtonClick($event)"
+                    >
                         <i class="far fa-plus-square"></i>Add Blue
                     </button>
                 </div>
@@ -71,26 +109,28 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
                         [suppressMoveWhenRowDragging]="true"
                         [rowData]="rightRowData"
                         [columnDefs]="columns"
-                        (gridReady)="onGridReady($event, 'Right')" />
+                        (gridReady)="onGridReady($event, 'Right')"
+                    />
                 </div>
             </div>
-
         </div>
-    `
+    `,
 })
 export class AppComponent {
-    themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
+    themeClass =
+        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+        'ag-theme-quartz' /** DARK MODE END **/;
 
     leftRowData: any[] = [];
-    rightRowData: any[] = []
+    rightRowData: any[] = [];
     leftApi!: GridApi;
     rightApi!: GridApi;
 
     rowClassRules = {
-        "red-row": 'data.color == "Red"',
-        "green-row": 'data.color == "Green"',
-        "blue-row": 'data.color == "Blue"'
-    }
+        'red-row': 'data.color == "Red"',
+        'green-row': 'data.color == "Green"',
+        'blue-row': 'data.color == "Blue"',
+    };
 
     defaultColDef: ColDef = {
         flex: 1,
@@ -98,14 +138,7 @@ export class AppComponent {
         filter: true,
     };
 
-    columns: ColDef[] = [
-        { field: "id", rowDrag: true },
-        { field: "color" },
-        { field: "value1" },
-        { field: "value2" }
-    ];
-
-
+    columns: ColDef[] = [{ field: 'id', rowDrag: true }, { field: 'color' }, { field: 'value1' }, { field: 'value2' }];
 
     @ViewChild('eLeftGrid') eLeftGrid: any;
     @ViewChild('eRightGrid') eRightGrid: any;
@@ -134,7 +167,9 @@ export class AppComponent {
 
     addRecordToGrid(side: string, data: any) {
         // if data missing or data has no it, do nothing
-        if (!data || data.id == null) { return; }
+        if (!data || data.id == null) {
+            return;
+        }
 
         const api = side === 'left' ? this.leftApi : this.rightApi;
         // do nothing if row is already in the grid, otherwise we would have duplicates
@@ -146,7 +181,7 @@ export class AppComponent {
         }
 
         const transaction = {
-            add: [data]
+            add: [data],
         };
 
         api.applyTransaction(transaction);
@@ -163,10 +198,12 @@ export class AppComponent {
 
     binDrop(data: any) {
         // if data missing or data has no id, do nothing
-        if (!data || data.id == null) { return; }
+        if (!data || data.id == null) {
+            return;
+        }
 
         var transaction = {
-            remove: [data]
+            remove: [data],
         };
 
         [this.leftApi, this.rightApi].forEach((api) => {
@@ -193,7 +230,7 @@ export class AppComponent {
                 this.binDrop(params.node.data);
                 this.eBin.nativeElement.style.color = 'black';
                 this.eBinIcon.nativeElement.style.transform = 'scale(1)';
-            }
+            },
         };
 
         api.addRowDropZone(dropZone);
@@ -202,13 +239,12 @@ export class AppComponent {
     addGridDropZone(side: string, api: GridApi) {
         const dropSide = side === 'Left' ? 'Right' : 'Left';
         const dropZone: RowDropZoneParams = {
-            getContainer: () => dropSide === 'Left' ? this.eLeftGrid.nativeElement : this.eRightGrid.nativeElement,
-            onDragStop: (dragParams) => this.addRecordToGrid(dropSide.toLowerCase(), dragParams.node.data)
+            getContainer: () => (dropSide === 'Left' ? this.eLeftGrid.nativeElement : this.eRightGrid.nativeElement),
+            onDragStop: (dragParams) => this.addRecordToGrid(dropSide.toLowerCase(), dragParams.node.data),
         };
 
         api.addRowDropZone(dropZone);
     }
-
 }
 
 let rowIdSequence = 100;
@@ -218,7 +254,7 @@ function createDataItem(color: string) {
         id: rowIdSequence++,
         color: color,
         value1: Math.floor(Math.random() * 100),
-        value2: Math.floor(Math.random() * 100)
+        value2: Math.floor(Math.random() * 100),
     };
 
     return obj;

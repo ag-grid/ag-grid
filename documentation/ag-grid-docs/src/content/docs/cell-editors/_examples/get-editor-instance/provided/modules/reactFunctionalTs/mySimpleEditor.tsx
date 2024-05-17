@@ -1,12 +1,12 @@
-import { CustomCellEditorProps } from '@ag-grid-community/react';
 import { ICellEditor } from '@ag-grid-community/core';
+import { CustomCellEditorProps } from '@ag-grid-community/react';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
 
 export interface MySimpleInterface extends ICellEditor {
-    myCustomFunction(): { rowIndex: number, colId: string };
+    myCustomFunction(): { rowIndex: number; colId: string };
 }
 
 export default forwardRef(({ value, onValueChange, eventKey, rowIndex, column }: CustomCellEditorProps, ref) => {
@@ -40,16 +40,18 @@ export default forwardRef(({ value, onValueChange, eventKey, rowIndex, column }:
             myCustomFunction() {
                 return {
                     rowIndex: rowIndex,
-                    colId: column.getId()
+                    colId: column.getId(),
                 };
-            }
+            },
         };
     });
 
     return (
-        <input value={value || ''}
+        <input
+            value={value || ''}
             ref={refInput}
             onChange={(event) => updateValue(event.target.value)}
-            className="my-simple-editor" />
+            className="my-simple-editor"
+        />
     );
-})
+});

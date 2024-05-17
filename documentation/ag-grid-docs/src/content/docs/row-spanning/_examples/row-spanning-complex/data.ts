@@ -60,6 +60,6 @@ export function getData(): any[] {
         { localTime: '8:15am', a: 0.423, b: 0.452, c: 0.523, d: 0.543, e: 0.452 },
         { localTime: '8:30am', a: 0.537, b: 0.246, c: 0.426, d: 0.421, e: 0.523 },
         { localTime: '8:45am', a: 0.893, b: 0.083, c: 0.532, d: 0.983, e: 0.543 },
-    ]
+    ];
     return rowData;
 }

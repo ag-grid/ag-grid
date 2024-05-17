@@ -1,4 +1,3 @@
-
 export function countries() {
     return [
         'United States',
@@ -111,5 +110,5 @@ export function countries() {
         'Sri Lanka',
         'Mozambique',
         'Barbados',
-    ]
+    ];
 }

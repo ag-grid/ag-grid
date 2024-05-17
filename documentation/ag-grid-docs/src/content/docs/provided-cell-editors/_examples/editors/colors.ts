@@ -145,5 +145,5 @@ export const colors: string[] = [
     'White',
     'WhiteSmoke',
     'Yellow',
-    'YellowGreen'
+    'YellowGreen',
 ];

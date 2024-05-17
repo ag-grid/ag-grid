@@ -1,4 +1,4 @@
-import React, {forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
@@ -34,9 +34,9 @@ export default forwardRef(({ value, onValueChange, eventKey, rowIndex, column },
             myCustomFunction() {
                 return {
                     rowIndex: rowIndex,
-                    colId: column.getId()
+                    colId: column.getId(),
                 };
-            }
+            },
         };
     });
 
@@ -48,4 +48,4 @@ export default forwardRef(({ value, onValueChange, eventKey, rowIndex, column },
             className="my-simple-editor"
         />
     );
-})
+});

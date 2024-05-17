@@ -1,12 +1,12 @@
-import { ICellEditorComp, ICellEditorParams } from "@ag-grid-community/core";
+import { ICellEditorComp, ICellEditorParams } from '@ag-grid-community/core';
 
 function isCharNumeric(charStr: string | null) {
-    return charStr != null && !!/^\d+$/.test(charStr)
+    return charStr != null && !!/^\d+$/.test(charStr);
 }
 
 function isNumericKey(event: any) {
     var charStr = event.key;
-    return isCharNumeric(charStr)
+    return isCharNumeric(charStr);
 }
 
 export class NumericCellEditor implements ICellEditorComp {
@@ -19,24 +19,24 @@ export class NumericCellEditor implements ICellEditorComp {
         // another cell in this row started the edit
         this.focusAfterAttached = params.cellStartedEdit;
 
-        this.eInput = document.createElement('input')
+        this.eInput = document.createElement('input');
         this.eInput.classList.add('ag-input-field-input');
         this.eInput.style.width = '100%';
 
-        this.eInput.value = (isCharNumeric(params.eventKey))
-            ? params.eventKey
-            : params.value;
+        this.eInput.value = isCharNumeric(params.eventKey) ? params.eventKey : params.value;
 
         this.eInput.addEventListener('keydown', (event) => {
-            if (!event.key || event.key.length !== 1 || isNumericKey(event)) { return; }
+            if (!event.key || event.key.length !== 1 || isNumericKey(event)) {
+                return;
+            }
             this.eInput.focus();
 
             if (event.preventDefault) event.preventDefault();
-        })
+        });
     }
 
     getGui() {
-        return this.eInput
+        return this.eInput;
     }
 
     afterGuiAttached() {

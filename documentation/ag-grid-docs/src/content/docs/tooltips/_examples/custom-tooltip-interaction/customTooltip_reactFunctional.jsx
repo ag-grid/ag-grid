@@ -1,10 +1,8 @@
 import React, { useMemo, useRef } from 'react';
 
-export default props => {
-
-    const data = useMemo( ()=> props.api.getDisplayedRowAtIndex(props.rowIndex).data, []);
+export default (props) => {
+    const data = useMemo(() => props.api.getDisplayedRowAtIndex(props.rowIndex).data, []);
     const inputEl = useRef(null);
-
 
     const onFormSubmit = (e) => {
         e.preventDefault();
@@ -17,7 +15,7 @@ export default props => {
                 props.hideTooltipCallback();
             }
         }
-    }
+    };
 
     return (
         <div className="custom-tooltip">
@@ -27,8 +25,19 @@ export default props => {
                 </div>
                 <form className="panel-body" onSubmit={onFormSubmit}>
                     <div className="form-group">
-                        <input type="text" ref={inputEl} className="form-control" id="name" placeholder="Name" autoComplete="off" defaultValue={data.athlete} onFocus={ e => e.target.select() }/>
-                        <button type="submit" className="btn btn-primary">Submit</button>
+                        <input
+                            type="text"
+                            ref={inputEl}
+                            className="form-control"
+                            id="name"
+                            placeholder="Name"
+                            autoComplete="off"
+                            defaultValue={data.athlete}
+                            onFocus={(e) => e.target.select()}
+                        />
+                        <button type="submit" className="btn btn-primary">
+                            Submit
+                        </button>
                     </div>
                     <p>Total: {data.total}</p>
                 </form>

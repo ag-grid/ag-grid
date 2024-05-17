@@ -1,6 +1,5 @@
 export default {
-  template: 
-    `
+    template: `
     <span class="missionSpan">
       <img
         :alt="params.value"
@@ -10,11 +9,11 @@ export default {
     </span>
     `,
     data: function () {
-      return {
-        cellValue: ''
-      };
+        return {
+            cellValue: '',
+        };
     },
     beforeMount() {
-      this.cellValue = this.params.value ? 'tick-in-circle' : 'cross-in-circle';
+        this.cellValue = this.params.value ? 'tick-in-circle' : 'cross-in-circle';
     },
 };

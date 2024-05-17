@@ -1,20 +1,19 @@
-import { createGrid, GetRowIdParams, GridApi, GridOptions } from '@ag-grid-community/core';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { GetRowIdParams, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RangeSelectionModule, RowGroupingModule, StatusBarModule]);
 
 function getInitialData() {
     const data = [];
     for (let i = 0; i < 5; i++) {
-        data.push(createItem())
+        data.push(createItem());
     }
 
-    return data
+    return data;
 }
 
 let immutableStore: any[] = [];
@@ -24,30 +23,30 @@ function addFiveItems(append: boolean) {
     for (let i = 0; i < 5; i++) {
         const newItem = createItem();
         if (append) {
-            newStore.push(newItem)
+            newStore.push(newItem);
         } else {
-            newStore.splice(0, 0, newItem)
+            newStore.splice(0, 0, newItem);
         }
     }
-    immutableStore = newStore
-    gridApi!.setGridOption('rowData', immutableStore)
+    immutableStore = newStore;
+    gridApi!.setGridOption('rowData', immutableStore);
 }
 
 function removeSelected() {
     const selectedRowNodes = gridApi!.getSelectedNodes();
     const selectedIds = selectedRowNodes.map(function (rowNode) {
-        return rowNode.id
+        return rowNode.id;
     });
     immutableStore = immutableStore.filter(function (dataItem) {
-        return selectedIds.indexOf(dataItem.symbol) < 0
-    })
-    gridApi!.setGridOption('rowData', immutableStore)
+        return selectedIds.indexOf(dataItem.symbol) < 0;
+    });
+    gridApi!.setGridOption('rowData', immutableStore);
 }
 
 function setSelectedToGroup(newGroup: string) {
     const selectedRowNodes = gridApi!.getSelectedNodes();
     const selectedIds = selectedRowNodes.map(function (rowNode) {
-        return rowNode.id
+        return rowNode.id;
     });
     immutableStore = immutableStore.map(function (dataItem) {
         const itemSelected = selectedIds.indexOf(dataItem.symbol) >= 0;
@@ -58,12 +57,12 @@ function setSelectedToGroup(newGroup: string) {
                 price: dataItem.price,
                 // group gets the group
                 group: newGroup,
-            }
+            };
         } else {
-            return dataItem
+            return dataItem;
         }
-    })
-    gridApi!.setGridOption('rowData', immutableStore)
+    });
+    gridApi!.setGridOption('rowData', immutableStore);
 }
 
 function updatePrices() {
@@ -76,20 +75,20 @@ function updatePrices() {
             group: item.group,
             // add random price
             price: Math.floor(Math.random() * 100),
-        })
-    })
-    immutableStore = newStore
-    gridApi!.setGridOption('rowData', immutableStore)
+        });
+    });
+    immutableStore = newStore;
+    gridApi!.setGridOption('rowData', immutableStore);
 }
 
 function filter(list: any[], callback: any) {
     const filteredList: any[] = [];
     list.forEach((item) => {
         if (callback(item)) {
-            filteredList.push(item)
+            filteredList.push(item);
         }
-    })
-    return filteredList
+    });
+    return filteredList;
 }
 
 function createItem() {
@@ -98,11 +97,11 @@ function createItem() {
         symbol: createUniqueRandomSymbol(),
         price: Math.floor(Math.random() * 100),
     };
-    return item
+    return item;
 }
 
 function onGroupingEnabled(enabled: boolean) {
-    setGroupingEnabled(enabled, gridApi!)
+    setGroupingEnabled(enabled, gridApi!);
 }
 
 function setGroupingEnabled(enabled: boolean, api: GridApi) {
@@ -112,23 +111,23 @@ function setGroupingEnabled(enabled: boolean, api: GridApi) {
                 { colId: 'group', rowGroup: true, hide: true },
                 { colId: 'symbol', hide: true },
             ],
-        })
+        });
     } else {
         api.applyColumnState({
             state: [
                 { colId: 'group', rowGroup: false, hide: false },
                 { colId: 'symbol', hide: false },
             ],
-        })
+        });
     }
 
-    setItemVisible('groupingOn', !enabled)
-    setItemVisible('groupingOff', enabled)
+    setItemVisible('groupingOn', !enabled);
+    setItemVisible('groupingOff', enabled);
 }
 
 function setItemVisible(id: string, visible: boolean) {
     const element = document.querySelector('#' + id)! as any;
-    element.style.display = visible ? 'inline' : 'none'
+    element.style.display = visible ? 'inline' : 'none';
 }
 
 // creates a unique symbol, eg 'ADG' or 'ZJD'
@@ -138,26 +137,26 @@ function createUniqueRandomSymbol() {
 
     let isUnique = false;
     while (!isUnique) {
-        symbol = ''
+        symbol = '';
         // create symbol
         for (let i = 0; i < 3; i++) {
-            symbol += possible.charAt(Math.floor(Math.random() * possible.length))
+            symbol += possible.charAt(Math.floor(Math.random() * possible.length));
         }
         // check uniqueness
-        isUnique = true
+        isUnique = true;
         immutableStore.forEach((oldItem) => {
             if (oldItem.symbol === symbol) {
-                isUnique = false
+                isUnique = false;
             }
-        })
+        });
     }
 
-    return symbol
+    return symbol;
 }
 
 function reverseItems() {
-    immutableStore.reverse()
-    gridApi!.setGridOption('rowData', immutableStore)
+    immutableStore.reverse();
+    gridApi!.setGridOption('rowData', immutableStore);
 }
 
 let gridApi: GridApi;
@@ -184,18 +183,18 @@ const gridOptions: GridOptions = {
     groupDefaultExpanded: 1,
     rowData: immutableStore,
     getRowId: (params: GetRowIdParams) => {
-        return params.data.symbol
+        return params.data.symbol;
     },
     onGridReady: (params) => {
-        immutableStore = []
-        immutableStore = getInitialData()
-        params.api.setGridOption('rowData', immutableStore)
-        setGroupingEnabled(false, params.api)
+        immutableStore = [];
+        immutableStore = getInitialData();
+        params.api.setGridOption('rowData', immutableStore);
+        setGroupingEnabled(false, params.api);
     },
-}
+};
 
 // after page is loaded, create the grid.
 document.addEventListener('DOMContentLoaded', function () {
     const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(eGridDiv, gridOptions);
-})
+});

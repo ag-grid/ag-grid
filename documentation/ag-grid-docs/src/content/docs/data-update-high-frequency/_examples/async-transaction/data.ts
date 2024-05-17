@@ -2,11 +2,11 @@
 // data store (such as Redux) then this would be similar to your store of data.
 export var globalRowData: any[];
 
-var MIN_BOOK_COUNT = 10
-var MAX_BOOK_COUNT = 20
+var MIN_BOOK_COUNT = 10;
+var MAX_BOOK_COUNT = 20;
 
-var MIN_TRADE_COUNT = 1
-var MAX_TRADE_COUNT = 10
+var MIN_TRADE_COUNT = 1;
+var MAX_TRADE_COUNT = 10;
 
 var products = [
     'Palm Oil',
@@ -37,31 +37,31 @@ var products = [
     'Cotton No.2',
     'Sugar No.11',
     'Sugar No.14',
-]
+];
 
-var portfolios = ['Aggressive', 'Defensive', 'Income', 'Speculative', 'Hybrid']
+var portfolios = ['Aggressive', 'Defensive', 'Income', 'Speculative', 'Hybrid'];
 
 // start the book id's and trade id's at some future random number,
 // looks more realistic than starting them at 0
-var nextBookId = 62472
-var nextTradeId = 24287
+var nextBookId = 62472;
+var nextTradeId = 24287;
 
 // build up the test data
 export function getData() {
-    globalRowData = []
+    globalRowData = [];
     for (var i = 0; i < products.length; i++) {
-        var product = products[i]
+        var product = products[i];
         for (var j = 0; j < portfolios.length; j++) {
-            var portfolio = portfolios[j]
+            var portfolio = portfolios[j];
 
-            var bookCount = randomBetween(MAX_BOOK_COUNT, MIN_BOOK_COUNT)
+            var bookCount = randomBetween(MAX_BOOK_COUNT, MIN_BOOK_COUNT);
 
             for (var k = 0; k < bookCount; k++) {
-                var book = createBookName()
-                var tradeCount = randomBetween(MAX_TRADE_COUNT, MIN_TRADE_COUNT)
+                var book = createBookName();
+                var tradeCount = randomBetween(MAX_TRADE_COUNT, MIN_TRADE_COUNT);
                 for (var l = 0; l < tradeCount; l++) {
-                    var trade = createTradeRecord(product, portfolio, book)
-                    globalRowData.push(trade)
+                    var trade = createTradeRecord(product, portfolio, book);
+                    globalRowData.push(trade);
                 }
             }
         }
@@ -69,12 +69,12 @@ export function getData() {
 }
 
 function randomBetween(min: number, max: number) {
-    return Math.floor(Math.random() * (max - min + 1)) + min
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function createTradeRecord(product: string, portfolio: string, book: string) {
-    var current = Math.floor(Math.random() * 100000) + 100
-    var previous = current + Math.floor(Math.random() * 10000) - 2000
+    var current = Math.floor(Math.random() * 100000) + 100;
+    var previous = current + Math.floor(Math.random() * 10000) - 2000;
     var trade = {
         product: product,
         portfolio: portfolio,
@@ -91,16 +91,16 @@ function createTradeRecord(product: string, portfolio: string, book: string) {
         gainDx: randomBetween(100, 1000),
         sxPx: randomBetween(100, 1000),
         _99Out: randomBetween(100, 1000),
-    }
-    return trade
+    };
+    return trade;
 }
 
 function createBookName() {
-    nextBookId++
-    return 'GL-' + nextBookId
+    nextBookId++;
+    return 'GL-' + nextBookId;
 }
 
 function createTradeId() {
-    nextTradeId++
-    return nextTradeId
+    nextTradeId++;
+    return nextTradeId;
 }

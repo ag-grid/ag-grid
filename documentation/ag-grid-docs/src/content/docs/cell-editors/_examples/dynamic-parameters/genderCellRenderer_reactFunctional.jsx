@@ -6,6 +6,7 @@ export default (props) => {
         <span>
             <i className={`fa ${icon}`}></i> {props.value}
         </span>
-    ) : <React.Fragment></React.Fragment>;
+    ) : (
+        <React.Fragment></React.Fragment>
+    );
 };
-
