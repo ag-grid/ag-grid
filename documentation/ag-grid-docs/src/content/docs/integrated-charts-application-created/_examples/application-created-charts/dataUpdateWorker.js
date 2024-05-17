@@ -45,10 +45,6 @@ function createRowData() {
     // console.log('Total number of records sent to grid = ' + globalRowData.length);
 }
 
-function randomBetween(min,max) {
-    return Math.floor(Math.random()*(max - min + 1)) + min;
-}
-
 function createTradeRecord(product, portfolio, book, batch) {
     var current = Math.floor(Math.random()*10000) + (Math.random()<.45 ? 500 : 19000);
     var previous = current + (Math.random()<.5 ? 500 : 19000);
