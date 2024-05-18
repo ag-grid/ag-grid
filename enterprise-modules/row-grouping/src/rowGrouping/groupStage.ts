@@ -23,7 +23,8 @@ import {
     _existsAndNotEmpty,
     _removeFromArray,
     _sortRowNodesByOrder,
-    _warnOnce
+    _warnOnce,
+    _last
 } from "@ag-grid-community/core";
 import { BatchRemover } from "./batchRemover";
 
@@ -71,6 +72,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private oldGroupingDetails: GroupingDetails;
     private oldGroupDisplayColIds: string;
+    private treeNodeCache: Record<string, RowNode> = {};
 
     public execute(params: StageExecuteParams): void {
 
@@ -284,8 +286,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private removeNodesInStages(leafRowNodes: RowNode[], details: GroupingDetails, batchRemover: BatchRemover | undefined): void {
         this.removeNodesFromParents(leafRowNodes, details, batchRemover);
         if (details.usingTreeData) {
-            this.postRemoveCreateFillerNodes(leafRowNodes, details);
-
             // When not TreeData, then removeEmptyGroups is called just before the BatchRemover is flushed.
             // However for TreeData, there is no BatchRemover, so we have to call removeEmptyGroups here.
             const nodeParents = leafRowNodes.map(n => n.parent!);
@@ -413,15 +413,17 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         child.setRowIndex(null);
     }
 
+    /**
+     * This is idempotent, but relies on the `key` field being the same throughout a RowNode's lifetime
+     */
     private addToParent(child: RowNode, parent: RowNode | null) {
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
-        if (parent) {
-            const children = parent.childrenMapped != null;
-            if (children) {
-                parent.childrenMapped![mapKey] = child;
+        if (parent?.childrenMapped != null) {
+            if (parent?.childrenMapped?.[mapKey] !== child) {
+                parent.childrenMapped[mapKey] = child;
+                parent.childrenAfterGroup!.push(child);
+                parent?.updateHasChildren();
             }
-            parent.childrenAfterGroup!.push(child);
-            parent.updateHasChildren();
         }
     }
 
@@ -507,7 +509,71 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         return noFurtherProcessingNeeded;
     }
 
+    private ensureRowNodeFields(rowNode: RowNode, key?: string): RowNode {
+        if (key !== undefined) {
+            rowNode.key = key;
+        }
+        rowNode.childrenMapped ??= {};
+        rowNode.allLeafChildren ??= [];
+        rowNode.childrenAfterGroup ??= [];
+        return rowNode;
+    }
+
+    /**
+     * Directly re-initialises this.treeNodeCache
+     */
+    private buildNodeCacheFromRows(rowNodes: RowNode[], details: GroupingDetails): void {
+        let width = 0;
+        const paths = rowNodes.map((node) => {
+            const info = this.getGroupInfo(node, details);
+            width = Math.max(width, info.length);
+            return info;
+        });
+
+        this.treeNodeCache = {};
+
+        for (let level = 0; level < width; level++) {
+            const levelCache: Record<string, [parent: RowNode, node: null | RowNode]> = {};
+
+            for (const [rowIdx, path] of paths.entries()) {
+                const isDefined = path[level] !== undefined;
+                const isLeaf = path[level + 1] === undefined;
+
+                if (!isDefined) {
+                    continue;
+                }
+
+                const info = path[level];
+
+                const currentValue = levelCache[info.key];
+                if (currentValue !== undefined && currentValue[1] !== null) {
+                    continue;
+                }
+
+                const parentInfo = path[level - 1];
+                const parentKey = parentInfo != null ? this.getChildrenMappedKey(parentInfo.key, parentInfo.rowGroupColumn) : null;
+                const parent = parentKey != null ? this.treeNodeCache[parentKey] ?? details.rootNode : details.rootNode;
+                levelCache[info.key] = isLeaf ? [parent, this.ensureRowNodeFields(rowNodes[rowIdx], info.key)] : [parent, null];
+            }
+
+            for (const [key, [parent, node]] of Object.entries(levelCache)) {
+                let group: RowNode;
+                if (node === null) {
+                    group = this.createGroup({key, rowGroupColumn: null ,field: null}, parent, level, details);
+                } else {
+                    group = node;
+                }
+                
+                this.treeNodeCache[key] = group;
+            }
+        }
+    }
+
     private insertNodes(newRowNodes: RowNode[], details: GroupingDetails, isMove: boolean): void {
+        if (details.usingTreeData) {
+            this.buildNodeCacheFromRows(newRowNodes, details);
+        }
+
         newRowNodes.forEach(rowNode => {
             this.insertOneNode(rowNode, details, isMove);
             if (details.changedPath.isActive()) {
@@ -519,16 +585,23 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private insertOneNode(childNode: RowNode, details: GroupingDetails, isMove: boolean, batchRemover?: BatchRemover): void {
 
         const path: GroupInfo[] = this.getGroupInfo(childNode, details);
+        const level = details.usingTreeData ? path.length - 1 : undefined;
 
-        const parentGroup = this.findParentForNode(childNode, path, details, batchRemover);
-        if (!parentGroup.group) {
-            console.warn(`AG Grid: duplicate group keys for row data, keys should be unique`,
-                [parentGroup.data, childNode.data]);
-        }
+        const parentGroup = this.findParentForNode(childNode, path, details, batchRemover, level);
 
         if (details.usingTreeData) {
-            this.swapGroupWithUserNode(parentGroup, childNode, isMove);
+            const info = _last(path);
+            childNode.parent = parentGroup;
+            childNode.level = path.length;
+            this.ensureRowNodeFields(childNode, this.getChildrenMappedKey(info.key, info.rowGroupColumn));
+            this.setGroupData(childNode, info, details);
+            this.setExpandedInitialValue(details, childNode)
+            this.addToParent(childNode, parentGroup);
         } else {
+            if (!parentGroup.group) {
+                console.warn(`AG Grid: duplicate group keys for row data, keys should be unique`,
+                    [parentGroup.data, childNode.data]);
+            }
             childNode.parent = parentGroup;
             childNode.level = path.length;
             parentGroup.childrenAfterGroup!.push(childNode);
@@ -536,10 +609,14 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private findParentForNode(childNode: RowNode, path: GroupInfo[], details: GroupingDetails, batchRemover?: BatchRemover): RowNode {
+    private findParentForNode(childNode: RowNode, path: GroupInfo[], details: GroupingDetails, batchRemover?: BatchRemover, stopLevel?: number): RowNode {
         let nextNode: RowNode = details.rootNode;
 
         path.forEach((groupInfo, level) => {
+            if (stopLevel !== undefined && level >= stopLevel) {
+                return;
+            }
+
             nextNode = this.getOrCreateNextNode(nextNode, groupInfo, level, details);
             // node gets added to all group nodes.
             // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
@@ -555,44 +632,19 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         return nextNode;
     }
 
-    private swapGroupWithUserNode(fillerGroup: RowNode, userGroup: RowNode, isMove: boolean) {
-        userGroup.parent = fillerGroup.parent;
-        userGroup.key = fillerGroup.key;
-        userGroup.field = fillerGroup.field;
-        userGroup.groupData = fillerGroup.groupData;
-        userGroup.level = fillerGroup.level;
-        // AG-3441 - preserve the existing expanded status of the node if we're moving it, so that
-        // you can drag a sub tree from one parent to another without changing its expansion
-        if (!isMove) {
-            userGroup.expanded = fillerGroup.expanded;
-        }
-
-        // we set .leafGroup to false for tree data, as .leafGroup is only used when pivoting, and pivoting
-        // isn't allowed with treeData, so the grid never actually use .leafGroup when doing treeData.
-        userGroup.leafGroup = fillerGroup.leafGroup;
-
-        // always null for userGroups, as row grouping is not allowed when doing tree data
-        userGroup.rowGroupIndex = fillerGroup.rowGroupIndex;
-
-        userGroup.allLeafChildren = fillerGroup.allLeafChildren;
-        userGroup.childrenAfterGroup = fillerGroup.childrenAfterGroup;
-        userGroup.childrenMapped = fillerGroup.childrenMapped;
-        userGroup.sibling = fillerGroup.sibling;
-        userGroup.updateHasChildren();
-
-        this.removeFromParent(fillerGroup);
-        userGroup.childrenAfterGroup!.forEach((rowNode: RowNode) => rowNode.parent = userGroup);
-        this.addToParent(userGroup, fillerGroup.parent);
-    }
-
     private getOrCreateNextNode(parentGroup: RowNode, groupInfo: GroupInfo, level: number,
         details: GroupingDetails): RowNode {
 
         const key = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
-        let nextNode = parentGroup.childrenMapped ? parentGroup.childrenMapped[key] : undefined;
+        let nextNode = parentGroup?.childrenMapped?.[key];
 
         if (!nextNode) {
-            nextNode = this.createGroup(groupInfo, parentGroup, level, details);
+            if (key in this.treeNodeCache) {
+                nextNode = this.treeNodeCache[key];
+                nextNode.parent = parentGroup;
+            } else {
+                nextNode = this.createGroup(groupInfo, parentGroup, level, details);
+            }
             // attach the new group to the parent
             this.addToParent(nextNode, parentGroup);
         }
