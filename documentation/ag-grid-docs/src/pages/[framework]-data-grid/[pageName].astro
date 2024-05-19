@@ -40,7 +40,7 @@ const version = versionsData[0]?.version;
 const frameworkDisplayText = getFrameworkDisplayText(currentFramework);
 const seoTagline = `Download AG Grid v${version} today: The best ${frameworkDisplayText} Table & ${frameworkDisplayText} Data Grid in the world.`;
 const description = page.data.description
-    ? page.data.description.replace('$framework', frameworkDisplayText) // Use front-matter description
+    ? page.data.description.replaceAll('$framework', frameworkDisplayText) // Use front-matter description
     : getFirstParagraphText(page.body, currentFramework); // Default to 1st paragraph text
 const descriptionWithSeoTagline = `${description} ${seoTagline}`;
 
