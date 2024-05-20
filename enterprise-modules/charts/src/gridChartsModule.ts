@@ -33,6 +33,6 @@ export const GridChartsModule: Module = {
         AdvancedSettingsMenuFactory,
     ],
     // Register all the components that are used across all the chart comps to avoid repetition
-    agStackComponents: [AgColorPicker, AgAngleSelect, AgInputRange, AgSlider, AgGroupComponent, AgSelect, AgInputNumberField, AgCheckbox],
+    agStackComponents: [AgColorPicker, AgColorInput, AgAngleSelect, AgInputRange, AgSlider, AgGroupComponent, AgSelect, AgInputNumberField, AgCheckbox],
     dependantModules: [RangeSelectionModule, EnterpriseCoreModule],
 };

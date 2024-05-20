@@ -41,6 +41,7 @@ export interface AgFieldParams extends AgLabelParams {
 export interface AgInputFieldParams extends AgFieldParams {
     inputName?: string;
     inputWidth?: number | 'flex';
+    template?: string;
 }
 
 export interface AgCheckboxParams extends AgInputFieldParams {
