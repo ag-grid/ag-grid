@@ -1,6 +1,8 @@
 import { ChartMappings, ChartType } from '@ag-grid-community/core';
 import { AgChartThemeOverrides } from 'ag-charts-community';
 
+import { ChartTranslationKey } from '../services/chartTranslationService';
+
 export type ChartSeriesType =
     (typeof ChartMappings.CHART_TYPE_TO_SERIES_TYPE)[keyof typeof ChartMappings.CHART_TYPE_TO_SERIES_TYPE] &
         keyof AgChartThemeOverrides;
@@ -185,4 +187,24 @@ export function supportsInvertedCategorySeries(chartType: ChartType): boolean {
 
 export function canSwitchDirection(chartType: ChartType): boolean {
     return doesSeriesHaveProperty(getSeriesType(chartType), 'canSwitchDirection');
+}
+
+export function getFullChartNameTranslationKey(chartType: ChartType): ChartTranslationKey {
+    switch (chartType) {
+        case 'groupedColumn':
+        case 'stackedColumn':
+        case 'normalizedColumn':
+        case 'groupedBar':
+        case 'stackedBar':
+        case 'normalizedBar':
+        case 'stackedArea':
+        case 'normalizedArea':
+            return `${chartType}Full`;
+        case 'doughnut':
+            return 'donut';
+        case 'areaColumnCombo':
+            return 'AreaColumnCombo';
+        default:
+            return chartType;
+    }
 }
