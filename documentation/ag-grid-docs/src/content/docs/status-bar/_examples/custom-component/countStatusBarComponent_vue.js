@@ -7,7 +7,7 @@ export default {
     `,
     data: function () {
         return {
-            count: null
+            count: null,
         };
     },
     beforeMount() {
@@ -16,6 +16,6 @@ export default {
     methods: {
         onGridReady(params) {
             this.count = this.params.api.getDisplayedRowCount();
-        }
-    }
+        },
+    },
 };

@@ -1,19 +1,18 @@
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
+    FirstDataRenderedEvent,
     GridApi,
-    createGrid,
     GridOptions,
     ISetFilter,
     ISetFilterParams,
     KeyCreatorParams,
     ValueFormatterParams,
-    FirstDataRenderedEvent,
+    createGrid,
 } from '@ag-grid-community/core';
-
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, FiltersToolPanelModule, MenuModule, SetFilterModule]);
 
@@ -28,7 +27,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         {
             field: 'country',
             valueFormatter: (params: ValueFormatterParams) => {
-                return `${params.value.name} (${params.value.code})`
+                return `${params.value.name} (${params.value.code})`;
             },
             keyCreator: countryKeyCreator,
             filterParams: { valueFormatter: (params: ValueFormatterParams) => params.value.name } as ISetFilterParams,
@@ -49,22 +48,22 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     sideBar: 'filters',
     onFirstDataRendered: onFirstDataRendered,
-}
+};
 
 function countryKeyCreator(params: KeyCreatorParams) {
-    return params.value.name
+    return params.value.name;
 }
 
 function patchData(data: any[]) {
     // hack the data, replace each country with an object of country name and code
     data.forEach((row) => {
-        const countryName = row.country
-        const countryCode = countryName.substring(0, 2).toUpperCase()
+        const countryName = row.country;
+        const countryCode = countryName.substring(0, 2).toUpperCase();
         row.country = {
             name: countryName,
             code: countryCode,
-        }
-    })
+        };
+    });
 }
 
 function selectJohnAndKenny() {
@@ -86,7 +85,7 @@ function selectNothing() {
 }
 
 function setCountriesToFranceAustralia() {
-    gridApi!.getColumnFilterInstance<ISetFilter<{ name: string, code: string }>>('country').then(instance => {
+    gridApi!.getColumnFilterInstance<ISetFilter<{ name: string; code: string }>>('country').then((instance) => {
         instance!.setFilterValues([
             {
                 name: 'France',
@@ -94,35 +93,35 @@ function setCountriesToFranceAustralia() {
             },
             {
                 name: 'Australia',
-                code: 'AU'
-            }
-        ])
-        instance!.applyModel()
-        gridApi!.onFilterChanged()
+                code: 'AU',
+            },
+        ]);
+        instance!.applyModel();
+        gridApi!.onFilterChanged();
     });
 }
 
 function setCountriesToAll() {
-    gridApi!.getColumnFilterInstance<ISetFilter<{ name: string, code: string }>>('country').then(instance => {
-        instance!.resetFilterValues()
-        instance!.applyModel()
-        gridApi!.onFilterChanged()
+    gridApi!.getColumnFilterInstance<ISetFilter<{ name: string; code: string }>>('country').then((instance) => {
+        instance!.resetFilterValues();
+        instance!.applyModel();
+        gridApi!.onFilterChanged();
     });
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-    params.api.getToolPanelInstance('filters')!.expandFilters()
+    params.api.getToolPanelInstance('filters')!.expandFilters();
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
+        .then((response) => response.json())
         .then(function (data) {
-            patchData(data)
-            gridApi!.setGridOption('rowData', data)
-        })
-})
+            patchData(data);
+            gridApi!.setGridOption('rowData', data);
+        });
+});

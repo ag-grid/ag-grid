@@ -2,18 +2,18 @@
 // might generate sql queries from the Server-Side Row Model request.
 // To keep things simple it does the bare minimum to support the example.
 export function FakeServer(allData) {
-    alasql.options.cache = false; 
+    alasql.options.cache = false;
 
     return {
-        getData: function(request) {
+        getData: function (request) {
             var results = executeQuery(request);
 
             return {
                 success: true,
                 rows: results,
-                lastRow: getLastRowIndex(request)
+                lastRow: getLastRowIndex(request),
             };
-        }
+        },
     };
 
     function executeQuery(request) {
@@ -33,7 +33,7 @@ export function FakeServer(allData) {
         var filterModel = request.filterModel;
 
         if (filterModel) {
-            Object.keys(filterModel).forEach(function(key) {
+            Object.keys(filterModel).forEach(function (key) {
                 var item = filterModel[key];
 
                 switch (item.filterType) {
@@ -59,7 +59,7 @@ export function FakeServer(allData) {
 
     function createFilterSql(mapper, key, item) {
         if (item.operator) {
-            const conditions = item.conditions.map(condition => mapper(key, condition));
+            const conditions = item.conditions.map((condition) => mapper(key, condition));
 
             return '(' + conditions.join(' ' + item.operator + ' ') + ')';
         }
@@ -82,9 +82,9 @@ export function FakeServer(allData) {
             case 'endsWith':
                 return key + " LIKE '%" + item.filter + "'";
             case 'blank':
-                return key + " IS NULL or " + key + " = ''";
+                return key + ' IS NULL or ' + key + " = ''";
             case 'notBlank':
-                return key + " IS NOT NULL and " + key + " != ''";
+                return key + ' IS NOT NULL and ' + key + " != ''";
             default:
                 console.log('unknown text filter type: ' + item.type);
         }
@@ -107,9 +107,9 @@ export function FakeServer(allData) {
             case 'inRange':
                 return '(' + key + ' >= ' + item.filter + ' and ' + key + ' <= ' + item.filterTo + ')';
             case 'blank':
-                return key + " IS NULL";
+                return key + ' IS NULL';
             case 'notBlank':
-                return key + " IS NOT NULL";
+                return key + ' IS NOT NULL';
             default:
                 console.log('unknown number filter type: ' + item.type);
         }
@@ -120,7 +120,7 @@ export function FakeServer(allData) {
 
         if (sortModel.length === 0) return '';
 
-        var sorts = sortModel.map(function(s) {
+        var sorts = sortModel.map(function (s) {
             return s.colId + ' ' + s.sort.toUpperCase();
         });
 
@@ -128,7 +128,9 @@ export function FakeServer(allData) {
     }
 
     function limitSql(request) {
-        if (request.endRow == undefined || request.startRow == undefined) { return ''; }
+        if (request.endRow == undefined || request.startRow == undefined) {
+            return '';
+        }
         var blockSize = request.endRow - request.startRow;
 
         return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;

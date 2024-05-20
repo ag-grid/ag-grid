@@ -66,13 +66,20 @@ const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
 
 const shouldShowTemplate = (framework: InternalFramework) => {
     return internalFramework === framework;
-}
-
-
+};
 ---
-{generatedContents.excluded && (
-    <h3 data-testid='excluded-framework'>PLACEHODER</h3><p>Example not generated as exampleConfig.json has supportedFrameworks specified but not including this one.</p>
-)}
+
+{
+    generatedContents.excluded && (
+        <>
+            <h3 data-testid="excluded-framework">PLACEHODER</h3>
+            <p>
+                Example not generated as exampleConfig.json has supportedFrameworks specified but not including this
+                one.
+            </p>
+        </>
+    )
+}
 
 {
     !generatedContents && (
@@ -164,7 +171,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
 }
 
 {
-    (shouldShowTemplate('vue3')) && (
+    shouldShowTemplate('vue3') && (
         <VueTemplate
             isDev={isDev}
             title={title}

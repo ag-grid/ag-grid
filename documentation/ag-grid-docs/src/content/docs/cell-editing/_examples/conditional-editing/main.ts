@@ -1,58 +1,56 @@
-import { GridApi, createGrid, GridOptions, EditableCallbackParams, CellClassParams } from '@ag-grid-community/core';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { CellClassParams, EditableCallbackParams, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 let editableYear = 2012;
 
 function isCellEditable(params: EditableCallbackParams | CellClassParams) {
-  return params.data.year === editableYear;
+    return params.data.year === editableYear;
 }
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-  columnDefs: [
-    { field: 'athlete', type: 'editableColumn' },
-    { field: 'age', type: 'editableColumn' },
-    { field: 'year' },
-    { field: 'country' },
-    { field: 'date' },
-    { field: 'sport' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
-    { field: 'total' },
-  ],
-  columnTypes: {
-    editableColumn: {
-      editable: (params: EditableCallbackParams<IOlympicData>) => {
-        return isCellEditable(params);
-      },
-      cellStyle: (params: CellClassParams<IOlympicData>) => {
-        if (isCellEditable(params)) {
-          return { backgroundColor: '#2244CC44' };
-        }
-      }
-    }
-  }
-}
+    columnDefs: [
+        { field: 'athlete', type: 'editableColumn' },
+        { field: 'age', type: 'editableColumn' },
+        { field: 'year' },
+        { field: 'country' },
+        { field: 'date' },
+        { field: 'sport' },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
+    ],
+    columnTypes: {
+        editableColumn: {
+            editable: (params: EditableCallbackParams<IOlympicData>) => {
+                return isCellEditable(params);
+            },
+            cellStyle: (params: CellClassParams<IOlympicData>) => {
+                if (isCellEditable(params)) {
+                    return { backgroundColor: '#2244CC44' };
+                }
+            },
+        },
+    },
+};
 
 function setEditableYear(year: number) {
-  editableYear = year;
-  // Redraw to re-apply the new cell style
-  gridApi!.redrawRows();
+    editableYear = year;
+    // Redraw to re-apply the new cell style
+    gridApi!.redrawRows();
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
 
-
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
-})
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+});

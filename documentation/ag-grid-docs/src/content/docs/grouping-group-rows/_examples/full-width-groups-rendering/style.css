@@ -1,25 +1,26 @@
 /* enable row hover for full width rows, since it is not applied by default */
 .ag-full-width-row.ag-row-hover {
-  background-color: var(--ag-row-hover-color);
+    background-color: var(--ag-row-hover-color);
 }
 
 .groupTitle {
-  font-size: 16px; font-weight: bold;
+    font-size: 16px;
+    font-weight: bold;
 }
 .medal {
-  margin: 0 5px;
+    margin: 0 5px;
 }
 .gold {
-  color: #e4ab11;
+    color: #e4ab11;
 }
 .silver {
-  color: #bbb4bb;
+    color: #bbb4bb;
 }
 .bronze {
-  color: #be9088;
+    color: #be9088;
 }
 .flag {
-  margin: 0 4px;
-  position: relative;
-  top: 2px;
+    margin: 0 4px;
+    position: relative;
+    top: 2px;
 }

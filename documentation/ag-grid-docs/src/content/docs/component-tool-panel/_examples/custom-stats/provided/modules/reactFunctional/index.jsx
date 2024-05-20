@@ -1,19 +1,25 @@
 'use strict';
 
-import React, { useCallback, useMemo, useState, StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import './styles.css';
-import CustomStatsToolPanel from './customStatsToolPanel.jsx';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import React, { StrictMode, useCallback, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, SetFilterModule]);
+import CustomStatsToolPanel from './customStatsToolPanel.jsx';
+import './styles.css';
+
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ColumnsToolPanelModule,
+    FiltersToolPanelModule,
+    SetFilterModule,
+]);
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -36,12 +42,12 @@ const GridExample = () => {
             flex: 1,
             minWidth: 100,
             filter: true,
-        }
+        };
     }, []);
     const icons = useMemo(() => {
         return {
             'custom-stats': '<span class="ag-icon ag-icon-custom-stats"></span>',
-        }
+        };
     }, []);
     const sideBar = useMemo(() => {
         return {
@@ -67,18 +73,18 @@ const GridExample = () => {
                     iconKey: 'custom-stats',
                     toolPanel: CustomStatsToolPanel,
                     toolPanelParams: {
-                      title: 'Custom Stats'
+                        title: 'Custom Stats',
                     },
                 },
             ],
             defaultToolPanel: 'customStats',
-        }
+        };
     }, []);
 
     const onGridReady = useCallback((params) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then(resp => resp.json())
-            .then(data => {
+            .then((resp) => resp.json())
+            .then((data) => {
                 setRowData(data);
             });
     }, []);
@@ -89,8 +95,14 @@ const GridExample = () => {
 
     return (
         <div style={containerStyle}>
-            <div style={{ "height": "100%", "boxSizing": "border-box" }}>
-                <div style={gridStyle} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+            <div style={{ height: '100%', boxSizing: 'border-box' }}>
+                <div
+                    style={gridStyle}
+                    className={
+                        /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                        'ag-theme-quartz' /** DARK MODE END **/
+                    }
+                >
                     <AgGridReact
                         rowData={rowData}
                         columnDefs={columnDefs}
@@ -105,7 +117,11 @@ const GridExample = () => {
             </div>
         </div>
     );
-}
+};
 
 const root = createRoot(document.getElementById('root'));
-root.render(<StrictMode><GridExample /></StrictMode>);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

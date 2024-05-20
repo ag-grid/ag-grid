@@ -1,4 +1,4 @@
-import React, {forwardRef, Fragment, useImperativeHandle, useRef, useState} from 'react';
+import React, { Fragment, forwardRef, useImperativeHandle, useRef, useState } from 'react';
 
 export default forwardRef((props, ref) => {
     const [currentValue, setCurrentValue] = useState(null);
@@ -16,35 +16,33 @@ export default forwardRef((props, ref) => {
                     inputRef.current.value = parentModel.filter + '';
                     setCurrentValue(parentModel.filter);
                 }
-            }
-
-        }
+            },
+        };
     });
 
-
-    const onInputBoxChanged = input => {
+    const onInputBoxChanged = (input) => {
         if (input.target.value === '') {
             // Remove the filter
-            props.parentFilterInstance(instance => {
+            props.parentFilterInstance((instance) => {
                 instance.onFloatingFilterChanged(null, null);
             });
             return;
         }
 
         setCurrentValue(Number(input.target.value));
-        props.parentFilterInstance(instance => {
+        props.parentFilterInstance((instance) => {
             instance.onFloatingFilterChanged('greaterThan', input.target.value);
         });
-    }
+    };
 
     const style = {
         borderColor: props.color,
-        width: "30px"
+        width: '30px',
     };
 
     return (
         <Fragment>
-            &gt; <input ref={inputRef} style={style} type="number" min="0" onInput={onInputBoxChanged}/>
+            &gt; <input ref={inputRef} style={style} type="number" min="0" onInput={onInputBoxChanged} />
         </Fragment>
     );
 });

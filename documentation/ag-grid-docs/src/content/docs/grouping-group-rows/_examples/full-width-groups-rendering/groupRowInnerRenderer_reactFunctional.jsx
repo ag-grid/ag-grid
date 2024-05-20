@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
-export default props => {
+export default (props) => {
     const node = props.node;
     const aggData = node.aggData;
     const flagCode = props.flagCodes[node.key];
@@ -21,7 +21,7 @@ export default props => {
         setGoldCount(aggData.gold);
         setSilverCount(aggData.silver);
         setBronzeCount(aggData.bronze);
-    }
+    };
 
     const dataChangedListener = () => refreshUi();
 
@@ -34,25 +34,30 @@ export default props => {
                 props.api.removeEventListener('cellValueChanged', dataChangedListener);
                 props.api.removeEventListener('filterChanged', dataChangedListener);
             }
-        }
-    }, [])
+        };
+    }, []);
 
     let img = '';
     if (flagCode) {
-        img = <img className="flag" border="0" width="20" height="15" src={flagCodeImg}/>
+        img = <img className="flag" border="0" width="20" height="15" src={flagCodeImg} />;
     }
 
     return (
-        <div style={{display: "inline-block"}}>
+        <div style={{ display: 'inline-block' }}>
             {img}
             <span className="groupTitle">{countryName}</span>
-            <span className="medal gold" aria-label={`${countryName} - ${goldCount} gold medals`}><i
-                className="fas fa-medal"></i>{goldCount}</span>
-            <span className="medal silver" aria-label={`${countryName} - ${silverCount} silver medals`}><i
-                className="fas fa-medal"></i>{silverCount}</span>
-            <span className="medal bronze" aria-label={`${countryName} - ${bronzeCount} bronze medals`}><i
-                className="fas fa-medal"></i>{bronzeCount}</span>
+            <span className="medal gold" aria-label={`${countryName} - ${goldCount} gold medals`}>
+                <i className="fas fa-medal"></i>
+                {goldCount}
+            </span>
+            <span className="medal silver" aria-label={`${countryName} - ${silverCount} silver medals`}>
+                <i className="fas fa-medal"></i>
+                {silverCount}
+            </span>
+            <span className="medal bronze" aria-label={`${countryName} - ${bronzeCount} bronze medals`}>
+                <i className="fas fa-medal"></i>
+                {bronzeCount}
+            </span>
         </div>
     );
 };
-

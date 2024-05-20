@@ -6,7 +6,7 @@ export function FakeServer(allData) {
     alasql.options.cache = false;
 
     return {
-        getData: function(request) {
+        getData: function (request) {
             const hasFilter = request.filterModel && Object.keys(request.filterModel).length;
             var results = executeQuery(request, hasFilter);
 
@@ -17,20 +17,20 @@ export function FakeServer(allData) {
             return {
                 success: true,
                 rows: results,
-                lastRow: getLastRowIndex(request)
+                lastRow: getLastRowIndex(request),
             };
         },
-        getDates: function() {
+        getDates: function () {
             var sql = 'SELECT DISTINCT startDate FROM ? ORDER BY startDate ASC';
 
-            return alasql(sql, [processedData]).map(row => row.startDate);
+            return alasql(sql, [processedData]).map((row) => row.startDate);
         },
-        getEmployees: function() {
+        getEmployees: function () {
             // get children only
             var sql = 'SELECT DISTINCT dataPath FROM ? WHERE underlings = FALSE ORDER BY dataPath ASC';
 
-            return alasql(sql, [processedData]).map(row => row.dataPath ? row.dataPath.split(',') : null);
-        }
+            return alasql(sql, [processedData]).map((row) => (row.dataPath ? row.dataPath.split(',') : null));
+        },
     };
 
     function executeQuery(request, ignoreLimit) {
@@ -51,10 +51,10 @@ export function FakeServer(allData) {
         var filterModel = request.filterModel;
 
         if (filterModel && Object.keys(filterModel).length) {
-            Object.keys(filterModel).forEach(function(key) {
+            Object.keys(filterModel).forEach(function (key) {
                 var item = filterModel[key];
                 if (key === 'ag-Grid-AutoColumn') {
-                    key = 'dataPath'
+                    key = 'dataPath';
                 }
 
                 switch (item.filterType) {
@@ -84,12 +84,12 @@ export function FakeServer(allData) {
     }
 
     function createSetFilterSql(key, values) {
-        return key + ' IN (\'' + values.join("', '") + '\')'
+        return key + " IN ('" + values.join("', '") + "')";
     }
 
     function createFilterSql(mapper, key, item) {
         if (item.operator) {
-            const conditions = item.conditions.map(condition => mapper(key, condition));
+            const conditions = item.conditions.map((condition) => mapper(key, condition));
 
             return '(' + conditions.join(' ' + item.operator + ' ') + ')';
         }
@@ -112,9 +112,9 @@ export function FakeServer(allData) {
             case 'endsWith':
                 return key + " LIKE '%" + item.filter + "'";
             case 'blank':
-                return key + " IS NULL or " + key + " = ''";
+                return key + ' IS NULL or ' + key + " = ''";
             case 'notBlank':
-                return key + " IS NOT NULL and " + key + " != ''";
+                return key + ' IS NOT NULL and ' + key + " != ''";
             default:
                 console.log('unknown text filter type: ' + item.type);
         }
@@ -137,9 +137,9 @@ export function FakeServer(allData) {
             case 'inRange':
                 return '(' + key + ' >= ' + item.filter + ' and ' + key + ' <= ' + item.filterTo + ')';
             case 'blank':
-                return key + " IS NULL";
+                return key + ' IS NULL';
             case 'notBlank':
-                return key + " IS NOT NULL";
+                return key + ' IS NOT NULL';
             default:
                 console.log('unknown number filter type: ' + item.type);
         }
@@ -150,7 +150,7 @@ export function FakeServer(allData) {
 
         if (sortModel.length === 0) return '';
 
-        var sorts = sortModel.map(function(s) {
+        var sorts = sortModel.map(function (s) {
             return s.colId + ' ' + s.sort.toUpperCase();
         });
 
@@ -158,7 +158,9 @@ export function FakeServer(allData) {
     }
 
     function limitSql(request, ignoreLimit) {
-        if (ignoreLimit || request.endRow == undefined || request.startRow == undefined) { return ''; }
+        if (ignoreLimit || request.endRow == undefined || request.startRow == undefined) {
+            return '';
+        }
         var blockSize = request.endRow - request.startRow;
 
         return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
@@ -183,12 +185,18 @@ export function FakeServer(allData) {
                 startDate = new Date(parseInt(dateParts[2]), dateParts[1] - 1, dateParts[0]).toISOString();
             }
             const dataPath = [...parentPath, row.employeeName];
-            flattenedData.push({...row, dataPath: dataPath.join(','), parentPath: parentPath.join(','), startDate, underlings: !!row.underlings});
+            flattenedData.push({
+                ...row,
+                dataPath: dataPath.join(','),
+                parentPath: parentPath.join(','),
+                startDate,
+                underlings: !!row.underlings,
+            });
             if (row.underlings) {
                 row.underlings.forEach((underling) => flattenRowRecursive(underling, dataPath));
             }
         };
-        data.forEach(row => flattenRowRecursive(row, []));
+        data.forEach((row) => flattenRowRecursive(row, []));
         return flattenedData;
     }
 
@@ -202,7 +210,12 @@ export function FakeServer(allData) {
         recursiveFilterChildMatches(allResults, results);
 
         const requestPath = request.groupKeys.join(',');
-        const sql = "SELECT DISTINCT processedData.* FROM ? processedData INNER JOIN ? allResults ON processedData.dataPath = allResults.dataPath WHERE parentPath = '" + requestPath + "'" + orderBySql(request) + limitSql(request);
+        const sql =
+            "SELECT DISTINCT processedData.* FROM ? processedData INNER JOIN ? allResults ON processedData.dataPath = allResults.dataPath WHERE parentPath = '" +
+            requestPath +
+            "'" +
+            orderBySql(request) +
+            limitSql(request);
         return alasql(sql, [processedData, allResults]);
     }
 
@@ -210,8 +223,11 @@ export function FakeServer(allData) {
         if (!childResults.length) {
             return;
         }
-        const sql = 'SELECT DISTINCT processedData.* FROM ? processedData INNER JOIN ? parentResults ON processedData.dataPath = parentResults.parentPath';
-        const newMatches = alasql(sql, [processedData, childResults]).filter(newResult => !allResults.some(existingResult => newResult.dataPath === existingResult.dataPath));
+        const sql =
+            'SELECT DISTINCT processedData.* FROM ? processedData INNER JOIN ? parentResults ON processedData.dataPath = parentResults.parentPath';
+        const newMatches = alasql(sql, [processedData, childResults]).filter(
+            (newResult) => !allResults.some((existingResult) => newResult.dataPath === existingResult.dataPath)
+        );
         allResults.push(...newMatches);
         recursiveFilterParentMatches(allResults, newMatches);
     }
@@ -220,8 +236,11 @@ export function FakeServer(allData) {
         if (!parentResults.length) {
             return;
         }
-        const sql = 'SELECT DISTINCT processedData.* FROM ? processedData INNER JOIN ? parentResults ON processedData.parentPath = parentResults.dataPath';
-        const newMatches = alasql(sql, [processedData, parentResults]).filter(newResult => !allResults.some(existingResult => newResult.dataPath === existingResult.dataPath));
+        const sql =
+            'SELECT DISTINCT processedData.* FROM ? processedData INNER JOIN ? parentResults ON processedData.parentPath = parentResults.dataPath';
+        const newMatches = alasql(sql, [processedData, parentResults]).filter(
+            (newResult) => !allResults.some((existingResult) => newResult.dataPath === existingResult.dataPath)
+        );
         allResults.push(...newMatches);
         recursiveFilterChildMatches(allResults, newMatches);
     }

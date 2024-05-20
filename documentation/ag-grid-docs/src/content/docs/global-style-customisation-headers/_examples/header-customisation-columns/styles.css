@@ -1,4 +1,5 @@
-.ag-theme-quartz, .ag-theme-quartz-dark {
+.ag-theme-quartz,
+.ag-theme-quartz-dark {
     --ag-header-column-separator-display: block;
     --ag-header-column-separator-height: 100%;
     --ag-header-column-separator-width: 2px;

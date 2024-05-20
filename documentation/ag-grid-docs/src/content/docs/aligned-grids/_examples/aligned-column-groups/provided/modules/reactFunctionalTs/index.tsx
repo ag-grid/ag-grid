@@ -1,15 +1,13 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { SizeColumnsToFitGridStrategy } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, FirstDataRenderedEvent, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
+import { AgGridReact } from '@ag-grid-community/react';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import React, { useMemo, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
-
-
-import { ColDef, ColGroupDef, GridReadyEvent, FirstDataRenderedEvent, ModuleRegistry } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -17,62 +15,77 @@ const GridExample = () => {
     const topGridRef = useRef<AgGridReact>(null);
     const bottomGridRef = useRef<AgGridReact>(null);
 
-    const defaultColDef = useMemo(() => ({
-        filter: true,
-        flex: 1,
-        minWidth: 120,
-    }), []);
+    const defaultColDef = useMemo(
+        () => ({
+            filter: true,
+            flex: 1,
+            minWidth: 120,
+        }),
+        []
+    );
 
-    const columnDefs = useMemo<(ColDef | ColGroupDef)[]>(() => [
-        {
-            headerName: 'Group 1',
-            groupId: 'Group1',
-            children: [
-                { field: 'athlete', pinned: true },
-                { field: 'age', pinned: true, columnGroupShow: 'open' },
-                { field: 'country' },
-                { field: 'year', columnGroupShow: 'open' },
-                { field: 'date' },
-                { field: 'sport', columnGroupShow: 'open' },
-            ]
-        },
-        {
-            headerName: 'Group 2',
-            groupId: 'Group2',
-            children: [
-                { field: 'athlete', pinned: true },
-                { field: 'age', pinned: true, columnGroupShow: 'open' },
-                { field: 'country' },
-                { field: 'year', columnGroupShow: 'open' },
-                { field: 'date' },
-                { field: 'sport', columnGroupShow: 'open' },
-            ]
-        }
-    ], []);
+    const columnDefs = useMemo<(ColDef | ColGroupDef)[]>(
+        () => [
+            {
+                headerName: 'Group 1',
+                groupId: 'Group1',
+                children: [
+                    { field: 'athlete', pinned: true },
+                    { field: 'age', pinned: true, columnGroupShow: 'open' },
+                    { field: 'country' },
+                    { field: 'year', columnGroupShow: 'open' },
+                    { field: 'date' },
+                    { field: 'sport', columnGroupShow: 'open' },
+                ],
+            },
+            {
+                headerName: 'Group 2',
+                groupId: 'Group2',
+                children: [
+                    { field: 'athlete', pinned: true },
+                    { field: 'age', pinned: true, columnGroupShow: 'open' },
+                    { field: 'country' },
+                    { field: 'year', columnGroupShow: 'open' },
+                    { field: 'date' },
+                    { field: 'sport', columnGroupShow: 'open' },
+                ],
+            },
+        ],
+        []
+    );
 
     const [rowData, setRowData] = useState<any[]>([]);
 
-    const autoSizeStrategy = useMemo<SizeColumnsToFitGridStrategy>(() => ({
-        type: 'fitGridWidth'
-    }), []);
+    const autoSizeStrategy = useMemo<SizeColumnsToFitGridStrategy>(
+        () => ({
+            type: 'fitGridWidth',
+        }),
+        []
+    );
 
     const onGridReady = (params: GridReadyEvent) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then(resp => resp.json())
-            .then(data => {
+            .then((resp) => resp.json())
+            .then((data) => {
                 setRowData(data);
             });
-    }
+    };
 
     const onFirstDataRendered = (params: FirstDataRenderedEvent) => {
         // mix up some columns
         params.api.moveColumnByIndex(11, 4);
         params.api.moveColumnByIndex(11, 4);
-    }
+    };
 
     return (
         <div className="container">
-            <div className={'grid ' + /** DARK MODE START **/(document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/}>
+            <div
+                className={
+                    'grid ' +
+                    /** DARK MODE START **/ (document.documentElement?.dataset.defaultTheme ||
+                        'ag-theme-quartz') /** DARK MODE END **/
+                }
+            >
                 <AgGridReact
                     ref={topGridRef}
                     rowData={rowData}
@@ -87,7 +100,13 @@ const GridExample = () => {
 
             <div className="divider"></div>
 
-            <div className={'grid ' + /** DARK MODE START **/(document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/}>
+            <div
+                className={
+                    'grid ' +
+                    /** DARK MODE START **/ (document.documentElement?.dataset.defaultTheme ||
+                        'ag-theme-quartz') /** DARK MODE END **/
+                }
+            >
                 <AgGridReact
                     ref={bottomGridRef}
                     rowData={rowData}
@@ -98,8 +117,7 @@ const GridExample = () => {
             </div>
         </div>
     );
-}
-
+};
 
 const root = createRoot(document.getElementById('root')!);
 root.render(<GridExample />);

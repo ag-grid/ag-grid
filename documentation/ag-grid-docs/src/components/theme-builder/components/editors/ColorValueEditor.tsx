@@ -103,7 +103,6 @@ export const ColorEditor = ({ preventTransparency, value, onChange }: ColorEdito
     );
 };
 
-
 const coerceToValidValue = (input: string, preventTransparency: boolean) => {
     let color = RGBAColor.parseCss(input);
     if (!color) {

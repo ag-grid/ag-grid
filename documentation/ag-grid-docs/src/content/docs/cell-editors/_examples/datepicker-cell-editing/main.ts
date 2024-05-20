@@ -1,52 +1,46 @@
-import {
-    GridApi,
-    createGrid,
-    ColDef,
-    GridOptions,
-    ICellEditorComp,
-    ICellEditorParams,
-} from '@ag-grid-community/core';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridApi, GridOptions, ICellEditorComp, ICellEditorParams, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule]);
 
 class DatePicker implements ICellEditorComp {
-    eInput!: HTMLInputElement
+    eInput!: HTMLInputElement;
 
     // gets called once before the renderer is used
     init(params: ICellEditorParams) {
         // create the cell
-        this.eInput = document.createElement('input')
-        this.eInput.value = params.value
-        this.eInput.classList.add('ag-input')
-        this.eInput.style.height = 'var(--ag-row-height)'
-        this.eInput.style.fontSize = 'calc(var(--ag-font-size) + 1px)'
+        this.eInput = document.createElement('input');
+        this.eInput.value = params.value;
+        this.eInput.classList.add('ag-input');
+        this.eInput.style.height = 'var(--ag-row-height)';
+        this.eInput.style.fontSize = 'calc(var(--ag-font-size) + 1px)';
 
         // https://jqueryui.com/datepicker/
         $(this.eInput).datepicker({
             dateFormat: 'dd/mm/yy',
-            onSelect: () => { this.eInput.focus(); }
-        })
+            onSelect: () => {
+                this.eInput.focus();
+            },
+        });
     }
 
     // gets called once when grid ready to insert the element
     getGui() {
-        return this.eInput
+        return this.eInput;
     }
 
     // focus and select can be done after the gui is attached
     afterGuiAttached() {
-        this.eInput.focus()
-        this.eInput.select()
+        this.eInput.focus();
+        this.eInput.select();
     }
 
     // returns the new value after editing
     getValue() {
-        return this.eInput.value
+        return this.eInput.value;
     }
 
     // any cleanup we need to be done here
@@ -58,7 +52,7 @@ class DatePicker implements ICellEditorComp {
     // if true, then this editor will appear in a popup
     isPopup() {
         // and we could leave this method out also, false is the default
-        return false
+        return false;
     }
 }
 
@@ -73,7 +67,7 @@ const columnDefs: ColDef[] = [
     { field: 'silver' },
     { field: 'bronze' },
     { field: 'total' },
-]
+];
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -82,15 +76,15 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
         minWidth: 150,
-    }
-}
+    },
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
-})
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+});

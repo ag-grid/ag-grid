@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class GenderRenderer implements ICellRendererComp {
     eGui!: HTMLSpanElement;
@@ -15,4 +15,3 @@ export class GenderRenderer implements ICellRendererComp {
         return false;
     }
 }
-

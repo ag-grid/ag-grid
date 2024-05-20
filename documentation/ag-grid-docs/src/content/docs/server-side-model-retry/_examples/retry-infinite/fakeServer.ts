@@ -5,13 +5,12 @@ export function FakeServer(allData) {
     alasql.options.cache = false;
 
     return {
-        getData: function(request) {
-
+        getData: function (request) {
             var failLoad = document.querySelector('#failLoad').checked === true;
             if (failLoad) {
                 return {
-                    success: false
-                }
+                    success: false,
+                };
             }
 
             var results = executeQuery(request);
@@ -19,9 +18,9 @@ export function FakeServer(allData) {
             return {
                 success: true,
                 rows: results,
-                lastRow: getLastRowIndex(request)
+                lastRow: getLastRowIndex(request),
             };
-        }
+        },
     };
 
     function executeQuery(request) {
@@ -33,7 +32,14 @@ export function FakeServer(allData) {
     }
 
     function buildSql(request) {
-        return selectSql(request) + ' FROM ?' + whereSql(request) + groupBySql(request) + orderBySql(request) + limitSql(request);
+        return (
+            selectSql(request) +
+            ' FROM ?' +
+            whereSql(request) +
+            groupBySql(request) +
+            orderBySql(request) +
+            limitSql(request)
+        );
     }
 
     function selectSql(request) {
@@ -45,7 +51,7 @@ export function FakeServer(allData) {
             var rowGroupCol = rowGroupCols[groupKeys.length];
             var colsToSelect = [rowGroupCol.id];
 
-            valueCols.forEach(function(valueCol) {
+            valueCols.forEach(function (valueCol) {
                 colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + valueCol.id);
             });
 
@@ -61,7 +67,7 @@ export function FakeServer(allData) {
         var whereParts = [];
 
         if (groupKeys) {
-            groupKeys.forEach(function(key, i) {
+            groupKeys.forEach(function (key, i) {
                 var value = typeof key === 'string' ? "'" + key + "'" : key;
 
                 whereParts.push(rowGroups[i].id + ' = ' + value);
@@ -93,7 +99,7 @@ export function FakeServer(allData) {
 
         if (sortModel.length === 0) return '';
 
-        var sorts = sortModel.map(function(s) {
+        var sorts = sortModel.map(function (s) {
             return s.colId + ' ' + s.sort.toUpperCase();
         });
 
@@ -101,7 +107,9 @@ export function FakeServer(allData) {
     }
 
     function limitSql(request) {
-        if (request.endRow == undefined || request.startRow == undefined) { return ''; }
+        if (request.endRow == undefined || request.startRow == undefined) {
+            return '';
+        }
 
         var blockSize = request.endRow - request.startRow;
 

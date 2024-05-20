@@ -1,4 +1,4 @@
-import { ICellRendererParams, ICellRendererComp } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class ColourCellRenderer implements ICellRendererComp {
     eGui!: HTMLDivElement;
@@ -15,7 +15,7 @@ export class ColourCellRenderer implements ICellRendererComp {
     }
 
     removeSpaces(str: string) {
-        return str ? str.replace(/\s/g, '') : str
+        return str ? str.replace(/\s/g, '') : str;
     }
 
     getGui() {
@@ -23,7 +23,6 @@ export class ColourCellRenderer implements ICellRendererComp {
     }
 
     refresh() {
-        return false
+        return false;
     }
 }
-

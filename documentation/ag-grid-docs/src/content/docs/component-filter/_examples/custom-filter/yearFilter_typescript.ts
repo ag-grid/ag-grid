@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "@ag-grid-community/core";
+import { IDoesFilterPassParams, IFilterComp, IFilterParams } from '@ag-grid-community/core';
 
 export class YearFilter implements IFilterComp {
     eGui!: HTMLDivElement;
@@ -9,8 +9,7 @@ export class YearFilter implements IFilterComp {
 
     init(params: IFilterParams) {
         this.eGui = document.createElement('div');
-        this.eGui.innerHTML =
-            `<div class="year-filter">
+        this.eGui.innerHTML = `<div class="year-filter">
                 <div>Select Year Range</div>
                 <label>  
                     <input type="radio" name="yearFilter" checked="true" id="rbAllYears" filter-checkbox="true"/> All
@@ -46,10 +45,7 @@ export class YearFilter implements IFilterComp {
 
     // this example isn't using getModel() and setModel(),
     // so safe to just leave these empty. don't do this in your code!!!
-    getModel() {
-    }
+    getModel() {}
 
-    setModel() {
-    }
+    setModel() {}
 }
-

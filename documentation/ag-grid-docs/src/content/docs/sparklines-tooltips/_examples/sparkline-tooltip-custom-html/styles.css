@@ -4,10 +4,12 @@
     pointer-events: none;
     white-space: nowrap;
     z-index: 99999;
-    font: 12px Verdana, sans-serif;
+    font:
+        12px Verdana,
+        sans-serif;
     color: black;
     border-radius: 5px;
-    background: rgb(209,209,246);
+    background: rgb(209, 209, 246);
     padding: 7px;
     line-height: 1.7em;
     text-align: center;
@@ -30,5 +32,5 @@
     left: -7px;
     border-top: 7px solid transparent;
     border-bottom: 7px solid transparent;
-    border-right: 7px solid rgb(209,209,246);
+    border-right: 7px solid rgb(209, 209, 246);
 }

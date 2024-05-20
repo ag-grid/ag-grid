@@ -1,6 +1,6 @@
 // Example locale file for English, give this to your locale team to translate
 
-export const AG_GRID_LOCALE_EN: Record<string,string> = {
+export const AG_GRID_LOCALE_EN: Record<string, string> = {
     // Set Filter
     selectAll: '(Select All)',
     selectAllSearchResults: '(Select All Search Results)',
@@ -128,7 +128,7 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
 
     // Row Drag
     rowDragRow: 'row',
-    rowDragRows:'rows',
+    rowDragRows: 'rows',
 
     // Other
     loadingOoo: 'Loading...',
@@ -497,7 +497,7 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     ariaFilterMenuOpen: 'Open Filter Menu',
     ariaFilteringOperator: 'Filtering Operator',
     ariaHidden: 'hidden',
-    ariaIndeterminate:'indeterminate',
+    ariaIndeterminate: 'indeterminate',
     ariaInputEditor: 'Input Editor',
     ariaMenuColumn: 'Press ALT DOWN to open column menu',
     ariaFilterColumn: 'Press CTRL ENTER to open filter',
@@ -584,11 +584,13 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
-}
+};
 
 export const AG_GRID_LOCALE_ZZZ: Record<string, string> = {};
 // Create a dummy locale based on english but prefix everything with zzz
-Object.keys(AG_GRID_LOCALE_EN).forEach(function(key) {
-    if (key === 'thousandSeparator' || key === 'decimalSeparator') { return; }
+Object.keys(AG_GRID_LOCALE_EN).forEach(function (key) {
+    if (key === 'thousandSeparator' || key === 'decimalSeparator') {
+        return;
+    }
     AG_GRID_LOCALE_ZZZ[key] = 'zzz-' + AG_GRID_LOCALE_EN[key];
 });

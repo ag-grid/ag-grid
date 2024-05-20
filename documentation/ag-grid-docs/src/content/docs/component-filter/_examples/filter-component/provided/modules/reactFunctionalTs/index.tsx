@@ -1,15 +1,16 @@
 'use strict';
 
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { createRoot } from 'react-dom/client';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, ColGroupDef, IFilter } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact, getInstance } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ColDef, ColGroupDef, IFilter } from '@ag-grid-community/core';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
+import { getData } from './data.tsx';
 import PartialMatchFilter from './partialMatchFilter';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { getData } from "./data.tsx";
 import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -23,7 +24,7 @@ const GridExample = () => {
         { field: 'row' },
         {
             field: 'name',
-            filter: PartialMatchFilter
+            filter: PartialMatchFilter,
         },
     ]);
     const defaultColDef = useMemo<ColDef>(() => {
@@ -32,12 +33,12 @@ const GridExample = () => {
             flex: 1,
             minWidth: 100,
             filter: true,
-        }
+        };
     }, []);
 
     const onClicked = useCallback(() => {
         gridRef.current!.api.getColumnFilterInstance('name').then((instance) => {
-            getInstance<IFilter, IFilter & { componentMethod(message: string): void }>(instance!, component => {
+            getInstance<IFilter, IFilter & { componentMethod(message: string): void }>(instance!, (component) => {
                 if (component) {
                     component.componentMethod('Hello World!');
                 }
@@ -45,13 +46,20 @@ const GridExample = () => {
         });
     }, []);
 
-
     return (
         <div style={containerStyle}>
             <div className="example-wrapper">
-                <button style={{ "marginBottom": "5px" }} onClick={onClicked} className="btn btn-primary">Invoke Filter Instance Method</button>
+                <button style={{ marginBottom: '5px' }} onClick={onClicked} className="btn btn-primary">
+                    Invoke Filter Instance Method
+                </button>
 
-                <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+                <div
+                    style={gridStyle}
+                    className={
+                        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+                        'ag-theme-quartz' /** DARK MODE END **/
+                    }
+                >
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}
@@ -61,11 +69,9 @@ const GridExample = () => {
                     />
                 </div>
             </div>
-
         </div>
     );
-
-}
+};
 
 const root = createRoot(document.getElementById('root')!);
 root.render(<GridExample />);

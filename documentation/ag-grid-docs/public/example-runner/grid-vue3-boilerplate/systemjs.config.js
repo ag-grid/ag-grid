@@ -1,31 +1,30 @@
 (function (global) {
-
     System.config({
-       // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
-        transpiler: "ts",
+        // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
+        transpiler: 'ts',
         typescriptOptions: {
-            target: "es2020"
+            target: 'es2020',
         },
         meta: {
             typescript: {
-                exports: "ts"
+                exports: 'ts',
             },
-            '*.css': {loader: 'css'}
+            '*.css': { loader: 'css' },
         },
         defaultExtension: 'js',
         paths: {
             // paths serve as alias
-            "npm:": "https://cdn.jsdelivr.net/npm/",
-            ...systemJsPaths
+            'npm:': 'https://cdn.jsdelivr.net/npm/',
+            ...systemJsPaths,
         },
         map: {
-            css: (boilerplatePath.length === 0 ? `./` : `${boilerplatePath}/`) + "css.js",
+            css: (boilerplatePath.length === 0 ? `./` : `${boilerplatePath}/`) + 'css.js',
 
-            ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
-            tslib: "npm:tslib@2.3.1/tslib.js",
+            ts: 'npm:plugin-typescript@8.0.0/lib/plugin.js',
+            tslib: 'npm:tslib@2.3.1/tslib.js',
             typescript: 'npm:typescript@5.4.5/lib/typescript.min.js',
 
-            'vue': 'npm:vue@3.2.29/dist/vue.esm-browser.js',
+            vue: 'npm:vue@3.2.29/dist/vue.esm-browser.js',
             '@vue/reactivity': 'npm:@vue/reactivity@3.0.0/dist/reactivity.esm-browser.prod.js',
 
             // vue class component
@@ -33,20 +32,20 @@
 
             app: appLocation + 'app',
             // systemJsMap comes from index.html
-            ...systemJsMap
+            ...systemJsMap,
         },
         packages: {
-            'vue': {
-                defaultExtension: 'js'
+            vue: {
+                defaultExtension: 'js',
             },
             'vue-class-component': {
-                defaultExtension: 'js'
+                defaultExtension: 'js',
             },
             'vue-property-decorator': {
-                defaultExtension: 'js'
+                defaultExtension: 'js',
             },
             app: {
-                defaultExtension: 'js'
+                defaultExtension: 'js',
             },
             '@ag-grid-community/vue3': {
                 main: './dist/package/main.cjs.js',
@@ -157,6 +156,6 @@
     });
 })(this);
 
-window.addEventListener('error', e => {
-    console.error('ERROR', e.message, e.filename)
+window.addEventListener('error', (e) => {
+    console.error('ERROR', e.message, e.filename);
 });

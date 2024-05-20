@@ -1,8 +1,8 @@
-import { Component, ElementRef, ViewChild } from "@angular/core";
-import { NgClass, NgStyle } from "@angular/common";
-import { IMenuItemAngularComp } from "@ag-grid-community/angular";
-import { Column, IFilterComp, IMenuItemParams } from "@ag-grid-community/core";
-import { FormsModule } from "@angular/forms";
+import { IMenuItemAngularComp } from '@ag-grid-community/angular';
+import { Column, IFilterComp, IMenuItemParams } from '@ag-grid-community/core';
+import { NgClass, NgStyle } from '@angular/common';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 export interface CustomMenuItemParams extends IMenuItemParams {
     column: Column;
@@ -28,16 +28,21 @@ export interface CustomMenuItemParams extends IMenuItemParams {
                 </span>
                 <span class="ag-menu-option-part ag-menu-option-text">Filter</span>
                 <span class="ag-menu-option-part ag-menu-option-popup-pointer">
-                <span class="ag-icon" [ngClass]="{ 'ag-icon-tree-closed': !expanded, 'ag-icon-tree-open': expanded }" unselectable="on" role="presentation"></span>
+                    <span
+                        class="ag-icon"
+                        [ngClass]="{ 'ag-icon-tree-closed': !expanded, 'ag-icon-tree-open': expanded }"
+                        unselectable="on"
+                        role="presentation"
+                    ></span>
                 </span>
             </div>
             <div
                 #filterWrapper
-                [ngStyle]="{ 'display': expanded ? 'block' : 'none' }"
+                [ngStyle]="{ display: expanded ? 'block' : 'none' }"
                 (keydown)="onFilterWrapperKeyDown($event)"
             ></div>
         </div>
-    `
+    `,
 })
 export class MenuItem implements IMenuItemAngularComp {
     @ViewChild('option', { read: ElementRef }) private option!: ElementRef;

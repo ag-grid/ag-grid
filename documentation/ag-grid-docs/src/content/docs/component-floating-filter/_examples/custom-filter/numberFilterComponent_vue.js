@@ -9,20 +9,22 @@ export default {
     `,
     data: function () {
         return {
-            filterText: null
+            filterText: null,
         };
     },
     watch: {
-        filterText (newFilterText, oldFilterText) {
+        filterText(newFilterText, oldFilterText) {
             this.params.filterChangedCallback();
-        }
+        },
     },
     methods: {
         isFilterActive() {
-            return this.filterText !== null &&
+            return (
+                this.filterText !== null &&
                 this.filterText !== undefined &&
                 this.filterText !== '' &&
-                this.isNumeric(this.filterText);
+                this.isNumeric(this.filterText)
+            );
         },
 
         doesFilterPass(params) {
@@ -33,7 +35,6 @@ export default {
                 return Number(value) > Number(this.filterText);
             }
         },
-
 
         isNumeric(n) {
             return !isNaN(parseFloat(n)) && isFinite(n);
@@ -48,7 +49,7 @@ export default {
         },
 
         getModelAsString() {
-            return this.isFilterActive() ? '>' + this.filterText : ''
-        }
-    }
+            return this.isFilterActive() ? '>' + this.filterText : '';
+        },
+    },
 };

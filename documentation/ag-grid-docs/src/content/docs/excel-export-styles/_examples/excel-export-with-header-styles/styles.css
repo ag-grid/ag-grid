@@ -17,19 +17,21 @@
     border-bottom: unset;
 }
 
-.gold-header, .silver-header, .bronze-header {
+.gold-header,
+.silver-header,
+.bronze-header {
     color: black;
     --ag-icon-font-color: black;
 }
-  
+
 .gold-header {
-    background-color: gold!important;
+    background-color: gold !important;
 }
 
 .silver-header {
-    background-color: silver!important;
+    background-color: silver !important;
 }
 
 .bronze-header {
-    background-color: chocolate!important;
+    background-color: chocolate !important;
 }

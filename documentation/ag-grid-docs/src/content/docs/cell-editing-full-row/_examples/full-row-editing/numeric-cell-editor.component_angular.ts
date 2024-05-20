@@ -1,19 +1,18 @@
-import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-import { ICellEditorAngularComp } from "@ag-grid-community/angular";
-import { ICellEditorParams } from "@ag-grid-community/core";
+import { ICellEditorAngularComp } from '@ag-grid-community/angular';
+import { ICellEditorParams } from '@ag-grid-community/core';
+import { AfterViewInit, Component, ViewChild, ViewContainerRef } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     standalone: true,
     imports: [FormsModule],
-    template: `<input #input (keydown)="onKeyDown($event)" [(ngModel)]="value" class="ag-input-field-input">`
+    template: `<input #input (keydown)="onKeyDown($event)" [(ngModel)]="value" class="ag-input-field-input" />`,
 })
 export class NumericCellEditor implements ICellEditorAngularComp, AfterViewInit {
     public value!: string;
     private focusAfterAttached!: boolean;
 
     @ViewChild('input', { read: ViewContainerRef }) public input!: ViewContainerRef;
-
 
     agInit(params: ICellEditorParams): void {
         // we only want to highlight this cell if it started the edit; it's possible
@@ -29,7 +28,9 @@ export class NumericCellEditor implements ICellEditorAngularComp, AfterViewInit 
     }
 
     onKeyDown(event: any): void {
-        if (!event.key || event.key.length !== 1 || this.isNumericKey(event)) { return; }
+        if (!event.key || event.key.length !== 1 || this.isNumericKey(event)) {
+            return;
+        }
         this.input.element.nativeElement.focus();
 
         if (event.preventDefault) event.preventDefault();
@@ -41,7 +42,7 @@ export class NumericCellEditor implements ICellEditorAngularComp, AfterViewInit 
                 this.input.element.nativeElement.focus();
                 this.input.element.nativeElement.select();
             }
-        })
+        });
     }
 
     // when we tab into this editor, we want to focus the contents

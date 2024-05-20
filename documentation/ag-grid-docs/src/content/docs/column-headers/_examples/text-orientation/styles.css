@@ -1,7 +1,7 @@
 .ag-header-cell-label {
     /*Necessary to allow for text to grow vertically*/
     height: 100%;
-    padding:0 !important;
+    padding: 0 !important;
 }
 
 .ag-header-cell-label .ag-header-cell-text {
@@ -14,7 +14,6 @@
     margin-top: 60px;
 }
 
-
 .ag-pivot-off .ag-header-group-cell {
     font-size: 50px;
 }
@@ -25,7 +24,7 @@
 }
 
 .ag-pivot-off .ag-header-cell-label {
-    color:#8a6d3b;
+    color: #8a6d3b;
 }
 
 .ag-pivot-on .ag-header-cell-label {
@@ -33,7 +32,7 @@
     height: 90px;
     padding-top: 36px;
     margin-left: 0px;
-    color:#1b6d85;
+    color: #1b6d85;
     font-weight: bold;
 }
 
@@ -45,11 +44,11 @@
 
 /*Floating filters*/
 .ag-floating-filter-body {
-    height:50px
+    height: 50px;
 }
 
 .ag-floating-filter-body input {
-    height:49px
+    height: 49px;
 }
 
 .ag-floating-filter-button {
@@ -57,11 +56,10 @@
 }
 
 .ag-floating-filter-button button {
-    height:49px
+    height: 49px;
 }
 
 .ag-floating-filter-body input {
     font-size: 15px;
     font-weight: bold;
 }
-

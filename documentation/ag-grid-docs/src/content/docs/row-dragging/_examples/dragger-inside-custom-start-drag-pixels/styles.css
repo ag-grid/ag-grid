@@ -35,7 +35,6 @@
     visibility: visible;
 }
 
-
 .my-custom-cell-renderer .athlete-info {
     display: flex;
     flex-direction: column;

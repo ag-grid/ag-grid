@@ -4,8 +4,8 @@
  */
 export const addNonBreakingSpaceBetweenLastWords = (text: string) => {
     if (!text || !text.replace) {
-        console.log("Text supplied to addNonBreakingSpaceBetweenLastWords is null or undefined");
+        console.log('Text supplied to addNonBreakingSpaceBetweenLastWords is null or undefined');
         return '';
     }
     return text.replace(/\s+(\S+)(\s*)$/, '\u00A0$1');
-}
+};

@@ -1,4 +1,7 @@
-p { font-size: 1em; margin: 0; }
+p {
+    font-size: 1em;
+    margin: 0;
+}
 
 .cell-renderer-outer {
     height: 80px;

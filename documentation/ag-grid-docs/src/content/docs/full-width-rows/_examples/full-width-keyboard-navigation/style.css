@@ -1,21 +1,21 @@
 .full-width-panel {
-  white-space: normal;
-  height: 100%;
-  width: 100%;
-  border: 2px solid grey;
-  border-style: ridge;
-  box-sizing: border-box;
-  background-color: #CCAA22A9;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding-left: var(--ag-cell-horizontal-padding); 
+    white-space: normal;
+    height: 100%;
+    width: 100%;
+    border: 2px solid grey;
+    border-style: ridge;
+    box-sizing: border-box;
+    background-color: #ccaa22a9;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding-left: var(--ag-cell-horizontal-padding);
 }
 
 .full-width-panel input {
-  width: 80px;
+    width: 80px;
 }
 
 .ag-row:focus .full-width-panel {
-  background-color: #CCAA22CC;
+    background-color: #ccaa22cc;
 }

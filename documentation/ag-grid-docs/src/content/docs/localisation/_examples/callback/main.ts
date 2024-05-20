@@ -1,20 +1,20 @@
-import {
-    GridApi,
-    createGrid,
-    ColDef,
-    GridOptions,
-    ICellRendererParams,
-    ICellRendererComp,
-    GetLocaleTextParams,
-} from '@ag-grid-community/core';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {
+    ColDef,
+    GetLocaleTextParams,
+    GridApi,
+    GridOptions,
+    ICellRendererComp,
+    ICellRendererParams,
+    createGrid,
+} from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { CsvExportModule } from '@ag-grid-community/csv-export';
+import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
@@ -22,9 +22,23 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ClipboardModule, ColumnsToolPanelModule, CsvExportModule, ExcelExportModule, FiltersToolPanelModule, GridChartsModule, MenuModule, MultiFilterModule, RangeSelectionModule, RowGroupingModule, SetFilterModule, SideBarModule, StatusBarModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ClipboardModule,
+    ColumnsToolPanelModule,
+    CsvExportModule,
+    ExcelExportModule,
+    FiltersToolPanelModule,
+    GridChartsModule,
+    MenuModule,
+    MultiFilterModule,
+    RangeSelectionModule,
+    RowGroupingModule,
+    SetFilterModule,
+    SideBarModule,
+    StatusBarModule,
+]);
 
 class NodeIdRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
@@ -46,7 +60,7 @@ const columnDefs: ColDef[] = [
     // this row just shows the row index, doesn't use any data from the row
     {
         headerName: '#',
-        cellRenderer: NodeIdRenderer
+        cellRenderer: NodeIdRenderer,
     },
     { field: 'athlete', filterParams: { buttons: ['clear', 'reset', 'apply'] } },
     {
@@ -77,7 +91,7 @@ const columnDefs: ColDef[] = [
     { field: 'silver', enableValue: true },
     { field: 'bronze', enableValue: true },
     { field: 'total', enableValue: true },
-]
+];
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -105,9 +119,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     getLocaleText: (params: GetLocaleTextParams) => {
         switch (params.key) {
             case 'thousandSeparator':
-                return '.'
+                return '.';
             case 'decimalSeparator':
-                return ','
+                return ',';
             default:
                 if (params.defaultValue) {
                     // the &lrm; marker should not be made uppercase
@@ -124,14 +138,14 @@ const gridOptions: GridOptions<IOlympicData> = {
                 return '';
         }
     },
-}
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
-})
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+});

@@ -1,12 +1,13 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
+import { ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { createApp } from 'vue';
+
 import GenderRenderer from './genderRendererVue.js';
 import MoodRenderer from './moodRendererVue.js';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
@@ -25,35 +26,29 @@ const VueExample = {
     components: {
         'ag-grid-vue': AgGridVue,
         genderCellRenderer: GenderRenderer,
-        moodCellRenderer: MoodRenderer
+        moodCellRenderer: MoodRenderer,
     },
     data: function () {
         return {
             columnDefs: [
-                { field: "value" },
+                { field: 'value' },
                 {
-                    headerName: "Rendered Value",
-                    field: "value",
+                    headerName: 'Rendered Value',
+                    field: 'value',
                     cellRendererSelector: (params) => {
                         const moodDetails = { component: 'moodCellRenderer' };
                         const genderDetails = {
                             component: 'genderCellRenderer',
                             params: {
-                                values: [
-                                    'Male',
-                                    'Female'
-                                ]
-                            }
+                                values: ['Male', 'Female'],
+                            },
                         };
-                        if (params.data.type === 'gender')
-                            return genderDetails;
-                        else if (params.data.type === 'mood')
-                            return moodDetails;
-                        else
-                            return undefined;
-                    }
+                        if (params.data.type === 'gender') return genderDetails;
+                        else if (params.data.type === 'mood') return moodDetails;
+                        else return undefined;
+                    },
                 },
-                { field: "type" }
+                { field: 'type' },
             ],
             defaultColDef: {
                 flex: 1,
@@ -62,34 +57,34 @@ const VueExample = {
             rowData: [
                 {
                     value: 14,
-                    type: "age"
+                    type: 'age',
                 },
                 {
-                    value: "Female",
-                    type: "gender"
+                    value: 'Female',
+                    type: 'gender',
                 },
                 {
-                    value: "Happy",
-                    type: "mood"
+                    value: 'Happy',
+                    type: 'mood',
                 },
                 {
                     value: 21,
-                    type: "age"
+                    type: 'age',
                 },
                 {
-                    value: "Male",
-                    type: "gender"
+                    value: 'Male',
+                    type: 'gender',
                 },
                 {
-                    value: "Sad",
-                    type: "mood"
-                }
+                    value: 'Sad',
+                    type: 'mood',
+                },
             ],
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
-        }
-    }
-}
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
+        };
+    },
+};
 
-createApp(VueExample)
-    .mount("#app")
-
+createApp(VueExample).mount('#app');

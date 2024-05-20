@@ -15,11 +15,11 @@ export function getData(): any[] {
 
         { country: 'USA', state: 'California', city: 'San Diego' },
         { country: 'USA', state: 'California', city: 'San Francisco' },
-    ]
+    ];
 
     rowData.forEach(function (item, i) {
-        item.val1 = ((i + 13) * 17 * 33) % 1000
-        item.val2 = ((i + 23) * 17 * 33) % 1000
-    })
+        item.val1 = ((i + 13) * 17 * 33) % 1000;
+        item.val2 = ((i + 23) * 17 * 33) % 1000;
+    });
     return rowData;
 }

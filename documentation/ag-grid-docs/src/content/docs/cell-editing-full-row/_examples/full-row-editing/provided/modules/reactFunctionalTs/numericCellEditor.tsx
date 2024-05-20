@@ -1,5 +1,5 @@
-import React, { memo, useCallback, useEffect, useRef } from "react";
-import { CustomCellEditorProps, useGridCellEditor } from "@ag-grid-community/react";
+import { CustomCellEditorProps, useGridCellEditor } from '@ag-grid-community/react';
+import React, { memo, useCallback, useEffect, useRef } from 'react';
 
 export default memo(({ value, onValueChange, eventKey, cellStartedEdit }: CustomCellEditorProps) => {
     const refInput = useRef<HTMLInputElement>(null);
@@ -29,7 +29,9 @@ export default memo(({ value, onValueChange, eventKey, cellStartedEdit }: Custom
     };
 
     const onKeyDown = (event: any) => {
-        if (!event.key || event.key.length !== 1 || isNumericKey(event)) { return; }
+        if (!event.key || event.key.length !== 1 || isNumericKey(event)) {
+            return;
+        }
         refInput.current?.focus();
 
         if (event.preventDefault) event.preventDefault();
@@ -53,7 +55,8 @@ export default memo(({ value, onValueChange, eventKey, cellStartedEdit }: Custom
     });
 
     return (
-        <input ref={refInput}
+        <input
+            ref={refInput}
             value={value == null ? '' : value}
             onChange={(event: any) => updateValue(event.target.value)}
             onKeyDown={(event: any) => onKeyDown(event)}

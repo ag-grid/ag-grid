@@ -10,14 +10,14 @@ export default {
     data: function () {
         return {
             date: null,
-            ariaLabel: undefined
+            ariaLabel: undefined,
         };
     },
     mounted() {
         this.picker = flatpickr(this.$refs['flatpickr'], {
             onChange: this.onDateChanged.bind(this),
             dateFormat: 'd/m/Y',
-            wrap: true
+            wrap: true,
         });
 
         this.eInput = this.$refs['eInput'];
@@ -51,6 +51,6 @@ export default {
             } else {
                 this.ariaLabel = label;
             }
-        }
-    }
+        },
+    },
 };

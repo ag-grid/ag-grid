@@ -5,9 +5,10 @@ export default ({ model, onModelChange }) => {
 
     return (
         <Fragment>
-            &gt; <input
+            &gt;{' '}
+            <input
                 value={model == null ? '' : model}
-                style={{ width: "30px" }}
+                style={{ width: '30px' }}
                 type="number"
                 min="0"
                 onInput={onInput}

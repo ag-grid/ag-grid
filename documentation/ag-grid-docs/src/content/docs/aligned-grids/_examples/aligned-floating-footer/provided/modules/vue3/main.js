@@ -1,13 +1,12 @@
-import { createApp } from 'vue';
-import { AgGridVue } from "@ag-grid-community/vue3";
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import "./styles.css";
-
 import { ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { createApp } from 'vue';
+
+import './styles.css';
+
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
@@ -33,7 +32,7 @@ const VueExample = {
         </div>
     `,
     components: {
-        "ag-grid-vue": AgGridVue
+        'ag-grid-vue': AgGridVue,
     },
     data: function () {
         return {
@@ -47,7 +46,9 @@ const VueExample = {
             ageVisible: true,
             countryVisible: true,
             rowStyle: { fontWeight: 'bold' },
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
     beforeMount() {
@@ -61,8 +62,8 @@ const VueExample = {
                 sport: 'Synchronised Riding',
                 gold: 55,
                 silver: 65,
-                bronze: 12
-            }
+                bronze: 12,
+            },
         ];
 
         this.topGridOptions = {
@@ -70,12 +71,12 @@ const VueExample = {
             defaultColDef: {
                 filter: true,
                 flex: 1,
-                minWidth: 100
+                minWidth: 100,
             },
             suppressHorizontalScroll: true,
             alwaysShowVerticalScroll: true,
             autoSizeStrategy: {
-                type: 'fitCellContents'
+                type: 'fitCellContents',
             },
         };
         this.bottomGridOptions = {
@@ -83,7 +84,7 @@ const VueExample = {
             defaultColDef: {
                 filter: true,
                 flex: 1,
-                minWidth: 100
+                minWidth: 100,
             },
             alwaysShowVerticalScroll: true,
         };
@@ -99,19 +100,19 @@ const VueExample = {
                 headerName: 'Total',
                 colId: 'total',
                 valueGetter: 'data.gold + data.silver + data.bronze',
-                width: 200
+                width: 200,
             },
             { field: 'gold', width: 100 },
             { field: 'silver', width: 100 },
-            { field: 'bronze', width: 100 }
+            { field: 'bronze', width: 100 },
         ];
     },
     mounted() {
         this.gridApi = this.$refs.topGrid.api;
 
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then(resp => resp.json())
-            .then(rowData => this.rowData = rowData);
+            .then((resp) => resp.json())
+            .then((rowData) => (this.rowData = rowData));
     },
 };
 

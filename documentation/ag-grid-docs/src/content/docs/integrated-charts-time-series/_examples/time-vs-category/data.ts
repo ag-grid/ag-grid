@@ -1,5 +1,5 @@
 export async function getData(delay: number = 100): Promise<any[]> {
-    return new Promise(resolve => setTimeout(() => resolve(data), delay));
+    return new Promise((resolve) => setTimeout(() => resolve(data), delay));
 }
 
 const data = [

@@ -3,27 +3,27 @@
         transpiler: 'ts',
         typescriptOptions: {
             target: 'es2020',
-            jsx: 'react'
+            jsx: 'react',
         },
         paths: {
             // paths serve as alias
             'npm:': 'https://cdn.jsdelivr.net/npm/',
-            ...systemJsPaths
+            ...systemJsPaths,
         },
         map: {
-            css: (boilerplatePath.length === 0 ? `./` : `${boilerplatePath}/`) + "css.js",
+            css: (boilerplatePath.length === 0 ? `./` : `${boilerplatePath}/`) + 'css.js',
 
             // react
             react: 'npm:react@18.2.0',
             'react-dom': 'npm:react-dom@18.2.0',
             'react-dom/client': 'npm:react-dom@18.2.0',
 
-            ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
+            ts: 'npm:plugin-typescript@8.0.0/lib/plugin.js',
             typescript: 'npm:typescript@5.4.5/lib/typescript.min.js',
 
             app: appLocation,
             // systemJsMap comes from index.html
-            ...systemJsMap
+            ...systemJsMap,
         },
         packages: {
             css: {},
@@ -150,11 +150,11 @@
             typescript: {
                 exports: 'ts',
             },
-            '*.css': {loader: 'css'},
+            '*.css': { loader: 'css' },
         },
     });
 })(this);
 
-window.addEventListener('error', e => {
-    console.error('ERROR', e.message, e.filename)
+window.addEventListener('error', (e) => {
+    console.error('ERROR', e.message, e.filename);
 });

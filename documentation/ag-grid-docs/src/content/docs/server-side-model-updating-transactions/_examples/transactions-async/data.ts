@@ -42,11 +42,10 @@ let nextBookId = 62472;
 export var data = [];
 
 // IIFE to create initial data
-(function () {   
+(function () {
+    const lastUpdated = new Date();
 
-  const lastUpdated = new Date();  
-
-  for (let i = 0; i < products.length; i++) {
+    for (let i = 0; i < products.length; i++) {
         let product = products[i];
         for (let j = 0; j < portfolios.length; j++) {
             let portfolio = portfolios[j];
@@ -55,16 +54,13 @@ export var data = [];
 
             for (let k = 0; k < bookCount; k++) {
                 let book = createBookName();
-                let tradeCount = randomBetween(
-                    MAX_TRADE_COUNT,
-                    MIN_TRADE_COUNT
-                );
+                let tradeCount = randomBetween(MAX_TRADE_COUNT, MIN_TRADE_COUNT);
                 for (let l = 0; l < tradeCount; l++) {
                     let trade = createTradeRecord(product, portfolio, book);
-             
+
                     trade.updateCount = 0;
                     trade.lastUpdated = lastUpdated;
-                        
+
                     data.push(trade);
                 }
             }
@@ -77,31 +73,31 @@ export var dataObservers = [];
 export function randomUpdates({ numRemove, numAdd, numUpdate }) {
     // removes
     const remove = [];
-    for (let i = 0; i < (Math.ceil(numRemove)); i++) {
-        const idx = randomBetween(0, data.length-1);
+    for (let i = 0; i < Math.ceil(numRemove); i++) {
+        const idx = randomBetween(0, data.length - 1);
         const d = data[idx];
         data.splice(idx, 1);
         remove.push(d);
-    }  
+    }
 
     // updates
     const update = [];
     for (let i = 0; i < numUpdate; i++) {
-        const idx = randomBetween(0, data.length-1);
+        const idx = randomBetween(0, data.length - 1);
         const d = data[idx];
         d.previous = d.current;
         d.current = d.previous + 13;
         d.lastUpdated = new Date();
         d.updateCount = ++d.updateCount;
         update.push(d);
-    } 
+    }
 
     // adds
     const add = [];
     const lastUpdate = new Date();
-    for (let i = 0; i < (Math.ceil(numAdd)); i++) {
-        const product = products[randomBetween(0, products.length-1)];
-        const portfolio = portfolios[randomBetween(0, portfolios.length-1)];
+    for (let i = 0; i < Math.ceil(numAdd); i++) {
+        const product = products[randomBetween(0, products.length - 1)];
+        const portfolio = portfolios[randomBetween(0, portfolios.length - 1)];
         const book = createBookName();
         const newRecord = createTradeRecord(product, portfolio, book);
         newRecord.lastUpdated = lastUpdate;
@@ -111,7 +107,7 @@ export function randomUpdates({ numRemove, numAdd, numUpdate }) {
     data.push(...add);
 
     // notify observers
-    dataObservers.forEach(obs => obs({update, add, remove}));
+    dataObservers.forEach((obs) => obs({ update, add, remove }));
 }
 
 function randomBetween(min, max) {
@@ -141,10 +137,10 @@ function createTradeRecord(product, portfolio, book) {
     return trade;
 }
 
-function createBookName() {    
+function createBookName() {
     return 'GL-' + nextBookId++;
 }
 
-function createTradeId() {    
+function createTradeId() {
     return nextTradeId++;
 }

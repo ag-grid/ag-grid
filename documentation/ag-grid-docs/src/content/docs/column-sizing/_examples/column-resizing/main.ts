@@ -1,58 +1,56 @@
-import { GridApi, createGrid, ColDef, GridOptions, ColumnResizedEvent } from '@ag-grid-community/core';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { ColDef, ColumnResizedEvent, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', width: 150, suppressSizeToFit: true },
-  {
-    field: 'age',
-    headerName: 'Age of Athlete',
-    width: 90,
-    minWidth: 50,
-    maxWidth: 150,
-  },
-  { field: 'country', width: 120 },
-  { field: 'year', width: 90 },
-  { field: 'date', width: 110 },
-  { field: 'sport', width: 110 },
-  { field: 'gold', width: 100 },
-  { field: 'silver', width: 100 },
-  { field: 'bronze', width: 100 },
-  { field: 'total', width: 100 },
-]
+    { field: 'athlete', width: 150, suppressSizeToFit: true },
+    {
+        field: 'age',
+        headerName: 'Age of Athlete',
+        width: 90,
+        minWidth: 50,
+        maxWidth: 150,
+    },
+    { field: 'country', width: 120 },
+    { field: 'year', width: 90 },
+    { field: 'date', width: 110 },
+    { field: 'sport', width: 110 },
+    { field: 'gold', width: 100 },
+    { field: 'silver', width: 100 },
+    { field: 'bronze', width: 100 },
+    { field: 'total', width: 100 },
+];
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-
-  columnDefs: columnDefs,
-  rowData: null,
-  onColumnResized: (params: ColumnResizedEvent) => {
-    console.log(params)
-  },
-  autoSizeStrategy: {
-    type: 'fitCellContents',
-  },
-}
+    columnDefs: columnDefs,
+    rowData: null,
+    onColumnResized: (params: ColumnResizedEvent) => {
+        console.log(params);
+    },
+    autoSizeStrategy: {
+        type: 'fitCellContents',
+    },
+};
 
 function autoSizeAll(skipHeader: boolean) {
-  const allColumnIds: string[] = []
-  gridApi!.getColumns()!.forEach(column => {
-    allColumnIds.push(column.getId())
-  })
+    const allColumnIds: string[] = [];
+    gridApi!.getColumns()!.forEach((column) => {
+        allColumnIds.push(column.getId());
+    });
 
-  gridApi!.autoSizeColumns(allColumnIds, skipHeader)
+    gridApi!.autoSizeColumns(allColumnIds, skipHeader);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
-})
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+});

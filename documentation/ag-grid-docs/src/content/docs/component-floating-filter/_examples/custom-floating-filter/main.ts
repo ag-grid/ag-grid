@@ -1,76 +1,76 @@
-import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
-import { NumberFloatingFilterComponent } from "./numberFloatingFilterComponent_typescript";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+
+import { NumberFloatingFilterComponent } from './numberFloatingFilterComponent_typescript';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-
 const columnDefs: ColDef[] = [
-  { field: 'athlete', filter: false },
-  {
-    field: 'gold',
-    filter: 'agNumberColumnFilter',
-    suppressHeaderMenuButton: true,
-    floatingFilterComponent: NumberFloatingFilterComponent,
-    floatingFilterComponentParams: {
-      color: 'gold',
+    { field: 'athlete', filter: false },
+    {
+        field: 'gold',
+        filter: 'agNumberColumnFilter',
+        suppressHeaderMenuButton: true,
+        floatingFilterComponent: NumberFloatingFilterComponent,
+        floatingFilterComponentParams: {
+            color: 'gold',
+        },
+        suppressFloatingFilterButton: true,
     },
-    suppressFloatingFilterButton: true,
-  },
-  {
-    field: 'silver',
-    filter: 'agNumberColumnFilter',
-    suppressHeaderMenuButton: true,
-    floatingFilterComponent: NumberFloatingFilterComponent,
-    floatingFilterComponentParams: {
-      color: 'silver',
+    {
+        field: 'silver',
+        filter: 'agNumberColumnFilter',
+        suppressHeaderMenuButton: true,
+        floatingFilterComponent: NumberFloatingFilterComponent,
+        floatingFilterComponentParams: {
+            color: 'silver',
+        },
+        suppressFloatingFilterButton: true,
     },
-    suppressFloatingFilterButton: true,
-  },
-  {
-    field: 'bronze',
-    filter: 'agNumberColumnFilter',
-    suppressHeaderMenuButton: true,
-    floatingFilterComponent: NumberFloatingFilterComponent,
-    floatingFilterComponentParams: {
-      color: '#CD7F32',
+    {
+        field: 'bronze',
+        filter: 'agNumberColumnFilter',
+        suppressHeaderMenuButton: true,
+        floatingFilterComponent: NumberFloatingFilterComponent,
+        floatingFilterComponentParams: {
+            color: '#CD7F32',
+        },
+        suppressFloatingFilterButton: true,
     },
-    suppressFloatingFilterButton: true,
-  },
-  {
-    field: 'total',
-    filter: 'agNumberColumnFilter',
-    suppressHeaderMenuButton: true,
-    floatingFilterComponent: NumberFloatingFilterComponent,
-    floatingFilterComponentParams: {
-      color: 'unset',
+    {
+        field: 'total',
+        filter: 'agNumberColumnFilter',
+        suppressHeaderMenuButton: true,
+        floatingFilterComponent: NumberFloatingFilterComponent,
+        floatingFilterComponentParams: {
+            color: 'unset',
+        },
+        suppressFloatingFilterButton: true,
     },
-    suppressFloatingFilterButton: true,
-  },
-]
+];
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-  defaultColDef: {
-    flex: 1,
-    minWidth: 100,
-    filter: true,
-    floatingFilter: true,
-  },
-  columnDefs: columnDefs,
-  rowData: null,
-}
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        floatingFilter: true,
+    },
+    columnDefs: columnDefs,
+    rowData: null,
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(data => {
-      gridApi!.setGridOption('rowData', data)
-    })
-})
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then((data) => {
+            gridApi!.setGridOption('rowData', data);
+        });
+});

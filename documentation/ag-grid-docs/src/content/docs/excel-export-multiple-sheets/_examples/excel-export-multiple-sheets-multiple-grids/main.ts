@@ -1,8 +1,17 @@
-import { ColDef, GridOptions, GridReadyEvent, ICellRendererComp, ICellRendererParams, GetRowIdParams, GridApi, createGrid } from "@ag-grid-community/core";
-import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { MenuModule } from '@ag-grid-enterprise/menu';
+import {
+    ColDef,
+    GetRowIdParams,
+    GridApi,
+    GridOptions,
+    GridReadyEvent,
+    ICellRendererComp,
+    ICellRendererParams,
+    createGrid,
+} from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
+import { MenuModule } from '@ag-grid-enterprise/menu';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
 
@@ -41,8 +50,8 @@ const leftColumnDefs: ColDef[] = [
             return params.rowNode!.data.athlete;
         },
     },
-    { field: "athlete" },
-    { field: "sport" }
+    { field: 'athlete' },
+    { field: 'sport' },
 ];
 
 const rightColumnDefs: ColDef[] = [
@@ -57,13 +66,13 @@ const rightColumnDefs: ColDef[] = [
             return params.rowNode!.data.athlete;
         },
     },
-    { field: "athlete" },
-    { field: "sport" },
+    { field: 'athlete' },
+    { field: 'sport' },
     {
         suppressHeaderMenuButton: true,
         maxWidth: 50,
-        cellRenderer: SportRenderer
-    }
+        cellRenderer: SportRenderer,
+    },
 ];
 
 let leftApi: GridApi;
@@ -83,7 +92,7 @@ const leftGridOptions: GridOptions = {
     columnDefs: leftColumnDefs,
     onGridReady: (params) => {
         addGridDropZone(params);
-    }
+    },
 };
 let rightApi: GridApi;
 const rightGridOptions: GridOptions = {
@@ -107,9 +116,9 @@ function addGridDropZone(params: GridReadyEvent) {
             leftApi!.applyTransaction({
                 remove: nodes.map(function (node) {
                     return node.data;
-                })
+                }),
             });
-        }
+        },
     });
 
     params.api.addRowDropZone(dropZoneParams);
@@ -125,16 +134,18 @@ function loadGrid(options: GridOptions, oldApi: GridApi, side: string, data: any
 
 function loadGrids() {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
+        .then((response) => response.json())
         .then(function (data) {
             const athletes: any[] = [];
             let i = 0;
 
             while (athletes.length < 20 && i < data.length) {
                 const pos = i++;
-                if (athletes.some(function (rec) {
-                    return rec.athlete === data[pos].athlete;
-                })) {
+                if (
+                    athletes.some(function (rec) {
+                        return rec.athlete === data[pos].athlete;
+                    })
+                ) {
                     continue;
                 }
                 athletes.push(data[pos]);
@@ -156,10 +167,9 @@ function onExcelExport() {
     // could be leftGridOptions or rightGridOptions
     leftApi!.exportMultipleSheetsAsExcel({
         data: spreadsheets,
-        fileName: 'ag-grid.xlsx'
+        fileName: 'ag-grid.xlsx',
     });
 }
-
 
 const resetBtn = document.querySelector('button.reset')!;
 const exportBtn = document.querySelector('button.excel')!;
@@ -173,4 +183,3 @@ exportBtn.addEventListener('click', () => {
 });
 
 loadGrids();
-

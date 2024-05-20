@@ -1,14 +1,20 @@
-import { FirstDataRenderedEvent, GridApi, createGrid, GridOptions, ISetFilterParams } from '@ag-grid-community/core';
-import { CountryCellRenderer } from './countryCellRenderer_typescript'
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { FirstDataRenderedEvent, GridApi, GridOptions, ISetFilterParams, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, MenuModule, SetFilterModule]);
+import { CountryCellRenderer } from './countryCellRenderer_typescript';
 
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ColumnsToolPanelModule,
+    FiltersToolPanelModule,
+    MenuModule,
+    SetFilterModule,
+]);
 
 const COUNTRY_CODES: Record<string, string> = {
     Ireland: 'ie',
@@ -52,12 +58,12 @@ const gridOptions: GridOptions<IOlympicData> = {
             filter: 'agSetColumnFilter',
             filterParams: {
                 cellRenderer: CountryCellRenderer,
-                cellRendererParams: { isFilterRenderer: true }
+                cellRendererParams: { isFilterRenderer: true },
             } as ISetFilterParams,
         },
     ],
     context: {
-        COUNTRY_CODES: COUNTRY_CODES
+        COUNTRY_CODES: COUNTRY_CODES,
     },
     defaultColDef: {
         flex: 1,
@@ -66,11 +72,11 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     sideBar: 'filters',
     onFirstDataRendered: onFirstDataRendered,
-}
+};
 
 function printFilterModel() {
     const filterModel = gridApi!.getFilterModel();
-    console.log(filterModel)
+    console.log(filterModel);
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
@@ -83,16 +89,16 @@ document.addEventListener('DOMContentLoaded', function () {
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
+        .then((response) => response.json())
         .then(function (data) {
             // only return data that has corresponding country codes
             const dataWithFlags = data.filter(function (d: any) {
-                return COUNTRY_CODES[d.country]
+                return COUNTRY_CODES[d.country];
             });
 
             // Empty data used to demonstrate custom (Blanks) handling in filter cell renderer
             dataWithFlags[0].country = '';
 
-            gridApi!.setGridOption('rowData', dataWithFlags)
-        })
-})
+            gridApi!.setGridOption('rowData', dataWithFlags);
+        });
+});

@@ -1,5 +1,5 @@
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 import React from 'react';
-import { CustomCellRendererProps } from "@ag-grid-community/react";
 
 export default (props: CustomCellRendererProps) => {
     const icon = props.value === 'Male' ? 'fa-male' : 'fa-female';
@@ -9,4 +9,3 @@ export default (props: CustomCellRendererProps) => {
         </span>
     );
 };
-

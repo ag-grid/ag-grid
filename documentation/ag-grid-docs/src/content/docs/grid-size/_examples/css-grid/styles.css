@@ -5,7 +5,7 @@
     grid-template-columns: 1fr 2fr 1fr;
     -ms-grid-rows: 100vh;
     grid-template-rows: calc(100vh - 2rem);
-    width: 100%; 
+    width: 100%;
 }
 
 .container > *:nth-child(1) {
