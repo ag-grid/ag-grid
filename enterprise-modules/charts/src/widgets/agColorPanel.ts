@@ -60,7 +60,7 @@ export class AgColorPanel extends Component {
     @RefSelector('recentColors') private readonly recentColors: HTMLElement;
 
     constructor(config: { picker: Component }) {
-        super(AgColorPanel.TEMPLATE);
+        super(AgColorPanel.TEMPLATE, [AgColorInput]);
         this.picker = config.picker;
     }
 
