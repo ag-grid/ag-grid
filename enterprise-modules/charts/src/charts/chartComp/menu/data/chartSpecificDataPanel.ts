@@ -1,6 +1,4 @@
 import {
-    AgGroupComponent,
-    AgGroupComponentParams,
     AgSelect,
     Autowired,
     ChartMappings,
@@ -13,6 +11,7 @@ import { ChartTranslationKey, ChartTranslationService } from "../../services/cha
 import { canSwitchDirection, getSeriesType } from "../../utils/seriesTypeMapper";
 import { ChartMenuContext } from "../chartMenuContext";
 import { ChartMenuParamsFactory } from "../chartMenuParamsFactory";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 
 export class ChartSpecificDataPanel extends Component {
     private static TEMPLATE = /* html */`
@@ -50,7 +49,7 @@ export class ChartSpecificDataPanel extends Component {
                 this.createGroupTypeSelect()
             ]
         }
-        this.setTemplate(ChartSpecificDataPanel.TEMPLATE, {
+        this.setTemplate(ChartSpecificDataPanel.TEMPLATE, [AgGroupComponent], {
             chartSpecificGroup: chartSpecificGroupParams
         });
         this.setDisplayed(this.hasContent);
