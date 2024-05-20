@@ -1,9 +1,17 @@
-@use "ag";
+@use 'ag';
 
 @mixin output {
     .ag-cell {
-        @include ag.unthemed-rtl(( border-right: var(--ag-cell-horizontal-border) ));
-        @include ag.unthemed-rtl(( border-right-width: 1px ));
+        @include ag.unthemed-rtl(
+            (
+                border-right: var(--ag-cell-horizontal-border),
+            )
+        );
+        @include ag.unthemed-rtl(
+            (
+                border-right-width: 1px,
+            )
+        );
     }
 
     .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left):not(.ag-cell-range-single-cell) {
@@ -20,16 +28,18 @@
         background-color: var(--ag-range-selection-background-color);
 
         &.ag-cell-range-chart {
-            background-color: var(--ag-range-selection-chart-background-color)!important;
+            background-color: var(--ag-range-selection-chart-background-color) !important;
 
             &.ag-cell-range-chart-category {
-                background-color: var(--ag-range-selection-chart-category-background-color)!important;
+                background-color: var(--ag-range-selection-chart-category-background-color) !important;
             }
         }
     }
 
     .ag-cell-range-selected-1:not(.ag-cell-focus),
-    .ag-root:not(.ag-context-menu-open) .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-1:not(.ag-cell-inline-editing) {
+    .ag-root:not(.ag-context-menu-open)
+        .ag-body-viewport:not(.ag-has-focus)
+        .ag-cell-range-selected-1:not(.ag-cell-inline-editing) {
         background-color: var(--ag-range-selection-background-color);
     }
 
@@ -68,7 +78,8 @@
     }
 
     // ltr/rtl needed so that this overrides the rtl/ltr styles of pinned column borders
-    .ag-ltr, .ag-rtl {
+    .ag-ltr,
+    .ag-rtl {
         .ag-cell-focus:not(.ag-cell-range-selected):focus-within,
         .ag-context-menu-open .ag-cell-focus:not(.ag-cell-range-selected),
         .ag-full-width-row.ag-row-focus:focus .ag-cell-wrapper.ag-row-group,
@@ -89,7 +100,11 @@
 
     .ag-cell.ag-selection-fill-right,
     .ag-cell.ag-selection-fill-right.ag-cell-range-selected {
-        @include ag.unthemed-rtl((border-right: 1px dashed var(--ag-range-selection-border-color) !important));
+        @include ag.unthemed-rtl(
+            (
+                border-right: 1px dashed var(--ag-range-selection-border-color) !important,
+            )
+        );
     }
 
     .ag-cell.ag-selection-fill-bottom,
@@ -100,15 +115,24 @@
 
     .ag-cell.ag-selection-fill-left,
     .ag-cell.ag-selection-fill-left.ag-cell-range-selected {
-        @include ag.unthemed-rtl((border-left: 1px dashed var(--ag-range-selection-border-color) !important));
+        @include ag.unthemed-rtl(
+            (
+                border-left: 1px dashed var(--ag-range-selection-border-color) !important,
+            )
+        );
     }
 
-    .ag-fill-handle, .ag-range-handle {
+    .ag-fill-handle,
+    .ag-range-handle {
         position: absolute;
         width: 6px;
         height: 6px;
         bottom: -1px;
-        @include ag.unthemed-rtl((right: -1px));
+        @include ag.unthemed-rtl(
+            (
+                right: -1px,
+            )
+        );
         background-color: var(--ag-range-selection-border-color);
     }
 
@@ -121,6 +145,6 @@
     }
 
     .ag-cell-inline-editing {
-        border-color: var(--ag-input-focus-border-color)!important;
+        border-color: var(--ag-input-focus-border-color) !important;
     }
 }

@@ -1,5 +1,6 @@
-import {Bean, BeanStub, PreConstruct } from '@ag-grid-community/core';
-import {ILicenseManager, LicenseManager} from "./shared/licenseManager";
+import { Bean, BeanStub, PreConstruct } from '@ag-grid-community/core';
+
+import { ILicenseManager, LicenseManager } from './shared/licenseManager';
 
 @Bean('licenseManager')
 export class GridLicenseManager extends BeanStub {
@@ -7,7 +8,7 @@ export class GridLicenseManager extends BeanStub {
 
     @PreConstruct
     public validateLicense(): void {
-        this.licenseManager = new LicenseManager(this.gos.getDocument())
+        this.licenseManager = new LicenseManager(this.gos.getDocument());
         this.licenseManager.validateLicense();
     }
 
@@ -19,7 +20,7 @@ export class GridLicenseManager extends BeanStub {
         return this.licenseManager.isDisplayWatermark();
     }
 
-    public getWatermarkMessage() : string {
+    public getWatermarkMessage(): string {
         return this.licenseManager.getWatermarkMessage();
     }
 

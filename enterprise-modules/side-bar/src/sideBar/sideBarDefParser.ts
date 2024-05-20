@@ -1,4 +1,4 @@
-import { SideBarDef, ToolPanelDef } from "@ag-grid-community/core";
+import { SideBarDef, ToolPanelDef } from '@ag-grid-community/core';
 
 export class SideBarDefParser {
     static readonly DEFAULT_COLUMN_COMP: ToolPanelDef = {
@@ -19,29 +19,32 @@ export class SideBarDefParser {
 
     static readonly DEFAULT_BY_KEY: { [p: string]: ToolPanelDef } = {
         columns: SideBarDefParser.DEFAULT_COLUMN_COMP,
-        filters: SideBarDefParser.DEFAULT_FILTER_COMP
+        filters: SideBarDefParser.DEFAULT_FILTER_COMP,
     };
 
     static parse(toParse: SideBarDef | string | string[] | boolean | null | undefined): SideBarDef | undefined {
-        if (!toParse) { return undefined; }
+        if (!toParse) {
+            return undefined;
+        }
         if (toParse === true) {
             return {
-                toolPanels: [
-                    SideBarDefParser.DEFAULT_COLUMN_COMP,
-                    SideBarDefParser.DEFAULT_FILTER_COMP,
-                ],
-                defaultToolPanel: 'columns'
+                toolPanels: [SideBarDefParser.DEFAULT_COLUMN_COMP, SideBarDefParser.DEFAULT_FILTER_COMP],
+                defaultToolPanel: 'columns',
             };
         }
 
-        if (typeof toParse === 'string') { return SideBarDefParser.parse([toParse]); }
+        if (typeof toParse === 'string') {
+            return SideBarDefParser.parse([toParse]);
+        }
 
         if (Array.isArray(toParse)) {
             const comps: ToolPanelDef[] = [];
-            toParse.forEach(key => {
+            toParse.forEach((key) => {
                 const lookupResult = SideBarDefParser.DEFAULT_BY_KEY[key];
                 if (!lookupResult) {
-                    console.warn(`AG Grid: the key ${key} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(SideBarDefParser.DEFAULT_BY_KEY).join(',')}`);
+                    console.warn(
+                        `AG Grid: the key ${key} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(SideBarDefParser.DEFAULT_BY_KEY).join(',')}`
+                    );
                     return;
                 }
 
@@ -54,7 +57,7 @@ export class SideBarDefParser {
 
             return {
                 toolPanels: comps,
-                defaultToolPanel: comps[0].id
+                defaultToolPanel: comps[0].id,
             };
         }
 
@@ -62,7 +65,7 @@ export class SideBarDefParser {
             toolPanels: SideBarDefParser.parseComponents(toParse.toolPanels),
             defaultToolPanel: toParse.defaultToolPanel,
             hiddenByDefault: toParse.hiddenByDefault,
-            position: toParse.position
+            position: toParse.position,
         };
 
         return result;
@@ -71,14 +74,18 @@ export class SideBarDefParser {
     static parseComponents(from?: (ToolPanelDef | string)[]): ToolPanelDef[] {
         const result: ToolPanelDef[] = [];
 
-        if (!from) { return result; }
+        if (!from) {
+            return result;
+        }
 
         from.forEach((it: ToolPanelDef | string) => {
             let toAdd: ToolPanelDef | null = null;
             if (typeof it === 'string') {
                 const lookupResult = SideBarDefParser.DEFAULT_BY_KEY[it];
                 if (!lookupResult) {
-                    console.warn(`AG Grid: the key ${it} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(SideBarDefParser.DEFAULT_BY_KEY).join(',')}`);
+                    console.warn(
+                        `AG Grid: the key ${it} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(SideBarDefParser.DEFAULT_BY_KEY).join(',')}`
+                    );
                     return;
                 }
 

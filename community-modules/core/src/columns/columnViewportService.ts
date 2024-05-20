@@ -1,17 +1,16 @@
-import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { Column, ColumnPinnedType } from "../entities/column";
-import { ColumnGroup } from "../entities/columnGroup";
-import { RowNode } from "../entities/rowNode";
-import { IHeaderColumn } from "../interfaces/iHeaderColumn";
-import { _exists } from "../utils/generic";
-import { ColumnEventDispatcher } from "./columnEventDispatcher";
-import { ColumnModel } from "./columnModel";
-import { VisibleColsService } from "./visibleColsService";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Column, ColumnPinnedType } from '../entities/column';
+import { ColumnGroup } from '../entities/columnGroup';
+import { RowNode } from '../entities/rowNode';
+import { IHeaderColumn } from '../interfaces/iHeaderColumn';
+import { _exists } from '../utils/generic';
+import { ColumnEventDispatcher } from './columnEventDispatcher';
+import { ColumnModel } from './columnModel';
+import { VisibleColsService } from './visibleColsService';
 
 @Bean('columnViewportService')
 export class ColumnViewportService extends BeanStub {
-
     @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
@@ -20,16 +19,16 @@ export class ColumnViewportService extends BeanStub {
     private colsWithinViewport: Column[] = [];
     // same as colsWithinViewport, except we always include columns with headerAutoHeight
     private headerColsWithinViewport: Column[] = [];
-    
+
     // A hash key to keep track of changes in viewport columns
     private colsWithinViewportHash: string = '';
 
     // all columns & groups to be rendered, index by row.
     // used by header rows to get all items to render for that row.
-    private rowsOfHeadersToRenderLeft: { [row: number]: IHeaderColumn[]; } = {};
-    private rowsOfHeadersToRenderRight: { [row: number]: IHeaderColumn[]; } = {};
-    private rowsOfHeadersToRenderCenter: { [row: number]: IHeaderColumn[]; } = {};
-    
+    private rowsOfHeadersToRenderLeft: { [row: number]: IHeaderColumn[] } = {};
+    private rowsOfHeadersToRenderRight: { [row: number]: IHeaderColumn[] } = {};
+    private rowsOfHeadersToRenderCenter: { [row: number]: IHeaderColumn[] } = {};
+
     private scrollWidth: number;
     private scrollPosition: number;
 
@@ -47,7 +46,9 @@ export class ColumnViewportService extends BeanStub {
         const bodyWidthDirty = this.visibleColsService.isBodyWidthDirty();
 
         const noChange = scrollWidth === this.scrollWidth && scrollPosition === this.scrollPosition && !bodyWidthDirty;
-        if (noChange) { return; }
+        if (noChange) {
+            return;
+        }
 
         this.scrollWidth = scrollWidth;
         this.scrollPosition = scrollPosition;
@@ -69,7 +70,7 @@ export class ColumnViewportService extends BeanStub {
             this.checkViewportColumns(afterScroll);
         }
     }
-    
+
     public getHeadersToRender(type: ColumnPinnedType, dept: number): IHeaderColumn[] {
         let result: IHeaderColumn[];
 
@@ -101,7 +102,7 @@ export class ColumnViewportService extends BeanStub {
         }
     }
 
-    private isColumnVirtualisationSuppressed(){
+    private isColumnVirtualisationSuppressed() {
         // When running within jsdom the viewportRight is always 0, so we need to return true to allow
         // tests to validate all the columns.
         return this.suppressColumnVirtualisation || this.viewportRight === 0;
@@ -116,14 +117,18 @@ export class ColumnViewportService extends BeanStub {
 
     private isColumnInHeaderViewport(col: Column): boolean {
         // for headers, we never filter out autoHeaderHeight columns, if calculating
-        if (col.isAutoHeaderHeight()) { return true; }
+        if (col.isAutoHeaderHeight()) {
+            return true;
+        }
 
         return this.isColumnInRowViewport(col);
     }
 
     private isColumnInRowViewport(col: Column): boolean {
         // we never filter out autoHeight columns, as we need them in the DOM for calculating Auto Height
-        if (col.isAutoHeight()) { return true; }
+        if (col.isAutoHeight()) {
+            return true;
+        }
 
         const columnLeft = col.getLeft() || 0;
         const columnRight = columnLeft + col.getActualWidth();
@@ -148,7 +153,7 @@ export class ColumnViewportService extends BeanStub {
         const res = this.colsWithinViewport.concat(leftCols).concat(rightCols);
         return res;
     }
-    
+
     // + rowRenderer
     // if we are not column spanning, this just returns back the virtual centre columns,
     // however if we are column spanning, then different rows can have different virtual
@@ -165,7 +170,9 @@ export class ColumnViewportService extends BeanStub {
         };
 
         // if doing column virtualisation, then we filter based on the viewport.
-        const inViewportCallback = this.isColumnVirtualisationSuppressed() ? null : this.isColumnInRowViewport.bind(this);
+        const inViewportCallback = this.isColumnVirtualisationSuppressed()
+            ? null
+            : this.isColumnInRowViewport.bind(this);
         const displayedColumnsCenter = this.visibleColsService.getColsCenter();
 
         return this.visibleColsService.getColsForRow(
@@ -187,7 +194,6 @@ export class ColumnViewportService extends BeanStub {
     }
 
     private calculateHeaderRows(): void {
-
         // go through each group, see if any of it's cols are displayed, and if yes,
         // then this group is included
         this.rowsOfHeadersToRenderLeft = {};
@@ -195,21 +201,19 @@ export class ColumnViewportService extends BeanStub {
         this.rowsOfHeadersToRenderCenter = {};
 
         // for easy lookup when building the groups.
-        const renderedColIds: { [key: string]: boolean; } = {};
+        const renderedColIds: { [key: string]: boolean } = {};
 
         const renderedColsLeft = this.visibleColsService.getLeftCols();
         const renderedColsRight = this.visibleColsService.getRightCols();
-        const allRenderedCols = this.headerColsWithinViewport
-            .concat(renderedColsLeft)
-            .concat(renderedColsRight);
+        const allRenderedCols = this.headerColsWithinViewport.concat(renderedColsLeft).concat(renderedColsRight);
 
-        allRenderedCols.forEach(col => renderedColIds[col.getId()] = true);
+        allRenderedCols.forEach((col) => (renderedColIds[col.getId()] = true));
 
         const testGroup = (
             children: IHeaderColumn[],
-            result: { [row: number]: IHeaderColumn[]; },
-            dept: number): boolean => {
-
+            result: { [row: number]: IHeaderColumn[] },
+            dept: number
+        ): boolean => {
             let returnValue = false;
 
             for (let i = 0; i < children.length; i++) {

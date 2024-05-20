@@ -68,12 +68,14 @@ export function _attrToBoolean(value?: boolean | string | null): boolean | undef
     }
 
     // if equal to the string 'true' (ignoring case) then return true
-    return (/true/i).test(value);
+    return /true/i.test(value);
 }
 
 // for parsing html attributes, where we want empty strings and missing attributes to be undefined
 export function _attrToString(value?: string): string | undefined {
-    if (value == null || value === '') { return; }
+    if (value == null || value === '') {
+        return;
+    }
 
     return value;
 }
@@ -113,7 +115,7 @@ export function _defaultComparator(valueA: any, valueB: any, accentedCompare: bo
     }
 
     function doQuickCompare<T>(a: T, b: T): number {
-        return (a > b ? 1 : (a < b ? -1 : 0));
+        return a > b ? 1 : a < b ? -1 : 0;
     }
 
     if (typeof valueA !== 'string') {
@@ -132,10 +134,9 @@ export function _defaultComparator(valueA: any, valueB: any, accentedCompare: bo
         // by browser, then just continue with the quick one
         return doQuickCompare(valueA, valueB);
     }
-
 }
 
-export function _values<T>(object: { [key: string]: T; } | Set<T> | Map<any, T>): T[] {
+export function _values<T>(object: { [key: string]: T } | Set<T> | Map<any, T>): T[] {
     if (object instanceof Set || object instanceof Map) {
         const arr: T[] = [];
 

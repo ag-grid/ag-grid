@@ -1,6 +1,8 @@
-@use "sass:color";
+@use 'sass:color';
 
-.ag-theme-alpine, .ag-theme-alpine-dark, .ag-theme-alpine-auto-dark {
+.ag-theme-alpine,
+.ag-theme-alpine-dark,
+.ag-theme-alpine-auto-dark {
     // COLOURS
 
     // Active colours - same shade, different opacities
@@ -30,7 +32,7 @@
     --ag-advanced-filter-column-pill-color: #a6e194;
     --ag-advanced-filter-option-pill-color: #f3c08b;
     --ag-advanced-filter-value-pill-color: #85c0e4;
-    
+
     // derived colours (no color blending - these are shared by alpine-dark)
     --ag-checkbox-background-color: var(--ag-background-color);
     --ag-checkbox-checked-color: var(--ag-alpine-active-color);
@@ -41,7 +43,6 @@
     --ag-input-focus-box-shadow: 0 0 2px 0.1rem var(--ag-input-focus-border-color);
     --ag-panel-background-color: var(--ag-header-background-color);
     --ag-menu-background-color: var(--ag-header-background-color);
-    
 
     // derived and blended colours (these are static versions of the dynamic colour blends
     // applied by the Sass API and must be overridden in alpine-dark)
@@ -62,8 +63,8 @@
     // SIZING
     --ag-grid-size: 6px;
     --ag-icon-size: 16px;
-    --ag-row-height: calc(var(--ag-grid-size) * 7);          // if changed, update environment.ts
-    --ag-header-height: calc(var(--ag-grid-size) * 8);       // if changed, update environment.ts
+    --ag-row-height: calc(var(--ag-grid-size) * 7); // if changed, update environment.ts
+    --ag-header-height: calc(var(--ag-grid-size) * 8); // if changed, update environment.ts
     --ag-list-item-height: calc(var(--ag-grid-size) * 4); // if changed, update environment.ts
     --ag-column-select-indent-size: var(--ag-icon-size);
     --ag-set-filter-indent-size: var(--ag-icon-size);
@@ -79,7 +80,8 @@
     --ag-toggle-button-width: 28px;
 
     // FONTS
-    --ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    --ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell,
+        'Helvetica Neue', sans-serif;
     --ag-font-size: 13px;
     --ag-icon-font-family: agGridAlpine;
 
@@ -92,8 +94,7 @@
     --ag-card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4);
     --ag-popup-shadow: var(--ag-card-shadow);
     --ag-side-bar-panel-width: 250px;
-};
-
+}
 
 @mixin -dark-vars {
     --ag-background-color: #181d1f;
@@ -107,9 +108,7 @@
     --ag-control-panel-background-color: #222628;
     --ag-subheader-background-color: #000;
     --ag-input-disabled-background-color: #282c2f;
-    --ag-input-focus-box-shadow:
-        0 0 2px 0.5px rgba(255, 255, 255, 0.5),
-        0 0 4px 3px var(--ag-input-focus-border-color);
+    --ag-input-focus-box-shadow: 0 0 2px 0.5px rgba(255, 255, 255, 0.5), 0 0 4px 3px var(--ag-input-focus-border-color);
     --ag-card-shadow: 0 1px 20px 1px black;
 
     --ag-disabled-foreground-color: #{color.change(#fff, $alpha: 0.5)};

@@ -178,8 +178,6 @@ export abstract class Sparkline {
         Sparkline.tooltipDocuments.push(document);
     }
 
-
-
     private _width: number = 100;
     set width(value: number) {
         if (this._width !== value) {

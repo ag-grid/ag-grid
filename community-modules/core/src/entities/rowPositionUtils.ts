@@ -1,15 +1,15 @@
-import { Autowired, Bean } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { IRowModel } from "../interfaces/iRowModel";
-import { RowNode } from "./rowNode";
-import { RowPinnedType } from "../interfaces/iRowNode";
-import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { _exists } from "../utils/generic";
-import { PaginationProxy } from "../pagination/paginationProxy";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean } from '../context/context';
+import { IRowModel } from '../interfaces/iRowModel';
+import { RowPinnedType } from '../interfaces/iRowNode';
+import { PaginationProxy } from '../pagination/paginationProxy';
+import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
+import { _exists } from '../utils/generic';
+import { RowNode } from './rowNode';
 
 export interface RowPosition {
     /** A positive number from 0 to n, where n is the last row the grid is rendering
-    * or -1 if you want to navigate to the grid header */
+     * or -1 if you want to navigate to the grid header */
     rowIndex: number;
 
     /** Either 'top', 'bottom' or null/undefined (for not pinned) */
@@ -18,7 +18,6 @@ export interface RowPosition {
 
 @Bean('rowPositionUtils')
 export class RowPositionUtils extends BeanStub {
-
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
@@ -73,9 +72,13 @@ export class RowPositionUtils extends BeanStub {
 
     public sameRow(rowA: RowPosition | undefined, rowB: RowPosition | undefined): boolean {
         // if both missing
-        if (!rowA && !rowB) { return true; }
+        if (!rowA && !rowB) {
+            return true;
+        }
         // if only one missing
-        if ((rowA && !rowB) || (!rowA && rowB)) { return false; }
+        if ((rowA && !rowB) || (!rowA && rowB)) {
+            return false;
+        }
         // otherwise compare (use == to compare rowPinned because it can be null or undefined)
         return rowA!.rowIndex === rowB!.rowIndex && rowA!.rowPinned == rowB!.rowPinned;
     }
@@ -85,11 +88,15 @@ export class RowPositionUtils extends BeanStub {
         switch (rowA.rowPinned) {
             case 'top':
                 // we we are floating top, and other isn't, then we are always before
-                if (rowB.rowPinned !== 'top') { return true; }
+                if (rowB.rowPinned !== 'top') {
+                    return true;
+                }
                 break;
             case 'bottom':
                 // if we are floating bottom, and the other isn't, then we are never before
-                if (rowB.rowPinned !== 'bottom') { return false; }
+                if (rowB.rowPinned !== 'bottom') {
+                    return false;
+                }
                 break;
             default:
                 // if we are not floating, but the other one is floating...

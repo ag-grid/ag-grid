@@ -2,40 +2,39 @@ import {
     AgCheckbox,
     Autowired,
     Column,
-    ColumnModel,
     ColumnEventType,
-    ColumnPanelItemDragStartEvent,
+    ColumnModel,
     ColumnPanelItemDragEndEvent,
+    ColumnPanelItemDragStartEvent,
     Component,
     CssClassApplier,
     DragAndDropService,
+    DragItem,
     DragSource,
     DragSourceType,
     Events,
+    IAggFunc,
     ITooltipParams,
     KeyCode,
-    ProvidedColumnGroup,
     PostConstruct,
+    ProvidedColumnGroup,
     RefSelector,
     TouchListener,
     WithoutGridCommon,
-    IAggFunc,
-    DragItem,
     _createIcon,
     _createIconNoSpan,
     _setAriaDescribedBy,
+    _setAriaExpanded,
     _setAriaLabel,
     _setDisplayed,
-    _setAriaExpanded
-} from "@ag-grid-community/core";
-import { ColumnModelItem } from "./columnModelItem";
-import { ModelItemUtils } from "./modelItemUtils";
-import { ToolPanelContextMenu } from "./toolPanelContextMenu";
+} from '@ag-grid-community/core';
+
+import { ColumnModelItem } from './columnModelItem';
+import { ModelItemUtils } from './modelItemUtils';
+import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
 export class ToolPanelColumnGroupComp extends Component {
-
-    private static TEMPLATE = /* html */
-        `<div class="ag-column-select-column-group" aria-hidden="true">
+    private static TEMPLATE /* html */ = `<div class="ag-column-select-column-group" aria-hidden="true">
             <span class="ag-column-group-icons" ref="eColumnGroupIcons" >
                 <span class="ag-column-group-closed-icon" ref="eGroupClosedIcon"></span>
                 <span class="ag-column-group-opened-icon" ref="eGroupOpenedIcon"></span>
@@ -95,11 +94,19 @@ export class ToolPanelColumnGroupComp extends Component {
 
         this.addCssClass('ag-column-select-indent-' + this.columnDept);
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
+            this.onColumnStateChanged.bind(this)
+        );
 
         this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
         this.addManagedListener(this.cbSelect, Events.EVENT_FIELD_VALUE_CHANGED, this.onCheckboxChanged.bind(this));
-        this.addManagedListener(this.modelItem, ColumnModelItem.EVENT_EXPANDED_CHANGED, this.onExpandChanged.bind(this));
+        this.addManagedListener(
+            this.modelItem,
+            ColumnModelItem.EVENT_EXPANDED_CHANGED,
+            this.onExpandChanged.bind(this)
+        );
         this.addManagedListener(this.focusWrapper, 'keydown', this.handleKeyDown.bind(this));
         this.addManagedListener(this.focusWrapper, 'contextmenu', this.onContextMenu.bind(this));
 
@@ -111,8 +118,13 @@ export class ToolPanelColumnGroupComp extends Component {
         this.refreshAriaLabel();
         this.setupTooltip();
 
-        const classes = CssClassApplier.getToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.gos, null, this.columnGroup);
-        classes.forEach(c => this.addOrRemoveCssClass(c, true));
+        const classes = CssClassApplier.getToolPanelClassesFromColDef(
+            this.columnGroup.getColGroupDef(),
+            this.gos,
+            null,
+            this.columnGroup
+        );
+        classes.forEach((c) => this.addOrRemoveCssClass(c, true));
     }
 
     public getColumns(): Column[] {
@@ -122,7 +134,9 @@ export class ToolPanelColumnGroupComp extends Component {
     private setupTooltip(): void {
         const colGroupDef = this.columnGroup.getColGroupDef();
 
-        if (!colGroupDef) { return; }
+        if (!colGroupDef) {
+            return;
+        }
 
         const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
 
@@ -170,18 +184,20 @@ export class ToolPanelColumnGroupComp extends Component {
     private onContextMenu(e: MouseEvent): void {
         const { columnGroup, gos } = this;
 
-        if (gos.get('functionsReadOnly')) { return; }
+        if (gos.get('functionsReadOnly')) {
+            return;
+        }
 
         const contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper));
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {
                 this.destroyBean(contextMenu);
             }
-        })
+        });
     }
 
     private addVisibilityListenersToAllChildren(): void {
-        this.columnGroup.getLeafColumns().forEach(column => {
+        this.columnGroup.getLeafColumns().forEach((column) => {
             this.addManagedListener(column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
             this.addManagedListener(column, Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
             this.addManagedListener(column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
@@ -200,31 +216,32 @@ export class ToolPanelColumnGroupComp extends Component {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            getDefaultIconName: () => hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: () =>
+                hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
                 hideColumnOnExit = !this.gos.get('suppressDragLeaveHidesColumns');
                 const event: WithoutGridCommon<ColumnPanelItemDragStartEvent> = {
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
-                    column: this.columnGroup
+                    column: this.columnGroup,
                 };
                 this.eventService.dispatchEvent(event);
             },
             onDragStopped: () => {
                 const event: WithoutGridCommon<ColumnPanelItemDragEndEvent> = {
-                    type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END
+                    type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
                 };
                 this.eventService.dispatchEvent(event);
             },
             onGridEnter: (dragItem: DragItem | null) => {
                 if (hideColumnOnExit) {
-                     // when dragged into the grid, restore the state that was active pre-drag
+                    // when dragged into the grid, restore the state that was active pre-drag
                     this.modelItemUtils.updateColumns({
                         columns: this.columnGroup.getLeafColumns(),
                         visibleState: dragItem?.visibleState,
                         pivotState: dragItem?.pivotState,
-                        eventType: this.eventType
-                    })
+                        eventType: this.eventType,
+                    });
                 }
             },
             onGridExit: () => {
@@ -233,7 +250,7 @@ export class ToolPanelColumnGroupComp extends Component {
                     // this handles the behaviour for pivot which is different to just hiding a column.
                     this.onChangeCommon(false);
                 }
-            }
+            },
         };
 
         this.dragAndDropService.addDragSource(dragSource, true);
@@ -242,13 +259,15 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private createDragItem() {
         const columns = this.columnGroup.getLeafColumns();
-        const visibleState: { [key: string]: boolean; } = {};
-        const pivotState: { [key: string]: {
-            pivot?: boolean;
-            rowGroup?: boolean;
-            aggFunc?: string | IAggFunc | null; }
+        const visibleState: { [key: string]: boolean } = {};
+        const pivotState: {
+            [key: string]: {
+                pivot?: boolean;
+                rowGroup?: boolean;
+                aggFunc?: string | IAggFunc | null;
+            };
         } = {};
-        columns.forEach(col => {
+        columns.forEach((col) => {
             const colId = col.getId();
             visibleState[colId] = col.isVisible();
             pivotState[colId] = this.modelItemUtils.createPivotState(col);
@@ -257,7 +276,7 @@ export class ToolPanelColumnGroupComp extends Component {
         return {
             columns,
             visibleState,
-            pivotState
+            pivotState,
         };
     }
 
@@ -286,8 +305,10 @@ export class ToolPanelColumnGroupComp extends Component {
         const childColumns: Column[] = [];
 
         const extractCols = (children: ColumnModelItem[]) => {
-            children.forEach(child => {
-                if (!child.isPassesFilter()) { return; }
+            children.forEach((child) => {
+                if (!child.isPassesFilter()) {
+                    return;
+                }
                 if (child.isGroup()) {
                     extractCols(child.getChildren());
                 } else {
@@ -304,7 +325,9 @@ export class ToolPanelColumnGroupComp extends Component {
     private onChangeCommon(nextState: boolean): void {
         this.refreshAriaLabel();
 
-        if (this.processingColumnStateChange) { return; }
+        if (this.processingColumnStateChange) {
+            return;
+        }
 
         this.modelItemUtils.selectAllChildren(this.modelItem.getChildren(), nextState, this.eventType);
     }
@@ -313,9 +336,12 @@ export class ToolPanelColumnGroupComp extends Component {
         const translate = this.localeService.getLocaleTextFunc();
         const columnLabel = translate('ariaColumnGroup', 'Column Group');
         const checkboxValue = this.cbSelect.getValue();
-        const state = checkboxValue === undefined ?
-            translate('ariaIndeterminate', 'indeterminate') : 
-            (checkboxValue ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden'));
+        const state =
+            checkboxValue === undefined
+                ? translate('ariaIndeterminate', 'indeterminate')
+                : checkboxValue
+                  ? translate('ariaVisible', 'visible')
+                  : translate('ariaHidden', 'hidden');
         const visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');
 
         _setAriaLabel(this.focusWrapper, `${this.displayName} ${columnLabel}`);
@@ -341,8 +367,10 @@ export class ToolPanelColumnGroupComp extends Component {
         let checkedCount = 0;
         let uncheckedCount = 0;
 
-        visibleLeafColumns.forEach(column => {
-            if (!pivotMode && column.getColDef().lockVisible) { return; }
+        visibleLeafColumns.forEach((column) => {
+            if (!pivotMode && column.getColDef().lockVisible) {
+                return;
+            }
 
             if (this.isColumnChecked(column, pivotMode)) {
                 checkedCount++;
@@ -363,7 +391,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         let colsThatCanAction = 0;
 
-        this.columnGroup.getLeafColumns().forEach(col => {
+        this.columnGroup.getLeafColumns().forEach((col) => {
             if (pivotMode) {
                 if (col.isAnyFunctionAllowed()) {
                     colsThatCanAction++;

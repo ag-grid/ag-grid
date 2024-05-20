@@ -1,18 +1,18 @@
-import { ColumnModel } from "../columns/columnModel";
-import { VisibleColsService } from "../columns/visibleColsService";
-import { KeyCode } from "../constants/keyCode";
-import { BeanStub } from "../context/beanStub";
-import { Autowired } from "../context/context";
-import { CtrlsService } from "../ctrlsService";
-import { Events } from "../eventKeys";
-import { FilterManager } from "../filter/filterManager";
-import { FocusService } from "../focusService";
-import { MenuService } from "../misc/menuService";
-import { _isIOSUserAgent } from "../utils/browser";
-import { _exists } from "../utils/generic";
-import { ManagedFocusFeature } from "../widgets/managedFocusFeature";
-import { LongTapEvent, TouchListener } from "../widgets/touchListener";
-import { HeaderNavigationDirection, HeaderNavigationService } from "./common/headerNavigationService";
+import { ColumnModel } from '../columns/columnModel';
+import { VisibleColsService } from '../columns/visibleColsService';
+import { KeyCode } from '../constants/keyCode';
+import { BeanStub } from '../context/beanStub';
+import { Autowired } from '../context/context';
+import { CtrlsService } from '../ctrlsService';
+import { Events } from '../eventKeys';
+import { FilterManager } from '../filter/filterManager';
+import { FocusService } from '../focusService';
+import { MenuService } from '../misc/menuService';
+import { _isIOSUserAgent } from '../utils/browser';
+import { _exists } from '../utils/generic';
+import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
+import { LongTapEvent, TouchListener } from '../widgets/touchListener';
+import { HeaderNavigationDirection, HeaderNavigationService } from './common/headerNavigationService';
 
 export interface IGridHeaderComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -20,7 +20,6 @@ export interface IGridHeaderComp {
 }
 
 export class GridHeaderCtrl extends BeanStub {
-
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('columnModel') private columnModel: ColumnModel;
@@ -37,27 +36,34 @@ export class GridHeaderCtrl extends BeanStub {
         this.comp = comp;
         this.eGui = eGui;
 
-        this.createManagedBean(new ManagedFocusFeature(
-            eFocusableElement,
-            {
+        this.createManagedBean(
+            new ManagedFocusFeature(eFocusableElement, {
                 onTabKeyDown: this.onTabKeyDown.bind(this),
                 handleKeyDown: this.handleKeyDown.bind(this),
-                onFocusOut: this.onFocusOut.bind(this)
-            }
-        ));
+                onFocusOut: this.onFocusOut.bind(this),
+            })
+        );
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
+            this.onPivotModeChanged.bind(this)
+        );
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
+            this.onDisplayedColumnsChanged.bind(this)
+        );
 
         this.onPivotModeChanged();
         this.setupHeaderHeight();
 
-        const listener = this.onHeaderContextMenu.bind(this)
+        const listener = this.onHeaderContextMenu.bind(this);
         this.addManagedListener(this.eGui, 'contextmenu', listener);
         this.mockContextMenuForIPad(listener);
 
-        this.ctrlsService.register('gridHeaderCtrl',this);
+        this.ctrlsService.register('gridHeaderCtrl', this);
     }
 
     private setupHeaderHeight(): void {
@@ -104,7 +110,9 @@ export class GridHeaderCtrl extends BeanStub {
         totalHeaderHeight += numberOfGroups * groupHeight!;
         totalHeaderHeight += headerHeight!;
 
-        if (this.headerHeight === totalHeaderHeight) { return; }
+        if (this.headerHeight === totalHeaderHeight) {
+            return;
+        }
 
         this.headerHeight = totalHeaderHeight;
 
@@ -114,7 +122,7 @@ export class GridHeaderCtrl extends BeanStub {
         this.comp.setHeightAndMinHeight(px);
 
         this.eventService.dispatchEvent({
-            type: Events.EVENT_HEADER_HEIGHT_CHANGED
+            type: Events.EVENT_HEADER_HEIGHT_CHANGED,
         });
     }
 
@@ -127,23 +135,22 @@ export class GridHeaderCtrl extends BeanStub {
 
     private onDisplayedColumnsChanged(): void {
         const columns = this.visibleColsService.getAllCols();
-        const shouldAllowOverflow = columns.some(col => col.isSpanHeaderHeight());
+        const shouldAllowOverflow = columns.some((col) => col.isSpanHeaderHeight());
 
         this.comp.addOrRemoveCssClass('ag-header-allow-overflow', shouldAllowOverflow);
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {
         const isRtl = this.gos.get('enableRtl');
-        const direction = e.shiftKey !== isRtl
-            ? HeaderNavigationDirection.LEFT
-            : HeaderNavigationDirection.RIGHT;
+        const direction = e.shiftKey !== isRtl ? HeaderNavigationDirection.LEFT : HeaderNavigationDirection.RIGHT;
 
-        if (this.headerNavigationService.navigateHorizontally(direction, true, e) ||
+        if (
+            this.headerNavigationService.navigateHorizontally(direction, true, e) ||
             this.focusService.focusNextGridCoreContainer(e.shiftKey)
         ) {
             e.preventDefault();
         }
-     }
+    }
 
     protected handleKeyDown(e: KeyboardEvent): void {
         let direction: HeaderNavigationDirection | null = null;
@@ -175,7 +182,9 @@ export class GridHeaderCtrl extends BeanStub {
     protected onFocusOut(e: FocusEvent): void {
         const { relatedTarget } = e;
 
-        if (!relatedTarget && this.eGui.contains(this.gos.getActiveDomElement())) { return; }
+        if (!relatedTarget && this.eGui.contains(this.gos.getActiveDomElement())) {
+            return;
+        }
 
         if (!this.eGui.contains(relatedTarget as HTMLElement)) {
             this.focusService.clearFocusedHeader();
@@ -183,7 +192,9 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private onHeaderContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
-        if ((!mouseEvent && !touchEvent) || !this.menuService.isHeaderContextMenuEnabled()) { return; }
+        if ((!mouseEvent && !touchEvent) || !this.menuService.isHeaderContextMenuEnabled()) {
+            return;
+        }
 
         const { target } = (mouseEvent ?? touch)!;
 
@@ -192,9 +203,13 @@ export class GridHeaderCtrl extends BeanStub {
         }
     }
 
-    private mockContextMenuForIPad(listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void): void {
+    private mockContextMenuForIPad(
+        listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
+    ): void {
         // we do NOT want this when not in iPad
-        if (!_isIOSUserAgent()) { return; }
+        if (!_isIOSUserAgent()) {
+            return;
+        }
 
         const touchListener = new TouchListener(this.eGui);
         const longTapListener = (event: LongTapEvent) => {

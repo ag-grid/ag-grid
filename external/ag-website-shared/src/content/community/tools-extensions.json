@@ -6,18 +6,9 @@
         "open_source": false,
         "type": "Extension",
         "ag_grid_usage": "Extends AG Grid functionality and exposes additional APIs",
-        "tags": [
-            "Extension"
-        ],
-        "frameworks": [
-            "React",
-            "TypeScript",
-            "Angular"
-        ],
-        "products": [
-            "Grid",
-            "Charts"
-        ],
+        "tags": ["Extension"],
+        "frameworks": ["React", "TypeScript", "Angular"],
+        "products": ["Grid", "Charts"],
         "img": "adaptable.webp",
         "favourite": true
     },
@@ -30,12 +21,8 @@
         "open_source": true,
         "stars": 120,
         "img": "plotly-dash.webp",
-        "frameworks": [
-            "Python"
-        ],
-        "tags": [
-            "Wrapper"
-        ]
+        "frameworks": ["Python"],
+        "tags": ["Wrapper"]
     },
     {
         "repo": "https://github.com/RocketCommunicationsInc/astro",
@@ -46,12 +33,8 @@
         "open_source": true,
         "stars": 80,
         "img": "astro-uxds.webp",
-        "frameworks": [
-            "React"
-        ],
-        "tags": [
-            "Design System", "Theme"
-        ]
+        "frameworks": ["React"],
+        "tags": ["Design System", "Theme"]
     },
     {
         "title": "Streamlit AG Grid",
@@ -62,12 +45,8 @@
         "type": "Wrapper",
         "link": "https://pypi.org/project/streamlit-aggrid/",
         "img": "streamlit-aggrid.webp",
-        "frameworks": [
-            "Python"
-        ],
-        "tags": [
-            "Wrapper"
-        ]
+        "frameworks": ["Python"],
+        "tags": ["Wrapper"]
     },
     {
         "repo": "https://github.com/zauberzeug/nicegui/tree/main",
@@ -78,12 +57,8 @@
         "img": "nicegui.webp",
         "link": "https://nicegui.io/documentation/section_data_elements#ag_grid",
         "stars": 6600,
-        "frameworks": [
-            "Python"
-        ],
-        "tags": [
-            "Component Library"
-        ]
+        "frameworks": ["Python"],
+        "tags": ["Component Library"]
     },
     {
         "title": "GoodData UI SDK",
@@ -94,12 +69,8 @@
         "type": "Wrapper",
         "img": "goodata-ui.webp",
         "link": "https://www.gooddata.com/docs/gooddata-ui/latest/",
-        "frameworks": [
-            "TypeScript"
-        ],
-        "tags": [
-            "Component Library"
-        ]
+        "frameworks": ["TypeScript"],
+        "tags": ["Component Library"]
     },
     {
         "link": "https://developer.blackbaud.com/skyux/",
@@ -110,12 +81,8 @@
         "title": "Sky UX",
         "img": "sky-ux.webp",
         "description": "Blackbaud's open source framework provides, amongst other components, a SKY UX-themed layout for AG Grid. Sky UX leverages reusable design patterns and components to create impactful, cohesive experiences across web applications.",
-        "frameworks": [
-            "Angular"
-        ],
-        "tags": [
-            "Integration"
-        ]
+        "frameworks": ["Angular"],
+        "tags": ["Integration"]
     },
     {
         "link": "https://ag-grid-svelte.michael.kim/guide",
@@ -125,12 +92,8 @@
         "type": "Wrapper",
         "open_source": true,
         "stars": 36,
-        "frameworks": [
-            "Svelte"
-        ],
-        "tags": [
-            "Wrapper"
-        ]
+        "frameworks": ["Svelte"],
+        "tags": ["Wrapper"]
     },
     {
         "repo": "https://github.com/widgetti/ipyaggrid",
@@ -140,12 +103,8 @@
         "type": "Wrapper",
         "open_source": true,
         "stars": 46,
-        "frameworks": [
-            "Python"
-        ],
-        "tags": [
-            "Wrapper"
-        ]
+        "frameworks": ["Python"],
+        "tags": ["Wrapper"]
     },
     {
         "repo": "https://github.com/lowdefy/lowdefy",
@@ -156,12 +115,8 @@
         "open_source": true,
         "stars": 2500,
         "img": "lowdefy.webp",
-        "frameworks": [
-            "React"
-        ],
-        "tags": [
-            "Integration"
-        ]
+        "frameworks": ["React"],
+        "tags": ["Integration"]
     },
     {
         "repo": "https://github.com/xh/hoist-react",
@@ -171,12 +126,8 @@
         "type": "Integration",
         "open_source": true,
         "stars": 21,
-        "frameworks": [
-            "React"
-        ],
-        "tags": [
-            "Integration"
-        ]
+        "frameworks": ["React"],
+        "tags": ["Integration"]
     },
     {
         "repo": "https://github.com/epicmaxco/vuestic-ui",
@@ -186,12 +137,8 @@
         "type": "Integration",
         "open_source": true,
         "stars": 3200,
-        "frameworks": [
-            "Vue"
-        ],
-        "tags": [
-            "Component Library"
-        ]
+        "frameworks": ["Vue"],
+        "tags": ["Component Library"]
     },
     {
         "repo": "https://github.com/solidjs-community/solid-ag-grid",
@@ -202,12 +149,8 @@
         "open_source": true,
         "stars": 5,
         "img": "",
-        "frameworks": [
-            "SolidJS"
-        ],
-        "tags": [
-            "Wrapper"
-        ]
+        "frameworks": ["SolidJS"],
+        "tags": ["Wrapper"]
     },
     {
         "repo": "https://github.com/kpmck/cypress-ag-grid",
@@ -216,12 +159,8 @@
         "type": "Utility",
         "open_source": true,
         "stars": 30,
-        "frameworks": [
-            "JavaScript", "TypeScript", "React", "Angular", "Vue"
-        ],
-        "tags": [
-            "Utility"
-        ]
+        "frameworks": ["JavaScript", "TypeScript", "React", "Angular", "Vue"],
+        "tags": ["Utility"]
     },
     {
         "repo": "https://github.com/clickbar/ag-grid-laravel",
@@ -230,12 +169,8 @@
         "type": "Wrapper",
         "open_source": true,
         "stars": 15,
-        "frameworks": [
-            "Laravel"
-        ],
-        "tags": [
-            "Wrapper"
-        ]
+        "frameworks": ["Laravel"],
+        "tags": ["Wrapper"]
     },
     {
         "repo": "https://github.com/LSEG/ag-grid-playwright",
@@ -244,12 +179,8 @@
         "type": "Utility",
         "open_source": true,
         "stars": 6,
-        "frameworks": [
-            "JavaScript", "TypeScript", "React", "Angular", "Vue"
-        ],
-        "tags": [
-            "Utility"
-        ]
+        "frameworks": ["JavaScript", "TypeScript", "React", "Angular", "Vue"],
+        "tags": ["Utility"]
     },
     {
         "repo": "https://github.com/terrestris/react-geo",
@@ -259,12 +190,8 @@
         "open_source": true,
         "stars": 350,
         "link": "https://terrestris.github.io/react-geo/docs/latest/#/Components/Grids/AgFeatureGrid",
-        "frameworks": [
-            "React"
-        ],
-        "tags": [
-            "Component Library"
-        ]
+        "frameworks": ["React"],
+        "tags": ["Component Library"]
     },
     {
         "title": "Grid Widget for BBJ",
@@ -274,12 +201,8 @@
         "stars": 5,
         "type": "Wrapper",
         "link": "https://bbj-plugins.github.io/BBjGridExWidget/",
-        "frameworks": [
-            "JavaScript"
-        ],
-        "tags": [
-            "Wrapper"
-        ]
+        "frameworks": ["JavaScript"],
+        "tags": ["Wrapper"]
     },
     {
         "title": "OpenMrs React Components",
@@ -289,12 +212,8 @@
         "stars": 20,
         "type": "Integration",
         "link": "https://openmrs.org/",
-        "frameworks": [
-            "React"
-        ],
-        "tags": [
-            "Component Library"
-        ]
+        "frameworks": ["React"],
+        "tags": ["Component Library"]
     },
     {
         "title": "OSharp",
@@ -304,12 +223,8 @@
         "stars": 2660,
         "type": "Integration",
         "link": "",
-        "frameworks": [
-            ".NET"
-        ],
-        "tags": [
-            "Component Library"
-        ]
+        "frameworks": [".NET"],
+        "tags": ["Component Library"]
     },
     {
         "title": "Otter",
@@ -319,12 +234,8 @@
         "stars": 45,
         "type": "Integration",
         "link": "https://amadeusitgroup.github.io/otter/",
-        "frameworks": [
-            "Angular"
-        ],
-        "tags": [
-            "Framework"
-        ]
+        "frameworks": ["Angular"],
+        "tags": ["Framework"]
     },
     {
         "title": "PortalJS",
@@ -334,12 +245,8 @@
         "stars": 2100,
         "type": "Integration",
         "link": "https://portaljs.org/",
-        "frameworks": [
-            "JavaScript"
-        ],
-        "tags": [
-            "Framework"
-        ]
+        "frameworks": ["JavaScript"],
+        "tags": ["Framework"]
     },
     {
         "title": "Feliz AG Grid",
@@ -349,12 +256,8 @@
         "stars": 10,
         "type": "Wrapper",
         "link": "https://compositionalit.github.io/feliz-ag-grid/",
-        "frameworks": [
-            "React"
-        ],
-        "tags": [
-            "Wrapper"
-        ]
+        "frameworks": ["React"],
+        "tags": ["Wrapper"]
     },
     {
         "open_source": true,
@@ -364,12 +267,8 @@
         "repo": "https://github.com/mercurymedia/elm-ag-grid",
         "description": "Elm integration for the Ag Grid data grid library.",
         "type": "Wrapper",
-        "frameworks": [
-            "JavaScript"
-        ],
-        "tags": [
-            "Wrapper"
-        ]
+        "frameworks": ["JavaScript"],
+        "tags": ["Wrapper"]
     },
     {
         "title": "Blazor AG Grid",
@@ -379,12 +278,8 @@
         "stars": 60,
         "type": "Wrapper",
         "link": "https://blog.bkkr.us/blazor-ag-grid/",
-        "frameworks": [
-            ".NET"
-        ],
-        "tags": [
-            "Wrapper"
-        ]
+        "frameworks": [".NET"],
+        "tags": ["Wrapper"]
     },
     {
         "title": "SUI Base",
@@ -394,12 +289,8 @@
         "stars": 25,
         "type": "Integration",
         "link": "https://suibase.io",
-        "frameworks": [
-            "Rust"
-        ],
-        "tags": [
-            "Framework"
-        ]
+        "frameworks": ["Rust"],
+        "tags": ["Framework"]
     },
     {
         "title": "AG Grid RS (Rust)",
@@ -409,12 +300,8 @@
         "stars": 10,
         "type": "Wrapper",
         "link": "https://docs.rs/ag-grid-rs/latest/ag_grid_rs/index.html#",
-        "frameworks": [
-            "Rust"
-        ],
-        "tags": [
-            "Wrapper"
-        ]
+        "frameworks": ["Rust"],
+        "tags": ["Wrapper"]
     },
     {
         "title": "Baloise Design System",
@@ -424,12 +311,8 @@
         "stars": 90,
         "type": "Integration",
         "link": "https://design.baloise.dev",
-        "frameworks": [
-            "JavaScript", "React", "Angular", "Vue"
-        ],
-        "tags": [
-            "Component Library"
-        ]
+        "frameworks": ["JavaScript", "React", "Angular", "Vue"],
+        "tags": ["Component Library"]
     },
     {
         "title": "SBA Angular",
@@ -439,12 +322,8 @@
         "stars": 30,
         "type": "Integration",
         "link": "https://sinequa.github.io/sba-angular/",
-        "frameworks": [
-            "Angular"
-        ],
-        "tags": [
-            "Framework"
-        ]
+        "frameworks": ["Angular"],
+        "tags": ["Framework"]
     },
     {
         "title": "AG Grid OData",
@@ -454,11 +333,7 @@
         "stars": 20,
         "type": "Extension",
         "link": "https://codesandbox.io/p/sandbox/ag-grid-server-side-row-model-sample-zqujt",
-        "frameworks": [
-            "TypeScript"
-        ],
-        "tags": [
-            "Framework"
-        ]
+        "frameworks": ["TypeScript"],
+        "tags": ["Framework"]
     }
 ]

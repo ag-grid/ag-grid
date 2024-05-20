@@ -1,13 +1,12 @@
-import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { RowGroupOpenedEvent } from "../events";
-import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
-import { IRowModel } from "../interfaces/iRowModel";
-import { AnimationFrameService } from "../misc/animationFrameService";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, PostConstruct } from '../context/context';
+import { RowGroupOpenedEvent } from '../events';
+import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import { IRowModel } from '../interfaces/iRowModel';
+import { AnimationFrameService } from '../misc/animationFrameService';
 
 @Bean('rowNodeEventThrottle')
 export class RowNodeEventThrottle extends BeanStub {
-
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('rowModel') private rowModel: IRowModel;
 
@@ -36,7 +35,6 @@ export class RowNodeEventThrottle extends BeanStub {
     // rather than debounce() so this will get done if anyone flushes the animationFrameService
     // (eg user calls api.ensureRowVisible(), which in turn flushes ).
     public dispatchExpanded(event: RowGroupOpenedEvent, forceSync?: boolean): void {
-
         // if not using CSRM, we don't debounce. otherwise this breaks the SSRM.
         if (this.clientSideRowModel == null) {
             this.eventService.dispatchEvent(event);
@@ -49,7 +47,7 @@ export class RowNodeEventThrottle extends BeanStub {
             if (this.clientSideRowModel) {
                 this.clientSideRowModel.onRowGroupOpened();
             }
-            this.events.forEach(e => this.eventService.dispatchEvent(e));
+            this.events.forEach((e) => this.eventService.dispatchEvent(e));
             this.events = [];
         };
 
@@ -58,9 +56,8 @@ export class RowNodeEventThrottle extends BeanStub {
         } else {
             if (this.dispatchExpandedDebounced == null) {
                 this.dispatchExpandedDebounced = this.animationFrameService.debounce(func);
-            }  
+            }
             this.dispatchExpandedDebounced();
         }
-
     }
 }

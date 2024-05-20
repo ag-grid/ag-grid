@@ -1,16 +1,12 @@
-import {
-    AgGroupComponent,
-    AgToggleButton,
-    PostConstruct,
-    _clearElement,
-} from "@ag-grid-community/core";
-import { ChartController } from "../../chartController";
-import { ColState } from "../../model/chartDataModel";
-import { ChartOptionsService } from "../../services/chartOptionsService";
-import { DragDataPanel } from "./dragDataPanel";
+import { AgGroupComponent, AgToggleButton, PostConstruct, _clearElement } from '@ag-grid-community/core';
+
+import { ChartController } from '../../chartController';
+import { ColState } from '../../model/chartDataModel';
+import { ChartOptionsService } from '../../services/chartOptionsService';
+import { DragDataPanel } from './dragDataPanel';
 
 export class SeriesDataPanel extends DragDataPanel {
-    private static TEMPLATE = /* html */`<div id="seriesGroup"></div>`;
+    private static TEMPLATE = /* html */ `<div id="seriesGroup"></div>`;
 
     constructor(
         chartController: ChartController,
@@ -26,26 +22,30 @@ export class SeriesDataPanel extends DragDataPanel {
 
     @PostConstruct
     private init() {
-        this.groupComp = this.createBean(new AgGroupComponent({
-            title: this.title,
-            enabled: true,
-            suppressEnabledCheckbox: true,
-            suppressOpenCloseIcons: false,
-            cssIdentifier: 'charts-data',
-            expanded: this.isOpen
-        }));
+        this.groupComp = this.createBean(
+            new AgGroupComponent({
+                title: this.title,
+                enabled: true,
+                suppressEnabledCheckbox: true,
+                suppressOpenCloseIcons: false,
+                cssIdentifier: 'charts-data',
+                expanded: this.isOpen,
+            })
+        );
         if (this.chartController.isActiveXYChart()) {
-            const pairedModeToggle = this.groupComp.createManagedBean(new AgToggleButton({
-                label: this.chartTranslationService.translate('paired'),
-                labelAlignment: 'left',
-                labelWidth: 'flex',
-                inputWidth: 'flex',
-                value: this.chartOptionsService.getPairedMode(),
-                onValueChange: newValue => {
-                    this.chartOptionsService.setPairedMode(!!newValue);
-                    this.chartController.updateForGridChange({ maintainColState: true });
-                }
-            }));
+            const pairedModeToggle = this.groupComp.createManagedBean(
+                new AgToggleButton({
+                    label: this.chartTranslationService.translate('paired'),
+                    labelAlignment: 'left',
+                    labelWidth: 'flex',
+                    inputWidth: 'flex',
+                    value: this.chartOptionsService.getPairedMode(),
+                    onValueChange: (newValue) => {
+                        this.chartOptionsService.setPairedMode(!!newValue);
+                        this.chartController.updateForGridChange({ maintainColState: true });
+                    },
+                })
+            );
             this.groupComp.addItem(pairedModeToggle);
         }
 
@@ -56,16 +56,19 @@ export class SeriesDataPanel extends DragDataPanel {
 
     public refresh(valueCols: ColState[]): void {
         this.valuePillSelect?.setValueFormatter(this.generateGetSeriesLabel(valueCols));
-        this.valuePillSelect?.setValues(valueCols, valueCols.filter(col => col.selected));
+        this.valuePillSelect?.setValues(
+            valueCols,
+            valueCols.filter((col) => col.selected)
+        );
         this.refreshValueSelect(valueCols);
     }
 
     private generateGetSeriesLabel(valueCols: ColState[]): (col: ColState) => string {
         if (!this.chartController.isActiveXYChart()) {
-            return col => col.displayName ?? '';
+            return (col) => col.displayName ?? '';
         }
 
-        const selectedCols = valueCols.filter(col => col.selected);
+        const selectedCols = valueCols.filter((col) => col.selected);
 
         const isBubble = this.chartController.getChartType() === 'bubble';
         const isInPairedMode = this.chartOptionsService.getPairedMode();
@@ -84,7 +87,9 @@ export class SeriesDataPanel extends DragDataPanel {
 
             const index = selectedCols.indexOf(col);
 
-            if (index === -1) { return escapedLabel; }
+            if (index === -1) {
+                return escapedLabel;
+            }
 
             let axisLabel;
 

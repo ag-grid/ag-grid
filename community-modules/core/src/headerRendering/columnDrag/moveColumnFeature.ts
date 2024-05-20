@@ -1,20 +1,19 @@
-import { Autowired, PostConstruct } from "../../context/context";
-import { ColumnModel } from "../../columns/columnModel";
-import { Column, ColumnPinnedType } from "../../entities/column";
-import { DragAndDropService, DraggingEvent, DragSourceType } from "../../dragAndDrop/dragAndDropService";
-import { DropListener } from "./bodyDropTarget";
-import { GridOptionsService } from "../../gridOptionsService";
-import { ColumnEventType } from "../../events";
-import { _missing, _exists } from "../../utils/generic";
-import { CtrlsService } from "../../ctrlsService";
-import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
-import { ColumnMoveHelper } from "../columnMoveHelper";
-import { HorizontalDirection } from "../../constants/direction";
-import { ColumnMoveService } from "../../columns/columnMoveService";
-import { VisibleColsService } from "../../columns/visibleColsService";
+import { ColumnModel } from '../../columns/columnModel';
+import { ColumnMoveService } from '../../columns/columnMoveService';
+import { VisibleColsService } from '../../columns/visibleColsService';
+import { HorizontalDirection } from '../../constants/direction';
+import { Autowired, PostConstruct } from '../../context/context';
+import { CtrlsService } from '../../ctrlsService';
+import { DragAndDropService, DragSourceType, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
+import { Column, ColumnPinnedType } from '../../entities/column';
+import { ColumnEventType } from '../../events';
+import { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
+import { GridOptionsService } from '../../gridOptionsService';
+import { _exists, _missing } from '../../utils/generic';
+import { ColumnMoveHelper } from '../columnMoveHelper';
+import { DropListener } from './bodyDropTarget';
 
 export class MoveColumnFeature implements DropListener {
-
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
@@ -33,7 +32,7 @@ export class MoveColumnFeature implements DropListener {
     private isCenterContainer: boolean;
 
     private lastDraggingEvent: DraggingEvent;
-    private lastMovedInfo: { columns: Column[]; toIndex: number; } | null = null;
+    private lastMovedInfo: { columns: Column[]; toIndex: number } | null = null;
 
     // this counts how long the user has been trying to scroll by dragging and failing,
     // if they fail x amount of times, then the column will get pinned. this is what gives
@@ -64,18 +63,18 @@ export class MoveColumnFeature implements DropListener {
 
         if (dragCameFromToolPanel) {
             // the if statement doesn't work if drag leaves grid, then enters again
-            this.setColumnsVisible(columns, true, "uiColumnDragged");
+            this.setColumnsVisible(columns, true, 'uiColumnDragged');
         } else {
             // restore previous state of visible columns upon re-entering. this means if the user drags
             // a group out, and then drags the group back in, only columns that were originally visible
             // will be visible again. otherwise a group with three columns (but only two visible) could
             // be dragged out, then when it's dragged in again, all three are visible. this stops that.
             const visibleState = draggingEvent.dragItem.visibleState;
-            const visibleColumns: Column[] = (columns || []).filter(column => visibleState![column.getId()]);
-            this.setColumnsVisible(visibleColumns, true, "uiColumnDragged");
+            const visibleColumns: Column[] = (columns || []).filter((column) => visibleState![column.getId()]);
+            this.setColumnsVisible(visibleColumns, true, 'uiColumnDragged');
         }
 
-        this.setColumnsPinned(columns, this.pinned, "uiColumnDragged");
+        this.setColumnsPinned(columns, this.pinned, 'uiColumnDragged');
         this.onDragging(draggingEvent, true, true);
     }
 
@@ -86,14 +85,14 @@ export class MoveColumnFeature implements DropListener {
 
     public setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType) {
         if (columns) {
-            const allowedCols = columns.filter(c => !c.getColDef().lockVisible);
+            const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
             this.columnModel.setColsVisible(allowedCols, visible, source);
         }
     }
 
     public setColumnsPinned(columns: Column[] | null | undefined, pinned: ColumnPinnedType, source: ColumnEventType) {
         if (columns) {
-            const allowedCols = columns.filter(c => !c.getColDef().lockPinned);
+            const allowedCols = columns.filter((c) => !c.getColDef().lockPinned);
             this.columnModel.setColsPinned(allowedCols, pinned, source);
         }
     }
@@ -113,11 +112,11 @@ export class MoveColumnFeature implements DropListener {
             const lastVisiblePixel = firstVisiblePixel + centerCtrl.getCenterWidth();
 
             if (this.gos.get('enableRtl')) {
-                this.needToMoveRight = xAdjustedForScroll < (firstVisiblePixel + 50);
-                this.needToMoveLeft = xAdjustedForScroll > (lastVisiblePixel - 50);
+                this.needToMoveRight = xAdjustedForScroll < firstVisiblePixel + 50;
+                this.needToMoveLeft = xAdjustedForScroll > lastVisiblePixel - 50;
             } else {
-                this.needToMoveLeft = xAdjustedForScroll < (firstVisiblePixel + 50);
-                this.needToMoveRight = xAdjustedForScroll > (lastVisiblePixel - 50);
+                this.needToMoveLeft = xAdjustedForScroll < firstVisiblePixel + 50;
+                this.needToMoveRight = xAdjustedForScroll > lastVisiblePixel - 50;
             }
 
             if (this.needToMoveLeft || this.needToMoveRight) {
@@ -128,7 +127,12 @@ export class MoveColumnFeature implements DropListener {
         }
     }
 
-    public onDragging(draggingEvent: DraggingEvent = this.lastDraggingEvent, fromEnter = false, fakeEvent = false, finished = false): void {
+    public onDragging(
+        draggingEvent: DraggingEvent = this.lastDraggingEvent,
+        fromEnter = false,
+        fakeEvent = false,
+        finished = false
+    ): void {
         if (finished) {
             if (this.lastMovedInfo) {
                 const { columns, toIndex } = this.lastMovedInfo;
@@ -143,13 +147,7 @@ export class MoveColumnFeature implements DropListener {
             return;
         }
 
-        const mouseX = ColumnMoveHelper.normaliseX(
-            draggingEvent.x,
-            this.pinned,
-            false,
-            this.gos,
-            this.ctrlsService
-        );
+        const mouseX = ColumnMoveHelper.normaliseX(draggingEvent.x, this.pinned, false, this.gos, this.ctrlsService);
 
         // if the user is dragging into the panel, ie coming from the side panel into the main grid,
         // we don't want to scroll the grid this time, it would appear like the table is jumping
@@ -162,15 +160,16 @@ export class MoveColumnFeature implements DropListener {
 
         const dragSourceType: DragSourceType = draggingEvent.dragSource.type;
 
-        const allMovingColumns = draggingEvent.dragSource.getDragItem().columns?.filter(col => {
-            if (col.getColDef().lockPinned) {
-                // if locked return true only if both col and container are same pin type.
-                // double equals (==) here on purpose so that null==undefined is true (for not pinned options)
-                return col.getPinned() == this.pinned;
-            }
-            // if not pin locked, then always allowed to be in this container
-            return true;
-        }) || [];
+        const allMovingColumns =
+            draggingEvent.dragSource.getDragItem().columns?.filter((col) => {
+                if (col.getColDef().lockPinned) {
+                    // if locked return true only if both col and container are same pin type.
+                    // double equals (==) here on purpose so that null==undefined is true (for not pinned options)
+                    return col.getPinned() == this.pinned;
+                }
+                // if not pin locked, then always allowed to be in this container
+                return true;
+            }) || [];
 
         const lastMovedInfo = ColumnMoveHelper.attemptMoveColumns({
             allMovingColumns,
@@ -183,7 +182,7 @@ export class MoveColumnFeature implements DropListener {
             gos: this.gos,
             columnModel: this.columnModel,
             columnMoveService: this.columnMoveService,
-            presentedColsService: this.visibleColsService
+            presentedColsService: this.visibleColsService,
         });
 
         if (lastMovedInfo) {
@@ -194,9 +193,12 @@ export class MoveColumnFeature implements DropListener {
     private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection | undefined {
         if (this.gos.get('enableRtl')) {
             switch (hDirection) {
-                case HorizontalDirection.Left: return HorizontalDirection.Right;
-                case HorizontalDirection.Right: return HorizontalDirection.Left;
-                default: console.error(`AG Grid: Unknown direction ${hDirection}`);
+                case HorizontalDirection.Left:
+                    return HorizontalDirection.Right;
+                case HorizontalDirection.Right:
+                    return HorizontalDirection.Left;
+                default:
+                    console.error(`AG Grid: Unknown direction ${hDirection}`);
             }
         } else {
             return hDirection;
@@ -229,7 +231,7 @@ export class MoveColumnFeature implements DropListener {
         // and getting faster. this is to give smoother user experience. we max at 100px to limit the speed.
         let pixelsToMove: number;
         this.intervalCount++;
-        pixelsToMove = 10 + (this.intervalCount * 5);
+        pixelsToMove = 10 + this.intervalCount * 5;
         if (pixelsToMove > 100) {
             pixelsToMove = 100;
         }
@@ -251,13 +253,13 @@ export class MoveColumnFeature implements DropListener {
             this.failedMoveAttempts++;
 
             const columns = this.lastDraggingEvent.dragItem.columns;
-            const columnsThatCanPin = columns!.filter(c => !c.getColDef().lockPinned);
+            const columnsThatCanPin = columns!.filter((c) => !c.getColDef().lockPinned);
 
             if (columnsThatCanPin.length > 0) {
                 this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
                 if (this.failedMoveAttempts > 7) {
                     const pinType = this.needToMoveLeft ? 'left' : 'right';
-                    this.setColumnsPinned(columnsThatCanPin, pinType, "uiColumnDragged");
+                    this.setColumnsPinned(columnsThatCanPin, pinType, 'uiColumnDragged');
                     this.dragAndDropService.nudge();
                 }
             }

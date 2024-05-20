@@ -1,5 +1,6 @@
 import { ChartType } from '@ag-grid-community/core';
 import { _Scene } from 'ag-charts-community';
+
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export class MiniRangeArea extends MiniChartWithAxes {
@@ -58,7 +59,10 @@ export class MiniRangeArea extends MiniChartWithAxes {
         const xMin = data.reduce((acc, series) => series.reduce((acc, { x }) => Math.min(acc, x), acc), Infinity);
         const xMax = data.reduce((acc, series) => series.reduce((acc, { x }) => Math.max(acc, x), acc), -Infinity);
         const yMin = data.reduce((acc, series) => series.reduce((acc, { low }) => Math.min(acc, low), acc), Infinity);
-        const yMax = data.reduce((acc, series) => series.reduce((acc, { high }) => Math.max(acc, high), acc), -Infinity);
+        const yMax = data.reduce(
+            (acc, series) => series.reduce((acc, { high }) => Math.max(acc, high), acc),
+            -Infinity
+        );
 
         const xScale = new _Scene.LinearScale();
         xScale.domain = [xMin, xMax];
@@ -128,11 +132,7 @@ interface ZigzagPatternOptions {
     period: number;
 }
 
-function zigzag(options: {
-    offset: number;
-    length: number;
-    pattern: ZigzagPatternOptions;
-}): Array<[number, number]> {
+function zigzag(options: { offset: number; length: number; pattern: ZigzagPatternOptions }): Array<[number, number]> {
     const { offset, length, pattern } = options;
 
     // Generate [x, y] points for all inflection points of the zigzag pattern that fall within the range
@@ -177,7 +177,6 @@ function zigzag(options: {
         return low + (high - low) * y;
     }
 }
-
 
 function getRemainderAbs(value: number): number {
     const remainder = value % 1;

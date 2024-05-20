@@ -1,16 +1,17 @@
+import { _includes } from '@ag-grid-community/core';
 import {
-    _Theme,
     AgChartLegendClickEvent,
     AgChartTheme,
     AgChartThemeName,
     AgChartThemeOverrides,
     AgChartThemePalette,
+    _Theme,
 } from 'ag-charts-community';
+
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
+import { get } from '../utils/object';
 import { ChartSeriesType, getSeriesType } from '../utils/seriesTypeMapper';
 import { ChartProxy, ChartProxyParams } from './chartProxy';
-import { get } from '../utils/object';
-import { _includes } from '@ag-grid-community/core';
 
 export function createAgChartTheme(
     chartProxyParams: ChartProxyParams,
@@ -37,11 +38,13 @@ export function createAgChartTheme(
 
     const isTitleEnabled = () => {
         const isTitleEnabled = (obj: any) => {
-            if (!obj) { return false; }
-            return Object.keys(obj).some(key => get(obj[key], 'title.enabled', false));
-        }
+            if (!obj) {
+                return false;
+            }
+            return Object.keys(obj).some((key) => get(obj[key], 'title.enabled', false));
+        };
         return isTitleEnabled(gridOptionsThemeOverrides) || isTitleEnabled(apiThemeOverrides);
-    }
+    };
 
     // Overrides in ascending precedence ordering.
     const overrides: (AgChartThemeOverrides | undefined)[] = [
@@ -51,7 +54,7 @@ export function createAgChartTheme(
         gridOptionsThemeOverrides,
         apiThemeOverrides,
         { ...(chartOptionsToRestore ?? {}) },
-        updatedOverrides
+        updatedOverrides,
     ];
 
     // Recursively nest theme overrides so they are applied with correct precedence in
@@ -88,8 +91,7 @@ function isIdenticalPalette(paletteA: AgChartThemePalette, paletteB: AgChartThem
         return arrA?.every((v: any, i) => v === arrB?.[i]) ?? false;
     };
 
-    return arrayCompare(paletteA.fills, paletteB.fills) &&
-        arrayCompare(paletteA.strokes, paletteB.strokes);
+    return arrayCompare(paletteA.fills, paletteB.fills) && arrayCompare(paletteA.strokes, paletteB.strokes);
 }
 
 export function isStockTheme(themeName: string): boolean {

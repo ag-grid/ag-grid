@@ -1,25 +1,31 @@
-import { Autowired, PostConstruct } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
-import { PopupService } from "./popupService";
-import { UserComponentFactory } from "../components/framework/userComponentFactory";
-import { _exists } from "../utils/generic";
-import { _isIOSUserAgent } from "../utils/browser";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { _warnOnce } from "../utils/function";
-import { Events } from "../eventKeys";
-import { TooltipHideEvent, TooltipShowEvent } from "../events";
+import { UserComponentFactory } from '../components/framework/userComponentFactory';
+import { BeanStub } from '../context/beanStub';
+import { Autowired, PostConstruct } from '../context/context';
+import { Events } from '../eventKeys';
+import { TooltipHideEvent, TooltipShowEvent } from '../events';
+import { WithoutGridCommon } from '../interfaces/iCommon';
+import { ITooltipComp, ITooltipParams } from '../rendering/tooltipComponent';
+import { _isIOSUserAgent } from '../utils/browser';
+import { _warnOnce } from '../utils/function';
+import { _exists } from '../utils/generic';
+import { PopupService } from './popupService';
 
 export interface TooltipParentComp {
     getTooltipParams(): WithoutGridCommon<ITooltipParams>;
     getGui(): HTMLElement;
 }
 
-enum TooltipStates { NOTHING, WAITING_TO_SHOW, SHOWING }
-enum TooltipTrigger { HOVER, FOCUS }
+enum TooltipStates {
+    NOTHING,
+    WAITING_TO_SHOW,
+    SHOWING,
+}
+enum TooltipTrigger {
+    HOVER,
+    FOCUS,
+}
 
 export class TooltipStateManager extends BeanStub {
-
     private readonly SHOW_QUICK_TOOLTIP_DIFF = 1000;
     private readonly FADE_OUT_TOOLTIP_TIMEOUT = 1000;
     private readonly INTERACTIVE_HIDE_DELAY = 100;
@@ -87,7 +93,7 @@ export class TooltipStateManager extends BeanStub {
 
         if (this.tooltipTrigger === TooltipTrigger.FOCUS) {
             this.addManagedListener(el, 'focusin', this.onFocusIn.bind(this));
-            this.addManagedListener(el, 'focusout', this.onFocusOut.bind(this))
+            this.addManagedListener(el, 'focusout', this.onFocusOut.bind(this));
         }
 
         this.addManagedListener(el, 'mousemove', this.onMouseMove.bind(this));
@@ -140,12 +146,14 @@ export class TooltipStateManager extends BeanStub {
             this.startHideTimeout();
         }
 
-        if (_isIOSUserAgent()) { return; }
+        if (_isIOSUserAgent()) {
+            return;
+        }
 
         if (TooltipStateManager.isLocked) {
             this.showTooltipTimeoutId = window.setTimeout(() => {
                 this.prepareToShowTooltip(e);
-            }, this.INTERACTIVE_HIDE_DELAY)
+            }, this.INTERACTIVE_HIDE_DELAY);
         } else {
             this.prepareToShowTooltip(e);
         }
@@ -159,11 +167,7 @@ export class TooltipStateManager extends BeanStub {
             this.lastMouseEvent = e;
         }
 
-        if (
-            this.tooltipMouseTrack &&
-            this.state === TooltipStates.SHOWING &&
-            this.tooltipComp
-        ) {
+        if (this.tooltipMouseTrack && this.state === TooltipStates.SHOWING && this.tooltipComp) {
             this.positionTooltip();
         }
     }
@@ -174,7 +178,7 @@ export class TooltipStateManager extends BeanStub {
 
     private onMouseLeave(): void {
         // if interaction is enabled, we need to verify if the user is moving
-        // the cursor from the cell onto the tooltip, so we lock the service 
+        // the cursor from the cell onto the tooltip, so we lock the service
         // for 100ms to prevent other tooltips from being created while this is happening.
         if (this.interactionEnabled) {
             this.lockService();
@@ -196,7 +200,9 @@ export class TooltipStateManager extends BeanStub {
             this.isInteractingWithTooltip ||
             parentCompGui.contains(relatedTarget) ||
             (this.interactionEnabled && tooltipGui?.contains(relatedTarget))
-        ) { return; }
+        ) {
+            return;
+        }
 
         this.setToDoNothing();
     }
@@ -210,7 +216,9 @@ export class TooltipStateManager extends BeanStub {
         // mouseenter to be called twice in a row, which can happen if editing the cell. this was reported
         // in https://ag-grid.atlassian.net/browse/AG-4422. to get around this, we check the state, and if
         // state is != nothing, then we know mouseenter was already received.
-        if (this.state != TooltipStates.NOTHING || TooltipStateManager.isLocked) { return; }
+        if (this.state != TooltipStates.NOTHING || TooltipStateManager.isLocked) {
+            return;
+        }
 
         // if we are showing the tooltip because of focus, no delay at all
         // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
@@ -230,9 +238,8 @@ export class TooltipStateManager extends BeanStub {
         const now = new Date().getTime();
         const then = TooltipStateManager.lastTooltipHideTime;
 
-        return (now - then) < this.SHOW_QUICK_TOOLTIP_DIFF;
+        return now - then < this.SHOW_QUICK_TOOLTIP_DIFF;
     }
-
 
     private setToDoNothing(): void {
         if (this.state === TooltipStates.SHOWING) {
@@ -276,9 +283,10 @@ export class TooltipStateManager extends BeanStub {
         userDetails.newAgStackInstance()!.then(callback);
     }
 
-
     public hideTooltip(forceHide?: boolean): void {
-        if (!forceHide && this.isInteractingWithTooltip) { return; }
+        if (!forceHide && this.isInteractingWithTooltip) {
+            return;
+        }
         // check if comp exists - due to async, although we asked for
         // one, the instance may not be back yet
         if (this.tooltipComp) {
@@ -288,7 +296,7 @@ export class TooltipStateManager extends BeanStub {
 
         const event: WithoutGridCommon<TooltipHideEvent> = {
             type: Events.EVENT_TOOLTIP_HIDE,
-            parentGui: this.parentComp.getGui()
+            parentGui: this.parentComp.getGui(),
         };
         this.eventService.dispatchEvent(event);
 
@@ -296,7 +304,8 @@ export class TooltipStateManager extends BeanStub {
     }
 
     private newTooltipComponentCallback(tooltipInstanceCopy: number, tooltipComp: ITooltipComp): void {
-        const compNoLongerNeeded = this.state !== TooltipStates.SHOWING || this.tooltipInstanceCount !== tooltipInstanceCopy;
+        const compNoLongerNeeded =
+            this.state !== TooltipStates.SHOWING || this.tooltipInstanceCount !== tooltipInstanceCopy;
 
         if (compNoLongerNeeded) {
             this.getContext().destroyBean(tooltipComp);
@@ -323,7 +332,7 @@ export class TooltipStateManager extends BeanStub {
 
         const addPopupRes = this.popupService.addPopup({
             eChild: eGui,
-            ariaLabel: translate('ariaLabelTooltip', 'Tooltip')
+            ariaLabel: translate('ariaLabelTooltip', 'Tooltip'),
         });
         if (addPopupRes) {
             this.tooltipPopupDestroyFunc = addPopupRes.hideFunc;
@@ -332,24 +341,36 @@ export class TooltipStateManager extends BeanStub {
         this.positionTooltip();
 
         if (this.tooltipTrigger === TooltipTrigger.FOCUS) {
-            this.onBodyScrollEventCallback = this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.setToDoNothing.bind(this));
-            this.onColumnMovedEventCallback = this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.setToDoNothing.bind(this));
+            this.onBodyScrollEventCallback = this.addManagedListener(
+                this.eventService,
+                Events.EVENT_BODY_SCROLL,
+                this.setToDoNothing.bind(this)
+            );
+            this.onColumnMovedEventCallback = this.addManagedListener(
+                this.eventService,
+                Events.EVENT_COLUMN_MOVED,
+                this.setToDoNothing.bind(this)
+            );
         }
 
         if (this.interactionEnabled) {
             if (this.tooltipTrigger === TooltipTrigger.HOVER) {
-                this.tooltipMouseEnterListener = this.addManagedListener(eGui, 'mouseenter', this.onTooltipMouseEnter.bind(this)) || null;
-                this.tooltipMouseLeaveListener = this.addManagedListener(eGui, 'mouseleave', this.onTooltipMouseLeave.bind(this)) || null;
+                this.tooltipMouseEnterListener =
+                    this.addManagedListener(eGui, 'mouseenter', this.onTooltipMouseEnter.bind(this)) || null;
+                this.tooltipMouseLeaveListener =
+                    this.addManagedListener(eGui, 'mouseleave', this.onTooltipMouseLeave.bind(this)) || null;
             } else {
-                this.tooltipFocusInListener = this.addManagedListener(eGui, 'focusin', this.onTooltipFocusIn.bind(this)) || null;
-                this.tooltipFocusOutListener = this.addManagedListener(eGui, 'focusout', this.onTooltipFocusOut.bind(this)) || null;
+                this.tooltipFocusInListener =
+                    this.addManagedListener(eGui, 'focusin', this.onTooltipFocusIn.bind(this)) || null;
+                this.tooltipFocusOutListener =
+                    this.addManagedListener(eGui, 'focusout', this.onTooltipFocusOut.bind(this)) || null;
             }
         }
 
         const event: WithoutGridCommon<TooltipShowEvent> = {
             type: Events.EVENT_TOOLTIP_SHOW,
             tooltipGui: eGui,
-            parentGui: this.parentComp.getGui()
+            parentGui: this.parentComp.getGui(),
         };
         this.eventService.dispatchEvent(event);
 
@@ -377,7 +398,9 @@ export class TooltipStateManager extends BeanStub {
 
         // focusout is dispatched when inner elements lose focus
         // so we need to verify if focus is contained within the tooltip
-        if (tooltipGui?.contains(relatedTarget)) { return; }
+        if (tooltipGui?.contains(relatedTarget)) {
+            return;
+        }
 
         this.isInteractingWithTooltip = false;
 
@@ -397,13 +420,13 @@ export class TooltipStateManager extends BeanStub {
             type: 'tooltip',
             ePopup: this.tooltipComp!.getGui(),
             nudgeY: 18,
-            skipObserver: this.tooltipMouseTrack
+            skipObserver: this.tooltipMouseTrack,
         };
 
         if (this.lastMouseEvent) {
             this.popupService.positionPopupUnderMouseEvent({
                 ...params,
-                mouseEvent: this.lastMouseEvent
+                mouseEvent: this.lastMouseEvent,
             });
         } else {
             this.popupService.positionPopupByComponent({
@@ -411,7 +434,7 @@ export class TooltipStateManager extends BeanStub {
                 eventSource: this.parentComp.getGui(),
                 position: 'under',
                 keepWithinBounds: true,
-                nudgeY: 5
+                nudgeY: 5,
             });
         }
     }
@@ -437,15 +460,22 @@ export class TooltipStateManager extends BeanStub {
     }
 
     private clearTooltipListeners(): void {
-        [ 
-            this.tooltipMouseEnterListener, this.tooltipMouseLeaveListener,
-            this.tooltipFocusInListener, this.tooltipFocusOutListener
-        ].forEach(listener => {
-            if (listener) { listener(); }
+        [
+            this.tooltipMouseEnterListener,
+            this.tooltipMouseLeaveListener,
+            this.tooltipFocusInListener,
+            this.tooltipFocusOutListener,
+        ].forEach((listener) => {
+            if (listener) {
+                listener();
+            }
         });
 
-        this.tooltipMouseEnterListener = this.tooltipMouseLeaveListener =
-        this.tooltipFocusInListener = this.tooltipFocusOutListener = null;
+        this.tooltipMouseEnterListener =
+            this.tooltipMouseLeaveListener =
+            this.tooltipFocusInListener =
+            this.tooltipFocusOutListener =
+                null;
     }
 
     private lockService(): void {
@@ -467,19 +497,25 @@ export class TooltipStateManager extends BeanStub {
     }
 
     private clearShowTimeout(): void {
-        if (!this.showTooltipTimeoutId) { return; }
+        if (!this.showTooltipTimeoutId) {
+            return;
+        }
         window.clearTimeout(this.showTooltipTimeoutId);
         this.showTooltipTimeoutId = undefined;
     }
 
     private clearHideTimeout(): void {
-        if (!this.hideTooltipTimeoutId) { return; }
+        if (!this.hideTooltipTimeoutId) {
+            return;
+        }
         window.clearTimeout(this.hideTooltipTimeoutId);
         this.hideTooltipTimeoutId = undefined;
     }
 
     private clearInteractiveTimeout(): void {
-        if (!this.interactiveTooltipTimeoutId) { return; }
+        if (!this.interactiveTooltipTimeoutId) {
+            return;
+        }
         window.clearTimeout(this.interactiveTooltipTimeoutId);
         this.interactiveTooltipTimeoutId = undefined;
     }

@@ -1,4 +1,4 @@
-import { AdvancedFilterModel, AgEvent, BaseCellDataType, JoinAdvancedFilterModel } from "@ag-grid-community/core";
+import { AdvancedFilterModel, AgEvent, BaseCellDataType, JoinAdvancedFilterModel } from '@ag-grid-community/core';
 
 interface AdvancedFilterBuilderItemEvent extends AgEvent {
     item: AdvancedFilterBuilderItem;
@@ -12,7 +12,7 @@ export interface AdvancedFilterBuilderMoveEvent extends AdvancedFilterBuilderIte
     backwards: boolean;
 }
 
-export interface AdvancedFilterBuilderRemoveEvent extends AdvancedFilterBuilderItemEvent { }
+export interface AdvancedFilterBuilderRemoveEvent extends AdvancedFilterBuilderItemEvent {}
 
 export interface AdvancedFilterBuilderItem {
     filterModel: AdvancedFilterModel | null;
@@ -26,22 +26,22 @@ export type CreatePillParams = CreateInputPillParams | CreateSelectPillParams;
 
 interface CreateInputPillParams extends BaseCreatePillParams {
     isSelect: false;
-    baseCellDataType: BaseCellDataType,
+    baseCellDataType: BaseCellDataType;
 }
 
 interface CreateSelectPillParams extends BaseCreatePillParams {
     isSelect: true;
-    getEditorParams: () => { values?: any[] },
-    pickerAriaLabelKey: string,
-    pickerAriaLabelValue: string
+    getEditorParams: () => { values?: any[] };
+    pickerAriaLabelKey: string;
+    pickerAriaLabelValue: string;
 }
 
 interface BaseCreatePillParams {
-    key: string,
-    displayValue: string,
-    cssClass: string,
-    update: (key: string) => void,
-    ariaLabel: string
+    key: string;
+    displayValue: string;
+    cssClass: string;
+    update: (key: string) => void;
+    ariaLabel: string;
 }
 
 export class AdvancedFilterBuilderEvents {

@@ -1,15 +1,10 @@
-import {
-    AgGroupComponentParams,
-    Autowired,
-    Component,
-    PostConstruct
-} from "@ag-grid-community/core";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import { AgGroupComponentParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+
+import { ChartTranslationService } from '../../../services/chartTranslationService';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class BackgroundPanel extends Component {
-    public static TEMPLATE = /* html */
-        `<div>
+    public static TEMPLATE /* html */ = `<div>
             <ag-group-component ref="chartBackgroundGroup">
                 <ag-color-picker ref="colorPicker"></ag-color-picker>
             </ag-group-component>
@@ -31,13 +26,13 @@ export class BackgroundPanel extends Component {
                 suppressOpenCloseIcons: true,
                 title: this.chartTranslationService.translate('background'),
                 suppressEnabledCheckbox: true,
-                useToggle: true
+                useToggle: true,
             }
         );
         const colorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams('background.fill');
         this.setTemplate(BackgroundPanel.TEMPLATE, {
             chartBackgroundGroup: chartBackgroundGroupParams,
-            colorPicker: colorPickerParams
+            colorPicker: colorPickerParams,
         });
     }
 }

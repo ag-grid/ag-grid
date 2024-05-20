@@ -84,9 +84,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "community-modules/core/jest.config.js"
       }
@@ -94,20 +92,3 @@
   },
   "tags": ["module:community", "module", "community"]
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

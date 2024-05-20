@@ -1,4 +1,6 @@
-export const compressBlob = async (data: Blob): Promise<{
+export const compressBlob = async (
+    data: Blob
+): Promise<{
     size: number;
     content: Blob;
 }> => {
@@ -9,23 +11,23 @@ export const compressBlob = async (data: Blob): Promise<{
         write: (chunk: Uint8Array) => {
             chunks.push(chunk);
             chunksSize += chunk.length;
-        }
+        },
     });
 
     // Create readable stream from blob
     const readable = new ReadableStream({
         start: (controller) => {
             const reader = new FileReader();
-            reader.onload = e => {
+            reader.onload = (e) => {
                 if (e.target?.result) {
                     controller.enqueue(e.target.result);
                 }
 
                 controller.close();
-            }
+            };
 
             reader.readAsArrayBuffer(data);
-        }
+        },
     });
 
     // Perform the compression using the browser's native CompressionStream API
@@ -37,18 +39,17 @@ export const compressBlob = async (data: Blob): Promise<{
     return {
         size: chunksSize,
         content: new Blob(chunks),
-    }
+    };
 };
 
-export const deflateLocalFile = async (rawContent: string | Uint8Array): Promise<{
+export const deflateLocalFile = async (
+    rawContent: string | Uint8Array
+): Promise<{
     size: number;
     content: Uint8Array;
 }> => {
     const contentAsBlob = new Blob([rawContent]);
-    const {
-        size: compressedSize,
-        content: compressedContent
-    } = await compressBlob(contentAsBlob);
+    const { size: compressedSize, content: compressedContent } = await compressBlob(contentAsBlob);
 
     const compressedContentAsUint8Array = new Uint8Array(await compressedContent.arrayBuffer());
 

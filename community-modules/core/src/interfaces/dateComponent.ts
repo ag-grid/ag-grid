@@ -1,7 +1,7 @@
-import { IComponent } from "../interfaces/iComponent";
-import { DateFilterParams } from "../filter/provided/date/dateFilter";
-import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
-import { AgGridCommon } from "../interfaces/iCommon";
+import { DateFilterParams } from '../filter/provided/date/dateFilter';
+import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
+import { AgGridCommon } from '../interfaces/iCommon';
+import { IComponent } from '../interfaces/iComponent';
 
 export interface BaseDate {
     /** Optional: Sets the disabled state of this component */
@@ -50,5 +50,4 @@ export interface IDateParams<TData = any, TContext = any> extends BaseDateParams
     onDateChanged: () => void;
 }
 
-export interface IDateComp extends IComponent<IDateParams>, IDate {
-}
+export interface IDateComp extends IComponent<IDateParams>, IDate {}

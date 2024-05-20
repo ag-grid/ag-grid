@@ -1,27 +1,29 @@
-import { UserCompDetails, UserComponentFactory } from "../components/framework/userComponentFactory";
-import { Autowired, PostConstruct } from "../context/context";
-import { Events } from "../eventKeys";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
-import { AgPromise } from "../utils/promise";
-import { _bindCellRendererToHtmlElement, _getInnerWidth } from "../utils/dom";
-import { RichSelectParams } from "./agRichSelect";
-import { FieldPickerValueSelectedEvent } from "../events";
-import { Component } from "./component";
-import { _escapeString } from "../utils/string";
-import { _exists } from "../utils/generic";
-import { _setAriaActiveDescendant, _setAriaSelected } from "../utils/aria";
-import { VirtualList } from "./virtualList";
+import { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
+import { Autowired, PostConstruct } from '../context/context';
+import { Events } from '../eventKeys';
+import { FieldPickerValueSelectedEvent } from '../events';
+import { WithoutGridCommon } from '../interfaces/iCommon';
+import { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
+import { _setAriaActiveDescendant, _setAriaSelected } from '../utils/aria';
+import { _bindCellRendererToHtmlElement, _getInnerWidth } from '../utils/dom';
+import { _exists } from '../utils/generic';
+import { AgPromise } from '../utils/promise';
+import { _escapeString } from '../utils/string';
+import { RichSelectParams } from './agRichSelect';
+import { Component } from './component';
+import { VirtualList } from './virtualList';
 
 export class RichSelectRow<TValue> extends Component {
-
     private value: TValue;
     private parsedValue: string | null;
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
-    constructor(private readonly params: RichSelectParams<TValue>, private readonly wrapperEl: HTMLElement) {
-        super(/* html */`<div class="ag-rich-select-row" role="presentation"></div>`);
+    constructor(
+        private readonly params: RichSelectParams<TValue>,
+        private readonly wrapperEl: HTMLElement
+    ) {
+        super(/* html */ `<div class="ag-rich-select-row" role="presentation"></div>`);
     }
 
     @PostConstruct
@@ -30,7 +32,7 @@ export class RichSelectRow<TValue> extends Component {
     }
 
     public setState(value: TValue): void {
-        let formattedValue: string = ''
+        let formattedValue: string = '';
 
         if (this.params.valueFormatter) {
             formattedValue = this.params.valueFormatter(value);
@@ -46,7 +48,9 @@ export class RichSelectRow<TValue> extends Component {
     public highlightString(matchString: string): void {
         const { parsedValue } = this;
 
-        if (this.params.cellRenderer || !_exists(parsedValue)) { return; }
+        if (this.params.cellRenderer || !_exists(parsedValue)) {
+            return;
+        }
 
         let hasMatch = _exists(matchString);
 
@@ -57,7 +61,9 @@ export class RichSelectRow<TValue> extends Component {
                 const startPart = _escapeString(parsedValue.slice(0, index), true);
                 const highlightedPart = _escapeString(parsedValue.slice(index, highlightEndIndex), true);
                 const endPart = _escapeString(parsedValue.slice(highlightEndIndex));
-                this.renderValueWithoutRenderer(`${startPart}<span class="ag-rich-select-row-text-highlight">${highlightedPart}</span>${endPart}`);
+                this.renderValueWithoutRenderer(
+                    `${startPart}<span class="ag-rich-select-row-text-highlight">${highlightedPart}</span>${endPart}`
+                );
             } else {
                 hasMatch = false;
             }
@@ -96,23 +102,24 @@ export class RichSelectRow<TValue> extends Component {
 
         eGui.appendChild(span);
         this.renderValueWithoutRenderer(parsedValue);
-        this.setTooltip ({
+        this.setTooltip({
             newTooltipText: this.parsedValue,
-            shouldDisplayTooltip: () => span.scrollWidth > span.clientWidth
+            shouldDisplayTooltip: () => span.scrollWidth > span.clientWidth,
         });
     }
 
     private renderValueWithoutRenderer(value: string | null): void {
         const span = this.getGui().querySelector('span');
-        if (!span) { return; }
-        span.innerHTML = _exists(value) ? value : '&nbsp;'
+        if (!span) {
+            return;
+        }
+        span.innerHTML = _exists(value) ? value : '&nbsp;';
     }
 
     private populateWithRenderer(value: TValue, valueFormatted: string): boolean {
         // bad coder here - we are not populating all values of the cellRendererParams
         let cellRendererPromise: AgPromise<any> | undefined;
         let userCompDetails: UserCompDetails | undefined;
-
 
         if (this.params.cellRenderer) {
             userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {
@@ -122,7 +129,6 @@ export class RichSelectRow<TValue> extends Component {
                     this.setTooltip({ newTooltipText: value, shouldDisplayTooltip });
                 },
             } as ICellRendererParams);
-            
         }
 
         if (userCompDetails) {
@@ -134,7 +140,7 @@ export class RichSelectRow<TValue> extends Component {
         }
 
         if (cellRendererPromise) {
-            cellRendererPromise.then(childComponent => {
+            cellRendererPromise.then((childComponent) => {
                 this.addDestroyFunc(() => {
                     this.getContext().destroyBean(childComponent);
                 });
@@ -149,10 +155,9 @@ export class RichSelectRow<TValue> extends Component {
         const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
             type: Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
             fromEnterKey: false,
-            value: this.value
+            value: this.value,
         };
 
         parent?.dispatchEvent(event);
     }
-
 }

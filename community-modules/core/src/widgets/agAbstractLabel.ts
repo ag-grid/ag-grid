@@ -1,7 +1,7 @@
-import { Component } from "./component";
-import { PostConstruct } from "../context/context";
-import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from "../utils/dom";
-import { _setAriaRole } from "../utils/aria";
+import { PostConstruct } from '../context/context';
+import { _setAriaRole } from '../utils/aria';
+import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from '../utils/dom';
+import { Component } from './component';
 
 export type LabelAlignment = 'left' | 'right' | 'top';
 
@@ -25,7 +25,7 @@ export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelPar
     constructor(config?: TConfig, template?: string) {
         super(template);
 
-        this.config = config || {} as any;
+        this.config = config || ({} as any);
     }
 
     @PostConstruct

@@ -6,7 +6,7 @@
     "cli": "nx",
     "outputCapture": "pipe",
     "type": "object",
-    "properties": {      
+    "properties": {
         "output": {
             "type": "string",
             "description": "The output path of the generated file.",

@@ -1,18 +1,17 @@
-import { Autowired, Bean } from "../context/context";
-import { Column } from "../entities/column";
-import { ColDef } from "../entities/colDef";
-import { ColumnModel } from "./columnModel";
-import { ColumnFactory } from "./columnFactory";
-import { BeanStub } from "../context/beanStub";
-import { _mergeDeep } from "../utils/object";
-import { _missing } from "../utils/generic";
-import { ColumnEventType } from "../events";
-import { ColumnNameService } from "./columnNameService";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean } from '../context/context';
+import { ColDef } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { ColumnEventType } from '../events';
+import { _missing } from '../utils/generic';
+import { _mergeDeep } from '../utils/object';
+import { ColumnFactory } from './columnFactory';
+import { ColumnModel } from './columnModel';
+import { ColumnNameService } from './columnNameService';
 
 export const GROUP_AUTO_COLUMN_ID: 'ag-Grid-AutoColumn' = 'ag-Grid-AutoColumn';
 @Bean('autoColService')
 export class AutoColService extends BeanStub {
-
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
@@ -24,7 +23,9 @@ export class AutoColService extends BeanStub {
         let doingMultiAutoColumn = this.gos.isGroupMultiAutoColumn();
 
         if (doingTreeData && doingMultiAutoColumn) {
-            console.warn('AG Grid: you cannot mix groupDisplayType = "multipleColumns" with treeData, only one column can be used to display groups when doing tree data');
+            console.warn(
+                'AG Grid: you cannot mix groupDisplayType = "multipleColumns" with treeData, only one column can be used to display groups when doing tree data'
+            );
             doingMultiAutoColumn = false;
         }
 
@@ -69,8 +70,8 @@ export class AutoColService extends BeanStub {
     private updateOneAutoCol(colToUpdate: Column, index: number, source: ColumnEventType) {
         const oldColDef = colToUpdate.getColDef();
         const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
-        const underlyingColumn = underlyingColId!=null ? this.columnModel.getColDefCol(underlyingColId) : undefined;
-        const colDef = this.createAutoColDef(colToUpdate.getId(), underlyingColumn??undefined, index);
+        const underlyingColumn = underlyingColId != null ? this.columnModel.getColDefCol(underlyingColId) : undefined;
+        const colDef = this.createAutoColDef(colToUpdate.getId(), underlyingColumn ?? undefined, index);
 
         colToUpdate.setColDef(colDef, null, source);
         this.columnFactory.applyColumnState(colToUpdate, colDef, source);
@@ -121,11 +122,10 @@ export class AutoColService extends BeanStub {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
 
         const res: ColDef = {
-            headerName: localeTextFunc('group', 'Group')
+            headerName: localeTextFunc('group', 'Group'),
         };
 
-        const userHasProvidedGroupCellRenderer = userDef &&
-            (userDef.cellRenderer || userDef.cellRendererSelector);
+        const userHasProvidedGroupCellRenderer = userDef && (userDef.cellRenderer || userDef.cellRendererSelector);
 
         // only add the default group cell renderer if user hasn't provided one
         if (!userHasProvidedGroupCellRenderer) {
@@ -139,15 +139,15 @@ export class AutoColService extends BeanStub {
             Object.assign(res, {
                 // cellRendererParams.groupKey: colDefToCopy.field;
                 headerName: this.columnNameService.getDisplayNameForColumn(rowGroupCol, 'header'),
-                headerValueGetter: colDef.headerValueGetter
+                headerValueGetter: colDef.headerValueGetter,
             });
 
             if (colDef.cellRenderer) {
                 Object.assign(res, {
                     cellRendererParams: {
                         innerRenderer: colDef.cellRenderer,
-                        innerRendererParams: colDef.cellRendererParams
-                    }
+                        innerRendererParams: colDef.cellRendererParams,
+                    },
                 });
             }
             res.showRowGroup = rowGroupCol.getColId();

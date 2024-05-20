@@ -64,7 +64,8 @@
     cursor: pointer;
 }
 
-.ag-filter-toolpanel-group-title-bar, .ag-filter-toolpanel-instance-header {
+.ag-filter-toolpanel-group-title-bar,
+.ag-filter-toolpanel-instance-header {
     padding-left: calc(var(--ag-grid-size) + var(--ag-filter-tool-panel-group-indent) * var(--ag-indentation-level));
 }
 

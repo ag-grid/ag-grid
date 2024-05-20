@@ -1,6 +1,6 @@
-import { AgInputTextField } from "../../widgets/agInputTextField";
-import { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ISimpleFilterModelType, Tuple } from "./simpleFilter";
-import { IFilterParams } from "../../interfaces/iFilter";
+import { IFilterParams } from '../../interfaces/iFilter';
+import { AgInputTextField } from '../../widgets/agInputTextField';
+import { ISimpleFilterModel, ISimpleFilterModelType, ISimpleFilterParams, SimpleFilter, Tuple } from './simpleFilter';
 
 /**
  * Parameters provided by the grid to the `init` method of a `ScalarFilter`.
@@ -28,7 +28,11 @@ export interface Comparator<T> {
     (left: T, right: T): number;
 }
 
-export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputTextField> extends SimpleFilter<M, V, E> {
+export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputTextField> extends SimpleFilter<
+    M,
+    V,
+    E
+> {
     private scalarFilterParams: ScalarFilterParams;
 
     protected abstract comparator(): Comparator<V>;
@@ -100,9 +104,9 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
             case ScalarFilter.IN_RANGE: {
                 const compareToResult = comparator(values[1]!, cellValue);
 
-                return this.scalarFilterParams.inRangeInclusive ?
-                    compareResult >= 0 && compareToResult <= 0 :
-                    compareResult > 0 && compareToResult < 0;
+                return this.scalarFilterParams.inRangeInclusive
+                    ? compareResult >= 0 && compareToResult <= 0
+                    : compareResult > 0 && compareToResult < 0;
             }
 
             case ScalarFilter.BLANK:
@@ -112,7 +116,11 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
                 return !this.isBlank(cellValue);
 
             default:
-                console.warn('AG Grid: Unexpected type of filter "' + filterModel.type + '", it looks like the filter was configured with incorrect Filter Options');
+                console.warn(
+                    'AG Grid: Unexpected type of filter "' +
+                        filterModel.type +
+                        '", it looks like the filter was configured with incorrect Filter Options'
+                );
                 return true;
         }
     }

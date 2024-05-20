@@ -1,19 +1,18 @@
 import {
     ColDef,
     ColGroupDef,
-    Component,
-    ToolPanelColumnCompParams,
-    RefSelector,
     ColumnEventType,
-    PositionableFeature
-} from "@ag-grid-community/core";
-import { PrimaryColsListPanel } from "./primaryColsListPanel";
-import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";
+    Component,
+    PositionableFeature,
+    RefSelector,
+    ToolPanelColumnCompParams,
+} from '@ag-grid-community/core';
+
+import { PrimaryColsHeaderPanel } from './primaryColsHeaderPanel';
+import { PrimaryColsListPanel } from './primaryColsListPanel';
 
 export class PrimaryColsPanel extends Component {
-
-    private static TEMPLATE = /* html */
-        `<div class="ag-column-select">
+    private static TEMPLATE /* html */ = `<div class="ag-column-select">
             <ag-primary-cols-header ref="primaryColsHeaderPanel"></ag-primary-cols-header>
             <ag-primary-cols-list ref="primaryColsListPanel"></ag-primary-cols-list>
         </div>`;
@@ -31,11 +30,7 @@ export class PrimaryColsPanel extends Component {
     }
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
-    public init(
-        allowDragging: boolean,
-        params: ToolPanelColumnCompParams,
-        eventType: ColumnEventType
-    ): void {
+    public init(allowDragging: boolean, params: ToolPanelColumnCompParams, eventType: ColumnEventType): void {
         this.allowDragging = allowDragging;
         this.params = params;
         this.eventType = eventType;

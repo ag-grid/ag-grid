@@ -1,18 +1,17 @@
-import { ColumnModel } from "../columns/columnModel";
-import { PivotResultColsService } from "../columns/pivotResultColsService";
-import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { GetQuickFilterTextParams } from "../entities/colDef";
-import { Column } from "../entities/column";
-import { RowNode } from "../entities/rowNode";
-import { Events } from "../eventKeys";
-import { IRowModel } from "../interfaces/iRowModel";
-import { _exists } from "../utils/generic";
-import { ValueService } from "../valueService/valueService";
+import { ColumnModel } from '../columns/columnModel';
+import { PivotResultColsService } from '../columns/pivotResultColsService';
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, PostConstruct } from '../context/context';
+import { GetQuickFilterTextParams } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { RowNode } from '../entities/rowNode';
+import { Events } from '../eventKeys';
+import { IRowModel } from '../interfaces/iRowModel';
+import { _exists } from '../utils/generic';
+import { ValueService } from '../valueService/valueService';
 
 @Bean('quickFilterService')
 export class QuickFilterService extends BeanStub {
-
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowModel') private rowModel: IRowModel;
@@ -31,9 +30,13 @@ export class QuickFilterService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.resetQuickFilterCache());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () =>
+            this.resetQuickFilterCache()
+        );
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.resetQuickFilterCache());
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.resetQuickFilterCache());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>
+            this.resetQuickFilterCache()
+        );
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
             if (!this.gos.get('includeHiddenColumnsInQuickFilter')) {
                 this.resetQuickFilterCache();
@@ -41,16 +44,19 @@ export class QuickFilterService extends BeanStub {
         });
 
         this.addManagedPropertyListener('quickFilterText', (e) => this.setQuickFilter(e.currentValue));
-        this.addManagedPropertyListeners([
-            'includeHiddenColumnsInQuickFilter', 'applyQuickFilterBeforePivotOrAgg'
-        ], () => this.onQuickFilterColumnConfigChanged());
+        this.addManagedPropertyListeners(
+            ['includeHiddenColumnsInQuickFilter', 'applyQuickFilterBeforePivotOrAgg'],
+            () => this.onQuickFilterColumnConfigChanged()
+        );
 
         this.quickFilter = this.parseQuickFilter(this.gos.get('quickFilterText'));
         this.parser = this.gos.get('quickFilterParser');
         this.matcher = this.gos.get('quickFilterMatcher');
         this.setQuickFilterParts();
 
-        this.addManagedPropertyListeners(['quickFilterMatcher', 'quickFilterParser'], () => this.setQuickFilterParserAndMatcher());
+        this.addManagedPropertyListeners(['quickFilterMatcher', 'quickFilterParser'], () =>
+            this.setQuickFilterParserAndMatcher()
+        );
     }
 
     // if we are using autoGroupCols, then they should be included for quick filter. this covers the
@@ -63,15 +69,16 @@ export class QuickFilterService extends BeanStub {
         const groupAutoCols = this.columnModel.getAutoCols();
         const providedCols = this.columnModel.getColDefCols();
 
-        let columnsForQuickFilter = (
-            pivotMode && !this.gos.get('applyQuickFilterBeforePivotOrAgg') ? this.pivotResultColsService.getPivotResultCols()?.list : providedCols
-        ) ?? [];
+        let columnsForQuickFilter =
+            (pivotMode && !this.gos.get('applyQuickFilterBeforePivotOrAgg')
+                ? this.pivotResultColsService.getPivotResultCols()?.list
+                : providedCols) ?? [];
         if (groupAutoCols) {
             columnsForQuickFilter = columnsForQuickFilter.concat(groupAutoCols);
         }
         this.colsForQuickFilter = this.gos.get('includeHiddenColumnsInQuickFilter')
             ? columnsForQuickFilter
-            : columnsForQuickFilter.filter(col => col.isVisible() || col.isRowGroupActive());
+            : columnsForQuickFilter.filter((col) => col.isVisible() || col.isRowGroupActive());
     }
 
     public isQuickFilterPresent(): boolean {
@@ -86,13 +93,13 @@ export class QuickFilterService extends BeanStub {
         }
 
         // each part must pass, if any fails, then the whole filter fails
-        return this.quickFilterParts!.every(part =>
+        return this.quickFilterParts!.every((part) =>
             usingCache ? this.doesRowPassQuickFilterCache(node, part) : this.doesRowPassQuickFilterNoCache(node, part)
         );
     }
 
     public resetQuickFilterCache(): void {
-        this.rowModel.forEachNode(node => node.quickFilterAggregateText = null);
+        this.rowModel.forEachNode((node) => (node.quickFilterAggregateText = null));
     }
 
     private setQuickFilterParts(): void {
@@ -119,7 +126,9 @@ export class QuickFilterService extends BeanStub {
 
     private setQuickFilter(newFilter: string | undefined): void {
         if (newFilter != null && typeof newFilter !== 'string') {
-            console.warn(`AG Grid - Grid option quickFilterText only supports string inputs, received: ${typeof newFilter}`);
+            console.warn(
+                `AG Grid - Grid option quickFilterText only supports string inputs, received: ${typeof newFilter}`
+            );
             return;
         }
 
@@ -153,7 +162,7 @@ export class QuickFilterService extends BeanStub {
     }
 
     private doesRowPassQuickFilterNoCache(node: RowNode, filterPart: string): boolean {
-        return this.colsForQuickFilter.some(column => {
+        return this.colsForQuickFilter.some((column) => {
             const part = this.getQuickFilterTextForColumn(column, node);
 
             return _exists(part) && part.indexOf(filterPart) >= 0;
@@ -180,7 +189,7 @@ export class QuickFilterService extends BeanStub {
 
     private checkGenerateQuickFilterAggregateText(node: RowNode): void {
         if (!node.quickFilterAggregateText) {
-            node.quickFilterAggregateText = this.getQuickFilterAggregateText(node)
+            node.quickFilterAggregateText = this.getQuickFilterAggregateText(node);
         }
     }
 
@@ -194,7 +203,7 @@ export class QuickFilterService extends BeanStub {
                 node,
                 data: node.data,
                 column,
-                colDef
+                colDef,
             });
 
             value = colDef.getQuickFilterText(params);
@@ -206,7 +215,7 @@ export class QuickFilterService extends BeanStub {
     private getQuickFilterAggregateText(node: RowNode): string {
         const stringParts: string[] = [];
 
-        this.colsForQuickFilter.forEach(column => {
+        this.colsForQuickFilter.forEach((column) => {
             const part = this.getQuickFilterTextForColumn(column, node);
 
             if (_exists(part)) {

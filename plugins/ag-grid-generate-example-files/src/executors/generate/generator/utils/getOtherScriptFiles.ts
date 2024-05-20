@@ -1,13 +1,13 @@
 import { SOURCE_ENTRY_FILE_NAME } from '../constants';
 import { readAsJsFile } from '../transformation-scripts/parser-utils';
-import { FileContents, FRAMEWORKS, ImportType, InternalFramework, TransformTsFileExt } from '../types';
+import { FRAMEWORKS, FileContents, ImportType, InternalFramework, TransformTsFileExt } from '../types';
 import { getFileList } from './fileUtils';
 
 const getOtherTsGeneratedFiles = async ({
     folderPath,
     sourceFileList,
     transformTsFileExt,
-    internalFramework
+    internalFramework,
 }: {
     folderPath: string;
     sourceFileList: string[];
@@ -23,7 +23,9 @@ const getOtherTsGeneratedFiles = async ({
         .filter((fileName) => fileName !== SOURCE_ENTRY_FILE_NAME)
         // Exclude angular and react functional ts files as they will be handled separately
         // We do let _typescript files through as they are used for vanilla and need to be readAsJsFile
-        .filter((fileName) => !['angular', 'reactFunctionalTs'].some(framework => fileName.includes('_'+ framework)));
+        .filter(
+            (fileName) => !['angular', 'reactFunctionalTs'].some((framework) => fileName.includes('_' + framework))
+        );
 
     const tsFileContents = await getFileList({
         folderPath,
@@ -43,8 +45,7 @@ const getOtherTsGeneratedFiles = async ({
             // For provided typescript component files, automatically generate vanilla js files
             jsFileName = jsFileName.replace('_typescript', '_vanilla');
             generatedFiles[jsFileName] = readAsJsFile(srcFile, internalFramework);
-        }
-        else {
+        } else {
             const jsFileName = tsFileName.replace('.ts', transformTsFileExt);
             generatedFiles[jsFileName] = readAsJsFile(srcFile, internalFramework);
         }
@@ -68,32 +69,31 @@ const getOtherJsFiles = ({
 };
 
 /**
- * 
+ *
  * @param file Get the suffix for the file based on the framework i.e colourCellRenderer_vue.js
- * @param framework 
- * @returns 
+ * @param framework
+ * @returns
  */
 const getComponentSuffix = (file: string, framework: InternalFramework) => {
     if (framework === 'vue3') {
         // Let vue3 share vue files
-        if (file.includes('_vue.' )){
-            return '_vue'
-        };
-        if (file.includes('_vue3.' )){
-            return '_vue3'
+        if (file.includes('_vue.')) {
+            return '_vue';
         }
-    }
-    else if (file.includes('_' + framework + '.')){
+        if (file.includes('_vue3.')) {
+            return '_vue3';
+        }
+    } else if (file.includes('_' + framework + '.')) {
         return '_' + framework;
     }
     return undefined;
 };
 
 const isValidFrameworkFile = (internalFramework: InternalFramework, framework: InternalFramework) => {
-    if (internalFramework === framework){
+    if (internalFramework === framework) {
         return true;
     }
-    if (internalFramework === 'vue3'){
+    if (internalFramework === 'vue3') {
         // Let vue3 share vue files
         return true;
     }
@@ -109,7 +109,9 @@ const getComponentFiles = ({
     sourceFileList: string[];
     internalFramework: InternalFramework;
 }): Promise<FileContents> => {
-    const frameworkComponents = sourceFileList.filter((fileName) => getComponentSuffix(fileName, internalFramework) !== undefined);
+    const frameworkComponents = sourceFileList.filter(
+        (fileName) => getComponentSuffix(fileName, internalFramework) !== undefined
+    );
     return getFileList({
         folderPath,
         fileList: frameworkComponents,
@@ -146,12 +148,11 @@ export const getOtherScriptFiles = async ({
     });
 
     const contents = { ...otherTsGeneratedFileContents, ...otherJsFileContents, ...componentFiles } as FileContents;
-    const frameworkComponentSuffix = (framework: InternalFramework) => framework === 'vue3' ? 'Vue' : '';
+    const frameworkComponentSuffix = (framework: InternalFramework) => (framework === 'vue3' ? 'Vue' : '');
     const filteredToFramework = {};
     const others = {};
     Object.entries(contents).forEach(([file, content]) => {
-
-        if (importType === 'packages'){
+        if (importType === 'packages') {
             content = convertModuleToPackageImports(content);
         }
 
@@ -161,7 +162,7 @@ export const getOtherScriptFiles = async ({
             if (suffix !== undefined) {
                 if (isValidFrameworkFile(internalFramework, framework)) {
                     filteredToFramework[file.replace(suffix, frameworkComponentSuffix(framework))] = content;
-                }else{
+                } else {
                     // Is a framework file, but not the current framework so we don't want to include it
                 }
                 isFrameworkFile = true;
@@ -173,7 +174,6 @@ export const getOtherScriptFiles = async ({
     });
     return [others, filteredToFramework];
 };
-
 
 export function convertModuleToPackageImports(file: any) {
     return file

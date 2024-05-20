@@ -1,15 +1,13 @@
-import { UserCompDetails } from "../../../components/framework/userComponentFactory";
-import { PostConstruct } from "../../../context/context";
-import { _setDisplayed } from "../../../utils/dom";
-import { RefSelector } from "../../../widgets/componentAnnotations";
-import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
-import { HeaderGroupCellCtrl, IHeaderGroupCellComp } from "./headerGroupCellCtrl";
-import { IHeaderGroupComp } from "./headerGroupComp";
+import { UserCompDetails } from '../../../components/framework/userComponentFactory';
+import { PostConstruct } from '../../../context/context';
+import { _setDisplayed } from '../../../utils/dom';
+import { RefSelector } from '../../../widgets/componentAnnotations';
+import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
+import { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
+import { IHeaderGroupComp } from './headerGroupComp';
 
 export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellCtrl> {
-
-    private static TEMPLATE = /* html */
-        `<div class="ag-header-group-cell" role="columnheader">
+    private static TEMPLATE /* html */ = `<div class="ag-header-group-cell" role="columnheader">
             <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
         </div>`;
 
@@ -26,16 +24,16 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         const eGui = this.getGui();
 
         const setAttribute = (key: string, value: string | undefined) =>
-                value != undefined ? eGui.setAttribute(key, value) : eGui.removeAttribute(key);
+            value != undefined ? eGui.setAttribute(key, value) : eGui.removeAttribute(key);
 
-        eGui.setAttribute("col-id", this.ctrl.getColId());
+        eGui.setAttribute('col-id', this.ctrl.getColId());
 
         const compProxy: IHeaderGroupCellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setResizableDisplayed: (displayed) => _setDisplayed(this.eResize, displayed),
-            setWidth: width => eGui.style.width = width,
+            setWidth: (width) => (eGui.style.width = width),
             setAriaExpanded: (expanded: 'true' | 'false' | undefined) => setAttribute('aria-expanded', expanded),
-            setUserCompDetails: details => this.setUserCompDetails(details),
+            setUserCompDetails: (details) => this.setUserCompDetails(details),
             getUserCompInstance: () => this.headerGroupComp,
         };
 
@@ -43,7 +41,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
     }
 
     private setUserCompDetails(details: UserCompDetails): void {
-        details.newAgStackInstance()!.then(comp => this.afterHeaderCompCreated(comp));
+        details.newAgStackInstance()!.then((comp) => this.afterHeaderCompCreated(comp));
     }
 
     private afterHeaderCompCreated(headerGroupComp: IHeaderGroupComp): void {
@@ -63,5 +61,4 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         this.headerGroupComp = headerGroupComp;
         this.ctrl.setDragSource(eGui);
     }
-
 }

@@ -1,14 +1,13 @@
-import { PopupComponent } from "../../widgets/popupComponent";
-import { ICellEditorParams } from "../../interfaces/iCellEditor";
-import { _isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
-import { PostConstruct } from "../../context/context";
+import { PostConstruct } from '../../context/context';
+import { ICellEditorParams } from '../../interfaces/iCellEditor';
+import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
+import { PopupComponent } from '../../widgets/popupComponent';
 
 export class PopupEditorWrapper extends PopupComponent {
-
     public static DOM_KEY_POPUP_EDITOR_WRAPPER = 'popupEditorWrapper';
 
     constructor(private readonly params: ICellEditorParams) {
-        super(/* html */`<div class="ag-popup-editor" tabindex="-1"/>`);
+        super(/* html */ `<div class="ag-popup-editor" tabindex="-1"/>`);
     }
 
     @PostConstruct

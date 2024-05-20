@@ -8,11 +8,12 @@ import {
     RefSelector,
     _capitalise,
     _includes,
-    _removeFromParent
-} from "@ag-grid-community/core";
-import { ChartTranslationService } from "../../services/chartTranslationService";
-import { ChartMenuParamsFactory } from "../chartMenuParamsFactory";
+    _removeFromParent,
+} from '@ag-grid-community/core';
+
 import { ChartOptionsProxy } from '../../services/chartOptionsService';
+import { ChartTranslationService } from '../../services/chartTranslationService';
+import { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
 
 interface Font {
     fontFamily?: string;
@@ -32,9 +33,7 @@ export interface FontPanelParams {
 }
 
 export class FontPanel extends Component {
-
-    public static TEMPLATE = /* html */
-        `<div class="ag-font-panel">
+    public static TEMPLATE /* html */ = `<div class="ag-font-panel">
             <ag-group-component ref="fontGroup">
                 <ag-select ref="familySelect"></ag-select>
                 <ag-select ref="weightStyleSelect"></ag-select>
@@ -66,19 +65,19 @@ export class FontPanel extends Component {
             title: this.params.name || this.chartTranslationService.translate('font'),
             enabled: this.params.enabled,
             suppressEnabledCheckbox: true,
-            onEnableChange: enabled => {
+            onEnableChange: (enabled) => {
                 if (this.params.onEnableChange) {
                     this.params.onEnableChange(enabled);
                 }
             },
-            useToggle: !this.params.suppressEnabledCheckbox
+            useToggle: !this.params.suppressEnabledCheckbox,
         };
         this.setTemplate(FontPanel.TEMPLATE, {
             fontGroup: fontGroupParams,
             familySelect: this.getFamilySelectParams(),
             weightStyleSelect: this.getWeightStyleSelectParams(),
             sizeSelect: this.getSizeSelectParams(),
-            colorPicker: this.params.chartMenuParamsFactory.getDefaultColorPickerParams(this.params.keyMapper('color'))
+            colorPicker: this.params.chartMenuParamsFactory.getDefaultColorPickerParams(this.params.keyMapper('color')),
         });
     }
 
@@ -116,7 +115,7 @@ export class FontPanel extends Component {
             'Palatino, serif',
             'Times New Roman, serif',
             'Times, serif',
-            'Verdana, sans-serif'
+            'Verdana, sans-serif',
         ];
 
         const family = this.getInitialFontValue('fontFamily');
@@ -124,7 +123,7 @@ export class FontPanel extends Component {
 
         if (family) {
             // check for known values using lowercase
-            const lowerCaseValues = families.map(f => f.toLowerCase());
+            const lowerCaseValues = families.map((f) => f.toLowerCase());
             const valueIndex = lowerCaseValues.indexOf(family.toLowerCase());
 
             if (valueIndex >= 0) {
@@ -139,13 +138,13 @@ export class FontPanel extends Component {
             }
         }
 
-        const options = families.sort().map(value => ({ value, text: value }));
+        const options = families.sort().map((value) => ({ value, text: value }));
 
         return this.params.chartMenuParamsFactory.getDefaultSelectParamsWithoutValueParams(
             'font',
             options,
             `${initialValue}`,
-            newValue => this.setFont({ fontFamily: newValue! })
+            (newValue) => this.setFont({ fontFamily: newValue! })
         );
     }
 
@@ -157,13 +156,13 @@ export class FontPanel extends Component {
             sizes.push(size!);
         }
 
-        const options = sizes.sort((a, b) => a - b).map(value => ({ value: `${value}`, text: `${value}` }));
+        const options = sizes.sort((a, b) => a - b).map((value) => ({ value: `${value}`, text: `${value}` }));
 
         return this.params.chartMenuParamsFactory.getDefaultSelectParamsWithoutValueParams(
             'size',
             options,
             `${size}`,
-            newValue => this.setFont({ fontSize: parseInt(newValue!, 10) })
+            (newValue) => this.setFont({ fontSize: parseInt(newValue!, 10) })
         );
     }
 
@@ -171,21 +170,25 @@ export class FontPanel extends Component {
         const weight = this.getInitialFontValue('fontWeight') ?? 'normal';
         const style = this.getInitialFontValue('fontStyle') ?? 'normal';
 
-        const weightStyles: { name: 'normal' | 'bold' | 'italic' | 'boldItalic' | 'predefined', weight: string, style: string }[] = [
+        const weightStyles: {
+            name: 'normal' | 'bold' | 'italic' | 'boldItalic' | 'predefined';
+            weight: string;
+            style: string;
+        }[] = [
             { name: 'normal', weight: 'normal', style: 'normal' },
             { name: 'bold', weight: 'bold', style: 'normal' },
             { name: 'italic', weight: 'normal', style: 'italic' },
-            { name: 'boldItalic', weight: 'bold', style: 'italic' }
+            { name: 'boldItalic', weight: 'bold', style: 'italic' },
         ];
 
-        let selectedOption = weightStyles.find(x => x.weight === weight && x.style === style);
+        let selectedOption = weightStyles.find((x) => x.weight === weight && x.style === style);
 
         if (!selectedOption) {
             selectedOption = { name: 'predefined', weight, style };
             weightStyles.unshift(selectedOption);
         }
 
-        const options = weightStyles.map(ws => ({
+        const options = weightStyles.map((ws) => ({
             value: ws.name,
             text: this.chartTranslationService.translate(ws.name),
         }));
@@ -194,8 +197,8 @@ export class FontPanel extends Component {
             'weight',
             options,
             selectedOption.name,
-            newValue => {
-                const selectedWeightStyle = weightStyles.find(x => x.name === newValue);
+            (newValue) => {
+                const selectedWeightStyle = weightStyles.find((x) => x.name === newValue);
 
                 this.setFont({ fontWeight: selectedWeightStyle!.weight, fontStyle: selectedWeightStyle!.style });
             }
@@ -203,7 +206,7 @@ export class FontPanel extends Component {
     }
 
     private destroyActiveComps(): void {
-        this.activeComps.forEach(comp => {
+        this.activeComps.forEach((comp) => {
             _removeFromParent(comp.getGui());
             this.destroyBean(comp);
         });

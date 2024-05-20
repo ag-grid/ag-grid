@@ -1,12 +1,13 @@
-import { ICellEditorParams } from "../../interfaces/iCellEditor";
-import { DataTypeService } from "../../columns/dataTypeService";
-import { Autowired } from "../../context/context";
-import { _serialiseDate } from "../../utils/date";
-import { AgInputDateField } from "../../widgets/agInputDateField";
-import { CellEditorInput, SimpleCellEditor } from "./simpleCellEditor";
-import { _exists } from "../../utils/generic";
+import { DataTypeService } from '../../columns/dataTypeService';
+import { Autowired } from '../../context/context';
+import { ICellEditorParams } from '../../interfaces/iCellEditor';
+import { _serialiseDate } from '../../utils/date';
+import { _exists } from '../../utils/generic';
+import { AgInputDateField } from '../../widgets/agInputDateField';
+import { CellEditorInput, SimpleCellEditor } from './simpleCellEditor';
 
-export interface IDateStringCellEditorParams<TData = any, TContext = any> extends ICellEditorParams<TData, string, TContext> {
+export interface IDateStringCellEditorParams<TData = any, TContext = any>
+    extends ICellEditorParams<TData, string, TContext> {
     /** Min allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */
     min?: string | Date;
     /** Max allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */
@@ -27,7 +28,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     constructor(private getDataTypeService: () => DataTypeService) {}
 
     public getTemplate() {
-        return /* html */`<ag-input-date-field class="ag-cell-editor" ref="eInput"></ag-input-date-field>`;
+        return /* html */ `<ag-input-date-field class="ag-cell-editor" ref="eInput"></ag-input-date-field>`;
     }
 
     public init(eInput: AgInputDateField, params: IDateStringCellEditorParams): void {

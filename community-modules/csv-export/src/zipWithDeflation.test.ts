@@ -1,5 +1,6 @@
-import {describe, expect, it} from '@jest/globals';
-import {ZipContainer} from '../src/csvExport/zipContainer/zipContainer';
+import { describe, expect, it } from '@jest/globals';
+
+import { ZipContainer } from '../src/csvExport/zipContainer/zipContainer';
 
 describe('When adding a file to a zip container with deflation', () => {
     const testPath: string = 'test-path/file-name.csv';
@@ -12,30 +13,30 @@ describe('When adding a file to a zip container with deflation', () => {
 
         const expectedCommonHeaderSize = 26; // bytes
         const expectedLocalFileHeader =
-            4 // bytes - signature: PK\x03\x04
-            + expectedCommonHeaderSize
-            + testPath.length;
+            4 + // bytes - signature: PK\x03\x04
+            expectedCommonHeaderSize +
+            testPath.length;
 
         const expectedCentralDirectoryHeader =
-            4 // bytes - signature: PK\x01\x02
-            + 16 // bytes - central directory header
-            + expectedCommonHeaderSize // Re-inserted inside the central directory
-            + testPath.length;
+            4 + // bytes - signature: PK\x01\x02
+            16 + // bytes - central directory header
+            expectedCommonHeaderSize + // Re-inserted inside the central directory
+            testPath.length;
 
         const expectedCentralDirectoryEndSize =
-            4 // bytes - signature: PK\x05\x06
-            + 18; // bytes - info about directory end
+            4 + // bytes - signature: PK\x05\x06
+            18; // bytes - info about directory end
 
         // The 20 bytes 'aaa' string can be deflated to 4 bytes
         const deflationGains = smallContent.length - 4;
 
         expect(result.type).toEqual('application/zip');
         expect(result.size).toEqual(
-            expectedCentralDirectoryHeader
-            + expectedLocalFileHeader
-            + smallContent.length
-            + expectedCentralDirectoryEndSize
-            - deflationGains
+            expectedCentralDirectoryHeader +
+                expectedLocalFileHeader +
+                smallContent.length +
+                expectedCentralDirectoryEndSize -
+                deflationGains
         );
     });
 
@@ -45,30 +46,30 @@ describe('When adding a file to a zip container with deflation', () => {
 
         const expectedCommonHeaderSize = 26; // bytes
         const expectedLocalFileHeader =
-            4 // bytes - signature: PK\x03\x04
-            + expectedCommonHeaderSize
-            + testPath.length;
+            4 + // bytes - signature: PK\x03\x04
+            expectedCommonHeaderSize +
+            testPath.length;
 
         const expectedCentralDirectoryHeader =
-            4 // bytes - signature: PK\x01\x02
-            + 16 // bytes - central directory header
-            + expectedCommonHeaderSize // Re-inserted inside the central directory
-            + testPath.length;
+            4 + // bytes - signature: PK\x01\x02
+            16 + // bytes - central directory header
+            expectedCommonHeaderSize + // Re-inserted inside the central directory
+            testPath.length;
 
         const expectedCentralDirectoryEndSize =
-            4 // bytes - signature: PK\x05\x06
-            + 18; // bytes - info about directory end
+            4 + // bytes - signature: PK\x05\x06
+            18; // bytes - info about directory end
 
         // The 20kb 'aaaaaa' string can be deflated to 38 bytes !!!
         const deflationGains = largeContent.length - 38;
 
         expect(result.type).toEqual('application/zip');
         expect(result.size).toEqual(
-            expectedCentralDirectoryHeader
-            + expectedLocalFileHeader +
-            + largeContent.length
-            + expectedCentralDirectoryEndSize
-            - deflationGains
+            expectedCentralDirectoryHeader +
+                expectedLocalFileHeader +
+                +largeContent.length +
+                expectedCentralDirectoryEndSize -
+                deflationGains
         );
     });
 
@@ -80,30 +81,30 @@ describe('When adding a file to a zip container with deflation', () => {
 
         const expectedCommonHeaderSize = 26; // bytes
         const expectedLocalFileHeader1 =
-            4 // bytes - signature: PK\x03\x04
-            + expectedCommonHeaderSize
-            + testPath.length;
+            4 + // bytes - signature: PK\x03\x04
+            expectedCommonHeaderSize +
+            testPath.length;
 
         const expectedLocalFileHeader2 =
-            4 // bytes - signature: PK\x03\x04
-            + expectedCommonHeaderSize
-            + testPath2.length;
+            4 + // bytes - signature: PK\x03\x04
+            expectedCommonHeaderSize +
+            testPath2.length;
 
         const expectedCentralDirectoryHeader1 =
-            4 // bytes - signature: PK\x01\x02
-            + 16 // bytes - central directory header
-            + expectedCommonHeaderSize // Re-inserted inside the central directory
-            + testPath2.length;
+            4 + // bytes - signature: PK\x01\x02
+            16 + // bytes - central directory header
+            expectedCommonHeaderSize + // Re-inserted inside the central directory
+            testPath2.length;
 
         const expectedCentralDirectoryHeader2 =
-            4 // bytes - signature: PK\x01\x02
-            + 16 // bytes - central directory header
-            + expectedCommonHeaderSize // Re-inserted inside the central directory
-            + testPath.length;
+            4 + // bytes - signature: PK\x01\x02
+            16 + // bytes - central directory header
+            expectedCommonHeaderSize + // Re-inserted inside the central directory
+            testPath.length;
 
         const expectedCentralDirectoryEndSize =
-            4 // bytes - signature: PK\x05\x06
-            + 18; // bytes - info about directory end
+            4 + // bytes - signature: PK\x05\x06
+            18; // bytes - info about directory end
 
         // The 20 bytes 'aaa' string can be deflated to 4 bytes
         // The 20kb 'aaaaaa' string can be deflated to 38 bytes
@@ -111,14 +112,14 @@ describe('When adding a file to a zip container with deflation', () => {
 
         expect(result.type).toEqual('application/zip');
         expect(result.size).toEqual(
-            + expectedCentralDirectoryHeader1
-            + expectedCentralDirectoryHeader2
-            + expectedLocalFileHeader1
-            + expectedLocalFileHeader2
-            + smallContent.length
-            + largeContent.length
-            + expectedCentralDirectoryEndSize
-            - deflationGains
+            +expectedCentralDirectoryHeader1 +
+                expectedCentralDirectoryHeader2 +
+                expectedLocalFileHeader1 +
+                expectedLocalFileHeader2 +
+                smallContent.length +
+                largeContent.length +
+                expectedCentralDirectoryEndSize -
+                deflationGains
         );
     });
 });

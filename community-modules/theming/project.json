@@ -20,9 +20,7 @@
       "options": {
         "script": "codegen:prod"
       },
-      "outputs": [
-        "{projectRoot}/**/GENERATED-*.ts"
-      ]
+      "outputs": ["{projectRoot}/**/GENERATED-*.ts"]
     },
     "build:types": {
       "executor": "@nx/js:tsc",
@@ -54,9 +52,7 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -68,9 +64,7 @@
           "externalDependencies": ["npm:typescript", "npm:esbuild"]
         }
       ],
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "community-modules/theming/dist/package",
         "main": "community-modules/theming/src/main.ts",
@@ -79,10 +73,7 @@
         "external": ["@ag-grid-community/core", "@ag-grid-enterprise/core"],
         "platform": "browser",
         "target": "es6",
-        "format": [
-          "cjs",
-          "esm"
-        ],
+        "format": ["cjs", "esm"],
         "sourcemap": true
       },
       "configurations": {
@@ -102,9 +93,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "community-modules/theming/jest.config.js"
       }

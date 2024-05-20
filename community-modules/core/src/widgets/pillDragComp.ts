@@ -1,21 +1,26 @@
-import { AgEvent } from "../events";
-import { DragAndDropService, DropTarget, DragSource, DragSourceType, DragItem } from "../dragAndDrop/dragAndDropService";
-import { Component } from "./component";
-import { Autowired, PostConstruct } from "../context/context";
-import { RefSelector } from "./componentAnnotations";
-import { _setDisplayed } from "../utils/dom";
+import { KeyCode } from '../constants/keyCode';
+import { Autowired, PostConstruct } from '../context/context';
+import {
+    DragAndDropService,
+    DragItem,
+    DragSource,
+    DragSourceType,
+    DropTarget,
+} from '../dragAndDrop/dragAndDropService';
 import { Events } from '../eventKeys';
-import { _createIconNoSpan } from "../utils/icon";
-import { _setAriaLabel } from "../utils/aria";
-import { KeyCode } from "../constants/keyCode";
-import { TouchListener } from "./touchListener";
-import { _escapeString } from "../utils/string";
+import { AgEvent } from '../events';
+import { _setAriaLabel } from '../utils/aria';
+import { _setDisplayed } from '../utils/dom';
+import { _createIconNoSpan } from '../utils/icon';
+import { _escapeString } from '../utils/string';
+import { Component } from './component';
+import { RefSelector } from './componentAnnotations';
+import { TouchListener } from './touchListener';
 
 export abstract class PillDragComp<TItem> extends Component {
     public static EVENT_COLUMN_REMOVE = 'columnRemove';
 
-    private static TEMPLATE = /* html */
-        `<span role="option">
+    private static TEMPLATE /* html */ = `<span role="option">
           <span ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
           <span ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
           <span ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
@@ -89,7 +94,10 @@ export abstract class PillDragComp<TItem> extends Component {
         _setAriaLabel(this.getGui(), ariaInstructions.join('. '));
     }
 
-    protected addAdditionalAriaInstructions(ariaInstructions: string[], translate: (key: string, defaultValue: string) => string): void {
+    protected addAdditionalAriaInstructions(
+        ariaInstructions: string[],
+        translate: (key: string, defaultValue: string) => string
+    ): void {
         if (this.isRemovable()) {
             const deleteAria = translate('ariaDropZoneColumnComponentDescription', 'Press DELETE to remove');
             ariaInstructions.push(deleteAria);
@@ -125,7 +133,7 @@ export abstract class PillDragComp<TItem> extends Component {
             eElement: eDragHandle,
             getDefaultIconName: () => defaultIconName,
             getDragItem,
-            dragItemName: this.getDisplayName()
+            dragItemName: this.getDisplayName(),
         };
 
         dragAndDropService.addDragSource(dragSource, true);
@@ -142,7 +150,7 @@ export abstract class PillDragComp<TItem> extends Component {
     }
 
     protected isRemovable(): boolean {
-         return true;
+        return true;
     }
 
     protected refreshRemove(): void {

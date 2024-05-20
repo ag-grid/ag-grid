@@ -2,9 +2,9 @@
 const fs = require('fs');
 
 if (process.argv.length !== 3) {
-    console.log("Usage: node scripts/release/versionPackageJson.js [New Version]");
-    console.log("For example: node scripts/release/versionPackageJson.js 19.1.2");
-    console.log("Note: This script should be run from the root of the monorepo");
+    console.log('Usage: node scripts/release/versionPackageJson.js [New Version]');
+    console.log('For example: node scripts/release/versionPackageJson.js 19.1.2');
+    console.log('Note: This script should be run from the root of the monorepo');
     process.exit(1);
 }
 
@@ -18,9 +18,7 @@ function main() {
         const copyOfFile = JSON.parse(JSON.stringify(packageJson));
         copyOfFile.version = newVersion;
 
-        fs.writeFileSync(FILE,
-            JSON.stringify(copyOfFile, null, 2),
-            "utf8");
+        fs.writeFileSync(FILE, JSON.stringify(copyOfFile, null, 2), 'utf8');
     });
 }
 

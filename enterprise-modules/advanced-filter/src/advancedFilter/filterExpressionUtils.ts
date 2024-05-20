@@ -1,6 +1,7 @@
 import { ColumnModel, DataTypeService, IRowNode, ValueService } from '@ag-grid-community/core';
+
 import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
-import { FilterExpressionEvaluatorParams, FilterExpressionOperator } from "./filterExpressionOperators";
+import { FilterExpressionEvaluatorParams, FilterExpressionOperator } from './filterExpressionOperators';
 
 export interface FilterExpressionParserParams {
     expression: string;
@@ -32,10 +33,16 @@ export interface ExpressionProxy {
     getValue<T = any>(colId: string, node: IRowNode): T;
 }
 
-export type FilterExpressionFunction = (expressionProxy: ExpressionProxy, node: IRowNode, params: FilterExpressionFunctionParams) => boolean;
+export type FilterExpressionFunction = (
+    expressionProxy: ExpressionProxy,
+    node: IRowNode,
+    params: FilterExpressionFunctionParams
+) => boolean;
 
 export function getSearchString(value: string, position: number, endPosition: number): string {
-    if (!value) { return ''; }
+    if (!value) {
+        return '';
+    }
     const numChars = endPosition - position;
     return numChars ? value.slice(0, value.length - numChars) : value;
 }
@@ -62,7 +69,8 @@ export function updateExpression(
             }
         }
     }
-    const updatedValue = expression.slice(0, startPosition) + updatedValuePart + expression.slice(secondPartStartPosition);
+    const updatedValue =
+        expression.slice(0, startPosition) + updatedValuePart + expression.slice(secondPartStartPosition);
     return { updatedValue, updatedPosition: startPosition + updatedValuePart.length + positionOffset };
 }
 
@@ -78,7 +86,12 @@ export function findStartPosition(expression: string, position: number, endPosit
     return startPosition;
 }
 
-export function findEndPosition(expression: string, position: number, includeCloseBracket?: boolean, isStartPositionUnknown?: boolean): { endPosition: number, isEmpty: boolean } {
+export function findEndPosition(
+    expression: string,
+    position: number,
+    includeCloseBracket?: boolean,
+    isStartPositionUnknown?: boolean
+): { endPosition: number; isEmpty: boolean } {
     let endPosition = position;
     let isEmpty = false;
     while (endPosition < expression.length) {

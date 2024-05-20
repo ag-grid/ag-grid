@@ -1,19 +1,21 @@
-import { ColDef, ColGroupDef } from "../entities/colDef";
-import { Column } from "../entities/column";
-import { Bean } from "../context/context";
-import { _deepCloneDefinition } from "../utils/object";
-import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
+import { Bean } from '../context/context';
+import { ColDef, ColGroupDef } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import { _deepCloneDefinition } from '../utils/object';
 
 @Bean('columnDefFactory')
 export class ColumnDefFactory {
-
-    public buildColumnDefs(cols: Column[], rowGroupColumns: Column[], pivotColumns: Column[]): (ColDef | ColGroupDef)[] {
-
+    public buildColumnDefs(
+        cols: Column[],
+        rowGroupColumns: Column[],
+        pivotColumns: Column[]
+    ): (ColDef | ColGroupDef)[] {
         const res: (ColDef | ColGroupDef)[] = [];
 
-        const colGroupDefs: {[id: string]: ColGroupDef} = {};
+        const colGroupDefs: { [id: string]: ColGroupDef } = {};
 
-        cols.forEach(col => {
+        cols.forEach((col) => {
             const colDef = this.createDefFromColumn(col, rowGroupColumns, pivotColumns);
 
             let addToResult = true;
@@ -23,7 +25,6 @@ export class ColumnDefFactory {
             let pointer = col.getOriginalParent();
             let lastPointer: ProvidedColumnGroup | null = null;
             while (pointer) {
-
                 let parentDef: ColGroupDef | null | undefined = null;
 
                 // we don't include padding groups, as the column groups provided
@@ -99,5 +100,4 @@ export class ColumnDefFactory {
 
         return colDefCloned;
     }
-
 }

@@ -1,6 +1,8 @@
-@use "sass:color";
+@use 'sass:color';
 
-.ag-theme-balham, .ag-theme-balham-dark, .ag-theme-balham-auto-dark {
+.ag-theme-balham,
+.ag-theme-balham-dark,
+.ag-theme-balham-auto-dark {
     // main colours (overridden by balham-dark)
     --ag-balham-active-color: #0091ea;
     --ag-foreground-color: #000;
@@ -17,7 +19,7 @@
     --ag-invalid-color: #e02525;
     --ag-input-disabled-background-color: #ebebeb;
     --ag-checkbox-unchecked-color: #7f8c8d;
-    --ag-input-focus-border-color: #719ECE;
+    --ag-input-focus-border-color: #719ece;
     --ag-advanced-filter-join-pill-color: #f08e8d;
     --ag-advanced-filter-column-pill-color: #a6e194;
     --ag-advanced-filter-option-pill-color: #f3c08b;
@@ -60,7 +62,8 @@
     --ag-chart-menu-panel-width: 240px;
 
     // Fonts
-    --ag-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    --ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell,
+        'Helvetica Neue', sans-serif;
     --ag-font-size: 12px;
     --ag-icon-font-family: agGridBalham;
 
@@ -68,12 +71,12 @@
     --ag-border-radius: 2px;
     --ag-checkbox-border-radius: 3px;
     --ag-card-shadow: none;
-};
+}
 
 @mixin -dark-vars {
     // override colours from balham theme
-    --ag-balham-active-color: #00B0FF;
-    --ag-foreground-color: #F5F5F5;
+    --ag-balham-active-color: #00b0ff;
+    --ag-foreground-color: #f5f5f5;
     --ag-background-color: #2d3436;
     --ag-header-background-color: #1c1c1c;
     --ag-tooltip-background-color: #1c1f20;
@@ -94,31 +97,30 @@
 
     // override blended colors from balham theme
     --ag-secondary-foreground-color: var(--ag-foreground-color);
-    --ag-disabled-foreground-color: #{color.change(#F5F5F5, $alpha: 0.38)};
+    --ag-disabled-foreground-color: #{color.change(#f5f5f5, $alpha: 0.38)};
     --ag-subheader-toolbar-background-color: #{color.change(#111, $alpha: 0.5)};
     --ag-row-border-color: #5c5c5c;
-    --ag-chip-background-color: #{color.change(#F5F5F5, $alpha: 0.08)};
-    --ag-range-selection-background-color: #{color.change(#00B0FF, $alpha: 0.2)};
-    --ag-range-selection-background-color-2: #{color.change(#00B0FF, $alpha: 0.36)};
-    --ag-range-selection-background-color-3: #{color.change(#00B0FF, $alpha: 0.49)};
-    --ag-range-selection-background-color-4: #{color.change(#00B0FF, $alpha: 0.59)};
-    --ag-selected-row-background-color: #{color.change(#00B0FF, $alpha: 0.28)};
+    --ag-chip-background-color: #{color.change(#f5f5f5, $alpha: 0.08)};
+    --ag-range-selection-background-color: #{color.change(#00b0ff, $alpha: 0.2)};
+    --ag-range-selection-background-color-2: #{color.change(#00b0ff, $alpha: 0.36)};
+    --ag-range-selection-background-color-3: #{color.change(#00b0ff, $alpha: 0.49)};
+    --ag-range-selection-background-color-4: #{color.change(#00b0ff, $alpha: 0.59)};
+    --ag-selected-row-background-color: #{color.change(#00b0ff, $alpha: 0.28)};
     --ag-header-column-separator-color: #{color.change(#424242, $alpha: 0.5)};
     --ag-input-disabled-border-color: #{color.change(#f0f0f0, $alpha: 0.3)};
 
     // additional overrides
-    --ag-header-foreground-color: #{color.change(#F5F5F5, $alpha: 0.64)};
+    --ag-header-foreground-color: #{color.change(#f5f5f5, $alpha: 0.64)};
     --ag-toggle-button-off-background-color: transparent;
     --ag-toggle-button-off-border-color: var(--ag-foreground-color);
     --ag-range-selection-chart-category-background-color: #{color.change(#1ab14a, $alpha: 0.5)};
     --ag-range-selection-chart-background-color: #{color.change(#2da6ff, $alpha: 0.5)};
     --ag-input-focus-box-shadow: 0 0 4px 1.5px var(--ag-input-focus-border-color);
 
-    --ag-row-loading-skeleton-effect-color:  #{color.change(#cacbcc, $alpha: 0.4)};;
+    --ag-row-loading-skeleton-effect-color: #{color.change(#cacbcc, $alpha: 0.4)};
 
     color-scheme: dark;
 }
-
 
 .ag-theme-balham-dark {
     @include -dark-vars();

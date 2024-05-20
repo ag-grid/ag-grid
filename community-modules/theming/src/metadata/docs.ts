@@ -1,5 +1,4 @@
-import { ParamType } from "../theme-types";
-
+import { ParamType } from '../theme-types';
 
 const docs: Record<string, string | undefined> = {
     backgroundColor:
@@ -129,7 +128,8 @@ const docs: Record<string, string | undefined> = {
     menuSeparatorColor:
         'Colour of the dividing line between sections of menus e.g. column menu and right-click context menu',
     setFilterIndentSize: 'How much to indent child items in the Set Filter list when filtering tree data.',
-    chartMenuButtonBorder: 'Border around the button that shows and hides the expanding chart editing panel for integrated charts',
+    chartMenuButtonBorder:
+        'Border around the button that shows and hides the expanding chart editing panel for integrated charts',
     chartMenuPanelWidth: 'Width of the expanding chart editing panel for integrated charts',
     iconButtonHoverColor: 'Hover color for clickable icons',
     dialogShadow: 'Shadow for popup dialogs such as the integrated charts and the advanced filter builder.',
@@ -213,7 +213,8 @@ const docs: Record<string, string | undefined> = {
     inputInvalidBorder:
         'Border around text inputs in an invalid state. By default the border is drawn all around the input, when using Material Design inputs the border is drawn underneath',
     inputInvalidTextColor: 'Color of text within text inputs in an invalid state',
-    rowLoadingSkeletonEffectColor: 'Colour of the skeleton loading effect used when loading row data with the Server-side Row Model',
+    rowLoadingSkeletonEffectColor:
+        'Colour of the skeleton loading effect used when loading row data with the Server-side Row Model',
 };
 
 export const getParamDocs = (param: string): string | undefined => {

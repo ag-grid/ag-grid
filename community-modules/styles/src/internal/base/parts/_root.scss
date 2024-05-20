@@ -1,13 +1,17 @@
 @mixin output {
-    .ag-root-wrapper, .ag-sticky-top, .ag-sticky-bottom, .ag-dnd-ghost {
+    .ag-root-wrapper,
+    .ag-sticky-top,
+    .ag-sticky-bottom,
+    .ag-dnd-ghost {
         background-color: var(--ag-background-color);
     }
 
-    .ag-root-wrapper, .ag-popup {
+    .ag-root-wrapper,
+    .ag-popup {
         --ag-indentation-level: 0;
     }
 
-    [class*="ag-theme-"] {
+    [class*='ag-theme-'] {
         -webkit-font-smoothing: antialiased;
         font-family: var(--ag-font-family);
         font-size: var(--ag-font-size);
@@ -15,4 +19,3 @@
         color: var(--ag-foreground-color);
     }
 }
- 

@@ -1,20 +1,21 @@
 // noinspection ES6UnusedImports
-import React, {Component} from 'react';
-import {AgGridReact} from '../agGridReact';
+import { mount } from 'enzyme';
+import React, { Component } from 'react';
 
-import {ensureGridApiHasBeenSet} from "./utils";
-
-import {mount} from 'enzyme';
+import { AgGridReact } from '../agGridReact';
+import { ensureGridApiHasBeenSet } from './utils';
 
 let component = null;
 let agGridReact = null;
 
 beforeEach((done) => {
-    component = mount((<GridComponent/>));
+    component = mount(<GridComponent />);
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
-    ensureGridApiHasBeenSet(component).then(() => setTimeout(() => done(), 20), () => fail("Grid API not set within expected time limits"));
-
+    ensureGridApiHasBeenSet(component).then(
+        () => setTimeout(() => done(), 20),
+        () => fail('Grid API not set within expected time limits')
+    );
 });
 
 afterEach(() => {
@@ -25,8 +26,12 @@ afterEach(() => {
 it('class component renderer with fragment renders expected cell values', () => {
     const renderedOutput = component.render();
     expect(renderedOutput.find('div .ag-cell-value').length).toBeGreaterThan(5); // 5 is arbitrary here
-    expect(renderedOutput.find('div .ag-cell-value').first().html()).toEqual(`<div class="ag-react-container"><span>0</span></div>`);
-    expect(renderedOutput.find('div .ag-cell-value').last().html()).toEqual(`<div class="ag-react-container"><span>81</span></div>`);
+    expect(renderedOutput.find('div .ag-cell-value').first().html()).toEqual(
+        `<div class="ag-react-container"><span>0</span></div>`
+    );
+    expect(renderedOutput.find('div .ag-cell-value').last().html()).toEqual(
+        `<div class="ag-react-container"><span>81</span></div>`
+    );
 });
 
 class CellRenderer extends Component {
@@ -34,14 +39,12 @@ class CellRenderer extends Component {
         super(props);
 
         this.state = {
-            value: props.value * props.value
-        }
+            value: props.value * props.value,
+        };
     }
 
     render() {
-        return (
-            <span>{this.state.value}</span>
-        )
+        return <span>{this.state.value}</span>;
     }
 }
 
@@ -54,11 +57,11 @@ class GridComponent extends Component {
         this.state = {
             columnDefs: [
                 {
-                    field: "value",
-                    cellRenderer: "cellRenderer"
-                }
+                    field: 'value',
+                    cellRenderer: 'cellRenderer',
+                },
             ],
-            rowData: this.createRowData()
+            rowData: this.createRowData(),
         };
     }
 
@@ -71,8 +74,8 @@ class GridComponent extends Component {
 
         for (let i = 0; i < NUMBER_OF_ROWS; i++) {
             rowData.push({
-                row: "Row " + i,
-                value: i
+                row: 'Row ' + i,
+                value: i,
             });
         }
 
@@ -81,8 +84,7 @@ class GridComponent extends Component {
 
     render() {
         return (
-            <div
-                className="ag-theme-balham">
+            <div className="ag-theme-balham">
                 <button onClick={this.scrollToBottom}>Scroll To Bottom</button>
                 <button onClick={this.scrollToTop}>Scroll To Top</button>
                 <AgGridReact
@@ -91,8 +93,9 @@ class GridComponent extends Component {
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
                     frameworkComponents={{
-                        cellRenderer: CellRenderer
-                    }}/>
+                        cellRenderer: CellRenderer,
+                    }}
+                />
             </div>
         );
     }

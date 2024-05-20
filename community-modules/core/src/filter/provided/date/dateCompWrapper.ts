@@ -1,9 +1,9 @@
-import { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { Context } from '../../../context/context';
+import { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
-import { _setDisplayed } from '../../../utils/dom';
 import { WithoutGridCommon } from '../../../interfaces/iCommon';
+import { _setDisplayed } from '../../../utils/dom';
 import { _warnOnce } from '../../../utils/function';
 
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
@@ -16,14 +16,20 @@ export class DateCompWrapper {
     private context: Context;
     private eParent: HTMLElement;
 
-    constructor(context: Context, userComponentFactory: UserComponentFactory, dateComponentParams: WithoutGridCommon<IDateParams>, eParent: HTMLElement, onReady?: (comp: DateCompWrapper) => void) {
+    constructor(
+        context: Context,
+        userComponentFactory: UserComponentFactory,
+        dateComponentParams: WithoutGridCommon<IDateParams>,
+        eParent: HTMLElement,
+        onReady?: (comp: DateCompWrapper) => void
+    ) {
         this.context = context;
         this.eParent = eParent;
 
         const compDetails = userComponentFactory.getDateCompDetails(dateComponentParams);
         const promise = compDetails.newAgStackInstance();
 
-        promise!.then(dateComp => {
+        promise!.then((dateComp) => {
             // because async, check the filter still exists after component comes back
             if (!this.alive) {
                 context.destroyBean(dateComp);
@@ -32,7 +38,9 @@ export class DateCompWrapper {
 
             this.dateComp = dateComp;
 
-            if (!dateComp) { return; }
+            if (!dateComp) {
+                return;
+            }
 
             eParent.appendChild(dateComp.getGui());
 
@@ -116,10 +124,13 @@ export class DateCompWrapper {
     }
 
     private setDateCompDisabled(disabled: boolean): void {
-        if (this.dateComp == null) { return; }
-        if (this.dateComp.setDisabled == null) { return; }
+        if (this.dateComp == null) {
+            return;
+        }
+        if (this.dateComp.setDisabled == null) {
+            return;
+        }
 
         this.dateComp.setDisabled(disabled);
     }
-
 }

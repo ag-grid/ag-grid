@@ -2,11 +2,11 @@ import { ChartModel } from '@ag-grid-community/core';
 import { AgChartThemeName } from 'ag-charts-community';
 
 // @ts-ignore
-import { getCanonicalChartType, getSeriesType, isPieChartSeries } from './chartComp/utils/seriesTypeMapper';
+import { VERSION } from '../version';
 // @ts-ignore
 import { ALL_AXIS_TYPES, getLegacyAxisType } from './chartComp/utils/axisTypeMapper';
 // @ts-ignore
-import { VERSION } from '../version';
+import { getCanonicalChartType, getSeriesType, isPieChartSeries } from './chartComp/utils/seriesTypeMapper';
 
 const DEBUG = false;
 
@@ -277,7 +277,7 @@ function migrateV30(model: ChartModel) {
 function migrateV31(model: ChartModel) {
     const V30_LEGACY_PALETTES: Record<string, AgChartThemeName> = {
         'ag-pastel': 'ag-sheets',
-        'ag-solar': 'ag-polychroma'
+        'ag-solar': 'ag-polychroma',
     };
 
     const updatedModel = jsonRename('chartOptions.column', 'bar', model);
@@ -286,7 +286,7 @@ function migrateV31(model: ChartModel) {
 
     return {
         ...updatedModel,
-        chartThemeName
+        chartThemeName,
     };
 }
 

@@ -1,22 +1,23 @@
 // noinspection ES6UnusedImports
-import React, {Component} from 'react';
-import {AgGridReact} from '../agGridReact';
+import { mount } from 'enzyme';
+import React, { Component } from 'react';
 
-import {ensureGridApiHasBeenSet} from "./utils";
-
-import {mount} from 'enzyme';
+import { AgGridReact } from '../agGridReact';
+import { ensureGridApiHasBeenSet } from './utils';
 
 let component = null;
 let agGridReact = null;
 
 beforeEach((done) => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
 
-    component = mount((<GridComponent/>));
+    component = mount(<GridComponent />);
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
-    ensureGridApiHasBeenSet(component).then(() => setTimeout(() => done(), 20), () => fail("Grid API not set within expected time limits"));
-
+    ensureGridApiHasBeenSet(component).then(
+        () => setTimeout(() => done(), 20),
+        () => fail('Grid API not set within expected time limits')
+    );
 });
 
 afterEach(() => {
@@ -33,7 +34,9 @@ it('functional renderer with fragment renders expected cell values', () => {
     let renderedOutput = component.render();
     expect(renderedOutput.find('div .ag-cell-value').length).toBeGreaterThan(5); // 5 is arbitrary here
     expect(renderedOutput.find('div .ag-cell-value').first().html()).toEqual(`<div class="ag-react-container">0</div>`);
-    expect(renderedOutput.find('div .ag-cell-value').last().html()).toEqual(`<div class="ag-react-container">1000</div>`);
+    expect(renderedOutput.find('div .ag-cell-value').last().html()).toEqual(
+        `<div class="ag-react-container">1000</div>`
+    );
 
     component.instance().scrollToBottom();
     jest.runAllTimers();
@@ -42,11 +45,15 @@ it('functional renderer with fragment renders expected cell values', () => {
     // (values are wrapped in span by default for static markup renderering)
     renderedOutput = component.render();
     expect(renderedOutput.find('div .ag-cell-value').length).toBeGreaterThan(5); // 5 is arbitrary here
-    expect(renderedOutput.find('div .ag-cell-value').first().html()).toEqual(`<div class="ag-react-container">729000</div>`);
-    expect(renderedOutput.find('div .ag-cell-value').last().html()).toEqual(`<div class="ag-react-container">1331000</div>`);
+    expect(renderedOutput.find('div .ag-cell-value').first().html()).toEqual(
+        `<div class="ag-react-container">729000</div>`
+    );
+    expect(renderedOutput.find('div .ag-cell-value').last().html()).toEqual(
+        `<div class="ag-react-container">1331000</div>`
+    );
 });
 
-const CellRenderer = props => <>{props.value * props.value * props.value}</>;
+const CellRenderer = (props) => <>{props.value * props.value * props.value}</>;
 
 const NUMBER_OF_ROWS = 1500;
 
@@ -57,11 +64,11 @@ class GridComponent extends Component {
         this.state = {
             columnDefs: [
                 {
-                    field: "value",
-                    cellRenderer: "cellRenderer"
-                }
+                    field: 'value',
+                    cellRenderer: 'cellRenderer',
+                },
             ],
-            rowData: this.createRowData()
+            rowData: this.createRowData(),
         };
     }
 
@@ -82,8 +89,8 @@ class GridComponent extends Component {
 
         for (let i = 0; i < NUMBER_OF_ROWS; i++) {
             rowData.push({
-                row: "Row " + i,
-                value: i
+                row: 'Row ' + i,
+                value: i,
             });
         }
 
@@ -92,9 +99,7 @@ class GridComponent extends Component {
 
     render() {
         return (
-            <div
-                className="ag-theme-balham"
-                style={{height: 100}}>
+            <div className="ag-theme-balham" style={{ height: 100 }}>
                 <button onClick={this.scrollToBottom}>Scroll To Bottom</button>
                 <button onClick={this.scrollToTop}>Scroll To Top</button>
                 <AgGridReact
@@ -103,8 +108,9 @@ class GridComponent extends Component {
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
                     frameworkComponents={{
-                        cellRenderer: CellRenderer
-                    }}/>
+                        cellRenderer: CellRenderer,
+                    }}
+                />
             </div>
         );
     }

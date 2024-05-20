@@ -2,16 +2,16 @@ import {
     Autowired,
     Bean,
     BeanStub,
+    CloseMenuEvent,
     Column,
     FocusService,
     HeaderNavigationService,
     HeaderPosition,
-    CloseMenuEvent,
     PopupEventParams,
+    VisibleColsService,
     _isVisible,
     _last,
-    VisibleColsService,
-} from "@ag-grid-community/core";
+} from '@ag-grid-community/core';
 
 export interface MenuRestoreFocusParams {
     column: Column | undefined;
@@ -28,14 +28,16 @@ export class MenuUtils extends BeanStub {
 
     public restoreFocusOnClose(
         restoreFocusParams: MenuRestoreFocusParams,
-        eComp:  HTMLElement,
+        eComp: HTMLElement,
         e?: Event,
         restoreIfMouseEvent?: boolean
     ): void {
         const { eventSource } = restoreFocusParams;
         const isKeyboardEvent = e instanceof KeyboardEvent;
-        if ((!restoreIfMouseEvent && !isKeyboardEvent) || !eventSource) { return; }
-        
+        if ((!restoreIfMouseEvent && !isKeyboardEvent) || !eventSource) {
+            return;
+        }
+
         const eDocument = this.gos.getDocument();
         const activeEl = this.gos.getActiveDomElement();
         if (!eComp.contains(activeEl) && activeEl !== eDocument.body) {
@@ -68,7 +70,13 @@ export class MenuUtils extends BeanStub {
         if (!activeEl || activeEl === eDocument.body) {
             if (focusedCell) {
                 const { rowIndex, rowPinned, column } = focusedCell;
-                this.focusService.setFocusedCell({ rowIndex, column, rowPinned, forceBrowserFocus: true, preventScrollOnBrowserFocus: true });
+                this.focusService.setFocusedCell({
+                    rowIndex,
+                    column,
+                    rowPinned,
+                    forceBrowserFocus: true,
+                    preventScrollOnBrowserFocus: true,
+                });
             } else {
                 this.focusHeaderCell(restoreFocusParams);
             }
@@ -78,13 +86,15 @@ export class MenuUtils extends BeanStub {
     public onContextMenu(
         mouseEvent: MouseEvent | null | undefined,
         touchEvent: TouchEvent | null | undefined,
-        showMenuCallback: (eventOrTouch: (MouseEvent | Touch)
-    ) => boolean): void {
+        showMenuCallback: (eventOrTouch: MouseEvent | Touch) => boolean
+    ): void {
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
         // not everyone wants this, so first 'if' below allows to turn this hack off.
         if (!this.gos.get('allowContextMenuWithControlKey')) {
             // then do the check
-            if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) { return; }
+            if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) {
+                return;
+            }
         }
 
         // need to do this regardless of context menu showing or not, so doing
@@ -93,9 +103,11 @@ export class MenuUtils extends BeanStub {
             this.blockMiddleClickScrollsIfNeeded(mouseEvent);
         }
 
-        if (this.gos.get('suppressContextMenu')) { return; }
+        if (this.gos.get('suppressContextMenu')) {
+            return;
+        }
 
-        const eventOrTouch: (MouseEvent | Touch) = mouseEvent ?? touchEvent!.touches[0];
+        const eventOrTouch: MouseEvent | Touch = mouseEvent ?? touchEvent!.touches[0];
         if (showMenuCallback(eventOrTouch)) {
             const event = mouseEvent ?? touchEvent;
 
@@ -108,7 +120,7 @@ export class MenuUtils extends BeanStub {
     private focusHeaderCell(restoreFocusParams: MenuRestoreFocusParams): void {
         const { column, columnIndex, headerPosition, eventSource } = restoreFocusParams;
 
-        const isColumnStillVisible = this.visibleColsService.getAllCols().some(col => col === column);
+        const isColumnStillVisible = this.visibleColsService.getAllCols().some((col) => col === column);
 
         if (isColumnStillVisible && eventSource && _isVisible(eventSource)) {
             const focusableEl = this.focusService.findTabbableParent(eventSource);
@@ -129,8 +141,8 @@ export class MenuUtils extends BeanStub {
                 this.focusService.focusHeaderPosition({
                     headerPosition: {
                         headerRowIndex: headerPosition.headerRowIndex,
-                        column: columnToFocus
-                    }
+                        column: columnToFocus,
+                    },
                 });
             }
         }

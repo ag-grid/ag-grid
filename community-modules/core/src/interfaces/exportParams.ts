@@ -1,8 +1,8 @@
-import { Column } from "../entities/column";
-import { ColumnGroup } from "../entities/columnGroup";
-import { RowPosition } from "../entities/rowPositionUtils";
-import { AgGridCommon } from "./iCommon";
-import { IRowNode } from "./iRowNode";
+import { Column } from '../entities/column';
+import { ColumnGroup } from '../entities/columnGroup';
+import { RowPosition } from '../entities/rowPositionUtils';
+import { AgGridCommon } from './iCommon';
+import { IRowNode } from './iRowNode';
 
 export interface ExportFileNameGetterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
 
@@ -99,7 +99,7 @@ export interface ExportParams<T> extends BaseExportParams {
      * Content to put at the bottom of the exported sheet.
      */
     appendContent?: T;
-        
+
     /** A callback function to return content to be inserted below a row in the export. */
     getCustomContentBelowRow?: (params: ProcessRowGroupForExportParams) => T | undefined;
 }

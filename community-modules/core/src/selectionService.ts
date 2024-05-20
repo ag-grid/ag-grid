@@ -1,22 +1,21 @@
-import { RowNode } from "./entities/rowNode";
-import { Bean } from "./context/context";
-import { BeanStub } from "./context/beanStub";
-import { Events, SelectionChangedEvent, SelectionEventSourceType } from "./events";
-import { Autowired } from "./context/context";
-import { IRowModel } from "./interfaces/iRowModel";
-import { PostConstruct } from "./context/context";
-import { ChangedPath } from "./utils/changedPath";
-import { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
-import { _exists, _missing } from "./utils/generic";
-import { WithoutGridCommon } from "./interfaces/iCommon";
-import { PaginationProxy } from "./pagination/paginationProxy";
-import { ISelectionService, ISetNodesSelectedParams } from "./interfaces/iSelectionService";
-import { _last } from "./utils/array";
-import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from "./interfaces/selectionState";
+import { BeanStub } from './context/beanStub';
+import { Bean } from './context/context';
+import { Autowired } from './context/context';
+import { PostConstruct } from './context/context';
+import { RowNode } from './entities/rowNode';
+import { Events, SelectionChangedEvent, SelectionEventSourceType } from './events';
+import { IClientSideRowModel } from './interfaces/iClientSideRowModel';
+import { WithoutGridCommon } from './interfaces/iCommon';
+import { IRowModel } from './interfaces/iRowModel';
+import { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelectionService';
+import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './interfaces/selectionState';
+import { PaginationProxy } from './pagination/paginationProxy';
+import { _last } from './utils/array';
+import { ChangedPath } from './utils/changedPath';
+import { _exists, _missing } from './utils/generic';
 
 @Bean('selectionService')
 export class SelectionService extends BeanStub implements ISelectionService {
-
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
@@ -50,18 +49,9 @@ export class SelectionService extends BeanStub implements ISelectionService {
     }
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
-        const {
-            newValue,
-            clearSelection,
-            suppressFinishActions,
-            rangeSelect,
-            nodes,
-            event,
-            source = 'api',
-        } = params;
+        const { newValue, clearSelection, suppressFinishActions, rangeSelect, nodes, event, source = 'api' } = params;
 
         if (nodes.length === 0) return 0;
-
 
         if (nodes.length > 1 && !this.isMultiselect()) {
             console.warn(`AG Grid: cannot multi select while rowSelection='single'`);
@@ -69,11 +59,11 @@ export class SelectionService extends BeanStub implements ISelectionService {
         }
 
         // groupSelectsFiltered only makes sense when group selects children
-        const groupSelectsFiltered = this.groupSelectsChildren && (params.groupSelectsFiltered === true);
+        const groupSelectsFiltered = this.groupSelectsChildren && params.groupSelectsFiltered === true;
 
         // if node is a footer, we don't do selection, just pass the info
         // to the sibling (the parent of the group)
-        const filteredNodes = nodes.map(node => node.footer ? node.sibling! : node);
+        const filteredNodes = nodes.map((node) => (node.footer ? node.sibling! : node));
 
         if (rangeSelect) {
             if (nodes.length > 1) {
@@ -145,24 +135,31 @@ export class SelectionService extends BeanStub implements ISelectionService {
                 // include any parent / child changes that this method caused
                 const event: WithoutGridCommon<SelectionChangedEvent> = {
                     type: Events.EVENT_SELECTION_CHANGED,
-                    source
+                    source,
                 };
                 this.eventService.dispatchEvent(event);
             }
         }
         return updatedCount;
     }
-    
+
     // selects all rows between this node and the last selected node (or the top if this is the first selection).
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
-    private selectRange(fromNode: RowNode, toNode: RowNode, value: boolean = true, source: SelectionEventSourceType): number {
-        const nodesToSelect = this.rowModel.getNodesInRangeForSelection(fromNode, toNode);   
+    private selectRange(
+        fromNode: RowNode,
+        toNode: RowNode,
+        value: boolean = true,
+        source: SelectionEventSourceType
+    ): number {
+        const nodesToSelect = this.rowModel.getNodesInRangeForSelection(fromNode, toNode);
 
         let updatedCount = 0;
 
-        nodesToSelect.forEach(rowNode => {
-            if (rowNode.group && this.groupSelectsChildren) { return; }
+        nodesToSelect.forEach((rowNode) => {
+            if (rowNode.group && this.groupSelectsChildren) {
+                return;
+            }
 
             const nodeWasSelected = rowNode.selectThisNode(value, undefined, source);
             if (nodeWasSelected) {
@@ -174,7 +171,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
 
         const event: WithoutGridCommon<SelectionChangedEvent> = {
             type: Events.EVENT_SELECTION_CHANGED,
-            source
+            source,
         };
 
         this.eventService.dispatchEvent(event);
@@ -182,10 +179,17 @@ export class SelectionService extends BeanStub implements ISelectionService {
         return updatedCount;
     }
 
-    private selectChildren(node: RowNode, newValue: boolean, groupSelectsFiltered: boolean, source: SelectionEventSourceType): number {
+    private selectChildren(
+        node: RowNode,
+        newValue: boolean,
+        groupSelectsFiltered: boolean,
+        source: SelectionEventSourceType
+    ): number {
         const children = groupSelectsFiltered ? node.childrenAfterAggFilter : node.childrenAfterGroup;
 
-        if (_missing(children)) { return 0; }
+        if (_missing(children)) {
+            return 0;
+        }
 
         return this.setNodesSelected({
             newValue: newValue,
@@ -200,14 +204,16 @@ export class SelectionService extends BeanStub implements ISelectionService {
     private getLastSelectedNode(): RowNode | null {
         const selectedKeys = Array.from(this.selectedNodes.keys());
 
-        if (selectedKeys.length == 0) { return null; }
+        if (selectedKeys.length == 0) {
+            return null;
+        }
 
         const node = this.selectedNodes.get(_last(selectedKeys));
 
         if (node) {
             return node;
         }
-        
+
         return null;
     }
 
@@ -247,7 +253,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
             if (passesPredicate) {
                 newSelectedNodes.set(key, rowNode);
             }
-        })
+        });
         this.selectedNodes = newSelectedNodes;
     }
 
@@ -272,10 +278,11 @@ export class SelectionService extends BeanStub implements ISelectionService {
 
         let selectionChanged = false;
 
-        changedPath.forEachChangedNodeDepthFirst(rowNode => {
+        changedPath.forEachChangedNodeDepthFirst((rowNode) => {
             if (rowNode !== rootNode) {
                 const selected = rowNode.calculateSelectedFromChildren();
-                selectionChanged = rowNode.selectThisNode(selected === null ? false : selected, undefined, source) || selectionChanged;
+                selectionChanged =
+                    rowNode.selectThisNode(selected === null ? false : selected, undefined, source) || selectionChanged;
             }
         });
 
@@ -341,7 +348,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
     // used by the grid for rendering, it's a copy of what the node used
     // to be like before the id was changed.
     private syncInOldRowNode(rowNode: RowNode, oldNode: RowNode | null): void {
-        const oldNodeHasDifferentId = _exists(oldNode) && (rowNode.id !== oldNode.id);
+        const oldNodeHasDifferentId = _exists(oldNode) && rowNode.id !== oldNode.id;
         if (oldNodeHasDifferentId && oldNode) {
             const id = oldNode.id!;
             const oldNodeSelected = this.selectedNodes.get(id) == rowNode;
@@ -366,7 +373,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
         if (selectionCount) {
             const event: WithoutGridCommon<SelectionChangedEvent> = {
                 type: Events.EVENT_SELECTION_CHANGED,
-                source
+                source,
             };
             this.eventService.dispatchEvent(event);
         }
@@ -429,7 +436,11 @@ export class SelectionService extends BeanStub implements ISelectionService {
         return count === 0;
     }
 
-    public deselectAllRowNodes(params: { source: SelectionEventSourceType, justFiltered?: boolean, justCurrentPage?: boolean }) {
+    public deselectAllRowNodes(params: {
+        source: SelectionEventSourceType;
+        justFiltered?: boolean;
+        justCurrentPage?: boolean;
+    }) {
         const callback = (rowNode: RowNode) => rowNode.selectThisNode(false, undefined, source);
         const rowModelClientSide = this.rowModel.getType() === 'clientSide';
 
@@ -459,20 +470,26 @@ export class SelectionService extends BeanStub implements ISelectionService {
 
         const event: WithoutGridCommon<SelectionChangedEvent> = {
             type: Events.EVENT_SELECTION_CHANGED,
-            source
+            source,
         };
 
         this.eventService.dispatchEvent(event);
     }
 
-    private getSelectedCounts(justFiltered?: boolean | undefined, justCurrentPage?: boolean | undefined): {
-        selectedCount: number, notSelectedCount: number
+    private getSelectedCounts(
+        justFiltered?: boolean | undefined,
+        justCurrentPage?: boolean | undefined
+    ): {
+        selectedCount: number;
+        notSelectedCount: number;
     } {
         let selectedCount = 0;
         let notSelectedCount = 0;
 
         const callback = (node: RowNode) => {
-            if (this.groupSelectsChildren && node.group) { return; }
+            if (this.groupSelectsChildren && node.group) {
+                return;
+            }
 
             if (node.isSelected()) {
                 selectedCount++;
@@ -487,7 +504,10 @@ export class SelectionService extends BeanStub implements ISelectionService {
         return { selectedCount, notSelectedCount };
     }
 
-    public getSelectAllState(justFiltered?: boolean | undefined, justCurrentPage?: boolean | undefined): boolean | null {
+    public getSelectAllState(
+        justFiltered?: boolean | undefined,
+        justCurrentPage?: boolean | undefined
+    ): boolean | null {
         const { selectedCount, notSelectedCount } = this.getSelectedCounts(justFiltered, justCurrentPage);
         // if no rows, always have it unselected
         if (selectedCount === 0 && notSelectedCount === 0) {
@@ -504,7 +524,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
     }
 
     public hasNodesToSelect(justFiltered = false, justCurrentPage = false) {
-        return this.getNodesToSelect(justFiltered, justCurrentPage).filter(node => node.selectable).length > 0;
+        return this.getNodesToSelect(justFiltered, justCurrentPage).filter((node) => node.selectable).length > 0;
     }
 
     /**
@@ -514,7 +534,9 @@ export class SelectionService extends BeanStub implements ISelectionService {
      */
     private getNodesToSelect(justFiltered = false, justCurrentPage = false) {
         if (this.rowModel.getType() !== 'clientSide') {
-            throw new Error(`selectAll only available when rowModelType='clientSide', ie not ${this.rowModel.getType()}`);
+            throw new Error(
+                `selectAll only available when rowModelType='clientSide', ie not ${this.rowModel.getType()}`
+            );
         }
 
         const nodes: RowNode[] = [];
@@ -533,7 +555,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
                         if (child.childrenAfterFilter?.length) {
                             child.childrenAfterFilter.forEach(recursivelyAddChildren);
                         }
-                    }
+                    };
                     recursivelyAddChildren(node);
                     return;
                 }
@@ -548,21 +570,27 @@ export class SelectionService extends BeanStub implements ISelectionService {
 
         const clientSideRowModel = this.rowModel as IClientSideRowModel;
         if (justFiltered) {
-            clientSideRowModel.forEachNodeAfterFilter(node => {
+            clientSideRowModel.forEachNodeAfterFilter((node) => {
                 nodes.push(node);
             });
             return nodes;
         }
 
-        clientSideRowModel.forEachNode(node => {
+        clientSideRowModel.forEachNode((node) => {
             nodes.push(node);
-        })
+        });
         return nodes;
     }
 
-    public selectAllRowNodes(params: { source: SelectionEventSourceType, justFiltered?: boolean, justCurrentPage?: boolean }) {
+    public selectAllRowNodes(params: {
+        source: SelectionEventSourceType;
+        justFiltered?: boolean;
+        justCurrentPage?: boolean;
+    }) {
         if (this.rowModel.getType() !== 'clientSide') {
-            throw new Error(`selectAll only available when rowModelType='clientSide', ie not ${this.rowModel.getType()}`);
+            throw new Error(
+                `selectAll only available when rowModelType='clientSide', ie not ${this.rowModel.getType()}`
+            );
         }
 
         const { source, justFiltered, justCurrentPage } = params;
@@ -578,7 +606,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
 
         const event: WithoutGridCommon<SelectionChangedEvent> = {
             type: Events.EVENT_SELECTION_CHANGED,
-            source
+            source,
         };
         this.eventService.dispatchEvent(event);
     }
@@ -593,11 +621,16 @@ export class SelectionService extends BeanStub implements ISelectionService {
         return selectedIds.length ? selectedIds : null;
     }
 
-    public setSelectionState(state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState, source: SelectionEventSourceType): void {
-        if (!Array.isArray(state)) { return; }
+    public setSelectionState(
+        state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState,
+        source: SelectionEventSourceType
+    ): void {
+        if (!Array.isArray(state)) {
+            return;
+        }
         const rowIds = new Set(state);
         const nodes: RowNode[] = [];
-        this.rowModel.forEachNode(node => {
+        this.rowModel.forEachNode((node) => {
             if (rowIds.has(node.id!)) {
                 nodes.push(node);
             }
@@ -605,7 +638,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
         this.setNodesSelected({
             newValue: true,
             nodes,
-            source
+            source,
         });
     }
 }

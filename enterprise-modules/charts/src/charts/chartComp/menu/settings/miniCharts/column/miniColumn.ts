@@ -1,7 +1,8 @@
-import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { _Scene } from "ag-charts-community";
-import { ChartType } from "@ag-grid-community/core";
-import { createColumnRects, CreateColumnRectsParams } from "../miniChartHelpers";
+import { ChartType } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
+import { CreateColumnRectsParams, createColumnRects } from '../miniChartHelpers';
+import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export class MiniColumn extends MiniChartWithAxes {
     static chartType: ChartType = 'groupedColumn';
@@ -11,7 +12,7 @@ export class MiniColumn extends MiniChartWithAxes {
     private columnData = [2, 3, 4];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {
-        super(container, "groupedColumnTooltip");
+        super(container, 'groupedColumnTooltip');
 
         const { root, columnData, size, padding } = this;
 
@@ -23,7 +24,7 @@ export class MiniColumn extends MiniChartWithAxes {
             padding,
             xScaleDomain: [0, 1, 2],
             yScaleDomain: [0, 4],
-            xScalePadding: 0.3
+            xScalePadding: 0.3,
         } as CreateColumnRectsParams);
 
         root.append(this.columns);

@@ -1,33 +1,48 @@
 import { ClipboardService } from './clipboardService';
 
 describe('stringToArray', () => {
-
     it('returns parsed data', () => {
         const input = 'a1,a2\nb1,b2\nc1,c2';
         const output = ClipboardService.stringToArray(input);
 
-        expect(output).toStrictEqual([['a1', 'a2'], ['b1', 'b2'], ['c1', 'c2']]);
+        expect(output).toStrictEqual([
+            ['a1', 'a2'],
+            ['b1', 'b2'],
+            ['c1', 'c2'],
+        ]);
     });
 
     it('can use different delimiter', () => {
         const input = 'a1;a2\nb1;b2\nc1;c2';
         const output = ClipboardService.stringToArray(input, ';');
 
-        expect(output).toStrictEqual([['a1', 'a2'], ['b1', 'b2'], ['c1', 'c2']]);
+        expect(output).toStrictEqual([
+            ['a1', 'a2'],
+            ['b1', 'b2'],
+            ['c1', 'c2'],
+        ]);
     });
 
     it('supports quoted fields', () => {
         const input = '"a1","a2"\n"b1","b2"\n"c1","c2"';
         const output = ClipboardService.stringToArray(input);
 
-        expect(output).toStrictEqual([['"a1"', '"a2"'], ['"b1"', '"b2"'], ['"c1"', '"c2"']]);
+        expect(output).toStrictEqual([
+            ['"a1"', '"a2"'],
+            ['"b1"', '"b2"'],
+            ['"c1"', '"c2"'],
+        ]);
     });
 
     it('supports mixture of quoted and unquoted fields', () => {
         const input = '"a1",a2\nb1,"b2"\n"c1","c2"';
         const output = ClipboardService.stringToArray(input);
 
-        expect(output).toStrictEqual([['"a1"', 'a2'], ['b1', '"b2"'], ['"c1"', '"c2"']]);
+        expect(output).toStrictEqual([
+            ['"a1"', 'a2'],
+            ['b1', '"b2"'],
+            ['"c1"', '"c2"'],
+        ]);
     });
 
     it('preserves newlines inside quoted fields', () => {

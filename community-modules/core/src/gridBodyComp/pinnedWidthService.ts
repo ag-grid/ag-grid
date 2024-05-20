@@ -1,12 +1,10 @@
-import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-
-import { Events } from "../eventKeys";
-import { VisibleColsService } from "../columns/visibleColsService";
+import { VisibleColsService } from '../columns/visibleColsService';
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Events } from '../eventKeys';
 
 @Bean('pinnedWidthService')
 export class PinnedWidthService extends BeanStub {
-
     @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
 
     private leftWidth: number;
@@ -21,7 +19,6 @@ export class PinnedWidthService extends BeanStub {
     }
 
     private checkContainerWidths() {
-
         const printLayout = this.gos.isDomLayout('print');
 
         const newLeftWidth = printLayout ? 0 : this.visibleColsService.getColsLeftWidth();
@@ -29,12 +26,12 @@ export class PinnedWidthService extends BeanStub {
 
         if (newLeftWidth != this.leftWidth) {
             this.leftWidth = newLeftWidth;
-            this.eventService.dispatchEvent({type: Events.EVENT_LEFT_PINNED_WIDTH_CHANGED});
+            this.eventService.dispatchEvent({ type: Events.EVENT_LEFT_PINNED_WIDTH_CHANGED });
         }
 
         if (newRightWidth != this.rightWidth) {
             this.rightWidth = newRightWidth;
-            this.eventService.dispatchEvent({type: Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED});
+            this.eventService.dispatchEvent({ type: Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED });
         }
     }
 

@@ -1,24 +1,24 @@
-import { AgEvent } from "../events";
-import { Autowired, PreConstruct } from "../context/context";
-import { AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
-import { BeanStub } from "../context/beanStub";
-import { NumberSequence } from "../utils/numberSequence";
+import { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
+import { BeanStub } from '../context/beanStub';
+import { Autowired, PreConstruct } from '../context/context';
+import { ColDef, ColGroupDef } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { ColumnGroup } from '../entities/columnGroup';
+import { AgEvent } from '../events';
+import { WithoutGridCommon } from '../interfaces/iCommon';
+import { CssClassManager } from '../rendering/cssClassManager';
+import { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
 import {
-    _isNodeOrElement,
     _copyNodeList,
+    _isNodeOrElement,
     _iterateNamedNodeMap,
     _loadTemplate,
+    _setDisplayed,
     _setVisible,
-    _setDisplayed
 } from '../utils/dom';
 import { _getFunctionName } from '../utils/function';
-import { ITooltipParams, TooltipLocation } from "../rendering/tooltipComponent";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { CssClassManager } from "../rendering/cssClassManager";
-import { TooltipFeature } from "./tooltipFeature";
-import { Column } from "../entities/column";
-import { ColumnGroup } from "../entities/columnGroup";
-import { ColDef, ColGroupDef } from "../entities/colDef";
+import { NumberSequence } from '../utils/numberSequence';
+import { TooltipFeature } from './tooltipFeature';
 
 const compIdSequence = new NumberSequence();
 
@@ -27,7 +27,6 @@ export interface VisibleChangedEvent extends AgEvent {
 }
 
 export class Component extends BeanStub {
-
     public static elementGettingCreated: any;
 
     public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
@@ -76,18 +75,18 @@ export class Component extends BeanStub {
     public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         return {
             value: this.tooltipText,
-            location: 'UNKNOWN'
+            location: 'UNKNOWN',
         };
     }
 
     public setTooltip(params?: {
         newTooltipText?: string | null;
         showDelayOverride?: number;
-        hideDelayOverride?: number; 
+        hideDelayOverride?: number;
         location?: TooltipLocation;
         getColumn?(): Column | ColumnGroup;
         getColDef?(): ColDef | ColGroupDef;
-        shouldDisplayTooltip?: () => boolean
+        shouldDisplayTooltip?: () => boolean;
     }): void {
         const { newTooltipText, showDelayOverride, hideDelayOverride, location, shouldDisplayTooltip } = params || {};
 
@@ -102,38 +101,44 @@ export class Component extends BeanStub {
         const getTooltipValue = () => this.tooltipText;
 
         if (newTooltipText != null) {
-            this.tooltipFeature = this.createBean(new TooltipFeature({
-                getTooltipValue,
-                getGui: () => this.getGui(),
-                getLocation: () => location ?? 'UNKNOWN',
-                getColDef: params?.getColDef,
-                getColumn: params?.getColumn,
-                getTooltipShowDelayOverride: showDelayOverride != null ? (() => showDelayOverride) : undefined,
-                getTooltipHideDelayOverride: hideDelayOverride != null ? (() => hideDelayOverride) : undefined,
-                shouldDisplayTooltip
-            }));
+            this.tooltipFeature = this.createBean(
+                new TooltipFeature({
+                    getTooltipValue,
+                    getGui: () => this.getGui(),
+                    getLocation: () => location ?? 'UNKNOWN',
+                    getColDef: params?.getColDef,
+                    getColumn: params?.getColumn,
+                    getTooltipShowDelayOverride: showDelayOverride != null ? () => showDelayOverride : undefined,
+                    getTooltipHideDelayOverride: hideDelayOverride != null ? () => hideDelayOverride : undefined,
+                    shouldDisplayTooltip,
+                })
+            );
         }
     }
 
     // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
-    private createChildComponentsFromTags(parentNode: Element, paramsMap?: { [key: string]: any; }): void {
+    private createChildComponentsFromTags(parentNode: Element, paramsMap?: { [key: string]: any }): void {
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
         const childNodeList: Node[] = _copyNodeList(parentNode.childNodes);
 
-        childNodeList.forEach(childNode => {
+        childNodeList.forEach((childNode) => {
             if (!(childNode instanceof HTMLElement)) {
                 return;
             }
 
-            const childComp = this.createComponentFromElement(childNode, childComp => {
-                // copy over all attributes, including css classes, so any attributes user put on the tag
-                // wll be carried across
-                const childGui = childComp.getGui();
-                if (childGui) {
-                    this.copyAttributesFromNode(childNode, childComp.getGui());
-                }
-            }, paramsMap);
+            const childComp = this.createComponentFromElement(
+                childNode,
+                (childComp) => {
+                    // copy over all attributes, including css classes, so any attributes user put on the tag
+                    // wll be carried across
+                    const childGui = childComp.getGui();
+                    if (childGui) {
+                        this.copyAttributesFromNode(childNode, childComp.getGui());
+                    }
+                },
+                paramsMap
+            );
 
             if (childComp) {
                 if ((childComp as any).addItems && childNode.children.length) {
@@ -155,7 +160,7 @@ export class Component extends BeanStub {
     private createComponentFromElement(
         element: HTMLElement,
         afterPreCreateCallback?: (comp: Component) => void,
-        paramsMap?: { [key: string]: any; }
+        paramsMap?: { [key: string]: any }
     ): Component | null {
         const key = element.nodeName;
         const componentParams = paramsMap ? paramsMap[element.getAttribute('ref')!] : undefined;
@@ -221,15 +226,15 @@ export class Component extends BeanStub {
             elements.push(this.getGui());
         }
 
-        elements.forEach(el => el.setAttribute('tabindex', tabIndex.toString()));
+        elements.forEach((el) => el.setAttribute('tabindex', tabIndex.toString()));
     }
 
-    public setTemplate(template: string | null | undefined, paramsMap?: { [key: string]: any; }): void {
+    public setTemplate(template: string | null | undefined, paramsMap?: { [key: string]: any }): void {
         const eGui = _loadTemplate(template as string);
         this.setTemplateFromElement(eGui, paramsMap);
     }
 
-    public setTemplateFromElement(element: HTMLElement, paramsMap?: { [key: string]: any; }): void {
+    public setTemplateFromElement(element: HTMLElement, paramsMap?: { [key: string]: any }): void {
         this.eGui = element;
         (this.eGui as any).__agComponent = this;
         this.wireQuerySelectors();
@@ -257,13 +262,13 @@ export class Component extends BeanStub {
         const thisNoType = this as any;
 
         this.iterateOverQuerySelectors((querySelector: any) => {
-            const setResult = (result: any) => thisNoType[querySelector.attributeName] = result;
+            const setResult = (result: any) => (thisNoType[querySelector.attributeName] = result);
 
             // if it's a ref selector, and match is on top level component, we return
             // the element. otherwise no way of components putting ref=xxx on the top
             // level element as querySelector only looks at children.
-            const topLevelRefMatch = querySelector.refSelector
-                && this.getAttribute('ref') === querySelector.refSelector;
+            const topLevelRefMatch =
+                querySelector.refSelector && this.getAttribute('ref') === querySelector.refSelector;
             if (topLevelRefMatch) {
                 setResult(this.eGui);
             } else {
@@ -273,7 +278,6 @@ export class Component extends BeanStub {
                     setResult(resultOfQuery.__agComponent || resultOfQuery);
                 }
             }
-
         });
     }
 
@@ -311,13 +315,14 @@ export class Component extends BeanStub {
         return this.eGui.querySelector(cssSelector) as HTMLInputElement;
     }
 
-    public appendChild(
-        newChild: HTMLElement | Component,
-        container?: HTMLElement
-    ): void {
-        if (newChild == null) { return; }
+    public appendChild(newChild: HTMLElement | Component, container?: HTMLElement): void {
+        if (newChild == null) {
+            return;
+        }
 
-        if (!container) { container = this.eGui; }
+        if (!container) {
+            container = this.eGui;
+        }
 
         if (_isNodeOrElement(newChild)) {
             container.appendChild(newChild as HTMLElement);
@@ -334,20 +339,20 @@ export class Component extends BeanStub {
     public setVisible(visible: boolean, options: { skipAriaHidden?: boolean } = {}): void {
         if (visible !== this.visible) {
             this.visible = visible;
-            const  { skipAriaHidden } = options;
+            const { skipAriaHidden } = options;
             _setVisible(this.eGui, visible, { skipAriaHidden });
         }
     }
 
-    public setDisplayed(displayed: boolean, options: { skipAriaHidden?: boolean } = {} ): void {
+    public setDisplayed(displayed: boolean, options: { skipAriaHidden?: boolean } = {}): void {
         if (displayed !== this.displayed) {
             this.displayed = displayed;
-            const  { skipAriaHidden } = options;
+            const { skipAriaHidden } = options;
             _setDisplayed(this.eGui, displayed, { skipAriaHidden });
 
             const event: VisibleChangedEvent = {
                 type: Component.EVENT_DISPLAYED_CHANGED,
-                visible: this.displayed
+                visible: this.displayed,
             };
 
             this.dispatchEvent(event);
@@ -360,7 +365,7 @@ export class Component extends BeanStub {
         }
 
         if (this.tooltipFeature) {
-            this.tooltipFeature = this.destroyBean(this.tooltipFeature)
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
 
         const eGui = this.eGui as any;

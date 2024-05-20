@@ -1,11 +1,11 @@
-import { Column } from "../entities/column";
-import { RowNode } from "../entities/rowNode";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { ValueService } from "../valueService/valueService";
-import { ColumnModel } from "../columns/columnModel";
-import { BeanStub } from "../context/beanStub";
-import { _defaultComparator } from "../utils/generic";
-import { ShowRowGroupColsService } from "../columns/showRowGroupColsService";
+import { ColumnModel } from '../columns/columnModel';
+import { ShowRowGroupColsService } from '../columns/showRowGroupColsService';
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Column } from '../entities/column';
+import { RowNode } from '../entities/rowNode';
+import { _defaultComparator } from '../utils/generic';
+import { ValueService } from '../valueService/valueService';
 
 export interface SortOption {
     sort: 'asc' | 'desc';
@@ -21,7 +21,6 @@ export interface SortedRowNode {
 
 @Bean('rowNodeSorter')
 export class RowNodeSorter extends BeanStub {
-
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
@@ -34,18 +33,23 @@ export class RowNodeSorter extends BeanStub {
         this.isAccentedSort = this.gos.get('accentedSort');
         this.primaryColumnsSortGroups = this.gos.isColumnsSortingCoupledToGroup();
 
-        this.addManagedPropertyListener('accentedSort', (propChange) => this.isAccentedSort = propChange.currentValue);
-        this.addManagedPropertyListener('autoGroupColumnDef', () => this.primaryColumnsSortGroups = this.gos.isColumnsSortingCoupledToGroup());
+        this.addManagedPropertyListener(
+            'accentedSort',
+            (propChange) => (this.isAccentedSort = propChange.currentValue)
+        );
+        this.addManagedPropertyListener(
+            'autoGroupColumnDef',
+            () => (this.primaryColumnsSortGroups = this.gos.isColumnsSortingCoupledToGroup())
+        );
     }
 
     public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
-
         const mapper = (rowNode: RowNode, pos: number) => ({ currentPos: pos, rowNode: rowNode });
         const sortedRowNodes: SortedRowNode[] = rowNodes.map(mapper);
 
         sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
 
-        return sortedRowNodes.map(item => item.rowNode);
+        return sortedRowNodes.map((item) => item.rowNode);
     }
 
     public compareRowNodes(sortOptions: SortOption[], sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode): number {
@@ -82,9 +86,10 @@ export class RowNodeSorter extends BeanStub {
         return sortedNodeA.currentPos - sortedNodeB.currentPos;
     }
 
-    private getComparator(sortOption: SortOption, rowNode: RowNode):
-        ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isDescending: boolean) => number) | undefined {
-
+    private getComparator(
+        sortOption: SortOption,
+        rowNode: RowNode
+    ): ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isDescending: boolean) => number) | undefined {
         const column = sortOption.column;
 
         // comparator on col get preference over everything else
@@ -93,14 +98,20 @@ export class RowNodeSorter extends BeanStub {
             return comparatorOnCol;
         }
 
-        if (!column.getColDef().showRowGroup) { return; }
+        if (!column.getColDef().showRowGroup) {
+            return;
+        }
 
         // if a 'field' is supplied on the autoGroupColumnDef we need to use the associated column comparator
         const groupLeafField = !rowNode.group && column.getColDef().field;
-        if (!groupLeafField) { return; }
+        if (!groupLeafField) {
+            return;
+        }
 
         const primaryColumn = this.columnModel.getColDefCol(groupLeafField);
-        if (!primaryColumn) { return; }
+        if (!primaryColumn) {
+            return;
+        }
 
         return primaryColumn.getColDef().comparator;
     }

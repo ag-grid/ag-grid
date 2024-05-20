@@ -1,6 +1,14 @@
-import { ColumnModel } from "./columns/columnModel";
-import { Logger } from "./logger";
-import { LoggerFactory } from "./logger";
+import { ColumnApplyStateService } from './columns/columnApplyStateService';
+import { ColumnModel } from './columns/columnModel';
+import { ColumnSizeService } from './columns/columnSizeService';
+import { BeanStub } from './context/beanStub';
+import { Bean } from './context/context';
+import { Qualifier } from './context/context';
+import { Autowired } from './context/context';
+import { PostConstruct } from './context/context';
+import { CtrlsService } from './ctrlsService';
+import { Column } from './entities/column';
+import { ProvidedColumnGroup } from './entities/providedColumnGroup';
 import {
     AgEvent,
     BodyScrollEvent,
@@ -10,24 +18,15 @@ import {
     ColumnPinnedEvent,
     ColumnResizedEvent,
     ColumnVisibleEvent,
-    Events
-} from "./events";
-import { Column } from "./entities/column";
-import { Bean } from "./context/context";
-import { Qualifier } from "./context/context";
-import { Autowired } from "./context/context";
-import { PostConstruct } from "./context/context";
-import { ProvidedColumnGroup } from "./entities/providedColumnGroup";
-import { BeanStub } from "./context/beanStub";
-import { CtrlsService } from "./ctrlsService";
-import { GridApi } from "./gridApi";
-import { _errorOnce } from "./utils/function";
-import { ColumnSizeService } from "./columns/columnSizeService";
-import { ColumnApplyStateService } from "./columns/columnApplyStateService";
+    Events,
+} from './events';
+import { GridApi } from './gridApi';
+import { Logger } from './logger';
+import { LoggerFactory } from './logger';
+import { _errorOnce } from './utils/function';
 
 @Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {
-
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
@@ -44,49 +43,53 @@ export class AlignedGridsService extends BeanStub {
         this.logger = loggerFactory.create('AlignedGridsService');
     }
 
-    private getAlignedGridApis(): GridApi[]{
+    private getAlignedGridApis(): GridApi[] {
         let alignedGrids = this.gos.get('alignedGrids') ?? [];
         const isCallbackConfig = typeof alignedGrids === 'function';
         if (typeof alignedGrids === 'function') {
             alignedGrids = alignedGrids();
         }
-        const seeUrl = () => `See ${this.getFrameworkOverrides().getDocLink('aligned-grids')}`
-        const apis = alignedGrids.map((alignedGrid) => {
-            if (!alignedGrid) {
-                _errorOnce(`alignedGrids contains an undefined option.`);
-                if (!isCallbackConfig) {
-                    _errorOnce(`You may want to configure via a callback to avoid setup race conditions:
+        const seeUrl = () => `See ${this.getFrameworkOverrides().getDocLink('aligned-grids')}`;
+        const apis = alignedGrids
+            .map((alignedGrid) => {
+                if (!alignedGrid) {
+                    _errorOnce(`alignedGrids contains an undefined option.`);
+                    if (!isCallbackConfig) {
+                        _errorOnce(`You may want to configure via a callback to avoid setup race conditions:
                      "alignedGrids: () => [linkedGrid]"`);
+                    }
+                    _errorOnce(seeUrl());
+                    return;
                 }
-                _errorOnce(seeUrl())
-                return; 
-            } 
-            if (alignedGrid instanceof GridApi) {
-                return alignedGrid;
-            }
-            // Extract the GridApi from a ref or component
-            const refOrComp = alignedGrid;
-            if ('current' in refOrComp) {
-                return refOrComp.current?.api;
-            } else {
-                if (!refOrComp.api) {
-                    _errorOnce(`alignedGrids - No api found on the linked grid. If you are passing gridOptions to alignedGrids since v31 this is no longer valid. ${seeUrl()}`);
+                if (alignedGrid instanceof GridApi) {
+                    return alignedGrid;
                 }
-                return refOrComp.api;
-            }
-        }).filter(api => !!api && !api.isDestroyed());
+                // Extract the GridApi from a ref or component
+                const refOrComp = alignedGrid;
+                if ('current' in refOrComp) {
+                    return refOrComp.current?.api;
+                } else {
+                    if (!refOrComp.api) {
+                        _errorOnce(
+                            `alignedGrids - No api found on the linked grid. If you are passing gridOptions to alignedGrids since v31 this is no longer valid. ${seeUrl()}`
+                        );
+                    }
+                    return refOrComp.api;
+                }
+            })
+            .filter((api) => !!api && !api.isDestroyed());
 
         return apis as GridApi[];
     }
 
     @PostConstruct
     private init(): void {
-        this.addManagedListener(this.eventService,  Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
-        this.addManagedListener(this.eventService,  Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
-        this.addManagedListener(this.eventService,  Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
-        this.addManagedListener(this.eventService,  Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
-        this.addManagedListener(this.eventService,  Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
-        this.addManagedListener(this.eventService,  Events.EVENT_BODY_SCROLL, this.fireScrollEvent.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.fireScrollEvent.bind(this));
     }
 
     // common logic across all the fire methods
@@ -99,10 +102,12 @@ export class AlignedGridsService extends BeanStub {
 
         // iterate through the aligned grids, and pass each aligned grid service to the callback
         this.getAlignedGridApis().forEach((api) => {
-            if(api.isDestroyed()) { return; }
+            if (api.isDestroyed()) {
+                return;
+            }
             const alignedGridService = api.__getAlignedGridService();
             callback(alignedGridService);
-        });        
+        });
     }
 
     // common logic across all consume methods. very little common logic, however extracting
@@ -114,14 +119,16 @@ export class AlignedGridsService extends BeanStub {
     }
 
     private fireColumnEvent(event: ColumnEvent): void {
-        this.fireEvent(alignedGridsService => {
+        this.fireEvent((alignedGridsService) => {
             alignedGridsService.onColumnEvent(event);
         });
     }
 
     private fireScrollEvent(event: BodyScrollEvent): void {
-        if (event.direction !== 'horizontal') { return; }
-        this.fireEvent(alignedGridsService => {
+        if (event.direction !== 'horizontal') {
+            return;
+        }
+        this.fireEvent((alignedGridsService) => {
             alignedGridsService.onScrollEvent(event);
         });
     }
@@ -148,7 +155,7 @@ export class AlignedGridsService extends BeanStub {
     public getColumnIds(event: ColumnEvent): string[] {
         const result: string[] = [];
         if (event.columns) {
-            event.columns.forEach(column => {
+            event.columns.forEach((column) => {
                 result.push(column.getColId());
             });
         } else if (event.column) {
@@ -159,9 +166,7 @@ export class AlignedGridsService extends BeanStub {
 
     public onColumnEvent(event: AgEvent): void {
         this.onEvent(() => {
-
             switch (event.type) {
-
                 case Events.EVENT_COLUMN_MOVED:
                 case Events.EVENT_COLUMN_VISIBLE:
                 case Events.EVENT_COLUMN_PINNED:
@@ -178,28 +183,33 @@ export class AlignedGridsService extends BeanStub {
                 case Events.EVENT_COLUMN_PIVOT_CHANGED:
                     // we cannot support pivoting with aligned grids as the columns will be out of sync as the
                     // grids will have columns created based on the row data of the grid.
-                    console.warn('AG Grid: pivoting is not supported with aligned grids. ' +
-                        'You can only use one of these features at a time in a grid.');
+                    console.warn(
+                        'AG Grid: pivoting is not supported with aligned grids. ' +
+                            'You can only use one of these features at a time in a grid.'
+                    );
                     break;
             }
-
         });
     }
 
     private processGroupOpenedEvent(groupOpenedEvent: ColumnGroupOpenedEvent): void {
-        groupOpenedEvent.columnGroups.forEach(masterGroup => {
+        groupOpenedEvent.columnGroups.forEach((masterGroup) => {
             // likewise for column group
             let otherColumnGroup: ProvidedColumnGroup | null = null;
-    
+
             if (masterGroup) {
                 const groupId = masterGroup.getGroupId();
                 otherColumnGroup = this.columnModel.getProvidedColGroup(groupId);
             }
-    
-            if (masterGroup && !otherColumnGroup) { return; }
-    
-            this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterGroup.isExpanded());
-            this.columnModel.setColumnGroupOpened(otherColumnGroup, masterGroup.isExpanded(), "alignedGridChanged");
+
+            if (masterGroup && !otherColumnGroup) {
+                return;
+            }
+
+            this.logger.log(
+                'onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterGroup.isExpanded()
+            );
+            this.columnModel.setColumnGroupOpened(otherColumnGroup, masterGroup.isExpanded(), 'alignedGridChanged');
         });
     }
 
@@ -214,7 +224,9 @@ export class AlignedGridsService extends BeanStub {
         }
         // if event was with respect to a master column, that is not present in this
         // grid, then we ignore the event
-        if (masterColumn && !otherColumn) { return; }
+        if (masterColumn && !otherColumn) {
+            return;
+        }
 
         // in time, all the methods below should use the column ids, it's a more generic way
         // of handling columns, and also allows for single or multi column events
@@ -228,9 +240,10 @@ export class AlignedGridsService extends BeanStub {
                 {
                     const movedEvent = colEvent as ColumnMovedEvent;
                     const srcColState = colEvent.api.getColumnState();
-                    const destColState = srcColState.map(s => ({ colId: s.colId }));
+                    const destColState = srcColState.map((s) => ({ colId: s.colId }));
                     this.columnApplyStateService.applyColumnState(
-                        { state: destColState, applyOrder: true }, "alignedGridChanged"
+                        { state: destColState, applyOrder: true },
+                        'alignedGridChanged'
                     );
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} toIndex = ${movedEvent.toIndex}`);
                 }
@@ -242,8 +255,8 @@ export class AlignedGridsService extends BeanStub {
                 {
                     const visibleEvent = colEvent as ColumnVisibleEvent;
                     const srcColState = colEvent.api.getColumnState();
-                    const destColState = srcColState.map(s => ({ colId: s.colId, hide: s.hide }));
-                    this.columnApplyStateService.applyColumnState({ state: destColState }, "alignedGridChanged");
+                    const destColState = srcColState.map((s) => ({ colId: s.colId, hide: s.hide }));
+                    this.columnApplyStateService.applyColumnState({ state: destColState }, 'alignedGridChanged');
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} visible = ${visibleEvent.visible}`);
                 }
                 break;
@@ -251,8 +264,8 @@ export class AlignedGridsService extends BeanStub {
                 {
                     const pinnedEvent = colEvent as ColumnPinnedEvent;
                     const srcColState = colEvent.api.getColumnState();
-                    const destColState = srcColState.map(s => ({ colId: s.colId, pinned: s.pinned }));
-                    this.columnApplyStateService.applyColumnState({state: destColState}, "alignedGridChanged");
+                    const destColState = srcColState.map((s) => ({ colId: s.colId, pinned: s.pinned }));
+                    this.columnApplyStateService.applyColumnState({ state: destColState }, 'alignedGridChanged');
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} pinned = ${pinnedEvent.pinned}`);
                 }
                 break;
@@ -263,19 +276,26 @@ export class AlignedGridsService extends BeanStub {
                     [key: string]: {
                         key: string | Column;
                         newWidth: number;
-                    }
+                    };
                 } = {};
                 masterColumns.forEach((column: Column) => {
-                    this.logger.log(`onColumnEvent-> processing ${colEvent.type} actualWidth = ${column.getActualWidth()}`);
-                    columnWidths[column.getId()] = {key: column.getColId(), newWidth: column.getActualWidth()};
+                    this.logger.log(
+                        `onColumnEvent-> processing ${colEvent.type} actualWidth = ${column.getActualWidth()}`
+                    );
+                    columnWidths[column.getId()] = { key: column.getColId(), newWidth: column.getActualWidth() };
                 });
                 // don't set flex columns width
-                resizedEvent.flexColumns?.forEach(col => {
+                resizedEvent.flexColumns?.forEach((col) => {
                     if (columnWidths[col.getId()]) {
                         delete columnWidths[col.getId()];
                     }
                 });
-                this.columnSizeService.setColumnWidths(Object.values(columnWidths), false, resizedEvent.finished, "alignedGridChanged");
+                this.columnSizeService.setColumnWidths(
+                    Object.values(columnWidths),
+                    false,
+                    resizedEvent.finished,
+                    'alignedGridChanged'
+                );
                 break;
         }
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();

@@ -1,8 +1,10 @@
-@use "ag";
+@use 'ag';
 
-@use "./balham-variables";
+@use './balham-variables';
 
-.ag-theme-balham, .ag-theme-balham-dark, .ag-theme-balham-auto-dark {
+.ag-theme-balham,
+.ag-theme-balham-dark,
+.ag-theme-balham-auto-dark {
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search,
     .ag-status-bar,
@@ -13,16 +15,19 @@
     }
 
     @include ag.text-input {
-        @include ag.theme-rtl((
-            padding-left: var(--ag-grid-size),
-        ));
+        @include ag.theme-rtl(
+            (
+                padding-left: var(--ag-grid-size),
+            )
+        );
     }
 
-    .ag-column-drop-vertical-empty-message, .ag-status-bar {
+    .ag-column-drop-vertical-empty-message,
+    .ag-status-bar {
         font-weight: 600;
         color: var(--ag-disabled-foreground-color);
     }
-    
+
     &.ag-dnd-ghost {
         font-size: var(--ag-font-size);
         font-weight: 600;
@@ -67,10 +72,12 @@
     }
 
     .ag-column-drop-vertical-empty-message {
-        @include ag.theme-rtl((
-            padding-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2),
-            padding-right: var(--ag-grid-size)
-        ));
+        @include ag.theme-rtl(
+            (
+                padding-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2),
+                padding-right: var(--ag-grid-size),
+            )
+        );
     }
 
     .ag-column-drop-horizontal {
@@ -112,7 +119,7 @@
     .ag-panel-title-bar-button-icon {
         font-size: calc(var(--ag-icon-size) + var(--ag-grid-size));
     }
-    
+
     .ag-panel {
         background-color: var(--ag-header-background-color);
     }
@@ -139,7 +146,7 @@
         color: var(--ag-balham-active-color);
     }
 
-    .ag-color-input input[class^=ag-][type=text].ag-input-field-input {
+    .ag-color-input input[class^='ag-'][type='text'].ag-input-field-input {
         min-height: calc(var(--ag-icon-size) + 4px);
     }
 }

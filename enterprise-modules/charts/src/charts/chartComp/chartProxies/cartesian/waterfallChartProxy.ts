@@ -1,14 +1,17 @@
-import {AgCartesianAxisOptions, AgCartesianChartOptions, AgWaterfallSeriesOptions} from "ag-charts-community";
-import {ChartProxyParams, UpdateParams} from "../chartProxy";
-import {CartesianChartProxy} from "./cartesianChartProxy";
+import { AgCartesianAxisOptions, AgCartesianChartOptions, AgWaterfallSeriesOptions } from 'ag-charts-community';
+
+import { ChartProxyParams, UpdateParams } from '../chartProxy';
+import { CartesianChartProxy } from './cartesianChartProxy';
 
 export class WaterfallChartProxy extends CartesianChartProxy<'waterfall'> {
-
     public constructor(params: ChartProxyParams) {
         super(params);
     }
 
-    protected override getAxes(params: UpdateParams, commonChartOptions: AgCartesianChartOptions): AgCartesianAxisOptions[] {
+    protected override getAxes(
+        params: UpdateParams,
+        commonChartOptions: AgCartesianChartOptions
+    ): AgCartesianAxisOptions[] {
         return [
             {
                 type: this.getXAxisType(params),
@@ -29,7 +32,7 @@ export class WaterfallChartProxy extends CartesianChartProxy<'waterfall'> {
             xKey: category.id,
             xName: category.name,
             yKey: firstField.colId,
-            yName: firstField.displayName ?? undefined
+            yName: firstField.displayName ?? undefined,
         };
 
         return [firstSeries]; // waterfall only supports a single series!

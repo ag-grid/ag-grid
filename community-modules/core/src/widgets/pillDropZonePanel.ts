@@ -1,15 +1,21 @@
-import { Autowired } from "../context/context";
-import { Component } from "./component";
-import { DragAndDropService, DraggingEvent, DragItem, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
-import { PillDragComp } from "./pillDragComp";
-import { PositionableFeature } from "../rendering/features/positionableFeature";
-import { FocusService } from "../focusService";
-import { ManagedFocusFeature } from "./managedFocusFeature";
-import { KeyCode } from "../constants/keyCode";
-import { _createIconNoSpan } from "../utils/icon";
-import { _setAriaHidden, _setAriaLabel, _setAriaPosInSet, _setAriaRole, _setAriaSetSize } from "../utils/aria";
-import { _areEqual, _existsAndNotEmpty, _includes, _insertArrayIntoArray } from "../utils/array";
-import { _clearElement } from "../utils/dom";
+import { KeyCode } from '../constants/keyCode';
+import { Autowired } from '../context/context';
+import {
+    DragAndDropService,
+    DragItem,
+    DragSourceType,
+    DraggingEvent,
+    DropTarget,
+} from '../dragAndDrop/dragAndDropService';
+import { FocusService } from '../focusService';
+import { PositionableFeature } from '../rendering/features/positionableFeature';
+import { _setAriaHidden, _setAriaLabel, _setAriaPosInSet, _setAriaRole, _setAriaSetSize } from '../utils/aria';
+import { _areEqual, _existsAndNotEmpty, _includes, _insertArrayIntoArray } from '../utils/array';
+import { _clearElement } from '../utils/dom';
+import { _createIconNoSpan } from '../utils/icon';
+import { Component } from './component';
+import { ManagedFocusFeature } from './managedFocusFeature';
+import { PillDragComp } from './pillDragComp';
 
 export interface PillDropZonePanelParams {
     emptyMessage?: string;
@@ -54,7 +60,12 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     protected abstract getExistingItems(): TItem[];
     protected abstract getIconName(): string;
     protected abstract getAriaLabel(): string;
-    protected abstract createPillComponent(item: TItem, dropTarget: DropTarget, ghost: boolean, horizontal: boolean): TPill;
+    protected abstract createPillComponent(
+        item: TItem,
+        dropTarget: DropTarget,
+        ghost: boolean,
+        horizontal: boolean
+    ): TPill;
     protected abstract getItems(dragItem: DragItem<TItem>): TItem[];
     protected abstract isInterestedIn(type: DragSourceType): boolean;
 
@@ -77,7 +88,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
     protected isSourceEventFromTarget(draggingEvent: DraggingEvent): boolean {
         const { dropZoneTarget, dragSource } = draggingEvent;
-        return dropZoneTarget.contains(dragSource.eElement)
+        return dropZoneTarget.contains(dragSource.eElement);
     }
 
     protected destroy(): void {
@@ -86,7 +97,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     }
 
     private destroyGui(): void {
-        this.guiDestroyFunctions.forEach(func => func());
+        this.guiDestroyFunctions.forEach((func) => func());
         this.guiDestroyFunctions.length = 0;
         this.childPillComponents.length = 0;
         _clearElement(this.getGui());
@@ -96,12 +107,11 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     public init(params?: PillDropZonePanelParams): void {
         this.params = params ?? {};
 
-        this.createManagedBean(new ManagedFocusFeature(
-            this.getFocusableElement(),
-            {
-                handleKeyDown: this.handleKeyDown.bind(this)
-            }
-        ));
+        this.createManagedBean(
+            new ManagedFocusFeature(this.getFocusableElement(), {
+                handleKeyDown: this.handleKeyDown.bind(this),
+            })
+        );
 
         this.setupDropTarget();
 
@@ -124,13 +134,11 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             isPrevious = (!isRtl && e.key === KeyCode.LEFT) || (isRtl && e.key === KeyCode.RIGHT);
         }
 
-        if (!isNext && !isPrevious) { return; }
+        if (!isNext && !isPrevious) {
+            return;
+        }
 
-        const el = this.focusService.findNextFocusableElement(
-            this.getFocusableElement(),
-            false,
-            isPrevious
-        );
+        const el = this.focusService.findNextFocusableElement(this.getFocusableElement(), false, isPrevious);
 
         if (el) {
             e.preventDefault();
@@ -152,7 +160,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             onDragEnter: this.onDragEnter.bind(this),
             onDragLeave: this.onDragLeave.bind(this),
             onDragStop: this.onDragStop.bind(this),
-            isInterestedIn: this.isInterestedIn.bind(this)
+            isInterestedIn: this.isInterestedIn.bind(this),
         };
 
         this.dragAndDropService.addDropTarget(this.dropTarget);
@@ -186,40 +194,32 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const mouseEvent = draggingEvent.event;
         const mouseLocation = this.horizontal ? mouseEvent.clientX : mouseEvent.clientY;
 
-        const boundsList = this.childPillComponents.map(comp => (
-            comp.getGui().getBoundingClientRect()
-        ));
+        const boundsList = this.childPillComponents.map((comp) => comp.getGui().getBoundingClientRect());
         // find the non-ghost component we're hovering
-        const hoveredIndex = boundsList.findIndex(rect => (
-            this.horizontal ? (
-                rect.right > mouseLocation && rect.left < mouseLocation
-            ) : (
-                rect.top < mouseLocation && rect.bottom > mouseLocation
-            )
-        ));
+        const hoveredIndex = boundsList.findIndex((rect) =>
+            this.horizontal
+                ? rect.right > mouseLocation && rect.left < mouseLocation
+                : rect.top < mouseLocation && rect.bottom > mouseLocation
+        );
 
         // not hovering a non-ghost component
         if (hoveredIndex === -1) {
             const enableRtl = this.gos.get('enableRtl');
 
             // if mouse is below or right of all components then new index should be placed last
-            const isLast = boundsList.every(rect => (
-                mouseLocation > (this.horizontal ? rect.right : rect.bottom)
-            ));
+            const isLast = boundsList.every((rect) => mouseLocation > (this.horizontal ? rect.right : rect.bottom));
 
             if (isLast) {
                 return enableRtl && this.horizontal ? 0 : this.childPillComponents.length;
             }
 
             // if mouse is above or left of all components, new index is first
-            const isFirst = boundsList.every(rect => (
-                mouseLocation < (this.horizontal ? rect.left : rect.top)
-            ));
+            const isFirst = boundsList.every((rect) => mouseLocation < (this.horizontal ? rect.left : rect.top));
 
             if (isFirst) {
                 return enableRtl && this.horizontal ? this.childPillComponents.length : 0;
             }
-            
+
             // must be hovering a ghost, don't change the index
             return this.insertIndex;
         }
@@ -231,7 +231,6 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         }
         return hoveredIndex;
     }
-
 
     private checkDragStartedBySelf(draggingEvent: DraggingEvent): void {
         if (this.state !== PillDropZonePanel.STATE_NOT_DRAGGING) {
@@ -262,16 +261,20 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const dragItems = this.getItems(draggingEvent.dragSource.getDragItem());
         this.state = PillDropZonePanel.STATE_NEW_ITEMS_IN;
         // take out items that are not droppable
-        const goodDragItems = dragItems.filter(item => this.isItemDroppable(item, draggingEvent));
-        const alreadyPresent = goodDragItems.every(item => this.childPillComponents.map(cmp => cmp.getItem()).indexOf(item) !== -1);
+        const goodDragItems = dragItems.filter((item) => this.isItemDroppable(item, draggingEvent));
+        const alreadyPresent = goodDragItems.every(
+            (item) => this.childPillComponents.map((cmp) => cmp.getItem()).indexOf(item) !== -1
+        );
 
-        if (goodDragItems.length === 0) { return; }
+        if (goodDragItems.length === 0) {
+            return;
+        }
 
         this.potentialDndItems = goodDragItems;
 
         if (alreadyPresent) {
             this.state = PillDropZonePanel.STATE_NOT_DRAGGING;
-            return; 
+            return;
         }
 
         this.handleDragEnterEnd(draggingEvent);
@@ -307,7 +310,6 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
     private onDragStop(): void {
         if (this.isPotentialDndItems()) {
-
             if (this.state === PillDropZonePanel.STATE_NEW_ITEMS_IN) {
                 this.addItems(this.potentialDndItems);
             } else {
@@ -322,14 +324,16 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     }
 
     private removeItems(itemsToRemove: TItem[]): void {
-        const newItemList = this.getExistingItems().filter(item => !_includes(itemsToRemove, item));
+        const newItemList = this.getExistingItems().filter((item) => !_includes(itemsToRemove, item));
         this.updateItems(newItemList);
     }
 
     private addItems(itemsToAdd: TItem[]): void {
-        if (!itemsToAdd) { return; }
+        if (!itemsToAdd) {
+            return;
+        }
         const newItemList = this.getExistingItems().slice();
-        const itemsToAddNoDuplicates = itemsToAdd.filter(item => newItemList.indexOf(item) < 0);
+        const itemsToAddNoDuplicates = itemsToAdd.filter((item) => newItemList.indexOf(item) < 0);
         _insertArrayIntoArray(newItemList, itemsToAddNoDuplicates, this.insertIndex);
         this.updateItems(newItemList);
     }
@@ -396,7 +400,9 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const eGui = this.getGui();
         const activeElement = this.gos.getActiveDomElement();
 
-        if (!eGui.contains(activeElement)) { return - 1; }
+        if (!eGui.contains(activeElement)) {
+            return -1;
+        }
 
         const items = Array.from(eGui.querySelectorAll('.ag-column-drop-cell'));
 
@@ -407,7 +413,9 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const eGui = this.getGui();
         const items = Array.from(eGui.querySelectorAll('.ag-column-drop-cell'));
 
-        if (index === -1) { return; }
+        if (index === -1) {
+            return;
+        }
 
         if (items.length === 0) {
             alternateElement.focus();
@@ -416,7 +424,9 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const indexToFocus = Math.min(items.length - 1, index);
         const el = items[indexToFocus] as HTMLElement;
 
-        if (el) { el.focus(); }
+        if (el) {
+            el.focus();
+        }
     }
 
     public focusList(fromBottom?: boolean): void {
@@ -428,21 +438,17 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const existingItems = this.getExistingItems();
 
         if (this.isPotentialDndItems()) {
-            return existingItems.filter(item => !_includes(this.potentialDndItems, item));
+            return existingItems.filter((item) => !_includes(this.potentialDndItems, item));
         }
         return existingItems;
     }
 
     private addItemsToGui(): void {
         const nonGhostItems = this.getNonGhostItems();
-        const itemsToAddToGui: TPill[] = nonGhostItems.map(item => (
-            this.createItemComponent(item, false)
-        ));
+        const itemsToAddToGui: TPill[] = nonGhostItems.map((item) => this.createItemComponent(item, false));
 
         if (this.isPotentialDndItems()) {
-            const dndItems = this.potentialDndItems.map(item => (
-                this.createItemComponent(item, true)
-            ));
+            const dndItems = this.potentialDndItems.map((item) => this.createItemComponent(item, true));
             if (this.insertIndex >= itemsToAddToGui.length) {
                 itemsToAddToGui.push(...dndItems);
             } else {
@@ -487,7 +493,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
     private addIconAndTitleToGui(): void {
         const { title, icon: eGroupIcon } = this.params;
-        if (!title || !eGroupIcon) { 
+        if (!title || !eGroupIcon) {
             return;
         }
         const eTitleBar = document.createElement('div');
@@ -514,7 +520,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     }
 
     private addEmptyMessageToGui(): void {
-        const { emptyMessage } =  this.params;
+        const { emptyMessage } = this.params;
         if (!emptyMessage || !this.isExistingItemsEmpty() || this.isPotentialDndItems()) {
             return;
         }

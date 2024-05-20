@@ -1,29 +1,30 @@
-import { MultiFilter, } from './multiFilter';
 import {
-    ColDef,
-    MultiFilterParams,
-    IMultiFilterModel,
-    IClientSideRowModel,
-    FilterManager,
-    ProvidedFilterParams,
-    Column,
-    UserComponentFactory,
-    IRowModel,
     AgPromise,
-    IFilterComp,
-    IAfterGuiAttachedParams,
-    IDoesFilterPassParams,
-    ProvidedFilter,
+    ColDef,
+    Column,
     Context,
+    FilterManager,
     FocusService,
+    IAfterGuiAttachedParams,
+    IClientSideRowModel,
+    IDoesFilterPassParams,
+    IFilterComp,
+    IMultiFilterModel,
+    IRowModel,
+    MultiFilterParams,
+    ProvidedFilter,
     ProvidedFilterModel,
+    ProvidedFilterParams,
     TabGuardCtrl,
+    UserComponentFactory,
 } from '@ag-grid-community/core';
+
 import { mock } from '../test-utils/mock';
+import { MultiFilter } from './multiFilter';
 
 let eGui: jest.Mocked<HTMLElement>;
 let filterManager: jest.Mocked<FilterManager>;
-let tabGuardCtrl: jest.Mocked<TabGuardCtrl>
+let tabGuardCtrl: jest.Mocked<TabGuardCtrl>;
 let userComponentFactory: jest.Mocked<UserComponentFactory>;
 let focusService: jest.Mocked<FocusService>;
 

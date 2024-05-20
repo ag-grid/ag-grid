@@ -1,42 +1,44 @@
 import {
-    IServerSideStore,
     Autowired,
     Bean,
     BeanStub,
+    ColumnModel,
+    ColumnVO,
+    GridOptions,
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
-    StoreRefreshAfterParams,
+    IServerSideStore,
     RowNode,
-    ColumnVO,
     RowNodeBlock,
-    ColumnModel,
-    GridOptions,
+    StoreRefreshAfterParams,
     _missingOrEmpty,
-    _warnOnce
-} from "@ag-grid-community/core";
-import { SSRMParams, ServerSideRowModel } from "../serverSideRowModel";
-import { StoreFactory } from "./storeFactory";
+    _warnOnce,
+} from '@ag-grid-community/core';
+
+import { SSRMParams, ServerSideRowModel } from '../serverSideRowModel';
+import { StoreFactory } from './storeFactory';
 
 @Bean('ssrmStoreUtils')
 export class StoreUtils extends BeanStub {
-
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
     @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
 
     public loadFromDatasource(p: {
-        storeParams: SSRMParams,
-        parentNode: RowNode,
-        parentBlock: RowNodeBlock,
-        success: () => void,
-        fail: () => void,
-        startRow?: number,
-        endRow?: number}
-    ): void {
+        storeParams: SSRMParams;
+        parentNode: RowNode;
+        parentBlock: RowNodeBlock;
+        success: () => void;
+        fail: () => void;
+        startRow?: number;
+        endRow?: number;
+    }): void {
         const { storeParams, parentBlock, parentNode } = p;
         const groupKeys = parentNode.getGroupKeys();
 
-        if (!storeParams.datasource) { return; }
+        if (!storeParams.datasource) {
+            return;
+        }
 
         const request: IServerSideGetRowsRequest = {
             startRow: p.startRow,
@@ -47,14 +49,14 @@ export class StoreUtils extends BeanStub {
             pivotMode: storeParams.pivotMode,
             groupKeys: groupKeys,
             filterModel: storeParams.filterModel,
-            sortModel: storeParams.sortModel
+            sortModel: storeParams.sortModel,
         };
 
         const getRowsParams: IServerSideGetRowsParams = this.gos.addGridCommonParams({
             success: p.success,
             fail: p.fail,
             request: request,
-            parentNode: p.parentNode
+            parentNode: p.parentNode,
         });
 
         window.setTimeout(() => {
@@ -67,8 +69,14 @@ export class StoreUtils extends BeanStub {
         }, 0);
     }
 
-    public getChildStore(keys: string[], currentCache: IServerSideStore, findNodeFunc: (key: string) => RowNode | null): IServerSideStore | null {
-        if (_missingOrEmpty(keys)) { return currentCache; }
+    public getChildStore(
+        keys: string[],
+        currentCache: IServerSideStore,
+        findNodeFunc: (key: string) => RowNode | null
+    ): IServerSideStore | null {
+        if (_missingOrEmpty(keys)) {
+            return currentCache;
+        }
 
         const nextKey = keys[0];
         const nextNode = findNodeFunc(nextKey);
@@ -89,7 +97,11 @@ export class StoreUtils extends BeanStub {
         return null;
     }
 
-    public isServerRefreshNeeded(parentRowNode: RowNode, rowGroupCols: ColumnVO[], params: StoreRefreshAfterParams): boolean {
+    public isServerRefreshNeeded(
+        parentRowNode: RowNode,
+        rowGroupCols: ColumnVO[],
+        params: StoreRefreshAfterParams
+    ): boolean {
         if (params.valueColChanged || params.secondaryColChanged) {
             return true;
         }
@@ -98,20 +110,24 @@ export class StoreUtils extends BeanStub {
         const grouping = level < rowGroupCols.length;
         const leafNodes = !grouping;
 
-        if (leafNodes) { return true; }
+        if (leafNodes) {
+            return true;
+        }
 
         const colIdThisGroup = rowGroupCols[level].id;
         const actionOnThisGroup = params.changedColumns.indexOf(colIdThisGroup) > -1;
 
-        if (actionOnThisGroup) { return true; }
+        if (actionOnThisGroup) {
+            return true;
+        }
 
         const allCols = this.columnModel.getCols();
         const affectedGroupCols = allCols
             // find all impacted cols which also a group display column
-            .filter(col => col.getColDef().showRowGroup && params.changedColumns.includes(col.getId()))
-            .map(col => col.getColDef().showRowGroup)
+            .filter((col) => col.getColDef().showRowGroup && params.changedColumns.includes(col.getId()))
+            .map((col) => col.getColDef().showRowGroup)
             // if displaying all groups, or displaying the effected col for this group, refresh
-            .some(group => group === true || group === colIdThisGroup);
+            .some((group) => group === true || group === colIdThisGroup);
 
         return affectedGroupCols;
     }
@@ -139,13 +155,23 @@ export class StoreUtils extends BeanStub {
         return this.gos.get('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
     }
     public isServerSideOnlyRefreshFilteredGroups() {
-        return this.gos.get('serverSideOnlyRefreshFilteredGroups') && this.assertRowModelIsServerSide('serverSideOnlyRefreshFilteredGroups');
+        return (
+            this.gos.get('serverSideOnlyRefreshFilteredGroups') &&
+            this.assertRowModelIsServerSide('serverSideOnlyRefreshFilteredGroups')
+        );
     }
     public isServerSideSortOnServer() {
-        return this.gos.get('serverSideSortOnServer') && this.assertRowModelIsServerSide('serverSideSortOnServer') && this.assertNotTreeData('serverSideSortOnServer');
+        return (
+            this.gos.get('serverSideSortOnServer') &&
+            this.assertRowModelIsServerSide('serverSideSortOnServer') &&
+            this.assertNotTreeData('serverSideSortOnServer')
+        );
     }
     public isServerSideFilterOnServer() {
-        return this.gos.get('serverSideFilterOnServer') && this.assertRowModelIsServerSide('serverSideFilterOnServer') && this.assertNotTreeData('serverSideFilterOnServer');
+        return (
+            this.gos.get('serverSideFilterOnServer') &&
+            this.assertRowModelIsServerSide('serverSideFilterOnServer') &&
+            this.assertNotTreeData('serverSideFilterOnServer')
+        );
     }
-
 }

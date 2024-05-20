@@ -27,7 +27,7 @@ export interface BindingImport {
     imports: string[];
 }
 
-export interface InlineGridStyles{
+export interface InlineGridStyles {
     theme: string;
     width: string;
     height: string;
@@ -36,15 +36,14 @@ export interface EventHandler {
     name: string;
     handlerName: string;
     handler: string;
-
 }
-export interface ExternalEventHandlers{
+export interface ExternalEventHandlers {
     name: string;
     params: string[];
     body: string;
 }
 
-export interface DataCallback{
+export interface DataCallback {
     url: string;
     callback: string;
 }
@@ -101,13 +100,7 @@ export interface GeneratedContents extends ExampleConfig {
     packageJson: Record<string, any>;
 }
 
-export type InternalFramework =
-    | 'vanilla'
-    | 'typescript'
-    | 'reactFunctional'
-    | 'reactFunctionalTs'
-    | 'angular'
-    | 'vue3';
+export type InternalFramework = 'vanilla' | 'typescript' | 'reactFunctional' | 'reactFunctionalTs' | 'angular' | 'vue3';
 
 export const FRAMEWORKS: InternalFramework[] = [
     'vanilla',

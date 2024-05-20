@@ -1,19 +1,18 @@
-import { Component } from "../widgets/component";
-import { Autowired, PostConstruct } from "../context/context";
-import { RefSelector } from "../widgets/componentAnnotations";
-import {Events, PaginationChangedEvent} from "../events";
-import { PaginationProxy } from "./paginationProxy";
-import { _createIconNoSpan } from "../utils/icon";
-import { _formatNumberCommas } from "../utils/number";
-import { _setAriaDisabled } from "../utils/aria";
 import { KeyCode } from '../constants/keyCode';
-import { RowNodeBlockLoader } from "../rowNodeCache/rowNodeBlockLoader";
-import { PaginationNumberFormatterParams } from "../interfaces/iCallbackParams";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { PageSizeSelectorComp } from "./pageSizeSelector/pageSizeSelectorComp";
+import { Autowired, PostConstruct } from '../context/context';
+import { Events, PaginationChangedEvent } from '../events';
+import { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
+import { WithoutGridCommon } from '../interfaces/iCommon';
+import { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
+import { _setAriaDisabled } from '../utils/aria';
+import { _createIconNoSpan } from '../utils/icon';
+import { _formatNumberCommas } from '../utils/number';
+import { Component } from '../widgets/component';
+import { RefSelector } from '../widgets/componentAnnotations';
+import { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
+import { PaginationProxy } from './paginationProxy';
 
 export class PaginationComp extends Component {
-
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
 
@@ -45,7 +44,7 @@ export class PaginationComp extends Component {
         this.setTemplate(this.getTemplate());
 
         const { btFirst, btPrevious, btNext, btLast, pageSizeComp } = this;
-        this.activateTabIndex([btFirst, btPrevious, btNext, btLast])
+        this.activateTabIndex([btFirst, btPrevious, btNext, btLast]);
 
         btFirst.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'last' : 'first', this.gos)!);
         btPrevious.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'next' : 'previous', this.gos)!);
@@ -54,13 +53,12 @@ export class PaginationComp extends Component {
 
         this.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
         this.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
-        this.addManagedPropertyListeners(['paginationPageSizeSelector', 'paginationAutoPageSize', 'suppressPaginationPanel'],
-            () => this.onPageSizeRelatedOptionsChange(),
+        this.addManagedPropertyListeners(
+            ['paginationPageSizeSelector', 'paginationAutoPageSize', 'suppressPaginationPanel'],
+            () => this.onPageSizeRelatedOptionsChange()
         );
 
-        this.pageSizeComp.toggleSelectDisplay(
-            this.pageSizeComp.shouldShowPageSizeSelector()
-        );
+        this.pageSizeComp.toggleSelectDisplay(this.pageSizeComp.shouldShowPageSizeSelector());
 
         this.onPaginationChanged();
     }
@@ -84,21 +82,23 @@ export class PaginationComp extends Component {
     }
 
     private onPageSizeRelatedOptionsChange(): void {
-        this.pageSizeComp.toggleSelectDisplay(
-            this.pageSizeComp.shouldShowPageSizeSelector()
-        );
+        this.pageSizeComp.toggleSelectDisplay(this.pageSizeComp.shouldShowPageSizeSelector());
     }
 
     private setupListeners() {
         if (!this.areListenersSetup) {
-            this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
+            this.addManagedListener(
+                this.eventService,
+                Events.EVENT_PAGINATION_CHANGED,
+                this.onPaginationChanged.bind(this)
+            );
 
             [
                 { el: this.btFirst, fn: this.onBtFirst.bind(this) },
                 { el: this.btPrevious, fn: this.onBtPrevious.bind(this) },
                 { el: this.btNext, fn: this.onBtNext.bind(this) },
-                { el: this.btLast, fn: this.onBtLast.bind(this) }
-            ].forEach(item => {
+                { el: this.btLast, fn: this.onBtLast.bind(this) },
+            ].forEach((item) => {
                 const { el, fn } = item;
                 this.addManagedListener(el, 'click', fn);
                 this.addManagedListener(el, 'keydown', (e: KeyboardEvent) => {
@@ -153,7 +153,7 @@ export class PaginationComp extends Component {
         const strLast = localeTextFunc('lastPage', 'Last Page');
         const compId = this.getCompId();
 
-        return /* html */`<div class="ag-paging-panel ag-unselectable" id="ag-${compId}">
+        return /* html */ `<div class="ag-paging-panel ag-unselectable" id="ag-${compId}">
                 <ag-page-size-selector ref="pageSizeComp"></ag-page-size-selector>
                 <span class="ag-paging-row-summary-panel" role="status">
                     <span id="ag-${compId}-first-row" ref="lbFirstRowOnPage" class="ag-paging-row-summary-panel-number"></span>
@@ -205,10 +205,10 @@ export class PaginationComp extends Component {
         this.toggleButtonDisabled(this.btPrevious, this.previousAndFirstButtonsDisabled);
 
         const zeroPagesToDisplay = this.isZeroPagesToDisplay();
-        const onLastPage = currentPage === (totalPages - 1);
+        const onLastPage = currentPage === totalPages - 1;
 
         this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
-        this.lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
+        this.lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || currentPage === totalPages - 1;
 
         this.toggleButtonDisabled(this.btNext, this.nextButtonDisabled);
         this.toggleButtonDisabled(this.btLast, this.lastButtonDisabled);
@@ -223,8 +223,7 @@ export class PaginationComp extends Component {
         const currentPage = this.paginationProxy.getCurrentPage();
         const pageSize = this.paginationProxy.getPageSize();
         const maxRowFound = this.paginationProxy.isLastPageFound();
-        const rowCount = this.paginationProxy.isLastPageFound() ?
-            this.paginationProxy.getMasterRowCount() : null;
+        const rowCount = this.paginationProxy.isLastPageFound() ? this.paginationProxy.getMasterRowCount() : null;
 
         let startRow: any;
         let endRow: any;
@@ -232,7 +231,7 @@ export class PaginationComp extends Component {
         if (this.isZeroPagesToDisplay()) {
             startRow = endRow = 0;
         } else {
-            startRow = (pageSize * currentPage) + 1;
+            startRow = pageSize * currentPage + 1;
             endRow = startRow + pageSize - 1;
             if (maxRowFound && endRow > rowCount!) {
                 endRow = rowCount;

@@ -1,16 +1,16 @@
-import { IFloatingFilterParams } from '../floatingFilter';
-import { RefSelector } from '../../../widgets/componentAnnotations';
-import { _debounce } from '../../../utils/function';
-import { ProvidedFilter } from '../../provided/providedFilter';
-import { PostConstruct } from '../../../context/context';
-import { SimpleFloatingFilter } from './simpleFloatingFilter';
-import { FilterChangedEvent } from '../../../events';
-import { AgInputTextField, AgInputTextFieldParams } from '../../../widgets/agInputTextField';
 import { KeyCode } from '../../../constants/keyCode';
-import { TextFilterParams, TextFilter, TextFilterModel } from '../../provided/text/textFilter';
-import { NumberFilter, NumberFilterModel } from '../../provided/number/numberFilter';
 import { BeanStub } from '../../../context/beanStub';
+import { PostConstruct } from '../../../context/context';
+import { FilterChangedEvent } from '../../../events';
 import { _clearElement } from '../../../utils/dom';
+import { _debounce } from '../../../utils/function';
+import { AgInputTextField, AgInputTextFieldParams } from '../../../widgets/agInputTextField';
+import { RefSelector } from '../../../widgets/componentAnnotations';
+import { NumberFilter, NumberFilterModel } from '../../provided/number/numberFilter';
+import { ProvidedFilter } from '../../provided/providedFilter';
+import { TextFilter, TextFilterModel, TextFilterParams } from '../../provided/text/textFilter';
+import { IFloatingFilterParams } from '../floatingFilter';
+import { SimpleFloatingFilter } from './simpleFloatingFilter';
 
 export interface FloatingFilterInputService {
     setupGui(parentElement: HTMLElement): void;
@@ -18,7 +18,7 @@ export interface FloatingFilterInputService {
     getValue(): string | null | undefined;
     setValue(value: string | null | undefined, silent?: boolean): void;
     setValueChangedListener(listener: (e: KeyboardEvent) => void): void;
-    setParams(params: { ariaLabel: string, autoComplete?: boolean | string }): void;
+    setParams(params: { ariaLabel: string; autoComplete?: boolean | string }): void;
 }
 
 export class FloatingFilterTextInputService extends BeanStub implements FloatingFilterInputService {
@@ -57,10 +57,10 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
     }
 
     public setValueChangedListener(listener: (e: KeyboardEvent) => void): void {
-       this.valueChangedListener = listener;
+        this.valueChangedListener = listener;
     }
 
-    public setParams(params: { ariaLabel: string, autoComplete?: boolean | string }): void {
+    public setParams(params: { ariaLabel: string; autoComplete?: boolean | string }): void {
         this.setAriaLabel(params.ariaLabel);
 
         if (params.autoComplete !== undefined) {
@@ -84,7 +84,7 @@ export interface ITextInputFloatingFilterParams extends IFloatingFilterParams<Te
      * @default false
      */
     browserAutoComplete?: boolean | string;
-};
+}
 
 type ModelUnion = TextFilterModel | NumberFilterModel;
 export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
@@ -95,11 +95,13 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
 
     private applyActive: boolean;
 
-    protected abstract createFloatingFilterInputService(params: ITextInputFloatingFilterParams): FloatingFilterInputService;
+    protected abstract createFloatingFilterInputService(
+        params: ITextInputFloatingFilterParams
+    ): FloatingFilterInputService;
 
     @PostConstruct
     private postConstruct(): void {
-        this.setTemplate(/* html */`
+        this.setTemplate(/* html */ `
             <div class="ag-floating-filter-input" role="presentation" ref="eFloatingFilterInputContainer"></div>
         `);
     }
@@ -141,10 +143,13 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         });
 
         this.applyActive = ProvidedFilter.isUseApplyButton(this.params.filterParams);
-        
+
         if (!this.isReadOnly()) {
             const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
-            const toDebounce: (e: KeyboardEvent) => void = _debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
+            const toDebounce: (e: KeyboardEvent) => void = _debounce(
+                this.syncUpWithParentFilter.bind(this),
+                debounceMs
+            );
 
             this.floatingFilterInputService.setValueChangedListener(toDebounce);
         }
@@ -170,7 +175,9 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
     private syncUpWithParentFilter(e: KeyboardEvent): void {
         const isEnterKey = e.key === KeyCode.ENTER;
 
-        if (this.applyActive && !isEnterKey) { return; }
+        if (this.applyActive && !isEnterKey) {
+            return;
+        }
 
         let value = this.floatingFilterInputService.getValue();
 
@@ -179,10 +186,10 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
             this.floatingFilterInputService.setValue(value, true); // ensure visible value is trimmed
         }
 
-        this.params.parentFilterInstance(filterInstance => {
+        this.params.parentFilterInstance((filterInstance) => {
             if (filterInstance) {
                 // NumberFilter is typed as number, but actually receives string values
-                filterInstance.onFloatingFilterChanged(this.getLastType() || null, value as never || null);
+                filterInstance.onFloatingFilterChanged(this.getLastType() || null, (value as never) || null);
             }
         });
     }

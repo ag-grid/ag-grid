@@ -1,19 +1,18 @@
-import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, Optional } from "../context/context";
-import { ColDef, IAggFunc } from "../entities/colDef";
-import { Column } from "../entities/column";
-import { ColumnEventType, Events } from "../events";
-import { IAggFuncService } from "../interfaces/iAggFuncService";
-import { _removeFromArray } from "../utils/array";
-import { _attrToBoolean, _attrToNumber, _exists, _missingOrEmpty } from "../utils/generic";
-import { ColumnState, ModifyColumnsNoEventsCallbacks } from "./columnApplyStateService";
-import { ColumnEventDispatcher } from "./columnEventDispatcher";
-import { ColKey, ColumnModel, Maybe } from "./columnModel";
-import { VisibleColsService } from "./visibleColsService";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, Optional } from '../context/context';
+import { ColDef, IAggFunc } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { ColumnEventType, Events } from '../events';
+import { IAggFuncService } from '../interfaces/iAggFuncService';
+import { _removeFromArray } from '../utils/array';
+import { _attrToBoolean, _attrToNumber, _exists, _missingOrEmpty } from '../utils/generic';
+import { ColumnState, ModifyColumnsNoEventsCallbacks } from './columnApplyStateService';
+import { ColumnEventDispatcher } from './columnEventDispatcher';
+import { ColKey, ColumnModel, Maybe } from './columnModel';
+import { VisibleColsService } from './visibleColsService';
 
 @Bean('funcColsService')
 export class FuncColsService extends BeanStub {
-
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
     @Optional('aggFuncService') private aggFuncService?: IAggFuncService;
@@ -30,10 +29,10 @@ export class FuncColsService extends BeanStub {
             addPivotCol: (column) => this.pivotCols.push(column),
             removePivotCol: (column) => _removeFromArray(this.pivotCols, column),
             addValueCol: (column) => this.valueCols.push(column),
-            removeValueCol: (column) => _removeFromArray(this.valueCols, column)
+            removeValueCol: (column) => _removeFromArray(this.valueCols, column),
         };
     }
-    
+
     public getSourceColumnsForGroupColumn(groupCol: Column): Column[] | null {
         const sourceColumnId = groupCol.getColDef().showRowGroup;
         if (!sourceColumnId) {
@@ -75,11 +74,19 @@ export class FuncColsService extends BeanStub {
         return _missingOrEmpty(this.rowGroupCols);
     }
 
-    public setColumnAggFunc(key: Maybe<ColKey>, aggFunc: string | IAggFunc | null | undefined, source: ColumnEventType): void {
-        if (!key) { return; }
+    public setColumnAggFunc(
+        key: Maybe<ColKey>,
+        aggFunc: string | IAggFunc | null | undefined,
+        source: ColumnEventType
+    ): void {
+        if (!key) {
+            return;
+        }
 
         const column = this.columnModel.getColDefCol(key);
-        if (!column) { return; }
+        if (!column) {
+            return;
+        }
 
         column.setAggFunc(aggFunc);
 
@@ -87,15 +94,21 @@ export class FuncColsService extends BeanStub {
     }
 
     public setRowGroupColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        this.setColList(colKeys, this.rowGroupCols,
-            Events.EVENT_COLUMN_ROW_GROUP_CHANGED, true,
+        this.setColList(
+            colKeys,
+            this.rowGroupCols,
+            Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
+            true,
             true,
             this.setRowGroupActive.bind(this),
-            source);
+            source
+        );
     }
-    
+
     private setRowGroupActive(active: boolean, column: Column, source: ColumnEventType): void {
-        if (active === column.isRowGroupActive()) { return; }
+        if (active === column.isRowGroupActive()) {
+            return;
+        }
 
         column.setRowGroupActive(active, source);
 
@@ -108,7 +121,11 @@ export class FuncColsService extends BeanStub {
     }
 
     public addRowGroupColumns(keys: Maybe<ColKey>[], source: ColumnEventType): void {
-        this.updateColList(keys, this.rowGroupCols, true, true,
+        this.updateColList(
+            keys,
+            this.rowGroupCols,
+            true,
+            true,
             this.setRowGroupActive.bind(this, true),
             Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
             source
@@ -116,23 +133,40 @@ export class FuncColsService extends BeanStub {
     }
 
     public removeRowGroupColumns(keys: Maybe<ColKey>[] | null, source: ColumnEventType): void {
-        this.updateColList(keys, this.rowGroupCols, false, true,
+        this.updateColList(
+            keys,
+            this.rowGroupCols,
+            false,
+            true,
             this.setRowGroupActive.bind(this, false),
             Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
-            source);
+            source
+        );
     }
 
     public addPivotColumns(keys: ColKey[], source: ColumnEventType): void {
-        this.updateColList(keys, this.pivotCols, true, false,
-            column => column.setPivotActive(true, source),
-            Events.EVENT_COLUMN_PIVOT_CHANGED, source);
+        this.updateColList(
+            keys,
+            this.pivotCols,
+            true,
+            false,
+            (column) => column.setPivotActive(true, source),
+            Events.EVENT_COLUMN_PIVOT_CHANGED,
+            source
+        );
     }
 
     public setPivotColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        this.setColList(colKeys, this.pivotCols, Events.EVENT_COLUMN_PIVOT_CHANGED, true, false,
+        this.setColList(
+            colKeys,
+            this.pivotCols,
+            Events.EVENT_COLUMN_PIVOT_CHANGED,
+            true,
+            false,
             (added: boolean, column: Column) => {
                 column.setPivotActive(added, source);
-            }, source
+            },
+            source
         );
     }
 
@@ -142,14 +176,16 @@ export class FuncColsService extends BeanStub {
             this.pivotCols,
             false,
             false,
-            column => column.setPivotActive(false, source),
+            (column) => column.setPivotActive(false, source),
             Events.EVENT_COLUMN_PIVOT_CHANGED,
             source
         );
     }
 
     public setValueColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        this.setColList(colKeys, this.valueCols,
+        this.setColList(
+            colKeys,
+            this.valueCols,
             Events.EVENT_COLUMN_VALUE_CHANGED,
             false,
             false,
@@ -159,7 +195,9 @@ export class FuncColsService extends BeanStub {
     }
 
     private setValueActive(active: boolean, column: Column, source: ColumnEventType): void {
-        if (active === column.isValueActive()) { return; }
+        if (active === column.isValueActive()) {
+            return;
+        }
 
         column.setValueActive(active, source);
 
@@ -170,7 +208,11 @@ export class FuncColsService extends BeanStub {
     }
 
     public addValueColumns(keys: ColKey[], source: ColumnEventType): void {
-        this.updateColList(keys, this.valueCols, true, false,
+        this.updateColList(
+            keys,
+            this.valueCols,
+            true,
+            false,
             this.setValueActive.bind(this, true),
             Events.EVENT_COLUMN_VALUE_CHANGED,
             source
@@ -178,7 +220,11 @@ export class FuncColsService extends BeanStub {
     }
 
     public removeValueColumns(keys: ColKey[], source: ColumnEventType): void {
-        this.updateColList(keys, this.valueCols, false, false,
+        this.updateColList(
+            keys,
+            this.valueCols,
+            false,
+            false,
             this.setValueActive.bind(this, false),
             Events.EVENT_COLUMN_VALUE_CHANGED,
             source
@@ -186,7 +232,9 @@ export class FuncColsService extends BeanStub {
     }
 
     public moveRowGroupColumn(fromIndex: number, toIndex: number, source: ColumnEventType): void {
-        if (this.isRowGroupEmpty()) { return; }
+        if (this.isRowGroupEmpty()) {
+            return;
+        }
 
         const column = this.rowGroupCols[fromIndex];
 
@@ -204,10 +252,12 @@ export class FuncColsService extends BeanStub {
         detectOrderChange: boolean,
         autoGroupsNeedBuilding: boolean,
         columnCallback: (added: boolean, column: Column) => void,
-        source: ColumnEventType,
+        source: ColumnEventType
     ): void {
         const gridColumns = this.columnModel.getCols();
-        if (_missingOrEmpty(gridColumns)) { return; }
+        if (_missingOrEmpty(gridColumns)) {
+            return;
+        }
 
         const changes: Map<Column, number> = new Map();
         // store all original cols and their index.
@@ -216,7 +266,7 @@ export class FuncColsService extends BeanStub {
         masterList.length = 0;
 
         if (_exists(colKeys)) {
-            colKeys.forEach(key => {
+            colKeys.forEach((key) => {
                 const column = this.columnModel.getColDefCol(key);
                 if (column) {
                     masterList.push(column);
@@ -237,13 +287,13 @@ export class FuncColsService extends BeanStub {
                 // if we're detecting order changes, and the indexes differ, we retain this as it's changed
                 return;
             }
-            
+
             // otherwise remove this col, as it's unchanged.
             changes.delete(col);
         });
 
         const primaryCols = this.columnModel.getColDefCols();
-        (primaryCols || []).forEach(column => {
+        (primaryCols || []).forEach((column) => {
             const added = masterList.indexOf(column) >= 0;
             columnCallback(added, column);
         });
@@ -264,21 +314,30 @@ export class FuncColsService extends BeanStub {
         eventType: string,
         source: ColumnEventType
     ) {
-
-        if (!keys || _missingOrEmpty(keys)) { return; }
+        if (!keys || _missingOrEmpty(keys)) {
+            return;
+        }
 
         let atLeastOne = false;
 
-        keys.forEach(key => {
-            if (!key) { return; }
+        keys.forEach((key) => {
+            if (!key) {
+                return;
+            }
             const columnToAdd = this.columnModel.getColDefCol(key);
-            if (!columnToAdd) { return; }
+            if (!columnToAdd) {
+                return;
+            }
 
             if (actionIsAdd) {
-                if (masterList.indexOf(columnToAdd) >= 0) { return; }
+                if (masterList.indexOf(columnToAdd) >= 0) {
+                    return;
+                }
                 masterList.push(columnToAdd);
             } else {
-                if (masterList.indexOf(columnToAdd) < 0) { return; }
+                if (masterList.indexOf(columnToAdd) < 0) {
+                    return;
+                }
                 _removeFromArray(masterList, columnToAdd);
             }
 
@@ -286,7 +345,9 @@ export class FuncColsService extends BeanStub {
             atLeastOne = true;
         });
 
-        if (!atLeastOne) { return; }
+        if (!atLeastOne) {
+            return;
+        }
 
         if (autoGroupsNeedBuilding) {
             this.columnModel.refreshCols();
@@ -331,7 +392,7 @@ export class FuncColsService extends BeanStub {
         );
 
         // all new columns added will have aggFunc missing, so set it to what is in the colDef
-        this.valueCols.forEach(col => {
+        this.valueCols.forEach((col) => {
             const colDef = col.getColDef();
             // if aggFunc provided, we always override, as reactive property
             if (colDef.aggFunc != null && colDef.aggFunc != '') {
@@ -346,12 +407,14 @@ export class FuncColsService extends BeanStub {
     }
 
     private extractRowGroupCols(source: ColumnEventType, oldProvidedCols: Column[] | undefined): void {
-        this.rowGroupCols = this.extractColsCommon(oldProvidedCols, this.rowGroupCols,
+        this.rowGroupCols = this.extractColsCommon(
+            oldProvidedCols,
+            this.rowGroupCols,
             (col: Column, flag: boolean) => col.setRowGroupActive(flag, source),
             (colDef: ColDef) => colDef.rowGroupIndex,
             (colDef: ColDef) => colDef.initialRowGroupIndex,
             (colDef: ColDef) => colDef.rowGroup,
-            (colDef: ColDef) => colDef.initialRowGroup,
+            (colDef: ColDef) => colDef.initialRowGroup
         );
     }
 
@@ -363,7 +426,7 @@ export class FuncColsService extends BeanStub {
             (colDef: ColDef) => colDef.pivotIndex,
             (colDef: ColDef) => colDef.initialPivotIndex,
             (colDef: ColDef) => colDef.pivot,
-            (colDef: ColDef) => colDef.initialPivot,
+            (colDef: ColDef) => colDef.initialPivot
         );
     }
 
@@ -376,7 +439,6 @@ export class FuncColsService extends BeanStub {
         getValueFunc: (colDef: ColDef) => boolean | null | undefined,
         getInitialValueFunc: (colDef: ColDef) => boolean | undefined
     ): Column[] {
-
         const colsWithIndex: Column[] = [];
         const colsWithValue: Column[] = [];
 
@@ -385,7 +447,7 @@ export class FuncColsService extends BeanStub {
         // go though all cols.
         // if value, change
         // if default only, change only if new
-        primaryCols.forEach(col => {
+        primaryCols.forEach((col) => {
             const colIsNew = oldProvidedCols.indexOf(col) < 0;
             const colDef = col.getColDef();
 
@@ -431,7 +493,7 @@ export class FuncColsService extends BeanStub {
             }
 
             if (include) {
-                const useIndex = colIsNew ? (index != null || initialIndex != null) : index != null;
+                const useIndex = colIsNew ? index != null || initialIndex != null : index != null;
                 useIndex ? colsWithIndex.push(col) : colsWithValue.push(col);
             }
         });
@@ -448,8 +510,12 @@ export class FuncColsService extends BeanStub {
             const indexA = getIndexForCol(colA);
             const indexB = getIndexForCol(colB);
 
-            if (indexA === indexB) { return 0; }
-            if (indexA < indexB) { return -1; }
+            if (indexA === indexB) {
+                return 0;
+            }
+            if (indexA < indexB) {
+                return -1;
+            }
 
             return 1;
         });
@@ -458,27 +524,27 @@ export class FuncColsService extends BeanStub {
 
         // second add columns that were there before and in the same order as they were before,
         // so we are preserving order of current grouping of columns that simply have rowGroup=true
-        previousCols.forEach(col => {
+        previousCols.forEach((col) => {
             if (colsWithValue.indexOf(col) >= 0) {
                 res.push(col);
             }
         });
 
         // lastly put in all remaining cols
-        colsWithValue.forEach(col => {
+        colsWithValue.forEach((col) => {
             if (res.indexOf(col) < 0) {
                 res.push(col);
             }
         });
 
         // set flag=false for removed cols
-        previousCols.forEach(col => {
+        previousCols.forEach((col) => {
             if (res.indexOf(col) < 0) {
                 setFlagFunc(col, false);
             }
         });
         // set flag=true for newly added cols
-        res.forEach(col => {
+        res.forEach((col) => {
             if (previousCols.indexOf(col) < 0) {
                 setFlagFunc(col, true);
             }
@@ -486,7 +552,7 @@ export class FuncColsService extends BeanStub {
 
         return res;
     }
-    
+
     public generateColumnStateForRowGroupAndPivotIndexes(
         updatedRowGroupColumnState: { [colId: string]: ColumnState },
         updatedPivotColumnState: { [colId: string]: ColumnState }
@@ -498,20 +564,29 @@ export class FuncColsService extends BeanStub {
         const existingColumnStateUpdates: { [colId: string]: ColumnState } = {};
 
         const orderColumns = (
-            updatedColumnState: { [colId: string]: ColumnState }, colList: Column[],
-            enableProp: 'rowGroup' | 'pivot', initialEnableProp: 'initialRowGroup' | 'initialPivot',
-            indexProp: 'rowGroupIndex' | 'pivotIndex', initialIndexProp: 'initialRowGroupIndex' | 'initialPivotIndex'
+            updatedColumnState: { [colId: string]: ColumnState },
+            colList: Column[],
+            enableProp: 'rowGroup' | 'pivot',
+            initialEnableProp: 'initialRowGroup' | 'initialPivot',
+            indexProp: 'rowGroupIndex' | 'pivotIndex',
+            initialIndexProp: 'initialRowGroupIndex' | 'initialPivotIndex'
         ) => {
             const primaryCols = this.columnModel.getColDefCols();
-            if (!colList.length || !primaryCols) { return []; }
+            if (!colList.length || !primaryCols) {
+                return [];
+            }
             const updatedColIdArray = Object.keys(updatedColumnState);
             const updatedColIds = new Set(updatedColIdArray);
             const newColIds = new Set(updatedColIdArray);
-            const allColIds = new Set(colList.map(column => {
-                const colId = column.getColId();
-                newColIds.delete(colId);
-                return colId;
-            }).concat(updatedColIdArray));
+            const allColIds = new Set(
+                colList
+                    .map((column) => {
+                        const colId = column.getColId();
+                        newColIds.delete(colId);
+                        return colId;
+                    })
+                    .concat(updatedColIdArray)
+            );
 
             const colIdsInOriginalOrder: string[] = [];
             const originalOrderMap: { [colId: string]: number } = {};
@@ -539,9 +614,9 @@ export class FuncColsService extends BeanStub {
                     }
                 }
                 lastIndex = originalOrderIndex;
-            }
+            };
 
-            colList.forEach(column => {
+            colList.forEach((column) => {
                 const colId = column.getColId();
                 if (updatedColIds.has(colId)) {
                     // New col already exists. Add any other new cols that should be before it.
@@ -549,15 +624,18 @@ export class FuncColsService extends BeanStub {
                     updatedColumnState[colId][indexProp] = index++;
                 } else {
                     const colDef = column.getColDef();
-                    const missingIndex = colDef[indexProp] === null || (colDef[indexProp] === undefined && colDef[initialIndexProp] == null);
+                    const missingIndex =
+                        colDef[indexProp] === null ||
+                        (colDef[indexProp] === undefined && colDef[initialIndexProp] == null);
                     if (missingIndex) {
                         if (!hasAddedNewCols) {
-                            const propEnabled = colDef[enableProp] || (colDef[enableProp] === undefined && colDef[initialEnableProp]);
+                            const propEnabled =
+                                colDef[enableProp] || (colDef[enableProp] === undefined && colDef[initialEnableProp]);
                             if (propEnabled) {
                                 processPrecedingNewCols(colId);
                             } else {
                                 // Reached the first manually added column. Add all the new columns now.
-                                newColIds.forEach(newColId => {
+                                newColIds.forEach((newColId) => {
                                     // Rather than increment the index, just use the original order index - doesn't need to be contiguous.
                                     updatedColumnState[newColId][indexProp] = index + originalOrderMap[newColId];
                                 });
@@ -572,10 +650,24 @@ export class FuncColsService extends BeanStub {
                     }
                 }
             });
-        }
+        };
 
-        orderColumns(updatedRowGroupColumnState, this.rowGroupCols, 'rowGroup', 'initialRowGroup', 'rowGroupIndex', 'initialRowGroupIndex');
-        orderColumns(updatedPivotColumnState, this.pivotCols, 'pivot', 'initialPivot', 'pivotIndex', 'initialPivotIndex');
+        orderColumns(
+            updatedRowGroupColumnState,
+            this.rowGroupCols,
+            'rowGroup',
+            'initialRowGroup',
+            'rowGroupIndex',
+            'initialRowGroupIndex'
+        );
+        orderColumns(
+            updatedPivotColumnState,
+            this.pivotCols,
+            'pivot',
+            'initialPivot',
+            'pivotIndex',
+            'initialPivotIndex'
+        );
 
         return Object.values(existingColumnStateUpdates);
     }

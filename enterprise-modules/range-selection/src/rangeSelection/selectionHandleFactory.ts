@@ -1,6 +1,13 @@
-import { Bean, BeanStub, ISelectionHandle, ISelectionHandleFactory, SelectionHandleType } from "@ag-grid-community/core";
-import { RangeHandle } from "./rangeHandle";
-import { FillHandle } from "./fillHandle";
+import {
+    Bean,
+    BeanStub,
+    ISelectionHandle,
+    ISelectionHandleFactory,
+    SelectionHandleType,
+} from '@ag-grid-community/core';
+
+import { FillHandle } from './fillHandle';
+import { RangeHandle } from './rangeHandle';
 
 @Bean('selectionHandleFactory')
 export class SelectionHandleFactory extends BeanStub implements ISelectionHandleFactory {

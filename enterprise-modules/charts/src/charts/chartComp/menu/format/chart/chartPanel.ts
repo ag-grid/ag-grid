@@ -4,20 +4,20 @@ import {
     Autowired,
     Component,
     PostConstruct,
-    RefSelector
-} from "@ag-grid-community/core";
-import { PaddingPanel } from "./paddingPanel";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { BackgroundPanel } from "./backgroundPanel";
-import { FormatPanelOptions } from "../formatPanel";
+    RefSelector,
+} from '@ag-grid-community/core';
+
+import { ChartTranslationService } from '../../../services/chartTranslationService';
+import { FormatPanelOptions } from '../formatPanel';
+import { BackgroundPanel } from './backgroundPanel';
+import { PaddingPanel } from './paddingPanel';
 
 export class ChartPanel extends Component {
-    private static TEMPLATE = /* html */
-        `<div>
+    private static TEMPLATE /* html */ = `<div>
             <ag-group-component ref="chartGroup"></ag-group-component>
         </div>`;
 
-    @Autowired('chartTranslationService') private readonly  chartTranslationService: ChartTranslationService;
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
     @RefSelector('chartGroup') private readonly chartGroup: AgGroupComponent;
 
     constructor(private readonly options: FormatPanelOptions) {
@@ -26,7 +26,12 @@ export class ChartPanel extends Component {
 
     @PostConstruct
     private init() {
-        const { chartController, chartMenuParamsFactory, isExpandedOnInit: expanded, registerGroupComponent } = this.options;
+        const {
+            chartController,
+            chartMenuParamsFactory,
+            isExpandedOnInit: expanded,
+            registerGroupComponent,
+        } = this.options;
 
         const chartGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-top-level',
@@ -36,8 +41,8 @@ export class ChartPanel extends Component {
             suppressEnabledCheckbox: true,
             items: [
                 this.createManagedBean(new PaddingPanel(chartMenuParamsFactory, chartController)),
-                this.createManagedBean(new BackgroundPanel(chartMenuParamsFactory))
-            ]
+                this.createManagedBean(new BackgroundPanel(chartMenuParamsFactory)),
+            ],
         };
         this.setTemplate(ChartPanel.TEMPLATE, { chartGroup: chartGroupParams });
         registerGroupComponent(this.chartGroup);

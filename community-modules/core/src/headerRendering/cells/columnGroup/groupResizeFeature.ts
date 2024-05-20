@@ -1,15 +1,15 @@
-import { ColumnEventType } from "../../../events";
-import { BeanStub } from "../../../context/beanStub";
-import { Autowired, PostConstruct } from "../../../context/context";
-import { Column, ColumnPinnedType } from "../../../entities/column";
-import { ColumnGroup } from "../../../entities/columnGroup";
-import { AutoWidthCalculator } from "../../../rendering/autoWidthCalculator";
-import { HorizontalResizeService } from "../../common/horizontalResizeService";
-import { IHeaderGroupCellComp } from "./headerGroupCellCtrl";
-import { IHeaderResizeFeature } from "../abstractCell/abstractHeaderCellCtrl";
-import { ColumnAutosizeService } from "../../../columns/columnAutosizeService";
-import { ColumnSizeService, ColumnResizeSet } from "../../../columns/columnSizeService";
-import { VisibleColsService } from "../../../columns/visibleColsService";
+import { ColumnAutosizeService } from '../../../columns/columnAutosizeService';
+import { ColumnResizeSet, ColumnSizeService } from '../../../columns/columnSizeService';
+import { VisibleColsService } from '../../../columns/visibleColsService';
+import { BeanStub } from '../../../context/beanStub';
+import { Autowired, PostConstruct } from '../../../context/context';
+import { Column, ColumnPinnedType } from '../../../entities/column';
+import { ColumnGroup } from '../../../entities/columnGroup';
+import { ColumnEventType } from '../../../events';
+import { AutoWidthCalculator } from '../../../rendering/autoWidthCalculator';
+import { HorizontalResizeService } from '../../common/horizontalResizeService';
+import { IHeaderResizeFeature } from '../abstractCell/abstractHeaderCellCtrl';
+import { IHeaderGroupCellComp } from './headerGroupCellCtrl';
 
 interface ColumnSizeAndRatios {
     columnsToResize: Column[];
@@ -20,7 +20,6 @@ interface ColumnSizeAndRatios {
     groupAfterRatios?: number[];
 }
 export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature {
-
     private eResize: HTMLElement;
     private columnGroup: ColumnGroup;
     private comp: IHeaderGroupCellComp;
@@ -40,7 +39,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     @Autowired('columnSizeService') private readonly columnSizeService: ColumnSizeService;
     @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
 
-    constructor(comp: IHeaderGroupCellComp, eResize: HTMLElement,  pinned: ColumnPinnedType, columnGroup: ColumnGroup) {
+    constructor(comp: IHeaderGroupCellComp, eResize: HTMLElement, pinned: ColumnPinnedType, columnGroup: ColumnGroup) {
         super();
 
         this.eResize = eResize;
@@ -51,7 +50,6 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
 
     @PostConstruct
     private postConstruct(): void {
-
         if (!this.columnGroup.isResizable()) {
             this.comp.setResizableDisplayed(false);
             return;
@@ -61,7 +59,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             eResizeBar: this.eResize,
             onResizeStart: this.onResizeStart.bind(this),
             onResizing: this.onResizing.bind(this, false),
-            onResizeEnd: this.onResizing.bind(this, true)
+            onResizeEnd: this.onResizing.bind(this, true),
         });
 
         this.addDestroyFunc(finishedWithResizeFunc);
@@ -86,7 +84,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
                         colKeys: keys,
                         skipHeader: skipHeaderOnAutoSize,
                         stopAtGroup: this.columnGroup,
-                        source: 'uiColumnResized'
+                        source: 'uiColumnResized',
                     });
                 }
 
@@ -116,7 +114,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         const columnSizeAndRatios: ColumnSizeAndRatios = {
             columnsToResize,
             resizeStartWidth,
-            resizeRatios
+            resizeRatios,
         };
 
         let groupAfter: ColumnGroup | null = null;
@@ -127,8 +125,11 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
 
         if (groupAfter) {
             const takeFromLeafCols = groupAfter.getDisplayedLeafColumns();
-            const groupAfterColumns = columnSizeAndRatios.groupAfterColumns = takeFromLeafCols.filter(col => col.isResizable());
-            const groupAfterStartWidth = columnSizeAndRatios.groupAfterStartWidth = this.getInitialSizeOfColumns(groupAfterColumns);
+            const groupAfterColumns = (columnSizeAndRatios.groupAfterColumns = takeFromLeafCols.filter((col) =>
+                col.isResizable()
+            ));
+            const groupAfterStartWidth = (columnSizeAndRatios.groupAfterStartWidth =
+                this.getInitialSizeOfColumns(groupAfterColumns));
             columnSizeAndRatios.groupAfterRatios = this.getSizeRatiosOfColumns(groupAfterColumns, groupAfterStartWidth);
         } else {
             columnSizeAndRatios.groupAfterColumns = undefined;
@@ -141,8 +142,12 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
 
     private storeLocalValues(initialValues: ColumnSizeAndRatios): void {
         const {
-            columnsToResize, resizeStartWidth, resizeRatios,
-            groupAfterColumns, groupAfterStartWidth, groupAfterRatios
+            columnsToResize,
+            resizeStartWidth,
+            resizeRatios,
+            groupAfterColumns,
+            groupAfterStartWidth,
+            groupAfterRatios,
         } = initialValues;
 
         this.resizeCols = columnsToResize;
@@ -172,7 +177,9 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     }
 
     private resizeColumnsFromLocalValues(totalWidth: number, source: ColumnEventType, finished: boolean = true): void {
-        if (!this.resizeCols || !this.resizeRatios) { return; }
+        if (!this.resizeCols || !this.resizeRatios) {
+            return;
+        }
 
         const initialValues: ColumnSizeAndRatios = {
             columnsToResize: this.resizeCols,
@@ -180,16 +187,25 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             resizeRatios: this.resizeRatios,
             groupAfterColumns: this.resizeTakeFromCols ?? undefined,
             groupAfterStartWidth: this.resizeTakeFromStartWidth ?? undefined,
-            groupAfterRatios: this.resizeTakeFromRatios ?? undefined
-        }
+            groupAfterRatios: this.resizeTakeFromRatios ?? undefined,
+        };
 
         this.resizeColumns(initialValues, totalWidth, source, finished);
     }
 
-    public resizeColumns(initialValues: ColumnSizeAndRatios, totalWidth: number, source: ColumnEventType, finished: boolean = true): void {
+    public resizeColumns(
+        initialValues: ColumnSizeAndRatios,
+        totalWidth: number,
+        source: ColumnEventType,
+        finished: boolean = true
+    ): void {
         const {
-            columnsToResize, resizeStartWidth, resizeRatios,
-            groupAfterColumns, groupAfterStartWidth, groupAfterRatios
+            columnsToResize,
+            resizeStartWidth,
+            resizeRatios,
+            groupAfterColumns,
+            groupAfterStartWidth,
+            groupAfterRatios,
         } = initialValues;
 
         const resizeSets: ColumnResizeSet[] = [];
@@ -197,7 +213,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         resizeSets.push({
             columns: columnsToResize,
             ratios: resizeRatios,
-            width: totalWidth
+            width: totalWidth,
         });
 
         if (groupAfterColumns) {
@@ -205,14 +221,14 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             resizeSets.push({
                 columns: groupAfterColumns,
                 ratios: groupAfterRatios!,
-                width: groupAfterStartWidth! - diff
+                width: groupAfterStartWidth! - diff,
             });
         }
 
         this.columnSizeService.resizeColumnSets({
             resizeSets,
             finished,
-            source: source
+            source: source,
         });
 
         if (finished) {
@@ -226,17 +242,15 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
 
     private getColumnsToResize(): Column[] {
         const leafCols = this.columnGroup.getDisplayedLeafColumns();
-        return leafCols.filter(col => col.isResizable());
+        return leafCols.filter((col) => col.isResizable());
     }
 
     private getInitialSizeOfColumns(columns: Column[]): number {
-        return columns.reduce(
-            (totalWidth: number, column: Column) => totalWidth + column.getActualWidth(), 0
-        );
+        return columns.reduce((totalWidth: number, column: Column) => totalWidth + column.getActualWidth(), 0);
     }
 
     private getSizeRatiosOfColumns(columns: Column[], initialSizeOfColumns: number): number[] {
-        return columns.map(column => column.getActualWidth() / initialSizeOfColumns);
+        return columns.map((column) => column.getActualWidth() / initialSizeOfColumns);
     }
 
     // optionally inverts the drag, depending on pinned and RTL

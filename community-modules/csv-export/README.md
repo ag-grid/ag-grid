@@ -1,4 +1,4 @@
-![AG Grid HTML5 Grid trusted by the community, built for enterprise](./github-banner.png "AG Grid")
+![AG Grid HTML5 Grid trusted by the community, built for enterprise](./github-banner.png 'AG Grid')
 
 [![CDNJS](https://img.shields.io/cdnjs/v/ag-grid.svg)](https://cdnjs.com/libraries/ag-grid)
 [![npm](https://img.shields.io/npm/dm/@ag-grid-community/csv-export.svg)](https://www.npmjs.com/package/@ag-grid-community/csv-export)
@@ -12,7 +12,7 @@ Check out the [developer documentation](https://www.ag-grid.com/documentation/?u
 
 ## CSV Export Module
 
-This package is the feature module for the [CSV Export](https://ag-grid.com/javascript-data-grid/csv-export/) feature to be used when working with AG Grid module setup in order to minimise your bundle size.  
+This package is the feature module for the [CSV Export](https://ag-grid.com/javascript-data-grid/csv-export/) feature to be used when working with AG Grid module setup in order to minimise your bundle size.
 
 For more details on working with AG Grid modules visit our [modules documentation](https://ag-grid.com/javascript-data-grid/modules/).
 

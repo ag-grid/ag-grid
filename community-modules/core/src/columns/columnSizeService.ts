@@ -1,22 +1,21 @@
-import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { CtrlsService } from "../ctrlsService";
-import { Column } from "../entities/column";
-import { ColumnEventType } from "../events";
-import { _removeFromArray, _removeFromUnorderedArray } from "../utils/array";
-import { _exists } from "../utils/generic";
-import { ColumnEventDispatcher } from "./columnEventDispatcher";
-import { ColKey, ColumnModel } from "./columnModel";
-import { getWidthOfColsInList } from "./columnUtils";
-import { ColumnViewportService } from "./columnViewportService";
-import { VisibleColsService } from "./visibleColsService";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, PostConstruct } from '../context/context';
+import { CtrlsService } from '../ctrlsService';
+import { Column } from '../entities/column';
+import { ColumnEventType } from '../events';
+import { _removeFromArray, _removeFromUnorderedArray } from '../utils/array';
+import { _exists } from '../utils/generic';
+import { ColumnEventDispatcher } from './columnEventDispatcher';
+import { ColKey, ColumnModel } from './columnModel';
+import { getWidthOfColsInList } from './columnUtils';
+import { ColumnViewportService } from './columnViewportService';
+import { VisibleColsService } from './visibleColsService';
 
 export interface ColumnResizeSet {
     columns: Column[];
     ratios: number[];
     width: number;
 }
-
 
 export interface IColumnLimit {
     /** Selector for the column to which these dimension limits will apply */
@@ -38,7 +37,6 @@ export interface ISizeColumnsToFitParams {
 
 @Bean('columnSizeService')
 export class ColumnSizeService extends BeanStub {
-
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnViewportService') private readonly columnViewportService: ColumnViewportService;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
@@ -49,7 +47,7 @@ export class ColumnSizeService extends BeanStub {
 
     public setColumnWidths(
         columnWidths: {
-            key: ColKey, // @key - the column who's size we want to change
+            key: ColKey; // @key - the column who's size we want to change
             newWidth: number; // @newWidth - width in pixels
         }[],
         shiftKey: boolean, // @takeFromAdjacent - if user has 'shift' pressed, then pixels are taken from adjacent column
@@ -58,15 +56,17 @@ export class ColumnSizeService extends BeanStub {
     ): void {
         const sets: ColumnResizeSet[] = [];
 
-        columnWidths.forEach(columnWidth => {
+        columnWidths.forEach((columnWidth) => {
             const col = this.columnModel.getColDefCol(columnWidth.key) || this.columnModel.getCol(columnWidth.key);
 
-            if (!col) { return; }
+            if (!col) {
+                return;
+            }
 
             sets.push({
                 width: columnWidth.newWidth,
                 ratios: [1],
-                columns: [col]
+                columns: [col],
             });
 
             // if user wants to do shift resize by default, then we invert the shift operation
@@ -78,7 +78,9 @@ export class ColumnSizeService extends BeanStub {
 
             if (shiftKey) {
                 const otherCol = this.visibleColsService.getColAfter(col);
-                if (!otherCol) { return; }
+                if (!otherCol) {
+                    return;
+                }
 
                 const widthDiff = col.getActualWidth() - columnWidth.newWidth;
                 const otherColWidth = otherCol.getActualWidth() + widthDiff;
@@ -86,17 +88,19 @@ export class ColumnSizeService extends BeanStub {
                 sets.push({
                     width: otherColWidth,
                     ratios: [1],
-                    columns: [otherCol]
+                    columns: [otherCol],
                 });
             }
         });
 
-        if (sets.length === 0) { return; }
+        if (sets.length === 0) {
+            return;
+        }
 
         this.resizeColumnSets({
             resizeSets: sets,
             finished,
-            source
+            source,
         });
     }
 
@@ -105,12 +109,13 @@ export class ColumnSizeService extends BeanStub {
     // then both the current group (grows), and the adjacent group (shrinks), will get resized,
     // so that's two sets for this method.
     public resizeColumnSets(params: {
-        resizeSets: ColumnResizeSet[],
-        finished: boolean,
-        source: ColumnEventType
+        resizeSets: ColumnResizeSet[];
+        finished: boolean;
+        source: ColumnEventType;
     }): void {
         const { resizeSets, finished, source } = params;
-        const passMinMaxCheck = !resizeSets || resizeSets.every(columnResizeSet => this.checkMinAndMaxWidthsForSet(columnResizeSet));
+        const passMinMaxCheck =
+            !resizeSets || resizeSets.every((columnResizeSet) => this.checkMinAndMaxWidthsForSet(columnResizeSet));
 
         if (!passMinMaxCheck) {
             // even though we are not going to resize beyond min/max size, we still need to dispatch event when finished
@@ -125,15 +130,15 @@ export class ColumnSizeService extends BeanStub {
         const changedCols: Column[] = [];
         const allResizedCols: Column[] = [];
 
-        resizeSets.forEach(set => {
+        resizeSets.forEach((set) => {
             const { width, columns, ratios } = set;
 
             // keep track of pixels used, and last column gets the remaining,
             // to cater for rounding errors, and min width adjustments
-            const newWidths: { [colId: string]: number; } = {};
-            const finishedCols: { [colId: string]: boolean; } = {};
+            const newWidths: { [colId: string]: number } = {};
+            const finishedCols: { [colId: string]: boolean } = {};
 
-            columns.forEach(col => allResizedCols.push(col));
+            columns.forEach((col) => allResizedCols.push(col));
 
             // the loop below goes through each col. if a col exceeds it's min/max width,
             // it then gets set to its min/max width and the column is removed marked as 'finished'
@@ -180,7 +185,7 @@ export class ColumnSizeService extends BeanStub {
                 const ratioScale = 1 / subsetRatioTotal;
 
                 subsetCols.forEach((col: Column, index: number) => {
-                    const lastCol = index === (subsetCols.length - 1);
+                    const lastCol = index === subsetCols.length - 1;
                     let colNewWidth: number;
 
                     if (lastCol) {
@@ -207,7 +212,7 @@ export class ColumnSizeService extends BeanStub {
                 });
             }
 
-            columns.forEach(col => {
+            columns.forEach((col) => {
                 const newWidth = newWidths[col.getId()];
                 const actualWidth = col.getActualWidth();
 
@@ -241,7 +246,7 @@ export class ColumnSizeService extends BeanStub {
             this.eventDispatcher.columnResized(colsForEvent, finished, source, flexedCols);
         }
     }
-    
+
     private checkMinAndMaxWidthsForSet(columnResizeSet: ColumnResizeSet): boolean {
         const { columns, width } = columnResizeSet;
 
@@ -251,7 +256,7 @@ export class ColumnSizeService extends BeanStub {
         let maxWidthAccumulated = 0;
         let maxWidthActive = true;
 
-        columns.forEach(col => {
+        columns.forEach((col) => {
             const minWidth = col.getMinWidth();
             minWidthAccumulated += minWidth || 0;
 
@@ -266,19 +271,30 @@ export class ColumnSizeService extends BeanStub {
         });
 
         const minWidthPasses = width >= minWidthAccumulated;
-        const maxWidthPasses = !maxWidthActive || (width <= maxWidthAccumulated);
+        const maxWidthPasses = !maxWidthActive || width <= maxWidthAccumulated;
 
         return minWidthPasses && maxWidthPasses;
     }
 
-    public refreshFlexedColumns(params: { resizingCols?: Column[], skipSetLeft?: boolean, viewportWidth?: number, source?: ColumnEventType, fireResizedEvent?: boolean, updateBodyWidths?: boolean; } = {}): Column[] {
+    public refreshFlexedColumns(
+        params: {
+            resizingCols?: Column[];
+            skipSetLeft?: boolean;
+            viewportWidth?: number;
+            source?: ColumnEventType;
+            fireResizedEvent?: boolean;
+            updateBodyWidths?: boolean;
+        } = {}
+    ): Column[] {
         const source = params.source ? params.source : 'flex';
 
         if (params.viewportWidth != null) {
             this.flexViewportWidth = params.viewportWidth;
         }
 
-        if (!this.flexViewportWidth) { return []; }
+        if (!this.flexViewportWidth) {
+            return [];
+        }
 
         // If the grid has left-over space, divide it between flexing columns in proportion to their flex value.
         // A "flexing column" is one that has a 'flex' value set and is not currently being constrained by its
@@ -315,19 +331,19 @@ export class ColumnSizeService extends BeanStub {
             } else {
                 knownColumnsWidth += displayedCenterCols[i].getActualWidth();
             }
-        };
+        }
 
         if (!flexingColumns.length) {
             return [];
         }
-        
+
         let changedColumns: Column[] = [];
 
         // this is for performance to prevent trying to flex when unnecessary
         if (knownColumnsWidth + minimumFlexedWidth > this.flexViewportWidth) {
             // known columns and the minimum width of all the flex cols are too wide for viewport
             // so don't flex
-            flexingColumns.forEach(col => col.setActualWidth(col.getMinWidth() ?? 0, source));
+            flexingColumns.forEach((col) => col.setActualWidth(col.getMinWidth() ?? 0, source));
 
             // No columns should flex, but all have been changed. Swap arrays so events fire properly.
             // Expensive logic won't execute as flex columns is empty.
@@ -396,16 +412,16 @@ export class ColumnSizeService extends BeanStub {
     // called from api
     public sizeColumnsToFit(
         gridWidth: any,
-        source: ColumnEventType = "sizeColumnsToFit",
+        source: ColumnEventType = 'sizeColumnsToFit',
         silent?: boolean,
-        params?: ISizeColumnsToFitParams,
+        params?: ISizeColumnsToFitParams
     ): void {
         if (this.columnModel.isShouldQueueResizeOperations()) {
             this.columnModel.pushResizeOperation(() => this.sizeColumnsToFit(gridWidth, source, silent, params));
             return;
         }
 
-        const limitsMap: { [colId: string]: Omit<IColumnLimit, 'key'>} = {};
+        const limitsMap: { [colId: string]: Omit<IColumnLimit, 'key'> } = {};
         if (params) {
             params?.columnLimits?.forEach(({ key, ...dimensions }) => {
                 limitsMap[typeof key === 'string' ? key : key.getColId()] = dimensions;
@@ -416,12 +432,14 @@ export class ColumnSizeService extends BeanStub {
         const allDisplayedColumns = this.visibleColsService.getAllCols();
 
         const doColumnsAlreadyFit = gridWidth === getWidthOfColsInList(allDisplayedColumns);
-        if (gridWidth <= 0 || !allDisplayedColumns.length || doColumnsAlreadyFit) { return; }
+        if (gridWidth <= 0 || !allDisplayedColumns.length || doColumnsAlreadyFit) {
+            return;
+        }
 
         const colsToSpread: Column[] = [];
         const colsToNotSpread: Column[] = [];
 
-        allDisplayedColumns.forEach(column => {
+        allDisplayedColumns.forEach((column) => {
             if (column.getColDef().suppressSizeToFit === true) {
                 colsToNotSpread.push(column);
             } else {
@@ -446,12 +464,12 @@ export class ColumnSizeService extends BeanStub {
         //
         // NOTE: the process below will assign values to `this.actualWidth` of each column without firing events
         // for this reason we need to manually dispatch resize events after the resize has been done for each column.
-        colsToSpread.forEach(column => {
+        colsToSpread.forEach((column) => {
             column.resetActualWidth(source);
 
             const widthOverride = limitsMap?.[column.getId()];
-            const minOverride = (widthOverride?.minWidth ?? params?.defaultMinWidth);
-            const maxOverride = (widthOverride?.maxWidth ?? params?.defaultMaxWidth);
+            const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth;
+            const maxOverride = widthOverride?.maxWidth ?? params?.defaultMaxWidth;
 
             const colWidth = column.getActualWidth();
             if (typeof minOverride === 'number' && colWidth < minOverride) {
@@ -484,12 +502,18 @@ export class ColumnSizeService extends BeanStub {
                     const column = colsToSpread[i];
 
                     const widthOverride = limitsMap?.[column.getId()];
-                    const minOverride = (widthOverride?.minWidth ?? params?.defaultMinWidth);
-                    const maxOverride = (widthOverride?.maxWidth ?? params?.defaultMaxWidth);
+                    const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth;
+                    const maxOverride = widthOverride?.maxWidth ?? params?.defaultMaxWidth;
                     const colMinWidth = column.getMinWidth() ?? 0;
                     const colMaxWidth = column.getMaxWidth() ?? Number.MAX_VALUE;
-                    const minWidth = typeof minOverride === 'number' && minOverride > colMinWidth ? minOverride : column.getMinWidth();
-                    const maxWidth = typeof maxOverride === 'number' && maxOverride < colMaxWidth ? maxOverride : column.getMaxWidth();
+                    const minWidth =
+                        typeof minOverride === 'number' && minOverride > colMinWidth
+                            ? minOverride
+                            : column.getMinWidth();
+                    const maxWidth =
+                        typeof maxOverride === 'number' && maxOverride < colMaxWidth
+                            ? maxOverride
+                            : column.getMaxWidth();
                     let newWidth = Math.round(column.getActualWidth() * scale);
 
                     if (_exists(minWidth) && newWidth < minWidth) {
@@ -500,7 +524,8 @@ export class ColumnSizeService extends BeanStub {
                         newWidth = maxWidth;
                         moveToNotSpread(column);
                         finishedResizing = false;
-                    } else if (i === 0) { // if this is the last column
+                    } else if (i === 0) {
+                        // if this is the last column
                         newWidth = pixelsForLastCol;
                     }
 
@@ -511,21 +536,25 @@ export class ColumnSizeService extends BeanStub {
         }
 
         // see notes above
-        colsToDispatchEventFor.forEach(col => {
+        colsToDispatchEventFor.forEach((col) => {
             col.fireColumnWidthChangedEvent(source);
         });
 
         this.visibleColsService.setLeftValues(source);
         this.visibleColsService.updateBodyWidths();
 
-        if (silent) { return; }
+        if (silent) {
+            return;
+        }
 
         this.eventDispatcher.columnResized(colsToDispatchEventFor, true, source);
     }
 
     public applyAutosizeStrategy(): void {
         const autoSizeStrategy = this.gos.get('autoSizeStrategy');
-        if (!autoSizeStrategy) { return; }
+        if (!autoSizeStrategy) {
+            return;
+        }
 
         const { type } = autoSizeStrategy;
         // ensure things like aligned grids have linked first
@@ -535,12 +564,12 @@ export class ColumnSizeService extends BeanStub {
                 const columnLimits = propColumnLimits?.map(({ colId: key, minWidth, maxWidth }) => ({
                     key,
                     minWidth,
-                    maxWidth
+                    maxWidth,
                 }));
                 this.ctrlsService.getGridBodyCtrl().sizeColumnsToFit({
                     defaultMinWidth,
                     defaultMaxWidth,
-                    columnLimits
+                    columnLimits,
                 });
             } else if (type === 'fitProvidedWidth') {
                 this.sizeColumnsToFit(autoSizeStrategy.width, 'sizeColumnsToFit');

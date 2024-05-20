@@ -1,13 +1,13 @@
-import { BeanStub } from "../context/beanStub";
-import { Column } from "../entities/column";
-import { ColumnGroup } from "../entities/columnGroup";
-import { RowNode } from "../entities/rowNode";
-import { TooltipStateManager, TooltipParentComp } from "./tooltipStateManager";
-import { ITooltipParams, TooltipLocation } from "../rendering/tooltipComponent";
-import { ColDef, ColGroupDef } from "../entities/colDef";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { Beans } from "../rendering/beans";
-import { Autowired, PostConstruct } from "../context/context";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, PostConstruct } from '../context/context';
+import { ColDef, ColGroupDef } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { ColumnGroup } from '../entities/columnGroup';
+import { RowNode } from '../entities/rowNode';
+import { WithoutGridCommon } from '../interfaces/iCommon';
+import { Beans } from '../rendering/beans';
+import { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
+import { TooltipParentComp, TooltipStateManager } from './tooltipStateManager';
 
 export interface ITooltipFeatureCtrl {
     getTooltipValue(): any;
@@ -27,7 +27,6 @@ export interface ITooltipFeatureCtrl {
 }
 
 export class TooltipFeature extends BeanStub {
-
     private tooltip: any;
 
     private tooltipManager: TooltipStateManager | undefined;
@@ -35,7 +34,10 @@ export class TooltipFeature extends BeanStub {
 
     @Autowired('beans') private beans: Beans;
 
-    constructor(private readonly ctrl: ITooltipFeatureCtrl, beans?: Beans) {
+    constructor(
+        private readonly ctrl: ITooltipFeatureCtrl,
+        beans?: Beans
+    ) {
         super();
 
         if (beans) {
@@ -48,12 +50,13 @@ export class TooltipFeature extends BeanStub {
         this.refreshToolTip();
     }
 
-
     private setBrowserTooltip(tooltip: string | null) {
         const name = 'title';
         const eGui = this.ctrl.getGui();
 
-        if (!eGui) { return; }
+        if (!eGui) {
+            return;
+        }
 
         if (tooltip != null && tooltip != '') {
             eGui.setAttribute(name, tooltip);
@@ -67,19 +70,24 @@ export class TooltipFeature extends BeanStub {
     }
 
     private createTooltipFeatureIfNeeded(): void {
-        if (this.tooltipManager != null) { return; }
+        if (this.tooltipManager != null) {
+            return;
+        }
 
         const parent: TooltipParentComp = {
             getTooltipParams: () => this.getTooltipParams(),
-            getGui: () => this.ctrl.getGui()
+            getGui: () => this.ctrl.getGui(),
         };
 
-        this.tooltipManager = this.createBean(new TooltipStateManager(
-            parent,
-            this.ctrl.getTooltipShowDelayOverride?.(),
-            this.ctrl.getTooltipHideDelayOverride?.(),
-            this.ctrl.shouldDisplayTooltip
-        ), this.beans.context);
+        this.tooltipManager = this.createBean(
+            new TooltipStateManager(
+                parent,
+                this.ctrl.getTooltipShowDelayOverride?.(),
+                this.ctrl.getTooltipHideDelayOverride?.(),
+                this.ctrl.shouldDisplayTooltip
+            ),
+            this.beans.context
+        );
     }
 
     public refreshToolTip() {
@@ -112,9 +120,8 @@ export class TooltipFeature extends BeanStub {
             data: rowNode ? rowNode.data : undefined,
             value: this.getTooltipText(),
             valueFormatted: ctrl.getValueFormatted ? ctrl.getValueFormatted() : undefined,
-            hideTooltipCallback: () => this.tooltipManager?.hideTooltip(true)
+            hideTooltipCallback: () => this.tooltipManager?.hideTooltip(true),
         };
-
     }
 
     private getTooltipText() {

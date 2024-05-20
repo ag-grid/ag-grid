@@ -1,9 +1,9 @@
-import { RefSelector } from "./componentAnnotations";
-import { AgInputRange } from "./agInputRange";
-import { AgAbstractLabel, LabelAlignment, AgLabelParams } from "./agAbstractLabel";
-import { AgInputNumberField } from "./agInputNumberField";
-import { PostConstruct } from "../context/context";
-import { Events } from "../eventKeys";
+import { PostConstruct } from '../context/context';
+import { Events } from '../eventKeys';
+import { AgAbstractLabel, AgLabelParams, LabelAlignment } from './agAbstractLabel';
+import { AgInputNumberField } from './agInputNumberField';
+import { AgInputRange } from './agInputRange';
+import { RefSelector } from './componentAnnotations';
 
 export interface AgSliderParams extends AgLabelParams {
     minValue?: number;
@@ -15,8 +15,7 @@ export interface AgSliderParams extends AgLabelParams {
 }
 
 export class AgSlider extends AgAbstractLabel<AgSliderParams> {
-    private static TEMPLATE = /* html */
-        `<div class="ag-slider">
+    private static TEMPLATE /* html */ = `<div class="ag-slider">
             <label ref="eLabel"></label>
             <div class="ag-wrapper ag-slider-wrapper">
                 <ag-input-range ref="eSlider"></ag-input-range>

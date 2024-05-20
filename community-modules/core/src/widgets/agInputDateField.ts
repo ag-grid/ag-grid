@@ -1,7 +1,7 @@
-import { AgInputTextField, AgInputTextFieldParams } from "./agInputTextField";
-import { _addOrRemoveAttribute } from "../utils/dom";
-import { _parseDateTimeFromString, _serialiseDate } from "../utils/date";
-import { _isBrowserSafari } from "../utils/browser";
+import { _isBrowserSafari } from '../utils/browser';
+import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
+import { _addOrRemoveAttribute } from '../utils/dom';
+import { AgInputTextField, AgInputTextFieldParams } from './agInputTextField';
 
 export class AgInputDateField extends AgInputTextField {
     private min?: string;
@@ -21,7 +21,9 @@ export class AgInputDateField extends AgInputTextField {
         // unless using safari as there is no clear button and focus does not work properly
         const usingSafari = _isBrowserSafari();
         this.addManagedListener(this.eInput, 'mousedown', () => {
-            if (this.isDisabled() || usingSafari) { return; }
+            if (this.isDisabled() || usingSafari) {
+                return;
+            }
             this.eInput.focus();
         });
 

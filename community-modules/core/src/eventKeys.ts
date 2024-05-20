@@ -1,5 +1,4 @@
 export class Events {
-
     /** Everything has changed with the columns. Either complete new set of columns set, or user called applyColumnState() */
     public static EVENT_COLUMN_EVERYTHING_CHANGED: 'columnEverythingChanged' = 'columnEverythingChanged';
 
@@ -158,7 +157,8 @@ export class Events {
     public static EVENT_FILTER_MODIFIED: 'filterModified' = 'filterModified';
     public static EVENT_FILTER_OPENED: 'filterOpened' = 'filterOpened';
 
-    public static EVENT_ADVANCED_FILTER_BUILDER_VISIBLE_CHANGED: 'advancedFilterBuilderVisibleChanged' = 'advancedFilterBuilderVisibleChanged';
+    public static EVENT_ADVANCED_FILTER_BUILDER_VISIBLE_CHANGED: 'advancedFilterBuilderVisibleChanged' =
+        'advancedFilterBuilderVisibleChanged';
 
     public static EVENT_SORT_CHANGED: 'sortChanged' = 'sortChanged';
 
@@ -230,11 +230,13 @@ export class Events {
     // not documented, either experimental, or we just don't want users using an depending on them
     public static EVENT_BODY_HEIGHT_CHANGED: 'bodyHeightChanged' = 'bodyHeightChanged';
     public static EVENT_COLUMN_CONTAINER_WIDTH_CHANGED: 'columnContainerWidthChanged' = 'columnContainerWidthChanged';
-    public static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED: 'displayedColumnsWidthChanged' = 'displayedColumnsWidthChanged';
+    public static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED: 'displayedColumnsWidthChanged' =
+        'displayedColumnsWidthChanged';
     public static EVENT_SCROLL_VISIBILITY_CHANGED: 'scrollVisibilityChanged' = 'scrollVisibilityChanged';
     public static EVENT_COLUMN_HOVER_CHANGED: 'columnHoverChanged' = 'columnHoverChanged';
     public static EVENT_FLASH_CELLS: 'flashCells' = 'flashCells';
-    public static EVENT_PAGINATION_PIXEL_OFFSET_CHANGED: 'paginationPixelOffsetChanged' = 'paginationPixelOffsetChanged';
+    public static EVENT_PAGINATION_PIXEL_OFFSET_CHANGED: 'paginationPixelOffsetChanged' =
+        'paginationPixelOffsetChanged';
     public static EVENT_DISPLAYED_ROWS_CHANGED: 'displayedRowsChanged' = 'displayedRowsChanged';
 
     public static EVENT_LEFT_PINNED_WIDTH_CHANGED: 'leftPinnedWidthChanged' = 'leftPinnedWidthChanged';
@@ -260,7 +262,8 @@ export class Events {
     public static EVENT_ROW_COUNT_READY: 'rowCountReady' = 'rowCountReady';
 
     // Advanced Filters
-    public static EVENT_ADVANCED_FILTER_ENABLED_CHANGED: 'advancedFilterEnabledChanged' = 'advancedFilterEnabledChanged';
+    public static EVENT_ADVANCED_FILTER_ENABLED_CHANGED: 'advancedFilterEnabledChanged' =
+        'advancedFilterEnabledChanged';
     public static EVENT_DATA_TYPES_INFERRED: 'dataTypesInferred' = 'dataTypesInferred';
 
     // Widgets

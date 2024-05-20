@@ -1,39 +1,39 @@
 import {
     Autowired,
     CellCtrl,
-    RowRenderer,
-    DragService,
-    Component,
-    MouseEventService,
-    ColumnModel,
     CellNavigationService,
-    CellRange,
-    RowPosition,
     CellPosition,
-    PostConstruct,
-    ISelectionHandle,
-    RowPositionUtils,
-    SelectionHandleType,
-    NavigationService,
-    CtrlsService,
     CellPositionUtils,
+    CellRange,
+    ColumnModel,
+    Component,
+    CtrlsService,
+    DragService,
+    ISelectionHandle,
+    MouseEventService,
+    NavigationService,
+    PostConstruct,
+    RowPosition,
+    RowPositionUtils,
+    RowRenderer,
+    SelectionHandleType,
+    VisibleColsService,
+    _isVisible,
     _last,
     _setDisplayed,
-    _isVisible,
-    VisibleColsService
-} from "@ag-grid-community/core";
-import { RangeService } from "./rangeService";
+} from '@ag-grid-community/core';
+
+import { RangeService } from './rangeService';
 
 export abstract class AbstractSelectionHandle extends Component implements ISelectionHandle {
-
-    @Autowired("rowRenderer") protected rowRenderer: RowRenderer;
-    @Autowired("dragService") protected dragService: DragService;
-    @Autowired("rangeService") protected rangeService: RangeService;
-    @Autowired("mouseEventService") protected mouseEventService: MouseEventService;
-    @Autowired("columnModel") protected columnModel: ColumnModel;
+    @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
+    @Autowired('dragService') protected dragService: DragService;
+    @Autowired('rangeService') protected rangeService: RangeService;
+    @Autowired('mouseEventService') protected mouseEventService: MouseEventService;
+    @Autowired('columnModel') protected columnModel: ColumnModel;
     @Autowired('visibleColsService') protected visibleColsService: VisibleColsService;
-    @Autowired("cellNavigationService") protected cellNavigationService: CellNavigationService;
-    @Autowired("navigationService") protected navigationService: NavigationService;
+    @Autowired('cellNavigationService') protected cellNavigationService: CellNavigationService;
+    @Autowired('navigationService') protected navigationService: NavigationService;
     @Autowired('rowPositionUtils') protected rowPositionUtils: RowPositionUtils;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('ctrlsService') protected ctrlsService: CtrlsService;
@@ -80,14 +80,10 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
                 if (this.shouldDestroyOnEndDragging) {
                     this.destroy();
                 }
-            }
+            },
         });
 
-        this.addManagedListener(
-            this.getGui(),
-            'mousedown',
-            this.preventRangeExtension.bind(this)
-        );
+        this.addManagedListener(this.getGui(), 'mousedown', this.preventRangeExtension.bind(this));
     }
 
     protected abstract onDrag(e: MouseEvent | Touch): void;
@@ -154,7 +150,9 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     protected updateValuesOnMove(e: MouseEvent) {
         const cell = this.mouseEventService.getCellPositionForEvent(e);
 
-        if (!cell || (this.lastCellHovered && this.cellPositionUtils.equals(cell, this.lastCellHovered))) { return; }
+        if (!cell || (this.lastCellHovered && this.cellPositionUtils.equals(cell, this.lastCellHovered))) {
+            return;
+        }
 
         this.lastCellHovered = cell;
         this.changedCalculatedValues = true;

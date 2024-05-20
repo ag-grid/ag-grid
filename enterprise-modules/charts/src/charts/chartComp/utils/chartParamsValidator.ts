@@ -8,9 +8,10 @@ import {
     UpdatePivotChartParams,
     UpdateRangeChartParams,
     _warnOnce,
-} from "@ag-grid-community/core";
-import { _ModuleSupport } from "ag-charts-community";
-import { CommonCreateChartParams } from "../../chartService";
+} from '@ag-grid-community/core';
+import { _ModuleSupport } from 'ag-charts-community';
+
+import { CommonCreateChartParams } from '../../chartService';
 import { getCanonicalChartType, getSeriesTypeIfExists, isComboChart, isEnterpriseChartType } from './seriesTypeMapper';
 
 const validateIfDefined = <I, O = never>(validationFn: (value: NonNullable<I>) => boolean | O) => {
@@ -23,13 +24,15 @@ const validateIfDefined = <I, O = never>(validationFn: (value: NonNullable<I>) =
 const isString = (value: any): boolean => typeof value === 'string';
 const isBoolean = (value: any): boolean => typeof value === 'boolean';
 const isValidSeriesChartType = (value: any): boolean => typeof value === 'object';
-const createWarnMessage = (property: string, expectedType: string): ((value: any) => string) =>
-    (value: any) => `AG Grid - unable to update chart as invalid params supplied:  \`${property}: ${value}\`, expected ${expectedType}.`;
+const createWarnMessage =
+    (property: string, expectedType: string): ((value: any) => string) =>
+    (value: any) =>
+        `AG Grid - unable to update chart as invalid params supplied:  \`${property}: ${value}\`, expected ${expectedType}.`;
 
 const createEnterpriseMessage = (feature: string) => {
     const url = 'https://www.ag-grid.com/javascript-data-grid/integrated-charts-installation/';
     return `${feature} is not supported in AG Charts Community (either 'ag-grid-charts-enterprise' or '@ag-grid-enterprise/charts-enterprise' hasn't been loaded). See ${url} for more details.`;
-}
+};
 
 interface ValidationFunction<T, K extends keyof T = keyof T, V = T[K]> {
     property: K;
@@ -39,13 +42,18 @@ interface ValidationFunction<T, K extends keyof T = keyof T, V = T[K]> {
 }
 
 export class ChartParamsValidator {
-    private static legacyChartTypes: ChartType[] = [
-        'doughnut',
-    ];
+    private static legacyChartTypes: ChartType[] = ['doughnut'];
 
-    private static baseUpdateChartParams = ['type', 'chartId', 'chartType', 'chartThemeName', 'chartThemeOverrides', 'unlinkChart'] as const;
+    private static baseUpdateChartParams = [
+        'type',
+        'chartId',
+        'chartType',
+        'chartThemeName',
+        'chartThemeOverrides',
+        'unlinkChart',
+    ] as const;
 
-    private static isEnterprise(): boolean { 
+    private static isEnterprise(): boolean {
         return _ModuleSupport.enterpriseModule.isEnterprise;
     }
 
@@ -57,13 +65,16 @@ export class ChartParamsValidator {
         return ChartParamsValidator.legacyChartTypes.includes(value as ChartType);
     }
 
-    private static validateChartType = validateIfDefined<UpdateChartParams['chartType'], Exclude<ChartType, 'doughnut'>>((chartType) => {
+    private static validateChartType = validateIfDefined<
+        UpdateChartParams['chartType'],
+        Exclude<ChartType, 'doughnut'>
+    >((chartType) => {
         if (this.isValidChartType(chartType)) return true;
         if (this.isLegacyChartType(chartType)) {
-            const renamedChartType = getCanonicalChartType(chartType)
+            const renamedChartType = getCanonicalChartType(chartType);
             _warnOnce(`The chart type '${chartType}' has been deprecated. Please use '${renamedChartType}' instead.`);
             return renamedChartType;
-        };
+        }
         return false;
     });
 
@@ -84,38 +95,40 @@ export class ChartParamsValidator {
 
     private static enterpriseChartTypeValidation: ValidationFunction<any> = {
         property: 'chartType',
-        validationFn: validateIfDefined<ChartType>(chartType => ChartParamsValidator.isEnterprise() || !chartType || !isEnterpriseChartType(chartType)),
-        warnMessage: chartType => createEnterpriseMessage(`The '${chartType}' chart type`)
-    }
+        validationFn: validateIfDefined<ChartType>(
+            (chartType) => ChartParamsValidator.isEnterprise() || !chartType || !isEnterpriseChartType(chartType)
+        ),
+        warnMessage: (chartType) => createEnterpriseMessage(`The '${chartType}' chart type`),
+    };
 
     private static switchCategorySeriesValidation: ValidationFunction<any> = {
         property: 'switchCategorySeries',
-        validationFn: validateIfDefined<boolean, undefined>(switchCategorySeries => {
+        validationFn: validateIfDefined<boolean, undefined>((switchCategorySeries) => {
             if (!switchCategorySeries || ChartParamsValidator.isEnterprise()) {
                 return true;
             }
             return undefined;
         }),
         warnMessage: () => createEnterpriseMessage(`'switchCategorySeries' has been ignored as it`),
-        warnIfFixed: true
-    }
+        warnIfFixed: true,
+    };
 
     private static commonUpdateValidations: ValidationFunction<any>[] = [
         { property: 'chartId', validationFn: isString, warnMessage: createWarnMessage('chartId', 'string') },
         {
             property: 'chartType',
             validationFn: ChartParamsValidator.validateChartType,
-            warnMessage: createWarnMessage('chartType', 'ChartType')
+            warnMessage: createWarnMessage('chartType', 'ChartType'),
         },
         {
             property: 'chartThemeName',
             validationFn: isString,
-            warnMessage: createWarnMessage('chartThemeName', 'string')
+            warnMessage: createWarnMessage('chartThemeName', 'string'),
         },
         {
             property: 'chartThemeOverrides',
             validationFn: ChartParamsValidator.validateAgChartThemeOverrides,
-            warnMessage: createWarnMessage('chartThemeOverrides', 'AgChartThemeOverrides')
+            warnMessage: createWarnMessage('chartThemeOverrides', 'AgChartThemeOverrides'),
         },
         { property: 'unlinkChart', validationFn: isBoolean, warnMessage: createWarnMessage('unlinkChart', 'boolean') },
     ];
@@ -124,19 +137,19 @@ export class ChartParamsValidator {
         {
             property: 'cellRange',
             validationFn: ChartParamsValidator.validateChartParamsCellRange,
-            warnMessage: createWarnMessage('cellRange', 'ChartParamsCellRange')
+            warnMessage: createWarnMessage('cellRange', 'ChartParamsCellRange'),
         },
         {
             property: 'suppressChartRanges',
             validationFn: isBoolean,
-            warnMessage: createWarnMessage('suppressChartRanges', 'boolean')
+            warnMessage: createWarnMessage('suppressChartRanges', 'boolean'),
         },
         {
             property: 'aggFunc',
             validationFn: ChartParamsValidator.validateAggFunc,
-            warnMessage: createWarnMessage('aggFunc', 'string or IAggFunc')
+            warnMessage: createWarnMessage('aggFunc', 'string or IAggFunc'),
         },
-        ChartParamsValidator.switchCategorySeriesValidation
+        ChartParamsValidator.switchCategorySeriesValidation,
     ];
 
     public static validateUpdateParams(params: UpdateChartParams): boolean | UpdateChartParams {
@@ -147,9 +160,13 @@ export class ChartParamsValidator {
             case 'pivotChartUpdate':
                 return ChartParamsValidator.validateUpdatePivotChartParams(params as UpdatePivotChartParams);
             case 'crossFilterChartUpdate':
-                return ChartParamsValidator.validateUpdateCrossFilterChartParams(params as UpdateCrossFilterChartParams);
+                return ChartParamsValidator.validateUpdateCrossFilterChartParams(
+                    params as UpdateCrossFilterChartParams
+                );
             default:
-                console.warn(`AG Grid - Invalid value supplied for 'type': ${params.type}. It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.`);
+                console.warn(
+                    `AG Grid - Invalid value supplied for 'type': ${params.type}. It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.`
+                );
                 return false;
         }
     }
@@ -168,32 +185,61 @@ export class ChartParamsValidator {
             ...ChartParamsValidator.cellRangeValidations,
             {
                 property: 'seriesChartTypes',
-                validationFn: (value: any) => value === undefined || (Array.isArray(value) && value.every(isValidSeriesChartType)),
+                validationFn: (value: any) =>
+                    value === undefined || (Array.isArray(value) && value.every(isValidSeriesChartType)),
                 warnMessage: createWarnMessage('seriesChartTypes', 'Array of SeriesChartType'),
             },
         ];
 
-        return ChartParamsValidator.validateProperties(params, validations, [...ChartParamsValidator.baseUpdateChartParams, 'cellRange', 'suppressChartRanges', 'switchCategorySeries', 'aggFunc', 'seriesChartTypes', 'seriesGroupType'], 'UpdateRangeChartParams');
+        return ChartParamsValidator.validateProperties(
+            params,
+            validations,
+            [
+                ...ChartParamsValidator.baseUpdateChartParams,
+                'cellRange',
+                'suppressChartRanges',
+                'switchCategorySeries',
+                'aggFunc',
+                'seriesChartTypes',
+                'seriesGroupType',
+            ],
+            'UpdateRangeChartParams'
+        );
     }
 
     private static validateUpdatePivotChartParams(params: UpdatePivotChartParams): boolean | UpdatePivotChartParams {
-        const validations: ValidationFunction<any>[] = [
-            ...ChartParamsValidator.commonUpdateValidations,
-        ];
+        const validations: ValidationFunction<any>[] = [...ChartParamsValidator.commonUpdateValidations];
 
-        return ChartParamsValidator.validateProperties(params, validations, [...ChartParamsValidator.baseUpdateChartParams], 'UpdatePivotChartParams');
+        return ChartParamsValidator.validateProperties(
+            params,
+            validations,
+            [...ChartParamsValidator.baseUpdateChartParams],
+            'UpdatePivotChartParams'
+        );
     }
 
-    private static validateUpdateCrossFilterChartParams(params: UpdateCrossFilterChartParams): boolean | UpdateCrossFilterChartParams {
+    private static validateUpdateCrossFilterChartParams(
+        params: UpdateCrossFilterChartParams
+    ): boolean | UpdateCrossFilterChartParams {
         const validations: ValidationFunction<any>[] = [
             ...ChartParamsValidator.commonUpdateValidations,
             ...ChartParamsValidator.cellRangeValidations,
         ];
 
-        return ChartParamsValidator.validateProperties(params, validations, [...ChartParamsValidator.baseUpdateChartParams, 'cellRange', 'suppressChartRanges', 'aggFunc'], 'UpdateCrossFilterChartParams');
+        return ChartParamsValidator.validateProperties(
+            params,
+            validations,
+            [...ChartParamsValidator.baseUpdateChartParams, 'cellRange', 'suppressChartRanges', 'aggFunc'],
+            'UpdateCrossFilterChartParams'
+        );
     }
 
-    private static validateProperties<T extends object>(params: T, validations: ValidationFunction<T>[], validPropertyNames?: (keyof T)[], paramsType?: string): boolean | T {
+    private static validateProperties<T extends object>(
+        params: T,
+        validations: ValidationFunction<T>[],
+        validPropertyNames?: (keyof T)[],
+        paramsType?: string
+    ): boolean | T {
         let validatedProperties: T | undefined = undefined;
         for (const validation of validations) {
             const { property, validationFn, warnMessage, warnIfFixed } = validation;
@@ -220,7 +266,9 @@ export class ChartParamsValidator {
             // Check for unexpected properties
             for (const property in params) {
                 if (!validPropertyNames.includes(property as keyof T)) {
-                    console.warn(`AG Grid - Unexpected property supplied. ${paramsType} does not contain: \`${property}\`.`);
+                    console.warn(
+                        `AG Grid - Unexpected property supplied. ${paramsType} does not contain: \`${property}\`.`
+                    );
                     return false;
                 }
             }
@@ -231,5 +279,4 @@ export class ChartParamsValidator {
 
         return true;
     }
-
 }

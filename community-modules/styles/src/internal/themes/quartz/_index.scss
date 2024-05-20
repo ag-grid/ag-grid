@@ -1,8 +1,10 @@
-@use "ag";
+@use 'ag';
 
-@use "./quartz-variables";
+@use './quartz-variables';
 
-.ag-theme-quartz, .ag-theme-quartz-dark, .ag-theme-quartz-auto-dark {
+.ag-theme-quartz,
+.ag-theme-quartz-dark,
+.ag-theme-quartz-auto-dark {
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search,
     .ag-status-bar,
@@ -16,10 +18,14 @@
     @include ag.text-input {
         min-height: calc(var(--ag-grid-size) * 4);
         border-radius: var(--ag-border-radius);
-        
-        @include ag.theme-rtl((padding-left: var(--ag-grid-size)));
+
+        @include ag.theme-rtl(
+            (
+                padding-left: var(--ag-grid-size),
+            )
+        );
     }
-        
+
     .ag-picker-field-wrapper {
         min-height: calc(var(--ag-grid-size) * 4);
     }
@@ -34,15 +40,23 @@
         border-right: var(--ag-borders) transparent;
         flex: 1 1 auto;
     }
-    
+
     .ag-tab-selected {
         background-color: var(--ag-background-color);
 
         &:not(:first-of-type) {
-            @include ag.theme-rtl((border-left-color: var(--ag-border-color)));
+            @include ag.theme-rtl(
+                (
+                    border-left-color: var(--ag-border-color),
+                )
+            );
         }
         &:not(:last-of-type) {
-            @include ag.theme-rtl((border-right-color: var(--ag-border-color)));
+            @include ag.theme-rtl(
+                (
+                    border-right-color: var(--ag-border-color),
+                )
+            );
         }
     }
 
@@ -81,18 +95,22 @@
     }
 
     .ag-menu-option-popup-pointer .ag-icon {
-        @include ag.theme-rtl((text-align: right));
+        @include ag.theme-rtl(
+            (
+                text-align: right,
+            )
+        );
     }
 
     .ag-tabs-header {
         border-bottom: var(--ag-borders) var(--ag-border-color);
         display: flex;
-        background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%)
+        background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%);
     }
-    
+
     //
     // VERTICAL TABS
-    // 
+    //
     .ag-side-bar {
         background-color: var(--ag-control-panel-background-color);
         min-width: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
@@ -104,7 +122,7 @@
         width: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
         background: var(--ag-control-panel-background-color);
     }
-    
+
     .ag-side-button {
         border-top: var(--ag-borders) transparent;
         border-bottom: var(--ag-borders) transparent;
@@ -116,7 +134,7 @@
             // in vertical-lr mode. Use "Segoe UI" in preference. In practice
             // this is a Windows-only fix since most non-Windows computers don't
             // have Segoe UI installed.
-            font-family: "Segoe UI", var(--ag-font-family);
+            font-family: 'Segoe UI', var(--ag-font-family);
             // ... and additionally apply a rotation to fix rendering in Firefox
             transform: rotate(0.05deg);
         }
@@ -151,7 +169,7 @@
         position: relative;
 
         &::after {
-            content: "";
+            content: '';
             position: absolute;
             display: block;
             top: 0;
@@ -266,10 +284,15 @@
     }
 
     .ag-group-title-bar-icon {
-        @include ag.theme-rtl((margin-right: var(--ag-grid-size)));
+        @include ag.theme-rtl(
+            (
+                margin-right: var(--ag-grid-size),
+            )
+        );
     }
 
-    .ag-spectrum-color, .ag-spectrum-fill {
+    .ag-spectrum-color,
+    .ag-spectrum-fill {
         border-radius: var(--ag-border-radius);
     }
 
@@ -284,12 +307,13 @@
         padding-left: 0px;
         padding-right: 0px;
     }
-    
+
     .ag-spectrum-tool {
         height: 12px;
     }
 
-    .ag-spectrum-hue-background,.ag-spectrum-alpha-background {
+    .ag-spectrum-hue-background,
+    .ag-spectrum-alpha-background {
         border-radius: 12px;
     }
 
@@ -301,7 +325,6 @@
         border: 3px solid rgb(248, 248, 248);
         background-color: transparent;
     }
-
 
     &.ag-dnd-ghost {
         font-weight: 500;
@@ -356,7 +379,12 @@
     }
 
     .ag-column-drop-vertical-icon {
-        @include ag.theme-rtl((margin-left: 0, margin-right: var(--ag-widget-horizontal-spacing)));
+        @include ag.theme-rtl(
+            (
+                margin-left: 0,
+                margin-right: var(--ag-widget-horizontal-spacing),
+            )
+        );
     }
 
     .ag-column-drop-vertical-empty-message {
@@ -420,7 +448,7 @@
     .ag-panel-title-bar-button-icon,
     .ag-chart-menu-icon {
         --ag-quartz-icon-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
-        
+
         &:hover {
             border-radius: 1px;
             background-color: var(--ag-quartz-icon-hover-color);
@@ -431,14 +459,14 @@
     .ag-filter-active {
         --ag-quartz-icon-active-color: color-mix(in srgb, transparent, var(--ag-active-color) 14%);
         --ag-quartz-icon-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 28%);
-        
+
         position: relative;
         border-radius: 1px;
         background-color: var(--ag-quartz-icon-active-color);
         box-shadow: 0 0 0 4px var(--ag-quartz-icon-active-color);
 
         &::after {
-            content: "";
+            content: '';
             position: absolute;
             width: 6px;
             height: 6px;
@@ -458,7 +486,7 @@
         background-color: color-mix(in srgb, transparent, var(--ag-background-color) 30%);
         padding: 4px 2px;
     }
-    
+
     .ag-chart-menu-icon {
         opacity: 0.8;
     }
@@ -467,8 +495,13 @@
         color: var(--ag-icon-font-color);
     }
 
-    .ag-menu-option-icon, .ag-compact-menu-option-icon {
-        @include ag.theme-rtl((padding-left: calc(var(--ag-grid-size) * 1.5)));
+    .ag-menu-option-icon,
+    .ag-compact-menu-option-icon {
+        @include ag.theme-rtl(
+            (
+                padding-left: calc(var(--ag-grid-size) * 1.5),
+            )
+        );
         width: var(--ag-icon-size);
         cursor: pointer;
     }
@@ -478,10 +511,12 @@
     }
 
     .ag-panel-title-bar-button {
-        @include ag.theme-rtl((
-            margin-left: calc(var(--ag-grid-size) * 2),
-            margin-right: var(--ag-grid-size)
-        ));
+        @include ag.theme-rtl(
+            (
+                margin-left: calc(var(--ag-grid-size) * 2),
+                margin-right: var(--ag-grid-size),
+            )
+        );
     }
 
     .ag-multi-filter-group-title-bar {
@@ -489,15 +524,21 @@
     }
 
     .ag-filter-toolpanel-group-container {
-        @include ag.theme-rtl((padding-left: var(--ag-grid-size)));
+        @include ag.theme-rtl(
+            (
+                padding-left: var(--ag-grid-size),
+            )
+        );
     }
 
     .ag-filter-toolpanel-instance-filter {
         border: none;
         background-color: var(--ag-control-panel-background-color);
-        @include ag.theme-rtl((
-            margin-left: calc(var(--ag-icon-size) * 0.5)
-        ))
+        @include ag.theme-rtl(
+            (
+                margin-left: calc(var(--ag-icon-size) * 0.5),
+            )
+        );
     }
 
     .ag-filter-toolpanel-group-level-0 {
@@ -514,8 +555,10 @@
         margin: 0;
     }
 
-    .ag-layout-auto-height, .ag-layout-print {
-        .ag-center-cols-viewport, .ag-center-cols-container {
+    .ag-layout-auto-height,
+    .ag-layout-print {
+        .ag-center-cols-viewport,
+        .ag-center-cols-container {
             min-height: 150px;
         }
     }
@@ -550,28 +593,44 @@
         opacity: 0.35;
     }
 
-    .ag-column-select-header-filter-wrapper, .ag-filter-toolpanel-search, .ag-mini-filter, .ag-filter-filter {
+    .ag-column-select-header-filter-wrapper,
+    .ag-filter-toolpanel-search,
+    .ag-mini-filter,
+    .ag-filter-filter {
         .ag-input-wrapper::before {
             position: absolute;
             display: block;
-            @include ag.theme-rtl((margin-left: var(--ag-grid-size)));
+            @include ag.theme-rtl(
+                (
+                    margin-left: var(--ag-grid-size),
+                )
+            );
             width: 12px;
             height: 12px;
-            background-image: url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMS41Ij48cGF0aCBkPSJNNS4zIDlhMy43IDMuNyAwIDEgMCAwLTcuNSAzLjcgMy43IDAgMCAwIDAgNy41Wk0xMC41IDEwLjUgOC4zIDguMiIvPjwvc3ZnPg==");
+            background-image: url('data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMS41Ij48cGF0aCBkPSJNNS4zIDlhMy43IDMuNyAwIDEgMCAwLTcuNSAzLjcgMy43IDAgMCAwIDAgNy41Wk0xMC41IDEwLjUgOC4zIDguMiIvPjwvc3ZnPg==');
             background-position: 50% 50%;
             background-size: contain;
             opacity: 40%;
-            content: "";
+            content: '';
             filter: var(--ag-icon-filter);
         }
 
-        input.ag-text-field-input, input.ag-number-field-input {
-            @include ag.theme-rtl((padding-left: 26px));
+        input.ag-text-field-input,
+        input.ag-number-field-input {
+            @include ag.theme-rtl(
+                (
+                    padding-left: 26px,
+                )
+            );
         }
     }
 
     .ag-column-select-add-group-indent {
-        @include ag.theme-rtl(( margin-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 1.5) ));
+        @include ag.theme-rtl(
+            (
+                margin-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 1.5),
+            )
+        );
     }
 
     .ag-text-field-input[disabled],
@@ -596,7 +655,10 @@
 }
 
 .ag-theme-quartz-dark {
-    .ag-column-select-header-filter-wrapper, .ag-filter-toolpanel-search, .ag-mini-filter, .ag-filter-filter {
+    .ag-column-select-header-filter-wrapper,
+    .ag-filter-toolpanel-search,
+    .ag-mini-filter,
+    .ag-filter-filter {
         .ag-input-wrapper::before {
             opacity: 66%;
             filter: invert(100%);

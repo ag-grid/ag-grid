@@ -1,9 +1,9 @@
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { IExpansionService } from "../interfaces/iExpansionService";
-import { IRowModel } from "../interfaces/iRowModel";
-import { ClientSideRowModelSteps, IClientSideRowModel } from "../interfaces/iClientSideRowModel";
-import { IRowNode } from "../interfaces/iRowNode";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, PostConstruct } from '../context/context';
+import { ClientSideRowModelSteps, IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import { IExpansionService } from '../interfaces/iExpansionService';
+import { IRowModel } from '../interfaces/iRowModel';
+import { IRowNode } from '../interfaces/iRowNode';
 
 @Bean('expansionService')
 export class ExpansionService extends BeanStub implements IExpansionService {
@@ -17,10 +17,12 @@ export class ExpansionService extends BeanStub implements IExpansionService {
     }
 
     public expandRows(rowIds: string[]): void {
-        if (!this.isClientSideRowModel) { return; }
+        if (!this.isClientSideRowModel) {
+            return;
+        }
 
         const rowIdSet = new Set(rowIds);
-        this.rowModel.forEachNode(node => {
+        this.rowModel.forEachNode((node) => {
             if (node.id && rowIdSet.has(node.id)) {
                 node.expanded = true;
             }
@@ -39,11 +41,18 @@ export class ExpansionService extends BeanStub implements IExpansionService {
     }
 
     public expandAll(value: boolean): void {
-        if (!this.isClientSideRowModel) { return; }
+        if (!this.isClientSideRowModel) {
+            return;
+        }
         (this.rowModel as IClientSideRowModel).expandOrCollapseAll(value);
     }
 
-    public setRowNodeExpanded(rowNode: IRowNode, expanded: boolean, expandParents?: boolean, forceSync?: boolean): void {
+    public setRowNodeExpanded(
+        rowNode: IRowNode,
+        expanded: boolean,
+        expandParents?: boolean,
+        forceSync?: boolean
+    ): void {
         if (rowNode) {
             // expand all parents recursively, except root node.
             if (expandParents && rowNode.parent && rowNode.parent.level !== -1) {
@@ -55,8 +64,10 @@ export class ExpansionService extends BeanStub implements IExpansionService {
     }
 
     public onGroupExpandedOrCollapsed(): void {
-        if (!this.isClientSideRowModel) { return; }
-         // we don't really want the user calling this if only one rowNode was expanded, instead they should be
+        if (!this.isClientSideRowModel) {
+            return;
+        }
+        // we don't really want the user calling this if only one rowNode was expanded, instead they should be
         // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
         // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
         // and thus the expand icon in the group cell won't get 'opened' or 'closed'.

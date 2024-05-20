@@ -1,8 +1,8 @@
-import { ExportParams } from "@ag-grid-community/core";
-import { BaseCreatorBeans, GridSerializingSession } from "./interfaces";
+import { ExportParams } from '@ag-grid-community/core';
+
+import { BaseCreatorBeans, GridSerializingSession } from './interfaces';
 
 export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P extends ExportParams<T>> {
-
     private beans: BaseCreatorBeans;
 
     protected setBeans(beans: BaseCreatorBeans) {
@@ -25,7 +25,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
 
     protected getData(params: P): string {
         const serializingSession = this.createSerializingSession(params);
-        return  this.beans.gridSerializer.serialize(serializingSession, params);
+        return this.beans.gridSerializer.serialize(serializingSession, params);
     }
 
     public getDefaultFileName(): string {

@@ -1,14 +1,15 @@
-import { Column, RowHeightCallbackParams, XmlElement } from "@ag-grid-community/core";
-import { XmlFactory } from "@ag-grid-community/csv-export";
-import { INCH_TO_EMU } from "./excelConstants";
-import { ExcelCalculatedImage } from "./excelInterfaces";
+import { Column, RowHeightCallbackParams, XmlElement } from '@ag-grid-community/core';
+import { XmlFactory } from '@ag-grid-community/csv-export';
+
+import { INCH_TO_EMU } from './excelConstants';
+import { ExcelCalculatedImage } from './excelInterfaces';
 
 export const pixelsToPoint = (pixels: number): number => {
-    return Math.round(pixels * 72 / 96);
+    return Math.round((pixels * 72) / 96);
 };
 
 export const pointsToPixel = (points: number): number => {
-    return Math.round(points * 96 / 72);
+    return Math.round((points * 96) / 72);
 };
 
 export const pixelsToEMU = (value: number): number => {
@@ -16,7 +17,9 @@ export const pixelsToEMU = (value: number): number => {
 };
 
 export const getFontFamilyId = (name?: string): number | undefined => {
-    if (name === undefined) { return; }
+    if (name === undefined) {
+        return;
+    }
 
     const families = ['Automatic', 'Roman', 'Swiss', 'Modern', 'Script', 'Decorative'];
     const pos = families.indexOf(name || 'Automatic');
@@ -24,8 +27,13 @@ export const getFontFamilyId = (name?: string): number | undefined => {
     return Math.max(pos, 0);
 };
 
-export const getHeightFromProperty = (rowIndex: number, height?: number | ((params: RowHeightCallbackParams) => number)): number | undefined => {
-    if (!height) { return; }
+export const getHeightFromProperty = (
+    rowIndex: number,
+    height?: number | ((params: RowHeightCallbackParams) => number)
+): number | undefined => {
+    if (!height) {
+        return;
+    }
 
     let finalHeight: number;
 
@@ -42,7 +50,9 @@ export const getHeightFromProperty = (rowIndex: number, height?: number | ((para
 export const setExcelImageTotalWidth = (image: ExcelCalculatedImage, columnsToExport: Column[]): void => {
     const { colSpan, column } = image.position!;
 
-    if (!image.width) { return; }
+    if (!image.width) {
+        return;
+    }
 
     if (colSpan) {
         const columnsInSpan = columnsToExport.slice(column! - 1, column! + colSpan - 1);
@@ -62,10 +72,15 @@ export const setExcelImageTotalWidth = (image: ExcelCalculatedImage, columnsToEx
     }
 };
 
-export const setExcelImageTotalHeight = (image: ExcelCalculatedImage, rowHeight?: number | ((params: RowHeightCallbackParams) => number)): void => {
+export const setExcelImageTotalHeight = (
+    image: ExcelCalculatedImage,
+    rowHeight?: number | ((params: RowHeightCallbackParams) => number)
+): void => {
     const { rowSpan, row } = image.position!;
 
-    if (!image.height) { return; }
+    if (!image.height) {
+        return;
+    }
 
     if (rowSpan) {
         let totalHeight = 0;
@@ -89,7 +104,7 @@ export const setExcelImageTotalHeight = (image: ExcelCalculatedImage, rowHeight?
 export const createXmlPart = (body: XmlElement, skipHeader?: boolean): string => {
     const header = XmlFactory.createHeader({
         encoding: 'UTF-8',
-        standalone: 'yes'
+        standalone: 'yes',
     });
 
     const xmlBody = XmlFactory.createXml(body);
@@ -109,9 +124,15 @@ export const getExcelColumnName = (colIdx: number): string => {
     const pos = Math.floor(colIdx / tableWidth);
     const tableIdx = colIdx % tableWidth;
 
-    if (!pos || colIdx === tableWidth) { return fromCharCode(startCode + colIdx - 1); }
-    if (!tableIdx) { return getExcelColumnName(pos - 1) + 'Z'; }
-    if (pos < tableWidth) { return fromCharCode(startCode + pos - 1) + fromCharCode(startCode + tableIdx - 1); }
+    if (!pos || colIdx === tableWidth) {
+        return fromCharCode(startCode + colIdx - 1);
+    }
+    if (!tableIdx) {
+        return getExcelColumnName(pos - 1) + 'Z';
+    }
+    if (pos < tableWidth) {
+        return fromCharCode(startCode + pos - 1) + fromCharCode(startCode + tableIdx - 1);
+    }
 
     return getExcelColumnName(pos) + fromCharCode(startCode + tableIdx - 1);
 };

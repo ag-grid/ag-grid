@@ -1,6 +1,14 @@
-import { IProvidedFilter } from "../filter/provided/providedFilter";
-import { AgPromise } from "../utils/promise";
-import { IFilter, IFilterComp, IFilterDef, IFilterParams, IFilterType, IFloatingFilterType, ProvidedFilterModel } from "./iFilter";
+import { IProvidedFilter } from '../filter/provided/providedFilter';
+import { AgPromise } from '../utils/promise';
+import {
+    IFilter,
+    IFilterComp,
+    IFilterDef,
+    IFilterParams,
+    IFilterType,
+    IFloatingFilterType,
+    ProvidedFilterModel,
+} from './iFilter';
 
 /** Interface contract for the public aspects of the ProvidedFilter implementation(s). */
 export interface IMultiFilter extends IProvidedFilter {
@@ -67,7 +75,7 @@ export interface IMultiFilterComp {
     /**
      * Sets the state of the child filters using the supplied models. Providing `null` will
      * de-activate all child filters.
-     * 
+     *
      * **Note:** if you are providing values asynchronously to a child Set Filter,
      * you need to wait for these changes to be applied before performing any further actions by
      * waiting on the returned grid promise, e.g.

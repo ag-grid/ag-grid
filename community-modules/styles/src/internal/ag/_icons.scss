@@ -1,22 +1,22 @@
-@use "sass:string";
-@use "sass:map";
-@use "sass:meta";
+@use 'sass:string';
+@use 'sass:map';
+@use 'sass:meta';
 
-@use "../../../icon-font-codes" as *;
-@use "./generated/agGridAlpine";
-@use "./generated/agGridBalham";
-@use "./generated/agGridMaterial";
-@use "./generated/agGridQuartz";
-@use "./generated/agGridQuartzSubset";
-@use "./generated/agGridClassic";
+@use '../../../icon-font-codes' as *;
+@use './generated/agGridAlpine';
+@use './generated/agGridBalham';
+@use './generated/agGridMaterial';
+@use './generated/agGridQuartz';
+@use './generated/agGridQuartzSubset';
+@use './generated/agGridClassic';
 
 $-fonts-emitted: ();
 
 @mixin font-face($name) {
     @if not map.get($-fonts-emitted, $name) {
         $-fonts-emitted: map.set($-fonts-emitted, $name, true);
-        
-        $data: map.get(meta.module-variables($name), "data");
+
+        $data: map.get(meta.module-variables($name), 'data');
         @if not $data {
             @error "No $data for #{$name} font";
         }
@@ -38,7 +38,7 @@ $-fonts-emitted: ();
     font-style: normal;
     font-variant: normal;
     text-transform: none;
-    
+
     // subpixel rendering can really mess up some icon fonts so disable it
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

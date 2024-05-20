@@ -1,4 +1,4 @@
-@use "ag";
+@use 'ag';
 
 @mixin output {
     .ag-paging-panel {
@@ -20,14 +20,15 @@
         cursor: pointer;
     }
 
-    .ag-paging-button.ag-disabled  {
+    .ag-paging-button.ag-disabled {
         cursor: default;
         color: var(--ag-disabled-foreground-color);
     }
 
     @include ag.keyboard-focus((ag-paging-button), 0px);
 
-    .ag-paging-button, .ag-paging-description {
+    .ag-paging-button,
+    .ag-paging-description {
         margin: 0 var(--ag-grid-size);
     }
 

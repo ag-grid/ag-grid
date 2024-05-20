@@ -1,13 +1,22 @@
+import { program } from 'commander';
+import dotenv from 'dotenv';
+
 import { getApiPageData, parseApiPageData } from './generators/api-refs';
 import { getAllDocPages, parseDocPage } from './generators/docs-pages';
-import { writeResults, enablePrintMode, updateAlgolia } from './utils/output';
 import { SUPPORTED_FRAMEWORKS } from './utils/constants';
-import dotenv from 'dotenv';
-import { program } from 'commander';
+import { enablePrintMode, updateAlgolia, writeResults } from './utils/output';
 
 program
-    .option('-d, --debug <debug>', 'if debug = true (not provided - it\'ll default to true), the script writes the records it would upload into JSON files for inspection', true)
-    .option("-i, --indexNamePrefix <prefix>", 'if indexNamePrefix = "ag-grid-dev" we\'ll update development indices, and for "ag-grid" production', 'ag-grid-dev');
+    .option(
+        '-d, --debug <debug>',
+        "if debug = true (not provided - it'll default to true), the script writes the records it would upload into JSON files for inspection",
+        true
+    )
+    .option(
+        '-i, --indexNamePrefix <prefix>',
+        'if indexNamePrefix = "ag-grid-dev" we\'ll update development indices, and for "ag-grid" production',
+        'ag-grid-dev'
+    );
 program.parse();
 const options = program.opts();
 const debug = options.debug === true;
@@ -33,12 +42,12 @@ const prefixPath = (framework) => (record) => ({ ...record, path: `/${framework}
  * First scrape docs for APIs and generate Algolia records
  */
 const apiPages = getApiPageData();
-apiPages.forEach(page => {
+apiPages.forEach((page) => {
     const records = parseApiPageData(page);
 
     const normalizedText = page.breadcrumbSuffix.replace(/ /g, '-').toLowerCase();
     const outputName = `api/${normalizedText}.json`;
-    
+
     writeResults(outputName, records);
 
     indices.react.push(...records.map(prefixPath('react')));
@@ -58,7 +67,7 @@ for (let i = 0; i < SUPPORTED_FRAMEWORKS.length; i++) {
     console.log('Processing framework:', framework);
 
     const pages = docPages.map(prefixPath(framework));
-    const promises = pages.map(page => parseDocPage(page));
+    const promises = pages.map((page) => parseDocPage(page));
     const results = await Promise.all(promises);
 
     // If print mode, try to write the results to disk
@@ -68,7 +77,7 @@ for (let i = 0; i < SUPPORTED_FRAMEWORKS.length; i++) {
         writeResults(outputName, results[i]);
     });
 
-    results.forEach(result => {
+    results.forEach((result) => {
         if (result) {
             indices[framework].push(...result);
         }
@@ -77,4 +86,3 @@ for (let i = 0; i < SUPPORTED_FRAMEWORKS.length; i++) {
     const indexName = `${indexNamePrefix}_${framework}`;
     await updateAlgolia(indexName, indices[framework]);
 }
-

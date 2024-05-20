@@ -1,11 +1,12 @@
+import { ComponentUtil } from '../src/ts/components/componentUtil';
+
 // @ts-nocheck
 const fs = require('fs');
 const ts = require('typescript');
-import { ComponentUtil } from '../src/ts/components/componentUtil'
 
 function getGridOptionProps(node) {
     let gridOptionsNode = undefined;
-    ts.forEachChild(node, n => {
+    ts.forEachChild(node, (n) => {
         if (n?.name?.escapedText == 'GridOptions') {
             gridOptionsNode = n;
         }
@@ -13,7 +14,7 @@ function getGridOptionProps(node) {
 
     const gridOpsMembers: string[] = [];
     ts.forEachChild(gridOptionsNode, (n: any) => {
-        gridOpsMembers.push(n?.name?.escapedText)
+        gridOpsMembers.push(n?.name?.escapedText);
     });
     return gridOpsMembers;
 }
@@ -24,27 +25,31 @@ function parseFile(sourceFile: any) {
 }
 
 function checkGridOptionPropertyKeys() {
-    const gridOpsFile = "../core/src/ts/entities/gridOptions.ts";
+    const gridOpsFile = '../core/src/ts/entities/gridOptions.ts';
     const srcFile = parseFile(gridOpsFile);
     const gridOpsMembers = getGridOptionProps(srcFile, 'GridOptions');
 
-
-    const ignored = ['api', 'TData']
+    const ignored = ['api', 'TData'];
     //Check our PropertyKeys is accurate via ComponentUtils
-    const keysToCheck = [...ComponentUtil.ALL_PROPERTIES, ...ComponentUtil.EVENTS, ...ComponentUtil.EVENT_CALLBACKS, ...ignored];
+    const keysToCheck = [
+        ...ComponentUtil.ALL_PROPERTIES,
+        ...ComponentUtil.EVENTS,
+        ...ComponentUtil.EVENT_CALLBACKS,
+        ...ignored,
+    ];
     const missingPropertyKeys: string[] = [];
-    gridOpsMembers.forEach(k => {
+    gridOpsMembers.forEach((k) => {
         if (k && !keysToCheck.includes(k)) {
-            missingPropertyKeys.push(k)
+            missingPropertyKeys.push(k);
         }
-    })
+    });
 
     if (missingPropertyKeys.length > 0) {
-        console.error('PropertyKeys is missing the following GridOption properties:', missingPropertyKeys.join(', '))
+        console.error('PropertyKeys is missing the following GridOption properties:', missingPropertyKeys.join(', '));
         return 1;
     }
     return 0;
 }
 
-const result = checkGridOptionPropertyKeys()
-process.exit(result)
+const result = checkGridOptionPropertyKeys();
+process.exit(result);

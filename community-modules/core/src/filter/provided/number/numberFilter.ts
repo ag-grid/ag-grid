@@ -1,10 +1,10 @@
-import { ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
-import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
-import { _makeNull } from '../../../utils/generic';
-import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
 import { _setAriaRole } from '../../../utils/aria';
+import { _makeNull } from '../../../utils/generic';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
+import { AgInputTextField } from '../../../widgets/agInputTextField';
+import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
+import { ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'number'` */
@@ -104,10 +104,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
     protected mapValuesFromModel(filterModel: NumberFilterModel | null): Tuple<number> {
         const { filter, filterTo, type } = filterModel || {};
-        return [
-            this.processValue(filter),
-            this.processValue(filterTo),
-        ].slice(0, this.getNumberOfInputs(type));
+        return [this.processValue(filter), this.processValue(filterTo)].slice(0, this.getNumberOfInputs(type));
     }
 
     protected getDefaultDebounceMs(): number {
@@ -116,7 +113,9 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
     protected comparator(): Comparator<number> {
         return (left: number, right: number): number => {
-            if (left === right) { return 0; }
+            if (left === right) {
+                return 0;
+            }
 
             return left < right ? 1 : -1;
         };
@@ -126,18 +125,27 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         this.numberFilterParams = params;
 
         super.setParams(params);
-        this.filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory, this.numberFilterParams.numberFormatter);
+        this.filterModelFormatter = new NumberFilterModelFormatter(
+            this.localeService,
+            this.optionsFactory,
+            this.numberFilterParams.numberFormatter
+        );
     }
 
     protected getDefaultFilterOptions(): string[] {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
     }
 
-    protected setElementValue(element: AgInputTextField | AgInputNumberField, value: number | null, fromFloatingFilter?: boolean): void {
+    protected setElementValue(
+        element: AgInputTextField | AgInputNumberField,
+        value: number | null,
+        fromFloatingFilter?: boolean
+    ): void {
         // values from floating filter are directly from the input, not from the model
-        const valueToSet = !fromFloatingFilter && this.numberFilterParams.numberFormatter
-            ? this.numberFilterParams.numberFormatter(value ?? null)
-            : value;
+        const valueToSet =
+            !fromFloatingFilter && this.numberFilterParams.numberFormatter
+                ? this.numberFilterParams.numberFormatter(value ?? null)
+                : value;
         super.setElementValue(element, valueToSet as any);
     }
 
@@ -154,8 +162,15 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return eCondition;
     }
 
-    private createFromToElement(eCondition: HTMLElement, eValues: (AgInputTextField | AgInputNumberField)[], fromTo: string, allowedCharPattern: string | null): void {
-        const eValue = this.createManagedBean(allowedCharPattern ? new AgInputTextField({ allowedCharPattern }) : new AgInputNumberField());
+    private createFromToElement(
+        eCondition: HTMLElement,
+        eValues: (AgInputTextField | AgInputNumberField)[],
+        fromTo: string,
+        allowedCharPattern: string | null
+    ): void {
+        const eValue = this.createManagedBean(
+            allowedCharPattern ? new AgInputTextField({ allowedCharPattern }) : new AgInputNumberField()
+        );
         eValue.addCssClass(`ag-filter-${fromTo}`);
         eValue.addCssClass('ag-filter-filter');
         eValues.push(eValue);
@@ -179,9 +194,9 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     }
 
     protected areSimpleModelsEqual(aSimple: NumberFilterModel, bSimple: NumberFilterModel): boolean {
-        return aSimple.filter === bSimple.filter
-            && aSimple.filterTo === bSimple.filterTo
-            && aSimple.type === bSimple.type;
+        return (
+            aSimple.filter === bSimple.filter && aSimple.filterTo === bSimple.filterTo && aSimple.type === bSimple.type
+        );
     }
 
     protected getFilterType(): 'number' {
@@ -217,7 +232,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         const type = this.getConditionType(position);
         const model: NumberFilterModel = {
             filterType: this.getFilterType(),
-            type
+            type,
         };
 
         const values = this.getValues(position);
@@ -244,7 +259,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
     protected hasInvalidInputs(): boolean {
         let invalidInputs = false;
-        this.forEachInput(element => {
+        this.forEachInput((element) => {
             if (!element.getInputElement().validity.valid) {
                 invalidInputs = true;
                 return;

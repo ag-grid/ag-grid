@@ -31,8 +31,8 @@ export const INTERNAL_FRAMEWORK_DEPENDENCIES: Partial<Record<InternalFramework, 
     },
 };
 
-
 // whether integrated charts includes ag-charts-enterprise or just ag-charts-community
 // also need to update documentation/ag-grid-docs/src/constants.ts if this value is changed
 export const integratedChartsUsesChartsEnterprise = true;
-export const getEnterprisePackageName = () => `ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise`;
+export const getEnterprisePackageName = () =>
+    `ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise`;

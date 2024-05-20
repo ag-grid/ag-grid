@@ -1,6 +1,6 @@
-import { IMenuActionParams } from "./iCallbackParams";
-import { AgGridCommon } from "./iCommon";
-import { IComponent } from "./iComponent";
+import { IMenuActionParams } from './iCallbackParams';
+import { AgGridCommon } from './iCommon';
+import { IComponent } from './iComponent';
 
 export interface MenuItemLeafDef<TData = any, TContext = any> {
     /** Name of the menu item. */
@@ -116,7 +116,7 @@ export interface IMenuItemParams<TData = any, TContext = any> extends BaseMenuIt
      * Callback to let the menu know that the current item has become active.
      * Required if updating the active status within the menu item.
      */
-     onItemActivated: () => void;
+    onItemActivated: () => void;
 }
 
 export interface BaseMenuItem {
@@ -140,4 +140,6 @@ export interface IMenuItem extends BaseMenuItem {
     setExpanded?(expanded: boolean): void;
 }
 
-export interface IMenuItemComp<TData = any, TContext = any> extends IComponent<IMenuItemParams<TData, TContext>>, IMenuItem {}
+export interface IMenuItemComp<TData = any, TContext = any>
+    extends IComponent<IMenuItemParams<TData, TContext>>,
+        IMenuItem {}

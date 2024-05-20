@@ -16,6 +16,7 @@ import {
     replaceGridReadyRowData,
 } from './parser-utils';
 import { toTitleCase } from './string-utils';
+
 const path = require('path');
 
 function getOnGridReadyCode(
@@ -52,7 +53,12 @@ function getOnGridReadyCode(
     }
 }
 
-function addModuleImports(imports: string[], bindings: ParsedBindings, exampleConfig: ExampleConfig, allStylesheets: string[]): string[] {
+function addModuleImports(
+    imports: string[],
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    allStylesheets: string[]
+): string[] {
     const { inlineGridStyles, imports: bindingImports, properties } = bindings;
 
     imports.push("import { AgGridAngular } from '@ag-grid-community/angular';");
@@ -90,7 +96,12 @@ function addModuleImports(imports: string[], bindings: ParsedBindings, exampleCo
     return imports;
 }
 
-function addPackageImports(imports: string[], bindings: ParsedBindings, exampleConfig: ExampleConfig, allStylesheets: string[]): string[] {
+function addPackageImports(
+    imports: string[],
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    allStylesheets: string[]
+): string[] {
     const { inlineGridStyles, imports: bindingImports, properties } = bindings;
 
     imports.push("import { AgGridAngular } from 'ag-grid-angular';");

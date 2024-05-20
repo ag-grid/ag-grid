@@ -1,10 +1,10 @@
-import { HeaderPosition } from "../headerRendering/common/headerPosition";
-import { ChartToolbarMenuItemOptions } from "./iChartOptions";
-import { AgGridCommon } from "./iCommon";
-import { ServerSideTransaction } from "./serverSideTransaction";
-import { CellPosition } from "../entities/cellPositionUtils";
-import { Column } from "../entities/column";
-import { IRowNode } from "./iRowNode";
+import { CellPosition } from '../entities/cellPositionUtils';
+import { Column } from '../entities/column';
+import { HeaderPosition } from '../headerRendering/common/headerPosition';
+import { ChartToolbarMenuItemOptions } from './iChartOptions';
+import { AgGridCommon } from './iCommon';
+import { IRowNode } from './iRowNode';
+import { ServerSideTransaction } from './serverSideTransaction';
 
 export interface GetContextMenuItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Names of the items that would be provided by default. */
@@ -30,8 +30,8 @@ export interface GetChartMenuItemsParams<TData = any, TContext = any> extends Ag
 }
 
 export interface ProcessUnpinnedColumnsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    columns: Column[],
-    viewportWidth: number
+    columns: Column[];
+    viewportWidth: number;
 }
 
 export interface PostProcessPopupParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -88,7 +88,6 @@ export interface TabToNextHeaderParams<TData = any, TContext = any> extends AgGr
     headerRowCount: number;
 }
 
-
 export interface TabToNextCellParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** True if the Shift key is also down */
     backwards: boolean;
@@ -99,7 +98,6 @@ export interface TabToNextCellParams<TData = any, TContext = any> extends AgGrid
     previousCellPosition: CellPosition;
     /** The cell the grid would normally pick as the next cell for navigation.  */
     nextCellPosition: CellPosition | null;
-
 }
 
 export interface NavigateToNextCellParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -117,7 +115,6 @@ export interface NavigateToNextCellParams<TData = any, TContext = any> extends A
 export interface PaginationNumberFormatterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     value: number;
 }
-
 
 export interface IsGroupOpenByDefaultParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The row node being considered. */
@@ -207,7 +204,7 @@ export interface RowHeightParams<TData = any, TContext = any> extends AgGridComm
     node: IRowNode<TData>;
 }
 
-export interface IsExternalFilterPresentParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> { }
+export interface IsExternalFilterPresentParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
 
 export interface InitialGroupOrderComparatorParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     nodeA: IRowNode<TData>;

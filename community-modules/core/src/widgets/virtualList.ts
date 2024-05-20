@@ -1,15 +1,15 @@
-import { Component } from './component';
-import { Autowired, PostConstruct } from '../context/context';
-import { RefSelector } from './componentAnnotations';
-import { _getAriaPosInSet, _setAriaSetSize, _setAriaPosInSet, _setAriaRole, _setAriaLabel } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
-import { ResizeObserverService } from "../misc/resizeObserverService";
-import { _waitUntil } from '../utils/function';
-import { TabGuardComp } from './tabGuardComp';
+import { Autowired, PostConstruct } from '../context/context';
 import { Events } from '../eventKeys';
-import { _stopPropagationForAgGrid } from '../utils/event';
-import { AnimationFrameService } from '../misc/animationFrameService';
 import { CssVariablesChanged } from '../events';
+import { AnimationFrameService } from '../misc/animationFrameService';
+import { ResizeObserverService } from '../misc/resizeObserverService';
+import { _getAriaPosInSet, _setAriaLabel, _setAriaPosInSet, _setAriaRole, _setAriaSetSize } from '../utils/aria';
+import { _stopPropagationForAgGrid } from '../utils/event';
+import { _waitUntil } from '../utils/function';
+import { Component } from './component';
+import { RefSelector } from './componentAnnotations';
+import { TabGuardComp } from './tabGuardComp';
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -30,7 +30,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     private listName?: string;
 
     private model: VirtualListModel;
-    private renderedRows = new Map<number, { rowComponent: C; eDiv: HTMLDivElement; value: any; }>();
+    private renderedRows = new Map<number, { rowComponent: C; eDiv: HTMLDivElement; value: any }>();
     private componentCreator: (value: any, listItemElement: HTMLElement) => C;
     private componentUpdater: (value: any, component: C) => void;
     private rowHeight = 20;
@@ -63,12 +63,16 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
             onFocusIn: (e: FocusEvent) => this.onFocusIn(e),
             onFocusOut: (e: FocusEvent) => this.onFocusOut(e),
             focusInnerElement: (fromBottom: boolean) => this.focusInnerElement(fromBottom),
-            onTabKeyDown: e => this.onTabKeyDown(e),
-            handleKeyDown: e => this.handleKeyDown(e)
+            onTabKeyDown: (e) => this.onTabKeyDown(e),
+            handleKeyDown: (e) => this.handleKeyDown(e),
         });
 
         this.setAriaProperties();
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onGridStylesChanged.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_GRID_STYLES_CHANGED,
+            this.onGridStylesChanged.bind(this)
+        );
     }
 
     private onGridStylesChanged(e: CssVariablesChanged): void {
@@ -142,18 +146,25 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     }
 
     private navigate(up: boolean): boolean {
-        if (this.lastFocusedRowIndex == null) { return false; }
+        if (this.lastFocusedRowIndex == null) {
+            return false;
+        }
 
         const nextRow = this.lastFocusedRowIndex + (up ? -1 : 1);
 
-        if (nextRow < 0 || nextRow >= this.model.getRowCount()) { return false; }
+        if (nextRow < 0 || nextRow >= this.model.getRowCount()) {
+            return false;
+        }
 
         this.focusRow(nextRow);
 
         return true;
     }
 
-    public navigateToPage(key: 'Home' | 'PageUp' | 'PageDown' | 'End', fromItem: number | 'focused' = 'focused'): number | null {
+    public navigateToPage(
+        key: 'Home' | 'PageUp' | 'PageDown' | 'End',
+        fromItem: number | 'focused' = 'focused'
+    ): number | null {
         let hasFocus = false;
 
         if (fromItem === 'focused') {
@@ -172,7 +183,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         } else if (key === KeyCode.PAGE_DOWN) {
             newIndex = Math.min(fromItem + this.pageSize, rowCount);
         } else if (key === KeyCode.PAGE_UP) {
-            newIndex = Math.max(fromItem - this.pageSize, 0)
+            newIndex = Math.max(fromItem - this.pageSize, 0);
         }
 
         if (newIndex === -1) {
@@ -193,14 +204,18 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     }
 
     public focusRow(rowNumber: number): void {
-        if (this.isScrolling) { return; }
+        if (this.isScrolling) {
+            return;
+        }
         this.isScrolling = true;
 
         this.ensureIndexVisible(rowNumber);
 
         this.animationFrameService.requestAnimationFrame(() => {
             this.isScrolling = false;
-            if (!this.isAlive()) { return; }
+            if (!this.isAlive()) {
+                return;
+            }
             const renderedRow = this.renderedRows.get(rowNumber);
 
             if (renderedRow) {
@@ -216,11 +231,12 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     }
 
     public forEachRenderedRow(func: (comp: C, idx: number) => void): void {
-        this.renderedRows.forEach((value, key)  => func(value.rowComponent, key));
+        this.renderedRows.forEach((value, key) => func(value.rowComponent, key));
     }
 
     private static getTemplate(cssIdentifier: string) {
-        return (/* html */
+        return (
+            /* html */
             `<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
                 <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer"></div>
             </div>`
@@ -262,7 +278,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
             eGui.scrollTop = rowTopPixel;
             return true;
         }
-        
+
         if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             const newScrollPosition = rowBottomPixel - viewportHeight;
@@ -296,15 +312,20 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     }
 
     public refresh(softRefresh?: boolean): void {
-        if (this.model == null || !this.isAlive()) { return; }
+        if (this.model == null || !this.isAlive()) {
+            return;
+        }
 
         const rowCount = this.model.getRowCount();
         this.eContainer.style.height = `${rowCount * this.rowHeight}px`;
 
         // ensure height is applied before attempting to redraw rows
-        _waitUntil(() => this.eContainer.clientHeight >= rowCount * this.rowHeight,
+        _waitUntil(
+            () => this.eContainer.clientHeight >= rowCount * this.rowHeight,
             () => {
-                if (!this.isAlive()) { return; }
+                if (!this.isAlive()) {
+                    return;
+                }
 
                 if (this.canSoftRefresh(softRefresh)) {
                     this.drawVirtualRows(true);
@@ -317,7 +338,12 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     }
 
     private canSoftRefresh(softRefresh: boolean | undefined): boolean {
-        return !!(softRefresh && this.renderedRows.size && typeof this.model.areRowsEqual === 'function' && this.componentUpdater);
+        return !!(
+            softRefresh &&
+            this.renderedRows.size &&
+            typeof this.model.areRowsEqual === 'function' &&
+            this.componentUpdater
+        );
     }
 
     private clearVirtualRows() {
@@ -325,7 +351,9 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     }
 
     private drawVirtualRows(softRefresh?: boolean) {
-        if (!this.isAlive() || !this.model) { return; }
+        if (!this.isAlive() || !this.model) {
+            return;
+        }
 
         const gui = this.getGui();
         const topPixel = gui.scrollTop;
@@ -352,7 +380,9 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
 
         // insert any required new rows
         for (let rowIndex = start; rowIndex <= finish; rowIndex++) {
-            if (this.renderedRows.has(rowIndex)) { continue; }
+            if (this.renderedRows.has(rowIndex)) {
+                continue;
+            }
 
             // check this row actually exists (in case overflow buffer window exceeds real data)
             if (rowIndex < this.model.getRowCount()) {
@@ -376,7 +406,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
 
         const rowComponent = this.componentCreator(value, eDiv);
 
-        rowComponent.addGuiEventListener('focusin', () => this.lastFocusedRowIndex = rowIndex);
+        rowComponent.addGuiEventListener('focusin', () => (this.lastFocusedRowIndex = rowIndex));
 
         eDiv.appendChild(rowComponent.getGui());
 
@@ -430,7 +460,9 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     }
 
     public destroy(): void {
-        if (!this.isAlive()) { return; }
+        if (!this.isAlive()) {
+            return;
+        }
 
         this.clearVirtualRows();
         super.destroy();

@@ -1,12 +1,12 @@
-import { AgSelect } from "../../widgets/agSelect";
-import { Autowired } from "../../context/context";
-import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
-import { PopupComponent } from "../../widgets/popupComponent";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { ListOption } from "../../widgets/agList";
-import { _missing } from "../../utils/generic";
 import { KeyCode } from '../../constants/keyCode';
-import { ValueService } from "../../valueService/valueService";
+import { Autowired } from '../../context/context';
+import { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import { _missing } from '../../utils/generic';
+import { ValueService } from '../../valueService/valueService';
+import { ListOption } from '../../widgets/agList';
+import { AgSelect } from '../../widgets/agSelect';
+import { RefSelector } from '../../widgets/componentAnnotations';
+import { PopupComponent } from '../../widgets/popupComponent';
 
 export interface ISelectCellEditorParams<TValue = any> {
     /** List of values to display */
@@ -16,20 +16,21 @@ export interface ISelectCellEditorParams<TValue = any> {
      * @default 4
      */
     valueListGap?: number;
-    /** The maximum height of the list of items. If the value is a `number` it will be 
+    /** The maximum height of the list of items. If the value is a `number` it will be
      * treated as pixels, otherwise it should be a valid CSS size string. Default: Height of Popup Parent.
      */
     valueListMaxHeight?: number | string;
-    /** The maximum width of the list of items. If the value is a `number` it will be 
+    /** The maximum width of the list of items. If the value is a `number` it will be
      * treated as pixels, otherwise it should be a valid CSS size string. Default: Width of the cell being edited.
      */
     valueListMaxWidth?: number | string;
 }
 
-interface SelectCellEditorParams<TData = any, TValue = any, TContext = any> extends ISelectCellEditorParams<TValue>, ICellEditorParams<TData, TValue, TContext> {}
+interface SelectCellEditorParams<TData = any, TValue = any, TContext = any>
+    extends ISelectCellEditorParams<TValue>,
+        ICellEditorParams<TData, TValue, TContext> {}
 
 export class SelectCellEditor extends PopupComponent implements ICellEditorComp {
-
     private focusAfterAttached: boolean;
 
     @Autowired('valueService') private valueService: ValueService;
@@ -38,7 +39,8 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
     private startedByEnter: boolean = false;
 
     constructor() {
-        super(/* html */
+        super(
+            /* html */
             `<div class="ag-cell-edit-wrapper">
                 <ag-select class="ag-cell-editor" ref="eSelect"></ag-select>
             </div>`

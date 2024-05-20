@@ -6,9 +6,9 @@
     "moduleResolution": "node",
     "strictNullChecks": false,
     "noImplicitAny": false,
-    "resolveJsonModule": true,
+    "resolveJsonModule": true
   },
-  
+
   "files": [],
   "include": [],
   "references": [

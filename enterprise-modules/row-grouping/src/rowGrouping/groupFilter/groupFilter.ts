@@ -3,21 +3,21 @@ import {
     AgSelect,
     Autowired,
     Column,
+    ColumnNameService,
     Events,
     FilterManager,
+    FilterWrapperComp,
+    FuncColsService,
     IAfterGuiAttachedParams,
     IFilterComp,
     IFilterParams,
     PostConstruct,
     RefSelector,
     TabGuardComp,
-    FilterWrapperComp,
     _clearElement,
     _loadTemplate,
     _setDisplayed,
     _warnOnce,
-    ColumnNameService,
-    FuncColsService,
 } from '@ag-grid-community/core';
 
 interface FilterColumnPair {
@@ -63,20 +63,28 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         this.params = params;
         this.validateParams();
         return this.updateGroups().then(() => {
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.onColumnRowGroupChanged());
+            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>
+                this.onColumnRowGroupChanged()
+            );
         });
     }
 
     private validateParams(): void {
         const { colDef } = this.params;
         if (colDef.field) {
-            _warnOnce('Group Column Filter does not work with the colDef property "field". This property will be ignored.');
+            _warnOnce(
+                'Group Column Filter does not work with the colDef property "field". This property will be ignored.'
+            );
         }
         if (colDef.filterValueGetter) {
-            _warnOnce('Group Column Filter does not work with the colDef property "filterValueGetter". This property will be ignored.');
+            _warnOnce(
+                'Group Column Filter does not work with the colDef property "filterValueGetter". This property will be ignored.'
+            );
         }
         if (colDef.filterParams) {
-            _warnOnce('Group Column Filter does not work with the colDef property "filterParams". This property will be ignored.');
+            _warnOnce(
+                'Group Column Filter does not work with the colDef property "filterParams". This property will be ignored.'
+            );
         }
     }
 
@@ -88,7 +96,9 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
     private getSourceColumns(): Column[] {
         this.groupColumn = this.params.column;
         if (this.gos.get('treeData')) {
-            _warnOnce('Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.');
+            _warnOnce(
+                'Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.'
+            );
             return [];
         }
         const sourceColumns = this.funcColsService.getSourceColumnsForGroupColumn(this.groupColumn);
@@ -105,7 +115,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
             this.destroyBean(this.eGroupFieldSelect);
         }
         const allSourceColumns = this.getSourceColumns();
-        const sourceColumns = allSourceColumns.filter(sourceColumn => sourceColumn.isFilterAllowed());
+        const sourceColumns = allSourceColumns.filter((sourceColumn) => sourceColumn.isFilterAllowed());
         if (!sourceColumns.length) {
             this.selectedColumn = undefined;
             _setDisplayed(this.eGroupField, false);
@@ -119,7 +129,10 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
             _setDisplayed(this.eGroupField, false);
         } else {
             // keep the old selected column if it's still valid
-            if (!this.selectedColumn || !sourceColumns.some(column => column.getId() === this.selectedColumn!.getId())) {
+            if (
+                !this.selectedColumn ||
+                !sourceColumns.some((column) => column.getId() === this.selectedColumn!.getId())
+            ) {
                 this.selectedColumn = sourceColumns[0];
             }
             this.createGroupFieldSelectElement(sourceColumns);
@@ -136,10 +149,12 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         this.eGroupFieldSelect.setLabel(localeTextFunc('groupFilterSelect', 'Select field:'));
         this.eGroupFieldSelect.setLabelAlignment('top');
-        this.eGroupFieldSelect.addOptions(sourceColumns.map(sourceColumn => ({
-            value: sourceColumn.getId(),
-            text: this.columnNameService.getDisplayNameForColumn(sourceColumn, 'groupFilter', false) ?? undefined
-        })));
+        this.eGroupFieldSelect.addOptions(
+            sourceColumns.map((sourceColumn) => ({
+                value: sourceColumn.getId(),
+                text: this.columnNameService.getDisplayNameForColumn(sourceColumn, 'groupFilter', false) ?? undefined,
+            }))
+        );
         this.eGroupFieldSelect.setValue(this.selectedColumn!.getId());
         this.eGroupFieldSelect.onValueChange((newValue) => this.updateSelectedColumn(newValue));
         this.eGroupFieldSelect.addCssClass('ag-group-filter-field-select-wrapper');
@@ -157,21 +172,23 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         }
         const filterPromises: AgPromise<IFilterComp>[] = [];
         const filterColumnPairs: FilterColumnPair[] = [];
-        sourceColumns.forEach(column => {
+        sourceColumns.forEach((column) => {
             const filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
             if (filterWrapper?.filterPromise) {
-                filterPromises.push(filterWrapper.filterPromise.then(filter => {
-                    if (filter) {
-                        filterColumnPairs.push({
-                            filter,
-                            column
-                        });
-                    }
-                    if (column.getId() === this.selectedColumn!.getId()) {
-                        this.selectedFilter = filter ?? undefined;
-                    }
-                    return filter!;
-                }));
+                filterPromises.push(
+                    filterWrapper.filterPromise.then((filter) => {
+                        if (filter) {
+                            filterColumnPairs.push({
+                                filter,
+                                column,
+                            });
+                        }
+                        if (column.getId() === this.selectedColumn!.getId()) {
+                            this.selectedFilter = filter ?? undefined;
+                        }
+                        return filter!;
+                    })
+                );
             }
         });
         return AgPromise.all(filterPromises).then(() => {
@@ -192,12 +209,18 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         }
         this.eUnderlyingFilter.appendChild(comp.getGui());
 
-        return comp.getFilter()?.then(() => {
-            comp.afterGuiAttached?.(this.afterGuiAttachedParams);
-            if (!this.afterGuiAttachedParams?.suppressFocus && this.eGroupFieldSelect && !this.eGroupFieldSelect.isDisabled()) {
-                this.eGroupFieldSelect.getFocusableElement().focus();
-            }
-        }) ?? AgPromise.resolve();
+        return (
+            comp.getFilter()?.then(() => {
+                comp.afterGuiAttached?.(this.afterGuiAttachedParams);
+                if (
+                    !this.afterGuiAttachedParams?.suppressFocus &&
+                    this.eGroupFieldSelect &&
+                    !this.eGroupFieldSelect.isDisabled()
+                ) {
+                    this.eGroupFieldSelect.getFocusableElement().focus();
+                }
+            }) ?? AgPromise.resolve()
+        );
     }
 
     private updateSelectedColumn(columnId: string | null | undefined): void {
@@ -211,7 +234,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         this.selectedFilter = selectedFilterColumnPair?.filter;
 
         this.dispatchEvent({
-            type: GroupFilter.EVENT_SELECTED_COLUMN_CHANGED
+            type: GroupFilter.EVENT_SELECTED_COLUMN_CHANGED,
         });
         this.addUnderlyingFilterElement();
     }
@@ -245,11 +268,11 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
     private onColumnRowGroupChanged(): void {
         this.updateGroups().then(() => {
             this.dispatchEvent({
-                type: GroupFilter.EVENT_COLUMN_ROW_GROUP_CHANGED
+                type: GroupFilter.EVENT_COLUMN_ROW_GROUP_CHANGED,
             });
             this.eventService.dispatchEvent({
-                type: 'filterAllowedUpdated'
-            })
+                type: 'filterAllowedUpdated',
+            });
         });
     }
 

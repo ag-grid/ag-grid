@@ -2,14 +2,14 @@
 import ts from 'typescript';
 
 import { inputGlob, writeJSONFile } from '../../executors-utils';
-import { getGridOptions, getInterfaces  } from './generate-code-reference-files';
+import { getGridOptions, getInterfaces } from './generate-code-reference-files';
 import { getGridApi } from './generate-code-reference-files';
 import { getRowNode } from './generate-code-reference-files';
 import { getColumnOptions } from './generate-code-reference-files';
 import { getColumn } from './generate-code-reference-files';
 import { buildInterfaceProps } from './generate-code-reference-files';
 
-type ExecutorOptions = { output: string};
+type ExecutorOptions = { output: string };
 
 export default async function (options: ExecutorOptions) {
     try {
@@ -31,12 +31,12 @@ export default async function (options: ExecutorOptions) {
 
 async function generateFile(options: ExecutorOptions) {
     const workspaceRoot = process.cwd();
-    const gridOpsFile = workspaceRoot + "/community-modules/core/src/entities/gridOptions.ts";
-    const colDefFile = workspaceRoot + "/community-modules/core/src/entities/colDef.ts";
-    const filterFile = workspaceRoot +  "/community-modules/core/src/interfaces/iFilter.ts";
-    const gridApiFile = workspaceRoot +  "/community-modules/core/src/gridApi.ts";
-    const columnFile = workspaceRoot +  "/community-modules/core/src/entities/column.ts";
-    const rowNodeFile = workspaceRoot +  "/community-modules/core/src/interfaces/iRowNode.ts";
+    const gridOpsFile = workspaceRoot + '/community-modules/core/src/entities/gridOptions.ts';
+    const colDefFile = workspaceRoot + '/community-modules/core/src/entities/colDef.ts';
+    const filterFile = workspaceRoot + '/community-modules/core/src/interfaces/iFilter.ts';
+    const gridApiFile = workspaceRoot + '/community-modules/core/src/gridApi.ts';
+    const columnFile = workspaceRoot + '/community-modules/core/src/entities/column.ts';
+    const rowNodeFile = workspaceRoot + '/community-modules/core/src/interfaces/iRowNode.ts';
 
     const distFolder = workspaceRoot + '/' + options.output;
 
@@ -59,13 +59,13 @@ async function generateFile(options: ExecutorOptions) {
         await writeJSONFile(distFolder + '/interfaces.AUTO.json', getInterfaces(INTERFACE_GLOBS));
         await writeJSONFile(distFolder + '/doc-interfaces.AUTO.json', buildInterfaceProps(INTERFACE_GLOBS));
     };
-    
+
     console.log(`--------------------------------------------------------------------------------`);
     console.log(`Generate docs reference files...`);
-    console.log('Using Typescript version: ', ts.version)
-    
+    console.log('Using Typescript version: ', ts.version);
+
     await generateMetaFiles();
-    
+
     console.log(`Generated OK.`);
     console.log(`--------------------------------------------------------------------------------`);
 }

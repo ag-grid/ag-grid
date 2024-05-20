@@ -1,5 +1,6 @@
 import fs from 'fs';
-import { API_SOURCE_DIR, API_REFERENCE_DIR } from '../utils/constants';
+
+import { API_REFERENCE_DIR, API_SOURCE_DIR } from '../utils/constants';
 
 export interface APIPageData {
     pagePath: `/${string}/`;
@@ -14,14 +15,17 @@ export const getApiPageData = (): APIPageData[] => {
     const result = [];
 
     const pageNames = fs.readdirSync(API_SOURCE_DIR, { withFileTypes: true });
-    pageNames.forEach(page => {
+    pageNames.forEach((page) => {
         if (page.isDirectory()) {
             const pagePath = `${API_SOURCE_DIR}/${page.name}`;
             const files = fs.readdirSync(pagePath);
-            const configFiles = files.filter(file => file.endsWith('.json'));
-            
-            configFiles.forEach(file => {
-                const pageName = page.name.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            const configFiles = files.filter((file) => file.endsWith('.json'));
+
+            configFiles.forEach((file) => {
+                const pageName = page.name
+                    .split('-')
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
                 const config: APIPageData = {
                     pagePath: `/${page.name}/`,
                     propertiesFileUrl: `${pagePath}/${file}`,
@@ -33,7 +37,7 @@ export const getApiPageData = (): APIPageData[] => {
     });
 
     return result;
-}
+};
 
 /**
  * Parse the API files to retrieve the index data
@@ -60,7 +64,7 @@ export const parseApiPageData = (details: APIPageData): AlgoliaRecord[] => {
 
         Object.entries(properties).forEach(([propertyKey, property]) => {
             const { description, more } = property; // more can include a link to a page with more info
-            
+
             const data = apiPropertiesSourceFile[propertyKey];
 
             const breadcrumb = `API > ${breadcrumbSuffix}`;
