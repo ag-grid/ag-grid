@@ -1,4 +1,13 @@
-import { Autowired, ChartGroupsDef, ChartType, Component, PostConstruct, _warnOnce } from '@ag-grid-community/core';
+import {
+    Autowired,
+    ChartGroupsDef,
+    ChartType,
+    Component,
+    KeyCode,
+    PostConstruct,
+    _setAriaLabel,
+    _warnOnce,
+} from '@ag-grid-community/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import { ChartController } from '../../chartController';
