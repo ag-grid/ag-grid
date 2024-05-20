@@ -1,7 +1,19 @@
-import { Autowired, Bean, BeanStub, PostConstruct, RowNodeBlockLoader, RowRenderer, RowNode, IServerSideGetRowsRequest, LoadSuccessParams, IServerSideGetRowsParams } from "@ag-grid-community/core";
-import { LazyCache } from "./lazyCache";
-import { ServerSideRowModel } from "../../serverSideRowModel";
-import { LazyStore } from "./lazyStore";
+import {
+    Autowired,
+    Bean,
+    BeanStub,
+    IServerSideGetRowsParams,
+    IServerSideGetRowsRequest,
+    LoadSuccessParams,
+    PostConstruct,
+    RowNode,
+    RowNodeBlockLoader,
+    RowRenderer,
+} from '@ag-grid-community/core';
+
+import { ServerSideRowModel } from '../../serverSideRowModel';
+import { LazyCache } from './lazyCache';
+import { LazyStore } from './lazyStore';
 
 @Bean('lazyBlockLoadingService')
 export class LazyBlockLoadingService extends BeanStub {
@@ -10,7 +22,7 @@ export class LazyBlockLoadingService extends BeanStub {
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('rowModel') private rowModel: ServerSideRowModel;
-    
+
     // a map of caches to loading nodes
     private cacheLoadingNodesMap: Map<LazyCache, Set<number>> = new Map();
 
@@ -18,14 +30,16 @@ export class LazyBlockLoadingService extends BeanStub {
     private isCheckQueued = false;
 
     // this is cached for blockLoadDebounce
-    private nextBlockToLoad?: { cache: LazyCache, index: number } = undefined;
+    private nextBlockToLoad?: { cache: LazyCache; index: number } = undefined;
     private loaderTimeout?: number;
 
     @PostConstruct
     private init() {
         // after a block is loaded, check if we have a block to load now that
         // `maxConcurrentDatasourceRequests` has changed
-        this.addManagedListener(this.rowNodeBlockLoader, RowNodeBlockLoader.BLOCK_LOADED_EVENT, () => this.queueLoadCheck());
+        this.addManagedListener(this.rowNodeBlockLoader, RowNodeBlockLoader.BLOCK_LOADED_EVENT, () =>
+            this.queueLoadCheck()
+        );
     }
 
     public subscribe(cache: LazyCache) {
@@ -55,14 +69,17 @@ export class LazyBlockLoadingService extends BeanStub {
         if (!nextBlockToLoad) {
             return;
         }
-    
+
         // for blockLoadDebounceMillis, if the next block to load is the same as the last block to load, ignore
         // otherwise cancel existing timeout and requeue
-        const isSameBlock = this.nextBlockToLoad && this.nextBlockToLoad.cache === nextBlockToLoad.cache && this.nextBlockToLoad.index === nextBlockToLoad.index;
+        const isSameBlock =
+            this.nextBlockToLoad &&
+            this.nextBlockToLoad.cache === nextBlockToLoad.cache &&
+            this.nextBlockToLoad.index === nextBlockToLoad.index;
         if (isSameBlock) {
             return;
         }
-        
+
         if (!this.nextBlockToLoad || !isSameBlock) {
             this.nextBlockToLoad = nextBlockToLoad;
             window.clearTimeout(this.loaderTimeout);
@@ -86,7 +103,7 @@ export class LazyBlockLoadingService extends BeanStub {
         // too many loads already, ignore the request as a successful request will requeue itself anyway
         if (availableLoadingCount != null && availableLoadingCount === 0) {
             return;
-        };
+        }
 
         this.rowNodeBlockLoader.registerLoads(1);
         this.executeLoad(cache, start, end);
@@ -115,13 +132,13 @@ export class LazyBlockLoadingService extends BeanStub {
             for (let i = 0; i < endRow - startRow; i++) {
                 loadingNodes.delete(startRow + i);
             }
-        }
-        
+        };
+
         const addNodesToLoadingMap = () => {
             for (let i = 0; i < endRow - startRow; i++) {
                 loadingNodes.add(startRow + i);
             }
-        }
+        };
 
         const success = (params: LoadSuccessParams) => {
             this.rowNodeBlockLoader.loadComplete();
@@ -133,13 +150,13 @@ export class LazyBlockLoadingService extends BeanStub {
             this.rowNodeBlockLoader.loadComplete();
             cache.onLoadFailed(startRow, endRow - startRow);
             removeNodesFromLoadingMap();
-        }
+        };
 
         const params: IServerSideGetRowsParams = this.gos.addGridCommonParams({
             request,
             success,
             fail,
-            parentNode: (cache as any).store.getParentNode()
+            parentNode: (cache as any).store.getParentNode(),
         });
 
         addNodesToLoadingMap();
@@ -187,7 +204,7 @@ export class LazyBlockLoadingService extends BeanStub {
 
         for (const cache of this.cacheLoadingNodesMap.keys()) {
             const nodesToRefresh = cache.getNodesToRefresh();
-            nodesToRefresh.forEach(node => {
+            nodesToRefresh.forEach((node) => {
                 if (node.rowIndex == null) {
                     nodeToRefresh = node;
                     cacheToRefresh = cache;
@@ -203,7 +220,7 @@ export class LazyBlockLoadingService extends BeanStub {
                 if (loadingNodes?.has(lazyNode.index)) {
                     return;
                 }
-            
+
                 const distToViewportTop = Math.abs(firstRowInViewport - node.rowIndex);
                 const distToViewportBottom = Math.abs(node.rowIndex - lastRowInViewport);
                 if (distToViewportTop < nodeToRefreshDist) {
@@ -227,10 +244,12 @@ export class LazyBlockLoadingService extends BeanStub {
         const lazyCache = cacheToRefresh as LazyCache;
 
         const lazyIndex = lazyCache.getNodes().getBy('node', nodeToRefresh)?.index;
-        return lazyIndex == null ? undefined : {
-            cache: lazyCache,
-            index: lazyCache.getBlockStartIndex(lazyIndex),
-        };
+        return lazyIndex == null
+            ? undefined
+            : {
+                  cache: lazyCache,
+                  index: lazyCache.getBlockStartIndex(lazyIndex),
+              };
     }
 
     public isRowLoading(cache: LazyCache, index: number) {

@@ -6,9 +6,10 @@ import {
     ITooltipParams,
     PostConstruct,
     WithoutGridCommon,
-    _createIconNoSpan
-} from "@ag-grid-community/core";
-import { BaseDropZonePanel } from "./baseDropZonePanel";
+    _createIconNoSpan,
+} from '@ag-grid-community/core';
+
+import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class PivotDropZonePanel extends BaseDropZonePanel {
     constructor(horizontal: boolean) {
@@ -24,12 +25,16 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
         super.init({
             icon: _createIconNoSpan('pivotPanel', this.gos, null)!,
             emptyMessage: emptyMessage,
-            title: title
+            title: title,
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refresh.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refresh.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.checkVisibility.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
+            this.checkVisibility.bind(this)
+        );
 
         this.refresh();
     }
@@ -79,13 +84,15 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
 
     protected isItemDroppable(column: Column, draggingEvent: DraggingEvent): boolean {
         // we never allow grouping of secondary columns
-        if (this.gos.get('functionsReadOnly') || !column.isPrimary()) { return false; }
+        if (this.gos.get('functionsReadOnly') || !column.isPrimary()) {
+            return false;
+        }
 
         return column.isAllowPivot() && (!column.isPivotActive() || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: Column[]): void {
-        this.columnModel.setPivotColumns(columns, "toolPanelUi");
+        this.funcColsService.setPivotColumns(columns, 'toolPanelUi');
     }
 
     protected getIconName(): string {
@@ -93,6 +100,6 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): Column[] {
-        return this.columnModel.getPivotColumns();
+        return this.funcColsService.getPivotColumns();
     }
 }

@@ -1,44 +1,42 @@
-import { CellValueChangedEvent, GridApi, createGrid, GridOptions, ValueParserParams } from '@ag-grid-community/core';
-import { getData } from "./data";
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { CellValueChangedEvent, GridApi, GridOptions, ValueParserParams, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+
+import { getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-
 let gridApi: GridApi;
 
-
 const gridOptions: GridOptions = {
-  columnDefs: [
-    { headerName: 'Name', field: 'simple' },
-    { headerName: 'Bad Number', field: 'numberBad' },
-    {
-      headerName: 'Good Number',
-      field: 'numberGood',
-      valueParser: numberParser,
+    columnDefs: [
+        { headerName: 'Name', field: 'simple' },
+        { headerName: 'Bad Number', field: 'numberBad' },
+        {
+            headerName: 'Good Number',
+            field: 'numberGood',
+            valueParser: numberParser,
+        },
+    ],
+    defaultColDef: {
+        flex: 1,
+        editable: true,
+        cellDataType: false,
     },
-  ],
-  defaultColDef: {
-    flex: 1,
-    editable: true,
-    cellDataType: false,
-  },
-  rowData: getData(),
-  onCellValueChanged: onCellValueChanged,
-}
+    rowData: getData(),
+    onCellValueChanged: onCellValueChanged,
+};
 
 function onCellValueChanged(event: CellValueChangedEvent) {
-  console.log('data after changes is: ', event.data);
+    console.log('data after changes is: ', event.data);
 }
 
 function numberParser(params: ValueParserParams) {
-  return Number(params.newValue)
+    return Number(params.newValue);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
+});

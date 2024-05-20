@@ -8,6 +8,7 @@ import {
     Column,
     ColumnAdvancedFilterModel,
     ColumnModel,
+    ColumnNameService,
     DataTypeService,
     JoinAdvancedFilterModel,
     PostConstruct,
@@ -17,6 +18,7 @@ import {
     _serialiseDate,
     _toStringOrNull,
 } from '@ag-grid-community/core';
+
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import { ColFilterExpressionParser } from './colFilterExpressionParser';
 import {
@@ -33,12 +35,13 @@ import {
 export class AdvancedFilterExpressionService extends BeanStub {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('dataTypeService') private dataTypeService: DataTypeService;
 
-    private columnNameToIdMap: { [columnNameUpperCase: string]: { colId: string, columnName: string } } = {};
+    private columnNameToIdMap: { [columnNameUpperCase: string]: { colId: string; columnName: string } } = {};
     private columnAutocompleteEntries: AutocompleteEntry[] | null = null;
     private expressionOperators: FilterExpressionOperators;
-    private expressionJoinOperators: { AND: string, OR: string };
+    private expressionJoinOperators: { AND: string; OR: string };
     private expressionEvaluatorParams: { [colId: string]: FilterExpressionEvaluatorParams<any> } = {};
 
     @PostConstruct
@@ -70,7 +73,11 @@ export class AdvancedFilterExpressionService extends BeanStub {
         return this.getExpressionOperator(model.filterType, model.type)?.displayValue ?? model.type;
     }
 
-    public getOperandModelValue(operand: string, baseCellDataType: BaseCellDataType, column: Column): string | number | null {
+    public getOperandModelValue(
+        operand: string,
+        baseCellDataType: BaseCellDataType,
+        column: Column
+    ): string | number | null {
         switch (baseCellDataType) {
             case 'number':
                 return _exists(operand) ? Number(operand) : null;
@@ -79,14 +86,17 @@ export class AdvancedFilterExpressionService extends BeanStub {
             case 'dateString':
                 // displayed string format may be different from data string format, so parse before converting to date
                 const parsedDateString = this.valueService.parseValue(column, null, operand, undefined);
-                return _serialiseDate(this.dataTypeService.getDateParserFunction(column)(parsedDateString) ?? null, false);
+                return _serialiseDate(
+                    this.dataTypeService.getDateParserFunction(column)(parsedDateString) ?? null,
+                    false
+                );
         }
         return operand;
     }
 
     public getOperandDisplayValue(model: ColumnAdvancedFilterModel, skipFormatting?: boolean): string {
         const { colId, filter } = model as any;
-        const column = this.columnModel.getPrimaryColumn(colId);
+        const column = this.columnModel.getColDefCol(colId);
         let operand = '';
         if (filter != null) {
             let operand1: string | null | undefined;
@@ -128,7 +138,10 @@ export class AdvancedFilterExpressionService extends BeanStub {
     public updateAutocompleteCache(updateEntry: AutocompleteEntry, type?: string): void {
         if (type === 'column') {
             const { key: colId, displayValue } = updateEntry;
-            this.columnNameToIdMap[updateEntry.displayValue!.toLocaleUpperCase()] = { colId, columnName: displayValue! };
+            this.columnNameToIdMap[updateEntry.displayValue!.toLocaleUpperCase()] = {
+                colId,
+                columnName: displayValue!,
+            };
         }
     }
 
@@ -140,27 +153,34 @@ export class AdvancedFilterExpressionService extends BeanStub {
         return this.localeService.getLocaleTextFunc()(key, defaultValue, variableValues);
     }
 
-    public generateAutocompleteListParams(entries: AutocompleteEntry[], type: string, searchString: string): AutocompleteListParams {
+    public generateAutocompleteListParams(
+        entries: AutocompleteEntry[],
+        type: string,
+        searchString: string
+    ): AutocompleteListParams {
         return {
             enabled: true,
             type,
             searchString,
-            entries
-        }
+            entries,
+        };
     }
 
     public getColumnAutocompleteEntries(): AutocompleteEntry[] {
         if (this.columnAutocompleteEntries) {
             return this.columnAutocompleteEntries;
         }
-        const columns = this.columnModel.getAllPrimaryColumns() ?? [];
+        const columns = this.columnModel.getColDefCols() ?? [];
         const entries: AutocompleteEntry[] = [];
         const includeHiddenColumns = this.gos.get('includeHiddenColumnsInAdvancedFilter');
-        columns.forEach(column => {
-            if (column.getColDef().filter && (includeHiddenColumns || column.isVisible() || column.isRowGroupActive())) {
+        columns.forEach((column) => {
+            if (
+                column.getColDef().filter &&
+                (includeHiddenColumns || column.isVisible() || column.isRowGroupActive())
+            ) {
                 entries.push({
                     key: column.getColId(),
-                    displayValue: this.columnModel.getDisplayNameForColumn(column, 'advancedFilter')!
+                    displayValue: this.columnNameService.getDisplayNameForColumn(column, 'advancedFilter')!,
                 });
             }
         });
@@ -168,12 +188,12 @@ export class AdvancedFilterExpressionService extends BeanStub {
             const aValue = a.displayValue ?? '';
             const bValue = b.displayValue ?? '';
             if (aValue < bValue) {
-                return -1
+                return -1;
             } else if (bValue > aValue) {
                 return 1;
             }
             return 0;
-        })
+        });
         return entries;
     }
 
@@ -183,32 +203,41 @@ export class AdvancedFilterExpressionService extends BeanStub {
     }
 
     public getJoinOperatorAutocompleteEntries(): AutocompleteEntry[] {
-        return Object.entries(this.expressionJoinOperators).map(([key, displayValue]) => ({key, displayValue}));
+        return Object.entries(this.expressionJoinOperators).map(([key, displayValue]) => ({ key, displayValue }));
     }
 
     public getDefaultAutocompleteListParams(searchString: string): AutocompleteListParams {
         return this.generateAutocompleteListParams(this.getColumnAutocompleteEntries(), 'column', searchString);
     }
 
-    public getDataTypeExpressionOperator(baseCellDataType?: BaseCellDataType): DataTypeFilterExpressionOperators<any> | undefined {
+    public getDataTypeExpressionOperator(
+        baseCellDataType?: BaseCellDataType
+    ): DataTypeFilterExpressionOperators<any> | undefined {
         return this.expressionOperators[baseCellDataType!];
     }
 
-    public getExpressionOperator(baseCellDataType?: BaseCellDataType, operator?: string): FilterExpressionOperator<any> | undefined {
+    public getExpressionOperator(
+        baseCellDataType?: BaseCellDataType,
+        operator?: string
+    ): FilterExpressionOperator<any> | undefined {
         return this.getDataTypeExpressionOperator(baseCellDataType)?.operators?.[operator!];
     }
 
-    public getExpressionJoinOperators(): { AND: string, OR: string } {
+    public getExpressionJoinOperators(): { AND: string; OR: string } {
         return this.expressionJoinOperators;
     }
 
-    public getColId(columnName: string): { colId: string, columnName: string } | null {
+    public getColId(columnName: string): { colId: string; columnName: string } | null {
         const upperCaseColumnName = columnName.toLocaleUpperCase();
         const cachedColId = this.columnNameToIdMap[upperCaseColumnName];
-        if (cachedColId) { return cachedColId; }
+        if (cachedColId) {
+            return cachedColId;
+        }
 
         const columnAutocompleteEntries = this.getColumnAutocompleteEntries();
-        const colEntry = columnAutocompleteEntries.find(({ displayValue }) => displayValue!.toLocaleUpperCase() === upperCaseColumnName);
+        const colEntry = columnAutocompleteEntries.find(
+            ({ displayValue }) => displayValue!.toLocaleUpperCase() === upperCaseColumnName
+        );
         if (colEntry) {
             const { key: colId, displayValue } = colEntry;
             const colValue = { colId, columnName: displayValue! };
@@ -219,18 +248,24 @@ export class AdvancedFilterExpressionService extends BeanStub {
         return null;
     }
 
-    public getExpressionEvaluatorParams<ConvertedTValue, TValue = ConvertedTValue>(colId: string): FilterExpressionEvaluatorParams<ConvertedTValue, TValue> {
+    public getExpressionEvaluatorParams<ConvertedTValue, TValue = ConvertedTValue>(
+        colId: string
+    ): FilterExpressionEvaluatorParams<ConvertedTValue, TValue> {
         let params = this.expressionEvaluatorParams[colId];
-        if (params) { return params; }
+        if (params) {
+            return params;
+        }
 
-        const column = this.columnModel.getPrimaryColumn(colId);
-        if (!column) { return { valueConverter: (v: any) => v }; }
+        const column = this.columnModel.getColDefCol(colId);
+        if (!column) {
+            return { valueConverter: (v: any) => v };
+        }
 
         const baseCellDataType = this.dataTypeService.getBaseDataType(column);
         switch (baseCellDataType) {
             case 'dateString':
                 params = {
-                    valueConverter: this.dataTypeService.getDateParserFunction(column)
+                    valueConverter: this.dataTypeService.getDateParserFunction(column),
                 };
                 break;
             case 'object':
@@ -239,13 +274,14 @@ export class AdvancedFilterExpressionService extends BeanStub {
                     params = { valueConverter: (v: any) => v };
                 } else {
                     params = {
-                        valueConverter: (value, node) => this.valueService.formatValue(column, node, value)
-                            ?? (typeof value.toString === 'function' ? value.toString() : '')
+                        valueConverter: (value, node) =>
+                            this.valueService.formatValue(column, node, value) ??
+                            (typeof value.toString === 'function' ? value.toString() : ''),
                     };
                 }
                 break;
-            case 'text': 
-            case undefined: 
+            case 'text':
+            case undefined:
                 params = { valueConverter: (v: any) => _toStringOrNull(v) };
                 break;
             default:
@@ -254,52 +290,61 @@ export class AdvancedFilterExpressionService extends BeanStub {
         }
         const { filterParams } = column.getColDef();
         if (filterParams) {
-            [
-                'caseSensitive', 'includeBlanksInEquals', 'includeBlanksInLessThan', 'includeBlanksInGreaterThan'
-            ].forEach((param: keyof FilterExpressionEvaluatorParams<ConvertedTValue, TValue>) => {
-                const paramValue = filterParams[param];
-                if (paramValue) {
-                    params[param] = paramValue
+            ['caseSensitive', 'includeBlanksInEquals', 'includeBlanksInLessThan', 'includeBlanksInGreaterThan'].forEach(
+                (param: keyof FilterExpressionEvaluatorParams<ConvertedTValue, TValue>) => {
+                    const paramValue = filterParams[param];
+                    if (paramValue) {
+                        params[param] = paramValue;
+                    }
                 }
-            });
+            );
         }
         this.expressionEvaluatorParams[colId] = params;
 
         return params;
     }
 
-    public getColumnDetails(colId: string): { column?: Column, baseCellDataType: BaseCellDataType } {
-        const column = this.columnModel.getPrimaryColumn(colId) ?? undefined;
+    public getColumnDetails(colId: string): { column?: Column; baseCellDataType: BaseCellDataType } {
+        const column = this.columnModel.getColDefCol(colId) ?? undefined;
         const baseCellDataType = (column ? this.dataTypeService.getBaseDataType(column) : undefined) ?? 'text';
         return { column, baseCellDataType };
     }
 
     public generateExpressionOperators(): FilterExpressionOperators {
-        const translate = (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]) => this.translate(key, variableValues);
+        const translate = (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]) =>
+            this.translate(key, variableValues);
         return {
             text: new TextFilterExpressionOperators({ translate }),
             boolean: new BooleanFilterExpressionOperators({ translate }),
             object: new TextFilterExpressionOperators<any>({ translate }),
             number: new ScalarFilterExpressionOperators<number>({ translate, equals: (v, o) => v === o }),
-            date: new ScalarFilterExpressionOperators<Date>({ translate, equals: (v: Date, o: Date) => v.getTime() === o.getTime() }),
-            dateString: new ScalarFilterExpressionOperators<Date, string>({ translate, equals: (v: Date, o: Date) => v.getTime() === o.getTime() })
-        }
+            date: new ScalarFilterExpressionOperators<Date>({
+                translate,
+                equals: (v: Date, o: Date) => v.getTime() === o.getTime(),
+            }),
+            dateString: new ScalarFilterExpressionOperators<Date, string>({
+                translate,
+                equals: (v: Date, o: Date) => v.getTime() === o.getTime(),
+            }),
+        };
     }
 
     public getColumnValue({ displayValue }: AutocompleteEntry): string {
         return `${ColFilterExpressionParser.COL_START_CHAR}${displayValue}${ColFilterExpressionParser.COL_END_CHAR}`;
     }
 
-    private generateExpressionJoinOperators(): { AND: string, OR: string } {
+    private generateExpressionJoinOperators(): { AND: string; OR: string } {
         return {
             AND: this.translate('advancedFilterAnd'),
-            OR: this.translate('advancedFilterOr')
+            OR: this.translate('advancedFilterOr'),
         };
     }
 
     private getActiveOperators(column: Column): string[] | undefined {
         const filterOptions = column.getColDef().filterParams?.filterOptions;
-        if (!filterOptions) { return undefined; }
+        if (!filterOptions) {
+            return undefined;
+        }
         const isValid = filterOptions.every((filterOption: any) => typeof filterOption === 'string');
         return isValid ? filterOptions : undefined;
     }

@@ -1,11 +1,11 @@
-import { CellCtrl } from "./cellCtrl";
-import { Column } from "../../entities/column";
-import { _areEqual, _last } from "../../utils/array";
-import { Events } from "../../eventKeys";
-import { _missing } from "../../utils/generic";
-import { BeanStub } from "../../context/beanStub";
-import { Beans } from "../beans";
-import { RowNode } from "../../entities/rowNode";
+import { BeanStub } from '../../context/beanStub';
+import { Column } from '../../entities/column';
+import { RowNode } from '../../entities/rowNode';
+import { Events } from '../../eventKeys';
+import { _areEqual, _last } from '../../utils/array';
+import { _missing } from '../../utils/generic';
+import { Beans } from '../beans';
+import { CellCtrl } from './cellCtrl';
 
 /**
  * Takes care of:
@@ -14,7 +14,6 @@ import { RowNode } from "../../entities/rowNode";
  *  #) Cell Left (the horizontal positioning of the cell, the vertical positioning is on the row)
  */
 export class CellPositionFeature extends BeanStub {
-
     private cellCtrl: CellCtrl;
     private eGui: HTMLElement;
 
@@ -39,7 +38,9 @@ export class CellPositionFeature extends BeanStub {
     private setupRowSpan(): void {
         this.rowSpan = this.column.getRowSpan(this.rowNode);
 
-        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onNewColumnsLoaded())
+        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () =>
+            this.onNewColumnsLoaded()
+        );
     }
 
     public setComp(eGui: HTMLElement): void {
@@ -57,7 +58,9 @@ export class CellPositionFeature extends BeanStub {
 
     private onNewColumnsLoaded(): void {
         const rowSpan = this.column.getRowSpan(this.rowNode);
-        if (this.rowSpan === rowSpan) { return; }
+        if (this.rowSpan === rowSpan) {
+            return;
+        }
 
         this.rowSpan = rowSpan;
         this.applyRowSpan(true);
@@ -75,21 +78,33 @@ export class CellPositionFeature extends BeanStub {
 
     private setupColSpan(): void {
         // if no col span is active, then we don't set it up, as it would be wasteful of CPU
-        if (this.column.getColDef().colSpan == null) { return; }
+        if (this.column.getColDef().colSpan == null) {
+            return;
+        }
 
         this.colsSpanning = this.getColSpanningList();
 
         // because we are col spanning, a reorder of the cols can change what cols we are spanning over
-        this.addManagedListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayColumnsChanged.bind(this));
+        this.addManagedListener(
+            this.beans.eventService,
+            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
+            this.onDisplayColumnsChanged.bind(this)
+        );
         // because we are spanning over multiple cols, we check for width any time any cols width changes.
         // this is expensive - really we should be explicitly checking only the cols we are spanning over
         // instead of every col, however it would be tricky code to track the cols we are spanning over, so
         // because hardly anyone will be using colSpan, am favouring this easier way for more maintainable code.
-        this.addManagedListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onWidthChanged.bind(this));
+        this.addManagedListener(
+            this.beans.eventService,
+            Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
+            this.onWidthChanged.bind(this)
+        );
     }
 
     public onWidthChanged(): void {
-        if (!this.eGui) { return; }
+        if (!this.eGui) {
+            return;
+        }
         const width = this.getCellWidth();
         this.eGui.style.width = `${width}px`;
     }
@@ -114,7 +129,7 @@ export class CellPositionFeature extends BeanStub {
             const pinned = this.column.getPinned();
             for (let i = 0; pointer && i < colSpan; i++) {
                 colsSpanning.push(pointer);
-                pointer = this.beans.columnModel.getDisplayedColAfter(pointer);
+                pointer = this.beans.visibleColsService.getColAfter(pointer);
                 if (!pointer || _missing(pointer)) {
                     break;
                 }
@@ -129,7 +144,9 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onLeftChanged(): void {
-        if (!this.eGui) { return; }
+        if (!this.eGui) {
+            return;
+        }
         const left = this.modifyLeftForPrintLayout(this.getCellLeft());
         this.eGui.style.left = left + 'px';
     }
@@ -151,10 +168,10 @@ export class CellPositionFeature extends BeanStub {
             return leftPosition;
         }
 
-        const leftWidth = this.beans.columnModel.getDisplayedColumnsLeftWidth();
+        const leftWidth = this.beans.visibleColsService.getColsLeftWidth();
 
         if (this.column.getPinned() === 'right') {
-            const bodyWidth = this.beans.columnModel.getBodyContainerWidth();
+            const bodyWidth = this.beans.visibleColsService.getBodyContainerWidth();
             return leftWidth + bodyWidth + (leftPosition || 0);
         }
 
@@ -163,8 +180,9 @@ export class CellPositionFeature extends BeanStub {
     }
 
     private applyRowSpan(force?: boolean): void {
-
-        if (this.rowSpan === 1 && !force) { return; }
+        if (this.rowSpan === 1 && !force) {
+            return;
+        }
 
         const singleRowHeight = this.beans.gos.getRowHeightAsNumber();
         const totalRowHeight = singleRowHeight * this.rowSpan;

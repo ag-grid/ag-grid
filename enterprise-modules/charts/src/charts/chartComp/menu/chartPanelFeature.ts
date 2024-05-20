@@ -1,12 +1,7 @@
-import {
-    BeanStub,
-    ChartType,
-    Component,
-    PostConstruct,
-    _removeFromParent,
-} from "@ag-grid-community/core";
-import { ChartController } from "../chartController";
-import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
+import { BeanStub, ChartType, Component, PostConstruct, _removeFromParent } from '@ag-grid-community/core';
+
+import { ChartController } from '../chartController';
+import { ChartSeriesType, getSeriesType } from '../utils/seriesTypeMapper';
 
 export class ChartPanelFeature extends BeanStub {
     private chartType: ChartType;
@@ -24,8 +19,12 @@ export class ChartPanelFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, () => this.refreshPanels(true));
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, () => this.refreshPanels(false));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, () =>
+            this.refreshPanels(true)
+        );
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, () =>
+            this.refreshPanels(false)
+        );
     }
 
     public addComponent(component: Component): void {
@@ -54,7 +53,7 @@ export class ChartPanelFeature extends BeanStub {
     }
 
     private destroyPanels(): void {
-        this.panels.forEach(panel => {
+        this.panels.forEach((panel) => {
             _removeFromParent(panel.getGui());
             this.destroyBean(panel);
         });

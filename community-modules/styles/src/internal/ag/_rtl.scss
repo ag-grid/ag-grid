@@ -1,6 +1,6 @@
-@use "sass:string";
-@use "sass:list";
-@use "sass:map";
+@use 'sass:string';
+@use 'sass:list';
+@use 'sass:map';
 
 // Automatically generate rtl styles from provided ltr styles by
 // flipping "left" and "right" in property names and values.
@@ -23,7 +23,7 @@
     @if list.length(list.nth(&, 1)) < 1 {
         @error "unthemed-rtl() can't be used at the top level of a css file, only nested in a selector.";
     }
-    @if string.index(list.nth(list.nth(&, 1), 1), ".ag-theme-") != null {
+    @if string.index(list.nth(list.nth(&, 1), 1), '.ag-theme-') != null {
         @error "unthemed-rtl() should not be used in a theme, use ag.theme-rtl() instead.";
     }
     .ag-ltr & {
@@ -84,28 +84,52 @@
 @function -get-rtl-rules($ltr-rules) {
     $rtl-rules: ();
     @each $property, $value in $ltr-rules {
-        @if string.index($property, "-right") {
-            $rtl-property: -replace-substring($property, "-right", "-left");
-            $rtl-rules: map.merge($rtl-rules, ($rtl-property: $value));
-        }
-        @else if string.index($property, "-left") {
-            $rtl-property: -replace-substring($property, "-left", "-right");
-            $rtl-rules: map.merge($rtl-rules, ($rtl-property: $value));
-        }
-        @else if $property == "right" {
-            $rtl-rules: map.merge($rtl-rules, (left: $value));
-        }
-        @else if $property == "left" {
-            $rtl-rules: map.merge($rtl-rules, (right: $value));
-        }
-        @else if $value == "right" {
-            $rtl-rules: map.merge($rtl-rules, ($property: left));
-        }
-        @else if $value == "left" {
-            $rtl-rules: map.merge($rtl-rules, (property: right));
-        }
-        @else {
-            @error "-get-rtl-rules doesn't know how to process the \"#{$property}\" property"
+        @if string.index($property, '-right') {
+            $rtl-property: -replace-substring($property, '-right', '-left');
+            $rtl-rules: map.merge(
+                $rtl-rules,
+                (
+                    $rtl-property: $value,
+                )
+            );
+        } @else if string.index($property, '-left') {
+            $rtl-property: -replace-substring($property, '-left', '-right');
+            $rtl-rules: map.merge(
+                $rtl-rules,
+                (
+                    $rtl-property: $value,
+                )
+            );
+        } @else if $property == 'right' {
+            $rtl-rules: map.merge(
+                $rtl-rules,
+                (
+                    left: $value,
+                )
+            );
+        } @else if $property == 'left' {
+            $rtl-rules: map.merge(
+                $rtl-rules,
+                (
+                    right: $value,
+                )
+            );
+        } @else if $value == 'right' {
+            $rtl-rules: map.merge(
+                $rtl-rules,
+                (
+                    $property: left,
+                )
+            );
+        } @else if $value == 'left' {
+            $rtl-rules: map.merge(
+                $rtl-rules,
+                (
+                    property: right,
+                )
+            );
+        } @else {
+            @error "-get-rtl-rules doesn't know how to process the \"#{$property}\" property";
         }
     }
     @return $rtl-rules;
@@ -114,9 +138,8 @@
 @function -replace-substring($string, $search, $replace: '') {
     $index: string.index($string, $search);
     @if $index {
-        @return string.slice($string, 1, $index - 1)
-                + $replace
-                + -replace-substring(str-slice($string, $index + str-length($search)), $search, $replace);
+        @return string.slice($string, 1, $index - 1) + $replace +
+            -replace-substring(str-slice($string, $index + str-length($search)), $search, $replace);
     }
     @return $string;
 }

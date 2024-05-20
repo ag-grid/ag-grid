@@ -4,7 +4,7 @@ export default {
             isGroup: null,
             paddingLeft: null,
             rotation: null,
-        }
+        };
     },
     template: `
         <div
@@ -24,15 +24,14 @@ export default {
     methods: {
         onExpand() {
             this.params.node.setExpanded(!this.params.node.expanded);
-        }
+        },
     },
     beforeMount() {
         this.isGroup = this.params.node.group;
         this.paddingLeft = `${this.params.node.level * 15}px`;
         this.rotation = this.params.node.expanded ? 'rotate(90deg)' : 'rotate(0deg)';
-
     },
     beforeDestroy() {
-        window.removeEventListener("click", this.onClick);
-    }
+        window.removeEventListener('click', this.onClick);
+    },
 };

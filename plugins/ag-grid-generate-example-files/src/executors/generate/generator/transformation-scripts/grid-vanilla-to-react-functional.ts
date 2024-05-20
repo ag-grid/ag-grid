@@ -1,5 +1,6 @@
 import { basename } from 'path';
-import { ExampleConfig, ParsedBindings, ImportType } from '../types';
+
+import { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
     addBindingImports,
@@ -14,9 +15,9 @@ import {
     preferParamsApi,
 } from './parser-utils';
 import {
-    convertFunctionalTemplate,
-    convertFunctionToConstCallback,
     EventAndCallbackNames,
+    convertFunctionToConstCallback,
+    convertFunctionalTemplate,
     getImport,
     getValueType,
 } from './react-utils';
@@ -92,8 +93,8 @@ function getPackageImports(
     if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach((styleSheet) => imports.push(`import './${basename(styleSheet)}';`));
     }
- 
-    addRelativeImports(bindings, imports, 'js');
+
+    addRelativeImports(bindings, imports, 'jsx');
 
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));

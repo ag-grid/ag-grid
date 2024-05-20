@@ -1,18 +1,17 @@
-import {Component} from "@angular/core";
-import {ICellRendererAngularComp} from '@ag-grid-community/angular';
-import {ICellRendererParams} from "@ag-grid-community/core";
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
+import { ICellRendererParams } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
 
 @Component({
     standalone: true,
     template: `
         <span class="total-value-renderer">
-             <span>{{country}}</span>
-             <button (click)="buttonClicked()">Push For Total</button>
+            <span>{{ country }}</span>
+            <button (click)="buttonClicked()">Push For Total</button>
         </span>
-    `
+    `,
 })
 export class MedalRenderer implements ICellRendererAngularComp {
-
     public country: string = '';
     public total: string = '';
 
@@ -27,6 +26,6 @@ export class MedalRenderer implements ICellRendererAngularComp {
     }
 
     buttonClicked() {
-        alert(`${this.total} medals won!`)
+        alert(`${this.total} medals won!`);
     }
 }

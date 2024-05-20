@@ -8,10 +8,15 @@ const CustomHeader = (props) => {
 
     return (
         <div style={{ display: 'flex' }}>
-            {enableMenu && <div
-                ref={menuButtonRef}
-                className="ag-icon ag-icon-menu"
-                onClick={() => showColumnMenu(menuButtonRef.current)}>&nbsp;</div>}
+            {enableMenu && (
+                <div
+                    ref={menuButtonRef}
+                    className="ag-icon ag-icon-menu"
+                    onClick={() => showColumnMenu(menuButtonRef.current)}
+                >
+                    &nbsp;
+                </div>
+            )}
             <div className="customHeaderLabel">{displayName}</div>
         </div>
     );

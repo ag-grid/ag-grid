@@ -1,15 +1,13 @@
-import { UserCompDetails } from "../../components/framework/userComponentFactory";
-import { _setAriaRole } from "../../utils/aria";
-import { _setDisplayed } from "../../utils/dom";
-import { Component } from "../../widgets/component";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer } from "./groupCellRendererCtrl";
-import { ICellRendererComp } from "./iCellRenderer";
+import { UserCompDetails } from '../../components/framework/userComponentFactory';
+import { _setAriaRole } from '../../utils/aria';
+import { _setDisplayed } from '../../utils/dom';
+import { Component } from '../../widgets/component';
+import { RefSelector } from '../../widgets/componentAnnotations';
+import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer } from './groupCellRendererCtrl';
+import { ICellRendererComp } from './iCellRenderer';
 
 export class GroupCellRenderer extends Component implements ICellRendererComp {
-
-    private static TEMPLATE = /* html */
-        `<span class="ag-cell-wrapper">
+    private static TEMPLATE /* html */ = `<span class="ag-cell-wrapper">
             <span class="ag-group-expanded" ref="eExpanded"></span>
             <span class="ag-group-contracted" ref="eContracted"></span>
             <span class="ag-group-checkbox ag-invisible" ref="eCheckbox"></span>
@@ -31,14 +29,13 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     public init(params: GroupCellRendererParams): void {
-
         const compProxy: IGroupCellRenderer = {
             setInnerRenderer: (compDetails, valueToDisplay) => this.setRenderDetails(compDetails, valueToDisplay),
-            setChildCount: count => this.eChildCount.textContent = count,
+            setChildCount: (count) => (this.eChildCount.textContent = count),
             addOrRemoveCssClass: (cssClass, value) => this.addOrRemoveCssClass(cssClass, value),
-            setContractedDisplayed: expanded => _setDisplayed(this.eContracted, expanded),
-            setExpandedDisplayed: expanded => _setDisplayed(this.eExpanded, expanded),
-            setCheckboxVisible: visible => this.eCheckbox.classList.toggle('ag-invisible', !visible)
+            setContractedDisplayed: (expanded) => _setDisplayed(this.eContracted, expanded),
+            setExpandedDisplayed: (expanded) => _setDisplayed(this.eExpanded, expanded),
+            setCheckboxVisible: (visible) => this.eCheckbox.classList.toggle('ag-invisible', !visible),
         };
 
         const ctrl = this.createManagedBean(new GroupCellRendererCtrl());
@@ -52,12 +49,15 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any): void {
-
         if (compDetails) {
             const componentPromise = compDetails.newAgStackInstance();
-            if (!componentPromise) { return; }
-            componentPromise.then(comp => {
-                if (!comp) { return; }
+            if (!componentPromise) {
+                return;
+            }
+            componentPromise.then((comp) => {
+                if (!comp) {
+                    return;
+                }
                 const destroyComp = () => this.context.destroyBean(comp);
                 if (this.isAlive()) {
                     this.eValue.appendChild(comp.getGui());

@@ -26,9 +26,19 @@ const pageName = Astro.params.pageName as Framework;
 const { name, blogPrefix } = whatsNewData[site];
 ---
 
-<Layout title={"What's new"} description={`See what's new in recent ${name} versions. View feature highlights, browse release notes or read our release blogs. Includes major and minor releases.`} showDocsNav={true} showSearchBar={true}>
+<Layout
+    title={"What's new"}
+    description={`See what's new in recent ${name} versions. View feature highlights, browse release notes or read our release blogs. Includes major and minor releases.`}
+    showDocsNav={true}
+    showSearchBar={true}
+>
     <div class:list={['contentViewport layout-grid']}>
-        <PagesNavigationFromLocalStorage client:load allMenuSections={allMenuSections} pageName={pageName} menuData={menuData} />
+        <PagesNavigationFromLocalStorage
+            client:load
+            allMenuSections={allMenuSections}
+            pageName={pageName}
+            menuData={menuData}
+        />
 
         <div class={styles.whatsNewContainer}>
             <h1>What's New in {name}</h1>

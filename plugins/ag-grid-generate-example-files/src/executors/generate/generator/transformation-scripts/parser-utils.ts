@@ -4,10 +4,7 @@ import ts from 'typescript';
 import { getEnterprisePackageName, integratedChartsUsesChartsEnterprise } from '../constants';
 import { BindingImport, ExampleConfig, InternalFramework, ParsedBindings } from '../types';
 
-export function readAsJsFile(
-    srcFile,
-    internalFramework: InternalFramework,
-) {
+export function readAsJsFile(srcFile, internalFramework: InternalFramework) {
     let tsFile = srcFile
         // Remove imports like import 'ag-grid-community/styles/ag-grid.css';
         .replace(/import ['"].*['"](;?)\n/g, '');
@@ -554,7 +551,10 @@ export function addBindingImports(
             const joiningComma = namedImport && importStr ? ', ' : '';
             let fullImportStr = `import ${namedImport}${joiningComma}${importStr} from ${k};`;
             if (!integratedChartsUsesChartsEnterprise && !convertToPackage) {
-                fullImportStr = fullImportStr.replace(/@ag-grid-enterprise\/charts-enterprise/g, '@ag-grid-enterprise/charts');
+                fullImportStr = fullImportStr.replace(
+                    /@ag-grid-enterprise\/charts-enterprise/g,
+                    '@ag-grid-enterprise/charts'
+                );
             }
             imports.push(fullImportStr);
         }
@@ -576,8 +576,6 @@ export function addRelativeImports(bindings: ParsedBindings, imports: string[], 
         });
     }
 }
-
-
 
 export function removeModuleRegistration(code: string) {
     return code.replace(/ModuleRegistry\.registerModules(.|\n)*?]\)(;?)/g, '');

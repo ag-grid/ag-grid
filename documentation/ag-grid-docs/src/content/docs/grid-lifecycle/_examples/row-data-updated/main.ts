@@ -1,21 +1,15 @@
-import {
-    GridApi,
-    createGrid,
-    GridOptions,
-    FirstDataRenderedEvent,
-    RowDataUpdatedEvent,
-} from '@ag-grid-community/core';
-import { getData, TAthlete } from './data';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { FirstDataRenderedEvent, GridApi, GridOptions, RowDataUpdatedEvent, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+
+import { TAthlete, getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
-
 
 const updateRowCount = (id: string) => {
     const element = document.querySelector(`#${id} > .value`);
     element!.textContent = `${new Date().toLocaleTimeString()}`;
-}
+};
 
 let gridApi: GridApi;
 

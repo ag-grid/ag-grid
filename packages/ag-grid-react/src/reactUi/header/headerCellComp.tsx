@@ -1,11 +1,21 @@
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+
+import {
+    ColumnSortState,
+    CssClassManager,
+    HeaderCellCtrl,
+    IHeader,
+    IHeaderCellComp,
+    UserCompDetails,
+    _removeAriaSort,
+    _setAriaSort,
+} from 'ag-grid-community';
+
 import { BeansContext } from '../beansContext';
-import { CssClassManager, HeaderCellCtrl, IHeader, IHeaderCellComp, UserCompDetails, _setAriaSort, _removeAriaSort, ColumnSortState } from 'ag-grid-community';
-import { isComponentStateless } from '../utils';
 import { showJsComp } from '../jsComp';
+import { isComponentStateless } from '../utils';
 
-const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
-
+const HeaderCellComp = (props: { ctrl: HeaderCellCtrl }) => {
     const { ctrl } = props;
     const isAlive = ctrl.isAlive();
 
@@ -37,11 +47,11 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
             addOrRemoveCssClass: (name: string, on: boolean) => cssClassManager.current!.addOrRemoveCssClass(name, on),
             setAriaSort: (sort?: ColumnSortState) => {
                 if (eGui.current) {
-                    sort ? _setAriaSort(eGui.current, sort) : _removeAriaSort(eGui.current)
+                    sort ? _setAriaSort(eGui.current, sort) : _removeAriaSort(eGui.current);
                 }
             },
             setUserCompDetails: (compDetails: UserCompDetails) => setUserCompDetails(compDetails),
-            getUserCompInstance: () => userCompRef.current || undefined
+            getUserCompInstance: () => userCompRef.current || undefined,
         };
 
         ctrl.setComp(compProxy, eGui.current, eResize.current!, eHeaderCompWrapper.current!);
@@ -51,7 +61,10 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
     }, []);
 
     // js comps
-    useLayoutEffect(() => showJsComp(userCompDetails, context, eHeaderCompWrapper.current!, userCompRef), [userCompDetails]);
+    useLayoutEffect(
+        () => showJsComp(userCompDetails, context, eHeaderCompWrapper.current!, userCompRef),
+        [userCompDetails]
+    );
 
     // add drag handling, must be done after component is added to the dom
     useEffect(() => {
@@ -67,16 +80,13 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
 
     return (
-        <div
-            ref={setRef}
-            className="ag-header-cell"
-            col-id={colId}
-            role="columnheader"
-        >
+        <div ref={setRef} className="ag-header-cell" col-id={colId} role="columnheader">
             <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
             <div ref={eHeaderCompWrapper} className="ag-header-cell-comp-wrapper" role="presentation">
-            { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }
-            { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ userCompRef }/> }
+                {reactUserComp && userCompStateless && <UserCompClass {...userCompDetails!.params} />}
+                {reactUserComp && !userCompStateless && (
+                    <UserCompClass {...userCompDetails!.params} ref={userCompRef} />
+                )}
             </div>
         </div>
     );

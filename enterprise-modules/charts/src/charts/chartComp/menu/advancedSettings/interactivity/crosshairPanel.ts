@@ -1,11 +1,7 @@
-import {
-    AgGroupComponentParams,
-    Autowired,
-    Component,
-    PostConstruct
-} from "@ag-grid-community/core";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import { AgGroupComponentParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+
+import { ChartTranslationService } from '../../../services/chartTranslationService';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class CrosshairPanel extends Component {
     public static TEMPLATE = /* html */ `<div>
@@ -24,14 +20,17 @@ export class CrosshairPanel extends Component {
 
     @PostConstruct
     private init() {
-        const crosshairGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>('crosshair.enabled', {
-            cssIdentifier: 'charts-advanced-settings-top-level',
-            direction: 'vertical',
-            suppressOpenCloseIcons: true,
-            title: this.chartTranslationService.translate('crosshair'),
-            suppressEnabledCheckbox: true,
-            useToggle: true
-        });
+        const crosshairGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(
+            'crosshair.enabled',
+            {
+                cssIdentifier: 'charts-advanced-settings-top-level',
+                direction: 'vertical',
+                suppressOpenCloseIcons: true,
+                title: this.chartTranslationService.translate('crosshair'),
+                suppressEnabledCheckbox: true,
+                useToggle: true,
+            }
+        );
         const crosshairLabelCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'crosshair.label.enabled',
             'crosshairLabel'
@@ -48,7 +47,7 @@ export class CrosshairPanel extends Component {
             crosshairGroup: crosshairGroupParams,
             crosshairLabelCheckbox: crosshairLabelCheckboxParams,
             crosshairSnapCheckbox: crosshairSnapCheckboxParams,
-            crosshairStrokeColorPicker: crosshairStrokeColorPickerParams
+            crosshairStrokeColorPicker: crosshairStrokeColorPickerParams,
         });
     }
 }

@@ -1,4 +1,4 @@
-import { IHeaderComp, IHeaderParams } from "@ag-grid-community/core";
+import { IHeaderComp, IHeaderParams } from '@ag-grid-community/core';
 
 export class CustomHeader implements IHeaderComp {
     params!: IHeaderParams;
@@ -12,7 +12,8 @@ export class CustomHeader implements IHeaderComp {
         this.params = params;
         console.log('CustomHeader.init() -> ' + this.params.column.getId());
         this.eGui = document.createElement('div');
-        this.eGui.innerHTML = '' +
+        this.eGui.innerHTML =
+            '' +
             '<div style="display: flex;">' +
             '<span ref="eMenu" class="ag-icon ag-icon-menu" style="margin-right: 4px;"></span>' +
             '<div style="flex-grow: 1;">' +

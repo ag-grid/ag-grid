@@ -4,17 +4,25 @@ import {
     BeanStub,
     Column,
     ColumnModel,
+    ColumnNameService,
     Events,
+    FuncColsService,
     PostConstruct,
     RowNode,
     RowPositionUtils,
-    ValueService
-} from "@ag-grid-community/core";
+    ShowRowGroupColsService,
+    ValueService,
+    VisibleColsService,
+} from '@ag-grid-community/core';
 
-@Bean("chartColumnService")
+@Bean('chartColumnService')
 export class ChartColumnService extends BeanStub {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('valueService') private readonly valueService: ValueService;
+    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
+    @Autowired('valueService') private valueService: ValueService;
     @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
 
     private valueColsWithoutSeriesType: Set<string> = new Set();
@@ -27,23 +35,23 @@ export class ChartColumnService extends BeanStub {
     }
 
     public getColumn(colId: string): Column | null {
-        return this.columnModel.getPrimaryColumn(colId);
+        return this.columnModel.getColDefCol(colId);
     }
 
     public getAllDisplayedColumns(): Column[] {
-        return this.columnModel.getAllDisplayedColumns();
+        return this.visibleColsService.getAllCols();
     }
 
     public getColDisplayName(col: Column): string | null {
-        return this.columnModel.getDisplayNameForColumn(col, 'chart');
+        return this.columnNameService.getDisplayNameForColumn(col, 'chart');
     }
 
     public getRowGroupColumns(): Column[] {
-        return this.columnModel.getRowGroupColumns();
+        return this.funcColsService.getRowGroupColumns();
     }
 
     public getGroupDisplayColumns(): Column[] {
-        return this.columnModel.getGroupDisplayColumns();
+        return this.showRowGroupColsService.getShowRowGroupCols();
     }
 
     public isPivotMode(): boolean {
@@ -54,13 +62,13 @@ export class ChartColumnService extends BeanStub {
         return this.columnModel.isPivotActive();
     }
 
-    public getChartColumns(): { dimensionCols: Set<Column>; valueCols: Set<Column>; } {
-        const gridCols = this.columnModel.getAllGridColumns();
+    public getChartColumns(): { dimensionCols: Set<Column>; valueCols: Set<Column> } {
+        const gridCols = this.columnModel.getCols();
 
         const dimensionCols = new Set<Column>();
         const valueCols = new Set<Column>();
 
-        gridCols.forEach(col => {
+        gridCols.forEach((col) => {
             const colDef = col.getColDef();
             const chartDataType = colDef.chartDataType;
 
@@ -77,7 +85,9 @@ export class ChartColumnService extends BeanStub {
                     case 'excluded':
                         return;
                     default:
-                        console.warn(`AG Grid: unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'`);
+                        console.warn(
+                            `AG Grid: unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'`
+                        );
                         break;
                 }
             }
@@ -131,7 +141,9 @@ export class ChartColumnService extends BeanStub {
     }
 
     private extractLeafData(row: RowNode, col: Column): any {
-        if (!row.allLeafChildren) { return null; }
+        if (!row.allLeafChildren) {
+            return null;
+        }
 
         for (let i = 0; i < row.allLeafChildren.length; i++) {
             const childRow = row.allLeafChildren[i];

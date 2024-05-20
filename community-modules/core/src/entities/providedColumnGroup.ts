@@ -1,14 +1,13 @@
-import { IProvidedColumn } from "../interfaces/iProvidedColumn";
-import { ColGroupDef } from "./colDef";
-import { ColumnGroupShowType } from "./columnGroup";
-import { Column, ColumnInstanceId, getNextColInstanceId } from "./column";
-import { EventService } from "../eventService";
-import { IEventEmitter } from "../interfaces/iEventEmitter";
-import { AgEvent, AgEventListener } from "../events";
-import { PreDestroy } from "../context/context";
+import { PreDestroy } from '../context/context';
+import { EventService } from '../eventService';
+import { AgEvent, AgEventListener } from '../events';
+import { IEventEmitter } from '../interfaces/iEventEmitter';
+import { IProvidedColumn } from '../interfaces/iProvidedColumn';
+import { ColGroupDef } from './colDef';
+import { Column, ColumnInstanceId, getNextColInstanceId } from './column';
+import { ColumnGroupShowType } from './columnGroup';
 
 export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
-
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
     public static EVENT_EXPANDABLE_CHANGED = 'expandableChanged';
 
@@ -82,7 +81,7 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
     public isVisible(): boolean {
         // return true if at least one child is visible
         if (this.children) {
-            return this.children.some(child => child.isVisible());
+            return this.children.some((child) => child.isVisible());
         }
 
         return false;
@@ -95,7 +94,7 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
     public setExpanded(expanded: boolean | undefined): void {
         this.expanded = expanded === undefined ? false : expanded;
         const event: AgEvent = {
-            type: ProvidedColumnGroup.EVENT_EXPANDED_CHANGED
+            type: ProvidedColumnGroup.EVENT_EXPANDED_CHANGED,
         };
         this.localEventService.dispatchEvent(event);
     }
@@ -135,7 +134,9 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
     }
 
     private addLeafColumns(leafColumns: Column[]): void {
-        if (!this.children) { return; }
+        if (!this.children) {
+            return;
+        }
 
         this.children.forEach((child: IProvidedColumn) => {
             if (child instanceof Column) {
@@ -149,7 +150,9 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
     public getColumnGroupShow(): ColumnGroupShowType | undefined {
         const colGroupDef = this.colGroupDef;
 
-        if (!colGroupDef) { return; }
+        if (!colGroupDef) {
+            return;
+        }
 
         return colGroupDef.columnGroupShow;
     }
@@ -160,19 +163,23 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
     public setupExpandable() {
         this.setExpandable();
 
-        if (this.expandableListenerRemoveCallback) { this.expandableListenerRemoveCallback(); }
+        if (this.expandableListenerRemoveCallback) {
+            this.expandableListenerRemoveCallback();
+        }
 
         const listener = this.onColumnVisibilityChanged.bind(this);
-        this.getLeafColumns().forEach(col => col.addEventListener('visibleChanged', listener));
+        this.getLeafColumns().forEach((col) => col.addEventListener('visibleChanged', listener));
 
         this.expandableListenerRemoveCallback = () => {
-            this.getLeafColumns().forEach(col => col.removeEventListener('visibleChanged', listener));
+            this.getLeafColumns().forEach((col) => col.removeEventListener('visibleChanged', listener));
             this.expandableListenerRemoveCallback = null;
         };
     }
 
     public setExpandable() {
-        if (this.isPadding()) { return; }
+        if (this.isPadding()) {
+            return;
+        }
         // want to make sure the group doesn't disappear when it's open
         let atLeastOneShowingWhenOpen = false;
         // want to make sure the group doesn't disappear when it's closed
@@ -207,7 +214,7 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
         if (this.expandable !== expandable) {
             this.expandable = expandable;
             const event: AgEvent = {
-                type: ProvidedColumnGroup.EVENT_EXPANDABLE_CHANGED
+                type: ProvidedColumnGroup.EVENT_EXPANDABLE_CHANGED,
             };
             this.localEventService.dispatchEvent(event);
         }
@@ -217,7 +224,7 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
         const res: IProvidedColumn[] = [];
 
         const process = (items: IProvidedColumn[]) => {
-            items.forEach(item => {
+            items.forEach((item) => {
                 // if padding, we add this children instead of the padding
                 const skipBecausePadding = item instanceof ProvidedColumnGroup && item.isPadding();
                 if (skipBecausePadding) {

@@ -17,5 +17,5 @@ export function getData(): any[] {
         { employee: 'Lilly Boaz', sickDays: 6 },
         { employee: 'Frank Kimura', sickDays: 1 },
         { employee: 'Alena Wages', sickDays: 5 },
-    ]
+    ];
 }

@@ -1,4 +1,5 @@
 import { Bean, BeanStub, PostConstruct, PreDestroy } from '@ag-grid-community/core';
+
 import { SparklineTooltip } from '../sparkline/tooltip/sparklineTooltip';
 
 /**

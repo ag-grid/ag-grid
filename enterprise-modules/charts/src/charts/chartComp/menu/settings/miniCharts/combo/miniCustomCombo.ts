@@ -1,7 +1,8 @@
-import { _Scene } from "ag-charts-community";
 import { ChartType } from '@ag-grid-community/core';
-import { createColumnRects, CreateColumnRectsParams, createLinePaths } from '../miniChartHelpers';
+import { _Scene } from 'ag-charts-community';
+
 import { MiniChart } from '../miniChart';
+import { CreateColumnRectsParams, createColumnRects, createLinePaths } from '../miniChartHelpers';
 
 export class MiniCustomCombo extends MiniChart {
     static chartType: ChartType = 'customCombo';

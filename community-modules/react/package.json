@@ -14,7 +14,7 @@
   "scripts": {
     "cypress:open": "npx cross-env NODE_ENV=test cypress open",
     "cypress:e2e": "npx cross-env NODE_ENV=test cypress run --spec 'cypress/integration/*spec.js'",
-    "cypress:components": "npx cross-env NODE_ENV=test cypress run --spec 'cypress/components/**/*spec.js'"
+    "cypress:components": "npx cross-env NODE_ENV=test cypress run --spec 'cypress/components/**/*spec.jsx'"
   },
   "repository": {
     "type": "git",

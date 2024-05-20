@@ -7,14 +7,17 @@ import {
     ISelectionService,
     PostConstruct,
     RowDataTransaction,
-    RowNode, RowRenderer, _iterateObject, _exists, _missing
-} from "@ag-grid-community/core";
-import { ClientSideRowModel } from "./clientSideRowModel";
+    RowNode,
+    RowRenderer,
+    _exists,
+    _iterateObject,
+    _missing,
+} from '@ag-grid-community/core';
 
+import { ClientSideRowModel } from './clientSideRowModel';
 
 @Bean('immutableService')
 export class ImmutableService extends BeanStub implements IImmutableService {
-
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('selectionService') private selectionService: ISelectionService;
@@ -31,25 +34,31 @@ export class ImmutableService extends BeanStub implements IImmutableService {
     }
 
     public isActive(): boolean {
-        const getRowIdProvided = this.gos.exists('getRowId');        
+        const getRowIdProvided = this.gos.exists('getRowId');
         // this property is a backwards compatibility property, for those who want
         // the old behaviour of Row ID's but NOT Immutable Data.
         const resetRowDataOnUpdate = this.gos.get('resetRowDataOnUpdate');
 
-        if (resetRowDataOnUpdate) { return false; }
+        if (resetRowDataOnUpdate) {
+            return false;
+        }
         return getRowIdProvided;
     }
 
     public setRowData(rowData: any[]): void {
         const transactionAndMap = this.createTransactionForRowData(rowData);
-        if (!transactionAndMap) { return; }
+        if (!transactionAndMap) {
+            return;
+        }
 
         const [transaction, orderIdMap] = transactionAndMap;
         this.clientSideRowModel.updateRowData(transaction, orderIdMap);
     }
 
     // converts the setRowData() command to a transaction
-    private createTransactionForRowData(rowData: any[]): ([RowDataTransaction, { [id: string]: number } | undefined]) | undefined {
+    private createTransactionForRowData(
+        rowData: any[]
+    ): [RowDataTransaction, { [id: string]: number } | undefined] | undefined {
         if (_missing(this.clientSideRowModel)) {
             console.error('AG Grid: ImmutableService only works with ClientSideRowModel');
             return;
@@ -57,7 +66,9 @@ export class ImmutableService extends BeanStub implements IImmutableService {
 
         const getRowIdFunc = this.gos.getCallback('getRowId');
         if (getRowIdFunc == null) {
-            console.error('AG Grid: ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
+            console.error(
+                'AG Grid: ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!'
+            );
             return;
         }
 
@@ -65,7 +76,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         const transaction: RowDataTransaction = {
             remove: [],
             update: [],
-            add: []
+            add: [],
         };
 
         const existingNodesMap: { [id: string]: RowNode | undefined } = this.clientSideRowModel.getCopyOfNodesMap();
@@ -113,7 +124,9 @@ export class ImmutableService extends BeanStub implements IImmutableService {
 
     private onRowDataUpdated(): void {
         const rowData = this.gos.get('rowData');
-        if (!rowData) { return; }
+        if (!rowData) {
+            return;
+        }
 
         if (this.isActive()) {
             this.setRowData(rowData);

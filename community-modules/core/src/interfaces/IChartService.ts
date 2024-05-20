@@ -1,8 +1,8 @@
-import { ChartToolPanelName, ChartType, CrossFilterChartType, SeriesChartType, SeriesGroupType } from "./iChartOptions";
-import { ChartRef } from "../entities/gridOptions";
-import { CellRangeParams } from "./IRangeService";
-import { IAggFunc } from "../entities/colDef";
-import { AgChartThemeOverrides, AgChartThemePalette } from "./iAgChartOptions";
+import { IAggFunc } from '../entities/colDef';
+import { ChartRef } from '../entities/gridOptions';
+import { CellRangeParams } from './IRangeService';
+import { AgChartThemeOverrides, AgChartThemePalette } from './iAgChartOptions';
+import { ChartToolPanelName, ChartType, CrossFilterChartType, SeriesChartType, SeriesGroupType } from './iChartOptions';
 
 export interface GetChartImageDataUrlParams {
     /** The id of the created chart. */
@@ -125,7 +125,7 @@ export interface CreateCrossFilterChartParams extends BaseCreateChartParams {
     aggFunc?: string | IAggFunc;
 }
 
-export interface CreatePivotChartParams extends BaseCreateChartParams { }
+export interface CreatePivotChartParams extends BaseCreateChartParams {}
 
 export type UpdateChartParams = UpdateRangeChartParams | UpdatePivotChartParams | UpdateCrossFilterChartParams;
 
@@ -144,7 +144,7 @@ interface BaseUpdateChartParams {
 
 // When updating, also update `ChartParamsValidator`
 export interface UpdateRangeChartParams extends BaseUpdateChartParams {
-    type: 'rangeChartUpdate',
+    type: 'rangeChartUpdate';
     /** The id of the chart to update. */
     /** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */
     cellRange?: ChartParamsCellRange;
@@ -162,12 +162,12 @@ export interface UpdateRangeChartParams extends BaseUpdateChartParams {
 
 // When updating, also update `ChartParamsValidator`
 export interface UpdatePivotChartParams extends BaseUpdateChartParams {
-    type: 'pivotChartUpdate',
+    type: 'pivotChartUpdate';
 }
 
 // When updating, also update `ChartParamsValidator`
 export interface UpdateCrossFilterChartParams extends BaseUpdateChartParams {
-    type: 'crossFilterChartUpdate',
+    type: 'crossFilterChartUpdate';
     /** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */
     cellRange?: ChartParamsCellRange;
     /** Suppress highlighting the selected range in the grid. */

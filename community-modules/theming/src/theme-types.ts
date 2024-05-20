@@ -83,7 +83,7 @@ export type BorderValue = string | boolean;
 
 const borderValueToCss = (value: BorderValue, param: string) => {
     if (value === true) return 'solid 1px var(--ag-border-color)';
-    if (value === false) return param === "columnBorder" ? 'solid 1px transparent' : 'false';
+    if (value === false) return param === 'columnBorder' ? 'solid 1px transparent' : 'false';
     if (typeof value === 'string') return value;
     return Error(`Expected a string or boolean`);
 };

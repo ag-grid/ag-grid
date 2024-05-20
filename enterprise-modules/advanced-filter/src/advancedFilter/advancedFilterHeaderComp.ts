@@ -8,10 +8,14 @@ import {
     KeyCode,
     PostConstruct,
     _clearElement,
+    _setAriaColIndex,
+    _setAriaColSpan,
+    _setAriaRole,
+    _setAriaRowIndex,
     _setDisplayed,
-    _setAriaRole, _setAriaColIndex, _setAriaColSpan, _setAriaRowIndex 
-} from "@ag-grid-community/core";
-import { AdvancedFilterComp } from "./advancedFilterComp";
+} from '@ag-grid-community/core';
+
+import { AdvancedFilterComp } from './advancedFilterComp';
 
 export class AdvancedFilterHeaderComp extends Component {
     @Autowired('columnModel') private columnModel: ColumnModel;
@@ -33,7 +37,9 @@ export class AdvancedFilterHeaderComp extends Component {
 
         this.addDestroyFunc(() => this.destroyBean(this.eAdvancedFilter));
 
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onGridColumnsChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () =>
+            this.onGridColumnsChanged()
+        );
 
         this.addGuiEventListener('keydown', (event: KeyboardEvent) => this.onKeyDown(event));
 
@@ -49,7 +55,9 @@ export class AdvancedFilterHeaderComp extends Component {
     }
 
     public setEnabled(enabled: boolean): void {
-        if (enabled === this.enabled) { return; }
+        if (enabled === this.enabled) {
+            return;
+        }
         this.setupAdvancedFilter(enabled);
     }
 
@@ -72,7 +80,7 @@ export class AdvancedFilterHeaderComp extends Component {
             this.eAdvancedFilter = this.createBean(new AdvancedFilterComp());
             const eAdvancedFilterGui = this.eAdvancedFilter.getGui();
             this.eAdvancedFilter.addCssClass('ag-advanced-filter-header-cell');
-            
+
             this.height = this.columnModel.getFloatingFiltersHeight();
             const height = `${this.height}px`;
             eGui.style.height = height;
@@ -92,9 +100,9 @@ export class AdvancedFilterHeaderComp extends Component {
         _setDisplayed(eGui, enabled);
         this.enabled = enabled;
     }
-    
+
     private setAriaColumnCount(eAdvancedFilterGui: HTMLElement): void {
-        _setAriaColSpan(eAdvancedFilterGui, this.columnModel.getAllGridColumns().length);
+        _setAriaColSpan(eAdvancedFilterGui, this.columnModel.getCols().length);
     }
 
     private setAriaRowIndex(): void {
@@ -102,7 +110,9 @@ export class AdvancedFilterHeaderComp extends Component {
     }
 
     private onGridColumnsChanged(): void {
-        if (!this.eAdvancedFilter) { return; }
+        if (!this.eAdvancedFilter) {
+            return;
+        }
         this.setAriaColumnCount(this.eAdvancedFilter.getGui());
         this.setAriaRowIndex();
     }
@@ -132,7 +142,11 @@ export class AdvancedFilterHeaderComp extends Component {
                 if (this.hasFocus()) {
                     this.navigateLeftRight(event);
                 } else {
-                    const nextFocusableEl = this.focusService.findNextFocusableElement(this.getFocusableElement(), null, event.shiftKey);
+                    const nextFocusableEl = this.focusService.findNextFocusableElement(
+                        this.getFocusableElement(),
+                        null,
+                        event.shiftKey
+                    );
                     if (nextFocusableEl) {
                         event.preventDefault();
                         nextFocusableEl.focus();
@@ -148,14 +162,16 @@ export class AdvancedFilterHeaderComp extends Component {
         if (this.hasFocus()) {
             if (this.focusService.focusNextFromAdvancedFilter(backwards)) {
                 event.preventDefault();
-            };
+            }
         }
     }
 
     private navigateLeftRight(event: KeyboardEvent): void {
-        if (event.shiftKey
-            ? this.focusService.focusLastHeader()
-            : this.focusService.focusNextFromAdvancedFilter(false, true)) {
+        if (
+            event.shiftKey
+                ? this.focusService.focusLastHeader()
+                : this.focusService.focusNextFromAdvancedFilter(false, true)
+        ) {
             event.preventDefault();
         }
     }

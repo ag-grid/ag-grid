@@ -5,11 +5,12 @@ import {
     PostConstruct,
     VirtualList,
     VirtualListDragFeature,
-    VirtualListDragItem
-} from "@ag-grid-community/core";
-import { AdvancedFilterBuilderComp } from "./advancedFilterBuilderComp";
-import { AdvancedFilterBuilderItemComp } from "./advancedFilterBuilderItemComp";
-import { AdvancedFilterBuilderItem } from "./iAdvancedFilterBuilder";
+    VirtualListDragItem,
+} from '@ag-grid-community/core';
+
+import { AdvancedFilterBuilderComp } from './advancedFilterBuilderComp';
+import { AdvancedFilterBuilderItemComp } from './advancedFilterBuilderItemComp';
+import { AdvancedFilterBuilderItem } from './iAdvancedFilterBuilder';
 
 export interface AdvancedFilterBuilderDragStartedEvent extends AgEvent {
     item: AdvancedFilterBuilderItem;
@@ -22,35 +23,38 @@ export class AdvancedFilterBuilderDragFeature extends BeanStub {
     constructor(
         private readonly comp: AdvancedFilterBuilderComp,
         private readonly virtualList: VirtualList
-    ) { super(); }
+    ) {
+        super();
+    }
 
     @PostConstruct
     private postConstruct(): void {
-        this.createManagedBean(new VirtualListDragFeature<
-            AdvancedFilterBuilderComp,
-            AdvancedFilterBuilderItemComp,
-            AdvancedFilterBuilderItem,
-            AdvancedFilterBuilderDragStartedEvent
-        >(
-            this.comp,
-            this.virtualList,
-            {
+        this.createManagedBean(
+            new VirtualListDragFeature<
+                AdvancedFilterBuilderComp,
+                AdvancedFilterBuilderItemComp,
+                AdvancedFilterBuilderItem,
+                AdvancedFilterBuilderDragStartedEvent
+            >(this.comp, this.virtualList, {
                 dragSourceType: DragSourceType.AdvancedFilterBuilder,
                 listItemDragStartEvent: AdvancedFilterBuilderDragFeature.EVENT_DRAG_STARTED,
                 listItemDragEndEvent: AdvancedFilterBuilderDragFeature.EVENT_DRAG_ENDED,
                 eventSource: this,
-                getCurrentDragValue: (listItemDragStartEvent: AdvancedFilterBuilderDragStartedEvent) => this.getCurrentDragValue(listItemDragStartEvent),
+                getCurrentDragValue: (listItemDragStartEvent: AdvancedFilterBuilderDragStartedEvent) =>
+                    this.getCurrentDragValue(listItemDragStartEvent),
                 isMoveBlocked: () => false,
                 getNumRows: (comp: AdvancedFilterBuilderComp) => comp.getNumItems(),
                 moveItem: (
                     currentDragValue: AdvancedFilterBuilderItem | null,
                     lastHoveredListItem: VirtualListDragItem<AdvancedFilterBuilderItemComp> | null
-                ) => this.moveItem(currentDragValue, lastHoveredListItem)
-            }
-        ));
+                ) => this.moveItem(currentDragValue, lastHoveredListItem),
+            })
+        );
     }
 
-    private getCurrentDragValue(listItemDragStartEvent: AdvancedFilterBuilderDragStartedEvent): AdvancedFilterBuilderItem {
+    private getCurrentDragValue(
+        listItemDragStartEvent: AdvancedFilterBuilderDragStartedEvent
+    ): AdvancedFilterBuilderItem {
         return listItemDragStartEvent.item;
     }
 

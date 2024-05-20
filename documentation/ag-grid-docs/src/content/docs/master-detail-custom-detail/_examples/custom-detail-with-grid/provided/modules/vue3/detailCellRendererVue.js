@@ -1,6 +1,6 @@
-import { AgGridVue } from '@ag-grid-community/vue3';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
 
 export default {
     template: `
@@ -20,14 +20,17 @@ export default {
       </div>
     `,
     components: {
-        'ag-grid-vue': AgGridVue
+        'ag-grid-vue': AgGridVue,
     },
     data: function () {
         return {
             gridOptions: null,
             colDefs: null,
             rowData: null,
-            themeClass: 'full-width-grid ' + /** DARK MODE START **/(document.documentElement.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/,
+            themeClass:
+                'full-width-grid ' +
+                /** DARK MODE START **/ (document.documentElement.dataset.defaultTheme ||
+                    'ag-theme-quartz') /** DARK MODE END **/,
         };
     },
     beforeMount() {
@@ -37,11 +40,11 @@ export default {
             { field: 'direction' },
             { field: 'number' },
             { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
-            { field: 'switchCode' }
+            { field: 'switchCode' },
         ];
         this.defaultColDef = {
             flex: 1,
-            minWidth: 120
+            minWidth: 120,
         };
     },
     mounted() {
@@ -50,7 +53,7 @@ export default {
         this.masterGridApi = this.params.api;
     },
     beforeDestroy() {
-        console.log("removing detail grid info with id: ", this.rowId);
+        console.log('removing detail grid info with id: ', this.rowId);
         this.masterGridApi.removeDetailGridInfo(this.rowId);
     },
     methods: {
@@ -60,8 +63,8 @@ export default {
                 api: params.api,
             };
 
-            console.log("adding detail grid info with id: ", this.rowId);
+            console.log('adding detail grid info with id: ', this.rowId);
             this.masterGridApi.addDetailGridInfo(this.rowId, gridInfo);
-        }
-    }
+        },
+    },
 };

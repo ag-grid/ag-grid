@@ -1,17 +1,17 @@
 import {
     Autowired,
     Events,
-    PostConstruct,
-    IStatusPanelComp,
-    IRowModel,
     IClientSideRowModel,
+    IRowModel,
+    IStatusPanelComp,
+    PostConstruct,
     _formatNumberCommas,
-    _warnOnce
+    _warnOnce,
 } from '@ag-grid-community/core';
-import { NameValueComp } from "./nameValueComp";
+
+import { NameValueComp } from './nameValueComp';
 
 export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp {
-
     @Autowired('rowModel') private rowModel: IRowModel;
 
     @PostConstruct
@@ -47,7 +47,7 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
 
     private getTotalRowCountValue(): number {
         let totalRowCount = 0;
-        this.rowModel.forEachNode((node) => totalRowCount += 1);
+        this.rowModel.forEachNode((node) => (totalRowCount += 1));
         return totalRowCount;
     }
 
@@ -73,5 +73,4 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
     public destroy(): void {
         super.destroy();
     }
-
 }

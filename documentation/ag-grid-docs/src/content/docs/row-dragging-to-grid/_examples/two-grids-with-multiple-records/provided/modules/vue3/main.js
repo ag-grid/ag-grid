@@ -1,13 +1,12 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { createApp } from 'vue';
+
 import './styles.css';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const SportRenderer = {
@@ -15,8 +14,8 @@ const SportRenderer = {
     methods: {
         applyTransaction() {
             this.params.api.applyTransaction({ remove: [this.params.node.data] });
-        }
-    }
+        },
+    },
 };
 
 const VueExample = {
@@ -80,7 +79,7 @@ const VueExample = {
         </div>`,
     components: {
         'ag-grid-vue': AgGridVue,
-        SportRenderer
+        SportRenderer,
     },
     data: function () {
         return {
@@ -111,10 +110,10 @@ const VueExample = {
                     maxWidth: 50,
                     checkboxSelection: true,
                     suppressHeaderMenuButton: true,
-                    headerCheckboxSelection: true
+                    headerCheckboxSelection: true,
                 },
-                { field: "athlete" },
-                { field: "sport" }
+                { field: 'athlete' },
+                { field: 'sport' },
             ],
             rightColumns: [
                 {
@@ -128,27 +127,29 @@ const VueExample = {
                         return params.rowNode.data.athlete;
                     },
                 },
-                { field: "athlete" },
-                { field: "sport" },
+                { field: 'athlete' },
+                { field: 'sport' },
                 {
                     suppressHeaderMenuButton: true,
                     maxWidth: 50,
-                    cellRenderer: 'SportRenderer'
-                }
+                    cellRenderer: 'SportRenderer',
+                },
             ],
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
     beforeMount() {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then(resp => resp.json())
-            .then(data => {
+            .then((resp) => resp.json())
+            .then((data) => {
                 const athletes = [];
                 let i = 0;
 
                 while (athletes.length < 20 && i < data.length) {
                     var pos = i++;
-                    if (athletes.some(rec => rec.athlete === data[pos].athlete)) {
+                    if (athletes.some((rec) => rec.athlete === data[pos].athlete)) {
                         continue;
                     }
                     athletes.push(data[pos]);
@@ -185,7 +186,7 @@ const VueExample = {
 
         onGridReady(params, side) {
             if (side === 0) {
-                this.leftApi = params.api
+                this.leftApi = params.api;
             }
 
             if (side === 1) {
@@ -196,7 +197,7 @@ const VueExample = {
 
         addGridDropZone() {
             const dropZoneParams = this.rightApi.getRowDropZoneParams({
-                onDragStop: params => {
+                onDragStop: (params) => {
                     var deselectCheck = this.$refs.eDeselectRadio.checked;
                     var moveCheck = this.$refs.eMoveRadio.checked;
                     var nodes = params.nodes;
@@ -205,17 +206,17 @@ const VueExample = {
                         this.leftApi.applyTransaction({
                             remove: nodes.map(function (node) {
                                 return node.data;
-                            })
+                            }),
                         });
                     } else if (deselectCheck) {
                         this.leftApi.setNodesSelected({ nodes, newValue: false });
                     }
-                }
+                },
             });
 
             this.leftApi.addRowDropZone(dropZoneParams);
-        }
-    }
+        },
+    },
 };
 
 createApp(VueExample).mount('#app');

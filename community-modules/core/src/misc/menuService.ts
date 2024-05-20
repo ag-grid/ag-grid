@@ -1,25 +1,25 @@
-import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
-import { IMenuFactory } from "../interfaces/iMenuFactory";
-import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
-import { Column } from "../entities/column";
-import { ContainerType } from "../interfaces/iAfterGuiAttachedParams";
-import { RowNode } from "../entities/rowNode";
-import { CtrlsService } from "../ctrlsService";
-import { AnimationFrameService } from "./animationFrameService";
-import { IColumnChooserFactory, ShowColumnChooserParams } from "../interfaces/iColumnChooserFactory";
-import { FilterManager } from "../filter/filterManager";
-import { _isIOSUserAgent } from "../utils/browser";
-import { _warnOnce } from "../utils/function";
-import { RowRenderer } from "../rendering/rowRenderer";
-import { RowCtrl } from "../rendering/row/rowCtrl";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
+import { CtrlsService } from '../ctrlsService';
+import { Column } from '../entities/column';
+import { RowNode } from '../entities/rowNode';
+import { FilterManager } from '../filter/filterManager';
+import { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
+import { IColumnChooserFactory, ShowColumnChooserParams } from '../interfaces/iColumnChooserFactory';
+import { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
+import { IMenuFactory } from '../interfaces/iMenuFactory';
+import { RowCtrl } from '../rendering/row/rowCtrl';
+import { RowRenderer } from '../rendering/rowRenderer';
+import { _isIOSUserAgent } from '../utils/browser';
+import { _warnOnce } from '../utils/function';
+import { AnimationFrameService } from './animationFrameService';
 
 interface BaseShowColumnMenuParams {
-    column?: Column,
+    column?: Column;
 }
 
 interface BaseShowFilterMenuParams {
-    column: Column,
+    column: Column;
     containerType: ContainerType;
 }
 
@@ -37,9 +37,11 @@ interface AutoShowMenuParams {
     positionBy: 'auto';
 }
 
-export type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) & BaseShowColumnMenuParams;
+export type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) &
+    BaseShowColumnMenuParams;
 
-export type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) & BaseShowFilterMenuParams;
+export type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) &
+    BaseShowFilterMenuParams;
 
 export interface ShowContextMenuParams {
     /** The `RowNode` associated with the Context Menu */
@@ -58,7 +60,8 @@ interface TouchShowContextMenuParam {
     touchEvent: TouchEvent;
 }
 
-export type EventShowContextMenuParams = (MouseShowContextMenuParams | TouchShowContextMenuParam) & ShowContextMenuParams;
+export type EventShowContextMenuParams = (MouseShowContextMenuParams | TouchShowContextMenuParam) &
+    ShowContextMenuParams;
 export interface IContextMenuParams extends ShowContextMenuParams {
     /** The x position for the Context Menu, if no value is given and `RowNode` and `Column` are provided, this will default to be middle of the cell, otherwise it will be `0`. */
     x?: number;
@@ -76,7 +79,7 @@ export class MenuService extends BeanStub {
 
     @Optional('columnChooserFactory') private columnChooserFactory?: IColumnChooserFactory;
     @Optional('contextMenuFactory') private readonly contextMenuFactory?: IContextMenuFactory;
-    @Optional('enterpriseMenuFactory') private readonly enterpriseMenuFactory? : IMenuFactory;
+    @Optional('enterpriseMenuFactory') private readonly enterpriseMenuFactory?: IMenuFactory;
 
     private activeMenuFactory: IMenuFactory;
 
@@ -90,9 +93,10 @@ export class MenuService extends BeanStub {
     }
 
     public showFilterMenu(params: ShowFilterMenuParams): void {
-        const menuFactory: IMenuFactory = this.enterpriseMenuFactory && this.isLegacyMenuEnabled()
-            ? this.enterpriseMenuFactory
-            : this.filterMenuFactory;
+        const menuFactory: IMenuFactory =
+            this.enterpriseMenuFactory && this.isLegacyMenuEnabled()
+                ? this.enterpriseMenuFactory
+                : this.filterMenuFactory;
         this.showColumnMenuCommon(menuFactory, params, params.containerType, true);
     }
 
@@ -100,7 +104,7 @@ export class MenuService extends BeanStub {
         this.activeMenuFactory.showMenuAfterContextMenuEvent(column, mouseEvent, touchEvent);
     }
 
-    public getContextMenuPosition(rowNode?: RowNode | null, column?: Column | null): { x: number, y: number } {
+    public getContextMenuPosition(rowNode?: RowNode | null, column?: Column | null): { x: number; y: number } {
         const rowCtrl = this.getRowCtrl(rowNode);
         const eGui = this.getCellGui(rowCtrl, column);
 
@@ -115,13 +119,11 @@ export class MenuService extends BeanStub {
 
         return {
             x: rect.x + rect.width / 2,
-            y: rect.y + rect.height / 2
-        }
+            y: rect.y + rect.height / 2,
+        };
     }
 
-    public showContextMenu(
-        params: EventShowContextMenuParams & { anchorToElement?: HTMLElement }
-    ): void {
+    public showContextMenu(params: EventShowContextMenuParams & { anchorToElement?: HTMLElement }): void {
         const { column, rowNode } = params;
         let { anchorToElement, value } = params;
 
@@ -130,7 +132,7 @@ export class MenuService extends BeanStub {
         }
 
         if (anchorToElement == null) {
-            anchorToElement = this.getContextMenuAnchorElement(rowNode, column)
+            anchorToElement = this.getContextMenuAnchorElement(rowNode, column);
         }
 
         this.contextMenuFactory?.onContextMenu(
@@ -161,7 +163,11 @@ export class MenuService extends BeanStub {
     public isColumnMenuInHeaderEnabled(column: Column): boolean {
         const { suppressMenu, suppressHeaderMenuButton } = column.getColDef();
         const isSuppressMenuButton = suppressHeaderMenuButton ?? suppressMenu;
-        return !isSuppressMenuButton && this.activeMenuFactory.isMenuEnabled(column) && (this.isLegacyMenuEnabled() || !!this.enterpriseMenuFactory);
+        return (
+            !isSuppressMenuButton &&
+            this.activeMenuFactory.isMenuEnabled(column) &&
+            (this.isLegacyMenuEnabled() || !!this.enterpriseMenuFactory)
+        );
     }
 
     public isFilterMenuInHeaderEnabled(column: Column): boolean {
@@ -189,12 +195,20 @@ export class MenuService extends BeanStub {
     }
 
     public isHeaderFilterButtonEnabled(column: Column): boolean {
-        return this.isFilterMenuInHeaderEnabled(column) && !this.isLegacyMenuEnabled() && !this.isFloatingFilterButtonDisplayed(column);
+        return (
+            this.isFilterMenuInHeaderEnabled(column) &&
+            !this.isLegacyMenuEnabled() &&
+            !this.isFloatingFilterButtonDisplayed(column)
+        );
     }
 
     public isFilterMenuItemEnabled(column: Column): boolean {
-        return this.filterManager.isFilterAllowed(column) && !this.isLegacyMenuEnabled() &&
-            !this.isFilterMenuInHeaderEnabled(column) && !this.isFloatingFilterButtonDisplayed(column);
+        return (
+            this.filterManager.isFilterAllowed(column) &&
+            !this.isLegacyMenuEnabled() &&
+            !this.isFilterMenuInHeaderEnabled(column) &&
+            !this.isFloatingFilterButtonDisplayed(column)
+        );
     }
 
     public isColumnMenuAnchoringEnabled(): boolean {
@@ -213,9 +227,13 @@ export class MenuService extends BeanStub {
         const colDef = column.getColDef();
         const legacySuppressFilterButton = colDef.floatingFilterComponentParams?.suppressFilterButton;
         if (legacySuppressFilterButton != null) {
-            _warnOnce(`As of v31.1, 'colDef.floatingFilterComponentParams.suppressFilterButton' is deprecated. Use 'colDef.suppressFloatingFilterButton' instead.`);
+            _warnOnce(
+                `As of v31.1, 'colDef.floatingFilterComponentParams.suppressFilterButton' is deprecated. Use 'colDef.suppressFloatingFilterButton' instead.`
+            );
         }
-        return colDef.suppressFloatingFilterButton == null ? !legacySuppressFilterButton : !colDef.suppressFloatingFilterButton;
+        return colDef.suppressFloatingFilterButton == null
+            ? !legacySuppressFilterButton
+            : !colDef.suppressFloatingFilterButton;
     }
 
     private getColumnMenuType(): 'legacy' | 'new' {
@@ -236,7 +254,12 @@ export class MenuService extends BeanStub {
         }
     }
 
-    private showColumnMenuCommon(menuFactory: IMenuFactory, params: ShowColumnMenuParams, containerType: ContainerType, filtersOnly?: boolean): void {
+    private showColumnMenuCommon(
+        menuFactory: IMenuFactory,
+        params: ShowColumnMenuParams,
+        containerType: ContainerType,
+        filtersOnly?: boolean
+    ): void {
         const { column, positionBy } = params;
         if (positionBy === 'button') {
             const { buttonElement } = params;
@@ -249,8 +272,15 @@ export class MenuService extends BeanStub {
             this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
             // make sure we've finished scrolling into view before displaying the menu
             this.animationFrameService.requestAnimationFrame(() => {
-                const headerCellCtrl = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned()).getHeaderCtrlForColumn(column)!;
-                menuFactory.showMenuAfterButtonClick(column, headerCellCtrl.getAnchorElementForMenu(filtersOnly), containerType, true);
+                const headerCellCtrl = this.ctrlsService
+                    .getHeaderRowContainerCtrl(column.getPinned())
+                    .getHeaderCtrlForColumn(column)!;
+                menuFactory.showMenuAfterButtonClick(
+                    column,
+                    headerCellCtrl.getAnchorElementForMenu(filtersOnly),
+                    containerType,
+                    true
+                );
             });
         }
     }
@@ -263,11 +293,12 @@ export class MenuService extends BeanStub {
         }
 
         return this.rowRenderer.getRowByPosition({ rowIndex, rowPinned }) || undefined;
-
     }
 
     private getCellGui(rowCtrl?: RowCtrl, column?: Column | null): HTMLElement | undefined {
-        if (!rowCtrl || !column) { return; }
+        if (!rowCtrl || !column) {
+            return;
+        }
 
         const cellCtrl = rowCtrl.getCellCtrl(column);
 

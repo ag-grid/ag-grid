@@ -45,7 +45,12 @@ const isMajor = (version) => {
 };
 ---
 
-<Layout title={'Documentation Archive'} description={'Browse archived documentation for previous AG Grid versions, from version 14 and onwards. View changelogs for every minor and major release.'} showDocsNav={true} showSearchBar={true}>
+<Layout
+    title={'Documentation Archive'}
+    description={'Browse archived documentation for previous AG Grid versions, from version 14 and onwards. View changelogs for every minor and major release.'}
+    showDocsNav={true}
+    showSearchBar={true}
+>
     <div class:list={['contentViewport layout-grid']}>
         <PagesNavigationFromLocalStorage client:load allMenuSections={allMenuSections} pageName={pageName} />
 

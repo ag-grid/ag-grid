@@ -1,8 +1,8 @@
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { GridApi, GridOptions, GridReadyEvent, Module } from '@ag-grid-community/core';
 import { Component, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, GridReadyEvent, Module } from '@ag-grid-community/core';
 import { AgGridAngular } from '../ag-grid-angular.component';
 
 // NOTE: More tests can be found under the ag-grid-angular-cli-example example under /src/tests/
@@ -18,7 +18,8 @@ import { AgGridAngular } from '../ag-grid-angular.component';
         [modules]="modules"
         (gridReady)="onGridReady($event)"
         [suppressBrowserResizeObserver]="suppressBrowserResizeObserver"
-        (firstDataRendered)="onFirstDataRendered($event)" />`,
+        (firstDataRendered)="onFirstDataRendered($event)"
+    />`,
 })
 export class GridWrapperComponent {
     modules: Module[] = [ClientSideRowModelModule];

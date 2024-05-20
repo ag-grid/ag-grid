@@ -1,22 +1,21 @@
-import { Logger, LoggerFactory } from '../logger';
-import { ColDef, ColGroupDef } from "../entities/colDef";
-import { ColumnKeyCreator } from "./columnKeyCreator";
-import { IProvidedColumn } from "../interfaces/iProvidedColumn";
-import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
-import { Column } from "../entities/column";
-import { Autowired, Bean, Qualifier } from "../context/context";
-import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
-import { BeanStub } from "../context/beanStub";
-import { _iterateObject, _mergeDeep } from '../utils/object';
-import { _attrToNumber, _attrToBoolean } from '../utils/generic';
-import { DataTypeService } from './dataTypeService';
-import { _warnOnce } from '../utils/function';
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, Qualifier } from '../context/context';
+import { ColDef, ColGroupDef } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { DefaultColumnTypes } from '../entities/defaultColumnTypes';
+import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import { ColumnEventType } from '../events';
+import { IProvidedColumn } from '../interfaces/iProvidedColumn';
+import { Logger, LoggerFactory } from '../logger';
+import { _warnOnce } from '../utils/function';
+import { _attrToBoolean, _attrToNumber } from '../utils/generic';
+import { _iterateObject, _mergeDeep } from '../utils/object';
+import { ColumnKeyCreator } from './columnKeyCreator';
+import { DataTypeService } from './dataTypeService';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')
 export class ColumnFactory extends BeanStub {
-
     @Autowired('dataTypeService') private dataTypeService: DataTypeService;
 
     private logger: Logger;
@@ -25,20 +24,30 @@ export class ColumnFactory extends BeanStub {
         this.logger = loggerFactory.create('ColumnFactory');
     }
 
-    public createColumnTree(defs: (ColDef | ColGroupDef)[] | null, primaryColumns: boolean, existingTree: IProvidedColumn[] | undefined, source: ColumnEventType)
-        : { columnTree: IProvidedColumn[], treeDept: number; } {
-
+    public createColumnTree(
+        defs: (ColDef | ColGroupDef)[] | null,
+        primaryColumns: boolean,
+        existingTree: IProvidedColumn[] | undefined,
+        source: ColumnEventType
+    ): { columnTree: IProvidedColumn[]; treeDept: number } {
         // column key creator dishes out unique column id's in a deterministic way,
         // so if we have two grids (that could be master/slave) with same column definitions,
         // then this ensures the two grids use identical id's.
         const columnKeyCreator = new ColumnKeyCreator();
 
-        const {existingCols, existingGroups, existingColKeys} = this.extractExistingTreeData(existingTree);
+        const { existingCols, existingGroups, existingColKeys } = this.extractExistingTreeData(existingTree);
         columnKeyCreator.addExistingKeys(existingColKeys);
 
         // create am unbalanced tree that maps the provided definitions
-        const unbalancedTree = this.recursivelyCreateColumns(defs, 0, primaryColumns,
-            existingCols, columnKeyCreator, existingGroups, source);
+        const unbalancedTree = this.recursivelyCreateColumns(
+            defs,
+            0,
+            primaryColumns,
+            existingCols,
+            columnKeyCreator,
+            existingGroups,
+            source
+        );
         const treeDept = this.findMaxDept(unbalancedTree, 0);
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
         const columnTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
@@ -56,17 +65,15 @@ export class ColumnFactory extends BeanStub {
 
         return {
             columnTree,
-            treeDept
+            treeDept,
         };
     }
 
-    private extractExistingTreeData(existingTree?: IProvidedColumn[]):
-        {
-            existingCols: Column[],
-            existingGroups: ProvidedColumnGroup[],
-            existingColKeys: string[]
-        }  {
-
+    private extractExistingTreeData(existingTree?: IProvidedColumn[]): {
+        existingCols: Column[];
+        existingGroups: ProvidedColumnGroup[];
+        existingColKeys: string[];
+    } {
         const existingCols: Column[] = [];
         const existingGroups: ProvidedColumnGroup[] = [];
         const existingColKeys: string[] = [];
@@ -84,38 +91,34 @@ export class ColumnFactory extends BeanStub {
             });
         }
 
-        return {existingCols, existingGroups, existingColKeys};
+        return { existingCols, existingGroups, existingColKeys };
     }
 
-    public createForAutoGroups(autoGroupCols: Column[], gridBalancedTree: IProvidedColumn[]): IProvidedColumn[] {
-        return autoGroupCols.map((col) => this.createAutoGroupTreeItem(gridBalancedTree, col));
-    }
+    public createForAutoGroups(autoGroupCols: Column[], liveTree: IProvidedColumn[]): [IProvidedColumn[], number] {
+        const tree: IProvidedColumn[] = [];
+        const dept = this.findDepth(liveTree);
 
-    private createAutoGroupTreeItem(balancedColumnTree: IProvidedColumn[], column: Column): IProvidedColumn {
-        const dept = this.findDepth(balancedColumnTree);
+        autoGroupCols.forEach((col) => {
+            // at the end, this will be the top of the tree item.
+            let nextChild: IProvidedColumn = col;
 
-        // at the end, this will be the top of the tree item.
-        let nextChild: IProvidedColumn = column;
+            for (let i = dept - 1; i >= 0; i--) {
+                const autoGroup = new ProvidedColumnGroup(null, `FAKE_PATH_${col.getId()}}_${i}`, true, i);
+                this.createBean(autoGroup);
+                autoGroup.setChildren([nextChild]);
+                nextChild.setOriginalParent(autoGroup);
+                nextChild = autoGroup;
+            }
 
-        for (let i = dept - 1; i >= 0; i--) {
-            const autoGroup = new ProvidedColumnGroup(
-                null,
-                `FAKE_PATH_${column.getId()}}_${i}`,
-                true,
-                i
-            );
-            this.createBean(autoGroup);
-            autoGroup.setChildren([nextChild]);
-            nextChild.setOriginalParent(autoGroup);
-            nextChild = autoGroup;
-        }
+            if (dept === 0) {
+                col.setOriginalParent(null);
+            }
 
-        if (dept === 0) {
-            column.setOriginalParent(null);
-        }
+            // at this point, the nextChild is the top most item in the tree
+            tree.push(nextChild);
+        });
 
-        // at this point, the nextChild is the top most item in the tree
-        return nextChild;
+        return [tree, dept];
     }
 
     private findDepth(balancedColumnTree: IProvidedColumn[]): number {
@@ -135,7 +138,6 @@ export class ColumnFactory extends BeanStub {
         columnDept: number,
         columnKeyCreator: ColumnKeyCreator
     ): IProvidedColumn[] {
-
         const result: IProvidedColumn[] = [];
 
         // go through each child, for groups, recurse a level deeper,
@@ -145,8 +147,12 @@ export class ColumnFactory extends BeanStub {
             if (child instanceof ProvidedColumnGroup) {
                 // child is a group, all we do is go to the next level of recursion
                 const originalGroup = child;
-                const newChildren = this.balanceColumnTree(originalGroup.getChildren(),
-                    currentDept + 1, columnDept, columnKeyCreator);
+                const newChildren = this.balanceColumnTree(
+                    originalGroup.getChildren(),
+                    currentDept + 1,
+                    columnDept,
+                    columnKeyCreator
+                );
                 originalGroup.setChildren(newChildren);
                 result.push(originalGroup);
             } else {
@@ -176,7 +182,7 @@ export class ColumnFactory extends BeanStub {
                 // likewise this if statement will not run if no padded groups
                 if (firstPaddedGroup && currentPaddedGroup) {
                     result.push(firstPaddedGroup);
-                    const hasGroups = unbalancedTree.some(leaf => leaf instanceof ProvidedColumnGroup);
+                    const hasGroups = unbalancedTree.some((leaf) => leaf instanceof ProvidedColumnGroup);
 
                     if (hasGroups) {
                         currentPaddedGroup.setChildren([child]);
@@ -221,15 +227,28 @@ export class ColumnFactory extends BeanStub {
         source: ColumnEventType
     ): IProvidedColumn[] {
         if (!defs) return [];
-    
+
         const result = new Array(defs.length);
         for (let i = 0; i < result.length; i++) {
             const def = defs[i];
             if (this.isColumnGroup(def)) {
-                result[i] = this.createColumnGroup(primaryColumns, def as ColGroupDef, level, existingColsCopy,
-                    columnKeyCreator, existingGroups, source);
+                result[i] = this.createColumnGroup(
+                    primaryColumns,
+                    def as ColGroupDef,
+                    level,
+                    existingColsCopy,
+                    columnKeyCreator,
+                    existingGroups,
+                    source
+                );
             } else {
-                result[i] = this.createColumn(primaryColumns, def as ColDef, existingColsCopy, columnKeyCreator, source);
+                result[i] = this.createColumn(
+                    primaryColumns,
+                    def as ColDef,
+                    existingColsCopy,
+                    columnKeyCreator,
+                    source
+                );
             }
         }
         return result;
@@ -260,8 +279,15 @@ export class ColumnFactory extends BeanStub {
             providedGroup.setExpanded(existingGroup.isExpanded());
         }
 
-        const children = this.recursivelyCreateColumns(colGroupDefMerged.children,
-            level + 1, primaryColumns, existingColumns, columnKeyCreator, existingGroups, source);
+        const children = this.recursivelyCreateColumns(
+            colGroupDefMerged.children,
+            level + 1,
+            primaryColumns,
+            existingColumns,
+            columnKeyCreator,
+            existingGroups,
+            source
+        );
 
         providedGroup.setChildren(children);
 
@@ -291,7 +317,7 @@ export class ColumnFactory extends BeanStub {
         if (existingColAndIndex) {
             existingColsCopy?.splice(existingColAndIndex.idx, 1);
         }
-    
+
         let column = existingColAndIndex?.column;
         if (!column) {
             // no existing column, need to create one
@@ -359,7 +385,10 @@ export class ColumnFactory extends BeanStub {
         }
     }
 
-    private findExistingColumn(newColDef: ColDef, existingColsCopy: Column[] | null): { idx: number, column: Column } | undefined {
+    private findExistingColumn(
+        newColDef: ColDef,
+        existingColsCopy: Column[] | null
+    ): { idx: number; column: Column } | undefined {
         if (!existingColsCopy) return undefined;
 
         for (let i = 0; i < existingColsCopy.length; i++) {
@@ -386,22 +415,27 @@ export class ColumnFactory extends BeanStub {
                 return { idx: i, column: existingColsCopy[i] };
             }
         }
-        return  undefined;
+        return undefined;
     }
 
-    private findExistingGroup(newGroupDef: ColGroupDef, existingGroups: ProvidedColumnGroup[]): { idx: number, group: ProvidedColumnGroup } | undefined {
+    private findExistingGroup(
+        newGroupDef: ColGroupDef,
+        existingGroups: ProvidedColumnGroup[]
+    ): { idx: number; group: ProvidedColumnGroup } | undefined {
         const newHasId = newGroupDef.groupId != null;
         if (!newHasId) {
             return undefined;
         }
-        
+
         for (let i = 0; i < existingGroups.length; i++) {
             const existingGroup = existingGroups[i];
             const existingDef = existingGroup.getColGroupDef();
-            if (!existingDef) { continue; }
+            if (!existingDef) {
+                continue;
+            }
 
             if (existingGroup.getId() === newGroupDef.groupId) {
-                return { idx: i, group: existingGroup};
+                return { idx: i, group: existingGroup };
             }
         }
         return undefined;
@@ -428,7 +462,12 @@ export class ColumnFactory extends BeanStub {
         const isSortingCoupled = this.gos.isColumnsSortingCoupledToGroup();
         if (colDef.rowGroup && autoGroupColDef && isSortingCoupled) {
             // override the sort for row group columns where the autoGroupColDef defines these values.
-            _mergeDeep(res, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort } as ColDef, false, true);
+            _mergeDeep(
+                res,
+                { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort } as ColDef,
+                false,
+                true
+            );
         }
 
         this.dataTypeService.validateColDef(res);
@@ -451,9 +490,11 @@ export class ColumnFactory extends BeanStub {
             } else {
                 const colType = value as any;
                 if (colType.type) {
-                    _warnOnce(`Column type definitions 'columnTypes' with a 'type' attribute are not supported ` +
-                        `because a column type cannot refer to another column type. Only column definitions ` +
-                        `'columnDefs' can use the 'type' attribute to refer to a column type.`);
+                    _warnOnce(
+                        `Column type definitions 'columnTypes' with a 'type' attribute are not supported ` +
+                            `because a column type cannot refer to another column type. Only column definitions ` +
+                            `'columnDefs' can use the 'type' attribute to refer to a column type.`
+                    );
                 }
 
                 allColumnTypes[key] = value;
@@ -490,6 +531,6 @@ export function depthFirstOriginalTreeSearch(
         if (child instanceof ProvidedColumnGroup) {
             depthFirstOriginalTreeSearch(child, child.getChildren(), callback);
         }
-        callback(child, parent);        
+        callback(child, parent);
     }
 }

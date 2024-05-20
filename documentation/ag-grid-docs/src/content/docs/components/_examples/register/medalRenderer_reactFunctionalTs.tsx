@@ -1,5 +1,5 @@
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 import React from 'react';
-import { CustomCellRendererProps } from "@ag-grid-community/react";
 
 export default (props: CustomCellRendererProps) => {
     const country = props.valueFormatted ? props.valueFormatted : props.value;
@@ -11,4 +11,4 @@ export default (props: CustomCellRendererProps) => {
             <button onClick={() => alert(`${total} medals won!`)}>Push For Total</button>
         </span>
     );
-}
+};

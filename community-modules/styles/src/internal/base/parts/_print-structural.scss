@@ -1,4 +1,4 @@
-@use "ag";
+@use 'ag';
 
 @mixin output {
     .ag-layout-print {
@@ -44,7 +44,8 @@
                 // https://bugzilla.mozilla.org/show_bug.cgi?id=939897
                 display: block !important;
             }
-            .ag-row, .ag-cell {
+            .ag-row,
+            .ag-cell {
                 break-inside: avoid;
             }
         }

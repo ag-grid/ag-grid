@@ -17,8 +17,18 @@ interface Props {
     extras?: string[];
 }
 
-const { isDev, title, modifiedTimeMs, isEnterprise, styleFiles, scriptFiles, indexFragment, appLocation, extraStyles, extras } =
-    Astro.props as Props;
+const {
+    isDev,
+    title,
+    modifiedTimeMs,
+    isEnterprise,
+    styleFiles,
+    scriptFiles,
+    indexFragment,
+    appLocation,
+    extraStyles,
+    extras,
+} = Astro.props as Props;
 
 import { MetaData } from './lib/MetaData';
 import { ExampleStyle } from './lib/ExampleStyle';

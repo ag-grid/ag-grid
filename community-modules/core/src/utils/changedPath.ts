@@ -1,5 +1,5 @@
-import { RowNode } from "../entities/rowNode";
-import { Column } from "../entities/column";
+import { Column } from '../entities/column';
+import { RowNode } from '../entities/rowNode';
 
 // the class below contains a tree of row nodes. each node is
 // represented by a PathItem
@@ -15,7 +15,6 @@ interface PathItem {
 // the the different CSRM operations (filter, sort etc) use the forEach method
 // to visit each group that was changed.
 export class ChangedPath {
-
     // we keep columns when doing changed detection after user edits.
     // when a user edits, we only need to re-aggregate the column
     // that was edited.
@@ -39,17 +38,17 @@ export class ChangedPath {
 
     // for each node in the change path, we also store which columns need
     // to be re-aggregated.
-    private nodeIdsToColumns: {[nodeId:string]: {[colId:string]:boolean}} = {};
+    private nodeIdsToColumns: { [nodeId: string]: { [colId: string]: boolean } } = {};
 
     // for quick lookup, all items in the change path are mapped by nodeId
-    private mapToItems: {[id: string]: PathItem} = {};
+    private mapToItems: { [id: string]: PathItem } = {};
 
     public constructor(keepingColumns: boolean, rootNode: RowNode) {
         this.keepingColumns = keepingColumns;
 
         this.pathRoot = {
             rowNode: rootNode,
-            children: null
+            children: null,
         };
         this.mapToItems[rootNode.id!] = this.pathRoot;
     }
@@ -74,7 +73,11 @@ export class ChangedPath {
         callback(pathItem.rowNode);
     }
 
-    private depthFirstSearchEverything(rowNode: RowNode, callback: (rowNode: RowNode) => void, traverseEverything: boolean): void {
+    private depthFirstSearchEverything(
+        rowNode: RowNode,
+        callback: (rowNode: RowNode) => void,
+        traverseEverything: boolean
+    ): void {
         if (rowNode.childrenAfterGroup) {
             for (let i = 0; i < rowNode.childrenAfterGroup.length; i++) {
                 const childNode = rowNode.childrenAfterGroup[i];
@@ -93,7 +96,7 @@ export class ChangedPath {
     public forEachChangedNodeDepthFirst(
         callback: (rowNode: RowNode) => void,
         traverseLeafNodes = false,
-        includeUnchangedNodes = false,
+        includeUnchangedNodes = false
     ): void {
         if (this.active && !includeUnchangedNodes) {
             // if we are active, then use the change path to callback
@@ -115,7 +118,7 @@ export class ChangedPath {
         while (!this.mapToItems[pointer.id!]) {
             const newEntry: PathItem = {
                 rowNode: pointer,
-                children: null
+                children: null,
             };
             this.mapToItems[pointer.id!] = newEntry;
             newEntryCount++;
@@ -125,7 +128,9 @@ export class ChangedPath {
     }
 
     private populateColumnsMap(rowNode: RowNode, columns: Column[]): void {
-        if (!this.keepingColumns || !columns) { return; }
+        if (!this.keepingColumns || !columns) {
+            return;
+        }
 
         let pointer = rowNode;
         while (pointer) {
@@ -134,7 +139,7 @@ export class ChangedPath {
             if (!this.nodeIdsToColumns[pointer.id!]) {
                 this.nodeIdsToColumns[pointer.id!] = {};
             }
-            columns.forEach(col => this.nodeIdsToColumns[pointer.id!][col.getId()] = true);
+            columns.forEach((col) => (this.nodeIdsToColumns[pointer.id!][col.getId()] = true));
             pointer = pointer.parent!;
         }
     }
@@ -156,8 +161,9 @@ export class ChangedPath {
     // 1) change detection (provides cols) and
     // 2) groupStage if doing transaction update (doesn't provide cols)
     public addParentNode(rowNode: RowNode | null, columns?: Column[]): void {
-
-        if (!rowNode || rowNode.isRowPinned()) { return; }
+        if (!rowNode || rowNode.isRowPinned()) {
+            return;
+        }
 
         // we cannot do  both steps below in the same loop as
         // the second loop has a dependency on the first loop.
@@ -179,18 +185,22 @@ export class ChangedPath {
     }
 
     public getValueColumnsForNode(rowNode: RowNode, valueColumns: Column[]): Column[] {
-        if (!this.keepingColumns) { return valueColumns; }
+        if (!this.keepingColumns) {
+            return valueColumns;
+        }
 
         const colsForThisNode = this.nodeIdsToColumns[rowNode.id!];
-        const result = valueColumns.filter(col => colsForThisNode[col.getId()]);
+        const result = valueColumns.filter((col) => colsForThisNode[col.getId()]);
         return result;
     }
 
     public getNotValueColumnsForNode(rowNode: RowNode, valueColumns: Column[]): Column[] | null {
-        if (!this.keepingColumns) { return null; }
+        if (!this.keepingColumns) {
+            return null;
+        }
 
         const colsForThisNode = this.nodeIdsToColumns[rowNode.id!];
-        const result = valueColumns.filter(col => !colsForThisNode[col.getId()]);
+        const result = valueColumns.filter((col) => !colsForThisNode[col.getId()]);
         return result;
     }
 }

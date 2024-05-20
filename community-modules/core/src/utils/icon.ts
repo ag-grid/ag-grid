@@ -1,14 +1,14 @@
 import { Column } from '../entities/column';
-import { _loadTemplate, _isNodeOrElement } from './dom';
-import { _setAriaRole } from './aria';
 import { GridOptionsService } from '../gridOptionsService';
+import { _setAriaRole } from './aria';
+import { _isNodeOrElement, _loadTemplate } from './dom';
 
 //
 // IMPORTANT NOTE!
 //
 // If you change the list below, copy/paste the new content into the docs page custom-icons
 //
-export const iconNameClassMap: { [key: string]: string; } = {
+export const iconNameClassMap: { [key: string]: string } = {
     // header column group shown when expanded (click to contract)
     columnGroupOpened: 'expanded',
     // header column group shown when contracted (click to expand)
@@ -177,7 +177,12 @@ export function _createIcon(iconName: string, gos: GridOptionsService, column: C
     return eResult;
 }
 
-export function _createIconNoSpan(iconName: string, gos: GridOptionsService, column?: Column | null, forceCreate?: boolean): Element | undefined {
+export function _createIconNoSpan(
+    iconName: string,
+    gos: GridOptionsService,
+    column?: Column | null,
+    forceCreate?: boolean
+): Element | undefined {
     let userProvidedIcon: Function | string | null = null;
 
     // check col for icon first

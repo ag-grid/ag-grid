@@ -1,6 +1,7 @@
 import { _Scale, _Scene, _Util } from 'ag-charts-community';
-import { BarColumnLabelPlacement, BarColumnSparkline, RectNodeDatum } from './barColumnSparkline';
+
 import { Point } from '../sparkline';
+import { BarColumnLabelPlacement, BarColumnSparkline, RectNodeDatum } from './barColumnSparkline';
 
 const { isNumber } = _Util;
 const { BandScale } = _Scale;

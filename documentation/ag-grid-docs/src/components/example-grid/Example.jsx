@@ -896,9 +896,9 @@ const ExampleInner = ({ darkMode }) => {
 
         let row = 0;
         const data = [];
-        
+
         // Don't show message on initial load as it causes a spike in CLS
-        setShowMessage(!initialLoad); 
+        setShowMessage(!initialLoad);
         setMessage(` Generating rows`);
 
         const loopCount = rowCount > 10000 ? 10000 : 1000;

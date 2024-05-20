@@ -1,6 +1,5 @@
-import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
-import { AgEventListener, AgGlobalEventListener } from "../events";
-
+import { AgEventListener, AgGlobalEventListener } from '../events';
+import { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 
 export class FrameworkEventListenerService {
     // Map from user listener to wrapped listener so we can remove listener provided by user

@@ -1,9 +1,9 @@
 import { Downloader } from '../downloader';
 import {
+    ProcessedZipFile,
     buildCentralDirectoryEnd,
     getDeflatedHeaderAndContent,
     getHeaderAndContent,
-    ProcessedZipFile,
 } from './zipContainerHelper';
 
 export interface ZipFile {
@@ -27,7 +27,7 @@ export class ZipContainer {
             path,
             created: new Date(),
             isBase64: false,
-            type: 'folder'
+            type: 'folder',
         });
     }
 
@@ -37,7 +37,7 @@ export class ZipContainer {
             created: new Date(),
             content: isBase64 ? content : new TextEncoder().encode(content),
             isBase64,
-            type: 'file'
+            type: 'file',
         });
     }
 
@@ -58,20 +58,14 @@ export class ZipContainer {
         this.files = [];
     }
 
-    private static packageFiles(
-        files: ProcessedZipFile[],
-    ) {
+    private static packageFiles(files: ProcessedZipFile[]) {
         let fileData: Uint8Array = new Uint8Array(0);
         let folderData: Uint8Array = new Uint8Array(0);
         let filesContentAndHeaderLength: number = 0;
         let folderHeadersLength: number = 0;
 
         for (const currentFile of files) {
-            const {
-                localFileHeader,
-                centralDirectoryHeader,
-                content,
-            } = currentFile;
+            const { localFileHeader, centralDirectoryHeader, content } = currentFile;
 
             // Append fileHeader to fData
             const dataWithHeader = new Uint8Array(fileData.length + localFileHeader.length);
@@ -95,11 +89,7 @@ export class ZipContainer {
             folderHeadersLength += centralDirectoryHeader.length;
         }
 
-        const folderEnd = buildCentralDirectoryEnd(
-            files.length,
-            folderHeadersLength,
-            filesContentAndHeaderLength,
-        );
+        const folderEnd = buildCentralDirectoryEnd(files.length, folderHeadersLength, filesContentAndHeaderLength);
 
         // Append folder data and file data
         const result = new Uint8Array(fileData.length + folderData.length + folderEnd.length);

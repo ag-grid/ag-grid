@@ -6,10 +6,7 @@ export type CategoryItem<T extends object> = {
     children?: Array<CategoryItem<T>>;
 } & T;
 
-export function createCategoryHierarchy<T extends object>(
-    data: T[],
-    categoryKeys: Array<keyof T>
-): CategoryItem<T>[] {
+export function createCategoryHierarchy<T extends object>(data: T[], categoryKeys: Array<keyof T>): CategoryItem<T>[] {
     const hierarchy = buildNestedHierarchy(data, getItemDepth, getItemCategoryLabel);
     return formatCategoryHierarchy(hierarchy);
 
@@ -53,7 +50,9 @@ export function createAutoGroupHierarchy<T extends object>(
 
 /** Convert an abstract nested hierarchy structure into an ag-charts-compatible 'category-grouped' data structure */
 function formatCategoryHierarchy<T extends object>(
-    hierarchy: Tree<T>, key: string | null = null, isChild?: boolean
+    hierarchy: Tree<T>,
+    key: string | null = null,
+    isChild?: boolean
 ): CategoryItem<T>[] {
     const { depth, rootValues, value, children: inputChildren } = hierarchy;
     if (rootValues) {
@@ -67,11 +66,15 @@ function formatCategoryHierarchy<T extends object>(
         children.push(...formatCategoryHierarchy(childHierarchy, childKey, true));
     }
 
-    return isChild ? [{
-        [CATEGORY_LABEL_KEY]: key,
-        children,
-        ...(value ?? {} as T)
-    }] : children;
+    return isChild
+        ? [
+              {
+                  [CATEGORY_LABEL_KEY]: key,
+                  children,
+                  ...(value ?? ({} as T)),
+              },
+          ]
+        : children;
 }
 
 /** Data structure that represents an arbitrarily deeply nested tree of keyed values */
@@ -88,10 +91,10 @@ type Tree<V> = {
 function buildNestedHierarchy<V extends object>(
     data: V[],
     getItemDepth: (item: V) => number,
-    getItemGroupKey: (item: V, depthIndex: number) => string | null,
+    getItemGroupKey: (item: V, depthIndex: number) => string | null
 ): Tree<V> {
     const hierarchy: Tree<V> = { depth: 0, children: new Map() };
-    data.forEach(item => {
+    data.forEach((item) => {
         const itemDepth = getItemDepth(item);
         createNestedItemHierarchy(item, itemDepth, getItemGroupKey, 0, hierarchy);
     });

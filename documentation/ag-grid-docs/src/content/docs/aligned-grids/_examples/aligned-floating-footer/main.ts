@@ -1,6 +1,6 @@
-import { ColDef, createGrid, GridApi, GridOptions } from "@ag-grid-community/core";
-import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -14,11 +14,11 @@ const columnDefs: ColDef[] = [
         headerName: 'Total',
         colId: 'total',
         valueGetter: 'data.gold + data.silver + data.bronze',
-        width: 200
+        width: 200,
     },
     { field: 'gold', width: 100 },
     { field: 'silver', width: 100 },
-    { field: 'bronze', width: 100 }
+    { field: 'bronze', width: 100 },
 ];
 
 const dataForBottomGrid = [
@@ -31,8 +31,8 @@ const dataForBottomGrid = [
         sport: 'Synchronised Riding',
         gold: 55,
         silver: 65,
-        bronze: 12
-    }
+        bronze: 12,
+    },
 ];
 // this is the grid options for the top grid
 let topApi: GridApi;
@@ -41,16 +41,16 @@ const gridOptionsTop: GridOptions = {
     defaultColDef: {
         filter: true,
         flex: 1,
-        minWidth: 100
+        minWidth: 100,
     },
     columnDefs,
     rowData: null,
     // don't show the horizontal scrollbar on the top grid
     suppressHorizontalScroll: true,
     alwaysShowVerticalScroll: true,
-    alignedGrids: ()=>[bottomApi],
+    alignedGrids: () => [bottomApi],
     autoSizeStrategy: {
-        type: 'fitCellContents'
+        type: 'fitCellContents',
     },
 };
 
@@ -59,7 +59,7 @@ const gridOptionsBottom: GridOptions = {
     defaultColDef: {
         filter: true,
         flex: 1,
-        minWidth: 100
+        minWidth: 100,
     },
     columnDefs: columnDefs,
     // we are hard coding the data here, it's just for demo purposes
@@ -78,7 +78,7 @@ const gridDivBottom = document.querySelector<HTMLElement>('#myGridBottom')!;
 bottomApi = createGrid(gridDivBottom, gridOptionsBottom);
 
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(data => {
+    .then((response) => response.json())
+    .then((data) => {
         topApi!.setGridOption('rowData', data);
     });

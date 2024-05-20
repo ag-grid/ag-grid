@@ -30,7 +30,6 @@ export function getData(): any[] {
                 [20, -29.7],
                 [21, -7.13],
                 [22, -8.53],
-
             ],
         },
         {
@@ -161,5 +160,5 @@ export function getData(): any[] {
                 [14, 96.18],
             ],
         },
-    ]
+    ];
 }

@@ -6,11 +6,7 @@
   "targets": {
     "build": {
       "executor": "nx:noop",
-      "dependsOn": [
-        "build:types",
-        "build:package",
-        "build:copy-source"
-      ],
+      "dependsOn": ["build:types", "build:package", "build:copy-source"],
       "inputs": [],
       "outputs": [],
       "configurations": {
@@ -37,15 +33,10 @@
         "sharedGlobals",
         "defaultExcludes",
         {
-          "externalDependencies": [
-            "npm:typescript",
-            "npm:esbuild"
-          ]
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
         }
       ],
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "packages/ag-grid-vue3/dist/types",
         "main": "packages/ag-grid-vue3/src/main.ts",
@@ -70,32 +61,19 @@
         "sharedGlobals",
         "defaultExcludes",
         {
-          "externalDependencies": [
-            "npm:typescript",
-            "npm:esbuild"
-          ]
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
         }
       ],
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "packages/ag-grid-vue3/dist/package",
         "main": "packages/ag-grid-vue3/src/main.ts",
         "tsConfig": "packages/ag-grid-vue3/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",
-        "external": [
-          "ag-grid-community",
-          "vue",
-          "vue-property-decorator",
-          "vue-class-component"
-        ],
+        "external": ["ag-grid-community", "vue", "vue-property-decorator", "vue-class-component"],
         "platform": "browser",
         "target": "es6",
-        "format": [
-          "cjs",
-          "esm"
-        ],
+        "format": ["cjs", "esm"],
         "sourcemap": true
       },
       "configurations": {

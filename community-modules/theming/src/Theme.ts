@@ -289,8 +289,7 @@ export type PickVariables<P extends Part, V extends object> = {
     [K in InferParams<P>]?: K extends keyof V ? V[K] : never;
 };
 
-export const installDocsUrl =
-    'https://www.ag-grid.com/javascript-data-grid/applying-theme-builder-styling-grid/';
+export const installDocsUrl = 'https://www.ag-grid.com/javascript-data-grid/applying-theme-builder-styling-grid/';
 
 const fileHeader = (parameters: Record<string, unknown>) => `/*
  * This file is a theme downloaded from the AG Grid Theme Builder for AG Grid ${VERSION}.

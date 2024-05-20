@@ -1,10 +1,9 @@
-import { Column } from "../../entities/column";
-import { BeanStub } from "../../context/beanStub";
-import { Autowired, PostConstruct } from "../../context/context";
-import { ColumnHoverService } from "../../rendering/columnHoverService";
+import { BeanStub } from '../../context/beanStub';
+import { Autowired, PostConstruct } from '../../context/context';
+import { Column } from '../../entities/column';
+import { ColumnHoverService } from '../../rendering/columnHoverService';
 
 export class HoverFeature extends BeanStub {
-
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
 
     private readonly columns: Column[];
@@ -36,5 +35,4 @@ export class HoverFeature extends BeanStub {
     private onMouseOver(): void {
         this.columnHoverService.setMouseOver(this.columns);
     }
-
 }

@@ -1,5 +1,5 @@
-import { RowPinnedType } from "../interfaces/iRowNode";
-import { CellRange } from "../interfaces/IRangeService";
+import { CellRange } from '../interfaces/IRangeService';
+import { RowPinnedType } from '../interfaces/iRowNode';
 
 export interface CellValueChange {
     rowPinned: RowPinnedType;
@@ -24,7 +24,6 @@ export class UndoRedoAction {
 }
 
 export class RangeUndoRedoAction extends UndoRedoAction {
-
     constructor(
         cellValueChanges: CellValueChange[],
         public readonly initialRange?: CellRange,
@@ -54,7 +53,9 @@ export class UndoRedoStack {
     public push(item: UndoRedoAction): void {
         const shouldAddActions = item.cellValueChanges && item.cellValueChanges.length > 0;
 
-        if (!shouldAddActions) { return; }
+        if (!shouldAddActions) {
+            return;
+        }
 
         if (this.actionStack.length === this.maxStackSize) {
             this.actionStack.shift();

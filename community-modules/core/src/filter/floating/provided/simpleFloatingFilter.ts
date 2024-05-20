@@ -1,16 +1,22 @@
-import { Component } from '../../../widgets/component';
-import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
-import { ProvidedFilterModel } from '../../../interfaces/iFilter';
-import { ICombinedSimpleModel, ISimpleFilter, ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter } from '../../provided/simpleFilter';
-import { OptionsFactory } from '../../provided/optionsFactory';
-import { ScalarFilterParams } from '../../provided/scalarFilter';
-import { FilterChangedEvent } from '../../../events';
-import { ProvidedFilterParams } from '../../provided/providedFilter';
+import { ColumnNameService } from '../../../columns/columnNameService';
 import { Autowired } from '../../../context/context';
-import { ColumnModel } from '../../../columns/columnModel';
+import { FilterChangedEvent } from '../../../events';
+import { ProvidedFilterModel } from '../../../interfaces/iFilter';
+import { Component } from '../../../widgets/component';
+import { OptionsFactory } from '../../provided/optionsFactory';
+import { ProvidedFilterParams } from '../../provided/providedFilter';
+import { ScalarFilterParams } from '../../provided/scalarFilter';
+import {
+    ICombinedSimpleModel,
+    ISimpleFilter,
+    ISimpleFilterModel,
+    SimpleFilter,
+    SimpleFilterModelFormatter,
+} from '../../provided/simpleFilter';
+import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
 
 export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp<ISimpleFilter> {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
 
     // this method is on IFloatingFilterComp. because it's not implemented at this level, we have to
     // define it as an abstract method. it gets implemented in sub classes.
@@ -94,7 +100,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     public init(params: IFloatingFilterParams): void {
-       this.setSimpleParams(params, false);
+        this.setSimpleParams(params, false);
     }
 
     private setSimpleParams(params: IFloatingFilterParams, update: boolean = true): void {
@@ -134,17 +140,19 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
 
     private isTypeEditable(type?: string | null): boolean {
         const uneditableTypes: string[] = [
-            SimpleFilter.IN_RANGE, SimpleFilter.EMPTY, SimpleFilter.BLANK, SimpleFilter.NOT_BLANK,
+            SimpleFilter.IN_RANGE,
+            SimpleFilter.EMPTY,
+            SimpleFilter.BLANK,
+            SimpleFilter.NOT_BLANK,
         ];
-        return !!type &&
-            !this.isReadOnly() &&
-            this.doesFilterHaveSingleInput(type) &&
-            uneditableTypes.indexOf(type) < 0;
+        return (
+            !!type && !this.isReadOnly() && this.doesFilterHaveSingleInput(type) && uneditableTypes.indexOf(type) < 0
+        );
     }
 
     protected getAriaLabel(params: IFloatingFilterParams): string {
-        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
+        const displayName = this.columnNameService.getDisplayNameForColumn(params.column, 'header', true);
         const translate = this.localeService.getLocaleTextFunc();
-        return `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`
+        return `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`;
     }
 }

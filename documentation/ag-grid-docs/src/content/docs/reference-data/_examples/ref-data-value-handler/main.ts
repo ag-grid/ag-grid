@@ -1,24 +1,29 @@
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
     CellValueChangedEvent,
     GridApi,
-    createGrid,
     GridOptions,
     ISetFilterParams,
     ValueFormatterParams,
     ValueSetterParams,
+    createGrid,
 } from '@ag-grid-community/core';
-import { ColourCellRenderer } from './colourCellRenderer_typescript';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule, RichSelectModule, SetFilterModule]);
+import { ColourCellRenderer } from './colourCellRenderer_typescript';
+import { getData } from './data';
 
-import { getData } from "./data";
-
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ColumnsToolPanelModule,
+    MenuModule,
+    RichSelectModule,
+    SetFilterModule,
+]);
 
 const carMappings = {
     tyt: 'Toyota',
@@ -34,7 +39,7 @@ const colourMappings = {
 };
 
 function extractKeys(mappings: Record<string, string>) {
-    return Object.keys(mappings)
+    return Object.keys(mappings);
 }
 
 const carCodes = extractKeys(carMappings);
@@ -53,11 +58,11 @@ const gridOptions: GridOptions = {
             },
             filterParams: {
                 valueFormatter: (params: ValueFormatterParams) => {
-                    return lookupValue(carMappings, params.value)
-                }
+                    return lookupValue(carMappings, params.value);
+                },
             },
             valueFormatter: (params) => {
-                return lookupValue(carMappings, params.value)
+                return lookupValue(carMappings, params.value);
             },
         },
         {
@@ -72,15 +77,15 @@ const gridOptions: GridOptions = {
             filterParams: {
                 values: colourCodes,
                 valueFormatter: (params) => {
-                    return lookupValue(colourMappings, params.value)
+                    return lookupValue(colourMappings, params.value);
                 },
                 cellRenderer: ColourCellRenderer,
             } as ISetFilterParams,
             valueFormatter: (params) => {
-                return lookupValue(colourMappings, params.value)
+                return lookupValue(colourMappings, params.value);
             },
             valueParser: (params) => {
-                return lookupKey(colourMappings, params.newValue)
+                return lookupKey(colourMappings, params.newValue);
             },
             cellRenderer: ColourCellRenderer,
         },
@@ -95,15 +100,15 @@ const gridOptions: GridOptions = {
             filterParams: {
                 values: colourCodes,
                 valueFormatter: (params: ValueFormatterParams) => {
-                    return lookupValue(colourMappings, params.value)
+                    return lookupValue(colourMappings, params.value);
                 },
                 cellRenderer: ColourCellRenderer,
             },
             valueFormatter: (params) => {
-                return lookupValue(colourMappings, params.value)
+                return lookupValue(colourMappings, params.value);
             },
             valueParser: (params) => {
-                return lookupKey(colourMappings, params.newValue)
+                return lookupKey(colourMappings, params.newValue);
             },
             cellRenderer: ColourCellRenderer,
         },
@@ -113,7 +118,7 @@ const gridOptions: GridOptions = {
             minWidth: 120,
             colId: 'retailPrice',
             valueGetter: (params) => {
-                return params.data.price
+                return params.data.price;
             },
             valueFormatter: currencyFormatter,
             valueSetter: numberValueSetter,
@@ -124,7 +129,7 @@ const gridOptions: GridOptions = {
             editable: false,
             valueGetter: (params) => {
                 // example of chaining value getters
-                return params.getValue('retailPrice') * 1.2
+                return params.getValue('retailPrice') * 1.2;
             },
             valueFormatter: currencyFormatter,
         },
@@ -136,15 +141,15 @@ const gridOptions: GridOptions = {
     },
     rowData: getData(),
     onCellValueChanged: onCellValueChanged,
-}
+};
 
 function onCellValueChanged(params: CellValueChangedEvent) {
     // notice that the data always contains the keys rather than values after editing
-    console.log('onCellValueChanged Data: ', params.data)
+    console.log('onCellValueChanged Data: ', params.data);
 }
 
 function lookupValue(mappings: Record<string, string>, key: string) {
-    return mappings[key]
+    return mappings[key];
 }
 
 function lookupKey(mappings: Record<string, string>, name: string) {
@@ -154,7 +159,7 @@ function lookupKey(mappings: Record<string, string>, name: string) {
         const key = keys[i];
 
         if (mappings[key] === name) {
-            return key
+            return key;
         }
     }
 }
@@ -163,21 +168,21 @@ function currencyFormatter(params: ValueFormatterParams) {
     const value = Math.floor(params.value);
 
     if (isNaN(value)) {
-        return ''
+        return '';
     }
 
     return '£' + value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
 function numberValueSetter(params: ValueSetterParams) {
-    const valueAsNumber = parseFloat(params.newValue)
+    const valueAsNumber = parseFloat(params.newValue);
     if (isNaN(valueAsNumber) || !isFinite(params.newValue)) {
-        return false // don't set invalid numbers!
+        return false; // don't set invalid numbers!
     }
 
     params.data.price = valueAsNumber;
 
-    return true
+    return true;
 }
 
 // wait for the document to be loaded, otherwise
@@ -188,4 +193,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // create the grid passing in the div to use together with the columns & data we want to use
     gridApi = createGrid(eGridDiv, gridOptions);
-})
+});

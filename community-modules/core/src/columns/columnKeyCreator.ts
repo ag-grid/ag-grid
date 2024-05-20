@@ -2,12 +2,10 @@
 // id is already taken, it will start appending numbers until it gets a unique id.
 // eg, if the col field is 'name', it will try ids: {name, name_1, name_2...}
 // if no field or id provided in the col, it will try the ids of natural numbers
-
-import { _toStringOrNull } from "../utils/generic";
+import { _toStringOrNull } from '../utils/generic';
 
 export class ColumnKeyCreator {
-
-    private existingKeys: {[key: string]: boolean} = {};
+    private existingKeys: { [key: string]: boolean } = {};
 
     public addExistingKeys(keys: string[]): void {
         for (let i = 0; i < keys.length; i++) {
@@ -46,5 +44,4 @@ export class ColumnKeyCreator {
             count++;
         }
     }
-
 }

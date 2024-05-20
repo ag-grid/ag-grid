@@ -1,178 +1,119 @@
 import {
-    AgCheckbox,
-    AgCheckboxParams,
     AgGroupComponent,
-    AgRadioButton,
     AgSelect,
     AgToggleButton,
-    AutoScrollService,
-    Autowired,
-    DragAndDropService,
-    DropTarget,
     IAggFunc,
     PostConstruct,
     _clearElement,
-} from "@ag-grid-community/core";
-import { ChartService } from "../../../chartService";
-import { ChartController } from "../../chartController";
-import { ChartDataModel, ColState } from "../../model/chartDataModel";
-import { DragDataPanel } from "./dragDataPanel";
+} from '@ag-grid-community/core';
+
+import { ChartController } from '../../chartController';
+import { ChartDataModel, ColState } from '../../model/chartDataModel';
+import { DragDataPanel } from './dragDataPanel';
 
 type AggFuncPreset = 'count' | 'sum' | 'min' | 'max' | 'avg' | 'first' | 'last';
 
-const DEFAULT_AGG_FUNC: AggFuncPreset = 'sum'
+const DEFAULT_AGG_FUNC: AggFuncPreset = 'sum';
 
 export class CategoriesDataPanel extends DragDataPanel {
-    private static TEMPLATE = /* html */`<div id="categoriesGroup"></div>`;
-
-    @Autowired('chartService') private readonly chartService: ChartService;
+    private static TEMPLATE = /* html */ `<div id="categoriesGroup"></div>`;
 
     private aggFuncToggle?: AgToggleButton;
     private aggFuncSelect?: AgSelect;
 
     constructor(
         chartController: ChartController,
-        autoScrollService: AutoScrollService,
         private readonly title: string,
         allowMultipleSelection: boolean,
         private dimensionCols: ColState[],
         private isOpen?: boolean
     ) {
         const maxSelection = undefined;
-        super(chartController, autoScrollService, allowMultipleSelection, maxSelection, CategoriesDataPanel.TEMPLATE);
+        super(chartController, allowMultipleSelection, maxSelection, CategoriesDataPanel.TEMPLATE);
     }
 
     @PostConstruct
     private init() {
-        this.groupComp = this.createBean(new AgGroupComponent({
-            title: this.title,
-            enabled: true,
-            suppressEnabledCheckbox: true,
-            suppressOpenCloseIcons: false,
-            cssIdentifier: 'charts-data',
-            expanded: this.isOpen
-        }));
-        if (this.chartService.isEnterprise()) {
-            this.createCategoriesGroup(this.dimensionCols);
-            this.createAggFuncControls(this.dimensionCols);
-        } else {
-            this.createLegacyCategoriesGroup(this.dimensionCols);
-            this.clearAggFuncControls();
-        }
+        this.groupComp = this.createBean(
+            new AgGroupComponent({
+                title: this.title,
+                enabled: true,
+                suppressEnabledCheckbox: true,
+                suppressOpenCloseIcons: false,
+                cssIdentifier: 'charts-data',
+                expanded: this.isOpen,
+            })
+        );
+
+        this.createGroup(
+            this.dimensionCols,
+            (col) => col.displayName ?? '',
+            'categoryAdd',
+            'categorySelect',
+            () => !this.chartController.getAggFunc()
+        );
+        this.createAggFuncControls(this.dimensionCols);
+
         this.getGui().appendChild(this.groupComp.getGui());
     }
 
     public refresh(dimensionCols: ColState[]): void {
-        if (this.chartService.isEnterprise()) {
-            this.valuePillSelect?.setValues(dimensionCols, dimensionCols.filter(col => col.selected));
-            this.refreshValueSelect(dimensionCols);
-            this.refreshAggFuncControls(dimensionCols, this.chartController.getAggFunc());
-        } else {
-            if (!this.refreshColumnComps(dimensionCols)) {
-                this.recreate(dimensionCols);
-            }
-        }
-    }
-
-    private recreate(dimensionCols: ColState[]): void {
-        this.isOpen = this.groupComp.isExpanded();
-        _clearElement(this.getGui());
-        this.destroyBean(this.groupComp);
-        this.dimensionCols = dimensionCols;
-        this.init();
-    }
-
-    private createCategoriesGroup(columns: ColState[]): void {
-        this.createGroup(columns, col => col.displayName ?? '', 'categoryAdd', 'categorySelect', () => !this.chartController.getAggFunc());
-    }
-
-    private createLegacyCategoriesGroup(columns: ColState[]): void {
-        const inputName = `chartDimension${this.groupComp.getCompId()}`;
-
-        // Display either radio buttons or checkboxes
-        // depending on whether the current chart type supports multiple category columns
-        const supportsMultipleCategoryColumns = this.allowMultipleSelection;
-
-        columns.forEach(col => {
-            const params: AgCheckboxParams = {
-                label: col.displayName ?? '',
-                value: col.selected,
-                inputName
-            };
-            const comp: AgCheckbox | AgRadioButton = this.groupComp!.createManagedBean(
-                supportsMultipleCategoryColumns
-                    ? (() => {
-                        const checkboxComp = new AgCheckbox(params);
-                        checkboxComp.addCssClass('ag-data-select-checkbox');
-                        return checkboxComp;
-                    })()
-                    : new AgRadioButton(params)
-            );
-
-            this.addChangeListener(comp, col);
-            this.groupComp!.addItem(comp);
-            this.columnComps.set(col.colId, comp);
-
-            if (supportsMultipleCategoryColumns) this.addDragHandle(comp, col);
-        });
-
-        if (supportsMultipleCategoryColumns) {
-            const categoriesGroupGui = this.groupComp.getGui();
-            
-            const dropTarget: DropTarget = {
-                getIconName: () => DragAndDropService.ICON_MOVE,
-                getContainer: () => categoriesGroupGui,
-                onDragging: (params) => this.onDragging(params),
-                onDragLeave: () => this.onDragLeave(),
-                isInterestedIn: this.isInterestedIn.bind(this),
-                targetContainsSource: true
-            };
-
-            this.dragAndDropService.addDropTarget(dropTarget);
-            this.addDestroyFunc(() => this.dragAndDropService.removeDropTarget(dropTarget));
-        }
+        this.valuePillSelect?.setValues(
+            dimensionCols,
+            dimensionCols.filter((col) => col.selected)
+        );
+        this.refreshValueSelect(dimensionCols);
+        this.refreshAggFuncControls(dimensionCols, this.chartController.getAggFunc());
     }
 
     private createAggFuncControls(dimensionCols: ColState[]): void {
         const aggFunc = this.chartController.getAggFunc();
-        this.groupComp.addItem(this.aggFuncToggle = this.createBean(new AgToggleButton({
-            label: this.chartTranslationService.translate('aggregate'),
-            labelAlignment: 'left',
-            labelWidth: 'flex',
-            inputWidth: 'flex',
-            value: aggFunc != undefined,
-            onValueChange: (value) => {
-                const aggFunc = value ? DEFAULT_AGG_FUNC : undefined;
-                this.chartController.setAggFunc(aggFunc);
-                this.aggFuncSelect?.setValue(aggFunc, true);
-                this.aggFuncSelect?.setDisplayed(aggFunc != undefined);
-            },
-        })));
-        this.groupComp.addItem(this.aggFuncSelect = this.createBean(new AgSelect<AggFuncPreset>({
-            options: [
-                { value: 'sum', text: this.chartTranslationService.translate('sum') },
-                { value: 'first', text: this.chartTranslationService.translate('first') },
-                { value: 'last', text: this.chartTranslationService.translate('last') },
-                { value: 'min', text: this.chartTranslationService.translate('min') },
-                { value: 'max', text: this.chartTranslationService.translate('max') },
-                { value: 'count', text: this.chartTranslationService.translate('count') },
-                { value: 'avg', text: this.chartTranslationService.translate('avg') },
-            ],
-            value: typeof aggFunc === 'string' ? aggFunc : undefined,
-            onValueChange: (value) => {
-                this.chartController.setAggFunc(value);
-            },
-        })));
+        this.groupComp.addItem(
+            (this.aggFuncToggle = this.createBean(
+                new AgToggleButton({
+                    label: this.chartTranslationService.translate('aggregate'),
+                    labelAlignment: 'left',
+                    labelWidth: 'flex',
+                    inputWidth: 'flex',
+                    value: aggFunc != undefined,
+                    onValueChange: (value) => {
+                        const aggFunc = value ? DEFAULT_AGG_FUNC : undefined;
+                        this.chartController.setAggFunc(aggFunc);
+                        this.aggFuncSelect?.setValue(aggFunc, true);
+                        this.aggFuncSelect?.setDisplayed(aggFunc != undefined);
+                    },
+                })
+            ))
+        );
+        this.groupComp.addItem(
+            (this.aggFuncSelect = this.createBean(
+                new AgSelect<AggFuncPreset>({
+                    options: [
+                        { value: 'sum', text: this.chartTranslationService.translate('sum') },
+                        { value: 'first', text: this.chartTranslationService.translate('first') },
+                        { value: 'last', text: this.chartTranslationService.translate('last') },
+                        { value: 'min', text: this.chartTranslationService.translate('min') },
+                        { value: 'max', text: this.chartTranslationService.translate('max') },
+                        { value: 'count', text: this.chartTranslationService.translate('count') },
+                        { value: 'avg', text: this.chartTranslationService.translate('avg') },
+                    ],
+                    value: typeof aggFunc === 'string' ? aggFunc : undefined,
+                    onValueChange: (value) => {
+                        this.chartController.setAggFunc(value);
+                    },
+                })
+            ))
+        );
         this.refreshAggFuncControls(dimensionCols, aggFunc);
     }
 
     private refreshAggFuncControls(dimensionCols: ColState[], aggFunc: string | IAggFunc | undefined): void {
-        const selectedDimensions = dimensionCols.filter(col => col.selected);
-        const supportsAggregation = selectedDimensions.some(col => col.colId !== ChartDataModel.DEFAULT_CATEGORY);
+        const selectedDimensions = dimensionCols.filter((col) => col.selected);
+        const supportsAggregation = selectedDimensions.some((col) => col.colId !== ChartDataModel.DEFAULT_CATEGORY);
         this.aggFuncToggle?.setValue(aggFunc != undefined);
         this.aggFuncSelect?.setValue(typeof aggFunc === 'string' ? aggFunc : undefined, true);
         this.aggFuncToggle?.setDisplayed(supportsAggregation);
-        this.aggFuncSelect?.setDisplayed(supportsAggregation && (aggFunc != undefined));
+        this.aggFuncSelect?.setDisplayed(supportsAggregation && aggFunc != undefined);
     }
 
     private clearAggFuncControls(): void {

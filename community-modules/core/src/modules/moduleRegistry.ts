@@ -1,13 +1,12 @@
-import { Module, ModuleValidationInvalidResult } from "../interfaces/iModule";
-import { ModuleNames } from "./moduleNames";
-import { _doOnce } from "../utils/function";
-import { _values } from "../utils/generic";
+import { Module, ModuleValidationInvalidResult } from '../interfaces/iModule';
+import { _doOnce } from '../utils/function';
+import { _values } from '../utils/generic';
+import { ModuleNames } from './moduleNames';
 
 export class ModuleRegistry {
-
     // having in a map a) removes duplicates and b) allows fast lookup
-    private static globalModulesMap: { [name: string]: Module; } = {};
-    private static gridModulesMap: { [gridId: string]: { [name: string]: Module; } } = {}
+    private static globalModulesMap: { [name: string]: Module } = {};
+    private static gridModulesMap: { [gridId: string]: { [name: string]: Module } } = {};
     private static moduleBased: boolean | undefined;
     private static currentModuleVersion: string;
     private static isBundled: boolean | undefined;
@@ -56,7 +55,7 @@ export class ModuleRegistry {
         if (!modules) {
             return;
         }
-        modules.forEach(module => ModuleRegistry.__register(module, moduleBased, gridId));
+        modules.forEach((module) => ModuleRegistry.__register(module, moduleBased, gridId));
     }
 
     private static isValidModuleVersion(module: Module): boolean {
@@ -72,9 +71,13 @@ export class ModuleRegistry {
         }
 
         if (!module.version) {
-            console.error(`AG Grid: You are using incompatible versions of AG Grid modules. Major and minor versions should always match across modules. '${module.moduleName}' is incompatible. Please update all modules to the same version.`);
+            console.error(
+                `AG Grid: You are using incompatible versions of AG Grid modules. Major and minor versions should always match across modules. '${module.moduleName}' is incompatible. Please update all modules to the same version.`
+            );
         } else if (!ModuleRegistry.isValidModuleVersion(module)) {
-            console.error(`AG Grid: You are using incompatible versions of AG Grid modules. Major and minor versions should always match across modules. '${module.moduleName}' is version ${module.version} but the other modules are version ${this.currentModuleVersion}. Please update all modules to the same version.`);
+            console.error(
+                `AG Grid: You are using incompatible versions of AG Grid modules. Major and minor versions should always match across modules. '${module.moduleName}' is version ${module.version} but the other modules are version ${this.currentModuleVersion}. Please update all modules to the same version.`
+            );
         }
 
         if (module.validate) {
@@ -92,11 +95,11 @@ export class ModuleRegistry {
         } else {
             if (ModuleRegistry.moduleBased !== moduleBased) {
                 _doOnce(() => {
-                    console.warn(`AG Grid: You are mixing modules (i.e. @ag-grid-community/core) and packages (ag-grid-community) - you can only use one or the other of these mechanisms.`);
+                    console.warn(
+                        `AG Grid: You are mixing modules (i.e. @ag-grid-community/core) and packages (ag-grid-community) - you can only use one or the other of these mechanisms.`
+                    );
                     console.warn('Please see https://www.ag-grid.com/javascript-grid/modules/ for more information.');
-
-                },
-                    'ModulePackageCheck');
+                }, 'ModulePackageCheck');
             }
         }
     }
@@ -119,18 +122,15 @@ export class ModuleRegistry {
 
         if (ModuleRegistry.isBundled) {
             {
-                warningMessage =
-                    `AG Grid: unable to use ${reason} as 'ag-grid-enterprise' has not been loaded. Check you are using the Enterprise bundle:
+                warningMessage = `AG Grid: unable to use ${reason} as 'ag-grid-enterprise' has not been loaded. Check you are using the Enterprise bundle:
         
         <script src="https://cdn.jsdelivr.net/npm/ag-grid-enterprise@AG_GRID_VERSION/dist/ag-grid-enterprise.min.js"></script>
         
 For more info see: https://ag-grid.com/javascript-data-grid/getting-started/#getting-started-with-ag-grid-enterprise`;
             }
-        }
-        else if (ModuleRegistry.moduleBased || ModuleRegistry.moduleBased === undefined) {
+        } else if (ModuleRegistry.moduleBased || ModuleRegistry.moduleBased === undefined) {
             const modName = Object.entries(ModuleNames).find(([k, v]) => v === moduleName)?.[0];
-            warningMessage =
-                `AG Grid: unable to use ${reason} as the ${modName} is not registered${ModuleRegistry.areGridScopedModules ? ` for gridId: ${gridId}` : ''}. Check if you have registered the module:
+            warningMessage = `AG Grid: unable to use ${reason} as the ${modName} is not registered${ModuleRegistry.areGridScopedModules ? ` for gridId: ${gridId}` : ''}. Check if you have registered the module:
            
     import { ModuleRegistry } from '@ag-grid-community/core';
     import { ${modName} } from '${moduleName}';
@@ -139,8 +139,7 @@ For more info see: https://ag-grid.com/javascript-data-grid/getting-started/#get
 
 For more info see: https://www.ag-grid.com/javascript-grid/modules/`;
         } else {
-            warningMessage =
-                `AG Grid: unable to use ${reason} as package 'ag-grid-enterprise' has not been imported. Check that you have imported the package:
+            warningMessage = `AG Grid: unable to use ${reason} as package 'ag-grid-enterprise' has not been imported. Check that you have imported the package:
             
     import 'ag-grid-enterprise';`;
         }
@@ -164,7 +163,7 @@ For more info see: https://www.ag-grid.com/javascript-grid/modules/`;
 
     /** AG GRID INTERNAL - Get the list of modules registered individually for this grid. */
     public static __getGridRegisteredModules(gridId: string): Module[] {
-        return  _values(ModuleRegistry.gridModulesMap[gridId] ?? {}) || [];
+        return _values(ModuleRegistry.gridModulesMap[gridId] ?? {}) || [];
     }
 
     /** INTERNAL */

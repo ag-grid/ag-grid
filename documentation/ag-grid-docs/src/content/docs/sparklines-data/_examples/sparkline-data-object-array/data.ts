@@ -212,8 +212,7 @@ export function getStockData() {
         },
         {
             symbol: 'ABEV',
-            name:
-                'Ambev S.A. American Depositary Shares (Each representing 1 Common Share)',
+            name: 'Ambev S.A. American Depositary Shares (Each representing 1 Common Share)',
             lastPrice: '3.14',
             marketCap: 49414685958,
             volume: 27226664,
@@ -301,5 +300,5 @@ export function getStockData() {
                 { xVal: 20, yVal: 1.64 },
             ],
         },
-    ]
+    ];
 }

@@ -1,5 +1,5 @@
 export class FloatingFilterMapper {
-    private static filterToFloatingFilterMapping: { [p: string]: string; } = {
+    private static filterToFloatingFilterMapping: { [p: string]: string } = {
         set: 'agSetColumnFloatingFilter',
         agSetColumnFilter: 'agSetColumnFloatingFilter',
 
@@ -16,7 +16,7 @@ export class FloatingFilterMapper {
         agDateColumnFilter: 'agDateColumnFloatingFilter',
 
         text: 'agTextColumnFloatingFilter',
-        agTextColumnFilter: 'agTextColumnFloatingFilter'
+        agTextColumnFilter: 'agTextColumnFloatingFilter',
     };
 
     public static getFloatingFilterType(filterType: string): string {

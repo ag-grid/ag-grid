@@ -1,22 +1,32 @@
-import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { _Scene } from "ag-charts-community";
-import { ChartType } from "@ag-grid-community/core";
+import { ChartType } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
+import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export class MiniScatter extends MiniChartWithAxes {
-
     static chartType: ChartType = 'scatter';
     private readonly points: _Scene.Shape[];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {
-        super(container, "scatterTooltip");
+        super(container, 'scatterTooltip');
 
         const size = this.size;
         const padding = this.padding;
 
         // [x, y] pairs
         const data = [
-            [[0.3, 3], [1.1, 0.9], [2, 0.4], [3.4, 2.4]],
-            [[0, 0.3], [1, 2], [2.4, 1.4], [3, 0]]
+            [
+                [0.3, 3],
+                [1.1, 0.9],
+                [2, 0.4],
+                [3.4, 2.4],
+            ],
+            [
+                [0, 0.3],
+                [1, 2],
+                [2.4, 1.4],
+                [3, 0],
+            ],
         ];
 
         const xScale = new _Scene.LinearScale();
@@ -29,7 +39,7 @@ export class MiniScatter extends MiniChartWithAxes {
 
         const points: _Scene.Shape[] = [];
 
-        data.forEach(series => {
+        data.forEach((series) => {
             series.forEach(([x, y]) => {
                 const arc = new _Scene.Arc();
                 arc.strokeWidth = 0;
@@ -44,7 +54,9 @@ export class MiniScatter extends MiniChartWithAxes {
         this.updateColors(fills, strokes);
 
         const pointsGroup = new _Scene.Group();
-        pointsGroup.setClipRectInGroupCoordinateSpace(new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2));
+        pointsGroup.setClipRectInGroupCoordinateSpace(
+            new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2)
+        );
         pointsGroup.append(this.points);
         this.root.append(pointsGroup);
     }

@@ -1,18 +1,17 @@
-import { FrameworkOverridesIncomingSource, IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
-import { _includes } from "./utils/array";
-import { AgPromise } from "./utils/promise";
+import { FrameworkOverridesIncomingSource, IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
+import { _includes } from './utils/array';
+import { AgPromise } from './utils/promise';
 
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
 
 /** The base frameworks, eg React & Angular, override this bean with implementations specific to their requirement. */
 export class VanillaFrameworkOverrides implements IFrameworkOverrides {
-
-    public renderingEngine: 'vanilla' | 'react' = "vanilla";
+    public renderingEngine: 'vanilla' | 'react' = 'vanilla';
 
     constructor(private frameworkName: 'javascript' | 'angular' | 'react' | 'vue' | 'solid' = 'javascript') {}
 
     public setInterval(action: any, timeout?: any): AgPromise<number> {
-        return new AgPromise(resolve => {
+        return new AgPromise((resolve) => {
             resolve(window.setInterval(action, timeout));
         });
     }
@@ -28,9 +27,11 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
         element.addEventListener(type, listener, { capture: !!useCapture, passive: isPassive });
     }
 
-    wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T = callback => callback();
-    wrapOutgoing: <T>(callback: () => T) => T = callback => callback();
-    get shouldWrapOutgoing() { return false;}
+    wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T = (callback) => callback();
+    wrapOutgoing: <T>(callback: () => T) => T = (callback) => callback();
+    get shouldWrapOutgoing() {
+        return false;
+    }
 
     frameworkComponent(name: string): any {
         return null;

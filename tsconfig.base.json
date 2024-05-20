@@ -11,10 +11,7 @@
     "esModuleInterop": true,
     "target": "ES6",
     "module": "commonjs",
-    "lib": [
-      "ES2022",
-      "DOM"
-    ],
+    "lib": ["ES2022", "DOM"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": "./",
@@ -23,22 +20,11 @@
     "noImplicitAny": true,
     "noUnusedLocals": false,
     "paths": {
-      "@ag-grid-community/core": [
-        "community-modules/core/src/main.ts"
-      ],
-      "@ag-grid-community/client-side-row-model": [
-        "community-modules/client-side-row-model/src/main.ts"
-      ],
-      "@ag-grid-enterprise/core": [
-        "enterprise-modules/core/src/main.ts"
-      ],
-      "@ag-grid-enterprise/status-bar": [
-        "enterprise-modules/status-bar/src/main.ts"
-      ]
+      "@ag-grid-community/client-side-row-model": ["community-modules/client-side-row-model/src/main.ts"],
+      "@ag-grid-community/core": ["community-modules/core/src/main.ts"],
+      "@ag-grid-enterprise/core": ["enterprise-modules/core/src/main.ts"],
+      "@ag-grid-enterprise/status-bar": ["enterprise-modules/status-bar/src/main.ts"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }

@@ -1,5 +1,4 @@
 export function getData(): any[] {
-
     return [
         {
             athlete: 'Niall',
@@ -82,5 +81,5 @@ export function getData(): any[] {
             silver: 2,
             bronze: 2,
         },
-    ]
+    ];
 }

@@ -1,18 +1,18 @@
-import { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
 import { Autowired, PostConstruct } from '../../context/context';
-import { IRowModel } from '../../interfaces/iRowModel';
+import { FilterChangedEventSourceType } from '../../events';
 import { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
+import { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
+import { IRowModel } from '../../interfaces/iRowModel';
+import { IRowNode } from '../../interfaces/iRowNode';
+import { PositionableFeature } from '../../rendering/features/positionableFeature';
 import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
 import { _debounce } from '../../utils/function';
 import { AgPromise } from '../../utils/promise';
+import { Component } from '../../widgets/component';
+import { RefSelector } from '../../widgets/componentAnnotations';
+import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import { PopupEventParams } from '../../widgets/popupService';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
-import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
-import { Component } from '../../widgets/component';
-import { IRowNode } from '../../interfaces/iRowNode';
-import { RefSelector } from '../../widgets/componentAnnotations';
-import { PositionableFeature } from '../../rendering/features/positionableFeature';
-import { FilterChangedEventSourceType } from '../../events';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
@@ -129,25 +129,21 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     @PostConstruct
     protected postConstruct(): void {
         this.resetTemplate(); // do this first to create the DOM
-        this.createManagedBean(new ManagedFocusFeature(
-            this.getFocusableElement(),
-            {
-                handleKeyDown: this.handleKeyDown.bind(this)
-            }
-        ));
-
-        this.positionableFeature = new PositionableFeature(
-            this.getPositionableElement(),
-            {
-                forcePopupParentAsOffsetParent: true
-            }
+        this.createManagedBean(
+            new ManagedFocusFeature(this.getFocusableElement(), {
+                handleKeyDown: this.handleKeyDown.bind(this),
+            })
         );
+
+        this.positionableFeature = new PositionableFeature(this.getPositionableElement(), {
+            forcePopupParentAsOffsetParent: true,
+        });
 
         this.createBean(this.positionableFeature);
     }
 
     // override
-    protected handleKeyDown(e: KeyboardEvent): void { }
+    protected handleKeyDown(e: KeyboardEvent): void {}
 
     public abstract getModelFromUi(): M | null;
 
@@ -166,7 +162,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         if (eGui) {
             eGui.removeEventListener('submit', this.onFormSubmit);
         }
-        const templateString = /* html */`
+        const templateString = /* html */ `
             <form class="ag-filter-wrapper">
                 <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper" ref="eFilterBody">
                     ${this.createBodyTemplate()}
@@ -224,9 +220,8 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         } else {
             // Always empty the buttons panel before adding new buttons
             _clearElement(this.eButtonsPanel);
-            this.buttonListeners.forEach(destroyFunc => destroyFunc?.());
+            this.buttonListeners.forEach((destroyFunc) => destroyFunc?.());
             this.buttonListeners = [];
-
         }
 
         if (!hasButtons) {
@@ -263,7 +258,9 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                     break;
                 case 'cancel':
                     text = this.translate('cancelFilter');
-                    clickListener = (e) => { this.onBtCancel(e!); };
+                    clickListener = (e) => {
+                        this.onBtCancel(e!);
+                    };
                     break;
                 default:
                     console.warn('AG Grid: Unknown button type specified');
@@ -285,7 +282,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             fragment.append(button);
         };
 
-        buttons.forEach(type => addButton(type));
+        buttons.forEach((type) => addButton(type));
 
         this.eButtonsPanel.append(fragment);
         this.getGui().appendChild(this.eButtonsPanel);
@@ -371,7 +368,9 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     public applyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
         const newModel = this.getModelFromUi();
 
-        if (!this.isModelValid(newModel!)) { return false; }
+        if (!this.isModelValid(newModel!)) {
+            return false;
+        }
 
         const previousModel = this.appliedModel;
 
@@ -392,7 +391,9 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     protected onBtApply(afterFloatingFilter = false, afterDataChange = false, e?: Event): void {
         // Prevent form submission
-        if (e) { e.preventDefault(); }
+        if (e) {
+            e.preventDefault();
+        }
         if (this.applyModel(afterDataChange ? 'rowDataUpdated' : 'ui')) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
@@ -408,11 +409,12 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         }
     }
 
-    public onNewRowsLoaded(): void {
-    }
+    public onNewRowsLoaded(): void {}
 
     public close(e?: Event): void {
-        if (!this.hidePopup) { return; }
+        if (!this.hidePopup) {
+            return;
+        }
 
         const keyboardEvent = e as KeyboardEvent;
         const key = keyboardEvent && keyboardEvent.key;
@@ -460,7 +462,9 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     private refreshFilterResizer(containerType?: ContainerType): void {
         // tool panel is scrollable, so don't need to size
-        if (!this.positionableFeature || containerType === 'toolPanel') { return; }
+        if (!this.positionableFeature || containerType === 'toolPanel') {
+            return;
+        }
 
         const isResizable = containerType === 'floatingFilter' || containerType === 'columnFilter';
 

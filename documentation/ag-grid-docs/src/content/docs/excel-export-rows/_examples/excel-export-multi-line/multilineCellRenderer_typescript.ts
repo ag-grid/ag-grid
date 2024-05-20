@@ -1,11 +1,11 @@
-import { ICellRendererParams, ICellRendererComp } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class MultilineCellRenderer implements ICellRendererComp {
     eGui!: HTMLDivElement;
 
     init(params: ICellRendererParams) {
         this.eGui = document.createElement('div');
-        this.eGui.innerHTML = params.value.replace('\n', '<br/>')
+        this.eGui.innerHTML = params.value.replace('\n', '<br/>');
     }
 
     getGui() {
@@ -13,7 +13,6 @@ export class MultilineCellRenderer implements ICellRendererComp {
     }
 
     refresh() {
-        return false
+        return false;
     }
 }
-

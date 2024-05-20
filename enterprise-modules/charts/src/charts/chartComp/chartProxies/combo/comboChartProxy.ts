@@ -1,18 +1,18 @@
-import {AgCartesianAxisOptions} from "ag-charts-community";
-import {ChartType, SeriesChartType} from "@ag-grid-community/core";
-import {ChartProxyParams, FieldDefinition, UpdateParams} from "../chartProxy";
-import {CartesianChartProxy} from "../cartesian/cartesianChartProxy";
-import {getSeriesType} from "../../utils/seriesTypeMapper";
+import { ChartType, SeriesChartType } from '@ag-grid-community/core';
+import { AgCartesianAxisOptions } from 'ag-charts-community';
+
+import { getSeriesType } from '../../utils/seriesTypeMapper';
+import { CartesianChartProxy } from '../cartesian/cartesianChartProxy';
+import { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 
 export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'> {
-
     public constructor(params: ChartProxyParams) {
         super(params);
     }
 
     public getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
         const fields = params ? params.fields : [];
-        const fieldsMap = new Map(fields.map(f => [f.colId, f]));
+        const fieldsMap = new Map(fields.map((f) => [f.colId, f]));
 
         const { primaryYKeys, secondaryYKeys } = this.getYKeys(fields, params.seriesChartTypes);
 
@@ -43,7 +43,7 @@ export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'
                     type: 'number',
                     keys: [secondaryYKey],
                     position: 'right',
-                }
+                };
 
                 axes.push(secondaryAxisOptions);
             });
@@ -56,8 +56,8 @@ export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'
         const { fields, seriesChartTypes } = params;
         const [category] = params.categories;
 
-        return fields.map(field => {
-            const seriesChartType = seriesChartTypes.find(s => s.colId === field.colId);
+        return fields.map((field) => {
+            const seriesChartType = seriesChartTypes.find((s) => s.colId === field.colId);
             if (seriesChartType) {
                 const chartType: ChartType = seriesChartType.chartType;
                 const grouped = ['groupedColumn', 'groupedBar'].includes(chartType);
@@ -69,7 +69,7 @@ export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'
                     yName: field.displayName,
                     stacked: ['stackedArea', 'stackedColumn'].includes(chartType),
                     ...groupedOpts,
-                }
+                };
             }
         });
     }
@@ -78,9 +78,9 @@ export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'
         const primaryYKeys: string[] = [];
         const secondaryYKeys: string[] = [];
 
-        fields.forEach(field => {
+        fields.forEach((field) => {
             const colId = field.colId;
-            const seriesChartType = seriesChartTypes.find(s => s.colId === colId);
+            const seriesChartType = seriesChartTypes.find((s) => s.colId === colId);
             if (seriesChartType) {
                 seriesChartType.secondaryAxis ? secondaryYKeys.push(colId) : primaryYKeys.push(colId);
             }

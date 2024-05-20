@@ -1,14 +1,13 @@
-import { Autowired, Bean } from "../../context/context";
-import { IComponent } from "../../interfaces/iComponent";
-import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
-import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
-import { BeanStub } from "../../context/beanStub";
-import { _loadTemplate } from "../../utils/dom";
+import { BeanStub } from '../../context/beanStub';
+import { Autowired, Bean } from '../../context/context';
+import { IComponent } from '../../interfaces/iComponent';
+import { ICellRendererComp, ICellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
+import { _loadTemplate } from '../../utils/dom';
+import { ComponentMetadata, ComponentMetadataProvider } from './componentMetadataProvider';
 
-@Bean("agComponentUtils")
+@Bean('agComponentUtils')
 export class AgComponentUtils extends BeanStub {
-
-    @Autowired("componentMetadataProvider")
+    @Autowired('componentMetadataProvider')
     private componentMetadataProvider: ComponentMetadataProvider;
 
     public adaptFunction(propertyName: string, jsCompFunc: any): any {
@@ -19,9 +18,8 @@ export class AgComponentUtils extends BeanStub {
         return null;
     }
 
-    public adaptCellRendererFunction(callback: any): { new(): IComponent<ICellRendererParams>; } {
+    public adaptCellRendererFunction(callback: any): { new (): IComponent<ICellRendererParams> } {
         class Adapter implements ICellRendererComp {
-
             private eGui: HTMLElement;
 
             refresh(params: ICellRendererParams): boolean {
@@ -39,11 +37,11 @@ export class AgComponentUtils extends BeanStub {
                     this.eGui = _loadTemplate('<span>' + callbackResult + '</span>');
                     return;
                 }
-                if (callbackResult==null) {
+                if (callbackResult == null) {
                     this.eGui = _loadTemplate('<span></span>');
                     return;
                 }
-                this.eGui =  callbackResult as HTMLElement;
+                this.eGui = callbackResult as HTMLElement;
             }
         }
 
@@ -51,7 +49,9 @@ export class AgComponentUtils extends BeanStub {
     }
 
     public doesImplementIComponent(candidate: any): boolean {
-        if (!candidate) { return false; }
+        if (!candidate) {
+            return false;
+        }
         return (candidate as any).prototype && 'getGui' in (candidate as any).prototype;
     }
 }

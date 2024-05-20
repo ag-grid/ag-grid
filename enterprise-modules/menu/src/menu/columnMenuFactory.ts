@@ -6,17 +6,20 @@ import {
     Column,
     ColumnModel,
     FilterManager,
+    FuncColsService,
     IRowModel,
     MenuItemDef,
     MenuService,
-    _removeRepeatsFromArray
-} from "@ag-grid-community/core";
-import { MenuItemMapper } from "./menuItemMapper";
+    _removeRepeatsFromArray,
+} from '@ag-grid-community/core';
+
+import { MenuItemMapper } from './menuItemMapper';
 
 @Bean('columnMenuFactory')
 export class ColumnMenuFactory extends BeanStub {
     @Autowired('menuItemMapper') private readonly menuItemMapper: MenuItemMapper;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('rowModel') private readonly rowModel: IRowModel;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('menuService') private readonly menuService: MenuService;
@@ -24,11 +27,13 @@ export class ColumnMenuFactory extends BeanStub {
     private static MENU_ITEM_SEPARATOR = 'separator';
 
     public createMenu(parent: BeanStub, column: Column | undefined, sourceElement: () => HTMLElement): AgMenuList {
-        const menuList = parent.createManagedBean(new AgMenuList(0, {
-            column: column ?? null,
-            node: null,
-            value: null
-        }));
+        const menuList = parent.createManagedBean(
+            new AgMenuList(0, {
+                column: column ?? null,
+                node: null,
+                value: null,
+            })
+        );
 
         const menuItems = this.getMenuItems(column);
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, column ?? null, sourceElement);
@@ -46,16 +51,18 @@ export class ColumnMenuFactory extends BeanStub {
         if (Array.isArray(columnMainMenuItems)) {
             result = columnMainMenuItems;
         } else if (typeof columnMainMenuItems === 'function') {
-            result = columnMainMenuItems(this.gos.addGridCommonParams({
-                column: column!,
-                defaultItems
-            }));
+            result = columnMainMenuItems(
+                this.gos.addGridCommonParams({
+                    column: column!,
+                    defaultItems,
+                })
+            );
         } else {
             const userFunc = this.gos.getCallback('getMainMenuItems');
             if (userFunc && column) {
                 result = userFunc({
                     column,
-                    defaultItems
+                    defaultItems,
                 });
             } else {
                 result = defaultItems;
@@ -84,7 +91,7 @@ export class ColumnMenuFactory extends BeanStub {
 
         const allowPinning = !column.getColDef().lockPinned;
 
-        const rowGroupCount = this.columnModel.getRowGroupColumns().length;
+        const rowGroupCount = this.funcColsService.getRowGroupColumns().length;
         const doingGrouping = rowGroupCount > 0;
 
         const allowValue = column.isAllowValue();
@@ -98,9 +105,9 @@ export class ColumnMenuFactory extends BeanStub {
 
         const allowValueAgg =
             // if primary, then only allow aggValue if grouping and it's a value columns
-            (isPrimary && doingGrouping && allowValue)
+            (isPrimary && doingGrouping && allowValue) ||
             // secondary columns can always have aggValue, as it means it's a pivot value column
-            || !isPrimary;
+            !isPrimary;
 
         if (!isLegacyMenuEnabled && column.isSortable()) {
             const sort = column.getSort();
@@ -142,7 +149,7 @@ export class ColumnMenuFactory extends BeanStub {
             result.push('rowUnGroup');
         } else if (allowRowGroup && column.isPrimary()) {
             if (column.isRowGroupActive()) {
-                const groupLocked = this.columnModel.isColumnGroupingLocked(column);
+                const groupLocked = this.columnModel.isColGroupLocked(column);
                 if (!groupLocked) {
                     result.push('rowUnGroup');
                 }

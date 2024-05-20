@@ -1,56 +1,67 @@
+import { AgGridReact } from '@ag-grid-community/react';
 import React, { useEffect } from 'react';
-import { AgGridReact } from "@ag-grid-community/react";
 
 const DetailCellRenderer = ({ data, node, api }) => {
-  const rowId = node.id;
+    const rowId = node.id;
 
-  useEffect(() => {
-    return () => {
-      if (!api.isDestroyed()) {
-        console.log('removing detail grid info with id: ', rowId);
-        api.removeDetailGridInfo(rowId);
-      }
-    };
-  }, []);
+    useEffect(() => {
+        return () => {
+            if (!api.isDestroyed()) {
+                console.log('removing detail grid info with id: ', rowId);
+                api.removeDetailGridInfo(rowId);
+            }
+        };
+    }, []);
 
-  const colDefs = [
-    { field: 'callId' },
-    { field: 'direction' },
-    { field: 'number' },
-    { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
-    { field: 'switchCode' }
-  ];
+    const colDefs = [
+        { field: 'callId' },
+        { field: 'direction' },
+        { field: 'number' },
+        { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
+        { field: 'switchCode' },
+    ];
 
-  const defaultColDef = {
-    flex: 1,
-    minWidth: 120
-  };
-
-  const onGridReady = params => {
-    const gridInfo = {
-      id: node.id,
-      api: params.api,
+    const defaultColDef = {
+        flex: 1,
+        minWidth: 120,
     };
 
-    console.log("adding detail grid info with id: ", rowId);
+    const onGridReady = (params) => {
+        const gridInfo = {
+            id: node.id,
+            api: params.api,
+        };
 
-    api.addDetailGridInfo(rowId, gridInfo);
-  };
+        console.log('adding detail grid info with id: ', rowId);
 
-  return <div className="full-width-panel">
-    <div className="full-width-details">
-      <div className="full-width-detail"><b>Name: </b>{data.name}</div>
-      <div className="full-width-detail"><b>Account: </b>{data.account}</div>
-    </div>
-    <AgGridReact
-      id="detailGrid"
-      className={"full-width-grid " +  /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}
-      columnDefs={colDefs}
-      defaultColDef={defaultColDef}
-      rowData={data.callRecords}
-      onGridReady={onGridReady}
-    />
-  </div>;
+        api.addDetailGridInfo(rowId, gridInfo);
+    };
+
+    return (
+        <div className="full-width-panel">
+            <div className="full-width-details">
+                <div className="full-width-detail">
+                    <b>Name: </b>
+                    {data.name}
+                </div>
+                <div className="full-width-detail">
+                    <b>Account: </b>
+                    {data.account}
+                </div>
+            </div>
+            <AgGridReact
+                id="detailGrid"
+                className={
+                    'full-width-grid ' + /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                    'ag-theme-quartz' /** DARK MODE END **/
+                }
+                columnDefs={colDefs}
+                defaultColDef={defaultColDef}
+                rowData={data.callRecords}
+                onGridReady={onGridReady}
+            />
+        </div>
+    );
 };
 
 export default DetailCellRenderer;

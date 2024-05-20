@@ -1,9 +1,9 @@
-import { CustomCellEditorProps } from '@ag-grid-community/react';
 import { ICellEditor } from '@ag-grid-community/core';
+import { CustomCellEditorProps } from '@ag-grid-community/react';
 import React, { useEffect, useRef } from 'react';
 
 export interface MySimpleInterface extends ICellEditor {
-    myCustomFunction(): { rowIndex: number, colId: string };
+    myCustomFunction(): { rowIndex: number; colId: string };
 }
 
 export default ({ value, onValueChange, eventKey, rowIndex, column }: CustomCellEditorProps, ref) => {
@@ -33,9 +33,11 @@ export default ({ value, onValueChange, eventKey, rowIndex, column }: CustomCell
     const refInput = useRef<HTMLInputElement>(null);
 
     return (
-        <input value={value || ''}
+        <input
+            value={value || ''}
             ref={refInput}
             onChange={(event) => updateValue(event.target.value)}
-            className="my-simple-editor" />
+            className="my-simple-editor"
+        />
     );
-}
+};

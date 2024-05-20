@@ -1,4 +1,4 @@
-const doOnceFlags: { [key: string]: boolean; } = {};
+const doOnceFlags: { [key: string]: boolean } = {};
 
 /**
  * If the key was passed before, then doesn't execute the func
@@ -6,17 +6,19 @@ const doOnceFlags: { [key: string]: boolean; } = {};
  * @param {string} key
  */
 export function _doOnce(func: () => void, key: string) {
-    if (doOnceFlags[key]) { return; }
+    if (doOnceFlags[key]) {
+        return;
+    }
 
     func();
     doOnceFlags[key] = true;
 }
 
 export function _warnOnce(msg: string) {
-    _doOnce(() => console.warn("AG Grid: " + msg), msg);
+    _doOnce(() => console.warn('AG Grid: ' + msg), msg);
 }
 export function _errorOnce(msg: string) {
-    _doOnce(() => console.error("AG Grid: " + msg), msg);
+    _doOnce(() => console.error('AG Grid: ' + msg), msg);
 }
 
 export function _getFunctionName(funcConstructor: any) {
@@ -44,20 +46,22 @@ let executeNextVMTurnPending = false;
 export function _executeNextVMTurn(func: () => void): void {
     executeNextVMTurnFuncs.push(func);
 
-    if (executeNextVMTurnPending) { return; }
+    if (executeNextVMTurnPending) {
+        return;
+    }
 
     executeNextVMTurnPending = true;
     window.setTimeout(() => {
         const funcsCopy = executeNextVMTurnFuncs.slice();
         executeNextVMTurnFuncs.length = 0;
         executeNextVMTurnPending = false;
-        funcsCopy.forEach(func => func());
+        funcsCopy.forEach((func) => func());
     }, 0);
 }
 
 export function _executeAfter(funcs: Function[], milliseconds = 0): void {
     if (funcs.length > 0) {
-        window.setTimeout(() => funcs.forEach(func => func()), milliseconds);
+        window.setTimeout(() => funcs.forEach((func) => func()), milliseconds);
     }
 }
 
@@ -75,7 +79,7 @@ export function _debounce(func: (...args: any[]) => void, delay: number): (...ar
         window.clearTimeout(timeout);
 
         // Set the new timeout
-        timeout = window.setTimeout(function() {
+        timeout = window.setTimeout(function () {
             func.apply(context, args);
         }, delay);
     };
@@ -89,11 +93,13 @@ export function _debounce(func: (...args: any[]) => void, delay: number): (...ar
 export function _throttle(func: (...args: any[]) => void, wait: number): (...args: any[]) => void {
     let previousCall = 0;
 
-    return function(...args: any[]) {
+    return function (...args: any[]) {
         const context = this;
         const currentCall = new Date().getTime();
 
-        if (currentCall - previousCall < wait) { return; }
+        if (currentCall - previousCall < wait) {
+            return;
+        }
 
         previousCall = currentCall;
 
@@ -101,14 +107,19 @@ export function _throttle(func: (...args: any[]) => void, wait: number): (...arg
     };
 }
 
-export function _waitUntil(condition: () => boolean, callback: () => void, timeout: number = 100, timeoutMessage?: string) {
+export function _waitUntil(
+    condition: () => boolean,
+    callback: () => void,
+    timeout: number = 100,
+    timeoutMessage?: string
+) {
     const timeStamp = new Date().getTime();
 
     let interval: number | null = null;
     let executed: boolean = false;
 
     const internalCallback = () => {
-        const reachedTimeout = ((new Date().getTime()) - timeStamp) > timeout;
+        const reachedTimeout = new Date().getTime() - timeStamp > timeout;
         if (condition() || reachedTimeout) {
             callback();
             executed = true;
@@ -134,4 +145,6 @@ export function _compose<T>(...fns: Function[]) {
     return (arg: T) => fns.reduce<T>((composed, f) => f(composed), arg);
 }
 
-export const noop = () => { return; };
+export const noop = () => {
+    return;
+};

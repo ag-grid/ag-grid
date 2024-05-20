@@ -1,6 +1,12 @@
-import { AdvancedFilterModel, AutocompleteEntry, AutocompleteListParams } from "@ag-grid-community/core";
-import { JoinFilterExpressionParser } from "./joinFilterExpressionParser";
-import { AutocompleteUpdate, FilterExpressionFunction, FilterExpressionFunctionParams, FilterExpressionParserParams } from "./filterExpressionUtils";
+import { AdvancedFilterModel, AutocompleteEntry, AutocompleteListParams } from '@ag-grid-community/core';
+
+import {
+    AutocompleteUpdate,
+    FilterExpressionFunction,
+    FilterExpressionFunctionParams,
+    FilterExpressionParserParams,
+} from './filterExpressionUtils';
+import { JoinFilterExpressionParser } from './joinFilterExpressionParser';
 
 export class FilterExpressionParser {
     private joinExpressionParser: JoinFilterExpressionParser;
@@ -21,12 +27,15 @@ export class FilterExpressionParser {
 
     public getValidationMessage(): string | null {
         const error = this.joinExpressionParser.getValidationError();
-        if (!error) { return null; }
+        if (!error) {
+            return null;
+        }
         const { message, startPosition, endPosition } = error;
         return startPosition < this.params.expression.length
             ? this.params.advancedFilterExpressionService.translate('advancedFilterValidationMessage', [
-                message, this.params.expression.slice(startPosition, endPosition + 1).trim()
-            ])
+                  message,
+                  this.params.expression.slice(startPosition, endPosition + 1).trim(),
+              ])
             : this.params.advancedFilterExpressionService.translate('advancedFilterValidationMessageAtEnd', [message]);
     }
 
@@ -37,7 +46,7 @@ export class FilterExpressionParser {
         const params = this.createFunctionParams();
         return {
             functionString: `return ${this.joinExpressionParser.getFunctionString(params)};`,
-            params
+            params,
         };
     }
 
@@ -48,7 +57,7 @@ export class FilterExpressionParser {
         const params = this.createFunctionParams();
         return {
             expressionFunction: this.joinExpressionParser.getFunctionParsed(params),
-            params
+            params,
         };
     }
 
@@ -68,7 +77,7 @@ export class FilterExpressionParser {
         return {
             operands: [],
             operators: [],
-            evaluatorParams: []
+            evaluatorParams: [],
         };
     }
 }

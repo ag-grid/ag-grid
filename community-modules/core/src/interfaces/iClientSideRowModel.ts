@@ -1,9 +1,9 @@
-import { IRowModel } from './iRowModel';
-import { RowNodeTransaction } from './rowNodeTransaction';
-import { RowDataTransaction } from './rowDataTransaction';
 import { RowNode } from '../entities/rowNode';
 import { RowHighlightPosition } from '../interfaces/iRowNode';
 import { ChangedPath } from '../utils/changedPath';
+import { IRowModel } from './iRowModel';
+import { RowDataTransaction } from './rowDataTransaction';
+import { RowNodeTransaction } from './rowNodeTransaction';
 
 export type ClientSideRowModelStep = `${ClientSideRowModelSteps}`;
 export enum ClientSideRowModelSteps {
@@ -14,14 +14,17 @@ export enum ClientSideRowModelSteps {
     AGGREGATE = 'aggregate',
     FILTER_AGGREGATES = 'filter_aggregates',
     PIVOT = 'pivot',
-    NOTHING = 'nothing'
+    NOTHING = 'nothing',
 }
 
 export interface IClientSideRowModel<TData = any> extends IRowModel {
     onRowGroupOpened(): void;
-    updateRowData(rowDataTran: RowDataTransaction<TData>, rowNodeOrder?: { [id: string]: number; } | null): RowNodeTransaction<TData> | null;
+    updateRowData(
+        rowDataTran: RowDataTransaction<TData>,
+        rowNodeOrder?: { [id: string]: number } | null
+    ): RowNodeTransaction<TData> | null;
     setRowData(rowData: any[]): void;
-    refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void 
+    refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void;
     expandOrCollapseAll(expand: boolean): void;
     forEachLeafNode(callback: (node: RowNode, index: number) => void): void;
     forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
@@ -30,7 +33,10 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     resetRowHeights(): void;
     onRowHeightChanged(): void;
     onRowHeightChangedDebounced(): void;
-    batchUpdateRowData(rowDataTransaction: RowDataTransaction<TData>, callback?: (res: RowNodeTransaction<TData>) => void): void;
+    batchUpdateRowData(
+        rowDataTransaction: RowDataTransaction<TData>,
+        callback?: (res: RowNodeTransaction<TData>) => void
+    ): void;
     flushAsyncTransactions(): void;
     getRootNode(): RowNode;
     doAggregate(changedPath?: ChangedPath): void;

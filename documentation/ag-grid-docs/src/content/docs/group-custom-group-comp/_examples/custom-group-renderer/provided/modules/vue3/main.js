@@ -1,15 +1,15 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import './styles.css';
-import CustomGroupCellRenderer from './customGroupCellRendererVue.js';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { AgGridVue } from '@ag-grid-community/vue3';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { createApp } from 'vue';
+
+import CustomGroupCellRenderer from './customGroupCellRendererVue.js';
+import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-
 
 const VueExample = {
     template: `
@@ -30,7 +30,7 @@ const VueExample = {
     `,
     components: {
         'ag-grid-vue': AgGridVue,
-        CustomGroupCellRenderer
+        CustomGroupCellRenderer,
     },
     data: function () {
         return {
@@ -48,7 +48,9 @@ const VueExample = {
             autoGroupColumnDef: null,
             groupDefaultExpanded: null,
             rowData: null,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
     created() {
@@ -63,9 +65,7 @@ const VueExample = {
 
             const updateData = (data) => params.api.setGridOption('rowData', data);
 
-            fetch(
-                'https://www.ag-grid.com/example-assets/small-olympic-winners.json'
-            )
+            fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
                 .then((resp) => resp.json())
                 .then((data) => updateData(data));
         },
@@ -81,13 +81,13 @@ const VueExample = {
             if (!(params.event instanceof KeyboardEvent)) {
                 return;
             }
-            if (params.event.code !== "Enter") {
+            if (params.event.code !== 'Enter') {
                 return;
             }
             if (params.colDef.showRowGroup) {
                 params.node.setExpanded(!params.node.expanded);
             }
-        }
+        },
     },
 };
 

@@ -1,8 +1,7 @@
-import React from 'react';
 import { CustomCellRendererProps } from '@ag-grid-community/react';
+import React from 'react';
 
 export default (props: CustomCellRendererProps) => {
-
     const footer = props.node.footer;
     const isRootLevel = props.node.level === -1;
     const value = props.value;
@@ -16,4 +15,4 @@ export default (props: CustomCellRendererProps) => {
     } else {
         return <span>{value}</span>;
     }
-}
+};

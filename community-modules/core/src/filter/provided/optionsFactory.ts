@@ -4,7 +4,7 @@ import { SimpleFilterParams } from './simpleFilter';
 
 /* Common logic for options, used by both filters and floating filters. */
 export class OptionsFactory {
-    protected customFilterOptions: { [name: string]: IFilterOptionDef; } = {};
+    protected customFilterOptions: { [name: string]: IFilterOptionDef } = {};
     protected filterOptions: (IFilterOptionDef | string)[];
     protected defaultOption: string;
 
@@ -19,14 +19,18 @@ export class OptionsFactory {
     }
 
     private mapCustomOptions(): void {
-        if (!this.filterOptions) { return; }
+        if (!this.filterOptions) {
+            return;
+        }
 
-        this.filterOptions.forEach(filterOption => {
-            if (typeof filterOption === 'string') { return; }
+        this.filterOptions.forEach((filterOption) => {
+            if (typeof filterOption === 'string') {
+                return;
+            }
 
             const requiredProperties = [['displayKey'], ['displayName'], ['predicate', 'test']];
             const propertyCheck = (keys: [keyof IFilterOptionDef]) => {
-                if (!keys.some(key => filterOption[key] != null)) {
+                if (!keys.some((key) => filterOption[key] != null)) {
                     console.warn(`AG Grid: ignoring FilterOptionDef as it doesn't contain one of '${keys}'`);
                     return false;
                 }
@@ -35,7 +39,7 @@ export class OptionsFactory {
             };
 
             if (!requiredProperties.every(propertyCheck)) {
-                this.filterOptions = this.filterOptions.filter(v => v === filterOption) || [];
+                this.filterOptions = this.filterOptions.filter((v) => v === filterOption) || [];
                 return;
             }
 

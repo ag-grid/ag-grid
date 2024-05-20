@@ -8,7 +8,7 @@ export interface ISetDisplayValueModel<V> {
 
     updateDisplayedValuesToMatchMiniFilter(
         getValue: (key: string | null) => V | null,
-        allKeys: Iterable<string | null> | undefined, 
+        allKeys: Iterable<string | null> | undefined,
         availableKeys: Set<string | null>,
         matchesFilter: (valueToCheck: string | null) => boolean,
         nullMatchesFilter: boolean,

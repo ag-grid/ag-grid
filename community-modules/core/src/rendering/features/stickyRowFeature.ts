@@ -1,18 +1,17 @@
-import { RowNode } from "../../entities/rowNode";
-import { BeanStub } from "../../context/beanStub";
-import { RowCtrl } from "../row/rowCtrl";
-import { RowCtrlByRowNodeIdMap, RowRenderer } from "../rowRenderer";
-import { Autowired, PostConstruct } from "../../context/context";
-import { IRowModel } from "../../interfaces/iRowModel";
-import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
-import { CtrlsService } from "../../ctrlsService";
-import { _last } from "../../utils/array";
+import { BeanStub } from '../../context/beanStub';
+import { Autowired, PostConstruct } from '../../context/context';
+import { CtrlsService } from '../../ctrlsService';
+import { RowNode } from '../../entities/rowNode';
+import { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
+import { IRowModel } from '../../interfaces/iRowModel';
+import { _last } from '../../utils/array';
+import { RowCtrl } from '../row/rowCtrl';
+import { RowCtrlByRowNodeIdMap, RowRenderer } from '../rowRenderer';
 
 export class StickyRowFeature extends BeanStub {
-
-    @Autowired("rowModel") private rowModel: IRowModel;
-    @Autowired("rowRenderer") private rowRenderer: RowRenderer;
-    @Autowired("ctrlsService") private ctrlsService: CtrlsService;
+    @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private stickyTopRowCtrls: RowCtrl[] = [];
     private stickyBottomRowCtrls: RowCtrl[] = [];
@@ -23,7 +22,10 @@ export class StickyRowFeature extends BeanStub {
 
     constructor(
         private readonly createRowCon: (rowNode: RowNode, animate: boolean, afterScroll: boolean) => RowCtrl,
-        private readonly destroyRowCtrls: (rowCtrlsMap: RowCtrlByRowNodeIdMap | null | undefined, animate: boolean) => void
+        private readonly destroyRowCtrls: (
+            rowCtrlsMap: RowCtrlByRowNodeIdMap | null | undefined,
+            animate: boolean
+        ) => void
     ) {
         super();
     }
@@ -32,7 +34,7 @@ export class StickyRowFeature extends BeanStub {
     private postConstruct(): void {
         this.isClientSide = this.rowModel.getType() === 'clientSide';
 
-        this.ctrlsService.whenReady(params => {
+        this.ctrlsService.whenReady((params) => {
             this.gridBodyCtrl = params.gridBodyCtrl;
         });
     }
@@ -102,12 +104,17 @@ export class StickyRowFeature extends BeanStub {
         }
 
         if (row.isExpandable() || row.footer) {
+            // grand total row at top, nothing can push it out of sticky.
             const grandTotalAtTop = row.footer && row.rowIndex === 0;
+            if (grandTotalAtTop) {
+                return Number.MAX_SAFE_INTEGER;
+            }
+
             // if no siblings, we search the children for the last displayed row, to get last px.
             // equally, if sibling but sibling is contiguous ('top') then sibling cannot be used
             // to find last px
             const noOrContiguousSiblings = !row.sibling || Math.abs(row.sibling.rowIndex! - row.rowIndex!) === 1;
-            if (grandTotalAtTop || noOrContiguousSiblings) {
+            if (noOrContiguousSiblings) {
                 let lastAncestor = row.footer ? row.sibling : row;
                 while (lastAncestor.isExpandable() && lastAncestor.expanded) {
                     if (lastAncestor.master) {
@@ -115,11 +122,13 @@ export class StickyRowFeature extends BeanStub {
                     } else if (lastAncestor.childrenAfterSort) {
                         // Tree Data will have `childrenAfterSort` without any nodes, but
                         // the current node will still be marked as expansible.
-                        if (lastAncestor.childrenAfterSort.length === 0) { break; }
+                        if (lastAncestor.childrenAfterSort.length === 0) {
+                            break;
+                        }
                         lastAncestor = _last(lastAncestor.childrenAfterSort);
                     }
                 }
-                return lastAncestor.rowTop! + lastAncestor.rowHeight!
+                return lastAncestor.rowTop! + lastAncestor.rowHeight!;
             }
 
             // if siblings not contiguous, footer is last row and easiest way for last px
@@ -131,7 +140,7 @@ export class StickyRowFeature extends BeanStub {
         // if not expandable, then this row shouldn't be sticky currently.
         return Number.MAX_SAFE_INTEGER;
     }
-    
+
     private updateStickyRows(container: 'top' | 'bottom'): boolean {
         const isTop = container === 'top';
         let newStickyContainerHeight = 0;
@@ -141,7 +150,8 @@ export class StickyRowFeature extends BeanStub {
         }
 
         const pixelAtContainerBoundary = isTop
-            ? this.rowRenderer.getFirstVisibleVerticalPixel() : this.rowRenderer.getLastVisibleVerticalPixel();
+            ? this.rowRenderer.getFirstVisibleVerticalPixel()
+            : this.rowRenderer.getLastVisibleVerticalPixel();
         const newStickyRows = new Set<RowNode>();
 
         const addStickyRow = (stickyRow: RowNode) => {
@@ -170,15 +180,14 @@ export class StickyRowFeature extends BeanStub {
             // have to recalculate height after each row has been added, to allow
             // calculating the next sticky row
             newStickyContainerHeight = 0;
-            newStickyRows.forEach(rowNode => {
+            newStickyRows.forEach((rowNode) => {
                 const thisRowLastPx = rowNode.stickyRowTop + rowNode.rowHeight!;
                 if (newStickyContainerHeight < thisRowLastPx) {
                     newStickyContainerHeight = thisRowLastPx;
                 }
             });
-
         };
- 
+
         const suppressFootersSticky = this.areFooterRowsStickySuppressed();
         const suppressGroupsSticky = this.gos.get('suppressGroupRowsSticky');
         const isRowSticky = (row: RowNode) => {
@@ -187,22 +196,30 @@ export class StickyRowFeature extends BeanStub {
             }
 
             if (row.footer) {
-                if (suppressFootersSticky === true) { return false; }
-                if (suppressFootersSticky === 'grand' && row.level === -1) { return false };
-                if (suppressFootersSticky === 'group' && row.level > -1) { return false };
+                if (suppressFootersSticky === true) {
+                    return false;
+                }
+                if (suppressFootersSticky === 'grand' && row.level === -1) {
+                    return false;
+                }
+                if (suppressFootersSticky === 'group' && row.level > -1) {
+                    return false;
+                }
 
                 const alreadySticking = newStickyRows.has(row);
                 return !alreadySticking;
             }
 
             if (row.isExpandable()) {
-                if (suppressGroupsSticky === true) { return false };
+                if (suppressGroupsSticky === true) {
+                    return false;
+                }
                 const alreadySticking = newStickyRows.has(row);
                 return !alreadySticking && row.expanded;
             }
 
             return false;
-        }
+        };
 
         // arbitrary counter to prevent infinite loop break out of the loop when the row calculation
         // changes while rows are becoming sticky (happens with auto height)
@@ -214,12 +231,14 @@ export class StickyRowFeature extends BeanStub {
             const firstIndex = this.rowModel.getRowIndexAtPixel(firstPixelAfterStickyRows);
             const firstRow = this.rowModel.getRow(firstIndex);
 
-            if (firstRow == null) {  break; }
+            if (firstRow == null) {
+                break;
+            }
 
             const ancestors: RowNode[] = this.getStickyAncestors(firstRow);
-            const firstMissingParent = ancestors.find(parent => (
-                    isTop ? parent.rowIndex! < firstIndex : parent.rowIndex! > firstIndex
-                ) && isRowSticky(parent)
+            const firstMissingParent = ancestors.find(
+                (parent) =>
+                    (isTop ? parent.rowIndex! < firstIndex : parent.rowIndex! > firstIndex) && isRowSticky(parent)
             );
             if (firstMissingParent) {
                 addStickyRow(firstMissingParent);
@@ -228,7 +247,7 @@ export class StickyRowFeature extends BeanStub {
 
             const isFirstRowOutsideViewport = isTop
                 ? firstRow.rowTop! < firstPixelAfterStickyRows
-                : (firstRow.rowTop! + firstRow.rowHeight!) > firstPixelAfterStickyRows;
+                : firstRow.rowTop! + firstRow.rowHeight! > firstPixelAfterStickyRows;
             // if first row is an open group, and partially shown, it needs
             // to be stuck
             if (isFirstRowOutsideViewport && isRowSticky(firstRow)) {
@@ -241,7 +260,7 @@ export class StickyRowFeature extends BeanStub {
 
         if (!isTop) {
             // Because sticky bottom rows are calculated inverted, we need to invert the top position
-            newStickyRows.forEach(rowNode => {
+            newStickyRows.forEach((rowNode) => {
                 rowNode.stickyRowTop = newStickyContainerHeight - (rowNode.stickyRowTop + rowNode.rowHeight!);
             });
         }
@@ -251,7 +270,9 @@ export class StickyRowFeature extends BeanStub {
 
     private areFooterRowsStickySuppressed(): boolean | 'grand' | 'group' {
         const suppressFootersSticky = this.gos.get('suppressStickyTotalRow');
-        if (suppressFootersSticky === true) { return true; }
+        if (suppressFootersSticky === true) {
+            return true;
+        }
 
         const suppressGroupRows = !!this.gos.get('groupIncludeFooter') || suppressFootersSticky === 'group';
         const suppressGrandRows = !!this.gos.get('groupIncludeTotalFooter') || suppressFootersSticky === 'grand';
@@ -301,16 +322,16 @@ export class StickyRowFeature extends BeanStub {
         this.refreshNodesAndContainerHeight('bottom', new Set(), 0);
     }
 
-    public refreshStickyNode(stickRowNode:  RowNode): void {
+    public refreshStickyNode(stickRowNode: RowNode): void {
         const allStickyNodes = new Set<RowNode>();
-        if (this.stickyTopRowCtrls.some(ctrl => ctrl.getRowNode() === stickRowNode)) {
+        if (this.stickyTopRowCtrls.some((ctrl) => ctrl.getRowNode() === stickRowNode)) {
             for (let i = 0; i < this.stickyTopRowCtrls.length; i++) {
                 const currentNode = this.stickyTopRowCtrls[i].getRowNode();
                 if (currentNode !== stickRowNode) {
                     allStickyNodes.add(currentNode);
                 }
             }
-    
+
             if (this.refreshNodesAndContainerHeight('top', allStickyNodes, this.topContainerHeight)) {
                 this.checkStickyRows();
             }
@@ -332,14 +353,18 @@ export class StickyRowFeature extends BeanStub {
     /**
      * Destroy old ctrls and create new ctrls where necessary.
      */
-    private refreshNodesAndContainerHeight(container: 'top' | 'bottom', newStickyNodes: Set<RowNode>, height: number): boolean {
+    private refreshNodesAndContainerHeight(
+        container: 'top' | 'bottom',
+        newStickyNodes: Set<RowNode>,
+        height: number
+    ): boolean {
         const isTop = container === 'top';
         const previousCtrls = isTop ? this.stickyTopRowCtrls : this.stickyBottomRowCtrls;
 
         // find removed ctrls and remaining ctrls
         const removedCtrlsMap: RowCtrlByRowNodeIdMap = {};
         const remainingCtrls: RowCtrl[] = [];
-        for(let i = 0; i < previousCtrls.length; i++) {
+        for (let i = 0; i < previousCtrls.length; i++) {
             const node = previousCtrls[i].getRowNode();
             const hasBeenRemoved = !newStickyNodes.has(node);
             if (hasBeenRemoved) {
@@ -361,8 +386,10 @@ export class StickyRowFeature extends BeanStub {
 
         // find the new ctrls to add
         const newCtrls: RowCtrl[] = [];
-        newStickyNodes.forEach(node => {
-            if (existingNodes.has(node)) { return; }
+        newStickyNodes.forEach((node) => {
+            if (existingNodes.has(node)) {
+                return;
+            }
             // ensure new node is set to sticky and create the new ctrl
             node.sticky = true;
             newCtrls.push(this.createRowCon(node, false, false));
@@ -383,7 +410,6 @@ export class StickyRowFeature extends BeanStub {
                 hasSomethingChanged = true;
             }
         }
-        
 
         // clean up removed ctrls
         this.destroyRowCtrls(removedCtrlsMap, false);
@@ -394,13 +420,12 @@ export class StickyRowFeature extends BeanStub {
         if (!isTop) {
             newCtrlsList.reverse();
         }
-        newCtrlsList.forEach(ctrl => ctrl.setRowTop(ctrl.getRowNode().stickyRowTop));
-
+        newCtrlsList.forEach((ctrl) => ctrl.setRowTop(ctrl.getRowNode().stickyRowTop));
 
         if (!hasSomethingChanged) {
             return false;
         }
-        
+
         if (isTop) {
             this.stickyTopRowCtrls = newCtrlsList;
         } else {

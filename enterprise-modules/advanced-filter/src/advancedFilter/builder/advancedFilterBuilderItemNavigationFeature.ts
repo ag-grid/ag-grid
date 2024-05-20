@@ -1,4 +1,11 @@
-import { BeanStub, Component, KeyCode, PostConstruct, _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from "@ag-grid-community/core";
+import {
+    BeanStub,
+    Component,
+    KeyCode,
+    PostConstruct,
+    _isStopPropagationForAgGrid,
+    _stopPropagationForAgGrid,
+} from '@ag-grid-community/core';
 
 export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
     constructor(
@@ -25,7 +32,9 @@ export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
                     _stopPropagationForAgGrid(event);
                     break;
                 case KeyCode.ESCAPE:
-                    if (_isStopPropagationForAgGrid(event)) { return; }
+                    if (_isStopPropagationForAgGrid(event)) {
+                        return;
+                    }
                     if (this.eGui.contains(this.gos.getActiveDomElement())) {
                         event.preventDefault();
                         _stopPropagationForAgGrid(event);
@@ -37,7 +46,9 @@ export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
         this.addManagedListener(this.focusWrapper, 'keydown', (event: KeyboardEvent) => {
             switch (event.key) {
                 case KeyCode.ENTER:
-                    if (_isStopPropagationForAgGrid(event)) { return; }
+                    if (_isStopPropagationForAgGrid(event)) {
+                        return;
+                    }
                     if (this.gos.getActiveDomElement() === this.focusWrapper) {
                         event.preventDefault();
                         _stopPropagationForAgGrid(event);

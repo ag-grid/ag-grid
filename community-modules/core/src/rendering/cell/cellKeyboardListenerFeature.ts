@@ -1,15 +1,14 @@
-import { BeanStub } from "../../context/beanStub";
-import { CellCtrl } from "./cellCtrl";
-import { Beans } from "../beans";
-import { Column } from "../../entities/column";
-import { RowNode } from "../../entities/rowNode";
-import { KeyCode } from "../../constants/keyCode";
-import { RowCtrl } from "../row/rowCtrl";
-import { _isDeleteKey } from "../../utils/keyboard";
-import { Events } from "../../eventKeys";
+import { KeyCode } from '../../constants/keyCode';
+import { BeanStub } from '../../context/beanStub';
+import { Column } from '../../entities/column';
+import { RowNode } from '../../entities/rowNode';
+import { Events } from '../../eventKeys';
+import { _isDeleteKey } from '../../utils/keyboard';
+import { Beans } from '../beans';
+import { RowCtrl } from '../row/rowCtrl';
+import { CellCtrl } from './cellCtrl';
 
 export class CellKeyboardListenerFeature extends BeanStub {
-
     private readonly cellCtrl: CellCtrl;
     private readonly beans: Beans;
     private readonly rowNode: RowNode;
@@ -59,7 +58,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     private onNavigationKeyDown(event: KeyboardEvent, key: string): void {
-        if (this.cellCtrl.isEditing()) { return; }
+        if (this.cellCtrl.isEditing()) {
+            return;
+        }
 
         if (event.shiftKey && this.cellCtrl.isRangeSelectionEnabled()) {
             this.onShiftRangeSelect(event);
@@ -72,7 +73,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     private onShiftRangeSelect(event: KeyboardEvent): void {
-        if (!this.beans.rangeService) { return; }
+        if (!this.beans.rangeService) {
+            return;
+        }
 
         const endCell = this.beans.rangeService.extendLatestRangeInDirection(event);
 
@@ -89,7 +92,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
         const { cellCtrl, beans, rowNode } = this;
         const { gos, rangeService, eventService } = beans;
 
-        if (cellCtrl.isEditing()) { return; }
+        if (cellCtrl.isEditing()) {
+            return;
+        }
 
         eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
 
@@ -98,7 +103,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 rangeService.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
             } else if (cellCtrl.isCellEditable()) {
                 const column = cellCtrl.getColumn();
-                const emptyValue = this.beans.valueService.parseValue(column, rowNode, '', rowNode.getValueFromValueService(column)) ?? null;
+                const emptyValue =
+                    this.beans.valueService.parseValue(column, rowNode, '', rowNode.getValueFromValueService(column)) ??
+                    null;
                 rowNode.setDataValue(column, emptyValue, 'cellClear');
             }
         } else {
@@ -147,7 +154,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
         const eventTarget = event.target;
         const eventOnChildComponent = eventTarget !== this.eGui;
 
-        if (eventOnChildComponent || this.cellCtrl.isEditing()) { return; }
+        if (eventOnChildComponent || this.cellCtrl.isEditing()) {
+            return;
+        }
 
         const key = event.key;
         if (key === ' ') {
@@ -197,5 +206,4 @@ export class CellKeyboardListenerFeature extends BeanStub {
     public destroy(): void {
         super.destroy();
     }
-
 }

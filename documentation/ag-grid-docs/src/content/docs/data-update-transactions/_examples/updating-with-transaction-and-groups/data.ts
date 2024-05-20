@@ -1,28 +1,15 @@
 export function getData(): any[] {
-    var rowData = []
+    var rowData = [];
 
     for (var i = 0; i < 10; i++) {
-        var category = categories[i % categories.length]
-        rowData.push(createNewRowData(category))
+        var category = categories[i % categories.length];
+        rowData.push(createNewRowData(category));
     }
-    return rowData
+    return rowData;
 }
 
 // make the data three 10 times bigger
-var names = [
-    'Elly',
-    'Shane',
-    'Niall',
-    'Rob',
-    'John',
-    'Sean',
-    'Dicky',
-    'Willy',
-    'Shaggy',
-    'Spud',
-    'Sugar',
-    'Spice',
-]
+var names = ['Elly', 'Shane', 'Niall', 'Rob', 'John', 'Sean', 'Dicky', 'Willy', 'Shaggy', 'Spud', 'Sugar', 'Spice'];
 var models = [
     'Mondeo',
     'Celica',
@@ -34,9 +21,8 @@ var models = [
     'Whoooper',
     'Scoooper',
     'Jet Blaster',
-]
-var categories = ['Sold', 'For Sale', 'In Workshop']
-
+];
+var categories = ['Sold', 'For Sale', 'In Workshop'];
 
 export function createNewRowData(category: string) {
     var newData = {
@@ -47,6 +33,6 @@ export function createNewRowData(category: string) {
         zombies: names[Math.floor(Math.random() * names.length)],
         style: 'Smooth',
         clothes: 'Jeans',
-    }
-    return newData
+    };
+    return newData;
 }

@@ -16,20 +16,19 @@ import { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 export enum HeaderRowType {
     COLUMN_GROUP = 'group',
     COLUMN = 'column',
-    FLOATING_FILTER = 'filter'
+    FLOATING_FILTER = 'filter',
 }
 
 export class HeaderRowComp extends Component {
-
     private ctrl: HeaderRowCtrl;
 
-    private headerComps: { [key: HeaderCellCtrlInstanceId]: AbstractHeaderCellComp<AbstractHeaderCellCtrl>; } = {};
+    private headerComps: { [key: HeaderCellCtrlInstanceId]: AbstractHeaderCellComp<AbstractHeaderCellCtrl> } = {};
 
     constructor(ctrl: HeaderRowCtrl) {
         super();
 
         this.ctrl = ctrl;
-        this.setTemplate(/* html */`<div class="${this.ctrl.getHeaderRowClass()}" role="row"></div>`);
+        this.setTemplate(/* html */ `<div class="${this.ctrl.getHeaderRowClass()}" role="row"></div>`);
     }
 
     //noinspection JSUnusedLocalSymbols
@@ -38,10 +37,10 @@ export class HeaderRowComp extends Component {
         _setAriaRowIndex(this.getGui(), this.ctrl.getAriaRowIndex());
 
         const compProxy: IHeaderRowComp = {
-            setHeight: height => this.getGui().style.height = height,
-            setTop: top => this.getGui().style.top = top,
+            setHeight: (height) => (this.getGui().style.height = height),
+            setTop: (top) => (this.getGui().style.top = top),
             setHeaderCtrls: (ctrls, forceOrder) => this.setHeaderCtrls(ctrls, forceOrder),
-            setWidth: width => this.getGui().style.width = width,
+            setWidth: (width) => (this.getGui().style.width = width),
         };
 
         this.ctrl.setComp(compProxy);
@@ -53,12 +52,14 @@ export class HeaderRowComp extends Component {
     }
 
     private setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean): void {
-        if (!this.isAlive()) { return; }
+        if (!this.isAlive()) {
+            return;
+        }
 
         const oldComps = this.headerComps;
         this.headerComps = {};
 
-        ctrls.forEach(ctrl => {
+        ctrls.forEach((ctrl) => {
             const id = ctrl.getInstanceId();
             let comp = oldComps[id];
             delete oldComps[id];
@@ -79,18 +80,22 @@ export class HeaderRowComp extends Component {
         if (forceOrder) {
             const comps = _getAllValuesInObject(this.headerComps);
             // ordering the columns by left position orders them in the order they appear on the screen
-            comps.sort((a: AbstractHeaderCellComp<AbstractHeaderCellCtrl>, b: AbstractHeaderCellComp<AbstractHeaderCellCtrl>) => {
-                const leftA = a.getCtrl().getColumnGroupChild().getLeft()!;
-                const leftB = b.getCtrl().getColumnGroupChild().getLeft()!;
-                return leftA - leftB;
-            });
-            const elementsInOrder = comps.map(c => c.getGui());
+            comps.sort(
+                (
+                    a: AbstractHeaderCellComp<AbstractHeaderCellCtrl>,
+                    b: AbstractHeaderCellComp<AbstractHeaderCellCtrl>
+                ) => {
+                    const leftA = a.getCtrl().getColumnGroupChild().getLeft()!;
+                    const leftB = b.getCtrl().getColumnGroupChild().getLeft()!;
+                    return leftA - leftB;
+                }
+            );
+            const elementsInOrder = comps.map((c) => c.getGui());
             _setDomChildOrder(this.getGui(), elementsInOrder);
         }
     }
 
     private createHeaderComp(headerCtrl: AbstractHeaderCellCtrl): AbstractHeaderCellComp<AbstractHeaderCellCtrl> {
-
         let result: AbstractHeaderCellComp<AbstractHeaderCellCtrl>;
 
         switch (this.ctrl.getType()) {

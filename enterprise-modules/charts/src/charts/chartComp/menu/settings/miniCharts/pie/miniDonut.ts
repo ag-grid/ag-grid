@@ -1,16 +1,24 @@
-import { MiniChart } from "../miniChart";
-import { _Scene } from "ag-charts-community";
-import { ChartType } from "@ag-grid-community/core";
-import { ThemeTemplateParameters } from "../../miniChartsContainer";
-import { ChartTranslationKey } from "../../../../services/chartTranslationService";
+import { ChartType } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
+import { ChartTranslationKey } from '../../../../services/chartTranslationService';
+import { ThemeTemplateParameters } from '../../miniChartsContainer';
+import { MiniChart } from '../miniChart';
 
 const toRadians = _Scene.toRadians;
 export class MiniDonut extends MiniChart {
-
     static chartType: ChartType = 'donut';
     private readonly sectors: _Scene.Sector[];
 
-    constructor(container: HTMLElement, fills: string[], strokes: string[], _themeTemplateParameters: ThemeTemplateParameters, _isCustomTheme: boolean, centerRadiusScaler = 0.6, tooltipName: ChartTranslationKey = "donutTooltip") {
+    constructor(
+        container: HTMLElement,
+        fills: string[],
+        strokes: string[],
+        _themeTemplateParameters: ThemeTemplateParameters,
+        _isCustomTheme: boolean,
+        centerRadiusScaler = 0.6,
+        tooltipName: ChartTranslationKey = 'donutTooltip'
+    ) {
         super(container, tooltipName);
 
         const radius = (this.size - this.padding * 2) / 2;
@@ -21,7 +29,7 @@ export class MiniDonut extends MiniChart {
             [toRadians(120), toRadians(180)],
             [toRadians(180), toRadians(210)],
             [toRadians(210), toRadians(240)],
-            [toRadians(240), toRadians(270)]
+            [toRadians(240), toRadians(270)],
         ];
 
         this.sectors = angles.map(([startAngle, endAngle]) => {

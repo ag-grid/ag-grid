@@ -18,7 +18,7 @@ export default {
             noSort: null,
             enableMenu: false,
             enableSorting: false,
-            displayName: null
+            displayName: null,
         };
     },
     beforeMount() {
@@ -62,6 +62,6 @@ export default {
             this.enableSorting = params.enableSorting;
             this.displayName = params.displayName;
             return true;
-        }
-    }
+        },
+    },
 };

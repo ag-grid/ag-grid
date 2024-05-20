@@ -1,20 +1,20 @@
-import { Autowired } from "../../../context/context";
-import { Column } from "../../../entities/column";
-import { IComponent } from "../../../interfaces/iComponent";
-import { AgGridCommon } from "../../../interfaces/iCommon";
-import { SortController } from "../../../sortController";
-import { _removeFromParent, _setDisplayed } from "../../../utils/dom";
-import { _exists } from "../../../utils/generic";
-import { _createIconNoSpan } from "../../../utils/icon";
-import { _escapeString } from "../../../utils/string";
-import { Component } from "../../../widgets/component";
-import { RefSelector } from "../../../widgets/componentAnnotations";
-import { LongTapEvent, TapEvent, TouchListener } from "../../../widgets/touchListener";
-import { SortIndicatorComp } from "./sortIndicatorComp";
-import { ColumnModel } from "../../../columns/columnModel";
-import { Events } from "../../../eventKeys";
-import { SortDirection } from "../../../entities/colDef";
-import { MenuService } from "../../../misc/menuService";
+import { FuncColsService } from '../../../columns/funcColsService';
+import { Autowired } from '../../../context/context';
+import { SortDirection } from '../../../entities/colDef';
+import { Column } from '../../../entities/column';
+import { Events } from '../../../eventKeys';
+import { AgGridCommon } from '../../../interfaces/iCommon';
+import { IComponent } from '../../../interfaces/iComponent';
+import { MenuService } from '../../../misc/menuService';
+import { SortController } from '../../../sortController';
+import { _removeFromParent, _setDisplayed } from '../../../utils/dom';
+import { _exists } from '../../../utils/generic';
+import { _createIconNoSpan } from '../../../utils/icon';
+import { _escapeString } from '../../../utils/string';
+import { Component } from '../../../widgets/component';
+import { RefSelector } from '../../../widgets/componentAnnotations';
+import { LongTapEvent, TapEvent, TouchListener } from '../../../widgets/touchListener';
+import { SortIndicatorComp } from './sortIndicatorComp';
 
 export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column the header is for. */
@@ -96,12 +96,10 @@ export interface IHeader {
     refresh(params: IHeaderParams): boolean;
 }
 
-export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> { }
+export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {}
 
 export class HeaderComp extends Component implements IHeaderComp {
-
-    private static TEMPLATE = /* html */
-        `<div class="ag-cell-label-container" role="presentation">
+    private static TEMPLATE /* html */ = `<div class="ag-cell-label-container" role="presentation">
             <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
             <span ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
             <div ref="eLabel" class="ag-header-cell-label" role="presentation">
@@ -113,7 +111,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     @Autowired('sortController') private sortController: SortController;
     @Autowired('menuService') private menuService: MenuService;
-    @Autowired('columnModel')  private readonly  columnModel: ColumnModel;
+    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
 
     @RefSelector('eFilter') private eFilter: HTMLElement;
     @RefSelector('eFilterButton') private eFilterButton?: HTMLElement;
@@ -125,11 +123,11 @@ export class HeaderComp extends Component implements IHeaderComp {
     /**
      * Selectors for custom headers templates
      */
-     @RefSelector('eSortOrder') private eSortOrder: HTMLElement;
-     @RefSelector('eSortAsc') private eSortAsc: HTMLElement;
-     @RefSelector('eSortDesc') private eSortDesc: HTMLElement;
-     @RefSelector('eSortMixed') private eSortMixed: HTMLElement;
-     @RefSelector('eSortNone') private eSortNone: HTMLElement;
+    @RefSelector('eSortOrder') private eSortOrder: HTMLElement;
+    @RefSelector('eSortAsc') private eSortAsc: HTMLElement;
+    @RefSelector('eSortDesc') private eSortDesc: HTMLElement;
+    @RefSelector('eSortMixed') private eSortMixed: HTMLElement;
+    @RefSelector('eSortNone') private eSortNone: HTMLElement;
 
     private params: IHeaderParams;
 
@@ -164,7 +162,6 @@ export class HeaderComp extends Component implements IHeaderComp {
         ) {
             return false;
         }
-
 
         this.setDisplayName(params);
 
@@ -203,7 +200,9 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
-        if (eParent == null) { return; }
+        if (eParent == null) {
+            return;
+        }
 
         const eIcon = _createIconNoSpan(iconName, this.gos, column);
         if (eIcon) {
@@ -214,7 +213,9 @@ export class HeaderComp extends Component implements IHeaderComp {
     private setupTap(): void {
         const { gos } = this;
 
-        if (gos.get('suppressTouch')) { return; }
+        if (gos.get('suppressTouch')) {
+            return;
+        }
 
         const touchListener = new TouchListener(this.getGui(), true);
         const suppressMenuHide = this.shouldSuppressMenuHide();
@@ -223,7 +224,8 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         if (this.params.enableMenu) {
             const eventType = tapMenuButton ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
-            const showMenuFn = (event: TapEvent | LongTapEvent) => this.params.showColumnMenuAfterMouseClick(event.touchStart);
+            const showMenuFn = (event: TapEvent | LongTapEvent) =>
+                this.params.showColumnMenuAfterMouseClick(event.touchStart);
             this.addManagedListener(menuTouchListener, TouchListener[eventType], showMenuFn);
         }
 
@@ -232,9 +234,11 @@ export class HeaderComp extends Component implements IHeaderComp {
                 const target = event.touchStart.target as HTMLElement;
                 // When suppressMenuHide is true, a tap on the menu icon or filter button will bubble up
                 // to the header container, in that case we should not sort
-                if (suppressMenuHide && (this.eMenu?.contains(target) || this.eFilterButton?.contains(target))) { return; }
+                if (suppressMenuHide && (this.eMenu?.contains(target) || this.eFilterButton?.contains(target))) {
+                    return;
+                }
 
-                this.sortController.progressSort(this.params.column, false, "uiColumnSorted");
+                this.sortController.progressSort(this.params.column, false, 'uiColumnSorted');
             };
 
             this.addManagedListener(touchListener, TouchListener.EVENT_TAP, tapListener);
@@ -242,7 +246,9 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         if (this.params.enableFilterButton) {
             const filterButtonTouchListener = new TouchListener(this.eFilterButton!, true);
-            this.addManagedListener(filterButtonTouchListener, 'tap', () => this.params.showFilter(this.eFilterButton!));
+            this.addManagedListener(filterButtonTouchListener, 'tap', () =>
+                this.params.showFilter(this.eFilterButton!)
+            );
             this.addDestroyFunc(() => filterButtonTouchListener.destroy());
         }
 
@@ -276,7 +282,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        const isLegacyMenu = this.menuService.isLegacyMenuEnabled()
+        const isLegacyMenu = this.menuService.isLegacyMenuEnabled();
         this.addInIcon(isLegacyMenu ? 'menu' : 'menuAlt', this.eMenu, this.params.column);
         this.eMenu.classList.toggle('ag-header-menu-icon', !isLegacyMenu);
 
@@ -329,7 +335,6 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-
         // keep track of last time the moving changed flag was set
         this.addManagedListener(this.params.column, Column.EVENT_MOVING_CHANGED, () => {
             this.lastMovingChanged = new Date().getTime();
@@ -338,19 +343,18 @@ export class HeaderComp extends Component implements IHeaderComp {
         // add the event on the header, so when clicked, we do sorting
         if (this.eLabel) {
             this.addManagedListener(this.eLabel, 'click', (event: MouseEvent) => {
-
                 // sometimes when moving a column via dragging, this was also firing a clicked event.
                 // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076
                 // this check stops sort if a) column is moving or b) column moved less than 200ms ago (so caters for race condition)
                 const moving = this.params.column.isMoving();
                 const nowTime = new Date().getTime();
                 // typically there is <2ms if moving flag was set recently, as it would be done in same VM turn
-                const movedRecently = (nowTime - this.lastMovingChanged) < 50;
+                const movedRecently = nowTime - this.lastMovingChanged < 50;
                 const columnMoving = moving || movedRecently;
 
                 if (!columnMoving) {
                     const sortUsingCtrl = this.gos.get('multiSortKey') === 'ctrl';
-                    const multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
+                    const multiSort = sortUsingCtrl ? event.ctrlKey || event.metaKey : event.shiftKey;
                     this.params.progressSort(multiSort);
                 }
             });
@@ -362,9 +366,11 @@ export class HeaderComp extends Component implements IHeaderComp {
             this.addOrRemoveCssClass('ag-header-cell-sorted-none', this.params.column.isSortNone());
 
             if (this.params.column.getColDef().showRowGroup) {
-                const sourceColumns = this.columnModel.getSourceColumnsForGroupColumn(this.params.column);
+                const sourceColumns = this.funcColsService.getSourceColumnsForGroupColumn(this.params.column);
                 // this == is intentional, as it allows null and undefined to match, which are both unsorted states
-                const sortDirectionsMatch = sourceColumns?.every(sourceCol => this.params.column.getSort() == sourceCol.getSort());
+                const sortDirectionsMatch = sourceColumns?.every(
+                    (sourceCol) => this.params.column.getSort() == sourceCol.getSort()
+                );
                 const isMultiSorting = !sortDirectionsMatch;
 
                 this.addOrRemoveCssClass('ag-header-cell-sorted-mixed', isMultiSorting);
@@ -375,12 +381,16 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupFilterIcon(): void {
-        if (!this.eFilter) { return; }
+        if (!this.eFilter) {
+            return;
+        }
         this.configureFilter(this.params.enableFilterIcon, this.eFilter, this.onFilterChangedIcon.bind(this));
     }
 
     private setupFilterButton(): void {
-        if (!this.eFilterButton) { return; }
+        if (!this.eFilterButton) {
+            return;
+        }
         const configured = this.configureFilter(
             this.params.enableFilterButton,
             this.eFilterButton,

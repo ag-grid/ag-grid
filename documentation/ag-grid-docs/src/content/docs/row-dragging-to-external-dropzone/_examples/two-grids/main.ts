@@ -1,22 +1,31 @@
-import { ModuleRegistry, ColDef, GridOptions, GridReadyEvent, RowDropZoneParams, GetRowIdParams, GridApi, createGrid } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {
+    ColDef,
+    GetRowIdParams,
+    GridApi,
+    GridOptions,
+    GridReadyEvent,
+    ModuleRegistry,
+    RowDropZoneParams,
+    createGrid,
+} from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 var rowIdSequence = 100;
 
 var leftColumnDefs: ColDef[] = [
-    { field: "id", rowDrag: true },
-    { field: "color" },
-    { field: "value1" },
-    { field: "value2" }
+    { field: 'id', rowDrag: true },
+    { field: 'color' },
+    { field: 'value1' },
+    { field: 'value2' },
 ];
 
 var rightColumnDefs: ColDef[] = [
-    { field: "id", rowDrag: true },
-    { field: "color" },
-    { field: "value1" },
-    { field: "value2" }
+    { field: 'id', rowDrag: true },
+    { field: 'color' },
+    { field: 'value1' },
+    { field: 'value2' },
 ];
 var leftApi: GridApi;
 var leftGridOptions: GridOptions = {
@@ -26,11 +35,13 @@ var leftGridOptions: GridOptions = {
         filter: true,
     },
     rowClassRules: {
-        "red-row": 'data.color == "Red"',
-        "green-row": 'data.color == "Green"',
-        "blue-row": 'data.color == "Blue"',
+        'red-row': 'data.color == "Red"',
+        'green-row': 'data.color == "Green"',
+        'blue-row': 'data.color == "Blue"',
     },
-    getRowId: (params: GetRowIdParams) => { return params.data.id },
+    getRowId: (params: GetRowIdParams) => {
+        return params.data.id;
+    },
     rowData: createLeftRowData(),
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
@@ -38,7 +49,7 @@ var leftGridOptions: GridOptions = {
     onGridReady: (params) => {
         addBinZone(params);
         addGridDropZone(params, 'Right');
-    }
+    },
 };
 var rightApi: GridApi;
 var rightGridOptions: GridOptions = {
@@ -48,11 +59,13 @@ var rightGridOptions: GridOptions = {
         filter: true,
     },
     rowClassRules: {
-        "red-row": 'data.color == "Red"',
-        "green-row": 'data.color == "Green"',
-        "blue-row": 'data.color == "Blue"',
+        'red-row': 'data.color == "Red"',
+        'green-row': 'data.color == "Green"',
+        'blue-row': 'data.color == "Blue"',
     },
-    getRowId: (params: GetRowIdParams) => { return params.data.id },
+    getRowId: (params: GetRowIdParams) => {
+        return params.data.id;
+    },
     rowData: [],
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
@@ -60,7 +73,7 @@ var rightGridOptions: GridOptions = {
     onGridReady: (params) => {
         addBinZone(params);
         addGridDropZone(params, 'Left');
-    }
+    },
 };
 
 function createLeftRowData() {
@@ -74,13 +87,15 @@ function createDataItem(color: string) {
         id: rowIdSequence++,
         color: color,
         value1: Math.floor(Math.random() * 100),
-        value2: Math.floor(Math.random() * 100)
+        value2: Math.floor(Math.random() * 100),
     };
 }
 
 function addRecordToGrid(side: string, data: any) {
     // if data missing or data has no it, do nothing
-    if (!data || data.id == null) { return; }
+    if (!data || data.id == null) {
+        return;
+    }
 
     var gridApi = side === 'left' ? leftApi : rightApi,
         // do nothing if row is already in the grid, otherwise we would have duplicates
@@ -93,7 +108,7 @@ function addRecordToGrid(side: string, data: any) {
     }
 
     transaction = {
-        add: [data]
+        add: [data],
     };
 
     gridApi!.applyTransaction(transaction);
@@ -110,10 +125,12 @@ function onFactoryButtonClick(e: any) {
 
 function binDrop(data: any) {
     // if data missing or data has no id, do nothing
-    if (!data || data.id == null) { return; }
+    if (!data || data.id == null) {
+        return;
+    }
 
     var transaction = {
-        remove: [data]
+        remove: [data],
     };
 
     [leftApi, rightApi].forEach((api) => {
@@ -129,7 +146,9 @@ function addBinZone(params: GridReadyEvent) {
     var eBin = document.querySelector('.bin') as any,
         icon = eBin.querySelector('i'),
         dropZone: RowDropZoneParams = {
-            getContainer: () => { return eBin; },
+            getContainer: () => {
+                return eBin;
+            },
             onDragEnter: () => {
                 eBin.style.color = 'blue';
                 icon.style.transform = 'scale(1.5)';
@@ -142,7 +161,7 @@ function addBinZone(params: GridReadyEvent) {
                 binDrop(dragStopParams.node.data);
                 eBin.style.color = 'black';
                 icon.style.transform = 'scale(1)';
-            }
+            },
         };
 
     params.api.addRowDropZone(dropZone);
@@ -151,10 +170,12 @@ function addBinZone(params: GridReadyEvent) {
 function addGridDropZone(params: GridReadyEvent, side: string) {
     var grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!,
         dropZone: RowDropZoneParams = {
-            getContainer: () => { return grid; },
+            getContainer: () => {
+                return grid;
+            },
             onDragStop: (params) => {
                 addRecordToGrid(side.toLowerCase(), params.node.data);
-            }
+            },
         };
 
     params.api.addRowDropZone(dropZone);

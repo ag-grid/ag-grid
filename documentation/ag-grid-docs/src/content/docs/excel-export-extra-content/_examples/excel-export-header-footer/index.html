@@ -31,10 +31,11 @@
                     <option>Bold Italic</option>
                 </select>
                 <label class="option underline" for="headerUnderline">
-                    <input type="checkbox" id="headerUnderline"><u>U</u>
+                    <input type="checkbox" id="headerUnderline" /><u>U</u>
                 </label>
             </div>
-            <div class="row option">Value
+            <div class="row option">
+                Value
                 <input id="headerValue" />
             </div>
         </fieldset>
@@ -69,16 +70,17 @@
                     <option>Bold Italic</option>
                 </select>
                 <label class="option underline" for="footerUnderline">
-                    <input type="checkbox" id="footerUnderline"><u>U</u>
+                    <input type="checkbox" id="footerUnderline" /><u>U</u>
                 </label>
             </div>
-            <div class="row">Value
+            <div class="row">
+                Value
                 <input id="footerValue" />
             </div>
         </fieldset>
     </div>
     <div>
-        <button onclick="onBtExport()" style="margin: 5px 0px; font-weight: bold;">Export to Excel</button>
+        <button onclick="onBtExport()" style="margin: 5px 0px; font-weight: bold">Export to Excel</button>
     </div>
     <div class="grid-wrapper">
         <div id="myGrid" class="ag-theme-quartz"></div>

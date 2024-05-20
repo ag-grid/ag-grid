@@ -1,10 +1,15 @@
-import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
+import { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 
-export interface ISparklineCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, TContext> {
+export interface ISparklineCellRendererParams<TData = any, TContext = any>
+    extends ICellRendererParams<TData, TContext> {
     sparklineOptions?: SparklineOptions;
 }
 
-export type SparklineOptions = LineSparklineOptions | AreaSparklineOptions | ColumnSparklineOptions | BarSparklineOptions;
+export type SparklineOptions =
+    | LineSparklineOptions
+    | AreaSparklineOptions
+    | ColumnSparklineOptions
+    | BarSparklineOptions;
 
 export interface BaseSparklineOptions {
     /** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.
@@ -136,7 +141,20 @@ export interface SparklineLabelOptions {
     /** Specify the font style for the label text. */
     fontStyle?: 'normal' | 'italic' | 'oblique';
     /** Set how thick or thin characters in label text should be displayed. */
-    fontWeight?: 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
+    fontWeight?:
+        | 'normal'
+        | 'bold'
+        | 'bolder'
+        | 'lighter'
+        | '100'
+        | '200'
+        | '300'
+        | '400'
+        | '500'
+        | '600'
+        | '700'
+        | '800'
+        | '900';
     /**
      * Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value.
      * @default rgba(70, 70, 70, 1)
@@ -304,7 +322,19 @@ export interface CrosshairLineOptions {
      * The default is `solid`, this renders a solid stroke with no gaps.
      * @default 'solid'
      */
-    lineDash?: 'dash' | 'dashDot' | 'dashDotDot' | 'dot' | 'longDash' | 'longDashDot' | 'longDashDotDot' | 'shortDash' | 'shortDashDot' | 'shortDashDotDot' | 'shortDot' | 'solid';
+    lineDash?:
+        | 'dash'
+        | 'dashDot'
+        | 'dashDotDot'
+        | 'dot'
+        | 'longDash'
+        | 'longDashDot'
+        | 'longDashDotDot'
+        | 'shortDash'
+        | 'shortDashDot'
+        | 'shortDashDotDot'
+        | 'shortDot'
+        | 'solid';
     /**
      * The shape used to draw the end points of the crosshair line.
      * The options include `butt` (the ends of the line are squared off at the endpoints), `round` (the ends of the line are rounded) and `square` (the ends of the line are squared off by adding a box with width equal to the line's strokeWidth and height equal to half the line's strokeWidth).

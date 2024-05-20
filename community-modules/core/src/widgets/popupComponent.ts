@@ -1,8 +1,7 @@
-import { Component } from "./component";
-import { IPopupComponent } from "../interfaces/iPopupComponent";
+import { IPopupComponent } from '../interfaces/iPopupComponent';
+import { Component } from './component';
 
 export class PopupComponent extends Component implements IPopupComponent<any> {
-
     public isPopup(): boolean {
         return true;
     }

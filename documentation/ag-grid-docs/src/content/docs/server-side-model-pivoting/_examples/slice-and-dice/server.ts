@@ -1,4 +1,3 @@
-
 export function createServerSideDatasource(fakeServer) {
     class ServerSideDatasource {
         constructor(fakeServer) {

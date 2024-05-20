@@ -1,11 +1,10 @@
-import { BeanStub } from "../../context/beanStub";
-import { Autowired, PostConstruct } from "../../context/context";
-import { RowContainerHeightService } from "../../rendering/rowContainerHeightService";
-import { Events } from "../../eventKeys";
+import { BeanStub } from '../../context/beanStub';
+import { Autowired, PostConstruct } from '../../context/context';
+import { Events } from '../../eventKeys';
+import { RowContainerHeightService } from '../../rendering/rowContainerHeightService';
 
 export class SetHeightFeature extends BeanStub {
-
-    @Autowired("rowContainerHeightService") private maxDivHeightScaler: RowContainerHeightService;
+    @Autowired('rowContainerHeightService') private maxDivHeightScaler: RowContainerHeightService;
 
     private eContainer: HTMLElement;
     private eViewport: HTMLElement | undefined;
@@ -18,7 +17,11 @@ export class SetHeightFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED, this.onHeightChanged.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED,
+            this.onHeightChanged.bind(this)
+        );
     }
 
     private onHeightChanged(): void {

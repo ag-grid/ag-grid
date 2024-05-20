@@ -1,27 +1,41 @@
-import { ColumnModel } from "../columns/columnModel";
-import { HorizontalDirection } from "../constants/direction";
-import { CtrlsService } from "../ctrlsService";
-import { Column, ColumnPinnedType } from "../entities/column";
-import { ColumnGroup } from "../entities/columnGroup";
-import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
-import { ColumnEventType } from "../events";
-import { GridOptionsService } from "../gridOptionsService";
-import { _areEqual, _includes, _last, _sortNumerically } from "../utils/array";
+import { ColumnModel } from '../columns/columnModel';
+import { ColumnMoveService } from '../columns/columnMoveService';
+import { VisibleColsService } from '../columns/visibleColsService';
+import { HorizontalDirection } from '../constants/direction';
+import { CtrlsService } from '../ctrlsService';
+import { Column, ColumnPinnedType } from '../entities/column';
+import { ColumnGroup } from '../entities/columnGroup';
+import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import { ColumnEventType } from '../events';
+import { GridOptionsService } from '../gridOptionsService';
+import { _areEqual, _includes, _last, _sortNumerically } from '../utils/array';
 
 export class ColumnMoveHelper {
-
     public static attemptMoveColumns(params: {
         allMovingColumns: Column[];
         isFromHeader: boolean;
         hDirection?: HorizontalDirection;
         xPosition: number;
         fromEnter: boolean;
-        fakeEvent: boolean,
-        pinned: ColumnPinnedType,
-        gos: GridOptionsService,
-        columnModel: ColumnModel
-    }): { columns: Column[], toIndex: number } | null | undefined {
-        const { isFromHeader, hDirection, xPosition, fromEnter, fakeEvent, pinned, gos, columnModel } = params; 
+        fakeEvent: boolean;
+        pinned: ColumnPinnedType;
+        gos: GridOptionsService;
+        columnModel: ColumnModel;
+        columnMoveService: ColumnMoveService;
+        presentedColsService: VisibleColsService;
+    }): { columns: Column[]; toIndex: number } | null | undefined {
+        const {
+            isFromHeader,
+            hDirection,
+            xPosition,
+            fromEnter,
+            fakeEvent,
+            pinned,
+            gos,
+            columnModel,
+            columnMoveService,
+            presentedColsService,
+        } = params;
 
         const draggingLeft = hDirection === HorizontalDirection.Left;
         const draggingRight = hDirection === HorizontalDirection.Right;
@@ -40,10 +54,10 @@ export class ColumnMoveHelper {
                 }
                 if (movingGroup != null) {
                     const isMarryChildren = !!movingGroup.getColGroupDef()?.marryChildren;
-                    const columnsToMove =  isMarryChildren
-                        // when marry children is true, we also have to move hidden
-                        // columns within the group, so grab them from the `providedColumnGroup`
-                        ? movingGroup.getProvidedColumnGroup().getLeafColumns()
+                    const columnsToMove = isMarryChildren
+                        ? // when marry children is true, we also have to move hidden
+                          // columns within the group, so grab them from the `providedColumnGroup`
+                          movingGroup.getProvidedColumnGroup().getLeafColumns()
                         : movingGroup.getLeafColumns();
 
                     columnsToMove.forEach((newCol) => {
@@ -62,7 +76,7 @@ export class ColumnMoveHelper {
         // could themselves be part of 'married children' groups, which means we need to maintain the order within
         // the moving list.
         const allMovingColumnsOrdered = allMovingColumns.slice();
-        columnModel.sortColumnsLikeGridColumns(allMovingColumnsOrdered);
+        columnModel.sortColsLikeCols(allMovingColumnsOrdered);
 
         const validMoves = this.calculateValidMoves({
             movingCols: allMovingColumnsOrdered,
@@ -70,14 +84,17 @@ export class ColumnMoveHelper {
             xPosition,
             pinned,
             gos,
-            columnModel
+            columnModel,
+            presentedColsService,
         });
 
         // if cols are not adjacent, then this returns null. when moving, we constrain the direction of the move
         // (ie left or right) to the mouse direction. however
         const oldIndex = this.calculateOldIndex(allMovingColumnsOrdered, columnModel);
 
-        if (validMoves.length === 0) { return; }
+        if (validMoves.length === 0) {
+            return;
+        }
 
         const firstValidMove = validMoves[0];
 
@@ -102,27 +119,31 @@ export class ColumnMoveHelper {
         // is not reliable for dictating where the column may now be placed.
         if (constrainDirection && !fakeEvent) {
             // only allow left drag if this column is moving left
-            if (draggingLeft && firstValidMove >= (oldIndex as number)) { return; }
+            if (draggingLeft && firstValidMove >= (oldIndex as number)) {
+                return;
+            }
 
             // only allow right drag if this column is moving right
-            if (draggingRight && firstValidMove <= (oldIndex as number)) { return; }
+            if (draggingRight && firstValidMove <= (oldIndex as number)) {
+                return;
+            }
         }
 
         // From when we find a move that passes all the rules
         // Remember what that move would look like in terms of displayed cols
         // keep going with further moves until we find a different result in displayed output
         // In this way potentialMoves contains all potential moves over 'hidden' columns
-        const displayedCols = columnModel.getAllDisplayedColumns();
+        const displayedCols = presentedColsService.getAllCols();
 
-        const potentialMoves: { move: number, fragCount: number }[] = [];
+        const potentialMoves: { move: number; fragCount: number }[] = [];
         let targetOrder: Column[] | null = null;
 
         for (let i = 0; i < validMoves.length; i++) {
             const move: number = validMoves[i];
 
-            const order = columnModel.getProposedColumnOrder(allMovingColumnsOrdered, move);
+            const order = columnMoveService.getProposedColumnOrder(allMovingColumnsOrdered, move);
 
-            if (!columnModel.doesOrderPassRules(order)) {
+            if (!columnMoveService.doesOrderPassRules(order)) {
                 continue;
             }
             const displayedOrder = order.filter((col) => displayedCols.includes(col));
@@ -142,11 +163,17 @@ export class ColumnMoveHelper {
         // The best move is the move with least group fragmentation
         potentialMoves.sort((a, b) => a.fragCount - b.fragCount);
 
-        return this.moveColumns(allMovingColumns, potentialMoves[0].move, 'uiColumnMoved', false, columnModel);
+        return this.moveColumns(allMovingColumns, potentialMoves[0].move, 'uiColumnMoved', false, columnMoveService);
     }
 
-    public static moveColumns(columns: Column[], toIndex: number, source: ColumnEventType, finished: boolean, columnModel: ColumnModel): { columns: Column[], toIndex: number } | null {
-        columnModel.moveColumns(columns, toIndex, source, finished);
+    public static moveColumns(
+        columns: Column[],
+        toIndex: number,
+        source: ColumnEventType,
+        finished: boolean,
+        columnMoveService: ColumnMoveService
+    ): { columns: Column[]; toIndex: number } | null {
+        columnMoveService.moveColumns(columns, toIndex, source, finished);
 
         return finished ? null : { columns, toIndex };
     }
@@ -154,8 +181,8 @@ export class ColumnMoveHelper {
     // returns the index of the first column in the list ONLY if the cols are all beside
     // each other. if the cols are not beside each other, then returns null
     private static calculateOldIndex(movingCols: Column[], columnModel: ColumnModel): number | null {
-        const gridCols: Column[] = columnModel.getAllGridColumns();
-        const indexes = _sortNumerically(movingCols.map(col => gridCols.indexOf(col)));
+        const gridCols: Column[] = columnModel.getCols();
+        const indexes = _sortNumerically(movingCols.map((col) => gridCols.indexOf(col)));
         const firstIndex = indexes[0];
         const lastIndex = _last(indexes);
         const spread = lastIndex - firstIndex;
@@ -176,7 +203,7 @@ export class ColumnMoveHelper {
             return result;
         }
         let count = 0;
-        for (let i = 0; i < columns.length -1; i++) {
+        for (let i = 0; i < columns.length - 1; i++) {
             let a = parents(columns[i]);
             let b = parents(columns[i + 1]);
             // iterate over the longest one
@@ -190,38 +217,42 @@ export class ColumnMoveHelper {
         return count;
     }
 
-    private static getDisplayedColumns(columnModel: ColumnModel, type: ColumnPinnedType): Column[] {
+    private static getDisplayedColumns(presentedColsService: VisibleColsService, type: ColumnPinnedType): Column[] {
         switch (type) {
             case 'left':
-                return columnModel.getDisplayedLeftColumns();
+                return presentedColsService.getLeftCols();
             case 'right':
-                return columnModel.getDisplayedRightColumns();
+                return presentedColsService.getRightCols();
             default:
-                return columnModel.getDisplayedCenterColumns();
+                return presentedColsService.getCenterCols();
         }
     }
 
     private static calculateValidMoves(params: {
-        movingCols: Column[],
-        draggingRight: boolean,
-        xPosition: number,
-        pinned: ColumnPinnedType,
-        gos: GridOptionsService,
-        columnModel: ColumnModel
+        movingCols: Column[];
+        draggingRight: boolean;
+        xPosition: number;
+        pinned: ColumnPinnedType;
+        gos: GridOptionsService;
+        columnModel: ColumnModel;
+        presentedColsService: VisibleColsService;
     }): number[] {
-        const { movingCols, draggingRight, xPosition, pinned, gos, columnModel } = params;
-        const isMoveBlocked = gos.get('suppressMovableColumns') || movingCols.some(col => col.getColDef().suppressMovable);
+        const { movingCols, draggingRight, xPosition, pinned, gos, columnModel, presentedColsService } = params;
+        const isMoveBlocked =
+            gos.get('suppressMovableColumns') || movingCols.some((col) => col.getColDef().suppressMovable);
 
-        if (isMoveBlocked) { return []; }
+        if (isMoveBlocked) {
+            return [];
+        }
         // this is the list of cols on the screen, so it's these we use when comparing the x mouse position
-        const allDisplayedCols = this.getDisplayedColumns(columnModel, pinned);
+        const allDisplayedCols = this.getDisplayedColumns(presentedColsService, pinned);
         // but this list is the list of all cols, when we move a col it's the index within this list that gets used,
         // so the result we return has to be and index location for this list
-        const allGridCols = columnModel.getAllGridColumns();
+        const allGridCols = columnModel.getCols();
 
-        const movingDisplayedCols = allDisplayedCols.filter(col => _includes(movingCols, col));
-        const otherDisplayedCols = allDisplayedCols.filter(col => !_includes(movingCols, col));
-        const otherGridCols = allGridCols.filter(col => !_includes(movingCols, col));
+        const movingDisplayedCols = allDisplayedCols.filter((col) => _includes(movingCols, col));
+        const otherDisplayedCols = allDisplayedCols.filter((col) => !_includes(movingCols, col));
+        const otherGridCols = allGridCols.filter((col) => !_includes(movingCols, col));
 
         // work out how many DISPLAYED columns fit before the 'x' position. this gives us the displayIndex.
         // for example, if cols are a,b,c,d and we find a,b fit before 'x', then we want to place the moving
@@ -233,7 +264,7 @@ export class ColumnMoveHelper {
         // include the width of the moving columns
         if (draggingRight) {
             let widthOfMovingDisplayedCols = 0;
-            movingDisplayedCols.forEach(col => widthOfMovingDisplayedCols += col.getActualWidth());
+            movingDisplayedCols.forEach((col) => (widthOfMovingDisplayedCols += col.getActualWidth()));
             availableWidth -= widthOfMovingDisplayedCols;
         }
 
@@ -242,7 +273,9 @@ export class ColumnMoveHelper {
             for (let i = 0; i < otherDisplayedCols.length; i++) {
                 const col = otherDisplayedCols[i];
                 availableWidth -= col.getActualWidth();
-                if (availableWidth < 0) { break; }
+                if (availableWidth < 0) {
+                    break;
+                }
                 displayIndex++;
             }
             // trial and error, if going right, we adjust by one, i didn't manage to quantify why, but it works
@@ -266,7 +299,7 @@ export class ColumnMoveHelper {
         }
 
         const validMoves = [firstValidMove];
-        const numberComparator = (a: number, b:number) => a - b;
+        const numberComparator = (a: number, b: number) => a - b;
 
         // add in other valid moves due to hidden columns and married children. for example, a particular
         // move might break a group that has married children (so move isn't valid), however there could
@@ -323,7 +356,13 @@ export class ColumnMoveHelper {
         return validMoves;
     }
 
-    public static normaliseX(x: number, pinned: ColumnPinnedType, fromKeyboard: boolean, gos: GridOptionsService, ctrlsService: CtrlsService): number {
+    public static normaliseX(
+        x: number,
+        pinned: ColumnPinnedType,
+        fromKeyboard: boolean,
+        gos: GridOptionsService,
+        ctrlsService: CtrlsService
+    ): number {
         const eViewport = ctrlsService.getHeaderRowContainerCtrl(pinned).getViewport();
 
         if (fromKeyboard) {

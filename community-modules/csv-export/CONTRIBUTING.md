@@ -1,10 +1,10 @@
- - [Question or Problem?](#question)
- - [Issues and Bugs](#issue)
- - [Feature Requests](#feature)
- - [Submission Guidelines](#submit)
- - [Coding Rules](#rules)
- - [Commit Message Guidelines](#commit)
- - [Signing the CLA](#cla)
+-   [Question or Problem?](#question)
+-   [Issues and Bugs](#issue)
+-   [Feature Requests](#feature)
+-   [Submission Guidelines](#submit)
+-   [Coding Rules](#rules)
+-   [Commit Message Guidelines](#commit)
+-   [Signing the CLA](#cla)
 
 ## <a name="question"></a> Got a Question or Problem?
 
@@ -15,11 +15,13 @@ If you're using the Enterprise version of AG Grid (ag-grid-enterprise), then you
 To save your and our time we will be systematically closing all the issues that are requests for general support (for AG Grid Community) and redirecting people to StackOverflow.
 
 ## <a name="issue"></a> Found a Bug?
+
 If you find a bug in the source code, you can help us by
 [submitting an issue](#submit-issue) to our [GitHub Repository][github].
 
 ## <a name="feature"></a> Missing a Feature?
-You can *request* a new feature by [submitting an issue](#submit-issue) to our GitHub
+
+You can _request_ a new feature by [submitting an issue](#submit-issue) to our GitHub
 Repository.
 
 ## <a name="submit"></a> Submission Guidelines
@@ -30,9 +32,9 @@ Before you submit an issue, please search the issue tracker, maybe an issue for 
 
 We want to fix all the issues as soon as possible, but before fixing a bug we need to reproduce and confirm it. In order to reproduce bugs we will systematically ask you to provide a minimal reproduction scenario using http://plnkr.co. Having a live, reproducible scenario gives us wealth of important information without going back & forth to you with additional questions like:
 
-- version of AG Grid used
-- 3rd-party libraries and their versions
-- and most importantly - a use-case that fails
+-   version of AG Grid used
+-   3rd-party libraries and their versions
+-   and most importantly - a use-case that fails
 
 A minimal reproduce scenario using http://plnkr.co/ allows us to quickly confirm a bug (or point out coding problem) as well as confirm that we are fixing the right problem. If plunker is not a suitable way to demonstrate the problem (for example for issues related to our npm packaging), please create a standalone git repository demonstrating the problem.
 
@@ -44,10 +46,8 @@ PR's on new features **are not** generally accepted.
 
 PR's on small bug fixes **are** generally accepted.
 
-
 [github]: https://github.com/ag-grid/ag-grid
 [jsfiddle]: http://jsfiddle.net
 [plunker]: http://plnkr.co/edit
 [runnable]: http://runnable.com
 [stackoverflow]: http://stackoverflow.com/questions/tagged/ag-grid
-

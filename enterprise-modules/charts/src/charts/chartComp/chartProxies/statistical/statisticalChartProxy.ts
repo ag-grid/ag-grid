@@ -1,9 +1,12 @@
-import {ChartProxyParams, UpdateParams} from '../chartProxy';
-import {CartesianChartProxy} from "../cartesian/cartesianChartProxy";
-import {AgCartesianAxisOptions, AgCartesianChartOptions} from 'ag-charts-community';
-import {ChartDataModel} from "../../model/chartDataModel";
+import { AgCartesianAxisOptions, AgCartesianChartOptions } from 'ag-charts-community';
 
-export abstract class StatisticalChartProxy<TSeries extends 'box-plot' | 'range-area' | 'range-bar'> extends CartesianChartProxy<TSeries> {
+import { ChartDataModel } from '../../model/chartDataModel';
+import { CartesianChartProxy } from '../cartesian/cartesianChartProxy';
+import { ChartProxyParams, UpdateParams } from '../chartProxy';
+
+export abstract class StatisticalChartProxy<
+    TSeries extends 'box-plot' | 'range-area' | 'range-bar',
+> extends CartesianChartProxy<TSeries> {
     protected constructor(params: ChartProxyParams) {
         super(params);
     }
@@ -22,7 +25,7 @@ export abstract class StatisticalChartProxy<TSeries extends 'box-plot' | 'range-
     }
 
     protected computeSeriesStatistics(params: UpdateParams, computeStatsFn: (values: number[]) => any): any[] {
-        const {data, fields} = params;
+        const { data, fields } = params;
         const [category] = params.categories;
         const categoryKey = category.id || ChartDataModel.DEFAULT_CATEGORY;
         const groupedData = this.groupDataByCategory(categoryKey, data);
@@ -33,8 +36,8 @@ export abstract class StatisticalChartProxy<TSeries extends 'box-plot' | 'range-
             fields.forEach((field, seriesIndex) => {
                 // `null` & `NaN` values are omitted from calculations
                 const seriesValues = categoryData
-                    .map(datum => datum[field.colId])
-                    .filter(value => typeof value === 'number' && !isNaN(value));
+                    .map((datum) => datum[field.colId])
+                    .filter((value) => typeof value === 'number' && !isNaN(value));
 
                 Object.entries(computeStatsFn(seriesValues)).forEach(([statKey, value]) => {
                     const propertyKey = `${statKey}:${seriesIndex}`;
@@ -57,7 +60,7 @@ export abstract class StatisticalChartProxy<TSeries extends 'box-plot' | 'range-
                 return ''; // use a blank category for `null` or `undefined` values
             }
             return categoryValue instanceof Date ? categoryValue.getTime() : categoryValue;
-        }
+        };
 
         return data.reduce((acc, datum) => {
             let category = getCategory(datum);
@@ -70,5 +73,4 @@ export abstract class StatisticalChartProxy<TSeries extends 'box-plot' | 'range-
             return acc;
         }, new Map<string | null, any[]>());
     }
-
 }

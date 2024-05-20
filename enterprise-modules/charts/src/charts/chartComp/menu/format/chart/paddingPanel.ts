@@ -7,17 +7,16 @@ import {
     Events,
     PostConstruct,
     RefSelector,
-} from "@ag-grid-community/core";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { AgChartPaddingOptions, AgChartThemeOverrides } from "ag-charts-community";
-import { ChartController } from "../../../chartController";
-import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
-import { ChartThemeOverridesSeriesType } from "../../../utils/seriesTypeMapper";
+} from '@ag-grid-community/core';
+import { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-community';
+
+import { ChartController } from '../../../chartController';
+import { ChartTranslationService } from '../../../services/chartTranslationService';
+import { ChartThemeOverridesSeriesType } from '../../../utils/seriesTypeMapper';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class PaddingPanel extends Component {
-
-    public static TEMPLATE = /* html */
-        `<div>
+    public static TEMPLATE /* html */ = `<div>
             <ag-group-component ref="chartPaddingGroup">
                 <ag-slider ref="paddingTopSlider"></ag-slider>
                 <ag-slider ref="paddingRightSlider"></ag-slider>
@@ -30,7 +29,10 @@ export class PaddingPanel extends Component {
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    constructor(private readonly chartMenuUtils: ChartMenuParamsFactory, private readonly chartController: ChartController) {
+    constructor(
+        private readonly chartMenuUtils: ChartMenuParamsFactory,
+        private readonly chartController: ChartController
+    ) {
         super();
     }
 
@@ -40,10 +42,10 @@ export class PaddingPanel extends Component {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
             suppressOpenCloseIcons: true,
-            title: this.chartTranslationService.translate("padding"),
-            suppressEnabledCheckbox: true
+            title: this.chartTranslationService.translate('padding'),
+            suppressEnabledCheckbox: true,
         };
-        const getSliderParams = (property: keyof AgChartPaddingOptions) => 
+        const getSliderParams = (property: keyof AgChartPaddingOptions) =>
             this.chartMenuUtils.getDefaultSliderParams('padding.' + property, property, 200);
 
         this.setTemplate(PaddingPanel.TEMPLATE, {
@@ -51,7 +53,7 @@ export class PaddingPanel extends Component {
             paddingTopSlider: getSliderParams('top'),
             paddingRightSlider: getSliderParams('right'),
             paddingBottomSlider: getSliderParams('bottom'),
-            paddingLeftSlider: getSliderParams('left')
+            paddingLeftSlider: getSliderParams('left'),
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, (e: ChartOptionsChanged) => {

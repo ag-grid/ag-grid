@@ -1,18 +1,3 @@
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnDestroy,
-    Output,
-    ViewContainerRef,
-    ViewEncapsulation
-} from "@angular/core";
-
-import { AgPromise, ComponentUtil, GridApi, GridOptions, GridParams, Module, createGrid } from "ag-grid-community";
-
 // @START_IMPORTS@
 import {
     AdvancedFilterBuilderVisibleChangedEvent,
@@ -183,22 +168,42 @@ import {
     VirtualRowRemovedEvent
 } from "ag-grid-community";
 // @END_IMPORTS@
+import {
+    AgPromise,
+    ComponentUtil,
+    GridApi,
+    GridOptions,
+    GridParams,
+    Module,
+    createGrid,
+} from 'ag-grid-community';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnDestroy,
+    Output,
+    ViewContainerRef,
+    ViewEncapsulation,
+} from '@angular/core';
 
-import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
-import { AngularFrameworkComponentWrapper } from "./angularFrameworkComponentWrapper";
+import { AngularFrameworkComponentWrapper } from './angularFrameworkComponentWrapper';
+import { AngularFrameworkOverrides } from './angularFrameworkOverrides';
 
 @Component({
     selector: 'ag-grid-angular',
     standalone: true,
     template: '',
-    providers: [
-        AngularFrameworkOverrides,
-        AngularFrameworkComponentWrapper
-    ],
+    providers: [AngularFrameworkOverrides, AngularFrameworkComponentWrapper],
     // tell angular we don't want view encapsulation, we don't want a shadow root
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
 })
-export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<any>> implements AfterViewInit, OnChanges, OnDestroy {
+export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<any>>
+    implements AfterViewInit, OnChanges, OnDestroy
+{
     // not intended for user to interact with. so putting _ in so if user gets reference
     // to this object, they kind'a know it's not part of the agreed interface
     private _nativeElement: any;
@@ -213,7 +218,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Grid Api available after onGridReady event has fired. */
     public api: GridApi<TData>;
 
-    constructor(elementDef: ElementRef,
+    constructor(
+        elementDef: ElementRef,
         private viewContainerRef: ViewContainerRef,
         private angularFrameworkOverrides: AngularFrameworkOverrides,
         private frameworkComponentWrapper: AngularFrameworkComponentWrapper
@@ -221,47 +227,46 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         this._nativeElement = elementDef.nativeElement;
     }
 
-
     ngAfterViewInit(): void {
-      // Run the setup outside of angular so all the event handlers that are created do not trigger change detection
-      this.angularFrameworkOverrides.runOutsideAngular(() => {
-          this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef, this.angularFrameworkOverrides);
-          const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this);
+        // Run the setup outside of angular so all the event handlers that are created do not trigger change detection
+        this.angularFrameworkOverrides.runOutsideAngular(() => {
+            this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef, this.angularFrameworkOverrides);
+            const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this);
 
-          this.gridParams = {
-               globalEventListener: this.globalEventListener.bind(this),
-               frameworkOverrides: this.angularFrameworkOverrides,
-               providedBeanInstances: {
+            this.gridParams = {
+                globalEventListener: this.globalEventListener.bind(this),
+                frameworkOverrides: this.angularFrameworkOverrides,
+                providedBeanInstances: {
                     frameworkComponentWrapper: this.frameworkComponentWrapper,
-               },
-               modules: (this.modules || []) as any,
-          };
+                },
+                modules: (this.modules || []) as any,
+            };
 
-          const api = createGrid(this._nativeElement, mergedGridOps, this.gridParams);
-          if (api) {
-               this.api = api;
-          }
+            const api = createGrid(this._nativeElement, mergedGridOps, this.gridParams);
+            if (api) {
+                this.api = api;
+            }
 
-          this._initialised = true;
+            this._initialised = true;
 
-          // sometimes, especially in large client apps gridReady can fire before ngAfterViewInit
-          // this ties these together so that gridReady will always fire after agGridAngular's ngAfterViewInit
-          // the actual containing component's ngAfterViewInit will fire just after agGridAngular's
-          this._fullyReady.resolveNow(null, (resolve) => resolve);
-       });
-     }
+            // sometimes, especially in large client apps gridReady can fire before ngAfterViewInit
+            // this ties these together so that gridReady will always fire after agGridAngular's ngAfterViewInit
+            // the actual containing component's ngAfterViewInit will fire just after agGridAngular's
+            this._fullyReady.resolveNow(null, (resolve) => resolve);
+        });
+    }
 
     public ngOnChanges(changes: any): void {
-         if (this._initialised) {
-               // Run the changes outside of angular so any event handlers that are created do not trigger change detection
-             this.angularFrameworkOverrides.runOutsideAngular(() => {
-                 const gridOptions: GridOptions = {};
-                 Object.entries(changes).forEach(([key, value]: [string, any]) => {
-                     gridOptions[key as keyof GridOptions] = value.currentValue;
-                 });
-                 ComponentUtil.processOnChange(gridOptions, this.api);
-             });
-         }
+        if (this._initialised) {
+            // Run the changes outside of angular so any event handlers that are created do not trigger change detection
+            this.angularFrameworkOverrides.runOutsideAngular(() => {
+                const gridOptions: GridOptions = {};
+                Object.entries(changes).forEach(([key, value]: [string, any]) => {
+                    gridOptions[key as keyof GridOptions] = value.currentValue;
+                });
+                ComponentUtil.processOnChange(gridOptions, this.api);
+            });
+        }
     }
 
     public ngOnDestroy(): void {
@@ -269,8 +274,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             // need to do this before the destroy, so we know not to emit any events
             // while tearing down the grid.
             this._destroyed = true;
-             // could be null if grid failed to initialise
-             this.api?.destroy();
+            // could be null if grid failed to initialise
+            this.api?.destroy();
         }
     }
 
@@ -283,7 +288,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         const hasEmitter = emitterAny?.observed ?? emitterAny?.observers?.length > 0;
 
         // gridReady => onGridReady
-        const asEventName = `on${eventType.charAt(0).toUpperCase()}${eventType.substring(1)}`
+        const asEventName = `on${eventType.charAt(0).toUpperCase()}${eventType.substring(1)}`;
         const hasGridOptionListener = !!this.gridOptions && !!(this.gridOptions as any)[asEventName];
 
         return hasEmitter || hasGridOptionListener;
@@ -299,7 +304,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         // generically look up the eventType
         const emitter = <EventEmitter<any>>(<any>this)[eventType];
         if (emitter && this.isEmitterUsed(eventType)) {
-
             // Make sure we emit within the angular zone, so change detection works properly
             const fireEmitter = () => this.angularFrameworkOverrides.runInsideAngular(() => emitter.emit(event));
 
@@ -312,18 +316,18 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         }
     }
 
-     /** Provided an initial gridOptions configuration to the component. If a property is specified in both gridOptions and via component binding the component binding takes precedence.  */
-     @Input() public gridOptions: GridOptions<TData> | undefined;
-     /**
+    /** Provided an initial gridOptions configuration to the component. If a property is specified in both gridOptions and via component binding the component binding takes precedence.  */
+    @Input() public gridOptions: GridOptions<TData> | undefined;
+    /**
      * Used to register AG Grid Modules directly with this instance of the grid.
      * See [Providing Modules To Individual Grids](https://www.ag-grid.com/angular-data-grid/modules/#providing-modules-to-individual-grids) for more information.
      */
-     @Input() public modules: Module[] | undefined;
+    @Input() public modules: Module[] | undefined;
 
     // @START@
     /** Specifies the status bar components to use in the status bar.
          */
-    @Input() public statusBar: { statusPanels: StatusPanelDef[]; } | undefined = undefined;
+    @Input() public statusBar: { statusPanels: StatusPanelDef[] } | undefined = undefined;
     /** Specifies the side bar components.
          */
     @Input() public sideBar: SideBarDef | string | string[] | boolean | null | undefined = undefined;
@@ -403,7 +407,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public copyGroupHeadersToClipboard: boolean | undefined = undefined;
     /** Specify the delimiter to use when copying to clipboard.
          * @default '\t'
-        */
+         */
     @Input() public clipboardDelimiter: string | undefined = undefined;
     /** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows.
          * @default false
@@ -441,7 +445,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public defaultColGroupDef: Partial<ColGroupDef<TData>> | undefined = undefined;
     /** An object map of custom column types which contain groups of properties that column definitions can reuse by referencing in their `type` property.
          */
-    @Input() public columnTypes: { [key: string]: ColTypeDef<TData>; } | undefined = undefined;
+    @Input() public columnTypes: { [key: string]: ColTypeDef<TData> } | undefined = undefined;
     /** An object map of cell data types to their definitions.
          * Cell data types can either override/update the pre-defined data types
          * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),
@@ -514,11 +518,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Auto-size the columns when the grid is loaded. Can size to fit the grid width, fit a provided width, or fit the cell contents.
          * @initial
          */
-    @Input() public autoSizeStrategy: SizeColumnsToFitGridStrategy | SizeColumnsToFitProvidedWidthStrategy | SizeColumnsToContentStrategy | undefined = undefined;
+    @Input() public autoSizeStrategy: | SizeColumnsToFitGridStrategy
+        | SizeColumnsToFitProvidedWidthStrategy
+        | SizeColumnsToContentStrategy | undefined = undefined;
     /** A map of component names to components.
          * @initial
          */
-    @Input() public components: { [p: string]: any; } | undefined = undefined;
+    @Input() public components: { [p: string]: any } | undefined = undefined;
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.
          */
     @Input() public editType: 'fullRow' | undefined = undefined;
@@ -875,7 +881,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** A map of 'function name' to 'function' for custom aggregation functions.
          * @initial
          */
-    @Input() public aggFuncs: { [key: string]: IAggFunc<TData>; } | undefined = undefined;
+    @Input() public aggFuncs: { [key: string]: IAggFunc<TData> } | undefined = undefined;
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
          * @default false
          * @initial
@@ -1040,17 +1046,17 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.
          * If a callback function is provided, it can used to select which groups will have a footer added.
          * @default false
-         * 
+         *
          * @deprecated v31.3 - use `groupTotalRow` instead.
          */
     @Input() public groupIncludeFooter: boolean | UseGroupFooter<TData> | undefined = undefined;
     /** Set to `true` to show a 'grand total' group footer across all groups.
          * @default false
-         * 
+         *
          * @deprecated v31.3 - use `grandTotalRow` instead.
          */
     @Input() public groupIncludeTotalFooter: boolean | undefined = undefined;
-    /** When provided, an extra row group total row will be inserted into row groups at the specified position, to display 
+    /** When provided, an extra row group total row will be inserted into row groups at the specified position, to display
          * when the group is expanded. This row will contain the aggregate values for the group. If a callback function is
          * provided, it can be used to selectively determine which groups will have a total row added.
          */
@@ -1330,7 +1336,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
          * @default [null, 'asc', 'desc']
          */
-    @Input() public sortingOrder: (SortDirection)[] | undefined = undefined;
+    @Input() public sortingOrder: SortDirection[] | undefined = undefined;
     /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.
          * @default false
          */
@@ -1357,7 +1363,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Icons to use inside the grid instead of the grid's default icons.
          * @initial
          */
-    @Input() public icons: { [key: string]: Function | string; } | undefined = undefined;
+    @Input() public icons: { [key: string]: Function | string } | undefined = undefined;
     /** Default row height in pixels.
          * @default 25
          */
@@ -1450,22 +1456,22 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public createChartContainer: ((params: ChartRefParams<TData>) => void) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.
          */
-    @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null)) | undefined = undefined;
+    @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams<TData>) => HeaderPosition | null) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused.
          * Return the next header position to navigate to, `true` to stay on the current header,
          * or `false` to let the browser handle the tab behaviour.
          * As of v31.3, returning `null` is deprecated.
          */
-    @Input() public tabToNextHeader: ((params: TabToNextHeaderParams<TData>) => (HeaderPosition | boolean | null)) | undefined = undefined;
+    @Input() public tabToNextHeader: ((params: TabToNextHeaderParams<TData>) => HeaderPosition | boolean | null) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.
          */
-    @Input() public navigateToNextCell: ((params: NavigateToNextCellParams<TData>) => (CellPosition | null)) | undefined = undefined;
+    @Input() public navigateToNextCell: ((params: NavigateToNextCellParams<TData>) => CellPosition | null) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused.
          * Return the next cell position to navigate to, `true` to stay on the current cell,
          * or `false` to let the browser handle the tab behaviour.
          * As of v31.3, returning `null` is deprecated.
          */
-    @Input() public tabToNextCell: ((params: TabToNextCellParams<TData>) => (CellPosition | boolean | null)) | undefined = undefined;
+    @Input() public tabToNextCell: ((params: TabToNextCellParams<TData>) => CellPosition | boolean | null) | undefined = undefined;
     /** A callback for localising text within the grid.
          * @initial
          */
@@ -1637,7 +1643,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or
          *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),
          * fill handle, copy range down, undo and redo.
-        */
+         */
     @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent<TData>> = new EventEmitter<CellValueChangedEvent<TData>>();
     /** Value has changed after editing. Only fires when `readOnlyEdit=true`.
          */

@@ -1,11 +1,14 @@
-import { RowNode } from "../entities/rowNode";
-import { SelectionEventSourceType } from "../events";
-import { ChangedPath } from "../utils/changedPath";
-import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from "./selectionState";
+import { RowNode } from '../entities/rowNode';
+import { SelectionEventSourceType } from '../events';
+import { ChangedPath } from '../utils/changedPath';
+import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './selectionState';
 
 export interface ISelectionService {
     getSelectionState(): string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | null;
-    setSelectionState(state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState, source: SelectionEventSourceType): void;
+    setSelectionState(
+        state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState,
+        source: SelectionEventSourceType
+    ): void;
     getSelectedNodes(): RowNode<any>[];
     getSelectedRows(): any[];
     getSelectionCount(): number;

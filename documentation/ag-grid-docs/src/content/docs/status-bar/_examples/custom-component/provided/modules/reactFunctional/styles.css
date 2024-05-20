@@ -5,15 +5,15 @@
     margin: 5px;
     background-color: lightgrey;
     padding: 3px 5px 3px 5px;
-    border-radius: 5px
+    border-radius: 5px;
 }
 
 .component {
     margin-left: 5px;
     padding-top: 0;
-    padding-bottom: 0
+    padding-bottom: 0;
 }
 
 input {
-    height: initial!important;
+    height: initial !important;
 }

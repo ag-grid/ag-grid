@@ -1,16 +1,15 @@
 {
-    "name": "ag-website-shared",
-    "$schema": "../../node_modules/nx/schemas/project-schema.json",
-    "projectType": "library",
-    "sourceRoot": "{projectRoot}/src",
-    "targets": {
-      "lint": {
-        "command": "eslint",
-        "options": {
-          "cwd": "{projectRoot}"
-        }
+  "name": "ag-website-shared",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "{projectRoot}/src",
+  "targets": {
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
       }
-    },
-    "tags": ["website"]
-  }
-  
+    }
+  },
+  "tags": ["website"]
+}

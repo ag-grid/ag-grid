@@ -1,6 +1,7 @@
-import {beforeEach, describe, expect, it} from '@jest/globals';
-import {ZipFile} from '../src/csvExport/zipContainer/zipContainer';
-import {getHeaderAndContent} from '../src/csvExport/zipContainer/zipContainerHelper';
+import { beforeEach, describe, expect, it } from '@jest/globals';
+
+import { ZipFile } from '../src/csvExport/zipContainer/zipContainer';
+import { getHeaderAndContent } from '../src/csvExport/zipContainer/zipContainerHelper';
 
 describe('getHeaderAndContent', () => {
     let testPath: string = 'test-path/file-name.csv';
@@ -21,9 +22,9 @@ describe('getHeaderAndContent', () => {
 
         const expectedCommonHeaderSize = 26; // bytes
         const expectedLocalFileHeader =
-            4 // bytes - signature: PK\x03\x04
-            + expectedCommonHeaderSize
-            + testPath.length;
+            4 + // bytes - signature: PK\x03\x04
+            expectedCommonHeaderSize +
+            testPath.length;
 
         expect(result.localFileHeader.length).toEqual(expectedLocalFileHeader);
     });

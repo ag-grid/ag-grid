@@ -1,4 +1,4 @@
-import { ICellEditorComp, ICellEditorParams } from "@ag-grid-community/core";
+import { ICellEditorComp, ICellEditorParams } from '@ag-grid-community/core';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
@@ -44,7 +44,7 @@ export class MySimpleEditor implements ICellEditorComp {
     myCustomFunction() {
         return {
             rowIndex: this.params.rowIndex,
-            colId: this.params.column.getId()
+            colId: this.params.column.getId(),
         };
     }
 }

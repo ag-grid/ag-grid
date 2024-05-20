@@ -1,11 +1,13 @@
-import {createApp, onBeforeMount, ref} from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue3';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { createApp, onBeforeMount, ref } from 'vue';
+
+import { getData } from './data.js';
 import './styles.css';
-import {ModuleRegistry} from '@ag-grid-community/core';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {getData} from './data.js';
+
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
@@ -34,29 +36,35 @@ const VueExample = {
     `,
     components: {
         'ag-grid-vue': AgGridVue,
-
     },
     setup(props) {
-        const columnDefs = ref([{
-            field: "name",
-            headerName: "Athlete",
-            width: 250
-        }, {
-            field: "person.country",
-            headerName: "Country"
-        }, {
-            field: "person.age",
-            headerName: "Age"
-        }, {
-            field: "medals.gold",
-            headerName: "Gold Medals"
-        }, {
-            field: "medals.silver",
-            headerName: "Silver Medals"
-        }, {
-            field: "medals.bronze",
-            headerName: "Bronze Medals"
-        }]);
+        const columnDefs = ref([
+            {
+                field: 'name',
+                headerName: 'Athlete',
+                width: 250,
+            },
+            {
+                field: 'person.country',
+                headerName: 'Country',
+            },
+            {
+                field: 'person.age',
+                headerName: 'Age',
+            },
+            {
+                field: 'medals.gold',
+                headerName: 'Gold Medals',
+            },
+            {
+                field: 'medals.silver',
+                headerName: 'Silver Medals',
+            },
+            {
+                field: 'medals.bronze',
+                headerName: 'Bronze Medals',
+            },
+        ]);
 
         const gridApi = ref();
 
@@ -66,12 +74,12 @@ const VueExample = {
 
         onBeforeMount(() => {
             rowData.value = getData();
-            rowSelection.value = 'multiple'
+            rowSelection.value = 'multiple';
         });
 
         const reloadGrid = () => {
             isVisible.value = false;
-            setTimeout(() => isVisible.value = true, 1);
+            setTimeout(() => (isVisible.value = true), 1);
         };
         const onGridReady = (params) => {
             gridApi.value = params.api;
@@ -81,9 +89,7 @@ const VueExample = {
 
             if (shouldPinFirstColumn) {
                 params.api.applyColumnState({
-                    state: [
-                        {colId: 'name', pinned: 'left'},
-                    ],
+                    state: [{ colId: 'name', pinned: 'left' }],
                 });
             }
         };
@@ -96,9 +102,11 @@ const VueExample = {
             onGridReady,
             reloadGrid,
             isVisible,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
-        }
-    }
-}
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
+        };
+    },
+};
 
-createApp(VueExample).mount("#app");
+createApp(VueExample).mount('#app');

@@ -1,13 +1,14 @@
 import * as JSON5 from 'json5';
+
 import { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import {
+    GRID_WIDE_COMPONENTS,
+    OVERRIDABLE_AG_COMPONENTS,
     convertDefaultColDef,
     getColumnDefs,
     getTemplate,
-    GRID_WIDE_COMPONENTS,
     isComponent,
     isExternalVueFile,
-    OVERRIDABLE_AG_COMPONENTS,
 } from './grid-vanilla-to-vue-common';
 import {
     addEnterprisePackage,
@@ -159,7 +160,11 @@ function getPropertyBindings(
             } else if (componentFileNames.length > 0 && property.name === 'components') {
                 if (bindings.components) {
                     const userAgComponents = OVERRIDABLE_AG_COMPONENTS.filter((agComponentName) =>
-                        bindings.components.some((component) => component.name === agComponentName && !vueComponents.some(existingComp => existingComp.includes(agComponentName)))
+                        bindings.components.some(
+                            (component) =>
+                                component.name === agComponentName &&
+                                !vueComponents.some((existingComp) => existingComp.includes(agComponentName))
+                        )
                     ).map((agComponentName) => `${agComponentName}: '${agComponentName}'`);
 
                     vueComponents.push(...userAgComponents);
@@ -273,10 +278,10 @@ function getModuleImports(
 
     if (bindings.moduleRegistration) {
         bindings.imports.forEach((importStatement) => {
-            if (importStatement.imports.some(m => m.includes('Module'))) {
-                imports.push(`import { ${importStatement.imports.join(', ')} } from ${importStatement.module};`)
+            if (importStatement.imports.some((m) => m.includes('Module'))) {
+                imports.push(`import { ${importStatement.imports.join(', ')} } from ${importStatement.module};`);
             }
-        })
+        });
         imports.push(bindings.moduleRegistration);
     }
 

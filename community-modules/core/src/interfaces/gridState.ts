@@ -1,14 +1,14 @@
-import { RowPosition } from "../entities/rowPositionUtils";
-import { SortModelItem } from "../sortController";
-import { AdvancedFilterModel } from "./advancedFilterModel";
-import { FilterModel } from "./iFilter";
-import { CellRangeType } from "./IRangeService";
-import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from "./selectionState";
+import { RowPosition } from '../entities/rowPositionUtils';
+import { SortModelItem } from '../sortController';
+import { CellRangeType } from './IRangeService';
+import { AdvancedFilterModel } from './advancedFilterModel';
+import { FilterModel } from './iFilter';
+import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './selectionState';
 
-export interface FilterState { 
-    filterModel?: FilterModel
+export interface FilterState {
+    filterModel?: FilterModel;
     advancedFilterModel?: AdvancedFilterModel;
-};
+}
 
 export interface RangeSelectionCellState {
     id?: string;
@@ -51,7 +51,6 @@ export interface SideBarState {
     toolPanels: {
         [id: string]: any;
     };
-
 }
 
 export interface FocusedCellState extends RowPosition {
@@ -76,9 +75,9 @@ export interface RowGroupState {
 }
 
 export interface AggregationColumnState {
-    colId: string,
+    colId: string;
     /** Only named aggregation functions can be used in state */
-    aggFunc: string
+    aggFunc: string;
 }
 
 export interface AggregationState {

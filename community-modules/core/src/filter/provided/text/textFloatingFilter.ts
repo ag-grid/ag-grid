@@ -1,9 +1,13 @@
-import { TextFilter, TextFilterModel, TextFilterModelFormatter } from './textFilter';
-import { FloatingFilterInputService, FloatingFilterTextInputService, ITextInputFloatingFilterParams, TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
+import {
+    FloatingFilterInputService,
+    FloatingFilterTextInputService,
+    ITextInputFloatingFilterParams,
+    TextInputFloatingFilter,
+} from '../../floating/provided/textInputFloatingFilter';
 import { SimpleFilterModelFormatter } from '../simpleFilter';
+import { TextFilter, TextFilterModel, TextFilterModelFormatter } from './textFilter';
 
-export interface ITextFloatingFilterParams extends ITextInputFloatingFilterParams {
-}
+export interface ITextFloatingFilterParams extends ITextInputFloatingFilterParams {}
 
 export class TextFloatingFilter extends TextInputFloatingFilter<TextFilterModel> {
     private filterModelFormatter: SimpleFilterModelFormatter;

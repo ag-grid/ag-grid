@@ -1,7 +1,4 @@
 {
-  "extras": [
-    "jquery",
-    "jqueryui"
-  ],
-  "supportedFrameworks": ["typescript"]
+    "extras": ["jquery", "jqueryui"],
+    "supportedFrameworks": ["typescript"]
 }

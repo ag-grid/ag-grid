@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
 import { useGridFilter } from '@ag-grid-community/react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 export default ({ model, onModelChange }) => {
     const [closeFilter, setCloseFilter] = useState();
@@ -25,9 +25,9 @@ export default ({ model, onModelChange }) => {
         setUnappliedModel(model);
     }, [model]);
 
-    const onYearChange = ({ target: { value }}) => {
+    const onYearChange = ({ target: { value } }) => {
         setUnappliedModel(value === 'All' ? null : value);
-    }
+    };
 
     const onClick = () => {
         onModelChange(unappliedModel);
@@ -40,10 +40,12 @@ export default ({ model, onModelChange }) => {
         <div className="year-filter">
             <div>Select Year Range</div>
             <label>
-                <input type="radio" name="year" value="All" checked={unappliedModel == null} onChange={onYearChange} /> All
+                <input type="radio" name="year" value="All" checked={unappliedModel == null} onChange={onYearChange} />{' '}
+                All
             </label>
             <label>
-                <input type="radio" name="year" value="2010" checked={unappliedModel != null} onChange={onYearChange} /> Since 2010
+                <input type="radio" name="year" value="2010" checked={unappliedModel != null} onChange={onYearChange} />{' '}
+                Since 2010
             </label>
             <button onClick={onClick}>Apply</button>
         </div>

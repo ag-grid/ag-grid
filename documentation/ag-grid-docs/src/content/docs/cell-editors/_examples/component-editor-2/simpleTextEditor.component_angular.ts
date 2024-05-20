@@ -1,10 +1,10 @@
-import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
-import { ICellEditorParams } from "@ag-grid-community/core";
-import { ICellEditorAngularComp } from "@ag-grid-community/angular";
+import { ICellEditorAngularComp } from '@ag-grid-community/angular';
+import { ICellEditorParams } from '@ag-grid-community/core';
+import { AfterViewInit, Component, ViewChild, ViewContainerRef } from '@angular/core';
 
 @Component({
     standalone: true,
-    template: `<input class="my-simple-editor" [value]="value" #input /> `
+    template: `<input class="my-simple-editor" [value]="value" #input /> `,
 })
 export class SimpleTextEditor implements ICellEditorAngularComp, AfterViewInit {
     private params!: ICellEditorParams;

@@ -2,55 +2,48 @@ import {
     Autowired,
     Bean,
     Column,
+    ColumnGroup,
     ColumnModel,
+    ColumnNameService,
+    CssClassApplier,
+    ExcelExportMultipleSheetParams,
     ExcelExportParams,
     ExcelFactoryMode,
+    ExcelRow,
     ExcelStyle,
+    FuncColsService,
     GridOptionsService,
     IExcelCreator,
     PostConstruct,
     StylingService,
     ValueService,
-    ExcelExportMultipleSheetParams,
-    ExcelRow,
-    CssClassApplier,
-    ColumnGroup
 } from '@ag-grid-community/core';
-import { ExcelXlsxFactory } from './excelXlsxFactory';
-import { BaseCreator, Downloader, GridSerializer, RowType, ZipContainer } from "@ag-grid-community/csv-export";
+import { BaseCreator, Downloader, GridSerializer, RowType, ZipContainer } from '@ag-grid-community/csv-export';
+
 import { ExcelGridSerializingParams, ExcelSerializingSession, StyleLinkerInterface } from './excelSerializingSession';
+import { ExcelXlsxFactory } from './excelXlsxFactory';
 
 const createExcelXMLCoreFolderStructure = (): void => {
-    ZipContainer.addFolders([
-        '_rels/',
-        'docProps/',
-        'xl/',
-        'xl/theme/',
-        'xl/_rels/',
-        'xl/worksheets/'
-    ]);
+    ZipContainer.addFolders(['_rels/', 'docProps/', 'xl/', 'xl/theme/', 'xl/_rels/', 'xl/worksheets/']);
 
-    const { images } = ExcelXlsxFactory
+    const { images } = ExcelXlsxFactory;
 
-    if (!images.size) { return; }
+    if (!images.size) {
+        return;
+    }
 
-    ZipContainer.addFolders([
-        'xl/worksheets/_rels',
-        'xl/drawings/',
-        'xl/drawings/_rels',
-        'xl/media/',
-    ]);
+    ZipContainer.addFolders(['xl/worksheets/_rels', 'xl/drawings/', 'xl/drawings/_rels', 'xl/media/']);
 
     let imgCounter = 0;
 
-    images.forEach(value => {
+    images.forEach((value) => {
         const firstImage = value[0].image[0];
         const { base64, imageType } = firstImage;
         const ext = imageType === 'jpg' ? 'jpeg' : imageType;
 
         ZipContainer.addFile(`xl/media/image${++imgCounter}.${ext}`, base64, true);
     });
-}
+};
 
 const createExcelXmlWorksheets = (data: string[]): void => {
     let imageRelationCounter = 0;
@@ -67,7 +60,9 @@ const createExcelXmlWorksheets = (data: string[]): void => {
         const hasTables = worksheetDataTables.size > 0 && worksheetDataTables.has(i);
         const hasHeaderFooterImages = images.size && worksheetHeaderFooterImages.has(i);
 
-        if (!hasImages && !hasTables && !hasHeaderFooterImages) { continue; }
+        if (!hasImages && !hasTables && !hasHeaderFooterImages) {
+            continue;
+        }
 
         let tableIndex: number | undefined;
         let drawingIndex: number | undefined;
@@ -82,7 +77,7 @@ const createExcelXmlWorksheets = (data: string[]): void => {
         if (hasHeaderFooterImages) {
             createExcelVmlDrawings(i, headerFooterImageCounter);
             vmlDrawingIndex = headerFooterImageCounter;
-            headerFooterImageCounter++
+            headerFooterImageCounter++;
         }
 
         if (hasTables) {
@@ -96,11 +91,11 @@ const createExcelXmlWorksheets = (data: string[]): void => {
             ExcelXlsxFactory.createRelationships({
                 tableIndex,
                 drawingIndex,
-                vmlDrawingIndex
-            }),
+                vmlDrawingIndex,
+            })
         );
     }
-}
+};
 
 const createExcelXmlDrawings = (sheetIndex: number, drawingIndex: number): void => {
     const drawingFolder = 'xl/drawings';
@@ -134,12 +129,9 @@ const createExcelXmlTables = (): void => {
             continue;
         }
 
-        ZipContainer.addFile(
-            `xl/tables/${dataTable.name}.xml`,
-            ExcelXlsxFactory.createTable(dataTable, i),
-        );
+        ZipContainer.addFile(`xl/tables/${dataTable.name}.xml`, ExcelXlsxFactory.createTable(dataTable, i));
     }
-}
+};
 
 const createExcelXmlCoreSheets = (fontSize: number, author: string, sheetLen: number): void => {
     ZipContainer.addFile('xl/workbook.xml', ExcelXlsxFactory.createWorkbook());
@@ -150,24 +142,26 @@ const createExcelXmlCoreSheets = (fontSize: number, author: string, sheetLen: nu
     ZipContainer.addFile('docProps/core.xml', ExcelXlsxFactory.createCore(author));
     ZipContainer.addFile('[Content_Types].xml', ExcelXlsxFactory.createContentTypes(sheetLen));
     ZipContainer.addFile('_rels/.rels', ExcelXlsxFactory.createRels());
-}
+};
 
-const createExcelFileForExcel = (data: string[], options: {
-    columns?: string[],
-    rowCount?: number,
-    fontSize?: number
-    author?: string,
-} = {}): boolean  => {
+const createExcelFileForExcel = (
+    data: string[],
+    options: {
+        columns?: string[];
+        rowCount?: number;
+        fontSize?: number;
+        author?: string;
+    } = {}
+): boolean => {
     if (!data || data.length === 0) {
-        console.warn("AG Grid: Invalid params supplied to createExcelFileForExcel() - `ExcelExportParams.data` is empty.");
+        console.warn(
+            'AG Grid: Invalid params supplied to createExcelFileForExcel() - `ExcelExportParams.data` is empty.'
+        );
         ExcelXlsxFactory.resetFactory();
         return false;
     }
 
-    const {
-        fontSize = 11,
-        author = 'AG Grid',
-    } = options;
+    const { fontSize = 11, author = 'AG Grid' } = options;
 
     createExcelXMLCoreFolderStructure();
     createExcelXmlTables();
@@ -177,16 +171,20 @@ const createExcelFileForExcel = (data: string[], options: {
     ExcelXlsxFactory.resetFactory();
 
     return true;
-}
+};
 
 const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> => {
     const { data, fontSize, author } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
-    if (!createExcelFileForExcel(data, {
-        author,
-        fontSize,
-    })) { return Promise.resolve(undefined); }
+    if (
+        !createExcelFileForExcel(data, {
+            author,
+            fontSize,
+        })
+    ) {
+        return Promise.resolve(undefined);
+    }
 
     return ZipContainer.getZipFile(mimeType);
 };
@@ -195,10 +193,14 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
     const { data, fontSize, author } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
-    if (!createExcelFileForExcel(data, {
-        author,
-        fontSize,
-    })) { return; }
+    if (
+        !createExcelFileForExcel(data, {
+            author,
+            fontSize,
+        })
+    ) {
+        return;
+    }
 
     return ZipContainer.getUncompressedZipFile(mimeType);
 };
@@ -206,11 +208,9 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
 export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams) => {
     const { fileName = 'export.xlsx' } = params;
 
-    getMultipleSheetsAsExcelCompressed(params).then(contents => {
+    getMultipleSheetsAsExcelCompressed(params).then((contents) => {
         if (contents) {
-            const downloadFileName = typeof fileName === 'function'
-                ? fileName()
-                : fileName;
+            const downloadFileName = typeof fileName === 'function' ? fileName() : fileName;
 
             Downloader.download(downloadFileName, contents);
         }
@@ -218,9 +218,13 @@ export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetPara
 };
 
 @Bean('excelCreator')
-export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSession, ExcelExportParams> implements IExcelCreator {
-
+export class ExcelCreator
+    extends BaseCreator<ExcelRow[], ExcelSerializingSession, ExcelExportParams>
+    implements IExcelCreator
+{
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('stylingService') private stylingService: StylingService;
 
@@ -231,7 +235,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
     public postConstruct(): void {
         this.setBeans({
             gridSerializer: this.gridSerializer,
-            gos: this.gos
+            gos: this.gos,
         });
     }
 
@@ -253,15 +257,14 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             data: [data],
             fontSize: mergedParams.fontSize,
             author: mergedParams.author,
-            mimeType: mergedParams.mimeType
+            mimeType: mergedParams.mimeType,
         };
 
-        this.packageCompressedFile(exportParams).then(packageFile => {
+        this.packageCompressedFile(exportParams).then((packageFile) => {
             if (packageFile) {
                 const { fileName } = mergedParams;
-                const providedFileName = typeof fileName === 'function'
-                    ? fileName(this.gos.getGridCommonParams())
-                    : fileName;
+                const providedFileName =
+                    typeof fileName === 'function' ? fileName(this.gos.getGridCommonParams()) : fileName;
 
                 Downloader.download(this.getFileName(providedFileName), packageFile);
             }
@@ -280,7 +283,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             data: [data],
             fontSize: mergedParams.fontSize,
             author: mergedParams.author,
-            mimeType: mergedParams.mimeType
+            mimeType: mergedParams.mimeType,
         };
 
         return this.packageFile(exportParams);
@@ -312,14 +315,13 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
     }
 
     public createSerializingSession(params: ExcelExportParams): ExcelSerializingSession {
-        const { columnModel, valueService, gos } = this;
+        const { columnModel, columnNameService, funcColsService, valueService, gos } = this;
 
         let sheetName: string;
         if (params.sheetName != null) {
-            const {sheetName: sheetNameParam } = params;
-            const sheetNameValue = typeof sheetNameParam === 'function'
-                ? sheetNameParam(this.gos.getGridCommonParams())
-                : sheetNameParam;
+            const { sheetName: sheetNameParam } = params;
+            const sheetNameValue =
+                typeof sheetNameParam === 'function' ? sheetNameParam(this.gos.getGridCommonParams()) : sheetNameParam;
 
             sheetName = String(sheetNameValue).substring(0, 31);
         } else {
@@ -330,19 +332,21 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             ...params,
             sheetName,
             columnModel,
+            columnNameService,
+            funcColsService,
             valueService,
             gos,
             suppressRowOutline: params.suppressRowOutline || params.skipRowGroups,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
             baseExcelStyles: this.gos.get('excelStyles') || [],
-            styleLinker: this.styleLinker.bind(this)
+            styleLinker: this.styleLinker.bind(this),
         };
 
         return new ExcelSerializingSession(config);
     }
 
     private styleLinker(params: StyleLinkerInterface): string[] {
-        const  { rowType, rowIndex, value, column, columnGroup, node } = params;
+        const { rowType, rowIndex, value, column, columnGroup, node } = params;
         const isHeader = rowType === RowType.HEADER;
         const isGroupHeader = rowType === RowType.HEADER_GROUPING;
         const col = (isHeader ? column : columnGroup) as Column | ColumnGroup;
@@ -353,14 +357,16 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             if (isGroupHeader) {
                 headerClasses.push('headerGroup');
             }
-            
+
             if (col) {
-                headerClasses = headerClasses.concat(CssClassApplier.getHeaderClassesFromColDef(
-                    col.getDefinition(),
-                    this.gos,
-                    column || null,
-                    columnGroup || null
-                ));
+                headerClasses = headerClasses.concat(
+                    CssClassApplier.getHeaderClassesFromColDef(
+                        col.getDefinition(),
+                        this.gos,
+                        column || null,
+                        columnGroup || null
+                    )
+                );
             }
 
             return headerClasses;
@@ -368,9 +374,11 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
 
         const styles = this.gos.get('excelStyles');
 
-        const applicableStyles: string [] = ["cell"];
+        const applicableStyles: string[] = ['cell'];
 
-        if (!styles || !styles.length) { return applicableStyles; }
+        if (!styles || !styles.length) {
+            return applicableStyles;
+        }
 
         const styleIds: string[] = styles.map((it: ExcelStyle) => {
             return it.id;
@@ -384,7 +392,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
                 node: node!,
                 colDef: column!.getDefinition(),
                 column: column!,
-                rowIndex: rowIndex
+                rowIndex: rowIndex,
             }),
             (className: string) => {
                 if (styleIds.indexOf(className) > -1) {
@@ -394,11 +402,11 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
         );
 
         return applicableStyles.sort((left: string, right: string): number => {
-            return (styleIds.indexOf(left) < styleIds.indexOf(right)) ? -1 : 1;
+            return styleIds.indexOf(left) < styleIds.indexOf(right) ? -1 : 1;
         });
     }
 
-    public isExportSuppressed():boolean {
+    public isExportSuppressed(): boolean {
         return this.gos.get('suppressExcelExport');
     }
 

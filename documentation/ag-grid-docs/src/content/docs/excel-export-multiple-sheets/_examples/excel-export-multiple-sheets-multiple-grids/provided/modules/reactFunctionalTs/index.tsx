@@ -1,26 +1,33 @@
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {
+    ColDef,
+    GetRowIdParams,
+    GridApi,
+    GridReadyEvent,
+    ModuleRegistry,
+    RowDragEndEvent,
+} from '@ag-grid-community/core';
+import { CsvExportModule } from '@ag-grid-community/csv-export';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
 import React, { useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CsvExportModule } from '@ag-grid-community/csv-export';
-import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
-import { ColDef, GetRowIdParams, GridApi, GridReadyEvent, ModuleRegistry, RowDragEndEvent } from '@ag-grid-community/core';
 
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
-
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule, ExcelExportModule]);
 
 const SportRenderer = (props: CustomCellRendererProps) => {
     return (
-        <i className="far fa-trash-alt"
+        <i
+            className="far fa-trash-alt"
             style={{ cursor: 'pointer' }}
-            onClick={() => props.api.applyTransaction({ remove: [props.node.data] })}>
-        </i>
-    )
-}
+            onClick={() => props.api.applyTransaction({ remove: [props.node.data] })}
+        ></i>
+    );
+};
 
 const leftColumns: ColDef[] = [
     {
@@ -34,8 +41,8 @@ const leftColumns: ColDef[] = [
             return params.rowNode!.data.athlete;
         },
     },
-    { field: "athlete" },
-    { field: "sport" }
+    { field: 'athlete' },
+    { field: 'sport' },
 ];
 
 const rightColumns: ColDef[] = [
@@ -50,14 +57,14 @@ const rightColumns: ColDef[] = [
             return params.rowNode!.data.athlete;
         },
     },
-    { field: "athlete" },
-    { field: "sport" },
+    { field: 'athlete' },
+    { field: 'sport' },
     {
         suppressHeaderMenuButton: true,
         maxWidth: 50,
-        cellRenderer: SportRenderer
-    }
-]
+        cellRenderer: SportRenderer,
+    },
+];
 
 const defaultColDef: ColDef = {
     flex: 1,
@@ -75,14 +82,16 @@ const GridExample = () => {
     useEffect(() => {
         if (!rawData.length) {
             fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-                .then(resp => resp.json())
-                .then(data => {
+                .then((resp) => resp.json())
+                .then((data) => {
                     const athletes: any[] = [];
                     let i = 0;
 
                     while (athletes.length < 20 && i < data.length) {
                         var pos = i++;
-                        if (athletes.some(rec => rec.athlete === data[pos].athlete)) { continue; }
+                        if (athletes.some((rec) => rec.athlete === data[pos].athlete)) {
+                            continue;
+                        }
                         athletes.push(data[pos]);
                     }
                     setRawData(athletes);
@@ -104,7 +113,7 @@ const GridExample = () => {
 
     const reset = () => {
         loadGrids();
-    }
+    };
 
     const onExcelExport = () => {
         var spreadsheets: any[] = [];
@@ -116,22 +125,29 @@ const GridExample = () => {
 
         exportMultipleSheetsAsExcel({
             data: spreadsheets,
-            fileName: 'ag-grid.xlsx'
+            fileName: 'ag-grid.xlsx',
         });
-    }
+    };
 
-    const getRowId = (params: GetRowIdParams) => params.data.athlete
+    const getRowId = (params: GetRowIdParams) => params.data.athlete;
 
-    const onDragStop = useCallback((params: RowDragEndEvent) => {
-        var nodes = params.nodes;
+    const onDragStop = useCallback(
+        (params: RowDragEndEvent) => {
+            var nodes = params.nodes;
 
-        leftApi!.applyTransaction({
-            remove: nodes.map(function (node) { return node.data; })
-        });
-    }, [leftApi]);
+            leftApi!.applyTransaction({
+                remove: nodes.map(function (node) {
+                    return node.data;
+                }),
+            });
+        },
+        [leftApi]
+    );
 
     useEffect(() => {
-        if (!leftApi || !rightApi) { return; }
+        if (!leftApi || !rightApi) {
+            return;
+        }
         const dropZoneParams = rightApi.getRowDropZoneParams({ onDragStop });
 
         leftApi.removeRowDropZone(dropZoneParams);
@@ -167,28 +183,33 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}
                     rowDragManaged={true}
-                    rowSelection={id === 0 ? "multiple" : undefined}
+                    rowSelection={id === 0 ? 'multiple' : undefined}
                     rowDragMultiRow={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
-
                     rowData={id === 0 ? leftRowData : rightRowData}
                     columnDefs={id === 0 ? leftColumns : rightColumns}
                     onGridReady={(params) => onGridReady(params, id)}
                 />
             </div>
         </div>
-    )
+    );
 
     return (
         <div className="top-container">
             {getTopToolBar()}
-            <div className={'grid-wrapper ' + /** DARK MODE START **/(document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/}>
+            <div
+                className={
+                    'grid-wrapper ' +
+                    /** DARK MODE START **/ (document.documentElement?.dataset.defaultTheme ||
+                        'ag-theme-quartz') /** DARK MODE END **/
+                }
+            >
                 {getGridWrapper(0)}
                 {getGridWrapper(1)}
             </div>
         </div>
     );
-}
+};
 
 const root = createRoot(document.getElementById('root')!);
 root.render(<GridExample />);

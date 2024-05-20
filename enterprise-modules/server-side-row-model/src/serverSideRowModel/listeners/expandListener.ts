@@ -1,23 +1,23 @@
 import {
     Autowired,
+    Bean,
     BeanStub,
-    StoreUpdatedEvent,
+    Beans,
     Events,
     PostConstruct,
     RowGroupOpenedEvent,
     RowNode,
-    Bean,
-    Beans,
+    StoreUpdatedEvent,
     WithoutGridCommon,
     _exists,
-    _missing
-} from "@ag-grid-community/core";
-import { ServerSideRowModel } from "../serverSideRowModel";
-import { StoreFactory } from "../stores/storeFactory";
+    _missing,
+} from '@ag-grid-community/core';
+
+import { ServerSideRowModel } from '../serverSideRowModel';
+import { StoreFactory } from '../stores/storeFactory';
 
 @Bean('ssrmExpandListener')
 export class ExpandListener extends BeanStub {
-
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
     @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
     @Autowired('beans') private beans: Beans;
@@ -25,7 +25,9 @@ export class ExpandListener extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
-        if (!this.gos.isRowModelType('serverSide')) { return; }
+        if (!this.gos.isRowModelType('serverSide')) {
+            return;
+        }
 
         this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
     }
@@ -49,7 +51,9 @@ export class ExpandListener extends BeanStub {
     }
 
     private createDetailNode(masterNode: RowNode): RowNode {
-        if (_exists(masterNode.detailNode)) { return masterNode.detailNode; }
+        if (_exists(masterNode.detailNode)) {
+            return masterNode.detailNode;
+        }
 
         const detailNode = new RowNode(this.beans);
 
@@ -72,5 +76,4 @@ export class ExpandListener extends BeanStub {
 
         return detailNode;
     }
-
 }

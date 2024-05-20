@@ -1,11 +1,10 @@
-import { GridOptionsService } from "./gridOptionsService";
-import { Bean } from "./context/context";
-import { Qualifier } from "./context/context";
-import { BeanStub } from "./context/beanStub";
+import { BeanStub } from './context/beanStub';
+import { Bean } from './context/context';
+import { Qualifier } from './context/context';
+import { GridOptionsService } from './gridOptionsService';
 
 @Bean('loggerFactory')
 export class LoggerFactory extends BeanStub {
-
     private logging: boolean;
 
     private setBeans(@Qualifier('gridOptionsService') gos: GridOptionsService): void {
@@ -22,7 +21,6 @@ export class LoggerFactory extends BeanStub {
 }
 
 export class Logger {
-
     private isLoggingFunc: () => boolean | undefined;
     private name: string;
 
@@ -41,5 +39,4 @@ export class Logger {
             console.log('AG Grid.' + this.name + ': ' + message);
         }
     }
-
 }

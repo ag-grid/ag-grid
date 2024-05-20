@@ -1,4 +1,4 @@
-![alt text](./github-banner.png "AG Grid")
+![alt text](./github-banner.png 'AG Grid')
 
 [![CDNJS](https://img.shields.io/cdnjs/v/ag-grid.svg)](https://cdnjs.com/libraries/ag-grid)
 [![npm](https://img.shields.io/npm/dm/ag-grid-community.svg)](https://www.npmjs.com/package/ag-grid-community)
@@ -11,38 +11,38 @@ It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_so
 
 Here's how our grid looks with multiple filters and grouping enabled:
 
-![alt text](./github-grid-demo.jpg "AG Grid demo")
+![alt text](./github-grid-demo.jpg 'AG Grid demo')
 
 ## Features
 
 In addition to the standard set of features you'd expect from any grid:
 
-* Column Interactions (resize, reorder, and pin columns)
-* Pagination
-* Sorting
-* Row Selection
+-   Column Interactions (resize, reorder, and pin columns)
+-   Pagination
+-   Sorting
+-   Row Selection
 
 Here are some of the features that make AG Grid stand out:
 
-* Grouping / Aggregation *
-* Custom Filtering
-* In-place Cell Editing
-* Records Lazy Loading *
-* Server-Side Records Operations *
-* Live Stream Updates
-* Hierarchical Data Support & Tree View *
-* Customizable Appearance
-* Customizable Cell Contents
-* Excel-like Pivoting *
-* State Persistence
-* Keyboard Navigation
-* Data Export to CSV
-* Data Export to Excel *
-* Row Reordering
-* Copy / Paste
-* Column Spanning
-* Pinned Rows
-* Full Width Rows
+-   Grouping / Aggregation \*
+-   Custom Filtering
+-   In-place Cell Editing
+-   Records Lazy Loading \*
+-   Server-Side Records Operations \*
+-   Live Stream Updates
+-   Hierarchical Data Support & Tree View \*
+-   Customizable Appearance
+-   Customizable Cell Contents
+-   Excel-like Pivoting \*
+-   State Persistence
+-   Keyboard Navigation
+-   Data Export to CSV
+-   Data Export to Excel \*
+-   Row Reordering
+-   Copy / Paste
+-   Column Spanning
+-   Pinned Rows
+-   Full Width Rows
 
 \* The features marked with an asterisk are available in the [Enterprise version](https://www.ag-grid.com/license-pricing.php?utm_source=@ag-grid-community/csv-export-readme&utm_medium=repository&utm_campaign=github) only.
 
@@ -50,9 +50,9 @@ Check out the [developer documentation](https://www.ag-grid.com/documentation/?u
 
 ## Looking for a framework specific solution?
 
-* [Get Started with Angular](https://www.ag-grid.com/angular-grid/getting-started/?utm_source=@ag-grid-community/csv-export-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with React](https://www.ag-grid.com/react-grid/getting-started/?utm_source=@ag-grid-community/csv-export-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with Vue](https://www.ag-grid.com/vue-grid/getting-started/?utm_source=@ag-grid-community/csv-export-readme&utm_medium=repository&utm_campaign=github)
+-   [Get Started with Angular](https://www.ag-grid.com/angular-grid/getting-started/?utm_source=@ag-grid-community/csv-export-readme&utm_medium=repository&utm_campaign=github)
+-   [Get Started with React](https://www.ag-grid.com/react-grid/getting-started/?utm_source=@ag-grid-community/csv-export-readme&utm_medium=repository&utm_campaign=github)
+-   [Get Started with Vue](https://www.ag-grid.com/vue-grid/getting-started/?utm_source=@ag-grid-community/csv-export-readme&utm_medium=repository&utm_campaign=github)
 
 ## Getting started
 
@@ -72,7 +72,6 @@ $ npm install --save @ag-grid-community/csv-export
 
 ```js
 import { createGrid } from '@ag-grid-community/core';
-
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 ```
@@ -81,16 +80,16 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 ```js
 const gridOptions = {
-	columnDefs: [
-		{ headerName: 'Make', field: 'make' },
-		{ headerName: 'Model', field: 'model' },
-		{ headerName: 'Price', field: 'price' }
-	],
-	rowData: [
-		{ make: 'Toyota', model: 'Celica', price: 35000 },
-		{ make: 'Ford', model: 'Mondeo', price: 32000 },
-		{ make: 'Porsche', model: 'Boxster', price: 72000 }
-	]
+    columnDefs: [
+        { headerName: 'Make', field: 'make' },
+        { headerName: 'Model', field: 'model' },
+        { headerName: 'Price', field: 'price' },
+    ],
+    rowData: [
+        { make: 'Toyota', model: 'Celica', price: 35000 },
+        { make: 'Ford', model: 'Mondeo', price: 32000 },
+        { make: 'Porsche', model: 'Boxster', price: 72000 },
+    ],
 };
 ```
 

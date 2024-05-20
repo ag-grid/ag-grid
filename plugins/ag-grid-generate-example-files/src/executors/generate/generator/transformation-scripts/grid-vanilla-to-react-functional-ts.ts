@@ -1,5 +1,6 @@
 import { basename } from 'path';
-import { ExampleConfig, ParsedBindings, ImportType } from '../types';
+
+import { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
     addBindingImports,
@@ -15,9 +16,9 @@ import {
     preferParamsApi,
 } from './parser-utils';
 import {
-    convertFunctionalTemplate,
-    convertFunctionToConstCallbackTs,
     EventAndCallbackNames,
+    convertFunctionToConstCallbackTs,
+    convertFunctionalTemplate,
     getImport,
     getValueType,
 } from './react-utils';
@@ -139,7 +140,12 @@ function getImports(
     }
 }
 
-function getTemplate(bindings: ParsedBindings, componentAttributes: string[], rowDataGeneric: string, exampleConfig: ExampleConfig): string {
+function getTemplate(
+    bindings: ParsedBindings,
+    componentAttributes: string[],
+    rowDataGeneric: string,
+    exampleConfig: ExampleConfig
+): string {
     const { inlineGridStyles } = bindings;
     const agGridTag = `
         <div ${exampleConfig.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className={${getActiveTheme(inlineGridStyles.theme, true)}}>
@@ -240,7 +246,14 @@ export function vanillaToReactFunctionalTs(
             extraCoreTypes = ['GridReadyEvent'];
         }
 
-        const imports = getImports(bindings, exampleConfig, componentFilenames, importType, extraCoreTypes, allStylesheets);
+        const imports = getImports(
+            bindings,
+            exampleConfig,
+            componentFilenames,
+            importType,
+            extraCoreTypes,
+            allStylesheets
+        );
 
         const components: { [componentName: string]: string } = extractComponentInformation(
             properties,
@@ -338,7 +351,12 @@ export function vanillaToReactFunctionalTs(
                 .replace(/gridRef\.current(!?)\.api(!?)\.setGridOption\(\'rowData\',/g, 'setRowData(')
                 .replace(/gridApi/g, 'gridRef.current!.api');
 
-        const template = getTemplate(bindings, componentProps.map(thisReferenceConverter), rowDataGeneric, exampleConfig);
+        const template = getTemplate(
+            bindings,
+            componentProps.map(thisReferenceConverter),
+            rowDataGeneric,
+            exampleConfig
+        );
         const eventHandlers = bindings.eventHandlers
             .map((event) => convertFunctionToConstCallbackTs(event.handler, callbackDependencies))
             .map(thisReferenceConverter)
