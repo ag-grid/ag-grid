@@ -72,7 +72,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private oldGroupingDetails: GroupingDetails;
     private oldGroupDisplayColIds: string;
-    private treeNodeCache: Record<string, RowNode>[] = [];
+    private treeNodeCache = new TreeDataNodeCache();
 
     public execute(params: StageExecuteParams): void {
 
@@ -530,11 +530,11 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             return info;
         });
 
-        this.treeNodeCache = [];
+        this.treeNodeCache.clear();
+        const levelCache = new TreeDataNodeCache<[GroupInfo[], RowNode, null | RowNode]>()
 
         for (let level = 0; level < width; level++) {
-            this.treeNodeCache.push({});
-            const levelCache: Record<string, [parent: RowNode, node: null | RowNode]> = {};
+            levelCache.clear();
 
             for (const [rowIdx, path] of paths.entries()) {
                 const isDefined = path[level] !== undefined;
@@ -546,26 +546,27 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
                 const info = path[level];
 
-                const currentValue = levelCache[info.key];
-                if (currentValue !== undefined && currentValue[1] !== null) {
+                const currentValue = levelCache.get(path, level, info.key);
+                if (currentValue != null && currentValue[1] !== null) {
                     continue;
                 }
 
                 const parentInfo = path[level - 1];
                 const parentKey = parentInfo != null ? this.getChildrenMappedKey(parentInfo.key, parentInfo.rowGroupColumn) : null;
-                const parent = parentKey != null ? this.treeNodeCache[level][parentKey] ?? details.rootNode : details.rootNode;
-                levelCache[info.key] = isLeaf ? [parent, this.ensureRowNodeFields(rowNodes[rowIdx], info.key)] : [parent, null];
+                const parent = parentKey != null ? this.treeNodeCache.get(path, level, parentKey) ?? details.rootNode : details.rootNode;
+                levelCache.set(path, level, info.key, isLeaf ? [path, parent, this.ensureRowNodeFields(rowNodes[rowIdx], info.key)] : [path, parent, null]);
             }
 
-            for (const [key, [parent, node]] of Object.entries(levelCache)) {
+            for (const [path, parent, node] of levelCache.values()) {
                 let group: RowNode;
                 if (node === null) {
-                    group = this.createGroup({key, rowGroupColumn: null ,field: null}, parent, level, details);
+                    const key = path[level].key;
+                    group = this.createGroup({key, rowGroupColumn: null, field: null}, parent, level, details);
                 } else {
                     group = node;
                 }
                 
-                this.treeNodeCache[level][key] = group;
+                this.treeNodeCache.set(path, level, group.key!, group);
             }
         }
     }
@@ -574,7 +575,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         if (details.usingTreeData) {
             this.buildNodeCacheFromRows(newRowNodes, details);
         } else {
-            this.treeNodeCache = [];
+            this.treeNodeCache.clear();
         }
 
         newRowNodes.forEach(rowNode => {
@@ -623,7 +624,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 return;
             }
 
-            nextNode = this.getOrCreateNextNode(nextNode, groupInfo, level, details);
+            nextNode = this.getOrCreateNextNode(nextNode, path, groupInfo, level, details);
             // node gets added to all group nodes.
             // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
 
@@ -638,14 +639,14 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         return nextNode;
     }
 
-    private getOrCreateNextNode(parentGroup: RowNode, groupInfo: GroupInfo, level: number, details: GroupingDetails): RowNode {
+    private getOrCreateNextNode(parentGroup: RowNode, path: GroupInfo[], groupInfo: GroupInfo, level: number, details: GroupingDetails): RowNode {
 
         const key = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
         let nextNode = parentGroup?.childrenMapped?.[key];
 
         if (!nextNode) {
-            if (details.usingTreeData && key in this.treeNodeCache[level]) {
-                nextNode = this.treeNodeCache[level][key];
+            if (details.usingTreeData && this.treeNodeCache.has(path, level, key)) {
+                nextNode = this.treeNodeCache.get(path, level, key);
                 nextNode.parent = parentGroup;
             } else {
                 nextNode = this.createGroup(groupInfo, parentGroup, level, details);
@@ -821,5 +822,43 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             }
         });
         return res;
+    }
+}
+
+class TreeDataNodeCache<T = RowNode> {
+    private cache: Record<string, T> = {};
+
+    private serialiseKey(path: GroupInfo[], level: number, key?: string): string {
+        let str = "";
+
+        for (let i = 0; i <= level; i++) {
+            str += path[i].key + "::";
+        }
+
+        if (key !== undefined) {
+            str += `::${key}`;
+        }
+
+        return str;
+    }
+
+    public set(path: GroupInfo[], level: number, key: string, value: T) {
+        this.cache[this.serialiseKey(path, level - 1, key)] = value;
+    }
+
+    public has(path: GroupInfo[], level: number, key: string): boolean {
+        return this.serialiseKey(path, level - 1, key) in this.cache;
+    }
+
+    public get(path: GroupInfo[], level: number, key: string): T | null {
+        return this.cache[this.serialiseKey(path, level - 1, key)];
+    }
+
+    public clear(): void {
+        this.cache = {};
+    }
+
+    public values(): T[] {
+        return Object.values(this.cache)
     }
 }
