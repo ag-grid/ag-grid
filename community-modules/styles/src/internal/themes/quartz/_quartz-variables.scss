@@ -72,6 +72,7 @@
     ); // if changed, update environment.ts
     --ag-column-select-indent-size: var(--ag-icon-size);
     --ag-set-filter-indent-size: var(--ag-icon-size);
+    --ag-filter-tool-panel-group-indent: var(--ag-grid-size);
     --ag-advanced-filter-builder-indent-size: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
     --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 2);
     --ag-cell-widget-spacing: calc(var(--ag-grid-size) * 1.5);
