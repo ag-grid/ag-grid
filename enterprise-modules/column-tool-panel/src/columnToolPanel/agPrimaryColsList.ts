@@ -17,7 +17,8 @@ import {
     _setAriaLabel,
     _exists,
     _includes,
-    AgComponentSelector
+    AgComponentSelector,
+    ColumnNameService
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanelItemDragFeature } from './primaryColsListPanelItemDragFeature';
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
@@ -53,6 +54,7 @@ export class AgPrimaryColsList extends Component {
     public static TEMPLATE = /* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`;
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('toolPanelColDefService') private colDefService: ToolPanelColDefService;
     @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
 
@@ -242,8 +244,8 @@ export class AgPrimaryColsList extends Component {
 
     private buildTreeFromProvidedColumnDefs(): void {
         // add column / group comps to tool panel
-        this.buildListModel(this.columnModel.getPrimaryColumnTree());
-        this.groupsExist = this.columnModel.isPrimaryColumnGroupsPresent();
+        this.buildListModel(this.columnModel.getColDefColTree());
+        this.groupsExist = this.columnModel.isProvidedColGroupsPresent();
     }
 
     private buildListModel(columnTree: IProvidedColumn[]): void {
@@ -274,7 +276,7 @@ export class AgPrimaryColsList extends Component {
                 return;
             }
 
-            const displayName = this.columnModel.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'columnToolPanel');
+            const displayName = this.columnNameService.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'columnToolPanel');
             const item: ColumnModelItem = new ColumnModelItem(displayName, columnGroup, dept, true, this.expandGroupsByDefault);
 
             parentList.push(item);
@@ -288,7 +290,7 @@ export class AgPrimaryColsList extends Component {
 
             if (skipThisColumn) { return; }
 
-            const displayName = this.columnModel.getDisplayNameForColumn(column, 'columnToolPanel');
+            const displayName = this.columnNameService.getDisplayNameForColumn(column, 'columnToolPanel');
 
             parentList.push(new ColumnModelItem(displayName, column, dept));
         };

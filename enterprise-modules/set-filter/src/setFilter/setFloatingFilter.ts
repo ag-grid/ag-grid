@@ -7,6 +7,7 @@ import {
     AgInputTextField,
     ColumnModel,
     SetFilterModel,
+    ColumnNameService,
 } from '@ag-grid-community/core';
 
 import { SetFilter } from './setFilter';
@@ -16,6 +17,7 @@ import { SetValueModel } from './setValueModel';
 export class SetFloatingFilterComp<V = string> extends Component implements IFloatingFilter {
     @RefSelector('eFloatingFilterText') private readonly eFloatingFilterText: AgInputTextField;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
 
     private params: IFloatingFilterParams;
     private availableValuesListenerAdded = false;
@@ -46,7 +48,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     }
 
     private setParams(params: IFloatingFilterParams): void {
-        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
+        const displayName = this.columnNameService.getDisplayNameForColumn(params.column, 'header', true);
         const translate = this.localeService.getLocaleTextFunc();
 
         this.eFloatingFilterText.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);

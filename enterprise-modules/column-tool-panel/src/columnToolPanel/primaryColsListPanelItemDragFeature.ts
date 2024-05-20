@@ -10,14 +10,17 @@ import {
     PostConstruct,
     VirtualList,
     VirtualListDragFeature,
-    VirtualListDragItem
+    VirtualListDragItem,
+    ColumnMoveService
 } from "@ag-grid-community/core";
 
 import { AgPrimaryColsList } from "./agPrimaryColsList";
 import { ToolPanelColumnComp } from "./toolPanelColumnComp";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {
+
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
 
     constructor(
         private readonly comp: AgPrimaryColsList,
@@ -78,12 +81,12 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         const columnsToMove: Column[] = this.getCurrentColumns(currentDragValue);
 
         if (targetIndex != null) {
-            this.columnModel.moveColumns(columnsToMove, targetIndex, 'toolPanelUi');
+            this.columnMoveService.moveColumns(columnsToMove, targetIndex, 'toolPanelUi');
         }
     }
 
     private getMoveDiff(currentDragValue: Column | ProvidedColumnGroup | null, end: number): number {
-        const allColumns = this.columnModel.getAllGridColumns();
+        const allColumns = this.columnModel.getCols();
         const currentColumns = this.getCurrentColumns(currentDragValue);
         const currentColumn = currentColumns[0];
         const span = currentColumns.length;
@@ -128,7 +131,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
             return null;
         }
 
-        const targetColumnIndex = this.columnModel.getAllGridColumns().indexOf(targetColumn);
+        const targetColumnIndex = this.columnModel.getCols().indexOf(targetColumn);
         const adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
         const diff = this.getMoveDiff(currentDragValue, adjustedTarget);
 

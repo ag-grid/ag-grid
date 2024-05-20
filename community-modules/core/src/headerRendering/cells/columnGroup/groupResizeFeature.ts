@@ -1,5 +1,4 @@
 import { ColumnEventType } from "../../../events";
-import { ColumnModel, ColumnResizeSet } from "../../../columns/columnModel";
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
 import { Column, ColumnPinnedType } from "../../../entities/column";
@@ -8,6 +7,9 @@ import { AutoWidthCalculator } from "../../../rendering/autoWidthCalculator";
 import { HorizontalResizeService } from "../../common/horizontalResizeService";
 import { IHeaderGroupCellComp } from "./headerGroupCellCtrl";
 import { IHeaderResizeFeature } from "../abstractCell/abstractHeaderCellCtrl";
+import { ColumnAutosizeService } from "community-modules/core/src/columns/columnAutosizeService";
+import { ColumnSizeService, ColumnResizeSet } from "../../../columns/columnSizeService";
+import { VisibleColsService } from "../../../columns/visibleColsService";
 
 interface ColumnSizeAndRatios {
     columnsToResize: Column[];
@@ -34,7 +36,9 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
 
     @Autowired('horizontalResizeService') private readonly horizontalResizeService: HorizontalResizeService;
     @Autowired('autoWidthCalculator') private readonly autoWidthCalculator: AutoWidthCalculator;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
+    @Autowired('columnSizeService') private readonly columnSizeService: ColumnSizeService;
+    @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
 
     constructor(comp: IHeaderGroupCellComp, eResize: HTMLElement,  pinned: ColumnPinnedType, columnGroup: ColumnGroup) {
         super();
@@ -78,8 +82,8 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
                 });
 
                 if (keys.length > 0) {
-                    this.columnModel.autoSizeColumns({
-                        columns: keys,
+                    this.columnAutosizeService.autoSizeCols({
+                        colKeys: keys,
                         skipHeader: skipHeaderOnAutoSize,
                         stopAtGroup: this.columnGroup,
                         source: 'uiColumnResized'
@@ -118,7 +122,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         let groupAfter: ColumnGroup | null = null;
 
         if (shiftKey) {
-            groupAfter = this.columnModel.getDisplayedGroupAtDirection(this.columnGroup, 'After');
+            groupAfter = this.visibleColsService.getGroupAtDirection(this.columnGroup, 'After');
         }
 
         if (groupAfter) {
@@ -205,7 +209,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             });
         }
 
-        this.columnModel.resizeColumnSets({
+        this.columnSizeService.resizeColumnSets({
             resizeSets,
             finished,
             source: source

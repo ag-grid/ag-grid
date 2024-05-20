@@ -7,7 +7,8 @@ import {
     ColumnModel,
     ColumnEventType,
     Events,
-    DragSourceType
+    DragSourceType,
+    FuncColsService
 } from "@ag-grid-community/core";
 import { DropZoneColumnComp } from "./dropZoneColumnComp";
 import { PillDropZonePanel, PillDropZonePanelParams } from "@ag-grid-enterprise/core";
@@ -15,7 +16,9 @@ import { PillDropZonePanel, PillDropZonePanelParams } from "@ag-grid-enterprise/
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, Column> {
+
     @Autowired('columnModel') protected readonly columnModel: ColumnModel;
+    @Autowired('funcColsService') protected readonly funcColsService: FuncColsService;
 
     constructor(horizontal: boolean, private dropZonePurpose: TDropZone) {
         super(horizontal);
@@ -40,7 +43,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
 
     protected minimumAllowedNewInsertIndex(): number {
         const numberOfLockedCols = this.gos.get('groupLockGroupColumns');
-        const numberOfGroupCols = this.columnModel.getRowGroupColumns().length;
+        const numberOfGroupCols = this.funcColsService.getRowGroupColumns().length;
         if (numberOfLockedCols === -1) {
             return numberOfGroupCols;
         }
@@ -74,7 +77,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     public setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType) {
         if (columns) {
             const allowedCols = columns.filter(c => !c.getColDef().lockVisible);
-            this.columnModel.setColumnsVisible(allowedCols, visible, source);
+            this.columnModel.setColsVisible(allowedCols, visible, source);
         }
     }
 

@@ -2,8 +2,10 @@ import {
     Autowired,
     Bean,
     ColumnModel,
+    ColumnNameService,
     CsvCustomContent,
     CsvExportParams,
+    FuncColsService,
     GridOptionsService,
     ICsvCreator,
     PostConstruct,
@@ -18,6 +20,8 @@ import { CsvSerializingSession } from "./sessions/csvSerializingSession";
 export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSession, CsvExportParams> implements ICsvCreator {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
     @Autowired('gridOptionsService') gos: GridOptionsService;
@@ -70,7 +74,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     }
 
     public createSerializingSession(params?: CsvExportParams): CsvSerializingSession {
-        const { columnModel, valueService, gos } = this;
+        const { columnModel, columnNameService, funcColsService, valueService, gos } = this;
         const {
             processCellCallback,
             processHeaderCallback,
@@ -81,7 +85,9 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         } = params!;
 
         return new CsvSerializingSession({
-            columnModel: columnModel,
+            columnModel,
+            columnNameService,
+            funcColsService,
             valueService,
             gos,
             processCellCallback: processCellCallback || undefined,

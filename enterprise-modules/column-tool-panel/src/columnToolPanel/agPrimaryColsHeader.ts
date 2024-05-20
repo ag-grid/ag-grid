@@ -124,7 +124,7 @@ export class AgPrimaryColsHeader extends Component {
         const showFilter = !this.params.suppressColumnFilter;
         const showSelect = !this.params.suppressColumnSelectAll;
         const showExpand = !this.params.suppressColumnExpandAll;
-        const groupsPresent = this.columnModel.isPrimaryColumnGroupsPresent();
+        const groupsPresent = this.columnModel.isProvidedColGroupsPresent();
         const translate = this.localeService.getLocaleTextFunc();
 
         this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));

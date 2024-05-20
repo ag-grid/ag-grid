@@ -1,11 +1,10 @@
 import { AlignedGridsService } from "./alignedGridsService";
 import { CellNavigationService } from "./cellNavigationService";
-import { AutoGroupColService } from "./columns/autoGroupColService";
 import { ColumnDefFactory } from "./columns/columnDefFactory";
 import { ColumnFactory } from "./columns/columnFactory";
 import { ColumnModel } from "./columns/columnModel";
 import { DataTypeService } from "./columns/dataTypeService";
-import { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
+import { VisibleColsService } from "./columns/visibleColsService";
 import { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
 import { AgComponentUtils } from "./components/framework/agComponentUtils";
 import { ComponentMetadataProvider } from "./components/framework/componentMetadataProvider";
@@ -79,6 +78,19 @@ import { ValueCache } from "./valueService/valueCache";
 import { ValueService } from "./valueService/valueService";
 import { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 import { PopupService } from "./widgets/popupService";
+import { ColumnApplyStateService } from "./columns/columnApplyStateService";
+import { ColumnEventDispatcher } from "./columns/columnEventDispatcher";
+import { ColumnMoveService } from "./columns/columnMoveService";
+import { ColumnAutosizeService } from "./columns/columnAutosizeService";
+import { ColumnGetStateService } from "./columns/columnGetStateService";
+import { ColumnGroupStateService } from "./columns/columnGroupStateService";
+import { ColumnSizeService } from "./columns/columnSizeService";
+import { FuncColsService } from "./columns/funcColsService";
+import { ColumnNameService } from "./columns/columnNameService";
+import { ColumnViewportService } from "./columns/columnViewportService";
+import { PivotResultColsService } from "./columns/pivotResultColsService";
+import { ShowRowGroupColsService } from "./columns/showRowGroupColsService";
+import { AutoColService } from "./columns/autoColService";
 
 export interface GridParams {
     // INTERNAL - used by Web Components
@@ -361,18 +373,22 @@ export class GridCoreCreator {
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             RowContainerHeightService, HorizontalResizeService, LocaleService, ValidationService,
-            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsService,
+            PinnedRowModel, DragService, VisibleColsService, EventService, GridOptionsService,
             PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory,
             AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,
             AutoWidthCalculator, StandardMenuFactory, DragAndDropService,
             FocusService, MouseEventService, Environment, CellNavigationService, StylingService,
             ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
-            SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
+            SelectableService, AutoColService, ChangeDetectionService, AnimationFrameService,
             UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory, RowCssClassCalculator, 
             RowNodeBlockLoader, RowNodeSorter, CtrlsService, PinnedWidthService, RowNodeEventThrottle,
             CtrlsFactory, DataTypeService, QuickFilterService, SyncService, OverlayService, StateService,
-            ExpansionService, ApiEventService, AriaAnnouncementService, MenuService
+            ExpansionService, ApiEventService, AriaAnnouncementService, MenuService,
+            ColumnApplyStateService, ColumnEventDispatcher, ColumnMoveService, ColumnAutosizeService,
+            ColumnGetStateService, ColumnGroupStateService, ColumnSizeService,
+            FuncColsService, ColumnNameService, ColumnViewportService, PivotResultColsService,
+            ShowRowGroupColsService
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);

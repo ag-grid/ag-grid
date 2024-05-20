@@ -29,7 +29,8 @@ import {
     _setDisplayed,
     _toStringOrNull,
     _warnOnce,
-    ComponentClass
+    ComponentClass,
+    FuncColsService,
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemExpandedChangedEvent, SetFilterListItemParams, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
@@ -45,6 +46,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     @RefSelector('eFilterNoMatches') private readonly eNoMatches: HTMLElement;
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('dataTypeService') private readonly dataTypeService: DataTypeService;
 
@@ -266,7 +268,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         const isGroupCol = newParams.column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
         this.treeDataTreeList = this.gos.get('treeData') && !!newParams.treeList && isGroupCol;
         this.getDataPath = this.gos.get('getDataPath');
-        this.groupingTreeList = !!this.columnModel.getRowGroupColumns().length && !!newParams.treeList && isGroupCol;
+        this.groupingTreeList = !!this.funcColsService.getRowGroupColumns().length && !!newParams.treeList && isGroupCol;
         this.createKey = this.generateCreateKey(keyCreator, this.convertValuesToStrings, this.treeDataTreeList || this.groupingTreeList);
     }
 
@@ -289,6 +291,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             usingComplexObjects: !!keyCreator,
             gos: this.gos,
             columnModel: this.columnModel,
+            funcColsService: this.funcColsService,
             valueService: this.valueService,
             treeDataTreeList: this.treeDataTreeList,
             groupingTreeList: this.groupingTreeList,
@@ -838,7 +841,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private doesFilterPassForGrouping(node: IRowNode): boolean {
-        const dataPath = this.columnModel.getRowGroupColumns().map(groupCol => this.valueService.getKeyForNode(groupCol, node));
+        const dataPath = this.funcColsService.getRowGroupColumns().map(groupCol => this.valueService.getKeyForNode(groupCol, node));
         dataPath.push(this.getValueFromNode(node));
         return this.isInAppliedModel(this.createKey(this.checkMakeNullDataPath(dataPath) as any) as any);
         

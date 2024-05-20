@@ -10,10 +10,14 @@ import { CtrlsService } from "../../ctrlsService";
 import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
 import { ColumnMoveHelper } from "../columnMoveHelper";
 import { HorizontalDirection } from "../../constants/direction";
+import { ColumnMoveService } from "../../columns/columnMoveService";
+import { VisibleColsService } from "../../columns/visibleColsService";
 
 export class MoveColumnFeature implements DropListener {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
+    @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridOptionsService') private gos: GridOptionsService;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
@@ -83,14 +87,14 @@ export class MoveColumnFeature implements DropListener {
     public setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType) {
         if (columns) {
             const allowedCols = columns.filter(c => !c.getColDef().lockVisible);
-            this.columnModel.setColumnsVisible(allowedCols, visible, source);
+            this.columnModel.setColsVisible(allowedCols, visible, source);
         }
     }
 
     public setColumnsPinned(columns: Column[] | null | undefined, pinned: ColumnPinnedType, source: ColumnEventType) {
         if (columns) {
             const allowedCols = columns.filter(c => !c.getColDef().lockPinned);
-            this.columnModel.setColumnsPinned(allowedCols, pinned, source);
+            this.columnModel.setColsPinned(allowedCols, pinned, source);
         }
     }
 
@@ -128,7 +132,7 @@ export class MoveColumnFeature implements DropListener {
         if (finished) {
             if (this.lastMovedInfo) {
                 const { columns, toIndex } = this.lastMovedInfo;
-                ColumnMoveHelper.moveColumns(columns, toIndex, 'uiColumnMoved', true, this.columnModel);
+                ColumnMoveHelper.moveColumns(columns, toIndex, 'uiColumnMoved', true, this.columnMoveService);
             }
             return;
         }
@@ -177,7 +181,9 @@ export class MoveColumnFeature implements DropListener {
             fromEnter,
             fakeEvent,
             gos: this.gos,
-            columnModel: this.columnModel
+            columnModel: this.columnModel,
+            columnMoveService: this.columnMoveService,
+            presentedColsService: this.visibleColsService
         });
 
         if (lastMovedInfo) {

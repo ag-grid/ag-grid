@@ -1,12 +1,12 @@
 import { Autowired, PostConstruct } from "../context/context";
 import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
 import { _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from "../utils/dom";
-import { ColumnModel } from "../columns/columnModel";
 import { Events } from "../eventKeys";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { CenterWidthFeature } from "./centerWidthFeature";
 import { AgComponentSelector } from "../widgets/component";
+import { VisibleColsService } from "../columns/visibleColsService";
 
 export class FakeHScrollComp extends AbstractFakeScrollComp {
     static readonly selector: AgComponentSelector = 'ag-fake-horizontal-scroll';
@@ -23,7 +23,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     @RefSelector('eLeftSpacer') private eLeftSpacer: HTMLElement;
     @RefSelector('eRightSpacer') private eRightSpacer: HTMLElement;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
 
     private enableRtl: boolean;
@@ -81,7 +81,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
         // we pad the right based on a) if cols are pinned to the right and
         // b) if v scroll is showing on the right (normal position of scroll)
-        let rightSpacing = this.columnModel.getDisplayedColumnsRightWidth();
+        let rightSpacing = this.visibleColsService.getDisplayedColumnsRightWidth();
         const scrollOnRight = !this.enableRtl && vScrollShowing;
         const scrollbarWidth = this.gos.getScrollbarWidth();
 
@@ -93,7 +93,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
         // we pad the left based on a) if cols are pinned to the left and
         // b) if v scroll is showing on the left (happens in LTR layout only)
-        let leftSpacing = this.columnModel.getDisplayedColumnsLeftWidth();
+        let leftSpacing = this.visibleColsService.getColsLeftWidth();
         const scrollOnLeft = this.enableRtl && vScrollShowing;
 
         if (scrollOnLeft) {

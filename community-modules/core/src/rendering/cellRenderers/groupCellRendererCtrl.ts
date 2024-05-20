@@ -1,4 +1,6 @@
 import { ColumnModel } from "../../columns/columnModel";
+import { VisibleColsService } from "../../columns/visibleColsService";
+import { FuncColsService } from "../../columns/funcColsService";
 import { UserCompDetails, UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { KeyCode } from "../../constants/keyCode";
 import { BeanStub } from "../../context/beanStub";
@@ -95,8 +97,10 @@ export class GroupCellRendererCtrl extends BeanStub {
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired("ctrlsService") private ctrlsService: CtrlsService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
 
     private params: GroupCellRendererParams;
 
@@ -157,7 +161,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.findDisplayedGroupNode();
 
         if (!topLevelFooter) {
-            const showingFooterTotal = params.node.footer && params.node.rowGroupIndex === this.columnModel.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup);
+            const showingFooterTotal = params.node.footer && params.node.rowGroupIndex === this.funcColsService.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup);
             // if we're always showing a group value
             const isAlwaysShowing = this.gos.get('groupDisplayType') != 'multipleColumns' || this.gos.get('treeData');
             // if the cell is populated with a parent value due to `showOpenedGroup`
@@ -167,7 +171,7 @@ export class GroupCellRendererCtrl extends BeanStub {
                         !params.node.group ||
                         (
                             params.node.rowGroupIndex != null &&
-                            params.node.rowGroupIndex > this.columnModel.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup)
+                            params.node.rowGroupIndex > this.funcColsService.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup)
                         )
                     )
                 ))
@@ -243,7 +247,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         if (colDef!.showRowGroup === true) { return true; }
 
-        const rowGroupCols = this.columnModel.getRowGroupColumns();
+        const rowGroupCols = this.funcColsService.getRowGroupColumns();
         // this is a sanity check, rowGroupCols should always be present
         if (!rowGroupCols || rowGroupCols.length === 0) { return true; }
 
@@ -263,13 +267,13 @@ export class GroupCellRendererCtrl extends BeanStub {
         const bodyCell = !pinnedLeftCell && !pinnedRightCell;
 
         if (this.gos.get('enableRtl')) {
-            if (this.columnModel.isPinningLeft()) {
+            if (this.visibleColsService.isPinningLeft()) {
                 return !pinnedRightCell;
             }
             return !bodyCell;
         }
 
-        if (this.columnModel.isPinningLeft()) {
+        if (this.visibleColsService.isPinningLeft()) {
             return !pinnedLeftCell;
         }
 

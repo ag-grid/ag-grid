@@ -5,11 +5,11 @@ import {
     Column,
     ColumnChooserParams,
     ColumnMenuVisibleChangedEvent,
-    ColumnModel,
     Events,
     FocusService,
     IColumnChooserFactory,
     ShowColumnChooserParams,
+    VisibleColsService,
     WithoutGridCommon
 } from "@ag-grid-community/core";
 import { AgPrimaryCols } from "@ag-grid-enterprise/column-tool-panel";
@@ -20,7 +20,7 @@ import { AgDialog } from "@ag-grid-enterprise/core";
 export class ColumnChooserFactory extends BeanStub implements IColumnChooserFactory {
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('menuUtils') private readonly menuUtils: MenuUtils;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
 
     private activeColumnChooser: AgPrimaryCols | undefined;
     private activeColumnChooserDialog: AgDialog | undefined;
@@ -63,7 +63,7 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
 
         const columnSelectPanel = this.createColumnSelectPanel(this, column, true, chooserParams);
         const translate = this.localeService.getLocaleTextFunc();
-        const columnIndex = this.columnModel.getAllDisplayedColumns().indexOf(column!);
+        const columnIndex = this.visibleColsService.getAllCols().indexOf(column!);
         const headerPosition = column ? this.focusService.getFocusedHeader() : null;
 
         this.activeColumnChooserDialog = this.createBean(new AgDialog({

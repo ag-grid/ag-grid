@@ -1,4 +1,6 @@
 import { ColumnModel } from "../columns/columnModel";
+import { ColumnMoveService } from "../columns/columnMoveService";
+import { VisibleColsService } from "../columns/visibleColsService";
 import { HorizontalDirection } from "../constants/direction";
 import { CtrlsService } from "../ctrlsService";
 import { Column, ColumnPinnedType } from "../entities/column";
@@ -19,9 +21,11 @@ export class ColumnMoveHelper {
         fakeEvent: boolean,
         pinned: ColumnPinnedType,
         gos: GridOptionsService,
-        columnModel: ColumnModel
+        columnModel: ColumnModel,
+        columnMoveService: ColumnMoveService,
+        presentedColsService: VisibleColsService
     }): { columns: Column[], toIndex: number } | null | undefined {
-        const { isFromHeader, hDirection, xPosition, fromEnter, fakeEvent, pinned, gos, columnModel } = params; 
+        const { isFromHeader, hDirection, xPosition, fromEnter, fakeEvent, pinned, gos, columnModel, columnMoveService, presentedColsService } = params; 
 
         const draggingLeft = hDirection === HorizontalDirection.Left;
         const draggingRight = hDirection === HorizontalDirection.Right;
@@ -62,7 +66,7 @@ export class ColumnMoveHelper {
         // could themselves be part of 'married children' groups, which means we need to maintain the order within
         // the moving list.
         const allMovingColumnsOrdered = allMovingColumns.slice();
-        columnModel.sortColumnsLikeGridColumns(allMovingColumnsOrdered);
+        columnModel.sortColsLikeCols(allMovingColumnsOrdered);
 
         const validMoves = this.calculateValidMoves({
             movingCols: allMovingColumnsOrdered,
@@ -70,7 +74,8 @@ export class ColumnMoveHelper {
             xPosition,
             pinned,
             gos,
-            columnModel
+            columnModel,
+            presentedColsService
         });
 
         // if cols are not adjacent, then this returns null. when moving, we constrain the direction of the move
@@ -112,7 +117,7 @@ export class ColumnMoveHelper {
         // Remember what that move would look like in terms of displayed cols
         // keep going with further moves until we find a different result in displayed output
         // In this way potentialMoves contains all potential moves over 'hidden' columns
-        const displayedCols = columnModel.getAllDisplayedColumns();
+        const displayedCols = presentedColsService.getAllCols();
 
         const potentialMoves: { move: number, fragCount: number }[] = [];
         let targetOrder: Column[] | null = null;
@@ -120,9 +125,9 @@ export class ColumnMoveHelper {
         for (let i = 0; i < validMoves.length; i++) {
             const move: number = validMoves[i];
 
-            const order = columnModel.getProposedColumnOrder(allMovingColumnsOrdered, move);
+            const order = columnMoveService.getProposedColumnOrder(allMovingColumnsOrdered, move);
 
-            if (!columnModel.doesOrderPassRules(order)) {
+            if (!columnMoveService.doesOrderPassRules(order)) {
                 continue;
             }
             const displayedOrder = order.filter((col) => displayedCols.includes(col));
@@ -142,11 +147,11 @@ export class ColumnMoveHelper {
         // The best move is the move with least group fragmentation
         potentialMoves.sort((a, b) => a.fragCount - b.fragCount);
 
-        return this.moveColumns(allMovingColumns, potentialMoves[0].move, 'uiColumnMoved', false, columnModel);
+        return this.moveColumns(allMovingColumns, potentialMoves[0].move, 'uiColumnMoved', false, columnMoveService);
     }
 
-    public static moveColumns(columns: Column[], toIndex: number, source: ColumnEventType, finished: boolean, columnModel: ColumnModel): { columns: Column[], toIndex: number } | null {
-        columnModel.moveColumns(columns, toIndex, source, finished);
+    public static moveColumns(columns: Column[], toIndex: number, source: ColumnEventType, finished: boolean, columnMoveService: ColumnMoveService): { columns: Column[], toIndex: number } | null {
+        columnMoveService.moveColumns(columns, toIndex, source, finished);
 
         return finished ? null : { columns, toIndex };
     }
@@ -154,7 +159,7 @@ export class ColumnMoveHelper {
     // returns the index of the first column in the list ONLY if the cols are all beside
     // each other. if the cols are not beside each other, then returns null
     private static calculateOldIndex(movingCols: Column[], columnModel: ColumnModel): number | null {
-        const gridCols: Column[] = columnModel.getAllGridColumns();
+        const gridCols: Column[] = columnModel.getCols();
         const indexes = _sortNumerically(movingCols.map(col => gridCols.indexOf(col)));
         const firstIndex = indexes[0];
         const lastIndex = _last(indexes);
@@ -190,14 +195,14 @@ export class ColumnMoveHelper {
         return count;
     }
 
-    private static getDisplayedColumns(columnModel: ColumnModel, type: ColumnPinnedType): Column[] {
+    private static getDisplayedColumns(presentedColsService: VisibleColsService, type: ColumnPinnedType): Column[] {
         switch (type) {
             case 'left':
-                return columnModel.getDisplayedLeftColumns();
+                return presentedColsService.getLeftCols();
             case 'right':
-                return columnModel.getDisplayedRightColumns();
+                return presentedColsService.getRightCols();
             default:
-                return columnModel.getDisplayedCenterColumns();
+                return presentedColsService.getCenterCols();
         }
     }
 
@@ -207,17 +212,18 @@ export class ColumnMoveHelper {
         xPosition: number,
         pinned: ColumnPinnedType,
         gos: GridOptionsService,
-        columnModel: ColumnModel
+        columnModel: ColumnModel,
+        presentedColsService: VisibleColsService
     }): number[] {
-        const { movingCols, draggingRight, xPosition, pinned, gos, columnModel } = params;
+        const { movingCols, draggingRight, xPosition, pinned, gos, columnModel, presentedColsService } = params;
         const isMoveBlocked = gos.get('suppressMovableColumns') || movingCols.some(col => col.getColDef().suppressMovable);
 
         if (isMoveBlocked) { return []; }
         // this is the list of cols on the screen, so it's these we use when comparing the x mouse position
-        const allDisplayedCols = this.getDisplayedColumns(columnModel, pinned);
+        const allDisplayedCols = this.getDisplayedColumns(presentedColsService, pinned);
         // but this list is the list of all cols, when we move a col it's the index within this list that gets used,
         // so the result we return has to be and index location for this list
-        const allGridCols = columnModel.getAllGridColumns();
+        const allGridCols = columnModel.getCols();
 
         const movingDisplayedCols = allDisplayedCols.filter(col => _includes(movingCols, col));
         const otherDisplayedCols = allDisplayedCols.filter(col => !_includes(movingCols, col));

@@ -597,7 +597,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         const autoHeights = this.__autoHeights!;
         if (autoHeights == null) { return; }
 
-        const displayedAutoHeightCols = this.beans.columnModel.getAllDisplayedAutoHeightCols();
+        const displayedAutoHeightCols = this.beans.visibleColsService.getAllAutoHeightCols();
         displayedAutoHeightCols.forEach(col => {
             let cellHeight = autoHeights[col.getId()];
 
@@ -608,13 +608,13 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
                     let activeColsForRow: Column[] = [];
                     switch (col.getPinned()) {
                         case 'left':
-                            activeColsForRow = this.beans.columnModel.getDisplayedLeftColumnsForRow(this);
+                            activeColsForRow = this.beans.visibleColsService.getLeftColsForRow(this);
                             break;
                         case 'right':
-                            activeColsForRow = this.beans.columnModel.getDisplayedRightColumnsForRow(this);
+                            activeColsForRow = this.beans.visibleColsService.getRightColsForRow(this);
                             break;
                         case null:
-                            activeColsForRow = this.beans.columnModel.getViewportCenterColumnsForRow(this);
+                            activeColsForRow = this.beans.columnViewportService.getColsWithinViewport(this);
                             break;
                     }
                     if (activeColsForRow.includes(col)) {
@@ -736,7 +736,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
                 return colKey;
             }
             // if in pivot mode, grid columns wont include primary columns
-            return this.beans.columnModel.getGridColumn(colKey) ?? this.beans.columnModel.getPrimaryColumn(colKey);
+            return this.beans.columnModel.getCol(colKey) ?? this.beans.columnModel.getColDefCol(colKey);
         }
         // When it is done via the editors, no 'cell changed' event gets fired, as it's assumed that
         // the cell knows about the change given it's in charge of the editing.
@@ -809,7 +809,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     public setGroupValue(colKey: string | Column, newValue: any): void {
-        const column = this.beans.columnModel.getGridColumn(colKey)!;
+        const column = this.beans.columnModel.getCol(colKey)!;
 
         if (_missing(this.groupData)) { this.groupData = {}; }
 
@@ -836,7 +836,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
                 if (value === oldValue) { return; }
 
                 // do a quick lookup - despite the event it's possible the column no longer exists
-                const column = this.beans.columnModel.lookupGridColumn(colId)!;
+                const column = this.beans.columnModel.getCol(colId)!;
                 if (!column) { return; }
 
                 this.dispatchCellChangedEvent(column, value, oldValue);

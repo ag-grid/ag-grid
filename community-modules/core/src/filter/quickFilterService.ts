@@ -1,4 +1,5 @@
 import { ColumnModel } from "../columns/columnModel";
+import { PivotResultColsService } from "../columns/pivotResultColsService";
 import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { GetQuickFilterTextParams } from "../entities/colDef";
@@ -11,12 +12,17 @@ import { ValueService } from "../valueService/valueService";
 
 @Bean('quickFilterService')
 export class QuickFilterService extends BeanStub {
+
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
 
     public static readonly EVENT_QUICK_FILTER_CHANGED = 'quickFilterChanged';
     private static readonly QUICK_FILTER_SEPARATOR = '\n';
+
+    // the columns the quick filter should use. this will be all primary columns plus the autoGroupColumns if any exist
+    private colsForQuickFilter: Column[];
 
     private quickFilter: string | null = null;
     private quickFilterParts: string[] | null = null;
@@ -45,6 +51,27 @@ export class QuickFilterService extends BeanStub {
         this.setQuickFilterParts();
 
         this.addManagedPropertyListeners(['quickFilterMatcher', 'quickFilterParser'], () => this.setQuickFilterParserAndMatcher());
+    }
+
+    // if we are using autoGroupCols, then they should be included for quick filter. this covers the
+    // following scenarios:
+    // a) user provides 'field' into autoGroupCol of normal grid, so now because a valid col to filter leafs on
+    // b) using tree data and user depends on autoGroupCol for first col, and we also want to filter on this
+    //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
+    public refreshQuickFilterCols(): void {
+        const pivotMode = this.columnModel.isPivotMode();
+        const groupAutoCols = this.columnModel.getAutoCols();
+        const providedCols = this.columnModel.getColDefCols();
+
+        let columnsForQuickFilter = (
+            pivotMode && !this.gos.get('applyQuickFilterBeforePivotOrAgg') ? this.pivotResultColsService.getPivotResultCols()?.list : providedCols
+        ) ?? [];
+        if (groupAutoCols) {
+            columnsForQuickFilter = columnsForQuickFilter.concat(groupAutoCols);
+        }
+        this.colsForQuickFilter = this.gos.get('includeHiddenColumnsInQuickFilter')
+            ? columnsForQuickFilter
+            : columnsForQuickFilter.filter(col => col.isVisible() || col.isRowGroupActive());
     }
 
     public isQuickFilterPresent(): boolean {
@@ -118,7 +145,7 @@ export class QuickFilterService extends BeanStub {
     }
 
     private onQuickFilterColumnConfigChanged(): void {
-        this.columnModel.refreshQuickFilterColumns();
+        this.refreshQuickFilterCols();
         this.resetQuickFilterCache();
         if (this.isQuickFilterPresent()) {
             this.dispatchEvent({ type: QuickFilterService.EVENT_QUICK_FILTER_CHANGED });
@@ -126,9 +153,7 @@ export class QuickFilterService extends BeanStub {
     }
 
     private doesRowPassQuickFilterNoCache(node: RowNode, filterPart: string): boolean {
-        const columns = this.columnModel.getAllColumnsForQuickFilter();
-
-        return columns.some(column => {
+        return this.colsForQuickFilter.some(column => {
             const part = this.getQuickFilterTextForColumn(column, node);
 
             return _exists(part) && part.indexOf(filterPart) >= 0;
@@ -180,9 +205,8 @@ export class QuickFilterService extends BeanStub {
 
     private getQuickFilterAggregateText(node: RowNode): string {
         const stringParts: string[] = [];
-        const columns = this.columnModel.getAllColumnsForQuickFilter();
 
-        columns.forEach(column => {
+        this.colsForQuickFilter.forEach(column => {
             const part = this.getQuickFilterTextForColumn(column, node);
 
             if (_exists(part)) {

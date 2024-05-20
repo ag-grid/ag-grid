@@ -14,7 +14,9 @@ import {
     ExcelExportMultipleSheetParams,
     ExcelRow,
     CssClassApplier,
-    ColumnGroup
+    ColumnGroup,
+    ColumnNameService,
+    FuncColsService
 } from '@ag-grid-community/core';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
 import { BaseCreator, Downloader, GridSerializer, RowType, ZipContainer } from "@ag-grid-community/csv-export";
@@ -221,6 +223,8 @@ export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetPara
 export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSession, ExcelExportParams> implements IExcelCreator {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('stylingService') private stylingService: StylingService;
 
@@ -312,7 +316,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
     }
 
     public createSerializingSession(params: ExcelExportParams): ExcelSerializingSession {
-        const { columnModel, valueService, gos } = this;
+        const { columnModel, columnNameService, funcColsService, valueService, gos } = this;
 
         let sheetName: string;
         if (params.sheetName != null) {
@@ -330,6 +334,8 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             ...params,
             sheetName,
             columnModel,
+            columnNameService,
+            funcColsService,
             valueService,
             gos,
             suppressRowOutline: params.suppressRowOutline || params.skipRowGroups,

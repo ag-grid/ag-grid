@@ -55,7 +55,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         this.comp = comp;
         this.setGui(eGui);
 
-        this.displayName = this.beans.columnModel.getDisplayNameForColumnGroup(this.column, 'header');
+        this.displayName = this.beans.columnNameService.getDisplayNameForColumnGroup(this.column, 'header');
 
         this.addClasses();
         this.setupMovingCss();
@@ -130,7 +130,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             fromEnter: false,
             fakeEvent: false,
             gos: gos,
-            columnModel: beans.columnModel
+            columnModel: beans.columnModel,
+            columnMoveService: beans.columnMoveService,
+            presentedColsService: beans.visibleColsService
         });
 
         const displayedLeafColumns = column.getDisplayedLeafColumns();
@@ -376,13 +378,13 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
                     const unlockedColumns = dragItem?.columns?.filter(col => !col.getColDef().lockVisible) || [];
-                    columnModel.setColumnsVisible(unlockedColumns, true, "uiColumnMoved");
+                    columnModel.setColsVisible(unlockedColumns, true, "uiColumnMoved");
                 }
             },
             onGridExit: (dragItem) => {
                 if (hideColumnOnExit) {
                     const unlockedColumns = dragItem?.columns?.filter(col => !col.getColDef().lockVisible) || [];
-                    columnModel.setColumnsVisible(unlockedColumns, false, "uiColumnMoved");
+                    columnModel.setColsVisible(unlockedColumns, false, "uiColumnMoved");
                 }
             },
         };
@@ -400,7 +402,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         allColumnsOriginalOrder.forEach(column => visibleState[column.getId()] = column.isVisible());
 
         const allColumnsCurrentOrder: Column[] = [];
-        this.beans.columnModel.getAllDisplayedColumns().forEach(column => {
+        this.beans.visibleColsService.getAllCols().forEach(column => {
             if (allColumnsOriginalOrder.indexOf(column) >= 0) {
                 allColumnsCurrentOrder.push(column);
                 _removeFromArray(allColumnsOriginalOrder, column);

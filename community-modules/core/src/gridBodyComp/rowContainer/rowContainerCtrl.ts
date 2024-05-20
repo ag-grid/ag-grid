@@ -17,6 +17,7 @@ import { RowCtrl } from "../../rendering/row/rowCtrl";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { ColumnPinnedType } from "../../entities/column";
 import { DisplayedRowsChangedEvent } from "../../events";
+import { ColumnViewportService } from "../../columns/columnViewportService";
 
 export enum RowContainerName {
     LEFT = 'left',
@@ -154,7 +155,7 @@ export class RowContainerCtrl extends BeanStub {
 
     @Autowired('dragService') private dragService: DragService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnViewportService') private columnViewportService: ColumnViewportService;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
@@ -334,7 +335,7 @@ export class RowContainerCtrl extends BeanStub {
         const scrollWidth = this.getCenterWidth();
         const scrollPosition = this.getCenterViewportScrollLeft();
 
-        this.columnModel.setViewportPosition(scrollWidth, scrollPosition, afterScroll);
+        this.columnViewportService.setScrollPosition(scrollWidth, scrollPosition, afterScroll);
     }
 
     public getCenterWidth(): number {

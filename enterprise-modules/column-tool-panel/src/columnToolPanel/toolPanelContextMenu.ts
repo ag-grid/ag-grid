@@ -2,8 +2,10 @@ import {
     Autowired,
     Column,
     ColumnModel,
+    ColumnNameService,
     Component,
     FocusService,
+    FuncColsService,
     MenuItemDef,
     PopupService,
     PostConstruct,
@@ -35,6 +37,8 @@ export class ToolPanelContextMenu extends Component {
     private displayName: string | null = null;
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('popupService') private readonly popupService: PopupService;
     @Autowired('focusService') private readonly focusService: FocusService;
 
@@ -52,9 +56,9 @@ export class ToolPanelContextMenu extends Component {
         this.buildMenuItemMap();
 
         if (this.column instanceof Column) {
-            this.displayName = this.columnModel.getDisplayNameForColumn(this.column, 'columnToolPanel');
+            this.displayName = this.columnNameService.getDisplayNameForColumn(this.column, 'columnToolPanel');
         } else {
-            this.displayName = this.columnModel.getDisplayNameForProvidedColumnGroup(null, this.column, 'columnToolPanel');
+            this.displayName = this.columnNameService.getDisplayNameForProvidedColumnGroup(null, this.column, 'columnToolPanel');
         }
 
         if (this.isActive()) {
@@ -83,17 +87,17 @@ export class ToolPanelContextMenu extends Component {
 
         this.menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap.set('rowGroup', {
-            allowedFunction: (col: Column) => col.isPrimary() && col.isAllowRowGroup() && !this.columnModel.isColumnGroupingLocked(col),
+            allowedFunction: (col: Column) => col.isPrimary() && col.isAllowRowGroup() && !this.columnModel.isColGroupLocked(col),
             activeFunction: (col: Column) => col.isRowGroupActive(),
             activateLabel: () => `${localeTextFunc('groupBy', 'Group by')} ${this.displayName}`,
             deactivateLabel: () => `${localeTextFunc('ungroupBy', 'Un-Group by')} ${this.displayName}`,
             activateFunction: () => {
-                const groupedColumns = this.columnModel.getRowGroupColumns();
-                this.columnModel.setRowGroupColumns(this.addColumnsToList(groupedColumns), "toolPanelUi");
+                const groupedColumns = this.funcColsService.getRowGroupColumns();
+                this.funcColsService.setRowGroupColumns(this.addColumnsToList(groupedColumns), "toolPanelUi");
             },
             deActivateFunction: () => {
-                const groupedColumns = this.columnModel.getRowGroupColumns();
-                this.columnModel.setRowGroupColumns(this.removeColumnsFromList(groupedColumns), "toolPanelUi");
+                const groupedColumns = this.funcColsService.getRowGroupColumns();
+                this.funcColsService.setRowGroupColumns(this.removeColumnsFromList(groupedColumns), "toolPanelUi");
             },
             addIcon: 'menuAddRowGroup',
             removeIcon: 'menuRemoveRowGroup'
@@ -105,12 +109,12 @@ export class ToolPanelContextMenu extends Component {
             activateLabel: () => localeTextFunc('addToValues', `Add ${this.displayName} to values`, [this.displayName!]),
             deactivateLabel: () => localeTextFunc('removeFromValues', `Remove ${this.displayName} from values`, [this.displayName!]),
             activateFunction: () => {
-                const valueColumns = this.columnModel.getValueColumns();
-                this.columnModel.setValueColumns(this.addColumnsToList(valueColumns), "toolPanelUi");
+                const valueColumns = this.funcColsService.getValueColumns();
+                this.funcColsService.setValueColumns(this.addColumnsToList(valueColumns), "toolPanelUi");
             },
             deActivateFunction: () => {
-                const valueColumns = this.columnModel.getValueColumns();
-                this.columnModel.setValueColumns(this.removeColumnsFromList(valueColumns), "toolPanelUi");
+                const valueColumns = this.funcColsService.getValueColumns();
+                this.funcColsService.setValueColumns(this.removeColumnsFromList(valueColumns), "toolPanelUi");
             },
             addIcon: 'valuePanel',
             removeIcon: 'valuePanel'
@@ -122,12 +126,12 @@ export class ToolPanelContextMenu extends Component {
             activateLabel: () => localeTextFunc('addToLabels', `Add ${this.displayName} to labels`, [this.displayName!]),
             deactivateLabel: () => localeTextFunc('removeFromLabels', `Remove ${this.displayName} from labels`, [this.displayName!]),
             activateFunction: () => {
-                const pivotColumns = this.columnModel.getPivotColumns();
-                this.columnModel.setPivotColumns(this.addColumnsToList(pivotColumns), "toolPanelUi");
+                const pivotColumns = this.funcColsService.getPivotColumns();
+                this.funcColsService.setPivotColumns(this.addColumnsToList(pivotColumns), "toolPanelUi");
             },
             deActivateFunction: () => {
-                const pivotColumns = this.columnModel.getPivotColumns();
-                this.columnModel.setPivotColumns(this.removeColumnsFromList(pivotColumns), "toolPanelUi");
+                const pivotColumns = this.funcColsService.getPivotColumns();
+                this.funcColsService.setPivotColumns(this.removeColumnsFromList(pivotColumns), "toolPanelUi");
             },
             addIcon: 'pivotPanel',
             removeIcon: 'pivotPanel'

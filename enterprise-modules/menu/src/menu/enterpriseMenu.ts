@@ -4,7 +4,6 @@ import {
     Bean,
     BeanStub,
     Column,
-    ColumnModel,
     ColumnMenuTab,
     FilterManager,
     IMenuFactory,
@@ -28,7 +27,8 @@ import {
     Events,
     WithoutGridCommon,
     FilterWrapperComp,
-    _createIconNoSpan
+    _createIconNoSpan,
+    VisibleColsService
 } from '@ag-grid-community/core';
 import { ColumnChooserFactory } from './columnChooserFactory';
 import { ColumnMenuFactory } from './columnMenuFactory';
@@ -51,7 +51,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     @Autowired('popupService') private readonly popupService: PopupService;
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('menuUtils') private readonly menuUtils: MenuUtils;
     @Autowired('menuService') private readonly menuService: MenuService;
@@ -221,7 +221,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         const restoreFocusParams = {
             column,
             headerPosition: this.focusService.getFocusedHeader(),
-            columnIndex: this.columnModel.getAllDisplayedColumns().indexOf(column!),
+            columnIndex: this.visibleColsService.getAllCols().indexOf(column!),
             eventSource
         };
         const menu = this.createMenu(column, restoreFocusParams, restrictToTabs, eventSource);

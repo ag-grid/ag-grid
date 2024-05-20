@@ -10,11 +10,19 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
 // columns
 export { ColumnFactory } from "./columns/columnFactory";
-export { ColumnModel, ColumnState, ColumnStateParams, ApplyColumnStateParams, ISizeColumnsToFitParams, IColumnLimit } from "./columns/columnModel";
+export { ColumnModel } from "./columns/columnModel";
+export { ColumnAutosizeService } from "./columns/columnAutosizeService";
+export { FuncColsService } from "./columns/funcColsService";
+export { ColumnApplyStateService, ColumnState, ColumnStateParams, ApplyColumnStateParams } from "./columns/columnApplyStateService";
+export { ColumnMoveService } from "./columns/columnMoveService";
+export { ColumnNameService } from "./columns/columnNameService";
+export { ShowRowGroupColsService } from "./columns/showRowGroupColsService";
+export { PivotResultColsService } from "./columns/pivotResultColsService";
+export { ColumnSizeService, IColumnLimit, ISizeColumnsToFitParams } from "./columns/columnSizeService";
 export { ColumnKeyCreator } from "./columns/columnKeyCreator";
-export { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
+export { VisibleColsService } from "./columns/visibleColsService";
 export { GroupInstanceIdCreator } from "./columns/groupInstanceIdCreator";
-export { GROUP_AUTO_COLUMN_ID } from "./columns/autoGroupColService";
+export { GROUP_AUTO_COLUMN_ID } from "./columns/autoColService";
 export {
     SizeColumnsToFitGridColumnLimits,
     SizeColumnsToContentStrategy,

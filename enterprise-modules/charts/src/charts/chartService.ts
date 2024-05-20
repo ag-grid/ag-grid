@@ -9,10 +9,10 @@ import {
     ChartParamsCellRange,
     ChartRef,
     ChartType,
-    ColumnModel,
     CreateCrossFilterChartParams,
     CreatePivotChartParams,
     CreateRangeChartParams,
+    VisibleColsService,
     GetChartImageDataUrlParams,
     IAggFunc,
     IChartService,
@@ -52,7 +52,7 @@ export interface CommonCreateChartParams extends BaseCreateChartParams {
 @Bean('chartService')
 export class ChartService extends BeanStub implements IChartService {
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Optional('rangeService') private rangeService?: IRangeService;
 
     public static CHARTS_VERSION = CHARTS_VERSION;
@@ -316,7 +316,7 @@ export class ChartService extends BeanStub implements IChartService {
             rowStartPinned: undefined,
             rowEndIndex: null,
             rowEndPinned: undefined,
-            columns: this.columnModel.getAllDisplayedColumns().map(col => col.getColId())
+            columns: this.visibleColsService.getAllCols().map(col => col.getColId())
         } : cellRangeParams;
         const cellRange = rangeParams && this.rangeService?.createPartialCellRangeFromRangeParams(rangeParams as CellRangeParams, true);
         if (!cellRange) {

@@ -249,7 +249,7 @@ export class UndoRedoService extends BeanStub {
         const { rowIndex, columnId, rowPinned } = lastFocusedCell;
         const scrollFeature = this.gridBodyCtrl.getScrollFeature();
 
-        const column: Column | null = this.columnModel.getGridColumn(columnId);
+        const column: Column | null = this.columnModel.getCol(columnId);
 
         if (!column) { return; }
 

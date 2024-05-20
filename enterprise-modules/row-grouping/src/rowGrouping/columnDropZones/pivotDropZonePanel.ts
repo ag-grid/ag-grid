@@ -85,7 +85,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     protected updateItems(columns: Column[]): void {
-        this.columnModel.setPivotColumns(columns, "toolPanelUi");
+        this.funcColsService.setPivotColumns(columns, "toolPanelUi");
     }
 
     protected getIconName(): string {
@@ -93,6 +93,6 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): Column[] {
-        return this.columnModel.getPivotColumns();
+        return this.funcColsService.getPivotColumns();
     }
 }

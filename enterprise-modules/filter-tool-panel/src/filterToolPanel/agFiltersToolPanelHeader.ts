@@ -82,7 +82,7 @@ export class AgFiltersToolPanelHeader extends Component {
         this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 
         const isFilterGroupPresent = (col: Column) => col.getOriginalParent() && col.isFilterAllowed();
-        const filterGroupsPresent = this.columnModel.getAllGridColumns().some(isFilterGroupPresent);
+        const filterGroupsPresent = this.columnModel.getCols().some(isFilterGroupPresent);
 
         _setDisplayed(this.eFilterTextField.getGui(), showFilterSearch);
         _setDisplayed(this.eExpand, showExpand && filterGroupsPresent);

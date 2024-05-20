@@ -13,7 +13,9 @@ import {
     WithoutGridCommon,
     PostSortRowsParams,
     RowNodeTransaction,
-    IRowNode
+    IRowNode,
+    FuncColsService,
+    ShowRowGroupColsService
 } from "@ag-grid-community/core";
 
 
@@ -21,7 +23,9 @@ import {
 export class SortService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
+    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
 
     public sort(
         sortOptions: SortOption[],
@@ -32,7 +36,7 @@ export class SortService extends BeanStub {
         sortContainsGroupColumns: boolean,
     ): void {
         const groupMaintainOrder = this.gos.get('groupMaintainOrder');
-        const groupColumnsPresent = this.columnModel.getAllGridColumns().some(c => c.isRowGroupActive());
+        const groupColumnsPresent = this.columnModel.getCols().some(c => c.isRowGroupActive());
 
         let allDirtyNodes: { [key: string]: true } = {};
         if (useDeltaSort && rowNodeTransactions) {
@@ -54,7 +58,7 @@ export class SortService extends BeanStub {
             // are going to inspect the original array position. This is what sortedRowNodes is for.
             let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
             if (skipSortingGroups) {
-                const nextGroup = this.columnModel.getRowGroupColumns()?.[rowNode.level + 1];
+                const nextGroup = this.funcColsService.getRowGroupColumns()?.[rowNode.level + 1];
                 // if the sort is null, then sort was explicitly removed, so remove sort from this group.
                 const wasSortExplicitlyRemoved =  nextGroup?.getSort() === null;
 
@@ -236,7 +240,7 @@ export class SortService extends BeanStub {
         if (!this.gos.get('groupHideOpenParents') || _missing(rowNodes)) { return; }
 
         rowNodes.forEach(childRowNode => {
-            const groupDisplayCols = this.columnModel.getGroupDisplayColumns();
+            const groupDisplayCols = this.showRowGroupColsService.getShowRowGroupCols();
             groupDisplayCols.forEach(groupDisplayCol => {
 
                 const showRowGroup = groupDisplayCol.getColDef().showRowGroup;
@@ -246,7 +250,7 @@ export class SortService extends BeanStub {
                 }
 
                 const displayingGroupKey = showRowGroup;
-                const rowGroupColumn = this.columnModel.getPrimaryColumn(displayingGroupKey);
+                const rowGroupColumn = this.columnModel.getColDefCol(displayingGroupKey);
                 const thisRowNodeMatches = rowGroupColumn === childRowNode.rowGroupColumn;
 
                 if (thisRowNodeMatches) { return; }

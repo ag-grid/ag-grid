@@ -4,6 +4,7 @@ import {
     ColumnModel,
     Component,
     Events,
+    FuncColsService,
     PostConstruct,
     _setAriaRole,
 } from "@ag-grid-community/core";
@@ -14,6 +15,7 @@ export class AgGridHeaderDropZones extends Component {
     static readonly selector: AgComponentSelector = 'ag-grid-header-drop-zones';
     
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
 
     private rowGroupComp: Component;
     private pivotComp: Component;
@@ -73,7 +75,7 @@ export class AgGridHeaderDropZones extends Component {
         if (rowGroupPanelShow === 'always') {
             this.rowGroupComp.setDisplayed(true);
         } else if (rowGroupPanelShow === 'onlyWhenGrouping') {
-            const grouping = !this.columnModel.isRowGroupEmpty();
+            const grouping = !this.funcColsService.isRowGroupEmpty();
             this.rowGroupComp.setDisplayed(grouping);
         } else {
             this.rowGroupComp.setDisplayed(false);

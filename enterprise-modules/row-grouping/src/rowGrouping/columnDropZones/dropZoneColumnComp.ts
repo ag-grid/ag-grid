@@ -15,7 +15,9 @@ import {
     DragItem,
     DragSourceType,
     DragAndDropService,
-    _loadTemplate
+    _loadTemplate,
+    ColumnNameService,
+    FuncColsService
 } from "@ag-grid-community/core";
 import { TDropZone } from "./baseDropZonePanel";
 import { PillDragComp } from "@ag-grid-enterprise/core";
@@ -24,8 +26,10 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     @Autowired('popupService') private readonly popupService: PopupService;
     @Autowired('sortController') private readonly sortController: SortController;
     @Autowired('columnModel') protected readonly columnModel: ColumnModel;
-    
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
+
     @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
+    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
 
     @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
 
@@ -52,7 +56,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     }
 
     public init(): void {
-        this.displayName = this.columnModel.getDisplayNameForColumn(this.column, 'columnDrop');
+        this.displayName = this.columnNameService.getDisplayNameForColumn(this.column, 'columnDrop');
 
         super.init();
 
@@ -302,7 +306,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
 
         const itemSelected = () => {
             hidePopup();
-            this.columnModel.setColumnAggFunc(this.column, value, "toolPanelDragAndDrop");
+            this.funcColsService.setColumnAggFunc(this.column, value, "toolPanelDragAndDrop");
         };
 
         const localeTextFunc = this.localeService.getLocaleTextFunc();
@@ -314,7 +318,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     }
 
     private isGroupingAndLocked(): boolean {
-        return this.isGroupingZone() && this.columnModel.isColumnGroupingLocked(this.column);
+        return this.isGroupingZone() && this.columnModel.isColGroupLocked(this.column);
     }
 
     private isAggregationZone() {
