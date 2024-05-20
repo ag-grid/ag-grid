@@ -311,6 +311,13 @@
 
         &.ag-selected {
             border-color: var(--ag-minichart-selected-chart-color);
+            border-width: 2px;
+        }
+
+        &:focus-visible {
+            outline: none;
+            border-color: var(--ag-minichart-selected-chart-color);
+            box-shadow: var(--ag-input-focus-box-shadow);
         }
     }
 
@@ -343,7 +350,6 @@
 
     @include ag.keyboard-focus(
         (
-            ag-charts-settings-group-title-bar,
             ag-charts-data-group-title-bar,
             ag-charts-format-top-level-group-title-bar
         ),
