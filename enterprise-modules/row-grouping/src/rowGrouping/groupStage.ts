@@ -72,7 +72,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private oldGroupingDetails: GroupingDetails;
     private oldGroupDisplayColIds: string;
-    private treeNodeCache: Record<string, RowNode> = {};
+    private treeNodeCache: Record<string, RowNode>[] = [];
 
     public execute(params: StageExecuteParams): void {
 
@@ -530,9 +530,10 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             return info;
         });
 
-        this.treeNodeCache = {};
+        this.treeNodeCache = [];
 
         for (let level = 0; level < width; level++) {
+            this.treeNodeCache.push({});
             const levelCache: Record<string, [parent: RowNode, node: null | RowNode]> = {};
 
             for (const [rowIdx, path] of paths.entries()) {
@@ -552,7 +553,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
                 const parentInfo = path[level - 1];
                 const parentKey = parentInfo != null ? this.getChildrenMappedKey(parentInfo.key, parentInfo.rowGroupColumn) : null;
-                const parent = parentKey != null ? this.treeNodeCache[parentKey] ?? details.rootNode : details.rootNode;
+                const parent = parentKey != null ? this.treeNodeCache[level][parentKey] ?? details.rootNode : details.rootNode;
                 levelCache[info.key] = isLeaf ? [parent, this.ensureRowNodeFields(rowNodes[rowIdx], info.key)] : [parent, null];
             }
 
@@ -564,7 +565,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                     group = node;
                 }
                 
-                this.treeNodeCache[key] = group;
+                this.treeNodeCache[level][key] = group;
             }
         }
     }
@@ -573,7 +574,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         if (details.usingTreeData) {
             this.buildNodeCacheFromRows(newRowNodes, details);
         } else {
-            this.treeNodeCache = {};
+            this.treeNodeCache = [];
         }
 
         newRowNodes.forEach(rowNode => {
@@ -643,8 +644,8 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         let nextNode = parentGroup?.childrenMapped?.[key];
 
         if (!nextNode) {
-            if (details.usingTreeData && key in this.treeNodeCache) {
-                nextNode = this.treeNodeCache[key];
+            if (details.usingTreeData && key in this.treeNodeCache[level]) {
+                nextNode = this.treeNodeCache[level][key];
                 nextNode.parent = parentGroup;
             } else {
                 nextNode = this.createGroup(groupInfo, parentGroup, level, details);
