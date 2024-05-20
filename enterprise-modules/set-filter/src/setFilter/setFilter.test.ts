@@ -2,7 +2,7 @@ import {
     AgCheckbox,
     AgInputTextField,
     ColDef,
-    ColumnModel,
+    FuncColsService,
     Context,
     EventService,
     GridOptionsService,
@@ -28,7 +28,7 @@ let eMiniFilter: jest.Mocked<AgInputTextField>;
 let eGui: jest.Mocked<HTMLElement>;
 let eSelectAll: jest.Mocked<AgCheckbox>;
 let gridOptionsService: jest.Mocked<GridOptionsService>;
-let columnModel: jest.Mocked<ColumnModel>;
+let funcColsService: jest.Mocked<FuncColsService>;
 let virtualList: jest.Mocked<VirtualList>;
 let setValueModel: jest.Mocked<SetValueModel<string>>;
 
@@ -67,8 +67,8 @@ beforeEach(() => {
 
     gridOptionsService = mock<GridOptionsService>('get', 'addEventListener');
 
-    columnModel = mock<ColumnModel>('getRowGroupColumns');
-    columnModel.getRowGroupColumns.mockImplementation(() => []);
+    funcColsService = mock<FuncColsService>('getRowGroupColumns');
+    funcColsService.getRowGroupColumns.mockImplementation(() => []);
 
     virtualList = mock<VirtualList>('refresh');
 
@@ -111,7 +111,7 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
     (setFilter as any).eMiniFilter = eMiniFilter;
     (setFilter as any).eSelectAll = eSelectAll;
     (setFilter as any).gos = gridOptionsService;
-    (setFilter as any).columnModel = columnModel;
+    (setFilter as any).funcColsService = funcColsService;
 
     setFilter.setParams(params);
 
