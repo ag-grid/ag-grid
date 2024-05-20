@@ -6,8 +6,8 @@ import { BeanStub } from "./context/beanStub";
 import { GridHeaderCtrl } from "./headerRendering/gridHeaderCtrl";
 import { HeaderRowContainerCtrl } from "./headerRendering/rowContainer/headerRowContainerCtrl";
 import { ColumnPinnedType } from "./entities/column";
-import { AgFakeHorizontalScroll } from "./gridBodyComp/agFakeHorizontalScroll";
-import { AgFakeVerticalScroll } from "./gridBodyComp/agFakeVerticalScroll";
+import { FakeHScrollComp } from "./gridBodyComp/fakeHScrollComp";
+import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
 
 // for all controllers that are singletons, they can register here so other parts
 // of the application can access them.
@@ -36,8 +36,8 @@ interface ReadyParams {
     stickyBottomLeft: RowContainerCtrl;
     stickyBottomRight: RowContainerCtrl;
 
-    fakeHScrollComp: AgFakeHorizontalScroll;
-    fakeVScrollComp: AgFakeVerticalScroll;
+    fakeHScrollComp: FakeHScrollComp;
+    fakeVScrollComp: FakeVScrollComp;
     gridHeaderCtrl: GridHeaderCtrl;
 
     centerHeader: HeaderRowContainerCtrl;

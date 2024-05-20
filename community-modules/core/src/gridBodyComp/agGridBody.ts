@@ -7,8 +7,8 @@ import { LayoutCssClasses } from "../styling/layoutFeature";
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRowCount } from '../utils/aria';
 import { AgComponentSelector, Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
-import { AgFakeHorizontalScroll } from './agFakeHorizontalScroll';
-import { AgFakeVerticalScroll } from './agFakeVerticalScroll';
+import { FakeHScrollComp } from './fakeHScrollComp';
+import { FakeVScrollComp } from './fakeVScrollComp';
 import {
     CSS_CLASS_FORCE_VERTICAL_SCROLL,
     GridBodyCtrl,
@@ -76,7 +76,7 @@ export class AgGridBody extends Component {
     private ctrl: GridBodyCtrl;
 
     constructor() {
-        super(GRID_BODY_TEMPLATE, [AgOverlayWrapper, FakeHScrollComp, FakeVScrollComp, GridHeaderComp, RowContainerComp]);
+        super(GRID_BODY_TEMPLATE, [AgOverlayWrapper, FakeHScrollComp, FakeVScrollComp, AgHeaderRoot, RowContainerComp]);
     }
 
     @PostConstruct
