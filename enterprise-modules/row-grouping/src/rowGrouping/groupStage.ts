@@ -831,7 +831,7 @@ class TreeDataNodeCache {
         let i = 0;
 
         while (i <= level) {
-            const key = path[level].key;
+            const key = path[i].key;
             
             if (!(key in cache)) {
                 cache[key] = { node: null, subtree: {} }
