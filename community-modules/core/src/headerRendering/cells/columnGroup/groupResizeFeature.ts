@@ -7,7 +7,7 @@ import { AutoWidthCalculator } from "../../../rendering/autoWidthCalculator";
 import { HorizontalResizeService } from "../../common/horizontalResizeService";
 import { IHeaderGroupCellComp } from "./headerGroupCellCtrl";
 import { IHeaderResizeFeature } from "../abstractCell/abstractHeaderCellCtrl";
-import { ColumnAutosizeService } from "community-modules/core/src/columns/columnAutosizeService";
+import { ColumnAutosizeService } from "../../../columns/columnAutosizeService";
 import { ColumnSizeService, ColumnResizeSet } from "../../../columns/columnSizeService";
 import { VisibleColsService } from "../../../columns/visibleColsService";
 
