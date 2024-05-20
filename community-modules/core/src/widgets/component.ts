@@ -73,7 +73,7 @@ export class Component extends BeanStub {
         
         // ui exists if user sets template in constructor. when this happens, we have to wait for the context
         // to be autoWired first before we can create child components.
-        if (!!this.getGui()) {
+        if (this.getGui()) {
             this.agStackComponentsRegistry.ensureRegistered(this.components);
             this.createChildComponentsFromTags(this.getGui(),);
         }
