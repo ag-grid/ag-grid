@@ -230,7 +230,7 @@ export { IFiltersToolPanel } from "./interfaces/iFiltersToolPanel";
 // overlays
 export { ILoadingOverlayComp, ILoadingOverlayParams, ILoadingOverlay } from "./rendering/overlays/loadingOverlayComponent";
 export { INoRowsOverlayComp, INoRowsOverlayParams, INoRowsOverlay } from "./rendering/overlays/noRowsOverlayComponent";
-export { AgOverlayWrapper } from "./rendering/overlays/overlayWrapperComponent";
+export { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 
 // features
 export { SetLeftFeature } from "./rendering/features/setLeftFeature";

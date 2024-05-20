@@ -2,7 +2,7 @@ import { Autowired, Optional, PostConstruct } from '../context/context';
 import { GridHeaderComp } from '../headerRendering/gridHeaderComp';
 import { IRangeService } from '../interfaces/IRangeService';
 import { ResizeObserverService } from '../misc/resizeObserverService';
-import { AgOverlayWrapper } from '../rendering/overlays/overlayWrapperComponent';
+import { OverlayWrapperComponent } from '../rendering/overlays/overlayWrapperComponent';
 import { LayoutCssClasses } from "../styling/layoutFeature";
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRowCount } from '../utils/aria';
 import { AgComponentSelector, Component } from '../widgets/component';
@@ -76,7 +76,7 @@ export class GridBodyComp extends Component {
     private ctrl: GridBodyCtrl;
 
     constructor() {
-        super(GRID_BODY_TEMPLATE, [AgOverlayWrapper, FakeHScrollComp, FakeVScrollComp, GridHeaderComp, RowContainerComp]);
+        super(GRID_BODY_TEMPLATE, [OverlayWrapperComponent, FakeHScrollComp, FakeVScrollComp, GridHeaderComp, RowContainerComp]);
     }
 
     @PostConstruct
