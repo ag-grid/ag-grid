@@ -222,6 +222,8 @@ export abstract class ChartProxy<TOptions extends AgChartOptions = AgChartOption
                 time: { crosshair }
             }
         } : {}
+        common.minHeight = 0;
+        common.minWidth = 0;
         common.navigator = {
             enabled: false
         };
