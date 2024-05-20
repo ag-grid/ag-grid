@@ -1,21 +1,22 @@
 // noinspection ES6UnusedImports
-import React, {memo, Component} from 'react';
-import {AgGridReact} from '../agGridReact';
-import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { mount } from 'enzyme';
+import React, { Component, memo } from 'react';
 
-import {ensureGridApiHasBeenSet, htmlForSelector} from "./utils";
-
-import {mount} from 'enzyme';
+import { AgGridReact } from '../agGridReact';
+import { ensureGridApiHasBeenSet, htmlForSelector } from './utils';
 
 let component = null;
 let agGridReact = null;
 
 beforeEach((done) => {
-    component = mount((<GridComponent/>));
+    component = mount(<GridComponent />);
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
-    ensureGridApiHasBeenSet(component).then(() => setTimeout(() => done(), 20), () => fail("Grid API not set within expected time limits"));
-
+    ensureGridApiHasBeenSet(component).then(
+        () => setTimeout(() => done(), 20),
+        () => fail('Grid API not set within expected time limits')
+    );
 });
 
 afterEach(() => {
@@ -28,11 +29,11 @@ it('memoized value cell renderer test', () => {
     const cells = htmlForSelector(renderedOutput, 'div .ag-react-container');
 
     expect(cells.length).toEqual(2);
-    expect(cells[0]).toEqual("FALSE");
-    expect(cells[1]).toEqual("TRUE");
+    expect(cells[0]).toEqual('FALSE');
+    expect(cells[1]).toEqual('TRUE');
 });
 
-const CellRenderer = memo(({data}) => (<>{data.value ? 'TRUE' : 'FALSE'}</>));
+const CellRenderer = memo(({ data }) => <>{data.value ? 'TRUE' : 'FALSE'}</>);
 
 class GridComponent extends Component {
     constructor(props) {
@@ -41,19 +42,18 @@ class GridComponent extends Component {
         this.state = {
             columnDefs: [
                 {
-                    field: "value",
-                    cellRenderer: "cellRenderer"
-                }
+                    field: 'value',
+                    cellRenderer: 'cellRenderer',
+                },
             ],
             rowData: [
                 {
-                    value: null
+                    value: null,
                 },
                 {
-                    value: true
-                }
-            ]
-
+                    value: true,
+                },
+            ],
         };
     }
 
@@ -63,18 +63,17 @@ class GridComponent extends Component {
 
     render() {
         return (
-            <div
-                className="ag-theme-balham"
-                style={{height: 100}}>
+            <div className="ag-theme-balham" style={{ height: 100 }}>
                 <AgGridReact
                     suppressReactUi={true}
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
                     components={{
-                        cellRenderer: CellRenderer
+                        cellRenderer: CellRenderer,
                     }}
-                    modules={[ClientSideRowModelModule]}/>
+                    modules={[ClientSideRowModelModule]}
+                />
             </div>
         );
     }

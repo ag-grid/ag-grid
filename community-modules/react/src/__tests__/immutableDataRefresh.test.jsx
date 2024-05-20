@@ -1,23 +1,24 @@
 // noinspection ES6UnusedImports
-import React, {Component} from 'react';
-import {AgGridReact} from '../agGridReact';
-import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { mount } from 'enzyme';
+import React, { Component } from 'react';
 
-import {ensureGridApiHasBeenSet, htmlForSelector} from "./utils";
-
-import {mount} from 'enzyme';
+import { AgGridReact } from '../agGridReact';
+import { ensureGridApiHasBeenSet, htmlForSelector } from './utils';
 
 let component = null;
 let agGridReact = null;
 
 beforeEach((done) => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
 
-    component = mount((<GridComponent/>));
+    component = mount(<GridComponent />);
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
-    ensureGridApiHasBeenSet(component).then(() => setTimeout(() => done(), 20), () => fail("Grid API not set within expected time limits"));
-
+    ensureGridApiHasBeenSet(component).then(
+        () => setTimeout(() => done(), 20),
+        () => fail('Grid API not set within expected time limits')
+    );
 });
 
 afterEach(() => {
@@ -32,21 +33,21 @@ it('immutable data grid with cell renderer with refresh updates as expected', ()
     jest.useFakeTimers();
 
     /*
-    * This is testing a (previous) issue where immutable data wasn't correctly updating react renderers
-    *
-    * 1) Initial Render
-    * 2) Add a new row
-    * 3) Update the last row
-    * 4) Add a new row
-    *
-    * The modified row should have been moved "down" when (4) is run
-    *
-    * So the "top" row should be:
-    * 1) 9 (initial render)
-    * 2) 10 (new row added)
-    * 3) 10* (last row modified)
-    * 4) 11 (new row added) (with the 2nd last row being 10*)
-    * */
+     * This is testing a (previous) issue where immutable data wasn't correctly updating react renderers
+     *
+     * 1) Initial Render
+     * 2) Add a new row
+     * 3) Update the last row
+     * 4) Add a new row
+     *
+     * The modified row should have been moved "down" when (4) is run
+     *
+     * So the "top" row should be:
+     * 1) 9 (initial render)
+     * 2) 10 (new row added)
+     * 3) 10* (last row modified)
+     * 4) 11 (new row added) (with the 2nd last row being 10*)
+     * */
     let renderedOutput = component.render();
     let cells = htmlForSelector(renderedOutput, 'div .ag-react-container');
 
@@ -58,12 +59,11 @@ it('immutable data grid with cell renderer with refresh updates as expected', ()
     componentInstance.addNew();
     jest.runAllTimers();
 
-
     renderedOutput = component.render();
     cells = htmlForSelector(renderedOutput, 'div .ag-react-container');
 
-    expect(cells[0]).toEqual(`<span>10</span>`);    // first cell
-    expect(cells[1]).toEqual(`<span>9</span>`);     // second cell
+    expect(cells[0]).toEqual(`<span>10</span>`); // first cell
+    expect(cells[1]).toEqual(`<span>9</span>`); // second cell
 
     componentInstance.modifyRow();
 
@@ -71,8 +71,8 @@ it('immutable data grid with cell renderer with refresh updates as expected', ()
     renderedOutput = component.render();
     cells = htmlForSelector(renderedOutput, 'div .ag-react-container');
 
-    expect(cells[0]).toEqual(`<span>10*</span>`);   // first cell
-    expect(cells[1]).toEqual(`<span>9</span>`);     // second cell
+    expect(cells[0]).toEqual(`<span>10*</span>`); // first cell
+    expect(cells[1]).toEqual(`<span>9</span>`); // second cell
 
     componentInstance.addNew();
 
@@ -80,9 +80,9 @@ it('immutable data grid with cell renderer with refresh updates as expected', ()
     renderedOutput = component.render();
     cells = htmlForSelector(renderedOutput, 'div .ag-react-container');
 
-    expect(cells[0]).toEqual(`<span>11</span>`);    // first cell
-    expect(cells[1]).toEqual(`<span>10*</span>`);   // second cell
-    expect(cells[2]).toEqual(`<span>9</span>`);     // third cell
+    expect(cells[0]).toEqual(`<span>11</span>`); // first cell
+    expect(cells[1]).toEqual(`<span>10*</span>`); // second cell
+    expect(cells[2]).toEqual(`<span>9</span>`); // third cell
 });
 
 class CellRenderer extends Component {
@@ -90,18 +90,16 @@ class CellRenderer extends Component {
         super(props);
 
         this.state = {
-            value: props.value
-        }
+            value: props.value,
+        };
     }
 
     refresh(newParams) {
-        this.setState({value: newParams.value})
+        this.setState({ value: newParams.value });
     }
 
     render() {
-        return (
-            <span>{this.state.value}</span>
-        )
+        return <span>{this.state.value}</span>;
     }
 }
 
@@ -114,15 +112,15 @@ class GridComponent extends Component {
         this.state = {
             columnDefs: [
                 {
-                    field: "id",
-                    sort: "desc"
+                    field: 'id',
+                    sort: 'desc',
                 },
                 {
-                    field: "value",
-                    cellRenderer: "cellRenderer"
-                }
+                    field: 'value',
+                    cellRenderer: 'cellRenderer',
+                },
             ],
-            rowData: this.createRowData()
+            rowData: this.createRowData(),
         };
     }
 
@@ -135,20 +133,21 @@ class GridComponent extends Component {
     }
 
     addNew() {
-        const newRowData = [...this.state.rowData,
+        const newRowData = [
+            ...this.state.rowData,
             {
                 id: this.state.rowData.length,
-                value: this.state.rowData.length
-            }
+                value: this.state.rowData.length,
+            },
         ];
-        this.setState({rowData: newRowData})
+        this.setState({ rowData: newRowData });
     }
 
     modifyRow() {
-        const newRowData = this.state.rowData.map(row => {
-            return row.value === this.state.rowData.length - 1 ? {...row, value: `${row.value}*`} : row;
-        })
-        this.setState({rowData: newRowData})
+        const newRowData = this.state.rowData.map((row) => {
+            return row.value === this.state.rowData.length - 1 ? { ...row, value: `${row.value}*` } : row;
+        });
+        this.setState({ rowData: newRowData });
     }
 
     createRowData() {
@@ -157,7 +156,7 @@ class GridComponent extends Component {
         for (let i = 0; i < NUMBER_OF_ROWS; i++) {
             rowData.push({
                 id: i,
-                value: i
+                value: i,
             });
         }
 
@@ -166,8 +165,7 @@ class GridComponent extends Component {
 
     render() {
         return (
-            <div
-                className="ag-theme-balham">
+            <div className="ag-theme-balham">
                 <button onClick={this.addNew}>Add New Row</button>
                 <button onClick={this.modifyRow}>Modify Row</button>
                 <AgGridReact
@@ -176,9 +174,10 @@ class GridComponent extends Component {
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
                     components={{
-                        cellRenderer: CellRenderer
+                        cellRenderer: CellRenderer,
                     }}
-                    modules={[ClientSideRowModelModule]}/>
+                    modules={[ClientSideRowModelModule]}
+                />
             </div>
         );
     }
