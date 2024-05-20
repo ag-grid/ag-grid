@@ -1,5 +1,5 @@
 import { Autowired, Optional, PostConstruct } from '../context/context';
-import { AgHeaderRoot } from '../headerRendering/agHeaderRoot';
+import { GridHeaderComp } from '../headerRendering/gridHeaderComp';
 import { IRangeService } from '../interfaces/IRangeService';
 import { ResizeObserverService } from '../misc/resizeObserverService';
 import { AgOverlayWrapper } from '../rendering/overlays/overlayWrapperComponent';
@@ -58,7 +58,7 @@ const GRID_BODY_TEMPLATE = /* html */
         <ag-overlay-wrapper></ag-overlay-wrapper>
     </div>`;
 
-export class AgGridBody extends Component {
+export class GridBodyComp extends Component {
     static readonly selector: AgComponentSelector = 'ag-grid-body';
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
@@ -70,13 +70,13 @@ export class AgGridBody extends Component {
     @RefSelector('eStickyBottom') private eStickyBottom: HTMLElement;
     @RefSelector('eTop') private eTop: HTMLElement;
     @RefSelector('eBottom') private eBottom: HTMLElement;
-    @RefSelector('gridHeader') headerRootComp: AgHeaderRoot;
+    @RefSelector('gridHeader') headerRootComp: GridHeaderComp;
     @RefSelector('eBody') private eBody: HTMLElement;
 
     private ctrl: GridBodyCtrl;
 
     constructor() {
-        super(GRID_BODY_TEMPLATE, [AgOverlayWrapper, FakeHScrollComp, FakeVScrollComp, AgHeaderRoot, RowContainerComp]);
+        super(GRID_BODY_TEMPLATE, [AgOverlayWrapper, FakeHScrollComp, FakeVScrollComp, GridHeaderComp, RowContainerComp]);
     }
 
     @PostConstruct

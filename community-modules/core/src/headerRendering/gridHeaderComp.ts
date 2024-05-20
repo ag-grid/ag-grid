@@ -3,13 +3,13 @@ import { AgComponentSelector, Component } from '../widgets/component';
 import { GridHeaderCtrl, IGridHeaderComp } from './gridHeaderCtrl';
 import { HeaderRowContainerComp } from './rowContainer/headerRowContainerComp';
 
-export class AgHeaderRoot extends Component {
+export class GridHeaderComp extends Component {
     static readonly selector: AgComponentSelector = 'ag-header-root';
     private static TEMPLATE = /* html */
         `<div class="ag-header" role="presentation"/>`;
 
     constructor() {
-        super(AgHeaderRoot.TEMPLATE);
+        super(GridHeaderComp.TEMPLATE);
     }
 
     @PostConstruct

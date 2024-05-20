@@ -146,7 +146,7 @@ export { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterBuilde
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 
 // gridPanel
-export { AgGridBody } from "./gridBodyComp/agGridBody";
+export { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from "./gridBodyComp/gridBodyCtrl";
 export { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
 export { MouseEventService } from "./gridBodyComp/mouseEventService";
@@ -164,7 +164,7 @@ export { BodyDropPivotTarget } from "./headerRendering/columnDrag/bodyDropPivotT
 export { BodyDropTarget } from "./headerRendering/columnDrag/bodyDropTarget";
 export { CssClassApplier } from "./headerRendering/cells/cssClassApplier";
 export { HeaderRowContainerComp } from "./headerRendering/rowContainer/headerRowContainerComp";
-export { AgHeaderRoot } from "./headerRendering/agHeaderRoot";
+export { GridHeaderComp } from "./headerRendering/gridHeaderComp";
 export { GridHeaderCtrl, IGridHeaderComp } from "./headerRendering/gridHeaderCtrl";
 export { HeaderRowComp, HeaderRowType } from "./headerRendering/row/headerRowComp";
 export { HeaderRowCtrl, IHeaderRowComp } from "./headerRendering/row/headerRowCtrl";
