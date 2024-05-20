@@ -4,6 +4,7 @@ import { _isNodeOrElement, _loadTemplate } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
 import { Component } from './component';
 
+
 interface AgMenuItemRendererParams {
     cssClassPrefix?: string;
     isCompact?: boolean;
@@ -16,7 +17,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
     constructor() {
         super();
 
-        this.setTemplate(/* html */ `<div></div>`, []);
+        this.setTemplate(/* html */ `<div></div>`);
     }
 
     public init(params: IMenuItemParams & AgMenuItemRendererParams): void {

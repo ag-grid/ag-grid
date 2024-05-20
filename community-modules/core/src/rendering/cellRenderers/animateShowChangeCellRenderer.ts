@@ -5,6 +5,7 @@ import { _exists } from '../../utils/generic';
 import { Component } from '../../widgets/component';
 import { ICellRenderer } from './iCellRenderer';
 
+
 const ARROW_UP = '\u2191';
 const ARROW_DOWN = '\u2193';
 
@@ -31,7 +32,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         template.appendChild(delta);
         template.appendChild(value);
 
-        this.setTemplateFromElement(template, []);
+        this.setTemplateFromElement(template);
     }
 
     public init(params: any): void {

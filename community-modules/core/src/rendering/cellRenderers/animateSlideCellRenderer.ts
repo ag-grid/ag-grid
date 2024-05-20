@@ -5,6 +5,7 @@ import { _exists, _missing } from '../../utils/generic';
 import { Component } from '../../widgets/component';
 import { ICellRenderer } from './iCellRenderer';
 
+
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
     private eCurrent: HTMLElement;
     private ePrevious: HTMLElement | null;
@@ -23,7 +24,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         slide.setAttribute('class', 'ag-value-slide-current');
         template.appendChild(slide);
 
-        this.setTemplateFromElement(template, []);
+        this.setTemplateFromElement(template);
 
         this.eCurrent = this.queryForHtmlElement('.ag-value-slide-current');
     }

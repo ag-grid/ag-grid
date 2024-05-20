@@ -9,6 +9,7 @@ import { _createIconNoSpan } from '../../utils/icon';
 import { Component } from '../../widgets/component';
 import { Beans } from '../beans';
 
+
 export interface IRowDragItem extends DragItem {
     /** The default text that would be applied to this Drag Element */
     defaultTextValue: string;
@@ -37,7 +38,7 @@ export class RowDragComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         if (!this.customGui) {
-            this.setTemplate(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`, []);
+            this.setTemplate(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`);
             this.getGui().appendChild(_createIconNoSpan('rowDrag', this.gos, null)!);
             this.addDragSource();
         } else {
@@ -56,7 +57,7 @@ export class RowDragComp extends Component {
     }
 
     public setDragElement(dragElement: HTMLElement, dragStartPixels?: number) {
-        this.setTemplateFromElement(dragElement, []);
+        this.setTemplateFromElement(dragElement);
         this.addDragSource(dragStartPixels);
     }
 

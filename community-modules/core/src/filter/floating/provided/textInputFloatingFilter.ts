@@ -12,6 +12,7 @@ import { TextFilter, TextFilterModel, TextFilterParams } from '../../provided/te
 import { IFloatingFilterParams } from '../floatingFilter';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
 
+
 export interface FloatingFilterInputService {
     setupGui(parentElement: HTMLElement): void;
     setEditable(editable: boolean): void;
@@ -101,12 +102,9 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
 
     @PostConstruct
     private postConstruct(): void {
-        this.setTemplate(
-            /* html */ `
+        this.setTemplate(/* html */ `
             <div class="ag-floating-filter-input" role="presentation" ref="eFloatingFilterInputContainer"></div>
-        `,
-            []
-        );
+        `);
     }
 
     protected getDefaultDebounceMs(): number {

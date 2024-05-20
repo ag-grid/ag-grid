@@ -6,7 +6,7 @@ export class AgMenuPanel extends TabGuardComp {
     constructor(private readonly wrappedComponent: IComponent<any>) {
         super();
 
-        this.setTemplateFromElement(wrappedComponent.getGui(), []);
+        this.setTemplateFromElement(wrappedComponent.getGui());
     }
 
     @PostConstruct

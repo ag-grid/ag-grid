@@ -13,6 +13,7 @@ import { HeaderFilterCellComp } from '../cells/floatingFilter/headerFilterCellCo
 import { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
 import { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 
+
 export enum HeaderRowType {
     COLUMN_GROUP = 'group',
     COLUMN = 'column',
@@ -28,7 +29,7 @@ export class HeaderRowComp extends Component {
         super();
 
         this.ctrl = ctrl;
-        this.setTemplate(/* html */ `<div class="${this.ctrl.getHeaderRowClass()}" role="row"></div>`, []);
+        this.setTemplate(/* html */ `<div class="${this.ctrl.getHeaderRowClass()}" role="row"></div>`);
     }
 
     //noinspection JSUnusedLocalSymbols

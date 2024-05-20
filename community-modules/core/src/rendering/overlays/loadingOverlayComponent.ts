@@ -2,6 +2,7 @@ import { AgGridCommon } from '../../interfaces/iCommon';
 import { IComponent } from '../../interfaces/iComponent';
 import { Component } from '../../widgets/component';
 
+
 export interface ILoadingOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
 
 export interface ILoadingOverlay<TData = any, TContext = any> {
@@ -29,7 +30,7 @@ export class LoadingOverlayComponent extends Component implements ILoadingOverla
     public init(params: ILoadingOverlayParams): void {
         const customTemplate = this.gos.get('overlayLoadingTemplate');
 
-        this.setTemplate(customTemplate ?? LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE, []);
+        this.setTemplate(customTemplate ?? LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE);
 
         if (!customTemplate) {
             const localeTextFunc = this.localeService.getLocaleTextFunc();

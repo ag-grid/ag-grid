@@ -8,6 +8,7 @@ import { HeaderRowComp } from '../row/headerRowComp';
 import { HeaderRowCtrl, HeaderRowCtrlInstanceId } from '../row/headerRowCtrl';
 import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowContainerCtrl';
 
+
 export class HeaderRowContainerComp extends Component {
     private static PINNED_LEFT_TEMPLATE = /* html */ `<div class="ag-pinned-left-header" role="rowgroup"></div>`;
 
@@ -66,7 +67,7 @@ export class HeaderRowContainerComp extends Component {
               ? HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE
               : HeaderRowContainerComp.CENTER_TEMPLATE;
 
-        this.setTemplate(template, []);
+        this.setTemplate(template);
 
         // for left and right, we add rows directly to the root element,
         // but for center container we add elements to the child container.

@@ -19,6 +19,7 @@ import { RowCtrl } from './../row/rowCtrl';
 import { RowDragComp } from './../row/rowDragComp';
 import { CellCtrl, ICellComp } from './cellCtrl';
 
+
 export class CellComp extends Component implements TooltipParentComp {
     private eCellWrapper: HTMLElement | undefined;
     private eCellValue: HTMLElement | undefined;
@@ -73,7 +74,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const cellDiv = document.createElement('div');
         cellDiv.setAttribute('comp-id', `${this.getCompId()}`);
-        this.setTemplateFromElement(cellDiv, []);
+        this.setTemplateFromElement(cellDiv);
 
         const eGui = this.getGui();
 

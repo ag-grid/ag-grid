@@ -8,17 +8,11 @@ import { AgEvent } from '../events';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { CssClassManager } from '../rendering/cssClassManager';
 import { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
-import {
-    _copyNodeList,
-    _isNodeOrElement,
-    _iterateNamedNodeMap,
-    _loadTemplate,
-    _setDisplayed,
-    _setVisible,
-} from '../utils/dom';
+import { _copyNodeList, _isNodeOrElement, _iterateNamedNodeMap, _loadTemplate, _setDisplayed, _setVisible } from '../utils/dom';
 import { _getFunctionName } from '../utils/function';
 import { NumberSequence } from '../utils/numberSequence';
 import { TooltipFeature } from './tooltipFeature';
+
 
 const compIdSequence = new NumberSequence();
 
@@ -247,7 +241,7 @@ export class Component extends BeanStub {
 
     public setTemplate(
         template: string | null | undefined,
-        components: ComponentClass[],
+        components?: ComponentClass[],
         paramsMap?: { [key: string]: any }
     ): void {
         const eGui = _loadTemplate(template as string);
@@ -256,7 +250,7 @@ export class Component extends BeanStub {
 
     public setTemplateFromElement(
         element: HTMLElement,
-        components: ComponentClass[],
+        components?: ComponentClass[],
         paramsMap?: { [key: string]: any }
     ): void {
         this.eGui = element;
