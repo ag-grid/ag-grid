@@ -138,3 +138,9 @@
         border-radius: var(--radius-none);
     }
 }
+img[alt='Quality Badge'] {
+    #{$selector-darkmode} & {
+        filter: invert(1) hue-rotate(180deg) saturate(1.25);
+        mix-blend-mode: screen;
+    }
+}
