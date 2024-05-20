@@ -598,6 +598,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             childNode.level = path.length;
             this.ensureRowNodeFields(childNode, this.getChildrenMappedKey(info.key, info.rowGroupColumn));
             this.setGroupData(childNode, info, details);
+            // AG-3441 - only set initial value if node is not being moved
             if (!isMove) {
                 this.setExpandedInitialValue(details, childNode)
             }
@@ -637,8 +638,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         return nextNode;
     }
 
-    private getOrCreateNextNode(parentGroup: RowNode, groupInfo: GroupInfo, level: number,
-        details: GroupingDetails): RowNode {
+    private getOrCreateNextNode(parentGroup: RowNode, groupInfo: GroupInfo, level: number, details: GroupingDetails): RowNode {
 
         const key = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
         let nextNode = parentGroup?.childrenMapped?.[key];
