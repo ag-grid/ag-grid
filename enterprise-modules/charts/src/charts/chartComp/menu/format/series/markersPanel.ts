@@ -107,13 +107,7 @@ export class MarkersPanel extends Component {
                 text: 'Heart'
             }
         ];
-        return this.chartMenuUtils.addValueParams(
-            'marker.shape',
-            {
-                options,
-                label: this.chartTranslationService.translate('shape')
-            }
-        );
+        return this.chartMenuUtils.getDefaultSelectParams('marker.shape', 'shape', options);
     }
 
     private getSliderParams(expression: string, labelKey: ChartTranslationKey, defaultMaxValue: number): AgSliderParams {

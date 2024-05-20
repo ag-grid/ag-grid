@@ -34,7 +34,7 @@ export class PolarAxisPanel extends Component {
 
     @PostConstruct
     private init() {
-        const { isExpandedOnInit: expanded, chartMenuParamsFactory, registerGroupComponent } = this.options;
+        const { isExpandedOnInit: expanded, chartAxisMenuParamsFactory, registerGroupComponent } = this.options;
         const axisGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-top-level',
             direction: 'vertical',
@@ -42,8 +42,8 @@ export class PolarAxisPanel extends Component {
             expanded,
             suppressEnabledCheckbox: true
         };
-        const axisColorInputParams = chartMenuParamsFactory.getDefaultColorPickerParams('line.color');
-        const axisLineWidthSliderParams = chartMenuParamsFactory.getDefaultSliderParams('line.width', 'thickness', 10);
+        const axisColorInputParams = chartAxisMenuParamsFactory.getDefaultColorPickerParams('line.color');
+        const axisLineWidthSliderParams = chartAxisMenuParamsFactory.getDefaultSliderParams('line.width', 'thickness', 10);
         this.setTemplate(PolarAxisPanel.TEMPLATE, {
             axisGroup: axisGroupParams,
             axisColorInput: axisColorInputParams,
@@ -86,7 +86,7 @@ export class PolarAxisPanel extends Component {
             name: this.translate('labels'),
             enabled: true,
             suppressEnabledCheckbox: true,
-            chartMenuParamsFactory: this.options.chartMenuParamsFactory,
+            chartMenuParamsFactory: this.options.chartAxisMenuParamsFactory,
             keyMapper: key => `label.${key}`
         };
 
@@ -148,7 +148,7 @@ export class PolarAxisPanel extends Component {
         property: string;
     }): AgSlider {
         const { labelKey, defaultMaxValue, step = 0.05, property } = config;
-        const params = this.options.chartMenuParamsFactory.getDefaultSliderParams(property, labelKey, defaultMaxValue);
+        const params = this.options.chartAxisMenuParamsFactory.getDefaultSliderParams(property, labelKey, defaultMaxValue);
         params.step = step;
         return this.createManagedBean(new AgSlider(params));
     }
@@ -158,17 +158,8 @@ export class PolarAxisPanel extends Component {
         options: Array<ListOption>;
         property: string
     }): AgSelect {
-        const { labelKey: label, options, property } = config;
-        return this.createManagedBean(new AgSelect(this.options.chartMenuParamsFactory.addValueParams<AgSelectParams>(
-            property,
-            {
-                label: this.chartTranslationService.translate(label),
-                labelAlignment: 'left',
-                labelWidth: 'flex',
-                inputWidth: 'flex',
-                options,
-            }
-        )));
+        const { labelKey, options, property } = config;
+        return this.createManagedBean(new AgSelect(this.options.chartAxisMenuParamsFactory.getDefaultSelectParams(property, labelKey, options)));
     }
 
     private translate(key: ChartTranslationKey) {

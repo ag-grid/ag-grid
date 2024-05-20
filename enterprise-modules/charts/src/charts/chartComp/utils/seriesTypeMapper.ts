@@ -178,7 +178,7 @@ export function getMaxNumSeries(chartType: ChartType): number | undefined {
 }
 
 export function supportsInvertedCategorySeries(chartType: ChartType): boolean {
-    return doesSeriesHaveProperty(getSeriesType(chartType), 'canInvert');
+    return !isComboChart(chartType) && doesSeriesHaveProperty(getSeriesType(chartType), 'canInvert');
 }
 
 export function canSwitchDirection(chartType: ChartType): boolean {

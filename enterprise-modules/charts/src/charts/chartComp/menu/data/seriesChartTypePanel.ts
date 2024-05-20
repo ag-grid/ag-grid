@@ -12,7 +12,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../model/chartDataModel";
-import { ChartTranslationKey, ChartTranslationService } from "../../services/chartTranslationService";
+import { ChartTranslationService } from "../../services/chartTranslationService";
 
 export class SeriesChartTypePanel extends Component {
     private static TEMPLATE = /* html */`<div id="seriesChartTypeGroup"></div>`;
@@ -103,22 +103,12 @@ export class SeriesChartTypePanel extends Component {
 
             seriesItemGroup.addItem(secondaryAxisComp);
 
-            const translate = (key: ChartTranslationKey) => {
-                return this.chartTranslationService.translate(key);
-            }
-
-            const availableChartTypes = [
-                { value: 'line', text: translate('line') },
-                { value: 'area', text: translate('area') },
-                { value: 'stackedArea', text: translate('stackedArea') },
-                { value: 'groupedColumn', text: translate('groupedColumn') },
-                { value: 'stackedColumn', text: translate('stackedColumn') },
-            ];
+            const options = ([
+                'line', 'area', 'stackedArea', 'groupedColumn', 'stackedColumn'
+            ] as const).map(value => ({ value, text: this.chartTranslationService.translate(value) }));
 
             const chartTypeComp = seriesItemGroup.createManagedBean(new AgSelect({
-                labelAlignment: 'left',
-                labelWidth: "flex",
-                options: availableChartTypes,
+                options,
                 value: seriesChartType.chartType,
                 onValueChange: (chartType: ChartType) => this.chartController.updateSeriesChartType(col.colId, chartType)
             }));

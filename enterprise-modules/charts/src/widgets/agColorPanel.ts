@@ -1,7 +1,8 @@
-import { Component, PostConstruct, RefSelector, _exists } from "@ag-grid-community/core";
+import { Component, PostConstruct, RefSelector, _exists, _setDisplayed } from "@ag-grid-community/core";
 import { AgColorPicker } from "./agColorPicker";
 import { _Util } from 'ag-charts-community';
 import { KeyCode } from "@ag-grid-community/core";
+import { AgColorInput } from "./agColorInput";
 
 export class AgColorPanel extends Component {
     private H = 1; // in the [0, 1] range
@@ -43,6 +44,7 @@ export class AgColorPanel extends Component {
                     <div class="ag-spectrum-alpha-background"></div>
                     <div ref="spectrumAlphaSlider" class="ag-spectrum-slider"></div>
                 </div>
+                <ag-color-input ref="colorInput"></ag-color-input>
                 <div ref="recentColors" class="ag-recent-colors"></div>
             </div>
         </div>`;
@@ -54,6 +56,7 @@ export class AgColorPanel extends Component {
     @RefSelector('spectrumHueSlider') private readonly spectrumHueSlider: HTMLElement;
     @RefSelector('spectrumAlpha') private readonly spectrumAlpha: HTMLElement;
     @RefSelector('spectrumAlphaSlider') private readonly spectrumAlphaSlider: HTMLElement;
+    @RefSelector('colorInput') private readonly colorInput: AgColorInput;
     @RefSelector('recentColors') private readonly recentColors: HTMLElement;
 
     constructor(config: { picker: Component }) {
@@ -91,6 +94,8 @@ export class AgColorPanel extends Component {
         // outside the UI control. When the mouse returns back to the control's area, the dragging
         // of the thumb is not expected and seen as a bug.
         this.addManagedListener(document, 'mouseup', this.onMouseUp.bind(this));
+
+        this.colorInput.onColorChanged(this.setColor.bind(this));
 
         this.addManagedListener(this.recentColors, 'click', this.onRecentColorClick.bind(this));
         this.addManagedListener(this.recentColors, 'keydown', (e: KeyboardEvent) => {
@@ -253,7 +258,7 @@ export class AgColorPanel extends Component {
         return x;
     }
 
-    private update() {
+    private update(suppressColorInputUpdate?: boolean) {
         const color = _Util.Color.fromHSB(this.H * 360, this.S, this.B, this.A);
         const spectrumColor = _Util.Color.fromHSB(this.H * 360, 1, 1);
         const rgbaColor = color.toRgbaString();
@@ -270,13 +275,17 @@ export class AgColorPanel extends Component {
 
         this.spectrumColor.style.backgroundColor = spectrumColor.toRgbaString();
         this.spectrumDragger.style.backgroundColor = rgbaColor;
+
+        if (!suppressColorInputUpdate) {
+            this.colorInput.setColor(color);
+        }
     }
 
     /**
      * @param saturation In the [0, 1] interval.
      * @param brightness In the [0, 1] interval.
      */
-    public setSpectrumValue(saturation: number, brightness: number) {
+    public setSpectrumValue(saturation: number, brightness: number, suppressColorInputUpdate?: boolean) {
         const valRect = this.spectrumValRect || this.refreshSpectrumRect();
 
         if (valRect == null) { return; }
@@ -295,7 +304,7 @@ export class AgColorPanel extends Component {
         dragger.style.left = (saturation * valRect.width - draggerRect.width / 2) + 'px';
         dragger.style.top = ((1 - brightness) * valRect.height - draggerRect.height / 2) + 'px';
 
-        this.update();
+        this.update(suppressColorInputUpdate);
     }
 
     private getSpectrumValue(): { x: number, y: number } {
@@ -315,10 +324,15 @@ export class AgColorPanel extends Component {
         });
 
         this.recentColors.innerHTML = innerHtml.join('');
+        _setDisplayed(this.recentColors, !!recentColors.length);
     }
 
-    public setValue(val: string) {
+    public setValue(val: string): void {
         const color: _Util.Color = _Util.Color.fromString(val);
+        this.setColor(color, true);
+    }
+
+    private setColor(color: _Util.Color, updateColorInput?: boolean): void {
         const [h, s, b] = color.toHSB();
 
         this.H = (isNaN(h) ? 0 : h) / 360;
@@ -330,7 +344,7 @@ export class AgColorPanel extends Component {
         this.spectrumHueSlider.style.left = `${((this.H - 1) * -spectrumHueRect.width)}px`;
         this.spectrumAlphaSlider.style.left = `${(this.A * spectrumAlphaRect.width)}px`;
 
-        this.setSpectrumValue(s, b);
+        this.setSpectrumValue(s, b, !updateColorInput);
     }
 
     private onRecentColorClick(e: MouseEvent | KeyboardEvent) {

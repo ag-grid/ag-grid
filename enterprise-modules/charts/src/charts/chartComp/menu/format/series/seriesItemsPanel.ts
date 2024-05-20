@@ -64,15 +64,7 @@ export class SeriesItemsPanel extends Component {
             this.initSeriesControls(newValue as SeriesItemType);
         }
 
-        return {
-            label: this.chartTranslationService.translate('seriesItemType'),
-            labelAlignment: "left",
-            labelWidth: 'flex',
-            inputWidth: 'flex',
-            options,
-            value: 'positive',
-            onValueChange: seriesItemChangedCallback
-        };
+        return this.chartMenuUtils.getDefaultSelectParamsWithoutValueParams('seriesItemType', options, 'positive', seriesItemChangedCallback);
     }
 
     private initSeriesControls(itemType: SeriesItemType = 'positive') {

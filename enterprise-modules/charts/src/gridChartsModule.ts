@@ -12,6 +12,7 @@ import { ChartMenuListFactory } from "./charts/chartComp/menu/chartMenuList";
 import { ChartMenuService } from "./charts/chartComp/services/chartMenuService";
 import { AgPillSelect } from "./widgets/agPillSelect";
 import { AdvancedSettingsMenuFactory } from "./charts/chartComp/menu/advancedSettings/advancedSettingsMenuFactory";
+import { AgColorInput } from "./widgets/agColorInput";
 
 export const GridChartsModule: Module = {
     version: GRID_VERSION,
@@ -29,6 +30,7 @@ export const GridChartsModule: Module = {
         { componentName: 'AgColorPicker', componentClass: AgColorPicker },
         { componentName: 'AgAngleSelect', componentClass: AgAngleSelect },
         { componentName: 'AgPillSelect', componentClass: AgPillSelect },
+        { componentName: 'AgColorInput', componentClass: AgColorInput },
     ],
     dependantModules: [
         RangeSelectionModule,

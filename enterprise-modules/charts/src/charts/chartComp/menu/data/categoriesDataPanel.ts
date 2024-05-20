@@ -1,19 +1,11 @@
 import {
-    AgCheckbox,
-    AgCheckboxParams,
     AgGroupComponent,
-    AgRadioButton,
     AgSelect,
     AgToggleButton,
-    AutoScrollService,
-    Autowired,
-    DragAndDropService,
-    DropTarget,
     IAggFunc,
     PostConstruct,
     _clearElement,
 } from "@ag-grid-community/core";
-import { ChartService } from "../../../chartService";
 import { ChartController } from "../../chartController";
 import { ChartDataModel, ColState } from "../../model/chartDataModel";
 import { DragDataPanel } from "./dragDataPanel";
@@ -25,21 +17,18 @@ const DEFAULT_AGG_FUNC: AggFuncPreset = 'sum'
 export class CategoriesDataPanel extends DragDataPanel {
     private static TEMPLATE = /* html */`<div id="categoriesGroup"></div>`;
 
-    @Autowired('chartService') private readonly chartService: ChartService;
-
     private aggFuncToggle?: AgToggleButton;
     private aggFuncSelect?: AgSelect;
 
     constructor(
         chartController: ChartController,
-        autoScrollService: AutoScrollService,
         private readonly title: string,
         allowMultipleSelection: boolean,
         private dimensionCols: ColState[],
         private isOpen?: boolean
     ) {
         const maxSelection = undefined;
-        super(chartController, autoScrollService, allowMultipleSelection, maxSelection, CategoriesDataPanel.TEMPLATE);
+        super(chartController, allowMultipleSelection, maxSelection, CategoriesDataPanel.TEMPLATE);
     }
 
     @PostConstruct
@@ -52,85 +41,17 @@ export class CategoriesDataPanel extends DragDataPanel {
             cssIdentifier: 'charts-data',
             expanded: this.isOpen
         }));
-        if (this.chartService.isEnterprise()) {
-            this.createCategoriesGroup(this.dimensionCols);
-            this.createAggFuncControls(this.dimensionCols);
-        } else {
-            this.createLegacyCategoriesGroup(this.dimensionCols);
-            this.clearAggFuncControls();
-        }
+
+        this.createGroup(this.dimensionCols, col => col.displayName ?? '', 'categoryAdd', 'categorySelect', () => !this.chartController.getAggFunc());
+        this.createAggFuncControls(this.dimensionCols);
+
         this.getGui().appendChild(this.groupComp.getGui());
     }
 
     public refresh(dimensionCols: ColState[]): void {
-        if (this.chartService.isEnterprise()) {
-            this.valuePillSelect?.setValues(dimensionCols, dimensionCols.filter(col => col.selected));
-            this.refreshValueSelect(dimensionCols);
-            this.refreshAggFuncControls(dimensionCols, this.chartController.getAggFunc());
-        } else {
-            if (!this.refreshColumnComps(dimensionCols)) {
-                this.recreate(dimensionCols);
-            }
-        }
-    }
-
-    private recreate(dimensionCols: ColState[]): void {
-        this.isOpen = this.groupComp.isExpanded();
-        _clearElement(this.getGui());
-        this.destroyBean(this.groupComp);
-        this.dimensionCols = dimensionCols;
-        this.init();
-    }
-
-    private createCategoriesGroup(columns: ColState[]): void {
-        this.createGroup(columns, col => col.displayName ?? '', 'categoryAdd', 'categorySelect', () => !this.chartController.getAggFunc());
-    }
-
-    private createLegacyCategoriesGroup(columns: ColState[]): void {
-        const inputName = `chartDimension${this.groupComp.getCompId()}`;
-
-        // Display either radio buttons or checkboxes
-        // depending on whether the current chart type supports multiple category columns
-        const supportsMultipleCategoryColumns = this.allowMultipleSelection;
-
-        columns.forEach(col => {
-            const params: AgCheckboxParams = {
-                label: col.displayName ?? '',
-                value: col.selected,
-                inputName
-            };
-            const comp: AgCheckbox | AgRadioButton = this.groupComp!.createManagedBean(
-                supportsMultipleCategoryColumns
-                    ? (() => {
-                        const checkboxComp = new AgCheckbox(params);
-                        checkboxComp.addCssClass('ag-data-select-checkbox');
-                        return checkboxComp;
-                    })()
-                    : new AgRadioButton(params)
-            );
-
-            this.addChangeListener(comp, col);
-            this.groupComp!.addItem(comp);
-            this.columnComps.set(col.colId, comp);
-
-            if (supportsMultipleCategoryColumns) this.addDragHandle(comp, col);
-        });
-
-        if (supportsMultipleCategoryColumns) {
-            const categoriesGroupGui = this.groupComp.getGui();
-            
-            const dropTarget: DropTarget = {
-                getIconName: () => DragAndDropService.ICON_MOVE,
-                getContainer: () => categoriesGroupGui,
-                onDragging: (params) => this.onDragging(params),
-                onDragLeave: () => this.onDragLeave(),
-                isInterestedIn: this.isInterestedIn.bind(this),
-                targetContainsSource: true
-            };
-
-            this.dragAndDropService.addDropTarget(dropTarget);
-            this.addDestroyFunc(() => this.dragAndDropService.removeDropTarget(dropTarget));
-        }
+        this.valuePillSelect?.setValues(dimensionCols, dimensionCols.filter(col => col.selected));
+        this.refreshValueSelect(dimensionCols);
+        this.refreshAggFuncControls(dimensionCols, this.chartController.getAggFunc());
     }
 
     private createAggFuncControls(dimensionCols: ColState[]): void {
