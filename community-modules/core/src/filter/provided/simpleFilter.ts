@@ -74,14 +74,6 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
      * @default 1
      */
     numAlwaysVisibleConditions?: number;
-    /**
-     * @deprecated As of v29.2 there can be more than two conditions in the filter. Use `maxNumConditions = 1` instead.
-     */
-    suppressAndOrCondition?: boolean;
-    /**
-     * @deprecated As of v29.2 there can be more than two conditions in the filter. Use `numAlwaysVisibleConditions = 2` instead.
-     */
-    alwaysShowBothConditions?: boolean;
 
     /**
      * Placeholder text for the filter textbox
@@ -109,25 +101,9 @@ export interface ISimpleFilterModel extends ProvidedFilterModel {
     type?: ISimpleFilterModelType | null;
 }
 
-/**
- * Old combined models prior to v29.2 only supported two conditions, which were defined using `condition1` and `condition2`.
- * New combined models allow more than two conditions using `conditions`.
- * When supplying combined models to the grid:
- * - `conditions` will be used if present.
- * - If `conditions` is not present, `condition1` and `condition2` will be used (deprecated).
- *
- * When receiving combined models from the grid:
- * - `conditions` will be populated with all the conditions (including the first and second conditions).
- * - `condition1` and `condition2` will be populated with the first and second conditions (deprecated).
- */
 export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends ProvidedFilterModel {
     operator: JoinOperator;
-    /** @deprecated As of v29.2, supply as the first element of `conditions`. */
-    condition1: M;
-    /** @deprecated As of v29.2, supply as the second element of `conditions`. */
-    condition2: M;
-    /** Will be mandatory in a future release. */
-    conditions?: M[];
+    conditions: M[];
 }
 
 export type Tuple<T> = (T | null)[];
@@ -150,11 +126,7 @@ export abstract class SimpleFilterModelFormatter<TValue = any> {
         const translate = this.localeService.getLocaleTextFunc();
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
-            let { conditions } = combinedModel;
-            if (!conditions) {
-                const { condition1, condition2 } = combinedModel;
-                conditions = [condition1, condition2];
-            }
+            const { conditions } = combinedModel;
             const customOptions = conditions.map((condition) => this.getModelAsString(condition));
             const joinOperatorTranslateKey = combinedModel.operator === 'AND' ? 'andCondition' : 'orCondition';
             return customOptions.join(
@@ -310,8 +282,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             return {
                 filterType: this.getFilterType(),
                 operator: this.getJoinOperator(),
-                condition1: conditions[0],
-                condition2: conditions[1],
                 conditions,
             };
         }
@@ -426,9 +396,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<M>;
-            if (!combinedModel.conditions) {
-                combinedModel.conditions = [combinedModel.condition1, combinedModel.condition2];
-            }
 
             const numConditions = this.validateAndUpdateConditions(combinedModel.conditions);
             const numPrevConditions = this.getNumConditions();
@@ -527,23 +494,12 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     private setNumConditions(params: SimpleFilterParams): void {
-        if (params.suppressAndOrCondition != null) {
-            _warnOnce(
-                'Since v29.2 "filterParams.suppressAndOrCondition" is deprecated. Use "filterParams.maxNumConditions = 1" instead.'
-            );
-        }
-        if (params.alwaysShowBothConditions != null) {
-            _warnOnce(
-                'Since v29.2 "filterParams.alwaysShowBothConditions" is deprecated. Use "filterParams.numAlwaysVisibleConditions = 2" instead.'
-            );
-        }
-        this.maxNumConditions = params.maxNumConditions ?? (params.suppressAndOrCondition ? 1 : 2);
+        this.maxNumConditions = params.maxNumConditions ?? 2;
         if (this.maxNumConditions < 1) {
             _warnOnce('"filterParams.maxNumConditions" must be greater than or equal to zero.');
             this.maxNumConditions = 1;
         }
-        this.numAlwaysVisibleConditions =
-            params.numAlwaysVisibleConditions ?? (params.alwaysShowBothConditions ? 2 : 1);
+        this.numAlwaysVisibleConditions = params.numAlwaysVisibleConditions ?? 1;
         if (this.numAlwaysVisibleConditions < 1) {
             _warnOnce('"filterParams.numAlwaysVisibleConditions" must be greater than or equal to zero.');
             this.numAlwaysVisibleConditions = 1;
@@ -642,13 +598,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
                 ? this.localeService.getLocaleTextFunc()(customOption.displayKey, customOption.displayName)
                 : this.translate(displayKey as keyof typeof FILTER_LOCALE_TEXT),
         };
-    }
-
-    /**
-     * @deprecated As of v29.2 filters can have more than two conditions. Check `colDef.filterParams.maxNumConditions` instead.
-     */
-    public isAllowTwoConditions(): boolean {
-        return this.maxNumConditions >= 2;
     }
 
     protected createBodyTemplate(): string {
