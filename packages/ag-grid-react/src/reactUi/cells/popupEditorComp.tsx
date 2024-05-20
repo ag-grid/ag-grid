@@ -1,7 +1,6 @@
+import { CellCtrl, PopupEditorWrapper } from 'ag-grid-community';
 import React, { memo, useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
-
-import { CellCtrl, PopupEditorWrapper } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { useEffectOnce } from '../useEffectOnce';

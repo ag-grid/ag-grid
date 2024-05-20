@@ -1,6 +1,5 @@
-import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
-
 import { GridHeaderCtrl, IGridHeaderComp } from 'ag-grid-community';
+import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import { BeansContext } from '../beansContext';
 import { CssClasses } from '../utils';
