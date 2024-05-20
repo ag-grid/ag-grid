@@ -6,7 +6,6 @@ import {
     ChangedPath,
     Column,
     ColumnModel,
-    FuncColsService,
     GetDataPath,
     IRowNodeStage,
     ISelectionService,
@@ -16,19 +15,19 @@ import {
     RowNode,
     RowNodeTransaction,
     SelectableService,
-    ShowRowGroupColsService,
     StageExecuteParams,
     ValueService,
     WithoutGridCommon,
     _areEqual,
     _exists,
     _existsAndNotEmpty,
+    _last,
     _removeFromArray,
     _sortRowNodesByOrder,
     _warnOnce,
-    _last
-} from "@ag-grid-community/core";
-import { BatchRemover } from "./batchRemover";
+} from '@ag-grid-community/core';
+
+import { BatchRemover } from './batchRemover';
 
 interface GroupInfo {
     key: string; // e.g. 'Ireland'
@@ -60,12 +59,10 @@ interface GroupingDetails {
 @Bean('groupStage')
 export class GroupStage extends BeanStub implements IRowNodeStage {
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('selectableService') private selectableService: SelectableService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('beans') private beans: Beans;
     @Autowired('selectionService') private selectionService: ISelectionService;
-    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
 
     // when grouping, these items are of note:
     // rowNode.parent: RowNode: set to the parent
@@ -75,7 +72,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private oldGroupingDetails: GroupingDetails;
     private oldGroupDisplayColIds: string;
-    private treeNodeCache: Record<string, RowNode> = {};
+    private treeNodeCache = new TreeDataNodeCache();
 
     public execute(params: StageExecuteParams): void {
         const details = this.createGroupingDetails(params);
@@ -129,7 +126,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
         const usingTreeData = this.gos.get('treeData');
 
-        const groupedCols = usingTreeData ? null : this.funcColsService.getRowGroupColumns();
+        const groupedCols = usingTreeData ? null : this.columnModel.getRowGroupColumns();
 
         const details: GroupingDetails = {
             expandByDefault: this.gos.get('groupDefaultExpanded'),
@@ -510,7 +507,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
         let noFurtherProcessingNeeded = false;
 
-        const groupDisplayColumns = this.showRowGroupColsService.getShowRowGroupCols();
+        const groupDisplayColumns = this.columnModel.getGroupDisplayColumns();
         const newGroupDisplayColIds = groupDisplayColumns ? groupDisplayColumns.map((c) => c.getId()).join('-') : '';
 
         if (afterColumnsChanged) {
@@ -553,11 +550,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             return info;
         });
 
-        this.treeNodeCache = {};
+        this.treeNodeCache.clear();
 
         for (let level = 0; level < width; level++) {
-            const levelCache: Record<string, [parent: RowNode, node: null | RowNode]> = {};
-
             for (const [rowIdx, path] of paths.entries()) {
                 const isDefined = path[level] !== undefined;
                 const isLeaf = path[level + 1] === undefined;
@@ -568,36 +563,47 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
                 const info = path[level];
 
-                const currentValue = levelCache[info.key];
-                if (currentValue !== undefined && currentValue[1] !== null) {
+                const currentValue = this.treeNodeCache.get(path, level, info.key);
+                if (currentValue != null) {
                     continue;
                 }
 
-                const parentInfo = path[level - 1];
-                const parentKey = parentInfo != null ? this.getChildrenMappedKey(parentInfo.key, parentInfo.rowGroupColumn) : null;
-                const parent = parentKey != null ? this.treeNodeCache[parentKey] ?? details.rootNode : details.rootNode;
-                levelCache[info.key] = isLeaf ? [parent, this.ensureRowNodeFields(rowNodes[rowIdx], info.key)] : [parent, null];
+                this.treeNodeCache.set(
+                    path,
+                    level,
+                    info.key,
+                    isLeaf ? this.ensureRowNodeFields(rowNodes[rowIdx], info.key) : null
+                );
             }
+        }
 
-            for (const [key, [parent, node]] of Object.entries(levelCache)) {
-                let group: RowNode;
-                if (node === null) {
-                    group = this.createGroup({key, rowGroupColumn: null ,field: null}, parent, level, details);
-                } else {
-                    group = node;
-                }
-                
-                this.treeNodeCache[key] = group;
+        // backfill nulls
+        const inner = this.treeNodeCache.inner();
+        this.backFillNulls(inner, details.rootNode, 0, details);
+    }
+
+    private backFillNulls(
+        cache: InnerTreeDataNodeCache,
+        parent: RowNode,
+        level: number,
+        details: GroupingDetails
+    ): void {
+        for (const [key, value] of Object.entries(cache)) {
+            if (value.node === null) {
+                value.node = this.createGroup({ key, rowGroupColumn: null, field: null }, parent, level, details);
             }
+            this.backFillNulls(value.subtree, value.node, level + 1, details);
         }
     }
 
     private insertNodes(newRowNodes: RowNode[], details: GroupingDetails, isMove: boolean): void {
         if (details.usingTreeData) {
             this.buildNodeCacheFromRows(newRowNodes, details);
+        } else {
+            this.treeNodeCache.clear();
         }
 
-        newRowNodes.forEach(rowNode => {
+        newRowNodes.forEach((rowNode) => {
             this.insertOneNode(rowNode, details, isMove);
             if (details.changedPath.isActive()) {
                 details.changedPath.addParentNode(rowNode.parent);
@@ -622,12 +628,17 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             childNode.level = path.length;
             this.ensureRowNodeFields(childNode, this.getChildrenMappedKey(info.key, info.rowGroupColumn));
             this.setGroupData(childNode, info, details);
-            this.setExpandedInitialValue(details, childNode)
+            // AG-3441 - only set initial value if node is not being moved
+            if (!isMove) {
+                this.setExpandedInitialValue(details, childNode);
+            }
             this.addToParent(childNode, parentGroup);
         } else {
             if (!parentGroup.group) {
-                console.warn(`AG Grid: duplicate group keys for row data, keys should be unique`,
-                    [parentGroup.data, childNode.data]);
+                console.warn(`AG Grid: duplicate group keys for row data, keys should be unique`, [
+                    parentGroup.data,
+                    childNode.data,
+                ]);
             }
             childNode.parent = parentGroup;
             childNode.level = path.length;
@@ -636,7 +647,13 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private findParentForNode(childNode: RowNode, path: GroupInfo[], details: GroupingDetails, batchRemover?: BatchRemover, stopLevel?: number): RowNode {
+    private findParentForNode(
+        childNode: RowNode,
+        path: GroupInfo[],
+        details: GroupingDetails,
+        batchRemover?: BatchRemover,
+        stopLevel?: number
+    ): RowNode {
         let nextNode: RowNode = details.rootNode;
 
         path.forEach((groupInfo, level) => {
@@ -644,7 +661,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 return;
             }
 
-            nextNode = this.getOrCreateNextNode(nextNode, groupInfo, level, details);
+            nextNode = this.getOrCreateNextNode(nextNode, path, groupInfo, level, details);
             // node gets added to all group nodes.
             // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
 
@@ -659,15 +676,19 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         return nextNode;
     }
 
-    private getOrCreateNextNode(parentGroup: RowNode, groupInfo: GroupInfo, level: number,
-        details: GroupingDetails): RowNode {
-
+    private getOrCreateNextNode(
+        parentGroup: RowNode,
+        path: GroupInfo[],
+        groupInfo: GroupInfo,
+        level: number,
+        details: GroupingDetails
+    ): RowNode {
         const key = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
         let nextNode = parentGroup?.childrenMapped?.[key];
 
         if (!nextNode) {
-            if (key in this.treeNodeCache) {
-                nextNode = this.treeNodeCache[key];
+            if (details.usingTreeData && this.treeNodeCache.has(path, level, key)) {
+                nextNode = this.treeNodeCache.get(path, level, key);
                 nextNode.parent = parentGroup;
             } else {
                 nextNode = this.createGroup(groupInfo, parentGroup, level, details);
@@ -740,7 +761,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo, details: GroupingDetails): void {
         groupNode.groupData = {};
-        const groupDisplayCols: Column[] = this.showRowGroupColsService.getShowRowGroupCols();
+        const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
         groupDisplayCols.forEach((col) => {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
@@ -847,5 +868,52 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             }
         });
         return res;
+    }
+}
+
+type InnerTreeDataNodeCache = Record<string, { node: null | RowNode; subtree: InnerTreeDataNodeCache }>;
+
+class TreeDataNodeCache {
+    private cache: InnerTreeDataNodeCache = {};
+
+    private traverse(path: GroupInfo[], level: number): InnerTreeDataNodeCache {
+        let cache = this.cache;
+        let i = 0;
+
+        while (i <= level) {
+            const key = path[i].key;
+
+            if (!(key in cache)) {
+                cache[key] = { node: null, subtree: {} };
+            }
+            cache = cache[key].subtree;
+
+            i++;
+        }
+
+        return cache;
+    }
+
+    public set(path: GroupInfo[], level: number, key: string, value: null | RowNode) {
+        const cache = this.traverse(path, level - 1);
+        cache[key] = { node: value, subtree: {} };
+    }
+
+    public has(path: GroupInfo[], level: number, key: string): boolean {
+        const cache = this.traverse(path, level - 1);
+        return key in cache;
+    }
+
+    public get(path: GroupInfo[], level: number, key: string): RowNode | null | undefined {
+        const cache = this.traverse(path, level - 1);
+        return cache[key]?.node;
+    }
+
+    public clear(): void {
+        this.cache = {};
+    }
+
+    public inner(): InnerTreeDataNodeCache {
+        return this.cache;
     }
 }
