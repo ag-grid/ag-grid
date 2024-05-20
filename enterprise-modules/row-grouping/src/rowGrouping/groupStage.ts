@@ -595,7 +595,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             childNode.level = path.length;
             this.ensureRowNodeFields(childNode, this.getChildrenMappedKey(info.key, info.rowGroupColumn));
             this.setGroupData(childNode, info, details);
-            this.setExpandedInitialValue(details, childNode)
+            if (!isMove) {
+                this.setExpandedInitialValue(details, childNode)
+            }
             this.addToParent(childNode, parentGroup);
         } else {
             if (!parentGroup.group) {
