@@ -45,6 +45,7 @@
         // are the other way round for backwards compatibility
         &::after {
             content: ag.icon-content(checkbox-unchecked);
+            font-family: inherit;
             color: var(--ag-checkbox-unchecked-color);
             display: var(--ag-icon-font-display-checkbox-unchecked, var(--ag-icon-font-display));
             position: absolute;
