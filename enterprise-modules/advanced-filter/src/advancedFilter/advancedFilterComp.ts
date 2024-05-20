@@ -19,7 +19,7 @@ import { AutocompleteUpdate } from './filterExpressionUtils';
 import { AgAutocomplete, AutocompleteOptionSelectedEvent, AutocompleteValidChangedEvent, AutocompleteValueChangedEvent, AutocompleteValueConfirmedEvent } from './autocomplete/agAutocomplete';
 import { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 
-export class AgAdvancedFilter extends Component {
+export class AdvancedFilterComp extends Component {
     static readonly selector: AgComponentSelector = 'ag-advanced-filter';
 
     @RefSelector('eAutocomplete') private eAutocomplete: AgAutocomplete;

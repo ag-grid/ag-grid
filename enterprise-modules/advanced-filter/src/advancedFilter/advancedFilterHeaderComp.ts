@@ -11,14 +11,14 @@ import {
     _setDisplayed,
     _setAriaRole, _setAriaColIndex, _setAriaColSpan, _setAriaRowIndex 
 } from "@ag-grid-community/core";
-import { AgAdvancedFilter } from "./agAdvancedFilter";
+import { AdvancedFilterComp } from "./advancedFilterComp";
 
 export class AdvancedFilterHeaderComp extends Component {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
 
-    private eAdvancedFilter: AgAdvancedFilter | undefined;
+    private eAdvancedFilter: AdvancedFilterComp | undefined;
     private height: number;
 
     constructor(private enabled: boolean) {
@@ -69,7 +69,7 @@ export class AdvancedFilterHeaderComp extends Component {
         const eGui = this.getGui();
         if (enabled) {
             // unmanaged as can be recreated
-            this.eAdvancedFilter = this.createBean(new AgAdvancedFilter());
+            this.eAdvancedFilter = this.createBean(new AdvancedFilterComp());
             const eAdvancedFilterGui = this.eAdvancedFilter.getGui();
             this.eAdvancedFilter.addCssClass('ag-advanced-filter-header-cell');
             

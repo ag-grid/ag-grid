@@ -9,10 +9,10 @@ import { _createIconNoSpan } from "../utils/icon";
 import { _formatNumberCommas } from "../utils/number";
 import { AgComponentSelector, Component } from "../widgets/component";
 import { RefSelector } from "../widgets/componentAnnotations";
-import { AgPageSizeSelector } from "./pageSizeSelector/agPageSizeSelector";
+import { PageSizeSelectorComp } from "./pageSizeSelector/pageSizeSelectorComp";
 import { PaginationProxy } from "./paginationProxy";
 
-export class AgPagination extends Component {
+export class PaginationComp extends Component {
     static readonly selector: AgComponentSelector = 'ag-pagination';
 
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
@@ -29,7 +29,7 @@ export class AgPagination extends Component {
     @RefSelector('lbCurrent') private lbCurrent: any;
     @RefSelector('lbTotal') private lbTotal: any;
 
-    @RefSelector('pageSizeComp') private pageSizeComp: AgPageSizeSelector;
+    @RefSelector('pageSizeComp') private pageSizeComp: PageSizeSelectorComp;
 
     private previousAndFirstButtonsDisabled = false;
     private nextButtonDisabled = false;
@@ -43,7 +43,7 @@ export class AgPagination extends Component {
     @PostConstruct
     protected postConstruct(): void {
         const isRtl = this.gos.get('enableRtl');
-        this.setTemplate(this.getTemplate(), [AgPageSizeSelector]);
+        this.setTemplate(this.getTemplate(), [PageSizeSelectorComp]);
 
         const { btFirst, btPrevious, btNext, btLast, pageSizeComp } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast])

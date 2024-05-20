@@ -8,7 +8,7 @@ import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { _clearElement } from "../../utils/dom";
 import { _warnOnce } from "../../utils/function";
 
-export class AgPageSizeSelector extends Component {
+export class PageSizeSelectorComp extends Component {
     static readonly selector: AgComponentSelector = 'ag-page-size-selector';
 
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
