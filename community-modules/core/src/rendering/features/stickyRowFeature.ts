@@ -102,12 +102,17 @@ export class StickyRowFeature extends BeanStub {
         }
 
         if (row.isExpandable() || row.footer) {
+            // grand total row at top, nothing can push it out of sticky.
             const grandTotalAtTop = row.footer && row.rowIndex === 0;
+            if (grandTotalAtTop) {
+                return Number.MAX_SAFE_INTEGER;
+            }
+
             // if no siblings, we search the children for the last displayed row, to get last px.
             // equally, if sibling but sibling is contiguous ('top') then sibling cannot be used
             // to find last px
             const noOrContiguousSiblings = !row.sibling || Math.abs(row.sibling.rowIndex! - row.rowIndex!) === 1;
-            if (grandTotalAtTop || noOrContiguousSiblings) {
+            if (noOrContiguousSiblings) {
                 let lastAncestor = row.footer ? row.sibling : row;
                 while (lastAncestor.isExpandable() && lastAncestor.expanded) {
                     if (lastAncestor.master) {
