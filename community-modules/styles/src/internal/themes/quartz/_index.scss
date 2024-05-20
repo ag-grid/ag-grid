@@ -162,57 +162,13 @@
         }
     }
 
-    .ag-chart-advanced-settings-section {
-        padding-top: calc(var(--ag-grid-size) * 2);
-        padding-bottom: calc(var(--ag-grid-size) * 2);
-    }
-
     .ag-charts-settings-group-title-bar,
     .ag-charts-data-group-title-bar,
     .ag-charts-format-top-level-group-title-bar,
     .ag-charts-advanced-settings-top-level-group-title-bar,
     .ag-charts-settings-group-container {
         border-top: none;
-        padding: 0 calc(var(--ag-grid-size) * 1.5);
         font-weight: 500;
-    }
-
-    .ag-charts-format-top-level-group-item {
-        padding-bottom: 12px;
-        margin-top: calc(var(--ag-grid-size) * 2);
-        margin-bottom: 0;
-    }
-
-    .ag-charts-advanced-settings-top-level-group-item {
-        margin-top: calc(var(--ag-grid-size) * 2);
-        margin-bottom: 0;
-    }
-
-    .ag-charts-settings-group-container {
-        margin-top: calc(var(--ag-grid-size));
-        @include ag.theme-rtl((padding-right: var(--ag-widget-container-horizontal-padding)));
-    }
-    
-    .ag-charts-format-sub-level-group-container {
-        @include ag.theme-rtl((padding-right: 0));
-    }
-
-    .ag-charts-format-top-level-group-toolbar,
-    .ag-charts-advanced-settings-top-level-group-toolbar {
-        margin-top: var(--ag-grid-size);
-        @include ag.theme-rtl((padding-left: calc(var(--ag-grid-size) * 2)));
-    }
-    
-    .ag-charts-settings-group-title-bar,
-    .ag-charts-data-group-title-bar,
-    .ag-charts-format-top-level-group-title-bar {
-        margin-top: calc(var(--ag-grid-size) * 2);
-    }
-
-    .ag-charts-format-top-level-group-container,
-    .ag-charts-advanced-settings-top-level-group-container {
-        padding: 0;
-        @include ag.theme-rtl((padding-left: var(--ag-grid-size), padding-right: var(--ag-widget-container-horizontal-padding)));
     }
 
     .ag-chart-mini-thumbnail {
@@ -225,49 +181,127 @@
         border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
     }
 
-    .ag-group-title-bar-icon {
-        @include ag.theme-rtl((margin-right: var(--ag-grid-size)));
-    }
-
-    .ag-color-picker {
-        .ag-picker-field-wrapper {
-            max-width: 55px;
-            min-width: 55px;
-        }
-        .ag-picker-field-display {
-            height: 18px;
-            width: 18px;
-            flex: auto 0 0;
-            margin: 6px;
-            border-radius: 2px;
-            border: solid 1px var(--ag-input-border-color);
-        }
-        .ag-picker-field-icon {
-            @include ag.theme-rtl((margin-right: 4px));
-        }
-    }
-
-    .ag-charts-format-sub-level-group {
-        border-left: dashed 1px;
-        border-left-color: var(--ag-border-color);
-        padding-left: var(--ag-grid-size);
-        margin-bottom: calc(var(--ag-grid-size) * 2);
-    }
-
     .ag-charts-format-sub-level-group-title-bar {
-        padding-top: 0;
-        padding-bottom: 0;
         background: none;
         font-weight: 500;
     }
 
-    .ag-charts-format-sub-level-group-container {
-        padding-bottom: 0;
+    .ag-chart-format-wrapper,
+    .ag-chart-data-wrapper,
+    .ag-charts-format-top-level-group,
+    .ag-charts-format-top-level-group-title-bar,
+    .ag-charts-format-top-level-group .ag-charts-format-top-level-group-container,
+    .ag-charts-format-top-level-group-item,
+    .ag-charts-format-sub-level-group,
+    .ag-charts-format-sub-level-group-title-bar,
+    .ag-charts-format-sub-level-group-container,
+    .ag-charts-format-sub-level-group-item:last-child,
+    .ag-charts-format-sub-level-group-container > *,
+    .ag-charts-data-group-title-bar,
+    .ag-charts-data-group-container,
+    .ag-charts-settings-group-title-bar,
+    .ag-charts-settings-group-container {
+        padding: 0;
+        margin: 0;
     }
 
-    .ag-charts-format-sub-level-group-item:last-child {
+    .ag-charts-format-top-level-group,
+    .ag-charts-data-group {
+        border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+    }
+
+    .ag-charts-format-top-level-group-title-bar,
+    .ag-charts-data-group-title-bar,
+    .ag-charts-settings-group-title-bar {
+        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+    }
+
+    .ag-charts-format-top-level-group .ag-charts-format-top-level-group-container,
+    .ag-charts-data-group .ag-charts-data-group-container,
+    .ag-charts-settings-group .ag-charts-settings-group-container {
+        padding: 0 var(--ag-widget-container-horizontal-padding);
+    }
+
+    .ag-charts-format-sub-level-group-title-bar {
+        padding: var(--ag-widget-vertical-spacing) 0;
+    }
+
+    .ag-charts-format-sub-level-group-container {
+        padding-top: var(--ag-widget-vertical-spacing);
+        padding-bottom: var(--ag-widget-container-vertical-padding);
+    }
+
+    .ag-charts-format-top-level-group-container > *,
+    .ag-charts-format-sub-level-group-container > * {
+        margin-bottom: var(--ag-widget-vertical-spacing);
+    }
+
+    .ag-charts-data-group-item {
+        padding-bottom: var(--ag-widget-container-vertical-padding);
+    }
+
+    .ag-chart-settings-mini-wrapper {
+        padding-bottom: var(--ag-widget-container-vertical-padding);
+    }
+
+    .ag-chart-advanced-settings-section {
+        padding-top: var(--ag-widget-container-vertical-padding);
+        padding-bottom: var(--ag-widget-container-vertical-padding);
+    }
+
+    .ag-charts-advanced-settings-top-level-group {
+        .ag-charts-advanced-settings-top-level-group-title-bar,
+        .ag-charts-advanced-settings-top-level-group-container {
+            padding: 0 var(--ag-widget-container-horizontal-padding);
+        }
+    }
+
+    .ag-charts-advanced-settings-top-level-group-container {
+        margin: 0;
+    }
+
+    .ag-charts-advanced-settings-top-level-group-item {
+        margin-top: calc(var(--ag-widget-vertical-spacing) * 2);
         margin-bottom: 0;
     }
+
+    .ag-group-title-bar-icon {
+        @include ag.theme-rtl((margin-right: var(--ag-grid-size)));
+    }
+
+    .ag-spectrum-color, .ag-spectrum-fill {
+        border-radius: var(--ag-border-radius);
+    }
+
+    .ag-spectrum-dragger {
+        border-radius: 18px;
+        height: 18px;
+        width: 18px;
+        border: 3px solid white;
+    }
+
+    .ag-spectrum-tools {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+    
+    .ag-spectrum-tool {
+        height: 12px;
+    }
+
+    .ag-spectrum-hue-background,.ag-spectrum-alpha-background {
+        border-radius: 12px;
+    }
+
+    .ag-spectrum-slider {
+        margin-top: -15px;
+        width: 18px;
+        height: 18px;
+        border-radius: 18px;
+        border: 3px solid rgb(248, 248, 248);
+        background-color: transparent;
+    }
+
 
     &.ag-dnd-ghost {
         font-weight: 500;

@@ -8,7 +8,6 @@ import {
     RefSelector,
     AgSelectParams,
     AgToggleButtonParams,
-    ChartMappings,
     _removeFromParent
 } from "@ag-grid-community/core";
 import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
@@ -63,8 +62,7 @@ export class SeriesPanel extends Component {
         caps: () => this.initCaps(),
         connectorLine: () => this.initConnectorLine(),
         seriesItems: () => this.initSeriesItemsPanel(),
-        tileSpacing: () => this.initTileSpacingPanel(),
-        groupType: () => this.initGroupType()
+        tileSpacing: () => this.initTileSpacingPanel()
     } as const;
 
     private readonly seriesWidgetMappings: { [K in ChartSeriesType]?: (keyof typeof this.widgetFuncs)[] } = {
@@ -76,11 +74,11 @@ export class SeriesPanel extends Component {
         bubble: ['tooltips', 'markers', 'labels'],
         area: ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
         histogram: ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
-        'radial-column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'groupType'],
-        'radial-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'groupType'],
+        'radial-column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+        'radial-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'radar-line': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
         'radar-area': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels'],
-        nightingale: ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'groupType'],
+        nightingale: ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
         'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'range-area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
@@ -142,18 +140,17 @@ export class SeriesPanel extends Component {
     }
 
     private initSeriesSelect() {
-        const seriesSelect = this.seriesGroup.createManagedBean(new AgSelect({
-            label: this.translate('seriesType'),
-            labelAlignment: "left",
-            labelWidth: 'flex',
-            inputWidth: 'flex',
-            options: this.getSeriesSelectOptions(),
-            value: `${this.seriesType}`,
-            onValueChange: (newValue: ChartSeriesType) => {
-                this.seriesType = newValue;
-                this.refreshWidgets();
-            }
-        }));
+        const seriesSelect = this.seriesGroup.createManagedBean(new AgSelect(
+            this.chartMenuUtils.getDefaultSelectParamsWithoutValueParams(
+                'seriesType',
+                this.getSeriesSelectOptions(),
+                `${this.seriesType}`,
+                (newValue: ChartSeriesType) => {
+                    this.seriesType = newValue;
+                    this.refreshWidgets();
+                }
+            )
+        ));
 
         this.seriesGroup.addItem(seriesSelect);
 
@@ -339,20 +336,6 @@ export class SeriesPanel extends Component {
     private initTileSpacingPanel() {
         const tileSpacingPanelComp = this.createBean(new TileSpacingPanel(this.chartMenuUtils));
         this.addWidget(tileSpacingPanelComp);
-    }
-
-    private initGroupType(): void {
-        const { chartController } = this.options;
-        const groupTypeSelect = this.createBean(new AgSelect({
-            label: this.chartTranslationService.translate('seriesGroupType'),
-            options: ChartMappings.SERIES_GROUP_TYPES.map(value => ({
-                value,
-                text: this.chartTranslationService.translate(`${value}SeriesGroupType`)
-            })),
-            value: chartController.getSeriesGroupType(),
-            onValueChange: value => chartController.setSeriesGroupType(value)
-        }));
-        this.addWidget(groupTypeSelect);
     }
 
     private addWidget(widget: Component): void {

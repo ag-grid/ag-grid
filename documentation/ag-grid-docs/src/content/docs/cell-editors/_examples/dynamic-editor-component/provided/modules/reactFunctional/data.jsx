@@ -1,4 +1,3 @@
-
 export function getData() {
     return [
         { value: 14, type: 'age' },
@@ -7,5 +6,5 @@ export function getData() {
         { value: 21, type: 'age' },
         { value: 'Male', type: 'gender' },
         { value: 'Sad', type: 'mood' },
-    ]
+    ];
 }

@@ -1,11 +1,12 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { createApp } from 'vue';
+
 import './styles.css';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const colDefsMedalsIncluded = [
@@ -27,7 +28,7 @@ const colDefsMedalsExcluded = [
     { field: 'country' },
     { field: 'sport' },
     { field: 'year' },
-    { field: 'date' }
+    { field: 'date' },
 ];
 
 const VueExample = {
@@ -51,7 +52,6 @@ const VueExample = {
     `,
     components: {
         'ag-grid-vue': AgGridVue,
-
     },
     data: function () {
         return {
@@ -61,12 +61,12 @@ const VueExample = {
                 initialWidth: 100,
             },
             rowData: null,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
-        }
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
+        };
     },
-    beforeMount() {
-
-    },
+    beforeMount() {},
     methods: {
         onBtExcludeMedalColumns() {
             this.gridApi.setGridOption('columnDefs', colDefsMedalsExcluded);
@@ -77,19 +77,16 @@ const VueExample = {
         onGridReady(params) {
             this.gridApi = params.api;
 
-
             const updateData = (data) => {
                 this.onBtIncludeMedalColumns();
                 this.rowData = data;
             };
 
             fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-                .then(resp => resp.json())
-                .then(data => updateData(data));
+                .then((resp) => resp.json())
+                .then((data) => updateData(data));
         },
-    }
-}
+    },
+};
 
-createApp(VueExample)
-    .mount("#app")
-
+createApp(VueExample).mount('#app');

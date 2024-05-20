@@ -5,7 +5,7 @@ export class UpdateCellRenderer implements ICellRendererComp {
     private params!: ICellRendererParams;
 
     init(params: ICellRendererParams): void {
-        this.eGui = document.createElement("div");
+        this.eGui = document.createElement('div');
         this.eGui.innerHTML = '<button>Update Data</button>';
         this.eGui.addEventListener('click', () => this.onClick());
         this.params = params;
@@ -26,7 +26,7 @@ export class UpdateCellRenderer implements ICellRendererComp {
             ...node.data,
             gold: gold + 1,
             silver: silver + 1,
-            bronze: bronze + 1
+            bronze: bronze + 1,
         });
     }
 }

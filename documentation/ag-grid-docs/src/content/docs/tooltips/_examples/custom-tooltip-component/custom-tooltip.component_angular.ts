@@ -1,14 +1,13 @@
+import { ITooltipAngularComp } from '@ag-grid-community/angular';
+import { ITooltipParams } from '@ag-grid-community/core';
 import { Component } from '@angular/core';
-import { ITooltipParams } from "@ag-grid-community/core";
-import { ITooltipAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     standalone: true,
-    template: `
-      <div class="custom-tooltip" [style.background-color]="color">
-          <div><b>Custom Tooltip</b></div>
-          <div>{{ params.value }}</div>
-      </div>`,
+    template: ` <div class="custom-tooltip" [style.background-color]="color">
+        <div><b>Custom Tooltip</b></div>
+        <div>{{ params.value }}</div>
+    </div>`,
     styles: [
         `
             :host {
@@ -31,8 +30,8 @@ import { ITooltipAngularComp } from "@ag-grid-community/angular";
             .custom-tooltip p:first-of-type {
                 font-weight: bold;
             }
-        `
-    ]
+        `,
+    ],
 })
 export class CustomTooltip implements ITooltipAngularComp {
     private params!: { color: string } & ITooltipParams;

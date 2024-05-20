@@ -1,4 +1,4 @@
-import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterComp, IFilterParams } from "@ag-grid-community/core";
+import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterComp, IFilterParams } from '@ag-grid-community/core';
 
 export class PersonFilter implements IFilterComp {
     filterParams!: IFilterParams;
@@ -15,8 +15,7 @@ export class PersonFilter implements IFilterComp {
     // not called by AG Grid, just for us to help setup
     setupGui(params: IFilterParams) {
         this.gui = document.createElement('div');
-        this.gui.innerHTML =
-            `<div class="person-filter">
+        this.gui.innerHTML = `<div class="person-filter">
                 <div>Custom Athlete Filter</div>
                 <div>
                     <input type="text" id="filterText" placeholder="Full name search..."/>
@@ -28,12 +27,12 @@ export class PersonFilter implements IFilterComp {
         const listener = (event: any) => {
             this.filterText = event.target.value;
             params.filterChangedCallback();
-        }
+        };
 
         this.eFilterText = this.gui.querySelector('#filterText');
-        this.eFilterText.addEventListener("changed", listener);
-        this.eFilterText.addEventListener("paste", listener);
-        this.eFilterText.addEventListener("input", listener);
+        this.eFilterText.addEventListener('changed', listener);
+        this.eFilterText.addEventListener('paste', listener);
+        this.eFilterText.addEventListener('input', listener);
     }
 
     getGui() {
@@ -45,13 +44,16 @@ export class PersonFilter implements IFilterComp {
 
         // make sure each word passes separately, ie search for firstname, lastname
         let passed = true;
-        this.filterText?.toLowerCase().split(' ').forEach(filterWord => {
-            const value = this.filterParams.getValue(node);
+        this.filterText
+            ?.toLowerCase()
+            .split(' ')
+            .forEach((filterWord) => {
+                const value = this.filterParams.getValue(node);
 
-            if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
-                passed = false;
-            }
-        });
+                if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
+                    passed = false;
+                }
+            });
 
         return passed;
     }
@@ -61,13 +63,15 @@ export class PersonFilter implements IFilterComp {
     }
 
     getModel() {
-        if (!this.isFilterActive()) { return null; }
+        if (!this.isFilterActive()) {
+            return null;
+        }
 
         return { value: this.filterText };
     }
 
     setModel(model: any) {
-        const newValue = model == null ? null : model.value
+        const newValue = model == null ? null : model.value;
         this.eFilterText.value = newValue;
         this.filterText = newValue;
     }
@@ -79,4 +83,3 @@ export class PersonFilter implements IFilterComp {
         }
     }
 }
-

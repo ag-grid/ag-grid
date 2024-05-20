@@ -1,39 +1,42 @@
 'use strict';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { AgGridReact } from '@ag-grid-community/react';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import './styles.css';
-import { getData } from './data.jsx';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { getData } from './data.jsx';
+import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, SetFilterModule, MenuModule, FiltersToolPanelModule]);
 
-const colourCellRenderer = props => {
+const colourCellRenderer = (props) => {
     if (!props.value || props.value === '(Select All)') {
         return props.value;
     }
 
     const styles = {
-        verticalAlign: "middle",
-        border: "1px solid black",
+        verticalAlign: 'middle',
+        border: '1px solid black',
         margin: 3,
-        display: "inline-block",
+        display: 'inline-block',
         width: 10,
         height: 10,
-        backgroundColor: props.value.toLowerCase()
+        backgroundColor: props.value.toLowerCase(),
     };
-    return <React.Fragment>
-        <div style={styles} />
-        {props.value}</React.Fragment>;
-}
+    return (
+        <React.Fragment>
+            <div style={styles} />
+            {props.value}
+        </React.Fragment>
+    );
+};
 
 const FILTER_TYPES = {
     insensitive: 'colour',
@@ -73,46 +76,50 @@ const GridExample = () => {
             minWidth: 225,
             cellRenderer: colourCellRenderer,
             floatingFilter: true,
-        }
+        };
     }, []);
 
-
     const onFirstDataRendered = useCallback((params) => {
-        ((gridRef.current.api.getToolPanelInstance('filters'))).expandFilters();
-    }, [])
+        gridRef.current.api.getToolPanelInstance('filters').expandFilters();
+    }, []);
 
     const setModel = useCallback((type) => {
         gridRef.current.api.setColumnFilterModel(FILTER_TYPES[type], { values: MANGLED_COLOURS }).then(() => {
             gridRef.current.api.onFilterChanged();
         });
-    }, [])
+    }, []);
 
-    const getModel = useCallback((type) => {
-        alert(JSON.stringify(gridRef.current.api.getColumnFilterModel(FILTER_TYPES[type]), null, 2));
-    }, [alert])
+    const getModel = useCallback(
+        (type) => {
+            alert(JSON.stringify(gridRef.current.api.getColumnFilterModel(FILTER_TYPES[type]), null, 2));
+        },
+        [alert]
+    );
 
     const setFilterValues = useCallback((type) => {
-        gridRef.current.api.getColumnFilterInstance(FILTER_TYPES[type]).then(instance => {
+        gridRef.current.api.getColumnFilterInstance(FILTER_TYPES[type]).then((instance) => {
             instance.setFilterValues(MANGLED_COLOURS);
             instance.applyModel();
             gridRef.current.api.onFilterChanged();
         });
-    }, [])
+    }, []);
 
-    const getValues = useCallback((type) => {
-        gridRef.current.api.getColumnFilterInstance(FILTER_TYPES[type]).then(instance => {
-            alert(JSON.stringify(instance.getFilterValues(), null, 2));
-        });
-        }, [alert])
+    const getValues = useCallback(
+        (type) => {
+            gridRef.current.api.getColumnFilterInstance(FILTER_TYPES[type]).then((instance) => {
+                alert(JSON.stringify(instance.getFilterValues(), null, 2));
+            });
+        },
+        [alert]
+    );
 
     const reset = useCallback((type) => {
-        gridRef.current.api.getColumnFilterInstance(FILTER_TYPES[type]).then(instance => {
+        gridRef.current.api.getColumnFilterInstance(FILTER_TYPES[type]).then((instance) => {
             instance.resetFilterValues();
             instance.setModel(null);
             gridRef.current.api.onFilterChanged();
         });
-    }, [])
-
+    }, []);
 
     return (
         <div style={containerStyle}>
@@ -122,21 +129,31 @@ const GridExample = () => {
                         Case Insensitive:
                         <button onClick={() => setModel('insensitive')}>API: setModel() - mismatching case</button>
                         <button onClick={() => getModel('insensitive')}>API: getModel()</button>
-                        <button onClick={() => setFilterValues('insensitive')}>API: setFilterValues() - mismatching case</button>
+                        <button onClick={() => setFilterValues('insensitive')}>
+                            API: setFilterValues() - mismatching case
+                        </button>
                         <button onClick={() => getValues('insensitive')}>API: getFilterValues()</button>
                         <button onClick={() => reset('insensitive')}>Reset</button>
                     </div>
-                    <div style={{ "paddingTop": "10px" }}>
+                    <div style={{ paddingTop: '10px' }}>
                         Case Sensitive:
                         <button onClick={() => setModel('sensitive')}>API: setModel() - mismatching case</button>
                         <button onClick={() => getModel('sensitive')}>API: getModel()</button>
-                        <button onClick={() => setFilterValues('sensitive')}>API: setFilterValues() - mismatching case</button>
+                        <button onClick={() => setFilterValues('sensitive')}>
+                            API: setFilterValues() - mismatching case
+                        </button>
                         <button onClick={() => getValues('sensitive')}>API: getFilterValues()</button>
                         <button onClick={() => reset('sensitive')}>Reset</button>
                     </div>
                 </div>
 
-                <div style={gridStyle} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+                <div
+                    style={gridStyle}
+                    className={
+                        /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                        'ag-theme-quartz' /** DARK MODE END **/
+                    }
+                >
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}
@@ -149,8 +166,7 @@ const GridExample = () => {
             </div>
         </div>
     );
-
-}
+};
 
 const root = createRoot(document.getElementById('root'));
 root.render(<GridExample />);

@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
-export default props => {
+export default (props) => {
     const [value, setValue] = useState();
 
     useEffect(() => {
@@ -14,7 +14,7 @@ export default props => {
 
             setValue(`${flagImage} ${props.value}`);
         }
-    }, [])
+    }, []);
 
-    return <div dangerouslySetInnerHTML={{__html: value}}></div>;
-}
+    return <div dangerouslySetInnerHTML={{ __html: value }}></div>;
+};

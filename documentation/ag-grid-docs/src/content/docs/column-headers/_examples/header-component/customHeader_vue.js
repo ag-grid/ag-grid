@@ -18,11 +18,10 @@ export default {
         return {
             ascSort: null,
             descSort: null,
-            noSort: null
+            noSort: null,
         };
     },
-    beforeMount() {
-    },
+    beforeMount() {},
     mounted() {
         this.params.column.addEventListener('sortChanged', this.onSortChanged);
         this.onSortChanged();
@@ -45,6 +44,6 @@ export default {
 
         onSortRequested(order, event) {
             this.params.setSort(order, event.shiftKey);
-        }
-    }
+        },
+    },
 };

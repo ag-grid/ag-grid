@@ -1,5 +1,5 @@
-import React from 'react';
 import { CustomMenuItemProps, useGridMenuItem } from '@ag-grid-community/react';
+import React from 'react';
 
 export interface ButtonCustomMenuItemProps extends CustomMenuItemProps {
     buttonValue: string;
@@ -7,7 +7,7 @@ export interface ButtonCustomMenuItemProps extends CustomMenuItemProps {
 
 export default ({ name, subMenu, buttonValue }: ButtonCustomMenuItemProps) => {
     useGridMenuItem({
-        configureDefaults: () => true
+        configureDefaults: () => true,
     });
 
     const onClick = () => alert(`${name} clicked`);
@@ -16,9 +16,11 @@ export default ({ name, subMenu, buttonValue }: ButtonCustomMenuItemProps) => {
         <div>
             <span className="ag-menu-option-part ag-menu-option-icon" role="presentation"></span>
             <span className="ag-menu-option-part ag-menu-option-text">{name}</span>
-            <span className="ag-menu-option-part ag-menu-option-shortcut"><button onClick={onClick}>{buttonValue}</button></span>
+            <span className="ag-menu-option-part ag-menu-option-shortcut">
+                <button onClick={onClick}>{buttonValue}</button>
+            </span>
             <span className="ag-menu-option-part ag-menu-option-popup-pointer">
-                {subMenu && (<span className="ag-icon ag-icon-small-right" unselectable="on" role="presentation"></span>)}
+                {subMenu && <span className="ag-icon ag-icon-small-right" unselectable="on" role="presentation"></span>}
             </span>
         </div>
     );

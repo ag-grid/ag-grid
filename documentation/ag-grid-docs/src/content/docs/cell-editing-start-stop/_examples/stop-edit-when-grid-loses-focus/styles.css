@@ -19,7 +19,10 @@
     border: 1px solid lightgreen !important;
 }
 .yearSelect {
-    padding: 4px; border: 1px solid var(--ag-border-color); background: var(--ag-header-background-color); text-align: center;
+    padding: 4px;
+    border: 1px solid var(--ag-border-color);
+    background: var(--ag-header-background-color);
+    text-align: center;
 }
 
 .yearButton {

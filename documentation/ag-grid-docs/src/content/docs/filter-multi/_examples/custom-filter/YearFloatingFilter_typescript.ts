@@ -1,5 +1,6 @@
-import { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParentCallback } from "@ag-grid-community/core";
-import { YearFilter } from "./YearFilter_typescript";
+import { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParentCallback } from '@ag-grid-community/core';
+
+import { YearFilter } from './YearFilter_typescript';
 
 export class YearFloatingFilter implements IFloatingFilterComp {
     parentFilterInstance!: (callback: IFloatingFilterParentCallback<YearFilter>) => void;

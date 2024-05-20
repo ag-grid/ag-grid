@@ -7,7 +7,7 @@
         transpiler: 'ts',
         typescriptOptions: {
             target: 'es2020',
-            jsx: 'react'
+            jsx: 'react',
         },
         paths: {
             // paths serve as alias
@@ -15,7 +15,7 @@
             ...sjsPaths,
         },
         map: {
-            'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
+            css: 'npm:systemjs-plugin-css@0.1.37/css.js',
 
             // react
             react: 'npm:react@18.2.0',
@@ -82,7 +82,7 @@
             },
             '@ag-grid-enterprise/charts-enterprise': {
                 main: './dist/package/main.cjs.js',
-                defaultExtension: 'js'
+                defaultExtension: 'js',
             },
             '@ag-grid-enterprise/clipboard': {
                 main: './dist/package/main.cjs.js',
@@ -198,13 +198,13 @@
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js',
                 format: 'cjs',
-            }
+            },
         },
         meta: {
             typescript: {
                 exports: 'ts',
             },
-            '*.css': {loader: 'css'},
+            '*.css': { loader: 'css' },
         },
     });
 })(this);

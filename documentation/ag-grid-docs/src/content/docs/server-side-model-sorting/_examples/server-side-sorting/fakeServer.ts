@@ -5,15 +5,15 @@ export function FakeServer(allData) {
     alasql.options.cache = false;
 
     return {
-        getData: function(request) {
+        getData: function (request) {
             var results = executeQuery(request);
 
             return {
                 success: true,
                 rows: results,
-                lastRow: getLastRowIndex(request)
+                lastRow: getLastRowIndex(request),
             };
-        }
+        },
     };
 
     function executeQuery(request) {
@@ -33,7 +33,7 @@ export function FakeServer(allData) {
 
         if (sortModel.length === 0) return '';
 
-        var sorts = sortModel.map(function(s) {
+        var sorts = sortModel.map(function (s) {
             return s.colId + ' ' + s.sort.toUpperCase();
         });
 
@@ -41,7 +41,9 @@ export function FakeServer(allData) {
     }
 
     function limitSql(request) {
-        if (request.endRow == undefined || request.startRow == undefined) { return ''; }
+        if (request.endRow == undefined || request.startRow == undefined) {
+            return '';
+        }
         var blockSize = request.endRow - request.startRow;
 
         return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;

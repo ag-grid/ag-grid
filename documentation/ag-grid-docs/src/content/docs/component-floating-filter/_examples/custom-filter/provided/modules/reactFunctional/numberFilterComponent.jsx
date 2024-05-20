@@ -1,15 +1,18 @@
-import React, { useCallback } from 'react';
 import { useGridFilter } from '@ag-grid-community/react';
+import React, { useCallback } from 'react';
 
 export default ({ model, onModelChange, getValue }) => {
-    const doesFilterPass = useCallback((params) => {
-        const { node } = params;
+    const doesFilterPass = useCallback(
+        (params) => {
+            const { node } = params;
 
-        const value = getValue(node);
+            const value = getValue(node);
 
-        if (value == null) return false;
-        return Number(value) > Number(model);
-    }, [model]);
+            if (value == null) return false;
+            return Number(value) > Number(model);
+        },
+        [model]
+    );
 
     const getModelAsString = useCallback(() => {
         return model == null ? '' : '>' + model;
@@ -21,15 +24,15 @@ export default ({ model, onModelChange, getValue }) => {
     });
 
     return (
-        <div style={{ padding: "4px" }}>
-            <div style={{ fontWeight: "bold" }}>Greater than:</div>
+        <div style={{ padding: '4px' }}>
+            <div style={{ fontWeight: 'bold' }}>Greater than:</div>
             <div>
                 <input
                     value={model == null ? '' : model}
-                    style={{ margin: "4px 0 4px 0" }}
+                    style={{ margin: '4px 0 4px 0' }}
                     type="number"
                     min="0"
-                    onChange={({ target: { value }}) => onModelChange(value === '' ? null : Number(value))}
+                    onChange={({ target: { value } }) => onModelChange(value === '' ? null : Number(value))}
                     placeholder="Number of medals..."
                 />
             </div>

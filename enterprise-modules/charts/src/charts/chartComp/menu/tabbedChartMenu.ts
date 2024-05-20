@@ -110,14 +110,13 @@ export class TabbedChartMenu extends Component {
     }
 
     private createPanel(panelType: string): Component {
-        const { chartController, chartOptionsService } = this.chartMenuContext;
         switch (panelType) {
             case TabbedChartMenu.TAB_DATA:
-                return new ChartDataPanel(chartController, chartOptionsService);
+                return new ChartDataPanel(this.chartMenuContext);
             case TabbedChartMenu.TAB_FORMAT:
                 return new FormatPanel(this.chartMenuContext);
             default:
-                return new ChartSettingsPanel(chartController);
+                return new ChartSettingsPanel(this.chartMenuContext.chartController);
         }
     }
 }

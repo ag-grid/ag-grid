@@ -1,18 +1,17 @@
-import { Component } from '@angular/core';
-import { IFilterAngularComp } from "@ag-grid-community/angular";
+import { IFilterAngularComp } from '@ag-grid-community/angular';
 import { IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
 
 @Component({
     standalone: true,
-    template: `
-        <div class="year-filter">
-            <label>
-                <input type="radio" name="isFilterActive" [checked]="!isActive" (change)="toggleFilter(false)" /> All
-            </label>
-            <label>
-                <input type="radio" name="isFilterActive" [checked]="isActive" (change)="toggleFilter(true)" /> After 2004
-            </label>
-        </div>`
+    template: ` <div class="year-filter">
+        <label>
+            <input type="radio" name="isFilterActive" [checked]="!isActive" (change)="toggleFilter(false)" /> All
+        </label>
+        <label>
+            <input type="radio" name="isFilterActive" [checked]="isActive" (change)="toggleFilter(true)" /> After 2004
+        </label>
+    </div>`,
 })
 export class YearFilter implements IFilterAngularComp {
     params!: IFilterParams;

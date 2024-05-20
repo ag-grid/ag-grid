@@ -1,6 +1,6 @@
-import { IStatusPanelParams } from "@ag-grid-community/core";
-import { Component } from "@angular/core";
-import { IStatusPanelAngularComp } from "@ag-grid-community/angular";
+import { IStatusPanelAngularComp } from '@ag-grid-community/angular';
+import { IStatusPanelParams } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
 
 @Component({
     standalone: true,
@@ -8,11 +8,13 @@ import { IStatusPanelAngularComp } from "@ag-grid-community/angular";
         @if (visible) {
             <div class="container">
                 <div>
-                    <span class="component">Status Bar Component <input type="button" (click)="onClick()" value="Click Me"/></span>
+                    <span class="component"
+                        >Status Bar Component <input type="button" (click)="onClick()" value="Click Me"
+                    /></span>
                 </div>
             </div>
         }
-    `
+    `,
 })
 export class ClickableStatusBarComponent implements IStatusPanelAngularComp {
     public params!: IStatusPanelParams;
@@ -23,7 +25,7 @@ export class ClickableStatusBarComponent implements IStatusPanelAngularComp {
     }
 
     onClick(): void {
-        alert('Selected Row Count: ' + this.params.api.getSelectedRows().length)
+        alert('Selected Row Count: ' + this.params.api.getSelectedRows().length);
     }
 
     setVisible(visible: boolean) {

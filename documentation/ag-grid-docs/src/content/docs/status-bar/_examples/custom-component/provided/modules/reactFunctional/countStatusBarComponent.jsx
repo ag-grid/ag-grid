@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-export default props => {
+export default (props) => {
     const [count, setCount] = useState(0);
 
     useEffect(() => {
@@ -14,4 +14,3 @@ export default props => {
         </div>
     );
 };
-

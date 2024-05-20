@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
 import { CustomStatusPanelProps } from '@ag-grid-community/react';
+import React, { useEffect, useState } from 'react';
 
 export default (props: CustomStatusPanelProps) => {
     const [count, setCount] = useState(0);
@@ -15,4 +15,3 @@ export default (props: CustomStatusPanelProps) => {
         </div>
     );
 };
-

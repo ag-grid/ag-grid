@@ -37,17 +37,13 @@ export class LegendPanel extends Component {
     @PostConstruct
     private init() {
         const { chartMenuParamsFactory, isExpandedOnInit: expanded, registerGroupComponent } = this.options;
-        const positionSelect = this.createManagedBean(new AgSelect(chartMenuParamsFactory.addValueParams<AgSelectParams>(
+        const positionSelect = this.createManagedBean(new AgSelect(chartMenuParamsFactory.getDefaultSelectParams(
             `${this.key}.position`,
-            {
-                label: this.chartTranslationService.translate('position'),
-                labelWidth: 'flex',
-                inputWidth: 'flex',
-                options: ['top', 'right', 'bottom', 'left'].map((position: ChartTranslationKey) => ({
-                    value: position,
-                    text: this.chartTranslationService.translate(position)
-                })),
-            }
+            'position',
+            ['top', 'right', 'bottom', 'left'].map((position: ChartTranslationKey) => ({
+                value: position,
+                text: this.chartTranslationService.translate(position)
+            }))
         )));
         const enabledGroup = this.createManagedBean(new AgGroupComponent(chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(
             `${this.key}.enabled`,

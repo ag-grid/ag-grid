@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class CustomCellRenderer implements ICellRendererComp {
     eGui: any;
@@ -6,12 +6,13 @@ export class CustomCellRenderer implements ICellRendererComp {
     init(params: ICellRendererParams) {
         this.eGui = document.createElement('div');
         this.eGui.classList.add('my-custom-cell-renderer');
-        this.eGui.innerHTML = /* html */
+        this.eGui.innerHTML =
+            /* html */
             `<div class="athlete-info">
             <span>${params.data.athlete}</span>
             <span>${params.data.country}</span>
         </div>
-        <span>${params.data.year}</span>`
+        <span>${params.data.year}</span>`;
 
         // creates the row dragger element
         var rowDragger = document.createElement('i');
@@ -25,7 +26,6 @@ export class CustomCellRenderer implements ICellRendererComp {
     getGui() {
         return this.eGui;
     }
-
 
     refresh(params: ICellRendererParams): boolean {
         return false;

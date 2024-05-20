@@ -1,4 +1,4 @@
-import React, {useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export default ({ value, onValueChange, eventKey, rowIndex, column }, ref) => {
     const updateValue = (val) => {
@@ -34,4 +34,4 @@ export default ({ value, onValueChange, eventKey, rowIndex, column }, ref) => {
             className="my-simple-editor"
         />
     );
-}
+};

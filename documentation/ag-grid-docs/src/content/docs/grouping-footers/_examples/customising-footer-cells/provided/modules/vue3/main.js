@@ -1,13 +1,14 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import MyInnerRenderer from './myInnerRendererVue.js';
-import { getData } from './data.js';
-
 import { ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { createApp } from 'vue';
+
+import { getData } from './data.js';
+import MyInnerRenderer from './myInnerRendererVue.js';
+
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const VueExample = {
@@ -27,28 +28,34 @@ const VueExample = {
     `,
     components: {
         'ag-grid-vue': AgGridVue,
-        MyInnerRenderer
+        MyInnerRenderer,
     },
     data: function () {
         return {
-            columnDefs: [{
-                field: "country",
-                rowGroup: true,
-                hide: true
-            }, {
-                field: "year",
-                rowGroup: true,
-                hide: true
-            }, {
-                field: "gold",
-                aggFunc: "sum"
-            }, {
-                field: "silver",
-                aggFunc: "sum"
-            }, {
-                field: "bronze",
-                aggFunc: "sum"
-            }],
+            columnDefs: [
+                {
+                    field: 'country',
+                    rowGroup: true,
+                    hide: true,
+                },
+                {
+                    field: 'year',
+                    rowGroup: true,
+                    hide: true,
+                },
+                {
+                    field: 'gold',
+                    aggFunc: 'sum',
+                },
+                {
+                    field: 'silver',
+                    aggFunc: 'sum',
+                },
+                {
+                    field: 'bronze',
+                    aggFunc: 'sum',
+                },
+            ],
             gridApi: null,
             defaultColDef: {
                 flex: 1,
@@ -57,18 +64,18 @@ const VueExample = {
             autoGroupColumnDef: {
                 minWidth: 300,
                 cellRendererParams: {
-                    innerRenderer: 'MyInnerRenderer'
-                }
+                    innerRenderer: 'MyInnerRenderer',
+                },
             },
             rowData: null,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
-        }
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
+        };
     },
     created() {
-        this.rowData = getData()
-    }
-}
+        this.rowData = getData();
+    },
+};
 
-createApp(VueExample)
-    .mount("#app")
-
+createApp(VueExample).mount('#app');

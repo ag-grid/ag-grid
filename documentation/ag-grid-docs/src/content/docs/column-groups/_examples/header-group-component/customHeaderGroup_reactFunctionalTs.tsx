@@ -1,5 +1,5 @@
+import { CustomHeaderGroupProps } from '@ag-grid-community/react';
 import React, { useEffect, useState } from 'react';
-import { CustomHeaderGroupProps } from "@ag-grid-community/react";
 
 export default (props: CustomHeaderGroupProps) => {
     const [expandState, setExpandState] = useState('collapsed');
@@ -7,11 +7,11 @@ export default (props: CustomHeaderGroupProps) => {
     const expandOrCollapse = () => {
         let currentState = props.columnGroup.getProvidedColumnGroup().isExpanded();
         props.setExpanded(!currentState);
-    }
+    };
 
     const syncExpandButtons = () => {
         setExpandState(props.columnGroup.getProvidedColumnGroup().isExpanded() ? 'expanded' : 'collapsed');
-    }
+    };
 
     useEffect(() => {
         props.columnGroup.getProvidedColumnGroup().addEventListener('expandedChanged', syncExpandButtons);
@@ -29,6 +29,5 @@ export default (props: CustomHeaderGroupProps) => {
                 <i className="fa fa-arrow-right"></i>
             </div>
         </div>
-
     );
 };

@@ -28,6 +28,8 @@ export class ChartMenuParamsFactory extends BeanStub {
                 label: this.chartTranslationService.translate(labelKey ?? 'color'),
                 labelWidth: 'flex',
                 inputWidth: 'flex',
+                labelAlignment: 'top',
+                pickerGap: 6
             },
             options,
         );
@@ -47,6 +49,7 @@ export class ChartMenuParamsFactory extends BeanStub {
             expression,
             {
                 label: this.chartTranslationService.translate(labelKey),
+                labelAlignment: 'top',
                 labelWidth: 'flex',
                 inputWidth: 'flex',
                 precision: options?.precision,
@@ -119,26 +122,32 @@ export class ChartMenuParamsFactory extends BeanStub {
     public getDefaultSelectParams(
         expression: string,
         labelKey: ChartTranslationKey,
-        dropdownOptions: Array<ListOption>,
-        options?: {
-            pickerType?: string;
-            pickerAriaLabelKey?: string;
-            pickerAriaLabelValue?: string;
-        },
+        dropdownOptions: Array<ListOption>
     ): AgSelectParams {
-        const value = this.chartOptionsProxy.getValue(expression);
-        const params: AgSelectParams = {
+        return this.getDefaultSelectParamsWithoutValueParams(
+            labelKey,
+            dropdownOptions,
+            this.chartOptionsProxy.getValue(expression),
+            (value) => {
+                this.chartOptionsProxy.setValue(expression, value);
+            }
+        );
+    }
+
+    public getDefaultSelectParamsWithoutValueParams(
+        labelKey: ChartTranslationKey,
+        options: Array<ListOption>,
+        value: any,
+        onValueChange: (value: any) => void
+    ): AgSelectParams {
+        return {
             label: this.chartTranslationService.translate(labelKey),
+            labelAlignment: 'top',
+            options,
+            pickerGap: 6,
             value,
-            options: dropdownOptions,
-            pickerType: options?.pickerType,
-            pickerAriaLabelKey: options?.pickerAriaLabelKey,
-            pickerAriaLabelValue: options?.pickerAriaLabelValue,
-        };
-        params.onValueChange = (value) => {
-            this.chartOptionsProxy.setValue(expression, value);
-        };
-        return params;
+            onValueChange
+        }
     }
 
     public getDefaultFontPanelParams(

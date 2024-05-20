@@ -1,6 +1,7 @@
 import { AgDialog } from "@ag-grid-enterprise/core";
 import { AgColorPanel } from "./agColorPanel";
 import { AgPickerFieldParams, AgPickerField, AgComponentSelector } from "@ag-grid-community/core";
+import { _Util } from "ag-charts-community";
 
 export interface AgColorPickerParams extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
     pickerType?: string;
@@ -12,6 +13,8 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
     static readonly selector: AgComponentSelector = 'ag-color-picker';
     
     private isDestroyingPicker: boolean;
+    private eDisplayFieldColor: HTMLElement;
+    private eDisplayFieldText: HTMLElement;
 
     constructor(config?: AgColorPickerParams) {
         super({
@@ -19,12 +22,20 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
             pickerAriaLabelValue: 'Color Picker',
             pickerType: 'ag-list',
             className: 'ag-color-picker',
-            pickerIcon: 'colorPicker',
+            pickerIcon: 'smallDown',
             ...config,
         });
     }
 
     protected postConstruct() {
+        const eDocument = this.gos.getDocument();
+        this.eDisplayFieldColor = eDocument.createElement('span');
+        this.eDisplayFieldColor.classList.add('ag-color-picker-color');
+        this.eDisplayFieldText = eDocument.createElement('span');
+        this.eDisplayFieldText.classList.add('ag-color-picker-value');
+        this.eDisplayField.appendChild(this.eDisplayFieldColor);
+        this.eDisplayField.appendChild(this.eDisplayFieldText);
+
         super.postConstruct();
 
         if (this.value) {
@@ -33,7 +44,7 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
     }
 
     protected createPickerComponent() {
-        const eGuiRect = this.getGui().getBoundingClientRect();
+        const eGuiRect = this.eWrapper.getBoundingClientRect();
 
         const colorDialog = this.createBean(new AgDialog({
             closable: false,
@@ -43,7 +54,7 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
             width: 190,
             height: 250,
             x: eGuiRect.right - 190,
-            y: eGuiRect.top - 250
+            y: eGuiRect.top - 250 - (this.config.pickerGap ?? 0),
         }));
 
         return colorDialog;
@@ -91,7 +102,8 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
     public setValue(color: string): this {
         if (this.value === color) { return this; }
 
-        this.eDisplayField.style.backgroundColor = color;
+        this.eDisplayFieldColor.style.backgroundColor = color;
+        this.eDisplayFieldText.textContent = _Util.Color.fromString(color).toHexString().toUpperCase();
 
         return super.setValue(color);
     }

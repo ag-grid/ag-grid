@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "@ag-grid-community/core";
+import { IDoesFilterPassParams, IFilterComp, IFilterParams } from '@ag-grid-community/core';
 
 export class PartialMatchFilter implements IFilterComp {
     filterParams!: IFilterParams;
@@ -14,7 +14,7 @@ export class PartialMatchFilter implements IFilterComp {
         const listener = (event: any) => {
             this.filterText = event.target.value;
             params.filterChangedCallback();
-        }
+        };
         this.eFilterText.addEventListener('changed', listener);
         this.eFilterText.addEventListener('paste', listener);
         this.eFilterText.addEventListener('input', listener);
@@ -28,13 +28,16 @@ export class PartialMatchFilter implements IFilterComp {
         const { node } = params;
         const value = this.filterParams.getValue(node).toString().toLowerCase();
 
-        return this.filterText.toLowerCase()
+        return this.filterText
+            .toLowerCase()
             .split(' ')
-            .every(filterWord => value.indexOf(filterWord) >= 0);
+            .every((filterWord) => value.indexOf(filterWord) >= 0);
     }
 
     getModel() {
-        if (!this.isFilterActive()) { return null; }
+        if (!this.isFilterActive()) {
+            return null;
+        }
 
         return { value: this.filterText };
     }

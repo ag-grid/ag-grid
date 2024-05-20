@@ -1,6 +1,6 @@
 export async function getData(delay: number = 100): Promise<any[]> {
     // Simulate a server delay using setTimeout wrapped in a Promise
-    return await new Promise<any[]>(resolve => setTimeout(() => resolve(generateData()), delay));
+    return await new Promise<any[]>((resolve) => setTimeout(() => resolve(generateData()), delay));
 }
 
 function generateData(): any[] {

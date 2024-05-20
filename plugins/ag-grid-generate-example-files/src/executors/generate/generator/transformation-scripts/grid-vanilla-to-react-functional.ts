@@ -93,7 +93,7 @@ function getPackageImports(
         allStylesheets.forEach((styleSheet) => imports.push(`import './${basename(styleSheet)}';`));
     }
  
-    addRelativeImports(bindings, imports, 'js');
+    addRelativeImports(bindings, imports, 'jsx');
 
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));

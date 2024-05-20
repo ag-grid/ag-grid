@@ -11,7 +11,7 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
     @RefSelector('eInput') protected readonly eInput: TElement;
 
     constructor(config?: TConfig, className?: string, private readonly inputType: string | null = 'text', private readonly displayFieldTag = 'input') {
-        super(config, /* html */`
+        super(config, config?.template ?? /* html */`
             <div role="presentation">
                 <div ref="eLabel" class="ag-input-field-label"></div>
                 <div ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">

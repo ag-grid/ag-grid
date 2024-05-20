@@ -13,7 +13,7 @@ export default {
     `,
     data: function () {
         return {
-            isActive: false
+            isActive: false,
         };
     },
     methods: {
@@ -35,6 +35,6 @@ export default {
         },
         onFloatingFilterChanged(value) {
             this.setModel(value);
-        }
-    }
+        },
+    },
 };

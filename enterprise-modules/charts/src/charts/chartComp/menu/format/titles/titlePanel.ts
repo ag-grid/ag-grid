@@ -61,7 +61,10 @@ export class TitlePanel extends Component {
     }
 
     protected getTextInputParams(): AgInputTextFieldParams {
-        return this.chartMenuUtils.addValueParams(`${this.key}.text`, {});
+        return this.chartMenuUtils.addValueParams(`${this.key}.text`, {
+            label: this.chartTranslationService.translate('title'),
+            labelAlignment: 'top'
+        });
     }
 
     protected getSpacingSliderParams(): AgSliderParams {

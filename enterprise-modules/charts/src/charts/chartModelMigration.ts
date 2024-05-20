@@ -31,6 +31,7 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
     model = migrateIfBefore('29.2.0', model, migrateV29_2);
     model = migrateIfBefore('30.0.0', model, migrateV30);
     model = migrateIfBefore('31.0.0', model, migrateV31);
+    model = migrateIfBefore('32.0.0', model, migrateV32);
     model = cleanup(model);
 
     // Bump version to latest.
@@ -289,6 +290,22 @@ function migrateV31(model: ChartModel) {
     };
 }
 
+function migrateV32(model: ChartModel) {
+    model = jsonMutateProperty('chartOptions.*.autoSize', true, model, (parent, targetProp) => {
+        if (parent[targetProp] === true) {
+            // autoSize: true was the OOB default, so just use the new OOB default baked-in.
+        } else if (parent[targetProp] === false) {
+            // Fallback to legacy Charts defaults for autoSize: false.
+            parent['minHeight'] = 600;
+            parent['minWidth'] = 300;
+        }
+
+        delete parent[targetProp];
+    });
+
+    return model;
+}
+
 function cleanup(model: ChartModel) {
     // Remove fixed width/height - this has never been supported via UI configuration.
     model = jsonDelete('chartOptions.*.width', model);
@@ -463,7 +480,7 @@ function jsonMutateProperty(
     skipMissing: boolean,
     json: any,
     mutator: (parent: any, targetProp: string) => any
-): void {
+) {
     const pathElements = path instanceof Array ? path : path.split('.');
     const parentPathElements = pathElements.slice(0, pathElements.length - 1);
     const targetName = pathElements[pathElements.length - 1];

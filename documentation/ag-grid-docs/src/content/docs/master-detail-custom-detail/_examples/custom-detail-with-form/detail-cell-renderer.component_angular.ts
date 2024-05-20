@@ -1,5 +1,5 @@
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 import { Component } from '@angular/core';
-import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     standalone: true,
@@ -9,26 +9,26 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
                 <div>
                     <div>
                         <label>
-                            Call Id:<br>
-                            <input type="text" value={{firstRecord.callId}}>
+                            Call Id:<br />
+                            <input type="text" value="{{ firstRecord.callId }}" />
                         </label>
                     </div>
                     <div>
                         <label>
-                            Number:<br>
-                            <input type="text" value={{firstRecord.number}}>
+                            Number:<br />
+                            <input type="text" value="{{ firstRecord.number }}" />
                         </label>
                     </div>
                     <div>
                         <label>
-                            Direction:<br>
-                            <input type="text" value={{firstRecord.direction}}>
+                            Direction:<br />
+                            <input type="text" value="{{ firstRecord.direction }}" />
                         </label>
                     </div>
                 </div>
             </form>
         </div>
-    `
+    `,
 })
 export class DetailCellRenderer implements ICellRendererAngularComp {
     firstRecord!: any;

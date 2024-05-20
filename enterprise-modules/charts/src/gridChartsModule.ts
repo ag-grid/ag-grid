@@ -13,6 +13,7 @@ import { AgAngleSelect } from './widgets/agAngleSelect';
 import { AgColorPicker } from './widgets/agColorPicker';
 import { AgInputRange } from './widgets/agInputRange';
 import { AgSlider } from './widgets/agSlider';
+import { AgColorInput } from "./widgets/agColorInput";
 
 export const GridChartsModule: Module = {
     version: GRID_VERSION,

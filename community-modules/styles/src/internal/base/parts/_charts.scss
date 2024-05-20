@@ -219,9 +219,11 @@
     }
 
     .ag-chart-advanced-settings-section {
-        border-bottom: 1px solid var(--ag-secondary-border-color);
         padding-top: var(--ag-grid-size);
         padding-bottom: var(--ag-grid-size);
+        &:not(:last-child) {
+            border-bottom: 1px solid var(--ag-secondary-border-color);
+        }
     }
 
     .ag-chart-empty-text {
@@ -336,9 +338,8 @@
     @include ag.keyboard-focus((
         ag-charts-settings-group-title-bar,
         ag-charts-data-group-title-bar,
-        ag-charts-format-top-level-group-title-bar,
-        ag-charts-advanced-settings-top-level-group-title-bar
-    ), -4px);
+        ag-charts-format-top-level-group-title-bar
+    ), 4px);
 
     .ag-charts-data-group-container {
         padding: calc(var(--ag-widget-container-vertical-padding) * 0.5) var(--ag-widget-container-horizontal-padding);
@@ -356,7 +357,7 @@
 
     .ag-charts-format-top-level-group-container,
     .ag-charts-advanced-settings-top-level-group-container {
-        margin-left: calc(var(--ag-grid-size) * 2);
+        @include ag.unthemed-rtl(( margin-left: calc(var(--ag-grid-size) * 2) ));
         padding: var(--ag-grid-size);
     }
 

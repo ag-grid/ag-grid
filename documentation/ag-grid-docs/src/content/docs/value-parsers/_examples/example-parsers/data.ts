@@ -1,5 +1,5 @@
 export function getData(): any[] {
-    var rowData = []
+    var rowData = [];
     var words = [
         'One',
         'Apple',
@@ -13,15 +13,15 @@ export function getData(): any[] {
         'White',
         'Salt',
         'Beach',
-    ]
+    ];
 
     for (var i = 0; i < 100; i++) {
         rowData.push({
             simple: words[i % words.length],
             numberBad: Math.floor(((i + 2) * 173456) % 10000),
             numberGood: Math.floor(((i + 2) * 476321) % 10000),
-        })
+        });
     }
 
-    return rowData
+    return rowData;
 }
