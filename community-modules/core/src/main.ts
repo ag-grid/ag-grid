@@ -156,7 +156,7 @@ export { AgFakeVerticalScroll } from "./gridBodyComp/agFakeVerticalScroll";
 
 
 // rowContainer
-export { AgRowContainer } from "./gridBodyComp/rowContainer/agRowContainer";
+export { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
 export { RowContainerName, IRowContainerComp, RowContainerCtrl, RowContainerType, getRowContainerTypeForName } from "./gridBodyComp/rowContainer/rowContainerCtrl";
 
 // headerRendering
