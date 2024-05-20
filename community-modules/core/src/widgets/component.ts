@@ -185,13 +185,6 @@ export class Component extends BeanStub {
             this.createBean(newComponent, null, afterPreCreateCallback);
         }
 
-        // Uncomment to replace @RefSelector
-        // if(elementRef){
-        //     const current = (this as any)[elementRef];
-        //     if(!current){
-        //         (this as any)[elementRef] = newComponent ?? element;
-        //     }
-        // }
         return newComponent;
     }
 
@@ -424,6 +417,8 @@ export type AgComponentSelector =
 'ag-watermark' |
 'ag-input-text-area' |
 'ag-input-text-field' |
+'ag-input-date-field' |
+'ag-input-number-field' |
 'ag-sort-indicator' |
 'ag-pagination' |
 'ag-page-size-selector'|

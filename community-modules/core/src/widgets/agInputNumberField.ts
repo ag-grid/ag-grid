@@ -1,6 +1,7 @@
 import { AgInputTextField, AgInputTextFieldParams } from "./agInputTextField";
 import { _addOrRemoveAttribute } from '../utils/dom';
 import { _exists } from "../utils/generic";
+import { AgComponentSelector } from "./component";
 
 export interface AgInputNumberFieldParams extends AgInputTextFieldParams {
     precision?: number;
@@ -10,6 +11,8 @@ export interface AgInputNumberFieldParams extends AgInputTextFieldParams {
 }
 
 export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParams> {
+    static readonly selector: AgComponentSelector = 'ag-input-number-field';
+
     private precision?: number;
     private step?: number;
     private min?: number;
